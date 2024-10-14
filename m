@@ -1,121 +1,147 @@
-Return-Path: <linux-kernel+bounces-364118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A2699CB4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:15:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B0499CB43
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2D0AB23D98
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:15:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB9F5B25998
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDC21BE23E;
-	Mon, 14 Oct 2024 13:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C122B1AB501;
+	Mon, 14 Oct 2024 13:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="V3QzwnRN"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RsqfMZQ9"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8EF1AA7BF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9781A76C4;
+	Mon, 14 Oct 2024 13:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911589; cv=none; b=T9qZOSy43lSqMVAtTp/Ix/peyxrJ2VB4BmzC1JYGfi+7UTiv1a6LU/IkeLQ1Zb46qmsLBFIbXFP1TcK0zLdaDSeh4LBmDZZc0xouUHXautQxcRjuaVptAXbvgC83faTCnVswYzpLKssAx/IV0bdQF12jpEiJqzCCRbI3/9arpt4=
+	t=1728911507; cv=none; b=BjtK8x41Y9GPFerIN0GdQ4HbdPOi5Oi3ppDXff7Oia8/41wLKLixn9U+6K6iIRY6fzJim6BpKdtm0xwiXmbTw/FAqLSTBxN0XodRolcTFzgFKT+cqFh3oG3x0TN7XEfiWqzMAaa4CajhuDHQTN3kTrdMXC6aSopOx0pibq3E+iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911589; c=relaxed/simple;
-	bh=Ld1IFHH4VoD948pzXVnM8uGtymM6N9lAqhQr7/Xhim0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MOIgOq9kFeR5exV+KCzuty/09G+ygWxD73ILwj3w4xe4ysulOveyl1XTDhxJS3kzxlFPbV5VEzYKZjA7T5f3dEfnRU9qPtkt+VpY+GpN0jknHMWzHZBUTnbVI/tjs2JCVhPrIDn/O9dQvQ0qMsTJFOl0gJwlT55FZZstUGJhazY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=V3QzwnRN; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4305413aec9so41512535e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1728911586; x=1729516386; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMxWbG3IzboBy+GjbpVI1B+44dHkVyWcI9T24UQ7YSc=;
-        b=V3QzwnRN34HJ53KpEAz7A28xqAitPMyLUeJ9cHIT8d9hYAmfLIv+TAKFbedwqtMcCG
-         Vn0UXsBNklUo0dUF1SB5SRqpobHlPStFb9QDweg4Emf+tg+NpLDv1Xu0Hze18m0Yi03m
-         Nu5yjp54DF7sO67gkruJkajgqgurR2uwm8P7372OhhNRJ43yjBn8CzVDYl73Ee3sajVH
-         WecPU0Prhlx/IJVno3u3OGE5cw2zXD6K4bWYVGIusfxDuL0SSGks/XVG/OwUHjDoCR5J
-         La9hnqAoT2AJDmsCW8FgOmTAsZ3PJp/nE9bZP6NeUKpx7TcvxzW89dB+QGbHgscaELZ+
-         ECcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728911586; x=1729516386;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lMxWbG3IzboBy+GjbpVI1B+44dHkVyWcI9T24UQ7YSc=;
-        b=vj/sbPSyO1N+X234UVnu/XCocgEz8TcX2j8VI5XvSxFTSz1GJ7LH2EwJ8tXvOrAF/l
-         by17k/lzek99rJhbsZyebKHDAD5jFelFImCiicDyA8iMqPICBn60J3DESAHP45hqwQ0v
-         KNkn2HCOZayra/kj0Mo2JDSZVl9N5RquUTHR58kKpe4Cm/tfxAiWImZTIEyNVDjfQd9z
-         Mc6BfqCrdKtRHvENB6l35rulYdYxHvjmd1FZ15F1F8SOp5NI02qsJ6uaVt/i/lR6ag78
-         dLSE8m3Y1IOt1k74IEmqSYzdWyglmzzo5U8NHM90n+AZ5LUuBtImCu0ICmZaOXLdvoYq
-         zXvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrjLLSEjuY/UgTrg1DgeOyiR+RCCeeYtPdnhEqyNiSu6OxZisGTUVrz70vQ9U3kB8z7+T58DiFZELWqd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7zX2iJ//c9T/H6pkYHxN4JhAQozY+BgYgwCJZMeq+K4eyB4hN
-	ib73KAyu2EL1K6uZB9Yu49NQHf/ZUGVZZIk7FlM19J2T2nRSCGtqM3KV+3lJuLs=
-X-Google-Smtp-Source: AGHT+IEPo6MAy2c+4GzFFcgx3sGQ/2Os/WfUJwtAh8XUeAuMsQOlwNE9ajuG1rMx3nJ9KAV3UNhhAg==
-X-Received: by 2002:adf:ea8d:0:b0:37c:ccad:733a with SMTP id ffacd0b85a97d-37d55304285mr7994847f8f.59.1728911585726;
-        Mon, 14 Oct 2024 06:13:05 -0700 (PDT)
-Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d605c197bsm7103718f8f.38.2024.10.14.06.13.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 06:13:05 -0700 (PDT)
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: u-boot@lists.denx.de,
-	linux-kernel@vger.kernel.org
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Simon Glass <sjg@chromium.org>,
-	Tom Rini <trini@konsulko.com>
-Subject: [PATCH v8 32/37] arm: Implement read_mpidr on armv7
-Date: Mon, 14 Oct 2024 15:10:48 +0200
-Message-ID: <20241014131152.267405-33-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241014131152.267405-1-patrick.rudolph@9elements.com>
-References: <20241014131152.267405-1-patrick.rudolph@9elements.com>
+	s=arc-20240116; t=1728911507; c=relaxed/simple;
+	bh=5yU4dRg8eWV7Fgu5/bN7jBjpK68MkobODeODS6fxwYM=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=J515l60RMLe8nhLrp7hSANhGnaMEK685oI/cTIM0YoJNyyMt8hYIVTsA1kpLTZWR758RPhX3uhlBFLLZtWCF6JZYdEzXZ3k0aeAvlBC/LNoAAairv7vyAJN3jLhgHiftfc4egxxIbf4kWiBHvlm5LWM30JP0AHT1lwU10Bsj01U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RsqfMZQ9; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728911450; x=1729516250; i=markus.elfring@web.de;
+	bh=TfCLl53lB42+HRnDMfXfFuOecGZa7W9eJj72/YGIQ90=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RsqfMZQ9Q+piDeHZsRcFUz3vDcgukjqoWXoDiTWFgKUxTOc9IPe2aCGni6qXn7sp
+	 cWrWorf72z2G6j8w2Tb4TUOIB4mjb13kkPjpGGcQreoyMbHBe0gldDx8qm+J2d2fX
+	 if4LMXB2Q1UeFTSnlBQ8hxMq9sc03DBN9jFRiYvYa8/2bA9rSkL3qzPeGGgr941bq
+	 eAxgsqZGQDpmYGKSLCCCVEGJfxVfA3vTLVUbGWTGpamLNUau6zGj3hBIXji0aq4TR
+	 ebvHDjkaUsvf1+JsHWeAmltdZcS4bcVAiv8KnleMRXbGfrdgJYQd979y7eS7t91RX
+	 soazwx1zCzQFXrVzjQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [94.31.82.95] ([94.31.82.95]) by web-mail.web.de
+ (3c-app-webde-bs22.server.lan [172.19.170.22]) (via HTTP); Mon, 14 Oct 2024
+ 15:10:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <trinity-a5696b99-bf11-4ae3-8b00-20db116f86e4-1728911450361@3c-app-webde-bs22>
+From: Markus Elfring <Markus.Elfring@web.de>
+To: Kevin Chen <kevin_chen@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
+Subject: RE: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX
+ INTC
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Oct 2024 15:10:50 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
+References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
+ <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
+ <PSAPR06MB4949904D1FA95DBD3EF5288A89792@PSAPR06MB4949.apcprd06.prod.outlook.com>
+ <0b995a34-28c4-4ba6-8ad2-e8413c6a63f5@web.de>
+ <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:ovMgIH1q08E5i7Y9d9W6SUygzJNgl2aH+f4oZ4d1KfDWxtS1ZMfItM3wjo2ZYndBhaV9q
+ sVsLTIFgAYVRuSGipm1FsubPyMzqvHvSteb4G59YcNgWaH80fuZ+UuXRhPLk821rLkBWIHkW30Ba
+ VuUDtM44h0UWnxTNZYXbFpGTgDzjWiAqxxZewwynGk07TGaZ4vBcMMMseNsjk6+009ifsSk1T9Ls
+ iLk4yLDwTV9z52eLXfrkRI8yHmF15qSC360cl5/tXmjX9eSQZSPkWuhDfWfFwGqJltTJCXY+R1n6
+ Lg=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8QIWZabSQls=;BMNnAN1dJoT/6h4uy684oy1oyg8
+ jrr4wBj+qthZ8l5y3dGE0as9BdePavt6FDWiZKGS3Yr049y/u0M/KiuShJ0T2cDVVKUbEU+zi
+ Xl5t6BmSc61xxFU9MdSfNICci4xBwBccugddklaAsddcr2R3CaPDxnBIpwjEWt5IfsippsbXo
+ XMQaT2aeUTUeH2NJ5ahSYKQX1XzAFtPT0DyrpMFZAjD8NFCi+sCScDnS0oML6SJTWh16r3N2a
+ lQCcJ4e64lhGQl6xQqMsgOjXMwKNzw9+LfRRKWICv5jIIjTGFFqGhqd9rDxGnzAkM9h92Z3QY
+ h4VyosDzY+iyf62bvzV266k7Bkor4XhdmG4dZcQ8gACuyDklooc/yxqrASQHtxvNzRhkwu13G
+ ysI0HF4gNIOlqkpZNj5S1PwDPHh4MvNPnASCcbC2PhdZ0uuN1W/pdlCyzVZYGTkGLHroGyX4X
+ uZ4z5OOD+0sJBjzda777h/6WDufB+Bn9wLlSt9mdaEFpZEgh/mo6L3G42b3hGW6V/t+7i9PiK
+ XKPA6/hyqPvPB6nzz4/zsXGBfl/Vf1AGY73RIL9/qBTKRL14OCkz3CZ2tQg+llzPA29N+jzBt
+ 0wFLFE2HXPBjU7gi4SxYZuvg/HhrprBjX1rKExITz/nYgz2FUw9Q+1KrsbdzWNdudmOy/Nsy9
+ fcK81NPE/cadP3hS6Ihiu0Md3pwMkaexbVlfkxeHmA==
 
-Implement read_mpidr() on armv8 to make use of it in generic
-code that compiles on both armv8 and armv8.
+> > I propose to move selected variable definitions into corresponding comp=
+ound
+> > statements (by using extra curly brackets)=2E
+> > https://refactoring=2Ecom/catalog/reduceScopeOfVariable=2Ehtml
+> OK=2E I moved these two local variables into scoped_guard=2E
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-Reviewed-by: Simon Glass <sjg@chromium.org>
----
- arch/arm/include/asm/system.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Will development interests grow for further refactorings?
 
-diff --git a/arch/arm/include/asm/system.h b/arch/arm/include/asm/system.h
-index 2237d7d006..9eb30c2ade 100644
---- a/arch/arm/include/asm/system.h
-+++ b/arch/arm/include/asm/system.h
-@@ -394,6 +394,15 @@ void switch_to_hypervisor_ret(void);
- #define wfi()
- #endif
- 
-+static inline unsigned long read_mpidr(void)
-+{
-+	unsigned long val;
-+
-+	asm volatile("mrc p15, 0, %0, c0, c0, 5" : "=r" (val));
-+
-+	return val;
-+}
-+
- static inline unsigned long get_cpsr(void)
- {
- 	unsigned long cpsr;
--- 
-2.46.2
 
+> +static void aspeed_intc_ic_irq_handler(struct irq_desc *desc)
+> +{
+> +       struct aspeed_intc_ic *intc_ic =3D irq_desc_get_handler_data(des=
+c);
+
+Another update candidate (for scope reduction)?
+
+
+> +
+> +       guard(chained_irq)(desc);
+
+Using another macro call =E2=80=9Cscoped_guard(=E2=80=A6) { =E2=80=A6 }=E2=
+=80=9D?
+
+
+> +       scoped_guard(raw_spinlock, &intc_ic->gic_lock) {
+
+Would you like to reconsider the proposed macro mixture once more?
+
+
+> +               unsigned long bit, status;
+=E2=80=A6
+
+=E2=80=A6
+> +++ b/include/linux/irqchip/chained_irq=2Eh
+> @@ -38,4 +38,6 @@ static inline void chained_irq_exit(struct irq_chip *c=
+hip,
+>                 chip->irq_unmask(&desc->irq_data);
+>  }
+>=20
+> +DEFINE_GUARD(chained_irq, struct irq_desc *, chained_irq_exit((_T->irq_=
+data=2Echip), (_T)),
+> +            chained_irq_enter((_T->irq_data=2Echip), (_T)))
+
+Would you like to add a #include directive in this header file accordingly=
+?
+
+Regards,
+Markus
 
