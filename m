@@ -1,139 +1,112 @@
-Return-Path: <linux-kernel+bounces-363422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79BC99C23C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:56:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7635099C24C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055D31C26252
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:56:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06783B24634
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECEE155A25;
-	Mon, 14 Oct 2024 07:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB04C14D6EB;
+	Mon, 14 Oct 2024 07:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlzAo8NO"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UozniotZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBEE14D444;
-	Mon, 14 Oct 2024 07:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08791384BF
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892540; cv=none; b=MiwEyg+DznfqKdhlL+CNIj70CNUCKOUKB9Dt/AOyHn1fdNX+BmDwSwdaS9RYTuUx73sjmf/BktyKDJA9byAo2aGMb6Ohelmq8XjBhUBH03fqGos6DQ4wD7kvsRDRUg0lOGeIGIN6hFThMlpwtvya5wi2XSFxG8JM0FD61ff/M0Q=
+	t=1728892707; cv=none; b=B4wQ4WSVzJnodqhKz3fAUO3D6Q0sH2aJb8Dj/6zAvjf0dClvJTeLVbFOda1/jeWLZltXJodEAHM11eqNPSomgyhgYQ3qlWKZE48TTVwMtf1PnTTRdgijRJtQ24pR9/zEk75fCU8EwWdwgsXZV5IFJoT7wk4UIXjO2TOWIzLvcLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892540; c=relaxed/simple;
-	bh=dA2IneD8kRvzg3poRH4eotGjefUz41K3QrIAfu+sz4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H02w9NY9+CRCxRuDP4ZG64nx5zPj+dTuyYIu8rUW0vxGuJ6W3muKrS+YimmEMsR/J1JuFFQS91S/oEnGg+kubvY+8oSNaKiiLfilLUnBIyOJQywUbYN4ZngU5aO+W0VgocWCMpcCrxqqshQOknVc2S6vkCNipUuW0+vmF5aTFPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OlzAo8NO; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so5091453a12.2;
-        Mon, 14 Oct 2024 00:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728892537; x=1729497337; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6WpR+CN6uEEu6EeTwqUSFj9u8VTqS2qMOuFsh7BuOiM=;
-        b=OlzAo8NO12yAGbVOAVSxFxTz529t4SSH8SOZJDcl4WvJuaM+cigmvDI9lYgruApFnu
-         Fie5UqqtF29+wEmUDFH8RPInxe16jbsTchtII/tEqMP/EWkjvGl6iSNSnVgwIAOx0mC4
-         5WYptjnjrdXZokYdp+KXS/8t1DUp8QyoqCf9UCIOkHKam9iTjxHyCiVK/EuHxaPS2di+
-         bvaKvYyQC6d0fFsixF1o/PP8R93dZV8kDZY/E864Cd/ZOYcbsd2hI7iix47LdAbiauDz
-         h/go78bThx8dcUiRzkZsUtDK5/SeMqzNu16cJxgWykgOS/duY7p1QS06CI7W5ggt09CD
-         RRjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728892537; x=1729497337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6WpR+CN6uEEu6EeTwqUSFj9u8VTqS2qMOuFsh7BuOiM=;
-        b=Q++mEZqJCfQ4m6KGJhcUsaXcsPZcnHm+/AxN3feDvS4WI31L5GKfwAo5OOqYFFCZeg
-         Zb036kLC1IBfvetrOY7GcV7w3gPcNq/UpzHXeSqNe9xdtBDJYA0CQpkA7NN0by4cbe5k
-         WqQzp2gotmgYKuAzzk1my8xUftjfQuVdyOxHOQ8KYronR34Y7ZdVqypFYAQZEGMj4vJe
-         WepObUOxN3CQK3r6RKk2TXL+AzO58KxqEGHGOXtXe8qvvqFs7R0OSDCJarK9/uxa5wTx
-         XZyuH+Zs7UuF7cwDtwqQ9g8AoN9N8tYNrWa1yg8mW2dpo92lvFhRKYFKeP6lRh+Y8C4f
-         vU0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2vEtLe6vNcPMXQB0kiB68y8GSAOLIM4Ss1chk8JfJvKAnTASXyLfYvC2RZsms9lTuH6rJwjIxhvE=@vger.kernel.org, AJvYcCXgEjUJD04Ki2bqDKTOCWt+Hg+dQ6a2ml50Cf132NW5OJRmyyIvxlz0l+rqS3g5yV2wLy+vhQITSu49X4Lq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/EAH2bcgwfr8mN3kgws99Ma52kUghGSY/CxKqFtuq+fSYracd
-	E2ikGyksJd7KZCK02ltkVQ1Q27MMbrAAf42VTf2Nu9h1oGnEQ3v/vgmwQFOvhuH3RF2VEQsQmq1
-	BkJkRAAEx1Fijq3Oib0T+d3OabdF48RM=
-X-Google-Smtp-Source: AGHT+IFcctVyNJkG1tiXJDJMAL32ITizXtIvBW2QMDcgKBM8PHI0UeAsniLAG3tGyewO4GbuKOAYmEj2MGLx6KzVxdg=
-X-Received: by 2002:a17:907:3e21:b0:a99:5278:ac93 with SMTP id
- a640c23a62f3a-a99b95badfamr828775266b.51.1728892537111; Mon, 14 Oct 2024
- 00:55:37 -0700 (PDT)
+	s=arc-20240116; t=1728892707; c=relaxed/simple;
+	bh=okUCVxZQmNBCZOnwLzSniC5oceCmOwUWK0e9RpAsbxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hrSyyoQvTTlF2fQeDCh1Qen03mzvZIbuCcHakPs0eHxC+sdYeNeXsS0mH2omBYMH5oKHRdUtPvJN7w0DExtvntMy4pmVziG011146x3AEKgUcIXjLeRPIkvpj9oognkTamNCJbYqIwtaIxMA+Umo2QZID7HIUPrVH/KAdOmbxM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UozniotZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728892702;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wBWYGh1L8mzLbunG0zkaPybO/VfGp8yc/5u12WiFxg0=;
+	b=UozniotZZ6wX/WstfA/gflvGgKIXze91sDfrtWENdFwMNyKhHIkJoWMwAU0JfOXvVAhwhn
+	X453trEnC6CIKg77R3THgjMBTGD/Vw0T52ye77+CQ5k6i8z+h1c+7pJGqxPTbkgHSmn2PH
+	4exoLgn2Kc8laF7snALJiQgKKXEjt6s=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-45-gto0hQeUPoivTJQQlE95vQ-1; Mon,
+ 14 Oct 2024 03:58:19 -0400
+X-MC-Unique: gto0hQeUPoivTJQQlE95vQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8893C1956080;
+	Mon, 14 Oct 2024 07:58:17 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.128])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 523B519560AA;
+	Mon, 14 Oct 2024 07:58:10 +0000 (UTC)
+Date: Mon, 14 Oct 2024 15:58:05 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.de>,
+	Hamza Mahfooz <someguy@effective-light.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
+ overlapping mappings aren't supported"
+Message-ID: <ZwzPDU5Lgt6MbpYt@fedora>
+References: <ZwxzdWmYcBK27mUs@fedora>
+ <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
+ <20241014074151.GA22419@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011055231.9826-1-kfting@nuvoton.com> <20241011055231.9826-5-kfting@nuvoton.com>
- <ZwkFwABviY8ClyUo@smile.fi.intel.com>
-In-Reply-To: <ZwkFwABviY8ClyUo@smile.fi.intel.com>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Mon, 14 Oct 2024 15:55:25 +0800
-Message-ID: <CACD3sJbw8QVsfNW=Rz4WfzQ3-+d=Y_=U1kpkneSNmfDcGugChQ@mail.gmail.com>
-Subject: Re: [PATCH v6 4/4] i2c: npcm: Enable slave in eob interrupt
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Charles Boyer <Charles.Boyer@fii-usa.com>, Vivekanand Veeracholan <vveerach@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014074151.GA22419@lst.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Andy:
+On Mon, Oct 14, 2024 at 09:41:51AM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 14, 2024 at 09:23:14AM +0200, Hannes Reinecke wrote:
+> >> 3) some storage utilities
+> >> - dm thin provisioning utility of thin_check
+> >> - `dt`(https://github.com/RobinTMiller/dt)
+> >>
+> >> I looks like same user buffer is used in more than 1 dio.
+> >>
+> >> 4) some self cooked test code which does same thing with 1)
+> >>
+> >> In storage stack, the buffer provider is far away from the actual DMA
+> >> controller operating code, which doesn't have the knowledge if
+> >> DMA_ATTR_SKIP_CPU_SYNC should be set.
+> >>
+> >> And suggestions for avoiding this noise?
+> >>
+> > Can you check if this is the NULL page? Operations like 'discard' will 
+> > create bios with several bvecs all pointing to the same NULL page.
+> > That would be the most obvious culprit.
+> 
+> The only case I fully understand without looking into the details
+> is raid1, and that will obviously map the same data multiple times
 
-Thank you for your feedback.
+The other cases should be concurrent DIOs on same userspace buffer.
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
-10=E6=9C=8811=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=887:02=E5=AF=AB=
-=E9=81=93=EF=BC=9A
->
-> On Fri, Oct 11, 2024 at 01:52:31PM +0800, Tyrone Ting wrote:
-> > From: Charles Boyer <Charles.Boyer@fii-usa.com>
-> >
-> > Nuvoton slave enable was in user space API call master_xfer, so it is
-> > subject to delays from the OS scheduler. If the BMC is not enabled for
-> > slave mode in time for master to send response, then it will NAK the
-> > address match. Then the PLDM request timeout occurs.
-> >
-> > If the slave enable is moved to the EOB interrupt service routine, then
-> > the BMC can be ready in slave mode by the time it needs to receive a
-> > response.
->
-> ...
->
-> > +#if IS_ENABLED(CONFIG_I2C_SLAVE)
-> > +             /* reenable slave if it was enabled */
-> > +             if (bus->slave)
-> > +                     iowrite8((bus->slave->addr & 0x7F) | NPCM_I2CADDR=
-_SAEN,
->
-> GENMASK()?
-> But why do we need it? Do we expect this to be 10-bit address or...?
->
 
-0x7f is going to be removed in the next patch set.
+Thanks,
+Ming
 
-> > +                              bus->reg + NPCM_I2CADDR1);
-> > +#endif
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
-
-Thank you.
-
-Regards,
-Tyrone
 
