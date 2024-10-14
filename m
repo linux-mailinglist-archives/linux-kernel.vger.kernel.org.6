@@ -1,256 +1,199 @@
-Return-Path: <linux-kernel+bounces-363944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023CA99C93A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:45:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61A999C947
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F11B27ADE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:24:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D99B81C228D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6EE1802DD;
-	Mon, 14 Oct 2024 11:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E79B1A01B4;
+	Mon, 14 Oct 2024 11:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ODIwSEM9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j6lZTgVc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ODIwSEM9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j6lZTgVc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HO867Weu"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E0C153BED;
-	Mon, 14 Oct 2024 11:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6961E19F104
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728905053; cv=none; b=QePigl3SL9Q8PwDicH0rRuKaTfAdlLXo/0R4YvBHBqkGEtwNzpJ9J1y/N2N47rehH4JseRo61iFpPrueHAHm6wshSE2cRDwwnr+YTj2Im/1l6qRotn1ctMDVX09fGc2ObmKmoN6VDdxFCLRwMwbPMlphNjnKEsTGfExpfIQz99A=
+	t=1728906397; cv=none; b=NxEAJLq6YP/Rv7jrOqN0/FZMnfMYYR8a0DgH5GaGEDedPBmrsgDvtZ1LPB3KFwFyfXTASvR1E5qfBqiCrqINdWRx6Jh3WMJVr6Nictf6i552C7DEJK18MhG+pb2MOHHTJSt63G87BxE1zFgHia1SPE2XVVOleYNTDGCx2Q/sM20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728905053; c=relaxed/simple;
-	bh=On7z+z0xlAx1Au7qeHzAiTOIxa/+fU28ylKaXB0m3E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbJ5SEr+YakPd4Q4XCj9U6oj/rc5Dt17EhL4xJzW+PTBLzdk1aRrDHaMpMWa67tr5lbCTUvitF9PFndc8CTmc5os52BE6ruPZLnePJar5NMM6crEH5YLklfkCOkbLYmDqwcwbbv8Zen5RWGS+975fx8O7BXhzIfjV5OS7syTO5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ODIwSEM9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j6lZTgVc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ODIwSEM9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j6lZTgVc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6C24A1FB91;
-	Mon, 14 Oct 2024 11:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728905049; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMnytouJs0/lKHqI+kq1mVU5YSiaKvf/nCGCdLOi3Rk=;
-	b=ODIwSEM9Xorq6nFBsNx2Xy+TBdVgu3KLUIN4eLrvnE7j9K62VVLQOhlWGPtRdwai8rYTLb
-	BoZ6e/4KgSvUkhu2LLRi0ZIMR/kYJASH822eD3iag6akleXhNTf5644zXo/RyVBKC6V5SD
-	x7VkNr/sNT1VcWY0Da0jZroAGldSPEQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728905049;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMnytouJs0/lKHqI+kq1mVU5YSiaKvf/nCGCdLOi3Rk=;
-	b=j6lZTgVceb8gtwnHK/S3JIx2clkv9NDCWn07ly7b+UUm44qWAL3KzpbFNgdkOslrietf8x
-	qhXXFn4V7oq51IAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ODIwSEM9;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=j6lZTgVc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728905049; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMnytouJs0/lKHqI+kq1mVU5YSiaKvf/nCGCdLOi3Rk=;
-	b=ODIwSEM9Xorq6nFBsNx2Xy+TBdVgu3KLUIN4eLrvnE7j9K62VVLQOhlWGPtRdwai8rYTLb
-	BoZ6e/4KgSvUkhu2LLRi0ZIMR/kYJASH822eD3iag6akleXhNTf5644zXo/RyVBKC6V5SD
-	x7VkNr/sNT1VcWY0Da0jZroAGldSPEQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728905049;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EMnytouJs0/lKHqI+kq1mVU5YSiaKvf/nCGCdLOi3Rk=;
-	b=j6lZTgVceb8gtwnHK/S3JIx2clkv9NDCWn07ly7b+UUm44qWAL3KzpbFNgdkOslrietf8x
-	qhXXFn4V7oq51IAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 615FB13A51;
-	Mon, 14 Oct 2024 11:24:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jQHAF1n/DGcwLQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 11:24:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1E034A0896; Mon, 14 Oct 2024 13:24:09 +0200 (CEST)
-Date: Mon, 14 Oct 2024 13:24:09 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org,
-	Benjamin Coddington <bcodding@redhat.com>,
-	Ye Bin <yebin@huaweicloud.com>, viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yebin10@huawei.com, zhangxiaoxu5@huawei.com
-Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
- filesystem
-Message-ID: <20241014112409.y77ftn3jqc7smxfp@quack3>
-References: <20241010112543.1609648-1-yebin@huaweicloud.com>
- <20241010112543.1609648-3-yebin@huaweicloud.com>
- <20241010121607.54ttcmdfmh7ywho7@quack3>
- <5A1217C0-A778-4A9A-B9D8-5F0401DC1013@redhat.com>
- <20241010170405.m5l4wutd4csj3v6d@quack3>
- <CAOQ4uxiR9ssLb8b6WBFhYJpDrSEvMfALx12w3sOzjB8qe_7t_g@mail.gmail.com>
+	s=arc-20240116; t=1728906397; c=relaxed/simple;
+	bh=C6sFmOvZgS6veMvi5bFfx1DTFkz5KDyV+BDRycxOS8k=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=eT6LdrhHPyN6FRA6dQg3mKCQyp7nfQs/uB6iu1MGrYP6ZGNbHbbQSnr9+4qm2VO6OMRQFYXtxXJAMIGhUuZaVkbhrFRARY/x64vfbjnoZN2CjTsSoSZh3/bEJb2hHVKl+ymgz5M8oyFII25odAmMEcH6oX3wI2D3IGjy6LuVOMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HO867Weu; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c803787abso27567015ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728906394; x=1729511194; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=aWFh25nJyPJAANz+nHPv+XgVZ4oTsCk51SIBxPDCfHQ=;
+        b=HO867WeuwBwSe50xK5tJMli2ofte9R0sHhCqB1xe++DT8RCVxuHfrI0XHjSqJ0Ei/p
+         hou5hlvZoSiPcvob49PYV+eS6S99TfSWM9G3u00eSayMr/lfDV7GfFIUxA3+o67XHDsl
+         jRCs6iQ5xP1U+HTFNV+1i8+4GLVqSpGwGLaf7d9vOXVp+XwOO52oayuQ/JGaMI81buD4
+         AYNj5CAA+v/XvIalfeV3GpYVag1GRlgdifyfSihkE2R89y6icayE95K6NaEWpniRt/YX
+         IUMD3R4645Qbuph42dLeoIIyS4PQ4QCQQ2YxZxw9NyvKw7ko3YrFG1bR8PPhT/J5MuBN
+         rKbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728906394; x=1729511194;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWFh25nJyPJAANz+nHPv+XgVZ4oTsCk51SIBxPDCfHQ=;
+        b=DvJWSPu5qedHD5q8jymC8XFfrnFqVmtRM+eJVQAtezqwmmXNiXU4MFaOVvq7Rtp/vW
+         UbGFjR8bUVbdiHS6zI2G9KgwqXTVmjhdJofeCgWPktnFviKP1Y1r7En1kGT3qZjLtKcv
+         QYu5By8ta61zLP1RnhE2m1I2qcGSK+JP6pz9zYy2MltufdDsN/gSKYqLgdi4nz2kK8RR
+         e2bOnWhu1XhiK7DtdwVL0/smfi5qbz+dSNbUZKDVlsSM8NX2P3dp6W1Db4iGOzDICP4e
+         AGrugeEAjdIQGOrPlEA7WGgJxS0CEP9nqEdVMgHOVTa4qE+MJHuCWXLS4nNatW+kDcsR
+         +szg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCWa6bHFU8gqfJHup1Qvpv+kyozgbOfCqdpCRA76ahHyREH6KYuQMOsPgfQEuQpUoWpf0cBkGgcYjgxyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj4YTjCTMRw6Mzp/nW41qspOKdxLtODrvLeTEDUGSENoWlMmal
+	AcY6zpntMeYtbNM8Sbdhuln8zYtIYdzjrKJS7elts/6CuS1DiO9r
+X-Google-Smtp-Source: AGHT+IEbzH2rLW7vX0++DAbmN0Cd8+5Z4OH+8mqkENfD5VLnA/+m5ohpTGDY/xnSU5tPiRMckODPdA==
+X-Received: by 2002:a17:903:110e:b0:205:5d71:561e with SMTP id d9443c01a7336-20ca0402291mr172569595ad.26.1728906393559;
+        Mon, 14 Oct 2024 04:46:33 -0700 (PDT)
+Received: from dw-tp ([171.76.85.106])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c0eb755sm64431045ad.134.2024.10.14.04.46.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 04:46:32 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-mm@kvack.org, Sourabh Jain <sourabhjain@linux.ibm.com>, Hari Bathini <hbathini@linux.ibm.com>, Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Donet Tom <donettom@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, Sachin P Bappalige <sachinpb@linux.ibm.com>
+Subject: Re: [RFC v3 1/3] fadump: Refactor and prepare fadump_cma_init for late init
+In-Reply-To: <941875f7-0d7f-4ba3-bc7c-7aedc3b20dae@linux.ibm.com>
+Date: Mon, 14 Oct 2024 16:54:56 +0530
+Message-ID: <87bjznyliv.fsf@gmail.com>
+References: <030b6d46fddac126a6cf7e119bea48055338f0ed.1728658614.git.ritesh.list@gmail.com> <941875f7-0d7f-4ba3-bc7c-7aedc3b20dae@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxiR9ssLb8b6WBFhYJpDrSEvMfALx12w3sOzjB8qe_7t_g@mail.gmail.com>
-X-Rspamd-Queue-Id: 6C24A1FB91
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Fri 11-10-24 13:44:57, Amir Goldstein wrote:
-> On Thu, Oct 10, 2024 at 7:04 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 10-10-24 09:35:46, Benjamin Coddington wrote:
-> > > On 10 Oct 2024, at 8:16, Jan Kara wrote:
-> > >
-> > > > On Thu 10-10-24 19:25:42, Ye Bin wrote:
-> > > >> From: Ye Bin <yebin10@huawei.com>
-> > > >>
-> > > >> In order to better analyze the issue of file system uninstallation caused
-> > > >> by kernel module opening files, it is necessary to perform dentry recycling
-> > > >
-> > > > I don't quite understand the use case you mention here. Can you explain it
-> > > > a bit more (that being said I've needed dropping caches for a particular sb
-> > > > myself a few times for debugging purposes so I generally agree it is a
-> > > > useful feature).
-> > > >
-> > > >> on a single file system. But now, apart from global dentry recycling, it is
-> > > >> not supported to do dentry recycling on a single file system separately.
-> > > >> This feature has usage scenarios in problem localization scenarios.At the
-> > > >> same time, it also provides users with a slightly fine-grained
-> > > >> pagecache/entry recycling mechanism.
-> > > >> This patch supports the recycling of pagecache/entry for individual file
-> > > >> systems.
-> > > >>
-> > > >> Signed-off-by: Ye Bin <yebin10@huawei.com>
-> > > >> ---
-> > > >>  fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
-> > > >>  include/linux/mm.h |  2 ++
-> > > >>  kernel/sysctl.c    |  9 +++++++++
-> > > >>  3 files changed, 54 insertions(+)
-> > > >>
-> > > >> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> > > >> index d45ef541d848..99d412cf3e52 100644
-> > > >> --- a/fs/drop_caches.c
-> > > >> +++ b/fs/drop_caches.c
-> > > >> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
-> > > >>    }
-> > > >>    return 0;
-> > > >>  }
-> > > >> +
-> > > >> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
-> > > >> +                            void *buffer, size_t *length, loff_t *ppos)
-> > > >> +{
-> > > >> +  unsigned int major, minor;
-> > > >> +  unsigned int ctl;
-> > > >> +  struct super_block *sb;
-> > > >> +  static int stfu;
-> > > >> +
-> > > >> +  if (!write)
-> > > >> +          return 0;
-> > > >> +
-> > > >> +  if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
-> > > >> +          return -EINVAL;
-> > > >
-> > > > I think specifying bdev major & minor number is not a great interface these
-> > > > days. In particular for filesystems which are not bdev based such as NFS. I
-> > > > think specifying path to some file/dir in the filesystem is nicer and you
-> > > > can easily resolve that to sb here as well.
-> > >
-> > > Slight disagreement here since NFS uses set_anon_super() and major:minor
-> > > will work fine with it.
-> >
-> > OK, fair point, anon bdev numbers can be used. But filesystems using
-> > get_tree_nodev() would still be problematic.
-> >
-> > > I'd prefer it actually since it avoids this
-> > > interface having to do a pathwalk and make decisions about what's mounted
-> > > where and in what namespace.
-> >
-> > I don't understand the problem here. We'd do user_path_at(AT_FDCWD, ...,
-> > &path) and then take path.mnt->mnt_sb. That doesn't look terribly
-> > complicated to me. Plus it naturally deals with issues like namespacing
-> > etc. although they are not a huge issue here because the functionality
-> > should be restricted to CAP_SYS_ADMIN anyway.
-> >
-> 
-> Both looking up bdev and looking up path from write() can make syzbot
-> and lockdep very upset:
-> https://lore.kernel.org/linux-fsdevel/00000000000098f75506153551a1@google.com/
+Madhavan Srinivasan <maddy@linux.ibm.com> writes:
 
-OK, thanks for the reference.
+> On 10/11/24 8:30 PM, Ritesh Harjani (IBM) wrote:
+>> We anyway don't use any return values from fadump_cma_init(). Since
+>> fadump_reserve_mem() from where fadump_cma_init() gets called today,
+>> already has the required checks.
+>> This patch makes this function return type as void. Let's also handle
+>> extra cases like return if fadump_supported is false or dump_active, so
+>> that in later patches we can call fadump_cma_init() separately from
+>> setup_arch().
+>
+> Usually patches to this file are posted with title format of
+>
+> powerpc/fadump:<>
 
-> I thought Christian had a proposal for dropping cache per-sb API via
-> fadvise() or something?
-> 
-> Why use sysfs API for this and not fd to reference an sb?
+yes. I guess it is good to do it that way (I might have missed it)
+Although commit history of oldest few patches to fadump shows..
 
-I guess because the original drop_caches is in the sysfs. But yes, in
-principle we could use fd pointing to the filesystem for this. I'm just not
-sure fadvise(2) is really the right syscall for this because it is
-currently all about page cache of a file and this call should shrink also
-the dcache / icache. But ioctl() (not sure if this debug-mostly
-functionality is worth a syscall) implemented in VFS would certainly be
-possible and perhaps nicer than sysfs interface.
+ebaeb5ae2437 fadump: Convert firmware-assisted cpu state dump data into elf notes.
+2df173d9e85d fadump: Initialize elfcore header and add PT_LOAD program headers.
+3ccc00a7e04f fadump: Register for firmware assisted dump.
+eb39c8803d0e fadump: Reserve the memory for firmware assisted dump.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+>
+>> 
+>> Acked-by: Hari Bathini <hbathini@linux.ibm.com>
+>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> ---
+>> v2 -> v3: Separated the series into 2 as discussed in v2.
+>> [v2]: https://lore.kernel.org/linuxppc-dev/cover.1728585512.git.ritesh.list@gmail.com/
+>> 
+>>  arch/powerpc/kernel/fadump.c | 23 +++++++++--------------
+>>  1 file changed, 9 insertions(+), 14 deletions(-)
+>> 
+>> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+>> index a612e7513a4f..162327d66982 100644
+>> --- a/arch/powerpc/kernel/fadump.c
+>> +++ b/arch/powerpc/kernel/fadump.c
+>> @@ -78,27 +78,23 @@ static struct cma *fadump_cma;
+>>   * But for some reason even if it fails we still have the memory reservation
+>>   * with us and we can still continue doing fadump.
+>>   */
+>> -static int __init fadump_cma_init(void)
+>> +static void __init fadump_cma_init(void)
+>>  {
+>>  	unsigned long long base, size;
+>>  	int rc;
+>> 
+>> -	if (!fw_dump.fadump_enabled)
+>> -		return 0;
+>> -
+>> +	if (!fw_dump.fadump_supported || !fw_dump.fadump_enabled ||
+>> +			fw_dump.dump_active)
+>> +		return;
+>
+> Is these checks even needed here? fadump_reserve_mem() checked for all
+> these already, also dont see any other caller for fadump_cma_init(). 
+>
+>
+
+In the next patch we will move fadump_cma_init() call from within
+fadump_reserve_mem() to setup_arch(). Hence we need these extra checks
+in fadump_cma_init() as well. I mentioned the same in the commit msg of
+this patch too.
+
+>>  	/*
+>>  	 * Do not use CMA if user has provided fadump=nocma kernel parameter.
+>> -	 * Return 1 to continue with fadump old behaviour.
+>>  	 */
+>> -	if (fw_dump.nocma)
+>> -		return 1;
+>> +	if (fw_dump.nocma || !fw_dump.boot_memory_size)
+>> +		return;
+>> 
+>>  	base = fw_dump.reserve_dump_area_start;
+>>  	size = fw_dump.boot_memory_size;
+>> 
+>> -	if (!size)
+>> -		return 0;
+>
+> So this is the only place where we return 0, which in turn will make the
+> "ret" in fadump_reserve_mem() as zero forcing to call reserve_crashkernel()
+> in early_init_devtree().
+>
+> we are removing it, becos we know "size" here will never be zero?
+>
+>
+
+yes. Because we already check if boot_memory_size is less than
+bootmem_min in fadump_reserve_mem(). If it is less, then we fail and
+disable fadump (fadump_enabled = 0).
+
+So then there is no need to check for !boot_memory_size in here.
+
+fadump_reseve_mem( ) {
+<...>
+	if (!fw_dump.dump_active) {
+		fw_dump.boot_memory_size =
+			PAGE_ALIGN(fadump_calculate_reserve_size());
+
+		bootmem_min = fw_dump.ops->fadump_get_bootmem_min();
+		if (fw_dump.boot_memory_size < bootmem_min) {
+			pr_err("Can't enable fadump with boot memory size (0x%lx) less than 0x%llx\n",
+			       fw_dump.boot_memory_size, bootmem_min);
+			goto error_out;
+		}
+    <...>    
+    }
+<...>
+error_out:
+	fw_dump.fadump_enabled = 0;
+	fw_dump.reserve_dump_area_size = 0;
+	return 0;
+}
+
+
+Thanks for the review!
+-ritesh
 
