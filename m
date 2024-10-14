@@ -1,332 +1,238 @@
-Return-Path: <linux-kernel+bounces-363230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C392B99BF4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 523B199BF55
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A471F2280E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:16:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B8C1F229BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C79813211F;
-	Mon, 14 Oct 2024 05:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F86813A24D;
+	Mon, 14 Oct 2024 05:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="b/YYsSY4"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q88VBKgd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BCA4C7E;
-	Mon, 14 Oct 2024 05:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F094C7E;
+	Mon, 14 Oct 2024 05:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728882993; cv=none; b=KH6EexmOb7wuPXOQixR0PmkQPo6JKTlrU+w65eRsx7mQP+p8eE2wpsdltntpXlT0cgtxwi9T2aYajg586SIfiRsQfHBHh3sah5I2tMXw7kf0MzXHgk7YuEPE/+/5T5dJASaMPN8rqq7PXu1bTAL+oGKowGqsq4auGS7JLazG+Ig=
+	t=1728883252; cv=none; b=e7/GdblFHalKEKynqMG4fxW0Rs3DYhXSwtppCceXypPX9a9Xmotj0k0nY3mkmqrpWwIcV598y42KqWnmnt57SV1bXykkcVRRiRrx4yNwy/+KoMOKtKRbGezCqQ9/75GtseXBsK+BYWjyW6OFnXlMEP3ohoNznQIsTA5WIgy50kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728882993; c=relaxed/simple;
-	bh=Mppu4XGdH1KEFAc61VT93mc1hYhP1t/WRc06WBcMlGQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=lH/PfEXA/F5EFKuRyZnP1iBtd6qYbryfFGhrv5g9kOgrIJkT2f5Tq3Wvdl0PU7FrzAWSlW3Q90KSAlbBLfR05DsuZAVCPVnxonrt92I71qAR3FZzR1cuJPGkRV9oOSU7htICs4afy3Zq+HIaSltFcOKlzGCd4UeWRwOXftFKEco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=b/YYsSY4; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1728883252; c=relaxed/simple;
+	bh=BQDcZ4P+fLPGF0vJTuYxgbGpyI35z+rA4Jph/kV4bkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XHii9mwcjghKqwBtX3PFjEjzLLINWJGBVq3nlFJs4amc24DD7eT7W13C18KjUsXU7r1zsAz9jIX7/KX1wwnP9XzqZfkXMEXXvOFS67nN4KYB18l8yimDkQjBbDxPQAsnNSM+JjN8Vq1lt78ZZfhmAq6FKNtAzWhImx+pqDHd11M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q88VBKgd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E4R04O013639;
+	Mon, 14 Oct 2024 05:20:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:mime-version:content-type; s=pp1;
+	 bh=DtSl2gjkL4b4viqV66J3GUu4iiCHJl1K/3o+41OOg58=; b=Q88VBKgd+XIY
+	Au0YbhYyyDfWlEGqCmhcfItKw0qS447iRv+X0PxFXLveObu38bLKKZ3vyEL3DGG4
+	IB09kYNlOCWhgHN6tDTqyTs6Lg5g+1F7IaRA9Oh47K4hj7UfmNFLTy4flKTCxCU4
+	VYuFx8prm8r+VRAzpwmiQD27zo2MqksCMRfnM+D3sxKufhgsI93adf88BYaWsvhg
+	QQPurXuQhZMdaAmw5yh/XY4kqJq5GymfyFU2OiRDFeHQEawzcjHfc25fGGc0bXib
+	mGTdGbyIeVYWJX88t8lI7vIBezfwRiNK2x7NSJnajPyDusb9n1OfGYFwvO3rjW7h
+	Qb04wlRbXg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 428v8cr6mc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 05:20:25 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49E5KPRw016439;
+	Mon, 14 Oct 2024 05:20:25 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 428v8cr6m7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 05:20:25 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49E1ubTm006671;
+	Mon, 14 Oct 2024 05:20:24 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4283ermxam-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 05:20:24 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49E5KLDJ56099284
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 05:20:21 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E98462004E;
+	Mon, 14 Oct 2024 05:20:20 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A05820043;
+	Mon, 14 Oct 2024 05:20:18 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.109.245.217])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Oct 2024 05:20:18 +0000 (GMT)
+Date: Mon, 14 Oct 2024 10:50:15 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto/nx: Rename devdata_mutex to devdata_spinlock
+Message-ID: <ZwyqD-w5hEhrnqTB@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1728882987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rTZ5SBr1aEj+jNtSS5ZlaOSl6XDMcU4TwFNZd5pPd78=;
-	b=b/YYsSY4IanecYhJieTrtOr6zdEhNOIXgUd/6V0rlqydp+O+EGwHxDEdLS5alyf8QVjVyD
-	SHg1UB93Z7LiUOWluV69EiWAHlm+x+jYJOKainudQPYGBlcL+aESdrvou6Fyk0JPbXlb6O
-	n/4HjXDEWlBYS6g9uo8AwfYN8kmgFazE9ws036T9l12Ga5wMZQRiD3IrlyZ4TuC7Xr0uNe
-	zu0KhnRV5wpZEi6lGAvZUNadeYNvY3oSR+Rr1v9l4wQuWEj3tFvCJMEbQUj5pKKVv0jrC7
-	uH2lTz9x6cnueutTeMF+qjYaGXb4vwKRYmlo4j+67gJJ7W+a+yIqzmwC1TcRwQ==
-Date: Mon, 14 Oct 2024 07:16:26 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: FUKAUMI Naoki <naoki@radxa.com>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, TL Lim <tllim@pine64.org>, Marek Kraus
- <gamiee@pine64.org>, Tom Cubie <tom@radxa.com>, Nicolas Frattaroli
- <frattaroli.nicolas@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add new SoC dtsi for the
- RK3566T variant
-In-Reply-To: <CE605641E53903DC+0f0ea6b2-9423-4aa2-ac9d-652a9ac5c237@radxa.com>
-References: <cover.1728752527.git.dsimic@manjaro.org>
- <95fc64aaf6d3ac7124926bcb0c664406b4e5fe3d.1728752527.git.dsimic@manjaro.org>
- <CE605641E53903DC+0f0ea6b2-9423-4aa2-ac9d-652a9ac5c237@radxa.com>
-Message-ID: <ce54f171dfb145ce85d9a0192562e174@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Fc_jBgneAtBFhAQ8nacSdxGD03Y4b6wc
+X-Proofpoint-ORIG-GUID: uFxA-QBAyPs8eUKlluc5LuNMXhvql8G5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_04,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=784 adultscore=0 bulkscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 impostorscore=0 spamscore=0 suspectscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410140037
 
-Hello Fukaumi,
+Rename devdata_mutex to devdata_spinlock to accurately reflect its
+implementation as a spinlock.
 
-On 2024-10-14 06:38, FUKAUMI Naoki wrote:
-> On 10/13/24 02:04, Dragan Simic wrote:
->> Add new SoC dtsi file for the RK3566T variant of the Rockchip RK3566 
->> SoC.
->> The difference between the RK3566T variant and the "full-fat" RK3566 
->> variant
->> is in fewer supported CPU and GPU OPPs on the RK3566T, and in the 
->> absence of
->> a functional NPU, which we currently don't have to worry about.
->> 
->> Examples of the boards based on the RK3566T include the Pine64 
->> Quartz64 Zero
->> SBC, [2] the Radxa ROCK 3C and the Radxa ZERO 3E/3W SBCs.  
->> Unfortunately,
->> Radxa doesn't mention the use of RK3566T officially, but its official 
->> SBC
->> specifications do state that the maximum frequency for the Cortex-A55 
->> cores
->> on those SBCs is lower than the "full-fat" RK3566's 1.8 GHz, which 
->> makes
->> spotting the presence of the RK3566T SoC variant rather easy. 
->> [3][4][5]  An
->> additional, helpful cue is that Radxa handles the CPU and GPU OPPs for 
->> the
->> RK3566T variant separately in its downstream kernel. [6]
->> 
->> The CPU and GPU OPPs supported on the RK3566T SoC variant are taken 
->> from the
->> vendor kernel source, [1] which uses the values of the 
->> "opp-supported-hw" OPP
->> properties to determine which ones are supported on a particular SoC 
->> variant.
->> The actual values of the "opp-supported-hw" properties make it rather 
->> easy
->> to see what OPPs are supported on the RK3566T SoC variant, but that, 
->> rather
->> unfortunately, clashes with the maximum frequencies advertised 
->> officially
->> for the Cortex-A55 CPU cores on the above-mentioned SBCs. [2][3][4][5] 
->>  The
->> vendor kernel source indicates that the maximum frequency for the CPU 
->> cores
->> is 1.4 GHz, while the SBC specifications state that to be 1.6 GHz.  
->> Unless
->> that discrepancy is resolved somehow, let's take the safe approach and 
->> use
->> the lower maximum frequency for the CPU cores.
->> 
->> Update the dts files of the currently supported RK3566T-based boards 
->> to use
->> the new SoC dtsi for the RK3566T variant.  This actually takes the CPU 
->> cores
->> and the GPUs found on these boards out of their earlier overclocks, 
->> but it
->> also means that the officially advertised specifications [2][3][4][5] 
->> of the
->> highest supported frequencies for the Cortex-A55 CPU cores on these 
->> boards
->> may actually be wrong, as already explained above.
->> 
->> The correctness of the introduced changes was validated by decompiling 
->> and
->> comparing all affected board dtb files before and after these changes.
->> 
->> [1] 
->> https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed561650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
->> [2] https://wiki.pine64.org/wiki/Quartz64
->> [3] 
->> https://dl.radxa.com/rock3/docs/hw/3c/radxa_rock3c_product_brief.pdf
->> [4] 
->> https://dl.radxa.com/zero3/docs/hw/3e/radxa_zero_3e_product_brief.pdf
->> [5] 
->> https://dl.radxa.com/zero3/docs/hw/3w/radxa_zero_3w_product_brief.pdf
->> [6] 
->> https://github.com/radxa/kernel/commit/2dfd51da472e7ebb5ef0d3db78f902454af826b8
->> 
->> Cc: TL Lim <tllim@pine64.org>
->> Cc: Marek Kraus <gamiee@pine64.org>
->> Cc: Tom Cubie <tom@radxa.com>
->> Cc: FUKAUMI Naoki <naoki@radxa.com>
->> Helped-by: Nicolas Frattaroli <frattaroli.nicolas@gmail.com>
->> Helped-by: Jonas Karlman <jonas@kwiboo.se>
->> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> ---
->>   .../dts/rockchip/rk3566-radxa-zero-3.dtsi     |  2 +-
->>   .../boot/dts/rockchip/rk3566-rock-3c.dts      |  2 +-
->>   arch/arm64/boot/dts/rockchip/rk3566t.dtsi     | 90 
->> +++++++++++++++++++
->>   3 files changed, 92 insertions(+), 2 deletions(-)
->>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3566t.dtsi
->> 
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi 
->> b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
->> index de390d92c35e..1ee5d96a46a1 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
->> @@ -3,7 +3,7 @@
->>   #include <dt-bindings/gpio/gpio.h>
->>   #include <dt-bindings/leds/common.h>
->>   #include <dt-bindings/soc/rockchip,vop2.h>
->> -#include "rk3566.dtsi"
->> +#include "rk3566t.dtsi"
-> 
-> could you drop this change for now?
+Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
+---
+ drivers/crypto/nx/nx-common-pseries.c | 34 +++++++++++++--------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-This patch is also going to be used for the upcoming board dts
-for the Pine64 Quartz64 Zero, so there's no need for dropping it.
-The Quartz64 Zero definitely uses the RK3566T.
+diff --git a/drivers/crypto/nx/nx-common-pseries.c b/drivers/crypto/nx/nx-common-pseries.c
+index 35f2d0d8507ed..a0eb900383af7 100644
+--- a/drivers/crypto/nx/nx-common-pseries.c
++++ b/drivers/crypto/nx/nx-common-pseries.c
+@@ -133,7 +133,7 @@ struct nx842_devdata {
+ };
 
-> We (Radxa) think we use RK3566.
+ static struct nx842_devdata __rcu *devdata;
+-static DEFINE_SPINLOCK(devdata_mutex);
++static DEFINE_SPINLOCK(devdata_spinlock);
 
-Well, the available documentation for the Radxa ROCK 3C and ZERO
-3E/3W boards doesn't say so; instead, everything points to the
-RK3566T being used.  The referenced commit in the Radxa downstream
-kernel also indicates that RK3566T is used at least on some boards.
+ #define NX842_COUNTER_INC(_x) \
+ static inline void nx842_inc_##_x( \
+@@ -750,15 +750,15 @@ static int nx842_OF_upd(struct property *new_prop)
+        if (!new_devdata)
+                return -ENOMEM;
 
-Also, some independent testing, by reading the efuses, has showed
-that at least some ROCK 3C and ZERO 3E/3W boards actually have the
-RK3566T, which means that we should handle them all as having the
-RK3566T, to avoid overclocking the CPU cores and the GPU.  I'll
-get back to this below.
+-       spin_lock_irqsave(&devdata_mutex, flags);
++       spin_lock_irqsave(&devdata_spinlock, flags);
+        old_devdata = rcu_dereference_check(devdata,
+-                       lockdep_is_held(&devdata_mutex));
++                       lockdep_is_held(&devdata_spinlock));
+        if (old_devdata)
+                of_node = old_devdata->dev->of_node;
 
-> and vendor kernel[6] refers efuse value to determine it's -T or not.
-> can you do similar way?
+        if (!old_devdata || !of_node) {
+                pr_err("%s: device is not available\n", __func__);
+-               spin_unlock_irqrestore(&devdata_mutex, flags);
++               spin_unlock_irqrestore(&devdata_spinlock, flags);
+                kfree(new_devdata);
+                return -ENODEV;
+        }
+@@ -810,7 +810,7 @@ static int nx842_OF_upd(struct property *new_prop)
+                        old_devdata->max_sg_len);
 
-Unfortunately not at the moment, because that would require major
-changes to the way OPPs are handled in the upstream kernel.  Maybe
-we can do that at some point in the future, as part of my planned
-work on supporting SoC binning.
+        rcu_assign_pointer(devdata, new_devdata);
+-       spin_unlock_irqrestore(&devdata_mutex, flags);
++       spin_unlock_irqrestore(&devdata_spinlock, flags);
+        synchronize_rcu();
+        dev_set_drvdata(new_devdata->dev, new_devdata);
+        kfree(old_devdata);
+@@ -821,13 +821,13 @@ static int nx842_OF_upd(struct property *new_prop)
+                dev_info(old_devdata->dev, "%s: device disabled\n", __func__);
+                nx842_OF_set_defaults(new_devdata);
+                rcu_assign_pointer(devdata, new_devdata);
+-               spin_unlock_irqrestore(&devdata_mutex, flags);
++               spin_unlock_irqrestore(&devdata_spinlock, flags);
+                synchronize_rcu();
+                dev_set_drvdata(new_devdata->dev, new_devdata);
+                kfree(old_devdata);
+        } else {
+                dev_err(old_devdata->dev, "%s: could not update driver from hardware\n", __func__);
+-               spin_unlock_irqrestore(&devdata_mutex, flags);
++               spin_unlock_irqrestore(&devdata_spinlock, flags);
+        }
 
-With that in place, hopefully, we could handle any ROCK 3C and ZERO
-3E/3W boards that actually have the "full-fat" RK3566 variant as
-such, but until then, it's much safer to treat them all as having
-the RK3566T, and avoid the possible overclocking.
+        if (!ret)
+@@ -1045,9 +1045,9 @@ static int nx842_probe(struct vio_dev *viodev,
+                return -ENOMEM;
+        }
 
->>   / {
->>   	chosen {
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts 
->> b/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
->> index f2cc086e5001..9a8f4f774dbc 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
->> +++ b/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
->> @@ -5,7 +5,7 @@
->>   #include <dt-bindings/leds/common.h>
->>   #include <dt-bindings/pinctrl/rockchip.h>
->>   #include <dt-bindings/soc/rockchip,vop2.h>
->> -#include "rk3566.dtsi"
->> +#include "rk3566t.dtsi"
-> 
-> same here.
-> 
-> Best regards,
-> 
-> --
-> FUKAUMI Naoki
-> Radxa Computer (Shenzhen) Co., Ltd.
-> 
->>   / {
->>   	model = "Radxa ROCK 3C";
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3566t.dtsi 
->> b/arch/arm64/boot/dts/rockchip/rk3566t.dtsi
->> new file mode 100644
->> index 000000000000..cd89bd3b125b
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/rockchip/rk3566t.dtsi
->> @@ -0,0 +1,90 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +
->> +#include "rk3566-base.dtsi"
->> +
->> +/ {
->> +	cpu0_opp_table: opp-table-0 {
->> +		compatible = "operating-points-v2";
->> +		opp-shared;
->> +
->> +		opp-408000000 {
->> +			opp-hz = /bits/ 64 <408000000>;
->> +			opp-microvolt = <850000 850000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +
->> +		opp-600000000 {
->> +			opp-hz = /bits/ 64 <600000000>;
->> +			opp-microvolt = <850000 850000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +
->> +		opp-816000000 {
->> +			opp-hz = /bits/ 64 <816000000>;
->> +			opp-microvolt = <850000 850000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +			opp-suspend;
->> +		};
->> +
->> +		opp-1104000000 {
->> +			opp-hz = /bits/ 64 <1104000000>;
->> +			opp-microvolt = <900000 900000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +
->> +		opp-1416000000 {
->> +			opp-hz = /bits/ 64 <1416000000>;
->> +			opp-microvolt = <1025000 1025000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +	};
->> +
->> +	gpu_opp_table: opp-table-1 {
->> +		compatible = "operating-points-v2";
->> +
->> +		opp-200000000 {
->> +			opp-hz = /bits/ 64 <200000000>;
->> +			opp-microvolt = <850000 850000 1000000>;
->> +		};
->> +
->> +		opp-300000000 {
->> +			opp-hz = /bits/ 64 <300000000>;
->> +			opp-microvolt = <850000 850000 1000000>;
->> +		};
->> +
->> +		opp-400000000 {
->> +			opp-hz = /bits/ 64 <400000000>;
->> +			opp-microvolt = <850000 850000 1000000>;
->> +		};
->> +
->> +		opp-600000000 {
->> +			opp-hz = /bits/ 64 <600000000>;
->> +			opp-microvolt = <900000 900000 1000000>;
->> +		};
->> +
->> +		opp-700000000 {
->> +			opp-hz = /bits/ 64 <700000000>;
->> +			opp-microvolt = <950000 950000 1000000>;
->> +		};
->> +	};
->> +};
->> +
->> +&cpu0 {
->> +	operating-points-v2 = <&cpu0_opp_table>;
->> +};
->> +
->> +&cpu1 {
->> +	operating-points-v2 = <&cpu0_opp_table>;
->> +};
->> +
->> +&cpu2 {
->> +	operating-points-v2 = <&cpu0_opp_table>;
->> +};
->> +
->> +&cpu3 {
->> +	operating-points-v2 = <&cpu0_opp_table>;
->> +};
->> +
->> +&gpu {
->> +	operating-points-v2 = <&gpu_opp_table>;
->> +};
+-       spin_lock_irqsave(&devdata_mutex, flags);
++       spin_lock_irqsave(&devdata_spinlock, flags);
+        old_devdata = rcu_dereference_check(devdata,
+-                       lockdep_is_held(&devdata_mutex));
++                       lockdep_is_held(&devdata_spinlock));
+
+        if (old_devdata && old_devdata->vdev != NULL) {
+                dev_err(&viodev->dev, "%s: Attempt to register more than one instance of the hardware\n", __func__);
+@@ -1062,7 +1062,7 @@ static int nx842_probe(struct vio_dev *viodev,
+        nx842_OF_set_defaults(new_devdata);
+
+        rcu_assign_pointer(devdata, new_devdata);
+-       spin_unlock_irqrestore(&devdata_mutex, flags);
++       spin_unlock_irqrestore(&devdata_spinlock, flags);
+        synchronize_rcu();
+        kfree(old_devdata);
+
+@@ -1101,7 +1101,7 @@ static int nx842_probe(struct vio_dev *viodev,
+        return 0;
+
+ error_unlock:
+-       spin_unlock_irqrestore(&devdata_mutex, flags);
++       spin_unlock_irqrestore(&devdata_spinlock, flags);
+        if (new_devdata)
+                kfree(new_devdata->counters);
+        kfree(new_devdata);
+@@ -1122,12 +1122,12 @@ static void nx842_remove(struct vio_dev *viodev)
+
+        crypto_unregister_alg(&nx842_pseries_alg);
+
+-       spin_lock_irqsave(&devdata_mutex, flags);
++       spin_lock_irqsave(&devdata_spinlock, flags);
+        old_devdata = rcu_dereference_check(devdata,
+-                       lockdep_is_held(&devdata_mutex));
++                       lockdep_is_held(&devdata_spinlock));
+        of_reconfig_notifier_unregister(&nx842_of_nb);
+        RCU_INIT_POINTER(devdata, NULL);
+-       spin_unlock_irqrestore(&devdata_mutex, flags);
++       spin_unlock_irqrestore(&devdata_spinlock, flags);
+        synchronize_rcu();
+        dev_set_drvdata(&viodev->dev, NULL);
+        if (old_devdata)
+@@ -1257,11 +1257,11 @@ static void __exit nx842_pseries_exit(void)
+
+        crypto_unregister_alg(&nx842_pseries_alg);
+
+-       spin_lock_irqsave(&devdata_mutex, flags);
++       spin_lock_irqsave(&devdata_spinlock, flags);
+        old_devdata = rcu_dereference_check(devdata,
+-                       lockdep_is_held(&devdata_mutex));
++                       lockdep_is_held(&devdata_spinlock));
+        RCU_INIT_POINTER(devdata, NULL);
+-       spin_unlock_irqrestore(&devdata_mutex, flags);
++       spin_unlock_irqrestore(&devdata_spinlock, flags);
+        synchronize_rcu();
+        if (old_devdata && old_devdata->dev)
+                dev_set_drvdata(old_devdata->dev, NULL);
+--
+2.47.0
+
 
