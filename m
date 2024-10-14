@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-364193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A97199CC8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB1099CC93
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 436E91F23A3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C321F20EAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7D817C8D;
-	Mon, 14 Oct 2024 14:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6136A1AA7A5;
+	Mon, 14 Oct 2024 14:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pZt3Ldo3"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sDGyU9dh"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4166D79C4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CC417C8D;
+	Mon, 14 Oct 2024 14:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728915308; cv=none; b=niQODiiGEBczoHEyy30i+XgfP0KJ7ahooygad3XwEHNgjDFfBro+qhYXKuNCkUhAWuI0rtAIpHGNSU8ZzLzsYhPlfEUUu3AhCldjKQPpPPPcS/Y0vL/KxP+32a5Z5RnC3eIGaP7cHhyLrhrgIqQxychNq6hZrWq9nY+cqnWsUCg=
+	t=1728915427; cv=none; b=QA9ihZ6zwJSbm2L+96En4cA9bgBhfE9LbLmu1GxPc41+HnLVfdB/+OUMPkOpp8jy4oKueO3coFODIOuwpTRNn67Pyk9ZrFVtwz3mM8J/QJAZHVxEf3ZZeE+4hw47SxmzCzUZEBbNiKhE62vxzoWH2rUvDty6ChnisqjzzL/RPXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728915308; c=relaxed/simple;
-	bh=K0bOWEC+HE1kkNV0lJmyf9eNjeLakCtO0ersbpJzOt8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A+bUIraBPAwn5xTZtLU+XzHnmhLP2wXsI1gMg6mMwW+qryCb8vTHq9shOLF2iFHSEA1v9DBHyst4dcZ0GJsRV/nCbDB+GtG1BrG1xA+leJvaI4R+MsrgC4vAVKvw+kE2DtFmI04cJXR18evSLPYBILNO1/SevYhJhj+MDPyttE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pZt3Ldo3; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d50fad249so2763122f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728915304; x=1729520104; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mW2Gu00UK++/xXWN5E2WTl/GlqCg0a99qal31mqPqL4=;
-        b=pZt3Ldo3Q5igYGdD5d6kOkQM4YgHnT/yMpn/afw4SfpNWRzgvmU+DbW5ijw2iIdpbd
-         p2R1yIn+M1pL5iu888FjcDT6bDQTFrmjf0mZzDHef9phcchrfrdWHcfNu+toKvlsOXFe
-         13JXSHfY8D6wV6uuxb4bhHPYwj1zSoLxqMJBu0GZYhIjnmyvRiQuqFQCpBlVuTn4k1Oq
-         nvaoSSeyWLuhBTR3j1IxvQ8NfhOrVSC6S+LQztfK+Gb5k4wh9i0N94WvRDwuZ76Zcvz3
-         ZXDJhLtBs8NvpPz/SK9LQMoo+faHOYAJIXV4k+P717yMEuRYJu52gA9B2qnMJ2bOJd69
-         n2Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728915304; x=1729520104;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mW2Gu00UK++/xXWN5E2WTl/GlqCg0a99qal31mqPqL4=;
-        b=Ehp207W6FH+p0M43DrCAZm4+jljhkbDK8O9hNQebzWZ4hzBOUbUokb/Gi6TlACBY4L
-         1IpohF36r0NmQZoaxuciD/pscScRS2umU2fos3FMb9uAGqt39uHzLFuAqJHJ6BetuLUk
-         HjZLEUxpt+PB4mzLSW/M+moXidxiGYNWZVb4dp7vU+h4fOLSjjpWbntu/uNSPr2a/5oH
-         Gg2bnY6Re4Q3DwX+ConMx9lx+sYXaysPGgGOgvxLEW9z0M2y7UZwuIuZlAZlpIIqLdcq
-         Ia5Ed8gT3/3RNzkwot9WKUpP8HlQl5yanMaPUz089fIZBoct93gwCri/6GY2TnbtSgjr
-         HX5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXNs68IbGqxqqo6uIVCSa26fe00GFgQGVwtKErX0x2r3SSBeblVQqchx6wH/sKOK5FoJPGVu8t11tNTrP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJb/YxkOjhqA0cs77KZXjf0f8yMn90mDAg4o6Kzp4gQlJTSyG4
-	jCuHUaNn6T+68RYahUswZrfqpADbiuNoqg9IytqCckXMaB47TVwr+kj2uGEy+TA=
-X-Google-Smtp-Source: AGHT+IH842xmdL5bgstxtrmHRDZldATMix1NsKVGEEADafMqa0y/TCecTEVTp7Q6EJfpih1E+b+IEw==
-X-Received: by 2002:a5d:67d2:0:b0:37d:492c:4f54 with SMTP id ffacd0b85a97d-37d5518e02fmr8134392f8f.3.1728915304493;
-        Mon, 14 Oct 2024 07:15:04 -0700 (PDT)
-Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf45d49sm154135035e9.12.2024.10.14.07.15.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 07:15:04 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 14 Oct 2024 17:14:51 +0300
-Subject: [PATCH] arm64: dts: qcom: x1e80100: Force host dr_mode for usb_2
- controller
+	s=arc-20240116; t=1728915427; c=relaxed/simple;
+	bh=ju4Mt8h2px3i7lcvR8qIN2n/WdXKkrr7yZo8Squbmg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RAsgUmE2a9cwJ52Acgw5IuFfZ+WdfVsYZskhAQSEzIImB0cIkWeJw3vm+8Pxrz0j4XFSscyRgGXmAWmChiUcXLqnx5dRxVzW0aRArtFZMwjo1viYwiJFCDm8RLTu4S4FxXAPF9ZclqI6D1tJtut5v0RGHTeogZlQll0vPQPWCW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sDGyU9dh; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EDo2Ur025375;
+	Mon, 14 Oct 2024 14:16:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=V4ZSJh+/gINXd1XQOEDszc54S6
+	0PZh0QEq00yayxAHg=; b=sDGyU9dh+SuUWfYRzRCNWixcdxcacaebP5R8sCvDut
+	XLvXwayQHy/6FDSKyk3qH6kmYbUJJiS0/frNdLe/Nwr203rXSjRjFjCkT5WwoSrd
+	9I8u5hQZRW5b/3T5sP6rlpYC4DtfzdSA9UV26CpKjkLPPsbht2LlKUzFeZ+Z6W1W
+	24YAF/d9rExQ1pBdEeqAl0t/W28YTrfEDlNGR+zJkwAu1mmRIwcdEZM1RarNhKAz
+	Nlo+QLxPK4G7j0Vs4W9Y5TeBOwZGhvhKrFdHIoQB/1um20kWkMf25qnfvKBfZxPR
+	C3tXa4WWcm47Nir49Hy5y/oahxnRx66uXGXyBZAX+QJw==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4294heg4kx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 14:16:58 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EDmwnB027452;
+	Mon, 14 Oct 2024 14:16:57 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txf2ee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 14:16:57 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EEGutp48497024
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 14:16:56 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6873558056;
+	Mon, 14 Oct 2024 14:16:56 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 110005803F;
+	Mon, 14 Oct 2024 14:16:56 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 14 Oct 2024 14:16:55 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] tpm: ibmvtpm: Set TPM_OPS_AUTO_STARTUP flag on driver
+Date: Mon, 14 Oct 2024 10:16:43 -0400
+Message-ID: <20241014141643.3101129-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241014-x1e80100-usb2-dwc3-set-dr-mode-host-v1-1-3baab3ad17d8@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAFonDWcC/x3NQQ6CQAxA0auQrm3SdiAxXsW4EFqkCxkzRSQh3
- N0Jy7f5f4ew4hZwa3Yotnp4niv40sAwPeeXoWs1CEnLxC1ubFdiIvxGL6i/IWHYglrwndVwyrF
- g6hKLskrXC9TSp9jo23m5P47jD07N0Bh1AAAA
-X-Change-ID: 20241014-x1e80100-usb2-dwc3-set-dr-mode-host-35312d1d25b2
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1025; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=K0bOWEC+HE1kkNV0lJmyf9eNjeLakCtO0ersbpJzOt8=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDSdhH2/cZLsXmymGJqy7UxGVRgwXHjFlNiBcS
- P0vJuqejsuJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZw0nYQAKCRAbX0TJAJUV
- Vt0+D/90zb+NBqLdICEDlaiQgWoO6WnVto3rxw2B497MTfOCFvx4cnqbaoEGTM9o3NC85DvL1ht
- 0TG/+CA0kqqkUdFggDHf5RuF+xc87v0sVQrkL2kqV3iFLlXgpcNXWirQHeWyAMNj66EVMh0KuUt
- 1xCU7Rk2OyamOSAz+58yRhqBs5zEX0gksWOFL4+9bf2EJeJuQu2E2NdIYxBGFtUBvL45PuZYEf6
- E0d1Bocj0eHvKsaw93fVhQ+4LAPvddYhYb1Ilcf5Lz0Z6hHtBk5tBua8pBlPkYabhT61Lu5Ljx7
- Tp1B7RTq7kzgMRl8NXTzZ5P0aBPHhqaG2tUdULxkrG5y0M91/v/0FWkG0hocnm7Qz0JntSWSaDO
- yElIkHDnD5lUUjXcPcAFbbRrYPW7fXv3PoOjCTWAVwSIs2a/x8MhAkZjGhsjqjJS/VSPlYzzvsq
- SZLAEL19dkuaRoHSB4jeFTwshdMp3Gmd6uAvrcbjKhpTJ18LeCbawVbVjpeWfTzKZ5Wajoqwe0A
- qQw8sa3iXWujHWHVMUYvfrRFU0uwGVAS/OSt8FAqJJTjzpKEfSt25mLSj4PL6vtW/7EqdNNZZXm
- jZEAolQB+IoD/dxNm11eUsbkuu0mUiMtr8sM9ORb6k/GLZJAdBVL4IbicJ3M2H/KMbWkXRmGndl
- 091ciVll+DrEpQQ==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 0aBf7fkdgq3XZUQFyWYEQFy7zRSFB2aG
+X-Proofpoint-GUID: 0aBf7fkdgq3XZUQFyWYEQFy7zRSFB2aG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_10,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1011
+ mlxscore=0 spamscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140103
 
-The usb_2 controller has only a USB 2.0 PHY connected to it. There is no
-USB 3.x PHY fot it. So since dual-role is not an option, explicitly set
-the dr_mode to host to match the hardware.
+Set the TPM_OPS_AUTO_STARTUP on the driver so that the ibmvtpm driver now
+uses tpm2_auto_startup and tpm1_auto_startup like many other drivers do.
+Remove tpm_get_timeouts, tpm2_get_cc_attrs_tbl, and tpm2_sessions_init
+calls from it since these will all be called in tpm2_auto_startup and
+tpm1_auto_startup.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+The exporting of the tpm2_session_init symbol was only necessary while the
+ibmvtpm driver was calling this function. Since this is not the case
+anymore, remove this symbol from being exported.
+
+What is new for the ibmvtpm driver is that now tpm2_do_selftest and
+tpm1_do_selftest will be called that send commands to the TPM to perform
+or continue its selftest. However, the firmware should already have sent
+these commands so that the TPM will not do much work at this time.
+
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/tpm/tpm2-sessions.c |  1 -
+ drivers/char/tpm/tpm_ibmvtpm.c   | 15 +--------------
+ 2 files changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 0e6802c1d2d8375987c614ec69c440e2f38d25c6..4da13c8472392d842442193dc740027fa011ee1f 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -4143,6 +4143,7 @@ usb_2_dwc3: usb@a200000 {
- 				iommus = <&apps_smmu 0x14e0 0x0>;
- 				phys = <&usb_2_hsphy>;
- 				phy-names = "usb2-phy";
-+				dr_mode = "host";
- 				maximum-speed = "high-speed";
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index 511c67061728..b1a0a37f14d7 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -1362,5 +1362,4 @@ int tpm2_sessions_init(struct tpm_chip *chip)
  
- 				ports {
-
----
-base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
-change-id: 20241014-x1e80100-usb2-dwc3-set-dr-mode-host-35312d1d25b2
-
-Best regards,
+ 	return rc;
+ }
+-EXPORT_SYMBOL(tpm2_sessions_init);
+ #endif /* CONFIG_TCG_TPM2_HMAC */
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index 1e5b107d1f3b..76d048f63d55 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -450,6 +450,7 @@ static bool tpm_ibmvtpm_req_canceled(struct tpm_chip *chip, u8 status)
+ }
+ 
+ static const struct tpm_class_ops tpm_ibmvtpm = {
++	.flags = TPM_OPS_AUTO_STARTUP,
+ 	.recv = tpm_ibmvtpm_recv,
+ 	.send = tpm_ibmvtpm_send,
+ 	.cancel = tpm_ibmvtpm_cancel,
+@@ -690,20 +691,6 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 	if (!strcmp(id->compat, "IBM,vtpm20"))
+ 		chip->flags |= TPM_CHIP_FLAG_TPM2;
+ 
+-	rc = tpm_get_timeouts(chip);
+-	if (rc)
+-		goto init_irq_cleanup;
+-
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-		rc = tpm2_get_cc_attrs_tbl(chip);
+-		if (rc)
+-			goto init_irq_cleanup;
+-
+-		rc = tpm2_sessions_init(chip);
+-		if (rc)
+-			goto init_irq_cleanup;
+-	}
+-
+ 	return tpm_chip_register(chip);
+ init_irq_cleanup:
+ 	do {
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+2.43.0
 
 
