@@ -1,126 +1,98 @@
-Return-Path: <linux-kernel+bounces-363504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D581799C342
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:29:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D258D99C345
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B767B2105D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96AE12850D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80FD15C15A;
-	Mon, 14 Oct 2024 08:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A8115665C;
+	Mon, 14 Oct 2024 08:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oGlpjvaL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rbh2eSM2"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866E5155C98;
-	Mon, 14 Oct 2024 08:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B191156222;
+	Mon, 14 Oct 2024 08:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728894466; cv=none; b=C+caC7swSvxfAm/r0wIjUxZAUkg05DbfO81xkotOXPUKP4s7XKeZMU5FHSJK5zbvaL2PkjSTsq32RYmOxsAvJN7o8r61LhWBVvHentJOKnUS7zvTv0aHyu1RThslnzqqFGmR3kiZAXjtkuGgm1mwHYkmakf1AVhPZLB26GANYRQ=
+	t=1728894482; cv=none; b=l6fPCrQ06D4YCH+cN2N4uADJi30Cj+p/GkMXvnjBuFujLbkMXWR5cpyQLafr//jbmWc1gNFyV9RPJf450pZ4VbU4uwEbLKY9+HKWSCi8SkWzM83S60XBwlxMBOeB+bDt7NPB9RshaDGWrA9GXXGISXNIEMTg6ZbTpKMNtqfDDTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728894466; c=relaxed/simple;
-	bh=+/txDlTZRlfL1E6ViTuAgBK8brlnyiBPLDdgnvnwqDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JLig9+7I2EHC+aHl89OxiwgxXIJjcB4Pf96Hej0yI2vObmsfZLVPa53umWroT3GI1e1kEq+aw99rUguWWddYWRLWrsKjx2MfGOfVclQS7kLfx6GarYV3aqex9P3j30SYFSkaoRW+6NjEIau4kaJLT14FFQVl92N49Feg885UzOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oGlpjvaL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728894462;
-	bh=+/txDlTZRlfL1E6ViTuAgBK8brlnyiBPLDdgnvnwqDk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oGlpjvaLOFy32Lo1P06OUFkRk6EJg1ZJSCKb/94dsaYCVZp0GaPX26RqAVb1e4NuS
-	 hcHdudD971rEQOiAcw1BTU1ZrFeheKg4FnpUs1RG6ZTckrOACEyYjwjfCrehR/jMOo
-	 yziINUYCyAbaBSycRSsOJ3Rk3h0IG47uvKS9Cxc3yUTIO5foqiiZMPE9XSQKHEZDMr
-	 0IJN8nZovv+gFGaZPAMagSQXqhgYvdulWHsmLRtUsJbBfIXTpDlganLyYe4t2HsoTa
-	 1QOsST92XnKF2QdV9BhkpiQJ36dvRhZBMX+p8pI2POY+zJPWEguR7uyLFrK5FKT3M7
-	 MmGP0ZzMWIM/Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 35A3D17E10A0;
-	Mon, 14 Oct 2024 10:27:42 +0200 (CEST)
-Message-ID: <2608306c-da19-4160-b0c7-dbb8935abc42@collabora.com>
-Date: Mon, 14 Oct 2024 10:27:41 +0200
+	s=arc-20240116; t=1728894482; c=relaxed/simple;
+	bh=MXaZ8YeDLqf/ZATmIgljn8OqLLESIPagR9e7Nm4UkjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZXLPCxpNIGLuimoV5AQcEFXKJVjuo0rNB40/N72l8k0rUwMVtb6vAzXWX9htUZc7iuPN3J1NkCj8ijltzwF3VlnW+Y/tdpfBgh2lOTMOsq0h8HV9YNmosOhods3TuI+5mJfsrQW2NX3jdXPmHIz5FTqOIBQz0SmPL5gm2uY4bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rbh2eSM2; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ifWLYUAWPQcSJ1ZuE1ZsTa5O2LKC8Bl9kn5reO3UHoI=; b=Rbh2eSM2Yqk05pYpRqjlrz6pAW
+	RjcaXvC8cWyEzV5fb/C3UrjXg1wJHV7HDoaa7SxZDtVzoO6wu3Q2nzZIbWBPNst+BOXmqPwH//+iH
+	gqihsEcIWbHrSq7TbpbHTwbG7bqjYTXFqcIVfFxpHgoOHY7iCWLd4ESpm3aUP5G9cCTw8LBBGSkkZ
+	2JadQRByjXtvM4aaxh6nbsOMhDvMTJl0mWxhCE3ovvh0YYSdfTzfpBLCwiexQC+bK6oYuTWTBI48K
+	kX9xomETXHcKwgLvlYTgiF61c6qFt5STlIDOw4028FX3gxwlnIW+YyihxS3+tRvpRz180rFQRyEIW
+	uCSetNIg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0GQb-00000006HG0-3lG5;
+	Mon, 14 Oct 2024 08:27:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7E330300777; Mon, 14 Oct 2024 10:27:45 +0200 (CEST)
+Date: Mon, 14 Oct 2024 10:27:45 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
+Cc: davem@davemloft.net, Liam.Howlett@oracle.com, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, jiri@resnulli.us,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	akpm@linux-foundation.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, peili.io@oracle.com
+Subject: Re: [PATCH net-next v1 1/3] connector/cn_proc: Add hash table for
+ threads
+Message-ID: <20241014082745.GT17263@noisy.programming.kicks-ass.net>
+References: <20241013170617.2139204-1-anjali.k.kulkarni@oracle.com>
+ <20241013170617.2139204-2-anjali.k.kulkarni@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/8] dt-bindings: pinctrl: mediatek,mt6779-pinctrl:
- Pull pinctrl node changes from MT6795 document
-To: Rob Herring <robh@kernel.org>, Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc: Sean Wang <sean.wang@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Yassine Oudjana <y.oudjana@protonmail.com>,
- Andy Teng <andy.teng@mediatek.com>, linux-mediatek@lists.infradead.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241011120520.140318-1-y.oudjana@protonmail.com>
- <20241011120520.140318-2-y.oudjana@protonmail.com>
- <20241011165640.GA2475122-robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241011165640.GA2475122-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241013170617.2139204-2-anjali.k.kulkarni@oracle.com>
 
-Il 11/10/24 18:56, Rob Herring ha scritto:
-> On Fri, Oct 11, 2024 at 03:03:46PM +0300, Yassine Oudjana wrote:
->> From: Yassine Oudjana <y.oudjana@protonmail.com>
->>
->> mediatek,pinctrl-mt6795.yaml has different node name patterns which match
->> bindings of other MediaTek pin controllers, ref for pinmux-node.yaml which
->> has a description of the pinmux property, as well as some additional
->> descriptions for some pin configuration properties. Pull those changes
->> into mediatek,mt6779-pinctrl.yaml and adjust the example DTS to match in
->> preparation to combine the MT6795 document into it.
->>
->> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
->> ---
->>   .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 38 ++++++++++++++-----
->>   1 file changed, 28 insertions(+), 10 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
->> index 3bbc00df5548d..352a88d7b135e 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
->> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
->> @@ -111,12 +111,12 @@ allOf:
->>           - "#interrupt-cells"
->>   
->>   patternProperties:
->> -  '-[0-9]*$':
->> +  '-pins$':
-> 
-> Worst case, this could be an ABI break. Best case, it's churn for
-> mt6779. Is it worth unifying?
-> 
-All those MediaTek pinctrl bindings are mostly the same, where only the pin
-definitions in the binding header does actually change.
+On Sun, Oct 13, 2024 at 10:06:15AM -0700, Anjali Kulkarni wrote:
 
-I think that it's worth unifying them, not only to get rid of the duplication
-but mostly for consistency between all of those subnode names which are wildly
-differing for no real reason... and consistency is a long time issue with
-MediaTek bindings/dts in general (which is way way way better now, but still)...
+> +	if (unlikely(task->flags & PF_EXIT_NOTIFY)) {
+> +		task_lock(task);
+> +		task->flags &= ~PF_EXIT_NOTIFY;
+> +		task_unlock(task);
+> +
 
-Besides - just for context and nothing else: the driver doesn't care about
-the names of the subnodes, anyway... so while this is technically an ABI break
-it's not really creating any functionality issue, and then, actually, Yassine
-is also modifying the devicetrees to comply with his consistency changes, so,
-in my own perspective, it's still acceptable.
+> @@ -413,6 +440,15 @@ static void cn_proc_mcast_ctl(struct cn_msg *msg,
+>  	if (msg->len == sizeof(*pinput)) {
+>  		pinput = (struct proc_input *)msg->data;
+>  		mc_op = pinput->mcast_op;
+> +		if (mc_op == PROC_CN_MCAST_NOTIFY) {
+> +			pr_debug("%s: Received PROC_CN_MCAST_NOTIFY, pid %d\n",
+> +					__func__, current->pid);
+> +			task_lock(current);
+> +			current->flags |= PF_EXIT_NOTIFY;
+> +			task_unlock(current);
+> +			err = cn_add_elem(pinput->uexit_code, current->pid);
+> +			return;
+> +		}
 
-If you think otherwise, though, I'm still fine with your POV.
-
-Cheers,
-Angelo
+You seem to think that task_lock protects task->flags ? Why?
 
