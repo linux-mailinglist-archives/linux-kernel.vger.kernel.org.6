@@ -1,127 +1,135 @@
-Return-Path: <linux-kernel+bounces-364626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796DE99D718
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:15:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7003E99D726
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E37E1F239B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862BC1C20CEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080641CB33E;
-	Mon, 14 Oct 2024 19:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023861CC177;
+	Mon, 14 Oct 2024 19:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9oVzOP5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjG/5WZA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AB212B73;
-	Mon, 14 Oct 2024 19:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6202F34;
+	Mon, 14 Oct 2024 19:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728933330; cv=none; b=o86iDypKlU/eCIJ5rXXoZjwP+bJcLohvVtQk2/RjODAWJowjFBTUsHS03ou8lT3fX+/l000ed+Z7kDXjHArVFIwmeUV7TMPoH50/5CniRMZoNCK3LjnEO3GjnuGe55ghMYKLB0IbT0/Ax2gKICiGnBBnL5n0Wjus7GiJYjuJssw=
+	t=1728933384; cv=none; b=cegl1BPXxppRW+41dCHi4URIL/7h7UWCtx3dEusPGgu0lK5uOtYsd0vXEv3SYq196pZc5UYYUX35xTCZqi1loe6+uq5C973RpUhkwpidnsd7NpT+22gAbmg+NeWHv9SA81S+W3TJukmRz1uOwnJ3pEjJ00CgH+KEyX2H8hRQ7wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728933330; c=relaxed/simple;
-	bh=2Zo/obCSn5sslgsyI7NcI4a9viaES0kEmjXw1Txs1R8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XwC/ClgDbRiSusyXpwy4MjG9IIhAefsXx2x4oBQXL6vFXGTFUKRb9rAF3RVc/kblYKYysSXsFzNijgVnPE4QDf+0jj0UGQX7s5bjJvCk6vrSLlqao/KNfW4UaNCl6VFEzPxMehK92vt9hrLXiO23KFBGKIGk92RvxK+thHjlV1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9oVzOP5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16985C4CEC3;
-	Mon, 14 Oct 2024 19:15:20 +0000 (UTC)
+	s=arc-20240116; t=1728933384; c=relaxed/simple;
+	bh=UuppSLaM0kOzMrDSh2RloHR9IgCcKKb57FBSLEkEUWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FFCOuTgz8sD7Ed/Kud9QCetDjIUNalCJp7fx5uHw1Lmy9rz4nHQDEuyQ/Js8mUYGIu7NDMob76aKmnNJiOi2L4O9SXpk56EaNsy0we+WKWwieq1Sco/q44kKRl8QMxa9zBx62PKRSDUFlxYPAUQCHyOzRrL463Nm1OvZadSbpoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjG/5WZA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DC60C4CEC3;
+	Mon, 14 Oct 2024 19:16:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728933329;
-	bh=2Zo/obCSn5sslgsyI7NcI4a9viaES0kEmjXw1Txs1R8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=G9oVzOP5A+O3Y10xCy8sTnXEiZTjgSttozIQKYSb9hWODlNOskBcYxxesmM7nJ8w6
-	 IAtL4Kd83dsPQUBqFRqGH1K/G4r8OURptnimqufsHMCv0WDFzJWarc1kM/gUfUbbsf
-	 6iW/iGWdizJY5kKq8SoOej6kehFEVoqwAJQLjJAD8P5CcyAT6fidhDhjNPv+20/bLu
-	 34Q99LGSMbo73je22Ekl20bBhCnpqC0YwaYLhMDnmDq0sRTLQoaP4mGtcLVO+0TDl/
-	 RYOL+s8g/el5jVuwZ2NF6o1PuObwg7LMqF+uN6ojVgYv14wiFPptZn+PNo8qRczMgv
-	 46+s6JWpQw42Q==
-Date: Mon, 14 Oct 2024 20:15:15 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <ukleinek@kernel.org>, David Lechner <dlechner@baylibre.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Ivan Mikhaylov <fr0st61te@gmail.com>,
- Marius Cristea <marius.cristea@microchip.com>, Dumitru Ceclan
- <mitrutzceclan@gmail.com>, =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dh?=
- =?UTF-8?B?bHZlcw==?= <joao.goncalves@toradex.com>, Alisa-Dariana Roman
- <alisadariana@gmail.com>, Mike Looijmans <mike.looijmans@topic.nl>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sergiu Cuciurean <sergiu.cuciurean@analog.com>, Dragos Bogdan
- <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
-Message-ID: <20241014201515.463c7c07@jic23-huawei>
-In-Reply-To: <Zw0ZM0vQXJep3dFJ@smile.fi.intel.com>
-References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
-	<20241014094154.9439-6-antoniu.miclaus@analog.com>
-	<Zw0ZM0vQXJep3dFJ@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1728933383;
+	bh=UuppSLaM0kOzMrDSh2RloHR9IgCcKKb57FBSLEkEUWY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EjG/5WZADaXhvwARHnqKg67eiuXX7gTWxPoitBNELLTxxDNviuMSsmlu/en6P6ED8
+	 zpJ52uHjqiz/g2IcIGwuziTngHnAXDzicRERzVAAIDP4l2L6y33KAuyIagMcpMXzl4
+	 9dBRK2tjgLlrX3Ons9R5vBST3i3yiewblKFLfAI64WB5+23Fn5KkJljDLeTWRKDZ84
+	 jnexNcW9vYFK3px9crwCiVYgH/8ctiyb/DdHjxU96pqWdOL1lwHrwqpz6qzLtvvsU8
+	 7pmIeyrMmskmV1mcXKss65BVVX6VBxafQdYx2gdNsA2KwzhcBEiTj2VcG0YSmjPMmN
+	 oCmkdGtrERExg==
+Date: Mon, 14 Oct 2024 12:16:20 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>
+Cc: Mike Rapoport <rppt@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v5 7/8] execmem: add support for cache of large ROX pages
+Message-ID: <Zw1uBBcG-jAgxF_t@bombadil.infradead.org>
+References: <20241009180816.83591-1-rppt@kernel.org>
+ <20241009180816.83591-8-rppt@kernel.org>
+ <Zwd7GRyBtCwiAv1v@infradead.org>
+ <ZwfPPZrxHzQgYfx7@kernel.org>
+ <ZwjXz0dz-RldVNx0@infradead.org>
+ <ZwuIPZkjX0CfzhjS@kernel.org>
+ <20241013202626.81f430a16750af0d2f40d683@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241013202626.81f430a16750af0d2f40d683@linux-foundation.org>
 
-On Mon, 14 Oct 2024 16:14:27 +0300
-Andy Shevchenko <andy@kernel.org> wrote:
+On Sun, Oct 13, 2024 at 08:26:26PM -0700, Andrew Morton wrote:
+> On Sun, 13 Oct 2024 11:43:41 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+> 
+> > > > The idea is to keep everything together and have execmem_info describe all
+> > > > that architecture needs. 
+> > > 
+> > > But why?  That's pretty different from our normal style of arch hooks,
+> > > and introduces an indirect call in a security sensitive area.
+> > 
+> > Will change to __weak hook. 
+> > 
+> 
+> Thanks, I'll drop the v1 series;
+> 
+> The todos which I collected are:
+> 
+> https://lkml.kernel.org/r/CAPhsuW66etfdU3Fvk0KsELXcgWD6_TkBFjJ-BTHQu5OejDsP2w@mail.gmail.com
+> https://lkml.kernel.org/r/Zwd6vH0rz0PVedLI@infradead.org
+> https://lkml.kernel.org/r/ZwjXz0dz-RldVNx0@infradead.org
+> https://lkml.kernel.org/r/202410111408.8fe6f604-lkp@intel.com
 
-> On Mon, Oct 14, 2024 at 12:40:40PM +0300, Antoniu Miclaus wrote:
-> > Add support for the AD485X a fully buffered, 8-channel simultaneous
-> > sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
-> > differential, wide common-mode range inputs.  
-> 
-> ...
-> 
-> > +config AD4851
-> > +	tristate "Analog Device AD4851 DAS Driver"
-> > +	depends on SPI
-> > +	select REGMAP_SPI
-> > +	select IIO_BACKEND
-> > +	help
-> > +	  Say yes here to build support for Analog Devices AD4851, AD4852,
-> > +	  AD4853, AD4854, AD4855, AD4856, AD4857, AD4858, AD4858I high speed
-> > +	  data acquisition system (DAS).  
-> 
-> I think I already commented on this... Anyway, it's much better to support when
-> this list is broke down on per device per line. In such a case it's less churn
-> if we need to remove or add an entry in the future.
-> 
-> > +	  To compile this driver as a module, choose M here: the module will be
-> > +	  called ad4851.  
-> 
-> Also, with all these devices to be supported why not ad485x as the name of
-> the driver? Is it a preference by the IIO subsystem?
+BTW Andrew I'd like to pick this up through the modules tree, and while
+at it, also beat it up with some more testing as we're expanding also
+with the modversions stuff for Rust modules.
 
-Don't.  We've been bitten by too many cases of manufacturers noticing
-a hole in their part numbers and 'slotting' something unrelated in.
-So it just causes confusion.  Hence strong preference for any new code
-is pick a name from the list.  The wild card also implies restrictions
-that tend to break overtime when other part numbers outside the range
-are used.  Not using a wildcard keeps it consistently wrong so people
-get used to it :)
-
-> 
-> ...
-> 
-> > +#include <asm/unaligned.h>  
-> 
-> linux/unaligned nowadays (I learnt it quite recently).
-> (It requires v6.12-rc2).
-
-Yup.  That bit me in the IIO tree 3 times so far. I've
-merged rc2 in for that reason.
-
+  Luis
 
