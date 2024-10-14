@@ -1,168 +1,163 @@
-Return-Path: <linux-kernel+bounces-364087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1352499CAF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:06:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FD799CAF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0041C235EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:06:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4D41C234D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16201AA7AF;
-	Mon, 14 Oct 2024 13:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KhEERjrZ"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137F91AA790;
+	Mon, 14 Oct 2024 13:06:08 +0000 (UTC)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE319F43B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1381B19E806;
+	Mon, 14 Oct 2024 13:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911170; cv=none; b=HEUsw7fFZGHBdTU6Og43hJf9UOHilyFvEpsLuPg67eL2V4lH1RpCdvEY/56BpNZ85e1PaZpolhVjbipoX6GWSEa0tvN6hKpyMvrif+GquAufYrNxFoEST6PaUMD7PLSA93NWbsb+uqwxvL7mB9km4wsE+OvH4SEazlGBzoV0QGo=
+	t=1728911167; cv=none; b=H+/lz/kIqoxpysJv+Wu132TdscDYJQlZfQ56PAnnD6BRtqLaf0yAvrlXc0lHnzL4clc+dJVxGnyoJQsIAgMR4691qQzcEnjXTSGfvwGZG5qd8Uik3yxResPJlJj2vLekkXnbBr7d8WW5GAlTeOa7I+EfJJjEK9jE0gXoXAe2s9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911170; c=relaxed/simple;
-	bh=LCNS312XX8+QtPMLYe1AhAHuLD8/5nIRC3vEE2GCZXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XdnPjkwSabZVfKHiepc7Hxh/No43Vd9sfXGoArSXu5KDv2yxGy3xcV7bwDlXSU/2ctx5JPjm/roOaqROKq2zzFfpF+0UPiuL0u+pTldnTfu9ROjxULgWOyBCwlcF4fXA0ImS4QgscUDS3J0/xvsuwJyO4pbBiW8nXHLbyb5r460=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KhEERjrZ; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f58c68c5so1518560e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:06:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728911167; x=1729515967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0KbDLhMcvfgwNdAQUxsq+9HS6SfLDbI1Cx605AIvkyo=;
-        b=KhEERjrZHh1uVqqmefRgJpp5a5PqNEN/WVt5no1ccHX/QrZ1ow4DD+wjIWT85E//wD
-         1aqRunAA+894XMWrAPBYAIKr4KEKHEnVVLKXlpRb+L3TLI8tkhoE0UPrm+obtR255dWT
-         tovaEVJDvS6TXyYzk6KBNPR7xURY5Wy8zwL0dHwHbenCMafVV56WSEV5gl1uJIexgC9a
-         bf3J8wEZTk/VCNaWAtrsaq0o9WAXPUXunLcnE7wirzOyRVSeXMuF4W1hgjKYQlVnoeVL
-         pCcCQDECGRBTDybPAwBqIsN6tIswSOn2YZTi4rtmUE6JD3UN37F6NxfKojdBzfBuiDeZ
-         M5sQ==
+	s=arc-20240116; t=1728911167; c=relaxed/simple;
+	bh=5yIE1AXTBtccQw+b33agkVNO7ZB538iyS504JjLMXcY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lK2+yjqi5+S8i2PfzfsymyrYPTfoBxef+5cCQaLiX1+A0PRT/X0XbZq8Xh3+1Qz0+kCfq/ACfx4wi3GBEQ1PRladYRpBjLm4e2NoopO0uiD7IkE+By9MVSFSlX+8AbVDaq1KTvWzr6GbZsbrNyOA9xma4sGwH8WBXNMYVr6OYNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so3343124f8f.3;
+        Mon, 14 Oct 2024 06:06:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728911167; x=1729515967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0KbDLhMcvfgwNdAQUxsq+9HS6SfLDbI1Cx605AIvkyo=;
-        b=Mg3oewuUa5FePM7mhpB88fTrZTKEaA5p4hdyR6P8FbK9eakxYbx+W9cLPQeM2FHe6P
-         /NgG0nBk0rxuPe+KNsUpYRlwixRVRkods7NYc6t8+eo66RZbLHBZIgfqbu+r4KYoOuLU
-         QHUuT48U38ojyjRjNykKMM3Vk2bsyWvCebrUX5+hNh067Axk0u0KKbhYKyy2WXgEXrF7
-         vTJjp7A5GvWZzsbCth52SpB9vdYmDue+WgzgBmwVsUnFrQwkYWMcfIR0TIlnoYrnFJvl
-         Ir7fpbisVqRvxC/ZU6HynO6r6vNujXrzGm2jyHJPUaYY7sZtF7ed1STEFiH9d/gDvbL0
-         XLOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkTLkHzcSXharAj2hEcLefPIQLcpFJdVFup8B5Z0NTjUibmyzPxlnUu1RQFy8AF7icB4qzUECMaiLlAX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2VzrOr/BYyFpQQe3fkvtRCXNK+HiEn2s6QvsaY2TkElb7oz6Z
-	hHBGXw0MCCa1quOLRxbORVOZeCwIs3RkfjuG91Ng/BWigrCFtWopHLwgNmdp74D98Miqp7NX9VH
-	tn007WVY483DUtQBj82VFS1BgDaW+GSbOCyeJqA==
-X-Google-Smtp-Source: AGHT+IEi9IXCmsD/OTpLrWSBlnQTF9y5K6Luts4kPNK9yagRWRstei7sNO9KfkZuBL7Rewk8E0uOpRK3pAasdzgDkpY=
-X-Received: by 2002:a05:6512:1598:b0:539:905c:15c5 with SMTP id
- 2adb3069b0e04-539e5521da6mr4247180e87.35.1728911167032; Mon, 14 Oct 2024
- 06:06:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728911164; x=1729515964;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=arN2EaeGbfyQzTtje2PaOTjOburdceclvq3hXPjtlHw=;
+        b=kzVLSJOlH7byGvjrHI06MVCebsBp2Rb1bs2pGH+Xm1gVL4UCuLLFB5rImdeCwcA00U
+         P27ai4q2z1tldkxWP5Z3x1hwaNmyCBGFn6T8+jiweaA7idf4kR1Dz3BPZ9pYoCOwt85A
+         X9t2W5nBL0JWJoJRVTVSaV5pkcr49Zg83sTUrjcfSWquxZeMW6GpElbxNxVJE8KbWViE
+         8rP4NgUr2zDbgHbDAjelP11Eiz6HuA8HrANzhYMZn21lO510jxro4Ee5oUE5dVkC4gn/
+         3+SNlxDrBWYbwgPiTSGnnmzjpO4D+ApDb7/FY8VkYjPlTHQkEaQDJJZDpG5y4IwS7qMr
+         yo8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVMu1fS/UZN8iVGLaq2fXfGZ7B1LrOq5UXXsfIvdIqW5P3c4PB+cADfNP6/+cpcSCFDnF1KHd5SgVhpWdzBohLbYw==@vger.kernel.org, AJvYcCW+YmqGx9WmKKsn23beoZLJzsaPGAn3qDMq7PtS5A9+YaiDFvtuVxcgzgZZ6aoAjgaRPpVwcwDfc74EoK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXaZ6K03OrjHkDE7BUc6NUGf0RZikf9PbGMMe2+q9MFc1Oz8IJ
+	VoMVHT0PzxE7I5Mv+mDP7+h1zJKfXXIOxzMVHVU0Pwky08zRViF5
+X-Google-Smtp-Source: AGHT+IFslGH1lFnLmbVAguvq3NPJ2Hq/naL7JW5Qulsjtxs4o1vYcbMFGHXyrS8up5WDYkXYYuvR7w==
+X-Received: by 2002:adf:f483:0:b0:37c:d2e3:1298 with SMTP id ffacd0b85a97d-37d601eea06mr6796782f8f.55.1728911164250;
+        Mon, 14 Oct 2024 06:06:04 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8911sm11289688f8f.14.2024.10.14.06.06.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 06:06:03 -0700 (PDT)
+Message-ID: <1b96ef59-3b25-4c16-b3ee-cb4c7432afc0@kernel.org>
+Date: Mon, 14 Oct 2024 15:06:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014111527.2272428-1-quic_kuldsing@quicinc.com> <20241014111527.2272428-2-quic_kuldsing@quicinc.com>
-In-Reply-To: <20241014111527.2272428-2-quic_kuldsing@quicinc.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 14 Oct 2024 15:05:55 +0200
-Message-ID: <CAMRc=MftQBH_d4Ew_5jdqqk1WpM511huWJH2ZDwnhXVYDboYLg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
- unsupported SHM bridge enabling
-To: Kuldeep Singh <quic_kuldsing@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Qingqing Zhou <quic_qqzhou@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
+ syscall ids in syscalltbl->entries
+From: Jiri Slaby <jirislaby@kernel.org>
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Howard Chu <howardchu95@gmail.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <0f841525-e02a-4e11-b5f8-1acc61979ccf@kernel.org>
+ <ZtYJ0z8f-1jwYSbV@x1> <c279ad02-2543-4a95-9404-9304e1e704da@kernel.org>
+ <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
+ <ZwYbQswnGHSstClc@google.com>
+ <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
+ <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
+ <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
+ <ZwgAzde-jVyo4cSu@google.com> <ZwgBenahw7EImQLk@google.com>
+ <ZwhA1SL706f60ynd@x1> <2a91f9d0-8950-4936-9776-7ba59ab1d42a@kernel.org>
+ <CA+JHD937angqu=48-kPC7LvtMMQPgUGp+2x5b+JKVNoFa3+9HQ@mail.gmail.com>
+ <5c2151fc-d7ed-4677-9456-4589f67d5f51@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ xsFNBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
+ rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
+ rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
+ i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
+ wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
+ ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
+ cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
+ 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
+ w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
+ YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABzSFKaXJpIFNsYWJ5
+ IDxqaXJpc2xhYnlAa2VybmVsLm9yZz7CwXcEEwEIACEFAlW3RUwCGwMFCwkIBwIGFQgJCgsC
+ BBYCAwECHgECF4AACgkQvSWxBAa0cEnVTg//TQpdIAr8Tn0VAeUjdVIH9XCFw+cPSU+zMSCH
+ eCZoA/N6gitEcnvHoFVVM7b3hK2HgoFUNbmYC0RdcSc80pOF5gCnACSP9XWHGWzeKCARRcQR
+ 4s5YD8I4VV5hqXcKo2DFAtIOVbHDW+0okOzcecdasCakUTr7s2fXz97uuoc2gIBB7bmHUGAH
+ XQXHvdnCLjDjR+eJN+zrtbqZKYSfj89s/ZHn5Slug6w8qOPT1sVNGG+eWPlc5s7XYhT9z66E
+ l5C0rG35JE4PhC+tl7BaE5IwjJlBMHf/cMJxNHAYoQ1hWQCKOfMDQ6bsEr++kGUCbHkrEFwD
+ UVA72iLnnnlZCMevwE4hc0zVhseWhPc/KMYObU1sDGqaCesRLkE3tiE7X2cikmj/qH0CoMWe
+ gjnwnQ2qVJcaPSzJ4QITvchEQ+tbuVAyvn9H+9MkdT7b7b2OaqYsUP8rn/2k1Td5zknUz7iF
+ oJ0Z9wPTl6tDfF8phaMIPISYrhceVOIoL+rWfaikhBulZTIT5ihieY9nQOw6vhOfWkYvv0Dl
+ o4GRnb2ybPQpfEs7WtetOsUgiUbfljTgILFw3CsPW8JESOGQc0Pv8ieznIighqPPFz9g+zSu
+ Ss/rpcsqag5n9rQp/H3WW5zKUpeYcKGaPDp/vSUovMcjp8USIhzBBrmI7UWAtuedG9prjqfO
+ wU0ETpLnhgEQAM+cDWLL+Wvc9cLhA2OXZ/gMmu7NbYKjfth1UyOuBd5emIO+d4RfFM02XFTI
+ t4MxwhAryhsKQQcA4iQNldkbyeviYrPKWjLTjRXT5cD2lpWzr+Jx7mX7InV5JOz1Qq+P+nJW
+ YIBjUKhI03ux89p58CYil24Zpyn2F5cX7U+inY8lJIBwLPBnc9Z0An/DVnUOD+0wIcYVnZAK
+ DiIXODkGqTg3fhZwbbi+KAhtHPFM2fGw2VTUf62IHzV+eBSnamzPOBc1XsJYKRo3FHNeLuS8
+ f4wUe7bWb9O66PPFK/RkeqNX6akkFBf9VfrZ1rTEKAyJ2uqf1EI1olYnENk4+00IBa+BavGQ
+ 8UW9dGW3nbPrfuOV5UUvbnsSQwj67pSdrBQqilr5N/5H9z7VCDQ0dhuJNtvDSlTf2iUFBqgk
+ 3smln31PUYiVPrMP0V4ja0i9qtO/TB01rTfTyXTRtqz53qO5dGsYiliJO5aUmh8swVpotgK4
+ /57h3zGsaXO9PGgnnAdqeKVITaFTLY1ISg+Ptb4KoliiOjrBMmQUSJVtkUXMrCMCeuPDGHo7
+ 39Xc75lcHlGuM3yEB//htKjyprbLeLf1y4xPyTeeF5zg/0ztRZNKZicgEmxyUNBHHnBKHQxz
+ 1j+mzH0HjZZtXjGu2KLJ18G07q0fpz2ZPk2D53Ww39VNI/J9ABEBAAHCwV8EGAECAAkFAk6S
+ 54YCGwwACgkQvSWxBAa0cEk3tRAAgO+DFpbyIa4RlnfpcW17AfnpZi9VR5+zr496n2jH/1ld
+ wRO/S+QNSA8qdABqMb9WI4BNaoANgcg0AS429Mq0taaWKkAjkkGAT7mD1Q5PiLr06Y/+Kzdr
+ 90eUVneqM2TUQQbK+Kh7JwmGVrRGNqQrDk+gRNvKnGwFNeTkTKtJ0P8jYd7P1gZb9Fwj9YLx
+ jhn/sVIhNmEBLBoI7PL+9fbILqJPHgAwW35rpnq4f/EYTykbk1sa13Tav6btJ+4QOgbcezWI
+ wZ5w/JVfEJW9JXp3BFAVzRQ5nVrrLDAJZ8Y5ioWcm99JtSIIxXxt9FJaGc1Bgsi5K/+dyTKL
+ wLMJgiBzbVx8G+fCJJ9YtlNOPWhbKPlrQ8+AY52Aagi9WNhe6XfJdh5g6ptiOILm330mkR4g
+ W6nEgZVyIyTq3ekOuruftWL99qpP5zi+eNrMmLRQx9iecDNgFr342R9bTDlb1TLuRb+/tJ98
+ f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
+ DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
+ S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
+In-Reply-To: <5c2151fc-d7ed-4677-9456-4589f67d5f51@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 1:19=E2=80=AFPM Kuldeep Singh <quic_kuldsing@quicin=
-c.com> wrote:
->
-> From: Qingqing Zhou <quic_qqzhou@quicinc.com>
->
-> When enabling SHM bridge, QTEE returns 0 and sets error 4 in result to
-> qcom_scm for unsupported platforms. Currently, tzmem interprets this as
-> an unknown error rather than recognizing it as an unsupported platform.
->
-> Error log:
-> [    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to e=
-nable the TrustZone memory allocator
-> [    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed w=
-ith error 4
->
-> To address this, modify the function call qcom_scm_shm_bridge_enable()
-> to remap result to indicate an unsupported error. This way, tzmem will
-> correctly identify it as an unsupported platform case instead of
-> reporting it as an error.
->
-> Fixes: 178e19c0df1b ("firmware: qcom: scm: add support for SHM bridge ope=
-rations")
-> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
-> Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qco=
-m_scm.c
-> index 10986cb11ec0..0df81a9ed438 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -112,6 +112,7 @@ enum qcom_scm_qseecom_tz_cmd_info {
->  };
->
->  #define QSEECOM_MAX_APP_NAME_SIZE              64
-> +#define SHMBRIDGE_RESULT_NOTSUPP               4
->
->  /* Each bit configures cold/warm boot address for one of the 4 CPUs */
->  static const u8 qcom_scm_cpu_cold_bits[QCOM_SCM_BOOT_MAX_CPUS] =3D {
-> @@ -1361,6 +1362,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
->
->  int qcom_scm_shm_bridge_enable(void)
->  {
-> +       int ret;
-> +
->         struct qcom_scm_desc desc =3D {
->                 .svc =3D QCOM_SCM_SVC_MP,
->                 .cmd =3D QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
-> @@ -1373,7 +1376,15 @@ int qcom_scm_shm_bridge_enable(void)
->                                           QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
->                 return -EOPNOTSUPP;
->
-> -       return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
-> +       ret =3D qcom_scm_call(__scm->dev, &desc, &res);
-> +
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (res.result[0] =3D=3D SHMBRIDGE_RESULT_NOTSUPP)
-> +               return -EOPNOTSUPP;
-> +
-> +       return res.result[0];
->  }
->  EXPORT_SYMBOL_GPL(qcom_scm_shm_bridge_enable);
->
-> --
-> 2.34.1
->
->
+On 14. 10. 24, 15:04, Jiri Slaby wrote:
+> On 14. 10. 24, 14:43, Arnaldo Carvalho de Melo wrote:
+>> And works? :-)
+> 
+> I cannot tell :P.
+> 
+>> I need to get access to a 32-bit arm distro that I can use with qemu 
+>> or with one of the libre computer arm64 boards I have, can you point 
+>> me to one? :-)
+> 
+> The former might be openSUSE. I have just booted:
+> https://download.opensuse.org/ports/armv7hl/tumbleweed/appliances/openSUSE-Tumbleweed-ARM-JeOS-efi.armv7l.raw.xz
+> 
+> with (when unpacked and aavmf-aarch32-vars.bin copied to /tmp/arm.bin):
+> qemu-system-arm -cpu cortex-a15 -M virt -hda 
+> /tmp/openSUSE-Tumbleweed-ARM-JeOS-efi.armv7l.raw -nographic -drive 
+> if=pflash,format=raw,unit=0,readonly=on,file=/usr/share/qemu/aavmf-aarch32-code.bin -drive if=pflash,format=raw,unit=1,file=/tmp/arm.bin -m 2000
 
-The patch looks correct to me and like something that should go upstream.
+FWIW
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+login: root
+pass: linux
 
-That being said, this doesn't seem to address any of the issues that
-we saw with SHM Bridge and it still leads to a crash on sc8180x. :(
+in all openSUSE images.
 
-Bart
+> thanks,-- 
+-- 
+js
+suse labs
+
 
