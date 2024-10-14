@@ -1,102 +1,145 @@
-Return-Path: <linux-kernel+bounces-363306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D05399C05F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:50:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261A599C060
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C3EDB20ED5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494B11C22522
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C3C145324;
-	Mon, 14 Oct 2024 06:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E3F144304;
+	Mon, 14 Oct 2024 06:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="YXoRqWd3"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cFIafSMD"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC6D13A24D;
-	Mon, 14 Oct 2024 06:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F1A14600F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728888624; cv=none; b=JuGs0smgLx/Vc082Rr6oCJlCYBrNWWClwUwqeOI5zXqDMn0CIBO77H4VYC9rf/dIUAyfxnlTIZS7HRJRSlj/6xEfWAUs9I5JcPCluRGUxg1Xtv11t1j6pPK/CUikvbjwhrDwPcWX6wPHaSXvVS3tByGpk3IEQugDIZPd9Joyr/A=
+	t=1728888629; cv=none; b=QoMIPwx2sNAgvm6eT8JjRYfhRsVKR/X62+6PhicCznBR+j0EF8Jv297Ktzof37J6V2qi4jvHUY/OoxJdSqNt08IA6MqvfrusMzd874xXu+8aju9a37BuuJboQih3NOtCpd5P98sTlgOIg37cmZ+WAbL+IX2oRSCLLkdV0OIE6u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728888624; c=relaxed/simple;
-	bh=SPaERr+frnN8S/Cdxdeffz0qp4nRXCiWqgfySXCE3XI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mYJXYbBGd+tXAAmrpiJX2xScr9uLbSensQn1QDTWIm/xeTTAm9FY4sqpE66OgLNItu+y0pY91mt1fptCXUjh+NJi3o2CQwiFfMBZur6AgvePn/rnsfd8SNw+u5oc8Cfm/K6mO3zd0qmF+b5cAFUZDZScv33LYKXZ8GoyD07iVh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=YXoRqWd3; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ZmAW6fZGix/AXO5/o5fQwKF8FWNV3LuFftvqlLUibzU=; b=YXoRqWd3T4v/uADHvjaklU3wSM
-	hJnl/cqT255Xe3Qn0KBBiicQRmWTgSATqFkhMEMer+wmOwuE8fnfMuV5pVLPI6p7m6BG6WAxAQC62
-	d9+VFzIjplLVrDdv6RbkfMXjqoW6gHFOVPukQHmSnj/rYaJdc9T11K8HkSwdLQHD/wYZxYuJ2Z6po
-	UNf38M3306E27WXDz+UxYouAsAoQ4KEO8A9iWxs/xBumoi3R7ppwrBZQ009AdoyYACrd3U2jJRPxv
-	jealmvOvERhEJMAlFG7sIboA+0IOslWgRwKidg9IdciKBmNVeAzMHbrcF2bA26rTYCmVwlCYg2/JY
-	MptTaqIA==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t0EuH-0005VP-TD; Mon, 14 Oct 2024 08:50:17 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, Frank Wang <frawang.cn@gmail.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
- tim.chen@rock-chips.com, yubing.zhang@rock-chips.com,
- Frank Wang <frank.wang@rock-chips.com>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: rockchip-usbdp: add rk3576
-Date: Mon, 14 Oct 2024 08:50:16 +0200
-Message-ID: <1900633.tdWV9SEqCh@diego>
-In-Reply-To: <20241014020342.15974-1-frawang.cn@gmail.com>
-References: <20241014020342.15974-1-frawang.cn@gmail.com>
+	s=arc-20240116; t=1728888629; c=relaxed/simple;
+	bh=qJF+kpQrONvE39M3qR5kHo2W0/05cB7CFCdC9OtQgQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tUFMbAC0L8UoyzYYHsZu8B0q/+Ht0XYDk1wvkiSBo1R7gHkEIfh2Bqu1yAYrIdyNkpYkoPNKZID0E/O/8IxY0Hc+UJQHWRoRD36R6jUvLgBlzatJwZ/kur4L0wtLEVEBoyK0NlsfE9iMAPUrnxMxgNAm/ALwIbs4Ehz9SKgz6WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cFIafSMD; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728888624; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=qqDE2FOehZs6toIhTzk0+At3PD0AOMbhKevFe2pY4/Q=;
+	b=cFIafSMDI8LYgeitNTWjodSLaeFs2vGagh8YiXfcKvszlBzksm8dR/gY/EBnuU7En4UNkQwa8aOl3h55OmOYhTH7ZvsbUfR/jJw/uSCF8ceXUZsSvF2XWmLQsSESou65NH4nlfK4wO1iJelJSEHTgavKs39VYCBEatIbEyCjYVg=
+Received: from 30.246.164.22(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0WH1pQO._1728888622 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 14 Oct 2024 14:50:23 +0800
+Message-ID: <78a18ddd-4704-49ce-86b2-05693ac9b032@linux.alibaba.com>
+Date: Mon, 14 Oct 2024 14:50:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: arm64: nVHE: gen-hyprel: Silent build warnings
+Content-Language: en-US
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, =?UTF-8?Q?Pierre-Cl=C3=A9ment_Tosi?=
+ <ptosi@google.com>, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20241009085751.35976-1-tianjia.zhang@linux.alibaba.com>
+ <86set55yca.wl-maz@kernel.org>
+ <b3c21234-73a0-43dd-8365-9039c62b7aa7@linux.alibaba.com>
+ <CAKwvOdnkTOjV_j6zGAkghgU0L_tLkb=8Nh3Qzvdb1N-tV61wag@mail.gmail.com>
+From: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <CAKwvOdnkTOjV_j6zGAkghgU0L_tLkb=8Nh3Qzvdb1N-tV61wag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Am Montag, 14. Oktober 2024, 04:03:41 CEST schrieb Frank Wang:
-> From: Frank Wang <frank.wang@rock-chips.com>
+Hi Nick,
+
+On 10/10/24 11:23 PM, Nick Desaulniers wrote:
+> On Thu, Oct 10, 2024 at 1:13 AM tianjia.zhang
+> <tianjia.zhang@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 10/9/24 7:07 PM, Marc Zyngier wrote:
+>>> On Wed, 09 Oct 2024 09:57:51 +0100,
+>>> Tianjia Zhang <tianjia.zhang@linux.alibaba.com> wrote:
+>>>>
+>>>> This patch silent the some mismatch format build warnings
+>>>> with clang, like:
+>>>>
+>>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:233:2: warning: format specifies
+>>>>     type 'unsigned long' but the argument has type 'Elf64_Off'
+>>>>     (aka 'unsigned long long') [-Wformat]
+>>>>       233 |         assert_ne(off, 0UL, "%lu");
+>>>>           |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>           |                              %llu
+>>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:193:34: note: expanded from macro 'assert_ne'
+>>>>       193 | #define assert_ne(lhs, rhs, fmt)        assert_op(lhs, rhs, fmt, !=)
+>>>>           |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:188:19: note: expanded from macro 'assert_op'
+>>>>       187 |                                 " failed (lhs=" fmt ", rhs=" fmt        \
+>>>>           |                                                 ~~~
+>>>>       188 |                                 ", line=%d)", _lhs, _rhs, __LINE__);    \
+>>>>           |                                               ^~~~
+>>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:167:17: note: expanded from macro 'fatal_error'
+>>>>       166 |                 fprintf(stderr, "error: %s: " fmt "\n",                 \
+>>>>           |                                               ~~~
+>>>>       167 |                         elf.path, ## __VA_ARGS__);                      \
+>>>>           |                                      ^~~~~~~~~~~
+>>>>
+>>>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>>>
+>>> I don't see these warnings. What version of LLVM are you using?
+>>>
+>>
+>> I compiled the kernel on Apple Silicon M3 Pro in macOS 15.0.1, Maybe this is
+>> a special scenario that is rarely used.
 > 
-> Add compatible for the USBDP phy in the Rockchip RK3576 SoC.
+> Right, so I had an initial patch set for building the kernel from a
+> MacOS host.  I sent a v1, but didn't chase sending a v2 at the time
+> because there didn't appear to be any interest.
 > 
-> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-> ---
->  Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> https://www.phoronix.com/news/Linux-Compile-On-macOS
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml b/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
-> index 1f1f8863b80d..b42f1272903d 100644
-> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
-> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
-> @@ -13,6 +13,7 @@ maintainers:
->  properties:
->    compatible:
->      enum:
-> +      - rockchip,rk3576-usbdp-phy
->        - rockchip,rk3588-usbdp-phy
->  
->    reg:
+> Since then, I saw a v2 or even a v3 fly by (I was cc'ed).
+> 
+> One issue I recall building from MacOS was that MacOS does not have an
+> <elf.h> (their object file format is not ELF, but Mach-O).  I had to
+> install some dependency through homebrew for that header.
+> 
+> Just a guess but:
+> Perhaps it defines Elf64_Off as a `unsigned long` incorrectly, and
+> should be defining it as an `unsigned long long`.  I'd check if that's
+> the case and if so, Tianjia, you may want to report that issue on the
+> thread where folks are reposting the MacOS host support.
 > 
 
+Thanks for the information, great work, very useful attempt.
 
+I have successfully compiled the latest 6.11 rc2 on macOS 15.0.1 Apple
+Silicon M3 chip. It seems that compiling on this version of the kernel
+is easier. I just added three header files, elf.h, byteswap.h and
+endian.h, and add the missing definitions. In addition, I fixed
+scriptsj/mod/file2alias.c as you did, and it compiled successfully
+without encountering other exceptions. The dependent toolchains are
+all installed through brew, include make, llvm and lld.
 
+Cheers,
+Tianjia
 
 
