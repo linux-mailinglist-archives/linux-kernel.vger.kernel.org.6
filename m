@@ -1,81 +1,125 @@
-Return-Path: <linux-kernel+bounces-364507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D4E99D585
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:21:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415B699D4FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526561C22E14
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:20:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C018DB22952
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2DE1C2DA1;
-	Mon, 14 Oct 2024 17:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78C41B4F3E;
+	Mon, 14 Oct 2024 16:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="UDeAXkOh"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eD49wm8e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1371BDABD;
-	Mon, 14 Oct 2024 17:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E489288B1;
+	Mon, 14 Oct 2024 16:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728926448; cv=none; b=p6OaTnB9rbXFE452f3vYm+rkj1xIgVtwMGonUqxvM/knTUcdynHZvdpKPa7i048FfP7U9/clvt0/5C3rKlIgLEGIoRo41Om0A2JsqXOxHCMXn2luEJehBYFWamOvGE3qnDx52nuUD4RrYSGvlwNgtwwtlZB2/93QOAP1BSVl/34=
+	t=1728924677; cv=none; b=hrd0ILmqSYs+Frbtw6DqsJdQT+8PY4F6ZId1gU1E2CVlDG/RKVgo9+PF0lKCp8q6kHtAjdfPsVSE1egd9J2Va0iCA0PQXyzjnQiq81WZh+C7jJ/8qYIK9NOjzwM0h9/EWNY/PJuU9Jfx/Y4hkQX8vTSeBKGu9oNAYTef9E4fzWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728926448; c=relaxed/simple;
-	bh=x8pf8dv6TsP8JXdYfzHDLKge5Sr1VNwRTlf5smWntyw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sOt6dWUva/NSjSr+1R522I73w2cXqEdXXVp6ognKsp0r7t7ZzQ8f6mO8YgyxoLx7WASNp1Ryp9z0blG3Ji57JvxVaSo850X1AwCy1aDnXazOOCnYZ9N5ltntTdYbzqcro0G9wuPJE5kjtLhExmH1rySC1detiI7Aem6MqhNLI1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=UDeAXkOh; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1728924621;
-	bh=x8pf8dv6TsP8JXdYfzHDLKge5Sr1VNwRTlf5smWntyw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=UDeAXkOhC34P/2l1RSU7AY+bCJpczEZhKjdHGbeEmaF/xWT8iZpAPJIciPsJ+Iabi
-	 Zf3bTpAO7c/Md9XExJpUfQLL2+CD4MuwJ6SWAToxHIbFFYT2MbTaRt5FkNkyX6FfMD
-	 RONlruABvmO0uB9Gq9q5ARnHkbQm4I/2gdZje5xc=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 2DFA44040C; Mon, 14 Oct 2024 09:50:21 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 2BD01401C9;
-	Mon, 14 Oct 2024 09:50:21 -0700 (PDT)
-Date: Mon, 14 Oct 2024 09:50:21 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, 
-    Anshuman Khandual <anshuman.khandual@arm.com>, 
-    Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Catalin Marinas <catalin.marinas@arm.com>, 
-    David Hildenbrand <david@redhat.com>, Dennis Zhou <dennis@kernel.org>, 
-    Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>, 
-    Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, 
-    Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>, 
-    Miroslav Benes <mbenes@suse.cz>, Tejun Heo <tj@kernel.org>, 
-    Will Deacon <will@kernel.org>, linux-arch@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 02/57] vmlinux: Align to PAGE_SIZE_MAX
-In-Reply-To: <20241014105912.3207374-2-ryan.roberts@arm.com>
-Message-ID: <0e7c6bd0-b4a0-4afe-22ff-73239bd86943@gentwo.org>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com> <20241014105912.3207374-1-ryan.roberts@arm.com> <20241014105912.3207374-2-ryan.roberts@arm.com>
+	s=arc-20240116; t=1728924677; c=relaxed/simple;
+	bh=HVkCAK28Uz4v2yjt6+6+8HaHLau4B2tiGzMBjwo5yvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4S9qFY5FjZAMxgQKep2h0aU+SMDqyqXW+GO9iJ8pZs7m+/qGk4lf93tJ7ynJF4zszpkoEWAM6wUK6IuyByiWII6xQCjWHEstTptmGE+wUK1FgqHZQadDsqQ14a/4HGxSu07kdeopvzCu8GSZSvHHvA5j8ml/wskq5OrUm8PZU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eD49wm8e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F7D9C4CEC3;
+	Mon, 14 Oct 2024 16:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728924676;
+	bh=HVkCAK28Uz4v2yjt6+6+8HaHLau4B2tiGzMBjwo5yvw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=eD49wm8eSZIYMXleMB9YbI5akYYyLT9prVZNXEKSzVFlgu7E66pfEvdB9XbCfwmr9
+	 dSENrcMazgWojRRN8wA8RTkpS20mm4vtSKEpDP79Wc3cq+UFnDuzSfUUMN9a5OxrYD
+	 HYOzLf/6sIxa4ayZFNwJbiJvtuYoE53N3n7EiiYU7Updvg68YkfTi4ndvJumsusii5
+	 GS41w7IjAC9oHZUwZoKkH201h7BninzBg/xVVfXlsyyUfOEoOMhKFK+Hf/8xsobphG
+	 6h4ZP8EMejn7b+EMwyNGl3+iwNYGOZ50sBaUpMM6yAa834kd/brgGkM+sDEJGt+ieg
+	 kj7DOhEbl84Dg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3C736CE0B68; Mon, 14 Oct 2024 09:51:16 -0700 (PDT)
+Date: Mon, 14 Oct 2024 09:51:16 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rostedt@goodmis.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
+Subject: Re: [PATCH rcu 04/12] srcu: Bit manipulation changes for additional
+ reader flavor
+Message-ID: <6f8934c8-8499-48ec-89fa-e3f356fae419@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
+ <20241009180719.778285-4-paulmck@kernel.org>
+ <abf6c382-7b70-4cdb-9227-7dfd21e60c45@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abf6c382-7b70-4cdb-9227-7dfd21e60c45@amd.com>
 
-On Mon, 14 Oct 2024, Ryan Roberts wrote:
+On Mon, Oct 14, 2024 at 02:42:33PM +0530, Neeraj Upadhyay wrote:
+> On 10/9/2024 11:37 PM, Paul E. McKenney wrote:
+> > Currently, there are only two flavors of readers, normal and NMI-safe.
+> > Very straightforward state updates suffice to check for erroneous
+> > mixing of reader flavors on a given srcu_struct structure.  This commit
+> > upgrades the checking in preparation for the addition of light-weight
+> > (as in memory-barrier-free) readers.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrii Nakryiko <andrii@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> > Cc: <bpf@vger.kernel.org>
+> > ---
+> >  kernel/rcu/srcutree.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> > index 18f2eae5e14bd..abe55777c4335 100644
+> > --- a/kernel/rcu/srcutree.c
+> > +++ b/kernel/rcu/srcutree.c
+> > @@ -462,7 +462,7 @@ static unsigned long srcu_readers_unlock_idx(struct srcu_struct *ssp, int idx)
+> >  		if (IS_ENABLED(CONFIG_PROVE_RCU))
+> >  			mask = mask | READ_ONCE(cpuc->srcu_reader_flavor);
+> >  	}
+> > -	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask >> 1)),
+> > +	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask - 1)),
+> >  		  "Mixed NMI-safe readers for srcu_struct at %ps.\n", ssp);
+> >  	return sum;
+> >  }
+> > @@ -712,8 +712,9 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor)
+> >  	sdp = raw_cpu_ptr(ssp->sda);
+> >  	old_reader_flavor_mask = READ_ONCE(sdp->srcu_reader_flavor);
+> >  	if (!old_reader_flavor_mask) {
+> > -		WRITE_ONCE(sdp->srcu_reader_flavor, reader_flavor_mask);
+> > -		return;
+> > +		old_reader_flavor_mask = cmpxchg(&sdp->srcu_reader_flavor, 0, reader_flavor_mask);
+> 
+> This looks to be separate independent fix?
 
-> Increase alignment of structures requiring at least PAGE_SIZE alignment
-> to PAGE_SIZE_MAX. For compile-time PAGE_SIZE, PAGE_SIZE_MAX == PAGE_SIZE
-> so there is no change. For boot-time PAGE_SIZE, PAGE_SIZE_MAX is the
-> largest selectable page size.
+I would say that it is part of the upgrade.  The old logic worked if there
+are only two flavors, but the cmpxchg() is required for more than two.
 
-Can you verify that this works with the arch specific portions? This may
-also allow to to reduce some of the arch dependent stuff.
+							Thanx, Paul
+
+> - Neeraj
+> 
+> > +		if (!old_reader_flavor_mask)
+> > +			return;
+> >  	}
+> >  	WARN_ONCE(old_reader_flavor_mask != reader_flavor_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_reader_flavor_mask, reader_flavor_mask);
+> >  }
+> 
 
