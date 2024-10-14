@@ -1,162 +1,150 @@
-Return-Path: <linux-kernel+bounces-363356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D7E99C13D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:27:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CAC99C23E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 049A41C22BA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:27:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25AEA1C26257
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363A414830A;
-	Mon, 14 Oct 2024 07:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R73QQi6l"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24BD156644;
+	Mon, 14 Oct 2024 07:55:54 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3017224D6
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4B4156238
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728890833; cv=none; b=aVmfVVQEWbqTEIVI6RgJ1pIC0bXVEVTWXrFliKNUgqHPH/8dg55qkWKVU0w1w4GMgh5i+85MMnpIxUl3b9KP0kEetclUUBii8tXhiiMxgMSLpHEfCN8g2JXtAqDBQjSa8XRKMVZ/W2YK+URRagLSEUztx5JTQJdRrtMoLvSnohw=
+	t=1728892554; cv=none; b=nnjyROZE5KsOn2G5nVhY4Louiy1IwyEEd3DTobLsnDaYcYYctjsU7YjueFGz0/bYrvkLqKBF9kjog0ks/f3WR//K7s/Q9u9SrQzQ6bsCe3WsCaOIBuNga5M+PHapvoYS5Z7ihC9zzR1ypXQEoo4yTFXi8RvDTepUdLYpyFlfJTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728890833; c=relaxed/simple;
-	bh=AV5GzsU1/P60BWtmrIaHzjkP3KanKsoJ9sqwKIlKnHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fO7O0/Hl1Y/2g0oomICfNJxwBPpTopzE/mLu39kO1NulPbdAaa/Ku7L72LNKi6JORMnziVqNJLyYzwMGzbzf9yeLzKJxa+ZriKhZBW6U/jufijjxNn21MRTeue5P2rr1L4FBAeHvhfLNM2FcJH3ZqQrG6YI39IduLcQkg9Dbkrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=R73QQi6l; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728890829;
-	bh=AV5GzsU1/P60BWtmrIaHzjkP3KanKsoJ9sqwKIlKnHc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R73QQi6lccAGSymlMmfW/c+DElC5NNykdPkzCXkRdgs7CakOJqn+B4uHjdk2vGEH8
-	 HDRaS1DSHTZC24bnXEE7nPPzDtUhZt/5ywJ9aBDFziSWcrwkH0alEudHUyvHVJhxHy
-	 Ed0SSxy6WljpBng/ITTPwKM9Qszw1ftT7DFE9qBYQQrRbX0EaFWALtNrlTYBOJVNYQ
-	 hLFrRHsDl+7FmS7+ZyWDVUYaNzileZHdGfy+RIUMK1ic6WufRjs7nJ2oArrIvGfDr1
-	 1LjkNUNg/Ks16vY4zFWI+dV5PptPUZyb2JDCnkZgBARewlZaqjK9WlN+JXtXsCFUzw
-	 CaTfJF/RIy0+w==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4731B17E10A4;
-	Mon, 14 Oct 2024 09:27:09 +0200 (CEST)
-Date: Mon, 14 Oct 2024 09:27:04 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/panthor: Rreset device and load FW after failed
- PM suspend
-Message-ID: <20241014092704.50a21276@collabora.com>
-In-Reply-To: <20241011225906.3789965-3-adrian.larumbe@collabora.com>
-References: <20241011225906.3789965-1-adrian.larumbe@collabora.com>
-	<20241011225906.3789965-3-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1728892554; c=relaxed/simple;
+	bh=AO5MfO8Mz4E6eCOjZBvEUWWNm1eCNHLSd1lIV4ZDa8E=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uyJeQWDeZq7Mp43hf280JDlprn8JEs//JjNSMbtAq3cNR7N4xflpGy75cnP171P1+KLN9MvQ00gA+3ybz8FMtKNuv1954E+WEhJSsHj4IN/YvMCXaBodzO4w3frPj+UgZN8UkSIj00VvdA6cMXDwmz2TTT8JzK3a7K0lTiQ59Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:3f20:7967:2d40:9ad2])
+	by baptiste.telenet-ops.be with cmsmtp
+	id Q7vk2D00C54R7sz017vkUN; Mon, 14 Oct 2024 09:55:44 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t0FvP-003ji2-7c
+	for linux-kernel@vger.kernel.org;
+	Mon, 14 Oct 2024 09:55:44 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t0FUJ-00FyRD-4T
+	for linux-kernel@vger.kernel.org;
+	Mon, 14 Oct 2024 09:27:31 +0200
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-kernel@vger.kernel.org
+Subject: Build regressions/improvements in v6.12-rc3
+Date: Mon, 14 Oct 2024 09:27:31 +0200
+Message-Id: <20241014072731.3807160-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAHk-=wg061j_0+a0wen8E-wxSzKx_TGCkKw-r1tvsp5fLeT0pA@mail.gmail.com>
+References: <CAHk-=wg061j_0+a0wen8E-wxSzKx_TGCkKw-r1tvsp5fLeT0pA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, 11 Oct 2024 23:57:01 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+Below is the list of build error/warning regressions/improvements in
+v6.12-rc3[1] compared to v6.11[2].
 
-> On rk3588 SoCs, during a runtime PM suspend, the transition to the
-> lowest voltage/frequency pair might sometimes fail for reasons not yet
-> understood. In that case, even a slow FW reset will fail, leaving the
-> device's PM runtime status as unusuable.
->=20
-> When that happens, successive attempts to resume the device upon running
-> a job will always fail.
->=20
-> Fix it by forcing a synchronous device reset, which will lead to a
-> successful FW reload, and also reset the device's PM runtime error
-> status before resuming it.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c | 10 ++++++++++
->  drivers/gpu/drm/panthor/panthor_device.h |  2 ++
->  drivers/gpu/drm/panthor/panthor_sched.c  |  7 +++++++
->  3 files changed, 19 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/p=
-anthor/panthor_device.c
-> index 5430557bd0b8..ec6fed5e996b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -105,6 +105,16 @@ static void panthor_device_reset_cleanup(struct drm_=
-device *ddev, void *data)
->  	destroy_workqueue(ptdev->reset.wq);
->  }
-> =20
-> +int panthor_device_reset_sync(struct panthor_device *ptdev)
-> +{
-> +	panthor_fw_pre_reset(ptdev, false);
-> +	panthor_mmu_pre_reset(ptdev);
-> +	panthor_gpu_soft_reset(ptdev);
-> +	panthor_gpu_l2_power_on(ptdev);
-> +	panthor_mmu_post_reset(ptdev);
-> +	return panthor_fw_post_reset(ptdev);
-> +}
-> +
->  static void panthor_device_reset_work(struct work_struct *work)
->  {
->  	struct panthor_device *ptdev =3D container_of(work, struct panthor_devi=
-ce, reset.work);
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/p=
-anthor/panthor_device.h
-> index 0e68f5a70d20..05a5a7233378 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -217,6 +217,8 @@ struct panthor_file {
->  int panthor_device_init(struct panthor_device *ptdev);
->  void panthor_device_unplug(struct panthor_device *ptdev);
-> =20
-> +int panthor_device_reset_sync(struct panthor_device *ptdev);
-> +
->  /**
->   * panthor_device_schedule_reset() - Schedules a reset operation
->   */
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/pa=
-nthor/panthor_sched.c
-> index c7b350fc3eba..9a854c8c5718 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -3101,6 +3101,13 @@ queue_run_job(struct drm_sched_job *sched_job)
->  		return dma_fence_get(job->done_fence);
->  	}
-> =20
-> +	if (ptdev->base.dev->power.runtime_error) {
-> +		ret =3D panthor_device_reset_sync(ptdev);
-> +		if (drm_WARN_ON(&ptdev->base, ret))
-> +			return ERR_PTR(ret);
-> +		drm_WARN_ON(&ptdev->base, pm_runtime_set_active(ptdev->base.dev));
-> +	}
+Summarized:
+  - build errors: +4/-3
+  - build warnings: +33/-3
 
-I'd rather pretend the suspend/resume worked (even if it didn't) and
-deal with the consequences (force a slow reset on the next resume), than
-spread the 'if-PM-op-failed-force-sync-reset' thing everywhere we do a
-pm_runtime_resume_and_get(). Also not sure how resetting the GPU will
-help fixing the OPP transition failure.
+JFYI, when comparing v6.12-rc3[1] to v6.12-rc2[3], the summaries are:
+  - build errors: +3/-1
+  - build warnings: +31/-0
 
-> +
->  	ret =3D pm_runtime_resume_and_get(ptdev->base.dev);
->  	if (drm_WARN_ON(&ptdev->base, ret))
->  		return ERR_PTR(ret);
+Note that there may be false regressions, as some logs are incomplete.
+Still, they're build errors/warnings.
 
+Happy fixing! ;-)
+
+Thanks to the linux-next team for providing the build service.
+
+[1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8e929cb546ee42c9a61d24fae60605e9e3192354/ (all 194 configs)
+[2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/98f7e32f20d28ec452afb208f9cffc08448a2652/ (131 out of 194 configs)
+[3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b/ (131 out of 194 configs)
+
+
+*** ERRORS ***
+
+4 error regressions:
+  + /kisskb/src/crypto/async_tx/async_tx.c: error: no previous prototype for '__async_tx_find_channel' [-Werror=missing-prototypes]:  => 43:1
+  + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Werror=format=]:  => 126:37
+  + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t' {aka 'long long unsigned int'} [-Werror=format=]:  => 126:46
+  + /kisskb/src/include/linux/err.h: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]:  => 28:49
+
+3 error improvements:
+  - /kisskb/src/drivers/md/dm-integrity.c: error: logical not is only applied to the left hand side of comparison [-Werror=logical-not-parentheses]: 4720:45 => 
+  - /kisskb/src/drivers/media/platform/nxp/imx-pxp.h: error: initializer element is not constant: 582:38 => 
+  - {standard input}: Error: unknown pseudo-op: `.siz': 1273 => 
+
+
+*** WARNINGS ***
+
+33 warning regressions:
+  + .config: warning: override: reassigning to symbol MIPS_CPS_NS16550_SHIFT: 15216, 15210 => 15343, 15345, 15351
+  + .config: warning: override: reassigning to symbol UML_NET_MCAST:  => 14880, 15123
+  + /kisskb/src/arch/mips/cavium-octeon/executive/cvmx-helper-errata.c: warning: no previous prototype for '__cvmx_helper_errata_qlm_disable_2nd_order_cdr' [-Wmissing-prototypes]:  => 49:6
+  + /kisskb/src/arch/mips/cavium-octeon/executive/cvmx-interrupt-decodes.c: warning: no previous prototype for '__cvmx_interrupt_gmxx_rxx_int_en_enable' [-Wmissing-prototypes]:  => 53:6
+  + /kisskb/src/arch/mips/cavium-octeon/octeon-platform.c: warning: no previous prototype for 'octeon_fill_mac_addresses' [-Wmissing-prototypes]:  => 701:13
+  + /kisskb/src/arch/mips/cavium-octeon/smp.c: warning: no previous prototype for 'octeon_send_ipi_single' [-Wmissing-prototypes]:  => 100:6
+  + /kisskb/src/arch/mips/kernel/cevt-bcm1480.c: warning: no previous prototype for 'sb1480_clockevent_init' [-Wmissing-prototypes]:  => 96:6
+  + /kisskb/src/arch/mips/kernel/csrc-bcm1480.c: warning: no previous prototype for 'sb1480_clocksource_init' [-Wmissing-prototypes]:  => 37:13
+  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'cache_parity_error_octeon_non_recoverable' [-Wmissing-prototypes]:  => 351:17
+  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'cache_parity_error_octeon_recoverable' [-Wmissing-prototypes]:  => 342:17
+  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'register_co_cache_error_notifier' [-Wmissing-prototypes]:  => 297:5
+  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'unregister_co_cache_error_notifier' [-Wmissing-prototypes]:  => 303:5
+  + /kisskb/src/arch/mips/mm/cerr-sb1.c: warning: no previous prototype for 'sb1_cache_error' [-Wmissing-prototypes]:  => 165:17
+  + /kisskb/src/arch/mips/pci/msi-octeon.c: warning: no previous prototype for 'octeon_msi_initialize' [-Wmissing-prototypes]:  => 343:12
+  + /kisskb/src/arch/mips/pci/pci-octeon.c: warning: no previous prototype for 'octeon_pci_pcibios_map_irq' [-Wmissing-prototypes]:  => 234:12
+  + /kisskb/src/arch/mips/pci/pcie-octeon.c: warning: no previous prototype for 'octeon_pcie_pcibios_map_irq' [-Wmissing-prototypes]:  => 1471:5
+  + /kisskb/src/arch/mips/sibyte/bcm1480/irq.c: warning: no previous prototype for 'init_bcm1480_irqs' [-Wmissing-prototypes]:  => 200:13
+  + /kisskb/src/arch/mips/sibyte/bcm1480/setup.c: warning: no previous prototype for 'bcm1480_setup' [-Wmissing-prototypes]:  => 104:13
+  + /kisskb/src/arch/mips/sibyte/bcm1480/smp.c: warning: no previous prototype for 'bcm1480_mailbox_interrupt' [-Wmissing-prototypes]:  => 158:6
+  + /kisskb/src/arch/mips/sibyte/bcm1480/smp.c: warning: no previous prototype for 'bcm1480_smp_init' [-Wmissing-prototypes]:  => 49:6
+  + /kisskb/src/arch/mips/sibyte/bcm1480/time.c: warning: no previous prototype for 'plat_time_init' [-Wmissing-prototypes]:  => 10:13
+  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_get_time' [-Wmissing-prototypes]:  => 186:10
+  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_probe' [-Wmissing-prototypes]:  => 219:5
+  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_set_time' [-Wmissing-prototypes]:  => 139:5
+  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_get_time' [-Wmissing-prototypes]:  => 167:10
+  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_probe' [-Wmissing-prototypes]:  => 203:5
+  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_set_time' [-Wmissing-prototypes]:  => 108:5
+  + /kisskb/src/arch/mips/sibyte/swarm/setup.c: warning: no previous prototype for 'swarm_be_handler' [-Wmissing-prototypes]:  => 59:5
+  + /kisskb/src/drivers/net/ethernet/sgi/meth.c: warning: no previous prototype for 'meth_reset' [-Wmissing-prototypes]:  => 271:5
+  + /kisskb/src/drivers/watchdog/octeon-wdt-main.c: warning: no previous prototype for 'octeon_wdt_nmi_stage3' [-Wmissing-prototypes]:  => 210:6
+  + warning: unmet direct dependencies detected for GET_FREE_REGION:  => N/A
+  + warning: unmet direct dependencies detected for HOTPLUG_CPU:  => N/A
+  + {standard input}: Warning: macro instruction expanded into multiple instructions:  => 339, 338, 285
+
+3 warning improvements:
+  - .config: warning: override: reassigning to symbol UML_NET_SLIRP: 14765, 15006 => 
+  - /kisskb/src/fs/ext4/readpage.c: warning: the frame size of 1120 bytes is larger than 1024 bytes [-Wframe-larger-than=]: 391:1 => 
+  - modpost: WARNING: modpost: lib/test_bitmap: section mismatch in reference: find_next_bit+0x40 (section: .text.unlikely) -> test_print (section: .init.rodata): N/A => 
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
