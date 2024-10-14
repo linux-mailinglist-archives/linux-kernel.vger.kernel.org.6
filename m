@@ -1,84 +1,95 @@
-Return-Path: <linux-kernel+bounces-364280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7877D99D022
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:01:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9966C99D01E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 718FE1C2354F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:01:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33C2BB25437
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB431BF804;
-	Mon, 14 Oct 2024 14:59:23 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBAF1B85F6;
+	Mon, 14 Oct 2024 14:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnL1L2qa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED250487A7;
-	Mon, 14 Oct 2024 14:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C40487A7;
+	Mon, 14 Oct 2024 14:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728917963; cv=none; b=I6yP5wp3cXmePJ5VSFP3SQ9p6UfsrFMG5Tl3Xt689j/DNmgFo+x9qYqZwMETt2yYlymN0D8Fisjx4OHAK5g9BJZqOqJDBxL2o92giWQxvWVqifCkPEIb8NxkuvSEB+6E9cPP8rneRFg0Py00+twSmxoDfkrQsdocT4athEnvuuY=
+	t=1728917955; cv=none; b=mQhriZffJwMpILkeE23T2mD4fa52Vikb8ICSJQTm51JPK+eABIkYfKjeWo37YiI97TVW6kZdLvH8QF6K4UuhR60DEmZmorXgwX5RBGhjcbJPv4hhfXc51UwiXGLemN18ugzoLy/0LjfVZJskh0Avl1Na+gZfltSNm1YnkpX12Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728917963; c=relaxed/simple;
-	bh=Dn19zreLRYH2na7zl/0Opm3qa+PxmwWRcIXTE94fpZs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d7HkFvP3opQoqR0I8321Octs0HH0z1bblVbHtqBPw6duujbDMGdEhRLb1KkmMWd1J9GBqY6M7pzhP9uIySE9LFi0iYFFQSvd6s9oYXFsQQyBL4w1zCaR8LNsS2rmcv3XcBQ9NfJihW1tfYJIoj3iXmeo3JQLQK3Cx0RQs0Uqzq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XS0h64Rc0z10N2f;
-	Mon, 14 Oct 2024 22:57:26 +0800 (CST)
-Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 01DC31800A7;
-	Mon, 14 Oct 2024 22:59:17 +0800 (CST)
-Received: from huawei.com (10.175.113.133) by kwepemm600001.china.huawei.com
- (7.193.23.3) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
- 2024 22:59:15 +0800
-From: Wang Hai <wanghai38@huawei.com>
-To: <justin.chen@broadcom.com>, <florian.fainelli@broadcom.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <zhangxiaoxu5@huawei.com>
-CC: <bcm-kernel-feedback-list@broadcom.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <wanghai38@huawei.com>
-Subject: [PATCH net] net: bcmasp: fix potential memory leak in bcmasp_xmit()
-Date: Mon, 14 Oct 2024 22:59:01 +0800
-Message-ID: <20241014145901.48940-1-wanghai38@huawei.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728917955; c=relaxed/simple;
+	bh=QMxEa9KS91llBNuBhYxvltZz8R0h14m+FTfLKJRC7Bo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QMyjCsbUp9mn0bMz00EpRC75JTkVS2WtEx00/L7frCIEA0xfcmR1ayKHkOfoSnbnNwAuJlftOUh1gdRBKqVrHimE6KXvVri+avuIsPxVrPiKPvtVOKXiNHyzYL6SS9c8iAzthcZZKu5rdchGXaEVJI/x9x9IRxaeL4Gkp0PtB84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnL1L2qa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B15C4CEC3;
+	Mon, 14 Oct 2024 14:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728917955;
+	bh=QMxEa9KS91llBNuBhYxvltZz8R0h14m+FTfLKJRC7Bo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZnL1L2qa90JvfcbUJ+Am75lhuDhToGbuHKxT0u64Bu3Ey7pDnYzJ6O7xgjuqiNAwO
+	 7Ft2SF5QPFJgGEh6P74IZoUEc28tj3xDo2fUOq9pz3S5qa7utVeCji4Ws80MHkAogy
+	 w1qVcft9ubrFyUeTG6LCUPYNsPqRl9dXUGiAJCT+ZApwuK7Q5SY2iGNor4j2KfX1OU
+	 X0Y8tJBKghJ1cyku1ph61qmKaDLP7kNKfD1uH9eg1VkxP+AZTzMd/xDM2B2s6Ysol9
+	 zwdywYR/jhdXO1BkPFmkmFnkq+Pi+PH4ogCesRkOinI40X4faUXF6ewUlU37pu2zMS
+	 ihRAhAaRyOPQA==
+From: Christian Brauner <brauner@kernel.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] coredump: add cond_resched() to dump_user_range
+Date: Mon, 14 Oct 2024 16:59:07 +0200
+Message-ID: <20241014-ortung-brombeeren-5793cd93604e@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241010113651.50cb0366@imladris.surriel.com>
+References: <20241010113651.50cb0366@imladris.surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600001.china.huawei.com (7.193.23.3)
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1116; i=brauner@kernel.org; h=from:subject:message-id; bh=QMxEa9KS91llBNuBhYxvltZz8R0h14m+FTfLKJRC7Bo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTzGu6x4hDlv2qx++1be/c1i57P/Gbkksc4xZzvo5Fqy Z2DRSfXdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE+wEjw9/CT6e/eKbcXxY5 S+J/za55eskp7/6vCGHL4ln19fKfK0qMDJdEheLW75MJ7926Z1efMf/OGx1VmnsqzRzf7Ws15Cx bzgAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-The bcmasp_xmit() returns NETDEV_TX_OK without freeing skb
-in case of mapping fails, add dev_kfree_skb() to fix it.
+On Thu, 10 Oct 2024 11:36:51 -0400, Rik van Riel wrote:
+> The loop between elf_core_dump() and dump_user_range() can run for
+> so long that the system shows softlockup messages, with side effects
+> like workqueues and RCU getting stuck on the core dumping CPU.
+> 
+> Add a cond_resched() in dump_user_range() to avoid that softlockup.
+> 
+> 
+> [...]
 
-Fixes: 490cb412007d ("net: bcmasp: Add support for ASP2.0 Ethernet controller")
-Signed-off-by: Wang Hai <wanghai38@huawei.com>
----
- drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c b/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-index 82768b0e9026..9ea16ef4139d 100644
---- a/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-+++ b/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-@@ -322,6 +322,7 @@ static netdev_tx_t bcmasp_xmit(struct sk_buff *skb, struct net_device *dev)
- 			}
- 			/* Rewind so we do not have a hole */
- 			spb_index = intf->tx_spb_index;
-+			dev_kfree_skb(skb);
- 			return NETDEV_TX_OK;
- 		}
- 
--- 
-2.17.1
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] coredump: add cond_resched() to dump_user_range
+      https://git.kernel.org/vfs/vfs/c/89be051f0724
 
