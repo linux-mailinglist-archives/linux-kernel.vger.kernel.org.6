@@ -1,132 +1,99 @@
-Return-Path: <linux-kernel+bounces-364778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A0499D93A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:37:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E98FD99D947
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11141F212E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:37:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52C32B22038
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DF41D14F3;
-	Mon, 14 Oct 2024 21:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18BF1D8A0A;
+	Mon, 14 Oct 2024 21:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r2tK3ENy"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="AOIZw3b6"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DCB26296
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FD01D1518;
+	Mon, 14 Oct 2024 21:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728941815; cv=none; b=UzkaafEXq6n01CDjK/dHyWNd5giNM6g9zrIhHOdQQ1H0kLvBtw3s4CX92icmzen6rPcaV8mPBOcsjcZInjnnREi3lezuQryTG5NSUCZz+gAr7AF56BMOSmvQFN13w0+jrZHbh76ulpcygEIm9sDCxQUADPShB/jCfRkJJOX3zW0=
+	t=1728941842; cv=none; b=km1ezKOuR2BqFO0SWQpURF3RchwlTruPJHDICX4pTlRgdtEu3FlL159wI3qo929bPqCEDfIBxl4wmFGdLIpemTyqe3zGZnQfwgRG7vYBIAVWkBB+/2lROfXL6RirIpj0EauDfkZ7WhNM+ZXrjiL+INX/n0ZWpbiK6FfdvIzOOuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728941815; c=relaxed/simple;
-	bh=k4SFlVjh+uR65uwdgKDRqHhs8xqLl0Ct7TG7dQW52lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=owXgy1YBnghiQLbReXoo24Kgdj1jiDB3Ak5APMqbrZUYZ98fVEPfN85L2JcdZH9Fupkje3GCHh0kaWCVC/h4c2gkmGn7AN3c30hqIk/7ZRuWQrcOMIBJ9YhsUiw/JoE1Cyj30+NKympoCypfhkDFGDnvuwQKFMoIfMBxFRxGWxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r2tK3ENy; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99650da839so820261566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:36:53 -0700 (PDT)
+	s=arc-20240116; t=1728941842; c=relaxed/simple;
+	bh=p/HRydk2WbbeV1Xsj4DBf6LGpuJs9jl6ySz3PNzKmWU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L8VRdBM2TO6IBk9oRrpPfywRDV3xUt9WebI6cFl5+DkaYkPJfbGnoye9cEhMy6H/vE3i5cf41Dzh2tVOVj51Qd1LrrhzhRtPRyfaZsi2neqyxKClAb77Ry8EjtfWe8W+euolKaLJFi9az6Mx7RCOPiz3PnRx+1kminPmDKrYcE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=AOIZw3b6; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728941812; x=1729546612; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aS5oHRHtEas82fi6dLQvcPoGTT6ij1fnB8J0TcYqkvo=;
-        b=r2tK3ENyMKvhrCAi7B1+Nfz/vQgmfUumEGaeN64F7XDwtJdB1HlrbmkFbY55dup8lE
-         E2dSqcbaVhJkNM5X8aJdgcQzUn3MST+uryw3S/Cqsh59egA1iVcGYsLH2ftMPsKYHELY
-         f77S1/zYmf/Bkfet+eQuvx5FDvh1/mCy+kzXWlnIb8RKQqnlSoLjIC0Nz9UBkMHCX8eb
-         BFDDBzQ6EMldAAzRYnJC5ylqzonKLkQHYbPlLBntZE3RBFiu4mzFglwJtlm9XCMb0kuN
-         hNK15wK+5GoyUPXByKgdGyRBQ7SD/TqrSFeaAX7EeLI78LzVnFnqo2R4cMX57VdopjBO
-         uhFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728941812; x=1729546612;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aS5oHRHtEas82fi6dLQvcPoGTT6ij1fnB8J0TcYqkvo=;
-        b=FH3bp53IizKOoI457QrBV84fjIaEwbmi7RObhn9aIzbdC8J2dpanECgk1d9iupZFti
-         WU4iCaHFH++TaihO6F9Z5VY70eaH38paCE43lVB+9h+BHhICPLhC1aPKQ8laY+j7kfUL
-         jTURpjvgndV9+WoaBzDHs/ZStaa5WrKZOqfbh/T7S5ByokcLJc/BWiUXjbyWiP/EO7Ad
-         dNLuVCxneDEmZrRdzj4TqkwOSZVXOyFNKZIrjJlMLt9oCsRTLld8dDL/Ih4VRojrp3I/
-         CbjfrhyiH+iMPhnI/zoUUfVYcbsI/GKodJdXRiHXwjb6LV50xFxGcBg3ZccfZh2RDbp7
-         mhcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpcVUKV3b/Xzm59QCb8lYG5pNAb/+XCIGsrm3d+BNcqg0aTAcLLPKv5P1/6I4pe7mmHBg1FFegZgfpW9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz55bGayH/P2fIstwwBCGv/c8/QzKAX9KqGFSE6JvvH5PrZpM2Q
-	znWxZIzYGWUXItq1SgwA/j9P0PsAJZzLHGFAYxQ3GlVMXjpJ+n9SfpzKGc6BTpQ=
-X-Google-Smtp-Source: AGHT+IGMbzqVMCN4nXkCJp0ZbA/DVg+/3LgMvva+vLk+OtvbPDG71diTtg6++8GyVXSdB/0w22sZkw==
-X-Received: by 2002:a17:907:e2d0:b0:a7a:aa35:408c with SMTP id a640c23a62f3a-a99e39e4fbbmr856093066b.8.1728941811683;
-        Mon, 14 Oct 2024 14:36:51 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a06169946sm260451066b.204.2024.10.14.14.36.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 14:36:51 -0700 (PDT)
-Message-ID: <6a060f86-82af-4d39-9ab8-a377650e6bf3@linaro.org>
-Date: Mon, 14 Oct 2024 22:36:50 +0100
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1728941841; x=1760477841;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=W3hd+4pFwwziUAi74TQ9zioclqFqUTYcF/v2j+nzP2M=;
+  b=AOIZw3b6LYLDxpP1OFY9GYEjDSS4nrkrD9eIacSM8TWOK8Tqi12XMotb
+   o6fc+1rrNUD0u4IPMjkhkkUa0nNOqz04nG38w2bCcIkq3Ja9V3c3FL8fp
+   NX/rsYpqF1Dq6UYyM7YlHKaphhrD9ysSDy1Wvv9CBC+cUCi0PieTC+iRU
+   o=;
+X-IronPort-AV: E=Sophos;i="6.11,203,1725321600"; 
+   d="scan'208";a="376100539"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 21:37:15 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:61276]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.24.95:2525] with esmtp (Farcaster)
+ id 68574c29-0a0f-4daf-83c2-8303d7174fd3; Mon, 14 Oct 2024 21:37:14 +0000 (UTC)
+X-Farcaster-Flow-ID: 68574c29-0a0f-4daf-83c2-8303d7174fd3
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 14 Oct 2024 21:37:13 +0000
+Received: from 6c7e67c6786f.amazon.com (10.106.101.44) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Mon, 14 Oct 2024 21:37:08 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <ignat@cloudflare.com>
+CC: <alex.aring@gmail.com>, <alibuda@linux.alibaba.com>,
+	<davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<johan.hedberg@gmail.com>, <kernel-team@cloudflare.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-bluetooth@vger.kernel.org>,
+	<linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-wpan@vger.kernel.org>, <luiz.dentz@gmail.com>, <marcel@holtmann.org>,
+	<miquel.raynal@bootlin.com>, <mkl@pengutronix.de>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <socketcan@hartkopp.net>, <stefan@datenfreihafen.org>,
+	<willemdebruijn.kernel@gmail.com>
+Subject: Re: [PATCH net-next v3 6/9] net: inet: do not leave a dangling sk pointer in inet_create()
+Date: Mon, 14 Oct 2024 14:37:05 -0700
+Message-ID: <20241014213705.99272-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20241014153808.51894-7-ignat@cloudflare.com>
+References: <20241014153808.51894-7-ignat@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
- konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
- vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
- Frank.Li@nxp.com, konradybcio@kernel.org, krzk+dt@kernel.org, robh@kernel.org
-References: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
- <20240927063108.2773304-5-quic_msavaliy@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240927063108.2773304-5-quic_msavaliy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D045UWA002.ant.amazon.com (10.13.139.12) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 27/09/2024 07:31, Mukesh Kumar Savaliya wrote:
-> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Mon, 14 Oct 2024 16:38:05 +0100
+> sock_init_data() attaches the allocated sk object to the provided sock
+> object. If inet_create() fails later, the sk object is freed, but the
+> sock object retains the dangling pointer, which may create use-after-free
+> later.
+> 
+> Clear the sk pointer in the sock object on error.
+> 
+> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
 
-As I read this the question jumps out "what is a subsystem" - in Linux 
-speak subsystem is say a bus or a memory management method but, here 
-what you really mean if I've understood the intent of this series is to 
-share the serial engine between two different bus-masters or perhaps a 
-better description is "system agent".
-
-Please make that delination clear - its not two Linux subsystems but two 
-different Qcom SoC bus masters right ?
-
-For example the APSS - Application Specific Sub Subsystem - where Linux 
-runs and say cDSP - the compute DSP on qcom SoCs.
-
-I'd rename this patch to make that clear - because "between two 
-subsystems" if you aren't intimately versed in qcom's architecture 
-suggests that a Linux i2c and spi driver are somehow muxing pins ..
-
-Really this is a type of AMP - asymmetric multi processing.
-
-"i2c: i2c-qcom-geni: Enable i2c controller sharing between two different 
-bus masters"
-
-And I'd mention in the commit log specific examples - APSS yes we get 
-but what is the other system agent in your use-case ?
-
-A DSP ? Some other processor in the SoC ?
-
-Anyway highlight one use-case for this AMP case, please.
-
----
-bod
-
-
-
-
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
