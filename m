@@ -1,265 +1,200 @@
-Return-Path: <linux-kernel+bounces-364271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1E999CFC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:57:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF4199CFD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E25AB249F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:57:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CBED287C2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C201C3051;
-	Mon, 14 Oct 2024 14:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9101B4F24;
+	Mon, 14 Oct 2024 14:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A8Cd7Hox";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D2kxP8TM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A8Cd7Hox";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D2kxP8TM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="S21RQ3an"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2059.outbound.protection.outlook.com [40.107.21.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30761AC884
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728917705; cv=none; b=PZq85uTXSit10V0dGW4IPn/IUKIQvsV0+UORLXVcj0fEE9eX4gKsax9AgZMz5tyyiCxcXDXryrcLqNWIekR04Le8WRNFr6AS/xBAQVtKaZl3LY5s9f9u41Djkg+IFt1jwXCUbL9NPrd1aoX/Kh1vzE5yH7B0ilvgYEi0NPLnE7o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728917705; c=relaxed/simple;
-	bh=1j89w/mcbIa859ixmIc+Chf2D395sYVECktWhbhTA10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q9odyE0AZI5/PhpUMl3oYCCmt8fY/wwRw0EwHkvWhUrNcPrTcDoMXTlQbchFRxAy4ZtpWx9gm/80eKcsAYrcgPh0P+CGMTcjW1/ub36mS6n24Zs1f88Hay+Dfv+0Ef7a1sAkv3c/gJARMxKf0VuGuMYiLCMyoCWvnaTRwOgGveM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A8Cd7Hox; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D2kxP8TM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A8Cd7Hox; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D2kxP8TM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0146D21D47;
-	Mon, 14 Oct 2024 14:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728917702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W8u9gbZijSd45DjThUUJz+yJSLX8ITYzCAOg+8vtfF8=;
-	b=A8Cd7HoxtEgUSE4BixmbeprkurMYm9+3Wc6kvNINAZKb04JrAGJNuu5VmZdHBDm+y/3UAd
-	ftrFhdBGM7gb96Cpo+NXvaPxSP1upW6G2ihqw/w/RmFmgXetsBosZ9Bb2cownFSPuvrpa0
-	lDnwI4FvwNvzfDoLjYI0c94cjtUR1g4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728917702;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W8u9gbZijSd45DjThUUJz+yJSLX8ITYzCAOg+8vtfF8=;
-	b=D2kxP8TMdF6oqs8X6+OwTMJs4zthHhWlfDhlZB8LYetfYLYQtsl+th6MaY+dBz9LChBCpQ
-	GVpSqBygfUI1mpAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728917702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W8u9gbZijSd45DjThUUJz+yJSLX8ITYzCAOg+8vtfF8=;
-	b=A8Cd7HoxtEgUSE4BixmbeprkurMYm9+3Wc6kvNINAZKb04JrAGJNuu5VmZdHBDm+y/3UAd
-	ftrFhdBGM7gb96Cpo+NXvaPxSP1upW6G2ihqw/w/RmFmgXetsBosZ9Bb2cownFSPuvrpa0
-	lDnwI4FvwNvzfDoLjYI0c94cjtUR1g4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728917702;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W8u9gbZijSd45DjThUUJz+yJSLX8ITYzCAOg+8vtfF8=;
-	b=D2kxP8TMdF6oqs8X6+OwTMJs4zthHhWlfDhlZB8LYetfYLYQtsl+th6MaY+dBz9LChBCpQ
-	GVpSqBygfUI1mpAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D84CE13A42;
-	Mon, 14 Oct 2024 14:55:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NMEFNMUwDWcscAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 14 Oct 2024 14:55:01 +0000
-Message-ID: <7726cccb-78f8-4696-ac7e-57598c35576d@suse.cz>
-Date: Mon, 14 Oct 2024 16:55:01 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BB71BDC3;
+	Mon, 14 Oct 2024 14:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728917737; cv=fail; b=rleSlVQ76Q1L/AW1v2ZIb4eLekNgiFv093NL4Csh5SoRQjaEXu+S/HDL0nh2LfULpKwByyxwCmX4HcPZkUF6aLWU8N65g+xETnoz3t3iv9M268T6dZGAKJLWVtluepnWe957roBu1R3Afl8PBaaUPSeETAphITampjj3qx1+6wU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728917737; c=relaxed/simple;
+	bh=5/GWsOHovA3JqT3lc2xUTZMP+vETRZAgI+JRDrmXMtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=pIFbpmWnAgGFcFqTNaPaGgbowHAcJD/dM1BCZV8/yI91a6eAV9EP7/MjGl8BMFi2DRv06i+cKQKNyl/TR9SGHcqrl8W7Ho+10Ap94wOKYWHEZUVZXplU3gCAmpHhfLvVw8BIyWfJQww8bZMD/DdoGxs5coVBr0tbl+Hk8BtqrIg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=S21RQ3an; arc=fail smtp.client-ip=40.107.21.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DQ4Ihp0B+Conk4pqAAKuH1vmAiGs9bQ7PykR3GoI+pwHw3KMchvQIVvwBf7MarQrMUmByyjDEyM/Gvw81d05lQyvr4bx4/U7kcgxQuPbSnWk+kNjQqo4mWcxyMbdKi/WeQVrQQ1Ck9le6ISAxI4CNJpR8vyLFA+8rmhNxe6gwC1Ac2h+VbAUohRjAbThO8LLaP97+lqs0aAvqTo+H5z6jNWizXSTCO50qwtAgoocT+jdVGVILO1AVw0v4j4rh9P4ek0ZdDVaWydKRiRj9zNbq+t7kJaw5gpJLl7iN4ykwpk00RxstGVEiNBUVdspjppIPHUx8WKg/V4wENcqZezA5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XL8R7AojCdk5uyr+cq96w1S6PT5gN+GtJnV4ryI0oco=;
+ b=lHOO0uKeK5watweARHxnheHIMcYq45lAz2epcbzgrigYY6tCWdPZ/6fqLD7qfcLHQG1s4nFsvYLemP7L6zJqqdxjFU72u7oamiqzMggVtVme9iJ9wizrn1AmsL/vUZDkgw75jVDP2BzLUaJlBmnWomgfCSDO2j7mUvGv65iMtFpjIJ1E/WqfbrPV9iEMCrarRxkAMGi6+Bx5Jb88qJ9c6ekT3qt70K3ybyvSU+k7v4MVTuG/xJ/SNvAzeuUhNugjeZT+l9caa1tlmKS5TGzmEW72mX7DuiK90RxtVq0jvzZvTXbnNLSpTqh7VyMGdc5xSswUJ+dWhL12RAYtSewHfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XL8R7AojCdk5uyr+cq96w1S6PT5gN+GtJnV4ryI0oco=;
+ b=S21RQ3an5ZeXO255sJrrmgVElE2PZixyNDGMMm0A9HdEAz/1MBj5kZt8w5Tlsel1DmKV4EFWs+8wpzqKFqIvtYKTTjoRo7iXA5iNa5Sic4sviBCFfQuFOjdeBUlwL79lelH5txjn8gSyrzFWoARk3Hvt48e3iLSE4R3OFKrRAe1xU7O7U3qpwC7zuelBFZal4JFJMVzZHvKIF1AtPZ0rqcRvMiZMuwUkrqkg4wl3uEK0yyJU1groHgavTyNILIUxCaYKA1lW01+0r4edGAzsG/vItq0HmVP5i0SBggEHHsl1jP7/qakDeH5ID+NkT6isNSG/IA4XrD6zdlpC97LGsA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AM9PR04MB8423.eurprd04.prod.outlook.com (2603:10a6:20b:3e3::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
+ 2024 14:55:32 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8048.013; Mon, 14 Oct 2024
+ 14:55:32 +0000
+Date: Mon, 14 Oct 2024 17:55:29 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: =?utf-8?B?UGF3ZcWC?= Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next] net: dsa: vsc73xx: remove
+ ds->untag_bridge_pvid request
+Message-ID: <20241014145529.zyki6k6yuob4nyop@skbuf>
+References: <20241008104657.3549151-1-vladimir.oltean@nxp.com>
+ <CAJN1KkyFgHSDydUN5CBhDpEkG2kEJd5iaA1TK24ynjYpVvK7aA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJN1KkyFgHSDydUN5CBhDpEkG2kEJd5iaA1TK24ynjYpVvK7aA@mail.gmail.com>
+X-ClientProxiedBy: VE1PR03CA0014.eurprd03.prod.outlook.com
+ (2603:10a6:802:a0::26) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/slub: Avoid list corruption when removing a slab
- from the full list
-Content-Language: en-US
-To: David Rientjes <rientjes@google.com>, "yuan.gao" <yuan.gao@ucloud.cn>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, roman.gushchin@linux.dev,
- 42.hyeyoo@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20241011102020.58087-1-yuan.gao@ucloud.cn>
- <c7b03b1e-e000-279d-f845-5808653ac3bf@gentwo.org>
- <i5vqm2ucpjzfbeteamphorouzoep3qxmh3prq5d76g4sazjarf@d3rfku3r5735>
- <572f7473-1781-388b-103e-d4382f58f2f9@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <572f7473-1781-388b-103e-d4382f58f2f9@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gentwo.org,kernel.org,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM9PR04MB8423:EE_
+X-MS-Office365-Filtering-Correlation-Id: 906a69e8-be88-4ddf-8b64-08dcec6040a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OUtXazdJeml6UmZnUjdRdnRPYUg5VklPb1d1b3gzMXlwaVlPVHJGSko1VUpE?=
+ =?utf-8?B?T3g4MTYrSVd2Y1c2Qk0zaFBlRVczbzd3NEVJZkZsYVIzRVNKaE1pZVFSOXg5?=
+ =?utf-8?B?NzN5dHRDS3pJTHVqZStkcTNGY3BwMDdwVzRnby9qdHV1SkRGVnBwNjNCV3Fq?=
+ =?utf-8?B?cGtHMkpJMXJkb1JtZzN5L0lQci9GL3FoUGsxTG1ob2lSc3ZvN2NRdmU5VHFy?=
+ =?utf-8?B?ekZsbjRpa3hvNEZVdU9pOG9GeTlORE5BazVOc201TXNUdGQrejVIQ1hOc1oy?=
+ =?utf-8?B?ci9RNG9FYVVFVU1QejA3N21ZY2dna2dJcmM1Z3QrVEZyT0lHNW1EYzRHckFz?=
+ =?utf-8?B?UWp5b1JONTFZK3J4L3Vvd2VjREZiSU9RU25WM2VFbWpDTlBsNGdsSkxYZGZu?=
+ =?utf-8?B?bTRyb2xYa2lyelV0aDBxZHlJVnVxZC9NSzVLWlBMNU5DdDVLcmJjOW92UzNv?=
+ =?utf-8?B?RjRjUng1Vnk3Wnd5ZmNHemtvR2pSQWppUVp3SVpsaHdBL1lYb0h1ejN4Ym9I?=
+ =?utf-8?B?RXJ0VVZKNHhzNTBpemxSRlpEUzlyNVQrK0VNeHltMnU2TGgwcVpaa3hvN3lx?=
+ =?utf-8?B?d1NiaFk2TDQveUhlV2FEMFIydWNXMlhkRm5NNm15ZlJPYU13Nmx5dzBndlR0?=
+ =?utf-8?B?V3lrb1V2SHdoa1djR3VCNzk2UHd2SkZtTXRKOWdIYk4vTGhTUFpzWitVaUFy?=
+ =?utf-8?B?SC9LSmZFaTU0MnNRc0VoWEE5LzlXVjUySnRxRDFrdGwvQkFwMkdEODJlSWJR?=
+ =?utf-8?B?RmdJSEw1bVRpNzFGN1hHdFozc0ZJbEo4NENXcHh4UWxzK3YzMUFUM2UydEpM?=
+ =?utf-8?B?cHorRFIwWGg3YWtKdlpNMGUyYVNVdk4rOW5MczFrUmI1YjRJeXo3NnNpZFdk?=
+ =?utf-8?B?aVY5ZlZFVUNURHZ5d0U1Qkpacjkwb2lyYmJPYnpobXNQZVdzM1JPejZmaDQ1?=
+ =?utf-8?B?Qy8yaFZiR3VsNTU3T09kWFZpbGFWOTNzTDdwRXNyOGduZEdDcE9scGF0cVlt?=
+ =?utf-8?B?VGhWN01nam1GYnpKNW9CZnlGRVJKdXh2cXpyWnZNOXozdWd6LzJoUDRHNVM3?=
+ =?utf-8?B?T0s5Qko4MlNVOVZhSTZobndWMkVRV3NuMTZvcGZadEQ5M2dhTVFWU2IxTzc4?=
+ =?utf-8?B?eGJwb1VXRHBNenVUY0ZNNVhGYkxydGtDZEpCWEFqVlRSL0JjUkpwWkttT05m?=
+ =?utf-8?B?ejlmYjRKUkhROFg3WXZvTXhDMlZTV1JVaVFyazhuTDdnT1AyU1dnUGM0Z09M?=
+ =?utf-8?B?K0I0ZUxlaGQxOEIwQ0FyNDMxUTVIdW5kRlNscUlYTjlwc0gveXg1Y3ZzZmZo?=
+ =?utf-8?B?MmZqSnVRV25wMmV4YkRmZDVHeHk5VFFYdlVsQlZmSCtoSFB6MXdlNnNrQldo?=
+ =?utf-8?B?cUdTWndPVThRQWlqNmRNZThUcTgyM1dmQnRSVkhwYVMzY1dmVEx0akVuWmVo?=
+ =?utf-8?B?d29RcGN5REFCcU9HVjAwd0FNRGE3Y2pldkdtSXYvbVp0cFB4WWZvQnNDR1BL?=
+ =?utf-8?B?QllFZUpKeWRSdlh1TFkyanNlWG5WL3M3a2NvcURUa2s4VlRxc0VzVmI4K2pR?=
+ =?utf-8?B?NndZUnZXWjNCaVBlVFJoaDFTOFI2Q0srQ2Q5STFOdjI0REplcXJjRkRNWWIz?=
+ =?utf-8?B?YUZlKzY3RUNqckhLc0w3eXZ2dmxpUlNtaUoxS1ppSjFTTnJpZW5aSXZPRGgy?=
+ =?utf-8?B?cVlsNDlxb0RpV2lWalEvU3lXK2hDd2VQbXFVTVpVWXBYaVR1MU1VQ2NnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R3pCSDAyRUNGQk8wbmJCZ3Z5WGRXWEptTkFYd1l2SyszdDNVY1FVNVdyOVlK?=
+ =?utf-8?B?ZG1WOFplNnpTRVJoNEF5Vmg3cHd6OXVmQVpSKzMyTHhXREt5eU1NR1dFWjJw?=
+ =?utf-8?B?c0F4TVhqcHJlekFNczRXalZoZW51bWdIeHIzMWtobXBGcmVMK3RsYm5PMEFG?=
+ =?utf-8?B?WjVqVTZqSVNVQ3pxSGhueUVjRjA5NFdFSEFNWk9NbDNvUkhlRkFxNEdHa1lN?=
+ =?utf-8?B?QzlSMFBrdVE5azBMalh1MlVKS0pIMktNVE9aOVBtaUhzZnBMeDdsK3lOZ1A1?=
+ =?utf-8?B?SVVIcXg5dUN3Mmc2N1ViS0VoSURIOEhPbyttVjEzTmdQVjRZOUwxUWxmaFE0?=
+ =?utf-8?B?bWQyM3duQmVGblpwRi9TdllhSCtBQzE1Z01Qc3ZWdC8reE1uSzlhZFhvalQ4?=
+ =?utf-8?B?UzcwSnIzKzNsQnFIM3kvcWdHOWs0Y0tzSm1RUkNwSWZEcmw3YVo0K0MzRXVa?=
+ =?utf-8?B?bUNtYWJVNlBsQzYrdEpHQUhCUEhZb2x1TzMvZlNvWnJsdTJOTjNTaFlsSTln?=
+ =?utf-8?B?QUZpTlpJMWlGOXZqMzF0NTFyYWJjNzZDOS8veHRxZWc1RHV3U25tOXdHdHBZ?=
+ =?utf-8?B?MlQxT2FPZTU4T1lZN2d1bVE0MGRoTzdNU29sbDh2ZmRObTU3bEkrYTdNbDIz?=
+ =?utf-8?B?UjRrSU9TM1ViTFg4dm1qaWVKVUQ4QkFtVm1qOHEzVWFaNERGc2RTd3JqaW41?=
+ =?utf-8?B?Q3d6WVo3Ulh0dUJOOTFMcmx2RGgrN2Y1Z0ViOW1NUUpiSmxPYjdVNUtHcXhp?=
+ =?utf-8?B?UmZrc3YvZkVpcVJiankrMzFpWVkrenBPMWcxeHNJdExpMnFJbkpYQjNDSEk5?=
+ =?utf-8?B?TUI4ZWszRGJockJSM1JXUk9aUlVkWVdDalJjUHhuN3FTQTZoSXQ0djJKMjZY?=
+ =?utf-8?B?MDJvR3h5OTFqazNSWERlVUZUK3dsd1VQdG9TQU1oYjMwYnRmdFBjRXEwcVY0?=
+ =?utf-8?B?RjBZZXNNUDZSNnhGZEo0OGd3R1Zzb1dwbzRyV3hHWkZBdnFqK0Z3c3VCcVNF?=
+ =?utf-8?B?RHNQZFJTSU5GVWx5SW1nUUhpU2xJaFBZbERIdnR4R1NRdW1NblY5WEJUK2pB?=
+ =?utf-8?B?NVEvbkZDOFdvb2JPVXBRMFptN3o1cUNvREM5RDJMcWl6R1J4MTJRUnF4ZjRN?=
+ =?utf-8?B?YjY4NFpyMkN3SjE0VSswSGxLbXl1VndodmJLa0t4MEdaZ0pOc2NUZFAzNVRn?=
+ =?utf-8?B?cW96YU1NTGVtaTVMV3FXd1BHaEVqcVY4WkVaZy83dFJPdlFnMDJoY1ZQOFls?=
+ =?utf-8?B?WndHRHl6Z1YzQzVOdXNXaXZSNlZVQXFBK2dxbmZRdVhPL2o3aVhCclRJcDdS?=
+ =?utf-8?B?dU9ucXN6NXVrenE3clMxbXZQbm5HbnU5NlJNNGRlaVhhb1FSdFc1RlByTU9G?=
+ =?utf-8?B?T01wQlJHajhnSjBzLys2ZlIycFUxVkk0RG9BZWtXU0gzZkpyekNyT3pqMkRs?=
+ =?utf-8?B?c0paZElMSWdONGhEVFNTckJXWFdxc3RCVENLRXN2cHZkVC9OeEFTVXdKaDB4?=
+ =?utf-8?B?NVorNWo3dEZLR3d6RjNwdXRDMFlRMjloc0dSZWcxU2xqZjV2NkpVeWNkT0Vs?=
+ =?utf-8?B?OVlFT1VmN09uSlBVR01vVjdTTDBQNXdFaXJyRWhtTEErc2lkdGFGUXBRU1Fk?=
+ =?utf-8?B?VDd6ZVdKSFhaV24wQXZoQmRyZ3ZRek03NGZ3c2R0SFVlanoxMW5oMTlpUEEx?=
+ =?utf-8?B?d21sZVdFTTlrdkpBYktBck1mNm0xRGJrSFRaYjJjTzQrTU51Wnprd0NDZjRK?=
+ =?utf-8?B?bGN5Y3duZVRpMjZNeHJ6Z2dNcS9HbWFIRXBJdVczQ25Ja21GWUU2S1Y3MnZI?=
+ =?utf-8?B?OVRCV0tQd3hpL0JPNk1OZzU0T2E5c0oxSG40TktUU1BRSUtiK1BQMkE4WUZw?=
+ =?utf-8?B?QzNCd0t6eFBUcTBTUFNubW1PMVpicUdWS1lkdE9JTi9SNHJHVi9MeFQwOWR3?=
+ =?utf-8?B?ZnM5MzF0cmxYQlpDVmJXS2trNVBlNDc2TCtTdUxsZERxcENjY2RSdmNTT0lB?=
+ =?utf-8?B?MjN3YTlyNTc3NitXVzlHZGpTZExVR0VJUE04THBsK1NCMkNsL1RsamptcWRZ?=
+ =?utf-8?B?MWtPWVp6OStyYVg2TExWbFRVR1EzTDUrMWhBVTFJZzRJV216V2ZVMGI5Ni9G?=
+ =?utf-8?B?NmdKMDhNK1YvRzBOL3p5ZnJWWUpLaTA4d1k4TTNIOEZoMzR3ZkF6VktRajEr?=
+ =?utf-8?B?ZGc9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 906a69e8-be88-4ddf-8b64-08dcec6040a9
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 14:55:32.7994
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1A4f2s+3HoxeM2uq2gGhif632UDjHqiLVq7LqLZ/1EduGierRCShWU0lM+2FYfF1i4pC+tdSNAY7TT7z0CEoDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8423
 
-On 10/13/24 22:46, David Rientjes wrote:
-> On Sat, 12 Oct 2024, yuan.gao wrote:
+On Sat, Oct 12, 2024 at 10:23:35PM +0200, Paweł Dembicki wrote:
+> wt., 8 paź 2024 o 12:47 Vladimir Oltean <vladimir.oltean@nxp.com> napisał(a):
+> >
+> > Similar to the situation described for sja1105 in commit 1f9fc48fd302
+> > ("net: dsa: sja1105: fix reception from VLAN-unaware bridges") from the
+> > 'net' tree, the vsc73xx driver uses tag_8021q.
+> >
+> > The ds->untag_bridge_pvid option strips VLANs from packets received on
+> > VLAN-unaware bridge ports. But those VLANs should already be stripped by
+> > tag_vsc73xx_8021q.c as part of vsc73xx_rcv(). It is even plausible that
+> > the same bug that existed for sja1105 also exists for vsc73xx:
+> > dsa_software_untag_vlan_unaware_bridge() tries to untag a VLAN that
+> > doesn't exist, corrupting the packet.
+> >
+> > Only compile tested, as I don't have access to the hardware.
+> >
 > 
->> On 24/10/11 11:07AM, Christoph Lameter (Ampere) wrote:
->> > On Fri, 11 Oct 2024, yuan.gao wrote:
->> > 
->> > > When an object belonging to the slab got freed later, the remove_full()
->> > > function is called. Because the slab is neither on the partial list nor
->> > > on the full list, it eventually lead to a list corruption.
->> > 
->> > We detect list poison....
->> > 
->> > > diff --git a/mm/slab.h b/mm/slab.h
->> > > index 6c6fe6d630ce..7681e71d9a13 100644
->> > > --- a/mm/slab.h
->> > > +++ b/mm/slab.h
->> > > @@ -73,6 +73,10 @@ struct slab {
->> > >  						struct {
->> > >  							unsigned inuse:16;
->> > >  							unsigned objects:15;
->> > > +							/*
->> > > +							 * Reuse frozen bit for slab with debug enabled:
->> > 
->> > "If slab debugging is enabled then the frozen bit can bereused to
->> >  indicate that the slab was corrupted"
->> > 
->> > > index 5b832512044e..b9265e9f11aa 100644
->> > > --- a/mm/slub.c
->> > > +++ b/mm/slub.c
->> > > @@ -1423,6 +1423,11 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
->> > >  			slab->inuse, slab->objects);
->> > >  		return 0;
->> > >  	}
->> > > +	if (slab->frozen) {
->> > > +		slab_err(s, slab, "Corrupted slab");
->> > 
->> > 
->> > "Slab folio disabled due to metadata corruption" ?
->> > 
->> > 
->> 
->> Yes, that's what I meant. 
->> Perhaps I should change the description from "Corrupted slab" to
->> "Metadata corrupt"?
->> 
+> Thanks Vladimir for this patch. This fix is required for the proper
+> functioning of vsc73xx.
 > 
-> I think the point here is that slab page corruption is different from slab 
-> metadata corruption :)
-> 
-> The suggested phrasing, "Slab folio disabled due to metadata corruption", 
-> sounds good to me.
+> Tested-by: Pawel Dembicki <paweldembicki@gmail.com>
 
-What about:
-
-"Slab disabled due to previous consistency check failure" ?
-
-> 
->> > > @@ -2744,7 +2750,10 @@ static void *alloc_single_from_partial(struct kmem_cache *s,
->> > >  	slab->inuse++;
->> > >
->> > >  	if (!alloc_debug_processing(s, slab, object, orig_size)) {
->> > > -		remove_partial(n, slab);
->> > > +		if (folio_test_slab(slab_folio(slab))) {
-
-Your patch adds add_full() here as in the previous versions. I wouldn't do
-it anymore. Thanks to the frozen bit check in check_slab(), no further list
-manipulation should happen that would trigger the list poison being detected.
-
-Adding to full list would rather mean each sysfs-triggered validation will
-reach the slab and output the new slab_err() message, which is not useful.
-We want the corrupted slab to stay away from everything else, and only be
-informed of further object freeing attempts.
-
->> > 
->> > 
->> > Does folio_test_slab test for the frozen bit??
->> > 
->> 
->> For slab folios, slab->fronzen has been set to 1.
->> For non-slab folios, we should not call remove_partial().
->> I'm not sure if I understand this correctly.
->> 
->> Thanks
->> 
-
+Thanks for testing, Paweł, I suspected as much. I will resend a v2 to
+the 'net' tree with your test tag and a Fixes: tag. I hope I caught it
+early enough that it didn't cause too much trouble.
 
