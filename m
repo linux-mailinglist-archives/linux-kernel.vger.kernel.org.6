@@ -1,136 +1,116 @@
-Return-Path: <linux-kernel+bounces-364564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101AA99D62E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 941FC99D632
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B6C01C21580
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:11:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1A01C217D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD0D1C82F4;
-	Mon, 14 Oct 2024 18:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F349B1C830B;
+	Mon, 14 Oct 2024 18:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Fzxm98e7"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzEo7rHp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB111B85E2
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 18:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF371B85E2;
+	Mon, 14 Oct 2024 18:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728929455; cv=none; b=EW+SyCqb9iUoVqjEm12tg3yiermjuoLR5OmjCqis4Bz0i9ImUY7ItID0dVxz5t5PhBJrIFO9UhYMDZBFIho01Faod2n7WmKxgiAXpuhWD7HWQP832QM4xbCm23XTEhPgBP9+enAFHginoFATpa9VP+j/h0nOAWQeG9v57YXAgnw=
+	t=1728929594; cv=none; b=dfbDTV/WTUgyFyNd6ep20w33SHs8wh9/vYfOC1Qzg28TkdpF7dBnul5KeIFZR/gIo/z68PUcg3v+3ViabUY1wR9Nly4B4GkzY4A5k6BVB7L5dzEbP8uWsQOureC/F3eA3saR9vCsp9DWezr+7gooilSQE0fj7KRGtVgDiitLeto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728929455; c=relaxed/simple;
-	bh=VypHTcUVue86TxJAIpJGKBY4Q20cHX/mFiRLyRntN9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LFWAwy4Rqokp2P4bOWxJleegzBJHuikrSJkna5YGojYebRzyicJHMZpxlthIfIJ+L8LMQlNAWglFukEf/etI7SaN6uelnCGg4OFcDsr0/uozNHIpu1LH1m6DiD6FeJajrM3TOpuqhNIlJ/BZQ/hPc72+R9uITN7EntQiehdlJHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Fzxm98e7; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a0084f703so282710966b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728929452; x=1729534252; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pHeyIJea3ALM6cFmjzsfw35tNiBlMHJavKPAe3QhB+o=;
-        b=Fzxm98e7W84vZExoLW9yGRcb5j/rZtMnd0NN8S7bavWsli2U5hD99JxoX6ikmckbl3
-         eKU4aWGviqnkgW8uz+4kPetG5wFlGAtybbmGsTNarlgcVWSPHgZV4uEfGc2qea7cKluk
-         o1BjmmidfdTMNgsJ3M7oiKmkHgmOhxW6HN5k0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728929452; x=1729534252;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pHeyIJea3ALM6cFmjzsfw35tNiBlMHJavKPAe3QhB+o=;
-        b=sN79HScRnqv9HxEoJRbwkd5qjZYW0aOvaCQOQH42kLKk8fmoL0Q2QDWnaoA8Vdzu4g
-         /MbqJl3UNkCmINC3f00sDZs2Tdmu8XlIc+GkQmT+2/7MP+urAVNdGVfNVL961eEJH/d5
-         rW1JZcSeQ35BsyoNIw1JBBgwnDtD/6fw2MxUV9ZFwp5+9stYJNCDIdRIbHwvEmgazIZl
-         eQja3uH6USfVsOGEVDVtrTHuPIcck17ZaeKUG0NAIE7N2BnLilrjmDyTLKKrStFJyW05
-         pbxbSib9E0axKwr+G3Gkr8sKRIdQ+ntThTY4HrpTqRFmiRG5mUydPNiamlqo6uwtR19n
-         RaSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmUP89MxSwpfI2B3q0dS/MTdAvaTvU1cNSRdGEW5U+161H9Iv/tC1SMpdlptQos/o0bvL5GS3zseg7Dzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlnrZCn6gsgBsOc/FHCXbnOAjz6LwgvLiLLZvdBG5ZVknsXbrm
-	phbV+aILouSgmREAJZj9bNJxl5VyRYZRovjJkNAis/rg9h8iGmEYaoj5SQ00sUKccnNeJJmSTV1
-	5JD+aHA==
-X-Google-Smtp-Source: AGHT+IFbOdQSa+6pmoWpEhRknTjMADLOA0PU/sM5DgZTtLkGmuft7JJJfqTqx5oMHoE4O3/KUic8Fw==
-X-Received: by 2002:a17:907:3f1d:b0:a9a:161:8da4 with SMTP id a640c23a62f3a-a9a01618eaemr602284266b.55.1728929451948;
-        Mon, 14 Oct 2024 11:10:51 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99eec087f4sm365359066b.81.2024.10.14.11.10.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 11:10:51 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0084f703so282706166b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:10:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBWnIjqOgEd8KFpBfaiDzJlfjPDt+F/D1lOJQN3f0P9b/s0pFhFYRdTkmwy+C5Ur2z9fn67Ry9wH4Jiok=@vger.kernel.org
-X-Received: by 2002:a17:906:df46:b0:a9a:daa:ef3c with SMTP id
- a640c23a62f3a-a9a0daaf058mr273908566b.14.1728929451045; Mon, 14 Oct 2024
- 11:10:51 -0700 (PDT)
+	s=arc-20240116; t=1728929594; c=relaxed/simple;
+	bh=nAMNq9di7aJMeg6Q0KPWYdeTOE2mztm0/Afx8ugwNTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8equAx0+OL8sxjvYbyTxZV0iGRx2dkwchfobp80hT8DgDBVi2kfReLDrL089/YY/qaVj7gxkfj8kQTiCkB4bxXhgVYDzop393RBThDu9k+PMtrb1XIIEV205+nGvEFHdzkgoqE4unFG9U8wn4DE5t1lbR6ps4zFDf90OFWeebQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzEo7rHp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5633C4CEC3;
+	Mon, 14 Oct 2024 18:13:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728929593;
+	bh=nAMNq9di7aJMeg6Q0KPWYdeTOE2mztm0/Afx8ugwNTY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bzEo7rHp4KrNvu35axVfnu5G/hih8dG7eUDYpWFhivoUeBFqY8KbaUVFcHCMwmRxv
+	 rprQTUaLaY1sc4mUSVHjzmfxy+z0YC2lzWifzjcwY33QsjkEqTKuRW/P69XNOawCqa
+	 YmLbRJPkNqG/kgrjK2jYzEZEZMlkPaTo1HRq2dNc/pFeltOlGkzVeCmX7Sa9Ax/Tox
+	 kC4mF1QyPnMypvnmstw/82NgeY80qBsIPmFjdDsGFioMeO9gEP+7ViESwo917uzG9q
+	 Q0JzVI/gPUQK8UWFwZJ3MFfT8RjEu8ifhlqlXbdmISaNV87QgqGHWr8rCYc8K5MJFF
+	 iTxHiC3eLGNBQ==
+Date: Mon, 14 Oct 2024 11:13:11 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm <linux-mm@kvack.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH v5 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
+Message-ID: <Zw1fN1WqjvoCeT_s@google.com>
+References: <20241010232505.1339892-1-namhyung@kernel.org>
+ <20241010232505.1339892-3-namhyung@kernel.org>
+ <CAADnVQLN1De95WqUu2ESAdX-wNvaGhSNeboar1k-O+z_d7-dNA@mail.gmail.com>
+ <Zwl5BkB-SawgQ9KY@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014125703.2287936-4-ardb+git@google.com> <CAHk-=wit+BLbbLPYOdoODvUYcZX_Gv8o-H7_usyEoAVO1YSJdg@mail.gmail.com>
- <CAMj1kXFu=fABi+d=A5PL2yNx2b70toT9KtDfnvU=8mmUBHMutg@mail.gmail.com>
-In-Reply-To: <CAMj1kXFu=fABi+d=A5PL2yNx2b70toT9KtDfnvU=8mmUBHMutg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 14 Oct 2024 11:10:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjk3ynjomNvFN8jf9A1k=qSc=JFF591W00uXj-qqNUxPQ@mail.gmail.com>
-Message-ID: <CAHk-=wjk3ynjomNvFN8jf9A1k=qSc=JFF591W00uXj-qqNUxPQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Use dot prefixes for section names
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zwl5BkB-SawgQ9KY@google.com>
 
-On Mon, 14 Oct 2024 at 10:44, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> We have this code in arch/x86/Makefile.postlink:
->
-> quiet_cmd_strip_relocs = RSTRIP  $@
->       cmd_strip_relocs = \
->         $(OBJCOPY) --remove-section='.rel.*' --remove-section='.rel__*' \
->                    --remove-section='.rela.*' --remove-section='.rela__*' $@
->
-> Of course, that could easily be fixed, I was just being cautious in
-> case there is other, out-of-tree tooling for live patch or kexec etc
-> that has similar assumptions wrt section names.
+Hi Alexei,
 
-I'd actually much rather just make strip_relocs not have that "." and
-"__" pattern at all, and just say "we strip all sections that start
-with '.rel'".
+On Fri, Oct 11, 2024 at 12:14:14PM -0700, Namhyung Kim wrote:
+> On Fri, Oct 11, 2024 at 11:35:27AM -0700, Alexei Starovoitov wrote:
+> > On Thu, Oct 10, 2024 at 4:25 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > >
+> > > The bpf_get_kmem_cache() is to get a slab cache information from a
+> > > virtual address like virt_to_cache().  If the address is a pointer
+> > > to a slab object, it'd return a valid kmem_cache pointer, otherwise
+> > > NULL is returned.
+> > >
+> > > It doesn't grab a reference count of the kmem_cache so the caller is
+> > > responsible to manage the access.  The returned point is marked as
+> > > PTR_UNTRUSTED.  And the kfunc has KF_RCU_PROTECTED as the slab object
+> > > might be protected by RCU.
+> > 
+> > ...
+> > > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RCU_PROTECTED)
+> > 
+> > This flag is unnecessary. PTR_UNTRUSTED can point to absolutely any memory.
+> > In this case it likely points to a valid kmem_cache, but
+> > the verifier will guard all accesses with probe_read anyway.
+> > 
+> > I can remove this flag while applying.
+> 
+> Ok, I'd be happy if you would remove it.
 
-And then we make the rule that we do *not* create sections named ".rel*".
+You will need to update the bpf_rcu_read_lock/unlock() in the test code
+(patch 3).  I can send v6 with that and Vlastimil's Ack if you want.
 
-That seems like a much simpler rule, and would seem to simplify
-strip_relocs too, which would just become
+Thanks,
+Namhyung
 
-        $(OBJCOPY) --remove-section='.rel*' $@
-
-(We seem to have three different copies of that complex pattern with
-.rel vs .rela and "." vs "__" - it's in s390, riscv, and x86. So we'd
-do that simplification in three places)
-
-IOW, I'd much rather make our section rules simpler rather than more complex.
-
-Of course, if there is some active and acute problem report with this
-thing, we might not have that option, but in the absence of any
-*known* issue with just simplifying things, I'd rather do that.
-
-I feel that our linker scripts - and linking rules in general - are
-already quite complicated, which is why I'd really like to take this
-as a time to try to simplify the rules.
-
-              Linus
-
-              Linus
 
