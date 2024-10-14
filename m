@@ -1,161 +1,150 @@
-Return-Path: <linux-kernel+bounces-364620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A2B99D705
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:09:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38AE699D6ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D76B213E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:09:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BB63B21217
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61B11CB330;
-	Mon, 14 Oct 2024 19:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABBE1CACF3;
+	Mon, 14 Oct 2024 19:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYESE+Xz"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llYDHDQI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34FF1CACFC
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 19:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D9013C810;
+	Mon, 14 Oct 2024 19:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728932938; cv=none; b=Eqf5XwLyJ6zAHbCCcV/v/Yv+Qw/ssY780SZY21En/fIuVctVegjB/8Uv8rhKrfpiZzxJEbdHcVKQ18tVPckh754/QNmN6L7zrUhGE6eZhUMoazAef1Tmu7Klo3rOMeVbTxHZ54mllngs8WcOPiqB3bcjEwo0VlFepVlj6o7ct8Q=
+	t=1728932505; cv=none; b=hnpfOFhNpzFsqGjVUhpyTLnMWZtDj9trKMzOM/Nw4Jv8EJYFUYrrM4bv9BpxtTq/uXd797rDuFeTu3rhZh6EQ1q1XZOvpStXrc79NzKMY9YRjb0e5s1RIRL96DKigpu4Tycf6hY4UVqzfVr+1pc2SqlGJmll92EUM1lsCl1+VBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728932938; c=relaxed/simple;
-	bh=cpZh4NBfiKPeA9AR0GaISnTFGTZ9w1x0tTKHjlKT45k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hp1AudfGNgCkXgEkSJ0FKRimmHn7/T5YihV2zTIzgb5yjNTqHg3/kRmIwOUd0r1ZS2i0QfsqmELqCKxJH4QZmY81FN58c2X9YKymrNjRUxnyF+AwJryYsWrsiTAIuXlHZuMJZwlhzfaJhR6OR4AZHeVqW+4bc6Jsu/A254zXISw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYESE+Xz; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7db3e962c2aso333318a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728932936; x=1729537736; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwggpQA75Ji4L7zAdfPb87y+vAtwZU5Fx5cuVPrXzvI=;
-        b=bYESE+XzVNPUR7ANMiUr4r0THDUlAq5cYFN9LCg+8Zv5QKMUSiita0g197uWXsVBaw
-         wYit0wvBkMhSPuGjkmqEn6OfR5y/1UcwZp5T9En5ejOlngxlzvcwjhRktFXa4ewMJJcd
-         vL/lXc3k9aolHgshTZTyielw+ar9QmUU84zd/xbqncRlCpNbu5/tKIQ+gK2dv5XrgMFT
-         gOeQqgmcAymRj6ALSmg+76v/ua2xaedVMPmZmBjIhplJZwEoCBQwqCmQ6xrdg2UxWfH9
-         bi7g1FAf5LRoFv4CV+UY0YaT+x82MmC9jNDy4WloWqfsIvCOkTUV36MqdSJsIFpBA4HA
-         bU0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728932936; x=1729537736;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GwggpQA75Ji4L7zAdfPb87y+vAtwZU5Fx5cuVPrXzvI=;
-        b=efJIUwlc44RZbcmmDXzwLmIviYgx7gF9vXbJyecPpUW5NeNPEcqJcSbjTLZpGF3JKx
-         7PqghFLTxngc733pvEMFXsxNh9n+8yMwGSPslAKwFsVZiNtbc4mU3ctAti38bFoxdlPw
-         LV3lIRQLSoTl+pBkjE7Gfg5Se7WDXifoA+sfEmHyMzW8codKpimhkwmgWI9o1dy5D+pi
-         /5i9D/4Pv4sLStSLN4kn79H8WY2SrtHb8jebOzlQXTe+DFf0JD0CCYuqEAa6KsjtGHxf
-         HCS+1Y3CdXaKhaKEi0o8TdKCHwXnpcvK1NfPOZsAOgHeOVQRr3tHThCYdV0hZpt0Bhgp
-         qYRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYiTgK89F3Y29f5us46+9tCUP1evQGxePwi/ZHsyH/4aUSksqK7epfSSjA8CO7F/WliDwijm+hpEE844c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqXMugLjypgNUbAZCxVbeIE4TFQx83Wu/Xen8K/4ifTC6iNUB9
-	RtJi3fClwnw5Y11fXWiLWExAnWMNj106qOJLr8WomPxSXi8uh9/0
-X-Google-Smtp-Source: AGHT+IH7I+prz8s3/btBQk/lhkhhtOiGMlV4NvsjkCqf29YOl5868G/eXwBOFn/j7VnT2qB7l2uniQ==
-X-Received: by 2002:a05:6a21:9998:b0:1cf:5471:bbe1 with SMTP id adf61e73a8af0-1d8bd017b40mr8872998637.8.1728932935999;
-        Mon, 14 Oct 2024 12:08:55 -0700 (PDT)
-Received: from ice.. ([171.76.87.218])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea775bf3easm2895833a12.94.2024.10.14.12.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 12:08:55 -0700 (PDT)
-From: Nihar Chaithanya <niharchaithanya@gmail.com>
-To: ryabinin.a.a@gmail.com
-Cc: andreyknvl@gmail.com,
-	dvyukov@google.com,
-	skhan@linuxfoundation.org,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Nihar Chaithanya <niharchaithanya@gmail.com>
-Subject: [PATCH v3] kasan: add kunit tests for kmalloc_track_caller, kmalloc_node_track_caller
-Date: Tue, 15 Oct 2024 00:31:30 +0530
-Message-Id: <20241014190128.442059-1-niharchaithanya@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728932505; c=relaxed/simple;
+	bh=4B/4MKRiZMEAx3KlSKct+QBFZ1DTuDQEOf7PADj4UYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njYqvPwxwQLmBEBIRhLRX21BeUF13bWYbNpuMU4Pp8seKt5BjTsL/jQXV5Ty1AipwNhgQgMHPUOH6hf6TMVpWf92faoMvDvgqHJW0PEp9a8C3ZckMhMHEo9+AK3HesuL8d2ZKE0vEZBdjpJX0nxIXFNMCqJ5D4hGNb5RRToko5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llYDHDQI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A59AC4CEC3;
+	Mon, 14 Oct 2024 19:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728932504;
+	bh=4B/4MKRiZMEAx3KlSKct+QBFZ1DTuDQEOf7PADj4UYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=llYDHDQIkfBeL0ZFDnSSgtqfLxoWdgvdPQQopLaTh+W9roGjh6pHAihxCtKvjbeiz
+	 wrXDNxYaPBV1FqD3nwk/3XYS6tVExcudDEkF40u11/es90SNLxLgEqHKl90Bz1sm8/
+	 UE+OSwTwgfZeTZ5J5FhTealJUO8mYpq5b9wbmYQA9b1Lwm5kbcD2A7Hz0MRFUXysVb
+	 ql+tPM3W3hmDIUQGaM4lwFS/ufGdl+dQJJAMuhF3Jax0Bp7+aq6uc1oeUo74yE6RY1
+	 KUoQCo+a8R1KttTQuGt8RzU9Ij4Kv1zZJNls5IYCd4SPowfxKwEAOsnoFw2o4vmQBx
+	 EZr/wgp+Hbv9A==
+Date: Mon, 14 Oct 2024 12:01:42 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Laight <David.Laight@aculab.com>
+Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 3/3] crypto: x86/crc32c - eliminate jump table and
+ excessive unrolling
+Message-ID: <20241014190142.GA1137@sol.localdomain>
+References: <20241014042447.50197-1-ebiggers@kernel.org>
+ <20241014042447.50197-4-ebiggers@kernel.org>
+ <a6c0c04a0486404ca4db3fd57a809d5b@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6c0c04a0486404ca4db3fd57a809d5b@AcuMS.aculab.com>
 
-The Kunit tests for kmalloc_track_caller and kmalloc_node_track_caller
-were missing in kasan_test_c.c, which check that these functions poison
-the memory properly.
+On Mon, Oct 14, 2024 at 04:30:05PM +0000, David Laight wrote:
+> From: Eric Biggers
+> > Sent: 14 October 2024 05:25
+> > 
+> > crc32c-pcl-intel-asm_64.S has a loop with 1 to 127 iterations fully
+> > unrolled and uses a jump table to jump into the correct location.  This
+> > optimization is misguided, as it bloats the binary code size and
+> > introduces an indirect call.  x86_64 CPUs can predict loops well, so it
+> > is fine to just use a loop instead.  Loop bookkeeping instructions can
+> > compete with the crc instructions for the ALUs, but this is easily
+> > mitigated by unrolling the loop by a smaller amount, such as 4 times.
+> 
+> Do you need to unroll it at all?
 
-Add a Kunit test:
--> kmalloc_tracker_caller_oob_right(): This includes out-of-bounds 
-   access test for kmalloc_track_caller and kmalloc_node_track_caller.
+It looks like on most CPUs, no.  On Haswell, Emerald Rapids, Zen 2 it does not
+make a significant difference.  However, it helps on Zen 5.
 
-Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
-Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=216509
----
-v1->v2: Simplified the three separate out-of-bounds tests to a single
-test for kmalloc_track_caller.
+> > +	# Unroll the loop by a factor of 4 to reduce the overhead of the loop
+> > +	# bookkeeping instructions, which can compete with crc32q for the ALUs.
+> > +.Lcrc_3lanes_4x_loop:
+> > +	crc32q	(bufp), crc_init_q
+> > +	crc32q	(bufp,chunk_bytes_q), crc1
+> > +	crc32q	(bufp,chunk_bytes_q,2), crc2
+> > +	crc32q	8(bufp), crc_init_q
+> > +	crc32q	8(bufp,chunk_bytes_q), crc1
+> > +	crc32q	8(bufp,chunk_bytes_q,2), crc2
+> > +	crc32q	16(bufp), crc_init_q
+> > +	crc32q	16(bufp,chunk_bytes_q), crc1
+> > +	crc32q	16(bufp,chunk_bytes_q,2), crc2
+> > +	crc32q	24(bufp), crc_init_q
+> > +	crc32q	24(bufp,chunk_bytes_q), crc1
+> > +	crc32q	24(bufp,chunk_bytes_q,2), crc2
+> > +	add	$32, bufp
+> > +	sub	$4, %eax
+> > +	jge	.Lcrc_3lanes_4x_loop
+> 
+> If you are really lucky you'll get two memory reads/clock.
+> So you won't ever to do than two crc32/clock.
+> Looking at Agner's instruction latency tables I don't think
+> any cpu can do more that one per clock, or pipeline them.
+> I think that means you don't even need two (never mind 3)
+> buffers.
 
-v2->v3: Used the same size for both the test cases.
+On most Intel and AMD CPUs (I tested Haswell for old Intel, Emerald Rapids for
+new Intel, and Zen 2 for slightly-old AMD), crc32q has 3 cycle latency and 1 per
+cycle throughput.  So you do need at least 3 streams.
 
-Link to v1: https://lore.kernel.org/all/20241013172912.1047136-1-niharchaithanya@gmail.com/
-Link to v2: https://lore.kernel.org/all/20241014041130.1768674-1-niharchaithanya@gmail.com/
+AMD Zen 5 has much higher crc32q throughput and seems to want up to 7 streams.
+This is not implemented yet.
 
- mm/kasan/kasan_test_c.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+> Most modern x86 can do 4 or 5 (or even more) ALU operations
+> per clock - depending on the combination of instructions.
+> 
+> Replace the loop termination with a comparison of 'bufp'
+> against a pre-calculated limit and you get two instructions
+> (that might get merged into one u-op) for the loop overhead.
+> They'll run in parallel with the crc32q instructions.
 
-diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-index a181e4780d9d..7e7076e71de0 100644
---- a/mm/kasan/kasan_test_c.c
-+++ b/mm/kasan/kasan_test_c.c
-@@ -213,6 +213,36 @@ static void kmalloc_node_oob_right(struct kunit *test)
- 	kfree(ptr);
- }
- 
-+static void kmalloc_track_caller_oob_right(struct kunit *test)
-+{
-+	char *ptr;
-+	size_t size = 128 - KASAN_GRANULE_SIZE;
-+
-+	/*
-+	 * Check that KASAN detects out-of-bounds access for object allocated via
-+	 * kmalloc_track_caller().
-+	 */
-+	ptr = kmalloc_track_caller(size, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-+
-+	OPTIMIZER_HIDE_VAR(ptr);
-+	KUNIT_EXPECT_KASAN_FAIL(test, ptr[size] = 'y');
-+
-+	kfree(ptr);
-+
-+	/*
-+	 * Check that KASAN detects out-of-bounds access for object allocated via
-+	 * kmalloc_node_track_caller().
-+	 */
-+	ptr = kmalloc_node_track_caller(size, GFP_KERNEL, 0);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-+
-+	OPTIMIZER_HIDE_VAR(ptr);
-+	KUNIT_EXPECT_KASAN_FAIL(test, ptr[size] = 'y');
-+
-+	kfree(ptr);
-+}
-+
- /*
-  * Check that KASAN detects an out-of-bounds access for a big object allocated
-  * via kmalloc(). But not as big as to trigger the page_alloc fallback.
-@@ -1958,6 +1988,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(kmalloc_oob_right),
- 	KUNIT_CASE(kmalloc_oob_left),
- 	KUNIT_CASE(kmalloc_node_oob_right),
-+	KUNIT_CASE(kmalloc_track_caller_oob_right),
- 	KUNIT_CASE(kmalloc_big_oob_right),
- 	KUNIT_CASE(kmalloc_large_oob_right),
- 	KUNIT_CASE(kmalloc_large_uaf),
--- 
-2.34.1
+That's actually still three instructions: add, cmp, and jne.
 
+I tried it on both Intel and AMD, and it did not help.
+
+> I've never managed to get a 1-clock loop, but two is easy.
+> You might find that just:
+> 10:
+> 	crc32q	(bufp), crc
+> 	crc32q	8(bufp), crc
+> 	add		$16, bufp
+> 	cmp		bufp, buf_lim
+> 	jne		10b
+> will run at 8 bytes/clock on modern intel cpu.
+
+No, the latency of crc32q is still three cycles.  You need three streams.
+
+> You can write that in C with a simple asm function for the crc32
+> instruction itself.
+
+Well, the single-stream CRC32C implementation already does that; see
+arch/x86/crypto/crc32c-intel_glue.c.  Things are not as simple for this
+multi-stream implementation, which uses pclmulqdq to combine the CRCs.
+
+- Eric
 
