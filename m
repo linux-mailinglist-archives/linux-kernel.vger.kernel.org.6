@@ -1,128 +1,272 @@
-Return-Path: <linux-kernel+bounces-363438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F3F99C26D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:02:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B9D99C26B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8E0CB24200
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:02:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 460E41C23EFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3973C14A4F7;
-	Mon, 14 Oct 2024 08:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="NnVkluPT"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0B0231CA6;
-	Mon, 14 Oct 2024 08:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EA4146A72;
+	Mon, 14 Oct 2024 08:01:54 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56470231CA6
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892924; cv=none; b=NnipnYpkuVZYAEPX+m841JxfYySjIYmRoxmgGCWW/S3UfP7h3pwtpzpFNelnMcuX9fiVPYqh+BhCcXQ+jwYTOV9hhR/X3yVfee2g/FygIjB/xGw3tTDX2I8ug2uw2f0qW5ZFO972TrRQyHyEqamQE0Q6sDUlqKpGiSL7z+QSI6E=
+	t=1728892914; cv=none; b=moWfHKwiKvxWMxbxHEEuSZrFnhqI1Dlxw3ih5cz+8x6eSIydDHjqGBjWy4tC/BofFauWcl2SnC1uiWgAtTiGL6al3nzsPgrTGV/TZbyQvCI4qSzNMYEkRLyyJ69i6GtvMbvQ7ChADvv4DLGwRsu42Pho1zfgJdB7czPyeVZtuDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892924; c=relaxed/simple;
-	bh=8QXd52PSDByTuMxAbtMLnunnTIIo8yWGgJnINtcoo5k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kF20khZkp6ibmwDamXbu8Lcg+kaznQoD0wNWXRAxTSrMUsNhZuqxATXESmdWrdV+rHae8kdEEU7KpniG45LqflqxaOtqz89lFw79E7YER8WGWtxhJTLJf5oymEwPjayXrm2qx5IeWGj5hVqomXM7u0+kqRsZaeNFJ7SGYcnuehA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=NnVkluPT; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 0581AC0005;
-	Mon, 14 Oct 2024 11:01:51 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 0581AC0005
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
-	t=1728892911; bh=nruzw+jdQvZ8QxnnUXsNHIRBRz7OhS6CrLOVWXYhdNU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=NnVkluPTRVpHyt3x+41XDnPVVIQ0B4tzdg5WxH0gwZU9nlieb56Vd7DaUFEbwwEb0
-	 eXlTqxp0T3XnAleJE2FGeJJs2QOWeZDFhCq/G29UQxFq8TuUvn0WJj9hpv/djsJkeV
-	 NKa0BYBO3KxlT9Hgyag4MLki/ndJLP/vUasvA6r9T3q0wfferWDvqpn2nuEXxS5Z9N
-	 cJmIAiWpcvgGrucZzRIxGdU/5/TcsVODIm7uKqc+iYFnUaAV38PXiovVNgAqs03g8B
-	 svr+a5PlN5lmLycmSgC83KGh667GtMUT/TLJdjii6gq5Z2z/do1HsxMg0gAw9bkZts
-	 /61Zhb4CwSZyw==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Mon, 14 Oct 2024 11:01:50 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (10.0.246.155) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.4; Mon, 14 Oct 2024 11:01:49 +0300
-From: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, Ma Ke <make24@iscas.ac.cn>, Mark
- Brown <broonie@kernel.org>, Oder Chiou <oder_chiou@realtek.com>, Liam
- Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, <derek.fang@realtek.com>,
-	<alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH 6.1] ASoC: rt5682s: Return devm_of_clk_add_hw_provider to transfer the error
-Date: Mon, 14 Oct 2024 13:01:25 +0500
-Message-ID: <20241014080125.28298-2-v.shevtsov@maxima.ru>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728892914; c=relaxed/simple;
+	bh=Kw7GynnEkanF/JPpXaa6lx4LGWMPBWTWxzAH5aQ2ce8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=J7OARpv5xH3mTwknX/UXbhmnnq5MNA6ImwDFvPbQ2+aW7xQPn++VEEizJxuoNoWvcePqwyfzo2FGqZG4k5mXEM0zN/fRzIX1wclkwTweGkg6ZJ1T1E/sXyuPPhDS3O4GPvQvMq7zg6kejtvsNPmbCl5VZIvP100hY9iIv0sLDdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8BxnnPszwxnj3MaAA--.38465S3;
+	Mon, 14 Oct 2024 16:01:48 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMAx_9XqzwxnW_EoAA--.15186S3;
+	Mon, 14 Oct 2024 16:01:48 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: Fix cpu hotplug issue
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ lixianglai@loongson.cn, WANG Xuerui <kernel@xen0n.name>
+References: <20241014063328.1216497-1-maobibo@loongson.cn>
+ <CAAhV-H5_SUnrf0PwOUFOA0EumKvGOmgqUq=Cx61Ub5AW=MPo=A@mail.gmail.com>
+ <24ea8b02-8c94-d561-cef0-01044b610a1e@loongson.cn>
+ <CAAhV-H7NqzO-FLmYoUySp5KYKJM+aN_s7g4i+qBixx5jwnbW=Q@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <5c1e0199-24ce-50d2-1cbc-5c9949a17563@loongson.cn>
+Date: Mon, 14 Oct 2024 16:01:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <CAAhV-H7NqzO-FLmYoUySp5KYKJM+aN_s7g4i+qBixx5jwnbW=Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-Rule-ID: 7
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188410 [Oct 14 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@maxima.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.61:7.1.2;maxima.ru:7.1.1;patch.msgid.link:7.1.1;127.0.0.199:7.1.2;ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/10/14 07:21:00
-X-KSMG-LinksScanning: Clean, bases: 2024/10/14 07:18:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/14 05:57:00 #26750521
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-CM-TRANSID:qMiowMAx_9XqzwxnW_EoAA--.15186S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxKFWrGrykGrykKryxKrWfZwc_yoWxXF4xpr
+	y8CFZ5CwsxXFyDG34Fq3ykWr90yr1DGrsrX3W3KFZ8CFn8trnrJr4kWr98uFy8Kw40yr1F
+	vF4rWF42qF48J3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Sb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
+	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
+	67AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
+	8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWU
+	CwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
+	1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
+	daVFxhVjvjDU0xZFpf9x07jnUUUUUUUU=
 
-From: Ma Ke <make24@iscas.ac.cn>
+Huacai,
 
-commit 3ff810b9bebe5578a245cfa97c252ab602e703f1 upstream.
+On 2024/10/14 下午3:39, Huacai Chen wrote:
+> On Mon, Oct 14, 2024 at 3:21 PM maobibo <maobibo@loongson.cn> wrote:
+>>
+>> Huacai,
+>>
+>> On 2024/10/14 下午3:05, Huacai Chen wrote:
+>>> Hi, Bibo,
+>>>
+>>> I'm a little confused, so please correct me if I'm wrong.
+>>>
+>>> On Mon, Oct 14, 2024 at 2:33 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>>>
+>>>> On LoongArch system, there are two places to set cpu numa node. One
+>>>> is in arch specified function smp_prepare_boot_cpu(), the other is
+>>>> in generic function early_numa_node_init(). The latter will overwrite
+>>>> the numa node information.
+>>>>
+>>>> However for hot-added cpu, cpu_logical_map() fails to its physical
+>>>> cpuid at beginning since it is not enabled in ACPI MADT table. So
+>>>> function early_cpu_to_node() also fails to get its numa node for
+>>>> hot-added cpu, and generic function early_numa_node_init() will
+>>>> overwrite incorrect numa node.
+>>> For hot-added cpus, we will call acpi_map_cpu() -->
+>>> acpi_map_cpu2node() --> set_cpuid_to_node(), and set_cpuid_to_node()
+>>> operates on __cpuid_to_node[]. So I think early_cpu_to_node() should
+>>> be correct?
+>>
+>> __cpuid_to_node[] is correct which is physical cpuid to numa node,
+>> however cpu_logical_map(cpu) is not set. It fails to get physical cpuid
+>> from logic cpu.
+>>
+>> int early_cpu_to_node(int cpu)
+>> {
+>>           int physid = cpu_logical_map(cpu);
+>>
+>> <<<<<<<<<<< Here physid is -1.
+> early_cpu_to_node() is not supposed to be called after boot, and if it
+Which calls early_cpu_to_node() after boot?
 
-Return devm_of_clk_add_hw_provider() in order to transfer the error, if it
-fails due to resource allocation failure or device tree clock provider
-registration failure.
+> is really needed, I think a better solution is:
+> 
+> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+> index f1a74b80f22c..998cf45fd3b7 100644
+> --- a/arch/loongarch/kernel/acpi.c
+> +++ b/arch/loongarch/kernel/acpi.c
+> @@ -311,6 +311,8 @@ static int __ref acpi_map_cpu2node(acpi_handle
+> handle, int cpu, int physid)
+> 
+>          nid = acpi_get_node(handle);
+>          if (nid != NUMA_NO_NODE) {
+> +               __cpu_number_map[physid] = cpu;
+> +               __cpu_logical_map[cpu] = physid;
+This does not solve the problem. The above has been done in function
+cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
 
-Fixes: bdd229ab26be ("ASoC: rt5682s: Add driver for ALC5682I-VS codec")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-Link: https://patch.msgid.link/20240717115436.3449492-1-make24@iscas.ac.cn
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
----
- sound/soc/codecs/rt5682s.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+static int set_processor_mask(u32 id, u32 flags)
+{
+...
+         if (flags & ACPI_MADT_ENABLED) {
+                 num_processors++;
+                 set_cpu_present(cpu, true);
+                 __cpu_number_map[cpuid] = cpu;
+                 __cpu_logical_map[cpu] = cpuid;
+         }
 
-diff --git a/sound/soc/codecs/rt5682s.c b/sound/soc/codecs/rt5682s.c
-index 80c673aa14db..07d514b4ce70 100644
---- a/sound/soc/codecs/rt5682s.c
-+++ b/sound/soc/codecs/rt5682s.c
-@@ -2828,7 +2828,9 @@ static int rt5682s_register_dai_clks(struct snd_soc_component *component)
- 		}
- 
- 		if (dev->of_node) {
--			devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, dai_clk_hw);
-+			ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, dai_clk_hw);
-+			if (ret)
-+				return ret;
- 		} else {
- 			ret = devm_clk_hw_register_clkdev(dev, dai_clk_hw,
- 							  init.name, dev_name(dev));
--- 
-2.46.2
+The problem is that
+         smp_prepare_boot_cpu(); /* arch-specific boot-cpu hooks */
+<<<<<<<<<<<<<<<<
+set_cpu_numa_node() is called in function smp_prepare_boot_cpu()
+
+         early_numa_node_init();
+
+static void __init early_numa_node_init(void)
+{
+#ifdef CONFIG_USE_PERCPU_NUMA_NODE_ID
+#ifndef cpu_to_node
+         int cpu;
+
+         /* The early_cpu_to_node() should be ready here. */
+         for_each_possible_cpu(cpu)
+                 set_cpu_numa_node(cpu, early_cpu_to_node(cpu));
+<<<<<<<<<<<<<<<<
+* however here early_cpu_to_node is -1, so that cpu_to_node(cpu) will 
+always return -1 in late. *, which causes cpu hotadd problem.
+
+Regards
+Bibo Mao
+
+
+>                  set_cpuid_to_node(physid, nid);
+>                  node_set(nid, numa_nodes_parsed);
+>                  set_cpu_numa_node(cpu, nid);
+> 
+> Huacai
+> 
+>>
+>>           if (physid < 0)
+>>                   return NUMA_NO_NODE;
+>>
+>>           return __cpuid_to_node[physid];
+>> }
+>>
+>> Regards
+>> Bibo Mao
+>>>
+>>> Huacai
+>>>
+>>>>
+>>>> Here static array __cpu_to_node and api set_early_cpu_to_node()
+>>>> is added, so that early_cpu_to_node is consistent with function
+>>>> cpu_to_node() for hot-added cpu.
+>>>>
+>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>>> ---
+>>>>    arch/loongarch/include/asm/numa.h |  2 ++
+>>>>    arch/loongarch/kernel/numa.c      | 10 +++++++++-
+>>>>    arch/loongarch/kernel/smp.c       |  1 +
+>>>>    3 files changed, 12 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/loongarch/include/asm/numa.h b/arch/loongarch/include/asm/numa.h
+>>>> index b5f9de9f102e..e8e6fcfb006a 100644
+>>>> --- a/arch/loongarch/include/asm/numa.h
+>>>> +++ b/arch/loongarch/include/asm/numa.h
+>>>> @@ -50,6 +50,7 @@ static inline void set_cpuid_to_node(int cpuid, s16 node)
+>>>>    }
+>>>>
+>>>>    extern int early_cpu_to_node(int cpu);
+>>>> +extern void set_early_cpu_to_node(int cpu, s16 node);
+>>>>
+>>>>    #else
+>>>>
+>>>> @@ -57,6 +58,7 @@ static inline void early_numa_add_cpu(int cpuid, s16 node)    { }
+>>>>    static inline void numa_add_cpu(unsigned int cpu)              { }
+>>>>    static inline void numa_remove_cpu(unsigned int cpu)           { }
+>>>>    static inline void set_cpuid_to_node(int cpuid, s16 node)      { }
+>>>> +static inline void set_early_cpu_to_node(int cpu, s16 node)    { }
+>>>>
+>>>>    static inline int early_cpu_to_node(int cpu)
+>>>>    {
+>>>> diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
+>>>> index 84fe7f854820..62508aace644 100644
+>>>> --- a/arch/loongarch/kernel/numa.c
+>>>> +++ b/arch/loongarch/kernel/numa.c
+>>>> @@ -34,6 +34,9 @@ static struct numa_meminfo numa_meminfo;
+>>>>    cpumask_t cpus_on_node[MAX_NUMNODES];
+>>>>    cpumask_t phys_cpus_on_node[MAX_NUMNODES];
+>>>>    EXPORT_SYMBOL(cpus_on_node);
+>>>> +static s16 __cpu_to_node[NR_CPUS] = {
+>>>> +       [0 ... CONFIG_NR_CPUS - 1] = NUMA_NO_NODE
+>>>> +};
+>>>>
+>>>>    /*
+>>>>     * apicid, cpu, node mappings
+>>>> @@ -117,11 +120,16 @@ int early_cpu_to_node(int cpu)
+>>>>           int physid = cpu_logical_map(cpu);
+>>>>
+>>>>           if (physid < 0)
+>>>> -               return NUMA_NO_NODE;
+>>>> +               return __cpu_to_node[cpu];
+>>>>
+>>>>           return __cpuid_to_node[physid];
+>>>>    }
+>>>>
+>>>> +void set_early_cpu_to_node(int cpu, s16 node)
+>>>> +{
+>>>> +       __cpu_to_node[cpu] = node;
+>>>> +}
+>>>> +
+>>>>    void __init early_numa_add_cpu(int cpuid, s16 node)
+>>>>    {
+>>>>           int cpu = __cpu_number_map[cpuid];
+>>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+>>>> index 9afc2d8b3414..998668be858c 100644
+>>>> --- a/arch/loongarch/kernel/smp.c
+>>>> +++ b/arch/loongarch/kernel/smp.c
+>>>> @@ -512,6 +512,7 @@ void __init smp_prepare_boot_cpu(void)
+>>>>                           set_cpu_numa_node(cpu, node);
+>>>>                   else {
+>>>>                           set_cpu_numa_node(cpu, rr_node);
+>>>> +                       set_early_cpu_to_node(cpu, rr_node);
+>>>>                           rr_node = next_node_in(rr_node, node_online_map);
+>>>>                   }
+>>>>           }
+>>>>
+>>>> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
+>>>> --
+>>>> 2.39.3
+>>>>
+>>>>
+>>
+>>
 
 
