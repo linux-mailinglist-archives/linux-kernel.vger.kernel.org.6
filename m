@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-364293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EDD99D13E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:12:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D1F99D171
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD8A284E37
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 635C3284C8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E931AAE02;
-	Mon, 14 Oct 2024 15:12:28 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FCE1A76A5;
-	Mon, 14 Oct 2024 15:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C501ADFE9;
+	Mon, 14 Oct 2024 15:13:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2476D1AC8A6;
+	Mon, 14 Oct 2024 15:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728918748; cv=none; b=khTRlWC+4GulvzsiWi6YNHQePDsw0kvETmXrYHqXaqEuW/plBiC4yGUVlujHSGqRengJSBA1yFbKnQUP/R/sbZXIyiOUkk/RFV5GHN07sbjg3DKyBws3oguzRwr/0bUO6wETR0XReQtMCa5BeJTAMznZiVUHnxcHVmOkGTmfITE=
+	t=1728918829; cv=none; b=QIo1A8VyXkRmjPPu+IqKkhsYx3ID360zhHM6RxAKb1gkBbkqWC3wKFebzl+80W98l9S1a+yJt1eomWN5wfTkwDgzFfV+PITEv5NFAWDajuK27Edo1V63cx/12ArsIOyl/6x0mbhoFOALj3scyRmsFKB+GGojdJpOYYxaLdenLk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728918748; c=relaxed/simple;
-	bh=pmsn1DhmhfVxjTjuHMktBoQrE3wdRvAdbPWknxQNOmI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dZAZ2BihH4VfSme2gKWWCLbXN8J2dSROjjWillZXz5Phx25zDYlSUjVoCIaoKzH13At+yS3qEssfALghsIV/hGKMkz1XXZvzlpS3A6ZM8E2MlwCMTSck4x+jnednoD7khIZCMitYxEEQ6UPj+O0jSYkYQdxuPF14iBSnCPlthIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS0wD2ppYz6L9F1;
-	Mon, 14 Oct 2024 23:07:56 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id A6C731401F4;
-	Mon, 14 Oct 2024 23:12:23 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
- 2024 17:12:22 +0200
-Date: Mon, 14 Oct 2024 16:12:20 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
-	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
-	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
-	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
-	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH v13 09/18] cxl/mbox: Add SET_FEATURE mailbox command
-Message-ID: <20241014161220.00007e5b@Huawei.com>
-In-Reply-To: <20241009124120.1124-10-shiju.jose@huawei.com>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
-	<20241009124120.1124-10-shiju.jose@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728918829; c=relaxed/simple;
+	bh=OvZk82LA6CB05B05R4XyE/T2XEgdPmG31eU4hosSKjc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RcutNTsu1xCRPcNXS6A+7dFJ3SY0KPnusOMmQfkokKyxgtgFHHR1iTlvQ3QVoZDTwowebOyNAlkRxRStwUmffcFVnQDOVLeGSuM34RVfIzfDr73t4Q5diNFhvM4df51qbA87+vfF0ENie428YtE2Fq4igJ9//iASweNMk+mmQms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81DB21007;
+	Mon, 14 Oct 2024 08:14:15 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2A2B83F51B;
+	Mon, 14 Oct 2024 08:13:45 -0700 (PDT)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Subject: [PATCH v5 0/3] vdso: Use only headers from the vdso/ namespace
+Date: Mon, 14 Oct 2024 16:13:37 +0100
+Message-Id: <20241014151340.1639555-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 9 Oct 2024 13:41:10 +0100
-<shiju.jose@huawei.com> wrote:
+The recent implementation of getrandom in the generic vdso library,
+includes headers from outside of the vdso/ namespace.
 
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> Add support for SET_FEATURE mailbox command.
-> 
-> CXL spec 3.1 section 8.2.9.6 describes optional device specific features.
-> CXL devices support features with changeable attributes.
-> The settings of a feature can be optionally modified using Set Feature
-> command.
-> CXL spec 3.1 section 8.2.9.6.3 describes Set Feature command.
-> 
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+The purpose of this series is to refactor the code to make sure
+that the library uses only the allowed namespace.
 
-LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-CXL reviewers. I'd like at least one more review of this one
-simply because it's a core code.
+Changes:
+--------
+v5:
+  - Fix an issue on s390 reported by kernel test robot.
+v4:
+  - Address review comments.
+v3:
+  - Discard vdso/mman.h changes in favor of [1].
+  - Refactor vdso/page.h.
+  - Add a fix to drm/intel_gt.
+v2:
+  - Added common PAGE_SIZE and PAGE_MASK definitions.
+  - Added opencoded macros where not defined.
+  - Dropped VDSO_PAGE_* redefinitions.
 
-Fan, you looked at v12 and pointed out a typo only. Could you
-take another quick look?
+[1] https://lore.kernel.org/lkml/20240925210615.2572360-1-arnd@kernel.org
 
-Thanks,
+Vincenzo Frascino (3):
+  drm: i915: Change fault type to unsigned long
+  vdso: Introduce vdso/page.h
+  s390: Remove remaining _PAGE_* macros
 
-Jonathan
+ arch/alpha/include/asm/page.h      |  6 +-----
+ arch/arc/include/uapi/asm/page.h   |  7 +++----
+ arch/arm/include/asm/page.h        |  5 +----
+ arch/arm64/include/asm/page-def.h  |  5 +----
+ arch/csky/include/asm/page.h       |  8 ++------
+ arch/hexagon/include/asm/page.h    |  4 +---
+ arch/loongarch/include/asm/page.h  |  7 +------
+ arch/m68k/include/asm/page.h       |  6 ++----
+ arch/microblaze/include/asm/page.h |  5 +----
+ arch/mips/include/asm/page.h       |  7 +------
+ arch/nios2/include/asm/page.h      |  7 +------
+ arch/openrisc/include/asm/page.h   | 11 +----------
+ arch/parisc/include/asm/page.h     |  4 +---
+ arch/powerpc/include/asm/page.h    | 10 +---------
+ arch/riscv/include/asm/page.h      |  4 +---
+ arch/s390/include/asm/page.h       | 10 ++--------
+ arch/s390/include/asm/pgtable.h    |  2 +-
+ arch/s390/mm/fault.c               |  2 +-
+ arch/s390/mm/gmap.c                |  6 +++---
+ arch/s390/mm/pgalloc.c             |  4 ++--
+ arch/sh/include/asm/page.h         |  6 ++----
+ arch/sparc/include/asm/page_32.h   |  4 +---
+ arch/sparc/include/asm/page_64.h   |  4 +---
+ arch/um/include/asm/page.h         |  5 +----
+ arch/x86/include/asm/page_types.h  |  5 +----
+ arch/xtensa/include/asm/page.h     |  8 +-------
+ drivers/gpu/drm/i915/gt/intel_gt.c |  6 +++---
+ include/vdso/page.h                | 30 ++++++++++++++++++++++++++++++
+ 28 files changed, 68 insertions(+), 120 deletions(-)
+ create mode 100644 include/vdso/page.h
 
+-- 
+2.34.1
 
 
