@@ -1,153 +1,156 @@
-Return-Path: <linux-kernel+bounces-363792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B1D99C71A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:25:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5196599C71B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336F31C2271F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:25:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9CCE1F231F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C2D15B972;
-	Mon, 14 Oct 2024 10:25:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA5415B143
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9579815B966;
+	Mon, 14 Oct 2024 10:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iIx97Dxk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26791581F4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728901512; cv=none; b=AD1ZxnjGehI7U1peGCPJRCno50vyPslrC4aWogQI2+KsjJlA4nbEMy5tPTrK/11SCn0hmxEz5pMmdABiLNj+XC8DVTyHG9Y39UIfTw27iT32TD0UAKGpidw4H7f+mJE1PKvecfs0Q4KCJaetUUAt/LvOzki+ZkDBQWnCJuLxFww=
+	t=1728901565; cv=none; b=iH5d5wRCBpsC979w7S/abj1lbRV/bErM7CLTbiVNLqhmbbv/wUl47uSc9LV8umcttqSYqea7jxFteh5eh2pmUIi2/39jKc+vnDzu1yGwXRMyMBt7fPl5SXNXX66Y7m0lMmNdeBwq9Wmbr0Ocw5/Cf3+NZQmuYpALh+UTxzAZv0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728901512; c=relaxed/simple;
-	bh=CNygW/kkl9Igu70pgOcFfZSUKNxhD6nc465LoHDKeIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gG9Df97wWPEnSfju3CCwF6aoYWFCf0TTclmKZ8uabl4y0c08gL6BsMiwUDVM3vNLVT9B/xTtAQP/bo3D7FCO5qWMjIjgtDJJ6Uv2iQILSKgDtBwUINoarG0LAXyl5u8MpVfKL2q97a9NrsDvA951cpK4BdI7NCruiPUdSmHHRmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 677C41007;
-	Mon, 14 Oct 2024 03:25:38 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC0DD3F51B;
-	Mon, 14 Oct 2024 03:25:07 -0700 (PDT)
-Date: Mon, 14 Oct 2024 11:24:47 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev
-Subject: Re: drivers/firmware/arm_scmi/raw_mode.c:924:8-24: WARNING:
- scmi_dbg_raw_mode_reset_fops: .write() has stream semantic; safe to change
- nonseekable_open -> stream_open. (fwd)
-Message-ID: <Zwzxb9K3FzbqVy9t@pluto>
-References: <1bb364cc-d167-4ef8-9d94-29b1774068f8@inria.fr>
+	s=arc-20240116; t=1728901565; c=relaxed/simple;
+	bh=/ST6Ws2sKBTO7rJLa2AQ4+qZHkmohIDh9s3LeMC0jCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y55LuFc0xPGZjOCMbX8hjb3oSZfuoMZaIq3kc3hjqbippPy4/VExcqk99UoTPK2XVOb4jPOHHPMdQ7YZZDm5Is6emAIRVcPiLC2J67a553H57iZ6H6RCnRbXpuUJ/bLQVK4a87iL1VtThiMwbfjd1MFbpPLD9I6XP8McvACI6Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iIx97Dxk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728901561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iehd1BNUIpWUCUdYEOtgXTd08uhD2ebuXNn5tihq+ko=;
+	b=iIx97DxkaADwL/5CQH/Rt5QC8OowkqUcr+46RUw1kMVE2U+Kp1VAMFCMguPC08oXeu4NQU
+	8NmNh/jrQiWFjuDGxJQzY7hdMEy1w2xY+FMpHIQpvc4UewztzCt4NIZ4ZuIxegW+iF9uli
+	QK6XHKWkAPhd+ddv1wYYRe6SoI+Oi44=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-232-Y2nA3YfmNYmiIsAXnK-T0g-1; Mon, 14 Oct 2024 06:26:00 -0400
+X-MC-Unique: Y2nA3YfmNYmiIsAXnK-T0g-1
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-7e9b2d75d6dso2875688a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:25:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728901559; x=1729506359;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iehd1BNUIpWUCUdYEOtgXTd08uhD2ebuXNn5tihq+ko=;
+        b=vi3BEG1U59iF3s9dCpQLYIN6J53YzafCPMUQggqAbdAh8z5BR450EtJOxp0ZOp14Cq
+         5lvbB5jg4sRM2Xi4grq8iqpshWMQCTANRWSZJfpuHRAhKm09ZXusMlLU1hLdYmkm5zfy
+         wJbM4UVpdiz0hGXBa3oAyGbH8xh5FssMGBQO6HWYzutBTnm+CPb7yD3GBUhnACDoPBsN
+         qyG5gXZf9Q1BJqWnKwvpBoXGiBKrLI7vz6r0IqBNP5xiDIOiWyHCJvxHNz89Zw77lPVa
+         tXE4iMs3DYJXltRNOrrq0S4/p13NLIphSyhySdx6ZDUVIHl52TrjeJBWCUJulmbrVe/m
+         SA6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUmm6MakR4olQ75xKkfXugJsHRIAnErFvRjVLs/fFItI1eGcKZhiUlXyPgw4KnqNAjJ9jObu4+B7pLtEco=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/6U6LfDa3c1h4HTUUVc6XNFnTxHm6NG6kDVkIjvmtOs4vjLJN
+	aOj+m2Ydj7Cb+GZP6bNEd97u6AwJtkcZKq8iWifhZXlvZQXaJd9A5J7CsJeEsXt1gucH8u2j0ov
+	TTJCb7FF3Y74kAnffXpG3COgBDdSPE6QGpfcsoWZX2lqNxJKQ06Bi/KBvvochPQ==
+X-Received: by 2002:a05:6a21:99a2:b0:1d8:abc6:71a4 with SMTP id adf61e73a8af0-1d8c955c952mr12602176637.6.1728901559025;
+        Mon, 14 Oct 2024 03:25:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG4S//5Qp+Gm5n0MIrRdxlFSCJcr23jiAU6pfy10eWEnVFM06aEmjGnFNJFwF+uQsl3N7XTfw==
+X-Received: by 2002:a05:6a21:99a2:b0:1d8:abc6:71a4 with SMTP id adf61e73a8af0-1d8c955c952mr12602145637.6.1728901558605;
+        Mon, 14 Oct 2024 03:25:58 -0700 (PDT)
+Received: from [192.168.68.54] ([180.233.125.129])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea4495a75asm6524493a12.65.2024.10.14.03.25.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 03:25:58 -0700 (PDT)
+Message-ID: <2ea2b741-3abd-4fe1-b622-b6a4a3c2a92b@redhat.com>
+Date: Mon, 14 Oct 2024 20:25:54 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1bb364cc-d167-4ef8-9d94-29b1774068f8@inria.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: arm_ffa: Fix warning caused by export_uuid()
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ shan.gavin@gmail.com
+References: <20241014004724.991353-1-gshan@redhat.com>
+ <ZwztgGdmNMrsqO7c@bogus>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <ZwztgGdmNMrsqO7c@bogus>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 02, 2024 at 09:36:51AM +0200, Julia Lawall wrote:
-> Hello,
+On 10/14/24 8:08 PM, Sudeep Holla wrote:
+> On Mon, Oct 14, 2024 at 10:47:24AM +1000, Gavin Shan wrote:
+>> Run into build warning caused by export_uuid() where the UUID's
+>> length exceeds that of ffa_value_t::a2, as the following warning
+>> messages indicate.
+>>
+>> In function ‘fortify_memcpy_chk’,
+>> inlined from ‘export_uuid’ at ./include/linux/uuid.h:88:2,
+>> inlined from ‘ffa_msg_send_direct_req2’ at drivers/firmware/arm_ffa/driver.c:488:2:
+>> ./include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ \
+>> declared with attribute warning: detected write beyond size of field (1st parameter); \
+>> maybe use struct_group()? [-Werror=attribute-warning]
+>> 571 |                         __write_overflow_field(p_size_field, size);
+>>      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> Fix it by not passing a plain buffer to memcpy() to avoid the overflow
+>> and underflow warning, similar to what have been done to copy over the
+>> struct ffa_send_direct_data2.
+>>
 > 
-> I'm just forwarding this for your consideration. I don't know about this
-> issue.
+> Are you observing this just on the upstream or -next as well? There is a
+> fix in the -next which I haven't sent to soc team yet, will do so soon.
 > 
 
-Hi Julia,
+I just tried the upstream when the patch was posted. I just have a try with -next
+and similar error exists.
 
-thanks for letting me know and sorry for the delay in this answer...
-...I'll have a look at this soon(-ish)
+[root@nvidia-grace-hopper-01 linux-next]# git remote -v
+origin	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git (fetch)
+origin	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git (push)
+[root@nvidia-grace-hopper-01 linux-next]# make W=1 drivers/firmware/arm_ffa/driver.o
+    :
+In function ‘fortify_memcpy_chk’,
+     inlined from ‘ffa_msg_send_direct_req2’ at drivers/firmware/arm_ffa/driver.c:504:3:
+./include/linux/fortify-string.h:580:25: error: call to ‘__read_overflow2_field’ declared with attribute warning: \
+detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
+   580 |                         __read_overflow2_field(q_size_field, size);
+       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+
+Part of the changes included this patch is still needed by -next. Could you please
+squeeze the changes to that one to be pulled?
+
+diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
+index 8dd81db9b071..b14cbdae94e8 100644
+--- a/drivers/firmware/arm_ffa/driver.c
++++ b/drivers/firmware/arm_ffa/driver.c
+@@ -501,7 +501,7 @@ static int ffa_msg_send_direct_req2(u16 src_id, u16 dst_id, const uuid_t *uuid,
+                 return ffa_to_linux_errno((int)ret.a2);
+  
+         if (ret.a0 == FFA_MSG_SEND_DIRECT_RESP2) {
+-               memcpy(data, &ret.a4, sizeof(*data));
++               memcpy(data, (void *)&ret + offsetof(ffa_value_t, a4), sizeof(*data));
+                 return 0;
+         }
 
 Thanks,
-Cristian
+Gavin
 
-> julia
-> 
-> ---------- Forwarded message ----------
-> Date: Wed, 2 Oct 2024 05:16:38 +0800
-> From: kernel test robot <lkp@intel.com>
-> To: oe-kbuild@lists.linux.dev
-> Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
-> Subject: drivers/firmware/arm_scmi/raw_mode.c:924:8-24: WARNING:
->     scmi_dbg_raw_mode_reset_fops: .write() has stream semantic; safe to change
->     nonseekable_open -> stream_open.
-> 
-> BCC: lkp@intel.com
-> CC: oe-kbuild-all@lists.linux.dev
-> CC: linux-kernel@vger.kernel.org
-> TO: Cristian Marussi <cristian.marussi@arm.com>
-> CC: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-> commit: b70c7996d4ffb2e02895132e8a79a37cee66504f firmware: arm_scmi: Make raw debugfs entries non-seekable
-> date:   6 months ago
-> :::::: branch date: 25 hours ago
-> :::::: commit date: 6 months ago
-> config: arm64-randconfig-r053-20241001 (https://download.01.org/0day-ci/archive/20241002/202410020543.MuCto6Eo-lkp@intel.com/config)
-> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Julia Lawall <julia.lawall@inria.fr>
-> | Closes: https://lore.kernel.org/r/202410020543.MuCto6Eo-lkp@intel.com/
-> 
-> cocci warnings: (new ones prefixed by >>)
-> >> drivers/firmware/arm_scmi/raw_mode.c:924:8-24: WARNING: scmi_dbg_raw_mode_reset_fops: .write() has stream semantic; safe to change nonseekable_open -> stream_open.
-> 
-> vim +924 drivers/firmware/arm_scmi/raw_mode.c
-> 
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  886
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  887  static int scmi_dbg_raw_mode_open(struct inode *inode, struct file *filp)
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  888  {
-> 7860701d1e6e6e Cristian Marussi 2023-01-18  889  	u8 id;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  890  	struct scmi_raw_mode_info *raw;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  891  	struct scmi_dbg_raw_data *rd;
-> 7860701d1e6e6e Cristian Marussi 2023-01-18  892  	const char *id_str = filp->f_path.dentry->d_parent->d_name.name;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  893
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  894  	if (!inode->i_private)
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  895  		return -ENODEV;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  896
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  897  	raw = inode->i_private;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  898  	rd = kzalloc(sizeof(*rd), GFP_KERNEL);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  899  	if (!rd)
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  900  		return -ENOMEM;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  901
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  902  	rd->rx.len = raw->desc->max_msg_size + sizeof(u32);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  903  	rd->rx.buf = kzalloc(rd->rx.len, GFP_KERNEL);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  904  	if (!rd->rx.buf) {
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  905  		kfree(rd);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  906  		return -ENOMEM;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  907  	}
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  908
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  909  	rd->tx.len = raw->desc->max_msg_size + sizeof(u32);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  910  	rd->tx.buf = kzalloc(rd->tx.len, GFP_KERNEL);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  911  	if (!rd->tx.buf) {
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  912  		kfree(rd->rx.buf);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  913  		kfree(rd);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  914  		return -ENOMEM;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  915  	}
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  916
-> 7860701d1e6e6e Cristian Marussi 2023-01-18  917  	/* Grab channel ID from debugfs entry naming if any */
-> 7860701d1e6e6e Cristian Marussi 2023-01-18  918  	if (!kstrtou8(id_str, 16, &id))
-> 7860701d1e6e6e Cristian Marussi 2023-01-18  919  		rd->chan_id = id;
-> 7860701d1e6e6e Cristian Marussi 2023-01-18  920
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  921  	rd->raw = raw;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  922  	filp->private_data = rd;
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  923
-> b70c7996d4ffb2 Cristian Marussi 2024-03-15 @924  	return nonseekable_open(inode, filp);
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  925  }
-> 3c3d818a9317a5 Cristian Marussi 2023-01-18  926
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
 
