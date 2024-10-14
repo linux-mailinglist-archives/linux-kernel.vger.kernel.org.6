@@ -1,170 +1,253 @@
-Return-Path: <linux-kernel+bounces-364551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1761099D605
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:00:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E1299D608
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B25282E9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:00:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7131628320F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEDB1BBBC4;
-	Mon, 14 Oct 2024 17:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE771C3300;
+	Mon, 14 Oct 2024 18:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nykRahsO"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aRJwSusF"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91911C3300
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D2B12FB34
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 18:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728928794; cv=none; b=SMqRFmhhhOTbm8cHCmRoG9gbL/wtmqGN6FTj/HJrBKD7YNgjkWlnWfzML46tqoJ37ldLPFwvv+52OD+wBBsL9szl49NwBOJ6vqkhFnVdN1N6ARKdn/hQ1NHE3OfR4D9/ho5dPgviMidfBjAnDkNcICsSgXsFL7E9QLid7875A1k=
+	t=1728928831; cv=none; b=G1RxSw82OATzFtiIJHBOHvJmgKCr2rwiPhIucjgMJaUPpSUr18M+vmew+WfhCqMJrvZcl8ZV7fSNtWa9cReqZN32vflJkz4e2y4SVKYrbq/TN054w9weJ0nSgXo+5Pcwgdr0ExKPDgPpYeN3RdqiygWeqUc39U292rXjoEYARj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728928794; c=relaxed/simple;
-	bh=sL5sMIwFWwCItD6gcYu481WzjPU0/7+yb5y82AD+Wvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=frqyzLk9GUndEDtwqg5WmVGXazCOUcbZMTX+eNVC9tPUsvIp++h23BwZ5wF4bRJerm0uLgH05mILbrLg/UNx/6Mm9LJKpc6f1acDDvz1qFlBqxjvX1yTKMLsURIthYY2pFuaabEi7nCpovdYcyxTstrBUGYClU3AZ7s55Rpq8Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nykRahsO; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4311d4762daso3644565e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:59:52 -0700 (PDT)
+	s=arc-20240116; t=1728928831; c=relaxed/simple;
+	bh=6ypbiWY7RkIhAY9hAwnSo+2ObiE6j/TmJ9Qd68+F5mo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cBGDTXnoGHh3dNMF2WqnW7kjSszE0oPylvaWjB6EkWld3YNur9D4lXa3z7ZWbGbub9Ghgra0xnvzHFW1sm3e14iGGc/kEPlm4Joxrcl+paMQWZlX7ghnqcVK/4Uv6MIAJHYslnInIlkEJuGPxAH07W7TYqC+7UnUctDNx19D5IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aRJwSusF; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c8ac50b79so297385ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728928791; x=1729533591; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9q/9cP3oWJrsUKpMb0FHSTkpYb3pjCPdKiZ+2qeTeso=;
-        b=nykRahsOSeYdY9l3q+9WKq52D6YXP1YgBf7nnP+2lijkId+Grucf4oV6bCjX8+4Rc4
-         ARDWmLmVlNcshJ70PHQGBl4RZPQIXUmdPkTjMmNCJ4qbHsGbDwxwiuunKeRodAHSgdnd
-         t7bkki8uoURQQTZOm9QzJRQaJkobThx/OtOi34TsyNIObBfREBmJ8Ht52BRkW3QIHGCh
-         6QrC3UGsmNfoYkxRAatUv4EkBEYXGoiyGKAJ+CXP+oZs6y0ruUMkOeTO1zcVKfgm4B6H
-         A/UxcsboK8aV2d/z7meQ3iarqmN0mKOuAt+DgfFh1jiJ6g77a+wGkQfkiKLZiYxIb9Sd
-         iDWQ==
+        d=google.com; s=20230601; t=1728928829; x=1729533629; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/pnjkA95iFybcKenTZmU5eArykaIZKWLZ28X9WicnPs=;
+        b=aRJwSusF/8/C1XHmW8ifrN8dQ0xt3d+rzZkeB+bUdbqwUlFaTuzUUTLxgxRmkvETq3
+         uG28y/osBd+hOGCDnMwrMi8ENYUJa8+CLdYGQngooQAe63LOMOmS3jPAq+kfFqkm4pRP
+         misU8T5lSfM8d1w2wIHLkfDa6OG9UyNCaThlV5bZzXugYxxAKkNDw+JfULAyxUz5LH6W
+         ZlOK2gh/5zjugh0qtQxZvg6gFBp3qHop56i74EW0+vFhUdyIuk76Ts9L+mnz2FYnO1ca
+         EKz+P/zWp/uBVaSzwWJW24LCufiPuwpVqbpaJ3iDFTM7T0KjxjL5K8bC5VLwQNtjkUqa
+         qjxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728928791; x=1729533591;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9q/9cP3oWJrsUKpMb0FHSTkpYb3pjCPdKiZ+2qeTeso=;
-        b=LsClg87tmhu/QKkpJJ852/F3D+n3kvi40XxR/LnfrjQ0YmztBITDVeDtE1vn41Ai8n
-         SttVNNCe3H2KJDnne8Nbv+OQD6NRXIkaynRwPw2Y9GobL4quV33+Y5gk3NY/bvwtapqZ
-         lhiPU9UtMXUywHtPv+QDe03lZKg39ZUB87E2ZnT2yV9yItmCPmsR9w+kZpLRXUmvrfBe
-         YHrdOKlI8fMaunZbe7tuTkve0HkD/OFQNlQ98pTI1t5UT3uVkaufOTqIRFIpFh+W+hUx
-         tmeowAfuOUKjyaLtu+NETxhSiornz8egmDT4e8MNyDLVSKyxyDnMZPIK1wAzfi6rs8G+
-         Cwjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkUPizj2N8imKHLSxx6fw29wWEX5weAULctww4M3WP5QP5A1G77//1T2PsAwTTSmv7awCbW4atL6foAs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGxPpibTB2XP8YEWb9feUbQ5oJ1NK/oqPm6GYW+l32aaCdRoui
-	RlLstGa3OcZ7IpBLVYFt10nZzx/8VnVTvj/xLacGqJw6befS15E/hHP72yYajTA=
-X-Google-Smtp-Source: AGHT+IGTUiH+wxBsHB9dno2CzL2+b4c3qz1CzT2oxTHAu1gqp3Wv6zCH7BYb49kA58Y2eWcu9EOc2g==
-X-Received: by 2002:a05:6000:1866:b0:374:c800:dc3d with SMTP id ffacd0b85a97d-37d55212222mr4267041f8f.1.1728928791216;
-        Mon, 14 Oct 2024 10:59:51 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6cffa5sm12027426f8f.53.2024.10.14.10.59.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 10:59:50 -0700 (PDT)
-Message-ID: <7f3ccd71-f885-4f84-bda3-cb2adaffc4fa@linaro.org>
-Date: Mon, 14 Oct 2024 19:59:47 +0200
+        d=1e100.net; s=20230601; t=1728928829; x=1729533629;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/pnjkA95iFybcKenTZmU5eArykaIZKWLZ28X9WicnPs=;
+        b=hd2FywspbHPSYg37fokaxBrLeUY8UktQfWT2+WlZrICTtt3FWdCxg5f2EM1/UNhpyD
+         pJD5nVEyEdPAUmlc8iclDfwK9o31o3A5TZX0R7m1ApbMb0aGGsRE6oZclWPBcvQGEt3M
+         rcCk0ZIyP8xkZxXt19VJxme/NJbpS244tvLcdpEP6tOoo6iw88rGLiNt+1rgxHG7cnyB
+         zSPHsBuh1JpbRDqVh0xkBhdLTKfV5r1kuEQUGjIb2bMwihaG+2CzUW72lDVrUGS7fS4c
+         rrPQqbGHMryqtM/BVSuscErJns4HxL2Kvndjwx0C796sER1h1X/wkl1FOqrwHgpw/Loq
+         ++Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3nyXCB2lvvTWdtLKbQ091hlWWzQ0Hgf/cyIDOIHUIoYWQUCliV7Q4jDWzfKhrleJKCT6r/zjTvrNCUuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4BXUywxoWBORXBgMXk3F1W/Z6FGMP3eBZ0OZX/7A9xAbuQWUx
+	687OIKj4qoG2DMF6g3DwJs1r0XHvW/TSwu5jWmVZ84/TeIh/QasRjYkjwz+7kmP3x1S9UyBLzN+
+	6VKxD/wttC4OLoomEuQPKG/3njZvI17cUT2OR
+X-Google-Smtp-Source: AGHT+IEL9/egI4VD2wpxU61jHzSMOredQkaD8p7xEj3VgfwJm+nI+dKW1a74faga41znD8nTiMgxJcc+n83f0Ntv7b4=
+X-Received: by 2002:a17:902:c407:b0:206:b7b2:4876 with SMTP id
+ d9443c01a7336-20cbced4be2mr3936015ad.20.1728928827087; Mon, 14 Oct 2024
+ 11:00:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/3] dt-bindings: iio: adc: add a7779 doc
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Cosmin Tanislav <cosmin.tanislav@analog.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Alexandru Ardelean <alexandru.ardelean@analog.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
- Ana-Maria Cusco <ana-maria.cusco@analog.com>,
- George Mois <george.mois@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241014143204.30195-1-ramona.nechita@analog.com>
- <20241014143204.30195-2-ramona.nechita@analog.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20241014143204.30195-2-ramona.nechita@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20230702162802.344176-1-rui.zhang@intel.com> <20241010213136.668672-1-jmattson@google.com>
+ <f5962c02ea46c3180e7c0e6e5e1f08f4209a1ca2.camel@intel.com>
+ <CALMp9eQ9v0Ku0Kcrb2mwz6hb5FJRPKT1axyhX5pQ-nhrLzBY4g@mail.gmail.com> <f590669a7fa8d3e3f4d24ae3ed2d864ac14fbef8.camel@intel.com>
+In-Reply-To: <f590669a7fa8d3e3f4d24ae3ed2d864ac14fbef8.camel@intel.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 14 Oct 2024 11:00:14 -0700
+Message-ID: <CALMp9eQRsQ7hs9vhDGzbyRaqyOuaHDFFgc6VSr9Ui1=J_4s9Nw@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86/acpi: Ignore invalid x2APIC entries
+To: "Zhang, Rui" <rui.zhang@intel.com>
+Cc: "ajorgens@google.com" <ajorgens@google.com>, "myrade@google.com" <myrade@google.com>, 
+	"bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "Tang, Feng" <feng.tang@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jay.chen@amd.com" <jay.chen@amd.com>, 
+	"vladteodor@google.com" <vladteodor@google.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14/10/2024 16:31, Ramona Alexandra Nechita wrote:
-> Add dt bindings for AD7779 8-channel, simultaneous sampling ADC
-> family with eight full Σ-Δ ADCs on chip and ultra-low input
-> current to allow direct sensor connection.
-> 
-> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+On Mon, Oct 14, 2024 at 6:05=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
+ote:
+>
+> > > >
+> > > > TBH, I'm not sure that there is actually anything wrong with the
+> > > > new
+> > > > numbering scheme.
+> > > >  The topology is reported correctly (e.g. in
+> > > > /sys/devices/system/cpu/cpu0/topology/thread_siblings_list). Yet,
+> > > > the
+> > > > new enumeration does seem to contradict user expectations.
+> > > >
+> > >
+> > > Well, we can say this is a violation of the ACPI spec.
+> > > "OSPM should initialize processors in the order that they appear in
+> > > the
+> > > MADT." even for interleaved LAPIC and X2APIC entries.
+> >
+> > Ah. Thanks. I didn't know that.
+> >
+> > > Maybe we need two steps for LAPIC/X2APIC parsing.
+> > > 1. check if there is valid LAPIC entry by going through all LAPIC
+> > > entries first
+> > > 2. parse LAPIC/X2APIC strictly following the order in MADT. (like
+> > > we do
+> > > before)
+> >
+> > That makes sense to me.
+> >
+> > Thanks,
+> >
+> > --jim
+>
+> Hi, Jim,
+>
+> Please check if below patch restores the CPU IDs or not.
+>
+> thanks,
+> rui
+>
+> From ec786dfe693cad2810b54b0d8afbfc7e4c4b3f8a Mon Sep 17 00:00:00 2001
+> From: Zhang Rui <rui.zhang@intel.com>
+> Date: Mon, 14 Oct 2024 13:26:55 +0800
+> Subject: [PATCH] x86/acpi: Fix LAPIC/x2APIC parsing order
+>
+> On some systems, the same CPU (with same APIC ID) is assigned with a
+> different logical CPU id after commit ec9aedb2aa1a ("x86/acpi: Ignore
+> invalid x2APIC entries").
+>
+> This means Linux enumerates the CPUs in a different order and it is a
+> violation of https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming=
+_Model.html#madt-processor-local-apic-sapic-structure-entry-order,
+>
+>   "OSPM should initialize processors in the order that they appear in
+>    the MADT"
+>
+> The offending commit wants to ignore x2APIC entries with APIC ID < 255
+> when valid LAPIC entries exist, so it parses all LAPIC entries before
+> parsing any x2APIC entries. This breaks the CPU enumeration order for
+> systems that have x2APIC entries listed before LAPIC entries in MADT.
+>
+> Fix the problem by checking the valid LAPIC entries separately, before
+> parsing any LAPIC/x2APIC entries.
+>
+> Cc: stable@vger.kernel.org
+> Reported-by: Jim Mattson <jmattson@google.com>
+> Closes: https://lore.kernel.org/all/20241010213136.668672-1-jmattson@goog=
+le.com/
+> Fixes: ec9aedb2aa1a ("x86/acpi: Ignore invalid x2APIC entries")
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> ---
+>  arch/x86/kernel/acpi/boot.c | 50 +++++++++++++++++++++++++++++++++----
+>  1 file changed, 45 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+> index 4efecac49863..c70b86f1f295 100644
+> --- a/arch/x86/kernel/acpi/boot.c
+> +++ b/arch/x86/kernel/acpi/boot.c
+> @@ -226,6 +226,28 @@ acpi_parse_x2apic(union acpi_subtable_headers *heade=
+r, const unsigned long end)
+>         return 0;
+>  }
+>
+> +static int __init
+> +acpi_check_lapic(union acpi_subtable_headers *header, const unsigned lon=
+g end)
+> +{
+> +       struct acpi_madt_local_apic *processor =3D NULL;
+> +
+> +       processor =3D (struct acpi_madt_local_apic *)header;
+> +
+> +       if (BAD_MADT_ENTRY(processor, end))
+> +               return -EINVAL;
+> +
+> +       /* Ignore invalid ID */
+> +       if (processor->id =3D=3D 0xff)
+> +               return 0;
+> +
+> +       /* Ignore processors that can not be onlined */
+> +       if (!acpi_is_processor_usable(processor->lapic_flags))
+> +               return 0;
+> +
+> +       has_lapic_cpus =3D true;
+> +       return 0;
+> +}
+> +
+>  static int __init
+>  acpi_parse_lapic(union acpi_subtable_headers * header, const unsigned lo=
+ng end)
+>  {
+> @@ -257,7 +279,6 @@ acpi_parse_lapic(union acpi_subtable_headers * header=
+, const unsigned long end)
+>                                processor->processor_id, /* ACPI ID */
+>                                processor->lapic_flags & ACPI_MADT_ENABLED=
+);
+>
+> -       has_lapic_cpus =3D true;
+>         return 0;
+>  }
+>
+> @@ -1029,6 +1050,8 @@ static int __init early_acpi_parse_madt_lapic_addr_=
+ovr(void)
+>  static int __init acpi_parse_madt_lapic_entries(void)
+>  {
+>         int count, x2count =3D 0;
+> +       struct acpi_subtable_proc madt_proc[2];
+> +       int ret;
+>
+>         if (!boot_cpu_has(X86_FEATURE_APIC))
+>                 return -ENODEV;
+> @@ -1037,10 +1060,27 @@ static int __init acpi_parse_madt_lapic_entries(v=
+oid)
+>                                       acpi_parse_sapic, MAX_LOCAL_APIC);
+>
+>         if (!count) {
+> -               count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC=
+,
+> -                                       acpi_parse_lapic, MAX_LOCAL_APIC)=
+;
+> -               x2count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_X2=
+APIC,
+> -                                       acpi_parse_x2apic, MAX_LOCAL_APIC=
+);
 
-<form letter>
-This is a friendly reminder during the review process.
+The point is moot now, but I don't think the previous code did the
+right thing when acpi_table_parse_madt() returned a negative value
+(for errors).
 
-It looks like you received a tag and forgot to add it.
+> +               /* Check if there are valid LAPIC entries */
+> +               acpi_table_parse_madt(ACPI_MADT_TYPE_LOCAL_APIC, acpi_che=
+ck_lapic, MAX_LOCAL_APIC);
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
+Two comments:
 
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+1) Should we check for a return value < 0 here, or just wait for one
+of the later walks to error out?
+2) It seems unfortunate to walk the entire table when the first entry
+may give you the answer, but perhaps modern systems have only X2APIC
+entries, so we will typically have to walk the entire table anyway.
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
-
+Reviewed-and-tested-by: Jim Mattson <jmattson@google.com>
 
