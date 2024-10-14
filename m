@@ -1,237 +1,155 @@
-Return-Path: <linux-kernel+bounces-363559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C2399C3FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A4F99C400
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144062830F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C393280E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17791514EE;
-	Mon, 14 Oct 2024 08:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5D614EC5D;
+	Mon, 14 Oct 2024 08:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AnESRwg+"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFZyEC2D"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EE51A270;
-	Mon, 14 Oct 2024 08:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF251A270;
+	Mon, 14 Oct 2024 08:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895696; cv=none; b=S04RvMpCN1jpMSudVyUTF5OTPH1V0JMlJTPtyaWTn9Js/lG0PaqZwxRMUofBuvyayFsRw1b/9oyV11fc2Kqw9vkrAb8Y5fQSI0afn1Be+dPO6n5CJejyTr9iPICbgSswHC1KSq1lOL+MJK/J+/FkgURdsRB/dxphsha7j6QDAzs=
+	t=1728895773; cv=none; b=OajG4WRluiIYRy8lF2sJP7+0htC0TE7aQgzAVDVbsgdaKhWuJgr7pLUn7S4fv0yWLMu4yAoSOjqb2fa5Y6iypAbqhSg5BhSNXgZOYVzpTnkVdbyA0xQGd/1bQkM0PcQLEL+TELm8h+Jx00XJ4QFRKWBo4+uzHyxnYRX5SAb9OJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895696; c=relaxed/simple;
-	bh=XUlH7SBebbNpINAE+wx39Vw/oLjGTMOCSxxpABkV8L8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vd+P24TWZ/z0MyAXbZccLot7vBdohLjN1Jki8bYq/pSy+iwZa2yFvQhr6liylVl39eHGplBP8Yu890+7Do/mpXhihwzgxkgNHMDV6lbIuw6aygz5NKyt79rC8ogI5xn7bxCxS90BzPelOUBMTDw8UsBbVbM2OR+bl1A/9OI58Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AnESRwg+; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1728895773; c=relaxed/simple;
+	bh=0FnX3kslkJmARMtmR5XzRR5CxoTQbloPjTXJKUtr1BA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YSZYT7H6hWilDBNsDsAr78lYNZitkodCPYVc98EH3gdHXVvvBGyZIfWt5lTm/ad1DVa0GAtsuFKpIYXbOJ1EJ/tPEFcA+gX7A7LU7RHwu+vgSCUkO3OE8aPBQGXsJ7dc11sIWHNTmm7kGBu8tAWKp92qshGsVFtL0uBPI95WI6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFZyEC2D; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43111cff9d3so29846075e9.1;
-        Mon, 14 Oct 2024 01:48:14 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c9634c9160so1671760a12.2;
+        Mon, 14 Oct 2024 01:49:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728895693; x=1729500493; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WPs81oFcWH+51u7WuJEjyNlpMlepy7CsftIdGzaBCYE=;
-        b=AnESRwg+tsl6Y0iwtUqD/9S6JjuvVrJ4KDp9cAhBdwNmhwMMNwE8OjcsDcMEPJZsfA
-         TIDISzj1ahVnQna+Ga5nZVXo35avJvLHQDn7+aN0Un61pC1jZ7UcpYRtkCdteizTs8hG
-         yl8qChvg+3gbY+nLunOHHSENTHqycrY9wlQPER8oC6Nej5oK1wkdj7D0rqTlzPo9i2w9
-         En3hkvKJ4XDe40oihtFC5fs4sncxALhyUL4LJAglHsKkqKkGHHznHAbJVVUJBFJRFtSy
-         ooASuDJ902J4U0gvleVOGOp2166RZ8iSkcjoRg0PT/sNlMcpZdag6tBM+yIv1ZEqHgVG
-         5hFw==
+        d=gmail.com; s=20230601; t=1728895770; x=1729500570; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N/pc6u088b0sZFymIkJ7ThisTP08fpmM8RFfE7zodyE=;
+        b=iFZyEC2DTX1E8rgRCYmTFgGktKaubFnP4krgXAo7D6ZvEsU1wa6CH7+KttH8FG8sjZ
+         afSfA/bdSuhtHMXGoPmYQAD45L4TIP8Sb08/tG6kHdLXcpaI3HmkTcTNLk7JXtLRuPww
+         sZB5RaLmGuAvYRrGRqLNYDKj3yawiBVxf0dPaq1Cu22yHfwX0nDVaLVM/nfwhzUr98Ry
+         T4DnL2msvmX9mcoHRV7zh52vt6znZWW4RfeNcWve5F+DpcICeEki1fss2NYVn5/ESGJ/
+         T39xxZV5zN5IWq9KQUbyd3E8P3UgYmy1pK2f9Jl1VVj0T+JlDGPLf4FKbA8jYqtuFmfo
+         HvMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728895693; x=1729500493;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WPs81oFcWH+51u7WuJEjyNlpMlepy7CsftIdGzaBCYE=;
-        b=igaXWVS+o3vv5FrFmtlS2HTlBsZ+cWAOlOPAGEvbgVaDg32SpOQs/o9T/5HbMhtrD2
-         OSmpCu17aJj2nItQx1E19Xq3M4ZAxcklerjm8C9KseFeUnV88VALqXDblIEUmpABA85M
-         URv5jZCF6gysNWGbLRaTCrpAdM4PSOwgtv2uF+Qm98vSs9LH9rODftWt76Pmup2cnI9h
-         2RkZxXekWttD562GpO12jHfVrFQcCvlPoCI8Lp5zDo3fEtnhBzUXRkoPPK2SzNIvQOLT
-         h1axPt/gsQQ/D9UGWjYOQDQn6fhAdA5JYdEB8Ki9/h/hWtJH0SB0pBsfNsh8te9sZTXJ
-         62tA==
-X-Forwarded-Encrypted: i=1; AJvYcCVC08//rElH73vFqvLkAw88WFc/Xb5WcQko2MYYMmv4Ukto6oOce5XjQHcGm2FcWqqXsgKBT9aSpTL5pPw=@vger.kernel.org, AJvYcCWnvm6WS963ZmslEQQEdauehPt3kzrf3uXE/0k8MO4NtofOdoy3W8m24zDuKwU/1b2MD++0HhVC7/GX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrw6KEPm8JNwq56qCc44rvfPVBxbJJyf/QTLVfw0AjRAlLh68A
-	67t7TJ2467oe21YY3gucPG6UsjUUFUVQj8QIYVv5hQrSHQO4y9Ii
-X-Google-Smtp-Source: AGHT+IGlBLalOk4/ecKUuRu4nTec1HLQ/slf1/Edv4CqJxEq3RkHgt8/qX/nMWuy9553izNMXfOzrw==
-X-Received: by 2002:a05:600c:3b19:b0:430:54a4:5b03 with SMTP id 5b1f17b1804b1-4311deba4bbmr89399895e9.6.1728895693147;
-        Mon, 14 Oct 2024 01:48:13 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:fd1:3993:f12c:5deb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182d7bddsm114580875e9.8.2024.10.14.01.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 01:48:12 -0700 (PDT)
-Date: Mon, 14 Oct 2024 10:48:11 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, francesco.dolcini@toradex.com, Frank.li@nxp.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2] PCI: imx6: Add suspend/resume support for i.MX6QDL
-Message-ID: <ZwzayxXuJWc1uhab@eichest-laptop>
-References: <20241009131659.29616-1-eichest@gmail.com>
- <20241012041315.vtmixcxbqwb63kno@thinkpad>
+        d=1e100.net; s=20230601; t=1728895770; x=1729500570;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/pc6u088b0sZFymIkJ7ThisTP08fpmM8RFfE7zodyE=;
+        b=bTmdmS+GWpV3XpeMBq3UzMcWeQeZ4xgjJSRqP2KVV9y7k3LFHHhoA6c87BNVJgJA4q
+         WNcXRVL/zjp3n3sdM2CSMoolU21ylk6oqFxFO7ODSn03IcJQO5UG5riBn92UXXKVGkU/
+         CTuAbzDsu7OF7E29KmNNvuaG1uVsa4F6al+xPbqX1VIPGZ6Db0fLzOTz8rgCU/dHAk/O
+         3Q2ZDNtM1BknFU+59jT+E3r+KO+pc7iirkGQlRLZcUC9ndT6wKQHcauelNkCLeclPHtp
+         Y7ik+5alInyNy7pLIOvt51uLBNZGCrm7fIF9ETHGie9613/2Ax7Bbyxg8qrQWAahE/CJ
+         Xh+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUm+mRjKuqR0tP6Qw5oHfIrQHHavx3UGzun2zvCAdnHOSjI9nIa8QaJLacWFa+/6xuRXMift3bNxNEGE6E=@vger.kernel.org, AJvYcCWjNjkM2B681G5QoBH8s23mzMunKcGOpcNgyPkb8UOtxpiz1IlKJkoJDYGVCksWi/T7CyaBaAC1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB/Giz4sCWfVDmYkR9sRpXwkHqOdUdh6mPquRYN3/sIrhjrjNM
+	zWDcL4uXuRlONVwNpsufxulK3PmmISw8R928qsiGFEmBlWUINdCd
+X-Google-Smtp-Source: AGHT+IF7onz7xq/lQNOnFDIr2wn5OnIJSIVfCPqEkOhi3dcJunRv41jwKHXl3xS+WE+yHR/3TgQkHQ==
+X-Received: by 2002:a05:6402:1e8c:b0:5c9:806a:c921 with SMTP id 4fb4d7f45d1cf-5c9806ad393mr940321a12.32.1728895770364;
+        Mon, 14 Oct 2024 01:49:30 -0700 (PDT)
+Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937260964sm4639710a12.69.2024.10.14.01.49.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 01:49:29 -0700 (PDT)
+Message-ID: <a3a8418a-57f2-4f3e-80a3-011de2af1296@gmail.com>
+Date: Mon, 14 Oct 2024 10:49:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241012041315.vtmixcxbqwb63kno@thinkpad>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: vchiq_arm: Fix missing refcount decrement in
+ error path for fw_node
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stefan Wahren <wahrenst@gmx.net>, Umang Jain <umang.jain@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241013-vchiq_arm-of_node_put-v1-1-f72b2a6e47d0@gmail.com>
+ <a4283afc-f869-4048-90b4-1775acb9adda@stanley.mountain>
+ <47c7694c-25e1-4fe1-ae3c-855178d3d065@gmail.com>
+ <767f08b7-be82-4b5e-bf82-3aa012a2ca5a@stanley.mountain>
+ <8c0bbde9-aba9-433f-b36b-2d467f6a1b66@gmail.com>
+ <20d12a96-c06b-4204-9a57-69a4bac02867@stanley.mountain>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20d12a96-c06b-4204-9a57-69a4bac02867@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mani,
-
-Thanks a lot for the comments.
-
-On Sat, Oct 12, 2024 at 09:43:15AM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Oct 09, 2024 at 03:14:05PM +0200, Stefan Eichenberger wrote:
-> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > 
-> > The suspend/resume support is broken on the i.MX6QDL platform. This
+On 14/10/2024 10:39, Dan Carpenter wrote:
+> On Mon, Oct 14, 2024 at 10:15:25AM +0200, Javier Carrasco wrote:
+>> On 14/10/2024 10:12, Dan Carpenter wrote:
+>>> On Mon, Oct 14, 2024 at 09:59:49AM +0200, Javier Carrasco wrote:
+>>>> This approach is great as long as the maintainer accepts mid-scope
+>>>> variable declaration and the goto instructions get refactored, as stated
+>>>> in cleanup.h.
+>>>>
+>>>> The first point is not being that problematic so far, but the second one
+>>>> is trickier, and we all have to take special care to avoid such issues,
+>>>> even if they don't look dangerous in the current code, because adding a
+>>>> goto where there cleanup attribute is already used can be overlooked as
+>>>> well.
+>>>>
+>>>
+>>> To be honest, I don't really understand this paragraph.  I think maybe you're
+>>> talking about if we declare the variable at the top and forget to initialize it
+>>> to NULL?  It leads to an uninitialized variable if we exit the function before
+>>> it is initialized.
+>>>
+>>
+>> No, I am talking about declaring the variable mid-scope, and later on
+>> adding a goto before that declaration in a different patch, let's say
+>> far above the variable declaration. As soon as a goto is added, care
+>> must be taken to make sure that we don't have variables with the cleanup
+>> attribute in the scope. Just something to take into account.
+>>
 > 
-> You mean the 'system suspend/resume'?
+> Huh.  That's an interesting point.  If you have:
 > 
-> > patch resets the link upon resuming to recover functionality. It shares
-> > most of the sequences with other i.MX devices but does not touch the
-> > critical registers, which might break PCIe. This patch addresses the
-> > same issue as the following downstream commit:
-> > https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
-> > In comparison this patch will also reset the device if possible. Without
-> > this patch suspend/resume will not work if a PCIe device is connected.
-> > The kernel will hang on resume and print an error:
-> > ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+> 	if (ret)
+> 		goto done;
 > 
-> Looks like the device is turned off during suspend.
-
-Yes, I don't have a deep understanding about PCIe to be honest. However,
-my understanding is that the PCIe devices will always try to suspend and
-there is no way from the PCIe host controller to prevent this. Or am I
-wrong? Currently suspend is not implemented for the i.MX6Dual/Quad
-variant in the pci-imx6 driver and the device will still be turned off
-by the PCI subsystem. On the other side I don't think it will fix
-anything if I can prevent suspend for the devices because the
-communication will still fail after resume.
-
+> 	struct device_node *fw_node __free(device_node) = something;
 > 
-> > 8<--- cut here ---
-> > Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
-> > 
-> > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > ---
-> > v1 -> v2: Share most code with other i.MX platforms and set suspend
-> > 	  support flag for i.MX6QDL. Version 1 can be found here:
-> > 	  https://lore.kernel.org/all/20240819090428.17349-1-eichest@gmail.com/
-> > 
-> >  drivers/pci/controller/dwc/pci-imx6.c | 44 +++++++++++++++++++++++++--
-> >  1 file changed, 41 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> > index 808d1f1054173..f33bef0aa1071 100644
-> > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > @@ -1238,8 +1238,23 @@ static int imx_pcie_suspend_noirq(struct device *dev)
-> >  
-> >  	imx_pcie_msi_save_restore(imx_pcie, true);
-> >  	imx_pcie_pm_turnoff(imx_pcie);
-> > -	imx_pcie_stop_link(imx_pcie->pci);
-> > -	imx_pcie_host_exit(pp);
-> > +	/*
-> > +	 * Do not turn off the PCIe controller because of ERR003756, ERR004490, ERR005188,
-> > +	 * they all document issues with LLTSSM and the PCIe controller which
+> Then fw_node isn't initialized when we get to done.  However, in my simple test
+> this triggered a build failure with Clang so I believe we would catch this sort
+> of bug pretty quickly.
 > 
-> LTSSM
+> regards,
+> dan carpenter
 > 
-> But LTSSM is for the PCIe link state, not sure how it impacts controller state.
-> Can you share the link to those erratums?
 
-The erratas are all from this document:
-https://www.nxp.com/docs/en/errata/IMX6DQCE.pdf
+Yes, the only pity is that GCC (I guess still the most common compiler
+for the Linux kernel) stays silent, and it happily builds a buggy image.
+But as you said, the patch will trigger some alarms as soon as it is
+sent upstream.
 
-Only the i.MX 6Dual/6Quad variant is affected but not the newer Plus
-variants.
+In this particular case, and as Greg pointed out, that is not a real
+threat anyway. My digression comes to an end, and v2 is on its way.
 
-> 
-> > +	 * does not come out of reset properly. Therefore, try to keep the controller enabled
-> > +	 * and only reset the link. However, the reference clock still needs to be turned off,
-> 
-> You are resetting the *device* below, not the link.
-
-Thanks, I will fix this comment.
-
-> > +	 * else the controller will freeze on resume.
-> > +	 */
-> 
-> Please use 80 columns for comments. Exception is for the code.
-
-Thanks, I will fix this.
-
-> > +	if (imx_pcie->drvdata->variant == IMX6Q) {
-> > +		/* Reset the PCIe device */
-> > +		gpiod_set_value_cansleep(imx_pcie->reset_gpiod, 1);
-> > +
-> > +		if (imx_pcie->drvdata->enable_ref_clk)
-> > +			imx_pcie->drvdata->enable_ref_clk(imx_pcie, false);
-> > +	} else {
-> > +		imx_pcie_stop_link(imx_pcie->pci);
-> > +		imx_pcie_host_exit(pp);
-> > +	}
-> >  
-> >  	return 0;
-> >  }
-> > @@ -1253,6 +1268,28 @@ static int imx_pcie_resume_noirq(struct device *dev)
-> >  	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_SUPPORTS_SUSPEND))
-> >  		return 0;
-> >  
-> > +	/*
-> > +	 * Even though the i.MX6Q does not support proper suspend/resume, we
-> > +	 * need to reset the link after resume or the memory mapped PCIe I/O
-> > +	 * space will be inaccessible. This will cause the system to freeze.
-> > +	 */
-
-Thanks, I will fix this.
-
-> 
-> > +	if (imx_pcie->drvdata->variant == IMX6Q) {
-> > +		if (imx_pcie->drvdata->enable_ref_clk)
-> > +			imx_pcie->drvdata->enable_ref_clk(imx_pcie, true);
-> > +
-> > +		imx_pcie_deassert_core_reset(imx_pcie);
-> 
-> There is no corresponding imx_pcie_assert_core_reset() in suspend.
-
-Thanks, I will try to fix this similar to what they do in the host_init.
-
-> > +
-> > +		/*
-> > +		 * Setup the root complex again and enable msi. Without this PCIe will
-> > +		 * not work in msi mode and drivers will crash if they try to access
-> > +		 * the device memory area
-> > +		 */
-> 
-> This indicates that the controller state is not preserved. I think we need a bit
-> more understanding on what is going on during system suspend on this platform.
-
-Yes I fully agree, but unfortunately I don't really know how to fix it
-properly. I just tried to fix the driver by searching for an absolute
-minimum that is required to make suspend/resume work when a PCIe device
-is connected. As an alternative the downstream patch would do something
-similar but I thought also resetting the device would be a better
-solution (to stay closer to what the other variants do):
-https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
-I just now saw that I didn't mention ERR005723 at all, sorry for that.
-If this would be a more acceptable solution I would do some more tests
-with this patch in our setup.
-
-Regards,
-Stefan
+Thanks and best regards,
+Javier Carrasco
 
