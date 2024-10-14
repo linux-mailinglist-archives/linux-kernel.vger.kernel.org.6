@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-363490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E8999C311
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 399E299C313
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463DB1C226F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61D161C226D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAC9176AD0;
-	Mon, 14 Oct 2024 08:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BC619597F;
+	Mon, 14 Oct 2024 08:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DBulGqQq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3lxr/e1p"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sTMTFJFG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YiXTsO3q"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1646315747D;
-	Mon, 14 Oct 2024 08:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4251158558;
+	Mon, 14 Oct 2024 08:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728894173; cv=none; b=OuMmguqN+z85LqKnXCx0/QvZ0TXTojoq+7qd4EnOK/YZMf1hzePmtCh4YKGPnF2jjKdpkCwZ9GleDEYnb6vYQPiwvXRGdn7hbxi8MUrBPhCy0Qz7WCVrhE1eXtuSpI+zgbZhwkPTbq3nx/88In7TXbLe4rgZTaLO10PGqcqRxy0=
+	t=1728894174; cv=none; b=VeDxXFnY/g1RtXQh1ruTKp0zTyblqlLgP6i0TXPCRbuO0XTlnRxS3V3wbqzPngHX5GulkhDbsDJQcsC2jjl3cxU3wYuMn77XCaS5tgvp7zVcG5jUi/N4tvwln/6N3NYh00bFI/A25GJ6u9Nc3rn8qsqJmvhxmtpdriJitHreSCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728894173; c=relaxed/simple;
-	bh=qifAZvSDJ4oCKAVNUiGd2BZc1rUvRYb11jCH8W1tAvc=;
+	s=arc-20240116; t=1728894174; c=relaxed/simple;
+	bh=bzBoPBXvgGgBceKCBKqe7YKjn85sRsKmpKifY22AX2A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DH6Es1JMY99TbuaTwWDmlDIakboAi2QSnmrs2MF50VRnVeMIhu6HE6rC551VDoDwuEYgyza+R61gcUjyWCGmpKra4q9AQGx5wWWsiZ4ehBZbyNEXhYAjUy00IC+x3AgdXiLuo5GAejR3KPzO6Mm/i//GVkYOHKL8Lx3i8ALPk10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DBulGqQq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3lxr/e1p; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=BVLMmM7TY5epvz6OunAVuQTZ4vVxHgRLqYXSXHO8UTCy2blbyDGbklhlEq+3naR7v/fIqUMNdQtRY8BQNSRMssJ2jcGG6SPt0AYdaZ+wdaWZ7iUzO7jNa9svuFuQOAOirj0iFNaldowkL+PjVQvr7Qadqnk97ySA7EfozjhUXss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sTMTFJFG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YiXTsO3q; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Anna-Maria Behnsen <anna-maria@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728894169;
+	s=2020; t=1728894170;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=joTkYfZuYDbUq+yir8wGSuEWOSrlObwkU2FwRn80vkM=;
-	b=DBulGqQqivo+HovK0ZWzPaLAfqSi54oj8a/ajqV+NODU3T81A4UvR9G+3PGcGnr8QYePr1
-	u+qEbqQorp4wld2ryheKfZFZ5okpBxhBU8/pSpUIBXV4v0Uc0dkK0CBLq8qznnWXObHmwB
-	Z+z+ugP/WyxLa36tb1Bz9XsG8IWkRR0yAlVjTfPhF2z1jK4yepBEpyvlo0Tc64eIkFByNv
-	lPG9rwh6ABJLelVeDa6yUAF/fx2XuTetyVM63wYoYJmIhu91QqZU8w+uIK34sMtwpjy5wi
-	ACHL4Xs4oFcwk/rag0QPSA17e34YPL3PeKGp7TSr4FxUSjDD/NIjN1+pcxic5A==
+	bh=kNRLICfcMX53Pl818PecpUhWq4UAyd0n3QQSNiHMS0Q=;
+	b=sTMTFJFGvylVpObZzdv1qmknTg52pZ48YWiroJTZicX+jQy1Mlt0Nwy4njse3ScvsitBPN
+	AarLq6u0hB7vf/sWLsDpPRUwWhPjaaUfsKuxH4QzSlaIYa2GRhvZ8jn7lX9m0aadfwvU4/
+	r/swaKR5jNTOAIjSbgs2jtN8WnxgN51MlifUV8KxK0Sf+2qxEOIiABHiYuqRWNqNoFXcpJ
+	5FbJ0AXPMhESnvenWqkAtuZ+/XiP4TvWNm24LGiK4v7SFBWPjXkoMFT80ibjuPZpjjNx3S
+	990cpnZFVbHZmQZJpWxuwnUePpRA0XkSpRYeXyu2gyUhOoYw2pgWgfACEt8fQA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728894169;
+	s=2020e; t=1728894170;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=joTkYfZuYDbUq+yir8wGSuEWOSrlObwkU2FwRn80vkM=;
-	b=3lxr/e1pnS/X0qbMGdQ/8zMBUdws2K1T64ougHTi6Cb7SKyLSEJxZEdvp6X0bQeW/0yMFj
-	Ci3sE5nPcdyDdwCg==
-Date: Mon, 14 Oct 2024 10:22:30 +0200
-Subject: [PATCH v3 13/16] powerpc/rtas: Use fsleep() to minimize additional
- sleep duration
+	bh=kNRLICfcMX53Pl818PecpUhWq4UAyd0n3QQSNiHMS0Q=;
+	b=YiXTsO3qLxn3vTSHXPfgV/b1ytZOM/RZ2M/bSg5i6/5WqHxHq3X2mwyl7+SxU5Ckqvkxyg
+	waDWkAxliFM0VODQ==
+Date: Mon, 14 Oct 2024 10:22:31 +0200
+Subject: [PATCH v3 14/16] media: anysee: Fix and remove outdated comment
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,7 +63,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241014-devel-anna-maria-b4-timers-flseep-v3-13-dc8b907cb62f@linutronix.de>
+Message-Id: <20241014-devel-anna-maria-b4-timers-flseep-v3-14-dc8b907cb62f@linutronix.de>
 References: <20241014-devel-anna-maria-b4-timers-flseep-v3-0-dc8b907cb62f@linutronix.de>
 In-Reply-To: <20241014-devel-anna-maria-b4-timers-flseep-v3-0-dc8b907cb62f@linutronix.de>
 To: Frederic Weisbecker <frederic@kernel.org>, 
@@ -74,78 +73,62 @@ Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
  Alice Ryhl <aliceryhl@google.com>, 
  FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
  Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Miguel Ojeda <ojeda@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
- Nathan Lynch <nathanl@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+ Miguel Ojeda <ojeda@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ linux-media@vger.kernel.org, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-When commit 38f7b7067dae ("powerpc/rtas: rtas_busy_delay() improvements")
-was introduced, documentation about proper usage of sleep related functions
-was outdated.
+anysee driver was transformed to use usbv2 years ago. The comments in
+anysee_ctrl_msg() still are referencing the old interfaces where msleep()
+was used. The v2 interfaces also changed over the years and with commit
+1162c7b383a6 ("[media] dvb_usb_v2: refactor dvb_usbv2_generic_rw()") the
+usage of msleep() was gone anyway.
 
-The commit message references the usage of a HZ=100 system. When using a
-20ms sleep duration on such a system and therefore using msleep(), the
-possible additional slack will be +10ms.
+Remove FIXME comment and update also comment before call to
+dvb_usbv2_generic_rw_locked().
 
-When the system is configured with HZ=100 the granularity of a jiffy and of
-a bucket of the lowest timer wheel level is 10ms. To make sure a timer will
-not expire early (when queueing of the timer races with an concurrent
-update of jiffies), timers are always queued into the next bucket. This is
-the reason for the maximal possible slack of 10ms.
-
-fsleep() limits the maximal possible slack to 25% by making threshold
-between usleep_range() and msleep() HZ dependent. As soon as the accuracy
-of msleep() is sufficient, the less expensive timer list timer based
-sleeping function is used instead of the more expensive hrtimer based
-usleep_range() function. The udelay() will not be used in this specific
-usecase as the lowest sleep length is larger than 1 millisecond.
-
-Use fsleep() directly instead of using an own heuristic for the best
-sleeping mechanism to use.
-
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Nathan Lynch <nathanl@linux.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org
 Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
-v2: fix typos
+v3: Remove FIXME comment completely
 ---
- arch/powerpc/kernel/rtas.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ drivers/media/usb/dvb-usb-v2/anysee.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
-index f7e86e09c49f..d31c9799cab2 100644
---- a/arch/powerpc/kernel/rtas.c
-+++ b/arch/powerpc/kernel/rtas.c
-@@ -1390,21 +1390,14 @@ bool __ref rtas_busy_delay(int status)
- 		 */
- 		ms = clamp(ms, 1U, 1000U);
- 		/*
--		 * The delay hint is an order-of-magnitude suggestion, not
--		 * a minimum. It is fine, possibly even advantageous, for
--		 * us to pause for less time than hinted. For small values,
--		 * use usleep_range() to ensure we don't sleep much longer
--		 * than actually needed.
--		 *
--		 * See Documentation/timers/timers-howto.rst for
--		 * explanation of the threshold used here. In effect we use
--		 * usleep_range() for 9900 and 9901, msleep() for
--		 * 9902-9905.
-+		 * The delay hint is an order-of-magnitude suggestion, not a
-+		 * minimum. It is fine, possibly even advantageous, for us to
-+		 * pause for less time than hinted. To make sure pause time will
-+		 * not be way longer than requested independent of HZ
-+		 * configuration, use fsleep(). See fsleep() for details of
-+		 * used sleeping functions.
- 		 */
--		if (ms <= 20)
--			usleep_range(ms * 100, ms * 1000);
--		else
--			msleep(ms);
-+		fsleep(ms * 1000);
- 		break;
- 	case RTAS_BUSY:
- 		ret = true;
+diff --git a/drivers/media/usb/dvb-usb-v2/anysee.c b/drivers/media/usb/dvb-usb-v2/anysee.c
+index 8699846eb416..bea12cdc85e8 100644
+--- a/drivers/media/usb/dvb-usb-v2/anysee.c
++++ b/drivers/media/usb/dvb-usb-v2/anysee.c
+@@ -46,24 +46,15 @@ static int anysee_ctrl_msg(struct dvb_usb_device *d,
+ 
+ 	dev_dbg(&d->udev->dev, "%s: >>> %*ph\n", __func__, slen, state->buf);
+ 
+-	/* We need receive one message more after dvb_usb_generic_rw due
+-	   to weird transaction flow, which is 1 x send + 2 x receive. */
++	/*
++	 * We need receive one message more after dvb_usbv2_generic_rw_locked()
++	 * due to weird transaction flow, which is 1 x send + 2 x receive.
++	 */
+ 	ret = dvb_usbv2_generic_rw_locked(d, state->buf, sizeof(state->buf),
+ 			state->buf, sizeof(state->buf));
+ 	if (ret)
+ 		goto error_unlock;
+ 
+-	/* TODO FIXME: dvb_usb_generic_rw() fails rarely with error code -32
+-	 * (EPIPE, Broken pipe). Function supports currently msleep() as a
+-	 * parameter but I would not like to use it, since according to
+-	 * Documentation/timers/timers-howto.rst it should not be used such
+-	 * short, under < 20ms, sleeps. Repeating failed message would be
+-	 * better choice as not to add unwanted delays...
+-	 * Fixing that correctly is one of those or both;
+-	 * 1) use repeat if possible
+-	 * 2) add suitable delay
+-	 */
+-
+ 	/* get answer, retry few times if error returned */
+ 	for (i = 0; i < 3; i++) {
+ 		/* receive 2nd answer */
 
 -- 
 2.39.5
