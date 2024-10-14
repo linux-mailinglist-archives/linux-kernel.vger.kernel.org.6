@@ -1,133 +1,194 @@
-Return-Path: <linux-kernel+bounces-363818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF60299C76E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:47:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8447F99C770
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00BBB1C22FA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:47:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F651C22932
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1EE1990D2;
-	Mon, 14 Oct 2024 10:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1IyH/pi"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CFB195811;
-	Mon, 14 Oct 2024 10:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BF9183CA2;
+	Mon, 14 Oct 2024 10:48:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F17B156C52
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728902818; cv=none; b=s/UUsdahaiGRrFH/MEyW+NEz2jBo7cDc9E1gbLTKKl2x7urXZWwmQayelcj96R/SBl9sXD31aB+YiKJ6dKbaN/9cB37kCE8NhxOFUSsoGnZy609hL+l7qPur03Rq7o+LCsJHte8FpVmhDePitP9slhe49dUPwULE5JQLQL7l7kw=
+	t=1728902884; cv=none; b=pXKMXEHhjQN2DbhUWwzHeCkcl9fzH1wCOCdRSNze29umOcI7RB7kJRbwLTNKjFLhHjQ0WBIF9SXhiENL8cEcfS0Zy88gQxNS05CTBzHz3n750rjRCbRirEEhOMCVB1I9pvlmIpYyDgMuIG1cXI+Y2KcbVY1uoXj8I8xJWAI0ndM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728902818; c=relaxed/simple;
-	bh=Q/oqmeVmOM3oomHbH8ADDkalQUS4i1GdXNDrEo0uVHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IiktqyGxxlxxJU87wpczMOWwb5Kx6BMyWt4B5VY2jZP0HJEQMfI2zKhajYyI3xdECppqXqBVn08Z9XWQV90PQhwgqsWao6RSFqg7yXc38GPyAELgGsGZxcQjJcEc4OKrThQ75zh++KhDft8Og7ka60KgvgliQDkHISczL8HgMOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1IyH/pi; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2c2a17aa4so849075a91.0;
-        Mon, 14 Oct 2024 03:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728902816; x=1729507616; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=46HkK5QbXKink9cFKdDs28XgpJ3tA0weU6y+j41fq5Q=;
-        b=D1IyH/piGOtzcc3KOcWzaj9M3T4rRgsJIMAD/Ipwa/ugmUWLra28sA5feUgrUPDzKA
-         3BJswqC+o9Y6wkVM7lgwbfc0j9y5bVmEmsiCXvM30OFSFKjVr5claHvpEEvwOOlCLPP+
-         pAudTTVfPFvebf0wjHIhezUezZI0Z7s5xdB1gSlWhg+OzLn2NEI16qgHVtuNNL5zOFZ4
-         9DcWe7r/BQ5HeNqON/pzZeCRiIaviO7iWIY7QM/WLnhdNQlLkOoCA7HwwEyWvyUjR1cm
-         9fnP/o7rzs3H3m9Yd00qtgvvbaxqRII3ynPxanmbs9UXFbfmVB5Fp4OHt8lXAw3wAujc
-         UhYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728902816; x=1729507616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=46HkK5QbXKink9cFKdDs28XgpJ3tA0weU6y+j41fq5Q=;
-        b=rj5dA3T1nm4r8AYCn/Z45XPGGPn8vqM6erh3dIR5Mcvac+CAfX9KogaGMlzrRN/v8g
-         b/a9n9GWjP83P6IHItCSr+ofPkePY6/GwLmXCOZfc88qdHPMl3S97EM6u6COJ9yhLm1R
-         Nk/rpb8cWU/UkPE4lQdGAtr7A5gY6tQLyTcrM7QRc9tOtJcgjSApL2hRLPYrZwl4HMMe
-         gPVeD3vEEeV/yqZSSFW3vQr8G4X3/YpXWmAxwGOru7syVBfs2pijIQk4dIC708Z3h8vd
-         5RbgUYrHtF+y9PxsCPz9Gs7y6IgHlKlqdNA/oGNInU5S/F+Bim6RSa9UYNLIeLYEKPA+
-         SclA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtavs1XI3PBGFbpPd2xq5sBEgu4r2ER/PfVqXm8Sk4K8xV0N+XMfpB1fLj0aNoH5Ky8hN86dOZ6t+uSyuzP2I=@vger.kernel.org, AJvYcCWKBeP6+mhmeT0ibVZ39WhAJcTAwZINxiXrMI8r/lg9I1i2WD4UOL8g5C05dKaC69qKoMgvyvl9A3lanV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn7eIzGXfBg5oZ5KPAw05/pNfxTzJFYl5m3AyJ25IRfay3qin8
-	vAqT3N1LmRwwD4sgJJ5qbbOC3gg2SQy8cJTUFE/KvabulbUZyyeekFLRdXu5FTQgmjeZQ8SLatT
-	F24AImZbFMXkG1CRwZlcwYvbzW9s=
-X-Google-Smtp-Source: AGHT+IEB/3sBumZ4RFHSZgvSjlHuw3kP78qj5138y8lCPsRQdrBstDKHwCAH9lqgwnJ0Wj1xRlNTTtwIe2wau3XXdyk=
-X-Received: by 2002:a17:90a:db41:b0:2e2:d881:5936 with SMTP id
- 98e67ed59e1d1-2e2f0d96389mr5719048a91.7.1728902816424; Mon, 14 Oct 2024
- 03:46:56 -0700 (PDT)
+	s=arc-20240116; t=1728902884; c=relaxed/simple;
+	bh=Fy8O4T0wrSTEzzQEqExtz1vMOSLdBu40q/2KIJ6LpQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CXxbQbVjdTVRdqKB0FFrnI1dtQoKsdinUL+8Sdvmph6WIP0eXMhijNoyvyXWPCuF+AsL7vaomi+S3BwaGx+yEBaebD2Uf2fO1rrKSUwHw9zXDPAu8/qCW6g4PBQMADdXZJyBVAMpL4dqlcPUzqIw58hupN6doP9wbZaKLPtEzRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F01891007;
+	Mon, 14 Oct 2024 03:48:31 -0700 (PDT)
+Received: from [10.163.38.184] (unknown [10.163.38.184])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D27F3F51B;
+	Mon, 14 Oct 2024 03:47:58 -0700 (PDT)
+Message-ID: <61203419-014e-4815-823c-62079aea93c9@arm.com>
+Date: Mon, 14 Oct 2024 16:18:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014-vma-v7-0-01e32f861195@google.com> <20241014-vma-v7-1-01e32f861195@google.com>
-In-Reply-To: <20241014-vma-v7-1-01e32f861195@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 14 Oct 2024 12:46:44 +0200
-Message-ID: <CANiq72n8oKnAWVj71uus8FuYEqqi+Bvy2zJ4SP=DX9Cgd39UKg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/2] rust: mm: add abstractions for mm_struct and vm_area_struct
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] arm64/mm: Replace PXD_TABLE_BIT with
+ PXD_TYPE_[MASK|SECT]
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ James Morse <james.morse@arm.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241005123824.1366397-1-anshuman.khandual@arm.com>
+ <20241005123824.1366397-3-anshuman.khandual@arm.com>
+ <bb1dcfcf-302a-4932-a0d5-3abf5ed958c5@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <bb1dcfcf-302a-4932-a0d5-3abf5ed958c5@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 11:30=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> +/// #[repr(transparent)]
 
-Line in docs.
 
-> +/// #[repr(transparent)]
-> +#[repr(transparent)]
+On 10/9/24 18:58, Ryan Roberts wrote:
+> On 05/10/2024 13:38, Anshuman Khandual wrote:
+>> This modifies existing block mapping related helpers e.g [pmd|pud]_mkhuge()
+>> , mk_[pmd|pud]_sect_prot() and pmd_trans_huge() to use PXD_TYPE_[MASK|SECT]
+>> instead of corresponding PXD_TABLE_BIT. This also moves pmd_sect() earlier
+>> for the symbol's availability preventing a build warning.
+>>
+>> While here this also drops pmd_val() check from pmd_trans_huge() helper, as
+>> pmd_present() returning true already ensures that pmd_val() cannot be false
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  arch/arm64/include/asm/pgtable.h | 15 ++++++++-------
+>>  1 file changed, 8 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>> index fa4c32a9f572..45c49c5ace80 100644
+>> --- a/arch/arm64/include/asm/pgtable.h
+>> +++ b/arch/arm64/include/asm/pgtable.h
+>> @@ -484,12 +484,12 @@ static inline pmd_t pte_pmd(pte_t pte)
+>>  
+>>  static inline pgprot_t mk_pud_sect_prot(pgprot_t prot)
+>>  {
+>> -	return __pgprot((pgprot_val(prot) & ~PUD_TABLE_BIT) | PUD_TYPE_SECT);
+>> +	return __pgprot((pgprot_val(prot) & ~PUD_TYPE_MASK) | PUD_TYPE_SECT);
+>>  }
+>>  
+>>  static inline pgprot_t mk_pmd_sect_prot(pgprot_t prot)
+>>  {
+>> -	return __pgprot((pgprot_val(prot) & ~PMD_TABLE_BIT) | PMD_TYPE_SECT);
+>> +	return __pgprot((pgprot_val(prot) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT);
+>>  }
+>>  
+>>  static inline pte_t pte_swp_mkexclusive(pte_t pte)
+>> @@ -554,10 +554,13 @@ static inline int pmd_protnone(pmd_t pmd)
+>>   * THP definitions.
+>>   */
+>>  
+>> +#define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
+>> +				 PMD_TYPE_SECT)
+>> +
+>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>  static inline int pmd_trans_huge(pmd_t pmd)
+>>  {
+>> -	return pmd_val(pmd) && pmd_present(pmd) && !(pmd_val(pmd) & PMD_TABLE_BIT);
+>> +	return pmd_present(pmd) && pmd_sect(pmd);
+> 
+> Bug? Prevously we would have returned true for a "present-invalid" PMD block
+> mapping - that's one which is formatted as a PMD block mapping except the
+> PTE_VALID bit is clear and PTE_PRESENT_INVALID is set. But now, due to
+> pmd_sect() testing VALID is set (via PMD_TYPE_SECT), we no longer return true in
+> this case.
 
-Ditto here, but in this case also outside the docs.
+Agreed, that will be problematic but the situation can be rectified by decoupling
+pmd_present_invalid() from pte_present_invalid() by checking for both last bits
+instead of just the valid bit against PTE_PRESENT_INVALID.
 
-Some trivial nits I noticed below since I am here.
+#define pmd_sect(pmd)          ((pmd_val(pmd) & PMD_TYPE_MASK) == \
+                                PMD_TYPE_SECT)
 
-> +    /// during the lifetime 'a.
+#define pmd_present_invalid(pmd) \
+       ((pmd_val(pmd) & (PMD_TYPE_MASK | PTE_PRESENT_INVALID)) == PTE_PRESENT_INVALID)
 
-Backticks (some other instances on lifetimes too).
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ static inline int pmd_trans_huge(pmd_t pmd)
+ {
+	return pmd_sect(pmd) || pmd_present_invalid(pmd);
+ }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
 
-> +    /// Calls `mmget_not_zero` and returns a handle if it succeeds.
+> 
+>>  }
+>>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>>  
+>> @@ -586,7 +589,7 @@ static inline int pmd_trans_huge(pmd_t pmd)
+>>  
+>>  #define pmd_write(pmd)		pte_write(pmd_pte(pmd))
+>>  
+>> -#define pmd_mkhuge(pmd)		(__pmd(pmd_val(pmd) & ~PMD_TABLE_BIT))
+>> +#define pmd_mkhuge(pmd)		(__pmd((pmd_val(pmd) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT))
+> 
+> I'm not sure if this also suffers from a similar problem? Is it possible that a
+> present-invalid pmd would be passed to pmd_mkhuge()? If so, then we are now
+> incorrectly setting the PTE_VALID bit.
+pmd_mkhuge() converts a regular pmd into a huge page and on arm64
+creating a huge page also involves setting PTE_VALID. Why would a
+present-invalid pmd is passed into pmd_mkhuge() without intending
+to make a huge entry ?
 
-I would add `bindings::` since otherwise it may be confusing to say
-the C name without qualifying, since this function is also called the
-same way.
+There just two generic use cases for pmd_mkhuge().
 
-> +        // SAFETY: The pointer is valid since self is a reference.
+insert_pfn_pmd
+	   entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
 
-`self`.
+set_huge_zero_folio
+        entry = mk_pmd(&zero_folio->page, vma->vm_page_prot);
+        entry = pmd_mkhuge(entry);
 
-> +// Make all VmAreaRef methods available on VmAreaMut.
-> +// Make all VmAreaMut methods available on VmAreaNew.
+As instances in mm/debug_vm_pgtable.c, pmd_mkinvalid() should be
+called on a PMD entry after pmd_mkhuge() not the other way around.
 
-Backticks.
-
-> +    /// Can contain "struct page" and pure PFN pages.
-> +    /// MADV_HUGEPAGE marked this vma.
-
-These are copied from C, so it is fine, but we may want to take the
-chance to format them.
-
-Cheers,
-Miguel
+> 
+>>  
+>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>  #define pmd_devmap(pmd)		pte_devmap(pmd_pte(pmd))
+>> @@ -614,7 +617,7 @@ static inline pmd_t pmd_mkspecial(pmd_t pmd)
+>>  #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
+>>  #define pud_write(pud)		pte_write(pud_pte(pud))
+>>  
+>> -#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
+>> +#define pud_mkhuge(pud)		(__pud((pud_val(pud) & ~PUD_TYPE_MASK) | PUD_TYPE_SECT))
+>>  
+>>  #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
+>>  #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
+>> @@ -712,8 +715,6 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+>>  
+>>  #define pmd_table(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
+>>  				 PMD_TYPE_TABLE)
+>> -#define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
+>> -				 PMD_TYPE_SECT)
+>>  #define pmd_leaf(pmd)		(pmd_present(pmd) && !pmd_table(pmd))
+>>  #define pmd_bad(pmd)		(!pmd_table(pmd))
+>>  
+> 
 
