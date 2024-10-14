@@ -1,159 +1,165 @@
-Return-Path: <linux-kernel+bounces-364715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6404D99D849
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:35:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2186299D84C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29D8D282ABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:35:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 803A1B21A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520F41D0E08;
-	Mon, 14 Oct 2024 20:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D272B1D0BA4;
+	Mon, 14 Oct 2024 20:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QyxhfCJh"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ect6gHv/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9004C7C;
-	Mon, 14 Oct 2024 20:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FFE1C879A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728938095; cv=none; b=ptatjZtpefUgAUELeHLk6G7WJo8wlVRxVAkRiiWBA6ytSGfqhhRec96RPmlPpdrfK+z3mLeGNu+kS3U97Ge1I4LgoOkTfh5R3aEm6inIBTDyI7noMKuhE/yNnkqQdzoSk2b/dU1oGgOhM+uVnvoHXDzUpDA57NliiDSDy9Xlx1A=
+	t=1728938122; cv=none; b=W+QXsnvDwfXaU1LbHvCfsLkoaZnmFP+mM8U4Sb1OS1PZKKmJRUZVU8McgBeHv+mdxu4aq/805qgiCPR5fqNYjoIyN5Wt+TO2IHVvBy2L1fmDHIDTZe1Q13yfvqPbQc8Sk1nLDN4l3Y+UeF4dfvs1tNvFYySeBApH9Mm4CmIu74A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728938095; c=relaxed/simple;
-	bh=Lk4I6UURrH3IQswz39h4iub5KOG09WnFz6iqw+Qh2c4=;
+	s=arc-20240116; t=1728938122; c=relaxed/simple;
+	bh=wLhf3jR8M5Z8MMOJ1B8t6VL9zgSh30irh8dHs0m90j4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqgl0GPbZEH6G7Y4hpciWaAF5ococCNx8PyhxUb/pxdabL41jzRxnWOuf1SiPud+HFO0q1Ryc1vaiuJZfUbF6OaJjfpUEhyuhbg/x/ctC7CpqIaRp7lZLo7cAH15R382V5AT7QBJZ6TOsp5Zj3Ynl9Z4Npjotek8ciNTIz9ym0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QyxhfCJh; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [23.233.251.139])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F24A71A7D;
-	Mon, 14 Oct 2024 22:33:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728937990;
-	bh=Lk4I6UURrH3IQswz39h4iub5KOG09WnFz6iqw+Qh2c4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuP6dcEQ3/IPE9JqTuGzCx+mzbAEw70+o0+LqsA5YJo7lCF+k8fyGvd4IOa4uTXe+r4nDVlMaUK0qsavtiLqsAZw3fX+xi61hk7DpKq/tsPLG0wHKU2f6PpvdY3xW8XOywKv65Z2cN74RH+dqfqPcfO+nlHdIq1y1K6sljHqbTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ect6gHv/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59E6C4CECE;
+	Mon, 14 Oct 2024 20:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728938121;
+	bh=wLhf3jR8M5Z8MMOJ1B8t6VL9zgSh30irh8dHs0m90j4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QyxhfCJhunR/Xb9ItJfdPZNAZ6mYdQj27QWwv2Du955G5zLoPClW+Vk055gwMLbTi
-	 fFxioz/SvtwVJsDt148PYGPeAPMjhnWXBogFCM0Kte8uo6nL3dRfr7nsDOfTIFVTle
-	 /xpqnFB1CLB37dhtKZGLKaJAwXG1jVYD6vo1j8I4=
-Date: Mon, 14 Oct 2024 23:34:41 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	"Paul J. Murphy" <paul.j.murphy@intel.com>,
-	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	Martin Hecht <martin.hecht@avnet.eu>,
-	Zhi Mao <zhi.mao@mediatek.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Ricardo Ribalda <ribalda@kernel.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Dongchun Zhu <dongchun.zhu@mediatek.com>,
-	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-	Todor Tomov <todor.too@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] media: dt-bindings: Remove assigned-clock-* from
- various schema
-Message-ID: <20241014203441.GF5522@pendragon.ideasonboard.com>
-References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
- <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-1-a2bb12a1796d@linaro.org>
- <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
+	b=Ect6gHv/bZie0Eolgfh8N6DRlAQnyFyCJplGNFbrR19cey3SPPXqQx2sIvoYxica1
+	 MHzCSzEtHhkgLbo9RTbnPvVyNu/q7tFCmo7oqlKqdMs7r/OMMZ15Hf1RXed+hDI07a
+	 y6TL+Xa+h45NN+ls3czivjkjwX5Wg1ah4mNFN9ZeqH3cPRxjNknZ3h5b/cQJPiU+Df
+	 9fv9/Hv/fdEZgpPoTRXnxx77K3lgP9M4/abqUsGVLw8sYlVX8nwBS2eQw03cbPIsDz
+	 mr5PXWZKapJr0TioKVO0GC/V6GoEp+5zhZOgaUkmn0k/GRqMND9+pWPiNzFzA8eQUr
+	 2EXr1TCygBH9w==
+Date: Mon, 14 Oct 2024 13:35:17 -0700
+From: Kees Cook <kees@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Feng Tang <feng.tang@intel.com>, Marco Elver <elver@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	David Gow <davidgow@google.com>, Danilo Krummrich <dakr@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v2 0/5] mm/slub: Improve data handling of krealloc() when
+ orig_size is enabled
+Message-ID: <202410141330.CAF56E3@keescook>
+References: <20240911064535.557650-1-feng.tang@intel.com>
+ <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
+ <CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com>
+ <49ef066d-d001-411e-8db7-f064bdc2104c@suse.cz>
+ <2382d6e1-7719-4bf9-8a4a-1e2c32ee7c9f@suse.cz>
+ <ZwzNtGALCG9jUNUD@feng-clx.sh.intel.com>
+ <a34e6796-e550-465c-92dc-ee659716b918@suse.cz>
+ <Zw0UKtx5d2hnHvDV@feng-clx.sh.intel.com>
+ <0e8d49d2-e89b-44df-9dff-29e8f24de105@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
+In-Reply-To: <0e8d49d2-e89b-44df-9dff-29e8f24de105@suse.cz>
 
-On Mon, Oct 14, 2024 at 09:43:07AM +0200, Krzysztof Kozlowski wrote:
-> On Sat, Oct 12, 2024 at 04:02:50PM +0100, Bryan O'Donoghue wrote:
-> > Remove extraneous assigned-clock* from media/i2c/* schemas, retain in the
-> > relevant examples.
+On Mon, Oct 14, 2024 at 03:12:09PM +0200, Vlastimil Babka wrote:
+> On 10/14/24 14:52, Feng Tang wrote:
+> > On Mon, Oct 14, 2024 at 10:53:32AM +0200, Vlastimil Babka wrote:
+> >> On 10/14/24 09:52, Feng Tang wrote:
+> >> > On Fri, Oct 04, 2024 at 05:52:10PM +0800, Vlastimil Babka wrote:
+> >> > Thanks for the suggestion!
+> >> > 
+> >> > As there were error report about the NULL slab for big kmalloc object, how
+> >> > about the following code for 
+> >> > 
+> >> > __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+> >> > {
+> >> > 	void *ret;
+> >> > 	size_t ks = 0;
+> >> > 	int orig_size = 0;
+> >> > 	struct kmem_cache *s = NULL;
+> >> > 
+> >> > 	/* Check for double-free. */
+> >> > 	if (likely(!ZERO_OR_NULL_PTR(p))) {
+> >> > 		if (!kasan_check_byte(p))
+> >> > 			return NULL;
+> >> > 
+> >> > 		ks = ksize(p);
+> >> 
+> >> I think this will result in __ksize() doing
+> >>   skip_orig_size_check(folio_slab(folio)->slab_cache, object);
+> >> and we don't want that?
 > > 
-> > Link: https://lore.kernel.org/linux-media/j7kgz2lyxnler5qwd7yiazdq6fmsv77kyozdrxf33h54ydakjz@uqjhwhoyv6re
-> > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml | 8 --------
-> >  Documentation/devicetree/bindings/media/i2c/ovti,ov5648.yaml | 8 --------
-> >  Documentation/devicetree/bindings/media/i2c/ovti,ov8865.yaml | 8 --------
-> >  Documentation/devicetree/bindings/media/i2c/ovti,ov9282.yaml | 4 ----
-> >  Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml | 4 ----
-> >  Documentation/devicetree/bindings/media/i2c/sony,imx334.yaml | 4 ----
-> >  Documentation/devicetree/bindings/media/i2c/sony,imx335.yaml | 4 ----
-> >  Documentation/devicetree/bindings/media/i2c/sony,imx412.yaml | 4 ----
-> >  8 files changed, 44 deletions(-)
+> > I think that's fine. As later code will re-set the orig_size anyway.
+> 
+> But you also read it first.
+> 
+> >> > 		/* Some objects have no orig_size, like big kmalloc case */
+> >> > 		if (is_kfence_address(p)) {
+> >> > 			orig_size = kfence_ksize(p);
+> >> > 		} else if (virt_to_slab(p)) {
+> >> > 			s = virt_to_cache(p);
+> >> > 			orig_size = get_orig_size(s, (void *)p);
+> 
+> here.
+> 
+> >> > 		}
+> 
+> >> Also the checks below repeat some of the checks of ksize().
 > > 
-> > diff --git a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> > index 60f19e1152b33128cf3baa15b8c70a874ca6d52e..d18ead8f7fc43bfacc291aed85b5ca9166c46edb 100644
-> > --- a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> > +++ b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> > @@ -28,12 +28,6 @@ properties:
-> >      items:
-> >        - description: Reference to the mclk clock.
-> >  
-> > -  assigned-clocks:
-> > -    maxItems: 1
-> > -
-> > -  assigned-clock-rates:
-> > -    maxItems: 1
-> > -
-> >    reset-gpios:
-> >      description: Reference to the GPIO connected to the RESETB pin. Active low.
-> >      maxItems: 1
-> > @@ -82,8 +76,6 @@ required:
-> >    - compatible
-> >    - reg
-> >    - clocks
-> > -  - assigned-clocks
-> > -  - assigned-clock-rates
+> > Yes, there is some redundancy, mostly the virt_to_slab() 
+> > 
+> >> So I think in __do_krealloc() we should do things manually to determine ks
+> >> and not call ksize(). Just not break any of the cases ksize() handles
+> >> (kfence, large kmalloc).
+> > 
+> > OK, originally I tried not to expose internals of __ksize(). Let me
+> > try this way.
 > 
-> That's not extraneous, but has a meaning that without assigned-clocks
-> this device or driver will not operate.
-
-How so ? Even if we assume that the device requires a specific clock
-frequency (which is often not the case for camera sensors, the
-limitation usually comes from drivers, so the constraint shouldn't be
-expressed in the bindings in that case), there is no overall requirement
-to assign a clock rate as in many cases the clock will come from a
-fixed-frequency oscillator. This seems to be a constraint that is
-outside of the scope of DT bindings. It is similar to regulators, where
-the regulator consumer doesn't have a way to express supported voltages
-in its DT bindings.
-
-> File should rather stay as is.
+> ksize() makes assumptions that a user outside of slab itself is calling it.
 > 
-> >    - vddio-supply
-> >    - vdda-supply
-> >    - vddd-supply
+> But we (well mostly Kees) also introduced kmalloc_size_roundup() to avoid
+> querying ksize() for the purposes of writing beyond the original
+> kmalloc(size) up to the bucket size. So maybe we can also investigate if the
+> skip_orig_size_check() mechanism can be removed now?
+> 
+> Still I think __do_krealloc() should rather do its own thing and not call
+> ksize().
 
-[snip]
+The goal was to avoid having users of the allocation APIs change the
+sizes of allocations without calling into realloc. This is because
+otherwise the "alloc_size" attribute used by compilers inform
+__builtin_dynamic_object_size() can get confused:
+
+ptr = alloc(less_than_bucket_size);
+...
+size = ksize(ptr); /* larger size! */
+memcpy(ptr, src, size); /* compiler instrumentation doesn't see that ptr "grows" */
+
+So the callers use kmalloc_size_roundup() to just allocate the rounded
+up size immediately. Internally, the allocator can do what it wants.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Kees Cook
 
