@@ -1,90 +1,98 @@
-Return-Path: <linux-kernel+bounces-364762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8639899D8F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83A499D8FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54C91C21462
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:29:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717AE1F22ACC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FD01D12FE;
-	Mon, 14 Oct 2024 21:29:48 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDFF1D1E62;
+	Mon, 14 Oct 2024 21:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="HYLbpUQL"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1EF14B965;
-	Mon, 14 Oct 2024 21:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEA91A4E9D;
+	Mon, 14 Oct 2024 21:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728941388; cv=none; b=E1M3ewlPCFDskw7Bg1k2LRnqOL4zIVaf59D2W5Ugp2y3+sK3lr/jENjmUIgR/lxDV8wQgcB/+P0DwMAfDiQn8CX0pf7IIwVqfkH/8XdqDZ+sxUmmc8KfCpd48ZPDhzUsH5b0KON93+0GIoQsTVBKjWAhmQ6G6E+SfM5tw33JPGQ=
+	t=1728941413; cv=none; b=JNLjnJkw2iLW/omxmLYZyQTfUPhi+3Z6bqnNRj91VAR7YfsP3UQhFCo8+TvU2ZA0xrrrITRgR3euOFTIK2YpGMRasje/HCETayeps075K9eQmmMfuu/FiiKAt6C/xSxqcVmKGAc2mOMNA5MDO7/g9sIcyWiEupr2uGIIkMv37w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728941388; c=relaxed/simple;
-	bh=kejcbBQmCLrRfOdyP9u5bzjmXECWH71Iolf0jNAMyA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KF1dKbatCR/W0tEgDcoJUz1w3i47BUdDMeg/l0YGMyGdkmvevUOidofsgQzEWmr9vYkEFZoaVatFK38eceCJNVovpoKgU/Zb8lJbVAtp/rrKPjOmkxGXYTqP/ty9sAwenKqfU++ZMRiGycIJw5UosXkTS3DkKojPUh4tuOCYBC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 0EF157BA; Mon, 14 Oct 2024 16:29:37 -0500 (CDT)
-Date: Mon, 14 Oct 2024 16:29:37 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org, mic@digikod.net
-Subject: Re: [PATCH v2 0/6] LSM: Replace secctx/len pairs with lsm_context
-Message-ID: <20241014212937.GA1100381@mail.hallyn.com>
-References: <20241014151450.73674-1-casey.ref@schaufler-ca.com>
- <20241014151450.73674-1-casey@schaufler-ca.com>
+	s=arc-20240116; t=1728941413; c=relaxed/simple;
+	bh=su04eqcmzbNsoBPEDjOtk4+rC2d9cxSsGq4fWIYfB08=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NlqDxl8yv8YSecmJId7vl6dQL1KBjEPkSsRAjbUxjO0FKAH0n0ycErZZF9CH6MfvP2z6OjhS2T8cJvIn3BxN8lR4OjzKhMHg0q0oMjmECflI3CthVBECvzR1QVl5Im4l6hcErJCMHv79xrLBg7ESWwTjk5FxL1rXYGlernXkJnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=HYLbpUQL; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1728941412; x=1760477412;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Cy3nRj6ZbrEXkjSJrmnBFPGak+LBHbw62VLP0dq0Jsk=;
+  b=HYLbpUQL3tuPl9GLZ7An+FI0CjQYNwvjoIsVDqTlhr4WNqqQsMnmed8g
+   p760A8mESQbLNK0eUxJ1/YeXCZtu9JGDtM6BmPeU6qCmlSWpKbElBIU+T
+   ASbVobne9Zfe/mOSA2sGCm/+Ad8DDDikn5znY1p3M0ASZxzzlpo9zCW9n
+   E=;
+X-IronPort-AV: E=Sophos;i="6.11,203,1725321600"; 
+   d="scan'208";a="766514186"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 21:30:06 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:62488]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.37.107:2525] with esmtp (Farcaster)
+ id c51856a5-92bc-4122-b22f-690cf97f479c; Mon, 14 Oct 2024 21:30:05 +0000 (UTC)
+X-Farcaster-Flow-ID: c51856a5-92bc-4122-b22f-690cf97f479c
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 14 Oct 2024 21:30:05 +0000
+Received: from 6c7e67c6786f.amazon.com (10.106.101.44) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Mon, 14 Oct 2024 21:29:59 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <ignat@cloudflare.com>
+CC: <alex.aring@gmail.com>, <alibuda@linux.alibaba.com>,
+	<davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<johan.hedberg@gmail.com>, <kernel-team@cloudflare.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-bluetooth@vger.kernel.org>,
+	<linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-wpan@vger.kernel.org>, <luiz.dentz@gmail.com>, <marcel@holtmann.org>,
+	<miquel.raynal@bootlin.com>, <mkl@pengutronix.de>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <socketcan@hartkopp.net>, <stefan@datenfreihafen.org>,
+	<willemdebruijn.kernel@gmail.com>
+Subject: Re: [PATCH net-next v3 3/9] Bluetooth: RFCOMM: avoid leaving dangling sk pointer in rfcomm_sock_alloc()
+Date: Mon, 14 Oct 2024 14:29:56 -0700
+Message-ID: <20241014212956.98604-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20241014153808.51894-4-ignat@cloudflare.com>
+References: <20241014153808.51894-4-ignat@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014151450.73674-1-casey@schaufler-ca.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D031UWA003.ant.amazon.com (10.13.139.47) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, Oct 14, 2024 at 08:14:44AM -0700, Casey Schaufler wrote:
-> LSM: Replace secctx/len pairs with lsm_context
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Mon, 14 Oct 2024 16:38:02 +0100
+> bt_sock_alloc() attaches allocated sk object to the provided sock object.
+> If rfcomm_dlc_alloc() fails, we release the sk object, but leave the
+> dangling pointer in the sock object, which may cause use-after-free.
 > 
-> Several of the Linux Security Module (LSM) interfaces use a pair of
-> pointers for transmitting security context data and data length. The
-> data passed is refered to as a security context.  While all existing
-> modules provide nul terminated strings, there is no requirement that
-> they to so. Hence, the length is necessary.
+> Fix this by swapping calls to bt_sock_alloc() and rfcomm_dlc_alloc().
 > 
-> Security contexts are provided by a number of interfaces. The interface
-> security_release_secctx() is used when the caller is finished with the
-> data. Each of the security modules that provide security contexts manages
-> them differently. This was safe in the past, because only one security
-> module that provides security contexts is allowed to be active. To allow
-> multiple active modules that use security contexts it is necessary to
-> identify which security module created a security context. Adding a third
-> pointer to the interfaces for the LSM identification is not appealing.
-> 
-> A new structure, lsm_context, is created for use in these interfaces.
-> It includes three members: the data pointer, the data length and
-> the LSM ID of its creator. The interfaces that create contexts and
-> security_release_secctx() now use a pointer to an lsm_context instead
-> of a pointer pair.
-> 
-> The changes are mostly mechanical, and some scaffolding is used within
-> the patch set to allow for smaller individual patches.
+> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
 
-Hey Casey,
-
-so this set is not bisectable.  Applying just patch 1 will no compile, right?
-What is your plan for getting past that?  Squash some or all of them into one?
-Or are you planning a wider reorg of the patches down the line, once the
-basics of the end result are agreed upon?
-
--serge
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
