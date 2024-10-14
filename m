@@ -1,88 +1,162 @@
-Return-Path: <linux-kernel+bounces-363795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0070699C72A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:29:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3787899C72F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321911C2287D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:29:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D74D4B2361E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F321607B7;
-	Mon, 14 Oct 2024 10:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9136EB4A;
+	Mon, 14 Oct 2024 10:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikZEIJ/q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LOTmEKiV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CBA156C69;
-	Mon, 14 Oct 2024 10:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F61F15CD6E;
+	Mon, 14 Oct 2024 10:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728901745; cv=none; b=BlllqkqbXk0EUHG/GBaLOPUlvqEef/9euzpzwAIqwIcyLVHDMElhBdxPGsAKkY+96lCZdQdJ/eKVy5MljuLuvDJ5hQxniF8NsGGVKclR9ik8r5Lu3KhY0gwMAXtb6IPCHkkSVbqtcc8IyXOHm2gDaMJGr/AXeCP8LCYMJmm/3/o=
+	t=1728901762; cv=none; b=fYGGuvlYBCgUb3UhjHwZeQJ+txdJuEVbvFWL9LDh/Sx0+2+x8BUSbzBV5i2b5bVAka/j5dNQ2UB1bJDKhxF1Ledh++txa9UFxLj29E+iLyof6176ZksidyhoQVx/+sP9hv/KxKCr8u7LmV7PpKaOpKihwaXM5t5FvbL7g50mYdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728901745; c=relaxed/simple;
-	bh=sV4Rp0TPVdzNhXz3lQhbAY5z63glc6lEzRRa41dAlHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+UffQVTqSpXYtYP+TZvHKeKr4VHO0c00KdVY7Bz0ZkmKX+HXbZz1N/pJVngID3hlO1skqNnn5ZBekWaTWVK5P5EtV5tplZqdK+6Wp4STveRM2FmRDIeQ7xzUgbpj7O6+83rIOHaF/PFmlNE7wov7CB/hEdwy0ROcfa1rI3Umnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikZEIJ/q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30349C4CEC6;
-	Mon, 14 Oct 2024 10:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728901744;
-	bh=sV4Rp0TPVdzNhXz3lQhbAY5z63glc6lEzRRa41dAlHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ikZEIJ/q02U0sgjPnYZhDgFSO09fOvHPApoO/qznd/NsKTgq3fuYKg+kXdQTGNoEZ
-	 ZdFP15gv+6ZSyxLOY2vpWe0MBh7ZPpkBcKv3Tb8GreZmO9kMzaoI9uwelL2IjjNl1K
-	 jD+ZzMqTMRAlNrfljDijm7JGdgsjeAji5YeZ9YYpK5UaHToAZIvGR693yNbzd9d0Xr
-	 QPawXFjCLH4+C1hfbNJuxRoa1chGFiuBxqD4qAa77jUYwF+rR5fGD54Qx8MvXtm6j5
-	 uHpxIbm+YJW4fX2DBOBHsPjR/Q7mpg942cp4wID2LsxrsUMfgq1PY70kbK8DN5Fjbn
-	 Hdfns0E4XIb0A==
-Date: Mon, 14 Oct 2024 11:29:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, dmaengine@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: Build regressions/improvements in v6.12-rc3
-Message-ID: <20241014102900.GS77519@kernel.org>
-References: <CAHk-=wg061j_0+a0wen8E-wxSzKx_TGCkKw-r1tvsp5fLeT0pA@mail.gmail.com>
- <20241014072731.3807160-1-geert@linux-m68k.org>
- <711d7f6d-b785-7560-f4dc-c6aad2cce99@linux-m68k.org>
- <20241014085819.GO77519@kernel.org>
- <CAMuHMdWedOgc4S12FwQR8_80aqgRJ2pwrKWsNb5Svt6776ti3Q@mail.gmail.com>
+	s=arc-20240116; t=1728901762; c=relaxed/simple;
+	bh=O1zDNala9EX9k298pR/ciiTZ0akbpeN3NpSMWyoMxbo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=uQPiBBbu8K266X00pb1rawlMCgPP094IZO8oLun2st68FbvJFfZLLKZrNnOLwMDgQ51944EFOOYeua5pkYZJmLtN/AfNjb3sLHU2eBU4AxPr0RLPk7v3IO06Ge/WLsgzpb9ZRtQcZ0krKDRMcxBF/SliIpQ2ch+yRUEvuM43070=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LOTmEKiV; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728901761; x=1760437761;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=O1zDNala9EX9k298pR/ciiTZ0akbpeN3NpSMWyoMxbo=;
+  b=LOTmEKiVspVm40m1EBv9GqLply8B0BtMV0H07oNxKxC0rC/llKZX6oLh
+   WB1oiSm6ovU48ujFIZSS9SEVrJjSTgNNZgVRSgFn0CuwJYC3ltNC3hU3r
+   fMpJrrDK9tU9oMJ9qvht06DGTJ/01Itk7/yhnDrpFyaFfAFVSc1bFgoHC
+   RKzOJyw6Ohn+qTOPd4PtPcgZFkUvWrILAGiF1R1EehYUP6OsXyTNtfCgh
+   EMuMu+5h53B00bwlJ24r/Zj8cNT0FR1rgSPK3EcB1nfqTHwbqI5GJvtUc
+   pF5JJ58hyD/gdkTeuK1hkmm/+ThgYJVjwRLXTUTidS/fUp4XGE33M0aOa
+   A==;
+X-CSE-ConnectionGUID: 6MfdOEbCSlu6pULaLAwETw==
+X-CSE-MsgGUID: FT34iGjZRneqA9o7NbMFsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="45748579"
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="45748579"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 03:29:14 -0700
+X-CSE-ConnectionGUID: IAnYW3iKRMGEwWR+Bt1iHg==
+X-CSE-MsgGUID: Oi6qp8o+RueXZiG1amHnMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="77545723"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.80])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 03:29:10 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 14 Oct 2024 13:29:07 +0300 (EEST)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>, 
+    x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
+    Perry Yuan <perry.yuan@amd.com>, LKML <linux-kernel@vger.kernel.org>, 
+    linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, 
+    platform-driver-x86@vger.kernel.org, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Perry Yuan <Perry.Yuan@amd.com>
+Subject: Re: [PATCH v2 09/13] platform/x86: hfi: add power management
+ callback
+In-Reply-To: <20241010193705.10362-10-mario.limonciello@amd.com>
+Message-ID: <d83fb93d-322a-180d-1cc6-6b898ad63b92@linux.intel.com>
+References: <20241010193705.10362-1-mario.limonciello@amd.com> <20241010193705.10362-10-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWedOgc4S12FwQR8_80aqgRJ2pwrKWsNb5Svt6776ti3Q@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Oct 14, 2024 at 11:18:14AM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Mon, Oct 14, 2024 at 10:58 AM Simon Horman <horms@kernel.org> wrote:
-> > On Mon, Oct 14, 2024 at 10:38:20AM +0200, Geert Uytterhoeven wrote:
-> > >   + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Werror=format=]:  => 126:37
-> > >   + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t' {aka 'long long unsigned int'} [-Werror=format=]:  => 126:46
-> >
-> > I wonder what the correct string format is in these cases?
-> > I didn't have a good idea the last time I looked.
-> 
-> "%pa" + taking the address of the resource_size_t object.
-> 
-> https://elixir.bootlin.com/linux/v6.11.3/source/Documentation/core-api/printk-formats.rst#L229
+On Thu, 10 Oct 2024, Mario Limonciello wrote:
 
-Thanks,
+> From: Perry Yuan <Perry.Yuan@amd.com>
+> 
+> Introduces power management callbacks for the `amd_hfi` driver.
+> Specifically, the `suspend` and `resume` callbacks have been added
+> to handle the necessary operations during system low power states
+> and wake-up.
+> 
+> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v2:
+>  * Whitespace changes
+>  * Use on online CPUs not present ones
+> ---
+>  drivers/platform/x86/amd/hfi/hfi.c | 33 ++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
+> index c969ee7ea5ee..0263993b0a94 100644
+> --- a/drivers/platform/x86/amd/hfi/hfi.c
+> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+> @@ -407,6 +407,38 @@ static int amd_hfi_metadata_parser(struct platform_device *pdev,
+>  	return ret;
+>  }
+>  
+> +static int amd_hfi_pm_resume(struct device *dev)
+> +{
+> +	int ret, cpu;
+> +
+> +	for_each_present_cpu(cpu) {
+> +		ret = amd_hfi_set_state(cpu, true);
+> +		if (ret < 0) {
+> +			dev_err(dev, "failed to enable workload class config: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int amd_hfi_pm_suspend(struct device *dev)
+> +{
+> +	int ret, cpu;
+> +
+> +	for_each_online_cpu(cpu) {
+> +		ret = amd_hfi_set_state(cpu, false);
+> +		if (ret < 0) {
+> +			dev_err(dev, "failed to disable workload class config: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(amd_hfi_pm_ops, amd_hfi_pm_suspend, amd_hfi_pm_resume);
+> +
+>  static const struct acpi_device_id amd_hfi_platform_match[] = {
+>  	{ "AMDI0104", 0},
+>  	{ }
+> @@ -458,6 +490,7 @@ static struct platform_driver amd_hfi_driver = {
+>  	.driver = {
+>  		.name = AMD_HFI_DRIVER,
+>  		.owner = THIS_MODULE,
+> +		.pm	= &amd_hfi_pm_ops,
 
-These format problems seem to have been introduced quite some time ago
-by commit 9d9326d3bc0e ("phy: Change mii_bus id field to a string").
-I'll send some patches to address the ones introduced by that patch
-that I was able to still find in-tree.
+This is inconsistent.
+
+>  		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
+>  	},
+>  	.probe = amd_hfi_probe,
+> 
+
+-- 
+ i.
+
 
