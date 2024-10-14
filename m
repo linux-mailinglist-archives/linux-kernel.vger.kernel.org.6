@@ -1,327 +1,231 @@
-Return-Path: <linux-kernel+bounces-363789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F8499C716
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE1499C718
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49B58B21668
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:24:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E201B250DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EFC15C13F;
-	Mon, 14 Oct 2024 10:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF69A15B546;
+	Mon, 14 Oct 2024 10:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SQBLBTRf";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="uodOnEML"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="J1zI4/kG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA244156676;
-	Mon, 14 Oct 2024 10:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728901451; cv=fail; b=bNq8gT05hwWzSSqgaxowYBjPAeItbFo1cwvjBKlNMrtVSvnxr4uDJI0PrkoDoNUvvb2IP66+BvaUK6KGslKpXyCxAbHi09s5PSu+EYgVaVyhfXYYmcb2PMRjsgkyI/79EbYc3gFqzRuxY6B9B1bOFNxPiROdlrTqI4OV9JnT4T8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728901451; c=relaxed/simple;
-	bh=bCkCP/h7mbi3nKAjvf3wlgXtqHBy/ixNaxwb1ypJ5tQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dRRITJANtTkNBgtARx1UAK/Q26BNsYWGQ6aymHX9C7n4HEcZMcNsSCo5qA0o5Ndfk7547QFtuwpy9D1tV1PsCned1MTWd73Ml5/vkQ9vj5+TK18kt6Vzn3j8nTjGv+1bG9SmyjzvEm0zSSxDvV3LyEYmqJY/wn4DmUJlpwbsogE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SQBLBTRf; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=uodOnEML; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E9tw42032249;
-	Mon, 14 Oct 2024 10:23:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=6jkhPEFUpWo3F9gWwRdNtKb26Fb9mj9GLiXn3W5Ek18=; b=
-	SQBLBTRfaj9UqWcjfmGMfMYmV74RDtdLSSO3Ie6fZlnZpvOyCYJbgTrahsca2pxX
-	R1C5zGIg1IvSBmIAOApYKbnxqhBEeb9/LSFSCzVkB1VRgE1fSOG0cVzbYWhlZ3Ip
-	rbkSnrD5/Ove9bCw16F6nS7UFopBVqNKdvuXXhHP0/PRYKAzDeuicJpYhPFPIrTP
-	a18AQwcUmsVeSjBQkeZOnJoxI7/oc43ZxwVoNcDwkjoddpZvRRo7jOlXAA76q6Xz
-	8XUR1D31D8sroX8ktN7j/BWSzX9U6XIqs3zTjX39XUm1C3x073e/OcbmmDUZxDi4
-	v/HrGb7cRGfXfDiJ9bNeSg==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427g1adwu9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 10:23:23 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49EADFDq026558;
-	Mon, 14 Oct 2024 10:23:22 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2177.outbound.protection.outlook.com [104.47.58.177])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 427fjcdnkc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 10:23:22 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=llBxRmVKqynfMi0fhb3WIse74ywdD67MNgsYHyaVKo4HeX3+wcJdZzHW0Z2P6FZNkRphXk0C3KLQ/lb0RvzlYMZWR9f+FE14IHYWlADjRF/+8d1abVhwnubRhI4Zf8TwJH/DJFve2TJOBhYyqVZLK26pHh3ARg+PhMugYb5z+4tPd+9Q5yxeHDMvNtirrAkRHKoKYIAEWnlt9dmB36XoUffXY/E78uAgUsKRtalBKxshtR3iCqwUlIx3QBFObGiyjZIincfafUJiebJCPXlZ3Im2M4Lx8d3X9xarqAgZGb87UD4fyfTa00suqBYDAa9h5lmzTIu2kbc4MvPAZ0I4Gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6jkhPEFUpWo3F9gWwRdNtKb26Fb9mj9GLiXn3W5Ek18=;
- b=UdEl6KLdm152Ajq3zmSgVicsQsEhisSBfVoGyqLkEWP6gvOwPSEdYpYghK0pYkGu1nlcwov4au3soIsvj8dQrxMWtUZjn6gon1PSlhceqKxIRZhaVu6aAZN1G+JI1kfhHybF3urvhcB4hnKHKKa0bd2rUvv1mIk6OUVujvuo5sWpQWTjvQX6QX5lHXAuwgXN1AL4RlkPGWVhDt+kJwMRGQSGJm+8va3JO6ZShTPm2kuG6nX43A/j5N8jmCVoPujToh7aNBMk6ARalrWS581dU7v1AoNs4qyDceUuTjseq2BvixI8QVcDGm7FuaXPYiYDzyl6O4pU/KLbkntPUCmfhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6jkhPEFUpWo3F9gWwRdNtKb26Fb9mj9GLiXn3W5Ek18=;
- b=uodOnEMLFNkdcKLSaPViwcMip206w38b5ExfsR7c2vC4nHTT7klszP++8CAqDJnyI+KsvAmCfZ6m2eOSR2HtsON6umXpySt8iZUTa7hBt6thFu3svOhibHMQTtu7v3OvfFIzKoxRttGCPrVnTqzsBrNM3lHjnOK1vubEjSH2CFs=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by CO1PR10MB4593.namprd10.prod.outlook.com (2603:10b6:303:91::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
- 2024 10:23:20 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
- 10:23:19 +0000
-Date: Mon, 14 Oct 2024 11:23:16 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Muchun Song <muchun.song@linux.dev>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: Re: [RFC PATCH 2/4] mm: add PTE_MARKER_GUARD PTE marker
-Message-ID: <34e41a11-10ef-4eb9-8c07-299d193dd8a7@lucifer.local>
-References: <cover.1727440966.git.lorenzo.stoakes@oracle.com>
- <03570f8a0ad2a9c0a92cc0c594e375c4185eccdc.1727440966.git.lorenzo.stoakes@oracle.com>
- <CAG48ez0rLrTrNiT93T2fG86w_n+ARRqNxOS6OXGS-Q_V54GjoQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez0rLrTrNiT93T2fG86w_n+ARRqNxOS6OXGS-Q_V54GjoQ@mail.gmail.com>
-X-ClientProxiedBy: LO4P123CA0158.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:188::19) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D5C1581F4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728901483; cv=none; b=gf6EL6Dwjn1c+oDhewMTtvupp/EG5EGQp84H3oMu9qWu7Rp11iy8Ryb4/sdDX793syhTBGtNWZdkvkPX4Wlcft3fNfYcLdc2B8UGPvmpZ87PCdaiwGWUEjSidtBp0C7l3ri9OXkLxzoS1gTfS+9xKHqsuNdoOCEz6IYCbOUJ608=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728901483; c=relaxed/simple;
+	bh=LYs+OrgXZoh1I9KaZW2b0xs+0+bxjdlmWmTsqOAC8vs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jlTyYSdbbIsasyH0KbNpUX4gTeP4HJPLnvxXi5kvpGyMw06aCHU76v0AfcrofbvHWOJf+2Z2+DfaOzIIqPozRJurlkcNapVpRbJXt0yr9K6Wk8WxefNE/phCnceCQ5WoIeJ3EXyl/2J9Dc3aV9WI0OytEBqAqp2GHs2V4QXw5so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=J1zI4/kG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E7ogVF006067;
+	Mon, 14 Oct 2024 10:24:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	Ocg3L0BVPJRwxCJcj03WGBFydvcJyY9Nl2aza3CZevs=; b=J1zI4/kGhDXyQYNQ
+	NA7cBd8+RsnpSRlMo1C0pL6EU/LHnfnDNcuAgEjbLeVHIfyT5ty91FurHJhH6MIC
+	CM7EdPy/l4Us0hNVQ4bdol5g7xx1EDj2WuGRIGtN3SIKx1mE6Jgj9R7WAF0Gk/+E
+	wCAo4EIFYuFSVK2njxE8QuoAKBLWTapagLyvYHhbjibgAUtz+FdxKR9YlzwKb4Zf
+	8Kjq8OHdwXgkgDLSlfDOuO9eagXIpotBYeMhTtL1dA3qaAHC6PtrsWhbo1+1O9sy
+	QOfYl/9c0O5GjhpnxquVQGZjXe0iT8FOPA8J7nvnBvdCaDIiMOc8ZmxySjnnAzhU
+	aIH8wA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 428y8w0nmf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 10:24:20 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EAOJHY029579;
+	Mon, 14 Oct 2024 10:24:19 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 428y8w0nmb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 10:24:19 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49E74jbO027452;
+	Mon, 14 Oct 2024 10:24:19 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txe1hf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 10:24:19 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EAOIme27198058
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 10:24:18 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0551F5804E;
+	Mon, 14 Oct 2024 10:24:18 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E25D65803F;
+	Mon, 14 Oct 2024 10:24:09 +0000 (GMT)
+Received: from [9.43.116.47] (unknown [9.43.116.47])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 14 Oct 2024 10:24:09 +0000 (GMT)
+Message-ID: <941875f7-0d7f-4ba3-bc7c-7aedc3b20dae@linux.ibm.com>
+Date: Mon, 14 Oct 2024 15:54:06 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v3 1/3] fadump: Refactor and prepare fadump_cma_init for
+ late init
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: linux-mm@kvack.org, Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+        Donet Tom <donettom@linux.vnet.ibm.com>,
+        LKML
+ <linux-kernel@vger.kernel.org>,
+        Sachin P Bappalige <sachinpb@linux.ibm.com>
+References: <030b6d46fddac126a6cf7e119bea48055338f0ed.1728658614.git.ritesh.list@gmail.com>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <030b6d46fddac126a6cf7e119bea48055338f0ed.1728658614.git.ritesh.list@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: vCjybacVMoVYpyuqbebMZr5tU5ddzP-S
+X-Proofpoint-GUID: HKCPcImhC0WCwjRQTgK8ZuBP0V1vbSTr
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CO1PR10MB4593:EE_
-X-MS-Office365-Filtering-Correlation-Id: 812f1849-cc2f-4a8e-eb01-08dcec3a398d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N2xsSmRqQWVFRk5jODVTc0JuY3NNWVh4RUZlS1Q4ZUtXbitVcWpvTG55TU8x?=
- =?utf-8?B?VU5neHhDT0Z2N3F3NU5mZ2RhMUlRQW9QWFJPTW5Bc3BmTVRhaXNiL1ZjVlpZ?=
- =?utf-8?B?VGZIR0oyVURUWXQyejhYYnBBVlNZSEpGN2dsUllsQXhCMG5Dc3c5SFhpNUpj?=
- =?utf-8?B?S3Q1WmxGSjVVa2ZjRUZGQU9ucUZxYzcyc3dSTWRuNnpzUXpwUzhPZmV5UTZY?=
- =?utf-8?B?dFVHZjVrVmpMZ0tlOTYvQzVZVjJsdjVCajJoZHdlQS9tY2pPYVRmekFrZVVo?=
- =?utf-8?B?OFJFM3FMMjFLTndpem8wOGtQWGVRL0Yzd1JYRlFuUVRTRldVZ2ZpUFFjTTFk?=
- =?utf-8?B?NnUvM2c5SFRERkpuWHMyL05pRXZwTXg1S052cHRJM3NaY2c5K0FXdmNHMURl?=
- =?utf-8?B?YzJZSE1uaWl6NDZ1VzhqNFRBWWc4MkxqbTFYRGdIeXViZVZQYWdyZmlrN3FN?=
- =?utf-8?B?bWRacDFaN1hGdFZZaHhDVzYxY3lVdUlOVVpZUmQ5WE8yZzd6Vllub3lnOXJ6?=
- =?utf-8?B?RTZ5SERuMFE4KzRQcjlmb1pkaFlTNld0OE5jdjF2Z1RYZXZyUWhGaGdNYTYy?=
- =?utf-8?B?L1JyalpNSU4xbWt6Yk5SZmJ3RVR0MytvWXJtUmtabWM2b1JWRGk3YXRuUGtD?=
- =?utf-8?B?dDVSdjY2VVlKdGlDMURzT2VWYUdJRlNSUXE5OTk3K1MxZFpzaVVvZ3pXdHdF?=
- =?utf-8?B?eElzUXgvck0rNzFTTFZYMVVnZUZSaHdraVlKSHpzb0dSZ2lacUhTSGpWTUJE?=
- =?utf-8?B?OS82Wmx3RVRTQVZkQ1hMa3lzZzcxUmp0K2lkUkN5aVdKNUY2MTRSTmJIVlJj?=
- =?utf-8?B?bDNsblBkWXVzakUxcVRjY1UzTmdyd0tLbkVRSTRvMlBqdGtWK0NEZ3VJT1N4?=
- =?utf-8?B?UVF6ZmNxYXppWXZEbkdOYUYwUTRIVThkNmdlSGRGdzBjRDdFVWFQZUIydnZm?=
- =?utf-8?B?OGptVVN4RkJyWnJzVFplSE1iT1FsbTlhNytBQWlEQ0gza2Rib1ZZeENBaVRF?=
- =?utf-8?B?d2FyQXRIRTUzdEMySE9JMHJCQ1FWVGlsRnZoaUptU3J4VHBCTDM4VjlnWExE?=
- =?utf-8?B?dHlUSGNSV3QxWGVtOC9VSDZBZElKblVmbHVWMlVDOTQzOGw2ejlxckhYN0dq?=
- =?utf-8?B?NWk2eU9KQ0duKzJJVTErNGpxVWl2UnhXb1ppVnBjU0VqaU9MS1hCYlJuQTZ6?=
- =?utf-8?B?RHRIZGZVL3dvNTA1MUlpb09LZkx2YWNOcmh5UWRIcW5Mb1JJZWFzeWlPd1FB?=
- =?utf-8?B?WXQ1bnkvQS9MeWgxbFZFdFFFR0wvVTBnVG1PSURERmlJMzUwbzkwQ1pnU3BI?=
- =?utf-8?B?VUlYNW1OZnZmLzVKUkVzTkZ0Z3ZMWnFPTkFJNkNMWEE2NklPWDgxRW03Tlk4?=
- =?utf-8?B?aHhTVWwzU1FtVHdzLzVORTVkN2ZaMkVXc1FQSWRoWlFNZkZPVmpzdDJYZGtn?=
- =?utf-8?B?eHpybDdKNnFienZJbFFwYVpWa1l6MER1UUFQKzN5N0hPaGpURFJyeW9BOWYr?=
- =?utf-8?B?WG9UeUtRQ2FucHhoUzZDbm1ncWppdkM5bElwN2pBM3BBN1ZHOVp0ZXlGRG1C?=
- =?utf-8?B?UCtmTmtqL0xJcXhSb3hQMjZxQUJ3b3I3VFRkWGlnT0NCbzdkYXJTaFdGeHRN?=
- =?utf-8?B?M0c3eVh5YTNwdGR6R050TEJ6bm1nOFVBRnhRbE54bERvcEtWNGdSTWFSZkxI?=
- =?utf-8?B?UHY4Mnp5Zmw5R0xoSnBZRWRleVQwRk8yV0RKc3RWTENZSTFCNlVwQXd3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?byt6aE04NVZla3psS2VDaFIrV2RvVm5FUGQ5RTh0WHp2bVo0b0MwUmx3TFhW?=
- =?utf-8?B?bXZNMWQyNkRoSjFOQWcwVkxPa2w2ZUtETWx2SWhCYVgvL0x3S3pCcmFjWjRp?=
- =?utf-8?B?dk9LUENlWkZqSWhyUjhRYmNpa1Z4aDlwNXVvTmpKRCtYa3RDS3FQMy85SEFj?=
- =?utf-8?B?OXdnTFJhYk1EQkRXTVBSaGhtTUxINzJ4RGp2RjI1MzVYQk1NY2lQc3pxTyti?=
- =?utf-8?B?TUJHVWhhVUg3SWJia1lvSjlTZ3ZCQUw3RzdjS1BqM0paVEEyaEJHY0NmRnAy?=
- =?utf-8?B?ZkRXc201NXJYMnF4LzRXWWc4QzVocGkrWFFFMG9qbXgvZFRYRmdFdXhIcG5T?=
- =?utf-8?B?czNoOUs3c3QzMGY1UjJZRTRheTlVMDliK1hhVHpMWkM3MzV5d0lrTWlDS2dS?=
- =?utf-8?B?UUpvZ2J6MlE3ZlZoK1pvZzZVRWJVeFcvS2NxRVV3ZDNhY2xLdFdqRzJDV1Q3?=
- =?utf-8?B?U2puWTRVY0xoM3hxbW4xOFpId0xJN3FTS3FpRmdodmIrZko1cnFPOW1NOUMy?=
- =?utf-8?B?eExrMkZFS0UvUnYzS2l6RGRxL1NiLy91SUpiZ1ExM014bUZUbXpTOEtTNWFF?=
- =?utf-8?B?T3Q2RmVrYkIySE5hS2dUWEdRcTFSUktKdklocm44eGYwbVJ5bksyamp3ZjA2?=
- =?utf-8?B?Nms2Q0NsY0orMDRRK2NscXpHRXh5a3gxMjBvZEs3alIxZEJ0cllyYmpJNjBT?=
- =?utf-8?B?OWxzamRKMngyR1I4TlQzSXFKRkJtYkpJSG82RDc1N2RybkdpQ0RvTVJJUUll?=
- =?utf-8?B?U2M2bGU0WVVHVUJlckRaU3U5SDg2ais2MDNiYjNnL0VSVXQwaVYyMTNXOWhC?=
- =?utf-8?B?c3JNOEJybldIV3JONll1VC8vOHc4Z3ZaRkY1anpTTUs4SGc3WTBubkJlWHVJ?=
- =?utf-8?B?OUp0UGFUY2NHa0dTd3QyemNLU3NFWGllRGhDemtHamY5RzYyZ1ppMkE5VFFZ?=
- =?utf-8?B?V3Avc2d6THBoTEpaQXFrQkt3WUk4bGFtUzJTKzdXRkNaRkxZVkNGSFZPZ0FV?=
- =?utf-8?B?cVBKRnZBWEFPUEl3UHFuSjdrclU0QzdrUHhOcU4vaDFaQ1k0RkY5Y1U3akdK?=
- =?utf-8?B?VWMxN2R5UWUrQ1RBZVhPQW03MnY1MFlNT3IvTStwWlZHTFNMeGcvSTVteFRJ?=
- =?utf-8?B?SGN0bVJvZEdlenVtbkJPTWtLWmVodWlsUUd5SmJiQ3RzVUFDVkp6aXVJSUtV?=
- =?utf-8?B?a2dhTG94WXFaNjJ6U1h1WE5Fd0tQRlhjUDd5aVBEc2xUYnRhdUFLM21WNkdW?=
- =?utf-8?B?T3BqN0ZKb25yRU9VMkFWR2QvRU9VMHhNUU0rVVBPcU5IZ2dFempMRGd2ZStr?=
- =?utf-8?B?MGVVVVVCd3gxa0IweFVUOWFoWkJ3V2dnMUdIK3BGSmpIaUc1enNSb3N2KzdU?=
- =?utf-8?B?TitQZ1puZnVGRDlQWGtSbHZvRzhZYUNrdFFOeWU1d2hGN05xU2ZPNVN6KzRo?=
- =?utf-8?B?dHNCTFB1Z05QMjBxVW9RcmJKcmtZQW9FbWJtYnBxanV6dTlFa000STB1dUpi?=
- =?utf-8?B?SUV1b016SDNuSWNRY0FYeUNXMVlHZ2UzZmFScHMxOG1BRk9JbnlNanZYc1VI?=
- =?utf-8?B?YmJLZHhabU5TVEh0a21zS0REQVozYTQreDgxZ2l6NUhLOWdEUUJYcmNYRmtk?=
- =?utf-8?B?WXRaUEwxRzFsWm1HUEp2OER6a3FJcnVPVEFKOXBXd2ZXbHg4RXVtWFpDNzR4?=
- =?utf-8?B?dDdjaXhKVmhGV0FEVjJsSVZCSEsrbmtJK3Znb3JJWGtOMzBualFvR05uZ1Bo?=
- =?utf-8?B?Qk5ncktsRkk1ZlcvQk5HTGtZTzNJa1RNVDkvcXNocHdLY3VaUWRLQVIwZUJP?=
- =?utf-8?B?WWFONnNGN3lRdG9UUzFReCtNVTR2MUdDVUpZVm9sV3dPeHY1ZTVYYXVVcnor?=
- =?utf-8?B?V1JSTTM0WHJLTXdHVE5jMHJ1cFMxbFlLWW9OZWVOc0R3K0RvcER2QWMrOEdx?=
- =?utf-8?B?cnNIY1JkM3dkV2lmd2J4QW83VUFTbndMK29NcEZFc1JBVTdsK25Ca3dQZ0Nq?=
- =?utf-8?B?eFkzaC80YnV6bXhZclNVRGorOFFmdEJlREpaRG52QWI3SnFCejU5WGlmczd3?=
- =?utf-8?B?RlRCOG9DNEpsV2l5Z2xvSGNydTFzVEJzY1FPaUZDY21ZdklZTVIrdGFWYjZM?=
- =?utf-8?B?NHozZk9Cd05yY1pnTFZDcXpXZGhHSFR2dzk2QnBQYTdDZkVCNmY3MVFZQUN6?=
- =?utf-8?B?a1E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	q9DOnKcrlA0jRS/qNSk/2BUPny4Fc12ExOlUW2kKsyCF62vdkeEKoC8GfkQNthHZM4+MkSsnAhZeQ7DrbgH+y8UGQticDrUjReHmkKPhSp67EmJLsDqjNSCEbvofBFuFbqj6i3gDGUGYv/NG1rB4RFMRxlLvJjEAhS6EIN6sL5XowrdlDftXps7iU+TgsYRFTCB9xBx2J2BkvbNhlwYpTLlVYqSkHoy3A1km0JMjMVjQDDFQsKNWIRxAOBsGo8f4MZVKkRiNAFukoxMkZqpGRnnSRqNrNF+eDlGBJhJu0SYx3gW0I+d+3Uaex6qQkxoG283WU4rKNiawn1jQZw8tdAUCBOc4BNxZNAIov4a7lCvwHyRQmacbx2kTDpm3oLi9UWcbWvrRxJNXe571giS6H8RLe796GRomKEKato5nhNWrm2BPIqnX/u+2nAcliaSCrpj+kiMPtF/K82fdZdJPPlCOh3dxj5DEtTywhu5VUVErcOFYiYUjQWQVetObquxkKmlX38NCaMKm67sVKxVqqb1gUz6m2qnTzuv2QEnlVRgCa/boVzY2Zf7lFR2ukr0vyUI5mAuzvbxVY2B47GXwfc1k174y8rNy6lHzbzFJ5kk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 812f1849-cc2f-4a8e-eb01-08dcec3a398d
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 10:23:19.8677
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jz/Vcg1hqCByczBeEc+SeMPkwTGdJsKgSZXhwUcxb0lqMrfWTdp3jfQQtDAzwrlzi8SO4mXe0rF4sdx5j7JU0YvCnWjhsY4MT5ZzUrJaJwQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4593
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_09,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- spamscore=0 malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410140075
-X-Proofpoint-GUID: ABPEb02ui2fR-WRjM6Xr2r_9faOtN-UP
-X-Proofpoint-ORIG-GUID: ABPEb02ui2fR-WRjM6Xr2r_9faOtN-UP
+ definitions=2024-10-14_08,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 malwarescore=0 adultscore=0 mlxscore=0
+ priorityscore=1501 clxscore=1011 suspectscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140073
 
-On Fri, Oct 11, 2024 at 08:11:32PM +0200, Jann Horn wrote:
-> On Fri, Sep 27, 2024 at 2:51 PM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> > Add a new PTE marker that results in any access causing the accessing
-> > process to segfault.
-> [...]
-> >  static inline int is_poisoned_swp_entry(swp_entry_t entry)
-> > +{
-> > +       /*
-> > +        * We treat guard pages as poisoned too as these have the same semantics
-> > +        * as poisoned ranges, only with different fault handling.
-> > +        */
-> > +       return is_pte_marker_entry(entry) &&
-> > +               (pte_marker_get(entry) &
-> > +                (PTE_MARKER_POISONED | PTE_MARKER_GUARD));
-> > +}
->
-> This means MADV_FREE will also clear guard PTEs, right?
 
-Yes, this is expected, it acts like unmap in effect (with a delayed
-effect), so we give it the same semantics. The same thing happens with
-hardware poisoning.
 
-You can see in the tests what expectations we have with different
-operations, we assert there this specific behaviour:
+On 10/11/24 8:30 PM, Ritesh Harjani (IBM) wrote:
+> We anyway don't use any return values from fadump_cma_init(). Since
+> fadump_reserve_mem() from where fadump_cma_init() gets called today,
+> already has the required checks.
+> This patch makes this function return type as void. Let's also handle
+> extra cases like return if fadump_supported is false or dump_active, so
+> that in later patches we can call fadump_cma_init() separately from
+> setup_arch().
 
-	/* Lazyfree range. */
-	ASSERT_EQ(madvise(ptr, 10 * page_size, MADV_FREE), 0);
+Usually patches to this file are posted with title format of
 
-	/* This should simply clear the poison markers. */
-	for (i = 0; i < 10; i++) {
-		ASSERT_TRUE(try_read_write_buf(&ptr[i * page_size]));
-	}
+powerpc/fadump:<>
 
-The tests somewhat self-document expected behaviour.
 
->
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 5c6486e33e63..6c413c3d72fd 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -1457,7 +1457,7 @@ static inline bool should_zap_folio(struct zap_details *details,
-> >         return !folio_test_anon(folio);
-> >  }
-> >
-> > -static inline bool zap_drop_file_uffd_wp(struct zap_details *details)
-> > +static inline bool zap_drop_markers(struct zap_details *details)
-> >  {
-> >         if (!details)
-> >                 return false;
-> > @@ -1478,7 +1478,7 @@ zap_install_uffd_wp_if_needed(struct vm_area_struct *vma,
-> >         if (vma_is_anonymous(vma))
-> >                 return;
-> >
-> > -       if (zap_drop_file_uffd_wp(details))
-> > +       if (zap_drop_markers(details))
-> >                 return;
-> >
-> >         for (;;) {
-> > @@ -1673,7 +1673,15 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
-> >                          * drop the marker if explicitly requested.
-> >                          */
-> >                         if (!vma_is_anonymous(vma) &&
-> > -                           !zap_drop_file_uffd_wp(details))
-> > +                           !zap_drop_markers(details))
-> > +                               continue;
-> > +               } else if (is_guard_swp_entry(entry)) {
-> > +                       /*
-> > +                        * Ordinary zapping should not remove guard PTE
-> > +                        * markers. Only do so if we should remove PTE markers
-> > +                        * in general.
-> > +                        */
-> > +                       if (!zap_drop_markers(details))
-> >                                 continue;
->
-> Just a comment: It's nice that the feature is restricted to anonymous
-> VMAs, otherwise we'd have to figure out here what to do about
-> unmap_mapping_folio() (which sets ZAP_FLAG_DROP_MARKER together with
-> details.single_folio)...
+> 
+> Acked-by: Hari Bathini <hbathini@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+> v2 -> v3: Separated the series into 2 as discussed in v2.
+> [v2]: https://lore.kernel.org/linuxppc-dev/cover.1728585512.git.ritesh.list@gmail.com/
+> 
+>  arch/powerpc/kernel/fadump.c | 23 +++++++++--------------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+> index a612e7513a4f..162327d66982 100644
+> --- a/arch/powerpc/kernel/fadump.c
+> +++ b/arch/powerpc/kernel/fadump.c
+> @@ -78,27 +78,23 @@ static struct cma *fadump_cma;
+>   * But for some reason even if it fails we still have the memory reservation
+>   * with us and we can still continue doing fadump.
+>   */
+> -static int __init fadump_cma_init(void)
+> +static void __init fadump_cma_init(void)
+>  {
+>  	unsigned long long base, size;
+>  	int rc;
+> 
+> -	if (!fw_dump.fadump_enabled)
+> -		return 0;
+> -
+> +	if (!fw_dump.fadump_supported || !fw_dump.fadump_enabled ||
+> +			fw_dump.dump_active)
+> +		return;
 
-Yes this is not the only issue with file-backed mappings. Readahead being
-another, and plenty more.
+Is these checks even needed here? fadump_reserve_mem() checked for all
+these already, also dont see any other caller for fadump_cma_init(). 
 
-We will probably look at how we might do this once this patch set lands,
-and tackle all of these fun things then...
 
->
->
-> >                 } else if (is_hwpoison_entry(entry) ||
-> >                            is_poisoned_swp_entry(entry)) {
-> > @@ -4005,6 +4013,10 @@ static vm_fault_t handle_pte_marker(struct vm_fault *vmf)
-> >         if (marker & PTE_MARKER_POISONED)
-> >                 return VM_FAULT_HWPOISON;
-> >
-> > +       /* Hitting a guard page is always a fatal condition. */
-> > +       if (marker & PTE_MARKER_GUARD)
-> > +               return VM_FAULT_SIGSEGV;
-> > +
-> >         if (pte_marker_entry_uffd_wp(entry))
-> >                 return pte_marker_handle_uffd_wp(vmf);
-> >
-> > --
-> > 2.46.2
-> >
+>  	/*
+>  	 * Do not use CMA if user has provided fadump=nocma kernel parameter.
+> -	 * Return 1 to continue with fadump old behaviour.
+>  	 */
+> -	if (fw_dump.nocma)
+> -		return 1;
+> +	if (fw_dump.nocma || !fw_dump.boot_memory_size)
+> +		return;
+> 
+>  	base = fw_dump.reserve_dump_area_start;
+>  	size = fw_dump.boot_memory_size;
+> 
+> -	if (!size)
+> -		return 0;
+
+So this is the only place where we return 0, which in turn will make the
+"ret" in fadump_reserve_mem() as zero forcing to call reserve_crashkernel()
+in early_init_devtree().
+
+we are removing it, becos we know "size" here will never be zero?
+
+
+> -
+>  	rc = cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma);
+>  	if (rc) {
+>  		pr_err("Failed to init cma area for firmware-assisted dump,%d\n", rc);
+> @@ -108,7 +104,7 @@ static int __init fadump_cma_init(void)
+>  		 * blocked from production system usage.  Hence return 1,
+>  		 * so that we can continue with fadump.
+>  		 */
+> -		return 1;
+> +		return;
+>  	}
+> 
+>  	/*
+> @@ -125,10 +121,9 @@ static int __init fadump_cma_init(void)
+>  		cma_get_size(fadump_cma),
+>  		(unsigned long)cma_get_base(fadump_cma) >> 20,
+>  		fw_dump.reserve_dump_area_size);
+> -	return 1;
+>  }
+>  #else
+> -static int __init fadump_cma_init(void) { return 1; }
+> +static void __init fadump_cma_init(void) { }
+>  #endif /* CONFIG_CMA */
+> 
+>  /*
+> @@ -638,7 +633,7 @@ int __init fadump_reserve_mem(void)
+>  		pr_info("Reserved %lldMB of memory at %#016llx (System RAM: %lldMB)\n",
+>  			(size >> 20), base, (memblock_phys_mem_size() >> 20));
+> 
+> -		ret = fadump_cma_init();
+> +		fadump_cma_init();
+>  	}
+> 
+>  	return ret;
+> --
+> 2.46.0
+> 
+
 
