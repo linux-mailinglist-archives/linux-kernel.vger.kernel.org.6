@@ -1,454 +1,183 @@
-Return-Path: <linux-kernel+bounces-363782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CACC699C6F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2A299C6F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBD721C203A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4071C22278
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A64915B546;
-	Mon, 14 Oct 2024 10:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5028E15B13D;
+	Mon, 14 Oct 2024 10:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mb9JhZjl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTPO5U1t"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B701BC58;
-	Mon, 14 Oct 2024 10:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062801BC58;
+	Mon, 14 Oct 2024 10:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728900866; cv=none; b=ehISrkK1lI0mf5SWgLRmABzI0ySBIgGGPUOMRs46ojPZQLxlgLk+EAji2zO6W6HUUGHHgYKMiBmylLGA9D0Yo3cY7PKN9JkMnc4jyYu2EJ+oIo9mBYjkaslaPXQ2zGK/FGSRJ30EEBFufEO5ISqmnQhac93IKSDSXl0bnkFDX2s=
+	t=1728900898; cv=none; b=DuPKhdjIlva74crf5NHQW3EeplZr8NUA6vGdGWsBc+pHjmDjnOADgzA6SlGi8bYN+JmG3zeQtjv0hApW8C+U8048FZQldsXX4H2xXykZ8hSLpiKC4kLl6dlH6wUvDm24w18AYU0Omvq8T2GeA876r/UfixpimwXjoyaB/ocmvuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728900866; c=relaxed/simple;
-	bh=WSfdIdbikJBmvjnqt9T+LbkLqxcwGf4Wx4fWItSV2ys=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=NHWp5oopuVbDNznxWAsb54LqrLjucn5OXOTP+wTIE0RUwU7haUrhXT4ngtzMNKMR7571QJ36HOapXnySZJGMvPKdtkgzTuCiOS69YnJX+vAVKcJL27vQt6p9zgjh9vyc+ET9EFWV+C+dZZ7PWtT2vB7WVVFtwb33L1y1CFTYdN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mb9JhZjl; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728900865; x=1760436865;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=WSfdIdbikJBmvjnqt9T+LbkLqxcwGf4Wx4fWItSV2ys=;
-  b=mb9JhZjlH0tj1//Fz2Bt7fFrbBh+xoJMs2NCil43RiJBMLr18ZzhdBLI
-   bsgzrHfUYUg1uGk9Yt9qejKSsXOTMo0IVyCqf5AwJutf1FQ7qN3l0cn4X
-   Bya6UaajxoradjYH1aRsye2hZrc6H/a85Qz0oKOpIMFOxFdNgXTzvRkvs
-   bLs8zYhRBs5p9SEHjk8ikBRPrW3CMUgpGL8VKsFADm0l61ubnJsqanNZt
-   AlwYd71BY+Xs68WyT2ErcZPn2yiHEWLYVGdneQn+Wk90ValogT9h+2k2q
-   MUMjKpJJ1K7cGKgJhuJ7FBt/W9wJ6h72K0M3PnA3t65L1igs2XnS1nMpv
-   g==;
-X-CSE-ConnectionGUID: C1OEcvTERqOq9rRFnOoAkg==
-X-CSE-MsgGUID: mAilXZAvRg+E66A8ToKwVg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28195837"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28195837"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 03:14:25 -0700
-X-CSE-ConnectionGUID: y/3a9hZEQYqZ5EoJbjDO5w==
-X-CSE-MsgGUID: v8ogmImySgq1K8o8/jXoKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="78359179"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.80])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 03:14:21 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 14 Oct 2024 13:14:17 +0300 (EEST)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>, 
-    x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
-    Perry Yuan <perry.yuan@amd.com>, LKML <linux-kernel@vger.kernel.org>, 
-    linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, 
-    platform-driver-x86@vger.kernel.org, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Perry Yuan <Perry.Yuan@amd.com>
-Subject: Re: [PATCH v2 06/13] platform/x86: hfi: parse CPU core ranking data
- from shared memory
-In-Reply-To: <20241010193705.10362-7-mario.limonciello@amd.com>
-Message-ID: <21e35bbf-a7d7-2b6b-60bf-e4eeceeb9bd3@linux.intel.com>
-References: <20241010193705.10362-1-mario.limonciello@amd.com> <20241010193705.10362-7-mario.limonciello@amd.com>
+	s=arc-20240116; t=1728900898; c=relaxed/simple;
+	bh=XcZO780BYECysxbejWj6eP3Dd/BXOvd6UYgS2nNe76g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kHja6cL1g6SKtxT0g0s7a9WTf/iZi6Uq6E3lnuf77gLlVDCrY+fvW96ACPPzF1+s1CYozXyRQ3Sb9xbf0EHLIVXBwVp2KLGQq0py9uYLVWYTBF5j9yOSE/QqQkLIUXiG5maAVnvzwCVuvMtvVJZUCZM4gNubW6mwL+WpOov57w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTPO5U1t; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso1329387e87.2;
+        Mon, 14 Oct 2024 03:14:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728900895; x=1729505695; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ygX1r+qVAqcleK4Xq+ypD6oUa+7g/TFUrrDfFds1s1w=;
+        b=TTPO5U1tsSEbLQlztVD9n+O2NtTWZiZ7eggoX8FM21MuCC5/wyOlVg+47+W9FbezH8
+         QV73g3YHoU5rnWETE/Rlr5vTzbYo847MQfEUNCH2PvlNpT2L93OiUeiia+qVG00/ZPjF
+         f/3Llm1LzaJvhXBPZ74Qp25+ORhW9kBmct8y3weAWkecLVATCcmFNtKAUhe6V6m2VqgH
+         0Z/8TxWlSkZfrhAcKU832KZumSL/sD2xasQklOY/CTOjXT4x13rn2HgzmW90jfYYmyKZ
+         sNTVltd1uGwCjplhVFxbjd/6lCUUagC5f96AhNExAaSzqavLgTUCipoophkncWj3P02T
+         BW8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728900895; x=1729505695;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ygX1r+qVAqcleK4Xq+ypD6oUa+7g/TFUrrDfFds1s1w=;
+        b=iPSIsm3nC3VuGVa9XojBS5JdTNPvAJ7RwfcY55VPl5f7U9xkB1JO6nwEbPa5ou1lYD
+         O/s/2eP1LLqgMRenOvRzontxJzE3j0igFWukCEq6p1IZtSpXSL5a2GXdh3FNnnwrM/Fm
+         glzVBlG1hcA2StpuYYfGsNwOQDyUxMTyGxZrVETiwanR+BjSQUEHGjcwQKYEBjm0Rifu
+         skYOSpLwmLSE6GQKwgEDGwdLegWt1F0lfRUrsRvZWjy9WConbnYFXPSlyPQM9PiGW8kn
+         PEyhWoGhqDwoB92NQIxQOvI8fK/JqUyf2IbwjHVb+aDe3MHVN76RMBto/Dt+K47JWwiE
+         39Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUn7JTHiqGGM5KapKBQfO2sY5Zcu9PS0+w2U6FELUET7MPsGITm+L0BJJ0TCaxMzBAxT6hC/Ctu@vger.kernel.org, AJvYcCWr/Cxk9ek/EkpMoRshpUZfsxm0p5El5x9+KLK7AMce8rRSk+4Qq+2TB/yKwLIXVM4VCeH9WbzE/baAC8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsXdBrbUw7WBTLZGDlGJLS1IJXqLBjvxT6vY8SnBcVt8TQm4He
+	D2cfvObb/kXWyjwwVo+TbAwe7RFRxX5gGhYB5Quukkl3RYze1ImMTvt83g==
+X-Google-Smtp-Source: AGHT+IErJeAEbsFChIAXvDCX17RyOAIMAO5DK/v6A+M+mgtii0XxBWAo3oLpBRUOtMJznv2mCt4lpg==
+X-Received: by 2002:a05:6512:2255:b0:52e:9762:2ba4 with SMTP id 2adb3069b0e04-539e5501c0bmr2588193e87.25.1728900894929;
+        Mon, 14 Oct 2024 03:14:54 -0700 (PDT)
+Received: from [192.168.0.101] (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-430ccf1f797sm149715175e9.4.2024.10.14.03.14.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 03:14:54 -0700 (PDT)
+Message-ID: <a71e0909-dc4c-43d7-88b2-8e92df89b386@gmail.com>
+Date: Mon, 14 Oct 2024 11:14:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: virtio_net: support device stats
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jason Wang <jasowang@redhat.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <eb09900a-8443-4260-9b66-5431a85ca102@gmail.com>
+ <20241014054305-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <20241014054305-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Oct 2024, Mario Limonciello wrote:
-
-> From: Perry Yuan <Perry.Yuan@amd.com>
+On 14/10/2024 10:47, Michael S. Tsirkin wrote:
+> On Mon, Oct 14, 2024 at 10:39:26AM +0100, Colin King (gmail) wrote:
+>> Hi,
+>>
+>> Static analysis on Linux-next has detected a potential issue with the
+>> following commit:
+>>
+>> commit 941168f8b40e50518a3bc6ce770a7062a5d99230
+>> Author: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+>> Date:   Fri Apr 26 11:39:24 2024 +0800
+>>
+>>      virtio_net: support device stats
+>>
+>>
+>> The issue is in function virtnet_stats_ctx_init, in drivers/net/virtio_net.c
+>> as follows:
+>>
+>>          if (vi->device_stats_cap & VIRTIO_NET_STATS_TYPE_CVQ) {
+>>                  queue_type = VIRTNET_Q_TYPE_CQ;
+>>
+>>                  ctx->bitmap[queue_type]   |= VIRTIO_NET_STATS_TYPE_CVQ;
+>>                  ctx->desc_num[queue_type] +=
+>> ARRAY_SIZE(virtnet_stats_cvq_desc);
+>>                  ctx->size[queue_type]     += sizeof(struct
+>> virtio_net_stats_cvq);
+>>          }
+>>
+>>
+>> ctx->bitmap is declared as a u32 however it is being bit-wise or'd with
+>> VIRTIO_NET_STATS_TYPE_CVQ and this is defined as 1 << 32:
+>>
+>> include/uapi/linux/virtio_net.h:#define VIRTIO_NET_STATS_TYPE_CVQ (1ULL <<
+>> 32)
+>>
+>> ..and hence the bit-wise or operation won't set any bits in ctx->bitmap
+>> because 1ULL < 32 is too wide for a u32.
 > 
-> When `amd_hfi` driver is loaded, it will use PCCT subspace type 4 table
-> to retrieve the shared memory address which contains the CPU core ranking
-> table. This table includes a header that specifies the number of ranking
-> data entries to be parsed and rank each CPU core with the Performance and
-> Energy Efficiency capability as implemented by the CPU power management
-> firmware.
+> Indeed. Xuan Zhuo how did you test this patch?
 > 
-> Once the table has been parsed, each CPU is assigned a ranking score
-> within its class. Subsequently, when the scheduler selects cores, it
-> chooses from the ranking list based on the assigned scores in each class,
-> thereby ensuring the optimal selection of CPU cores according to their
-> predefined classifications and priorities.
+>> I suspect ctx->bitmap should be
+>> declared as u64.
+>>
+>> Colin
+>>
+>>
 > 
-> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
-> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v2:
->  * Rework amd_hfi_fill_metatadata to directly use structure instead of
->    pointer math.
-> ---
->  drivers/platform/x86/amd/hfi/hfi.c | 215 ++++++++++++++++++++++++++++-
->  1 file changed, 212 insertions(+), 3 deletions(-)
+> In fact, it is read into a u64:
 > 
-> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-> index da2e667107e8..10651399cf75 100644
-> --- a/drivers/platform/x86/amd/hfi/hfi.c
-> +++ b/drivers/platform/x86/amd/hfi/hfi.c
-> @@ -18,22 +18,78 @@
->  #include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/mailbox_client.h>
->  #include <linux/mutex.h>
-> +#include <linux/percpu-defs.h>
->  #include <linux/platform_device.h>
->  #include <linux/printk.h>
->  #include <linux/smp.h>
->  #include <linux/string.h>
-> +#include <linux/topology.h>
-> +#include <linux/workqueue.h>
-> +
-> +#include <asm/cpu_device_id.h>
-> +
-> +#include <acpi/pcc.h>
-> +#include <acpi/cppc_acpi.h>
->  
->  #define AMD_HFI_DRIVER		"amd_hfi"
-> +#define AMD_HFI_MAILBOX_COUNT	1
-> +#define AMD_HETERO_RANKING_TABLE_VER	2
-> +
->  #define AMD_HETERO_CPUID_27	0x80000027
-> +
->  static struct platform_device *device;
->  
-> +/**
-> + * struct amd_shmem_info - Shared memory table for AMD HFI
-> + *
-> + * @signature:	The PCC signature. The signature of a subspace is computed by
-> + *		a bitwise of the value 0x50434300 with the subspace ID.
-> + * @flags:	Notify on completion
-> + * @length:	Length of payload being transmitted including command field
-> + * @command:	Command being sent over the subspace
-> + * @version_number:		Version number of the table
-> + * @n_logical_processors:	Number of logical processors
-> + * @n_capabilities:		Number of ranking dimensions (performance, efficiency, etc)
-> + * @table_update_context:	Command being sent over the subspace
-> + * @n_bitmaps:			Number of 32-bit bitmaps to enumerate all the APIC IDs
-> + *				This is based on the maximum APIC ID enumerated in the system
-> + * @reserved:			24 bit spare
-> + * @table_data:			Bit Map(s) of enabled logical processors
-> + *				Followed by the ranking data for each logical processor
-> + */
-> +struct amd_shmem_info {
-> +	struct acpi_pcct_ext_pcc_shared_memory header;
-> +	u32	version_number		:8,
-> +		n_logical_processors	:8,
-> +		n_capabilities		:8,
-> +		table_update_context	:8;
-> +	u32	n_bitmaps		:8,
-> +		reserved		:24;
-> +	u32	table_data[];
-> +} __packed;
-> +
->  struct amd_hfi_data {
->  	const char	*name;
->  	struct device	*dev;
->  	struct mutex	lock;
-> +
-> +	/* PCCT table related*/
-> +	struct pcc_mbox_chan	*pcc_chan;
-> +	void __iomem		*pcc_comm_addr;
-> +	struct acpi_subtable_header	*pcct_entry;
-> +	struct amd_shmem_info	*shmem;
->  };
->  
-> +/**
-> + * struct amd_hfi_classes - HFI class capabilities per CPU
-> + * @perf:	Performance capability
-> + * @eff:	Power efficiency capability
-> + *
-> + * Capabilities of a logical processor in the ranking table. These capabilities
-> + * are unitless and specific to each HFI class.
-> + */
->  struct amd_hfi_classes {
->  	u32	perf;
->  	u32	eff;
-> @@ -42,23 +98,105 @@ struct amd_hfi_classes {
->  /**
->   * struct amd_hfi_cpuinfo - HFI workload class info per CPU
->   * @cpu:		cpu index
-> + * @apic_id:		apic id of the current cpu
->   * @cpus:		mask of cpus associated with amd_hfi_cpuinfo
->   * @class_index:	workload class ID index
->   * @nr_class:		max number of workload class supported
-> + * @ipcc_scores:	ipcc scores for each class
->   * @amd_hfi_classes:	current cpu workload class ranking data
->   *
->   * Parameters of a logical processor linked with hardware feedback class
->   */
->  struct amd_hfi_cpuinfo {
->  	int		cpu;
-> +	u32		apic_id;
->  	cpumask_var_t	cpus;
->  	s16		class_index;
->  	u8		nr_class;
-> +	int		*ipcc_scores;
->  	struct amd_hfi_classes	*amd_hfi_classes;
->  };
->  
->  static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
->  
-> +static int find_cpu_index_by_apicid(unsigned int target_apicid)
-> +{
-> +	int cpu_index;
-> +
-> +	for_each_possible_cpu(cpu_index) {
-> +		struct cpuinfo_x86 *info = &cpu_data(cpu_index);
-> +
-> +		if (info->topo.apicid == target_apicid) {
-> +			pr_debug("match APIC id %d for CPU index: %d",
+>         u64 offset, bitmap;
+> ....
+>          bitmap = ctx->bitmap[queue_type];
+> 
+> we'll have to reorder fields to avoid wasting memory.
+> Like this I guess:
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> 
+> Colin, can you confirm pls?
 
-Missing \n
+Fix looks sane to be, with u64 bitmap[3] struct size field re-ordering 
+does not seem to make any difference on x86-64 (64 bytes) and i586 (56 
+bytes) when I compiled with gcc-12, gcc-14 and clang-20.
 
-> +				 info->topo.apicid, cpu_index);
-> +			return cpu_index;
-> +		}
-> +	}
-> +
-> +	return -ENODEV;
-> +}
-> +
-> +static int amd_hfi_fill_metadata(struct amd_hfi_data *amd_hfi_data)
-> +{
-> +	struct acpi_pcct_ext_pcc_slave *pcct_ext =
-> +		(struct acpi_pcct_ext_pcc_slave *)amd_hfi_data->pcct_entry;
-> +	void __iomem *pcc_comm_addr;
-> +
-> +	pcc_comm_addr = acpi_os_ioremap(amd_hfi_data->pcc_chan->shmem_base_addr,
-> +					amd_hfi_data->pcc_chan->shmem_size);
-> +	if (!pcc_comm_addr) {
-> +		pr_err("failed to ioremap PCC common region mem\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	memcpy_fromio(amd_hfi_data->shmem, pcc_comm_addr, pcct_ext->length);
-> +	iounmap(pcc_comm_addr);
-> +
-> +	if (amd_hfi_data->shmem->header.signature != PCC_SIGNATURE) {
-> +		pr_err("Invalid signature in shared memory\n");
-> +		return -EINVAL;
-> +	}
-> +	if (amd_hfi_data->shmem->version_number != AMD_HETERO_RANKING_TABLE_VER) {
-> +		pr_err("Invalid veresion %d\n", amd_hfi_data->shmem->version_number);
+I can't functionally test this though (not sure how).
 
-version
+Reviewed-by: Colin Ian King <colin.king@gmail.com>
 
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (u32 i = 0; i < amd_hfi_data->shmem->n_bitmaps; i++) {
-> +		u32 bitmap = amd_hfi_data->shmem->table_data[i];
-> +
-> +		for (u32 j = 0; j < BITS_PER_TYPE(u32); j++) {
-
-Are these u32 really the types you want to use for the loop vars, why?
-
-> +			struct amd_hfi_cpuinfo *info;
-> +			int apic_id = i * BITS_PER_TYPE(u32) + j;
-> +			int cpu_index;
-> +
-> +			if (!(bitmap & BIT(j)))
-> +				continue;
-> +
-> +			cpu_index = find_cpu_index_by_apicid(apic_id);
-> +			if (cpu_index < 0) {
-> +				pr_warn("APIC ID %d not found\n", apic_id);
-> +				continue;
-> +			}
-> +
-> +			info = per_cpu_ptr(&amd_hfi_cpuinfo, cpu_index);
-> +			info->apic_id = apic_id;
-> +
-> +			/* Fill the ranking data for each logical processor */
-> +			info = per_cpu_ptr(&amd_hfi_cpuinfo, cpu_index);
-> +			for (int k = 0; k < info->nr_class; k++) {
-
-unsigned int
-
-> +				u32 *table = amd_hfi_data->shmem->table_data +
-> +					     amd_hfi_data->shmem->n_bitmaps +
-> +					     i * info->nr_class;
-> +
-> +				info->amd_hfi_classes[k].eff = table[apic_id + 2 * k];
-> +				info->amd_hfi_classes[k].perf = table[apic_id + 2 * k + 1];
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int amd_hfi_alloc_class_data(struct platform_device *pdev)
->  {
->  	struct amd_hfi_cpuinfo *hfi_cpuinfo;
-> @@ -68,8 +206,7 @@ static int amd_hfi_alloc_class_data(struct platform_device *pdev)
->  
->  	nr_class_id = cpuid_eax(AMD_HETERO_CPUID_27);
->  	if (nr_class_id < 0 || nr_class_id > 255) {
-> -		dev_warn(dev, "failed to get supported class number from CPUID %d\n",
-> -				AMD_HETERO_CPUID_27);
-> +		dev_warn(dev, "failed to get number of supported classes\n");
-
-This message was added in the previous patch and now immediately changed.
-
->  		return -EINVAL;
->  	}
->  
-> @@ -79,7 +216,10 @@ static int amd_hfi_alloc_class_data(struct platform_device *pdev)
->  				sizeof(struct amd_hfi_classes), GFP_KERNEL);
->  		if (!hfi_cpuinfo->amd_hfi_classes)
->  			return -ENOMEM;
+> 
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index c6af18948092..ef221429f784 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -4111,12 +4111,12 @@ struct virtnet_stats_ctx {
+>   	/* Used to calculate the offset inside the output buffer. */
+>   	u32 desc_num[3];
+>   
+> -	/* The actual supported stat types. */
+> -	u32 bitmap[3];
 > -
-> +		hfi_cpuinfo->ipcc_scores = devm_kcalloc(dev, nr_class_id,
-> +							sizeof(int), GFP_KERNEL);
-> +		if (!hfi_cpuinfo->ipcc_scores)
-> +			return -ENOMEM;
->  		hfi_cpuinfo->nr_class = nr_class_id;
->  	}
->  
-> @@ -93,6 +233,70 @@ static void amd_hfi_remove(struct platform_device *pdev)
->  	mutex_destroy(&dev->lock);
->  }
->  
-> +static int amd_hfi_metadata_parser(struct platform_device *pdev,
-> +				   struct amd_hfi_data *amd_hfi_data)
-> +{
-> +	struct acpi_pcct_ext_pcc_slave *pcct_ext;
-> +	struct acpi_subtable_header *pcct_entry;
-> +	struct mbox_chan *pcc_mbox_channels;
-> +	struct acpi_table_header *pcct_tbl;
-> +	struct pcc_mbox_chan *pcc_chan;
-> +	acpi_status status;
-> +	int ret;
+>   	/* Used to calculate the reply buffer size. */
+>   	u32 size[3];
+>   
+> +	/* The actual supported stat types. */
+> +	u64 bitmap[3];
 > +
-> +	pcc_mbox_channels = devm_kcalloc(&pdev->dev, AMD_HFI_MAILBOX_COUNT,
-> +					 sizeof(*pcc_mbox_channels), GFP_KERNEL);
-> +	if (!pcc_mbox_channels) {
-> +		ret = -ENOMEM;
-> +		goto out;
+>   	/* Record the output buffer. */
+>   	u64 *data;
+>   };
 
-Please return directly if there is nothing to rollback.
 
-> +	}
-> +
-> +	pcc_chan = devm_kcalloc(&pdev->dev, AMD_HFI_MAILBOX_COUNT,
-> +				sizeof(*pcc_chan), GFP_KERNEL);
-> +	if (!pcc_chan) {
-> +		ret = -ENOMEM;
-> +		goto out;
-
-Ditto.
-
-> +	}
-> +
-> +	status = acpi_get_table(ACPI_SIG_PCCT, 0, &pcct_tbl);
-> +	if (ACPI_FAILURE(status) || !pcct_tbl) {
-> +		ret = -ENODEV;
-> +		goto out;
-
-Ditto.
-
-> +	}
-> +
-> +	/* get pointer to the first PCC subspace entry */
-> +	pcct_entry = (struct acpi_subtable_header *) (
-> +			(unsigned long)pcct_tbl + sizeof(struct acpi_table_pcct));
-> +
-> +	pcc_chan->mchan = &pcc_mbox_channels[0];
-> +
-> +	amd_hfi_data->pcc_chan = pcc_chan;
-> +	amd_hfi_data->pcct_entry = pcct_entry;
-> +	pcct_ext = (struct acpi_pcct_ext_pcc_slave *)pcct_entry;
-> +
-> +	if (pcct_ext->length <= 0) {
-> +		ret = -EINVAL;
-> +		goto out;
-
-Ditto.
-
-> +	}
-> +
-> +	amd_hfi_data->shmem = devm_kmalloc(amd_hfi_data->dev, pcct_ext->length, GFP_KERNEL);
-
-Why kmalloc ?
-
-> +	if (!amd_hfi_data->shmem) {
-> +		ret = -ENOMEM;
-> +		goto out;
-
-Return directly.
-
-> +	}
-> +
-> +	pcc_chan->shmem_base_addr = pcct_ext->base_address;
-> +	pcc_chan->shmem_size = pcct_ext->length;
-> +
-> +	/* parse the shared memory info from the pcct table */
-> +	ret = amd_hfi_fill_metadata(amd_hfi_data);
-> +
-> +	acpi_put_table(pcct_tbl);
-> +
-> +out:
-> +	return ret;
-> +}
-> +
->  static const struct acpi_device_id amd_hfi_platform_match[] = {
->  	{ "AMDI0104", 0},
->  	{ }
-> @@ -121,6 +325,11 @@ static int amd_hfi_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto out;
-
-This should do return ret; directly, not jump to out label which does 
-nothing but return.
-
->  
-> +	/* parse PCCT table */
-> +	ret = amd_hfi_metadata_parser(pdev, amd_hfi_data);
-> +	if (ret)
-> +		goto out;
-> +
->  out:
->  	return ret;
-
-Might again be there for churn avoidance, otherwise, please consider:
-
-	return amd_hfi_metadata_parser(pdev, amd_hfi_data);
-
-That goto out should again just return ret directly.
-
->  }
-> 
-
--- 
- i.
 
 
