@@ -1,174 +1,179 @@
-Return-Path: <linux-kernel+bounces-363982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C7299C946
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:46:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C9999C943
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82AC4292731
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:46:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1237E1C21E99
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F2D19E980;
-	Mon, 14 Oct 2024 11:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322E719E802;
+	Mon, 14 Oct 2024 11:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MdS0KHEf"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CTKnMC0Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BF7154BFF;
-	Mon, 14 Oct 2024 11:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EF619CD0B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906390; cv=none; b=qNNBXGjUQcNlw82lgAHeoo8BDXcVaPX8EYi3TshFL7+l8enr2/4iacg/IbgEydyptZrUUJNYnRLUQSixZDPSbQ2nIIHkhXaXo3tkoYpcfJEC7bwZDvA3SiWTS/6URXDLc+dBOykx3OofovW7Qf1tEfN131XuCkOxFr0jedHpI10=
+	t=1728906372; cv=none; b=C9cmsPwOl2EVw8sHx7x+MGJ6Od7oV5p4qJ/l7mZG01u37/xyMagrZxkxnXFRGywD7KeYt/TorfE0T5OWSmrTkohmarTKHoz80UKAA0NJ2cNmRlsLVVfOmrHALkfdDhql6ZFFIBPKD9z4AyOQNjZMousSrsIgB2gw+W6YE7zIEe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906390; c=relaxed/simple;
-	bh=WCsxHw3vZQcjnLcbXSjXjwVJ4eA/MYcD+tajOib6FT4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VolPdGa5VJtL2CurWFaCE6rW6NOwAVApeZYXsw5sML984jtqFF5rBqdJSEd9dwaHAX6Fgei5JTECUELfmS8g1/AQis8qBS7QGgl07PEy2sANeZFdTp1XpbnVfjhGDKbn0rSZHzPGwaTWg0dqK+/jEcx70dpsZ0owR6rSfFoWUL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MdS0KHEf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E9shQo005514;
-	Mon, 14 Oct 2024 11:46:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	WCsxHw3vZQcjnLcbXSjXjwVJ4eA/MYcD+tajOib6FT4=; b=MdS0KHEfRRyQVmol
-	l7Foxf3uI71SAwaBHJEHAXKpSmji55GQD4A7nlBYv6etacyeuim5f0xt/xxCk1iZ
-	XiU4+TcUABZwnyNSp0StGb+nYUwFWNLZ5OL0d4xX9gndVgfUf1Ld8JjmKiNwYjJ/
-	uMc2pVBS2lDPJX1ELTJxPOxiXsui+mtA/7JRAYA8ljAeGav399O/qYhdj78rgVpe
-	/HWmCTjsjtY/0WXZLegLZKyI0Brb9GWKdq1CAZVIf3vLNvF4ZIvIkmDkJIOcQQy5
-	gYmeeVZohS5iatQKgdFD3Rq/E4TQ0JSelrr9ReuPZ30oyMk67+VK+QvnWSKP0JkV
-	RfyaGw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4291330fxk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:46:01 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EBk1Tg017492;
-	Mon, 14 Oct 2024 11:46:01 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4291330fxc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:46:01 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EBbf5K002452;
-	Mon, 14 Oct 2024 11:45:59 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284eme94a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:45:59 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EBjxIx25231986
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 11:45:59 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0810A58067;
-	Mon, 14 Oct 2024 11:45:58 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 389CF58052;
-	Mon, 14 Oct 2024 11:45:58 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.89.75])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 14 Oct 2024 11:45:58 +0000 (GMT)
-Message-ID: <04dc04872f2925166f969b43852161d468ee899a.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>,
-        linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
-        mapengyu@gmail.com, David Howells <dhowells@redhat.com>,
-        Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
- <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe
- <jgg@ziepe.ca>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 14 Oct 2024 07:45:57 -0400
-In-Reply-To: <e70c55c6edea2a5be7786ee04a85778193237444.camel@kernel.org>
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-	 <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
-	 <21b46f4882f0b9b12304d7786bd88f33a7ad2b97.camel@huaweicloud.com>
-	 <a0068539450a81fdd363d078521cb3822c54608b.camel@kernel.org>
-	 <e70c55c6edea2a5be7786ee04a85778193237444.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728906372; c=relaxed/simple;
+	bh=nQs+cqM/TaBXPVSYcyMlhgYXouder6o3cNlvdrgf1vw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uD+2dlJGB5V0fP/MmTrVfq+4+qnhv9soW4LLNbImysmIHB0Z6NIWK7berKN4wVsu5/hmWrBGUD+Tr6VUxY9JZyGEkS+mg8dm0gPzJPmLD4sXEJXtxOeyeezaIsE1L7+/NQ3kWJKpFtJAuTi/vgTz8zn8F3dHXdaIXhHQKtOOqW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CTKnMC0Z; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728906369;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gBjYzcRVvT12PEuEEui9pwXMfmtmAfZKGIhfMKjJ2K4=;
+	b=CTKnMC0Z2bohhGUASi7wxzZLrUvxwku8+1do5QPWwmwM9IWhfXre5d8z8lDidf9zyHvChE
+	VHQcuOjTQNGjK2haLWmU0DMpaJj8Va4eqdmKzRVAgRj7+7taR78vNBNOYIW/k1j9sWKS00
+	6xDLrwY6kX7J75lq/qQvqWVaKLB8nfE=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-547-dtfg7gApMMm9jUEl5lbWYQ-1; Mon, 14 Oct 2024 07:46:08 -0400
+X-MC-Unique: dtfg7gApMMm9jUEl5lbWYQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d4cf04bcfso1366476f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:46:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728906367; x=1729511167;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gBjYzcRVvT12PEuEEui9pwXMfmtmAfZKGIhfMKjJ2K4=;
+        b=XNEpw9uHAIGz+/3EeVl5Tnr9IsiNeOV+b5b8Viru5JbUJ1uqv3lfONXs0oV+k5aWfs
+         dtFyRPdWe1tJZbSnFZIQwmQZEQ13U2HrnhwUbqcTj5cc096vB0HuzvCNc3JaTahAfQOO
+         5oQnNdjUldXuR4lJcfd5u1Zbs8E+S7lrEMSalmVmFJxCMqsJgNzDyxxB99hDn6MAUYfK
+         jYFXgD8kwS1QuiD1dVjisCisOmDyD+NvghBbzWZOHMW497Jbxdh4xKkfwi6gRXBJdGcT
+         igW2VvUxjqAUY503qcST0C27AHUY9AG+p/hEpYirdHYEBRVSCmbd0rc1+h6d5cbZ7Jbl
+         dNgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKEyub02fU3FUulETAsyfsuCkg1BRBPMZ/aIl3i3R9newO/lPGvF08efxPhNGCgZcJv0Vlstllh4KtFkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMaAp0djmJ5PlME+nAfSsPEUXlh8++e1rHdwqJCW9ooOpdPlOX
+	7DYsxps64hBHOE0VPvLN/cWnpr6ePVhdv6xMg37TtjMQ9UNijFecDnU5eGlxdCD3UCQzHBLCdUJ
+	wpskztGpgjy0hOYXpdDlKkYeuNYnfUPp4P6veno1ISga5LR8Vl8w0G44lC971pA==
+X-Received: by 2002:a5d:4bc7:0:b0:37d:5257:41bd with SMTP id ffacd0b85a97d-37d5fe9563bmr5646863f8f.3.1728906366818;
+        Mon, 14 Oct 2024 04:46:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGy4+eK7AI1hvF0chp44blw4HV74w/vDgNn4hR29csqzaMxakWWq4fE61CpHPmk22Wnjjh4wA==
+X-Received: by 2002:a5d:4bc7:0:b0:37d:5257:41bd with SMTP id ffacd0b85a97d-37d5fe9563bmr5646848f8f.3.1728906366399;
+        Mon, 14 Oct 2024 04:46:06 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79f9a9sm11208067f8f.74.2024.10.14.04.46.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 04:46:05 -0700 (PDT)
+Message-ID: <38b5649b-0e4b-460c-8097-04c530fbfa46@redhat.com>
+Date: Mon, 14 Oct 2024 13:46:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: rYrsrcYGDrxAJtbTIwXVtk0T6VlTXmWv
-X-Proofpoint-GUID: Yej-s5UB3gYcINthSPFZKN81Sf6sAPvl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_10,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- phishscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410140083
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kaslr: rename physmem_end and PHYSMEM_END to
+ direct_map_physmem_end
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+ Alistair Popple <apopple@nvidia.com>, Jordan Niethe <jniethe@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org, linux-mm@kvack.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20241009025024.89813-1-jhubbard@nvidia.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241009025024.89813-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 2024-10-12 at 13:56 +0300, Jarkko Sakkinen wrote:
-> On Fri, 2024-10-11 at 19:25 +0300, Jarkko Sakkinen wrote:
-> > On Fri, 2024-10-11 at 18:10 +0200, Roberto Sassu wrote:
-> > > Initially, I thought that maybe it would not be good to have an
-> > > event
-> > > log with unmodified and altered measurement entries. Then, I tried
-> > > to
-> > > think if we can really prevent an active interposer from injecting
-> > > arbitrary PCR extends and pretending that those events actually
-> > > happened.
-> > >=20
-> > > If I understood James's cover letter correctly, the kernel can
-> > > detect
-> > > whether a TPM reset occurred, but not that a PCR extend occurred
-> > > (maybe
-> > > with a shadow PCR?).
-> >=20
-> > We can detect TPM reset indirectly. I.e. null seed re-randomizes
-> > per reset.
-> >=20
-> > >=20
-> > > Second point, do we really want to take the responsibility to
-> > > disable
-> > > the protection on behalf of users? Maybe a better choice is to let
-> > > them
-> > > consciously disable HMAC protection.
-> >=20
-> > So when IMA is not used already with these fixes we get good
-> > results. And for tpm2_get_random() we can make the algorithm
-> > smarter. All in all we have good path ongoing for "desktop
-> > use case" that I would keep thing way there are or at least
-> > postpone any major decisions just a bit.
-> >=20
-> > For server/IMA use case I'll add a boot parameter it can be
-> > either on or off by default, I will state that in the commit
-> > message and we'll go from there.
+On 09.10.24 04:50, John Hubbard wrote:
+> For clarity. It's increasingly hard to reason about the code, when KASLR
+> is moving around the boundaries. In this case where KASLR is randomizing
+> the location of the kernel image within physical memory, the maximum
+> number of address bits for physical memory has not changed.
+> 
+> What has changed is the ending address of memory that is allowed to be
+> directly mapped by the kernel.
+> 
+> Let's name the variable, and the associated macro accordingly.
+> 
+> Also, enhance the comment above the direct_map_physmem_end definition,
+> to further clarify how this all works.
+> 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Jordan Niethe <jniethe@nvidia.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+> 
+> David Hildenbrand, I recall you had an unanswered question in this
+> vicinity [1] when tglx's recent kaslr fix was being reviewed. Maybe this
+> will help with that.
 
-Sounds good.
+Yes, that makes it clearer for me, thanks
 
->=20
-> Up until legit fixes are place distributors can easily disable
-> the feature. It would be worse if TCG_TPM2_HMAC did not exist.
->=20
-> So I think it is better to focus on doing right things right,
-> since the feature itself is useful objectively, and make sure
-> that those fixes bring the wanted results.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Are you backtracking on having a boot parameter here specifically to turn o=
-n/off
-HMAC encryption for IMA?
+-- 
+Cheers,
 
-Mimi
+David / dhildenb
 
 
