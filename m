@@ -1,130 +1,165 @@
-Return-Path: <linux-kernel+bounces-364557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A2D99D617
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:04:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5440C99D61C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDB01F2545A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:04:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1345B282F21
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6346F1C7B7E;
-	Mon, 14 Oct 2024 18:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81971C82E2;
+	Mon, 14 Oct 2024 18:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsliI3Ta"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="q7e0q4gU"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8027A13C3D5;
-	Mon, 14 Oct 2024 18:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821541C7265;
+	Mon, 14 Oct 2024 18:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728929060; cv=none; b=dpz27abRrLqlArhsRS+0oRmAfeAZapQAVE36VHGgJRl4y03nRJ/ZFhxmYtom60UwIXpCKpe/eGQuMbGtIMrBoVP5nVBxym17VZq5CnhOk1BpFJ/SnhP88XsnJPnj9Z9hVAmtV4VbsTC9EKzddta51KlYBERk/Bqr0kx9np6Ld1c=
+	t=1728929073; cv=none; b=EpHKvxH7wkZqAD9yYwRmmI+b2Xrj9Mn7zPnDiMiGD4gxIiGfsg5KkrQ5B02ikXt7Q5mS7Vqi1srU0mGjRlrDJWwIQDsafTZmG+cV44hzF+JxYHW+YG4RSw4P+VAGzzEsRNVGmMbYVwyjErJLIUPwMjcasu/4vWmuDrN7IXj4FGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728929060; c=relaxed/simple;
-	bh=pgIvhX6DWi2lVx8GQBAGHBczkT4Q44P+FeEZFYw/8XI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nvl7myjtZP9MThuLDSAOfnZx5BXqPFVmfTpmyjN5j6Pu7p8aoNMlP/VTmyCQ2WggiNTHrSVy+doXLka95TN9Fq3rxP5ONoUPybRLhO6UaxgPMSTlNNYKl9s4FJ7n3Ykxb9Kx30CydrrTvNxl3hp4LJqFjQnwzXAY4efLN5d1sL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsliI3Ta; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea3e367ae6so448686a12.1;
-        Mon, 14 Oct 2024 11:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728929059; x=1729533859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bvhwh3gLG6gcnOHuIbpfqhWVaibVg9c2c2Ldevdyqjw=;
-        b=XsliI3TaFgV1kvK3Rs/2Og8CJr3NLT0Y4jOhO9kAKHa3fJH8Lb+Cxi2epo+7NmFzOA
-         WVf/gkVoblPUGsB/5AHI4BojsuKZthMe34yKYkN+y71lAj59RNxvO7hJldC40egYZrEU
-         FYkSBJB6ukRJxzndMINA4WQS0KKOsPSWA/8WEs/5/v/zAtZHCJJzmdtnpOPiBcbZ5tka
-         G6GracXY07vF8LvCt0jzbR1W37DL8U04JwJSVeA6wMv80HtK5DAj/IeehUkjAss6USNE
-         r6b822BYQSIBWEc3nST6yQvG8dS5njf2y/PTOvlcWivtuvXUZ9eCnUEklbq26ql1QFH3
-         /tPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728929059; x=1729533859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bvhwh3gLG6gcnOHuIbpfqhWVaibVg9c2c2Ldevdyqjw=;
-        b=orii51HglYovEHZoah9TmEavz1Vwk6r9oLwAVfyLDzJSZfbNsEqNQ/huo8KQjq+88l
-         zTn+USHDzF94hrS5TUYIpegiwbNVFlxLAx3n9nezTxcNTFp9cmPqebW3LUvViHftkimO
-         f8FUq7dHOa5zLPzxQs4Vdpd8+efpSeGG0fL8kAQrpwwt56wgsTT6IgtH9wdqDUd9sjlL
-         JR5cB/l6DBVCuzLQql27T2kvWeUgQ8xD226NMmdR9yas5hH98vpGRnQessQtRfqJdOfF
-         H/UEx5RcdcoKxPmaDma/Ifh4NaYpl14hl7ZqiPyqoL3jLEdjFHVt2R6Si5VuPtnl4M/X
-         EDfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEQhcukePVPfPGSshsaBKW/G7bErOTTjxfvspmW6cQAah6Z1rKQsmAkISSZJmi6kPF/ejZxhxj1QEmjhQSaDw=@vger.kernel.org, AJvYcCXNn1dtPsj5CW1pa810ajdqNEe/Aa054Vn6AAmn6Nyt92DfR7nz87EhbdtOr2/tAU29/yaOnct62VhTfMLv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw83RX+QBb3M7FpLTAnZjEsRIeNTe3C+jv8iSGIov76mVHuf33z
-	QfvJJYXJ/P74cSj7sJWegdRG88QrJZbGhxd8aJKCDOb1OYQZP0hD4Hj10kPXymGPheIfjdj+Ote
-	RAqPKlcd1bZmomedYflJC8IVP0P0=
-X-Google-Smtp-Source: AGHT+IGQSiVAhq5p2Nni7Nqi5xdR7AQXxhYJRI8o2X32oWs0TAqQmtICSbeIENaqYKnuwO6PNosi2vKWXoxwvpo5zSg=
-X-Received: by 2002:a17:90b:318:b0:2e2:a70a:f107 with SMTP id
- 98e67ed59e1d1-2e2f0a11479mr6745183a91.1.1728929058628; Mon, 14 Oct 2024
- 11:04:18 -0700 (PDT)
+	s=arc-20240116; t=1728929073; c=relaxed/simple;
+	bh=SdjcDP5OfxIiwCoIu7fbZLksQxYF8RhGxJo4XtKvbnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHDcid/TpkmzOA4RIb74IXMt1igfdN/4QUfuNdOkw88uhk2HCvgPTOeet5glO1ou1+y5gaWoxvNn+RS/I4THGDWna+bylN/RGOLCYfF1yWtnHj5nLjr/IYgd2jhfqd7J+Op4oAto1+XopmP4aA1O/Lz3k5NBP1bsNK0AGSqDhdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=q7e0q4gU; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EHLg4D026615;
+	Mon, 14 Oct 2024 18:04:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=8xiOAnxSdyu4+TwMLojb8uRtGgH
+	cpSJojTKbAe3+Zfc=; b=q7e0q4gUB0e5gGeqE1i4IP6FAi/TA9U+3HUGibUu/ZK
+	6Iw2ZZwxq4Mgef20pGP9Y9TOIKKqQfsQxuz4JX6h8POTlMGPHaE3MD7bRwSVePAa
+	JSgEaCbiNDeQhkdKePuj9URoQvudq+RRJFAlvekc6Z3bTD74hT6SvW3aIBD2BQ1o
+	ZsC0KtjV9iCq6jXnfU3ehZsfhhVhOP3FZDbGhAYAuR5wEytAAbDZ9y7deaiZ79MF
+	t7vQSxpiR7kMz9ADJ2OJnmYSlJshOir1hQyfRKMTjKkti0n8GyG1qWaSutpzQSnA
+	Kl60k3w5aVpex1ywVVNUjUJM288oNNnF3jmWcT3qSZw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4297mh0693-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 18:04:17 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EI4Hv6021968;
+	Mon, 14 Oct 2024 18:04:17 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4297mh068y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 18:04:17 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EEuaSf007025;
+	Mon, 14 Oct 2024 18:04:16 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xjyssc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 18:04:16 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EI4CWL17367318
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 18:04:12 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F40020043;
+	Mon, 14 Oct 2024 18:04:12 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7D82320040;
+	Mon, 14 Oct 2024 18:04:11 +0000 (GMT)
+Received: from osiris (unknown [9.171.66.174])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Oct 2024 18:04:11 +0000 (GMT)
+Date: Mon, 14 Oct 2024 20:04:10 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v2 2/7] Documentation: s390-diag.rst: make diag500 a
+ generic KVM hypercall
+Message-ID: <20241014180410.10447-C-hca@linux.ibm.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-3-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f3cf409f-2b04-444f-88f0-9b4cfe290667@stanley.mountain> <a1acb975-c29e-4c90-b7a9-5f50478ab946@amd.com>
-In-Reply-To: <a1acb975-c29e-4c90-b7a9-5f50478ab946@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 14 Oct 2024 14:04:06 -0400
-Message-ID: <CADnq5_M-Ccu8cN-aSx=Xu3+mSCx7HV1H8JftJk277u7qvCLXvw@mail.gmail.com>
-Subject: Re: [PATCH next] drm/amdgpu: Fix off by one in current_memory_partition_show()
-To: "Lazar, Lijo" <lijo.lazar@amd.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hawking Zhang <Hawking.Zhang@amd.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
-	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014144622.876731-3-david@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: jXoQsbGwi2M09wVIau-wlOgpnwDPXmRm
+X-Proofpoint-GUID: riwysc8s6Iq-tjcvsxftDgfGdw7fL_8J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_12,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ clxscore=1015 mlxlogscore=577 bulkscore=0 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140128
 
-Applied.  Thanks!
+On Mon, Oct 14, 2024 at 04:46:14PM +0200, David Hildenbrand wrote:
+> Let's make it a generic KVM hypercall, allowing other subfunctions to
+> be more independent of virtio.
+> 
+> This is a preparation for documenting a new hypercall.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  Documentation/virt/kvm/s390/s390-diag.rst | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 
-Alex
+...
 
-On Thu, Oct 10, 2024 at 11:18=E2=80=AFPM Lazar, Lijo <lijo.lazar@amd.com> w=
-rote:
->
->
->
-> On 10/11/2024 12:05 AM, Dan Carpenter wrote:
-> > The >=3D ARRAY_SIZE() should be > ARRAY_SIZE() to prevent an out of
-> > bounds read.
-> >
-> > Fixes: 012be6f22c01 ("drm/amdgpu: Add sysfs interfaces for NPS mode")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->
-> Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
->
-> Thanks,
-> Lijo
->
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_gmc.c
-> > index ddf716d27f3a..75c9291ac3eb 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
-> > @@ -1199,7 +1199,7 @@ static ssize_t current_memory_partition_show(
-> >       enum amdgpu_memory_partition mode;
-> >
-> >       mode =3D adev->gmc.gmc_funcs->query_mem_partition_mode(adev);
-> > -     if ((mode > ARRAY_SIZE(nps_desc)) ||
-> > +     if ((mode >=3D ARRAY_SIZE(nps_desc)) ||
-> >           (BIT(mode) & AMDGPU_ALL_NPS_MASK) !=3D BIT(mode))
-> >               return sysfs_emit(buf, "UNKNOWN\n");
-> >
+> -DIAGNOSE function code 'X'500' - KVM virtio functions
+> ------------------------------------------------------
+> +DIAGNOSE function code 'X'500' - KVM functions
+> +----------------------------------------------
+>  
+> -If the function code specifies 0x500, various virtio-related functions
+> -are performed.
+> +If the function code specifies 0x500, various KVM-specific functions
+> +are performed, including virtio functions.
+>  
+> -General register 1 contains the virtio subfunction code. Supported
+> -virtio subfunctions depend on KVM's userspace. Generally, userspace
+> -provides either s390-virtio (subcodes 0-2) or virtio-ccw (subcode 3).
+> +General register 1 contains the subfunction code. Supported subfunctions
+> +depend on KVM's userspace. Regarding virtio subfunctions, generally
+> +userspace provides either s390-virtio (subcodes 0-2) or virtio-ccw
+> +(subcode 3).
+
+Reading this file leaves a number of questions open: how does one know
+which subcodes are supported, and what happens if an unsupported
+subcode is used?
+
+I'm afraid there is no indication available and the only way to figure
+out is to try and if it is unsupported the result is a specification
+exception. Is that correct?
+
+If so, it would be nice to document that too; but that is not
+necessarily your problem.
+
+I guess we won't see too many new diag 500 subcodes, or would it make
+sense to implement some query subcode?
 
