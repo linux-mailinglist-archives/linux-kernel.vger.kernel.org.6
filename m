@@ -1,138 +1,109 @@
-Return-Path: <linux-kernel+bounces-364026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FC699CA09
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:28:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9340499CA15
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2093A1C22842
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 577E1283549
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BBE1A0701;
-	Mon, 14 Oct 2024 12:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2671A0701;
+	Mon, 14 Oct 2024 12:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="KNSzbho3"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="O18EBEro"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF1D8F64
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7951A8F64
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728908887; cv=none; b=ONLVKs6SymqRXqTFLSY/8H2Za88+qr8CqTYE2+M2qKHZC3Zhn3EspmRwnW8Jgx6T6JNVUViXg0rhAbAbqaabvZNy8Fq1aCsSLX+lttvIjmR28y01RSaM3RKIk6e0FSds4bmNUEIrkwLgkcyaz05leqxPvHWsk3tUsYPo35sxq2c=
+	t=1728908938; cv=none; b=bo2vK0/pmNAh8mJArh5oJVf05ciRmyl2HYpg6zLT4vxJD0ZD/QXz0x6p7NPmdr0FK9UuV+m1XoAEySoZKgh0a9VgRp5BM1MA5DN0PFF3ecCmuYKX7psNQIDHb+OD/trQPnC2StN8QhZ6kYdQ2lnoWStzcNEXBGT5M0EEuWz2Kdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728908887; c=relaxed/simple;
-	bh=SP/qoFw7eVmxJKuKGs2A0+VORBPFlBO3P3RLV7FVNgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q+2sNS9w7dar3RqpGxMn7F8Q51ON2v1IPww10vldBwVOc6ilYAw7dcFtr1KMJg+mqEZ5AeEd8Rdtn+Ki77bZ9c7I+jOjkwYlA2u1oA8fSVEKEVfHo/wyFBlTksROquXL/emWpDCRwRfEpORvpb7gzYpO4HecPs1w72OpjnctAfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=KNSzbho3; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id DE8E2120009;
-	Mon, 14 Oct 2024 15:27:47 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru DE8E2120009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1728908867;
-	bh=Hm+XhRX4TIgzDknahBKuXWyWd5Q9+AsIAU5whoj+RvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=KNSzbho3rCQbwO2Frovwko8WO5o4sGngh1zAL313SYy3/ui6gZKFZBNLc6e5nk9at
-	 2eWPFDbtV0LnGTCjTlWezWoPthRRhkFKxpvbgYIjPXNDpLaZiMTgIn4UwhGREpfVBt
-	 rjHAfTF0l414Y6QDs59AtVqeW0XtLoXxWwmUoNZwNOJjBKhKfS2v5Dr57Fh+84NYqG
-	 K7S+CFvGeT4tGUB1aGjeoiPvDEmvyjQa4bhE8wIqhUNIvor4YfGqw8TARuLCRipKah
-	 LR8HAA3tGbdFEjKzO6GmQQNeIFLXeidOdcmiBYCkx/76DE+qu+WgNiCXV/ISqcgciZ
-	 COUALLAp9L9sQ==
-Received: from smtp.sberdevices.ru (unknown [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 14 Oct 2024 15:27:47 +0300 (MSK)
-Message-ID: <4ddd0588-0ff5-4c31-94b0-c9f0e453d98f@salutedevices.com>
-Date: Mon, 14 Oct 2024 15:27:46 +0300
+	s=arc-20240116; t=1728908938; c=relaxed/simple;
+	bh=BrYSQl0ZLYvbQAmDcGnc5LG7BHe+vhf/hldSMnJJFxA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LyGxtIZU1hnGwttNk64imnD9XBTsWJwIFy8kqj/cFT1y6GJbbo8yz6fuRUIT2HpNqEE6vyMj3kjigZqoCViMBq2MIVrq5id3+TnHdD28Uz0NFfD3dy4OprKQF1l/eTbqymh33sKxQl5dRW5Tdl55o+aawDiJAhabxMlQlHOw7HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=O18EBEro; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43116f8a3c9so47494615e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728908936; x=1729513736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VvR0lu9QOEiDhbztW3BgvcC1mYRKpQv7bJS1XmkZnE0=;
+        b=O18EBErot56MqXhuM/d4p32SjCEWGD1xnyAqSKHgeQOZGtLq5IPpdrzLtnHDKMB5d3
+         +Vu/W5xrueZxVsfteuh+X2REhVzjuPrd/NOwn57+K+ZyCoET/DL6QZ0Se6ZXuefOWnlx
+         NSU+eA0j/PURZ0nt7/TYck032wDxD17PZnPu9Emnyp3ae2yLOtn8hcyF+CMWjqZhE3Oi
+         V6blcY/8k/WEV0oMofW1n5KikoNhJctvg+YivCguVaogZM/aPGzn9+FPFXIEUw1tzves
+         v7lyGKOGXi8gg4WY+DZQXFyprSoFJxJrkIUo3zIB8Buh2/7nYvdw8J0XY79hAqRw+yaW
+         gF+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728908936; x=1729513736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VvR0lu9QOEiDhbztW3BgvcC1mYRKpQv7bJS1XmkZnE0=;
+        b=KF2ZFCyugs9mmtGo1KbI/gtnXxYOQSl8LqVxItG7NeUCYLSwvNwElBJYUB4KvFfRxk
+         NNFTzMQYTlDAtY7xOWXsVApPXtOsat/cvJ8fpC2na5oI9X5ax4NslmfDlH2WZvsK+uI2
+         I56sULTUL5AzKEOv3R21DpWdFw6gPtBntXrKGdaWDG/TPoiPSyMksjo/oTEL+XF8Afqk
+         6LJGZtSN6SikkGDHFzwmxGJW+qSB9sBBqogrUwCaZoavBlbYGnMboe5fNE2YXu0vymJG
+         lwXTn74L1jwGg3h1KTnR0TiYqv9HLKtrLEbZSngoaYbJVoxp2WcPhurphVKElf1lk5k0
+         sfHw==
+X-Gm-Message-State: AOJu0YzmNBHSV9ZfzU5yOY4R3oXN6gAkao7ztnMiGTZOo0/f+fVsza6o
+	muk8vEYCG3l/oH0KEo9z7y2Mq+CCb0YybbhGyUl3O0F1gW9ELhnDtXgAab1AnAc=
+X-Google-Smtp-Source: AGHT+IHKqVPpy+WCo6MDj0JB9eI/p+F2Q9SzzXqrjOE5wRvYvmXya1pR2Ksq4yYBDzjl4NfZZeAD0A==
+X-Received: by 2002:a05:600c:3ba1:b0:42c:c401:6d6f with SMTP id 5b1f17b1804b1-431255e052amr100118205e9.16.1728908935790;
+        Mon, 14 Oct 2024 05:28:55 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de54:ebb2:31be:53a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b2780c1sm11324606f8f.0.2024.10.14.05.28.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 05:28:55 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] driver core: constify devlink class
+Date: Mon, 14 Oct 2024 14:28:49 +0200
+Message-ID: <20241014122849.118766-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] mtd: spinand: add OTP support
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-CC: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
-	<vigneshr@ti.com>, Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Michael Walle" <michael@walle.cc>, Mark Brown <broonie@kernel.org>, Chia-Lin
- Kao <acelan.kao@canonical.com>, Md Sadre Alam <quic_mdalam@quicinc.com>,
-	"Ezra Buehler" <ezra.buehler@husqvarnagroup.com>, Sridharan S N
-	<quic_sridsn@quicinc.com>, Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Alexey Romanov <avromanov@salutedevices.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mtd@lists.infradead.org>, <kernel@salutedevices.com>
-References: <20240827174920.316756-1-mmkurbanov@salutedevices.com>
- <20240827174920.316756-3-mmkurbanov@salutedevices.com>
- <20241001111225.36cb9701@xps-13>
-Content-Language: en-US
-From: Martin Kurbanov <mmkurbanov@salutedevices.com>
-In-Reply-To: <20241001111225.36cb9701@xps-13>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188416 [Oct 14 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: mmkurbanov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/14 10:53:00 #26751613
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Hi Miquel,
+The devlink class object is never modified and can be made constant.
 
-On 10/1/24 12:12, Miquel Raynal wrote:
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/base/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> +/**
->> + * spinand_set_mtd_otp_ops() - Set up OTP methods
->> + * @spinand: the spinand device
->> + *
->> + * Set up OTP methods.
->> + */
->> +void spinand_set_mtd_otp_ops(struct spinand_device *spinand)
->> +{
->> +	struct mtd_info *mtd = spinand_to_mtd(spinand);
->> +
->> +	if (!spinand->otp->ops)
-> 
-> Could we use something else as check? It feels odd to check for otp ops
-> and then just ignore the fact that they are here. Maybe check npages or
-> otp_size() ?
-
-A developer may not specify OTP callbacks:
-SPINAND_OTP_INFO(otp_pages, NULL /* OTP ops */)
-
-Or do you mean that it is better to check in each function
-spinand_mtd_otp_{info,read,write,lock}? E.g.:
-static int spinand_mtd_otp_erase(struct mtd_info *mtd, loff_t ofs, size_t len)
-{
-	struct spinand_device *spinand = mtd_to_spinand(mtd);
-	const struct spinand_otp_ops *ops = spinand->otp->ops;
-	int ret;
-
-	if (!ops || !ops->erase)
-		return -EOPNOTSUPP;
-
-
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index a84a7b952cfd..0e618d675792 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -553,7 +553,7 @@ void device_link_wait_removal(void)
+ }
+ EXPORT_SYMBOL_GPL(device_link_wait_removal);
+ 
+-static struct class devlink_class = {
++static const struct class devlink_class = {
+ 	.name = "devlink",
+ 	.dev_groups = devlink_groups,
+ 	.dev_release = devlink_dev_release,
 -- 
-Best Regards,
-Martin Kurbanov
+2.43.0
 
 
