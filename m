@@ -1,97 +1,170 @@
-Return-Path: <linux-kernel+bounces-364570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41B799D63F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:16:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D018C99D64A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9631F22B35
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EBFFB20CFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B9A1C8774;
-	Mon, 14 Oct 2024 18:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2E11CACCF;
+	Mon, 14 Oct 2024 18:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPcYicls"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MTPMgIde"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18CE1AA79A;
-	Mon, 14 Oct 2024 18:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2709B1FAA;
+	Mon, 14 Oct 2024 18:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728929792; cv=none; b=nPSB5jUjAF7cuDiqLtYBoS/aXIqTtHZGJD+KwzsVw9mREtnmMx5/U5TfdqqBgV14Wkgba2VErhUCJS0FKQ5PlEx8ev7aE0RNY4a5wo91F/nKaAlltBVPRkMal617DZqibAD3owzdPoBezQMKCA9fXicxx2vYrreZ0xZG44OQMAk=
+	t=1728929845; cv=none; b=Q0dQkZLOosDf+NFWgQgzNCVPA24MtVqeANyQjUX+/EVE/WvoU28VdTsMYeSc3e8Uj2KyLmJY1HV9IPAQ0VbYgcuQS78no7BwjOwx/3sxJBkKqtk5A47YjY0P+7QrbyMIy/fz6Sn9xF8Q2NfW9hmwV0yXxncgVDFMFkbBVVPlZao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728929792; c=relaxed/simple;
-	bh=or/9n08L+r2SABq92t68DUSRRGWy7/LVH1rEDc0EUWI=;
+	s=arc-20240116; t=1728929845; c=relaxed/simple;
+	bh=P3Pzj722a0qn2KFz7CJfgBKO+JfL3dlBqaxecPwjeek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yz8SaGkhsKJPmp2WDMlJrK4+B/b/CzrAaeRHveDgTJwLfoUD3RdDr8VuKqPVAgns+2ZWR55xkItln1HLQWJIgo/545zMtItJ7D2Jm64o15IR4wVL7YiFPX6dHXrc3wCQnBMYUnowBRmlft62B36yF3Y7BVu/LczTPACHAeL2xXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPcYicls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB251C4CEC3;
-	Mon, 14 Oct 2024 18:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728929792;
-	bh=or/9n08L+r2SABq92t68DUSRRGWy7/LVH1rEDc0EUWI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSs82ZBhn5+N8AOCnxg7RPAvs3WBgKgijn/zeTWxQCG1xBCF7x4RRpZ0+/Nv+nQMwA99vBOPHJcbFeQcBWC/uxprHUHOXelGeQ+uH7KWq5lG0KFFf+tVLzMMS8CtqghMa8o7xU77ozdzeBWtkscH+QwAGjJzx4JVSGaGjUZdI7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MTPMgIde; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9DA5440E0184;
+	Mon, 14 Oct 2024 18:17:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FdZTbS5Yi9uB; Mon, 14 Oct 2024 18:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1728929835; bh=rRulwwslaCiKpYQiRcp3k5u/GU44D2gHabFxhCGCe2k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gPcYicls39vMcuFBiXJL6KRWsMx7FtrVHF41K9xQ/H/8bDe2ikLmvVpb158lvyySi
-	 C6fM528gm3lcYB8+1tpko9Nn1gs0U5wCbMfuS5wUx24Ubpmhvm4rhqVmCM4BSQZnKG
-	 sAWn9c36rQ3H/ZFXh5IYTMouykwZF2KsAGhObcUuc2Vk1WEJ9e2M52FNrhZcOhA1cn
-	 o+YgulxJozGPOiXsUtfud5pY1wo+WtMNGbElgjDDndUJG2S8s1N0Uun2lkcHiVtjqb
-	 L8VJAvWlx/qdefDgo2nuCaRNYGq4G3M8ftira90XnBQUJH9+X61S8x88luFVyugZPZ
-	 7y1bevdj5IZow==
-Date: Mon, 14 Oct 2024 23:46:28 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com
-Subject: Re: [PATCH] drivers/dma: Fix unsigned compared against 0
-Message-ID: <Zw1f/OviOSJ9eqJE@vaman>
-References: <20241005093436.27728-1-advaitdhamorikar@gmail.com>
+	b=MTPMgIdelKAHQlU+HXCBeAaSxV0Ui/L3cr6Xmo31ldIIcLmnP7D4yadrMwJr3I6DK
+	 x5aRFKCygueVgCT4ABt6WkPjIxfTQtJzn8scvo7XLEWuY0MP3ryR+G1mU5+x39zRxy
+	 0qTqJs2sr8nTWfEW4A7rDf55zuMOCqrTx65nAnEaRGkxsw+Xeq3XJopNq+hv2+NZ0w
+	 zEtzEVBvFR4S5lKwKvOmwJ/gr9Samx+3Pmtkg+yd1ffZCRx3J4xoSKA9Xwh4LhGBzY
+	 EssseZkPgIMoGB/ZkMXGcSdK2LhUYkqOfWJVZTz/ztw+PpEio9q6ZDI27wv3pvAxon
+	 P1VUpTRXcW/ouQ1U+cD96In1NZp4abLzIxWHUDR8XuYHvnY+Szuk1LxXSS5hvNVYH6
+	 SFjQD+1N7hCHFHBbVRfzIvxQ2EUjsCIMzYOn1y9Iw6g6YO+hbBU5DodBMmsoOQl4zF
+	 tzxkkFFTbOiwpmsu+zHwtih92WPYNA0LSE+Yq/iMZu8XiVlF7LoVHuwaTYeM+H8hOB
+	 MA0rljcPbgb5E6hGaRfnWzViLNb/ASRRL2utzBls+bEOA/tWIKGttv/AneXcKt0gzT
+	 0Cxt6mJKJ/wkS+n5PXZ2t+zpKTrmVwtv6Da+sWW5OQBbWRvQISXRcNnQh8lsey/uOZ
+	 yPUGFx3OJTY7fvqQ4Y2BFTLk=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E5E4140E0163;
+	Mon, 14 Oct 2024 18:16:52 +0000 (UTC)
+Date: Mon, 14 Oct 2024 20:16:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Priyanka Singh <priyanka.singh@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>
+Subject: Re: [PATCH v2 3/6] EDAC/fsl_ddr: Fix bad bit shift operations
+Message-ID: <20241014181647.GQZw1gDwIhBdnFnleH@fat_crate.local>
+References: <20241011-imx95_edac-v2-0-011b68290951@nxp.com>
+ <20241011-imx95_edac-v2-3-011b68290951@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241005093436.27728-1-advaitdhamorikar@gmail.com>
+In-Reply-To: <20241011-imx95_edac-v2-3-011b68290951@nxp.com>
 
-On 05-10-24, 15:04, Advait Dhamorikar wrote:
-> An unsigned value can never be negative,
-> so this test will always evaluate the same way.
-> In ep93xx_dma_alloc_chan_resources: An unsigned dma_cfg.port's
-> value is checked against EP93XX_DMA_I2S1 which is 0.
-
-Please use subject line dmaengine: ... git log will tell you the tags to
-use
-
-I am fixing it up and applying
-
+On Fri, Oct 11, 2024 at 11:31:31AM -0400, Frank Li wrote:
+> From: Priyanka Singh <priyanka.singh@nxp.com>
 > 
-> Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+> Fix undefined behavior caused by left-shifting a negative value in the
+> expression:
+> 
+>     cap_high ^ (1 << (bad_data_bit - 32))
+> 
+> The variable `bad_data_bit` ranges from 0 to 63. When `bad_data_bit` is
+> less than 32, `bad_data_bit - 32` becomes negative, and left-shifting by a
+> negative value in C is undefined behavior.
+> 
+> Fix this by checking the range of `bad_data_bit` before performing the
+> shift.
+> 
+> Fixes: ea2eb9a8b620 ("EDAC, fsl-ddr: Separate FSL DDR driver from MPC85xx")
+
+Is this an urgent fix which needs to go to stable or someone just caught it
+from code review?
+
+Does it trigger in real life, IOW?
+
+> Signed-off-by: Priyanka Singh <priyanka.singh@nxp.com>
+> Reviewed-by: Sherry Sun <sherry.sun@nxp.com>
+> Signed-off-by: Li Yang <leoyang.li@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  drivers/dma/ep93xx_dma.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/edac/fsl_ddr_edac.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
-> index 995427afe077..6d7f6bd12d76 100644
-> --- a/drivers/dma/ep93xx_dma.c
-> +++ b/drivers/dma/ep93xx_dma.c
-> @@ -929,8 +929,7 @@ static int ep93xx_dma_alloc_chan_resources(struct dma_chan *chan)
+> diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> index 7a9fb1202f1a0..ccc13c2adfd6f 100644
+> --- a/drivers/edac/fsl_ddr_edac.c
+> +++ b/drivers/edac/fsl_ddr_edac.c
+> @@ -338,11 +338,18 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  			fsl_mc_printk(mci, KERN_ERR,
+>  				"Faulty ECC bit: %d\n", bad_ecc_bit);
 >  
->  	/* Sanity check the channel parameters */
->  	if (!edmac->edma->m2m) {
-> -		if (edmac->dma_cfg.port < EP93XX_DMA_I2S1 ||
-> -		    edmac->dma_cfg.port > EP93XX_DMA_IRDA)
-> +		if (edmac->dma_cfg.port > EP93XX_DMA_IRDA)
->  			return -EINVAL;
->  		if (edmac->dma_cfg.dir != ep93xx_dma_chan_direction(chan))
->  			return -EINVAL;
-> -- 
-> 2.34.1
+> -		fsl_mc_printk(mci, KERN_ERR,
+> -			"Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
+> -			cap_high ^ (1 << (bad_data_bit - 32)),
+> -			cap_low ^ (1 << bad_data_bit),
+> -			syndrome ^ (1 << bad_ecc_bit));
+> +		if ((bad_data_bit > 0 && bad_data_bit < 32) && bad_ecc_bit > 0) {
+> +			fsl_mc_printk(mci, KERN_ERR,
+> +				      "Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
+> +				      cap_high, cap_low ^ (1 << bad_data_bit),
+> +				      syndrome ^ (1 << bad_ecc_bit));
+> +		}
+> +		if (bad_data_bit >= 32 && bad_ecc_bit > 0) {
+> +			fsl_mc_printk(mci, KERN_ERR,
+> +				      "Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
+> +				      cap_high ^ (1 << (bad_data_bit - 32)),
+> +				      cap_low, syndrome ^ (1 << bad_ecc_bit));
+> +		}
+
+This is getting unnecessarily clumsy than it should be. Please do the
+following:
+
+	if (bad_data_bit != 1 && bad_ecc_bit != -1) {
+
+		// prep the values you need to print
+
+		// do an exactly one fsl_mc_printk() with the prepared values.
+
+	}
+
+Not have 4 fsl_mc_printks with a bunch of silly if-checks in front.
+
+Thx.
 
 -- 
-~Vinod
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
