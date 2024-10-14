@@ -1,116 +1,99 @@
-Return-Path: <linux-kernel+bounces-363987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F21F99C965
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:51:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E37BD99C981
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3935E1C221E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:51:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E228B2453F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABC719E80F;
-	Mon, 14 Oct 2024 11:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87A519E971;
+	Mon, 14 Oct 2024 11:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="evt0oa+U"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4hZPo8J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D73513C67C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0681684B4;
+	Mon, 14 Oct 2024 11:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906700; cv=none; b=G7z7B+3oPSddenY8AZXyMy29wRcotUQB/hF9DhgoPJZmIa5yTXgMLPPADfVu4Z6wgFDjX/VDs3tgUNy0DcPvgVhJv/ROPJOq0NvskLVHBfFuorf41yIr0nSgDWIo/nkxLQ58VL1aqD94rMsp+fSDM/IFEpDgsUq5pDeWMoN5Gqo=
+	t=1728906746; cv=none; b=dXjmQQztBfDugw/AtNAdvKFMnPGXkgoXS6iUUvPIBl6zHLGKDQ44qHHhM9CtO7vYxKqEksoVmRGkY1uy1FqoNJvTy1+UWGT9xtARq/KYtwYZAZOPtuNRihpld5Hs6LOKn+gg4voojddBQn+V/OObE68roaYxo+j8I1Bf5dyJD9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906700; c=relaxed/simple;
-	bh=H0U3uZ7KfOsYmM2ci8kiRSH44T1xP9+zi5pkF5bDyAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ecsjnUunonYfCiTkJeoY2MjavFXRzp1g1H+99ZTXLXPJP61r5EFb3dLcxanaQPtHzbcqcPX9mi6K6oU+mYG9IUlW6gT9Y5TM2DzjiwNmOkEhYf7rYzlnlDjQeSroJAA6cwK0AgGjW66Ur8DIhNfPf0GjVJr+b+0D0jgDFGsZf8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=evt0oa+U; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f72c913aso895667e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:51:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728906696; x=1729511496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V1xWMt3UTvAd/JjpHzhIgfyaHO9/VjAl/Sg2CqO7Ryw=;
-        b=evt0oa+UcwISwgOMlx5cVBO8/zIIC6OWWqiEyXcyVWwugswgpP+uFXCBj1CeXi446Q
-         q1M2pjddkH2t05BC4wMzCY72TxZZReSd+jYN9TAutNKFn3r25BLlT4eKhztmU940fsG3
-         a8bcUN2dUplF/ARbXZ9kwBKErJXMkB7vUIpoTi41pQT58VN5A/7c6b9r+9R6NJlouxh+
-         bZVXuxbFw6ld4Us0+If/d8EK0wRLUl3UDfifZyKQTCtWSxcp01LDT0hQNIUxvRSQSPD0
-         MuYYttyYJy3D00xnK7NcQMMvOP2XZS7h8ANz/mNFPn7s0C6YURxiIgtPYtjb09ZjVIy/
-         mqfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728906696; x=1729511496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V1xWMt3UTvAd/JjpHzhIgfyaHO9/VjAl/Sg2CqO7Ryw=;
-        b=ooY9YmLKEFbh5yqBKISmrYSgNLNKGfH7uALTfKUoEHTLnwLDOwmK4+KokrRh9ku50T
-         kcnaiM7JyJOzlI6bqaWZZ9aNRosQG9+XvxOhY58KFt+DBoGs3ch0cj4AgNUVPSA1V67P
-         JnvnipMeFCGipoBMX2vsqJoS4B3bhdyyN7f06M9LkkGgTUjSduY0a4Hu21j/MZZTDbOK
-         9Dl9wZskuixejGLEt/KI2r4VRHb/i8xMdA3L1zIZVoy5Ocac49RMJFkLeab6r45+FyJl
-         HRKNXong8REhc8RZtYRnfNVlZeQQpMTeN9fmdqxFhkIpkFUANUaskVH1O/CzOupOHRA0
-         Fueg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmz/VeRTqqI3xZh7pDiu9xNMJ3/RsTz8Fv1/mjVqPxbyJf2Qszp3tARtO2bNTms0NeEL0+rm+Mpb2tuB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYvEXnhggyaqz8hraHN8DrYxqF90dPVPVvaAAxoDv0w6H4B8x6
-	jyUREx6xHLSqhWvmbveMu0HU1am/cgwwTvANSm5YdZELpXqIycdducDA7on0Mpc=
-X-Google-Smtp-Source: AGHT+IHHuAMIoaQuFwnEb6QkDi1r5lPPQLpCWZGzSTxE9JYStKerl0AiV8ueiqeqgLDWlOoq82aTTQ==
-X-Received: by 2002:a05:6512:2302:b0:52e:9b9e:a6cb with SMTP id 2adb3069b0e04-539da3c649dmr5594953e87.15.1728906696406;
-        Mon, 14 Oct 2024 04:51:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539e85ccaedsm874894e87.58.2024.10.14.04.51.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 04:51:34 -0700 (PDT)
-Date: Mon, 14 Oct 2024 14:51:33 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Hermes Wu <Hermes.Wu@ite.com.tw>
-Cc: Pin-yen Lin <treapking@chromium.org>, 
-	Kenneth Hung <Kenneth.hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 02/10] drm/bridge: it6505: improve AUX operation for
- edid read
-Message-ID: <e5slvrvg5es5bzb6jfqph53o4lylsqyytcjvopkkp6tasfya6p@iht5n3cqedfk>
-References: <20241001064305.32180-1-Hermes.Wu@ite.com.tw>
- <20241001064305.32180-3-Hermes.Wu@ite.com.tw>
+	s=arc-20240116; t=1728906746; c=relaxed/simple;
+	bh=sDrRw60zuzKbS92EBKllWgxujSkHVzdPmKV/iFTcCSA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ni6Y4NLGSwrbYBO8TC4etOHbyJoc2K7Ji0VQIUm/CvRNH2G8PHZ5OJVMStDmdzmrs4m/s+WSZDjxi3OJdZ6hb9oH4ZLR5xlrpZ/ScJvSXaiSg7nEDhCVcPeG7IcQ4cJiLuTyxppn3AJ+GtPvZKR5b0C/8RWton0AsP0JnaCaieo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4hZPo8J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C7E8C4CED0;
+	Mon, 14 Oct 2024 11:52:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728906745;
+	bh=sDrRw60zuzKbS92EBKllWgxujSkHVzdPmKV/iFTcCSA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=V4hZPo8JulfCIGIR1+wxel5FOy5lMvZYoN1xlsOS4T3feuPgoLHpubNe0d45gBzaY
+	 9FdDF+78nogni21y6/n+ZhotQLNbi9hGTYs/yeSwpVVx0FZX2AwQRPmkxgkH21w4Pt
+	 Y63Vn2XzP/R/OfYR6T0zA5mn4ZDBKvQ3yI2vtwxs+XP/2uEBxgN25HSk449zEGxHsR
+	 B8vVyRE8RydpbT7fAyfxORBtaV6UxfYcFWceaJq4TcpYkKUD4UI+wY+PehN2YGRKbh
+	 Z/tzkfSZwlEBV4rQjB2KZJxhhvauVgrSaWr4QPAg/ULB4dfGbdh3nmc2YkChkxzUyC
+	 V8xQjRWKz82cQ==
+From: Mark Brown <broonie@kernel.org>
+To: claudiu.beznea@tuxon.dev, lgirdwood@gmail.com, perex@perex.cz, 
+ tiwai@suse.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
+ nicolas.ferre@microchip.com, Andrei Simion <andrei.simion@microchip.com>
+Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241014092830.46709-1-andrei.simion@microchip.com>
+References: <20241014092830.46709-1-andrei.simion@microchip.com>
+Subject: Re: [PATCH v2 RESEND] MAINTAINERS: Update maintainer list for
+ MICROCHIP ASOC, SSC and MCP16502 drivers
+Message-Id: <172890674010.4183272.7344078847755683372.b4-ty@kernel.org>
+Date: Mon, 14 Oct 2024 12:52:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001064305.32180-3-Hermes.Wu@ite.com.tw>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-On Tue, Oct 01, 2024 at 02:43:01PM +0800, Hermes Wu wrote:
-> From: Hermes Wu <Hermes.wu@ite.com.tw>
+On Mon, 14 Oct 2024 12:28:31 +0300, Andrei Simion wrote:
+> To help Claudiu and offload the work, add myself to the maintainer list for
+> those drivers.
 > 
-> The original AUX operation using data registers is limited to 4 bytes.
-> The AUX operation command CMD_AUX_I2C_EDID_READ uses AUX FIFO and is capable of reading 16 bytes.
-> This improves the speed of EDID read.
-
-Nit: Improve the speed of EDID reads by using CMD_AUX_I2C_EDID_READ.
-
-> 
-> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Applied to
 
--- 
-With best wishes
-Dmitry
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] MAINTAINERS: Update maintainer list for MICROCHIP ASOC, SSC and MCP16502 drivers
+      commit: 3692a4ccacf3c44249e584aea3ae8568f953e7e4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
