@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-363186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC1D99BECC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:07:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C16B99BECF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4D1285AEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:07:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E50C1C2249E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F091A7241;
-	Mon, 14 Oct 2024 03:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0F61A7062;
+	Mon, 14 Oct 2024 03:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADpDTbrf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEei9gPf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1192B1A7062;
-	Mon, 14 Oct 2024 03:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87DC1A726B;
+	Mon, 14 Oct 2024 03:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728878338; cv=none; b=i6mMaaXQrMkJd6jerzx0mZag9R18PnTSbvOTU9T/DfYcQyomdl+LCGbuouBowJxKWzsZCnKNQ0ZLR26Us7Fj0DPRxd13WywOx++9pHDbMj8yggvBIhK6NAnneQXoRwEVKRjHP1Z9NaJKRElOI+7dqxTIGa2vGu3xS9V5HHkIMVM=
+	t=1728878340; cv=none; b=VBbyGAjkpm+4u0bekvAzPbcHYvSw6aOW+Kj74bIIKtbb+dDF8lyFDCYvIEj9NFTE4616T7kay3dX/UWehiYmzd50c7sa2Xkv9UAvbwyDfXsuntMGKvOn2a4E3M0r3h6lpHH3C8HGbTJLeJg3hk3kWt81aDguoJ1mKIhy4hM1NVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728878338; c=relaxed/simple;
-	bh=EEwQJM6UjH6LfciOUNPLG6CzjG0L+/ES9mq8B59X8bQ=;
+	s=arc-20240116; t=1728878340; c=relaxed/simple;
+	bh=iiNXBTXSYxUR7Njmep6gisphn1RKs2HVD7L0k2T+5a4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cPBf3jQwm5DUFuny7fG8BmI8bjDFCIlAe9xBBLOg6cvLHH/P2VXEvo86umiMrUJuc07yhrA0sFeYzV8K6QoUM253Lz+va1G21gvRikg8v8A3cW830WZVTB8CSQqO9iX7e9XwQUNuvkv7pcs66vXJc6tC5BuGtbC/tc2Cq0+o/OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADpDTbrf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D19C4CEC3;
-	Mon, 14 Oct 2024 03:58:56 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CV2KAkNSKIdaZIahGolugj6UNvRXBqjVoGb+KuZwkqFNq3H9UFozA0ZINuUR1ham3NlizFiGwKzVPMFM0SN5H6zZ/tRpiuB0eEpjIDuhprBeSz0omf4OBpC0bamZyKYpiQrrR/OqHbOLRnKrtMtKgf6yCLpKyXB+AVCSGarsE7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEei9gPf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D2FC4CED0;
+	Mon, 14 Oct 2024 03:58:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728878337;
-	bh=EEwQJM6UjH6LfciOUNPLG6CzjG0L+/ES9mq8B59X8bQ=;
+	s=k20201202; t=1728878340;
+	bh=iiNXBTXSYxUR7Njmep6gisphn1RKs2HVD7L0k2T+5a4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ADpDTbrf4AS2zDz1GwvqnfFCEn//A3GvUZ8BUdZMxmApnIov9St2dYiMw/XFpP+yV
-	 LSaR/sMYTNY/IKIpJ2LcEoZFOE3J99vg8PAiwpU7J7RyUVdwmJO0rD7sj85UthWN1y
-	 y0FTxX6HLctFMVKifGj/QCZUyR/oJewxdthNDpHzmIjLvE28dJ+k46kRphQJrRbxqK
-	 kCn8vYpuiom49NttpJoKx8GoMNESGVJVmARMRPjQZ0Z3Z3Go4g7Yc6QJfnSW5OXnLj
-	 U2uOqkPKIYstoc3Ydwg9uLvsqDRD5UTcNsvrkZQKDg9CpZ6PXyLV9m1TDsVyO8Id93
-	 9kj4EvL0pPubA==
+	b=QEei9gPficzZsIvvUU3XlRqmthnd9JAU8MfvGSvCDeunK0fkiFkWAD7Dyxa6JL5FG
+	 CsmhjtVdb7BCxrZ/WLrB3vuSrpOYck7nwoAnz8aPkdTc/VdCZ6XaYzmC27NiSIS1k9
+	 UG3i/1LOA31dshNsKDxvQgt1c28P/C6csdj0vmAVq6QqT7aXPyWgSTkUPR4r1yt4+I
+	 qAJscDHpwSqJoPoM5dHyIFV6pNHyL6O7zXy6Va0LrZQtKPWzdq2oLXwCOuhEsXjiVX
+	 X9xVoXh/uS6hWCVMyly/7WxuwPXdHBRRXKwNs7L6xBiXQqGXctzvzd30BEeUD8dhGo
+	 vYFyHZP+z3Hsg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Benjamin Marzinski <bmarzins@redhat.com>,
-	"Ewan D . Milne" <emilne@redhat.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+	Steve French <stfrench@microsoft.com>,
 	Sasha Levin <sashal@kernel.org>,
-	James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 06/10] scsi: scsi_transport_fc: Allow setting rport state to current state
-Date: Sun, 13 Oct 2024 23:58:41 -0400
-Message-ID: <20241014035848.2247549-6-sashal@kernel.org>
+	sfrench@samba.org,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org
+Subject: [PATCH AUTOSEL 6.1 07/10] cifs: Fix creating native symlinks pointing to current or parent directory
+Date: Sun, 13 Oct 2024 23:58:42 -0400
+Message-ID: <20241014035848.2247549-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014035848.2247549-1-sashal@kernel.org>
 References: <20241014035848.2247549-1-sashal@kernel.org>
@@ -61,51 +61,69 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.112
 Content-Transfer-Encoding: 8bit
 
-From: Benjamin Marzinski <bmarzins@redhat.com>
+From: Pali Rohár <pali@kernel.org>
 
-[ Upstream commit d539a871ae47a1f27a609a62e06093fa69d7ce99 ]
+[ Upstream commit 63271b7d569fbe924bccc7dadc17d3d07a4e5f7a ]
 
-The only input fc_rport_set_marginal_state() currently accepts is
-"Marginal" when port_state is "Online", and "Online" when the port_state
-is "Marginal". It should also allow setting port_state to its current
-state, either "Marginal or "Online".
+Calling 'ln -s . symlink' or 'ln -s .. symlink' creates symlink pointing to
+some object name which ends with U+F029 unicode codepoint. This is because
+trailing dot in the object name is replaced by non-ASCII unicode codepoint.
 
-Signed-off-by: Benjamin Marzinski <bmarzins@redhat.com>
-Link: https://lore.kernel.org/r/20240917230643.966768-1-bmarzins@redhat.com
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+So Linux SMB client currently is not able to create native symlink pointing
+to current or parent directory on Windows SMB server which can be read by
+either on local Windows server or by any other SMB client which does not
+implement compatible-reverse character replacement.
+
+Fix this problem in cifsConvertToUTF16() function which is doing that
+character replacement. Function comment already says that it does not need
+to handle special cases '.' and '..', but after introduction of native
+symlinks in reparse point form, this handling is needed.
+
+Note that this change depends on the previous change
+"cifs: Improve creating native symlinks pointing to directory".
+
+Signed-off-by: Pali Rohár <pali@kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/scsi_transport_fc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/smb/client/cifs_unicode.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/scsi_transport_fc.c b/drivers/scsi/scsi_transport_fc.c
-index 8934160c4a33b..1aaeb0ead7a71 100644
---- a/drivers/scsi/scsi_transport_fc.c
-+++ b/drivers/scsi/scsi_transport_fc.c
-@@ -1252,7 +1252,7 @@ static ssize_t fc_rport_set_marginal_state(struct device *dev,
- 		 */
- 		if (rport->port_state == FC_PORTSTATE_ONLINE)
- 			rport->port_state = port_state;
--		else
-+		else if (port_state != rport->port_state)
- 			return -EINVAL;
- 	} else if (port_state == FC_PORTSTATE_ONLINE) {
- 		/*
-@@ -1262,7 +1262,7 @@ static ssize_t fc_rport_set_marginal_state(struct device *dev,
- 		 */
- 		if (rport->port_state == FC_PORTSTATE_MARGINAL)
- 			rport->port_state = port_state;
--		else
-+		else if (port_state != rport->port_state)
- 			return -EINVAL;
- 	} else
- 		return -EINVAL;
+diff --git a/fs/smb/client/cifs_unicode.c b/fs/smb/client/cifs_unicode.c
+index e7582dd791794..53f862a9c03cc 100644
+--- a/fs/smb/client/cifs_unicode.c
++++ b/fs/smb/client/cifs_unicode.c
+@@ -485,10 +485,21 @@ cifsConvertToUTF16(__le16 *target, const char *source, int srclen,
+ 			/**
+ 			 * Remap spaces and periods found at the end of every
+ 			 * component of the path. The special cases of '.' and
+-			 * '..' do not need to be dealt with explicitly because
+-			 * they are addressed in namei.c:link_path_walk().
++			 * '..' are need to be handled because of symlinks.
++			 * They are treated as non-end-of-string to avoid
++			 * remapping and breaking symlinks pointing to . or ..
+ 			 **/
+-			if ((i == srclen - 1) || (source[i+1] == '\\'))
++			if ((i == 0 || source[i-1] == '\\') &&
++			    source[i] == '.' &&
++			    (i == srclen-1 || source[i+1] == '\\'))
++				end_of_string = false; /* "." case */
++			else if (i >= 1 &&
++				 (i == 1 || source[i-2] == '\\') &&
++				 source[i-1] == '.' &&
++				 source[i] == '.' &&
++				 (i == srclen-1 || source[i+1] == '\\'))
++				end_of_string = false; /* ".." case */
++			else if ((i == srclen - 1) || (source[i+1] == '\\'))
+ 				end_of_string = true;
+ 			else
+ 				end_of_string = false;
 -- 
 2.43.0
 
