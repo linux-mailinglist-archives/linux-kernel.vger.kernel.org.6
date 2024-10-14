@@ -1,115 +1,83 @@
-Return-Path: <linux-kernel+bounces-364733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B632499D892
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:54:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF77299D899
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9831F2196B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:54:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86B8BB21DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1251D1726;
-	Mon, 14 Oct 2024 20:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627B61D31AA;
+	Mon, 14 Oct 2024 20:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="tFnkTz98"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+j7SIyJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496991D14FF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D5A1D14E1
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728939266; cv=none; b=Ply9ufjs0lJp9AP1JqGXZICm64DugGMQdq0bN/sHC7ZLhgc/mpb+2AbDhu1nJWVmDUeYmcTe5b4Qghbr14S7uVnkvIEkrJ/DmuXwWkAHHO74wIP6ed07l/eN4/HrDgYqsezP4cHo2oqEBwu7PdBRmcLTQKpkZsBlSJj71penurw=
+	t=1728939275; cv=none; b=fY8XpDpObNjkfJzwSWZs1GQEsYBcgaDcwQTfVQr/DHr0BjeiJvsIczRbRsFy5HC7cG6D73/JHGnDTQyMug/9CBur3LtqYMd+YKAMdVpzDLfJy3QRaghRqBDFQUPFJSMKQIPixYU3p03kdWKbgWUpdYIJjwR30d+R8XO03VPweSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728939266; c=relaxed/simple;
-	bh=ecwCNyY08pw4NyGI13qICJ21vTpSZg1pUCkauZBQgyM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=EZA4pcVP5yTHsOQ2KsPyKSK1oo0P0g2rEcty1RU4OreHZX3bxjEPc2+KIy8j9QLZU4Uv8F1fe8RgvjnMGEFGh+YRBeFjAq0vKOxD5U70+ME1Ouoi+x7KarymT5Mwhs0j8Ujxn82ssWWBkr6ebstb3/BQVGgcLxb89tHjgnFX0Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=tFnkTz98; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so1098103a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:54:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1728939263; x=1729544063; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=upBIwmLVEKrYA/8mpgHqplBGbXrpIDV9EVYbTEhbDSc=;
-        b=tFnkTz982ZJtngZfcYhN6IexLp6clTut9o8ScB3KJzdPVp6l6CJKUTY+rr5sRr0VAx
-         K8OA7JBoADz8Sl8CZcUnoJkZiWw67ycKKefcWe3U95TBoygHwos/P/a8hrWGD8oyec3I
-         D7X0GIFKqWkh4V+gtveAfY59leAaGJyDqHxu+QvTRlt3/fih6eA0Do8btBD95YPIBKgR
-         QOQUXiraleYFvBoNNBDU8Y80R1T/ictCnno9SptQrqHWdN1LAL6sRSQvEq1LT8yvaatp
-         LPLY9RMZC+A9rPyRLjJ2r9T4zDkB4srV+8TG7CoTtSR2pCim29DGBXxCITY41k0vighs
-         8d7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728939263; x=1729544063;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=upBIwmLVEKrYA/8mpgHqplBGbXrpIDV9EVYbTEhbDSc=;
-        b=WR4piB2WpD60ocHpN0VU32Op8gxSKe4h2gQCYPjC1FREHiIbo8Q0I2KKLiT963/4ud
-         4WOjnLXF9KRcV2+f+PLYqkQPlrTmvN02KS37Ajx2fpAMJa8c9h7K8T2EejE5AgnbZ/+a
-         0aUwkaRdJlbIlNpubM9a3wfmQqZO2YEIuqL4EfI9akVEpW1teeOd5FJAYEfLeyCWAr7m
-         qEguwVbLIOQwRGeWs715jitDW8lImN+lP58LPKOCKO0hSa+rRsoP6d02x2toNcsa+qQv
-         bkD159vUSgM0KXGN7d6uZ5McgkhybY3/prmcGpoZq+vbNjo1dwHmNMkk0BvqXyTlBZZh
-         Fbqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsvjFd/piZDYVPgF0gA6WNTjnT/Q3NoCy62InJvRr2x/1glCM4ssl4sxJEgB9JLWzmQ2HCgBh+lW1k5Z0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw26xseVVyZ4R0YQKb6BHLFPBs9LYv7oK+vdbkKjLVmzHLbBAEd
-	MFyLYCKIosdiVZ8lCFVYE9oicfabKsu8bRPbfxItf+mob86Tj3e4Zw9MSJKClpg=
-X-Google-Smtp-Source: AGHT+IFHzS+dJQbp8kc2lCYA4RjGEvgxYJIfozZyGXFfM/lJ8tRvHTCm9spf7yg8DFMCiQPoDUFa9A==
-X-Received: by 2002:a05:6a21:9cca:b0:1cf:451f:4624 with SMTP id adf61e73a8af0-1d8c95d5594mr15722713637.21.1728939263331;
-        Mon, 14 Oct 2024 13:54:23 -0700 (PDT)
-Received: from thelio.. (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e59aa9917sm3845277b3a.135.2024.10.14.13.54.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 13:54:22 -0700 (PDT)
-From: Drew Fustini <drew@pdp7.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Drew Fustini <drew@pdp7.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-riscv@lists.infradead.org,
+	s=arc-20240116; t=1728939275; c=relaxed/simple;
+	bh=lPrerADCuriCIw1uM+h2A0ONUGJN8Rfcxz6aH9C+9yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AqHCRis6RGNgYZmsvCYrZJT5uPYj4gg5mwZ6nSOLRmaiYyN9tuaC+KU+feiwAEa6/PJaVrmxIe6lnULAsFU5XdR/jz1KFw/uF2gvu6/09F/vDogXORkeHg98ZZ8idSL1Wrzsu85Fsu6Y3T4GyjUuQnK1gwovLcq0K3UTeA3TdJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+j7SIyJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57081C4CEC6;
+	Mon, 14 Oct 2024 20:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728939275;
+	bh=lPrerADCuriCIw1uM+h2A0ONUGJN8Rfcxz6aH9C+9yo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J+j7SIyJW2WNhK9bhxm0uUp2sXMGYgfJpVB1pbn0FSHSNZ6a5jN173gGDZCG2XcbF
+	 +6FtWMDq47m7I08n8+t8BEkagvYdIHOEkZm9vLIdKHH9zxDP3w4GRNt4v+xoQBTn/w
+	 SS4VU2FbwpHibYb3Pr90878sAuPKu2ra5ieHs8JbOUnyEHCc8ML+GHrxJ8VTCV/Fjj
+	 jLwRjW2Bqi+bjd3CG1V9t4uNhFsamwW9J0TAIZEtn2EAWzY8pE583gqcLuIQF1GWAr
+	 3RYpdEn0IAfRZf7lRb5ZdazqaJ7UDxCyAPB5yKY6ZgLdrUwR55iBhfx7vLFq0R19zV
+	 yQjT/8vscaZXw==
+Date: Mon, 14 Oct 2024 13:54:32 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: defconfig: enable gpio support for TH1520
-Date: Mon, 14 Oct 2024 13:53:15 -0700
-Message-Id: <20241014205315.1349391-1-drew@pdp7.com>
-X-Mailer: git-send-email 2.40.1
+Subject: Re: [PATCH] seccomp: Stub for !HAVE_ARCH_SECCOMP_FILTER
+Message-ID: <202410141352.7C2783E@keescook>
+References: <20241008-seccomp-compile-error-v1-1-f87de4007095@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008-seccomp-compile-error-v1-1-f87de4007095@linaro.org>
 
-Enable gpio-dwapb driver which is used by TH1520-based boards like the
-BeagleV Ahead and the Sipeed LicheePi 4A.
+On Tue, Oct 08, 2024 at 10:29:43AM +0200, Linus Walleij wrote:
+> If we have CONFIG_SECCOMP but not CONFIG_HAVE_ARCH_SECCOMP_FILTER
+> we get a compilation error:
+> [...]
+> +static inline int __secure_computing(const struct seccomp_data *sd) { return 0; }
 
-Signed-off-by: Drew Fustini <drew@pdp7.com>
----
- arch/riscv/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I don't think this is the right solution (for gaining ARM generic
+syscall support). For example see how this is done currently on ARM:
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 2341393cfac1..cfc887a7243d 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -167,6 +167,7 @@ CONFIG_PINCTRL_SOPHGO_CV1800B=y
- CONFIG_PINCTRL_SOPHGO_CV1812H=y
- CONFIG_PINCTRL_SOPHGO_SG2000=y
- CONFIG_PINCTRL_SOPHGO_SG2002=y
-+CONFIG_GPIO_DWAPB=y
- CONFIG_GPIO_SIFIVE=y
- CONFIG_POWER_RESET_GPIO_RESTART=y
- CONFIG_SENSORS_SFCTEMP=m
+#ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
+        if (secure_computing() == -1)
+                return -1;
+#else
+        /* XXX: remove this once OABI gets fixed */
+        secure_computing_strict(syscall_get_nr(current, regs));
+#endif
+
+If we just return 0, all of seccomp will get ignored. I think the
+generic code needs to do something like the above...
+
 -- 
-2.40.1
-
+Kees Cook
 
