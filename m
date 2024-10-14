@@ -1,38 +1,39 @@
-Return-Path: <linux-kernel+bounces-363136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0E499BE4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:42:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E934099BE4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 247AB2832C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:42:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9049CB23642
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F87D84037;
-	Mon, 14 Oct 2024 03:42:24 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A517139578;
+	Mon, 14 Oct 2024 03:42:25 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CC6231CA6;
-	Mon, 14 Oct 2024 03:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B82461FD7;
+	Mon, 14 Oct 2024 03:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728877343; cv=none; b=B5Zqhf8GUR1cYuGd7x8Bp/DIsPTNEVynPACzSYWMxQ9l4fLe2yWz61Pa2KkR4igldEypZeEYfioQaqsr8HF4ycee0E7LL3xjzZFh4AtGUXmIWfAo3fC0QK2ssSHL80BBraA+foka65KPCU5UAlGlraQ5rsCB8jL3V7Q7L9bWVgM=
+	t=1728877345; cv=none; b=B2afNw2J46zM915mIv5SwJ4z1RKPuisg3p47y3zsROb0c1KkVdqfWpFeFwcH92uGFolDLJ/FY/pgpjqgr++GVHForOH0UQakJo/8EDq9KxSMDOClkOcFoiMoChA5IXdP5zSdnfX7e5cGqpDWaahXV+suQk2pC+dXL3V6Memdf/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728877343; c=relaxed/simple;
-	bh=ZJ5ogckYMccQ182afl7uMmAuafSGOq5THxK+uUkXlJo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cl8tgiHw2I/SW4dbQMV2zwWTNwieZHdtgATflrIqrOmYJ/yMvJnOjSYfs/EPGwdG+iayIV0eEH/PsK3SC5fK5xwn0ulhoekLjUaIl5d1FRGhzOkUwGyvHlTG3JY1Kw0k+Ep46eNcsj6V8WDHJtz1dGRD3GyGCtrg7L/n5fxb/CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+	s=arc-20240116; t=1728877345; c=relaxed/simple;
+	bh=N641RsZNhrgqANLu9gCSZFQzX4mLyMm/4xaWcCToa5g=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZY4Z0fL7FjvbgZQ6NORduI4MduwKFcqy5tZ+wkVYIz0x71ic9eAdnTyNRs476Azj/+ggb63gcLNLTcnqupZ6vECdC8puuKxK7qDy3fG/UHaUncrdeCsQZGKDBCyxvH0jyxbJXvZ2G2wHuSsrOLSvzYpAaBzZtrTWdn0aJRRSlsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XRjgd6sZWz1S9xH;
-	Mon, 14 Oct 2024 11:41:01 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XRjg21MW9z10N2w;
+	Mon, 14 Oct 2024 11:40:30 +0800 (CST)
 Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id CAC6F1A016C;
-	Mon, 14 Oct 2024 11:42:13 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id EC627140361;
+	Mon, 14 Oct 2024 11:42:19 +0800 (CST)
 Received: from lihuafei.huawei.com (10.90.53.74) by
  kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -45,10 +46,12 @@ CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 	<kan.liang@linux.intel.com>, <kjain@linux.ibm.com>, <sesse@google.com>,
 	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<lihuafei1@huawei.com>
-Subject: [PATCH 1/3] perf disasm: Use disasm_line__free() to properly free disasm_line
-Date: Mon, 14 Oct 2024 19:42:46 +0800
-Message-ID: <20241014114248.212711-1-lihuafei1@huawei.com>
+Subject: [PATCH 2/3] perf disasm: Use disasm_line__free() to properly free disasm_line
+Date: Mon, 14 Oct 2024 19:42:47 +0800
+Message-ID: <20241014114248.212711-2-lihuafei1@huawei.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241014114248.212711-1-lihuafei1@huawei.com>
+References: <20241014114248.212711-1-lihuafei1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,20 +67,44 @@ The structure disasm_line contains members that require dynamically
 allocated memory and need to be freed correctly using
 disasm_line__free().
 
-This patch fixes the incorrect release in
-symbol__disassemble_capstone().
+This patch fixes the incorrect freeing in
+symbol__disassemble_capstone_powerpc().  Also, since cs_disasm is not
+enabled, it does not need to handle the situation described in
+symbol__disassemble_capstone() where "offset != len" may occur due to
+unknown instructions.
 
-Fixes: 6d17edc113de ("perf annotate: Use libcapstone to disassemble")
+Fixes: c5d60de1813a ("perf annotate: Add support to use libcapstone in powerpc")
 Signed-off-by: Li Huafei <lihuafei1@huawei.com>
 ---
- tools/perf/util/disasm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/disasm.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
 
 diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index f05ba7739c1e..42222d61ceb5 100644
+index 42222d61ceb5..40d99f4d5cc7 100644
 --- a/tools/perf/util/disasm.c
 +++ b/tools/perf/util/disasm.c
-@@ -1717,7 +1717,7 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
+@@ -1580,20 +1580,6 @@ static int symbol__disassemble_capstone_powerpc(char *filename, struct symbol *s
+ 		offset += 4;
+ 	}
+ 
+-	/* It failed in the middle */
+-	if (offset != len) {
+-		struct list_head *list = &notes->src->source;
+-
+-		/* Discard all lines and fallback to objdump */
+-		while (!list_empty(list)) {
+-			dl = list_first_entry(list, struct disasm_line, al.node);
+-
+-			list_del_init(&dl->al.node);
+-			disasm_line__free(dl);
+-		}
+-		count = -1;
+-	}
+-
+ out:
+ 	if (needs_cs_close)
+ 		cs_close(&handle);
+@@ -1612,7 +1598,7 @@ static int symbol__disassemble_capstone_powerpc(char *filename, struct symbol *s
  		 */
  		list_for_each_entry_safe(dl, tmp, &notes->src->source, al.node) {
  			list_del(&dl->al.node);
