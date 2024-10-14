@@ -1,184 +1,318 @@
-Return-Path: <linux-kernel+bounces-363410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6634399C1FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:51:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5CB99C205
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3E81B22BDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:51:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB751C222AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2DE14C59C;
-	Mon, 14 Oct 2024 07:51:08 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E43E14B946;
+	Mon, 14 Oct 2024 07:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AEEHqVxF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255DB14A092
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892267; cv=none; b=YhQNUnIp/gDPHfaeUQcgwZGkJvxzx8TPv/R00OWrG5p0GdF0ivUwRK48Z8RCWB0F4XS2Ja18T3gr4Xbzvn22m0Xr3EllS6wyOkqOkiUdIA05PrRTLYFh9Ih6W3d6uA0A4fBnB85763gKjdxxjTvL3uB6TksQs3dId67QvXf24zE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892267; c=relaxed/simple;
-	bh=h6XOjTLx9GsAYP2TTG7DhV+WzeICO4DTeGOEauKII/w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JZDP7rlsx8Y/Fj/lPHjdCp2u5UwA4/erD8FIEDtkEv0PDgLrVl21SfDSmlvc0XAwLGNOjBle9MFp+MpuwW4JYz0N4UGBMm2RYcBnIOc2vex4lwi8oxfQl0SLnCMRE/nfKH0ItCMTdcuYAGlilrT/pWYuFnAwUfVj9R8jleEl0+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3bf44b0f5so7333365ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:51:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728892265; x=1729497065;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mIjMjQapyboG58LGKBDpfcy0mY53NBlv+GOrbJsFKvg=;
-        b=hO2OI/aaXLpheg5KzxWAaSgr7o+9N2FlvmXfH34ujB2qyVQw0gsNRaMn+bf8EFDDY4
-         TutIzhP1q6/c8acS3vtKVc/FMPZMfIxkj4bpSxMKIuTtqLWnggdCn6KIXInS/t+aEoTV
-         DJrxVDvu8NQyOdxU/GUgWMLoIM0snOFTMa3rj6pI21EfooGvvGVNLVSZT+ezPMbv9tEG
-         jjRexsIMpv0xCAcexou8EEnmhPXyXmjoA/imNiSQdf8L48znG7ag5LFyM9IPSyEUbF+I
-         Mv8f7qMf3NBqMvgZYErq81oZKSLsgw+llB6lfSNynVYahQ12FN4IBhIvxZZALOtYg5QW
-         tWXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvx8wgnBoETpwy68jxSt2BW7QdJpDqr2li7EkeUxJX3WuQLWacRz7Al6u84lo1qhgcNEeGmBx64q0Bp44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDRGYS+wXzdgzOUHuDhStNTeSqgFmK5sNSaSid8QZ6X0MFu55+
-	lIq0s5D5zmSQdsrm3rZ3e8k5PaeT5118zSYIg7tfwaGH0BDo5T6u8XYqGMtttFNvBadEQkjqjA0
-	QFcP7QTUCuHRIOgTLJMLIsvEXZnBu01pwb8TdS/9fUVQFO0buDwdd4g0=
-X-Google-Smtp-Source: AGHT+IE+wOaa9Mey5x6wmJBg7zVDo8M3c8mtZRZ5QSDA9JmOzw9QepHazIGHjhr5pQUYfRB6zK8BkImUuNMjyGAm3VIHMdl2u9gS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A46214A092
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728892359; cv=fail; b=JnacCYDn7AUca3lcUGV9OGc0sAi4d6+eBSeh0NeAqHKXdM89heEBtxtDPEgA5eXQX2HmoVl+Yns4cocIG84s9mA3zW5+h31ygvOVovUpKNDwiZgsz+4N8+nJ1JnlcburCD+YKS/2XFJ1xUI96h1iqyQr/Y+Cykdu+l51CQjPQ3o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728892359; c=relaxed/simple;
+	bh=yBg4u8JlG9rMdtoxaeS+R7hSGr+uOqe7lFUgn2/G7kE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hT7K3cOxw7v01BaP+pRiwKryQw6SeEq3hi/4aqbgyI14PprZpNRahyixPAPDWSDNgafz9auh16W7iTARYCBF28ILufR0VllmBs15RLLVj9aGZsYarKNkJKxSY9NIHYN1290W1ZMexYU8gk80rMtrJ1G5vh5HhGAz19MBP16G9O0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AEEHqVxF; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728892357; x=1760428357;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=yBg4u8JlG9rMdtoxaeS+R7hSGr+uOqe7lFUgn2/G7kE=;
+  b=AEEHqVxF9DbQ0kV81hYwc5+W1HOJVPFgqeoh/92ikAG/5CONlgvvu92F
+   qX4ik+sntz31924MNj1e8qwM7GNNV6yenNIdlvBp+rbN1d14soq5TNCA5
+   Ai7Nk+f8UbJYEK4nf3wmvElpxduBfGgRgVrq2bCcGB8IungHyA1VO+OP9
+   gTn4gC3vK7JZtGwMp0hMs9xDlJ+pewuBp/HO0+F4BVOmJ84w09Ud+WmMr
+   Ahyzuxl8cr9tOCVaPRKp6AGjUdrlKPRIR1DWAFuJMGn0h1QmOqdeWQQAR
+   gebtOfeadIsjyZuvjmjCV5e3V210ZvLGTPFUGDfxAoC2hiF6HJ9hiqxVb
+   w==;
+X-CSE-ConnectionGUID: 9DA9fgASQ7mGdmT3NTfDQg==
+X-CSE-MsgGUID: XhT5/FPNTm+Mrxd/9ifnFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="28112135"
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="28112135"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 00:52:36 -0700
+X-CSE-ConnectionGUID: l3flFRs8TXiOCtSCxy6vvw==
+X-CSE-MsgGUID: 5DjYl/ixR6O+0UBsvHqmnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="78323107"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Oct 2024 00:52:36 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 14 Oct 2024 00:52:36 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 14 Oct 2024 00:52:36 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.48) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 14 Oct 2024 00:52:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gw9BRC/0OyrlXz6MtOupyxXmg31yjrELDbc5r7e6QwZF5nSlCyI/l8rSrTBX9M58VSi4Cw/0tuAtark9EDSsHNmlL9JXa7xh4MHYXDMUvpD23tx3EzvAypuw57GrU1z2e/gNnZ2SxGScZX34lccesRmL0+LPGyHQyiAMhuwptEGd6zBBmV4Yzb2Wkw3fvK+pJajO1h7dB75fme5copuTiDM1bP6oaf3apgO/EKgCNjaYyt8FIl4qQwDC80Pk1+lDtMskTsWnpfPD6wIUHh4TrCxiWaIVI6QrSzJmtV5Qi/5zj2NAtOdslzu8dt0XOEXNVdX5ETY7wkjVf/wWvKYY9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ciBrbD9ozIynR0PPo4542+UZSLUTpjlqSyFh0/k8dB8=;
+ b=ZZnpX0MC8TShJ6wJMciKNHtyjLYpddo2fuuWO9/CnF0WWTp2x7w8Rcyvu49l92DothCm+OVfqOmvXOJzb8qCjqETPFhVRDdB2T85RQWif0zq6iyb2akzoirK7mpL9A/WxEp8e94LevKErKaQhk+cWGf5Pzl4NCpgSVOCp4OZHMTD/Yz2cqN24MvBlApptz6IiUTNbY9z/+q4XzA8rQyFkDfQbB/AUiYwJ90HNsdiB4wctmTQ3C0H8lRSIt5LnrAA/hfSBj72ZiqO+Ri/t+iir+GtV7Nbo7e3HhpeJtwIrjdN9Qo1pXLFyT9lixlBip+QU3e4jDmGyjvvjMQDtQzAsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7)
+ by LV8PR11MB8461.namprd11.prod.outlook.com (2603:10b6:408:1e6::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Mon, 14 Oct
+ 2024 07:52:34 +0000
+Received: from MN0PR11MB6304.namprd11.prod.outlook.com
+ ([fe80::7f88:f3b1:22ec:f508]) by MN0PR11MB6304.namprd11.prod.outlook.com
+ ([fe80::7f88:f3b1:22ec:f508%4]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
+ 07:52:34 +0000
+Date: Mon, 14 Oct 2024 15:52:20 +0800
+From: Feng Tang <feng.tang@intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+CC: Marco Elver <elver@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, "David
+ Rientjes" <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, "Roman
+ Gushchin" <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>, Shuah Khan
+	<skhan@linuxfoundation.org>, David Gow <davidgow@google.com>, "Danilo
+ Krummrich" <dakr@kernel.org>, Alexander Potapenko <glider@google.com>,
+	"Andrey Ryabinin" <ryabinin.a.a@gmail.com>, Dmitry Vyukov
+	<dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "kasan-dev@googlegroups.com"
+	<kasan-dev@googlegroups.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v2 0/5] mm/slub: Improve data handling of krealloc() when
+ orig_size is enabled
+Message-ID: <ZwzNtGALCG9jUNUD@feng-clx.sh.intel.com>
+References: <20240911064535.557650-1-feng.tang@intel.com>
+ <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
+ <CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com>
+ <49ef066d-d001-411e-8db7-f064bdc2104c@suse.cz>
+ <2382d6e1-7719-4bf9-8a4a-1e2c32ee7c9f@suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2382d6e1-7719-4bf9-8a4a-1e2c32ee7c9f@suse.cz>
+X-ClientProxiedBy: KL1PR0401CA0029.apcprd04.prod.outlook.com
+ (2603:1096:820:e::16) To MN0PR11MB6304.namprd11.prod.outlook.com
+ (2603:10b6:208:3c0::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:b70d:0:b0:3a3:968b:4e3f with SMTP id
- e9e14a558f8ab-3a3bcdeeff5mr43178315ab.18.1728892265330; Mon, 14 Oct 2024
- 00:51:05 -0700 (PDT)
-Date: Mon, 14 Oct 2024 00:51:05 -0700
-In-Reply-To: <PUZPR04MB6316D062F577B655E85385E381442@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670ccd69.050a0220.3e960.005a.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
-From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6304:EE_|LV8PR11MB8461:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08cf16f2-1111-44fc-7b94-08dcec2529d4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?b7rvTjWvLExwln4ZTDGeso19ar5rYD5wmqpNJMfpsoQOufHeoBfZJIUQQSoI?=
+ =?us-ascii?Q?d2MgYgg5XmBNa3aUSEKQmWXaPwL6T9rHvuno7fngQVpSXn1pFfJhJMLVoS80?=
+ =?us-ascii?Q?EBGYPJY6TP1xcSCUObHawtf9J/Dhi6tD7yQ/5cJRZb/NmI/g6SUdRDMDdOPc?=
+ =?us-ascii?Q?vvVuuysRbxXfPraIwan7TWw2AmcQVsyyXcE5f/rZn+D36RT9f5uySzDBZh3j?=
+ =?us-ascii?Q?K4imWslGswkjAenjFQB7Ypy//3kI7KsboUeX/+ZlU2S71QmCwFC9Izua4+eq?=
+ =?us-ascii?Q?LcJcjlqN8OGC3PTXkVj0a2wLpGDA88iqsrGmB3WgeVMEeI2sTzNal2ikLd5n?=
+ =?us-ascii?Q?ump16hYpimYKaxrLwZMxs9FM2tOkumehxb79z/T/ZQMqmEYD+AM31SsWG5C5?=
+ =?us-ascii?Q?I6jJ1mEBlcx1xNOL9YNoyiSw6Y7ruYrxxYbfaVq4CZP1z4m0QD4aKFxpieEK?=
+ =?us-ascii?Q?wFMNKCRNXHd9qkOzaA/2aA8HNICnGrzWbzS0AK7uSud4rnhXtPmNfyYfUu1R?=
+ =?us-ascii?Q?ostYojQ3P99fTwRQXuuF03+r9Qffpb2ivC49e8b7SvP7V2Mkw0CAN83VXRh/?=
+ =?us-ascii?Q?GM7zfl75F2T2luNZCFCnmPKp9It+raBDoxoJFKd4pbRQRX3SBzZXlj3UJhIq?=
+ =?us-ascii?Q?a2BJ30udbchr/HhZcRLqY7cCE2gWcfMr+fOIY8EvsSUU1f20Z4prm9zXDwpa?=
+ =?us-ascii?Q?7nwlPOw2FpxJ+/AWQeOcLfIaOlULHPGXwLoeYeqqOarS5OdxVKFM9EQRpkoJ?=
+ =?us-ascii?Q?rOsdArc4VyEpPO/SuNy/5BjlwifAIBcoCfY3w0DlDv4rsdpSqbedhEgm8x2S?=
+ =?us-ascii?Q?fsHekhHjvSllQAf8eLc+D1hrxqBjt9urRisLNRDZRsrOdmIEYnQgyB/Oo0VQ?=
+ =?us-ascii?Q?H9Li6xusLVe7r7N4W0GkgeeJoGAOBGJBUlouOFt31hxsoUcUIcyHmMJX4Mnp?=
+ =?us-ascii?Q?78G9KymQdmI2oxIORKl+tbyhnorzY3E1gHjC4Nyc3wxXRsMqhhTjvxNdK9BW?=
+ =?us-ascii?Q?+RwqI8OkKtTKzO023KKZElpq6ekOm6ZG4ZAvSLUKcK4R51ur3CEMcCZe2g9U?=
+ =?us-ascii?Q?W0kG2vmZb1+KPryPLQUVbxk/cPosIYmd15yKE+dApHDmKwwGZAWba1F7hb27?=
+ =?us-ascii?Q?qxje2Zvf/uODym1a1S5UOcPTllNx0tKggXEV/BlswKcSgWqtvqXr9JiEQ0xa?=
+ =?us-ascii?Q?9xISl9LeY7No0nj3nG2r0kEBkzFTGZS3d5+fsqbzFOW5U/0fZXNpRww5Hso9?=
+ =?us-ascii?Q?GzSeoydbiu1Lvb/83mhmyCOaLc3zWZc6ahIvuQgZhA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6304.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YxeOb/V8pA2lhAq34G7acqiDRD5BDIy/KnYFWPkgEKi1BREdxvLjr6R2O9Po?=
+ =?us-ascii?Q?CgELG2rno5PfM5O8RcGbvWrX8lveMSQxwihWm0BTF3Gx9OE2hY/A8hDFNZsg?=
+ =?us-ascii?Q?VFVWGHrO4r2VO0yXuUkolOdS2OhbMBKC2APIDAjJ11/aGrfcV8gHdbFFo2iD?=
+ =?us-ascii?Q?d0/MwlspQ1kf7qsOHToJ7uWlEIw+/ZINT227y4nsDsjr9YiAXB88YIuJv2w9?=
+ =?us-ascii?Q?Gpm3euyx2RR4nhX+ovWUYXJZwq6lEmV8358jDQMIa0B+qw/DBVj74ivizLW1?=
+ =?us-ascii?Q?LaNTS76RYT3qFIBam1Cb83+IfJ4CvnD14ngkT27UhbYuP7BSKovyUSCPN5YL?=
+ =?us-ascii?Q?9LAM7BYLn9FegdtBdXKZ7nlIqqAEXVQPPI4cZ5t5jSX2p1UtWRzrO7mAV0Er?=
+ =?us-ascii?Q?77D/sAarsoEUSekfIpb34aqRa/pSWfSyjcB0H8hyDYEwI3jOC0M3HKNIM/db?=
+ =?us-ascii?Q?8oLNe6cCex7rbzL7la7teApEAkn81eRY2UEr5hx0hwTrRXrkAmgHKEe00ech?=
+ =?us-ascii?Q?J5A1biwmnisZ2DwQCGqCZs3bCalCNvfz280BXdWolcuoPCEoyPkxRaEI9YiH?=
+ =?us-ascii?Q?pd/74eYFFg3B3WtWDaNyjyGK0DAAipEadQu2yyCborb88BTqEIFI4VDLjUio?=
+ =?us-ascii?Q?mnwbc78FetzlDF+8+JTZuqZKbApeqrq6K0XQEE1dOqVaUjOHsPAqNbQneUDs?=
+ =?us-ascii?Q?unpCxgoBKT5MMO7EB7FyyT4erZ8geqHOSAzqzNd16Cao41a+KXtwrTOc+DIX?=
+ =?us-ascii?Q?/AbDC8G6rtkJmW6wyDVuB9MzmB0VoKTC9ObHScjnUZka5M5Hx60nSz6GqxFR?=
+ =?us-ascii?Q?XDNl9QaqaHxHyO9p6zYSbR4GfpaUQYrWudrYAfOx+OzhuBfdI8MdgFyrw6uW?=
+ =?us-ascii?Q?C6V+zokTv6y6Nmc75ihgc91qwqqOp7HPnhTUk6jErGRlvva5JJP5BU5RZ0/R?=
+ =?us-ascii?Q?ZSiUUWMPOk+hZNPA/ODZWB1jqzpClkU+/dshn1+2/lP+fhl8ovTk9PSfa/L9?=
+ =?us-ascii?Q?hPvI/D/RuEjCIaP14BcsrdW0BuBB+jKtvLdInMQOM6/eGhwEvXDR8J8mwBsB?=
+ =?us-ascii?Q?8NsmXfXsU/l2laCgIqYAo8scU79GFNkiZSfUxjYLcyy+JJp3kMUE8Tsca7eV?=
+ =?us-ascii?Q?WClDtwz3mLf/AJSOeb5H36OkEvwctYJ4ZPKPJHyFOTXh34OfeOQWhXgFhMeM?=
+ =?us-ascii?Q?JpZ5h1ZUul25Q4tdZ46QGuZ0pzt287MCD8+Axw/DRhHTksUabfvrw/2ftO3W?=
+ =?us-ascii?Q?oEApvcWEzEBRiqldE4/BNTTepj8WZ5VlRBfvaP8pBnC7Js8qzaqSfaX0CoMh?=
+ =?us-ascii?Q?/SF7PW3KIo8JMzg1kuSM0MG5KUl6K6uDm7+Y17esBN39P1kgb3Q2zw9QEuk1?=
+ =?us-ascii?Q?gI8J0sEtJhIMcbO47Be65vuq3IeVVOg0HtnhSMa72b6XVP9JfJf9DwMaHx2f?=
+ =?us-ascii?Q?E4pmA+EJ5HoZUxwG6Kn4vjg9F8/GYjOdaca3i6nlCFa9f+w2EBDsOVlFa0pK?=
+ =?us-ascii?Q?j9wYt817mw4JdMA8yJIT/whbJwhOQWZaTtCaDxdPUIVI1Ze6RLJstzsgatxN?=
+ =?us-ascii?Q?RgPOeTdxF5vbljIcP9o13fj6RytSdgyAKnVY8J3d?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08cf16f2-1111-44fc-7b94-08dcec2529d4
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6304.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 07:52:34.0673
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xp5wt1M9e8fyyhOKgGmx2B03haYu7dBYQuyxk1ZIIn1sKWU3dW3hInGvo0cJLOesvtFQQPetvqwrYfVNLXfwMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8461
+X-OriginatorOrg: intel.com
 
-Hello,
+On Fri, Oct 04, 2024 at 05:52:10PM +0800, Vlastimil Babka wrote:
+> On 10/4/24 11:18, Vlastimil Babka wrote:
+> > On 10/4/24 08:44, Marco Elver wrote:
+> > 
+> > I think it's commit d0a38fad51cc7 doing in __do_krealloc()
+> > 
+> > -               ks = ksize(p);
+> > +
+> > +               s = virt_to_cache(p);
+> > +               orig_size = get_orig_size(s, (void *)p);
+> > +               ks = s->object_size;
+> > 
+> > so for kfence objects we don't get their actual allocation size but the
+> > potentially larger bucket size?
+> > 
+> > I guess we could do:
+> > 
+> > ks = kfence_ksize(p) ?: s->object_size;
+> > 
+> > ?
+> 
+> Hmm this probably is not the whole story, we also have:
+> 
+> -               memcpy(ret, kasan_reset_tag(p), ks);
+> +               if (orig_size)
+> +                       memcpy(ret, kasan_reset_tag(p), orig_size);
+> 
+> orig_size for kfence will be again s->object_size so the memcpy might be a
+> (read) buffer overflow from a kfence allocation.
+> 
+> I think get_orig_size() should perhaps return kfence_ksize(p) for kfence
+> allocations, in addition to the change above.
+> 
+> Or alternatively we don't change get_orig_size() (in a different commit) at
+> all, but __do_krealloc() will have an "if is_kfence_address()" that sets
+> both orig_size and ks to kfence_ksize(p) appropriately. That might be easier
+> to follow.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __exfat_get_dentry_set
+Thanks for the suggestion!
 
-loop0: detected capacity change from 0 to 256
-exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
-=====================================================
-BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
- __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
- exfat_get_dentry_set+0x58/0xec0 fs/exfat/dir.c:859
- __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
- __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
- exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
- exfat_write_failed fs/exfat/inode.c:435 [inline]
- exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:499
- generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
- __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
- exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
- __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
- x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+As there were error report about the NULL slab for big kmalloc object, how
+about the following code for 
 
-Uninit was stored to memory at:
- memcpy_to_iter lib/iov_iter.c:65 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
- copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
- shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_read+0x278/0x760 fs/read_write.c:923
- lo_read_simple drivers/block/loop.c:283 [inline]
- do_req_filebacked drivers/block/loop.c:516 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+__do_krealloc(const void *p, size_t new_size, gfp_t flags)
+{
+	void *ret;
+	size_t ks = 0;
+	int orig_size = 0;
+	struct kmem_cache *s = NULL;
 
-Uninit was stored to memory at:
- memcpy_from_iter lib/iov_iter.c:73 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- __copy_from_iter lib/iov_iter.c:249 [inline]
- copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
- copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
- generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
- shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
- lo_write_bvec drivers/block/loop.c:243 [inline]
- lo_write_simple drivers/block/loop.c:264 [inline]
- do_req_filebacked drivers/block/loop.c:511 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+	/* Check for double-free. */
+	if (likely(!ZERO_OR_NULL_PTR(p))) {
+		if (!kasan_check_byte(p))
+			return NULL;
 
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof mm/mempolicy.c:2345 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
- __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
- block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
- exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:448
- exfat_extend_valid_size fs/exfat/file.c:553 [inline]
- exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
- __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
- x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+		ks = ksize(p);
 
-CPU: 1 UID: 0 PID: 5987 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-g6485cf5ea253-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+		/* Some objects have no orig_size, like big kmalloc case */
+		if (is_kfence_address(p)) {
+			orig_size = kfence_ksize(p);
+		} else if (virt_to_slab(p)) {
+			s = virt_to_cache(p);
+			orig_size = get_orig_size(s, (void *)p);
+		}
+	} else {
+		goto alloc_new;
+	}
 
+	/* If the object doesn't fit, allocate a bigger one */
+	if (new_size > ks)
+		goto alloc_new;
 
-Tested on:
+	/* Zero out spare memory. */
+	if (want_init_on_alloc(flags)) {
+		kasan_disable_current();
+		if (orig_size && orig_size < new_size)
+			memset((void *)p + orig_size, 0, new_size - orig_size);
+		else
+			memset((void *)p + new_size, 0, ks - new_size);
+		kasan_enable_current();
+	}
 
-commit:         6485cf5e Merge tag 'hid-for-linus-2024101301' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1012d85f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
-dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=154ac727980000
+	/* Setup kmalloc redzone when needed */
+	if (s && slub_debug_orig_size(s) && !is_kfence_address(p)) {
+		set_orig_size(s, (void *)p, new_size);
+		if (s->flags & SLAB_RED_ZONE && new_size < ks)
+			memset_no_sanitize_memory((void *)p + new_size,
+						SLUB_RED_ACTIVE, ks - new_size);
+	}
 
+	p = kasan_krealloc((void *)p, new_size, flags);
+	return (void *)p;
+
+alloc_new:
+	ret = kmalloc_node_track_caller_noprof(new_size, flags, NUMA_NO_NODE, _RET_IP_);
+	if (ret && p) {
+		/* Disable KASAN checks as the object's redzone is accessed. */
+		kasan_disable_current();
+		memcpy(ret, kasan_reset_tag(p), orig_size ?: ks);
+		kasan_enable_current();
+	}
+
+	return ret;
+}
+
+I've run it with the reproducer of syzbot, so far the issue hasn't been
+reproduced on my local machine.
+
+Thanks,
+Feng
+
+> 
+> But either way means rewriting 2 commits. I think it's indeed better to drop
+> the series now from -next and submit a v3.
+> 
+> Vlastimil
+> 
+> >> Thanks,
+> >> -- Marco
+> > 
+> 
 
