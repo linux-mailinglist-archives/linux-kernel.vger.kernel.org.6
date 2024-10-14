@@ -1,226 +1,107 @@
-Return-Path: <linux-kernel+bounces-364567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD9F99D636
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:15:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 104FF99D63A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4126D283754
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:15:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C585B2837D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C2E1AE017;
-	Mon, 14 Oct 2024 18:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBB01BFE10;
+	Mon, 14 Oct 2024 18:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YH7gdCz0"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m4dau21N"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E031C8785
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 18:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD751FAA
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 18:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728929708; cv=none; b=A8gS8SidTqiHPS1E8plHRR4mW320wW4nJxOyYK9etwH++Jfs1DYR2QJHc3DErCNfWe3tSmG2r8bi9ZWY0+jF/GQpJHaqOJLIyhsxDpNuKusuNnwrC5pUBK3FcyyW6kElMVqe7Tc92pSGp8Ii7WqDZ1FMewGPTRuB3nhGzSpEBHU=
+	t=1728929738; cv=none; b=YeDpI/HZU2+wBfx7EoscNOtXH9HJ7jG2NFEzjqflL/zOQCyxe62u85aW+BDRAcOi187LJx5wv6/s+tWjVc5uFpOrCUCZlhVoTs+WBRviA5y+QBlgOOQ/ch4nYaoG8qEptyrF/YzHw0Ey0fnZpVgeHSDav20MaT6dEQJllDl5qMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728929708; c=relaxed/simple;
-	bh=psGXUzJuH/L2z1/iTd15xLLLmgcDkiy//BOohqm6suo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rj70Up/aj2113jHbWg7nXEsnevdFOvfb/Tqi7dVBdeyRejgwv7ORMf5S8SSfRLKamYoGPecXN2v1tTGPz3XO7Y6qcBmTMYbg6HT3vTlfktx8xLPL5vQmenmRU9GiLt4jqVtHKQ8pSnxTVlM5PVZ6ia/DN5YP38c4FDTh5PyYFGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YH7gdCz0; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so25430a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:15:06 -0700 (PDT)
+	s=arc-20240116; t=1728929738; c=relaxed/simple;
+	bh=tawDe/qMib6Os9HlJWLzs0aXSDeZTKKfyVNAQDqiuzs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=q9GXhyMEciacy7K+dmQuZMhJfUah/ee4/QDn1VbblIoa9ugIBTbTurC/Hf2D9LUKTuGG8cXf1yAqRg/aHo/ur3lrP1Dyz8dgJrtayckiCk3h5qfy6HfIXWt+XIczA+u3tsLKirU9/3iLY3gv13DUAIL6Xa8McTxmLE3rSmDoNSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m4dau21N; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d4dbb4a89so363418f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:15:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728929705; x=1729534505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1728929735; x=1729534535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mNEJX4kqr9odUybTaFkTf23XVWJozLbeDB372EuR6j4=;
-        b=YH7gdCz0u4YI7kKWrwOV7823Ry8mfVTaUBgfPXEYBaTHPRQVL4alo8053TNv7BmVcI
-         O/ZhyIYjT4oh0Z8SEpTUgW/RikaUwDAmlJbt39BpAypJ4Ac5lzEtEdKf7H4e9aXEoLoo
-         xSPNnR5rK27S2rV86xpMuay0ksO6lHTdMM1qXQ3B8I3gpc3pfbKwHfTQ7LLLGdGGRQ+M
-         m3tjbAOTqBBSSWZk7WSddcJ+ZpLXT7GzleWVLp93/OtO4jNzr0cYvHH9jtKaM2oTUNZO
-         t4cUK2w5vTPHg4bm8oOypZIf3QV9IASfaoWuZB8D6AKOp93KCXidIUGsi9R5J9uInIof
-         eBDg==
+        bh=wyI6QU0sEQSUgQx8t01Q2w+9b49AL4RDi5tUs3mTrEg=;
+        b=m4dau21NoK2NcL2q/5ZX93hRw23wbLXVYV3eY+vu7AnfkJOKeLVJeU9/qHpQWHoekY
+         I2D3f15J0bZi1RW0uYNpPDbWrdP3VWVcoNl4oadpUQx6JvBrkLcu043ma+W0xuQO3Vpb
+         dFs0TfnnfVpclvSDXv2bcDUqRohhbaDHEjjJohq/MUJ6YNByF09/aYD4s+q00+5ZMTCN
+         kWEqH/9P58SQkNkHuYiebRdAkywKbv/jEKIj6ybC6+smBytWXenuAif/xpIwL6ymizdz
+         /RrWrAJ6MoRjSs/mQYESAT9e9hJ/Vd1Psihw9BxorrZ7Un26ewA4SBd/oCRDNxAFWMee
+         1fFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728929705; x=1729534505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728929735; x=1729534535;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mNEJX4kqr9odUybTaFkTf23XVWJozLbeDB372EuR6j4=;
-        b=X0BGEyIcWIl5+JO5d1tMk8WHZGtf+ePjwfLOzUQeaZ2V83mvZ9QiLgtV+EFHIe5hbQ
-         MImI92dmlptNamYkW61TPcIEAlP+zlgwSqLV71yzOofSrNqDtSmeyiVdw0y8JgR0XEQy
-         yr773v0KBCk9oWUki392Y9DpZeMQYJ0O0HFZd7FZVpIWfL/lLNyfv8iURxrls/kDS5On
-         mwDK/uu0f/Kqx0K+8wVwdVLHtHWcqtSP1EE42NR9U1wQgB7orsW2J3POzPeRJhte3mFc
-         dFPzm8Glldihowzi7Rwish/5AXMeu+YT8ao3ikf+mYCa7svBVF8Ykb//UFVFm59cxmRq
-         cFpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCSk4Is/FAIqTwYsiGVy/1kLSAOoN3+RPxp4vch0hrYUFtb8nuu9TjgD2DMI2t0NyNBanss3Rd6BEozqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv7+gY5Gxk3StxIW1bAe+I3Q7W6JzNpYZQsCGV9OIJPHO1yGnf
-	ZqgTj3nsCARwYqd+nwa2lgBk3q/0cjn1kIVKa2IAZ7azxH9511IIK9gkMuxW+Z0kkDt84zCARvD
-	lgOdbiuKXfEn5ck2z1T5MJwmCmTTOJzsTbzKY
-X-Google-Smtp-Source: AGHT+IEbkDzR+ThZoGvgYtCS7Y5gwEV3PkXHeMMP5MKP0m0Oi8H/8Bb2XOPnZQdihqJsksuw7ZM7VJ44A8HdzyHg+Ps=
-X-Received: by 2002:a05:6402:26c1:b0:5c2:5641:af79 with SMTP id
- 4fb4d7f45d1cf-5c95b0bd39amr402722a12.0.1728929704710; Mon, 14 Oct 2024
- 11:15:04 -0700 (PDT)
+        bh=wyI6QU0sEQSUgQx8t01Q2w+9b49AL4RDi5tUs3mTrEg=;
+        b=llgiUSWmEG2kTY+LkJFK0HggsL43eRB7+o3D63Rsd19kt8UWwFEV0xYVrjqvfPufZN
+         CVRKNVBzja9FDt4WjwS9rzH9TNpl3XC2uqeK1cRZhQXpH2/Hjr/dDohjfR8ryk10tY0c
+         oXNgwA9FZ8U88oLgiRV65oJqsOlqpKbqE75PwhyypSPbcw4qXtgt2uDKW4SAVD5HA7oK
+         RoR83P8JNMrjOgTsHk9wcmMZG72Lz3OdiA1nvYQ3qXK2Slv6F/j9XHiknfOd/czcBaB5
+         85/NmT2wsiwGxY/kOqKRDglWmYlgGeLSYAm22rOYxHzluULvTiUrQCVleTgY+ooHFoiD
+         mAbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmK/NoWE/BdQDxlVDXkDK56+f/1r8cPxX+cHcQRcnuFFB89MmDF9r2suOwPVLMAFKH2bLPZhkS56uYCd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBU6j2vS8ZMbeFq4XD3jDu0DZks1K++g/mYSg0u4VaKx/OYafA
+	/kLEOPngcEcRG+EhHuLycbo9uGR2ykaJXvyoBUP8Pzf1UE9Et1msXWFOXNgESAw=
+X-Google-Smtp-Source: AGHT+IHlBz6hKnnQoHQGH4XDSGgKi1fFso9iF2cyVIW1C0buU2/RjXy9iYdZPwGAexx52W0HdcJ0hw==
+X-Received: by 2002:a5d:64aa:0:b0:37d:4aa2:5cfe with SMTP id ffacd0b85a97d-37d551dd618mr4358751f8f.6.1728929734694;
+        Mon, 14 Oct 2024 11:15:34 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6cffa5sm12065947f8f.53.2024.10.14.11.15.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 11:15:33 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Esben Haabendal <esben@geanix.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240913-fsl-ifc-config-v4-1-ae4b012fc402@geanix.com>
+References: <20240913-fsl-ifc-config-v4-1-ae4b012fc402@geanix.com>
+Subject: Re: [PATCH v4] arm64/configs: Update defconfig with now
+ user-visible CONFIG_FSL_IFC
+Message-Id: <172892973241.360345.9958529372232338977.b4-ty@linaro.org>
+Date: Mon, 14 Oct 2024 20:15:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727440966.git.lorenzo.stoakes@oracle.com>
- <a578ee9bb656234d3a19bf9e97c3012378d31a19.1727440966.git.lorenzo.stoakes@oracle.com>
- <CAG48ez3ursoL-f=mYpV79Do18XPPt+MPPHNUBv6uFE1GhpOwSA@mail.gmail.com>
- <868739d2-0869-462f-ac86-1a8d1dccb0a4@lucifer.local> <CAG48ez3vqbqyWb4bLdpqSUnhwqGo2OQetecNhEGPdCGDr94nbQ@mail.gmail.com>
- <b483187b-5caa-4581-86b1-895184301cbb@lucifer.local>
-In-Reply-To: <b483187b-5caa-4581-86b1-895184301cbb@lucifer.local>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 14 Oct 2024 20:14:26 +0200
-Message-ID: <CAG48ez0pCasCQ_=ALog7nseKnGci0o0LyQehV42J==gNAiXBVg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/4] mm: madvise: implement lightweight guard page mechanism
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Muchun Song <muchun.song@linux.dev>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, Vlastimil Babka <vbabka@suze.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 14, 2024 at 7:02=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> On Mon, Oct 14, 2024 at 05:56:50PM +0200, Jann Horn wrote:
-> > On Mon, Oct 14, 2024 at 1:09=E2=80=AFPM Lorenzo Stoakes <lorenzo.stoake=
-s@oracle.com> wrote:
-> > > On Fri, Oct 11, 2024 at 08:11:36PM +0200, Jann Horn wrote:
-> > > > On Fri, Sep 27, 2024 at 2:51=E2=80=AFPM Lorenzo Stoakes <lorenzo.st=
-oakes@oracle.com> wrote:
-> > > By being optimistic and simply having the user having to handle loopi=
-ng
-> > > which seems reasonable (again, it's weird if you're installing poison
-> > > markers and another thread could be racing you) we avoid all of that.
-> >
-> > I guess one case in which that could happen legitimately is if you
-> > race a MADV_POISON on the area 0x1ff000-0x200100 (first page is
-> > populated, second page is not, pmd entry corresponding to 0x200000 is
-> > clear) with a page fault at 0x200200? So you could have a scenario
-> > like:
-> >
-> > 1. MADV_POISON starts walk_page_range()
-> > 2. MADV_POISON sees non-zero, non-poison PTE at 0x1ff000, stops the wal=
-k
-> > 3. MADV_POISON does zap_page_range_single()
-> > 4. pagefault at 0x200200 happens and populates with a hugepage
-> > 5. MADV_POISON enters walk_page_range()
-> > 6. MADV_POISON splits the THP
-> > 7. MADV_POISON sees a populated PTE
->
-> You really shouldn't be seeing page faults in the range you are setting u=
-p
-> poison markers for _at all_ :) it's something you'd do ahead of time.
-
-But that's not what happens in my example - the address where the
-fault happens (0x200200) *is not* in the address range that
-MADV_POISON is called on (0x1ff000-0x200100). The fault and the
-MADV_POISON are in different 4KiB pages. What causes the conflict is
-that the fault and the MADV_POISON overlap the same *2MiB region*
-(both are in the region 0x200000-0x400000), and so THP stuff can
-effectively cause "page faults in the range you are setting up poison
-markers for".
-
-> But of course it's possible some scenario could arise like that, that's
-> what the EAGAIN is for.
->
-> I just really don't want to get into a realm of trying to prove absolutel=
-y
-> under all circumstances that we can't go on forever in a loop like that.
-
-We can have a bailout on signal_pending() or something like that, and
-a cond_resched(). Then as far as I know, it won't really make a
-difference in behavior whether the loop is in the kernel or in
-userspace code that's following what the manpage tells it to do -
-either way, the program will loop until it either finishes its work or
-is interrupted by a signal, and either way it can get preempted.
-(Well, except under PREEMPT_NONE, but that is basically asking for
-long scheduling delays.)
-
-And we do have other codepaths that have to loop endlessly if they
-keep racing with page table updates the wrong way, though I guess
-those loops are not going to always scan over a large address range
-over and over again...
-
-Maybe something like this would be good enough, and mirror what you'd
-otherwise tell userspace to do?
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-@@ -1598,6 +1598,7 @@ int do_madvise(struct mm_struct *mm, unsigned
-long start, size_t len_in, int beh
-                return madvise_inject_error(behavior, start, start + len_in=
-);
- #endif
+On Fri, 13 Sep 2024 10:13:12 +0200, Esben Haabendal wrote:
+> With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
+> to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
+> selected in defconfig.
+> 
+> 
 
-+retry:
-        write =3D madvise_need_mmap_write(behavior);
-        if (write) {
-                if (mmap_write_lock_killable(mm))
-@@ -1627,6 +1628,12 @@ int do_madvise(struct mm_struct *mm, unsigned
-long start, size_t len_in, int beh
-        else
-                mmap_read_unlock(mm);
+Applied, thanks!
 
-+       if (error =3D=3D <<<some special value>>>) {
-+               if (!signal_pending(current))
-+                       goto retry;
-+               error =3D -ERESTARTNOINTR;
-+       }
-+
-        return error;
- }
+[1/1] arm64/configs: Update defconfig with now user-visible CONFIG_FSL_IFC
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/1f1d847a657523e182df87f88158b607afe7d559
 
-Buuut, heh, actually, I just realized: You could even omit this and
-simply replace -EINTR with -ERESTARTNOINTR in your code as the error
-value, and then the kernel would automatically go back into the
-syscall for you after going through signal handing and such, without
-userspace noticing.
-https://lore.kernel.org/all/20121206220955.GZ4939@ZenIV.linux.org.uk/
-has some explanation on how this works. Basically it tells the
-architecture's syscall entry code to move the userspace instruction
-pointer back to the syscall instruction, so as soon as execution
-returns to userspace, the first userspace instruction that executes
-will immediately re-do the syscall. That might be the easiest way,
-even if it is maybe a *little* bit of an API abuse to use this thing
-without having a pending signal...
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-
-> If you drop the lock for contention then you up the risk of that, it just
-> feels dangerous.
->
-> A userland program can however live with a 'if EAGAIN try again' situatio=
-n.
->
-> An alternative approach to this might be to try to take the VMA lock, but
-> given the fraught situation with locking elsewhere I wonder if we should.
->
-> Also, you have to be realy unlucky with timing for this to happen, even i=
-n
-> the scenario you mention (where you'd have to be unlucky with alignment
-> too), unless you're _heavily_ page faulting in the range, either way a
-> userland loop checking EAGAIN doesn't seem unreasonable.
-
-Yes, we could do -EINTR and document that for userspace, and as long
-as everyone using this properly reads the documentation, it will be
-fine. Though I imagine that from the userspace programmer perspective
-that's a weird API design - as in, if this error code always means I
-have to try again, why can't the kernel do that internally. It's kind
-of leaking an implementation detail into the UAPI.
 
