@@ -1,175 +1,153 @@
-Return-Path: <linux-kernel+bounces-363308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E584399C062
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:51:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABFF199C064
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52F50B22895
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CBF281C7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8CC1459F6;
-	Mon, 14 Oct 2024 06:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8646D1448C7;
+	Mon, 14 Oct 2024 06:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OikLSEgx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="E8v1l2Vk"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACD13A24D;
-	Mon, 14 Oct 2024 06:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD1C13A24D;
+	Mon, 14 Oct 2024 06:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728888657; cv=none; b=VX0IlYKMdjVtyLlQPvIWYfEoiNFeQUaGOweF47Bb/EHqtQQukWS87EdEiF8FHJcOE1rG+spbLNnY3MKKJhP221cHda6AePGG9xofDXkjuN59SXtnUizQo6CJhD3W09oXlT4/347YBZL9jg9Yd1418PfuhCCKd4BSMyjxse0zhh0=
+	t=1728888665; cv=none; b=CsTJAKjKwFeLWm3q708giYF4Fiwcrh5kCgXcfafjmeL8Ah8TRNp68gX2bTvTUMQ0UKda6jyU22e6C/BTpCnNvWM2KIQBlIn9dMsZIBYNKpkS0/9bXSWHLkii+T0bw1nA49VX4kplPNBXDyTCMSEf9mFtluWjRHLb8fy7uwED1RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728888657; c=relaxed/simple;
-	bh=5fwQDtuZJ/Bi5IWJSnGY6namt6pSnRXtrjudA9qIXhQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q6AIYsiw8+JuzfpC1CcTc6xSbCdlLqzwdyAGxWX5AWZeAfrJIrY81RYIybHLuRLEp9BJWULOV9BTud8MBxskJJPrPIyGbP2rApdb1HvBDVSZqlY9fpgZ5c8mlfv9zamY/3PGinZH4VRPpO4NsXvJuw6dAyUSfU+rBBYgwI1S3ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OikLSEgx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E4BC4CECE;
-	Mon, 14 Oct 2024 06:50:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728888656;
-	bh=5fwQDtuZJ/Bi5IWJSnGY6namt6pSnRXtrjudA9qIXhQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OikLSEgxvQ/fcEAxUnjoMJaWuQcyDjzgHvleJaYTLT1RavHgsL3i0/Yzy0wNeJrQQ
-	 eTEhsKcI3zUd7snnF2VraEuaCezkG5TpwnMA+8VM1eB5QUmjvNugJutc7JG3Ynp3oZ
-	 abFprHe8KBSibQM71ElL/fMdt6iYMGBXhYFqMxBzdbfNH1mqUs8wfU4nNbKfo1V5sB
-	 9yOapvIO+Bdkk6AkaDpE6FE6Any7H6oaqogkDm30mwQmJhu3oIG680Kj7eFdNmmvMD
-	 xknVzMO2qml7hhuj8oMYZCn6BZMrp4rK3BcZzA8SZx6dQKWHG17xMdSuFm4U6QgQGX
-	 YNmHPIIOMAXng==
-Message-ID: <52ce41b7-72e1-48ad-86e4-5cfac67f8174@kernel.org>
-Date: Mon, 14 Oct 2024 08:50:50 +0200
+	s=arc-20240116; t=1728888665; c=relaxed/simple;
+	bh=6b8oLxcs9H9SAwiBm6vrXA0N5GfD9SIv1m9TpwWOC20=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QFpUcCOsweLO/VeyjRAJ6f3pHQvJHGtEyBf07oOnSijrLaZIDY1VkMHaA5fYqFjojV+KaIJLXvTuWSOLz+k160muUcCDJlXeQbLcjjJdGDZCbgOhIi5QX5mNrUxXrg+AfsLio/RNyi2euvNGc6lwPwYf2JxXj7BasZxaXLeJWoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=E8v1l2Vk; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bDIJc0lzPWFuK32g4GsXmjt7r9miciNd9/zrnLYf/jQ=; b=E8v1l2Vk8bPbWumsFcQAJiVwME
+	rnrK+33WV59LVA3WiXWQHpnWVLMlOiLK5r3sLOJlDiJ1sWT/6cTtMijybEkBzPiqNijepaEbGRnoz
+	klaB+0dKyA1E7oLoT0FlW18xetZ00+U/1KnsnledyT7x7SwnbJmwm3O1TnX/gz9nCLcNEEUKZbh8p
+	V0xGc46QoHsArYKdf/EJx4fZ4tK/RmcDLd9hqhc9CMYveJA/GrOfBBBp8KRFq0HEs1lG0NyuaODAv
+	4e5Bxmr44e3L/TAZl36plB+YQhpa0qBxsMyNBLCWlRBu9vELtoCALZgDQLRgMu0JAKpyd9ZhRltNY
+	+FhJISbw==;
+Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t0Euz-0005Vq-2C; Mon, 14 Oct 2024 08:51:01 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Frank Wang <frawang.cn@gmail.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, yubing.zhang@rock-chips.com,
+ Frank Wang <frank.wang@rock-chips.com>
+Subject: Re: [PATCH 2/2] phy: rockchip: usbdp: add rk3576 device match data
+Date: Mon, 14 Oct 2024 08:50:59 +0200
+Message-ID: <13616137.uLZWGnKmhe@diego>
+In-Reply-To: <20241014020342.15974-2-frawang.cn@gmail.com>
+References:
+ <20241014020342.15974-1-frawang.cn@gmail.com>
+ <20241014020342.15974-2-frawang.cn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vchiq_arm: Fix missing refcount decrement in
- error path for fw_node
-To: Umang Jain <umang.jain@ideasonboard.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Stefan Wahren <wahrenst@gmx.net>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241013-vchiq_arm-of_node_put-v1-1-f72b2a6e47d0@gmail.com>
- <e88e5faf-d88a-4ce9-948a-c976c2969cad@ideasonboard.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <e88e5faf-d88a-4ce9-948a-c976c2969cad@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 13/10/2024 13:36, Umang Jain wrote:
-> Hi Javier,
+Am Montag, 14. Oktober 2024, 04:03:42 CEST schrieb Frank Wang:
+> From: Frank Wang <frank.wang@rock-chips.com>
 > 
-> Thank you for the patch.
+> This adds RK3576 device match data support.
 > 
-> On 13/10/24 4:12 pm, Javier Carrasco wrote:
->> An error path was introduced without including the required call to
->> of_node_put() to decrement the node's refcount and avoid leaking memory.
->> If the call to kzalloc() for 'mgmt' fails, the probe returns without
->> decrementing the refcount.
->>
->> Use the automatic cleanup facility to fix the bug and protect the code
->> against new error paths where the call to of_node_put() might be missing
->> again.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 1c9e16b73166 ("staging: vc04_services: vchiq_arm: Split driver static and runtime data")
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 6 ++----
->>   1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
->> index 27ceaac8f6cc..792cf3a807e1 100644
->> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
->> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
->> @@ -1332,7 +1332,8 @@ MODULE_DEVICE_TABLE(of, vchiq_of_match);
->>   
->>   static int vchiq_probe(struct platform_device *pdev)
->>   {
->> -	struct device_node *fw_node;
->> +	struct device_node *fw_node __free(device_node) =
->> +		of_find_compatible_node(NULL, NULL, "raspberrypi,bcm2835-firmware");
-> 
-> How about :
-> 
-> +	struct device_node *fw_node __free(device_node) = NULL;
-> 
->>   	const struct vchiq_platform_info *info;
->>   	struct vchiq_drv_mgmt *mgmt;
->>   	int ret;
->> @@ -1341,8 +1342,6 @@ static int vchiq_probe(struct platform_device *pdev)
->>   	if (!info)
->>   		return -EINVAL;
->>   
->> -	fw_node = of_find_compatible_node(NULL, NULL,
->> -					  "raspberrypi,bcm2835-firmware");
-> 
-> And undo this (i.e. keep the of_find_compatible_node() call here
+> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
 
-The point of using cleanup is to have constructor and destructor in one
-place, not split. This is not in the spirit of cleanup. Linus also
-commented on this and cleanup.h *explicitly* recommends not doing so. It
-also lead to real bugs from time to time, so no, please do not insist on
-such weird way.
+Nice, that the rk3576 support fits in so easily :-)
 
-Best regards,
-Krzysztof
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+> ---
+>  drivers/phy/rockchip/phy-rockchip-usbdp.c | 41 +++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/phy/rockchip/phy-rockchip-usbdp.c b/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> index 2c51e5c62d3e..5b1e8a3806ed 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> @@ -1538,6 +1538,43 @@ static const char * const rk_udphy_rst_list[] = {
+>  	"init", "cmn", "lane", "pcs_apb", "pma_apb"
+>  };
+>  
+> +static const struct rk_udphy_cfg rk3576_udphy_cfgs = {
+> +	.num_phys = 1,
+> +	.phy_ids = { 0x2b010000 },
+> +	.num_rsts = ARRAY_SIZE(rk_udphy_rst_list),
+> +	.rst_list = rk_udphy_rst_list,
+> +	.grfcfg	= {
+> +		/* u2phy-grf */
+> +		.bvalid_phy_con		= RK_UDPHY_GEN_GRF_REG(0x0010, 1, 0, 0x2, 0x3),
+> +		.bvalid_grf_con		= RK_UDPHY_GEN_GRF_REG(0x0000, 15, 14, 0x1, 0x3),
+> +
+> +		/* usb-grf */
+> +		.usb3otg0_cfg		= RK_UDPHY_GEN_GRF_REG(0x0030, 15, 0, 0x1100, 0x0188),
+> +
+> +		/* usbdpphy-grf */
+> +		.low_pwrn		= RK_UDPHY_GEN_GRF_REG(0x0004, 13, 13, 0, 1),
+> +		.rx_lfps		= RK_UDPHY_GEN_GRF_REG(0x0004, 14, 14, 0, 1),
+> +	},
+> +	.vogrfcfg = {
+> +		{
+> +			.hpd_trigger	= RK_UDPHY_GEN_GRF_REG(0x0000, 11, 10, 1, 3),
+> +			.dp_lane_reg    = 0x0000,
+> +		},
+> +	},
+> +	.dp_tx_ctrl_cfg = {
+> +		rk3588_dp_tx_drv_ctrl_rbr_hbr_typec,
+> +		rk3588_dp_tx_drv_ctrl_rbr_hbr_typec,
+> +		rk3588_dp_tx_drv_ctrl_hbr2,
+> +		rk3588_dp_tx_drv_ctrl_hbr3,
+> +	},
+> +	.dp_tx_ctrl_cfg_typec = {
+> +		rk3588_dp_tx_drv_ctrl_rbr_hbr_typec,
+> +		rk3588_dp_tx_drv_ctrl_rbr_hbr_typec,
+> +		rk3588_dp_tx_drv_ctrl_hbr2,
+> +		rk3588_dp_tx_drv_ctrl_hbr3,
+> +	},
+> +};
+> +
+>  static const struct rk_udphy_cfg rk3588_udphy_cfgs = {
+>  	.num_phys = 2,
+>  	.phy_ids = {
+> @@ -1584,6 +1621,10 @@ static const struct rk_udphy_cfg rk3588_udphy_cfgs = {
+>  };
+>  
+>  static const struct of_device_id rk_udphy_dt_match[] = {
+> +	{
+> +		.compatible = "rockchip,rk3576-usbdp-phy",
+> +		.data = &rk3576_udphy_cfgs
+> +	},
+>  	{
+>  		.compatible = "rockchip,rk3588-usbdp-phy",
+>  		.data = &rk3588_udphy_cfgs
+> 
+
+
+
 
 
