@@ -1,112 +1,137 @@
-Return-Path: <linux-kernel+bounces-364009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E5D99C9C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F9999C9D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6BC282A7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E281F22F4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234A919F436;
-	Mon, 14 Oct 2024 12:12:33 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A051A0B08;
+	Mon, 14 Oct 2024 12:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOjL8u/z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB719F421
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A456819D086;
+	Mon, 14 Oct 2024 12:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728907952; cv=none; b=LX4WEiqpIpg57Dnc4BoG4Hf1qdiopmnAfTT90yawdgRAW/Z8bGJFGPfbIHWwQ1xkh9RQl2edATVt2qkuLF+7H6MMXR8ZMTH+Y9mxcPbCLrHsyRJe92hciM/yrk7T9ntB5IxTkc2EmZVCS4ImkAGyP8w8LXN0U0WYvwix6zLkGag=
+	t=1728908011; cv=none; b=FjwoB9cxCFFawPPuVjgIApGbqz6SQL2jPi76/Rj+XogqTsOZwGx2iCLPyR6U0lgGcwBOemYHep5garAKi4hHC13rft8DbiFtjvbrgSu4pu2/4B5RBbYP5RE2JrVtRxyTkyjgqyvKIDUXOupBpxvaWePSz4UcJI/Lq3B8NmCZhN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728907952; c=relaxed/simple;
-	bh=cIQPLLPfrXCdF+cPGC1rmVdjvRswT/WXKja1n8pT6g8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dUJWAd/b5e2ddD7IdPL9C6hT6nPJMrOtdCty06y8Bli82ztJ7kb1epsvjWIukBEJvK2itbfpcQyOctoUfo7q4hA7p1EykXpBtmySjVvWVccmfnpb1Wfu06WXu5fGXR+47rElx4ZJpModTEl4faJhcqfU6UJq0Muj3OXeB9xBVWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AF0F4E0007;
-	Mon, 14 Oct 2024 12:12:25 +0000 (UTC)
-Message-ID: <d39e4832-50f3-4fc8-ba95-a2d6eefa5abe@ghiti.fr>
-Date: Mon, 14 Oct 2024 14:12:25 +0200
+	s=arc-20240116; t=1728908011; c=relaxed/simple;
+	bh=Pqcl0dwf49EdBvTszQmFGHzrd66GK6QAO4IKAI4N30Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pedsqHzY8JAD8mFXONwTwN0PWScEFvZbe2ZNwm0ujPORKQqTWNkFtl2ISpQewtXyAFKbkGOgZFgDkq/qjs8pUIWoc2EfMN3jiwYAtVOIQ8nONfsNjNLySwLcFOyvtxS3XYxRUJ4cDhBstGtMeqH+uaB5CugQ4gheTWgShUm371E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOjL8u/z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 596EFC4CEC3;
+	Mon, 14 Oct 2024 12:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728908011;
+	bh=Pqcl0dwf49EdBvTszQmFGHzrd66GK6QAO4IKAI4N30Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TOjL8u/z2Kga9VObd6TWtDpF8KY3MXxRzJWYOMnMOsIC6IsMZ2dNDiieIWJDGvCce
+	 nqRtUfMBZC537LmFYTarzmtsbh/LLF8IQuLoxO2JrckofKKwGvRnfeEnqDEXmxEwLl
+	 N55dohhrj51rGq6szyhCsKHt+oAkrJr0Pj7Cr1beHxF+T0ipqObt+SnssA28RecQsK
+	 mq2iaL81hT+C4tgZ+D6vAEZf/LhEu++7dYTcTFZdZAT3WRBf9/T71m82+h28+w84SS
+	 3yvfmBOw3WaRbrWGUm7duJpTcx1aton7uzy03IzG4WhB5nJHVkkkh5eOR9Dl+MtwRt
+	 wXV0BU6RxTLLA==
+Date: Mon, 14 Oct 2024 13:13:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>,
+	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>, Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+	Al Viro <viro@zeniv.linux.org.uk>, Keith Busch <kbusch@kernel.org>,
+	Li Zetao <lizetao1@huawei.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v7 4/5] gpio: Replace deprecated PCI functions
+Message-ID: <20241014121324.GT77519@kernel.org>
+References: <20241014075329.10400-1-pstanner@redhat.com>
+ <20241014075329.10400-5-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] RISC-V: ACPI: fix early_ioremap to early_memremap
-Content-Language: en-US
-To: Yunhui Cui <cuiyunhui@bytedance.com>, punit.agrawal@bytedance.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- sunilvl@ventanamicro.com, ajones@ventanamicro.com, alexghiti@rivosinc.com,
- jeeheng.sia@starfivetech.com, haibo1.xu@intel.com,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241014094705.71775-1-cuiyunhui@bytedance.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20241014094705.71775-1-cuiyunhui@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014075329.10400-5-pstanner@redhat.com>
 
-Hi Yunhui,
-
-On 14/10/2024 11:47, Yunhui Cui wrote:
-> When SVPBMT is enabled, __acpi_map_table() will directly access the
-> data in DDR through the IO attribute, rather than through hardware
-> cache consistency, resulting in incorrect data in the obtained ACPI
-> table.
->
-> The log: ACPI: [ACPI:0x18] Invalid zero length.
->
-> We do not assume whether the bootloader flushes or not. We should
-> access in a cacheable way instead of maintaining cache consistency
-> by software.
->
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+On Mon, Oct 14, 2024 at 09:53:25AM +0200, Philipp Stanner wrote:
+> pcim_iomap_regions() and pcim_iomap_table() have been deprecated by the
+> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+> pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> 
+> Replace those functions with calls to pcim_iomap_region().
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->   arch/riscv/kernel/acpi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
-> index 6e0d333f57e5..3177c9af8764 100644
-> --- a/arch/riscv/kernel/acpi.c
-> +++ b/arch/riscv/kernel/acpi.c
-> @@ -210,7 +210,7 @@ void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
->   	if (!size)
->   		return NULL;
->   
-> -	return early_ioremap(phys, size);
-> +	return early_memremap(phys, size);
->   }
->   
->   void __init __acpi_unmap_table(void __iomem *map, unsigned long size)
+>  drivers/gpio/gpio-merrifield.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+> index 421d7e3a6c66..274afcba31e6 100644
+> --- a/drivers/gpio/gpio-merrifield.c
+> +++ b/drivers/gpio/gpio-merrifield.c
+> @@ -78,24 +78,24 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
+>  	if (retval)
+>  		return retval;
+>  
+> -	retval = pcim_iomap_regions(pdev, BIT(1) | BIT(0), pci_name(pdev));
+> -	if (retval)
+> -		return dev_err_probe(dev, retval, "I/O memory mapping error\n");
+> -
+> -	base = pcim_iomap_table(pdev)[1];
+> +	base = pcim_iomap_region(pdev, 1, pci_name(pdev));
+> +	if (IS_ERR(base))
+> +		return dev_err_probe(dev, PTR_ERR(base), "I/O memory mapping error\n");
+>  
+>  	irq_base = readl(base + 0 * sizeof(u32));
+>  	gpio_base = readl(base + 1 * sizeof(u32));
+>  
+>  	/* Release the IO mapping, since we already get the info from BAR1 */
+> -	pcim_iounmap_regions(pdev, BIT(1));
+> +	pcim_iounmap_region(pdev, 1);
+>  
+>  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>  	if (!priv)
+>  		return -ENOMEM;
+>  
+>  	priv->dev = dev;
+> -	priv->reg_base = pcim_iomap_table(pdev)[0];
+> +	priv->reg_base = pcim_iomap_region(pdev, 0, pci_name(pdev));
+> +	if (IS_ERR(priv->reg_base))
+> +		return dev_err_probe(dev, PTR_ERR(base), "I/O memory mapping error\n");
 
+Hi Philipp,
 
-It makes sense to me since with this, we don't have to care about how 
-the firmware mapped the table. And it mimics all other architectures 
-(arm64, loongarch and x86).
+There seems to be a mismatch in the use of priv->reg_base and base above.
+Should the above use PTR_ERR(priv->reg_base) instead of PTR_ERR(base)?
 
-Here is the corresponding fixes tag:
-
-Fixes: 3b426d4b5b14 ("RISC-V: ACPI : Fix for usage of pointers in 
-different address space")
-
-With the corresponding fix in __acpi_unmap_table() as pointed by Sunil, 
-you can add:
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-And regarding the sparse error, I don't see any other architecture 
-casting to __iomem, so maybe that's not necessary anymore?
-
-Thanks,
-
-Alex
-
-
+>  
+>  	priv->pin_info.pin_ranges = mrfld_gpio_ranges;
+>  	priv->pin_info.nranges = ARRAY_SIZE(mrfld_gpio_ranges);
+> -- 
+> 2.46.2
+> 
+> 
 
