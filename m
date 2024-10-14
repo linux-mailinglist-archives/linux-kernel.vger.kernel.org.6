@@ -1,120 +1,73 @@
-Return-Path: <linux-kernel+bounces-363923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304A099C87C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4989C99C87E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8391C23AEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:17:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0791C236A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F92F19ABDE;
-	Mon, 14 Oct 2024 11:13:08 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9062617BECA
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB8B19CCFA;
+	Mon, 14 Oct 2024 11:13:44 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E24E156C69;
+	Mon, 14 Oct 2024 11:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728904387; cv=none; b=DfCxtp5bfqgPZUtETKkbMQx22Uatq9VG5EoF8bFSvMIuW6I5Jxsd9jn/Mq6pL09b+wQe+JioMXOrE9qmUA5UA+5yfLJo8BTsgUDRG9fkWG/uhJP98LW8dAbA76X3u20oX5LpIHueqlmRq4++eg0KS2sPGgUIwXTQw3LSXbWcv3M=
+	t=1728904423; cv=none; b=VpuRfu+NTG2JArcHF9SesguzGhKWMJNgIw09rDnxoGqIGwsUbU8tTOgE1nmENXs7riLRtkcX1ohvhNWaEMNNmHT6DmhsLeIpU1Nr8KAYBHgYcA/KNF4yW4VphxkDEAV/XHUaxxMhIxzSGPsHMbb2EzvEJue7zL7ojxDFsUzORMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728904387; c=relaxed/simple;
-	bh=sf73umAdsshCxjnI1FBaiVERr9V5mGYONtFk0jvxidY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQEMyJeoP3kqRPQTNkI2kPXZCXt6OYSNuNlhRp/h/z08DuCou/qMBqFPEsDGaVonZHyEQ4zdtOvZBtSCPXCVDW3gtVk/eWAMEEXFRzWjde+rKlUfz6xSBppi4AtNgR8eqKXDSd+3ZkWHUl9G66yEeZomkFIjBLDwvOnrULmDWlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A82F01C0003;
-	Mon, 14 Oct 2024 11:12:53 +0000 (UTC)
-Message-ID: <8138c729-8a30-454d-8422-234cead415ab@ghiti.fr>
-Date: Mon, 14 Oct 2024 13:12:52 +0200
+	s=arc-20240116; t=1728904423; c=relaxed/simple;
+	bh=s9EdIrToNe1X4raz+OIvL//9qPb1YTxtelE1sffA10w=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=KJifnSmF5ex9KppAqJAnp4ZfxAIe9bcRylS49WswBQo334ShcE+aYji6U3ZP/VDArvHB7ih6expv5E0iYjnO01BHvhPmlVMGE1CTBEpfGlO+DnUVYvTL9mXq6Dc802iIhZbPaHLwC4cZAiVumZlgng6UH7ybBmtpSwRSAFLdsbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 8135492009C; Mon, 14 Oct 2024 13:13:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 7C88A92009B;
+	Mon, 14 Oct 2024 12:13:39 +0100 (BST)
+Date: Mon, 14 Oct 2024 12:13:39 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+cc: Johannes Berg <johannes@sipsolutions.net>, 
+    Jakub Kicinski <kuba@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+    Linux Networking <netdev@vger.kernel.org>, 
+    Loic Poulain <loic.poulain@linaro.org>, 
+    Sergey Ryazanov <ryazanov.s.a@gmail.com>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+    Simon Horman <horms@kernel.org>, Martin Wolf <mwolf@adiumentum.com>
+Subject: Re: [PATCH net v2 1/2] MAINTAINERS: Move M Chetan Kumar to CREDITS
+In-Reply-To: <cc949ab7-b5aa-4812-9c4a-d50bfee92de0@leemhuis.info>
+Message-ID: <alpine.DEB.2.21.2410141209390.40463@angie.orcam.me.uk>
+References: <20231023032905.22515-2-bagasdotme@gmail.com> <20231023032905.22515-3-bagasdotme@gmail.com> <20231023093837.49c7cb35@kernel.org> <e1b1f477-e41d-4834-984b-0db219342e5b@gmail.com> <20231023185221.2eb7cb38@kernel.org>
+ <3a68f9ff27d9c82a038aea6acfb39848d0b31842.camel@sipsolutions.net> <cc949ab7-b5aa-4812-9c4a-d50bfee92de0@leemhuis.info>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] riscv: vdso: Prevent gcc from inserting calls to
- memset()
-Content-Language: en-US
-To: Palmer Dabbelt <palmer@dabbelt.com>, alexghiti@rivosinc.com
-Cc: vladimir.isaev@syntacore.com, roman.artemev@syntacore.com,
- guoren@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
- aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <mhng-b17acfa9-03e8-4ef7-a24f-a133b2dbf31a@palmer-ri-x1c9>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <mhng-b17acfa9-03e8-4ef7-a24f-a133b2dbf31a@palmer-ri-x1c9>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Palmer,
+On Mon, 14 Oct 2024, Thorsten Leemhuis wrote:
 
-On 17/09/2024 17:41, Palmer Dabbelt wrote:
-> On Thu, 04 Jul 2024 23:09:01 PDT (-0700), alexghiti@rivosinc.com wrote:
->> gcc is smart enough to insert a call to memset() in
->> riscv_vdso_get_cpus(), which generates a dynamic relocation.
->>
->> So prevent gcc from doing that by using the
->> -fno-tree-loop-distribute-patterns option.
->
-> This option doesn't exist on LLVM (at least on whatever version I'm 
-> using), and I'm not getting any memset()s generated locally so I'm not 
-> sure what to look for over there.
->
+> >>> He's now in a state of limbo. He has significant contribution
+> >>> (and gets listed by get_maintainer script with (AFAIK) no way
+> >>> to filter him out), yet emails to him bounces. What will be
+> >>> the resolution then?
+> >>
+> >> Yes :( Not much we can do about that (even if we drop him from
+> >> maintainers all fixes will CC him based on the sign-off tags).
 
-When compiling a rv32_defconfig (still on 6.12), I get:
+ FWIW adding an entry to .get_maintainer.ignore is the way to sort it.
 
-~/linux$ riscv64-unknown-elf-readelf -r 
-build_defconfig_rv32/arch/riscv/kernel/vdso/vdso.so
-
-Relocation section '.rela.dyn' at offset 0x5a0 contains 1 entry:
-  Offset     Info    Type            Sym.Value  Sym. Name + Addend
-00000314  00000205 R_RISCV_JUMP_SLOT 00000000   memset + 0
-
-
-> From poking around GCC it looks like we might want -fno-tree-ccp too? 
-> That seems to be able to convert assignments into builtins as well...
-
-
-I gave a try at -fno-tree-ccp, but it did not remove this relocation.
-
-I now see this relocation in llvm too, so it would be nice to find a 
-common option or another way to do it, any idea is welcome!
-
-Thanks,
-
-Alex
-
-
->
->> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->> ---
->>  arch/riscv/kernel/vdso/Makefile | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/riscv/kernel/vdso/Makefile 
->> b/arch/riscv/kernel/vdso/Makefile
->> index f7ef8ad9b550..c7e40bf36371 100644
->> --- a/arch/riscv/kernel/vdso/Makefile
->> +++ b/arch/riscv/kernel/vdso/Makefile
->> @@ -18,6 +18,7 @@ obj-vdso = $(patsubst %, %.o, $(vdso-syms)) note.o
->>
->>  ccflags-y := -fno-stack-protector
->>  ccflags-y += -DDISABLE_BRANCH_PROFILING
->> +ccflags-y += -fno-tree-loop-distribute-patterns
->>
->>  ifneq ($(c-gettimeofday-y),)
->>    CFLAGS_vgettimeofday.o += -fPIC -include $(c-gettimeofday-y)
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+  Maciej
 
