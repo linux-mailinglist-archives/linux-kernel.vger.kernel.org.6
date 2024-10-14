@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-363399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F1199C1D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:46:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C1699C1D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD8C28189C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DDC1C24609
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181D814E2CD;
-	Mon, 14 Oct 2024 07:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DA91547E4;
+	Mon, 14 Oct 2024 07:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r0WFoRZ0"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s3ygCD24"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E315914B946;
-	Mon, 14 Oct 2024 07:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D94415252D;
+	Mon, 14 Oct 2024 07:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728891951; cv=none; b=gJnkK7USmFkg/4I+L2gAEXNckrI7k9rBNx1xn5V/fOc6C7ATpVs1elGc44ewnbq3nHtFwYstx28PHAYA5JZIEuhRmRRnVnwBB8836a5Gi9s29zbJRM8NmCmG2aQHFEWQTiSU5WYnHck6pZbLic+gSukQyjy8nEFXtzKLE5zkg0Y=
+	t=1728891954; cv=none; b=RyAPoQbnFPvGvcjkIHUsw3K1uhCNH61xq5yGFzRF/plEDK27DF3TRBFfvo6iBEyaWLBwPC9fgjmXH4iCTVreYg1H/u5+CfrNAWsTVc3z4r0792DLzai0fZcGY9lr0uT/5m58FPsRAqsK3KDvPUDMfAzmy41uJofegiXKex5WmSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728891951; c=relaxed/simple;
-	bh=hyxinxMXFh5dYNzfcLySUJEFNAqmURdUkYPbXXezyOg=;
+	s=arc-20240116; t=1728891954; c=relaxed/simple;
+	bh=NTi5AOG7Ycfat7NIsi6EzOR8kOqucsBWWSBqFEcFHeo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f0/mlNgCmGRTmKjGFdlqktXuI0Ug/ImKtNvkZDpIoAU6CeS4CJzTvzrLwb04bCySKe0q/JhvOIdU80gr2AAybtufvHOqSpRCWJjRv11uDjCQ7otqHeetpB2zEMXbxDHS9v6da6pdPOoHFSZGFyGumbsmm2GcpJiFPQHmqkSx4oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r0WFoRZ0; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=CRIj/hSSoBLucbIy2e5VEVV875EhSNPWOJyI9MzSn/ZqPcivMAPncCGz3i8HZnmO9jBsBIIMU3ArFsn6kEEorXXVRsFxVYVxEBfmxR0GXgXlTHGr4WyKt+doe7+itVZ+MiN67Gq5RNBMw39l49f0Ta7SSXYIMTO+5rmrHUIJ8g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s3ygCD24; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49E7jcct062777;
-	Mon, 14 Oct 2024 02:45:38 -0500
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49E7jeww081105;
+	Mon, 14 Oct 2024 02:45:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728891938;
-	bh=TX0pT7Yiay+cHg+D5Yb7R+y34ZzlQnZ9SVNpIG9Ky+o=;
+	s=ti-com-17Q1; t=1728891940;
+	bh=pblTvLzcBrU0P0UpeGmpVZAX2MKmE81/Kyw59oboS0k=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=r0WFoRZ0cbtiF6Ip4+OY3QwCCpfSZpx46RqKdHbNANh7ZC2r7a0IgU/adoza9nAfb
-	 e9pPAbzq5sLVUYx/2g7gOpEv/iUFBirzq9w3v3u/N5iw9GFFfJ9yiB5LRC9Da8OrQ2
-	 U3lH/lUqzPA1px7MIFeKbXrgyCi1IJZKjBLMrLck=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49E7jcv3017513
+	b=s3ygCD24VVsB9de943BwIyjmNZ5+sJgqZ2C3M56pjQGDEZdIXuw1iaTgwdjOgUiTl
+	 6aUHi31y84RKLnGteQlX1A+W01oJj7DcvwXxH0QIzEJC91BrRhj3h8bED5BD8QdifA
+	 kdPafZ6n4A7TcowiAy6UVd5622eKOg/tyxkRxHY4=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49E7jerx017542
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 14 Oct 2024 02:45:38 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 14 Oct 2024 02:45:40 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 14
- Oct 2024 02:45:38 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2024 02:45:40 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 14 Oct 2024 02:45:38 -0500
+ Frontend Transport; Mon, 14 Oct 2024 02:45:40 -0500
 Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49E7jc1Y071262;
-	Mon, 14 Oct 2024 02:45:38 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49E7jenV011855;
+	Mon, 14 Oct 2024 02:45:40 -0500
 Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49E7jb17025342;
-	Mon, 14 Oct 2024 02:45:38 -0500
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49E7jdNJ025347;
+	Mon, 14 Oct 2024 02:45:40 -0500
 From: MD Danish Anwar <danishanwar@ti.com>
 To: <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
 CC: <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <kristo@kernel.org>,
         <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH 3/4] arm64: dts: ti: k3-am64-main: Add ti,pruss-pa-st node
-Date: Mon, 14 Oct 2024 13:15:26 +0530
-Message-ID: <20241014074527.1121613-4-danishanwar@ti.com>
+Subject: [PATCH 4/4] arm64: dts: ti: k3-am64: Add ti,pa-stats property
+Date: Mon, 14 Oct 2024 13:15:27 +0530
+Message-ID: <20241014074527.1121613-5-danishanwar@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241014074527.1121613-1-danishanwar@ti.com>
 References: <20241014074527.1121613-1-danishanwar@ti.com>
@@ -80,44 +80,29 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add pa-stats nodes to k3-am64-main.dtsi for all ICSSG instances.
-This is needed to dump IET related statistics for ICSSG Driver.
+Add ti,pa-stats phandles to k3-am64x-evm.dts. This is a phandle to
+PA_STATS syscon regmap and will be used to dump IET related statistics
+for ICSSG Driver
 
 Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 Reviewed-by: Roger Quadros <rogerq@kernel.org>
 Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am64-main.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-index 7eae18399caa..82cd910e06b8 100644
---- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-@@ -1261,6 +1261,11 @@ icssg0_mii_g_rt: mii-g-rt@33000 {
- 			reg = <0x33000 0x1000>;
- 		};
- 
-+		icssg0_pa_stats: pa-stats@2c000 {
-+			compatible = "ti,pruss-pa-st", "syscon";
-+			reg = <0x2c000 0x1000>;
-+		};
-+
- 		icssg0_intc: interrupt-controller@20000 {
- 			compatible = "ti,icssg-intc";
- 			reg = <0x20000 0x2000>;
-@@ -1426,6 +1431,11 @@ icssg1_mii_g_rt: mii-g-rt@33000 {
- 			reg = <0x33000 0x1000>;
- 		};
- 
-+		icssg1_pa_stats: pa-stats@2c000 {
-+			compatible = "ti,pruss-pa-st", "syscon";
-+			reg = <0x2c000 0x1000>;
-+		};
-+
- 		icssg1_intc: interrupt-controller@20000 {
- 			compatible = "ti,icssg-intc";
- 			reg = <0x20000 0x2000>;
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+index 97ca16f00cd2..3e9361ba2cb9 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+@@ -253,6 +253,7 @@ icssg1_eth: icssg1-eth {
+ 		ti,mii-g-rt = <&icssg1_mii_g_rt>;
+ 		ti,mii-rt = <&icssg1_mii_rt>;
+ 		ti,iep = <&icssg1_iep0>,  <&icssg1_iep1>;
++		ti,pa-stats = <&icssg1_pa_stats>;
+ 		interrupt-parent = <&icssg1_intc>;
+ 		interrupts = <24 0 2>, <25 1 3>;
+ 		interrupt-names = "tx_ts0", "tx_ts1";
 -- 
 2.34.1
 
