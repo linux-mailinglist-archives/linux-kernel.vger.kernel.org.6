@@ -1,262 +1,182 @@
-Return-Path: <linux-kernel+bounces-363324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5CD99C0AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00BF99C0AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 289D9B2395D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:05:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A527D283AD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E1A13FD83;
-	Mon, 14 Oct 2024 07:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD606145B21;
+	Mon, 14 Oct 2024 07:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OnA6NRb0"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shBxTmmh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4BA33C9
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B22136353
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728889499; cv=none; b=kdqodRboEr5Y0X9lb1p1K9huE0CbrMIZgtWYTLbZG6S0ixJNG8nbzQlFeCorssyGcZ7ofH2NKVf5Hp5DS2aCYRMHLkSHzfPrxIm1M/+OzvvLfc6+H7ZQaoyGHkxw+pBkYM/gh1PCcIvUju0OHWV5UDSipMUvlVPS36MJUXnHUv8=
+	t=1728889519; cv=none; b=jPqwRLpF/e/xKgpugs/U3APR721gC5cqjRmqyLiVnCAhnLs5uNo+htMdekNGIaD9rJGSjFjHAvdRxmDgbttPQuBr/4Mp/hmpswIh7/DINSAxQI58/8yX7U9yTlh/5AS6AYEDtIBeZuH9v9e/OLFPSinoC5SWfDf5Tr2uAHtvcTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728889499; c=relaxed/simple;
-	bh=jb6fmG3jUcn9rj+/51XFR2D89XJgwcnKnAqRPEOP71o=;
+	s=arc-20240116; t=1728889519; c=relaxed/simple;
+	bh=mese6oT1x19qVSHCIVBwQWAA4f2xJ/TUY1HmXrJBd1s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qefy1Rckyevr9cqdY+5NEkuxaw0bvgQ3n9vbkKHtb1peZogh2xjYJ5Hl7ZHh/A+1iLnVn5FjL9buS05xbJjlhAf38qOE1l8VizSYsjge4HhONPVktT3MCIFJTHQfEjM9dB7f/1PNatdU0k6AXqPp+GL689UqbMOjkO8+4BumCyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OnA6NRb0; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539ee1acb86so1122144e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728889496; x=1729494296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ynM5W4VrPGHZiCTug5hrtZgV83Yif26KnCypK7Mhz8=;
-        b=OnA6NRb06MVgoRFlCzqYaI6TyM/+ot49+PPMmjahzQg0nDD2fjSDMS9+WjzHBCddx7
-         EhBM7vstXKEzVKqZcWM5iC0/axpuUQWy+6GlrkGbHnYQtGRkwtEV+D3qLWRa0vnd0oXH
-         zkKFI4YN5sHzKn7YjJrHmIsSWbCBo53YzoZXg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728889496; x=1729494296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7ynM5W4VrPGHZiCTug5hrtZgV83Yif26KnCypK7Mhz8=;
-        b=jCiGFgYy/2WQHxe+Zb9WW3vQHVnk3K84iUsJ8rUP/AKhp+qDOKWYVZ+JjYF3FDaqSK
-         mcd3C0l6yoxZ8F6qpR+FBwzKCZuXicuTZ68vRUoDcjMhXYbq2i96ZF0vlbaW1Q71PyBH
-         mDDHN3LDo255xDVZ6zXmy0/CeysT7aLcHwnmy3SQQToauiO0BkIHjjER+Q0aqJ2ZeBjy
-         U73FVL7D8ZEKq1S+/rK2UWLqMbU+NkB84JVxFW5/FuGMIX4iC6eODo2SqxtD6IIk4RlD
-         NM48Q8tBaPw1wYO2SNoPSrFiG6ZZAtx069W+Ho3l4/SgNOvtk6ZZ8GVCtPBuXWVREf2J
-         yZSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyxY4mzdodadkEAgggtDecqNmRBZFpIZoule4HTkAOgZfZXgEnpvbWY8w/K9dOXeNHT4dInbrGhn1bVXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCwTXchOBjTHf0z7BXuJcN0sxVSn+e5NxcFTbTm9AqmUZqLShI
-	ApwyaLFmusljlSIcOfPs29kofe20j/a1rXfDgY8kl+FetLwqzH6CwfDQSTV6xvpF6vMAFS7lw4U
-	Di5Fe050CJPQez8Ryh8WcMPAkdhWSYwvEyrBI
-X-Google-Smtp-Source: AGHT+IFT7HlAXavEjKzdhXvzBtEDuZfwe6IvILZ8dpouGERPtoOe8fs5ejCzMZSurR6nnvkNUPToEI3YRpIVnaoznhU=
-X-Received: by 2002:a05:6512:b11:b0:539:8d9b:b624 with SMTP id
- 2adb3069b0e04-539e5742bdamr2688773e87.55.1728889495769; Mon, 14 Oct 2024
- 00:04:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=a+3HCEJCySzHv//IDjL4xNcJaMFXCFPedmYie4um6mefSiXpkHgZRKN8y49Hf76GaZSQNZ6DodTEasWJin4vxBnYCdR/rbUUkDM/LNKAzCNrJu6IL0RCUew94wJlkCNU5O/OBZTrsQb0cU8yZ0rPRqP4ay2U3VEP6FrEtmGRRzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shBxTmmh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9481C4CEC3
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728889518;
+	bh=mese6oT1x19qVSHCIVBwQWAA4f2xJ/TUY1HmXrJBd1s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=shBxTmmhXBpFUMKgL/HP+UI4Z4sUkZ8oZiXliMM1o6cBLe6Yk2Wkh7lG1EVIBBB/6
+	 HVf+wJTD6/P5B4LbXJDp9NQdIY1aredZmrY6RHIFEpcEEf99LIpAsePG6o3svxJDgQ
+	 TQDNKd72KlbHgIuuSCCdbvcEYfTGY1JqL63dDcXCpgK9rq5ScXE959vATNgu/GxCJB
+	 ebZoMaiUfBOzLIx47CpwiIcXPShapMjam3djISqtXfPnN5Q5YwFzMAuFPkLRzN0roa
+	 sRV+rZmkulHwOcVrUWxONqN3zYQRzpgyq10Ixt4a9XuPx3plM5xQmCOXCS31QLh36E
+	 VjQw4zenIDe7Q==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a0474e70eso151771766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:05:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUc+bwSLpHyhW+5B38ovdsEt9Q0R0ymoxaH958wIZja+874PJBmA+uk6BK5ySuEWJagSxZ4Qwh1vq5HwUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS1TaONwK+kXBrtOCcYsrDhwAoe9o+y7AyNpHNqnC/W2ktfF0H
+	6Lwnf59WSgjEa/pt/rcmNozPmQBWHzRPRjlQSpWk0qNc+CrraaoxyuYsiTEBnTRKybhKlkKkFIr
+	CWziy6BOxNM5pXNgOfS0MBWPSiN0=
+X-Google-Smtp-Source: AGHT+IEvsobYOwAEgBGxgglMFDAntbyiVLVCbK8eeJZO6bH/8h4webSPLkUjFLKIZD8Ux2h4J4cKxZ6BtLseSDotwr0=
+X-Received: by 2002:a17:907:7f12:b0:a99:f945:8776 with SMTP id
+ a640c23a62f3a-a99f94588c4mr433903166b.24.1728889517314; Mon, 14 Oct 2024
+ 00:05:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008073430.3992087-1-wenst@chromium.org> <20241008073430.3992087-8-wenst@chromium.org>
- <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
-In-Reply-To: <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 14 Oct 2024 15:04:44 +0800
-Message-ID: <CAGXv+5FAhZQR+Tah_6Qxp4O7=x2RawfWuMh29_FT4mGQGQF84w@mail.gmail.com>
-Subject: Re: [PATCH v8 7/8] platform/chrome: Introduce device tree hardware prober
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+References: <20241014063328.1216497-1-maobibo@loongson.cn>
+In-Reply-To: <20241014063328.1216497-1-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 14 Oct 2024 15:05:06 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5_SUnrf0PwOUFOA0EumKvGOmgqUq=Cx61Ub5AW=MPo=A@mail.gmail.com>
+Message-ID: <CAAhV-H5_SUnrf0PwOUFOA0EumKvGOmgqUq=Cx61Ub5AW=MPo=A@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Fix cpu hotplug issue
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	lixianglai@loongson.cn, WANG Xuerui <kernel@xen0n.name>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 11:29=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Tue, Oct 08, 2024 at 03:34:26PM +0800, Chen-Yu Tsai wrote:
-> > Some devices are designed and manufactured with some components having
-> > multiple drop-in replacement options. These components are often
-> > connected to the mainboard via ribbon cables, having the same signals
-> > and pin assignments across all options. These may include the display
-> > panel and touchscreen on laptops and tablets, and the trackpad on
-> > laptops. Sometimes which component option is used in a particular devic=
-e
-> > can be detected by some firmware provided identifier, other times that
-> > information is not available, and the kernel has to try to probe each
-> > device.
-> >
-> > This change attempts to make the "probe each device" case cleaner. The
-> > current approach is to have all options added and enabled in the device
-> > tree. The kernel would then bind each device and run each driver's prob=
-e
-> > function. This works, but has been broken before due to the introductio=
-n
-> > of asynchronous probing, causing multiple instances requesting "shared"
-> > resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-> > time, with only one instance succeeding. Work arounds for these include
-> > moving the pinmux to the parent I2C controller, using GPIO hogs or
-> > pinmux settings to keep the GPIO pins in some fixed configuration, and
-> > requesting the interrupt line very late. Such configurations can be see=
-n
-> > on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-> > Lenovo Thinkpad 13S.
-> >
-> > Instead of this delicate dance between drivers and device tree quirks,
-> > this change introduces a simple I2C component prober. For any given
-> > class of devices on the same I2C bus, it will go through all of them,
-> > doing a simple I2C read transfer and see which one of them responds.
-> > It will then enable the device that responds.
-> >
-> > This requires some minor modifications in the existing device tree.
-> > The status for all the device nodes for the component options must be
-> > set to "fail-needs-probe". This makes it clear that some mechanism is
-> > needed to enable one of them, and also prevents the prober and device
-> > drivers running at the same time.
->
-> ...
->
-> > +#include <linux/array_size.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/i2c-of-prober.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
->
-> > +static int chromeos_i2c_component_prober(struct device *dev, const voi=
-d *_data)
-> > +{
-> > +     const struct chromeos_i2c_probe_data *data =3D _data;
-> > +     struct i2c_of_probe_simple_ctx ctx =3D {
-> > +             .opts =3D data->opts
->
-> Leave trailing comma in such cases (when it's not a terminator and
-> not on the same line with the variable definition).
+Hi, Bibo,
 
-Ack.
+I'm a little confused, so please correct me if I'm wrong.
 
-> > +     };
-> > +
-> > +     return i2c_of_probe_component(dev, data->cfg, &ctx);
-> > +}
-> > +
-> > +static const struct chromeos_i2c_probe_data chromeos_i2c_probe_dumb_to=
-uchscreen =3D {
-> > +     .cfg =3D &(const struct i2c_of_probe_cfg) {
+On Mon, Oct 14, 2024 at 2:33=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
 >
-> Perhaps you can introduce something like
+> On LoongArch system, there are two places to set cpu numa node. One
+> is in arch specified function smp_prepare_boot_cpu(), the other is
+> in generic function early_numa_node_init(). The latter will overwrite
+> the numa node information.
 >
-> #define DEFINE_I2C_OF_PROBE_CFG(_type_, _ops_)          \
->         (struct ...) {                                  \
->                 .ops =3D _ops_,                           \
->                 .type =3D #_type_,                        \
+> However for hot-added cpu, cpu_logical_map() fails to its physical
+> cpuid at beginning since it is not enabled in ACPI MADT table. So
+> function early_cpu_to_node() also fails to get its numa node for
+> hot-added cpu, and generic function early_numa_node_init() will
+> overwrite incorrect numa node.
+For hot-added cpus, we will call acpi_map_cpu() -->
+acpi_map_cpu2node() --> set_cpuid_to_node(), and set_cpuid_to_node()
+operates on __cpuid_to_node[]. So I think early_cpu_to_node() should
+be correct?
+
+Huacai
+
+>
+> Here static array __cpu_to_node and api set_early_cpu_to_node()
+> is added, so that early_cpu_to_node is consistent with function
+> cpu_to_node() for hot-added cpu.
+>
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> ---
+>  arch/loongarch/include/asm/numa.h |  2 ++
+>  arch/loongarch/kernel/numa.c      | 10 +++++++++-
+>  arch/loongarch/kernel/smp.c       |  1 +
+>  3 files changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/include/asm/numa.h b/arch/loongarch/include/a=
+sm/numa.h
+> index b5f9de9f102e..e8e6fcfb006a 100644
+> --- a/arch/loongarch/include/asm/numa.h
+> +++ b/arch/loongarch/include/asm/numa.h
+> @@ -50,6 +50,7 @@ static inline void set_cpuid_to_node(int cpuid, s16 nod=
+e)
+>  }
+>
+>  extern int early_cpu_to_node(int cpu);
+> +extern void set_early_cpu_to_node(int cpu, s16 node);
+>
+>  #else
+>
+> @@ -57,6 +58,7 @@ static inline void early_numa_add_cpu(int cpuid, s16 no=
+de)    { }
+>  static inline void numa_add_cpu(unsigned int cpu)              { }
+>  static inline void numa_remove_cpu(unsigned int cpu)           { }
+>  static inline void set_cpuid_to_node(int cpuid, s16 node)      { }
+> +static inline void set_early_cpu_to_node(int cpu, s16 node)    { }
+>
+>  static inline int early_cpu_to_node(int cpu)
+>  {
+> diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
+> index 84fe7f854820..62508aace644 100644
+> --- a/arch/loongarch/kernel/numa.c
+> +++ b/arch/loongarch/kernel/numa.c
+> @@ -34,6 +34,9 @@ static struct numa_meminfo numa_meminfo;
+>  cpumask_t cpus_on_node[MAX_NUMNODES];
+>  cpumask_t phys_cpus_on_node[MAX_NUMNODES];
+>  EXPORT_SYMBOL(cpus_on_node);
+> +static s16 __cpu_to_node[NR_CPUS] =3D {
+> +       [0 ... CONFIG_NR_CPUS - 1] =3D NUMA_NO_NODE
+> +};
+>
+>  /*
+>   * apicid, cpu, node mappings
+> @@ -117,11 +120,16 @@ int early_cpu_to_node(int cpu)
+>         int physid =3D cpu_logical_map(cpu);
+>
+>         if (physid < 0)
+> -               return NUMA_NO_NODE;
+> +               return __cpu_to_node[cpu];
+>
+>         return __cpuid_to_node[physid];
+>  }
+>
+> +void set_early_cpu_to_node(int cpu, s16 node)
+> +{
+> +       __cpu_to_node[cpu] =3D node;
+> +}
+> +
+>  void __init early_numa_add_cpu(int cpuid, s16 node)
+>  {
+>         int cpu =3D __cpu_number_map[cpuid];
+> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+> index 9afc2d8b3414..998668be858c 100644
+> --- a/arch/loongarch/kernel/smp.c
+> +++ b/arch/loongarch/kernel/smp.c
+> @@ -512,6 +512,7 @@ void __init smp_prepare_boot_cpu(void)
+>                         set_cpu_numa_node(cpu, node);
+>                 else {
+>                         set_cpu_numa_node(cpu, rr_node);
+> +                       set_early_cpu_to_node(cpu, rr_node);
+>                         rr_node =3D next_node_in(rr_node, node_online_map=
+);
+>                 }
 >         }
 >
-> and use it here as
->
->         .cfg =3D DEFINE_I2C_OF_PROBE_CFG(touchscreen, NULL),
-
-Overall reply about the compound literals is in my other email.
-
-> > +             .type =3D "touchscreen"
->
-> Ditto.
-
-Ack.
-
->
-> > +     }
->
-> Ditto.
->
-> > +};
-> > +
-> > +static const struct i2c_of_probe_cfg chromeos_i2c_probe_simple_trackpa=
-d_cfg =3D {
-> > +     .ops =3D &i2c_of_probe_simple_ops,
-> > +     .type =3D "trackpad"
->
-> Leave a comma.
-
-Ack.
-
-> > +};
->
-> ...
->
-> > +static const struct chromeos_i2c_probe_data chromeos_i2c_probe_hana_tr=
-ackpad =3D {
-> > +     .cfg =3D &chromeos_i2c_probe_simple_trackpad_cfg,
->
->         .cfg =3D DEFINE_I2C_OF_PROBE_CFG(trackpad, i2c_of_probe_simple_op=
-s),
->
-> Or even
->
-> #define DEFINE_I2C_OF_PROBE_CFG_SIMPLE(_type_)                  \
->         DEFINE_I2C_OF_PROBE_CFG(type, &i2c_of_probe_simple_ops)
->
-> > +     .opts =3D &(const struct i2c_of_probe_simple_opts) {
->
-> Perhaps also DEFINE_xxx for this compound literal?
-
-I think it's better to leave this one as is. Not every entry will
-use the same combination of parameters. And having the entry spelled
-out like this makes it easier to read which value is for what
-parameter, instead of having to go up to the macro definition.
-
-For comparison, this entry uses just two of the parameters, while for
-another platform I'm working on the full set of parameters is needed.
-
-> > +             .res_node_compatible =3D "elan,ekth3000",
-> > +             .supply_name =3D "vcc",
-> > +             /*
-> > +              * ELAN trackpad needs 2 ms for H/W init and 100 ms for F=
-/W init.
-> > +              * Synaptics trackpad needs 100 ms.
-> > +              * However, the regulator is set to "always-on", presumab=
-ly to
-> > +              * avoid this delay. The ELAN driver is also missing dela=
-ys.
-> > +              */
-> > +             .post_power_on_delay_ms =3D 0,
-> > +     }
-> > +};
-> > +
-> > +static const struct hw_prober_entry hw_prober_platforms[] =3D {
-> > +     { .compatible =3D "google,hana", .prober =3D chromeos_i2c_compone=
-nt_prober, .data =3D &chromeos_i2c_probe_dumb_touchscreen },
-> > +     { .compatible =3D "google,hana", .prober =3D chromeos_i2c_compone=
-nt_prober, .data =3D &chromeos_i2c_probe_hana_trackpad },
->
-> These strings are a bit long, perhaps wrap on one member per line?
-
-Sure.
-
-
-ChenYu
-
-
-> > +};
->
+> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
 > --
-> With Best Regards,
-> Andy Shevchenko
+> 2.39.3
 >
 >
 
