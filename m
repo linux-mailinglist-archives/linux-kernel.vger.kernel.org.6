@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-364172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5258099CC37
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:06:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E5399CC3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082C81F239C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D79B52842F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052521AC427;
-	Mon, 14 Oct 2024 14:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818581AB530;
+	Mon, 14 Oct 2024 14:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2Abom9p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wb+SUd2f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5691ABEC6;
-	Mon, 14 Oct 2024 14:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80CC1AC885;
+	Mon, 14 Oct 2024 14:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728914731; cv=none; b=azzGysZ8nsKYCct8fAbMTAQoKV6NO+o1sfa0uiy2ZCgWwBd6/ya6LU53k1MvyEOqAwBPDj+JVoU0dWBRKhBWysmqWAPv3KlNBHFVA7oktF7iRHrPwRnVydfhZLBuCLxWJlVWK9HwEZ0Y1r8f8o4I2y9uQKrXXZnBZazQopfNuu0=
+	t=1728914732; cv=none; b=lqjoMm94KgBw1+vfuMCyA6nNiplgwgJ32bGhzYQonX6SQtr8zxoQzt7KJImPFagazok5AC18Ze+JA41xSZieAMoKhO+ahSY7EUkvZn+qevTSOHw85fpsngHEJgMkWkhJ6tWHCbqOSvU+Eq8jar6C7qnhUxY5KfrrDR/bkmTKy9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728914731; c=relaxed/simple;
-	bh=UR9QzHv4Tlg7eSv5ldrag2JVOWLwv94dSbZYXgs2ksU=;
+	s=arc-20240116; t=1728914732; c=relaxed/simple;
+	bh=eiBz2oCRNLu1LEWaYxV3JYICGOhv3PmcLnzaYHKoTsA=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=nCse3PtMHBNNJ6utcdJgZxhhd1d+MT0vNwPaxP8EAZ+A3aDRNu4hZ+hHn0mOoELYqzQegpc8vebAjb1ADLYZ1NHreUwedo+KQauo051So+kT8vqtzJUWTmw6Cdt4N6zhCGlG0BZk7sDeIiiYDAbjtwzr5k7M7y2uSlU0vL1gfxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2Abom9p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BE5C4CEC3;
-	Mon, 14 Oct 2024 14:05:30 +0000 (UTC)
+	 Message-Id:Subject; b=EHvJSzjajOs1aAvVhBFr+bWLrkk/owgyywZJ8PkTdJsoQrIuB9EpKLuR8kiy4x7DkAlcVT+rEvh0eRWrRKlSs4LiNF9RdR77aYvShTVMaExXBPPfPJEflqz1oSn55zV6xyQX7XwWsMU1j+KD3aFttKkE+QarqNTYJUAAMub/UWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wb+SUd2f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44CE1C4CEC3;
+	Mon, 14 Oct 2024 14:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728914731;
-	bh=UR9QzHv4Tlg7eSv5ldrag2JVOWLwv94dSbZYXgs2ksU=;
+	s=k20201202; t=1728914732;
+	bh=eiBz2oCRNLu1LEWaYxV3JYICGOhv3PmcLnzaYHKoTsA=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=c2Abom9pwOo7M9hucnFxshR0LFAqMccXdVJbY+51XHlhOIRIVXYfURw0W9DZkGLmx
-	 DVpKsnz1kc6twZG7MuX5BuCjV0pymh2GxrM2HPLjMs/bhelLMQs/x0Lcc5ZIPe2cFt
-	 ZUfKvTy/Fqw0ag2nVZN+6RDJSCl0/72vRuxiygyW30NVPksesxCxW1NHXb8iEtDziP
-	 q0b6uxtrV4052ZNNzdQy/mOc5NjGVv2wlFGk0YqqGa/z9xrkC4FIENaJEUJN/HHtTl
-	 OxpZfWnGTavRpk3xCbms6WW0iVEsl8+s6jj6jao+Rl0kW6f4UFFtSU4NYcCuM6JNkq
-	 WFbkkdDTuO+NA==
-Date: Mon, 14 Oct 2024 09:05:30 -0500
+	b=Wb+SUd2fDKIJr+msk5x3l2yLqY3VO+INwsSJZKHSEkiDTZ0pA/0xbALhBAIUW3X3Z
+	 uGQ4DA23I85earVnDxoSQJKCvKvKJRm3TwT73BRBuav6bNkGZWOGEjr4dWXJCWbo8R
+	 PylLhpjo6N27F3LAIJmrBPF7caftb4eex5+yyHRVO5JHtoLmmNnVdgmDtQQeyhwCic
+	 bXG4ZY8FkKX8rY5sb1oTTfKNIJxGAdEmDwO/w1NzyeidGcctrTTt5sr8FGxwOfy3Rd
+	 3DpBPhx2/dwAHagI8M+BxueQwEYvVD4TaFZLKeBAuTuLUBnc8JthOL1uMUVOlLwjoI
+	 nai7lYSRZy8lA==
+Date: Mon, 14 Oct 2024 09:05:31 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,65 +50,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Cenk Uluisik <cenk.uluisik@googlemail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Heiko Stuebner <heiko@sntech.de>, Chris Morgan <macromorgan@hotmail.com>, 
- Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>, 
- linux-arm-kernel@lists.infradead.org, Tim Lunn <tim@feathertop.org>, 
- linux-rockchip@lists.infradead.org, Dragan Simic <dsimic@manjaro.org>, 
- Jonas Karlman <jonas@kwiboo.se>, 
- Michael Riesch <michael.riesch@wolfvision.net>, Jing Luo <jing@jing.rocks>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Jimmy Hon <honyuenkwun@gmail.com>
-In-Reply-To: <20241014113026.78853-1-cenk.uluisik@googlemail.com>
-References: <20241014113026.78853-1-cenk.uluisik@googlemail.com>
-Message-Id: <172891445477.1127378.13874736914700071280.robh@kernel.org>
-Subject: Re: [PATCH v4 1/2] arm64: dts: rockchip: Add rk3588-orangepi-5b
- device tree and refactor
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+ Jonathan Bell <jonathan@raspberrypi.com>, 
+ Jim Quinlan <jim2101024@gmail.com>, linux-rpi-kernel@lists.infradead.org, 
+ kw@linux.com, Andrea della Porta <andrea.porta@suse.com>, 
+ devicetree@vger.kernel.org, Phil Elwell <phil@raspberrypi.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20241014130710.413-1-svarbanov@suse.de>
+References: <20241014130710.413-1-svarbanov@suse.de>
+Message-Id: <172891445648.1127418.3673645217921706886.robh@kernel.org>
+Subject: Re: [PATCH v3 00/11] Add PCIe support for bcm2712
 
 
-On Mon, 14 Oct 2024 13:29:55 +0200, Cenk Uluisik wrote:
-> Implements a slightly modified rk3588s-orangepi-5b.dts
-> from the vendor. Unfortunately the &wireless_bluetooth
-> and &wireless_wlan are not implemented yet.
+On Mon, 14 Oct 2024 16:06:59 +0300, Stanimir Varbanov wrote:
+> Hello,
 > 
-> Bigger parts of the rk3588s-orangepi-5.dts file were
-> moved into a new rk3588s-orangepi-5.dtsi file, so
-> that both device trees from the orangepi-5 and 5b
-> include from it and avoid including from the .dts.
+> Here is v3 the series to add support for PCIe on bcm2712 SoC
+> used by RPi5. Previous v2 can be found at [1].
 > 
-> This changes the Orange Pi 5's sdmmc alias to be mmc1,
-> breaking existing users if they used the /dev/mmc0 device
-> file, so it's consistent with all the other rk3588 DTS,
-> which, is also the new default that rockchip wants to use.
-> https://github.com/orangepi-xunlong/linux-orangepi/commit/bce92d16b230b8e93c2831fb7768839fd7bbab04
-> Therefore also add the sdhc alias to be mmc0 on the
-> rk3588s-orangepi-5b.dts.
+> v2 -> v3 changes include:
+>  - Added Reviewed-by/Acked-by tags.
+>  - MIP MSI-X driver has been converted to MSI parent.
+>  - Added a new patch for PHY PLL adjustment need to succesfully
+>    enumerate PCIe endpoints on extension connector (tested with
+>    Pineboards AI Bundle + NVME SSD adapter card).
+>  - Re-introduced brcm,msi-offset DT private property for MIP
+>    interrupt-controller (without it I'm anable to use the interrupts
+>    of adapter cards on PCIe enxtension connector).
 > 
-> How does this board differ from the original Orange Pi 5?
->   - the Orange Pi 5 has a M.2 NVMe M-key PCI 2.0x1
->     slot (hooked to combphy0_ps) whereas the Orange Pi 5b uses combphy0_ps
->     for the WiFi.
->   - The Orange Pi 5 with the M.2 socket has a regulator defined hooked to
->     "GPIO0_C5" (i.e. PCIE_PWREN_H) whereas the Orange Pi 5B has GPIO0_C5
->     hooked to BT_WAKE_HOST.
->   - builtin eMMC storage
->   - no SPI NOR flash (u-boot, preboot etc. initiates
->       from within the eMMC
->       storage)
->   - ap6275p Wifi module (like the Orange Pi 5 Plus)
->   - builtin BlueTooth module
+> For more info check patches.
 > 
-> Signed-off-by: Cenk Uluisik <cenk.uluisik@googlemail.com>
-> ---
->  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->  .../boot/dts/rockchip/rk3588s-orangepi-5.dts  | 798 +-----------------
->  ...orangepi-5.dts => rk3588s-orangepi-5.dtsi} |  36 +-
->  .../boot/dts/rockchip/rk3588s-orangepi-5b.dts |  27 +
->  4 files changed, 73 insertions(+), 789 deletions(-)
->  rewrite arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts (95%)
->  copy arch/arm64/boot/dts/rockchip/{rk3588s-orangepi-5.dts => rk3588s-orangepi-5.dtsi} (96%)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts
+> [1] https://patchwork.kernel.org/project/linux-pci/cover/20240910151845.17308-1-svarbanov@suse.de/
+> 
+> Stanimir Varbanov (11):
+>   dt-bindings: interrupt-controller: Add bcm2712 MSI-X DT bindings
+>   dt-bindings: PCI: brcmstb: Update bindings for PCIe on bcm2712
+>   irqchip: mip: Add Broadcom bcm2712 MSI-X interrupt controller
+>   PCI: brcmstb: Expand inbound size calculation helper
+>   PCI: brcmstb: Enable external MSI-X if available
+>   PCI: brcmstb: Avoid turn off of bridge reset
+>   PCI: brcmstb: Add bcm2712 support
+>   PCI: brcmstb: Reuse config structure
+>   PCI: brcmstb: Adjust PHY PLL setup to use a 54MHz input refclk
+>   arm64: dts: broadcom: bcm2712: Add PCIe DT nodes
+>   arm64: dts: broadcom: bcm2712-rpi-5-b: Enable PCIe DT nodes
+> 
+>  .../brcm,bcm2712-msix.yaml                    |  60 ++++
+>  .../bindings/pci/brcm,stb-pcie.yaml           |   5 +-
+>  .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |   8 +
+>  arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 160 +++++++++
+>  drivers/irqchip/Kconfig                       |  16 +
+>  drivers/irqchip/Makefile                      |   1 +
+>  drivers/irqchip/irq-bcm2712-mip.c             | 308 ++++++++++++++++++
+>  drivers/pci/controller/pcie-brcmstb.c         | 197 ++++++++---
+>  8 files changed, 707 insertions(+), 48 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+>  create mode 100644 drivers/irqchip/irq-bcm2712-mip.c
+> 
+> --
+> 2.43.0
+> 
+> 
 > 
 
 
@@ -126,12 +137,36 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y rockchip/rk3588s-orangepi-5.dtb rockchip/rk3588s-orangepi-5b.dtb' for 20241014113026.78853-1-cenk.uluisik@googlemail.com:
+New warnings running 'make CHECK_DTBS=y broadcom/bcm2712-rpi-5-b.dtb' for 20241014130710.413-1-svarbanov@suse.de:
 
-arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dtb: gpio-func: leds-gpio: {'rockchip,pins': [[0, 2, 0, 245]], 'phandle': 253} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dtb: vcc-3v3-sd-s0-regulator: Unevaluated properties are not allowed ('enable-active-low' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/fixed-regulator.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@100000: resets: [[12, 42], [13]] is too short
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@100000: reset-names:0: 'rescal' was expected
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@100000: reset-names:1: 'bridge' was expected
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@100000: reset-names: ['bridge', 'rescal'] is too short
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@110000: 'msi-controller' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@110000: resets: [[12, 43], [13]] is too short
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@110000: reset-names:0: 'rescal' was expected
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@110000: reset-names:1: 'bridge' was expected
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@110000: reset-names: ['bridge', 'rescal'] is too short
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@120000: 'msi-controller' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@120000: resets: [[12, 44], [13]] is too short
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@120000: reset-names:0: 'rescal' was expected
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@120000: reset-names:1: 'bridge' was expected
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@120000: reset-names: ['bridge', 'rescal'] is too short
+	from schema $id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
 
 
 
