@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-363557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD49099C3F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:48:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9177F99C3FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724CF282897
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B92341C220C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEC7155727;
-	Mon, 14 Oct 2024 08:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F8D156C62;
+	Mon, 14 Oct 2024 08:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z5glFQD7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwbimzvP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0D9146D7E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DD2155300;
+	Mon, 14 Oct 2024 08:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895647; cv=none; b=qHZn5BuzZ9cmc67iC/Y8S4Fqm2f/cWjn9iiFzDiIe2jb5kiDHIF2JTmjMugz1GsUyrM8pQ7v+rgz/RKDdNK8DuMUrOj1EmKCZrzsB5KeQ6oLuaSXBregABDPEjK0hjkdCKi9LzrigQZJWQGyxQ+5iX7wdPKBviMS2KmK37MFv34=
+	t=1728895661; cv=none; b=u/D+hLSTLJDSgG536HSla6/aRtsxxxYc1nseB24Xr2gWnXO04N6fgGmFdk1e+ANiYaU87fbcyM2/p1bwnwYFD9iyvbNPcGnhRwgz6v5KZDJMDRame0QxYUGwHI7iS3PZY7liM0e9ZjWkUuGJS1fH149MMd4ED7fQ8mMQC8Zm//M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895647; c=relaxed/simple;
-	bh=CKAAFTOaYXzss3hbLk4LijIqfj37lvrsTUlUC26hYX8=;
+	s=arc-20240116; t=1728895661; c=relaxed/simple;
+	bh=zrvtMHe1s04dHvmkw1UtZtAB96rdOnmBrzsn6WfJtjE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pc849uvlU04Ug2vVbVRs5AfNdqMrX4I0App0QomlD4kvFJ1qf/S9prB23A9QbczbczPuUO/1Px/MDd8utB0zvEgPrxHNE4cXphydqHgzBW6I8l9T+EQZnQsPl+hn7HSVWJuxpYWBl2XJeXl9N9pQkAFHYijdvaxETsv0tLgIJ/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z5glFQD7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728895644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EHHrpd04LCN5U9FT9iT5XYMMgwb+6uYYFSdfvRXUjCQ=;
-	b=Z5glFQD73M+VyIL6QXQRmcjo6SQyHUdhI598qG+LBJHcjhYiqZ++cFQi5BQIEarDXstr4j
-	dxNAZEN7Iimx43Fjn/Hk1xZ7LYwx6wdNEA6ZeeUnb5fk7m/ayZBIbwAJUZOnOyzPOEZUqw
-	3mfcjyL04mpfr7nBMjMmCn4bk5myH50=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-247-K7DexFfmOeutJNJe-ZcsFA-1; Mon, 14 Oct 2024 04:47:23 -0400
-X-MC-Unique: K7DexFfmOeutJNJe-ZcsFA-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-539e91e12bbso1014946e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:47:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728895642; x=1729500442;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHHrpd04LCN5U9FT9iT5XYMMgwb+6uYYFSdfvRXUjCQ=;
-        b=h8cIfo8m8Bh+lj9f0jGcc3sh4vESKWViF9cXndZomCo3/1YDHInQKcbrZ2gvx2KXiv
-         wJkiw1CT3ZDtgH1RrKi/CeFpo1f9YxL08POG3LgH8cyfa1Czv28o4VH/tNtxIDrIYrGR
-         l1G1VgZZVQsNqt2tixrwHYJK4QWrR4DpnOaClybUCTYqqhcu5K0OmjRlcJ29Pk9fFpNg
-         H5crBANPvos6ZxAs3qKdbJMOiPeTQkhHG6FnO7dftnBIbS7CYniNceO0L32G1SZQKxex
-         FS7REZxy6bXA4kmR+iYxkTc85v+NLp+8l3N7XS6PIdriC9FQqiKJPkFCJC10ipuebUjS
-         5Gdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQYbPOX1TzdA3ViTB0z//DeJeCXXV06ozBS0powdaLk5xKUjsuvkJqPyxtqijah9BwU/Jns9RjJn4edhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpi3fbT6OlxlHlNcSukZ1CuNl81pw0XUvoSwiPpk0wmsH0ZjId
-	dYr9/OBCGsanndA82VWa5bWyXFjT06YGd7KzgxRCMnIYbndA1yjMCG6mxI4DWbOBqBVrBZ0H8MM
-	oVEFmfdQwaTl7fs6c53c3vyCePzQVjUWTGQTU+9ja3nULRol8HXT7R/sikwrsow==
-X-Received: by 2002:a05:6512:3da3:b0:539:8b02:8f1d with SMTP id 2adb3069b0e04-539e551635bmr2803362e87.30.1728895641634;
-        Mon, 14 Oct 2024 01:47:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNGzizcYSea0we+7mFRqxFtVg7tJgmmDdbFHqE+mDRdFYzekLDQxwTxv+nzZLoG0jBJLv5ag==
-X-Received: by 2002:a05:6512:3da3:b0:539:8b02:8f1d with SMTP id 2adb3069b0e04-539e551635bmr2803341e87.30.1728895641192;
-        Mon, 14 Oct 2024 01:47:21 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6d0217sm10791478f8f.60.2024.10.14.01.47.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 01:47:20 -0700 (PDT)
-Message-ID: <08d47408-e15d-448f-9fa6-41a3d2ec953f@redhat.com>
-Date: Mon, 14 Oct 2024 10:47:19 +0200
+	 In-Reply-To:Content-Type; b=anmUppYgA1ziTeJZZgYmM4w116CcwLqS0k/Qgp0vlCanzTWdn+LUW2Eth+swVUwyUDHQlZjUeiS8gSH8p45+loabdqkaXpNPhwFh8n/YJmTecjtFygnlA4OaAk5qU0rzr2VrA5Lt8bwsLw9t7hnRK4dmYIfjRNSbuXPtrWmAekc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwbimzvP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32CC9C4CEC3;
+	Mon, 14 Oct 2024 08:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728895661;
+	bh=zrvtMHe1s04dHvmkw1UtZtAB96rdOnmBrzsn6WfJtjE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JwbimzvPPcmHg5xlEngFWLV6jGmcmcTw0K6OZ3IXR8hT2tqENO4JY7EgO4WHbDAS1
+	 z5rftYaPloX1HdMBqdTS/x6EmZuUdRbaQddn/Xl7Z0INvyykWixERkWnGldWl3XI1q
+	 RddN2G53A7pYvNeD4GvGVSNLomAv4utC98lqUG9V2R+0lCkcOt0XOEunTknyQGFnnJ
+	 WkC0GcmbiX554BsvQ4q+fHjupOO/Fb111Wz1owK4FF45wfi7dkNJLOr5UvDYlQB9FM
+	 4hAUVP9tOoCmftiQtvgPtJhZ0QOqUivb+/4Te8sFdvnnMhL7Xpg9Tix5LEwoQtviwa
+	 PwgcnTwVn16eQ==
+Message-ID: <9510b546-28fa-4fb4-b06e-0af5f9fd3bbb@kernel.org>
+Date: Mon, 14 Oct 2024 10:47:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,73 +49,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] drm/panic: correctly indent continuation of line in
- list item
-To: =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241012075312.16342-1-witcher@wiredspace.de>
- <20241012075312.16342-5-witcher@wiredspace.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20241012075312.16342-5-witcher@wiredspace.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 2/2] media: dt-bindings: Use additionalProperties: false
+ for endpoint: properties:
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Martin Kepplinger <martink@posteo.de>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ "Paul J. Murphy" <paul.j.murphy@intel.com>,
+ Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+ Tommaso Merciai <tomm.merciai@gmail.com>,
+ Martin Hecht <martin.hecht@avnet.eu>, Zhi Mao <zhi.mao@mediatek.com>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Mikhail Rudenko <mike.rudenko@gmail.com>,
+ Ricardo Ribalda <ribalda@kernel.org>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Umang Jain <umang.jain@ideasonboard.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Dongchun Zhu <dongchun.zhu@mediatek.com>,
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+ Todor Tomov <todor.too@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
+ <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-2-a2bb12a1796d@linaro.org>
+ <7ecxjoa7aije46cxmkyfd6ihxnqw4wleqkioddomxbwlu7qtrc@4dkfitppeksu>
+ <6f461cb3-3a41-4a3d-b9b2-71b1c6be77f7@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <6f461cb3-3a41-4a3d-b9b2-71b1c6be77f7@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 12/10/2024 09:52, Thomas Böhler wrote:
-> It is common practice in Rust to indent the next line the same amount of
-> space as the previous one if both belong to the same list item. Clippy
-> checks for this with the lint `doc_lazy_continuation`.
+On 14/10/2024 10:31, Bryan O'Donoghue wrote:
+> On 14/10/2024 08:45, Krzysztof Kozlowski wrote:
+>> I do not understand the reasoning behind this change at all. I don't
+>> think DT maintainers ever suggested it (in fact, rather opposite:
+>> suggested using unevaluatedProps) and I think is not a consensus of any
+>> talks.
 > 
-> error: doc list item without indentation
->     --> drivers/gpu/drm/drm_panic_qr.rs:979:5
->      |
-> 979 | /// conversion to numeric segments.
->      |     ^
->      |
->      = help: if this is supposed to be its own paragraph, add a blank line
->      = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#doc_lazy_continuation
->      = note: `-D clippy::doc-lazy-continuation` implied by `-D warnings`
->      = help: to override `-D warnings` add `#[allow(clippy::doc_lazy_continuation)]`
-> help: indent this line
->      |
-> 979 | ///   conversion to numeric segments.
->      |     ++
+> No there is not but then, how do you give consistent feedback except 
+> proposing something to be a baseline.
 > 
-> Indent the offending line by 2 more spaces to remove this Clippy error.
+> On the one hand you have upstream additionalProperties: false and 
+> unevaluatedProperites: false - it'd be better to have a consistent 
+> message on which is to be used.
 
-Thanks, it looks good to me.
+Well, I am afraid that push towards additionalProps will lead to grow
+common schema (video-interface-devices or video-interfaces) into huge
+one-fit-all binding. And that's not good.
 
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+If a common binding for a group of devices encourages you to list its
+subset, then it is not that common.
 
-> 
-> Reported-by: Miguel Ojeda <ojeda@kernel.org>
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1123
-> Signed-off-by: Thomas Böhler <witcher@wiredspace.de>
-> ---
->   drivers/gpu/drm/drm_panic_qr.rs | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index 5b2386a515fa..58c46f366f76 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -976,7 +976,7 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
->   /// * `url_len`: Length of the URL.
->   ///
->   /// * If `url_len` > 0, remove the 2 segments header/length and also count the
-> -/// conversion to numeric segments.
-> +///   conversion to numeric segments.
->   /// * If `url_len` = 0, only removes 3 bytes for 1 binary segment.
->   #[no_mangle]
->   pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
+Solution is to fix that, e.g. split it per classes of devices.
+
+Or don't care and use unevaluatedProps because it makes people's life
+easier and is still correct. If it is not correct, then this should be
+used as an argument.
+
+Best regards,
+Krzysztof
 
 
