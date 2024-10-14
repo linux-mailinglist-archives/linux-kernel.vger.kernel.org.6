@@ -1,167 +1,249 @@
-Return-Path: <linux-kernel+bounces-363929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D157F99C89A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:20:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF7A99C8F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CDA288DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:20:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3668B2AE38
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CCC1ABEA1;
-	Mon, 14 Oct 2024 11:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE0F1A7AE3;
+	Mon, 14 Oct 2024 11:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l9OUfd6J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ve6xDzpA"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA731AB6E6;
-	Mon, 14 Oct 2024 11:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931E41AB6ED
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728904575; cv=none; b=IYTDyeQ9s3xWK9och9NgxBy9ocQMSQ9j3lwm6M0uRXc8UugnbA8thpRHglDUOVNMrnA0BI40uwAwrldxeW7dcMIlPLoyX/u8EwrmyRwEGWzqAihavi1dcF2AwqVzwQyld505Y4dlvfQf3bHKBck3LC0bLGEh9P2IB77NcSnuOlg=
+	t=1728904596; cv=none; b=oF+P1EablG/NkomYIkoMkk+kebnvxBpoUkPO8s7T4cKRNEfnxx94khMO2a+hh4EHbSnLRxIq7OSuV3Bf4qy7afmEr9C86m0I3Hny315yuj6kGjCfSe9KoXROd3DcPOXqexKUxKgp8tFIwDDArFuVX3RtwRH3SKYklkI6NGnGZas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728904575; c=relaxed/simple;
-	bh=diqbe8v7QmoEpj4SUWtjif2WUvBD6+uTDFf6w7M0FM8=;
+	s=arc-20240116; t=1728904596; c=relaxed/simple;
+	bh=q8xn13G2JLnINWn7XM/JZSqwR/jIxOEPsASBJ+UhOFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhAQFG8+l1SD8w70SwFVEj6XMyoYsu6FoToxNTVD2g4dwFhXAOPxQt0xP8LmWn6oQI88/YN8egyIBBfMysMHOzA/OexgUEYCfbMrhx4UZG6xa0zlG9SPw1JaJ7NOdX4pUMUKGn++0vLQO4xdtoWd6lF+v5UyrZkroZahNRROT4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l9OUfd6J; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728904574; x=1760440574;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=diqbe8v7QmoEpj4SUWtjif2WUvBD6+uTDFf6w7M0FM8=;
-  b=l9OUfd6JWf3ykrdmBQjDgJeYibGj/VEhJKvZGcOYfOVAz+Uxm6pZ1myu
-   mrzvEvV91Ly/Rox6g4hVhiwt3mmiHJM8pTK//b3MGyYG2fJyqOB/f9rTo
-   pxzy9lt6YTH/ZSgCSTUj7wN3TfKlvAJvJIk0YLwgJSOI2hiRcLAjZKFSC
-   CV5uGZ1iU95HRplradipscc0ZgjWZ88pp9f1jZcjKcwaWtkNCTYMWBnKO
-   okzBAdLoPyLgK4pUwdc4okbmoOczm1UXO72KE51A0bhMzkC0EtA8+vXMG
-   1KTBdO0hrTyun6QYW/3xjgeKyexyArWkeMIEoN/TbEZppZmoWN1T9TAqA
-   Q==;
-X-CSE-ConnectionGUID: ZjoftGdhT2qBfphbjwhsQA==
-X-CSE-MsgGUID: +qeTcIC/QgWWOSu7LOD83w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="45721216"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="45721216"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:16:14 -0700
-X-CSE-ConnectionGUID: F7kxP5ktT96AFNZ0M+Zjdg==
-X-CSE-MsgGUID: 14W+s8UkRyyg6QVnDq6lyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="77171383"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:16:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t0J3W-00000002sPr-1VL8;
-	Mon, 14 Oct 2024 14:16:06 +0300
-Date: Mon, 14 Oct 2024 14:16:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v8 4/8] i2c: Introduce OF component probe function
-Message-ID: <Zwz9djqb0Q6Ujmo_@smile.fi.intel.com>
-References: <20241008073430.3992087-1-wenst@chromium.org>
- <20241008073430.3992087-5-wenst@chromium.org>
- <ZwfvuA2WhD_0P3gL@smile.fi.intel.com>
- <CAGXv+5Hm62hFsF27B-cEWTJ_AKrhcfCPaqR7BxmpwnjABzwHTQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7vkHddGzDZvcB4WWuwomtwu+rM/rMGwW1kiHmg/ow2hZrU/gILlLdpHE7Sm1OwIyZBwPy/cNAKD/SSKJ4rF7+3qNpOrMJZTMSISBtJajv8s23tTpu5gFE3w7l6eAr1XkzCpbVqA0zWQC/zXozYm3iqZ2DeVDlYozgSSUGsVeMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ve6xDzpA; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb51f39394so6376891fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:16:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728904593; x=1729509393; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6iKMYh9oSOiPHX5MB8zVYm5Uz7Q4gZEo4Fjhxbd/uKo=;
+        b=ve6xDzpA2y7WtmUBJet57yxraZQdz8FAyydO1mjxXlpRi5D3+DipI+MK+zS5WZGphZ
+         9fvx2y5XTwN6FJXamrqyzEiR6JpXJbEEk23bs0gXFWrVyiC3vWusA61jcggBSptgAw+U
+         RD+657zwYeYyk4dHkVVTmMFVzQYVScXCrHuTjcNgaMFUoTFSCHEvXBbzcM8d94Mk7iY+
+         oZ95SMbAH0g9OJYztANDhT8gFAEsDskS1Si519Gr59tV8rCQXdINwoUls5YuRCerUjjH
+         UPnViiE9fdI29CcTavgXVC9WfRjb2yO/UK1UAyClQbztdxa2f72PMTrmvyZ+KOpeFYGW
+         PaIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728904593; x=1729509393;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6iKMYh9oSOiPHX5MB8zVYm5Uz7Q4gZEo4Fjhxbd/uKo=;
+        b=tFo3zUly7PlhT2v3NeGd/Utm/YrZYdb5x3vgyANDW+rw/B8IwnFc7mjdOAy8LaDrPL
+         5jVCPmikfFNK9eaHpKjr0wogD5zLeVqSIR7s4ywjtKys91UrwB9RmhPw/Rzi/rxU4Hqm
+         40hWfzXX5CaT1BEG8KrlW2v1355GMA+Rj3oVzbV9s0HEhCq9xdXPisBUlvp5NsP7uL4G
+         xhvmrHjpRM8eVjYPbVINM6lXsh0GINKb96rZQ+zxDXzeNusle9NE6hv/lvEIDNYCmfYF
+         DMaCjaVBoyGcEPHSPtOfO/2HUY+gxZ8dKBu/ELyySIL0eIg8wSt4JOCLv3REATv1pYn1
+         9ENQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB6UgYqBrCSehyoZIi21oz7qAxBmGUqbmBr99jLSEKmEmsVIXHRuxXF/vMuOHWQE1+l6d6aNQmIUKc2gM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws5tT62/+vjLEt/NUxTOxJFqvn/8m3Fp2K+ToHVxQDjQTBQ/4K
+	oXDVRUOwwveW0g2p+ObtsPIAYkNETOs/89BguF9UZ9IeLFPOoVE+exi2am11wxI=
+X-Google-Smtp-Source: AGHT+IFyRE26TjB4tT/MsFr8imPfDicH3NsN5nWBwmwpqRjbY5FCggbJmvwRTRVlwm6RGPRd3jbmvQ==
+X-Received: by 2002:a2e:e19:0:b0:2f5:2e2:eadf with SMTP id 38308e7fff4ca-2fb3270ab14mr38619491fa.10.1728904592591;
+        Mon, 14 Oct 2024 04:16:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb50148d25sm3695571fa.97.2024.10.14.04.16.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 04:16:31 -0700 (PDT)
+Date: Mon, 14 Oct 2024 14:16:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Liu Ying <victor.liu@nxp.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>, 
+	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"simona@ffwll.ch" <simona@ffwll.ch>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
+	"tzimmermann@suse.de" <tzimmermann@suse.de>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, 
+	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, 
+	"arnd@arndb.de" <arnd@arndb.de>, "nfraprado@collabora.com" <nfraprado@collabora.com>, 
+	"o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "y.moog@phytec.de" <y.moog@phytec.de>, 
+	"marex@denx.de" <marex@denx.de>, "isaac.scott@ideasonboard.com" <isaac.scott@ideasonboard.com>
+Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS
+ to HDMI converter
+Message-ID: <p42wdftkplib2c3hrnobinhytglok53cunqywtbcdfcp4gg7cg@4oclcixgcxso>
+References: <20241012073543.1388069-1-victor.liu@nxp.com>
+ <20241012073543.1388069-6-victor.liu@nxp.com>
+ <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
+ <07b47f70-5dab-4813-97fa-388a0c0f42e9@nxp.com>
+ <dvcdy32dig3w3r3a7eib576zaumsoxw4xb5iw6u6b2rds3zaov@lvdevbyl6skf>
+ <90e0c4ac-1636-4936-ba40-2f7693bc6b32@nxp.com>
+ <TY3PR01MB11346530A53C8085561713B6086442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <ki7zj2qvf64oi45kcnxl4maoxfvxtawko3vcdikg7dc5q6gw7u@5obyfvyylb3w>
+ <TY3PR01MB113463A0E53DAA7481926219186442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5Hm62hFsF27B-cEWTJ_AKrhcfCPaqR7BxmpwnjABzwHTQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <TY3PR01MB113463A0E53DAA7481926219186442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-On Mon, Oct 14, 2024 at 11:53:47AM +0800, Chen-Yu Tsai wrote:
-> On Thu, Oct 10, 2024 at 11:16 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Tue, Oct 08, 2024 at 03:34:23PM +0800, Chen-Yu Tsai wrote:
+On Mon, Oct 14, 2024 at 08:09:44AM +0000, Biju Das wrote:
+> Hi Dmitry,
+> 
+> > -----Original Message-----
+> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Sent: Monday, October 14, 2024 9:04 AM
+> > Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS to HDMI converter
+> > 
+> > On Mon, Oct 14, 2024 at 07:39:16AM +0000, Biju Das wrote:
+> > > Hi Liu and Dmitry,
+> > >
+> > > > -----Original Message-----
+> > > > From: Liu Ying <victor.liu@nxp.com>
+> > > > Sent: Monday, October 14, 2024 6:34 AM
+> > > > Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE
+> > > > IT6263 LVDS to HDMI converter
+> > > >
+> > > > On 10/14/2024, Dmitry Baryshkov wrote:
+> > > > > On Sat, Oct 12, 2024 at 05:14:13PM +0800, Liu Ying wrote:
+> > > > >> On 10/12/2024, Dmitry Baryshkov wrote:
+> > > > >>> On Sat, Oct 12, 2024 at 03:35:39PM +0800, Liu Ying wrote:
+> > > > >>>> Document ITE IT6263 LVDS to HDMI converter.
+> > > > >>>>
+> > > > >>>> Product link:
+> > > > >>>> https://www.ite.com.tw/en/product/cate1/IT6263
+> > > > >>>>
+> > > > >>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> > > > >>>> ---
+> > > > >>>> v2:
+> > > > >>>> * Document number of LVDS link data lanes.  (Biju)
+> > > > >>>> * Simplify ports property by dropping "oneOf".  (Rob)
+> > > > >>>>
+> > > > >>>>  .../bindings/display/bridge/ite,it6263.yaml   | 276 ++++++++++++++++++
+> > > > >>>>  1 file changed, 276 insertions(+)  create mode 100644
+> > > > >>>> Documentation/devicetree/bindings/display/bridge/ite,it6263.yam
+> > > > >>>> l
+> > > > >>>>
+> > > > >>>> diff --git
+> > > > >>>> a/Documentation/devicetree/bindings/display/bridge/ite,it6263.y
+> > > > >>>> aml
+> > > > >>>> b/Documentation/devicetree/bindings/display/bridge/ite,it6263.y
+> > > > >>>> aml
+> > > > >>>> new file mode 100644
+> > > > >>>> index 000000000000..bc2bbec07623
+> > > > >>>> --- /dev/null
+> > > > >>>> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it62
+> > > > >>>> +++ 63.y
+> > > > >>>> +++ aml
+> > > > >>>> @@ -0,0 +1,276 @@
+> > > > >>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > >>>> +%YAML
+> > > > >>>> +1.2
+> > > > >>>> +---
+> > > > >>>> +$id:
+> > > > >>>> +http://devicetree.org/schemas/display/bridge/ite,it6263.yaml#
+> > > > >>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > >>>> +
+> > > > >>>> +title: ITE IT6263 LVDS to HDMI converter
+> > > > >>>> +
+> > > > >>>> +maintainers:
+> > > > >>>> +  - Liu Ying <victor.liu@nxp.com>
+> > > > >>>> +
+> > > > >>>> +description: |
+> > > > >>>> +  The IT6263 is a high-performance single-chip
+> > > > >>>> +De-SSC(De-Spread
+> > > > >>>> +Spectrum) LVDS
+> > > > >>>> +  to HDMI converter.  Combined with LVDS receiver and HDMI
+> > > > >>>> +1.4a transmitter,
+> > > > >>>> +  the IT6263 supports LVDS input and HDMI 1.4 output by conversion function.
+> > > > >>>> +  The built-in LVDS receiver can support single-link and
+> > > > >>>> +dual-link LVDS inputs,
+> > > > >>>> +  and the built-in HDMI transmitter is fully compliant with
+> > > > >>>> +HDMI 1.4a/3D, HDCP
+> > > > >>>> +  1.2 and backward compatible with DVI 1.0 specification.
+> > > > >>>> +
+> > > > >>>> +  The IT6263 also encodes and transmits up to 8 channels of
+> > > > >>>> + I2S digital audio,  with sampling rate up to 192KHz and
+> > > > >>>> + sample size up to 24 bits. In addition,  an S/PDIF input port
+> > > > >>>> + takes in compressed audio of up to 192KHz
+> > > > frame rate.
+> > > > >>>> +
+> > > > >>>> +  The newly supported High-Bit Rate(HBR) audio by HDMI
+> > > > >>>> + specifications v1.3 is  provided by the IT6263 in two interfaces:
+> > > > >>>> + the four I2S input ports or the  S/PDIF input port.  With
+> > > > >>>> + both interfaces the highest possible HBR frame rate  is supported at up to 768KHz.
+> > > > >>>> +
+> > > > >>>> +properties:
+> > > > >>>
+> > > > >>> No LVDS data-mapping support?
+> > > > >>
+> > > > >> It is enough to document number of LVDS link data lanes because
+> > > > >> OS should be able to determine the data-mapping by looking at the
+> > > > >> number and the data-mapping capability of the other side of the LVDS link.
+> > > > >
+> > > > > From what I can see, data-mapping is specified on the consumer
+> > > > > sink side of the LVDS link. This means it should go to the bridge's device node.
+> > > >
+> > > > Then, I won't define data-lanes, because data-mapping implies it,
+> > > > e.g., jeida-24 implies data lanes 0/1/2/3, see lvds-data-mapping.yaml.
+> > > >
+> > > > Please let me know which one you prefer.
+> > >
+> > > Assume a top level use case where a user changes the format from JEDAI
+> > > to VESA using On screen display or modetest(if some one adds support
+> > > for lvds-mapping) then setting of the lvds data mapping should be dynamic.
+> > >
+> > > Maybe for initial version hardcode with JEDAI or VESA as default and
+> > > provide a way to override the host driver and bridge with requested lvds-data mapping dynamically
+> > later??
+> > 
+> > The ite,lvds-link-num-data-lanes property should be removed, it is not standard. I foresee two ways to
+> > specify the number of lanes used: either the data-lanes property or the data-mapping property. Granted
+> > that data-mapping replaces the data-lanes functionality for LVDS links, I think it's better to use it
+> > from the start.
+> > 
+> > Frankly speaking, what is the usecase for specifying the data mapping dynamically? What kind of uAPI
+> > do you have in mind and what is the usecase for it?
+> 
+> It simple just want to change from VESA to JEDAI, how do you change it with existing DRM framework?
 
-...
+Why do you want to change it on the fly?
 
-> > Fresh reading of the commit message make me think why the firmware or
-> > bootloader on such a device can't form a dynamic OF (overlay?) to fulfill
-> > the need?
+> Currently I see LVDS panel driver use drm_of_lvds_get_data_mapping(bus_node) to get this info.
+> IT6263 bridge device can use that API to get that info.
 > 
-> The firmware / bootloader on existing devices are practically not upgradable.
-> On the other hand, the kernel is very easy to upgrade or swap out.
-> 
-> For said shipped devices, there is also nothing to key the detection
-> off of besides actually powering things up and doing I2C transfers,
-> which takes time that the firmware has little to spare. We (ChromeOS)
-> require that the bootloader jump into the kernel within 1 second of
-> power on. That includes DRAM calibration, whatever essential hardware
-> initialization, and loading and uncompressing the kernel. Anything
-> non-essential that can be done in the kernel is going to get deferred
-> to the kernel.
-> 
-> Also, due to project timelines oftentimes the devices are shipped with a
-> downstream kernel with downstream device trees. We don't want to tie the
-> firmware too tightly to the device tree in case the downstream stuff gets
-> reworked when upstreamed.
+> Some vendors use VESA as default LVDS data mapping whereas some others use JEDAI.
 
-Okay, I was always under impression that DT has at least one nice feature in
-comparison with ACPI that it can be replaced / updated in much quicker /
-independent manner. What you are telling seems like the same issue that
-ACPI-based platforms have. However, there they usually put all possible devices
-into DSDT and firmware enables them via run-time (ACPI) variables. Are you
-trying to implement something similar here?
+I think this is logical. Bus format is set by the system design
+constraints. In theory one can use buf format negotiation for the same
+purpose.
 
-...
-
-> > Another question is that we have the autoprobing mechanism for I2C for ages,
-> > why that one can't be (re-)used / extended to cover these cases?
 > 
-> I haven't looked into it very much, but a quick read of
-> Documentation/i2c/instantiating-devices.rst suggests that it's solving
-> a different problem?
-> 
-> In our case, we know that it is just one of a handful of possible
-> devices that we already described in the device tree. We don't need
-> to probe the full address range nor the full range of drivers. We
-> already have a hacky workaround in place, but that mangles the
-> device tree in a way that doesn't really match the hardware.
-> 
-> The components that we are handling don't seem to have any hardware
-> ID register, nor do their drivers implement the .detect() callback.
-> There's also power sequencing (regulator and GPIO lines) and interrupt
-> lines from the device tree that need to be handled, something that is
-> missing in the autoprobe path.
-> 
-> Based on the above I don't think the existing autoprobe is a good fit.
-> Trying to shoehorn it in is likely going to be a mess.
-> 
-> Doug's original cover letter describes the problem in more detail,
-> including why we think this should be done in the kernel, not the
-> firmware:
-> https://lore.kernel.org/all/20230921102420.RFC.1.I9dddd99ccdca175e3ceb1b9fa1827df0928c5101@changeid/
-
-Perhaps it needs to be summarised to cover at least this question along with
-the above?
+> Cheers,
+> Biju
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
