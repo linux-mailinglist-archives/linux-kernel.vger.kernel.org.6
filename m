@@ -1,136 +1,311 @@
-Return-Path: <linux-kernel+bounces-364752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CB899D8D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:15:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E21A99D8DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B811C2133C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:15:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C090FB21DE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9340C156661;
-	Mon, 14 Oct 2024 21:15:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6121D0940;
+	Mon, 14 Oct 2024 21:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HswkXmlM"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8E61D5AA7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C560714B965
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728940506; cv=none; b=bTS+2yNIKDwODIclUad2P/2gfgr0pZswuPSXklsnfKGhajcBDzYP9lwT/qXKDaMIysvz3xcPS/JVhh9oGeunMuNqYR2K+tJoRyqsnqtmFkzERbQMb86uPsqPN1trN00dcLosLxizNJeLeDXLf2c+I3uh+dce8o/WOPwdInI/BII=
+	t=1728940565; cv=none; b=dRB/BX1V0Pm+mBSUxiwE3zC9X2aE77oOXautlWt6jR2GMDuuHmA4Jahqb0OUz0kMy7wTwUMCHcsQcpzuIai9cD3O9sHfBn68rO5yS5B7GQbZboIZQY4Sf1hJD3v6YOFeKtCmkPFXkHpr8fug/GU4SU2nTmD3zDp0Vi7yH2ksT0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728940506; c=relaxed/simple;
-	bh=EZ0v7J4oOMcOslFf4bKPZhcYqjd8zK4BtPViPW+0F9w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dCsk0p8muu2J03Cagzrd7fDO50R4V7d+w41IHIh7AJ3cCVhhZhOgAULb8HlhyBKJajD6Wq6pVsavTF3jATHFtuujD6nMORYEocWexsr8S6x4wtIJe47oYl/KCceFJorYq5Sys41l0o6ZZH09dihJOQ4ZAORkBZNfXvgUgTghNOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3cb771556so22026955ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:15:03 -0700 (PDT)
+	s=arc-20240116; t=1728940565; c=relaxed/simple;
+	bh=PNT7KmUtldzIpqspy3EtJ7aA4bhnVjw/L9lrwheULCc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d0GBKCpmPgJ2CjKMZbfN4wmrGyMOr8fxIsZQwbI9ke5n3HZHb34Cykmd4Q2Ae8edeZ9CBzhGFw/+SDoNMU6wzo+eSXGQpuGihQtZrHxTPuMTxbdIr/JTDN3oR7lc37dNHF3d+JvPG7JxU9Povchexp7myleSkjFiCiIp/QiCeT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HswkXmlM; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-717cf9c6297so1936032a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:16:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728940563; x=1729545363; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0ce1GIY1b6+RwP6V6COJLCd1pwfwJxZLHizCPmeaNRY=;
+        b=HswkXmlMSHQqDixI/URpYfrGwfL+VOp8akS/SfMwOJMb6YzApTv7eaGc5lyGdPKu89
+         aDnYF/J9WTGo6WFAXXDZHoqW77mNMIdOSp/bHroPTWhcpEIfkoRP/1dFVH/1ZQHVTbQn
+         xbz+a2XX6LKVnWj93oJS3xtanlo5haRTKIxmaWZ0TuRzPR1AVGuegDxpkHtT3NsGrxG7
+         wIyQ2HjYgpAxZtI3/SkslPcBYwHWfIrzBnOs/LnjFmWYedeVsN0kjVfDwL4v+4FNEE64
+         jMxHQ/BtWjPA95B051U9wW3NXlKUanDvb4/gp2EuzN6FR9F9dOdwRRpelsdL4DDlWV55
+         QG2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728940503; x=1729545303;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1728940563; x=1729545363;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JbtytKxPtWo8qGp6PSNI1VKdxYyCl07qstxWqw8lXnM=;
-        b=HSqGcp3tS1NSMqmHlP/l3PuZxf0ovQ2y4yyvFpUpQnqtIK3sYBEpE3oVep5BYSStey
-         k19HbLxvZMgsNxFplKpwdMh2Cs6ikUGenEG+J2b3n+mS2gx4Ub3x7PV669y1sTAbI0Cd
-         9JgtG+xUTaM7BJGs3YCECNVkVzrvzbPj2MIvtPIsTr4TC+XdggO/q8q0Ke6xes8n63cp
-         I7uQUcp1EOG8Db621qeSrxrKWLgo2WT51FkOSQ+hxiAto6bfSkf1hR88/S6KFp+AY9/O
-         BFMJB+IxZv2rPPZDtSYXHqLHagcX9HDROeqSGYeKGDWaswJYaqPRxB2EmTbJaoIwj7YP
-         RX3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWyGGcOk+mP07Lt+kLXAMOskCYaOEhzUBYlJY+EriyPNwtLzrnrK0S4f8BtnL4nRFct48fIKanfqmtvG4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxiosBwLEziv8voXtGHLhJ27B7pfU3JlNwxooJN8cbNajY/qTW
-	EA6MVS7YE5dYpW3plsLlKZcb+fS6zinC8IU4rSRxMUgXZHprGzO564EdrMkokuh+Wa2Fn9qsl79
-	yLiYqkhCrUVpR82uoPAA1Iv4LUj6ZcPv6fInoby//DK8ltJJshHIaJac=
-X-Google-Smtp-Source: AGHT+IGrsZwrxcJrRmY2ubbDLziXaeejHf4eUJb1ONBndHg/ZQzSMOowXsKgTgtDAA5/aGB/zNoeHllgoly2vP75azbbKCMP2L6R
+        bh=0ce1GIY1b6+RwP6V6COJLCd1pwfwJxZLHizCPmeaNRY=;
+        b=OvNaD4AnYLRBN/QbHiSz9IePqdJaxmlMjl2/hG4cQsJpfNyeLT3XxcSZUUA7n7KUO3
+         fo0iduQoWiMID7A1Ay9W34U2qCAOuQyEI4LzlKHBe4WYx/6OO7KhiCFjqaNlvMstjvEA
+         I+t1rSbqIIQAYwGa793FpsTuUNMDTntHjcZXMxfwgqp/BbnPVXolZ8nJGABzdr4JpVkx
+         VfSxukHKfSYifS7F9RhcIUtsjtyvSIqqPlHff+G16Z+MuDASklz9BMeTeK5T+eniAQwO
+         JV4omDCi4Wz81snIXthiOE4FeoWF54fPUVffKfsHwbJBbHpmYRn8GAjQyy0Qg6hlXIU+
+         XYsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEvQvG4IJ5wfzj/y37FgEcJYI2nnfp1RjiU9GnQUvFIvwQ5MMmYAWJnJr94cSPF7msFL77YygI+YZ0s2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9w+Bda/H3vClsfmN/43snU+XstsGQbcqYNmRQjRhoUqLvXS7N
+	C4Tck3FObEzg66LwwmoF6SbUqryVRAnJd5LH/UU/w+ukLYCUBlZn9XGCxnP+heo=
+X-Google-Smtp-Source: AGHT+IF+zeQij3RixSt43EFgims8S8GqUMFCrkC+x7dsT3Aw/QPn3T9Eb962SdFHuqYXFtPWShD0lA==
+X-Received: by 2002:a05:6830:4486:b0:717:d0a1:f15b with SMTP id 46e09a7af769-717d640e836mr8899216a34.4.1728940562787;
+        Mon, 14 Oct 2024 14:16:02 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-717d0033a2csm2108717a34.68.2024.10.14.14.15.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 14:16:01 -0700 (PDT)
+Message-ID: <c3d55f78-5a54-49f8-b6a1-4ed0f24f8666@baylibre.com>
+Date: Mon, 14 Oct 2024 16:15:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1385:b0:3a2:7651:9864 with SMTP id
- e9e14a558f8ab-3a3bcdc6befmr68290185ab.12.1728940503359; Mon, 14 Oct 2024
- 14:15:03 -0700 (PDT)
-Date: Mon, 14 Oct 2024 14:15:03 -0700
-In-Reply-To: <457510ec-d103-4fe9-82bd-293e66f48be6@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670d89d7.050a0220.3798c8.0131.GAE@google.com>
-Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
- dereference in read_cache_folio
-From: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 7/8] iio: dac: ad3552r: add high-speed platform driver
+To: Angelo Dureghello <adureghello@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+ <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/14/24 5:08 AM, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Add High Speed ad3552r platform driver.
+> 
 
-syzbot tried to test the proposed patch but the build/boot failed:
+...
 
-kernel clean failed: failed to run ["make" "-j" "0" "ARCH=arm64" "CROSS_COMPILE=aarch64-linux-gnu-" "distclean"]: exit status 2
-make: the '-j' option requires a positive integer argument
-Usage: make [options] [target] ...
-Options:
-  -b, -m                      Ignored for compatibility.
-  -B, --always-make           Unconditionally make all targets.
-  -C DIRECTORY, --directory=DIRECTORY
-                              Change to DIRECTORY before doing anything.
-  -d                          Print lots of debugging information.
-  --debug[=FLAGS]             Print various types of debugging information.
-  -e, --environment-overrides
-                              Environment variables override makefiles.
-  -E STRING, --eval=STRING    Evaluate STRING as a makefile statement.
-  -f FILE, --file=FILE, --makefile=FILE
-                              Read FILE as a makefile.
-  -h, --help                  Print this message and exit.
-  -i, --ignore-errors         Ignore errors from recipes.
-  -I DIRECTORY, --include-dir=DIRECTORY
-                              Search DIRECTORY for included makefiles.
-  -j [N], --jobs[=N]          Allow N jobs at once; infinite jobs with no arg.
-  -k, --keep-going            Keep going when some targets can't be made.
-  -l [N], --load-average[=N], --max-load[=N]
-                              Don't start multiple jobs unless load is below N.
-  -L, --check-symlink-times   Use the latest mtime between symlinks and target.
-  -n, --just-print, --dry-run, --recon
-                              Don't actually run any recipe; just print them.
-  -o FILE, --old-file=FILE, --assume-old=FILE
-                              Consider FILE to be very old and don't remake it.
-  -O[TYPE], --output-sync[=TYPE]
-                              Synchronize output of parallel jobs by TYPE.
-  -p, --print-data-base       Print make's internal database.
-  -q, --question              Run no recipe; exit status says if up to date.
-  -r, --no-builtin-rules      Disable the built-in implicit rules.
-  -R, --no-builtin-variables  Disable the built-in variable settings.
-  -s, --silent, --quiet       Don't echo recipes.
-  --no-silent                 Echo recipes (disable --silent mode).
-  -S, --no-keep-going, --stop
-                              Turns off -k.
-  -t, --touch                 Touch targets instead of remaking them.
-  --trace                     Print tracing information.
-  -v, --version               Print the version number of make and exit.
-  -w, --print-directory       Print the current directory.
-  --no-print-directory        Turn off -w, even if it was turned on implicitly.
-  -W FILE, --what-if=FILE, --new-file=FILE, --assume-new=FILE
-                              Consider FILE to be infinitely new.
-  --warn-undefined-variables  Warn when an undefined variable is referenced.
+> +static int ad3552r_hs_read_raw(struct iio_dev *indio_dev,
+> +			       struct iio_chan_spec const *chan,
+> +			       int *val, int *val2, long mask)
+> +{
+> +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ: {
+> +		int sclk;
+> +
+> +		ret = iio_backend_read_raw(st->back, chan, &sclk, 0,
+> +					   IIO_CHAN_INFO_FREQUENCY);
 
-This program built for x86_64-pc-linux-gnu
-Report bugs to <bug-make@gnu.org>
+FWIW, this still seems like an odd way to get the stream mode SCLK
+rate from the backend to me. How does the backend know that we want
+the stream mode clock rate and not some other frequency value? 
+
+> +		if (ret != IIO_VAL_INT)
+> +			return -EINVAL;
+> +
+> +		/* Using 4 lanes (QSPI) */
+> +		*val = DIV_ROUND_CLOSEST(sclk * 4 * (1 + st->ddr_mode),
+
+Since DDR is always enabled for buffered reads, I think we should
+always be multiplying by 2 here instead of (1 + st->ddr_mode).
+
+Otherwise the sampling frequency attribute will return the wrong
+value if it is read when a buffered read is not currently in
+progress.
+
+> +					 chan->scan_type.storagebits);
+
+It would probably be more correct to use realbits here instead of
+storagebits. Usually realbits is the bits per word being sent over
+the SPI bus while storagebits can be larger.
+
+> +
+> +		return IIO_VAL_INT;
+> +	}
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = st->data->bus_reg_read(st->back,
+> +				AD3552R_REG_ADDR_CH_DAC_16B(chan->channel),
+> +				val, 2);
+> +		if (ret)
+> +			return ret;
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+
+...
+
+> +static int ad3552r_hs_buffer_postenable(struct iio_dev *indio_dev)
+> +{
+> +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
+> +	struct iio_backend_data_fmt fmt = {
+> +		.type = IIO_BACKEND_DATA_UNSIGNED
+> +	};
+> +	int loop_len, val, err;
+> +
+> +	/* Inform DAC chip to switch into DDR mode */
+> +	err = ad3552r_qspi_update_reg_bits(st,
+> +					   AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+> +					   AD3552R_MASK_SPI_CONFIG_DDR,
+> +					   AD3552R_MASK_SPI_CONFIG_DDR, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Inform DAC IP to go for DDR mode from now on */
+> +	err = iio_backend_ddr_enable(st->back);
+> +	if (err) {
+> +		dev_warn(st->dev, "could not set DDR mode, not streaming");
+> +		goto exit_err;
+> +	}
+> +
+> +	st->ddr_mode = true;
+> +
+> +	switch (*indio_dev->active_scan_mask) {
+> +	case AD3552R_CH0_ACTIVE:
+> +		st->single_channel = true;
+> +		loop_len = 2;
+> +		val = AD3552R_REG_ADDR_CH_DAC_16B(0);
+> +		break;
+> +	case AD3552R_CH1_ACTIVE:
+> +		st->single_channel = true;
+> +		loop_len = 2;
+> +		val = AD3552R_REG_ADDR_CH_DAC_16B(1);
+> +		break;
+> +	case AD3552R_CH0_CH1_ACTIVE:
+> +		st->single_channel = false;
+> +		loop_len = 4;
+> +		val = AD3552R_REG_ADDR_CH_DAC_16B(1);
+> +		break;
+> +	default:
+> +		err = -EINVAL;
+> +		goto exit_err_ddr;
+> +	}
+> +
+> +	err = st->data->bus_reg_write(st->back, AD3552R_REG_ADDR_STREAM_MODE,
+> +				      loop_len, 1);
+
+It would be more logical to set this before switching to DDR mode.
+No need to do a register write with DDR enabled. 
+
+(And would be necessary for Jonathan's hypothetical 2-SPI-controller
+backend.) ;-)
+
+> +	if (err)
+> +		goto exit_err_ddr;
+> +
+> +	err = iio_backend_data_transfer_addr(st->back, val);
+> +	if (err)
+> +		goto exit_err_ddr;
+> +
+> +	err = iio_backend_data_format_set(st->back, 0, &fmt);
+> +	if (err)
+> +		goto exit_err_ddr;
+> +
+> +	err = iio_backend_data_stream_enable(st->back);
+> +	if (err)
+> +		goto exit_err_ddr;
+> +
+> +	return 0;
+> +
+> +exit_err_ddr:
+> +	iio_backend_ddr_disable(st->back);
+
+Does it actually work in this order? In ad3552r_hs_buffer_predisable()
+we call ad3552r_qspi_update_reg_bits() first and then iio_backend_ddr_disable().
+If DDR affects register writes, then it seems like disabling DDR in the
+backend first would cause the register write to disable DDR on the DAC
+to fail. So the order in ad3552r_hs_buffer_predisable() seems correct.
+
+Probably can just drop this part and change all goto exit_err_ddr;
+to goto exit_err;.
+
+> +
+> +exit_err:
+> +	ad3552r_qspi_update_reg_bits(st,
+> +				     AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+> +				     AD3552R_MASK_SPI_CONFIG_DDR,
+> +				     0, 1);
+> +
+> +	iio_backend_ddr_disable(st->back);
+> +
+> +	st->ddr_mode = false;
+> +
+> +	return err;
+> +}
+> +
+> +static int ad3552r_hs_buffer_predisable(struct iio_dev *indio_dev)
+> +{
+> +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
+> +	int err;
+> +
+> +	err = iio_backend_data_stream_disable(st->back);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Inform DAC to set in SDR mode */
+> +	err = ad3552r_qspi_update_reg_bits(st,
+> +					   AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+> +					   AD3552R_MASK_SPI_CONFIG_DDR,
+> +					   0, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	err = iio_backend_ddr_disable(st->back);
+> +	if (err)
+> +		return err;
+> +
+> +	st->ddr_mode = false;
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+> +
+> +#define AD3552R_CHANNEL(ch) { \
+> +	.type = IIO_VOLTAGE, \
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), \
+> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+
+As described in [1], the sampling freq attr should be info_mask_separate
+since it is the sample rate per individual sample, not the sample rate
+per scan.
+
+[1]: https://lore.kernel.org/linux-iio/20240908164940.7c4ffb8a@jic23-huawei/
 
 
-
-Tested on:
-
-commit:         eca631b8 Merge tag 'f2fs-6.12-rc4' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ba9c4620d9519d1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
-compiler:       
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10db8030580000
-
+> +	.output = 1, \
+> +	.indexed = 1, \
+> +	.channel = (ch), \
+> +	.scan_index = (ch), \
+> +	.scan_type = { \
+> +		.sign = 'u', \
+> +		.realbits = 16, \
+> +		.storagebits = 16, \
+> +		.endianness = IIO_BE, \
+> +	} \
+> +}
+> +
 
