@@ -1,178 +1,270 @@
-Return-Path: <linux-kernel+bounces-363673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C8699C57D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF1399C580
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6691F228AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:23:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EFAB1F23C94
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53AF158870;
-	Mon, 14 Oct 2024 09:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27515B104;
+	Mon, 14 Oct 2024 09:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xlnaw9yB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbHXaWex"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED98215534B;
-	Mon, 14 Oct 2024 09:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AD11591E3;
+	Mon, 14 Oct 2024 09:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897708; cv=none; b=sUnJJ2959y8eUBaKOOnzELAI9Bkf/osSFyamyfb2xjjL+dl/DFP/ciidUFeLGxP016pJ2ESsASkUeprzgQ1VmY5s6xDfmxiLAA0gjj8I+DBFAzSH8VGPOvdrs+uJBPRKkB4ff53YbG1X6JgQc0SCQIfu1kwAsYcQk9EK23dmmeM=
+	t=1728897723; cv=none; b=n6BcdHzy55/smgMbCbjzjnNwPA9meqWQ+eZyIVQH7tXNVLSzVUdoCilUjK8AxGW8OfBEUqtJ7KS9YbbGwkPVo/mawz3AvH0InVtySAfN1XUwxG/4DKQ4t1QcbqMWQafr9up+HDL/eeNlc5FCrmvKwbei0haQlVpKkL7PQgXnavY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897708; c=relaxed/simple;
-	bh=AN0bb3Rg8bGlAKwyQat5svfN/yPRf8imdA3o/pMSdfQ=;
+	s=arc-20240116; t=1728897723; c=relaxed/simple;
+	bh=oUasyECg4FzObacLupjjvObgA7tfGWkxHT+TC+1yGPk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Felx6kZiYpKNBkLcIEuIjTwqXpSlk/gbqOphjkzx2dxVNuS8L4+glZl7Y1h7++tvVDHZmSkRA5GtU1GW6670Z5EE3LAr+utPQgWxCUICQzeE8f94h1690/WNk1gBpJKQPpUlKTN8wyF8AFLVzUE4dM2evc6uKbIq8pCJCLQwU98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xlnaw9yB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D860DC4CEC3;
-	Mon, 14 Oct 2024 09:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728897707;
-	bh=AN0bb3Rg8bGlAKwyQat5svfN/yPRf8imdA3o/pMSdfQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=gtDIO9agXrMytSfXMPnXrNADFTk/NleuhFXp/5nYslinx1zJw1p1f/+x57ylpINxMNaGaxO56eY/v3zhMRECrOnnKZMHY2Je04E1roRn9i3HrZ3gf7wcFNlP7WHiIqgIi24ca3vfI6Wb7HhN2XZHSwWZz+oyYBrT+ueE0qBElnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbHXaWex; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC3AC4CEC3;
+	Mon, 14 Oct 2024 09:22:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728897723;
+	bh=oUasyECg4FzObacLupjjvObgA7tfGWkxHT+TC+1yGPk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xlnaw9yB/8mQBlpV7fqOGAPzkU12psMr03psuiyFpIrDP9du0aMtgEr28Po8LiDfK
-	 6lSx2LBa9H/72WHiNq/NeV395qGfRtjycvtxw6VZP/ixyR35zbYg9IRTAcR0U7/wLD
-	 0a/pk2ZIoom/hFwa17QZBIpOALPCvFCnh/J/fPnU=
-Date: Mon, 14 Oct 2024 11:21:44 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Guan-Yu Lin <guanyulin@google.com>
-Cc: Thinh.Nguyen@synopsys.com, mathias.nyman@intel.com,
-	stern@rowland.harvard.edu, yajun.deng@linux.dev,
-	sumit.garg@linaro.org, kekrby@gmail.com, oneukum@suse.com,
-	dianders@chromium.org, perex@perex.cz, tiwai@suse.com,
-	niko.mauno@vaisala.com, andreyknvl@gmail.com,
-	christophe.jaillet@wanadoo.fr, tj@kernel.org,
-	stanley_chang@realtek.com, quic_jjohnson@quicinc.com,
-	ricardo@marliere.net, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-	badhri@google.com, albertccwang@google.com, quic_wcheng@quicinc.com,
-	pumahsu@google.com
-Subject: Re: [PATCH v5 5/5] usb: host: enable sideband transfer during system
- sleep
-Message-ID: <2024101432-dollar-untrue-d366@gregkh>
-References: <20241014085816.1401364-1-guanyulin@google.com>
- <20241014085816.1401364-6-guanyulin@google.com>
+	b=UbHXaWexNkFk1Edhb6b1Fp7cfwIRRbsMGl/2PvmVIqAOQIKxwlxFZN5oKxhG7QJgw
+	 OtfqXhQunhfedm5BhVOMYFaxfYhTrnGuB0FtlndDBXnUcq/sxXBrbBPwh9mmWVZs96
+	 05mDtc5KDDDUPmmHxMdPfJWNU1ePzsXLrmznNl3ACUa1WbGmPlW1vRxS+xBxlIoHco
+	 hq8bh4vZ4chpPWiKs8JLBTCjtqgTCGC7bRwIvBzDH+6WCmYQ58ft/s+dO0G/Gm61dh
+	 0/h983VMnI7vCsTwQLqfIP/DxwFtuasDYAQEXWIL7ty8QL0HRqcHZCeRvzzMDvR9/7
+	 ghpZ2TdYYOQ6w==
+Date: Mon, 14 Oct 2024 11:22:00 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	catalin.marinas@arm.com, will@kernel.org, quic_bjorande@quicinc.com, 
+	geert+renesas@glider.be, dmitry.baryshkov@linaro.org, arnd@arndb.de, 
+	nfraprado@collabora.com, o.rempel@pengutronix.de, y.moog@phytec.de
+Subject: Re: [PATCH 4/8] drm/bridge: fsl-ldb: Use clk_round_rate() to
+ validate "ldb" clock rate
+Message-ID: <20241014-meteoric-acrid-corgi-f81a04@houat>
+References: <20240930052903.168881-1-victor.liu@nxp.com>
+ <20240930052903.168881-5-victor.liu@nxp.com>
+ <2on4bu5jsxvaxckqz3wouwrf2z6nwbtv34ek4xda2dvobqhbsf@g7z7kxq5xrxi>
+ <5fb80bf6-96be-4654-bd54-dc4f1d5136ae@nxp.com>
+ <20241011-mottled-translucent-dodo-8877e6@houat>
+ <6be9d2ac-7e0b-4b6a-885d-ad40158a2998@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="w45doemgv4va56xv"
+Content-Disposition: inline
+In-Reply-To: <6be9d2ac-7e0b-4b6a-885d-ad40158a2998@nxp.com>
+
+
+--w45doemgv4va56xv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241014085816.1401364-6-guanyulin@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 08:50:29AM +0000, Guan-Yu Lin wrote:
-> Sharing a USB controller with another entity via xhci-sideband driver
-> creates power management complexities. To prevent the USB controller
-> from being inadvertently deactivated while in use by the other entity, a
-> usage-count based mechanism is implemented. This allows the system to
-> manage power effectively, ensuring the controller remains available
-> whenever needed.
-> 
-> Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
-> ---
->  drivers/usb/core/driver.c         | 10 ++++++++++
->  drivers/usb/core/hcd.c            |  1 +
->  drivers/usb/core/usb.c            |  1 +
->  drivers/usb/dwc3/core.c           | 13 +++++++++++++
->  drivers/usb/dwc3/core.h           |  8 ++++++++
->  drivers/usb/host/xhci-plat.c      | 10 ++++++++++
->  drivers/usb/host/xhci-plat.h      |  7 +++++++
->  sound/usb/qcom/qc_audio_offload.c |  3 +++
->  8 files changed, 53 insertions(+)
-> 
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index e713cf9b3dd2..eb85cbb1a2ff 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -1583,6 +1583,11 @@ int usb_suspend(struct device *dev, pm_message_t msg)
->  	struct usb_device	*udev = to_usb_device(dev);
->  	int r;
->  
-> +	if (msg.event == PM_EVENT_SUSPEND && usb_sideband_check(udev)) {
-> +		dev_dbg(dev, "device accessed via sideband\n");
-> +		return 0;
-> +	}
+On Sat, Oct 12, 2024 at 02:18:16PM GMT, Liu Ying wrote:
+> On 10/11/2024, Maxime Ripard wrote:
+> > On Mon, Sep 30, 2024 at 03:55:30PM GMT, Liu Ying wrote:
+> >> On 09/30/2024, Maxime Ripard wrote:
+> >>> On Mon, Sep 30, 2024 at 01:28:59PM GMT, Liu Ying wrote:
+> >>>> Multiple display modes could be read from a display device's EDID.
+> >>>> Use clk_round_rate() to validate the "ldb" clock rate for each mode
+> >>>> in drm_bridge_funcs::mode_valid() to filter unsupported modes out.
+> >>>>
+> >>>> Also, if the "ldb" clock and the pixel clock are sibling in clock
+> >>>> tree, use clk_round_rate() to validate the pixel clock rate against
+> >>>> the "ldb" clock.  This is not done in display controller driver
+> >>>> because drm_crtc_helper_funcs::mode_valid() may not decide to do
+> >>>> the validation or not if multiple encoders are connected to the CRTC,
+> >>>> e.g., i.MX93 LCDIF may connect with MIPI DSI controller, LDB and
+> >>>> parallel display output simultaneously.
+> >>>>
+> >>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> >>>> ---
+> >>>>  drivers/gpu/drm/bridge/fsl-ldb.c | 22 ++++++++++++++++++++++
+> >>>>  1 file changed, 22 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/brid=
+ge/fsl-ldb.c
+> >>>> index b559f3e0bef6..ee8471c86617 100644
+> >>>> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+> >>>> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+> >>>> @@ -11,6 +11,7 @@
+> >>>>  #include <linux/of_graph.h>
+> >>>>  #include <linux/platform_device.h>
+> >>>>  #include <linux/regmap.h>
+> >>>> +#include <linux/units.h>
+> >>>> =20
+> >>>>  #include <drm/drm_atomic_helper.h>
+> >>>>  #include <drm/drm_bridge.h>
+> >>>> @@ -64,6 +65,7 @@ struct fsl_ldb_devdata {
+> >>>>  	u32 lvds_ctrl;
+> >>>>  	bool lvds_en_bit;
+> >>>>  	bool single_ctrl_reg;
+> >>>> +	bool ldb_clk_pixel_clk_sibling;
+> >>>>  };
+> >>>> =20
+> >>>>  static const struct fsl_ldb_devdata fsl_ldb_devdata[] =3D {
+> >>>> @@ -74,11 +76,13 @@ static const struct fsl_ldb_devdata fsl_ldb_devd=
+ata[] =3D {
+> >>>>  	[IMX8MP_LDB] =3D {
+> >>>>  		.ldb_ctrl =3D 0x5c,
+> >>>>  		.lvds_ctrl =3D 0x128,
+> >>>> +		.ldb_clk_pixel_clk_sibling =3D true,
+> >>>>  	},
+> >>>>  	[IMX93_LDB] =3D {
+> >>>>  		.ldb_ctrl =3D 0x20,
+> >>>>  		.lvds_ctrl =3D 0x24,
+> >>>>  		.lvds_en_bit =3D true,
+> >>>> +		.ldb_clk_pixel_clk_sibling =3D true,
+> >>>>  	},
+> >>>>  };
+> >>>> =20
+> >>>> @@ -269,11 +273,29 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
+> >>>>  		   const struct drm_display_info *info,
+> >>>>  		   const struct drm_display_mode *mode)
+> >>>>  {
+> >>>> +	unsigned long link_freq, pclk_rate, rounded_pclk_rate;
+> >>>>  	struct fsl_ldb *fsl_ldb =3D to_fsl_ldb(bridge);
+> >>>> =20
+> >>>>  	if (mode->clock > (fsl_ldb_is_dual(fsl_ldb) ? 160000 : 80000))
+> >>>>  		return MODE_CLOCK_HIGH;
+> >>>> =20
+> >>>> +	/* Validate "ldb" clock rate. */
+> >>>> +	link_freq =3D fsl_ldb_link_frequency(fsl_ldb, mode->clock);
+> >>>> +	if (link_freq !=3D clk_round_rate(fsl_ldb->clk, link_freq))
+> >>>> +		return MODE_NOCLOCK;
+> >>>> +
+> >>>> +	/*
+> >>>> +	 * Use "ldb" clock to validate pixel clock rate,
+> >>>> +	 * if the two clocks are sibling.
+> >>>> +	 */
+> >>>> +	if (fsl_ldb->devdata->ldb_clk_pixel_clk_sibling) {
+> >>>> +		pclk_rate =3D mode->clock * HZ_PER_KHZ;
+> >>>> +
+> >>>> +		rounded_pclk_rate =3D clk_round_rate(fsl_ldb->clk, pclk_rate);
+> >>>> +		if (rounded_pclk_rate !=3D pclk_rate)
+> >>>> +			return MODE_NOCLOCK;
+> >>>> +	}
+> >>>> +
+> >>>
+> >>> I guess this is to workaround the fact that the parent rate would be
+> >>> changed, and thus the sibling rate as well? This should be documented=
+ in
+> >>> a comment if so.
+> >>
+> >> This is to workaround the fact that the display controller driver
+> >> (lcdif_kms.c) cannot do the mode validation against pixel clock, as
+> >> the commit message mentions.
+> >=20
+> > That part is still not super clear to me, but it's also not super
+> > important to the discussion.
+>=20
+> As kerneldoc of drm_crtc_helper_funcs::mode_valid mentions that
+> it is not allowed to look at anything else but the passed-in mode,
+> it doesn't know of the connected encoder(s)/bridge(s) and thus
+> cannot decide if it should do mode validation against pixel clock
+> or not.  Encoder/bridge drivers could adjust pixel clock rates
+> for display modes.  So, mode validation against pixel clock should
+> be done in this bridge driver.
+>=20
+> In fact, the pixel clock should have been defined as a DT property
+> in fsl,ldb.yaml because the clock routes to LDB as an input signal.
+> However, it's too late...  If the DT property was defined in the
+> first place, then this driver can naturally do mode validation
+> against pixel clock instead of this workaround.
+>=20
+> >=20
+> > My point is: from a clock API standpoint, there's absolutely no reason
+> > to consider sibling clocks. clk_round_rate() should give you the rate
+>=20
+> Agree, but it's a workaround.
+>=20
+> > you want. If it affects other clocks it shouldn't, it's a clock driver
+> > bug.
+>=20
+> The sibling clocks are the same type of clocks from HW design
+> point of view and derived from the same clock parent/PLL.
+> That's the reason why the workaround works.
+>=20
+> >=20
+> > You might want to workaround it, but this is definitely not something
+> > you should gloss over: it's a hack, it needs to be documented as such.
+>=20
+> I can add some documentation in next version to clarify this
+> a bit.
+>=20
+> >=20
+> >> The parent clock is IMX8MP_VIDEO_PLL1_OUT and it's clock rate is not
+> >> supposed to be changed any more once IMX8MP_VIDEO_PLL1 clock rate is
+> >> set by using DT assigned-clock-rates property.  For i.MX8MP EVK, the
+> >> clock rate is assigned to 1039500000Hz in imx8mp.dtsi in media_blk_ctrl
+> >> node.
+> >=20
+> > There's two things wrong with what you just described:
+> >=20
+> >   - assigned-clock-rates never provided the guarantee that the clock
+> >     rate wouldn't change later on. So if you rely on that, here's your
+> >     first bug.
+>=20
+> I'm not relying on that.
 
-What prevents the check from changing state right after you call this?
+Sure you do. If anything in the kernel changes the rate of the
+VIDEO_PLL1 clock, then it's game over and "clock rate is not supposed to
+be changed any more once IMX8MP_VIDEO_PLL1 clock rate is set by using DT
+assigned-clock-rates property." isn't true anymore.
 
-> +
->  	unbind_no_pm_drivers_interfaces(udev);
->  
->  	/* From now on we are sure all drivers support suspend/resume
-> @@ -1619,6 +1624,11 @@ int usb_resume(struct device *dev, pm_message_t msg)
->  	struct usb_device	*udev = to_usb_device(dev);
->  	int			status;
->  
-> +	if (msg.event == PM_EVENT_RESUME && usb_sideband_check(udev)) {
-> +		dev_dbg(dev, "device accessed via sideband\n");
-> +		return 0;
-> +	}
+> Instead, the PLL clock rate is not supposed to change since
+> IMX8MP_CLK_MEDIA_LDB clock("ldb" clock parent clock) hasn't the
+> CLK_SET_RATE_PARENT flag. And, we don't want to change the PLL clock
+> rate at runtime because the PLL can be used by i.MX8MP MIPI DSI and
+> LDB display pipelines at the same time, driven by two LCDIFv3 display
+> controllers respectively with two imx-lcdif KMS instances. We don't
+> want to see the two display pipelines to step on each other.
+>=20
+> >=20
+> >   - If the parent clock rate must not change, why does that clock has
+> >     SET_RATE_PARENT then? Because that's the bug you're trying to work
+> >     around.
+>=20
+> IMX8MP_CLK_MEDIA_LDB clock hasn't the CLK_SET_RATE_PARENT flag.
+> I'm fine with the "ldb" clock tree from the current clock driver
+> PoV - just trying to validate pixel clock rate as a workaround.
 
-Same here, what's keeping the state from changing?
+As far as I can see, the ldb clock is IMX8MP_CLK_MEDIA_LDB_ROOT in
+imx8mp.dtsi. That clock is defined using imx_clk_hw_gate2_shared2 that
+does set CLK_SET_RATE_PARENT.
 
+Maxime
 
-> +
->  	/* For all calls, take the device back to full power and
->  	 * tell the PM core in case it was autosuspended previously.
->  	 * Unbind the interfaces that will need rebinding later,
-> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> index 1ff7d901fede..9876b3940281 100644
-> --- a/drivers/usb/core/hcd.c
-> +++ b/drivers/usb/core/hcd.c
-> @@ -2593,6 +2593,7 @@ struct usb_hcd *__usb_create_hcd(const struct hc_driver *driver,
->  	timer_setup(&hcd->rh_timer, rh_timer_func, 0);
->  #ifdef CONFIG_PM
->  	INIT_WORK(&hcd->wakeup_work, hcd_resume_work);
-> +	refcount_set(&hcd->sb_usage_count, 0);
->  #endif
->  
->  	INIT_WORK(&hcd->died_work, hcd_died_work);
-> diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
-> index 0b4685aad2d5..d315d066a56b 100644
-> --- a/drivers/usb/core/usb.c
-> +++ b/drivers/usb/core/usb.c
-> @@ -671,6 +671,7 @@ struct usb_device *usb_alloc_dev(struct usb_device *parent,
->  	dev->state = USB_STATE_ATTACHED;
->  	dev->lpm_disable_count = 1;
->  	atomic_set(&dev->urbnum, 0);
-> +	refcount_set(&dev->sb_usage_count, 0);
->  
->  	INIT_LIST_HEAD(&dev->ep0.urb_list);
->  	dev->ep0.desc.bLength = USB_DT_ENDPOINT_SIZE;
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 2fdafbcbe44c..18c743ce5ac5 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -2550,8 +2550,15 @@ static int dwc3_runtime_idle(struct device *dev)
->  static int dwc3_suspend(struct device *dev)
->  {
->  	struct dwc3	*dwc = dev_get_drvdata(dev);
-> +	struct platform_device *xhci = dwc->xhci;
->  	int		ret;
->  
-> +	if (xhci && xhci_sideband_check(xhci->dev.driver_data)) {
+--w45doemgv4va56xv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-What could go wrong with poking into a random device structure's private
-data that you don't know the type of?  :(
+-----BEGIN PGP SIGNATURE-----
 
-> +		dev_dbg(dev, "device accessed via sideband\n");
-> +		return 0;
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZwziuAAKCRAnX84Zoj2+
+dr2LAX95pmyIbBkFFUEui7PiHgljiomXcZhA3D+PsqZIdS4fAHBL/ajvV12rKc90
+zTNHIbgBf1l3pytylMUdDYO9YPSzR6ycdEshRcV+N97mR5qeuaBkQQVeovN7ptjq
+kmV3iPlg3w==
+=unJz
+-----END PGP SIGNATURE-----
 
-I predict, that if this all does get implemented, we're going to have a
-lot of confusion of "why will my devices not go into suspend?"
-questions, right?
-
-How does userspace know if a device is controlled by a sideband path or
-not?  Is there some sysfs link somewhere, and does any tool show it
-anyway?
-
-thanks,
-
-greg k-h
+--w45doemgv4va56xv--
 
