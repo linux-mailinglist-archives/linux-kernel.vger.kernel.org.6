@@ -1,153 +1,110 @@
-Return-Path: <linux-kernel+bounces-364368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDFB99D3C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:45:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E8999D3C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4FBB1F23A27
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CB7528254B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065EC1ABEDC;
-	Mon, 14 Oct 2024 15:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FE71ADFEC;
+	Mon, 14 Oct 2024 15:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jru7JLFj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Uwh9+gcG"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r87D5XJm"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A021AAC4;
-	Mon, 14 Oct 2024 15:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AE91ADFE4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728920616; cv=none; b=AFDfoaKyj3PzI+5XV0W3huwVKSlZosmzXP8CM+byB1iosT8cki8JtxEu+YWHTb4I5rADMGdokYrY6V6P2hsfivDKMtFM2J9Tjxw3Ud/I7MENebeNaJrZmYoHP9oTGxEicYjVGpgCW7ax2NPjljUH5vb3jWxQuHOioAXNjPdOFbU=
+	t=1728920622; cv=none; b=FOEGdbBRuANL/UkBkL8YLMMM/VwAQrY/0jE4hd+ZeD97qgfCUtuyOqD6K0YojF986uy3XtrKFUc+iT8QSKKQhs50TuP7mGlKaV4TQ1vPjOobwFh736Hkkq9iRTH8DGd6pdrmercNkc8tZ2g63OEvUGGHYgHeC+SCCJY3d4IPbqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728920616; c=relaxed/simple;
-	bh=hgsXsOcp3OQh7B3lbb5dpw8btzJApolsWcbgSFCCI9U=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=LpLH7mzRhMMnW8fER8LxGjiuuigHntZMFn6oRNqJYJwK46KfLxOS8HWOyhZZh/vbCMOUs7N+Dlt17I7CZavi5RsIeerqQMLCCdBYRcpRl6bcqJACg88vIJBV4nMBqkC3n+4dYeTPzHRJilLUkaHmt4S/22rccGHAare65sbiE+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jru7JLFj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Uwh9+gcG; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2AA361140171;
-	Mon, 14 Oct 2024 11:43:33 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 14 Oct 2024 11:43:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728920613;
-	 x=1729007013; bh=CG7LSN+EM/lAaMmJIOnT+Q9Bg9sRCT6XCqzcRBY41EM=; b=
-	jru7JLFjlhjK0pSS0xjjDrbyWzCJShEjSO7iA3NxmlquXO3x6NwlTJpQk5GM91ce
-	Bl0vBs70J7aLJ6ZbooxKbfHIB56As89ePrnxvglge+ANbE6HfaDYPY0oD4/1O0+X
-	40VkoyDr2fyR9Bx9dRB5ZEGo0oUNwvF4V1TPQvyYVLVjXqjRjbxdWRhKOCipa0RY
-	rj5+1qgwSAfuQw1IJyfiS8xIGM0fnLhMW+AJR6SjYaLbb5AJ1ff5GKQ+W5LYa6Gi
-	Sy7smXwR9IcIYG2/RusheGuWuHmgWFIrFRLrLxq85caFw51OE5APFWwBu45F13Wq
-	D9xql3ArBW0+RizD1r+7JQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728920613; x=
-	1729007013; bh=CG7LSN+EM/lAaMmJIOnT+Q9Bg9sRCT6XCqzcRBY41EM=; b=U
-	wh9+gcGR1d5IDbS2QbsBVDColEBR2ytdTlBIeVJdBX2ArLPXf2KLlkKqfgC8ws8B
-	+p6BglZqxH89YJ8eYyCQjUX9grxqwypZ1bIqEUf/y7BegVHqjgrN0RweyGfGB5gx
-	fAdhP9COWrjMFbPNYfA/YgKAdiL7ogvvNFddITi0TOKjhmpz9irGcFhIj9Ph+XAW
-	3KdNt6LxQ7M9DiRSug3vGt+nmwkDYNTqIzBFs2O0esbkC7LlWVvKRRucpd+peUwF
-	JjXwY5FogO41lvc5qbNjsKJi/x5aDWFwolTV07uD+wI7mC5a/lIoR3IeXcgkkZWv
-	f14FNH37Ri1LP/chRn6bA==
-X-ME-Sender: <xms:JDwNZ-36eWakExPGOdPLCqWQtXxxB3p8qD-yh0IUqH-94glUAljokA>
-    <xme:JDwNZxHh0ln158vTJhsr8iUyiefH63GC2SdSO2i2c_op-kaf2BJwbIJICprENUCBy
-    cLUBWSElmWn_dF3vJI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrthihnhdrfigvlhgthhestg
-    holhhlrggsohhrrgdrtghomhdprhgtphhtthhopehjrghsshhishhinhhghhgsrhgrrhes
-    ghhmrghilhdrtghomhdprhgtphhtthhopegrnhguvghrshhsohhnsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgr
-    thhhihgvuhdrphhoihhrihgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprghfug
-    esthhirdgtohhmpdhrtghpthhtohephhhnrghgrghllhgrsehtihdrtghomhdprhgtphht
-    thhopehnmhesthhirdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:JDwNZ25yC-b5M8byQkJuIcfcLhertGVgxdR6mxFJEe1nAib_CCCauA>
-    <xmx:JDwNZ_34-WG3lHJpd09tcwHVbafdBjThDqEAhTBUb_WCAtLZmL1F7A>
-    <xmx:JDwNZxEWonjsNGWzzuB1AMDoXft_p1Tka8rGzRRETxS4yHcS5e-w7w>
-    <xmx:JDwNZ49HaZPVlP2rt22CZd-7X_wMBl5wO6B5j9zRbVP--uhhFgOy5Q>
-    <xmx:JTwNZwBTI6RT3hZ71rG5_45DUj-OOB21cd7Q12usXhnRp4wKVTc8cBO3>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D870A2220071; Mon, 14 Oct 2024 11:43:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728920622; c=relaxed/simple;
+	bh=r1sb5uWNoptiAeL9yGdUfaOt0UuYamFtPL+AEfq1epA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oZVsDTgpm172l8D27Nj9zo3PjcCgIQzkaMnfC+0Re/JV00A5bT7OXKUx2T+MsxM2clV+A02PoBPcDJ5aIhSPlOgL/bhIqKvb9C0fnOa1P4vHfiAZrZ9UOo4tGYdpAzXlwin6JVFd0hV/wisdHCTefTMthqfPTDAC/OVLmlogzIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r87D5XJm; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 14 Oct 2024 17:43:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728920617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gQbzq0SBCVNErmwjmVNt/xzC0FXhs9tyXk41hnnLPPk=;
+	b=r87D5XJmaAXDDYbXwqXTxr7HD4B3uapOcAl53YLF+uXDXIsJ10bxHPe3989o8KgRJs1poh
+	XdoaPU5VGYrwz32cj0zepN8w+NarTWptPPY41nllWNOazm2QHNhtktmim+xkm/zsLOp111
+	Sk5b8XA0nofd3JC3nwVNoTtL1RLjANI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Always call put_prev_task() with scx enabled
+Message-ID: <Zw08JUlsm7b8xZk8@gpd3>
+References: <20241013173928.20738-1-andrea.righi@linux.dev>
+ <20241014083608.GU17263@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 14 Oct 2024 15:43:01 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andrew Davis" <afd@ti.com>, "Arnd Bergmann" <arnd@kernel.org>,
- "Bjorn Andersson" <andersson@kernel.org>,
- "Mathieu Poirier" <mathieu.poirier@linaro.org>,
- "Martyn Welch" <martyn.welch@collabora.com>,
- "Hari Nagalla" <hnagalla@ti.com>, "Jassi Brar" <jassisinghbrar@gmail.com>,
- "Nishanth Menon" <nm@ti.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <e6c84b91-20ce-474a-87f8-9faeb64f3724@app.fastmail.com>
-In-Reply-To: <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com>
-References: <20241007132441.2732215-1-arnd@kernel.org>
- <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com>
-Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014083608.GU17263@noisy.programming.kicks-ass.net>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 14, 2024, at 14:56, Andrew Davis wrote:
-> On 10/7/24 8:23 AM, Arnd Bergmann wrote:
->>   config TI_K3_M4_REMOTEPROC
->>   	tristate "TI K3 M4 remoteproc support"
->> -	depends on ARCH_OMAP2PLUS || ARCH_K3
->> -	select MAILBOX
->> -	select OMAP2PLUS_MBOX
->> +	depends on ARCH_K3 || COMPILE_TEST
->> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
->
-> This line is odd. IMHO "COMPILE_TEST" should only be added to ARCH_*
-> dependencies, as often only one ARCH can be selected which prevents
-> compile testing drivers with various multiple architecture deps in
-> one compile test.
+On Mon, Oct 14, 2024 at 10:36:08AM +0200, Peter Zijlstra wrote:
+...
+> > @@ -2523,6 +2508,21 @@ DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+> >  #define scx_switched_all()	false
+> >  #endif /* !CONFIG_SCHED_CLASS_EXT */
+> >  
+> > +static inline void put_prev_set_next_task(struct rq *rq,
+> > +					  struct task_struct *prev,
+> > +					  struct task_struct *next)
+> > +{
+> > +	WARN_ON_ONCE(rq->curr != prev);
+> > +
+> > +	__put_prev_set_next_dl_server(rq, prev, next);
+> > +
+> > +	if (next == prev && !scx_enabled())
+> > +		return;
+> 
+> Does that not also want to include a 'next->sched_class ==
+> &ext_sched_class' clause ? And a comment?
+> 
+> > +
+> > +	prev->sched_class->put_prev_task(rq, prev, next);
+> > +	next->sched_class->set_next_task(rq, next, true);
+> > +}
+> 
+> And is there really no way scx can infer this happened? We just did pick
+> after all, that can see this coming a mile of.
 
-I generally agree, but the TI_SCI_PROTOCOL interface
-definitions that were added in aa276781a64a ("firmware: Add basic
-support for TI System Control Interface (TI-SCI) protocol")
-appear to explicitly support the case of compile-testing.
+Ah, I believe I understand better what's happening now.
 
-See also 13678f3feb30 ("reset: ti-sci: honor TI_SCI_PROTOCOL
-setting when not COMPILE_TEST").
+When prev == next with the idle class we're not calling
+->put_prev_task/set_next_task anymore, so we may skip calling
+ops.update_idle() in scx.
 
-> Normal dependencies, on the other hand, can simply be enabled if one
-> wants to compile test its dependent drivers. In this case, TI_SCI_PROTOCOL
-> cannot be enabled as it has a dependency up the chain that doesn't
-> allow selecting when not on a TI platform. We can fix that as I posted
-> here[0]. With that fix in, this line can be simply become:
->
-> depends on TI_SCI_PROTOCOL
+I think that's the only special case that we need to handle, and we may
+be able to solve the regression by calling scx_update_idle() from
+pick_task_idle().
 
-That's certainly fine with me, but if we do this, I would suggest
-also removing the stub functions from
-include/linux/soc/ti/ti_sci_protocol.h, and the dependency in the
-reset driver.
+Will do some testing with this.
 
-Adding Nishanth Menon to Cc, to see if he has a preference.
-
-     Arnd
+-Andrea
 
