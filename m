@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-363708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8590E99C5DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:37:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E3599C5BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D5C283BA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D027228CB77
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D9C15697B;
-	Mon, 14 Oct 2024 09:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEE3155727;
+	Mon, 14 Oct 2024 09:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WqQK5CrW"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6Zq3N3P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A8C14A60F;
-	Mon, 14 Oct 2024 09:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C25F13DDAA;
+	Mon, 14 Oct 2024 09:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898615; cv=none; b=ZNJHMRgyc8MOxg3vnK7zeGn/OGvjbp0aCK3F3HNdZCyMdJil779YiSAQmuuYOQKweLlX1MUd4Ja1NTinMEn+fjYyJW9ZkOrDAXDWOMK+nZAlwbJ65hz6Qi3R4NFk1nzY7O1TbG01EYzM8AdaxuzMjFBytXgT8kGN5qDeMsffysw=
+	t=1728898331; cv=none; b=OwRS+WDjWiPbEKUQ5cIhjOT9IezJosRbXytBUc1K5E5t34FJGTmpZN3IdBMLSXe6bmrFj3S4Gp+45aTbPVCTdcNRmNBMZ5rkQife5r/Y3BBWCL4O54NFv5X0vuwMnqXNwUr1ek7jdXaFXlX9wnieyatNIzKRnjxI5caOwBhSeyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898615; c=relaxed/simple;
-	bh=SsDzFXoQvN4gh5FLsiwia3cjb9QC2/XbGclc+wnSFVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UPTmNyp2PZzRIrtvAhm7zpghq3q+zzozmIyqaKe+p/B+CCTc/mQ7V432enQUsDyBwaZcNZf++PUzqsVBKF1lUVfhF0uYlHPLXsuovUEjKrHq8XQuQLyAcER/uB6Kr9p2QtEWntAN2R+jQMTMoRWmDWmvlO67th4baAMwACxBmQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WqQK5CrW; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E54WgY026996;
-	Mon, 14 Oct 2024 11:36:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Y1wWLgOdlus18jZTNI/TrhpX0Z0nvcFkl1+WB4i8ztY=; b=WqQK5CrWjeZU47tj
-	TsOh53c8+xSff02acMn8k+DhbbZPamiST1OctOcQIaKOHg7ry+zkJAgEMZOYiVjx
-	clyOOSGk4Kd5XVYJr0NE6rzaSHY32/152XI4UACSiC0q18GkTDPwgiwY0knbE/yJ
-	67b/yOpXeKzXu+6OOnz84sDQXeAcdRpX/yfsjUPsPdgQ8+CWgPaixmbhAa4Ba4Zj
-	axUgqsFOJDFxop5hMmG66RMt9CKftlLcPdtHVM5WtdYy5YxhsINrwF/7ya9qOZz0
-	+Gs9T2KAb6iDk1aGz4Hajs9U5uyXsa++0tGpviOVcKq34Lbffg3RhNrqNVjou6eO
-	BOcK9A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 427e85qff8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:36:05 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A30B64004C;
-	Mon, 14 Oct 2024 11:34:48 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4277D25F512;
-	Mon, 14 Oct 2024 11:31:41 +0200 (CEST)
-Received: from [10.252.14.29] (10.252.14.29) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 14 Oct
- 2024 11:31:40 +0200
-Message-ID: <f8c4de66-1d4f-480b-9137-f91e0323ecde@foss.st.com>
-Date: Mon, 14 Oct 2024 11:31:39 +0200
+	s=arc-20240116; t=1728898331; c=relaxed/simple;
+	bh=H6iAE2LegkHNp+32/yt3whqw8Zq05OwWueCyBd7K+Hw=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=FAgRVPb2n8RjZ0H/v8ZbFhOwr/SuIdEyx1iUtrwYXWDJBvrSkchZC07WML0LIf9kw7mmCqs+id5yQItn46fnz5O9YFmjLlXHD1Skt6x+6zgYIhQGtLQLxk9yHf/8Ba0HhAmKAsuErotXOW79HP2+xRqSfTKCvgNszwzNzrM5Zic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6Zq3N3P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01007C4CEC3;
+	Mon, 14 Oct 2024 09:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728898330;
+	bh=H6iAE2LegkHNp+32/yt3whqw8Zq05OwWueCyBd7K+Hw=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=M6Zq3N3PCiStt2G83cEgWx8o4bKzMfBezq8TBjf4oGBUTNEwompWn+LQ/C+ofFioi
+	 y7WQ13MM0GVVi0W3B6Hym4d+I3V5V8ZBR2kr+f4jNWmP8gmCgbg/zh815ABruto0MV
+	 VmL6/GEUM7HCmgVVgArGynSv8rRhxFCFyrFyEKYc6rMQjbUSA/zvCZ9t3rmqNOFYve
+	 1HjWL/E+cqCRztuiQXTISR5Dlhj3NfdkZ4qW+GeNqOuaVyTHPMP2oAdjT5MUpJoCC9
+	 EWbTAkigiQZvikWPgvJrMC8qDRSBC/tAEfk22ek16SHNc6FehtMIBFD5/z1eVv1xOo
+	 zUixQub5fHfuA==
+From: Kalle Valo <kvalo@kernel.org>
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Cc: linux-kernel@vger.kernel.org,  "David S . Miller" <davem@davemloft.net>,
+  Alexandre Belloni <alexandre.belloni@bootlin.com>,  Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,  Geert Uytterhoeven <geert@linux-m68k.org>,
+  Geoff Levand <geoff@infradead.org>,  Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Jakub Kicinski <kuba@kernel.org>,  Jeff
+ Johnson <quic_jjohnson@quicinc.com>,  Johannes Berg
+ <johannes@sipsolutions.net>,  Larry Finger <Larry.Finger@lwfinger.net>,
+  Nicolas Ferre <nicolas.ferre@microchip.com>,  Pavel Machek
+ <pavel@ucw.cz>,  Stanislaw Gruszka <stf_xl@wp.pl>,  Gregory Greenman
+ <gregory.greenman@intel.com>,  linuxppc-dev
+ <linuxppc-dev@lists.ozlabs.org>,  linux-arm-kernel@lists.infradead.org,
+  linux-staging@lists.linux.dev,  linux-wireless@vger.kernel.org,  Arnd
+ Bergmann <arnd@arndb.de>,  Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Subject: Re: [RFC] ipw2100 ipw2200 ps3_gelic rtl8712 --- Are we ready for
+ wext cleanup?
+References: <a7eb3db4-ad0d-451a-9106-90d481bd3231@gmail.com>
+Date: Mon, 14 Oct 2024 12:32:04 +0300
+In-Reply-To: <a7eb3db4-ad0d-451a-9106-90d481bd3231@gmail.com> (Philipp
+	Hortmann's message of "Sun, 13 Oct 2024 22:28:48 +0200")
+Message-ID: <87iktv58tn.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: rng: add st,stm32mp25-rng support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Olivia Mackall <olivia@selenic.com>,
-        Herbert Xu
-	<herbert@gondor.apana.org.au>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Lionel Debieve <lionel.debieve@foss.st.com>, <marex@denx.de>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
- <20241011-rng-mp25-v2-v2-1-76fd6170280c@foss.st.com>
- <v4c7vwoqfposhm3bxnidjzwb7via7flf2em45qbgjjncwfvv74@n2rsz3ujpdoc>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <v4c7vwoqfposhm3bxnidjzwb7via7flf2em45qbgjjncwfvv74@n2rsz3ujpdoc>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Philipp Hortmann <philipp.g.hortmann@gmail.com> writes:
 
+> origin of this question was the following patch series from Arnd Bergmann
+> [PATCH 00/10] Remove obsolete and orphaned wifi drivers
+> https://lore.kernel.org/linux-staging/20231023131953.2876682-1-arnd@kerne=
+l.org/
+>
+> Here the remaining files that use iw_handler_def:
+> drivers/net/ethernet/toshiba/ps3_gelic_wireless.c:static const struct
+> iw_handler_def gelic_wl_wext_handler_def =3D {
+> drivers/net/wireless/intel/ipw2x00/ipw2100.c:static const struct
+> iw_handler_def ipw2100_wx_handler_def;
+> drivers/net/wireless/intel/ipw2x00/ipw2100.c:static const struct
+> iw_handler_def ipw2100_wx_handler_def =3D {
+> drivers/net/wireless/intel/ipw2x00/ipw2200.c:static const struct
+> iw_handler_def ipw_wx_handler_def =3D {
+> drivers/staging/rtl8712/os_intfs.c:     pnetdev->wireless_handlers =3D
+> (struct iw_handler_def *)
+> drivers/staging/rtl8712/rtl871x_ioctl.h:extern struct iw_handler_def
+> r871x_handlers_def;
+> drivers/staging/rtl8712/rtl871x_ioctl_linux.c:struct iw_handler_def
+> r871x_handlers_def =3D {
+>
+>
+> In this Email Greg writes over rtl8192e:
+> https://lore.kernel.org/linux-staging/2024100810-payback-suds-8c15@gregkh/
+> "...
+> No staging driver should ever get in the way of api changes elsewhere in
+> the kernel, that's one of the rules of this part of the tree.  So from
+> my opinion, it's fine to delete it now.  It can always come back in a
+> new way later on.
+> ..."
+>
+> So it should not be an issue to remove rtl8712.
+>
+> Stefan Lippers-Hollmann was one year ago still using the ipw2200.
+> https://lore.kernel.org/linux-staging/20231024014302.0a0b79b0@mir/
+>
+> Here my opinion why I think we should reconsider this:
+>
+> I really like to use old hardware. One of my computers is from trash
+> and the other one is bought for 50=E2=82=AC three years ago. But non of my
+> hardware is from before 2012. Do we as a community really need to
+> support hardware from 2003 in kernel 6.13 for WLAN that evolved so
+> rapidly? I do not think so.
+>
+> People around me are complaining that the 2,4GHz WLAN is difficult to
+> use because so many devices are using it. Such slow devices consume a
+> lot of time to send and receive the data and block therefore other
+> devices.
+>
+> The longterm kernels will still support this hardware for years.
+>
+> Please explain to our very high value resources (Maintainers,
+> Developers with wext and mac80211 expierience) that you cannot find
+> any other solution that is within technical possibility and budget
+> (USB WLAN Stick or exchange of WLAN module) and that they need to
+> invest their time for maintenance.
+> Here the example of invested time from Johannes Berg:
+> https://lore.kernel.org/all/20241007213525.8b2d52b60531.I6a27aaf30bded9a0=
+977f07f47fba2bd31a3b3330@changeid/
+>
+> I cannot ask the Linux kernel community to support my test hardware
+> just because I bought it some time ago. Rather, I have to show that I
+> use it for private or business purposes on a regular basis and that I
+> cannot easily change.
+>
+> Using this hardware is security wise not state of the art as WPA3 is
+> not supported. We put so much effort into security. Why not here?
 
-On 10/14/24 09:29, Krzysztof Kozlowski wrote:
-> On Fri, Oct 11, 2024 at 05:41:41PM +0200, Gatien Chevallier wrote:
->>     clocks:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 2
->> +
->> +  clock-names:
->> +    minItems: 1
->> +    items:
->> +      - const: core
->> +      - const: bus
->>   
->>     resets:
->>       maxItems: 1
->> @@ -57,6 +65,26 @@ allOf:
->>         properties:
->>           st,rng-lock-conf: false
->>   
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - st,stm32-rng
->> +              - st,stm32mp13-rng
->> +    then:
->> +      properties:
->> +        clocks:
->> +          maxItems: 1
->> +        clock-names: false
->> +    else:
->> +      properties:
->> +        clocks:
->> +          minItems: 2
->> +          maxItems: 2
-> 
-> Missing clock-names constraint. They *always* go in sync with clocks.
-> 
-> Best regards,
-> Krzysztof
-> 
+I didn't quite get what you are saying here, are you proposing that we
+should remove ancient drivers faster?
 
-Done for V3,
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-Best regards,
-Gatien
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
