@@ -1,235 +1,126 @@
-Return-Path: <linux-kernel+bounces-363743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3552199C673
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE0299C676
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9758281EAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33DC21F23A95
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3606D15886C;
-	Mon, 14 Oct 2024 09:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF531586DB;
+	Mon, 14 Oct 2024 09:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2ds1tB0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lzxpxFjR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2E8157494;
-	Mon, 14 Oct 2024 09:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C102A146D55;
+	Mon, 14 Oct 2024 09:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728899542; cv=none; b=MP38NIKKeUJULQFQJ0Mu0V8dsmjNzDm1fUeYg4FFP81C5NWZewFHQquj5YWXl/r6zjVQL1jiAm/sMPDMOK1AEeY18OnOwFM9Ma1SsSTKQ1RX/Yyt+9wkeuXTKGUn6HSRgAi4GNbPKEIZcjxtvh1OwBewBS+x9uVyusa9GrMfGsY=
+	t=1728899618; cv=none; b=uHBhkXcVR4OjwI8bJ3xqDwwlDRpbCpqpY02GHJOhj5+x8KZh4NxYR0EdgvNhBzgZRpD5UJLiLWTl7O4dC9+vHW97uCXSI2sxZYNaMpeQV9zCRNaumA7BFvQe2uUPM2058a1w8pPKZiFL5KW7+Ch9aHdEw1J/Gc3aUaxhC9wIiL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728899542; c=relaxed/simple;
-	bh=7G2rTAKiIHvqKGEL3BERg1CQ7sWLWd/WC84/5LIrGJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4tk17eoFZJ5xqE/dddS4+M8ADstxPDofWCcudBuaH64zOrg7sqriZfnijjkL+TzH1TB0bTARNsxbmtFqrfOqeT3t4prck7sxOXutcG5Foh2kqXK4HT7sge+0CUWjWyNHHneFgCMhFAba6rOTWulTUlBD8UQM6BttFp1a7u9I+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2ds1tB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7085C4CEC3;
-	Mon, 14 Oct 2024 09:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728899542;
-	bh=7G2rTAKiIHvqKGEL3BERg1CQ7sWLWd/WC84/5LIrGJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J2ds1tB0p5clgZySms+JjjMYVGy5O4FdI8MqKAaZ+klDNiKsbSWvivx6TZVRsweDJ
-	 U31CQXur1wqwAmU5Vvkb2GyLog35LayuPVnUB0EfddkLMpU8aMvU0S35BSobq/e8TJ
-	 TQXL2efYj+C9T/p9iMsblNR/VortbDmDrQbcOahPAkhyDZqxfDRmthJBQTVjSDRgtd
-	 v55indsD9kLWJCjXrimttt7x6dSAr3wwJvpaDL7o6/RwDuOsWblMGPKWJxGwL1uFE7
-	 cRqhM1ZuJryFKisaP2qoDn5BlCKIe6diTAMyyAdM1dF0fQGOUK6UKjc9OPxg1xt6hW
-	 dhNxBB9XrpFPQ==
-Received: by pali.im (Postfix)
-	id 981C29DA; Mon, 14 Oct 2024 11:52:15 +0200 (CEST)
-Date: Mon, 14 Oct 2024 11:52:15 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] cifs: Fix parsing native symlinks directory/file
- type
-Message-ID: <20241014095215.nae6hnwo23tk6yjs@pali>
-References: <20240929185053.10554-1-pali@kernel.org>
- <20241005140300.19416-1-pali@kernel.org>
- <20241005140300.19416-5-pali@kernel.org>
- <CAH2r5mtbK7vRVHs6rosrvGuer52cyfdsyCt1FL3TFg4RXxULuA@mail.gmail.com>
+	s=arc-20240116; t=1728899618; c=relaxed/simple;
+	bh=e+Bwo2NC+pMNRd8ckI+Vz0wV5wuZi+wfJeI6HwZ7nfg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=McKhfGozn1bZBY6+nqiUsrOAaI04HuIJOFA3h4bj1usroIhBVbN+u8tMZJEsHZvmG4XzxoHTLKAB0kWAdxf2iB6pwujCHNRyzajIw6PE08RkgV5P0+maj9JRl9uIF4VEkDKnZ2hMygTEMHGemuohg4//qulouRdPTQAfRqyaUcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lzxpxFjR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49DMvgj0015046;
+	Mon, 14 Oct 2024 09:53:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	x943eeIf1OGm4gHh4eXaE9srZxFaW2nqi0KQm3uYLxE=; b=lzxpxFjRdCAZ2ftC
+	LPQv/rMcHl8AWBpsQdrdPiq0Z21pX5J4Ktb+0s87LXZY4B5+JLuckTSlAIDscSgi
+	V6n7Rrc7MIvFRjmNbhe4Nc7VNDrspF1PSxe6uiF4Uuc0+8fjl0Ujrykv3CmkwVz3
+	auNChqG1akDYNqd25xSsFzXKaubQlqLPIgNfpnSe+Rr8NOPj3IC/C4VbeZZ7WtS1
+	qGjv2xyaiug55QsoAld5XpGpi+gpK3wl96oqXKFbC1Kq/pd0rlSB8495f5TyCLTT
+	ZWeK+tN5dUYguGpTLwXVXE5Pg1N2ZjhHOBKEqMrFchtYubZDty6Q51wfhP3QdJpf
+	XdGTeg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427hvfuwsx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 09:53:26 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49E9rPIF025380
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 09:53:25 GMT
+Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
+ 2024 02:53:21 -0700
+Message-ID: <c316c6ff-b741-4186-8f03-f103efc51d1c@quicinc.com>
+Date: Mon, 14 Oct 2024 17:53:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: arm-smmu: Document Qualcomm QCS615 apps
+ smmu
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <robimarko@gmail.com>, <quic_gurus@quicinc.com>,
+        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+References: <20241011063112.19087-1-quic_qqzhou@quicinc.com>
+ <20241011063112.19087-3-quic_qqzhou@quicinc.com>
+ <af81be27-fdfa-4dec-a18c-56c7022e3c75@kernel.org>
+ <2224b2fe-4e72-4371-9f0b-d5ee211c2210@quicinc.com>
+ <4102024c-d4a9-494d-b855-c5f770228788@kernel.org>
+From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+In-Reply-To: <4102024c-d4a9-494d-b855-c5f770228788@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mtbK7vRVHs6rosrvGuer52cyfdsyCt1FL3TFg4RXxULuA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LsRrV4vBcDNpys5sRunHPVuFPmZE2lxD
+X-Proofpoint-ORIG-GUID: LsRrV4vBcDNpys5sRunHPVuFPmZE2lxD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ clxscore=1015 adultscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140071
 
-I see what you mean. The last check in smb2_fix_symlink_target_type
-will disallow to use symlinks to "." and ".." created by older linux
-client as it created it as symlink to file, instead of symlink to dir.
 
-This is a good point. I can send a new version with dropped last check
-in smb2_fix_symlink_target_type.
 
-On Sunday 13 October 2024 12:56:23 Steve French wrote:
-> Would this break any pure Linux client example, mounted to Windows,
-> where previously the Linux client created all symlinks as file
-> symlinks?  e.g. If there were two Linux clients writing to the share,
-> one that included this fix and one that did not.
+在 10/14/2024 2:52 PM, Krzysztof Kozlowski 写道:
+> On 14/10/2024 05:09, Qingqing Zhou wrote:
+>>>> ---
+>>>>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+>>>> index 92d350b8e01a..9e62c2cdda08 100644
+>>>> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+>>>> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+>>>> @@ -36,6 +36,7 @@ properties:
+>>>>          items:
+>>>>            - enum:
+>>>>                - qcom,qcm2290-smmu-500
+>>>> +              - qcom,qcs615-smmu-500
+>>>
+>>> This is incomplete? No clocks? No power-domains?
+>> This is APPS SMMU, no clocks and no power-domains are needed for DT.
 > 
-> On Sat, Oct 5, 2024 at 9:03 AM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > As SMB protocol distinguish between symlink to directory and symlink to
-> > file, add some mechanism to disallow resolving incompatible types.
-> >
-> > When SMB symlink is of the directory type, ensure that its target path ends
-> > with slash. This forces Linux to not allow resolving such symlink to file.
-> >
-> > And when SMB symlink is of the file type and its target path ends with
-> > slash then returns an error as such symlink is unresolvable. Such symlink
-> > always points to invalid location as file cannot end with slash.
-> >
-> > As POSIX server does not distinguish between symlinks to file and symlink
-> > directory, do not apply this change for symlinks from POSIX SMB server. For
-> > POSIX SMB servers, this change does nothing.
-> >
-> > This mimics Windows behavior of native SMB symlinks.
-> >
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > ---
-> >  fs/smb/client/inode.c     |  5 ++++
-> >  fs/smb/client/smb2file.c  | 55 +++++++++++++++++++++++++++++++++++++++
-> >  fs/smb/client/smb2inode.c |  4 +++
-> >  fs/smb/client/smb2proto.h |  1 +
-> >  4 files changed, 65 insertions(+)
-> >
-> > diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> > index 0fe54b2d2561..aa38a3935f8f 100644
-> > --- a/fs/smb/client/inode.c
-> > +++ b/fs/smb/client/inode.c
-> > @@ -1110,6 +1110,11 @@ static int reparse_info_to_fattr(struct cifs_open_info_data *data,
-> >                                                               full_path,
-> >                                                               iov, data);
-> >                 }
-> > +
-> > +               if (data->reparse.tag == IO_REPARSE_TAG_SYMLINK && !rc) {
-> > +                       bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
-> > +                       rc = smb2_fix_symlink_target_type(&data->symlink_target, directory, cifs_sb);
-> > +               }
-> >                 break;
-> >         }
-> >
-> > diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
-> > index dc52995f5591..149449d9c1c0 100644
-> > --- a/fs/smb/client/smb2file.c
-> > +++ b/fs/smb/client/smb2file.c
-> > @@ -63,6 +63,56 @@ static struct smb2_symlink_err_rsp *symlink_data(const struct kvec *iov)
-> >         return sym;
-> >  }
-> >
-> > +int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb)
-> > +{
-> > +       char *buf;
-> > +       int len;
-> > +
-> > +       /*
-> > +        * POSIX server does not distinguish between symlinks to file and
-> > +        * symlink directory. So nothing is needed to fix on the client side.
-> > +        */
-> > +       if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS)
-> > +               return 0;
-> > +
-> > +       len = strlen(*target);
-> > +       if (!len)
-> > +               return -EIO;
-> > +
-> > +       /*
-> > +        * If this is directory symlink and it does not have trailing slash then
-> > +        * append it. Trailing slash simulates Windows/SMB behavior which do not
-> > +        * allow resolving directory symlink to file.
-> > +        */
-> > +       if (directory && (*target)[len-1] != '/') {
-> > +               buf = kzalloc(len+2, GFP_KERNEL);
-> > +               if (!buf)
-> > +                       return -ENOMEM;
-> > +               memcpy(buf, *target, len);
-> > +               buf[len] = '/';
-> > +               kfree(*target);
-> > +               *target = buf;
-> > +       }
-> > +
-> > +       /*
-> > +        * If this is a symlink which points to file name with trailing slash,
-> > +        * or to file named "." or file named ".." then this symlink cannot be
-> > +        * resolved on Linux because Linux does not allow files with such names.
-> > +        * So return an error to prevent resolving this file type symlink to
-> > +        * directory, as it do not point to directory at all.
-> > +        */
-> > +       if (!directory) {
-> > +               const char *basename = kbasename(*target);
-> > +               int basename_len = strlen(basename);
-> > +               if (basename_len == 0 || /* symname ends with slash */
-> > +                   (basename_len == 1 && basename[0] == '.') || /* last component is "." */
-> > +                   (basename_len == 2 && basename[0] == '.' && basename[1] == '.')) /* or ".." */
-> > +                       return -EIO;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> >  int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb, const struct kvec *iov,
-> >                                 const char *full_path, char **path)
-> >  {
-> > @@ -133,6 +183,11 @@ int smb2_open_file(const unsigned int xid, struct cifs_open_parms *oparms, __u32
-> >                                                NULL, NULL, NULL);
-> >                                 oparms->create_options &= ~OPEN_REPARSE_POINT;
-> >                         }
-> > +                       if (!rc) {
-> > +                               bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
-> > +                               rc = smb2_fix_symlink_target_type(&data->symlink_target,
-> > +                                                                 directory, oparms->cifs_sb);
-> > +                       }
-> >                 }
-> >         }
-> >
-> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> > index 9a28a30ec1a3..06bb6f7fbf0f 100644
-> > --- a/fs/smb/client/smb2inode.c
-> > +++ b/fs/smb/client/smb2inode.c
-> > @@ -960,6 +960,10 @@ int smb2_query_path_info(const unsigned int xid,
-> >                 rc = smb2_compound_op(xid, tcon, cifs_sb, full_path,
-> >                                       &oparms, in_iov, cmds, num_cmds,
-> >                                       cfile, NULL, NULL, NULL);
-> > +               if (data->reparse.tag == IO_REPARSE_TAG_SYMLINK && !rc) {
-> > +                       bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
-> > +                       rc = smb2_fix_symlink_target_type(&data->symlink_target, directory, cifs_sb);
-> > +               }
-> >                 break;
-> >         case -EREMOTE:
-> >                 break;
-> > diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-> > index aa01ae234732..1828b825c7d3 100644
-> > --- a/fs/smb/client/smb2proto.h
-> > +++ b/fs/smb/client/smb2proto.h
-> > @@ -113,6 +113,7 @@ extern int smb3_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
-> >                           struct cifs_sb_info *cifs_sb,
-> >                           const unsigned char *path, char *pbuf,
-> >                           unsigned int *pbytes_read);
-> > +int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb);
-> >  int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
-> >                               bool unicode, bool relative,
-> >                               const char *full_path,
-> > --
-> > 2.20.1
-> >
-> >
+> Then express it in the binding.
+OK, will add this in next patch version.
 > 
+> Best regards,
+> Krzysztof
 > 
-> -- 
-> Thanks,
-> 
-> Steve
 
