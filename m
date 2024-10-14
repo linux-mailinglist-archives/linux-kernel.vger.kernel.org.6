@@ -1,270 +1,196 @@
-Return-Path: <linux-kernel+bounces-363674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF1399C580
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECBE399C585
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EFAB1F23C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC95A2853ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27515B104;
-	Mon, 14 Oct 2024 09:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438201684B0;
+	Mon, 14 Oct 2024 09:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbHXaWex"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wAy9cgM8"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AD11591E3;
-	Mon, 14 Oct 2024 09:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1741662E5
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897723; cv=none; b=n6BcdHzy55/smgMbCbjzjnNwPA9meqWQ+eZyIVQH7tXNVLSzVUdoCilUjK8AxGW8OfBEUqtJ7KS9YbbGwkPVo/mawz3AvH0InVtySAfN1XUwxG/4DKQ4t1QcbqMWQafr9up+HDL/eeNlc5FCrmvKwbei0haQlVpKkL7PQgXnavY=
+	t=1728897752; cv=none; b=qwDmo3LRhItWnJAKkGQpcci+t6h0VBMbclaq8Jk9U88FDX3Gbyx3uv85YtgGDpNgK6NROmdETjOU7MsYa92nU9IVhgh1QTU/pG7bdhLU50z2blFVUN5YPtZDTgwmvwK9UTrMfUwy7tPTy+IR4t1Liqm9nTf3gy6v/4qOlrHtkv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897723; c=relaxed/simple;
-	bh=oUasyECg4FzObacLupjjvObgA7tfGWkxHT+TC+1yGPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gtDIO9agXrMytSfXMPnXrNADFTk/NleuhFXp/5nYslinx1zJw1p1f/+x57ylpINxMNaGaxO56eY/v3zhMRECrOnnKZMHY2Je04E1roRn9i3HrZ3gf7wcFNlP7WHiIqgIi24ca3vfI6Wb7HhN2XZHSwWZz+oyYBrT+ueE0qBElnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbHXaWex; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC3AC4CEC3;
-	Mon, 14 Oct 2024 09:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728897723;
-	bh=oUasyECg4FzObacLupjjvObgA7tfGWkxHT+TC+1yGPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UbHXaWexNkFk1Edhb6b1Fp7cfwIRRbsMGl/2PvmVIqAOQIKxwlxFZN5oKxhG7QJgw
-	 OtfqXhQunhfedm5BhVOMYFaxfYhTrnGuB0FtlndDBXnUcq/sxXBrbBPwh9mmWVZs96
-	 05mDtc5KDDDUPmmHxMdPfJWNU1ePzsXLrmznNl3ACUa1WbGmPlW1vRxS+xBxlIoHco
-	 hq8bh4vZ4chpPWiKs8JLBTCjtqgTCGC7bRwIvBzDH+6WCmYQ58ft/s+dO0G/Gm61dh
-	 0/h983VMnI7vCsTwQLqfIP/DxwFtuasDYAQEXWIL7ty8QL0HRqcHZCeRvzzMDvR9/7
-	 ghpZ2TdYYOQ6w==
-Date: Mon, 14 Oct 2024 11:22:00 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	catalin.marinas@arm.com, will@kernel.org, quic_bjorande@quicinc.com, 
-	geert+renesas@glider.be, dmitry.baryshkov@linaro.org, arnd@arndb.de, 
-	nfraprado@collabora.com, o.rempel@pengutronix.de, y.moog@phytec.de
-Subject: Re: [PATCH 4/8] drm/bridge: fsl-ldb: Use clk_round_rate() to
- validate "ldb" clock rate
-Message-ID: <20241014-meteoric-acrid-corgi-f81a04@houat>
-References: <20240930052903.168881-1-victor.liu@nxp.com>
- <20240930052903.168881-5-victor.liu@nxp.com>
- <2on4bu5jsxvaxckqz3wouwrf2z6nwbtv34ek4xda2dvobqhbsf@g7z7kxq5xrxi>
- <5fb80bf6-96be-4654-bd54-dc4f1d5136ae@nxp.com>
- <20241011-mottled-translucent-dodo-8877e6@houat>
- <6be9d2ac-7e0b-4b6a-885d-ad40158a2998@nxp.com>
+	s=arc-20240116; t=1728897752; c=relaxed/simple;
+	bh=QTBIWdmXk+U4SFPfc0A6/33f0Fbuahy50iVAAeV4uWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=htiIial46uyHHBRD7kvS/jxqJyh0T1eYwjGrph3QhmP7dN+XgD5yh01rpPH4Dt00TZ+RTQV/GTBJekVxlcLawKySWVD00xhq2pAmGM0x9pr1OldagSsHiU4WVABQBK4j60n8i3XkUqjE6T/pgB7SdBWeon9KTbH2aMjGrxFXACU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wAy9cgM8; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43120f65540so18610285e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728897749; x=1729502549; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g3HoY7eFtigRWVv0qg9qyKFXGHm9Qzz/2QFCdLIKNg8=;
+        b=wAy9cgM8yr52tT5O2Hftyi7Yg4Meq9Hu0Afr3Qn6yjXx3Lh7f4HXhMdThHhqgalNac
+         RtwZuGOJbmaVLxWO8ZxakoH3q/smcPy5bh4VruCbRZxAoCQxD5W6xl/KzrL771zw2eSO
+         +Mw/85A3R3ovas4PuLYd+41sIx6QUynY5efeGEoAvL3TQDrQ5BHw2k3a2f2j76q1UJFe
+         eV3ypHkQ7Wtgb+xf2765QThriVzFsKbYmJYsVgthraT/S5nk/LezW7edmacKd6aR0Fz+
+         g3GsvAP0XxBqq3f2uR9i+atovLDIq1OSmDf6rwPa/2NegBSlsCQdSngZVmJ7dlmE7btd
+         WWMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728897749; x=1729502549;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g3HoY7eFtigRWVv0qg9qyKFXGHm9Qzz/2QFCdLIKNg8=;
+        b=IcX1R9hKdrvfP1Lx7WkT2cYLNDCL1OtGnsj7vZSQwqI2dwNTpacoB2UrydXTe6JTlF
+         k8JqUoSUtZfPpFGu37Eh3ORgXFRRSyC57LwFhZlEba4Lofu9XlbpTQQ+gWlFJeF3/sZ3
+         LrEp8wmVipfb+SHqoRutXDzITRsl/QxBRhVy6Zkr1nkYGE5hd3yjEAgqWJzXQE+wF9Rx
+         xBX+WnLLJgeXnAcBdDXgC7ZRBfZyqjMumKiKB+jGvjsipI0dGREjgWGjhD2bfMh8X1X7
+         a4/9ocD6a3BJsze37SoAsydsd7c3zbUevIijwjYL0+8RtQn8P+iLlclWCYyZtbWzY3Us
+         UyvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmYKhl/8+pt2VUkh0cnUdGevZZLovGvJO/SK8GFfp0PB7bPhdybTY0wjlDtw8vV8EVhC2+rj36xxx7iRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLtJlXSmRbJWirEvkfP7xXg/7b+HxPrF2Jjt3kg7G6v6sVtRPS
+	Jp0LvMKgCd7S7LaQNwOItIjm30LLLd7XG+XlcBgFmpn05W09WvTxMU1Ma8R+aeY=
+X-Google-Smtp-Source: AGHT+IFXR2uVEc7GbSxE/yzzaHc2PPfNTiLBNOx/tJ1Z8Yw4E50d6RS4aAVXY8VBR+2SKfTOzGPztA==
+X-Received: by 2002:a05:600c:3b1f:b0:426:6158:962d with SMTP id 5b1f17b1804b1-43125609073mr66644385e9.23.1728897748620;
+        Mon, 14 Oct 2024 02:22:28 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de54:ebb2:31be:53a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835687bsm115728755e9.34.2024.10.14.02.22.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 02:22:28 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: menz127: simplify error path and remove remove()
+Date: Mon, 14 Oct 2024 11:22:26 +0200
+Message-ID: <20241014092227.78886-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="w45doemgv4va56xv"
-Content-Disposition: inline
-In-Reply-To: <6be9d2ac-7e0b-4b6a-885d-ad40158a2998@nxp.com>
+Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
---w45doemgv4va56xv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use devres to drop all goto labels from probe() and remove the driver
+remove() callback. While at it: drop the unnecessary dev_info() message
+as not only should the driver be quiet when successful, the message is
+also wrong: the device was probed at this point, the driver had been
+registered earlier.
 
-On Sat, Oct 12, 2024 at 02:18:16PM GMT, Liu Ying wrote:
-> On 10/11/2024, Maxime Ripard wrote:
-> > On Mon, Sep 30, 2024 at 03:55:30PM GMT, Liu Ying wrote:
-> >> On 09/30/2024, Maxime Ripard wrote:
-> >>> On Mon, Sep 30, 2024 at 01:28:59PM GMT, Liu Ying wrote:
-> >>>> Multiple display modes could be read from a display device's EDID.
-> >>>> Use clk_round_rate() to validate the "ldb" clock rate for each mode
-> >>>> in drm_bridge_funcs::mode_valid() to filter unsupported modes out.
-> >>>>
-> >>>> Also, if the "ldb" clock and the pixel clock are sibling in clock
-> >>>> tree, use clk_round_rate() to validate the pixel clock rate against
-> >>>> the "ldb" clock.  This is not done in display controller driver
-> >>>> because drm_crtc_helper_funcs::mode_valid() may not decide to do
-> >>>> the validation or not if multiple encoders are connected to the CRTC,
-> >>>> e.g., i.MX93 LCDIF may connect with MIPI DSI controller, LDB and
-> >>>> parallel display output simultaneously.
-> >>>>
-> >>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> >>>> ---
-> >>>>  drivers/gpu/drm/bridge/fsl-ldb.c | 22 ++++++++++++++++++++++
-> >>>>  1 file changed, 22 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/brid=
-ge/fsl-ldb.c
-> >>>> index b559f3e0bef6..ee8471c86617 100644
-> >>>> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> >>>> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> >>>> @@ -11,6 +11,7 @@
-> >>>>  #include <linux/of_graph.h>
-> >>>>  #include <linux/platform_device.h>
-> >>>>  #include <linux/regmap.h>
-> >>>> +#include <linux/units.h>
-> >>>> =20
-> >>>>  #include <drm/drm_atomic_helper.h>
-> >>>>  #include <drm/drm_bridge.h>
-> >>>> @@ -64,6 +65,7 @@ struct fsl_ldb_devdata {
-> >>>>  	u32 lvds_ctrl;
-> >>>>  	bool lvds_en_bit;
-> >>>>  	bool single_ctrl_reg;
-> >>>> +	bool ldb_clk_pixel_clk_sibling;
-> >>>>  };
-> >>>> =20
-> >>>>  static const struct fsl_ldb_devdata fsl_ldb_devdata[] =3D {
-> >>>> @@ -74,11 +76,13 @@ static const struct fsl_ldb_devdata fsl_ldb_devd=
-ata[] =3D {
-> >>>>  	[IMX8MP_LDB] =3D {
-> >>>>  		.ldb_ctrl =3D 0x5c,
-> >>>>  		.lvds_ctrl =3D 0x128,
-> >>>> +		.ldb_clk_pixel_clk_sibling =3D true,
-> >>>>  	},
-> >>>>  	[IMX93_LDB] =3D {
-> >>>>  		.ldb_ctrl =3D 0x20,
-> >>>>  		.lvds_ctrl =3D 0x24,
-> >>>>  		.lvds_en_bit =3D true,
-> >>>> +		.ldb_clk_pixel_clk_sibling =3D true,
-> >>>>  	},
-> >>>>  };
-> >>>> =20
-> >>>> @@ -269,11 +273,29 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
-> >>>>  		   const struct drm_display_info *info,
-> >>>>  		   const struct drm_display_mode *mode)
-> >>>>  {
-> >>>> +	unsigned long link_freq, pclk_rate, rounded_pclk_rate;
-> >>>>  	struct fsl_ldb *fsl_ldb =3D to_fsl_ldb(bridge);
-> >>>> =20
-> >>>>  	if (mode->clock > (fsl_ldb_is_dual(fsl_ldb) ? 160000 : 80000))
-> >>>>  		return MODE_CLOCK_HIGH;
-> >>>> =20
-> >>>> +	/* Validate "ldb" clock rate. */
-> >>>> +	link_freq =3D fsl_ldb_link_frequency(fsl_ldb, mode->clock);
-> >>>> +	if (link_freq !=3D clk_round_rate(fsl_ldb->clk, link_freq))
-> >>>> +		return MODE_NOCLOCK;
-> >>>> +
-> >>>> +	/*
-> >>>> +	 * Use "ldb" clock to validate pixel clock rate,
-> >>>> +	 * if the two clocks are sibling.
-> >>>> +	 */
-> >>>> +	if (fsl_ldb->devdata->ldb_clk_pixel_clk_sibling) {
-> >>>> +		pclk_rate =3D mode->clock * HZ_PER_KHZ;
-> >>>> +
-> >>>> +		rounded_pclk_rate =3D clk_round_rate(fsl_ldb->clk, pclk_rate);
-> >>>> +		if (rounded_pclk_rate !=3D pclk_rate)
-> >>>> +			return MODE_NOCLOCK;
-> >>>> +	}
-> >>>> +
-> >>>
-> >>> I guess this is to workaround the fact that the parent rate would be
-> >>> changed, and thus the sibling rate as well? This should be documented=
- in
-> >>> a comment if so.
-> >>
-> >> This is to workaround the fact that the display controller driver
-> >> (lcdif_kms.c) cannot do the mode validation against pixel clock, as
-> >> the commit message mentions.
-> >=20
-> > That part is still not super clear to me, but it's also not super
-> > important to the discussion.
->=20
-> As kerneldoc of drm_crtc_helper_funcs::mode_valid mentions that
-> it is not allowed to look at anything else but the passed-in mode,
-> it doesn't know of the connected encoder(s)/bridge(s) and thus
-> cannot decide if it should do mode validation against pixel clock
-> or not.  Encoder/bridge drivers could adjust pixel clock rates
-> for display modes.  So, mode validation against pixel clock should
-> be done in this bridge driver.
->=20
-> In fact, the pixel clock should have been defined as a DT property
-> in fsl,ldb.yaml because the clock routes to LDB as an input signal.
-> However, it's too late...  If the DT property was defined in the
-> first place, then this driver can naturally do mode validation
-> against pixel clock instead of this workaround.
->=20
-> >=20
-> > My point is: from a clock API standpoint, there's absolutely no reason
-> > to consider sibling clocks. clk_round_rate() should give you the rate
->=20
-> Agree, but it's a workaround.
->=20
-> > you want. If it affects other clocks it shouldn't, it's a clock driver
-> > bug.
->=20
-> The sibling clocks are the same type of clocks from HW design
-> point of view and derived from the same clock parent/PLL.
-> That's the reason why the workaround works.
->=20
-> >=20
-> > You might want to workaround it, but this is definitely not something
-> > you should gloss over: it's a hack, it needs to be documented as such.
->=20
-> I can add some documentation in next version to clarify this
-> a bit.
->=20
-> >=20
-> >> The parent clock is IMX8MP_VIDEO_PLL1_OUT and it's clock rate is not
-> >> supposed to be changed any more once IMX8MP_VIDEO_PLL1 clock rate is
-> >> set by using DT assigned-clock-rates property.  For i.MX8MP EVK, the
-> >> clock rate is assigned to 1039500000Hz in imx8mp.dtsi in media_blk_ctrl
-> >> node.
-> >=20
-> > There's two things wrong with what you just described:
-> >=20
-> >   - assigned-clock-rates never provided the guarantee that the clock
-> >     rate wouldn't change later on. So if you rely on that, here's your
-> >     first bug.
->=20
-> I'm not relying on that.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-menz127.c | 58 +++++++++++++++----------------------
+ 1 file changed, 24 insertions(+), 34 deletions(-)
 
-Sure you do. If anything in the kernel changes the rate of the
-VIDEO_PLL1 clock, then it's game over and "clock rate is not supposed to
-be changed any more once IMX8MP_VIDEO_PLL1 clock rate is set by using DT
-assigned-clock-rates property." isn't true anymore.
+diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
+index a035a9bcb57c..3ccd2cb35b9c 100644
+--- a/drivers/gpio/gpio-menz127.c
++++ b/drivers/gpio/gpio-menz127.c
+@@ -127,6 +127,13 @@ static int men_z127_set_config(struct gpio_chip *gc, unsigned offset,
+ 	return -ENOTSUPP;
+ }
+ 
++static void men_z127_release_mem(void *data)
++{
++	struct resource *res = data;
++
++	mcb_release_mem(res);
++}
++
+ static int men_z127_probe(struct mcb_device *mdev,
+ 			  const struct mcb_device_id *id)
+ {
+@@ -140,17 +147,19 @@ static int men_z127_probe(struct mcb_device *mdev,
+ 		return -ENOMEM;
+ 
+ 	men_z127_gpio->mem = mcb_request_mem(mdev, dev_name(dev));
+-	if (IS_ERR(men_z127_gpio->mem)) {
+-		dev_err(dev, "failed to request device memory");
+-		return PTR_ERR(men_z127_gpio->mem);
+-	}
++	if (IS_ERR(men_z127_gpio->mem))
++		return dev_err_probe(dev, PTR_ERR(men_z127_gpio->mem),
++				     "failed to request device memory");
+ 
+-	men_z127_gpio->reg_base = ioremap(men_z127_gpio->mem->start,
+-					  resource_size(men_z127_gpio->mem));
+-	if (men_z127_gpio->reg_base == NULL) {
+-		ret = -ENXIO;
+-		goto err_release;
+-	}
++	ret = devm_add_action_or_reset(dev, men_z127_release_mem,
++				       men_z127_gpio->mem);
++	if (ret)
++		return ret;
++
++	men_z127_gpio->reg_base = devm_ioremap(dev, men_z127_gpio->mem->start,
++					resource_size(men_z127_gpio->mem));
++	if (men_z127_gpio->reg_base == NULL)
++		return -ENXIO;
+ 
+ 	mcb_set_drvdata(mdev, men_z127_gpio);
+ 
+@@ -161,34 +170,16 @@ static int men_z127_probe(struct mcb_device *mdev,
+ 			 men_z127_gpio->reg_base + MEN_Z127_GPIODR,
+ 			 NULL, 0);
+ 	if (ret)
+-		goto err_unmap;
++		return ret;
+ 
+ 	men_z127_gpio->gc.set_config = men_z127_set_config;
+ 
+-	ret = gpiochip_add_data(&men_z127_gpio->gc, men_z127_gpio);
+-	if (ret) {
+-		dev_err(dev, "failed to register MEN 16Z127 GPIO controller");
+-		goto err_unmap;
+-	}
+-
+-	dev_info(dev, "MEN 16Z127 GPIO driver registered");
++	ret = devm_gpiochip_add_data(dev, &men_z127_gpio->gc, men_z127_gpio);
++	if (ret)
++		return dev_err_probe(dev, ret,
++			"failed to register MEN 16Z127 GPIO controller");
+ 
+ 	return 0;
+-
+-err_unmap:
+-	iounmap(men_z127_gpio->reg_base);
+-err_release:
+-	mcb_release_mem(men_z127_gpio->mem);
+-	return ret;
+-}
+-
+-static void men_z127_remove(struct mcb_device *mdev)
+-{
+-	struct men_z127_gpio *men_z127_gpio = mcb_get_drvdata(mdev);
+-
+-	gpiochip_remove(&men_z127_gpio->gc);
+-	iounmap(men_z127_gpio->reg_base);
+-	mcb_release_mem(men_z127_gpio->mem);
+ }
+ 
+ static const struct mcb_device_id men_z127_ids[] = {
+@@ -202,7 +193,6 @@ static struct mcb_driver men_z127_driver = {
+ 		.name = "z127-gpio",
+ 	},
+ 	.probe = men_z127_probe,
+-	.remove = men_z127_remove,
+ 	.id_table = men_z127_ids,
+ };
+ module_mcb_driver(men_z127_driver);
+-- 
+2.43.0
 
-> Instead, the PLL clock rate is not supposed to change since
-> IMX8MP_CLK_MEDIA_LDB clock("ldb" clock parent clock) hasn't the
-> CLK_SET_RATE_PARENT flag. And, we don't want to change the PLL clock
-> rate at runtime because the PLL can be used by i.MX8MP MIPI DSI and
-> LDB display pipelines at the same time, driven by two LCDIFv3 display
-> controllers respectively with two imx-lcdif KMS instances. We don't
-> want to see the two display pipelines to step on each other.
->=20
-> >=20
-> >   - If the parent clock rate must not change, why does that clock has
-> >     SET_RATE_PARENT then? Because that's the bug you're trying to work
-> >     around.
->=20
-> IMX8MP_CLK_MEDIA_LDB clock hasn't the CLK_SET_RATE_PARENT flag.
-> I'm fine with the "ldb" clock tree from the current clock driver
-> PoV - just trying to validate pixel clock rate as a workaround.
-
-As far as I can see, the ldb clock is IMX8MP_CLK_MEDIA_LDB_ROOT in
-imx8mp.dtsi. That clock is defined using imx_clk_hw_gate2_shared2 that
-does set CLK_SET_RATE_PARENT.
-
-Maxime
-
---w45doemgv4va56xv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZwziuAAKCRAnX84Zoj2+
-dr2LAX95pmyIbBkFFUEui7PiHgljiomXcZhA3D+PsqZIdS4fAHBL/ajvV12rKc90
-zTNHIbgBf1l3pytylMUdDYO9YPSzR6ycdEshRcV+N97mR5qeuaBkQQVeovN7ptjq
-kmV3iPlg3w==
-=unJz
------END PGP SIGNATURE-----
-
---w45doemgv4va56xv--
 
