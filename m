@@ -1,114 +1,149 @@
-Return-Path: <linux-kernel+bounces-363696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A748799C5D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8590E99C5DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DFB4B27E94
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D5C283BA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23A4155CB0;
-	Mon, 14 Oct 2024 09:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D9C15697B;
+	Mon, 14 Oct 2024 09:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eMXcXS8l"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WqQK5CrW"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88465146A79
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A8C14A60F;
+	Mon, 14 Oct 2024 09:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898268; cv=none; b=GyXFp5qrW/P0FGi//v6NICz36cGPyH7TebK7jJTnCTZ5dHuqwHeHS9VznppHLh+Xu0NTOm5YNeAqPP+ZXX0z9RG375dbqaQhHCQCNFQN7LLYgA/L/FyQArBz1X5ceZ2PwlcR9YDHIEnD1ZG3SwpfrYKaDL/Ga0bOmP7J6QWC9ts=
+	t=1728898615; cv=none; b=ZNJHMRgyc8MOxg3vnK7zeGn/OGvjbp0aCK3F3HNdZCyMdJil779YiSAQmuuYOQKweLlX1MUd4Ja1NTinMEn+fjYyJW9ZkOrDAXDWOMK+nZAlwbJ65hz6Qi3R4NFk1nzY7O1TbG01EYzM8AdaxuzMjFBytXgT8kGN5qDeMsffysw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898268; c=relaxed/simple;
-	bh=10Vh/KXdRgda34P24+FCpQSF7tDiI5LjonUGB1ERa3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V1gEQElV98x6E0Jz4+4xPxtWr6udZNdmgVXby8bo0KtQKL7tb5YnvzVA937KeW/MZN4lX9wXzg/BsuIavvVy2aYi0IjwhHqSTrWY16FCSUEBBckCG09eflAoG4z9zEkkSeIIEtdVnm5pdYH6AD5hAvwkV/4RrPfY7XzcgHSsvQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eMXcXS8l; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4311d972e3eso21261865e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728898265; x=1729503065; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tPxfM3/+LHt+EmVnzhLr9Fip6ZGfwtZ5p/tUW2SXXpI=;
-        b=eMXcXS8lzTnM02rJIVw2/WdsdmSh/mnx/ivOmhWN8ViLT9NNERxB4W7xliedmLhH1U
-         P9q9MwDQYYfBQsWQh9os4zZXfDzbuJoBjp4xOR3RinoOc278D5Z0IR8mzybKbwwu2W21
-         lPfZSq6fesf0cRiLuObl92IuvJtrj6XMCWZ9LxrGUiQGkUfMSNHTmQ23XoIFl/WAnOZo
-         +o4oAsVOmxj1tqMfannFrZT7oA837YZ/Gue1RpkIBGKiFF0nAzNRmLO5obvM3zQtvXTO
-         7uUeBTJGye+HNYoKNhZRhPA/qsYUPs248r2BcyQ4o5VJMoKT6NoSuHr5G/aps62cVkjD
-         3z0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728898265; x=1729503065;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tPxfM3/+LHt+EmVnzhLr9Fip6ZGfwtZ5p/tUW2SXXpI=;
-        b=nsy03f6UHt6TouYZ+ZY44kNKd6KburQB519/acpNgsZI/IM9oebNQBx6Lh+mxeJsme
-         H8ztlA4/t+J7ltQRNgKythyUWv4Lg8KKvV5a75ZYhARSAAwWiosTXUpteQ/njaEWL80u
-         dCO0wo2f2p3xf7L3c96WP6C7pYeF1WegpihSTmwxi9L4RNYmeHQQElW4KiOsFDQqXLcV
-         OM448Tm8outhrD5lnjSeySPY1QMMwd+vDHly4x2Hs9QpEDEIl8fDa3NL/p0BxKQpHcYM
-         ifzzJSKYNkh2rx4jLLiF3ROk1Z7qn8Pxe1uhk41x7sdbbBve833uuux0qLHe0J/TDO8/
-         il6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVOxU0h0DHewZFIgULgjpV/zGNhh2DL+pL0MwNvmVEbcu7pzQ/SkJvi7SVteBWtRCRnbT7dTDo/YqqIIeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrW6V8Y/i3xeCqkR+ymjxbtX6ki8Cwxo3XbmG24klAUX/bCCH2
-	rnDrM50xnLxmC8rKbHH5d84DYHc7y6RY7F4r11JyFTyXOlsC55nyZI3FjtdWwhQ=
-X-Google-Smtp-Source: AGHT+IGJAZ2abLY3A+ePxucwhIPOIPVNEZwYUtaSndGiYueX+Z9ySXWSN9wDAthowcyl1n/MoONv3w==
-X-Received: by 2002:a05:600c:190f:b0:430:53f8:38bc with SMTP id 5b1f17b1804b1-431255dcb76mr61160315e9.12.1728898264921;
-        Mon, 14 Oct 2024 02:31:04 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43127a6ae71sm63892235e9.47.2024.10.14.02.31.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 02:31:04 -0700 (PDT)
-Date: Mon, 14 Oct 2024 12:31:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] staging: vchiq_arm: Fix missing refcount
- decrement in error path for fw_node
-Message-ID: <e9ccca49-c609-4d65-8609-a5ca3264ede7@stanley.mountain>
-References: <20241014-vchiq_arm-of_node_put-v2-0-cafe0a4c2666@gmail.com>
+	s=arc-20240116; t=1728898615; c=relaxed/simple;
+	bh=SsDzFXoQvN4gh5FLsiwia3cjb9QC2/XbGclc+wnSFVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UPTmNyp2PZzRIrtvAhm7zpghq3q+zzozmIyqaKe+p/B+CCTc/mQ7V432enQUsDyBwaZcNZf++PUzqsVBKF1lUVfhF0uYlHPLXsuovUEjKrHq8XQuQLyAcER/uB6Kr9p2QtEWntAN2R+jQMTMoRWmDWmvlO67th4baAMwACxBmQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WqQK5CrW; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E54WgY026996;
+	Mon, 14 Oct 2024 11:36:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Y1wWLgOdlus18jZTNI/TrhpX0Z0nvcFkl1+WB4i8ztY=; b=WqQK5CrWjeZU47tj
+	TsOh53c8+xSff02acMn8k+DhbbZPamiST1OctOcQIaKOHg7ry+zkJAgEMZOYiVjx
+	clyOOSGk4Kd5XVYJr0NE6rzaSHY32/152XI4UACSiC0q18GkTDPwgiwY0knbE/yJ
+	67b/yOpXeKzXu+6OOnz84sDQXeAcdRpX/yfsjUPsPdgQ8+CWgPaixmbhAa4Ba4Zj
+	axUgqsFOJDFxop5hMmG66RMt9CKftlLcPdtHVM5WtdYy5YxhsINrwF/7ya9qOZz0
+	+Gs9T2KAb6iDk1aGz4Hajs9U5uyXsa++0tGpviOVcKq34Lbffg3RhNrqNVjou6eO
+	BOcK9A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 427e85qff8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 11:36:05 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A30B64004C;
+	Mon, 14 Oct 2024 11:34:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4277D25F512;
+	Mon, 14 Oct 2024 11:31:41 +0200 (CEST)
+Received: from [10.252.14.29] (10.252.14.29) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 14 Oct
+ 2024 11:31:40 +0200
+Message-ID: <f8c4de66-1d4f-480b-9137-f91e0323ecde@foss.st.com>
+Date: Mon, 14 Oct 2024 11:31:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014-vchiq_arm-of_node_put-v2-0-cafe0a4c2666@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: rng: add st,stm32mp25-rng support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Olivia Mackall <olivia@selenic.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Lionel Debieve <lionel.debieve@foss.st.com>, <marex@denx.de>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
+ <20241011-rng-mp25-v2-v2-1-76fd6170280c@foss.st.com>
+ <v4c7vwoqfposhm3bxnidjzwb7via7flf2em45qbgjjncwfvv74@n2rsz3ujpdoc>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <v4c7vwoqfposhm3bxnidjzwb7via7flf2em45qbgjjncwfvv74@n2rsz3ujpdoc>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Mon, Oct 14, 2024 at 10:56:35AM +0200, Javier Carrasco wrote:
-> This series refactors some useless goto instructions as a preparation
-> for the fix of a missing of_node_put() by means of the cleanup
-> attribute.
+
+
+On 10/14/24 09:29, Krzysztof Kozlowski wrote:
+> On Fri, Oct 11, 2024 at 05:41:41PM +0200, Gatien Chevallier wrote:
+>>     clocks:
+>> -    maxItems: 1
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    items:
+>> +      - const: core
+>> +      - const: bus
+>>   
+>>     resets:
+>>       maxItems: 1
+>> @@ -57,6 +65,26 @@ allOf:
+>>         properties:
+>>           st,rng-lock-conf: false
+>>   
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - st,stm32-rng
+>> +              - st,stm32mp13-rng
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          maxItems: 1
+>> +        clock-names: false
+>> +    else:
+>> +      properties:
+>> +        clocks:
+>> +          minItems: 2
+>> +          maxItems: 2
 > 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
-> Changes in v2:
-> - Refactor vchiq_probe() to remove goto instructions.
-> - Declare and initialize the node right before its first usage.
-> - Link to v1: https://lore.kernel.org/r/20241013-vchiq_arm-of_node_put-v1-1-f72b2a6e47d0@gmail.com
+> Missing clock-names constraint. They *always* go in sync with clocks.
+> 
+> Best regards,
+> Krzysztof
 > 
 
-Thanks!
+Done for V3,
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+Best regards,
+Gatien
 
