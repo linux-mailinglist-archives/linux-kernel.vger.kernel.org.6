@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-364670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8207199D7AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8485299D7B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BEDF28438C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46AA92845C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1271CFEA9;
-	Mon, 14 Oct 2024 19:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D991CDA3E;
+	Mon, 14 Oct 2024 19:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MxNGJpE5"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="S+y6ztHJ"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452FF1C2DB0;
-	Mon, 14 Oct 2024 19:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30EB1C877E;
+	Mon, 14 Oct 2024 19:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728935252; cv=none; b=MeokCGs2f1AUAFXUGAqRmk0NV3JzBHuTM5SBVkRj37TdyS46NMm48KbRJLBbQUuhJvlfcNVg6rohZ4jjgEw3M5Tz5mIkWQR1fd29SgdHHA9jILWXQze6yLAMWZ0FZbIQJHPXOI2XpCT4N451o5slVujW/K0EPJC6qGg7FkX75+U=
+	t=1728935253; cv=none; b=UtEdFKy5iEBSp8HNQT7hNKMRakGvr5viq4lc9FDR4hpMy43QXu8g+bvTNerzYJefzYu1k4XiKxxSWvTkbyG1jtqRZzQICQWQ8PuGw3DCsLSbO8VIGcLULXcKsbCxmCyV+mdkGOgOCQNLqUuRk3BWZaXAACq5eRBIdhGJHJ+C5RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728935252; c=relaxed/simple;
-	bh=fgP3lC8Cue3uRjcsaZ58dxyULkfZK4nH32kxg7ZAOsg=;
+	s=arc-20240116; t=1728935253; c=relaxed/simple;
+	bh=HrjaBQddtlYnMWaPxZnfEaKP1aWpS2Gr/imB/Ke9JTI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z+Wkvi1qEjgf0QTR6mp9l7IhgjN1GjiKVcYRmafCQYz2z2Ix0l4/LVwI0zE29cZTSTzFasuhe73EK/HBeMFJiWrCi+juoWrwPXqDMjFl9D0QPUHxx/YaskUuMNtsdsnf9MW1O0iyH8KV9J4376xvE5neGScLE4ufGaML/BJC0cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MxNGJpE5; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=Wn44aRHlkUbVPeELizEbCP0WzzRAzgygGNi27ZMQnTTqBpwHxHxG9xd0SNDVcJjO03UMfJ/dJ+y2wIi2ExIg+67NdaO6pHFv+irrqG9bn0SMlEeZQkGJHYOkTftKubjQBF2u8d0KB1+NamX2eUINdirPg/J0qJ/XZcLuQ2W7SXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=S+y6ztHJ; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49EJlN1O022644;
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49EJlNFW017926;
 	Mon, 14 Oct 2024 14:47:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1728935243;
-	bh=XFYix9QSnw7P9Q2WomFqXPBRxSQ9YH8/tWQ1pxHZynU=;
+	bh=OfeUQFbrKPf1VWol3OA2JgYbMdzM5STfxX6WAMWs4tc=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=MxNGJpE5YBTuNqkc9nE0B3prSvd+69Bl34+nQ2S6HgaDW3NsykzDWYEJe75AFEZp2
-	 ZbEJ/L9+YpLTqrMO6SwH7NyHFshXWOV9gksNTiSdLRdMc2jmmsKiPv+byBqbwThvgA
-	 d59j6JR08qy3VJdf2DBBoRIE61T0O765mtBVlv0s=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49EJlNNK016776
+	b=S+y6ztHJcqo4YA75V1gQvdyWlPTvKr3V6JEcL7kWbgmj3Fq5osEE8MGnvZVP59lP7
+	 ap2ApL/Lr8kCNdbXJSti6xfN6AOdHznEfCYr20UzQR5jDBE03wnqZakXaCX27NetaN
+	 TD8uNwOsHmtxSQ+s4g6AIln5jPsbgTjpP8hrVrXE=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49EJlNkA009520
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Mon, 14 Oct 2024 14:47:23 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 14
  Oct 2024 14:47:22 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Mon, 14 Oct 2024 14:47:22 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49EJlM9Y002469;
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49EJlM9Z002469;
 	Mon, 14 Oct 2024 14:47:22 -0500
 From: Judith Mendez <jm@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
@@ -65,9 +65,9 @@ CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] arm64: dts: ti: k3-am6*: Remove disable-wp for eMMC
-Date: Mon, 14 Oct 2024 14:47:20 -0500
-Message-ID: <20241014194722.358444-2-jm@ti.com>
+Subject: [PATCH 2/3] arm64: dts: ti: k3-am65-main: Add missing itapdly to sdhci0
+Date: Mon, 14 Oct 2024 14:47:21 -0500
+Message-ID: <20241014194722.358444-3-jm@ti.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241014194722.358444-1-jm@ti.com>
 References: <20241014194722.358444-1-jm@ti.com>
@@ -81,94 +81,28 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Remove disable-wp flag for eMMC nodes since this flag is
-only applicable to SD.
+For am65x, add missing ITAP delay values for sdhci0
+node according to the device datasheet [0].
 
-For eMMC, this flag should be ignored but lets remove
-anyways to cleanup sdhci nodes.
-
+[0] https://www.ti.com/lit/ds/symlink/am6548.pdf
 Signed-off-by: Judith Mendez <jm@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts | 1 -
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts        | 1 -
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts        | 1 -
- arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 1 -
- arch/arm64/boot/dts/ti/k3-am642-evm.dts        | 1 -
- arch/arm64/boot/dts/ti/k3-am654-base-board.dts | 1 -
- 6 files changed, 6 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-index 70de288d728e4..092d7713e6209 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-@@ -820,7 +820,6 @@ &sdhci0 {
- 	bootph-all;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&emmc_pins_default>;
--	disable-wp;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index 67faf46d7a35a..748cd7ac2646e 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -602,7 +602,6 @@ &sdhci0 {
- 	non-removable;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_mmc0_pins_default>;
--	disable-wp;
- };
- 
- &sdhci1 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index 3efa12bb72546..efedf226addcb 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -445,7 +445,6 @@ &main_i2c2 {
- &sdhci0 {
- 	status = "okay";
- 	ti,driver-strength-ohm = <50>;
--	disable-wp;
- 	bootph-all;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-index 44ff67b6bf1e4..e903382c0caba 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-@@ -418,7 +418,6 @@ &sdhci0 {
- 	status = "okay";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_mmc0_pins_default>;
--	disable-wp;
- };
- 
- &sdhci1 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-index 97ca16f00cd26..95c20e39342cc 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-@@ -584,7 +584,6 @@ &sdhci0 {
- 	status = "okay";
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
--	disable-wp;
- 	bootph-all;
- };
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index aa7139cc8a92b..c30425960398e 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -456,7 +456,6 @@ &sdhci0 {
- 	bus-width = <8>;
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
--	disable-wp;
- };
- 
- /*
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+index 1f1af7ea23305..0534b53483473 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+@@ -449,6 +449,8 @@ sdhci0: mmc@4f80000 {
+ 		ti,otap-del-sel-mmc-hs = <0x0>;
+ 		ti,otap-del-sel-ddr52 = <0x5>;
+ 		ti,otap-del-sel-hs200 = <0x5>;
++		ti,itap-del-sel-legacy = <0xa>;
++		ti,itap-del-sel-mmc-hs = <0x1>;
+ 		ti,itap-del-sel-ddr52 = <0x0>;
+ 		dma-coherent;
+ 		status = "disabled";
 -- 
 2.47.0
 
