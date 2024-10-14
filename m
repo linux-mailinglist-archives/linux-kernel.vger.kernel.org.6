@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-364166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CA599CC16
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A4699CC1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A843F1F23977
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6A1283C7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2741AAE08;
-	Mon, 14 Oct 2024 13:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E9D1AAE33;
+	Mon, 14 Oct 2024 14:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSUyMHM3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGlaTC7b"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3102231C8A;
-	Mon, 14 Oct 2024 13:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EC819C557;
+	Mon, 14 Oct 2024 14:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728914389; cv=none; b=WS3egqDU/iSjLTMWZ/3l95DVcmDk/Bh78JQRwNAlETrBx7KSagyL69CbA+rVDDO1UnsQYiEYXiVNWdkRghh+RZpSmM2RAuftul38eliHl1HEG5bjm6E9P7E2g7E/Wlu9fPw4GkXcNk109TeXO0Uj+gghB7p+Wh1In1uj9f5T2E8=
+	t=1728914401; cv=none; b=R1dRv1bXOfkGoXulQj31pbLtg+CRQfNwiiQOPoXCTzRVf6E0U7v9PnAy0Uhv4iQuscW3lR9qNDmelQRQkoHSmQcwBVpU0wCkxWmBOK7Jx1gb2dIgcc3CXM0pilTUJDEHBsT0d/cQkMITgdeNLB8WFJrVLxOVw5JRoqP3KgOPEHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728914389; c=relaxed/simple;
-	bh=H9P82NUHjzhSG+q03ylKXcErnfke+kcbkRkAXEXtqss=;
+	s=arc-20240116; t=1728914401; c=relaxed/simple;
+	bh=Ot6KI4/aX9+94sigBkkQUxKZPjmPMSk2BxYrlxSnfp4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kx2JmdhbvtqOMvU1AZyd+2Zyx6/ZzT+3dEA0L8NAXaVfHKzs+zlRzfuvZ91PSUtVYXTMVi9xy9iC+TQhakYA5Ltw3MCmw7owNXRfAsJ5G+Zt34JKrdDWINmbRi9WH/iW5QOfPJ+xts0LlOeFWXfO+UXqGzkvGWJXfNjKyR30Ptw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSUyMHM3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DE44C4CEC3;
-	Mon, 14 Oct 2024 13:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728914388;
-	bh=H9P82NUHjzhSG+q03ylKXcErnfke+kcbkRkAXEXtqss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NSUyMHM312ILKPLeoDrkDB5PqqmMcQXJGNf/rrrQ0VjEAD4ebiRUhrIyozWQ2eGPN
-	 K4ege7WiwKlk46bvSDbx03kr9XUeKzrIYI4sHwciGOxO0WMzPdKSJ6ENhrZWuDWWeY
-	 GLi+EB0emlojuZERgAdKWUPgzjI84Bo+t6HxU4mNonaA5w49WHQf50KtXnMSmKMsWX
-	 VOXG+zGYmKJPumw9ypG4H8TIPF5FA1wC7F43lKOpZWuVLy+l+3UHOeD0LqDjmxV0Su
-	 7VJ4wdZCBX9uUsoWFr9xRbWSzq4LDNiwWQS7Z9d2YGbMNLUObt8UqFKWlzg4mwT3bi
-	 W27SYygaZmeJQ==
-Date: Mon, 14 Oct 2024 14:59:39 +0100
-From: Will Deacon <will@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-s390@vger.kernel.org, loongarch@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 3/9] arm64: vdso: Remove timekeeper include
-Message-ID: <20241014135939.GC17505@willie-the-truck>
-References: <20241010-vdso-generic-arch_update_vsyscall-v1-0-7fe5a3ea4382@linutronix.de>
- <20241010-vdso-generic-arch_update_vsyscall-v1-3-7fe5a3ea4382@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M4f+Ven2DQMiStY+1zjdE+IzJdR2c9q6vt6fO2r+AjX3kSnsbq0LpaGw8WXekE5dN8hv/dTh57z+h3UNs22qNu9HPjWWvod8yAU/hLsG8WG/5U1SqVqTnpeoU8podBP/eTvVYuDDuGniuVf7+lT/pwBpBFNAUPmIquOJ5P8d7ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGlaTC7b; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-716ab0c7873so1172564a34.2;
+        Mon, 14 Oct 2024 06:59:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728914399; x=1729519199; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TciJDqM/oynQN7SuulzmnyT4zsxsL81U0wRwHqFFwI0=;
+        b=KGlaTC7bB9vX4v+4umcrWQzUvlA+ZmhCoubFLzxBU7/RvMYe+M7b+xjYWPdTQEH5wG
+         C3jXyS5+HTkZJ5+yyN6vKXJgPCKLrbHaErpZm3foWksx6Wf+GIAfZSIc7cQXuyqIGGHQ
+         J/LwUk/gPiwtch64nVhCDjgU8OUwZaFXAME66JvczPqTVJSP3cswKIJz5yS6Za5z+W96
+         Gih+WxGLHDZg6lbKo61f3P513RlDl7atRy4KyqZRH87LLqKeQqdKYCgjBrr24xu+Daxx
+         /H/WO9Wyy48JiPMa6f6dnkkqOEAYlpu86mhX8Xk1Tu3NkOPkid75p1Jun+Pyy/P4NR+q
+         2qxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728914399; x=1729519199;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TciJDqM/oynQN7SuulzmnyT4zsxsL81U0wRwHqFFwI0=;
+        b=mz7xT9KM+ABeK42YzK/ev/ajbZEDk2l8CxU3Xt6r4tM2inFZHymq/uwZoAJq341KmY
+         iivygeIOyeW8QpFPmX6yxvwMwSyC16eEZMB+YOQeE94zte3Q/1e6Aww4WOJ9Kuiirp/G
+         3UIoOhH9omGWXbRT1Sjr8pOoyFn3a3kHado5naeZukNRBiP58Ce0kQPtiH3c3EdWKNMS
+         yKAlicmlxIhMu1gJe/X5kfMbJ5K6s1vuQ27+2zN0nwQDJW7mfHJz6tvs/HYerYvwa4sS
+         H+sGq/FxxjbXPSXyWyzEDOnxdw3Oa2Sv8xa1ad9V+M2C1i6GCDggjSmk8AYGv+KCcd9L
+         GEBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULU2d0xclNdTmwY+c1XjC/vZiTzD3iKTS/NejbKTkPRnCX4gNMn6ERGccBZsXDDJe+CSxl7UyUeZNnwpY=@vger.kernel.org, AJvYcCVJFnDXmg/Z3R086TTm72qpCE7XnQqGNh3h3sU0mV/20VrmMy75/jOkDRV9AqiIeo6UfuuMDGjj7XnX3+rk@vger.kernel.org, AJvYcCWI7FQVvueRQgOEM4kxmyRyvgC78gHaHu2cqPZssDqkKY4BEajQ8mgfJWq3yVa7/lZhsl4oJn2OCZx4@vger.kernel.org, AJvYcCWj3laIMeCqPUuvDgEElrwUBT0OUyLi6S65UJrbNnlKU7GkSGiRX6lq3e9aHUKKUiAgtX1uH1v2+L1Dw513iA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwYR/AkA4GtXaze6Kp33qNty97MAv8ALpKIjERPs1XsdJGO6Ky
+	Mffef6v+yj7qeWPTRGoU94SPAejXg67wjT5QJXiLHXisdLpYsjVJ
+X-Google-Smtp-Source: AGHT+IF1DO38bcqmfhG3Bvj6vycHvTrsuNZGFmtCdNfPnG2YcslUQ1TwRlOxbKNUbxaVUPpTmBe/mA==
+X-Received: by 2002:a05:6358:6f82:b0:1c2:fe94:abda with SMTP id e5c5f4694b2df-1c340c656dfmr60367355d.5.1728914399188;
+        Mon, 14 Oct 2024 06:59:59 -0700 (PDT)
+Received: from localhost.localdomain ([103.149.249.231])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea448f9542sm6863045a12.33.2024.10.14.06.59.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 06:59:58 -0700 (PDT)
+Date: Mon, 14 Oct 2024 22:00:21 +0800
+From: Jianhua Lu <lujianhua000@gmail.com>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sebastian Fricke <sebastian.fricke@collabora.com>,
+	linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 27/28] media: iris: enable video driver probe of
+ SM8250 SoC
+Message-ID: <Zw0j9UeJmC1MZ3Xt@localhost.localdomain>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-27-c5eaa4e9ab9e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241010-vdso-generic-arch_update_vsyscall-v1-3-7fe5a3ea4382@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20241014-qcom-video-iris-v4-v4-27-c5eaa4e9ab9e@quicinc.com>
 
-On Thu, Oct 10, 2024 at 05:44:46PM +0200, Thomas Weiﬂschuh wrote:
-> Since the generic VDSO clock mode storage is used, this header file is
-> unused and can be removed.
+On Mon, Oct 14, 2024 at 02:37:48PM +0530, Dikshita Agarwal wrote:
+> Initialize the platform data and enable video driver
+> probe of SM8250 SoC.
 > 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 > ---
->  arch/arm64/kernel/vdso.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-> index 706c9c3a7a50a4574e77da296e9c83e1e2a9f5ab..8ef20c16bc482e92de8098d55000c9999b89830e 100644
-> --- a/arch/arm64/kernel/vdso.c
-> +++ b/arch/arm64/kernel/vdso.c
-> @@ -19,7 +19,6 @@
->  #include <linux/signal.h>
->  #include <linux/slab.h>
->  #include <linux/time_namespace.h>
-> -#include <linux/timekeeper_internal.h>
->  #include <linux/vmalloc.h>
->  #include <vdso/datapage.h>
->  #include <vdso/helpers.h>
+[..] 
+> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+> index 86ef2e5c488e..a2aadd48926f 100644
+> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+> @@ -325,6 +325,10 @@ static const struct of_device_id iris_dt_match[] = {
+>  		.compatible = "qcom,sm8550-iris",
+>  		.data = &sm8550_data,
+>  	},
+> +	{
+> +		.compatible = "qcom,sm8250-venus",
+> +		.data = &sm8250_data,
+> +	},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, iris_dt_match);
 
-Acked-by: Will Deacon <will@kernel.org>
-
-Will
+qcom-venus driver has already supported sm8250 soc, I think you should add
+an extra patch to drop sm8250 releated code from qcom-venus driver if you
+tend to add support for sm8250 in qcom-iris driver.
 
