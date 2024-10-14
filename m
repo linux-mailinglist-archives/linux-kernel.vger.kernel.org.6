@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-364229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBCD99CE33
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:41:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7162699CE37
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9935A1F23C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:41:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BB81C230CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFCA1AB52D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF71ABEBF;
+	Mon, 14 Oct 2024 14:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTUGCUT/"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA31E1AB6DD;
 	Mon, 14 Oct 2024 14:41:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529E7611E;
-	Mon, 14 Oct 2024 14:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916878; cv=none; b=G0Y6NCUrYcz6IGflU+/P8A/VclhtxutzEcHWQ8WDvIqhYjDwdOaPmu0MEO2MC1OyQnHW33M9SKTsBShGkPkC78jaJVUZ088VdSrPqoo4bXe0/w7dGXPl1Xw6BdbFmFTuOBDfUoLcnNfjYCzV+18lUWvC+/U/zcp3aguJJfVNkYs=
+	t=1728916881; cv=none; b=KhYUTpEYacQBrL6a9nCdeMmRSZ7/4buZOo5G0TvAUWy0zlVsG9aP3u2W+Fla/y6Zh9hrLdFaxbem/UdNJBwDHd8fgfivSygAOALYZqEQ9p9CfVvKHv6UabTuz1HcQMmxeCPnad8kTBK+DdMBNn24Xsv6kEECW0M/OI6/DuqEExA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916878; c=relaxed/simple;
-	bh=DFO1aR4GLZZo4R8pIqMvQlWpP7eE9cLB5QesFzKUEqg=;
+	s=arc-20240116; t=1728916881; c=relaxed/simple;
+	bh=poO1b4aOOl4KxcNSMPtHE5c3OpdVVV7KBRYV8RfpmPQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dGw+oNTtB2BSH8C2yIQAg+Brh3svu5mwivFASUDcP42d9/xcOBx4bjUmeADJW8TXSNT1DKZFA2SNmaGisaq4QX1Uaw6pBrd9ZRqeTcspU89kzDTN9OD6j+waiFfHgFxDV4nVDxeEfUVJsqFeFPrxvjHJ7YY2ALbfYh4KNVsQt7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6198F1007;
-	Mon, 14 Oct 2024 07:41:44 -0700 (PDT)
-Received: from [10.57.21.126] (unknown [10.57.21.126])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD6853F51B;
-	Mon, 14 Oct 2024 07:41:09 -0700 (PDT)
-Message-ID: <f3ce0718-064d-48e4-a681-7058157127b0@arm.com>
-Date: Mon, 14 Oct 2024 15:41:07 +0100
+	 In-Reply-To:Content-Type; b=BGKCNoAM2YVFJVDMVj7UNWPLi7UaL1dtXljUqvrXhqeALtvWbHbGr7+vXdIpzcF4eL3e6UN4HmVExkelNsH0IR1mHZkuc4Jtp7G7dD3IbmKBDKvY0qwkoLgqgU3i3d4OGnSMdfNpKbVlUc2g12upDAkcAhezj+/jg507jeniuvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTUGCUT/; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e28fd8cdfb8so3690607276.3;
+        Mon, 14 Oct 2024 07:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728916879; x=1729521679; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S+RUbcnctgVo0yHfaNa75XTL/Dsjylm+oWJiYZAGfmI=;
+        b=PTUGCUT/1Qnckdr5VRB6h/hRmEYvtMn5LluuHf4r9w4MqFL4LclP61VW2LNzIgEw7E
+         IZsqKKFxpDQU/ypzKmypXzqZpH4e1zBrGlGW7xvUsg/9guswi6NelOzRuyfoTOdo0cl1
+         xV0jbCZSKXHUncSD6ApX4Wv/qsAVHd9spbc5gOsvj085cWmROZdx4yTikqFI82hZvKDs
+         kk/d+8T0hnZPboVwg9N97sGzIMbdaj2dcZoe7XFdtTH/2vKcN02k7e96yyIc9JR1aac/
+         gQzgGY0g0z+EVFwpUMxOP+bcQU6/jZRd7roy5TWs7TwgyPYud4E9Z/haGhvc7l8ZJ+iG
+         j7jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728916879; x=1729521679;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S+RUbcnctgVo0yHfaNa75XTL/Dsjylm+oWJiYZAGfmI=;
+        b=waxemJJwaPhZc6wTqscqwi+po3Cl2l7MH/sX4YX533VVQLSnOtxpvXScQKD6VA9Y1z
+         VJ8YIpolS0jaDoSOoxVKZyXcrHUQDZlRffqVTRQmtWAfIGXmC83EN7T68aXNawS+XvbW
+         qPu9mgU/DGm3pbfRKK/CTHljj+7opVH1CZyMRP2mBx6QEVji0FSi+AnGR5f4hmf2JJtj
+         ZEOaP0J2m/ukp8Gq9Exp5uVA9fTvGdlmHc1oyklZe2Hdtm0b232nBy/s2sB2C2UE84rE
+         8G3K4r9q4R7a4JEPRDGIEFDgVvr7Fs5Qvd4KBo5D1OxamM7r+vxd8FCxLK1hyzO9PeUL
+         6gog==
+X-Forwarded-Encrypted: i=1; AJvYcCXWKOrCrcuyTcbnOznU166RdSVezGqy0iQgIu72LeCDuQ1oqSxzSqqx/3tHv0LdFSasY/8pBN84LK+yOT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeMyksdvq+47gRp+r82fISv6Zt6WfJlrsUfUc8kuDeeDEUgWy/
+	Z5+WGs5NxiOBA/ZN5up5Lw7kP77xQipm70v0ALFaMh3BzSx3rsLt
+X-Google-Smtp-Source: AGHT+IGQubHr9ZiXzGYy4dV7cpuxvQehMmYCUwhCmcdGah8JYEzV/e0Q7ah7aEsKhuP87W15U1rgJQ==
+X-Received: by 2002:a05:6902:1607:b0:e29:492:72ef with SMTP id 3f1490d57ef6-e2919d83eefmr7517932276.20.1728916878799;
+        Mon, 14 Oct 2024 07:41:18 -0700 (PDT)
+Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ef1e3d5sm2370041276.39.2024.10.14.07.41.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 07:41:18 -0700 (PDT)
+Message-ID: <7d59b479-9fa4-49a1-906a-ef6a30951faa@gmail.com>
+Date: Mon, 14 Oct 2024 10:41:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,209 +75,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/11] virt: arm-cca-guest: TSM_REPORT support for
- realms
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, Gavin Shan <gshan@redhat.com>,
- kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Sami Mujawar <sami.mujawar@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, Dan Williams <dan.j.williams@intel.com>,
- "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004144307.66199-1-steven.price@arm.com>
- <20241004144307.66199-11-steven.price@arm.com>
- <5a3432d1-6a79-434c-bc93-6317c8c6435c@redhat.com>
- <6c306817-fbd7-402c-8425-a4523ed43114@arm.com>
- <7a83461d-40fd-4e61-8833-5dae2abaf82b@arm.com>
- <5999b021-0ae3-4d90-ae29-f18f187fd115@redhat.com>
- <11cff100-3406-4608-9993-c29caf3d086d@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <11cff100-3406-4608-9993-c29caf3d086d@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 6/7] linux-kbuild: fix: configs with defaults do not need
+ a prompt
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ shuah@kernel.org, javier.carrasco.cruz@gmail.com
+References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
+ <20240913171205.22126-7-david.hunter.linux@gmail.com>
+ <CAK7LNARNteNvrbTeNTz71XTFjjL4XjLC-CT2UjVsGRpP_ToPKg@mail.gmail.com>
+Content-Language: en-US
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <CAK7LNARNteNvrbTeNTz71XTFjjL4XjLC-CT2UjVsGRpP_ToPKg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 14/10/2024 09:56, Suzuki K Poulose wrote:
-> On 12/10/2024 07:06, Gavin Shan wrote:
->> On 10/12/24 2:22 AM, Suzuki K Poulose wrote:
->>> On 11/10/2024 15:14, Steven Price wrote:
->>>> On 08/10/2024 05:12, Gavin Shan wrote:
->>>>> On 10/5/24 12:43 AM, Steven Price wrote:
->>>>>> From: Sami Mujawar <sami.mujawar@arm.com>
->>>>>>
->>>>>> Introduce an arm-cca-guest driver that registers with
->>>>>> the configfs-tsm module to provide user interfaces for
->>>>>> retrieving an attestation token.
->>>>>>
->>>>>> When a new report is requested the arm-cca-guest driver
->>>>>> invokes the appropriate RSI interfaces to query an
->>>>>> attestation token.
->>>>>>
->>>>>> The steps to retrieve an attestation token are as follows:
->>>>>>     1. Mount the configfs filesystem if not already mounted
->>>>>>        mount -t configfs none /sys/kernel/config
->>>>>>     2. Generate an attestation token
->>>>>>        report=/sys/kernel/config/tsm/report/report0
->>>>>>        mkdir $report
->>>>>>        dd if=/dev/urandom bs=64 count=1 > $report/inblob
->>>>>>        hexdump -C $report/outblob
->>>>>>        rmdir $report
->>>>>>
->>>>>> Signed-off-by: Sami Mujawar <sami.mujawar@arm.com>
->>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>>> Signed-off-by: Steven Price <steven.price@arm.com>
->>>>>> ---
->>>>>> v3: Minor improvements to comments and adapt to the renaming of
->>>>>> GRANULE_SIZE to RSI_GRANULE_SIZE.
->>>>>> ---
->>>>>>    drivers/virt/coco/Kconfig                     |   2 +
->>>>>>    drivers/virt/coco/Makefile                    |   1 +
->>>>>>    drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
->>>>>>    drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
->>>>>>    .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211
->>>>>> ++++++++++++ ++++++
->>>>>>    5 files changed, 227 insertions(+)
->>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
->>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
->>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
->>
->> [...]
->>
->>>>>> +/**
->>>>>> + * arm_cca_report_new - Generate a new attestation token.
->>>>>> + *
->>>>>> + * @report: pointer to the TSM report context information.
->>>>>> + * @data:  pointer to the context specific data for this module.
->>>>>> + *
->>>>>> + * Initialise the attestation token generation using the
->>>>>> challenge data
->>>>>> + * passed in the TSM descriptor. Allocate memory for the attestation
->>>>>> token
->>>>>> + * and schedule calls to retrieve the attestation token on the
->>>>>> same CPU
->>>>>> + * on which the attestation token generation was initialised.
->>>>>> + *
->>>>>> + * The challenge data must be at least 32 bytes and no more than 64
->>>>>> bytes. If
->>>>>> + * less than 64 bytes are provided it will be zero padded to 64
->>>>>> bytes.
->>>>>> + *
->>>>>> + * Return:
->>>>>> + * * %0        - Attestation token generated successfully.
->>>>>> + * * %-EINVAL  - A parameter was not valid.
->>>>>> + * * %-ENOMEM  - Out of memory.
->>>>>> + * * %-EFAULT  - Failed to get IPA for memory page(s).
->>>>>> + * * A negative status code as returned by
->>>>>> smp_call_function_single().
->>>>>> + */
->>>>>> +static int arm_cca_report_new(struct tsm_report *report, void *data)
->>>>>> +{
->>>>>> +    int ret;
->>>>>> +    int cpu;
->>>>>> +    long max_size;
->>>>>> +    unsigned long token_size;
->>>>>> +    struct arm_cca_token_info info;
->>>>>> +    void *buf;
->>>>>> +    u8 *token __free(kvfree) = NULL;
->>>>>> +    struct tsm_desc *desc = &report->desc;
->>>>>> +
->>>>>> +    if (!report)
->>>>>> +        return -EINVAL;
->>>>>> +
->>>>>
->>>>> This check seems unnecessary and can be dropped.
->>>>
->>>> Ack
->>>>
->>>>>> +    if (desc->inblob_len < 32 || desc->inblob_len > 64)
->>>>>> +        return -EINVAL;
->>>>>> +
->>>>>> +    /*
->>>>>> +     * Get a CPU on which the attestation token generation will be
->>>>>> +     * scheduled and initialise the attestation token generation.
->>>>>> +     */
->>>>>> +    cpu = get_cpu();
->>>>>> +    max_size = rsi_attestation_token_init(desc->inblob,
->>>>>> desc->inblob_len);
->>>>>> +    put_cpu();
->>>>>> +
->>>>>
->>>>> It seems that put_cpu() is called early, meaning the CPU can go
->>>>> away before
->>>>> the subsequent call to arm_cca_attestation_continue() ?
->>>>
->>>> Indeed, good spot. I'll move it to the end of the function and update
->>>> the error paths below.
->>>
->>> Actually this was on purpose, not to block the CPU hotplug. The
->>> attestation must be completed on the same CPU.
->>>
->>> We can detect the failure from "smp_call" further down and make sure
->>> we can safely complete the operation or restart it.
->>>
->>
->> Yes, It's fine to call put_cpu() early since we're tolerant to error
->> introduced
->> by CPU unplug. It's a bit confused that rsi_attestation_token_init()
->> is called
->> on the local CPU while arm_cca_attestation_continue() is called on
->> same CPU
->> with help of smp_call_function_single(). Does it make sense to unify
->> so that
->> both will be invoked with the help of smp_call_function_single() ?
->>
->>      int cpu = smp_processor_id();
->>
->>      /*
->>       * The calling and target CPU can be different after the calling
->> process
->>       * is migrated to another different CPU. It's guaranteed the
->> attestatation
->>       * always happen on the target CPU with smp_call_function_single().
->>       */
->>      ret = smp_call_function_single(cpu,
->> rsi_attestation_token_init_wrapper,
->>                                     (void *)&info, true);
-> 
-> Well, we want to allocate sufficient size buffer (size returned from
-> token_init())  outside an atomic context (thus not in smp_call_function()).
-> 
-> May be we could make this "allocation" restriction in a comment to
-> make it clear, why we do it this way.
-
-So if I've followed this correctly the get_cpu() route doesn't work
-because of the need to allocate outblob. So using
-smp_call_function_single() for all calls seems to be the best approach,
-along with a comment explaining what's going on. So how about:
-
-	/*
-	 * The attestation token 'init' and 'continue' calls must be
-	 * performed on the same CPU. smp_call_function_single() is used
-	 * instead of simply calling get_cpu() because of the need to
-	 * allocate outblob based on the returned value from the 'init'
-	 * call and that cannot be done in an atomic context.
-	 */
-	cpu = smp_processor_id();
-
-	info.challenge = desc->inblob;
-	info.challenge_size = desc->inblob_len;
-
-	ret = smp_call_function_single(cpu, arm_cca_attestation_init,
-				       &info, true);
-	if (ret)
-		return ret;
-	max_size = info.result;
-
-(with appropriate updates to the 'info' struct and a new
-arm_cca_attestation_init() wrapper for rsi_attestation_token_init()).
-
-Steve
-
+version 2: 
+https://lore.kernel.org/all/20241014141345.5680-4-david.hunter.linux@gmail.com/
 
