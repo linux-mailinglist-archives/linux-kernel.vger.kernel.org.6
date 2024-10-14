@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-363549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A7999C3E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:46:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F1899C3F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B5CCB25075
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1901F2108E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529DE157A59;
-	Mon, 14 Oct 2024 08:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3253B156C5F;
+	Mon, 14 Oct 2024 08:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dM/K99cj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aBqoZXri"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8FE156F39
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC33A154BE2
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895509; cv=none; b=kqkV4W3QNEnmKg2fM19BQQlsNF8tuysqktTqaedylnd+Yckmljjw01kDmzUHRwsm8xq0pz6y/SSjMcEMhe0a1T9wieQRC8SFzwRAa4EUD4XwqvkhX2GwuzthxCO5P8eemxg7i0WHSSxGcDVOlKNIDFc5rQXzwdrGp59a5H4HQlQ=
+	t=1728895547; cv=none; b=k4QULK5WtamcY3NLb+oeLEnapJNO8rU2HqrKqBh++siZF8wS6fM4i9kr5YVvZIPlRXzuSnBd9okYej8BSPQTP8W0XAS8J6+NEx+kcq16oJElHNct4Ek1x1Ub0sm1b5d8Y/sei2wKir2I7DwaJqd/bst+5W8VEQfep0dSlKaGxh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895509; c=relaxed/simple;
-	bh=CwuZER7CMm5JDCMH6v2vPK57MgMOmo4wMH1yhyCB1SY=;
+	s=arc-20240116; t=1728895547; c=relaxed/simple;
+	bh=lgPopW14BJVg1VkGC49i3EhdLbT5zQ2I5kJXX/QZfUg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B25JacbbUxsuxhSOOAziAFgrUh9CWTGybcBHL5/3+myDkADXHPETW+isaFHNzfRHY9LhYyu1v2dMe067ScGw6iTAo/doJY3hOqyQMi8MGLvhxrdZq+bgrrsW3MYlHTwat/t6Jy9+xr9yOaCV7/F1MUhSUNicdVlfI9j3p196zX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dM/K99cj; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=ffBOnnCd8GogNerizGR7iGFILEa3qsNmx8hB4mRPsABIXvI0QDwMTyXWAPrU6cF1PNbAwCkbLl5rEp55jJAf/NDnH9zSDYbrA1Wq2ffsdOLQopu2/hGF0QgYVcnLKIBPna6AgVjcvQC+A7DwSHaSF0zTpi7WkLRUwcqTqiJBe4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aBqoZXri; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728895506;
+	s=mimecast20190719; t=1728895545;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IwPdK057Cp2nQLCke3sfXHwalbY2C/QTU6X8kPub9I8=;
-	b=dM/K99cjEMVLmtZD4IxuoQ4x2Bk5YNVTpiRwaaXW09F0LeT7/HI49t/8WGT7jMN/Uy0ze6
-	KkIq6ll5MGB5j+lS6MIAVzOJRRdj54fLRPpcYSlBXCFaoQhduZ4bCViXx9LLOy6XMfm7/6
-	UAoaR41QQ+NJBsVRZxGXg14cKth789s=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=kt7ZpUw00t5zKHLBBAr1PrwMsK/5xgdQaLql2aMEo1M=;
+	b=aBqoZXriQE1tm1tfWF0MMLTqVHWyKQj+b7iLx6ny2EYCHbZPFsxYLafa62edunr1YBh3Y7
+	LEHzFKx1cL06rb8502EeBvF5ulk21jsROdzhoJLJ0ttCU16tALxTWQQ+NjR4PTBcJaUh7Q
+	x7Pt795J/zPyobaVHTDIdCbqkvhEw1A=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-70-JQRI6E2bOiurnoA3ic6oAA-1; Mon, 14 Oct 2024 04:45:05 -0400
-X-MC-Unique: JQRI6E2bOiurnoA3ic6oAA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d5ca192b8so1225522f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:45:05 -0700 (PDT)
+ us-mta-316-5EbpPiNxOI2C5Hm6iDDOuA-1; Mon, 14 Oct 2024 04:45:43 -0400
+X-MC-Unique: 5EbpPiNxOI2C5Hm6iDDOuA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43123d8a33dso14910435e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:45:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728895504; x=1729500304;
+        d=1e100.net; s=20230601; t=1728895543; x=1729500343;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IwPdK057Cp2nQLCke3sfXHwalbY2C/QTU6X8kPub9I8=;
-        b=wVRqcCgnDCW/xcYWwNJEFfoaBK7cehTbqPJC0QJDTnM22UrkSqLx49N6unhMyEboXv
-         J7T+H9Bin/Qc2k2iVoJFET1Ln5ZlsjbUcIB48OfKfL2LPi/BLTfcE3GusROrcWRsV6qt
-         WVfO8fgsG9N3EOGfVsyWt4QYFHQPa+uzt2JxO1oQ4OiGcOPcnzpqzUC0ORtXI18QdB++
-         a8Wb4UznsAYLWq8VDVQzOfG91MYbGOft6OLSp0RT5J4CfGO3ARh8dEsY7IhZ11Cr7/8q
-         Z4hq/kpfPZm4k/FitX9hyPU3ZZMDodE22FSDlt8ir/q9MLDRywIFVu1TUr8Gy7jXFYIU
-         +dHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrG3zFGoakb0lorP0LlE0gPhcJyrp1P0jfePRwszEVzG72p8rBp5FjqpZ1WWO2ePucO7K+LeRohoYJgLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXWrhJzof+GIDCvbkXLaWODgGsW3Y98NyJZsDjBZju5KmtVQsN
-	EKp1tS5DtIxDHbErxrTriCp8fdAiuxFMWmFrQRbdVAWJZ8u8RSpys7MLTfD8Ie+nwSUQSzbkPCB
-	VW4XQkLwZAJazBnbWxhAk180gSfETAatS9CuiMx7XVRZhiFgP6xzvZw50bSmm3w==
-X-Received: by 2002:a05:6000:410b:b0:37d:5251:e5ad with SMTP id ffacd0b85a97d-37d5251e61emr10001920f8f.2.1728895503941;
-        Mon, 14 Oct 2024 01:45:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGi2hL5R0Qzddqsq5A+5TzAAhKxmoPEGTna582tFhlN51HBFUK8Usw3/Lf3VB1BnJ+qqSmzBg==
-X-Received: by 2002:a05:6000:410b:b0:37d:5251:e5ad with SMTP id ffacd0b85a97d-37d5251e61emr10001893f8f.2.1728895503470;
-        Mon, 14 Oct 2024 01:45:03 -0700 (PDT)
+        bh=kt7ZpUw00t5zKHLBBAr1PrwMsK/5xgdQaLql2aMEo1M=;
+        b=GSRoqqUwu1Xie3RWA1FdxRwSl15CIC780RDQ8RakhE0scBDabuIRa2WjHTuslv3qao
+         VFfSqsx4mKhHA+HLVRqw7Hy65HWaC4Mf8YmQvDHJnG2qC0f7ezECiKfi4huN5YKis0Co
+         hrSeAAXTDniv1552562CtPbN1OL2de9jSEVCd3XeGct9+/BqZyfVdGyV+Dr2qDqzRi44
+         5jHZ6qLCTWAiHOrkalc1jLGNmuTZSimmEjVtjGC+KIxLP2NGSIu4M8UkpmKUb8Lb5uyW
+         TLqNEY0YBz8KodyLOGlqZtu0t80+va+vjTK+iyMLLc93FksDrsjH4KeYeBOue5yGHuWs
+         XvrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHxaBZXJxwurTZt3u+YrhMq2k1zlzC0sFL1vv4GsfZFPdn3RRTVhC5ps8Zg97c/dkeErsaFuzFtXw30Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvSGHaCtFjXZsa4XExSl97N0wcbqM/hQI8TsqK4CpYT506z9HL
+	TgG0MWOs6I4UsMpfbH1oKWyJOC2U5iBklvx8q/8ynD5nAYQQLLLvoNUk93js2ZcYUJbCg6WHIPT
+	vO1yNSK4s0VRiof65WQYgG5ZPJ7xF5sJQkPvtH+S4NNQsAc/Fc03h/OI73YZewA==
+X-Received: by 2002:a05:600c:5122:b0:42c:b22e:fc2e with SMTP id 5b1f17b1804b1-4311dede4efmr85784415e9.15.1728895542622;
+        Mon, 14 Oct 2024 01:45:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtqRSS2nbZ+gemMvRsJ39NH+QcIg8oMuQO5fsBN4pOW3+HQjIjgY4dj/+hR8uAckTbY4WSxw==
+X-Received: by 2002:a05:600c:5122:b0:42c:b22e:fc2e with SMTP id 5b1f17b1804b1-4311dede4efmr85784285e9.15.1728895542180;
+        Mon, 14 Oct 2024 01:45:42 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835d784sm113938295e9.46.2024.10.14.01.45.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8802sm10762445f8f.21.2024.10.14.01.45.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 01:45:03 -0700 (PDT)
-Message-ID: <89f24f92-de2d-4303-a189-9e5bc1eba02a@redhat.com>
-Date: Mon, 14 Oct 2024 10:44:56 +0200
+        Mon, 14 Oct 2024 01:45:41 -0700 (PDT)
+Message-ID: <db18fcea-7dfe-4edc-8e3a-8078860656b3@redhat.com>
+Date: Mon, 14 Oct 2024 10:45:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +81,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] drm/panic: avoid reimplementing Iterator::find
+Subject: Re: [PATCH 2/7] drm/panic: remove unnecessary borrow in
+ alignment_pattern
 To: =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>,
  Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
 Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
@@ -94,45 +95,35 @@ Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 References: <20241012075312.16342-1-witcher@wiredspace.de>
+ <20241012075312.16342-2-witcher@wiredspace.de>
 Content-Language: en-US, fr
 From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20241012075312.16342-1-witcher@wiredspace.de>
+In-Reply-To: <20241012075312.16342-2-witcher@wiredspace.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 On 12/10/2024 09:52, Thomas Böhler wrote:
-> Rust's standard library's `std::iter::Iterator` trait provides a function
-> `find` that finds the first element that satisfies a predicate.
-> The function `Version::from_segments` is doing the same thing but is
-> implementing the same logic itself.
-> Clippy complains about this in the `manual_find` lint:
+> The function `alignment_pattern` returns a static reference to a `u8`
+> slice. The borrow of the returned element in `ALIGNMENT_PATTERNS` is
+> already a reference as defined in the array definition above so this
+> borrow is unnecessary and removed by the compiler. Clippy notes this in
+> `needless_borrow`:
 > 
->      error: manual implementation of `Iterator::find`
->         --> drivers/gpu/drm/drm_panic_qr.rs:212:9
+>      error: this expression creates a reference which is immediately dereferenced by the compiler
+>         --> drivers/gpu/drm/drm_panic_qr.rs:245:9
 >          |
->      212 | /         for v in (1..=40).map(|k| Version(k)) {
->      213 | |             if v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum() {
->      214 | |                 return Some(v);
->      215 | |             }
->      216 | |         }
->      217 | |         None
->          | |____________^ help: replace with an iterator: `(1..=40).map(|k| Version(k)).find(|&v| v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum())`
+>      245 |         &ALIGNMENT_PATTERNS[self.0 - 1]
+>          |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `ALIGNMENT_PATTERNS[self.0 - 1]`
 >          |
->          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_find
->          = note: `-D clippy::manual-find` implied by `-D warnings`
->          = help: to override `-D warnings` add `#[allow(clippy::manual_find)]`
+>          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_borrow
+>          = note: `-D clippy::needless-borrow` implied by `-D warnings`
+>          = help: to override `-D warnings` add `#[allow(clippy::needless_borrow)]`
 > 
-> Use `Iterator::find` instead to make the intention clearer.
+> Remove the unnecessary borrow.
 
-Thanks for this patch, and the whole series.
-
-It's a nice cleanup.
+Thanks, it looks good to me.
 
 Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
-
--- 
-
-Jocelyn
 
 
 > 
@@ -140,28 +131,21 @@ Jocelyn
 > Closes: https://github.com/Rust-for-Linux/linux/issues/1123
 > Signed-off-by: Thomas Böhler <witcher@wiredspace.de>
 > ---
->   drivers/gpu/drm/drm_panic_qr.rs | 9 +++------
->   1 file changed, 3 insertions(+), 6 deletions(-)
+>   drivers/gpu/drm/drm_panic_qr.rs | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index 1ef56cb07dfb..76decf49e678 100644
+> index 76decf49e678..7adfaa3d6222 100644
 > --- a/drivers/gpu/drm/drm_panic_qr.rs
 > +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -209,12 +209,9 @@
->   impl Version {
->       /// Returns the smallest QR version than can hold these segments.
->       fn from_segments(segments: &[&Segment<'_>]) -> Option<Version> {
-> -        for v in (1..=40).map(|k| Version(k)) {
-> -            if v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum() {
-> -                return Some(v);
-> -            }
-> -        }
-> -        None
-> +        (1..=40)
-> +            .map(Version)
-> +            .find(|&v| v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum())
+> @@ -239,7 +239,7 @@ fn g1_blk_size(&self) -> usize {
 >       }
 >   
->       fn width(&self) -> u8 {
+>       fn alignment_pattern(&self) -> &'static [u8] {
+> -        &ALIGNMENT_PATTERNS[self.0 - 1]
+> +        ALIGNMENT_PATTERNS[self.0 - 1]
+>       }
+>   
+>       fn poly(&self) -> &'static [u8] {
 
 
