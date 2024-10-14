@@ -1,118 +1,264 @@
-Return-Path: <linux-kernel+bounces-364592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5299899D69D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD98299D69C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B2728439E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:34:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F943284C80
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915831C8787;
-	Mon, 14 Oct 2024 18:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361261CACD0;
+	Mon, 14 Oct 2024 18:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cUNVdFZb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeDcHjAK"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408A0231C95
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 18:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98961C82F4;
+	Mon, 14 Oct 2024 18:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728930884; cv=none; b=WUiUrHui8LuNdgqx6v/+QOI5EnIIPmI+WwSqWF0SZ0PK2bZDiLJed1LcJ4f+Ahc5qGtfjsuMs+m2wot2sWu2VdZHqcoZz1nRHWyYoCJhRz4yTK8Dg2KJoGN80gYEdzANT82wHsV19/T9ZX6NMziZy7ouRdTebXVq9H67alk9fvw=
+	t=1728930852; cv=none; b=WEGRBj/SDKeKe7GqjqqcNNlXBbauJU+DEZJ07FWfhDdnlaJoR+lyF06iz0wKy3CZVpu1LntCimkrhCxcMC8iWKOoBuJWA0SF3xS27404xN+On9vuBOVo9FG/o+SiTVlF1pnrMMwlR4INjQUXVKW0Xf9LWYEJTvkbLtRPNMAGjSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728930884; c=relaxed/simple;
-	bh=DcpF6yulUm95WMJOeU92hu5tF5L+SdRZIVjzksq8shA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pO56MoEi/9WqFu2jraTjRyT8d0/H+oD0hYYv0Vx80PcW0XLITSpvcTas1HSZV6wtvnGFmwa8vF328xchw/ujuBms7vCqFHO31L5szddxrIYcd8x7Kr4Y1c7g0T/d0sr8Rgpx095gUkcK3ClKUdIQOLnW8Kn3jUaV8mK3RmQzmCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cUNVdFZb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EFrD5L019841;
-	Mon, 14 Oct 2024 18:34:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=ZtMZ9rpeS1pqw3+AB3ebNz1vWNw34/B8sPO+EDEkMYE=; b=cU
-	NVdFZb5dGGoSA/v01torSxdOcqzkpBSm5VnBy480ikipRlMNFwptCm6+n0G3BPxg
-	kc+UIXIK23SW0qe85W/H0acif1ru8IumeRknctzN8UqoTecLEf+alrHUrs9eNa9D
-	dUu9Xb2C9sh4hviqKsQnlhJ/MR63S24TtDMYZ9WkvG+O/ML2Hrks9ixZf7PDhn0+
-	KGhTYHMZYmSgrOg9OkKT+2wAZia7VmIqqHrzvPRgzT/tMzldf/SwLibHrpg8PKFv
-	Xoj8ocQpxwXrEHJqLDbW8gn6nTGfENFK+hf9qAsYmZ/pW2C7K5Bjts12863+rPeI
-	VFQU6cBXZgctIE2OHQIw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4296b7rc9s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:34:36 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EIYZFX012598
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:34:35 GMT
-Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 14 Oct 2024 11:34:33 -0700
-From: Pintu Kumar <quic_pintu@quicinc.com>
-To: <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
-        Pintu Kumar
-	<quic_pintu@quicinc.com>
-Subject: [PATCH] mm/dmapool: use unsigned int instead of unsigned
-Date: Tue, 15 Oct 2024 00:03:49 +0530
-Message-ID: <20241014183349.21763-1-quic_pintu@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728930852; c=relaxed/simple;
+	bh=UO2Bad4J5y0XW53XxtAm0h5XmWXUfxO04tiAMyE160U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FAhZDu3wIKEf5QvzBlGUHNROXDz3TW+8+YFFckl7eZTGRA2TFvcGvfQwM3So/EMLF89CTPxiKZ+YHPPgmeYgii3jbVAogLVM7GJVqNpO1yMzf7AboegvCNWP5z90TJvzFK+vi+qsnrYNUafNtk9Q0siw0Om5fWsO4vwwrYGjk4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeDcHjAK; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a86e9db75b9so665903966b.1;
+        Mon, 14 Oct 2024 11:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728930849; x=1729535649; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VlOnxyLsKzjPmX7mgEUAeOELC286PF6R2i4tL7ZkhEQ=;
+        b=jeDcHjAKHo9pO8oKHIsC6kLiPjNYsWRoulcGf5Wipz2wQjA7tCtlocQLgJTomFUCtW
+         XoB0uxM7/oLsDMzVDmJbHo5k+IYAGbXSyZjnFWb/yZ9ozCvurPvGnaRJDj28/+2BVdN5
+         bZGdPY4OgA28wSQuB1nwBS7XdB5sJOKyE4nKlCpa+ZkhsL3WW/jV8Fv18iW+ZwQnUxub
+         Tgi2YcG0r71rKyrYKs6d9wXqcCg2g8bF0VLHxpTVlp12vyO6OldI5g4pVJ96wzW9z348
+         V1RFKSvZQvvTcl/YbTZDfXkXrtOxLbPtt6akvorsngWorcQA5xsfeQ1uzINU2M5EIrib
+         ZdrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728930849; x=1729535649;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VlOnxyLsKzjPmX7mgEUAeOELC286PF6R2i4tL7ZkhEQ=;
+        b=EMZzj9U/+pF03nhPC6KqGVVDgP+uwVsJu0SDmSDJuDbAf25eq7aXL7b8O8GacwnOjV
+         GU4WENMh8rKr3Pbp1ToT/1LShgRhrRog8d+v8gDLnYX4ze6NvuMxHyKl6oKYeI6c0QN3
+         br67G1srqiVNdKBaoqMCF6C5Mh+Iclelr9cN12i313ryguqHTDNgaQdAZf8F0FZVuCNw
+         e/2A0ttMpFLmvaZNb5AxrzvW7TRd1VQrIr+YdcBTJOjRqmDg9adtvGxHvw4QM5TkULXq
+         ZXreoXkx00bxdru6rD//6Bbp0fadL4isuXdWKD+xg8Jt7aoClAPOc4+v8KXYmr39QTZD
+         Yh3w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3HUyNPrcPjmrfLYSRUK3sGoHsB/F2jHBjLCKmIrHLGqp0L1XIJG1uS5YmIISWv6iRrSFvZNUOn0BExPM=@vger.kernel.org, AJvYcCWq2T8G6J73U4bM2byTaCR0Q57zED2oj+AeJquwW/JgZPwACBI3Hri43zeKK46uQj5bqaw9YOkjcJpK0rGmHDAy@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGYNs6+wZGYgywTANuCJwXgPj83GGrubonNmoxAUennUVLxwZx
+	Q31LWsQ3u5yQi7ADo+WCFIlN0zncXgQ4T3e4vd1atSnDdZ1dg6z/
+X-Google-Smtp-Source: AGHT+IHKZO+fC56r4LaVpTKQzX/+/pa5l07qojFohlY7OCNXpmf0sPt3hbXHuNvHiBIPoGLRAmVB1g==
+X-Received: by 2002:a17:907:97cd:b0:a99:dfb3:dcb4 with SMTP id a640c23a62f3a-a99dfb3df63mr790057066b.39.1728930848857;
+        Mon, 14 Oct 2024 11:34:08 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:20d:1300:1b1c:4449:176a:89ea? (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a04223e3csm261266766b.52.2024.10.14.11.34.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 11:34:08 -0700 (PDT)
+Message-ID: <a0db4efa-2328-4935-9eb6-3344fcbc4b07@gmail.com>
+Date: Mon, 14 Oct 2024 20:34:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W69QJEk-dfTBGiBJLW5SswZMPcJaTny_
-X-Proofpoint-ORIG-GUID: W69QJEk-dfTBGiBJLW5SswZMPcJaTny_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 clxscore=1015 phishscore=0
- mlxlogscore=990 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140133
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 net-next 06/12] net: core: dev: Add
+ dev_fill_bridge_path()
+To: Nikolay Aleksandrov <razor@blackwall.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+ <20241013185509.4430-7-ericwouds@gmail.com>
+ <c3678626-7f5c-4446-9b4d-2650ddf5d5a6@blackwall.org>
+From: Eric Woudstra <ericwouds@gmail.com>
+Content-Language: en-US
+In-Reply-To: <c3678626-7f5c-4446-9b4d-2650ddf5d5a6@blackwall.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This warning is reported by checkpatch.
-Fix by simply replacing it with unsigned int.
-This make the style clean.
 
-WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
-+       unsigned size;
 
-total: 0 errors, 1 warnings, 524 lines checked
+On 10/14/24 8:59 AM, Nikolay Aleksandrov wrote:
+> On 13/10/2024 21:55, Eric Woudstra wrote:
+>> New function dev_fill_bridge_path(), similar to dev_fill_forward_path().
+>> It handles starting from a bridge port instead of the bridge master.
+>> The structures ctx and nft_forward_info need to be already filled in with
+>> the (vlan) encaps.
+>>
+>> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
+>> ---
+>>  include/linux/netdevice.h |  2 +
+>>  net/core/dev.c            | 77 ++++++++++++++++++++++++++++++++-------
+>>  2 files changed, 66 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+>> index e87b5e488325..9d80f650345e 100644
+>> --- a/include/linux/netdevice.h
+>> +++ b/include/linux/netdevice.h
+>> @@ -3069,6 +3069,8 @@ void dev_remove_offload(struct packet_offload *po);
+>>  
+>>  int dev_get_iflink(const struct net_device *dev);
+>>  int dev_fill_metadata_dst(struct net_device *dev, struct sk_buff *skb);
+>> +int dev_fill_bridge_path(struct net_device_path_ctx *ctx,
+>> +			 struct net_device_path_stack *stack);
+>>  int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
+>>  			  struct net_device_path_stack *stack);
+>>  struct net_device *__dev_get_by_flags(struct net *net, unsigned short flags,
+>> diff --git a/net/core/dev.c b/net/core/dev.c
+>> index cd479f5f22f6..49959c4904fc 100644
+>> --- a/net/core/dev.c
+>> +++ b/net/core/dev.c
+>> @@ -713,44 +713,95 @@ static struct net_device_path *dev_fwd_path(struct net_device_path_stack *stack)
+>>  	return &stack->path[k];
+>>  }
+>>  
+>> -int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
+>> -			  struct net_device_path_stack *stack)
+>> +static int dev_fill_forward_path_common(struct net_device_path_ctx *ctx,
+>> +					struct net_device_path_stack *stack)
+>>  {
+>>  	const struct net_device *last_dev;
+>> -	struct net_device_path_ctx ctx = {
+>> -		.dev	= dev,
+>> -	};
+>>  	struct net_device_path *path;
+>>  	int ret = 0;
+>>  
+>> -	memcpy(ctx.daddr, daddr, sizeof(ctx.daddr));
+>> -	stack->num_paths = 0;
+>> -	while (ctx.dev && ctx.dev->netdev_ops->ndo_fill_forward_path) {
+>> -		last_dev = ctx.dev;
+>> +	while (ctx->dev && ctx->dev->netdev_ops->ndo_fill_forward_path) {
+>> +		last_dev = ctx->dev;
+>>  		path = dev_fwd_path(stack);
+>>  		if (!path)
+>>  			return -1;
+>>  
+>>  		memset(path, 0, sizeof(struct net_device_path));
+>> -		ret = ctx.dev->netdev_ops->ndo_fill_forward_path(&ctx, path);
+>> +		ret = ctx->dev->netdev_ops->ndo_fill_forward_path(ctx, path);
+>>  		if (ret < 0)
+>>  			return -1;
+>>  
+>> -		if (WARN_ON_ONCE(last_dev == ctx.dev))
+>> +		if (WARN_ON_ONCE(last_dev == ctx->dev))
+>>  			return -1;
+>>  	}
+>>  
+>> -	if (!ctx.dev)
+>> +	if (!ctx->dev)
+>>  		return ret;
+>>  
+>>  	path = dev_fwd_path(stack);
+>>  	if (!path)
+>>  		return -1;
+>>  	path->type = DEV_PATH_ETHERNET;
+>> -	path->dev = ctx.dev;
+>> +	path->dev = ctx->dev;
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +int dev_fill_bridge_path(struct net_device_path_ctx *ctx,
+>> +			 struct net_device_path_stack *stack)
+>> +{
+>> +	const struct net_device *last_dev, *br_dev;
+>> +	struct net_device_path *path;
+>> +	int ret = 0;
+>> +
+>> +	stack->num_paths = 0;
+>> +
+>> +	if (!ctx->dev || !netif_is_bridge_port(ctx->dev))
+>> +		return -1;
+>> +
+>> +	br_dev = netdev_master_upper_dev_get_rcu((struct net_device *)ctx->dev);
+>> +	if (!br_dev || !br_dev->netdev_ops->ndo_fill_forward_path)
+>> +		return -1;
+>> +
+>> +	last_dev = ctx->dev;
+>> +	path = dev_fwd_path(stack);
+>> +	if (!path)
+>> +		return -1;
+>> +
+>> +	memset(path, 0, sizeof(struct net_device_path));
+>> +	ret = br_dev->netdev_ops->ndo_fill_forward_path(ctx, path);
+>> +	if (ret < 0)
+>> +		return -1;
+>> +
+>> +	if (!ctx->dev || WARN_ON_ONCE(last_dev == ctx->dev))
+>> +		return -1;
+>> +
+>> +	if (!netif_is_bridge_master(ctx->dev))
+> 
+> hmm, do we expect ctx->dev to be a bridge master? Looking at
+> br_fill_forward_path, it seems to be == fdb->dst->dev which
+> should be the target port
 
-Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
----
- mm/dmapool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It would indeed be very unlikely. It was a left-over from code I wrote,
+thinking that here I could handle cascaded bridges (via vlan-device). I
+dropped that, since conntrack does not follow this flow.
 
-diff --git a/mm/dmapool.c b/mm/dmapool.c
-index f0bfc6c490f4..9d81d7b3cb05 100644
---- a/mm/dmapool.c
-+++ b/mm/dmapool.c
-@@ -72,7 +72,7 @@ static DEFINE_MUTEX(pools_reg_lock);
- static ssize_t pools_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	struct dma_pool *pool;
--	unsigned size;
-+	unsigned int size;
- 
- 	size = sysfs_emit(buf, "poolinfo - 0.1\n");
- 
--- 
-2.17.1
+So would it be better to only make sure that ctx->dev is not a bridge
+master?
 
+	if (netif_is_bridge_master(ctx->dev))
+		return -1;
+
+	return dev_fill_forward_path_common(ctx, stack);
+
+>> +		return dev_fill_forward_path_common(ctx, stack);
+>> +
+>> +	path = dev_fwd_path(stack);
+>> +	if (!path)
+>> +		return -1;
+>> +	path->type = DEV_PATH_ETHERNET;
+>> +	path->dev = ctx->dev;
+>>  
+>>  	return ret;
+>>  }
+>> +EXPORT_SYMBOL_GPL(dev_fill_bridge_path);
+>> +
+>> +int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
+>> +			  struct net_device_path_stack *stack)
+>> +{
+>> +	struct net_device_path_ctx ctx = {
+>> +		.dev	= dev,
+>> +	};
+>> +
+>> +	memcpy(ctx.daddr, daddr, sizeof(ctx.daddr));
+>> +
+>> +	stack->num_paths = 0;
+>> +
+>> +	return dev_fill_forward_path_common(&ctx, stack);
+>> +}
+>>  EXPORT_SYMBOL_GPL(dev_fill_forward_path);
+>>  
+>>  /**
+> 
 
