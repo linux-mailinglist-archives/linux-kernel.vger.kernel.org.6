@@ -1,128 +1,110 @@
-Return-Path: <linux-kernel+bounces-364363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371D199D3FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:55:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19F999D3D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A173B29CE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:44:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9BDEB2BE64
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F0B1C3300;
-	Mon, 14 Oct 2024 15:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JDLV34J3"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71401AA7AB;
-	Mon, 14 Oct 2024 15:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655A91AE863;
+	Mon, 14 Oct 2024 15:40:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1771AAE23
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728920480; cv=none; b=EPpIRUK2QC46rcYSK0YRhzerTO2wxyaL8fhQkjf0JCXi4pke9LLU4BoaNlS+pdLghGBZT4F8vpwhTESUTU5xfa7BqvodBEBXcrjINpj5SD8L98iefUNi+sEnoHq03KK0/cfGzCVlwDnNJXgxEbCVQTCVqtYHQbIZbvHNVtCJros=
+	t=1728920457; cv=none; b=rv1k30SC3ZDfWWILWsAMZtLRmhGLDcJaqIUbIXxlzuWhO6LZuGiN+B31h96b57qlTyGjYHGv97xnNJSlUb4jPt0WD6DIxq4qFHKw5otU9+mOgL3sFQeCqaZiq6IMaRDq1D4VpY2FjSwTGvSAGU+5jo8D5qvHJLqZieGuqih74X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728920480; c=relaxed/simple;
-	bh=Vhgb8HMcP+PGqhPkFegSOhv2Wf5gbgeyjQgtSM6OTEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmI40gFTKbLdINwksZoS4/+JDrdsdXdnf5ZoS4TxDv+hNxvQXror2XkUDd/LZUV4CcJCX+28dE6e61p3EEmkJDiPWYymvzr5bKJJeLAJO/+Ag2C03BQKrAWpWx1LY2nMTz8+wAM2Cp4zPXEfBqJ+xc/R/9QSfI4+houkwxQKIxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JDLV34J3; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6A6C940E0184;
-	Mon, 14 Oct 2024 15:41:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ROeAZSAksAB9; Mon, 14 Oct 2024 15:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728920461; bh=ulyFKHLbKKWql3gjmvQlmgr4sV9sT8AjEfj6klpUj7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JDLV34J34UL0GOpZpy+5BIq+LUf+XsSDN/Gh4QVWEotlXBjKg8S2vYbApWUv0EShp
-	 6AP7wScRwVZfSAAd7Uy+RpUv7WJEwDKLgpBFKZkQjKaN847OnZNUNrdNcDy6yptIcn
-	 3Fm8FXPmOGJOmevw81DijFG++8//pTNHDAdOGrBIo3zdAqdJgPQ84GK+4B745FSCru
-	 850Y2qeHJ2MELZ5F6CAJ0M+lyM4OxNRf0LNOGDG6ec2Zj1EOJUfvMcqEleYZZK/mfK
-	 WZcpBMTEtglqvfD9wwH6PvLDaN6HIe+EDmhTNa8tr/6+a435BcwPFiKzKQd1GcFfyv
-	 7qWRsoS1Z483mAkjdSNywf91ZI0HEm0Y5jK9PG9z4OP1rmBsUTmKa7sYafJzJ5vAeC
-	 YSerfZNzmaH2vIBvUxQdTK6GUgvi0NYb+ndKO7YPYb0RxeceOW5NSYekDIoggTof98
-	 oSk81MWKE99UnzSe4AZSa9UeEuBNNy6Gv9mnjRrDxPJZy99y3yX6AXos0rOKZjFIsD
-	 JIlyUF6eHGitBcswlA2y8bkce7pRQQgyso95AVGEe9c1hGz/fq9SV5wcZoAu5s31/x
-	 8tP34fgTQoVonYG5xlmj74bSzvJBrQjwIpKCDwsyvuDWzQIeAryjDs4MgGdYg3B+mJ
-	 h4UDk1DO+qDeeaGDEevlrNXE=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D64F240E0198;
-	Mon, 14 Oct 2024 15:40:46 +0000 (UTC)
-Date: Mon, 14 Oct 2024 17:40:40 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Pavan Kumar Paluri <papaluri@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-coco@lists.linux.dev, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Eric Van Tassell <Eric.VanTassell@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dhaval Giani <dhaval.giani@amd.com>
-Subject: Re: [PATCH v7 2/2] x86 KVM:SVM: Provide "nosnp" boot option for sev
- kernel command line
-Message-ID: <20241014154040.GBZw07eBVDJoLJZV0w@fat_crate.local>
-References: <20241014130948.1476946-1-papaluri@amd.com>
- <20241014130948.1476946-3-papaluri@amd.com>
+	s=arc-20240116; t=1728920457; c=relaxed/simple;
+	bh=p1Vg17F35a1DEGWtU5hHwKxhHXUlMzvJhVOjq/pbIz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J/8zyNiQV62XIMC+jfPINRCDf8YFYZzL2ayvpEm1fX/VC20mJzvNNULHX94nrXHwvnrQWVIZ+K0IApCadKqQgmpbzcS3EePk47/sdTkbg++IYC9JVPU2oxhb5rTJi9NMoZlYPrDUC0ixfy4UGbC2YpjGzx1AjWUZOaO1l+CkYwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 518851007;
+	Mon, 14 Oct 2024 08:41:24 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 149033F51B;
+	Mon, 14 Oct 2024 08:40:53 -0700 (PDT)
+Message-ID: <24019386-6ecc-4715-9486-503ccc828113@arm.com>
+Date: Mon, 14 Oct 2024 16:40:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241014130948.1476946-3-papaluri@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf: arm-ccn: remove unused macros
+To: Mark Rutland <mark.rutland@arm.com>, Ba Jing <bajing@cmss.chinamobile.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241012091629.2369-1-bajing@cmss.chinamobile.com>
+ <ZwziGzex9RmVlcNa@J2N7QTR9R3>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ZwziGzex9RmVlcNa@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 08:09:48AM -0500, Pavan Kumar Paluri wrote:
-> @@ -25,6 +26,12 @@ static int __init init_sev_config(char *str)
->  			continue;
->  		}
->  
-> +		if (!strcmp(s, "nosnp")) {
-> +			setup_clear_cpu_cap(X86_FEATURE_SEV_SNP);
-> +			cc_platform_clear(CC_ATTR_HOST_SEV_SNP);
-> +			continue;
-> +		}
+On 14/10/2024 10:19 am, Mark Rutland wrote:
+> On Sat, Oct 12, 2024 at 05:16:29PM +0800, Ba Jing wrote:
+>> By reading the code, I found these marcos are never
+>> referenced in the code. Just remove them.
+>>
+>> Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
+> 
+> These are control bit values, so I don't see a strong reason to delete
+> them unless we're certain we're not going to use them in future.
+> 
+> Anyhow, Robin Murphy wrote this driver, so its up to him. Please Cc him
+> for any changes to this driver in future.
 
-Well, if it is a HV-only option, then it better be such:
+Er, this is CCN - FWIW I didn't claim this one, nor CCI, as supported in 
+my maintainers entry largely because active development on them has long 
+finished, but also because I *didn't* write them, so wouldn't claim to 
+understand them much better than you or Will do ;)
 
-@@ -25,6 +26,17 @@ static int __init init_sev_config(char *str)
- 			continue;
- 		}
- 
-+		if (!strcmp(s, "nosnp")) {
-+			if (!cpu_feature_enabled(X86_FEATURE_HYPERVISOR)) {
-+				setup_clear_cpu_cap(X86_FEATURE_SEV_SNP);
-+				cc_platform_clear(CC_ATTR_HOST_SEV_SNP);
-+				continue;
-+			} else {
-+				goto warn;
-+			}
-+		}
-+
-+warn:
- 		pr_info("SEV command-line option '%s' was not recognized\n", s);
- 	}
- 
+However, I'd agree that there doesn't seem to be any significant benefit 
+to removing these (certainly showing at a glance that ALL_ERRORS_DISABLE 
+is composed equivalently to PMU_EVENTS_DISABLE seems like no bad thing.)
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
+Robin.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> Mark.
+> 
+>> ---
+>>   drivers/perf/arm-ccn.c | 5 -----
+>>   1 file changed, 5 deletions(-)
+>>
+>> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+>> index 5c66b9278862..ea878b025d32 100644
+>> --- a/drivers/perf/arm-ccn.c
+>> +++ b/drivers/perf/arm-ccn.c
+>> @@ -28,12 +28,7 @@
+>>   
+>>   #define CCN_MN_ERRINT_STATUS		0x0008
+>>   #define CCN_MN_ERRINT_STATUS__INTREQ__DESSERT		0x11
+>> -#define CCN_MN_ERRINT_STATUS__ALL_ERRORS__ENABLE	0x02
+>> -#define CCN_MN_ERRINT_STATUS__ALL_ERRORS__DISABLED	0x20
+>>   #define CCN_MN_ERRINT_STATUS__ALL_ERRORS__DISABLE	0x22
+>> -#define CCN_MN_ERRINT_STATUS__CORRECTED_ERRORS_ENABLE	0x04
+>> -#define CCN_MN_ERRINT_STATUS__CORRECTED_ERRORS_DISABLED	0x40
+>> -#define CCN_MN_ERRINT_STATUS__CORRECTED_ERRORS_DISABLE	0x44
+>>   #define CCN_MN_ERRINT_STATUS__PMU_EVENTS__ENABLE	0x08
+>>   #define CCN_MN_ERRINT_STATUS__PMU_EVENTS__DISABLED	0x80
+>>   #define CCN_MN_ERRINT_STATUS__PMU_EVENTS__DISABLE	0x88
+>> -- 
+>> 2.33.0
+>>
+>>
+>>
 
