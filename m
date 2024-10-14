@@ -1,172 +1,198 @@
-Return-Path: <linux-kernel+bounces-363214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFBA99BF1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:22:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9377499BF1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291561F22A6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:22:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13E101F21023
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEA3130E4A;
-	Mon, 14 Oct 2024 04:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9BE137775;
+	Mon, 14 Oct 2024 04:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S8MvshJs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W9j5fgl6"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CA0231C9C;
-	Mon, 14 Oct 2024 04:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728879721; cv=none; b=kTRmmf5fQCGGf/c7pVlvFuGfWSGsoeVUmfsaTJvgNhAIzqgvaXgAoxf0aEMZusmpjLenxI36ykP74pV4dHm1E7Secl7xhAM//Zghkb1064u2GLpYLTW3RhEav4HUghLkySDYcrYLrw02AEFwwn9de/MCaPjepzDyQG8fsQCNUm0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728879721; c=relaxed/simple;
-	bh=7u6BhScJFESan00qiEx5aDqMPc4HPZs7ourjTOn24dE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EZcMc8JNl0Wsgh2uYLMTa9FBc6KNCvil3YzbkCwsWGsBlWgc0bQttWluPPk1R5hn8sZ9/C2FQRqhHzH4jrK18hL7p2iFwG4tgUXAR1TvWnXGNENf/bhBBdeouxxL4ieS7Nk858sRdBN4nsKUC3kWORLuTKLiNa8Q0bhQFjAN2oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S8MvshJs; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728879720; x=1760415720;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=7u6BhScJFESan00qiEx5aDqMPc4HPZs7ourjTOn24dE=;
-  b=S8MvshJsfdjkmxjsVpCmuVL9M0+sGQVTBTnHaRg7gAOHf0bn92+c6VB6
-   rXI65v/YBNgHEyG7RJb4ypxWbYfKChVwm+9Zd7KLVW+NoJhY4/Vdhk9B8
-   sNJdr2BLSA5FYrvviv82iTiZIsU8R5dhodWZmdasmkVjwnSwWJkpzcA4R
-   Quic9UYzbj+kCvzVHz3cfVCk5Pak2Cmqd9N+6ouym9YfXlFGTBSXobav8
-   p1s4xTYz7vC+bpOJTaHZa7Jq6siSO4NicRB1iCgzylZ+KmX6c34w65DRp
-   Sizvq6n3bdsw6dBnqLxTFccWsz0KoAiPb8LJdMzgJCkCDf7jTt5ecsexn
-   g==;
-X-CSE-ConnectionGUID: Uqp5JH6NSXy5aAeAsP26dg==
-X-CSE-MsgGUID: D4pTa8y+Rg+dvqdQCPcW6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="15840801"
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="15840801"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 21:21:59 -0700
-X-CSE-ConnectionGUID: gx6nqTwuQEWJvHB5odwfcg==
-X-CSE-MsgGUID: SnXW3sGiSaWA5KlY3W61Qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="77466454"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 21:21:57 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>,
-	Yuan Yao <yuan.yao@intel.com>
-Subject: [PATCH] KVM: VMX: Remove the unused variable "gpa" in __invept()
-Date: Mon, 14 Oct 2024 12:19:40 +0800
-Message-ID: <20241014041941.579-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E42513211A;
+	Mon, 14 Oct 2024 04:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728879754; cv=fail; b=TeHV1HEnmRu5Gp6PJWvtWanqsiCHAmZk7Ab60eTWZ9a+B1Q2eOLUztJHAJAhFCV6YbvgnK86eOVKUC4eXn5s2ZFezBztSlppbmyMmN9n/ORDa2l71czTcJ+HO3TsDFHn/PLrjWf4bn+p4Tp9MsrQ+6ZCMF7U4ExR7MCpH4ssjDI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728879754; c=relaxed/simple;
+	bh=QVxbZiIjOrxlFMNCPjb326nfTOUcMbOzZLbNRg1vs1w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EZQRcPCbL0mWUTDth5gSyO7FTxtZ3O7n6DPfGi4PzYhzZKRhe1wiOYccWfg16z9EDOAVKq+sPgERrmsgyRn5J4MFiIG4XcGAsObtIv0U4XeefGtQF93GKLl8X+EW2GFlCeq4A4d9ZWVe0x9Tz7cCufnIZTkQ/pJJ+NqeSB05kuU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W9j5fgl6; arc=fail smtp.client-ip=40.107.220.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ykBF07/47ooyDJuiUvjdWYJbLCw3fs9xhc6dY6tp4M1jTunRzBZBlT89HAKPfq4uAOXYh5kYX4QJ1BuAYfwv5PToD2Tjfk3NNA0rk80n/F654i1YZeGQEgitm98HI+PpcnTgJ9CNhIvoTzA8wW7t8RrB0LRuVeHujdYVaYHsgn9rbeVUKXGdVR04qe6fwLoiNP+6qdFMfKUXxuMBq0A+WBqplM5IFre/lqju19wwtjXh6ZL6DgCK+/gytnMlNqkTwTg0LIRF3ubUAnr4Q9OcmjyL9o8z7wjSckQjJvvivdeJ1U91F14TTyqeUnh2vx2t7LC8dPz4DwP/8Q72mPBVDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LXxBWYiUYLagxQeOIofZXz7DW8vr+EYWJVZQDtmavR8=;
+ b=bkRLapsnmKImTZhVLv/+HTTsZbS98jV1L8arAt7YsKH7k1Qjzs2Z4X1yefEMFgdeMd9EX1FNKvJ+SPsQThYuvUwXCjTifhQwPF/V7ASGEvDGT+PGjmI1oICNXv3NtCznAtKexSdkBMeM+huPTtRC3P56yQighjiWzzPuy/8oFlBox/izAxS2hNoot1bfUKFk+jmrRsU7bf+ymIEdDJcjqm7ELwZf5V7ncewJnF2FwcjTdzOGfUJo6cIchXKowEPMmFfraVtyCwXBOyXfzYEi5C47C58rumelwcDJsiaKcmWWABqe5UerRumCiOIy8oCa2ejKba/lRlkpCEuQ023YHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LXxBWYiUYLagxQeOIofZXz7DW8vr+EYWJVZQDtmavR8=;
+ b=W9j5fgl63m6RiAxZdcII21mTxzzGQwhZfkN+AkhwG0fU55AbXo/AUrsRnr6ab7sSl3o3v+GtcfeGrSwJ/ToYC9jlVPFyFFPSfxdncg+fxtBdVdLAeXbL6Glf5d6R0InK7UKHD7Zx3nST3kEtf1LuOkjYyRLpELZ0v3wEP2zjcbpKiMWP25dhFjt2PJikrL0RTxxrdZ+0bqGGpCz88DlrTTNg3bOlNoiX5LPgPGX0Yau2Mr1Oav3H9VLzQBMK7mxzWh61QKaAbkj2Jrec9TZA3rWRZ01wjyEhDhiir0/+zcQNba5jX0SQJ4ykZzc3X6hHIEnPge8TKq/Nb7ZeYziJUA==
+Received: from CH5PR02CA0021.namprd02.prod.outlook.com (2603:10b6:610:1ed::26)
+ by CH2PR12MB4136.namprd12.prod.outlook.com (2603:10b6:610:a4::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
+ 2024 04:22:28 +0000
+Received: from CH2PEPF00000148.namprd02.prod.outlook.com
+ (2603:10b6:610:1ed:cafe::5b) by CH5PR02CA0021.outlook.office365.com
+ (2603:10b6:610:1ed::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26 via Frontend
+ Transport; Mon, 14 Oct 2024 04:22:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF00000148.mail.protection.outlook.com (10.167.244.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.13 via Frontend Transport; Mon, 14 Oct 2024 04:22:28 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 13 Oct
+ 2024 21:22:21 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 13 Oct
+ 2024 21:22:21 -0700
+Received: from henryl-vm.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 13 Oct 2024 21:22:19 -0700
+From: Henry Lin <henryl@nvidia.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Petlozu Pravareshwar
+	<petlozup@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	<linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <henryl@nvidia.com>, <stable@vger.kernel.org>
+Subject: [PATCH v4] xhci: tegra: fix checked USB2 port number
+Date: Mon, 14 Oct 2024 12:21:34 +0800
+Message-ID: <20241014042134.27664-1-henryl@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000148:EE_|CH2PR12MB4136:EE_
+X-MS-Office365-Filtering-Correlation-Id: f10bbc16-0d3d-4c44-b7de-08dcec07d033
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6DV1uuW+SkrOLwY1jDRZjmnpvu1lxUzWC9HDEqWIkBgik0b1xsd2d0X+RTOX?=
+ =?us-ascii?Q?vJrqUF+DiC0LqZNo806bNgbovqi1J4Vyx1KNtZAVrxPMWUxEyX+XzFAb91bm?=
+ =?us-ascii?Q?FO9NQat0bI248iFIr4ItVKDb7ln9T2wuAE6tmLVHLZkmPKY04ZPdlaR/F8IB?=
+ =?us-ascii?Q?4DazUfwWR/7U+L38QNQCHXo99QUQ3VxAgBgZSw9zHrgC9t3OR3vkLsc/SQui?=
+ =?us-ascii?Q?6zC6ndbrRY9uodIa/f6FCuJjIfCiR0t+5arjSKAQmmedgMHTdCQjbgeypTJp?=
+ =?us-ascii?Q?wNCDbiSm06gtF+MGDEXy+AsmpGr0aXtYSa1RRSflNt15dksFYTPrgdG5R0e2?=
+ =?us-ascii?Q?DUfRNNWxS+x4fKHqDQEEL9DGChIEBpSHPS20wT8Zrnxb6RyvkMaATH2zhrot?=
+ =?us-ascii?Q?ORgW0R6yAnWKLC03lBN3UM7dAy+/juN5izv/vIn2f8s64DlKAD7Xgh5Nh5o5?=
+ =?us-ascii?Q?sxgeVe7xaCr/HqryJX+fWm6ZmPEj5y+INRBveQ3IT76V90h4lHCUBYKP2yO8?=
+ =?us-ascii?Q?CGQNfDDV7RFc+B6tfeBEdXJn1i1OBwU+eHbgY0PZ0JydxTXf4INaWLdMGNz2?=
+ =?us-ascii?Q?5dTxHbxUPfPtUlJxlyS1e8Tux4o8F3XkA7aFJTux+8MUANGxU90ax4Z4PIsD?=
+ =?us-ascii?Q?EVFe78KeNahYIE5OhPDn1Ft9GTdfmMzCRQQVil2EiqqTMbpk9fuT6QRdfz8a?=
+ =?us-ascii?Q?wPz+UzOSHcFlqkjNvDKgGx/jc2BHXPW7Qi5pptiFYoOsaBmeV2uY4HthX22P?=
+ =?us-ascii?Q?AGZvJ7dSzfTzSe1v3XmZSPJeN+EP/MKH/gwnKH2id+OvpyciLBNB3u8w1K+0?=
+ =?us-ascii?Q?JaVy+aMhNlYFsAcka03Rd1F9kmxw52C+YcpjhnFVoYDlm0EZsDd45lsluVgX?=
+ =?us-ascii?Q?vvLra0T0K4UfWmBof+tBrqwyxpElV66flQsDdm2Ob235jJUUmZO2CrZvJ4JO?=
+ =?us-ascii?Q?h/VY6TyTlo983mJ4DoEyQzWzdqhXRVj0l3OsMC0uDrrRcErYjThjR/k1MLD1?=
+ =?us-ascii?Q?uOi2roDui3IGle9uUeYoDl8RHPzmP9KEgSXIuw64JXGw5YlFSSeqLtfgcP33?=
+ =?us-ascii?Q?U1vCS9S+vN51eFnAPUgcH5M7v/gHWzFWZN+fymM8h2jT7Gk/dpFRvBtHW5WN?=
+ =?us-ascii?Q?5tAZF9XzMSWuI6IqPjd1MjrLdhxYpFtyeRP6vnwCfMfMjIixaXQTicpuveud?=
+ =?us-ascii?Q?6GXEjOoCm1CBktNUnnhlkaXYEgPG7sRQmvUqtBBv8YqYt6ReaMBJ71Edm/Tp?=
+ =?us-ascii?Q?E0QG/cFZ3jtmXFzL3I28VJj1xciQ08T2IEzEvTbuOqDP5HCfgRk1fP8zXA3a?=
+ =?us-ascii?Q?JdTfc5bvGds8SCd4wbX/yaqleiIRnIMoGmpvmAx8k3iSjTvpcGOjYhCIl7dk?=
+ =?us-ascii?Q?GtlK9Yc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 04:22:28.0650
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f10bbc16-0d3d-4c44-b7de-08dcec07d033
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000148.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4136
 
-Remove the unused variable "gpa" in __invept().
+If USB virtualizatoin is enabled, USB2 ports are shared between all
+Virtual Functions. The USB2 port number owned by an USB2 root hub in
+a Virtual Function may be less than total USB2 phy number supported
+by the Tegra XUSB controller.
 
-The INVEPT instruction only supports two types: VMX_EPT_EXTENT_CONTEXT (1)
-and VMX_EPT_EXTENT_GLOBAL (2). Neither of these types requires a third
-variable "gpa".
+Using total USB2 phy number as port number to check all PORTSC values
+would cause invalid memory access.
 
-The "gpa" variable for __invept() is always set to 0 and was originally
-introduced for the old non-existent type VMX_EPT_EXTENT_INDIVIDUAL_ADDR
-(0). This type was removed by commit 2b3c5cbc0d81 ("kvm: don't use bit24
-for detecting address-specific invalidation capability") and
-commit 63f3ac48133a ("KVM: VMX: clean up declaration of VPID/EPT
-invalidation types").
+[  116.923438] Unable to handle kernel paging request at virtual address 006c622f7665642f
+...
+[  117.213640] Call trace:
+[  117.216783]  tegra_xusb_enter_elpg+0x23c/0x658
+[  117.222021]  tegra_xusb_runtime_suspend+0x40/0x68
+[  117.227260]  pm_generic_runtime_suspend+0x30/0x50
+[  117.232847]  __rpm_callback+0x84/0x3c0
+[  117.237038]  rpm_suspend+0x2dc/0x740
+[  117.241229] pm_runtime_work+0xa0/0xb8
+[  117.245769]  process_scheduled_works+0x24c/0x478
+[  117.251007]  worker_thread+0x23c/0x328
+[  117.255547]  kthread+0x104/0x1b0
+[  117.259389]  ret_from_fork+0x10/0x20
+[  117.263582] Code: 54000222 f9461ae8 f8747908 b4ffff48 (f9400100)
 
-Since this variable is not useful for error handling either, remove it to
-avoid confusion.
-
-No functional changes expected.
-
-Cc: Yuan Yao <yuan.yao@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Cc: <stable@vger.kernel.org> # v6.3+
+Fixes: a30951d31b25 ("xhci: tegra: USB2 pad power controls")
+Signed-off-by: Henry Lin <henryl@nvidia.com>
 ---
- arch/x86/kvm/vmx/vmx.c     |  5 ++---
- arch/x86/kvm/vmx/vmx_ops.h | 15 +++++++--------
- 2 files changed, 9 insertions(+), 11 deletions(-)
+V1 -> V2: Add Fixes tag and the cc stable line
+V2 -> V3: Update commit message to clarify issue
+V3 -> V4: Resend for patch changelogs that are missing in V3
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 80883f43d4c4..f19686d55d42 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -480,10 +480,9 @@ noinline void invvpid_error(unsigned long ext, u16 vpid, gva_t gva)
- 			ext, vpid, gva);
- }
- 
--noinline void invept_error(unsigned long ext, u64 eptp, gpa_t gpa)
-+noinline void invept_error(unsigned long ext, u64 eptp)
- {
--	vmx_insn_failed("invept failed: ext=0x%lx eptp=%llx gpa=0x%llx\n",
--			ext, eptp, gpa);
-+	vmx_insn_failed("invept failed: ext=0x%lx eptp=%llx\n", ext, eptp);
- }
- 
- static DEFINE_PER_CPU(struct vmcs *, vmxarea);
-diff --git a/arch/x86/kvm/vmx/vmx_ops.h b/arch/x86/kvm/vmx/vmx_ops.h
-index 8060e5fc6dbd..4616f8d120bb 100644
---- a/arch/x86/kvm/vmx/vmx_ops.h
-+++ b/arch/x86/kvm/vmx/vmx_ops.h
-@@ -15,7 +15,7 @@ void vmwrite_error(unsigned long field, unsigned long value);
- void vmclear_error(struct vmcs *vmcs, u64 phys_addr);
- void vmptrld_error(struct vmcs *vmcs, u64 phys_addr);
- void invvpid_error(unsigned long ext, u16 vpid, gva_t gva);
--void invept_error(unsigned long ext, u64 eptp, gpa_t gpa);
-+void invept_error(unsigned long ext, u64 eptp);
- 
- #ifndef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
- /*
-@@ -312,13 +312,12 @@ static inline void __invvpid(unsigned long ext, u16 vpid, gva_t gva)
- 	vmx_asm2(invvpid, "r"(ext), "m"(operand), ext, vpid, gva);
- }
- 
--static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
-+static inline void __invept(unsigned long ext, u64 eptp)
- {
- 	struct {
--		u64 eptp, gpa;
--	} operand = {eptp, gpa};
--
--	vmx_asm2(invept, "r"(ext), "m"(operand), ext, eptp, gpa);
-+		u64 eptp;
-+	} operand = { eptp };
-+	vmx_asm2(invept, "r"(ext), "m"(operand), ext, eptp);
- }
- 
- static inline void vpid_sync_vcpu_single(int vpid)
-@@ -355,13 +354,13 @@ static inline void vpid_sync_vcpu_addr(int vpid, gva_t addr)
- 
- static inline void ept_sync_global(void)
- {
--	__invept(VMX_EPT_EXTENT_GLOBAL, 0, 0);
-+	__invept(VMX_EPT_EXTENT_GLOBAL, 0);
- }
- 
- static inline void ept_sync_context(u64 eptp)
- {
- 	if (cpu_has_vmx_invept_context())
--		__invept(VMX_EPT_EXTENT_CONTEXT, eptp, 0);
-+		__invept(VMX_EPT_EXTENT_CONTEXT, eptp);
- 	else
- 		ept_sync_global();
- }
+ drivers/usb/host/xhci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 6246d5ad1468..76f228e7443c 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -2183,7 +2183,7 @@ static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
+ 		goto out;
+ 	}
+ 
+-	for (i = 0; i < tegra->num_usb_phys; i++) {
++	for (i = 0; i < xhci->usb2_rhub.num_ports; i++) {
+ 		if (!xhci->usb2_rhub.ports[i])
+ 			continue;
+ 		portsc = readl(xhci->usb2_rhub.ports[i]->addr);
 -- 
-2.43.2
+2.25.1
 
 
