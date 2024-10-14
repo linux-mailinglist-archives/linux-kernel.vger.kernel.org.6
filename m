@@ -1,147 +1,157 @@
-Return-Path: <linux-kernel+bounces-363287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB5E99C00B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FF199C00A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFBB71F22FE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90D421F230C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7308583CC1;
-	Mon, 14 Oct 2024 06:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2600145B0B;
+	Mon, 14 Oct 2024 06:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HuQhmyUs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="u91yCczv"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CCD146A9B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B451D22339
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728887475; cv=none; b=mCwrE336XhmsQAJp/iGsN8O7FZfz63m5B1wmvcbxJwQJoBA42nAX0p5Ic8/SRSr3rdgIsVBjC7rdaBJMgpALx3tzBPli96ZCgT11c8nmX5Crs/Rok6ezuny53o50W7wQMev7r/F41Uqll/mK0xcl59gQPQ1fYkOwB9pcrhbEwBQ=
+	t=1728887472; cv=none; b=NQlyHFJomzhHDcsOB92M1dn688lEFKnakNPcR5KBKnNGnPjHMtER/kbtxCRHJg4nw5j15gsaTGihUAAUNtypYpD8QWZw5cxNOWPehE+ve5rQsu/3xvTUowfhiikVUKWON+FLRw5H+kvg7/CItZ+6OBrkIaJ7j4ZgRD167Egwwlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728887475; c=relaxed/simple;
-	bh=gtdpBTeQLmr18gVrhQkVp+R+fm5FD66vp+1RtcWutpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lT9UG0pn9P/dD9lCrQE7eDhlhDgdB9dGodDosfkZ+UnNiQqra8XGbIEkM7psCBDG6JxqNCI88gGGl0fkGK/G3VEtlgqyb3J46k2TlVX0fi5MJrgR8fVsZitmUnE+//JIwJEudIONci87Y6NHEiRUGlmxFJ+vG/C2mqPbcgKAJjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HuQhmyUs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59142C4CECE
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:31:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728887475;
-	bh=gtdpBTeQLmr18gVrhQkVp+R+fm5FD66vp+1RtcWutpI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HuQhmyUsxHFQosKnFrRPoQFxO3qFr4NwggE3ksPLx9oycfgViN4ZTGJhLXWsXjIU8
-	 ntd66f/prdD5VrSjGyi8nFxZJ7bsfnabc/eF6nTwdYcCayDM+k3NnFSi4wMVAcgj6s
-	 wFPB2arEtAtaA6TIH3dwaiS+ZTflir5FESdte65uqM3CA6BRjq4Ka/ZL8RMydvqYb9
-	 M/6a5G6LyV3jlpHLZfwQwqi0L7ufQpe9rT+tni85EGxSDpe2l4DzkPzvZpbTLGsclq
-	 HDxhLzrC78sANOS0fHx+dcoJ/mWVzdGfzwrQX6y8K0lu+y+O9TlqQbdbs5OGg38xKg
-	 jOBE/IrYJZI4w==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso45854041fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:31:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV0tH2YKUt0we6XuEgpbANa27D5v41/5tnaVdPO0/5q+fZODCWi24fVdJeZpB3omk+iLW9g13kxl9DIoCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsNl8tQVMYyQyJ7GMtec5o8R0swbult9wchMG0bzHEoxcaPPy2
-	6Ft6hcGqGQxgzbaraGRFVbMcyTzZ9E7BVwPoUVR2IsRWZgxqHkfaQL5bC0Mwgy4v4RINWaD0V9n
-	M2mAa5ZwhVK9IqjyVWX+A6475De0=
-X-Google-Smtp-Source: AGHT+IE2ikZfTCj1ldIG4d5HvpoPlo2JvKFiNjMNNj8Hkiza0u+9foosUHeMoLBWDVDJbRUUk8gLgI7f1jDWzR6Lh6E=
-X-Received: by 2002:a05:6512:1598:b0:530:b773:b4ce with SMTP id
- 2adb3069b0e04-539e551a25emr2964252e87.33.1728887473738; Sun, 13 Oct 2024
- 23:31:13 -0700 (PDT)
+	s=arc-20240116; t=1728887472; c=relaxed/simple;
+	bh=0A4vgkAGt82wxHcpsenFQsI7HzVKtIZqnzOs2bEiezo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g4+x6NWGbpgKreEIcONgQjKr5F0r3kO8ddGMwT0SHpsvGeMElBEeRHYmbWZ76UmoC+hFY6fjO1e8c2R+dc5BOFNgX8IzZ58l0Fe+0zDFtu9eef2ejzp/5Jx6bJByiDlAklv5orz5cs/bP3KuKKFkWisO9TlylsNtoJ1+qjnaUys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=u91yCczv; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728887467; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=wo8Ga0ptQeAsx82Kg+bL/pEOvPAP2xUdjy9xkwJ1LT0=;
+	b=u91yCczve1PWy3jG4qupu7xNd5gI6cYMr58u9At3Jb0z+FvOJG6McvTVUhQ0EKa1fLW3OVVwhQetFUuTZrGrmFRMnzBsgALcyxIpPHM4GFZfN2g0K03Q08wVWmNN9uy01iQnoiSzdcTw5yIybgp2YzGrNsvOd60Iq56o6V/YX8M=
+Received: from 30.246.164.22(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0WH1hiLv_1728887465 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 14 Oct 2024 14:31:06 +0800
+Message-ID: <dae3a35e-2ce9-42a2-956b-039505c98082@linux.alibaba.com>
+Date: Mon, 14 Oct 2024 14:31:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014035855.1119220-1-maobibo@loongson.cn> <20241014035855.1119220-3-maobibo@loongson.cn>
-In-Reply-To: <20241014035855.1119220-3-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 14 Oct 2024 14:31:02 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6nkiw_eOS3jFdojJsCJOA2yiprQmaT5c=SnPhJTOyKkQ@mail.gmail.com>
-Message-ID: <CAAhV-H6nkiw_eOS3jFdojJsCJOA2yiprQmaT5c=SnPhJTOyKkQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] LoongArch: Add barrier between set_pte and memory access
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: arm64: nVHE: gen-hyprel: Silent build warnings
+To: Marc Zyngier <maz@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ =?UTF-8?Q?Pierre-Cl=C3=A9ment_Tosi?= <ptosi@google.com>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20241009085751.35976-1-tianjia.zhang@linux.alibaba.com>
+ <86set55yca.wl-maz@kernel.org>
+ <b3c21234-73a0-43dd-8365-9039c62b7aa7@linux.alibaba.com>
+ <86o73s5cv0.wl-maz@kernel.org>
+Content-Language: en-US
+From: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <86o73s5cv0.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi, Bibo,
+Hi Marc,
 
-On Mon, Oct 14, 2024 at 11:59=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wro=
-te:
->
-> It is possible to return a spurious fault if memory is accessed
-> right after the pte is set. For user address space, pte is set
-> in kernel space and memory is accessed in user space, there is
-> long time for synchronization, no barrier needed. However for
-> kernel address space, it is possible that memory is accessed
-> right after the pte is set.
->
-> Here flush_cache_vmap/flush_cache_vmap_early is used for
-> synchronization.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  arch/loongarch/include/asm/cacheflush.h | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/include/asm/cacheflush.h b/arch/loongarch/inc=
-lude/asm/cacheflush.h
-> index f8754d08a31a..53be231319ef 100644
-> --- a/arch/loongarch/include/asm/cacheflush.h
-> +++ b/arch/loongarch/include/asm/cacheflush.h
-> @@ -42,12 +42,24 @@ void local_flush_icache_range(unsigned long start, un=
-signed long end);
->  #define flush_cache_dup_mm(mm)                         do { } while (0)
->  #define flush_cache_range(vma, start, end)             do { } while (0)
->  #define flush_cache_page(vma, vmaddr, pfn)             do { } while (0)
-> -#define flush_cache_vmap(start, end)                   do { } while (0)
->  #define flush_cache_vunmap(start, end)                 do { } while (0)
->  #define flush_icache_user_page(vma, page, addr, len)   do { } while (0)
->  #define flush_dcache_mmap_lock(mapping)                        do { } wh=
-ile (0)
->  #define flush_dcache_mmap_unlock(mapping)              do { } while (0)
->
-> +/*
-> + * It is possible for a kernel virtual mapping access to return a spurio=
-us
-> + * fault if it's accessed right after the pte is set. The page fault han=
-dler
-> + * does not expect this type of fault. flush_cache_vmap is not exactly t=
-he
-> + * right place to put this, but it seems to work well enough.
-> + */
-> +static inline void flush_cache_vmap(unsigned long start, unsigned long e=
-nd)
-> +{
-> +       smp_mb();
-> +}
-> +#define flush_cache_vmap flush_cache_vmap
-> +#define flush_cache_vmap_early flush_cache_vmap
-From the history of flush_cache_vmap_early(), It seems only archs with
-"virtual cache" (VIVT or VIPT) need this API, so LoongArch can be a
-no-op here.
+On 10/10/24 9:03 PM, Marc Zyngier wrote:
+> On Thu, 10 Oct 2024 09:12:29 +0100,
+> "tianjia.zhang" <tianjia.zhang@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 10/9/24 7:07 PM, Marc Zyngier wrote:
+>>> On Wed, 09 Oct 2024 09:57:51 +0100,
+>>> Tianjia Zhang <tianjia.zhang@linux.alibaba.com> wrote:
+>>>>
+>>>> This patch silent the some mismatch format build warnings
+>>>> with clang, like:
+>>>>
+>>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:233:2: warning: format specifies
+>>>>     type 'unsigned long' but the argument has type 'Elf64_Off'
+>>>>     (aka 'unsigned long long') [-Wformat]
+>>>>       233 |         assert_ne(off, 0UL, "%lu");
+>>>>           |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>           |                              %llu
+>>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:193:34: note: expanded from macro 'assert_ne'
+>>>>       193 | #define assert_ne(lhs, rhs, fmt)        assert_op(lhs, rhs, fmt, !=)
+>>>>           |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:188:19: note: expanded from macro 'assert_op'
+>>>>       187 |                                 " failed (lhs=" fmt ", rhs=" fmt        \
+>>>>           |                                                 ~~~
+>>>>       188 |                                 ", line=%d)", _lhs, _rhs, __LINE__);    \
+>>>>           |                                               ^~~~
+>>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:167:17: note: expanded from macro 'fatal_error'
+>>>>       166 |                 fprintf(stderr, "error: %s: " fmt "\n",                 \
+>>>>           |                                               ~~~
+>>>>       167 |                         elf.path, ## __VA_ARGS__);                      \
+>>>>           |                                      ^~~~~~~~~~~
+>>>>
+>>>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>>>
+>>> I don't see these warnings. What version of LLVM are you using?
+>>>
+>>
+>> I compiled the kernel on Apple Silicon M3 Pro in macOS 15.0.1, Maybe this is
+>> a special scenario that is rarely used.
+>>
+>> Details of clang:
+>>
+>>      # clang --version
+>>      Homebrew clang version 19.1.1
+>>      Target: arm64-apple-darwin24.0.0
+>>      Thread model: posix
+>>      InstalledDir: /opt/homebrew/Cellar/llvm/19.1.1/bin
+> 
+> What I have is similar enough:
+> 
+> ClangBuiltLinux clang version 19.1.1 (https://github.com/llvm/llvm-project.git d401987fe349a87c53fe25829215b080b70c0c1a)
+> Target: aarch64-unknown-linux-gnu
+> Thread model: posix
+> InstalledDir: /home/maz/hot-poop/llvm/llvm-19.1.1-aarch64/bin
+> 
+> and yet this doesn't fire. Can you try with a compiler actually
+> targeting with Linux instead of MacOS?
+> 
 
-And I still think flush_cache_vunmap() should be a smp_mb(). A
-smp_mb() in flush_cache_vmap() prevents subsequent accesses be
-reordered before pte_set(), and a smp_mb() in flush_cache_vunmap()
-prevents preceding accesses be reordered after pte_clear(). This
-potential problem may not be seen from experiment, but it is needed in
-theory.
+I downloaded the precompiled version, but it didn't compile
+properly, interrupted by other errors, which seemed to be
+different from the brew version:
 
-Huacai
+     HOSTCC  scripts/mod/modpost.o
+   scripts/mod/modpost.c:16:10: fatal error: 'fnmatch.h' file not found
+      16 | #include <fnmatch.h>
+         |          ^~~~~~~~~~~
+   1 error generated.
 
-> +
->  #define cache_op(op, addr)                                             \
->         __asm__ __volatile__(                                           \
->         "       cacop   %0, %1                                  \n"     \
-> --
-> 2.39.3
->
->
+Details of clang:
+
+clang version 19.1.1 (/Users/runner/work/llvm-project/llvm-project/clang 
+d401987fe349a87c53fe25829215b080b70c0c1a)
+Target: arm64-apple-darwin24.0.0
+Thread model: posix
+InstalledDir: /Users/tianjia/sbin/LLVM-19.1.1-macOS-ARM64/bin
+
+There is no verification yet whether this patch issue will be fire.
+The clang installed with brew can be compiled normally.
+
+Thanks,
+Tianjia
+
 
