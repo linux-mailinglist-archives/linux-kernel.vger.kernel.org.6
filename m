@@ -1,125 +1,147 @@
-Return-Path: <linux-kernel+bounces-363698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F3C99C5BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:32:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5345599C5C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ADEE28CC36
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:32:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857261C214D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AE515539A;
-	Mon, 14 Oct 2024 09:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56E815539F;
+	Mon, 14 Oct 2024 09:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGkzEZ+4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="dORX6Fse"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6F2146D65;
-	Mon, 14 Oct 2024 09:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED8713DDAA
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898339; cv=none; b=mg/x2TZBM0LR6d+q1Shz/UAk4bo9cdBEPGFcjBrB3FwLcvkKGRzaHxNLgxhsEDSeYGyJDEqUjBjP0+sENWE8ywjtxYjIT2Xz14FtKSTzYgHHDqTUDIVB+GSrAMG2UaW31idEoDhp4QmO1+eGexXa2iDNx59v1dO3dPGZso6Zqkc=
+	t=1728898359; cv=none; b=q7YasiY2r57J7n2xlsPyXTM2WPu/+ooV/Ny6eSb0YUmIF6Nwym39Lg1CNHs85WG+aFwh07Ysd1njrl3oBKMXJR+jg8FBuQzIE2TLpzcYdkCymCbZ5WvLP6/v1M5fwovo3et/La9dAKNXtg8KvxcHxM7RqAE0+SJ4h36RTkP9FQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898339; c=relaxed/simple;
-	bh=QXdb3dmbBO1WUFzxA15O4RBDNdglYPNtG79nukr33RU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOvzhX/hsaz/YzKy2XF0IQqAwQeRHVuyhCFfbTsUvgOIRUHfGYxEEp0KxdEJ0M43M80zZoryfAk+E2zd8crkaNkC6+nTqf11UCLHrAZ6hykjOTOGSj8/srOxdiHibnDdKgRoHhxKrg0YySk3g0/EFDidFDDMDRCMp4InSoLarD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGkzEZ+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98590C4CEC3;
-	Mon, 14 Oct 2024 09:32:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728898338;
-	bh=QXdb3dmbBO1WUFzxA15O4RBDNdglYPNtG79nukr33RU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aGkzEZ+4xIlDkUKCbi1UFiyfxfqw+IUf5sVqj2uo1Ng0T03ngS/RSF1mW7bGrRpMn
-	 9HZqvMn25gyP8En/Orq4IPo4Q4NpMeBmdob93LoNEH6aWnCjousUxiqbup9icj5MI5
-	 scp5PD9Zj3jChTXrceDYml1ddWVUN8NJXMd5LyT/npc7l37RAz9HgozcJRjbRdqlUS
-	 SFRYuU0OBopUj8wHDQms+EHOKeVabsvGrX2V69ar14jOzBWnrpQt3tqwUNdFZVBxpI
-	 3OX/RCaAUFRjMU2Ckbyr034Fwu7b/ubBtwBOeqhWiOWAiyGs3nUon01uk5GvcgcYRu
-	 ell7FqmGAh0Nw==
-Received: by pali.im (Postfix)
-	id AF3809DA; Mon, 14 Oct 2024 11:32:12 +0200 (CEST)
-Date: Mon, 14 Oct 2024 11:32:12 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] Allow to choose symlink and socket type
-Message-ID: <20241014093212.rrijt2x43jubaclz@pali>
-References: <20241006100046.30772-1-pali@kernel.org>
- <20241012085252.560-1-pali@kernel.org>
- <CAH2r5mtGqqM35Cy5k9NN=X05rTZPk-adhb7LgoV8PGNVL9P6FQ@mail.gmail.com>
- <20241013133827.lodho6ep2uspbzpk@pali>
+	s=arc-20240116; t=1728898359; c=relaxed/simple;
+	bh=Keaah5l1gMY79cEpIH5DcFLPpE/5+8Tm2Fy2JXm1Zc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cRoChWl25kpR+35/ddlnpd6TbAsPiaJkWNpMxVZrEZ+ILelZwVncDqbErfsviwsA+NTGBeUV0Wb3tRW3/yKFsFHHsQiZ/8LCxXVKOoUmp8C6IiJHlP+mauVIcz5CCriTNyCd2JU3uqCPIIkT+3xUzH2N7zJhoAVEhuL0yYTP95U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=dORX6Fse; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fbbadf83so378775e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:32:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728898356; x=1729503156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lfneKJD9s7n0cg97Ymqk1c8gEskV7vajSDux8+eET10=;
+        b=dORX6FseS8h9NrgTjRMSrr9p3O4P9+8ZwLE2agjvE5Ka4j9yZYqNA0NDJ8bnMZonWz
+         owFfQ2F1QlL91Ir5SdQLdlNisvX/KDl6XGZa/cQ2bsfWLU/4TySkoRSmYung++QNyvEU
+         7sLiLPFwcDPRBmRwenD748KR2+Dm//iPpFlL2o+790+xNX69O1dhr4HZva03BFnm9pD9
+         rxtgeh00bKblYzjxh67fRTpNpFJ6F5IGgOXSksVppGY1nkUBTgbrNxexm/fGPn0Tzyec
+         XJmVHRWochZmAtoFBBOOmzCg38JqAYpGlMYG7ptx42Cydoi+wOfVjL5n02KePb2KyBRX
+         TZEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728898356; x=1729503156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lfneKJD9s7n0cg97Ymqk1c8gEskV7vajSDux8+eET10=;
+        b=p1lyHfe5Uq0hJ6RGYlG6JBZks1nPhHGKsUwToUEYN/lKUCk7jcYN1pLY7lRxvMAiRa
+         FDRQlphPBgoh0Aeptvz3ALlpHzRknnqtCryC6pa5gOFh/LIi8/pm6dVkK8QSYp6+k9ZZ
+         0CSm6Hav7yW9CDq608vFSTksf/u9aVxuW0rOo2a/KQqF2VsyUAk3iOoOFbw2aFILGqnl
+         dqUGzpdnKtu03TL+pHcdUW2ntMCF4SwdvgEt+wtNxYXLhFtl0/wL+JLJ7K38t+nqs4XB
+         qDNJL/i4PA44p+9/1B3VASxUDjJUlauyW0iXA94NleSQhikIuaOpJEkVU42dHO6Kb16j
+         rANA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQRPybM45nZmaLPIiFsppC8SsfilcF29smVUBwML3SGEW3250HylrZGKuIP15lhVZaUVedV00LCTBbVQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzEXkFIG3IkjWKsT5RwwwjQ+7YHknUHvduxNasMHBdseELvC6W
+	YHCT78fh+d8WA7fFR+kntYAPgI2NRA5VSN2cm2neOKjUnsb72eb7dpZptZSouv2HFyw0vSY+4zg
+	3ogBea3YIhW5MtIrcS8HzNsBjtA2rw9QVUU8QaA==
+X-Google-Smtp-Source: AGHT+IGu1aLp2QUS44YRhbYBzcW5nnGJeO4uvh3RAPV4KBMUBfnkkM0lJ8FNAJMJ8lPe5CqA316xRMYuygZp+o4WVZA=
+X-Received: by 2002:a05:6512:6d2:b0:539:f4c1:71d3 with SMTP id
+ 2adb3069b0e04-539f4c17406mr1425450e87.29.1728898355652; Mon, 14 Oct 2024
+ 02:32:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241013133827.lodho6ep2uspbzpk@pali>
-User-Agent: NeoMutt/20180716
+References: <20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org>
+ <20241010-gpio-notify-in-kernel-events-v2-5-b560411f7c59@linaro.org>
+ <20241014021140.GC20620@rigel> <CAMRc=MeoSnr-z=fmfRoTU-vdL_BAkTAE+0HiBaVUWmFG-bOTPw@mail.gmail.com>
+ <20241014092450.GA101913@rigel> <CAMRc=Mdf8CLQDPL8RMyWPyx8362xS3jEBe4zM=JL_dzRgF5wow@mail.gmail.com>
+ <20241014092955.GA105498@rigel>
+In-Reply-To: <20241014092955.GA105498@rigel>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 14 Oct 2024 11:32:24 +0200
+Message-ID: <CAMRc=MchnY==2vLFUaOEJSTqaLvimkyNSixNpqbPkNyzSGew9g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] gpiolib: switch the line state notifier to atomic
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now I found this statement in FSCTL_SET_REPARSE_POINT documentation:
-https://learn.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-fsctl_set_reparse_point
+On Mon, Oct 14, 2024 at 11:30=E2=80=AFAM Kent Gibson <warthog618@gmail.com>=
+ wrote:
+>
+> On Mon, Oct 14, 2024 at 11:27:05AM +0200, Bartosz Golaszewski wrote:
+> > On Mon, Oct 14, 2024 at 11:24=E2=80=AFAM Kent Gibson <warthog618@gmail.=
+com> wrote:
+> > >
+> > > On Mon, Oct 14, 2024 at 09:48:16AM +0200, Bartosz Golaszewski wrote:
+> > > > On Mon, Oct 14, 2024 at 4:11=E2=80=AFAM Kent Gibson <warthog618@gma=
+il.com> wrote:
+> > > > > >
+> > > > > > +     /*
+> > > > > > +      * This is called from atomic context (with a spinlock ta=
+ken by the
+> > > > > > +      * atomic notifier chain). Any sleeping calls must be don=
+e outside of
+> > > > > > +      * this function in process context of the dedicated work=
+queue.
+> > > > > > +      *
+> > > > > > +      * Let's gather as much info as possible from the descrip=
+tor and
+> > > > > > +      * postpone just the call to pinctrl_gpio_can_use_line() =
+until the work
+> > > > > > +      * is executed.
+> > > > > > +      */
+> > > > > > +
+> > > > >
+> > > > > Should be in patch 4?  You aren't otherwise changing that functio=
+n here.
+> > > > >
+> > > >
+> > > > Until this patch, the comment isn't really true, so I figured it ma=
+kes
+> > > > more sense here.
+> > > >
+> > >
+> > > So the validity of the comment depends on how the function is being c=
+alled?
+> > > Then perhaps you should reword it as well.
+> > >
+> >
+> > The validity of the comment depends on the type of the notifier used.
+> > As long as it's a blocking notifier, it's called with a mutex taken -
+> > it's process context. When we switch to the atomic notifier, this
+> > function is now called with a spinlock taken, so it's considered
+> > atomic.
+> >
+>
+> Indeed - so the comment is brittle.
+>
 
-  "FSCTL_SET_REPARSE_POINT IOCTL - Sets a reparse point on a file or directory."
-  "The calling process must have the SE_CREATE_SYMBOLIC_LINK_NAME privilege."
+I'm not sure what you're saying. We know it's an atomic notifier, we
+assign this callback to the block and register by calling
+atomic_notifier_chain_register(). I fail to see why you consider it
+"brittle".
 
-On Sunday 13 October 2024 15:38:27 Pali Rohár wrote:
-> Anyway, I think that the create symlink privilege is needed to create
-> any reparse point, so fallback to NFS reparse point would not help.
-> 
-> On Saturday 12 October 2024 23:18:13 Steve French wrote:
-> > after doing more experiments with native windows symlinks (and how
-> > difficult it is to get permission to set them over the wire to Windows),
-> > was wondering if we should allow fall back strategy if creating windows
-> > style symlinks fails with STATUS_PRIVILEGE_NOT_HELD then we should try NFS
-> > reparse point symlink.  Any opinions?
-> > 
-> > On Sat, Oct 12, 2024 at 3:53 AM Pali Rohár <pali@kernel.org> wrote:
-> > 
-> > > This patch series improves choosing reparse format when creating new
-> > > special files.
-> > >
-> > > Changes since v1:
-> > > * Instead of new -o reparse= mount option is now a new -o symlink= mount
-> > >   option for choosing symlink type during creation, and new option
-> > >   -o nonativesocket for choosing socket type
-> > >
-> > > Pali Rohár (7):
-> > >   cifs: Add mount option -o symlink= for choosing symlink create type
-> > >   cifs: Add mount option -o reparse=none
-> > >   cifs: Add support for creating native Windows sockets
-> > >   cifs: Add support for creating NFS-style symlinks
-> > >   cifs: Improve guard for excluding $LXDEV xattr
-> > >   cifs: Add support for creating WSL-style symlinks
-> > >   cifs: Validate content of WSL reparse point buffers
-> > >
-> > >  fs/smb/client/cifsfs.c     |   4 +
-> > >  fs/smb/client/cifsglob.h   |  36 +++++++
-> > >  fs/smb/client/connect.c    |   4 +
-> > >  fs/smb/client/fs_context.c |  82 +++++++++++++++
-> > >  fs/smb/client/fs_context.h |  19 ++++
-> > >  fs/smb/client/link.c       |  60 ++++++++---
-> > >  fs/smb/client/reparse.c    | 201 +++++++++++++++++++++++++++++++------
-> > >  fs/smb/client/reparse.h    |   2 +
-> > >  8 files changed, 364 insertions(+), 44 deletions(-)
-> > >
-> > > --
-> > > 2.20.1
-> > >
-> > >
-> > >
-> > 
-> > -- 
-> > Thanks,
-> > 
-> > Steve
+Bart
 
