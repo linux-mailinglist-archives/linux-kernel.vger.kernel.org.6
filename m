@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-364136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE4D99CB88
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C3E99CB89
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9731F21DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14ED51F22B5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC6F1AA78D;
-	Mon, 14 Oct 2024 13:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0003F1A76BC;
+	Mon, 14 Oct 2024 13:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ncng1wVS"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MrlqxTs0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECEA4A3E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E73F4A3E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728912274; cv=none; b=gHC7YOc/OeIDnTs3mVVYc4vFMFauFQ4+fBmdX/wv6lfjJIl+9yM/88JxipJRRTkCBRWxDZOCs/p5R6eM9WM0r6TEQTZmIDF2I1DvR3czTkhwtMSJzuJoICYqjcSjlAVjB6ofzKnbyKlvM1jTQDV+Php0bUbz3h0V5WWLqkP0Wv4=
+	t=1728912294; cv=none; b=dH8TVbcz9DBI8xMiYP6XFDux+n6fTQrgc1Jn+zqviR79caUHPNIjUfesMfhEzxHlWFZPf8rjM0KVJeziXcqEuCbZegqtz7Tv+XXDadFzlsEVt6QEA/QARuxkugtN54OuytX+WSEbe8sev2MAIQNOcLwjdaokT8Hgba2/6JBde44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728912274; c=relaxed/simple;
-	bh=xrXhQABRV81Vzx7GWZwk0fYd1nj6Scg5+6f67OlamiM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nSmvcthltUjnPy58vQg8eI81lb1GJAO3h4xDWOMmzRtW0DM4nAAwKRWSgi89qUkw5p8VrAc9UH6t4xKl0gpVjCw4NsaRXZQkiku9MGzbeQgu5e9npzl3w7aZxjYl9TxS8k7WYmhc6Pc95qdfRCb0GrscG7NQ/PiebKNFGA7dGN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ncng1wVS; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb58980711so3533211fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:24:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728912271; x=1729517071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n5KhJAw2py2gNyB51ij4Ahm4Pf+WITFslqbmQTWMfBg=;
-        b=Ncng1wVSaOWNe/9wdzgZdT0OYyRsNgexuKEVCT3R159fAHzsH+vSaM1MzoiRv1lQ4i
-         WQdvCWsfxPd5hAeh96FWhmpnmyBulNmjMypl7GE1Viwt96yPZaNYXpv1mTfD8O7ZAqIS
-         iB3D/wtBZhko4UcQlNvA6uDIBrNP7Tl3rs2BDn4w5rAG6BwcdfhnEatvuL5yqdc3Ks7f
-         m3bcJXeBh+L6pHaBg1IRVni8OAcWYggm34niuov8AFjGz7MIter8p0t/ZA1qDG0SAiR9
-         QoGkfmwwKwvcj6Yd0DkwAngY4eVz1UTn70FW79+0P6VhJfptm+PiAKEmP/Tavj+cdGyc
-         q+VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728912271; x=1729517071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n5KhJAw2py2gNyB51ij4Ahm4Pf+WITFslqbmQTWMfBg=;
-        b=vsYthgpQ9nfBvkuthFw61bn3b3WzQA97N+kcHHwa5dx4HTFRL82G8shl6JdJlNAPnn
-         JjJZaPAxlFo1e+zCkj8k2SsewaCEA6Xo++v2ebQ+PAYBzCw0jU6p0RR2b+sWMcg8XuMJ
-         V0N9Uj9po2yg2Eukeu+xr9aqdbFHiSVBQi8mMydbz2m+0NPL6+S/GIrV711osfNVYcYU
-         uTTvYb8e77Xwuqv30ks9R9jXAIbeBBvvU+7n1m7VSNwJg/00XRpdXJNWSsS6zNWug3Pf
-         SqRATBbOHa34jFxGFMpRkbOgTt82LLXWqu5natnNLmDaIvphg1Av5JSzlbiGDZE5+b2Q
-         2pow==
-X-Forwarded-Encrypted: i=1; AJvYcCWMOYbiUj4xBliCKlR7np17JUnSxPC+OPxNCiTYeol2FC5gJYfPfyNsdm/SfnTfDvMhsGuNnN1Il4W/VOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7hJEynZzrvJtzZY6wngFoKiEEPmn5/aLye8DlA9Rcp0XH3uRQ
-	BMKo/UcpF1AKJgLFn4/5m5EQTlL07KSg6aRLp6pk/nfgLrAh7gbYXuymxgKXLF6btkgcdJNo4Pr
-	+bUdzcJpEsfedRYOu65hsrrIeNZY4+Qw2pcZW
-X-Google-Smtp-Source: AGHT+IENmU+8gZcd0n4/BWk5Du8tBT6NpXgwJWpHkzCIHdhxUpyy+q2TmAGvGdxix2OqIXBk9jSMIBaz2UmZY+T6C2A=
-X-Received: by 2002:a2e:b8c1:0:b0:2f7:90b8:644e with SMTP id
- 38308e7fff4ca-2fb326ff6b6mr53795831fa.1.1728912270535; Mon, 14 Oct 2024
- 06:24:30 -0700 (PDT)
+	s=arc-20240116; t=1728912294; c=relaxed/simple;
+	bh=P3434jjoYDLOru+6xv29EKjoEYA2tZQNbtyGYyCmSdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hshZsHXqPh92hiVdEDaPXqmqfiKgbDl5MXCBjkAoSm1hcPNd8iVpbXoEMqXyDxf3WkMt4iOsegglI7JKTAVqupEFpzAZv7wKhbeenJA5Ksz4Ke5APFUuupc1KOeemSjkwgh/QxZCPROBesPWokaKXeYT6p3RPRXJfE3WEuGYTVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MrlqxTs0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 485E2C4CEC3;
+	Mon, 14 Oct 2024 13:24:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728912293;
+	bh=P3434jjoYDLOru+6xv29EKjoEYA2tZQNbtyGYyCmSdg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MrlqxTs0Sdj57/prtWrlmsR88D0ncAIcdBMvfJUs+3MDt4uKF5fw+RQRlLj59r1ZX
+	 3BZYsHReScDj43h6DWoqbdDxgh9EVQx6QVsp6qAgJi1GpKJAb6QMl1e9noY3jdV7nq
+	 J942JCNrl5YmsTyDzsKBTH/Ex3oaRmQ4k2SmU9K4=
+Date: Mon, 14 Oct 2024 15:24:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
+Cc: "Weil, Oren jer" <oren.jer.weil@intel.com>,
+	Tomas Winkler <tomasw@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [char-misc-next] mei: use kvmalloc for read buffer
+Message-ID: <2024101439-vagrancy-cubicle-77e0@gregkh>
+References: <20241013115314.1290051-1-alexander.usyskin@intel.com>
+ <2024101343-proposal-gatherer-8c43@gregkh>
+ <CY5PR11MB63665F42CE8EDCD3D48D2A27ED7B2@CY5PR11MB6366.namprd11.prod.outlook.com>
+ <2024101335-turbulent-smelting-00f2@gregkh>
+ <CY5PR11MB636626DB1AB4507D847E21CEED442@CY5PR11MB6366.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241012225524.117871-1-andrey.konovalov@linux.dev>
- <CACT4Y+YS4UTMwk_j+Fjah3bCQd0zFcr2XqsUJ5K8HC991Soyhg@mail.gmail.com> <CA+fCnZfkurMxTyf0ivF8uffeO+S0piqFuZ975SSxmjr_V2OrHg@mail.gmail.com>
-In-Reply-To: <CA+fCnZfkurMxTyf0ivF8uffeO+S0piqFuZ975SSxmjr_V2OrHg@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 14 Oct 2024 15:24:15 +0200
-Message-ID: <CACT4Y+aPjTmFRA58ewiHOaxUFxh1w_OwHj00GRjuPSBgA9ZyCw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: kasan, kcov: add bugzilla links
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: andrey.konovalov@linux.dev, Andrew Morton <akpm@linux-foundation.org>, 
-	Marco Elver <elver@google.com>, Alexander Potapenko <glider@google.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY5PR11MB636626DB1AB4507D847E21CEED442@CY5PR11MB6366.namprd11.prod.outlook.com>
 
-On Mon, 14 Oct 2024 at 14:51, Andrey Konovalov <andreyknvl@gmail.com> wrote=
-:
->
-> On Mon, Oct 14, 2024 at 10:08=E2=80=AFAM Dmitry Vyukov <dvyukov@google.co=
-m> wrote:
-> >
-> > On Sun, 13 Oct 2024 at 00:55, <andrey.konovalov@linux.dev> wrote:
-> > >
-> > > From: Andrey Konovalov <andreyknvl@gmail.com>
-> > >
-> > > Add links to the Bugzilla component that's used to track KASAN and KC=
-OV
-> > > issues.
-> > >
-> > > Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
-> > > ---
-> > >  MAINTAINERS | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 7ad507f49324a..c9b6fc55f84a6 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -12242,6 +12242,7 @@ R:      Dmitry Vyukov <dvyukov@google.com>
-> > >  R:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-> > >  L:     kasan-dev@googlegroups.com
-> > >  S:     Maintained
-> > > +B:     https://bugzilla.kernel.org/buglist.cgi?component=3DSanitizer=
-s&product=3DMemory%20Management
-> >
-> > Do we want a link to buglist.cgi, or to enter_bug.cgi, or both? =F0=9F=
-=A4=94
->
-> I think buglist.cgi makes more sense - people can check the list of
-> existing bugs before filing a new one. Finding a link to the right
-> enter_bug.cgi page once you know the component name should not be hard
-> (but IMO Bugzilla should just provide that link when viewing bugs for
-> a component).
+On Mon, Oct 14, 2024 at 01:15:49PM +0000, Usyskin, Alexander wrote:
+> > -----Original Message-----
+> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Sent: Sunday, October 13, 2024 6:08 PM
+> > To: Usyskin, Alexander <alexander.usyskin@intel.com>
+> > Cc: Weil, Oren jer <oren.jer.weil@intel.com>; Tomas Winkler
+> > <tomasw@gmail.com>; linux-kernel@vger.kernel.org
+> > Subject: Re: [char-misc-next] mei: use kvmalloc for read buffer
+> > 
+> > On Sun, Oct 13, 2024 at 02:22:27PM +0000, Usyskin, Alexander wrote:
+> > > > -----Original Message-----
+> > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Sent: Sunday, October 13, 2024 3:14 PM
+> > > > To: Usyskin, Alexander <alexander.usyskin@intel.com>
+> > > > Cc: Weil, Oren jer <oren.jer.weil@intel.com>; Tomas Winkler
+> > > > <tomasw@gmail.com>; linux-kernel@vger.kernel.org
+> > > > Subject: Re: [char-misc-next] mei: use kvmalloc for read buffer
+> > > >
+> > > > On Sun, Oct 13, 2024 at 02:53:14PM +0300, Alexander Usyskin wrote:
+> > > > > Read buffer is allocated according to max message size,
+> > > > > reported by the firmware and may reach 64K in systems
+> > > > > with pxp client.
+> > > > > Contiguous 64k allocation may fail under memory pressure.
+> > > > > Read buffer is used as in-driver message storage and
+> > > > > not required to be contiguous.
+> > > > > Use kvmalloc to allow kernel to allocate non-contiguous
+> > > > > memory in this case.
+> > > > >
+> > > > > Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> > > > > ---
+> > > > >  drivers/misc/mei/client.c | 4 ++--
+> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > What about this thread:
+> > > > 	https://lore.kernel.org/all/20240813084542.2921300-1-
+> > > > rohiagar@chromium.org/
+> 
+> [1] https://lore.kernel.org/all/20240813084542.2921300-1-rohiagar@chromium.org/
 
-then
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Yes, it's a problem, I don't understand.
+
+> > > >
+> > > > No attribution for the reporter?  Does it solve their problem?
+> > > >
+> > > This patch is a result from non-public bug report on ChromeOS.
+> > 
+> > Then make that bug report public as it was discussed in public already :)
+> > 
+> Unfortunately, it is not my call.
+> For now, I'll anchor this on [1]
+> 
+> > > > Also, where is this memory pressure coming from, what is the root cause
+> > > > and what commit does this fix?  Stable backports needed?  Anything else?
+> > > >
+> > > The ChromeOS is extremely short on memory by design and can trigger
+> > > this situation very easily.
+> > 
+> > So normal allocations are failing?  That feels wrong, what caused this?
+> 
+> 64K is order 4 allocation and may fail according to [1].
+
+And what changed to cause this to suddenly be 64k?  And why can't we
+allocate 64k at this point in time now?
+
+> > > I do not think that this patch fixes any commit - the problematic code exists
+> > > from the earliest versions of this driver.
+> > > As this problem reproduced only on ChromeOS I believe that no need
+> > > in wide backport, the ChromeOS can cherry-pick the patch.
+> > > From your experience, is this the right strategy?
+> > 
+> > No.
+> 
+> Sure, I'll use
+> Fixes: 3030dc056459 ("mei: add wrapper for queuing control commands.")
+> where the first time such buffer allocated and add stable here in v2.
+
+So the problem has been there for years?  Why is it just now showing up?
+
+thanks,
+
+greg k-h
 
