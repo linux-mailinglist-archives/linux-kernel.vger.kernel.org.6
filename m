@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-363859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD3599C7F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E6599C7FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134C91F24849
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D61F1F2486D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5AB19E990;
-	Mon, 14 Oct 2024 11:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47111AAE16;
+	Mon, 14 Oct 2024 11:00:16 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3C61AA7A4;
-	Mon, 14 Oct 2024 11:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB241AA782
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903613; cv=none; b=RWB7cb7ZyNTHXvHbjMQLMvSkEZjgpnEZBNTPHFy5IOr70B3JfVl62wD/rg1N+lbX22HdJcT2yztdOq1KjNcGODSPf7KPDEWPvMRMVTGXckEc9KCOLnjhpWi/NyOsFKA8QXuSlKubbrU+EmDhtr4QifptixUeS7/7fg6428dggRk=
+	t=1728903616; cv=none; b=L3tj3P0iPTNgOdPgt6iBeDbSR1pLJSx9FPAXQvE+3k0ACq/stdEiZrpN2Eix4SKVcVTdctSxwzNhdovZCstT+hTNE6WOvkVBkqu+NA3tgjJD9MtDZDV6PXJOUhjr9tRTBD31emMoAPxObZ1Wf1FN1go6uA9tCW6/WaynWsk5F9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903613; c=relaxed/simple;
-	bh=Yxb1puFdmCzj+zqRyhar+QOClnGRONkrA3hd8BvcUvY=;
+	s=arc-20240116; t=1728903616; c=relaxed/simple;
+	bh=RJA+e4KX+mvmw1zI84SqBEoV8nApC8Eop+pK1GntlbY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WDlC20raYNMFzuBTCXzPWJCe6LOY7euG1hPEBkdDvcetYO/YZtnfwGwGIMrFzSlgkmL8SGmdddNquAs3ye2VVk3SBXPSaNXJniGsi0dMmY+YXFIbh6Y8rVLVT8L/RQpAWPELzNswbbXeriy8cVmqb7leJ/M3r+sK5B2eLDPmCaM=
+	 MIME-Version; b=QhqLyGMmUZUxST/CnOMUtDbF3c6lWV81r1pLoNcP3eKsFQmGB5a9qOrdb3uK/ku0DLEx2V0pox7+BBBzQrjJKDdq5WwP1W6sXFtV9NeRYboJA/9pbVd7764IsRXM4B4nJJrQzHsEprp5lUuLzyI9i9lM2aZf4+hcP9p5UGD/9nc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15DE8168F;
-	Mon, 14 Oct 2024 04:00:41 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA5741691;
+	Mon, 14 Oct 2024 04:00:43 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC2633F51B;
-	Mon, 14 Oct 2024 04:00:08 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB0D53F51B;
+	Mon, 14 Oct 2024 04:00:11 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -49,11 +49,10 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-pm@vger.kernel.org
-Subject: [RFC PATCH v1 14/57] pm/hibernate: Remove PAGE_SIZE compile-time constant assumption
-Date: Mon, 14 Oct 2024 11:58:21 +0100
-Message-ID: <20241014105912.3207374-14-ryan.roberts@arm.com>
+	linux-mm@kvack.org
+Subject: [RFC PATCH v1 15/57] stackdepot: Remove PAGE_SIZE compile-time constant assumption
+Date: Mon, 14 Oct 2024 11:58:22 +0100
+Message-ID: <20241014105912.3207374-15-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -70,16 +69,28 @@ To prepare for supporting boot-time page size selection, refactor code
 to remove assumptions about PAGE_SIZE being compile-time constant. Code
 intended to be equivalent when compile-time page size is active.
 
-"struct linked_page", "struct swap_map_page" and "struct swsusp_header"
-were all previously sized to be exactly PAGE_SIZE. Refactor those
-structures to remove the padding, then superimpose them on a page at
-runtime.
+"union handle_parts" previously calculated the number of bits required
+for its pool index and offset members based on PAGE_SHIFT. This is
+problematic for boot-time page size builds because the actual page size
+isn't known until boot-time.
 
-"struct cmp_data" and "struct dec_data" previously contained embedded
-"unc" and "cmp" arrays, who's sizes were derived from PAGE_SIZE. We
-can't use flexible array approach here since there are 2 arrays in the
-structure, so convert to pointers and define an allocator and
-deallocator for each struct.
+We could use PAGE_SHIFT_MAX in calculating the worst case offset bits,
+but bits would be wasted that could be used for pool index when
+PAGE_SIZE is set smaller than MAX, the end result being that stack depot
+can address less memory than it should.
+
+To avoid needing to dynamically define the offset and index bit widths,
+let's instead fix the pool size and derive the order at runtime based on
+the PAGE_SIZE. This means that the fields' widths can remain static,
+with the down side being slightly increased risk of failing to allocate
+the large folio.
+
+This only affects boot-time page size builds. compile-time page size
+builds will still always allocate order-2 folios.
+
+Additionally, wrap global variables that are initialized with PAGE_SIZE
+derived values using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their
+initialization can be deferred for boot-time page size builds.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -88,316 +99,59 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- kernel/power/power.h    |   2 +-
- kernel/power/snapshot.c |   2 +-
- kernel/power/swap.c     | 129 +++++++++++++++++++++++++++++++++-------
- 3 files changed, 108 insertions(+), 25 deletions(-)
+ include/linux/stackdepot.h | 6 +++---
+ lib/stackdepot.c           | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/power/power.h b/kernel/power/power.h
-index de0e6b1077f23..74af2eb8d48a4 100644
---- a/kernel/power/power.h
-+++ b/kernel/power/power.h
-@@ -16,7 +16,7 @@ struct swsusp_info {
- 	unsigned long		image_pages;
- 	unsigned long		pages;
- 	unsigned long		size;
--} __aligned(PAGE_SIZE);
-+} __aligned(PAGE_SIZE_MAX);
+diff --git a/include/linux/stackdepot.h b/include/linux/stackdepot.h
+index e9ec32fb97d4a..ac877a4e90406 100644
+--- a/include/linux/stackdepot.h
++++ b/include/linux/stackdepot.h
+@@ -32,10 +32,10 @@ typedef u32 depot_stack_handle_t;
  
- #ifdef CONFIG_HIBERNATION
- /* kernel/power/snapshot.c */
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index 405eddbda4fc5..144e92f786e35 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -155,7 +155,7 @@ struct pbe *restore_pblist;
+ #define DEPOT_HANDLE_BITS (sizeof(depot_stack_handle_t) * 8)
  
- struct linked_page {
- 	struct linked_page *next;
--	char data[LINKED_PAGE_DATA_SIZE];
-+	char data[];
- } __packed;
+-#define DEPOT_POOL_ORDER 2 /* Pool size order, 4 pages */
+-#define DEPOT_POOL_SIZE (1LL << (PAGE_SHIFT + DEPOT_POOL_ORDER))
++#define DEPOT_POOL_ORDER 2 /* Pool size order, 4 pages of PAGE_SIZE_MAX */
++#define DEPOT_POOL_SIZE (1LL << (PAGE_SHIFT_MAX + DEPOT_POOL_ORDER))
+ #define DEPOT_STACK_ALIGN 4
+-#define DEPOT_OFFSET_BITS (DEPOT_POOL_ORDER + PAGE_SHIFT - DEPOT_STACK_ALIGN)
++#define DEPOT_OFFSET_BITS (DEPOT_POOL_ORDER + PAGE_SHIFT_MAX - DEPOT_STACK_ALIGN)
+ #define DEPOT_POOL_INDEX_BITS (DEPOT_HANDLE_BITS - DEPOT_OFFSET_BITS - \
+ 			       STACK_DEPOT_EXTRA_BITS)
  
- /*
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index 82b884b67152f..ffd4c864acfa2 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -59,6 +59,7 @@ static bool clean_pages_on_decompress;
-  */
- 
- #define MAP_PAGE_ENTRIES	(PAGE_SIZE / sizeof(sector_t) - 1)
-+#define NEXT_SWAP_INDEX		MAP_PAGE_ENTRIES
- 
- /*
-  * Number of free pages that are not high.
-@@ -78,8 +79,11 @@ static inline unsigned long reqd_free_pages(void)
- }
- 
- struct swap_map_page {
--	sector_t entries[MAP_PAGE_ENTRIES];
--	sector_t next_swap;
-+	/*
-+	 * A PAGE_SIZE structure with (PAGE_SIZE / sizeof(sector_t)) entries.
-+	 * The last entry, [NEXT_SWAP_INDEX], is `.next_swap`.
-+	 */
-+	sector_t entries[1];
- };
- 
- struct swap_map_page_list {
-@@ -103,8 +107,6 @@ struct swap_map_handle {
- };
- 
- struct swsusp_header {
--	char reserved[PAGE_SIZE - 20 - sizeof(sector_t) - sizeof(int) -
--	              sizeof(u32) - sizeof(u32)];
- 	u32	hw_sig;
- 	u32	crc32;
- 	sector_t image;
-@@ -113,6 +115,7 @@ struct swsusp_header {
- 	char	sig[10];
- } __packed;
- 
-+static char *swsusp_header_pg;
- static struct swsusp_header *swsusp_header;
- 
- /*
-@@ -315,7 +318,7 @@ static int mark_swapfiles(struct swap_map_handle *handle, unsigned int flags)
- {
- 	int error;
- 
--	hib_submit_io(REQ_OP_READ, swsusp_resume_block, swsusp_header, NULL);
-+	hib_submit_io(REQ_OP_READ, swsusp_resume_block, swsusp_header_pg, NULL);
- 	if (!memcmp("SWAP-SPACE",swsusp_header->sig, 10) ||
- 	    !memcmp("SWAPSPACE2",swsusp_header->sig, 10)) {
- 		memcpy(swsusp_header->orig_sig,swsusp_header->sig, 10);
-@@ -329,7 +332,7 @@ static int mark_swapfiles(struct swap_map_handle *handle, unsigned int flags)
- 		if (flags & SF_CRC32_MODE)
- 			swsusp_header->crc32 = handle->crc32;
- 		error = hib_submit_io(REQ_OP_WRITE | REQ_SYNC,
--				      swsusp_resume_block, swsusp_header, NULL);
-+				      swsusp_resume_block, swsusp_header_pg, NULL);
- 	} else {
- 		pr_err("Swap header not found!\n");
- 		error = -ENODEV;
-@@ -466,7 +469,7 @@ static int swap_write_page(struct swap_map_handle *handle, void *buf,
- 		offset = alloc_swapdev_block(root_swap);
- 		if (!offset)
- 			return -ENOSPC;
--		handle->cur->next_swap = offset;
-+		handle->cur->entries[NEXT_SWAP_INDEX] = offset;
- 		error = write_page(handle->cur, handle->cur_swap, hb);
- 		if (error)
- 			goto out;
-@@ -643,8 +646,8 @@ struct cmp_data {
- 	wait_queue_head_t done;                   /* compression done */
- 	size_t unc_len;                           /* uncompressed length */
- 	size_t cmp_len;                           /* compressed length */
--	unsigned char unc[UNC_SIZE];              /* uncompressed buffer */
--	unsigned char cmp[CMP_SIZE];              /* compressed buffer */
-+	unsigned char *unc;                       /* uncompressed buffer */
-+	unsigned char *cmp;                       /* compressed buffer */
- };
- 
- /* Indicates the image size after compression */
-@@ -683,6 +686,45 @@ static int compress_threadfn(void *data)
- 	return 0;
- }
- 
-+static void free_cmp_data(struct cmp_data *data, unsigned nr_threads)
-+{
-+	int i;
-+
-+	if (!data)
-+		return;
-+
-+	for (i = 0; i < nr_threads; i++) {
-+		vfree(data[i].unc);
-+		vfree(data[i].cmp);
-+	}
-+
-+	vfree(data);
-+}
-+
-+static struct cmp_data *alloc_cmp_data(unsigned nr_threads)
-+{
-+	struct cmp_data *data = NULL;
-+	int i = -1;
-+
-+	data = vzalloc(array_size(nr_threads, sizeof(*data)));
-+	if (!data)
-+		goto fail;
-+
-+	for (i = 0; i < nr_threads; i++) {
-+		data[i].unc = vzalloc(UNC_SIZE);
-+		if (!data[i].unc)
-+			goto fail;
-+		data[i].cmp = vzalloc(CMP_SIZE);
-+		if (!data[i].cmp)
-+			goto fail;
-+	}
-+
-+	return data;
-+fail:
-+	free_cmp_data(data, nr_threads);
-+	return NULL;
-+}
-+
- /**
-  * save_compressed_image - Save the suspend image data after compression.
-  * @handle: Swap map handle to use for saving the image.
-@@ -724,7 +766,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
- 		goto out_clean;
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 5ed34cc963fc3..974351f0e9e3c 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -68,7 +68,7 @@ static void *new_pool;
+ /* Number of pools in stack_pools. */
+ static int pools_num;
+ /* Offset to the unused space in the currently used pool. */
+-static size_t pool_offset = DEPOT_POOL_SIZE;
++static DEFINE_GLOBAL_PAGE_SIZE_VAR(size_t, pool_offset, DEPOT_POOL_SIZE);
+ /* Freelist of stack records within stack_pools. */
+ static LIST_HEAD(free_stacks);
+ /* The lock must be held when performing pool or freelist modifications. */
+@@ -625,7 +625,7 @@ depot_stack_handle_t stack_depot_save_flags(unsigned long *entries,
+ 	 */
+ 	if (unlikely(can_alloc && !READ_ONCE(new_pool))) {
+ 		page = alloc_pages(gfp_nested_mask(alloc_flags),
+-				   DEPOT_POOL_ORDER);
++				   get_order(DEPOT_POOL_SIZE));
+ 		if (page)
+ 			prealloc = page_address(page);
  	}
- 
--	data = vzalloc(array_size(nr_threads, sizeof(*data)));
-+	data = alloc_cmp_data(nr_threads);
- 	if (!data) {
- 		pr_err("Failed to allocate %s data\n", hib_comp_algo);
- 		ret = -ENOMEM;
-@@ -902,7 +944,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
- 			if (data[thr].cc)
- 				crypto_free_comp(data[thr].cc);
- 		}
--		vfree(data);
-+		free_cmp_data(data, nr_threads);
+@@ -663,7 +663,7 @@ depot_stack_handle_t stack_depot_save_flags(unsigned long *entries,
+ exit:
+ 	if (prealloc) {
+ 		/* Stack depot didn't use this memory, free it. */
+-		free_pages((unsigned long)prealloc, DEPOT_POOL_ORDER);
++		free_pages((unsigned long)prealloc, get_order(DEPOT_POOL_SIZE));
  	}
- 	if (page) free_page((unsigned long)page);
- 
-@@ -1036,7 +1078,7 @@ static int get_swap_reader(struct swap_map_handle *handle,
- 			release_swap_reader(handle);
- 			return error;
- 		}
--		offset = tmp->map->next_swap;
-+		offset = tmp->map->entries[NEXT_SWAP_INDEX];
- 	}
- 	handle->k = 0;
- 	handle->cur = handle->maps->map;
-@@ -1150,8 +1192,8 @@ struct dec_data {
- 	wait_queue_head_t done;                   /* decompression done */
- 	size_t unc_len;                           /* uncompressed length */
- 	size_t cmp_len;                           /* compressed length */
--	unsigned char unc[UNC_SIZE];              /* uncompressed buffer */
--	unsigned char cmp[CMP_SIZE];              /* compressed buffer */
-+	unsigned char *unc;                       /* uncompressed buffer */
-+	unsigned char *cmp;                       /* compressed buffer */
- };
- 
- /*
-@@ -1189,6 +1231,45 @@ static int decompress_threadfn(void *data)
- 	return 0;
- }
- 
-+static void free_dec_data(struct dec_data *data, unsigned nr_threads)
-+{
-+	int i;
-+
-+	if (!data)
-+		return;
-+
-+	for (i = 0; i < nr_threads; i++) {
-+		vfree(data[i].unc);
-+		vfree(data[i].cmp);
-+	}
-+
-+	vfree(data);
-+}
-+
-+static struct dec_data *alloc_dec_data(unsigned nr_threads)
-+{
-+	struct dec_data *data = NULL;
-+	int i = -1;
-+
-+	data = vzalloc(array_size(nr_threads, sizeof(*data)));
-+	if (!data)
-+		goto fail;
-+
-+	for (i = 0; i < nr_threads; i++) {
-+		data[i].unc = vzalloc(UNC_SIZE);
-+		if (!data[i].unc)
-+			goto fail;
-+		data[i].cmp = vzalloc(CMP_SIZE);
-+		if (!data[i].cmp)
-+			goto fail;
-+	}
-+
-+	return data;
-+fail:
-+	free_dec_data(data, nr_threads);
-+	return NULL;
-+}
-+
- /**
-  * load_compressed_image - Load compressed image data and decompress it.
-  * @handle: Swap map handle to use for loading data.
-@@ -1231,7 +1312,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
- 		goto out_clean;
- 	}
- 
--	data = vzalloc(array_size(nr_threads, sizeof(*data)));
-+	data = alloc_dec_data(nr_threads);
- 	if (!data) {
- 		pr_err("Failed to allocate %s data\n", hib_comp_algo);
- 		ret = -ENOMEM;
-@@ -1510,7 +1591,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
- 			if (data[thr].cc)
- 				crypto_free_comp(data[thr].cc);
- 		}
--		vfree(data);
-+		free_dec_data(data, nr_threads);
- 	}
- 	vfree(page);
- 
-@@ -1569,9 +1650,9 @@ int swsusp_check(bool exclusive)
- 	hib_resume_bdev_file = bdev_file_open_by_dev(swsusp_resume_device,
- 				BLK_OPEN_READ, holder, NULL);
- 	if (!IS_ERR(hib_resume_bdev_file)) {
--		clear_page(swsusp_header);
-+		clear_page(swsusp_header_pg);
- 		error = hib_submit_io(REQ_OP_READ, swsusp_resume_block,
--					swsusp_header, NULL);
-+					swsusp_header_pg, NULL);
- 		if (error)
- 			goto put;
- 
-@@ -1581,7 +1662,7 @@ int swsusp_check(bool exclusive)
- 			/* Reset swap signature now */
- 			error = hib_submit_io(REQ_OP_WRITE | REQ_SYNC,
- 						swsusp_resume_block,
--						swsusp_header, NULL);
-+						swsusp_header_pg, NULL);
- 		} else {
- 			error = -EINVAL;
- 		}
-@@ -1631,12 +1712,12 @@ int swsusp_unmark(void)
- 	int error;
- 
- 	hib_submit_io(REQ_OP_READ, swsusp_resume_block,
--			swsusp_header, NULL);
-+			swsusp_header_pg, NULL);
- 	if (!memcmp(HIBERNATE_SIG,swsusp_header->sig, 10)) {
- 		memcpy(swsusp_header->sig,swsusp_header->orig_sig, 10);
- 		error = hib_submit_io(REQ_OP_WRITE | REQ_SYNC,
- 					swsusp_resume_block,
--					swsusp_header, NULL);
-+					swsusp_header_pg, NULL);
- 	} else {
- 		pr_err("Cannot find swsusp signature!\n");
- 		error = -ENODEV;
-@@ -1653,9 +1734,11 @@ int swsusp_unmark(void)
- 
- static int __init swsusp_header_init(void)
- {
--	swsusp_header = (struct swsusp_header*) __get_free_page(GFP_KERNEL);
--	if (!swsusp_header)
-+	swsusp_header_pg = (char *)__get_free_page(GFP_KERNEL);
-+	if (!swsusp_header_pg)
- 		panic("Could not allocate memory for swsusp_header\n");
-+	swsusp_header = (struct swsusp_header *)(swsusp_header_pg +
-+				PAGE_SIZE - sizeof(struct swsusp_header));
- 	return 0;
- }
- 
+ 	if (found)
+ 		handle = found->handle.handle;
 -- 
 2.43.0
 
