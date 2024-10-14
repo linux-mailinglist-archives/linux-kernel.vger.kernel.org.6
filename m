@@ -1,199 +1,304 @@
-Return-Path: <linux-kernel+bounces-363712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A14899C5EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:38:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E5399C609
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D37E1C22B9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:38:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B16B8B23BCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D369A156F3A;
-	Mon, 14 Oct 2024 09:38:14 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2B0156C72;
+	Mon, 14 Oct 2024 09:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rYhVoF1t"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADF9156F27
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3196015667B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898694; cv=none; b=DqNXx26F1aBRx67BdfZ+6zqeBg7Y2DOmBIXliFaT+CPr6fdbYl/I94kgm/9rA8WK/Brj4Exr47wQERR/sv75SKF2oBwEMbpBZRQSx45wF/t3oLOClUTKOLdO4MWgwp5sCSv3UGDDYpLsQqyWBPPjRQLzLcukvNCCU+PHhHBkYVQ=
+	t=1728898745; cv=none; b=DnNj7eHdUgqoSWk0aHx8sPnBv/CnNj2rOkwDut8GxuYX87n7gAvOF5ggA9TWvCW1ByxVs1BnEB7gS9aAciNTLPo35WftYnXfS/VlUx60tbaUbFcqRLpvQ743feMPaZhV7PbNNHlRdyD1YwZm27chY3Xwy1osYi57q2xOEqI9jVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898694; c=relaxed/simple;
-	bh=7mLZXShPz6ctC59swvlAb/zB3kE07wrVSdzufhFdG3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z+CIANNtelnMEpXhpcHxqpa8ZeybVe6IhxDTHBbUs6NRORNREGJ8u7d2sJMfKryNJL3PqMXa3A+CZhSkb68CF7XDRguFmTL/9czbU1Z7K2swUH1ypkBiPfaXfPoNIPzoq8t1/PWe5aUbBYdcy5IxeCHUw0oQhNP0CzaE+cqjjwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XRsXv1qFzzkWnm;
-	Mon, 14 Oct 2024 17:35:43 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 53C23140137;
-	Mon, 14 Oct 2024 17:38:09 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 14 Oct
- 2024 17:38:08 +0800
-Message-ID: <95d5b806-d912-4a63-add6-ac115e8f181d@huawei.com>
-Date: Mon, 14 Oct 2024 17:38:07 +0800
+	s=arc-20240116; t=1728898745; c=relaxed/simple;
+	bh=atf9cxxXJhH217cnmDapxD/aBntumO7oqHV2osJfBM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gysTpgk9qbfCujik46eNe6kZiEBE4fkmJd5B40FjEec52jf5xbuuZEte9UCU0A1lLOYRA5Ng4ryKggIVOugfIgDVyAI+eHYOjgnk0b1uu1E7IUnHtXXJGWSA+DAiv2ofUnboCo6XoaodKerOAkGQMLf4mD4c9MIp0zzAfGtcOvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rYhVoF1t; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so766813f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728898741; x=1729503541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b001oiV/UzZqPLybgR/FM6soHDX3/9WwSoJrMQ060j0=;
+        b=rYhVoF1tnh1RXYZZVuOwlpCh/W9U47yXXbuLuea+jBzp7pZqGQa4utDqpxW5Bc8sw1
+         QDJDiLb7D4pDDXsAJgR3WbZxz8u31dhkb8OvFYHA8r/E49fIcPu7PbM/bJv8bW4asfFS
+         CPlg0TGszZixrX5N4QJt6FGdEt86zuUfSEmR8jDXQUq0lJffdbTWHG3oYmbGBCitTd8h
+         OExMp1RHStJu//jlRbZF2tJ0v+fHr4kzfTk4/6CTaUmuZtR5aHL4k8O0U20PsVQRk10V
+         CDjyrs2HkeVn0xEUvS+sCQoJNHnqydp5JYfqbxo1uN5SzYOUI92qW+fZcPdQZ9E9JonD
+         Jztw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728898741; x=1729503541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b001oiV/UzZqPLybgR/FM6soHDX3/9WwSoJrMQ060j0=;
+        b=nlhnLfrdgaBRbcj/VOwHI6bkse/5ek+RKHMdB1EhEIWwP7q4e0ONSAbIOd1jk2i86K
+         4AGOuQPGPWVcrw5K4Qk9KOzrY6LN/1m2+hKD9dfk1iH26rbGHJkrFOQ+cto4RynMKm1Z
+         osyYSeV7XDLqhoVBwfEKw70GQsX937FmaeQflv25diNGY/UaIIZhOzKCTJg40IVmgKrk
+         5gzZLcsh2L+k0IrvjiY5R6pvXNhSmOsIAvBTTf6goSFEhiXIVOA6VtAAakHyTZZKTL6g
+         eAvFDgwHqQPJgCutjuv0jh/9hDazPjpsjjIiiNk8Re8cKHmVhIEQZDwUMc3FuuyUVtjJ
+         8/gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZmr5plifukn/lbK/FhORRzNs9anvEIGevEl/v2nhoQ2EtsiNtVmH4u7CUkXlECW8pXFC4ln+ugK00HR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznyiYjqybS7Hi1jS+jjetIucHUs5MR/fSrQtldTBSKbF9Sy7YE
+	MSNkdQMmQEUe+Oe2G0g7hnONxwaUj0yilJxlNz9qnK87+Wv3H+2bO9XZ2G7qglhmPOHzOKLlkZ7
+	NHog5ZBsOLyH5b8m43OoTPGDvM96F4nSEYwYn
+X-Google-Smtp-Source: AGHT+IE3eJL/hR0/vEuuq6MwdpcQ3awsduVnI1XTTUpTPwx5QABtwxoL6EMVsQSmoSkQ4WGLyCRynnFRwfJnPVZkxYM=
+X-Received: by 2002:a05:6000:11ce:b0:37d:4e20:9be0 with SMTP id
+ ffacd0b85a97d-37d600c91ecmr4669904f8f.51.1728898741238; Mon, 14 Oct 2024
+ 02:39:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
-To: Muchun Song <muchun.song@linux.dev>
-CC: Anshuman Khandual <anshuman.khandual@arm.com>, Chen Ridong
-	<chenridong@huaweicloud.com>, <akpm@linux-foundation.org>,
-	<david@fromorbit.com>, <zhengqi.arch@bytedance.com>,
-	<roman.gushchin@linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <wangweiyang2@huawei.com>
-References: <20241014032336.482088-1-chenridong@huaweicloud.com>
- <c34b962b-8b9a-41e5-a54e-364b826c5e2a@arm.com>
- <178A7AC8-0BDA-42CA-86B2-E1C13F3E1E8B@linux.dev>
- <1dc9acbd-351f-4755-8c56-d3d77aaccfb2@huawei.com>
- <F8EBBED0-6D7D-4A23-AC8C-3E395EA1BF12@linux.dev>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <F8EBBED0-6D7D-4A23-AC8C-3E395EA1BF12@linux.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+References: <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
+ <ZvwKTinnLckZm8aQ@boqun-archlinux> <87a5falmjy.fsf@kernel.org>
+ <dae08234-c9ba-472d-b769-1d07e579a8ac@gmail.com> <Zwmy-2Yc7vGboYvl@boqun-archlinux>
+ <d2ce38a3-9a32-4f4c-88f2-22864b66afe5@gmail.com> <ZwooHrqIiirl1so7@boqun-archlinux>
+ <4dd93603-04fa-4da4-b867-bd12ece4b391@gmail.com> <Zwr3i4x7J5qyjFog@Boquns-Mac-mini.local>
+ <c19edf2d-2b53-403f-abcc-a5e81e7613f8@gmail.com> <Zww2Vhsl9sutNm0s@Boquns-Mac-mini.local>
+ <9eb1504a-b306-4332-99ce-739bc016622e@gmail.com>
+In-Reply-To: <9eb1504a-b306-4332-99ce-739bc016622e@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 14 Oct 2024 11:38:49 +0200
+Message-ID: <CAH5fLgierGcZ7SycTspdOrFofWGmM_UOKHUmfNQ0VjSzMtMB5g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/14] hrtimer Rust API
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Lyude Paul <lyude@redhat.com>, Dirk Behme <dirk.behme@de.bosch.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 14, 2024 at 8:58=E2=80=AFAM Dirk Behme <dirk.behme@gmail.com> w=
+rote:
+>
+> On 13.10.24 23:06, Boqun Feng wrote:
+> > On Sun, Oct 13, 2024 at 07:39:29PM +0200, Dirk Behme wrote:
+> >> On 13.10.24 00:26, Boqun Feng wrote:
+> >>> On Sat, Oct 12, 2024 at 09:50:00AM +0200, Dirk Behme wrote:
+> >>>> On 12.10.24 09:41, Boqun Feng wrote:
+> >>>>> On Sat, Oct 12, 2024 at 07:19:41AM +0200, Dirk Behme wrote:
+> >>>>>> On 12.10.24 01:21, Boqun Feng wrote:
+> >>>>>>> On Fri, Oct 11, 2024 at 05:43:57PM +0200, Dirk Behme wrote:
+> >>>>>>>> Hi Andreas,
+> >>>>>>>>
+> >>>>>>>> Am 11.10.24 um 16:52 schrieb Andreas Hindborg:
+> >>>>>>>>>
+> >>>>>>>>> Dirk, thanks for reporting!
+> >>>>>>>>
+> >>>>>>>> :)
+> >>>>>>>>
+> >>>>>>>>> Boqun Feng <boqun.feng@gmail.com> writes:
+> >>>>>>>>>
+> >>>>>>>>>> On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
+> >>>>>>>>>>> On 18.09.2024 00:27, Andreas Hindborg wrote:
+> >>>>>>>>>>>> Hi!
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> This series adds support for using the `hrtimer` subsystem f=
+rom Rust code.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> I tried breaking up the code in some smaller patches, hopefu=
+lly that will
+> >>>>>>>>>>>> ease the review process a bit.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Just fyi, having all 14 patches applied I get [1] on the firs=
+t (doctest)
+> >>>>>>>>>>> Example from hrtimer.rs.
+> >>>>>>>>>>>
+> >>>>>>>>>>> This is from lockdep:
+> >>>>>>>>>>>
+> >>>>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
+x.git/tree/kernel/locking/lockdep.c#n4785
+> >>>>>>>>>>>
+> >>>>>>>>>>> Having just a quick look I'm not sure what the root cause is.=
+ Maybe mutex in
+> >>>>>>>>>>> interrupt context? Or a more subtle one?
+> >>>>>>>>>>
+> >>>>>>>>>> I think it's calling mutex inside an interrupt context as show=
+n by the
+> >>>>>>>>>> callstack:
+> >>>>>>>>>>
+> >>>>>>>>>> ]  __mutex_lock+0xa0/0xa4
+> >>>>>>>>>> ] ...
+> >>>>>>>>>> ]  hrtimer_interrupt+0x1d4/0x2ac
+> >>>>>>>>>>
+> >>>>>>>>>> , it is because:
+> >>>>>>>>>>
+> >>>>>>>>>> +//! struct ArcIntrusiveTimer {
+> >>>>>>>>>> +//!     #[pin]
+> >>>>>>>>>> +//!     timer: Timer<Self>,
+> >>>>>>>>>> +//!     #[pin]
+> >>>>>>>>>> +//!     flag: Mutex<bool>,
+> >>>>>>>>>> +//!     #[pin]
+> >>>>>>>>>> +//!     cond: CondVar,
+> >>>>>>>>>> +//! }
+> >>>>>>>>>>
+> >>>>>>>>>> has a Mutex<bool>, which actually should be a SpinLockIrq [1].=
+ Note that
+> >>>>>>>>>> irq-off is needed for the lock, because otherwise we will hit =
+a self
+> >>>>>>>>>> deadlock due to interrupts:
+> >>>>>>>>>>
+> >>>>>>>>>>      spin_lock(&a);
+> >>>>>>>>>>      > timer interrupt
+> >>>>>>>>>>        spin_lock(&a);
+> >>>>>>>>>>
+> >>>>>>>>>> Also notice that the IrqDisabled<'_> token can be simply creat=
+ed by
+> >>>>>>>>>> ::new(), because irq contexts should guarantee interrupt disab=
+led (i.e.
+> >>>>>>>>>> we don't support nested interrupts*).
+> >>>>>>>>>
+> >>>>>>>>> I updated the example based on the work in [1]. I think we need=
+ to
+> >>>>>>>>> update `CondVar::wait` to support waiting with irq disabled.
+> >>>>>>>>
+> >>>>>>>> Yes, I agree. This answers one of the open questions I had in th=
+e discussion
+> >>>>>>>> with Boqun :)
+> >>>>>>>>
+> >>>>>>>> What do you think regarding the other open question: In this *sp=
+ecial* case
+> >>>>>>>> here, what do you think to go *without* any lock? I mean the 'wh=
+ile *guard
+> >>>>>>>> !=3D 5' loop in the main thread is read only regarding guard. So=
+ it doesn't
+> >>>>>>>> matter if it *reads* the old or the new value. And the read/modi=
+fy/write of
+> >>>>>>>> guard in the callback is done with interrupts disabled anyhow as=
+ it runs in
+> >>>>>>>> interrupt context. And with this can't be interrupted (excluding=
+ nested
+> >>>>>>>> interrupts). So this modification of guard doesn't need to be pr=
+otected from
+> >>>>>>>> being interrupted by a lock if there is no modifcation of guard =
+"outside"
+> >>>>>>>> the interupt locked context.
+> >>>>>>>>
+> >>>>>>>> What do you think?
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> Reading while there is another CPU is writing is data-race, which=
+ is UB.
+> >>>>>>
+> >>>>>> Could you help to understand where exactly you see UB in Andreas' =
+'while
+> >>>>>> *guard !=3D 5' loop in case no locking is used? As mentioned I'm u=
+nder the
+> >>>>>
+> >>>>> Sure, but could you provide the code of what you mean exactly, if y=
+ou
+> >>>>> don't use a lock here, you cannot have a guard. I need to the exact=
+ code
+> >>>>> to point out where the compiler may "mis-compile" (a result of bein=
+g
+> > [...]
+> >>>> I thought we are talking about anything like
+> >>>>
+> >>>> #[pin_data]
+> >>>> struct ArcIntrusiveTimer {
+> >>>>         #[pin]
+> >>>>         timer: Timer<Self>,
+> >>>>         #[pin]
+> >>>> -      flag: SpinLockIrq<u64>,
+> >>>> +      flag: u64,
+> >>>>         #[pin]
+> >>>>         cond: CondVar,
+> >>>> }
+> >>>>
+> >>>> ?
+> >>>>
+> >>>
+> >>> Yes, but have you tried to actually use that for the example from
+> >>> Andreas? I think you will find that you cannot write to `flag` inside
+> >>> the timer callback, because you only has a `Arc<ArcIntrusiveTimer>`, =
+so
+> >>> not mutable reference for `ArcIntrusiveTimer`. You can of course use
+> >>> unsafe to create a mutable reference to `flag`, but it won't be sound=
+,
+> >>> since you are getting a mutable reference from an immutable reference=
+.
+> >>
+> >> Yes, of course. But, hmm, wouldn't that unsoundness be independent on =
+the
+> >> topic we discuss here? I mean we are talking about getting the compile=
+r to
+> >
+> > What do you mean? If the code is unsound, you won't want to use it in a=
+n
+> > example, right?
+>
+> Yes, sure. But ;)
+>
+> In a first step I just wanted to answer the question if we do need a
+> lock at all in this special example. And that we could do even with
+> unsound read/modify/write I would guess. And then, in a second step,
+> if the answer would be "we don't need the lock", then we could think
+> about how to make the flag handling sound. So I'm talking just about
+> answering that question, not about the final example code. Step by step :=
+)
+>
+>
+> >> read/modify/write 'flag' in the TimerCallback. *How* we tell him to do=
+ so
+> >> should be independent on the result what we want to look at regarding =
+the
+> >> locking requirements of 'flag'?
+> >>
+> >> Anyhow, my root motivation was to simplify Andreas example to not use =
+a lock
+> >> where not strictly required. And with this make Andreas example indepe=
+ndent
+> >
+> > Well, if you don't want to use a lock then you need to use atomics,
+> > otherwise it's likely a UB,
+>
+> And here we are back to the initial question :) Why would it be UB
+> without lock (and atomics)?
+>
+> Some (pseudo) assembly:
+>
+> Lets start with the main thread:
+>
+> ldr x1, [x0]
+> <work with x1>
+>
+> x0 and x1 are registers. x0 contains the address of flag in the main
+> memory. I.e. that instruction reads (ldr =3D=3D load) the content of that
+> memory location (flag) into x1. x1 then contains flag which can be
+> used then. This is what I mean with "the main thread is read only". If
+> flag, i.e. x1, does contain the old or new flag value doesn't matter.
+> I.e. for the read only operation it doesn't matter if it is protected
+> by a lock as the load (ldr) can't be interrupted.
 
+If the compiler generates a single load, then sure. But for an
+unsynchronized load, the compiler may generate two separate load
+instructions and assume that both loads read the same value.
 
-On 2024/10/14 17:20, Muchun Song wrote:
-> 
-> 
->> On Oct 14, 2024, at 17:04, chenridong <chenridong@huawei.com> wrote:
->>
->>
->>
->> On 2024/10/14 16:43, Muchun Song wrote:
->>>> On Oct 14, 2024, at 16:13, Anshuman Khandual <anshuman.khandual@arm.com> wrote:
->>>>
->>>>
->>>>
->>>> On 10/14/24 08:53, Chen Ridong wrote:
->>>>> From: Chen Ridong <chenridong@huawei.com>
->>>>>
->>>>> A memleak was found as bellow:
->>>>>
->>>>> unreferenced object 0xffff8881010d2a80 (size 32):
->>>>>   comm "mkdir", pid 1559, jiffies 4294932666
->>>>>   hex dump (first 32 bytes):
->>>>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>>>>     40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
->>>>>   backtrace (crc 2e7ef6fa):
->>>>>     [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
->>>>>     [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
->>>>>     [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
->>>>>     [<ffffffff81198dd9>] online_css+0x29/0xa0
->>>>>     [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
->>>>>     [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
->>>>>     [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
->>>>>     [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
->>>>>     [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
->>>>>     [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
->>>>>     [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
->>>>>     [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>>
->>>>> In the alloc_shrinker_info function, when shrinker_unit_alloc return
->>>>> err, the info won't be freed. Just fix it.
->>>>>
->>>>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
->>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>>> ---
->>>>> mm/shrinker.c | 1 +
->>>>> 1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
->>>>> index dc5d2a6fcfc4..92270413190d 100644
->>>>> --- a/mm/shrinker.c
->>>>> +++ b/mm/shrinker.c
->>>>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>>>>
->>>>> err:
->>>>> mutex_unlock(&shrinker_mutex);
->>>>> + kvfree(info);
->>>>> free_shrinker_info(memcg);
->>>>> return -ENOMEM;
->>>>> }
->>>>
->>>> There are two scenarios when "goto err:" gets called
->>>>
->>>> - When shrinker_info allocations fails, no kvfree() is required
->>>> - but after this change kvfree() would be called even
->>>>   when the allocation had failed originally, which does
->>>>     not sound right
->>> Yes. In this case, @info is NULL and kvfree could handle NULL.
->>> It seems strange but the final behaviour correct.
->>>>
->>>> - shrinker_unit_alloc() fails, kvfree() is actually required
->>>>
->>>> I guess kvfree() should be called just after shrinker_unit_alloc()
->>>> fails but before calling into "goto err".
->>> We could do it like this, which avoids ambiguity (if someone ignores
->>> that kvfree could handle NULL). Something like:
->>> --- a/mm/shrinker.c
->>> +++ b/mm/shrinker.c
->>> @@ -88,13 +88,14 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>>                          goto err;
->>>                  info->map_nr_max = shrinker_nr_max;
->>>                  if (shrinker_unit_alloc(info, NULL, nid))
->>> -                       goto err;
->>> +                       goto free;
->>>                  rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>>          }
->>>          mutex_unlock(&shrinker_mutex);
->>>          return ret;
->>> -
->>> +free:
->>> +       kvfree(info);
->>>   err:
->>>          mutex_unlock(&shrinker_mutex);
->>>          free_shrinker_info(memcg);
->>> Thanks.
->>>>
->>>> But curious, should not both kvzalloc_node()/kvfree() be avoided
->>>> while inside mutex lock to avoid possible lockdep issues ?
->> How about:
->>
->> diff --git a/mm/shrinker.c b/mm/shrinker.c
->> index dc5d2a6fcfc4..7baee7f00497 100644
->> --- a/mm/shrinker.c
->> +++ b/mm/shrinker.c
->> @@ -87,9 +87,9 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>                  if (!info)
->>                          goto err;
->>                  info->map_nr_max = shrinker_nr_max;
->> +               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>                  if (shrinker_unit_alloc(info, NULL, nid))
->>                          goto err;
->> -               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>          }
->>          mutex_unlock(&shrinker_mutex);
-> 
-> No. We should make sure the @info is fully initialized before others
-> could see it. That's why rcu_assign_pointer is used here.
-> 
-
-Thank you, it seems that 'goto free' is a better choice.
-Will update.
-
-Thanks,
-Ridong
->>
->> I think this is concise.
->>
->> Best regards,
->> Ridong
-> 
+Alice
 
