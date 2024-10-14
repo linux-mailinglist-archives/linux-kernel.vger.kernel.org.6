@@ -1,165 +1,152 @@
-Return-Path: <linux-kernel+bounces-364716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2186299D84C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:35:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C4D99D84F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 803A1B21A6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:35:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C0BA1C22CBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D272B1D0BA4;
-	Mon, 14 Oct 2024 20:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86511D172B;
+	Mon, 14 Oct 2024 20:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ect6gHv/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J42UJivW"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FFE1C879A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52751D0F79;
+	Mon, 14 Oct 2024 20:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728938122; cv=none; b=W+QXsnvDwfXaU1LbHvCfsLkoaZnmFP+mM8U4Sb1OS1PZKKmJRUZVU8McgBeHv+mdxu4aq/805qgiCPR5fqNYjoIyN5Wt+TO2IHVvBy2L1fmDHIDTZe1Q13yfvqPbQc8Sk1nLDN4l3Y+UeF4dfvs1tNvFYySeBApH9Mm4CmIu74A=
+	t=1728938125; cv=none; b=kvpKpnHhYZrTLMS3TCQ95fdWtbDhn4F+53yayeB6gkJYfTcwU9BnvAxwPgFcfALDUZhzNXmDqiUZl6uqvvlAvMbTg3E8B8+u/kUZt9HtNfbCfkuofWnUJxrin3XDn1r9HqFs4Sn+OuepE16P4xk2hCBeAhq2FzKUU30rS4+X9hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728938122; c=relaxed/simple;
-	bh=wLhf3jR8M5Z8MMOJ1B8t6VL9zgSh30irh8dHs0m90j4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuP6dcEQ3/IPE9JqTuGzCx+mzbAEw70+o0+LqsA5YJo7lCF+k8fyGvd4IOa4uTXe+r4nDVlMaUK0qsavtiLqsAZw3fX+xi61hk7DpKq/tsPLG0wHKU2f6PpvdY3xW8XOywKv65Z2cN74RH+dqfqPcfO+nlHdIq1y1K6sljHqbTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ect6gHv/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59E6C4CECE;
-	Mon, 14 Oct 2024 20:35:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728938121;
-	bh=wLhf3jR8M5Z8MMOJ1B8t6VL9zgSh30irh8dHs0m90j4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ect6gHv/bZie0Eolgfh8N6DRlAQnyFyCJplGNFbrR19cey3SPPXqQx2sIvoYxica1
-	 MHzCSzEtHhkgLbo9RTbnPvVyNu/q7tFCmo7oqlKqdMs7r/OMMZ15Hf1RXed+hDI07a
-	 y6TL+Xa+h45NN+ls3czivjkjwX5Wg1ah4mNFN9ZeqH3cPRxjNknZ3h5b/cQJPiU+Df
-	 9fv9/Hv/fdEZgpPoTRXnxx77K3lgP9M4/abqUsGVLw8sYlVX8nwBS2eQw03cbPIsDz
-	 mr5PXWZKapJr0TioKVO0GC/V6GoEp+5zhZOgaUkmn0k/GRqMND9+pWPiNzFzA8eQUr
-	 2EXr1TCygBH9w==
-Date: Mon, 14 Oct 2024 13:35:17 -0700
-From: Kees Cook <kees@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Feng Tang <feng.tang@intel.com>, Marco Elver <elver@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	David Gow <davidgow@google.com>, Danilo Krummrich <dakr@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH v2 0/5] mm/slub: Improve data handling of krealloc() when
- orig_size is enabled
-Message-ID: <202410141330.CAF56E3@keescook>
-References: <20240911064535.557650-1-feng.tang@intel.com>
- <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
- <CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com>
- <49ef066d-d001-411e-8db7-f064bdc2104c@suse.cz>
- <2382d6e1-7719-4bf9-8a4a-1e2c32ee7c9f@suse.cz>
- <ZwzNtGALCG9jUNUD@feng-clx.sh.intel.com>
- <a34e6796-e550-465c-92dc-ee659716b918@suse.cz>
- <Zw0UKtx5d2hnHvDV@feng-clx.sh.intel.com>
- <0e8d49d2-e89b-44df-9dff-29e8f24de105@suse.cz>
+	s=arc-20240116; t=1728938125; c=relaxed/simple;
+	bh=zUKIh96AOoscnKFUvHFFxsjuLKwoeDpDZkU6IAm3I8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L8867YQVjMaFrHULj5iYCQpvz1dNukQp5urkTnoqW3Cyyb2amv4r5R3GL3oBx0+jo9YTNvx07ZLsitZGSib/cEVIVs8s0XqF9mz7yjqZ7CwvZV38vZqKREqIqKd/uIhXK3295CRQPXlTdeBklzakk+qAmYvca/RYRDQaK+60Mhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J42UJivW; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4604b48293dso30858191cf.0;
+        Mon, 14 Oct 2024 13:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728938123; x=1729542923; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=OzS3I4dx6YLA6yr/693oMCouTXOBfKTG+g21VPclfFY=;
+        b=J42UJivWYXJ/GRpWv9OaBQLvee9FnoFHXVEPyVLhQeFfaLXQVWFnlJ1Kaz6CeCmMeP
+         wIDhKKPPqRf3fpE4EMr6m2v9rPLPW2V/c/qFOrJCw7tWo8GoA/k5AWp4cbN56u5aBzC6
+         /oG/DF2xut0zAwXdmFoN3ynb9Bev3YZcB270ej7X2bD1JvHzyqmim4P/5dwtwoM0bf9w
+         dJxzG2lSF+8gzv9dRHobV2EtFLZDzcyyWXjNR7ciRuvc8nP1cwwughsnxiy3AE51N2G/
+         T6twT/KNekrg/y3rxe6IaqQLl/309in3gn0Us8PpqYfSBh+DH3uhbnJr189mRowll8Fl
+         VWwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728938123; x=1729542923;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OzS3I4dx6YLA6yr/693oMCouTXOBfKTG+g21VPclfFY=;
+        b=dO2KoZhUzvehiLen4PttWZx4213yZDK4lS8DGQoYQAUt0om14RsFh5M/YtgvJnUsIB
+         epsop1WhWm8zWbes/otCLZniPduNxQZI+UhJKrjVqfole0OpO/9zJowxa6tpY52B8y2q
+         ti/S3G7PcTJIYp21RCG7Ab9coWqmz1vpVndtJrga4Er5nTsRRXWad8ceqKDxWkRi/ysF
+         u+nShTz5JFGAwYuWfPkBIw4kZH2iKzpcw9aTXA5HaRDRCBL7rwvzvKPdzpUXjkYk6G3W
+         bWMUIw0VrqP4ob0U1DXqoxv34vcvEcYyQRPoy8Rzjtc6/UWdEugYbRdnQx1+ueQHf005
+         BYaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJnlol5vJ5wVsS1UBs/nhGIhk5KXqn/eHNwW5RPtBu4tgYdyF/HFrqma3zY1w9zkHFV9DpYavEdDljOlg=@vger.kernel.org, AJvYcCWWoakgSU5g0DXz8Hqm90wjCeiC1JCBqSTmtQYQ8ClokedtKMJNzrQB5AMD8sZVlvLAQNKaDFt1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHoxGKF5EI27CXYkAGrtDmLL78Eujc5JzS7BpmFXedWGKGqEnZ
+	dZa14RxRPVQfO0uak5ZHg8eUlMkUbKuOiILRWU+hArGO5c26/+ZQ
+X-Google-Smtp-Source: AGHT+IFozEPKPltAcdtxlEwwbAW0fDGauG8/U5vhNblNesvVptDpoDkpofPtg4yJrShcBjY/4sJiAQ==
+X-Received: by 2002:a05:622a:145:b0:460:4dd:20bb with SMTP id d75a77b69052e-4603f5909c6mr298265441cf.8.1728938122498;
+        Mon, 14 Oct 2024 13:35:22 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46042789a5csm48398391cf.20.2024.10.14.13.35.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 13:35:21 -0700 (PDT)
+Message-ID: <431a7cdd-f5d8-4355-82fe-1fc541fbd622@gmail.com>
+Date: Mon, 14 Oct 2024 13:35:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e8d49d2-e89b-44df-9dff-29e8f24de105@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241014141217.941104064@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20241014141217.941104064@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 03:12:09PM +0200, Vlastimil Babka wrote:
-> On 10/14/24 14:52, Feng Tang wrote:
-> > On Mon, Oct 14, 2024 at 10:53:32AM +0200, Vlastimil Babka wrote:
-> >> On 10/14/24 09:52, Feng Tang wrote:
-> >> > On Fri, Oct 04, 2024 at 05:52:10PM +0800, Vlastimil Babka wrote:
-> >> > Thanks for the suggestion!
-> >> > 
-> >> > As there were error report about the NULL slab for big kmalloc object, how
-> >> > about the following code for 
-> >> > 
-> >> > __do_krealloc(const void *p, size_t new_size, gfp_t flags)
-> >> > {
-> >> > 	void *ret;
-> >> > 	size_t ks = 0;
-> >> > 	int orig_size = 0;
-> >> > 	struct kmem_cache *s = NULL;
-> >> > 
-> >> > 	/* Check for double-free. */
-> >> > 	if (likely(!ZERO_OR_NULL_PTR(p))) {
-> >> > 		if (!kasan_check_byte(p))
-> >> > 			return NULL;
-> >> > 
-> >> > 		ks = ksize(p);
-> >> 
-> >> I think this will result in __ksize() doing
-> >>   skip_orig_size_check(folio_slab(folio)->slab_cache, object);
-> >> and we don't want that?
-> > 
-> > I think that's fine. As later code will re-set the orig_size anyway.
+On 10/14/24 07:09, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.113 release.
+> There are 798 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> But you also read it first.
+> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
+> Anything received after that time might be too late.
 > 
-> >> > 		/* Some objects have no orig_size, like big kmalloc case */
-> >> > 		if (is_kfence_address(p)) {
-> >> > 			orig_size = kfence_ksize(p);
-> >> > 		} else if (virt_to_slab(p)) {
-> >> > 			s = virt_to_cache(p);
-> >> > 			orig_size = get_orig_size(s, (void *)p);
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.113-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> here.
+> thanks,
 > 
-> >> > 		}
-> 
-> >> Also the checks below repeat some of the checks of ksize().
-> > 
-> > Yes, there is some redundancy, mostly the virt_to_slab() 
-> > 
-> >> So I think in __do_krealloc() we should do things manually to determine ks
-> >> and not call ksize(). Just not break any of the cases ksize() handles
-> >> (kfence, large kmalloc).
-> > 
-> > OK, originally I tried not to expose internals of __ksize(). Let me
-> > try this way.
-> 
-> ksize() makes assumptions that a user outside of slab itself is calling it.
-> 
-> But we (well mostly Kees) also introduced kmalloc_size_roundup() to avoid
-> querying ksize() for the purposes of writing beyond the original
-> kmalloc(size) up to the bucket size. So maybe we can also investigate if the
-> skip_orig_size_check() mechanism can be removed now?
-> 
-> Still I think __do_krealloc() should rather do its own thing and not call
-> ksize().
+> greg k-h
 
-The goal was to avoid having users of the allocation APIs change the
-sizes of allocations without calling into realloc. This is because
-otherwise the "alloc_size" attribute used by compilers inform
-__builtin_dynamic_object_size() can get confused:
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-ptr = alloc(less_than_bucket_size);
-...
-size = ksize(ptr); /* larger size! */
-memcpy(ptr, src, size); /* compiler instrumentation doesn't see that ptr "grows" */
-
-So the callers use kmalloc_size_roundup() to just allocate the rounded
-up size immediately. Internally, the allocator can do what it wants.
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Kees Cook
+Florian
 
