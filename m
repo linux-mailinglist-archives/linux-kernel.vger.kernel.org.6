@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-363861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F1F99C7FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:02:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4906899C7FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B6C1C24074
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:02:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717031C241DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004711AB501;
-	Mon, 14 Oct 2024 11:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91241AB535;
+	Mon, 14 Oct 2024 11:00:21 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AE81AAE23;
-	Mon, 14 Oct 2024 11:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADFB1AB51E;
+	Mon, 14 Oct 2024 11:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903618; cv=none; b=QpoW2JZzYhWeP8o9FQtCCw3Cm8CzVfZ/zynlIhe3NB3p7kilD8LW5oDdCohZtYbdtDVycNfq7iRKO994/UK0cANFludtHdSCpkn+rGSuvnXNcvd7Fbrbq0RPzUOnw0xaif0pPSVb+slAmYwRVFLc7Pe3X4s8DKPzu4DIvQMr4cg=
+	t=1728903621; cv=none; b=SIHyIifdBM6RmFwBPqgVgzWiJAwDG7BnEpixKD742wYCeXDHmNfn9+NAg/gh2G1ZC3CQwxpsTRqqFAfrLveXqglRPvji+KBGZbBBLkEuCb8NiHq9CYy+g8NAMMj90IJM7qxDreyiMCBQGMva8eCmMuovks2OQWOCh50i5o4TD1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903618; c=relaxed/simple;
-	bh=ckI1+T2GFgSWcVYnvAcaN2k41SpN9b7TGriYQVjzmWI=;
+	s=arc-20240116; t=1728903621; c=relaxed/simple;
+	bh=ebamfkv7IgPXvDyLs+8HBwIvTIxriJQNMXxJv1O/XIc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i9BM+aPJgJLWkBWmbx23IgDHdKZj/bRCqaYC/L/R5mVTF1WAj5+IRcD6LV7IRqB0D1Q5O9a4f16PIUJPswIQ77CntslSrzWMmdplzeeJ1U8RRuPGSkyvDQEjp2MuH9w8CpqPaUxcBrEiLzID+OZneHlhF1aMHgPEbVcMv8R64/k=
+	 MIME-Version; b=V19SREZf/vSQrEuGRnb9H8tourX6+y2PHdYZys9zCoRTsNPH/TRP0PfC95xzuzgdJSH+g6RwScfdBb6aNXRc6myx6dG8LS6y3RED4Hp5oN9mbKw5drUo/DfXSuksVU+ugPwOD6SVElCcV0IJblOnMdE4QmJdr74tKAsvVBUFMbs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89DBA168F;
-	Mon, 14 Oct 2024 04:00:46 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58C151684;
+	Mon, 14 Oct 2024 04:00:49 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B5403F51B;
-	Mon, 14 Oct 2024 04:00:14 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A6AC3F51B;
+	Mon, 14 Oct 2024 04:00:17 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -47,13 +47,13 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Miroslav Benes <mbenes@suse.cz>,
 	Will Deacon <will@kernel.org>
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	kvm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-perf-users@vger.kernel.org
-Subject: [RFC PATCH v1 16/57] perf: Remove PAGE_SIZE compile-time constant assumption
-Date: Mon, 14 Oct 2024 11:58:23 +0100
-Message-ID: <20241014105912.3207374-16-ryan.roberts@arm.com>
+	linux-mm@kvack.org
+Subject: [RFC PATCH v1 17/57] kvm: Remove PAGE_SIZE compile-time constant assumption
+Date: Mon, 14 Oct 2024 11:58:24 +0100
+Message-ID: <20241014105912.3207374-17-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -70,13 +70,7 @@ To prepare for supporting boot-time page size selection, refactor code
 to remove assumptions about PAGE_SIZE being compile-time constant. Code
 intended to be equivalent when compile-time page size is active.
 
-Refactor a BUILD_BUG_ON() so that we test against the limit; _format is
-invariant to page size so testing it is no bigger than the minimum
-supported size is sufficient.
-
-Wrap global variables that are initialized with PAGE_SIZE derived values
-using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
-deferred for boot-time page size builds.
+Modify BUILD_BUG_ON() to compare with page size limit.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -85,36 +79,22 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- include/linux/perf_event.h | 2 +-
- kernel/events/core.c       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ virt/kvm/kvm_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1a8942277ddad..b7972155f93eb 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1872,7 +1872,7 @@ _name##_show(struct device *dev,					\
- 			       struct device_attribute *attr,		\
- 			       char *page)				\
- {									\
--	BUILD_BUG_ON(sizeof(_format) >= PAGE_SIZE);			\
-+	BUILD_BUG_ON(sizeof(_format) >= PAGE_SIZE_MIN);			\
- 	return sprintf(page, _format "\n");				\
- }									\
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index cb2b78e92910f..6c862bc41a672 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4244,7 +4244,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+ 		goto vcpu_decrement;
+ 	}
  
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8a6c6bbcd658a..81149663ab7d8 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -419,7 +419,7 @@ static struct kmem_cache *perf_event_cache;
- int sysctl_perf_event_paranoid __read_mostly = 2;
- 
- /* Minimum for 512 kiB + 1 user control page */
--int sysctl_perf_event_mlock __read_mostly = 512 + (PAGE_SIZE / 1024); /* 'free' kiB per user */
-+__DEFINE_GLOBAL_PAGE_SIZE_VAR(int, sysctl_perf_event_mlock, __read_mostly, 512 + (PAGE_SIZE / 1024)); /* 'free' kiB per user */
- 
- /*
-  * max perf event sample rate
+-	BUILD_BUG_ON(sizeof(struct kvm_run) > PAGE_SIZE);
++	BUILD_BUG_ON(sizeof(struct kvm_run) > PAGE_SIZE_MIN);
+ 	page = alloc_page(GFP_KERNEL_ACCOUNT | __GFP_ZERO);
+ 	if (!page) {
+ 		r = -ENOMEM;
 -- 
 2.43.0
 
