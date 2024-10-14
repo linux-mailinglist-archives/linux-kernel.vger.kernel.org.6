@@ -1,116 +1,155 @@
-Return-Path: <linux-kernel+bounces-363302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0358499C038
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:45:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F7399C03B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977EFB2320E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D4E282FAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65960140E50;
-	Mon, 14 Oct 2024 06:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CBE13DDB5;
+	Mon, 14 Oct 2024 06:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="z51YFBRP"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="iqP6dHtU"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B8536B;
-	Mon, 14 Oct 2024 06:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7F71A270
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728888345; cv=none; b=duNsipHlHlK7uGusfETpU+i6BfLL8vIAW1JIx+OkM9tB/OSDnOm9Zx7p3jD8+Szob7BUpxNQXfQdI8njwPyyTqaJYd3p+e5sdX4r6L6Z+g8GEfrh38hhghfWiiHiGbCRqECEaDuDtCT7e37gygpn7/LmsUoOJ2rFytVcCSa5MK0=
+	t=1728888449; cv=none; b=GQ90/73E5htDgXceVMLIkIHzt1BKrIKZcrLBiOz7fVN5OQkqFpX1a4HOke1J/60rIdm9xnb8f0Ogm8D2BzzYvXLNv5EepcEDLUXa7hfKRQq2gHlrenyNxgGLezAnUeT3Ov70uTXzB7mn7IrVWclefwFLC/jsnyeFVaXr4CiceYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728888345; c=relaxed/simple;
-	bh=5+7U5NsPCJJ1SeC7sthTmtpMjLOa80ghowv7qWW2nio=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=A/ZIxf8snGIdlT/bMVHXHhaXxMK95Hsls5nfeFC22NBEfnjVJ+NblYoakPDmg+ZYeA+gLfg7Y1IcotcA8RDAc5344mZih0oZgVM4TG8aWuAfL//1jC5BpeL3ZnScnJVIJvX6BB+eEz2EkKOEdm1ul1WXYXr4exGrLDaeTcU+KzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=z51YFBRP; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Cc:From:References:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=zfAhj9c9aib/1i6GUjRiuU0PI8OaiFSyn9NGekauN9U=; t=1728888344;
-	x=1729320344; b=z51YFBRPPSV94xmfSo3YYSTUZXPMBj7XiTLKwkuRv3VTRWqmBxL+FkPlnpPU1
-	CTonKWpOAoamBjrOWNDM8JSF6uwqJCzQNpKfagb1dSoRMgsqjkafKPaHPcFm8L4QTRBgoSmUf3Amt
-	juoBmTKV4Z7Mg8IQWUmbEqqYvs/JNPEZ3YI99UW5b/f3DqNX9zV+DMO+yMjwnmEi+fEXYJOOVRN3v
-	JAC80aXMBTheZQved93S1CLKvwKfEck3k+MpHrpJU8X1A4AVa5Avb5WkxDMncwz4Xxp64Y0C2hryy
-	hHILJ7jWS3rRqbXTrDYtu9FhQdSqXCw2AI8x2Zqdt/lKyyWOWA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t0Epj-0000HP-9Q; Mon, 14 Oct 2024 08:45:35 +0200
-Message-ID: <06bab5c5-e9fd-4741-bab7-6b199cfac18a@leemhuis.info>
-Date: Mon, 14 Oct 2024 08:45:34 +0200
+	s=arc-20240116; t=1728888449; c=relaxed/simple;
+	bh=04XYqrmnQ48BCQSPqaTd5Q1NXgx8uEeVrzQkfizNtcM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WtBRehlPGeLqx8FVnY44PGG5u4zS+wUODOg22Z2/lAT9iDDmJgfvFHaLoEVNYlTSWA0lwm8+G0bNiI5w+bpa6F2p6rOKaaIIDVb7Yej1M7vvBEfjPx/HJfd100S980QgEQj+Hddj541LHcXblgqpMNGivxC0w/ePq6h6xIzf0g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=iqP6dHtU; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1728888447; x=1760424447;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=04XYqrmnQ48BCQSPqaTd5Q1NXgx8uEeVrzQkfizNtcM=;
+  b=iqP6dHtUBtrsmZps8CVoBX6LgZuKOoJ/Zwjs4fzvCL4YHQdRwTpvDRtH
+   /zDYLEarunQqIlw6fgzdWaHUGjm1BuAa4ESsb+23wJ6HwFIbU8bxXh7TA
+   d+vHNRIaISX7WUB3Tk8aKixMkr6wnUPHVZ5bseCbFS2HxUCTYn5pGG1hM
+   anznH5mV56vH0Hlj7b1bOyrT+HIHwWlUSmXfeTH5Kp8jpEKpz4K/DJpqm
+   cw8YKPMYIViRnR/nEVsVrs/1nqo8a0qgS1vymZzQni/1ZiRyAO+Biv7dy
+   SdCqoLExaHgACwxjfMJYFqxJiDa0b8kT6eaqittS/QF9aRRGS8FYB+OxE
+   g==;
+X-CSE-ConnectionGUID: 4xBlmyQHTkm/61W9c+bOkQ==
+X-CSE-MsgGUID: nU2/czUjSwu/VSmxBYrk6Q==
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="32772256"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Oct 2024 23:47:25 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sun, 13 Oct 2024 23:46:54 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Sun, 13 Oct 2024 23:46:49 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <sam@ravnborg.org>, <bbrezillon@kernel.org>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Manikandan Muralidharan <manikandan.m@microchip.com>
+Subject: [PATCH] drm: atmel-hlcdc: update the LCDC_ATTRE register in plane atomic_disable
+Date: Mon, 14 Oct 2024 12:16:44 +0530
+Message-ID: <20241014064644.292943-1-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Bad commit backported on the v5.15.y branch ?
-To: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-References: <AM9P192MB1316ABE1A8E1D41C4243F596D7792@AM9P192MB1316.EURP192.PROD.OUTLOOK.COM>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Cc: Greg KH <gregkh@linuxfoundation.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- Sasha Levin <sashal@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Joel GUITTET <jguittet.opensource@witekio.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-In-Reply-To: <AM9P192MB1316ABE1A8E1D41C4243F596D7792@AM9P192MB1316.EURP192.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1728888344;2a23363c;
-X-HE-SMSGID: 1t0Epj-0000HP-9Q
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 11.10.24 10:48, Joel GUITTET wrote:
-> 
-> I faced some issue related to scaling frequency on ZynqMP device
-> using v5.15.167 kernel. As an exemple setting the scaling frequency
-> below show it's not properly set:
-> 
-> cat /sys/devices/system/cpu/cpufreq/policy0/
-> scaling_available_frequencies 299999 399999 599999 1199999
-> 
-> echo 399999 > /sys/devices/system/cpu/cpufreq/policy0/
-> scaling_setspeed
-> 
-> cat /sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq 399999
-> 
-> cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq 299999
-> ====> Should be 399999
-> 
-> After analysis of this issue with the help of Xilinx, it appears
-> that a commit was backported on the 5.15.y branch, but probably it
-> should not, or not as is. The commit is
-> 9117fc44fd3a9538261e530ba5a022dfc9519620 modifying drivers/clk/
-> zynqmp/divider.c.
+update the LCDC_ATTRE register in drm plane atomic_disable to handle
+the configuration changes of each layer when a plane is disabled.
 
-FWIW, that is 1fe15be1fb6135 ("drivers: clk: zynqmp: update divider
-round rate logic") [v6.8-rc1].
+Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+---
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h    |  3 ++-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 17 ++++++++++++++---
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
-> Is anybody reading this message able to answer why it was
-> backported ?
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
+index e1a0bb24b511..53d47f01db0b 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
+@@ -378,7 +378,8 @@ struct atmel_lcdc_dc_ops {
+ 	void (*lcdc_update_buffers)(struct atmel_hlcdc_plane *plane,
+ 				    struct atmel_hlcdc_plane_state *state,
+ 				    u32 sr, int i);
+-	void (*lcdc_atomic_disable)(struct atmel_hlcdc_plane *plane);
++	void (*lcdc_atomic_disable)(struct atmel_hlcdc_plane *plane,
++				    struct atmel_hlcdc_dc *dc);
+ 	void (*lcdc_update_general_settings)(struct atmel_hlcdc_plane *plane,
+ 					     struct atmel_hlcdc_plane_state *state);
+ 	void (*lcdc_atomic_update)(struct atmel_hlcdc_plane *plane,
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+index 4a7ba0918eca..4bcaf2cd7672 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+@@ -816,7 +816,8 @@ static int atmel_hlcdc_plane_atomic_check(struct drm_plane *p,
+ 	return 0;
+ }
+ 
+-static void atmel_hlcdc_atomic_disable(struct atmel_hlcdc_plane *plane)
++static void atmel_hlcdc_atomic_disable(struct atmel_hlcdc_plane *plane,
++				       struct atmel_hlcdc_dc *dc)
+ {
+ 	/* Disable interrupts */
+ 	atmel_hlcdc_layer_write_reg(&plane->layer, ATMEL_HLCDC_LAYER_IDR,
+@@ -832,7 +833,8 @@ static void atmel_hlcdc_atomic_disable(struct atmel_hlcdc_plane *plane)
+ 	atmel_hlcdc_layer_read_reg(&plane->layer, ATMEL_HLCDC_LAYER_ISR);
+ }
+ 
+-static void atmel_xlcdc_atomic_disable(struct atmel_hlcdc_plane *plane)
++static void atmel_xlcdc_atomic_disable(struct atmel_hlcdc_plane *plane,
++				       struct atmel_hlcdc_dc *dc)
+ {
+ 	/* Disable interrupts */
+ 	atmel_hlcdc_layer_write_reg(&plane->layer, ATMEL_XLCDC_LAYER_IDR,
+@@ -842,6 +844,15 @@ static void atmel_xlcdc_atomic_disable(struct atmel_hlcdc_plane *plane)
+ 	atmel_hlcdc_layer_write_reg(&plane->layer,
+ 				    ATMEL_XLCDC_LAYER_ENR, 0);
+ 
++	/*
++	 * Updating XLCDC_xxxCFGx, XLCDC_xxxFBA and XLCDC_xxxEN,
++	 * (where xxx indicates each layer) requires writing one to the
++	 * Update Attribute field for each layer in LCDC_ATTRE register for SAM9X7.
++	 */
++	regmap_write(dc->hlcdc->regmap, ATMEL_XLCDC_ATTRE, ATMEL_XLCDC_BASE_UPDATE |
++		     ATMEL_XLCDC_OVR1_UPDATE | ATMEL_XLCDC_OVR3_UPDATE |
++		     ATMEL_XLCDC_HEO_UPDATE);
++
+ 	/* Clear all pending interrupts */
+ 	atmel_hlcdc_layer_read_reg(&plane->layer, ATMEL_XLCDC_LAYER_ISR);
+ }
+@@ -852,7 +863,7 @@ static void atmel_hlcdc_plane_atomic_disable(struct drm_plane *p,
+ 	struct atmel_hlcdc_plane *plane = drm_plane_to_atmel_hlcdc_plane(p);
+ 	struct atmel_hlcdc_dc *dc = plane->base.dev->dev_private;
+ 
+-	dc->desc->ops->lcdc_atomic_disable(plane);
++	dc->desc->ops->lcdc_atomic_disable(plane, dc);
+ }
+ 
+ static void atmel_hlcdc_atomic_update(struct atmel_hlcdc_plane *plane,
+-- 
+2.25.1
 
-Looks like because it fixes a bug. I CCed the original author and those
-that handled the patch, maybe they can help us out and tell us what's
-the best strategy forward here.
-
-> The information I have until now is that it is intended
-> recent kernel version. Dependencies for this modification is
-> currently under clarification with Xilinx (maybe another commit to
-> backport).
-> 
-> By the way, reverting this commit fix the issue shown above.
-Does 6.12-rc work fine for you? Because if not, we should fix the
-problem there.
-
-Ciao, Thorsten
 
