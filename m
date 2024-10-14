@@ -1,858 +1,339 @@
-Return-Path: <linux-kernel+bounces-364699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CAF99D81F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E062899D821
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ED41B2146A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:22:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3712CB212A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14F51D0946;
-	Mon, 14 Oct 2024 20:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1951F1D07BC;
+	Mon, 14 Oct 2024 20:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="UU5N9ShJ"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4HwZa2o"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4B3149C47;
-	Mon, 14 Oct 2024 20:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B5C149C47
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728937335; cv=none; b=jEdymRRUoIU9V12R5wSGIkXZS2pe81TAkBcyOnE5yeyssPRx9mFk+Bv09ejFk0+ir1Tua7nLW2++X6us3/DU0urM94Vtsb3262HXKDGbbfLi/vVSncpXiSoJgygbC4HutqO/94ozsHH00428Xu95oU4Oa83oDoSVDeEUM5FTeIM=
+	t=1728937415; cv=none; b=XxaopuJZDu7tKEu2yvFiUtnoz2RlpSDzkDSPAt6lvYBGwKi5SB+HstRj7eElhD3LiDXhkw+q+PxiJuQSXVCQzCBMWRc+m6ocGm56f88OmZ+XKtkaj4LUH1WRJvkqGDcPUaaQzDq3wwDb9UIw5/awBdX12wGZs/U+Rq1b31LAZcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728937335; c=relaxed/simple;
-	bh=lXZPVTFw4gS5XzAB5361QkBAbIlC7+nsYkzvztH3aYk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EYqv7Iw9tzGbIdHn9sbvVdetw41BGgJp+pDTXyZfynflBx8q3Ke/wrf/6ptVimCj4PXePGo1UvMILEtj3ZYa5ktDnLqIQqfsHuDvQgxIcf1fNZpZfGItl6D8zJCuyWuBOCxvOTWbmU9DfdOWsHgcS1u2K/CfN+uA5yQRxkVQo6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=UU5N9ShJ; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1728937323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Fy6ip9Ec6sFQhLqMTPBcsRStEIPSb0Tf4hVebsrEnsM=;
-	b=UU5N9ShJwbxTnwISU7ZdBgWCer8i20R+YJyW6dAlAqy5uPWjrG9oHzTOP35lk0nJM1+PFt
-	TcKUAKz6a3GkPjUdlMma81tRZrVRNzBfZtxQ91c4Lo0Vqdxr4CGDD/7ASH4ATH0ro2xzLJ
-	i1nTkOKh4wopwDPn+ScxUvlyXbGgNWI4oBKc2y/Nlk+K9c0jHGh5dLBvSPAGdNDjUlDSzy
-	XxXG4Xuqb4d4M0DIxJDk6Nw6hQ3GAhd3zHq5PsnarrUzjzXD89kjm5WJ9MLIT3ZRKkGydh
-	qzadr8z9AI1ynnWsokuGNLvruSYP/t0+If3KtB9LSoxJDqgyPJxszVg48x0TZQ==
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Subject: [PATCH] arm64: dts: rockchip: Convert dts files used as parents to dtsi files
-Date: Mon, 14 Oct 2024 22:21:57 +0200
-Message-Id: <f3d789c14fe34a53327cac03cd3837e530e21f5c.1728937091.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1728937415; c=relaxed/simple;
+	bh=WcMzyO4cJE+xvcZaXtDnD3jDU3z5Pc5fL5vfePv30TA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aW+BV9BJIrePlgWhfj67jqKCLCp+IqVG3iTNAHHt/b+VDUijj1vjff6LiVM2ovHMpmhkKX4S/+/uJGENK1irjttlUbZic0Wuldc2rdksiLD5tVmM39cZNhxCFEyu1PosLqICiNrBp+Mdoba2oTyQCzMJHMl1U046l+RnDAONH8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4HwZa2o; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4604b48293dso30796451cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728937412; x=1729542212; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pt98ZiFFLOkpjChOt0j7iW9N/0ozbXeRldYiUup84+8=;
+        b=h4HwZa2oG6mdW2Bi6n1oimHGU1XdJubYCsO0pMJRmPtNSyLNRrKMULGYgG//580oeS
+         9IXiw960l8Js68neaWyOdPeaNIMxyB5ecUMTJnNlL6H+G1J/ZG/xPyXKlricyNAzAnzu
+         YK8Z3oP5XK7fkWKb+wbCEKk2+F/yuOLHT/QIVNn+adGMqSSAQGnoAFoDD3i9LUtYf6Fd
+         Sh69Tuoo7f3SDzCezae/Vuw2DspJ1OpOgeXv62AtRLEli6at5wI1SuYEKZWR3/xYShdt
+         KLBduojDK85LZPCv5kOtV694/6sWRsomdxyIQWeOUUH9grUuvYGsmTllS8sFAFCUhQV2
+         Pmmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728937412; x=1729542212;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pt98ZiFFLOkpjChOt0j7iW9N/0ozbXeRldYiUup84+8=;
+        b=XJxSN+/4Z1ff/4dQEXt+PkUa3Oy0FpBL97U9VNm5lvRc/hWSlB6oMIwXlaz7qXnVp1
+         FDBfM9cMKzwuCYethc7Rl+BSMtWJPbvxlzRKfMoui4w/OTAQf93nJCC+jpsbQ0/GuTM3
+         i5AoPRijpDdwwn+WpbgrwG/rG5kaQqIdnn8KTMFfclsSL3StBWFzMgnRFxWtF2/8qG3a
+         +6XDfG0hKyG/RQLboYjSAZahayvJbg5iacx97dYr39Uisrb3z6+rz6YLsEjfLoqp1upf
+         2zdT+rwvAKXcS6dzSqW7gQ0dPkZupPfrHk6+LcHknkEYMgeFbzi34t1SAgfB+tDrgh9K
+         qm0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVOvdG9IxsieQFDshRwtK5YMSEeRV0sF3iwmbSu0DcrEv3kcU6qSZQ+XY5O5r8vvsoSacyEuBzgcgsm6sE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8pr7O2QP6WFt03HCMOcxGfwucq0TSIZypU3uX5P1uybt+hMtz
+	VxF8UtsW4qqIyma9ICIp5oEpu6lHWKF7bXojUDvOGSHHfvy7O8Qh
+X-Google-Smtp-Source: AGHT+IHAy7D5m6nzCEmeeIBtaV1KQgHkqVsgWc0XqOfW6IWQYQVTUlDYJIy8MgPdjyJkr7unlpQ/iQ==
+X-Received: by 2002:a05:6214:c87:b0:6cb:c892:8c17 with SMTP id 6a1803df08f44-6cbe52a1cb3mr316148016d6.22.1728937412013;
+        Mon, 14 Oct 2024 13:23:32 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8679a41sm49222006d6.139.2024.10.14.13.23.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 13:23:31 -0700 (PDT)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id CFF1E1200075;
+	Mon, 14 Oct 2024 16:23:30 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Mon, 14 Oct 2024 16:23:30 -0400
+X-ME-Sender: <xms:wn0NZ3HXYJeiKokFJRo2H2VHQDj-UJ6J10nIkw9PYP5lNqOA0aRtQg>
+    <xme:wn0NZ0Vd7VeGSPYPHRqE1d383kbIlfXDRliN-yCXj37dvasC-TE3CQwD5BMgl6vAL
+    KJAg0QA_4HdDus3Dg>
+X-ME-Received: <xmr:wn0NZ5IM2XqtHBuPNeGrF6fk5A51VQAy5-1a9xUXvy8W_RDIy9sYJnvCiN7IXw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgudeglecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    udenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpedtgeehleevffdujeffgedvlefghffhleek
+    ieeifeegveetjedvgeevueffieehhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepuddupdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehthhhomhgrshdrhhgvlhhlshhtrhhomh
+    eslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehinhhtvghlqdigvgeslhhi
+    shhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehpvghtvghriiesih
+    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtgho
+    mhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonh
+    hgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnheslhgrnhhk
+    hhhorhhsthdrshgvpdhrtghpthhtoheptghhrhhishhtihgrnhdrkhhovghnihhgsegrmh
+    gurdgtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggv
+    shhkthhophdrohhrgh
+X-ME-Proxy: <xmx:wn0NZ1HyMMew2x3WWs5Zc7DoWSo7xtn6nCqdO00LZv6gSjBuhVygJg>
+    <xmx:wn0NZ9W2e6ay1FLFLTAKywjtjBHeQP0pnN2ocEkcBzPMnP5nh19jCg>
+    <xmx:wn0NZwPTMszivE8sH-hUF7eruGCGUYtXEqvB9fD1jzbpV4rd9F7PIg>
+    <xmx:wn0NZ80bmi4SqKYLPUEBHaBbaYwfaeudHXKxKi5u8TB5KbhFhPAg6A>
+    <xmx:wn0NZyXRRLzGqqZXDkjcJGpQaGNfWeZ3LlBvsXOUIfU9c2OtCnwWQm50>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 14 Oct 2024 16:23:30 -0400 (EDT)
+Date: Mon, 14 Oct 2024 13:23:12 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Maarten Lankhorst <maarten@lankhorst.se>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] locking/ww_mutex: Adjust to lockdep nest_lock
+ requirements
+Message-ID: <Zw19sMtnKdyOVQoh@boqun-archlinux>
+References: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+In-Reply-To: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
 
-Including a board dts file is not the right way to represent the hierarchical
-nature of the board dts files and to create a dts file for another variant of
-an ancestor board.  However, a few boards and their variants (ab)used this
-approach, so let's clean that up by converting the common ancestors into dtsi
-files, and by adding separate board-variant dts files.
+Hi Thomas,
 
-No functional changes are introduced, which was validated by decompiling and
-comparing all affected board dtb files before and after these changes.  In
-more detail, the affected dtb files have some of their blocks shuffled around
-a bit and some of their phandles have different values, as a result of the
-changes to the order in which the building blocks from the parent dtsi files
-are included, but they effectively remain the same as the originals.
+On Wed, Oct 09, 2024 at 11:20:31AM +0200, Thomas Hellström wrote:
+> When using mutex_acquire_nest() with a nest_lock, lockdep refcounts the
+> number of acquired lockdep_maps of mutexes of the same class, and also
+> keeps a pointer to the first acquired lockdep_map of a class. That pointer
+> is then used for various comparison-, printing- and checking purposes,
+> but there is no mechanism to actively ensure that lockdep_map stays in
+> memory. Instead, a warning is printed if the lockdep_map is freed and
+> there are still held locks of the same lock class, even if the lockdep_map
+> itself has been released.
+> 
+> In the context of WW/WD transactions that means that if a user unlocks
+> and frees a ww_mutex from within an ongoing ww transaction, and that
+> mutex happens to be the first ww_mutex grabbed in the transaction,
+> such a warning is printed and there might be a risk of a UAF.
+> 
+> Note that this is only problem when lockdep is enabled and affects only
+> dereferences of struct lockdep_map.
+> 
+> Adjust to this by adding a fake lockdep_map to the acquired context and
+> make sure it is the first acquired lockdep map of the associated
+> ww_mutex class. Then hold it for the duration of the WW/WD transaction.
+> 
+> This has the side effect that trying to lock a ww mutex *without* a
+> ww_acquire_context but where a such context has been acquire, we'd see
+> a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
+> modify that particular test to not acquire a ww_acquire_context if it
+> is not going to be used.
+> 
+> v2:
+> - Lower the number of locks in the test-ww_mutex
+>   stress(STRESS_ALL) test to accommodate the dummy lock
+>   introduced in this patch without overflowing lockdep held lock
+>   references.
+> 
 
-The only perceivable introduced change is the turning of "roc-rk3328-cc" into
-"ROC-RK3328-CC", which is the model name of one of the affected boards, which
-was performed to match the styling of the official board name.
+Have you tested your patch with lib/locking-selftests.c? It reported two
+errors for me:
 
-As a side note, due to the nature of introduced changes, this commit is best
-viewed using "-B80%/80% -M20% -C5%" as the set of options for git-log(1).
+	[..]   | Wound/wait tests |
+	[..]   ---------------------
+	[..]                   ww api failures:  ok  |FAILED|  ok  |
+	[..]                ww contexts mixing:  ok  |  ok  |
+	[..]              finishing ww context:  ok  |  ok  |  ok  |  ok  |
+	[..]                locking mismatches:  ok  |  ok  |  ok  |
+	[..]                  EDEADLK handling:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |
+	[..]            spinlock nest unlocked:  ok  |
+	[..]                spinlock nest test:  ok  |
+	[..]   -----------------------------------------------------
+	[..]                                  |block | try  |context|
+	[..]   -----------------------------------------------------
+	[..]                           context:  ok  |  ok  |  ok  |
+	[..]                               try:  ok  |  ok  |  ok  |
+	[..]                             block:  ok  |  ok  |  ok  |
+	[..]                          spinlock:  ok  |  ok  |FAILED|
 
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
- ...8-nanopi-r2s.dts => rk3328-nanopi-r2.dtsi} | 16 -------
- .../dts/rockchip/rk3328-nanopi-r2c-plus.dts   |  3 +-
- .../boot/dts/rockchip/rk3328-nanopi-r2c.dts   | 28 +----------
- ...-nanopi-r2c.dts => rk3328-nanopi-r2c.dtsi} |  9 +---
- .../dts/rockchip/rk3328-nanopi-r2s-plus.dts   | 20 +++++++-
- ...s-nanopi-r6c.dts => rk3328-nanopi-r2s.dts} | 13 +++--
- ...pi-r2s-plus.dts => rk3328-nanopi-r2s.dtsi} | 35 +++++++-------
- .../rockchip/rk3328-orangepi-r1-plus-lts.dts  |  6 +--
- ...pi-r2c.dts => rk3328-orangepi-r1-plus.dts} | 34 +++++---------
- ...-plus.dts => rk3328-orangepi-r1-plus.dtsi} | 16 -------
- ...3588s-nanopi-r6c.dts => rk3328-roc-cc.dts} | 23 +++++++--
- .../arm64/boot/dts/rockchip/rk3328-roc-pc.dts |  3 +-
- .../{rk3328-roc-cc.dts => rk3328-roc.dtsi}    | 11 +----
- .../boot/dts/rockchip/rk3399-nanopi-m4.dts    | 47 +------------------
- ...99-nanopi-m4.dts => rk3399-nanopi-m4.dtsi} |  8 +---
- .../boot/dts/rockchip/rk3399-nanopi-m4b.dts   |  3 +-
- .../rockchip/rk3399-nanopi-r4s-enterprise.dts |  3 +-
- ...s-nanopi-r6c.dts => rk3399-nanopi-r4s.dts} | 13 +++--
- ...-nanopi-r4s.dts => rk3399-nanopi-r4s.dtsi} |  6 +--
- ...-nanopi-r6s.dts => rk3588s-nanopi-r6.dtsi} |  4 --
- .../boot/dts/rockchip/rk3588s-nanopi-r6c.dts  |  2 +-
- ...-nanopi-r6c.dts => rk3588s-nanopi-r6s.dts} |  8 ++--
- 22 files changed, 104 insertions(+), 207 deletions(-)
- rename arch/arm64/boot/dts/rockchip/{rk3328-nanopi-r2s.dts => rk3328-nanopi-r2.dtsi} (95%)
- copy arch/arm64/boot/dts/rockchip/{rk3328-nanopi-r2c.dts => rk3328-nanopi-r2c.dtsi} (80%)
- copy arch/arm64/boot/dts/rockchip/{rk3588s-nanopi-r6c.dts => rk3328-nanopi-r2s.dts} (25%)
- copy arch/arm64/boot/dts/rockchip/{rk3328-nanopi-r2s-plus.dts => rk3328-nanopi-r2s.dtsi} (39%)
- copy arch/arm64/boot/dts/rockchip/{rk3328-nanopi-r2c.dts => rk3328-orangepi-r1-plus.dts} (27%)
- rename arch/arm64/boot/dts/rockchip/{rk3328-orangepi-r1-plus.dts => rk3328-orangepi-r1-plus.dtsi} (94%)
- copy arch/arm64/boot/dts/rockchip/{rk3588s-nanopi-r6c.dts => rk3328-roc-cc.dts} (14%)
- rename arch/arm64/boot/dts/rockchip/{rk3328-roc-cc.dts => rk3328-roc.dtsi} (96%)
- copy arch/arm64/boot/dts/rockchip/{rk3399-nanopi-m4.dts => rk3399-nanopi-m4.dtsi} (88%)
- copy arch/arm64/boot/dts/rockchip/{rk3588s-nanopi-r6c.dts => rk3399-nanopi-r4s.dts} (25%)
- rename arch/arm64/boot/dts/rockchip/{rk3399-nanopi-r4s.dts => rk3399-nanopi-r4s.dtsi} (93%)
- rename arch/arm64/boot/dts/rockchip/{rk3588s-nanopi-r6s.dts => rk3588s-nanopi-r6.dtsi} (99%)
- copy arch/arm64/boot/dts/rockchip/{rk3588s-nanopi-r6c.dts => rk3588s-nanopi-r6s.dts} (35%)
+The first one is a use case issue, I think and can be fixed similar to
+your changes in test-ww_mutex.c:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
-similarity index 95%
-rename from arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
-rename to arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
-index a4399da7d8b1..f9fab35aed23 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
-@@ -10,9 +10,6 @@
- #include "rk3328.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi R2S";
--	compatible = "friendlyarm,nanopi-r2s", "rockchip,rk3328";
+diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+index 6f6a5fc85b42..6750321e3e9a 100644
+--- a/lib/locking-selftest.c
++++ b/lib/locking-selftest.c
+@@ -1720,8 +1720,6 @@ static void ww_test_normal(void)
+ {
+        int ret;
+
+-       WWAI(&t);
 -
- 	aliases {
- 		ethernet0 = &gmac2io;
- 		ethernet1 = &rtl8153;
-@@ -141,29 +138,16 @@ &gmac2io {
- 	assigned-clocks = <&cru SCLK_MAC2IO>, <&cru SCLK_MAC2IO_EXT>;
- 	assigned-clock-parents = <&gmac_clk>, <&gmac_clk>;
- 	clock_in_out = "input";
--	phy-handle = <&rtl8211e>;
- 	phy-mode = "rgmii";
- 	phy-supply = <&vcc_io_33>;
- 	pinctrl-0 = <&rgmiim1_pins>;
- 	pinctrl-names = "default";
--	rx_delay = <0x18>;
- 	snps,aal;
--	tx_delay = <0x24>;
--	status = "okay";
- 
- 	mdio {
- 		compatible = "snps,dwmac-mdio";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--
--		rtl8211e: ethernet-phy@1 {
--			reg = <1>;
--			pinctrl-0 = <&eth_phy_reset_pin>;
--			pinctrl-names = "default";
--			reset-assert-us = <10000>;
--			reset-deassert-us = <50000>;
--			reset-gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
--		};
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-plus.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-plus.dts
-index 16a1958e4572..3709ba30bbd4 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-plus.dts
-@@ -7,7 +7,8 @@
-  */
- 
- /dts-v1/;
--#include "rk3328-nanopi-r2c.dts"
+        /*
+         * None of the ww_mutex codepaths should be taken in the 'normal'
+         * mutex calls. The easiest way to verify this is by using the
+@@ -1770,6 +1768,8 @@ static void ww_test_normal(void)
+        ww_mutex_base_unlock(&o.base);
+        WARN_ON(o.ctx != (void *)~0UL);
+
++       WWAI(&t);
 +
-+#include "rk3328-nanopi-r2c.dtsi"
- 
- / {
- 	model = "FriendlyElec NanoPi R2C Plus";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts
-index a07a26b944a0..e8ab773dc245 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts
-@@ -7,34 +7,10 @@
-  */
- 
- /dts-v1/;
--#include "rk3328-nanopi-r2s.dts"
-+
-+#include "rk3328-nanopi-r2c.dtsi"
- 
- / {
- 	model = "FriendlyElec NanoPi R2C";
- 	compatible = "friendlyarm,nanopi-r2c", "rockchip,rk3328";
- };
--
--&gmac2io {
--	phy-handle = <&yt8521s>;
--	tx_delay = <0x22>;
--	rx_delay = <0x12>;
--
--	mdio {
--		/delete-node/ ethernet-phy@1;
--
--		yt8521s: ethernet-phy@3 {
--			compatible = "ethernet-phy-ieee802.3-c22";
--			reg = <3>;
--
--			motorcomm,clk-out-frequency-hz = <125000000>;
--			motorcomm,keep-pll-enabled;
--			motorcomm,auto-sleep-disabled;
--
--			pinctrl-0 = <&eth_phy_reset_pin>;
--			pinctrl-names = "default";
--			reset-assert-us = <10000>;
--			reset-deassert-us = <50000>;
--			reset-gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
--		};
--	};
--};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dtsi
-similarity index 80%
-copy from arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts
-copy to arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dtsi
-index a07a26b944a0..3b0457de2a98 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dtsi
-@@ -7,21 +7,16 @@
-  */
- 
- /dts-v1/;
--#include "rk3328-nanopi-r2s.dts"
- 
--/ {
--	model = "FriendlyElec NanoPi R2C";
--	compatible = "friendlyarm,nanopi-r2c", "rockchip,rk3328";
--};
-+#include "rk3328-nanopi-r2.dtsi"
- 
- &gmac2io {
- 	phy-handle = <&yt8521s>;
- 	tx_delay = <0x22>;
- 	rx_delay = <0x12>;
-+	status = "okay";
- 
- 	mdio {
--		/delete-node/ ethernet-phy@1;
--
- 		yt8521s: ethernet-phy@3 {
- 			compatible = "ethernet-phy-ieee802.3-c22";
- 			reg = <3>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-index cb81ba3f23ff..8ae9b7550816 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-@@ -7,7 +7,8 @@
-  */
- 
- /dts-v1/;
--#include "rk3328-nanopi-r2s.dts"
-+
-+#include "rk3328-nanopi-r2s.dtsi"
- 
- / {
- 	compatible = "friendlyarm,nanopi-r2s-plus", "rockchip,rk3328";
-@@ -30,3 +31,20 @@ &emmc {
- 	supports-emmc;
- 	status = "okay";
- };
-+
-+&gmac2io {
-+	phy-handle = <&rtl8211e>;
-+	tx_delay = <0x24>;
-+	rx_delay = <0x18>;
-+
-+	mdio {
-+		rtl8211e: ethernet-phy@1 {
-+			reg = <1>;
-+			pinctrl-0 = <&eth_phy_reset_pin>;
-+			pinctrl-names = "default";
-+			reset-assert-us = <10000>;
-+			reset-deassert-us = <50000>;
-+			reset-gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
-similarity index 25%
-copy from arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-copy to arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
-index 497bbb57071f..8579f22a1942 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
-@@ -1,14 +1,13 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 David Bauer <mail@david-bauer.net>
-+ */
- 
- /dts-v1/;
- 
--#include "rk3588s-nanopi-r6s.dts"
-+#include "rk3328-nanopi-r2s.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi R6C";
--	compatible = "friendlyarm,nanopi-r6c", "rockchip,rk3588s";
--};
--
--&lan2_led {
--	label = "user_led";
-+	model = "FriendlyElec NanoPi R2S";
-+	compatible = "friendlyarm,nanopi-r2s", "rockchip,rk3328";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dtsi
-similarity index 39%
-copy from arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-copy to arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dtsi
-index cb81ba3f23ff..308e526c2861 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dtsi
-@@ -7,26 +7,23 @@
-  */
- 
- /dts-v1/;
--#include "rk3328-nanopi-r2s.dts"
- 
--/ {
--	compatible = "friendlyarm,nanopi-r2s-plus", "rockchip,rk3328";
--	model = "FriendlyElec NanoPi R2S Plus";
-+#include "rk3328-nanopi-r2.dtsi"
- 
--	aliases {
--		mmc1 = &emmc;
--	};
--};
--
--&emmc {
--	bus-width = <8>;
--	cap-mmc-highspeed;
--	disable-wp;
--	mmc-hs200-1_8v;
--	non-removable;
--	num-slots = <1>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
--	supports-emmc;
-+&gmac2io {
-+	phy-handle = <&rtl8211e>;
-+	tx_delay = <0x24>;
-+	rx_delay = <0x18>;
- 	status = "okay";
-+
-+	mdio {
-+		rtl8211e: ethernet-phy@1 {
-+			reg = <1>;
-+			pinctrl-0 = <&eth_phy_reset_pin>;
-+			pinctrl-names = "default";
-+			reset-assert-us = <10000>;
-+			reset-deassert-us = <50000>;
-+			reset-gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts.dts b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts.dts
-index 4237f2ee8fee..67c246ad8b8c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts.dts
-@@ -7,21 +7,21 @@
-  */
- 
- /dts-v1/;
--#include "rk3328-orangepi-r1-plus.dts"
-+
-+#include "rk3328-orangepi-r1-plus.dtsi"
- 
- / {
- 	model = "Xunlong Orange Pi R1 Plus LTS";
- 	compatible = "xunlong,orangepi-r1-plus-lts", "rockchip,rk3328";
- };
- 
- &gmac2io {
- 	phy-handle = <&yt8531c>;
- 	tx_delay = <0x19>;
- 	rx_delay = <0x05>;
-+	status = "okay";
- 
- 	mdio {
--		/delete-node/ ethernet-phy@1;
--
- 		yt8531c: ethernet-phy@0 {
- 			compatible = "ethernet-phy-ieee802.3-c22";
- 			reg = <0>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
-similarity index 27%
-copy from arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts
-copy to arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
-index a07a26b944a0..324a8e951f7e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
-@@ -1,35 +1,27 @@
--// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-- * Copyright (c) 2021 FriendlyElec Computer Tech. Co., Ltd.
-- * (http://www.friendlyarm.com)
-- *
-- * Copyright (c) 2021-2023 Tianling Shen <cnsztl@gmail.com>
-+ * Based on rk3328-nanopi-r2s.dts, which is:
-+ *   Copyright (c) 2020 David Bauer <mail@david-bauer.net>
-  */
- 
- /dts-v1/;
--#include "rk3328-nanopi-r2s.dts"
-+
-+#include "rk3328-orangepi-r1-plus.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi R2C";
--	compatible = "friendlyarm,nanopi-r2c", "rockchip,rk3328";
-+	model = "Xunlong Orange Pi R1 Plus";
-+	compatible = "xunlong,orangepi-r1-plus", "rockchip,rk3328";
- };
- 
- &gmac2io {
--	phy-handle = <&yt8521s>;
--	tx_delay = <0x22>;
--	rx_delay = <0x12>;
-+	phy-handle = <&rtl8211e>;
-+	tx_delay = <0x24>;
-+	rx_delay = <0x18>;
-+	status = "okay";
- 
- 	mdio {
--		/delete-node/ ethernet-phy@1;
--
--		yt8521s: ethernet-phy@3 {
--			compatible = "ethernet-phy-ieee802.3-c22";
--			reg = <3>;
--
--			motorcomm,clk-out-frequency-hz = <125000000>;
--			motorcomm,keep-pll-enabled;
--			motorcomm,auto-sleep-disabled;
--
-+		rtl8211e: ethernet-phy@1 {
-+			reg = <1>;
- 			pinctrl-0 = <&eth_phy_reset_pin>;
- 			pinctrl-names = "default";
- 			reset-assert-us = <10000>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi
-similarity index 94%
-rename from arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
-rename to arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi
-index f20662929c77..181ec6de0019 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi
-@@ -11,9 +11,6 @@
- #include "rk3328.dtsi"
- 
- / {
--	model = "Xunlong Orange Pi R1 Plus";
--	compatible = "xunlong,orangepi-r1-plus", "rockchip,rk3328";
--
- 	aliases {
- 		ethernet0 = &gmac2io;
- 		ethernet1 = &rtl8153;
-@@ -112,29 +109,16 @@ &gmac2io {
- 	assigned-clocks = <&cru SCLK_MAC2IO>, <&cru SCLK_MAC2IO_EXT>;
- 	assigned-clock-parents = <&gmac_clk>, <&gmac_clk>;
- 	clock_in_out = "input";
--	phy-handle = <&rtl8211e>;
- 	phy-mode = "rgmii";
- 	phy-supply = <&vcc_io>;
- 	pinctrl-0 = <&rgmiim1_pins>;
- 	pinctrl-names = "default";
- 	snps,aal;
--	rx_delay = <0x18>;
--	tx_delay = <0x24>;
--	status = "okay";
- 
- 	mdio {
- 		compatible = "snps,dwmac-mdio";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--
--		rtl8211e: ethernet-phy@1 {
--			reg = <1>;
--			pinctrl-0 = <&eth_phy_reset_pin>;
--			pinctrl-names = "default";
--			reset-assert-us = <10000>;
--			reset-deassert-us = <50000>;
--			reset-gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
--		};
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-similarity index 14%
-copy from arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-copy to arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-index 497bbb57071f..1ea4b2a95a09 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-@@ -1,14 +1,27 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2017 T-Chip Intelligent Technology Co., Ltd
-+ */
- 
- /dts-v1/;
- 
--#include "rk3588s-nanopi-r6s.dts"
-+#include <dt-bindings/input/input.h>
-+#include "rk3328-roc.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi R6C";
--	compatible = "friendlyarm,nanopi-r6c", "rockchip,rk3588s";
-+	model = "Firefly ROC-RK3328-CC";
-+	compatible = "firefly,roc-rk3328-cc", "rockchip,rk3328";
- };
- 
--&lan2_led {
--	label = "user_led";
-+&rk805 {
-+	interrupt-parent = <&gpio1>;
-+	interrupts = <24 IRQ_TYPE_LEVEL_LOW>;
-+};
-+
-+&vcc_host1_5v {
-+	gpio = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&vcc_sdio {
-+	gpios = <&grf_gpio 0 GPIO_ACTIVE_HIGH>;
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts
-index e3e3984d01d4..329d03172433 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts
-@@ -4,8 +4,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/input/input.h>
--
--#include "rk3328-roc-cc.dts"
-+#include "rk3328-roc.dtsi"
- 
- / {
- 	model = "Firefly ROC-RK3328-PC";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-similarity index 96%
-rename from arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-rename to arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-index 414897a57e75..6b274e91ee07 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-@@ -4,12 +4,10 @@
-  */
- 
- /dts-v1/;
-+
- #include "rk3328.dtsi"
- 
- / {
--	model = "Firefly roc-rk3328-cc";
--	compatible = "firefly,roc-rk3328-cc", "rockchip,rk3328";
--
- 	aliases {
- 		ethernet0 = &gmac2io;
- 		mmc0 = &sdmmc;
-@@ -50,21 +48,18 @@ vcc_sd: sdmmc-regulator {
- 
- 	vcc_sdio: sdmmcio-regulator {
- 		compatible = "regulator-gpio";
--		gpios = <&grf_gpio 0 GPIO_ACTIVE_HIGH>;
--		states = <1800000 0x1>,
--			 <3300000 0x0>;
-+		states = <1800000 0x1>, <3300000 0x0>;
- 		regulator-name = "vcc_sdio";
- 		regulator-type = "voltage";
- 		regulator-min-microvolt = <1800000>;
- 		regulator-max-microvolt = <3300000>;
- 		regulator-always-on;
- 		vin-supply = <&vcc_sys>;
- 	};
- 
- 	vcc_host1_5v: vcc_otg_5v: vcc-host1-5v-regulator {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
--		gpio = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&usb20_host_drv>;
- 		regulator-name = "vcc_host1_5v";
-@@ -183,8 +178,6 @@ &i2c1 {
- 	rk805: pmic@18 {
- 		compatible = "rockchip,rk805";
- 		reg = <0x18>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <24 IRQ_TYPE_LEVEL_LOW>;
- 		#clock-cells = <1>;
- 		clock-output-names = "xin32k", "rk805-clkout2";
- 		gpio-controller;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts
-index 60358ab8c7df..e091b20c2d1f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts
-@@ -10,57 +10,14 @@
-  */
- 
- /dts-v1/;
--#include "rk3399-nanopi4.dtsi"
-+
-+#include "rk3399-nanopi-m4.dtsi"
- 
- / {
- 	model = "FriendlyElec NanoPi M4";
- 	compatible = "friendlyarm,nanopi-m4", "rockchip,rk3399";
--
--	vdd_5v: vdd-5v {
--		compatible = "regulator-fixed";
--		regulator-name = "vdd_5v";
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
--	vcc5v0_core: vcc5v0-core {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc5v0_core";
--		regulator-always-on;
--		regulator-boot-on;
--		vin-supply = <&vdd_5v>;
--	};
--
--	vcc5v0_usb1: vcc5v0-usb1 {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc5v0_usb1";
--		regulator-always-on;
--		regulator-boot-on;
--		vin-supply = <&vcc5v0_sys>;
--	};
--
--	vcc5v0_usb2: vcc5v0-usb2 {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc5v0_usb2";
--		regulator-always-on;
--		regulator-boot-on;
--		vin-supply = <&vcc5v0_sys>;
--	};
--};
--
--&vcc3v3_sys {
--	vin-supply = <&vcc5v0_core>;
- };
- 
- &u2phy0_host {
- 	phy-supply = <&vcc5v0_usb1>;
- };
--
--&u2phy1_host {
--	phy-supply = <&vcc5v0_usb2>;
--};
--
--&vbus_typec {
--	regulator-always-on;
--	vin-supply = <&vdd_5v>;
--};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dtsi
-similarity index 88%
-copy from arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts
-copy to arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dtsi
-index 60358ab8c7df..5cd69ddf9891 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dtsi
-@@ -10,12 +10,10 @@
-  */
- 
- /dts-v1/;
-+
- #include "rk3399-nanopi4.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi M4";
--	compatible = "friendlyarm,nanopi-m4", "rockchip,rk3399";
--
- 	vdd_5v: vdd-5v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vdd_5v";
-@@ -52,10 +50,6 @@ &vcc3v3_sys {
- 	vin-supply = <&vcc5v0_core>;
- };
- 
--&u2phy0_host {
--	phy-supply = <&vcc5v0_usb1>;
--};
--
- &u2phy1_host {
- 	phy-supply = <&vcc5v0_usb2>;
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4b.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4b.dts
-index 65cb21837b0c..d03ce6fa5bf6 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4b.dts
-@@ -6,7 +6,8 @@
-  */
- 
- /dts-v1/;
--#include "rk3399-nanopi-m4.dts"
-+
-+#include "rk3399-nanopi-m4.dtsi"
- 
- / {
- 	model = "FriendlyElec NanoPi M4B";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s-enterprise.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s-enterprise.dts
-index a23d11ca0eb6..b76f98962076 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s-enterprise.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s-enterprise.dts
-@@ -1,7 +1,8 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- 
- /dts-v1/;
--#include "rk3399-nanopi-r4s.dts"
-+
-+#include "rk3399-nanopi-r4s.dtsi"
- 
- / {
- 	model = "FriendlyElec NanoPi R4S Enterprise Edition";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
-similarity index 25%
-copy from arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-copy to arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
-index 497bbb57071f..ec3883f6221e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
-@@ -1,14 +1,13 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 FriendlyElec Computer Tech. Co., Ltd.
-+ */
- 
- /dts-v1/;
- 
--#include "rk3588s-nanopi-r6s.dts"
-+#include "rk3399-nanopi-r4s.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi R6C";
--	compatible = "friendlyarm,nanopi-r6c", "rockchip,rk3588s";
--};
--
--&lan2_led {
--	label = "user_led";
-+	model = "FriendlyElec NanoPi R4S";
-+	compatible = "friendlyarm,nanopi-r4s", "rockchip,rk3399";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi
-similarity index 93%
-rename from arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
-rename to arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi
-index fe5b52610010..f5f8b9c7c166 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dtsi
-@@ -1,24 +1,22 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-- * FriendlyElec NanoPC-T4 board device tree source
-+ * FriendlyElec NanoPC-R4 board device tree source
-  *
-  * Copyright (c) 2020 FriendlyElec Computer Tech. Co., Ltd.
-  * (http://www.friendlyarm.com)
-  *
-  * Copyright (c) 2018 Collabora Ltd.
-  *
-  * Copyright (c) 2020 Jensen Huang <jensenhuang@friendlyarm.com>
-  * Copyright (c) 2020 Marty Jones <mj8263788@gmail.com>
-  * Copyright (c) 2021 Tianling Shen <cnsztl@gmail.com>
-  */
- 
- /dts-v1/;
-+
- #include "rk3399-nanopi4.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi R4S";
--	compatible = "friendlyarm,nanopi-r4s", "rockchip,rk3399";
--
- 	/delete-node/ display-subsystem;
- 
- 	gpio-leds {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6.dtsi
-similarity index 99%
-rename from arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
-rename to arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6.dtsi
-index 4fa644ae510c..eef4851844bc 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6.dtsi
-@@ -8,9 +8,6 @@
- #include "rk3588s.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi R6S";
--	compatible = "friendlyarm,nanopi-r6s", "rockchip,rk3588s";
--
- 	aliases {
- 		ethernet0 = &gmac1;
- 		mmc0 = &sdmmc;
-@@ -74,7 +71,6 @@ lan1_led: led-2 {
- 		};
- 
- 		lan2_led: led-3 {
--			label = "lan2_led";
- 			gpios = <&gpio1 RK_PC4 GPIO_ACTIVE_HIGH>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&lan2_led_pin>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-index 497bbb57071f..ccc5e4627517 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-@@ -2,7 +2,7 @@
- 
- /dts-v1/;
- 
--#include "rk3588s-nanopi-r6s.dts"
-+#include "rk3588s-nanopi-r6.dtsi"
- 
- / {
- 	model = "FriendlyElec NanoPi R6C";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
-similarity index 35%
-copy from arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-copy to arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
-index 497bbb57071f..9c3e0b0daaac 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
-@@ -2,13 +2,13 @@
- 
- /dts-v1/;
- 
--#include "rk3588s-nanopi-r6s.dts"
-+#include "rk3588s-nanopi-r6.dtsi"
- 
- / {
--	model = "FriendlyElec NanoPi R6C";
--	compatible = "friendlyarm,nanopi-r6c", "rockchip,rk3588s";
-+	model = "FriendlyElec NanoPi R6S";
-+	compatible = "friendlyarm,nanopi-r6s", "rockchip,rk3588s";
- };
- 
- &lan2_led {
--	label = "user_led";
-+	label = "lan2_led";
- };
+        /* nest_lock */
+        o.ctx = (void *)~0UL;
+        ww_mutex_base_lock_nest_lock(&o.base, &t);
+
+Please confirm whether this change is intended.
+
+The second is a case as follow:
+
+	ww_acquire_init(...);
+	spin_lock(...);
+	ww_mutex_lock(...); // this should trigger a context
+			    // invalidation. But the mutex was
+			    // initialized by ww_acquire_init() as a
+			    // LD_WAIT_INV lock.
+
+The following could fix this:
+
+diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+index a401a2f31a77..45ff6f7a872b 100644
+--- a/include/linux/ww_mutex.h
++++ b/include/linux/ww_mutex.h
+@@ -156,8 +156,8 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
+        debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
+        lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
+                         &ww_class->acquire_key, 0);
+-       lockdep_init_map(&ctx->first_lock_dep_map, ww_class->mutex_name,
+-                        &ww_class->mutex_key, 0);
++       lockdep_init_map_wait(&ctx->first_lock_dep_map, ww_class->mutex_name,
++                             &ww_class->mutex_key, 0, LD_WAIT_SLEEP);
+        mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
+        mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx->dep_map, _RET_IP_);
+ #endif
+
+A v3 with all these fixed would look good to me, and I can add a
+Tested-by tag to it. Thanks!
+
+Regards,
+Boqun
+
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Maarten Lankhorst <maarten@lankhorst.se>
+> Cc: Christian König <christian.koenig@amd.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+> ---
+>  include/linux/ww_mutex.h       | 14 ++++++++++++++
+>  kernel/locking/test-ww_mutex.c |  8 +++++---
+>  2 files changed, 19 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+> index bb763085479a..a401a2f31a77 100644
+> --- a/include/linux/ww_mutex.h
+> +++ b/include/linux/ww_mutex.h
+> @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
+>  #endif
+>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>  	struct lockdep_map dep_map;
+> +	/**
+> +	 * @first_lock_dep_map: fake lockdep_map for first locked ww_mutex.
+> +	 *
+> +	 * lockdep requires the lockdep_map for the first locked ww_mutex
+> +	 * in a ww transaction to remain in memory until all ww_mutexes of
+> +	 * the transaction have been unlocked. Ensure this by keeping a
+> +	 * fake locked ww_mutex lockdep map between ww_acquire_init() and
+> +	 * ww_acquire_fini().
+> +	 */
+> +	struct lockdep_map first_lock_dep_map;
+>  #endif
+>  #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+>  	unsigned int deadlock_inject_interval;
+> @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
+>  	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
+>  	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
+>  			 &ww_class->acquire_key, 0);
+> +	lockdep_init_map(&ctx->first_lock_dep_map, ww_class->mutex_name,
+> +			 &ww_class->mutex_key, 0);
+>  	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
+> +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx->dep_map, _RET_IP_);
+>  #endif
+>  #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+>  	ctx->deadlock_inject_interval = 1;
+> @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
+>  static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
+>  {
+>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
+>  	mutex_release(&ctx->dep_map, _THIS_IP_);
+>  #endif
+>  #ifdef DEBUG_WW_MUTEXES
+> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+> index 10a5736a21c2..5d58b2c0ef98 100644
+> --- a/kernel/locking/test-ww_mutex.c
+> +++ b/kernel/locking/test-ww_mutex.c
+> @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
+>  	int ret;
+>  
+>  	ww_mutex_init(&mtx.mutex, &ww_class);
+> -	ww_acquire_init(&ctx, &ww_class);
+> +	if (flags & TEST_MTX_CTX)
+> +		ww_acquire_init(&ctx, &ww_class);
+>  
+>  	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
+>  	init_completion(&mtx.ready);
+> @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
+>  		ret = wait_for_completion_timeout(&mtx.done, TIMEOUT);
+>  	}
+>  	ww_mutex_unlock(&mtx.mutex);
+> -	ww_acquire_fini(&ctx);
+> +	if (flags & TEST_MTX_CTX)
+> +		ww_acquire_fini(&ctx);
+>  
+>  	if (ret) {
+>  		pr_err("%s(flags=%x): mutual exclusion failure\n",
+> @@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = stress(2047, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
+> +	ret = stress(2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
+>  	if (ret)
+>  		return ret;
+>  
+> -- 
+> 2.46.0
+> 
 
