@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-364108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B0499CB43
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A391299CB55
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB9F5B25998
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:13:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CD03B26779
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C122B1AB501;
-	Mon, 14 Oct 2024 13:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1833D1C303A;
+	Mon, 14 Oct 2024 13:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RsqfMZQ9"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="Y3qjK5Nd"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9781A76C4;
-	Mon, 14 Oct 2024 13:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC44C1C3022
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911507; cv=none; b=BjtK8x41Y9GPFerIN0GdQ4HbdPOi5Oi3ppDXff7Oia8/41wLKLixn9U+6K6iIRY6fzJim6BpKdtm0xwiXmbTw/FAqLSTBxN0XodRolcTFzgFKT+cqFh3oG3x0TN7XEfiWqzMAaa4CajhuDHQTN3kTrdMXC6aSopOx0pibq3E+iw=
+	t=1728911594; cv=none; b=Vi1FEXuGe+/9dfgS8f7czrEeui9KtuZ7hPrJ0S+g3jr9GkW1iGi+C2cx4OhezkyMD+yW5EietgeOiA7Sh8PBwJXXLah9fTVJrNACXQxc5lFWU3YZgUc7nk2uSipsrpM36XncNa1/2iHu7ntDPyNqZKslzurKS7swYg9T07PIf+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911507; c=relaxed/simple;
-	bh=5yU4dRg8eWV7Fgu5/bN7jBjpK68MkobODeODS6fxwYM=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=J515l60RMLe8nhLrp7hSANhGnaMEK685oI/cTIM0YoJNyyMt8hYIVTsA1kpLTZWR758RPhX3uhlBFLLZtWCF6JZYdEzXZ3k0aeAvlBC/LNoAAairv7vyAJN3jLhgHiftfc4egxxIbf4kWiBHvlm5LWM30JP0AHT1lwU10Bsj01U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RsqfMZQ9; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728911450; x=1729516250; i=markus.elfring@web.de;
-	bh=TfCLl53lB42+HRnDMfXfFuOecGZa7W9eJj72/YGIQ90=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=RsqfMZQ9Q+piDeHZsRcFUz3vDcgukjqoWXoDiTWFgKUxTOc9IPe2aCGni6qXn7sp
-	 cWrWorf72z2G6j8w2Tb4TUOIB4mjb13kkPjpGGcQreoyMbHBe0gldDx8qm+J2d2fX
-	 if4LMXB2Q1UeFTSnlBQ8hxMq9sc03DBN9jFRiYvYa8/2bA9rSkL3qzPeGGgr941bq
-	 eAxgsqZGQDpmYGKSLCCCVEGJfxVfA3vTLVUbGWTGpamLNUau6zGj3hBIXji0aq4TR
-	 ebvHDjkaUsvf1+JsHWeAmltdZcS4bcVAiv8KnleMRXbGfrdgJYQd979y7eS7t91RX
-	 soazwx1zCzQFXrVzjQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [94.31.82.95] ([94.31.82.95]) by web-mail.web.de
- (3c-app-webde-bs22.server.lan [172.19.170.22]) (via HTTP); Mon, 14 Oct 2024
- 15:10:50 +0200
+	s=arc-20240116; t=1728911594; c=relaxed/simple;
+	bh=aN7qz/p2yFFjWdhvlvJcw0UJXrJvejxwLpb3F/G3N2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IL8lKJ+qN+DegoX8W2CkMZuaLPDNorYya6bCXyPVDxUGFiPM6wnxdUFAE6hi3LsvAe5L3uwwLBsMkVBm1NvznhlpxEDwOz4GA37JxJkdrDZIUfSkp9AVp0i7syOMR/Y3hULH64dMzwh8QLJ6fUSvYgg0P4p6pRq7spbeYg8NouE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=Y3qjK5Nd; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so41569825e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1728911591; x=1729516391; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o0y2fOVyD+icRBtf7f6CfcDIS1ruayl7XHPLwSR33SU=;
+        b=Y3qjK5Ndi/rnZTcQ5KRPfcLbwYzXIlqACZT8il93X6JlB5R1H5NwIz3ulweibpKT19
+         NhYQyqpDrcGrLNxbGHCH95MX9sEDbUnPFS65NbBvDWNIg+vLUkRNprNU1uRYdURBHLW9
+         Rtnd45FaPFluiDa40GyqBbuk3JGfSO3IdNdqm7LB1STYRyGc6d9DDLi9XdSvj8fhATL+
+         H5lr1H58YPOG9a/G3panvXbTpQcBbJavArc8AZSBvB05F+kTv4XMB4/C9aXTw/1+W05j
+         OoJ7DEdXjDTuErrtNHjQ6VDrziDm0AIrYQqxH0vbYIsH6nADUgLM1YhiiJz0x9hha0hI
+         I0zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728911591; x=1729516391;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o0y2fOVyD+icRBtf7f6CfcDIS1ruayl7XHPLwSR33SU=;
+        b=XJxgpdQM7iPqgjZUHZdqsboI7vxs0zO+ZyTP8lxybsiUGaxrJh6FaLVVZMAg2qDkYz
+         gi/9FLS7NW9B0ViMLy7qEMIDL1qjG65g5dFWx83j8rsWHEpV3eS5XRMLWGgz3Za8nUfy
+         kRbe8L5OU7hYwZqCyw9jJdSAq2pWgZjJ719AWuN2bHrSCvlzeG1LkiU33ykbDcid+N57
+         zjOXiG5m+QYZtn0e0WGMrqyeWIn2JzrLcnZz1PLq3fUK59b1mneWfCqYZjzQUQj66sGt
+         l5VDFGLA37tuVT3HZUffs7oAwlZW5bfv2JvFfFqHhtjrRtNqpHYzPAFHEhsOCeC9HlOw
+         LGDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVf/o40oNTucnKnLiRuM7ASj1UfwiKo/msx5fzIHKubhw55dR102u5EI91Wst6sGydwPKIhG1zmrGYJqgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/ABRwz+Mfr9o/dxvlXBFFAb8a4QpFgQoa7SfDqur23oSwS+ds
+	EIrJ6SKJf62M2JeFC+IjFAI0kKhKVBPKKRtPrjvwpKKIbRFQCL0Qi0ih4vZWfd0=
+X-Google-Smtp-Source: AGHT+IHOoYlvcJQ1pnE65pzpw5C0GkcYdH9az4L45bbIkQ5nmWMsFzKU2Vv84I9vMO9ZCIXC0xd/FQ==
+X-Received: by 2002:a05:600c:3588:b0:428:f0c2:ef4a with SMTP id 5b1f17b1804b1-4311ded3f5fmr110753755e9.13.1728911591199;
+        Mon, 14 Oct 2024 06:13:11 -0700 (PDT)
+Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d605c197bsm7103718f8f.38.2024.10.14.06.13.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 06:13:10 -0700 (PDT)
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
+To: u-boot@lists.denx.de,
+	linux-kernel@vger.kernel.org
+Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Simon Glass <sjg@chromium.org>,
+	Tom Rini <trini@konsulko.com>
+Subject: [PATCH v8 35/37] bloblist: Fix use of uninitialized variable
+Date: Mon, 14 Oct 2024 15:10:51 +0200
+Message-ID: <20241014131152.267405-36-patrick.rudolph@9elements.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241014131152.267405-1-patrick.rudolph@9elements.com>
+References: <20241014131152.267405-1-patrick.rudolph@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-a5696b99-bf11-4ae3-8b00-20db116f86e4-1728911450361@3c-app-webde-bs22>
-From: Markus Elfring <Markus.Elfring@web.de>
-To: Kevin Chen <kevin_chen@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
-Subject: RE: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX
- INTC
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 14 Oct 2024 15:10:50 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
-References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
- <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
- <PSAPR06MB4949904D1FA95DBD3EF5288A89792@PSAPR06MB4949.apcprd06.prod.outlook.com>
- <0b995a34-28c4-4ba6-8ad2-e8413c6a63f5@web.de>
- <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:ovMgIH1q08E5i7Y9d9W6SUygzJNgl2aH+f4oZ4d1KfDWxtS1ZMfItM3wjo2ZYndBhaV9q
- sVsLTIFgAYVRuSGipm1FsubPyMzqvHvSteb4G59YcNgWaH80fuZ+UuXRhPLk821rLkBWIHkW30Ba
- VuUDtM44h0UWnxTNZYXbFpGTgDzjWiAqxxZewwynGk07TGaZ4vBcMMMseNsjk6+009ifsSk1T9Ls
- iLk4yLDwTV9z52eLXfrkRI8yHmF15qSC360cl5/tXmjX9eSQZSPkWuhDfWfFwGqJltTJCXY+R1n6
- Lg=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8QIWZabSQls=;BMNnAN1dJoT/6h4uy684oy1oyg8
- jrr4wBj+qthZ8l5y3dGE0as9BdePavt6FDWiZKGS3Yr049y/u0M/KiuShJ0T2cDVVKUbEU+zi
- Xl5t6BmSc61xxFU9MdSfNICci4xBwBccugddklaAsddcr2R3CaPDxnBIpwjEWt5IfsippsbXo
- XMQaT2aeUTUeH2NJ5ahSYKQX1XzAFtPT0DyrpMFZAjD8NFCi+sCScDnS0oML6SJTWh16r3N2a
- lQCcJ4e64lhGQl6xQqMsgOjXMwKNzw9+LfRRKWICv5jIIjTGFFqGhqd9rDxGnzAkM9h92Z3QY
- h4VyosDzY+iyf62bvzV266k7Bkor4XhdmG4dZcQ8gACuyDklooc/yxqrASQHtxvNzRhkwu13G
- ysI0HF4gNIOlqkpZNj5S1PwDPHh4MvNPnASCcbC2PhdZ0uuN1W/pdlCyzVZYGTkGLHroGyX4X
- uZ4z5OOD+0sJBjzda777h/6WDufB+Bn9wLlSt9mdaEFpZEgh/mo6L3G42b3hGW6V/t+7i9PiK
- XKPA6/hyqPvPB6nzz4/zsXGBfl/Vf1AGY73RIL9/qBTKRL14OCkz3CZ2tQg+llzPA29N+jzBt
- 0wFLFE2HXPBjU7gi4SxYZuvg/HhrprBjX1rKExITz/nYgz2FUw9Q+1KrsbdzWNdudmOy/Nsy9
- fcK81NPE/cadP3hS6Ihiu0Md3pwMkaexbVlfkxeHmA==
+Content-Transfer-Encoding: 8bit
 
-> > I propose to move selected variable definitions into corresponding comp=
-ound
-> > statements (by using extra curly brackets)=2E
-> > https://refactoring=2Ecom/catalog/reduceScopeOfVariable=2Ehtml
-> OK=2E I moved these two local variables into scoped_guard=2E
+Initialize addr to zero which allows to build on the CI
+which is more strict.
 
-Will development interests grow for further refactorings?
+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+Reviewed-by: Simon Glass <sjg@chromium.org>
+---
+ common/bloblist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/common/bloblist.c b/common/bloblist.c
+index 2008ab4d25..cf1a3b8b62 100644
+--- a/common/bloblist.c
++++ b/common/bloblist.c
+@@ -499,7 +499,7 @@ int bloblist_init(void)
+ {
+ 	bool fixed = IS_ENABLED(CONFIG_BLOBLIST_FIXED);
+ 	int ret = -ENOENT;
+-	ulong addr, size;
++	ulong addr = 0, size;
+ 	/*
+ 	 * If U-Boot is not in the first phase, an existing bloblist must be
+ 	 * at a fixed address.
+-- 
+2.46.2
 
-> +static void aspeed_intc_ic_irq_handler(struct irq_desc *desc)
-> +{
-> +       struct aspeed_intc_ic *intc_ic =3D irq_desc_get_handler_data(des=
-c);
-
-Another update candidate (for scope reduction)?
-
-
-> +
-> +       guard(chained_irq)(desc);
-
-Using another macro call =E2=80=9Cscoped_guard(=E2=80=A6) { =E2=80=A6 }=E2=
-=80=9D?
-
-
-> +       scoped_guard(raw_spinlock, &intc_ic->gic_lock) {
-
-Would you like to reconsider the proposed macro mixture once more?
-
-
-> +               unsigned long bit, status;
-=E2=80=A6
-
-=E2=80=A6
-> +++ b/include/linux/irqchip/chained_irq=2Eh
-> @@ -38,4 +38,6 @@ static inline void chained_irq_exit(struct irq_chip *c=
-hip,
->                 chip->irq_unmask(&desc->irq_data);
->  }
->=20
-> +DEFINE_GUARD(chained_irq, struct irq_desc *, chained_irq_exit((_T->irq_=
-data=2Echip), (_T)),
-> +            chained_irq_enter((_T->irq_data=2Echip), (_T)))
-
-Would you like to add a #include directive in this header file accordingly=
-?
-
-Regards,
-Markus
 
