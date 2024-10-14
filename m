@@ -1,44 +1,42 @@
-Return-Path: <linux-kernel+bounces-363858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A092B99C7F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:02:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD3599C7F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF2628620C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134C91F24849
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7431AA79A;
-	Mon, 14 Oct 2024 11:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5AB19E990;
+	Mon, 14 Oct 2024 11:00:14 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E91819E980;
-	Mon, 14 Oct 2024 11:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3C61AA7A4;
+	Mon, 14 Oct 2024 11:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903611; cv=none; b=moFymIW3eKfyccOp8bp3aEXtR74XaqkqdWQh86Y3zrlER5z1Rx8aPz90YnO20aLgzxMtD6Iwew5ph8TXlomcOU9oomswlTM5GZCd5pjg2LPswD/PykaXQCxLyhsPB3y/M/lECQpgpMUFOhsnuWgSAaUMkb0C+ABLYBH3EeYuBtU=
+	t=1728903613; cv=none; b=RWB7cb7ZyNTHXvHbjMQLMvSkEZjgpnEZBNTPHFy5IOr70B3JfVl62wD/rg1N+lbX22HdJcT2yztdOq1KjNcGODSPf7KPDEWPvMRMVTGXckEc9KCOLnjhpWi/NyOsFKA8QXuSlKubbrU+EmDhtr4QifptixUeS7/7fg6428dggRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903611; c=relaxed/simple;
-	bh=MYo2eVE04Uihxjd9OjHw5pgp2GZSp/xiYux4/Csipuo=;
+	s=arc-20240116; t=1728903613; c=relaxed/simple;
+	bh=Yxb1puFdmCzj+zqRyhar+QOClnGRONkrA3hd8BvcUvY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TGrM5muwU31ngAfddeJcLekWiFfCagPD44g9keKwfyMJ/ztHUM/QlmaaCcRbn+Vqhf7qznlGMf58T/4rZRYgwLiEQlF2a7CFztZADka0WwDEoQB4f8IZbrMlc/eHsbwaKyUxfVnXGjRYJ5g0hWlmZ7HuWbJLlFMgnmJat9NzHv0=
+	 MIME-Version; b=WDlC20raYNMFzuBTCXzPWJCe6LOY7euG1hPEBkdDvcetYO/YZtnfwGwGIMrFzSlgkmL8SGmdddNquAs3ye2VVk3SBXPSaNXJniGsi0dMmY+YXFIbh6Y8rVLVT8L/RQpAWPELzNswbbXeriy8cVmqb7leJ/M3r+sK5B2eLDPmCaM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 478EC1688;
-	Mon, 14 Oct 2024 04:00:38 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15DE8168F;
+	Mon, 14 Oct 2024 04:00:41 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF8813F51B;
-	Mon, 14 Oct 2024 04:00:05 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC2633F51B;
+	Mon, 14 Oct 2024 04:00:08 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
+To: Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
 	Ard Biesheuvel <ardb@kernel.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
 	David Hildenbrand <david@redhat.com>,
 	Greg Marsden <greg.marsden@oracle.com>,
 	Ivan Ivanov <ivan.ivanov@suse.com>,
@@ -49,13 +47,13 @@ To: Alexei Starovoitov <ast@kernel.org>,
 	Miroslav Benes <mbenes@suse.cz>,
 	Will Deacon <will@kernel.org>
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	bpf@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH v1 13/57] bpf: Remove PAGE_SIZE compile-time constant assumption
-Date: Mon, 14 Oct 2024 11:58:20 +0100
-Message-ID: <20241014105912.3207374-13-ryan.roberts@arm.com>
+	linux-mm@kvack.org,
+	linux-pm@vger.kernel.org
+Subject: [RFC PATCH v1 14/57] pm/hibernate: Remove PAGE_SIZE compile-time constant assumption
+Date: Mon, 14 Oct 2024 11:58:21 +0100
+Message-ID: <20241014105912.3207374-14-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -72,21 +70,16 @@ To prepare for supporting boot-time page size selection, refactor code
 to remove assumptions about PAGE_SIZE being compile-time constant. Code
 intended to be equivalent when compile-time page size is active.
 
-Refactor "struct bpf_ringbuf" so that consumer_pos, producer_pos,
-pending_pos and data are no longer embedded at (static) page offsets
-within the struct. This can't work for boot-time page size because the
-page size isn't known at compile-time. Instead, only define the meta
-data in the struct, along with pointers to those values. At "struct
-bpf_ringbuf" allocation time, the extra pages are allocated at the end
-and the pointers are initialized to point to the correct locations.
+"struct linked_page", "struct swap_map_page" and "struct swsusp_header"
+were all previously sized to be exactly PAGE_SIZE. Refactor those
+structures to remove the padding, then superimpose them on a page at
+runtime.
 
-Additionally, only expose the __PAGE_SIZE enum to BTF for compile-time
-page size builds. We don't know the page size at compile-time for
-boot-time builds. NOTE: This may need some extra thought; perhaps
-__PAGE_SIZE should be exposed as 0 in this case? And/or perhaps
-__PAGE_SIZE_MIN/__PAGE_SIZE_MAX should be exposed? And there would need
-to be a runtime mechanism for querying the page size (e.g.
-getpagesize()).
+"struct cmp_data" and "struct dec_data" previously contained embedded
+"unc" and "cmp" arrays, who's sizes were derived from PAGE_SIZE. We
+can't use flexible array approach here since there are 2 arrays in the
+structure, so convert to pointers and define an allocator and
+deallocator for each struct.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -95,206 +88,316 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- kernel/bpf/core.c    |  9 ++++++--
- kernel/bpf/ringbuf.c | 54 ++++++++++++++++++++++++--------------------
- 2 files changed, 37 insertions(+), 26 deletions(-)
+ kernel/power/power.h    |   2 +-
+ kernel/power/snapshot.c |   2 +-
+ kernel/power/swap.c     | 129 +++++++++++++++++++++++++++++++++-------
+ 3 files changed, 108 insertions(+), 25 deletions(-)
 
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 7ee62e38faf0e..485875aa78e63 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -89,10 +89,15 @@ void *bpf_internal_load_pointer_neg_helper(const struct sk_buff *skb, int k, uns
- 	return NULL;
+diff --git a/kernel/power/power.h b/kernel/power/power.h
+index de0e6b1077f23..74af2eb8d48a4 100644
+--- a/kernel/power/power.h
++++ b/kernel/power/power.h
+@@ -16,7 +16,7 @@ struct swsusp_info {
+ 	unsigned long		image_pages;
+ 	unsigned long		pages;
+ 	unsigned long		size;
+-} __aligned(PAGE_SIZE);
++} __aligned(PAGE_SIZE_MAX);
+ 
+ #ifdef CONFIG_HIBERNATION
+ /* kernel/power/snapshot.c */
+diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
+index 405eddbda4fc5..144e92f786e35 100644
+--- a/kernel/power/snapshot.c
++++ b/kernel/power/snapshot.c
+@@ -155,7 +155,7 @@ struct pbe *restore_pblist;
+ 
+ struct linked_page {
+ 	struct linked_page *next;
+-	char data[LINKED_PAGE_DATA_SIZE];
++	char data[];
+ } __packed;
+ 
+ /*
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index 82b884b67152f..ffd4c864acfa2 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -59,6 +59,7 @@ static bool clean_pages_on_decompress;
+  */
+ 
+ #define MAP_PAGE_ENTRIES	(PAGE_SIZE / sizeof(sector_t) - 1)
++#define NEXT_SWAP_INDEX		MAP_PAGE_ENTRIES
+ 
+ /*
+  * Number of free pages that are not high.
+@@ -78,8 +79,11 @@ static inline unsigned long reqd_free_pages(void)
  }
  
--/* tell bpf programs that include vmlinux.h kernel's PAGE_SIZE */
-+/*
-+ * tell bpf programs that include vmlinux.h kernel's PAGE_SIZE. We can only do
-+ * this for compile-time PAGE_SIZE builds.
-+ */
-+#if PAGE_SIZE_MIN == PAGE_SIZE_MAX
- enum page_size_enum {
- 	__PAGE_SIZE = PAGE_SIZE
+ struct swap_map_page {
+-	sector_t entries[MAP_PAGE_ENTRIES];
+-	sector_t next_swap;
++	/*
++	 * A PAGE_SIZE structure with (PAGE_SIZE / sizeof(sector_t)) entries.
++	 * The last entry, [NEXT_SWAP_INDEX], is `.next_swap`.
++	 */
++	sector_t entries[1];
  };
-+#endif
  
- struct bpf_prog *bpf_prog_alloc_no_stats(unsigned int size, gfp_t gfp_extra_flags)
+ struct swap_map_page_list {
+@@ -103,8 +107,6 @@ struct swap_map_handle {
+ };
+ 
+ struct swsusp_header {
+-	char reserved[PAGE_SIZE - 20 - sizeof(sector_t) - sizeof(int) -
+-	              sizeof(u32) - sizeof(u32)];
+ 	u32	hw_sig;
+ 	u32	crc32;
+ 	sector_t image;
+@@ -113,6 +115,7 @@ struct swsusp_header {
+ 	char	sig[10];
+ } __packed;
+ 
++static char *swsusp_header_pg;
+ static struct swsusp_header *swsusp_header;
+ 
+ /*
+@@ -315,7 +318,7 @@ static int mark_swapfiles(struct swap_map_handle *handle, unsigned int flags)
  {
-@@ -100,7 +105,7 @@ struct bpf_prog *bpf_prog_alloc_no_stats(unsigned int size, gfp_t gfp_extra_flag
- 	struct bpf_prog_aux *aux;
- 	struct bpf_prog *fp;
+ 	int error;
  
--	size = round_up(size, __PAGE_SIZE);
-+	size = round_up(size, PAGE_SIZE);
- 	fp = __vmalloc(size, gfp_flags);
- 	if (fp == NULL)
- 		return NULL;
-diff --git a/kernel/bpf/ringbuf.c b/kernel/bpf/ringbuf.c
-index e20b90c361316..8e4093ddbc638 100644
---- a/kernel/bpf/ringbuf.c
-+++ b/kernel/bpf/ringbuf.c
-@@ -14,9 +14,9 @@
- 
- #define RINGBUF_CREATE_FLAG_MASK (BPF_F_NUMA_NODE)
- 
--/* non-mmap()'able part of bpf_ringbuf (everything up to consumer page) */
-+/* non-mmap()'able part of bpf_ringbuf (everything defined in struct) */
- #define RINGBUF_PGOFF \
--	(offsetof(struct bpf_ringbuf, consumer_pos) >> PAGE_SHIFT)
-+	(PAGE_ALIGN(sizeof(struct bpf_ringbuf)) >> PAGE_SHIFT)
- /* consumer page and producer page */
- #define RINGBUF_POS_PAGES 2
- #define RINGBUF_NR_META_PAGES (RINGBUF_PGOFF + RINGBUF_POS_PAGES)
-@@ -69,10 +69,10 @@ struct bpf_ringbuf {
- 	 * validate each sample to ensure that they're correctly formatted, and
- 	 * fully contained within the ring buffer.
- 	 */
--	unsigned long consumer_pos __aligned(PAGE_SIZE);
--	unsigned long producer_pos __aligned(PAGE_SIZE);
--	unsigned long pending_pos;
--	char data[] __aligned(PAGE_SIZE);
-+	unsigned long *consumer_pos;
-+	unsigned long *producer_pos;
-+	unsigned long *pending_pos;
-+	char *data;
+-	hib_submit_io(REQ_OP_READ, swsusp_resume_block, swsusp_header, NULL);
++	hib_submit_io(REQ_OP_READ, swsusp_resume_block, swsusp_header_pg, NULL);
+ 	if (!memcmp("SWAP-SPACE",swsusp_header->sig, 10) ||
+ 	    !memcmp("SWAPSPACE2",swsusp_header->sig, 10)) {
+ 		memcpy(swsusp_header->orig_sig,swsusp_header->sig, 10);
+@@ -329,7 +332,7 @@ static int mark_swapfiles(struct swap_map_handle *handle, unsigned int flags)
+ 		if (flags & SF_CRC32_MODE)
+ 			swsusp_header->crc32 = handle->crc32;
+ 		error = hib_submit_io(REQ_OP_WRITE | REQ_SYNC,
+-				      swsusp_resume_block, swsusp_header, NULL);
++				      swsusp_resume_block, swsusp_header_pg, NULL);
+ 	} else {
+ 		pr_err("Swap header not found!\n");
+ 		error = -ENODEV;
+@@ -466,7 +469,7 @@ static int swap_write_page(struct swap_map_handle *handle, void *buf,
+ 		offset = alloc_swapdev_block(root_swap);
+ 		if (!offset)
+ 			return -ENOSPC;
+-		handle->cur->next_swap = offset;
++		handle->cur->entries[NEXT_SWAP_INDEX] = offset;
+ 		error = write_page(handle->cur, handle->cur_swap, hb);
+ 		if (error)
+ 			goto out;
+@@ -643,8 +646,8 @@ struct cmp_data {
+ 	wait_queue_head_t done;                   /* compression done */
+ 	size_t unc_len;                           /* uncompressed length */
+ 	size_t cmp_len;                           /* compressed length */
+-	unsigned char unc[UNC_SIZE];              /* uncompressed buffer */
+-	unsigned char cmp[CMP_SIZE];              /* compressed buffer */
++	unsigned char *unc;                       /* uncompressed buffer */
++	unsigned char *cmp;                       /* compressed buffer */
  };
  
- struct bpf_ringbuf_map {
-@@ -134,9 +134,15 @@ static struct bpf_ringbuf *bpf_ringbuf_area_alloc(size_t data_sz, int numa_node)
- 	rb = vmap(pages, nr_meta_pages + 2 * nr_data_pages,
- 		  VM_MAP | VM_USERMAP, PAGE_KERNEL);
- 	if (rb) {
-+		void *base = rb;
+ /* Indicates the image size after compression */
+@@ -683,6 +686,45 @@ static int compress_threadfn(void *data)
+ 	return 0;
+ }
+ 
++static void free_cmp_data(struct cmp_data *data, unsigned nr_threads)
++{
++	int i;
 +
- 		kmemleak_not_leak(pages);
- 		rb->pages = pages;
- 		rb->nr_pages = nr_pages;
-+		rb->consumer_pos = (unsigned long *)(base + PAGE_SIZE * RINGBUF_PGOFF);
-+		rb->producer_pos = (unsigned long *)(base + PAGE_SIZE * (RINGBUF_PGOFF + 1));
-+		rb->pending_pos = rb->producer_pos + 1;
-+		rb->data = base + PAGE_SIZE * nr_meta_pages;
- 		return rb;
++	if (!data)
++		return;
++
++	for (i = 0; i < nr_threads; i++) {
++		vfree(data[i].unc);
++		vfree(data[i].cmp);
++	}
++
++	vfree(data);
++}
++
++static struct cmp_data *alloc_cmp_data(unsigned nr_threads)
++{
++	struct cmp_data *data = NULL;
++	int i = -1;
++
++	data = vzalloc(array_size(nr_threads, sizeof(*data)));
++	if (!data)
++		goto fail;
++
++	for (i = 0; i < nr_threads; i++) {
++		data[i].unc = vzalloc(UNC_SIZE);
++		if (!data[i].unc)
++			goto fail;
++		data[i].cmp = vzalloc(CMP_SIZE);
++		if (!data[i].cmp)
++			goto fail;
++	}
++
++	return data;
++fail:
++	free_cmp_data(data, nr_threads);
++	return NULL;
++}
++
+ /**
+  * save_compressed_image - Save the suspend image data after compression.
+  * @handle: Swap map handle to use for saving the image.
+@@ -724,7 +766,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
+ 		goto out_clean;
  	}
  
-@@ -179,9 +185,9 @@ static struct bpf_ringbuf *bpf_ringbuf_alloc(size_t data_sz, int numa_node)
- 	init_irq_work(&rb->work, bpf_ringbuf_notify);
+-	data = vzalloc(array_size(nr_threads, sizeof(*data)));
++	data = alloc_cmp_data(nr_threads);
+ 	if (!data) {
+ 		pr_err("Failed to allocate %s data\n", hib_comp_algo);
+ 		ret = -ENOMEM;
+@@ -902,7 +944,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
+ 			if (data[thr].cc)
+ 				crypto_free_comp(data[thr].cc);
+ 		}
+-		vfree(data);
++		free_cmp_data(data, nr_threads);
+ 	}
+ 	if (page) free_page((unsigned long)page);
  
- 	rb->mask = data_sz - 1;
--	rb->consumer_pos = 0;
--	rb->producer_pos = 0;
--	rb->pending_pos = 0;
-+	*rb->consumer_pos = 0;
-+	*rb->producer_pos = 0;
-+	*rb->pending_pos = 0;
+@@ -1036,7 +1078,7 @@ static int get_swap_reader(struct swap_map_handle *handle,
+ 			release_swap_reader(handle);
+ 			return error;
+ 		}
+-		offset = tmp->map->next_swap;
++		offset = tmp->map->entries[NEXT_SWAP_INDEX];
+ 	}
+ 	handle->k = 0;
+ 	handle->cur = handle->maps->map;
+@@ -1150,8 +1192,8 @@ struct dec_data {
+ 	wait_queue_head_t done;                   /* decompression done */
+ 	size_t unc_len;                           /* uncompressed length */
+ 	size_t cmp_len;                           /* compressed length */
+-	unsigned char unc[UNC_SIZE];              /* uncompressed buffer */
+-	unsigned char cmp[CMP_SIZE];              /* compressed buffer */
++	unsigned char *unc;                       /* uncompressed buffer */
++	unsigned char *cmp;                       /* compressed buffer */
+ };
  
- 	return rb;
+ /*
+@@ -1189,6 +1231,45 @@ static int decompress_threadfn(void *data)
+ 	return 0;
  }
-@@ -300,8 +306,8 @@ static unsigned long ringbuf_avail_data_sz(struct bpf_ringbuf *rb)
+ 
++static void free_dec_data(struct dec_data *data, unsigned nr_threads)
++{
++	int i;
++
++	if (!data)
++		return;
++
++	for (i = 0; i < nr_threads; i++) {
++		vfree(data[i].unc);
++		vfree(data[i].cmp);
++	}
++
++	vfree(data);
++}
++
++static struct dec_data *alloc_dec_data(unsigned nr_threads)
++{
++	struct dec_data *data = NULL;
++	int i = -1;
++
++	data = vzalloc(array_size(nr_threads, sizeof(*data)));
++	if (!data)
++		goto fail;
++
++	for (i = 0; i < nr_threads; i++) {
++		data[i].unc = vzalloc(UNC_SIZE);
++		if (!data[i].unc)
++			goto fail;
++		data[i].cmp = vzalloc(CMP_SIZE);
++		if (!data[i].cmp)
++			goto fail;
++	}
++
++	return data;
++fail:
++	free_dec_data(data, nr_threads);
++	return NULL;
++}
++
+ /**
+  * load_compressed_image - Load compressed image data and decompress it.
+  * @handle: Swap map handle to use for loading data.
+@@ -1231,7 +1312,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
+ 		goto out_clean;
+ 	}
+ 
+-	data = vzalloc(array_size(nr_threads, sizeof(*data)));
++	data = alloc_dec_data(nr_threads);
+ 	if (!data) {
+ 		pr_err("Failed to allocate %s data\n", hib_comp_algo);
+ 		ret = -ENOMEM;
+@@ -1510,7 +1591,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
+ 			if (data[thr].cc)
+ 				crypto_free_comp(data[thr].cc);
+ 		}
+-		vfree(data);
++		free_dec_data(data, nr_threads);
+ 	}
+ 	vfree(page);
+ 
+@@ -1569,9 +1650,9 @@ int swsusp_check(bool exclusive)
+ 	hib_resume_bdev_file = bdev_file_open_by_dev(swsusp_resume_device,
+ 				BLK_OPEN_READ, holder, NULL);
+ 	if (!IS_ERR(hib_resume_bdev_file)) {
+-		clear_page(swsusp_header);
++		clear_page(swsusp_header_pg);
+ 		error = hib_submit_io(REQ_OP_READ, swsusp_resume_block,
+-					swsusp_header, NULL);
++					swsusp_header_pg, NULL);
+ 		if (error)
+ 			goto put;
+ 
+@@ -1581,7 +1662,7 @@ int swsusp_check(bool exclusive)
+ 			/* Reset swap signature now */
+ 			error = hib_submit_io(REQ_OP_WRITE | REQ_SYNC,
+ 						swsusp_resume_block,
+-						swsusp_header, NULL);
++						swsusp_header_pg, NULL);
+ 		} else {
+ 			error = -EINVAL;
+ 		}
+@@ -1631,12 +1712,12 @@ int swsusp_unmark(void)
+ 	int error;
+ 
+ 	hib_submit_io(REQ_OP_READ, swsusp_resume_block,
+-			swsusp_header, NULL);
++			swsusp_header_pg, NULL);
+ 	if (!memcmp(HIBERNATE_SIG,swsusp_header->sig, 10)) {
+ 		memcpy(swsusp_header->sig,swsusp_header->orig_sig, 10);
+ 		error = hib_submit_io(REQ_OP_WRITE | REQ_SYNC,
+ 					swsusp_resume_block,
+-					swsusp_header, NULL);
++					swsusp_header_pg, NULL);
+ 	} else {
+ 		pr_err("Cannot find swsusp signature!\n");
+ 		error = -ENODEV;
+@@ -1653,9 +1734,11 @@ int swsusp_unmark(void)
+ 
+ static int __init swsusp_header_init(void)
  {
- 	unsigned long cons_pos, prod_pos;
- 
--	cons_pos = smp_load_acquire(&rb->consumer_pos);
--	prod_pos = smp_load_acquire(&rb->producer_pos);
-+	cons_pos = smp_load_acquire(rb->consumer_pos);
-+	prod_pos = smp_load_acquire(rb->producer_pos);
- 	return prod_pos - cons_pos;
+-	swsusp_header = (struct swsusp_header*) __get_free_page(GFP_KERNEL);
+-	if (!swsusp_header)
++	swsusp_header_pg = (char *)__get_free_page(GFP_KERNEL);
++	if (!swsusp_header_pg)
+ 		panic("Could not allocate memory for swsusp_header\n");
++	swsusp_header = (struct swsusp_header *)(swsusp_header_pg +
++				PAGE_SIZE - sizeof(struct swsusp_header));
+ 	return 0;
  }
  
-@@ -418,7 +424,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
- 	if (len > ringbuf_total_data_sz(rb))
- 		return NULL;
- 
--	cons_pos = smp_load_acquire(&rb->consumer_pos);
-+	cons_pos = smp_load_acquire(rb->consumer_pos);
- 
- 	if (in_nmi()) {
- 		if (!spin_trylock_irqsave(&rb->spinlock, flags))
-@@ -427,8 +433,8 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
- 		spin_lock_irqsave(&rb->spinlock, flags);
- 	}
- 
--	pend_pos = rb->pending_pos;
--	prod_pos = rb->producer_pos;
-+	pend_pos = *rb->pending_pos;
-+	prod_pos = *rb->producer_pos;
- 	new_prod_pos = prod_pos + len;
- 
- 	while (pend_pos < prod_pos) {
-@@ -440,7 +446,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
- 		tmp_size = round_up(tmp_size + BPF_RINGBUF_HDR_SZ, 8);
- 		pend_pos += tmp_size;
- 	}
--	rb->pending_pos = pend_pos;
-+	*rb->pending_pos = pend_pos;
- 
- 	/* check for out of ringbuf space:
- 	 * - by ensuring producer position doesn't advance more than
-@@ -460,7 +466,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
- 	hdr->pg_off = pg_off;
- 
- 	/* pairs with consumer's smp_load_acquire() */
--	smp_store_release(&rb->producer_pos, new_prod_pos);
-+	smp_store_release(rb->producer_pos, new_prod_pos);
- 
- 	spin_unlock_irqrestore(&rb->spinlock, flags);
- 
-@@ -506,7 +512,7 @@ static void bpf_ringbuf_commit(void *sample, u64 flags, bool discard)
- 	 * new data availability
- 	 */
- 	rec_pos = (void *)hdr - (void *)rb->data;
--	cons_pos = smp_load_acquire(&rb->consumer_pos) & rb->mask;
-+	cons_pos = smp_load_acquire(rb->consumer_pos) & rb->mask;
- 
- 	if (flags & BPF_RB_FORCE_WAKEUP)
- 		irq_work_queue(&rb->work);
-@@ -580,9 +586,9 @@ BPF_CALL_2(bpf_ringbuf_query, struct bpf_map *, map, u64, flags)
- 	case BPF_RB_RING_SIZE:
- 		return ringbuf_total_data_sz(rb);
- 	case BPF_RB_CONS_POS:
--		return smp_load_acquire(&rb->consumer_pos);
-+		return smp_load_acquire(rb->consumer_pos);
- 	case BPF_RB_PROD_POS:
--		return smp_load_acquire(&rb->producer_pos);
-+		return smp_load_acquire(rb->producer_pos);
- 	default:
- 		return 0;
- 	}
-@@ -680,12 +686,12 @@ static int __bpf_user_ringbuf_peek(struct bpf_ringbuf *rb, void **sample, u32 *s
- 	u64 cons_pos, prod_pos;
- 
- 	/* Synchronizes with smp_store_release() in user-space producer. */
--	prod_pos = smp_load_acquire(&rb->producer_pos);
-+	prod_pos = smp_load_acquire(rb->producer_pos);
- 	if (prod_pos % 8)
- 		return -EINVAL;
- 
- 	/* Synchronizes with smp_store_release() in __bpf_user_ringbuf_sample_release() */
--	cons_pos = smp_load_acquire(&rb->consumer_pos);
-+	cons_pos = smp_load_acquire(rb->consumer_pos);
- 	if (cons_pos >= prod_pos)
- 		return -ENODATA;
- 
-@@ -715,7 +721,7 @@ static int __bpf_user_ringbuf_peek(struct bpf_ringbuf *rb, void **sample, u32 *s
- 		 * Update the consumer pos, and return -EAGAIN so the caller
- 		 * knows to skip this sample and try to read the next one.
- 		 */
--		smp_store_release(&rb->consumer_pos, cons_pos + total_len);
-+		smp_store_release(rb->consumer_pos, cons_pos + total_len);
- 		return -EAGAIN;
- 	}
- 
-@@ -737,9 +743,9 @@ static void __bpf_user_ringbuf_sample_release(struct bpf_ringbuf *rb, size_t siz
- 	 * prevents another task from writing to consumer_pos after it was read
- 	 * by this task with smp_load_acquire() in __bpf_user_ringbuf_peek().
- 	 */
--	consumer_pos = rb->consumer_pos;
-+	consumer_pos = *rb->consumer_pos;
- 	 /* Synchronizes with smp_load_acquire() in user-space producer. */
--	smp_store_release(&rb->consumer_pos, consumer_pos + rounded_size);
-+	smp_store_release(rb->consumer_pos, consumer_pos + rounded_size);
- }
- 
- BPF_CALL_4(bpf_user_ringbuf_drain, struct bpf_map *, map,
 -- 
 2.43.0
 
