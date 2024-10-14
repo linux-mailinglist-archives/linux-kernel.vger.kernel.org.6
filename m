@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-363311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC4C99C06C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED0799C070
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD661F21D7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D4D2820DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1DA146A9B;
-	Mon, 14 Oct 2024 06:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69141459FD;
+	Mon, 14 Oct 2024 06:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkHSeraW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGDiJthX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31C614601F;
-	Mon, 14 Oct 2024 06:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127FF17C91;
+	Mon, 14 Oct 2024 06:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728888764; cv=none; b=upJb4xYNUcBw8AiYPhjd2hSuRS8+K+ahx3f2x0Ef1xuOUgzWwg25XgIP7ozUtvlADLjbsiaDKLWaFhIDfAvVgPXuKxJhp7xW5W/MEtF5rwCCGB1dnVCerplAZwjQHxNMegbYWDh09nJXBbtgDAR55FMu/M1LcwY1yrJ0fgtw2hY=
+	t=1728888818; cv=none; b=UdoeySFuDsJ2i6shOPRaxSSgJHWjmaPUJ0RjgBBiFnWJSvIVWzz5mFUSXu/jzTTTUN2YqweHwET0jbDmUvvJCY+gKRCoQwpohUPiFXmkETGU/l8rBlvtPMlDKbxOLoU9TWJ3pH3PduN4Qbsq4OrcE+26ls3zmhrs5EYGuigSN+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728888764; c=relaxed/simple;
-	bh=qREW/euOH9DYT//QF1mzpX6twa9S//GNV4iRbrtjq2o=;
+	s=arc-20240116; t=1728888818; c=relaxed/simple;
+	bh=vhoTT8s1JGb/9tyN4DGENWhCfB9gXwEeAO5oMOAb7aM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AcfWQsaX+CKBLu2++ul5cBkwIqYWhD9AfsGk+78Fu5PWJhGHbQQZBUapuZr74LgWrO4ZMl5hJBWkUWNXOFuidBterkGNM5yBByTsCx2lALk8spdAPVDeH37VFqbhhBTsTlQy7cntBUtCH7P742P/BTQyAOdJl5pZuwF4y3YqpZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkHSeraW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA52EC4CEC3;
-	Mon, 14 Oct 2024 06:52:37 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LloHLn24D75dt+q+7UtoQBWR06791KqPBlo+UoXwF22Fy7NIeFNl4oSUx33/BlVYOfzMAxyJlIsnaMb7U8Fv1pRvE7vb6JYmOuWFcOGmzqhU5UchRsaKvsoabNmJs1HLsS0svz6G/vy2XVE29Qw0ERutbLhQpbMvhlekfREmFhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGDiJthX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A95EC4CEC3;
+	Mon, 14 Oct 2024 06:53:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728888763;
-	bh=qREW/euOH9DYT//QF1mzpX6twa9S//GNV4iRbrtjq2o=;
+	s=k20201202; t=1728888817;
+	bh=vhoTT8s1JGb/9tyN4DGENWhCfB9gXwEeAO5oMOAb7aM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tkHSeraWRx8nU0nkmgQbkFX3D7Acs8lHVPYotlcG0ktn3bm3Uoximql1ZnIAmGACE
-	 +O8IzsBu59BPhS/yDi2Eh412872vWe0byu5cdaSlQiru0P6meQexqfqC8sk7sbxFVx
-	 yS031ujpVuVp3pl2WwnmQLYJ2drNphmy9B3mYk90+LYEpoMu/vTWubfIRRBbWjAm/X
-	 eicikr9cyxRcHq35gbs3N2/+AsbdamSzLJY2DvCQ8KpG7Rhda/DeROBRzl6LpMzqkx
-	 0EijlgN/PiUFnPQkWiXlb6j+SR2N2ZfdiAG+fMCz6ejxRTuSaojVQH3xbDdzJ4BHPw
-	 6+bXA/27HF6AQ==
-Message-ID: <4102024c-d4a9-494d-b855-c5f770228788@kernel.org>
-Date: Mon, 14 Oct 2024 08:52:35 +0200
+	b=rGDiJthXelGmaTwGij9O2HN8zT8+ZII5jxPMQcX4j96XzkMorm3BM3AFpTfjsUbCw
+	 qyVcCGJ33cm0bjqR0M+qCCnKo7QKysWkkTwrvEueGkM93vUeGMS6pv1gq/D3BlS/kv
+	 P/hRVkr/rW9jzOclqpBMsMNuuAgsA89tV0RQrjblGYZziiGeR3vqJGRXQW+5bM9tKY
+	 1aFWhgqQE4OQM2Xn0mXAUw7lLsEnK4/q1vZGwqVfpQ57gFHEtDzVQXRVdBNDBVL3M3
+	 pgSeX1FhTCTZQVzEvDuk/D7GZhci1AhM1Y4N6izk7kHopaUZyQc4Mk+4GwuFlDTrVJ
+	 HYgaAU89gA54g==
+Message-ID: <e53369a9-c205-4297-b151-7a1e61d8459f@kernel.org>
+Date: Mon, 14 Oct 2024 08:53:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: arm-smmu: Document Qualcomm QCS615 apps
- smmu
-To: Qingqing Zhou <quic_qqzhou@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, robimarko@gmail.com, quic_gurus@quicinc.com,
- will@kernel.org, robin.murphy@arm.com, joro@8bytes.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20241011063112.19087-1-quic_qqzhou@quicinc.com>
- <20241011063112.19087-3-quic_qqzhou@quicinc.com>
- <af81be27-fdfa-4dec-a18c-56c7022e3c75@kernel.org>
- <2224b2fe-4e72-4371-9f0b-d5ee211c2210@quicinc.com>
+Subject: Re: [PATCH 1/4] dt-bindings: watchdog: aspeed: Add property for WDT
+ SW reset
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
+ "patrick@stwcx.xyz" <patrick@stwcx.xyz>,
+ "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+ "linux@roeck-us.net" <linux@roeck-us.net>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+ <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+ <andrew@codeconstruct.com.au>,
+ "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "Peter.Yin@quantatw.com" <Peter.Yin@quantatw.com>,
+ "Patrick_NC_Lin@wiwynn.com" <Patrick_NC_Lin@wiwynn.com>,
+ "Bonnie_Lo@wiwynn.com" <Bonnie_Lo@wiwynn.com>,
+ "DELPHINE_CHIU@wiwynn.com" <DELPHINE_CHIU@wiwynn.com>,
+ BMC-SW <BMC-SW@aspeedtech.com>, Aaron Lee <aaron_lee@aspeedtech.com>
+References: <20241007063408.2360874-1-chin-ting_kuo@aspeedtech.com>
+ <20241007063408.2360874-2-chin-ting_kuo@aspeedtech.com>
+ <6bb599b4-141c-43a5-8b9f-4cf6ca6c3384@kernel.org>
+ <TYZPR06MB5203B274C68C34FD478EA162B2442@TYZPR06MB5203.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,29 +119,99 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <2224b2fe-4e72-4371-9f0b-d5ee211c2210@quicinc.com>
+In-Reply-To: <TYZPR06MB5203B274C68C34FD478EA162B2442@TYZPR06MB5203.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/10/2024 05:09, Qingqing Zhou wrote:
->>> ---
->>>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->>> index 92d350b8e01a..9e62c2cdda08 100644
->>> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->>> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->>> @@ -36,6 +36,7 @@ properties:
->>>          items:
->>>            - enum:
->>>                - qcom,qcm2290-smmu-500
->>> +              - qcom,qcs615-smmu-500
+On 14/10/2024 04:07, Chin-Ting Kuo wrote:
+> Hi Krzysztof,
+> 
+> Thanks for the review.
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Monday, October 7, 2024 2:58 PM
+>> Subject: Re: [PATCH 1/4] dt-bindings: watchdog: aspeed: Add property for WDT
+>> SW reset
 >>
->> This is incomplete? No clocks? No power-domains?
-> This is APPS SMMU, no clocks and no power-domains are needed for DT.
+>> On 07/10/2024 08:34, Chin-Ting Kuo wrote:
+>>> Add "aspeed,restart-sw" property to distinguish normal WDT reset from
+>>> system restart triggered by SW consciously.
+>>>
+>>> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+>>> ---
+>>>  .../bindings/watchdog/aspeed,ast2400-wdt.yaml         | 11
+>> +++++++++++
+>>>  1 file changed, 11 insertions(+)
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/watchdog/aspeed,ast2400-wdt.yaml
+>>> b/Documentation/devicetree/bindings/watchdog/aspeed,ast2400-wdt.yaml
+>>> index be78a9865584..6cc3604c295a 100644
+>>> ---
+>>> a/Documentation/devicetree/bindings/watchdog/aspeed,ast2400-wdt.yaml
+>>> +++ b/Documentation/devicetree/bindings/watchdog/aspeed,ast2400-wdt.ya
+>>> +++ ml
+>>> @@ -95,6 +95,17 @@ properties:
+>>>        array with the first word defined using the AST2600_WDT_RESET1_*
+>> macros,
+>>>        and the second word defined using the AST2600_WDT_RESET2_*
+>> macros.
+>>>
+>>> +  aspeed,restart-sw:
+>>> +    $ref: /schemas/types.yaml#/definitions/flag
+>>> +    description: >
+>>
+>> Why >?
+>>
+> 
+> ">" will be removed in the next patch series and the description content will be
+> concatenated after the colon, ":".
+> 
+>>> +      Normally, ASPEED WDT reset may occur when system hangs or
+>> reboot
+>>> +      triggered by SW consciously. However, system doesn't know whether
+>> the
+>>> +      restart is triggered by SW consciously since the reset event flag is
+>>> +      the same as normal WDT timeout reset. With this property, SW
+>>> + can
+>>
+>> So DTS has this property and watchdog bites (timeout) but you will ignore it
+>> and claim that it was software choice?
+>>
+> 
+> No. Normally, when WDT is enabled, a counter is also be enabled. When the counter
+> is equal to an expected value, timeout event occurs. AST2600 hardware supports a SW
+> mode, when a magic number is filled into a specific register, WDT reset is triggered
+> immediately without controlling the counter and the counter is not counted.
+> Thus, WDT timeout doesn't occur.
 
-Then express it in the binding.
+How is this a no?
+
+> 
+>> This does not make much sense to me, at least based on this explanation
+>>
+>>> +      restart the system immediately and directly without wait for WDT
+>>> +      timeout occurs. The reset event flag is also different from the
+>> normal
+>>> +      WDT reset. This property is only supported since AST2600 platform.
+>>
+>> Supported as drivers? How is this related? Or you mean hardware? Then
+>> property should be restricted there.
+>>
+> 
+> It is a hardware supported function on AST2600. For platform compatibility, without
+> this property, all behaviors are the same as the previous generation platform, AST2500.
+> 
+> This property may be removed in the next patch series with referring to Rob suggestion
+
+s/may/will/
+
+> in the other reply. After checking with the major users, it is feasible to remove this
+> property and using SW reset by default when the restart operation is triggered by SW
+> deliberately on AST2600 platform.
+> 
+
 
 Best regards,
 Krzysztof
