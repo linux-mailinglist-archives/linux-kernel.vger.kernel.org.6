@@ -1,174 +1,180 @@
-Return-Path: <linux-kernel+bounces-363539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED8099C3A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:42:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BF599C392
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A27FF283470
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:42:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55A4DB2449C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E24155A30;
-	Mon, 14 Oct 2024 08:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE2C14BF87;
+	Mon, 14 Oct 2024 08:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="U8LGMsmr"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ineZg90O"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4C014F9D7;
-	Mon, 14 Oct 2024 08:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A10D1494A5;
+	Mon, 14 Oct 2024 08:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895342; cv=none; b=BTThrDw3tCde3+QU2yOKioa509I7pOGlY785OJ2OWNqo9Q/lS0oaEGPOGm6Fo0v2r/T8o5t6F4QGMJvZJwTuuD5vcM7SJrigsHCibK/EQU5umcX01AtwV55mUlAlF0vDr2ZhJdlXUKA5TL4axh2H4+PjRL53DNbXW4GRRt4C0vg=
+	t=1728895159; cv=none; b=VdXctjSAEPIBZTLqL23jdsIoCh6Eewu6KH3plagpvK2aizB9fqHdKxa4P77hrgr41pIPCweK0Cv1ycLJvt+Bv9nvdmk5kktybbyCMpYuir8D6dtK8aGrsnuSMtG33sxSjwQ4sLXfSbOzLL3Ta9mZYxUl+nRPnemfu9YR5p2u29c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895342; c=relaxed/simple;
-	bh=TwZlYjD13UqeLN+DlUIDduikX8JN0RpSVvnJbYRu89U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l54fj7kLklZ74azkeeWx4nSghwyUMPW95QukNWrrlq5CizRVLVJNDqAQOulR7puo1EIuEv0/JzSQ0ilckdBq9vtG/iImATXvqQAfvg23/eSimwgLMnNh8Nms35H1+vOZOuSL10Wh9TviOSthWvXJi0bE5Nn8qxXTpRXFMkcCc+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=U8LGMsmr; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E54nkx027926;
-	Mon, 14 Oct 2024 10:41:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	5esNFNUTDUNqlWySOqU6hZQiJIQS2bs1dT2iyHYhZiQ=; b=U8LGMsmrHBNIGI+A
-	yCEYAvn1pY2AklzSiwRyoXsWjgxAJfdtNwMAi6Mkc/NiEgXx0a98lxxDwOAjxdDi
-	tkiMGumOlzzh9LefvAgUeb15mDpgsUKxcyuW/sCEtiCevgydE2ZfzIQ+qb+uZIlQ
-	aZE+53QTmCiDFuVLXEC20q95gLgRa8o3gSuqfZikIixc3wzGEFA6CeSfuts0VjcM
-	3QXWC1ccOkBfSZDqcs/bv8fB1GdG8gxSk4a/G2Unuzy/Wm9mOZb0AFyppoXwmAjH
-	9N158NDDaBk5DUunG3Id0kCog9xxbalwc8MP8SQiUkuAUMGfVPpERyi6BPFJaYpj
-	gAkGSw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 427gewq6jn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 10:41:28 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 941EC40050;
-	Mon, 14 Oct 2024 10:39:59 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C17BF269E1E;
-	Mon, 14 Oct 2024 10:38:41 +0200 (CEST)
-Received: from [10.252.14.29] (10.252.14.29) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 14 Oct
- 2024 10:38:40 +0200
-Message-ID: <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
-Date: Mon, 14 Oct 2024 10:38:36 +0200
+	s=arc-20240116; t=1728895159; c=relaxed/simple;
+	bh=WKXyTfzMjSpiItvyXmW2STbUw7WLem8FH5AsaAwozOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Z9e88IbO7oaHkqiuPKIaN7nG45Ew8n8D/Eue3n022CZiiqU2ELxJ+X9x0eyNXcP4GpNfpXUp1gKamsMGg7c6F+y5lto7OR4GWol4Hs8x3+b94V9JUgA13iN+r2i885enO1Sr+cP8b8JAEUmOAc+hChXdN0qApnFdn1vJiMxHAts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ineZg90O; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D401A40005;
+	Mon, 14 Oct 2024 08:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728895149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=xwwJA2Ql/p3nTNZMaPBavk6qkt9+5ofr39jFUmX7VhI=;
+	b=ineZg90OqmePX7mn3689VWQggegHmILcoG+eV2jVywRM+7g+p6UNSiRSJyfBWUJ+1GCCfd
+	N8TWq03ukFGTAa172JFIlVMqkcq1QihyPs/3m0Uz02NYvcO4NR+YgDWs+WcwW6XzXG+Jfb
+	9m18RWEXQSm11lM86z9eHmkbUTFQx2bpbqQUKJ8qx4Hd5wwuXQYqHoUIkGU/d7yBbSIl7T
+	WDTiM5eAAEQSrX9WPlQsCFysoD4leiJU14/CJSHLyZBKjlIHa0gy+5iI9+6LaXItSW1K3T
+	48hQd5kerhAjSvuzslYODURuuS1EeGE+AMDvWxYDMlKK2VYRANGS/YoLXahROg==
+Date: Mon, 14 Oct 2024 10:39:06 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Maira Canal <mairacanal@riseup.net>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
+	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
+Subject: Re: [PATCH v12 09/15] drm/vkms: Remove useless drm_rotation_simplify
+Message-ID: <ZwzYqihbReaLFn-c@louis-chauvet-laptop>
+Mail-Followup-To: Maira Canal <mairacanal@riseup.net>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
+	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
- platforms
-To: Marek Vasut <marex@denx.de>, Olivia Mackall <olivia@selenic.com>,
-        Herbert
- Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Lionel Debieve <lionel.debieve@foss.st.com>
-CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
- <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
- <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+In-Reply-To: <608074ed-567c-4e6d-b1c2-9e0ecf1d102b@riseup.net>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-
-
-On 10/11/24 18:17, Marek Vasut wrote:
-> On 10/11/24 5:41 PM, Gatien Chevallier wrote:
+On 11/10/24 - 10:53, Maira Canal wrote:
+> Hi Louis,
 > 
-> [...]
+> On 10/11/24 06:36, Louis Chauvet wrote:
+> > 
+> > Hi all,
+> > 
+> > Until this point, this series has not received any major comments since
+> > v9. I will commit patches 1-9 next week if there are no further comments.
+> > 
 > 
->> @@ -551,6 +565,41 @@ static int stm32_rng_probe(struct platform_device 
->> *ofdev)
->>       priv->rng.read = stm32_rng_read;
->>       priv->rng.quality = 900;
->> +    if (!priv->data->nb_clock || priv->data->nb_clock > 2)
->> +        return -EINVAL;
->> +
->> +    priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * 
->> sizeof(*priv->clk_bulk),
->> +                      GFP_KERNEL);
->> +    if (!priv->clk_bulk)
->> +        return -ENOMEM;
-> 
-> Try this:
-> 
-> ret = devm_clk_bulk_get(dev, priv->data->nb_clock, priv->clk_bulk);
-> ...
-> // Swap the clock if they are not in the right order:
-> if (priv->data->nb_clock == 2 &&
->      strcmp(__clk_get_name(priv->clk_bulk[0].clk), "core"))
-> {
->   const char *id = priv->clk_bulk[1].id;
->   struct clk *clk = priv->clk_bulk[1].clk;
->   priv->clk_bulk[1].id = priv->clk_bulk[0].id;
->   priv->clk_bulk[1].clk = priv->clk_bulk[0].clk;
->   priv->clk_bulk[0].id = id;
->   priv->clk_bulk[0].clk = clk;
-> }
-> 
+> Although we are maintainers of VKMS, it isn't recommended that we push
+> our own changes without even the Ack of another person. Please, read the
+> "drm-misc Committer Guidelines" [1].
 
-Hi Marek,
+Hi Ma�ra, Maxime,
 
-This won't work as the name returned by this API is clk->core->name.
-AFAICT, it doesn't correspond to the names present in the device tree
-under the "clock-names" property.
-Any other idea or are you fine with what's below?
+I apologize for this rushed commit request. I sent the initial email with 
+a delay before the commit action because I was not sure about the 
+procedure and wanted to give others a chance to raise any concerns. 
+Unfortunately, I overlooked the need to collect an Ack/Review for each 
+patch, even when there hadn't been any responses for several months. I'm 
+sorry for this oversight.
 
-Thanks,
-Gatien
+> I can ack patches 05/15, 07/15, and 09/15, but it would be more
+> beneficial for the community if you ask for an ack (from me or from the
+> DRM maintainers, which are always around), instead of saying that you
+> are going to commit the patches without any review.
 
->> +    if (priv->data->nb_clock == 2) {
->> +        struct clk *clk;
->> +        struct clk *bus_clk;
->> +
->> +        clk = devm_clk_get(&ofdev->dev, "core");
->> +        if (IS_ERR(clk))
->> +            return PTR_ERR(clk);
->> +
->> +        bus_clk = devm_clk_get(&ofdev->dev, "bus");
->> +        if (IS_ERR(clk))
->> +            return PTR_ERR(bus_clk);
->> +
->> +        priv->clk_bulk[0].clk = clk;
->> +        priv->clk_bulk[0].id = "core";
->> +        priv->clk_bulk[1].clk = bus_clk;
->> +        priv->clk_bulk[1].id = "bus";
->> +    } else {
->> +        struct clk *clk;
->> +
->> +        clk = devm_clk_get(&ofdev->dev, NULL);
->> +        if (IS_ERR(clk))
->> +            return PTR_ERR(clk);
->> +
->> +        priv->clk_bulk[0].clk = clk;
->> +        priv->clk_bulk[0].id = "core";
->> +    }
+I will be happy to ask for acknowledgments if needed, but as you mentioned 
+multiple times: nobody is paid to maintain VKMS. Since you did not comment 
+these series since July, when you told me you would review my patches, I 
+assumed it was either okay or you no longer had the time to maintain 
+(which I completely understand).
+
+So, I hereby formally request reviews/ACKs for the following series:
+
+[this series]:https://lore.kernel.org/all/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com/
+[2]:https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com/
+[3]:https://lore.kernel.org/all/20240516-writeback_line_by_line-v1-0-7b2e3bf9f1c9@bootlin.com/
+
+(I have to send a v2 for [3] because of rebase conflict, but nothing else 
+changed)
+
+Thanks a lot,
+Louis Chauvet
+ 
+> [1] https://drm.pages.freedesktop.org/maintainer-tools/committer/committer-drm-misc.html
 > 
+> Best Regards,
+> - Ma�ra
+> 
+> > For patches 10-15, I am currently waiting for feedback from Maxime to
+> > send the next iteration with a fix for kunit tests.
+> > 
+> > Thanks,
+> > Louis Chauvet
+> > 
+> > On 07/10/24 - 18:10, Louis Chauvet wrote:
+> > > As all the rotation are now supported by VKMS, this simplification does
+> > > not make sense anymore, so remove it.
+> > > 
+> > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > ---
+> > >   drivers/gpu/drm/vkms/vkms_plane.c | 7 +------
+> > >   1 file changed, 1 insertion(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> > > index 8875bed76410..5a028ee96c91 100644
+> > > --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> > > +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> > > @@ -115,12 +115,7 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
+> > >   	frame_info->fb = fb;
+> > >   	memcpy(&frame_info->map, &shadow_plane_state->data, sizeof(frame_info->map));
+> > >   	drm_framebuffer_get(frame_info->fb);
+> > > -	frame_info->rotation = drm_rotation_simplify(new_state->rotation, DRM_MODE_ROTATE_0 |
+> > > -									  DRM_MODE_ROTATE_90 |
+> > > -									  DRM_MODE_ROTATE_270 |
+> > > -									  DRM_MODE_REFLECT_X |
+> > > -									  DRM_MODE_REFLECT_Y);
+> > > -
+> > > +	frame_info->rotation = new_state->rotation;
+> > >   	vkms_plane_state->pixel_read_line = get_pixel_read_line_function(fmt);
+> > >   }
+> > > 
+> > > -- 
+> > > 2.46.2
+> > > 
 
