@@ -1,352 +1,286 @@
-Return-Path: <linux-kernel+bounces-363757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F1C99C6A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:02:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D8299C6A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F376B23704
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:01:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB86A1C22EE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A0915B546;
-	Mon, 14 Oct 2024 10:01:34 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC0A158D6A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728900093; cv=none; b=FJvIHgd/MlEzgHEGzV73Eg4nFb2MCUTj5hMhOW33uyLBYar2Bvl/bRk1RO1NJqej7IwQbxey4mvXytXyalLeRph+FGNBg74Pc+i++qCClqtflZ13JuD9Ai0R321vs7TrQDwGMTR3zOhFKitzNhXAVqvIukVchwdRN077kyJBcao=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728900093; c=relaxed/simple;
-	bh=dGjO6+1rcZ8YWLBxPbsv/a7hUKVLfKzscDihFtEb2ic=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KHRPC76kibAqYSHKA2JObjXLNROFxsZqiuUrwM48IBx2/9jx4UeB/7uBnRYDfQicK7oK+v1+iyUnvxE+6tsLydI6CUrPG1DrY0NAPTGWlMv1hUskcZoLWbEE7p6N3x5rboVr4mRwf5J/Pei/k9rKIYaO1EVfOeLSWIX0Xu1ZFNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxUej46wxnVq0aAA--.38433S3;
-	Mon, 14 Oct 2024 18:01:28 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMDxcNb16wxnHBspAA--.3050S3;
-	Mon, 14 Oct 2024 18:01:27 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: Fix cpu hotplug issue
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- lixianglai@loongson.cn, WANG Xuerui <kernel@xen0n.name>
-References: <20241014063328.1216497-1-maobibo@loongson.cn>
- <CAAhV-H5_SUnrf0PwOUFOA0EumKvGOmgqUq=Cx61Ub5AW=MPo=A@mail.gmail.com>
- <24ea8b02-8c94-d561-cef0-01044b610a1e@loongson.cn>
- <CAAhV-H7NqzO-FLmYoUySp5KYKJM+aN_s7g4i+qBixx5jwnbW=Q@mail.gmail.com>
- <5c1e0199-24ce-50d2-1cbc-5c9949a17563@loongson.cn>
- <CAAhV-H6JKNBgsLdAsKHp3rttpY+0KGabac2m87-PsT4FH_H=Ew@mail.gmail.com>
- <035be759-3adc-d224-43f8-1888822f6492@loongson.cn>
- <CAAhV-H4esrPeWAM1ExA2xAsUQ_Aitncro-i31e4wJO5OOVcwEQ@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <0cccad0d-8632-5e3f-ba07-3e96ad5d8263@loongson.cn>
-Date: Mon, 14 Oct 2024 18:01:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8642158A33;
+	Mon, 14 Oct 2024 10:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="V5uarZlt"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2066.outbound.protection.outlook.com [40.107.22.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB3B15886C;
+	Mon, 14 Oct 2024 10:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728900090; cv=fail; b=ml38JNUCptG9QUrMNh8kJ6PmjUyiQwIMLbUnuWlpVuVvzGtPXL7Q6s1AOeMTJCt2TG4ndBallmKxL9gSxTIogeq2XG2C/K4u/Ayt88tMkhHjG12Lo2UZ3AMTsFS5ue1sgMYy2KCNnDcsL4YoP+Smbw9PCSQD64Y3aBtwVuNnuRc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728900090; c=relaxed/simple;
+	bh=rjExYRn6yCnhup12BVvD5r31q3LxtQ46MBKTX+vE8qQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=c0v450eAnpibYwyr84m2iXISJfVcXM+FfC6vmSA1w80hP17ErIQRMtvyK6R1Y36MPoB1foub4GLFbjL60er46pvL4tJNuDZuDwishAbkbJdUoeHLwKfYEs96k/hXvsehetQKhk02ZbijDHoIJ7MhqtNwESr9gfZzO3MbIpElOW8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=V5uarZlt; arc=fail smtp.client-ip=40.107.22.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sWUA7XX89e9KFRDqv3uqdZ0Kxp1AyhYHY4ptLQTWp1WX6BjLkjEUIVYdfmE2KHw21gHJx5C/HqJLkWr9bqMiDUzfsSiMxcUDhCTjtqd9g9ydCWy90sEg/MxfavqS7Xc6Qbpyi87cgv/deWtXz5/DHoZHg00ZbS8o9K0A2lGUNl9HApNfbbn2E1qlNiTyLGffDN5P99kjY3xv9dsHZWHu5MXJqPKHSs+JU4yNreOXfJAIeHdPe2dOqjplTh3SOfMciLaWxCFL8ieAWPqd9o9lt+DlERW0qDpPTy5CsSBctERbNMrltOyEAC1+8MR7JrhdjuGu8ANAyav6kcx/EvxXHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5GiyX47Jecs7gxaIbccktqFZ7qKULFgehH0FnnszTM8=;
+ b=rwRVyfqWcW3MNd7HRqO9wLZ11GfyQsX7/YAZUg2F7Dq6fRiQaZ2W46Q7JqfooI0/HUTxBebfrJrgq8ReExtJr+SSDY04VRt50xKV2kAs7Z8Ms4RqYiKWhJMuwU1iJHPmzONiv7qCykT4KzJXSp67lwggeIu7voc7KUgvMLWBA1VdkYk5XpHXFO/jpVO4p1pv+b/NsnFsq7k1+P+iZSNVpyxNsC0NcM0qNWaysClUS7NfmzdT/I4c52gEpKwgYzAZdh60sXLJ8LX7ZmtBZXMr1Fd6BnWimdKisq3zKok45c7YUZDk3Vl+WiIvSsdohs7X3AQnYfe+XhQwSVOZj2iCsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5GiyX47Jecs7gxaIbccktqFZ7qKULFgehH0FnnszTM8=;
+ b=V5uarZlt5zcnhhAT16GlhwpnTIVzUv5+hjs1xr5O9ROVQ1ekhSZOi6Kg9HG41EzchO0WLxmJW7olnH30Uf+AJy4fbOInxUXbO37LmrWB4/zXTWr7XicvImifXnuwcMJFMjFqca4/wACXp6DDpYMlfD51w7SH3lX2VCDf0VE+Dr6v2Bdr+uADAA8yoJ3T93ozNit/PEMIY8TRQBRSU6GY00Iw/iiZVj9Qq1OjdcUt37AhVMYXu4HT32c5cYOFa4llfhmqtQv57z1O1zJaMuvEnmv/X6Jg0SxjH4863w4dN0BWSmnYDFvA68VQNS/L26BRqvUv6wZa0sHSlimBYGvCCw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AM9PR04MB8147.eurprd04.prod.outlook.com (2603:10a6:20b:3e0::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Mon, 14 Oct
+ 2024 10:01:25 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
+ 10:01:25 +0000
+Message-ID: <20dfe41f-7aca-4321-a5e9-5c6b8513b400@nxp.com>
+Date: Mon, 14 Oct 2024 18:01:49 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS
+ to HDMI converter
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de,
+ nfraprado@collabora.com, o.rempel@pengutronix.de, y.moog@phytec.de,
+ marex@denx.de, isaac.scott@ideasonboard.com, biju.das.jz@bp.renesas.com
+References: <20241012073543.1388069-1-victor.liu@nxp.com>
+ <20241012073543.1388069-6-victor.liu@nxp.com>
+ <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
+ <07b47f70-5dab-4813-97fa-388a0c0f42e9@nxp.com>
+ <dvcdy32dig3w3r3a7eib576zaumsoxw4xb5iw6u6b2rds3zaov@lvdevbyl6skf>
+ <90e0c4ac-1636-4936-ba40-2f7693bc6b32@nxp.com>
+ <lcogrc6uztckwwwsuag5tlk5otidmo7rudsl7zshe3wpfot3wc@ziljns5phhfe>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <lcogrc6uztckwwwsuag5tlk5otidmo7rudsl7zshe3wpfot3wc@ziljns5phhfe>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0017.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::19) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H4esrPeWAM1ExA2xAsUQ_Aitncro-i31e4wJO5OOVcwEQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxcNb16wxnHBspAA--.3050S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxtryrCr45Jr48Cw4DJrW7KFX_yoWDGw4xpr
-	yUCFZ8Cr45XFyUG340q3y8GryUtr1DGrsrX3W7KFy5CFn8tr1UJr4UXry5uFy8Kw48Jr10
-	qF1rKa1aqF48J3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Sb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
-	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
-	67AKxVW8ZVWrXwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
-	8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWU
-	CwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
-	1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
-	daVFxhVjvjDU0xZFpf9x07jnUUUUUUUU=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM9PR04MB8147:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4450f7d-776b-4876-3835-08dcec3729e9
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?NW1MUFM0WHNodE9GRWtOOEE4WmN5aEFnWGh2V0EzbVp1aEdEUGdEcEZZSnVC?=
+ =?utf-8?B?SER1NWltZ0pyTmdVWDR3K1lRaVM2NjREclA1Vi84RTZZd0UyRTB0Z0d0V25C?=
+ =?utf-8?B?MkVwcmdhTmhmTDZlc1BsdmoyMldmTWpJOWdsR05RZlBOSVRDcVhhOEp3N24v?=
+ =?utf-8?B?ekRHN2tKMW9TaHpqKzFlWnNSdGRBbEJUUW43WE42OStEc3lLSnhwWm5OeTRa?=
+ =?utf-8?B?QVFWeWtzaXlrM3N4K0JaV002TFBqWE1oMW9FaW1BY1BiNzJ2bzZqVEhOTVZD?=
+ =?utf-8?B?TGxIOTdidldsNEI5OUxST3R2bUZwRlBld0twOEtFTUl0ZktwZVBaZnRTc2F1?=
+ =?utf-8?B?dWcrbHpSa3UwdnRZRWYvTmhIcDZpdCtUTlNYOUllRmlFV2VjQTV2WjVZdWNh?=
+ =?utf-8?B?QnJ0QlB5RHdneHVoN0xQdW4yUWFjUW9TY3VTdzVNVkZXUlFCcXF4SkhBVXJo?=
+ =?utf-8?B?cmg3WGZEMU54bUw0M3pZdnI5dGNmbS9VRmlJRXRZZFJuMjBMRE9VWHE1ZkNa?=
+ =?utf-8?B?UUxHMDZmU3BVSFd3Z0VHRVlMMlRJeGllOGVtLzZJd0JHWUNuQlZJc3NjNEVy?=
+ =?utf-8?B?N1JXR1lmclJTNGJRR1diN0ljOGNKYzRjZ2pCOHhjdnZxQWFnZFdCOGdRMm93?=
+ =?utf-8?B?cFZjWnU1VlUrQitiSDBJV0ticTh6bVRaTU5CL2tITmtSVHhmaStTSi85MHQv?=
+ =?utf-8?B?TTRHZ1U1U0JzUnFPbnRiOU5HOUd5ZWQ0RGR0Rk1IcEk2ZWhyMEJjUTRWUE93?=
+ =?utf-8?B?bnp0VllsRE9mbmNIaFRmbWVINnZsNm9iNXptYlpVWjd0MmV6SEprSlhJYzhS?=
+ =?utf-8?B?UkZvbVpweTBIMFVPakhPcmJ2UkZEV1N4bXhmZlZwMWxtRW1lZExFWTNsSVV6?=
+ =?utf-8?B?OFo1WkRrSk1tNXo2WEh2VThxekF0allCRHhWRFY0L2JUQ1FnUFA1SFR0Wi9u?=
+ =?utf-8?B?c295M0dqNS9KU3pDOFN2d2tVWFVqQWx5WlhBUHVzRzBiRElsc0pYWmJlV3do?=
+ =?utf-8?B?MzJMRERxZVl0QTVlejE3Z0dkbEU2R01SOXJmY1hOTTF1ODcxRXJPR0daalVh?=
+ =?utf-8?B?SElXZEhzQTQ4U2p0UEFkdEFCbWVmZnErK2RQL0htT2FUaXBJMHMyWml1MFg3?=
+ =?utf-8?B?M0Q0U3Y1WW9VZmpyTnhWalpOSVVEam9pNHVKWVNINXZGRWg4TXhoYjVqR1dm?=
+ =?utf-8?B?eGZqQW1HM0F3Y2JLNzYrWVZOOTNxZEdwd0NGbGFNa3JPQXUxVUZhWjZUdEsr?=
+ =?utf-8?B?MjNRcDU3S2NWcDNBNkUvZ29ERHg5bDk2bWJQOTh0L2lFUkxld3Z3YlIrNkZh?=
+ =?utf-8?B?VjJiRWhGeTZXQmJ6MmJvanZPNEJxY284ME1HVkE5NUYvb1U1cEQxTDBWN29D?=
+ =?utf-8?B?aGdsTnltK0YxWDRlK3pBK000alQvWXdncHVPV0xGamxhS0VNbjF5anA5eDFn?=
+ =?utf-8?B?Zkp4WWw3MkZDQ2xmZzRJQ0RBTkxvZ09mcGNRdDNmeTZFUTRHTTFOdWwyYWlK?=
+ =?utf-8?B?NEVndmg5UXdCQ21RaGl3eUVHcUEwQXU2K3VyRC82YzdGSU9TL09hdFVYN2Y3?=
+ =?utf-8?B?cVY3ZGM0NjJGaGt6d0puM0Q5dU85d002VW5ranRxano2U3hWN3ZyaEtYZFh2?=
+ =?utf-8?B?aEg4K05qQXlEQkFLWlhUMm13eXczcElzNklZTmhKTDdSb00xVTl6UnFrWHBE?=
+ =?utf-8?B?L1p5NWE1SkdBWm03REQwY09QK2piS3J0UHFhTHIxYkhWWW54ZWdNNjFBPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?RG9aaDRSQXJOOU4vN295NkN1N29NN1RlZFl4OFJWcVprcGEra2h1OVFOdFpM?=
+ =?utf-8?B?MnZCbTlRS0dwdXAxRlhKU2l4TlF4ZGkrNmNOVWp1ZVhMMncrMGVmU0o1bW4r?=
+ =?utf-8?B?OW5lcDhvVXBRMSs5S3VoamlGNURGTlY0dVQ0UHRia2JPZVZQMFJiVS9ianRa?=
+ =?utf-8?B?cGs3d3IxQmpwVkRnb0kyODJXKzN5alNQdHhJTUo3UWhGY3luckFPV0p3bUwx?=
+ =?utf-8?B?bnVnOU15RDkrZkNKRVhwaG5oTkE4MktNM1QvVHhIcExXejR1NGNyeEI3aFhW?=
+ =?utf-8?B?QWJpRkFNSUNIb0VDMnRsVGFtRnM4am8yMlRXVnZHSzVsQXV4aTRqYktpZGU4?=
+ =?utf-8?B?Rmd5M0dHWUFLQWlXQTBEK1Q4THZEWUJHOUZiVnQ0MTRyUWpYRmNvaXozVnlH?=
+ =?utf-8?B?dDNlZ1VMZEU2TkFYSTk2SG9OQVRHc3hyWEYyMWF0SnMrMDBWUkdUV0RxcVBr?=
+ =?utf-8?B?SmFMYWtiNWYyQXA1M1oyYnBEZEZ3ekFIUUgzdXNNUVFGUEdkYzFZeXZMV3Mv?=
+ =?utf-8?B?VTErbVMxM3BXc2s1U2F2SUlzSGFTdWc5elZaSXJOYmpCREJrOU94SnNXcTAx?=
+ =?utf-8?B?Z0g2YnFOTHBZdk9BdXovZVovcjdvRFNjcVhseCtHRGZpREpobmREWll3TkVl?=
+ =?utf-8?B?ZlovVVpuSGxYWjJRT3VQZk82MzZoL0FnYlU4Yk1EeGNpWmY5U2hCL25PY3B5?=
+ =?utf-8?B?YXJldmtCQUs0dkJMTUIwRWM3ckRxWkNiS1c0UVo2L3hray9qSFRRMnVFYUpW?=
+ =?utf-8?B?VlFBNFBFbmozbEtSaEQ2WVhYNmRNV2dWZ21Hc0hINGVZK05SOWlFNkJKZ05u?=
+ =?utf-8?B?L202alhjVVFMWXRSTEd1Wk1vait4R1NrbENjZVcwSkxFVEZDRGdVbDJyRnNl?=
+ =?utf-8?B?a3I5MzMvQ0tzM3M2WjR1TFBZdWxpUXF4bEl1MStPZmlGR1duZ1ZEV1FvMlAr?=
+ =?utf-8?B?VjZIV1NELzkrVkh1am1aV01DMnZqOFZmUm5mMVlxU2FkRTAzWkdpNkVlWmVa?=
+ =?utf-8?B?clZIZjlHalEyWlBaQ1l2OGkveHFORkpqaWFBbytFaUwyWm9vb1RxdU8reUZ6?=
+ =?utf-8?B?ZnFHUzBCclVzS3RvVE1OSUdDYUhkMzhsV0xCcFRFS2FzeHg4OXFqRHNvNWw4?=
+ =?utf-8?B?ZzNORGVvTmtRcXZ1QkR4Nmt3ZmZrcjlhKzZ0bWMvblU1SHVGbkZoSDJWaUVa?=
+ =?utf-8?B?R0JwS3liN2RQazVvVkhyanA0bHI5VGtSV0p1NEl0U255MUdEUHhSd0JybG9x?=
+ =?utf-8?B?ZjlYV1hOTUdKcWlqY05jeExjSFNTQjhIQWpDMXdMSE1aTVFZQkRkT1BYMyts?=
+ =?utf-8?B?Z3B1aStacFBpemdybHZSZlZwcEpiR0NsbHFUVEx2SkJtWmlXMXFRcWtMcmVj?=
+ =?utf-8?B?U2haVmFrckxYenB5Y2NKUCtxbDk3SmhSRk01M3FnVUFreTBLc3FSL052MXJt?=
+ =?utf-8?B?ek80M0o4dmRvdHZTZ0ljZlRaOC81cWhvSTU1cHVETk9mZWh1c2J2aVpOY3li?=
+ =?utf-8?B?TVBTSU9RcS9RN3NBaFVQMWRHWU1ob2NFcFFJaHdlR0pNSUlhLzQwcWEzbVlJ?=
+ =?utf-8?B?bnpqQ1FXSGVNSHB3Q3YyV3BJV3I5ZEVBSy95V01CVGM5a0xNbk5KQUxZY0pM?=
+ =?utf-8?B?ZFE5R05KNzBydEZjMXBTbHZtUktSKzFRUk1BamNqUTBIMnRMcFJiYUlFWUVp?=
+ =?utf-8?B?RDJNTFE1OTZvQmRDQUlqRXpzV3JqVllMNlp5UkNRVW4vbVg1TEtLc3Y4NGkv?=
+ =?utf-8?B?TUY5OHIyeWR5MDRDRjZpQmxsRjk1djBiZk1WY1hTLzhCMW10R1owbFhGV2Iw?=
+ =?utf-8?B?dU1xdGtJeUU2QnNZR2xNTFpJb2tmdEF5SmxqQjRmYTRQNW5HelQ4VWYrU0Fs?=
+ =?utf-8?B?Z1Z5Z2szZkFzUU1xWW1WWk5hL1RRdUNXYUVKdUdESGJSNFRZN2NnRkRnZUo4?=
+ =?utf-8?B?cDZpSGkvMGc3dEp0eWF6VUxqZEhVVkhGd3JjS3Y5Y1h6NkttU1FpdjQ0RUFn?=
+ =?utf-8?B?K3N2S01vOXYxLzg4R2VRNlV4OXBJb0pmUWhsTkc5UUs3Z2h6QXlyaGpVeGk5?=
+ =?utf-8?B?b2UyL2FRV1RwU1BTbmtreFk0bXhNaC91UUlxakNQZmZmUXVpNnlwZ2s4ZkI3?=
+ =?utf-8?Q?FqHjtv4PW8ujSov4G9j983QFD?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4450f7d-776b-4876-3835-08dcec3729e9
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 10:01:25.1893
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U7FmsZ0i4DhmiZxrckASH+1bdsAiGD+tskp7v3SqTEa4fNcN5T1C55dbRjNRbNa5EMpK7VFJJElKuzRri2blOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8147
 
+On 10/14/2024, Dmitry Baryshkov wrote:
 
+[...]
 
-On 2024/10/14 下午5:29, Huacai Chen wrote:
-> On Mon, Oct 14, 2024 at 5:12 PM maobibo <maobibo@loongson.cn> wrote:
->>
->>
->>
->> On 2024/10/14 下午4:23, Huacai Chen wrote:
->>> On Mon, Oct 14, 2024 at 4:01 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>> My suggestion would be to add a single root-level property which
+>>>>> specifies which port provides even pixel data.
 >>>>
->>>> Huacai,
->>>>
->>>> On 2024/10/14 下午3:39, Huacai Chen wrote:
->>>>> On Mon, Oct 14, 2024 at 3:21 PM maobibo <maobibo@loongson.cn> wrote:
->>>>>>
->>>>>> Huacai,
->>>>>>
->>>>>> On 2024/10/14 下午3:05, Huacai Chen wrote:
->>>>>>> Hi, Bibo,
->>>>>>>
->>>>>>> I'm a little confused, so please correct me if I'm wrong.
->>>>>>>
->>>>>>> On Mon, Oct 14, 2024 at 2:33 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>>>>>>>
->>>>>>>> On LoongArch system, there are two places to set cpu numa node. One
->>>>>>>> is in arch specified function smp_prepare_boot_cpu(), the other is
->>>>>>>> in generic function early_numa_node_init(). The latter will overwrite
->>>>>>>> the numa node information.
->>>>>>>>
->>>>>>>> However for hot-added cpu, cpu_logical_map() fails to its physical
->>>>>>>> cpuid at beginning since it is not enabled in ACPI MADT table. So
->>>>>>>> function early_cpu_to_node() also fails to get its numa node for
->>>>>>>> hot-added cpu, and generic function early_numa_node_init() will
->>>>>>>> overwrite incorrect numa node.
->>>>>>> For hot-added cpus, we will call acpi_map_cpu() -->
->>>>>>> acpi_map_cpu2node() --> set_cpuid_to_node(), and set_cpuid_to_node()
->>>>>>> operates on __cpuid_to_node[]. So I think early_cpu_to_node() should
->>>>>>> be correct?
->>>>>>
->>>>>> __cpuid_to_node[] is correct which is physical cpuid to numa node,
->>>>>> however cpu_logical_map(cpu) is not set. It fails to get physical cpuid
->>>>>> from logic cpu.
->>>>>>
->>>>>> int early_cpu_to_node(int cpu)
->>>>>> {
->>>>>>             int physid = cpu_logical_map(cpu);
->>>>>>
->>>>>> <<<<<<<<<<< Here physid is -1.
->>>>> early_cpu_to_node() is not supposed to be called after boot, and if it
->>>> Which calls early_cpu_to_node() after boot?
->>>>
->>>>> is really needed, I think a better solution is:
->>>>>
->>>>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
->>>>> index f1a74b80f22c..998cf45fd3b7 100644
->>>>> --- a/arch/loongarch/kernel/acpi.c
->>>>> +++ b/arch/loongarch/kernel/acpi.c
->>>>> @@ -311,6 +311,8 @@ static int __ref acpi_map_cpu2node(acpi_handle
->>>>> handle, int cpu, int physid)
->>>>>
->>>>>            nid = acpi_get_node(handle);
->>>>>            if (nid != NUMA_NO_NODE) {
->>>>> +               __cpu_number_map[physid] = cpu;
->>>>> +               __cpu_logical_map[cpu] = physid;
->>>> This does not solve the problem. The above has been done in function
->>>> cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
->>>>
->>>> static int set_processor_mask(u32 id, u32 flags)
->>>> {
->>>> ...
->>>>            if (flags & ACPI_MADT_ENABLED) {
->>>>                    num_processors++;
->>>>                    set_cpu_present(cpu, true);
->>>>                    __cpu_number_map[cpuid] = cpu;
->>>>                    __cpu_logical_map[cpu] = cpuid;
->>>>            }
->>>>
->>>> The problem is that
->>>>            smp_prepare_boot_cpu(); /* arch-specific boot-cpu hooks */
->>>> <<<<<<<<<<<<<<<<
->>>> set_cpu_numa_node() is called in function smp_prepare_boot_cpu()
->>>>
->>>>            early_numa_node_init();
->>>>
->>>> static void __init early_numa_node_init(void)
->>>> {
->>>> #ifdef CONFIG_USE_PERCPU_NUMA_NODE_ID
->>>> #ifndef cpu_to_node
->>>>            int cpu;
->>>>
->>>>            /* The early_cpu_to_node() should be ready here. */
->>>>            for_each_possible_cpu(cpu)
->>>>                    set_cpu_numa_node(cpu, early_cpu_to_node(cpu));
->>>> <<<<<<<<<<<<<<<<
->>>> * however here early_cpu_to_node is -1, so that cpu_to_node(cpu) will
->>>> always return -1 in late. *, which causes cpu hotadd problem.
->>> Still confused. For ACPI_MADT_ENABLED cpus, everything is right after
->>> early_numa_node_init(). For !ACPI_MADT_ENABLED cpus, cpu_to_node()
->>> returns -1 after early_numa_node_init() and before hot-add, but if
->>> acpi_map_cpu() do things right, cpu_to_node() should still work well
->>> after hot-add.
->> yes, if "_PXM" information for hot-add cpu handle exist, it works well.
->>
->> However if "_PXM" information does not exist, it falls back to legacy
->> method from smp_prepare_boot_cpu(). However cpu_numa_node information is
->> overwritten with -1 by later function early_numa_node_init().
-> OK, now I finally get the key point. But no _PXM should be treated as
-> a BIOS bug, right?
-Currently if no numa information is added in qemu command line, there 
-will be no "_PXM" information for hot-added cpu. Such as for this command:
-   qemu-system-loongarch64 -m 4096 -smp 
-1,maxcpus=4,sockets=1,cores=4,threads=1
-> 
->  From comments we can see:
-> 
->                   * If possible cpus > present cpus here (e.g. some possible
->                   * cpus will be added by cpu-hotplug later), for possible but
->                   * not present cpus, early_cpu_to_node will return NUMA_NO_NODE,
->                   * and we just map them to online nodes in round-robin way.
->                   * Once hotplugged, new correct mapping will be built for them.
-> 
-> This means even with this patch, cpu_to_node() can return a "valid"
-> node rather than NUMA_NO_NODE, but this round-robin node is still an
-> incorrect node.
-The round-robin node is not standard, may it is copied from x86, I do 
-not know how to use it however. At least SRAT tables provides numa 
-information only that there is not logical cpu allocated in SRAT table 
-parsing. How about something like this?
-
-diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
-index f1a74b80f22c..bb9fdd318998 100644
---- a/arch/loongarch/kernel/acpi.c
-+++ b/arch/loongarch/kernel/acpi.c
-@@ -310,6 +310,12 @@ static int __ref acpi_map_cpu2node(acpi_handle 
-handle, int cpu, int physid)
-         int nid;
-
-         nid = acpi_get_node(handle);
-+       /*
-+        * Fall back to srat numa node information if _PXM is not provided
-+        */
-+       if (nid != NUMA_NO_NODE)
-+               nid = __cpuid_to_node[physid];
-+
-         if (nid != NUMA_NO_NODE) {
-                 set_cpuid_to_node(physid, nid);
-                 node_set(nid, numa_nodes_parsed);
-
-Regards
-Bibo Mao
-> 
-> Huacai
-> 
->>
->> Regards
->> Bibo Mao
+>>>> That won't work.  The LVDS source side expects the ports of
+>>>> the sink side specify dual-lvds-{odd,even}-pixels properties.
 >>>
->>> Huacai
->>>>
->>>> Regards
->>>> Bibo Mao
->>>>
->>>>
->>>>>                    set_cpuid_to_node(physid, nid);
->>>>>                    node_set(nid, numa_nodes_parsed);
->>>>>                    set_cpu_numa_node(cpu, nid);
->>>>>
->>>>> Huacai
->>>>>
->>>>>>
->>>>>>             if (physid < 0)
->>>>>>                     return NUMA_NO_NODE;
->>>>>>
->>>>>>             return __cpuid_to_node[physid];
->>>>>> }
->>>>>>
->>>>>> Regards
->>>>>> Bibo Mao
->>>>>>>
->>>>>>> Huacai
->>>>>>>
->>>>>>>>
->>>>>>>> Here static array __cpu_to_node and api set_early_cpu_to_node()
->>>>>>>> is added, so that early_cpu_to_node is consistent with function
->>>>>>>> cpu_to_node() for hot-added cpu.
->>>>>>>>
->>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->>>>>>>> ---
->>>>>>>>      arch/loongarch/include/asm/numa.h |  2 ++
->>>>>>>>      arch/loongarch/kernel/numa.c      | 10 +++++++++-
->>>>>>>>      arch/loongarch/kernel/smp.c       |  1 +
->>>>>>>>      3 files changed, 12 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/arch/loongarch/include/asm/numa.h b/arch/loongarch/include/asm/numa.h
->>>>>>>> index b5f9de9f102e..e8e6fcfb006a 100644
->>>>>>>> --- a/arch/loongarch/include/asm/numa.h
->>>>>>>> +++ b/arch/loongarch/include/asm/numa.h
->>>>>>>> @@ -50,6 +50,7 @@ static inline void set_cpuid_to_node(int cpuid, s16 node)
->>>>>>>>      }
->>>>>>>>
->>>>>>>>      extern int early_cpu_to_node(int cpu);
->>>>>>>> +extern void set_early_cpu_to_node(int cpu, s16 node);
->>>>>>>>
->>>>>>>>      #else
->>>>>>>>
->>>>>>>> @@ -57,6 +58,7 @@ static inline void early_numa_add_cpu(int cpuid, s16 node)    { }
->>>>>>>>      static inline void numa_add_cpu(unsigned int cpu)              { }
->>>>>>>>      static inline void numa_remove_cpu(unsigned int cpu)           { }
->>>>>>>>      static inline void set_cpuid_to_node(int cpuid, s16 node)      { }
->>>>>>>> +static inline void set_early_cpu_to_node(int cpu, s16 node)    { }
->>>>>>>>
->>>>>>>>      static inline int early_cpu_to_node(int cpu)
->>>>>>>>      {
->>>>>>>> diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
->>>>>>>> index 84fe7f854820..62508aace644 100644
->>>>>>>> --- a/arch/loongarch/kernel/numa.c
->>>>>>>> +++ b/arch/loongarch/kernel/numa.c
->>>>>>>> @@ -34,6 +34,9 @@ static struct numa_meminfo numa_meminfo;
->>>>>>>>      cpumask_t cpus_on_node[MAX_NUMNODES];
->>>>>>>>      cpumask_t phys_cpus_on_node[MAX_NUMNODES];
->>>>>>>>      EXPORT_SYMBOL(cpus_on_node);
->>>>>>>> +static s16 __cpu_to_node[NR_CPUS] = {
->>>>>>>> +       [0 ... CONFIG_NR_CPUS - 1] = NUMA_NO_NODE
->>>>>>>> +};
->>>>>>>>
->>>>>>>>      /*
->>>>>>>>       * apicid, cpu, node mappings
->>>>>>>> @@ -117,11 +120,16 @@ int early_cpu_to_node(int cpu)
->>>>>>>>             int physid = cpu_logical_map(cpu);
->>>>>>>>
->>>>>>>>             if (physid < 0)
->>>>>>>> -               return NUMA_NO_NODE;
->>>>>>>> +               return __cpu_to_node[cpu];
->>>>>>>>
->>>>>>>>             return __cpuid_to_node[physid];
->>>>>>>>      }
->>>>>>>>
->>>>>>>> +void set_early_cpu_to_node(int cpu, s16 node)
->>>>>>>> +{
->>>>>>>> +       __cpu_to_node[cpu] = node;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>>      void __init early_numa_add_cpu(int cpuid, s16 node)
->>>>>>>>      {
->>>>>>>>             int cpu = __cpu_number_map[cpuid];
->>>>>>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
->>>>>>>> index 9afc2d8b3414..998668be858c 100644
->>>>>>>> --- a/arch/loongarch/kernel/smp.c
->>>>>>>> +++ b/arch/loongarch/kernel/smp.c
->>>>>>>> @@ -512,6 +512,7 @@ void __init smp_prepare_boot_cpu(void)
->>>>>>>>                             set_cpu_numa_node(cpu, node);
->>>>>>>>                     else {
->>>>>>>>                             set_cpu_numa_node(cpu, rr_node);
->>>>>>>> +                       set_early_cpu_to_node(cpu, rr_node);
->>>>>>>>                             rr_node = next_node_in(rr_node, node_online_map);
->>>>>>>>                     }
->>>>>>>>             }
->>>>>>>>
->>>>>>>> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
->>>>>>>> --
->>>>>>>> 2.39.3
->>>>>>>>
->>>>>>>>
->>>>>>
->>>>>>
->>>>
->>>>
+>>> I didn't notice that these properties are already defined.
+>>>
+>>> As these properties are common between several schema files, please
+>>> extract them to a common schema file (like lvds.yaml).
 >>
+>> I'm not sure how to do that. Is it obvious?
+>> Please shed some light. 
 >>
+>> Only two panel schema files are defining even/odd pixels now -
+>> advantech,idk-2121wr.yaml and panel-simple-lvds-dual-ports.yaml.
+>> Maybe, extract them later when more schema files(especially for
+>> bridges) try to define the same?  I'd like to keep a low profile
+>> for now.
+> 
+> I'd say, please extract those now. Adding third is more than enough and
+> should be avoided. Extracting is pretty simple. One patch to move the
+> definition and descriptions from panel-simple-lvds-dual-ports to a
+> common location (e.g. lvds-dual-ports.yaml). Leave the required
+> constrains in place. Second patch is to add oneOf constraints to the
+> ports. 
+
+oneOf just sits below ports so that single-port and dual-port
+are documented separately?  That won't pass dt_binding_check
+as the v1 binding has proved that warnings will be generated.
+
+> port@0 might get the same oneOf + the
+> dual-lvds-{odd,even}-pixels:false case, allowing a single-port
+> definition.
+
+I don't catch this.
+Below snippet is a draft lvds-dual-port.yaml.
+How can it be referenced in ite,it6263.yaml?
+
+---8<---
+allOf:                                                                           
+  - $ref: lvds.yaml#                                                             
+                                                                                 
+properties:                                                                      
+  ports:                                                                         
+    $ref: /schemas/graph.yaml#/properties/ports                                  
+                                                                                 
+    properties:                                                                  
+      port@0:                                                                    
+        $ref: /schemas/graph.yaml#/$defs/port-base                               
+        unevaluatedProperties: false                                             
+        description: the first LVDS input link                                   
+                                                                                 
+        properties:                                                              
+          dual-lvds-odd-pixels:                                                  
+            type: boolean                                                        
+            description: the first sink port for odd pixels                      
+                                                                                 
+          dual-lvds-even-pixels:                                                           
+            type: boolean                                                        
+            description: the first sink port for even pixels                     
+                                                                                 
+        oneOf:                                                                   
+          - required: [dual-lvds-even-pixels]                                    
+          - required: [dual-lvds-odd-pixels]                                     
+                                                                                 
+      port@1:                                                                    
+        $ref: /schemas/graph.yaml#/$defs/port-base                               
+        unevaluatedProperties: false                                             
+        description: the second LVDS input link                                  
+                                                                                 
+        properties:                                                              
+          dual-lvds-even-pixels:                                                 
+            type: boolean                                                        
+            description: the second sink port for even pixels                    
+                                                                                 
+          dual-lvds-odd-pixels:                                                  
+            type: boolean                                                        
+            description: the second sink port for odd pixels                     
+                                                                                 
+        oneOf:                                                                   
+          - required: [dual-lvds-even-pixels]                                    
+          - required: [dual-lvds-odd-pixels]                                     
+                                                                                 
+    required:                                                                    
+      - port@0                                                                   
+      - port@1                                                                   
+                                                                                 
+unevaluatedProperties: false   
+---8<---
+
+-- 
+Regards,
+Liu Ying
 
 
