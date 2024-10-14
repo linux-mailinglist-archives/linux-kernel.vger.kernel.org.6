@@ -1,138 +1,197 @@
-Return-Path: <linux-kernel+bounces-364028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DEA99CA19
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:29:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8E099CA21
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67133283CF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:29:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 521461C22950
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1061A071C;
-	Mon, 14 Oct 2024 12:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D41E1A3A9B;
+	Mon, 14 Oct 2024 12:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZF/Zi0XD"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZP5+rMN9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDE98F64
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57AD15665C;
+	Mon, 14 Oct 2024 12:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728908969; cv=none; b=WhM1a6bO31jjtDYdAOZNMf9Svpj2xmr044oJNp5M83o245WybBK/KaZ6HzDGZIq2akHNHOj+17F5MB0CQ3sh1/cXhVD8gTPYTYh60tTy00PlQgITiue+NvrrUxb7z71UBTRlYLB5QBaCAthw4ovPfnu/zmXfQyJzp+q9Ay7pQsQ=
+	t=1728909022; cv=none; b=XSKsUHD0Cd9enXWVxghIbcQpIUrdRV8T9urDgTlu15Abbw+U+v48I8uxqK2i5+lUQDUuu8kP+3xWTAnVWQkGM4teusraYkEGeG/Vlwe4zHPCnzZY7oNHJ0wqeRvgKEAZBk5b/sWG3RppDthVWcU5FLQ/bVy2uQ2MxfuahNSBGyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728908969; c=relaxed/simple;
-	bh=4r71UHV8kVFGGnENUKb5J9J81MjyUqvzqmiNZoXIQj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CfyRZ0RycpeIClrIh/lYi1qAa6bZtI4nw3r96gBD5H3qB1XOiroRjVB3emicR0IHNN+ycoh6/afoupvqhOzBtq+4NChtxaN5HKGD6qd6HMGfO9AgdUqLJZzTR99YJ3123eaFV61V9yOpOe/fmBd2JZoxugKqNbDSGR0bAPsETRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZF/Zi0XD; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e5b5715607so2145974eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1728908967; x=1729513767; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=obYwGkvze5brDSPVKwCxBn24HUjtTBUUJpgF04yDya0=;
-        b=ZF/Zi0XDS71zc7KG8Nf5IlePwoRVnUutJWkC8ie7UKaET+C+3QGMgnOef7W9mPePHo
-         kBku+f9LVsbE5ucpLJcoDXExNLsJ5/5Agj0fT4p6Ybdb/Uu+dC9Aa2qig2z6w0P8Jayi
-         hVKrN2dql7yy/wFa+kR4k+Tqhc+JYKSaqROizXHxuwk/PLeRWz4JmBaC+apZ5zVYX408
-         TDpvCwD2crb4UEsFwaTFFpUmi3I2zoPvBIdUlQRX3wAfAe1Gx1K3fO+MqsCAl0qYsYoo
-         QBZC4pi8G3DGIhkHXWJV5mf+UJlBiFF6EW7Q6iPPeFGsEjSJZccj7WonprflLfCZpJFj
-         tdkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728908967; x=1729513767;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=obYwGkvze5brDSPVKwCxBn24HUjtTBUUJpgF04yDya0=;
-        b=mQgq1bjiD/q2Y08/+qn9XH7xX+8qdPuou9QMkDrgkImWzDqBYLmjljmJCA0FkOCc8x
-         HI2BiVD1BWJ+V+YybaOR35rqsgjErQMnTD51EZTB2ISu6NxI0UYYF3HhtrMK9Yf0kKYb
-         8xYJ5hfUTkfZ503AMyy5XzbnM+5rJjhYc/8ZqvkTDULIvScPSYSbDjodIKyQqRFnVoZr
-         AlHwIMS1agWiT4ShgDErXpkgYt0K9M9L6teisyEHHIsaSfzKm+fQpZWYFdIhLNMQIoI5
-         T45VzRHQWqBjOUQncf07DKLt6iyN6ENPGNd56uxVn37iM7Tu5sofm32r40zhj8iZuY6w
-         FlCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZtmZ33R50Cdmptw9mUWN26EoNiALon+ORUo34R0ISl+gJSlDJs7tLZN5q3sQpEDq7Gs/iDRgegHHYzJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLuquHgT7HJ/I/xdqmMpioRtpXsI91ORiAUIzj2v7DAxJUPhM4
-	lxSEnfNbMJHX35wPgPtnwzVDzLTowyvxi4CX9wMWw0L3ooOTsAWjEsQrb6UUXmuIujmXWqQSdba
-	5KIcXfHmuTdjYR9juiHeHE8ZCmxeB9hn0lxXL6g==
-X-Google-Smtp-Source: AGHT+IGquwzzJq3TSHzHDk59BGV7hfB4VOx7ysqUP6B9j2bTJgjryU0p6MgswYU9kQMvvdQq5iI60yybmFuLgD4vqBo=
-X-Received: by 2002:a05:6820:1ac6:b0:5d6:ab0:b9a6 with SMTP id
- 006d021491bc7-5eb18d8d9eamr5308659eaf.4.1728908966736; Mon, 14 Oct 2024
- 05:29:26 -0700 (PDT)
+	s=arc-20240116; t=1728909022; c=relaxed/simple;
+	bh=HsdR6pzvJTUp/7mHWPf23rC+R6CP3K7kYSkMipzLsvk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nR/N8xQhDYz90wseLRI1eeVA7z9Qbn6ShDhPZR7e3pkuwKAj61ZOQVgxclTEjU1h5xzlxsJT5zpis9wXGB3dNv0ISXwFr4xjl9B6qKyO/lH7jxOZt78X87ph6CHEyFjf2ZA1xX6J4NaFe3VdlGuPimbzPYHBemWfgiJvvr05nUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZP5+rMN9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E9nJm7020865;
+	Mon, 14 Oct 2024 12:30:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=RXhjsQ65Zq/owiEys2n6kxDU
+	86vYQ7Q7zhWlre1o2tI=; b=ZP5+rMN9GEq14X20+CKF5LnU2QFnS5KZWqc8Sw4E
+	ahktcd3omZnaSNV+5nHQ+ZaXkUIlm5Rj0vPZMy1WKvdwW4OjnVz+zm+3V+FKaJNm
+	fkDCrjlxl7EpU11rWmzJR2w2bJafxXI0vgkhh9stuGDbF1Ef5eZqT+3p9+kc2rAn
+	PcTNrXqunQdp/r1A9Ex9uUOQv9uHyMWRiL2vLGK2w22iJuDQUaaKP+kbzw8c52Du
+	Y+9lirMUiFcGQOXl73Hp7uzQ6t4jrvFTz8iFGDiBU734MqLaHkmDz8GuXqdvIf43
+	HwEFlr/JnJnD3/jCXPzrBx6KMMoAfhwIOXf2uG3c1iFSOA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427g45ceng-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 12:30:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ECUD54024454
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 12:30:13 GMT
+Received: from hu-shashim-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 14 Oct 2024 05:30:09 -0700
+Date: Mon, 14 Oct 2024 17:59:59 +0530
+From: Shiraz Hashim <quic_shashim@quicinc.com>
+To: <neil.armstrong@linaro.org>
+CC: Mukesh Ojha <quic_mojha@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
+ support
+Message-ID: <20241014122959.GA2147073@hu-shashim-hyd.qualcomm.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-7-quic_mojha@quicinc.com>
+ <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
+ <ZwP1t45ni/gk754B@hu-mojha-hyd.qualcomm.com>
+ <ZwTPghV36CSIpkE4@hu-mojha-hyd.qualcomm.com>
+ <dfe46653-5243-47c8-8de9-17a38d13da53@linaro.org>
+ <20241011050518.GJ1421305@hu-shashim-hyd.qualcomm.com>
+ <80113961-1222-4492-80d2-b29ec6db2b66@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014094705.71775-1-cuiyunhui@bytedance.com> <Zw0B6_k7ejVtBTRC@sunil-laptop>
-In-Reply-To: <Zw0B6_k7ejVtBTRC@sunil-laptop>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Mon, 14 Oct 2024 20:29:15 +0800
-Message-ID: <CAEEQ3wnZaTnUDgKr3tTmD0q=G118u4RReiShNAfxScxiOcKqmg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] RISC-V: ACPI: fix early_ioremap to early_memremap
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: punit.agrawal@bytedance.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, ajones@ventanamicro.com, alexghiti@rivosinc.com, 
-	jeeheng.sia@starfivetech.com, haibo1.xu@intel.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <80113961-1222-4492-80d2-b29ec6db2b66@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 74GUA4wgpdZ_XzLZD7sLc27LxL2JyN0g
+X-Proofpoint-ORIG-GUID: 74GUA4wgpdZ_XzLZD7sLc27LxL2JyN0g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 spamscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1015 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140090
 
-Hi Sunil,
+On Fri, Oct 11, 2024 at 09:09:08AM +0200, neil.armstrong@linaro.org wrote:
+> On 11/10/2024 07:05, Shiraz Hashim wrote:
+> > On Thu, Oct 10, 2024 at 08:57:56AM +0200, neil.armstrong@linaro.org wrote:
+> > > On 08/10/2024 08:21, Mukesh Ojha wrote:
+> > > > On Mon, Oct 07, 2024 at 08:22:39PM +0530, Mukesh Ojha wrote:
+> > > > > On Mon, Oct 07, 2024 at 10:05:08AM +0200, neil.armstrong@linaro.org wrote:
+> > > > > > On 04/10/2024 23:23, Mukesh Ojha wrote:
+> > > > > > > For Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+> > > > > > > translation for remote processors is managed by QHEE and if the same SoC
+> > > > > > > run under KVM, remoteproc carveout and devmem region should be IOMMU
+> > > > > > > mapped from Linux PAS driver before remoteproc is brought up and
+> > > > > > > unmapped once it is tear down and apart from this, SHM bridge also need
+> > > > > > > to set up to enable memory protection on both remoteproc meta data
+> > > > > > > memory as well as for the carveout region.
+> > > > > > > 
+> > > > > > > Enable the support required to run Qualcomm remoteprocs on non-QHEE
+> > > > > > > hypervisors.
+> > > > > > > 
+> > > > > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > > > > ---
+> > > > > > >     drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++++++++++++++++++++++++++-
+> > > > > > >     1 file changed, 40 insertions(+), 1 deletion(-)
+> > > > > > > 
+> > > > > > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > > > > > index ac339145e072..13bd13f1b989 100644
+> > > > > > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > > > > > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > 
+> > <snip>
+> > 
+> > > > > > > +		struct of_phandle_args args;
+> > > > > > > +
+> > > > > > > +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus", "#iommu-cells", 0, &args);
+> > > > > > > +		if (ret < 0)
+> > > > > > > +			return ret;
+> > > > > > > +
+> > > > > > > +		rproc->has_iommu = true;
+> > > > > > > +		adsp->sid = args.args[0];
+> > > > > > > +		of_node_put(args.np);
+> > > > > > > +		ret = adsp_devmem_init(adsp);
+> > > > > > > +		if (ret)
+> > > > > > > +			return ret;
+> > > > > > 
+> > > > > > Why don't you get this table from the firmware like presumably
+> > > > > > QHEE does ?
+> > > > > 
+> > > > > Well, AFAIK, QHEE(EL2) has this information statically present
+> > > > > and does not get it from anywhere., but will confirm this
+> > > > > twice..
+> > > > 
+> > > > Double confirmed, device memory region required by remoteproc is
+> > > > statically present with QHEE.
+> > > 
+> > > Right, in this case why those tables can't be embedded in the elf
+> > > .resource_table like it's done with qcom_q6v5_adsp.c by calling
+> > > rproc_elf_load_rsc_table() and let the remoteproc framework load the
+> > > resource table and setup the devmem ssmu_map ?
+> > 
+> > Mainly for two reasons -
+> > 
+> > firmware images on platforms where we like to bring additional no-qhee
+> > support do not have resource table.
+> > 
+> > QCOM PAS implementation for secure remoteproc supports single TZ call
+> > of auth_and_rest that authenticates and brings remoteproc out of
+> > reset. And we don't have provision to authenticate resource table
+> > before it is used for devmem/iommu setup.
+> 
+> Why not authenticate a separate binary containing the resource table ?
+> 
+> Adding the resources to DT is a no go since it's clearly related to what
+> the firmare will be using at runtime,
 
-On Mon, Oct 14, 2024 at 7:35=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
-> wrote:
->
-> Hi Yunhui,
-> On Mon, Oct 14, 2024 at 05:47:05PM +0800, Yunhui Cui wrote:
-> > When SVPBMT is enabled, __acpi_map_table() will directly access the
-> > data in DDR through the IO attribute, rather than through hardware
-> > cache consistency, resulting in incorrect data in the obtained ACPI
-> > table.
-> >
-> > The log: ACPI: [ACPI:0x18] Invalid zero length.
-> >
-> > We do not assume whether the bootloader flushes or not. We should
-> > access in a cacheable way instead of maintaining cache consistency
-> > by software.
-> >
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > ---
-> >  arch/riscv/kernel/acpi.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
-> > index 6e0d333f57e5..3177c9af8764 100644
-> > --- a/arch/riscv/kernel/acpi.c
-> > +++ b/arch/riscv/kernel/acpi.c
-> > @@ -210,7 +210,7 @@ void __init __iomem *__acpi_map_table(unsigned long=
- phys, unsigned long size)
-> >       if (!size)
-> >               return NULL;
-> >
-> > -     return early_ioremap(phys, size);
-> > +     return early_memremap(phys, size);
-> >  }
-> >
-> I think __acpi_unmap_table() also needs similar change. You might need
-> to typecast to suppress the sparse error [1] then.
+Sorry didn't understand how is it classified as runtime. Similar to
+resources required to bring up a device, these correspond to resources
+required to be handled before bringing up a remoteproc.
 
-OK. I will make the changes in v2. Regarding the sparse error, I will
-use another patch specifically to solve it. Is that okay?
+> so either it should go in a .resource_table section or can be moved
+> in a signed .mbn that can be authenticated by TZ.
 
->
-> [1] - https://lore.kernel.org/oe-kbuild-all/202305201427.I7QhPjNW-lkp@int=
-el.com/#r
->
-> Thanks,
-> Sunil
+TZ doesn't have a separate authentication call as of now.
 
-Thanks,
-Yunhui
+If DT is strictly a no go, would moving it to driver itself be an
+acceptable option ? inline with what Dmitry suggesting.
+
+regards
+Shiraz
 
