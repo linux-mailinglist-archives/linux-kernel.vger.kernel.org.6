@@ -1,863 +1,522 @@
-Return-Path: <linux-kernel+bounces-363843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A434999C7C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:57:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CBB99C7C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 113E4B22D3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:57:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F231B221CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886A01A3035;
-	Mon, 14 Oct 2024 10:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="6wbFLRz+"
-Received: from SJ2PR03CU002.outbound.protection.outlook.com (mail-westusazon11023118.outbound.protection.outlook.com [52.101.44.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F2819597F;
-	Mon, 14 Oct 2024 10:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.44.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903319; cv=fail; b=KXkFSgu/DghlEa5Gile+iQfaPxkX8JUsC79LY27KyfWuyS6duIeXvJf43lw17EUp/HkyJnXIh/KaUde+rW0Nl0KJwwNhlKZshxEQxl6uih1uPciFULAEvtoYNckTfMld746vKHgC2b3f00CNzQwEsAgLxkDEk3d7MZGUq8JM3hQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903319; c=relaxed/simple;
-	bh=0fD7WhfHXAYaNTJueymBwti3+rlKlXeC0WBPwj8Ae20=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=K4F809vZ9QMMxkGovVOJkipxTH5xxayk8wbXksiGTiQ6LP0I1wwMlV1KZjFtNmQeHwwtgKbZuSGgwSpzGlfUV0JOAE8Kg/GvKRmLgYNxzsGyibSaJ6iGS9w0liHZn6BzZMt2BTGvwc10RGqBnYOaNd+6ksMqR08zaJUPPIFRGO4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=6wbFLRz+ reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.44.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JdfOIs+pWHWyGwLfu4T6fFuWeYrPyQySp9oj9CWgBwZV/Mlp3n+SpCLyIW5Ez/Qpe2+fyJIyPbb+Ntw5FdMbPmlJjacAOjBFjhv1zRXPz42P6dp9G7GX7xXYUnLVdbCzr7Llbseq+SymKNzY8y3kbXHgxjLZQKPeIJS4N2LL5PwwXOkcT8+izJ9B02LgQyT0s/Sk63khAd8QWO8dJPsHmaXfyB5XleX3aHSKIpGXzszs/Tk54+jCI3OT0xAgpRz1isAtlnAUj/r2QYhN/j7p2Ey3jvkOXbNNbjjI/Pn6pZmGeDOvG29rg4R1bCnLvdX3n66e4+xyPi9WHkIiRY8+Kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=83OhEODN4BYGJh7cQPpiR42xNuQ7HkJPx57/nEi38zk=;
- b=KMMh4+wC/HmYdAGVyfYWYnoJFnaXHLfbJv5adAmCFiSLBvumQ92Chh9IYX/iPfOOr2VBRV2kaHxJ2P/ah+/q6RTqBZGNydWjWy4Nx/hdF3IlirZGNIcpOCvgzFcevLbkZ+HPw/0Y81HyfXNDVteYcb0L1WUo7nR28H9XofiDBlzTd9UeqCLW+vUj+puTa5tT4xaEClnN/lo22N39pYdzfiOktEqPgfL8caum98gNTZZjHm6RzizZ0Gr0vH6WaoX/730HT3w9qcgi0R28VzckYTusJWB9hcy9+ECkC16GpbvZilntm6nK7wKmUfm24D4DUk+Uwhagw/uKepNso92C1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=83OhEODN4BYGJh7cQPpiR42xNuQ7HkJPx57/nEi38zk=;
- b=6wbFLRz+Gead5hnhYG6B6JRZBUmcWn8r7Q2un3fUiEURMfsTLErHZuVn3hYi1192vpn0I5U2vsJb+HRbqDihSZ9NnOlrjtyCYaOhxRmKhZLtQPDwXKLPefK4WpBf1vXvIgWNlT2KJdhBrOuqCFc1LOOj+HgMCWTpNp5n7Zx0BME=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
- PH7PR01MB7752.prod.exchangelabs.com (2603:10b6:510:1db::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.34; Mon, 14 Oct 2024 10:55:13 +0000
-Received: from BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7982.033; Mon, 14 Oct 2024
- 10:55:13 +0000
-Message-ID: <ea9e34ec-c557-4616-a95e-7b20229db03a@amperemail.onmicrosoft.com>
-Date: Mon, 14 Oct 2024 17:54:57 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: aspeed: Add device tree for Ampere's Mt.
- Jefferson BMC
-To: Chanh Nguyen <chanh@os.amperecomputing.com>,
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>
-Cc: Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>,
- Khanh Pham <khpham@amperecomputing.com>
-References: <20241014105031.1963079-1-chanh@os.amperecomputing.com>
-Content-Language: en-US
-From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-In-Reply-To: <20241014105031.1963079-1-chanh@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CYZPR19CA0008.namprd19.prod.outlook.com
- (2603:10b6:930:8e::15) To BL3PR01MB7057.prod.exchangelabs.com
- (2603:10b6:208:35c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F45B19CD0E;
+	Mon, 14 Oct 2024 10:55:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1DF198A21
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728903348; cv=none; b=cHuYzWkW42wtG5yEq1ZarjT3UEUVY0boupzOsutk/Vb9QOq79bTrcvki3d/cx9Ms7TvzBxklhk3YOyqlmHs4C/20DJ6QKYQMe0u+YLRDqsGyAshFNAViTZ6y9AX96GVS8jUTbdcBPiWgdP4dwYFOYuER30G/EgnBsPTPeU6rgz8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728903348; c=relaxed/simple;
+	bh=hmECFfl6KGf9+jMALjWi0U8xFJvh+SA4fgPvNlK941U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tv/B2AXgSBf14n8E6hxC9oDETvXsvFSSdTmmTgz6sR1N6hpRrBvzYLtsGBgDlfHlbnv2Ze3fQHYN2W2Kxx2cnY61clvki3Zk1NE8LdQ5haSNWjK3moY40Z+5/BB3B314a4sgCtMYLUOVj1W+RwzNaKxtKn5mcFLwVWl5eEl25Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 970571007;
+	Mon, 14 Oct 2024 03:56:13 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D76043F51B;
+	Mon, 14 Oct 2024 03:55:41 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Greg Marsden <greg.marsden@oracle.com>,
+	Ivan Ivanov <ivan.ivanov@suse.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Miroslav Benes <mbenes@suse.cz>,
+	Will Deacon <will@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
+Date: Mon, 14 Oct 2024 11:55:11 +0100
+Message-ID: <20241014105514.3206191-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|PH7PR01MB7752:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6135350-73d9-4e57-b7b6-08dcec3eadc9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L2JHMkdsNTRHRmVYN1BIU3ZxMXpod0JlcWpaOGRmRHJzMTlXUGNVeWg5YnpI?=
- =?utf-8?B?VzRRblpnU3JZUEJ5LzUrSjJqRkdXQjBQRGVKMGc3dXIxaFYyT2N1QThoWlVZ?=
- =?utf-8?B?SzBJWGRMUU1OZkYvUnFIWjVNUzFycFQxdzZtZVVXRlNFYU1ZMEVRWERFKzg4?=
- =?utf-8?B?elFXSTdoekljWFFXakR2eUw2cHQ0a3owUXRTWENzUGEyV0VCVytxbTdDNEZh?=
- =?utf-8?B?dzdSamdTUHZYeXEzWENybkNvRzc3UDBVUkpPNGN1ZjQ1YTFIbnEyWXREaTJa?=
- =?utf-8?B?Y2xUYmtTS3lNak9VdStVYWJPdGxiMFJVRmZhNlB5eXprcFIxSWprOWNrS08z?=
- =?utf-8?B?QVlINTVwWVQ4MkNQRm1rT0JCOG9hYWIxK3pVcDRFMW5Dd1BsekZDb25KZmdM?=
- =?utf-8?B?V3c4WEZhUFRKUlpxNnBEaWJmV1g2NFlkb201U0JsVHNCMXJMNGNmc2xZQkdX?=
- =?utf-8?B?OFNDdHhPVytLbjZqVjEvaVNSbjVoR09RZDk3NmtWZG9QUTV5T2QwSXdDWTI4?=
- =?utf-8?B?L003ZmNaRkd0ZVNxc29TV0JGMGRFYnQ4TFltUGdmbFhYNjVVNnNjNkwzekZV?=
- =?utf-8?B?K3BmUUhhYUNDcVk3S3VRTG03Mmx3Y2d3WnpVSWVZWmNIbGpYWVJuNlNCNnpV?=
- =?utf-8?B?T0FSRzVPOTFDSW43MmplYk9yRUhhMCtQR3NPb29ON1h0T0JjbnhwcmVUTk5V?=
- =?utf-8?B?RjBjSTdiQ2E2dEpoMTJXWXIzOUZYZFhsL0VBakFuRjZIalZ5U2RQRDgvdFFD?=
- =?utf-8?B?UDgvVUxMV1doZFMxbTNBZE1xSGdBNGhKcVJZa1NpbGlaWmJIdFJLSUM4ZGZs?=
- =?utf-8?B?QTRmWktwc2c2cDRLRjR6TTRIOTZQNmdwa2NPM25OQmt3QXpkSjlubjkwQVdP?=
- =?utf-8?B?eTFmSXA2WjNLd21JRk53bXBxY3dLQWNpOVNob2dvWEJOMjNYcEhNaFpEZGE3?=
- =?utf-8?B?NlhuT0dmSTczT0ZOMXpTdVFBM1RJUElJUEZtRTNnOVlRS3hWSGVxVXRldkFr?=
- =?utf-8?B?eXN5WTNOVm4wTnJNNG1YdFI1ME4xRGFiOStkWlBrY0FXdzBpeUMyR2dSOFFz?=
- =?utf-8?B?NTBwZzYrT29vc2NKZG10bGpZSVBXRVFURGRTa2k0Q0FScUI3OEpsSFZnKzhL?=
- =?utf-8?B?aHFJcS9rdGlQWjM3WUNzOGxpZ3V6OTlGSkxNQnVkTUQ1OTJEOEdRbHZRNFhI?=
- =?utf-8?B?Nzl0blFlZVo3TE9aN2h6Q2ROcEpERlpTL2JxcC9GUDgxd3dnY0ZaRzB6S2sz?=
- =?utf-8?B?V3NGRDZkc3FDbEFPR0s4MHV2cytxblV5dW91dWhJOE0wazRqbGszZS9YUzU4?=
- =?utf-8?B?LzFvbU9LalUwNncwenlKNElXYUpuVHFIMUcvWGpiWTIxclFNZmZZdmZBYkF0?=
- =?utf-8?B?dkFCcHN5THNQeG1QY3ZaWFJHUlI1dmcvTlVyL2VhYWxPMlgwa3lYU0JZU0pU?=
- =?utf-8?B?Vm1kOEpvNE1vc2toVzh1OERubUpqTG5MNEtwaDl3enovazFJajVHdUF4VmhR?=
- =?utf-8?B?NHRQakhRWHlxdmlwaE5ERTgyb1krT3hsMTIrQ1A4QXZuUzJodlpoSm5TbU9J?=
- =?utf-8?B?cjIwQUg3aDBVZWgya1FiVUNOSGZoazBNSnBOTWlBZTRJMnZuOEFsZGg0RHNW?=
- =?utf-8?B?ZTJFWmc4Q0syQlNKK3hjSXk2SEVKbVh0ZXlvK3J0TVNQWFZkaFdTWDZjc1cx?=
- =?utf-8?B?NmtJbGVwMnNVWU9mbERGVHNrK0lvODljTk5Ua0ZJbzlUUWR1R014OWorV1Rt?=
- =?utf-8?Q?D2wuyjt/V0O7W8Ij5JPXvSMym6ziFarsn4bqFXP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TW01V0NleTVDWXgwd0lWRWcyVllwbTdnbXp6akZJZzVWdkxuNi96aXlHTjJv?=
- =?utf-8?B?VzE0VWpJZmVFL2pUTkI5elFmL2Z3eEYrU1A1Q1UyL1d2WmFjTktWdlVKSU5Q?=
- =?utf-8?B?UnJtVkNMU3RFd0U5QlZHS1I5Z3NHTE1TT2o3NmkrSkc1OHZldkprYTNkeVpS?=
- =?utf-8?B?Ni9oVWlXVjJNN3ZsVGRGampITXZKWWo1amduV0lzQnpPTS8wRlFKbURYbUtI?=
- =?utf-8?B?Qm0rTTBCd2U4UlcxOFpYaVlrR0hLYUo0K3h1RTYvRFBlc2VNYmdVMko3UHA5?=
- =?utf-8?B?OGx4WXBDcUpzK3VkTUFXU3JhVXRjQlBqR3BINzZwc2dWZkF2MnBjM3VJTGU0?=
- =?utf-8?B?TDZMMkpiL3Z1K3RCaytQYnRGREdoc3BIY3dSdjdtckFNT0p4eEUvaks2Umh2?=
- =?utf-8?B?UU42cGlmYkxYZEs0OVkzQ01IYTFDYkdpS0V3dEd3eThVY0syZ3A5UG5nYWdh?=
- =?utf-8?B?SGZYaG5TZUZQcURFYUd5S0dDU2NxUnR6ZVNnN25oYSsvQnl3OGlON0xxTEJG?=
- =?utf-8?B?NTdTTk14dXk4SmQveTVZdzFJcFM3VGsyN3ZweHc1M2o2bzVRY0VsN0V6R1R2?=
- =?utf-8?B?Y2IyVUVsalVWNlUvOHZEVUFjODNHazhsYUNmWTQrSWZyam9DYUtYT0NZQmQz?=
- =?utf-8?B?OElmVFpRTmVLbmFKSTJ1UGF0K3V2QitCa3kxcFhxbmxiQnR1NlNJOVVJWXJ4?=
- =?utf-8?B?QVBVNHJWTUp1RUI2Wm5nSFNtbitUdEhLSzJEZTBURVRqb1B3R1ArMUpSeHZ4?=
- =?utf-8?B?WFlOeURrUlhJVzhldmpldEFhZk9aN0IwS2I3NkRaRTFBZ3oxS1Rmc3c0Rm1F?=
- =?utf-8?B?Z2Nyb21aRlRyTTF3ZUNQWjhIcDJGay9jemg4VEozOVdlR3lpUWo5VzIrUGNM?=
- =?utf-8?B?aS9OMjB6Wm1nT3VqaEpZaThrWUQya3J2cGk5V1RGQk5acmdmY3owSXEvK3Yw?=
- =?utf-8?B?WHpuRmxmaldjbVVuc0hpaEk0Z1FOOERvUVVuWThZL1ZHbFpMcXJtbUZ0eEtL?=
- =?utf-8?B?dml2eE5TdFI5MTNUUUZXNW42c3ZoYlRSTmU1SjljazZYSkp2WjJGdStROWRq?=
- =?utf-8?B?Q0xUOWxVNUlBVWkzb1VNa3VKSWJtVFN0azd6b25xTHFyTDNlL2NGZ05vMUR3?=
- =?utf-8?B?UjBwRWJ3dVFmUW9XVCs4NDUyRVJQalRTWkduTy95bzZHS01BM1RncmVTUmRr?=
- =?utf-8?B?VEwyR0tOdWJsRnZuYWowTFlXYjZqK2JUeW11SE9PaFFhSkNodllERGZJZXJY?=
- =?utf-8?B?bU12K01WbEZzNkV2Sk1MTGsrb3N1Z1FBRTErVTdiaEVQdFpjV29STlZqSkhr?=
- =?utf-8?B?Z3E1c3Q2WjVZZjl1RHVtNkh1ZW5zaHNiY2x5RUpXNS9LME1WS2oweGlsL215?=
- =?utf-8?B?VXNYa1ZhMnIxZHlLUFpIWTJIODBmejNudW1abUtZdlo3T1dTVkZ2Y0NIMU5G?=
- =?utf-8?B?Mmdzc2FDcmRYcTNXUThWaFB6UUhZUTFUU3ZTZWVTQkNsU1ZSZmlnTmErWTYy?=
- =?utf-8?B?bFkzOGVmeXlhaWExQUdkK3dPY3FrWFN5ZDFNaTB5STVKS0VMcFZQV3dWWWlq?=
- =?utf-8?B?eENxY0dQWXBKcFUxRld0R3BKWTZuUG1WaGE0eWtkZXZENXhMSVAxSDlSQTBM?=
- =?utf-8?B?TGFJRnhGeVlMZXNLaG5JL2J6elJLT2QxeGlmRXluZTFyTnQxbm5LVDdYS1dC?=
- =?utf-8?B?UEtkbkJEejRYaHdKODB2Um5USzM5Zzg1aXRQWEpZZHNEWDk0aUdaQU9ZY1Az?=
- =?utf-8?B?aC9YdGdQa21tZDR5WDlTdWM3dENyMnpHbTZtQ2Voa1gzeVkxVkpGZWUvM056?=
- =?utf-8?B?Si83T0NIbXJvMjU5c3ZHbzdCalEvTDV4SlE4TFVSNGhkQU0wdEVzMmR0Q21V?=
- =?utf-8?B?NXpzZzRGcEdUekZMNWtrMGdrL01ZVnhQUDhtemgzb2lnekNXa29TVHFIbmht?=
- =?utf-8?B?K3N2bDR5Z09iRG9mOWQ5b2ZTOWM3OHpVUjRMdm1sQ0RQWnBpSTJobnpFeHAy?=
- =?utf-8?B?c3JtbXlJRTV2T2hsU3FzbGJocHg2a29Pam5mOVlkZmFpN2dhbzdBZ0lHalNO?=
- =?utf-8?B?SkxoM1FVRWpwVDE1eEZHQkZPZXV1bWxmaENNai9lekcvRmdIRjFEMFBab3Qz?=
- =?utf-8?B?US8yK25HZkdjRVowMExQN2M3VVdibFVLVGF6cnRaa0doSllON0dlZVpOSzQz?=
- =?utf-8?Q?Zw+M9OZVnrupIDCJnnOR1aM=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6135350-73d9-4e57-b7b6-08dcec3eadc9
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 10:55:12.9169
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OECK2dBgSec5jYSQutRm5GshuOMrfw4+wt7KK9iLDJxtinVGXbUHAHRi9WloJZBWeahUfw0AKC9FwOq/Ts0tA9VducDtJExVYnqig3c7KJ+JVQX7c8CaxDPvZ0kX0QFZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB7752
+Content-Transfer-Encoding: 8bit
 
-Hi @Andrew, I just upstreamed the patch 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/Documentation/devicetree/bindings/trivial-devices.yaml?id=3d973b98d2744cfced1f06167c83e2cc2d7b63d5 
-  to linux-next branch,  I think we also need to pick it up to 
-https://github.com/openbmc/linux/tree/dev-6.6, which will help pass the 
-"onnn,adt7462" compatible warning log from the dt_binding_check tool.
+Hi All,
 
-On 14/10/2024 17:50, Chanh Nguyen wrote:
-> The Mt. Jefferson BMC is an ASPEED AST2600-based BMC for the Mt. Jefferson
-> hardware reference platform with AmpereOne(TM)M processor.
-> 
-> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
-> ---
->   arch/arm/boot/dts/aspeed/Makefile             |   1 +
->   .../aspeed/aspeed-bmc-ampere-mtjefferson.dts  | 646 ++++++++++++++++++
->   2 files changed, 647 insertions(+)
->   create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts
-> 
-> diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
-> index c4f064e4b073..b1fb0853a789 100644
-> --- a/arch/arm/boot/dts/aspeed/Makefile
-> +++ b/arch/arm/boot/dts/aspeed/Makefile
-> @@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
->   	aspeed-bmc-amd-daytonax.dtb \
->   	aspeed-bmc-amd-ethanolx.dtb \
->   	aspeed-bmc-ampere-mtjade.dtb \
-> +	aspeed-bmc-ampere-mtjefferson.dtb \
->   	aspeed-bmc-ampere-mtmitchell.dtb \
->   	aspeed-bmc-arm-stardragon4800-rep2.dtb \
->   	aspeed-bmc-asrock-e3c246d4i.dtb \
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts
-> new file mode 100644
-> index 000000000000..f24111ab9e65
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts
-> @@ -0,0 +1,646 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +// Copyright 2024 Ampere Computing LLC.
-> +
-> +/dts-v1/;
-> +
-> +#include "aspeed-g6.dtsi"
-> +#include <dt-bindings/i2c/i2c.h>
-> +#include <dt-bindings/gpio/aspeed-gpio.h>
-> +
-> +/ {
-> +	model = "Ampere Mt. Jefferson BMC";
-> +	compatible = "ampere,mtjefferson-bmc", "aspeed,ast2600";
-> +
-> +	aliases {
-> +		i2c20 = &i2c4_bus70_chn0;
-> +		i2c22 = &i2c4_bus70_chn2;
-> +		i2c24 = &i2c2_bus70_chn0;
-> +
-> +		/*
-> +		 *  I2C OCP alias port
-> +		 */
-> +		i2c30 = &ocpslot;
-> +
-> +		/*
-> +		 *  I2C NVMe alias port
-> +		 */
-> +		i2c48 = &nvmeslot_0;
-> +		i2c49 = &nvmeslot_1;
-> +		i2c50 = &nvmeslot_2;
-> +		i2c51 = &nvmeslot_3;
-> +		i2c52 = &nvmeslot_4;
-> +		i2c53 = &nvmeslot_5;
-> +		i2c54 = &nvmeslot_6;
-> +		i2c55 = &nvmeslot_7;
-> +		i2c56 = &nvmeslot_8;
-> +		i2c57 = &nvmeslot_9;
-> +		i2c58 = &nvmeslot_10;
-> +		i2c59 = &nvmeslot_11;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &uart5;
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x80000000 0x80000000>;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		gfx_memory: framebuffer {
-> +			size = <0x01000000>;
-> +			alignment = <0x01000000>;
-> +			compatible = "shared-dma-pool";
-> +			reusable;
-> +		};
-> +
-> +		video_engine_memory: video {
-> +			size = <0x04000000>;
-> +			alignment = <0x01000000>;
-> +			compatible = "shared-dma-pool";
-> +			reusable;
-> +		};
-> +
-> +		vga_memory: region@bf000000 {
-> +			no-map;
-> +			compatible = "shared-dma-pool";
-> +			reg = <0xbf000000 0x01000000>;  /* 16M */
-> +		};
-> +	};
-> +
-> +	voltage_mon_reg: voltage-mon-regulator {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "ltc2497_reg";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		led-bmc-ready {
-> +			gpios = <&gpio0 ASPEED_GPIO(W, 5) (GPIO_ACTIVE_HIGH | GPIO_TRANSITORY)>;
-> +		};
-> +
-> +		led-sw-heartbeat {
-> +			gpios = <&gpio0 ASPEED_GPIO(N, 3) GPIO_ACTIVE_HIGH>;
-> +		};
-> +
-> +		led-identify {
-> +			gpios = <&gpio0 ASPEED_GPIO(S, 3) GPIO_ACTIVE_HIGH>;
-> +		};
-> +
-> +		led-fault {
-> +			gpios = <&gpio0 ASPEED_GPIO(P, 4) GPIO_ACTIVE_HIGH>;
-> +		};
-> +	};
-> +
-> +	iio-hwmon {
-> +		compatible = "iio-hwmon";
-> +		io-channels =   <&adc0 0>, <&adc0 1>, <&adc0 2>,
-> +				<&adc_i2c_2 0>, <&adc_i2c_2 1>,
-> +				<&adc_i2c_2 2>, <&adc_i2c_2 3>,
-> +				<&adc_i2c_2 4>, <&adc_i2c_2 5>,
-> +				<&adc_i2c_2 6>, <&adc_i2c_2 7>,
-> +				<&adc_i2c_2 8>, <&adc_i2c_2 9>,
-> +				<&adc_i2c_2 10>, <&adc_i2c_2 11>,
-> +				<&adc_i2c_2 12>, <&adc_i2c_2 13>,
-> +				<&adc_i2c_2 14>, <&adc_i2c_2 15>,
-> +				<&adc_i2c_0 0>, <&adc_i2c_0 1>,
-> +				<&adc_i2c_0 2>, <&adc_i2c_0 3>,
-> +				<&adc_i2c_0 4>, <&adc_i2c_0 5>,
-> +				<&adc_i2c_0 6>, <&adc_i2c_0 7>,
-> +				<&adc_i2c_0 8>, <&adc_i2c_0 9>,
-> +				<&adc_i2c_0 10>, <&adc_i2c_0 11>,
-> +				<&adc_i2c_0 12>;
-> +	};
-> +};
-> +
-> +&mdio0 {
-> +	status = "okay";
-> +
-> +	ethphy0: ethernet-phy@0 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <0>;
-> +	};
-> +};
-> +
-> +&mac0 {
-> +	status = "okay";
-> +
-> +	phy-mode = "rgmii";
-> +	phy-handle = <&ethphy0>;
-> +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_rgmii1_default>;
-> +};
-> +
-> +&mac3 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_rmii4_default>;
-> +	clock-names = "MACCLK", "RCLK";
-> +	use-ncsi;
-> +};
-> +
-> +&fmc {
-> +	status = "okay";
-> +	flash@0 {
-> +		status = "okay";
-> +		m25p,fast-read;
-> +		label = "bmc";
-> +		spi-max-frequency = <50000000>;
-> +#include "openbmc-flash-layout-64.dtsi"
-> +	};
-> +
-> +	flash@1 {
-> +		status = "okay";
-> +		m25p,fast-read;
-> +		label = "alt-bmc";
-> +		spi-max-frequency = <50000000>;
-> +#include "openbmc-flash-layout-64-alt.dtsi"
-> +	};
-> +};
-> +
-> +&spi1 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_spi1_default>;
-> +
-> +	flash@0 {
-> +		status = "okay";
-> +		m25p,fast-read;
-> +		label = "pnor";
-> +		spi-max-frequency = <20000000>;
-> +	};
-> +};
-> +
-> +&uart1 {
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c2 {
-> +	status = "okay";
-> +	i2c-mux@70 {
-> +		compatible = "nxp,pca9548";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		reg = <0x70>;
-> +		i2c-mux-idle-disconnect;
-> +
-> +		i2c2_bus70_chn0: i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0x0>;
-> +			psu@58 {
-> +				compatible = "pmbus";
-> +				reg = <0x58>;
-> +			};
-> +
-> +			psu@59 {
-> +				compatible = "pmbus";
-> +				reg = <0x59>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c3 {
-> +	status = "okay";
-> +	bus-frequency = <1000000>;
-> +	multi-master;
-> +	mctp-controller;
-> +
-> +	mctp@10 {
-> +		compatible = "mctp-i2c-controller";
-> +		reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
-> +	};
-> +};
-> +
-> +&i2c4 {
-> +	status = "okay";
-> +	eeprom@50 {
-> +		compatible = "atmel,24c64";
-> +		reg = <0x50>;
-> +		pagesize = <32>;
-> +	};
-> +
-> +	i2c-mux@70 {
-> +		compatible = "nxp,pca9545";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		reg = <0x70>;
-> +		i2c-mux-idle-disconnect;
-> +
-> +		i2c4_bus70_chn0: i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0x0>;
-> +
-> +			eeprom@52 {
-> +				compatible = "atmel,24c256";
-> +				reg = <0x52>;
-> +				pagesize = <32>;
-> +			};
-> +			temperature-sensor@48 {
-> +				compatible = "ti,tmp75";
-> +				reg = <0x48>;
-> +			};
-> +			temperature-sensor@49 {
-> +				compatible = "ti,tmp75";
-> +				reg = <0x49>;
-> +			};
-> +			temperature-sensor@4a{
-> +				compatible = "ti,tmp75";
-> +				reg = <0x4a>;
-> +			};
-> +			temperature-sensor@4b {
-> +				compatible = "ti,tmp464";
-> +				reg = <0x4b>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				channel@0 {
-> +					reg = <0x0>;
-> +					status = "disabled";
-> +				};
-> +				channel@1 {
-> +					reg = <0x1>;
-> +					status = "disabled";
-> +				};
-> +				channel@2 {
-> +					reg = <0x2>;
-> +					status = "disabled";
-> +				};
-> +				channel@3 {
-> +					reg = <0x3>;
-> +					status = "disabled";
-> +				};
-> +				channel@4 {
-> +					reg = <0x4>;
-> +				};
-> +			};
-> +			temperature-sensor@4d {
-> +				compatible = "ti,tmp75";
-> +				reg = <0x4d>;
-> +			};
-> +			temperature-sensor@4e {
-> +				compatible = "ti,tmp75";
-> +				reg = <0x4e>;
-> +			};
-> +			temperature-sensor@4f {
-> +				compatible = "ti,tmp75";
-> +				reg = <0x4f>;
-> +			};
-> +			temperature-sensor@28 {
-> +				compatible = "nuvoton,nct7802";
-> +				reg = <0x28>;
-> +
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				channel@1 { /* RTD1 */
-> +					reg = <1>;
-> +					sensor-type = "temperature";
-> +					temperature-mode = "thermistor";
-> +				};
-> +			};
-> +			adc_i2c_0: adc@14 {
-> +				compatible = "lltc,ltc2497";
-> +				reg = <0x14>;
-> +				vref-supply = <&voltage_mon_reg>;
-> +				#io-channel-cells = <1>;
-> +			};
-> +		};
-> +
-> +		i2c4_bus70_chn2: i2c@2 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0x2>;
-> +
-> +			adc_i2c_2: adc@14 {
-> +				compatible = "lltc,ltc2497";
-> +				reg = <0x14>;
-> +				vref-supply = <&voltage_mon_reg>;
-> +				#io-channel-cells = <1>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c5 {
-> +	status = "okay";
-> +	i2c-mux@70 {
-> +		compatible = "nxp,pca9548";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		reg = <0x70>;
-> +		i2c-mux-idle-disconnect;
-> +
-> +		i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0x0>;
-> +
-> +			i2c-mux@71 {
-> +				compatible = "nxp,pca9548";
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				reg = <0x71>;
-> +				i2c-mux-idle-disconnect;
-> +
-> +				nvmeslot_8: i2c@0 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x0>;
-> +				};
-> +				nvmeslot_9: i2c@1 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x1>;
-> +				};
-> +				nvmeslot_10: i2c@2 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x2>;
-> +				};
-> +				nvmeslot_11: i2c@3 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x3>;
-> +				};
-> +			};
-> +
-> +			i2c-mux@72 {
-> +				compatible = "nxp,pca9548";
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				reg = <0x72>;
-> +				i2c-mux-idle-disconnect;
-> +
-> +				nvmeslot_4: i2c@4 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x4>;
-> +				};
-> +				nvmeslot_5: i2c@5 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x5>;
-> +				};
-> +				nvmeslot_6: i2c@6 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x6>;
-> +				};
-> +				nvmeslot_7: i2c@7 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x7>;
-> +				};
-> +			};
-> +
-> +			i2c-mux@74 {
-> +				compatible = "nxp,pca9548";
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				reg = <0x74>;
-> +				i2c-mux-idle-disconnect;
-> +
-> +				ocpslot: i2c@0 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x0>;
-> +
-> +					ocpslot_temp: temperature-sensor@1f {
-> +						compatible = "ti,tmp421";
-> +						reg = <0x1f>;
-> +						#address-cells = <1>;
-> +						#size-cells = <0>;
-> +
-> +						channel@0 {
-> +							reg = <0x0>;
-> +							status = "disabled";
-> +						};
-> +						channel@1 {
-> +							reg = <0x1>;
-> +						};
-> +					};
-> +				};
-> +
-> +				nvmeslot_0: i2c@4 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x4>;
-> +				};
-> +				nvmeslot_1: i2c@5 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x5>;
-> +				};
-> +				nvmeslot_2: i2c@6 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x6>;
-> +				};
-> +				nvmeslot_3: i2c@7 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x7>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c6 {
-> +	status = "okay";
-> +
-> +	rtc@51 {
-> +		compatible = "nxp,pcf8563";
-> +		reg = <0x51>;
-> +	};
-> +};
-> +
-> +&i2c7 {
-> +	status = "okay";
-> +
-> +	temperature-sensor@4f {
-> +		compatible = "ti,tmp75";
-> +		reg = <0x4f>;
-> +	};
-> +};
-> +
-> +&i2c8 {
-> +	status = "okay";
-> +
-> +	fan-controller@5c {
-> +		compatible = "onnn,adt7462";
-> +		reg = <0x5c>;
-> +	};
-> +};
-> +
-> +&i2c9 {
-> +	status = "okay";
-> +
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	eeprom@50 {
-> +		compatible = "atmel,24c02";
-> +		reg = <0x50>;
-> +	};
-> +
-> +	eeprom@52 {
-> +		compatible = "atmel,24c02";
-> +		reg = <0x52>;
-> +	};
-> +
-> +	temperature-sensor@18 {
-> +		compatible = "jedec,jc-42.4-temp";
-> +		reg = <0x18>;
-> +	};
-> +
-> +	temperature-sensor@1a {
-> +		compatible = "jedec,jc-42.4-temp";
-> +		reg = <0x1a>;
-> +	};
-> +};
-> +
-> +&i2c10 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c11 {
-> +	status = "okay";
-> +	ssif-bmc@10 {
-> +		compatible = "ssif-bmc";
-> +		reg = <0x10>;
-> +	};
-> +};
-> +
-> +&i2c14 {
-> +	status = "okay";
-> +	eeprom@50 {
-> +		compatible = "atmel,24c64";
-> +		reg = <0x50>;
-> +		pagesize = <32>;
-> +	};
-> +
-> +	bmc_ast2600_cpu: temperature-sensor@48 {
-> +		compatible = "ti,tmp75";
-> +		reg = <0x48>;
-> +	};
-> +};
-> +
-> +&i2c15 {
-> +	status = "okay";
-> +	gpio_expander1: gpio-expander@22 {
-> +		compatible = "nxp,pca9535";
-> +		reg = <0x22>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		gpio-line-names =
-> +			"presence-ocp1","presence-ocp2",
-> +			"","",
-> +			"","",
-> +			"","",
-> +			"","",
-> +			"","",
-> +			"","",
-> +			"","";
-> +	};
-> +};
-> +
-> +&adc0 {
-> +	status = "okay";
-> +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_adc0_default &pinctrl_adc1_default
-> +		&pinctrl_adc2_default>;
-> +};
-> +
-> +&vhub {
-> +	status = "okay";
-> +};
-> +
-> +&video {
-> +	status = "okay";
-> +	memory-region = <&video_engine_memory>;
-> +};
-> +
-> +&gpio0 {
-> +	gpio-line-names =
-> +	/*A0-A7*/	"","","","","cpu-type-detect","i2c2-reset-n","i2c6-reset-n","i2c5-reset-n",
-> +	/*B0-B7*/	"","","","","host0-sysreset-n","host0-pmin-n","fru-rd-complete",
-> +			"chassis-id-sel",
-> +	/*C0-C7*/	"s0-vrd-fault-n","","bmc-debug-mode","","cpld-3v3-irq-n","","vrd-sel",
-> +			"spd-sel",
-> +	/*D0-D7*/	"presence-ps0","presence-ps1","hsc-12vmain-alt2-n","ext-high-temp-n",
-> +			"","","","",
-> +	/*E0-E7*/	"eth-phy-rst-n","eth-phy-int-n","","","","","","",
-> +	/*F0-F7*/	"s0-pcp-oc-warn-n","","power-chassis-control",
-> +			"cpu-bios-recover","s0-heartbeat","hs-scout-proc-hot","s0-vr-hot-n","",
-> +	/*G0-G7*/	"","","hsc-12vmain-alt1-n","","","bp-cpld-program-en","led-fp-sta-gr",
-> +			"led-fp-sta-amb",
-> +	/*H0-H7*/	"jtag-program-sel","jtag-cmpl2","wd-disable-n","power-chassis-good","","",
-> +			"","",
-> +	/*I0-I7*/	"","","","","","","power-button","rtc-battery-voltage-read-enable",
-> +	/*J0-J7*/	"","","","","","","","",
-> +	/*K0-K7*/	"","","","","","","","",
-> +	/*L0-L7*/	"","","","","reset-button","","","",
-> +	/*M0-M7*/	"nmi-n","s0-ddr-save","soc-spi-nor-access","presence-cpu0","s0-rtc-lock",
-> +			"","","",
-> +	/*N0-N7*/	"hpm-fw-recovery","hpm-stby-rst-n","jtag-sel-s0","led-sw-hb",
-> +			"jtag-dbgr-prsnt-n","","","",
-> +	/*O0-O7*/	"","","","","","","","",
-> +	/*P0-P7*/	"ps0-ac-loss-n","ps1-ac-loss-n","","","led-fault","user-mode","jtag-srst-n",
-> +			"led-bmc-hb",
-> +	/*Q0-Q7*/	"","","","","","","","",
-> +	/*R0-R7*/	"","","","","","","","",
-> +	/*S0-S7*/	"","","identify-button","led-identify","","spi-nor-access","host0-ready","",
-> +	/*T0-T7*/	"","","","","","","","",
-> +	/*U0-U7*/	"","","","","","","","",
-> +	/*V0-V7*/	"s0-hightemp-n","s0-fault-alert","s0-sys-auth-failure-n",
-> +			"host0-reboot-ack-n","s0-fw-boot-ok","host0-shd-req-n",
-> +			"host0-shd-ack-n","s0-overtemp-n",
-> +	/*W0-W7*/	"ocp-aux-pwren","ocp-main-pwren","ocp-pgood","",
-> +			"bmc-ok","bmc-ready","spi0-program-sel","spi0-backup-sel",
-> +	/*X0-X7*/	"","","","","","","","",
-> +	/*Y0-Y7*/	"","","","vrd-prg-en-n","","","","host0-special-boot",
-> +	/*Z0-Z7*/	"","ps0-pgood","ps1-pgood","","","","","";
-> +
-> +	ocp-aux-pwren-hog {
-> +		gpio-hog;
-> +		gpios = <ASPEED_GPIO(W, 0) GPIO_ACTIVE_HIGH>;
-> +		output-high;
-> +		line-name = "ocp-aux-pwren";
-> +	};
-> +
-> +};
-> +
-> +&gpio1 {
-> +	gpio-line-names =
-> +	/*18A0-18A7*/	"","","","","","","","",
-> +	/*18B0-18B7*/	"","","","","s0-soc-pgood","vga-ft-press-n","emmc-rst-n","s01-uart1-sel",
-> +	/*18C0-18C7*/	"uart1-mode0","uart1-mode1","uart2-mode0","uart2-mode1",
-> +			"","","","",
-> +	/*18D0-18D7*/	"","","","","","","","",
-> +	/*18E0-18E3*/	"","","","";
-> +};
+Patch bomb incoming... This covers many subsystems, so I've included a core set
+of people on the full series and additionally included maintainers on relevant
+patches. I haven't included those maintainers on this cover letter since the
+numbers were far too big for it to work. But I've included a link to this cover
+letter on each patch, so they can hopefully find their way here. For follow up
+submissions I'll break it up by subsystem, but for now thought it was important
+to show the full picture.
+
+This RFC series implements support for boot-time page size selection within the
+arm64 kernel. arm64 supports 3 base page sizes (4K, 16K, 64K), but to date, page
+size has been selected at compile-time, meaning the size is baked into a given
+kernel image. As use of larger-than-4K page sizes become more prevalent this
+starts to present a problem for distributions. Boot-time page size selection
+enables the creation of a single kernel image, which can be told which page size
+to use on the kernel command line.
+
+Why is having an image-per-page size problematic?
+=================================================
+
+Many traditional distros are now supporting both 4K and 64K. And this means
+managing 2 kernel packages, along with drivers for each. For some, it means
+multiple installer flavours and multiple ISOs. All of this adds up to a
+less-than-ideal level of complexity. Additionally, Android now supports 4K and
+16K kernels. I'm told having to explicitly manage their KABI for each kernel is
+painful, and the extra flash space required for both kernel images and the
+duplicated modules has been problematic. Boot-time page size selection solves
+all of this.
+
+Additionally, in starting to think about the longer term deployment story for
+D128 page tables, which Arm architecture now supports, a lot of the same
+problems need to be solved, so this work sets us up nicely for that.
+
+So what's the down side?
+========================
+
+Well nothing's free; Various static allocations in the kernel image must be
+sized for the worst case (largest supported page size), so image size is in line
+with size of 64K compile-time image. So if you're interested in 4K or 16K, there
+is a slight increase to the image size. But I expect that problem goes away if
+you're compressing the image - its just some extra zeros. At boot-time, I expect
+we could free the unused static storage once we know the page size - although
+that would be a follow up enhancement.
+
+And then there is performance. Since PAGE_SIZE and friends are no longer
+compile-time constants, we must look up their values and do arithmetic at
+runtime instead of compile-time. My early perf testing suggests this is
+inperceptible for real-world workloads, and only has small impact on
+microbenchmarks - more on this below.
+
+Approach
+========
+
+The basic idea is to rid the source of any assumptions that PAGE_SIZE and
+friends are compile-time constant, but in a way that allows the compiler to
+perform the same optimizations as was previously being done if they do turn out
+to be compile-time constant. Where constants are required, we use limits;
+PAGE_SIZE_MIN and PAGE_SIZE_MAX. See commit log in patch 1 for full description
+of all the classes of problems to solve.
+
+By default PAGE_SIZE_MIN=PAGE_SIZE_MAX=PAGE_SIZE. But an arch may opt-in to
+boot-time page size selection by defining PAGE_SIZE_MIN & PAGE_SIZE_MAX. arm64
+does this if the user selects the CONFIG_ARM64_BOOT_TIME_PAGE_SIZE Kconfig,
+which is an alternative to selecting a compile-time page size.
+
+When boot-time page size is active, the arch pgtable geometry macro definitions
+resolve to something that can be configured at boot. The arm64 implementation in
+this series mainly uses global, __ro_after_init variables. I've tried using
+alternatives patching, but that performs worse than loading from memory; I think
+due to code size bloat.
+
+Status
+======
+
+When CONFIG_ARM64_BOOT_TIME_PAGE_SIZE is selected, I've only implemented enough
+to compile the kernel image itself with defconfig (and a few other bits and
+pieces). This is enough to build a kernel that can boot under QEMU or FVP. I'll
+happily do the rest of the work to enable all the extra drivers, but wanted to
+get feedback on the shape of this effort first. If anyone wants to do any
+testing, and has a must-have config, let me know and I'll prioritize enabling it
+first.
+
+The series is arranged as follows:
+
+  - patch 1:	   Add macros required for converting non-arch code to support
+  		   boot-time page size selection
+  - patches 2-36:  Remove PAGE_SIZE compile-time constant assumption from all
+  		   non-arch code
+  - patches 37-38: Some arm64 tidy ups
+  - patch 39:	   Add macros required for converting arm64 code to support
+  		   boot-time page size selection
+  - patches 40-56: arm64 changes to support boot-time page size selection
+  - patch 57:	   Add arm64 Kconfig option to enable boot-time page size
+  		   selection
+
+Ideally, I'd like to get the basics merged (something like this series), then
+incrementally improve it over a handful of kernel releases until we can
+demonstrate that we have feature parity with the compile-time build and no
+performance blockers. Once at that point, ideally the compile-time build options
+would be removed and the code could be cleaned up further.
+
+One of the bigger peices that I'd propose to add as a follow up, is to make
+va-size boot-time selectable too. That will greatly simplify LPA2 fallback
+handling.
+
+Assuming people are ammenable to the rough shape, how would I go about getting
+the non-arch changes merged? Since they cover many subsystems, will each piece
+need to go independently to each relevant maintainer or could it all be merged
+together through the arm64 tree?
+
+Image Size
+==========
+
+The below shows the size of a defconfig (+ xfs, squashfs, ftrace, kprobes)
+kernel image on disk for base (before any changes applied), compile (with
+changes, configured for compile-time page size) and boot (with changes,
+configured for boot-time page size).
+
+You can see the that compile-16k and 64k configs are actually slightly smaller
+than the baselines; that's due to optimizing some buffer sizes which didn't need
+to depend on page size during the series. The boot-time image is ~1% bigger than
+the 64k compile-time image. I believe there is scope to improve this to make it
+equal to compile-64k if required:
+
+| config      | size/KB | diff/KB |  diff/% |
+|-------------|---------|---------|---------|
+| base-4k     |   54895 |       0 |    0.0% |
+| base-16k    |   55161 |     266 |    0.5% |
+| base-64k    |   56775 |    1880 |    3.4% |
+| compile-4k  |   54895 |       0 |    0.0% |
+| compile-16k |   55097 |     202 |    0.4% |
+| compile-64k |   56391 |    1496 |    2.7% |
+| boot-4K     |   57045 |    2150 |    3.9% |
+
+And below shows the size of the image in memory at run-time, separated for text
+and data costs. The boot image has ~1% text cost; most likely due to the fact
+that PAGE_SIZE and friends are not compile-time constants so need instructions
+to load the values and do arithmetic. I believe we could eventually get the data
+cost to match the cost for the compile image for the chosen page size by freeing
+the ends of the static buffers not needed for the selected page size:
+
+|             |    text |    text |    text |    data |    data |    data |
+| config      | size/KB | diff/KB |  diff/% | size/KB | diff/KB |  diff/% |
+|-------------|---------|---------|---------|---------|---------|---------|
+| base-4k     |   20561 |       0 |    0.0% |   14314 |       0 |    0.0% |
+| base-16k    |   20439 |    -122 |   -0.6% |   14625 |     311 |    2.2% |
+| base-64k    |   20435 |    -126 |   -0.6% |   15673 |    1359 |    9.5% |
+| compile-4k  |   20565 |       4 |    0.0% |   14315 |       1 |    0.0% |
+| compile-16k |   20443 |    -118 |   -0.6% |   14517 |     204 |    1.4% |
+| compile-64k |   20439 |    -122 |   -0.6% |   15134 |     820 |    5.7% |
+| boot-4K     |   20811 |     250 |    1.2% |   15287 |     973 |    6.8% |
+
+Functional Testing
+==================
+
+I've build-tested defconfig for all arches supported by tuxmake (which is most)
+without issue.
+
+I've boot-tested arm64 with CONFIG_ARM64_BOOT_TIME_PAGE_SIZE for all page sizes
+and a few va-sizes, and additionally have run all the mm-selftests, with no
+regressions observed vs the equivalent compile-time page size build (although
+the mm-selftests have a few existing failures when run against 16K and 64K
+kernels - those should really be investigated and fixed independently).
+
+Test coverage is lacking for many of the drivers that I've touched, but in many
+cases, I'm hoping the changes are simple enough that review might suffice?
+
+Performance Testing
+===================
+
+I've run some limited performance benchmarks:
+
+First, a real-world benchmark that causes a lot of page table manipulation (and
+therefore we would expect to see regression here if we are going to see it
+anywhere); kernel compilation. It barely registers a change. Values are times,
+so smaller is better. All relative to base-4k:
+
+|             |    kern |    kern |    user |    user |    real |    real |
+| config      |    mean |   stdev |    mean |   stdev |    mean |   stdev |
+|-------------|---------|---------|---------|---------|---------|---------|
+| base-4k     |    0.0% |    1.1% |    0.0% |    0.3% |    0.0% |    0.3% |
+| compile-4k  |   -0.2% |    1.1% |   -0.2% |    0.3% |   -0.1% |    0.3% |
+| boot-4k     |    0.1% |    1.0% |   -0.3% |    0.2% |   -0.2% |    0.2% |
+
+The Speedometer JavaScript benchmark also shows no change. Values are runs per
+min, so bigger is better. All relative to base-4k:
+
+| config      |    mean |   stdev |
+|-------------|---------|---------|
+| base-4k     |    0.0% |    0.8% |
+| compile-4k  |    0.4% |    0.8% |
+| boot-4k     |    0.0% |    0.9% |
+
+Finally, I've run some microbenchmarks known to stress page table manipulations
+(originally from David Hildenbrand). The fork test maps/allocs 1G of anon
+memory, then measures the cost of fork(). The munmap test maps/allocs 1G of anon
+memory then measures the cost of munmap()ing it. The fork test is known to be
+extremely sensitive to any changes that cause instructions to be aligned
+differently in cachelines. When using this test for other changes, I've seen
+double digit regressions for the slightest thing, so 12% regression on this test
+is actually fairly good. This likely represents the extreme worst case for
+regressions that will be observed across other microbenchmarks (famous last
+words). Values are times, so smaller is better. All relative to base-4k:
+
+|             |    fork |    fork |  munmap |  munmap |
+| config      |    mean |   stdev |   stdev |   stdev |
+|-------------|---------|---------|---------|---------|
+| base-4k     |    0.0% |    1.3% |    0.0% |    0.3% |
+| compile-4k  |    0.1% |    1.3% |   -0.9% |    0.1% |
+| boot-4k     |   12.8% |    1.2% |    3.8% |    1.0% |
+
+NOTE: The series applies on top of v6.11.
+
+Thanks,
+Ryan
+
+
+Ryan Roberts (57):
+  mm: Add macros ahead of supporting boot-time page size selection
+  vmlinux: Align to PAGE_SIZE_MAX
+  mm/memcontrol: Fix seq_buf size to save memory when PAGE_SIZE is large
+  mm/page_alloc: Make page_frag_cache boot-time page size compatible
+  mm: Avoid split pmd ptl if pmd level is run-time folded
+  mm: Remove PAGE_SIZE compile-time constant assumption
+  fs: Introduce MAX_BUF_PER_PAGE_SIZE_MAX for array sizing
+  fs: Remove PAGE_SIZE compile-time constant assumption
+  fs/nfs: Remove PAGE_SIZE compile-time constant assumption
+  fs/ext4: Remove PAGE_SIZE compile-time constant assumption
+  fork: Permit boot-time THREAD_SIZE determination
+  cgroup: Remove PAGE_SIZE compile-time constant assumption
+  bpf: Remove PAGE_SIZE compile-time constant assumption
+  pm/hibernate: Remove PAGE_SIZE compile-time constant assumption
+  stackdepot: Remove PAGE_SIZE compile-time constant assumption
+  perf: Remove PAGE_SIZE compile-time constant assumption
+  kvm: Remove PAGE_SIZE compile-time constant assumption
+  trace: Remove PAGE_SIZE compile-time constant assumption
+  crash: Remove PAGE_SIZE compile-time constant assumption
+  crypto: Remove PAGE_SIZE compile-time constant assumption
+  sunrpc: Remove PAGE_SIZE compile-time constant assumption
+  sound: Remove PAGE_SIZE compile-time constant assumption
+  net: Remove PAGE_SIZE compile-time constant assumption
+  net: fec: Remove PAGE_SIZE compile-time constant assumption
+  net: marvell: Remove PAGE_SIZE compile-time constant assumption
+  net: hns3: Remove PAGE_SIZE compile-time constant assumption
+  net: e1000: Remove PAGE_SIZE compile-time constant assumption
+  net: igbvf: Remove PAGE_SIZE compile-time constant assumption
+  net: igb: Remove PAGE_SIZE compile-time constant assumption
+  drivers/base: Remove PAGE_SIZE compile-time constant assumption
+  edac: Remove PAGE_SIZE compile-time constant assumption
+  optee: Remove PAGE_SIZE compile-time constant assumption
+  random: Remove PAGE_SIZE compile-time constant assumption
+  sata_sil24: Remove PAGE_SIZE compile-time constant assumption
+  virtio: Remove PAGE_SIZE compile-time constant assumption
+  xen: Remove PAGE_SIZE compile-time constant assumption
+  arm64: Fix macros to work in C code in addition to the linker script
+  arm64: Track early pgtable allocation limit
+  arm64: Introduce macros required for boot-time page selection
+  arm64: Refactor early pgtable size calculation macros
+  arm64: Pass desired page size on command line
+  arm64: Divorce early init from PAGE_SIZE
+  arm64: Clean up simple cases of CONFIG_ARM64_*K_PAGES
+  arm64: Align sections to PAGE_SIZE_MAX
+  arm64: Rework trampoline rodata mapping
+  arm64: Generalize fixmap for boot-time page size
+  arm64: Statically allocate and align for worst-case page size
+  arm64: Convert switch to if for non-const comparison values
+  arm64: Convert BUILD_BUG_ON to VM_BUG_ON
+  arm64: Remove PAGE_SZ asm-offset
+  arm64: Introduce cpu features for page sizes
+  arm64: Remove PAGE_SIZE from assembly code
+  arm64: Runtime-fold pmd level
+  arm64: Support runtime folding in idmap_kpti_install_ng_mappings
+  arm64: TRAMP_VALIAS is no longer compile-time constant
+  arm64: Determine THREAD_SIZE at boot-time
+  arm64: Enable boot-time page size selection
+
+ arch/alpha/include/asm/page.h                 |   1 +
+ arch/arc/include/asm/page.h                   |   1 +
+ arch/arm/include/asm/page.h                   |   1 +
+ arch/arm64/Kconfig                            |  26 ++-
+ arch/arm64/include/asm/assembler.h            |  78 ++++++-
+ arch/arm64/include/asm/cpufeature.h           |  44 +++-
+ arch/arm64/include/asm/efi.h                  |   2 +-
+ arch/arm64/include/asm/fixmap.h               |  28 ++-
+ arch/arm64/include/asm/kernel-pgtable.h       | 150 +++++++++----
+ arch/arm64/include/asm/kvm_arm.h              |  21 +-
+ arch/arm64/include/asm/kvm_hyp.h              |  11 +
+ arch/arm64/include/asm/kvm_pgtable.h          |   6 +-
+ arch/arm64/include/asm/memory.h               |  62 ++++--
+ arch/arm64/include/asm/page-def.h             |   3 +-
+ arch/arm64/include/asm/pgalloc.h              |  16 +-
+ arch/arm64/include/asm/pgtable-geometry.h     |  46 ++++
+ arch/arm64/include/asm/pgtable-hwdef.h        |  28 ++-
+ arch/arm64/include/asm/pgtable-prot.h         |   2 +-
+ arch/arm64/include/asm/pgtable.h              | 133 +++++++++---
+ arch/arm64/include/asm/processor.h            |  10 +-
+ arch/arm64/include/asm/sections.h             |   1 +
+ arch/arm64/include/asm/smp.h                  |   1 +
+ arch/arm64/include/asm/sparsemem.h            |  15 +-
+ arch/arm64/include/asm/sysreg.h               |  54 +++--
+ arch/arm64/include/asm/tlb.h                  |   3 +
+ arch/arm64/kernel/asm-offsets.c               |   4 +-
+ arch/arm64/kernel/cpufeature.c                |  93 ++++++--
+ arch/arm64/kernel/efi.c                       |   2 +-
+ arch/arm64/kernel/entry.S                     |  60 +++++-
+ arch/arm64/kernel/head.S                      |  46 +++-
+ arch/arm64/kernel/hibernate-asm.S             |   6 +-
+ arch/arm64/kernel/image-vars.h                |  14 ++
+ arch/arm64/kernel/image.h                     |   4 +
+ arch/arm64/kernel/pi/idreg-override.c         |  68 +++++-
+ arch/arm64/kernel/pi/map_kernel.c             | 165 ++++++++++----
+ arch/arm64/kernel/pi/map_range.c              | 201 ++++++++++++++++--
+ arch/arm64/kernel/pi/pi.h                     |  63 +++++-
+ arch/arm64/kernel/relocate_kernel.S           |  10 +-
+ arch/arm64/kernel/vdso-wrap.S                 |   4 +-
+ arch/arm64/kernel/vdso.c                      |   7 +-
+ arch/arm64/kernel/vdso/vdso.lds.S             |   4 +-
+ arch/arm64/kernel/vdso32-wrap.S               |   4 +-
+ arch/arm64/kernel/vdso32/vdso.lds.S           |   4 +-
+ arch/arm64/kernel/vmlinux.lds.S               |  48 +++--
+ arch/arm64/kvm/arm.c                          |  10 +
+ arch/arm64/kvm/hyp/nvhe/Makefile              |   1 +
+ arch/arm64/kvm/hyp/nvhe/host.S                |  10 +-
+ arch/arm64/kvm/hyp/nvhe/hyp.lds.S             |   4 +-
+ arch/arm64/kvm/hyp/nvhe/pgtable-geometry.c    |  16 ++
+ arch/arm64/kvm/mmu.c                          |  39 ++--
+ arch/arm64/lib/clear_page.S                   |   7 +-
+ arch/arm64/lib/copy_page.S                    |  33 ++-
+ arch/arm64/lib/mte.S                          |  27 ++-
+ arch/arm64/mm/Makefile                        |   1 +
+ arch/arm64/mm/fixmap.c                        |  38 ++--
+ arch/arm64/mm/hugetlbpage.c                   |  40 +---
+ arch/arm64/mm/init.c                          |  26 +--
+ arch/arm64/mm/kasan_init.c                    |   8 +-
+ arch/arm64/mm/mmu.c                           |  53 +++--
+ arch/arm64/mm/pgd.c                           |  12 +-
+ arch/arm64/mm/pgtable-geometry.c              |  24 +++
+ arch/arm64/mm/proc.S                          | 128 ++++++++---
+ arch/arm64/mm/ptdump.c                        |   3 +-
+ arch/arm64/tools/cpucaps                      |   3 +
+ arch/csky/include/asm/page.h                  |   3 +
+ arch/hexagon/include/asm/page.h               |   2 +
+ arch/loongarch/include/asm/page.h             |   2 +
+ arch/m68k/include/asm/page.h                  |   1 +
+ arch/microblaze/include/asm/page.h            |   1 +
+ arch/mips/include/asm/page.h                  |   1 +
+ arch/nios2/include/asm/page.h                 |   2 +
+ arch/openrisc/include/asm/page.h              |   1 +
+ arch/parisc/include/asm/page.h                |   1 +
+ arch/powerpc/include/asm/page.h               |   2 +
+ arch/riscv/include/asm/page.h                 |   1 +
+ arch/s390/include/asm/page.h                  |   1 +
+ arch/sh/include/asm/page.h                    |   1 +
+ arch/sparc/include/asm/page.h                 |   3 +
+ arch/um/include/asm/page.h                    |   2 +
+ arch/x86/include/asm/page_types.h             |   2 +
+ arch/xtensa/include/asm/page.h                |   1 +
+ crypto/lskcipher.c                            |   4 +-
+ drivers/ata/sata_sil24.c                      |  46 ++--
+ drivers/base/node.c                           |   6 +-
+ drivers/base/topology.c                       |  32 +--
+ drivers/block/virtio_blk.c                    |   2 +-
+ drivers/char/random.c                         |   4 +-
+ drivers/edac/edac_mc.h                        |  13 +-
+ drivers/firmware/efi/libstub/arm64.c          |   3 +-
+ drivers/irqchip/irq-gic-v3-its.c              |   2 +-
+ drivers/mtd/mtdswap.c                         |   4 +-
+ drivers/net/ethernet/freescale/fec.h          |   3 +-
+ drivers/net/ethernet/freescale/fec_main.c     |   5 +-
+ .../net/ethernet/hisilicon/hns3/hns3_enet.h   |   4 +-
+ drivers/net/ethernet/intel/e1000/e1000_main.c |   6 +-
+ drivers/net/ethernet/intel/igb/igb.h          |  25 +--
+ drivers/net/ethernet/intel/igb/igb_main.c     | 149 +++++++------
+ drivers/net/ethernet/intel/igbvf/netdev.c     |   6 +-
+ drivers/net/ethernet/marvell/mvneta.c         |   9 +-
+ drivers/net/ethernet/marvell/sky2.h           |   2 +-
+ drivers/tee/optee/call.c                      |   7 +-
+ drivers/tee/optee/smc_abi.c                   |   2 +-
+ drivers/virtio/virtio_balloon.c               |  10 +-
+ drivers/xen/balloon.c                         |  11 +-
+ drivers/xen/biomerge.c                        |  12 +-
+ drivers/xen/privcmd.c                         |   2 +-
+ drivers/xen/xenbus/xenbus_client.c            |   5 +-
+ drivers/xen/xlate_mmu.c                       |   6 +-
+ fs/binfmt_elf.c                               |  11 +-
+ fs/buffer.c                                   |   2 +-
+ fs/coredump.c                                 |   8 +-
+ fs/ext4/ext4.h                                |  36 ++--
+ fs/ext4/move_extent.c                         |   2 +-
+ fs/ext4/readpage.c                            |   2 +-
+ fs/fat/dir.c                                  |   4 +-
+ fs/fat/fatent.c                               |   4 +-
+ fs/nfs/nfs42proc.c                            |   2 +-
+ fs/nfs/nfs42xattr.c                           |   2 +-
+ fs/nfs/nfs4proc.c                             |   2 +-
+ include/asm-generic/pgtable-geometry.h        |  71 +++++++
+ include/asm-generic/vmlinux.lds.h             |  38 ++--
+ include/linux/buffer_head.h                   |   1 +
+ include/linux/cpumask.h                       |   5 +
+ include/linux/linkage.h                       |   4 +-
+ include/linux/mm.h                            |  17 +-
+ include/linux/mm_types.h                      |  15 +-
+ include/linux/mm_types_task.h                 |   2 +-
+ include/linux/mmzone.h                        |   3 +-
+ include/linux/netlink.h                       |   6 +-
+ include/linux/percpu-defs.h                   |   4 +-
+ include/linux/perf_event.h                    |   2 +-
+ include/linux/sched.h                         |   4 +-
+ include/linux/slab.h                          |   7 +-
+ include/linux/stackdepot.h                    |   6 +-
+ include/linux/sunrpc/svc.h                    |   8 +-
+ include/linux/sunrpc/svc_rdma.h               |   4 +-
+ include/linux/sunrpc/svcsock.h                |   2 +-
+ include/linux/swap.h                          |  17 +-
+ include/linux/swapops.h                       |   6 +-
+ include/linux/thread_info.h                   |  10 +-
+ include/xen/page.h                            |   2 +
+ init/main.c                                   |   7 +-
+ kernel/bpf/core.c                             |   9 +-
+ kernel/bpf/ringbuf.c                          |  54 ++---
+ kernel/cgroup/cgroup.c                        |   8 +-
+ kernel/crash_core.c                           |   2 +-
+ kernel/events/core.c                          |   2 +-
+ kernel/fork.c                                 |  71 +++----
+ kernel/power/power.h                          |   2 +-
+ kernel/power/snapshot.c                       |   2 +-
+ kernel/power/swap.c                           | 129 +++++++++--
+ kernel/trace/fgraph.c                         |   2 +-
+ kernel/trace/trace.c                          |   2 +-
+ lib/stackdepot.c                              |   6 +-
+ mm/kasan/report.c                             |   3 +-
+ mm/memcontrol.c                               |  11 +-
+ mm/memory.c                                   |   4 +-
+ mm/mmap.c                                     |   2 +-
+ mm/page-writeback.c                           |   2 +-
+ mm/page_alloc.c                               |  31 +--
+ mm/slub.c                                     |   2 +-
+ mm/sparse.c                                   |   2 +-
+ mm/swapfile.c                                 |   2 +-
+ mm/vmalloc.c                                  |   7 +-
+ net/9p/trans_virtio.c                         |   4 +-
+ net/core/hotdata.c                            |   4 +-
+ net/core/skbuff.c                             |   4 +-
+ net/core/sysctl_net_core.c                    |   2 +-
+ net/sunrpc/cache.c                            |   3 +-
+ net/unix/af_unix.c                            |   2 +-
+ sound/soc/soc-utils.c                         |   4 +-
+ virt/kvm/kvm_main.c                           |   2 +-
+ 172 files changed, 2185 insertions(+), 951 deletions(-)
+ create mode 100644 arch/arm64/include/asm/pgtable-geometry.h
+ create mode 100644 arch/arm64/kvm/hyp/nvhe/pgtable-geometry.c
+ create mode 100644 arch/arm64/mm/pgtable-geometry.c
+ create mode 100644 include/asm-generic/pgtable-geometry.h
+
+--
+2.43.0
 
 
