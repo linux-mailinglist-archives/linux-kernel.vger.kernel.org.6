@@ -1,309 +1,428 @@
-Return-Path: <linux-kernel+bounces-363225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8894B99BF38
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD0499BF34
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B831C216A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65A21C2155C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077F61369BC;
-	Mon, 14 Oct 2024 04:54:16 +0000 (UTC)
-Received: from cosmicgizmosystems.com (beyond-windows.com [63.249.102.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0481369AA;
+	Mon, 14 Oct 2024 04:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VlU6gPZo"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F53D4A1C;
-	Mon, 14 Oct 2024 04:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.249.102.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4A7288DB
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728881655; cv=none; b=PDemHl7SR3+1YnWEv2/dZHmtClE6lG6JqnUNpRG74D1EpfVugbKwM7UMFNUITK95ltn22f3kY4DgEGXy4nrEx4dMPeUZ84+Om/owEcOnc53WJSmc8K2uXyAq6qYvzVM//IN4MfSCNm6cWvazrgCeIAUyLsFnmjulKXQH37ZCEIQ=
+	t=1728881385; cv=none; b=DF+GLrRF951On0RK1PPEL3g7yBksAanHQi1C7dK2dElRW3nuLqvNajbhAsar759SwFaaLl5kFgrQiiQOKMa1mxnT5nICjJ3G4pLljSOnhHmDyMx4vB/cv5ln8hHDqa49Qem+7lsBcADaAJjlOP9E1Llgm7Jw6+ypuTswmexcL9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728881655; c=relaxed/simple;
-	bh=WTSxNEFV87UUOCvE3AFLbbV3O/wp3BlqSEnenjaV7xE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hi/3JVcmTHr5QvN9yAQ9v2ofsJoupm0HV53S8i/vzs3PdRppk7+eHbv4qZZ4eLJbD76oiVMZrx8Q3rrBV/9+L5QxoMnqT1S17PuvM0piiDNm4RbVwLBuQ6avvIAgwc4q8q+ADXjuQLNupmvHSSJm7waYL9IOdzbbdyD+2PBsqls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com; spf=pass smtp.mailfrom=cosmicgizmosystems.com; arc=none smtp.client-ip=63.249.102.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cosmicgizmosystems.com
-Received: from [10.0.0.101] (c-73-190-111-195.hsd1.wa.comcast.net [73.190.111.195])
-	by host11.cruzio.com (Postfix) with ESMTPSA id 5FB2E275BF53;
-	Sun, 13 Oct 2024 21:47:38 -0700 (PDT)
-Message-ID: <234020be-e030-4271-9cc1-a1f6d04eeeed@cosmicgizmosystems.com>
-Date: Sun, 13 Oct 2024 21:47:37 -0700
+	s=arc-20240116; t=1728881385; c=relaxed/simple;
+	bh=U2cCHdsbIOfVh5dpaXFu+9tUsMgYwBdrm8GpTJjS594=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lpdpnmDEL/pYsJdNC4nNfCRiC17VP74dhoEEDI768N3TwUbiMRpO9MfnAJAQL2D8a57DpqV9pkOW1q3MmmDizomQWtZaMvg/Lxx++dmpyKSEn8/TXHAdbL+fY1ZeGcd2egUOmqGevTtoyXct+Hl/1M5da1Djr+TuxDzEgoIOuBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VlU6gPZo; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-286f4d2abf1so107438fac.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 21:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728881382; x=1729486182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aXygzV2KTIZpy73JYymw8mRNeey1AWkRtD0JC+polOw=;
+        b=VlU6gPZoo4H2qdi0RC9kmw5UjjcXj2anIZGU0Libb4OJadDMxQPA85FuyJynA4Q9do
+         Pm7qlVL7T5RamWin10RK3rsnAxZnMP5Qn1Uf34l14Unsptllc1GNXxzf1t55uJgInAIe
+         /H+9uZJDPSDA353xTBbhhX0LciQU312zbgFi8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728881382; x=1729486182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aXygzV2KTIZpy73JYymw8mRNeey1AWkRtD0JC+polOw=;
+        b=HwGWp62G1qAu5qjRilv/M+O4YkO7xxJBUT/EazJccOdn3YEqoQBmfWJLHsQIIXu1Bs
+         pkreDiuf0eI4q1Vp75SwQrYAr8FHk+RTFhTnCq4+1hMyT5BpLPQC084OJ/IAmRy0Q18v
+         VSSPrRWqNbwAhdlETM1tgr01H4FQ7mnSv248/a55gE6z3ftYQFjJc28c0Gjwl7++ArWr
+         9oCSseSybWxmVgHxOuD1JSk+LFOYHvWE13mJ+K2m8sFf4rUV2SOasqOchAmS3FrB+lfS
+         Pz/ZMEdhidZhPiTtT8yNtfdorW/xWm2T2JrA7z1X699tMPVyO1XvVfnKBTu2U0XaZwzo
+         P/uA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT7LzPMeQtk0+jM/O7UEIEbNpRVUsgH4TkqcgAwxOYRWa50u0gc7PV/LWUp7pUFXdSmZcJU1sJhjgSfjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLIW3276gma2y0Yy0V/rsPAE2g7Sgfr/CvC+ST57RF2oWQdX6/
+	4spukinSowlLolXGoSS+CyXJmjTWx/5c6J/siuelwTtpDRmlD3+0O2yk6WJmu2aPbs8VHePXHe4
+	rrwy8DvIoDn2QXRpNR9MuA+ZYDr2kvvg9LAye
+X-Google-Smtp-Source: AGHT+IEW/1AiekjBhEnn2YIPy9eT6g762PBkV5jIpTSn0H9S7U6T1VGDPofVhO6vlb2jV6yz5IwbYQWfUPh8byf/bFE=
+X-Received: by 2002:a05:6870:558d:b0:27b:b2e0:6af with SMTP id
+ 586e51a60fabf-2886dd5a7d4mr1886468fac.2.1728881382240; Sun, 13 Oct 2024
+ 21:49:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] HID: plantronics: Update to map micmute controls
-To: "Wang, Wade" <wade.wang@hp.com>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: "jikos@kernel.org" <jikos@kernel.org>,
- "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240913060800.1325954-1-wade.wang@hp.com>
- <s36bnt7ptdarrxpejm6n62gf3rvvwfagmmpyq4unpv3hn7v2jf@up2vjv7shl2q>
- <EA2PR84MB378051BB14F857BA84E662818B602@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
- <EA2PR84MB378082C6FA58AA25258DC74B8B682@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
- <bc92e409-cebe-4da1-a225-c48915c5dcba@cosmicgizmosystems.com>
- <EA2PR84MB37807C9F2191AFE41F9372328B6A2@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
- <EA2PR84MB378022DD0D3D06901404BEDB8B792@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Terry Junge <linuxhid@cosmicgizmosystems.com>
-In-Reply-To: <EA2PR84MB378022DD0D3D06901404BEDB8B792@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240927185211.729207-1-jeffxu@chromium.org> <20240927185211.729207-2-jeffxu@chromium.org>
+ <2vkppisejac42wnawjkd7qzyybuycu667yxwmsd4pfk5rwhiqc@gszyo5lu24ge>
+ <CABi2SkU62r8bLCeitzVwAW-r7L8-Lfmy8Cp73DE2HaeLzUXVXQ@mail.gmail.com>
+ <2q6hzkvep2g3z6m2jrwbw2j3sbydf6tgj2obwd6hgmm7xzgsg3@ddr5ghmsia5k>
+ <CABi2SkUUdbzgGkfr3YjvfUywkC7ciumwMPdLsCCHscr8uJPUeQ@mail.gmail.com> <uwwg47m4mwo3g32qavzr2mjmh4r6lcm3irr3wtlvedlylbq74z@flcq2kwvmh46>
+In-Reply-To: <uwwg47m4mwo3g32qavzr2mjmh4r6lcm3irr3wtlvedlylbq74z@flcq2kwvmh46>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Sun, 13 Oct 2024 21:49:30 -0700
+Message-ID: <CABi2SkW2XzuZ2-TunWOVzTEX1qc29LhjfNQ3hD4Nym8U-_f+ug@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] mseal: update mseal.rst
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, corbet@lwn.net, 
+	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com, 
+	sroettger@google.com, linux-hardening@vger.kernel.org, willy@infradead.org, 
+	gregkh@linuxfoundation.org, torvalds@linux-foundation.org, 
+	deraadt@openbsd.org, usama.anjum@collabora.com, surenb@google.com, 
+	merimus@google.com, rdunlap@infradead.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, enh@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wade,
+Hi Pedro
 
-Short answer is no, not until some fix is put into the kernel or user 
-space so the majority of Plantronics/Poly/HP headsets bind to the mixer 
-so the host feeds back settings on the audio control interface for the 
-volume level and mute state. The problem is in the names that the kernel 
-creates for the various controls.
+On Fri, Oct 4, 2024 at 10:02=E2=80=AFAM Pedro Falcato <pedro.falcato@gmail.=
+com> wrote:
+>
+> On Mon, Sep 30, 2024 at 05:24:39PM -0700, Jeff Xu wrote:
+> > Hi Pedro
+> >
+> > On Sat, Sep 28, 2024 at 6:43=E2=80=AFAM Pedro Falcato <pedro.falcato@gm=
+ail.com> wrote:
+> > >
+> > > On Fri, Sep 27, 2024 at 06:29:30PM GMT, Jeff Xu wrote:
+> > > > Hi Pedro,
+> > > >
+> > > > On Fri, Sep 27, 2024 at 3:59=E2=80=AFPM Pedro Falcato <pedro.falcat=
+o@gmail.com> wrote:
+> > > <snip>
+> > > > > > +
+> > > > > > +   Blocked mm syscall:
+> > > > > > +      - munmap
+> > > > > > +      - mmap
+> > > > > > +      - mremap
+> > > > > > +      - mprotect and pkey_mprotect
+> > > > > > +      - some destructive madvise behaviors: MADV_DONTNEED, MAD=
+V_FREE,
+> > > > > > +        MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_W=
+IPEONFORK
+> > > > > > +
+> > > > > > +   The first set of syscall to block is munmap, mremap, mmap. =
+They can
+> > > > > > +   either leave an empty space in the address space, therefore=
+ allow
+> > > > > > +   replacement with a new mapping with new set of attributes, =
+or can
+> > > > > > +   overwrite the existing mapping with another mapping.
+> > > > > > +
+> > > > > > +   mprotect and pkey_mprotect are blocked because they changes=
+ the
+> > > > >                                                           change
+> > > > > > +   protection bits (rwx) of the mapping.
+> > > > > > +
+> > > > > > +   Some destructive madvice behaviors (MADV_DONTNEED, MADV_FRE=
+E,
+> > > > > > +   MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEON=
+FORK)
+> > > > > > +   for anonymous memory, when users don't have write permissio=
+n to the
+> > > > > > +   memory. Those behaviors can alter region contents by discar=
+ding pages,
+> > > > > > +   effectively a memset(0) for anonymous memory.
+> > > > >
+> > > > > What's the difference between anonymous memory and MAP_PRIVATE | =
+MAP_FILE?
+> > > > >
+> > > > MAP_FILE seems not used ?
+> > > > anonymous mapping is the mapping that is not backed by a file.
+> > >
+> > > MAP_FILE is actually defined as 0 usually :) But I meant file-backed =
+private mappings.
+> > >
+> > OK, we are on the same page for this.
+> >
+> > > > > The feature now, as is (as far as I understand!) will allow you t=
+o do things like MADV_DONTNEED
+> > > > > on a read-only file mapping. e.g .text. This is obviously wrong?
+> > > > >
+> > > > When a MADV_DONTNEED is called, pages will be freed, on file-backed
+> > > > mapping,  if the process reads from the mapping again, the content
+> > > > will be retrieved from the file.
+> > > >
+> > >
+> > > Sorry, it was late and I gave you a crap example. Consider this:
+> > > a file-backed MAP_PRIVATE vma is marked RW. I write to it, then RO-it=
+ + mseal.
+> > >
+> > > The attacker later gets me to MADV_DONTNEED that VMA. You've just los=
+t data.
+> > >
+> > > The big problem here is with anon _pages_, not anon vmas.
+> > >
+> > That depends on the app's threat-model. What you described seems to be
+> > a case below
+> > 1. The file is rw
+> > 2. The process opens the file as rw
+> > 3. the process mmap the fd as rw
+> > 4 The process writes the memory, and the change isn't flushed to the
+> > file on disk.
+> > 5 The process  changes the mapping to RO
+> > 6. The process seals the mapping
+> > 7. The process is called MADV_DONTNEED , and because the change isn't
+> > flush to file on disk, so it loses the change, (retrieve the old data
+> > from disk when read from the mapped address later)
+> >
+> > I'm not sure this is a valid use case, the problem here seems to be
+> > that the app needs to flush the change from memory to disk if the
+> > expectation is writing is permanent.
+> >
+>
+> MAP_PRIVATE never does writeback. That's not what this is about.
+> I can trivially discard anonymous pages for private "file VMAs", which ar=
+en't
+> refilled with the exact same contents. This is a problem.
+>
+That is fair, I appreciate you providing the use case.
 
-After a couple of weeks torture and two days to repair/recover my system 
-after following Ubuntu's instructions on building and installing the 
-kernel, I was able to test the behavior with a modified hid-plantronics 
-driver. I removed all the quirks that have been added since I retired 
-and just added allowing the telephony mute event to be mapped by the core.
+I think mseal should support this . In addition, after reviewing
+MADV_DONTNEED, I believe we should also allow madvise(DONTNEED) when
+PROT is PROT_NONE.
 
-The quirks, by the way, are just masking the as designed behavior of the 
-headsets. Both the repeated *same* volume event and the *opposite* 
-volume event can occur depending on feedback (or lack of feedback) from 
-the host on the audio control interface. Blame Windows...
+I will work on fixes for those, but before that,  I like to make sure
+some of the existing fixes are backported to 6.10, which makes it easy
+to backport future fixes.
 
-I don't have many headsets around to test with but I'll describe the 
-mute behavior with a DA80. It's PID is AF01 but I would expect all AFxx 
-and 43xx PID devices would do the same as the control names are the same 
-for all.
+> > In any case, the mseal currently just blocks a subset of madvise, those
+> > we know with a security implication.  If there is something mseal needs
+> > to block additionally, one can always extend it by using the "flags" fi=
+eld.
+> > I do think the bar is high though, e.g. a valid use case to support tha=
+t.
+>
+> No, this has nothing to do with a flag. It's about providing sane semanti=
+cs.
+>
+> >
+> > > > For anonymous mapping, since  there is no file backup, if process
+> > > > reads from the mapping, 0 is filled, hence equivalent to memset(0)
+> > > >
+> > > > > > +
+> > > > > > +   Kernel will return -EPERM for blocked syscalls.
+> > > > > > +
+> > > > > > +   When blocked syscall return -EPERM due to sealing, the memo=
+ry regions may or may not be changed, depends on the syscall being blocked:
+> > > > > > +      - munmap: munmap is atomic. If one of VMAs in the given =
+range is
+> > > > > > +        sealed, none of VMAs are updated.
+> > > > > > +      - mprotect, pkey_mprotect, madvise: partial update might=
+ happen, e.g.
+> > > > > > +        when mprotect over multiple VMAs, mprotect might updat=
+e the beginning
+> > > > > > +        VMAs before reaching the sealed VMA and return -EPERM.
+> > > > > > +      - mmap and mremap: undefined behavior.
+> > > > >
+> > > > > mmap and mremap are actually not undefined as they use munmap sem=
+antics for their unmapping.
+> > > > > Whether this is something we'd want to document, I don't know hon=
+estly (nor do I think is ever written down in POSIX?)
+> > > > >
+> > > > I'm not sure if I can declare mmap/mremap as atomic.
+> > > >
+> > > > Although, it might be possible to achieve this due to munmap being
+> > > > atomic. I'm not sure  as I didn't test this. Would you like to find
+> > > > out ?
+> > >
+> > > I just told you they use munmap under the hood. It's just that the re=
+quirement isn't actually
+> > > written down anywhere.
+> > >
+> > I knew about mmap/mremap calling munmap. I don't know what exactly you
+> > are asking though. In your patch and its discussion, you did not mentio=
+n
+> > the mmap/mremap (for sealing) is or should be atomic.
+> >
+> > My point is: since there isn't a clear statement from your patch descri=
+ption
+> > or POSIX, that mremap/mmap is atomic,  and I haven't tested it myself w=
+ith
+> > regards to sealing, let's  leave them as "undefined" for now. (I could =
+get back
+> > to this later after the merging window)
+> >
+> > > >
+> > > > > >
+> > > > > >  Use cases:
+> > > > > >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > >  - glibc:
+> > > > > >    The dynamic linker, during loading ELF executables, can appl=
+y sealing to
+> > > > > > -  non-writable memory segments.
+> > > > > > +  mapping segments.
+> > > > > >
+> > > > > >  - Chrome browser: protect some security sensitive data-structu=
+res.
+> > > > > >
+> > > > > > -Notes on which memory to seal:
+> > > > > > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > -
+> > > > > > -It might be important to note that sealing changes the lifetim=
+e of a mapping,
+> > > > > > -i.e. the sealed mapping won=E2=80=99t be unmapped till the pro=
+cess terminates or the
+> > > > > > -exec system call is invoked. Applications can apply sealing to=
+ any virtual
+> > > > > > -memory region from userspace, but it is crucial to thoroughly =
+analyze the
+> > > > > > -mapping's lifetime prior to apply the sealing.
+> > > > > > +Don't use mseal on:
+> > > > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > +Applications can apply sealing to any virtual memory region fr=
+om userspace,
+> > > > > > +but it is *crucial to thoroughly analyze the mapping's lifetim=
+e* prior to
+> > > > > > +apply the sealing. This is because the sealed mapping *won=E2=
+=80=99t be unmapped*
+> > > > > > +till the process terminates or the exec system call is invoked=
+.
+> > > > >
+> > > > > There should probably be a nice disclaimer as to how most people =
+don't need this or shouldn't use this.
+> > > > > At least in its current form.
+> > > > >
+> > > > Ya, the mseal is not for most apps. I mention the malloc example to=
+ stress that.
+> > > >
+> > > > > <snip>
+> > > > > > -
+> > > > > > -
+> > > > > > -Additional notes:
+> > > > > > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > >  As Jann Horn pointed out in [3], there are still a few ways to=
+ write
+> > > > > > -to RO memory, which is, in a way, by design. Those cases are n=
+ot covered
+> > > > > > -by mseal(). If applications want to block such cases, sandbox =
+tools (such as
+> > > > > > -seccomp, LSM, etc) might be considered.
+> > > > > > +to RO memory, which is, in a way, by design. And those could b=
+e blocked
+> > > > > > +by different security measures.
+> > > > > >
+> > > > > >  Those cases are:
+> > > > > > -
+> > > > > > -- Write to read-only memory through /proc/self/mem interface.
+> > > > > > -- Write to read-only memory through ptrace (such as PTRACE_POK=
+ETEXT).
+> > > > > > -- userfaultfd.
+> > > > > > +   - Write to read-only memory through /proc/self/mem interfac=
+e (FOLL_FORCE).
+> > > > > > +   - Write to read-only memory through ptrace (such as PTRACE_=
+POKETEXT).
+> > > > > > +   - userfaultfd.
+> > > > >
+> > > > > I don't understand how this is not a problem, but MADV_DONTNEED i=
+s.
+> > > > > To me it seems that what we have now is completely useless, becau=
+se you can trivially
+> > > > > bypass it using /proc/self/mem, which is enabled on most Linux sy=
+stems.
+> > > > >
+> > > > > Before you mention ChromeOS or Chrome, I don't care. Kernel featu=
+res aren't designed
+> > > > > for Chrome. They need to work with every other distro and applica=
+tion as well.
+> > > > >
+> > > > > It seems to me that the most sensible change is blocking/somehow =
+distinguishing between /proc/self/mem and
+> > > > > /proc/<pid>/mem (some other process) and ptrace. As in blocking /=
+proc/self/mem but allowing the other FOLL_FORCE's
+> > > > > as the traditional UNIX permission model allows.
+> > > > >
+> > > > IMO, it is a matter of  Divide and Conquer.  In a nutshell, mseal o=
+nly
+> > > > prevents VMA's certain attributes (such as prot bits) from changing=
+.
+> > > > It doesn't mean to say that sealed RO memory is immutable. To achie=
+ve
+> > > > that, the system needs to apply multiple security measures.
+> > >
+> > > No, it's a matter of providing a sane API without tons of edgecases. =
+Making a VMA immutable should make a VMA
+> > > immutable, and not require you to provide a crap ton of other mechani=
+sms in order to truly make it immutable.
+> > > If I call mseal, I expect it to be sealed, not "sealed except when it=
+'s not, lol".
+> > >
+> > > You haven't been able to quite specify what semantics are desirable o=
+ut of this whole thing. Making
+> > > prot flags "immutable" is completely worthless if you can simply writ=
+e to a random pseudofile and
+> > > have it bypass the whole thing (where a write to /proc/self/mem is se=
+mantically equivalent to
+> > > mprotect RW + write + mprotect RO). Making the vma immutable is compl=
+etely worthless
+> > > if I can simply wipe anon pages. There has to be some end goal here (=
+make contents immutable?
+> > > make sure VMA protection can't be changed? both?) which seems to be u=
+nclear from the kernel mmap-side.
+> > >
+> > > If you insist on providing half-baked APIs (and waving off any concer=
+ns), I'm sure this would've been better
+> > > implemented as a random bpf program for chrome. Maybe we could revert=
+ this whole thing and give eBPF one
+> > > or two bits of vma flags for their own uses :)
+> > >
+>
+> Please reply to the above. We're struggling to understand exactly what se=
+mantics you want from this.
+> *That* is what we want to document and get set in stone, and we'll move f=
+rom there.
+>
+If you meant to make mseal to support blocking /proc/self/mem or
+ptrace or other cases, I welcome that.  Please go ahead to implement
+it with a flag, the mseal already has a field for such future
+extension.
 
-1. Plug in the headset.
-2. Open Ubuntu Settings menu and select Sound.
-3. Select the headset as the output and input devices.
-4. Mute the Input Volume by clicking on the microphone icon.
-5. Start pressing the mute button on the headset.
+The current  mseal's semantic doesn't come out from vacuum, for system
+such as ChromeOS and Android, they are already relying heavily on
+security mechanisms to block /proc/self/mem or ptrace, as I pointed
+out previously, SELINUX/YAMA/Landlock/seccomp, and most recently
+CONFIG_PROC_MEM_RESTRICT_WRITE_ALL all contributes to that, therefore
+I don't have a use case or needs to make mseal to additionally block
+those. But I understand others might have different choices on which
+security mechanism to use, and I don't want to argue about which
+requirements are correct. Security isn't a true/false binary state,
+each system is different and no single security feature can achieve
+the absolute "secure" state.
 
-Note that the mute state in the mixer is now out of synchronization with 
-the headset. Every time you press the headset mute button they both 
-toggle so one or the other is always muted and the microphone is useless.
+Thanks
+-Jeff
 
-Also, if you unplug the headset when the mixer is muted but the headset 
-is unmuted, when you plug it in again the mixer is still muted. So the 
-microphone is still useless. You have to go back to the Sound Settings 
-dialog and set the mute to match the headset state to resynchronize them.
 
-I also tested a BT600 Bluetooth dongle which binds to the mixer volume 
-and mute controls. Mute synchronization works as expected.
 
-So before we uncork the telephony mute event and hope user space will 
-fix something in the future, let's fix it so the headsets all bind to 
-the mixer and things just work before we pull the cork. The issue is in 
-the names...
-
-Of the headsets I have these are the names that don't bind.
-
-Control: name="Headset Earphone Playback Volume"
-Control: name="Headset Microphone Capture Switch"
-Control: name="Receive Playback Volume"
-Control: name="Transmit Capture Switch"
-
-These are the names that do bind.
-
-Control: name="Headset Capture Switch"
-Control: name="PCM Playback Volume"
-
-These names are created by the kernel in:
-
-sound/usb/mixer.c function __build_feature_ctl
-
-I have a patch I am trying to test that will clean up the names only for 
-VID=047F (Plantronics) devices so the broken names will come out as 
-"Headset Capture Switch" and "Headset Playback Volume". I was able to 
-modprobe the hid_plantronics module into the running kernel to test it 
-but modprobe fails loading the snd_usb_audio module (which contains the 
-patch) so I will have to install the full kernel. The last time I tried 
-that it broke the kernel. I think some of the packages that the build 
-created are not supposed to be installed? Not sure which ones to install 
-and in what order.
-
-Here's what a full build
-
-fakeroot debian/rules binary
-
-created:
-
-linux-buildinfo-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-cloud-tools-6.8.0-45_6.8.0-45.45+test1_amd64.deb
-linux-cloud-tools-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-cloud-tools-common_6.8.0-45.45+test1_all.deb
-linux-doc_6.8.0-45.45+test1_all.deb
-linux-headers-6.8.0-45_6.8.0-45.45+test1_all.deb
-linux-headers-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-image-unsigned-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-libc-dev_6.8.0-45.45+test1_amd64.deb
-linux-lib-rust-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-modules-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-modules-extra-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-modules-ipu6-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-modules-iwlwifi-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-modules-usbio-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-source-6.8.0_6.8.0-45.45+test1_all.deb
-linux-tools-6.8.0-45_6.8.0-45.45+test1_amd64.deb
-linux-tools-6.8.0-45-generic_6.8.0-45.45+test1_amd64.deb
-linux-tools-common_6.8.0-45.45+test1_all.deb
-linux-tools-host_6.8.0-45.45+test1_all.deb
-
-I'm going to git the ALSA branch tomorrow so I can create an actual 
-patch. Maybe I can pass it to you to build and test on your machines 
-with as many headsets as possible?
-
-Thanks and regards,
-Terry
-
-On 10/10/24 9:03 PM, Wang, Wade wrote:
-> Hi Terry,
-> 
-> Is it OK to apply? At least we will have a chance to improve user experience in userspace after apply this patch. Looking forward to your comments. Thanks
-> 
-> Regards
-> Wade
-> 
-> -----Original Message-----
-> From: Wang, Wade
-> Sent: Thursday, September 26, 2024 9:58 AM
-> To: Terry Junge <linuxhid@cosmicgizmosystems.com>; Benjamin Tissoires <bentiss@kernel.org>
-> Cc: jikos@kernel.org; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; stable@vger.kernel.org
-> Subject: RE: [PATCH] HID: plantronics: Update to map micmute controls
-> 
-> Hi Terry,
-> 
-> 1. Per our testing, Poly headset will maintain Mute status at headset side, whatever host send feedback or not.
-> 2. Mute led is off when Poly USB headset connect to host, so host will keep same Mute status with headset because of toggle Mute key event.
-> 3. Even Ubuntu and Chromebooks have to feedback Poly headset mute state, it should be done at user space instead of kernel. The precondition is kernel should report Mute key event first, then user space has chance to do this kind of improvement in future
-> 
-> So following standard HID rule is necessary.
-> 
-> BTW, on MSFT Windows, After receive mute key, the host switch the mute control status of the audio control interface, whatever mute status in headset FW is correct or not. I think it make sense than LED page mute LED.
-> 
-> Thanks,
-> Wade
-> 
-> -----Original Message-----
-> From: Terry Junge <linuxhid@cosmicgizmosystems.com>
-> Sent: Wednesday, September 25, 2024 11:32 AM
-> To: Wang, Wade <wade.wang@hp.com>; Benjamin Tissoires <bentiss@kernel.org>
-> Cc: jikos@kernel.org; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; stable@vger.kernel.org
-> Subject: Re: [PATCH] HID: plantronics: Update to map micmute controls
-> 
-> CAUTION: External Email
-> 
-> Hi Wade,
-> 
-> I retired from Plantronics in 2020. The original driver did not allow mute button to be mapped as there were mute synchronization issues.
-> 
-> The headset needs to receive some type of feedback from the host when it sends the mute event in order to synchronize with the host, ideally the host setting or clearing the mute control in the audio control interface but setting/clearing the mute LED would also work.
-> 
-> At the time Ubuntu and Chromebooks did not feedback mute state and it was possible to mute from the headset and then unmute from the mixer or keyboard and the headset would stay muted. The only way to unmute was with the headset button. This was an unacceptable user experience so we blocked mapping.
-> 
-> If you want to try mapping mute event then you also need to allow mapping the mute LED for possible host feedback.
-> 
-> (HID_UP_TELEPHONY | 0x2f) is telephony page mute button (HID_UP_LED | 0x09) is LED page mute LED
-> 
-> Then you need to test more than just the event getting to user space.
-> You need to check mute synchronization with the host mixer under all mute/unmute use cases.
-> 
-> Regards,
-> Terry Junge
-> 
-> 
-> On 9/24/24 2:00 AM, Wang, Wade wrote:
->> Hi Benjamin and Greg,
->>
->> May I know the review progress and anything I need to change? Thanks
->>
->> Regards
->> Wade
->>
->> -----Original Message-----
->> From: Wang, Wade
->> Sent: Monday, September 16, 2024 4:13 PM
->> To: Benjamin Tissoires <bentiss@kernel.org>
->> Cc: jikos@kernel.org; linux-input@vger.kernel.org;
->> linux-kernel@vger.kernel.org; stable@vger.kernel.org
->> Subject: RE: [PATCH] HID: plantronics: Update to map micmute controls
->>
->> Hi Benjamin,
->>
->> This patch is for all Poly HS devices, and it does not depends on other patches, it can apply directly by " git am -3".
->>
->> With this patch, MicMute button key event will be send to user space, I have tested on the below Poly devices:
->>           Plantronics EncorePro 500 Series
->>           Plantronics Blackwire_3325 Series
->>           Poly Voyager 4320 HS + BT700 Dongle
->>
->> Regards
->> Wade
->>
->> -----Original Message-----
->> From: Benjamin Tissoires <bentiss@kernel.org>
->> Sent: Friday, September 13, 2024 10:04 PM
->> To: Wang, Wade <wade.wang@hp.com>
->> Cc: jikos@kernel.org; linux-input@vger.kernel.org;
->> linux-kernel@vger.kernel.org; stable@vger.kernel.org
->> Subject: Re: [PATCH] HID: plantronics: Update to map micmute controls
->>
->> CAUTION: External Email
->>
->> On Sep 13 2024, Wade Wang wrote:
->>> telephony page of Plantronics headset is ignored currently, it caused
->>> micmute button no function, Now follow native HID key mapping for
->>> telephony page map, telephony micmute key is enabled by default
->>
->> For which devices this patch is required? Is it related to the other patch you sent today? If so please make a mention of the concerned devices and make sure both patches are sent in a single v3 series.
->>
->> Also, have you tested this change with other Plantronics headsets? Where there any changes in behavior from them?
->>
->> Cheers,
->> Benjamin
->>
->>>
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Wade Wang <wade.wang@hp.com>
->>> ---
->>>    drivers/hid/hid-plantronics.c | 4 ++--
->>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/hid/hid-plantronics.c
->>> b/drivers/hid/hid-plantronics.c index 2a19f3646ecb..2d17534fce61
->>> 100644
->>> --- a/drivers/hid/hid-plantronics.c
->>> +++ b/drivers/hid/hid-plantronics.c
->>> @@ -77,10 +77,10 @@ static int plantronics_input_mapping(struct hid_device *hdev,
->>>                 }
->>>         }
->>>         /* handle standard types - plt_type is 0xffa0uuuu or 0xffa2uuuu */
->>> -     /* 'basic telephony compliant' - allow default consumer page map */
->>> +     /* 'basic telephony compliant' - allow default consumer &
->>> + telephony page map */
->>>         else if ((plt_type & HID_USAGE) >= PLT_BASIC_TELEPHONY &&
->>>                  (plt_type & HID_USAGE) != PLT_BASIC_EXCEPTION) {
->>> -             if (PLT_ALLOW_CONSUMER)
->>> +             if (PLT_ALLOW_CONSUMER || (usage->hid & HID_USAGE_PAGE)
->>> + == HID_UP_TELEPHONY)
->>>                         goto defaulted;
->>>         }
->>>         /* not 'basic telephony' - apply legacy mapping */
->>> --
->>> 2.34.1
->>>
->>
->>
-> 
-
+> > > >
+> > > > For writing to /proc/pid/mem, it can be disabled via [1].  SELINUX =
+and
+> > > > Landlock can achieve the same protection too.
+> > >
+> > > I'm not blocking /proc/pid/mem, and my distro doesn't run any of thos=
+e security modules :/
+> > >
+> > It is a choice you can make :-)
+>
+> Your feature needs to work without "extra choices".
+>
+> --
+> Pedro
 
