@@ -1,78 +1,108 @@
-Return-Path: <linux-kernel+bounces-364790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD9099D963
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:54:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEBA99D969
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2D6282E6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:54:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 019EFB21511
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436CD1D5AA9;
-	Mon, 14 Oct 2024 21:54:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BF81D1E79;
+	Mon, 14 Oct 2024 21:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCWDKhvl"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B1D1D4146;
-	Mon, 14 Oct 2024 21:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458AF14AD38;
+	Mon, 14 Oct 2024 21:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728942851; cv=none; b=gYHE8ZZ1vjuDZ3FWZtRkSDC/fsxyM3kQSHXN2T/Vq9Sg7qtlgwI0bMfVgawI8DtT2bN9vPsc3mJwsIJ9XfBm4BdGE1mdDs9ZlKbzeUM4u0EsC3Zy9G5iuaLZ+rEqOfUJNXeeUTBPecS9EO5NqkLl1wbiLrr1zgVG4V1kYP85V78=
+	t=1728943025; cv=none; b=f43HB5INmw/1Fq7TJTYWsOPTGzNPIdQ74eRXEqax6IFUZA2xzn3sWLb38TD67BYNZJJAGXVnAth8xEVmS/HUYaOPCCT1vy1ftYgRXOQdKhNno6UQuIvDRlZgtoEP4uUwuyC8WPnhybDQ9B7HVmVbDJFKo4hJzk7KfDHoqCucgzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728942851; c=relaxed/simple;
-	bh=ZqH16Rgj4Hh52BSJPWE9L9nQI9vM/8AD4xag8e1XBjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rkC+R2isu4Tw3bb9ArgT0iFAnuHKKNz0a1ryxPj/f8Ld6jM5Bd+CrbZdAJnCo/YqNHzjv+G6Ms4dwbLo6FPZsnEcwq6Ewnvxq2fT4S1e15TBRg+MX1VxPIzl5QyWtmyANkrov0OlRWgLAn1UGBmwGtIt5jor0LTkdq/iOatMDCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92664C4CECF;
-	Mon, 14 Oct 2024 21:54:10 +0000 (UTC)
-Date: Mon, 14 Oct 2024 17:54:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Justin Stitt <justinstitt@google.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] tracing: replace multiple deprecated strncpy with
- memcpy
-Message-ID: <20241014175427.4bcf9020@gandalf.local.home>
-In-Reply-To: <202410141423.2C30F35EE0@keescook>
-References: <20241014-strncpy-kernel-trace-trace_events_filter-c-v2-1-d821e81e371e@google.com>
-	<202410141423.2C30F35EE0@keescook>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728943025; c=relaxed/simple;
+	bh=CCNhB8wRuPqzKYstyjiKWxgd79v0ox5Jx4ud5FEvrkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TWTZVbB79ODoV9dTHWgvFUHNOV7QtDRmUquekZC9DLGT1EmW4eE77y7L/uFSFdmN8w1GRviRdnonUlMDitrNO2uVW0drghjZAmyN2HDKQuHqkpZFvrUpNvVi5tvonL2HB00sDGi3U/aQJdEJ244yofHLyLfmd1r87ZohUw+7Mpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCWDKhvl; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e31977c653so439640a91.0;
+        Mon, 14 Oct 2024 14:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728943023; x=1729547823; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CCNhB8wRuPqzKYstyjiKWxgd79v0ox5Jx4ud5FEvrkc=;
+        b=mCWDKhvlMvUgvKeqZQTcZkba9J05+lUUZ1quBITspEg13ofQe1neq+iRBPDYaiUuuY
+         prSixy/3GPutj1na3pdUiB2ZFVeaX/uzDBuUIB2xpaIpWQH+KxIP3uqUWEptNz47rxh4
+         IZpJ1KUIgx86c6tPznIvLj3yM6GPmsQ3PYUtCSNkqTJIPG5LaCHe6IK7axX6OEzkyCdc
+         vpwWL2JEtCKQtHlHq+ESCn2RcgD16I2FQxiFQs5uCntQEI1YrMn+5UUFz4MwnXM/p/oz
+         6A4tygM4FtycKAtF/g6uXpfQjQrJgM3Ik1P2+u7MwvPuVRdFNwfikWPHC3Myqq/gFtUg
+         41Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728943023; x=1729547823;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CCNhB8wRuPqzKYstyjiKWxgd79v0ox5Jx4ud5FEvrkc=;
+        b=JziF1FRb87a37guobFmy0AbRXMDVM6Y4e2rGNj1uknXYO2tUaV4n2/jJ6dDhu0o4d+
+         fBXV+tc884Qj3iq13FVHU2luzhblxiZOJvsaqqFCA9snpgLc6wAyksps7ASIJdsJVRIk
+         5M82XL4viNTU0Yik4s6bFLdSDlc+m4AyrwQApCzPSCDZFV5sWNci+DXb3w2k8QW8JiBU
+         EeBx7M1rECf6E8Uq7SPmPRcxTAOVs4WnmpwLRD1rVgiK37054TUiV4zHauM8nNejMrP6
+         r98nlSAx5SCVR8Qa/LA/9L6JDFuHVd2MpVq0xA58Zm8c3j/37iaV73pVWWJzyvBzv4wj
+         SSww==
+X-Forwarded-Encrypted: i=1; AJvYcCULQr69Dcd5kfJfnp8kz93KHRAdbqLI7GaL6nXoaJUyLkTma1GR1uYhXSHGRUZ35xDSriAB547T0mix54g=@vger.kernel.org, AJvYcCWum6gvfBKjlxydVyYSe2HPa7NjPvK7hw0OPIKNSMaIacfW1LJA1Alvy/oVXJ5aqpNLKF7M4te+1/ZVk42cgec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjD4jELxpt1EUIR8ncQ9Sp379g8x44m16F1ww2nA4+Tc5BG3nE
+	S8G5U/nByByCqoQyJtWfpa8OLc31CH9LXQmDXbNq0XWQT+Q9Ewo0Kz/ddIUEMsbl7je7lyCvRES
+	ab4+YW4NCu4+TQNvrRGMBJwDtGXY=
+X-Google-Smtp-Source: AGHT+IFETqmdiRm4yosntRLT56uPB2qh9JnPzC1RN9dEryG2oHGK85k6vqx/f3Dn2DZWnUDjaR0ujQdVXIEAaReRt88=
+X-Received: by 2002:a17:902:dac9:b0:20b:642c:222b with SMTP id
+ d9443c01a7336-20ca1724228mr63138165ad.15.1728943023484; Mon, 14 Oct 2024
+ 14:57:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241009102821.2675718-1-masahiroy@kernel.org>
+In-Reply-To: <20241009102821.2675718-1-masahiroy@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 14 Oct 2024 23:56:51 +0200
+Message-ID: <CANiq72k4+upHYWOtYD1vLZ222EHaau9Q5nWW_HiQJ+xNLHLzEw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: refactor cc-option-yn, cc-disable-warning,
+ rust-option-yn macros
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Matthew Maurer <mmaurer@google.com>, Alice Ryhl <aliceryhl@google.com>, 
+	rust-for-linux@vger.kernel.org, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Benno Lossin <benno.lossin@proton.me>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Trevor Gross <tmgross@umich.edu>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Oct 2024 14:31:29 -0700
-Kees Cook <kees@kernel.org> wrote:
-> 
-> We know the destination must have a NUL-terminated string. Is the src
-> NUL terminated? Looking at parse_pred(), it seems like no? And we can't
-> use memtostr_pad() here because the source buffer size isn't known at
-> compile time. Okay then. And there are no NUL bytes in the "str + s"
-> span, so yeah, it looks like memcpy() is best.
-> 
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> 
+On Wed, Oct 9, 2024 at 12:28=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> cc-option-yn and cc-disable-warning duplicate the compile command seen
+> a few lines above. These can be defined based on cc-option.
+>
+> I also refactored rustc-option-yn in the same way, although there are
+> currently no users of it.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-The code is simply breaking up parts of one string and copying the bits
-into other strings. Like the example that broke:
+Applied to `rust-fixes` as a prerequisite for the `rustc-option` fix
+-- thanks everyone!
 
-$ echo 'common_pid != 0 && common_pid != 120 && common_pid != 1253 &&
-  common_pid != 17 && common_pid != 394 && common_pid != 81 &&
-  common_pid != 87' > /sys/kernel/tracing/events/sched/sched_switch/filter
-
-It would need to move each of the above tokens "common_pid", "!=", "0", "&&", etc
-into their own strings for later processing. The parser finds the start and
-end of the location needed to copy, so memcpy() followed by a nul byte is fine.
-
--- Steve
+Cheers,
+Miguel
 
