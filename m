@@ -1,303 +1,173 @@
-Return-Path: <linux-kernel+bounces-363095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F64B99BDCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:38:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A363F99BDCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F204B21C0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:38:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D9E1F228EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE89450F2;
-	Mon, 14 Oct 2024 02:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D037C450F2;
+	Mon, 14 Oct 2024 02:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J0UvWuXo"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LfNjL/iK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8754594D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AB82D047;
+	Mon, 14 Oct 2024 02:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728873472; cv=none; b=AlqoxU7F1YOicE7PzrrZAbwBNhJ2NainjzUsZzY0RHsytNJ2v5f5nZhBvC7VBJfjSxvlTYXOromohQ5yHMzaUFdktrbH2syzvrCSw9uxJ6eHPnAE1ToYNbFEJkcqIhA2HPekqwGFLm0v/q8xsKz1Dvb0M7AaMw5NzuQd9G3ZBpw=
+	t=1728873460; cv=none; b=LBSLxI6kVHQqbHWa+kIU/vtYNx+zqGYY/g9YYqFA0g7eeFgngk+t+Ivo2tocg9Zfu+c/tO6r6ojodjZx93gJVVAxb3+I+HM9FEqnW7tD7txTDE4M3uR3FYpwroo3Gth+FFfwvvb00TRWJNgQy8UCME2P72nw+R7GhNdJ0W9HknM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728873472; c=relaxed/simple;
-	bh=sIxI7e5sgdvRRPR9jHSTfcKb4j6Q+ooisLwyqBkg2wo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lblVAzAc1ab9P0OKkJOXI7JgxezsZuCaVv/ailiLTnRdqu5lFUw92iT7wuii2we9x/ebaJm56oPq1jgum5SCo5OeksTNzsD/BpKyP2zfRCvlSsQnsiTrnGDlsmuDwpMTVpY4RAGfxiR/cVaeWOuX1lcl6CTB0jeKo6mPceo9yQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J0UvWuXo; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c693b68f5so37703135ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728873470; x=1729478270; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yvS7dkDnxUI6bp1u5nJxrjFDPThHi48yAYLmv0eTJmw=;
-        b=J0UvWuXorwx4HbQSZ+FpbStEaaO5YqVDwvuglIlMQLDZ1VYq9uIB/qfChZslk3+xn/
-         FXdqopWC9z6UR2GJyGqQnertCGRyH1dDODQFRk39uwsHqKA54T45rQm5/Fc/jCsklgPT
-         Xx6X7WMJ9g9RrFGMfOgQ7MdZs1oT+wj1g8E8UH46+Ojcd2lxBKWb9vdZNaNymFGT2ean
-         wohJkUiajzAx3hvndab+HNFfp3e8oazApp4JsTBNJKG5dSXDWHdlXnybBmUhLzg4LEe+
-         50rkWxW5ErlvuBOg8Mq2lUBmi/uzOldNGaZREjx2HyDe9HV7cfE111UtiIhsrR5yfk2S
-         9OYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728873470; x=1729478270;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yvS7dkDnxUI6bp1u5nJxrjFDPThHi48yAYLmv0eTJmw=;
-        b=Yzy9+BjpX1Ni7BKlxObSMld9bXc5u5L44lZhB8rfDirRwZWVV9T8IXWrmk94KaJbh7
-         IfXV7gqVsFj0LUogfpiONNf9qVZV+hzGozZHxjzmfDJgLMcIi7k7kkgboXMMMNU5SCbt
-         F0ZyflwXSFQvPfNlfflDkAC/ZvCMEB0qe0psAlL6ync0jKfMPGt7ydj/Bss/8IEO0wSm
-         03EPqhrrfRVkCA5UHaYR03NPgQratS1v38qB9PXi9h0enAVLNB+/VnprWP/iGp52Q2Ur
-         nFo+OtTS+rYzjX/C9lFOXLaDS4+xufr1lkYtTQcWbOxBMTf92sRKk+XUx0Qxb1e2mf4m
-         j29g==
-X-Forwarded-Encrypted: i=1; AJvYcCWmoRgLtKAi7kU7TaJTwu1i1QE2YEg8zNZcKiB66tgCtS8/+2IwqL0V5DErRQWtZ6RkH2Idkto5YJ1iAME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrG1DHdTaueYDosjqfQ0zbBTuom4dLy13QSsmWSMloo1JMD9iQ
-	mx26+OUwlCkei6wMhgxvtQaKHBDCrFtKRiAYTqQJlR3WDIUjIEgYP0M5c1gThSej2LzS1zn3/yi
-	NwUIKQW+EbH8u/8aAWV6bKZxqRuGHhrzSErhsEtbC0WBnOlT+Khbe
-X-Google-Smtp-Source: AGHT+IHdscZngOk4DHV6or3IO500O+lpxngvQQvWAeD6ImszLIemhpRLBPXwXKk532fxYhBAl3tOt4Dgaa+rt8JSCL0=
-X-Received: by 2002:a17:90a:df89:b0:2e2:bd10:599d with SMTP id
- 98e67ed59e1d1-2e2f0ad2040mr12976320a91.11.1728873469285; Sun, 13 Oct 2024
- 19:37:49 -0700 (PDT)
+	s=arc-20240116; t=1728873460; c=relaxed/simple;
+	bh=XLRTE3U7nubzU4CD5qzrO4xBAIypZc1gjzx+jFwlTzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AiLkucbF74b8Xjvb3Br2o+nZ1hTXI0I+l/9WBE2jbvaFToz0uVPlFexRT3vqm/RC5WmxzIGyZdPlpts+zZZXX5hY8FQoF/wfKd6/DGSjdafKQOEZzQ4wI/enXPspI6ACpKU1K+H1BJSi9AYNlkWq+DIXDKkA6mA22k4kzrqyc+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LfNjL/iK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49DMDnqL002442;
+	Mon, 14 Oct 2024 02:37:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	f1H0TnejxVh6i6GpOuV0FVQkBI1xjimoU9D5YX/ySkA=; b=LfNjL/iKmU0TnW8s
+	o4bxiY5bM7pYtehKCPjTZzf79f75dF1zPLLKQuXIZEQRu1ZxlGL+MNXaJRm+jpkm
+	xMyowFGniZp3duZpu7arQQTbBqCTaygcVSkfOdLtdcX3P7mEAjOWGmu7PjWbV8uA
+	ckQrzb9/WklnuYSgb154Vv8ereRw3XTyWqrEQ8s44BG7aMSp7TiQIlPlJSaA8LRy
+	SXXrglcR3cNQJZtOQodXyFYib3Nx3dNqNtrV8Be5YDVPkvj56kD+KIkzPxSCZdB1
+	6dOGOsua3ci/t4++ZrykzN/JjEL3G9fLnSwsEO3ZY84CtEtYyQ0O00C/P1FaHdVC
+	pGMZJQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427efnb8a7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 02:37:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49E2bNbO009474
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 02:37:23 GMT
+Received: from [10.110.109.95] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 13 Oct
+ 2024 19:37:22 -0700
+Message-ID: <0ca707a4-bd5f-4a31-a424-f466afa08e0d@quicinc.com>
+Date: Sun, 13 Oct 2024 19:37:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241013200730.20542-1-richard@nod.at>
-In-Reply-To: <20241013200730.20542-1-richard@nod.at>
-From: Saravana Kannan <saravanak@google.com>
-Date: Sun, 13 Oct 2024 19:37:10 -0700
-Message-ID: <CAGETcx_+Poy8b_QhKY21Wg9=TBjtxrhCmFWTq8Qv6rLSJMURCw@mail.gmail.com>
-Subject: Re: [PATCH] [RFC] of: Add debug aid to find unused device tree properties
-To: Richard Weinberger <richard@nod.at>
-Cc: devicetree@vger.kernel.org, robh@kernel.org, linux-kernel@vger.kernel.org, 
-	upstream+devicetree@sigma-star.at
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/msm/dpu: don't always activate merge_3d block
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jessica Zhang
+	<quic_jesszhan@quicinc.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241011-merge3d-fix-v2-1-2082470f573c@quicinc.com>
+ <kah73euzauizsxvcrgmfsatshfe4pytgb7xe5iprtajg7abhsv@l7jdcxza5gd2>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <kah73euzauizsxvcrgmfsatshfe4pytgb7xe5iprtajg7abhsv@l7jdcxza5gd2>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DOw1EfYM3TfLltUrxDkJqjoVFw-0Yvjr
+X-Proofpoint-ORIG-GUID: DOw1EfYM3TfLltUrxDkJqjoVFw-0Yvjr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxscore=0 suspectscore=0 malwarescore=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 clxscore=1011 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140017
 
-On Sun, Oct 13, 2024 at 1:07=E2=80=AFPM Richard Weinberger <richard@nod.at>=
- wrote:
->
-> This is a proof-of-concept patch that introduces a debug feature I find
-> particularly useful.  I frequently encounter situations where I'm
-> uncertain if my device tree configuration is correct or being utilized
-> by the kernel.  This is especially common when porting device trees
-> from vendor kernels, as some properties may have slightly different
-> names in the upstream kernel, or upstream drivers may not use certain
-> properties at all.
+Hi Dmitry
 
-Why not just add debug logs? You can print the full path of the
-properties being read and it should be easy to grep for the property
-you care about.
+On 10/13/2024 5:20 PM, Dmitry Baryshkov wrote:
+> On Fri, Oct 11, 2024 at 10:25:13AM -0700, Jessica Zhang wrote:
+>> Only enable the merge_3d block for the video phys encoder when the 3d
+>> blend mode is not *_NONE since there is no need to activate the merge_3d
+>> block for cases where merge_3d is not needed.
+>>
+>> Fixes: 3e79527a33a8 ("drm/msm/dpu: enable merge_3d support on sm8150/sm8250")
+>> Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> ---
+>> Changes in v2:
+>> - Added more detailed commit message
+>> - Link to v1: https://lore.kernel.org/r/20241009-merge3d-fix-v1-1-0d0b6f5c244e@quicinc.com
+>> ---
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> LGTM now. Please clarify, is there any dependency between this patch and
+> [1]
+> 
 
-> By writing 'y' to <debugfs>/of_mark_queried, every queried device tree
+No dependency as such. Both are tackling similar issues though. One for 
+video mode and the other for writeback thats all. Namely:
 
-A lot of querying is going to happen at boot time. So, I'm not sure if
-this method of enabling it is helpful. If we do this, make it a kernel
-command line.
+1) We should not be enabling merge_3d block if two LMs are not being 
+used as that block needs to be enabled only to merge two streams. If its 
+always enabled, its incorrect programming because as per the docs its 
+mentioned "if required". Even if thats not causing issues, I would 
+prefer not to enable it always due to the "if required" clause and also 
+we dont need to enable a hardware sub-block unnecessarily.
 
-> property will gain S_IWUSR in sysfs.  While abusing S_IWUSR is
-> admittedly a crude hack, it works for now.   I'm open to better ideas,
-> perhaps using an xattr?
+2) We should be flushing the merge_3d only if its active like Jessica 
+wrote in the commit message of [1]. Otherwise, the flush bit will never 
+be taken by hardware leading to the false timeout errors.
 
-This seems quite convoluted. Why not just add another file per node
-that lists all the queried properties?
+It has been sent as two patches as one is for video mode and the other 
+for writeback and for writeback it includes both (1) and (2) together in 
+the same patch.
 
-> That way, dtc can easily add an annotation to unused device trees when
-> reading from /proc/device-tree.
+I thought this separation is fine, if we need to squash it, let me know.
 
-I'm not too familiar with this part. Can you elaborate more?
+Thanks
 
--Saravana
+Abhinav
 
->
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> ---
->  drivers/of/Kconfig      |  9 +++++
->  drivers/of/Makefile     |  1 +
->  drivers/of/base.c       |  2 +
->  drivers/of/debug.c      | 83 +++++++++++++++++++++++++++++++++++++++++
->  drivers/of/of_private.h |  6 +++
->  include/linux/of.h      |  3 ++
->  6 files changed, 104 insertions(+)
->  create mode 100644 drivers/of/debug.c
->
-> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-> index 0e2d608c3e207..39079ab9f1dc9 100644
-> --- a/drivers/of/Kconfig
-> +++ b/drivers/of/Kconfig
-> @@ -90,6 +90,15 @@ config OF_IRQ
->         def_bool y
->         depends on !SPARC && IRQ_DOMAIN
->
-> +config OF_DEBUG
-> +       bool "Device Tree debug features"
-> +       select DEBUG_FS
-> +       help
-> +        This option enables device tree debug features.
-> +        Currently only <debugfs>/of_mark_queried, writing 'y' to this fi=
-le
-> +        causes setting S_IWUSR on each device tree property in sysfs tha=
-t
-> +        was queried by a device driver.  This is useful to find dead pro=
-perties.
-> +
->  config OF_RESERVED_MEM
->         def_bool OF_EARLY_FLATTREE
->
-> diff --git a/drivers/of/Makefile b/drivers/of/Makefile
-> index 379a0afcbdc0b..041502125e897 100644
-> --- a/drivers/of/Makefile
-> +++ b/drivers/of/Makefile
-> @@ -25,3 +25,4 @@ obj-$(CONFIG_OF_OVERLAY_KUNIT_TEST) +=3D overlay-test.o
->  overlay-test-y :=3D overlay_test.o kunit_overlay_test.dtbo.o
->
->  obj-$(CONFIG_OF_UNITTEST) +=3D unittest-data/
-> +obj-$(CONFIG_OF_DEBUG) +=3D debug.o
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 20603d3c9931b..00807da2187aa 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -202,6 +202,8 @@ static struct property *__of_find_property(const stru=
-ct device_node *np,
->                 if (of_prop_cmp(pp->name, name) =3D=3D 0) {
->                         if (lenp)
->                                 *lenp =3D pp->length;
-> +                       of_debug_mark_queried(pp);
-> +
->                         break;
->                 }
->         }
-> diff --git a/drivers/of/debug.c b/drivers/of/debug.c
-> new file mode 100644
-> index 0000000000000..ceb88062e9dec
-> --- /dev/null
-> +++ b/drivers/of/debug.c
-> @@ -0,0 +1,83 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +#include <linux/debugfs.h>
-> +#include <linux/kstrtox.h>
-> +#include <linux/of.h>
-> +
-> +#include "of_private.h"
-> +
-> +void of_debug_mark_queried(struct property *pp)
-> +{
-> +       pp->queried =3D true;
-> +}
-> +
-> +static int dtmq_update_node_sysfs(struct device_node *np)
-> +{
-> +       struct property *pp;
-> +       int ret =3D 0;
-> +
-> +       if (!IS_ENABLED(CONFIG_SYSFS) || !of_kset)
-> +               goto out;
-> +
-> +       for_each_property_of_node(np, pp) {
-> +               if (pp->queried) {
-> +                       ret =3D sysfs_chmod_file(&np->kobj, &pp->attr.att=
-r,
-> +                                              pp->attr.attr.mode | S_IWU=
-SR);
-> +                       if (ret)
-> +                               break;
-> +               }
-> +       }
-> +
-> +out:
-> +       return ret;
-> +}
-> +
-> +static int dtmq_update_sysfs(void)
-> +{
-> +       struct device_node *np;
-> +       int ret =3D 0;
-> +
-> +       mutex_lock(&of_mutex);
-> +       for_each_of_allnodes(np) {
-> +               ret =3D dtmq_update_node_sysfs(np);
-> +               if (ret)
-> +                       break;
-> +       }
-> +       mutex_unlock(&of_mutex);
-> +
-> +       return ret;
-> +}
-> +
-> +static ssize_t dtmq_file_write(struct file *file, const char __user *use=
-r_buf,
-> +                              size_t count, loff_t *ppos)
-> +{
-> +       bool do_it;
-> +       int ret;
-> +
-> +       ret =3D kstrtobool_from_user(user_buf, count, &do_it);
-> +       if (ret)
-> +               goto out;
-> +
-> +       if (do_it) {
-> +               ret =3D dtmq_update_sysfs();
-> +               if (!ret)
-> +                       ret =3D count;
-> +       } else {
-> +               ret =3D -EINVAL;
-> +       }
-> +
-> +out:
-> +       return ret;
-> +}
-> +
-> +static const struct file_operations dtmq_fops =3D {
-> +       .write  =3D dtmq_file_write,
-> +       .open   =3D simple_open,
-> +       .owner  =3D THIS_MODULE,
-> +};
-> +
-> +static int __init of_debug_init(void)
-> +{
-> +       return PTR_ERR_OR_ZERO(debugfs_create_file("of_mark_queried", 064=
-4, NULL, NULL,
-> +                              &dtmq_fops));
-> +}
-> +late_initcall(of_debug_init);
-> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-> index 04aa2a91f851a..55a21ef292064 100644
-> --- a/drivers/of/of_private.h
-> +++ b/drivers/of/of_private.h
-> @@ -184,4 +184,10 @@ void fdt_init_reserved_mem(void);
->
->  bool of_fdt_device_is_available(const void *blob, unsigned long node);
->
-> +#if defined(CONFIG_OF_DEBUG)
-> +void of_debug_mark_queried(struct property *pp);
-> +#else
-> +static inline void of_debug_mark_queried(struct property *pp) { }
-> +#endif
-> +
->  #endif /* _LINUX_OF_PRIVATE_H */
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 85b60ac9eec50..3b7afa252fca3 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -39,6 +39,9 @@ struct property {
->  #if defined(CONFIG_OF_KOBJ)
->         struct bin_attribute attr;
->  #endif
-> +#if defined(CONFIG_OF_DEBUG)
-> +       bool    queried;
-> +#endif
->  };
->
->  #if defined(CONFIG_SPARC)
-> --
-> 2.35.3
->
+> [1] https://lore.kernel.org/dri-devel/20241009-mode3d-fix-v1-1-c0258354fadc@quicinc.com/
+> 
+>>
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+>> index ba8878d21cf0e1945a393cca806cb64f03b16640..c5e27eeaff0423a69fad98122ffef7e041fbc68e 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+>> @@ -302,7 +302,7 @@ static void dpu_encoder_phys_vid_setup_timing_engine(
+>>   	intf_cfg.stream_sel = 0; /* Don't care value for video mode */
+>>   	intf_cfg.mode_3d = dpu_encoder_helper_get_3d_blend_mode(phys_enc);
+>>   	intf_cfg.dsc = dpu_encoder_helper_get_dsc(phys_enc);
+>> -	if (phys_enc->hw_pp->merge_3d)
+>> +	if (intf_cfg.mode_3d && phys_enc->hw_pp->merge_3d)
+>>   		intf_cfg.merge_3d = phys_enc->hw_pp->merge_3d->idx;
+>>   
+>>   	spin_lock_irqsave(phys_enc->enc_spinlock, lock_flags);
+>>
+>> ---
+>> base-commit: a20a91fb1bfac5d05ec5bcf9afe0c9363f6c8c93
+>> change-id: 20240828-merge3d-fix-1a8d005e3277
+>>
+>> Best regards,
+>> -- 
+>> Jessica Zhang <quic_jesszhan@quicinc.com>
+>>
+> 
 
