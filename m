@@ -1,267 +1,138 @@
-Return-Path: <linux-kernel+bounces-363659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0339399C56B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CFA99C55B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CD89B2EBD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B625C1F24855
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4937119C551;
-	Mon, 14 Oct 2024 09:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D09156C5F;
+	Mon, 14 Oct 2024 09:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HUTyjlge"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rfd/Ssfm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE0A156678
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E530519D885
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897133; cv=none; b=aOx5k9hzGFSj49qKLvIk0Rpz4enhTGJIORyNvIawcfF61Dtb3hPRUnGFBygUIMDfePyY332y5t11G4q7JKHXgSz/Xg9nK8ir6lMohUavbvkThIdVON28fmyVMiivUKjcesE+YcHZl7w2dBTannjmMJNolgOsUOZylH1Tel54PE0=
+	t=1728897148; cv=none; b=ri3slFo7uNiEQjhnjH5EMxEl2ZS4qleho+EIlOVKO7BThaEWwCupHdKNXFEHo2teY7HNqZpZZiJzvjMX9Q1Cdn3Jsvvv8AY0dOr3/7AK5AK5hiXPL/sulyhIaia5pj8AEd2vbQGg/3qvJih6DV6svLBbb7iBgcv769Aj4VZ3njM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897133; c=relaxed/simple;
-	bh=X6kY1iJ7DeXV7dzOM/Quy8TkeUIc2RgmP57BuSAG348=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LHUhNRHC3mXr3aSED0u2ep5KU9lerpaNdT8E9GVXcJ0UbKpMkxrhnOh7r4ZkGwqqkEVZi4POwZ7ggui35Ht7bv4Iw+MLhNM6+0KSV5e4yShADuvQqDxblUwPUC5vrDFRizLrgjpQbiu7UqwYX7dTREA5e2mQeVCI2ofo7GlBogE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HUTyjlge; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728897130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=efYEDzJoXvnSDmPZhcwgS+G1MqF2s5kTREhSaGYut/4=;
-	b=HUTyjlgeFceJqihqg6Rgr5eSgMTf4AyWsRiI+28eO8PlwmGPZze0TaiUxI/okLbYFID8nE
-	XRTLYtedaGGVce8vfS5sVC5Wb6ExB4hblwv51M+wg9+DOsaYc9EpCrrO2QWmgP5IWWEMWD
-	RmJzg9WhgGt6THrNZFH4N6W/DIbSMdA=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-382-BhjBgDr-PqaNMXte9sagBg-1; Mon, 14 Oct 2024 05:12:09 -0400
-X-MC-Unique: BhjBgDr-PqaNMXte9sagBg-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a93d0b27d37so357971366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:12:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728897128; x=1729501928;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=efYEDzJoXvnSDmPZhcwgS+G1MqF2s5kTREhSaGYut/4=;
-        b=pSVVBDqULb3fS00BOFm1iQQGrTd8do/VuqdLOmaX3LH/Rk5tG0yJQXI/NpaUn/Joig
-         +4/QFlVwvqDGoWjRXWUEF2i5eHk1pN+kBF6M2u9YZYYD/QChMceGw0w1z9MM+0YzD4HM
-         y7OsKT7uOfcmOVS+UJZNUt6NzHgt+wHlBFTE7aG0ecHkWLfXOW79jB2qyewQsaXNWR9K
-         wq1HmpvXQMQAYCSw8NwzYN8+IaGh+KK69eZRNtfeZ0cpN8Nb7O7GqTMyDEIH1KusGtt1
-         RDDZyok0Y37r5lFCY5QTvRbrfxJJbFnKAoGz+1pBVGPenKOCp2orSbxU33dspEPftPnN
-         bHRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMe7CXZO1gPltxgDNzy+bd8dTK7FJLmEOhvD6sXTUEMHBoqAZY5CnA0IVy9ClisNknqOBm1QTTrASNWXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/xeMH08+whKUv4LaYOI4piPMjNRLfh6yP36sinhcHCtgDZ2mO
-	uTPZzNWTh0dc+nmLkxnNzcmPnc2yW+hGRSDEFDlkBECbiHVcal5IkkvKbcgdqZmtOU7fCy1/9Kx
-	lEdux5mKPzXMnINMQ6CdFaZS2iY7nT9Fsbd14em9a0BpXONrDFuRSjtsBcWx7LQ==
-X-Received: by 2002:a17:907:9611:b0:a99:36ab:d843 with SMTP id a640c23a62f3a-a99b940ff26mr1050656866b.38.1728897127739;
-        Mon, 14 Oct 2024 02:12:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnnCmW/otcj2gQQZVhAW9woFCE4udOO76Y7RHXvuu8hpYM4Kp8213Cwui9o9/A0ZQF2FNuJw==
-X-Received: by 2002:a17:907:9611:b0:a99:36ab:d843 with SMTP id a640c23a62f3a-a99b940ff26mr1050652366b.38.1728897127228;
-        Mon, 14 Oct 2024 02:12:07 -0700 (PDT)
-Received: from ?IPv6:2001:16b8:2d37:9800:1d57:78cf:c1ae:b0b3? (200116b82d3798001d5778cfc1aeb0b3.dip.versatel-1u1.de. [2001:16b8:2d37:9800:1d57:78cf:c1ae:b0b3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f07c842csm290736366b.54.2024.10.14.02.12.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 02:12:06 -0700 (PDT)
-Message-ID: <3515493a0d0dd8f1b7df5a5677042946325ea6a8.camel@redhat.com>
-Subject: Re: [RFC PATCH 01/13] PCI: Prepare removing devres from pci_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
- Sergey Shtylyov <s.shtylyov@omp.ru>, Basavaraj Natikar
- <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
- Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
- Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
- <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Rasesh Mody <rmody@marvell.com>,
- GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
- Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar S K
- <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, Chen
- Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
- <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Mostafa Saleh
- <smostafa@google.com>, Hannes Reinecke <hare@suse.de>, John Garry
- <john.g.garry@oracle.com>, Soumya Negi <soumya.negi97@gmail.com>, Jason
- Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, "Dr. David Alan
- Gilbert" <linux@treblig.org>, Christian Brauner <brauner@kernel.org>, Ankit
- Agrawal <ankita@nvidia.com>, Reinette Chatre <reinette.chatre@intel.com>,
- Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>, Marek
- =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
- <kai.vehmanen@linux.intel.com>,  Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>, Rui Salvaterra <rsalvaterra@gmail.com>,
- Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-input@vger.kernel.org,
- netdev@vger.kernel.org,  linux-wireless@vger.kernel.org,
- ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
- linux-staging@lists.linux.dev, kvm@vger.kernel.org, 
- xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
-Date: Mon, 14 Oct 2024 11:12:03 +0200
-In-Reply-To: <ZwktO8AUmFEakhVP@smile.fi.intel.com>
-References: <20241009083519.10088-1-pstanner@redhat.com>
-	 <20241009083519.10088-2-pstanner@redhat.com>
-	 <ZwfnULv2myACxnVb@smile.fi.intel.com>
-	 <f65e9fa01a1947782fc930876e5f84174408db67.camel@redhat.com>
-	 <ZwktO8AUmFEakhVP@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728897148; c=relaxed/simple;
+	bh=nkSs4ZYs/RlbtRbJnQoFHtVRNGXONx0cS2oxXr+jVCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ii7lunyw9agSgb0zf8b/Q9N1qkR6AgDUkEOiK5lvQ/LdIutBuDMtb/1hnYhyE6OKJOLUnrjRJZiXhnGYrfVW39WDElkDMwhn8Rj4iJhX2A4Dz9a3ncWyFBF4yDsB5HUG3hpaW9TXSfha1jN/4JkWEKZWEMyX2EjGxoYVO1zgPqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rfd/Ssfm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6E1C4CEC7;
+	Mon, 14 Oct 2024 09:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728897147;
+	bh=nkSs4ZYs/RlbtRbJnQoFHtVRNGXONx0cS2oxXr+jVCs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rfd/SsfmGkAexMnnEPRK+L3kmVtDUCJHdJ+BQr85NZJpTX7yfGWHL5+1+fhg2DvLy
+	 otCaWW0vDpC7sGSe9l/s+bJ004jYBPfeM3zs9IfOdHJxqnjd7TAeoWAs6Pttl5yv/B
+	 EIr+xXZTgo1zS62sHDTRTRLBH4erMSYCWoebhLMZyrISDLiAtcjZht3Fs1Nl6peRBP
+	 /IFMzB+tNMvrvrT96ZrA+Mwew+37pNzsvEn9aI9bBAwCRNhq9vnEhOetDicxiXOdCD
+	 DtObrIIUh1G1h/HXx1zO/rGN/xo2Ca8ZyIk7awij8CL3ink2KPNi+UmUIqVd+ColYC
+	 gjdw1FlqkLKrQ==
+Date: Mon, 14 Oct 2024 11:12:24 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, christian.koenig@amd.com, ray.huang@amd.com, 
+	dmitry.baryshkov@linaro.org, dave.stevenson@raspberrypi.com, mcanal@igalia.com, 
+	quic_jjohnson@quicinc.com, karolina.stolarek@intel.com, Arunpravin.PaneerSelvam@amd.com, 
+	thomas.hellstrom@linux.intel.com, asomalap@amd.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] drm/tests: hdmi: Fix memory leaks in
+ drm_display_mode_from_cea_vic()
+Message-ID: <20241014-translucent-shrew-of-pluck-82abd5@houat>
+References: <20241014071632.989108-1-ruanjinjie@huawei.com>
+ <20241014071632.989108-4-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="zpuwtj3jjpvxw4oq"
+Content-Disposition: inline
+In-Reply-To: <20241014071632.989108-4-ruanjinjie@huawei.com>
 
-On Fri, 2024-10-11 at 16:50 +0300, Andy Shevchenko wrote:
-> On Fri, Oct 11, 2024 at 02:16:06PM +0200, Philipp Stanner wrote:
-> > On Thu, 2024-10-10 at 17:40 +0300, Andy Shevchenko wrote:
-> > > On Wed, Oct 09, 2024 at 10:35:07AM +0200, Philipp Stanner wrote:
-> > > > pci_intx() is a hybrid function which sometimes performs devres
-> > > > operations, depending on whether pcim_enable_device() has been
-> > > > used
-> > > > to
-> > > > enable the pci_dev. This sometimes-managed nature of the
-> > > > function
-> > > > is
-> > > > problematic. Notably, it causes the function to allocate under
-> > > > some
-> > > > circumstances which makes it unusable from interrupt context.
-> > > >=20
-> > > > To, ultimately, remove the hybrid nature from pci_intx(), it is
-> > > > first
-> > > > necessary to provide an always-managed and a never-managed
-> > > > version
-> > > > of that function. Then, all callers of pci_intx() can be ported
-> > > > to
-> > > > the
-> > > > version they need, depending whether they use
-> > > > pci_enable_device()
-> > > > or
-> > > > pcim_enable_device().
->=20
-> > > > An always-managed function exists, namely pcim_intx(), for
-> > > > which
-> > > > __pcim_intx(), a never-managed version of pci_intx() had been
-> > > > implemented.
-> > >=20
-> > > > Make __pcim_intx() a public function under the name
-> > > > pci_intx_unmanaged(). Make pcim_intx() a public function.
->=20
-> It seems I got confused by these two paragraphs. Why the double
-> underscored
-> function is even mentioned here?
 
-It's mentioned because it's being moved.
+--zpuwtj3jjpvxw4oq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 14, 2024 at 03:16:32PM GMT, Jinjie Ruan wrote:
+> modprobe drm_hdmi_state_helper_test and then rmmod it, the following
+> memory leak occurs.
 >=20
-> > > To avoid an additional churn we can make just completely new
-> > > APIs,
-> > > namely:
-> > > pcim_int_x()
-> > > pci_int_x()
-> > >=20
-> > > You won't need all dirty dances with double underscored function
-> > > naming and
-> > > renaming.
-> >=20
-> > =C3=84hm.. I can't follow. The new version doesn't use double
-> > underscores
-> > anymore. __pcim_intx() is being removed, effectively.
-> > After this series, we'd end up with a clean:
-> >=20
-> > 	pci_intx() <-> pcim_intx()
-> >=20
-> > just as in the other PCI APIs.
+> The `mode` allocated in drm_mode_duplicate() called by
+> drm_display_mode_from_cea_vic() is not freed, which cause the memory leak:
 >=20
-> ...
+> 	unreferenced object 0xffffff80ccd18100 (size 128):
+> 	  comm "kunit_try_catch", pid 1851, jiffies 4295059695
+> 	  hex dump (first 32 bytes):
+> 	    57 62 00 00 80 02 90 02 f0 02 20 03 00 00 e0 01  Wb........ .....
+> 	    ea 01 ec 01 0d 02 00 00 0a 00 00 00 00 00 00 00  ................
+> 	  backtrace (crc c2f1aa95):
+> 	    [<000000000f10b11b>] kmemleak_alloc+0x34/0x40
+> 	    [<000000001cd4cf73>] __kmalloc_cache_noprof+0x26c/0x2f4
+> 	    [<00000000f1f3cffa>] drm_mode_duplicate+0x44/0x19c
+> 	    [<000000008cbeef13>] drm_display_mode_from_cea_vic+0x88/0x98
+> 	    [<0000000019daaacf>] 0xffffffedc11ae69c
+> 	    [<000000000aad0f85>] kunit_try_run_case+0x13c/0x3ac
+> 	    [<00000000a9210bac>] kunit_generic_run_threadfn_adapter+0x80/0xec
+> 	    [<000000000a0b2e9e>] kthread+0x2e8/0x374
+> 	    [<00000000bd668858>] ret_from_fork+0x10/0x20
+> 	......
 >=20
-> > > > +	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
-> > > > +
-> > > > +	if (enable)
-> > > > +		new =3D pci_command & ~PCI_COMMAND_INTX_DISABLE;
-> > > > +	else
-> > > > +		new =3D pci_command | PCI_COMMAND_INTX_DISABLE;
-> > > > +
-> > > > +	if (new !=3D pci_command)
-> > >=20
-> > > I would use positive conditionals as easy to read (yes, a couple
-> > > of
-> > > lines
-> > > longer, but also a win is the indentation and avoiding an
-> > > additional
-> > > churn in
-> > > the future in case we need to add something in this branch.
-> >=20
-> > I can't follow. You mean:
-> >=20
-> > if (new =3D=3D pci_command)
-> > =C2=A0=C2=A0=C2=A0 return;
-> >=20
-> > ?
-> >=20
-> > That's exactly the same level of indentation.
+> Free `mode` by calling drm_mode_destroy() to fix it.
 >=20
-> No, the body gets one level off.
+> Cc: stable@vger.kernel.org
+> Fixes: 4af70f19e559 ("drm/tests: Add RGB Quantization tests")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 >=20
-> > Plus, I just copied the code.
-> >=20
-> > > > +		pci_write_config_word(pdev, PCI_COMMAND, new);
->=20
-> 	if (new =3D=3D pci_command)
-> 		return;
->=20
-> 	pci_write_config_word(pdev, PCI_COMMAND, new);
->=20
-> See the difference?
-> Also, imaging adding a new code in your case:
->=20
-> 	if (new !=3D pci_command)
-> 		pci_write_config_word(pdev, PCI_COMMAND, new);
->=20
-> =3D=3D>
->=20
-> 	if (new !=3D pci_command) {
-> 		...foo...
-> 		pci_write_config_word(pdev, PCI_COMMAND, new);
-> 		...bar...
-> 	}
->=20
-> And in mine:
->=20
-> 	if (new =3D=3D pci_command)
-> 		return;
->=20
-> 	...foo...
-> 	pci_write_config_word(pdev, PCI_COMMAND, new);
-> 	...bar...
->=20
-> I hope it's clear now what I meant.
+> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers=
+/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> index 34ee95d41f29..70b91e8c8219 100644
+> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> @@ -466,6 +466,8 @@ static void drm_test_check_broadcast_rgb_auto_cea_mod=
+e_vic_1(struct kunit *test)
+>  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
+> =20
+>  	KUNIT_EXPECT_FALSE(test, conn_state->hdmi.is_limited_range);
+> +
+> +	drm_mode_destroy(drm, mode);
+>  }
 
-It is clear.. I'm not necessarily convinced that it's better to review
-than just copying the pre-existing code, but if you really want it we
-can do it I guess.
+Same comment than on patch 1
 
-P.
+Maxime
 
+--zpuwtj3jjpvxw4oq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZwzgeAAKCRAnX84Zoj2+
+dthhAX95EFCmz4YfB2uFG4r5vFoH+Pw2zFz5wObKVxWkg/ycJBQMzJR1vCCvdTUR
+3EruXsoBgN7TtI4aZzl8FSO7hu3Ie1RKiYtx98hknQoGMTSbre5R6j1GcYnduNkC
+uKJAHkRnuA==
+=v3d6
+-----END PGP SIGNATURE-----
+
+--zpuwtj3jjpvxw4oq--
 
