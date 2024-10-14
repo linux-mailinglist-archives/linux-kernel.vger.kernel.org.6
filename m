@@ -1,85 +1,104 @@
-Return-Path: <linux-kernel+bounces-363390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D21D99C1B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:42:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488A599C1B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E2BC1C22FA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:42:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84721F22AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C5414A624;
-	Mon, 14 Oct 2024 07:41:59 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DDA14A0B7;
+	Mon, 14 Oct 2024 07:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X90ynpFM"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E415231CA6;
-	Mon, 14 Oct 2024 07:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBB4145324
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728891719; cv=none; b=b9Bdv+KBnawTMw2xnjwAMdUqUyzjF7X216v31clF8j1LdvdPzwoWBQAcauihQXxqhWuEm9qJ6EW/XJ5PlHF+NDRDCgGHJgrblVDMmrt6eBYRkF8LPn8Fcp/l/fRFGt72RHjHa5e+AykSJI7w/hGNJZWlvJ9/eBvHOmwVY2efhVo=
+	t=1728891735; cv=none; b=YlQAJ5yksyUYDfI0yPl6vUhn0Gi3wS3c2ZAJzx1xK7E/PRg+Y6mbtV/KRONzjjm5sfUYhVFgDkKAqm0la9hla8goYdR54CAQOsHbYsBVoVqBAQnH5ndZ1i93tyjvwPsXUaEaZes19u/IOChvDlyBqN+OTw20NPALpXL/7GkMomM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728891719; c=relaxed/simple;
-	bh=MBeYVI8AF27boE14kv/tqJbI4GfJ8Eto/zOJNuTNSyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuW0nEsvd/wp5Jo05tHkuGcaua7LBmL9roqmwDM2yeCfFQOKvkMZ2iwCCX9cLLX2LBwFA9FxUT9hUr6qkEdIGFcLJ/f4t887/PeMfmcOjGWeCR37+J42WT5l+zjlu1lKoC60U1pyYo/EjG7TN5K51FWu51n3IF6XeR8MMcU/JUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id BACF6227AB7; Mon, 14 Oct 2024 09:41:51 +0200 (CEST)
-Date: Mon, 14 Oct 2024 09:41:51 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Ming Lei <ming.lei@redhat.com>,
-	Hamza Mahfooz <someguy@effective-light.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
- overlapping mappings aren't supported"
-Message-ID: <20241014074151.GA22419@lst.de>
-References: <ZwxzdWmYcBK27mUs@fedora> <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
+	s=arc-20240116; t=1728891735; c=relaxed/simple;
+	bh=Tr8ZUfI7WuIJqS+Kbyv89NZrMjAzQlMLbG0EsH6Gg/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ey8lepTFYIBDLF8+95RL71d9v7Yv4UlZDaxxYtcKkVnpj5zNPOK5ZkgSVXQpECtTlLv0KuMAvzC4vvV6D43S9wiV0kKzn+pZ0kLH8NxBvqakrQrBJJXcnHXdIuqRAPWTJ+G7RIUZ6Jhc9PRRFQyLfmF9DKTXHaaB8EyaA8BLiIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X90ynpFM; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so3095391f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728891732; x=1729496532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tr8ZUfI7WuIJqS+Kbyv89NZrMjAzQlMLbG0EsH6Gg/8=;
+        b=X90ynpFM9KZZZCzmHuC+gXQZ3gPfsk+uu+miwK1ej6Af9ykeBDzB1yYHDgO/Ejfely
+         JKnfEKu0bJW49cRShWk4Wc0FEa64Z5QBNPMD+vl+l9LfssG3Bn8N74LEWNClfhAWLKth
+         dHzCxoCVa4QzvoA2IEKu1v/knUsUCJ82qgQA0GxkfdCrvkWG6Gc2Fa5iE1tQLfLFznLS
+         QrzR0hQmwE3CS13Ct2Tb2/eSwp7eRsEv64DVtDHq0FNZ5rgd72vmNs380mwbK9JGF5eN
+         IanCBhhnfzdyEftjR0l2fYio+IqEuLT2/85s07lZUs2xcqqv58YnNrcwgJnkYiCR6OoK
+         2fUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728891732; x=1729496532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tr8ZUfI7WuIJqS+Kbyv89NZrMjAzQlMLbG0EsH6Gg/8=;
+        b=sVnIkfRp2if1lJ/Xj9EwGyyKf/AbCjCx4zRT3Rjha6Fz5BIBT2Dz5CgbjqHVD8o6gP
+         WlG39/MXKPPOD4wx9824Jv+K0aLEwR90gNFJIiR0jj4b8c1qzYfX4bkw+uKRpNDEWasQ
+         uCNy+pfuTE6d4prUNuuTyxPACBHW46h/7mpvISQkQd3j9BcwIOvJNiHgqXUdMJgO9Nf1
+         z1jmgdFRPdhv0jncHbZfU5uCXve5wKs+Ssww9tqy8A3XDPB6+IWLeeKeX70kxWc5yP7S
+         PuKkzj7EjHo8PSa4P5b1kvHDGGHjC55jb1r97gA8hOIu3UdD5ASWGCcvQ9iP/XD+4HOh
+         qy/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVm8ar8EBd/xyaA8q/303Ht3NY3+tGuV5qNqRUOJLKvQmup1ZreJGELcabuWWgcy5q9fklumeeUcp4emQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxviAzKTzXsy7E4dC5Mk9S21WxXEgbeZJZqefMjGOejs1MMqYpT
+	aDXagQ0yrs2DYvk44yWqDFZmGSt8Sfa0oC13JCk4x8ZQTxmJjSgbT6g3eMV1AcZJF1HMjk4GC0i
+	joi3rRmmI/gaonDLHJwx3+v3wCNI7YdRH3zzt
+X-Google-Smtp-Source: AGHT+IFanHxngXEXoSruIGL7Lj9eBY0UNJQ4Ee/B1N1FU2RBHqVnBPNL966Bm6XUd1wbTeZ7KNEgYUSxxBXPLPfuRfM=
+X-Received: by 2002:a05:6000:10cb:b0:37c:cdbf:2cc0 with SMTP id
+ ffacd0b85a97d-37d601e9acfmr7383958f8f.53.1728891732017; Mon, 14 Oct 2024
+ 00:42:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr> <20241013201704.49576-3-Julia.Lawall@inria.fr>
+In-Reply-To: <20241013201704.49576-3-Julia.Lawall@inria.fr>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 14 Oct 2024 09:41:58 +0200
+Message-ID: <CANn89iLQE6uFHpTXq-MGEX+Wnn-BtFnbpC-bUu=zHu0Pw2dKYA@mail.gmail.com>
+Subject: Re: [PATCH 02/17] ipv4: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, vbabka@suse.cz, 
+	paulmck@kernel.org, David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 09:23:14AM +0200, Hannes Reinecke wrote:
->> 3) some storage utilities
->> - dm thin provisioning utility of thin_check
->> - `dt`(https://github.com/RobinTMiller/dt)
->>
->> I looks like same user buffer is used in more than 1 dio.
->>
->> 4) some self cooked test code which does same thing with 1)
->>
->> In storage stack, the buffer provider is far away from the actual DMA
->> controller operating code, which doesn't have the knowledge if
->> DMA_ATTR_SKIP_CPU_SYNC should be set.
->>
->> And suggestions for avoiding this noise?
->>
-> Can you check if this is the NULL page? Operations like 'discard' will 
-> create bios with several bvecs all pointing to the same NULL page.
-> That would be the most obvious culprit.
+On Sun, Oct 13, 2024 at 10:18=E2=80=AFPM Julia Lawall <Julia.Lawall@inria.f=
+r> wrote:
+>
+> Since SLOB was removed and since
+> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache=
+_destroy()"),
+> it is not necessary to use call_rcu when the callback only performs
+> kmem_cache_free. Use kfree_rcu() directly.
+>
+> The changes were made using Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-The only case I fully understand without looking into the details
-is raid1, and that will obviously map the same data multiple times
-because it writes it out multiple time.  Now mapping a buffer
-multiple times for a DMA_TO_DEVICE is relatively harmless in
-practice as the data is transferred to the device, but it it
-still breaks the dma buffer ownership model in the dma which is
-really helpful to find bugs where people don't think about this
-at all.  Not sure if there is any good solution here.
+Note that fn_alias_kmem is never destroyed, so commit 6c6c47b063b5
+seems not relevant.
+
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
