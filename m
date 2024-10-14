@@ -1,140 +1,172 @@
-Return-Path: <linux-kernel+bounces-363540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4125999C3C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:43:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61DB999C3D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13A8283220
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:43:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF9C3B21231
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7204E14D70B;
-	Mon, 14 Oct 2024 08:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD77014F9D7;
+	Mon, 14 Oct 2024 08:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MggKFUaA"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eUXjikBZ"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B3D1494C3;
-	Mon, 14 Oct 2024 08:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078D513D2BC
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895379; cv=none; b=k7enWInHSJSBot9ruPAe8Om23j/xQ1og+yAASw8qBHBgrnNtzpQN739lil8NdVn+CbSTNH0pvAffOlZeba9YlVhUyZXbOJVj7JSf3dU0kxC3O/XLJxjBJPLm2Y+L0pgU36fTqMi0eg7jRzj99u0qbO0LzR3IO1Afo+lxrROmSas=
+	t=1728895496; cv=none; b=CGoKYLST91lm3seNmvwRYaWFwopD8RyLI3F62BgFVLJdsfxWGS/RALAnfkvurwwf7Bb0+sY6ZPl+fdRPIMW/gupbqVRg38Y0onYnLJcV3aQy3HJ55nRdaWcrnUNaj2LxMFkWTndsasyCCxvapUX2UGXYR+lJ+5pA8VpsiabRbxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895379; c=relaxed/simple;
-	bh=WSkDReICKC6VPCPeO8dqT5Tl8DyyIkXcdPtQIt9xG/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mPGHGyfklQ7lu+oz+0khw0loGk0Eqbxu1Jiu76bfsqwqbgWU8xysbMUkSSA//nv9p6QDEM0WK7zZAwIxySTUVMdV0/5gvhB79qIHZBrOCxpfJKPItrF0bjbbRx4XdS74dd3T4+Js13Papu+PDaI66uX6hlVkivYuhWskpnUMjHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MggKFUaA; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c70abba48so25289255ad.0;
-        Mon, 14 Oct 2024 01:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728895378; x=1729500178; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Mc1xjH8jda9+Ou+CdWyvRTeIYF2yxLMZaS+DypzEeCo=;
-        b=MggKFUaAryFPNz7YqHXdtibC0oeQ8nUtsV1GsKmA3GbH+XsO7QMxWc9+IKj1oiijqO
-         VJhureF+6MHLQpyr7YpLhsVNRYXnr5sle6VH1DQQ0GF3WAwgp5Q0dmxfTTwmBuB9bawd
-         U3TcEbMBFEi9sC15WvbKzNOUZ79+UAQxALvpeGNcxxVyK0qbnRbONl2aAGgdx8UV5+Vy
-         zoRE7z+h5QNCzFJexHFn6OB880CAu3+IRWg7DwB5IJ0MEhfsnzgGPjt0X597hJIE3OPj
-         fN3Vsyp2Vx85ciGgXZKMligxDtkcPURhNxUi2UbTAi6A7DnQzpiGURX/h9bTj08CpdrS
-         dvPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728895378; x=1729500178;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mc1xjH8jda9+Ou+CdWyvRTeIYF2yxLMZaS+DypzEeCo=;
-        b=F1c9D9hg4OMRTqpk+kWtd73q4V5Br7fxeLqQxXejHRViLq8EdHkVMe0HS4DRrs2C89
-         CGRlgpORtM+ij0k79rmo4njbpB8WOxTprhg+eiZPhkJThp76jJCCqDtOgfP+8/FANLMr
-         y41dn5AzS3KNIeYEjAUr2R2UnIIPtRcKk5HC5gn1h5hHGGpragzAmE6gLJul0MGuelOo
-         U6J5Osmr0TN7t1AHebW4NDO49TCnPFGI3Qo/wGrobTID+JlgktBjdsNM74UbwInxfkq7
-         om1TynRx3WeQVcw81PGN3I+Dh6tUhQ7OG7b1sUrD/Cx05RsAMqC5avtDdSb3TRXlxc4U
-         yRHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQh2rMrX139cTcOwyxLF5x/b2mIm7vI00BML6bLLuhNf6jNplRq0Qa7CwM71TiR1MSY1hF803bIAgrVO76@vger.kernel.org, AJvYcCWMIkNrqtfTEAyefGV5fQLlxpLPfQlyOON94WhdDfqui7O8Ck7kYUGW48kgiTCjCl00o5/Ka20EXoFu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfz+CDX2W71RFo2li6apdiVExgB5CeO0vJMTYJEucm6gGx7TNf
-	wG/20JMbqSISMCmTo+8dUVaLFpDRJm5g2cz9dhmAut5U8kAqPtypgEhBRxix
-X-Google-Smtp-Source: AGHT+IEW8nQM4PJ5E89ft0mnASqcYSQQN+ouyaTKQTd0sWtCeSmz+wWGOeBnSPq+WZEBZjg1QXhe4A==
-X-Received: by 2002:a17:902:f552:b0:20c:8c51:f9f with SMTP id d9443c01a7336-20cbb24087emr123645205ad.44.1728895377051;
-        Mon, 14 Oct 2024 01:42:57 -0700 (PDT)
-Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c0e74d6sm61771355ad.166.2024.10.14.01.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 01:42:56 -0700 (PDT)
-Date: Mon, 14 Oct 2024 16:42:52 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 6/6] gpiolib: notify user-space about in-kernel line
- state changes
-Message-ID: <20241014084252.GB76995@rigel>
-References: <20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org>
- <20241010-gpio-notify-in-kernel-events-v2-6-b560411f7c59@linaro.org>
- <20241014022433.GD20620@rigel>
- <CAMRc=MddUUx-iDUWY53nStzt9nutRzB=EkGyaHa+e37Wm+10+A@mail.gmail.com>
+	s=arc-20240116; t=1728895496; c=relaxed/simple;
+	bh=6a1aFNvCP8oSQhfNPDpQjZyDszaUOOVaxqTozcN7CHo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KG3nGoh91PVALMy8rCD26afIT6xn/T8a6/gDGyaKf+zJkTol8qD4M2MAKQ13eYqp2iMGdu6DxhZ+KephWedJFTet0Wf4Avr0USAKsLDB5AaADvDQfGaiijkCDXzZrvzQKHt9y6mFLvUYEfT+3ua3/mGheBCwr0Y83/F/RrXGWmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eUXjikBZ; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728895491;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8HymtqTchiQpzME33HIhPmrfIpt1fflEw+LjEVZN4OU=;
+	b=eUXjikBZo/wbyW+I2zALGFaqZCtk+WaTncA+wFsPHiACMY1PAFz8oeEkbOiudDy+S3gSZd
+	m4LICcK5Ao/JkSsyS3x/srpyIwHPxY1kPbbh7cuml4zAv2K45bv0FC0mbNtvK+SUTHyTwC
+	gQC1cwKcVsCO8hCuchpY2rCXiVwSrUo=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MddUUx-iDUWY53nStzt9nutRzB=EkGyaHa+e37Wm+10+A@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <c34b962b-8b9a-41e5-a54e-364b826c5e2a@arm.com>
+Date: Mon, 14 Oct 2024 16:43:59 +0800
+Cc: akpm@linux-foundation.org,
+ david@fromorbit.com,
+ zhengqi.arch@bytedance.com,
+ roman.gushchin@linux.dev,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ chenridong@huawei.com,
+ wangweiyang2@huawei.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <178A7AC8-0BDA-42CA-86B2-E1C13F3E1E8B@linux.dev>
+References: <20241014032336.482088-1-chenridong@huaweicloud.com>
+ <c34b962b-8b9a-41e5-a54e-364b826c5e2a@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Chen Ridong <chenridong@huaweicloud.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 14, 2024 at 10:13:59AM +0200, Bartosz Golaszewski wrote:
-> On Mon, Oct 14, 2024 at 4:24 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > On Thu, Oct 10, 2024 at 11:10:27AM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > We currently only notify user-space about line config changes that are
-> > > made from user-space. Any kernel config changes are not signalled.
-> > >
-> > > Let's improve the situation by emitting the events closer to the source.
-> > > To that end let's call the relevant notifier chain from the functions
-> > > setting direction, gpiod_set_config(), gpiod_set_consumer_name() and
-> > > gpiod_toggle_active_low(). This covers all the options that we can
-> > > inform the user-space about. We ignore events which don't have
-> > > corresponding flags exported to user-space on purpose - otherwise the
-> > > user would see a config-changed event but the associated line-info would
-> > > remain unchanged.
-> > >
-> > > gpiod_direction_output/input() can be called from any context.
-> > > Fortunately, we now emit line state events using an atomic notifier
-> > > chain, so it's no longer an issue.
-> > >
-> > > Let's also add non-notifying wrappers around the direction setters in
-> > > order to not emit superfluous reconfigure events when requesting the
-> > > lines as the initial config should be part of the request notification.
-> > >
-> >
-> > So lines requested from kernel space will result in a LINE_REQUESTED and
-> > then a series of LINE_CHANGED_CONFIG?  Whereas for lines requested from
-> > userspace those will be collapsed into the one LINE_REQUESTED event?
->
-> No, why? I added the notification about the request to
-> gpiod_find_and_request() which is called by all the kernel getters and
-> it already configures all the flags without emitting events and calls
-> the non-notify variant of the direction setter. When a kernel driver
-> requests a GPIO, I only see a single event UNLESS after the
-> gpiod_get() call returns, it sets direction or changes config - just
-> like user-space.
->
 
-Oh, ok, I was assuming there could be others using gpiolib the same way
-cdev does.  So cdev is the only one that takes the gpiod_request(),
-gpiod_direction_output() etc path?  All good then.
 
-Cheers,
-Kent.
+> On Oct 14, 2024, at 16:13, Anshuman Khandual =
+<anshuman.khandual@arm.com> wrote:
+>=20
+>=20
+>=20
+> On 10/14/24 08:53, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>=20
+>> A memleak was found as bellow:
+>>=20
+>> unreferenced object 0xffff8881010d2a80 (size 32):
+>>  comm "mkdir", pid 1559, jiffies 4294932666
+>>  hex dump (first 32 bytes):
+>>    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>    40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
+>>  backtrace (crc 2e7ef6fa):
+>>    [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+>>    [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+>>    [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+>>    [<ffffffff81198dd9>] online_css+0x29/0xa0
+>>    [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+>>    [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+>>    [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+>>    [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+>>    [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+>>    [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+>>    [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+>>    [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>=20
+>> In the alloc_shrinker_info function, when shrinker_unit_alloc return
+>> err, the info won't be freed. Just fix it.
+>>=20
+>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for =
+shrinker_info::{map, nr_deferred}")
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>> mm/shrinker.c | 1 +
+>> 1 file changed, 1 insertion(+)
+>>=20
+>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>> index dc5d2a6fcfc4..92270413190d 100644
+>> --- a/mm/shrinker.c
+>> +++ b/mm/shrinker.c
+>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>=20
+>> err:
+>> 	mutex_unlock(&shrinker_mutex);
+>> + 	kvfree(info);
+>> 	free_shrinker_info(memcg);
+>> 	return -ENOMEM;
+>> }
+>=20
+> There are two scenarios when "goto err:" gets called
+>=20
+> - When shrinker_info allocations fails, no kvfree() is required
+> 	- but after this change kvfree() would be called even
+> 	  when the allocation had failed originally, which does
+>  	  not sound right
+
+Yes. In this case, @info is NULL and kvfree could handle NULL.
+It seems strange but the final behaviour correct.
+
+>=20
+> - shrinker_unit_alloc() fails, kvfree() is actually required
+>=20
+> I guess kvfree() should be called just after shrinker_unit_alloc()
+> fails but before calling into "goto err".
+
+We could do it like this, which avoids ambiguity (if someone ignores
+that kvfree could handle NULL). Something like:
+
+--- a/mm/shrinker.c
++++ b/mm/shrinker.c
+@@ -88,13 +88,14 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+                        goto err;
+                info->map_nr_max =3D shrinker_nr_max;
+                if (shrinker_unit_alloc(info, NULL, nid))
+-                       goto err;
++                       goto free;
+                rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, =
+info);
+        }
+        mutex_unlock(&shrinker_mutex);
+
+        return ret;
+-
++free:
++       kvfree(info);
+ err:
+        mutex_unlock(&shrinker_mutex);
+        free_shrinker_info(memcg);
+
+Thanks.
+
+>=20
+> But curious, should not both kvzalloc_node()/kvfree() be avoided
+> while inside mutex lock to avoid possible lockdep issues ?
 
 
