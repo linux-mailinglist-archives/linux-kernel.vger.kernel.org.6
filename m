@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-364546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D9799D5F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:56:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A0299D5F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300CA1F22EC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4ABE1C2037A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8161CF2B6;
-	Mon, 14 Oct 2024 17:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394581C877E;
+	Mon, 14 Oct 2024 17:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="gcCczIL2"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="f37HxR4E"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384641CF2B2
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC81D1C75F3;
+	Mon, 14 Oct 2024 17:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728928488; cv=none; b=hqxMK4WJ7YDTRq9HO9R4xmE2OZfgNtnRR3CSENqQ1Y0snaqu6fUKqIdJFelNm8GjIOmHa7vxFv82OJh8+ivTWnVJqCI+zSWUEMuSg9fmtGabAxj90xmyzY9t/poHbbh+PwrnhIppXT2oQpusRomfEXVr+7xJrUr9r7tcdC+MFkw=
+	t=1728928505; cv=none; b=MRCDedimYaN9bcHy7BwlKGL89M9W0Szf6TOAZwLoXZ8eigyiPH4xdt0rEyBtHDuspU4Nuu2iDV/62vAhWVsziYcRvz/rE7HwgB/g2aOWyiOdVq8vlt9AWMQA5xl/3qmD8xQhmFCJgLBEpKmDrXVpimf6GVtDYJ4WNOq5Ck30Cq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728928488; c=relaxed/simple;
-	bh=j8PRpBk/lIiVe/T2RTs5CZVHcgqvJy9CT3C0m3PRVNA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JJ7O1ZEEdIQ7soKmqNG2UyJ8mG6XoDbGKMQ8vFwUB7wxmat8xvyn5K2pYUBDCIwGQw8gRkRoYoEO44ZvbdAxi8e2oKWm6oY1ZVh4EPQNW6wXwtpwxV7YH0A4u7bbrTpplVWLGQK6Db32MmKfBU6aT+kLCNhpFwTWRS6X3ApquDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=gcCczIL2; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e483c83dbso2702908b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:54:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1728928485; x=1729533285; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ib0LzHxCGUP2Of7LzCAvLTsWSTSTY5vzi6Axbb4I5D0=;
-        b=gcCczIL2vD5NxmIJu4XU3mzFGSscbuC5Q2wz7lw0TlYmoABIZpBTmy1kP1IqZa+Eds
-         tvFuncHhFc1izI61ygrqs5RmKIUxpLId8q5vRox7Gxkj28OS4RPyi+lRMTEic9oSvNOj
-         fhh9g1CzXKjYkni3P8msQ/YyAZh5bJgNVyx49hlulMoc1niwtACAlrM9htalqFo5rJ39
-         S6vstqOJ0/OLvFdoiMXlqbxnP9nzc8Dss8tUvvMEwIs9VwkzPdL41a/pTADGf+gh65i0
-         m9CQ1QzVZmqgJVXqkPMQsBtIZSfuNZCxumur5SbHxuyGHsmXfNqjsUo1FOohSmr0lGXJ
-         UhlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728928485; x=1729533285;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ib0LzHxCGUP2Of7LzCAvLTsWSTSTY5vzi6Axbb4I5D0=;
-        b=B5iil8uPadvriB+H+HGksQAxd4PpnAm8+qwzAe5hW3lCqTBCJg4pf6JwNfUy8NIv4S
-         qB+WOL+BMbdtvlcxzI0ENuMF8IbpGTEpdoeLZX48k/GOFjT7Je1SMoiTK76/OcF+vVb3
-         ZYznxJXfxQ0y5X/DsShXDyALRt+a0oE3+JYAEgwdDSu95fiCjipd3LyiH0V5znqHRphZ
-         /UeVGrbEkKGJ6V4o+NAJpeq/a+mDcN82Hn95WwvXSgTSw/KFheQKR1sAqavfN8ttVmJx
-         EsgFHXox+T0s48edsC8J2GDkA1cv6s0Jtkf74fvy0BiWptNCy23I8X7UgdLmeSCQhLYy
-         B4gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKx5rM1wPBP1oVGPoaaa/zKI2QgLbpY9RoUfJjJqJykr7Mk2wlJUH3F4yEUcrfgw7GcqazJYY3+6zVu94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxGBbXh6vXDg2jzGVK0NdoBs2N2d12ja8FNasFHVLPLnkfyc9f
-	wRbn0TxHAjYF4XZ4MDLPze2x3PxN/xbOx/S/ifGJq/IvvH6g0H7Zpv+9qUugR8w=
-X-Google-Smtp-Source: AGHT+IGn+w4J6ujcKmDO9lhPgpFFwLHQORkcQhURsA6+UDHkjEM67AndBJceCtyLERFJD54nONsRxA==
-X-Received: by 2002:a05:6a00:ac7:b0:71e:4fe4:282a with SMTP id d2e1a72fcca58-71e4fe430admr12455912b3a.2.1728928485620;
-        Mon, 14 Oct 2024 10:54:45 -0700 (PDT)
-Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e49a7e5e7sm5611109b3a.179.2024.10.14.10.54.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 10:54:44 -0700 (PDT)
-From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Mon, 14 Oct 2024 10:54:25 -0700
-Subject: [PATCH 8/8] riscv: dts: thead: remove enabled property for spi0
+	s=arc-20240116; t=1728928505; c=relaxed/simple;
+	bh=XFkxICuLISQtarmpHa26eTxLUZ1Aq/Ypudx9pZHytG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lN7kjvR7luBf3gR4uVIQejN5lORyZJOy/Zuer6KHG/poOAcgUd0DZ5f6x//RRpO64PHK5IQj36KvZlcWTKqisEju1VcS+95FsjAGXUQ7r/dsFpMsCsOZbBuaAetDIsTNWghgOBb20hQH6wWSjoUH6OK0P+Nq2j0LJgevuRQGECk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=f37HxR4E; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [23.233.251.139])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C5DDB8BE;
+	Mon, 14 Oct 2024 19:53:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728928400;
+	bh=XFkxICuLISQtarmpHa26eTxLUZ1Aq/Ypudx9pZHytG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f37HxR4EuCQOj+7lko6w6NHcjxYe4iE6O9yr3qO0gGgmtN1X+nuxeh6wCv7HDAENb
+	 9Nz1odLAkBNYBy+5kyBmGhVGPJx68vR0NlKg70bs/Yd6A8Tm8aZzad1FgruLJ7gWjK
+	 X65TfbObHpkCLh8wIvnqZ5LCE+khpMW1m1JDCzX8=
+Date: Mon, 14 Oct 2024 20:54:52 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: sakari.ailus@linux.intel.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: ov5645: add HAS_EVENTS support
+Message-ID: <20241014175452.GB13238@pendragon.ideasonboard.com>
+References: <20241014173840.412695-1-tomm.merciai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241014-th1520-pinctrl-dts-v1-8-268592ca786e@tenstorrent.com>
-References: <20241014-th1520-pinctrl-dts-v1-0-268592ca786e@tenstorrent.com>
-In-Reply-To: <20241014-th1520-pinctrl-dts-v1-0-268592ca786e@tenstorrent.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
- Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241014173840.412695-1-tomm.merciai@gmail.com>
 
-There are currently no nodes that use spi0 so remove the enabled
-property for it in the beaglev ahead and lpi4a dts files. It can be
-re-enabled in the future if any peripherals will use it. The definition
-of spi0 remains in the th1520.dtsi file.
+Hi Tommaso,
 
-Suggested-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
----
- arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts | 4 ----
- arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts  | 4 ----
- 2 files changed, 8 deletions(-)
+Thank you for the patch.
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-index c0cf9b086f81..86feb3df02c8 100644
---- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-@@ -150,7 +150,3 @@ &uart0 {
- 	pinctrl-0 = <&uart0_pins>;
- 	status = "okay";
- };
--
--&spi0 {
--	status = "okay";
--};
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index f60b1879192d..4020c727f09e 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -59,7 +59,3 @@ &uart0 {
- 	pinctrl-0 = <&uart0_pins>;
- 	status = "okay";
- };
--
--&spi0 {
--	status = "okay";
--};
+On Mon, Oct 14, 2024 at 07:38:40PM +0200, Tommaso Merciai wrote:
+> Controls can be exposed to userspace via a v4l-subdevX device, and
+> userspace has to be able to subscribe to control events so that it is
+> notified when the control changes value.
+> Add missing HAS_EVENTS support: flag and .(un)subscribe_event().
+> 
+> Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> ---
+>  drivers/media/i2c/ov5645.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> index 0c32bd2940ec..2c5145d5c616 100644
+> --- a/drivers/media/i2c/ov5645.c
+> +++ b/drivers/media/i2c/ov5645.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+>  #include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-event.h>
+>  #include <media/v4l2-fwnode.h>
+>  #include <media/v4l2-subdev.h>
+>  
+> @@ -1034,6 +1035,11 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
+>  	.s_stream = ov5645_s_stream,
+>  };
+>  
+> +static const struct v4l2_subdev_core_ops ov5645_subdev_core_ops = {
+> +	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> +	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> +};
+> +
+>  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+>  	.enum_mbus_code = ov5645_enum_mbus_code,
+>  	.enum_frame_size = ov5645_enum_frame_size,
+> @@ -1043,6 +1049,7 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+>  };
+>  
+>  static const struct v4l2_subdev_ops ov5645_subdev_ops = {
+> +	.core = &ov5645_subdev_core_ops,
+>  	.video = &ov5645_video_ops,
+>  	.pad = &ov5645_subdev_pad_ops,
+>  };
+> @@ -1178,7 +1185,8 @@ static int ov5645_probe(struct i2c_client *client)
+>  
+>  	v4l2_i2c_subdev_init(&ov5645->sd, client, &ov5645_subdev_ops);
+>  	ov5645->sd.internal_ops = &ov5645_internal_ops;
+> -	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> +			    V4L2_SUBDEV_FL_HAS_EVENTS;
+
+Instead of patching every subdev driver, should we handle all of this in
+the subdev core ? If a control handler is set for the subdev, we could
+set the HAS_EVENTS flag automatically, and default to
+v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+if there are no control operations.
+
+>  	ov5645->pad.flags = MEDIA_PAD_FL_SOURCE;
+>  	ov5645->sd.dev = &client->dev;
+>  	ov5645->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
 
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
 
