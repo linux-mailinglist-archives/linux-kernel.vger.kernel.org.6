@@ -1,160 +1,129 @@
-Return-Path: <linux-kernel+bounces-363264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D666899BFCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B7299BFCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A8D2837FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:09:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800C3280F2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A0C143890;
-	Mon, 14 Oct 2024 06:09:31 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C269913FD83;
+	Mon, 14 Oct 2024 06:09:29 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AEA13DB9F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D6313D53F
 	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728886170; cv=none; b=ZlF6Bv1LDe2F1Qtf4QDol0xqhDA5dkJDgRoUL+LyKoj+ZogYxnvsGZi/HaTXqLYnsDMM37CqizVRuznq7N5+KaZEwiTj7KysDZlYrlJbln7lZkl7TvDhea1blpaZk/D0EXPiDlPbaabKACGo/Yw2Tu7b2tjNiDA2+wcQ3skbIaA=
+	t=1728886169; cv=none; b=qpDrga43d2EGV/0XPdP2EeUbTvCPMmACKQwg7CwBOhOBZ6QufiYmRv2zJS7jH2/bp7w64Vtit7scga1amTlUIYY2iVobeXZWeFu8aRwarnBvNHSsH0MkXSUi1rrbbl7OPVNI56osBvNnuCZVd/0yUYF401wFceReB2CarN209qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728886170; c=relaxed/simple;
-	bh=IleWPMl4f2R84lOyvluflgeYB1LOZt+fD2PzHIvAJSU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fOSrhljOr4fxmlnnorBh5FtJwlbvo3Z+TEwj9Frrvnpat56MGDyMDd4fjghqb9/+bILQ//ULAf+WTB4o11vHyhdOLwY2VujGr8wZ0LTj3yPsI2Rjptb/jl+SNhsLr6N2sl6Xke7VrupH5LNJ2RMKPnVPoEVMPL5+wVLij2quZiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+	s=arc-20240116; t=1728886169; c=relaxed/simple;
+	bh=nv8qLXjacwOGsNr3ILmZF8qwOncQUaBG2RFwEAkUrbk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bwFYss8/M0lrvN4tedryjluat8jaa93LIHkGDBk7c5zgNHx/INY5+kAPKsuvJ9MtNbYQl4qjJgCoR3R98oZpjejyiFjgKfJYl92XKUjRZaJ+TbZ2saf2puWReV+wGzJlYuVV08Bbg7sxeBTJ1++ZKj+5Abxq/VfrXI8mfY09AYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83a709455a7so190706239f.3
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3ba4fcf24so24772055ab.0
         for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:09:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1728886165; x=1729490965;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7wQiWlq4yH2O6lhbszuVPwvf6IBAxvm5byuyLUfh3V4=;
-        b=rb6hD3zEPzFoD+NgPOLmlO5C/46NV/rrGHtAKWkKm8eHOQC6clBMncPTzx0VCqR4Hg
-         0FuiVxJxTBXkk/RUoU+CO1AckZTrmOBm3WePNaycEHUntlEeHVoxT/rp4PDnGuCpP/vB
-         jUngheQdDzCwy8spKCWffVevgLIL2bvRMLTRzGg12gsDHxs8Fh8S1HWIoA21mXEay+DI
-         A7WTPePYlaJg04am0vKb5yznZiaI5zb4E5VWb82049yVy9Dn4MsrdtbJCyHOafamMwc+
-         VmaqUYbXwB16KHDs5GYsasSb9Q46sToyGcjE0xaJxq2m77/vODKUxqA7Mu+fDOXMIrLb
-         w6qw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLMurbbkOzxQRGKMYBNwdJHAWdhZE6nZehb4mweRYI7VdQVZYjJmGQ4zwybLiPNdGjht528ejPPG8YxNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOQILaCy5ovRh6AuqveZBGOzU6JAujyd4inxG7Lh+WOoO+28JF
-	Gb8rV3klnxSa6F2J+E6w3ivNgpnJsSfZ2M6qC2HvXzTWIzLsfTnJ9iYFkz6U5+qQJV8PZ8TkYxc
-	gYUjfXzAXkpbNPDNnHU6ZvkhObzPLeN4zpRlshFtc3eAAJwqxT3jomFA=
-X-Google-Smtp-Source: AGHT+IH43XkxgpxH+6sUUzn6+IHpr7XAZI2ztetGzkU0CdO0qwlAvK9MvMPr9POKFDlnLCjNzqHz80lhpM7+2pkS7TbFrqFXZWOT
+        bh=NKiXsArvGra0VX5VVktVVDzHkecq7lDHEZLHLanAM8Y=;
+        b=rpJT/grzbuzEVb/ANHuQPIjrYFubi4rsDTIOYVIS46dQXwTI2a9AmxMhe3pNE+Lg9+
+         bBdp4odZ/LctcODGkhwXNuFrPJ0a8QYz92yz/S2jj8Gm0FKNk6qCiUBF0VO+d4R7qsqC
+         P+fwFsuzPxm1HiYdDgnJ2BYB6PPjTz5fm1oWy5I8aOWfdBKahZBEs3SIDl5IaUQ5nmpW
+         3VJbTY6OzMnVlIwn7wOLY5e4R7bSjUaaoO0GSDkoPVne+5FPWPPxvgY6qqzwxEaRnwTy
+         b+aS2dWYZWyCE1onBh7SjxLtseOJFXZ2B8IRpbgPXLB2u0ln6dsBmdb2pSUH8I/sj0Wx
+         7phg==
+X-Forwarded-Encrypted: i=1; AJvYcCWz06mTkFpYJJe6s2weAq+ParUevPFtmW9XXBkMuq2FZYgaNd663l/jVlKkcQf7B4y5GJb8+YBdgA8to2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrgU93clRCRafioUi/GnYJgvrhwt1NgTeqzWjE6vEs+YKEWUN2
+	FA/3fY8lC3ZdpzbnsQohoA8lehxJcUKc0WrXnmaN0Dsdpjrr6egWr/AG4Wv8i/uDw71MJuzZF5U
+	VD9xNuJIqL4VhY3veGvhefE2clb7ulbEufOX2B9QozYTPbFMOy8GmDQw=
+X-Google-Smtp-Source: AGHT+IFcI7LD8MU0anBfXZfOQmjNnGHnPHe7/s0l+xyckvvJ88KkptyJzhS7CWyLdpeQhOBwZlFZIfN63SadvrKBXZy5YDOhnwpQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1885:b0:39d:2939:3076 with SMTP id
- e9e14a558f8ab-3a3bce159bbmr56920315ab.25.1728886165301; Sun, 13 Oct 2024
+X-Received: by 2002:a05:6e02:1c8b:b0:3a3:9471:8967 with SMTP id
+ e9e14a558f8ab-3a3b5f9fca7mr84667255ab.11.1728886165034; Sun, 13 Oct 2024
  23:09:25 -0700 (PDT)
 Date: Sun, 13 Oct 2024 23:09:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670cb595.050a0220.4cbc0.0044.GAE@google.com>
-Subject: [syzbot] [exfat?] KCSAN: data-race in xas_find_marked /
- xas_init_marks (4)
-From: syzbot <syzbot+0dd28f0c6293cc87d462@syzkaller.appspotmail.com>
-To: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+Message-ID: <670cb595.050a0220.4cbc0.0043.GAE@google.com>
+Subject: [syzbot] [perf?] KCSAN: data-race in _free_event / perf_pending_task (2)
+From: syzbot <syzbot+e75157f5b04f8ff40e17@syzkaller.appspotmail.com>
+To: acme@kernel.org, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
+	namhyung@kernel.org, peterz@infradead.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    09f6b0c8904b Merge tag 'linux_kselftest-fixes-6.12-rc3' of..
+HEAD commit:    87d6aab2389e Merge tag 'for_linus' of git://git.kernel.org..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1777705f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10104f9f980000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=a2f7ae2f221e9eae
-dashboard link: https://syzkaller.appspot.com/bug?extid=0dd28f0c6293cc87d462
+dashboard link: https://syzkaller.appspot.com/bug?extid=e75157f5b04f8ff40e17
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/bab2dba03669/disk-09f6b0c8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ef90b6468079/vmlinux-09f6b0c8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5674cb34660a/bzImage-09f6b0c8.xz
+disk image: https://storage.googleapis.com/syzbot-assets/cce40536bdc3/disk-87d6aab2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/479edc06c8d8/vmlinux-87d6aab2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9d377c65ffca/bzImage-87d6aab2.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0dd28f0c6293cc87d462@syzkaller.appspotmail.com
+Reported-by: syzbot+e75157f5b04f8ff40e17@syzkaller.appspotmail.com
 
 ==================================================================
-BUG: KCSAN: data-race in xas_find_marked / xas_init_marks
+BUG: KCSAN: data-race in _free_event / perf_pending_task
 
-read-write to 0xffff8881068ba480 of 8 bytes by task 7376 on cpu 0:
- instrument_read_write include/linux/instrumented.h:55 [inline]
- __instrument_read_write_bitop include/asm-generic/bitops/instrumented-non-atomic.h:84 [inline]
- ___test_and_clear_bit include/asm-generic/bitops/instrumented-non-atomic.h:114 [inline]
- node_clear_mark lib/xarray.c:102 [inline]
- xas_clear_mark lib/xarray.c:915 [inline]
- xas_init_marks+0x17e/0x320 lib/xarray.c:948
- xas_store+0x213/0xc90 lib/xarray.c:810
- page_cache_delete_batch mm/filemap.c:322 [inline]
- delete_from_page_cache_batch+0x31c/0x700 mm/filemap.c:344
- truncate_inode_pages_range+0x1c5/0x6b0 mm/truncate.c:343
- truncate_inode_pages mm/truncate.c:423 [inline]
- truncate_pagecache mm/truncate.c:727 [inline]
- truncate_setsize+0x9b/0xc0 mm/truncate.c:752
- fat_setattr+0x720/0x840 fs/fat/file.c:550
- notify_change+0x85c/0x8e0 fs/attr.c:503
- do_truncate+0x116/0x160 fs/open.c:65
- handle_truncate fs/namei.c:3395 [inline]
- do_open fs/namei.c:3778 [inline]
- path_openat+0x1c03/0x1fa0 fs/namei.c:3933
- do_filp_open+0xf7/0x200 fs/namei.c:3960
- do_sys_openat2+0xab/0x120 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0xf3/0x120 fs/open.c:1441
- x64_sys_call+0x1025/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+write to 0xffff8881155361e8 of 4 bytes by task 9574 on cpu 1:
+ perf_pending_task+0xe8/0x220 kernel/events/core.c:6976
+ task_work_run+0x13a/0x1a0 kernel/task_work.c:228
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
+ do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-read to 0xffff8881068ba480 of 8 bytes by task 7358 on cpu 1:
- xas_find_chunk include/linux/xarray.h:1733 [inline]
- xas_find_marked+0x216/0x660 lib/xarray.c:1370
- find_get_entry+0x54/0x390 mm/filemap.c:1994
- filemap_get_folios_tag+0x136/0x210 mm/filemap.c:2261
- writeback_get_folio mm/page-writeback.c:2489 [inline]
- writeback_iter+0x4b0/0x830 mm/page-writeback.c:2590
- write_cache_pages+0xad/0x100 mm/page-writeback.c:2639
- mpage_writepages+0x72/0xf0 fs/mpage.c:666
- fat_writepages+0x24/0x30 fs/fat/inode.c:199
- do_writepages+0x1d8/0x480 mm/page-writeback.c:2683
- filemap_fdatawrite_wbc+0xdb/0x100 mm/filemap.c:398
- __filemap_fdatawrite_range mm/filemap.c:431 [inline]
- file_write_and_wait_range+0xc4/0x250 mm/filemap.c:788
- __generic_file_fsync+0x46/0x140 fs/libfs.c:1528
- fat_file_fsync+0x46/0x100 fs/fat/file.c:191
- vfs_fsync_range+0x116/0x130 fs/sync.c:188
- generic_write_sync include/linux/fs.h:2871 [inline]
- generic_file_write_iter+0x185/0x1c0 mm/filemap.c:4185
- new_sync_write fs/read_write.c:590 [inline]
- vfs_write+0x76a/0x910 fs/read_write.c:683
- ksys_write+0xeb/0x1b0 fs/read_write.c:736
- __do_sys_write fs/read_write.c:748 [inline]
- __se_sys_write fs/read_write.c:745 [inline]
- __x64_sys_write+0x42/0x50 fs/read_write.c:745
- x64_sys_call+0x27dd/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+read to 0xffff8881155361e8 of 4 bytes by task 9573 on cpu 0:
+ perf_pending_task_sync kernel/events/core.c:5302 [inline]
+ _free_event+0x3d/0xa10 kernel/events/core.c:5326
+ put_event kernel/events/core.c:5454 [inline]
+ perf_event_release_kernel+0x61a/0x670 kernel/events/core.c:5579
+ perf_release+0x1f/0x30 kernel/events/core.c:5589
+ __fput+0x17a/0x6d0 fs/file_table.c:431
+ ____fput+0x1c/0x30 fs/file_table.c:459
+ task_work_run+0x13a/0x1a0 kernel/task_work.c:228
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
+ do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-value changed: 0xffffffffffffffff -> 0xfffffffffff00000
+value changed: 0x7ad100bf -> 0x00000000
 
 Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 7358 Comm: syz.0.1306 Not tainted 6.12.0-rc2-syzkaller-00291-g09f6b0c8904b #0
+CPU: 0 UID: 0 PID: 9573 Comm: syz.3.2265 Tainted: G        W          6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+Tainted: [W]=WARN
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
 ==================================================================
 
