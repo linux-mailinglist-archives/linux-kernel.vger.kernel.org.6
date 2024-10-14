@@ -1,106 +1,106 @@
-Return-Path: <linux-kernel+bounces-363779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F113D99C6ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:13:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0D299C6E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5246FB26FC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:12:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A8C1F217AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AFC1714A3;
-	Mon, 14 Oct 2024 10:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90E2176FA2;
+	Mon, 14 Oct 2024 10:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4WN9/Gi"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wUT0dEgs"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215AA158D6A;
-	Mon, 14 Oct 2024 10:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D4E15B551
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728900638; cv=none; b=R8VdjcxUrWoAsw5sKzK0NlkL9t+cFSlQHto9GUVV5Hnoqyk6A1deHoGAjX3qCzgKkCZgXxcp5Cgrmh/ityuK7ehWfaFwwjgcI+fa+ekktrpQYsjqQLWmM+mVlSOo1jepK1Vq9uP0HDigJG6UXDT0Tjn98Vy25G2wqv9Vj/vYMw4=
+	t=1728900683; cv=none; b=n9alyD20AOxaz789jlvJ9aBL6iXzv3eFm2/vAnL/kSpBHh/DaSUQu9pk16nKeqr2tuXA1zPq1zhlFgv08K39708q9uWpDOtCVoQeB3zg4ZXF+aNeXDn+d60VyX+QLEYU0x5doBq7lo+/0GL2OpiYumthTbjG3/KTh3ObR8Ab2DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728900638; c=relaxed/simple;
-	bh=bzdp1yBdRjDhQjgFwaq1csTPqxCzv1szUiX6Wwo3b1Y=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gK//ZHHBlacaYLpVunTk5VnfymYkRCzTQ+YYvZv4fUXySN2R85RfPmpr11HKBct9VTVG+KbPw4LFLPyBYNNDkywE0R43TU8NQEr8xeZ91M2Ju4YPuqAiQTJMsSa1MBe+iAH5fTRU6XkSNmK/c73RXvVrSBH7ojlJxTr0F1uTxmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4WN9/Gi; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4311c575172so29583805e9.2;
-        Mon, 14 Oct 2024 03:10:36 -0700 (PDT)
+	s=arc-20240116; t=1728900683; c=relaxed/simple;
+	bh=45f5JP3bQWFt0F2u2LUbZ1L8HR/D6tqr+/MlO0jRbGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFRNPoUSJ16i3+O5c/a74/A+aOlq0AlILIBO544MHGPUAg/FNYmJtuu4yOHyXW4zNu0rhiPUvdbTusamG+falNOLQRMWA+kZzOjcThNvXRkdZ0RaV34yo5YKYWOlI3y2dgSv5Fm7Ixl141OzhlfhDfdADeYWKUtxnl61BaVlG1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wUT0dEgs; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a99543ab209so613142566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:11:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728900635; x=1729505435; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r/jtJHpZ3TCFw6NZzPBRH9fN0A2Zm4v391WyqXi8gbM=;
-        b=h4WN9/GiOzQdyA7SGoG7SUjHWPIREWzOPtWKv7FBb/8pKNzGmLzzVUczITUJibAWMO
-         SQ+x9Bni522I+MddMrWIQK/n8Hu5pzGeM0eY+UbcWSOalJyLRfluThLhc9u4zlQWD7XL
-         qsQ9csKplur7AzRigjHYtxt24omIrAPxkY0uVCv/hEbYrD6vw9ywm/HUOzE4StWgnlpr
-         2pxX8hK3U/fC5sBgjrpU+nF31uQt1E9hy6CpjCy5M3jFvHvKgIo8iYpRUsziiZGJSkYu
-         PBq/IV0Q5suaH3jUff9dJBCTPDaxWzSwx7AszSUEmHvT9+eeA40LCz+HdQCkWglOiZok
-         +M+A==
+        d=linaro.org; s=google; t=1728900679; x=1729505479; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I/LXd4VHO1p1BbKAcgczo+qxpSILM19q0yd+EHjEU8Q=;
+        b=wUT0dEgsmBR3GlzZd17yP/ZDQQ9mI4Zz6mzvHTRlw7bTfyIMNPGBgxEOAL2+9lfwUt
+         95Rj339sw5EJ7KhBuFCFh02eMlG47bwKM9nfFkTKuQA8CARscriehXSws0DicgWpU5Wj
+         xjaz3EV8uW1zE4A4EUu6P63iconSvjU2ZfWRDM3JzJFhLeP9gpuWhIVwhPCWUbOntSNq
+         pqvsQhhh3IvtQQ+3Jmuz4VEGBj/r0UeeCsbuqK115ZkXEXv6yOtQpkckGeHIQ6FkBhQC
+         GVWruolIZPqsVUF6ePjiVAxQyKN6XPacYpjEwuDdRyBHht7ae5Nk5zDBqV88Z5XgIHKu
+         6vNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728900635; x=1729505435;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/jtJHpZ3TCFw6NZzPBRH9fN0A2Zm4v391WyqXi8gbM=;
-        b=cE4nvSrCyA856RiNbqPDlTDz5j5y01vTCoO+sxa8pmwGE48lqMeOKkEFX6JqkPB72E
-         I1qAGudxKEecDdX1d93maUaT0xhZCt+N0mUuwwK2K+ulGvs7ND6Ox0dq0KRZDbJk6ZSM
-         lm1nno9p8ESUBMMLhLYCqNyU6rWcEDJNyhAMSHqJ0HXqWb3+7YnDNt+EtdB5j0qVjg3w
-         IB5iz9iwQLc6FVJktExlnxfcQNdQb9hmjnjF7lkU3x6wJbX5MmKzk6SEmMtlXjzhnpsF
-         Paw6IlSeEpo7JmoVQSvGLPfGF7ds9VpRxiDcQgJ1M2b6Kz8jmpkR3quNWHkvcwivDYxg
-         G+/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWUSO6LE/sKaX7tbkrRHYdxD+f+ra880pgsk+YR4aIFk0sAzaXyXCKVWY73hoBkZLROWT57eQ1gHZptBlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP/NwzSGWy6C/k59EHpqTiuk6goRBh4U7Cp/oySvuGgiiPaTJB
-	gkW8lNtOgmVJY04jxsK14JjSIuE1Miq/4WFBSVBLVWpmKYa+78HhhAtbzw==
-X-Google-Smtp-Source: AGHT+IGyppWkVmApOtjCUbtRtDXYHLKnG+Ld16jhz3PIO7i6zKlGxZZwQ2etf+Wu99kiuAYnUiTTIQ==
-X-Received: by 2002:a05:600c:228c:b0:42f:80f4:ab2b with SMTP id 5b1f17b1804b1-4311dee6f58mr104057295e9.19.1728900635179;
-        Mon, 14 Oct 2024 03:10:35 -0700 (PDT)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7f2c1esm10943702f8f.109.2024.10.14.03.10.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 03:10:34 -0700 (PDT)
-Subject: Re: [PATCH net-next 1/2] ethtool: rss: prevent rss ctx deletion when
- in use
-To: Daniel Zahka <daniel.zahka@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241011183549.1581021-1-daniel.zahka@gmail.com>
- <20241011183549.1581021-2-daniel.zahka@gmail.com>
-From: Edward Cree <ecree.xilinx@gmail.com>
-Message-ID: <966a82d9-c835-e87e-2c54-90a9a2552a21@gmail.com>
-Date: Mon, 14 Oct 2024 11:10:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        d=1e100.net; s=20230601; t=1728900679; x=1729505479;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I/LXd4VHO1p1BbKAcgczo+qxpSILM19q0yd+EHjEU8Q=;
+        b=sEsxE5r/QBFwOORdov/IDv9C7sPY5LEpqELagjsYLWP3g/KZ/jNbvt/Js0A0h6agcq
+         MUrS/FGVs7/dRij/r2gx5NC+XXuYusqwp7Le4lAZrwvgCR/Lbv8KeZPKqXZr0pYkzWYi
+         smtSDgZbXux8yPj6b12wMdPNntuCIbw1bN2I4XQ41HNSP+PMdz/K05j6DmPkJlPRX7l5
+         LBVJCxjDdQVnKWRa7aIQ31RxysAajrh1UcLJbEKSu0kf5w2Qg42CbdkiBAi6tNsqzOBu
+         d6WY4myemt9wpCdaKxfgaCvItLaf2/xbsISTT7YIZNOGGqu84MRFeCerhD8Az/K0JmXe
+         FSlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjGSgXWm1myGisg4HYdqNbqaS0jGTrgUuBSWLRjhL5KKm0s0yAjM9KFwsJCOaBENoXuOpo8Fzth/0mYTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJmV4PYoc0rsIYS8NQnGxApdD0KyH+Im4h+75dvxB+2oFS4yQI
+	VdqvPhw9IPJhO94NaYyDjm5226qXffAl3ok1UCMbDH8qz5aLUvfQC2brkc5or9E=
+X-Google-Smtp-Source: AGHT+IETPBBETQDag5kjsGc5Ue8CZM6ASCuWmb5sR/j8wYmAJr0+kZOnRg/kDq19oUGmuUzvrlzu2A==
+X-Received: by 2002:a17:907:60d3:b0:a9a:1796:30d0 with SMTP id a640c23a62f3a-a9a179635dfmr119185266b.62.1728900679059;
+        Mon, 14 Oct 2024 03:11:19 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99e57f763bsm337884566b.85.2024.10.14.03.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 03:11:18 -0700 (PDT)
+Date: Mon, 14 Oct 2024 13:11:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Umang Jain <umang.jain@ideasonboard.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	kernel-list@raspberrypi.com, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH v3 0/2] staging: staging: vchiq_arm: Two memory leak fixes
+Message-ID: <3ec84f12-15b5-40c4-ba6d-137371d755d8@stanley.mountain>
+References: <20241014100624.104987-1-umang.jain@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241011183549.1581021-2-daniel.zahka@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014100624.104987-1-umang.jain@ideasonboard.com>
 
-On 11/10/2024 19:35, Daniel Zahka wrote:
-> A list of active
-> ntuple filters and their associated rss contexts can be compiled by
-> querying a device's ethtool_ops.get_rxnfc. This patch checks to see if
-> any ntuple filters are referencing an rss context during context
-> deletion, and prevents the deletion if the requested context is still
-> in use.
+On Mon, Oct 14, 2024 at 03:36:22PM +0530, Umang Jain wrote:
+> Two memory leaks were identified and this series addresses those leaks.
+> 
+> Changes in v3:
+> - Add Fixes tag to 1/2 as well.
+>   (Suggestion by Dan Carpenter)
 
-Imho it would make more sense to add core tracking of ntuple
- filters, along with a refcount on the rss context.  That way
- context deletion just has to check the count is zero.
+Thanks.
 
--ed
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
 
