@@ -1,88 +1,140 @@
-Return-Path: <linux-kernel+bounces-364022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE4099CA01
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:24:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A1899CA02
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712A0283090
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:24:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 758D1B24397
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C29A19E961;
-	Mon, 14 Oct 2024 12:24:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D889C7E574
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C434D1A4B69;
+	Mon, 14 Oct 2024 12:24:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69D07E574;
+	Mon, 14 Oct 2024 12:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728908644; cv=none; b=Q4zVPHnbA0KA3fhMA7a/GS5aBofTWP0/RrogkOZg08YjM7IH7aMVhg320o7XLixz233XP7cIUhuzclur8tkrhRomgODVC8Vbb7A6PTwmF4R7I1xzTbWSRmbPFGo5MZK7Ch5kqHkFiN/EZMayD9W5yd4GjGLLGbmPAG77sXSFqWo=
+	t=1728908650; cv=none; b=KHP0q1ciOlJtOHBaB1CbOGmtN81OnBHsZL9l2exxhGbR5bZgsS3FtAAjGnZkAoOK5hbJQ27t5vD8Ujel22eECv1B12nP6o35JRTPIn5ZHtWxHeg3JEs5StfIS0uAHZxAM+Cp6i7mnrA6LC9i7LiPPf65PZRWQbpOeU/jd5Ds7A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728908644; c=relaxed/simple;
-	bh=4uo1yrIKZRlZBhNcFPhEdGxh2rozWeponJyUN09cGPo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MSD77Ebn/21yVlP82oF8z9McT4ShNd1TwCYC9HpBtW7Dk2ktVsfxlYsECli0qjnkmp6tQmHE2IOkzKGHSkXjwXcx0xdV9ktEb38kZwtk5PWBsA7+CFrwENDQRqZ1CgpkPfcymCbmiiQ6DOpsog5R6Rmkef7MLflaiRyIU1Fpq4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso32004515ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:24:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728908642; x=1729513442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1RB3MG0tXgK4yNbGMLIpzHlvd8r6IXM/6IENmhQbfx0=;
-        b=rMg+2GHy5j11i60KwQHIAFZ9iaJ9IWKvRNpAekWdyryUsiW8Qlm6qxdZYkZKAGEFYL
-         UET3jYlwNVggnK5uTsLcb4GzwRiYCOIXBbq7u4dKtwn6BhkpTqx065i4jGPJA2SI/bpD
-         v2A1NMQ0arq7BU4fCr2pi0pKeCntT4xgFAtLQlvwbW3SC4W2XWG3o0eeeFAb8AO4rZcG
-         g2AxWiQ0R9GdWQNvJyiKezDNiAZmOHa0N/UIdgjibO/PNoWqKuOxzJNx2yG/l/vwen11
-         XhyJOazmb2KmhGGwW55EJ6iers0Qr/Pf5VGpyU/PCyvPQHkYVir8jA0pXUBd4qd38n3c
-         8gbw==
-X-Forwarded-Encrypted: i=1; AJvYcCULaP7uErlODAceSvyjl6Fs3nfV1R3vvH5GqhCez5ZAmTpPRJO765QXYXfaBbLgVpchu2KUMmA+qwkvLMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSevKZjgvELC6JJ0+1p4PXv/UvDNPUqGRy0ymS+WCFKLTSMzDE
-	CL/25SWmHJktN+BMyZCpMHH9Gqt2VWhMER9/qx91trVKyIsnxGGfMOKCJU4JazIznBwQrRf0w07
-	SrrvYsdH1oM/wfuK41AqxwQoCaHDD5jdMdSCd3OxhfwOZyN6kGDUCo7M=
-X-Google-Smtp-Source: AGHT+IGxoGj8a67YFnUIJmALzL/ACJqsQ8w6PShHANxjqQvnFcbbipN6ft8JXniI7L9waVO51xsn1PRh+ed+T0u4h9JdoP0t53tr
+	s=arc-20240116; t=1728908650; c=relaxed/simple;
+	bh=Le0e0kUNrDFWDkroBhdDWVbxdg0w8tcg9r/v0Nd3f28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZwJRMNAH8WGT9WzT2ZUK9FstwwqgQ41pywwEtG4tFNeXf8QMcAAbKf4ac11a+1b6jiGoBcIHi4NEMkO9xntamypS8lQa2yvKUszmzVt6zhqU3B4Qh12PaEwLlDPLr6jW7L95Zl8WFEWLiRu6ekwdEMbaOYUd/uDwWTd04CWRPC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 322411007;
+	Mon, 14 Oct 2024 05:24:37 -0700 (PDT)
+Received: from [10.57.86.130] (unknown [10.57.86.130])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2053C3F71E;
+	Mon, 14 Oct 2024 05:24:03 -0700 (PDT)
+Message-ID: <6926988e-5532-457f-9e1a-135b03585c5d@arm.com>
+Date: Mon, 14 Oct 2024 13:24:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1e07:b0:3a0:a80a:997c with SMTP id
- e9e14a558f8ab-3a3b5fb085cmr76536545ab.19.1728908642037; Mon, 14 Oct 2024
- 05:24:02 -0700 (PDT)
-Date: Mon, 14 Oct 2024 05:24:02 -0700
-In-Reply-To: <tencent_C8EA75F1764366383C3F373A972436904A09@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670d0d62.050a0220.3e960.005e.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_read_virt_blocks
-From: syzbot <syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com>
-To: eadavis@qq.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 22/57] sound: Remove PAGE_SIZE compile-time
+ constant assumption
+Content-Language: en-GB
+To: Mark Brown <broonie@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ David Hildenbrand <david@redhat.com>, Greg Marsden
+ <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Jaroslav Kysela <perex@perex.cz>, Kalesh Singh <kaleshsingh@google.com>,
+ Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Matthias Brugger <mbrugger@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+ Takashi Iwai <tiwai@suse.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-sound@vger.kernel.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-22-ryan.roberts@arm.com>
+ <Zw0CyAlSmaxOCZJl@finisterre.sirena.org.uk>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <Zw0CyAlSmaxOCZJl@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 14/10/2024 12:38, Mark Brown wrote:
+> On Mon, Oct 14, 2024 at 11:58:29AM +0100, Ryan Roberts wrote:
+>> To prepare for supporting boot-time page size selection, refactor code
+>> to remove assumptions about PAGE_SIZE being compile-time constant. Code
+>> intended to be equivalent when compile-time page size is active.
+> 
+> Please submit patches using subject lines reflecting the style for the
+> subsystem, this makes it easier for people to identify relevant patches.
+> Look at what existing commits in the area you're changing are doing and
+> make sure your subject lines visually resemble what they're doing.
+> There's no need to resubmit to fix this alone.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+No problem, will fix this in the next round (where I anticipate sending more
+targetted serieses to maintainers).
 
-Reported-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
-Tested-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
+> 
+>> ***NOTE***
+>> Any confused maintainers may want to read the cover note here for context:
+>> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+> 
+> As documented in submitting-patches.rst please send patches to the 
+> maintainers for the code you would like to change.  The normal kernel
+> workflow is that people apply patches from their inboxes, if they aren't
+> copied they are likely to not see the patch at all and it is much more
+> difficult to apply patches.
 
-Tested on:
+Sure. I think you're implying that you would have liked to be in To: for this
+patch? I went to quite a lot of trouble to ensure all maintainers were at least
+in the To: field for patches touching their code. But get_maintainer.pl lists
+you as a supporter, not a maintainer when I ran this patch through. Could you
+clarify what would have been the correct thing to do? I could include all
+reviewers and supporters as well as maintainers but then I'd be banging up
+against the limits for some of the patches.
 
-commit:         6485cf5e Merge tag 'hid-for-linus-2024101301' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17186887980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
-dashboard link: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14cb0030580000
+Or perhaps I've misunderstood the point you're making here.
 
-Note: testing is done by a robot and is best-effort only.
+> 
+>> -static const struct snd_pcm_hardware dummy_dma_hardware = {
+>> +static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(struct snd_pcm_hardware, dummy_dma_hardware, {
+>>  	/* Random values to keep userspace happy when checking constraints */
+>>  	.info			= SNDRV_PCM_INFO_INTERLEAVED |
+>>  				  SNDRV_PCM_INFO_BLOCK_TRANSFER,
+>> @@ -107,7 +107,7 @@ static const struct snd_pcm_hardware dummy_dma_hardware = {
+>>  	.period_bytes_max	= PAGE_SIZE*2,
+>>  	.periods_min		= 2,
+>>  	.periods_max		= 128,
+>> -};
+>> +});
+> 
+> It's probably better to just use PAGE_SIZE_MAX here and avoid the
+> deferred patching, like the comment says we don't particularly care what
+> the value actually is here given that it's a dummy.
+
+OK, so would that be:
+
+	.buffer_bytes_max	= 128*1024,
+	.period_bytes_min	= PAGE_SIZE_MAX,      <<<<<
+	.period_bytes_max	= PAGE_SIZE_MAX*2,    <<<<<
+	.periods_min		= 2,
+	.periods_max		= 128,
+
+?
+
+It's not really clear to me how all the parameters interact; the buffer size
+128K, which, if PAGE_SIZE_MAX is 64K, would hold 1 period of the maximum size.
+But periods_min is 2. So not sure that works? Or perhaps I'm trying to apply too
+much meaning to the param names...
+
+Thanks,
+Ryan
+
+
 
