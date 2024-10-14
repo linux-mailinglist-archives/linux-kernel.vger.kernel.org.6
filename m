@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-363107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D007799BDEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:56:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0B099BDEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768E2B21AE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:56:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4C2E1F21D75
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3EF7602D;
-	Mon, 14 Oct 2024 02:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4544D599;
+	Mon, 14 Oct 2024 02:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BL0ZrgUn"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VcvMalOO"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505DE5A4D5;
-	Mon, 14 Oct 2024 02:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE193CF73;
+	Mon, 14 Oct 2024 02:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728874568; cv=none; b=M5jEl37cNN0+9ukapT6iwBQsqjdP2nPwfD023nat22EeZJNZNLEygZr2m7gyiMrRCgSd/Q2fS2b2Qq+tpAytWFt9eK9c2I4Nt1yUtQXni/gQWUhJ6nm/sRx79TPWd5hhh/kF19LAkYphMpzuXLHuPG+SpMdLQwonSGXMPY1AESY=
+	t=1728874606; cv=none; b=a/UfvFH2LApRC5Dt/DX1qOmMlRYE91eUttdK+Equf+IR1zJnbpSEmgKmFVi3DwHlsIjsr75mIu5bwzVFaRFRNej2cJJe610H45f/n4EXssBscrRFwXcISafAiVz+n+iHGtQ4wFN2/dT4tsk+kNvmlMiJi8MsjDnrS7I5zseiddY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728874568; c=relaxed/simple;
-	bh=Qe2ChtW/mBRF94ySzEHdaeNT66y9rdZInIjzCEIRchI=;
+	s=arc-20240116; t=1728874606; c=relaxed/simple;
+	bh=3nJnFVnwR+L3Z18DYoST7sOHYfHg//9WUdBRCtPPyWY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i40RvNxG6uVI/ug0R9iz97bb4quj4QoNalXBiQMB3Z5B7d/UTkINmC9CzASz5wQlhOBSBh8ahs8QJ27TT3e5vC2DALoftG1QuzR7gVIvuu1ZajldedOaytujbrN1bKV0CQlz+ifqtLI2Yx5cwPT+gHvw4e/iqP8u3g6lL5QRPOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BL0ZrgUn; arc=none smtp.client-ip=209.85.208.41
+	 MIME-Version; b=hSi4DnnzA5enOLOvnjPHuyZP/w2FcnafXj9S+WOKzY/2Ko3sWDT9V8j1UEipynN8jeDP2GHEiSqiOgxqYGveBd0MWOKLN1dBE1/E+jfAf67Tkb3upML5Mzbxlq5ewHSCKKkhf7nw6imgADNk4AH9FevYmOcXDnwT0FbuGVG6RQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VcvMalOO; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c96936065dso1537612a12.3;
-        Sun, 13 Oct 2024 19:56:07 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so220805966b.0;
+        Sun, 13 Oct 2024 19:56:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728874565; x=1729479365; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728874603; x=1729479403; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fsia9jopa1EBGuIlree1T5OAe+wj8zghwoJWVSExaNA=;
-        b=BL0ZrgUnE8KYw819rzDDM98Nda7D5h2637zGFp/eIa5fwGhXjyVD6kgbaI+/LAa2Gu
-         4ayh7NsVKJdJqregKkNRHLhcA7+AGY495irr+3yHRyYwW0wERUNdS/ZyYMAhgHIYMcoF
-         vBZkJxJ11pBR9+FNRUul92QI1w/APdQHmD7FsiBx/1rrfD/SF7OOhGB5uXYgrBBPNgR0
-         aC31+SgTBUaKv9gNAKiHYcSSbHFAcVUFd1UyClj/dfUVbqQu58Zpg3b3Al42lUbHEA5k
-         1JLV4mKJ/85pjouSoC18XnC0PvpoewL90livGsNTvE5HJXZN2eG8vtUNlV2w+8PT7/8J
-         re0Q==
+        bh=/8xPPGnp2eNdFzyDsH77udpuxb5hGHHiKYVsaBBQcww=;
+        b=VcvMalOOiVxQDojiwALQKOK7h9mXaO1kSU59jDQr8C+yZ/MNncxYvjG6ttUiC5yyvf
+         IaQaDSoDkfIJzJtqaDlBQ9ItQN4Qef5ImVWvhPwUNnzwVVZZzE+FBpMtfln3FdlKW67w
+         kZlP5Br+Cb9T6u1JmqwiCLox+44U9kYd2KyqPkK9mJKe0U3a6zQ0W75uFFxMnvOSnzi0
+         0ZN2kPgkvB8ZbHdudPZ+veS/JBxb8XZN5oQ15ShnHuU/E1oLVbvymsw0Ocf7WLAVYBqU
+         sQgAZ0U9HmhVU7EcISXBG00YIfDtSz7m7LudYdUCAv/2oa03lqQ5zz1gTl/6UP4HCE0Z
+         SizQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728874565; x=1729479365;
+        d=1e100.net; s=20230601; t=1728874603; x=1729479403;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fsia9jopa1EBGuIlree1T5OAe+wj8zghwoJWVSExaNA=;
-        b=MXTo7RtNNqksyVtyr+bKfX/agOpSdwZRBObhMecLgaa6q+rGH23FQl82lT12aTji7A
-         8ZLsZQwiBJtbmDP+Z3mhiPD/WI7LbCzdEiXPvsN75YkEROMc0BmIuiBayZt/KHyf4jOD
-         QzpYybT/XmnShOtfhrD7tGYdFlPJ+jdjMg7xAg1TZRDn2O4YyTjmh9IeqLL79FZ1kpz2
-         Po40a5ofLTIV8EDp6Bwy2PGxqaR1dvrBRFWfQ/3OEMJyqptkebd7hgU1dbCRMEDz37Al
-         HnLc3qHU3CFKnMeOeOTV5EhDkwFB0wPBq31p2TqEXY62avLkScnSAWed9j8griMB7oGU
-         L/mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUag4GWUnYoNd5bXRjkJV1J9eKg9lqbzhiqC6tPJXyTrKUON6zrXWiFq/BXrUKDNabx4HR1+La+C3gZSsCZ@vger.kernel.org, AJvYcCVFm7Pc/oCCTZGpSNE7S96goy67AcswK8FcVNDZBPADsY2qsR+pceJoo3GBe/0ZGNxTB44pf0PJDok=@vger.kernel.org, AJvYcCXfYBWRWa+YT4QAlwttBIPGha3cTHra096VCpEWz4qGssIvPC8dOxgK7S40/A0Oje2vKLKLDVSq1OTM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyglI+Vdux8OES8BC4WPrvOkY2Lg4SbM9HA3NGgw6ShcTzRQix
-	IMH1EjMqGasL/qfcVSuNxs3859apBtVK9uE7P81rsBy9HD2il+zT
-X-Google-Smtp-Source: AGHT+IGnwwZeigphOJ9brMGXGLoktj1FJV8WBeBfj1WroyrEnTp3w3CdGAC9gyG0bLeuTFdMUZwEGA==
-X-Received: by 2002:a17:906:6a12:b0:a99:742c:5c7 with SMTP id a640c23a62f3a-a99b9305ed1mr791073066b.10.1728874565516;
-        Sun, 13 Oct 2024 19:56:05 -0700 (PDT)
+        bh=/8xPPGnp2eNdFzyDsH77udpuxb5hGHHiKYVsaBBQcww=;
+        b=Y9rRP8WqUVPZSegOY4eghER9bIxK4du7/nZ7u+CeQqaGIPnWdDDxxdYe7ZUKO48BND
+         +txEw+IG4JeiWvEDyFidoVs1tInCLRkf2/CqTXep0jAknVdbQ48a0THmxnaylt3ejFHJ
+         IDHXQy6mjRDRaiWg49/CB73fgpGAnOQ7pd9GiBVEMudqC2Z+9DLBn3xfW7crnuYSsknR
+         PvIK4agyVZW+i/Ru9qEODc14zEfZAk22ugcdXcLV4c3bAw89UJ4J/wvs+s9H0t2hSLaI
+         adpSLPSr6zavd1J9wnTP16HsqN50FrtJ3YuUp+pbAklWmXXWEo4xJYNNhbpU6U99Ro3C
+         I5vw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3MXVK3iZsNaA4rDoFwHbCJS+ImZpe9zh9at61BkzvnLHvgIdS9iL4wE8DDdj9f31hzojXGZnNrp4=@vger.kernel.org, AJvYcCVaffj4K54njIYTgJ0LHs68OoUbKWVkoq/nzw8+jktpVmwlsZlkXVZXlrjv2Ibx9SoxLsnw87aHbqE8sQhf@vger.kernel.org, AJvYcCXnQJSyWSx3C7RMa7WXlq0nBbWXCYPJnF3Bk+FwoM8MO35gQkMIknF5CA30xICNUu8Xhu/wgOTjuNOI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7jN46bgQ9TUfXGruVNM6mxM9u7Gb1btsHbdLacMOSpe0HrL27
+	dJqv6MY6OO8zgs6dZZFVckWJ7krRr0NILlvd1mqHlZ8MLD+KHAcC
+X-Google-Smtp-Source: AGHT+IGg2zTiSP9pkdThFwEPz88Rrc+thazAWWlSrFQkSIpC5/PWk+n9SRWCQsJl50F54xDsLVUSLg==
+X-Received: by 2002:a17:907:9488:b0:a9a:791:fb86 with SMTP id a640c23a62f3a-a9a0792046fmr282817966b.64.1728874602739;
+        Sun, 13 Oct 2024 19:56:42 -0700 (PDT)
 Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99ebdfbff1sm270501366b.39.2024.10.13.19.56.03
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99ebdfbff1sm270501366b.39.2024.10.13.19.56.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 19:56:05 -0700 (PDT)
+        Sun, 13 Oct 2024 19:56:42 -0700 (PDT)
 From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 To: andreyknvl@gmail.com
 Cc: 2023002089@link.tyut.edu.cn,
@@ -84,9 +84,9 @@ Cc: 2023002089@link.tyut.edu.cn,
 	snovitoll@gmail.com,
 	vincenzo.frascino@arm.com,
 	workflows@vger.kernel.org
-Subject: [PATCH RESEND v3 1/3] kasan: move checks to do_strncpy_from_user
-Date: Mon, 14 Oct 2024 07:56:59 +0500
-Message-Id: <20241014025701.3096253-2-snovitoll@gmail.com>
+Subject: [PATCH RESEND v3 2/3] kasan: migrate copy_user_test to kunit
+Date: Mon, 14 Oct 2024 07:57:00 +0500
+Message-Id: <20241014025701.3096253-3-snovitoll@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241014025701.3096253-1-snovitoll@gmail.com>
 References: <CA+fCnZcyrGf5TBdkaG4M+r9ViKDwdCHZg12HUeeoTV3UNZnwBg@mail.gmail.com>
@@ -99,41 +99,194 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since in the commit 2865baf54077("x86: support user address masking instead
-of non-speculative conditional") do_strncpy_from_user() is called from
-multiple places, we should sanitize the kernel *dst memory and size
-which were done in strncpy_from_user() previously.
+Migrate the copy_user_test to the KUnit framework to verify out-of-bound
+detection via KASAN reports in copy_from_user(), copy_to_user() and
+their static functions.
 
-Fixes: 2865baf54077 ("x86: support user address masking instead of non-speculative conditional")
+This is the last migrated test in kasan_test_module.c, therefore delete
+the file.
+
 Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
 Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 ---
- lib/strncpy_from_user.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Changes v2 -> v3:
+- added a long string in usermem for strncpy_from_user. Suggested by Andrey.
+---
+ mm/kasan/Makefile            |  2 -
+ mm/kasan/kasan_test_c.c      | 47 +++++++++++++++++++++
+ mm/kasan/kasan_test_module.c | 81 ------------------------------------
+ 3 files changed, 47 insertions(+), 83 deletions(-)
+ delete mode 100644 mm/kasan/kasan_test_module.c
 
-diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-index 989a12a6787..f36ad821176 100644
---- a/lib/strncpy_from_user.c
-+++ b/lib/strncpy_from_user.c
-@@ -31,6 +31,9 @@ static __always_inline long do_strncpy_from_user(char *dst, const char __user *s
- 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
- 	unsigned long res = 0;
+diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
+index b88543e5c0c..1a958e7c8a4 100644
+--- a/mm/kasan/Makefile
++++ b/mm/kasan/Makefile
+@@ -46,7 +46,6 @@ endif
  
-+	kasan_check_write(dst, count);
-+	check_object_size(dst, count, false);
+ CFLAGS_kasan_test_c.o := $(CFLAGS_KASAN_TEST)
+ RUSTFLAGS_kasan_test_rust.o := $(RUSTFLAGS_KASAN)
+-CFLAGS_kasan_test_module.o := $(CFLAGS_KASAN_TEST)
+ 
+ obj-y := common.o report.o
+ obj-$(CONFIG_KASAN_GENERIC) += init.o generic.o report_generic.o shadow.o quarantine.o
+@@ -59,4 +58,3 @@ ifdef CONFIG_RUST
+ endif
+ 
+ obj-$(CONFIG_KASAN_KUNIT_TEST) += kasan_test.o
+-obj-$(CONFIG_KASAN_MODULE_TEST) += kasan_test_module.o
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index a181e4780d9..382bc64e42d 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1954,6 +1954,52 @@ static void rust_uaf(struct kunit *test)
+ 	KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
+ }
+ 
++static void copy_user_test_oob(struct kunit *test)
++{
++	char *kmem;
++	char __user *usermem;
++	unsigned long useraddr;
++	size_t size = 128 - KASAN_GRANULE_SIZE;
++	int __maybe_unused unused;
 +
- 	if (IS_UNALIGNED(src, dst))
- 		goto byte_at_a_time;
++	kmem = kunit_kmalloc(test, size, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, kmem);
++
++	useraddr = kunit_vm_mmap(test, NULL, 0, PAGE_SIZE,
++					PROT_READ | PROT_WRITE | PROT_EXEC,
++					MAP_ANONYMOUS | MAP_PRIVATE, 0);
++	KUNIT_ASSERT_NE_MSG(test, useraddr, 0,
++		"Could not create userspace mm");
++	KUNIT_ASSERT_LT_MSG(test, useraddr, (unsigned long)TASK_SIZE,
++		"Failed to allocate user memory");
++
++	OPTIMIZER_HIDE_VAR(size);
++	usermem = (char __user *)useraddr;
++
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = copy_from_user(kmem, usermem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = copy_to_user(usermem, kmem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = __copy_from_user(kmem, usermem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = __copy_to_user(usermem, kmem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = __copy_from_user_inatomic(kmem, usermem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = __copy_to_user_inatomic(usermem, kmem, size + 1));
++
++	/*
++	* Prepare a long string in usermem to avoid the strncpy_from_user test
++	* bailing out on '\0' before it reaches out-of-bounds.
++	*/
++	memset(kmem, 'a', size);
++	KUNIT_EXPECT_EQ(test, copy_to_user(usermem, kmem, size), 0);
++
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = strncpy_from_user(kmem, usermem, size + 1));
++}
++
+ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(kmalloc_oob_right),
+ 	KUNIT_CASE(kmalloc_oob_left),
+@@ -2028,6 +2074,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(match_all_ptr_tag),
+ 	KUNIT_CASE(match_all_mem_tag),
+ 	KUNIT_CASE(rust_uaf),
++	KUNIT_CASE(copy_user_test_oob),
+ 	{}
+ };
  
-@@ -142,8 +145,6 @@ long strncpy_from_user(char *dst, const char __user *src, long count)
- 		if (max > count)
- 			max = count;
- 
--		kasan_check_write(dst, count);
--		check_object_size(dst, count, false);
- 		if (user_read_access_begin(src, max)) {
- 			retval = do_strncpy_from_user(dst, src, count, max);
- 			user_read_access_end();
+diff --git a/mm/kasan/kasan_test_module.c b/mm/kasan/kasan_test_module.c
+deleted file mode 100644
+index 27ec22767e4..00000000000
+--- a/mm/kasan/kasan_test_module.c
++++ /dev/null
+@@ -1,81 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- *
+- * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+- * Author: Andrey Ryabinin <a.ryabinin@samsung.com>
+- */
+-
+-#define pr_fmt(fmt) "kasan: test: " fmt
+-
+-#include <linux/mman.h>
+-#include <linux/module.h>
+-#include <linux/printk.h>
+-#include <linux/slab.h>
+-#include <linux/uaccess.h>
+-
+-#include "kasan.h"
+-
+-static noinline void __init copy_user_test(void)
+-{
+-	char *kmem;
+-	char __user *usermem;
+-	size_t size = 128 - KASAN_GRANULE_SIZE;
+-	int __maybe_unused unused;
+-
+-	kmem = kmalloc(size, GFP_KERNEL);
+-	if (!kmem)
+-		return;
+-
+-	usermem = (char __user *)vm_mmap(NULL, 0, PAGE_SIZE,
+-			    PROT_READ | PROT_WRITE | PROT_EXEC,
+-			    MAP_ANONYMOUS | MAP_PRIVATE, 0);
+-	if (IS_ERR(usermem)) {
+-		pr_err("Failed to allocate user memory\n");
+-		kfree(kmem);
+-		return;
+-	}
+-
+-	OPTIMIZER_HIDE_VAR(size);
+-
+-	pr_info("out-of-bounds in copy_from_user()\n");
+-	unused = copy_from_user(kmem, usermem, size + 1);
+-
+-	pr_info("out-of-bounds in copy_to_user()\n");
+-	unused = copy_to_user(usermem, kmem, size + 1);
+-
+-	pr_info("out-of-bounds in __copy_from_user()\n");
+-	unused = __copy_from_user(kmem, usermem, size + 1);
+-
+-	pr_info("out-of-bounds in __copy_to_user()\n");
+-	unused = __copy_to_user(usermem, kmem, size + 1);
+-
+-	pr_info("out-of-bounds in __copy_from_user_inatomic()\n");
+-	unused = __copy_from_user_inatomic(kmem, usermem, size + 1);
+-
+-	pr_info("out-of-bounds in __copy_to_user_inatomic()\n");
+-	unused = __copy_to_user_inatomic(usermem, kmem, size + 1);
+-
+-	pr_info("out-of-bounds in strncpy_from_user()\n");
+-	unused = strncpy_from_user(kmem, usermem, size + 1);
+-
+-	vm_munmap((unsigned long)usermem, PAGE_SIZE);
+-	kfree(kmem);
+-}
+-
+-static int __init kasan_test_module_init(void)
+-{
+-	/*
+-	 * Temporarily enable multi-shot mode. Otherwise, KASAN would only
+-	 * report the first detected bug and panic the kernel if panic_on_warn
+-	 * is enabled.
+-	 */
+-	bool multishot = kasan_save_enable_multi_shot();
+-
+-	copy_user_test();
+-
+-	kasan_restore_multi_shot(multishot);
+-	return -EAGAIN;
+-}
+-
+-module_init(kasan_test_module_init);
+-MODULE_LICENSE("GPL");
 -- 
 2.34.1
 
