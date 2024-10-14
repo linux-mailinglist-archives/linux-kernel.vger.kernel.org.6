@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-363577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2584999C431
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:55:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55E599C435
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE761280845
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:55:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A1F5280EE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002531487F4;
-	Mon, 14 Oct 2024 08:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12B6153824;
+	Mon, 14 Oct 2024 08:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YqiJ0JbC"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sg5G8LD8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18DC231C8E;
-	Mon, 14 Oct 2024 08:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBEF231CB2
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728896094; cv=none; b=hkp5Z16Vm8IrhuCQrQydQHC4YT47c/TBbSAEeL2VMe8FTfLdwCs2gzHqzsqgslis+pID9vvwKk2558STZsjGjZMCDnjEfHrWzPtH5EimeVi4FlHvkv+TV4WmbbFqTPy4YXWN3HVNZzc9IMinHzqvh+S7h17mKnGUfZsZk4Oe6NY=
+	t=1728896141; cv=none; b=pQTgR8+2CV0YsAIfs+mnrK/uDHTfmybQS665EY25ABuaPeamWcXQ74IHvN+dyFvCEN3bCSbVkNfBU1U4HptMt53WeGnPHhvXztN3MBxTBAySWetCUhuqoCUwjnKUdoPOm4VzkQh+QEuju4unOQg8Evo8nh4nfNimdj1hZkXHFK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728896094; c=relaxed/simple;
-	bh=334/kP1ZS9qqdH61za7BkXxyez1dWPdwP5jxmw2QOgc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EqciLPWRe6j53FvXlpBbaQW2tB/EahaxhcC21hwAlASevQynblqJt/pe9JoN1p2drsvht2DK9dwJ6H2EB598xZzK1D4UDAwuJsEm6F3AM1XHx2Ha82/yL7kS2lE7SzDvxDp5hN+oWeM3T1CmnKjVmdZm89FGRPoxArlGJs36vrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YqiJ0JbC; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E8LkHf026351;
-	Mon, 14 Oct 2024 08:54:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	g20+vSwQPCR+VxKd35Vza9wQi09ArdNbwM3n/b5/10w=; b=YqiJ0JbCyE8gGssW
-	ZM8K3f7M+CZziAbwJuAVxqAnz95lBx4tZCAZjFb7PdMrbHEdbeH+5yHIVavgYeeC
-	ZixJEqDToRA2ncV2qqjVBsRcmmIhRX4gMj7agqmq32O073cMcSXG9kQwgZHtaCtx
-	AHGCNRqLJdDk+EvSa34lrw201IfD6Y742MIKVZe3id/xyy8mBmRD4qlL5PeIarKw
-	NgQUKZ8s83jR81T0rCKa7DsiOOt0QKgdJcsmfxoxMdMaUKT8h7qqIX//gbzyATsm
-	/m/AvPpkerYHQc9AeZ6kzN7erbqdtmBjBuKSPomBehsu8aAtbWmDhUVKmhw+OIwc
-	9vM7kw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 428yq4046p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 08:54:33 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49E8QQse006843;
-	Mon, 14 Oct 2024 08:54:33 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xjwdpy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 08:54:33 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49E8sTBO23790106
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 08:54:29 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5774920043;
-	Mon, 14 Oct 2024 08:54:29 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0AB3D2004B;
-	Mon, 14 Oct 2024 08:54:29 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 14 Oct 2024 08:54:28 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 0/2] s390: two bugfixes (for kunit)
-In-Reply-To: <20241014-s390-kunit-v1-0-941defa765a6@linutronix.de> ("Thomas
-	=?utf-8?Q?Wei=C3=9Fschuh=22's?= message of "Mon, 14 Oct 2024 07:50:05
- +0200")
-References: <20241014-s390-kunit-v1-0-941defa765a6@linutronix.de>
-Date: Mon, 14 Oct 2024 10:54:28 +0200
-Message-ID: <yt9dmsj712uz.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728896141; c=relaxed/simple;
+	bh=q5AtrCSAA7vrYMLlA/eP1eHpMODMlqvnRe1smcyIJKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WQQVJ49y2LDC12zeYrA90gh4sAxsLIx+04DCjrG+25q6wNnn6YXpcQy7qni+YSZRSvaY+UEbO3LoE4Fk3jbpJHpnZc0JMh+eZ65Ws1oFMl3Hg6xcVaSv5RAZSrc/5gTNQp3gnVOKFzAF815GG+b43Zeb56HU8CfucBQAxlK7a/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sg5G8LD8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728896138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SZZV3eCjwH17+qwXquSijSlOfzm3AowdcidnwQs1e80=;
+	b=Sg5G8LD87p2BeFY6YnDMa+m0YT+eZ/ZBUydGUrB5ioau3Zz8kf7OaHT28g8GTAhXTjEUe3
+	Kel7jpyJdJoaGXiPr1TsllNmG7IzApcOtGvoeuUQ/cVB7irQJJSnAVpuy3RAIkaacvlkTA
+	5XdUfC9DZunLXBhOD1SMhBLPvjSLdp0=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-76-ArBvDpstPlKuiMQziAik3A-1; Mon, 14 Oct 2024 04:55:37 -0400
+X-MC-Unique: ArBvDpstPlKuiMQziAik3A-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-539ea0fcd4bso981609e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:55:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728896135; x=1729500935;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZZV3eCjwH17+qwXquSijSlOfzm3AowdcidnwQs1e80=;
+        b=G0wWdmMkGSLd87HmmVcxmno4NVLUcoOVTSgKhF8vNZ4nimUYZrW2hfwSj43LUUUOmB
+         U3xRkOhwnLgDDlqRlZw7C4STPjnXk42KjANOig9naQ0Q6tiTKYGdlaoQxGwwbvlEFLTQ
+         28DYpD720OhT9GaTvDhOREXgBft1uiURmAar2xfZ/aA+NJoquH7wrU5N7FdfeCg2NO9C
+         6YCke5AgN1X2S3siF5hO1ZAyjS1v9NDh3Q8kBExAdrT8hJ3bhUBKJ27ZCoJFkTetEFn6
+         R2Phv3vLidrdyt0sZc0MnEf41+xZB3fNEoPCkqovq6yrzaeJg2mafmeBHoW988KM4XAJ
+         NKLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwIA74c+dHb2LRVEHXZVZB7fuW0kOioGgWmtAmR/omjinz2En7AgIVYY1uUrvEd7oI+rwNT2EH8D//XD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIJnD/nCCynZ5O06x9Vu9CHkirgN5lsLUVlsvSt8LE5U6UYhTH
+	Eup1fpfHztIYlizVZTCbX5a52eoAxI+KC0jafsWZ/WYZ65x+LXx3hHWO5bf2fG5qSrUxedRvM7I
+	h1hGRExd7EkA+L3zGDmbZ+0+sRUGByQD9inhKCdihyuiPQH/0I2Q4RuNgG20HQw==
+X-Received: by 2002:a05:6512:3196:b0:539:89f7:3187 with SMTP id 2adb3069b0e04-539da583db0mr4542265e87.47.1728896135544;
+        Mon, 14 Oct 2024 01:55:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHsnAdyTUOwoRixLAd99Kcrm/Heu2DZ1kp3SFQWf3sDK6kM96X3+KpLcEanEEOaqVXM5IPHrw==
+X-Received: by 2002:a05:6512:3196:b0:539:89f7:3187 with SMTP id 2adb3069b0e04-539da583db0mr4542248e87.47.1728896135047;
+        Mon, 14 Oct 2024 01:55:35 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b9190f7sm10761253f8f.114.2024.10.14.01.55.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 01:55:34 -0700 (PDT)
+Message-ID: <8d1c8667-e032-4d9f-bc8c-f12d71070a11@redhat.com>
+Date: Mon, 14 Oct 2024 10:55:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: IMkdp4OlovZoU_cFZnvrm2k4wYUXoIk-
-X-Proofpoint-GUID: IMkdp4OlovZoU_cFZnvrm2k4wYUXoIk-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_07,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 mlxlogscore=548 priorityscore=1501 adultscore=0
- impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140060
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] drm/panic: allow verbose version check
+To: =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241012075312.16342-1-witcher@wiredspace.de>
+ <20241012075312.16342-7-witcher@wiredspace.de>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20241012075312.16342-7-witcher@wiredspace.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de> writes:
+On 12/10/2024 09:52, Thomas Böhler wrote:
+> Clippy warns about a reimplementation of `RangeInclusive::contains`:
+> 
+>      error: manual `!RangeInclusive::contains` implementation
+>         --> drivers/gpu/drm/drm_panic_qr.rs:986:8
+>          |
+>      986 |     if version < 1 || version > 40 {
+>          |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: use: `!(1..=40).contains(&version)`
+>          |
+>          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_range_contains
+>          = note: `-D clippy::manual-range-contains` implied by `-D warnings`
+>          = help: to override `-D warnings` add `#[allow(clippy::manual_range_contains)]`
+> 
+> Ignore this and keep the current implementation as that makes it easier
+> to read.
 
-> When trying to use kunit for s390 with
-> ./tools/testing/kunit/kunit.py run --arch=3Ds390 --kunitconfig drivers/ba=
-se/test --cross_compile=3D$CROSS_COMPILE
-> I ran into some bugs.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Thanks, it looks good to me.
+
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+
+> 
+> Reported-by: Miguel Ojeda <ojeda@kernel.org>
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1123
+> Signed-off-by: Thomas Böhler <witcher@wiredspace.de>
 > ---
-> Thomas Wei=C3=9Fschuh (2):
->       s390/sclp: deactivate sclp after all its users
->       s390/sclp_vt220: convert newlines to CRLF instead of LFCR
->
->  drivers/s390/char/sclp.c       | 3 ++-
->  drivers/s390/char/sclp_vt220.c | 4 ++--
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> ---
-> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
-> change-id: 20241014-s390-kunit-47cbc26a99e6
+>   drivers/gpu/drm/drm_panic_qr.rs | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
+> index 226107c02679..fe842466d8d6 100644
+> --- a/drivers/gpu/drm/drm_panic_qr.rs
+> +++ b/drivers/gpu/drm/drm_panic_qr.rs
+> @@ -981,6 +981,7 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
+>   /// * If `url_len` = 0, only removes 3 bytes for 1 binary segment.
+>   #[no_mangle]
+>   pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
+> +    #[allow(clippy::manual_range_contains)]
+>       if version < 1 || version > 40 {
+>           return 0;
+>       }
 
-Looks good to me. For both patches:
-
-Reviewed-by: Sven Schnelle <svens@linux.ibm.com>
-
-Thanks!
-Sven
 
