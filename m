@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-363882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33DF99C821
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:07:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3992D99C822
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 453811F25BE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:07:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8CD8B2913B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F751A7046;
-	Mon, 14 Oct 2024 11:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F7E1CC891;
+	Mon, 14 Oct 2024 11:01:25 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A7F1CBE85
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1A11CC892
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903682; cv=none; b=JAav7DDWCUbKe0w+brGZBodw5JcWCHVW3Yy85oILvYZFjA0ZVwJYN0RV7QmWW1Ec9NifXVS1GZ2WsnZHGwdfe3qnjaCjAHw0LMZuFhigPci1QzPzC3QsVEJxvSTAuR0PBs9WhRfEDpDBnGkiQJFIrXgNbF3kFt1/u1nc+iThROc=
+	t=1728903685; cv=none; b=aAnQdZCHOKgpLMdnLtWm5i1dRUdQwRbZb59L9QfMoQ6D0CwVK6sJI+xWvKJQEbWEW2dLauishd05f/OdXQSWAX2Z4nQg/4bOUkOF0chr+QOhDE1cah9uWUtLoZhlqy7tKL+iF4j4LhvrJSHC2yk+gv//nOcwUk0NXSRvB1gJeW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903682; c=relaxed/simple;
-	bh=zi/oF+fhoqpeY/5+lLkr/wjiPSgTaS0DTEmEzkfptbU=;
+	s=arc-20240116; t=1728903685; c=relaxed/simple;
+	bh=GhwJFY5PT/dbmm4PJVMYDIxvOlsI9WdHtdSuD38uguk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PTci3qYcwGlr9KBI5MCgseKEBVHNvni/V9RoIQPuABR0BYm6pdKf3Yj8aPlK823HkTuzD/FD3GEETMrkg31kUdpbszGdE/pmUQKkYGoVJwYh6+++mzmL+FvNPGmmIOT1D1VvG20Gdz+q2DBIVX1twXQ6UgISfo8cEjWs4KOCRZI=
+	 MIME-Version; b=Ux2wN5zo7mUsc8RFmNsxyStoGEMY3g+MGwG3jX4Sl/4z9WyYqjPN4MyuEIUQTet+6A9ZLVh4GN91lJ3Yv7Od8pH8KTeFqKIu2U6G4hnbqxikQwahIKM2pPSgFAOA78mJQeybI4YDX/ZlUnEDaxv1eIhVS4AbnSlePKWya4QwjuQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6816B1713;
-	Mon, 14 Oct 2024 04:01:50 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1861F1756;
+	Mon, 14 Oct 2024 04:01:53 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4980A3F51B;
-	Mon, 14 Oct 2024 04:01:18 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18CCC3F51B;
+	Mon, 14 Oct 2024 04:01:20 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -49,11 +49,10 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	xen-devel@lists.xenproject.org
-Subject: [RFC PATCH v1 36/57] xen: Remove PAGE_SIZE compile-time constant assumption
-Date: Mon, 14 Oct 2024 11:58:43 +0100
-Message-ID: <20241014105912.3207374-36-ryan.roberts@arm.com>
+	linux-mm@kvack.org
+Subject: [RFC PATCH v1 37/57] arm64: Fix macros to work in C code in addition to the linker script
+Date: Mon, 14 Oct 2024 11:58:44 +0100
+Message-ID: <20241014105912.3207374-37-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -66,23 +65,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To prepare for supporting boot-time page size selection, refactor code
-to remove assumptions about PAGE_SIZE being compile-time constant. Code
-intended to be equivalent when compile-time page size is active.
+Previously INIT_DIR_SIZE and INIT_IDMAP_DIR_SIZE used _end for the end
+address of the kernel image. In the linker script context, this resolves
+to an integer that refers to the link va of the end of the kernel image.
+But in C code it resolves to a pointer to the end of the image as placed
+in memory. So there are 2 problems; because its a pointer, we can't do
+arithmetic on it. And because the image may be in a different location
+in memory than the one it was linked at, it is not correct to find the
+image size by subtracting KIMAGE_VADDR.
 
-Allocate enough "frame_list" static storage in the balloon driver for
-the maximum supported page size. Although continue to use only the first
-PAGE_SIZE of the buffer at run-time to maintain existing behaviour.
-
-Refactor xen_biovec_phys_mergeable() to convert ifdeffery to c if/else.
-For compile-time page size, the compiler will choose one branch and
-strip the dead one. For boot-time, it can be evaluated at run time.
-
-Refactor a BUILD_BUG_ON to evaluate the limit (when the minimum
-supported page size is selected at boot-time).
-
-Reserve enough storage for max page size in "struct remap_data" and
-"struct xenbus_map_node".
+So introduce KIMAGE_VADDR_END, which always represents the link va of
+the end of the kernel image as an integer.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -91,137 +84,35 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- drivers/xen/balloon.c              | 11 ++++++-----
- drivers/xen/biomerge.c             | 12 ++++++------
- drivers/xen/privcmd.c              |  2 +-
- drivers/xen/xenbus/xenbus_client.c |  5 +++--
- drivers/xen/xlate_mmu.c            |  6 +++---
- include/xen/page.h                 |  2 ++
- 6 files changed, 21 insertions(+), 17 deletions(-)
+ arch/arm64/include/asm/kernel-pgtable.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-index 528395133b4f8..0ed5f6453af0e 100644
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -131,7 +131,8 @@ struct balloon_stats balloon_stats;
- EXPORT_SYMBOL_GPL(balloon_stats);
+diff --git a/arch/arm64/include/asm/kernel-pgtable.h b/arch/arm64/include/asm/kernel-pgtable.h
+index bf05a77873a49..1722b9217d47d 100644
+--- a/arch/arm64/include/asm/kernel-pgtable.h
++++ b/arch/arm64/include/asm/kernel-pgtable.h
+@@ -35,6 +35,8 @@
+ #define IDMAP_LEVELS		ARM64_HW_PGTABLE_LEVELS(IDMAP_VA_BITS)
+ #define IDMAP_ROOT_LEVEL	(4 - IDMAP_LEVELS)
  
- /* We increase/decrease in batches which fit in a page */
--static xen_pfn_t frame_list[PAGE_SIZE / sizeof(xen_pfn_t)];
-+static xen_pfn_t frame_list[PAGE_SIZE_MAX / sizeof(xen_pfn_t)];
-+#define FRAME_LIST_NR_ENTRIES (PAGE_SIZE / sizeof(xen_pfn_t))
- 
- 
- /* List of ballooned pages, threaded through the mem_map array. */
-@@ -389,8 +390,8 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
- 	unsigned long i;
- 	struct page   *page;
- 
--	if (nr_pages > ARRAY_SIZE(frame_list))
--		nr_pages = ARRAY_SIZE(frame_list);
-+	if (nr_pages > FRAME_LIST_NR_ENTRIES)
-+		nr_pages = FRAME_LIST_NR_ENTRIES;
- 
- 	page = list_first_entry_or_null(&ballooned_pages, struct page, lru);
- 	for (i = 0; i < nr_pages; i++) {
-@@ -434,8 +435,8 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
- 	int ret;
- 	LIST_HEAD(pages);
- 
--	if (nr_pages > ARRAY_SIZE(frame_list))
--		nr_pages = ARRAY_SIZE(frame_list);
-+	if (nr_pages > FRAME_LIST_NR_ENTRIES)
-+		nr_pages = FRAME_LIST_NR_ENTRIES;
- 
- 	for (i = 0; i < nr_pages; i++) {
- 		page = alloc_page(gfp);
-diff --git a/drivers/xen/biomerge.c b/drivers/xen/biomerge.c
-index 05a286d24f148..28f0887e40026 100644
---- a/drivers/xen/biomerge.c
-+++ b/drivers/xen/biomerge.c
-@@ -8,16 +8,16 @@
- bool xen_biovec_phys_mergeable(const struct bio_vec *vec1,
- 			       const struct page *page)
- {
--#if XEN_PAGE_SIZE == PAGE_SIZE
--	unsigned long bfn1 = pfn_to_bfn(page_to_pfn(vec1->bv_page));
--	unsigned long bfn2 = pfn_to_bfn(page_to_pfn(page));
-+	if (XEN_PAGE_SIZE == PAGE_SIZE) {
-+		unsigned long bfn1 = pfn_to_bfn(page_to_pfn(vec1->bv_page));
-+		unsigned long bfn2 = pfn_to_bfn(page_to_pfn(page));
++#define KIMAGE_VADDR_END	(_AT(u64, _end) - _AT(u64, _text) + KIMAGE_VADDR)
 +
-+		return bfn1 + PFN_DOWN(vec1->bv_offset + vec1->bv_len) == bfn2;
-+	}
+ /*
+  * A relocatable kernel may execute from an address that differs from the one at
+  * which it was linked. In the worst case, its runtime placement may intersect
+@@ -56,10 +58,10 @@
+ 	+ EARLY_LEVEL(3, (lvls), (vstart), (vend), add) /* each entry needs a next level page table */	\
+ 	+ EARLY_LEVEL(2, (lvls), (vstart), (vend), add)	/* each entry needs a next level page table */	\
+ 	+ EARLY_LEVEL(1, (lvls), (vstart), (vend), add))/* each entry needs a next level page table */
+-#define INIT_DIR_SIZE (PAGE_SIZE * (EARLY_PAGES(SWAPPER_PGTABLE_LEVELS, KIMAGE_VADDR, _end, EXTRA_PAGE) \
++#define INIT_DIR_SIZE (PAGE_SIZE * (EARLY_PAGES(SWAPPER_PGTABLE_LEVELS, KIMAGE_VADDR, KIMAGE_VADDR_END, EXTRA_PAGE) \
+ 				    + EARLY_SEGMENT_EXTRA_PAGES))
  
--	return bfn1 + PFN_DOWN(vec1->bv_offset + vec1->bv_len) == bfn2;
--#else
- 	/*
- 	 * XXX: Add support for merging bio_vec when using different page
- 	 * size in Xen and Linux.
- 	 */
- 	return false;
--#endif
- }
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index 9563650dfbafc..847f7b806caf7 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -557,7 +557,7 @@ static long privcmd_ioctl_mmap_batch(
- 	state.global_error  = 0;
- 	state.version       = version;
+-#define INIT_IDMAP_DIR_PAGES	(EARLY_PAGES(INIT_IDMAP_PGTABLE_LEVELS, KIMAGE_VADDR, _end, 1))
++#define INIT_IDMAP_DIR_PAGES	(EARLY_PAGES(INIT_IDMAP_PGTABLE_LEVELS, KIMAGE_VADDR, KIMAGE_VADDR_END, 1))
+ #define INIT_IDMAP_DIR_SIZE	((INIT_IDMAP_DIR_PAGES + EARLY_IDMAP_EXTRA_PAGES) * PAGE_SIZE)
  
--	BUILD_BUG_ON(((PAGE_SIZE / sizeof(xen_pfn_t)) % XEN_PFN_PER_PAGE) != 0);
-+	BUILD_BUG_ON(((PAGE_SIZE_MIN / sizeof(xen_pfn_t)) % XEN_PFN_PER_PAGE_MAX) != 0);
- 	/* mmap_batch_fn guarantees ret == 0 */
- 	BUG_ON(traverse_pages_block(m.num, sizeof(xen_pfn_t),
- 				    &pagelist, mmap_batch_fn, &state));
-diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
-index 51b3124b0d56c..99bde836c10c4 100644
---- a/drivers/xen/xenbus/xenbus_client.c
-+++ b/drivers/xen/xenbus/xenbus_client.c
-@@ -49,9 +49,10 @@
- 
- #include "xenbus.h"
- 
--#define XENBUS_PAGES(_grants)	(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE))
-+#define XENBUS_PAGES(_grants)		(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE))
-+#define XENBUS_PAGES_MAX(_grants)	(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE_MIN))
- 
--#define XENBUS_MAX_RING_PAGES	(XENBUS_PAGES(XENBUS_MAX_RING_GRANTS))
-+#define XENBUS_MAX_RING_PAGES		(XENBUS_PAGES_MAX(XENBUS_MAX_RING_GRANTS))
- 
- struct xenbus_map_node {
- 	struct list_head next;
-diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
-index f17c4c03db30c..a757c801a7542 100644
---- a/drivers/xen/xlate_mmu.c
-+++ b/drivers/xen/xlate_mmu.c
-@@ -74,9 +74,9 @@ struct remap_data {
- 	int mapped;
- 
- 	/* Hypercall parameters */
--	int h_errs[XEN_PFN_PER_PAGE];
--	xen_ulong_t h_idxs[XEN_PFN_PER_PAGE];
--	xen_pfn_t h_gpfns[XEN_PFN_PER_PAGE];
-+	int h_errs[XEN_PFN_PER_PAGE_MAX];
-+	xen_ulong_t h_idxs[XEN_PFN_PER_PAGE_MAX];
-+	xen_pfn_t h_gpfns[XEN_PFN_PER_PAGE_MAX];
- 
- 	int h_iter;	/* Iterator */
- };
-diff --git a/include/xen/page.h b/include/xen/page.h
-index 285677b42943a..86683a30038a3 100644
---- a/include/xen/page.h
-+++ b/include/xen/page.h
-@@ -21,6 +21,8 @@
- 	((page_to_pfn(page)) << (PAGE_SHIFT - XEN_PAGE_SHIFT))
- 
- #define XEN_PFN_PER_PAGE	(PAGE_SIZE / XEN_PAGE_SIZE)
-+#define XEN_PFN_PER_PAGE_MIN	(PAGE_SIZE_MIN / XEN_PAGE_SIZE)
-+#define XEN_PFN_PER_PAGE_MAX	(PAGE_SIZE_MAX / XEN_PAGE_SIZE)
- 
- #define XEN_PFN_DOWN(x)	((x) >> XEN_PAGE_SHIFT)
- #define XEN_PFN_UP(x)	(((x) + XEN_PAGE_SIZE-1) >> XEN_PAGE_SHIFT)
+ #define INIT_IDMAP_FDT_PAGES	(EARLY_PAGES(INIT_IDMAP_PGTABLE_LEVELS, 0UL, UL(MAX_FDT_SIZE), 1) - 1)
 -- 
 2.43.0
 
