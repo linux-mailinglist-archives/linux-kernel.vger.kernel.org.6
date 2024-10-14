@@ -1,241 +1,303 @@
-Return-Path: <linux-kernel+bounces-363093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E185999BDC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:28:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F64B99BDCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7CE81C21641
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:28:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F204B21C0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6E73B1A2;
-	Mon, 14 Oct 2024 02:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE89450F2;
+	Mon, 14 Oct 2024 02:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZEyVxK+"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J0UvWuXo"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA2A288DB
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8754594D
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728872917; cv=none; b=V4sjubdI/eo7tCYLxtOo8frYUnmtumwXyTTbHvjirPL9yCrkB0wzSCyUME+AAdpoFRdha72xbXCeyvs7a+qu6KkVOOYj+LWVVqyiFmCuf3iI7Ka/+2W/Ktzz/6xL644trxbxsa4SmBoMjDwaKv9DBa88hKps2mm3CWzAtpbuUeA=
+	t=1728873472; cv=none; b=AlqoxU7F1YOicE7PzrrZAbwBNhJ2NainjzUsZzY0RHsytNJ2v5f5nZhBvC7VBJfjSxvlTYXOromohQ5yHMzaUFdktrbH2syzvrCSw9uxJ6eHPnAE1ToYNbFEJkcqIhA2HPekqwGFLm0v/q8xsKz1Dvb0M7AaMw5NzuQd9G3ZBpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728872917; c=relaxed/simple;
-	bh=tlwBh2Z/1brQAzCt4ns0piA9/+qrNxBD2K/8CFQn9M8=;
+	s=arc-20240116; t=1728873472; c=relaxed/simple;
+	bh=sIxI7e5sgdvRRPR9jHSTfcKb4j6Q+ooisLwyqBkg2wo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WgMTDJWh1/8SHyxzRthNESuQzbmAyB7A6gOPmrc+VxzHEa18KVSh7JaIdmXbmfugWtJo+jZLrhzabGatPVhq3RfcjPRGMTzxfv3Hnv2PhT5bwCQiSZ1PDSrvBHD8/31P3d2FU2pQzdaI+EVVG2u2hX3NmXOGXNKkAGG8fdqOlKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZEyVxK+; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5111747cso3348131fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:28:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=lblVAzAc1ab9P0OKkJOXI7JgxezsZuCaVv/ailiLTnRdqu5lFUw92iT7wuii2we9x/ebaJm56oPq1jgum5SCo5OeksTNzsD/BpKyP2zfRCvlSsQnsiTrnGDlsmuDwpMTVpY4RAGfxiR/cVaeWOuX1lcl6CTB0jeKo6mPceo9yQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J0UvWuXo; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c693b68f5so37703135ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:37:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728872914; x=1729477714; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728873470; x=1729478270; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DfmcJnsg9hPSgI4ciMyHW2uknZSwabtGxD0Ci3TDCIM=;
-        b=EZEyVxK+yG89zJ43BHzdaPZsWru5LbCYDaoeA3vnxhJev6BOHmK7+Ox+QTtbqjd/4h
-         tsJSCKdRstQ2dhJwT7vtBSpGvynskrDcnAfXtNWWCS9gWHk/9tLpv557vtrz9lOMmiQg
-         fdhZFjPBD35QGgdbiv9YbQ/uYvvfGRL4k37z/zxbmg6nCt6SzPvHxXVwGjK972ApsmUD
-         C+jLtxaL0ZsjAfRVuHDIVOOEtl7v4gVBTyEsw55ZGekz4E62DrLx/EJlm9SD1r4ClG44
-         /46kqjo+9aqiJ3E37x8oHUeYaSVHzqGUZlwzUpMLhPhAT4c0K75EolMrVx8RdqPNJSBF
-         x00Q==
+        bh=yvS7dkDnxUI6bp1u5nJxrjFDPThHi48yAYLmv0eTJmw=;
+        b=J0UvWuXorwx4HbQSZ+FpbStEaaO5YqVDwvuglIlMQLDZ1VYq9uIB/qfChZslk3+xn/
+         FXdqopWC9z6UR2GJyGqQnertCGRyH1dDODQFRk39uwsHqKA54T45rQm5/Fc/jCsklgPT
+         Xx6X7WMJ9g9RrFGMfOgQ7MdZs1oT+wj1g8E8UH46+Ojcd2lxBKWb9vdZNaNymFGT2ean
+         wohJkUiajzAx3hvndab+HNFfp3e8oazApp4JsTBNJKG5dSXDWHdlXnybBmUhLzg4LEe+
+         50rkWxW5ErlvuBOg8Mq2lUBmi/uzOldNGaZREjx2HyDe9HV7cfE111UtiIhsrR5yfk2S
+         9OYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728872914; x=1729477714;
+        d=1e100.net; s=20230601; t=1728873470; x=1729478270;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DfmcJnsg9hPSgI4ciMyHW2uknZSwabtGxD0Ci3TDCIM=;
-        b=NrRy9uwKq/CWQK830c0hB6Ead4gkAQ4NgAjjJ1ZUNB7QgZBVGMl06H2HeCCMC/2hLw
-         MVw4pR6QTidYuL19PTQ0dgeEu0udeuAHYHtIOl+fk+w5WN4nEksigAOGBMVcYs6pvtHx
-         uBfq1FoksX4wVsLclicHDpSEg/9/Bb3a6uUF13+OC778Op46oIozG9rc56xpoioPD2CX
-         mUYMRMgKCkPZnvyvyPzig9MAlPmt10GTDAOp2ECfZrSnRhNdfI1LHBF7aWR6Fmhl4OFU
-         us7BtmA+N0TzFJer0EtdSdhRBtdAjDxh6ySJ0CPIT3JQC7J8goIDSgSOAquxtsw36f/F
-         zYkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXlZvbAAsw5szNOHjHdq5jxdpQSfijKJwcLVhF7LZK4g2w1TI9tpj/4zdlRgv4gF0FoNCFhX+0vEUJTpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywUFkAOUOL4pOu8Pv3J5uiFTOvTAqRmdsYA5xmN6kvUWwdTWo/
-	By1eUMmOhF1kUesWia0pTZi5FzLQJ3TzXx9XUDfAjlopwOND2Szs63K+efVrMloG+TTmir5FI07
-	Slpk/SFy6OKtpzmGY5jE1x4Bkhe8=
-X-Google-Smtp-Source: AGHT+IHdK5gACj8fFgR2azBikKqVFWqp+99/BKao1nw8XxstHHQnUNZkLUJ31fKhz6PfYzNyZp/rh8BEm6YYD3UBC0w=
-X-Received: by 2002:a2e:4a01:0:b0:2fb:4bee:47ec with SMTP id
- 38308e7fff4ca-2fb4bee4870mr6767741fa.33.1728872913443; Sun, 13 Oct 2024
- 19:28:33 -0700 (PDT)
+        bh=yvS7dkDnxUI6bp1u5nJxrjFDPThHi48yAYLmv0eTJmw=;
+        b=Yzy9+BjpX1Ni7BKlxObSMld9bXc5u5L44lZhB8rfDirRwZWVV9T8IXWrmk94KaJbh7
+         IfXV7gqVsFj0LUogfpiONNf9qVZV+hzGozZHxjzmfDJgLMcIi7k7kkgboXMMMNU5SCbt
+         F0ZyflwXSFQvPfNlfflDkAC/ZvCMEB0qe0psAlL6ync0jKfMPGt7ydj/Bss/8IEO0wSm
+         03EPqhrrfRVkCA5UHaYR03NPgQratS1v38qB9PXi9h0enAVLNB+/VnprWP/iGp52Q2Ur
+         nFo+OtTS+rYzjX/C9lFOXLaDS4+xufr1lkYtTQcWbOxBMTf92sRKk+XUx0Qxb1e2mf4m
+         j29g==
+X-Forwarded-Encrypted: i=1; AJvYcCWmoRgLtKAi7kU7TaJTwu1i1QE2YEg8zNZcKiB66tgCtS8/+2IwqL0V5DErRQWtZ6RkH2Idkto5YJ1iAME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrG1DHdTaueYDosjqfQ0zbBTuom4dLy13QSsmWSMloo1JMD9iQ
+	mx26+OUwlCkei6wMhgxvtQaKHBDCrFtKRiAYTqQJlR3WDIUjIEgYP0M5c1gThSej2LzS1zn3/yi
+	NwUIKQW+EbH8u/8aAWV6bKZxqRuGHhrzSErhsEtbC0WBnOlT+Khbe
+X-Google-Smtp-Source: AGHT+IHdscZngOk4DHV6or3IO500O+lpxngvQQvWAeD6ImszLIemhpRLBPXwXKk532fxYhBAl3tOt4Dgaa+rt8JSCL0=
+X-Received: by 2002:a17:90a:df89:b0:2e2:bd10:599d with SMTP id
+ 98e67ed59e1d1-2e2f0ad2040mr12976320a91.11.1728873469285; Sun, 13 Oct 2024
+ 19:37:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMgjq7BdaUe6YweW03MHEOmunXm7tJz=nMOCWTvq_jDoVGAL+Q@mail.gmail.com>
- <EF64B02C-05B4-4E51-91E1-9C3CD6FDF220@gmail.com>
-In-Reply-To: <EF64B02C-05B4-4E51-91E1-9C3CD6FDF220@gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 14 Oct 2024 10:28:16 +0800
-Message-ID: <CAMgjq7Ah6PjeQuR3PRyRgCpH1ybj=76cmpMfvV50D1prjZpH+w@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: swap: prevent possible data-race in __try_to_reclaim_swap
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
+References: <20241013200730.20542-1-richard@nod.at>
+In-Reply-To: <20241013200730.20542-1-richard@nod.at>
+From: Saravana Kannan <saravanak@google.com>
+Date: Sun, 13 Oct 2024 19:37:10 -0700
+Message-ID: <CAGETcx_+Poy8b_QhKY21Wg9=TBjtxrhCmFWTq8Qv6rLSJMURCw@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] of: Add debug aid to find unused device tree properties
+To: Richard Weinberger <richard@nod.at>
+Cc: devicetree@vger.kernel.org, robh@kernel.org, linux-kernel@vger.kernel.org, 
+	upstream+devicetree@sigma-star.at
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 10:17=E2=80=AFAM Jeongjun Park <aha310510@gmail.com=
-> wrote:
-> > Kairui Song <ryncsn@gmail.com> wrote:
-> >
-> > =EF=BB=BFOn Mon, Oct 7, 2024 at 3:06=E2=80=AFPM Jeongjun Park <aha31051=
-0@gmail.com> wrote:
-> >>
-> >> A report [1] was uploaded from syzbot.
-> >>
-> >> In the previous commit 862590ac3708 ("mm: swap: allow cache reclaim to=
- skip
-> >> slot cache"), the __try_to_reclaim_swap() function reads offset and fo=
-lio->entry
-> >> from folio without folio_lock protection.
-> >>
-> >> In the currently reported KCSAN log, it is assumed that the actual dat=
-a-race
-> >> will not occur because the calltrace that does WRITE already obtains t=
-he
-> >> folio_lock and then writes.
-> >>
-> >> However, the existing __try_to_reclaim_swap() function was already imp=
-lemented
-> >> to perform reads under folio_lock protection [1], and there is a risk =
-of a
-> >> data-race occurring through a function other than the one shown in the=
- KCSAN
-> >> log.
-> >>
-> >> Therefore, I think it is appropriate to change read operations for
-> >> folio to be performed under folio_lock.
-> >>
-> >> [1]
-> >>
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> BUG: KCSAN: data-race in __delete_from_swap_cache / __try_to_reclaim_s=
-wap
-> >>
-> >> write to 0xffffea0004c90328 of 8 bytes by task 5186 on cpu 0:
-> >> __delete_from_swap_cache+0x1f0/0x290 mm/swap_state.c:163
-> >> delete_from_swap_cache+0x72/0xe0 mm/swap_state.c:243
-> >> folio_free_swap+0x1d8/0x1f0 mm/swapfile.c:1850
-> >> free_swap_cache mm/swap_state.c:293 [inline]
-> >> free_pages_and_swap_cache+0x1fc/0x410 mm/swap_state.c:325
-> >> __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
-> >> tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
-> >> tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
-> >> tlb_flush_mmu+0x2cf/0x440 mm/mmu_gather.c:373
-> >> zap_pte_range mm/memory.c:1700 [inline]
-> >> zap_pmd_range mm/memory.c:1739 [inline]
-> >> zap_pud_range mm/memory.c:1768 [inline]
-> >> zap_p4d_range mm/memory.c:1789 [inline]
-> >> unmap_page_range+0x1f3c/0x22d0 mm/memory.c:1810
-> >> unmap_single_vma+0x142/0x1d0 mm/memory.c:1856
-> >> unmap_vmas+0x18d/0x2b0 mm/memory.c:1900
-> >> exit_mmap+0x18a/0x690 mm/mmap.c:1864
-> >> __mmput+0x28/0x1b0 kernel/fork.c:1347
-> >> mmput+0x4c/0x60 kernel/fork.c:1369
-> >> exit_mm+0xe4/0x190 kernel/exit.c:571
-> >> do_exit+0x55e/0x17f0 kernel/exit.c:926
-> >> do_group_exit+0x102/0x150 kernel/exit.c:1088
-> >> get_signal+0xf2a/0x1070 kernel/signal.c:2917
-> >> arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
-> >> exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
-> >> exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> >> __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> >> syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
-> >> do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
-> >> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >>
-> >> read to 0xffffea0004c90328 of 8 bytes by task 5189 on cpu 1:
-> >> __try_to_reclaim_swap+0x9d/0x510 mm/swapfile.c:198
-> >> free_swap_and_cache_nr+0x45d/0x8a0 mm/swapfile.c:1915
-> >> zap_pte_range mm/memory.c:1656 [inline]
-> >> zap_pmd_range mm/memory.c:1739 [inline]
-> >> zap_pud_range mm/memory.c:1768 [inline]
-> >> zap_p4d_range mm/memory.c:1789 [inline]
-> >> unmap_page_range+0xcf8/0x22d0 mm/memory.c:1810
-> >> unmap_single_vma+0x142/0x1d0 mm/memory.c:1856
-> >> unmap_vmas+0x18d/0x2b0 mm/memory.c:1900
-> >> exit_mmap+0x18a/0x690 mm/mmap.c:1864
-> >> __mmput+0x28/0x1b0 kernel/fork.c:1347
-> >> mmput+0x4c/0x60 kernel/fork.c:1369
-> >> exit_mm+0xe4/0x190 kernel/exit.c:571
-> >> do_exit+0x55e/0x17f0 kernel/exit.c:926
-> >> __do_sys_exit kernel/exit.c:1055 [inline]
-> >> __se_sys_exit kernel/exit.c:1053 [inline]
-> >> __x64_sys_exit+0x1f/0x20 kernel/exit.c:1053
-> >> x64_sys_call+0x2d46/0x2d60 arch/x86/include/generated/asm/syscalls_64.=
-h:61
-> >> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >> do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
-> >> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >>
-> >> value changed: 0x0000000000000242 -> 0x0000000000000000
-> >>
-> >> Reported-by: syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
-> >> Fixes: 862590ac3708 ("mm: swap: allow cache reclaim to skip slot cache=
-")
-> >> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> >> ---
-> >> mm/swapfile.c | 7 ++++---
-> >> 1 file changed, 4 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> >> index 0cded32414a1..eb782fcd5627 100644
-> >> --- a/mm/swapfile.c
-> >> +++ b/mm/swapfile.c
-> >> @@ -194,9 +194,6 @@ static int __try_to_reclaim_swap(struct swap_info_=
-struct *si,
-> >>        if (IS_ERR(folio))
-> >>                return 0;
-> >>
-> >> -       /* offset could point to the middle of a large folio */
-> >> -       entry =3D folio->swap;
-> >> -       offset =3D swp_offset(entry);
-> >>        nr_pages =3D folio_nr_pages(folio);
-> >>        ret =3D -nr_pages;
-> >>
-> >> @@ -210,6 +207,10 @@ static int __try_to_reclaim_swap(struct swap_info=
-_struct *si,
-> >>        if (!folio_trylock(folio))
-> >>                goto out;
-> >>
-> >> +       /* offset could point to the middle of a large folio */
-> >> +       entry =3D folio->swap;
-> >> +       offset =3D swp_offset(entry);
-> >> +
-> >>        need_reclaim =3D ((flags & TTRS_ANYWAY) ||
-> >>                        ((flags & TTRS_UNMAPPED) && !folio_mapped(folio=
-)) ||
-> >>                        ((flags & TTRS_FULL) && mem_cgroup_swap_full(fo=
-lio)));
-> >> --
-> >
-> > Reviewed-by: Kairui Song <kasong@tencent.com>
-> >
-> > Hi Andrew,
-> >
-> > Will this be added to stable and 6.12? 862590ac3708 is already in 6.12
-> > and this fixes a potential issue of it.
+On Sun, Oct 13, 2024 at 1:07=E2=80=AFPM Richard Weinberger <richard@nod.at>=
+ wrote:
 >
-> As far as I can see, commit 862590ac3708 was applied starting
-> from 6.12-rc1, so it looks like no additional commits are needed
-> for the stable version.
+> This is a proof-of-concept patch that introduces a debug feature I find
+> particularly useful.  I frequently encounter situations where I'm
+> uncertain if my device tree configuration is correct or being utilized
+> by the kernel.  This is especially common when porting device trees
+> from vendor kernels, as some properties may have slightly different
+> names in the upstream kernel, or upstream drivers may not use certain
+> properties at all.
 
-Hi, sorry for the confusion, I meant mm-stable, not the stable branch.
-It's better to merge this in 6.12.
+Why not just add debug logs? You can print the full path of the
+properties being read and it should be easy to grep for the property
+you care about.
 
-> Regards,
+> By writing 'y' to <debugfs>/of_mark_queried, every queried device tree
+
+A lot of querying is going to happen at boot time. So, I'm not sure if
+this method of enabling it is helpful. If we do this, make it a kernel
+command line.
+
+> property will gain S_IWUSR in sysfs.  While abusing S_IWUSR is
+> admittedly a crude hack, it works for now.   I'm open to better ideas,
+> perhaps using an xattr?
+
+This seems quite convoluted. Why not just add another file per node
+that lists all the queried properties?
+
+> That way, dtc can easily add an annotation to unused device trees when
+> reading from /proc/device-tree.
+
+I'm not too familiar with this part. Can you elaborate more?
+
+-Saravana
+
 >
-> Jeongjun Park
+> Signed-off-by: Richard Weinberger <richard@nod.at>
+> ---
+>  drivers/of/Kconfig      |  9 +++++
+>  drivers/of/Makefile     |  1 +
+>  drivers/of/base.c       |  2 +
+>  drivers/of/debug.c      | 83 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/of/of_private.h |  6 +++
+>  include/linux/of.h      |  3 ++
+>  6 files changed, 104 insertions(+)
+>  create mode 100644 drivers/of/debug.c
+>
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index 0e2d608c3e207..39079ab9f1dc9 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -90,6 +90,15 @@ config OF_IRQ
+>         def_bool y
+>         depends on !SPARC && IRQ_DOMAIN
+>
+> +config OF_DEBUG
+> +       bool "Device Tree debug features"
+> +       select DEBUG_FS
+> +       help
+> +        This option enables device tree debug features.
+> +        Currently only <debugfs>/of_mark_queried, writing 'y' to this fi=
+le
+> +        causes setting S_IWUSR on each device tree property in sysfs tha=
+t
+> +        was queried by a device driver.  This is useful to find dead pro=
+perties.
+> +
+>  config OF_RESERVED_MEM
+>         def_bool OF_EARLY_FLATTREE
+>
+> diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+> index 379a0afcbdc0b..041502125e897 100644
+> --- a/drivers/of/Makefile
+> +++ b/drivers/of/Makefile
+> @@ -25,3 +25,4 @@ obj-$(CONFIG_OF_OVERLAY_KUNIT_TEST) +=3D overlay-test.o
+>  overlay-test-y :=3D overlay_test.o kunit_overlay_test.dtbo.o
+>
+>  obj-$(CONFIG_OF_UNITTEST) +=3D unittest-data/
+> +obj-$(CONFIG_OF_DEBUG) +=3D debug.o
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 20603d3c9931b..00807da2187aa 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -202,6 +202,8 @@ static struct property *__of_find_property(const stru=
+ct device_node *np,
+>                 if (of_prop_cmp(pp->name, name) =3D=3D 0) {
+>                         if (lenp)
+>                                 *lenp =3D pp->length;
+> +                       of_debug_mark_queried(pp);
+> +
+>                         break;
+>                 }
+>         }
+> diff --git a/drivers/of/debug.c b/drivers/of/debug.c
+> new file mode 100644
+> index 0000000000000..ceb88062e9dec
+> --- /dev/null
+> +++ b/drivers/of/debug.c
+> @@ -0,0 +1,83 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +#include <linux/debugfs.h>
+> +#include <linux/kstrtox.h>
+> +#include <linux/of.h>
+> +
+> +#include "of_private.h"
+> +
+> +void of_debug_mark_queried(struct property *pp)
+> +{
+> +       pp->queried =3D true;
+> +}
+> +
+> +static int dtmq_update_node_sysfs(struct device_node *np)
+> +{
+> +       struct property *pp;
+> +       int ret =3D 0;
+> +
+> +       if (!IS_ENABLED(CONFIG_SYSFS) || !of_kset)
+> +               goto out;
+> +
+> +       for_each_property_of_node(np, pp) {
+> +               if (pp->queried) {
+> +                       ret =3D sysfs_chmod_file(&np->kobj, &pp->attr.att=
+r,
+> +                                              pp->attr.attr.mode | S_IWU=
+SR);
+> +                       if (ret)
+> +                               break;
+> +               }
+> +       }
+> +
+> +out:
+> +       return ret;
+> +}
+> +
+> +static int dtmq_update_sysfs(void)
+> +{
+> +       struct device_node *np;
+> +       int ret =3D 0;
+> +
+> +       mutex_lock(&of_mutex);
+> +       for_each_of_allnodes(np) {
+> +               ret =3D dtmq_update_node_sysfs(np);
+> +               if (ret)
+> +                       break;
+> +       }
+> +       mutex_unlock(&of_mutex);
+> +
+> +       return ret;
+> +}
+> +
+> +static ssize_t dtmq_file_write(struct file *file, const char __user *use=
+r_buf,
+> +                              size_t count, loff_t *ppos)
+> +{
+> +       bool do_it;
+> +       int ret;
+> +
+> +       ret =3D kstrtobool_from_user(user_buf, count, &do_it);
+> +       if (ret)
+> +               goto out;
+> +
+> +       if (do_it) {
+> +               ret =3D dtmq_update_sysfs();
+> +               if (!ret)
+> +                       ret =3D count;
+> +       } else {
+> +               ret =3D -EINVAL;
+> +       }
+> +
+> +out:
+> +       return ret;
+> +}
+> +
+> +static const struct file_operations dtmq_fops =3D {
+> +       .write  =3D dtmq_file_write,
+> +       .open   =3D simple_open,
+> +       .owner  =3D THIS_MODULE,
+> +};
+> +
+> +static int __init of_debug_init(void)
+> +{
+> +       return PTR_ERR_OR_ZERO(debugfs_create_file("of_mark_queried", 064=
+4, NULL, NULL,
+> +                              &dtmq_fops));
+> +}
+> +late_initcall(of_debug_init);
+> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+> index 04aa2a91f851a..55a21ef292064 100644
+> --- a/drivers/of/of_private.h
+> +++ b/drivers/of/of_private.h
+> @@ -184,4 +184,10 @@ void fdt_init_reserved_mem(void);
+>
+>  bool of_fdt_device_is_available(const void *blob, unsigned long node);
+>
+> +#if defined(CONFIG_OF_DEBUG)
+> +void of_debug_mark_queried(struct property *pp);
+> +#else
+> +static inline void of_debug_mark_queried(struct property *pp) { }
+> +#endif
+> +
+>  #endif /* _LINUX_OF_PRIVATE_H */
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 85b60ac9eec50..3b7afa252fca3 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -39,6 +39,9 @@ struct property {
+>  #if defined(CONFIG_OF_KOBJ)
+>         struct bin_attribute attr;
+>  #endif
+> +#if defined(CONFIG_OF_DEBUG)
+> +       bool    queried;
+> +#endif
+>  };
+>
+>  #if defined(CONFIG_SPARC)
+> --
+> 2.35.3
+>
 
