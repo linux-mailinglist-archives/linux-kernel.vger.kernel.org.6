@@ -1,213 +1,219 @@
-Return-Path: <linux-kernel+bounces-364516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A226099D59D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:33:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BDB99D5A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19A55B21A8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:33:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AAE6283E4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CB21B85C2;
-	Mon, 14 Oct 2024 17:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A3B1C2439;
+	Mon, 14 Oct 2024 17:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Wd5kbv5y"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cEAVo5Up"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DD629A0
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728927178; cv=none; b=H+19gKGSfd2pEUkO1kjKhjb+qh1pDVLF9TxPcTs1IUF+7jqoPBar00DNyBlw7yX9cxNXIGzpGvlEnNDGroycIhizu4FhifFIx9kkUBSFKLlnjmFK3GDsnoDz700udohQznJvVHX+dkNqd85XrTF/PStCTT+yyvsdqBs+hPgfpoc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728927178; c=relaxed/simple;
-	bh=x8k/egH+bBvK4s3ZnPRvk4qJCTowYXGGR8W2q6rwT/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oAUdqU389QllnDYjs8tWA9t/H0w5Pxe9osjJMRmF9vXzes+Wp6Y9lOrbsQkBnwZFrZMBdJafuMrYuKn6EogILO++8WzvksatiYI7mxvXSweSlUt2WDiF8bnbW2DTFo7Hk0kUVCWQhyGxu4EnuypTUGMulAt0MNMYttlFWRzS2xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Wd5kbv5y; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20ce5e3b116so10017655ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:32:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728927176; x=1729531976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=bQQSHSD7pMPEnyh5pSYNZBMzysQwlv1Sj6SfqEv1kug=;
-        b=Wd5kbv5y4tBDXlLIDIidZ5r+dZtPPpbv1tiS79WrBzMv4K000GCiVSqThWmLS9CaGS
-         WTbSktMTxNzfe7olV2vGoMAj7zBHGD4LHXpcltEJTq9obeiCxQS4fBzMMoVu/4fBB042
-         gi5tyKByyiCyc7xSeC1QXacUigaoYLj1tgvPM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728927176; x=1729531976;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bQQSHSD7pMPEnyh5pSYNZBMzysQwlv1Sj6SfqEv1kug=;
-        b=GqLDrvzrpALESxZU9e+YBJpBwJG5PnLIDaOLeO+wvT9m9xq1O2C79MxkapCF0Z/dGU
-         B4+CmDYjvKOEojf2dLu8inYKF9tjLM/qX07ABUg2wtdmIx04vqdBHb98+ov7ltOKHQ1d
-         1bZg14ZrHGuyr8JjEihnFDoov6O0e251Sw/8snCPuTQUk/PTNYBKHIOIKKZIIp2qRgem
-         poWdfepvHRU/n1dTZ0kaXoVFGbKN0wkY8EaomPTunpqi39ATpYDsW2U3va10FuJnaRDY
-         +ATIL9YworYypygvU6P8Ec15cVkBE3kMdrKestF4cYXG+bEPiiX8TPFqkm2kEPvxkfZb
-         /fZA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5nTen0z80d4CgWmxs7hqRc31y2eLq4AAjltrh/Xd8gIonMHEigowcIflMrekt2h/xrGUg6oew+U4fzww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmiOYsZhmU/uMx5rtScfIdSjBFa6dq5+Gv9BVdwnGF27ttWS1Y
-	iVcq6buRJC1Mpp8X19VgdYvwhAiBdr2jll4CO6Q50GApoVLCJX+Gqd+F9NtUkg==
-X-Google-Smtp-Source: AGHT+IEns2eqkxyiAg986XLyfsK4RpsMx2bwZL6BIHWTOuBJ8RnZHMXrUX4qvjPsrHC+Vm+yqwVq0A==
-X-Received: by 2002:a17:903:1c6:b0:20c:e262:2560 with SMTP id d9443c01a7336-20ce26227c9mr76987585ad.50.1728927175840;
-        Mon, 14 Oct 2024 10:32:55 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c0eb7bbsm68863045ad.162.2024.10.14.10.32.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 10:32:55 -0700 (PDT)
-Message-ID: <3e742298-2f38-496c-ba63-1e30d16318c6@broadcom.com>
-Date: Mon, 14 Oct 2024 10:32:53 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438C229A0;
+	Mon, 14 Oct 2024 17:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728927230; cv=fail; b=sNVZtezH9iKan69MjMaB1ut/CUgxc+nVdgylTfSznn9/OjtAlsYCpgRn3kG3OnffCtG/yws3kad6g9LJ84+yy0aWXan7UBWFYLj7TpGB7ans5qTOwjwW0Tc6slc7FZwGDpbhcaavhrIzLA67pKpQG15IgjqEmb7IKMANy/qr5nc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728927230; c=relaxed/simple;
+	bh=IOWiaKNmhgjZbprwVZkfyPiJHzV54wVUwY8DrhvNfNI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Rt4KjwQiyNVGz2AhwKfD26KMIE8MPM57a0QrA8Ij95K7Y0/pzYRHIBXzAHgDfCRQ/026jT4X5Z5LxK/rma7A6PDBANgny3R5eOWPRS2jjEnZajCyjnCJJ+ioi7pHmF+AzNiHtYR1X/tZHpBLR17FWDACk3lwyX6ZlbHNLbUr4bI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cEAVo5Up; arc=fail smtp.client-ip=40.107.236.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f+aadpL1kMs+1T9IIxEZ7g3iYD69/uTcf7jX+UjJuCvkryunPt7MjMpfoAiGqhN23qb46eIb9GWYTogqJgzrNfpysHsUxP6JmwBCeQSwwe0sGJXEPhLj7NbuWNQ+6ESHoLvWqFuz8Nf48W2d/w1jb3mHs1880lKBTdK6kMJzJ5+PYv+IBgbeYtMXZtFQ8/0ML1vbmmAZRoUzplIplnDhQmyk5BDLsrxCRyLgG6/BDqDjFPA9yDefRqagdjGukyuC7wIZ0Svd0hxgYxuFPdpkZ+oa9OGKUkaf0gFoEKlTKBk7gaNuaZvAvpoAZD4TVDZUKqPHER1FLim+Wer13+iNLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2xUIH/tZ7sBd64nODDdrfTJzm8M5jiAnJZbfdNqDSko=;
+ b=qrM+QXCEYax80ChjdTZ2umDULgcOPadSlvlDJZYQok38ahfA4ojIvP4j1nYr3ESSDeesl3NrmslV4ZmNiHaHfatyxm35JR4ZRqc4JRfGHvug5hpl+YB9nncGsC5DD1m6To/Xvke1Lu9nXG06yDiV4BIprq2RD3Y83QGqxa2xpnKOWBxUM8fehpBggJLzG6+kkAFYWSLWaQ4BBVpQgUdlh2wnCHo0fVMcqmFppZeE+rPPpRPC/YEMLC6gkjbFgQDCWbWisiT/TRwLqwtZ8wox2jAK94gRc6TFvfmIEO2gOymvDnmaKzNusl/vprEzbl522kbQhrEpoIUU0TtEInPGuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2xUIH/tZ7sBd64nODDdrfTJzm8M5jiAnJZbfdNqDSko=;
+ b=cEAVo5Upwj/ItPFmAmqDAcePXHv+TpHVCXKjlWHEjIavpkDrNnp2Nq2RxjUNAZvxQGVsySvGjIiSJVbTWwyaaxuk/jCRzUYx4r40VIH4HJGQrLZv0PimgHct0w1lGE99aREtNghdlEpEnvK5YP5XacVwG1y/n0SR97NPm8yR0/8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
+ SJ2PR12MB8927.namprd12.prod.outlook.com (2603:10b6:a03:547::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.27; Mon, 14 Oct 2024 17:33:46 +0000
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f%6]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
+ 17:33:46 +0000
+Message-ID: <d9d87f72-6273-4adc-934c-e25ee79bb8c7@amd.com>
+Date: Mon, 14 Oct 2024 12:33:44 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/15] Enable CXL PCIe port protocol error handling and
+ logging
+Content-Language: en-US
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+ nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
+References: <20241014172930.GA612951@bhelgaas>
+From: Terry Bowman <Terry.Bowman@amd.com>
+In-Reply-To: <20241014172930.GA612951@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0050.namprd11.prod.outlook.com
+ (2603:10b6:806:d0::25) To DS0PR12MB6390.namprd12.prod.outlook.com
+ (2603:10b6:8:ce::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241014105514.3206191-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|SJ2PR12MB8927:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69f4c50c-ad25-461a-61f7-08dcec765b3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UTRKTUNRaCtDNnFBejhXdlRyaHRhWkVDd2FwakpuRzVrZGI4dk5xNEhjMFJO?=
+ =?utf-8?B?b09jN2ZFelhlYlpSeVJHRTBwMG9HYkYyZnkzSExqL0M1cFlmZWhXWTZwSzIw?=
+ =?utf-8?B?UUlVMk5GVEtDcmdidmg4d2NzQkpMa3VrRFlLRWlvRnhTTzFQZjZYbGRndGY5?=
+ =?utf-8?B?aUJmRkg3blFGOTVvSTZ4UVRTemVrN0x1b1JmV05WZmhEY1J6ZWRac3U2UDgz?=
+ =?utf-8?B?T0Z1dUZTRlhLT3FnRXU4ZVhHNlZvWm5sN1JXam11bFVWUWpldlI2b1E1U0ta?=
+ =?utf-8?B?S3AwK21Md1ZGS1VsNmhaWmQxVG5CRUc1ZE90OUJOaG1NUTRtMGZEbkhYenFU?=
+ =?utf-8?B?VmtzTnUwcmhjQzd2ZjRXZnlzUS9IbUxrVklaQ1NlSjYyazhHZUVSM05kRzRh?=
+ =?utf-8?B?T0pTdU9JQVdDcGJuQU9FWmZzVlFnN044MWNmMGNkc05LcythNlMxRm9ONXg3?=
+ =?utf-8?B?YldJRVNwNkJURUw4RDdUNFlsL01uSEFaRTNmWU9zTzhab1BwUkRVL0lZY0gy?=
+ =?utf-8?B?ZUFldEE1VjJ4Wlp1ZjZYK2ZMTHZobEdCWnZtb1JVY2txcTIzQmNtZTRFRERM?=
+ =?utf-8?B?RlVGdDVUejMyb0NqV0s4RTZRMG9STm9zN0Z1NUVSdnRhZWRHMjlNamFoKy9h?=
+ =?utf-8?B?bldkditKbTNZc0t3Um45QW41Z0V6Mmc0OWIxVFJwT0tZWnJ1UzJyeDFBMkVq?=
+ =?utf-8?B?cEtya3JyakFhMjRWeFVTYTFReU5IMUx2dXhFTUh1cWlrYkQ2ODloUUNNbVp6?=
+ =?utf-8?B?QWVCd3pOTzdjNTZybTJiMGRjNDFRSWI0YkhyWjd6U0tuNHNvbnhmSWV6N0xL?=
+ =?utf-8?B?VEVNZHdpdmtHWkdOLzlvS0ZvYy9zbFVIOGFCdHRCc0dJMXZqZFVZYzNMejlp?=
+ =?utf-8?B?cUVmQWc5WmJYbHFOREt4NlVIWDRQdGlQTlNPS1d1cmNXRXpuUG1wWjhpcDV4?=
+ =?utf-8?B?OWljYTNHc3FDZEhyZmRoQmxhR1UrVWY4d0ZCYkdmb2pDQmxwR2owV2V0Rk5u?=
+ =?utf-8?B?dU9sQnNMWExjcy9yNDB6aWtKZllTMUlEYThMOVI3R29tQVExcUZMbFVyRENW?=
+ =?utf-8?B?cmhWUndVRW5FVDdnRTY0SnQ5T2tXak5MZGNITHZVL3M4L2l0ZS8xbWJIWEVM?=
+ =?utf-8?B?ak1nZGVqUFhaNzRxbllYVmlXZ2NJbVRkdENNNEtRWEVnRFhZTHNmZVdNRXlY?=
+ =?utf-8?B?TC9wcnljWldJeG1BMlNoV2pzbW5IajRCbm1HRW9TclgxeGpQODNHcmt1SHZ0?=
+ =?utf-8?B?azZSWnpMVEVEMzF4WFhOODhMd1FPaURkMHUxcS9xZHRtU3VRVmc1L1lKbGN0?=
+ =?utf-8?B?cFVyRG5hc0V2MmdNMTVVNm01bHl1c1ZqMjh2aVhzS0hmTjZ4ZmpwMDBOTjFm?=
+ =?utf-8?B?SWpBR0FzQXFGelhMU0NGUHYzb2VySTZnUFRzZ0wrSFRwVDROK1cwdU9ad1BE?=
+ =?utf-8?B?K3ZLbEo5UmN0b25ybnpOU1pGSGRJRUZKdiszNzI4bGZZZVdtb1pwMEl6WHVP?=
+ =?utf-8?B?R2NUSk5GYUF5NGNIM0hpVGpIc2VVb21KelhRRlNvME5xcERjc3ZPWkVoclM0?=
+ =?utf-8?B?RTFoc1FsdTg4eHlrdlFQcUFqb3N2a0daa2VjRDA2VnVVUlJWVklucGtBWi9Y?=
+ =?utf-8?B?ckU2MUQ5NzFsa2YyRW5Vb2hCU3UrclZJQmxDd280NGRVU2JVOElKVWxqSWs1?=
+ =?utf-8?B?bS9PTGRMb1QrSUcreGQrTzdtUWJOdGhXMzkxR2dWY213QmhMREJRMDRnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M0xaVGxKNnhkYmtlaEMyTWM0SVRnOFBDS1puamdIL1VlNFdqNklGWHpZQXlQ?=
+ =?utf-8?B?TFkreWhGUEVpZkxyRGU5TWJGdkFkNWZlVU1TMU5Lengya3h6M0Jyc0EwbEZs?=
+ =?utf-8?B?RUVQQXQ5WDZFUTZiMDZKSUcva2w3UmRtRThqcGRXckNBdmxCUGNQTzRtZXdC?=
+ =?utf-8?B?SmpacVIrSVBEc2FzRlBKRUVzSHUzdnBKMXZkZnA1NmxoajFMUDZPa2pMTnM1?=
+ =?utf-8?B?cXpzbkdidFM5OFMwY2dzb1RtVERIdkkvODBRVHdCd0w3V1JFN05HdVBrZ1Z1?=
+ =?utf-8?B?QWlrOS9SV3lUanE1YlpWUHdMZXQ1ZTNQQUc3bm5RVVE0WVYwV2RGL0p5TmVp?=
+ =?utf-8?B?T09DSmhqL2hvV3o5RXVKblU4Y0tRTlNLdm95RnU4R3ZQa2pyWFplUVBkdm4v?=
+ =?utf-8?B?QkNOTkI1WWpEcWphT1Y1d1VLR3hlNU40d2cxTEYvMDFkRE5GUmg0Q0NUMEx3?=
+ =?utf-8?B?ZEwrV3dSOStCaEd6NGR0dmFZUzhHOE5ZdWFWSmMrYit1Mmxvam1kbCtyeFls?=
+ =?utf-8?B?YVNJNWZseUVKNENQcnExcXBEcjdPSktjUEdCNXZYaXBsMVJFODJVRE1wNzBs?=
+ =?utf-8?B?empNd3pkS25OY2xMTkJDa1BiRERmWHdKQ0hpN2VKS0pnL1NxdGFmV3hURVB3?=
+ =?utf-8?B?SmprYU5vVVVMUzZ4d1JBaC8rbHJ2b2t5Y3lFbGJZVFJnWDNQV0JKRXF5eWtw?=
+ =?utf-8?B?dGw4K1c3VHhqK1NMQUY4UDJjbFpTTUVocXBzTFBZbUk0a09aS2kxS254UHNk?=
+ =?utf-8?B?dmkrc1pvT2xPSTJjWStYV2J5MmRGZ1hMZk01SUcwS1NmejlRZ2tEdHBuTnJ2?=
+ =?utf-8?B?UzVidmsrczk3THJ3cmNzZVFwK3dvR2VNcGpJWHBFYUpIMVZkOEZWQThVeURu?=
+ =?utf-8?B?NVNFVkFvZEdDQkdSSlBLZkxtVTFXNG1jd0VCV0pJQU5paUVlUDUxZzZvc2hF?=
+ =?utf-8?B?RHJMbTZSRFhjYTlUL1hUYUU0TUpyOFVENytUdVoxcElNRXNmSFFqMHdGek9y?=
+ =?utf-8?B?VlpMRlgrU2dNRC9GUUplNEU1SjJldm9HZldEZlIvMmh0WkNzNndXNCszeU1Y?=
+ =?utf-8?B?bm5qSmp1VnNDU1VpU2xFeGVyVW15STlrbk1YSkFjWkJWbENmTU13ZnRKMG8z?=
+ =?utf-8?B?ZDltQXk4N3c1T2tOMmZmNE41bzZCQnRYSy9xV1BBNFllTi81U2RFaTA2S09M?=
+ =?utf-8?B?UWtpY1JnMitmM3d1dUNqaUhiY2tsUWhIZ09pendzUDBKMUVnZ3pEYW5oVjB6?=
+ =?utf-8?B?UGxPRFZTR29SOTlRWnoyNVdCZEFHQitPejYrS3pMUWY2OEtCSU1LSzVHZzVE?=
+ =?utf-8?B?ZHJsNjZ2ZG5PU1UyNDM5WG9YVXE0SmJPcTNZNWlwaXUwbUxhWGhic0x0THQ4?=
+ =?utf-8?B?azBqQ0lxZGh2ait1Z2hhMyszMUZQMGdDWlc2Q2dOQnlkV0o3NEpBZkhjL1NJ?=
+ =?utf-8?B?KzZMSHVvcGxHem1QWnU5RmRRa3R2V0doZldQbFk3T0VkMEoyNjFpZnhEYjhT?=
+ =?utf-8?B?ZlF1ZFQwT1VZcCtrSWhJb2lhbWtiWEFscWgydlBkT2VOd25WT2k0RDdYMGc5?=
+ =?utf-8?B?bUlkSjRmTVFBM0cvaGxkemtqZktLa1NmZUYxY29ENnc4ZXFoVlE3V2FjOW1C?=
+ =?utf-8?B?Z2dmbHl1WEo1ZTNtdUJlQlNlMk5tR1ZJS0lCUkJuNkw4Sm5UZXAvb3JLWE1j?=
+ =?utf-8?B?QmVLM0RBVkNUdmpvWFFHSElrbW9DWC9SV2Q4NHk0UkI5aXhxRGlLVGdYbHFP?=
+ =?utf-8?B?NlNGdXI5M2wzYU1DSjJGV2F3Qm4yVTFMd0xHTkJvcGlnaTk1VndYYjdwb0NJ?=
+ =?utf-8?B?NkEyZ1ViMWtVaExuYWRSYkdxUTFEbEpaM25YbUhzWUJEMEJJN3I3N3VaNVhl?=
+ =?utf-8?B?VVdCMFdqV1BObTRDOHMybU5ROU5rcWppYThMV1puMmlpQTB5NXAzc1NlWEtt?=
+ =?utf-8?B?emZyNkk4ejBoeFhqNDdkY2lJY3ZXcVh3WW1COUFkSWZOL2VsbzQ5SmhWRGhC?=
+ =?utf-8?B?dXRzUVUrb1JTT2Q2czV3WmcxMHZiZUlCNEhGV3lmVHF3T1dUU0ZNalFpQ0ZK?=
+ =?utf-8?B?am42UTlKTk5keVFkd3BMNWhHb1J4cjFWNGZJc3FnM2JvQ2I3elFSak5Rdnls?=
+ =?utf-8?Q?AzsvTwQiU++rhn/TRzZZmRFmn?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69f4c50c-ad25-461a-61f7-08dcec765b3c
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 17:33:46.1938
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yLPxfpCpaYTX04kYqfaEpuQMcNwz6TwgRpSDD9Sl4E14mclrNlmBJDDyBVQ8v37z0VTnNIa/26mdX0mUr2U6TQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8927
 
-On 10/14/24 03:55, Ryan Roberts wrote:
-> Hi All,
-> 
-> Patch bomb incoming... This covers many subsystems, so I've included a core set
-> of people on the full series and additionally included maintainers on relevant
-> patches. I haven't included those maintainers on this cover letter since the
-> numbers were far too big for it to work. But I've included a link to this cover
-> letter on each patch, so they can hopefully find their way here. For follow up
-> submissions I'll break it up by subsystem, but for now thought it was important
-> to show the full picture.
-> 
-> This RFC series implements support for boot-time page size selection within the
-> arm64 kernel. arm64 supports 3 base page sizes (4K, 16K, 64K), but to date, page
-> size has been selected at compile-time, meaning the size is baked into a given
-> kernel image. As use of larger-than-4K page sizes become more prevalent this
-> starts to present a problem for distributions. Boot-time page size selection
-> enables the creation of a single kernel image, which can be told which page size
-> to use on the kernel command line.
-> 
-> Why is having an image-per-page size problematic?
-> =================================================
-> 
-> Many traditional distros are now supporting both 4K and 64K. And this means
-> managing 2 kernel packages, along with drivers for each. For some, it means
-> multiple installer flavours and multiple ISOs. All of this adds up to a
-> less-than-ideal level of complexity. Additionally, Android now supports 4K and
-> 16K kernels. I'm told having to explicitly manage their KABI for each kernel is
-> painful, and the extra flash space required for both kernel images and the
-> duplicated modules has been problematic. Boot-time page size selection solves
-> all of this.
-> 
-> Additionally, in starting to think about the longer term deployment story for
-> D128 page tables, which Arm architecture now supports, a lot of the same
-> problems need to be solved, so this work sets us up nicely for that.
-> 
-> So what's the down side?
-> ========================
-> 
-> Well nothing's free; Various static allocations in the kernel image must be
-> sized for the worst case (largest supported page size), so image size is in line
-> with size of 64K compile-time image. So if you're interested in 4K or 16K, there
-> is a slight increase to the image size. But I expect that problem goes away if
-> you're compressing the image - its just some extra zeros. At boot-time, I expect
-> we could free the unused static storage once we know the page size - although
-> that would be a follow up enhancement.
-> 
-> And then there is performance. Since PAGE_SIZE and friends are no longer
-> compile-time constants, we must look up their values and do arithmetic at
-> runtime instead of compile-time. My early perf testing suggests this is
-> inperceptible for real-world workloads, and only has small impact on
-> microbenchmarks - more on this below.
-> 
-> Approach
-> ========
-> 
-> The basic idea is to rid the source of any assumptions that PAGE_SIZE and
-> friends are compile-time constant, but in a way that allows the compiler to
-> perform the same optimizations as was previously being done if they do turn out
-> to be compile-time constant. Where constants are required, we use limits;
-> PAGE_SIZE_MIN and PAGE_SIZE_MAX. See commit log in patch 1 for full description
-> of all the classes of problems to solve.
-> 
-> By default PAGE_SIZE_MIN=PAGE_SIZE_MAX=PAGE_SIZE. But an arch may opt-in to
-> boot-time page size selection by defining PAGE_SIZE_MIN & PAGE_SIZE_MAX. arm64
-> does this if the user selects the CONFIG_ARM64_BOOT_TIME_PAGE_SIZE Kconfig,
-> which is an alternative to selecting a compile-time page size.
-> 
-> When boot-time page size is active, the arch pgtable geometry macro definitions
-> resolve to something that can be configured at boot. The arm64 implementation in
-> this series mainly uses global, __ro_after_init variables. I've tried using
-> alternatives patching, but that performs worse than loading from memory; I think
-> due to code size bloat.
 
-FWIW, this paragraph was not entirely clear to me until I looked at 
-patch 57 to see that the compile time page size selection had been 
-retained, and could continue to be used as-is. It was somewhat implicit, 
-but not IMHO explicit enough, not a big deal though.
 
-Great work, thanks for doing that! This makes me wonder if we could 
-leverage any of that to have a single kernel supporting both LPAE and 
-!LPAE on ARM 32-bit, but that still seems like somewhat more difficult, 
-largely due to the difference in the page table descriptor format (long 
-vs. short).
--- 
-Florian
+On 10/14/24 12:29, Bjorn Helgaas wrote:
+> On Mon, Oct 14, 2024 at 12:22:08PM -0500, Terry Bowman wrote:
+>> On 10/10/24 14:07, Bjorn Helgaas wrote:
+>>> On Tue, Oct 08, 2024 at 05:16:42PM -0500, Terry Bowman wrote:
+>>>> This is a continuation of the CXL port error handling RFC from earlier.[1]
+>>>> The RFC resulted in the decision to add CXL PCIe port error handling to
+>>>> the existing RCH downstream port handling. This patchset adds the CXL PCIe
+>>>> port handling and logging.
+>> ...
+> 
+>>>>     Downstream switch port CE:
+>>>>     root@tbowman-cxl:~/aer-inject# ./ds-ce-inject.sh
+>>>>     [  177.114442] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00004000/00000000 into device 0000:0e:00.0
+>>>>     [  177.115602] pcieport 0000:0c:00.0: AER: Correctable error message received from 0000:0e:00.0
+>>>>     [  177.116973] pcieport 0000:0e:00.0: PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+>>>>     [  177.117985] pcieport 0000:0e:00.0:   device [19e5:a129] error status/mask=00004000/0000a000
+>>>>     [  177.118809] pcieport 0000:0e:00.0:    [14] CorrIntErr
+>>>>     [  177.119521] aer_event: 0000:0e:00.0 PCIe Bus Error: severity=Corrected, Corrected Internal Error, TLP Header=Not available
+>>>>     [  177.119521]
+>>>>     [  177.122037] cxl_port_aer_correctable_error: device=0000:0e:00.0 host=0000:0d:00.0 status='Received Error From Physical Layer'
+>>>
+>>> Thanks for the hints about how to test this; it's helpful to have
+>>> those in the email archives.  Remove the timestamps and non-relevant
+>>> call trace entries unless they add useful information.  AFAICT they're
+>>> just distractions in this case.
+>>
+>> I'll remove the test logging and details from the cover sheet. I'm
+>> unable to find how to attach using git tools. Instead of an
+>> atatachment, I can locate the log files and details on a public
+>> github. Let me know if this is not acceptable.
+> 
+> It's fine to keep this in the cover sheet, and I'd rather have it
+> there, where lore will archive it reliably forever, than to have a
+> pointer to some other github that may eventually disappear even though
+> it's public today.
+> 
+> I just meant to remove irrelevant information like the timestamps.
+> 
+> Bjorn
 
+Ok, I'll cleanup and leave here. Thanks.
+
+Regards,
+Terry
 
