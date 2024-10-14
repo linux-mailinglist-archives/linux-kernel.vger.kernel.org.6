@@ -1,102 +1,129 @@
-Return-Path: <linux-kernel+bounces-364423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEC199D473
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D155F99D480
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96AC01F23C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:16:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 012C31C22AC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9691AC450;
-	Mon, 14 Oct 2024 16:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6271AB536;
+	Mon, 14 Oct 2024 16:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="cOFwW2Rr"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzF7WqaL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998BA20323;
-	Mon, 14 Oct 2024 16:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD941AB6E6;
+	Mon, 14 Oct 2024 16:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728922573; cv=none; b=aApCj4HKbugyPvQB1Q4l2xX6j//su7dqiQqiSLkMQQJNUlsuhhS8auG62lvQOzA3zDh4awCMp2SDg1yd1ddcImYGdv74GWIL87YbGw0X9prmwyCvziHU5vJRG0D1PVjfa+H8Y9vplDDftOObspu2+du6ebeTIxn9Yz/vsYiTYqo=
+	t=1728922830; cv=none; b=bFPGyoeDySlV7Ay1WVw29OQk5krAsk+fCgDZOwOPVQY7hQXLhoPGsvu0AOJ/1HEVlYQTKMbtHhZAa/gUA8XrBrGhhHUY+9hf1N6nycNnZzmQciJP68CMY7cscbp05GOfwzeko7D19BUSD89Ro9zlg/HC5+ZUHG/w/mQ9BklfX2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728922573; c=relaxed/simple;
-	bh=zRv+5ICbmICC8lLulQye0gpcpQRjLqfBK4wwQxCwFQc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iZ/PPWlz3sQW7n//74mEwe5LvNIwkCbhtMHWCJZLmRqlAdpDZPWjh5Nmm6x5UGh3+OPDw0bO1ob6wsTkeEOyXtldIUnQdQbmm85NLCAwrCfWxabm+mejQPCXulbEoJ+Dass1U+My8sEQcKwz+o41OCYKAB/3d77QCRGaAXPZB14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=cOFwW2Rr; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C05DB42BFE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728922571; bh=J5fEbVcW0uhdB55dqfS20FIGCPc2N2MZWHsQ7Tw263g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cOFwW2RrwnpKbDtI2QeHkx6bihLVWvRtqbpp/Q2vHulf40/tz7F8TlPa8W23yvkp6
-	 LIReYzHmciHVpGhDF89YR0vBpi+xTvQxWhUGPOheHZP5tAUSvMlOjn2Mv2cfvtwzds
-	 2cdLurU18gXDKZ67PcJuUAH3ILa/cck5H2Rc1N/11ai1tWacsqbys5Xm7WlgPWuIeF
-	 n97wKpW6l4dt5W8+uU+SMEmRsHATSKnUOoZvh09OJYECof95D6fZqbchtisvg9+9YF
-	 Vyudk8jSkCZNScoqnHXmOOMHC9KgaWu1LX0+xkgNNkxhk16lGOrnHiXQ0Qqi2qGkts
-	 W/hZ+/+b5y7tg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id C05DB42BFE;
-	Mon, 14 Oct 2024 16:16:11 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Pengyu Zhang <zpenya1314@gmail.com>
-Cc: rppt@kernel.org, linus.walleij@linaro.org, fmdefrancesco@gmail.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- yaxin_wang_uestc@163.com, Pengyu Zhang <zpenya1314@gmail.com>
-Subject: Re: [PATCH v2] Docs/mm: Fix a mistake for pfn in page_tables.rst
-In-Reply-To: <20241009144135.12453-1-zpenya1314@gmail.com>
-References: <20241009144135.12453-1-zpenya1314@gmail.com>
-Date: Mon, 14 Oct 2024 10:16:10 -0600
-Message-ID: <87msj6slrp.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728922830; c=relaxed/simple;
+	bh=/CARQhPqBaW4+V9x4ApINwn61E3dQZeQA7x8Xarx6Kg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C4E2VX6Qjnb0nhVEDTtx0TW6Vnt9GG0QE8HCR883sKuCXj6LFHKwJw//UyVaDKhkpHm/5wPSOYBIQXiBp5bPyZ0mXmcTA1yPuv3OUPiFoE1ZVrEdIM6DqRkh1f6ddMNDPAeBrp0g6ffDyMIf6QwoPmN+AqHRQq6H+h0QNehi54U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzF7WqaL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 093C5C4CEC3;
+	Mon, 14 Oct 2024 16:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728922830;
+	bh=/CARQhPqBaW4+V9x4ApINwn61E3dQZeQA7x8Xarx6Kg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DzF7WqaLR2VUgTvY5eKGGRxAkVsiZKOTrWQhfIK/HdIimOGOZeT9wrY4QdWKG42AW
+	 T3/AcWgTgAhsbMtyQyX4iLdMM0137DZP4H36c0a6Nf1wG+1pxhwFcNKsDBXDMIb/uG
+	 dtkZZuRW4XoEYVrC0G76Laf9iWw5LTyLDVMMIF/Bcf93aRAUt2t7+UVioMT9XPEmcB
+	 AflYU0IQKhaFMS7Q7BbknRkrH3LmG3Yojy7uYJbcxvYCPhVjj2WI51LgjASarNhldd
+	 PE4S2R4lYd6ZnjrUuz3DNvdFPYfSmPfogIm/tKA0MdrEABnsGRAsjyxt1Fr7WXMDpQ
+	 /arce2KKDfm+A==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: cros-qcom-dts-watchers@chromium.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: Drop undocumented domain "idle-state-name"
+Date: Mon, 14 Oct 2024 11:16:32 -0500
+Message-ID: <20241014161631.1527918-2-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Pengyu Zhang <zpenya1314@gmail.com> writes:
+"idle-state-name" is not a valid property for "domain-idle-state"
+binding, so drop it.
 
-> The documentation incorrectly calculate the pfn value as 0x3fffff,
-> which should be 0x3ffff instead. It is obtained by right-shifting
-> 0xffffc000 by 14 bits.
->
-> This patch corrects the value to prevent any potential confusion
-> for developers referencing this document.
->
-> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
-> ---
->  Documentation/mm/page_tables.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/mm/page_tables.rst b/Documentation/mm/page_tables.rst
-> index be47b192a596..e7c69cc32493 100644
-> --- a/Documentation/mm/page_tables.rst
-> +++ b/Documentation/mm/page_tables.rst
-> @@ -29,7 +29,7 @@ address.
->  With a page granularity of 4KB and a address range of 32 bits, pfn 0 is at
->  address 0x00000000, pfn 1 is at address 0x00001000, pfn 2 is at 0x00002000
->  and so on until we reach pfn 0xfffff at 0xfffff000. With 16KB pages pfs are
-> -at 0x00004000, 0x00008000 ... 0xffffc000 and pfn goes from 0 to 0x3fffff.
-> +at 0x00004000, 0x00008000 ... 0xffffc000 and pfn goes from 0 to 0x3ffff.
->  
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Alternatively, the property could be added to the binding. In that case, 
+the 2 idle state bindings should be refactored with the common 
+properties factored out. Since no one seems to have cared despite 
+reported warnings on every new board of these platforms, I don't either 
+and went with the simple change.
 
-Applied, thanks.
+ arch/arm64/boot/dts/qcom/sc7180.dtsi   | 3 ---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 --
+ 2 files changed, 5 deletions(-)
 
-For future reference, when you submit an updated version of a patch,
-please make a note of what has changed below the "---" line.  Also, you
-didn't pick up Mike's Reviewed-by from the first version; I've added it.
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index b5ebf8980325..dec25a0d9057 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -357,7 +357,6 @@ BIG_CPU_SLEEP_1: cpu-sleep-1-1 {
+ 		domain_idle_states: domain-idle-states {
+ 			CLUSTER_SLEEP_PC: cluster-sleep-0 {
+ 				compatible = "domain-idle-state";
+-				idle-state-name = "cluster-l3-power-collapse";
+ 				arm,psci-suspend-param = <0x41000044>;
+ 				entry-latency-us = <2752>;
+ 				exit-latency-us = <3048>;
+@@ -366,7 +365,6 @@ CLUSTER_SLEEP_PC: cluster-sleep-0 {
+ 
+ 			CLUSTER_SLEEP_CX_RET: cluster-sleep-1 {
+ 				compatible = "domain-idle-state";
+-				idle-state-name = "cluster-cx-retention";
+ 				arm,psci-suspend-param = <0x41001244>;
+ 				entry-latency-us = <3638>;
+ 				exit-latency-us = <4562>;
+@@ -375,7 +373,6 @@ CLUSTER_SLEEP_CX_RET: cluster-sleep-1 {
+ 
+ 			CLUSTER_AOSS_SLEEP: cluster-sleep-2 {
+ 				compatible = "domain-idle-state";
+-				idle-state-name = "cluster-power-down";
+ 				arm,psci-suspend-param = <0x4100b244>;
+ 				entry-latency-us = <3263>;
+ 				exit-latency-us = <6562>;
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index a36076e3c56b..847d6bc39edd 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -287,7 +287,6 @@ CLUSTER_C4: cpu-sleep-0 {
+ 		domain-idle-states {
+ 			CLUSTER_CL4: cluster-sleep-0 {
+ 				compatible = "domain-idle-state";
+-				idle-state-name = "l2-ret";
+ 				arm,psci-suspend-param = <0x01000044>;
+ 				entry-latency-us = <350>;
+ 				exit-latency-us = <500>;
+@@ -296,7 +295,6 @@ CLUSTER_CL4: cluster-sleep-0 {
+ 
+ 			CLUSTER_CL5: cluster-sleep-1 {
+ 				compatible = "domain-idle-state";
+-				idle-state-name = "ret-pll-off";
+ 				arm,psci-suspend-param = <0x01000054>;
+ 				entry-latency-us = <2200>;
+ 				exit-latency-us = <2500>;
+-- 
+2.45.2
 
-Thanks,
-
-jon
 
