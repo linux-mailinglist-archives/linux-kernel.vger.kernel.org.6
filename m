@@ -1,150 +1,150 @@
-Return-Path: <linux-kernel+bounces-364435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4206699D49B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:26:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08BF99D499
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4941C24615
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADDB2870D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587DB1B4F1E;
-	Mon, 14 Oct 2024 16:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jW5/jYIv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342621B85C2;
+	Mon, 14 Oct 2024 16:26:15 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0E428FC;
-	Mon, 14 Oct 2024 16:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB28228FC;
+	Mon, 14 Oct 2024 16:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728923208; cv=none; b=M7rHiuOEgl+Ou3Md1F6bCLML41FOmEl3SXE4l/s8wQROBglZgIy3vfqx+4nev1Zg0Be7pq3cbec738D7L1UHvOKYKpRdsS9Wl+h31VVNaAunnxzl4OT4d5yPjog5fIkoQ0KQatrasGfQBWYSV4xcI/8Ae1Y2pfj1oMhLr1JFl8c=
+	t=1728923174; cv=none; b=bJAhiOzZ6G3mm0qUl8Is/oFFMxxReRR76LQMl2O7AgNIIgHqvttcnlEDKF1PpE9191swNmgLurss1bzDjhlZ9DYkcuaqjp7Jz9uy/Ivs1+AIQMB1T+nwPrzVYR/wSW6H6dgan2aJjnQXnjIi5kxt3m5U5tQ5nBjPScbRhrlVk2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728923208; c=relaxed/simple;
-	bh=k9Br7NGn1JUJDdpw4cdkfc2viP9z4pXwuv/4rditTgM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t+KyLzsoX16fXoJHHAFGcd9XCbD+pB4+CZDutjGZo7VcBnSLsnXfdZOO7/NlndSdUr9lMCnII53T7LvArbQ2l1vSBkaj/lM0U7c//CUaUiH8wYKNu9JxvjhEK0pWMhEW/JgFA2xAJ68kZblJhqxdSIhhPPz2d0tfbprsNDjLGeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jW5/jYIv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EAjHBR029461;
-	Mon, 14 Oct 2024 16:26:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=tcbhP5eT086myskRJMszrU
-	ovLk1dvJ9QFpMPp6xbhxM=; b=jW5/jYIvnNMLYuKcwxMW2YdqWSV34aBeQz1nCJ
-	WqrnEtRU9c8i17xDveNtcnRJ+rozNO8Fc6I5/tlyu18A0Ub0JNFxIngRKdk3Wnn1
-	k8p5cVqW8j5Bui/GNCoyLzBU388/Lu1TSYqVvQfHk89CxSnVP7F0TVEv4HoqbnLP
-	IfgsfaBUn3IrdBhIeKCkxmcB/JWMeP4pgn4+nKpSjlFXyzmJTqvCp6J65HUpfs5T
-	+okBxKL1bcMe6Mwl4+Jnwhm1/KiUBum8Wt7WJy0QSw7dWMDYjbEO8SzUqCr+qZdL
-	fZGBG+JnoCU7cOlCNe55sCRaJi8bC9o7LXVHzPY9XOLrHCPw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427jd8vx0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 16:26:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EGQQr0000507
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 16:26:26 GMT
-Received: from hu-mrana-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 14 Oct 2024 09:26:26 -0700
-From: Mayank Rana <quic_mrana@quicinc.com>
-To: <kevin.xie@starfivetech.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_krichai@quicinc.com>, Mayank Rana <quic_mrana@quicinc.com>,
-        "Marek
- Szyprowski" <m.szyprowski@samsung.com>
-Subject: [PATCH v3] PCI: starfive: Enable PCIe controller's runtime PM  before probing host bridge
-Date: Mon, 14 Oct 2024 09:26:07 -0700
-Message-ID: <20241014162607.1247611-1-quic_mrana@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728923174; c=relaxed/simple;
+	bh=W9kNSItfPSUE+SfBw6OF4HZ2NJ0QQb8sReb6G7N/Glo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JG9G8XCzGaTIPZEWQo6Zu7tnK99+vsw6DMlgqycPwRfbcFboQKXwiskv0IvQlEJ2IRWckyK66VH2lQ+sGZPZ52lP9VAYOyMD0Y0X/iN6l/FjU8/AFOgWagsIuh781fuSuRXr4urO1c/A6fvhTT3dzRCma3/jwPjTQ7/eu5LQrD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS2cg3dG7z6K5Xl;
+	Tue, 15 Oct 2024 00:24:35 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 76EBE140B55;
+	Tue, 15 Oct 2024 00:26:10 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
+ 2024 18:26:09 +0200
+Date: Mon, 14 Oct 2024 17:26:07 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH v13 16/18] cxl/mbox: Add support for PERFORM_MAINTENANCE
+ mailbox command
+Message-ID: <20241014172607.000066bb@Huawei.com>
+In-Reply-To: <20241009124120.1124-17-shiju.jose@huawei.com>
+References: <20241009124120.1124-1-shiju.jose@huawei.com>
+	<20241009124120.1124-17-shiju.jose@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FeoM34QLfoUxiLkmq9s0PbLfuQAorsip
-X-Proofpoint-ORIG-GUID: FeoM34QLfoUxiLkmq9s0PbLfuQAorsip
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 bulkscore=0
- mlxscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140118
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-PCIe controller device (i.e. PCIe starfive device) is parent to PCIe host
-bridge device. To enable runtime PM of PCIe host bridge device (child
-device), it is must to enable parent device's runtime PM to avoid seeing
-the below warning from PM core:
+On Wed, 9 Oct 2024 13:41:17 +0100
+<shiju.jose@huawei.com> wrote:
 
-pcie-starfive 940000000.pcie: Enabling runtime PM for inactive device
-with active children
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> Add support for PERFORM_MAINTENANCE mailbox command.
+> 
+> CXL spec 3.1 section 8.2.9.7.1 describes the Perform Maintenance command.
+> This command requests the device to execute the maintenance operation
+> specified by the maintenance operation class and the maintenance operation
+> subclass.
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+One trivial comment. With that tidied up
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Fix this issue by enabling starfive pcie controller device's runtime PM
-before calling pci_host_probe() in plda_pcie_host_init().
+> ---
+>  drivers/cxl/core/mbox.c | 40 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/cxlmem.h    | 17 +++++++++++++++++
+>  2 files changed, 57 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index 30c44ab11347..a6f69864c504 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -1084,6 +1084,46 @@ int cxl_set_feature(struct cxl_memdev_state *mds,
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_set_feature, CXL);
+>  
+> +int cxl_do_maintenance(struct cxl_memdev_state *mds,
+> +		       u8 class, u8 subclass,
+> +		       void *data_in, size_t data_in_size)
+> +{
+> +	struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;
+> +	struct cxl_memdev_maintenance_pi {
+> +		struct cxl_mbox_do_maintenance_hdr hdr;
+> +		u8 data[];
+> +	}  __packed;
+> +	struct cxl_mbox_cmd mbox_cmd;
+> +	size_t hdr_size;
+> +	int rc = 0;
+Always set, so no need to init.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
-v2->v3:
-- Update commit description based on Mani's feedback
-- Updated Reviewed-by tag
-Link to v2: https://patchwork.kernel.org/project/linux-pci/patch/20241011235530.3919347-1-quic_mrana@quicinc.com/
-
-v1->v2: Updated commit description based on Bjorn's feedback
-Link to v1: https://patchwork.kernel.org/project/linux-pci/patch/20241010202950.3263899-1-quic_mrana@quicinc.com/
- 
- drivers/pci/controller/plda/pcie-starfive.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/plda/pcie-starfive.c b/drivers/pci/controller/plda/pcie-starfive.c
-index 0567ec373a3e..e73c1b7bc8ef 100644
---- a/drivers/pci/controller/plda/pcie-starfive.c
-+++ b/drivers/pci/controller/plda/pcie-starfive.c
-@@ -404,6 +404,9 @@ static int starfive_pcie_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_get_sync(&pdev->dev);
-+
- 	plda->host_ops = &sf_host_ops;
- 	plda->num_events = PLDA_MAX_EVENT_NUM;
- 	/* mask doorbell event */
-@@ -413,11 +416,12 @@ static int starfive_pcie_probe(struct platform_device *pdev)
- 	plda->events_bitmap <<= PLDA_NUM_DMA_EVENTS;
- 	ret = plda_pcie_host_init(&pcie->plda, &starfive_pcie_ops,
- 				  &stf_pcie_event);
--	if (ret)
-+	if (ret) {
-+		pm_runtime_put_sync(&pdev->dev);
-+		pm_runtime_disable(&pdev->dev);
- 		return ret;
-+	}
- 
--	pm_runtime_enable(&pdev->dev);
--	pm_runtime_get_sync(&pdev->dev);
- 	platform_set_drvdata(pdev, pcie);
- 
- 	return 0;
--- 
-2.25.1
+> +
+> +	struct cxl_memdev_maintenance_pi *pi __free(kfree) =
+> +					kmalloc(cxl_mbox->payload_size, GFP_KERNEL);
+> +	pi->hdr.op_class = class;
+> +	pi->hdr.op_subclass = subclass;
+> +	hdr_size = sizeof(pi->hdr);
+> +	/*
+> +	 * Check minimum mbox payload size is available for
+> +	 * the maintenance data transfer.
+> +	 */
+> +	if (hdr_size + data_in_size > cxl_mbox->payload_size)
+> +		return -ENOMEM;
+> +
+> +	memcpy(pi->data, data_in, data_in_size);
+> +	mbox_cmd = (struct cxl_mbox_cmd) {
+> +		.opcode = CXL_MBOX_OP_DO_MAINTENANCE,
+> +		.size_in = hdr_size + data_in_size,
+> +		.payload_in = pi,
+> +	};
+> +
+> +	rc = cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_do_maintenance, CXL);
 
 
