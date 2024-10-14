@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-364224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF8B99CDE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:37:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554EA99CDF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B08283A83
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 011B51F23C7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0431AB517;
-	Mon, 14 Oct 2024 14:37:26 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3688F1AAE08;
+	Mon, 14 Oct 2024 14:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsFDWGdF"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D044A24;
-	Mon, 14 Oct 2024 14:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4617E1AA793;
+	Mon, 14 Oct 2024 14:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916646; cv=none; b=TWjcQOIvOr9pQKDKU4ixeINZJOMt8Vf19d4FwXUyFSMwuTP5Miql161QkbAgTMYeHHtNAxSfWTfG7qHzRU7dMcFTgZSfd4kgf5SOa3TY8Q+iH3ZzFZannDBEkV4ifuKbFm2iW4eAH5/I5hVt6BGBR6jPT90lDmYarYKZtQ0BKoE=
+	t=1728916685; cv=none; b=Dj5/f3ULstvq4qRp2pMJWb6cj1510qDCj3OMshkS5qlDEbgMDGQkiBMxDSSH233140/XApVHeLlU/7bkx5245EFa/qIZefIZNBNXM+cmUCPB0qGNLXu6ZKnZsFvaN4rUiTmLEmpJXQomGDDDAI3/T+ceQfIxyLJUtJJ8QiDZ2uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916646; c=relaxed/simple;
-	bh=seOGrShxODMYZ05aHugBbw0isx2IFEiunBYacuosxBs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ca6JrU6P205Zj7aNtwagi5Qi0HmuKIBnPGtQVgiZzDBgPlTH5ZI3g/vTboEvT2+y9MuKB986dUPwYYRa0bA9sjTsX4I58A4W7Lnf0g1UO99tzxxk3IWYCAkbSQX5FbzE+wf+5qH17rBUtrIfjg1tNNsbQShjj9yfHA/L7iDapyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XS0CW6nw2z2DdNw;
-	Mon, 14 Oct 2024 22:36:07 +0800 (CST)
-Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id C895D140158;
-	Mon, 14 Oct 2024 22:37:19 +0800 (CST)
-Received: from huawei.com (10.175.113.133) by kwepemm600001.china.huawei.com
- (7.193.23.3) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
- 2024 22:37:18 +0800
-From: Wang Hai <wanghai38@huawei.com>
-To: <radhey.shyam.pandey@amd.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<michal.simek@amd.com>, <andre.przywara@arm.com>, <zhangxiaoxu5@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <wanghai38@huawei.com>
-Subject: [PATCH net] net: xilinx: axienet: fix potential memory leak in axienet_start_xmit()
-Date: Mon, 14 Oct 2024 22:37:04 +0800
-Message-ID: <20241014143704.31938-1-wanghai38@huawei.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728916685; c=relaxed/simple;
+	bh=owwnjThLfakHhe5ARwRbi6jw739M9wIYH8WQUXH0+RY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y0Suz1gmUbBw2nsJ3StxF8oHn7fN+Z3aJSSmQagAR8hF9ITXBVjL8yoQlsQSaNwmPMJOTOJepEN7d160+7b5qA0Z4RN+uPB+8wEEPfiIVBGdnRH2fLOUduV+kNhnRsKgU76OmaKiilUwwG8cihBqamLpu3GFReFs67IPRWe6HHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsFDWGdF; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e290200a560so3751831276.1;
+        Mon, 14 Oct 2024 07:38:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728916683; x=1729521483; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WU/WSO9mNbBclMCOEiZKWLWuiGoo8N3sN7OChae2Z90=;
+        b=SsFDWGdFitiddy7rHWxZzMoVktAS2hF+Qzr/bMddkx5UKXDdhc8LR5L74MiSVwyUTS
+         ADjwqQBPnqAAoFLmJfSgjqSpZfhHsI0wxw3AgntP3lku6cIDx5Kf46SuXx0Vet/TG3mA
+         afMNDrmLK18/2x+zH+bCGl2fOsjITVn0kxvsGhRhN+B46b5gDKYx3VNczwZSFZfdQa2K
+         2TzblSB10KrAk0FeZLfr7Gtu1wmnGY8U7MlMDihJV7tMqC0wazeKZgcZq6O5snMMsotH
+         xHPQDT9oxq5PnwF0IjKc3hCCfyhEFSPISNUCtDKZZ3kRtKx3TFIEDUqqO6iXv6Vg9qef
+         zrAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728916683; x=1729521483;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WU/WSO9mNbBclMCOEiZKWLWuiGoo8N3sN7OChae2Z90=;
+        b=i0rAOaBD4yXLcbzLYZVCo8lRYks7xGsTajl9fUC1ms6vXpviHAHI2FUgGESb6vX4uV
+         6/rlxE3N/6dHr0lom7j1te/fvKmxWpic3xvj/6AQ6SAAPBr6ajib5HkROuzyPgsA7+iw
+         m1zDvit0QuRvEznEVJSKzRhqdA2mnEjaM5oIu4fFIGmVU4GXTGncCXTw7qrGE4OZMa5h
+         vRLhhzIMAf7/ZrrMKV9h/M1VNuiRDv168Ns0+qfWpkxlv7tzKIA6YzQXvBynWBn9SLwh
+         XEbq0N/E3yMC057d2/HrUlReC4d/nu1jMS44O2eOGgPM/8c1Kxy01fBpKFwABiZ8+2LO
+         nZfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGIPtxq/anjVpHFqQmfAfK4Vxk4K6DSiOTx5O4nUS1xywl/INa7XvEDnkn0lvlQClfFqrSEHlZm2EPLyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRVHtLYZSNCRnVco76MDcRIy3Zd3vSrQ2aM5buvmVQCWsaEwN3
+	/Ca2HNXrrINNSi67qXWNeplIvDKfNF6P9550XId1tAHryVOdOolH0KTcxw==
+X-Google-Smtp-Source: AGHT+IE5XmDhEqAbGBxzDIa2YqzZtcy+1skVyM8fpjHB8iw+at+jdN0IZDc8rQ/WNP9LTsS+IPefnQ==
+X-Received: by 2002:a05:6902:27c7:b0:e25:ce5f:42cc with SMTP id 3f1490d57ef6-e2931b557ccmr5759254276.32.1728916683220;
+        Mon, 14 Oct 2024 07:38:03 -0700 (PDT)
+Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ef5e065sm2450841276.51.2024.10.14.07.38.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 07:38:02 -0700 (PDT)
+Message-ID: <fff1f9ce-28b2-4ba1-a118-3a7cef722bdc@gmail.com>
+Date: Mon, 14 Oct 2024 10:38:02 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600001.china.huawei.com (7.193.23.3)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] linux-kbuild: fix: ensure selected configs were
+ turned on in original
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ shuah@kernel.org, javier.carrasco.cruz@gmail.com
+References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
+ <20240913171205.22126-5-david.hunter.linux@gmail.com>
+ <CAK7LNARdzUro3A00wU7XScXa=582vtY+nZ5-zkN89_3mS70Fag@mail.gmail.com>
+Content-Language: en-US
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <CAK7LNARdzUro3A00wU7XScXa=582vtY+nZ5-zkN89_3mS70Fag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The axienet_start_xmit() returns NETDEV_TX_OK without freeing skb
-in case of dma_map_single() fails, add dev_kfree_skb_any() to fix it.
+On 9/23/24 23:45, Masahiro Yamada wrote:
 
-Fixes: 71791dc8bdea ("net: axienet: Check for DMA mapping errors")
-Signed-off-by: Wang Hai <wanghai38@huawei.com>
----
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+> I believe defined($orig_configs{$conf} is always true here
+> because it was already checked a few lines above.
+> 
+> 
+>      # We only need to process if the depend config is a module
+>      if (!defined($orig_configs{$conf}) || $orig_configs{$conf} eq "y") {
+>          next;
+>      }
+> 
+> 
+> If $conf is not present in the original .config,
+> the 'next' statement skips the current iteration.
+> 
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index ea7d7c03f48e..53cf1a927278 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1046,6 +1046,7 @@ axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 		if (net_ratelimit())
- 			netdev_err(ndev, "TX DMA mapping error\n");
- 		ndev->stats.tx_dropped++;
-+		dev_kfree_skb_any(skb);
- 		return NETDEV_TX_OK;
- 	}
- 	desc_set_phys_addr(lp, phys, cur_p);
-@@ -1066,6 +1067,7 @@ axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 			ndev->stats.tx_dropped++;
- 			axienet_free_tx_chain(lp, orig_tail_ptr, ii + 1,
- 					      true, NULL, 0);
-+			dev_kfree_skb_any(skb);
- 			return NETDEV_TX_OK;
- 		}
- 		desc_set_phys_addr(lp, phys, cur_p);
--- 
-2.17.1
+
+Good point, I will remove this portion for the series patch.
+
 
 
