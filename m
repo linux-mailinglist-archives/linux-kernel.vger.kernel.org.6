@@ -1,121 +1,172 @@
-Return-Path: <linux-kernel+bounces-364015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701B899C9EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:18:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF9E99C9EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E241F21D5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:18:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E943B234F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980191A01C3;
-	Mon, 14 Oct 2024 12:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mYhICIuL"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AC21A0726;
+	Mon, 14 Oct 2024 12:20:15 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721AC156F3F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92CC19F13F;
+	Mon, 14 Oct 2024 12:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728908316; cv=none; b=O3pxmr0seRI2hP5xqlVp614iXBi+hgcQvst96kQD/k4PDBJZ8qYX8V+sCpTS+LcLeH5HG83n/jKC6NUyCIXGpjyA89eMi0OKDhLIKkyIzdW7s0ru2jCMzg3+r04mwIGXthuZshPgzjtOzhZ954kgLAnoTcZKgr0lg8N7GJq2D8s=
+	t=1728908415; cv=none; b=azAnDmBHHclcpp67P7BbQgzja7lHIWERVz2u1S9SdruPtpkE1rM2GsbjuwFJaj6hdXtu2cKyZnRdp8LJQKMTAY4NR40/YHcvpdLw757CQjiW23p5AxEzBEAIcoRT+uMMMYl2srIqFHHLwrHiaf6FrBxSdJzluJr9tOXfwJw0QBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728908316; c=relaxed/simple;
-	bh=mFBoCNrUZG3cLzWf/DGnig1fihxe/09n1vjOwanoI1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DU7bSBzQsCuH+Sz/bogfyKRv2WgdR4mF990Ur+7IGea+dgI5mALZsXIECFLZNC5RukJlXpoow+CYIrCKRzXF/oCJqQ2iGUAgsc+23virXG+gWtBQUnewqhWxQ6LROqsN829Gk30xCAhggDTZkghKH7cBxdHYTNzl+DYNTuGClhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mYhICIuL; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d462c91a9so2697684f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728908313; x=1729513113; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PY41G9O9B41tlvbRmkxCPs2gsA50Z6WrgLw/irylVJo=;
-        b=mYhICIuLUar8Wc1sgiAwLRnfsGp4IDICVeMH0mCdz4Rqh/RsMclRZKNtMj6aQfXrPO
-         8pGyxToZCBB4a5TrhCOi9tvIcj4lE+x+t/Y9JL15Jg4JNZVXa1s57yjKdm4536iQBsfL
-         +RtZuJV6lO6tv9p9/m9WC/p5ci9uJFAZHCdZ79YzZoZKWtOtD3fz67g2OdEU5J2jZUDo
-         FjCf5/r5XyAaqrzZvOBwLERb6lNzeoB2kDNBsGEekUgYAAgLkKe5jweGS6tKpPBtUP68
-         hYqNtU8NqpTReE65lUAL8chUclIcDEdaWRksP1vMAKIngR+pBKWW31109mnMUPMredlS
-         753w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728908313; x=1729513113;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PY41G9O9B41tlvbRmkxCPs2gsA50Z6WrgLw/irylVJo=;
-        b=xLiJtDpLniHoretG5MEVkNgBcBUZ8DJGmk9y7or1HKZcwrjd74WTV5RIPXArb/lX3t
-         wngxMKSokWM72P3loPxyHSqLj8g6mRMJDE+UofoMHNnkvyWob9jEtb1vp+URzVIvgUo5
-         F5s9OHWskvRI19UNEEPoVygFMgofoFh9gOHtYauGt2pLKuuSFQokVeQACAB/9o33CNJh
-         EvC1QGgcOK0gHITvchN2FGNT9Gjm0dH9tT1SsfyqEY4k5sfdegqv7KcpJC7++r6u9CSh
-         0nda1iK90+2yxiI0dcr5XlNXP1AMyHQqLDEdx4mciUQLmDQlbp7RyzTaQTvIAxDjpeTZ
-         MYCw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3cfA6NwFQgFyMFasfAAZMUN8E5ZwO2aC1f24RGubMuCmnXXscuMbu1ajq1Jdhv0NHKb75F+QyUtolpn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEUuH2VVaeltS9kE6dYqJ6l9T9ClpTzYHA4G55JvUWrGkmupaN
-	lMsaG8FKvkoJVBjpUY12PPak4aLMbxryYqY4inWeeoeQeMm/AJic5BtRfL9txM9K56BJ8rBa7KW
-	i
-X-Google-Smtp-Source: AGHT+IGBtBgbb11CDhtxi74JajGba5TMb4OF5YCUYq7KkMcFJWXjOTg6hGJK3YS9i6dFXvblbTY3xQ==
-X-Received: by 2002:adf:f3c9:0:b0:37d:3280:203a with SMTP id ffacd0b85a97d-37d55184cdbmr8709433f8f.10.1728908312531;
-        Mon, 14 Oct 2024 05:18:32 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de54:ebb2:31be:53a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fdc2sm11234895f8f.88.2024.10.14.05.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 05:18:32 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: sysfs: constify gpio class
-Date: Mon, 14 Oct 2024 14:18:30 +0200
-Message-ID: <20241014121831.106532-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728908415; c=relaxed/simple;
+	bh=AUhjtHtcecM/dEzpdM3LcT0mXsfkX+O7EhREQ5NNmRM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rOhdsx+y6kJuFOPyJpWjEknVbL8Ti62CLILj90iyWirTdQqdECu1WAVqk6LqRXFk22M/UKb+dBsGmqlHJssE2ZUkLsoBPqeQODu4BwI+KMb+3et3xDx/CQiGPGJf+VM4Vl96ViB3KrIoKDD1sPHt7IGdJelW16SZiJL8KfuxoiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XRx8W2l42z1T8dZ;
+	Mon, 14 Oct 2024 20:18:19 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 524F91401F1;
+	Mon, 14 Oct 2024 20:20:09 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 14 Oct
+ 2024 20:20:08 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <lars.povlsen@microchip.com>, <Steen.Hegelund@microchip.com>,
+	<daniel.machon@microchip.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>,
+	<jensemil.schulzostergaard@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH net v2] net: microchip: vcap api: Fix memory leaks in vcap_api_encode_rule_test()
+Date: Mon, 14 Oct 2024 20:19:22 +0800
+Message-ID: <20241014121922.1280583-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Commit a3c1e45156ad ("net: microchip: vcap: Fix use-after-free error in
+kunit test") fixed the use-after-free error, but introduced below
+memory leaks by removing necessary vcap_free_rule(), add it to fix it.
 
-All class functions used here take a const pointer to the class
-structure. We can constify gpio_class.
+	unreferenced object 0xffffff80ca58b700 (size 192):
+	  comm "kunit_try_catch", pid 1215, jiffies 4294898264
+	  hex dump (first 32 bytes):
+	    00 12 7a 00 05 00 00 00 0a 00 00 00 64 00 00 00  ..z.........d...
+	    00 00 00 00 00 00 00 00 00 04 0b cc 80 ff ff ff  ................
+	  backtrace (crc 9c09c3fe):
+	    [<0000000052a0be73>] kmemleak_alloc+0x34/0x40
+	    [<0000000043605459>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<0000000040a01b8d>] vcap_alloc_rule+0x3cc/0x9c4
+	    [<000000003fe86110>] vcap_api_encode_rule_test+0x1ac/0x16b0
+	    [<00000000b3595fc4>] kunit_try_run_case+0x13c/0x3ac
+	    [<0000000010f5d2bf>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<00000000c5d82c9a>] kthread+0x2e8/0x374
+	    [<00000000f4287308>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80cc0b0400 (size 64):
+	  comm "kunit_try_catch", pid 1215, jiffies 4294898265
+	  hex dump (first 32 bytes):
+	    80 04 0b cc 80 ff ff ff 18 b7 58 ca 80 ff ff ff  ..........X.....
+	    39 00 00 00 02 00 00 00 06 05 04 03 02 01 ff ff  9...............
+	  backtrace (crc daf014e9):
+	    [<0000000052a0be73>] kmemleak_alloc+0x34/0x40
+	    [<0000000043605459>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<000000000ff63fd4>] vcap_rule_add_key+0x2cc/0x528
+	    [<00000000dfdb1e81>] vcap_api_encode_rule_test+0x224/0x16b0
+	    [<00000000b3595fc4>] kunit_try_run_case+0x13c/0x3ac
+	    [<0000000010f5d2bf>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<00000000c5d82c9a>] kthread+0x2e8/0x374
+	    [<00000000f4287308>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80cc0b0700 (size 64):
+	  comm "kunit_try_catch", pid 1215, jiffies 4294898265
+	  hex dump (first 32 bytes):
+	    80 07 0b cc 80 ff ff ff 28 b7 58 ca 80 ff ff ff  ........(.X.....
+	    3c 00 00 00 00 00 00 00 01 2f 03 b3 ec ff ff ff  <......../......
+	  backtrace (crc 8d877792):
+	    [<0000000052a0be73>] kmemleak_alloc+0x34/0x40
+	    [<0000000043605459>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<000000006eadfab7>] vcap_rule_add_action+0x2d0/0x52c
+	    [<00000000323475d1>] vcap_api_encode_rule_test+0x4d4/0x16b0
+	    [<00000000b3595fc4>] kunit_try_run_case+0x13c/0x3ac
+	    [<0000000010f5d2bf>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<00000000c5d82c9a>] kthread+0x2e8/0x374
+	    [<00000000f4287308>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80cc0b0900 (size 64):
+	  comm "kunit_try_catch", pid 1215, jiffies 4294898266
+	  hex dump (first 32 bytes):
+	    80 09 0b cc 80 ff ff ff 80 06 0b cc 80 ff ff ff  ................
+	    7d 00 00 00 01 00 00 00 00 00 00 00 ff 00 00 00  }...............
+	  backtrace (crc 34181e56):
+	    [<0000000052a0be73>] kmemleak_alloc+0x34/0x40
+	    [<0000000043605459>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<000000000ff63fd4>] vcap_rule_add_key+0x2cc/0x528
+	    [<00000000991e3564>] vcap_val_rule+0xcf0/0x13e8
+	    [<00000000fc9868e5>] vcap_api_encode_rule_test+0x678/0x16b0
+	    [<00000000b3595fc4>] kunit_try_run_case+0x13c/0x3ac
+	    [<0000000010f5d2bf>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<00000000c5d82c9a>] kthread+0x2e8/0x374
+	    [<00000000f4287308>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80cc0b0980 (size 64):
+	  comm "kunit_try_catch", pid 1215, jiffies 4294898266
+	  hex dump (first 32 bytes):
+	    18 b7 58 ca 80 ff ff ff 00 09 0b cc 80 ff ff ff  ..X.............
+	    67 00 00 00 00 00 00 00 01 01 74 88 c0 ff ff ff  g.........t.....
+	  backtrace (crc 275fd9be):
+	    [<0000000052a0be73>] kmemleak_alloc+0x34/0x40
+	    [<0000000043605459>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<000000000ff63fd4>] vcap_rule_add_key+0x2cc/0x528
+	    [<000000001396a1a2>] test_add_def_fields+0xb0/0x100
+	    [<000000006e7621f0>] vcap_val_rule+0xa98/0x13e8
+	    [<00000000fc9868e5>] vcap_api_encode_rule_test+0x678/0x16b0
+	    [<00000000b3595fc4>] kunit_try_run_case+0x13c/0x3ac
+	    [<0000000010f5d2bf>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<00000000c5d82c9a>] kthread+0x2e8/0x374
+	    [<00000000f4287308>] ret_from_fork+0x10/0x20
+	......
 
-While at it: remove a stray newline and use a tab in the struct
-definition for consistency with the line above.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: stable@vger.kernel.org
+Fixes: a3c1e45156ad ("net: microchip: vcap: Fix use-after-free error in kunit test")
+Reviewed-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- drivers/gpio/gpiolib-sysfs.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+v2:
+- Add Reviewed-bys.
+- Remove duplicate memory leak backtraces.
+- Subject prefix: PATCH -> PATCH net.
+---
+ drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 20426d6e04d5..0c713baa7784 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -549,12 +549,11 @@ static struct attribute *gpio_class_attrs[] = {
- };
- ATTRIBUTE_GROUPS(gpio_class);
+diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+index f2a5a36fdacd..7251121ab196 100644
+--- a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
++++ b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+@@ -1444,6 +1444,8 @@ static void vcap_api_encode_rule_test(struct kunit *test)
  
--static struct class gpio_class = {
-+static const struct class gpio_class = {
- 	.name =		"gpio",
--	.class_groups = gpio_class_groups,
-+	.class_groups =	gpio_class_groups,
- };
+ 	ret = vcap_del_rule(&test_vctrl, &test_netdev, id);
+ 	KUNIT_EXPECT_EQ(test, 0, ret);
++
++	vcap_free_rule(rule);
+ }
  
--
- /**
-  * gpiod_export - export a GPIO through sysfs
-  * @desc: GPIO to make available, already requested
+ static void vcap_api_set_rule_counter_test(struct kunit *test)
 -- 
-2.43.0
+2.34.1
 
 
