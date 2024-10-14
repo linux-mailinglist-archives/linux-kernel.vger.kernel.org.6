@@ -1,89 +1,103 @@
-Return-Path: <linux-kernel+bounces-363465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E19899C2D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:17:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E969599C2DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84F11F23D2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:17:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77668B21445
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A4514F12D;
-	Mon, 14 Oct 2024 08:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899A14D70E;
+	Mon, 14 Oct 2024 08:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A+XkYBCx"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kq14tKIv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B7414B965;
-	Mon, 14 Oct 2024 08:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DED149E17;
+	Mon, 14 Oct 2024 08:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728893848; cv=none; b=Vxhn+3HJVGIXUiof5p60SM9wYUdxEqno8n1db2b4+9LQffeLnGqsTFRBQpbj4BFpgrGoKf+rgoLP4DnBSohoIfGbqDGMu2Sb4DiE/sInTnbL9EhhrZtipvxSZX8h0bkKQHvg28j8EoQIBMdy/Dd5C5b5dPSwXGpaLavcBMMtqAM=
+	t=1728893909; cv=none; b=hM7/qJOiHihHbeXAZmGFwvWh8VOdmlhf8XIBCEVDtGw5PJ64AaNbsByQKzMh/oMa2IXJhAnXGYOM0jz0AmsovH41LUhrV9XYjwRWsJzM+SE4TGQp8JL5nv77fLkMthGdwLrkgA95YCx3nacFS+orXPAq5vvnzyMSwaqG+PdvxNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728893848; c=relaxed/simple;
-	bh=f13sm+4uAzEq1nYOwS44NWG9Bv7vNyYaIcfkBEEaAh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mdT1gdsBjEsUdmc1lxvW5gMPJwo8GqM9+aDgbpA/cEYpMHWG16q1HPID5Q3Usw4/OrWjzekJveYt2QuhYtKHrnoVJMq9+fOcHDED94jQN8lykUfkF/1UzyJK6OB36euIOiQdH4wVc47qzx/3w2sR130Ew3IYN/ZF2SXxyv4l9CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A+XkYBCx; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728893845;
-	bh=f13sm+4uAzEq1nYOwS44NWG9Bv7vNyYaIcfkBEEaAh8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A+XkYBCx33szv8j7fB/jBYhcRPUdNnN7j/bnNgbTpJu8toCYyTsSN1fRTYXL4VJZQ
-	 89LlFbZDdwlLiDMP8xmdLZyOwNorGH9hKzarNujhojYpta23Rsx5Aqz+SUquvpkinS
-	 iAxqRgzjjZcoBtwKoWP68L4nKydG9GZSNxDRx+z6NXMOmIZmqJvVLWHyXfopRGVUnv
-	 XCGoGmz2Z4N4U45tPsWhvDIqUCU0HVprNAX+W9VKxz91yp3xkZG84PBEtK3gaZSdsU
-	 FArlb9AWvrhm8WO9eRxEFimmjAtZYNK4hicFHY9qtg87upLOIoJor00O7j6Qdk6rl5
-	 VrSA49AN5Dsfg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6621F17E10A0;
-	Mon, 14 Oct 2024 10:17:24 +0200 (CEST)
-Message-ID: <ebc3b026-2ab5-4c78-9bb9-b8e7dc2c4731@collabora.com>
-Date: Mon, 14 Oct 2024 10:17:24 +0200
+	s=arc-20240116; t=1728893909; c=relaxed/simple;
+	bh=WSG6JKOrpz//yHgEJmqYwVlan1AwfYYChHInmnQGJWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ThHHEdyZsSEU+82KR4YX73LkUOmIuuORpeT0ELfYatviSlZHcT3dsB2y8P7Zopyjzd7I/zY92z19RzDfwTGiDgt8L0kETPuzjaCJSeLBusdHpD78iYmN7XOVvaREPa6vdBOzKYE1Vtmo642YjVsR7w1DnQqszfEbAYago6UMXHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kq14tKIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A04EC4CEC7;
+	Mon, 14 Oct 2024 08:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728893909;
+	bh=WSG6JKOrpz//yHgEJmqYwVlan1AwfYYChHInmnQGJWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kq14tKIvdRmlqZXLADeTGOPOPtBpwWU/YWA8URdTeOFBla9CtDT8grK/h1Yyv5Cja
+	 hDfBL1aVogMWZumJzicbQ2bHE9a7NWgnFTGUzAtOb8hXIHqampAsO/SjDYPIFiZvNV
+	 d+t7v/5p6+JTrCc8fMNIY28ISzY0lQCEtGSYc7C5M56HTvU5LjQGPffMdYMmHa59bv
+	 dd43wfIL3XvMJ7PQjqJzZUnYD4t6ptLIQLZlHTjHKqC5KEjbFCv4LskEX6TGB/q1Q/
+	 zqqvFhAoq9wi3SS8/7iBZXYEr7Ew2X8yXzMk183jqVxfUt3qudmGuNI8HFKYd9b0hT
+	 2Z37ZDBiRR/fA==
+Date: Mon, 14 Oct 2024 09:18:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next 1/1] net: phy: Refactor mediatek-ge-soc.c for
+ clarity and correctness
+Message-ID: <20241014081823.GL77519@kernel.org>
+References: <20241014040521.24949-1-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: mmc: mtk-sd: Add mt7988 SoC
-To: Frank Wunderlich <linux@fw-web.de>,
- Chaotian Jing <chaotian.jing@mediatek.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Wenbin Mei <wenbin.mei@mediatek.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, eladwf@gmail.com,
- ansuelsmth@gmail.com
-References: <20241012143826.7690-1-linux@fw-web.de>
- <20241012143826.7690-2-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241012143826.7690-2-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014040521.24949-1-SkyLake.Huang@mediatek.com>
 
-Il 12/10/24 16:38, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
+On Mon, Oct 14, 2024 at 12:05:21PM +0800, Sky Huang wrote:
+> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
 > 
-> Add binding definitions for mmc on MT7988 SoC.
+> This patch does the following clean-up:
+> 1. Fix spelling errors and rearrange variables with reverse
+>    Xmas tree order.
+> 2. Shrink mtk-ge-soc.c line wrapping to 80 characters.
+> 3. Propagate error code correctly in cal_cycle().
+> 4. Fix some functions with FIELD_PREP()/FIELD_GET().
+> 5. Remove unnecessary outer parens of supported_triggers var.
 > 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
+> ---
+> This patch is derived from Message ID:
+> 20241004102413.5838-9-SkyLake.Huang@mediatek.com
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Hi Sky,
 
+I think this patch is trying to do two many things (at least 5 are listed
+above). Please consider breaking this up into separate patches, perhaps
+one for each of the points above.
 
+Also, I think it would be best to drop the following changes unless you are
+touching those lines for some other reason [1] or are preparing to do so:
+
+* xmas tree
+* 80 character lines
+* parentheses updates
+
+[1] https://docs.kernel.org/process/maintainer-netdev.html#clean-up-patches
 
