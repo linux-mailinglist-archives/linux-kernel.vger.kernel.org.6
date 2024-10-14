@@ -1,307 +1,88 @@
-Return-Path: <linux-kernel+bounces-364395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D064A99D415
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:58:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E2D99D41A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC7C1F246F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:58:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7282B284A2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860C71AC885;
-	Mon, 14 Oct 2024 15:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rjCsFmYp"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090161ABEA5;
+	Mon, 14 Oct 2024 15:59:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830ED1AC884
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4955C1AB6F8
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728921452; cv=none; b=PiV8xkpOe7Fnee8JZ3wn/zF0kCYjndpHkW2GuzNCXm6WJwvP+g8UvdxtthJzNW6yKw6/3ztYjlpyOqaOs1JRyC1d9W5WVMhq09od5Tn8BAqi1A7MErkM1EFElXFXsPryrWe0r7vHZIz1FFcdGrvrfvzGMu7UvigfnjqmO4eyL4s=
+	t=1728921544; cv=none; b=LZ5U+3ACM2J84hEdBsXI0a4AgWkKVGdoeDyOWOZm8PGLe+/JHFvSlPlMzuBBgKKZwtheb1jZYToGZYeKPAExielLzf9ZNy5tUW2h2WIOlgB8Z2Db9Ij1H0Nt5RJ2u9LTauxtFj1HyuZK7Zjiohor8KWkPEjLg3kHqW5lCQePYLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728921452; c=relaxed/simple;
-	bh=iz21pBdE6/PrAsEcs5M2ooHdZ/I9dVVWFMpdoI6Oacs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cROjAYiizYKdWunEf3O1naJMTd9wMht/mhbx4953vCTwVJkP2+DP6XmSYKxhWjH2Ab2JnP8paecBePf19rvQaz28N6t3ad+wvwJvZJ6oBon5qVgjhmwVxBLVp7fToCxINv0dtzX5aDbCkNLKDIV8anYCFShxjJr03Q/vilITnic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rjCsFmYp; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so20535a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728921449; x=1729526249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m6UcN7D6a3Y3HeZfL95jmfp9Wnz9QqZMWgnGuOo2iKI=;
-        b=rjCsFmYprXtPatr1uyZAR/3ztftfC8w4/fhGfnQ99SwUU3H5xalnl47IkBz/RQXXTM
-         pf0fqwMFVponM3Uim5PC/ipyo4A45L95aIaVdvGdW//WTxwRfM5iUAkbmI96z+ZRWRjw
-         qatVAMAvuDHrsYpeobwNwn2Kos7kkMMfS8mFt9DDL3NEDaTaVvb9bKNRLtdGloyJZ7//
-         GfHZHDdLE69fjcQkQOxqi2EMj5VOs0Y63bObJo4MFctXXyg5EFVoxPg6Wxrua2T3Kps+
-         NXtL1mzhTVcmFe2aH2SDeQk4EbSISVbCNHN65FU2UoqvWM0EmRCmEHkhxlMhEa+wXdNV
-         LhLw==
+	s=arc-20240116; t=1728921544; c=relaxed/simple;
+	bh=yYjCjnKyWWEhTK49Z7J9QBWqaLavJtlsumymWwDexQc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=a8nBpn18nklKwqGe37urMBtb4N5Jij7HwmSJbhwBfqCEAShz6Q4a6I15bo/hubgl02k3MCj7V4aQgIgcm2HdDx0iRM26w8v5j8xN+Hd+H10LSrWiJGwmucsjGIHRvHlFH6obLANF7cMpydTnrrko2vXIRqbkjaE65FtETaUKViw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3ae775193so32079135ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:59:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728921449; x=1729526249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m6UcN7D6a3Y3HeZfL95jmfp9Wnz9QqZMWgnGuOo2iKI=;
-        b=Vw+ZZLGd7c74VY3gTHHwivvmJGBHlvNYlvgcISaJVJEB8SoGtbUVLhP40NOq+0A1X3
-         vXpWZk/NlpHR9N0KN43tLDMm41iNQw7DiA0IFUMPr6dkUQ5W8wB1dmIHbruz/RbHLifE
-         4y+Ao9flpo2woZp/rl9/ks1bN0onPjYj5jWCWmr3i7gSHVDC2BLMkpmgE8bc+aWsq92d
-         Hb3DGD/qrmzXrPwXR9bd58jZb0KB0VMmxoMA2cI4W2piGFoRVlj2Ms77+ZG4KcaAIQ3q
-         MS5I5RVOwBenHYw3rRlC7XzeZkjWJXroyuNFiW8xN2QCwQADxMkK7CB+EpqSmUb6A9Jm
-         gHLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/W9TLqMJ2J6nQU8veiEMVrfg8VQ835Z3x00T10ZpbVfQBlWmx5/WR8pb2d2yWM0CtVgOVh44+ie0VfXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuYXfD4Gjlou3UCS/UQN4/y49QESdoBladBJ9mz6nocoJ1YVa7
-	xxLcn6NtIDWBAre3dRU/3+lKRuwRjuBYjrkmluCrYQQoGe9U27y5dEtqICvRiNvGpBQ5kZpRNCS
-	m5Fq2r/3lvL9ToVBq+9B0poYb4dJM57rd7q9E
-X-Google-Smtp-Source: AGHT+IEGtZ74IajYTANuZOCN6og9uIMTu7SYAYG5PbPVPdswaALt2lAU33R1qlhZZ1AD7R94hwvEgAiDaN9IhA3SQdQ=
-X-Received: by 2002:a05:6402:3586:b0:5c5:c44d:484e with SMTP id
- 4fb4d7f45d1cf-5c95c5c820dmr391530a12.1.1728921448200; Mon, 14 Oct 2024
- 08:57:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728921542; x=1729526342;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2B+oHb7GsvncoATojUDsI07bjYeVlJ7EVCHHMvtLChg=;
+        b=xKxRQSAxedi7IcRZxwsiDPtOT9TA2Sd9OO4nhqhZAhexYh1SU1Q73CRH0o50fj3vpS
+         jzMtX26FqWmILQXc66WkXYK4eH5iIsxd1HoG/76r7qNSA+yRzp/OegYZWwRkMKIB358R
+         gT8cRT4CGhVaDPej5+e90YNOCas3V9+RNh3kaH/WfgMGcArQ+r7us0bg30KJLACThT1r
+         mig1oCbepQedsb0p05ImdAS40c5OQMkM6iVG+dGjMpY9WPwqqwmXDAUJFFXJv862clvf
+         ktVDusH5stc8wyz15NOBk8Px6logMdwegPbwDfK2t6X9hTSbqMW64hhQ4H9wURRYxiV3
+         X+YA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmaoszitqpXanSGD4sRMPR8EG4O9/53rpmwf+kKefi8rRnXjhZvpEMdlKgIRaZWg8b3prheWShhatCs/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM5lVjx8go0ckDVFDZ+9SF4GTi5/UBdKFPb3y/ckmMKulb/6OZ
+	3/vFmJ1fr/pWcjIJiT6sSSD9T2XMNPyHimbYmyVRXbKo44Rq8lMCjOWmbQBXyDhzEqiuxOJ4L6Z
+	spGsODi3OCyonOk5/7c8HlKcyLD13AqYO4mYMP8yu67uIhxzLo4u+ZDY=
+X-Google-Smtp-Source: AGHT+IEB1o9aRPaI5CycKDs1+XfU4SzSOYp4i6cVka7d2UQwciHA67ck89wKCzhAaiBHOR+qNO/WaHGYCOzckPXIK36LJoz2VZj+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727440966.git.lorenzo.stoakes@oracle.com>
- <a578ee9bb656234d3a19bf9e97c3012378d31a19.1727440966.git.lorenzo.stoakes@oracle.com>
- <CAG48ez3ursoL-f=mYpV79Do18XPPt+MPPHNUBv6uFE1GhpOwSA@mail.gmail.com> <868739d2-0869-462f-ac86-1a8d1dccb0a4@lucifer.local>
-In-Reply-To: <868739d2-0869-462f-ac86-1a8d1dccb0a4@lucifer.local>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 14 Oct 2024 17:56:50 +0200
-Message-ID: <CAG48ez3vqbqyWb4bLdpqSUnhwqGo2OQetecNhEGPdCGDr94nbQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/4] mm: madvise: implement lightweight guard page mechanism
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Muchun Song <muchun.song@linux.dev>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, Vlastimil Babka <vbabka@suze.cz>
+X-Received: by 2002:a05:6e02:2167:b0:3a3:983a:874f with SMTP id
+ e9e14a558f8ab-3a3bcdc6bfamr71677955ab.12.1728921542422; Mon, 14 Oct 2024
+ 08:59:02 -0700 (PDT)
+Date: Mon, 14 Oct 2024 08:59:02 -0700
+In-Reply-To: <CAOQ4uxgbKV9q9WVwrwv28ucAEUfh1V7T+gqe6euTm+b_+TcG3w@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670d3fc6.050a0220.4cbc0.004d.GAE@google.com>
+Subject: Re: [syzbot] [overlayfs?] general protection fault in ovl_real_file_path
+From: syzbot <syzbot+aaf95b6e8fc9d906d8a7@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 1:09=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> On Fri, Oct 11, 2024 at 08:11:36PM +0200, Jann Horn wrote:
-> > On Fri, Sep 27, 2024 at 2:51=E2=80=AFPM Lorenzo Stoakes <lorenzo.stoake=
-s@oracle.com> wrote:
-> > >                 return 0;
-> > >         default:
-> > >                 /* be safe, default to 1. list exceptions explicitly =
-*/
-> > [...]
-> > > +static long madvise_guard_poison(struct vm_area_struct *vma,
-> > > +                                struct vm_area_struct **prev,
-> > > +                                unsigned long start, unsigned long e=
-nd)
-> > > +{
-> > > +       long err;
-> > > +       bool retried =3D false;
-> > > +
-> > > +       *prev =3D vma;
-> > > +       if (!is_valid_guard_vma(vma, /* allow_locked =3D */false))
-> > > +               return -EINVAL;
-> > > +
-> > > +       /*
-> > > +        * Optimistically try to install the guard poison pages first=
-. If any
-> > > +        * non-guard pages are encountered, give up and zap the range=
- before
-> > > +        * trying again.
-> > > +        */
-> > > +       while (true) {
-> > > +               unsigned long num_installed =3D 0;
-> > > +
-> > > +               /* Returns < 0 on error, =3D=3D 0 if success, > 0 if =
-zap needed. */
-> > > +               err =3D walk_page_range_mm(vma->vm_mm, start, end,
-> > > +                                        &guard_poison_walk_ops,
-> > > +                                        &num_installed);
-> > > +               /*
-> > > +                * If we install poison markers, then the range is no=
- longer
-> > > +                * empty from a page table perspective and therefore =
-it's
-> > > +                * appropriate to have an anon_vma.
-> > > +                *
-> > > +                * This ensures that on fork, we copy page tables cor=
-rectly.
-> > > +                */
-> > > +               if (err >=3D 0 && num_installed > 0) {
-> > > +                       int err_anon =3D anon_vma_prepare(vma);
-> >
-> > I'd move this up, to before we create poison PTEs. There's no harm in
-> > attaching an anon_vma to the VMA even if the rest of the operation
-> > fails; and I think it would be weird to have error paths that don't
-> > attach an anon_vma even though they .
->
-> I think you didn't finish this sentence :)
+Hello,
 
-Oops...
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> I disagree, we might have absolutely no need to do it, and I'd rather onl=
-y
-> do so _if_ we have to.
+Reported-by: syzbot+aaf95b6e8fc9d906d8a7@syzkaller.appspotmail.com
+Tested-by: syzbot+aaf95b6e8fc9d906d8a7@syzkaller.appspotmail.com
 
-But there's no downside to erroring out after having installed an
-anon_vma, right?
+Tested on:
 
-> It feels like the logical spot to do it and, while the cases where it
-> wouldn't happen are ones where pages are already poisoned (the
-> vma->anon_vma =3D=3D NULL test will fail so basically a no-op) or error o=
-n page
-> walk.
+commit:         2d66a7ce ovl: convert ovl_real_fdget() callers to ovl_..
+git tree:       https://github.com/amir73il/linux ovl_real_file
+console output: https://syzkaller.appspot.com/x/log.txt?x=15a3385f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=aaf95b6e8fc9d906d8a7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-My understanding is that some of the MM code basically assumes that a
-VMA without an anon_vma and without userfault-WP can't contain any
-state that needs to be preserved; or something along those lines. As
-you pointed out, fork() is one such case (which maybe doesn't matter
-so much because it can't race with this operation).
-
-khugepaged also relies on this assumption in retract_page_tables(),
-though that function is not used on anonymous VMAs. If MADVISE_GUARD
-is extended to cover file VMAs in the future, then I think we could
-race with retract_page_tables() in a functionally relevant way even
-when MADVISE_GUARD succeeds: If khugepaged preempts us between the
-page walk and installing the anon_vma, retract_page_tables() could
-observe that we don't have an anon_vma yet and throw away a page table
-in which we just installed guard PTEs.
-
-Though I guess really that's not the main reason why I'm saying this;
-my main reason is that almost any other path that has to ensure an
-anon_vma is present does that part first (usually because the ordering
-matters and this way around is more or less the only possible
-ordering). So even if there are some specific reasons why you can do
-the ordering the other way around here, it kinda stands out to me as
-being weird...
-
-> > > +                       if (err_anon)
-> > > +                               err =3D err_anon;
-> > > +               }
-> > > +
-> > > +               if (err <=3D 0)
-> > > +                       return err;
-> > > +
-> > > +               if (!retried)
-> > > +                       /*
-> > > +                        * OK some of the range have non-guard pages =
-mapped, zap
-> > > +                        * them. This leaves existing guard pages in =
-place.
-> > > +                        */
-> > > +                       zap_page_range_single(vma, start, end - start=
-, NULL);
-> > > +               else
-> > > +                       /*
-> > > +                        * If we reach here, then there is a racing f=
-ault that
-> > > +                        * has populated the PTE after we zapped. Giv=
-e up and
-> > > +                        * let the user know to try again.
-> > > +                        */
-> > > +                       return -EAGAIN;
-> >
-> > Hmm, yeah, it would be nice if we could avoid telling userspace to
-> > loop on -EAGAIN but I guess we don't have any particularly good
-> > options here? Well, we could bail out with -EINTR if a (fatal?) signal
-> > is pending and otherwise keep looping... if we'd tell userspace "try
-> > again on -EAGAIN", we might as well do that in the kernel...
->
-> The problem is you could conceivably go on for quite some time, while
-> holding and contending a HIGHLY contended lock (mm->mmap_lock) so I'd
-> really rather let userspace take care of it.
-
-Hmm... so if the retry was handled in-kernel, you'd basically ideally
-have the retry happen all the way up in do_madvise(), where the mmap
-lock can be dropped and re-taken?
-
-> You could avoid this by having the walker be a _replace_ operation, that =
-is
-> - if we encounter an existing mapping, replace in-place with a poison
-> marker rather than install marker/zap.
->
-> However doing that would involve either completely abstracting such logic
-> from scratch (a significant task in itself) to avoid duplication which be
-> hugely off-topic for the patch set or worse, duplicating a whole bunch of
-> page walking logic once again.
-
-Mmh, yeah, you'd have to extract the locked part of zap_pte_range()
-and add your own copy of all the stuff that happens higher up for
-setting up TLB flushes and such... I see how that would be a massive
-pain and error-prone.
-
-> By being optimistic and simply having the user having to handle looping
-> which seems reasonable (again, it's weird if you're installing poison
-> markers and another thread could be racing you) we avoid all of that.
-
-I guess one case in which that could happen legitimately is if you
-race a MADV_POISON on the area 0x1ff000-0x200100 (first page is
-populated, second page is not, pmd entry corresponding to 0x200000 is
-clear) with a page fault at 0x200200? So you could have a scenario
-like:
-
-1. MADV_POISON starts walk_page_range()
-2. MADV_POISON sees non-zero, non-poison PTE at 0x1ff000, stops the walk
-3. MADV_POISON does zap_page_range_single()
-4. pagefault at 0x200200 happens and populates with a hugepage
-5. MADV_POISON enters walk_page_range()
-6. MADV_POISON splits the THP
-7. MADV_POISON sees a populated PTE
-
-> > > +               update_mmu_cache(walk->vma, addr, pte);
-> > > +       }
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +static const struct mm_walk_ops guard_unpoison_walk_ops =3D {
-> > > +       .pte_entry              =3D guard_unpoison_pte_entry,
-> > > +       .walk_lock              =3D PGWALK_RDLOCK,
-> > > +};
-> >
-> > It is a _little_ weird that unpoisoning creates page tables when they
-> > don't already exist, which will also prevent creating THP entries on
-> > fault in such areas afterwards... but I guess it doesn't really matter
-> > given that poisoning has that effect, too, and you probably usually
-> > won't call MADV_GUARD_UNPOISON on an area that hasn't been poisoned
-> > before... so I guess this is not an actionable comment.
->
-> It doesn't? There's no .install_pte so if an entries are non-present we
-> ignore.
-
-Ah, right, of course. Nevermind.
-
-> HOWEVER, we do split THP. I don't think there's any way around it unless =
-we
-> extended the page walker to handle this more gracefully (pmd level being
-> able to hint that we shouldn't do that or something), but that's really o=
-ut
-> of scope here.
-
-I think the `walk->action =3D=3D ACTION_CONTINUE` check in
-walk_pmd_range() would let you do that, see wp_clean_pmd_entry() for
-an example. But yeah I guess that might just be unnecessary
-complexity.
-
-> The idea is that a caller can lazily call MADV_GUARD_UNPOISON on a range
-> knowing things stay as they were, I guess we can add to the manpage a not=
-e
-> that this will split THP?
-
-Yeah, might make sense...
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
