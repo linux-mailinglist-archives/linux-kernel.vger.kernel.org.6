@@ -1,355 +1,151 @@
-Return-Path: <linux-kernel+bounces-363655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B657F99C54A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 011FD99C551
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F311C22727
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28D611C227BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BFE15DBD5;
-	Mon, 14 Oct 2024 09:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FB318A6A0;
+	Mon, 14 Oct 2024 09:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JxdbQLyU"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2082.outbound.protection.outlook.com [40.107.244.82])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dRq9dTB+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E58158558;
-	Mon, 14 Oct 2024 09:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897049; cv=fail; b=Y0gy1k/WEGT5Q4+dVS1eFkMa7iSytq+6SN79IITSOq0GQIeUkmbIRb0pNczz1AeNKbi15WSLSNGv5tbg0kH2dKcnz2TtjYeARbFWR8VbKlt++QyEIDeqeucfjfv3pSXqn+YaOOp43euoHcp+rXiOw+qwm3IFKKcqjc/VRREO5Mg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897049; c=relaxed/simple;
-	bh=twhl2XMNEkhSOfSDhQvZFWsawB3SlVqeBEmXV9hmAIs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gLeuvRs7/DeRc6Agti4YB6/Ev9TCgCG3mTXgPOKjGj26mEu+Nphfns7bqJRgBOx8c1YnWWpNS3AzQOtyTUIiZuVISqg/XMHuuygV9HDJG/faaTF2l4cTC4IW4tWi1PXIKGZdE8niSY83kSSWYmL/dNQnYKJq8WgKtSC8dJmu/x0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JxdbQLyU; arc=fail smtp.client-ip=40.107.244.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hM82Ifjl+xMl+7kBQgr6FdUNflTifFiUqB8RFqGxgYI7Qy24xw82iPGGU4pNWS2TW/8dQswMm8jz3cyyagDqImtdn2Nyxmh2HVgids3B5voDs3iPH9CeQGX3mKqldEp0qB5fQWbeUiOpvaqsLs1c3eN+M9H4k5mufhR67evf/+QauWFGv6kMx4pc/sH3vEStSsGnU5S/CHMIN6mLKTu7Uo6w4pIAqv/ZIF9AjgiCd8WAC2bSBAEasw3HV9ugoO+MjNBE8nfx7znmhPUrUFYzclGYq+IpMMeVx6Uj3hjHwO+oQdIaIRQp0fAgj0r+De5KS6ZjdSDgpRVEc+DpAq/x9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=leQXKapewwnrBlLQKiDkdqhzZFLKayJESm890HxHiwI=;
- b=Vptw2+RjOUdu0323G6flCnMs1Aa7B72r6uN71RVUIUwveHnOsvH41mUYnUg+NaH4Z53kljQgQg9TltQ816WgoyCYdgbszlOg/YXfgkK9OkpKCaHG1/f+f8K5knmLeRvXqTmYbBP0tNtezt/58i97A5qV/ovJgyI/nwriEa85sgP1UZMDQ1aAYavmhDNJjCFSoexDFqx8dTfSslnr8XkA3nBA7oxAF4rfiTGb+yegeNFjPgjQn8j9wEPDUo0IInoo5NwM6mtFYnMv+tlQ5o3t/NqBwppylMzKCAoo82WLnErHdph/s74BbadWZRtQeESI0PMrzH4SvC+WjcTtLYALIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=leQXKapewwnrBlLQKiDkdqhzZFLKayJESm890HxHiwI=;
- b=JxdbQLyUanHgfS7bq7siKd+Lb1XZBR3OYwJVDQFTvvi6xguRW2/3t3JHBMGhRcXun8S2nDSsm+9pQRjvJUbqZCWlcICG+oAOe/CapnOPItPwqZDDMWoxzubh+yXfFh7U5a4HYluu8earyhiaLlDwA/3mu0cXEE0Nv1rPdRr3+6I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
- SN7PR12MB7882.namprd12.prod.outlook.com (2603:10b6:806:348::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
- 2024 09:10:44 +0000
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627%3]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
- 09:10:44 +0000
-Message-ID: <6853d494-0262-4a6a-b538-338695677f57@amd.com>
-Date: Mon, 14 Oct 2024 14:40:35 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH rcu 03/12] srcu: Renaming in preparation for additional
- reader flavor
-Content-Language: en-US
-To: "Paul E. McKenney" <paulmck@kernel.org>, frederic@kernel.org,
- rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
- <20241009180719.778285-3-paulmck@kernel.org>
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-In-Reply-To: <20241009180719.778285-3-paulmck@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0158.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:c8::11) To DS0PR12MB6608.namprd12.prod.outlook.com
- (2603:10b6:8:d0::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581721586DB;
+	Mon, 14 Oct 2024 09:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728897064; cv=none; b=VecljIkqK+94XRUL+2WMLLMiCr1fgjHL2HmkwnThDVrVQx/qblRbW+vK+ptkTE0EL2qLLJ2s9aXG8ahsOqOxspkY8o3gdqns9JAD8kN5hhLZI0+kpDhhZFMRJl/eUXNiTSN6joKtEgeP96mA3PDlzYJtLTb9FLh2v81IIopnCLs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728897064; c=relaxed/simple;
+	bh=IWMFo0CUkbGGCkiXoO60kGmPwwahy1ZsLnaAq0JE7mg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRVJ/mCyst1X1kdCuRqnAGYQaukigM4Deu5KlQZWzKiXEFJCy6Ma6yr2QtsnR/AKOXDoBwfnVBPFZ6iTXV7iRbSu2ClvGa5FfMAJEC5u3yrqZXhvVEc8S4MiYtBN8GZW5eMU2hd0C0B6mjWw4sWG4nD1d2OgT1Iwf+DlnzhSLJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dRq9dTB+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E7pSBB000965;
+	Mon, 14 Oct 2024 09:10:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=abMqXhXzs5egyLkdSjXUaqJTQsj
+	P1mdRKGJi5z9WjHE=; b=dRq9dTB+NXYi4F+AyOByzeA6K2jMLlpzNboaWRY5KEr
+	R2MKm43/WdDhqs85o59B7rCt8A+vnhSdvmugUEkt4qKFoCAu8qoEnu5C9YFeq4aj
+	PluECwDMEqYR3HlyfDOQ5xBY3eL56si1GyN9fj/olVCqvCaTLBeagJ5HNkbn2Ml1
+	JTjtmG7M5tfi5PGCrywu6dvDkmhOmLC5XsPpmB7uzVr0/DJmktGWXhkCqgA+w7wm
+	CIjCncnYM3N4CAEGgHpEYl6w2PSm45y7yg52SX/4yda+TDxjn0zIPsXUXgDKQpzf
+	qaZPznJK3Wg6lWLYwFSZ0pHh8hTbvNXOmCJ9LZidnvw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 428y8urbwy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 09:10:54 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49E9ArDs026745;
+	Mon, 14 Oct 2024 09:10:53 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 428y8urbwq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 09:10:53 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49E7nngE001940;
+	Mon, 14 Oct 2024 09:10:52 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emdkq3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 09:10:52 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49E9AoBm20578790
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 09:10:50 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 29C4220040;
+	Mon, 14 Oct 2024 09:10:50 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BA11320043;
+	Mon, 14 Oct 2024 09:10:48 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Oct 2024 09:10:48 +0000 (GMT)
+Date: Mon, 14 Oct 2024 14:40:45 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        linux-kernel@vger.kernel.org, dchinner@redhat.com,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
+ extsize
+Message-ID: <ZwzgFTX7H35+6S9U@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
+ <20241011163830.GX21853@frogsfrogsfrogs>
+ <20241011164057.GY21853@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|SN7PR12MB7882:EE_
-X-MS-Office365-Filtering-Correlation-Id: adcbdcb4-9ee9-41e1-02e0-08dcec30157c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QS80SisranBIMkt1a3RTNGpSK0Z1UXlYTktORTZrbmhFaEhabWdYRzRWdkZu?=
- =?utf-8?B?VFRFeElCQ3FxdEpzWklaSGxNYm1PdE5QTldlVitCVHNjdlRXZW5uMXFwZlNG?=
- =?utf-8?B?WDFZOC8vRzUvN0VGMlk1UEwxUDB0KzQ3cmlJcWV5RDhCQ3pYbEpBYUdFNVhS?=
- =?utf-8?B?Z2NJYVF6emxUTDBsU3IxZDR6M1B3ejdqTFFjU2ozb1gvQlRsRWwvRDZpWWc4?=
- =?utf-8?B?bFVGNSs3aXdvQXV3ekVQa1lVY0ZRTmQrQysrYUJhRDAxd3NFQWFIdkQ3cldD?=
- =?utf-8?B?aGpSaTlBbHhOSmdkMDhSOU1iSzlCTm15cDM5UGEvZFRMeWo5NXhPK0RxdTVK?=
- =?utf-8?B?cm14bTJWdTl2MnpSbEpLTWZUZ2hCbVZCR2c0N3YzbjlpZU5XT3B3UWIyTHZW?=
- =?utf-8?B?M2JpL1dBVDBrUzZUQXIvTkZCMTZpVUxaSVp0Um5vSzFENGx5Q1h5a0VvYmln?=
- =?utf-8?B?bW56U0RDc3pMTlZQY2hhOTJBemFJelJhWlVsMGhiRVdUbElDdHdNeGFZakxV?=
- =?utf-8?B?V0hUUU5sUDM1QklJNWpFem1SSkRML0k5eVRmTU11T0VMcDNVS0NIb3VUQnQr?=
- =?utf-8?B?ZkExeWxyQUpYRzBRR1F1MmxKMjhpNVlMSTI4VVBTc1RlUENnRk9TMldUUFdH?=
- =?utf-8?B?SENoUXF0RTdFMjE2NHhFTWd4a1FpZ1FYYXh6Q0VQd0NqejZJNlpYbHB0MVVk?=
- =?utf-8?B?WWFsQ1UwTWdHRzRISUJ4QUcrNjNpSEk5eWhRYksyS1QyQS9mMGNCVGl3UVpk?=
- =?utf-8?B?OG03Z1NLeHFWTzlTOTBrYUpia0ZRYys2bVMxdzNPTHBZcWVlR2p4N0s2dklH?=
- =?utf-8?B?ZExYMGUwbGYvbUU5UEo0dlJjb09QbURSZzdOME9CN05nMEFNa245T1k1d2Zp?=
- =?utf-8?B?S1hpMG9RQWtHekxDWi82VjAvek5Vak9OdnBZSlF3UkZSM0QxOW1abHByaE5n?=
- =?utf-8?B?RGY5RUViZU9PYk90K1ZvckQ1RElpclRxbWNya2dudm8rYkNUSDNtRHVDWFVk?=
- =?utf-8?B?MjN4UnkxMkwyZmNlRGd0L25TR3hPd2lFcXpoL3FPR3dDb2pJVlRVUmM2WWky?=
- =?utf-8?B?dE16L21nbklVYU5Pb2VhamhBLy9Lajl4ZE5OVUtTTUJYSjZaUFNwOXB3WXpU?=
- =?utf-8?B?cDluYTdiTVBqVWFNVGZWVkFjNk5wSCtJZU9KeGNGZnlDTEJJNVVtYmRHeWdH?=
- =?utf-8?B?QVp3VU90VGRIUzJQZ1JLcGh3Wlk1UjBjRks5OU1lWGgzWXpUcjZjS3BqODB6?=
- =?utf-8?B?Z1VKQkE0OWlscnZRSWJzMkQycjFyTEthRnFKZmRWNmhOQWh3L1NZVjlYUWNi?=
- =?utf-8?B?enBjd2hPQTJncDZNRUs2ZDI3NzNNeFYvMkkwY0F5TWEweDVHSERpdkEvTncx?=
- =?utf-8?B?NFg2SnhlTDRSK25vNEo2bVFVSEt5cVRjU3lIMzBRLzBIK1BVRHR4YTdrcGdZ?=
- =?utf-8?B?cVV0RzFHMDQ5c2QzY0x2dllZOFhsNTRuRjUrMnRDSjZNRFMwcWI4N2hJQllr?=
- =?utf-8?B?bmNxV0Y2WGZESEMvemI3V0Z4aktxdlhJM3VTcEJXeGFHUHAvbzNPR2pqSkN4?=
- =?utf-8?B?L2pESVh1SU5WWVIzRDk1RHpTenErNkdjaWJPeWRxa2pVaXJhQUFtMEZETkg4?=
- =?utf-8?B?aEIxNTVmNjB5c2JoMCtKQTRGTVRTZE1oTWFqWk9OQlQvaWxYZ3lGZXNlMC9Z?=
- =?utf-8?B?b3dsYXNRVjZldDJBSDRGclJrMkZ2UUtTN0o0STk2cEZPUWVKSmg4UVNRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UFdWS0RWZzRpZEVtdVJjSUhiZmZ0S3NRS09YQ1hXaWJyZU1pd3VpWDA4MDk4?=
- =?utf-8?B?akZTUXFjcDVibGtRZFVVOEs3c3Q4d08rMUNRNEhwcDBFL1RZdk1YTmtTNlhS?=
- =?utf-8?B?bkd6eFg0R3lvMUZ1eFp5dUhkNTVrTWpLekVUOGxpRWZ3WHM3Zko4MXMrY1My?=
- =?utf-8?B?dHJwUFAxSFZUcTlYbkRiQzVHbDdBTzBmMUo1VkdveCszL3hSYUw4akN1Y3Qx?=
- =?utf-8?B?cTNXeEpXSnVFTEozdkJld0w4R2x6UHJ0b01rV1lUZWE2Wm1vdnJYRGFQQlVl?=
- =?utf-8?B?YlJDbCtoTFkzZ2dHMkNKbFNSUlBRaU0rOVRxU0hOSUFEZE5YS2dnMzQ5SEhy?=
- =?utf-8?B?VjFwVm9scm9pYm9CRk5zVmMzbFBpWmw2VHEvNWtrb2hWUzEwTGo3eWNlc0pm?=
- =?utf-8?B?NUY3SFljRFlIVWJxKzZTNTlKdWM4VjJEVVFVYjhQNDNjcjFvdUpUM3lXRCtl?=
- =?utf-8?B?bUlSWU5TUFJNcWMySW5CWXRhNHpLWFZqKzkwRXgvbTkwRTZaZFFwbVFNVDRz?=
- =?utf-8?B?RldCWjgrUDBiVEF0dEU3aDgrbUx3WnpDY3dZUlM5enZUSVo3Mm1kNTFRYVpE?=
- =?utf-8?B?YTJrVlVFMXFsc2tab2dJNFF1NTlzcERkUEEydUplYWZLeWV4M3o1U1lZYXVq?=
- =?utf-8?B?UHFBcG80WUhhYkNoTUxlSW1QVXRxaHFrSExZdHU4amt6bUwraWUwMitUa2Yy?=
- =?utf-8?B?TmdlMGJhcGFFK2ZnSUtVbjNRQlVSOWtjYlZ5SWo1eUJ6RTJEa0I3dzljZ2ZD?=
- =?utf-8?B?T2M2ZDVjaW91Ui9ISUJVdkxSOS9rWHRTRGloemRFakhkRWRlbE9PWTRVdkl0?=
- =?utf-8?B?L0h2YWoyMUNTSy9yNkRWa0ZOakJkSi9VUjZ3bjk5Q2tTOWVVNU5NbUlvT2VB?=
- =?utf-8?B?VFdzRHlMei9rVmQ1WEZGWStzcWpQSTVaZERqK3IybWVBdy81VmxYeENDOTBC?=
- =?utf-8?B?QUtwTm9CL2FxY2IxOHU4T3I5ckZxbHVJNHpLcUJDZ1I1WjFROTN3SWQ5MCtH?=
- =?utf-8?B?bG1zVkZwMXBHalJvZ1NPQ0gvWFJXQ1IvcEVqbWRYbnM4cU9ac1FFQUhUUEFL?=
- =?utf-8?B?d0dWZk10cTVBN1hhWnJtalZsdjZJQUo0SVlkSjY1MXhJWWhDTkx0Q2R6RGhI?=
- =?utf-8?B?WXJITTlydFBrWFg0N3hhY1ozTGVHT1pVcGo5WHlqd1U3KzM2M0NlSVIrNk9h?=
- =?utf-8?B?VEh1YUQwMVRVU1EzenNxNlhYSnpXNnVCUzdCVXBwbjAvQ1RiYWptUTYxeTFM?=
- =?utf-8?B?Q09aNTdEWFBvb0FPU0lFNDBBWWxpZkhtOEZ3bGUySVFiV3gzVEllbnl5NnY5?=
- =?utf-8?B?UVVYcE81cVdrMTV5bmpFUmJodEpOTjQwcXVEN0hCYWFDWG50U2hqckdQa0k4?=
- =?utf-8?B?WjNBZW5mQ3I0bmwySGt1RWxDK2xIQ3Y4YW1zaXdxWk5KYmFSWGcvNWY0U3oy?=
- =?utf-8?B?OGo4cFFzbXZyZU5Tb1R4VG5QSXJVZVdRbHpPd3NQTFJuQkJsaWVzSzJsckgz?=
- =?utf-8?B?Q3gxVzR3eWlBTGp0c3h2dTgrUU9FcDA2S0IyLzc5ajJUbE4zOHZobjdUdUVh?=
- =?utf-8?B?UWNwV2NkNHlXU0NSOGE3WmhJakdleXlsb1VMaDFCQm5wYzhJTy82dUlGb29j?=
- =?utf-8?B?V1VWemhQYld4N0ZOMzM3VkxCZlY5VVFnRExpOE52VkgzRzFSSGNiUFZCWGhP?=
- =?utf-8?B?ZGx0Q3VnRHN4YlAzU3ZTUGZ6bEtXVll6WExveEwvWWFTK2w5Nk05VkVHM2R0?=
- =?utf-8?B?Wllod0dOcW9mRU1UazFxSzkrS1NxcTUwZ3JCaHpKYzV4V1VwbVB6c3N6dnAz?=
- =?utf-8?B?YmhBYnkrbmUrQjdCR2o2eHFDTUNaTUpWREF3TkVxNktXSEZERGx4Y0FVaXg0?=
- =?utf-8?B?dUZCeERlVnhyNlJlYTJkN0RWQ1ZxTEIzOWZtcXF6Wm51RXB2MTlINU85cm51?=
- =?utf-8?B?Ym1FamlWVGhnN0U1dk1ud0xXVlVwb3QveDdDNnhFR050VGlacER6TDFzMHJi?=
- =?utf-8?B?WEIxRU1ieGxxTTBKbG0wakNFNkx1TWo2Vm5uNnhaZHk1TDlxMDFiZ1U5Ylhs?=
- =?utf-8?B?SDFwZ25vRCtuazBwck53VVBaV2cweWFMV3hTeFBYM003clJFcDB5MWJNL0U0?=
- =?utf-8?Q?ZM9U0azGkpywOV9imFbCjxQpS?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: adcbdcb4-9ee9-41e1-02e0-08dcec30157c
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 09:10:44.6167
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: c/BXsiA0vj8Nm4QsqsVdmXzJHmYEYejkNOFNbmeYFhZdvWa7j4e/8yIgXxkuHR5klh+dz/U1Zmqfp+4tO8mPrQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7882
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011164057.GY21853@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EmYe1RyLYM-D4SUWCeCAZxXOGPiTym5b
+X-Proofpoint-ORIG-GUID: 5V3K5SOs2D1rE9yxXk_rTSVQuUr8NpAC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_08,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=487
+ lowpriorityscore=0 adultscore=0 bulkscore=0 impostorscore=0 spamscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140066
 
-On 10/9/2024 11:37 PM, Paul E. McKenney wrote:
-> Currently, there are only two flavors of readers, normal and NMI-safe.
-> A number of fields, functions, and types reflect this restriction.
-> This renaming-only commit prepares for the addition of light-weight
-> (as in memory-barrier-free) readers.  OK, OK, there is also a drive-by
-> white-space fixeup!
+On Fri, Oct 11, 2024 at 09:40:57AM -0700, Darrick J. Wong wrote:
+> On Fri, Oct 11, 2024 at 09:38:30AM -0700, Darrick J. Wong wrote:
+> > On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
+> > > Extsize is allowed to be set on files with no data in it. For this,
+> > > we were checking if the files have extents but missed to check if
+> > > delayed extents were present. This patch adds that check.
+> > > 
+> > > While we are at it, also refactor this check into a helper since
+> > > its used in some other places as well like xfs_inactive() or
+> > > xfs_ioctl_setattr_xflags()
+> > > 
+> > > **Without the patch (SUCCEEDS)**
+> > > 
+> > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > > 
+> > > wrote 1024/1024 bytes at offset 0
+> > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > > 
+> > > **With the patch (FAILS as expected)**
+> > > 
+> > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > > 
+> > > wrote 1024/1024 bytes at offset 0
+> > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > > xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
+> > > 
+> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > 
+> > Looks good now,
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 > 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: <bpf@vger.kernel.org>
-> ---
->  include/linux/srcu.h     | 21 ++++++++++-----------
->  include/linux/srcutree.h |  2 +-
->  kernel/rcu/srcutree.c    | 22 +++++++++++-----------
->  3 files changed, 22 insertions(+), 23 deletions(-)
-> 
-> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> index 835bbb2d1f88a..06728ef6f32a4 100644
-> --- a/include/linux/srcu.h
-> +++ b/include/linux/srcu.h
-> @@ -181,10 +181,9 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
->  #define SRCU_NMI_SAFE		0x2
->  
->  #if defined(CONFIG_PROVE_RCU) && defined(CONFIG_TREE_SRCU)
-> -void srcu_check_nmi_safety(struct srcu_struct *ssp, bool nmi_safe);
-> +void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
->  #else
-> -static inline void srcu_check_nmi_safety(struct srcu_struct *ssp,
-> -					 bool nmi_safe) { }
-> +static inline void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor) { }
->  #endif
->  
->  
-> @@ -245,7 +244,7 @@ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
->  {
->  	int retval;
->  
-> -	srcu_check_nmi_safety(ssp, false);
-> +	srcu_check_read_flavor(ssp, false);
+> That said, could you add a fixes tag for the xfs_ioctl_setattr_*
+> changes, please?
 
-As srcu_check_read_flavor() takes an "int" now, passing a macro for the type of reader would
-be better here?
+Hi Darrick,
 
+Sure I'll send a new version. Thanks for the review!
 
->  	retval = __srcu_read_lock(ssp);
->  	srcu_lock_acquire(&ssp->dep_map);
->  	return retval;
-> @@ -262,7 +261,7 @@ static inline int srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires(ssp
->  {
->  	int retval;
->  
-> -	srcu_check_nmi_safety(ssp, true);
-> +	srcu_check_read_flavor(ssp, true);
->  	retval = __srcu_read_lock_nmisafe(ssp);
->  	rcu_try_lock_acquire(&ssp->dep_map);
->  	return retval;
-> @@ -274,7 +273,7 @@ srcu_read_lock_notrace(struct srcu_struct *ssp) __acquires(ssp)
->  {
->  	int retval;
->  
-> -	srcu_check_nmi_safety(ssp, false);
-> +	srcu_check_read_flavor(ssp, false);
->  	retval = __srcu_read_lock(ssp);
->  	return retval;
->  }
-> @@ -303,7 +302,7 @@ srcu_read_lock_notrace(struct srcu_struct *ssp) __acquires(ssp)
->  static inline int srcu_down_read(struct srcu_struct *ssp) __acquires(ssp)
->  {
->  	WARN_ON_ONCE(in_nmi());
-> -	srcu_check_nmi_safety(ssp, false);
-> +	srcu_check_read_flavor(ssp, false);
->  	return __srcu_read_lock(ssp);
->  }
->  
-> @@ -318,7 +317,7 @@ static inline void srcu_read_unlock(struct srcu_struct *ssp, int idx)
->  	__releases(ssp)
->  {
->  	WARN_ON_ONCE(idx & ~0x1);
-> -	srcu_check_nmi_safety(ssp, false);
-> +	srcu_check_read_flavor(ssp, false);
->  	srcu_lock_release(&ssp->dep_map);
->  	__srcu_read_unlock(ssp, idx);
->  }
-> @@ -334,7 +333,7 @@ static inline void srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
->  	__releases(ssp)
->  {
->  	WARN_ON_ONCE(idx & ~0x1);
-> -	srcu_check_nmi_safety(ssp, true);
-> +	srcu_check_read_flavor(ssp, true);
->  	rcu_lock_release(&ssp->dep_map);
->  	__srcu_read_unlock_nmisafe(ssp, idx);
->  }
-> @@ -343,7 +342,7 @@ static inline void srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
->  static inline notrace void
->  srcu_read_unlock_notrace(struct srcu_struct *ssp, int idx) __releases(ssp)
->  {
-> -	srcu_check_nmi_safety(ssp, false);
-> +	srcu_check_read_flavor(ssp, false);
->  	__srcu_read_unlock(ssp, idx);
->  }
->  
-> @@ -360,7 +359,7 @@ static inline void srcu_up_read(struct srcu_struct *ssp, int idx)
->  {
->  	WARN_ON_ONCE(idx & ~0x1);
->  	WARN_ON_ONCE(in_nmi());
-> -	srcu_check_nmi_safety(ssp, false);
-> +	srcu_check_read_flavor(ssp, false);
->  	__srcu_read_unlock(ssp, idx);
->  }
->  
-> diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> index ed57598394de3..ab7d8d215b84b 100644
-> --- a/include/linux/srcutree.h
-> +++ b/include/linux/srcutree.h
-> @@ -25,7 +25,7 @@ struct srcu_data {
->  	/* Read-side state. */
->  	atomic_long_t srcu_lock_count[2];	/* Locks per CPU. */
->  	atomic_long_t srcu_unlock_count[2];	/* Unlocks per CPU. */
-> -	int srcu_nmi_safety;			/* NMI-safe srcu_struct structure? */
-> +	int srcu_reader_flavor;			/* Reader flavor for srcu_struct structure? */
-
-This is a mask for the reader flavor, so s/srcu_reader_flavor/srcu_reader_flavor_mask ?
-
-
-- Neeraj
-
->  
->  	/* Update-side state. */
->  	spinlock_t __private lock ____cacheline_internodealigned_in_smp;
-> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-> index e29c6cbffbcb0..18f2eae5e14bd 100644
-> --- a/kernel/rcu/srcutree.c
-> +++ b/kernel/rcu/srcutree.c
-> @@ -460,7 +460,7 @@ static unsigned long srcu_readers_unlock_idx(struct srcu_struct *ssp, int idx)
->  
->  		sum += atomic_long_read(&cpuc->srcu_unlock_count[idx]);
->  		if (IS_ENABLED(CONFIG_PROVE_RCU))
-> -			mask = mask | READ_ONCE(cpuc->srcu_nmi_safety);
-> +			mask = mask | READ_ONCE(cpuc->srcu_reader_flavor);
->  	}
->  	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask >> 1)),
->  		  "Mixed NMI-safe readers for srcu_struct at %ps.\n", ssp);
-> @@ -699,25 +699,25 @@ EXPORT_SYMBOL_GPL(cleanup_srcu_struct);
->  
->  #ifdef CONFIG_PROVE_RCU
->  /*
-> - * Check for consistent NMI safety.
-> + * Check for consistent reader flavor.
->   */
-> -void srcu_check_nmi_safety(struct srcu_struct *ssp, bool nmi_safe)
-> +void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor)
->  {
-> -	int nmi_safe_mask = 1 << nmi_safe;
-> -	int old_nmi_safe_mask;
-> +	int reader_flavor_mask = 1 << read_flavor;
-> +	int old_reader_flavor_mask;
->  	struct srcu_data *sdp;
->  
->  	/* NMI-unsafe use in NMI is a bad sign */
-> -	WARN_ON_ONCE(!nmi_safe && in_nmi());
-> +	WARN_ON_ONCE(!read_flavor && in_nmi());
->  	sdp = raw_cpu_ptr(ssp->sda);
-> -	old_nmi_safe_mask = READ_ONCE(sdp->srcu_nmi_safety);
-> -	if (!old_nmi_safe_mask) {
-> -		WRITE_ONCE(sdp->srcu_nmi_safety, nmi_safe_mask);
-> +	old_reader_flavor_mask = READ_ONCE(sdp->srcu_reader_flavor);
-> +	if (!old_reader_flavor_mask) {
-> +		WRITE_ONCE(sdp->srcu_reader_flavor, reader_flavor_mask);
->  		return;
->  	}
-> -	WARN_ONCE(old_nmi_safe_mask != nmi_safe_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_nmi_safe_mask, nmi_safe_mask);
-> +	WARN_ONCE(old_reader_flavor_mask != reader_flavor_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_reader_flavor_mask, reader_flavor_mask);
->  }
-> -EXPORT_SYMBOL_GPL(srcu_check_nmi_safety);
-> +EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
->  #endif /* CONFIG_PROVE_RCU */
->  
->  /*
-
+Regards,
+ojaswin
 
