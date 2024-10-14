@@ -1,47 +1,95 @@
-Return-Path: <linux-kernel+bounces-363801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB1799C744
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A6D99C745
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9041F23872
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:37:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7661F234FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A23817C990;
-	Mon, 14 Oct 2024 10:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE8A172BA9;
+	Mon, 14 Oct 2024 10:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxRP8Iyv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EBWhCM7R";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kGmrN/s1";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EBWhCM7R";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kGmrN/s1"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E2F170A2E;
-	Mon, 14 Oct 2024 10:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20143170A2E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728902248; cv=none; b=IRGJ/eHloqgyhX3Pa3wWp9pepeueUXPEo6ST2g0GInMKnAUGI3G9ix0M7W1+ixemEXzJGR3SxzBFmqpUyzU8UlH4rwlAqaBp5jOP7UzHaRb0FXXtQrncRDhZuzXBiXO5sH0CwLU8whCjhONoa0HMCOg3motOS6K8L6SgkrHErHo=
+	t=1728902269; cv=none; b=a2LRXwzdEtOYBm7WKUrviKzHEaJC+Hzf60HQjTHpJMdp191DZFcP0knUq4BwIjh8NmW2LnPihWugFKhve36cSBTDFvxSFzp0KIbDzESZFebA7nkQH8vIDbjc616P4JUfGsK9Us0kUxf8ftKN949YQXoD7/MauXDidKzu3rmo3x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728902248; c=relaxed/simple;
-	bh=2S8MdpHGWCkhqffBqigt/hdFiAI0DAJfTBodnIv2uxU=;
+	s=arc-20240116; t=1728902269; c=relaxed/simple;
+	bh=kFzr98EQPCiVGp1+/iEsZMSzGfHz/DLqzDhGI6jJr6E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NUkGr/xLDtk0HGf/byteC7rW8Ufi2Oq18Y49/IUWY6bufPO2bd+i8V15qkJDapnIlOWgmxhoYMU0sGqQDq8UV8VvzX6l0VJ380PIWA/VZU81ks87/eDagPnIz/OnG4by5z2ox65aTeqiPBEdpceTXRHwPAlxJQGKy7SHyYBi3Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxRP8Iyv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A84C4CEC3;
-	Mon, 14 Oct 2024 10:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728902246;
-	bh=2S8MdpHGWCkhqffBqigt/hdFiAI0DAJfTBodnIv2uxU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pxRP8Iyv9YM5zwk0QiU4NQ0m8Sbkj2qL5WdAdI9LBVRCx9+5vYPCNFKwrRkOmlUaI
-	 3j1kxQ6LMTy6tJgkkUXQ0wldfhISA5gVK3IyftG3Z+yMI15refNOixEB4POa7aHr7s
-	 H8UQIN4RlBeHWkDEeKtGWaLAiFKMornnR5tEBuZipLAMkpPY7KFuSSejMyHLx9dk43
-	 JK7TkRLlms7tC4XooddEaG6hyBr7U/fY3GwLqHuyKyCVZVLz8Z89n8zMcvBjifiO8y
-	 b5kCxitT07UoY0cbC6K5ckREMU9nKHdAzMNlu9Fa2p4zrPJhBYgir1mvpw9iDxv8Hk
-	 56jjpY+6WqC5A==
-Message-ID: <9525ac5c-5cae-4e4f-baf5-f81e4ffd4dbd@kernel.org>
-Date: Mon, 14 Oct 2024 12:37:12 +0200
+	 In-Reply-To:Content-Type; b=p2ajrcs3Uy1uVqmrQM85SVM+19dGJWaeZZo6iyW0O64dxk+ll5N+jsoamJier7/a2j8642DBT9Kzyv/E/QSczzSjdYdLyObnRSVV0NnOrldv4qKZcPCipVvCu32yiNVK05Ny/K2Pt1JdDmH8PI3iyn+w91nEVNBFxHeQ/j3gp1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EBWhCM7R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kGmrN/s1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EBWhCM7R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kGmrN/s1; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 410C21F786;
+	Mon, 14 Oct 2024 10:37:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728902265; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nz2I5FT15ZQhSs4tr1Du9ZagXzAtAlidl5olumNcdA0=;
+	b=EBWhCM7R2gzMScacFrZPN7g3Ofj2ecWI/zE+OvozItACddu8xGf2KirnbHtAG0+ya5PwC/
+	RHU3UQYCVn9P+hfKTPRoT42/sscC/nh2ZolHhFrzyb1M5YIGevTrKeCjuV1TbVI/Jq2ueW
+	bA/ycuMSn5l9EDoQUQq8so8o4VpnLVs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728902265;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nz2I5FT15ZQhSs4tr1Du9ZagXzAtAlidl5olumNcdA0=;
+	b=kGmrN/s1IASY1j+1g7PiVG0ssjgV9aSm8kebAAqo2OTtnbHZD95GffgAiWo6Y0ZIzdxsB+
+	ejdnftkQImp7NFAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=EBWhCM7R;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="kGmrN/s1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728902265; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nz2I5FT15ZQhSs4tr1Du9ZagXzAtAlidl5olumNcdA0=;
+	b=EBWhCM7R2gzMScacFrZPN7g3Ofj2ecWI/zE+OvozItACddu8xGf2KirnbHtAG0+ya5PwC/
+	RHU3UQYCVn9P+hfKTPRoT42/sscC/nh2ZolHhFrzyb1M5YIGevTrKeCjuV1TbVI/Jq2ueW
+	bA/ycuMSn5l9EDoQUQq8so8o4VpnLVs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728902265;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nz2I5FT15ZQhSs4tr1Du9ZagXzAtAlidl5olumNcdA0=;
+	b=kGmrN/s1IASY1j+1g7PiVG0ssjgV9aSm8kebAAqo2OTtnbHZD95GffgAiWo6Y0ZIzdxsB+
+	ejdnftkQImp7NFAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 200C813A42;
+	Mon, 14 Oct 2024 10:37:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NDhDB3n0DGdlHgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 14 Oct 2024 10:37:45 +0000
+Message-ID: <0f46ff18-e385-4940-b0f0-db4130704bfb@suse.cz>
+Date: Mon, 14 Oct 2024 12:37:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,142 +97,169 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: dt-bindings: Use additionalProperties: false
- for endpoint: properties:
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Martin Kepplinger <martink@posteo.de>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- "Paul J. Murphy" <paul.j.murphy@intel.com>,
- Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
- Tommaso Merciai <tomm.merciai@gmail.com>,
- Martin Hecht <martin.hecht@avnet.eu>, Zhi Mao <zhi.mao@mediatek.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Mikhail Rudenko <mike.rudenko@gmail.com>,
- Ricardo Ribalda <ribalda@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Umang Jain <umang.jain@ideasonboard.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dongchun Zhu <dongchun.zhu@mediatek.com>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Todor Tomov <todor.too@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
- <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-2-a2bb12a1796d@linaro.org>
- <7ecxjoa7aije46cxmkyfd6ihxnqw4wleqkioddomxbwlu7qtrc@4dkfitppeksu>
- <6f461cb3-3a41-4a3d-b9b2-71b1c6be77f7@linaro.org>
- <9510b546-28fa-4fb4-b06e-0af5f9fd3bbb@kernel.org>
- <2afe4f3c-e2ce-4cc0-88ac-348e6f3f7e26@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] mm/page_alloc: Let GFP_ATOMIC order-0 allocs access
+ highatomic reserves
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2afe4f3c-e2ce-4cc0-88ac-348e6f3f7e26@linaro.org>
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
+ Matt Fleming <mfleming@cloudflare.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>
+References: <20241011120737.3300370-1-matt@readmodwrite.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20241011120737.3300370-1-matt@readmodwrite.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 410C21F786
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 14/10/2024 11:03, Bryan O'Donoghue wrote:
-> On 14/10/2024 09:47, Krzysztof Kozlowski wrote:
->> If a common binding for a group of devices encourages you to list its
->> subset, then it is not that common.
->>
->> Solution is to fix that, e.g. split it per classes of devices.
+On 10/11/24 14:07, Matt Fleming wrote:
+> From: Matt Fleming <mfleming@cloudflare.com>
 > 
-> It might be possible to have
+> Under memory pressure it's possible for GFP_ATOMIC order-0 allocations
+> to fail even though free pages are available in the highatomic reserves.
+> GFP_ATOMIC allocations cannot trigger unreserve_highatomic_pageblock()
+> since it's only run from reclaim.
 > 
->           $ref: /schemas/media/video-interfaces-endpoint-defaults.yaml#
+> Given that such allocations will pass the watermarks in
+> __zone_watermark_unusable_free(), it makes sense to fallback to
+> highatomic reserves the same way that ALLOC_OOM can.
 > 
-> which declares the typical list ->
+> This fixes order-0 page allocation failures observed on Cloudflare's
+> fleet when handling network packets:
 > 
-> $ref: /schemas/media/video-interfaces.yaml#
-> additonalProperties:false
+>   kswapd1: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
+>   nodemask=(null),cpuset=/,mems_allowed=0-7
+>   CPU: 10 PID: 696 Comm: kswapd1 Kdump: loaded Tainted: G           O 6.6.43-CUSTOM #1
+>   Hardware name: MACHINE
+>   Call Trace:
+>    <IRQ>
+>    dump_stack_lvl+0x3c/0x50
+>    warn_alloc+0x13a/0x1c0
+>    __alloc_pages_slowpath.constprop.0+0xc9d/0xd10
+>    __alloc_pages+0x327/0x340
+>    __napi_alloc_skb+0x16d/0x1f0
+>    bnxt_rx_page_skb+0x96/0x1b0 [bnxt_en]
+>    bnxt_rx_pkt+0x201/0x15e0 [bnxt_en]
+>    __bnxt_poll_work+0x156/0x2b0 [bnxt_en]
+>    bnxt_poll+0xd9/0x1c0 [bnxt_en]
+>    __napi_poll+0x2b/0x1b0
+>    bpf_trampoline_6442524138+0x7d/0x1000
+>    __napi_poll+0x5/0x1b0
+>    net_rx_action+0x342/0x740
+>    handle_softirqs+0xcf/0x2b0
+>    irq_exit_rcu+0x6c/0x90
+>    sysvec_apic_timer_interrupt+0x72/0x90
+>    </IRQ>
+> 
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: linux-mm@kvack.org
+> Link: https://lore.kernel.org/all/CAGis_TWzSu=P7QJmjD58WWiu3zjMTVKSzdOwWE8ORaGytzWJwQ@mail.gmail.com/
+> Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
 
-I meant something else - define common schema matching this class of
-devices. Not a schema for some defaults. This is supposed to reflect how
-we look at hardware, not some library of schemas or library of functions.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+(but a comment should be updated, see below)
 
-> 
-> properties:
->      data-lanes: true
->      link-frequencies: true
->      remote-endpoints: true
+I think we could add Cc: stable and I believe the commit that broke it was:
 
-and I still don't like all these. I rather expect people to list the
-hardware constraints or just drop it. I mentioned it some time ago in
-the first patch you sent, which I think started this entire discussion.
+Fixes: 1d91df85f399 ("mm/page_alloc: handle a missing case for
+memalloc_nocma_{save/restore} APIs")
 
-> 
-> required:
->      data-lanes
->      link-frequencies
->      remote-endpoints
-> 
-> and then if you need say clock-noncontinuous you'd just include
-> 
-> $ref: /schemas/media/video-interfaces.yaml#
-> unevaluatedProperties: false
-> 
-> and then list whatever you need
-> 
->> Or don't care and use unevaluatedProps because it makes people's life
->> easier and is still correct. If it is not correct, then this should be
->> used as an argument.
-> 
-> I'll wait to see what people think before progressing this patch further.
+because it was where an order > 0 condition was introduced to allow
+allocation from MIGRATE_HIGHATOMIC
 
+commit eb2e2b425c69 ("mm/page_alloc: explicitly record high-order atomic
+allocations in alloc_flags") realized there's a gap for OOM (even if
+changelog doesn't mention it) but we should allow the order-0 atomic
+allocations to fallback as well.
 
-Best regards,
-Krzysztof
+> ---
+>  mm/page_alloc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 8afab64814dc..0c4c359f5ba7 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2898,7 +2898,7 @@ struct page *rmqueue_buddy(struct zone *preferred_zone, struct zone *zone,
+>  			 * failing a high-order atomic allocation in the
+>  			 * future.
+>  			 */
+
+We should also update the comment above to reflect this is no longer just
+for the OOM case?
+
+> -			if (!page && (alloc_flags & ALLOC_OOM))
+> +			if (!page && (alloc_flags & (ALLOC_OOM|ALLOC_NON_BLOCK)))
+>  				page = __rmqueue_smallest(zone, order, MIGRATE_HIGHATOMIC);
+>  
+>  			if (!page) {
 
 
