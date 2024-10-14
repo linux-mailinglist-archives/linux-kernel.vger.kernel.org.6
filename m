@@ -1,217 +1,368 @@
-Return-Path: <linux-kernel+bounces-364331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F68799D2AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:28:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD6D99D2CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6E261F251FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DD171C229B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07FD1B4F1E;
-	Mon, 14 Oct 2024 15:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68CB1CACD2;
+	Mon, 14 Oct 2024 15:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gfq5ChoN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5YP3dpTP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gfq5ChoN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5YP3dpTP"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMSkLeh4"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C0314AA9;
-	Mon, 14 Oct 2024 15:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE881BB6BB;
+	Mon, 14 Oct 2024 15:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728919557; cv=none; b=F2eaaB28eAoAWnntgcAX/Q3N3CEkiHVK+oxdrL23tnfORwIizMaTUofpRZZwVggbPbfo9aZ5qP0twD21JuwYp0DXwVD8fTripazbpn0E0IHEurGEFON2i3Fhj4amo2xVRyGzSwWvA4aNIlZYBv2Avn7HPc+9M6InebEMC2csQyM=
+	t=1728919633; cv=none; b=Q4A6igsfvZH5x6R6v0N3SpY/BqLjea2++yYI3jKwY8qRnfYO/9pLhKQTINvsXxPUUr3iFC4CelHc29k72RQT6q9OUsYIzFOo/YjoQQHCHox+yb0So0Kye4D4/i3Av1FipfR++tgnsy8EaLtLM2YY4ql/s/KF5Ah0gwGIgIOe9sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728919557; c=relaxed/simple;
-	bh=/o3pbCuD+AKmbGIym+plWt/PHD9pn2DrXSdhvpYQeRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EYSqikQNj0I1lzwyWFFiBsnxP+er8/FUT2ssk1cBjVUk4KUbyELR+avn9j7vHMeASGGatMi5i7ct7CLgEzdlP8GzS1SPwhGo8bOTCsLa8COi/NvE9sh1GmMaRZwuvWE1y0jtnXjLiL8Qy5xlU0yDfhvf4QA8Ywj53VK8A4Fa4OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gfq5ChoN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5YP3dpTP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gfq5ChoN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5YP3dpTP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6647A21DA7;
-	Mon, 14 Oct 2024 15:25:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728919553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8xU4pxKajR5Z43H0Q3ovrmEeN0OGXbnjeGrOnvWHZuI=;
-	b=Gfq5ChoNq8737/+3TcSw3CRZ/1YmbgJtwhb7WOBQdBfr8idu7jWc9iYDpCo65xFHa17J4Y
-	i4eZdFocAD2+QxZHokzVtRZ+fjg+FI3Zvd1S5DXlLoXwI4zU8NPpX/Gvwopfi4BQt19HhT
-	4OTb+yT53piepzG/HJ1dadzb8j4Zwpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728919553;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8xU4pxKajR5Z43H0Q3ovrmEeN0OGXbnjeGrOnvWHZuI=;
-	b=5YP3dpTPb/t5fssBYHXxRBtcUlFy3SbcOblZYTIgfe3GwoEdlURMJ4siHBLmfI9ec+pv3u
-	of6M3/L0seyNskAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Gfq5ChoN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5YP3dpTP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728919553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8xU4pxKajR5Z43H0Q3ovrmEeN0OGXbnjeGrOnvWHZuI=;
-	b=Gfq5ChoNq8737/+3TcSw3CRZ/1YmbgJtwhb7WOBQdBfr8idu7jWc9iYDpCo65xFHa17J4Y
-	i4eZdFocAD2+QxZHokzVtRZ+fjg+FI3Zvd1S5DXlLoXwI4zU8NPpX/Gvwopfi4BQt19HhT
-	4OTb+yT53piepzG/HJ1dadzb8j4Zwpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728919553;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8xU4pxKajR5Z43H0Q3ovrmEeN0OGXbnjeGrOnvWHZuI=;
-	b=5YP3dpTPb/t5fssBYHXxRBtcUlFy3SbcOblZYTIgfe3GwoEdlURMJ4siHBLmfI9ec+pv3u
-	of6M3/L0seyNskAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 318D013A42;
-	Mon, 14 Oct 2024 15:25:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id toqvCwE4DWddeQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 14 Oct 2024 15:25:53 +0000
-Message-ID: <99d33f0b-5991-4b23-908f-aabb9fdccb98@suse.cz>
-Date: Mon, 14 Oct 2024 17:25:52 +0200
+	s=arc-20240116; t=1728919633; c=relaxed/simple;
+	bh=/w9Os86l7FHNJxysUUeMiY+H+cHaR+kLKaoHZu3+CsM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Op8dnkwGmkaKTA4SX1pHa6h69oDwC1VCHPA2xBtIFAsTIA6Zvbd+GipuFYnZT5JQTAa3718LGlcS2ctd3hTT5Ut03vKUlraC7ESBc2sh/8KmRNiUPRQ5TSC1OB8ttklXws9VtKfMPz1kVcdpJUtqyjK116cwBSC0eo78iCWtfuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMSkLeh4; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e52582cf8so1229056b3a.2;
+        Mon, 14 Oct 2024 08:27:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728919630; x=1729524430; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qOAdM2vRa0WDPcot4d5cPlMIUWLYDpNWkruyJ5KeQW0=;
+        b=WMSkLeh4N8n6PIyn8EtOcG4i+oKhylt4D2/XH+gn/miXxQbwB86/izNdGA94wemL67
+         Y7GZN2mbnAaH2SGcEBOcs41wJEBVcCMOtJcstu181D8ZJQ+vWEAVxkd+shT+7QFl+T5T
+         8h0CSD7Vqxkn5BqH+TbEnkWXiDzyxhbhvZ9ycB3nGimktX/0mCD4meXyHS+H7JKjSqwg
+         zjoIDhlo//GXhEmAsovW9FpLvLkt2QhD9ZT2dpjW2xzFSu8JsRBCtFbdKc/C5mXXRRpg
+         D2HGefMji1mnPGGPabzs80nws87MuOO6eLL2RvO9n45DEy8IWvJMaL2kBotB/L0giOze
+         gwsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728919630; x=1729524430;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qOAdM2vRa0WDPcot4d5cPlMIUWLYDpNWkruyJ5KeQW0=;
+        b=PFdEMcb6a5l9OlWGp3Gu3NdkFkv7pUoHVf1D7xq5GaXJPy6oi7jMxTYQ9/DpBYI2+r
+         q7YTcvXPj+WMufK6v8YGKESjvVWk68hUK8ajiPJx++JfE0GHPw6/2/EEwPDf7K4tXsD6
+         nyRHyEQFpqSTbJVZgWQHCD9fKYqq/k3/owgSzy9zjkCRhMij5rPTxvO0+y1cvXHH+2YG
+         1wY4ZA/b+MRYghUrOT+G1HpGgwvySwlvNlFi6i2sWjXxrAfiiPBfz0jwPf2kVXRPOw6/
+         NUv8MlxFDXV+MDIXKposWztIAi7PIH/1G4ulMXRa6byy2K6Io+/YFPC+/0zE8IUzPFPu
+         a4TA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDhpZ5nAQblgusMSFFTtpZiGrkkhdw/C8U4lukbDWoWpFu7JIRpoDaLu8hHLmIuh3Ih+S2Dayo4XJMsg==@vger.kernel.org, AJvYcCXQPONjeZPM4G741bAhZQ3r1kc83m2aOtw37u4O6UWRUXwyFbOJba3GZmW2TWxzIyUcmfenPz0KVUtNxQq7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy732QNH/Hv6HQ+k9m3IdEDgedQQA1qHU6iuEGBTaLaSHA3pNf8
+	QBmkTjQrcah7uYcs8RR9XnR7Mmg756cNaARbs/0fuufVdONnRA5KEwGNnIeL
+X-Google-Smtp-Source: AGHT+IH6nXvsp3J8kgQ2EVC0PM9s96sJEUTLd55W/4f6yKvrLIhLm8lb9t5nR33RpPwbz5c78SB2WA==
+X-Received: by 2002:a05:6a20:d808:b0:1d7:8fd:2df6 with SMTP id adf61e73a8af0-1d8c9577029mr13103445637.1.1728919630292;
+        Mon, 14 Oct 2024 08:27:10 -0700 (PDT)
+Received: from localhost (fwdproxy-prn-113.fbsv.net. [2a03:2880:ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea448e3eaesm6934758a12.19.2024.10.14.08.27.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 08:27:09 -0700 (PDT)
+From: Sanman Pradhan <sanman.p211993@gmail.com>
+To: netdev@vger.kernel.org
+Cc: alexanderduyck@fb.com,
+	kuba@kernel.org,
+	kernel-team@meta.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	horms@kernel.org,
+	mohsin.bashr@gmail.com,
+	sanmanpradhan@meta.com,
+	andrew@lunn.ch,
+	linux-hwmon@vger.kernel.org,
+	sanman.p211993@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v7] eth: fbnic: Add hardware monitoring support via HWMON interface
+Date: Mon, 14 Oct 2024 08:27:09 -0700
+Message-ID: <20241014152709.2123811-1-sanman.p211993@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 bpf-next 1/3] bpf: Add kmem_cache iterator
-Content-Language: en-US
-To: Namhyung Kim <namhyung@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- bpf@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>,
- "Paul E. McKenney" <paulmck@kernel.org>
-References: <20241010232505.1339892-1-namhyung@kernel.org>
- <20241010232505.1339892-2-namhyung@kernel.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241010232505.1339892-2-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6647A21DA7
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,gmail.com,kernel.org,fomichev.me,google.com,vger.kernel.org,linux-foundation.org,linux.com,lge.com,kvack.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	R_RATELIMIT(0.00)[to_ip_from(RLpxgctgqauymhrqgz9esg39kp)];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On 10/11/24 01:25, Namhyung Kim wrote:
-> The new "kmem_cache" iterator will traverse the list of slab caches
-> and call attached BPF programs for each entry.  It should check the
-> argument (ctx.s) if it's NULL before using it.
-> 
-> Now the iteration grabs the slab_mutex only if it traverse the list and
-> releases the mutex when it runs the BPF program.  The kmem_cache entry
-> is protected by a refcount during the execution.
-> 
-> It includes the internal "mm/slab.h" header to access kmem_cache,
-> slab_caches and slab_mutex.  Hope it's ok to mm folks.
+From: Sanman Pradhan <sanmanpradhan@meta.com>
 
-Yeah this paragraph can be dropped.
+This patch adds support for hardware monitoring to the fbnic driver,
+allowing for temperature and voltage sensor data to be exposed to
+userspace via the HWMON interface. The driver registers a HWMON device
+and provides callbacks for reading sensor data, enabling system
+admins to monitor the health and operating conditions of fbnic.
 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Sanman Pradhan <sanmanpradhan@meta.com>
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz> #slab
+---
+v7:
+  - Address local variable err
 
+v6: https://patchwork.kernel.org/project/netdevbpf/patch/20241011235847.1209435-1-sanman.p211993@gmail.com/
+
+v5: https://patchwork.kernel.org/project/netdevbpf/patch/20241009192018.2683416-1-sanman.p211993@gmail.com/
+
+v4: https://patchwork.kernel.org/project/netdevbpf/patch/20241008143212.2354554-1-sanman.p211993@gmail.com/
+
+v3: https://patchwork.kernel.org/project/netdevbpf/patch/20241004204953.2223536-1-sanman.p211993@gmail.com/
+
+v2: https://patchwork.kernel.org/project/netdevbpf/patch/20241003173618.2479520-1-sanman.p211993@gmail.com/
+
+v1: https://lore.kernel.org/netdev/153c5be4-158e-421a-83a5-5632a9263e87@roeck-us.net/T/
+
+---
+ drivers/net/ethernet/meta/fbnic/Makefile      |  1 +
+ drivers/net/ethernet/meta/fbnic/fbnic.h       |  5 ++
+ drivers/net/ethernet/meta/fbnic/fbnic_fw.h    |  7 ++
+ drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c | 81 +++++++++++++++++++
+ drivers/net/ethernet/meta/fbnic/fbnic_mac.c   | 22 +++++
+ drivers/net/ethernet/meta/fbnic/fbnic_mac.h   |  7 ++
+ drivers/net/ethernet/meta/fbnic/fbnic_pci.c   |  3 +
+ 7 files changed, 126 insertions(+)
+ create mode 100644 drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c
+
+diff --git a/drivers/net/ethernet/meta/fbnic/Makefile b/drivers/net/ethernet/meta/fbnic/Makefile
+index ed4533a73c57..41494022792a 100644
+--- a/drivers/net/ethernet/meta/fbnic/Makefile
++++ b/drivers/net/ethernet/meta/fbnic/Makefile
+@@ -11,6 +11,7 @@ fbnic-y := fbnic_devlink.o \
+ 	   fbnic_ethtool.o \
+ 	   fbnic_fw.o \
+ 	   fbnic_hw_stats.o \
++	   fbnic_hwmon.o \
+ 	   fbnic_irq.o \
+ 	   fbnic_mac.o \
+ 	   fbnic_netdev.o \
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic.h b/drivers/net/ethernet/meta/fbnic/fbnic.h
+index 0f9e8d79461c..ff0ff012c8d6 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic.h
++++ b/drivers/net/ethernet/meta/fbnic/fbnic.h
+@@ -18,6 +18,7 @@
+ struct fbnic_dev {
+ 	struct device *dev;
+ 	struct net_device *netdev;
++	struct device *hwmon;
+
+ 	u32 __iomem *uc_addr0;
+ 	u32 __iomem *uc_addr4;
+@@ -30,6 +31,7 @@ struct fbnic_dev {
+
+ 	struct fbnic_fw_mbx mbx[FBNIC_IPC_MBX_INDICES];
+ 	struct fbnic_fw_cap fw_cap;
++	struct fbnic_fw_completion *cmpl_data;
+ 	/* Lock protecting Tx Mailbox queue to prevent possible races */
+ 	spinlock_t fw_tx_lock;
+
+@@ -127,6 +129,9 @@ void fbnic_devlink_unregister(struct fbnic_dev *fbd);
+ int fbnic_fw_enable_mbx(struct fbnic_dev *fbd);
+ void fbnic_fw_disable_mbx(struct fbnic_dev *fbd);
+
++void fbnic_hwmon_register(struct fbnic_dev *fbd);
++void fbnic_hwmon_unregister(struct fbnic_dev *fbd);
++
+ int fbnic_pcs_irq_enable(struct fbnic_dev *fbd);
+ void fbnic_pcs_irq_disable(struct fbnic_dev *fbd);
+
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_fw.h b/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
+index 221faf8c6756..7cd8841920e4 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_fw.h
+@@ -44,6 +44,13 @@ struct fbnic_fw_cap {
+ 	u8	link_fec;
+ };
+
++struct fbnic_fw_completion {
++	struct {
++		s32 millivolts;
++		s32 millidegrees;
++	} tsene;
++};
++
+ void fbnic_mbx_init(struct fbnic_dev *fbd);
+ void fbnic_mbx_clean(struct fbnic_dev *fbd);
+ void fbnic_mbx_poll(struct fbnic_dev *fbd);
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c b/drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c
+new file mode 100644
+index 000000000000..bcd1086e3768
+--- /dev/null
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_hwmon.c
+@@ -0,0 +1,81 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) Meta Platforms, Inc. and affiliates. */
++
++#include <linux/hwmon.h>
++
++#include "fbnic.h"
++#include "fbnic_mac.h"
++
++static int fbnic_hwmon_sensor_id(enum hwmon_sensor_types type)
++{
++	if (type == hwmon_temp)
++		return FBNIC_SENSOR_TEMP;
++	if (type == hwmon_in)
++		return FBNIC_SENSOR_VOLTAGE;
++
++	return -EOPNOTSUPP;
++}
++
++static umode_t fbnic_hwmon_is_visible(const void *drvdata,
++				      enum hwmon_sensor_types type,
++				      u32 attr, int channel)
++{
++	if (type == hwmon_temp && attr == hwmon_temp_input)
++		return 0444;
++	if (type == hwmon_in && attr == hwmon_in_input)
++		return 0444;
++
++	return 0;
++}
++
++static int fbnic_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
++			    u32 attr, int channel, long *val)
++{
++	struct fbnic_dev *fbd = dev_get_drvdata(dev);
++	const struct fbnic_mac *mac = fbd->mac;
++	int id;
++
++	id = fbnic_hwmon_sensor_id(type);
++	return id < 0 ? id : mac->get_sensor(fbd, id, val);
++}
++
++static const struct hwmon_ops fbnic_hwmon_ops = {
++	.is_visible = fbnic_hwmon_is_visible,
++	.read = fbnic_hwmon_read,
++};
++
++static const struct hwmon_channel_info *fbnic_hwmon_info[] = {
++	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
++	HWMON_CHANNEL_INFO(in, HWMON_I_INPUT),
++	NULL
++};
++
++static const struct hwmon_chip_info fbnic_chip_info = {
++	.ops = &fbnic_hwmon_ops,
++	.info = fbnic_hwmon_info,
++};
++
++void fbnic_hwmon_register(struct fbnic_dev *fbd)
++{
++	if (!IS_REACHABLE(CONFIG_HWMON))
++		return;
++
++	fbd->hwmon = hwmon_device_register_with_info(fbd->dev, "fbnic",
++						     fbd, &fbnic_chip_info,
++						     NULL);
++	if (IS_ERR(fbd->hwmon)) {
++		dev_notice(fbd->dev,
++			   "Failed to register hwmon device %pe\n",
++			fbd->hwmon);
++		fbd->hwmon = NULL;
++	}
++}
++
++void fbnic_hwmon_unregister(struct fbnic_dev *fbd)
++{
++	if (!IS_REACHABLE(CONFIG_HWMON) || !fbd->hwmon)
++		return;
++
++	hwmon_device_unregister(fbd->hwmon);
++	fbd->hwmon = NULL;
++}
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_mac.c b/drivers/net/ethernet/meta/fbnic/fbnic_mac.c
+index 7b654d0a6dac..80b82ff12c4d 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic_mac.c
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_mac.c
+@@ -686,6 +686,27 @@ fbnic_mac_get_eth_mac_stats(struct fbnic_dev *fbd, bool reset,
+ 			    MAC_STAT_TX_BROADCAST);
+ }
+
++static int fbnic_mac_get_sensor_asic(struct fbnic_dev *fbd, int id, long *val)
++{
++	struct fbnic_fw_completion fw_cmpl;
++	s32 *sensor;
++
++	switch (id) {
++	case FBNIC_SENSOR_TEMP:
++		sensor = &fw_cmpl.tsene.millidegrees;
++		break;
++	case FBNIC_SENSOR_VOLTAGE:
++		sensor = &fw_cmpl.tsene.millivolts;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	*val = *sensor;
++
++	return 0;
++}
++
+ static const struct fbnic_mac fbnic_mac_asic = {
+ 	.init_regs = fbnic_mac_init_regs,
+ 	.pcs_enable = fbnic_pcs_enable_asic,
+@@ -695,6 +716,7 @@ static const struct fbnic_mac fbnic_mac_asic = {
+ 	.get_eth_mac_stats = fbnic_mac_get_eth_mac_stats,
+ 	.link_down = fbnic_mac_link_down_asic,
+ 	.link_up = fbnic_mac_link_up_asic,
++	.get_sensor = fbnic_mac_get_sensor_asic,
+ };
+
+ /**
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_mac.h b/drivers/net/ethernet/meta/fbnic/fbnic_mac.h
+index 476239a9d381..05a591653e09 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic_mac.h
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_mac.h
+@@ -47,6 +47,11 @@ enum {
+ #define FBNIC_LINK_MODE_PAM4	(FBNIC_LINK_50R1)
+ #define FBNIC_LINK_MODE_MASK	(FBNIC_LINK_AUTO - 1)
+
++enum fbnic_sensor_id {
++	FBNIC_SENSOR_TEMP,		/* Temp in millidegrees Centigrade */
++	FBNIC_SENSOR_VOLTAGE,		/* Voltage in millivolts */
++};
++
+ /* This structure defines the interface hooks for the MAC. The MAC hooks
+  * will be configured as a const struct provided with a set of function
+  * pointers.
+@@ -83,6 +88,8 @@ struct fbnic_mac {
+
+ 	void (*link_down)(struct fbnic_dev *fbd);
+ 	void (*link_up)(struct fbnic_dev *fbd, bool tx_pause, bool rx_pause);
++
++	int (*get_sensor)(struct fbnic_dev *fbd, int id, long *val);
+ };
+
+ int fbnic_mac_init(struct fbnic_dev *fbd);
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_pci.c b/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
+index a4809fe0fc24..ef9dc8c67927 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_pci.c
+@@ -289,6 +289,8 @@ static int fbnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+
+ 	fbnic_devlink_register(fbd);
+
++	fbnic_hwmon_register(fbd);
++
+ 	if (!fbd->dsn) {
+ 		dev_warn(&pdev->dev, "Reading serial number failed\n");
+ 		goto init_failure_mode;
+@@ -345,6 +347,7 @@ static void fbnic_remove(struct pci_dev *pdev)
+ 		fbnic_netdev_free(fbd);
+ 	}
+
++	fbnic_hwmon_unregister(fbd);
+ 	fbnic_devlink_unregister(fbd);
+ 	fbnic_fw_disable_mbx(fbd);
+ 	fbnic_free_irqs(fbd);
+--
+2.43.5
 
