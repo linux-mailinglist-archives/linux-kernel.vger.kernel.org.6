@@ -1,160 +1,129 @@
-Return-Path: <linux-kernel+bounces-364601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21E899D6B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC3499D6BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AB0B2146A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56341F23885
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B38D1CACC8;
-	Mon, 14 Oct 2024 18:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AAC1CACE3;
+	Mon, 14 Oct 2024 18:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwPxg0AL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="In0ZR+59"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632DA4683;
-	Mon, 14 Oct 2024 18:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E33C83CDA;
+	Mon, 14 Oct 2024 18:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728931575; cv=none; b=OcI0j99eBMBNNyq2omWi7VcA0hr6DpK6FNFZf9uYTDOhaVbnWuD3D7gUYhKN2vhFq6GRVdxD1iOC31Z2kxqb2jgIeKqlIarRJnDb4razjcl/1zb+UXRkwRN7TFi65y7bBBR5szSJS3PYL9PxtDjwpInhF93QgIXU3rSGAky+G7Y=
+	t=1728931720; cv=none; b=Xxj2De3h7me0vDSo0rGYxsfQT1pZez6VJbJhFbBuyP0ERcQGQxWR01ohM0C0pPjkVtVmJ1KgZ6suvt83qA3jD4PVG/6NMHbfjSEbbB4JP8OdE7uEtF4T6IwHCH40mm0/Rv1OdPZan3q5M1r/MEf5bhaFt6x5qyhxKmWSiRDfSVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728931575; c=relaxed/simple;
-	bh=boc15PWERETESJNxCNOMxyRSxtxOGcpQbKMu5NjC1v0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hR9+dlr3eUasNTguAC2HXQ9a1mJGJRM/WquMx9tCSFhEQLc2QwvhUi2FLYmco1jU9204s6643KYdMW1Nu+lBUaHPF0V7h0eJrGNAPCQaq70Eiu1k/K34PsgwnM8jI4DUh/Gqr9Nw3qzmpGTX++ngQm7puofc8HdGR4N1cF9bNvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PwPxg0AL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB18C4CEC3;
-	Mon, 14 Oct 2024 18:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728931575;
-	bh=boc15PWERETESJNxCNOMxyRSxtxOGcpQbKMu5NjC1v0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PwPxg0ALSHU5xWCTpSTs5o13VMJD9nvJz/IIhOA8j413KfzZZeKDZH4yEd9d3G/Fn
-	 7WNXl+Be7oOUypeRM2NA22EX7sPZcyyXy9C81sWw1Nf1+jKclJZPLIjUHHoh6EYSYB
-	 qUidg/tFLA1iE/MUpfKmJjgwSu+Xt+c3oEaNC070WMTLABZFadR4sIJwbC/aLkGVxx
-	 FMUK5j+hFqaLkv6n1PWgs0WtgSLBa29GCjy5PfGCHRPMipBTbbb9/80G2T3vla+cdJ
-	 vvwDS8H9GNkGPJUGV8gCc8x1ABAXB7t0/lKzBoqgRY8hKoca6d6dxvToMYfi+F/yTl
-	 COI08cSb2CCaQ==
-Date: Mon, 14 Oct 2024 19:46:05 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Victor.Duicu@microchip.com, lars@metafoo.de,
- Marius.Cristea@microchip.com, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH v3] iio: adc: pac1921: add ACPI support to Microchip
- pac1921.
-Message-ID: <20241014194605.285e3909@jic23-huawei>
-In-Reply-To: <172892078642.158534.11658754591922958169@njaxe.localdomain>
-References: <20241011134454.45283-1-victor.duicu@microchip.com>
-	<172872753469.9340.10387646359307852048@njaxe.localdomain>
-	<e4cad20ed2f8d31bf71bc595ab54c64d96bfb4b4.camel@microchip.com>
-	<172892078642.158534.11658754591922958169@njaxe.localdomain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728931720; c=relaxed/simple;
+	bh=y9u96jcTsOYTUXHXWItfaOV9ukdvlpwU38+tlafA1Dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bY+F8wFMCZ7aLyUVYz/tUYiPXsgZbDBp7eeUv3dUXYkfnHkgW9A/aQwi0m7QSrv+6gmjynh60waexT4sHQTv0s81P+o8sztBnZMu/baRdlpFSVvmOeI6D2kYs/LCpcVrPWqVZqmVT8stKp1/l16U0C/jaznEsJ85DMO+JGvNrRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=In0ZR+59; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EIJiP5028228;
+	Mon, 14 Oct 2024 18:48:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=y9u96jcTsOYTUXHXWItfaOV9ukd
+	vlpwU38+tlafA1Dw=; b=In0ZR+59AzJO4xVMpVJgPv+FbyP80wFaXM/grtexUxU
+	xN/3KCHETDO763NQBzLKgkMRJfRKns/cSVejLZ+GD1Ji5N7pICtaf8iVf6vdcRMO
+	zUFHCk5jUza/zMNexi1dZnT24totLnmqoqm9cZZnMPZfbP6EnOB4TsP6G373qQN4
+	QpQ+HLEOo2+tgZPBlZ6X7LoyTRgGegDe6PyVUdmxmFTDPKFexRINQrjZi8Gi8nSZ
+	41rfipScPCUjJ0aJFvNjiqwb+rqZHVmylilgLxbdV1IEDjj0vK91FFr/CCUO7Vu2
+	NUgFEf7vXjC0ZsMYGM7a5s5F0yklOAaxUHPzi6g9yuQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4298fsg3gn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 18:48:32 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EImVPj021174;
+	Mon, 14 Oct 2024 18:48:31 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4298fsg3gg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 18:48:31 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EHgPje027432;
+	Mon, 14 Oct 2024 18:48:30 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txg590-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 18:48:30 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EImR0d54985154
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 18:48:27 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 215EA20043;
+	Mon, 14 Oct 2024 18:48:27 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2820620040;
+	Mon, 14 Oct 2024 18:48:26 +0000 (GMT)
+Received: from osiris (unknown [9.171.66.174])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Oct 2024 18:48:26 +0000 (GMT)
+Date: Mon, 14 Oct 2024 20:48:24 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+Subject: Re: [PATCH v2 5/7] virtio-mem: s390 support
+Message-ID: <20241014184824.10447-F-hca@linux.ibm.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-6-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014144622.876731-6-david@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: uxrAbvVrvo_xSFv3iSYJ1lcmH8ghEeSX
+X-Proofpoint-ORIG-GUID: s1Vm0XBS-RoBWitXsY0-xWCcYcWAwN3a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_12,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 malwarescore=0 phishscore=0 spamscore=0 mlxlogscore=270
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410140131
 
+On Mon, Oct 14, 2024 at 04:46:17PM +0200, David Hildenbrand wrote:
+> The special s390 kdump mode, whereby the 2nd kernel creates the ELF
+> core header, won't currently dump virtio-mem memory. The virtio-mem
+> driver has a special kdump mode, from where we can detect memory ranges
+> to dump. Based on this, support for dumping virtio-mem memory can be
+> added in the future fairly easily.
 
->=20
-> > > > +static int pac1921_parse_of_fw(struct i2c_client *client, struct
-> > > > pac1921_priv *priv,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_dev *indio_dev)
-> > > > +{
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *dev =3D &clien=
-t->dev;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u64 temp;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D device_property_read_=
-u64(dev, "shunt-resistor-micro-
-> > > > ohms", &temp); =20
-> > >=20
-> > > Since the driver would discard a value out of INT boundaries, I don't
-> > > see the
-> > > need to read a value larger than u32 that would be discarded anyway.
-> > > To my
-> > > understanding, device_property_read_u32() should fail for an
-> > > overflowing value
-> > > thus I would keep device_property_read_u32() here, and at that point
-> > > the temp
-> > > var would not be necessary as well. I think it would also help to
-> > > keep the patch
-> > > diff confined in the ACPI extension context. =20
-> >=20
-> > If the value in .dtso is greater than 32b, at compilation it will be
-> > truncated, and the incorrect value will be accepted by the driver. By
-> > adding "/bits/ 64" in the devicetree to shunt resistor the value will
-> > not be truncated. This way values on 32b and 64b can be read correctly.
-> >  =20
->=20
-> I see your point but if I understand this correctly with this change the
-> shunt-resistor-micro-ohms field in the DT should always be specified
-> with /bits/ 64, even for values in 32bit boundaries. I might be wrong
-> but this looks like something that should be documented in
-> Documentation/devicetree/bindings, especially since all the other
-> shunt-resistor-micro-ohms instances look to be interpreted as u32.
-> Also, I think that such change would fit better in a different patch as
-> it is not related to the introduction of ACPI support.
-
-I'll ask the silly question. How big a shunt resistor do you have?
-If it's necessary to change them over that is fine but if that means
-existing dt is wrong, then you'd need to maintain compatibility.
-So test with a 32 bit dt value and 64 bit. Probably need to try
-64 bit and if it fails try 32 bits.
-
-
->=20
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return dev_err_probe(dev, ret,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "Cann=
-ot read shunt resistor
-> > > > property\n");
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pac1921_shunt_is_valid(te=
-mp))
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return dev_err_probe(dev, -EINVAL, "Invalid shunt
-> > > > resistor: %u\n",
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv-=
->rshunt_uohm); =20
-> > >=20
-> > > The error should be returned when the shunt is NOT valid.
-> > >  =20
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv->rshunt_uohm =3D (u32)te=
-mp; =20
-> > >=20
-> > > The temp var should not be necessary if switching back to
-> > > device_property_read_u32(),
-> > > otherwise I would remove the unnecessary explicit cast for the above
-> > > reason.
-> > >  =20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pac1921_calc_current_scales(p=
-riv);
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> > > > +}
-> > > > + =20
->=20
-> Thanks,
-> Matteo Martelli
-
+Hm.. who will add this support? This looks like a showstopper to me.
+Who is supposed to debug crash dumps where memory parts are missing?
 
