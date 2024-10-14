@@ -1,126 +1,231 @@
-Return-Path: <linux-kernel+bounces-363744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE0299C676
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:53:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8434D99C679
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33DC21F23A95
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:53:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C061F23A17
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF531586DB;
-	Mon, 14 Oct 2024 09:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525511586DB;
+	Mon, 14 Oct 2024 09:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lzxpxFjR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UxKjDBd+"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C102A146D55;
-	Mon, 14 Oct 2024 09:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F14146D55;
+	Mon, 14 Oct 2024 09:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728899618; cv=none; b=uHBhkXcVR4OjwI8bJ3xqDwwlDRpbCpqpY02GHJOhj5+x8KZh4NxYR0EdgvNhBzgZRpD5UJLiLWTl7O4dC9+vHW97uCXSI2sxZYNaMpeQV9zCRNaumA7BFvQe2uUPM2058a1w8pPKZiFL5KW7+Ch9aHdEw1J/Gc3aUaxhC9wIiL0=
+	t=1728899633; cv=none; b=hujpwU5WJ1PDLK/H2wJw1408gsmG13hnf7UlPVjeuJsGPLQ6nz41/XKZabb+H9kXAP9z3l2HvRI7l2j0o/TcnuC/agrwNvcizEJgbcFn2TmeFwI0CHAMVPF4DhOPBc7mgtFnM+X0na0KiyCB5JSTTzZk9Zl0ofR6uh7wbhfJHVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728899618; c=relaxed/simple;
-	bh=e+Bwo2NC+pMNRd8ckI+Vz0wV5wuZi+wfJeI6HwZ7nfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=McKhfGozn1bZBY6+nqiUsrOAaI04HuIJOFA3h4bj1usroIhBVbN+u8tMZJEsHZvmG4XzxoHTLKAB0kWAdxf2iB6pwujCHNRyzajIw6PE08RkgV5P0+maj9JRl9uIF4VEkDKnZ2hMygTEMHGemuohg4//qulouRdPTQAfRqyaUcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lzxpxFjR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49DMvgj0015046;
-	Mon, 14 Oct 2024 09:53:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	x943eeIf1OGm4gHh4eXaE9srZxFaW2nqi0KQm3uYLxE=; b=lzxpxFjRdCAZ2ftC
-	LPQv/rMcHl8AWBpsQdrdPiq0Z21pX5J4Ktb+0s87LXZY4B5+JLuckTSlAIDscSgi
-	V6n7Rrc7MIvFRjmNbhe4Nc7VNDrspF1PSxe6uiF4Uuc0+8fjl0Ujrykv3CmkwVz3
-	auNChqG1akDYNqd25xSsFzXKaubQlqLPIgNfpnSe+Rr8NOPj3IC/C4VbeZZ7WtS1
-	qGjv2xyaiug55QsoAld5XpGpi+gpK3wl96oqXKFbC1Kq/pd0rlSB8495f5TyCLTT
-	ZWeK+tN5dUYguGpTLwXVXE5Pg1N2ZjhHOBKEqMrFchtYubZDty6Q51wfhP3QdJpf
-	XdGTeg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427hvfuwsx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 09:53:26 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49E9rPIF025380
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 09:53:25 GMT
-Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
- 2024 02:53:21 -0700
-Message-ID: <c316c6ff-b741-4186-8f03-f103efc51d1c@quicinc.com>
-Date: Mon, 14 Oct 2024 17:53:18 +0800
+	s=arc-20240116; t=1728899633; c=relaxed/simple;
+	bh=5cjk8iUobFGFzWz9q45XgRHJrGFZmeeY8r3AbkL4hAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i0JU01St3/SzhYmqaW+qwOHuzPemohHBWn5ZEnpIdrQG5kTJxRwmxuSaahWVPlzG5CnuMl+V2EZVT8poR6lSfa45etPZIApHhendB+7LyrT3RBafIe7+PL5/xXNab6VDxhGwaed8/txnab0G06TlxUuBT/Jj4JNfNWx9IBayCd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UxKjDBd+; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539fb49c64aso527819e87.0;
+        Mon, 14 Oct 2024 02:53:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728899630; x=1729504430; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nTJCAbsfL5kAFzil++rWGNYvs34Y3ujnFp8XvG65VYM=;
+        b=UxKjDBd+PA8x3Mlj2t6EHf+yRv9DfSeelyapoDBFpCIPFC/iuPSa3ut0P6B3okqtbA
+         /MrneE8oG3z3a0JsExBzcuOt/31YA7cXqhAdm86MYOIlTItcKhUy4uLHIAD3Ir6iLCKl
+         I8HEqix4ms7wHxVWg9HmKaEhH3/G1UMlSxBlZLkfUjXSIzUeHGcMOrtlVQCaEkaGyLSg
+         qiZYizaM3NdZ534FU360AV2v9xw4s/brr3xQaMcP6Og7LsJ1rS0BZXuN3s64mogg3nhw
+         40S0zwNHz43Nf5jT1wCx7XeKeZKRrSa4kPYGXX6KUaS3mgsQizYrLsNAP72zpTOZjD7n
+         6pAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728899630; x=1729504430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nTJCAbsfL5kAFzil++rWGNYvs34Y3ujnFp8XvG65VYM=;
+        b=UCPRyMChwNclTb3u//rtz1tMHgOBq4nZ3UDc8jesABJrDcOR3D8QapQAyeQzmUPkYZ
+         Lr0yTjxr29jMk/UpzcbMJGl80tBATOBzvPNwC0TOyyOYeKMho7RfrUAMuqQ6I/PYReY4
+         Ng+qAjea0hph36rbgOxPrBK5L5YHp+VUR5ecPSxwNCNEHE6jrH0NHM226eza7FxNPbWH
+         w5KZjF/UmHO8Ayh/vPpt949BH+IPtQQEP5zltiA6Wbm9QYDAYTkXAlCZAyMwJxfbaZgn
+         gSVHRHQfzJ42II5IPSlGZ1HKVizaTqEdGJJBZZwcIy36crx/efMJQav9ufkQUZXJ9Zov
+         lMog==
+X-Forwarded-Encrypted: i=1; AJvYcCUwiuw056yAn4q9EPifPKkitGIKG5sj5oIHNEXiYrW/DNFT/67T3Ex/53fpmSOk+avhWr4p4qHPOApgltNZ@vger.kernel.org, AJvYcCVORXrwthYEkhXMTy3Yhx9NfJLbpojXNmoE/AWK8/z0pDILHW8oyCBC5K6/gXqAsJL4XEj4U7Z/SNVdoX6H@vger.kernel.org, AJvYcCW3F0O5bOYN2GR2FwZCMz6n9I4Cj71px5b4qntyXgwZn4pLa9Kz5Z9GCSl8aQ28EOKbU96lG73bndFhl2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZgt1FqEJ+y883+tgLZdOkPekEqpzI1oiZhij467fJuqCGw7GM
+	JfT8Z5znk2vX4HOSLF6TyuAtNGZPlTyb5PBQCVmLM7NDntZPrKFrelEUvOlWh9JL7CWng2FGFSP
+	FEw2nHWyexwoGPfPZCef9IU1dnZ8=
+X-Google-Smtp-Source: AGHT+IFqx8TcKXiv/Re9D241u030wW+khWtByCMfrfX8RLhIUB/l6/xMKzx/arboRN6kooM7tP4z+Lxl5ZB0NKdU8zk=
+X-Received: by 2002:a05:6512:2346:b0:52c:e10b:cb33 with SMTP id
+ 2adb3069b0e04-539e57267ddmr3864409e87.50.1728899629474; Mon, 14 Oct 2024
+ 02:53:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: arm-smmu: Document Qualcomm QCS615 apps
- smmu
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <robimarko@gmail.com>, <quic_gurus@quicinc.com>,
-        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-References: <20241011063112.19087-1-quic_qqzhou@quicinc.com>
- <20241011063112.19087-3-quic_qqzhou@quicinc.com>
- <af81be27-fdfa-4dec-a18c-56c7022e3c75@kernel.org>
- <2224b2fe-4e72-4371-9f0b-d5ee211c2210@quicinc.com>
- <4102024c-d4a9-494d-b855-c5f770228788@kernel.org>
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-In-Reply-To: <4102024c-d4a9-494d-b855-c5f770228788@kernel.org>
+References: <670cb3f6.050a0220.3e960.0052.GAE@google.com>
+In-Reply-To: <670cb3f6.050a0220.3e960.0052.GAE@google.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Mon, 14 Oct 2024 18:53:33 +0900
+Message-ID: <CAKFNMomwgmzwxbRKtDvbK-N0wWJ8iY9Xg-c_mBKzC3W90pXUMg@mail.gmail.com>
+Subject: Re: [syzbot] [fs?] kernel BUG in submit_bh_wbc (3)
+To: syzbot <syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com>
+Cc: syzkaller-bugs@googlegroups.com, linux-nilfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LsRrV4vBcDNpys5sRunHPVuFPmZE2lxD
-X-Proofpoint-ORIG-GUID: LsRrV4vBcDNpys5sRunHPVuFPmZE2lxD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
- clxscore=1015 adultscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140071
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 14, 2024 at 3:02=E2=80=AFPM syzbot
+<syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    6485cf5ea253 Merge tag 'hid-for-linus-2024101301' of git:=
+/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D142f585f98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D164d2822debd8=
+b0d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D985ada84bf055a5=
+75c07
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f39f2ba63ff0/dis=
+k-6485cf5e.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1b68f3c352ce/vmlinu=
+x-6485cf5e.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/38070176e828/b=
+zImage-6485cf5e.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> kernel BUG at fs/buffer.c:2785!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+> CPU: 0 UID: 0 PID: 5968 Comm: syz.0.65 Not tainted 6.12.0-rc3-syzkaller-0=
+0007-g6485cf5ea253 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> RIP: 0010:submit_bh_wbc+0x556/0x560 fs/buffer.c:2785
+> Code: 89 fa e8 dd d7 cb 02 e9 95 fe ff ff e8 63 9b 74 ff 90 0f 0b e8 5b 9=
+b 74 ff 90 0f 0b e8 53 9b 74 ff 90 0f 0b e8 4b 9b 74 ff 90 <0f> 0b e8 43 9b=
+ 74 ff 90 0f 0b 90 90 90 90 90 90 90 90 90 90 90 90
+> RSP: 0018:ffffc9000303e9f8 EFLAGS: 00010287
+> RAX: ffffffff82204bb5 RBX: 0000000000000154 RCX: 0000000000040000
+> RDX: ffffc900044b1000 RSI: 0000000000000a81 RDI: 0000000000000a82
+> RBP: 0000000000000100 R08: ffffffff82204779 R09: 1ffff1100ae83f79
+> R10: dffffc0000000000 R11: ffffed100ae83f7a R12: 0000000000000000
+> R13: ffff88805741fbc8 R14: 0000000000000000 R15: 1ffff1100ae83f79
+> FS:  00007fbfb2dcc6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f08b6361160 CR3: 000000005f354000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  submit_bh fs/buffer.c:2824 [inline]
+>  block_read_full_folio+0x93b/0xcd0 fs/buffer.c:2451
+>  do_mpage_readpage+0x1a73/0x1c80 fs/mpage.c:317
+>  mpage_read_folio+0x108/0x1e0 fs/mpage.c:392
+>  filemap_read_folio+0x14b/0x630 mm/filemap.c:2367
+>  do_read_cache_folio+0x3f5/0x850 mm/filemap.c:3825
+>  read_mapping_folio include/linux/pagemap.h:1011 [inline]
+>  nilfs_get_folio+0x4b/0x240 fs/nilfs2/dir.c:190
+>  nilfs_find_entry+0x138/0x650 fs/nilfs2/dir.c:313
+>  nilfs_inode_by_name+0xa8/0x210 fs/nilfs2/dir.c:393
+>  nilfs_lookup+0x76/0x110 fs/nilfs2/namei.c:62
+>  __lookup_slow+0x28c/0x3f0 fs/namei.c:1732
+>  lookup_slow fs/namei.c:1749 [inline]
+>  lookup_one_unlocked+0x1a4/0x290 fs/namei.c:2912
+>  ovl_lookup_positive_unlocked fs/overlayfs/namei.c:210 [inline]
+>  ovl_lookup_single+0x200/0xbd0 fs/overlayfs/namei.c:240
+>  ovl_lookup_layer+0x417/0x510 fs/overlayfs/namei.c:333
+>  ovl_lookup+0x5d8/0x2a60 fs/overlayfs/namei.c:1068
+>  lookup_open fs/namei.c:3573 [inline]
+>  open_last_lookups fs/namei.c:3694 [inline]
+>  path_openat+0x11a7/0x3590 fs/namei.c:3930
+>  do_filp_open+0x235/0x490 fs/namei.c:3960
+>  do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+>  do_sys_open fs/open.c:1430 [inline]
+>  __do_sys_open fs/open.c:1438 [inline]
+>  __se_sys_open fs/open.c:1434 [inline]
+>  __x64_sys_open+0x225/0x270 fs/open.c:1434
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fbfb1f7dff9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fbfb2dcc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 00007fbfb2135f80 RCX: 00007fbfb1f7dff9
+> RDX: 0000000000000000 RSI: 000000000014d27e RDI: 0000000020000180
+> RBP: 00007fbfb1ff0296 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007fbfb2135f80 R15: 00007ffe859206a8
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:submit_bh_wbc+0x556/0x560 fs/buffer.c:2785
+> Code: 89 fa e8 dd d7 cb 02 e9 95 fe ff ff e8 63 9b 74 ff 90 0f 0b e8 5b 9=
+b 74 ff 90 0f 0b e8 53 9b 74 ff 90 0f 0b e8 4b 9b 74 ff 90 <0f> 0b e8 43 9b=
+ 74 ff 90 0f 0b 90 90 90 90 90 90 90 90 90 90 90 90
+> RSP: 0018:ffffc9000303e9f8 EFLAGS: 00010287
+> RAX: ffffffff82204bb5 RBX: 0000000000000154 RCX: 0000000000040000
+> RDX: ffffc900044b1000 RSI: 0000000000000a81 RDI: 0000000000000a82
+> RBP: 0000000000000100 R08: ffffffff82204779 R09: 1ffff1100ae83f79
+> R10: dffffc0000000000 R11: ffffed100ae83f7a R12: 0000000000000000
+> R13: ffff88805741fbc8 R14: 0000000000000000 R15: 1ffff1100ae83f79
+> FS:  00007fbfb2dcc6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f08b6361160 CR3: 000000005f354000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
+I can't say for sure, but from the stack trace, this seems to be an
+issue with nilfs2, so I'll add the nilfs tag:
 
-在 10/14/2024 2:52 PM, Krzysztof Kozlowski 写道:
-> On 14/10/2024 05:09, Qingqing Zhou wrote:
->>>> ---
->>>>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->>>> index 92d350b8e01a..9e62c2cdda08 100644
->>>> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->>>> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->>>> @@ -36,6 +36,7 @@ properties:
->>>>          items:
->>>>            - enum:
->>>>                - qcom,qcm2290-smmu-500
->>>> +              - qcom,qcs615-smmu-500
->>>
->>> This is incomplete? No clocks? No power-domains?
->> This is APPS SMMU, no clocks and no power-domains are needed for DT.
-> 
-> Then express it in the binding.
-OK, will add this in next patch version.
-> 
-> Best regards,
-> Krzysztof
-> 
+#syz set subsystems: nilfs, fs
+
+Ryusuke Konishi
 
