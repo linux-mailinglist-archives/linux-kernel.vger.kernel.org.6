@@ -1,83 +1,204 @@
-Return-Path: <linux-kernel+bounces-363348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B0699C120
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:20:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDA599C121
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12A85B23E72
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:20:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA21281209
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAA214A0A0;
-	Mon, 14 Oct 2024 07:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIViGYo7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C402633C9;
-	Mon, 14 Oct 2024 07:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF3E1482FE;
+	Mon, 14 Oct 2024 07:21:32 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80E0147C98
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728890405; cv=none; b=HvXJEKmi/OIqhPhXO6HC2MpRhnFV0vSGNoR7upYytfm63iUUzN0MP+OYgd0dBPMF5x8i7pFYjQds0oRKuFCJBEYakSyx99IoEmDsjpVTTuMTdyj0keIevFZFgkxp/yTyvYpeDHGnmsPSZUsjvScj4HmLcvRDq3AZcZdNPyPvg5E=
+	t=1728890491; cv=none; b=HiE1sIfhSuwcT8oqmzit0JrzUQblkFzFA0ee9v+W6MxBaEKdaszIiH+e5GImKY1zBwNi4Y+YLoM/9KWeOJjh1lR15CDbFY4VUiMy5hu92hkh1YdD1G1RCHy8v+9xOcNOm8p93xF0sS5XO+I8/PfYSWEIgqB4Ama8SqeIaEx0p1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728890405; c=relaxed/simple;
-	bh=lTu6b95UCsiayyZ977ilYDsx19yq0h1YXeBd8TAgnAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6yAgbDFKOnBXqlqgxJ8i+r+pHTIXEpGvsKfLIfo93q24dP1O8uYOAZIa9NROXZawU4XWbjHv7NVKr1v8Wc/5oU0N05sj+qy5WSjqPqHM5AkFDnySYasnJrIzJ3fbQ0oD0CbZs6Ig4BcPB1Xj/YWiSao8j99mswohRzfcy8wqOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIViGYo7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0CABC4CECE;
-	Mon, 14 Oct 2024 07:20:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728890405;
-	bh=lTu6b95UCsiayyZ977ilYDsx19yq0h1YXeBd8TAgnAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eIViGYo7QB6FWy5beKClPwuP1l07fqRDxTa2sMeL4v2mqoAJwnbf+8JwoGwAWxc3q
-	 4Z98CXu8E59Dko+qLKk8tbeHZlAEzHwzSvwMbJllmtIhlahen1nuU8gZ1lAmINqKdi
-	 ++/VEK0z/T5ZPrAQxxa+BuGQQycnUkgyEtcr2tITH1uUWxWl4gCh9/g1VaMhycMpk6
-	 LzPmpsStC9pi/Ly4ycVI5D690yEpXU5XfWnQY42N7tTlTe+ZFoezNff6EUi6qBExXq
-	 2nyoyZOf/9LixGXGzLibZASxKyIlu+TQmO+H9kwFy+G6h5hb9PVVMFei99n6ZvsI5f
-	 ZdYNITUxmDqnw==
-Date: Mon, 14 Oct 2024 09:20:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Merck Hung <merckhung@gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: arm: qcom: Add Microsoft Windows Dev
- Kit 2023
-Message-ID: <jebri52am4sjtdfe6726g4cbbroyr7a7ctrvolin7rxjfpdu3z@73ko5u37hpnc>
-References: <20241013-jg-blackrock-for-upstream-v3-0-839d3483a8e7@oldschoolsolutions.biz>
- <20241013-jg-blackrock-for-upstream-v3-1-839d3483a8e7@oldschoolsolutions.biz>
+	s=arc-20240116; t=1728890491; c=relaxed/simple;
+	bh=+XjRHuZjF/bjyb2UI9kssv4hU1ZkiUV9lPgi6nt6OtU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=sPyZRMPYMLRR9/Ir+234TrLkZWxyB4ypCLc1FGPQk1qLHb0NM7LSTcjWjS25KYRJ7XIyHBM013YzsDryjaP5ZdQSJjzb1ycMrBicDw0+2zfwHCNt3Ul+TPN8Uzb3VvAN2FJ2CZbZc5ZTwT8zoGenSkROVuyDNRMd8wvv5OWwO2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxWbF2xgxnuV8aAA--.38166S3;
+	Mon, 14 Oct 2024 15:21:26 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMCxrtdzxgxnwOIoAA--.2980S3;
+	Mon, 14 Oct 2024 15:21:25 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: Fix cpu hotplug issue
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ lixianglai@loongson.cn, WANG Xuerui <kernel@xen0n.name>
+References: <20241014063328.1216497-1-maobibo@loongson.cn>
+ <CAAhV-H5_SUnrf0PwOUFOA0EumKvGOmgqUq=Cx61Ub5AW=MPo=A@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <24ea8b02-8c94-d561-cef0-01044b610a1e@loongson.cn>
+Date: Mon, 14 Oct 2024 15:21:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241013-jg-blackrock-for-upstream-v3-1-839d3483a8e7@oldschoolsolutions.biz>
+In-Reply-To: <CAAhV-H5_SUnrf0PwOUFOA0EumKvGOmgqUq=Cx61Ub5AW=MPo=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxrtdzxgxnwOIoAA--.2980S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxZw1DWryUWF43Zw1UXrW8AFc_yoWrAFy5pr
+	W8CFZ5CwsxXFykW3yrt397Wry5Zr1kKrsIq3W3KFWrCFn8Jr1kAr4vgr98XFyUKw40yr1F
+	vF4rWanIvF48J3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8j-
+	e5UUUUU==
 
-On Sun, Oct 13, 2024 at 01:54:03PM +0200, Jens Glathe wrote:
-> Add compatible values for the Microsoft Windows Dev Kit (WDK2023)
-> with its codename "blackrock". The Dev kit is a small desktop box
-> based on the mainboard of the Surface pro 9 5G, intended for
-> developers to test/build arm64-based Windows software.
-> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
+Huacai,
+
+On 2024/10/14 下午3:05, Huacai Chen wrote:
+> Hi, Bibo,
 > 
-> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> I'm a little confused, so please correct me if I'm wrong.
+> 
+> On Mon, Oct 14, 2024 at 2:33 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> On LoongArch system, there are two places to set cpu numa node. One
+>> is in arch specified function smp_prepare_boot_cpu(), the other is
+>> in generic function early_numa_node_init(). The latter will overwrite
+>> the numa node information.
+>>
+>> However for hot-added cpu, cpu_logical_map() fails to its physical
+>> cpuid at beginning since it is not enabled in ACPI MADT table. So
+>> function early_cpu_to_node() also fails to get its numa node for
+>> hot-added cpu, and generic function early_numa_node_init() will
+>> overwrite incorrect numa node.
+> For hot-added cpus, we will call acpi_map_cpu() -->
+> acpi_map_cpu2node() --> set_cpuid_to_node(), and set_cpuid_to_node()
+> operates on __cpuid_to_node[]. So I think early_cpu_to_node() should
+> be correct?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+__cpuid_to_node[] is correct which is physical cpuid to numa node, 
+however cpu_logical_map(cpu) is not set. It fails to get physical cpuid
+from logic cpu.
 
-Best regards,
-Krzysztof
+int early_cpu_to_node(int cpu)
+{
+         int physid = cpu_logical_map(cpu);
+
+<<<<<<<<<<< Here physid is -1.
+
+         if (physid < 0)
+                 return NUMA_NO_NODE;
+
+         return __cpuid_to_node[physid];
+}
+
+Regards
+Bibo Mao
+> 
+> Huacai
+> 
+>>
+>> Here static array __cpu_to_node and api set_early_cpu_to_node()
+>> is added, so that early_cpu_to_node is consistent with function
+>> cpu_to_node() for hot-added cpu.
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/include/asm/numa.h |  2 ++
+>>   arch/loongarch/kernel/numa.c      | 10 +++++++++-
+>>   arch/loongarch/kernel/smp.c       |  1 +
+>>   3 files changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/numa.h b/arch/loongarch/include/asm/numa.h
+>> index b5f9de9f102e..e8e6fcfb006a 100644
+>> --- a/arch/loongarch/include/asm/numa.h
+>> +++ b/arch/loongarch/include/asm/numa.h
+>> @@ -50,6 +50,7 @@ static inline void set_cpuid_to_node(int cpuid, s16 node)
+>>   }
+>>
+>>   extern int early_cpu_to_node(int cpu);
+>> +extern void set_early_cpu_to_node(int cpu, s16 node);
+>>
+>>   #else
+>>
+>> @@ -57,6 +58,7 @@ static inline void early_numa_add_cpu(int cpuid, s16 node)    { }
+>>   static inline void numa_add_cpu(unsigned int cpu)              { }
+>>   static inline void numa_remove_cpu(unsigned int cpu)           { }
+>>   static inline void set_cpuid_to_node(int cpuid, s16 node)      { }
+>> +static inline void set_early_cpu_to_node(int cpu, s16 node)    { }
+>>
+>>   static inline int early_cpu_to_node(int cpu)
+>>   {
+>> diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
+>> index 84fe7f854820..62508aace644 100644
+>> --- a/arch/loongarch/kernel/numa.c
+>> +++ b/arch/loongarch/kernel/numa.c
+>> @@ -34,6 +34,9 @@ static struct numa_meminfo numa_meminfo;
+>>   cpumask_t cpus_on_node[MAX_NUMNODES];
+>>   cpumask_t phys_cpus_on_node[MAX_NUMNODES];
+>>   EXPORT_SYMBOL(cpus_on_node);
+>> +static s16 __cpu_to_node[NR_CPUS] = {
+>> +       [0 ... CONFIG_NR_CPUS - 1] = NUMA_NO_NODE
+>> +};
+>>
+>>   /*
+>>    * apicid, cpu, node mappings
+>> @@ -117,11 +120,16 @@ int early_cpu_to_node(int cpu)
+>>          int physid = cpu_logical_map(cpu);
+>>
+>>          if (physid < 0)
+>> -               return NUMA_NO_NODE;
+>> +               return __cpu_to_node[cpu];
+>>
+>>          return __cpuid_to_node[physid];
+>>   }
+>>
+>> +void set_early_cpu_to_node(int cpu, s16 node)
+>> +{
+>> +       __cpu_to_node[cpu] = node;
+>> +}
+>> +
+>>   void __init early_numa_add_cpu(int cpuid, s16 node)
+>>   {
+>>          int cpu = __cpu_number_map[cpuid];
+>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+>> index 9afc2d8b3414..998668be858c 100644
+>> --- a/arch/loongarch/kernel/smp.c
+>> +++ b/arch/loongarch/kernel/smp.c
+>> @@ -512,6 +512,7 @@ void __init smp_prepare_boot_cpu(void)
+>>                          set_cpu_numa_node(cpu, node);
+>>                  else {
+>>                          set_cpu_numa_node(cpu, rr_node);
+>> +                       set_early_cpu_to_node(cpu, rr_node);
+>>                          rr_node = next_node_in(rr_node, node_online_map);
+>>                  }
+>>          }
+>>
+>> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
+>> --
+>> 2.39.3
+>>
+>>
 
 
