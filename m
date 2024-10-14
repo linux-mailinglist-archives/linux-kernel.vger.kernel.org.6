@@ -1,145 +1,221 @@
-Return-Path: <linux-kernel+bounces-364175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CF699CC43
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:07:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4646399CC28
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2E31C21561
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:07:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0816F284303
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B2F19F43B;
-	Mon, 14 Oct 2024 14:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8471AA7A6;
+	Mon, 14 Oct 2024 14:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DYbi4wBl"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbT5uamD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B911A0724
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7141D555;
+	Mon, 14 Oct 2024 14:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728914769; cv=none; b=uItoiZZfwXqnleBEVm2IK+U04ZkegBeTrsyPFm77Sadc/z+wMuRp1EDXZijsuxNJIZ5QhOjDLeet0PvgXVlJxep+vasyZWEgamoLx+5C08P/Vt1zI/nyvCy1tpul9SF1Ljf4+Wgyfy6ps+LZHuXL+meWQyGnMCoQDW25xYjuUKg=
+	t=1728914725; cv=none; b=D2H3v3NHua7sav85HUF5GEZimSPXXcfJsTwrZU6WdGkd6fXHP/77m4m5wgWGY9TjlueDxeqLBP4ux/zsKxqcwxYZ9oxBGkECYUrBRAAdbbcwtT+mGkqpVPRwMSVsXn0595D1I7SOzJwOgC1pbtazLtW/IZBqUOSLAUAki7px3Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728914769; c=relaxed/simple;
-	bh=qhFTW7QIPjVVpSRlDT+6fXtgWvhKWttXIIqOIcfGqAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GepmOAhz5d5mGEJyOp6S0dioI2BCsVtjtx20sttmyk298jX0J/OFy9uUl8aedE9Kqoxflxqymdom+jjjVBiCfg6MnrI+XSvbOyGKCU7MjfhNHBwh31+h7+092hCFA7Wc/G7+kyWEgDfuCOYCihbD7enGlN7TYeG4JaHz7g6BlNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DYbi4wBl; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37cea34cb57so2882080f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728914764; x=1729519564; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PLfXdr9BsaIn75yQ115wB7w9fRCYY4Q6oR31SITc134=;
-        b=DYbi4wBltw6y/LlcUyS4dNi7u07Y37z2PA2wTiECbWcw9IBA2/Z6p5iYMK5F8axZ8i
-         spnQlmER56l1V/Q8NJ+pGYLUVoGqXPeb/DeebAVuZtLzpCWLjTY2sCcaQuUFHPHPCit6
-         GpZt/pNdJ0D1alBxsmZ9F6mafbPFv1tkdJpDaXrRvA4EpEbZqK6AE4+esJW01k9i9Ivc
-         UGR4WjMfImadJT+Uq1m/B81cIc+OUqrP1+2OrtgXY77pha0Puv8DRTF+yy1rfdcdysyI
-         f7gMVq3chTKfDyfHN3vIUBUgA0BnG0IHPRstYmseYEWEbAoLQyzB0ZnSgvwrd0U/9HWF
-         XGHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728914764; x=1729519564;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PLfXdr9BsaIn75yQ115wB7w9fRCYY4Q6oR31SITc134=;
-        b=ppdMY4cCEqU/0dheZz/zvxQohuFrHFXYAfLlKrxZ57dYD1kKR49hqh6jnQ53ONwn/w
-         coAeDWhpQY235MCw8KJbVTjJHRqSDkyvw/QgB34xwT4VzugPb+kCLGquLSxkvnOx46h1
-         5pISWgzQekHwEqV8gArz/AxA1hgC+lY+n9Of7A3ntFhQeaue/qsbkK72fSNQ6lgJs9kq
-         RBTQ6Gqg+2I29C0mvJXxWfx1elsVbKz+ae59DHXM9fUg0RpI8O+PhjNbJlWO2iEOQfiC
-         RSx/HNR67+h1x2eFGWG5VGCExF6Rd9En3kpvRNUK/BYrlErTdFK5nRytNoeqqqOnZg3H
-         K9UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVpZEkkpbhK2JX8yEaBMCVJCzC5q2vgm/3Tyjh1jLUoUXiHOhY0UQX5fhk8Tl4DCy3XSKDr1y95hlswFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrfdk3XD9hTzOhThp/3uyyzoc17oKg8Cx0PUAdzXnbH0GpdBWA
-	us0hG2xtGafskggSteQSnSbKJonCnNxUUMTvqg5QVCAUtXzE3gsmxj6Osg366jM=
-X-Google-Smtp-Source: AGHT+IGJIKE0j3n+bSOYnhn8s9A4HLTrtvBewTwoHkoBGYIhcVUnPXMQGUvU/Re1B6fDK5qaBVgmVw==
-X-Received: by 2002:adf:8b54:0:b0:37d:52b5:451e with SMTP id ffacd0b85a97d-37d551fc226mr7228923f8f.33.1728914763671;
-        Mon, 14 Oct 2024 07:06:03 -0700 (PDT)
-Received: from dfj (host-79-45-239-138.retail.telecomitalia.it. [79.45.239.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bfc8csm11484743f8f.45.2024.10.14.07.06.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 07:06:03 -0700 (PDT)
-Date: Mon, 14 Oct 2024 16:04:35 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-iio@vger.kernel.org, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dlechner@baylibre.com, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>
-Subject: Re: [PATCH v6 2/8] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
- axi variant
-Message-ID: <r2gmorclmtcrykws4sd7l3hkjzg6f72vbh7ulh3ml2jsnev35z@on2stvxr36qm>
-References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
- <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-2-eeef0c1e0e56@baylibre.com>
- <172890486251.793259.16216468875581353928.robh@kernel.org>
- <20241014133823.GA1018400-robh@kernel.org>
+	s=arc-20240116; t=1728914725; c=relaxed/simple;
+	bh=3P53f06q2jOIKqVMldN6nW1SJr0MQe8FU5Df9K3aLhI=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=W1i5jMyAdUHhq/XiTa9RDZwRuugIb6ftz9qy/aU0vvgzkckAGehg7G22/pPh+F2Q7VWR/tm2/JwPeyoU1+aMtSlQBM1COTfx7VkCGEnH9nuWwPCukLaeoAfuBNbdHvK8JhcbEFf/HDvhIBbk8l8jL4jLYN+dCK9nl53MF0+RVew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbT5uamD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5457AC4CEC3;
+	Mon, 14 Oct 2024 14:05:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728914725;
+	bh=3P53f06q2jOIKqVMldN6nW1SJr0MQe8FU5Df9K3aLhI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=GbT5uamDSyndnevVXWG2KlC7P2IwS6nmuUbExiCLXrmmkFB48JHGoQa/v+7q7gnl8
+	 j3WA5UKv8GePweo+QBJsLStOSP37Poy41vmA9FfiTDCVQluUxrBZZuYKiVsCsTjjdY
+	 k/DZ85uDU+Dzk8l/0NOUHIcKYjoiZZchKJ8FcHg6zuMZkz6eYlsqr5FCt3FhC9vTiF
+	 2CqnyhkIEVJejn6ToBMBVucVkiP7Q2ZyceAJml0Zq/vIyDKkn1xNghHvniGO0+Iexv
+	 SaJNZEAivboiLNdGNo/s73HzAKYD3RGhbJWAnl2eE/29CEIuNem5kZ/7WMPFJhnZD8
+	 bgzwykhU5s3/A==
+Date: Mon, 14 Oct 2024 09:05:24 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014133823.GA1018400-robh@kernel.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Dhruva Gole <d-gole@ti.com>, 
+ Santosh Shilimkar <ssantosh@kernel.org>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Vishal Mahaveer <vishalm@ti.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Anand Gadiyar <gadiyar@ti.com>, Tero Kristo <kristo@kernel.org>
+In-Reply-To: <20241012-topic-am62-partialio-v6-12-b4-v3-0-f7c6c2739681@baylibre.com>
+References: <20241012-topic-am62-partialio-v6-12-b4-v3-0-f7c6c2739681@baylibre.com>
+Message-Id: <172891443733.1126799.5690975556564135369.robh@kernel.org>
+Subject: Re: [PATCH v3 0/6] firmware: ti_sci: Partial-IO support
 
-Hi Rob,
 
-On 14.10.2024 08:38, Rob Herring wrote:
-> On Mon, Oct 14, 2024 at 06:21:02AM -0500, Rob Herring (Arm) wrote:
-> > 
-> > On Mon, 14 Oct 2024 12:08:08 +0200, Angelo Dureghello wrote:
-> > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > 
-> > > Add a new compatible and related bindigns for the fpga-based
-> > > "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
-> > > 
-> > > The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-> > > generic AXI "DAC" IP, intended to control ad3552r and similar chips,
-> > > mainly to reach high speed transfer rates using a QSPI DDR
-> > > (dobule-data-rate) interface.
-> > > 
-> > > The ad3552r device is defined as a child of the AXI DAC, that in
-> > > this case is acting as an SPI controller.
-> > > 
-> > > Note, #io-backend is present because it is possible (in theory anyway)
-> > > to use a separate controller for the control path than that used
-> > > for the datapath.
-> > > 
-> > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > ---
-> > >  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 56 ++++++++++++++++++++--
-> > >  1 file changed, 53 insertions(+), 3 deletions(-)
-> > > 
-> > 
-> > My bot found errors running 'make dt_binding_check' on your patch:
-> > 
-> > yamllint warnings/errors:
-> > 
-> > dtschema/dtc warnings/errors:
-> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: spi-max-frequency: 66000000 is greater than the maximum of 30000000
-> > 	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
+On Sat, 12 Oct 2024 16:39:26 +0200, Markus Schneider-Pargmann wrote:
+> Hi,
 > 
-> This is at least the third time this issue has been reported. Don't send 
-> more versions until you fix it.
+> Series
+> ------
+> Partial-IO is a poweroff SoC state with a few pingroups active for
+> wakeup. This state can be entered by sending a TI_SCI PREPARE_SLEEP
+> message.
+> 
+> The message is sent on poweroff if one of the potential wakeup sources
+> for this power state are wakeup enabled. The potential wakeup sources
+> are determined by the power supply name of devices as there is one
+> always-on power-line that powers all canuart devices that are powered
+> through Partial-IO as well. The wakeup sources can be individually
+> enabled/disabled by the user in the running system.
+> 
+> The series is based on v6.12-rc1.
+> 
+> Partial-IO
+> ----------
+> This series is part of a bigger topic to support Partial-IO on am62,
+> am62a and am62p. Partial-IO is a poweroff state in which some pins are
+> able to wakeup the SoC. In detail MCU m_can and two serial port pins can
+> trigger the wakeup.
+> A documentation can also be found in section 6.2.4 in the TRM:
+>   https://www.ti.com/lit/pdf/spruiv7
+> 
+> This other series is relevant for the support of Partial-IO:
+> 
+>  - can: m_can: Add am62 wakeup support
+>    https://lore.kernel.org/lkml/20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com
+>    https://gitlab.baylibre.com/msp8/linux/-/tree/topic/mcan-wakeup-source/v6.12?ref_type=heads
+> 
+> Testing
+> -------
+> A test branch is available here that includes all patches required to
+> test Partial-IO:
+> 
+> https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62/v6.12?ref_type=heads
+> 
+> After enabling Wake-on-LAN the system can be powered off and will enter
+> the Partial-IO state in which it can be woken up by activity on the
+> specific pins:
+>     ethtool -s can0 wol p
+>     ethtool -s can1 wol p
+>     poweroff
+> 
+> I tested these patches on am62-lp-sk.
+> 
+> Best,
+> Markus
+> 
+> Previous versions:
+>  v1: https://lore.kernel.org/lkml/20240523080225.1288617-1-msp@baylibre.com/
+>  v2: https://lore.kernel.org/lkml/20240729080101.3859701-1-msp@baylibre.com/
+> 
+> Changes in v3:
+>  - Remove other modes declared for PREPARE_SLEEP as they probably won't
+>    ever be used in upstream.
+>  - Replace the wait loop after sending PREPARE_SLEEP with msleep and do
+>    an emergency_restart if it exits
+>  - Remove uarts from DT wakeup sources
+>  - Split no response handling in ti_sci_do_xfer() into a separate patch
+>    and use goto instead of if ()
+>  - Remove DT binding parital-io-wakeup-sources. Instead I am modeling
+>    the devices that are in the relevant group that are powered during
+>    Partial-IO with the power supplies that are externally provided to
+>    the SoC. In this case they are provided through 'vddshv_canuart'. All
+>    devices using this regulator can be considered a potential wakeup
+>    source if they are wakeup capable and wakeup enabled.
+>  - Added devicetree patches adding vcc_3v3_sys regulator and
+>    vddshv_canuart for am62-lp-sk
+>  - Add pinctrl entries for am62-lp-sk to add WKUP_EN for mcu_mcan0 and
+>    mcu_mcan1
+> 
+> Changes in v2:
+>  - Rebase to v6.11-rc1
+>  - dt-binding:
+>     - Update commit message
+>     - Add more verbose description of the new binding for a better
+>       explanation.
+>  - ti_sci driver:
+>     - Combine ti_sci_do_send() into ti_sci_do_xfer and only wait on a
+>       response if a flag is set.
+>     - On failure to enter Partial-IO, do emergency_restart()
+>     - Add comments
+>     - Fix small things
+> 
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+> Markus Schneider-Pargmann (6):
+>       firmware: ti_sci: Support transfers without response
+>       firmware: ti_sci: Partial-IO support
+>       arm64: dts: ti: k3-pinctrl: Add WKUP_EN flag
+>       arm64: dts: ti: am62-lp-sk: Add vcc_3v3_sys regulator
+>       arm64: dts: ti: am62-lp-sk: Add vddshv_canuart regulator
+>       arm64: dts: ti: am62-lp-sk: Add wakeup mcu_mcan0/1 pinctrl
+> 
+>  arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts |  79 +++++++++++++++++-
+>  arch/arm64/boot/dts/ti/k3-pinctrl.h      |   3 +
+>  drivers/firmware/ti_sci.c                | 137 ++++++++++++++++++++++++++++++-
+>  drivers/firmware/ti_sci.h                |   5 ++
+>  4 files changed, 221 insertions(+), 3 deletions(-)
+> ---
+> base-commit: 03dc72319cee7d0dfefee9ae7041b67732f6b8cd
+> change-id: 20241008-topic-am62-partialio-v6-12-b4-c273fbac4447
+> prerequisite-change-id: 20241006-tisci-syssuspendresume-e6550720a50f:13
+> prerequisite-patch-id: 945b15416a011cb40007c5d95561786c1776bb98
+> prerequisite-patch-id: 69a741b9c81d7990937483fc481aafa70e67669d
+> prerequisite-patch-id: 15e97947da8cb7055745151990c756d81fded804
+> prerequisite-patch-id: a0efbf22e69d23dba8bb96db4032ca644935709b
+> prerequisite-patch-id: 2999da190c1ba63aabecc55fae501d442e4e0d7b
+> prerequisite-change-id: 20241009-topic-mcan-wakeup-source-v6-12-8c1d69931bd8:3
+> prerequisite-patch-id: a7c60adc118d6b8bf783686a62d03c88b14b853c
+> prerequisite-patch-id: 90f03012d910402b043334ad5a5a8580e33e3d97
+> prerequisite-patch-id: 74aa28d4203323744419694568d2f5bbf471e233
+> prerequisite-patch-id: 56fd0aae20e82eb2dfb48f1b7088d62311a11f05
+> prerequisite-patch-id: f4febebdfba5f2fbfd1f276b8ee8b72be047dfc8
+> prerequisite-patch-id: c7f9373ac4b8a623f9cb68788c7d0cb6567e3ed9
+> prerequisite-patch-id: 33d27d8c3f8d1913ed1ec2abb9f64f4d7cd9f1fb
+> prerequisite-patch-id: 38ba1a5ffe086d1bc186db125d8610b0cdb191f9
+> prerequisite-patch-id: 46803aa31b9b00725e58fa27c883be94729941c2
+> 
+> Best regards,
+> --
+> Markus Schneider-Pargmann <msp@baylibre.com>
+> 
+> 
 > 
 
-as stated in the patch message, this patch applies to linux-iio testing,
-where there are no errors, from my tests.
 
-Error is due to the spi-max-frequency fix already applied in iio testing,
-but still not where your bot is testing, proably in mainline.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Regards,
-angelo
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-> Rob
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y ti/k3-am62-lp-sk.dtb' for 20241012-topic-am62-partialio-v6-12-b4-v3-0-f7c6c2739681@baylibre.com:
+
+arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb: pinctrl@4084000: 'mcu-mcan0-rx-pins-default', 'mcu-mcan0-rx-pins-wakeup', 'mcu-mcan0-tx-pins-default', 'mcu-mcan1-rx-pins-default', 'mcu-mcan1-rx-pins-wakeup', 'mcu-mcan1-tx-pins-default' do not match any of the regexes: '-pins(-[0-9]+)?$|-pin$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
+
+
+
+
+
 
