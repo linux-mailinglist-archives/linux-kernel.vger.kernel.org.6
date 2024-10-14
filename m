@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-363514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F1F99C35A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:32:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31A999C35F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D9401F24390
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:32:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 413B0B261F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BF5156C70;
-	Mon, 14 Oct 2024 08:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325FB153824;
+	Mon, 14 Oct 2024 08:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VUNzeSgl"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="g9u/1aeT"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B254156654
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D0F14D70B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728894679; cv=none; b=kNyugJZTDDhOoseC5e74b5SBB/+nBNRLhuyvtbfL2ngOsct8wbAsuOdETKCWenchC6bpkhf7tH+Y2fOuYWF3EuQhY6AASUxxXTYh6+OJDzBxa09ci7+rEA3P4XbNIA4LPbY1YWQnYLK2HV1fRSo7IUnElGOYfORlzcawrbh4UBc=
+	t=1728894708; cv=none; b=nJk+C3PejHHrQgRYv09TocCM4DjLc8hN0CSUaNociCM+a6b/yS7zL6L+QpjpYSKhSrssyvXdLfJWcQOttsgmWSswjCBioijkZmQGwVLM8cfwF2SAykWaxtYNc/VQ/OEVTxPPXB9VKrxCJ/x4k4A19fpD3YJPmRb9nB+hmNoquEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728894679; c=relaxed/simple;
-	bh=Fv+iKDGnubuClZOy0sgzuUSOaRDVqKI+AzPFvb16xxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lob6PBKZIagJfpBlVqyJPCaUC10o5w+h8MCn95Hr2DY3yqK6ROGP8i/NTk7GyHRWfZpyBu2AsE24ARUnGIsFkG76K6BsaHe99PAjuJ1gsGekA4zV/APTUuHT/2LUUyOLKMzcviTFawNcFlWF8b8AqzkbT5XFl+/E2hVXVA7jYtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VUNzeSgl; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c948c41edeso3446803a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:31:17 -0700 (PDT)
+	s=arc-20240116; t=1728894708; c=relaxed/simple;
+	bh=gmWuCVngXdsFXb2tCMrklsahOitu2AkKO6bcxumDxTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tOuOEBoYvmTXA5TwEK4+6uYfvc0tmMhGBAlGwmrIswDNQ3MTXvihallGKtq9bSDmFfcRUv0m9rn8ZaBEY5AJNgtUPY9Totd+zOeB7i4UYswFIrlq4hM2HGDLbTKKAAHMdhfTHNm6UuU/1hDWfkVXV4PEHIOpCrFXnVVb9i4d4ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=g9u/1aeT; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4305724c12eso30012055e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:31:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728894676; x=1729499476; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CVYpiwMgp/0jaR9U+wh+xTtNu0fqPqTVzNP6AS7gd9Q=;
-        b=VUNzeSglEKwrq4M23wXEmHjG5rFqTfMvkTwY7gIPu7PMq8TdEwKlyrViSgWMKQ5I80
-         VfRlfbbK0lWhaM7ojeUaJr3HKpRNqW1YtyElRNvIvfQ1elddwZiNsjBet8WPpDah0UKX
-         sCrxrUdZsdEdGkX250UPEm+KdcAMRHWUSnOM9fNxZp6zL7Z+ftvEbowAHczuni/rNwbT
-         EOkXd/bxx7grzL3TdRbZUm+7OjuqeXNmvsH1NXudNcGiiMcN/NhBdhJNNORSLThTTkEG
-         /SzEKKMGIC/9yxChKrDeLsRaFMsVdMrXofODtGbRoiWkv229z1TNwNb809c5kfr1PgfO
-         gFcw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728894705; x=1729499505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v2aUenQHtDR4d3im3kX4S2ns02KTZQwh5qzY3YgiWBY=;
+        b=g9u/1aeTUqMYbDGTvsHDQH3407XRnf9vJvFYtYwKmX7Wxs6lxTVrHrl66lSCRgqY31
+         wpLx9vaDTiIH1q3lqVrFKUWyTJe9KlFNEf5yWJlg+nwYh5woW51VdcOOTp1nV+WALNuG
+         66mV/dxeBR6KHwevjvDD12U5lUzsn9T7J6JQ4CKUzEL3N8z8HMFiOqHNLebAXcK4Uchi
+         aT2zvQTNZPgg/VZCnRPEqrghHdSQpLCAesFoH6hUyGYyMZaI8qewICIVVKr/A6FLPhFj
+         MV3dgFrdgROrSgCGC5c3YyHtEHPPMdaTIt7sPh8aXMaVN5ULITb8sA90+rqEAIN7QalR
+         ciJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728894676; x=1729499476;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CVYpiwMgp/0jaR9U+wh+xTtNu0fqPqTVzNP6AS7gd9Q=;
-        b=ElDiaan/NXqRBkPSiFpNJVXUUKPfanK7dEthcH9vL+O0RtRfbN1DkW7eANpQkPEzTt
-         TWAqgsjJ6pr6aho/QHz8FjWHoyJ+mJkXmZS+uauAyIZ0UFO4u35bIXl+mMK+QqRnj5vp
-         yQT6bx9z7hQNSK2wkRWrRNUfEcVsoazWtNoHymfhFw1dV3DJHaqDUbXgBVEyugxqXNzF
-         2ZQL7Uy/ihXEBxRsDLa77B47m5WB3v28ZFpYQL/8Mo9J0M/vba3SDCaTtvDucoMM1XSx
-         ZNFQPB9JavNONokZbXl2VombiRxsuBY+QjMZCRTqSWubXcOyAK6CDCJbms7zgWLMbUbv
-         IYJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuoIO9YYThqkeiYgg4+27oJ+DRFx4BROObWnmu5N8O9XnSJPt1Llm+maOXXMKbBe+FO2dgl+Fu7mq94V8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKNqCP2TEFJTZjdw7gbCx2KpZ2RjcTes3P+JYAksGGv00R/fe/
-	eKtOCSx6DhbQ8K4rC04tOi4s5tkH/+QJqJCy1Lq5XA6LIJ+uGRI7Q5df5VAdbZg=
-X-Google-Smtp-Source: AGHT+IF4ZeTiZ0TXalZNrlD6o7WG/tvA0YCER2qeJ3qHcdtTBeMwseRJMf6VI67pV1MSibnaeMxnPw==
-X-Received: by 2002:a05:6402:2786:b0:5c9:615d:c784 with SMTP id 4fb4d7f45d1cf-5c9615dd641mr4858375a12.23.1728894676407;
-        Mon, 14 Oct 2024 01:31:16 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c93711ba5dsm4634615a12.29.2024.10.14.01.31.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 01:31:15 -0700 (PDT)
-Message-ID: <6f461cb3-3a41-4a3d-b9b2-71b1c6be77f7@linaro.org>
-Date: Mon, 14 Oct 2024 09:31:14 +0100
+        d=1e100.net; s=20230601; t=1728894705; x=1729499505;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v2aUenQHtDR4d3im3kX4S2ns02KTZQwh5qzY3YgiWBY=;
+        b=TX+Z1m9rgTFGHY/tFxDpgNG+pti11ZO2JLmZgkpbJiNZI5CBEVylxUNfr9n6l3tVi2
+         UEIiTgyD6q6wlqd0JR+tapojDpLcX1vBzhGyxbkFex5TCgohFj8He1pmax891nNcQhQR
+         Uk2NM6k13+ig0xeetWJFAs/FuY4Njg+jjRog2D5CtBCy8PLoN6YMRdNXlNMlRH4OEc2P
+         GIHCSoVg9pb11sOg482OWLKaZkzZghjIylK0pwCvZJ7aSkF63nqhHMgOhtWw5wV5zh7a
+         e9SxXu3/teaK/l5aZg8iW79AkXj0aXkL6QrFTAzQ89+8hM3VJ2wvCbtPuKkVg83sKvnk
+         gNjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPNSXWs/KULxWCsjnO2YhuAxfsscSnAkkIcGQIkxZxJdt7uIvcTDU4m736sT6rTgUjPUBY/nnaX2yAbiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9fopHlXPbufYS0vddezYFmMgrWUVU2q2Dod+mQAtAoFe18ufK
+	cesFtM9IDLU5zPEKY2Q11fTtSum598Nog7YUBQgu+eTnyA5vc/cOaAOfAPYcsKw=
+X-Google-Smtp-Source: AGHT+IE0IvkqMtxjmmWnvyKx/nVbv6T1IUy7UMhj+4NYk+B3uzC/VKqBrGEM/7Aqd8RMPLchoDgXNg==
+X-Received: by 2002:a05:600c:19d0:b0:428:1b0d:8657 with SMTP id 5b1f17b1804b1-43125609022mr59886525e9.22.1728894705196;
+        Mon, 14 Oct 2024 01:31:45 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de54:ebb2:31be:53a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ed69dsm10737698f8f.92.2024.10.14.01.31.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 01:31:44 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] gpio: mpc8xxx: use a helper variable to store the address of pdev->dev
+Date: Mon, 14 Oct 2024 10:31:31 +0200
+Message-ID: <172889468798.57095.15268233570021195003.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241009162910.33477-1-brgl@bgdev.pl>
+References: <20241009162910.33477-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: dt-bindings: Use additionalProperties: false
- for endpoint: properties:
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Martin Kepplinger <martink@posteo.de>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- "Paul J. Murphy" <paul.j.murphy@intel.com>,
- Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
- Tommaso Merciai <tomm.merciai@gmail.com>,
- Martin Hecht <martin.hecht@avnet.eu>, Zhi Mao <zhi.mao@mediatek.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Mikhail Rudenko <mike.rudenko@gmail.com>,
- Ricardo Ribalda <ribalda@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Umang Jain <umang.jain@ideasonboard.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dongchun Zhu <dongchun.zhu@mediatek.com>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Todor Tomov <todor.too@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
- <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-2-a2bb12a1796d@linaro.org>
- <7ecxjoa7aije46cxmkyfd6ihxnqw4wleqkioddomxbwlu7qtrc@4dkfitppeksu>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <7ecxjoa7aije46cxmkyfd6ihxnqw4wleqkioddomxbwlu7qtrc@4dkfitppeksu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 14/10/2024 08:45, Krzysztof Kozlowski wrote:
-> I do not understand the reasoning behind this change at all. I don't
-> think DT maintainers ever suggested it (in fact, rather opposite:
-> suggested using unevaluatedProps) and I think is not a consensus of any
-> talks.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-No there is not but then, how do you give consistent feedback except 
-proposing something to be a baseline.
 
-On the one hand you have upstream additionalProperties: false and 
-unevaluatedProperites: false - it'd be better to have a consistent 
-message on which is to be used.
+On Wed, 09 Oct 2024 18:29:09 +0200, Bartosz Golaszewski wrote:
+> Instead of repeatedly dereferencing pdev, just store the address of the
+> embedded struct device in a local variable and use it instead for
+> improved readability.
+> 
+> While at it: rearrange variable declarations.
+> 
+> 
+> [...]
 
----
-bod
+Applied, thanks!
+
+[1/2] gpio: mpc8xxx: use a helper variable to store the address of pdev->dev
+      commit: 2707a028c9b9c54a6dff22c9dcfebf3083ea095e
+[2/2] gpio: mpc8xxx: use generic device_is_compatible()
+      commit: a937ee6d7eba055226fba300e17ade6f65de6d93
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
