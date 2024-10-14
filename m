@@ -1,194 +1,93 @@
-Return-Path: <linux-kernel+bounces-363819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8447F99C770
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:48:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C7999C774
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F651C22932
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:48:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6363D1C22952
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BF9183CA2;
-	Mon, 14 Oct 2024 10:48:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F17B156C52
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09EB18C32D;
+	Mon, 14 Oct 2024 10:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDehbRUi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BC417DE16;
+	Mon, 14 Oct 2024 10:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728902884; cv=none; b=pXKMXEHhjQN2DbhUWwzHeCkcl9fzH1wCOCdRSNze29umOcI7RB7kJRbwLTNKjFLhHjQ0WBIF9SXhiENL8cEcfS0Zy88gQxNS05CTBzHz3n750rjRCbRirEEhOMCVB1I9pvlmIpYyDgMuIG1cXI+Y2KcbVY1uoXj8I8xJWAI0ndM=
+	t=1728902901; cv=none; b=Vrcm9eDIe9zNk8JpjovSEWylQbaVS4P11mz056MsLB4QJtLPkl3Ch3hcT+gacBG1BxeM8fel5Co+4yiuN1RaPgB8GuKGSd6zfjxU4KrjYEavbQylUPHCyee/RnTAtF3/TiG7mGsrhwjb/CyzfSCCYLYrC5Uf+NLKA88BFADiE/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728902884; c=relaxed/simple;
-	bh=Fy8O4T0wrSTEzzQEqExtz1vMOSLdBu40q/2KIJ6LpQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CXxbQbVjdTVRdqKB0FFrnI1dtQoKsdinUL+8Sdvmph6WIP0eXMhijNoyvyXWPCuF+AsL7vaomi+S3BwaGx+yEBaebD2Uf2fO1rrKSUwHw9zXDPAu8/qCW6g4PBQMADdXZJyBVAMpL4dqlcPUzqIw58hupN6doP9wbZaKLPtEzRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F01891007;
-	Mon, 14 Oct 2024 03:48:31 -0700 (PDT)
-Received: from [10.163.38.184] (unknown [10.163.38.184])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D27F3F51B;
-	Mon, 14 Oct 2024 03:47:58 -0700 (PDT)
-Message-ID: <61203419-014e-4815-823c-62079aea93c9@arm.com>
-Date: Mon, 14 Oct 2024 16:18:00 +0530
+	s=arc-20240116; t=1728902901; c=relaxed/simple;
+	bh=nyk7KmsjJVeX09LhsxjDfvCwzgNz1+vfkwwUVY+0C/g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aSUznDNQNff+vmc97LWKOzjxIQKAbpHNzztpS2L+48xXUUnnGRJGZX9/MrkomERC7sAPxZ33Mu9YKcECrVK98tHQTdbOZIoOl0fWwM7l8j6yelR/A7OPSdlnydgHUtR07mk4knloT0I58xvDKho8QF3QDtsm3/6TbiBxL5tskF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDehbRUi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7AF4C4CEC3;
+	Mon, 14 Oct 2024 10:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728902900;
+	bh=nyk7KmsjJVeX09LhsxjDfvCwzgNz1+vfkwwUVY+0C/g=;
+	h=From:Subject:Date:To:Cc:From;
+	b=lDehbRUijHK3VViD/M4SotvPenvFUgbjHygLq7PtTA+4wUYOFk0PYzWJ3MPsh1XdR
+	 Z2jBi7HUs+M2OXVJrZYFSU/dpy+BV+wt35g2d15fDTqBzi9lqYZDZf61gnw4NeSwA+
+	 Sdyrxe7Ch/to8A+VconinXXUYSzz4Fv1mieeWg8Hysqj7w7ftZbHJsZ8NthDT1Mrkn
+	 kf4Rj+LbgbHT1738OkBBqjo7VLFeOPUHVklgbNzDR6ap3b77Ht/Nj/lGmvsqR/tsrh
+	 RYSDTKLHsFbyuQ3ZB7OLPWylJ3J6RMFNNc8pWBn0HkvDiWUWersbpfsUOaBeLcJsXC
+	 Jloo1d4yj+BIQ==
+From: Simon Horman <horms@kernel.org>
+Subject: [PATCH 0/2] net: ethernet: freescale: Use %pa to format
+ resource_size_t
+Date: Mon, 14 Oct 2024 11:48:06 +0100
+Message-Id: <20241014-net-pa-fmt-v1-0-dcc9afb8858b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] arm64/mm: Replace PXD_TABLE_BIT with
- PXD_TYPE_[MASK|SECT]
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241005123824.1366397-1-anshuman.khandual@arm.com>
- <20241005123824.1366397-3-anshuman.khandual@arm.com>
- <bb1dcfcf-302a-4932-a0d5-3abf5ed958c5@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <bb1dcfcf-302a-4932-a0d5-3abf5ed958c5@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOb2DGcC/x3MQQqAIBBA0avErBtQGQi6SrTQGmsWmahEIN49a
+ fkW/1fInIQzzEOFxI9kuUOHHgfYThsORtm7wShDWmnCwAWjRX8VZOccaTsReYIexMRe3n+2rK1
+ 94+9cQVwAAAA=
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Pantelis Antoniou <pantelis.antoniou@gmail.com>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+X-Mailer: b4 0.14.0
 
+Hi,
 
+This short series addersses the formatting of variables of
+type resource_size_t in freescale drivers.
 
-On 10/9/24 18:58, Ryan Roberts wrote:
-> On 05/10/2024 13:38, Anshuman Khandual wrote:
->> This modifies existing block mapping related helpers e.g [pmd|pud]_mkhuge()
->> , mk_[pmd|pud]_sect_prot() and pmd_trans_huge() to use PXD_TYPE_[MASK|SECT]
->> instead of corresponding PXD_TABLE_BIT. This also moves pmd_sect() earlier
->> for the symbol's availability preventing a build warning.
->>
->> While here this also drops pmd_val() check from pmd_trans_huge() helper, as
->> pmd_present() returning true already ensures that pmd_val() cannot be false
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Ard Biesheuvel <ardb@kernel.org>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  arch/arm64/include/asm/pgtable.h | 15 ++++++++-------
->>  1 file changed, 8 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->> index fa4c32a9f572..45c49c5ace80 100644
->> --- a/arch/arm64/include/asm/pgtable.h
->> +++ b/arch/arm64/include/asm/pgtable.h
->> @@ -484,12 +484,12 @@ static inline pmd_t pte_pmd(pte_t pte)
->>  
->>  static inline pgprot_t mk_pud_sect_prot(pgprot_t prot)
->>  {
->> -	return __pgprot((pgprot_val(prot) & ~PUD_TABLE_BIT) | PUD_TYPE_SECT);
->> +	return __pgprot((pgprot_val(prot) & ~PUD_TYPE_MASK) | PUD_TYPE_SECT);
->>  }
->>  
->>  static inline pgprot_t mk_pmd_sect_prot(pgprot_t prot)
->>  {
->> -	return __pgprot((pgprot_val(prot) & ~PMD_TABLE_BIT) | PMD_TYPE_SECT);
->> +	return __pgprot((pgprot_val(prot) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT);
->>  }
->>  
->>  static inline pte_t pte_swp_mkexclusive(pte_t pte)
->> @@ -554,10 +554,13 @@ static inline int pmd_protnone(pmd_t pmd)
->>   * THP definitions.
->>   */
->>  
->> +#define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
->> +				 PMD_TYPE_SECT)
->> +
->>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>  static inline int pmd_trans_huge(pmd_t pmd)
->>  {
->> -	return pmd_val(pmd) && pmd_present(pmd) && !(pmd_val(pmd) & PMD_TABLE_BIT);
->> +	return pmd_present(pmd) && pmd_sect(pmd);
-> 
-> Bug? Prevously we would have returned true for a "present-invalid" PMD block
-> mapping - that's one which is formatted as a PMD block mapping except the
-> PTE_VALID bit is clear and PTE_PRESENT_INVALID is set. But now, due to
-> pmd_sect() testing VALID is set (via PMD_TYPE_SECT), we no longer return true in
-> this case.
+The correct format string for resource_size_t is %pa which
+acts on the address of the variable to be formatted [1].
 
-Agreed, that will be problematic but the situation can be rectified by decoupling
-pmd_present_invalid() from pte_present_invalid() by checking for both last bits
-instead of just the valid bit against PTE_PRESENT_INVALID.
+[1] https://elixir.bootlin.com/linux/v6.11.3/source/Documentation/core-api/printk-formats.rst#L229
 
-#define pmd_sect(pmd)          ((pmd_val(pmd) & PMD_TYPE_MASK) == \
-                                PMD_TYPE_SECT)
+These problems were introduced by
+commit 9d9326d3bc0e ("phy: Change mii_bus id field to a string")
 
-#define pmd_present_invalid(pmd) \
-       ((pmd_val(pmd) & (PMD_TYPE_MASK | PTE_PRESENT_INVALID)) == PTE_PRESENT_INVALID)
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Closes: https://lore.kernel.org/netdev/711d7f6d-b785-7560-f4dc-c6aad2cce99@linux-m68k.org/
 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- static inline int pmd_trans_huge(pmd_t pmd)
- {
-	return pmd_sect(pmd) || pmd_present_invalid(pmd);
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+---
+Simon Horman (2):
+      net: fec_mpc52xx_phy: Use %pa to format resource_size_t
+      net: ethernet: fs_enet: Use %pa to format resource_size_t
 
-> 
->>  }
->>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->>  
->> @@ -586,7 +589,7 @@ static inline int pmd_trans_huge(pmd_t pmd)
->>  
->>  #define pmd_write(pmd)		pte_write(pmd_pte(pmd))
->>  
->> -#define pmd_mkhuge(pmd)		(__pmd(pmd_val(pmd) & ~PMD_TABLE_BIT))
->> +#define pmd_mkhuge(pmd)		(__pmd((pmd_val(pmd) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT))
-> 
-> I'm not sure if this also suffers from a similar problem? Is it possible that a
-> present-invalid pmd would be passed to pmd_mkhuge()? If so, then we are now
-> incorrectly setting the PTE_VALID bit.
-pmd_mkhuge() converts a regular pmd into a huge page and on arm64
-creating a huge page also involves setting PTE_VALID. Why would a
-present-invalid pmd is passed into pmd_mkhuge() without intending
-to make a huge entry ?
+ drivers/net/ethernet/freescale/fec_mpc52xx_phy.c     | 2 +-
+ drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-There just two generic use cases for pmd_mkhuge().
+base-commit: 6aac56631831e1386b6edd3c583c8afb2abfd267
 
-insert_pfn_pmd
-	   entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
-
-set_huge_zero_folio
-        entry = mk_pmd(&zero_folio->page, vma->vm_page_prot);
-        entry = pmd_mkhuge(entry);
-
-As instances in mm/debug_vm_pgtable.c, pmd_mkinvalid() should be
-called on a PMD entry after pmd_mkhuge() not the other way around.
-
-> 
->>  
->>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>  #define pmd_devmap(pmd)		pte_devmap(pmd_pte(pmd))
->> @@ -614,7 +617,7 @@ static inline pmd_t pmd_mkspecial(pmd_t pmd)
->>  #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
->>  #define pud_write(pud)		pte_write(pud_pte(pud))
->>  
->> -#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
->> +#define pud_mkhuge(pud)		(__pud((pud_val(pud) & ~PUD_TYPE_MASK) | PUD_TYPE_SECT))
->>  
->>  #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
->>  #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
->> @@ -712,8 +715,6 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
->>  
->>  #define pmd_table(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
->>  				 PMD_TYPE_TABLE)
->> -#define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
->> -				 PMD_TYPE_SECT)
->>  #define pmd_leaf(pmd)		(pmd_present(pmd) && !pmd_table(pmd))
->>  #define pmd_bad(pmd)		(!pmd_table(pmd))
->>  
-> 
 
