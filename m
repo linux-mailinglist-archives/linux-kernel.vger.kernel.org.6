@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-363894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52B399C82F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 860E499C830
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C741C25DA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:09:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B079B1C25EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E4C1D2B21;
-	Mon, 14 Oct 2024 11:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CA91A76DD;
+	Mon, 14 Oct 2024 11:01:59 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DCC1D26F7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355991D3624
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903716; cv=none; b=pv9xPjKg6KJYTpgWrTVUGQme/Z/GTQgzAaKmxdGny5kvO0gS3HNcK1ijnfri9fw3YMofx58JDUhb4Iq/KyNKEik8FvnCQOVsBe7HBugfj/2CyafRkg0ESxYVCi8gbQ5nBZQ6mHxD7jL0kaXZxhPCRLJhrxr52vPTv0Iq/yEpnL0=
+	t=1728903718; cv=none; b=huEztXZU+j8ZrNwFa6qkEFCtRHgPmJ+fpxzHClDv66EHTzK51NDbhom92dZW9ozUtLAtNYfT1ri4qtfOyO87vfS7FN1+8qZh16xJj7swdhMPZtSrxpF4SLMCnXM+I9596Q2sD46VByGIlK1b4jnWat0RJf+qAe0eiDXidHhIVGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903716; c=relaxed/simple;
-	bh=sjwU7BUgzN01wTQM2WKLIvC11P4vGU1exV8tjpcVD2I=;
+	s=arc-20240116; t=1728903718; c=relaxed/simple;
+	bh=tObwb618ZSTF6zsP7bIlO7E6YzHLh2clJtCrO/U+DNQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DoYL2VMzH6o/bB+sAIZdxTiWC0Wfq5pNpczvblp/6Zya68XYSvxqJ3oiBmvzNDQnvizq32nPs2teq1BAa4mCphtETwvRrCZv0WnljBKZewvMVirSKy6XWQlaDjsX+mCAYOkjka7jRKOIGXpj4dM0fIq/tByqD39MSBtq4Av0Vcg=
+	 MIME-Version; b=q40i+IEkwSNeGjobFss2GZKmdZy21LPuXKJSFxPsnwfAyEhmcfXaynrZuhJY5pfbTHzPv1E6nvXIqsSgoIefk+3loxJKPfUF2Xs/K7EaOqU43hNkpR+Z1Q4NeNQnX28QmBCzOWMBFCQ53xJrem4QXulcC4G90HxAEPugfODT9Ug=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0064176C;
-	Mon, 14 Oct 2024 04:02:23 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FFED19F0;
+	Mon, 14 Oct 2024 04:02:26 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 62FEC3F51B;
-	Mon, 14 Oct 2024 04:01:51 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 512493F51B;
+	Mon, 14 Oct 2024 04:01:54 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -45,16 +45,14 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Matthias Brugger <mbrugger@suse.com>,
 	Miroslav Benes <mbenes@suse.cz>,
-	Oliver Upton <oliver.upton@linux.dev>,
 	Will Deacon <will@kernel.org>
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	kvmarm@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v1 48/57] arm64: Convert switch to if for non-const comparison values
-Date: Mon, 14 Oct 2024 11:58:55 +0100
-Message-ID: <20241014105912.3207374-48-ryan.roberts@arm.com>
+Subject: [RFC PATCH v1 49/57] arm64: Convert BUILD_BUG_ON to VM_BUG_ON
+Date: Mon, 14 Oct 2024 11:58:56 +0100
+Message-ID: <20241014105912.3207374-49-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -67,12 +65,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When we enable boot-time page size, some macros are no longer
-compile-time constants. Where these macros are used as cases in switch
-statements, the switch statements no longer compile.
-
-Let's convert these to if/else blocks, which can handle the runtime
-values.
+There are some build bug checks that will no longer compile for
+boot-time page size because the values they are testing are no longer
+compile-time constants. Resolve these by converting them to VM_BUG_ON,
+which will perform a runtime check.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -81,137 +77,62 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- arch/arm64/kvm/mmu.c        | 32 +++++++++++++++-----------------
- arch/arm64/mm/hugetlbpage.c | 34 +++++++++++-----------------------
- 2 files changed, 26 insertions(+), 40 deletions(-)
+ arch/arm64/mm/init.c | 6 +++---
+ arch/arm64/mm/mmu.c  | 4 ++--
+ arch/arm64/mm/pgd.c  | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index a509b63bd4dd5..248a2d7ad6dbb 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -1487,29 +1487,27 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 		vma_shift = get_vma_page_shift(vma, hva);
- 	}
- 
--	switch (vma_shift) {
- #ifndef __PAGETABLE_PMD_FOLDED
--	case PUD_SHIFT:
--		if (fault_supports_stage2_huge_mapping(memslot, hva, PUD_SIZE))
--			break;
--		fallthrough;
-+	if (vma_shift == PUD_SHIFT) {
-+		if (!fault_supports_stage2_huge_mapping(memslot, hva, PUD_SIZE))
-+			vma_shift = PMD_SHIFT;
-+	}
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 42eb246949072..4d24034418b39 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -388,15 +388,15 @@ void __init mem_init(void)
+ 	 * detected at build time already.
+ 	 */
+ #ifdef CONFIG_COMPAT
+-	BUILD_BUG_ON(TASK_SIZE_32 > DEFAULT_MAP_WINDOW_64);
++	VM_BUG_ON(TASK_SIZE_32 > DEFAULT_MAP_WINDOW_64);
  #endif
--	case CONT_PMD_SHIFT:
-+	if (vma_shift == CONT_PMD_SHIFT) {
- 		vma_shift = PMD_SHIFT;
--		fallthrough;
--	case PMD_SHIFT:
--		if (fault_supports_stage2_huge_mapping(memslot, hva, PMD_SIZE))
--			break;
--		fallthrough;
--	case CONT_PTE_SHIFT:
-+	}
-+	if (vma_shift == PMD_SHIFT) {
-+		if (!fault_supports_stage2_huge_mapping(memslot, hva, PMD_SIZE))
-+			vma_shift = PAGE_SHIFT;
-+	}
-+	if (vma_shift == CONT_PTE_SHIFT) {
- 		vma_shift = PAGE_SHIFT;
- 		force_pte = true;
--		fallthrough;
--	case PAGE_SHIFT:
--		break;
--	default:
--		WARN_ONCE(1, "Unknown vma_shift %d", vma_shift);
- 	}
-+	if (vma_shift != PUD_SHIFT &&
-+	    vma_shift != PMD_SHIFT &&
-+	    vma_shift != PAGE_SHIFT)
-+		WARN_ONCE(1, "Unknown vma_shift %d", vma_shift);
  
- 	vma_pagesize = 1UL << vma_shift;
+ 	/*
+ 	 * Selected page table levels should match when derived from
+ 	 * scratch using the virtual address range and page size.
+ 	 */
+-	BUILD_BUG_ON(ARM64_HW_PGTABLE_LEVELS(CONFIG_ARM64_VA_BITS) !=
+-		     CONFIG_PGTABLE_LEVELS);
++	VM_BUG_ON(ARM64_HW_PGTABLE_LEVELS(CONFIG_ARM64_VA_BITS) !=
++		  CONFIG_PGTABLE_LEVELS);
  
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index 5f1e2103888b7..bc98c20655bba 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -51,16 +51,12 @@ void __init arm64_hugetlb_cma_reserve(void)
+ 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
+ 		extern int sysctl_overcommit_memory;
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index b4cd3b6a73c22..ad7fd3fda705a 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -639,8 +639,8 @@ static void __init map_mem(pgd_t *pgdp)
+ 	 * entire reduced VA space is covered by a single pgd_t which will have
+ 	 * been populated without the PXNTable attribute by the time we get here.)
+ 	 */
+-	BUILD_BUG_ON(pgd_index(direct_map_end - 1) == pgd_index(direct_map_end) &&
+-		     pgd_index(_PAGE_OFFSET(VA_BITS_MIN)) != PTRS_PER_PGD - 1);
++	VM_BUG_ON(pgd_index(direct_map_end - 1) == pgd_index(direct_map_end) &&
++		  pgd_index(_PAGE_OFFSET(VA_BITS_MIN)) != PTRS_PER_PGD - 1);
  
- static bool __hugetlb_valid_size(unsigned long size)
- {
--	switch (size) {
- #ifndef __PAGETABLE_PMD_FOLDED
--	case PUD_SIZE:
-+	if (size == PUD_SIZE)
- 		return pud_sect_supported();
+ 	early_kfence_pool = arm64_kfence_alloc_pool();
+ 
+diff --git a/arch/arm64/mm/pgd.c b/arch/arm64/mm/pgd.c
+index 0c501cabc2384..4b106510358b1 100644
+--- a/arch/arm64/mm/pgd.c
++++ b/arch/arm64/mm/pgd.c
+@@ -56,7 +56,7 @@ void __init pgtable_cache_init(void)
+ 	 * With 52-bit physical addresses, the architecture requires the
+ 	 * top-level table to be aligned to at least 64 bytes.
+ 	 */
+-	BUILD_BUG_ON(PGD_SIZE < 64);
++	VM_BUG_ON(PGD_SIZE < 64);
  #endif
--	case CONT_PMD_SIZE:
--	case PMD_SIZE:
--	case CONT_PTE_SIZE:
-+	if (size == CONT_PMD_SIZE || size == PMD_SIZE || size == CONT_PTE_SIZE)
- 		return true;
--	}
  
- 	return false;
- }
-@@ -104,24 +100,20 @@ static inline int num_contig_ptes(unsigned long size, size_t *pgsize)
- 
- 	*pgsize = size;
- 
--	switch (size) {
- #ifndef __PAGETABLE_PMD_FOLDED
--	case PUD_SIZE:
-+	if (size == PUD_SIZE) {
- 		if (pud_sect_supported())
- 			contig_ptes = 1;
--		break;
-+	} else
- #endif
--	case PMD_SIZE:
-+	if (size == PMD_SIZE) {
- 		contig_ptes = 1;
--		break;
--	case CONT_PMD_SIZE:
-+	} else if (size == CONT_PMD_SIZE) {
- 		*pgsize = PMD_SIZE;
- 		contig_ptes = CONT_PMDS;
--		break;
--	case CONT_PTE_SIZE:
-+	} else if (size == CONT_PTE_SIZE) {
- 		*pgsize = PAGE_SIZE;
- 		contig_ptes = CONT_PTES;
--		break;
- 	}
- 
- 	return contig_ptes;
-@@ -339,20 +331,16 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
- {
- 	unsigned long hp_size = huge_page_size(h);
- 
--	switch (hp_size) {
- #ifndef __PAGETABLE_PMD_FOLDED
--	case PUD_SIZE:
-+	if (hp_size == PUD_SIZE)
- 		return PGDIR_SIZE - PUD_SIZE;
- #endif
--	case CONT_PMD_SIZE:
-+	if (hp_size == CONT_PMD_SIZE)
- 		return PUD_SIZE - CONT_PMD_SIZE;
--	case PMD_SIZE:
-+	if (hp_size == PMD_SIZE)
- 		return PUD_SIZE - PMD_SIZE;
--	case CONT_PTE_SIZE:
-+	if (hp_size == CONT_PTE_SIZE)
- 		return PMD_SIZE - CONT_PTE_SIZE;
--	default:
--		break;
--	}
- 
- 	return 0UL;
- }
+ 	/*
 -- 
 2.43.0
 
