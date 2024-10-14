@@ -1,165 +1,138 @@
-Return-Path: <linux-kernel+bounces-364537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80CF599D5E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:54:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE3F99D5E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA1EE1C22791
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:54:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD2D8B22AF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612241C7608;
-	Mon, 14 Oct 2024 17:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808A21C75EB;
+	Mon, 14 Oct 2024 17:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MAWNDWJi"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="X8bcmZ5a"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371C8231C8A;
-	Mon, 14 Oct 2024 17:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD04C1B85D0
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728928433; cv=none; b=GuIE6OypqWJsIPEjzHv/JkiLD8/nNITM18tmNpcbGe3mAEhEJxJb6H+2O5bxmyxJtvYou7oPsohSaQyGANzo4LutuWu0OD/Kd+10zczhkM7vd2WqCunJS6OHD4/t6aZR21xTPsg1U8vyky6S9k4AM4YyhoYNarMtAu/rSrNqJtc=
+	t=1728928470; cv=none; b=jVoC9GcQhWwfbj/v20sYhmMgHEsZoGCSY5zHbV5BsP25llnpqHB5NMWx58BpqkVLuzob0+pHvmCRecRlN5wS3UPsjQiBmgsDZDI8edfY4DqkiC84tvMAFYLfulKkDVn0jphQWawapJOFccMgxBLZDBa7ToFC2aCvZBtlJo/nDtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728928433; c=relaxed/simple;
-	bh=v+mnqLFStPaJF5Mc8YcJfD7J7cx62hdqhcZqrfk1hHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSuc/tYL3whmf/AVXZor9KdNq+wr/Lf6F1+fwraHYH7Oidg2j7Zs3mIwxF7iI92t6SQHZLm81EEmxS6d4r9V/eWPEXIDeq/EGpro0YADQMEN8+JjjNCMFecpKsT344ibvWqqnWBo3D6+MJOvf/gQaA6ho85M9ZCur5I213WoNbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MAWNDWJi; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EHpnhJ032095;
-	Mon, 14 Oct 2024 17:53:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=brLW2EcSwr3dgFdZYov7EsAvpYw
-	fb5CRO99N/OPunA4=; b=MAWNDWJiZRG4uc1TJl8OSC3XFdTTvCXrznd/Ha0VShH
-	wxgDeEO1JHhiA4fNVeZRYmcXUpcYsWa8YNevpkEhEw4wLakdzpXw5fPfM5gqZ5AL
-	lxtfNxAqRXGmX2nZ19xX43YlPHn/53QizNI4UlHrodNROKBuKqwaA/cZAtL8m5sM
-	CQhIukttr9i2wao0GFPvKDuKk7M138WvhHBYi0/QKdhXh2BdLsRh7yNOls0DmfNo
-	zwnXrqoEc2cY7rwOph6xiJrZTSc5u4x717kR/h8v8A00l8HzoA/+ssiXd47JFAF6
-	vuiKZBIEJSXf5qaxo0XmvKJQG3hxTNnNwFgRJuTJAhQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42982kg05s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 17:53:44 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EHrhJk003502;
-	Mon, 14 Oct 2024 17:53:43 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42982kg05j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 17:53:43 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EHgPUo027432;
-	Mon, 14 Oct 2024 17:53:42 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txfxmh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 17:53:41 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EHrcwV46203318
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 17:53:38 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3480020049;
-	Mon, 14 Oct 2024 17:53:38 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 397BC20040;
-	Mon, 14 Oct 2024 17:53:37 +0000 (GMT)
-Received: from osiris (unknown [9.171.66.174])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 14 Oct 2024 17:53:37 +0000 (GMT)
-Date: Mon, 14 Oct 2024 19:53:35 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-Subject: Re: [PATCH v2 7/7] s390/sparsemem: reduce section size to 128 MiB
-Message-ID: <20241014175335.10447-B-hca@linux.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-8-david@redhat.com>
+	s=arc-20240116; t=1728928470; c=relaxed/simple;
+	bh=LLg0wCPOpS/AmndI72VxttCgIFv7G1VnB/HH0FuhVXY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TfkoL5PvkebuvpTvICxoIYGcyub3MsHyLzOajzCPUCKu9EHQNhpNvp58dUhHTjXLMKz97eM6zeqE2oQywntuv3u7ZrFN77Gc+k9mvWS5BbFDHZWUiDJQEbD8wB20Upu2wXutTNzDMGYx0210ck4FfnX6cvINM5ivCOIaOsmtokU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=X8bcmZ5a; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e579abb99so1275714b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:54:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1728928468; x=1729533268; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3WMPWjM4v7j14DyEcQ5hwRAd9xYSxf1LHTYEm0hMLIQ=;
+        b=X8bcmZ5aPT7+HnBej0npveR9XSk0bIUCe0zxcfMD/MXrnp/VBBWqT+rGcKcRafAsdz
+         RCFy6Rq6ix0q3z6U6tg0OFaLHTdLDfnaQihhtldtqPyi5LGT5MdQ91tPYdnXDVX6c2pE
+         vK4u5XHXExLUx3wFr7+teb+hmdo1PUFlvk9Xz3p5Toq75yoK64MwktDf13U0xXJWTTDa
+         aJ5iaZeEoneIAs1jVx4ZHt0BSjdbmtrFU8AjwVGKqbHOSPTJAtjH1f3hLtL4Q9Co46vX
+         oQ35LoB0AhhXfqXSTKXbMSZxyODf/19BcLBeXgy9OHyNcyr1lHsEehzW4TiiwckBDiPU
+         X8Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728928468; x=1729533268;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3WMPWjM4v7j14DyEcQ5hwRAd9xYSxf1LHTYEm0hMLIQ=;
+        b=S73mejg2Vlsr/AyG5bRUKzsq6/9u9rzCYKWrn8nyXFKb0VAjb4QICCYtfy+A5FUH0m
+         W2TtNpkVkFfhiMKpO7Qzbd2CnsnTZGaaW3M559p7ro8acuypLmJLY4DrzJnpF/zxDsRD
+         370gRz4tCJLCkJkMXaFxsPLXgK27Fwi4u7vzTcrnKPoNKkII/eSgycBu3n6cfb9iSZ13
+         5KaVAdimo2stxMvCx56S6ZEM6gHO/NJxHw68MatOyJ0kE0PFxXhifblds4fWZcuRl8lj
+         7mJcLGpcv9Cog6J61ssiDv9O1El5NNb5DxaPMSYc5Y+BG/kZgfGfFTZU5M3eKuIU8onc
+         mbjw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4DKgtM3GM7XvSL49pZ+4iDEagy0rMqGH3+E40ja/IaekWjoQdSGipWGbEM3AFuExput5I3zEBu8I8sNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRCPwwAflrAGc6EblPAtpMb5tk3IbV4jPUeB0Cu356iJb7P+RK
+	XXdsNIJ8am4vqYUBGw7P70AcsvvFrNyj4vltyUTo09MI1ia5iWQvTMCFg8aWTlc=
+X-Google-Smtp-Source: AGHT+IGg0wES5gNNTPcTHOmFhOZ7P4Cnh4UasrOzlCIqf49HPyl8t7AfprhbcD8tS5R+AH+gxhD9rQ==
+X-Received: by 2002:a05:6a00:2e06:b0:71e:6a13:9bac with SMTP id d2e1a72fcca58-71e6a139d5fmr4826861b3a.0.1728928467907;
+        Mon, 14 Oct 2024 10:54:27 -0700 (PDT)
+Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e49a7e5e7sm5611109b3a.179.2024.10.14.10.54.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 10:54:26 -0700 (PDT)
+From: Drew Fustini <dfustini@tenstorrent.com>
+Subject: [PATCH 0/8] riscv: dts: thead: Add TH1520 pin controller support
+Date: Mon, 14 Oct 2024 10:54:17 -0700
+Message-Id: <20241014-th1520-pinctrl-dts-v1-0-268592ca786e@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014144622.876731-8-david@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 5D_xC6nknQqUzkF7BmFqB2_0PkJpbEq7
-X-Proofpoint-GUID: UKk9TP1S1FoYIjDngHQjul4Nmfsk5MhM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_12,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=4 mlxlogscore=143
- malwarescore=0 adultscore=0 suspectscore=0 clxscore=1011 impostorscore=0
- priorityscore=1501 mlxscore=4 bulkscore=0 spamscore=4 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140128
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMlaDWcC/x3MQQqAIBBA0avIrBtQU4KuEi1KpxoIE5UIpLsnL
+ d/i/wqZElOGUVRIdHPmKzSoToA7lrATsm8GLbVRUvVYDmW1xMjBlXSiLxmt0YN1zmx+ldDCmGj
+ j559O8/t+wF8+xWQAAAA=
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+ Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+ Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
+X-Mailer: b4 0.14.1
 
-On Mon, Oct 14, 2024 at 04:46:19PM +0200, David Hildenbrand wrote:
-> Ever since commit 421c175c4d609 ("[S390] Add support for memory hot-add.")
-> we've been using a section size of 256 MiB on s390 and 32 MiB on s390.
-> Before that, we were using a section size of 32 MiB on both
-> architectures.
-> 
-> Likely the reason was that we'd expect a storage increment size of
-> 256 MiB under z/VM back then. As we didn't support memory blocks spanning
-> multiple memory sections, we would have had to handle having multiple
-> memory blocks for a single storage increment, which complicates things.
-> Although that issue reappeared with even bigger storage increment sizes
-> later, nowadays we have memory blocks that can span multiple memory
-> sections and we avoid any such issue completely.
+This series of device tree patches enables the TH1520 pin controllers on
+the BeagleV Ahead and Lichee Pi 4A boards.
 
-I doubt that z/VM had support for memory hotplug back then already; and the
-sclp memory hotplug code was always written in a way that it could handle
-increment sizes smaller, larger or equal to section sizes.
+Patches 1-7 have all been cherry picked from esmil's th1520 branch [1].
+They do not have the issues pointed out in the previous series [2] that
+I sent out which contained out dated versions of the patches.
 
-If I remember correctly the section size was also be used to represent each
-piece of memory in sysfs (aka memory block). So the different sizes were
-chosen to avoid an excessive number of sysfs entries on 64 bit.
+The final patch was suggested by Emil as there are not currently any
+users of the spi0 node so there is no need to enable it in the board dts
+files.
 
-This problem went away later with the introduction of memory_block_size.
+I have tested on the BeagleV Ahead and the LicheePi 4A. The leds on the
+BeagleV can be controlled as expected through sysfs.
 
-Even further back in time I think there were static arrays which had
-2^(MAX_PHYSMEM_BITS - SECTION_SIZE_BITS) elements.
+[1] https://github.com/esmil/linux
+[2] https://lore.kernel.org/lkml/20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com/
 
-I just gave it a try and, as nowadays expected, bloat-o-meter doesn't
-indicate anything like that anymore.
+---
+Drew Fustini (1):
+      riscv: dts: thead: remove enabled property for spi0
 
-> 128 MiB has been used by x86-64 since the very beginning. arm64 with 4k
-> base pages switched to 128 MiB as well: it's just big enough on these
-> architectures to allows for using a huge page (2 MiB) in the vmemmap in
-> sane setups with sizeof(struct page) == 64 bytes and a huge page mapping
-> in the direct mapping, while still allowing for small hot(un)plug
-> granularity.
-> 
-> For s390, we could even switch to a 64 MiB section size, as our huge page
-> size is 1 MiB: but the smaller the section size, the more sections we'll
-> have to manage especially on bigger machines. Making it consistent with
-> x86-64 and arm64 feels like te right thing for now.
+Emil Renner Berthing (7):
+      riscv: dts: thead: Add TH1520 pin control nodes
+      riscv: dts: thead: Add TH1520 GPIO ranges
+      riscv: dts: thead: Adjust TH1520 GPIO labels
+      riscv: dts: thead: Add Lichee Pi 4M GPIO line names
+      riscv: dts: thead: Add TH1520 pinctrl settings for UART0
+      riscv: dtb: thead: Add BeagleV Ahead LEDs
+      riscv: dts: thead: Add missing GPIO clock-names
 
-That's fine with me.
+ arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts | 86 +++++++++++++++++++++-
+ .../boot/dts/thead/th1520-lichee-module-4a.dtsi    | 39 ++++++++++
+ arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts  | 30 +++++++-
+ arch/riscv/boot/dts/thead/th1520.dtsi              | 70 ++++++++++++++----
+ 4 files changed, 202 insertions(+), 23 deletions(-)
+---
+base-commit: 66f5c917cba075cb2cdf8cad2019f72a1df0328f
+change-id: 20241013-th1520-pinctrl-dts-54275cc4fdb0
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Best regards,
+-- 
+Drew Fustini <dfustini@tenstorrent.com>
+
 
