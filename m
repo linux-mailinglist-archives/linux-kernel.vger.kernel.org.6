@@ -1,140 +1,110 @@
-Return-Path: <linux-kernel+bounces-363977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2974B99C924
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:39:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B0999C92A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3509293CBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FFA91C21A31
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E5A198A1B;
-	Mon, 14 Oct 2024 11:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBZjdVlu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1318519D07D;
+	Mon, 14 Oct 2024 11:42:32 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F1D15AAB6;
-	Mon, 14 Oct 2024 11:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BF614A4DD;
+	Mon, 14 Oct 2024 11:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728905935; cv=none; b=TAvW1FyLXkTYbH0RSDQ016VM4NjCpeTY7BgZgNV1x5PRQ4WfQyncyBVDcQvXCOhskzbwZrlBArlAcDGsyjkvlgOSLDO5BTQGEpAlz5Qxl2GTRcJFmnmAvBJveBESH2kBpUEZxXMpyCLDqZnnRSa1sw478K1Fr6O+kbfVsqa4Dxo=
+	t=1728906151; cv=none; b=NTKM2RuEjEzOCeuPO2HiZL9XqqsRQ3aBp1/VKdQ0IMHIn3hKZo4rGBJMoYiNcfOTJBL8VbFZUx5SxDPngOybLvuHYYFCo3wo5c6pwtSbT+XOv2UWM6tGapqeuLaqvnyyVVpcHOaNkzE89wj7bHU+V1tc0axn0Zbryk1Qe7lMy5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728905935; c=relaxed/simple;
-	bh=8VfuUeVgtGH6z1bv8BILTJVErAHzlY7901fz61AWmVM=;
+	s=arc-20240116; t=1728906151; c=relaxed/simple;
+	bh=l5MYO66/WMMI45LSa9nTZsuDWnmoRvXQvjhOQaTwG00=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T31QdXqANsLgI2fgH9ioIoswQq+1Ac+kAQGUsjx6Xhr2jYTE3Ahbzn44QvlnOKsVUXXK591DLAWVQUgB4BS2lEVUEJiGADxh1bp1VDZbVgVH0C9929DKB/8cuuiapacgI3rCEH566ixVp3oQRv2D3QZS6L++33r7bhnSU/Wi0TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBZjdVlu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C7AAC4CEC3;
-	Mon, 14 Oct 2024 11:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728905935;
-	bh=8VfuUeVgtGH6z1bv8BILTJVErAHzlY7901fz61AWmVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GBZjdVlu4Jj13xJuF4qu25fsYJTIPeBYkyw6aGaayoz/Xrjs7lhrWmvvu6ipvEZea
-	 cOExRLfYqbbgzXg7Drv7cz/T7gq3ADxS82SDi7PQk+50F4rOTK1d0SkV+L1D3cOM9j
-	 jv+GGA4FnP4T1bC4kysnH16Gflod0iLpodrURWXbd5qqEKXVDdzkytBa/23HdqNRGq
-	 Yz0IICQTHAEvOFEF2TnKQF1kKg8EQDX/ExbbMRuddnMXngLRjfVIl/FnbvrJU4SHiR
-	 B6qXaN/TXrEoiR+aqRwBURIrVXlpqALzPBU+EaUFOSSNTtlHHUs8cHINMzS3wyk1eX
-	 rdQy+3QNRDOhQ==
-Date: Mon, 14 Oct 2024 12:38:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Marsden <greg.marsden@oracle.com>,
-	Ivan Ivanov <ivan.ivanov@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>, Takashi Iwai <tiwai@suse.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [RFC PATCH v1 22/57] sound: Remove PAGE_SIZE compile-time
- constant assumption
-Message-ID: <Zw0CyAlSmaxOCZJl@finisterre.sirena.org.uk>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-22-ryan.roberts@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWVkBzpsbsQnbL/IbiIYwW62haqbXcCMRkiUkf1/9l3upyqNjIG22+i3heUYDyd/e8dc873wcD+kwNDXpDUP0SZ9b0EW0jRJ/l4CJKJ8+m4Jg1yqIemLqNsDeSYXqQhjymQa+q4FQtfIRlAh4vZZD0PJFo9tiHgiHUgs8x0OqSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: HHN4KzVgTv22IDNJ1x7C0A==
+X-CSE-MsgGUID: 91uInNCVTgOSxG6qnEfQZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="32047315"
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="32047315"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:42:30 -0700
+X-CSE-ConnectionGUID: 2grNElgURSCTH1Y+GT/8ZA==
+X-CSE-MsgGUID: kuJeZS/8RwCYfRp33I4/+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="81539575"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:42:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1t0JSv-00000002srd-2pma;
+	Mon, 14 Oct 2024 14:42:21 +0300
+Date: Mon, 14 Oct 2024 14:42:21 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] iio: adc: adi-axi-adc: add interface type
+Message-ID: <Zw0DnW88GWMOMPft@smile.fi.intel.com>
+References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
+ <20241014094154.9439-3-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ycN+RKQXjDkOKbxT"
-Content-Disposition: inline
-In-Reply-To: <20241014105912.3207374-22-ryan.roberts@arm.com>
-X-Cookie: Q:	How do you keep a moron in suspense?
-
-
---ycN+RKQXjDkOKbxT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241014094154.9439-3-antoniu.miclaus@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 14, 2024 at 11:58:29AM +0100, Ryan Roberts wrote:
-> To prepare for supporting boot-time page size selection, refactor code
-> to remove assumptions about PAGE_SIZE being compile-time constant. Code
-> intended to be equivalent when compile-time page size is active.
+On Mon, Oct 14, 2024 at 12:40:37PM +0300, Antoniu Miclaus wrote:
+> Add support for getting the interface (CMOS or LVDS) used by the AXI ADC
+> ip.
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+IP
 
-> ***NOTE***
-> Any confused maintainers may want to read the cover note here for context:
-> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+...
 
-As documented in submitting-patches.rst please send patches to the=20
-maintainers for the code you would like to change.  The normal kernel
-workflow is that people apply patches from their inboxes, if they aren't
-copied they are likely to not see the patch at all and it is much more
-difficult to apply patches.
+>  #define   ADI_AXI_REG_RSTN_MMCM_RSTN		BIT(1)
+>  #define   ADI_AXI_REG_RSTN_RSTN			BIT(0)
+>  
+> +#define ADI_AXI_ADC_REG_CONFIG			0x000c
+> +#define   ADI_AXI_ADC_REG_CONFIG_CMOS_OR_LVDS_N	BIT(7)
+> +
+>  #define ADI_AXI_ADC_REG_CTRL			0x0044
+>  #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
 
-> -static const struct snd_pcm_hardware dummy_dma_hardware =3D {
-> +static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(struct snd_pcm_hardware, dummy_=
-dma_hardware, {
->  	/* Random values to keep userspace happy when checking constraints */
->  	.info			=3D SNDRV_PCM_INFO_INTERLEAVED |
->  				  SNDRV_PCM_INFO_BLOCK_TRANSFER,
-> @@ -107,7 +107,7 @@ static const struct snd_pcm_hardware dummy_dma_hardwa=
-re =3D {
->  	.period_bytes_max	=3D PAGE_SIZE*2,
->  	.periods_min		=3D 2,
->  	.periods_max		=3D 128,
-> -};
-> +});
+Side note, the field definitions are indented with different amount of white
+spaces.
 
-It's probably better to just use PAGE_SIZE_MAX here and avoid the
-deferred patching, like the comment says we don't particularly care what
-the value actually is here given that it's a dummy.
+-- 
+With Best Regards,
+Andy Shevchenko
 
---ycN+RKQXjDkOKbxT
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcNAsgACgkQJNaLcl1U
-h9BWAgf+LdKxooT0VD6Ci0TP5dkUHa2sxEvt7Ga+Fb/ouyFg4FxRMAkp+sEwiikJ
-t69JrZ/RBXdF9knOyE22pj9DcD1zT0AlAIaI/G5ecJXLd3zIZJClHeMAJgfPtMEo
-9CN1OU0Q3Snm6m1AiwZ45f1Xkj6b6nldlpRG1BcPTgYKB+C9STCX5809fm2dVFbF
-w1LTjRW8FHla+sQs25Q71IIgAGo16QKJ9bB2uB5RM6BQXuiz1oht8QVU+9yjsRUO
-cvAccu9UaUkYxy0tNHgHV0puMi3kzx8TvqtJpjs2cwOZCcm4J6AoLJlrGHBERLWr
-K1YwrVWJypo+R9VFxN6GMOoDgoGNmg==
-=I1aS
------END PGP SIGNATURE-----
-
---ycN+RKQXjDkOKbxT--
 
