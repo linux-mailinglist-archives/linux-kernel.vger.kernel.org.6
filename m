@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-364162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F4099CC02
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:55:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5743A99CC04
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A2C01C22D71
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4C661F22DD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5841AAE2C;
-	Mon, 14 Oct 2024 13:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F791AB53A;
+	Mon, 14 Oct 2024 13:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lw15VpqL"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xq10JHev"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049011537AA
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854651AAE34
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728914129; cv=none; b=OW+96C3wfMVt5eQAHYgKgnqBcNkvVF4ftEnR0hNA7Azj9utj49f8vrM6O46AFsqlZ46XTGdNqL+GN60JpCdrOZYFvu0SLgVV7GuLgX+cJ2/uCxRQYajz21/nFgfECZWov0zRHSsl8RQwiJ+DBzZTKUkIr1HesLlWJOSqlHNzn/0=
+	t=1728914132; cv=none; b=PXNkpm0yak11rnjUSmqDNnkKG7PNPJdZOeMivI61xewFD1EdgtNzLdW59HwhkkXQeIuJla2DVEEu5kI3rAsMTp35YEuTa4EINzxD+4bAOVUpBAkVVl+vR3EJ1p8WHCu6zOC/LChrsIy0AJaKoHkzpSaMcqpTX19itzWC6Jscwso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728914129; c=relaxed/simple;
-	bh=OB3yO9FQv0J593fU52zHVnW8M9sIKaaudWV4PCqWeY8=;
+	s=arc-20240116; t=1728914132; c=relaxed/simple;
+	bh=HycFsKS2HqCUNgySmxRekC/7rRVA9x2c5Czo/mq9rYY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=APDnIfOzQLImnFbxKni5L3BR5Urokr4mEjeRLgbOFSKf0L69gcV2bPVkRH21JuyvTaGerYEQ9Ak4j0tF1R13NAPKZ9tL1rpGACxgFLGojzwhRF4tu/jPQPtxWBVjn3WeeZoBjspvKPXXLh2TOxHbTFtsRabCYpl00JnzxAWNv6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lw15VpqL; arc=none smtp.client-ip=209.85.208.179
+	 In-Reply-To:To:Cc; b=NGlv2HzSId2d0pkP4aldsQlBwQO6YtajYXnpvJXwtulvzMJ1MhD6bprZ50+saNYl/l+oQhF7tVNnR78lLo6KwzylQnNoYJ8YfwSE4yNLNuqdSWIydqEpGnz0+IPQBJWQsskQM2L72JQ6kjclIXVP7NLzPhA4ddghHsU2YLlu+MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xq10JHev; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb3da341c9so19456251fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:55:27 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb443746b8so8872941fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:55:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728914126; x=1729518926; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728914129; x=1729518929; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WOBAB4fCN+OYdhF4Gj278BY1JY5UgUE5qLDzZmKiBEQ=;
-        b=Lw15VpqLztVfCUckdCH2p/oWcadCfGzQquMTEwxjJtCyoR4A4B01BzOBtMkd59/3+r
-         fZTjmyWcnt/BY5GdPrq0Dcrzzqs3tKZEPGvYs+e5Jz9DoXp2ppA5skUyl23U/Ox8c46Z
-         t6lEnsY8Cu752OpHytfVg8+pzsAz94YarUY+AotXf6mLBaQCt33r2VfLvmI2jYL1vVf3
-         CxJNFZT0rDVmth/bMQl+WuhzYthYL1VYLdeETcKBNLVu3TRC6FZKGprtfoYp5tRDgNT3
-         L19AhV4JY/lUSByEx6uy5kg/hgSSm54Iv9Ud3xQU3hMNowXM98mIIFQ7RxSpgmHrkcqd
-         Hw8A==
+        bh=910VNT/3al90WIHFmuvF3u7AO/uPrBTduU56Fw5sYjM=;
+        b=Xq10JHev0rxkMj7FPUev0BMF4vgMdM8Ej+kFUKVvOK6CMPL5p/qvtoj9gFC+C7pF9n
+         u7XZ3nl5h8rrRv/2IZHxsjh0rfo4G10TCA8hTDpudakuc/3iwWyK9nqykHz/h1mTZJGi
+         Tg4yWlu3M2T2KnKGZmiqRgY76ScI0mgMpKgLy07Ug0NOmBNvolE4W4AHsMcYJcvGSrV5
+         XUE+IBXvHoYc6H2qDNeLtyTMCHGh9yKI4CkYGGeoS1Rc3wAejyoLKTyOz7wWXQhO7i2g
+         2u6GhMXE4yfxM4ifBebAmSs1U02OR086cMJqlLLUZ7KepTJfJ2GM5GWSu8/NVtEzLvZb
+         M6Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728914126; x=1729518926;
+        d=1e100.net; s=20230601; t=1728914129; x=1729518929;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WOBAB4fCN+OYdhF4Gj278BY1JY5UgUE5qLDzZmKiBEQ=;
-        b=PKCFPVigjJb9mHIqA1bdzgq0ho4jFCKW6RtvdmDjD5isYBHUW6mmtmBTpBqlImiBw6
-         Ulg3mihOutTc+j8/jCvLwnyiB8hqVvAH2RTQTI13wxDlc4r1VA5sEq4W91teH7EyqTAE
-         outdsciDu60qnspJ7yTe06lCZxH1J94RPE+bKvU2O7dwbwZP9rzqhMnAtCyWSFnC5TJq
-         H2DjdAh8Qw2cesZ8oGkonwQuQfFOa8nXKGcPL7u2l3kBs26CBul7u+wsBOe4gJ9rg1da
-         pbUELwfMMIBF1BMTvyalFr6AojTX8qcBICroT15NpovwD91dkQv/tb8H9WmV83wTB2OW
-         HKBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWV67fk0vlU5ffreO/L4ss8IyYRB7VXqSU8O00SFMPhG5eEt74m24NNE3o23mpzBttkLbdGHnHPek7Nn+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYq6cK40RWLNI6PkGaDQ8Twk5PKnpeT9CrdofCVewGzZLtqJ60
-	TE45TRKT4MwCUxG9WgGDLlLxlw8A5z7aTJIbsW9yYZlnfmDG39nod8UG/+V0ITw=
-X-Google-Smtp-Source: AGHT+IHXfxymwMuBTLIPhj1IILaLlqCN68Kc44a6pGyIrVl/vNinMfPWVaScDLDhzz6b1w5Xu/CMGQ==
-X-Received: by 2002:a05:651c:1509:b0:2fa:bd30:1928 with SMTP id 38308e7fff4ca-2fb3f2d1b11mr26316081fa.32.1728914126119;
-        Mon, 14 Oct 2024 06:55:26 -0700 (PDT)
+        bh=910VNT/3al90WIHFmuvF3u7AO/uPrBTduU56Fw5sYjM=;
+        b=aD4D+x3cxXyYdULKjxYUTlnsHz3g/NIC+3tF9W4oQPuEc0i6OaoWF6r0NJX7Aag+Uv
+         eV9p15LVBYxfcwbmxqW/Yotn7JLYClDp0pBRcoE7l02i79SUMEtQmfbCjhhhD4De/oZX
+         bBbbIyt1g9PG/oazU4hNj3j2d1DGF+bz8QDbSHRhoAqjIVkU0vy9GnKH8w3MNgbVUoPK
+         6/c2QKcEgQ9YLZE9yX5bMWt4f7zckyNDHgzqMBdaO79deBg9WT7BPig4K19U7apybopH
+         kEzTgMsdD/bDVfbuyIjvj7QhqAktM6dTUu9WmCygjdJYLET9NBWJwdxpW6wjeAfnQSoB
+         DpoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXP+4XZcG6Ic9i0x3npGFuM16xQkA6PUqQchyMEyvdnEXbj9r3GcEs1vk59Bgh/fbqw5QvBfq16lgRtX+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCSvaNAJYrmoxm8V0xY7Dw7q1pDVMWGShr3fsTGoKLThlzZBU2
+	n+nhEn5XRK9FgkxEoBXsy1rC3swNoLH/AS04V8uDnruXkZlHnHu6NeysPcX2jEA=
+X-Google-Smtp-Source: AGHT+IEnxC4Uc6qG1GhsLQY8bUBklQuVIxgJUvUZgodJgeel9W3Lcu6LQ8WPbMv9KY6uPfNfevwmBg==
+X-Received: by 2002:a05:651c:548:b0:2fa:d345:18b9 with SMTP id 38308e7fff4ca-2fb329b2a01mr53500281fa.38.1728914128643;
+        Mon, 14 Oct 2024 06:55:28 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb438c06f7sm8039641fa.55.2024.10.14.06.55.25
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb438c06f7sm8039641fa.55.2024.10.14.06.55.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 06:55:25 -0700 (PDT)
+        Mon, 14 Oct 2024 06:55:27 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 14 Oct 2024 16:55:20 +0300
-Subject: [PATCH v2 1/2] ARM: add CLIDR accessor functions
+Date: Mon, 14 Oct 2024 16:55:21 +0300
+Subject: [PATCH v2 2/2] ARM: implement cacheinfo support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241014-armv7-cacheinfo-v2-1-38ab76d2b7fa@linaro.org>
+Message-Id: <20241014-armv7-cacheinfo-v2-2-38ab76d2b7fa@linaro.org>
 References: <20241014-armv7-cacheinfo-v2-0-38ab76d2b7fa@linaro.org>
 In-Reply-To: <20241014-armv7-cacheinfo-v2-0-38ab76d2b7fa@linaro.org>
 To: Sudeep Holla <sudeep.holla@arm.com>, Ard Biesheuvel <ardb@kernel.org>, 
@@ -86,57 +86,267 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
  linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konradybcio@kernel.org>, Arnd Bergmann <arnd@arndb.de>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1067;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7266;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=OB3yO9FQv0J593fU52zHVnW8M9sIKaaudWV4PCqWeY8=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnDSLKtlJv5vCrtJr/cNbUxbxVvYF7NDouakMt/
- W1CwyiX+LOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZw0iygAKCRCLPIo+Aiko
- 1eKFB/wLj20pVDg44I5tdPc6vbCK41LLd742EI7OeUQjip1Myn2p+pnpfgShdMzFHwpnhcVz+fa
- Y9D5UQ/73fOaI8EMt/CO//nyZbPZlu9N40Zto9dDrzK+0X726hn/F3prsFNMv006TFfUUzKYSzU
- 7G7WVg9nkw7wJ9druObfFR8Ph/b5ouw6tq6gXI4w25YtvTtKs+SoMxlYODeBQzKY3yN9T/DiEaX
- rPj5MwtIYfX/H1HWKuGJ6YyJMq4TSNGBmW9OIOQJnYogypC1bmE8+mgOFi8cFX2ys+jFvJybFtj
- drlm+eQF1wGx1JzNAnDxx6gtSNqrx/CUJIU4EW/pQZYEIABX
+ bh=HycFsKS2HqCUNgySmxRekC/7rRVA9x2c5Czo/mq9rYY=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnDSLK4kchsZSCE/y4fGAlwP0OjdcGOvDRJOlBU
+ W7ERhDdWgKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZw0iygAKCRCLPIo+Aiko
+ 1cG9CACIc2ogCdqpBl2gPZOk1bO+V3BvHiJZ7lSdu/hqpl/rvKZxHJgttKgVRf7wsSSiwlA89vt
+ DX+xoh/67Ghx0ydqQhg7rDijvg01PcPD2/zacJg1oGIDED72T2FjIxQS/Lf2oC7dm13XWXBE0Yg
+ Y5mhG3fGdTjP9FTNnyflLSEi7NjBstDYBBmxW7J/s2KPmHOljagK4iusbEijSOXelU7s+W3rTCi
+ 1/dgQVIa492pyLJ+nzho4G3DoLRz4mR6XsZ9rPdEGGu4XmtW5SuU+xo8ry4HdwCF2rkaSvfcTMN
+ ZbPQWEcaQRK17xfHjXywIZMiGX4IMhyMTDYyXG+6Xczck+EK
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Add functions to read the CLIDR, Cache Level ID Register.
+On ARMv7 / v7m machines read CTR and CLIDR registers to provide
+information regarding the cache topology. Earlier machines should
+describe full cache topology in the device tree.
+
+Note, this follows the ARM64 cacheinfo support and provides only minimal
+support required to bootstrap cache info. All useful properties should
+be decribed in Device Tree.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm/include/asm/cachetype.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/Kconfig             |   1 +
+ arch/arm/include/asm/cache.h |   6 ++
+ arch/arm/kernel/Makefile     |   1 +
+ arch/arm/kernel/cacheinfo.c  | 173 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/cacheinfo.h    |   2 +-
+ 5 files changed, 182 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/include/asm/cachetype.h b/arch/arm/include/asm/cachetype.h
-index b9dbe1d4c8fe..b01c59076b84 100644
---- a/arch/arm/include/asm/cachetype.h
-+++ b/arch/arm/include/asm/cachetype.h
-@@ -83,6 +83,14 @@ static inline unsigned int read_ccsidr(void)
- 	asm volatile("mrc p15, 1, %0, c0, c0, 0" : "=r" (val));
- 	return val;
- }
-+
-+static inline unsigned int read_clidr(void)
-+{
-+	unsigned int val;
-+
-+	asm volatile("mrc p15, 1, %0, c0, c0, 1" : "=r" (val));
-+	return val;
-+}
- #else /* CONFIG_CPU_V7M */
- #include <linux/io.h>
- #include "asm/v7m.h"
-@@ -96,6 +104,11 @@ static inline unsigned int read_ccsidr(void)
- {
- 	return readl(BASEADDR_V7M_SCB + V7M_SCB_CCSIDR);
- }
-+
-+static inline unsigned int read_clidr(void)
-+{
-+	return readl(BASEADDR_V7M_SCB + V7M_SCB_CLIDR);
-+}
- #endif
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 749179a1d162..e790543c3eaf 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -5,6 +5,7 @@ config ARM
+ 	select ARCH_32BIT_OFF_T
+ 	select ARCH_CORRECT_STACKTRACE_ON_KRETPROBE if HAVE_KRETPROBES && FRAME_POINTER && !ARM_UNWIND
+ 	select ARCH_HAS_BINFMT_FLAT
++	select ARCH_HAS_CACHE_LINE_SIZE if OF
+ 	select ARCH_HAS_CPU_CACHE_ALIASING
+ 	select ARCH_HAS_CPU_FINALIZE_INIT if MMU
+ 	select ARCH_HAS_CURRENT_STACK_POINTER
+diff --git a/arch/arm/include/asm/cache.h b/arch/arm/include/asm/cache.h
+index e3ea34558ada..ecbc100d22a5 100644
+--- a/arch/arm/include/asm/cache.h
++++ b/arch/arm/include/asm/cache.h
+@@ -26,4 +26,10 @@
  
+ #define __read_mostly __section(".data..read_mostly")
+ 
++#ifndef __ASSEMBLY__
++#ifdef CONFIG_ARCH_HAS_CACHE_LINE_SIZE
++int cache_line_size(void);
++#endif
++#endif
++
  #endif
+diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
+index aaae31b8c4a5..b3333d070390 100644
+--- a/arch/arm/kernel/Makefile
++++ b/arch/arm/kernel/Makefile
+@@ -40,6 +40,7 @@ obj-y		+= entry-armv.o
+ endif
+ 
+ obj-$(CONFIG_MMU)		+= bugs.o
++obj-$(CONFIG_OF)		+= cacheinfo.o
+ obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
+ obj-$(CONFIG_ISA_DMA_API)	+= dma.o
+ obj-$(CONFIG_FIQ)		+= fiq.o fiqasm.o
+diff --git a/arch/arm/kernel/cacheinfo.c b/arch/arm/kernel/cacheinfo.c
+new file mode 100644
+index 000000000000..a8eabcaa18d8
+--- /dev/null
++++ b/arch/arm/kernel/cacheinfo.c
+@@ -0,0 +1,173 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ *  ARM cacheinfo support
++ *
++ *  Copyright (C) 2023 Linaro Ltd.
++ *  Copyright (C) 2015 ARM Ltd.
++ *  All Rights Reserved
++ */
++
++#include <linux/bitfield.h>
++#include <linux/cacheinfo.h>
++#include <linux/of.h>
++
++#include <asm/cachetype.h>
++#include <asm/cputype.h>
++#include <asm/system_info.h>
++
++/* Ctypen, bits[3(n - 1) + 2 : 3(n - 1)], for n = 1 to 7 */
++#define CLIDR_CTYPE_SHIFT(level)	(3 * (level - 1))
++#define CLIDR_CTYPE_MASK(level)		(7 << CLIDR_CTYPE_SHIFT(level))
++#define CLIDR_CTYPE(clidr, level)	\
++	(((clidr) & CLIDR_CTYPE_MASK(level)) >> CLIDR_CTYPE_SHIFT(level))
++
++#define MAX_CACHE_LEVEL			7	/* Max 7 level supported */
++
++#define CTR_FORMAT_MASK	GENMASK(27, 24)
++#define CTR_FORMAT_ARMV6 0
++#define CTR_FORMAT_ARMV7 4
++#define CTR_CWG_MASK	GENMASK(27, 24)
++#define CTR_DSIZE_LEN_MASK GENMASK(13, 12)
++#define CTR_ISIZE_LEN_MASK GENMASK(1, 0)
++
++/* Also valid for v7m */
++static inline int cache_line_size_cp15(void)
++{
++	u32 ctr = read_cpuid_cachetype();
++	u32 format = FIELD_GET(CTR_FORMAT_MASK, ctr);
++
++	if (format == CTR_FORMAT_ARMV7) {
++		u32 cwg = FIELD_GET(CTR_CWG_MASK, ctr);
++
++		return cwg ? 4 << cwg : ARCH_DMA_MINALIGN;
++	} else if (WARN_ON_ONCE(format != CTR_FORMAT_ARMV6)) {
++		return ARCH_DMA_MINALIGN;
++	}
++
++	return 8 << max(FIELD_GET(CTR_ISIZE_LEN_MASK, ctr),
++			FIELD_GET(CTR_DSIZE_LEN_MASK, ctr));
++}
++
++int cache_line_size(void)
++{
++	if (coherency_max_size != 0)
++		return coherency_max_size;
++
++	/* CP15 is optional / implementation defined before ARMv6 */
++	if (cpu_architecture() < CPU_ARCH_ARMv6)
++		return ARCH_DMA_MINALIGN;
++
++	return cache_line_size_cp15();
++}
++EXPORT_SYMBOL_GPL(cache_line_size);
++
++static inline enum cache_type get_cache_type(int level)
++{
++	u32 clidr;
++
++	if (level > MAX_CACHE_LEVEL)
++		return CACHE_TYPE_NOCACHE;
++
++	clidr = read_clidr();
++
++	return CLIDR_CTYPE(clidr, level);
++}
++
++static void ci_leaf_init(struct cacheinfo *this_leaf,
++			 enum cache_type type, unsigned int level)
++{
++	this_leaf->level = level;
++	this_leaf->type = type;
++}
++
++static int detect_cache_level(unsigned int *level_p, unsigned int *leaves_p)
++{
++	unsigned int ctype, level, leaves;
++	u32 ctr, format;
++
++	/* CLIDR is not present before ARMv7/v7m */
++	if (cpu_architecture() < CPU_ARCH_ARMv7)
++		return -EOPNOTSUPP;
++
++	/* Don't try reading CLIDR if CTR declares old format */
++	ctr = read_cpuid_cachetype();
++	format = FIELD_GET(CTR_FORMAT_MASK, ctr);
++	if (format != CTR_FORMAT_ARMV7)
++		return -EOPNOTSUPP;
++
++	for (level = 1, leaves = 0; level <= MAX_CACHE_LEVEL; level++) {
++		ctype = get_cache_type(level);
++		if (ctype == CACHE_TYPE_NOCACHE) {
++			level--;
++			break;
++		}
++		/* Separate instruction and data caches */
++		leaves += (ctype == CACHE_TYPE_SEPARATE) ? 2 : 1;
++	}
++
++	*level_p = level;
++	*leaves_p = leaves;
++
++	return 0;
++}
++
++int early_cache_level(unsigned int cpu)
++{
++	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++
++	return detect_cache_level(&this_cpu_ci->num_levels, &this_cpu_ci->num_leaves);
++}
++
++int init_cache_level(unsigned int cpu)
++{
++	unsigned int level, leaves;
++	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++	int fw_level;
++	int ret;
++
++	ret = detect_cache_level(&level, &leaves);
++	if (ret)
++		return ret;
++
++	fw_level = of_find_last_cache_level(cpu);
++
++	if (level < fw_level) {
++		/*
++		 * some external caches not specified in CLIDR_EL1
++		 * the information may be available in the device tree
++		 * only unified external caches are considered here
++		 */
++		leaves += (fw_level - level);
++		level = fw_level;
++	}
++
++	this_cpu_ci->num_levels = level;
++	this_cpu_ci->num_leaves = leaves;
++	return 0;
++}
++
++int populate_cache_leaves(unsigned int cpu)
++{
++	unsigned int level, idx;
++	enum cache_type type;
++	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++	struct cacheinfo *this_leaf = this_cpu_ci->info_list;
++	unsigned int arch = cpu_architecture();
++
++	/* CLIDR is not present before ARMv7/v7m */
++	if (arch < CPU_ARCH_ARMv7)
++		return -EOPNOTSUPP;
++
++	for (idx = 0, level = 1; level <= this_cpu_ci->num_levels &&
++	     idx < this_cpu_ci->num_leaves; idx++, level++) {
++		type = get_cache_type(level);
++		if (type == CACHE_TYPE_SEPARATE) {
++			ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
++		} else {
++			ci_leaf_init(this_leaf++, type, level);
++		}
++	}
++
++	return 0;
++}
+diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+index 108060612bb8..1e7061549fc7 100644
+--- a/include/linux/cacheinfo.h
++++ b/include/linux/cacheinfo.h
+@@ -147,7 +147,7 @@ static inline int get_cpu_cacheinfo_id(int cpu, int level)
+ 	return ci ? ci->id : -1;
+ }
+ 
+-#ifdef CONFIG_ARM64
++#if defined(CONFIG_ARM64) || defined(CONFIG_ARM)
+ #define use_arch_cache_info()	(true)
+ #else
+ #define use_arch_cache_info()	(false)
 
 -- 
 2.39.5
