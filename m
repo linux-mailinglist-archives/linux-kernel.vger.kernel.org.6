@@ -1,123 +1,175 @@
-Return-Path: <linux-kernel+bounces-363732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1427899C64A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:47:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E2799C653
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451371C225D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:47:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C4C286112
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC5D156886;
-	Mon, 14 Oct 2024 09:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68CE157484;
+	Mon, 14 Oct 2024 09:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QhdeJ4CD"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bDd1L5KU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5521527A7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6567414B96E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728899244; cv=none; b=mXVyjcL3tNQm7GtTbyJWVg02KKCddoVCASSZ6dT0Ih8vuBoTk2IAmZV06euZm8DGidaw/+gesYI9qYFHBdVGiXidUaUSr/lyK4XJBQbn/wHPaWD3KVOBuVCpSiIyl9IwHZtmcqXKMiS86wmSMm3ATqv0xSR2dxVmZi7Np7Gf5kU=
+	t=1728899272; cv=none; b=M0r+jJE7Z6l9YXO7Q5moggEx4qic8psbmgx2g28buEGwbjOibRNS906sBEw9Rtn6L5U94f0mKj9Mw08US4FSpnmSxyqg/RKELhwUkUdQmSR5skPU1bwpKe1bK7bRx86nxJQjsJ8cPXyWQXEngoAYInRf2F2S4tCLINK11toD+9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728899244; c=relaxed/simple;
-	bh=Naw0Zp65neeH/lp6kK0p1aABP6t8tLIRNhqGbcsxXOc=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ZMqC7W76HLrTl11zYH36yiW7Zfc9wYWsq9IAlghHQBjcWSZ3ooDPdAzGpNYYZHGDYtsIWwy7DDgRjkI0/AtAyl04DKAdAkC5cTSzfNOzsHY7aSTRpBuoLJGqGgDgazq4ooeHZFSiJAHhDosl4I1lsBER4739x9cnwkz888hrtKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QhdeJ4CD; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cdda5cfb6so9651965ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1728899242; x=1729504042; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n58iiwTpzY85BchUZIr1TDODnx4LudJgqcinpAoQ7vk=;
-        b=QhdeJ4CDBjj8Mi6aYF+L4Er/FE4eKtfhrFMBBJayhBJH+UZ6hnMeGDDooS+m8r0YIY
-         Pp/ZjXEoy2N2V5xPl2DUQlfFNHzeTV+BYaLElN0k7MtbBpT9KntJaeAvKIdqsgQOKAgI
-         5I88szhUklqnKgz/Cdb6x9YW0lnH8nXAa1lMyx/ECSDoZY9rhMLA0FIUaJe2Bsp1yQmz
-         nuQghgkRjA8HUKjnmzuryHUei3DlcQFWQAuPe6g7FiJyOEdM4laN1DMyBK63f7bl9rZc
-         TkV/aqsNf1nP7RyNXQYpcbxrc37MQAyXQLbtEMDWP5UvG5hJl2CsSChLnrx3DrYDssSK
-         LRkw==
+	s=arc-20240116; t=1728899272; c=relaxed/simple;
+	bh=b8NCLRJKGrm+n0lum0OQZapBDj5h/D1HEj2AK7tWcKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DEcCjkPKr0Nm/czHx3I2SDJ3t6qDD/krRHOCIXubB3yTdyLmGuMQC3Rd6lROtMALwsBciTXvC5a8LOUQLW1TNcTad+JEletauNspTNHMe09PW+kbVIAvCym7jLCihLjRiTuvLvUrKmyolN+xA64YZURuMtygBuGEE4AsKsdh8Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bDd1L5KU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728899269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sbyVEHx1wYT46hZ0YR53rr13HilYd79w5fQFSE3Vqco=;
+	b=bDd1L5KU6NufRvg/tuuRymQ7geTiod+4yoil6cZT/KfghQxbDhVSzfO4nWAvJd6NfQ9gnt
+	AVPrqW/DxJ4Z6+X/rL8alj77tGsFwj6FilW+DY9KfdNZq5aS16uXZh+/nNtccRLjnln1Do
+	bIbvrqWTKLKy3ThLq41YZE0rDWMv2S8=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-5-U9OCyFBYNm6SLJoSdz2REg-1; Mon, 14 Oct 2024 05:47:48 -0400
+X-MC-Unique: U9OCyFBYNm6SLJoSdz2REg-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a157d028aso41147366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:47:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728899242; x=1729504042;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n58iiwTpzY85BchUZIr1TDODnx4LudJgqcinpAoQ7vk=;
-        b=gdkZynQXqEi762+Av0bJpYoHHwiiS6H85sq3qF742CIcQKQPuYX0bGwgUiIRHXd1WV
-         9NBbz/oNDuikmKVB1lkTNQwJM4a4A/EPB+S996DLd4R6cnBMIh8Er2mYcr25muMYttTT
-         vzFFm5bqGCSGuxWQu7nvX8fEoqjpT4aIf96vyTQuABJuXvRv0Me+DIB16XRgSEeNUP+8
-         +lbbAbkRfWfrdSn1yTQDwG3LzvbpGogn6T43EuR9HRlrvKqJ49rVVc1sTWfgGsAnm93d
-         fUekUecq4+dpd9+Cb/+sAcHZ3zUIRRGGLhlxb2PVbhhLnDgjkehUQ26izKLkcJsX8CF7
-         P06A==
-X-Forwarded-Encrypted: i=1; AJvYcCW98u/iNOp4KADJmIX7W6IMxIwaeDeJsnN4N0Z39jFz3DEhHeKTZTNmyf2KgUZgVSAChPy2zeewHjMXfbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjyWnG7UqWSNJMxIIZ3URx/ecrcFSZ86Bcz03cYzqODQmLsXsf
-	ZYSQYUvZkhneq4zjYK9AK5Xonms89PWIdHeFrVRnN9h03pgFfT6e0l2nlm3BhBE=
-X-Google-Smtp-Source: AGHT+IGmzF68/qQ+7bOjFdgyKBRsCojyZ+YIvq/M5Xf7hscDg17luLPgQdaAdaYtZxk1MyR8puiWEQ==
-X-Received: by 2002:a17:902:d588:b0:20c:7898:a8f5 with SMTP id d9443c01a7336-20ca148bea0mr155253285ad.28.1728899242026;
-        Mon, 14 Oct 2024 02:47:22 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c2133besm62817625ad.211.2024.10.14.02.47.17
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 14 Oct 2024 02:47:21 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: punit.agrawal@bytedance.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	sunilvl@ventanamicro.com,
-	cuiyunhui@bytedance.com,
-	ajones@ventanamicro.com,
-	alexghiti@rivosinc.com,
-	jeeheng.sia@starfivetech.com,
-	haibo1.xu@intel.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] RISC-V: ACPI: fix early_ioremap to early_memremap
-Date: Mon, 14 Oct 2024 17:47:05 +0800
-Message-Id: <20241014094705.71775-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+        d=1e100.net; s=20230601; t=1728899266; x=1729504066;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sbyVEHx1wYT46hZ0YR53rr13HilYd79w5fQFSE3Vqco=;
+        b=dMVV7+S6sf0nLK+prLvYqMsjFPvGDgkod/1amv/mheIbxIFahuXkn63heEqJMtrCqM
+         5LoKTZzoeOwdSRhGiT6iRbLaeZCOQrEA6PUZUnRyW1LQMirxkPC6ZoFB7GvxSrrQ8xs4
+         kAY8TiI3r72HzViH7iADbjm8rTJ+YUqTj5yBBRazWA37mgxlOiLrO47tYNr5zfJSwZ+T
+         ZdWQmKu2QUcVCvfRzCnrZl12+zNG7xjplMb1s1FOYg6bVyGaJcGb7uhnjXBeZO+sV04m
+         dZO7rtjbecEjUu92OlYoU7xa1QeQ0hHAlbqhTPIMo4nzrrWjEFMtjIu0FKbcY51uNoNy
+         JX7A==
+X-Forwarded-Encrypted: i=1; AJvYcCV1sQgaf4U32kTxFGVss+YsL2nHvEY5ivxdyXkr4NFvc/aztEfnUmzQ25h6CoZUbGCI86Qgr1R026X4xaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyrs0Kg+Q0z5SNtNjg3Nz/QfHnzjc283NE+xhvFcl6A0UcMUWyo
+	+RL87SxuEwOUc2TO+foBRq6DpfVRJwHSgRpwY1C/ewuh92KM0QBMyVszk8eTZ/opIC/IPpMoIy8
+	n1vjcM502r/kwNZ9OUbgwUMzSy3HImsxrm5OhDJKf1x2gOgNgEtnPT0tLUM06LvY3niU2Ww==
+X-Received: by 2002:a17:907:31c8:b0:a8d:2b7a:ff44 with SMTP id a640c23a62f3a-a99e3c97e69mr785565366b.32.1728899266579;
+        Mon, 14 Oct 2024 02:47:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMHMu4YWij0zyJOKwCcWc+znbiga0jEn5SFeqDdbHrQBD3dXiMBV8NYSsDJh+q3dUEZeJFiA==
+X-Received: by 2002:a17:907:31c8:b0:a8d:2b7a:ff44 with SMTP id a640c23a62f3a-a99e3c97e69mr785562766b.32.1728899266063;
+        Mon, 14 Oct 2024 02:47:46 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1ec:d16c:2d5b:a55d:7fda:5330])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a07662ffbsm178004966b.130.2024.10.14.02.47.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 02:47:45 -0700 (PDT)
+Date: Mon, 14 Oct 2024 05:47:41 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: "Colin King (gmail)" <colin.i.king@gmail.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Jason Wang <jasowang@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: virtio_net: support device stats
+Message-ID: <20241014054305-mutt-send-email-mst@kernel.org>
+References: <eb09900a-8443-4260-9b66-5431a85ca102@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb09900a-8443-4260-9b66-5431a85ca102@gmail.com>
 
-When SVPBMT is enabled, __acpi_map_table() will directly access the
-data in DDR through the IO attribute, rather than through hardware
-cache consistency, resulting in incorrect data in the obtained ACPI
-table.
+On Mon, Oct 14, 2024 at 10:39:26AM +0100, Colin King (gmail) wrote:
+> Hi,
+> 
+> Static analysis on Linux-next has detected a potential issue with the
+> following commit:
+> 
+> commit 941168f8b40e50518a3bc6ce770a7062a5d99230
+> Author: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> Date:   Fri Apr 26 11:39:24 2024 +0800
+> 
+>     virtio_net: support device stats
+> 
+> 
+> The issue is in function virtnet_stats_ctx_init, in drivers/net/virtio_net.c
+> as follows:
+> 
+>         if (vi->device_stats_cap & VIRTIO_NET_STATS_TYPE_CVQ) {
+>                 queue_type = VIRTNET_Q_TYPE_CQ;
+> 
+>                 ctx->bitmap[queue_type]   |= VIRTIO_NET_STATS_TYPE_CVQ;
+>                 ctx->desc_num[queue_type] +=
+> ARRAY_SIZE(virtnet_stats_cvq_desc);
+>                 ctx->size[queue_type]     += sizeof(struct
+> virtio_net_stats_cvq);
+>         }
+> 
+> 
+> ctx->bitmap is declared as a u32 however it is being bit-wise or'd with
+> VIRTIO_NET_STATS_TYPE_CVQ and this is defined as 1 << 32:
+> 
+> include/uapi/linux/virtio_net.h:#define VIRTIO_NET_STATS_TYPE_CVQ (1ULL <<
+> 32)
+> 
+> ..and hence the bit-wise or operation won't set any bits in ctx->bitmap
+> because 1ULL < 32 is too wide for a u32.
 
-The log: ACPI: [ACPI:0x18] Invalid zero length.
+Indeed. Xuan Zhuo how did you test this patch?
 
-We do not assume whether the bootloader flushes or not. We should
-access in a cacheable way instead of maintaining cache consistency
-by software.
+> I suspect ctx->bitmap should be
+> declared as u64.
+> 
+> Colin
+> 
+> 
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- arch/riscv/kernel/acpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In fact, it is read into a u64:
 
-diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
-index 6e0d333f57e5..3177c9af8764 100644
---- a/arch/riscv/kernel/acpi.c
-+++ b/arch/riscv/kernel/acpi.c
-@@ -210,7 +210,7 @@ void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
- 	if (!size)
- 		return NULL;
+       u64 offset, bitmap;
+....
+        bitmap = ctx->bitmap[queue_type];
+
+we'll have to reorder fields to avoid wasting memory.
+Like this I guess:
+
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+Colin, can you confirm pls?
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index c6af18948092..ef221429f784 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -4111,12 +4111,12 @@ struct virtnet_stats_ctx {
+ 	/* Used to calculate the offset inside the output buffer. */
+ 	u32 desc_num[3];
  
--	return early_ioremap(phys, size);
-+	return early_memremap(phys, size);
- }
+-	/* The actual supported stat types. */
+-	u32 bitmap[3];
+-
+ 	/* Used to calculate the reply buffer size. */
+ 	u32 size[3];
  
- void __init __acpi_unmap_table(void __iomem *map, unsigned long size)
++	/* The actual supported stat types. */
++	u64 bitmap[3];
++
+ 	/* Record the output buffer. */
+ 	u64 *data;
+ };
 -- 
-2.39.2
+MST
 
 
