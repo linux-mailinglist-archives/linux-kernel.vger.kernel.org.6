@@ -1,152 +1,127 @@
-Return-Path: <linux-kernel+bounces-364502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8AB99D569
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7873999D56E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66201F24003
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212A51F24465
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE811C1ADB;
-	Mon, 14 Oct 2024 17:17:03 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B441C3027;
+	Mon, 14 Oct 2024 17:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKA7pD6Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D845A29A0;
-	Mon, 14 Oct 2024 17:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B236029A0;
+	Mon, 14 Oct 2024 17:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728926222; cv=none; b=MitvxvdxKWT2schBe8Gyq04IjrBAO1uOpL20bWIpcB4gyqr7QrpImtcRT/sbmFOFUXMHOcBTrapT6g05hZiV84GV1YXTcaGdYalfIIoLFKNZ9kM4D8+QEgUkmvxfwaXFY9DDV4s4LR5lYJs1AAxvRl2biX1DzOmeWJKudC/J6Bo=
+	t=1728926289; cv=none; b=h4mbvzMbTt3fSqWRlDjer7oY2ynofYH2vAlMTGf61BFQDGensZWv37P8TG+r6bh56oi++LVS0SDc/CKryhHFpVU/D9r4k+HsWXwHfIiMCen2Jj5oVu6biC45rxNuyY5Ko61kBmzaT5LY/ZLdvzCPf38pev85irRshKcRnmRM57o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728926222; c=relaxed/simple;
-	bh=XCeA+5nUpigSV09HFAGPYtOx2/NeR3ALQlw3vYP/wjE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y/DHLrVU3Rb5CQFm6GUOowGKUA/yiFVKw4mMlZwjXaPoHgLjNxAD6755479acx7R6W7iN5vbiYcNRWGBAwko8RzQu6EZD8RniOKftNOXzM8zBgiSS6EYc7g/fBgUsks4mnarQerkRRRSQpyrhbOnSeWAGatvoCljGRtDO/LBzl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS3mS5pQJz6HJpx;
-	Tue, 15 Oct 2024 01:16:24 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 43E88140CF4;
-	Tue, 15 Oct 2024 01:16:57 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
- 2024 19:16:55 +0200
-Date: Mon, 14 Oct 2024 18:16:54 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <shiju.jose@huawei.com>, <linux-edac@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <bp@alien8.de>,
-	<tony.luck@intel.com>, <rafael@kernel.org>, <lenb@kernel.org>,
-	<mchehab@kernel.org>, <dan.j.williams@intel.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <david@redhat.com>,
-	<Vilas.Sridharan@amd.com>, <leo.duran@amd.com>, <Yazen.Ghannam@amd.com>,
-	<rientjes@google.com>, <jiaqiyan@google.com>, <Jon.Grimm@amd.com>,
-	<dave.hansen@linux.intel.com>, <naoya.horiguchi@nec.com>,
-	<james.morse@arm.com>, <jthoughton@google.com>, <somasundaram.a@hpe.com>,
-	<erdemaktas@google.com>, <pgonda@google.com>, <duenwen@google.com>,
-	<gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH v13 12/18] platform: Add __free() based cleanup function
- for platform_device_put
-Message-ID: <20241014181654.00005180@Huawei.com>
-In-Reply-To: <2024101451-reword-animation-2179@gregkh>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
-	<20241009124120.1124-13-shiju.jose@huawei.com>
-	<20241014164339.00003e73@Huawei.com>
-	<2024101410-turf-junior-7739@gregkh>
-	<2024101451-reword-animation-2179@gregkh>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728926289; c=relaxed/simple;
+	bh=1ziApFauYenoCS9MtS1B+tDzb5Mh3mm1sv1noAcTU6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=iU7wtcXUxGokl0WIHv1YNj/DGx4wCVyTmAvHDumvrYxrENmOm/3xynALI7bis79KYVuy66bQ8MvW2yDSJQ0DtvgxEACxjDupDnsgaxMmXPJgv21cpPGJKT2vLibejXNEcG78pagFxWyXnyUEVyUH5iNOcQLVPa+F6H63r0GD3Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKA7pD6Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7772C4CEC3;
+	Mon, 14 Oct 2024 17:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728926289;
+	bh=1ziApFauYenoCS9MtS1B+tDzb5Mh3mm1sv1noAcTU6k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VKA7pD6YIgstOPFxjDhROkqhZWnVeMgAJlI+6imU3n58/Pf8OdDY+M8/RVlGnN/0S
+	 GBw9tyJBa4EOkMthReck7N7DDx2hSJwVrmewZ9A2OwVw1I7T4kJigLyIkKz7V6CZlE
+	 TFy4aq/E0//kuoMkq6ccVSFCg6Vqm2tTIQco3BIH5akm1ByJQI8i5vobR+9r/jsTOg
+	 FV5g66HvbV8K6kE4VZ1mTj951cIxhXPwCFPO8jrSQvrvA6KkchM6G6JsKDCyMpk6BY
+	 qHUKn3Ng+C/0cicrNKDC6yJ+YMgmFWiU4l4MlnWIaTbMWDgUA5rSn339wwhcj/LmTZ
+	 pDYKkCWYKRbNA==
+Date: Mon, 14 Oct 2024 12:18:07 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH v6 6/8] PCI: qcom: Fix the ops for SC8280X family SoC
+Message-ID: <20241014171807.GA612411@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011104142.1181773-7-quic_qianyu@quicinc.com>
 
-On Mon, 14 Oct 2024 18:04:37 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
+[+cc Johan; if you tag a commit with Fixes:, please cc the author of
+that commit!]
 
-> On Mon, Oct 14, 2024 at 06:00:51PM +0200, Greg KH wrote:
-> > On Mon, Oct 14, 2024 at 04:43:39PM +0100, Jonathan Cameron wrote:  
-> > > On Wed, 9 Oct 2024 13:41:13 +0100
-> > > <shiju.jose@huawei.com> wrote:
-> > >   
-> > > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > 
-> > > > Add __free() based cleanup function for platform_device_put().
-> > > > 
-> > > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> > > > ---
-> > > >  include/linux/platform_device.h | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-> > > > index d422db6eec63..606533b88f44 100644
-> > > > --- a/include/linux/platform_device.h
-> > > > +++ b/include/linux/platform_device.h
-> > > > @@ -232,6 +232,7 @@ extern int platform_device_add_data(struct platform_device *pdev,
-> > > >  extern int platform_device_add(struct platform_device *pdev);
-> > > >  extern void platform_device_del(struct platform_device *pdev);
-> > > >  extern void platform_device_put(struct platform_device *pdev);
-> > > > +DEFINE_FREE(platform_device_put, struct platform_device *, if (_T) platform_device_put(_T))
-> > > >  
-> > > >  struct platform_driver {
-> > > >  	int (*probe)(struct platform_device *);  
-> > > 
-> > > +CC Greg KH and Rafael.
-> > > 
-> > > Makes sure to include them on v14 as this needs review from a driver core point
-> > > of view I think.  
-> > 
-> > Why is this needed for a platform device?  This feels like you will have
-> > to do more work to "keep" the reference on the normal path than you to
-> > today to release the reference on the error path, right?  Have a pointer
-> > to a patch that uses this?  
+On Fri, Oct 11, 2024 at 03:41:40AM -0700, Qiang Yu wrote:
+> On SC8280X family SoC, PCIe controllers are connected to SMMUv3, hence
+> they don't need the config_sid() callback in ops_1_9_0 struct. Fix it by
+> introducing a new ops struct, namely ops_1_21_0, so that BDF2SID mapping
+> won't be configured during init.
+
+Can you make the subject line say something specific about what this
+patch does?  "Fix the ops" really doesn't include any useful
+information.
+
+Based on the Fixes: below, this has to do with ASPM, so the subject
+line (and the commit log) should probably say something about ASPM.
+
+I don't see the connection between your mention of SMMUv3 and ASPM.
+Are there two logical changes here that should be two separate
+patches?
+
+> Fixes: d1997c987814 ("PCI: qcom: Disable ASPM L0s for sc8280xp, sa8540p and sa8295p")
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
-> Ah, is it this one:
-> 	https://lore.kernel.org/all/20241014164955.00003439@Huawei.com/
-> ?
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 88a98be930e3..468bd4242e61 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>  };
+>  
+> +/* Qcom IP rev.: 1.21.0 */
+> +static const struct qcom_pcie_ops ops_1_21_0 = {
+> +	.get_resources = qcom_pcie_get_resources_2_7_0,
+> +	.init = qcom_pcie_init_2_7_0,
+> +	.post_init = qcom_pcie_post_init_2_7_0,
+> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+> +	.deinit = qcom_pcie_deinit_2_7_0,
+> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +};
+> +
+>  static const struct qcom_pcie_cfg cfg_1_0_0 = {
+>  	.ops = &ops_1_0_0,
+>  };
+> @@ -1405,7 +1415,7 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
+>  };
+>  
+>  static const struct qcom_pcie_cfg cfg_sc8280xp = {
+> -	.ops = &ops_1_9_0,
+> +	.ops = &ops_1_21_0,
+>  	.no_l0s = true,
+>  };
+>  
+> -- 
+> 2.34.1
 > 
-> If so, no, that's an abuse of a platform device, don't do that, make a
-> REAL device on the bus that this device lives on.  If it doesn't live on
-> a real bus, then put it on the virtual bus but do NOT abuse the platform
-> device layer for something like this.
-
-Ok.  Probably virtual bus it is then.  Rafael, what do you think makes sense
-for a 'feature' that is described only by an ACPI table (here RAS2)?
-Kind of similar(ish) to say IORT.
-
-My thinking on a platform device was that this could be described
-in DSDT and would have ended up as one. No idea why it isn't.
-Maybe it predated the resource stuff that lets you use PCC channels
-from methods under devices. Anyhow, it's not something I care about
-so virtual bus is fine by me.
-
-Jonathan
-
-
-> 
-> thanks,
-> 
-> greg k-h
-> 
-
 
