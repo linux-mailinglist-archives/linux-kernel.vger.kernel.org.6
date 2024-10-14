@@ -1,355 +1,95 @@
-Return-Path: <linux-kernel+bounces-364333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE16499D2BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:29:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633BE99CCA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED221F252AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:29:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946661C21FE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68CF19E98B;
-	Mon, 14 Oct 2024 15:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA291A76AC;
+	Mon, 14 Oct 2024 14:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2iEbmaVb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZquEgqO"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8B61C3F26;
-	Mon, 14 Oct 2024 15:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EEC1547F3;
+	Mon, 14 Oct 2024 14:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728919608; cv=none; b=H/It7VzpD7m1qZbHkxSQ4uCKrznIbfW/sCQIQw91u9EP1onSh3F2EbZsdfxRfEAR/33389HjAUiVt9h3tCJ8k3i+7EjmW8cqR3tSr6VlFpxYrySFvAghdR4cGU1uZBIJXvm30uycVa+6CsteEtelfBZQPk2r4k/0xaYkixiq+MI=
+	t=1728915625; cv=none; b=PDi1nrrpT0SKEx91SNQ2f6QoWtXdI1/J9Jl0t/t8+AJMeYnu+iFHIZRT8Ymz5AUyWSjHpkVKeYjWwf2sLqDxa1/LIeutB6aTfTUkyKR+52dUeVStnKaZhLRjUNOZEQLPGH54lPvWLp9Z0bFDZOEKlrnQcAF1sxI6AmuN4Lyq33M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728919608; c=relaxed/simple;
-	bh=JgoZCu5Q6iGRY0D8qn/QEoGHtZMR5kUB2CwVV3TPtzM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PPJTSoiVgDY6xp79VllEoQxHFyQpAeFy+gQkaV2rL6nv+i3MFAiuHjXTRHWA8A1xuxt1Ixmrk3aeabbokDDl9wDmehX1yHgFjJokr06G4Cbp/QJMmFpIhd/IUw1HZPXHmN5AQvNz7HaOyVt4MuaYGfUsk9MOmDXsA3wWgSplM1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2iEbmaVb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB75C4CEC3;
-	Mon, 14 Oct 2024 15:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728919607;
-	bh=JgoZCu5Q6iGRY0D8qn/QEoGHtZMR5kUB2CwVV3TPtzM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=2iEbmaVbAe1zgi+MgOMzKufnK+R+MUbUFajYobbxEF8OSnG146kApDdZZWutIsVck
-	 rvTPu049ELcRGdHwNziPp28JMo3JdtqJMhVZoZrRbIMf8VTaK1pXxN9BwRKWYq7wJu
-	 0jAJWln70yfw50ZOr2wz6yJYouE3p2CTCbBqZrdY=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	"linux-erofs@lists.ozlabs.org, LKML" <linux-kernel@vger.kernel.org>,
-	Yue Hu <huyue2@coolpad.com>,
-	Chao Yu <chao@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH 6.1 655/798] erofs: get rid of z_erofs_do_map_blocks() forward declaration
-Date: Mon, 14 Oct 2024 16:20:09 +0200
-Message-ID: <20241014141243.783321537@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241014141217.941104064@linuxfoundation.org>
-References: <20241014141217.941104064@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1728915625; c=relaxed/simple;
+	bh=1U2eFcy8btOrX7BWJkQL0y+3D3BkWa7uYK0HJXmC4Kc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PdGOrjUI07EEdsRETOvo2Oia7yiGDPB43whXfSDjm4KRi3yRAD2zl/Mb83PFQ/5mRPswcCx3seJ2lYVurpM/1n3GwvFdDAN0aIg1k+Ok3hfsghg0+HZK9wHChjZzsEZOfELHQWvVeTTyD7kGE3R4g/ohR88SNFUbyshg/QacDm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZquEgqO; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f1292a9bso1445530e87.2;
+        Mon, 14 Oct 2024 07:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728915622; x=1729520422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1U2eFcy8btOrX7BWJkQL0y+3D3BkWa7uYK0HJXmC4Kc=;
+        b=gZquEgqO3m7oJ/yhf7NyWsdDTaqwXiel7VT4fzvGjCowK/pxJKjwv45HlI1nBaUgor
+         fl1eHal+85cVtujw7YyV19N54r3OV6VF3Xc09gP6VfVL5av6ZSm7WVbnU7gg4UADwF/X
+         gd7jUhRVsNiLxABmyvno3WrbF8TDXRPjp09b71SivhGCWbW+3CuJwgVlgyauTdeX8oIF
+         QxBgGAkBJU3mW2e4CAsY++NIZoTQm1xZMzV/VnKGsbyJDSagnAgfY2ZP1KzDkOvnzpwB
+         Y3QQxw5X6TrtzHETXkpEZMRGseQnrP6rIk/IPhRF5Bx9ZMmaK/kEV0RKn9OHlCpC+dE2
+         u/NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728915622; x=1729520422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1U2eFcy8btOrX7BWJkQL0y+3D3BkWa7uYK0HJXmC4Kc=;
+        b=n5GbEOBLptQm8wlbWw67qhKFVtqwqfYWLXEkcG9PWx2kgUUTMRWW64NdrYyXtfRNaK
+         i1UvwYjU804orQNsjFzbN2MuANXV5GuC76D19oO/Sd2Qq2ocZdhWWG+5GfvWGd78kxa4
+         VMD63ocTMTbMpB5sz/mkYAtJ98eiE0t/PQBNJ5FO+CTZlyBuvqgLH81hdbcY5VPsj64L
+         D5Y0znL1vLDnldLYgD3irtSaQK12gEB2pKMKUoFHI8hb3Uk465lNsrnic4cZHgu76a2t
+         VGLrhFrkw2s5zpTKp2XwmgKW1zHsMLdAykx0W118+D/AirKiLmCDCTO3FJ5REluF3SLZ
+         +KDg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7o6JNxTAkCwXpMBKy6klYnfeHD5+Vpj8AC1/1OisPQ6c3xng4ecPe1tv1IaP6qHIndcmYTzneadLhl23M@vger.kernel.org, AJvYcCX3/F6pWDRXugMdJyg6dRcp9ovR5DRddajT8cxlfg32mVDoNuv10zm0yO+yJ2v/DgFquweBXhFs37Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTtt9CL+CDxmlH/RHEgSTu7q+fndEJG0hGcFiGy5Q6Na2gnhYr
+	vfHYMUAtAnR9/gRQRcMf0/0Vq59fn50PTgXch6e5Xg4LK26V3f0yQ8YxSeJs97wwngDH4OfGa3y
+	IA8Eu1Yzv9cXBydI+oxTpwec7rwD2cSAK
+X-Google-Smtp-Source: AGHT+IHEFNvqDXKt0pGhSKYkU7CMdg6N4XcIBaTaCc0yZ8gHXEwcN8ltk8mVyRKlKqEx2HfiESSWu0MqDfFpoe9gndQ=
+X-Received: by 2002:ac2:4e16:0:b0:536:554a:24c2 with SMTP id
+ 2adb3069b0e04-539da3c5ee1mr6119083e87.13.1728915621449; Mon, 14 Oct 2024
+ 07:20:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241014-imx-clk-v1-v1-0-ee75876d3102@nxp.com> <20241014-imx-clk-v1-v1-1-ee75876d3102@nxp.com>
+In-Reply-To: <20241014-imx-clk-v1-v1-1-ee75876d3102@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 14 Oct 2024 11:20:09 -0300
+Message-ID: <CAOMZO5Ct1u6d8gnrSEbBW6b+sOdz3W=1oF0y21hdcUFdr0ymzg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: imx: lpcg-scu: SW workaround for errata (e10858)
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Aisheng Dong <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Oct 14, 2024 at 6:03=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
+m> wrote:
 
-------------------
+> +/* e10858 -LPCG clock gating register synchronization errata */
 
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-
-commit 999f2f9a63f475192d837a2b8595eb0962984d21 upstream.
-
-The code can be neater without forward declarations.  Let's
-get rid of z_erofs_do_map_blocks() forward declaration.
-
-Reviewed-by: Yue Hu <huyue2@coolpad.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
-Stable-dep-of: 9ed50b8231e3 ("erofs: fix incorrect symlink detection in fast symlink")
-Link: https://lore.kernel.org/r/20230204093040.97967-5-hsiangkao@linux.alibaba.com
-[ Gao Xiang: apply this to 6.6.y to avoid further backport twists
-             due to obsoleted EROFS_BLKSIZ. ]
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/erofs/zmap.c |  242 +++++++++++++++++++++++++++-----------------------------
- 1 file changed, 119 insertions(+), 123 deletions(-)
-
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -7,10 +7,6 @@
- #include <asm/unaligned.h>
- #include <trace/events/erofs.h>
- 
--static int z_erofs_do_map_blocks(struct inode *inode,
--				 struct erofs_map_blocks *map,
--				 int flags);
--
- int z_erofs_fill_inode(struct inode *inode)
- {
- 	struct erofs_inode *const vi = EROFS_I(inode);
-@@ -29,125 +25,6 @@ int z_erofs_fill_inode(struct inode *ino
- 	return 0;
- }
- 
--static int z_erofs_fill_inode_lazy(struct inode *inode)
--{
--	struct erofs_inode *const vi = EROFS_I(inode);
--	struct super_block *const sb = inode->i_sb;
--	int err, headnr;
--	erofs_off_t pos;
--	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
--	void *kaddr;
--	struct z_erofs_map_header *h;
--
--	if (test_bit(EROFS_I_Z_INITED_BIT, &vi->flags)) {
--		/*
--		 * paired with smp_mb() at the end of the function to ensure
--		 * fields will only be observed after the bit is set.
--		 */
--		smp_mb();
--		return 0;
--	}
--
--	if (wait_on_bit_lock(&vi->flags, EROFS_I_BL_Z_BIT, TASK_KILLABLE))
--		return -ERESTARTSYS;
--
--	err = 0;
--	if (test_bit(EROFS_I_Z_INITED_BIT, &vi->flags))
--		goto out_unlock;
--
--	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize + vi->xattr_isize, 8);
--	kaddr = erofs_read_metabuf(&buf, sb, erofs_blknr(pos), EROFS_KMAP);
--	if (IS_ERR(kaddr)) {
--		err = PTR_ERR(kaddr);
--		goto out_unlock;
--	}
--
--	h = kaddr + erofs_blkoff(pos);
--	/*
--	 * if the highest bit of the 8-byte map header is set, the whole file
--	 * is stored in the packed inode. The rest bits keeps z_fragmentoff.
--	 */
--	if (h->h_clusterbits >> Z_EROFS_FRAGMENT_INODE_BIT) {
--		vi->z_advise = Z_EROFS_ADVISE_FRAGMENT_PCLUSTER;
--		vi->z_fragmentoff = le64_to_cpu(*(__le64 *)h) ^ (1ULL << 63);
--		vi->z_tailextent_headlcn = 0;
--		goto done;
--	}
--	vi->z_advise = le16_to_cpu(h->h_advise);
--	vi->z_algorithmtype[0] = h->h_algorithmtype & 15;
--	vi->z_algorithmtype[1] = h->h_algorithmtype >> 4;
--
--	headnr = 0;
--	if (vi->z_algorithmtype[0] >= Z_EROFS_COMPRESSION_MAX ||
--	    vi->z_algorithmtype[++headnr] >= Z_EROFS_COMPRESSION_MAX) {
--		erofs_err(sb, "unknown HEAD%u format %u for nid %llu, please upgrade kernel",
--			  headnr + 1, vi->z_algorithmtype[headnr], vi->nid);
--		err = -EOPNOTSUPP;
--		goto out_put_metabuf;
--	}
--
--	vi->z_logical_clusterbits = LOG_BLOCK_SIZE + (h->h_clusterbits & 7);
--	if (!erofs_sb_has_big_pcluster(EROFS_SB(sb)) &&
--	    vi->z_advise & (Z_EROFS_ADVISE_BIG_PCLUSTER_1 |
--			    Z_EROFS_ADVISE_BIG_PCLUSTER_2)) {
--		erofs_err(sb, "per-inode big pcluster without sb feature for nid %llu",
--			  vi->nid);
--		err = -EFSCORRUPTED;
--		goto out_put_metabuf;
--	}
--	if (vi->datalayout == EROFS_INODE_FLAT_COMPRESSION &&
--	    !(vi->z_advise & Z_EROFS_ADVISE_BIG_PCLUSTER_1) ^
--	    !(vi->z_advise & Z_EROFS_ADVISE_BIG_PCLUSTER_2)) {
--		erofs_err(sb, "big pcluster head1/2 of compact indexes should be consistent for nid %llu",
--			  vi->nid);
--		err = -EFSCORRUPTED;
--		goto out_put_metabuf;
--	}
--
--	if (vi->z_advise & Z_EROFS_ADVISE_INLINE_PCLUSTER) {
--		struct erofs_map_blocks map = {
--			.buf = __EROFS_BUF_INITIALIZER
--		};
--
--		vi->z_idata_size = le16_to_cpu(h->h_idata_size);
--		err = z_erofs_do_map_blocks(inode, &map,
--					    EROFS_GET_BLOCKS_FINDTAIL);
--		erofs_put_metabuf(&map.buf);
--
--		if (!map.m_plen ||
--		    erofs_blkoff(map.m_pa) + map.m_plen > EROFS_BLKSIZ) {
--			erofs_err(sb, "invalid tail-packing pclustersize %llu",
--				  map.m_plen);
--			err = -EFSCORRUPTED;
--		}
--		if (err < 0)
--			goto out_put_metabuf;
--	}
--
--	if (vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER &&
--	    !(h->h_clusterbits >> Z_EROFS_FRAGMENT_INODE_BIT)) {
--		struct erofs_map_blocks map = {
--			.buf = __EROFS_BUF_INITIALIZER
--		};
--
--		vi->z_fragmentoff = le32_to_cpu(h->h_fragmentoff);
--		err = z_erofs_do_map_blocks(inode, &map,
--					    EROFS_GET_BLOCKS_FINDTAIL);
--		erofs_put_metabuf(&map.buf);
--		if (err < 0)
--			goto out_put_metabuf;
--	}
--done:
--	/* paired with smp_mb() at the beginning of the function */
--	smp_mb();
--	set_bit(EROFS_I_Z_INITED_BIT, &vi->flags);
--out_put_metabuf:
--	erofs_put_metabuf(&buf);
--out_unlock:
--	clear_and_wake_up_bit(EROFS_I_BL_Z_BIT, &vi->flags);
--	return err;
--}
--
- struct z_erofs_maprecorder {
- 	struct inode *inode;
- 	struct erofs_map_blocks *map;
-@@ -732,6 +609,125 @@ unmap_out:
- 	return err;
- }
- 
-+static int z_erofs_fill_inode_lazy(struct inode *inode)
-+{
-+	struct erofs_inode *const vi = EROFS_I(inode);
-+	struct super_block *const sb = inode->i_sb;
-+	int err, headnr;
-+	erofs_off_t pos;
-+	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
-+	void *kaddr;
-+	struct z_erofs_map_header *h;
-+
-+	if (test_bit(EROFS_I_Z_INITED_BIT, &vi->flags)) {
-+		/*
-+		 * paired with smp_mb() at the end of the function to ensure
-+		 * fields will only be observed after the bit is set.
-+		 */
-+		smp_mb();
-+		return 0;
-+	}
-+
-+	if (wait_on_bit_lock(&vi->flags, EROFS_I_BL_Z_BIT, TASK_KILLABLE))
-+		return -ERESTARTSYS;
-+
-+	err = 0;
-+	if (test_bit(EROFS_I_Z_INITED_BIT, &vi->flags))
-+		goto out_unlock;
-+
-+	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize + vi->xattr_isize, 8);
-+	kaddr = erofs_read_metabuf(&buf, sb, erofs_blknr(pos), EROFS_KMAP);
-+	if (IS_ERR(kaddr)) {
-+		err = PTR_ERR(kaddr);
-+		goto out_unlock;
-+	}
-+
-+	h = kaddr + erofs_blkoff(pos);
-+	/*
-+	 * if the highest bit of the 8-byte map header is set, the whole file
-+	 * is stored in the packed inode. The rest bits keeps z_fragmentoff.
-+	 */
-+	if (h->h_clusterbits >> Z_EROFS_FRAGMENT_INODE_BIT) {
-+		vi->z_advise = Z_EROFS_ADVISE_FRAGMENT_PCLUSTER;
-+		vi->z_fragmentoff = le64_to_cpu(*(__le64 *)h) ^ (1ULL << 63);
-+		vi->z_tailextent_headlcn = 0;
-+		goto done;
-+	}
-+	vi->z_advise = le16_to_cpu(h->h_advise);
-+	vi->z_algorithmtype[0] = h->h_algorithmtype & 15;
-+	vi->z_algorithmtype[1] = h->h_algorithmtype >> 4;
-+
-+	headnr = 0;
-+	if (vi->z_algorithmtype[0] >= Z_EROFS_COMPRESSION_MAX ||
-+	    vi->z_algorithmtype[++headnr] >= Z_EROFS_COMPRESSION_MAX) {
-+		erofs_err(sb, "unknown HEAD%u format %u for nid %llu, please upgrade kernel",
-+			  headnr + 1, vi->z_algorithmtype[headnr], vi->nid);
-+		err = -EOPNOTSUPP;
-+		goto out_put_metabuf;
-+	}
-+
-+	vi->z_logical_clusterbits = LOG_BLOCK_SIZE + (h->h_clusterbits & 7);
-+	if (!erofs_sb_has_big_pcluster(EROFS_SB(sb)) &&
-+	    vi->z_advise & (Z_EROFS_ADVISE_BIG_PCLUSTER_1 |
-+			    Z_EROFS_ADVISE_BIG_PCLUSTER_2)) {
-+		erofs_err(sb, "per-inode big pcluster without sb feature for nid %llu",
-+			  vi->nid);
-+		err = -EFSCORRUPTED;
-+		goto out_put_metabuf;
-+	}
-+	if (vi->datalayout == EROFS_INODE_FLAT_COMPRESSION &&
-+	    !(vi->z_advise & Z_EROFS_ADVISE_BIG_PCLUSTER_1) ^
-+	    !(vi->z_advise & Z_EROFS_ADVISE_BIG_PCLUSTER_2)) {
-+		erofs_err(sb, "big pcluster head1/2 of compact indexes should be consistent for nid %llu",
-+			  vi->nid);
-+		err = -EFSCORRUPTED;
-+		goto out_put_metabuf;
-+	}
-+
-+	if (vi->z_advise & Z_EROFS_ADVISE_INLINE_PCLUSTER) {
-+		struct erofs_map_blocks map = {
-+			.buf = __EROFS_BUF_INITIALIZER
-+		};
-+
-+		vi->z_idata_size = le16_to_cpu(h->h_idata_size);
-+		err = z_erofs_do_map_blocks(inode, &map,
-+					    EROFS_GET_BLOCKS_FINDTAIL);
-+		erofs_put_metabuf(&map.buf);
-+
-+		if (!map.m_plen ||
-+		    erofs_blkoff(map.m_pa) + map.m_plen > EROFS_BLKSIZ) {
-+			erofs_err(sb, "invalid tail-packing pclustersize %llu",
-+				  map.m_plen);
-+			err = -EFSCORRUPTED;
-+		}
-+		if (err < 0)
-+			goto out_put_metabuf;
-+	}
-+
-+	if (vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER &&
-+	    !(h->h_clusterbits >> Z_EROFS_FRAGMENT_INODE_BIT)) {
-+		struct erofs_map_blocks map = {
-+			.buf = __EROFS_BUF_INITIALIZER
-+		};
-+
-+		vi->z_fragmentoff = le32_to_cpu(h->h_fragmentoff);
-+		err = z_erofs_do_map_blocks(inode, &map,
-+					    EROFS_GET_BLOCKS_FINDTAIL);
-+		erofs_put_metabuf(&map.buf);
-+		if (err < 0)
-+			goto out_put_metabuf;
-+	}
-+done:
-+	/* paired with smp_mb() at the beginning of the function */
-+	smp_mb();
-+	set_bit(EROFS_I_Z_INITED_BIT, &vi->flags);
-+out_put_metabuf:
-+	erofs_put_metabuf(&buf);
-+out_unlock:
-+	clear_and_wake_up_bit(EROFS_I_BL_Z_BIT, &vi->flags);
-+	return err;
-+}
-+
- int z_erofs_map_blocks_iter(struct inode *inode, struct erofs_map_blocks *map,
- 			    int flags)
- {
-
-
+Please share the link to the errata doc that contains this e10858.
 
