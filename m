@@ -1,165 +1,289 @@
-Return-Path: <linux-kernel+bounces-363728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8FD99C625
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:44:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A44099C645
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7DD1F236C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:44:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D16E1C22E28
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1A21581F4;
-	Mon, 14 Oct 2024 09:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5AD1591E3;
+	Mon, 14 Oct 2024 09:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RZnqlicO"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FuVxw/iB"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85714156230
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2431581F4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728899045; cv=none; b=edwYIImkJKvrsqUXKfZBQXrbbB/kplF4f4WTcUMqKLOHhpPkf2tFRxctuPhHpO38KFfKLD/UiIqXiVzvyLwQ5bUBpWqEQG22MtfPXAKYoA59Mxi9XuOYw/2OYggPbLBqJCaHYvqgh9gN2NDKp00usucNlXSX+0XHJmeWEYKNNcY=
+	t=1728899068; cv=none; b=WyL5fwKDGCmYXUBBuT0GMs2lS5d1l8cDuMWcHOZptgzOpcaVq6LN9Ae/w5WsZlOoHjOJMXofXMcBDHiyqvesUYMyq6qBOao4BoWm2IY058/MgLUZrjyCYvc7iJMS1Lsjjnhcv4nXp9JchDvllCRy+0EFHuRiSGE+i/nbnxeRC1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728899045; c=relaxed/simple;
-	bh=d8mmBTMzQw0eATTs8K+Ognc0TOnmxw6QIf4V8eWf3h0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=oHONZFPFVLAaAlgQYZsOhdiKc91XCR4rCFK1AUIND1rLGBI5x75cQGRyqojymXLy9n8FLAtSdsqUMyuTlEi/C6vyjMJuWWsSGLdOwrfLS0B/xLcb54zK28qR0ubqdxzgz288C44vSoSVADJB6MSHfzHmjcOB++vEljLYpAoDDl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RZnqlicO; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728899043; x=1760435043;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=d8mmBTMzQw0eATTs8K+Ognc0TOnmxw6QIf4V8eWf3h0=;
-  b=RZnqlicOC385bq1hhLJOuPEyo88OKfDcpVI3n1FnAXCnXLM3A+GVeXod
-   Y7xlcTteBSWc4bqIljRAEYaB3Cea3vgIPwkTPa4m6fomrm/bD3H+gPDhj
-   Pnh1NWQm9hjlDuLApkoze0oKFBevd3hTa4UHCbwgeEhPYRL1QM7UijtiV
-   uQZnQDwtktKnlsY5ZKm/2Ftayq1PVdM0pbgtXd0chzKZit6yJsVfSxKIY
-   MKYJMlPSX+l5zlCQmZXPSuwiDIVIc0p5nTtZX2JltAOhSiXnI7B+mdND9
-   dgbOxn7ZDSmGavqKDdhGU/X9aUuOyp2PPohTpLuWlrzu7IKd+JKDEOKi9
-   g==;
-X-CSE-ConnectionGUID: nSGur+sPSS29M1xsOrSxxQ==
-X-CSE-MsgGUID: sfdqwUpWRm6ZzStgyyQ/PA==
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="32778525"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Oct 2024 02:44:02 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 14 Oct 2024 02:44:00 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 14 Oct 2024 02:43:58 -0700
-Message-ID: <16e23ecd-24e3-4d6e-a336-da3c4308011d@microchip.com>
-Date: Mon, 14 Oct 2024 11:44:10 +0200
+	s=arc-20240116; t=1728899068; c=relaxed/simple;
+	bh=uexHJ3VPlX9SKg5/u/j1GuOuA426G5t7g2ZTiXh0QSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hP+Vwkw4TmQVRPQbXQPTFU8opCBnmoRlDLo9+IGuiK4PvRobSh+RbVekGnYno48roo2rKD3NtrBIjd8fxoCrgpx5M5jSC6H2jKyM1OMEQ8rqgVU0Mh32NGwmDukCFMyR3pcIcz01eKV0EBC6PDjZpDFEfqI7v+//ZeMprj18YU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FuVxw/iB; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so2223957a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1728899064; x=1729503864; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xYdW1MLT+R4RqdxPTWswoKxYM+Nw7MibpBQQ9rgTpmg=;
+        b=FuVxw/iB7PpwBEb5W6oRWbOdn0mr2dEsENjIp9YBmXzGId3llvkrUljdkufYiknqZP
+         EI4ZRKjvf+0E52D/Kclmv3rft9kW06uNgdBgf/iWPkud+Wpc2/y05ixM3F02k7h9XYoq
+         9B17ktxZPjZkrCwU/Nga/OKqt2+FWX0D19O40=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728899064; x=1729503864;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xYdW1MLT+R4RqdxPTWswoKxYM+Nw7MibpBQQ9rgTpmg=;
+        b=Xpiia6Af1mYJBECmhEOhjzl5JTh9HlmgYlMbWThvlTmPMPeQJ4v8zN3bgobk+2NUyf
+         IZy7vgRiPGPPtxLie/i6pQOPgp2LXPmQX912sWR7CBQZXPzygYUJrj6RvBjELAyMyxge
+         evm8qtIh2az4J8eZ6sUcDw3SZDPQiTJeiJqRv+smCS9G28zvoJFShpLSa3nmMYW8KimW
+         iTvnVpsX4mrk0n6LvUTNVRif8rZNzN1akTou/UzY7efs3VkLQGjRXh3xSuZOv21lx8XN
+         SGRh++oCwdJzsftNC6nMpAUyJw2klbNj6q/9rxz+L5UPpGGeMtNQNG2khrzVl8hxQfQs
+         3A8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUnv6zrQdmV1KHwMNGEPEFz1MZTVZguaner4szXWzcrBAXA0cY/UVMYuvyFQ1be/COB1yFtftEXiOeHvdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK0NO2pKwmZPkwRpKkLfMGZwFYhIDpJu3nse41fxwIhn6nHHiS
+	smJ63ZjOYAJ9mA/qcBf+m2RNqcG0fQs/XOadrt1PogFZyNNpvtxppviyByOCb/3+PdmBCiUznAz
+	Fa6sSEOUgmK9nfpkViWYUdlxSaAfL/9Oq/peq
+X-Google-Smtp-Source: AGHT+IGmNVCTFBRtszDuViOsU6A92o8syey2CWa//Mny8FL9Ib7R1oF38rssJ2YwNpU2kn8tFadhzwyEfpMAnOfDmHQ=
+X-Received: by 2002:a17:907:7e9e:b0:a9a:bed:e564 with SMTP id
+ a640c23a62f3a-a9a0bede949mr269814766b.48.1728899063964; Mon, 14 Oct 2024
+ 02:44:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: atmel-hlcdc: update the LCDC_ATTRE register in plane
- atomic_disable
-Content-Language: en-US, fr-FR
-To: Manikandan Muralidharan <manikandan.m@microchip.com>, <sam@ravnborg.org>,
-	<bbrezillon@kernel.org>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <dri-devel@lists.freedesktop.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241014064644.292943-1-manikandan.m@microchip.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20241014064644.292943-1-manikandan.m@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1726733624-2142-1-git-send-email-shivasharan.srikanteshwara@broadcom.com>
+ <1726733624-2142-3-git-send-email-shivasharan.srikanteshwara@broadcom.com> <20240924160827.000049dd@Huawei.com>
+In-Reply-To: <20240924160827.000049dd@Huawei.com>
+From: Shivasharan Srikanteshwara <shivasharan.srikanteshwara@broadcom.com>
+Date: Mon, 14 Oct 2024 15:14:11 +0530
+Message-ID: <CAOHJnDuNT9ZRg1g0sBHw5ytsWTf3USCboh3=q3XdJCEyqyNYKA@mail.gmail.com>
+Subject: Re: [PATCH 2/2 v2] PCI/P2PDMA: Modify p2p_dma_distance to detect P2P links
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, 
+	manivannan.sadhasivam@linaro.org, logang@deltatee.com, 
+	linux-kernel@vger.kernel.org, sumanesh.samanta@broadcom.com, 
+	sathya.prakash@broadcom.com, sjeaugey@nvidia.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000096c87f06246caea3"
 
-On 14/10/2024 at 08:46, Manikandan Muralidharan wrote:
-> update the LCDC_ATTRE register in drm plane atomic_disable to handle
-> the configuration changes of each layer when a plane is disabled.
-> 
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+--00000000000096c87f06246caea3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+On Tue, Sep 24, 2024 at 8:38=E2=80=AFPM Jonathan Cameron
+<Jonathan.Cameron@huawei.com> wrote:
+>
+> On Thu, 19 Sep 2024 01:13:44 -0700
+> Shivasharan S <shivasharan.srikanteshwara@broadcom.com> wrote:
+>
+> > Update the p2p_dma_distance() to determine inter-switch P2P links exist=
+ing
+> > between two switches and use this to calculate the DMA distance between
+> > two devices.
+> >
+> > Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+> > ---
+> >  drivers/pci/p2pdma.c       | 17 ++++++++++++++++-
+> >  drivers/pci/pcie/portdrv.c | 34 ++++++++++++++++++++++++++++++++++
+> >  drivers/pci/pcie/portdrv.h |  2 ++
+> >  3 files changed, 52 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> > index 4f47a13cb500..eed3b69e7293 100644
+> > --- a/drivers/pci/p2pdma.c
+> > +++ b/drivers/pci/p2pdma.c
+> > @@ -21,6 +21,8 @@
+> >  #include <linux/seq_buf.h>
+> >  #include <linux/xarray.h>
+> >
+> > +extern bool pcie_port_is_p2p_link_available(struct pci_dev *a, struct =
+pci_dev *b);
+>
+> That's nasty.  Include the header so you get a clean stub if
+> this support is not built in etc.
+>
+Will move this to the new header file that will be added.
+> > +
+>
+> > diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+> > index c940b4b242fd..2fe1598fc684 100644
+> > --- a/drivers/pci/pcie/portdrv.c
+> > +++ b/drivers/pci/pcie/portdrv.c
+> > @@ -104,6 +104,40 @@ static bool pcie_port_is_p2p_supported(struct pci_=
+dev *dev)
+> >       return false;
+> >  }
+> >
+> > +/**
+> > + * pcie_port_is_p2p_link_available: Determine if a P2P link is availab=
+le
+> > + * between the two upstream bridges. The serial number of the two devi=
+ces
+> > + * will be compared and if they are same then it is considered that th=
+e P2P
+> > + * link is available.
+> > + *
+> > + * Return value: true if inter switch P2P is available, return false o=
+therwise.
+> > + */
+> > +bool pcie_port_is_p2p_link_available(struct pci_dev *a, struct pci_dev=
+ *b)
+> > +{
+> > +     u64 dsn_a, dsn_b;
+> > +
+> > +     /*
+> > +      * Check if the devices support Inter switch P2P.
+> > +      */
+>
+> Single line comment syntax fine here.  However it's kind
+> of obvious, so I'd just drop the comment.
+>
+>
+Will do.
 
-Thanks Mani. Best regards,
-   Nicolas
+> > +     if (!pcie_port_is_p2p_supported(a) ||
+> > +         !pcie_port_is_p2p_supported(b))
+>
+> Don't wrap this. I think it's under 80 chars anyway.
+>
+Will do.
 
-> ---
->   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h    |  3 ++-
->   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 17 ++++++++++++++---
->   2 files changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-> index e1a0bb24b511..53d47f01db0b 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-> @@ -378,7 +378,8 @@ struct atmel_lcdc_dc_ops {
->   	void (*lcdc_update_buffers)(struct atmel_hlcdc_plane *plane,
->   				    struct atmel_hlcdc_plane_state *state,
->   				    u32 sr, int i);
-> -	void (*lcdc_atomic_disable)(struct atmel_hlcdc_plane *plane);
-> +	void (*lcdc_atomic_disable)(struct atmel_hlcdc_plane *plane,
-> +				    struct atmel_hlcdc_dc *dc);
->   	void (*lcdc_update_general_settings)(struct atmel_hlcdc_plane *plane,
->   					     struct atmel_hlcdc_plane_state *state);
->   	void (*lcdc_atomic_update)(struct atmel_hlcdc_plane *plane,
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> index 4a7ba0918eca..4bcaf2cd7672 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-> @@ -816,7 +816,8 @@ static int atmel_hlcdc_plane_atomic_check(struct drm_plane *p,
->   	return 0;
->   }
->   
-> -static void atmel_hlcdc_atomic_disable(struct atmel_hlcdc_plane *plane)
-> +static void atmel_hlcdc_atomic_disable(struct atmel_hlcdc_plane *plane,
-> +				       struct atmel_hlcdc_dc *dc)
->   {
->   	/* Disable interrupts */
->   	atmel_hlcdc_layer_write_reg(&plane->layer, ATMEL_HLCDC_LAYER_IDR,
-> @@ -832,7 +833,8 @@ static void atmel_hlcdc_atomic_disable(struct atmel_hlcdc_plane *plane)
->   	atmel_hlcdc_layer_read_reg(&plane->layer, ATMEL_HLCDC_LAYER_ISR);
->   }
->   
-> -static void atmel_xlcdc_atomic_disable(struct atmel_hlcdc_plane *plane)
-> +static void atmel_xlcdc_atomic_disable(struct atmel_hlcdc_plane *plane,
-> +				       struct atmel_hlcdc_dc *dc)
->   {
->   	/* Disable interrupts */
->   	atmel_hlcdc_layer_write_reg(&plane->layer, ATMEL_XLCDC_LAYER_IDR,
-> @@ -842,6 +844,15 @@ static void atmel_xlcdc_atomic_disable(struct atmel_hlcdc_plane *plane)
->   	atmel_hlcdc_layer_write_reg(&plane->layer,
->   				    ATMEL_XLCDC_LAYER_ENR, 0);
->   
-> +	/*
-> +	 * Updating XLCDC_xxxCFGx, XLCDC_xxxFBA and XLCDC_xxxEN,
-> +	 * (where xxx indicates each layer) requires writing one to the
-> +	 * Update Attribute field for each layer in LCDC_ATTRE register for SAM9X7.
-> +	 */
-> +	regmap_write(dc->hlcdc->regmap, ATMEL_XLCDC_ATTRE, ATMEL_XLCDC_BASE_UPDATE |
-> +		     ATMEL_XLCDC_OVR1_UPDATE | ATMEL_XLCDC_OVR3_UPDATE |
-> +		     ATMEL_XLCDC_HEO_UPDATE);
-> +
->   	/* Clear all pending interrupts */
->   	atmel_hlcdc_layer_read_reg(&plane->layer, ATMEL_XLCDC_LAYER_ISR);
->   }
-> @@ -852,7 +863,7 @@ static void atmel_hlcdc_plane_atomic_disable(struct drm_plane *p,
->   	struct atmel_hlcdc_plane *plane = drm_plane_to_atmel_hlcdc_plane(p);
->   	struct atmel_hlcdc_dc *dc = plane->base.dev->dev_private;
->   
-> -	dc->desc->ops->lcdc_atomic_disable(plane);
-> +	dc->desc->ops->lcdc_atomic_disable(plane, dc);
->   }
->   
->   static void atmel_hlcdc_atomic_update(struct atmel_hlcdc_plane *plane,
+> > +             return false;
+> > +
+> > +     dsn_a =3D pci_get_dsn(a);
+> > +     if (!dsn_a)
+> > +             return false;
+> If we assume that dsn is the only right way to detect this
+> (I'm fine with that for now) then we know the supported tests
+> above would only pass if this is true. Hence
+>
+> return pci_get_dsn(a) =3D=3D pci_get_dsn(b);
+>
+> should be fine.
+>
+Agreed. Will rework this as suggested and update in the next
+patch.
 
+> > +
+> > +     dsn_b =3D pci_get_dsn(b);
+> > +     if (!dsn_b)
+> > +             return false;
+> > +
+> > +     if (dsn_a =3D=3D dsn_b)
+> > +             return true;
+>
+>         return dsn_a =3D=3D dsn_b;
+>
+Above changes will take care of this as well.
+
+> > +
+> > +     return false;
+> > +}
+> > +EXPORT_SYMBOL_GPL(pcie_port_is_p2p_link_available);
+> > +
+> >  /*
+> >   * Traverse list of all PCI bridges and find devices that support Inte=
+r switch P2P
+> >   * and have the same serial number to create report the BDF over sysfs=
+.
+>
+>
+
+--00000000000096c87f06246caea3
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBXYwggReoAMCAQICDFr9U6igf1QRzoaH1TANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwOTMyNDhaFw0yNTA5MTAwOTMyNDhaMIGq
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xIzAhBgNVBAMTGlNoaXZhc2hhcmFuIFNyaWthbnRlc2h3YXJh
+MTYwNAYJKoZIhvcNAQkBFidzaGl2YXNoYXJhbi5zcmlrYW50ZXNod2FyYUBicm9hZGNvbS5jb20w
+ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDulAFNbtc+tsB1JubfhUwbq5745iWy0PqA
+tUlf8OsSpnKZPtpZ/P9TJL8MrXyDJN5GdKeVAvh1YAvXb2S0i90gW5qWZtFQ4MRMQwXKHvwdVCTj
+NBVuju4wvuIk8TWSSWryDIa/KUmQEFgRethHXcwAGKVM2LV19E+RJxjbqcqBXqT20XVYJ+86q3gC
+pKeDdMqs49aS4NkFAulUXfKMvwayi1/al6l6H6NjkYI9V+VAhd2Pw5dVGT1UGNnGenU1ASxrICxB
+p1may//a5w+WwgjNTKaKkyc6n0c4ds/TIbS/qi/G87n1VXSpcJHiebcJy8WZCbvo6g9j0Ipsx9mZ
+ZyjVAgMBAAGjggHoMIIB5DAOBgNVHQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsG
+AQUFBzAChkJodHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29u
+YWxzaWduMmNhMjAyMC5jcnQwQQYIKwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29t
+L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRME
+AjAAMEkGA1UdHwRCMEAwPqA8oDqGOGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3Bl
+cnNvbmFsc2lnbjJjYTIwMjAuY3JsMDIGA1UdEQQrMCmBJ3NoaXZhc2hhcmFuLnNyaWthbnRlc2h3
+YXJhQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdb
+NHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUOXk95+zAtIGGWGU9q37iyIJKcYMwDQYJKoZIhvcNAQEL
+BQADggEBABd5fRmxw/2mYuimst/fZaHYCHDoiYauRKIOm2YcV+s/4xhvXJx0fFit4LzpW8EgTXQv
+GQCCaJeSArd/ad3NUOhuQtVB5xOO5cHcCYpdb9gvRPzSZss4mN5OrQsOD6iH0lyg9zIQfhReghMc
+Y0C0m8ndFGSil396kqXLgxfPWJ8LChptV9z3iLmGoxJa/gqhi4xu+Ql3ZcQqcP6YItbGOmGjXF/p
+uwxVuxQ2ZLaLPPZF5H6t1UPCJRYZXbcjPQHXqFTijI0/1PIUtJy3gUmAsxZe+1n/rCqqCHE4rM+q
+Xm1kxB5u/2AMUovVed0IK1+1PFQLP47vY8PfDbSkU4UXH0YxggJtMIICaQIBATBrMFsxCzAJBgNV
+BAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdD
+QyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxa/VOooH9UEc6Gh9UwDQYJYIZIAWUDBAIBBQCg
+gdQwLwYJKoZIhvcNAQkEMSIEIAAtC8RAVzSbDfEuBpt5/foMt6AWwCUB3F/O5UDCqfcyMBgGCSqG
+SIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAxNDA5NDQyNFowaQYJKoZI
+hvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG
+9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEF
+AASCAQAXTHyUALJSBls/xdehkGEavQr9V5w6Wn15tjGIT/DvtHeu1Y7lo+4ole2ZpN8AFnbOKE7j
+n+blMQ0xLENDEivJrcxF5TIKlpAqEW2dk/TtCqdcRw5qdZp6qiyjrNPqHT/8jmYHWwkfcZ1DR7V9
+G5su5ESyVs8GOuc1XQFC5fM4x+vQl8wwYcKLJTzQcKBaFH9lef2JGvso3rmpcgl7G2o93GM0bQQA
+l03U4WJ5jkvdMOQkEC9q/SShI5NS6OdjU81rRbSYwMXkw86ES1meU/2tSOyY9mlI5X4QHEHc5nlj
+o7AtQupjglyyDezLLhWkPmQ5aN9ydnR+5GFtuYA7WQ9s
+--00000000000096c87f06246caea3--
 
