@@ -1,197 +1,121 @@
-Return-Path: <linux-kernel+bounces-364701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D2A99D825
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C02C799D827
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1A4F282AAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:23:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15713281CCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01921D0DEB;
-	Mon, 14 Oct 2024 20:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030761D0E05;
+	Mon, 14 Oct 2024 20:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mn3ShdzU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkD6iDOw"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7066A1D0490;
-	Mon, 14 Oct 2024 20:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2771D0490;
+	Mon, 14 Oct 2024 20:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728937429; cv=none; b=ncwte0u5qKhE0970p+TtpOawk1SrV3za5IsNw5kt2RE3D7qgtkJ9W3I/WlSY5Ph+DEPLmbU7B33p1owTKrqREhz/EZ5lxTqbQRB/FGfqJJRpv4oDWF/zB64P6pvSGAKh2QLUeTBygZ/4oXIvjTsaxw9q5pV4rY91SaMqUUachV4=
+	t=1728937645; cv=none; b=hAwF1jx79IjxeWL+uRht4ChYa/50R47GYEC8huUMhPoB9vWgG02eC7SQ9q6rC4GdeQPiJp+dCjlxZckLP0Fbot3GvslDbFgKvVc4/IO37XfN5MkznpCSXEJE8a8VOf4EKYdcUbOK7/xMap8YkXGszzDpKRghmxh/RXAFvNCDGek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728937429; c=relaxed/simple;
-	bh=LviqP7dfxzphekEg06s6g4kBqxHkUFlHvfJIaO/HC1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ECV5t8DnXA6DlUXZ0Hy/9TTHlQl5yQSjNVu/Fi6PCEWFXk5dcrZMKfKu7cJ3/6dK4fSPQnr759xeWu+WlEVTHIyKVW0rBTGdQGAlZVjs5HILRSHKR53XtUuLMB1H78eMdlWyI9naMRBgFfnxmcawfz81LOAPH621npe3/Ar/RvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mn3ShdzU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EBvZg7017256;
-	Mon, 14 Oct 2024 20:23:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Mvzjs9vn24PX6m8HBm1RR4yT3b4jLp9/QR1eizu7Iv0=; b=mn3ShdzUXeSpoyIi
-	ImoN/r/R+muNOyBoxUlhTg/O+oiT3r4vtWOnzaUQQ0S9SNrOwxk0hwPKBJzLM+DN
-	Pq6TRdYRRgODDqZqeyUeK7FlhNXlu7JbZZET4HPHyq5i3IRvNRvb7s7IT+6OpZes
-	2T3fXw5F9O+nRDbvjZS+acVy5EaJ3bSOIGyt0mUoC8IozZv/ybT/stOB9pUlxmj+
-	OmvodHshLuXs7kdU7ina4FCztqo9LxUTwepXzjb4dMprhYK0tVDD1kJ5Zat6yzti
-	qP/1crd3YYIlFLxUX76KVQiiv5gl95MUjjEDjyohz8qJ3qk/KmseF7mTLCO7JTWv
-	4pLXiw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427hb35dy1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 20:23:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EKNYtx019269
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 20:23:34 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
- 2024 13:23:33 -0700
-Message-ID: <098b51a8-0165-4d14-9365-ef56ea2bcfae@quicinc.com>
-Date: Mon, 14 Oct 2024 13:23:24 -0700
+	s=arc-20240116; t=1728937645; c=relaxed/simple;
+	bh=T7hR8tJ06xrBOZxmj2ZoouJ4PMBncoMUs3f9JxO7pTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kkJE65HgZRwjdmhcurGRP//xD1o6Rh5a2jVaNkvp01DfisukrRhUaQsifhydQYKiwIDVfs00MgEcmhsoIDklFSWO6lmOsXCBR56o3u5QYL07YVlr4zqzbO/EuMDDXT/x6ta1p2IiD9bLmxIz+TVAoLeFY28Xe1TowG/QS30tiPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkD6iDOw; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e6d988ecfso757063b3a.0;
+        Mon, 14 Oct 2024 13:27:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728937643; x=1729542443; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T7hR8tJ06xrBOZxmj2ZoouJ4PMBncoMUs3f9JxO7pTk=;
+        b=FkD6iDOwnmCyFYc41DhVMGuVK11pNPMDB8LuCWWmtKPtO3rYc6H/kjLpa14OAplFOo
+         CEOTIA6TBKUtMkYbcfgEOmAOfYyyY//yLW59gSYzQN4KsQVo4d1jYYQV1+8DEFpGorti
+         Qhb7k27LZ0jfxhW2189T4I+Q7U2cezo2VgXRMIaPDpOC3lMndOsrzIZIWx9fsRaGcFsn
+         mKd7nMyRgL8+0GIai3rWTE+Se4jZqijJhTHzi2cd89eBEp0grD7s9wJgYV/fdd9Xbh8a
+         9WeNVdEGqhd3TNrwquxQMeAQIbQFAqBPxl2TOPkSvsAAKuC6PDuOU7f3bJd81T+5VjnE
+         pQsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728937643; x=1729542443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T7hR8tJ06xrBOZxmj2ZoouJ4PMBncoMUs3f9JxO7pTk=;
+        b=OBs2Sn5hJX/3ndukjg8YevntP6GIbQRtRrjzSKQQhlTi9HLdIRCRfyHFO0sQNyFdAK
+         1s1VO/dzt+44CmiWDWI9zcskQYtwYpX0eToQWlNT9R4uSIkgrx0mFoC23F7eiWcyywEL
+         wxwheSL5MbdjWo6Q65Z83/rwo7QYUrSG/axS9ltiC+XLxsALCsdizb4eEmqmNWkmmabB
+         dJnc5mVbSAlaAwVSkdo0DBWzHJThFtK+HCUhzUFhjz3BOryAgHhPAH+xxbVOFErLcO0Y
+         DHXdKYwE3dqtpzHaMDbyjGkA3TlKkFs8QZ9RbpVymRiKLAiOBg6AKsUCZ3Cn4dOC4WO+
+         Qe/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUX5T9J6KrmjJk9MINDbRm+aAuxB4Xpk7rdZP73KKBrL6nFMgrvrReDRDuq249/rEgn0I3gX0h+NMxrJ2pt@vger.kernel.org, AJvYcCVuH5uVzFpwEJLkecg6xU6n5ZrxBF8mWWHFWNDbTs6iToc+LlvQgnO3mQg/s2WVUIaS0po=@vger.kernel.org, AJvYcCW343Jzh9g1e+TPUFm/2lr0fv3S+OWj4+I/oRpLSmKiP2BYAtFVuU8aFk1cB/4FRCmiWHslrdk10jVsbeMurEa55eaO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhCgxKT8iOKS1MBAFUAwNhfjFGVx34tdXBLfh7FeSYFJQVXV6N
+	Qpnnt+HqANsSwU9Z7XLckjBUw6sl4pukcsCzW/gWEtKq2Sc5ILtbN+U88kZ8u5VeMfK8Nd3dNre
+	0zuwkwxfs3/Z6pkMBsqK/YZlvS5anKQ==
+X-Google-Smtp-Source: AGHT+IFwGAVjPCdEfP0TFh0THmiQ2svUymXIDU62M+8OYi04yZko9TY8AU62qmmEpn/aJdwuEt6QmxmqOdM2SpHuNKk=
+X-Received: by 2002:a05:6a00:8d3:b0:71e:5a6a:94ca with SMTP id
+ d2e1a72fcca58-71e5a6a9589mr10680912b3a.19.1728937643345; Mon, 14 Oct 2024
+ 13:27:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/msm/dpu: don't always activate merge_3d block
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241011-merge3d-fix-v2-1-2082470f573c@quicinc.com>
- <kah73euzauizsxvcrgmfsatshfe4pytgb7xe5iprtajg7abhsv@l7jdcxza5gd2>
- <0ca707a4-bd5f-4a31-a424-f466afa08e0d@quicinc.com>
- <pahfbstxa6snym7bem456npsp6bdekjqhnjcsrlpbfn77hkrut@uviaesubwz2a>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <pahfbstxa6snym7bem456npsp6bdekjqhnjcsrlpbfn77hkrut@uviaesubwz2a>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cuVXLuwnSQvaTMs3JxINy6cUg0iFoGA5
-X-Proofpoint-GUID: cuVXLuwnSQvaTMs3JxINy6cUg0iFoGA5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- bulkscore=0 clxscore=1015 adultscore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140144
+References: <20241010205644.3831427-1-andrii@kernel.org> <20241010205644.3831427-2-andrii@kernel.org>
+ <haivdc546utidpbb626qsmuwsa3f3aorurqn5khwsqqxflpu3w@xbdqwoty4blv>
+In-Reply-To: <haivdc546utidpbb626qsmuwsa3f3aorurqn5khwsqqxflpu3w@xbdqwoty4blv>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 14 Oct 2024 13:27:11 -0700
+Message-ID: <CAEf4BzYRiE9vYCRLmiRHD+fqb_ROwqrb0sX6sktqDNdfeH85DA@mail.gmail.com>
+Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce mmap_lock_speculation_{start|end}
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, peterz@infradead.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org, 
+	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, mhocko@kernel.org, 
+	vbabka@suse.cz, hannes@cmpxchg.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Oct 13, 2024 at 12:56=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.d=
+ev> wrote:
+>
+> On Thu, Oct 10, 2024 at 01:56:41PM GMT, Andrii Nakryiko wrote:
+> > From: Suren Baghdasaryan <surenb@google.com>
+> >
+> > Add helper functions to speculatively perform operations without
+> > read-locking mmap_lock, expecting that mmap_lock will not be
+> > write-locked and mm is not modified from under us.
+> >
+> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > Link: https://lore.kernel.org/bpf/20240912210222.186542-1-surenb@google=
+.com
+>
+> Looks good to me. mmap_lock_speculation_* functions could use kerneldoc
+> but that can be added later.
 
+Yep, though probably best if Suren can do that in the follow up, as he
+knows all the right words to use :)
 
-On 10/14/2024 12:13 AM, Dmitry Baryshkov wrote:
-> On Sun, Oct 13, 2024 at 07:37:20PM -0700, Abhinav Kumar wrote:
->> Hi Dmitry
->>
->> On 10/13/2024 5:20 PM, Dmitry Baryshkov wrote:
->>> On Fri, Oct 11, 2024 at 10:25:13AM -0700, Jessica Zhang wrote:
->>>> Only enable the merge_3d block for the video phys encoder when the 3d
->>>> blend mode is not *_NONE since there is no need to activate the merge_3d
->>>> block for cases where merge_3d is not needed.
->>>>
->>>> Fixes: 3e79527a33a8 ("drm/msm/dpu: enable merge_3d support on sm8150/sm8250")
->>>> Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->>>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
->>>> ---
->>>> Changes in v2:
->>>> - Added more detailed commit message
->>>> - Link to v1: https://lore.kernel.org/r/20241009-merge3d-fix-v1-1-0d0b6f5c244e@quicinc.com
->>>> ---
->>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> LGTM now. Please clarify, is there any dependency between this patch and
->>> [1]
->>>
->>
->> No dependency as such. Both are tackling similar issues though. One for
->> video mode and the other for writeback thats all. Namely:
->>
->> 1) We should not be enabling merge_3d block if two LMs are not being used as
->> that block needs to be enabled only to merge two streams. If its always
->> enabled, its incorrect programming because as per the docs its mentioned "if
->> required". Even if thats not causing issues, I would prefer not to enable it
->> always due to the "if required" clause and also we dont need to enable a
->> hardware sub-block unnecessarily.
->>
->> 2) We should be flushing the merge_3d only if its active like Jessica wrote
->> in the commit message of [1]. Otherwise, the flush bit will never be taken
->> by hardware leading to the false timeout errors.
->>
->> It has been sent as two patches as one is for video mode and the other for
->> writeback and for writeback it includes both (1) and (2) together in the
->> same patch.
-> 
-> I think it's better to handle (1) in a single patch (both for video and
-> WB) and (2) in another patch. This way it becomes more obvious that WB
-> had two different independent issues issues.
+>
+> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>
 
-Hi Dmitry,
+Thanks!
 
-Just to clarify, the patches are already being split this way.
-
-Thanks,
-
-Jessica Zhang
-
-> 
->>
->> I thought this separation is fine, if we need to squash it, let me know.
->>
->> Thanks
->>
->> Abhinav
->>
->>> [1] https://lore.kernel.org/dri-devel/20241009-mode3d-fix-v1-1-c0258354fadc@quicinc.com/
->>>
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
->>>> index ba8878d21cf0e1945a393cca806cb64f03b16640..c5e27eeaff0423a69fad98122ffef7e041fbc68e 100644
->>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
->>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
->>>> @@ -302,7 +302,7 @@ static void dpu_encoder_phys_vid_setup_timing_engine(
->>>>    	intf_cfg.stream_sel = 0; /* Don't care value for video mode */
->>>>    	intf_cfg.mode_3d = dpu_encoder_helper_get_3d_blend_mode(phys_enc);
->>>>    	intf_cfg.dsc = dpu_encoder_helper_get_dsc(phys_enc);
->>>> -	if (phys_enc->hw_pp->merge_3d)
->>>> +	if (intf_cfg.mode_3d && phys_enc->hw_pp->merge_3d)
->>>>    		intf_cfg.merge_3d = phys_enc->hw_pp->merge_3d->idx;
->>>>    	spin_lock_irqsave(phys_enc->enc_spinlock, lock_flags);
->>>>
->>>> ---
->>>> base-commit: a20a91fb1bfac5d05ec5bcf9afe0c9363f6c8c93
->>>> change-id: 20240828-merge3d-fix-1a8d005e3277
->>>>
->>>> Best regards,
->>>> -- 
->>>> Jessica Zhang <quic_jesszhan@quicinc.com>
->>>>
->>>
-> 
-> -- 
-> With best wishes
-> Dmitry
-
+>
 
