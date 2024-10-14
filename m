@@ -1,119 +1,146 @@
-Return-Path: <linux-kernel+bounces-364474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955C399D514
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:58:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5F099D516
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DFD3B265C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C862846C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69B61C2DB2;
-	Mon, 14 Oct 2024 16:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907A31BFE05;
+	Mon, 14 Oct 2024 16:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgiUybSY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="EdxZoV14"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2241F28FC;
-	Mon, 14 Oct 2024 16:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0F428FC
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728925075; cv=none; b=WIPNMuxytWDmEhJkB3iF9X+jlx/MkunaJdGqRbJSezKtCwgbYuE0bzYdDE7lLLtnvlLvsOJNpIkzoFkbJuWgiKjN9wtM4XkdCzYAc63lXwAfzz4RGsmYTpcm/crcZ7ZpZleh9z5Yd4DCrQD65WhA5DP3j88Fws7N/AiXRpKu4dk=
+	t=1728925173; cv=none; b=AuoOE9oMQg4G2+YWIo3uxw2DULi9MBnqNe73qbaoOgcU8/VTEwzGSv3yWkL6dsCKQMBkVnsUP/o5Qk/hKIg3lPmWO+543YIzIKM/wxicUG8IiVqlvR4P9BTRNi3dgY92lLd1U48zrxrUjmGcJtM1aNAe7bgERxdgavyf2Xi4isQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728925075; c=relaxed/simple;
-	bh=wXWzMdrUxolDFmjz40s5QfHgXPCyiA7KBOB9gExbNoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YwlLSCdMaBWfPVcBDzb//4iKs0kK9DZwNk4AcwYxKP6vDSvgx7vmjI9XFjMYN1VgWYLECXPEUIJnSEPrel6v9ENSHGtSug7m/OFPrMxUITfKZWKet0swa/EcxtD/GluFZV/NgS7FVeT172jWJrMS3x1KEWa/NS/KBONXlrOkK20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgiUybSY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C67EC4CEC3;
-	Mon, 14 Oct 2024 16:57:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728925074;
-	bh=wXWzMdrUxolDFmjz40s5QfHgXPCyiA7KBOB9gExbNoo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=GgiUybSYshbUNzejaSCnPLicOmznG3IXLZs0Ne0pYdd0FwUTMy5rnBRB7PvARVe7o
-	 rgVV3XvNr15M+ceo4vir7M+oPOiSp4xszzdfBWjx3rHAW2eQts4smdBQDg3gxJscNB
-	 rBvsube5oReuK32CkktFMqviLgNBavmqlYx7A0hrp7R4gC3SC/EunDoww1pBEnGS/q
-	 UdiOS+236BW8VU4+kKTissW9IkdTxTFNihEBGNV+lhh7wOrDFsEby24zuexmXWbN/J
-	 vu3uEBWPiZRON8OJlMqut4O8AWDxXj2rYe2orUSBQtHz81yPVo6LdnokYqDBH3DQJu
-	 63NmYkBzN2d9w==
-Date: Mon, 14 Oct 2024 11:57:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>
-Subject: Re: [PATCH v3 04/11] PCI: brcmstb: Expand inbound size calculation
- helper
-Message-ID: <20241014165752.GA611670@bhelgaas>
+	s=arc-20240116; t=1728925173; c=relaxed/simple;
+	bh=IAEXoTKbuaet2ein7Is+rP2m/6PrfzTUYg6uUkxmlBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AoVx7ijLWNG6kfJJzGBYjlOnbI7xF8ddxV33Ce25s+w8Mbxyb8MikC7BX1E8iaBORthli+qJugjUK9W9GDEzmYevk6VnYmdav8NRLUFgH47pt1BSu2vLTsyi4FojBRxbaCwRQ5phZPOloesyVGWucnAyQgCaXMToH9YctxTINy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=EdxZoV14; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e74900866so35805b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:59:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1728925169; x=1729529969; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=O1syxfSnQyHySLm6XoSC5cHIpkKL030ar0h5eOxBwi4=;
+        b=EdxZoV141w1RPTgZ/TlvpFH19M5nvlZ3H6aNaMISNWevPppLQfau/AjgN2Jn2+d8nL
+         iBiSqIbrq9elxYiHsUK5dgFQznlCZBthJA0/wK435Y/YMpLLuE/rah6Z/6yiB8g/lb0I
+         yIMTBuPOmdn5tvMQm9bKGS/kOFJjVQyJJe5EY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728925169; x=1729529969;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O1syxfSnQyHySLm6XoSC5cHIpkKL030ar0h5eOxBwi4=;
+        b=mG7ikhHtWeAGQ/XAIT3JGixeAEiAfyLccEZ+rNH+KfYiy5nAslOm1s/3u1rWSWJDMf
+         elnQubjVlojtYgd0Mem5+nwnaO9NlPDlEc+qo57PD8lXSp4xdFIJMJsvp+9DrngOrhnj
+         ETjtVC66HPF5n0LUx32BQWQW7KFeGi/5yFikPD9Sgq7QI9dwNHQ1ne3FWynwTeSpymad
+         OX0jtDSCnKwUbeFlLCT/r8nn/+71kIrkgo92QEUDKHHzookT+nU+c7gZkXLNIvQL295G
+         ZDVMtVgEa0oF+cWExMmrZ0jM6R+BWjU8yCJ+aNkmMQ7LFeA/AsrluaV1auMaetlB9GPu
+         OvOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWs/6qqaAygN4tvprGTlMkVeFCi26u9nC9iuV2nPVeGOfwaqyC0q0w6Ft7D7j5AmEEWWRTZkQ3aNsqPWy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfdBayLvOy3EBBY9gvcHahvdE411EfuTa+Io4syRdkKLjhD/Pn
+	6bI+JBUq+UIZyt/Z07oqZbM9L4eRr+AI93igHrwT89kTrVmHsGzukgbE+ZZ/XA==
+X-Google-Smtp-Source: AGHT+IGDop3vsO9bjydZXq2P+39lYFaW+oypuSKZBK74M5rCrtPylZjtzOQ5TTC40Pxy+ozQGkW0GA==
+X-Received: by 2002:a05:6a00:1310:b0:71e:cc7:c511 with SMTP id d2e1a72fcca58-71e3807443cmr21479086b3a.23.1728925169376;
+        Mon, 14 Oct 2024 09:59:29 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e3a3b6185sm6296915b3a.38.2024.10.14.09.59.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 09:59:28 -0700 (PDT)
+Message-ID: <0c21ac6a-fda4-4924-9ad1-db1b549be418@broadcom.com>
+Date: Mon, 14 Oct 2024 09:59:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014130710.413-5-svarbanov@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: systemport: fix potential memory leak in
+ bcm_sysport_xmit()
+To: Wang Hai <wanghai38@huawei.com>, bcm-kernel-feedback-list@broadcom.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, zhangxiaoxu5@huawei.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241014145115.44977-1-wanghai38@huawei.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241014145115.44977-1-wanghai38@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 04:07:03PM +0300, Stanimir Varbanov wrote:
-> BCM2712 memory map can supports up to 64GB of system
-> memory, thus expand the inbound size calculation in
-> helper function up to 64GB.
-
-The fact that the calculation is done in a helper isn't important
-here.  Can you make the subject line say something about supporting
-DMA for up to 64GB of system memory?
-
-This is being done specifically for BCM2712, but I assume it's safe
-for *all* brcmstb devices, right?
-
-s/can supports/can support/
-
-Rewrap commit log to fill 75 columns.
-
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
-> v2 -> v3:
->  - Added Reviewed-by tags.
->  - Improved patch description (Florian).
+On 10/14/24 07:51, Wang Hai wrote:
+> The bcm_sysport_xmit() returns NETDEV_TX_OK without freeing skb
+> in case of dma_map_single() fails, add dev_kfree_skb() to fix it.
 > 
->  drivers/pci/controller/pcie-brcmstb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+ > --->   drivers/net/ethernet/broadcom/bcmsysport.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 9321280f6edb..b0ef2f31914d 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -309,8 +309,8 @@ static int brcm_pcie_encode_ibar_size(u64 size)
->  	if (log2_in >= 12 && log2_in <= 15)
->  		/* Covers 4KB to 32KB (inclusive) */
->  		return (log2_in - 12) + 0x1c;
-> -	else if (log2_in >= 16 && log2_in <= 35)
-> -		/* Covers 64KB to 32GB, (inclusive) */
-> +	else if (log2_in >= 16 && log2_in <= 36)
-> +		/* Covers 64KB to 64GB, (inclusive) */
->  		return log2_in - 15;
->  	/* Something is awry so disable */
->  	return 0;
-> -- 
-> 2.43.0
-> 
+> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+> index c9faa8540859..0a68b526e4a8 100644
+> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
+> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+> @@ -1359,6 +1359,7 @@ static netdev_tx_t bcm_sysport_xmit(struct sk_buff *skb,
+>   		netif_err(priv, tx_err, dev, "DMA map failed at %p (len=%d)\n",
+>   			  skb->data, skb_len);
+>   		ret = NETDEV_TX_OK;
+> +		dev_kfree_skb_any(skb);
+
+Since we already have a private counter tracking DMA mapping errors, I 
+would follow what the driver does elsewhere in the transmit path, 
+especially what bcm_sysport_insert_tsb() does, and just use 
+dev_consume_skb_any() here.
+-- 
+Florian
 
