@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-364607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5063299D6CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:53:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6930599D6D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 830541C229D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265E0283522
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB291CB529;
-	Mon, 14 Oct 2024 18:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2111CACEF;
+	Mon, 14 Oct 2024 18:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M6sILbTW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EU4NiTB0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2431CACC1;
-	Mon, 14 Oct 2024 18:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7AD1C9EDB;
+	Mon, 14 Oct 2024 18:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728931986; cv=none; b=q+rOXHMQPdAeE1Q1ILCyA4f9i5VImZY1z9hM42cFwjHG5HT8ra0i+Tvlv68wcKA4EIycns6JqULJIwuUhyhMZPb2QJFXZNJSPqjohT/IsFXq07ziZiLHVbQ9Np83A80IWyNsoALBCSJgLdOiJ41laFp4OuQlPtNYLmZCV84VpvQ=
+	t=1728932037; cv=none; b=ig1Cvfl+Ba0UBrANiCYpRfWFEINLI1X9lHqDlUyQ9HvFHu4hrj83tfpz7CyWRn18Qoypf2TADrI6wSQp69mRSt4Bm310WlXUA5O3qKcOTOTJcQQ8BZl1o0bVKlG9a9JkF4P8yYwiyZtnJDyogmmeJRA+7B0MGUT4oQwYuPtPDsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728931986; c=relaxed/simple;
-	bh=R0WD3juJZzWXzIt/CVnXoMlePx6Ujc+0GTsPcOtjA+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NunBrRp1fA6GcvSD6mhNp319g9EbrvjIymd0wti3pP6+viDURPcTRnhAByNE3Vds6gV4UPJap2nidzSkQFykb1HsTcPK/LeBLT1GZI7d8YPllaznzX5GeTnrllCqp0C7+m3S4JNVrKUUcfNT+ko6iThM8nSu2NVdosocBbck8xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M6sILbTW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EAiBh6011283;
-	Mon, 14 Oct 2024 18:52:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	USPQITIPllVhWG5IEj1TfL6AbGFHobQWh5g/bbReJf0=; b=M6sILbTWz7gxNF+r
-	F74w5U0rhvWHumL4NS3enHeFvgdWiauXhLHMsJuSgQWZ3Sn8PiUn0i34gAxIIaUJ
-	piw1FmtE1PaEAAEj8LDxdKQUTp2CV6SjVJeAoxI/I0AbZlo+2MS0A7Xjg4mMSQ5Z
-	wbwQ8/jz8GU/pw9DsAiBQMnNCqwZLikD2xqvPMyXdAxRGLQGsfaieGmgDC2XDG51
-	6r0lsdFTTb+BAuf5jCr6SPkolDfLSxJIBACFfU6fpFrG/y5Lx91vlYCEIfaYJSEK
-	UStsNb1hjc4FqlqGKIB9ZDFDkhdtXihQzkYam+jIh6cKnAOoolM4Bu5VwQsUbLYq
-	+vqOIw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427h6twdt3-1
+	s=arc-20240116; t=1728932037; c=relaxed/simple;
+	bh=Q23Dqecm4rQW4LbmLu/fWqBs/g2VUgntNVy/XHd1CiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9JymTX31oKHX12ZQB8upF/HYMeMpEH0rW/ufyb8OqHtFa2NNz4CkUUwtxrjCD/1qMvZT3C4gwOlGHdqbHs6KgWqUCaV9XH5uK8dcoBG1f6EZ9PI/2ZG+bWMT/mWPreZk0v7/cQ6RSkGaLEkL1BZGYy+YEocfjnRmEES0w1WDL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EU4NiTB0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EGLr5W024481;
+	Mon, 14 Oct 2024 18:53:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=qli9+AqdmrYjqn+I9SUah+tTjB2
+	z+FoJZ2DPQzlDrTY=; b=EU4NiTB02AP+nBsUzH3YrsoNJoQJJLvgBgartXQslh/
+	VZPgKbRTlO2YMs/6IXykmT3npBElHcFI6m7qKXQfyhxVaTpJDX3bONmGHSNGFqjU
+	NmkAuutJkQkf4LyS7jO66DXit5SdyMNuKzU8hexRErSnTdn+t3LcuoHeynuGd38K
+	RU7M5wNBM9EGLZA1efsV6JsdKwCg3+eO3+d2IrMmVCJS10TSMtwZb5/JQhkmpucN
+	aLTmntYTdHitdYJY132t+Mo0KL8w9tvLpk4Dx9cv7jXP0E9lRb+tlZSCPm+PVtCT
+	wrfrx8PSJis4VRLIQBahyPeib6a4smO18I5cMGW0nrw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4296r30nd9-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:52:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EIqsOU002490
+	Mon, 14 Oct 2024 18:53:48 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EIrlD7020744;
+	Mon, 14 Oct 2024 18:53:47 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4296r30ncy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:52:54 GMT
-Received: from [10.110.109.95] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
- 2024 11:52:53 -0700
-Message-ID: <a740622c-5d7f-48a0-9888-e01fa4ef4c2c@quicinc.com>
-Date: Mon, 14 Oct 2024 11:52:53 -0700
+	Mon, 14 Oct 2024 18:53:47 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EHtfve002408;
+	Mon, 14 Oct 2024 18:53:46 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emg2ys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 18:53:45 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EIrgPS43123138
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 18:53:42 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 38CE92004B;
+	Mon, 14 Oct 2024 18:53:42 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0A39C20040;
+	Mon, 14 Oct 2024 18:53:41 +0000 (GMT)
+Received: from osiris (unknown [9.171.66.174])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Oct 2024 18:53:40 +0000 (GMT)
+Date: Mon, 14 Oct 2024 20:53:39 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+Subject: Re: [PATCH v2 6/7] lib/Kconfig.debug: default STRICT_DEVMEM to "y"
+ on s390
+Message-ID: <20241014185339.10447-G-hca@linux.ibm.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-7-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm/msm: Avoid NULL dereference in
- msm_disp_state_print_regs()
-To: Douglas Anderson <dianders@chromium.org>, Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Stephen Boyd <swboyd@chromium.org>, David Airlie <airlied@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241014093605.1.Ia1217cecec9ef09eb3c6d125360cc6c8574b0e73@changeid>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241014093605.1.Ia1217cecec9ef09eb3c6d125360cc6c8574b0e73@changeid>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WK0znMCj3ftNmauzp8zBAfBgbi1U25NZ
-X-Proofpoint-ORIG-GUID: WK0znMCj3ftNmauzp8zBAfBgbi1U25NZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014144622.876731-7-david@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mAW_T_fBPvj4hf4pGvS0idwYV0lYsd3R
+X-Proofpoint-GUID: cFbrqvSxhg3gJUt9lCJvsb6mg8EdgPi_
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
- spamscore=0 suspectscore=0 clxscore=1011 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140134
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_12,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ suspectscore=0 malwarescore=0 lowpriorityscore=0 mlxscore=0 clxscore=1015
+ mlxlogscore=457 spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410140135
 
-
-
-On 10/14/2024 9:36 AM, Douglas Anderson wrote:
-> If the allocation in msm_disp_state_dump_regs() failed then
-> `block->state` can be NULL. The msm_disp_state_print_regs() function
-> _does_ have code to try to handle it with:
+On Mon, Oct 14, 2024 at 04:46:18PM +0200, David Hildenbrand wrote:
+> virtio-mem currently depends on !DEVMEM | STRICT_DEVMEM. Let's default
+> STRICT_DEVMEM to "y" just like we do for arm64 and x86.
 > 
->    if (*reg)
->      dump_addr = *reg;
+> There could be ways in the future to filter access to virtio-mem device
+> memory even without STRICT_DEVMEM, but for now let's just keep it
+> simple.
 > 
-> ...but since "dump_addr" is initialized to NULL the above is actually
-> a noop. The code then goes on to dereference `dump_addr`.
-> 
-> Make the function print "Registers not stored" when it sees a NULL to
-> solve this. Since we're touching the code, fix
-> msm_disp_state_print_regs() not to pointlessly take a double-pointer
-> and properly mark the pointer as `const`.
-> 
-> Fixes: 98659487b845 ("drm/msm: add support to take dpu snapshot")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Tested-by: Mario Casquero <mcasquer@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
-> 
->   drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.c | 15 ++++++++-------
->   1 file changed, 8 insertions(+), 7 deletions(-)
-> 
+>  lib/Kconfig.debug | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-LGTM, thanks for the fix
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
