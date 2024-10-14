@@ -1,167 +1,184 @@
-Return-Path: <linux-kernel+bounces-363411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C91C99C200
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:51:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6634399C1FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F84C1C2521E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:51:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3E81B22BDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A2E14D6EB;
-	Mon, 14 Oct 2024 07:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V1doFuVT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2DE14C59C;
+	Mon, 14 Oct 2024 07:51:08 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263FC14A092;
-	Mon, 14 Oct 2024 07:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255DB14A092
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892281; cv=none; b=Feo3admLUwRk1ZWjrxjL6Emi1TQz4L5TjcRCILGA6tc640Kdteb/8wH2GNEaKSW0Be4LC6OcpIcAgsixPrFHjchfg8Ul9lPuHRonfA2Ph0n427IOZrXTiW6IYMaimPb9GYWck4cPX41JjvKwP5W9KjPAnPWhVzoF6eZYiwHmrlQ=
+	t=1728892267; cv=none; b=YhQNUnIp/gDPHfaeUQcgwZGkJvxzx8TPv/R00OWrG5p0GdF0ivUwRK48Z8RCWB0F4XS2Ja18T3gr4Xbzvn22m0Xr3EllS6wyOkqOkiUdIA05PrRTLYFh9Ih6W3d6uA0A4fBnB85763gKjdxxjTvL3uB6TksQs3dId67QvXf24zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892281; c=relaxed/simple;
-	bh=a2HMJn4Hv9unmOCAOZxrCsje+PKdd6KLUJK7SCRo6no=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Qq3DvZNhRKku9l+E7JrgdyOqn8E0FywY84voBwmukH+K9Btf7avu0BlKL2yFiT2TXHmRZlCsJEe7W+x0GB7v9Xo+AYcol37RpFXKjSFwSCntM+X0CJpEXOjPbqet224uU87xU1so/D6eAkRgQxANNMmiZWTKB+Y1cb9oZdRGPyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V1doFuVT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49DNdoLP005267;
-	Mon, 14 Oct 2024 07:51:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bZoC//fj3Iku0eMTHN9r0vcUQXgeGd56zY8cVePVZFY=; b=V1doFuVT4jA3fceZ
-	H4a5h9sEpaXuKE53ZJsgTh2+OpIxGgZlzNUS6DKinVEiVT5hGs7FftlMyCJdhqeI
-	ReDn/ytBRUZgiqV/cenqapQ9zhhYaEzf+p44qSwOs0y8ql4xC9sGkXl39ZXshHNF
-	FVjEBvRBK/XNGRcxbiZ6+kJgwrHULmxdwMFSZzB9IaeblfRpDEY4PGOwCNKpTctr
-	D6AQ9NLTlI7VNz2J4cicLkqlWv/+7c630AM81K4I1O7uAYkY3LPz4EzlFBbQnPQy
-	cwPAiQjeZZCauMsup8PawKdw47rQu6DKJlUmKDGFQ86UT2R2XfqCeOum+MthQCsl
-	Asdeeg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427hg73med-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 07:51:06 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49E7p5Zq020221
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 07:51:05 GMT
-Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
- 2024 00:51:00 -0700
-Message-ID: <96816abb-4e0d-4c60-8ae6-b5a5cd796e99@quicinc.com>
-Date: Mon, 14 Oct 2024 15:50:53 +0800
+	s=arc-20240116; t=1728892267; c=relaxed/simple;
+	bh=h6XOjTLx9GsAYP2TTG7DhV+WzeICO4DTeGOEauKII/w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JZDP7rlsx8Y/Fj/lPHjdCp2u5UwA4/erD8FIEDtkEv0PDgLrVl21SfDSmlvc0XAwLGNOjBle9MFp+MpuwW4JYz0N4UGBMm2RYcBnIOc2vex4lwi8oxfQl0SLnCMRE/nfKH0ItCMTdcuYAGlilrT/pWYuFnAwUfVj9R8jleEl0+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3bf44b0f5so7333365ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:51:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728892265; x=1729497065;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mIjMjQapyboG58LGKBDpfcy0mY53NBlv+GOrbJsFKvg=;
+        b=hO2OI/aaXLpheg5KzxWAaSgr7o+9N2FlvmXfH34ujB2qyVQw0gsNRaMn+bf8EFDDY4
+         TutIzhP1q6/c8acS3vtKVc/FMPZMfIxkj4bpSxMKIuTtqLWnggdCn6KIXInS/t+aEoTV
+         DJrxVDvu8NQyOdxU/GUgWMLoIM0snOFTMa3rj6pI21EfooGvvGVNLVSZT+ezPMbv9tEG
+         jjRexsIMpv0xCAcexou8EEnmhPXyXmjoA/imNiSQdf8L48znG7ag5LFyM9IPSyEUbF+I
+         Mv8f7qMf3NBqMvgZYErq81oZKSLsgw+llB6lfSNynVYahQ12FN4IBhIvxZZALOtYg5QW
+         tWXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvx8wgnBoETpwy68jxSt2BW7QdJpDqr2li7EkeUxJX3WuQLWacRz7Al6u84lo1qhgcNEeGmBx64q0Bp44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDRGYS+wXzdgzOUHuDhStNTeSqgFmK5sNSaSid8QZ6X0MFu55+
+	lIq0s5D5zmSQdsrm3rZ3e8k5PaeT5118zSYIg7tfwaGH0BDo5T6u8XYqGMtttFNvBadEQkjqjA0
+	QFcP7QTUCuHRIOgTLJMLIsvEXZnBu01pwb8TdS/9fUVQFO0buDwdd4g0=
+X-Google-Smtp-Source: AGHT+IE+wOaa9Mey5x6wmJBg7zVDo8M3c8mtZRZ5QSDA9JmOzw9QepHazIGHjhr5pQUYfRB6zK8BkImUuNMjyGAm3VIHMdl2u9gS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/8] dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global'
- interrupt
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
-        <quic_devipriy@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
- <20241011104142.1181773-4-quic_qianyu@quicinc.com>
- <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
- <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
- <3d1d0822-da66-44c8-a328-69804210123c@kernel.org>
- <65B34B14-76C3-491D-8A58-6D0887889018@linaro.org>
- <df6379c6-662a-4b35-a919-13c695a869c7@kernel.org>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <df6379c6-662a-4b35-a919-13c695a869c7@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: c8DC4QGZl6mybIcNqaHlS2FPJub-re1X
-X-Proofpoint-GUID: c8DC4QGZl6mybIcNqaHlS2FPJub-re1X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=909
- lowpriorityscore=0 spamscore=0 adultscore=0 priorityscore=1501
- suspectscore=0 bulkscore=0 phishscore=0 malwarescore=0 impostorscore=0
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140056
+X-Received: by 2002:a92:b70d:0:b0:3a3:968b:4e3f with SMTP id
+ e9e14a558f8ab-3a3bcdeeff5mr43178315ab.18.1728892265330; Mon, 14 Oct 2024
+ 00:51:05 -0700 (PDT)
+Date: Mon, 14 Oct 2024 00:51:05 -0700
+In-Reply-To: <PUZPR04MB6316D062F577B655E85385E381442@PUZPR04MB6316.apcprd04.prod.outlook.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670ccd69.050a0220.3e960.005a.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
+From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in __exfat_get_dentry_set
+
+loop0: detected capacity change from 0 to 256
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
+=====================================================
+BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
+ __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
+ exfat_get_dentry_set+0x58/0xec0 fs/exfat/dir.c:859
+ __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
+ __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
+ exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
+ exfat_write_failed fs/exfat/inode.c:435 [inline]
+ exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:499
+ generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
+ __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
+ exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ memcpy_to_iter lib/iov_iter.c:65 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
+ copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
+ shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_read+0x278/0x760 fs/read_write.c:923
+ lo_read_simple drivers/block/loop.c:283 [inline]
+ do_req_filebacked drivers/block/loop.c:516 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
+ copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
+ generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
+ shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
+ lo_write_bvec drivers/block/loop.c:243 [inline]
+ lo_write_simple drivers/block/loop.c:264 [inline]
+ do_req_filebacked drivers/block/loop.c:511 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+ alloc_pages_noprof mm/mempolicy.c:2345 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
+ __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
+ block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
+ exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:448
+ exfat_extend_valid_size fs/exfat/file.c:553 [inline]
+ exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 5987 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-g6485cf5ea253-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
 
 
-On 10/12/2024 12:06 AM, Krzysztof Kozlowski wrote:
-> On 11/10/2024 17:51, Manivannan Sadhasivam wrote:
->>
->> On October 11, 2024 9:14:31 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> On 11/10/2024 17:42, Manivannan Sadhasivam wrote:
->>>>
->>>> On October 11, 2024 8:03:58 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>> On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
->>>>>> Document 'global' SPI interrupt along with the existing MSI interrupts so
->>>>>> that QCOM PCIe RC driver can make use of it to get events such as PCIe
->>>>>> link specific events, safety events, etc.
->>>>> Describe the hardware, not what the driver will do.
->>>>>
->>>>>> Though adding a new interrupt will break the ABI, it is required to
->>>>>> accurately describe the hardware.
->>>>> That's poor reason. Hardware was described and missing optional piece
->>>>> (because according to your description above everything was working
->>>>> fine) is not needed to break ABI.
->>>>>
->>>> Hardware was described but not completely. 'global' IRQ let's the controller driver to handle PCIe link specific events like Link up, Link down etc... They improve user experience like the driver can use those interrupts to start bus enumeration on its own. So breaking the ABI for good in this case.
->>>>
->>>>> Sorry, if your driver changes the ABI for this poor reason.
->>>>>
->>>> Is the above reasoning sufficient?
->>> I tried to look for corresponding driver change, but could not, so maybe
->>> there is no ABI break in the first place.
->> Here it is:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4581403f67929d02c197cb187c4e1e811c9e762a
->>
->>   Above explanation is good, but
->>> still feels like improvement and device could work without global clock.
-> So there is no ABI break in the first place... Commit is misleading.
-OK, will remove the description about ABI break in commit message. But may
-I know in which case ABI will be broken by adding an interrupt in bingdings
-and what ABI will be broken?
->
->> It is certainly an improvement but provides a nice user experience as the devices will be enumerated when they get plugged into the slot (like hotplug). Otherwise, users have to rescan the bus every time they plug a device. Also when the device gets removed, driver could retrain the link if link went to a bad state. Otherwise, link will remain in the broken state requiring users to unload/load the driver again.
-> OK
+Tested on:
 
-Thanks Mani for your detailed explaination. Can I reword commit message
-like this:
+commit:         6485cf5e Merge tag 'hid-for-linus-2024101301' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1012d85f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
+dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=154ac727980000
 
-Qcom PCIe RC controllers are capable of generating 'global' SPI interrupt
-to the host CPU. This interrupt can be used by the device driver to handle
-PCIe link specific events such as Link up and Link down, which give the
-driver a chance to start bus enumeration on its own when link is up and
-initiate link training if link went to a bad state. This provides a nice
-user experience.
-
-Hence, document it in the binding along with the existing MSI interrupts.
-
-Thanks,
-Qiang
->
-> Best regards,
-> Krzysztof
->
 
