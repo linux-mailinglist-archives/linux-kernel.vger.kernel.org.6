@@ -1,466 +1,136 @@
-Return-Path: <linux-kernel+bounces-364281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D339C99D02C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B49C99D039
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C55285EB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:01:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F80286625
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC871AAE27;
-	Mon, 14 Oct 2024 14:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43DC1AA7AE;
+	Mon, 14 Oct 2024 15:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="UuNZ9T0n"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="maUzWCI4"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C831D81749;
-	Mon, 14 Oct 2024 14:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33011CA8D
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728917996; cv=none; b=QQqa9JLY9g8y02xh8V58zDSrzmLmEdrR0cDPfOjIuwiE4Zz548ZiWtTfElfbA0/P3hnmDQkmXPO8BYjcYNffPBqIxommuoVcurji3pfAsGgITJLs5EeS5AvwkzXhpigOMKwXjGs8dCJVrGKIIqRgleX9SX6Mmrib3zyOY5qfnhI=
+	t=1728918033; cv=none; b=rAYiVbBwb17UGqFnu2o8C7uffXbkthhtUUbjh9aOFcMbO1UjfYhbXnAUrN2Vs5H4i5E6CXyr5en3ItCJUnYEW92gfEf1eUoJRzCk9fca1MaTDQg2ypFQ+oSm9ui8+Kec5kncT+qk1jDOZxUFuls9WBkT72aAV2fUtBSLSZYD3QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728917996; c=relaxed/simple;
-	bh=xRNW2O9ugcX7+hnZU3hZJwTYurj5BshIHmpk33yGMTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I3WV5SKqcDlzYuFVbFbtC5NzhpxxigZ+f2eKMt5V+e5rlIn9A2JhH3hO+k4I/P0CCu/8Mq6SfXdQLQSmoxywmfwZixDXf43w43QbUu+BhmVO86D9RGvSKi+yeyzT0Xg/q7c0cH9ViFvBzk6rrE56tkjOOYL5XiZKbz2/XB3H6jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=UuNZ9T0n; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 323abf5bb3fc7085; Mon, 14 Oct 2024 16:59:46 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 55AFA69EF45;
-	Mon, 14 Oct 2024 16:59:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728917986;
-	bh=xRNW2O9ugcX7+hnZU3hZJwTYurj5BshIHmpk33yGMTM=;
-	h=From:Subject:Date;
-	b=UuNZ9T0nYh9v+Z4y/WKMN0jL3aOdrYnMQ7OdA8iHsutw2OWyIJfnrHGQ4f60AQ9f1
-	 tFCar4vQiE+7O+RKWF/8mNuuY60reyWoVo8kmDLFM7W28e/wrXiu2AwDY7oEQIGfJO
-	 KHEqYmhlG7WJ8VH8dSWJE53GavJBZ5g9dBDePr+jZ9Cu5Pka+C72au49NJOJNPQfkF
-	 hT+F6KuwAvb74+uIVmiqzt72r7XfGUVqay+xxXB1gRw4Uz5NrX0ZPmvRQX6SUIe52s
-	 XiMZFpL8FFhvVpF3NSl4KMPGqdZ4rAwGjyr+Osofmq2aKlQRZDqrOArFhWUYhRyEam
-	 btZQESuq6nW/g==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2.1 09/11] thermal: core: Add and use cooling device guard
-Date: Mon, 14 Oct 2024 16:59:46 +0200
-Message-ID: <5837621.DvuYhMxLoT@rjwysocki.net>
-In-Reply-To: <4985597.31r3eYUQgx@rjwysocki.net>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1728918033; c=relaxed/simple;
+	bh=c9klRdtmfQ1jSeSsmH3rq7gnU/BLvFDWgrhzM6GgnGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZUixzRqRJs2S8y13QmTDIoN0MlsXFuAKeQKuxo6qU40Jb6TPw14eK8+8TFsamj5t2pX/n9/TXHSaql9jG//gpnmJIdSJiDdMtgO4KCngdYv+R00stvnpcqQWPCIi7mMd2rKxEMFRWMMzFraq7RvDjTNEjiM47K998KpzjJ4i88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=maUzWCI4; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 14 Oct 2024 17:00:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728918026;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9sulRIvdyGva2HvmQHD6chWx2d7ARWFv2QudetJpYFk=;
+	b=maUzWCI4w4zRMc744W0WfWhUzCk2BiNKULEwfgB9UD4g+mgCUJYUjx1aLEN/g2+CoY51Sr
+	qGh/qF3XgYo+oCeLzY2LvUJMSYKEqvwylBhoXoJND5mji2GOt0lgks+Q/u91ifTJEKkamG
+	NM6j2QAxx/uQIT0CSwXf4tcprNlrieo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Always call put_prev_task() with scx enabled
+Message-ID: <Zw0yBekifvsv9s2G@gpd3>
+References: <20241013173928.20738-1-andrea.righi@linux.dev>
+ <20241014083608.GU17263@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgkedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphh
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014083608.GU17263@noisy.programming.kicks-ass.net>
+X-Migadu-Flow: FLOW_OUT
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, Oct 14, 2024 at 10:36:08AM +0200, Peter Zijlstra wrote:
+> On Sun, Oct 13, 2024 at 07:39:28PM +0200, Andrea Righi wrote:
+> > With the consolidation of put_prev_task/set_next_task(), we are now
+> > skipping the sched_ext ops.stopping/running() transitions when the
+> > previous and next tasks are the same, see commit 436f3eed5c69 ("sched:
+> > Combine the last put_prev_task() and the first set_next_task()").
+> > 
+> > While this optimization makes sense in general, it can negatively impact
+> > performance in some user-space schedulers, that expect to handle such
+> > transitions when tasks exhaust their timeslice (see SCX_OPS_ENQ_LAST).
+> > 
+> > For example, scx_rustland suffers a significant performance regression
+> > (e.g., gaming benchmarks drop from ~60fps to ~10fps).
+> > 
+> > To fix this, ensure that put_prev_task()/set_next_task() are never
+> > skipped when the scx scheduling class is enabled, allowing the scx class
+> > to handle such transitions.
+> > 
+> > This change restores the previous behavior, fixing the performance
+> > regression in scx_rustland.
+> > 
+> > Link: https://github.com/sched-ext/scx/issues/788
+> 
+> How persistent are links like that? In general I strongly discourage
+> links to things not pointing to kernel.org resources.
 
-Add and use a special guard for cooling devices.
+This one persists also after the issue is marked as resolved, I only
+added it to provide more context about the problem. However, the the
+commit description already contains all the details, so we can probably
+get rid of the link.
 
-This allows quite a few error code paths to be simplified among
-other things and brings in code size reduction for a good measure.
+> 
+> > @@ -2523,6 +2508,21 @@ DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+> >  #define scx_switched_all()	false
+> >  #endif /* !CONFIG_SCHED_CLASS_EXT */
+> >  
+> > +static inline void put_prev_set_next_task(struct rq *rq,
+> > +					  struct task_struct *prev,
+> > +					  struct task_struct *next)
+> > +{
+> > +	WARN_ON_ONCE(rq->curr != prev);
+> > +
+> > +	__put_prev_set_next_dl_server(rq, prev, next);
+> > +
+> > +	if (next == prev && !scx_enabled())
+> > +		return;
+> 
+> Does that not also want to include a 'next->sched_class ==
+> &ext_sched_class' clause ? And a comment?
 
-No intentional functional impact.
+Good point.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+> 
+> > +
+> > +	prev->sched_class->put_prev_task(rq, prev, next);
+> > +	next->sched_class->set_next_task(rq, next, true);
+> > +}
+> 
+> And is there really no way scx can infer this happened? We just did pick
+> after all, that can see this coming a mile of.
 
-This is a new iteration of
+I'll do some testing, we can probably infer this in pick_task_scx() and
+make adjustments there, or possibly in scx_update_idle() within the idle
+class, since that seems to be where the real issue lies.
 
-https://lore.kernel.org/linux-pm/1890654.atdPhlSkOF@rjwysocki.net/
-
-v2 -> v2.1: Add missing hunk in trans_table_show()
-
-v1 -> v2: Rearrange cur_state_store()
-
----
- drivers/thermal/gov_power_allocator.c |   21 ++++++--------
- drivers/thermal/gov_step_wise.c       |    6 ++--
- drivers/thermal/thermal_core.c        |   17 +++--------
- drivers/thermal/thermal_debugfs.c     |   25 ++++++++++------
- drivers/thermal/thermal_helpers.c     |   19 +++---------
- drivers/thermal/thermal_sysfs.c       |   51 ++++++++++++----------------------
- include/linux/thermal.h               |    3 ++
- 7 files changed, 59 insertions(+), 83 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -758,12 +758,10 @@ static int thermal_instance_add(struct t
- 
- 	list_add_tail(&new_instance->trip_node, &td->thermal_instances);
- 
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
- 
- 	list_add_tail(&new_instance->cdev_node, &cdev->thermal_instances);
- 
--	mutex_unlock(&cdev->lock);
--
- 	return 0;
- }
- 
-@@ -872,11 +870,9 @@ static void thermal_instance_delete(stru
- {
- 	list_del(&instance->trip_node);
- 
--	mutex_lock(&instance->cdev->lock);
-+	guard(cooling_dev)(instance->cdev);
- 
- 	list_del(&instance->cdev_node);
--
--	mutex_unlock(&instance->cdev->lock);
- }
- 
- /**
-@@ -1239,10 +1235,10 @@ void thermal_cooling_device_update(struc
- 	 * Update under the cdev lock to prevent the state from being set beyond
- 	 * the new limit concurrently.
- 	 */
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
- 
- 	if (cdev->ops->get_max_state(cdev, &cdev->max_state))
--		goto unlock;
-+		return;
- 
- 	thermal_cooling_device_stats_reinit(cdev);
- 
-@@ -1269,12 +1265,9 @@ void thermal_cooling_device_update(struc
- 	}
- 
- 	if (cdev->ops->get_cur_state(cdev, &state) || state > cdev->max_state)
--		goto unlock;
-+		return;
- 
- 	thermal_cooling_device_stats_update(cdev, state);
--
--unlock:
--	mutex_unlock(&cdev->lock);
- }
- EXPORT_SYMBOL_GPL(thermal_cooling_device_update);
- 
-Index: linux-pm/include/linux/thermal.h
-===================================================================
---- linux-pm.orig/include/linux/thermal.h
-+++ linux-pm/include/linux/thermal.h
-@@ -140,6 +140,9 @@ struct thermal_cooling_device {
- #endif
- };
- 
-+DEFINE_GUARD(cooling_dev, struct thermal_cooling_device *, mutex_lock(&_T->lock),
-+	     mutex_unlock(&_T->lock))
-+
- /* Structure to define Thermal Zone parameters */
- struct thermal_zone_params {
- 	const char *governor_name;
-Index: linux-pm/drivers/thermal/thermal_sysfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_sysfs.c
-+++ linux-pm/drivers/thermal/thermal_sysfs.c
-@@ -544,14 +544,15 @@ cur_state_store(struct device *dev, stru
- 	if (state > cdev->max_state)
- 		return -EINVAL;
- 
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
- 
- 	result = cdev->ops->set_cur_state(cdev, state);
--	if (!result)
--		thermal_cooling_device_stats_update(cdev, state);
-+	if (result)
-+		return result;
- 
--	mutex_unlock(&cdev->lock);
--	return result ? result : count;
-+	thermal_cooling_device_stats_update(cdev, state);
-+
-+	return count;
- }
- 
- static struct device_attribute
-@@ -625,21 +626,18 @@ static ssize_t total_trans_show(struct d
- {
- 	struct thermal_cooling_device *cdev = to_cooling_device(dev);
- 	struct cooling_dev_stats *stats;
--	int ret = 0;
-+	int ret;
- 
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
- 
- 	stats = cdev->stats;
- 	if (!stats)
--		goto unlock;
-+		return 0;
- 
- 	spin_lock(&stats->lock);
- 	ret = sprintf(buf, "%u\n", stats->total_trans);
- 	spin_unlock(&stats->lock);
- 
--unlock:
--	mutex_unlock(&cdev->lock);
--
- 	return ret;
- }
- 
-@@ -652,11 +650,11 @@ time_in_state_ms_show(struct device *dev
- 	ssize_t len = 0;
- 	int i;
- 
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
- 
- 	stats = cdev->stats;
- 	if (!stats)
--		goto unlock;
-+		return 0;
- 
- 	spin_lock(&stats->lock);
- 
-@@ -668,9 +666,6 @@ time_in_state_ms_show(struct device *dev
- 	}
- 	spin_unlock(&stats->lock);
- 
--unlock:
--	mutex_unlock(&cdev->lock);
--
- 	return len;
- }
- 
-@@ -682,11 +677,11 @@ reset_store(struct device *dev, struct d
- 	struct cooling_dev_stats *stats;
- 	int i, states;
- 
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
- 
- 	stats = cdev->stats;
- 	if (!stats)
--		goto unlock;
-+		return count;
- 
- 	states = cdev->max_state + 1;
- 
-@@ -702,9 +697,6 @@ reset_store(struct device *dev, struct d
- 
- 	spin_unlock(&stats->lock);
- 
--unlock:
--	mutex_unlock(&cdev->lock);
--
- 	return count;
- }
- 
-@@ -716,13 +708,11 @@ static ssize_t trans_table_show(struct d
- 	ssize_t len = 0;
- 	int i, j;
- 
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
- 
- 	stats = cdev->stats;
--	if (!stats) {
--		len = -ENODATA;
--		goto unlock;
--	}
-+	if (!stats)
-+		return -ENODATA;
- 
- 	len += snprintf(buf + len, PAGE_SIZE - len, " From  :    To\n");
- 	len += snprintf(buf + len, PAGE_SIZE - len, "       : ");
-@@ -731,10 +721,8 @@ static ssize_t trans_table_show(struct d
- 			break;
- 		len += snprintf(buf + len, PAGE_SIZE - len, "state%2u  ", i);
- 	}
--	if (len >= PAGE_SIZE) {
--		len = PAGE_SIZE;
--		goto unlock;
--	}
-+	if (len >= PAGE_SIZE)
-+		return PAGE_SIZE;
- 
- 	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
- 
-@@ -760,9 +748,6 @@ static ssize_t trans_table_show(struct d
- 		len = -EFBIG;
- 	}
- 
--unlock:
--	mutex_unlock(&cdev->lock);
--
- 	return len;
- }
- 
-Index: linux-pm/drivers/thermal/thermal_helpers.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_helpers.c
-+++ linux-pm/drivers/thermal/thermal_helpers.c
-@@ -58,17 +58,10 @@ bool thermal_trip_is_bound_to_cdev(struc
- 				   const struct thermal_trip *trip,
- 				   struct thermal_cooling_device *cdev)
- {
--	bool ret;
--
- 	guard(thermal_zone)(tz);
-+	guard(cooling_dev)(cdev);
- 
--	mutex_lock(&cdev->lock);
--
--	ret = thermal_instance_present(tz, cdev, trip);
--
--	mutex_unlock(&cdev->lock);
--
--	return ret;
-+	return thermal_instance_present(tz, cdev, trip);
- }
- EXPORT_SYMBOL_GPL(thermal_trip_is_bound_to_cdev);
- 
-@@ -197,12 +190,12 @@ void __thermal_cdev_update(struct therma
-  */
- void thermal_cdev_update(struct thermal_cooling_device *cdev)
- {
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
-+
- 	if (!cdev->updated) {
- 		__thermal_cdev_update(cdev);
- 		cdev->updated = true;
- 	}
--	mutex_unlock(&cdev->lock);
- }
- 
- /**
-@@ -211,11 +204,9 @@ void thermal_cdev_update(struct thermal_
-  */
- void thermal_cdev_update_nocheck(struct thermal_cooling_device *cdev)
- {
--	mutex_lock(&cdev->lock);
-+	guard(cooling_dev)(cdev);
- 
- 	__thermal_cdev_update(cdev);
--
--	mutex_unlock(&cdev->lock);
- }
- 
- /**
-Index: linux-pm/drivers/thermal/thermal_debugfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_debugfs.c
-+++ linux-pm/drivers/thermal/thermal_debugfs.c
-@@ -516,6 +516,19 @@ void thermal_debug_cdev_add(struct therm
- 	cdev->debugfs = thermal_dbg;
- }
- 
-+static struct thermal_debugfs *thermal_debug_cdev_clear(struct thermal_cooling_device *cdev)
-+{
-+	struct thermal_debugfs *thermal_dbg;
-+
-+	guard(cooling_dev)(cdev);
-+
-+	thermal_dbg = cdev->debugfs;
-+	if (thermal_dbg)
-+		cdev->debugfs = NULL;
-+
-+	return thermal_dbg;
-+}
-+
- /**
-  * thermal_debug_cdev_remove - Remove a cooling device debugfs entry
-  *
-@@ -527,17 +540,9 @@ void thermal_debug_cdev_remove(struct th
- {
- 	struct thermal_debugfs *thermal_dbg;
- 
--	mutex_lock(&cdev->lock);
--
--	thermal_dbg = cdev->debugfs;
--	if (!thermal_dbg) {
--		mutex_unlock(&cdev->lock);
-+	thermal_dbg = thermal_debug_cdev_clear(cdev);
-+	if (!thermal_dbg)
- 		return;
--	}
--
--	cdev->debugfs = NULL;
--
--	mutex_unlock(&cdev->lock);
- 
- 	mutex_lock(&thermal_dbg->lock);
- 
-Index: linux-pm/drivers/thermal/gov_power_allocator.c
-===================================================================
---- linux-pm.orig/drivers/thermal/gov_power_allocator.c
-+++ linux-pm/drivers/thermal/gov_power_allocator.c
-@@ -549,18 +549,17 @@ static void allow_maximum_power(struct t
- 		cdev = instance->cdev;
- 
- 		instance->target = 0;
--		mutex_lock(&cdev->lock);
--		/*
--		 * Call for updating the cooling devices local stats and avoid
--		 * periods of dozen of seconds when those have not been
--		 * maintained.
--		 */
--		cdev->ops->get_requested_power(cdev, &req_power);
-+		scoped_guard(cooling_dev, cdev) {
-+			/*
-+			 * Call for updating the cooling devices local stats and
-+			 * avoid periods of dozen of seconds when those have not
-+			 * been maintained.
-+			 */
-+			cdev->ops->get_requested_power(cdev, &req_power);
- 
--		if (params->update_cdevs)
--			__thermal_cdev_update(cdev);
--
--		mutex_unlock(&cdev->lock);
-+			if (params->update_cdevs)
-+				__thermal_cdev_update(cdev);
-+		}
- 	}
- }
- 
-Index: linux-pm/drivers/thermal/gov_step_wise.c
-===================================================================
---- linux-pm.orig/drivers/thermal/gov_step_wise.c
-+++ linux-pm/drivers/thermal/gov_step_wise.c
-@@ -97,9 +97,9 @@ static void thermal_zone_trip_update(str
- 
- 		instance->initialized = true;
- 
--		mutex_lock(&instance->cdev->lock);
--		instance->cdev->updated = false; /* cdev needs update */
--		mutex_unlock(&instance->cdev->lock);
-+		scoped_guard(cooling_dev, instance->cdev) {
-+			instance->cdev->updated = false; /* cdev needs update */
-+		}
- 	}
- }
- 
-
-
-
+Thanks for looking at this,
+-Andrea
 
