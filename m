@@ -1,103 +1,148 @@
-Return-Path: <linux-kernel+bounces-363468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E969599C2DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:18:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8653099C2DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77668B21445
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4586D281377
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899A14D70E;
-	Mon, 14 Oct 2024 08:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8C412EBDB;
+	Mon, 14 Oct 2024 08:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kq14tKIv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XW90NVU1"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DED149E17;
-	Mon, 14 Oct 2024 08:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BC612C54B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728893909; cv=none; b=hM7/qJOiHihHbeXAZmGFwvWh8VOdmlhf8XIBCEVDtGw5PJ64AaNbsByQKzMh/oMa2IXJhAnXGYOM0jz0AmsovH41LUhrV9XYjwRWsJzM+SE4TGQp8JL5nv77fLkMthGdwLrkgA95YCx3nacFS+orXPAq5vvnzyMSwaqG+PdvxNo=
+	t=1728893988; cv=none; b=gSTi7eK1S8HJWAIiflFoFMqylgDUuxibe8Z/LuIUW32jnKhYf61e5XmLrY5vNlDFcE0TzjFMrRF0DeG1ZBEQHrsKR3nFuIBvjGlY9Vtbm0nUCtj5U9YhFCdCbaaucCBr21maCa8EWwdQkOUQmQ2YKMzuZuCYFyuOqFSQx9/92Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728893909; c=relaxed/simple;
-	bh=WSG6JKOrpz//yHgEJmqYwVlan1AwfYYChHInmnQGJWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ThHHEdyZsSEU+82KR4YX73LkUOmIuuORpeT0ELfYatviSlZHcT3dsB2y8P7Zopyjzd7I/zY92z19RzDfwTGiDgt8L0kETPuzjaCJSeLBusdHpD78iYmN7XOVvaREPa6vdBOzKYE1Vtmo642YjVsR7w1DnQqszfEbAYago6UMXHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kq14tKIv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A04EC4CEC7;
-	Mon, 14 Oct 2024 08:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728893909;
-	bh=WSG6JKOrpz//yHgEJmqYwVlan1AwfYYChHInmnQGJWE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kq14tKIvdRmlqZXLADeTGOPOPtBpwWU/YWA8URdTeOFBla9CtDT8grK/h1Yyv5Cja
-	 hDfBL1aVogMWZumJzicbQ2bHE9a7NWgnFTGUzAtOb8hXIHqampAsO/SjDYPIFiZvNV
-	 d+t7v/5p6+JTrCc8fMNIY28ISzY0lQCEtGSYc7C5M56HTvU5LjQGPffMdYMmHa59bv
-	 dd43wfIL3XvMJ7PQjqJzZUnYD4t6ptLIQLZlHTjHKqC5KEjbFCv4LskEX6TGB/q1Q/
-	 zqqvFhAoq9wi3SS8/7iBZXYEr7Ew2X8yXzMk183jqVxfUt3qudmGuNI8HFKYd9b0hT
-	 2Z37ZDBiRR/fA==
-Date: Mon, 14 Oct 2024 09:18:23 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next 1/1] net: phy: Refactor mediatek-ge-soc.c for
- clarity and correctness
-Message-ID: <20241014081823.GL77519@kernel.org>
-References: <20241014040521.24949-1-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1728893988; c=relaxed/simple;
+	bh=xw2OJqLmdlgJRjPuT1t2HIpou/PjV8ECKTZV4nucn+E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jUzEPfgvE3lnh9p6cYoyf5RcyNOaIIlYFRCXDCj/JVIhy4s2Db1xSyeknSDqhkEm3qHM4wqN3y1KxKI9w3Yrlnr/CndQDXTGCe2aVPisGkY/CCUWNWFFxoQKRRVQfiQzV11I9+3/kt3XrsV9gA14nKKvf4TnBSEKaxmW2HPGs+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XW90NVU1; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d55f0cf85so1776835f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:19:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728893985; x=1729498785; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gd7tvUIcHEudi4VdsXpEME5L1feZKH1BO8QhpI19d4E=;
+        b=XW90NVU113DNxSLTRfqmJmB6dxyheWqLF18Adhu6dhY2vZ8GiMnjVE2xvnirbl2rR6
+         u5CJo050vy1Iu2dHichFcRXdmzL9JSq84pleqQbe6kFD6Jx2xXl3OW4bpIlQOvuJn2KQ
+         3ng7NrYT44g8th4FX0dc5XWQDYDEB1FJm9CmFNYHrQ/A57XDVzXhWIVgjufdpX+Q9s8x
+         Hr9K7yOJ406OASwqod4to2nmRj2JubF/r6V+sU2c4HrZ5djRuF0SdYGhXnGGgMzlqlj7
+         6QrmmhbotplgcmC4q3JkBFz2IsGMuRW2rTTFXxAEf2G4Z68BACS6mLdBXZnkUHeEiGBN
+         PflQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728893985; x=1729498785;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gd7tvUIcHEudi4VdsXpEME5L1feZKH1BO8QhpI19d4E=;
+        b=N3uUNsp65L1j6HcyfH+6eSJaF287WHW2H+8hoRM/sZApdfy/wBDEdcL6Kyf2tNaOu2
+         pSOqWCdO/cejM9G62lDS3jBt48gUb/WMmI/Gk230nSW2K+Lic+Vo9jjmKoKdGmlJmIPL
+         j6VO7oUur7LOaBdzl9q0F/b3aZlCU1jKOhfPVEh6LRh0XZB//710hEjqn8ISicwb2p5n
+         RCkelZnMfwhOy56MjEUsl7UEifrtAcAiN1pj22wEx8Rgsk/GrggWSzS2YBXBllc95DYy
+         L1AQAiHWSEier39V5X25J6WaKxZBpkKlQybSHlb4sUQAufWKZd35yYWIxI9r5tqrR89L
+         E85g==
+X-Forwarded-Encrypted: i=1; AJvYcCXf9fkG4OU33XF1uZDSMZoQ4Irw2wNX7C/BaKgqVvz7TjhTueyYWdugPdUl/dETlJkAxAJ02GyAEuJtqto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMjUFS0tQObIwnMsCF0BGtS8AGBIm3x16HIfaB0soAZCCsmLqR
+	wcBz3CM5ZmN2eF44aY8TBS6ICiafaw8bUon9aPPFNbROk7uCDJMdlBrY1ieH0+U=
+X-Google-Smtp-Source: AGHT+IH4cArkWsKeyXZB3oSCRl0gYezdgDkmRYtkaXPxR2pQRhP3G9Apq/L2qoUjMlXXxgceMU2Auw==
+X-Received: by 2002:a5d:4d42:0:b0:37d:4ebe:1650 with SMTP id ffacd0b85a97d-37d5529b1bdmr7968921f8f.46.1728893984762;
+        Mon, 14 Oct 2024 01:19:44 -0700 (PDT)
+Received: from [127.0.1.1] ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd04asm10715752f8f.27.2024.10.14.01.19.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 01:19:44 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH v2 0/3] arm64: dts: qcom: x1e80100: Describe SDCs and
+ enable support on QCP
+Date: Mon, 14 Oct 2024 11:19:23 +0300
+Message-Id: <20241014-x1e80100-qcp-sdhc-v2-0-868e70a825e0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014040521.24949-1-SkyLake.Huang@mediatek.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAvUDGcC/22NzQqDMBCEX0X23C3Z1PrTU9+jeAjJqgvFaFLEI
+ nn3pkJvvc03MN/sEDkIR7gVOwReJYqfMuhTAXY008AoLjNopUtSqsaNuFE54WJnjG60SFdbU+W
+ Ma8sK8m4O3Mt2OB9d5lHiy4f3cbHSt/3Zmj+2lVCh67kvbasNX+j+lMkEf/ZhgC6l9AFu8seVs
+ wAAAA==
+X-Change-ID: 20241007-x1e80100-qcp-sdhc-15c716dad946
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-mmc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1358; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=xw2OJqLmdlgJRjPuT1t2HIpou/PjV8ECKTZV4nucn+E=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDNQSVxW3GAqb2HK0TImCJ/FSZyyGW5UhZPdv0
+ hcBQpfTOKOJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZwzUEgAKCRAbX0TJAJUV
+ VnJjD/9KApqkwLPUPyneOzHvHnQTKp9VwcboL7A6+Mjc0WJdtTmo0RBJCwd57mNcFqTjhwhfHut
+ g8OuTWQDyd0xgcgO6ZtonF92ENs2Z4OtTwEjLlyfyQIYceIisINNun9pv5TJNiQh+bGoL4bcN/m
+ EZzu9huH/xEA2QfS5DRzsiKBoRw8zuAN20UlFyJATafaDAAZ/81bKZ2G4AYwhFSNKjDqkR4N0Rk
+ Rg0zztsqzSlD7fmspxZ8eOablpi5IBWHwYLvkhv5EtbtyVW3dD6eoixvKIyi/Ru0EPVkl5X3CDm
+ W9HgdO9gvC1119gU0hmWCWRYFNiseq62S7RhowTPHy6ssIJoWN5C1NUS1BAxfjqATyS4908mGB3
+ TILZgvaw8pq3184BzTypVPYVfv3rSTGrB7M2UJFldL1YiTLPmq3aZNqfxpOTzrBS4yEXUmuHriY
+ gR6aSS8Ytb/gDnX2SNWp3+nY/U9viy0FXFvFDDOIRKB7lY0tt78IfAUsATxnBBMuTSQCNrJ1aLc
+ KDevVCGK48AdF4kxt9RgbQXr+RK0V6uZ8kSU8QMmrp3loo6aZaRD0h32dh3PZo1NxwHSop4hGea
+ Xyu/VyeMXs7iBl4nyV+uY8PHdMEE5IREbFRwdr+fCOXvAGZzLQhPLXUXcWM+UPBSLnRSVVacEgE
+ 9XoeeUd1tP0Blww==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Mon, Oct 14, 2024 at 12:05:21PM +0800, Sky Huang wrote:
-> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
-> 
-> This patch does the following clean-up:
-> 1. Fix spelling errors and rearrange variables with reverse
->    Xmas tree order.
-> 2. Shrink mtk-ge-soc.c line wrapping to 80 characters.
-> 3. Propagate error code correctly in cal_cycle().
-> 4. Fix some functions with FIELD_PREP()/FIELD_GET().
-> 5. Remove unnecessary outer parens of supported_triggers var.
-> 
-> Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
-> ---
-> This patch is derived from Message ID:
-> 20241004102413.5838-9-SkyLake.Huang@mediatek.com
+The X1E80100 has two SDHC controllers (called SDC2 and SDC4).
+Describe both of them and enable the SDC2 on QCP. This brings
+SD card support for the microSD port on QCP.
 
-Hi Sky,
+The SDC4 is described but there is no device outthere yet that makes
+use of it, AFAIK.
 
-I think this patch is trying to do two many things (at least 5 are listed
-above). Please consider breaking this up into separate patches, perhaps
-one for each of the points above.
+Didn't include the SDC4 pins yet because there are some bindings
+errors that need to be addressed, and since there is no HW that
+actually uses it, we can describe them at a later stage.
 
-Also, I think it would be best to drop the following changes unless you are
-touching those lines for some other reason [1] or are preparing to do so:
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Changes in v2:
+- rebased on next-20241011
+- dropped the bindings schema update patch
+- dropped the sdhci-caps-mask properties from both
+  controllers as SDR104/SDR50 are actually supported
+- Link to v1: https://lore.kernel.org/r/20241008-x1e80100-qcp-sdhc-v1-0-dfef4c92ae31@linaro.org
 
-* xmas tree
-* 80 character lines
-* parentheses updates
+---
+Abel Vesa (3):
+      arm64: dts: qcom: x1e80100: Describe the SDHC controllers
+      arm64: dts: qcom: x1e80100: Describe TLMM pins for SDC2
+      arm64: dts: qcom: x1e80100-qcp: Enable SD card support
 
-[1] https://docs.kernel.org/process/maintainer-netdev.html#clean-up-patches
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts |  20 +++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi    | 142 ++++++++++++++++++++++++++++++
+ 2 files changed, 162 insertions(+)
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241007-x1e80100-qcp-sdhc-15c716dad946
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
 
