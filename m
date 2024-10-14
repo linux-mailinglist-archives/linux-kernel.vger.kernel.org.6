@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-363866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3114499C803
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:03:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8515599C804
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD241F2504B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:03:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ADEA287520
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DCB1A01D8;
-	Mon, 14 Oct 2024 11:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4341A071E;
+	Mon, 14 Oct 2024 11:00:36 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1501AC42C;
-	Mon, 14 Oct 2024 11:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4161B1AC444;
+	Mon, 14 Oct 2024 11:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903634; cv=none; b=qwfm4Inv76YTgaEK0Kp2bx5bbs9bsPYs4lrkn9AJYCJsD5jZM+iPos4YyU1yzs1F1HmILYIWxikjxOv8fRVVx+cquOqvNbNPXZDVvANqJNLu9Y03Btqeg0BvuhAW2waPXnVxMw6j+WavPlqVkpww35HcfH4n94bgJloa20u8Adw=
+	t=1728903636; cv=none; b=tdBMDBwBvslljHYQylE3rApYZmAC+K3Huf691vQelKlVoaWuCbANcs56BjTwdbdo0Qv9Fq3XZ0i47G6+MSdrJV9FVUXwqv0zT3z7UkIOYSKhKr4uljGqOuMeFaaBe9CYmvJat4J/dfbUIglxift4vYTIeSzQmqiIVOEhUxOZ3ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903634; c=relaxed/simple;
-	bh=e+YQDR10H2AzwPGwlgfVFvSnmoMZbbXPbr3mIsLC0sw=;
+	s=arc-20240116; t=1728903636; c=relaxed/simple;
+	bh=FcM7fKKo2HWCTYaccbwaa3xgX3AIhVCd/YNKcH7yqmk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B6+YQzMc7Wfm76GaiP7hzYHtFqUkYCDU5hvlFa+GVRdttumZEiQAXwLm1PeGUcjlMARdNbIBkw/ZloamsaQLD3bOHEz+OiaBumZ/5stzGw/rWJt0Z03UHdoRwz/ZYkVxOILRvlurVnvnPw11/MQHZVUWGwHDfKIAIs6X+kcJ7Cg=
+	 MIME-Version; b=NIQISzuEPaWYExXt4MzuQ6+kHEua5xnweku1+BqiWOmdNLiBQRyMC7PxAIgFbgqt+RNhZZcIKV284NM7iQa5+LdoaYd3JnDZEahc3T6aX1NECXo55xUG59oOMyqO+Vj7LH7aAgQUiUvmqlrSS7k/FeOKfBr7CYx5JuxDqoSYmWY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EB86168F;
-	Mon, 14 Oct 2024 04:01:01 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C133168F;
+	Mon, 14 Oct 2024 04:01:04 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1323A3F51B;
-	Mon, 14 Oct 2024 04:00:28 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 201A53F51B;
+	Mon, 14 Oct 2024 04:00:32 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
-	Anna Schumaker <anna@kernel.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
 	Ard Biesheuvel <ardb@kernel.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	David Hildenbrand <david@redhat.com>,
 	Greg Marsden <greg.marsden@oracle.com>,
 	Ivan Ivanov <ivan.ivanov@suse.com>,
+	Jaroslav Kysela <perex@perex.cz>,
 	Kalesh Singh <kaleshsingh@google.com>,
 	Marc Zyngier <maz@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Matthias Brugger <mbrugger@suse.com>,
 	Miroslav Benes <mbenes@suse.cz>,
-	Trond Myklebust <trondmy@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>,
 	Will Deacon <will@kernel.org>
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-nfs@vger.kernel.org
-Subject: [RFC PATCH v1 21/57] sunrpc: Remove PAGE_SIZE compile-time constant assumption
-Date: Mon, 14 Oct 2024 11:58:28 +0100
-Message-ID: <20241014105912.3207374-21-ryan.roberts@arm.com>
+	linux-sound@vger.kernel.org
+Subject: [RFC PATCH v1 22/57] sound: Remove PAGE_SIZE compile-time constant assumption
+Date: Mon, 14 Oct 2024 11:58:29 +0100
+Message-ID: <20241014105912.3207374-22-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -72,8 +72,9 @@ To prepare for supporting boot-time page size selection, refactor code
 to remove assumptions about PAGE_SIZE being compile-time constant. Code
 intended to be equivalent when compile-time page size is active.
 
-Updated array sizes in various structs to contain enough entries for the
-smallest supported page size.
+Wrap global variables that are initialized with PAGE_SIZE derived values
+using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
+deferred for boot-time page size builds.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -82,77 +83,31 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- include/linux/sunrpc/svc.h      | 8 +++++---
- include/linux/sunrpc/svc_rdma.h | 4 ++--
- include/linux/sunrpc/svcsock.h  | 2 +-
- 3 files changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/soc-utils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
-index a7d0406b9ef59..dda44018b8f36 100644
---- a/include/linux/sunrpc/svc.h
-+++ b/include/linux/sunrpc/svc.h
-@@ -160,6 +160,8 @@ extern u32 svc_max_payload(const struct svc_rqst *rqstp);
-  */
- #define RPCSVC_MAXPAGES		((RPCSVC_MAXPAYLOAD+PAGE_SIZE-1)/PAGE_SIZE \
- 				+ 2 + 1)
-+#define RPCSVC_MAXPAGES_MAX	((RPCSVC_MAXPAYLOAD+PAGE_SIZE_MIN-1)/PAGE_SIZE_MIN \
-+				+ 2 + 1)
+diff --git a/sound/soc/soc-utils.c b/sound/soc/soc-utils.c
+index 303823dc45d7a..74e1bc1087de4 100644
+--- a/sound/soc/soc-utils.c
++++ b/sound/soc/soc-utils.c
+@@ -98,7 +98,7 @@ int snd_soc_tdm_params_to_bclk(const struct snd_pcm_hw_params *params,
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_tdm_params_to_bclk);
  
- /*
-  * The context of a single thread, including the request currently being
-@@ -190,14 +192,14 @@ struct svc_rqst {
- 	struct xdr_stream	rq_res_stream;
- 	struct page		*rq_scratch_page;
- 	struct xdr_buf		rq_res;
--	struct page		*rq_pages[RPCSVC_MAXPAGES + 1];
-+	struct page		*rq_pages[RPCSVC_MAXPAGES_MAX + 1];
- 	struct page *		*rq_respages;	/* points into rq_pages */
- 	struct page *		*rq_next_page; /* next reply page to use */
- 	struct page *		*rq_page_end;  /* one past the last page */
+-static const struct snd_pcm_hardware dummy_dma_hardware = {
++static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(struct snd_pcm_hardware, dummy_dma_hardware, {
+ 	/* Random values to keep userspace happy when checking constraints */
+ 	.info			= SNDRV_PCM_INFO_INTERLEAVED |
+ 				  SNDRV_PCM_INFO_BLOCK_TRANSFER,
+@@ -107,7 +107,7 @@ static const struct snd_pcm_hardware dummy_dma_hardware = {
+ 	.period_bytes_max	= PAGE_SIZE*2,
+ 	.periods_min		= 2,
+ 	.periods_max		= 128,
+-};
++});
  
- 	struct folio_batch	rq_fbatch;
--	struct kvec		rq_vec[RPCSVC_MAXPAGES]; /* generally useful.. */
--	struct bio_vec		rq_bvec[RPCSVC_MAXPAGES];
-+	struct kvec		rq_vec[RPCSVC_MAXPAGES_MAX]; /* generally useful.. */
-+	struct bio_vec		rq_bvec[RPCSVC_MAXPAGES_MAX];
  
- 	__be32			rq_xid;		/* transmission id */
- 	u32			rq_prog;	/* program number */
-diff --git a/include/linux/sunrpc/svc_rdma.h b/include/linux/sunrpc/svc_rdma.h
-index d33bab33099ab..7c6441e8d6f7a 100644
---- a/include/linux/sunrpc/svc_rdma.h
-+++ b/include/linux/sunrpc/svc_rdma.h
-@@ -200,7 +200,7 @@ struct svc_rdma_recv_ctxt {
- 	struct svc_rdma_pcl	rc_reply_pcl;
- 
- 	unsigned int		rc_page_count;
--	struct page		*rc_pages[RPCSVC_MAXPAGES];
-+	struct page		*rc_pages[RPCSVC_MAXPAGES_MAX];
- };
- 
- /*
-@@ -242,7 +242,7 @@ struct svc_rdma_send_ctxt {
- 	void			*sc_xprt_buf;
- 	int			sc_page_count;
- 	int			sc_cur_sge_no;
--	struct page		*sc_pages[RPCSVC_MAXPAGES];
-+	struct page		*sc_pages[RPCSVC_MAXPAGES_MAX];
- 	struct ib_sge		sc_sges[];
- };
- 
-diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
-index 7c78ec6356b92..6c6bcc82685a3 100644
---- a/include/linux/sunrpc/svcsock.h
-+++ b/include/linux/sunrpc/svcsock.h
-@@ -40,7 +40,7 @@ struct svc_sock {
- 
- 	struct completion	sk_handshake_done;
- 
--	struct page *		sk_pages[RPCSVC_MAXPAGES];	/* received data */
-+	struct page *		sk_pages[RPCSVC_MAXPAGES_MAX];	/* received data */
- };
- 
- static inline u32 svc_sock_reclen(struct svc_sock *svsk)
+ static const struct snd_soc_component_driver dummy_platform;
 -- 
 2.43.0
 
