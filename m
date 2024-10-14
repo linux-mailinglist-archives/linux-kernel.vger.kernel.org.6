@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-363188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F4599BED0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:08:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568BA99BEDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DBD1F22E91
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:08:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19A75286C87
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1031A7240;
-	Mon, 14 Oct 2024 03:59:02 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10061A7259
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D267149C7A;
+	Mon, 14 Oct 2024 03:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONDQ1rew"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E2A1494A5;
+	Mon, 14 Oct 2024 03:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728878342; cv=none; b=ou22oUGKxwcOp2WkGri8xm5prn6phA5tScLNtKKmaXuN4xM2BtiybMBYJvAbm1v0z1jHtZ8wL2sCbBpvISvC+95WK7ZYnglwo5mtrloKfc1JyZc2yblkkpIEqKG5/pAXy+jkdP29p98gcvkcdx/9BralwI5gcAmRTzyhoiOpSbM=
+	t=1728878372; cv=none; b=io+ofgyQm5qtkZq4rTL9H13IA7LfZk3QycpCdGiqy6USN+vXTTGUzxcWKkC8XOaCnXgqKhG9XQCQno+iGAXaUeQa68Xqf1IaBQ3fXJHosnZWhIigWpAiZctntkJZf4Xw0nYR4zJqazTmoi8GdvYiaM/KV5lXdD50aIaIJndGHh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728878342; c=relaxed/simple;
-	bh=ptzeV/KUkyoX894HxvO+FYV/s0m195mvVeaeLYKJ5W4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EUEGQvY6g9E9U7JP0DtijoucVhVOp66pfY5oQdh0hLE6MkyKTnVS5+lnUp8UG0+c6tPfgOEYydf1F7S69B8KTflNbVXCp7OZK3gz/2weqSsBze/bbVUYh+DJDILrXaxUCczMfhdyL1tHLw6uPy+/Glxm5DEIx0BTPbXe+i8/0mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8AxhokClwxnkgIaAA--.37545S3;
-	Mon, 14 Oct 2024 11:58:58 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowMBxXuT_lgxnc6EoAA--.1717S5;
-	Mon, 14 Oct 2024 11:58:57 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-mm@kvack.org
-Subject: [PATCH v2 3/3] LoongArch: Remove pte buddy set with set_pte and pte_clear function
-Date: Mon, 14 Oct 2024 11:58:55 +0800
-Message-Id: <20241014035855.1119220-4-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20241014035855.1119220-1-maobibo@loongson.cn>
-References: <20241014035855.1119220-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1728878372; c=relaxed/simple;
+	bh=+pCTZq5gffnwaGyI/JHSLk7jHCYopxjr2+PXu0oiK6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eLFRdO399yaKV8wv10OLz+kg9vnuKAfFED1Hv1YIOJcnwLkow7M1/qlQvjWVdZH5JSZoU8WTZkKSMUUPWlg92JiZ7kUeKdfeF/KwHvwNB1dzw4cKh6UPpBbgvhaZJKH4Mpxv0O0gZPqd+BeH1ztMZkrrxbck/zEDftG5MjrE7WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONDQ1rew; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3718C4CEC3;
+	Mon, 14 Oct 2024 03:59:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728878371;
+	bh=+pCTZq5gffnwaGyI/JHSLk7jHCYopxjr2+PXu0oiK6I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ONDQ1rew2ldnG/1YAoRDfmB9UxzBjFPyhonOImpzaFkIBoMiUPxxG78DAtOsxjbbV
+	 4qG9X6SwKpXyj/Q96nKiO5qsLbLfCHV8GSLskgc/7lR4aq6F2d4A6P/PZRDqzI2xRS
+	 AY7ia8mZFf9x97D6JcgkZAGglX/QFN5X6vAxtLb+LBjGiTePbvO+i/guMAKCOJFROe
+	 cc6CLax0AyZqxXrxGRRKSEbS8PeeTOvmnCOGb21oZdmia8kR8Wr/KptOIx9U8aVhmM
+	 8dDvtghE1DsOddc7Lbb2Lkt/xxzyRTlnUve1aSfnJDXH+DBojVA/2PnemHkXOoNkcc
+	 sRzuJ/xKKXrpw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Andrew Ballance <andrewjballance@gmail.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Sasha Levin <sashal@kernel.org>,
+	ntfs3@lists.linux.dev
+Subject: [PATCH AUTOSEL 5.15 1/8] fs/ntfs3: Check if more than chunk-size bytes are written
+Date: Sun, 13 Oct 2024 23:59:16 -0400
+Message-ID: <20241014035929.2251266-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.15.167
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxXuT_lgxnc6EoAA--.1717S5
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
 
-For kernel address space area on LoongArch system, both two consecutive
-page table entries should be enabled with PAGE_GLOBAL bit. So with
-function set_pte() and pte_clear(), pte buddy entry is checked and set
-besides its own pte entry. However it is not atomic operation to set both
-two pte entries, there is problem with test_vmalloc test case.
+From: Andrew Ballance <andrewjballance@gmail.com>
 
-With previous patch, all page table entries are set with PAGE_GLOBAL
-bit at beginning. Only its own pte entry need update with function
-set_pte() and pte_clear(), nothing to do with pte buddy entry.
+[ Upstream commit 9931122d04c6d431b2c11b5bb7b10f28584067f0 ]
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+A incorrectly formatted chunk may decompress into
+more than LZNT_CHUNK_SIZE bytes and a index out of bounds
+will occur in s_max_off.
+
+Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/loongarch/include/asm/pgtable.h | 35 ++++------------------------
- 1 file changed, 5 insertions(+), 30 deletions(-)
+ fs/ntfs3/lznt.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
-index 22e3a8f96213..bc29c95b1710 100644
---- a/arch/loongarch/include/asm/pgtable.h
-+++ b/arch/loongarch/include/asm/pgtable.h
-@@ -325,40 +325,15 @@ extern void paging_init(void);
- static inline void set_pte(pte_t *ptep, pte_t pteval)
- {
- 	WRITE_ONCE(*ptep, pteval);
--
--	if (pte_val(pteval) & _PAGE_GLOBAL) {
--		pte_t *buddy = ptep_buddy(ptep);
--		/*
--		 * Make sure the buddy is global too (if it's !none,
--		 * it better already be global)
--		 */
--		if (pte_none(ptep_get(buddy))) {
--#ifdef CONFIG_SMP
--			/*
--			 * For SMP, multiple CPUs can race, so we need
--			 * to do this atomically.
--			 */
--			__asm__ __volatile__(
--			__AMOR "$zero, %[global], %[buddy] \n"
--			: [buddy] "+ZB" (buddy->pte)
--			: [global] "r" (_PAGE_GLOBAL)
--			: "memory");
--
--			DBAR(0b11000); /* o_wrw = 0b11000 */
--#else /* !CONFIG_SMP */
--			WRITE_ONCE(*buddy, __pte(pte_val(ptep_get(buddy)) | _PAGE_GLOBAL));
--#endif /* CONFIG_SMP */
--		}
--	}
- }
+diff --git a/fs/ntfs3/lznt.c b/fs/ntfs3/lznt.c
+index 28f654561f279..09db01c1098cd 100644
+--- a/fs/ntfs3/lznt.c
++++ b/fs/ntfs3/lznt.c
+@@ -236,6 +236,9 @@ static inline ssize_t decompress_chunk(u8 *unc, u8 *unc_end, const u8 *cmpr,
  
- static inline void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
- {
--	/* Preserve global status for the pair */
--	if (pte_val(ptep_get(ptep_buddy(ptep))) & _PAGE_GLOBAL)
--		set_pte(ptep, __pte(_PAGE_GLOBAL));
--	else
--		set_pte(ptep, __pte(0));
-+	pte_t pte;
-+
-+	pte = ptep_get(ptep);
-+	pte_val(pte) &= _PAGE_GLOBAL;
-+	set_pte(ptep, pte);
- }
- 
- #define PGD_T_LOG2	(__builtin_ffs(sizeof(pgd_t)) - 1)
+ 	/* Do decompression until pointers are inside range. */
+ 	while (up < unc_end && cmpr < cmpr_end) {
++		// return err if more than LZNT_CHUNK_SIZE bytes are written
++		if (up - unc > LZNT_CHUNK_SIZE)
++			return -EINVAL;
+ 		/* Correct index */
+ 		while (unc + s_max_off[index] < up)
+ 			index += 1;
 -- 
-2.39.3
+2.43.0
 
 
