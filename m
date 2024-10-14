@@ -1,234 +1,172 @@
-Return-Path: <linux-kernel+bounces-364745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F70699D8C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:13:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE3A799D8CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E5E1C2132E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:13:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 147571C212C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4551D0F65;
-	Mon, 14 Oct 2024 21:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8F31D0E3E;
+	Mon, 14 Oct 2024 21:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RsSFV+bc"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S+VMjkUJ"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074601CFEA2
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26B51D1726
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728940393; cv=none; b=rSgYzAdpZEUZwIkcCBIUHcxgyoup8yiVJuXsXOUgZg5Y2ER9YWGvSdPD/llUgy4u9HlKaAPEz28YYRYit3iXFfVLyavGsRvJXxqzqWLHr3cZZBP+ZSWSuwY03tVYf1Py5WBSYnQSzMHyCsBbQ2rCjaWsswABzHO1ND3FC3EXRHk=
+	t=1728940397; cv=none; b=k3817DyDEM/RXAbGuNezA/VpgQEAO14RmdloqICbv6ScH73sgYkmbtKqyPJKCadTR3N8JtrEL0b7DRl24AKeOrnxzs65j0uCJcL+miOM/ar2Bfcyz4brxR4HOyxqvvmSJKqizovDWp4Sq/HvkLsWGu9odPzx3fVwkZJ4gxdIPhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728940393; c=relaxed/simple;
-	bh=OdET77X1i4ggszon4cmj68cg0TB8oGScO1tomRBYGQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KRks568FlI+SJ6KUYzw/qKUAnAJf80OWEA7jweHpbktxWkT8EWSojKlsZvWCoSFDbkk8DxH4IpjJzPA6Zp+ejiTR7AYfOl6JnmHcfJEsowoT04F8aW+IGyGkd9QODgCiq2O9DF1El39SaLxPN3lcrMRxtfjVi8D1FcVYj7ntU4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RsSFV+bc; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2887326be3dso1348995fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:13:09 -0700 (PDT)
+	s=arc-20240116; t=1728940397; c=relaxed/simple;
+	bh=uzGP3fTBfJEcisBlsf65F3JUyRpz1YsU0VQnyjjJC3Q=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HHTdUIJN9DwQH5HM86+C4P49U4XaeGIj+KctfGAvd/G/sGqL70Annzkdln5eg/BwBvUGlotdzGxzWN4LUzt43XVQcMEeLSCSEPFWuoNotNMwm1VllxQN4u/yWU9ZSrMXyZr0JTFh39pVf6ky2g9uo5XGhE8yIhwIAUR9RBWvdtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S+VMjkUJ; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1159159528so8210330276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:13:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728940389; x=1729545189; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Cw88bhy+WAxwwmxSvgd82uwT5sTmI6aznn+bTPeUSI=;
-        b=RsSFV+bcC0u8Jtb6aEnWYQLkJ0uuDLJp2lFewFauXW07EXpa5mxTjCb4YPd5RZpKj5
-         WcCwu2/rE/0ILnyuegs1HpU52OH5Rv/l4BlZIdQkIaMRZSuUXVGjYkj0VTGNo4PTYzje
-         QmsMm1ogoJqPmp5MZCn88mcN/EgzkFqNj01zc+IO0e7z+AIKuv5uevvQdYFOR7cGvyYC
-         dTK2sehEcj1s/IVT8N60tct8yesCJiW8OKiKs5b6UBnCvrPtFBsj8EVini3OgXswixf8
-         hCGgQFggijq68ssOfyEFkztX2h/WBczmk19kJk5YKfiR42icQ/J4tvTIWqRQsPXGXN/j
-         vCwA==
+        d=google.com; s=20230601; t=1728940395; x=1729545195; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0/hwr21L5jvhIc5C9e7aZcC+JDoL+nMT8XwfIns1XuE=;
+        b=S+VMjkUJqJu5yI874W0IDiqncOcHDcR1BSCC5hG1MelVXHnGBXpo78OvNEuXvRdt8G
+         G4A/Q/VX2Ql4msdvh31CnHxw834C/s8wNeYE2s3qCPpnItK+e8xx58Ot+yoy2vG9bXUu
+         Vs4o6p3Y9ZYI6hwS9vqsp3rhqM/f0Ow4ULVETWWTPLd+egT9gWMhK11+ClglJnm+3t4R
+         2Hsv3ca6YqmZOi1OAkbyveivq7zXdqT+tWetEtEJvWokBljbRpOP5lT+AYJNKdAm3Unw
+         o0GpO2FrDuuU1FDtaGrAiiHhSVXgnqjB8WnbG5Vwbhmu6w9cuG0zXExjhArF3ej3181j
+         M1PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728940389; x=1729545189;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Cw88bhy+WAxwwmxSvgd82uwT5sTmI6aznn+bTPeUSI=;
-        b=Eb3h+Q+Tfb7eMz3ilHXw4vN9ah9TW3k1Rz7FNJ7kz17U2G4MiuquwzAg9669zL+HvS
-         gtaZJPPw+tgupfA2n0LArA/yYc76PcDDtSjV/6qYFP9pe5JR5i+ztr7OIbvudmlTPHGD
-         NPQgiEFnPSu+zn6hUIP8FcHot8My84Tdw9cHywMCUXz4jctrE4+SdIDCsm+/2L14Q/aD
-         QjqXdpeiJX6zILknFSkzGdRzycLv29/F8U11aoCo8cw3CeoYhTncRpx27C93BC28GrI5
-         LunmkzOKCYOMdqTyDjWaFPyCssLSD7i7T3/R0w+VFrhRIgSVuCQpctkX/k6z0nN+d8Vj
-         pOuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCUWjW8oxqnC2iBFIhUz7+hrr9vMXdQ7uVEi9Urwv6eiIem611LRI/CgwrM06k62AUQ+xkfT+GA3ChBOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztgCDSD6EdGcr4Gl82sr+YWq/T3suKrj/tjHSXblwbbU+38NpG
-	szf7D2d+JAKyweZESPQD5zY6IZhiHWfbwqLRaRPlueaoEANxdOtg2+6PjU218S0=
-X-Google-Smtp-Source: AGHT+IEYFwN+KSyQJ/bVArBPweGcc+tcFfbKB16ZPqY76LvpKnB4+T6tOHsbn/aFS7lWk9NFwC1CYA==
-X-Received: by 2002:a05:6870:e243:b0:288:b7f0:f8fc with SMTP id 586e51a60fabf-288b7f0fc20mr2865174fac.41.1728940389056;
-        Mon, 14 Oct 2024 14:13:09 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-288581dcebbsm2956653fac.27.2024.10.14.14.13.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 14:13:07 -0700 (PDT)
-Message-ID: <a27eb208-0fa1-45cc-bb0c-18a03b6cce4e@baylibre.com>
-Date: Mon, 14 Oct 2024 16:13:05 -0500
+        d=1e100.net; s=20230601; t=1728940395; x=1729545195;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0/hwr21L5jvhIc5C9e7aZcC+JDoL+nMT8XwfIns1XuE=;
+        b=dQbkgtLnn6M2aVP8nQww1a+r3KyCEe8E19NGvg9GDiHCDwN0Q8HEZo8d8w9PWZ38w8
+         WYXBl6hve+Y8hRRoiCRV1SGbds29KAtmQ3DZf83CBwgUo3qxHNJe4gUAlCNAJBRLPMP4
+         A52DBPD0s1Z7+bqVkHjvNbUAmFfzyIQhTutvUm6ggT5eVmMduje1ZafWNawuGZPWy9wp
+         ZE0tOZ7W6MSgsTrUMkRVGracyAzAqiOAc/cx+SfBktHRuzBw08mkwxdHRQfCZ4CeNuEH
+         Jv/kDkc1t0STnnhCAx+uiByUzprPRgN+7M0fi3FFYPVpSWLtbagMx0YcEHD4O8ggKehh
+         DsDQ==
+X-Gm-Message-State: AOJu0YyuGoZAGQoEGMNlLyc2kkkwKAq1GIuszKj1mGSeCxxCBwvNC+lp
+	yQ9DlZ9XENnTflMsn2VV0U0jyjne10bxHNhrOgTXSfHA0DmTfd39UGXzx4EKsP8+ryWLh+u8tUx
+	T/x0UOFKSykomq0JRmwxXDQ==
+X-Google-Smtp-Source: AGHT+IEVKC+wG4wGouRbzL32A0moDAXPTQcMZCtANmaveTOGRNjnHIMmr3sCc3s8PDpq4sxnwiq3TrmSzLazj5jTeA==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:ba:c019:ac11:dacf])
+ (user=justinstitt job=sendgmr) by 2002:a25:6805:0:b0:e20:cfc2:a326 with SMTP
+ id 3f1490d57ef6-e29184333b9mr123460276.6.1728940394998; Mon, 14 Oct 2024
+ 14:13:14 -0700 (PDT)
+Date: Mon, 14 Oct 2024 14:13:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/8] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
- axi variant
-To: Angelo Dureghello <adureghello@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
- <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-2-eeef0c1e0e56@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-2-eeef0c1e0e56@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAGmJDWcC/52NSwrCMBRFt1Iy9kl+QnTkPqSUmr60wZqUlxAsp
+ Xs36g6cXDh3cM7GEpLHxC7NxgiLTz6GCvLQMDv1YUTwQ2UmudT8rDikTMEuKzyQAs6Qqbf42w4
+ Lhpw65+eMBBac1r1yRpuTMKwKF0LnX9/Yra08+ZQjrd92EZ/3r0wRIMAhDoobye9GXccYxxmPN j5Zu+/7G4UEiojlAAAA
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728940393; l=2965;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=uzGP3fTBfJEcisBlsf65F3JUyRpz1YsU0VQnyjjJC3Q=; b=LexTwNo7Ijmd2xfyR7O6jramq59fng0ZxBNdR7gqur/w7C0LwKEsKgfpwgR7ClJd3t2EYjMK3
+ ZOjmBmNNaZ+Co+83EVktZTPpJ2thPrTRsf1ai1Gu6X561x6ozL5VS8R
+X-Mailer: b4 0.12.3
+Message-ID: <20241014-strncpy-kernel-trace-trace_events_filter-c-v2-1-d821e81e371e@google.com>
+Subject: [PATCH v2] tracing: replace multiple deprecated strncpy with memcpy
+From: Justin Stitt <justinstitt@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, Justin Stitt <justinstitt@google.com>, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 
-On 10/14/24 5:08 AM, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
-> 
-> Add a new compatible and related bindigns for the fpga-based
-> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
-> 
-> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
-> mainly to reach high speed transfer rates using a QSPI DDR
-> (dobule-data-rate) interface.
-> 
-> The ad3552r device is defined as a child of the AXI DAC, that in
-> this case is acting as an SPI controller.
-> 
-> Note, #io-backend is present because it is possible (in theory anyway)
-> to use a separate controller for the control path than that used
-> for the datapath.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 56 ++++++++++++++++++++--
->  1 file changed, 53 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> index a55e9bfc66d7..2b7e16717219 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> @@ -19,11 +19,13 @@ description: |
->    memory via DMA into the DAC.
->  
->    https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
-> +  https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
->  
->  properties:
->    compatible:
->      enum:
->        - adi,axi-dac-9.1.b
-> +      - adi,axi-ad3552r
->  
->    reg:
->      maxItems: 1
-> @@ -36,7 +38,14 @@ properties:
->        - const: tx
->  
->    clocks:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: s_axi_aclk
-> +      - const: dac_clk
->  
->    '#io-backend-cells':
->      const: 0
-> @@ -47,7 +56,16 @@ required:
->    - reg
->    - clocks
->  
-> -additionalProperties: false
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: adi,axi-ad3552r
-> +    then:
-> +      $ref: /schemas/spi/spi-controller.yaml#
-  +      properties:
-  +        clocks:
-  +          minItems: 2
-  +        clock-names:
-  +          minItems: 2
-  +      required:
-  +        clock-names
-  +    else:
-  +      properties:
-  +        clocks:
-  +          maxItems: 1
-  +        clock-names:
-  +          maxItems: 1
+strncpy() is deprecated for use on NUL-terminated destination strings [1] and
+as such we should prefer more robust and less ambiguous string interfaces.
 
-We could make the checking of clocks more strict to show
-the intent:
+String copy operations involving manual pointer offset and length
+calculations followed by explicit NUL-byte assignments are best changed
+to either strscpy or memcpy.
 
-adi,axi-dac-9.1.b only has 1 clock and clock-names is optional.
+strscpy is not a drop-in replacement as @len would need a one subtracted
+from it to avoid truncating the source string.
 
-adi,axi-ad3552r always has 2 clocks and clock-names is required.
+To not sabotage readability of the current code, use memcpy (retaining
+the manual NUL assignment) as this unambiguously describes the desired
+behavior.
 
-> +
-> +unevaluatedProperties: false
->  
->  examples:
->    - |
-> @@ -57,6 +75,38 @@ examples:
->          dmas = <&tx_dma 0>;
->          dma-names = "tx";
->          #io-backend-cells = <0>;
-> -        clocks = <&axi_clk>;
-> +        clocks = <&clkc 15>;
-> +        clock-names = "s_axi_aclk";
-> +    };
-> +
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    axi_dac: spi@44a70000 {
-> +        compatible = "adi,axi-ad3552r";
-> +        reg = <0x44a70000 0x1000>;
-> +        dmas = <&dac_tx_dma 0>;
-> +        dma-names = "tx";
-> +        #io-backend-cells = <0>;
-> +        clocks = <&clkc 15>, <&ref_clk>;
-> +        clock-names = "s_axi_aclk", "dac_clk";
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        dac@0 {
-> +            compatible = "adi,ad3552r";
-> +            reg = <0>;
-> +            reset-gpios = <&gpio0 92 GPIO_ACTIVE_HIGH>;
-> +            io-backends = <&axi_dac>;
-> +            spi-max-frequency = <66000000>;
-> +
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            channel@0 {
-> +                reg = <0>;
-> +                adi,output-range-microvolt = <(-10000000) (10000000)>;
-> +            };
-> +        };
->      };
->  ...
-> 
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+Link: https://github.com/KSPP/linux/issues/90 [2]
+Cc: Kees Cook <keescook@chromium.org>
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Changes in v2:
+- use memcpy instead of strscpy (thanks Steven)
+- No longer breaks Steven's test:
+
+$ echo 'common_pid != 0 && common_pid != 120 && common_pid != 1253 &&
+  common_pid != 17 && common_pid != 394 && common_pid != 81 &&
+  common_pid != 87' > /sys/kernel/tracing/events/sched/sched_switch/filter
+
+- Link to v1: https://lore.kernel.org/r/20240930-strncpy-kernel-trace-trace_events_filter-c-v1-1-feed30820b83@google.com
+---
+ kernel/trace/trace_events_filter.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 0c611b281a5b..78051de581e7 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1616,7 +1616,7 @@ static int parse_pred(const char *str, void *data,
+ 				goto err_free;
+ 			}
+ 
+-			strncpy(num_buf, str + s, len);
++			memcpy(num_buf, str + s, len);
+ 			num_buf[len] = 0;
+ 
+ 			ret = kstrtoul(num_buf, 0, &ip);
+@@ -1694,7 +1694,7 @@ static int parse_pred(const char *str, void *data,
+ 		if (!pred->regex)
+ 			goto err_mem;
+ 		pred->regex->len = len;
+-		strncpy(pred->regex->pattern, str + s, len);
++		memcpy(pred->regex->pattern, str + s, len);
+ 		pred->regex->pattern[len] = 0;
+ 
+ 	} else if (!strncmp(str + i, "CPUS", 4)) {
+@@ -1859,7 +1859,7 @@ static int parse_pred(const char *str, void *data,
+ 		if (!pred->regex)
+ 			goto err_mem;
+ 		pred->regex->len = len;
+-		strncpy(pred->regex->pattern, str + s, len);
++		memcpy(pred->regex->pattern, str + s, len);
+ 		pred->regex->pattern[len] = 0;
+ 
+ 		filter_build_regex(pred);
+@@ -1919,7 +1919,7 @@ static int parse_pred(const char *str, void *data,
+ 			goto err_free;
+ 		}
+ 
+-		strncpy(num_buf, str + s, len);
++		memcpy(num_buf, str + s, len);
+ 		num_buf[len] = 0;
+ 
+ 		/* Make sure it is a value */
+
+---
+base-commit: bc83b4d1f08695e85e85d36f7b803da58010161d
+change-id: 20240930-strncpy-kernel-trace-trace_events_filter-c-f44a3f848518
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
 
 
