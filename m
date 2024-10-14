@@ -1,168 +1,121 @@
-Return-Path: <linux-kernel+bounces-364430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520B299D493
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:25:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF08099D492
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4557AB2549F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 831FC283C33
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B731B4F1E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891751B4F2B;
 	Mon, 14 Oct 2024 16:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="EYDWeUIu"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="ku52fG03"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FA728FC
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728923090; cv=none; b=pq19uzdszZdbW5tXYInXTndO0z8URV5A8r05FvZd1eQ1G9JOrjy0lx+fACJDpY7LT92fJQGVkhhxShGt4Ia974I+Z7oyhQLmOtOrPQdkUT2Jj5C5NiuhJEXGd6n8PBJ85MGPL/XgK189AqVH/6Gl5Whbt/gLeKXLSVrKlfIrASY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628401ADFF9;
+	Mon, 14 Oct 2024 16:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728923090; cv=fail; b=CO4DvI5SyCOh9ZqLZfJ2+c/OPnEMyDeUGBUw1WqD+1o1b36iWpDu4j716weGTDxGJZ4MVI990dI33i6ZN1C3b8pDuZowFv9NAdrAI8nLjvYKnhbLcsSKxH/ba1HERvlpLGnTH71pLZHfveJr08O3cS9LTppG/jJ5EyhhqMsYveI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728923090; c=relaxed/simple;
-	bh=7qk94Guv8LBFSYegmHwjOoEMP2PDG3o5wK0DA1GKGto=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YBUhpLBYL3lfS1wTYqgVr77KNcTDGZxAQ2p3+emPJ6UIVKi+JYrHJ9/75t/pTQuEGn6eVeKSwFd1bUiD2MnqBwsfYi6caKjjFLboWuBsg3zEqK2PpzpqfX9H6C4yV7s4k9GFrALVIsCE5i519qnUCyKqNeaC2BCxMvbcz4qACVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=EYDWeUIu; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a3b463e9b0so9105505ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:24:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1728923088; x=1729527888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dJn/xuiSxsczXZp7+7UAGdT6DhOFjqYt9pTtANxrEgQ=;
-        b=EYDWeUIufbDJvOngMMsVg3uRiYyY+RoUSNof6uBpnrvsicw7ZsMSrTNIXYFXw2NJd3
-         nlow1JX6f/s5PNc443REAYWoXlU7Mm1T3vK7PjA+Qpt4Vy8yTO6LpBWswB08DsXyvBFp
-         hxmJZASTXbS/gCx1uKxQTowIhML/n0a2meBUe6bkwUsbhCNOA3UVXlIsUbgNwwxAacK4
-         l/HVdT8qHdeMmIDDGzRtV7xeNVN6xNKN7pDMa1qe+fnwb8hGOiKr/HUTNM057vcxjWDl
-         APKj5piXS1iFY/UOmQ+uQ/yZElBMcHITELQ3SKHZMODRPRshif1lWK47cC36MINa5qMA
-         f5gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728923088; x=1729527888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dJn/xuiSxsczXZp7+7UAGdT6DhOFjqYt9pTtANxrEgQ=;
-        b=bX2n8JMSnkP3q1tF80i0g0w6Z8Jo80gQhzte5ygJ3m46qOHAvVwjXeMfBH4yhUT6Cy
-         kGVCTTJBRMNdbghXKEFvuIzwoxQ4+5M/+F77kLwpKNuiqI4yDnyH2y8DHfc9dukHobeG
-         oVNTAO8YplT95lMcrfiXiGSVRQL/xOq6B+9zgfb28TMVPGExmn0nbjaA4Murhbg3314Q
-         YexrCtb4DvcK0Jp/b5lYICxxDVb0k3ZSQSPaOhzdclzEQLL9SgdpEEz//vgCPM8sLM2M
-         XsNVMn3rV50blLjMmpMXQLG4fVzXyMZ+PlAic3t9g+UI0jfSb2GWws9SwvI8iFvwz5r7
-         ay/w==
-X-Forwarded-Encrypted: i=1; AJvYcCW9g43ylQN2zuMm0QvD2fLVUoogR48/P9aXmxo4o8QiofI9tsGdjlJuvLH9mmqSGMVSRd58uFb2V3X5zaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWMXKlQyYt6lkXoUCJsrd1mOi+8iYlcKhleGlQnMAgI3L25kB2
-	+Bm0KZfW45ti5JQGrM/89CCK4Wrm0qjQG9vs4PKrHw0tVy/Laf51i+/6oUy7x4lTAIveSyZu0JB
-	qD4F8rbrQNuyLzhZ36F+IXtqCW6N9yJUlRniT3w==
-X-Google-Smtp-Source: AGHT+IFV0VHvASCjoRM9a75NSJBiTm5im9fCEBfBFDcZ+2dk7xxJU9/OmuDjfiaRkKYfTG9qzDMF2vMyVR4n8GO9JFU=
-X-Received: by 2002:a05:6e02:b2e:b0:39e:6e47:814d with SMTP id
- e9e14a558f8ab-3a3b5f1c0f0mr80933735ab.2.1728923088127; Mon, 14 Oct 2024
- 09:24:48 -0700 (PDT)
+	bh=lgVZeGHaAeoVCaZ7zXfdGDNEV1YbO1LVdewMscb//Oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mo4dPG147R+2O3vXVGcMIH/zWGhMdntVat3yOIq5QTrkMcwVNXtlNcp9Zk3PHz+g3R+pLZXjt+ils2IGY4VHSZAYF29ry15dm5PHZ6lvxVW+KgSXaVXPY7/hy60mJbgvegSHbEAnx0eFS4xZDJ+o4TYZ7PxSnZHBr+hK0QG3drk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=ku52fG03; arc=fail smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from darkstar.musicnaut.iki.fi (85-76-77-198-nat.elisa-mobile.fi [85.76.77.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aaro.koskinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4XS2cl1kVMzyQK;
+	Mon, 14 Oct 2024 19:24:39 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1728923080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bA88+Mwqcu5TZnmEDMTMatD0BKBGd4kdYquoS68m2WQ=;
+	b=ku52fG03aScxdHq2rJkQRkp8cMQFHabGe9J5p/+nlrubv6mTQ/YnKhtgGTbHNlc0QJJ6BJ
+	5rYH5+1iz7WqVbJ1LzSJQ8fdD7yHDiahJJ/zPbzVYvZD6G0u/jQPuWvI+QwGG9VUPDvHlX
+	9Egs2h8e1kALnATOtQrit7PaK50hVu0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1728923080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bA88+Mwqcu5TZnmEDMTMatD0BKBGd4kdYquoS68m2WQ=;
+	b=GLKKt0dd0aPsnhOb33Mnviq7/X6KnqacA+hMHKOajyk9D6o+8XdMAsHTY5Y3niLsmZsUdm
+	zdAdwFbzACkWYNSA7sPCkJbxUaG8IcPDm0YOhvIMbycCY1V/5xxfwZGXTYF0RZUUMdNAcj
+	zd9bGS6criXhl4O6G657whC27cL/Mbw=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1728923080; a=rsa-sha256; cv=none;
+	b=BrmgWvL4sGQ2P9OOZGpp8GGlMjFWZiIfs0Sypxy7ZfctAvwN1jmV5sKz80L8lLQksD1rot
+	VsJT8n7GEmrr+kZi9xHmx/ZKfvHY/tdl2AwuhtJ5Y9/DqMgvoQ5IzCtfCdFbf2BnimY/bg
+	tz3nd5A2Ftu8kibH6xnvYhFCdNuHRcA=
+Date: Mon, 14 Oct 2024 19:24:37 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>, linux-omap@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] MAINTAINERS: sync omap devicetree maintainers with omap
+ platform
+Message-ID: <Zw1FxSzcs1OSR8QR@darkstar.musicnaut.iki.fi>
+References: <20240915195321.1071967-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014065739.656959-1-sunilvl@ventanamicro.com>
-In-Reply-To: <20241014065739.656959-1-sunilvl@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Mon, 14 Oct 2024 21:54:37 +0530
-Message-ID: <CAAhSdy0yH=fn_2bhZUubkaNZb1RtQz1GTWMTgTyteA1j7ZiNLg@mail.gmail.com>
-Subject: Re: [PATCH] irqchip/riscv-intc: Fix no-SMP boot with ACPI
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240915195321.1071967-1-andreas@kemnade.info>
 
-On Mon, Oct 14, 2024 at 12:27=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.co=
-m> wrote:
->
-> When CONFIG_SMP is disabled, the static array rintc_acpi_data with size
-> NR_CPUS will not be sufficient to hold all RINTC structures passed from
-> the firmware. All RINTC structures are required to configure
-> IMSIC/APLIC/PLIC properly irrespective of SMP in the OS. So, allocate
-> dynamic memory based on the number of RINTC structures in MADT to fix
-> this issue.
->
-> Fixes: f8619b66bdb1 ("irqchip/riscv-intc: Add ACPI support for AIA")
-> Reported-by: Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org>
-> Closes: https://github.com/linux-riscv/linux-riscv/actions/runs/112809975=
-11/job/31375229012
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+Hi,
 
-LGTM.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
-
+On Sun, Sep 15, 2024 at 09:53:21PM +0200, Andreas Kemnade wrote:
+> Both used to go through Tony's branches, so lets keep things together.
+> This was missed at the time when Co-Maintainers were added.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > ---
->  drivers/irqchip/irq-riscv-intc.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv=
--intc.c
-> index 8c5411386220..f653c13de62b 100644
-> --- a/drivers/irqchip/irq-riscv-intc.c
-> +++ b/drivers/irqchip/irq-riscv-intc.c
-> @@ -265,7 +265,7 @@ struct rintc_data {
->  };
->
->  static u32 nr_rintc;
-> -static struct rintc_data *rintc_acpi_data[NR_CPUS];
-> +static struct rintc_data **rintc_acpi_data;
->
->  #define for_each_matching_plic(_plic_id)                               \
->         unsigned int _plic;                                             \
-> @@ -329,13 +329,30 @@ int acpi_rintc_get_imsic_mmio_info(u32 index, struc=
-t resource *res)
->         return 0;
->  }
->
-> +static int __init riscv_intc_acpi_match(union acpi_subtable_headers *hea=
-der,
-> +                                       const unsigned long end)
-> +{
-> +       return 0;
-> +}
-> +
->  static int __init riscv_intc_acpi_init(union acpi_subtable_headers *head=
-er,
->                                        const unsigned long end)
->  {
->         struct acpi_madt_rintc *rintc;
->         struct fwnode_handle *fn;
-> +       int count;
->         int rc;
->
-> +       if (!rintc_acpi_data) {
-> +               count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_RINTC, ris=
-cv_intc_acpi_match, 0);
-> +               if (count <=3D 0)
-> +                       return -EINVAL;
-> +
-> +               rintc_acpi_data =3D kcalloc(count, sizeof(*rintc_acpi_dat=
-a), GFP_KERNEL);
-> +               if (!rintc_acpi_data)
-> +                       return -ENOMEM;
-> +       }
-> +
->         rintc =3D (struct acpi_madt_rintc *)header;
->         rintc_acpi_data[nr_rintc] =3D kzalloc(sizeof(*rintc_acpi_data[0])=
-, GFP_KERNEL);
->         if (!rintc_acpi_data[nr_rintc])
-> --
-> 2.43.0
->
+>  MAINTAINERS | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index cc40a9d9b8cd1..755c378cb2e73 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16653,6 +16653,10 @@ S:	Maintained
+>  F:	arch/arm/*omap*/*clock*
+>  
+>  OMAP DEVICE TREE SUPPORT
+> +M:	Aaro Koskinen <aaro.koskinen@iki.fi>
+
+Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+
+A.
+
+> +M:	Andreas Kemnade <andreas@kemnade.info>
+> +M:	Kevin Hilman <khilman@baylibre.com>
+> +M:	Roger Quadros <rogerq@kernel.org>
+>  M:	Tony Lindgren <tony@atomide.com>
+>  L:	linux-omap@vger.kernel.org
+>  L:	devicetree@vger.kernel.org
+> -- 
+> 2.39.2
+> 
+> 
 
