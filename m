@@ -1,150 +1,324 @@
-Return-Path: <linux-kernel+bounces-364434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08BF99D499
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:26:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D081999D49D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADDB2870D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F90287CE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342621B85C2;
-	Mon, 14 Oct 2024 16:26:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129161B4F0B;
+	Mon, 14 Oct 2024 16:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="i+CXAf+4"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB28228FC;
-	Mon, 14 Oct 2024 16:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A8C28FC;
+	Mon, 14 Oct 2024 16:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728923174; cv=none; b=bJAhiOzZ6G3mm0qUl8Is/oFFMxxReRR76LQMl2O7AgNIIgHqvttcnlEDKF1PpE9191swNmgLurss1bzDjhlZ9DYkcuaqjp7Jz9uy/Ivs1+AIQMB1T+nwPrzVYR/wSW6H6dgan2aJjnQXnjIi5kxt3m5U5tQ5nBjPScbRhrlVk2E=
+	t=1728923217; cv=none; b=ZUvIqcN8r/Aw5WXZUh2TLLrmWGzPw3BeyIe9I8wE0vDdCoHqtwhPTdovNX9hhk/1hOwwYE84IJYJ3ZRxLs0Zdcla0J1p3jrNAxMPqh7gpEhPLP75N13rNJmz4jZcCFUJNIMWGC1dRiO/01zsGxW8kIRTdSchGiPJVAhGsk4U9V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728923174; c=relaxed/simple;
-	bh=W9kNSItfPSUE+SfBw6OF4HZ2NJ0QQb8sReb6G7N/Glo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JG9G8XCzGaTIPZEWQo6Zu7tnK99+vsw6DMlgqycPwRfbcFboQKXwiskv0IvQlEJ2IRWckyK66VH2lQ+sGZPZ52lP9VAYOyMD0Y0X/iN6l/FjU8/AFOgWagsIuh781fuSuRXr4urO1c/A6fvhTT3dzRCma3/jwPjTQ7/eu5LQrD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS2cg3dG7z6K5Xl;
-	Tue, 15 Oct 2024 00:24:35 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 76EBE140B55;
-	Tue, 15 Oct 2024 00:26:10 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
- 2024 18:26:09 +0200
-Date: Mon, 14 Oct 2024 17:26:07 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
-	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
-	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
-	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
-	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH v13 16/18] cxl/mbox: Add support for PERFORM_MAINTENANCE
- mailbox command
-Message-ID: <20241014172607.000066bb@Huawei.com>
-In-Reply-To: <20241009124120.1124-17-shiju.jose@huawei.com>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
-	<20241009124120.1124-17-shiju.jose@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728923217; c=relaxed/simple;
+	bh=U30A7BPRrbdyRUqaxjptAW19OsPSGOMJiYV+YtVSQCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VAhLDccXobehnYBSTEUrOoyGkcCBeQWbMMXuDHJHnTtSSB95Oh3P1nFFLfRJ3MjgPKY1FmlezUVakLcgc22jX7dN0madYGezetyU7/q7mlU40klzWpOlL6wF4Qyk73sjjyDyMA4ZPOjsnAZ7BUHDJiv5OBJxsADKWOdsVHQyAMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=i+CXAf+4; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1728923206; x=1729528006; i=w_armin@gmx.de;
+	bh=NGewo8lqX5cHCvf2WJySa3l6Ye+MnvpY5Dy5n+Z+GY0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=i+CXAf+42eaUTdvC1UV9ajGhWRVFsSfq41gHFt1z3l+skfvNFXWCSyD9LRbYzpHd
+	 fijSyN9jdm5NOj23Csw5sh1vWnQk2Fd6vYfWmsmtsoeo5z0ITPFtAmJxpMiVVmF/y
+	 mXgJMjv0L74gTuHKiRI2EKqzydxQd9GL7U2Uj283PV+ddZTkoq+H8s9Av7Rtnqty3
+	 lmLLfThsXIotEGxeN+GpO0Nlcn+RZaPv7lYVOGRe3TtDaSRFZL2bqGTVmQ8bfPV/c
+	 5RifKCjdPX0B7jiIZzivPRGLHsMCM0smVFwD+wdOS293dQpQTxBsmJtR3iNMF5azH
+	 5cx96KLLKmMaOuNSoQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N3bSt-1u0MGD3EJf-015HdX; Mon, 14
+ Oct 2024 18:26:46 +0200
+Message-ID: <2d685783-aef8-4774-b67c-8a8736b5a477@gmx.de>
+Date: Mon, 14 Oct 2024 18:26:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] alienware-wmi: fixed indentation and clean up
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20241012015849.19036-3-kuurtb@gmail.com>
+ <20241012020124.19444-2-kuurtb@gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241012020124.19444-2-kuurtb@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CEW9GjiaopWCsE9NtCF6TATRM0exmFfmxrQ0qODseC4sc3B4NGQ
+ 7O3oOcagj0lP188n7vIPrXQ6+uP18LTQBZwmiKPCsn3wJjmoetNuC/rdmOwXRHXzj/Z9qCd
+ 4iopjNjBwpF3cU9BEHuZqvbPAUVjxGpK7kE5i+mB8vq3WENAITGP08djt1uJl7LdW01hjWB
+ Adib85yBSvDUnQ5O/jlSA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rH/mVFQuNjA=;vynIc65mjijJv/iqq5hgSql3mAK
+ uopkBKLRlh5RfzsUYUY0/KqQGsR4WMv2DJnGbx1LalCdVSbd3zJ32x4YKeYNF/nE1M53iVSad
+ XBt+iaJ5wz0YDIy6aqVTpPt4PBCa0wjF1RfRFOOxNf27fzO/k9K77XQkpJEVYrgJP/uGX4K0H
+ 27dUtvuLu54kD3v9mLx3Rs/pw1u4F60UjMCqS2uBtWD031pffGXJdYfQmrKANADiML+s3SlhC
+ nWK9fYI6Y0vvPjEqUgraDQREc0Ju4E3lymr2hU9ixIZgkzFP6bXRxPF+qDoO4HTN5R2aDpV2t
+ KTjIUZfaTDRZ9TNUfXDVNIth6pTvUxR0w6f9JDvbycDiZMKahJNsbL1mAJkr5fzTiMqele0Rl
+ Ds4eIBXydYUdj+uSoJSVIilGgCy9i8hb/XlmlhP9XlXyLhEdZgvbY2ODbJYDj+XYyr4tK2IHK
+ OOon6JwbFlCC7jw5fD7AZrAC6cLIVlZPfMLBcHKzLkZWyWxkhPrdaF9GUiZrqQAw3CcKXZRNd
+ e/+YnQUtiAMaHHEmxMKFWxoc5YN8qhS09xVx9NePJkAteCNc4yr5JpNpWokPkHXP/NL3rKrIG
+ jLql6W0qT28AXIrOQUCmygIQ0UIIM0aZ63DpnUAj9b9H7jpg9UuZy5H9m3ll1srj5UJfUco0K
+ fFvV8gInCkb30bK03d0xR3RGUGrffx2n2nI3S+4VQIlwywaq+PJoP6gjs9rDTGOSA8zDKR+Sk
+ tdnDbaTsvmlI+ovJnu/U30m8Qe7Y7LVApASUV4AqNESxGbxGPxJKHWdMV6S9FagMqPqabN2ht
+ +HBSTZSCGR4dLx8Xgg9o3fkw==
 
-On Wed, 9 Oct 2024 13:41:17 +0100
-<shiju.jose@huawei.com> wrote:
+Am 12.10.24 um 04:01 schrieb Kurt Borja:
 
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> Add support for PERFORM_MAINTENANCE mailbox command.
-> 
-> CXL spec 3.1 section 8.2.9.7.1 describes the Perform Maintenance command.
-> This command requests the device to execute the maintenance operation
-> specified by the maintenance operation class and the maintenance operation
-> subclass.
-> 
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-One trivial comment. With that tidied up
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Fixed inconsistent indentation and removed unnecessary (acpi_size) and
+> (u32 *) casts.
 
+Reviewed-by: Armin Wolf <W_Armin@gmx.de
+
+>
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 > ---
->  drivers/cxl/core/mbox.c | 40 ++++++++++++++++++++++++++++++++++++++++
->  drivers/cxl/cxlmem.h    | 17 +++++++++++++++++
->  2 files changed, 57 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index 30c44ab11347..a6f69864c504 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -1084,6 +1084,46 @@ int cxl_set_feature(struct cxl_memdev_state *mds,
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_set_feature, CXL);
->  
-> +int cxl_do_maintenance(struct cxl_memdev_state *mds,
-> +		       u8 class, u8 subclass,
-> +		       void *data_in, size_t data_in_size)
-> +{
-> +	struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;
-> +	struct cxl_memdev_maintenance_pi {
-> +		struct cxl_mbox_do_maintenance_hdr hdr;
-> +		u8 data[];
-> +	}  __packed;
-> +	struct cxl_mbox_cmd mbox_cmd;
-> +	size_t hdr_size;
-> +	int rc = 0;
-Always set, so no need to init.
-
-> +
-> +	struct cxl_memdev_maintenance_pi *pi __free(kfree) =
-> +					kmalloc(cxl_mbox->payload_size, GFP_KERNEL);
-> +	pi->hdr.op_class = class;
-> +	pi->hdr.op_subclass = subclass;
-> +	hdr_size = sizeof(pi->hdr);
-> +	/*
-> +	 * Check minimum mbox payload size is available for
-> +	 * the maintenance data transfer.
-> +	 */
-> +	if (hdr_size + data_in_size > cxl_mbox->payload_size)
-> +		return -ENOMEM;
-> +
-> +	memcpy(pi->data, data_in, data_in_size);
-> +	mbox_cmd = (struct cxl_mbox_cmd) {
-> +		.opcode = CXL_MBOX_OP_DO_MAINTENANCE,
-> +		.size_in = hdr_size + data_in_size,
-> +		.payload_in = pi,
-> +	};
-> +
-> +	rc = cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_do_maintenance, CXL);
-
+>   drivers/platform/x86/dell/alienware-wmi.c | 134 +++++++++++-----------
+>   1 file changed, 67 insertions(+), 67 deletions(-)
+>
+> diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platfor=
+m/x86/dell/alienware-wmi.c
+> index f5ee62ce1..16a3fe9ac 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi.c
+> @@ -116,68 +116,68 @@ static int __init dmi_matched(const struct dmi_sys=
+tem_id *dmi)
+>
+>   static const struct dmi_system_id alienware_quirks[] __initconst =3D {
+>   	{
+> -	 .callback =3D dmi_matched,
+> -	 .ident =3D "Alienware X51 R3",
+> -	 .matches =3D {
+> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> -		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R3"),
+> -		     },
+> -	 .driver_data =3D &quirk_x51_r3,
+> -	 },
+> +		.callback =3D dmi_matched,
+> +		.ident =3D "Alienware X51 R3",
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R3"),
+> +		},
+> +		.driver_data =3D &quirk_x51_r3,
+> +	},
+>   	{
+> -	 .callback =3D dmi_matched,
+> -	 .ident =3D "Alienware X51 R2",
+> -	 .matches =3D {
+> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> -		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R2"),
+> -		     },
+> -	 .driver_data =3D &quirk_x51_r1_r2,
+> -	 },
+> +		.callback =3D dmi_matched,
+> +		.ident =3D "Alienware X51 R2",
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R2"),
+> +		},
+> +		.driver_data =3D &quirk_x51_r1_r2,
+> +	},
+>   	{
+> -	 .callback =3D dmi_matched,
+> -	 .ident =3D "Alienware X51 R1",
+> -	 .matches =3D {
+> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> -		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51"),
+> -		     },
+> -	 .driver_data =3D &quirk_x51_r1_r2,
+> -	 },
+> +		.callback =3D dmi_matched,
+> +		.ident =3D "Alienware X51 R1",
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51"),
+> +		},
+> +		.driver_data =3D &quirk_x51_r1_r2,
+> +	},
+>   	{
+> -	 .callback =3D dmi_matched,
+> -	 .ident =3D "Alienware ASM100",
+> -	 .matches =3D {
+> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> -		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM100"),
+> -		     },
+> -	 .driver_data =3D &quirk_asm100,
+> -	 },
+> +		.callback =3D dmi_matched,
+> +		.ident =3D "Alienware ASM100",
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "ASM100"),
+> +		},
+> +		.driver_data =3D &quirk_asm100,
+> +	},
+>   	{
+> -	 .callback =3D dmi_matched,
+> -	 .ident =3D "Alienware ASM200",
+> -	 .matches =3D {
+> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> -		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM200"),
+> -		     },
+> -	 .driver_data =3D &quirk_asm200,
+> -	 },
+> +		.callback =3D dmi_matched,
+> +		.ident =3D "Alienware ASM200",
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "ASM200"),
+> +		},
+> +		.driver_data =3D &quirk_asm200,
+> +	},
+>   	{
+> -	 .callback =3D dmi_matched,
+> -	 .ident =3D "Alienware ASM201",
+> -	 .matches =3D {
+> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> -		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM201"),
+> -		     },
+> -	 .driver_data =3D &quirk_asm201,
+> -	 },
+> -	 {
+> -	 .callback =3D dmi_matched,
+> -	 .ident =3D "Dell Inc. Inspiron 5675",
+> -	 .matches =3D {
+> -		     DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> -		     DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 5675"),
+> -		     },
+> -	 .driver_data =3D &quirk_inspiron5675,
+> -	 },
+> +		.callback =3D dmi_matched,
+> +		.ident =3D "Alienware ASM201",
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "ASM201"),
+> +		},
+> +		.driver_data =3D &quirk_asm201,
+> +	},
+> +	{
+> +		.callback =3D dmi_matched,
+> +		.ident =3D "Dell Inc. Inspiron 5675",
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 5675"),
+> +		},
+> +		.driver_data =3D &quirk_inspiron5675,
+> +	},
+>   	{}
+>   };
+>
+> @@ -221,8 +221,8 @@ static struct platform_zone *zone_data;
+>
+>   static struct platform_driver platform_driver =3D {
+>   	.driver =3D {
+> -		   .name =3D "alienware-wmi",
+> -		   }
+> +		.name =3D "alienware-wmi",
+> +	}
+>   };
+>
+>   static struct attribute_group zone_attribute_group =3D {
+> @@ -292,7 +292,7 @@ static int alienware_update_led(struct platform_zone=
+ *zone)
+>   		guid =3D WMAX_CONTROL_GUID;
+>   		method_id =3D WMAX_METHOD_ZONE_CONTROL;
+>
+> -		input.length =3D (acpi_size) sizeof(wmax_basic_args);
+> +		input.length =3D sizeof(wmax_basic_args);
+>   		input.pointer =3D &wmax_basic_args;
+>   	} else {
+>   		legacy_args.colors =3D zone->colors;
+> @@ -306,7 +306,7 @@ static int alienware_update_led(struct platform_zone=
+ *zone)
+>   			guid =3D LEGACY_CONTROL_GUID;
+>   		method_id =3D zone->location + 1;
+>
+> -		input.length =3D (acpi_size) sizeof(legacy_args);
+> +		input.length =3D sizeof(legacy_args);
+>   		input.pointer =3D &legacy_args;
+>   	}
+>   	pr_debug("alienware-wmi: guid %s method %d\n", guid, method_id);
+> @@ -358,7 +358,7 @@ static int wmax_brightness(int brightness)
+>   		.led_mask =3D 0xFF,
+>   		.percentage =3D brightness,
+>   	};
+> -	input.length =3D (acpi_size) sizeof(args);
+> +	input.length =3D sizeof(args);
+>   	input.pointer =3D &args;
+>   	status =3D wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
+>   				     WMAX_METHOD_BRIGHTNESS, &input, NULL);
+> @@ -508,7 +508,7 @@ static acpi_status alienware_wmax_command(struct wma=
+x_basic_args *in_args,
+>   	struct acpi_buffer input;
+>   	struct acpi_buffer output;
+>
+> -	input.length =3D (acpi_size) sizeof(*in_args);
+> +	input.length =3D sizeof(*in_args);
+>   	input.pointer =3D in_args;
+>   	if (out_data) {
+>   		output.length =3D ACPI_ALLOCATE_BUFFER;
+> @@ -542,7 +542,7 @@ static ssize_t show_hdmi_cable(struct device *dev,
+>   	};
+>   	status =3D
+>   	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_CABLE,
+> -				   (u32 *) &out_data);
+> +				   &out_data);
+>   	if (ACPI_SUCCESS(status)) {
+>   		if (out_data =3D=3D 0)
+>   			return sysfs_emit(buf, "[unconnected] connected unknown\n");
+> @@ -563,7 +563,7 @@ static ssize_t show_hdmi_source(struct device *dev,
+>   	};
+>   	status =3D
+>   	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_STATUS,
+> -				   (u32 *) &out_data);
+> +				   &out_data);
+>
+>   	if (ACPI_SUCCESS(status)) {
+>   		if (out_data =3D=3D 1)
+> @@ -643,7 +643,7 @@ static ssize_t show_amplifier_status(struct device *=
+dev,
+>   	};
+>   	status =3D
+>   	    alienware_wmax_command(&in_args, WMAX_METHOD_AMPLIFIER_CABLE,
+> -				   (u32 *) &out_data);
+> +				   &out_data);
+>   	if (ACPI_SUCCESS(status)) {
+>   		if (out_data =3D=3D 0)
+>   			return sysfs_emit(buf, "[unconnected] connected unknown\n");
+> @@ -695,7 +695,7 @@ static ssize_t show_deepsleep_status(struct device *=
+dev,
+>   		.arg =3D 0,
+>   	};
+>   	status =3D alienware_wmax_command(&in_args, WMAX_METHOD_DEEP_SLEEP_ST=
+ATUS,
+> -					(u32 *) &out_data);
+> +					&out_data);
+>   	if (ACPI_SUCCESS(status)) {
+>   		if (out_data =3D=3D 0)
+>   			return sysfs_emit(buf, "[disabled] s5 s5_s4\n");
 
