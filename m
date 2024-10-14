@@ -1,85 +1,83 @@
-Return-Path: <linux-kernel+bounces-363518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B914F99C367
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:33:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE06C99C369
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E99D28305E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:33:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247DBB2643E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CFE158558;
-	Mon, 14 Oct 2024 08:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6FE1537CB;
+	Mon, 14 Oct 2024 08:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ia14Iyll"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0gZOtEED"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C731581F0
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2747515853E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728894717; cv=none; b=tNsmtgClcamTuCpk8iv0boIQBy/I2fNjPtEiOw0UhXPBfwk1RQFYWfhdqA393f0RMtnt07xjgceirhfTI281/u4R+IQyWtE5bRc+osIr0wtTInnzklfol5kxHTOwWlrZJA1AXZumRLk5sZ7Xe0mmJGWTB6MplzzRdruJ16Tg3sU=
+	t=1728894718; cv=none; b=Tyj9dCfznuAN2v/OioterBemourZzO+ob1DwA8wTcwxR6u428Gv0KZCP1NpMeKC5n+OkIlwQgvvjzB9ufhk7u0sgnm40NARSw4SvOeblUTudXGuYsuIukRRpbPXKK9CfLZFMUPSfQ7kRJtMYiPpliabWx255IHrd1cBXwXvJa44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728894717; c=relaxed/simple;
-	bh=xjOQIBKFQ4hDmFj1xQS3dgUvVasX3HXJz/ZWRUBk604=;
+	s=arc-20240116; t=1728894718; c=relaxed/simple;
+	bh=ERtyTosM76vUpxtmF4Cy1QAhArlJoqd656AhoSYKEzI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jJQfDWpksmGECtXCQurOVgPLrWT1ubFvxId7b3r7arTju0yRoiLWAfnEnAd9IICs7tNisrOfU2YECj5NjHoajMInkrIf0MzjA68oe4pObf4PBgmZFhQ9scfK3ODqFXrY+vTZokcVhyA6h3I5wbhAj6zhD3JSN34WAl3hmS++1EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ia14Iyll; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version:Content-Type; b=ni+rc8DUaKJYXxTToUvhjbKYEP1YOBXtG5wPLhQwy7Mguz9xSBh1J7wYOSVCoSFkocodlwlidCVO3E8Yfy918Fpf9FUAt9CWfH2jZki+RJxViRKIYbGf1lx9cVfxeVDqPMPC3zZ7dfB1aIcPg0EnuECVucM+UsJBNGes5yOMIq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0gZOtEED; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43117917eb9so35032885e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:31:55 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d6ff1cbe1so757778f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:31:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728894714; x=1729499514; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728894715; x=1729499515; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C05OXST78BruJxxa1zeybAiFGS605rIOOOqnoYlzeWk=;
-        b=Ia14IyllcEVex8j3UQM/n4lU3z6ZPqHCyfIqcLqFL3COeZbL3ADxK3Rati8OyUC2Cf
-         vndDHb9lS2L/AEnD01j3NJCBFnb7gPln6c/sMYlMas2lAORlNDL8iPU3CTV6Ccno+vV3
-         CuR/hB/YzYC2ryBw2DzUyOUgZyWAmtew62WKEqdBwgSg6p8eJAQwOxj17NSWJ8yDnsDE
-         V+zyiWgNM9pmXtYQDeTbLkKIdDaoDPaqdDCxqnbPtGhAnjvNZJL3j1JTboYUCmtsC8Wu
-         U/FcKP9UyJz/WZPPyR+lhgIFour8ppu93237a1shoY2J2icghHtxTUpqzQoQq5k+AxLX
-         i/ZA==
+        bh=2r6ByVWzke2vujVQcymK2DMK6uDZmMPvMtc2XOTnxDw=;
+        b=0gZOtEED6HsDq8akqOvGp/rDB2gabwUUKjgwsZ1EKIOL+vHF7Ye/m3WPL+bDxuErsM
+         Ys5IXgxzcK5RRNKLx9rmvf3eu5cKaNil+1W8kfIRdAGIse/GjezWKu5LwLbpEJpNRs2N
+         p0MziFQKG3zk0N8avzm9u4smxiKxTEan2/m1zeBd0HHRnvEQgqxoMOYxMFO1tezWDJSw
+         4Ck1xJi9FbMBiGYpLclZCEdbYU9ryGdPdjgXg27sb7dGCx0S8pEWvwsTiNxX3fHFvVPt
+         F96Sh888z84i9lU96uC3mBLtB6PQ3ZCO3VR5dIaH3hn8bpnJfQ7rq6ccPg4TGN4Cr0mY
+         65mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728894714; x=1729499514;
+        d=1e100.net; s=20230601; t=1728894715; x=1729499515;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C05OXST78BruJxxa1zeybAiFGS605rIOOOqnoYlzeWk=;
-        b=LPhOPGsGO9k1boeVQQ21yjaNtkloIQxArW2KqGlWKCktmWC4TUy+YGM90Nse0NvBsO
-         5RxSlnx+qBwojjPdvfyq3DPXD50cWG86ZRuh+S7lAKd3AjPHfyxmFhJdJ0TgxzZjuf7N
-         1BYenz4arjDrputXfzq4pnnSSj3UQLmEELXYlCfOp7w+XCQjAmdUkYBpf8CAQFqeSGdR
-         fr/AIMqjIzx45LEkiJeT4G03ZLRMvyn85jkZbCGzsQGkwTwMylPP8SyPoWls6FYpP6vP
-         stJN3QkQPsaPflTmB2a1im5l/8jTAscvj6oCRjp2cl60rq+A82y2aEC7nZegD4Q/YsAO
-         IN4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUWJ2WxFLvVL2kc3cGfFXuEC2b6TBosYV67BSkrXqO3YS2fCYBzvLvcGy0X9TgHOVIMSb94+YkNEjdElno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUPs13DbHiGQ3Yxqgnl1mQ7XiG4mIpvhLVBWM2jeLZg+sBomQf
-	0WZWyRtMnhutX6cUQyUIqlDDpVHA/OrgtJLbI2o1BzADUoMIfGpRor+nbNffjcY=
-X-Google-Smtp-Source: AGHT+IGftJe+CXGllU0M8y7/IKDb429f7k1VevaNKk/gKa8H8ugNvRkINgUHkF1YS1uTi9NYbjc9eA==
-X-Received: by 2002:a05:6000:e85:b0:37d:4d21:350c with SMTP id ffacd0b85a97d-37d551e1303mr6392447f8f.13.1728894713825;
-        Mon, 14 Oct 2024 01:31:53 -0700 (PDT)
+        bh=2r6ByVWzke2vujVQcymK2DMK6uDZmMPvMtc2XOTnxDw=;
+        b=IWmKGeRYwLVpGPK23RfyE/xMIPjdE40QIYy7hxuFiPqQ+2ikV0tJ2hj6SAM15VQnDe
+         o4q+WfBTXc1bPizDaUViSxmDePL1bZ5BdYT1czsNF5y0gMFS8kl1bkXAsSxAfs3jDsNO
+         kEngD9cFx5DK6tpxqc/6xDC0KCWviugNlPprYFq58X5niagoTQX4AsxJBo+FwiigS5XL
+         cj2skb0aY773NvYBj72+W6q+kMVbotxwBkoVGK7n510o8fHbgiQ8OvnBPw7EZa6dBjJW
+         gtxC2WgJGLbQwOFXJrPHsRSFDsKRcYEmDbfkT+0XuSaXDHVXfPVESLgFjyPSo3IoHlpo
+         m05w==
+X-Forwarded-Encrypted: i=1; AJvYcCX7DUERtI/QmeU/JztmRoY/ZlfYzx9ZUFpyZRPJH5TWWNYs1QlNifKpBR/3A9p3lNc/3WXvasOTrcJL0Gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3UA9mV61oo3UkURglhS8xRl00F/qvV3vFHbhSpD+/DcGcvZtI
+	H4kxCBq0EZit5svy5lPzIKR8xJPWXg8qV+tkv5UxpzG97as3gk1/2R+1CrWTYZ0=
+X-Google-Smtp-Source: AGHT+IGIOdFxLJHhDKqHPfpJzhzMoyFRXNhpGgdVWJc0mwOlZYlsCxtQM3/3LF+Q+9Wuxo6GXajhpg==
+X-Received: by 2002:adf:f3d2:0:b0:37d:37b8:3778 with SMTP id ffacd0b85a97d-37d5529e7dcmr7002601f8f.45.1728894715399;
+        Mon, 14 Oct 2024 01:31:55 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de54:ebb2:31be:53a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ed69dsm10737698f8f.92.2024.10.14.01.31.52
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ed69dsm10737698f8f.92.2024.10.14.01.31.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 01:31:53 -0700 (PDT)
+        Mon, 14 Oct 2024 01:31:54 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Linus Walleij <linus.walleij@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH] gpio: mvebu: drop dependency on OF_GPIO
-Date: Mon, 14 Oct 2024 10:31:34 +0200
-Message-ID: <172889468795.57095.15111681852340725345.b4-ty@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: ts4900: use generic device properties
+Date: Mon, 14 Oct 2024 10:31:35 +0200
+Message-ID: <172889468795.57095.2124355920743532392.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241008081555.23465-1-brgl@bgdev.pl>
-References: <20241008081555.23465-1-brgl@bgdev.pl>
+In-Reply-To: <20241007104052.39374-1-brgl@bgdev.pl>
+References: <20241007104052.39374-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,16 +90,16 @@ Content-Transfer-Encoding: 8bit
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Tue, 08 Oct 2024 10:15:55 +0200, Bartosz Golaszewski wrote:
-> This driver doesn't really depend on interfaces from OF_GPIO so the
-> Kconfig dependency can be dropped.
+On Mon, 07 Oct 2024 12:40:52 +0200, Bartosz Golaszewski wrote:
+> There's no reason to use OF-specific variants of property getters.
+> Switch to using the preferred, generic device property helpers.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] gpio: mvebu: drop dependency on OF_GPIO
-      commit: 3a5ca23bb65169f2f79727c51a5495a2d7a5166e
+[1/1] gpio: ts4900: use generic device properties
+      commit: 16de489e3a3009e027a86858bfd645126d391502
 
 Best regards,
 -- 
