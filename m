@@ -1,171 +1,187 @@
-Return-Path: <linux-kernel+bounces-363500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3413899C332
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:28:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D382599C338
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91AE1F26309
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:28:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020411C228C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4504A158A18;
-	Mon, 14 Oct 2024 08:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8779E15B122;
+	Mon, 14 Oct 2024 08:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqJ/xXNB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1l8tcPP0"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7041215855E;
-	Mon, 14 Oct 2024 08:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8B5153BF8
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728894356; cv=none; b=QaFnLuck6cZfaNP1G+G5xddT560ca9tMEjxkL3oQ591WiRlFf/7jJ+/RZk1intFL+vf74TzDhjRm5YKfJupYNoiHHf2rAXTqHSiulxbjj9ORwINKgh6ZAqZwKRuBTV1m/4szR8TdplpU/oIqRbvDISXe1tLdof8UR4Vb19Qh1zY=
+	t=1728894440; cv=none; b=C4iugV2vTIAgczeGCw7ictORuT3KMqpJChK4BFWlRBX1KZ4ikDGq9pYKxjTEiwNVJNezIOkSZOBAGeQi+28OnrimLBrtaKKKSvZTRWV6hE+lpI1e4BmckuSzsqRyG2ocpqcPKpVorpOQdX6yxc95i9MHzTNnjcG/Ht/mDK43B9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728894356; c=relaxed/simple;
-	bh=u7YfSWegyPPOTNPrJniGqPQMCIlA47Jb7N5EXK91ZEc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2BiUAGfB6p3g7k7Xn34OZQzvkhhdphQ+45R7ogkCRtyG3Sp6lqVUe86CVzExg3+c8q0vjGIdF2g0z9PQtqqv+gvr5cki6nkQwMZSSznpJivoGJpD4v6VjbuVqypQWjCj/oXpsokATlqeabBSKIKpSkK2U/e3Ng0g/463elvfcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqJ/xXNB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0282DC4CED0;
-	Mon, 14 Oct 2024 08:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728894356;
-	bh=u7YfSWegyPPOTNPrJniGqPQMCIlA47Jb7N5EXK91ZEc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mqJ/xXNBkhAm5ZmVGkzbAlnXMcg27Pjen/y5+tjZ32b3fi3kHD2i1UY76bdtcdAS0
-	 r9b4K4Jho5iDsabAFMORTHrZcfuygeBhuTtMp7rvL7tdI9c4ZSbYelRylF7BraOvWr
-	 RMAXYG8ePhqSXZnZMBVbfJ/FhMTbpNcx3SwR6i2tSIU8DxPXK1kkx0mVQH5fdSBJDV
-	 WaaBUUNHk8C/H34ltphBtZhLsflHA5/9evMcykiAhXkQSq1hGRqwLDTI2DxF8PQA+2
-	 S8UjUuqmApGRSUKieY1Jn0J3ZZdvarFqBzJr/sEMeRAxnzAEqrP/IqaiTUHEDUQWpy
-	 UKUHmQC76hMYQ==
-Message-ID: <d16a2dca-5b96-4b72-bd79-6ad2960fdb5e@kernel.org>
-Date: Mon, 14 Oct 2024 10:25:47 +0200
+	s=arc-20240116; t=1728894440; c=relaxed/simple;
+	bh=LvYGHStzCtcz+9e/DZlTfVJS7zU9dpZwIJ9ZhL42uSI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QZK5FhXJywDcLedefbGWBUmpZp4iKMA5hGdKS76n+T5idU0wt75t/tOoVf4+Z+YfY4IcqrkLrNl/ldAI+AzwwVnk8V9YeHPMNe1OZBuF8Re4a0xxsljcxSdtFpsUyQfSwMENyoGKeqPR6yPoi39cAYu9jPOrzUmZd3Z9HInIGBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1l8tcPP0; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso8202171fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728894437; x=1729499237; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4U+q04AM0alBVevec+hSgnxI/ctIzw+GPfbc8eU/zBk=;
+        b=1l8tcPP0ovdbNr/ltzAe5Q8mDuC2rcoBnAExZwG7dAgt8RM8SUE/+iZEqg2NhgfoL1
+         0txkQFt+QvY2nCZZxBg4Pn9kGDI6gdNbf/nIfJ96yTO0kDX+2foCPKOa2a6FZOV6g+wG
+         Kma9Tg+ymoAbDkZBlg/W3akKraM5+wqPWacvoUFA4VYTGls/lDy242BvoWJSpZ0Bzgre
+         2gHLdwYteOR5TedPBUTVFj94FR6rsAU0jAazJNUudtHambhPPP5xO9wYd1z08VeH5ZRW
+         HBXXdBc/D+P9uFnNf8JeZt6xGg49dzc77YgEWF/vVighex8YVhHnlLqj/9mJB+fSn+mf
+         8IQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728894437; x=1729499237;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4U+q04AM0alBVevec+hSgnxI/ctIzw+GPfbc8eU/zBk=;
+        b=gWSdsSFgLCKR9ChDereJP3nLD2LKJ8YR7ecoQ9Fu/RY0JlMOe0RChuGIKdJzHIiRf0
+         OQ+UGnYZQKyyAklLn+BoyPWtr0qDvzJEJm7wosyNwZXY3xw+o2B5y3hKAzkp6VGDaRtg
+         DJAauykEJJpSCMhLA7AuOnDCzA+BQ2vITI9oHsuq00ySOls/lPSEgNPnSErPgA4tkmwt
+         BzNHhDWZPUIXpREv2DyaA+vwnlxnIRTlbVVymUkB3kw/KJR+7Cvs55CkHUzjpelQVR/u
+         J5iLVBjiuHlgAXiLb9NOINar1NTejw9Jw3ht+BndalxVlmqJ7MCkPSESbJBPGAPc+vmT
+         eCrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEjzYZD7HnAn+MPWdTccbhhH5LkTdKqGq81BzymX2cWeyGuSycP7EkeKh7met4p1RStK4B4+PgZ7a7XfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp0L1sY7p4rvps2snHFGf1uKi8eOj2JWyboWv36rfJbl9ktT2L
+	E38FJ+jdmMS1c65W3mBrH0LdR0/ui7mEqszL+t5HlEyaL8zfgtXohaOHTiz5JHWXyVKpp/w9RrR
+	H0T7z/B86koPRfPTURP0pE1F/SehRfY+2FWnE
+X-Google-Smtp-Source: AGHT+IGkWptcxvpbi4kLJj7CIrPyKLsbvdpvN2NGzgazbbzC4V+8GlljYAOc0GZo4E//XsoW8w/0JS1NoNbhy6wodXE=
+X-Received: by 2002:a2e:6101:0:b0:2fb:cff:b535 with SMTP id
+ 38308e7fff4ca-2fb3f1980demr27708401fa.13.1728894436934; Mon, 14 Oct 2024
+ 01:27:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/8] dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global'
- interrupt
-To: Qiang Yu <quic_qianyu@quicinc.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
- dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
- <20241011104142.1181773-4-quic_qianyu@quicinc.com>
- <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
- <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
- <3d1d0822-da66-44c8-a328-69804210123c@kernel.org>
- <65B34B14-76C3-491D-8A58-6D0887889018@linaro.org>
- <df6379c6-662a-4b35-a919-13c695a869c7@kernel.org>
- <96816abb-4e0d-4c60-8ae6-b5a5cd796e99@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <96816abb-4e0d-4c60-8ae6-b5a5cd796e99@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <670cb520.050a0220.4cbc0.0041.GAE@google.com>
+In-Reply-To: <670cb520.050a0220.4cbc0.0041.GAE@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 14 Oct 2024 10:27:05 +0200
+Message-ID: <CACT4Y+a1sWaWSVoYrafE+9secQgHYwywEWGCSTF6MZs0Rr7zUA@mail.gmail.com>
+Subject: Re: [syzbot] [bpf?] KCSAN: data-race in __mod_timer / kvfree_call_rcu
+To: syzbot <syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>, 
+	Marco Elver <elver@google.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 14/10/2024 09:50, Qiang Yu wrote:
-> 
-> On 10/12/2024 12:06 AM, Krzysztof Kozlowski wrote:
->> On 11/10/2024 17:51, Manivannan Sadhasivam wrote:
->>>
->>> On October 11, 2024 9:14:31 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>> On 11/10/2024 17:42, Manivannan Sadhasivam wrote:
->>>>>
->>>>> On October 11, 2024 8:03:58 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>> On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
->>>>>>> Document 'global' SPI interrupt along with the existing MSI interrupts so
->>>>>>> that QCOM PCIe RC driver can make use of it to get events such as PCIe
->>>>>>> link specific events, safety events, etc.
->>>>>> Describe the hardware, not what the driver will do.
->>>>>>
->>>>>>> Though adding a new interrupt will break the ABI, it is required to
->>>>>>> accurately describe the hardware.
->>>>>> That's poor reason. Hardware was described and missing optional piece
->>>>>> (because according to your description above everything was working
->>>>>> fine) is not needed to break ABI.
->>>>>>
->>>>> Hardware was described but not completely. 'global' IRQ let's the controller driver to handle PCIe link specific events like Link up, Link down etc... They improve user experience like the driver can use those interrupts to start bus enumeration on its own. So breaking the ABI for good in this case.
->>>>>
->>>>>> Sorry, if your driver changes the ABI for this poor reason.
->>>>>>
->>>>> Is the above reasoning sufficient?
->>>> I tried to look for corresponding driver change, but could not, so maybe
->>>> there is no ABI break in the first place.
->>> Here it is:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4581403f67929d02c197cb187c4e1e811c9e762a
->>>
->>>   Above explanation is good, but
->>>> still feels like improvement and device could work without global clock.
->> So there is no ABI break in the first place... Commit is misleading.
-> OK, will remove the description about ABI break in commit message. But may
+On Mon, 14 Oct 2024 at 08:07, syzbot
+<syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    5b7c893ed5ed Merge tag 'ntfs3_for_6.12' of https://github...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=148ae327980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=a2f7ae2f221e9eae
+> dashboard link: https://syzkaller.appspot.com/bug?extid=061d370693bdd99f9d34
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/79bb9e82835a/disk-5b7c893e.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5931997fd31c/vmlinux-5b7c893e.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/fc8cc3d97b18/bzImage-5b7c893e.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KCSAN: data-race in __mod_timer / kvfree_call_rcu
+>
+> read to 0xffff888237d1cce8 of 8 bytes by task 10149 on cpu 1:
+>  schedule_delayed_monitor_work kernel/rcu/tree.c:3520 [inline]
 
-Describe real effects. You got comments about ABI impact before, right?
-So if you remove this, how previous feedback is addressed?
++rcu maintainers, this looks more like rcu issue
 
+#syz set subsystems: rcu
 
-> I know in which case ABI will be broken by adding an interrupt in bingdings
-> and what ABI will be broken?
-
-Users of ABI stop working.
-
-Best regards,
-Krzysztof
-
+>  kvfree_call_rcu+0x3b8/0x510 kernel/rcu/tree.c:3839
+>  trie_update_elem+0x47c/0x620 kernel/bpf/lpm_trie.c:441
+>  bpf_map_update_value+0x324/0x350 kernel/bpf/syscall.c:203
+>  generic_map_update_batch+0x401/0x520 kernel/bpf/syscall.c:1849
+>  bpf_map_do_batch+0x28c/0x3f0 kernel/bpf/syscall.c:5143
+>  __sys_bpf+0x2e5/0x7a0
+>  __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
+>  __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
+>  __x64_sys_bpf+0x43/0x50 kernel/bpf/syscall.c:5739
+>  x64_sys_call+0x2625/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:322
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> write to 0xffff888237d1cce8 of 8 bytes by task 56 on cpu 0:
+>  __mod_timer+0x578/0x7f0 kernel/time/timer.c:1173
+>  add_timer_global+0x51/0x70 kernel/time/timer.c:1330
+>  __queue_delayed_work+0x127/0x1a0 kernel/workqueue.c:2523
+>  queue_delayed_work_on+0xdf/0x190 kernel/workqueue.c:2552
+>  queue_delayed_work include/linux/workqueue.h:677 [inline]
+>  schedule_delayed_monitor_work kernel/rcu/tree.c:3525 [inline]
+>  kfree_rcu_monitor+0x5e8/0x660 kernel/rcu/tree.c:3643
+>  process_one_work kernel/workqueue.c:3229 [inline]
+>  process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3310
+>  worker_thread+0x51d/0x6f0 kernel/workqueue.c:3391
+>  kthread+0x1d1/0x210 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Reported by Kernel Concurrency Sanitizer on:
+> CPU: 0 UID: 0 PID: 56 Comm: kworker/u8:4 Not tainted 6.12.0-rc2-syzkaller-00050-g5b7c893ed5ed #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Workqueue: events_unbound kfree_rcu_monitor
+> ==================================================================
+> bridge0: port 2(bridge_slave_1) entered blocking state
+> bridge0: port 2(bridge_slave_1) entered forwarding state
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/670cb520.050a0220.4cbc0.0041.GAE%40google.com.
 
