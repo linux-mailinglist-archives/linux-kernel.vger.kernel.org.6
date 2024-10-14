@@ -1,88 +1,81 @@
-Return-Path: <linux-kernel+bounces-364286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7D399D073
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:04:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BFC99D089
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9F72851EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:04:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEEE8B26725
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558A943AA9;
-	Mon, 14 Oct 2024 15:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F871ABEBD;
+	Mon, 14 Oct 2024 15:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="c+JnI8eS"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2133.outbound.protection.outlook.com [40.107.243.133])
+	dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b="nuwMvh16"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2042.outbound.protection.outlook.com [40.107.22.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1DD481B7;
-	Mon, 14 Oct 2024 15:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A894C4087C;
+	Mon, 14 Oct 2024 15:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728918190; cv=fail; b=sgZ95JtXZgV38aZY0YUb/OrInRc4pIMaRAIxtj055j8Si0Y7wFEascaQMxUPNMD0IJPKHgs8XNiJpCGrIL7Vvostle8BmR5TyoUrJFVi4oCxrsjWi8JdECqNTDA7mtcmdNX0nFm+ZbJutZL5Df+2VKdh8qDJa/gjNn/+QApewSI=
+	t=1728918255; cv=fail; b=G0i+L3qQzysibtUMtWmLw39kCa+dhpG86Ypi0okXWN+aBKFPMVmxzi5ylT0gZarsJT9qTe34+fJsLBz5ydBJrHSSVTV8uAudEI9Gcns7JlvzrWtXQKnXpOPlRlOT4bGDgDEBTdUQOIB+mkPn1euldJp5eooiPkQTVvo3a9FB7uQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728918190; c=relaxed/simple;
-	bh=PM2kHOIn4dgAeli6WqGB8tw08eskhuD0QI5GmHGq1qc=;
+	s=arc-20240116; t=1728918255; c=relaxed/simple;
+	bh=Rc9SSRtwZ7Qg5KMgjVvJKl43h4maJ3C+B7ucheOIWNs=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=S+SMtKzaox6LWFErxKvtGXGkJ6MF+ikIPZnUK8pklandBRFNKrOqFxnCnd4hETlPvhnUGDWBePF8ozOercJD82LMWtxgwdN+mIasFqxRtM6l+OUbl90CTYfB8XwpmzzlcR8FAZVWh0dsMLfFRo4i3ihDkMd0baxFjwg697i9Cs4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=c+JnI8eS reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.243.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	 Content-Type:MIME-Version; b=qW0HIxndzzkdR1S+q/HFOcMfPDj55qS4ew0VDaK/OHa8O0H9qKQZxSbAv0f4hPNk3pwNShCVwv9NLTQ8keK+eAclinY3QULDA5byrIhsEqrEGOZjWGfnVi6lF8ICAPPhy9BFwWwoNz8W9VfPnR2UJThxJrqdRYOLje9IMPnhchM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com; spf=fail smtp.mailfrom=nokia.com; dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b=nuwMvh16; arc=fail smtp.client-ip=40.107.22.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nokia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aAPt2X6syWuUD6zeJnP6dDi9UyzKxiqAZOskLgzrBBQVr0l8LaYfWddYwNjx5tumLT5gDtscLgNikMFDEQKiPkZxaMNdfPlMX1Bg4ABdYSExrvghWuP+XheHxle2WktmLYnnUiV0I4Lq9lk0xSfhvDaZZGQtLC19wnguU1n7/s52Aruj0Tf9UuLdU4nV3uTJOpGeuhe/hYIgnd7/2ubhq64IL625K0CRXxHn17vQwM3om//vVf7xA026Bdge8c0xNBLRAy1QAbeJ0glCHH4YrRYn1yIPjtir385FY9ji3MJ5T9zrhXU8GZcadzZ7FVPZK54oAzLMClLxtVgGetbeYw==
+ b=xH52Rrv7MdCvye5spuLIS8+c7PyuYKsDK7PwSTyV7Kg/af4DdXkeJkXSAC89greVgHijdz4UewYhWmvh3d7RodO6iIS8n88yHMR3QE7+7P7xrBCFi4D6NOR+LkQXIpkWTbuFb8YPDKwmKKUUWuPW2XPwzHTvdOdLjMDRLqBY9ejz6rBK53lHtjjAFBoMFJomUXcedXgYdKaJEBRndw4xDY7rWUqJz4asaOd+D79m/WiNN4UPTucdlq2Ome3RgK+ZMtSFsxZuYwfM79odwoj/unD7n5jf/0V+SiWKMfHCeAnXs3YeyppeZCeowLcdRX9em1+wrNP0ZrQ+wl2kKHKMMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2nclub39f5O7yaHC0mr1HmtTiVrl0MhpRp/q1v8VnzM=;
- b=dvQfXJZnGiWQYsfNvIMDt7y7k/Ctj2d6nzgq3VixOaDD5Zjq7gF2SDWPxh2y3jh3POpzyFW9iDgU5OnOg5Wi+OPaknUIgStvWgqkmIv09NyvsmYbqw0dbH4EBAxTxL5sxEQRdHTq/yLC2651t5QEaMvVHsxHDv66q7AdPWUV80syLjKaWWKc00thhq3fngMyExMLD3q3SvGmz4DZ9mZkbXOh35eDhyAmy3RmRhgRZ3qHfXJx1orENd4f4W+Xhi0reMXgAXBOmqyLmeBxRi77RKm1weW/jI8Bm3tpZ9QF/hp9KcEmwgkpx0Ho7qz4jvU0xrCvQXCwffWn9hbzZjlu3Q==
+ bh=ADw4O8TUq7eft7Cf9q/P9MOi6LOi9rLNVkrJwCK1B9s=;
+ b=P/FoHPS6In1G2PVmXGhAxvwU9jwLdTIk+5AP3kA0EhTpdY2cqZdarhRfzE34jrqFw98H6VHA311b9gxHGY6D301twCPVcf6oscRovAXbSYaBxo17/1uP6fzftfxN/s6e1hSE09kRPMZlk3TFuImefBnwppOouCIE+rP5RrAU7Qp7wY8yH6oeDOhE31wNGu5MXsUAI2vXrsU7hu+IgF7jSwSDM28bT7WWWAYUEyTId/wMWyQOgsmBCgPlsnaUzn2r0d3IvCSbNxFQpwOAK36dMZ+FPGv8Qh4JO2q2vbXuptbHRW5b7YoXRgjG4slmiQruJ7z9nJVzDK8ENVHrBZf20w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2nclub39f5O7yaHC0mr1HmtTiVrl0MhpRp/q1v8VnzM=;
- b=c+JnI8eS/SZcKGnsniModWjN4BaYwQJ8Ak2v6CjT2s/d8W/WARFHVRXSshLDWshSnNdg0EhmShxbHiv5RJbimKkJl/sGVL1ClYD4L2bB6I60M2y4ZveUie1aFOVByiAwFYpILczdTswjIzunx7ZbJHErKtXgB00w5xD6j7giQxs=
+ bh=ADw4O8TUq7eft7Cf9q/P9MOi6LOi9rLNVkrJwCK1B9s=;
+ b=nuwMvh160FhAp2ojTmlvSM5/cM4Z5OceOc91TJtVlrck1fi2cjjG8z1vop9Op5flAm9fzPqXeZyVmhbWhyqhgW27gVgLL0wjm8eyUfFXgwUiRY6ojOALrbdXv/wIVc6DwajVoPm7vKiMYvdJYjJyy0JiZyPbmso2cNeplji8/N1wlirG95NaE31GVNcQQZghEEyJwFdEwLvP+BBDvEIg8qF5hxqsPubXCy8lvtKmosI3nFQzTApafffvMCHWAZYQHiWk7EDUaxHs8P6QcNFc9/xARPrrO65ZmHq0HCJ0KcBJ/AX8cZ1P6/we4zOZN5XUN6gCXRK/KP6w6fhc35jtcg==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
- PH7PR01MB8448.prod.exchangelabs.com (2603:10b6:510:2f3::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.34; Mon, 14 Oct 2024 15:02:56 +0000
-Received: from BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7982.033; Mon, 14 Oct 2024
- 15:02:56 +0000
-Message-ID: <01c3d596-197a-46c6-b56c-05ef602b9c96@amperemail.onmicrosoft.com>
-Date: Mon, 14 Oct 2024 22:02:44 +0700
+ header.d=none;dmarc=none action=none header.from=nokia.com;
+Received: from PAWPR07MB9688.eurprd07.prod.outlook.com (2603:10a6:102:383::17)
+ by DB9PR07MB7964.eurprd07.prod.outlook.com (2603:10a6:10:2a0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
+ 2024 15:04:09 +0000
+Received: from PAWPR07MB9688.eurprd07.prod.outlook.com
+ ([fe80::6b9d:9c50:8fe6:b8c5]) by PAWPR07MB9688.eurprd07.prod.outlook.com
+ ([fe80::6b9d:9c50:8fe6:b8c5%4]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
+ 15:04:09 +0000
+Message-ID: <4a09c9cb-f115-47ef-9088-c1a4d4d50c5b@nokia.com>
+Date: Mon, 14 Oct 2024 17:04:06 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: aspeed: Add device tree for Ampere's Mt.
- Jefferson BMC
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Chanh Nguyen <chanh@os.amperecomputing.com>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>
-Cc: Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>,
- Khanh Pham <khpham@amperecomputing.com>
-References: <20241014105031.1963079-1-chanh@os.amperecomputing.com>
- <975ab37a-7429-4c52-b1e7-6ec9ba63048a@kernel.org>
+Subject: Re: [PATCH net v4 0/5] Lock RCU before calling ip6mr_get_table()
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S . Miller" <davem@davemloft.net>, David Ahern
+ <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241011074811.2308043-3-stefan.wiehler@nokia.com>
+ <CANn89iKFB=T94_wRyND_Z_fGp-Wd9u0EHF_DXg-scQye_tb-Bw@mail.gmail.com>
 Content-Language: en-US
-From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-In-Reply-To: <975ab37a-7429-4c52-b1e7-6ec9ba63048a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Stefan Wiehler <stefan.wiehler@nokia.com>
+Organization: Nokia
+In-Reply-To: <CANn89iKFB=T94_wRyND_Z_fGp-Wd9u0EHF_DXg-scQye_tb-Bw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CYXPR03CA0014.namprd03.prod.outlook.com
- (2603:10b6:930:d0::13) To BL3PR01MB7057.prod.exchangelabs.com
- (2603:10b6:208:35c::16)
+X-ClientProxiedBy: FR2P281CA0076.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9a::18) To PAWPR07MB9688.eurprd07.prod.outlook.com
+ (2603:10a6:102:383::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,166 +83,158 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|PH7PR01MB8448:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f8e3df6-448f-49ac-55d0-08dcec614920
+X-MS-TrafficTypeDiagnostic: PAWPR07MB9688:EE_|DB9PR07MB7964:EE_
+X-MS-Office365-Filtering-Correlation-Id: cad103b0-132c-4c30-e0d6-08dcec6174dc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|7416014|921020;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Tmh5SHMyR25odXF3bUJSU3BqTlpKYmRXTkE4S1BqWXcwSWdqNHcxcWdJVFQy?=
- =?utf-8?B?S2JKbjB2M25janRsaTd6Njdwd1dLODhJOFY2VnFxeFpGM1IyOXEzTVBGNFRo?=
- =?utf-8?B?dVR0d3hFdnhnT1FVZThCMU8yLzltb3VRbWhFclhnVVpOQ3Y3MElxZ0pzT3Vi?=
- =?utf-8?B?OStHK0JuL0hNamlTekNkNVJuaG5IMmVhTFRKdGVYaWhPcEsrZWxsSCt2QjJ5?=
- =?utf-8?B?Y2VzcjFEclh4RnFxV0Y1ZnNPcTh6bCtxblVlNVBDMkpMNUs2clhIcW9lUGhF?=
- =?utf-8?B?SWxJcUJ4WlZjQ1NEOXNMMzZQc2djd0RjNkhGWHhPMGwxeXlDT1NGY3lYclpu?=
- =?utf-8?B?dm5XajdBVC83VGYwa3dlZnBlRTh5ZHhpOFNnQTkrOTB1YTRpYmQ2cDh0dExE?=
- =?utf-8?B?dU02b2xlNWwwVUFWN3lWWkFUUkdEdHdYa1VkeGU4YnNCYWVwV0puY01ZZ0FZ?=
- =?utf-8?B?Sm1kdU1JNnZmTnVYZUlUcmhwSURMQklQdVBnbzJUQTA1Q2NKeTlGeTZmRFdz?=
- =?utf-8?B?MDRGTDY1TFJnaUZTK3lPek5DcVpJMFp3cks0Y0N3TGN6YUFUV2Y2dkxVYjcv?=
- =?utf-8?B?NmNrREJwcCtTd0JUY2NRUjI5bCtPYWhSNThvbDVaLzF3M2xkQjluNlZiWi9M?=
- =?utf-8?B?VzFsYmtxYklaOEdMQXZHOVdIYkUzQmtNOW5mdGZ0c2g3LzF1QUxUc2M1ZU9y?=
- =?utf-8?B?RHlFMVZSVUd2N3U0UURXNTBaMkI2WGtUYTRRaXM5d250bGszQjR3N3NJemN2?=
- =?utf-8?B?N3l1MTQydWFnTE05aUVIZllCaVUwdmtmUTloOWk3SUdYU0QxMDBUSHVmQWxu?=
- =?utf-8?B?THFqbEZ4bDV0OEo5VWVhSldOOGc1d1BsY29wSitURVMrYzhQMDZ5K2RuejUz?=
- =?utf-8?B?QTMvaUw3cVplSEdsK2xYa292c3dnL1BaeTVjeWlqdGVHT2NwSWlXWFk3UDM3?=
- =?utf-8?B?dmw5UUxDaTZGa0lKT2pFcWVTamlvSzQ2UTdyTURMNU83OU9pYWxCUExJRjdq?=
- =?utf-8?B?WmU0RVFQMHlmUkRwVEVqcEdRd21HRXc0VENiZThDaHE1K2hKYXQ5cE5HQkt0?=
- =?utf-8?B?YXhueDVHVGpiK1ZwRVJqMkFQdVFHay8rMkVNaE9ZNk9BYXpsbkROcUx5VHE3?=
- =?utf-8?B?M0doOHl2UlVTOTdiNnBaZVdYNkZHVzRqNzdJTnVRWEtoV1E1a1QwU2w0L0pr?=
- =?utf-8?B?anNuWDRnTVVRVFJkblFKVGdGbUY3cmtveDNlS3Q5V0NWNXdOb0tja3ZKaEpv?=
- =?utf-8?B?WW1wc2RENmpoL1dHc1R6MVIwK3dpU2FGMG1TOFVpdVVHVU5ibUU5d2RiLzAw?=
- =?utf-8?B?SVhKQXkwU0VJenROY1pjYkd3amIxOGk2S2UzRFd2Y2lNYW9TNytTblh3TG5h?=
- =?utf-8?B?MFFBRnJnT01CbnRqMGFiL3REWTdvQ3VLUXV3ejZ3Qks4d2M4MjdlQjkwNjUv?=
- =?utf-8?B?ekZiZkUyZWc4d2V2dGFEZWZmenA5d1Vpek9HVllnVUtzaUpTR1E0bUpLSHpL?=
- =?utf-8?B?WHBqZTl1YTFFZTAyZm1INjJBR1dVMDhVNGZYT2d2aWk0MXNvRVY2VUI3R0xD?=
- =?utf-8?B?dlNORnk2MjY2MVVIdldtT2UyTWYwaTlHZk0xVnRoSkJCT3lGalU5RlNzRmU3?=
- =?utf-8?B?blk5UXVVdm9MbWRrc1dGRVZPdXBIdkN1WjBRVGJQY3ZWUENHOVBzWWlLMzFX?=
- =?utf-8?B?YU5ZUEE0Q05PKzhjbFNWbVFLTkVKa1M3d3cvdDRURHdHQ0hXL2dkZWxEZnNj?=
- =?utf-8?Q?Z+hBO23Oh9oOrYQO/TYNlVVIOvT/XixTCUwayTE?=
+	=?utf-8?B?SG9nLys4dTlMQU1sMVJGMXNKb0ZhY0dYOUNMZU0xL29jQTE4QitFLzFWQ2k1?=
+ =?utf-8?B?M2t0R0V4L29lcmM3cU5xVEhTdnBsSVc0TC9zOUZFZ3N0TElCMWdYYzVoWWpt?=
+ =?utf-8?B?ejBsSUxzVXdpRXZnUUFDTGk1U1NYMS92Q1oxQXBrQnJQdXl1Z05ab3cyaHZV?=
+ =?utf-8?B?clN4aHAzN1IwbjdSa0V4dURWMUxucDUrbm13dDN5Z2d6ajJXRHFhbzBST2hI?=
+ =?utf-8?B?SWVNN0JRTnFsMGVKaEl0a3VjQVRSUXFxVmUwSUFVTXd5UWtnTVcxWjcxdFAr?=
+ =?utf-8?B?dkp2VWozR1JMMVk5Zy8yb1hJc0RmdVFUWXkzL0luTFRsRDBjL2cybWd3bHBk?=
+ =?utf-8?B?T0xxYnZaek9HOHU5YnVYcnNzdGpJQ3A0VmRxOHRpamExZmN5MEtvV1VlZE1i?=
+ =?utf-8?B?aURCYkt6enEyMmlTalRkRjNjU2RteStkNWJSR0pqZGpGME9TODJKTiszOGlw?=
+ =?utf-8?B?WnhXZ0hwbmVVMURSdzcvWW5Nc0RVRTE4ZkFXaUVhYnpZVkt2WU1KSGQyaE56?=
+ =?utf-8?B?K0lzYWtjODM0bThTd01SN3RrTmdId28wYjV2TjJ5dFFqd1UxKzAralY1WXpp?=
+ =?utf-8?B?RTlFeWQwdWpRalJYWmdFcndXR0orVkh0MTVrVU5EcFpGNHBoNzVaRkszc0lp?=
+ =?utf-8?B?VFhzWE5TSk9NSXV2QlM2clk3dzY4VERYRDFmdG9LSERNQkZoUm1uSVVzMWZF?=
+ =?utf-8?B?VTQ5SWdJMEl3M2wvL0JkMG1DUmNjNXZldXVjRG5FOTN2MXFqamxMdDV4aWtX?=
+ =?utf-8?B?TVdYNDJKbWFFa0dHeEFvdE4ycldZQkVGREdLYW9RVFlmRElWU2VoSzFxb2VR?=
+ =?utf-8?B?NEpVZTBhUTROWWFnand5Sk5ORDEzeG5tWndvU0tZR3plOGRRUTA0QVN0bU5m?=
+ =?utf-8?B?RWlpekhGOFNJWG1NdHVLd0pWeWEwZGxUckk5YTZINVl3alh2MHRrRzJjN3BO?=
+ =?utf-8?B?NHlnbDg3WWFpMVgyMC9ZQ0t5NGhNRTFsQ052Yk5pdm5UaStYcFRuUU80eHF4?=
+ =?utf-8?B?QVgwVUZvQnZGek53SmliWFFMTG9MT2dhR29nRDVwYXFxTzFWcll5MHFiTm9a?=
+ =?utf-8?B?TWVtTjhIY21uK3NVeE9YcU11Tk5wN2FhU3hCRXBpNUlDM2l5ZDBReUlHNEFE?=
+ =?utf-8?B?Z2VDNjZHVis1NkNEZDlPaHR6elllOWo1RUtwVlBXaGg1UGhacDhXcXBCckdq?=
+ =?utf-8?B?MkdXVW54akhMSWRaNWQ5U0xqNWJuL1dyUm9zclQzeTJnbHFtamoyaXBPeU9n?=
+ =?utf-8?B?NUtDVW9LZVJOcXJmMUg3VWxmbjIwYk9CVm9tWFJDQ1RhUGFLTjk4T29tOFBS?=
+ =?utf-8?B?VnBGMlVwWVd5TEdYV0dXaU1kdVhrVC94VU0xQ1hrNks0UWRFWE5kL2lQd1JD?=
+ =?utf-8?B?WFVpeTR1RENhalpqZVJUUDNDSUVsRDFoRGk0d25YYzZKWnRkdXIxRjM4SmFQ?=
+ =?utf-8?B?UDNJclVJVEZlQXU1UFhuaTRzN2cxOXNZUnVLZXN4Y0xCKytsNTgxRlNzdk4z?=
+ =?utf-8?B?blg1TFd6WUpQTjdQVFZPaFBLMWdoWlRiTVBZYWY3S1hHZVIzMnh6WGQ2NS9K?=
+ =?utf-8?B?VG02UnhWZG1zUlIxSnJrQXNobHUxYzlFSXYwT09DUFhCdmx2V1lMMGNVb0w0?=
+ =?utf-8?B?WDM3Szg1THNLQ2ozOHYzTFo4MWc0NkFXZnJuL280Skdua3FZNU1uNTREWDlH?=
+ =?utf-8?B?bGpBM1haU1FnZmlkVmFpRllTeThHaGlzQWdGeGZxRURtZmh6djhYZmdnPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(921020);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR07MB9688.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MWJRUm5WbTg0WWg3MXdYdldwMTJXbW9yTnB0eGtGLytaUXlsTnUzZGE0SDdS?=
- =?utf-8?B?bStCbVpEYWwrYnBxd0NTMDR5YnVQZ2dOS3dEc2dSVEx4WWdUQ25ZRkJjdHdR?=
- =?utf-8?B?Q1JNandxTTdmdUR0RjQ5Z0lKRzJoa1h6SFZsRm5kV0NZREczVHVTWmtBendr?=
- =?utf-8?B?V1dhYy9rQ0VvMEd4dTRsZ1JBdjBSNnFpSURWUnZWaHNqdzIwSkp5UmZkWjdU?=
- =?utf-8?B?elY1akU1NlhzVVdXdk4zaENEc1VpNVpYdkY5ZVBrQmIrdHFaL0pXdFpYTFNs?=
- =?utf-8?B?QytOOThxOUp1cktkV0p1MkR6ay9ONEZYMGkwRVAvNXl2K0F6SkJYSXU5NU41?=
- =?utf-8?B?MU1uT2dqSEwyMUcwV3JLNGtRaDJaQ3Y1U0hSNlNob3kyaVFxckFWN0tlZkJV?=
- =?utf-8?B?K3ZyRU81NnBJVGkwbTBsRTlSWjU4aTQraDFaSlVoeEJtdVlWU0F3R2JjMUZz?=
- =?utf-8?B?NVR0ZWJaK1dWY3NsamhacFpudkxjN3JXVVRrNGNNM21KZnlDMkJiSVpkWEVM?=
- =?utf-8?B?TVBGRStYNjFkZWlMeFJVdjdUVzRjVkpib3pmVWVja1N3YkFrajBSTXZLV1FH?=
- =?utf-8?B?cDE2MzBsRzlDMzNDb2ZKNzNwUDd4WXU3Tzgyc01BQi8xZWxOK1prak1Nb2Q4?=
- =?utf-8?B?V3V4ZDVtRmYzbFUwL2FMRDRwUjRpWVkzaFBPSVpnY1VDdlcvQitlZkpBYWpz?=
- =?utf-8?B?WWswK256VnIvY1pOQ0t5MVVkWmJrVkkyMFlsZm4rUy9UdEJ1aTlkODBQcVJa?=
- =?utf-8?B?a2ZlZlIrM1lpU2h5dWx5MHlyam13MmtLSFBKL3hwZ1BXVEdVSTRHanFiOS91?=
- =?utf-8?B?NkMwZHQxQW11dG81bWE4VDN4N0U5bkpWdXZlb0JFa0FTcXBDd3N1dlFZREw1?=
- =?utf-8?B?MHlVTU02eUd1N0c5VkpZUjlldDB0MkI3OFQ1T3pCK08xdGdPUUFjL3VoSm1x?=
- =?utf-8?B?TzVCR2RxQWxZeU1KZ2dOTmhIdFd6ZytLaWZJV1JmTi85dis0NWtKM2d5dkFN?=
- =?utf-8?B?bTczQkRBckhuK2tYVjNCTnRQMGNyWDg0YlU2TFZWK3dLU3NENWRTamtzeHkz?=
- =?utf-8?B?bjRJWGxQMUZvL2VKblFOVktJcmdrakNrdHJPT3V4bDJtTmVYRy9lbnR3bFht?=
- =?utf-8?B?NkhOdWRQc0FBVjZETmRVU1FROWFHaUR3S3Z6Mnc3UkljTmZSd3EyaEs3SFJt?=
- =?utf-8?B?SmxGTkxNaE5KWnkzUEdWSUlaaGd5YXloY3lucTFFTWg4bHBEZy9NZk0rTGdp?=
- =?utf-8?B?cFVaMklpWWdqYVZmbjlpSmpoQWQxRmNrV1lwNmFzemFUdXhoT1FMMElrVFlk?=
- =?utf-8?B?cTBUeE5ST2dRcDJyN09aYVBkVkhuOWgrSFFvcXBxN2JkR2lTeDBsblFIOHA2?=
- =?utf-8?B?SFIrUklQTVpHaFhFdFVJZFZhNnowZU9iVWQ1QnhyOU1MWHBhNURKdkFhazZk?=
- =?utf-8?B?LzhGRVFwa0IyalNBU256a0FPeFJoR3NlamRXUlRReEYwQXNlZmNkbmZPanJ4?=
- =?utf-8?B?SzdUYWdNaCtleWRNRlUvclhlNHhnRjZTckh4MERDNE1sMTYxY2V1eUdHQ0I2?=
- =?utf-8?B?VmZyb09jOG94a041MktKd1ZoT0Y4K0VBOUg0S3lXWXNEMlRkb3FuWXk0Vjd2?=
- =?utf-8?B?anBUUjJKbWorNm1rRGdHcktQUWh5d0JyRlZVSjVES1d5dEdYeHY1a2h4Z2kv?=
- =?utf-8?B?OTM4bU5aQ203SDEzQnlXMzZ3RVNMWGJkbU1ST3loYWk5SmdyWVIvZ0U5MzRo?=
- =?utf-8?B?eTFxZkJuU2w2ZlptTmdJMzY2TEtLcVVDMVdlZjkyQ0luM3RoVE00R0VEWnpX?=
- =?utf-8?B?aDVuRHFmN2pXQVpYSjZodnp5c0JyM0F5ekFNVG1QNHZpZUdVeG9RUkt0WnRo?=
- =?utf-8?B?d09sU0pJSzNCWmVnNGk1OG5wRDBLQ1d0VU0zUGhmN1pjNEdBWGFSYjVNamJa?=
- =?utf-8?B?NEpDSkkxS2gxQmpKQ0NlaVJRSmdBTXcxUkUvOUZ5Z1B3Sm9lWnZuVlZTQndq?=
- =?utf-8?B?Zjl1TmxsWWVKQ1RnL20zZU5jT2FSTlJUQXJ3MzlRenJzNm1xQkJEVkdoZUhm?=
- =?utf-8?B?SzRpZXRFR0VFWFIybTNkVDNjQkd4WHJLRDl5M0Z0ZDV3anR0T1FRN1hYN2ZH?=
- =?utf-8?B?d0tCWjY0SUNBYzZKTVR2NVJVYno2dGVNN0paOXppb0ZVSkNBeDlRTzNjNm9N?=
- =?utf-8?Q?9qJm2x3V8fgN/0R61DxHpwc=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f8e3df6-448f-49ac-55d0-08dcec614920
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
+	=?utf-8?B?T2NHdjdueStqaXR0RHcxWDZ0THNmdEZBSmVZajV4QzFXQUs3WjdDTlRJZFp6?=
+ =?utf-8?B?RGg4WTlCdVN6YnNTTlliNUV3Ym1ENlRSK216L1NjYTNIVnlQVEhjKzFoajEz?=
+ =?utf-8?B?QitXRE1Rb2hZRmtDSnMwd1REZ0U5RVJZUTcrakFTbkI4enlTUlRaL2pFb1JG?=
+ =?utf-8?B?TUFPcHFMUXA4V0xDQmRPNGRKa3pDeDVkNHhrRmZ4VXRMSGZCWis1NmNDR2xX?=
+ =?utf-8?B?Y0grSlZ0d00yczZYczNsMUFyN3pyMVJ3djBjTVV6RWUwd0ZxdzJIMXZ5bU1o?=
+ =?utf-8?B?SDN1eXoxby9RUlp0YVd5RXFjSlg5cVV3azl4WEJjUFFDSHIxZDhCMlF2RzZO?=
+ =?utf-8?B?L2xWQVNJaXVBT1RFS0VjOWF5bVRrQTY1TTNkaHMzNTU5cWN6VitPZnJ1NFNN?=
+ =?utf-8?B?WWNIaS9LNVBCYnJhNnpHUE9ENXprcm5wdWtrUy9QWExNdjNiL1lHSktiakJC?=
+ =?utf-8?B?MFNuQ0dtVFBBOGlRWW5wRnM2QUtnSTJWNXI5WUhERE90T3Z4dE9GVFh3eUt6?=
+ =?utf-8?B?Z0twb2YraU5xSThZQS8yNHc2SG94SWFIdDlPeGJWdXNDYkgrYTdSV0wvNGJl?=
+ =?utf-8?B?R01GTVN4emVPWHNUSU5PaSt3aHNuV01nRUF0blp6MVkwOU9FNmdKNmRvRysw?=
+ =?utf-8?B?azRwWm9maWd1TURMY1hxc2IrNE9ZYWVnbklsc1ZXQjdIQ1d0d2pWRGZzVGo2?=
+ =?utf-8?B?Q3lmZWw3R21GeGd4eFREZFpvUEpkY2w4UHllM2luaU9Kd2RhSndSYXg5YUFi?=
+ =?utf-8?B?WnRqRVFTVWZuOEFHSGYwMEF5Y2Q2WE5lcmJJUDNzR2NMSFNPaGhHSEtTSzhN?=
+ =?utf-8?B?aVZzNTZ1UVhISGJ3ZytZZjRjR1hxK0xFNjBXNUdGdTZHdTM1SU9JRUcrbmhv?=
+ =?utf-8?B?OWVtOVVCSlY3c24rdUJiVURwalpLeVpwRFBxUGgrWTNNT1dCd0RHM1I2Q0dw?=
+ =?utf-8?B?REg0d1liOTRpdjdRQkdQeEZUTG9rdENUR0hOeEZibEFpRGtMWEowYXphTHdE?=
+ =?utf-8?B?cjR6VTFDRC85bzdNb083UHl0Mjh5cUNla0tZMVRsMVFSL0RlWmFWdExSZEFE?=
+ =?utf-8?B?YnZUdDNpNU1qSGVzckExWGNRY0dBRERkNURxZ04vQU9pNUdodHNFNU9tOW5w?=
+ =?utf-8?B?a3RuTzR4OGlPNFNhVmpPQW8yWG91ODE4QzU1U1lJNlJMc0pEV04zbTBWUWor?=
+ =?utf-8?B?dTFHQ05jSzIzRStLQU5BSWZGUFViZHhwaktWbDF2SHlOTjdNR1NGUTdJTWFk?=
+ =?utf-8?B?dlV4NnBCMG9DTmVUMUZOajJOcU1iOHpPS2w2OW9iaTU3S0p0UjlmV0hYM29S?=
+ =?utf-8?B?Q2RRUkh6YTBLSUpXOE9sMG5XYXpISThDU2hQQ0IvdzZaVUtWazlwSHVmQ3Ay?=
+ =?utf-8?B?WWVSdHVieVdWSkJtbWxaTjI0cVBkNm5lcEhsT3BvSld5b2Fwa1hQSVhJS01T?=
+ =?utf-8?B?UmlFNk4vTGZOTllicTgwbExHNlBRaDN4dk9TNTV1MmdrS0dHV2t1Mmc4eTZK?=
+ =?utf-8?B?cDdDOE5CVXJ3Y1NBSXlkeWQ4enkzbGFqZmlKdzdBbE02VW0vckFya01BamN6?=
+ =?utf-8?B?OTF3bUJQM05DZkpsRjBjZHhQWVErK25NR0QvY3BMME1GbTJJQmN6Y29VVzM3?=
+ =?utf-8?B?Z0p6Rmd6QXhQWVVWTlcxeDdNVG5uSHBkaWUzenIySU5jd2lPVWRsa0RUWXV6?=
+ =?utf-8?B?VGdmQ2RSeEdjVWxvUjNyREQ5UCtLYm05alZpeFF1UmhNTW10czh3Q0ZNbUJm?=
+ =?utf-8?B?aHR3dkhlYmU1c2hiTW5jVEpaYWN0WVRMZFgzNyt1eEl4S2JieVpNOUZPQmRr?=
+ =?utf-8?B?ZkJrSzU0bFI2NjVzY3R1SEVTUkxsRUFpKzJTMTY0Z0M3a1QwbUhlQ2YwSk5X?=
+ =?utf-8?B?S3kyQm1iM3VSZ0NESmVzYmJ4NXVsS0tidXFmbG9BNWRvZGFmbEg0WGZiRzc2?=
+ =?utf-8?B?UU5hR1RDYmdVUnV4dUFXeU1PWFpNTGdBYmNUZWdjN1YybUYzQjBlSm5RdGww?=
+ =?utf-8?B?MWRJQXNFMk1Nc3kxeXZqYWF6U3Bma2tRTFJwRFY0bVE3N2cwNWZKbXJPN1dp?=
+ =?utf-8?B?cWI2NlVJd1hVOVVlTmRhREF6WEF5K1hUNE9BS2ZxeHlsaC9XVmNYSFFWQTAy?=
+ =?utf-8?B?eHBiNWNWa3luU3JKMHU3QUpNZjJPUjcwamNKb3NVQ1ZCb0MrRWNta0tLSkRU?=
+ =?utf-8?B?UzVFWTlCOVEzVU9pT203TkpGVlgxVlpGQ1N1dklnUzZjN0paQ1ZaUG9Heml4?=
+ =?utf-8?B?VTMvV2g3STJPTStQT3gvN01aU0ZRPT0=?=
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cad103b0-132c-4c30-e0d6-08dcec6174dc
+X-MS-Exchange-CrossTenant-AuthSource: PAWPR07MB9688.eurprd07.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 15:02:56.5187
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 15:04:09.7435
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zez/jUZn+gPZRLCadUDodMo6aTIe0qukhzl3czeYVlZoCoS1aWoE3d3GeYe5hXoTEbsKxIhJ5nOU0PyWQADAlzCBmMLYApUCgFp7OySXxil8uaVbNGrKXTMksjMelM1Y
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB8448
+X-MS-Exchange-CrossTenant-UserPrincipalName: T14zJ6fjmRx+A3nmmg+u8viX1tLVpS+CKxNIqVQh2W32dBeJ2Sk0kG86M41GAM2k4qZJjuFbq6CzcqDafc+5tU8Kv8mfjaoBuY7WQ+mtv2Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB7964
 
-
-
-On 14/10/2024 18:58, Krzysztof Kozlowski wrote:
-> On 14/10/2024 12:50, Chanh Nguyen wrote:
->> The Mt. Jefferson BMC is an ASPEED AST2600-based BMC for the Mt. Jefferson
->> hardware reference platform with AmpereOne(TM)M processor.
->>
->> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
->> ---
->>   arch/arm/boot/dts/aspeed/Makefile             |   1 +
->>   .../aspeed/aspeed-bmc-ampere-mtjefferson.dts  | 646 ++++++++++++++++++
->>   2 files changed, 647 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts
->>
->> diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
->> index c4f064e4b073..b1fb0853a789 100644
->> --- a/arch/arm/boot/dts/aspeed/Makefile
->> +++ b/arch/arm/boot/dts/aspeed/Makefile
->> @@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
->>   	aspeed-bmc-amd-daytonax.dtb \
->>   	aspeed-bmc-amd-ethanolx.dtb \
->>   	aspeed-bmc-ampere-mtjade.dtb \
->> +	aspeed-bmc-ampere-mtjefferson.dtb \
->>   	aspeed-bmc-ampere-mtmitchell.dtb \
->>   	aspeed-bmc-arm-stardragon4800-rep2.dtb \
->>   	aspeed-bmc-asrock-e3c246d4i.dtb \
->> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts
->> new file mode 100644
->> index 000000000000..f24111ab9e65
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts
->> @@ -0,0 +1,646 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +// Copyright 2024 Ampere Computing LLC.
->> +
->> +/dts-v1/;
->> +
->> +#include "aspeed-g6.dtsi"
->> +#include <dt-bindings/i2c/i2c.h>
->> +#include <dt-bindings/gpio/aspeed-gpio.h>
->> +
->> +/ {
->> +	model = "Ampere Mt. Jefferson BMC";
->> +	compatible = "ampere,mtjefferson-bmc", "aspeed,ast2600";
+> Hi Stefan. I think a v5 is needed :)
 > 
-> Missing binding.
+> Please double check your syslog
 > 
-> Please run scripts/checkpatch.pl and fix reported warnings. Then please
-> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-> Some warnings can be ignored, especially from --strict run, but the code
-> here looks like it needs a fix. Feel free to get in touch if the warning
-> is not clear.
+> [   18.149447] =============================
+> [   18.149471] WARNING: suspicious RCU usage
+> [   18.149649] 6.12.0-rc2-virtme #1155 Not tainted
+> [   18.149726] -----------------------------
+> [   18.149747] net/ipv6/ip6mr.c:131 RCU-list traversed in non-reader section!!
+> [   18.149792]
+> other info that might help us debug this:
 > 
+> [   18.149824]
+> rcu_scheduler_active = 2, debug_locks = 1
+> [   18.150050] 1 lock held by swapper/0/1:
+> [   18.150090] #0: ffffffff95b36390 (pernet_ops_rwsem){+.+.}-{3:3},
+> at: register_pernet_subsys (net/core/net_namespace.c:1356)
+> [   18.151482]
+> stack backtrace:
+> [   18.151716] CPU: 12 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+> 6.12.0-rc2-virtme #1155
+> [   18.151809] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [   18.151982] Call Trace:
+> [   18.152122]  <TASK>
+> [   18.152411] dump_stack_lvl (lib/dump_stack.c:123)
+> [   18.152411] lockdep_rcu_suspicious (kernel/locking/lockdep.c:6822)
+> [   18.152411] ip6mr_get_table (net/ipv6/ip6mr.c:131 (discriminator 9))
+> [   18.152411] ip6mr_net_init (net/ipv6/ip6mr.c:384
+> net/ipv6/ip6mr.c:238 net/ipv6/ip6mr.c:1317 net/ipv6/ip6mr.c:1309)
+> [   18.152411] ops_init (net/core/net_namespace.c:139)
+> [   18.152411] register_pernet_operations
+> (net/core/net_namespace.c:1239 net/core/net_namespace.c:1315)
+> [   18.152411] register_pernet_subsys (net/core/net_namespace.c:1357)
+> [   18.152411] ip6_mr_init (net/ipv6/ip6mr.c:1379)
+> [   18.152411] inet6_init (net/ipv6/af_inet6.c:1137)
+> [   18.152411] ? __pfx_inet6_init (net/ipv6/af_inet6.c:1076)
+> [   18.152411] do_one_initcall (init/main.c:1269)
+> [   18.152411] ? _raw_spin_unlock_irqrestore
+> (./arch/x86/include/asm/irqflags.h:42
+> ./arch/x86/include/asm/irqflags.h:97
+> ./arch/x86/include/asm/irqflags.h:155
+> ./include/linux/spinlock_api_smp.h:151 kernel/locking/spinlock.c:194)
+> [   18.152411] kernel_init_freeable (init/main.c:1330 (discriminator
+> 1) init/main.c:1347 (discriminator 1) init/main.c:1366 (discriminator
+> 1) init/main.c:1580 (discriminator 1))
+> [   18.152411] ? __pfx_kernel_init (init/main.c:1461)
+> [   18.152411] kernel_init (init/main.c:1471)
+> [   18.152411] ret_from_fork (arch/x86/kernel/process.c:153)
+> [   18.152411] ? __pfx_kernel_init (init/main.c:1461)
+> [   18.152411] ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
+> [   18.152411]  </TASK>
 
-Thank Krzysztof for your review!
+Thanks, I'm not sure why I missed that one since it also shows up on our v6.1-based kernel.
 
-I will add my board to dt-bindings in patch v2.
+I went through all the remaining calls of ip6mr_get_table() in ip6mr.c (since
+I've picked this topic up from a colleague):
 
-Follow some previous patches on 
-Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+- call in ip6mr_rule_action is safe because fib_rules_lookup() holds RCU lock
+- call in ipmr_mfc_seq_start() needs to be in RCU read-side critical section as well
+- calls in ip6mr_rtm_(set|get)sockopt() need to be in RCU read-side critical section as well
+- call in ip6mr_rtm_getroute() needs to hold RCU read lock earlier as well
+- call in ip6mr_rtm_dumproute() is safe because rtnl_register_internal() holds the RTNL lock
 
-https://lore.kernel.org/all/20240805-potin-catalina-dts-v7-1-286bfd2ab93b@gmail.com/
-https://lore.kernel.org/all/20240522192524.3286237-13-eajames@linux.ibm.com/
-https://lore.kernel.org/all/20240502002836.17862-7-zev@bewilderbeest.net/
-
-Best regards,
-Chanh
-
-> Best regards,
-> Krzysztof
-> 
-
+I'll prepare a v5; please carefully review as I'm not familar with the codebase...
 
