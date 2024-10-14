@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-364703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEEB99D82A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:28:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD27D99D82C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937B21F22DB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4B01C22693
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B091D0BA4;
-	Mon, 14 Oct 2024 20:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85DC1D0E08;
+	Mon, 14 Oct 2024 20:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="lZYwal+F"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="HKsn0S9T"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A316B231C94;
-	Mon, 14 Oct 2024 20:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30771D0942;
+	Mon, 14 Oct 2024 20:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728937687; cv=none; b=O2ULu9QsvVUFF8B/RgxewTdq8BhVjEjWM6PlYk9OJJcP4nKZoWHANjzb+WttgEbnpO9VPM8SZZSvsYxg/Lmat/KAPnZbKvWdmFTvFgwfwyENabs/2X+Dk+PfY0zc/9KI+jV6LgBoSGSO3ANsnMomiJ9A+FHpODwKAPFe3A5gez4=
+	t=1728937760; cv=none; b=Vc0BIYnaCiCZceq/7VoAIIrPVy4vpfr6OIvrqfC0fBdGOwe2Jn/y6JQEDrLqvqBUbYtO7WYmyEt1MIU4sF4QnOacx276UEHaoWw0a4tbitPwdSeBfsI7W1V3Pc635RfBlEEF5kS2k4nR2Tyyik6mvCG5mUf40P8krN/EdlHJmvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728937687; c=relaxed/simple;
-	bh=/vHGSU34qDtaxKOjbL6OXDPlmp1Gri+djVQ2DMGbd4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MqtLuyQuRhjhUxHWS/plPB7BccA8R0rflH8DLkc+77ss9dUutOI0BanDbexnpz5tCuMso/ZS7Njc/AVscgI+qoEwHzwC3BHHcZiwy3SAtcFxeBinmqpcqzMkoJWM33ningxG8V5f1ORZe/Kd+qR839IL1BcCcvmAx7DqvN5ehH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=lZYwal+F; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=HhkcX725e/3oAWjz9xZVWQiKXqdRkr07/xexm6SenoI=; b=lZYwal+FxlOb7aLLzWJsDONhrL
-	DaHhLlN9YQQTB/thexylNscem+ElDuw8zEc3SrbSzTkisNiWjYaS7PA3CI+3eFVdX9iN5uBwGKbCx
-	3TDR/OQZresaAepfP/oNvjtP0yELldkRAdKnyY+7ybzBumz1SwW+qitha/+yGjd/lcbbNpStIypmZ
-	rxJ+et0dfo3mF8MEqvBHTrCXU2hq379X5FY8c+Nr1IG7Yo6bC77jAuPwYrwRedLfAHyNwaZzn0st0
-	PUzlKWtFNf4f4SUQ/LGnmS7FdE/xD7rdyFxvhSNdOo/DHIPhRaWq25++4RJGOkbbxGY2BO6Vyt9lR
-	DY5Udb0A==;
-Received: from ohm.aurel32.net ([2001:bc8:30d7:111::2] helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1t0RfJ-003pXv-2A;
-	Mon, 14 Oct 2024 22:27:41 +0200
-Date: Mon, 14 Oct 2024 22:27:41 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	E Shattow <lucent@gmail.com>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbdjM=?= =?utf-8?Q?=5D?= riscv: dts:
- starfive: jh7110: Add camera subsystem nodes
-Message-ID: <Zw1-vcN4CoVkfLjU@aurel32.net>
-Mail-Followup-To: Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	E Shattow <lucent@gmail.com>
-References: <ZQ0PR01MB13026F78B2580376095AF7E7F2442@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1728937760; c=relaxed/simple;
+	bh=9aR9lv25iuYJM3n3+1PvxoqvrjezR4dJ7SJeHh1oAK4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=m4u1AYUc7HSCKHrQtEiTa06muVSOFV3hY7EKiIJH0ZMKSU1Xk9D/KubsQOOntjDdaKkg9COVxO5ybseUnC0fghCpxwK4d0GDUL7aKXXqZpBFuqqPiLwaw3muk4+gnOiwejaaMqPn6xAfjOOuZ3vK48qvaLiDeyWSU2aVaTvhaOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=HKsn0S9T; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZQ0PR01MB13026F78B2580376095AF7E7F2442@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1728937755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DU60WL7DeLOtDOK8bJ4w2KZeuNGEq/82GYZDHFw14lE=;
+	b=HKsn0S9TKKzWyslK26UMDckc592r3RWQhpWtdnl9rSbPcZIsLoOhVQBdBy61CVL+xdG4hp
+	fG6YS6rPr+HomDcbdN01FRt03BsoHwVFmx+3+qw2LY8T0YPJgCrDLgPL1B/DVRy94VZFX3
+	itt8Wzv39tScYpodsp8SoHSaVerj4Fc2/lLCwn9+Ei3W4bsZZFmwlLy8XCZpqqnn60Y8Yc
+	19cwgv7qlaglbcGfM1XYYhtNqiv6G+vbTlQNUyxZtyBdElTwopm+381mWgrg9OBn/egGBR
+	oQdTeX6YETf0v9cGyzJ5BdnNgzkJ4qILrbfqfAhI4boxSbbfiVgMKrujsWNBnQ==
+Date: Mon, 14 Oct 2024 22:29:14 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Cenk Uluisik <cenk.uluisik@googlemail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Chris
+ Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>, Andy Yan
+ <andyshrk@163.com>, Tim Lunn <tim@feathertop.org>, Jagan Teki
+ <jagan@edgeble.ai>, Michael Riesch <michael.riesch@wolfvision.net>, Jimmy
+ Hon <honyuenkwun@gmail.com>, Jing Luo <jing@jing.rocks>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] arm64: dts: rockchip: Add rk3588-orangepi-5b
+ device tree and refactor
+In-Reply-To: <20241014180324.536702-2-cenk.uluisik@googlemail.com>
+References: <20241014180324.536702-1-cenk.uluisik@googlemail.com>
+ <20241014180324.536702-2-cenk.uluisik@googlemail.com>
+Message-ID: <c773f975333718d0a677616b68252ec3@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hi,
+Hello Cenk,
 
-On 2024-10-14 01:08, Changhuang Liang wrote:
-> Hi, Aurelien
+Please see a few comments below.
+
+On 2024-10-14 20:02, Cenk Uluisik wrote:
+> Implements a slightly modified rk3588s-orangepi-5b.dts
+> from the vendor. Unfortunately the &wireless_bluetooth
+> and &wireless_wlan are not implemented yet.
 > 
-> > 
-> > Hi,
-> > 
-> > On 2024-02-18 19:27, Changhuang Liang wrote:
-> > > Add camera subsystem nodes for the StarFive JH7110 SoC. They contain
-> > > the dphy-rx, csi2rx, camss nodes.
-> > >
-> > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > > ---
-> > >  .../jh7110-starfive-visionfive-2.dtsi         | 49 ++++++++++++++
-> > >  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 67
-> > +++++++++++++++++++
-> > >  2 files changed, 116 insertions(+)
-> > 
-> > We have been asked to enable CONFIG_VIDEO_STARFIVE_CAMSS in the
-> > Debian kernel, which from my understanding and given the device tree shown
-> > below also requires enabling CONFIG_VIDEO_CADENCE_CSI2RX. That said
-> > doing so triggers the following error in dmesg:
-> > 
-> > [   25.143282] cdns-csi2rx 19800000.csi: probe with driver cdns-csi2rx
-> > failed with error -22
-> > 
-> > From a quick look it seems there is something in the port@0 csi2rx entry. Do
-> > you happen to know what is wrong?
-> > 
+> Bigger parts of the rk3588s-orangepi-5.dts file were
+> moved into a new rk3588s-orangepi-5.dtsi file, so
+> that both device trees from the orangepi-5 and 5b
+> include from it and avoid including from the .dts.
 > 
-> You need to add your sensor node. You can refer to this patch:
-> https://patchwork.kernel.org/project/linux-riscv/patch/20240119100639.84029-3-changhuang.liang@starfivetech.com/
+> This changes the Orange Pi 5's sdmmc alias to be mmc1,
+> breaking existing users if they used the /dev/mmc0 device
+> file, so it's consistent with all the other rk3588 DTS,
+> which, is also the new default that rockchip wants to use.
+> https://github.com/orangepi-xunlong/linux-orangepi/commit/bce92d16b230b8e93c2831fb7768839fd7bbab04
+> Therefore also add the sdhc alias to be mmc0 on the
+> rk3588s-orangepi-5b.dts.
+
+It would be good to reflow the patch description to use the
+76-or-so-column width a bit better.
+
+> How does this board differ from the original Orange Pi 5?
+>   - the Orange Pi 5 has a M.2 NVMe M-key PCI 2.0x1
+>     slot (hooked to combphy0_ps) whereas the Orange Pi 5b uses 
+> combphy0_ps
+>     for the WiFi.
+>   - The Orange Pi 5 with the M.2 socket has a regulator defined hooked 
+> to
+>     "GPIO0_C5" (i.e. PCIE_PWREN_H) whereas the Orange Pi 5B has 
+> GPIO0_C5
+>     hooked to BT_WAKE_HOST.
+>   - builtin eMMC storage
+>   - no SPI NOR flash (u-boot, preboot etc. initiates
+>       from within the eMMC
+>       storage)
+>   - ap6275p Wifi module (like the Orange Pi 5 Plus)
+>   - builtin BlueTooth module
 > 
-> We suggest that using the imx219
+> Signed-off-by: Cenk Uluisik <cenk.uluisik@googlemail.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>  .../boot/dts/rockchip/rk3588s-orangepi-5.dts  | 798 +-----------------
+>  ...orangepi-5.dts => rk3588s-orangepi-5.dtsi} |  36 +-
+>  .../boot/dts/rockchip/rk3588s-orangepi-5b.dts |  27 +
+>  4 files changed, 73 insertions(+), 789 deletions(-)
 
-Thanks for your answer. I do not have any sensor attached, the goal is
-to build a generic kernel, and people can use overlays or patch their
-device tree to add support for additional devices.
+Please see my patch [1] that presents use of a set of git-diff(1)
+parameters that could also, possibly, reduce the size of this patch
+significantly and increase its readability.
 
-In that regard, I have the impression that csi2rx device (and maybe the
-camss device?) should not be marked as enabled in the default device
-tree. I think they could be enabled by users as part of the change need
-to add the sensor node.
-
-Regards
-Aurelien
-
--- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+[1] 
+https://lore.kernel.org/linux-rockchip/f3d789c14fe34a53327cac03cd3837e530e21f5c.1728937091.git.dsimic@manjaro.org/
 
