@@ -1,138 +1,205 @@
-Return-Path: <linux-kernel+bounces-364041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8769899CA64
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD6B99CA69
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31DDE1F2304C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA2D2812B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4D91A76A3;
-	Mon, 14 Oct 2024 12:39:02 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F851A7271;
+	Mon, 14 Oct 2024 12:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PHGUumH8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9xAPvqnV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PHGUumH8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9xAPvqnV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7561A7265;
-	Mon, 14 Oct 2024 12:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5571A7249;
+	Mon, 14 Oct 2024 12:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728909542; cv=none; b=FsF3S9DmvI0tqnQ6RIy5T3AIrvI0KUd95AWugPlVisibIQSQZRHPCWF+1e3KwIRb6A30EYQS48Ain3BdgoKKWngWSFHmIq7zjfnR4OPiHj6XbuZ3sjJJqBAX+lvdQ/apOdmqUm6tNa2Hz47gE4OoE23Sz0N1YFyTAU4EanipUXo=
+	t=1728909629; cv=none; b=nEhg4f/W3qLwi9t68zep3I4EyV8hdXs1GNUfvHnwjUlP0e/6PW7/AFKGWmUUQCEpinW+To8FDyYTm1KpQ8ltFlP1U1r52z9sOSuLqyuUDVCwEAGzEySFKtsE07o/pBZD9Nw86+1vXYODw+P6yqJ0IoIFG4J++dillBfOt3nTpEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728909542; c=relaxed/simple;
-	bh=rYDIZbKlan7o80zOmIUX4D3Rm04vlRDItz+xRnK70vU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kFpXaXq+UGbm4fX1jsEyL6DDEyKGK1tA3QIVlV1MpX+tVTKUBwcZD/w+otca38Ar6D2/MCGi+7F3Q3TxEHOhfl/8dYSPkPLpu+guOVAfirzb42ecXGQLQDOfIePsLiT7XFtKJvCPGPyAecfZCwtIoKrdY1WoFJdRMNtBpCzXGAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XRxZj6RbrzyTBb;
-	Mon, 14 Oct 2024 20:37:33 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id B53501402CA;
-	Mon, 14 Oct 2024 20:38:55 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 14 Oct 2024 20:38:55 +0800
-Message-ID: <14627cec-d54a-4732-8a99-3b1b5757987d@huawei.com>
-Date: Mon, 14 Oct 2024 20:38:55 +0800
+	s=arc-20240116; t=1728909629; c=relaxed/simple;
+	bh=eLv93g+XA//OTp2safLqFz4/KQcBzg9Js76cf3suyXc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eQKK00LCwFuVmbld3XbL48MMw7S8rPVjyBECKXUCdr0XoVAkkvdAPwa2YGknLDpW8v+epeOtPYjL5QwKoQ+yEoUAwO3BnKnmMdgrdoD6FAsqfxdAYVS/W7L2z/P8w78NcdPh3fZ0AFSElRe8rx2FrGToLpWnvxTar6RRLYqefyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PHGUumH8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9xAPvqnV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PHGUumH8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9xAPvqnV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5CE161FDF9;
+	Mon, 14 Oct 2024 12:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728909625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7ZJ2fMmVlwHb5HvH9xU5iseMxVbY4QfNNlC3OaZlj+w=;
+	b=PHGUumH8nj5isCuPAQnE4eYR5dihMZdP7zvegGPfRu+qTFJZVJYhvq15ZiV2V9k1hB154c
+	GG8HKcOnHJeeDSASCBeRlpaqCYxD6rVU8vXoc+rRNBck6FubfFFyh6fSQ7sRzYIiJaqlvr
+	Gk19R6YhPHsb91hLtAPq5NNRfuPGXqg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728909625;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7ZJ2fMmVlwHb5HvH9xU5iseMxVbY4QfNNlC3OaZlj+w=;
+	b=9xAPvqnViW03ecvj5tWuJNz4ilkQOcf5wIaUHnifeZcnuht5FjCTnnu1CdZhWD2J8OJgav
+	8i15gyza3wbwqWCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=PHGUumH8;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9xAPvqnV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728909625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7ZJ2fMmVlwHb5HvH9xU5iseMxVbY4QfNNlC3OaZlj+w=;
+	b=PHGUumH8nj5isCuPAQnE4eYR5dihMZdP7zvegGPfRu+qTFJZVJYhvq15ZiV2V9k1hB154c
+	GG8HKcOnHJeeDSASCBeRlpaqCYxD6rVU8vXoc+rRNBck6FubfFFyh6fSQ7sRzYIiJaqlvr
+	Gk19R6YhPHsb91hLtAPq5NNRfuPGXqg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728909625;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7ZJ2fMmVlwHb5HvH9xU5iseMxVbY4QfNNlC3OaZlj+w=;
+	b=9xAPvqnViW03ecvj5tWuJNz4ilkQOcf5wIaUHnifeZcnuht5FjCTnnu1CdZhWD2J8OJgav
+	8i15gyza3wbwqWCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B39C313A42;
+	Mon, 14 Oct 2024 12:40:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kGUyKjgRDWctRgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 14 Oct 2024 12:40:24 +0000
+Date: Mon, 14 Oct 2024 14:41:22 +0200
+Message-ID: <8734kyyhzh.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Greg Marsden
+ <greg.marsden@oracle.com>,
+	Ivan Ivanov <ivan.ivanov@suse.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Miroslav Benes <mbenes@suse.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [RFC PATCH v1 22/57] sound: Remove PAGE_SIZE compile-time constant assumption
+In-Reply-To: <6926988e-5532-457f-9e1a-135b03585c5d@arm.com>
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+	<20241014105912.3207374-1-ryan.roberts@arm.com>
+	<20241014105912.3207374-22-ryan.roberts@arm.com>
+	<Zw0CyAlSmaxOCZJl@finisterre.sirena.org.uk>
+	<6926988e-5532-457f-9e1a-135b03585c5d@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
-To: Furong Xu <0x1207@gmail.com>
-CC: Ilias Apalodimas <ilias.apalodimas@linaro.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<xfr@outlook.com>
-References: <20241010114019.1734573-1-0x1207@gmail.com>
- <601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
- <20241011101455.00006b35@gmail.com>
- <CAC_iWjL7Z6qtOkxXFRUnnOruzQsBNoKeuZ1iStgXJxTJ_P9Axw@mail.gmail.com>
- <20241011143158.00002eca@gmail.com>
- <21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
- <CAC_iWjLE+R8sGYx74dZqc+XegLxvd4GGG2rQP4yY_p0DVuK-pQ@mail.gmail.com>
- <d920e23b-643d-4d35-9b1a-8b4bfa5b545f@huawei.com>
- <20241014143542.000028dc@gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <20241014143542.000028dc@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 5CE161FDF9
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2024/10/14 14:35, Furong Xu wrote:
-> Hi Yunsheng,
+On Mon, 14 Oct 2024 14:24:02 +0200,
+Ryan Roberts wrote:
 > 
-> On Sat, 12 Oct 2024 14:14:41 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+> On 14/10/2024 12:38, Mark Brown wrote:
+> > On Mon, Oct 14, 2024 at 11:58:29AM +0100, Ryan Roberts wrote:
+> >> -static const struct snd_pcm_hardware dummy_dma_hardware = {
+> >> +static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(struct snd_pcm_hardware, dummy_dma_hardware, {
+> >>  	/* Random values to keep userspace happy when checking constraints */
+> >>  	.info			= SNDRV_PCM_INFO_INTERLEAVED |
+> >>  				  SNDRV_PCM_INFO_BLOCK_TRANSFER,
+> >> @@ -107,7 +107,7 @@ static const struct snd_pcm_hardware dummy_dma_hardware = {
+> >>  	.period_bytes_max	= PAGE_SIZE*2,
+> >>  	.periods_min		= 2,
+> >>  	.periods_max		= 128,
+> >> -};
+> >> +});
+> > 
+> > It's probably better to just use PAGE_SIZE_MAX here and avoid the
+> > deferred patching, like the comment says we don't particularly care what
+> > the value actually is here given that it's a dummy.
 > 
->> I would prefer to add a new api to do that, as it makes the semantic
->> more obvious and may enable removing some checking in the future.
->>
->> And we may need to disable this 'feature' for frag relate API for now,
->> as currently there may be multi callings to page_pool_put_netmem() for
->> the same page, and dma_sync is only done for the last one, which means
->> it might cause some problem for those usecases when using frag API.
+> OK, so would that be:
 > 
-> I am not an expert on page_pool.
-> So would you mind sending a new patch to add a non-dma-sync version of
-> page_pool_put_page() and CC it to me?
-
-As I have at least two patchsets pending for the net-next, which seems
-it might take a while, so it might take a while for me to send another
-new patch.
-
-Perhaps just add something like page_pool_put_page_nosync() as
-page_pool_put_full_page() does for the case of dma_sync_size being
--1? and leave removing of extra checking as later refactoring and
-optimization.
-
-As for the frag related API like page_pool_alloc_frag() and
-page_pool_alloc(), we don't really have a corresponding free side
-API for them, instead we reuse page_pool_put_page() for the free
-side, and don't really do any dma sync unless it is the last frag
-user of the same page, see the page_pool_is_last_ref() checking in
-page_pool_put_netmem().
-
-So it might require more refactoring to support the usecase of
-this patch for frag API, for example we might need to pull the
-dma_sync operation out of __page_pool_put_page(), and put it in
-page_pool_put_netmem() so that dma_sync is also done for the
-non-last frag user too.
-Or not support it for frag API for now as stmmac driver does not
-seem to be using frag API, and put a warning to catch the case of
-misusing of the 'feature' for frag API in the 'if' checking in
-page_pool_put_netmem() before returning? something like below:
-
---- a/include/net/page_pool/helpers.h
-+++ b/include/net/page_pool/helpers.h
-@@ -317,8 +317,10 @@ static inline void page_pool_put_netmem(struct page_pool *pool,
-         * allow registering MEM_TYPE_PAGE_POOL, but shield linker.
-         */
- #ifdef CONFIG_PAGE_POOL
--       if (!page_pool_is_last_ref(netmem))
-+       if (!page_pool_is_last_ref(netmem)) {
-+		/* Big comment why frag API is not support yet */
-+               DEBUG_NET_WARN_ON_ONCE(!dma_sync_size);
-                return;
-+       }
-
-        page_pool_put_unrefed_netmem(pool, netmem, dma_sync_size, allow_direct);
- #endif
-
-
-> I am so glad to test it on my device ;)
-> Thanks.
+> 	.buffer_bytes_max	= 128*1024,
+> 	.period_bytes_min	= PAGE_SIZE_MAX,      <<<<<
+> 	.period_bytes_max	= PAGE_SIZE_MAX*2,    <<<<<
+> 	.periods_min		= 2,
+> 	.periods_max		= 128,
 > 
+> ?
 > 
+> It's not really clear to me how all the parameters interact; the buffer size
+> 128K, which, if PAGE_SIZE_MAX is 64K, would hold 1 period of the maximum size.
+> But periods_min is 2. So not sure that works? Or perhaps I'm trying to apply too
+> much meaning to the param names...
+
+Right, when PAGE_SIZE_MAX is 64k, 128k won't be used because of the
+constrant of periods_min=2.
+
+As Mark mentioned, here the actual size itself doesn't matter much.
+So I suppose it'd be even simpler to define just 4096 and 4096 * 2 for
+period_bytes_min and *_max instead of sticking with PAGE_SIZE.  Then
+it would become platform-agnostic, too.
+
+
+thanks,
+
+Takashi
 
