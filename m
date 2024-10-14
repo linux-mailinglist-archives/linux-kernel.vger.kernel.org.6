@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-364107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19BE99CB3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:13:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAA099CAFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C461F23649
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D531C2374B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64FA1AAE22;
-	Mon, 14 Oct 2024 13:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2D31AA7A1;
+	Mon, 14 Oct 2024 13:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMvBZJVO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SahEqF1d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101C81A76C4;
-	Mon, 14 Oct 2024 13:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DF71A4F20;
+	Mon, 14 Oct 2024 13:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911493; cv=none; b=eeSDxrQk8+xnUIpvuq8HzU3azwQnUMgTfDrdPo3SYqPXwfqlqDT81IzPVd/o7BVdsx4JHuKXwhrJaVot0Gqs+ZstH+NxABCTTSrgYa7FnLfD2HK6PVY9Yd/ESKetxgglUMTbXoOOgN6zsM+MzOe0/m2XiGbNh8KQIuc9/14YR+w=
+	t=1728911204; cv=none; b=QhPIf86oSv/u66UAUBSQb+0AgCOLpwxkPgoaWIZA44zWZqCmCQJ8CK19x37axg4nfBol18aAFPJPzIquN0K9Uk3SWc3pIPDUUcWNnWFJQl43RNdOTkTA4e2rC6UpXhX2nRVEHbCn3fevsGdmZXwegyfi5GjIZ6/yE9+dtkwuKL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911493; c=relaxed/simple;
-	bh=Rj0DDOED5iD2FdGYxYV+4r4tEXYq4n6Xi/0d9QAVLUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jv2BjvjRfhADX1K/7e1XCYeM8/kImi6/9tkXEXk90RWuefHEx1UKDuIKqtLoLMJtswZNCFzyyX9AWJ5xlJK6FwhmVYwpsev9aq9ezQwygKULDJGSLuKtF+T1pLtgxNgi25DatM6G0qfaITvVGe7t+ga4lYgeJ6HObxENxVjug6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMvBZJVO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D95C4CEC3;
-	Mon, 14 Oct 2024 13:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728911492;
-	bh=Rj0DDOED5iD2FdGYxYV+4r4tEXYq4n6Xi/0d9QAVLUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vMvBZJVOinxsLsrPPXzSxPojzLbDfnzNQ55w0X0QwTjcMMxar0CDAK08E2JThkQpb
-	 4cpioov/cqx2XJwdmLwC1BTnXl3vfXvrgA1ETi3RHPPFn/KFa3uZAW+joXD5HEZg+c
-	 4U5ok631tPzwPd7hoGyNRL5ynGDynUSOamB6K2RiHfHSi/erCk9kHqPS+1U5lBuMVB
-	 r0jU8Sa0yR3rOlG2WDCJ68+YmRHtYreB6qz66TSlQdG0YMQVcdBysszRX2pWrQ1lN4
-	 ziJbkceFmXn8rCIwx79sxsDKS6SGBNY9GisCIBFcBwGbEy+4gMh7VJcsFjn3AG+8KF
-	 uacBBUphpSFpQ==
-Date: Mon, 14 Oct 2024 16:07:40 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 7/8] execmem: add support for cache of large ROX pages
-Message-ID: <Zw0XnDHbpHDwFDHy@kernel.org>
-References: <20241009180816.83591-1-rppt@kernel.org>
- <20241009180816.83591-8-rppt@kernel.org>
- <Zwd7GRyBtCwiAv1v@infradead.org>
- <ZwfPPZrxHzQgYfx7@kernel.org>
- <ZwjXz0dz-RldVNx0@infradead.org>
- <ZwuIPZkjX0CfzhjS@kernel.org>
- <ZwyyTetoLX7aXhGg@infradead.org>
+	s=arc-20240116; t=1728911204; c=relaxed/simple;
+	bh=PTBOYMEy5sDrtcwT6alRgPl5WDMXK8h4WMrdqBbUtyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eqPgtn+mQmej73Mgam19roOtaUKsKZP+ykUP/LjjUzKbVilCo23r4zsc/YtmlVasd+rTMk28DxXbDKwScAb67Br3x2hgmLjbA6PbTO4CXJ8x46B9qq6xy+CzG5skLrsbiDv2WUgloDyNcCWmOGzBScpA9gzDTtZyF7wG/N5mIbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SahEqF1d; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728911203; x=1760447203;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PTBOYMEy5sDrtcwT6alRgPl5WDMXK8h4WMrdqBbUtyI=;
+  b=SahEqF1dxhBQi2YZ07lUHo55+o6bkqydkvG/rvAu99YqrdH31xR/YiZn
+   yokMsqafjjbKb50aVmO0Ihuchp60SlpE2cyxqkJca9isRPoBSliIeW6vJ
+   BbemQ86VrbPmktJdB+TAC1jufZYTeuROL7LsOmDw3oVUJuPaj1KIRugkI
+   sJKdlcWdSQb9ooJ9TZMO1Fw3jytU5jgptF6H1p7cGBdSyGF4e/2qlSfWq
+   +zwKFfQhZ+KcCnMNbJRX8qTnbZDd4Yl+r7zXh6kW3ppWupVoFENSmUSZi
+   suzFRR2ET0fEXFJPX/FJ7qKfSIZ6zpal3IUlhs6cszZh3WoFGzWPLHQMZ
+   Q==;
+X-CSE-ConnectionGUID: tK0wPuleRpSBv+uQjJErnQ==
+X-CSE-MsgGUID: 1bUvLy8nTj++GxlgQ16oNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="53678612"
+X-IronPort-AV: E=Sophos;i="6.11,203,1725346800"; 
+   d="scan'208";a="53678612"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 06:06:42 -0700
+X-CSE-ConnectionGUID: E9t8hJZtRi+7bkSsKuDGBg==
+X-CSE-MsgGUID: mzLeac+ZReall9eN25SgHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,203,1725346800"; 
+   d="scan'208";a="82192851"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
+  by fmviesa004.fm.intel.com with ESMTP; 14 Oct 2024 06:06:36 -0700
+Message-ID: <afc9fa53-b7f2-45d0-bd30-8681b71beef5@linux.intel.com>
+Date: Mon, 14 Oct 2024 16:08:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwyyTetoLX7aXhGg@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/5] usb: host: enable sideband transfer during system
+ sleep
+To: Guan-Yu Lin <guanyulin@google.com>, Thinh.Nguyen@synopsys.com,
+ gregkh@linuxfoundation.org, mathias.nyman@intel.com,
+ stern@rowland.harvard.edu, yajun.deng@linux.dev, sumit.garg@linaro.org,
+ kekrby@gmail.com, oneukum@suse.com, dianders@chromium.org, perex@perex.cz,
+ tiwai@suse.com, niko.mauno@vaisala.com, andreyknvl@gmail.com,
+ christophe.jaillet@wanadoo.fr, tj@kernel.org, stanley_chang@realtek.com,
+ quic_jjohnson@quicinc.com, ricardo@marliere.net
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, badhri@google.com, albertccwang@google.com,
+ quic_wcheng@quicinc.com, pumahsu@google.com
+References: <20241014085816.1401364-1-guanyulin@google.com>
+ <20241014085816.1401364-6-guanyulin@google.com>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20241014085816.1401364-6-guanyulin@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 13, 2024 at 10:55:25PM -0700, Christoph Hellwig wrote:
-> On Sun, Oct 13, 2024 at 11:43:41AM +0300, Mike Rapoport wrote:
-> > > But why?  That's pretty different from our normal style of arch hooks,
-> > > and introduces an indirect call in a security sensitive area.
-> > 
-> > Will change to __weak hook. 
-> 
-> Isn't the callback required when using the large ROX page?  I.e.
-> shouldn't it be an unconditional callback and not a weak override?
+On 14.10.2024 11.50, Guan-Yu Lin wrote:
+> Sharing a USB controller with another entity via xhci-sideband driver
+> creates power management complexities. To prevent the USB controller
+> from being inadvertently deactivated while in use by the other entity, a
+> usage-count based mechanism is implemented. This allows the system to
+> manage power effectively, ensuring the controller remains available
+> whenever needed.
 
-I'll add a Kconfig option to ensure that an architecture that wants to use
-large ROX pages has explicit callback for that.
+I don't think all this is needed to prevent USB controller from being
+deactivated while sideband is in use. The modified audio class driver
+that uses sideband is still bound to a usb interface device, and all
+normal pm reference counting should work.
 
--- 
-Sincerely yours,
-Mike.
+To me it looks like this code is tricking pm framework into believing
+the usb device and host controller have successfully suspended during
+system suspend when they in reality are fully up and running.
+
+I'm not sure I fully understand the case this series is solving.
+
+Thanks
+Mathias
+
 
