@@ -1,80 +1,200 @@
-Return-Path: <linux-kernel+bounces-363273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE8C99BFE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D6E99BFE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA82C280E8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 663D6282985
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBB513DDDD;
-	Mon, 14 Oct 2024 06:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xgNFo2lw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD70140E2E;
+	Mon, 14 Oct 2024 06:17:25 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC7B3E47B;
-	Mon, 14 Oct 2024 06:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7791760DCF
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728886635; cv=none; b=hitqMaPu6Lbpy8rRCysN0hATJgOuP7xItirUNHHKUsVG0+rpdYFLeuoArHWWKnVa7APlzy8/JN/Xn+lnVPow6RsODybyXJBDlB1cxrYe5D4jiDzCPra62CUsUwRQbxwB/DSsj4+MLQRz9xaARNhXbW2Y0aM85hRjcIwmSzPJi3w=
+	t=1728886645; cv=none; b=kyMh5uqOdThdEmPUdsy+4cX0BVyj/33wAKAPJ1jnTN+jjTlU4ZVFa+oGusCI7qiDyDQQWJ4yplbpn1FHXQx9Oj/eznoIwMuY8XhD2I0JA1CT9JLf9rrInH38BycOSPKQvi5JLUV4axLnUEXQZl8ZtovkIhdu7hzWq4XsijYnvGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728886635; c=relaxed/simple;
-	bh=DaCfb60xXYGTfydHKa4gWcBaytXWhjn1261Cct4Va0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2iUwZD6qELCSNH04jOuIR3YJNIP9NZuaDGaBgJ76XtXCqE1u8VdE2ZLkgAqU7UNI3KHWMCbWOOo3W0S6oXxUeRvmnJ9L+Q0YTVAiEOJFnPGLeQMwSY7BrYZoMpzBbtf3Es3TRBhZQe7+74d4p/OkzMUXLIz5GhEBE2lNcCyQEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xgNFo2lw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15FDAC4CEC3;
-	Mon, 14 Oct 2024 06:17:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728886634;
-	bh=DaCfb60xXYGTfydHKa4gWcBaytXWhjn1261Cct4Va0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xgNFo2lwsS4g7B6G3hhKZ53RUL/IeRISuCAuwGQvamLPDKTsWfzarlUTYhkKxHP30
-	 fgrCjLCT1vNKYWv8issN3pS+K9uCJ0+DOwRzXbt2+eUTh4J/jrjcSge/1wiOn72h44
-	 MuI0XvzIUzVuXYPbyAX1k9kmSoUAi1KMl1yAxC2Y=
-Date: Mon, 14 Oct 2024 08:17:12 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build failure after merge of the bcachefs tree
-Message-ID: <2024101458-tux-unopposed-7960@gregkh>
-References: <20241014102859.53f4774f@canb.auug.org.au>
+	s=arc-20240116; t=1728886645; c=relaxed/simple;
+	bh=FuSlxbMfeRmXypGhWxhFJ8OCi9c5Q63HRLEBD628/+Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qrYUeoh2Nkm/jF28SiATBHsn2i1QcApcjWz2T+gaxo8sczeZvHXxoSyefplxkQQce67/L056s5orGfDSLWJvNbAt9QVEnnOavbAZjBBPKPvcsIV2sGIDtD3cvQLS6NVmyXPPmY1Q6stSeoB4x/yX3XQBYupdJjQll31HjBm2qAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so6741405ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:17:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728886642; x=1729491442;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B6SLUhu9WKh2xClqb5Vsket9NVDXVbBlHIM8iF15Kng=;
+        b=CmcvA3D/oiFdloMPpS6xrvl2E12oLMkDqRNGwPLzb0CrAynMNPCiKwd+btsp6/gF7W
+         O/eKbQHePzljFpa7PJ7Qhg8QK1Il1mYuGXlP6phDO+am4pPIxy4a9ZfogsbWHi5l9pXc
+         +UUMenBDQTzfwtvjijR9uHrs61/CZKQKaqbyv/IfB37EExAuidkEvtcDO8vgv0czqOH0
+         E5r+lN9pLq5TNvROvQ7yG6ZRlqmypHovKB75d55gAGAPOc0t0fCHT0KR38e2+Z84MX+J
+         RcNjmtlbFVV7HgJJjyUlbEqVef3hbVJHvHuuSH5jToJ5xgAgq1MTxLhoNgHcMPHFgQ32
+         yw1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVtllDnqvvQy0dAqMygvAwAFQ8ZV628oAgSSuQOJ7w4uimmwxuRqZhjuy4lt1zgr4PZinnodA6dB+pABWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIcK/oSQqZIoKT95F2idytHHHfs+x3cVL5MFtIjQaPn5t3C0oa
+	BH88fhMk2PRMla3jx+i8IWgXT3RZ890nwx6c+OVSXf6ynTvBC6eEGcO9bbtagwbp+1PB+nzfCXG
+	iID8/P3JeHRszRyyURY0ms5aZVyhlVPxH0TLZW2da7N+siZXZSQ1+fcQ=
+X-Google-Smtp-Source: AGHT+IF0KpBUXtqkzLwJiDpYmExyMkV1rKRbG/VoTqbvM2rsUGprgHORYYlAh+CBuRNIjWhFq9FQ7p8IMDvfTD3aHG2bRpbTQ9Fk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014102859.53f4774f@canb.auug.org.au>
+X-Received: by 2002:a05:6e02:178b:b0:3a0:8d60:8b7d with SMTP id
+ e9e14a558f8ab-3a3bcdbdb3emr43271045ab.11.1728886642595; Sun, 13 Oct 2024
+ 23:17:22 -0700 (PDT)
+Date: Sun, 13 Oct 2024 23:17:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670cb772.050a0220.3e960.0056.GAE@google.com>
+Subject: [syzbot] [ocfs2?] general protection fault in ocfs2_evict_inode
+From: syzbot <syzbot+0058ba2149d0a0c61344@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 14, 2024 at 10:28:59AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the bcachefs tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: modpost: "sysfs_delete_link" [fs/bcachefs/bcachefs.ko] undefined!
-> 
-> Caused by commit
-> 
->   c37fd6772eea ("bcachefs: Fix sysfs warning in fstests generic/730,731")
-> 
-> sysfs_delete_link() is not exported to modules.
+Hello,
 
-Perhaps sysfs_remove_link() should be used instead?
+syzbot found the following issue on:
 
-thanks,
+HEAD commit:    33ce24234fca Add linux-next specific files for 20241008
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14148f07980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4750ca93740b938d
+dashboard link: https://syzkaller.appspot.com/bug?extid=0058ba2149d0a0c61344
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-greg k-h
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ee8dc2df0c57/disk-33ce2423.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dc473c0fa06e/vmlinux-33ce2423.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4671f1ca2e61/bzImage-33ce2423.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0058ba2149d0a0c61344@syzkaller.appspotmail.com
+
+ocfs2: Unmounting device (7,4) on (node local)
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 1 UID: 0 PID: 11386 Comm: syz.4.712 Not tainted 6.12.0-rc2-next-20241008-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:ocfs2_clear_inode fs/ocfs2/inode.c:1208 [inline]
+RIP: 0010:ocfs2_evict_inode+0xdd3/0x4680 fs/ocfs2/inode.c:1220
+Code: 00 00 4c 89 e0 48 c1 e8 03 42 80 3c 30 00 74 08 4c 89 e7 e8 5f 17 71 fe 4c 01 f3 4d 8b 24 24 49 83 c4 08 4c 89 e0 48 c1 e8 03 <42> 80 3c 30 00 74 08 4c 89 e7 e8 3e 17 71 fe 49 8b 3c 24 49 81 c7
+RSP: 0018:ffffc9000349ef00 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: fffff52000693df4 RCX: ffff88802db11e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000349f650 R08: ffffffff838d937e R09: 1ffff1100bf6f616
+R10: dffffc0000000000 R11: ffffed100bf6f617 R12: 0000000000000008
+R13: 1ffff1100bf6f644 R14: dffffc0000000000 R15: ffff88805fb7b338
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000021000000 CR3: 000000002dcfc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ evict+0x4e8/0x9b0 fs/inode.c:808
+ __ocfs2_free_slot_info fs/ocfs2/slot_map.c:307 [inline]
+ ocfs2_free_slot_info+0x94/0x270 fs/ocfs2/slot_map.c:443
+ ocfs2_delete_osb+0x58/0x180 fs/ocfs2/super.c:2497
+ ocfs2_dismount_volume+0x594/0x8f0 fs/ocfs2/super.c:1936
+ generic_shutdown_super+0x139/0x2d0 fs/super.c:642
+ kill_block_super+0x44/0x90 fs/super.c:1696
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xa2f/0x28e0 kernel/exit.c:939
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+ get_signal+0x16a3/0x1740 kernel/signal.c:2917
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f581257dff9
+Code: Unable to access opcode bytes at 0x7f581257dfcf.
+RSP: 002b:00007f5813441038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: 0000000000ffecc0 RBX: 00007f5812735f80 RCX: 00007f581257dff9
+RDX: 7706c522012798af RSI: 0000000020001340 RDI: 0000000000000005
+RBP: 00007f58125f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f5812735f80 R15: 00007ffd87bff1c8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_clear_inode fs/ocfs2/inode.c:1208 [inline]
+RIP: 0010:ocfs2_evict_inode+0xdd3/0x4680 fs/ocfs2/inode.c:1220
+Code: 00 00 4c 89 e0 48 c1 e8 03 42 80 3c 30 00 74 08 4c 89 e7 e8 5f 17 71 fe 4c 01 f3 4d 8b 24 24 49 83 c4 08 4c 89 e0 48 c1 e8 03 <42> 80 3c 30 00 74 08 4c 89 e7 e8 3e 17 71 fe 49 8b 3c 24 49 81 c7
+RSP: 0018:ffffc9000349ef00 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: fffff52000693df4 RCX: ffff88802db11e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000349f650 R08: ffffffff838d937e R09: 1ffff1100bf6f616
+R10: dffffc0000000000 R11: ffffed100bf6f617 R12: 0000000000000008
+R13: 1ffff1100bf6f644 R14: dffffc0000000000 R15: ffff88805fb7b338
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000021000000 CR3: 000000002dcfc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	00 00                	add    %al,(%rax)
+   2:	4c 89 e0             	mov    %r12,%rax
+   5:	48 c1 e8 03          	shr    $0x3,%rax
+   9:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1)
+   e:	74 08                	je     0x18
+  10:	4c 89 e7             	mov    %r12,%rdi
+  13:	e8 5f 17 71 fe       	call   0xfe711777
+  18:	4c 01 f3             	add    %r14,%rbx
+  1b:	4d 8b 24 24          	mov    (%r12),%r12
+  1f:	49 83 c4 08          	add    $0x8,%r12
+  23:	4c 89 e0             	mov    %r12,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 e7             	mov    %r12,%rdi
+  34:	e8 3e 17 71 fe       	call   0xfe711777
+  39:	49 8b 3c 24          	mov    (%r12),%rdi
+  3d:	49                   	rex.WB
+  3e:	81                   	.byte 0x81
+  3f:	c7                   	.byte 0xc7
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
