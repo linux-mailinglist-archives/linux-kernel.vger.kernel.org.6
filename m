@@ -1,135 +1,152 @@
-Return-Path: <linux-kernel+bounces-364501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35FC299D565
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:15:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8AB99D569
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAD291F24686
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:15:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66201F24003
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26801C0DD6;
-	Mon, 14 Oct 2024 17:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PX/geZ6o";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lV9OJCJq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE811C1ADB;
+	Mon, 14 Oct 2024 17:17:03 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65141AB507;
-	Mon, 14 Oct 2024 17:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D845A29A0;
+	Mon, 14 Oct 2024 17:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728926130; cv=none; b=qyL2AuxtpRm5YP5qGlvXQhlH2rj/aQcOw27/Keb5Vec/DRYeb1+qf+rx5zs66Hr9VW39AFYkPIhwap2I9PPGCKgkD8GEUklGHPRjaCQmRFardgUJ/bRNYKdmVYGGauIJawXyb9YjSvBokj6qFlXdcx6kFYk3NTH8oOxsUEn5rX0=
+	t=1728926222; cv=none; b=MitvxvdxKWT2schBe8Gyq04IjrBAO1uOpL20bWIpcB4gyqr7QrpImtcRT/sbmFOFUXMHOcBTrapT6g05hZiV84GV1YXTcaGdYalfIIoLFKNZ9kM4D8+QEgUkmvxfwaXFY9DDV4s4LR5lYJs1AAxvRl2biX1DzOmeWJKudC/J6Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728926130; c=relaxed/simple;
-	bh=n5Kbeynb9dYQqAYNARe8OK4pIiXFkQVB7iVuUzmt4lA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dwOoIsvcT7Vjs1BH6lvG110C3+B821jVbmveKU5g3pmmzkt3mSwzgmXXaQHtLyv+qh1if5Mtt+z76+CSbJPW1/869ylzxVIwyS0waanpKcpE2t41c00l4zT6tQm2R1EkK/sA83IXvJrKU7oRMxDuFf4j3++GZYIfFVsxayFfBk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PX/geZ6o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lV9OJCJq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 14 Oct 2024 17:15:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728926126;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OjGR580tfrYCHIjnzfz5A20mun0pLBD6siz0jwVGOYw=;
-	b=PX/geZ6oCLoM7/6+6BNJO0kXM35KUPHlBq791e2SCC+kzHezNQZ7WsiRVOuLiRw3E4uJ21
-	iUq6SvppO6n+1gAZHYB3h2/TXB2UlbdnTFZi3oc6+TZidq1VF1lpOTIChPCNApDZGhdCe/
-	uw9puIEHhG6twKDA0+tyztx9gOGDJ/99nSZaKYH3bQDtZDkRFMpBGNSqDxsBCmd79/0/F/
-	ORRbfmX0b+mS6tPZyNuQZ0JJ6g/D1xgKPGroCAuPRoftvjHPnzBLfutUcqEqBha5fEACPv
-	N7+KEr54ji45KyfMI2L5qQ1M5JGwGLKY6zuHAHrNkPctIRda6fCGvFFZJhUVqA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728926126;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OjGR580tfrYCHIjnzfz5A20mun0pLBD6siz0jwVGOYw=;
-	b=lV9OJCJqUe3Dd0aLtqZbgJMVfKsMcD35ZtasObDTsJtJPRb2Vhf5Nk1URp1iPIFZZAmSyL
-	lZ4bYsFJQJuR4UBQ==
-From: "tip-bot2 for Christophe JAILLET" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cache] x86/resctrl: Slightly clean-up mbm_config_show()
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Cb2ebc809c8b6c6440d17b12ccf7c2d29aaafd488=2E17208?=
- =?utf-8?q?68538=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
-References: =?utf-8?q?=3Cb2ebc809c8b6c6440d17b12ccf7c2d29aaafd488=2E172086?=
- =?utf-8?q?8538=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
+	s=arc-20240116; t=1728926222; c=relaxed/simple;
+	bh=XCeA+5nUpigSV09HFAGPYtOx2/NeR3ALQlw3vYP/wjE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y/DHLrVU3Rb5CQFm6GUOowGKUA/yiFVKw4mMlZwjXaPoHgLjNxAD6755479acx7R6W7iN5vbiYcNRWGBAwko8RzQu6EZD8RniOKftNOXzM8zBgiSS6EYc7g/fBgUsks4mnarQerkRRRSQpyrhbOnSeWAGatvoCljGRtDO/LBzl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS3mS5pQJz6HJpx;
+	Tue, 15 Oct 2024 01:16:24 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 43E88140CF4;
+	Tue, 15 Oct 2024 01:16:57 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
+ 2024 19:16:55 +0200
+Date: Mon, 14 Oct 2024 18:16:54 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <shiju.jose@huawei.com>, <linux-edac@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <bp@alien8.de>,
+	<tony.luck@intel.com>, <rafael@kernel.org>, <lenb@kernel.org>,
+	<mchehab@kernel.org>, <dan.j.williams@intel.com>, <dave@stgolabs.net>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <david@redhat.com>,
+	<Vilas.Sridharan@amd.com>, <leo.duran@amd.com>, <Yazen.Ghannam@amd.com>,
+	<rientjes@google.com>, <jiaqiyan@google.com>, <Jon.Grimm@amd.com>,
+	<dave.hansen@linux.intel.com>, <naoya.horiguchi@nec.com>,
+	<james.morse@arm.com>, <jthoughton@google.com>, <somasundaram.a@hpe.com>,
+	<erdemaktas@google.com>, <pgonda@google.com>, <duenwen@google.com>,
+	<gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH v13 12/18] platform: Add __free() based cleanup function
+ for platform_device_put
+Message-ID: <20241014181654.00005180@Huawei.com>
+In-Reply-To: <2024101451-reword-animation-2179@gregkh>
+References: <20241009124120.1124-1-shiju.jose@huawei.com>
+	<20241009124120.1124-13-shiju.jose@huawei.com>
+	<20241014164339.00003e73@Huawei.com>
+	<2024101410-turf-junior-7739@gregkh>
+	<2024101451-reword-animation-2179@gregkh>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172892612576.1442.8509245466738133480.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-The following commit has been merged into the x86/cache branch of tip:
+On Mon, 14 Oct 2024 18:04:37 +0200
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-Commit-ID:     29eaa79583671f1e1b468760d505ef837317ab15
-Gitweb:        https://git.kernel.org/tip/29eaa79583671f1e1b468760d505ef837317ab15
-Author:        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-AuthorDate:    Sat, 13 Jul 2024 13:02:32 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 14 Oct 2024 18:58:24 +02:00
+> On Mon, Oct 14, 2024 at 06:00:51PM +0200, Greg KH wrote:
+> > On Mon, Oct 14, 2024 at 04:43:39PM +0100, Jonathan Cameron wrote:  
+> > > On Wed, 9 Oct 2024 13:41:13 +0100
+> > > <shiju.jose@huawei.com> wrote:
+> > >   
+> > > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > > 
+> > > > Add __free() based cleanup function for platform_device_put().
+> > > > 
+> > > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> > > > ---
+> > > >  include/linux/platform_device.h | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > > 
+> > > > diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+> > > > index d422db6eec63..606533b88f44 100644
+> > > > --- a/include/linux/platform_device.h
+> > > > +++ b/include/linux/platform_device.h
+> > > > @@ -232,6 +232,7 @@ extern int platform_device_add_data(struct platform_device *pdev,
+> > > >  extern int platform_device_add(struct platform_device *pdev);
+> > > >  extern void platform_device_del(struct platform_device *pdev);
+> > > >  extern void platform_device_put(struct platform_device *pdev);
+> > > > +DEFINE_FREE(platform_device_put, struct platform_device *, if (_T) platform_device_put(_T))
+> > > >  
+> > > >  struct platform_driver {
+> > > >  	int (*probe)(struct platform_device *);  
+> > > 
+> > > +CC Greg KH and Rafael.
+> > > 
+> > > Makes sure to include them on v14 as this needs review from a driver core point
+> > > of view I think.  
+> > 
+> > Why is this needed for a platform device?  This feels like you will have
+> > to do more work to "keep" the reference on the normal path than you to
+> > today to release the reference on the error path, right?  Have a pointer
+> > to a patch that uses this?  
+> 
+> Ah, is it this one:
+> 	https://lore.kernel.org/all/20241014164955.00003439@Huawei.com/
+> ?
+> 
+> If so, no, that's an abuse of a platform device, don't do that, make a
+> REAL device on the bus that this device lives on.  If it doesn't live on
+> a real bus, then put it on the virtual bus but do NOT abuse the platform
+> device layer for something like this.
 
-x86/resctrl: Slightly clean-up mbm_config_show()
+Ok.  Probably virtual bus it is then.  Rafael, what do you think makes sense
+for a 'feature' that is described only by an ACPI table (here RAS2)?
+Kind of similar(ish) to say IORT.
 
-'mon_info' is already zeroed in the list_for_each_entry() loop below.  There
-is no need to explicitly initialize it here. It just wastes some space and
-cycles.
+My thinking on a platform device was that this could be described
+in DSDT and would have ended up as one. No idea why it isn't.
+Maybe it predated the resource stuff that lets you use PCC channels
+from methods under devices. Anyhow, it's not something I care about
+so virtual bus is fine by me.
 
-Remove this un-needed code.
+Jonathan
 
-On a x86_64, with allmodconfig:
 
-  Before:
-  ======
-     text	   data	    bss	    dec	    hex	filename
-    74967	   5103	   1880	  81950	  1401e	arch/x86/kernel/cpu/resctrl/rdtgroup.o
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-  After:
-  =====
-     text	   data	    bss	    dec	    hex	filename
-    74903	   5103	   1880	  81886	  13fde	arch/x86/kernel/cpu/resctrl/rdtgroup.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Link: https://lore.kernel.org/r/b2ebc809c8b6c6440d17b12ccf7c2d29aaafd488.1720868538.git.christophe.jaillet@wanadoo.fr
----
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index d7163b7..d906a1c 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1596,7 +1596,7 @@ static void mondata_config_read(struct rdt_mon_domain *d, struct mon_config_info
- 
- static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid)
- {
--	struct mon_config_info mon_info = {0};
-+	struct mon_config_info mon_info;
- 	struct rdt_mon_domain *dom;
- 	bool sep = false;
- 
 
