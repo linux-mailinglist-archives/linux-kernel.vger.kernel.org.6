@@ -1,246 +1,88 @@
-Return-Path: <linux-kernel+bounces-364020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD0299C9FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:22:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE4099CA01
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CFF7283C9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712A0283090
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C33A1A0B07;
-	Mon, 14 Oct 2024 12:22:34 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C29A19E961;
+	Mon, 14 Oct 2024 12:24:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F707E574;
-	Mon, 14 Oct 2024 12:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D889C7E574
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728908553; cv=none; b=D10Y2/TJGV+0Mx8xyAa5Wk6cM104xD1t6AkMuPibdO+KZ1WveoAOO+nLPHx7ZdjJMU8IxU+DapeTY+j+NQoZPIBXU7uACiLltfP333QhCbvzzz6/B2VI4eaa9LcAsmG3xkp7RAtyQOWBbcZ+WGZ6+nhLpsAG/LELMpxu5DDq4YU=
+	t=1728908644; cv=none; b=Q4zVPHnbA0KA3fhMA7a/GS5aBofTWP0/RrogkOZg08YjM7IH7aMVhg320o7XLixz233XP7cIUhuzclur8tkrhRomgODVC8Vbb7A6PTwmF4R7I1xzTbWSRmbPFGo5MZK7Ch5kqHkFiN/EZMayD9W5yd4GjGLLGbmPAG77sXSFqWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728908553; c=relaxed/simple;
-	bh=KYuZko1HpxDoLSWLWeZMeIWV/ky/H3yVkCUVxDuGZxQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ur4Ye6FvL9sFbM6+dB32zodmLr1yLgg2yqcjznumsNyHY7xrO1mr7ANUsWKhLXqjGX/9aqSOTnkkc9CJVDomGKwCOmqVp4v/sLF2aLjc7zNIBbkKa4VZuOGcJL9wnMdQYue4VayNSkcFyO6ZHIeDq5RUorkJx5rpWmg+RFp0Als=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XRxBV4zQKzkWhL;
-	Mon, 14 Oct 2024 20:20:02 +0800 (CST)
-Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
-	by mail.maildlp.com (Postfix) with ESMTPS id CE3451402CA;
-	Mon, 14 Oct 2024 20:22:28 +0800 (CST)
-Received: from [10.174.162.134] (10.174.162.134) by
- kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 14 Oct 2024 20:22:27 +0800
-Subject: Re: [PATCH v2] ACPI: GTDT: Tighten the check for the array of
- platform timer structures
-To: Marc Zyngier <maz@kernel.org>
-CC: <lpieralisi@kernel.org>, <guohanjun@huawei.com>, <sudeep.holla@arm.com>,
-	<mark.rutland@arm.com>, <rafael@kernel.org>, <lenb@kernel.org>,
-	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
-	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241012085343.6594-1-zhengzengkai@huawei.com>
- <8734l1usxe.wl-maz@kernel.org>
-From: Zheng Zengkai <zhengzengkai@huawei.com>
-Message-ID: <f316e8b5-c4c9-da6f-26e8-395cb7500f1d@huawei.com>
-Date: Mon, 14 Oct 2024 20:22:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1728908644; c=relaxed/simple;
+	bh=4uo1yrIKZRlZBhNcFPhEdGxh2rozWeponJyUN09cGPo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MSD77Ebn/21yVlP82oF8z9McT4ShNd1TwCYC9HpBtW7Dk2ktVsfxlYsECli0qjnkmp6tQmHE2IOkzKGHSkXjwXcx0xdV9ktEb38kZwtk5PWBsA7+CFrwENDQRqZ1CgpkPfcymCbmiiQ6DOpsog5R6Rmkef7MLflaiRyIU1Fpq4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso32004515ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:24:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728908642; x=1729513442;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1RB3MG0tXgK4yNbGMLIpzHlvd8r6IXM/6IENmhQbfx0=;
+        b=rMg+2GHy5j11i60KwQHIAFZ9iaJ9IWKvRNpAekWdyryUsiW8Qlm6qxdZYkZKAGEFYL
+         UET3jYlwNVggnK5uTsLcb4GzwRiYCOIXBbq7u4dKtwn6BhkpTqx065i4jGPJA2SI/bpD
+         v2A1NMQ0arq7BU4fCr2pi0pKeCntT4xgFAtLQlvwbW3SC4W2XWG3o0eeeFAb8AO4rZcG
+         g2AxWiQ0R9GdWQNvJyiKezDNiAZmOHa0N/UIdgjibO/PNoWqKuOxzJNx2yG/l/vwen11
+         XhyJOazmb2KmhGGwW55EJ6iers0Qr/Pf5VGpyU/PCyvPQHkYVir8jA0pXUBd4qd38n3c
+         8gbw==
+X-Forwarded-Encrypted: i=1; AJvYcCULaP7uErlODAceSvyjl6Fs3nfV1R3vvH5GqhCez5ZAmTpPRJO765QXYXfaBbLgVpchu2KUMmA+qwkvLMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSevKZjgvELC6JJ0+1p4PXv/UvDNPUqGRy0ymS+WCFKLTSMzDE
+	CL/25SWmHJktN+BMyZCpMHH9Gqt2VWhMER9/qx91trVKyIsnxGGfMOKCJU4JazIznBwQrRf0w07
+	SrrvYsdH1oM/wfuK41AqxwQoCaHDD5jdMdSCd3OxhfwOZyN6kGDUCo7M=
+X-Google-Smtp-Source: AGHT+IGxoGj8a67YFnUIJmALzL/ACJqsQ8w6PShHANxjqQvnFcbbipN6ft8JXniI7L9waVO51xsn1PRh+ed+T0u4h9JdoP0t53tr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8734l1usxe.wl-maz@kernel.org>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200010.china.huawei.com (7.221.188.124)
+X-Received: by 2002:a05:6e02:1e07:b0:3a0:a80a:997c with SMTP id
+ e9e14a558f8ab-3a3b5fb085cmr76536545ab.19.1728908642037; Mon, 14 Oct 2024
+ 05:24:02 -0700 (PDT)
+Date: Mon, 14 Oct 2024 05:24:02 -0700
+In-Reply-To: <tencent_C8EA75F1764366383C3F373A972436904A09@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670d0d62.050a0220.3e960.005e.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_read_virt_blocks
+From: syzbot <syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com>
+To: eadavis@qq.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Marc,
+Hello,
 
-ÔÚ 2024/10/13 1:34, Marc Zyngier Ð´µÀ:
-> On Sat, 12 Oct 2024 09:53:43 +0100,
-> Zheng Zengkai <zhengzengkai@huawei.com> wrote:
->> As suggested by Marc and Lorenzo, first we need to check whether the
->> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
->> de-referencing what it points at to detect the length of the platform
->> timer struct and then check that the length of current platform_timer
->> struct is within gtdt_end too. Now next_platform_timer() only checks
->> against gtdt_end for the entry of subsequent platform timer without
->> checking the length of it and will not report error if the check failed.
->>
->> Add check against table length (gtdt_end) for each element of platform
->> timer array in acpi_gtdt_init() early, making sure that both their entry
->> and length actually fit in the table.
->>
->> For the first platform timer, keep the check against the end of the
->> acpi_table_gtdt struct, it is unnecessary for subsequent platform timer.
-> Really?
->
->> Suggested-by: Marc Zyngier <maz@kernel.org>
->> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
->> ---
->> Changes in v2:
->> - Check against gtdt_end for both entry and len of each array element
->>
->> v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
->> ---
->>   drivers/acpi/arm64/gtdt.c | 19 +++++++++++++++----
->>   1 file changed, 15 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
->> index c0e77c1c8e09..f5f62643899d 100644
->> --- a/drivers/acpi/arm64/gtdt.c
->> +++ b/drivers/acpi/arm64/gtdt.c
->> @@ -157,6 +157,8 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->>   {
->>   	void *platform_timer;
->>   	struct acpi_table_gtdt *gtdt;
->> +	struct acpi_gtdt_header *gh;
->> +	void *struct_end;
->>   
->>   	gtdt = container_of(table, struct acpi_table_gtdt, header);
->>   	acpi_gtdt_desc.gtdt = gtdt;
->> @@ -177,11 +179,20 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->>   	}
->>   
->>   	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
->> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
->> -		pr_err(FW_BUG "invalid timer data.\n");
->> -		return -EINVAL;
->> +	struct_end = (void *)table + sizeof(struct acpi_table_gtdt);
->> +	for (int i = 0; i < gtdt->platform_timer_count; i++) {
->> +		gh = platform_timer;
->> +		if (((i == 0 && platform_timer >= struct_end) || i != 0) &&
-> Why is only index 0 checked against the end of the table? Shouldn't
-> int be an invariant that all timer descriptions must not intersect
-> with the non-variable part of the GTDT table?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
+Tested-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
 
-AFAICS, after checking against the end of the acpi_table_gtdt struct for the
+Tested on:
 
-first platform timer, the subsequent platform_timer pointer value
+commit:         6485cf5e Merge tag 'hid-for-linus-2024101301' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17186887980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
+dashboard link: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14cb0030580000
 
-computed via "platform_timer + gh->length" will also pass the check,
-
-as the gh->length is of u16 type.
-
-
->> +			platform_timer < acpi_gtdt_desc.gtdt_end &&
->> +			platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end) {
-> Surely, assuming that length isn't zero, if the last term is true, the
-> previous one also is? And what if it is 0?
-
-
-Agree , the length should also be checked against 0,
-
-but I think we should first check the platform_timer entry pointer,
-
-then check the size of the same platform_timer structure,
-
-not check them in the opposite order.
-
-
-> Again, you cannot trust *anything* you find in the ACPI table.
->
->> +			platform_timer += gh->length;
-> You are also reinventing the wheel, and repeating some of the worse
-> constructs in this code. It would be much better to build on (and
-> augment) the existing primitives to make the code *readable* instead
-> of being this pointer soup. Believe it or not, there is some value in
-> abstracting things.
-
-
-Yes. Abstract things common and reuse it is better.
-
-
-> I came up with the patchlet below, very lightly tested on my
-> Synquacer. It may not be optimal, but given that this is used exactly
-> once per boot, I'm sure we can afford a few extra comparisons. It
-> makes the iterator robust, and then uses that to implement the checks.
->
-> 	M.
->
-> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
-> index c0e77c1c8e09d..dca814183cc5c 100644
-> --- a/drivers/acpi/arm64/gtdt.c
-> +++ b/drivers/acpi/arm64/gtdt.c
-> @@ -36,15 +36,24 @@ struct acpi_gtdt_descriptor {
->   
->   static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
->   
-> -static inline __init void *next_platform_timer(void *platform_timer)
-> +static __init bool platform_timer_valid(void *platform_timer)
->   {
->   	struct acpi_gtdt_header *gh = platform_timer;
->   
-> -	platform_timer += gh->length;
-> -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
-> -		return platform_timer;
-> +	return (gh->length != 0 &&
-
-
-Shall we first check against gtdt_end for the platform_timer entry?
-
-making sure that platform timer entry(the gh) is within gtdt_end
-
-and valid
-
-
-Thanks!
-
-
-> +		platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
-> +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
-> +}
-> +
-> +static __init void *next_platform_timer(void *platform_timer)
-> +{
-> +	struct acpi_gtdt_header *gh = platform_timer;
->   
-> -	return NULL;
-> +	if (!platform_timer_valid(platform_timer) ||
-> +	    !platform_timer_valid(platform_timer + gh->length))
-> +		return NULL;
-> +
-> +	return platform_timer + gh->length;
->   }
->   
->   #define for_each_platform_timer(_g)				\
-> @@ -155,8 +164,9 @@ bool __init acpi_gtdt_c3stop(int type)
->   int __init acpi_gtdt_init(struct acpi_table_header *table,
->   			  int *platform_timer_count)
->   {
-> -	void *platform_timer;
-> +	void *platform_timer, *tmp;
->   	struct acpi_table_gtdt *gtdt;
-> +	int cnt = 0;
->   
->   	gtdt = container_of(table, struct acpi_table_gtdt, header);
->   	acpi_gtdt_desc.gtdt = gtdt;
-> @@ -177,7 +187,12 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->   	}
->   
->   	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
-> +	for (tmp = platform_timer;
-> +	     tmp && platform_timer_valid(tmp);
-> +	     tmp = next_platform_timer(tmp))
-> +		cnt++;
-> +
-> +	if (cnt != gtdt->platform_timer_count) {
->   		pr_err(FW_BUG "invalid timer data.\n");
->   		return -EINVAL;
->   	}
->
+Note: testing is done by a robot and is best-effort only.
 
