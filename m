@@ -1,125 +1,335 @@
-Return-Path: <linux-kernel+bounces-363690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF1899C5AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:30:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3159D99C5A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D4831C221D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E400C28B340
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA2E156968;
-	Mon, 14 Oct 2024 09:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CED15852E;
+	Mon, 14 Oct 2024 09:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="a4n46Plp"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XesC32yf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0347514D428;
-	Mon, 14 Oct 2024 09:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C371581E0
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898196; cv=none; b=Y6WnWt0Y2AFIhADQdYHvwcGTQ44HoYA/jtKW9/yWzNxOZmvHse8Nk614j36DliYx8kfMsXry5H4XaKURN+TdGkdjjvuJHDL/N8bhwDLAn119v/4IvKvKkiojaGJ/tqY6iDThwNNAiVpGTJihmqSynj1GoQID9+LBG8gGWFEaR60=
+	t=1728898162; cv=none; b=Bz/gAARHHJxGPJjrKfOKxQCeeL8hV6P5u7FF7AcFpSsVeP7Ovt6DBDR8Wug6SB2zqGJ+2rTAJp2ou6l9hNrmJMfD1WbPjrMNOr2Zz/3c1+Rka/BRJg6fvwQi6fiILsm0jOQKhmLr8r4gukhcJgEAy+e41batzwzkoofByGEDakU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898196; c=relaxed/simple;
-	bh=+/0MUZYB4A2sleIMMMI/f4e98kGIzrhlAW+0y+eL3lQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jFt1AJi/3QspefCNAYNz8nn7U4+Tp6mY80+9s0X6a82F4FtYQr8Cmn17/1fvyAHL02ZJqkpoGmTJxb8i1fk458MRZb00H/nUwBG/mF8df9iEfKrPKUxsNEHB/MT9+tXg8a+3ISnVcFQl81ph+9EgtFAyidXv4WDMyTGHDZB/RHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=a4n46Plp; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728898195; x=1760434195;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+/0MUZYB4A2sleIMMMI/f4e98kGIzrhlAW+0y+eL3lQ=;
-  b=a4n46PlpL0JjF48mfN5D1u6Q+hspT27V022KdgpK+2mTDl4lQPqOe+/6
-   J1SN9sOw04VnXBUw9FOGdr5WN/SdUh3k1Pvcc7+nn9Ro1y7g5QY6gA3qR
-   PUvzz+s39NifiLoW4itEPVBeRC9/5xCyVkUAIM2Br05MkWKzuPdy/B01z
-   l12NLYXflJ2A4FMJuTp6PYleit0DtfTzoNATcp6KFJIqnOuuA1v83nQDh
-   e2JEmvx3qxD254CIiNBqAIJhY5k5qUW9Lb8k3EIipPN5h5EamrP083FZk
-   s9fspCW4aDhKtp0vgQhS+aIOA24v1FFIjhlFRBfbJV69R+Nvy5gz1VToM
-   A==;
-X-CSE-ConnectionGUID: pCLDKrORScqRABue8oJFyg==
-X-CSE-MsgGUID: AmmQ2eMhSiGkTkZoRt17Qw==
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="32974832"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Oct 2024 02:29:54 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 14 Oct 2024 02:29:33 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 14 Oct 2024 02:29:30 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-	<perex@perex.cz>, <tiwai@suse.com>, <arnd@arndb.de>,
-	<gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>
-CC: <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Andrei Simion <andrei.simion@microchip.com>
-Subject: [PATCH v2 RESEND] MAINTAINERS: Update maintainer list for MICROCHIP ASOC, SSC and MCP16502 drivers
-Date: Mon, 14 Oct 2024 12:28:31 +0300
-Message-ID: <20241014092830.46709-1-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728898162; c=relaxed/simple;
+	bh=A7dwRnjFybRYfmlXxa4Fkp9QgbqhxA1NVzVqCQAh63U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K8g+fdCS4nsvRl+c+mNp/u/CnyiDzKN1BrT50kqhNoRlNRmIzYrPGrWp3TWVAnP112td32kQfNsE6h9rlATCjAdy9lZM+/8w2+jZBsIX9+/UzBU7ShEogP1CXo9F7f5+VtAh55HMKH7FUs3+rxpm2qdRayzDl2JPeuMrEkkfcko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XesC32yf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9898C4CECE
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:29:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728898161;
+	bh=A7dwRnjFybRYfmlXxa4Fkp9QgbqhxA1NVzVqCQAh63U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XesC32yfC+wu1OJ+R9od3U+Z64GWrQ06EpVd2XE/GKngK/fQ6DaSytnbedspQJM8o
+	 VJ9Hyas8yIWKMgaQQjpKJ3xJkEqUPY6d/4MYLPdL901rdTFl/6N5SLFApUrlEZ2pYh
+	 pHu3oIR/5QmOkDnbly+KS91LhMuBcgziNf6HSGumerOpK1EHyC2lOafSYtBeig/5bM
+	 X0/tcoDLayI7cy8D+zNe//YaGsuF2agCSUFP8IUtrXDUOrd8t0YP5xrS7R2BHoAnEK
+	 QMijW4tkI3YKWlbKz+NflIDTp+OJTa5PxEZzjk9FrWFkvO56NWkAnC8gNa9w50tbNY
+	 86CWtOUR/4V/g==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c9709c9b0cso1670056a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:29:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWAfBz/wauWuwz3FtuqcwtbEV2vDgLnAzPR/qN96bLKw9RIVDKqdO5ZaQmxFo0qLYjevPygxHr0/7Y1g5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxhbq8k3PVhZqS4UKyjVA4LU12sJBw6e4vXZiIEsWD4n8rrUTl
+	h3maZwdOj4c8jB/ZRNg9pZS3Id5raPvnImKM/RrTfQHAxndlfxB/Z7gqNjnKvWa88tLec80WJUx
+	UgDoShLjpP7CpipIrEsQw1yBigNA=
+X-Google-Smtp-Source: AGHT+IHtZBiMv7RGW8bpzQD2idmPZYGYGKyoc//Y0TSBVaZKA6XdzS9diP/J2m24xfSQh2KxvCMJsiG2NQY/B3SCmMg=
+X-Received: by 2002:a17:907:1ca8:b0:a99:4136:895f with SMTP id
+ a640c23a62f3a-a99b95bab6bmr1094315166b.41.1728898160277; Mon, 14 Oct 2024
+ 02:29:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20241014063328.1216497-1-maobibo@loongson.cn> <CAAhV-H5_SUnrf0PwOUFOA0EumKvGOmgqUq=Cx61Ub5AW=MPo=A@mail.gmail.com>
+ <24ea8b02-8c94-d561-cef0-01044b610a1e@loongson.cn> <CAAhV-H7NqzO-FLmYoUySp5KYKJM+aN_s7g4i+qBixx5jwnbW=Q@mail.gmail.com>
+ <5c1e0199-24ce-50d2-1cbc-5c9949a17563@loongson.cn> <CAAhV-H6JKNBgsLdAsKHp3rttpY+0KGabac2m87-PsT4FH_H=Ew@mail.gmail.com>
+ <035be759-3adc-d224-43f8-1888822f6492@loongson.cn>
+In-Reply-To: <035be759-3adc-d224-43f8-1888822f6492@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 14 Oct 2024 17:29:08 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4esrPeWAM1ExA2xAsUQ_Aitncro-i31e4wJO5OOVcwEQ@mail.gmail.com>
+Message-ID: <CAAhV-H4esrPeWAM1ExA2xAsUQ_Aitncro-i31e4wJO5OOVcwEQ@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Fix cpu hotplug issue
+To: maobibo <maobibo@loongson.cn>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	lixianglai@loongson.cn, WANG Xuerui <kernel@xen0n.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To help Claudiu and offload the work, add myself to the maintainer list for
-those drivers.
+On Mon, Oct 14, 2024 at 5:12=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote=
+:
+>
+>
+>
+> On 2024/10/14 =E4=B8=8B=E5=8D=884:23, Huacai Chen wrote:
+> > On Mon, Oct 14, 2024 at 4:01=E2=80=AFPM maobibo <maobibo@loongson.cn> w=
+rote:
+> >>
+> >> Huacai,
+> >>
+> >> On 2024/10/14 =E4=B8=8B=E5=8D=883:39, Huacai Chen wrote:
+> >>> On Mon, Oct 14, 2024 at 3:21=E2=80=AFPM maobibo <maobibo@loongson.cn>=
+ wrote:
+> >>>>
+> >>>> Huacai,
+> >>>>
+> >>>> On 2024/10/14 =E4=B8=8B=E5=8D=883:05, Huacai Chen wrote:
+> >>>>> Hi, Bibo,
+> >>>>>
+> >>>>> I'm a little confused, so please correct me if I'm wrong.
+> >>>>>
+> >>>>> On Mon, Oct 14, 2024 at 2:33=E2=80=AFPM Bibo Mao <maobibo@loongson.=
+cn> wrote:
+> >>>>>>
+> >>>>>> On LoongArch system, there are two places to set cpu numa node. On=
+e
+> >>>>>> is in arch specified function smp_prepare_boot_cpu(), the other is
+> >>>>>> in generic function early_numa_node_init(). The latter will overwr=
+ite
+> >>>>>> the numa node information.
+> >>>>>>
+> >>>>>> However for hot-added cpu, cpu_logical_map() fails to its physical
+> >>>>>> cpuid at beginning since it is not enabled in ACPI MADT table. So
+> >>>>>> function early_cpu_to_node() also fails to get its numa node for
+> >>>>>> hot-added cpu, and generic function early_numa_node_init() will
+> >>>>>> overwrite incorrect numa node.
+> >>>>> For hot-added cpus, we will call acpi_map_cpu() -->
+> >>>>> acpi_map_cpu2node() --> set_cpuid_to_node(), and set_cpuid_to_node(=
+)
+> >>>>> operates on __cpuid_to_node[]. So I think early_cpu_to_node() shoul=
+d
+> >>>>> be correct?
+> >>>>
+> >>>> __cpuid_to_node[] is correct which is physical cpuid to numa node,
+> >>>> however cpu_logical_map(cpu) is not set. It fails to get physical cp=
+uid
+> >>>> from logic cpu.
+> >>>>
+> >>>> int early_cpu_to_node(int cpu)
+> >>>> {
+> >>>>            int physid =3D cpu_logical_map(cpu);
+> >>>>
+> >>>> <<<<<<<<<<< Here physid is -1.
+> >>> early_cpu_to_node() is not supposed to be called after boot, and if i=
+t
+> >> Which calls early_cpu_to_node() after boot?
+> >>
+> >>> is really needed, I think a better solution is:
+> >>>
+> >>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acp=
+i.c
+> >>> index f1a74b80f22c..998cf45fd3b7 100644
+> >>> --- a/arch/loongarch/kernel/acpi.c
+> >>> +++ b/arch/loongarch/kernel/acpi.c
+> >>> @@ -311,6 +311,8 @@ static int __ref acpi_map_cpu2node(acpi_handle
+> >>> handle, int cpu, int physid)
+> >>>
+> >>>           nid =3D acpi_get_node(handle);
+> >>>           if (nid !=3D NUMA_NO_NODE) {
+> >>> +               __cpu_number_map[physid] =3D cpu;
+> >>> +               __cpu_logical_map[cpu] =3D physid;
+> >> This does not solve the problem. The above has been done in function
+> >> cpu =3D set_processor_mask(physid, ACPI_MADT_ENABLED);
+> >>
+> >> static int set_processor_mask(u32 id, u32 flags)
+> >> {
+> >> ...
+> >>           if (flags & ACPI_MADT_ENABLED) {
+> >>                   num_processors++;
+> >>                   set_cpu_present(cpu, true);
+> >>                   __cpu_number_map[cpuid] =3D cpu;
+> >>                   __cpu_logical_map[cpu] =3D cpuid;
+> >>           }
+> >>
+> >> The problem is that
+> >>           smp_prepare_boot_cpu(); /* arch-specific boot-cpu hooks */
+> >> <<<<<<<<<<<<<<<<
+> >> set_cpu_numa_node() is called in function smp_prepare_boot_cpu()
+> >>
+> >>           early_numa_node_init();
+> >>
+> >> static void __init early_numa_node_init(void)
+> >> {
+> >> #ifdef CONFIG_USE_PERCPU_NUMA_NODE_ID
+> >> #ifndef cpu_to_node
+> >>           int cpu;
+> >>
+> >>           /* The early_cpu_to_node() should be ready here. */
+> >>           for_each_possible_cpu(cpu)
+> >>                   set_cpu_numa_node(cpu, early_cpu_to_node(cpu));
+> >> <<<<<<<<<<<<<<<<
+> >> * however here early_cpu_to_node is -1, so that cpu_to_node(cpu) will
+> >> always return -1 in late. *, which causes cpu hotadd problem.
+> > Still confused. For ACPI_MADT_ENABLED cpus, everything is right after
+> > early_numa_node_init(). For !ACPI_MADT_ENABLED cpus, cpu_to_node()
+> > returns -1 after early_numa_node_init() and before hot-add, but if
+> > acpi_map_cpu() do things right, cpu_to_node() should still work well
+> > after hot-add.
+> yes, if "_PXM" information for hot-add cpu handle exist, it works well.
+>
+> However if "_PXM" information does not exist, it falls back to legacy
+> method from smp_prepare_boot_cpu(). However cpu_numa_node information is
+> overwritten with -1 by later function early_numa_node_init().
+OK, now I finally get the key point. But no _PXM should be treated as
+a BIOS bug, right?
 
-Acked-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
-v1 -> v2:
-- add acked-by tag
-- adjust commit title
-- update maintainer list for MICROCHIP SSC DRIVER
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+From comments we can see:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1eebb14efb5e..73afcdd005ee 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15144,6 +15144,7 @@ F:	drivers/spi/spi-at91-usart.c
- 
- MICROCHIP AUDIO ASOC DRIVERS
- M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-+M:	Andrei Simion <andrei.simion@microchip.com>
- L:	linux-sound@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/sound/atmel*
-@@ -15252,6 +15253,7 @@ F:	include/video/atmel_lcdc.h
- 
- MICROCHIP MCP16502 PMIC DRIVER
- M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-+M:	Andrei Simion <andrei.simion@microchip.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Supported
- F:	Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml
-@@ -15383,6 +15385,7 @@ F:	drivers/spi/spi-atmel.*
- 
- MICROCHIP SSC DRIVER
- M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-+M:	Andrei Simion <andrei.simion@microchip.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Supported
- F:	Documentation/devicetree/bindings/misc/atmel-ssc.txt
+                 * If possible cpus > present cpus here (e.g. some possible
+                 * cpus will be added by cpu-hotplug later), for possible b=
+ut
+                 * not present cpus, early_cpu_to_node will return NUMA_NO_=
+NODE,
+                 * and we just map them to online nodes in round-robin way.
+                 * Once hotplugged, new correct mapping will be built for t=
+hem.
 
-base-commit: 7f773fd61baa9b136faa5c4e6555aa64c758d07c
--- 
-2.34.1
+This means even with this patch, cpu_to_node() can return a "valid"
+node rather than NUMA_NO_NODE, but this round-robin node is still an
+incorrect node.
 
+Huacai
+
+>
+> Regards
+> Bibo Mao
+> >
+> > Huacai
+> >>
+> >> Regards
+> >> Bibo Mao
+> >>
+> >>
+> >>>                   set_cpuid_to_node(physid, nid);
+> >>>                   node_set(nid, numa_nodes_parsed);
+> >>>                   set_cpu_numa_node(cpu, nid);
+> >>>
+> >>> Huacai
+> >>>
+> >>>>
+> >>>>            if (physid < 0)
+> >>>>                    return NUMA_NO_NODE;
+> >>>>
+> >>>>            return __cpuid_to_node[physid];
+> >>>> }
+> >>>>
+> >>>> Regards
+> >>>> Bibo Mao
+> >>>>>
+> >>>>> Huacai
+> >>>>>
+> >>>>>>
+> >>>>>> Here static array __cpu_to_node and api set_early_cpu_to_node()
+> >>>>>> is added, so that early_cpu_to_node is consistent with function
+> >>>>>> cpu_to_node() for hot-added cpu.
+> >>>>>>
+> >>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >>>>>> ---
+> >>>>>>     arch/loongarch/include/asm/numa.h |  2 ++
+> >>>>>>     arch/loongarch/kernel/numa.c      | 10 +++++++++-
+> >>>>>>     arch/loongarch/kernel/smp.c       |  1 +
+> >>>>>>     3 files changed, 12 insertions(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/arch/loongarch/include/asm/numa.h b/arch/loongarch/in=
+clude/asm/numa.h
+> >>>>>> index b5f9de9f102e..e8e6fcfb006a 100644
+> >>>>>> --- a/arch/loongarch/include/asm/numa.h
+> >>>>>> +++ b/arch/loongarch/include/asm/numa.h
+> >>>>>> @@ -50,6 +50,7 @@ static inline void set_cpuid_to_node(int cpuid, =
+s16 node)
+> >>>>>>     }
+> >>>>>>
+> >>>>>>     extern int early_cpu_to_node(int cpu);
+> >>>>>> +extern void set_early_cpu_to_node(int cpu, s16 node);
+> >>>>>>
+> >>>>>>     #else
+> >>>>>>
+> >>>>>> @@ -57,6 +58,7 @@ static inline void early_numa_add_cpu(int cpuid,=
+ s16 node)    { }
+> >>>>>>     static inline void numa_add_cpu(unsigned int cpu)             =
+ { }
+> >>>>>>     static inline void numa_remove_cpu(unsigned int cpu)          =
+ { }
+> >>>>>>     static inline void set_cpuid_to_node(int cpuid, s16 node)     =
+ { }
+> >>>>>> +static inline void set_early_cpu_to_node(int cpu, s16 node)    { =
+}
+> >>>>>>
+> >>>>>>     static inline int early_cpu_to_node(int cpu)
+> >>>>>>     {
+> >>>>>> diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/=
+numa.c
+> >>>>>> index 84fe7f854820..62508aace644 100644
+> >>>>>> --- a/arch/loongarch/kernel/numa.c
+> >>>>>> +++ b/arch/loongarch/kernel/numa.c
+> >>>>>> @@ -34,6 +34,9 @@ static struct numa_meminfo numa_meminfo;
+> >>>>>>     cpumask_t cpus_on_node[MAX_NUMNODES];
+> >>>>>>     cpumask_t phys_cpus_on_node[MAX_NUMNODES];
+> >>>>>>     EXPORT_SYMBOL(cpus_on_node);
+> >>>>>> +static s16 __cpu_to_node[NR_CPUS] =3D {
+> >>>>>> +       [0 ... CONFIG_NR_CPUS - 1] =3D NUMA_NO_NODE
+> >>>>>> +};
+> >>>>>>
+> >>>>>>     /*
+> >>>>>>      * apicid, cpu, node mappings
+> >>>>>> @@ -117,11 +120,16 @@ int early_cpu_to_node(int cpu)
+> >>>>>>            int physid =3D cpu_logical_map(cpu);
+> >>>>>>
+> >>>>>>            if (physid < 0)
+> >>>>>> -               return NUMA_NO_NODE;
+> >>>>>> +               return __cpu_to_node[cpu];
+> >>>>>>
+> >>>>>>            return __cpuid_to_node[physid];
+> >>>>>>     }
+> >>>>>>
+> >>>>>> +void set_early_cpu_to_node(int cpu, s16 node)
+> >>>>>> +{
+> >>>>>> +       __cpu_to_node[cpu] =3D node;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>>     void __init early_numa_add_cpu(int cpuid, s16 node)
+> >>>>>>     {
+> >>>>>>            int cpu =3D __cpu_number_map[cpuid];
+> >>>>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/s=
+mp.c
+> >>>>>> index 9afc2d8b3414..998668be858c 100644
+> >>>>>> --- a/arch/loongarch/kernel/smp.c
+> >>>>>> +++ b/arch/loongarch/kernel/smp.c
+> >>>>>> @@ -512,6 +512,7 @@ void __init smp_prepare_boot_cpu(void)
+> >>>>>>                            set_cpu_numa_node(cpu, node);
+> >>>>>>                    else {
+> >>>>>>                            set_cpu_numa_node(cpu, rr_node);
+> >>>>>> +                       set_early_cpu_to_node(cpu, rr_node);
+> >>>>>>                            rr_node =3D next_node_in(rr_node, node_=
+online_map);
+> >>>>>>                    }
+> >>>>>>            }
+> >>>>>>
+> >>>>>> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
+> >>>>>> --
+> >>>>>> 2.39.3
+> >>>>>>
+> >>>>>>
+> >>>>
+> >>>>
+> >>
+> >>
+>
+>
 
