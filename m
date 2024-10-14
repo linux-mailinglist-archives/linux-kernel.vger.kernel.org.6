@@ -1,277 +1,138 @@
-Return-Path: <linux-kernel+bounces-363941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7BD99C8DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:28:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB0299C8BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3983B2E056
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142F8286C43
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2651A4F2A;
-	Mon, 14 Oct 2024 11:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A17719DF45;
+	Mon, 14 Oct 2024 11:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OCMKF5PR"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="czAnHXNb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805541A08A0
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374E9197A6E;
+	Mon, 14 Oct 2024 11:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728904930; cv=none; b=tcytsfXOnxADCiWd73E4BQIaLJNBT0BvKGhIbakkaX6ZbZvIcRwpPXCBn/UKsrE5DlLkYGDiODZ1soDx2ptJPanCeJZnYmbNKdbBSAEu0OATzKV/jFImGJRT0OoccYAWXfI1Lx4dKt91rTEUKcyeeo7DP1J5DykUowUh78g56K0=
+	t=1728905013; cv=none; b=YQyOcs8TkdU7/Y8FmaF+k8HOd7wlXk126uwO46wgdvaz/WHIMAMbZgDGztcV6LQX8d6TcNkpbBEqci7IIEkUcZYd2AbZ3tSAXL92XgOLO0AnAF9Lsa/YMkLhk8FR7EFoCvIOBMZBGuUci29xWQzDO5H45h3IaCRGLxJMsf8DXHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728904930; c=relaxed/simple;
-	bh=2wdQhAhyw/SdXzugpRpMo4y4p7fkvbNM1sGdlnuD0Ok=;
+	s=arc-20240116; t=1728905013; c=relaxed/simple;
+	bh=F6OtytiL7+JS9gPiOc57+sw/mfDS+IMkcUewiU8ceGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KL5sXuh/E2BcDZ3Zeif8SkZZpofmSvXkQELY+6fZpBsv960AIqOoCpUeQNhjlo66Tsy7PaSgq9uxh6wruQr7bPXCZl5S/qupDHlN1k994zpue9LHkpB6yFJwe17sFZlJ/AbW6ulgnjlBuXJPCIRLWCpA2qzJcDX3yKT3KqOrQVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OCMKF5PR; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f1292a9bso1186855e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:22:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728904927; x=1729509727; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c/WJZ6TxkTCNzjbO8VtHNLVTfZRsmiEKJfPFl0v8JMg=;
-        b=OCMKF5PREoVAuXyFCsH52t1It1xtvygNfPfzo/4tNpZkRJYY5tn6x/31UOj0QJgmD6
-         Ff05GsPhIchcXH08rqqr9BQdxhBQI4VJLTp+XJS9+ejRbNAJyj3fXYJl1i4bllNhI95z
-         /TWeAyFiBZ0cG/aLuGCCoZkNUEZf4HgyQg0M7d1jgi8Bow8h4PBozXEMl1ipeZRsSoit
-         xrV1O4kxoRAvBTR8+Cb1RYeXRDHROg6XMC0ofe6dcgHWoGENi4xSG1ryhB03QgpgIoYY
-         map+9idNtXeKvJSv/HDbSMDOdtjkpHM8j9R/c2Chd68W3g3VpsHQe6b/fRdrHdLJjCI1
-         PSmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728904927; x=1729509727;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c/WJZ6TxkTCNzjbO8VtHNLVTfZRsmiEKJfPFl0v8JMg=;
-        b=GjSFqjFN87GQGu4HGufY8G+JyxHTaIhHQ8HwkknEUHPTt10rapu+ksNBEJCpXJEbIR
-         Le5aPdoVuhDZD2UnWUxFIbf6TxQxNEp1a9M+sP9Zja4F5b9jg25VNQ6fsjoAO/avmz0s
-         eF7bCRfJg/nLlzSuRzwuWCmo0V+aAgkBvLElwWYmhYAr7FqAymH26QqRFVkqRhWr4iyF
-         CGS/BHbTNqDFFqTawlBQIIShdDXEQ12RoG0RlmaKCoup4zCfYpRHUfNoUIWewH4w7vy1
-         n+AFP9fQuKUW8daBHWWebzK4WwLzbOzWGFiUxwgEnij1C1C6pLSeTCun4qH7hbDDPGrn
-         HXlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcPRtnk6Oa20xfnc9F2rhAqmKtU7SfGWZZ9Mgkps2SOkOMBNCu7zi6zLkRpge2jKF3t9ned/PUlOqlYoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQcpv/FoFTcz/0pzN2rmeo8dhAVWVDR9iUxs7DWEuwBYVJjB+N
-	3L+pWi060njuo+1fb+AehqkmwpJIdV908shq3xMYW1tWnaAQzsm3COIIJhwbiac=
-X-Google-Smtp-Source: AGHT+IHyq2KzCbTQHgIF+N3Wkwz4ktOrcRxxTc37r4GkdQ0eTp8kNWi6LQOgPbMbscQq22sm9zgMXw==
-X-Received: by 2002:a05:6512:1305:b0:539:d05c:f553 with SMTP id 2adb3069b0e04-539da3c6967mr5271456e87.21.1728904926491;
-        Mon, 14 Oct 2024 04:22:06 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539e86e2fa5sm834727e87.145.2024.10.14.04.22.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 04:22:05 -0700 (PDT)
-Date: Mon, 14 Oct 2024 14:22:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com, 
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de, nfraprado@collabora.com, 
-	o.rempel@pengutronix.de, y.moog@phytec.de, marex@denx.de, isaac.scott@ideasonboard.com, 
-	biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH v2 6/9] drm/bridge: Add ITE IT6263 LVDS to HDMI converter
-Message-ID: <re3oe4nlz3mqecdlaetrgtqsdjzrzlwxjnxu6cojkbyzcjpwkn@24gg755jm2lv>
-References: <20241012073543.1388069-1-victor.liu@nxp.com>
- <20241012073543.1388069-7-victor.liu@nxp.com>
- <dtloyyghjep5rm34qjjinvhvrar5jzj3n24czvpdmnkfesntjq@t2uijuez7myj>
- <f47bc3f1-20d9-4f7e-acdd-85eabdb8d743@nxp.com>
- <kaoqse23we5lyhaawk6xe2ouxwwjtjfpkiqb3j7xe64o2jscny@3yswlkjhuuxw>
- <91d1e176-f578-466b-991b-2df1728e2f78@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQ63TWvhJrabQ5NqJuujEyDdgi9O1c1SDPFUCwglUAoxzl5HNZSGvAWTuHD2fkw9ull4gehCgOxOisjYSLSiJH1lmxs2KF7S59FDv/jvEyZk/upR9qo4Gp+lbNSj3qU1M3dZ0S+PtFVE1jT3/JKVxzBod2GrFowBvur6UB1+8bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=czAnHXNb; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728905012; x=1760441012;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=F6OtytiL7+JS9gPiOc57+sw/mfDS+IMkcUewiU8ceGQ=;
+  b=czAnHXNbCcaxfTTZLAuA148eXVumxV6POU1+Dohoa6m9Kr42h+jyLukb
+   lQ7bIMgSqFSEoD1uVh3t8+XZQzP0cRTi3h9IFsKDr4c+7dg8P6+CTu/Ks
+   AklH+yIIMg7MCc2SCv6GautG4V/eKAM745e1tfN01YR+MlNXK+uk2ml3b
+   m2IkJKX3t648FpYF8vME6yeDmk2U8je6LqpndCVYJMsh5YAHPjn07zcwf
+   Gk7b1VMrl5LWJkeucsRMaWWikaBwvpkzgdLeqZ6dAKyqviEBtHqXDMQzT
+   1+tkhj/7jdKQ+9r6+Q+hFPuijF1A9tiPv8Dv+7pOuqismZeLvYUH3lXOv
+   g==;
+X-CSE-ConnectionGUID: HzPMbG4ZSAumuOLmm4A6gA==
+X-CSE-MsgGUID: iLYmgoKgRTWFSU2BkVVLEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="15878320"
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="15878320"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:23:30 -0700
+X-CSE-ConnectionGUID: YcWC7ZFLTc6LAyGu3A9NIQ==
+X-CSE-MsgGUID: lZxKA49mTcSf+Sb9vfj03w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="77414868"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:23:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t0JAY-00000002sWN-1clp;
+	Mon, 14 Oct 2024 14:23:22 +0300
+Date: Mon, 14 Oct 2024 14:23:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v8 7/8] platform/chrome: Introduce device tree hardware
+ prober
+Message-ID: <Zwz_Kl7SwfL0ZaAZ@smile.fi.intel.com>
+References: <20241008073430.3992087-1-wenst@chromium.org>
+ <20241008073430.3992087-8-wenst@chromium.org>
+ <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
+ <ZwfzhsvlPrxMi61j@smile.fi.intel.com>
+ <CAGXv+5ED7j49ndT7BaESW8ZL7_mjVUJLM_FWma8Lwkg+Uh3saw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <91d1e176-f578-466b-991b-2df1728e2f78@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5ED7j49ndT7BaESW8ZL7_mjVUJLM_FWma8Lwkg+Uh3saw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 14, 2024 at 04:28:29PM +0800, Liu Ying wrote:
-> On 10/14/2024, Dmitry Baryshkov wrote:
-> > On Mon, Oct 14, 2024 at 03:18:15PM +0800, Liu Ying wrote:
-> >> On 10/14/2024, Dmitry Baryshkov wrote:
-> >>> On Sat, Oct 12, 2024 at 03:35:40PM +0800, Liu Ying wrote:
-> >>>> Add basic HDMI video output support. Currently, only RGB888 output
-> >>>> pixel format is supported.  At the LVDS input side, the driver
-> >>>> supports single LVDS link and dual LVDS links with "jeida-24" LVDS
-> >>>> mapping.
-> >>>>
-> >>>> Product link:
-> >>>> https://www.ite.com.tw/en/product/cate1/IT6263
-> >>>>
-> >>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> >>>> ---
-> >>>> v2:
-> >>>> * Add AVI inforframe support.  (Maxime)
-> >>>> * Add DRM_MODE_CONNECTOR_HDMIA.  (Biju)
-> >>>> * Rename it6263_reset() to it6263_hw_reset().  (Biju)
-> >>>> * Check number of LVDS link data lanes.  (Biju)
-> >>>>
-> >>>>  drivers/gpu/drm/bridge/Kconfig      |   8 +
-> >>>>  drivers/gpu/drm/bridge/Makefile     |   1 +
-> >>>>  drivers/gpu/drm/bridge/ite-it6263.c | 919 ++++++++++++++++++++++++++++
-> >>>>  3 files changed, 928 insertions(+)
-> >>>>  create mode 100644 drivers/gpu/drm/bridge/ite-it6263.c
-> >>>>
-> >>>
-> >>> [...]
-> >>>
-> >>>> +static int it6263_parse_dt(struct it6263 *it)
-> >>>> +{
-> >>>> +	struct device *dev = it->dev;
-> >>>> +	struct device_node *port0, *port1;
-> >>>> +	int ret;
-> >>>> +
-> >>>> +	ret = of_property_read_u8(dev->of_node, "ite,lvds-link-num-data-lanes",
-> >>>> +				  &it->lvds_link_num_dlanes);
-> >>>> +	if (ret) {
-> >>>> +		dev_err(dev, "failed to get LVDS link number of data lanes: %d\n",
-> >>>> +			ret);
-> >>>> +		return ret;
-> >>>> +	}
-> >>>> +
-> >>>> +	it->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 2, 0);
-> >>>> +	if (IS_ERR(it->next_bridge))
-> >>>> +		return dev_err_probe(dev, PTR_ERR(it->next_bridge),
-> >>>> +				     "failed to get next bridge\n");
-> >>>> +
-> >>>> +	port0 = of_graph_get_port_by_id(dev->of_node, 0);
-> >>>> +	port1 = of_graph_get_port_by_id(dev->of_node, 1);
-> >>>> +	if (port0 && port1) {
-> >>>> +		if (of_property_read_bool(port0, "dual-lvds-even-pixels") &&
-> >>>> +		    of_property_read_bool(port1, "dual-lvds-odd-pixels")) {
-> >>>> +			it->lvds_dual_link = true;
-> >>>> +			it->lvds_link12_swap = true;
-> >>>> +		} else if (of_property_read_bool(port0, "dual-lvds-odd-pixels") &&
-> >>>> +			   of_property_read_bool(port1, "dual-lvds-even-pixels")) {
-> >>>> +			it->lvds_dual_link = true;
-> >>>> +		}
-> >>>> +
-> >>>> +		if (!it->lvds_dual_link) {
-> >>>> +			dev_err(dev,
-> >>>> +				"failed to get LVDS dual link pixel order\n");
-> >>>> +			ret = -EINVAL;
-> >>>> +		}
-> >>>
-> >>> Please use drm_of_lvds_get_dual_link_pixel_order(), it validates that
-> >>> the DT definition is sound: one port for odd pixels, one port for even
-> >>> pixels.
-> >>
-> >> It cannot be used, because it get the pixel order for the LVDS
-> >> source not sink. IT6263 is the LVDS sink.
-> > 
-> > Then you need a similar function for the sink side. Add it to the
-> > drm_of.c
-> 
-> How about getting remote LVDS source ports first and use
-> drm_of_lvds_get_dual_link_pixel_order() like the snippet below?
-> This way, no need to add a similar function or modify
-> drm_of_lvds_get_dual_link_pixel_order() implementation.
-> 
-> If you don't like this, can you please suggest a similar function
-> name or maybe an additional parameter(with type and name) for
-> drm_of_lvds_get_dual_link_pixel_order()?
-> 
-> ---8<---
->         port0_ep = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);           
->         if (port0_ep) {                                                          
->                 remote_port0 = of_graph_get_remote_port(port0_ep);               
->                 of_node_put(port0_ep);                                           
->         }                                                                        
->         port1_ep = of_graph_get_endpoint_by_regs(dev->of_node, 1, -1);           
->         if (port1_ep) {                                                          
->                 remote_port1 = of_graph_get_remote_port(port1_ep);               
->                 of_node_put(port1_ep);                                           
->         }                                                                        
+On Mon, Oct 14, 2024 at 12:56:20PM +0800, Chen-Yu Tsai wrote:
+> On Thu, Oct 10, 2024 at 11:32 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Oct 10, 2024 at 06:29:44PM +0300, Andy Shevchenko wrote:
+> > > On Tue, Oct 08, 2024 at 03:34:26PM +0800, Chen-Yu Tsai wrote:
 
-I think getting remotes just to get remotes back is a little bit clumsy.
-Adding drm_of_lvds_get_dual_link_pixel_order_sink() looks like a claner
-solution.
+...
 
->                                                                                  
->         if (remote_port0 && remote_port1) {                                      
->                 order = drm_of_lvds_get_dual_link_pixel_order(remote_port0,      
->                                                               remote_port1);     
->                 if (order < 0) {                                                 
->                         dev_err(dev,                                             
->                                 "failed to get dual link pixel order: %d\n",     
->                                 order);                                          
->                         ret = order;                                             
->                 } else if (order == DRM_LVDS_DUAL_LINK_ODD_EVEN_PIXELS) {        
->                         it->lvds_dual_link = true;                               
->                 } else if (order == DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS) {        
->                         it->lvds_dual_link = true;                               
->                         it->lvds_link12_swap = true;                             
->                 }                                                                
+> > > > +   .cfg = &chromeos_i2c_probe_simple_trackpad_cfg,
+> > >
+> > >       .cfg = DEFINE_I2C_OF_PROBE_CFG(trackpad, i2c_of_probe_simple_ops),
+> > >
+> > > Or even
+> > >
+> > > #define DEFINE_I2C_OF_PROBE_CFG_SIMPLE(_type_)                        \
+> > >       DEFINE_I2C_OF_PROBE_CFG(type, &i2c_of_probe_simple_ops)
+> 
+> I'm not inclined on using compound literals here. "simple X cfg" will
+> likely get shared between multiple |chromeos_i2c_probe_data| entries,
+> and AFAIK the toolchain can't merge them. So we would end up with one
+> compound literal per entry, even if their contents are the same.
 
-	it->lvds_dual_link = true;
-	order = drm_of_lvds_get_dual_link_pixel_order_sink(port0_ep,
-							   port1_ep);
-	if (order < 0) {
-		dev_err(...);
-		ret = order;
-	} else if (order == DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS) {
-		it->lvds_link12_swap = true;
-	}
+I'm not sure I follow, you are using compound literal _already_.
+How does my proposal change that?
 
->         } else if (remote_port1) {                                               
->                 ret = -EINVAL;                                                   
->                 dev_err(dev, "single input LVDS port1 is not supported\n");      
->         } else if (!remote_port0) {                                              
->                 ret = -EINVAL;                                                   
->                 dev_err(dev, "no input LVDS port\n");                            
->         }                                                                        
->                                                                                  
->         of_node_put(remote_port0);                                               
->         of_node_put(remote_port1); 
-> ---8<---
+> > With that also looking at the above
+> >
+> > #define DEFINE_I2C_OF_PROBE_CFG_NONE(_type_)                            \
+> >         DEFINE_I2C_OF_PROBE_CFG(type, NULL)
 > 
-> > 
-> >>
-> >>  * drm_of_lvds_get_dual_link_pixel_order - Get LVDS dual-link pixel order        
-> >>  * @port1: First DT port node of the Dual-link LVDS source                       
-> >>  * @port2: Second DT port node of the Dual-link LVDS source      
-> >>
-> >>>
-> >>>> +	} else if (port1) {
-> >>>> +		ret = -EINVAL;
-> >>>> +		dev_err(dev, "single input LVDS port1 is not supported\n");
-> >>>> +	} else if (!port0) {
-> >>>> +		ret = -EINVAL;
-> >>>> +		dev_err(dev, "no input LVDS port\n");
-> >>>> +	}
-> >>>> +
-> >>>> +	of_node_put(port0);
-> >>>> +	of_node_put(port1);
-> >>>> +
-> >>>> +	return ret;
-> >>>> +}
-> >>>> +
-> >>>
-> >>
-> >> -- 
-> >> Regards,
-> >> Liu Ying
-> >>
-> > 
-> 
-> -- 
-> Regards,
-> Liu Ying
-> 
+> For the "dumb" case it makes sense though, since it would be one instance
+> per type. But we could go further and just wrap the whole
+> |chromeos_i2c_probe_data| declaration.
+
+Maybe it's too far from now...
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
