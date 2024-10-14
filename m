@@ -1,172 +1,130 @@
-Return-Path: <linux-kernel+bounces-363546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DB999C3D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:45:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AE299C3DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF9C3B21231
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9C31F231DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD77014F9D7;
-	Mon, 14 Oct 2024 08:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF54715625A;
+	Mon, 14 Oct 2024 08:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eUXjikBZ"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ucph95/7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078D513D2BC
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99987155756;
+	Mon, 14 Oct 2024 08:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895496; cv=none; b=CGoKYLST91lm3seNmvwRYaWFwopD8RyLI3F62BgFVLJdsfxWGS/RALAnfkvurwwf7Bb0+sY6ZPl+fdRPIMW/gupbqVRg38Y0onYnLJcV3aQy3HJ55nRdaWcrnUNaj2LxMFkWTndsasyCCxvapUX2UGXYR+lJ+5pA8VpsiabRbxg=
+	t=1728895502; cv=none; b=mmMjscjpLlzxhVb4/oOBKMM5alnX6q5/nm0/EXrOnP9Qlsnzpglnvk2NGgDfZNsA3jfvwPgwXFF+UeNkfZPPhK2SXDdgTGur2n0FQLfFuLDFj9u8K9pFOwDr/atFH4G7SBhqIe3pKB1nv3BWK08kOum7otwWY4uSG3IOkcsPQsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895496; c=relaxed/simple;
-	bh=6a1aFNvCP8oSQhfNPDpQjZyDszaUOOVaxqTozcN7CHo=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=KG3nGoh91PVALMy8rCD26afIT6xn/T8a6/gDGyaKf+zJkTol8qD4M2MAKQ13eYqp2iMGdu6DxhZ+KephWedJFTet0Wf4Avr0USAKsLDB5AaADvDQfGaiijkCDXzZrvzQKHt9y6mFLvUYEfT+3ua3/mGheBCwr0Y83/F/RrXGWmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eUXjikBZ; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728895491;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8HymtqTchiQpzME33HIhPmrfIpt1fflEw+LjEVZN4OU=;
-	b=eUXjikBZo/wbyW+I2zALGFaqZCtk+WaTncA+wFsPHiACMY1PAFz8oeEkbOiudDy+S3gSZd
-	m4LICcK5Ao/JkSsyS3x/srpyIwHPxY1kPbbh7cuml4zAv2K45bv0FC0mbNtvK+SUTHyTwC
-	gQC1cwKcVsCO8hCuchpY2rCXiVwSrUo=
+	s=arc-20240116; t=1728895502; c=relaxed/simple;
+	bh=QoP8iPr+fVnnS97eu95m5O2F0x4LsHdGOPZQPOZsMSs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R5gJanYvvqTu+eVwpykgbnEq2d4v5QuCSiD+bcS3G/6BKhDgBUk/tklpqnMvP817ZPtjdNlUe18Wsd2DtMrTNlOoiMesq/SRO0TkNOJon9CtascAwjwFLPdS9bw/QTZbaL0k3r3/+OOjx2NMFX0Xf2RnSpB/bE4S7cbFd6sggo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ucph95/7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49DMuKBO019709;
+	Mon, 14 Oct 2024 08:44:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=EnXmBCeVsiTcuW3H/7Ye9G
+	aQf18jZRw1FMPtUbjudi4=; b=Ucph95/7FikJV3emy4b94HzAGHHDEcw1tp/cjF
+	P2I6qZ6gAdVgciBJ+c4RHe5PIRf9B8uy1L9MYzO7KpY9frTbcqcCInrk3yYVCo2j
+	jpaPV4ifLRrkLkba9bxEb94porvSkIDsxPiuRyVFzAURdh4mVJRj4aqDtvQkRJ8c
+	krJ/OxByPEb1/CNJ7XdDRhRI+A+rAOq6x9dDgCnB5qHZvIAdDdF/3J02pDsjd8ZY
+	3ZCvj0eGNFfdqgP88qVfZUd1TOlIFQv3BuYeqfq5qJlHBz/gi3hjBkZxJNcMrXCM
+	6JzNtTrsS9mTi8ITffIR5Z/e0liabIyjwIJ5a6ASTzVrhSuA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427h6tuu2h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 08:44:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49E8inms012879
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 08:44:49 GMT
+Received: from hu-kriskura-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 14 Oct 2024 01:44:43 -0700
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Wesley Cheng
+	<quic_wcheng@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <quic_ppratap@quicinc.com>,
+        <quic_jackp@quicinc.com>, Krishna Kurapati <quic_kriskura@quicinc.com>
+Subject: [PATCH 0/5] Add support for primary USB controller on QCS615.
+Date: Mon, 14 Oct 2024 14:14:27 +0530
+Message-ID: <20241014084432.3310114-1-quic_kriskura@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <c34b962b-8b9a-41e5-a54e-364b826c5e2a@arm.com>
-Date: Mon, 14 Oct 2024 16:43:59 +0800
-Cc: akpm@linux-foundation.org,
- david@fromorbit.com,
- zhengqi.arch@bytedance.com,
- roman.gushchin@linux.dev,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- chenridong@huawei.com,
- wangweiyang2@huawei.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <178A7AC8-0BDA-42CA-86B2-E1C13F3E1E8B@linux.dev>
-References: <20241014032336.482088-1-chenridong@huaweicloud.com>
- <c34b962b-8b9a-41e5-a54e-364b826c5e2a@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- Chen Ridong <chenridong@huaweicloud.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0Zr3wbMAg4KeXj0aKqcEgQJuiBrD0kgm
+X-Proofpoint-ORIG-GUID: 0Zr3wbMAg4KeXj0aKqcEgQJuiBrD0kgm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxlogscore=852 malwarescore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
+ spamscore=0 suspectscore=0 clxscore=1011 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140063
 
+This series aims at enabling USB on QCS615 which has 2 USB controllers.
+The primary controller is SuperSpeed capable and secondary one is
+High Speed only capable. The High Speed Phy is a QUSB2 phy and the
+SuperSpeed Phy is a QMP Uni Phy which supports non-concurrent DP.
 
+Device tree patches will sent separately after the SMMU node is acked [1]
+on upstream. DT Binding checks done on the binding patches.
 
-> On Oct 14, 2024, at 16:13, Anshuman Khandual =
-<anshuman.khandual@arm.com> wrote:
->=20
->=20
->=20
-> On 10/14/24 08:53, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>=20
->> A memleak was found as bellow:
->>=20
->> unreferenced object 0xffff8881010d2a80 (size 32):
->>  comm "mkdir", pid 1559, jiffies 4294932666
->>  hex dump (first 32 bytes):
->>    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>    40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
->>  backtrace (crc 2e7ef6fa):
->>    [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
->>    [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
->>    [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
->>    [<ffffffff81198dd9>] online_css+0x29/0xa0
->>    [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
->>    [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
->>    [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
->>    [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
->>    [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
->>    [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
->>    [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
->>    [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>=20
->> In the alloc_shrinker_info function, when shrinker_unit_alloc return
->> err, the info won't be freed. Just fix it.
->>=20
->> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for =
-shrinker_info::{map, nr_deferred}")
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->> mm/shrinker.c | 1 +
->> 1 file changed, 1 insertion(+)
->>=20
->> diff --git a/mm/shrinker.c b/mm/shrinker.c
->> index dc5d2a6fcfc4..92270413190d 100644
->> --- a/mm/shrinker.c
->> +++ b/mm/shrinker.c
->> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>=20
->> err:
->> 	mutex_unlock(&shrinker_mutex);
->> + 	kvfree(info);
->> 	free_shrinker_info(memcg);
->> 	return -ENOMEM;
->> }
->=20
-> There are two scenarios when "goto err:" gets called
->=20
-> - When shrinker_info allocations fails, no kvfree() is required
-> 	- but after this change kvfree() would be called even
-> 	  when the allocation had failed originally, which does
->  	  not sound right
+Bindings have been added only for the first controller.
 
-Yes. In this case, @info is NULL and kvfree could handle NULL.
-It seems strange but the final behaviour correct.
+[1]: https://lore.kernel.org/all/20241011063112.19087-1-quic_qqzhou@quicinc.com/
 
->=20
-> - shrinker_unit_alloc() fails, kvfree() is actually required
->=20
-> I guess kvfree() should be called just after shrinker_unit_alloc()
-> fails but before calling into "goto err".
+Krishna Kurapati (5):
+  dt-bindings: usb: qcom,dwc3: Add QCS615 to USB DWC3 bindings
+  dt-bindings: phy: qcom,qusb2: Add bindings for QCS615
+  dt-bindings: phy: qcom,msm8998-qmp-usb3-phy: Add support for QCS615
+  phy: qcom-qusb2: Add support for QCS615
+  phy: qcom: qmp-usbc: Add qmp configuration for QCS615
 
-We could do it like this, which avoids ambiguity (if someone ignores
-that kvfree could handle NULL). Something like:
+ .../phy/qcom,msm8998-qmp-usb3-phy.yaml        |  2 ++
+ .../bindings/phy/qcom,qusb2-phy.yaml          |  1 +
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    |  3 ++
+ drivers/phy/qualcomm/phy-qcom-qmp-usbc.c      |  3 ++
+ drivers/phy/qualcomm/phy-qcom-qusb2.c         | 29 +++++++++++++++++++
+ 5 files changed, 38 insertions(+)
 
---- a/mm/shrinker.c
-+++ b/mm/shrinker.c
-@@ -88,13 +88,14 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
-                        goto err;
-                info->map_nr_max =3D shrinker_nr_max;
-                if (shrinker_unit_alloc(info, NULL, nid))
--                       goto err;
-+                       goto free;
-                rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, =
-info);
-        }
-        mutex_unlock(&shrinker_mutex);
-
-        return ret;
--
-+free:
-+       kvfree(info);
- err:
-        mutex_unlock(&shrinker_mutex);
-        free_shrinker_info(memcg);
-
-Thanks.
-
->=20
-> But curious, should not both kvzalloc_node()/kvfree() be avoided
-> while inside mutex lock to avoid possible lockdep issues ?
+-- 
+2.34.1
 
 
