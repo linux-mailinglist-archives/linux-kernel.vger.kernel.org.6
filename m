@@ -1,193 +1,122 @@
-Return-Path: <linux-kernel+bounces-364198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D594799CC9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:18:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C1899D291
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB33282BC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7051F24516
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D5D1AA793;
-	Mon, 14 Oct 2024 14:18:38 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1D81CC8AC;
+	Mon, 14 Oct 2024 15:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QeI6S4SU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE78E571;
-	Mon, 14 Oct 2024 14:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3353B1C7617;
+	Mon, 14 Oct 2024 15:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728915518; cv=none; b=KF3bz9khoBXR3hJNFWL19ODef6ZYMEUVQFSNOYmd89k7zkoGoA9wD+QllvgBPOdwoAbZhgd3HBfw4wn4J1XZ4nQJpKq/xzsa25SAJNCvKCP7q/+Yx2arFzcZuOJjtsByR6dP8ghYdvqEUcZtz8IG+ykm+DqMn5Hj9JFxPRAGEmQ=
+	t=1728919503; cv=none; b=nJynzR0E99ULzwNADRGafMxPOdR8/wATGYQgFS5fHEo+2TXFbTWCAZKhHhGnDMfGWc45djuOXzuMsAQrvQCPZ1L4fPB6BGuZ8ZO5q1oCAZ+7tzCqpbQ6AH9ECo20kY91zdtR8geXJ8vJTP58B126WmbFYtyYlbxeHfyFmBDyYJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728915518; c=relaxed/simple;
-	bh=4097PcwXhyCabDSzBoH2+3WktTBaJqGbxkJjbO/T67o=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VtT95Q78IviWur8N5CghpUiIVTAwhHidAncTVHXQlb9Rmv+cFNT0EjcOxNiYlz9MuwhXmDan3Oq3lW5khKJN0G9laocOBR/iK7H2zjvaksAvDJCj6pj7J3sozSRPLxIJ6JQgyQDUczeSDpN+E8XP2HBfYoYlkxf8O1ATQTGL76Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XRzpc5lRtz6HJnN;
-	Mon, 14 Oct 2024 22:18:00 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id AFBE0140AB8;
-	Mon, 14 Oct 2024 22:18:32 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
- 2024 16:18:31 +0200
-Date: Mon, 14 Oct 2024 15:18:29 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
-	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
-	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
-	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
-	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH v13 01/18] EDAC: Add support for EDAC device features
- control
-Message-ID: <20241014151829.00000e7f@Huawei.com>
-In-Reply-To: <20241009124120.1124-2-shiju.jose@huawei.com>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
-	<20241009124120.1124-2-shiju.jose@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728919503; c=relaxed/simple;
+	bh=1GoaPfLQ84iWGdlMtTwtwD5xjUpqEJmFCGIhxXHA0q0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kMm3pZkILHYfewCpchaYLkPwF9bWHxS/RFQMfTY2088l9K2Cu138QXmJSe17hHEuCJUoVW9i08xNtuTTyz+XBHugq9vfL6Nto6v5MQWM7t1SPsK9Ymk+sL3c+5S0uxxxuOAUS9WLjDR+Q79lwxaZeSEP/UYJcQ63w25TxcCf3eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QeI6S4SU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFD7C4CEC3;
+	Mon, 14 Oct 2024 15:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728919502;
+	bh=1GoaPfLQ84iWGdlMtTwtwD5xjUpqEJmFCGIhxXHA0q0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QeI6S4SUhYpSgimP4UGiLNrCdTShZ2vhFcqoiR3Q47fh5YlBhE0U49sfN98EoUztx
+	 vq21kJImqh9R3WTPuT99R7l9sxA5jhR02oaeEgG80ew8nvhDTEXtmYeD4KZ4zMQckK
+	 d1UQitE9ZdU0Y519GEqfyN6x95GFAQ1rG7VLSQX0=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Morse <james.morse@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.1 624/798] arm64: Add Cortex-715 CPU part definition
+Date: Mon, 14 Oct 2024 16:19:38 +0200
+Message-ID: <20241014141242.554119006@linuxfoundation.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241014141217.941104064@linuxfoundation.org>
+References: <20241014141217.941104064@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Wed, 9 Oct 2024 13:41:02 +0100
-<shiju.jose@huawei.com> wrote:
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> Add generic EDAC device features control supports registering
-> RAS features supported in the system. Driver exposes features
-> control attributes to userspace in
-> /sys/bus/edac/devices/<dev-name>/<ras-feature>/
-> 
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-Hi Shiju,
+------------------
 
-Spotted a few minor bugs in here that I'd missed in internal
-review :( See below.
+From: Anshuman Khandual <anshuman.khandual@arm.com>
 
-Jonathan
+[ Upstream commit 07e39e60bbf0ccd5f895568e1afca032193705c0 ]
 
-> ---
->  drivers/edac/edac_device.c | 105 +++++++++++++++++++++++++++++++++++++
->  include/linux/edac.h       |  32 +++++++++++
->  2 files changed, 137 insertions(+)
-> 
-> diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
-> index 621dc2a5d034..0b8aa8150239 100644
-> --- a/drivers/edac/edac_device.c
-> +++ b/drivers/edac/edac_device.c
+Add the CPU Partnumbers for the new Arm designs.
 
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Link: https://lore.kernel.org/r/20221116140915.356601-2-anshuman.khandual@arm.com
+Signed-off-by: Will Deacon <will@kernel.org>
+[ Mark: Trivial backport ]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm64/include/asm/cputype.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +
-> +/**
-> + * edac_dev_register - register device for RAS features with EDAC
-> + * @parent: client device.
-> + * @name: client device's name.
-> + * @private: parent driver's data to store in the context if any.
-> + * @num_features: number of RAS features to register.
-> + * @ras_features: list of RAS features to register.
-> + *
-> + * Return:
-> + *  * %0       - Success.
-> + *  * %-EINVAL - Invalid parameters passed.
-> + *  * %-ENOMEM - Dynamic memory allocation failed.
-> + *
-> + * The new edac_dev_feat_ctx would be freed automatically.
-> + */
-> +int edac_dev_register(struct device *parent, char *name,
-> +		      void *private, int num_features,
-> +		      const struct edac_dev_feature *ras_features)
-> +{
-
-...
-
-> +	ret = device_register(&ctx->dev);
-> +	if (ret) {
-> +		put_device(&ctx->dev);
-> +		goto groups_free;
-> +		return ret;
-
-Unreachable line. However, shouldn't have the goto here
-as put_device() should result in the release being called
-in which case this is a double free. So drop the goto and keep
-the return.
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index a0a028a6b9670..9916346948ba2 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -82,6 +82,7 @@
+ #define ARM_CPU_PART_CORTEX_A510	0xD46
+ #define ARM_CPU_PART_CORTEX_A520	0xD80
+ #define ARM_CPU_PART_CORTEX_A710	0xD47
++#define ARM_CPU_PART_CORTEX_A715	0xD4D
+ #define ARM_CPU_PART_CORTEX_X2		0xD48
+ #define ARM_CPU_PART_NEOVERSE_N2	0xD49
+ #define ARM_CPU_PART_CORTEX_A78C	0xD4B
+@@ -156,6 +157,7 @@
+ #define MIDR_CORTEX_A510 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A510)
+ #define MIDR_CORTEX_A520 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A520)
+ #define MIDR_CORTEX_A710 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A710)
++#define MIDR_CORTEX_A715 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A715)
+ #define MIDR_CORTEX_X2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X2)
+ #define MIDR_NEOVERSE_N2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N2)
+ #define MIDR_CORTEX_A78C	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78C)
+-- 
+2.43.0
 
 
-> +	}
-> +
-> +	return devm_add_action_or_reset(parent, edac_dev_unreg, &ctx->dev);
-> +
-> +groups_free:
-> +	kfree(ras_attr_groups);
-> +ctx_free:
-> +	kfree(ctx);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(edac_dev_register);
-> diff --git a/include/linux/edac.h b/include/linux/edac.h
-> index b4ee8961e623..1db008a82690 100644
-> --- a/include/linux/edac.h
-> +++ b/include/linux/edac.h
-> @@ -661,4 +661,36 @@ static inline struct dimm_info *edac_get_dimm(struct mem_ctl_info *mci,
-
-
-> +/* EDAC device feature information structure */
-> +struct edac_dev_data {
-> +	u8 instance;
-> +	void *private;
-> +};
-> +
-> +struct device;
-
-That forwards def doesn't work as this header needs to include
-enough information to establish layout of struct edac_dev_feat_ctx.
-Header already includes linux/device.h so just drop this.
-
-
-> +
-> +struct edac_dev_feat_ctx {
-> +	struct device dev;
-> +	void *private;
-> +};
-> +
-> +struct edac_dev_feature {
-> +	enum edac_dev_feat ft_type;
-> +	u8 instance;
-> +	void *ctx;
-> +};
-> +
-> +int edac_dev_register(struct device *parent, char *dev_name,
-> +		      void *parent_pvt_data, int num_features,
-> +		      const struct edac_dev_feature *ras_features);
->  #endif /* _LINUX_EDAC_H_ */
 
 
