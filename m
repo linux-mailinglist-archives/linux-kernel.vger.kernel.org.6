@@ -1,99 +1,176 @@
-Return-Path: <linux-kernel+bounces-363227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BDD99BF3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:56:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54C599BF47
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914941F22733
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:56:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F9B280E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DA113C690;
-	Mon, 14 Oct 2024 04:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03591369BB;
+	Mon, 14 Oct 2024 05:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HjlbCUai"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EjuIS0Q2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25917F48C;
-	Mon, 14 Oct 2024 04:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2510F1804E;
+	Mon, 14 Oct 2024 05:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728881797; cv=none; b=jf/RRYPy54tJhVaO8xx0qj2RdylHVDSu7PMSmxfWhTrygl6RuJ/5qD2qA6viXE19BqRn5Oo9STN8TWWnRUD1ygaImjgfnopm14A123mvB0P+EqFzD+JDCi+JZ+IqYaTF2ZyspmP6VLjPfjrKvSH24V0u4Opj0cRCpRnarJ42qtY=
+	t=1728882109; cv=none; b=kwGyOQy0TekceHLUFFJZ4puVkiBtvA0QpYU71l7h/47pqxvr0p6DFFZ+yM1NOJFg13OXbmuCmQF2H+IyaMKaOpTPbnDf2xOLdfPMK00WfDCTC/oG/9VmCO56KlL6nDNJ6s4ky4BmR9Jds7pnrlIUF7i1FmOnEiZSF9oCag1vV1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728881797; c=relaxed/simple;
-	bh=OLmhVg78lcUBnsUQeSffBUaOmoQ0KEXsLEXGRmfRhrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=foYZFEP5jWm+bdsM/qjjO0LGZJTtxkudG5CBN1TQ+IIQ0w54lKBILJtlpmduhLTf1E92LoX3gwYCjcmOF5FK4CDPr4QWB1XCl1Ylpv3MtMoJsYPb4BqNGmlEM4spou+k1LfbUQ90OjaO3rR3WiRNXkCdOThMn6t75XVFKAJPmU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HjlbCUai; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso4146331fa.0;
-        Sun, 13 Oct 2024 21:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728881794; x=1729486594; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OLmhVg78lcUBnsUQeSffBUaOmoQ0KEXsLEXGRmfRhrA=;
-        b=HjlbCUaioQ2RqWKVkdeznHjOqV4QFk0Uz/wlOVrpoL5Y7cWiWlmvNnTYbSXChhOrbY
-         tkB/V6L1tN5aAzsWT0YJBHB9WNO8fj+ktL6Yho9bNo5LK7RtNW1mdDnFjnOGa0GByQRn
-         D4Jxrqid9IY18Uq4aUrNLSaj1DR05MLnjsngIQ01jszA749dWAP7L9uiAS8G40r6SF6X
-         zI8LUWHEkbkHu+2ZzavOA5MG9ruzXmxiGLfXdPLonrzlmQuhBe5fODQfwR3VERaCEY1a
-         V3FwZvkhDGlV2289Ph8KyRCiX3Q8JrxK40o+12j4O5lqPGtq7IixWki5NknM4j+11xDi
-         lWlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728881794; x=1729486594;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OLmhVg78lcUBnsUQeSffBUaOmoQ0KEXsLEXGRmfRhrA=;
-        b=bkkqi6ANOLfm3xiiM/wxosQzJnCb6uM6hucHTDFQP05dFGW1mThuViI3e1ifELGaXi
-         YP3EjBOi38qHJab2fn4frrmkCYE4LIiayk6oeBFTVOKvq88MwJS7UyiIPqR1LjqVaO0t
-         Wo7fhpnm8YKtUI9eMlDOzfI5I+qhbMaETQnEJpSzfPCZWUt5uD3/uOK+tiMGSE4EMpn6
-         408rQeX/JfXPjgle/Dtb7jomtea/IQBlVgaOUdI3tbeGHYrNJEZKCNQwce1YxatQhjt/
-         0vX/9W5Yyt/wK+cRkte2NJ2xQP6Oz2CL6P3wP2cPosuKHusc6nPsw+j8uPZVdGBdw6da
-         olog==
-X-Forwarded-Encrypted: i=1; AJvYcCVAfjzXOjT2egM1GWw7lfjxqYi1zoAY1yumgq+0LbbUx8c8r0MmZ6jSScUNXygHdtfDqnA6ZnO6XxgV@vger.kernel.org, AJvYcCVCC1LYF+loXI49R50QSTiwooKhxxrI8uGEcgAEws86je3Aqg9QTPksYbe1bLJuoa+EZM1ayCAdS43GTBxT@vger.kernel.org, AJvYcCXFt2cw8GKLGjYkcHg7lJ61mHEJZCowNBG7EexKGghFSk6NgQBIFp9p1n7OYt4T6UlmnbsAvuGeFpcCbA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+uU23qtITjZXdfO2jyu5VUbxHCXjdG/WRsk+U5mXZWCQz2R93
-	3ptl4gH1lqNB0snkJ1I5fwkMwaVJJ+qPuGreicHFmX5qHIJXsb6d
-X-Google-Smtp-Source: AGHT+IE54gXcv3a4S2J6AbtS8itW3hdrWOeULbQ9UDBITrRp2ibiZ9Cfzvn2bTKHXF3J+p3FzMJLHg==
-X-Received: by 2002:a05:651c:549:b0:2fa:bad7:70fc with SMTP id 38308e7fff4ca-2fb3f2d1691mr24724481fa.29.1728881793397;
-        Sun, 13 Oct 2024 21:56:33 -0700 (PDT)
-Received: from matsievskiysv ([94.141.107.74])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb4bca8cf3sm3878411fa.139.2024.10.13.21.56.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 21:56:32 -0700 (PDT)
-Date: Mon, 14 Oct 2024 07:56:29 +0300
-From: Sergey Matsievskiy <matsievskiysv@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: alexandre.belloni@bootlin.com, quentin.schulz@bootlin.com,
-	lars.povlsen@microchip.com, horatiu.vultur@microchip.com,
-	andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH v2 1/1] pinctrl: ocelot: fix system hang on level based
- interrupts
-Message-ID: <ZwykfY7iP-xXgsY8@matsievskiysv>
-References: <20241012105743.12450-1-matsievskiysv@gmail.com>
- <20241012105743.12450-2-matsievskiysv@gmail.com>
- <CACRpkdbCVFEgP3ZchLtM8KgDVVbCiK7ZgGha=iVfTBveRstDkA@mail.gmail.com>
+	s=arc-20240116; t=1728882109; c=relaxed/simple;
+	bh=YQNIqpnXngZWhi/aJCruSivBm8gOysW+5qKPkdNBfDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PTADwx1i3ZxmIF44uAERiTu7Niv0ywZqH1FqwPephCnB+8FbJGPYt2xylJGf2oY1MJxPCUQpV+/klZRgx5VJvibIAq80649gduUKFS7+vUP//dODQoQvoGh2O9roy8jPsYeh1lTpa/WWakj4VhcG2M3Rx5RtDs3d210Q9KVzvS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EjuIS0Q2; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728882107; x=1760418107;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YQNIqpnXngZWhi/aJCruSivBm8gOysW+5qKPkdNBfDI=;
+  b=EjuIS0Q2PXdQSyedin6GFfKpvigPOsHlqRQQJ5DH6y6FnABt7wN5WVK9
+   CJe3+ciVuYPd6d7O7rQ79MOGZ5VtXF6iNPNUU5QXopnhKjrCuQX0rvisZ
+   OHO3I7VeJHkABYCgF8lKhh7IZ9alAZBbqNxXNkd+a/JcWVZ8urJxuSO1y
+   NK4mZc+ijbDg5knuk21WL61q1dQC18ke2Mx8TSie4FoRL6yamJtFRT3xa
+   JaA4Aa59gYRr73JuQaXwxTLsG2+y3+hbEArvh7oZ7+00VkbpF8fflquAr
+   Q1iotc7dcAr6KkfClc08UyfuZldXWRSpekpCstc9yPqwRQH3jHVlvBv5e
+   g==;
+X-CSE-ConnectionGUID: 8Ol1yq/FQaqnr1v4/+dVSA==
+X-CSE-MsgGUID: 4kN7VA1kR+C6XHTDEolVNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="53635245"
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="53635245"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:01:45 -0700
+X-CSE-ConnectionGUID: KY7a8L4UQWqt4lR8nk9GzA==
+X-CSE-MsgGUID: 8pKGXwuPTAOo3NAY3aMVLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="77331512"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:01:43 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>,
+	Yuan Yao <yuan.yao@intel.com>
+Subject: [PATCH v2] KVM: VMX: Remove the unused variable "gpa" in __invept()
+Date: Mon, 14 Oct 2024 12:59:31 +0800
+Message-ID: <20241014045931.1061-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbCVFEgP3ZchLtM8KgDVVbCiK7ZgGha=iVfTBveRstDkA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 12, 2024 at 10:04:30PM +0200, Linus Walleij wrote:
-> Patch applied and tagged for stable!
+Remove the unused variable "gpa" in __invept().
 
-Awesome, thanks!
+The INVEPT instruction only supports two types: VMX_EPT_EXTENT_CONTEXT (1)
+and VMX_EPT_EXTENT_GLOBAL (2). Neither of these types requires a third
+variable "gpa".
 
+The "gpa" variable for __invept() is always set to 0 and was originally
+introduced for the old non-existent type VMX_EPT_EXTENT_INDIVIDUAL_ADDR
+(0). This type was removed by commit 2b3c5cbc0d81 ("kvm: don't use bit24
+for detecting address-specific invalidation capability") and
+commit 63f3ac48133a ("KVM: VMX: clean up declaration of VPID/EPT
+invalidation types").
+
+Since this variable is not useful for error handling either, remove it to
+avoid confusion.
+
+No functional changes expected.
+
+Cc: Yuan Yao <yuan.yao@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
 --
-Sergey Matsievskiy
+v2:
+Add the missing must_be_zero 64 bits.
+---
+ arch/x86/kvm/vmx/vmx.c     |  5 ++---
+ arch/x86/kvm/vmx/vmx_ops.h | 16 ++++++++--------
+ 2 files changed, 10 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 1a4438358c5e..c0f4bb506a58 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -481,10 +481,9 @@ noinline void invvpid_error(unsigned long ext, u16 vpid, gva_t gva)
+ 			ext, vpid, gva);
+ }
+ 
+-noinline void invept_error(unsigned long ext, u64 eptp, gpa_t gpa)
++noinline void invept_error(unsigned long ext, u64 eptp)
+ {
+-	vmx_insn_failed("invept failed: ext=0x%lx eptp=%llx gpa=0x%llx\n",
+-			ext, eptp, gpa);
++	vmx_insn_failed("invept failed: ext=0x%lx eptp=%llx\n", ext, eptp);
+ }
+ 
+ static DEFINE_PER_CPU(struct vmcs *, vmxarea);
+diff --git a/arch/x86/kvm/vmx/vmx_ops.h b/arch/x86/kvm/vmx/vmx_ops.h
+index 93e020dc88f6..633c87e2fd92 100644
+--- a/arch/x86/kvm/vmx/vmx_ops.h
++++ b/arch/x86/kvm/vmx/vmx_ops.h
+@@ -15,7 +15,7 @@ void vmwrite_error(unsigned long field, unsigned long value);
+ void vmclear_error(struct vmcs *vmcs, u64 phys_addr);
+ void vmptrld_error(struct vmcs *vmcs, u64 phys_addr);
+ void invvpid_error(unsigned long ext, u16 vpid, gva_t gva);
+-void invept_error(unsigned long ext, u64 eptp, gpa_t gpa);
++void invept_error(unsigned long ext, u64 eptp);
+ 
+ #ifndef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
+ /*
+@@ -312,13 +312,13 @@ static inline void __invvpid(unsigned long ext, u16 vpid, gva_t gva)
+ 	vmx_asm2(invvpid, "r"(ext), "m"(operand), ext, vpid, gva);
+ }
+ 
+-static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
++static inline void __invept(unsigned long ext, u64 eptp)
+ {
+ 	struct {
+-		u64 eptp, gpa;
+-	} operand = {eptp, gpa};
+-
+-	vmx_asm2(invept, "r"(ext), "m"(operand), ext, eptp, gpa);
++		u64 eptp;
++		u64 reserved_0;
++	} operand = { eptp, 0 };
++	vmx_asm2(invept, "r"(ext), "m"(operand), ext, eptp);
+ }
+ 
+ static inline void vpid_sync_vcpu_single(int vpid)
+@@ -355,13 +355,13 @@ static inline void vpid_sync_vcpu_addr(int vpid, gva_t addr)
+ 
+ static inline void ept_sync_global(void)
+ {
+-	__invept(VMX_EPT_EXTENT_GLOBAL, 0, 0);
++	__invept(VMX_EPT_EXTENT_GLOBAL, 0);
+ }
+ 
+ static inline void ept_sync_context(u64 eptp)
+ {
+ 	if (cpu_has_vmx_invept_context())
+-		__invept(VMX_EPT_EXTENT_CONTEXT, eptp, 0);
++		__invept(VMX_EPT_EXTENT_CONTEXT, eptp);
+ 	else
+ 		ept_sync_global();
+ }
+
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+-- 
+2.43.2
+
 
