@@ -1,153 +1,103 @@
-Return-Path: <linux-kernel+bounces-363140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5366599BE50
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:47:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7B999BE58
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0271F22BA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC7D282FE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8907711F;
-	Mon, 14 Oct 2024 03:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF97B83CC1;
+	Mon, 14 Oct 2024 03:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="P7UALpFo"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="LjmScu4v"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89D320E6;
-	Mon, 14 Oct 2024 03:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DD5231CB1;
+	Mon, 14 Oct 2024 03:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728877615; cv=none; b=Ke5XD3iy76rn2gbJKPOwiwL/JHv7AE47/kxco/lOw8KVeeIaakOtnTBgkcirWvwEOov1RjCs/hg/uDwmXsQvaUp7TKnzbg4XMvTGKavUZ4Efb6rTKgsf8EJVha6rmU4Gfrwo6B5xMv37rwSY3h0KJORfI3O9TK+oGE+HymNgZqM=
+	t=1728878028; cv=none; b=OtNoCe8qGGkCrjn4KR9wEZsoo0VivRDIM4u9AeZdNjW2lkMBWPoLqdJvxiru0fsakyPHtnmYnjgexrlX2PIq5XJ3fPalYcMpYGnh7clwFI5smJeB7FFKZ0IAV8NVIR74IYGpYHNZm2vCLazN6DifZ48x1lUodSXCGtxvDYa0l78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728877615; c=relaxed/simple;
-	bh=2NsT0WAo+3qTiXMENIEjzGb38f/nMG9A+IRUyZ08r+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AgIuGU90hzoIXlj6P2XWatWnzcLoGb68N3y+GQLoMZYeoM4QEyo2CTv31cdkInH6PY9Ny+KM0rgy6vaONRXVJ44X/is6zW/NmuBKGvPLZBH3/lftepF0341HaIr5LLa7gzdfUGXGtTX7eqbpK/TN+PhgW/zxl60kYOR1EVLIeks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=P7UALpFo; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728877608;
-	bh=IE+eFhBCyhykX0HaoXeVsgGgtRo5zD6kl1e9wJhuCWY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=P7UALpFoC9/8IJgoRKuU0QdLLX2pDtoiTsWvxr2uxlkhG5ZtJ6eLR12Ndgp2hbwj+
-	 LB057t8hPIARWqDKI26ES/XZ+CLB05CI0xw9VM8Izb8Fr3oEUMcWcnuCD33z3CQlr0
-	 nzWSCaN/jWrrwMwQyLHB8w0QSMAnspRD2aJyBLgQm45CurRBJUSEnfNTdQEyHovafr
-	 sCkHZw5qRbc5ligf8wWQh1Q2h+/Hxt1BtF3I4reELP4pttUGHt6LQNPGS7FOfxZZe0
-	 JRaz3A1C794yJu9P+AsyCoPJtjkLPEdTp7OGZZbYEGHHRo5bzttJAQwGhw3L3LawfO
-	 eSYnFfO5SCrCA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XRjpJ3gZpz4x8T;
-	Mon, 14 Oct 2024 14:46:48 +1100 (AEDT)
-Date: Mon, 14 Oct 2024 14:46:48 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paul Moore <paul@paul-moore.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Yafang Shao <laoar.shao@gmail.com>
-Subject: linux-next: manual merge of the security tree with the mm tree
-Message-ID: <20241014144648.1923104a@canb.auug.org.au>
+	s=arc-20240116; t=1728878028; c=relaxed/simple;
+	bh=T0PylFUGGEvk/NxJbKOo0gN2s6qagSt3zCfg4Ee1feQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=IAIZU+8MXadORjzQUVudxFC997P2Vtbt497ctg2tFhU6xdaOMtrmPZhQC5VDNcJqUkItdq7nO1WqkgI88YzXWJF2mb6WgQJ7D1bJ9vZ0CmxXuDMMSqIC6Fngk36CS6ohyG2pyK5CiWN7mBa849m0dWmN9WaffROENEgZtQymFN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=LjmScu4v; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bvzq9izB=+eAOMZ29dmGYWD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1728878022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y1kR0sfl5tb/JBd/o562F1YUU5L9dc/UgrNB2JP6zYU=;
+	b=LjmScu4vRNphEIqQE9JBQ026JkApI3Iyyl5w66rT93cJil/Myh717LkU0GzqG7H++9WrfS
+	mW5qWEK4F3QVP0naYvBhnvZNglv6b3jyePG5qWSXQcwKTG80KBWBqhfLJJfY7Px9KsQ6Le
+	6NBxMnjPw3jooKBGoumcA1fblFfd0/MSGd8iQO+SHLU/5MynnT1EYqBBnJYaYT2thXFYT1
+	DyXnos9TPh5aEDsO85u9iaC3d+a8h2li/ocjL4e2z/wxA9DAKqJhQ4cc5/sYsXSCp2bRRI
+	5HGhI0L1IZTEit3YQQ6USZfYuapcO8QiahyKNfqrakF1r3wvvl+FtEVbcI8phg==
+Date: Mon, 14 Oct 2024 05:53:42 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Frank Wang <frawang.cn@gmail.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, yubing.zhang@rock-chips.com, Frank Wang
+ <frank.wang@rock-chips.com>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: rockchip-usbdp: add rk3576
+In-Reply-To: <20241014020342.15974-1-frawang.cn@gmail.com>
+References: <20241014020342.15974-1-frawang.cn@gmail.com>
+Message-ID: <00175534f48f419c44836129f9cacbeb@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
---Sig_/bvzq9izB=+eAOMZ29dmGYWD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Frank,
 
-Hi all,
+On 2024-10-14 04:03, Frank Wang wrote:
+> From: Frank Wang <frank.wang@rock-chips.com>
+> 
+> Add compatible for the USBDP phy in the Rockchip RK3576 SoC.
+> 
+> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
 
-Today's linux-next merge of the security tree got a conflict in:
+Looking good to me, thanks for the patch.
 
-  kernel/auditsc.c
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 
-between commit:
-
-  cd39427be833 ("auditsc: replace memcpy() with strscpy()")
-
-from the mm-nonmm-unstable branch of the mm tree and commits:
-
-  37f670aacd48 ("lsm: use lsm_prop in security_current_getsecid")
-  13d826e564e2 ("audit: change context data from secid to lsm_prop")
-
-from the security tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/auditsc.c
-index 7adc67d5aafb,f28fd513d047..000000000000
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@@ -2729,8 -2728,8 +2728,8 @@@ void __audit_ptrace(struct task_struct=20
-  	context->target_auid =3D audit_get_loginuid(t);
-  	context->target_uid =3D task_uid(t);
-  	context->target_sessionid =3D audit_get_sessionid(t);
-- 	security_task_getsecid_obj(t, &context->target_sid);
-+ 	security_task_getlsmprop_obj(t, &context->target_ref);
- -	memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
- +	strscpy(context->target_comm, t->comm);
-  }
- =20
-  /**
-@@@ -2756,8 -2755,8 +2755,8 @@@ int audit_signal_info_syscall(struct ta
-  		ctx->target_auid =3D audit_get_loginuid(t);
-  		ctx->target_uid =3D t_uid;
-  		ctx->target_sessionid =3D audit_get_sessionid(t);
-- 		security_task_getsecid_obj(t, &ctx->target_sid);
-+ 		security_task_getlsmprop_obj(t, &ctx->target_ref);
- -		memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
- +		strscpy(ctx->target_comm, t->comm);
-  		return 0;
-  	}
- =20
-@@@ -2777,8 -2776,8 +2776,8 @@@
-  	axp->target_auid[axp->pid_count] =3D audit_get_loginuid(t);
-  	axp->target_uid[axp->pid_count] =3D t_uid;
-  	axp->target_sessionid[axp->pid_count] =3D audit_get_sessionid(t);
-- 	security_task_getsecid_obj(t, &axp->target_sid[axp->pid_count]);
-+ 	security_task_getlsmprop_obj(t, &axp->target_ref[axp->pid_count]);
- -	memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
- +	strscpy(axp->target_comm[axp->pid_count], t->comm);
-  	axp->pid_count++;
- =20
-  	return 0;
-
---Sig_/bvzq9izB=+eAOMZ29dmGYWD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcMlCgACgkQAVBC80lX
-0Gwywgf+IwyZEUTP5cnKHGRLTZuJ3pvWgtBgiMJANnZAgZTHmsqlmOgGAw20NtlF
-wwIpbA2unwZLwmvRWdC/HCAZFCVN5E61MJgM1WmR5qdWDeHWuHguRzLWN5xE+rSY
-cUV0iQGasTul01usVR0bzZQqzspoObJUub48x8ku1BZdBXhL7XjY1hCirFerVKCG
-xjUfMh6Ali7MdTY5It7DsN8mklOlS8i0u2AL+z5S59QGiwgoDR8G/eNKJ74zEGeN
-7JhKkSuUUtvjxC71I0wTD6DDOJuSJrwVccFGycwC3jtHBRqnuent7DiY9wp7Zvwo
-Uc8MPEONR7KWApdQbz/OGiyWFscBiQ==
-=pKRg
------END PGP SIGNATURE-----
-
---Sig_/bvzq9izB=+eAOMZ29dmGYWD--
+> ---
+>  Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
+> b/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
+> index 1f1f8863b80d..b42f1272903d 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
+> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
+> @@ -13,6 +13,7 @@ maintainers:
+>  properties:
+>    compatible:
+>      enum:
+> +      - rockchip,rk3576-usbdp-phy
+>        - rockchip,rk3588-usbdp-phy
+> 
+>    reg:
 
