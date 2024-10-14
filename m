@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-363316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BB799C080
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:58:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740D099C086
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D80C6281DE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:58:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE9EB2204D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ACA145B25;
-	Mon, 14 Oct 2024 06:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C1C145B25;
+	Mon, 14 Oct 2024 07:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3Nb9yPN"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="KqfUwbpq"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F133D145346;
-	Mon, 14 Oct 2024 06:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E68143C7E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728889085; cv=none; b=r4bypbJnDoDpTqm2FLvGSG98WwfZzZ9A5WpDkfwhsJUVcCsYMPSbHIG/bDx4aqy9wJeLap8GKP3T/QxT7/XPTIB8rWMoHdwJHro4yKRK9c3iB0Hjf0M6+Z9mJVPZeSK7MmE657R4dw5I3i6qox9htd3DKAPcepUTuOm6wEzRYd0=
+	t=1728889200; cv=none; b=ksVYMG6UIkkjKeCSPfKTXS+bCu99NKwGRzRLMz3vMEdmBr7s+RL9TrfQ6BNKh8VDtc6XMlo7D/pU9Bo1NPrHlC9fpm/1qWwcpA2whmuuReQjbngEyquzt3TDkZB2Ihx9RYJfHyJ9OFtBYwNFoQ97fD/L5JudRy3KJaGa7SSywtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728889085; c=relaxed/simple;
-	bh=Uol9y/3LMoDv/EFKW5TNIdlJcME3TxMkab0kqRRjiuw=;
+	s=arc-20240116; t=1728889200; c=relaxed/simple;
+	bh=xKtOQZK5HutUaVl6kbbOU9Qu7Ar2joczRXup5ujyrgE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eiFmHMZgk781UJ0y3qPqrNSzNap6w6bN6t1f9N3KQIoIoyy6CJuAJ4TPmJY8yq1MfMJkbohCFTOCqyS3UprRofioK8NVbm7xpTi1cwOIRLWOqB9LZnxODitOYnquhYCoSCnm7wm4V1BOf58XfdJGzShdwTw8u8kB+8s1oJ2RQls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m3Nb9yPN; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a99650da839so689997666b.2;
-        Sun, 13 Oct 2024 23:58:03 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=kxEtVjLnOAb52YDDTlF4pggeTj+CzmsugHmJQFaFEbRYKmIqpGla3QAw+BdgWwxd4rDRCThqodF5DNvPsTsXuICREzylfu8HUYAl2tmKZ/UZBhCnK8spO7d/ZBjHizpH44/6SvRIwimtBIrnUeqtZ0ODMMvgr+feSAZf2tFzsmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=KqfUwbpq; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99b1f43aceso525955066b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728889082; x=1729493882; darn=vger.kernel.org;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728889197; x=1729493997; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OqPCjsaPjJ50AmD4VKJMjnNhFs+kU2A2X2fUveI6tCQ=;
-        b=m3Nb9yPNHJyumxv2+iJJ3gmUK+7sKZsTjxEO80THY2SBSnTInI6OQI22NQEpLGUpoK
-         Ks1qq7eBkcJOqmkWew2uHEZS8t/GQnnu+zTJg3bq0MyynAoSlcmNkACjhNGasZbtPNl5
-         0qRL0A6E8WBSHVcfiS0l9KbzCbevinSkI7hyj17QIEOYzgBqrT7zDb8Y0M1+tE2FsDOM
-         S8cOO5k+/Wn+SY/pV0WGGDDDP8rpUSUoGnP6Y2kt9/5oBHXgt6+f4QUwvy2Xv8/3bqbe
-         CQOb8Jy4JSn2x+HUnmgMb6Cw8KHUk5QMIhbglPEb46xcr01QtX1LEEoe69rHGKMiqggt
-         5q2Q==
+        bh=SbvyoL9Luo/70/PTVBa7h557couwK2dRn3xz6x5mHho=;
+        b=KqfUwbpqQ1gzt++iVRYbKYodeC5q6EqZM81NuUSPt94AA7DSrvMhhpTOvmCC6Omt7E
+         eZ8uPiw6rmjA+UaqjWoOVrwEub0lgjTjv9KZx7ydj14aChqkaldxgu1/8qs8HPowIifu
+         DcdFuCgwrAxzP++14QY6RJ/DMzzsOb5VcDqt9CslirzHEL3Gh72eKnQ6iWuUJoT2HDgx
+         8tbJyi6X2CkkwEYriX1kMTWCjKk4Abfz5K52eXeHA86HIACWgBd8gwnht+Ky8pJroc2y
+         TZdO4PKQnEpvAK9Z2eS/bWDKR3fsG1O31VPRau8Vvidxl7O3BR9vG5hVGqdES2AHdrn1
+         UY1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728889082; x=1729493882;
+        d=1e100.net; s=20230601; t=1728889197; x=1729493997;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OqPCjsaPjJ50AmD4VKJMjnNhFs+kU2A2X2fUveI6tCQ=;
-        b=k6RxTngRnM4+ZIx+fJMIPsmZi3kMpd+cSpIZxSK+l/epIZOz1fzh/HwEsyhDXEGrrn
-         5UwcamgxKVnNK42NWH1dLzp0gD7O96A6uE6HmQUgmvzpWKEvtBivdutq91WoltoP3xE9
-         v8kU92MPsUnAUp/Fu3e73mpaUen9RasazARZYonBPMCazSlxCCafmaHpIJA9z/gIo9sc
-         abvAGxu/7Gw/P5rPW41D8fAVSRkzS11dNTLDyrNoorjdpo9M4psUcGX3grtk+nVCt+Er
-         D/g/RJf48+gSut0Oq8MvLOjoUnMI0dOOqhPgkvlsLc/6ESalooSOfYIyuu+OIafRII3f
-         +DOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuRn7FfGneAsGGvF/tDSw8e7dSLI1JE8nlCjxa/024HeD4HDqU3Bqgvo2jWM7bW1gGPDg0spl2WtAzLKg=@vger.kernel.org, AJvYcCVuoHvnLZiCoyAcrBMiKkwKBc03KWHWK4QTVByd3KViWoeZyxVpK2gk0Z5LOIMZUx21c/KZGTktXUkB06u2aMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeNAi194OZcaR9UWlhjjwPCy5mPOALVPyweQNIhuq1h7T8YLnY
-	eCgGQtC55L00Hsc4GEKqqaNpqV0q0fFHiKgCWLU43K7qhvxV8ENC
-X-Google-Smtp-Source: AGHT+IHjkwzmeYolNcpCu4kMgihidz35UylOt9qNLPfjiy7JpDl7IioyNAX8HaWuhUesiiLv0eXtYw==
-X-Received: by 2002:a17:907:986:b0:a99:89bd:d84a with SMTP id a640c23a62f3a-a99e3b6db69mr691134866b.25.1728889081841;
-        Sun, 13 Oct 2024 23:58:01 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf0d:b400:2fe4:847b:4ba1:cae7? (p200300dfbf0db4002fe4847b4ba1cae7.dip0.t-ipconnect.de. [2003:df:bf0d:b400:2fe4:847b:4ba1:cae7])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937260082sm4540343a12.60.2024.10.13.23.58.01
+        bh=SbvyoL9Luo/70/PTVBa7h557couwK2dRn3xz6x5mHho=;
+        b=FiCuHvsvkzvvYHtT7cHjAhyxBF40MiHcQeURaMUudcKLA40wIeRik6BXqDTgKeEU3T
+         SFcUwnzu5l6MNRve5m3BVNwEOjzHyJPeUKXF3nMeHsIAqjua4xp5IXivJNvZd4gTNPFr
+         xYYZvgEk9eA5Lj2JDJwD/c68Yrz8w2E8MJze4bzczbBiZMMvWjk0Sd2iH4gWJXgEIiTC
+         rrb8AOyEbThuXwejluHrKmU3huzXtT9ltw2SWxeS1bF/NxJ+NkdpTrJr9j1wVHI0NJVp
+         GrWCoip1gChdpuMDM/H+fEgAS9wiExuwJxG1G0MDFBVCqC4SknDjZmg5OvG25BTyuN/8
+         HuGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOu1g5Tn8F44zrOvXBS23FQaqwd/+M2sNnVvXlMo9iCD7JT2H9fyYQjpWauAUq0n2KRH6uciSswvCveSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTzPnSVISYRCwvqyAnfrql9bAriYeHtrMFsyQ1vjHws2UPgePn
+	XlEgW+a9yIkq4zzM61cVtCAODDhABYRmWJOOaf4Uzycn+x47km5SBxu9ebRDTmw=
+X-Google-Smtp-Source: AGHT+IGOUfK99ago/evOrlGj0pi4YFg7EEKNgJdbazY59vps+t6ylGtngYjJWYkKZ58+i22OdP1stg==
+X-Received: by 2002:a17:906:eec7:b0:a77:ab9e:9202 with SMTP id a640c23a62f3a-a99a0eb9349mr1327215166b.4.1728889196586;
+        Sun, 13 Oct 2024 23:59:56 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a13f42e8bsm62471966b.58.2024.10.13.23.59.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 23:58:01 -0700 (PDT)
-Message-ID: <9eb1504a-b306-4332-99ce-739bc016622e@gmail.com>
-Date: Mon, 14 Oct 2024 08:58:00 +0200
+        Sun, 13 Oct 2024 23:59:56 -0700 (PDT)
+Message-ID: <c3678626-7f5c-4446-9b4d-2650ddf5d5a6@blackwall.org>
+Date: Mon, 14 Oct 2024 09:59:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,258 +75,174 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/14] hrtimer Rust API
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Dirk Behme <dirk.behme@de.bosch.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
- <ZvwKTinnLckZm8aQ@boqun-archlinux> <87a5falmjy.fsf@kernel.org>
- <dae08234-c9ba-472d-b769-1d07e579a8ac@gmail.com>
- <Zwmy-2Yc7vGboYvl@boqun-archlinux>
- <d2ce38a3-9a32-4f4c-88f2-22864b66afe5@gmail.com>
- <ZwooHrqIiirl1so7@boqun-archlinux>
- <4dd93603-04fa-4da4-b867-bd12ece4b391@gmail.com>
- <Zwr3i4x7J5qyjFog@Boquns-Mac-mini.local>
- <c19edf2d-2b53-403f-abcc-a5e81e7613f8@gmail.com>
- <Zww2Vhsl9sutNm0s@Boquns-Mac-mini.local>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <Zww2Vhsl9sutNm0s@Boquns-Mac-mini.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH RFC v1 net-next 06/12] net: core: dev: Add
+ dev_fill_bridge_path()
+To: Eric Woudstra <ericwouds@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+ <20241013185509.4430-7-ericwouds@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20241013185509.4430-7-ericwouds@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13.10.24 23:06, Boqun Feng wrote:
-> On Sun, Oct 13, 2024 at 07:39:29PM +0200, Dirk Behme wrote:
->> On 13.10.24 00:26, Boqun Feng wrote:
->>> On Sat, Oct 12, 2024 at 09:50:00AM +0200, Dirk Behme wrote:
->>>> On 12.10.24 09:41, Boqun Feng wrote:
->>>>> On Sat, Oct 12, 2024 at 07:19:41AM +0200, Dirk Behme wrote:
->>>>>> On 12.10.24 01:21, Boqun Feng wrote:
->>>>>>> On Fri, Oct 11, 2024 at 05:43:57PM +0200, Dirk Behme wrote:
->>>>>>>> Hi Andreas,
->>>>>>>>
->>>>>>>> Am 11.10.24 um 16:52 schrieb Andreas Hindborg:
->>>>>>>>>
->>>>>>>>> Dirk, thanks for reporting!
->>>>>>>>
->>>>>>>> :)
->>>>>>>>
->>>>>>>>> Boqun Feng <boqun.feng@gmail.com> writes:
->>>>>>>>>
->>>>>>>>>> On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
->>>>>>>>>>> On 18.09.2024 00:27, Andreas Hindborg wrote:
->>>>>>>>>>>> Hi!
->>>>>>>>>>>>
->>>>>>>>>>>> This series adds support for using the `hrtimer` subsystem from Rust code.
->>>>>>>>>>>>
->>>>>>>>>>>> I tried breaking up the code in some smaller patches, hopefully that will
->>>>>>>>>>>> ease the review process a bit.
->>>>>>>>>>>
->>>>>>>>>>> Just fyi, having all 14 patches applied I get [1] on the first (doctest)
->>>>>>>>>>> Example from hrtimer.rs.
->>>>>>>>>>>
->>>>>>>>>>> This is from lockdep:
->>>>>>>>>>>
->>>>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
->>>>>>>>>>>
->>>>>>>>>>> Having just a quick look I'm not sure what the root cause is. Maybe mutex in
->>>>>>>>>>> interrupt context? Or a more subtle one?
->>>>>>>>>>
->>>>>>>>>> I think it's calling mutex inside an interrupt context as shown by the
->>>>>>>>>> callstack:
->>>>>>>>>>
->>>>>>>>>> ]  __mutex_lock+0xa0/0xa4
->>>>>>>>>> ] ...
->>>>>>>>>> ]  hrtimer_interrupt+0x1d4/0x2ac
->>>>>>>>>>
->>>>>>>>>> , it is because:
->>>>>>>>>>
->>>>>>>>>> +//! struct ArcIntrusiveTimer {
->>>>>>>>>> +//!     #[pin]
->>>>>>>>>> +//!     timer: Timer<Self>,
->>>>>>>>>> +//!     #[pin]
->>>>>>>>>> +//!     flag: Mutex<bool>,
->>>>>>>>>> +//!     #[pin]
->>>>>>>>>> +//!     cond: CondVar,
->>>>>>>>>> +//! }
->>>>>>>>>>
->>>>>>>>>> has a Mutex<bool>, which actually should be a SpinLockIrq [1]. Note that
->>>>>>>>>> irq-off is needed for the lock, because otherwise we will hit a self
->>>>>>>>>> deadlock due to interrupts:
->>>>>>>>>>
->>>>>>>>>> 	spin_lock(&a);
->>>>>>>>>> 	> timer interrupt
->>>>>>>>>> 	  spin_lock(&a);
->>>>>>>>>>
->>>>>>>>>> Also notice that the IrqDisabled<'_> token can be simply created by
->>>>>>>>>> ::new(), because irq contexts should guarantee interrupt disabled (i.e.
->>>>>>>>>> we don't support nested interrupts*).
->>>>>>>>>
->>>>>>>>> I updated the example based on the work in [1]. I think we need to
->>>>>>>>> update `CondVar::wait` to support waiting with irq disabled.
->>>>>>>>
->>>>>>>> Yes, I agree. This answers one of the open questions I had in the discussion
->>>>>>>> with Boqun :)
->>>>>>>>
->>>>>>>> What do you think regarding the other open question: In this *special* case
->>>>>>>> here, what do you think to go *without* any lock? I mean the 'while *guard
->>>>>>>> != 5' loop in the main thread is read only regarding guard. So it doesn't
->>>>>>>> matter if it *reads* the old or the new value. And the read/modify/write of
->>>>>>>> guard in the callback is done with interrupts disabled anyhow as it runs in
->>>>>>>> interrupt context. And with this can't be interrupted (excluding nested
->>>>>>>> interrupts). So this modification of guard doesn't need to be protected from
->>>>>>>> being interrupted by a lock if there is no modifcation of guard "outside"
->>>>>>>> the interupt locked context.
->>>>>>>>
->>>>>>>> What do you think?
->>>>>>>>
->>>>>>>
->>>>>>> Reading while there is another CPU is writing is data-race, which is UB.
->>>>>>
->>>>>> Could you help to understand where exactly you see UB in Andreas' 'while
->>>>>> *guard != 5' loop in case no locking is used? As mentioned I'm under the
->>>>>
->>>>> Sure, but could you provide the code of what you mean exactly, if you
->>>>> don't use a lock here, you cannot have a guard. I need to the exact code
->>>>> to point out where the compiler may "mis-compile" (a result of being
-> [...]
->>>> I thought we are talking about anything like
->>>>
->>>> #[pin_data]
->>>> struct ArcIntrusiveTimer {
->>>>         #[pin]
->>>>         timer: Timer<Self>,
->>>>         #[pin]
->>>> -      flag: SpinLockIrq<u64>,
->>>> +      flag: u64,
->>>>         #[pin]
->>>>         cond: CondVar,
->>>> }
->>>>
->>>> ?
->>>>
->>>
->>> Yes, but have you tried to actually use that for the example from
->>> Andreas? I think you will find that you cannot write to `flag` inside
->>> the timer callback, because you only has a `Arc<ArcIntrusiveTimer>`, so
->>> not mutable reference for `ArcIntrusiveTimer`. You can of course use
->>> unsafe to create a mutable reference to `flag`, but it won't be sound,
->>> since you are getting a mutable reference from an immutable reference.
->>
->> Yes, of course. But, hmm, wouldn't that unsoundness be independent on the
->> topic we discuss here? I mean we are talking about getting the compiler to
+On 13/10/2024 21:55, Eric Woudstra wrote:
+> New function dev_fill_bridge_path(), similar to dev_fill_forward_path().
+> It handles starting from a bridge port instead of the bridge master.
+> The structures ctx and nft_forward_info need to be already filled in with
+> the (vlan) encaps.
 > 
-> What do you mean? If the code is unsound, you won't want to use it in an
-> example, right?
-
-Yes, sure. But ;)
-
-In a first step I just wanted to answer the question if we do need a 
-lock at all in this special example. And that we could do even with 
-unsound read/modify/write I would guess. And then, in a second step, 
-if the answer would be "we don't need the lock", then we could think 
-about how to make the flag handling sound. So I'm talking just about 
-answering that question, not about the final example code. Step by step :)
-
-
->> read/modify/write 'flag' in the TimerCallback. *How* we tell him to do so
->> should be independent on the result what we want to look at regarding the
->> locking requirements of 'flag'?
->>
->> Anyhow, my root motivation was to simplify Andreas example to not use a lock
->> where not strictly required. And with this make Andreas example independent
+> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
+> ---
+>  include/linux/netdevice.h |  2 +
+>  net/core/dev.c            | 77 ++++++++++++++++++++++++++++++++-------
+>  2 files changed, 66 insertions(+), 13 deletions(-)
 > 
-> Well, if you don't want to use a lock then you need to use atomics,
-> otherwise it's likely a UB, 
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index e87b5e488325..9d80f650345e 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -3069,6 +3069,8 @@ void dev_remove_offload(struct packet_offload *po);
+>  
+>  int dev_get_iflink(const struct net_device *dev);
+>  int dev_fill_metadata_dst(struct net_device *dev, struct sk_buff *skb);
+> +int dev_fill_bridge_path(struct net_device_path_ctx *ctx,
+> +			 struct net_device_path_stack *stack);
+>  int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
+>  			  struct net_device_path_stack *stack);
+>  struct net_device *__dev_get_by_flags(struct net *net, unsigned short flags,
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index cd479f5f22f6..49959c4904fc 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -713,44 +713,95 @@ static struct net_device_path *dev_fwd_path(struct net_device_path_stack *stack)
+>  	return &stack->path[k];
+>  }
+>  
+> -int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
+> -			  struct net_device_path_stack *stack)
+> +static int dev_fill_forward_path_common(struct net_device_path_ctx *ctx,
+> +					struct net_device_path_stack *stack)
+>  {
+>  	const struct net_device *last_dev;
+> -	struct net_device_path_ctx ctx = {
+> -		.dev	= dev,
+> -	};
+>  	struct net_device_path *path;
+>  	int ret = 0;
+>  
+> -	memcpy(ctx.daddr, daddr, sizeof(ctx.daddr));
+> -	stack->num_paths = 0;
+> -	while (ctx.dev && ctx.dev->netdev_ops->ndo_fill_forward_path) {
+> -		last_dev = ctx.dev;
+> +	while (ctx->dev && ctx->dev->netdev_ops->ndo_fill_forward_path) {
+> +		last_dev = ctx->dev;
+>  		path = dev_fwd_path(stack);
+>  		if (!path)
+>  			return -1;
+>  
+>  		memset(path, 0, sizeof(struct net_device_path));
+> -		ret = ctx.dev->netdev_ops->ndo_fill_forward_path(&ctx, path);
+> +		ret = ctx->dev->netdev_ops->ndo_fill_forward_path(ctx, path);
+>  		if (ret < 0)
+>  			return -1;
+>  
+> -		if (WARN_ON_ONCE(last_dev == ctx.dev))
+> +		if (WARN_ON_ONCE(last_dev == ctx->dev))
+>  			return -1;
+>  	}
+>  
+> -	if (!ctx.dev)
+> +	if (!ctx->dev)
+>  		return ret;
+>  
+>  	path = dev_fwd_path(stack);
+>  	if (!path)
+>  		return -1;
+>  	path->type = DEV_PATH_ETHERNET;
+> -	path->dev = ctx.dev;
+> +	path->dev = ctx->dev;
+> +
+> +	return ret;
+> +}
+> +
+> +int dev_fill_bridge_path(struct net_device_path_ctx *ctx,
+> +			 struct net_device_path_stack *stack)
+> +{
+> +	const struct net_device *last_dev, *br_dev;
+> +	struct net_device_path *path;
+> +	int ret = 0;
+> +
+> +	stack->num_paths = 0;
+> +
+> +	if (!ctx->dev || !netif_is_bridge_port(ctx->dev))
+> +		return -1;
+> +
+> +	br_dev = netdev_master_upper_dev_get_rcu((struct net_device *)ctx->dev);
+> +	if (!br_dev || !br_dev->netdev_ops->ndo_fill_forward_path)
+> +		return -1;
+> +
+> +	last_dev = ctx->dev;
+> +	path = dev_fwd_path(stack);
+> +	if (!path)
+> +		return -1;
+> +
+> +	memset(path, 0, sizeof(struct net_device_path));
+> +	ret = br_dev->netdev_ops->ndo_fill_forward_path(ctx, path);
+> +	if (ret < 0)
+> +		return -1;
+> +
+> +	if (!ctx->dev || WARN_ON_ONCE(last_dev == ctx->dev))
+> +		return -1;
+> +
+> +	if (!netif_is_bridge_master(ctx->dev))
 
-And here we are back to the initial question :) Why would it be UB 
-without lock (and atomics)?
+hmm, do we expect ctx->dev to be a bridge master? Looking at
+br_fill_forward_path, it seems to be == fdb->dst->dev which
+should be the target port
 
-Some (pseudo) assembly:
-
-Lets start with the main thread:
-
-ldr x1, [x0]
-<work with x1>
-
-x0 and x1 are registers. x0 contains the address of flag in the main 
-memory. I.e. that instruction reads (ldr == load) the content of that 
-memory location (flag) into x1. x1 then contains flag which can be 
-used then. This is what I mean with "the main thread is read only". If 
-flag, i.e. x1, does contain the old or new flag value doesn't matter. 
-I.e. for the read only operation it doesn't matter if it is protected 
-by a lock as the load (ldr) can't be interrupted.
-
-Now to the TimerCallback:
-
-ldr x1, [x0]
-add x1, x1, #1
-str x1, [x0]
-
-This is what I mean with read/modify/write. And this needs to be 
-ensured that it is not interruptable. I.e. that we are scheduled 
-between ldr and add or between add and str. Yes, I *totally* agree 
-that for this a lock is needed:
-
-<lock>
-ldr x1, [x0]
-add x1, x1, #1
-str x1, [x0]
-<unlock>
-
-But:
-
-In this this special example we know that we are executing this code 
-in interrupt context. I.e.:
-
-<interrupts are disabled>
-ldr x1, [x0]
-add x1, x1, #1
-str x1, [x0]
-<interrupts are still disabled>
-
-So this read/modify/write can't be interrupted because the interrupts 
-are off. I.e. the interrupt off prevents the scheduling here. And in 
-this sense replaces the lock. And as mentioned, which value is read by 
-the main thread doesn't matter.
-
-To summarize: I totally agree that usually a lock would be needed. But 
-in this special case with (a) read/modify/write in interrupt context 
-*and* (b) read only in main thread I'm unclear.
-
-So with this back to the main question: What is my misunderstanding 
-here? I.e. what is UB in this special case? :)
-
-Best regards
-
-Dirk
-
-> but atomics are still WIP, so that why I
-> suggested Andreas to use a lock first. But I guess I didn't realise the
-> lock needs to be irq-safe when I suggested that.
-> 
-> Regards,
-> Boqun
-> 
->> on mutex lockdep issues, SpinLockIrq changes and possible required CondVar
->> updates. But maybe we find an other way to simplify it and decrease the
->> dependencies. In the end its just example code ;)
->>
->> Best regards
->>
->> Dirk
->>
->>
->>> Regards,
->>> Boqun
->>>
-> [...]
+> +		return dev_fill_forward_path_common(ctx, stack);
+> +
+> +	path = dev_fwd_path(stack);
+> +	if (!path)
+> +		return -1;
+> +	path->type = DEV_PATH_ETHERNET;
+> +	path->dev = ctx->dev;
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(dev_fill_bridge_path);
+> +
+> +int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
+> +			  struct net_device_path_stack *stack)
+> +{
+> +	struct net_device_path_ctx ctx = {
+> +		.dev	= dev,
+> +	};
+> +
+> +	memcpy(ctx.daddr, daddr, sizeof(ctx.daddr));
+> +
+> +	stack->num_paths = 0;
+> +
+> +	return dev_fill_forward_path_common(&ctx, stack);
+> +}
+>  EXPORT_SYMBOL_GPL(dev_fill_forward_path);
+>  
+>  /**
 
 
