@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-363032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4DF99BD23
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:47:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6425799BD24
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8544281640
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AF621C208F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4D13FF1;
-	Mon, 14 Oct 2024 00:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NMRRg7jW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8044683;
+	Mon, 14 Oct 2024 00:48:00 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474F14C7C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F019FEAD5
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728866868; cv=none; b=eYG0ehTRV5DhZ8240nUsTvd121z/gcWgl2gQ9z5TelZc6Y1Swi5ursfgU7LxhE9T8ItH+0MTwiEhD8R+xhBEqWxYIzbT7m+E00WqWunys6ZkXserZb1Ya/YIqJ4t5mNqD7tvPI8fEBN8ZGTUAjlSRDvCBsM5FPaJViue/Uw+AYM=
+	t=1728866879; cv=none; b=Z3mFS/OP93EzS3QTNAS32BjX/vvXMErUN8TXU2gVbVe716T0nsx0sklphP1wSdIR7DKs7XbmtYFe9JkwXJYxVcZR+dQ9j0JSHMp7lbizbFEBH7xf7UrcPS7FWBPxsezk6vWtxOgokIx728fqm5KwAUAZoqqmrnYMZTj8nO4oZCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728866868; c=relaxed/simple;
-	bh=3KGQob7k6Ew8a0A8C5bPWpWol4v3kwZJKffbU9ctFuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 MIME-Version; b=kEyT8LMzyAm7R2Tkg/zcaO4XV+5vkrXJmvnKkkMGvwOYrpdhcQ2cVmqvH5dpAI0kFaqgLaV+mfG5pNn5cA2ajQUUBAtTA1NZ7S2/RJ2zbP9KFVUuVkzO6HZJBiC9aXmX8+vxmPgXBKq7RakfkMzz2lk0udu1COKBAjtALdbADXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NMRRg7jW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728866865;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:mime-version:  content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=X05hnwmFfahTamUd2ZyCmOrUz5+WC9QCz0YioOU37gU=;
-	b=NMRRg7jWvywpd0R9GstwQ7/duc+43vYKpnj7BgrFwvks7TiMEvpXBj4Fza/So9N8irwT/y
-	YLQuoUfKdqg428EiVB6sSEQ2Vk/SYYcPH6NkntBNLXHFZ9WiOLgzNP0a0ODRX8FAuwVcH3
-	QmEBY72wq//0g78AYZlsm+HjRGjoEd8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-451-_PDTQTuXM4ixcBjULnFfOg-1; Sun,
- 13 Oct 2024 20:47:41 -0400
-X-MC-Unique: _PDTQTuXM4ixcBjULnFfOg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4DE7A19560AA;
-	Mon, 14 Oct 2024 00:47:40 +0000 (UTC)
-Received: from gshan-thinkpadx1nanogen2.remote.csb (unknown [10.64.136.10])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F45B19560AA;
-	Mon, 14 Oct 2024 00:47:36 +0000 (UTC)
-From: Gavin Shan <gshan@redhat.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	sudeep.holla@arm.com,
-	shan.gavin@gmail.com
-Subject: [PATCH] firmware: arm_ffa: Fix warning caused by export_uuid()
-Date: Mon, 14 Oct 2024 10:47:24 +1000
-Message-ID: <20241014004724.991353-1-gshan@redhat.com>
+	s=arc-20240116; t=1728866879; c=relaxed/simple;
+	bh=uhgspVG8xD/klVA9BlyZvwT5u5ZI/CkBG6XB0/a+uFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TXGJEx6y7xRXpSH9ydfY9PNo4QA6W3ZavYQGgw/GiKcKlYCO7jWn8olPSPcGodbB1pmqBb0LcmxYLSkb+KB2GuVl4lnrzD81x7IXghUUgT4wofjv9pU5f4UWanMmXjmGZiSyoGJqWU7qfjzk9ksTS5bTqXbvuOuziaKFIS3MQMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XRdpP3FbXz2DdP3;
+	Mon, 14 Oct 2024 08:46:37 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8F1101A016C;
+	Mon, 14 Oct 2024 08:47:48 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 14 Oct
+ 2024 08:47:47 +0800
+Message-ID: <4184c61f-80f7-4adc-8929-c29f959cb8df@huawei.com>
+Date: Mon, 14 Oct 2024 08:47:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: shrinker: avoid memleak in alloc_shrinker_info
+To: Muchun Song <muchun.song@linux.dev>, Chen Ridong
+	<chenridong@huaweicloud.com>
+CC: <akpm@linux-foundation.org>, <david@fromorbit.com>,
+	<zhengqi.arch@bytedance.com>, <roman.gushchin@linux.dev>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<wangweiyang2@huawei.com>
+References: <20241011142105.391157-1-chenridong@huaweicloud.com>
+ <63593DC0-21DD-40C1-A4D8-6082F2BB4222@linux.dev>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <63593DC0-21DD-40C1-A4D8-6082F2BB4222@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-Run into build warning caused by export_uuid() where the UUID's
-length exceeds that of ffa_value_t::a2, as the following warning
-messages indicate.
 
-In function ‘fortify_memcpy_chk’,
-inlined from ‘export_uuid’ at ./include/linux/uuid.h:88:2,
-inlined from ‘ffa_msg_send_direct_req2’ at drivers/firmware/arm_ffa/driver.c:488:2:
-./include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ \
-declared with attribute warning: detected write beyond size of field (1st parameter); \
-maybe use struct_group()? [-Werror=attribute-warning]
-571 |                         __write_overflow_field(p_size_field, size);
-    |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Fix it by not passing a plain buffer to memcpy() to avoid the overflow
-and underflow warning, similar to what have been done to copy over the
-struct ffa_send_direct_data2.
+On 2024/10/12 10:42, Muchun Song wrote:
+> 
+> 
+>> On Oct 11, 2024, at 22:21, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> A memleak was found as bellow:
+>>
+>> unreferenced object 0xffff8881010d2a80 (size 32):
+>>   comm "mkdir", pid 1559, jiffies 4294932666
+>>   hex dump (first 32 bytes):
+>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>     40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
+>>   backtrace (crc 2e7ef6fa):
+>>     [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+>>     [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+>>     [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+>>     [<ffffffff81198dd9>] online_css+0x29/0xa0
+>>     [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+>>     [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+>>     [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+>>     [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+>>     [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+>>     [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+>>     [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+>>     [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>
+>> In the alloc_shrinker_info function, when shrinker_unit_alloc return
+>> err, the info won't be freed. Just fix it.
+>>
+>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>> mm/shrinker.c | 4 +++-
+>> 1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>> index dc5d2a6fcfc4..e4b795ee6d2e 100644
+>> --- a/mm/shrinker.c
+>> +++ b/mm/shrinker.c
+>> @@ -87,8 +87,10 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>> 		if (!info)
+>> 			goto err;
+>> 		info->map_nr_max = shrinker_nr_max;
+>> - 		if (shrinker_unit_alloc(info, NULL, nid))
+>> + 		if (shrinker_unit_alloc(info, NULL, nid)) {
+>> + 			kvfree(info);
+>> 			goto err;
+> 
+> Since we already use goto to do the cleanup for failure, I don't like
+> to mix two different ways to do the similar thing. I suggest adding
+> the kvfree (BTW, it could handle NULL argument) to the label of err.
+> 
+> Muchun,
+> Thanks.
+> 
+Thanks, I will update soon.
 
-Fixes: aaef3bc98129 ("firmware: arm_ffa: Add support for FFA_MSG_SEND_DIRECT_{REQ,RESP}2")
-Signed-off-by: Gavin Shan <gshan@redhat.com>
----
- drivers/firmware/arm_ffa/driver.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Best regards,
+Ridong
 
-diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index 4d231bc375e0..154777e89f04 100644
---- a/drivers/firmware/arm_ffa/driver.c
-+++ b/drivers/firmware/arm_ffa/driver.c
-@@ -485,7 +485,7 @@ static int ffa_msg_send_direct_req2(u16 src_id, u16 dst_id, const uuid_t *uuid,
- 		.a0 = FFA_MSG_SEND_DIRECT_REQ2, .a1 = src_dst_ids,
- 	};
- 
--	export_uuid((u8 *)&args.a2, uuid);
-+	memcpy((void *)&args + offsetof(ffa_value_t, a2), uuid, sizeof(*uuid));
- 	memcpy((void *)&args + offsetof(ffa_value_t, a4), data, sizeof(*data));
- 
- 	invoke_ffa_fn(args, &ret);
-@@ -496,7 +496,7 @@ static int ffa_msg_send_direct_req2(u16 src_id, u16 dst_id, const uuid_t *uuid,
- 		return ffa_to_linux_errno((int)ret.a2);
- 
- 	if (ret.a0 == FFA_MSG_SEND_DIRECT_RESP2) {
--		memcpy(data, &ret.a4, sizeof(*data));
-+		memcpy(data, (void *)&ret + offsetof(ffa_value_t, a4), sizeof(*data));
- 		return 0;
- 	}
- 
--- 
-2.45.2
-
+>> + 		}
+>> 		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>> 	}
+>> 	mutex_unlock(&shrinker_mutex);
+>> -- 
+>> 2.34.1
+>>
+> 
 
