@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-363376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FE099C17A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:35:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34AB99C249
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461B12822AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 113941C269EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FFE14BFA2;
-	Mon, 14 Oct 2024 07:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B810814E2E6;
+	Mon, 14 Oct 2024 07:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o28VWOZg"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="o/24iZFK";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="kUgnqLhc"
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE01148317
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D465E13DB9F;
+	Mon, 14 Oct 2024 07:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728891310; cv=none; b=X6y/7DZDtrLMpkNcvq+UsAzcc8vKYywmaNakSZvjBoTeMRZFvApEpjjozL9fwp+6x80/mUj4boVVHhRy89ToC7M63kvOi+opl/IpJZmQgOpb3xD71Wiug3zfqrmM04W/ZQhwz3wYL8m6iBDgzGzWLst45OcuTycUfcBbJpx1Ugw=
+	t=1728892698; cv=none; b=OIavXJGcwDmi+XS9EAc/xapPB00y62LvLASXpJEdVach1eSvmaXTx6Aib87H8AW03Oz+07s5MqUFO3XrkKOeSKaerclGUII9eUHNC3sCZ79dxk6Djx1hUJ6Fv5iE8TNkwasB+A57vJC82vkclRG7XpCSj8sYd5k3pTJil3geBYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728891310; c=relaxed/simple;
-	bh=NEIbyKWfSfDfYub7dOi2+DthG1dy6lDUSX8rgR7BuE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eL7LWmnKpsER1Gl5mGSDTvzSrLvfF9mTKVpMcYORI474YYM9v+VhTUiHSpSqYmQEJ/XMwQdI831O06FQT0BpBfi7Qya0UCjKcVxARE5DqE6IOg62n9b8Z7//btQF3mStmMHzp5aQk5af6Xbf61iDiejQNiI6bR97U0yU4VZ0Iqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o28VWOZg; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539d9fffea1so2625364e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728891307; x=1729496107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXd9IRsJ/Q2GAEkeQwvXUDlljQikHHqovvpnz4Mnaes=;
-        b=o28VWOZgDxC2YkO7SeBGhYEmy06T1djyswuxcia2ZYFIw82gwyfbyjAq6sm3ypoX+W
-         d6SGya+dTqshAJViGaI/Qm+hXai3tM0NIkhgBLLDGvFXxx5GpoCSBNMdVMWWG8QLyDtn
-         w7/EnEfH5zxqUn7EoIQ95qlPAmU3cjUyWRezPE6PvEukTYSR6XsCURWvMJPetX+apjHj
-         tHLeXcwaCY669ioyzjMYGTW6cI0dIn/GzJwENbm+EZDg8CKojtS/B06HqIgO1AhCqThz
-         ttAsdtu4gsbuLyCLybapI0mZamtn435Sb78kdCqGptC7VKJHAzSOvpV8zkXxqlHVzuDq
-         El3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728891307; x=1729496107;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RXd9IRsJ/Q2GAEkeQwvXUDlljQikHHqovvpnz4Mnaes=;
-        b=fX8NlO1IuSVN3TCNXe454ITR+bbt+uTceiVJ87CAyw6qMXbnMkDOL3o8ZE5c25xPSW
-         JIsFKC7NUV2TDGxWgWYOL5Rj6OXmp9duJFlyJ8vJZ0xA6hpgv+oxqriib3rBW3RMlKZJ
-         nrKyOanCOKvNnYbFseKUMybY1PgiUyj3pUWhLZlyZWhYwVmJk44HYgkXNICfxoAOzuE9
-         DNynZvCmCE650jQfl5FzR/aeN2/UZ9DiUeGJWd8tPqkSARoIegwhrGAUxiDncxDfu09E
-         k/3ojWvtIcB1Y8lU9Sg9WuY3UHZ+s1FdyE6CeHBAtGFGVMZYe+HwXD7NoZAQM15Y/pN1
-         s+6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUU2YLFOLdSFJ5iA+ZWMeFqgCYmX50wPZnz3p2It7TpyVvsubw9mqmt833p4Op7yPLeSOs9WSEFfgFTimc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNmkNicr69fi3NrtY/zStD8vWck4mgDdDwHIOBy/2H82EOxppS
-	xmAaCXhrlK6kBxyKkIVPL11tX+FXwFNdIrmL5J+y0tqfZQNzVzj2ZSemVYWkMjo=
-X-Google-Smtp-Source: AGHT+IFG5mAcJza7yiles85LfH/G0lB/xgU5IoFW9zjQX8bagRJinxpczK+JtOryP0YxXrBGl1BZ1Q==
-X-Received: by 2002:a05:6512:3c95:b0:539:d0c4:5b2c with SMTP id 2adb3069b0e04-539da595273mr4520019e87.51.1728891306540;
-        Mon, 14 Oct 2024 00:35:06 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539e48c1807sm953064e87.237.2024.10.14.00.35.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 00:35:05 -0700 (PDT)
-Date: Mon, 14 Oct 2024 10:35:03 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Alex Lanzano <lanzano.alex@gmail.com>
-Cc: u.kleine-koenig@baylibre.com, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Mehdi Djait <mehdi.djait@bootlin.com>, linux-kernel-mentees@lists.linuxfoundation.org, 
-	skhan@linuxfoundation.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v10 0/2] Add driver for Sharp Memory LCD
-Message-ID: <hfpq35cxext6vd7shppa4ovtszywzqkc5gqo3t7p77uldasxts@gyfrypofijmd>
-References: <20241008030341.329241-1-lanzano.alex@gmail.com>
+	s=arc-20240116; t=1728892698; c=relaxed/simple;
+	bh=Zh8qbVVIX7EsBpJFG/gcKYvAuggerEXcwlv2jiDrPbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jp0J0FFts4y42LzBokqrWn1fI6AiNnBfrW/OJgdpKF1oVP/ANGmp7GtIr0SMAi6/Ip0+S2CSgroleFT34KVcWnOi9apWR3gDaRM+OKprT0NlA8xWHdv8fpGxOmA6bON8RDfH7+ufNh5NKI3tHsEMtKPjqEMZ30AKoajJx4Wa8Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=o/24iZFK; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=kUgnqLhc; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 92879122FE22;
+	Mon, 14 Oct 2024 00:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1728891520; bh=Zh8qbVVIX7EsBpJFG/gcKYvAuggerEXcwlv2jiDrPbs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o/24iZFKJYmLwlXVRJ+jgYXwoiyWYJRHJJHsujVOfVJAv1AVOh35NDNLmhdrNlLbw
+	 kAuYbb/hHepa1GDILnyYD9oJuAwVLyzwPkBvJZ2tLdSEQqNcYBcZbXSpHQuj42NV0b
+	 gG2O/iT25gp69DINZVj8+Anq9IWcNHrNdfmBHC1ibOugVRrZdjFPaL7gCVTf1jLhaY
+	 0TsW6lf131cL9B0w4imX68R265tudazjKgsKU0PjwSLJdk7E4eovQFLmStuXxpyTwr
+	 OELtuxhle4mmtf5PwSRgI6p7FEuUsxuoAKLsfgcm0PKW+06HTQkTAaohKrO/3EYNk3
+	 JSvfkObdP0fHg==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
+ header.d=4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id I1NoHwtUyw32; Mon, 14 Oct 2024 00:38:38 -0700 (PDT)
+Received: from localhost.localdomain (unknown [110.52.220.241])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 531B7122FE1E;
+	Mon, 14 Oct 2024 00:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1728891518; bh=Zh8qbVVIX7EsBpJFG/gcKYvAuggerEXcwlv2jiDrPbs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kUgnqLhc0j+qgIaHSDUxoQLC0f0+/URJuqxRQbc7ofvAhqYAC8wMXLapSmbc8RjQ3
+	 Gf2jIONH02Rn0TpDVp5DsamsyyDRliDEHxtEvfcIf8jgdwVGfn2rYLZJdyARnb8ekj
+	 NtG6M/pJg5G2Jc/aSulzYiuTIX3dDBXFXvfxqtLYw9w44bCl7FwHh1RrqTChC2nLdH
+	 geoM79FZ1izrDy/PMAGWoAGUghQFNEoTTOdamXqSExcYg/M0d4pkJsZuxDEn7o0VED
+	 FjLhew2QRG6Uvehl2VwuvSumyupHlD7RxWNnAzolv8YP0C4VyNob4cZvxj1UEsdidt
+	 gnTG9/w9T/ypg==
+From: Haylen Chu <heylenay@4d2.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Haylen Chu <heylenay@4d2.org>
+Subject: [PATCH v5 0/3] riscv: sophgo: add thermal sensor support for cv180x/sg200x SoCs
+Date: Mon, 14 Oct 2024 07:38:10 +0000
+Message-ID: <20241014073813.23984-1-heylenay@4d2.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008030341.329241-1-lanzano.alex@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 07, 2024 at 11:03:09PM -0400, Alex Lanzano wrote:
-> This patch series add support for the monochrome Sharp Memory LCD
-> panels. This series is based off of the work done by Mehdi Djait.
-> 
-> References:
-> https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
-> https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
-> 
-> Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
-> ---
-> Changes in v10:
-> - Address comments from from Uwe
->     - Replaced -EINVAL with PTR_ERR
->     - Error check pwm_apply_might_sleep function
->     - Remove redundant error message
+This series implements driver for Sophgo cv180x/sg200x on-chip thermal
+sensor and adds thermal zones for CV1800B SoCs.
 
-Let's wait for an Ack from Uwe's side. If there are no further issues,
-the series seems to be ready.
+Changed from v4:
+1. support temperature threshold violation interrupts
+2. completely switch codename to cv1800
+3. style improvements
+4. update e-mail address
+Link: https://lore.kernel.org/all/SEYPR01MB422158B2766DA03728AD90CBD7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
+
+Changed from v3:
+1. style improvments
+2. drop unnecessary dt parameters for simplicity
+Link: https://lore.kernel.org/all/SEYPR01MB42213F3A032C60C6AF5EB677D7DC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
+
+Changed from v2:
+1. style and code improvements
+2. use human-readable value for sensor parameters
+Link: https://lore.kernel.org/all/SG2PR01MB4218013241B3EED779D3BAE8D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com/
+
+Changed from v1:
+1. style and code improvements
+2. make sample parameters configurable
+3. generalize document temperature calculating formula
+Link: https://lore.kernel.org/all/SEYPR01MB422119B40F4CF05B823F93DCD7F32@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
+
+Haylen Chu (3):
+  dt-bindings: thermal: sophgo,cv1800-thermal: Add Sophgo CV1800 thermal
+  thermal: cv1800: Add cv1800 thermal driver support
+  riscv: dts: sophgo: cv18xx: Add sensor device and thermal zone
+
+ .../thermal/sophgo,cv1800-thermal.yaml        |  57 ++++
+ arch/riscv/boot/dts/sophgo/cv1800b.dtsi       |  28 ++
+ arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |   8 +
+ drivers/thermal/Kconfig                       |   6 +
+ drivers/thermal/Makefile                      |   1 +
+ drivers/thermal/cv1800_thermal.c              | 296 ++++++++++++++++++
+ 6 files changed, 396 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+ create mode 100644 drivers/thermal/cv1800_thermal.c
 
 -- 
-With best wishes
-Dmitry
+2.46.2
+
 
