@@ -1,244 +1,153 @@
-Return-Path: <linux-kernel+bounces-364442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A8F99D4AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:31:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA08499D4B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455DC1C24F29
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:31:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F250B1C23789
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076121B4F04;
-	Mon, 14 Oct 2024 16:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD171B85E1;
+	Mon, 14 Oct 2024 16:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jAMmC2iW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LAM0rKnx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jAMmC2iW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LAM0rKnx"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rrQud1Bm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wPq0vw4z"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45482231C92;
-	Mon, 14 Oct 2024 16:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3126B231C92;
+	Mon, 14 Oct 2024 16:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728923485; cv=none; b=hh84cBVkuGIoVWtjQNie0G5twPeCMTgpOHNabSpSbUVx7Lgrd1xbAwv36oDSBP51hN9XJBBkM9zxKmU2FvzoMCOjMp7NjPErskxh/INPLJyEtBYykTxGhaxVlWLfHcDEjSnX3w5fU+lqnLnP+nDtGjT4U4wDS45Uheg3oaBOTCk=
+	t=1728923496; cv=none; b=CSaCtZpkp3Wb161pg9GZUjyQPOuFk/EjJT8pOwkpzDcIVJvH5TQLiMyOme+EGxCH0T7CyDaVYCNVH8y9cHqTe9L6FvU6mHGJXsP7ws8qXgdI5+GdQ1KyFFD+qX+E5ORDLam3vMddaLVc8zaJdYs5ywjHTXfxTpy+7solSblMxV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728923485; c=relaxed/simple;
-	bh=AZFOPJj+z+E7HOyr0IfZb0QvrjK3TVWMJuVeJTFglNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyeFh9mPOck/PA9X6jBX45+f3jkZFqTuVyHmy6nG2W3jj9lg1AToBcVjVG+xe2csG6XEoTt3gNvM534pQUMwiXe6SW6rFbalIoHfS/n/89OWWdUWPOyJOoCCbGMvZTsAxsdLWzU72oe4jlpvkMA/EuevxHrSm4Tm1SKRTLAs3Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jAMmC2iW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LAM0rKnx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jAMmC2iW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LAM0rKnx; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5A0E51FE87;
-	Mon, 14 Oct 2024 16:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728923481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1728923496; c=relaxed/simple;
+	bh=hRoA3ccR5Y8oRXRdOMvMWRGqLfR7Pm1OrtYuVHblhug=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JR/GpQ1NPWc+kgepWLK+mZ16V4ldnUq1jGk5setQXY6jmnI9bsz7jW7BgcDqJEqT1ky9k3lQ19HjdETZdzN2Cn8FAUUtumDLZVzrDwvVwz4KulkE+4nsxJICTBXPixDAfsrLlh4+waO/HhSZe/H3N1hsTBz2Jrt81oy8rwxwcwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rrQud1Bm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wPq0vw4z; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728923492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GMSvSwEinMbWBDsy63k3v3dPvLeoUCIAjXKJaTuFbjg=;
-	b=jAMmC2iWP83lNj9CZWkFG7Z64BV3VKgtHA9SR5CUK7RfocqMP5vqGtjoBrlSsvAmlzjLja
-	QdDQRIcmBT2sQJj4YskFDfg1sPzRx/V06ueFkuil7kcKoQg2Pv7FZ3mRiL0bVz0eyn23rR
-	0njeItmjY9XUo2BC4X3cuzF4kadsm7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728923481;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	bh=ow/UxrNjYbB9p7imk5iwLyMoJAD0hoXV5EJONRnoywA=;
+	b=rrQud1Bmrb6k1OJO8EmZWxF/QUHGHoo6snHSxtVUgsEFeCxNzJ4q1QMFXvIBHiCXLrKOnp
+	5n2zfs4cjvMRW84uP2ReREOXB4GsDYWko8jIDJkr9l+9zdO8YwS26aL6ZSWCDjRud13enR
+	KsHcpVLiarsShJnRVFn4EhH3D+c78VhqrZZnmHAwIZ55bCGCLkxhmQ/ki2Ny5NpX5G+FiT
+	4el9dkx2BNEHvetIh2DFvh54IORDpOroEmPDh5UZ/bgbVFpY3DjPUqwrOzaJX72HycQoPj
+	jBUluAEhaic3IhLOaOiqXwD4Lzr/iEcOr5BdHwPnyX7HYGY6YL619CT/VYHswQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728923492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GMSvSwEinMbWBDsy63k3v3dPvLeoUCIAjXKJaTuFbjg=;
-	b=LAM0rKnxwqFzWBT6CPRuPEgXd3Zew54inH0pdVN1eZZADpz/zlZJ3iRttR1D58W1wzfsQe
-	rKAcO+mxo66/ZSCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728923481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GMSvSwEinMbWBDsy63k3v3dPvLeoUCIAjXKJaTuFbjg=;
-	b=jAMmC2iWP83lNj9CZWkFG7Z64BV3VKgtHA9SR5CUK7RfocqMP5vqGtjoBrlSsvAmlzjLja
-	QdDQRIcmBT2sQJj4YskFDfg1sPzRx/V06ueFkuil7kcKoQg2Pv7FZ3mRiL0bVz0eyn23rR
-	0njeItmjY9XUo2BC4X3cuzF4kadsm7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728923481;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GMSvSwEinMbWBDsy63k3v3dPvLeoUCIAjXKJaTuFbjg=;
-	b=LAM0rKnxwqFzWBT6CPRuPEgXd3Zew54inH0pdVN1eZZADpz/zlZJ3iRttR1D58W1wzfsQe
-	rKAcO+mxo66/ZSCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A31C13A42;
-	Mon, 14 Oct 2024 16:31:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /Rw1EllHDWccDwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 16:31:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D3F97A0896; Mon, 14 Oct 2024 18:31:20 +0200 (CEST)
-Date: Mon, 14 Oct 2024 18:31:20 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, Qianqiang Liu <qianqiang.liu@163.com>,
-	tytso@mit.edu, adilger.kernel@dilger.ca,
-	syzbot <syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, Yang Erkun <yangerkun@huawei.com>
-Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
-Message-ID: <20241014163120.hinbd5jc6mp4vev7@quack3>
-References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
- <66efba95.050a0220.3195df.008c.GAE@google.com>
- <Zu+8aQBJgMn7xVws@thinkpad.lan>
- <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
- <20241009155028.u7jpzrw6txldt43j@quack3>
- <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
+	bh=ow/UxrNjYbB9p7imk5iwLyMoJAD0hoXV5EJONRnoywA=;
+	b=wPq0vw4zgDf7pPyiwHAm5p05qXTlNkIJPC5VQTxfHidMe8ODXZEdfMPPimcsSbxLQli+/+
+	ZLuoGkIRW8RucaDg==
+To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org, Broadcom
+ internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ kw@linux.com, Philipp Zabel <p.zabel@pengutronix.de>, Andrea della Porta
+ <andrea.porta@suse.com>, Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
+ <jonathan@raspberrypi.com>, Stanimir Varbanov <svarbanov@suse.de>
+Subject: Re: [PATCH v3 03/11] irqchip: mip: Add Broadcom bcm2712 MSI-X
+ interrupt controller
+In-Reply-To: <20241014130710.413-4-svarbanov@suse.de>
+References: <20241014130710.413-1-svarbanov@suse.de>
+ <20241014130710.413-4-svarbanov@suse.de>
+Date: Mon, 14 Oct 2024 18:31:32 +0200
+Message-ID: <87o73mfxy3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[f792df426ff0f5ceb8d1];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,163.com,mit.edu,dilger.ca,syzkaller.appspotmail.com,vger.kernel.org,googlegroups.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+Content-Type: text/plain
 
-On Fri 11-10-24 10:18:04, Baokun Li wrote:
-> On 2024/10/9 23:50, Jan Kara wrote:
-> > > Or go one step further and add a mechanism like xfs Reverse-Mapping, which
-> > > makes sure that allocated blocks do point to the target inode, which could
-> > > replace the current block_validity, and could also be used in future online
-> > > fscks.
-> > Well, that is a rather big change. It requires significant on-disk format
-> > change and also performance cost when to maintain. Furthermore for xattr
-> > blocks which can be shared by many inodes it is not even clear how to
-> > implement this... So I'm not sure we really want to do this either.
-> 
-> Yes, there can be a lot of work involved.
-> 
->  * Perhaps we could create an rmap file to store the rmap tree to avoid
->    on-disk format changes.
->  * The performance impact of maintaining rmap really needs to be evaluated,
->    perhaps by writing a simple DEMO to test it.
->  * XFS supports shared blocks(A.K.A. reflink.), so even if the physical
->    blocks are the same, but the inodes are different or the logical blocks
->    are different, they will be recorded multiple times in the tree. So the
->    shared xattr block can be handled similarly.
-> 
-> We have plans to support online fsck in the future, and implementing rmap
-> is one of the steps. Perhaps one can wait until rmap is implemented to
-> assess whether it is worth a strict check here.
 
-Yes, we could implement something like this be as you wrote, it's going to
-be a lot of work. We've briefly discussed this with Ted on ext4 call and we
-came to a conclusion that this is a type of corruption ext4 may never
-protect agaist. You simply should not mount arbitrarily corrupted
-filesystems... But if you want to try, sure go ahead :)
+> Subject: irqchip: mip:
 
-One relatively easy solution to similar class of problems would be to store
-the type of metadata buffer inside the buffer_head when we are verifying
-checksum, clear the info when freeing the block in __ext4_forget(), and
-fail with EFSCORRUPTED error when one type -> another type transition would
-happen.
+is not a valid prefix
 
-> Implementing rmap may take some time, until then we can avoid the problem
-> as much as possible by checking the magic and xattr block csum.
-> Maybe something like this?
-> 
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index 7647e9f6e190..cd3ae1e3371c 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -1676,6 +1676,13 @@ static int ext4_xattr_set_entry(struct
-> ext4_xattr_info *i,
->                 }
->         }
-> 
-> +       if (WARN_ON_ONCE(last < here)) {
-> +               EXT4_ERROR_INODE(inode, "corrupted xattr entries in %s",
-> +                                       is_block ? "block" : "ibody");
-> +               ret = -EFSCORRUPTED;
-> +               goto out;
-> +       }
+Just make it: irqchip: Add Broadcom  .....
+
+> +static int mip_middle_domain_alloc(struct irq_domain *domain, unsigned int virq,
+> +				   unsigned int nr_irqs, void *arg)
+> +{
+> +	struct mip_priv *mip = domain->host_data;
+> +	struct irq_fwspec fwspec = {0};
+> +	struct irq_data *irqd;
+> +	unsigned int hwirq, irq, i;
+
+	unsigned int hwirq, irq, i;
+	struct irq_data *irqd;
+
 > +
->         /* Check whether we have enough space. */
->         if (i->value) {
->                 size_t free;
-> @@ -1923,6 +1930,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode
-> *inode,
->         }
-> 
->         if (s->base) {
-> +               struct ext4_xattr_header *hdr;
->                 int offset = (char *)s->here - bs->bh->b_data;
-> 
->                 BUFFER_TRACE(bs->bh, "get_write_access");
-> @@ -1932,6 +1940,16 @@ ext4_xattr_block_set(handle_t *handle, struct inode
-> *inode,
->                         goto cleanup;
-> 
->                 lock_buffer(bs->bh);
-> +               hdr = header(s->base);
+> +#define MIP_MSI_FLAGS_REQUIRED	(MSI_FLAG_USE_DEF_DOM_OPS |	\
+> +				 MSI_FLAG_USE_DEF_CHIP_OPS |	\
+> +				 MSI_FLAG_PCI_MSI_MASK_PARENT |	\
+> +				 MSI_FLAG_PCI_MSIX)
+
+Why are you requiring MSI_FLAG_PCI_MSIX here? That's a supported flag,
+not a required one.
+
+> +#define MIP_MSI_FLAGS_SUPPORTED	(MSI_GENERIC_FLAGS_MASK |	\
+> +				 MSI_FLAG_PCI_MSIX |		\
+
+So this does not support multi MSI, but your allocation function looks
+like it supports it (nr_irqs is not range checked).
+
+> +				 IRQ_DOMAIN_FLAG_MSI_PARENT)
+
+This is not a MSI flag and has no place here.
+
+> +static const struct msi_parent_ops mip_msi_parent_ops = {
+> +	.supported_flags	= MIP_MSI_FLAGS_SUPPORTED,
+> +	.required_flags		= MIP_MSI_FLAGS_REQUIRED,
+> +	.bus_select_token       = DOMAIN_BUS_PCI_MSI,
+> +	.bus_select_mask	= MATCH_PCI_MSI,
+> +	.prefix			= "MIP-MSI-",
+> +	.init_dev_msi_info	= msi_lib_init_dev_msi_info,
+> +};
 > +
-> +               if (hdr->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
-> +                   (ext4_has_metadata_csum(inode->i_sb) &&
-> +                    (ext4_xattr_block_csum(inode, bs->bh->b_blocknr, hdr)
-> !=
-> +                     hdr->h_checksum))) {
-> +                       unlock_buffer(bs->bh);
-> +                       error = -EFSCORRUPTED;
-> +                       goto bad_block;
-> +               }
-> 
->                 if (header(s->base)->h_refcount == cpu_to_le32(1)) {
->                         __u32 hash = le32_to_cpu(BHDR(bs->bh)->h_hash);
+> +static int mip_init_domains(struct mip_priv *mip, struct device_node *np)
+> +{
+> +	struct irq_domain *middle;
+> +
+> +	middle = irq_domain_add_hierarchy(mip->parent, 0, mip->num_msis, np,
+> +					  &mip_middle_domain_ops, mip);
+> +	if (!middle)
+> +		return -ENOMEM;
+> +
+> +	irq_domain_update_bus_token(middle, DOMAIN_BUS_PCI_MSI);
 
-Hum, there are more places in xattr code that access a buffer that could
-have been modified. So why do you add check into this place? Is it somehow
-special?
+That's the wrong token. DOMAIN_BUS_PCI_MSI is what the v2 global PCI/MSI
+domain uses. But that's not what this is about. This is the parent
+domain for PCI/MSI. DOMAIN_BUS_GENERIC_MSI or DOMAIN_BUS_NEXUS is what
+you want here.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +	middle->dev = mip->dev;
+> +	middle->flags |= IRQ_DOMAIN_FLAG_MSI_PARENT;
+> +	middle->msi_parent_ops = &mip_msi_parent_ops;
+> +
+
+Other than this, this looks good now.
+
+Thanks,
+
+        tglx
 
