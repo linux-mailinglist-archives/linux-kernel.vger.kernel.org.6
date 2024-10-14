@@ -1,210 +1,365 @@
-Return-Path: <linux-kernel+bounces-363252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0D499BFA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A71A99BFAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF862835A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:01:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3DE2834D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B9F142623;
-	Mon, 14 Oct 2024 06:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DrXeqW4y"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2048.outbound.protection.outlook.com [40.107.22.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B732E13C9C7;
+	Mon, 14 Oct 2024 06:01:36 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9F713EFF3;
-	Mon, 14 Oct 2024 06:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728885646; cv=fail; b=ex0GZbm7/bn4uKqDSHfPU/TGnaWlTD//kOK9i5t5uy3mKaMqwr3VFUhOjHpmJvj8awsFYZYHl1s32EppmFd4CG6T2n8eXygM7UZy9nQvlZ5BZdfU5wZk7zNf/DyvSHKNAs8kMmWnaBr2Np9IZp66FD9eCJ4MeFaeYnsx28Yj960=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728885646; c=relaxed/simple;
-	bh=rOOwKzF71V2MHYYPif9n4eDxZEf3Z1fTWh5YQIIjav4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Dg8CkCkF2hjD/t1x1OtsW6w236bmjlqlLE9O0AT7TJU46/UP88ymhfhWRi76AS9UhRD55EdXxDNAtz7ODtEeAipM+AAdGAYQNtFNdeqWWifl449Lz7NyaakE/iJz5zWqcnSdsdMXk3LaPtld0x/aW3NIVBUz1weQIGe0Qu5vixM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DrXeqW4y; arc=fail smtp.client-ip=40.107.22.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g9DKM2PAGoc5EH2GdnHRh++0qG33L42K06XGYjHIkL/rp3ktuIxX5abyLCDVx+lbRkjxKOLVxr1ZLtPw3nO+bfE0wtE35z6yMPWaYlAj8VN3Gv/zmSNO7759+RLaQKbnrbo4kfrqyL4BqVx/+DaitZCJzwFgwbAagtBkH2/u+OqXtq1nxQn6nlMrg6Xxoc7BrEUVPpcOgy+JM7VxIE+GKsq9g4l8sKC1StvlG4BPWAAWkJXAAb+D0fkjozhPOLO8LflALzeZ49s3ClltaI1tOXKBOgIQGa8Qcm6uszw7jvPlXqCfzdz7ep6UAu3JgJUmZqUwcQoyZleBKSLiuiUPlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MEW+ck023C1R0wEnHSWTj2drmMrl5/32Ipeta6xg2yI=;
- b=I3pLm0aunJeFADpFkZOYyWPvPpUss9Ric9fK5PTJdwM6DCjtqVlQmZ0QaDWKnw4LDwxvujKSSlyThZNmPu4sNJE1GQbm0cTUbCGbDhOVBCdJKgY+Nr9C3L9Njo9cACNvWGaOShdp17MpwAn6L8Pbbsou0nhPQqkaoJHAY7ObU+9p+vPRNVyM7oh8eolaykD9BGtJ4zuWj0ad4EKIi77m2h5vb71PP5zzZXkzxwfER3mrUsaZddX9fVIWEcX/Rcw6Dfe/1SdEe30ua9YQm/gV0s2GjHlo9GZvpG3+uqWDJUwe+Uqov6PspIpzvVBE0qbd+cZQionGGSpNqL9OUCMjnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MEW+ck023C1R0wEnHSWTj2drmMrl5/32Ipeta6xg2yI=;
- b=DrXeqW4yozTMksFF1jwxVdPOjw2QEiRxybyWmi0SBk2In/IWcJsmwttCQi2rzrxQREuzezLYuhSuyxfGcSpfJ2E80HQvBL7OIhTSxCSf3cEOlXuqx5K08QpCkx24UG63uFmbUN2Xt+wMmbOmwItmC0V/84GTMnyPuNBNNg3CFNYgUVyalDN4RGay1DtIcwp068DLNHzjJrmntVeUfllQlhcRrQUoKj85fe071VF5MCx5GWRY6sWU6BJ0YF71vJ1LEZKxiIFvN3DAeqYb1R3OIC1+3aOyhkymbgcU8ZzTfglVGFcsHIzPWk/MBBzrfip0Zel10+Y9ERmiS+9t56RV0A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
- by PAXPR04MB8224.eurprd04.prod.outlook.com (2603:10a6:102:1cb::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
- 2024 06:00:40 +0000
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::4fa3:7420:14ed:5334%7]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
- 06:00:40 +0000
-From: haibo.chen@nxp.com
-To: adrian.hunter@intel.com,
-	ulf.hansson@linaro.org,
-	linux-mmc@vger.kernel.org
-Cc: imx@lists.linux.dev,
-	haibo.chen@nxp.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	s32@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] mmc: sdhci-esdhc-imx: do not change to sleep pinctrl state in suspend if enable wakeup
-Date: Mon, 14 Oct 2024 14:01:30 +0800
-Message-Id: <20241014060130.1162629-5-haibo.chen@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241014060130.1162629-1-haibo.chen@nxp.com>
-References: <20241014060130.1162629-1-haibo.chen@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR06CA0011.apcprd06.prod.outlook.com
- (2603:1096:4:186::16) To DU0PR04MB9496.eurprd04.prod.outlook.com
- (2603:10a6:10:32d::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0137085956
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728885696; cv=none; b=j4icOI/0MwVCr41bkHBKsIKvbz+M1D21V+zTCICvHOnJmTy2sH9G7q7sNwvIj7jHkRKDQY3QCDEdEvWP/xbgYEL/3gzJ5CMBU5HudufCz/AusUpFDLlgQ91cf8ZIs2SlRVHoP13PgibuQtEHzfNya4EsaooeC3CWecmwuFQFti4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728885696; c=relaxed/simple;
+	bh=8BdQfTrtYsj7qHISXUSGac+FjdDzaE+vhCt3VsJK8Gk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=X881rEc7GjjISQVkX3f9V6wDtMgyO41g4b8Ayjso1P2gOocoUxoo9meRSuxGcgKEP49cckmcnAV0TgoDfIxLt/hjFjTgXetXKgoK56KsXAb2YD+adUDkDM4tXPa2kQ1Rl0sPRUfQ5KXWdsr7jMFpgnHfIBGurx4duYJf0uMSuG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83a69fb833dso162514639f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:01:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728885693; x=1729490493;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OVRsmBtgs8jn5Jxv78t+D/S1/3+yYfQpKi0us3DL3gk=;
+        b=VI7Jaj5ZYQEihlxWaDGAPAm428hthB2GSsCG6+L/g2aio9jNRme/MDWu44V7bY74Pa
+         SiwOpbvKqi3d8JL49Qc3/+UYNTMB+5kbsSHDHB4oyE+41EkWzi44oqZxkk+ncNIeX/Kt
+         +6AHlqPaHgMFqJD/M23UQuBS9a0WN4kzdQw0sNvSDlJAxcUh37wFHn2QI5WrRvXvOTib
+         agCWL2OxkCrmuibAfY6cpjLLKbUCbrCwND90UZ5coYBIEtkZUDLpQfQDa8vwCp7W9myl
+         3qrh96zVyB/pZgWDHfjyqbKq9PSim/u2hcrV0l7rv1cC+0UZuuhKQXcA4aDhMbyAOYzK
+         w59g==
+X-Forwarded-Encrypted: i=1; AJvYcCVkMao56Jg2yA5+mYjjxw3HIZxFcmzokylPxOiYWCYWfNjgGGPVbPa1+VSolK1IBXN65ekZ1KmvsZZIcCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG9+ngNrx0/ZmFy9F6qY44gUn2BNcMdAugEjl+vfuEDE4fiq5+
+	eWErtaq12y8qBjdvKmgGvx7Hht+2hKiZxlGx4l2axPsfydLq1jBH+884/1gaOMEM8DnZXX64+et
+	9V3FsMedxwmOz4ixkLahUYRnrrQ2rAgeHwneZWPE3fZXGU5jkBtdEVyM=
+X-Google-Smtp-Source: AGHT+IHVx9kLvgXnhz7Zz4BB5/5F+PdK00AYgqb+sHSuU76EQ45VBa9u2GqvUl8BKZXeSQpF/Kk9CMC35iFaOhTfoXIeKwSigjH4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9496:EE_|PAXPR04MB8224:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c41fabc-9305-4897-0918-08dcec158834
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Aur5Owf93diMl1B6fs2wMDiqVo0+auyMxnjQj4qZkxBRLlx0OftoPXMX2unL?=
- =?us-ascii?Q?qri1ijeDEZscN3sIgnJ4P9ws47SySOXNKc7Tw8970f7X9R8F3g+9SpbgMoM3?=
- =?us-ascii?Q?14KhzY/J7hGq44gfRmnL28F+nQDBTtNjcSJf5b3QHNOAXPI832W8b8drRlCi?=
- =?us-ascii?Q?G1l8gR87KbBzc3QP8+GXDTZpXBt+HPJhZAxAkWUtR3+WjKBJQClVG+Mq3NPV?=
- =?us-ascii?Q?R5isI+aij3nEo4hkADIQiEiUjg2USra8M+UPNeeJb1fiBePXt6+gKvPedaWS?=
- =?us-ascii?Q?hI2ORTSilZWueSwIE2QfRqnhmA3sTfn3RAhrL5D25POe4nr4IDWOfPINUYqa?=
- =?us-ascii?Q?YdRl/rh1kV0VYsg8ebxVi6d52wbpvlKVXjyeVH3anxF3H7FQ8BK5xl8KSNrw?=
- =?us-ascii?Q?BzqRK0nX6lBGBaBPDtznPb6vKQYEowHT4eRl2vXNFaLPOgsj+LYLg8KQXZp9?=
- =?us-ascii?Q?15MOjRqUsigBP4+zjF8a4ZTXZpPN2Qo+BzrYn3H6tUpDQurBkjAMwcFVgCAn?=
- =?us-ascii?Q?cspmEEk0fduW8T3Z7Et9L9JkLt+Tqpx/rw/0HBXJBcWl2WxMethSbuGuT6Dv?=
- =?us-ascii?Q?rF44car+6sghVdagd25R3glh5PeScMGv+BgbykMMmB8n8siiOJTCI9FZucK9?=
- =?us-ascii?Q?0kDDkWpIqRi046Fhco8puY8zNTFX5c10HwRdBDY2BT+Zyq+XFSxW92R/JukY?=
- =?us-ascii?Q?dstQUFuMgEqRWd5t6AJVd4M1JE6l++htLuNDXjc1UltVxP+dykCxLGEKjilh?=
- =?us-ascii?Q?7Sq0dq/dUSaA/CaBiqW1IARu3jq8n80k9F6rZddnYGHr6XeABB1k8W78QiBV?=
- =?us-ascii?Q?8mWJwe2xtZ08pYB/uUJKWOiJ3i/56Y6X+nQ1AjRqHyb7Va3Ak31rUeRuQhQ0?=
- =?us-ascii?Q?5WOe7PAqW0Wn6Hehn6/2noFDiFhqoZ0lpuupyuh1GCvKh7vr86kDBaxFFnGd?=
- =?us-ascii?Q?twCOrDg2wekZmsdiGRmnAtM20JttaIt5JB2H0wnNlm4zAyTnIgSHSBipbN7c?=
- =?us-ascii?Q?h5WohBKKvvRsLZOfun+nh9kgW26TAMn5G69ZcePFtHR4M8Bu4AoTupnIf6Is?=
- =?us-ascii?Q?m0x1Jv8LLxmoWNTIiA3fIoulXD6n6HSPCl1DX+aBW6N+A/sqzExzqUth2Wx9?=
- =?us-ascii?Q?tVFY39Gnux67CyIz5VoqLvktNnUN259mwfN204ZRM9j6O+/X8hzx2I6fbury?=
- =?us-ascii?Q?k66gUxzN6z3KTQ9Oj47z4H16OTeK7KQakoTwwQX36FXH4ywcMgge8SC0jeCs?=
- =?us-ascii?Q?pDpBaGpWM6hLxJcfTCJWFnCtcVJqkgZ7vBkPxDMzSL5UvAceuLvPxvvt32S1?=
- =?us-ascii?Q?8D/SuWGDL20mxxk2gH/hwhvKE4d2dICauEK5MeZQLFDOZw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PSG/rGY0w7+oR5llUDC3VTE8odkeM8GeP1+fjaTR9yyyGi2JrPl5fnOHj9u4?=
- =?us-ascii?Q?hfT6Tm9NUWZiQQQnOSBG82B9caSoKH0YoKuuhy2guFYJrsKtJfyvQbw5+0JE?=
- =?us-ascii?Q?OTJexn19k5S0FrBQNiDTd5cfNQ2euQaP8UudWXvkbgb60qlVZd+XI1dn7llG?=
- =?us-ascii?Q?a5nUNRBaMW7x1iuie/GtaeL3ooOF0EnlJdMIOcEVV6wDJ5w/5WG+Rc8e3ruA?=
- =?us-ascii?Q?RO4zh2mA7N8RiOVI8v2c+ZCVSqK2oDtrIioga+Jgx9c6SlpC12sPg7rgj03U?=
- =?us-ascii?Q?ghLEJ2WgYBRTxtSQ4tgILw6IjxikpOL+Mgql/f+D8r5smm2yqvyp+3FVxpEv?=
- =?us-ascii?Q?L3reKCAIvAk8E9yjTZ1KFVi4xIIkRXVhjGF6Oip8shbvCkNYpmIRTo2kYKsX?=
- =?us-ascii?Q?sc9AcDuBXDXGT0WCCkJSfx28ZQWt+5cWUwjt75aYIEgdoWZJMZnXltcaqroP?=
- =?us-ascii?Q?FcJ2cfo+jz2BK79AEKoV5Nqlw45z0xi1s9RzzWvxciVCpwQNp+x75YlY50FA?=
- =?us-ascii?Q?egOCZ5oHyHsvlLTz8kR5Kkhwr6W3PZFkWOhwdtcdaPl1ds8m/FCN21FiFndA?=
- =?us-ascii?Q?5zbQ7Z63AucPZzu3iNh6oJMLUFXE0EO/+i5hYcUcZTMo7DM0iRcZWM1gu2PD?=
- =?us-ascii?Q?gpMIh+XEMomIyVdC267HlZ6TqCvnclq33F1Bxo3mQI16RaAImdUpClIVE4Ic?=
- =?us-ascii?Q?dWrxTHeDNSd3bjBkldsK42iWQfRPe7FYmZTJfx3uDInh/hpKSqR2xoHrL6A+?=
- =?us-ascii?Q?kxuIRgmQ1RfuOsN1iFiRZ6VFpLrnuXo76qxbQBpMevfzrqO6PjpHIjutTlbX?=
- =?us-ascii?Q?6V+hK79O0cCJqfEk4IzZeHeRMhg2Xju2mBUqtvpwUhhEvgT5tTlXXNyeqp0/?=
- =?us-ascii?Q?xoBJ+aXpm+NdtNzaJL16xH+4i8L32WKUtndTG0cJIlvIVYHOmQIBItEP+R3F?=
- =?us-ascii?Q?p910YhV1wSTADGm0f5aEK3CpYOYDtodaM1/mrEJGw1tnsUamctXxcbePB06K?=
- =?us-ascii?Q?HajYHlXVZLRmo+TKD12PXZPVVQ9FoVJRre4m1LE53UnQ+OnhP2qqBxef6dkl?=
- =?us-ascii?Q?iH3FEG9pf8ytDYRdtgghgL+w+jyuItxQnVSRi5SkVVukNpoJM/XRLHT1rUIx?=
- =?us-ascii?Q?nqaJSdDQcUbCfxBpnTyQA8ibaDFoyr/RLTS259HFTvE1MkX+UZ2bvHWhUc4e?=
- =?us-ascii?Q?zIosIc3kbfXMEp/7Ff+H055ga/kjW2rgY9wKqBuYkN+sRRu5AZ1eKaf0AvJd?=
- =?us-ascii?Q?YBDHaHYEgQNrgG4/bm5cSPE70Rz9DkP7pOMM1PRjgB7fQ9BM5wizOfzRhi16?=
- =?us-ascii?Q?QyrLboZ7uhH3iIFPIkSLLg3ayzDVnIkzWe9Te7ITivxFAGowkp0Kv0q1KaH0?=
- =?us-ascii?Q?O2Ppw93hwRRxfi+8bClUrDWKYycl3gGQBTJ3wKZ8wFC/xQJq1tN4X24Tan7S?=
- =?us-ascii?Q?Y4O5GFbkFScJ7fH8Dp92gI0kajyY+0Ec0kw2oyr1YsJouUpWGUubg0YFwqKj?=
- =?us-ascii?Q?XfzRdeWhwJuHYTetQ+bNOofyRQFEB6DlSp4RZCvLumvgrQ52SNC28gpAZ0MS?=
- =?us-ascii?Q?yzQ+PA5u8DAHuuneJhlvgyKgjgdws+0Sur5KWDOp?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c41fabc-9305-4897-0918-08dcec158834
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 06:00:40.5857
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: r875Lh6Zi/vchDxp8itrWhJp+w3WXoEybP1vBuwk08AMJm6DNr7oCDN1A/kMFiP0M8EYVvsKIOGtHQLpkX/pYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8224
+X-Received: by 2002:a05:6e02:1a25:b0:3a0:a070:b81 with SMTP id
+ e9e14a558f8ab-3a3b603d139mr84962995ab.23.1728885693115; Sun, 13 Oct 2024
+ 23:01:33 -0700 (PDT)
+Date: Sun, 13 Oct 2024 23:01:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670cb3bd.050a0220.4cbc0.0040.GAE@google.com>
+Subject: [syzbot] [mm?] BUG: stack guard page was hit in compat_sys_open
+From: syzbot <syzbot+0e1748603cc9f2dfc87d@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Haibo Chen <haibo.chen@nxp.com>
+Hello,
 
-pinctrl sleep state may config the pin mux to certain function to save
-power in system PM. But if usdhc is setting as wakeup source, like
-the card interrupt(SDIO) or card insert interrupt, it depends on the
-related pin mux configured to usdhc function pad.
-e.g. To support card interrupt(SDIO interrupt), it need the pin is
-configured as usdhc DATA[1] function pin.
+syzbot found the following issue on:
 
-Find the issue on imx93-11x11-evk board, SDIO WiFi in band interrupt
-can't wakeup system because the pinctrl sleep state config the DATA[1]
-pin as GPIO function.
+HEAD commit:    27cc6fdf7201 Merge tag 'linux_kselftest-fixes-6.12-rc2' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13043307980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e3e4d87a80ed4297
+dashboard link: https://syzkaller.appspot.com/bug?extid=0e1748603cc9f2dfc87d
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-27cc6fdf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ae2f7d656e32/vmlinux-27cc6fdf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1b06a62cc1e5/bzImage-27cc6fdf.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0e1748603cc9f2dfc87d@syzkaller.appspotmail.com
+
+BUG: TASK stack guard page was hit at ffffc90002b3ffb8 (stack is ffffc90002b40000..ffffc90002b48000)
+Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 12425 Comm: syz.2.2179 Not tainted 6.12.0-rc1-syzkaller-00306-g27cc6fdf7201 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:mark_lock+0x25/0xc60 kernel/locking/lockdep.c:4686
+Code: 90 90 90 90 90 55 48 89 e5 41 57 41 56 41 89 d6 48 ba 00 00 00 00 00 fc ff df 41 55 41 54 53 48 83 e4 f0 48 81 ec 10 01 00 00 <48> c7 44 24 30 b3 8a b5 41 48 8d 44 24 30 48 c7 44 24 38 38 51 57
+RSP: 0018:ffffc90002b3ffc0 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000003
+RDX: dffffc0000000000 RSI: ffff888021edaf98 RDI: ffff888021eda440
+RBP: ffffc90002b40100 R08: 0000000000000000 R09: 0000000000000006
+R10: ffffffff9698ad37 R11: 0000000000000002 R12: dffffc0000000000
+R13: ffff888021edaf98 R14: 0000000000000008 R15: ffff888021eda440
+FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f56f6b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: ffffc90002b3ffb8 CR3: 000000005f61e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <#DF>
+ </#DF>
+ <TASK>
+ mark_usage kernel/locking/lockdep.c:4646 [inline]
+ __lock_acquire+0x906/0x3ce0 kernel/locking/lockdep.c:5156
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ page_ext_get+0x3a/0x310 mm/page_ext.c:525
+ __set_page_owner+0x9a/0x790 mm/page_owner.c:322
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x101e/0x3070 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x223/0x25c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2ba/0x3f0 mm/slub.c:2631
+ ___slab_alloc+0xd1d/0x16f0 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ kmem_cache_alloc_noprof+0x2ae/0x2f0 mm/slub.c:4141
+ p9_tag_alloc+0x9c/0x870 net/9p/client.c:281
+ p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
+ p9_client_zc_rpc.constprop.0+0x105/0x880 net/9p/client.c:793
+ p9_client_read_once+0x443/0x820 net/9p/client.c:1560
+ p9_client_read+0x13f/0x1b0 net/9p/client.c:1524
+ v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
+ netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
+ netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+ netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
+ netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
+ netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
+ netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
+ v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
+ __kernel_read+0x3f1/0xb50 fs/read_write.c:527
+ integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm+0x2c9/0x3e0 security/integrity/ima/ima_crypto.c:480
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x8a7/0xa10 security/integrity/ima/ima_api.c:293
+ process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
+ ima_file_check+0xc1/0x110 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0x8e/0x210 security/security.c:3127
+ do_open fs/namei.c:3776 [inline]
+ path_openat+0x1419/0x2d60 fs/namei.c:3933
+ do_filp_open+0x1dc/0x430 fs/namei.c:3960
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_compat_sys_open fs/open.c:1481 [inline]
+ __se_compat_sys_open fs/open.c:1479 [inline]
+ __ia32_compat_sys_open+0x147/0x1e0 fs/open.c:1479
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf740e579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f56f656c EFLAGS: 00000296 ORIG_RAX: 0000000000000005
+RAX: ffffffffffffffda RBX: 0000000020000240 RCX: 0000000000000b00
+RDX: 0000000000000008 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:mark_lock+0x25/0xc60 kernel/locking/lockdep.c:4686
+Code: 90 90 90 90 90 55 48 89 e5 41 57 41 56 41 89 d6 48 ba 00 00 00 00 00 fc ff df 41 55 41 54 53 48 83 e4 f0 48 81 ec 10 01 00 00 <48> c7 44 24 30 b3 8a b5 41 48 8d 44 24 30 48 c7 44 24 38 38 51 57
+RSP: 0018:ffffc90002b3ffc0 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000003
+RDX: dffffc0000000000 RSI: ffff888021edaf98 RDI: ffff888021eda440
+RBP: ffffc90002b40100 R08: 0000000000000000 R09: 0000000000000006
+R10: ffffffff9698ad37 R11: 0000000000000002 R12: dffffc0000000000
+R13: ffff888021edaf98 R14: 0000000000000008 R15: ffff888021eda440
+FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f56f6b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: ffffc90002b3ffb8 CR3: 000000005f61e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	55                   	push   %rbp
+   6:	48 89 e5             	mov    %rsp,%rbp
+   9:	41 57                	push   %r15
+   b:	41 56                	push   %r14
+   d:	41 89 d6             	mov    %edx,%r14d
+  10:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
+  17:	fc ff df
+  1a:	41 55                	push   %r13
+  1c:	41 54                	push   %r12
+  1e:	53                   	push   %rbx
+  1f:	48 83 e4 f0          	and    $0xfffffffffffffff0,%rsp
+  23:	48 81 ec 10 01 00 00 	sub    $0x110,%rsp
+* 2a:	48 c7 44 24 30 b3 8a 	movq   $0x41b58ab3,0x30(%rsp) <-- trapping instruction
+  31:	b5 41
+  33:	48 8d 44 24 30       	lea    0x30(%rsp),%rax
+  38:	48                   	rex.W
+  39:	c7                   	.byte 0xc7
+  3a:	44 24 38             	rex.R and $0x38,%al
+  3d:	38 51 57             	cmp    %dl,0x57(%rcx)
+
+
 ---
- drivers/mmc/host/sdhci-esdhc-imx.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index 4173967022d0..d4bb23c9e866 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -1969,9 +1969,19 @@ static int sdhci_esdhc_suspend(struct device *dev)
- 			dev_warn(dev, "Failed to enable irq wakeup\n");
- 	}
- 
--	ret = pinctrl_pm_select_sleep_state(dev);
--	if (ret)
--		return ret;
-+	/*
-+	 * For the device which works as wakeup source, no need
-+	 * to change the pinctrl to sleep state.
-+	 * e.g. For SDIO device, the interrupt share with data pin,
-+	 * but the pinctrl sleep state may config the data pin to
-+	 * other function like GPIO function to save power in PM,
-+	 * which finally block the SDIO wakeup function.
-+	 */
-+	if (!device_may_wakeup(dev) || !host->irq_wake_enabled) {
-+		ret = pinctrl_pm_select_sleep_state(dev);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	ret = mmc_gpio_set_cd_wake(host->mmc, true);
- 
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
