@@ -1,76 +1,262 @@
-Return-Path: <linux-kernel+bounces-364748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2BF99D8CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:13:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5920499D8D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EFBCB21D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C34B11F21EE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70681D27A0;
-	Mon, 14 Oct 2024 21:13:39 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AC01D14FF;
+	Mon, 14 Oct 2024 21:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wV8lYQSL"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B881D1E9D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14EB1D0B9B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728940419; cv=none; b=odjn6n+aCOIJkuJ+eaBPhIwTzLhmBhlW7SY8sW0CDTk7w3wMAXUTrvTLxOlddb+uIbq6N9YBaYEtn11varCk4KELYjFU3OIgCH8mGP9JK3ktMZWiCM4gJbbgafKAwwwtQ9b+H4Iqe51Vae5D4CNOmAThcZ/qZwyY4z/UHPg6QnE=
+	t=1728940450; cv=none; b=Glceg6u3WQzLthmtHf2M2kuDf96Bo9VTeIyi/5lyLD3ZT3PZR4KH6ghgEqkvKQRsaa/Jxq4eAENZnxw4aGE+C64mgg+Z/ZiHFlEWWr5fmW8EhsfpB+47O7pfjh2tVSlyN6jApy/M3XQChqo7/BF+LcWjmmLouXmrZHvF4wxYrjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728940419; c=relaxed/simple;
-	bh=ZxfBwRlLY96pWS3rv5giwEZEPfeuzdV/jBcK467SqDQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EQUGFij9PwoUxLPrDNXkIfdJ5f+yL7ZvQvpj6M9HcIIc0aZRYLHqbyNoyTouGXTQDvFa1xEgFF3VRdVZ9b9N425wQzxL7koKV7hKd/YHdgn9yn4xdkMFKIDU7fuCe4zj0V051ICLgdz7++wwsunBZOui+tBRg7jZ+J7tEFzJsQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso9796065ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:13:37 -0700 (PDT)
+	s=arc-20240116; t=1728940450; c=relaxed/simple;
+	bh=NNULu7V4/uFQOOw1zu9eVvMWDZPrUoD1MFk/IRT5hLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UlNfcrxNpxu8I+Tu5Hxah6kDbcvoSoT3proFYUGLWxA+q1YbCnpFIFD+NwW8d5aIkLJWohZDgrgTYIHGWH40yEcQyy480dday7i54uRC0DutmxP+1uqxaALVn/P4nKB5LnCllZ2HMLzkyH0YK9hQbQtg3ZeQbwFQnIqt6gsA4yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wV8lYQSL; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-715884fcf32so1818526a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728940448; x=1729545248; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zq14q1R1F8s50ju9k71p1ZwPAO4Av1bykZb7U4Dj1cE=;
+        b=wV8lYQSLveiIsyBaD9d01kQXbU3B+KqPSMv2Odc571NxUsY/JunsWZSs749976PW/t
+         ll3pCd6M+BJRSp8XBJZohIxKdXD1akV3h3Ynml8mMwvMfL1TB8X+ZNb1oAX47tCAh5k0
+         tDyWg2FgUjq7eltPyg/xnBBvJE1txW71D5x54ZQBQ1iw3PMpJteqwz9BQ/lDrFyv5Mfj
+         yE6BwqUmWAkvvCZ/B64/duZqTOdfEQH8F0XxGDbvv6wl9rX26XtQpjpKm71N9vkBO2kz
+         O5lUypYrNgO731RkwzgeQRnAeP7ExVznivds6vxg7KmI5LmYShktBpVF32EEuRywK7WU
+         WOUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728940417; x=1729545217;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1728940448; x=1729545248;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxfBwRlLY96pWS3rv5giwEZEPfeuzdV/jBcK467SqDQ=;
-        b=uaxuL4Rxh+i+gzBLWA0uJRFk3jnhDgBXZt/cxIv+cOKrIa7RwfgB1GtcyohDnzDovu
-         duocvvWDzJJfEDw1SE0UwUpIrikxorNXhxUxi8BsC+F7BZMY9TQVXgO8xkETIS3cCoZj
-         3lPJA+W4i7xr1F3x8nsnt3VarHH1BP/8g5CYoYERKKaz1WIyRPt7K3siaMWQYWQI+340
-         ysOTQBCrn93+SUWg84sSpt+/+C5PfnQt3xihUpBK8M0RVHNTfinJInBrQizG+6iZt391
-         LntH0F+Er47WLc9bRI9sZCOK+y6EGpS9nSZmorIxp1436SlpRjjBNVRL1Ys1YLoMjtD3
-         oCqQ==
-X-Gm-Message-State: AOJu0YxIB9ps5GIZlr/6eals3W/bIW6NDwmoad3EJKoFFm1AeEKBCeWl
-	2kCLb57NlntpeGt4MonhAE2ara2C9NInaW3/JuccZqHoLucBTN8FF7j2XzzX8JRaaS6yCpmfGGw
-	5e4LFErS6vHAvQk3J8784jWkOAd7V2Rhuc3dA/X1t9HEk/v5ccrOnBwU=
-X-Google-Smtp-Source: AGHT+IFJI48vKy6iRMFyV0b7V2LwyUipydp/8iSYbClzSv+usLRy4ZThDK47zGFBAvtfJ3Y2lyiYBHbqgTt01wnJ2HKqhLTOiwd2
+        bh=zq14q1R1F8s50ju9k71p1ZwPAO4Av1bykZb7U4Dj1cE=;
+        b=DwGWZ/1OyKkp6Tj8tRU2HN3MIvkn8vhYNUk8MwMe9sGTtaJpGGVa0l/4uMEtker55k
+         AvKnxZLNdICmNAuvO1nDNo7Kp5q0GUt33JwaFD+Wz/PKD2Hz5/k1uboyFrfnEeac9AN8
+         Rw21kYf3nu5IgZpA2EZcBa8A8jYOGrgP3qOS1kzKQgs1nxn66BLlgNL+DFy7chcD3zBq
+         9YmZE7wXbEecc7HJh67i+q3Z3BFCcft74LYgRwFijXibATlOFFjfr02RhxcXExOlxNZS
+         FcPS3DxDmX2kXhdSHrhqSTuziF/ViwiMNJD11RV+Z5gCBjI8B4n71KbBapOi+b7l0E4V
+         WhVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWv49n0tZKtT418hUzmuJgCfaBJ9tOPEYIA0l9JIJzi0cyj3AluB21fxnzoOdcOjoMcN7bjkOle7UV3w6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzytQtvrU8/gqTV+yylm1ZLd1wVdOS+wfqjn5L5s3LWmzbK+Tq
+	FQho/mGCFtsbJ6pZrUJ1nBWm/8k0EUQLwXKFhvHWS0vXN1Certt6vaeWGK3Ys8Q=
+X-Google-Smtp-Source: AGHT+IFBQpcdVQJpDxZ/TlLOQl91w5TGGNDrZiZmWC5MClEg9c6QlPh8jb8yUjuS+qoWYS4wRLVRcg==
+X-Received: by 2002:a05:6870:3749:b0:27d:10f5:347 with SMTP id 586e51a60fabf-28887343aa1mr4749601fac.15.1728940447653;
+        Mon, 14 Oct 2024 14:14:07 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-288581dcebbsm2957223fac.27.2024.10.14.14.14.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 14:14:06 -0700 (PDT)
+Message-ID: <ab559026-7e95-4adc-9978-6db30982b2a6@baylibre.com>
+Date: Mon, 14 Oct 2024 16:14:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc9:b0:3a0:9f85:d74f with SMTP id
- e9e14a558f8ab-3a3bcdfc2e6mr73322585ab.16.1728940417200; Mon, 14 Oct 2024
- 14:13:37 -0700 (PDT)
-Date: Mon, 14 Oct 2024 14:13:37 -0700
-In-Reply-To: <66f574eb.050a0220.211276.0076.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670d8981.050a0220.d9b66.001b.GAE@google.com>
-Subject: Re: [syzbot] Re: Fix NULL pointer dereference in read_cache_folio
-From: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/8] iio: dac: adi-axi-dac: extend features
+To: Angelo Dureghello <adureghello@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+ <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-4-eeef0c1e0e56@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-4-eeef0c1e0e56@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 10/14/24 5:08 AM, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Extend AXI-DAC backend with new features required to interface
+> to the ad3552r DAC. Mainly, a new compatible string is added to
+> support the ad3552r-axi DAC IP, very similar to the generic DAC
+> IP but with some customizations to work with the ad3552r.
+> 
+> Then, a serie of generic functions has been added to match with
 
-***
+spelling: series
 
-Subject: Re: Fix NULL pointer dereference in read_cache_folio
-Author: gianf.trad@gmail.com
+> ad3552r needs. Function names has been kept generic as much as
+> possible, to allow re-utilization from other frontend drivers.
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
 
-#syz test
+...
+
+> +static int axi_dac_read_raw(struct iio_backend *back,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> +	int err, reg;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_FREQUENCY:
+> +
+> +		if (!st->info->has_dac_clk)
+> +			return -EOPNOTSUPP;
+> +
+> +		/*
+> +		 * As from ad3552r AXI IP documentation,
+> +		 * returning the SCLK depending on the stream mode.
+> +		 */
+> +		err = regmap_read(st->regmap, AXI_DAC_CUSTOM_CTRL_REG, &reg);
+> +		if (err)
+> +			return err;
+> +
+> +		if (reg & AXI_DAC_CUSTOM_CTRL_STREAM)
+> +			*val = st->dac_clk_rate / 2;
+> +		else
+> +			*val = st->dac_clk_rate / 8;
+
+To get the DAC sample rate, we only care about the streaming mode
+rate, so this should just always be / 2 and not / 8. Otherwise
+the sampling_frequency attribute in the DAC driver will return
+the wrong value when the buffer is not enabled. We never do buffered
+writes without enabling streaming mode.
+
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int axi_dac_bus_reg_write(struct iio_backend *back, u32 reg, u32 val,
+> +				 size_t data_size)
+> +{
+> +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> +	int ret;
+> +	u32 ival;
+> +
+> +	if (data_size == sizeof(u16))
+> +		ival = FIELD_PREP(AXI_DAC_CUSTOM_WR_DATA_16, val);
+> +	else
+> +		ival = FIELD_PREP(AXI_DAC_CUSTOM_WR_DATA_8, val);
+> +
+> +	ret = regmap_write(st->regmap, AXI_DAC_CUSTOM_WR_REG, ival);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to know
+
+I'm guessing these got renamed. REG_CNTRL_2 = AXI_DAC_CNTRL_2_REG
+and AXI_DAC_CNTRL_DATA_WR = AXI_DAC_CUSTOM_WR_REG?
+
+> +	 * the data size. So keeping data size control here only,
+> +	 * since data size is mandatory for the current transfer.
+> +	 * DDR state handled separately by specific backend calls,
+> +	 * generally all raw register writes are SDR.
+> +	 */
+> +	if (data_size == sizeof(u8))
+> +		ret = regmap_set_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> +				      AXI_DAC_CNTRL_2_SYMB_8B);
+> +	else
+> +		ret = regmap_clear_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> +					AXI_DAC_CNTRL_2_SYMB_8B);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> +				 AXI_DAC_CUSTOM_CTRL_ADDRESS,
+> +				 FIELD_PREP(AXI_DAC_CUSTOM_CTRL_ADDRESS, reg));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA,
+> +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read_poll_timeout(st->regmap,
+> +				       AXI_DAC_CUSTOM_CTRL_REG, ival,
+> +				       ival & AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA,
+> +				       10, 100 * KILO);
+> +	if (ret)
+> +		return ret;
+
+Should we also clear AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA on timeout
+so that we don't leave things in a bad state?
+
+> +
+> +	return regmap_clear_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA);
+> +}
+> +
+
+...
+
+>  static int axi_dac_probe(struct platform_device *pdev)
+>  {
+> -	const unsigned int *expected_ver;
+>  	struct axi_dac_state *st;
+>  	void __iomem *base;
+>  	unsigned int ver;
+> @@ -566,15 +793,26 @@ static int axi_dac_probe(struct platform_device *pdev)
+>  	if (!st)
+>  		return -ENOMEM;
+>  
+> -	expected_ver = device_get_match_data(&pdev->dev);
+> -	if (!expected_ver)
+> +	st->info = device_get_match_data(&pdev->dev);
+> +	if (!st->info)
+>  		return -ENODEV;
+>  
+> -	clk = devm_clk_get_enabled(&pdev->dev, NULL);
+> +	clk = devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
+
+This will break existing users that don't have clock-names
+in the DT. It should be fine to leave it as NULL in which
+case it will get the clock at index 0 in the clocks array
+even if there is more than one clock.
+
+>  	if (IS_ERR(clk))
+>  		return dev_err_probe(&pdev->dev, PTR_ERR(clk),
+>  				     "failed to get clock\n");
+>  
+> +	if (st->info->has_dac_clk) {
+> +		struct clk *dac_clk;
+> +
+> +		dac_clk = devm_clk_get_enabled(&pdev->dev, "dac_clk");
+> +		if (IS_ERR(dac_clk))
+> +			return dev_err_probe(&pdev->dev, PTR_ERR(dac_clk),
+> +					     "failed to get dac_clk clock\n");
+> +
+> +		st->dac_clk_rate = clk_get_rate(dac_clk);
+> +	}
+> +
+>  	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
 
