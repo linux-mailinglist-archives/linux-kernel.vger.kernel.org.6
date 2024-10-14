@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-363893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2D999C82E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:09:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52B399C82F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C35E1C25D02
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C741C25DA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A39C1D1E62;
-	Mon, 14 Oct 2024 11:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E4C1D2B21;
+	Mon, 14 Oct 2024 11:01:56 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766A21D14E8
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DCC1D26F7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903712; cv=none; b=h0Nx7FmTiWYdqvZV59ZEdpu8wb7bhLSfD6oiNB61APslSiRzXM/VWf/Fs8F3xDl0EksKgSOHrUitq70j0Ka5q6GTPiJObfAHP2Y1QP4XYlvTXKvcGTbD4spjEyOmEFOteegfid8nme77RXKSk63jE2xQLy8SgiOjY1ybjW0mipg=
+	t=1728903716; cv=none; b=pv9xPjKg6KJYTpgWrTVUGQme/Z/GTQgzAaKmxdGny5kvO0gS3HNcK1ijnfri9fw3YMofx58JDUhb4Iq/KyNKEik8FvnCQOVsBe7HBugfj/2CyafRkg0ESxYVCi8gbQ5nBZQ6mHxD7jL0kaXZxhPCRLJhrxr52vPTv0Iq/yEpnL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903712; c=relaxed/simple;
-	bh=yhFOHFcdXSc/tus5owk1BUSLa21Hclx8JBn17i6EL8Q=;
+	s=arc-20240116; t=1728903716; c=relaxed/simple;
+	bh=sjwU7BUgzN01wTQM2WKLIvC11P4vGU1exV8tjpcVD2I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fk7S/qDNjD4nZIPRdMXqXDyGNSLJLF0FZSnF0mP1Q4WwWhdfrTsygYsiW0b8gzmqgpzaRG4w/hwERz0M2bbTWn1kd9+RiWMLXDEy1PawbOFIaUNejPcmPOXfvNguZ9mV1C9tLgbDAaOKkYXCExZM0tQ3AL/BQKdW9+8u4E5DFZI=
+	 MIME-Version; b=DoYL2VMzH6o/bB+sAIZdxTiWC0Wfq5pNpczvblp/6Zya68XYSvxqJ3oiBmvzNDQnvizq32nPs2teq1BAa4mCphtETwvRrCZv0WnljBKZewvMVirSKy6XWQlaDjsX+mCAYOkjka7jRKOIGXpj4dM0fIq/tByqD39MSBtq4Av0Vcg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1DC6176B;
-	Mon, 14 Oct 2024 04:02:20 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0064176C;
+	Mon, 14 Oct 2024 04:02:23 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B31C53F51B;
-	Mon, 14 Oct 2024 04:01:48 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 62FEC3F51B;
+	Mon, 14 Oct 2024 04:01:51 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -45,14 +45,16 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Matthias Brugger <mbrugger@suse.com>,
 	Miroslav Benes <mbenes@suse.cz>,
+	Oliver Upton <oliver.upton@linux.dev>,
 	Will Deacon <will@kernel.org>
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v1 47/57] arm64: Statically allocate and align for worst-case page size
-Date: Mon, 14 Oct 2024 11:58:54 +0100
-Message-ID: <20241014105912.3207374-47-ryan.roberts@arm.com>
+Subject: [RFC PATCH v1 48/57] arm64: Convert switch to if for non-const comparison values
+Date: Mon, 14 Oct 2024 11:58:55 +0100
+Message-ID: <20241014105912.3207374-48-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -65,12 +67,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Increase the size and alignment of the zero page and various static
-buffers used for page tables to PAGE_SIZE_MAX. This resolves to the same
-thing for compile-time page size builds.
+When we enable boot-time page size, some macros are no longer
+compile-time constants. Where these macros are used as cases in switch
+statements, the switch statements no longer compile.
 
-For boot-time builds, we may in future consider freeing unused pages at
-runtime when the selected page size is less than MAX.
+Let's convert these to if/else blocks, which can handle the runtime
+values.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -79,61 +81,137 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- arch/arm64/include/asm/pgtable.h  | 2 +-
- arch/arm64/kernel/pi/map_kernel.c | 2 +-
- arch/arm64/mm/mmu.c               | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/kvm/mmu.c        | 32 +++++++++++++++-----------------
+ arch/arm64/mm/hugetlbpage.c | 34 +++++++++++-----------------------
+ 2 files changed, 26 insertions(+), 40 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 7a4f5604be3f7..fd47f70a42396 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -61,7 +61,7 @@
-  * ZERO_PAGE is a global shared page that is always zero: used
-  * for zero-mapped memory areas etc..
-  */
--extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
-+extern unsigned long empty_zero_page[PAGE_SIZE_MAX / sizeof(unsigned long)];
- #define ZERO_PAGE(vaddr)	phys_to_page(__pa_symbol(empty_zero_page))
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index a509b63bd4dd5..248a2d7ad6dbb 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -1487,29 +1487,27 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		vma_shift = get_vma_page_shift(vma, hva);
+ 	}
  
- #define pte_ERROR(e)	\
-diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
-index 7a62d4238449d..deb8cd50b0b0c 100644
---- a/arch/arm64/kernel/pi/map_kernel.c
-+++ b/arch/arm64/kernel/pi/map_kernel.c
-@@ -199,7 +199,7 @@ static void __init remap_idmap(bool use_lpa2, int page_shift)
+-	switch (vma_shift) {
+ #ifndef __PAGETABLE_PMD_FOLDED
+-	case PUD_SHIFT:
+-		if (fault_supports_stage2_huge_mapping(memslot, hva, PUD_SIZE))
+-			break;
+-		fallthrough;
++	if (vma_shift == PUD_SHIFT) {
++		if (!fault_supports_stage2_huge_mapping(memslot, hva, PUD_SIZE))
++			vma_shift = PMD_SHIFT;
++	}
+ #endif
+-	case CONT_PMD_SHIFT:
++	if (vma_shift == CONT_PMD_SHIFT) {
+ 		vma_shift = PMD_SHIFT;
+-		fallthrough;
+-	case PMD_SHIFT:
+-		if (fault_supports_stage2_huge_mapping(memslot, hva, PMD_SIZE))
+-			break;
+-		fallthrough;
+-	case CONT_PTE_SHIFT:
++	}
++	if (vma_shift == PMD_SHIFT) {
++		if (!fault_supports_stage2_huge_mapping(memslot, hva, PMD_SIZE))
++			vma_shift = PAGE_SHIFT;
++	}
++	if (vma_shift == CONT_PTE_SHIFT) {
+ 		vma_shift = PAGE_SHIFT;
+ 		force_pte = true;
+-		fallthrough;
+-	case PAGE_SHIFT:
+-		break;
+-	default:
+-		WARN_ONCE(1, "Unknown vma_shift %d", vma_shift);
+ 	}
++	if (vma_shift != PUD_SHIFT &&
++	    vma_shift != PMD_SHIFT &&
++	    vma_shift != PAGE_SHIFT)
++		WARN_ONCE(1, "Unknown vma_shift %d", vma_shift);
  
- static void __init map_fdt(u64 fdt, int page_shift)
+ 	vma_pagesize = 1UL << vma_shift;
+ 
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 5f1e2103888b7..bc98c20655bba 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -51,16 +51,12 @@ void __init arm64_hugetlb_cma_reserve(void)
+ 
+ static bool __hugetlb_valid_size(unsigned long size)
  {
--	static u8 ptes[INIT_IDMAP_FDT_SIZE_MAX] __initdata __aligned(PAGE_SIZE);
-+	static u8 ptes[INIT_IDMAP_FDT_SIZE_MAX] __initdata __aligned(PAGE_SIZE_MAX);
- 	static bool first_time __initdata = true;
- 	u64 limit = (u64)&ptes[INIT_IDMAP_FDT_SIZE_MAX];
- 	u64 efdt = fdt + MAX_FDT_SIZE;
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 84df9f278d24d..b4cd3b6a73c22 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -62,7 +62,7 @@ long __section(".mmuoff.data.write") __early_cpu_boot_status;
-  * Empty_zero_page is a special page that is used for zero-initialized data
-  * and COW.
-  */
--unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)] __page_aligned_bss;
-+unsigned long empty_zero_page[PAGE_SIZE_MAX / sizeof(unsigned long)] __page_aligned_bss;
- EXPORT_SYMBOL(empty_zero_page);
+-	switch (size) {
+ #ifndef __PAGETABLE_PMD_FOLDED
+-	case PUD_SIZE:
++	if (size == PUD_SIZE)
+ 		return pud_sect_supported();
+ #endif
+-	case CONT_PMD_SIZE:
+-	case PMD_SIZE:
+-	case CONT_PTE_SIZE:
++	if (size == CONT_PMD_SIZE || size == PMD_SIZE || size == CONT_PTE_SIZE)
+ 		return true;
+-	}
  
- static DEFINE_SPINLOCK(swapper_pgdir_lock);
-@@ -783,8 +783,8 @@ void __pi_map_range(u64 *pgd, u64 limit, u64 start, u64 end, u64 pa,
- 		    pgprot_t prot, int level, pte_t *tbl, bool may_use_cont,
- 		    u64 va_offset);
+ 	return false;
+ }
+@@ -104,24 +100,20 @@ static inline int num_contig_ptes(unsigned long size, size_t *pgsize)
  
--static u8 idmap_ptes[IDMAP_LEVELS_MAX - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init,
--	  kpti_ptes[IDMAP_LEVELS_MAX - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init;
-+static u8 idmap_ptes[IDMAP_LEVELS_MAX - 1][PAGE_SIZE_MAX] __aligned(PAGE_SIZE_MAX) __ro_after_init,
-+	  kpti_ptes[IDMAP_LEVELS_MAX - 1][PAGE_SIZE_MAX] __aligned(PAGE_SIZE_MAX) __ro_after_init;
+ 	*pgsize = size;
  
- static void __init create_idmap(void)
+-	switch (size) {
+ #ifndef __PAGETABLE_PMD_FOLDED
+-	case PUD_SIZE:
++	if (size == PUD_SIZE) {
+ 		if (pud_sect_supported())
+ 			contig_ptes = 1;
+-		break;
++	} else
+ #endif
+-	case PMD_SIZE:
++	if (size == PMD_SIZE) {
+ 		contig_ptes = 1;
+-		break;
+-	case CONT_PMD_SIZE:
++	} else if (size == CONT_PMD_SIZE) {
+ 		*pgsize = PMD_SIZE;
+ 		contig_ptes = CONT_PMDS;
+-		break;
+-	case CONT_PTE_SIZE:
++	} else if (size == CONT_PTE_SIZE) {
+ 		*pgsize = PAGE_SIZE;
+ 		contig_ptes = CONT_PTES;
+-		break;
+ 	}
+ 
+ 	return contig_ptes;
+@@ -339,20 +331,16 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
  {
+ 	unsigned long hp_size = huge_page_size(h);
+ 
+-	switch (hp_size) {
+ #ifndef __PAGETABLE_PMD_FOLDED
+-	case PUD_SIZE:
++	if (hp_size == PUD_SIZE)
+ 		return PGDIR_SIZE - PUD_SIZE;
+ #endif
+-	case CONT_PMD_SIZE:
++	if (hp_size == CONT_PMD_SIZE)
+ 		return PUD_SIZE - CONT_PMD_SIZE;
+-	case PMD_SIZE:
++	if (hp_size == PMD_SIZE)
+ 		return PUD_SIZE - PMD_SIZE;
+-	case CONT_PTE_SIZE:
++	if (hp_size == CONT_PTE_SIZE)
+ 		return PMD_SIZE - CONT_PTE_SIZE;
+-	default:
+-		break;
+-	}
+ 
+ 	return 0UL;
+ }
 -- 
 2.43.0
 
