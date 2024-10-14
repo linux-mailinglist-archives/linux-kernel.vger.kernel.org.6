@@ -1,354 +1,168 @@
-Return-Path: <linux-kernel+bounces-364471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE5299D50E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:56:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B233299D510
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0724D28316F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:56:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDEE4B25AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3171BFDF4;
-	Mon, 14 Oct 2024 16:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE811AD3F6;
+	Mon, 14 Oct 2024 16:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsK9CZfN"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ctQVpgpY"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8121AAE02;
-	Mon, 14 Oct 2024 16:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB011AF4F6
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728924982; cv=none; b=PNq9ozPbexBajMHI9JrvCwhaEP3cuohHe2nDiYqQHx92dUAHOAjuk/qu7wFbifB0V6e38S9vaezfXUD8MVPcLZlb1u54Gujaj9dypkjaBc3kNQkT5SrQO3czAZii/8dKsNljTXAbStcdRSTVRZUyDyZmyP2NRCLWjaw3HqE4GBo=
+	t=1728924990; cv=none; b=hwDGGR9nVfPdiBwDtLB5uIU+uCIe8i4mlOpDhbbTkMzgTNEdZGTXTdaBJQP7EfDyiNv9Izkyr5sJX4H/CxNu2eBujNk4FtTB+wmeT8bboB2Q9D8ojTyNLHh04OWv7NlErbNmNM8loeSFP8eDe0s5h0nDr9OOs8uDZc+hxiV9uYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728924982; c=relaxed/simple;
-	bh=nD3fGeBFvL+EJJPI5lGj7pAV+MixQ67qEsOh2VTNyKI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OqpvuuyyqfMvZPrk7N8th9KgypIA0zgyfhXruziqwfLkZMt0cbzjvrN2H1CxfRtwwJ01hK4CAwGohezqk/esjDdSOtVGo72q2CdUESNwAXh2SHTgNe36mGaz7HxXXeZEZFGcl3K9GEqyja/umF7VUIrdzerF1gyaSSXEgjrNoWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LsK9CZfN; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e2908e8d45eso3755540276.2;
-        Mon, 14 Oct 2024 09:56:19 -0700 (PDT)
+	s=arc-20240116; t=1728924990; c=relaxed/simple;
+	bh=k8fFu63Mnqa9R96BH6wgTaXjgAGSuyRmS3aedznynuQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ul5yVL7L1eZ9ECZJKLnPpAFk4Hj2e41zM8N2e4H2/3UnmoGmV+rxT/hdKondY/dXIAuVL/XTM2cwWlXLewZ3OrSafFvBw5kKw8cku4a6eSpV53A4jOE5DDEpVM2pMEJLVosIU0umwDlbXvcCoIWL7NqsXj/ON2JUlWo4EXyv2CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ctQVpgpY; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cdbe608b3so11001965ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:56:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728924978; x=1729529778; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ddsXQQbU8MvXf6QmdcSJ6JsFBx6hSo9OkjFj+kLPcxo=;
-        b=LsK9CZfNKN+OpKgMlq3J0/GMqZ+ANb0uXR2AfAABO6vgom9kFGs7s2B3bOaTV60M//
-         UkYdEVul9mySSJOeJlY38YPaYCYF9wXFk6a5D9uYqBW63w+jS8zPio0MlmmJPNi71blr
-         /43WHQeyhHwIxz7czcasjZJKdrPdKxW2s7Xz5Auwn16mRrzrY2i2533d4WpUgZGBBvi7
-         WocwG7MFC31RILfsaS06SkLAfmM8orhFBDPVKFVqJbgFvIHEmDnRt0LNGboGqRpTsIWu
-         G0NhhafqGbw5cICgHPXzkqNp/SIPRPmvLfPefNL6SqP3aGvbRnX6sCy81eufgmh6olqh
-         Vw0w==
+        d=broadcom.com; s=google; t=1728924987; x=1729529787; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=XshrvEkrWmKQRy64hShoDm58Lk89RKJKAsS7vcs1Ows=;
+        b=ctQVpgpYbs9koz11JffTjs34OqY+lbUI92CTXcGHQLnBTVUBCqMZ++ohQrjcqj28F+
+         NPFfh8UrU7GuBsIWtQ9x8m6hdfCzkHKALZD0/M/ngD4BvBcl87pyB/GdXf5XFzafbfEf
+         PhyM1mRHzA9GRziIf5ykIJFKoyYngoL0fMDyM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728924978; x=1729529778;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1728924987; x=1729529787;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ddsXQQbU8MvXf6QmdcSJ6JsFBx6hSo9OkjFj+kLPcxo=;
-        b=tbtyoqFOVWT5g+9O47Z1I+MKRjr+crvKF63ZP9RPKcTKqZ79H46KgfLagxbliLLreL
-         0EsfO96mSWLVKbqt7okUjCp4FAx+itowl0BIstc9SyEQjl5bjxSbzVSvzOgG2MTocy0K
-         c3n1TTRskKEDOxOqxIAQTceXBkf0+onoBUanFYnWAS+VjUrN4vmLyRs1g7njgeK8nGtU
-         VS+GMHe7okr05CES7e3u0K5US86LrL6r7u0RW349PqFcGk8QBhpnAhg5lJY04cWu5ckf
-         NPFA3cd0l2aOdPtxnnqlOccg5/WIcJZadQNkgLTNcOMZMG7SnHycKEEqrGNFVaSMK7nF
-         U95g==
-X-Forwarded-Encrypted: i=1; AJvYcCUoAdGkrzPnfNtGWZQQRHKD8k/zGcyvf2Wu+nLY2sMD30khkfsRAUqWX9CXVn3CrKd6K5c3tCkvDvar@vger.kernel.org, AJvYcCWx6Z21uUDulIfGtDkL9Y99+ZI1FjzSrSNN3z/re4utcMWb57KklycsskoTYageGh3IfDJHDMCzn39tMw==@vger.kernel.org, AJvYcCX+kSuPPNDRmbjTRDwVp8WGHLp69bns9KrsSKcOOb5XP6An/93KWRYqLg3YWx1MaDK0X80fvGUvYtshvHEI@vger.kernel.org, AJvYcCXoBAq0BrAo8Z6G3WoJ5KxBZ9v+YRE3McB1dNEtfB337rsPVNtu/oQ7N6BhiQVx2QP4FRrF/dQesTzf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrRvLchYUMuPW816U9jKuQfXAaCPYdvHMuYifT1OTF9FhxpCoG
-	ZL2zN5qYQmffVmjROCz/Kbrvp2aBPJeHfa7+d907WOzAHB/bfxeE
-X-Google-Smtp-Source: AGHT+IGRxIooMyF8x4PKhiot8G3u2vhGn1BfEG0sXBKicJWPXR5jgNPa1nRNB1dgAoe7W2WUWzlBuw==
-X-Received: by 2002:a05:690c:2843:b0:6dd:b920:6e61 with SMTP id 00721157ae682-6e347c840a2mr71270877b3.40.1728924978243;
-        Mon, 14 Oct 2024 09:56:18 -0700 (PDT)
-Received: from fan ([50.205.20.42])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332b611acsm15759257b3.24.2024.10.14.09.56.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 09:56:18 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Mon, 14 Oct 2024 09:56:15 -0700
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 23/28] dax/bus: Factor out dev dax resize logic
-Message-ID: <Zw1NL3_otWVTUF4c@fan>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-23-c261ee6eeded@intel.com>
+        bh=XshrvEkrWmKQRy64hShoDm58Lk89RKJKAsS7vcs1Ows=;
+        b=LDdnfrMowyr/Vg0C3UrdzSTLyGiO2ZhCFeUXNTY0IiL661/t8ajD4xIeY2qZes9ai+
+         G8EPd4AALxrZUxSW8/3MX/f3h10PnDVMpS78OwPy2+WVP76PFiJefaz5DEPVgP/pE+eA
+         sw1B23CRi9HonKHRFZiC1afs/NpOQjOUNrqTRJ1IsWT03CmQXiUCD0mUASwcqMmcmXFb
+         /8yAlvqt7WesSCoItEG99FCw8blNm1I7EqFgroY3CYxXLKL5GRtKSUcD5tGWFwnyiX9A
+         jBCu8hGXQHQKHwkQNfKPGzcgTMEiTCBDYcfdjME7PgXSIwEvfav0sQWGpccGojOHBVEO
+         CcPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSc8PS0Uh4uCqFiW+m/V9rYKWGr/E6ZiKT4kU/PghWIlq6lvkWbTzrDlW1Sut3LO9Kq74AJ6YqyQt4f64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf0VrXKBMtpkxKYIbW7DyJtGYI9S+cRXOMINBkGn9bkF1b/RWL
+	lBx4gsKs6kYg17ejMToV6kEEi+bgBvWF5CG9jXUVdGyD+JIJ0L9pI95GDRCsYg==
+X-Google-Smtp-Source: AGHT+IEBwtkMuz59Zc84AsR0slLKr5kYtqrxnj7DgZmB2A+4e91Eecm9SOzZie3yc4k87AzSEQqbPg==
+X-Received: by 2002:a17:903:190:b0:20c:f648:e39e with SMTP id d9443c01a7336-20cf648e4f7mr36987285ad.58.1728924987323;
+        Mon, 14 Oct 2024 09:56:27 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c0e74d6sm68525565ad.166.2024.10.14.09.56.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 09:56:26 -0700 (PDT)
+Message-ID: <c5ffe617-e182-4561-95d4-5f635fda53db@broadcom.com>
+Date: Mon, 14 Oct 2024 09:56:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-dcd-type2-upstream-v4-23-c261ee6eeded@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: systemport: avoid build warnings due to
+ unused I/O helpers
+To: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org
+Cc: Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-kernel@vger.kernel.org
+References: <20241014150139.927423-1-vladimir.oltean@nxp.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241014150139.927423-1-vladimir.oltean@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 06:16:29PM -0500, Ira Weiny wrote:
-> Dynamic Capacity regions must limit dev dax resources to those areas
-> which have extents backing real memory.  Such DAX regions are dubbed
-> 'sparse' regions.  In order to manage where memory is available four
-> alternatives were considered:
+On 10/14/24 08:01, Vladimir Oltean wrote:
+> A clang-16 W=1 build emits the following (abridged):
 > 
-> 1) Create a single region resource child on region creation which
->    reserves the entire region.  Then as extents are added punch holes in
->    this reservation.  This requires new resource manipulation to punch
->    the holes and still requires an additional iteration over the extent
->    areas which may already have existing dev dax resources used.
+> warning: unused function 'txchk_readl' [-Wunused-function]
+> BCM_SYSPORT_IO_MACRO(txchk, SYS_PORT_TXCHK_OFFSET);
+> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
 > 
-> 2) Maintain an ordered xarray of extents which can be queried while
->    processing the resize logic.  The issue is that existing region->res
->    children may artificially limit the allocation size sent to
->    alloc_dev_dax_range().  IE the resource children can't be directly
->    used in the resize logic to find where space in the region is.  This
->    also poses a problem of managing the available size in 2 places.
+> warning: unused function 'txchk_writel' [-Wunused-function]
+> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
 > 
-> 3) Maintain a separate resource tree with extents.  This option is the
->    same as 2) but with the different data structure.  Most ideally there
->    should be a unified representation of the resource tree not two places
->    to look for space.
+> warning: unused function 'tbuf_readl' [-Wunused-function]
+> BCM_SYSPORT_IO_MACRO(tbuf, SYS_PORT_TBUF_OFFSET);
+> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
 > 
-> 4) Create region resource children for each extent.  Manage the dax dev
->    resize logic in the same way as before but use a region child
->    (extent) resource as the parents to find space within each extent.
+> warning: unused function 'tbuf_writel' [-Wunused-function]
+> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
 > 
-> Option 4 can leverage the existing resize algorithm to find space within
-> the extents.  It manages the available space in a singular resource tree
-> which is less complicated for finding space.
+> Annotate the functions with the __maybe_unused attribute to tell the
+> compiler it's fine to do dead code elimination, and suppress the
+> warnings.
 > 
-> In preparation for this change, factor out the dev_dax_resize logic.
-> For static regions use dax_region->res as the parent to find space for
-> the dax ranges.  Future patches will use the same algorithm with
-> individual extent resources as the parent.
+> Also, remove the "inline" keyword from C files, since the compiler is
+> free anyway to inline or not.
 > 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-LGTM based on the code logic, but not familiar with dax resource management.
+clang is adequately warning that the txchk_{read,write}l functions are 
+not used at all, so while your patch is correct, I think we could also 
+go with this one liner in addition, or as a replacement to your patch:
 
-Fan
-
-> ---
-> Changes:
-> [Jonathan: Fix handling of alloc]
-> ---
->  drivers/dax/bus.c | 129 +++++++++++++++++++++++++++++++++---------------------
->  1 file changed, 79 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> index d8cb5195a227..f0e3f8c787df 100644
-> --- a/drivers/dax/bus.c
-> +++ b/drivers/dax/bus.c
-> @@ -844,11 +844,9 @@ static int devm_register_dax_mapping(struct dev_dax *dev_dax, int range_id)
->  	return 0;
->  }
->  
-> -static int alloc_dev_dax_range(struct dev_dax *dev_dax, u64 start,
-> -		resource_size_t size)
-> +static int alloc_dev_dax_range(struct resource *parent, struct dev_dax *dev_dax,
-> +			       u64 start, resource_size_t size)
->  {
-> -	struct dax_region *dax_region = dev_dax->region;
-> -	struct resource *res = &dax_region->res;
->  	struct device *dev = &dev_dax->dev;
->  	struct dev_dax_range *ranges;
->  	unsigned long pgoff = 0;
-> @@ -866,14 +864,14 @@ static int alloc_dev_dax_range(struct dev_dax *dev_dax, u64 start,
->  		return 0;
->  	}
->  
-> -	alloc = __request_region(res, start, size, dev_name(dev), 0);
-> +	alloc = __request_region(parent, start, size, dev_name(dev), 0);
->  	if (!alloc)
->  		return -ENOMEM;
->  
->  	ranges = krealloc(dev_dax->ranges, sizeof(*ranges)
->  			* (dev_dax->nr_range + 1), GFP_KERNEL);
->  	if (!ranges) {
-> -		__release_region(res, alloc->start, resource_size(alloc));
-> +		__release_region(parent, alloc->start, resource_size(alloc));
->  		return -ENOMEM;
->  	}
->  
-> @@ -1026,50 +1024,45 @@ static bool adjust_ok(struct dev_dax *dev_dax, struct resource *res)
->  	return true;
->  }
->  
-> -static ssize_t dev_dax_resize(struct dax_region *dax_region,
-> -		struct dev_dax *dev_dax, resource_size_t size)
-> +/**
-> + * dev_dax_resize_static - Expand the device into the unused portion of the
-> + * region. This may involve adjusting the end of an existing resource, or
-> + * allocating a new resource.
-> + *
-> + * @parent: parent resource to allocate this range in
-> + * @dev_dax: DAX device to be expanded
-> + * @to_alloc: amount of space to alloc; must be <= space available in @parent
-> + *
-> + * Return the amount of space allocated or -ERRNO on failure
-> + */
-> +static ssize_t dev_dax_resize_static(struct resource *parent,
-> +				     struct dev_dax *dev_dax,
-> +				     resource_size_t to_alloc)
->  {
-> -	resource_size_t avail = dax_region_avail_size(dax_region), to_alloc;
-> -	resource_size_t dev_size = dev_dax_size(dev_dax);
-> -	struct resource *region_res = &dax_region->res;
-> -	struct device *dev = &dev_dax->dev;
->  	struct resource *res, *first;
-> -	resource_size_t alloc = 0;
->  	int rc;
->  
-> -	if (dev->driver)
-> -		return -EBUSY;
-> -	if (size == dev_size)
-> -		return 0;
-> -	if (size > dev_size && size - dev_size > avail)
-> -		return -ENOSPC;
-> -	if (size < dev_size)
-> -		return dev_dax_shrink(dev_dax, size);
-> -
-> -	to_alloc = size - dev_size;
-> -	if (dev_WARN_ONCE(dev, !alloc_is_aligned(dev_dax, to_alloc),
-> -			"resize of %pa misaligned\n", &to_alloc))
-> -		return -ENXIO;
-> -
-> -	/*
-> -	 * Expand the device into the unused portion of the region. This
-> -	 * may involve adjusting the end of an existing resource, or
-> -	 * allocating a new resource.
-> -	 */
-> -retry:
-> -	first = region_res->child;
-> -	if (!first)
-> -		return alloc_dev_dax_range(dev_dax, dax_region->res.start, to_alloc);
-> +	first = parent->child;
-> +	if (!first) {
-> +		rc = alloc_dev_dax_range(parent, dev_dax,
-> +					   parent->start, to_alloc);
-> +		if (rc)
-> +			return rc;
-> +		return to_alloc;
-> +	}
->  
-> -	rc = -ENOSPC;
->  	for (res = first; res; res = res->sibling) {
->  		struct resource *next = res->sibling;
-> +		resource_size_t alloc;
->  
->  		/* space at the beginning of the region */
-> -		if (res == first && res->start > dax_region->res.start) {
-> -			alloc = min(res->start - dax_region->res.start, to_alloc);
-> -			rc = alloc_dev_dax_range(dev_dax, dax_region->res.start, alloc);
-> -			break;
-> +		if (res == first && res->start > parent->start) {
-> +			alloc = min(res->start - parent->start, to_alloc);
-> +			rc = alloc_dev_dax_range(parent, dev_dax,
-> +						 parent->start, alloc);
-> +			if (rc)
-> +				return rc;
-> +			return alloc;
->  		}
->  
->  		alloc = 0;
-> @@ -1078,21 +1071,55 @@ static ssize_t dev_dax_resize(struct dax_region *dax_region,
->  			alloc = min(next->start - (res->end + 1), to_alloc);
->  
->  		/* space at the end of the region */
-> -		if (!alloc && !next && res->end < region_res->end)
-> -			alloc = min(region_res->end - res->end, to_alloc);
-> +		if (!alloc && !next && res->end < parent->end)
-> +			alloc = min(parent->end - res->end, to_alloc);
->  
->  		if (!alloc)
->  			continue;
->  
->  		if (adjust_ok(dev_dax, res)) {
->  			rc = adjust_dev_dax_range(dev_dax, res, resource_size(res) + alloc);
-> -			break;
-> +			if (rc)
-> +				return rc;
-> +			return alloc;
->  		}
-> -		rc = alloc_dev_dax_range(dev_dax, res->end + 1, alloc);
-> -		break;
-> +		rc = alloc_dev_dax_range(parent, dev_dax, res->end + 1, alloc);
-> +		if (rc)
-> +			return rc;
-> +		return alloc;
->  	}
-> -	if (rc)
-> -		return rc;
-> +
-> +	/* available was already calculated and should never be an issue */
-> +	dev_WARN_ONCE(&dev_dax->dev, 1, "space not found?");
-> +	return 0;
-> +}
-> +
-> +static ssize_t dev_dax_resize(struct dax_region *dax_region,
-> +		struct dev_dax *dev_dax, resource_size_t size)
-> +{
-> +	resource_size_t avail = dax_region_avail_size(dax_region), to_alloc;
-> +	resource_size_t dev_size = dev_dax_size(dev_dax);
-> +	struct device *dev = &dev_dax->dev;
-> +	resource_size_t alloc;
-> +
-> +	if (dev->driver)
-> +		return -EBUSY;
-> +	if (size == dev_size)
-> +		return 0;
-> +	if (size > dev_size && size - dev_size > avail)
-> +		return -ENOSPC;
-> +	if (size < dev_size)
-> +		return dev_dax_shrink(dev_dax, size);
-> +
-> +	to_alloc = size - dev_size;
-> +	if (dev_WARN_ONCE(dev, !alloc_is_aligned(dev_dax, to_alloc),
-> +			"resize of %pa misaligned\n", &to_alloc))
-> +		return -ENXIO;
-> +
-> +retry:
-> +	alloc = dev_dax_resize_static(&dax_region->res, dev_dax, to_alloc);
-> +	if (alloc <= 0)
-> +		return alloc;
->  	to_alloc -= alloc;
->  	if (to_alloc)
->  		goto retry;
-> @@ -1198,7 +1225,8 @@ static ssize_t mapping_store(struct device *dev, struct device_attribute *attr,
->  
->  	to_alloc = range_len(&r);
->  	if (alloc_is_aligned(dev_dax, to_alloc))
-> -		rc = alloc_dev_dax_range(dev_dax, r.start, to_alloc);
-> +		rc = alloc_dev_dax_range(&dax_region->res, dev_dax, r.start,
-> +					 to_alloc);
->  	up_write(&dax_dev_rwsem);
->  	up_write(&dax_region_rwsem);
->  
-> @@ -1466,7 +1494,8 @@ static struct dev_dax *__devm_create_dev_dax(struct dev_dax_data *data)
->  	device_initialize(dev);
->  	dev_set_name(dev, "dax%d.%d", dax_region->id, dev_dax->id);
->  
-> -	rc = alloc_dev_dax_range(dev_dax, dax_region->res.start, data->size);
-> +	rc = alloc_dev_dax_range(&dax_region->res, dev_dax, dax_region->res.start,
-> +				 data->size);
->  	if (rc)
->  		goto err_range;
->  
-> 
-> -- 
-> 2.46.0
-> 
-
+diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c 
+b/drivers/net/ethernet/broadcom/bcmsysport.c
+index c9faa8540859..7cea30eac83a 100644
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -46,7 +46,6 @@ BCM_SYSPORT_IO_MACRO(umac, SYS_PORT_UMAC_OFFSET);
+  BCM_SYSPORT_IO_MACRO(gib, SYS_PORT_GIB_OFFSET);
+  BCM_SYSPORT_IO_MACRO(tdma, SYS_PORT_TDMA_OFFSET);
+  BCM_SYSPORT_IO_MACRO(rxchk, SYS_PORT_RXCHK_OFFSET);
+-BCM_SYSPORT_IO_MACRO(txchk, SYS_PORT_TXCHK_OFFSET);
+  BCM_SYSPORT_IO_MACRO(rbuf, SYS_PORT_RBUF_OFFSET);
+  BCM_SYSPORT_IO_MACRO(tbuf, SYS_PORT_TBUF_OFFSET);
+  BCM_SYSPORT_IO_MACRO(topctrl, SYS_PORT_TOPCTRL_OFFSET);
 -- 
-Fan Ni
+Florian
 
