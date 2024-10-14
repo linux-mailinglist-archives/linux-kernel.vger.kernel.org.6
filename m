@@ -1,230 +1,234 @@
-Return-Path: <linux-kernel+bounces-364819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5691799D9D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:38:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB7699D9D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06D91F22B18
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:38:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A0D0B21D84
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9CD1D3184;
-	Mon, 14 Oct 2024 22:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529451D5AD8;
+	Mon, 14 Oct 2024 22:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VZZ4a7DI"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Yvpegfnz"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5C71D0F61
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B85A1D31AF
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728945508; cv=none; b=ew15Z70n+PPb+2Xk2r4MqC2w3n9IwvSUqbxqnwaCNpMRFEq8VxlTjNMfmlCl99WSXRX45jJDDibndn6SyGxEt6RxoUSWbS+9T4ayr3WqCY8cs4NsgG+AnWqMQ0tNKTY7+ipNROPHgD6K647pISTPj6lEipKUdmm7jIAQzuqYSPc=
+	t=1728945519; cv=none; b=rmKSICExMZLMTp/Fizmx3Q3PLr2vd36w1TqccNSIlAifqtTk6gvuKFAO55FIBzzIPsoxFK0KRHgZsS4BGlHeCxI9rS09990ArEqNPbxExsOr12SDk6bntQBX0gZPg6/kZpMScpESS1gtfdTdux/tfotklZYjgiAgbI/hvkhp9F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728945508; c=relaxed/simple;
-	bh=O8OKq8HDwbJjRTWzd1uS/ZHiUvAuLk/CNimbphejG5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KSiZCVQ0znTjRk273gGIqTNtfvW1J9cWHM5VGCyRNWK/uF4GiNqYIzX4jVFIWx3618N7cx72kWmBcIe9XVk6CAtOhtJXDDu93twd9fadKPOi0pxaVJzJU1QVHkMrzN/DYtNPd8m/+TPqkfnyGVvxTspuMpLyUC44cXOAZCK5lEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VZZ4a7DI; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8354851fbfaso228809939f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:38:26 -0700 (PDT)
+	s=arc-20240116; t=1728945519; c=relaxed/simple;
+	bh=rZX+S+qAjlcCuNV4zhkfDLlYh/dPDT4D/9JOYTwkpmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9AJGhhrpB+rVCZbrA9DBBaV8/LQhabr43Ka9KucB+Tjec8JMuB6u6+YXgS2ncjAn2XzZlOO6rdNx6Mm6k/InDU9inocvxYVn3xTyoy0hORp0Ma0oImIQuzCoPx8WJ/E7vlIx147mQ8DMdKtFPrzpOXektSiruVcaLyCh5MATro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Yvpegfnz; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7afcd322cabso438380785a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728945505; x=1729550305; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AIonu1LkVfLUVFewo4PfSaVbZJxpryIcr1kRznLAruM=;
-        b=VZZ4a7DIWxFBF0w8QLIdIo8HJb4VFhtbJBzwzfBqk2m3Vcwup/o5hZqVCFbfixo1QI
-         A5QfemGgqOtmsK68txPRIFCGDL9yilI+qvRdhhRPGe+y1yFnxlmC+ZoVOpg6FSnrDsoG
-         TmWeM/kVU7bji2IZFQaQgIhdhXrJ8DtEFd9go=
+        d=rowland.harvard.edu; s=google; t=1728945516; x=1729550316; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dDxLrTOjtztTPOdPfS/2HucdWvOPHnw6CLT4pCaqd24=;
+        b=YvpegfnzPCdDF/V9ajmXR9blNjcPmxKUghUHkY+vkpXlaxISur9MshYty8fXaV4Ly8
+         1MDEpw/FhneQHS49gxtKyQ/3ysmpz9iyaZToLymzUxgGq6XbfvvX15x2PSbinEnbiQ0V
+         MCzixTTqEegPOCoz8W+HFuoXGjJLuXMmUWQLj0old0gNOW4dFbQNx/FEOK3GXR2HUmNJ
+         H6Y2078HYFGR6KVn66wohgwOtIpKga45MrNB+WserrGhakemkUWIDO6lecwdzJ+Abs6x
+         Wd99Xxyf69tFpAIo5ho3s8ja0tSmGbULV08cRwIRpZa+DlziDidkLHlV1R14URmGfbD2
+         Wyjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728945505; x=1729550305;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AIonu1LkVfLUVFewo4PfSaVbZJxpryIcr1kRznLAruM=;
-        b=fFBHLCdRdO4Ho4SqejhZGVV+TDYPKdCVW3qTOYRJTUUIb4mOQqF5aQLAGAx4sjRDQY
-         CSiaKRPshSBt487VxH4wimnPcqoMzSfq6WN5Nb7aBPSmPIL6eP7V4gQHpnJwnQ6kRwQ5
-         tYmtrPc1nRtD/pQZSgfYPwTAT4SiJKLTsyeLcY6nHvPK2gV1+H5jcU3cYQ5JyTQWKsQK
-         WG3EUnxc8t8dpwqAEO371jBQvX644+u+brHc/rG2SEPuXH1p/kZADkavXlidV+FT+lkn
-         10YfFZTZ/CCpAq5sMe+rLVbpuJ1LdBcCVjaFc55Kv+w0n3r8h9oLDnG0dTYlRbdwBvdm
-         XguA==
-X-Gm-Message-State: AOJu0YwQ7LRAQXCQxPfmNqSsAoRNun/dwuPn+DqSBcNIScn4Bp6agLlJ
-	iiCDHRs//vZUyXRBWSq27kJ9RrEI+/2B89GeeD2rXr0wTkAvJrk0oBXkfxcuf8c=
-X-Google-Smtp-Source: AGHT+IHpEqUp+akex3EK/CJOQyx8TJduGjR4UjuL/G45Ogs0SFpV2pbARlLAAZYTHhTjtTIubmr86g==
-X-Received: by 2002:a05:6e02:1a0b:b0:39f:5efe:ae73 with SMTP id e9e14a558f8ab-3a3b5f1deaamr118636665ab.5.1728945505169;
-        Mon, 14 Oct 2024 15:38:25 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec837620sm25823173.0.2024.10.14.15.38.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 15:38:24 -0700 (PDT)
-Message-ID: <0f79692e-ed68-462d-8ec7-955219116282@linuxfoundation.org>
-Date: Mon, 14 Oct 2024 16:38:23 -0600
+        d=1e100.net; s=20230601; t=1728945516; x=1729550316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dDxLrTOjtztTPOdPfS/2HucdWvOPHnw6CLT4pCaqd24=;
+        b=InTDzRno+suJI5yi11KkaibRfhe33Cld+SFkElSw/VZ6n41026+i9A7fzoYZJMus/t
+         /q5ALjhfyDS1YCiQidUXELFsVQXl92DI/k9Xl0GXez5DEQFaXjD9McP7v8t2+5R9ZyFK
+         kD6s4WdR1vnIdffCgf8rl7gukyS439UpRu7bxlNTzdkLi0irbSsmbfvOaTDj1JCgNQ7j
+         xRbEZA+UBpyDvTb8HV5QtddauuBFevFOGAXczX3MnoMM1/IQsuYtcYIx+42icy6WJSQQ
+         ohTgRn5HZhxZZs+7fsx00EQyeV6F4VY2KQFV1NbMTaspdjwaMC4s2F4cRdtVOjDnqPZc
+         LIhw==
+X-Gm-Message-State: AOJu0YxP82BubHQdr3NWaXu7T4WYOiTauEhEw1+ZhEmofelUJUyhiWmV
+	Nhz6VJgXGkvuBjZkHD+aX+pWAFqI315AvMAxqCoo3/A9hJR5cEwh/CAbzSLQHQ==
+X-Google-Smtp-Source: AGHT+IHIKwJkYho3CBwfkGcN0GmO2wkLT3O+UXvucd2+jHtDkxqkJQA1Vhwit0y9BzudR9fHQ06U6g==
+X-Received: by 2002:a05:620a:141:b0:7b1:2242:e3fc with SMTP id af79cd13be357-7b12242e65emr1141161085a.31.1728945515966;
+        Mon, 14 Oct 2024 15:38:35 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::7dde])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1363c9d24sm2020785a.133.2024.10.14.15.38.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 15:38:35 -0700 (PDT)
+Date: Mon, 14 Oct 2024 18:38:32 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+Message-ID: <d662ba74-2c02-4298-adfe-f12b3d65471c@rowland.harvard.edu>
+References: <6f7bdad6-d266-45c6-ad2d-2d0b1c33e4a6@rowland.harvard.edu>
+ <670d65fa.050a0220.3e960.00c1.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: clone3: Use the capget and capset syscall
- directly
-To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org, shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- zhouyuhang <zhouyuhang@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241010121612.2601444-1-zhouyuhang1010@163.com>
- <5b471a5c-c99d-42a5-943d-bb253127a202@linuxfoundation.org>
- <a2ab9671-5095-47bf-82cf-0e167320772f@163.com>
- <b2e02494-0f22-476e-bb79-f3a133b7fa07@linuxfoundation.org>
- <714162ff-a2f8-4fc6-91af-0ecd6376bc7f@163.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <714162ff-a2f8-4fc6-91af-0ecd6376bc7f@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670d65fa.050a0220.3e960.00c1.GAE@google.com>
 
-On 10/12/24 02:28, zhouyuhang wrote:
+On Mon, Oct 14, 2024 at 11:42:02AM -0700, syzbot wrote:
+> Hello,
 > 
-> On 2024/10/11 22:21, Shuah Khan wrote:
->> On 10/11/24 00:59, zhouyuhang wrote:
->>>
->>> On 2024/10/10 23:50, Shuah Khan wrote:
->>>> On 10/10/24 06:16, zhouyuhang wrote:
->>>>> From: zhouyuhang <zhouyuhang@kylinos.cn>
->>>>>
->>>>> The libcap commit aca076443591 ("Make cap_t operations thread safe.") added a
->>>>> __u8 mutex at the beginning of the struct _cap_struct,it changes the offset of
->>>>> the members in the structure that breaks the assumption made in the "struct libcap"
->>>>> definition in clone3_cap_checkpoint_restore.c.So use the capget and capset syscall
->>>>> directly and remove the libcap library dependency like the commit 663af70aabb7
->>>>> ("bpf: selftests: Add helpers to directly use the capget and capset syscall") does.
->>>>>
->>>>
->>>> NIT: grammar and comma spacing. Please fix those for readability.
->>>> e.g: Change "struct _cap_struct,it" to "struct _cap_struct, it"
->>>> Fix others as well.
->>>>
->>>
->>> Thanks, I'll fix it in V2
->>>
->>>
->>>>> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
->>>>> ---
->>>>>   tools/testing/selftests/clone3/Makefile       |  1 -
->>>>>   .../clone3/clone3_cap_checkpoint_restore.c    | 60 +++++++++----------
->>>>>   2 files changed, 28 insertions(+), 33 deletions(-)
->>>>>
->>>>> diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
->>>>> index 84832c369a2e..59d26e8da8d2 100644
->>>>> --- a/tools/testing/selftests/clone3/Makefile
->>>>> +++ b/tools/testing/selftests/clone3/Makefile
->>>>> @@ -1,6 +1,5 @@
->>>>>   # SPDX-License-Identifier: GPL-2.0
->>>>>   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
->>>>> -LDLIBS += -lcap
->>>>>     TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
->>>>>       clone3_cap_checkpoint_restore
->>>>> diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->>>>> index 3c196fa86c99..111912e2aead 100644
->>>>> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->>>>> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->>>>> @@ -15,7 +15,7 @@
->>>>>   #include <stdio.h>
->>>>>   #include <stdlib.h>
->>>>>   #include <stdbool.h>
->>>>> -#include <sys/capability.h>
->>>>> +#include <linux/capability.h>
->>>>>   #include <sys/prctl.h>
->>>>>   #include <sys/syscall.h>
->>>>>   #include <sys/types.h>
->>>>> @@ -27,6 +27,13 @@
->>>>>   #include "../kselftest_harness.h"
->>>>>   #include "clone3_selftests.h"
->>>>>   +#ifndef CAP_CHECKPOINT_RESTORE
->>>>> +#define CAP_CHECKPOINT_RESTORE 40
->>>>> +#endif
->>>>> +
->>>>
->>>> Why is this necessary? This is defined in linux/capability.h.
->>>>
->>>>> +int capget(cap_user_header_t header, cap_user_data_t data);
->>>>> +int capset(cap_user_header_t header, const cap_user_data_t data);
->>>>
->>>> In general prototypes such as these should be defined in header
->>>> file. Why are we defining these here?
->>>>
->>>> These are defined in sys/capability.h
->>>>
->>>> I don't understand this change. You are removing sys/capability.h
->>>> which requires you to add these defines here. This doesn't
->>>> sound like a correct solution to me.
->>>>
->>>
->>> I tested it on my machine without libcap-dev installed, the /usr/include/linux/capability.h
->>>
->>> is on this machine by default. Successfully compiled using #include <linux/capability.h>
->>>
->>> but not with #include <sys/capability.h>. This patch removes libcap library dependencies.
->>>
->>> And we don't use any part of sys/capability.h other than these two syscalls. So I think that's why it's necessary.
->>
->> You are changing the code to not include sys/capability.h
->> What happens if sys/capability.h along with linux/capability.h
->>
->> Do you see problems?
->>
-> 
-> I'm sorry, maybe I wasn't clear enough.
-> When we install the libcap library it will have the following output:
-> 
-> test@test:~/work/libcap$ sudo make install | grep capability
-> install -m 0644 include/sys/capability.h /usr/include/sys
-> install -m 0644 include/sys/capability.h /usr/include/sys
-> /usr/share/man/man5 capability.conf.5 \
-> 
-> It installs sys/capability.h in the correct location, but does not
-> 
-> install linux/capability.h, so sys/capability.h is bound to the libcap library
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
 
-It won't install inux/capability.h unless you run "make headers" in
-the kernel repo.
+This line in the console log confirms it:
 
-> 
-> and they will either exist or disappear together. Now I want to remove
-> 
-> the dependency of the test on libcap library so I changed the code that it
-> 
-> does not contain sys/capability.h but instead linux/capability.h,
-> 
-> so that the test can compile successfully without libcap being installed,
-> 
-> these two syscalls are not declared in linux/capability.h(It is sufficient for test use except for these two syscalls)
-> 
-> so we need to declare them here. I think that's why the commit 663af70aabb7
-> 
-> ("bpf: selftests: Add helpers to directly use the capget and capset syscall") I refered to
-> 
-> does the same thing. As for your question "What happens if sys/capability.h along
-> 
-> with linux/capability.h", I haven't found the problem yet, I sincerely hope you can
-> 
-> help me improve this code. Thank you very much.
+[  170.681412][ T6529] dummy_hcd dummy_hcd.1: Dequeue norestart: 0 ffff8881067e9700 active 0
 
-Try this:
+Let's add some more debugging info to pin down more closely what's
+going wrong.
 
-Run make headers in the kernel repo.
-Build without making any changes.
-Then add you changes and add linux/capability.h to include files
+Alan Stern
 
-Tell me what happens.
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
 
-The change you are making isn't correct. Because you don't want to
-define system calls locally in your source file.
-
-thanks,
--- Shuah
+Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+===================================================================
+--- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
++++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -50,7 +50,7 @@
+ #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
+ #define POWER_BUDGET_3	900	/* in mA */
+ 
+-#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
++#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
+ 
+ static const char	driver_name[] = "dummy_hcd";
+ static const char	driver_desc[] = "USB Host+Gadget Emulator";
+@@ -257,6 +257,9 @@ struct dummy_hcd {
+ 	unsigned			active:1;
+ 	unsigned			old_active:1;
+ 	unsigned			resuming:1;
++
++	bool				alanflag;
++	const char			*alandbg;
+ };
+ 
+ struct dummy {
+@@ -1303,9 +1306,11 @@ static int dummy_urb_enqueue(
+ 		urb->error_count = 1;		/* mark as a new urb */
+ 
+ 	/* kick the scheduler, it'll do the rest */
+-	if (!hrtimer_active(&dum_hcd->timer))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++	if (!hrtimer_active(&dum_hcd->timer)) {
++		dum_hcd->alandbg = "s1";
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
++	}
+ 
+  done:
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+@@ -1325,9 +1330,19 @@ static int dummy_urb_dequeue(struct usb_
+ 
+ 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
+ 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
+-			!list_empty(&dum_hcd->urbp_list))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
+-
++			!list_empty(&dum_hcd->urbp_list)) {
++		dev_info(dummy_dev(dum_hcd), "Dequeue restart %p\n", urb);
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++				HRTIMER_MODE_REL_SOFT);
++		dum_hcd->alandbg = "s2";
++	} else {
++		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %d %d %p active %d %s\n",
++				rc, dum_hcd->rh_state,
++				list_empty(&dum_hcd->urbp_list), urb,
++				hrtimer_active(&dum_hcd->timer),
++				dum_hcd->alandbg);
++	}
++	dum_hcd->alanflag = true;
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+ 	return rc;
+ }
+@@ -1813,10 +1828,14 @@ static enum hrtimer_restart dummy_timer(
+ 
+ 	/* look at each urb queued by the host side driver */
+ 	spin_lock_irqsave(&dum->lock, flags);
++	dum_hcd->alandbg = "cb1";
++	if (dum_hcd->alanflag)
++		dev_info(dummy_dev(dum_hcd), "Timer handler\n");
+ 
+ 	if (!dum_hcd->udev) {
+ 		dev_err(dummy_dev(dum_hcd),
+ 				"timer fired with no URBs pending?\n");
++		dum_hcd->alandbg = "cb2";
+ 		spin_unlock_irqrestore(&dum->lock, flags);
+ 		return HRTIMER_NORESTART;
+ 	}
+@@ -1984,6 +2003,8 @@ return_urb:
+ 			ep->already_seen = ep->setup_stage = 0;
+ 
+ 		usb_hcd_unlink_urb_from_ep(dummy_hcd_to_hcd(dum_hcd), urb);
++		if (dum_hcd->alanflag)
++			dev_info(dummy_dev(dum_hcd), "Giveback %p\n", urb);
+ 		spin_unlock(&dum->lock);
+ 		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
+ 		spin_lock(&dum->lock);
+@@ -1994,12 +2015,15 @@ return_urb:
+ 	if (list_empty(&dum_hcd->urbp_list)) {
+ 		usb_put_dev(dum_hcd->udev);
+ 		dum_hcd->udev = NULL;
++		dum_hcd->alandbg = "cb3";
+ 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
+-		/* want a 1 msec delay here */
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++		dum_hcd->alandbg = "scb";
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
+-	}
++	} else
++		dum_hcd->alandbg = "cb4";
+ 
++	dum_hcd->alanflag = false;
+ 	spin_unlock_irqrestore(&dum->lock, flags);
+ 
+ 	return HRTIMER_NORESTART;
+@@ -2390,8 +2414,11 @@ static int dummy_bus_resume(struct usb_h
+ 	} else {
+ 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 		set_link_state(dum_hcd);
+-		if (!list_empty(&dum_hcd->urbp_list))
+-			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
++		if (!list_empty(&dum_hcd->urbp_list)) {
++			dum_hcd->alandbg = "s3";
++			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++					HRTIMER_MODE_REL_SOFT);
++			}
+ 		hcd->state = HC_STATE_RUNNING;
+ 	}
+ 	spin_unlock_irq(&dum_hcd->dum->lock);
+@@ -2490,6 +2517,7 @@ static int dummy_start(struct usb_hcd *h
+ {
+ 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
+ 
++	dum_hcd->alandbg = "i";
+ 	/*
+ 	 * HOST side init ... we emulate a root hub that'll only ever
+ 	 * talk to one device (the gadget side).  Also appears in sysfs,
+@@ -2521,6 +2549,7 @@ static void dummy_stop(struct usb_hcd *h
+ {
+ 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
+ 
++	dum_hcd->alandbg = "can";
+ 	hrtimer_cancel(&dum_hcd->timer);
+ 	device_remove_file(dummy_dev(dum_hcd), &dev_attr_urbs);
+ 	dev_info(dummy_dev(dum_hcd), "stopped\n");
 
