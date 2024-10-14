@@ -1,87 +1,177 @@
-Return-Path: <linux-kernel+bounces-363419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F6099C233
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E64A99C236
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FDFAB245F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F3C1F21168
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6295814F9F3;
-	Mon, 14 Oct 2024 07:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF844154435;
+	Mon, 14 Oct 2024 07:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evFClWSq"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kc4Ur3Wn"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798E614F9EB
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB0E1531E2;
+	Mon, 14 Oct 2024 07:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892488; cv=none; b=AI9m2cz+l96oRwS5xVBMsA3HtySZSy9w0OSXl3TkhjJLvBC2tkkoFvPJt7LS5lB4GESR9xc1SZwSQcu8nYe0eTRweBkngiunJKbtJnFscocbjtdfl+nbG92wkobhdTbopV2m3jOei002kxwsENcD5wf08qdEy3/pNtvSnKEKbI8=
+	t=1728892512; cv=none; b=Wtd79GWnsNDVeFgoouVLYbhqjD7iE9S1Opgk+jqG02aTRkBKpkwblPYcg6PSN/UcyYQS5sFnSjv2sYvsMeHUcwXMS0+GZhKAn7NUrkKTovJg3sbDWFRhXcLyIXUJ8KUWQAT6BVUxXAMxWUuqdAg9BGYbq6h+rU4LRrNkTcnF2zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892488; c=relaxed/simple;
-	bh=BX28rAzmD4iiFzVyOHBt728GRE15tu8MjCYp4yUF6Zs=;
-	h=From:Message-ID:To:Subject:Date:MIME-Version:Content-Type; b=F2SwfiuxFwM6YDdXxoq3/GREPnVEIWpiJ4SVi452D1oJk041EMPyXjt6PVdqv+lNOjsME4Z6sUjBtcmlUiM+CadP0GeCR5Y3CvvyWZHfDbYh8Y5lHG5mSp+0G4b78kmwT7OZHiXaJDBgUyp3z8mAHFck7KTfjVvdotsxvjDloJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evFClWSq; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20caea61132so22025315ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728892486; x=1729497286; darn=vger.kernel.org;
-        h=mime-version:date:subject:to:reply-to:message-id:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BX28rAzmD4iiFzVyOHBt728GRE15tu8MjCYp4yUF6Zs=;
-        b=evFClWSqKhgK9PskQmfYoz1zv8Oy/IHKs0/7lWDsQLs/SdApjuXdK914GtwzmY2R7T
-         xNip0syetJc5ljzqawy2Y8ABaNuynJ2sr0pfoz+9MGu+T8XOXCG1z5xnCUMSOPXvjr13
-         zKmsylrwYBfW2VpLjXbvesTNj4wc5pOMuAKIngcYU/kWN8J+j4F89UIml9ypdSOxplh6
-         vMFzgUf5rrXWf5j8cAMaAnxIVChovVKeV0H1SRKKD1OGXZ1cdmQrOkYPJhl8jAIqc12E
-         WcYueeWQHu0GYQhBI1nuJsnTJ6flvqyi0SfHjFSkVGRdYpi9m6OhkQi42CppdUOu+TYf
-         3SdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728892486; x=1729497286;
-        h=mime-version:date:subject:to:reply-to:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BX28rAzmD4iiFzVyOHBt728GRE15tu8MjCYp4yUF6Zs=;
-        b=hhYqUHENrlfrxv53LeN+wwux1JLmHhr5m1GxyBaOMnAHrlVmKdipbM04vXEICE8Iot
-         oCpUd4+6nQ6t/+A09PqQ3ppP9ZenCo5yCc9X7TdTf8RVifTa6nXfHIfovDMKLQwpBo34
-         5NXxzrRgPmWo43XTq04KeS5nvkpczwM24Un/XlgiXjVpYiglazCfQYTO7N+TasJ2hNPq
-         +j2D9bCgI5FjwVvCSx0r08zQJT0olZkNFt33ZGHQidKxMjsd+u73VQX8MnZFBOhnEacE
-         hx8uNNlFhGAIX/iVJPBAxmmHCjYIiZ+vXGFLJfF44CKpZGc0vvzCzysg+XIslfrkbgk1
-         0PJg==
-X-Gm-Message-State: AOJu0YyEsNTkO8s9PzHGh86BJZa0U0N1mJLvW/q+nffPJAVLUWjLa1bz
-	zRCfMQLwrYNFg9QOtWtNrGH8DnKCNAjihFOGyaKFCwsaMWszNKgkLnXk0w==
-X-Google-Smtp-Source: AGHT+IGAPwz0TaHtOcgnkb7Gw0y8hMH2OZQfGs7o07JXVnLQfzN3aZOlnTO8RRYZA6zLePtXGNQB0g==
-X-Received: by 2002:a17:902:ce87:b0:20c:8b10:9660 with SMTP id d9443c01a7336-20cbb2845dcmr127337465ad.44.1728892485758;
-        Mon, 14 Oct 2024 00:54:45 -0700 (PDT)
-Received: from [103.67.163.162] ([103.67.163.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c21643fsm60280185ad.221.2024.10.14.00.54.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Oct 2024 00:54:45 -0700 (PDT)
-From: Debbie Magoffin <eklaemon5522@gmail.com>
-X-Google-Original-From: Debbie Magoffin <dmagoffin@outlook.com>
-Message-ID: <5d254b2f3b7952bdf8fcbe8a301c182352670dc2a4b078e603d17777dd0484f6@mx.google.com>
-Reply-To: dmagoffin@outlook.com
-To: linux-kernel@vger.kernel.org
-Subject: Yamaha Piano 10/14
-Date: Mon, 14 Oct 2024 03:54:42 -0400
+	s=arc-20240116; t=1728892512; c=relaxed/simple;
+	bh=lyY+5pCJTEqtKDO4IDGUo7crF97ivfpsYxSpoaLJzwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mz3AN9uV/fCeHfnHIb6JrYRyTREAn2SubdFq//i4X9aGo6wgEtvIo8qFAESLFAs1m0cCVM7UlkM+u5Y62BVDqC57t8Cs8MmZtUY6udQSiuwcPrDtC0+Ty6D8m6Euo7YHiiSfi+Z2bjALGTw8ne+g5aSJoR7hcGHeqMEbumCrjQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kc4Ur3Wn; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728892508;
+	bh=lyY+5pCJTEqtKDO4IDGUo7crF97ivfpsYxSpoaLJzwM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kc4Ur3WnZmYwqXum2e65KYNu28CZXXCtPImc2q+0dLYWxog/203HZjF4rvsSkF9Vu
+	 xbrHpEemrM2270Cjo1oFKSjB2FqUAQ7WEFGuvaOWclx1vtTmsI3It7dCvEa/wa6vUG
+	 LrFTsj4nsq7KFRQsi6K0SNNUHTSIuacyNKnTSHMruMx+hwTKOz5GPtiqXcinEM3rkz
+	 Th1JtjvFNV94E6w2y8aOC/Uzccfii1As/sU0irwc78sH+RgDo+dkNkDFo/yJafTj37
+	 caHW5ntPdEwUKwPmD5HyiCvgGPUWWZGFCSLOHxS+rH4byGANz01t8QG91wQx0x/GcR
+	 drV8K9f65QLJA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B35A517E10B5;
+	Mon, 14 Oct 2024 09:55:07 +0200 (CEST)
+Message-ID: <099a5360-a42c-4a60-a6e1-08ec6d6162ec@collabora.com>
+Date: Mon, 14 Oct 2024 09:55:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 8/8] pinctrl: mediatek: Add MT6735 pinctrl driver
+To: Yassine Oudjana <yassine.oudjana@gmail.com>,
+ Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
+ Andy Teng <andy.teng@mediatek.com>, linux-mediatek@lists.infradead.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241011120520.140318-1-y.oudjana@protonmail.com>
+ <20241011120520.140318-9-y.oudjana@protonmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241011120520.140318-9-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Il 11/10/24 14:03, Yassine Oudjana ha scritto:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> 
+> Add a driver for the MediaTek MT6735 SoC pin controller. This driver
+> also supports the pin controller on MT6735M, which lacks 6 physical
+> pins (198-203) used for MSDC2 on MT6735.
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> ---
+>   MAINTAINERS                                   |    3 +
+>   drivers/pinctrl/mediatek/Kconfig              |    6 +
+>   drivers/pinctrl/mediatek/Makefile             |    1 +
+>   drivers/pinctrl/mediatek/pinctrl-mt6735.c     |  880 ++++
+>   drivers/pinctrl/mediatek/pinctrl-mtk-mt6735.h | 3993 +++++++++++++++++
+>   5 files changed, 4883 insertions(+)
+>   create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6735.c
+>   create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6735.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f95ae886f9fd8..28de4a76bc05a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18315,6 +18315,9 @@ PIN CONTROLLER - MEDIATEK MT6735
+>   M:	Yassine Oudjana <y.oudjana@protonmail.com>
+>   L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+>   S:	Maintained
+> +F:	Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+> +F:	drivers/pinctrl/mediatek/pinctrl-mt6735.c
+> +F:	drivers/pinctrl/mediatek/pinctrl-mtk-mt6735.h
+>   F:	include/dt-bindings/pinctrl/mediatek,mt6735-pinctrl.h
+>   
+>   PIN CONTROLLER - MICROCHIP AT91
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+> index 7af287252834a..73052dad0e4a1 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -133,6 +133,12 @@ config PINCTRL_MT2712
+>   	default ARM64 && ARCH_MEDIATEK
+>   	select PINCTRL_MTK
+>   
+> +config PINCTRL_MT6735
+> +	bool "MediaTek MT6735(M) pin control"
 
-I am offering my late husband?s Yamaha piano to anyone who would truly appreciate it. If you or someone you know would be interested in receiving this instrument for free, please do not hesitate to contact me.
+bool "MediaTek MT6735 and MT6735m pin control"
 
-Warm regards,
-Debbie
+> +	depends on OF
+
+depends on ARM64 || COMPILE_TEST
+
+> +	default ARM64 && ARCH_MEDIATEK
+> +	select PINCTRL_MTK_PARIS
+> +
+>   config PINCTRL_MT6765
+>   	tristate "MediaTek MT6765 pin control"
+>   	depends on OF
+> diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
+> index 680f7e8526e00..f8ea0926b06db 100644
+> --- a/drivers/pinctrl/mediatek/Makefile
+> +++ b/drivers/pinctrl/mediatek/Makefile
+> @@ -18,6 +18,7 @@ obj-$(CONFIG_PINCTRL_MT2701)		+= pinctrl-mt2701.o
+>   obj-$(CONFIG_PINCTRL_MT2712)		+= pinctrl-mt2712.o
+>   obj-$(CONFIG_PINCTRL_MT8135)		+= pinctrl-mt8135.o
+>   obj-$(CONFIG_PINCTRL_MT8127)		+= pinctrl-mt8127.o
+> +obj-$(CONFIG_PINCTRL_MT6735)		+= pinctrl-mt6735.o
+>   obj-$(CONFIG_PINCTRL_MT6765)		+= pinctrl-mt6765.o
+>   obj-$(CONFIG_PINCTRL_MT6779)		+= pinctrl-mt6779.o
+>   obj-$(CONFIG_PINCTRL_MT6795)		+= pinctrl-mt6795.o
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6735.c b/drivers/pinctrl/mediatek/pinctrl-mt6735.c
+> new file mode 100644
+> index 0000000000000..3366860d8b493
+> --- /dev/null
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt6735.c
+> @@ -0,0 +1,880 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
+> + */
+> +
+
+..snip...
+
+
+static const unsigned int debounce_time_mt6735[] = {
+	1, 1000, 16000, 32000, 64000, 128000, 256000, 0
+};
+
+> +
+> +static const struct mtk_eint_hw mt6735_eint_hw = {
+> +	.port_mask = 7,
+> +	.ports     = 6,
+> +	.ap_num    = 224,
+> +	.db_cnt    = 16,
+	.db_time   = debounce_time_mt6735,
+
+> +};
+
+After which:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
 
