@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-363719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9EE99C5FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:41:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D8799C5EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC7B1F22B5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652872840FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B444156F3F;
-	Mon, 14 Oct 2024 09:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE19156C69;
+	Mon, 14 Oct 2024 09:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHTLyPaP"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iG7FsJrW"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655BA15666B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D34B156885;
+	Mon, 14 Oct 2024 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898862; cv=none; b=Ok2hbjg9NPxAWm+ZCEvIARWrIF8bz08ROAcKen0p55Ye2xx8fMQfJQmjLDlgmciUibqHJtqHOfdnDHzdEHV4PvPFNHJPKcDg/RKzJizH9f/oQlHyAwBxvwdo0G88EnYFsCigat4QGuT2aMfQaYRvVVlIyGDpYXPDabeVn1cLlWI=
+	t=1728898771; cv=none; b=cUIW2h3VwbrkfzCafS8BSZV6Z/Dd/thkr/KximaVYts8o2SeufGbTkqF7PW7Z172ELEWHcRvqXFWD9xeCyhlEcjFMFzlAH1/wmhLaCurEAYBEht3F6Wb/tvIVPebHionMPRVQcIlPdCEfjic846eRMSP/cCnh5lYIa+trbOLOeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898862; c=relaxed/simple;
-	bh=p5XMYQmLQn6nDeqPFmROh50lCFrxs3BLS4f63jKnnuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X/p6pHB/m/1anDWGvkgPA+6prh8OcyAo4jN7zXGstrl6TiotUpVXLiABz9l1LqberEwKG9LuzF7Jn3BcVyEU1KH7RUnPNuvfQndSHRMTAHnNwyTBmPSOdXhKyOSNuIy4a+A0DieRJGVl4vAWWG76mnLP2ro3SONKCxDYwH0KMAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHTLyPaP; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1728898771; c=relaxed/simple;
+	bh=hSExf4atp+U51gi7jYudiyiV0XJl/A3cSzCmKq/njJA=;
+	h=Message-ID:Date:MIME-Version:To:From:Cc:Subject:Content-Type; b=gtq3OP9D8rtNe86TUVzQWjifRxML9o48b8qYkIaU4WkLHnQS7+tRsp5jT0zSN+1sGMURj/NQjQgfSP1o5IsXbV0Cu32VXaAFQPYL/8JB9hLo2yhJN3Tbdlpb3eQWlFYIaMjI60cVlB0qq/5smDSNJ2+H2rrEHXQW0t4sz4Dlb/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iG7FsJrW; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43124843b04so18166605e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:40:59 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d461162b8so2703457f8f.1;
+        Mon, 14 Oct 2024 02:39:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728898858; x=1729503658; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5a4qfjLxUFAWrjF7SBSebNnHB1LQ0GNam3wZT3QbPkg=;
-        b=VHTLyPaPS4ee0S8AV3y39kVcFIIGIj9DlxRauLiQdiNgauHrbIdv/lpCUxdM4oBsB9
-         n9NtcBt9G/J++BHqFi6Y58H67zYzIzp1GIk1brL9oC2nIsHmGrTZeGJR5QEAg6ziMw30
-         l6Xe8pOXBxurZ02u3hE93QcplMtCTjkxADN2Q/78F4Bmek1PbxhoXXktRsofidNcD9+3
-         avLYhb/96i2xWGa4wAsVK+uXqCtd6BsCc3F2x8ilbB11HwrgKomaHZ76bdXm6TwS+ddE
-         rCtpnfLsZ+T5xqvZyyPwSf1uqphJVxjDXWnBFPgxdv7QSkM0r9BoKLtrQRpsNBjrH7IG
-         9fsg==
+        d=gmail.com; s=20230601; t=1728898769; x=1729503569; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:cc:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rXvmuKgNurYfFmlWGhrBnQNjxraoDSU6b11R1GM4I2w=;
+        b=iG7FsJrWynqLnJ/GHbsiySJGvi6nGoxkCFw4J7/pBCx39U8UanO7t/R/E40+pt1Jhj
+         iU6f+APR9WX4Pyo5oNqQQUhdJ+YwANV5m69C4sR8ya9E/sWpxOQgLWMFD1ao7Yfh119D
+         qknF5n87s8J6j3vvVAkA/uewTi9IgOJ4/lus7S2McGwh2WBsTmZ8kzXntaBKH0J3W4vc
+         Dhw1mGFuyf+cxLSavNELtOAlr/BV4ROCwXpC8R3+RuqC37BSkSOIfY/j+qP/WOn5BdXZ
+         iTEx0UV+rkuZX/O1qeeCzzS4fdzywZ/lVvw2cU92CfCqmm62r6bvfyeH6DxWR0Hdpczn
+         uv+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728898858; x=1729503658;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5a4qfjLxUFAWrjF7SBSebNnHB1LQ0GNam3wZT3QbPkg=;
-        b=BfkMgVuoszvKXgInpAL4SFmTqDdc1zXxto4hDauP3woDlGVct7pBZLDHKNdCfCOZ1Z
-         zWnzrcK9HxAukYpW9EaTIsn/iMWi+5cDlrrY00S4TvfzRbVmL3mgjCTj8TnQImkDsF8n
-         P6MFBZrxkpqK8fSyqg3RwZr7U6eelPmRx3qdYYrdcJDLdw0XxQ9rQTeo2MiSe0bEsuou
-         OUDMC2Y709cxX/ue20X1ycMOYB4tiuIQ0Fq7uAksNKBZgg6hKtcKcijgHrUfqJL7ReiZ
-         RzWl+qBO2IjrjyWgsX4bv5IA4knumMS4JMQvsAa2tE5OIoKvlWlUR/Ug7R7BdJ7Yf1Ir
-         dmtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxB5M9qPzt8oEbBez8uv8LLezRkEPf1MnWQkr6U8/Bz8pblYkGiq6EYecfTU0XAqf8cz5KqFoMovnaIaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw86RGk0T4kgcomxCCCb+v6N37dlrKeLNoKff7hOwGtJjC59NrV
-	6MUytQ+T7JTB0ETu/45Kpb2b/QojlBH0lrM0K3mlk2/wuIkUSQeAvUxj6g4VCp0=
-X-Google-Smtp-Source: AGHT+IHBDC3j3sVyvHElbDNRRmedDAgbyplgVakeUYKBKRQlyrc/vtKe3qcsRtcd4U4umqg8KfNKVg==
-X-Received: by 2002:a05:600c:5705:b0:431:2b66:44f7 with SMTP id 5b1f17b1804b1-4312b664514mr43060755e9.31.1728898858349;
-        Mon, 14 Oct 2024 02:40:58 -0700 (PDT)
-Received: from giedriuslaptop.vinted.net ([92.61.38.146])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd03fsm10889481f8f.34.2024.10.14.02.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 02:40:57 -0700 (PDT)
-From: =?UTF-8?q?Giedrius=20Statkevi=C4=8Dius?= <giedriuswork@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: =?UTF-8?q?Giedrius=20Statkevi=C4=8Dius?= <giedriuswork@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org
-Subject: [PATCH] drm/i915/lspcon: do not hardcode settle timeout
-Date: Mon, 14 Oct 2024 12:39:12 +0300
-Message-ID: <20241014093914.109162-1-giedriuswork@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1728898769; x=1729503569;
+        h=content-transfer-encoding:subject:cc:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rXvmuKgNurYfFmlWGhrBnQNjxraoDSU6b11R1GM4I2w=;
+        b=xUvdrOmeW6OCgFRGMoXp+0I8JANvfxs/n/rpbUJqfMu2+DwJ9xGj8P9KLAxcpO1lgn
+         8905hvNVOQRP1wlyCC/Jp5pw+sB64hCSI6M8R5NdzLJqxSjUGrXUiZoCGpBDhwjsOFgu
+         ZvzxXYGH1keRh9pQcwFRNLh2fB5pi7blWv0ksi62RXK21Hp6lqPMYC3TDvrwfITrri2l
+         n/4F9p7aIpv3kZl7UevWb+XTqvhNhyFSGCGq2cFRKN414HV8En7cInNZ0htQtPsz8k1p
+         wZ7K6/dXSK3CM642FSV+Yodrq4qr9IshXE7ivw19N4OHASvBwLE0JtUSV7OR6vFAtF8M
+         hXZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpKjLpXCuhGIld2ulRkfj6q9NwKFgTN159EG+wPpaoOol08yAybXlhIb7OR3v/Mu0GGp+DI3bzeVMyCxE=@vger.kernel.org, AJvYcCVqwN//vdVXnXGBMU4XdiZhWGJiYQ6Ghnirz8fFB54358hGhf5LvmxEzUaAdDpQ/Bs8lAipQWu6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5PUIuQRJIbW6HC3v190c/fuKT+Yr3otsD6EyAie+d/TVb282j
+	NwvDyQYa5NytK/xfsp5oKJNqMGdWPD3b9NiGKkNxo5aESVVDKIht
+X-Google-Smtp-Source: AGHT+IHvlPq8uXKsAnqFl6SXuA29bSIr6fSRIYWCunQYemcdhRdpsILntml+usT+l9Gmo3QcVnWMDw==
+X-Received: by 2002:a5d:59a5:0:b0:37d:3973:cb8d with SMTP id ffacd0b85a97d-37d5feccac8mr6510785f8f.24.1728898768397;
+        Mon, 14 Oct 2024 02:39:28 -0700 (PDT)
+Received: from [192.168.0.101] (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-430d70b444csm149379745e9.33.2024.10.14.02.39.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 02:39:27 -0700 (PDT)
+Message-ID: <eb09900a-8443-4260-9b66-5431a85ca102@gmail.com>
+Date: Mon, 14 Oct 2024 10:39:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+Cc: Jason Wang <jasowang@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin\"" <mst@redhat.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: re: virtio_net: support device stats
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Avoid hardcoding the LSPCON settle timeout because it takes a longer
-time on certain chips made by certain vendors. Use the function that
-already exists to determine the timeout.
+Hi,
 
-Signed-off-by: Giedrius Statkevičius <giedriuswork@gmail.com>
----
- drivers/gpu/drm/display/drm_dp_dual_mode_helper.c | 3 +--
- drivers/gpu/drm/i915/display/intel_lspcon.c       | 2 +-
- include/drm/display/drm_dp_dual_mode_helper.h     | 2 +-
- 3 files changed, 3 insertions(+), 4 deletions(-)
+Static analysis on Linux-next has detected a potential issue with the 
+following commit:
 
-diff --git a/drivers/gpu/drm/display/drm_dp_dual_mode_helper.c b/drivers/gpu/drm/display/drm_dp_dual_mode_helper.c
-index 14a2a8473682..ae9d6b93136b 100644
---- a/drivers/gpu/drm/display/drm_dp_dual_mode_helper.c
-+++ b/drivers/gpu/drm/display/drm_dp_dual_mode_helper.c
-@@ -491,11 +491,10 @@ EXPORT_SYMBOL(drm_lspcon_get_mode);
-  * 0 on success, -error on failure/timeout
-  */
- int drm_lspcon_set_mode(const struct drm_device *dev, struct i2c_adapter *adapter,
--			enum drm_lspcon_mode mode)
-+			enum drm_lspcon_mode mode, int time_out)
- {
- 	u8 data = 0;
- 	int ret;
--	int time_out = 200;
- 	enum drm_lspcon_mode current_mode;
- 
- 	if (mode == DRM_LSPCON_MODE_PCON)
-diff --git a/drivers/gpu/drm/i915/display/intel_lspcon.c b/drivers/gpu/drm/i915/display/intel_lspcon.c
-index f9db867fae89..764cf4898364 100644
---- a/drivers/gpu/drm/i915/display/intel_lspcon.c
-+++ b/drivers/gpu/drm/i915/display/intel_lspcon.c
-@@ -211,7 +211,7 @@ static int lspcon_change_mode(struct intel_lspcon *lspcon,
- 		return 0;
- 	}
- 
--	err = drm_lspcon_set_mode(intel_dp->aux.drm_dev, ddc, mode);
-+	err = drm_lspcon_set_mode(intel_dp->aux.drm_dev, ddc, mode, lspcon_get_mode_settle_timeout(lspcon));
- 	if (err < 0) {
- 		drm_err(display->drm, "LSPCON mode change failed\n");
- 		return err;
-diff --git a/include/drm/display/drm_dp_dual_mode_helper.h b/include/drm/display/drm_dp_dual_mode_helper.h
-index 7ee482265087..7ac6969db935 100644
---- a/include/drm/display/drm_dp_dual_mode_helper.h
-+++ b/include/drm/display/drm_dp_dual_mode_helper.h
-@@ -117,5 +117,5 @@ const char *drm_dp_get_dual_mode_type_name(enum drm_dp_dual_mode_type type);
- int drm_lspcon_get_mode(const struct drm_device *dev, struct i2c_adapter *adapter,
- 			enum drm_lspcon_mode *current_mode);
- int drm_lspcon_set_mode(const struct drm_device *dev, struct i2c_adapter *adapter,
--			enum drm_lspcon_mode reqd_mode);
-+			enum drm_lspcon_mode reqd_mode, int time_out);
- #endif
--- 
-2.47.0
+commit 941168f8b40e50518a3bc6ce770a7062a5d99230
+Author: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Date:   Fri Apr 26 11:39:24 2024 +0800
+
+     virtio_net: support device stats
+
+
+The issue is in function virtnet_stats_ctx_init, in 
+drivers/net/virtio_net.c as follows:
+
+         if (vi->device_stats_cap & VIRTIO_NET_STATS_TYPE_CVQ) {
+                 queue_type = VIRTNET_Q_TYPE_CQ;
+
+                 ctx->bitmap[queue_type]   |= VIRTIO_NET_STATS_TYPE_CVQ;
+                 ctx->desc_num[queue_type] += 
+ARRAY_SIZE(virtnet_stats_cvq_desc);
+                 ctx->size[queue_type]     += sizeof(struct 
+virtio_net_stats_cvq);
+         }
+
+
+ctx->bitmap is declared as a u32 however it is being bit-wise or'd with 
+VIRTIO_NET_STATS_TYPE_CVQ and this is defined as 1 << 32:
+
+include/uapi/linux/virtio_net.h:#define VIRTIO_NET_STATS_TYPE_CVQ 
+(1ULL << 32)
+
+..and hence the bit-wise or operation won't set any bits in ctx->bitmap 
+because 1ULL < 32 is too wide for a u32. I suspect ctx->bitmap should be 
+declared as u64.
+
+Colin
+
+
+
 
 
