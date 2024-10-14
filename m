@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-363902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C771599C83B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:11:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAB599C83D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 004421C266AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:11:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F0DC1C25C59
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6221DB366;
-	Mon, 14 Oct 2024 11:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731851DACA8;
+	Mon, 14 Oct 2024 11:02:19 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5878219E96E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDE31DD860;
+	Mon, 14 Oct 2024 11:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903735; cv=none; b=tbes4sbcaYxoFz80lKGGRQS1K09cd0mu3nl1PCuwCIuDpq/YT5OCUa8KepvkNON3hyJf7xshbr7xeYWvnIGLRJfy1nmpTnBfT3+BhgDieA3Cy2OOasyNGXCc0fJs6jcxwcJ/eyHRo42HsArTrCU88owaf1gYkS1GdbaxK0PatUQ=
+	t=1728903738; cv=none; b=XkAKuOneSGzFlkapxH1SG2TwCEvCvA02vhqYwKzO8ISkn5IctbAVmfJ24/O5PRLvt2XBvcIVAIdvFr6bpkx5PSz7jt0LSTDbyM9mvzXeBBBnKf1aL1guFE4vHrGurKwFfeKlQwEDqTES8izSjgr6k7/cTQnRTF+vvssxfG5XXAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903735; c=relaxed/simple;
-	bh=GkPzecSQaAvl4l6I0Y++koNnAjn+1Yg9kW7EtJ+6G8U=;
+	s=arc-20240116; t=1728903738; c=relaxed/simple;
+	bh=wXcWDfoIbzEAXadEzvyVMkkfOTcBg0Jj+Po0Slo/R4g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e83uDRDoCPN2UqG2igUYPosSkGU0vUtSpYoenRTSy0LYw1XPdr+BFw6b4828xnTQ3uAqrq7/kvKs9LgWAUTXLHEiMvHJdZ9UJEyU2bDrwspC7WQvzBMdfe6AAE+kYADS/CY/S7X/GYEH+m2ozKahZC6OtGJ+FvnHYbkYlKbHbjk=
+	 MIME-Version; b=DYRUugAfWfEP9XLBDF9Hg5diLQyo6Nk1NklV6tSTgREqSVBDCLiCCOw1YM6iIJabyMey7ZkcO1tfhdVUjax6f5gkPMBu7B7Ex9d7ZhvsKthn7nHBFICRyPLvr/w+WnkEDk0jvKq0lALs0iBUcO2E+ID4sW4q8ryVVqimM/AuzAY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E32F1756;
-	Mon, 14 Oct 2024 04:02:43 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C0D71756;
+	Mon, 14 Oct 2024 04:02:46 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E9263F51B;
-	Mon, 14 Oct 2024 04:02:11 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FB423F51B;
+	Mon, 14 Oct 2024 04:02:13 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -45,14 +45,17 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Matthias Brugger <mbrugger@suse.com>,
 	Miroslav Benes <mbenes@suse.cz>,
+	Oliver Upton <oliver.upton@linux.dev>,
 	Will Deacon <will@kernel.org>
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
+	linux-efi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v1 55/57] arm64: TRAMP_VALIAS is no longer compile-time constant
-Date: Mon, 14 Oct 2024 11:59:02 +0100
-Message-ID: <20241014105912.3207374-55-ryan.roberts@arm.com>
+Subject: [RFC PATCH v1 56/57] arm64: Determine THREAD_SIZE at boot-time
+Date: Mon, 14 Oct 2024 11:59:03 +0100
+Message-ID: <20241014105912.3207374-56-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -65,18 +68,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When boot-time page size is in operation, TRAMP_VALIAS is no longer a
-compile-time constant, because the VA of a fixmap slot depends upon
-PAGE_SIZE.
+Since THREAD_SIZE depends on PAGE_SIZE when stacks are vmapped, we must
+defer the decision on THREAD_SIZE until we have selected PAGE_SIZE at
+boot.
 
-Let's handle this by instead exporting the slot index,
-FIX_ENTRY_TRAMP_BEGIN,to assembly, then do the TRAMP_VALIAS calculation
-per page size and use alternatives to decide which variant to activate.
-
-Note that for the tramp_map_kernel case, we are one instruction short of
-space in the vector to have NOPs for all 3 page size variants. So we do
-if/else for 16K/64K and branch around it for the 4K case. This saves 2
-instructions.
+The one wrinkle is entry.S's requirement to have THREAD_SHIFT as an
+immediate in order to check that the stack has not overflowed without
+clobbering any registers, early in the exception handler. Solve this by
+patching alternatives. During early boot, all 3 options are NOPs until
+the alternative is patched in. So we forgo overflow checking until
+boot-cpu patching is complete.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -85,96 +86,215 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- arch/arm64/kernel/asm-offsets.c |  2 +-
- arch/arm64/kernel/entry.S       | 50 ++++++++++++++++++++++++++-------
- 2 files changed, 41 insertions(+), 11 deletions(-)
+ arch/arm64/include/asm/assembler.h |  5 +++
+ arch/arm64/include/asm/efi.h       |  2 +-
+ arch/arm64/include/asm/memory.h    | 51 +++++++++++++++++++++++++-----
+ arch/arm64/kernel/efi.c            |  2 +-
+ arch/arm64/kernel/entry.S          | 10 +++++-
+ arch/arm64/kernel/head.S           |  3 +-
+ arch/arm64/kernel/vmlinux.lds.S    |  4 +--
+ arch/arm64/kvm/hyp/nvhe/hyp.lds.S  |  2 +-
+ 8 files changed, 64 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index f32b8d7f00b2a..c45fa3e281884 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -172,7 +172,7 @@ int main(void)
-   DEFINE(ARM64_FTR_SYSVAL,	offsetof(struct arm64_ftr_reg, sys_val));
-   BLANK();
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
--  DEFINE(TRAMP_VALIAS,		TRAMP_VALIAS);
-+  DEFINE(FIX_ENTRY_TRAMP_BEGIN,	FIX_ENTRY_TRAMP_BEGIN);
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 0cfa7c3efd214..745328e7768b7 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -928,4 +928,9 @@ alternative_cb_end
+ 	get_tg0 \val
+ 	value_for_page_size \val, \val, (~(SZ_4K-1)), (~(SZ_16K-1)), (~(SZ_64K-1))
+ 	.endm
++
++	.macro	get_task_size, val
++	get_tg0 \val
++	value_for_page_size \val, \val, (1 << THREAD_SHIFT_4K), (1 << THREAD_SHIFT_16K), (1 << THREAD_SHIFT_64K)
++	.endm
+ #endif	/* __ASM_ASSEMBLER_H */
+diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
+index bcd5622aa0968..913f599c14e40 100644
+--- a/arch/arm64/include/asm/efi.h
++++ b/arch/arm64/include/asm/efi.h
+@@ -68,7 +68,7 @@ void arch_efi_call_virt_teardown(void);
+  * kernel need greater alignment than we require the segments to be padded to.
+  */
+ #define EFI_KIMG_ALIGN	\
+-	(SEGMENT_ALIGN > THREAD_ALIGN ? SEGMENT_ALIGN : THREAD_ALIGN)
++	(SEGMENT_ALIGN > THREAD_ALIGN_MAX ? SEGMENT_ALIGN : THREAD_ALIGN_MAX)
+ 
+ /*
+  * On arm64, we have to ensure that the initrd ends up in the linear region,
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index 5393a859183f7..e28f5700ef022 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -110,23 +110,56 @@
+ #define PAGE_END		(_PAGE_END(VA_BITS_MIN))
+ #endif /* CONFIG_KASAN */
+ 
+-#define MIN_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
++#define IDEAL_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
+ 
+ /*
+  * VMAP'd stacks are allocated at page granularity, so we must ensure that such
+  * stacks are a multiple of page size.
+  */
+-#if defined(CONFIG_VMAP_STACK) && (MIN_THREAD_SHIFT < PAGE_SHIFT)
+-#define THREAD_SHIFT		PAGE_SHIFT
++
++#if defined(CONFIG_VMAP_STACK)
++#define THREAD_SHIFT							\
++	(IDEAL_THREAD_SHIFT < PAGE_SHIFT ? PAGE_SHIFT : IDEAL_THREAD_SHIFT)
++#if (IDEAL_THREAD_SHIFT < PAGE_SHIFT_MIN)
++#define THREAD_SHIFT_MIN	PAGE_SHIFT_MIN
+ #else
+-#define THREAD_SHIFT		MIN_THREAD_SHIFT
++#define THREAD_SHIFT_MIN	IDEAL_THREAD_SHIFT
  #endif
- #ifdef CONFIG_ARM_SDE_INTERFACE
-   DEFINE(SDEI_EVENT_INTREGS,	offsetof(struct sdei_registered_event, interrupted_regs));
+-
+-#if THREAD_SHIFT >= PAGE_SHIFT
+-#define THREAD_SIZE_ORDER	(THREAD_SHIFT - PAGE_SHIFT)
++#if (IDEAL_THREAD_SHIFT < PAGE_SHIFT_MAX)
++#define THREAD_SHIFT_MAX	PAGE_SHIFT_MAX
++#else
++#define THREAD_SHIFT_MAX	IDEAL_THREAD_SHIFT
++#endif
++#if (IDEAL_THREAD_SHIFT < ARM64_PAGE_SHIFT_4K)
++#define THREAD_SHIFT_4K		ARM64_PAGE_SHIFT_4K
++#else
++#define THREAD_SHIFT_4K		IDEAL_THREAD_SHIFT
++#endif
++#if (IDEAL_THREAD_SHIFT < ARM64_PAGE_SHIFT_16K)
++#define THREAD_SHIFT_16K	ARM64_PAGE_SHIFT_16K
++#else
++#define THREAD_SHIFT_16K	IDEAL_THREAD_SHIFT
++#endif
++#if (IDEAL_THREAD_SHIFT < ARM64_PAGE_SHIFT_64K)
++#define THREAD_SHIFT_64K	ARM64_PAGE_SHIFT_64K
++#else
++#define THREAD_SHIFT_64K	IDEAL_THREAD_SHIFT
+ #endif
++#else
++#define THREAD_SHIFT		IDEAL_THREAD_SHIFT
++#define THREAD_SHIFT_MIN	IDEAL_THREAD_SHIFT
++#define THREAD_SHIFT_MAX	IDEAL_THREAD_SHIFT
++#define THREAD_SHIFT_4K		IDEAL_THREAD_SHIFT
++#define THREAD_SHIFT_16K	IDEAL_THREAD_SHIFT
++#define THREAD_SHIFT_64K	IDEAL_THREAD_SHIFT
++#endif
++
++#define THREAD_SIZE_ORDER						\
++	(PAGE_SHIFT < THREAD_SHIFT ? THREAD_SHIFT - PAGE_SHIFT : 0)
+ 
+ #define THREAD_SIZE		(UL(1) << THREAD_SHIFT)
++#define THREAD_SIZE_MIN		(UL(1) << THREAD_SHIFT_MIN)
++#define THREAD_SIZE_MAX		(UL(1) << THREAD_SHIFT_MAX)
+ 
+ /*
+  * By aligning VMAP'd stacks to 2 * THREAD_SIZE, we can detect overflow by
+@@ -135,11 +168,13 @@
+  */
+ #ifdef CONFIG_VMAP_STACK
+ #define THREAD_ALIGN		(2 * THREAD_SIZE)
++#define THREAD_ALIGN_MAX	(2 * THREAD_SIZE_MAX)
+ #else
+ #define THREAD_ALIGN		THREAD_SIZE
++#define THREAD_ALIGN_MAX	THREAD_SIZE_MAX
+ #endif
+ 
+-#define IRQ_STACK_SIZE		THREAD_SIZE
++#define IRQ_STACK_SIZE		THREAD_SIZE_MIN
+ 
+ #define OVERFLOW_STACK_SIZE	SZ_4K
+ 
+diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
+index 712718aed5dd9..ebc44b7e83199 100644
+--- a/arch/arm64/kernel/efi.c
++++ b/arch/arm64/kernel/efi.c
+@@ -197,7 +197,7 @@ bool efi_runtime_fixup_exception(struct pt_regs *regs, const char *msg)
+ }
+ 
+ /* EFI requires 8 KiB of stack space for runtime services */
+-static_assert(THREAD_SIZE >= SZ_8K);
++static_assert(THREAD_SIZE_MIN >= SZ_8K);
+ 
+ static int __init arm64_efi_rt_init(void)
+ {
 diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 7ef0e127b149f..ba47dc8672c04 100644
+index ba47dc8672c04..1ab65e406b62e 100644
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -101,11 +101,27 @@
- .org .Lventry_start\@ + 128	// Did we overflow the ventry slot?
- 	.endm
- 
-+#define TRAMP_VALIAS(page_shift)	(FIXADDR_TOP - (FIX_ENTRY_TRAMP_BEGIN << (page_shift)))
-+
- 	.macro	tramp_alias, dst, sym
--	.set	.Lalias\@, TRAMP_VALIAS + \sym - .entry.tramp.text
--	movz	\dst, :abs_g2_s:.Lalias\@
--	movk	\dst, :abs_g1_nc:.Lalias\@
--	movk	\dst, :abs_g0_nc:.Lalias\@
+@@ -62,7 +62,15 @@
+ 	 */
+ 	add	sp, sp, x0			// sp' = sp + x0
+ 	sub	x0, sp, x0			// x0' = sp' - x0 = (sp + x0) - x0 = sp
+-	tbnz	x0, #THREAD_SHIFT, 0f
 +alternative_if ARM64_USE_PAGE_SIZE_4K
-+	.set	.Lalias4k\@, TRAMP_VALIAS(ARM64_PAGE_SHIFT_4K) + \sym - .entry.tramp.text
-+	movz	\dst, :abs_g2_s:.Lalias4k\@
-+	movk	\dst, :abs_g1_nc:.Lalias4k\@
-+	movk	\dst, :abs_g0_nc:.Lalias4k\@
++	tbnz	x0, #THREAD_SHIFT_4K, 0f
 +alternative_else_nop_endif
 +alternative_if ARM64_USE_PAGE_SIZE_16K
-+	.set	.Lalias16k\@, TRAMP_VALIAS(ARM64_PAGE_SHIFT_16K) + \sym - .entry.tramp.text
-+	movz	\dst, :abs_g2_s:.Lalias16k\@
-+	movk	\dst, :abs_g1_nc:.Lalias16k\@
-+	movk	\dst, :abs_g0_nc:.Lalias16k\@
++	tbnz	x0, #THREAD_SHIFT_16K, 0f
 +alternative_else_nop_endif
 +alternative_if ARM64_USE_PAGE_SIZE_64K
-+	.set	.Lalias64k\@, TRAMP_VALIAS(ARM64_PAGE_SHIFT_64K) + \sym - .entry.tramp.text
-+	movz	\dst, :abs_g2_s:.Lalias64k\@
-+	movk	\dst, :abs_g1_nc:.Lalias64k\@
-+	movk	\dst, :abs_g0_nc:.Lalias64k\@
++	tbnz	x0, #THREAD_SHIFT_64K, 0f
 +alternative_else_nop_endif
- 	.endm
+ 	sub	x0, sp, x0			// x0'' = sp' - x0' = (sp + x0) - sp = x0
+ 	sub	sp, sp, x0			// sp'' = sp' - x0 = (sp + x0) - x0 = sp
+ 	b	el\el\ht\()_\regsize\()_\label
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index 761b7f5633e15..2530ee5cee548 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -198,7 +198,8 @@ SYM_CODE_END(preserve_boot_args)
+ 	msr	sp_el0, \tsk
+ 
+ 	ldr	\tmp1, [\tsk, #TSK_STACK]
+-	add	sp, \tmp1, #THREAD_SIZE
++	get_task_size \tmp2
++	add	sp, \tmp1, \tmp2
+ 	sub	sp, sp, #PT_REGS_SIZE
+ 
+ 	stp	xzr, xzr, [sp, #S_STACKFRAME]
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 09fcc234c0f77..937900a458a89 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -60,11 +60,11 @@
+ #define RO_EXCEPTION_TABLE_ALIGN	4
+ #define RUNTIME_DISCARD_EXIT
+ 
++#include <asm/memory.h>
+ #include <asm-generic/vmlinux.lds.h>
+ #include <asm/cache.h>
+ #include <asm/kernel-pgtable.h>
+ #include <asm/kexec.h>
+-#include <asm/memory.h>
+ #include <asm/page.h>
+ 
+ #include "image.h"
+@@ -292,7 +292,7 @@ SECTIONS
+ 
+ 	_data = .;
+ 	_sdata = .;
+-	RW_DATA(L1_CACHE_BYTES, PAGE_SIZE_MAX, THREAD_ALIGN)
++	RW_DATA(L1_CACHE_BYTES, PAGE_SIZE_MAX, THREAD_ALIGN_MAX)
  
  	/*
-@@ -627,16 +643,30 @@ SYM_CODE_END(ret_to_user)
- 	bic	\tmp, \tmp, #USER_ASID_FLAG
- 	msr	ttbr1_el1, \tmp
- #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
--alternative_if ARM64_WORKAROUND_QCOM_FALKOR_E1003
-+alternative_if_not ARM64_WORKAROUND_QCOM_FALKOR_E1003
-+	b	.Lskip_falkor_e1003\@
-+alternative_else_nop_endif
- 	/* ASID already in \tmp[63:48] */
--	movk	\tmp, #:abs_g2_nc:(TRAMP_VALIAS >> 12)
--	movk	\tmp, #:abs_g1_nc:(TRAMP_VALIAS >> 12)
--	/* 2MB boundary containing the vectors, so we nobble the walk cache */
--	movk	\tmp, #:abs_g0_nc:((TRAMP_VALIAS & ~(SZ_2M - 1)) >> 12)
-+alternative_if ARM64_USE_PAGE_SIZE_4K
-+	movk	\tmp, #:abs_g2_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_4K) >> 12)
-+	movk	\tmp, #:abs_g1_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_4K) >> 12)
-+	movk	\tmp, #:abs_g0_nc:((TRAMP_VALIAS(ARM64_PAGE_SHIFT_4K) & ~(SZ_2M - 1)) >> 12)
-+	b	.Lfinish_falkor_e1003\@
-+alternative_else_nop_endif
-+alternative_if ARM64_USE_PAGE_SIZE_16K
-+	movk	\tmp, #:abs_g2_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_16K) >> 12)
-+	movk	\tmp, #:abs_g1_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_16K) >> 12)
-+	movk	\tmp, #:abs_g0_nc:((TRAMP_VALIAS(ARM64_PAGE_SHIFT_16K) & ~(SZ_2M - 1)) >> 12)
-+alternative_else /* ARM64_USE_PAGE_SIZE_64K */
-+	movk	\tmp, #:abs_g2_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_64K) >> 12)
-+	movk	\tmp, #:abs_g1_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_64K) >> 12)
-+	movk	\tmp, #:abs_g0_nc:((TRAMP_VALIAS(ARM64_PAGE_SHIFT_64K) & ~(SZ_2M - 1)) >> 12)
-+alternative_endif
-+.Lfinish_falkor_e1003\@:
- 	isb
- 	tlbi	vae1, \tmp
- 	dsb	nsh
--alternative_else_nop_endif
-+.Lskip_falkor_e1003\@:
- #endif /* CONFIG_QCOM_FALKOR_ERRATUM_1003 */
- 	.endm
+ 	 * Data written with the MMU off but read with the MMU on requires
+diff --git a/arch/arm64/kvm/hyp/nvhe/hyp.lds.S b/arch/arm64/kvm/hyp/nvhe/hyp.lds.S
+index 74c7c21626270..fe1fbfa8f8f05 100644
+--- a/arch/arm64/kvm/hyp/nvhe/hyp.lds.S
++++ b/arch/arm64/kvm/hyp/nvhe/hyp.lds.S
+@@ -7,9 +7,9 @@
+  */
  
+ #include <asm/hyp_image.h>
++#include <asm/memory.h>
+ #include <asm-generic/vmlinux.lds.h>
+ #include <asm/cache.h>
+-#include <asm/memory.h>
+ 
+ SECTIONS {
+ 	HYP_SECTION(.idmap.text)
 -- 
 2.43.0
 
