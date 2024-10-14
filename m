@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-363058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DCF99BD68
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810D299BD62
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7360B1C2151D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:42:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 797AD1C214E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A9B25634;
-	Mon, 14 Oct 2024 01:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C6F1A29A;
+	Mon, 14 Oct 2024 01:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DYaUvLG+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJvYhZ4j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5668517BD3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B01812B71;
+	Mon, 14 Oct 2024 01:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728870151; cv=none; b=tBfDybI3DugKp8MF5plARItoTmpsDM3DcE3kMsUFbSe/vVs2OquB0e8qfIAaXxJkn5jAMC3iiQuhwaNJWKEg1orj2fxZ9JUWmGw6DLRASAWkZOASAGK4hc6UkvnpWuwxOZd5pV/PW2m9BOwyRAm5jOKoGNU79VADtonUMuVdAVM=
+	t=1728869966; cv=none; b=chCFrNcOTb0+kWXGVe+PONFszVK5tcrGULwJXOTi6cHaLYo6lvUcBav+WBgPwG0uFaMXDZzZzjhkPik0zL9Mz0xBtAk4KIqSLtBWwY/MXrHP0Je/nM7z85XwmTYqDMS1o0hhl9KRUbk068k21ytwvrL9UjNml52gNCB+HyCN4NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728870151; c=relaxed/simple;
-	bh=q3D1q2iubT8uEHm0mI7fu9YayFjRPXmqoTIwkpJs3Co=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=edVP+HCZlMzDv/62I2nAV1zs1sZQA7XyLvitCNbEwsb9bnCAxk0oMI7Rf0ZmF0dgbJLmArDLdeNnL3RAlf0r6nPdsF+LKJAMTVUGvhfOyl09C+UoGmpkCpXpH4GJdNHRd9izG2Eio24Qn3OVBz4joxlX+xZ/8twiVaK22eOJ6w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DYaUvLG+; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1728869966; c=relaxed/simple;
+	bh=9yGpnLRQqo4qFc61E+nRYS3zDFC+qK7mTDtGZhkszFI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jbF/2N+0KbOXKNikmAKLW+LK/Fvmg7QgJ3eKOYPbZilSeKvz6KQ8zeTqRzNLvj+bHd756ZQSorVLSttZiXFJeQhMaxBqZ+kZy8ZbInf3+SS07BkKX/4IXZ+7lFoKE9mTShFgX5qAf6bKRQqkLjrsDSjVAIu/FsF+wAVYwgg/wcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJvYhZ4j; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728870150; x=1760406150;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=q3D1q2iubT8uEHm0mI7fu9YayFjRPXmqoTIwkpJs3Co=;
-  b=DYaUvLG+Ir7W7GCxg94+lokwZEu7nl8dixaNsCOYiMp4D+vVi+1AkXs+
-   fZmVzx8YPbaYccnyNzU8+2WFvENfJes0uvQN7UwFyJga+6FC+pOwZ+Uae
-   ZleSFBqxxIhlMngalnQEidFDY2Ertz5jemDcD2ueVKhq9LnvxpbznnqjU
-   4lvnbLS8ufcojVkGs4sDOBAv5WXPAYB7KbbOfqYYhiOxvWBrTffTAUwc9
-   LOoRpFfJM70DKkzzHxVwIuUP2PU5wMRJjY33/KCaJu8FghWccT6UMWWk9
-   KwTBfThuHyzCZClkBSJqOFanK/cnQBcaw3OGYEdpUHguls87A2HaAIO/r
-   Q==;
-X-CSE-ConnectionGUID: EGFmq2gTSl+EQlseB3IoNA==
-X-CSE-MsgGUID: up+dzubvRWCSQAE0e6BEzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="28389759"
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="28389759"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 18:42:28 -0700
-X-CSE-ConnectionGUID: WCDr7wGrTf23uXaIG//fNA==
-X-CSE-MsgGUID: VrodvMIXR8CEmqDJnn2tDQ==
+  t=1728869966; x=1760405966;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9yGpnLRQqo4qFc61E+nRYS3zDFC+qK7mTDtGZhkszFI=;
+  b=LJvYhZ4j4oRxAnJXsrk7Y2bRtVOO0QNLWR0sZtpOe8+UMgl5GOppKoUx
+   ruA+92e4NyjkVcUzc//C1M4qUtam9Kj9U5+bVBYzQNrTmgVYOu6tRFUUd
+   6GBo2BzWzZ4La5fY/WsIJ6PYycW0EAUWBAHsNPYQdTRj7Zn5QpNP9xh3l
+   1NHO5xjWyT/FBNztRpfo1Zo8WEjoj22tVlv6SGKTWPqJkuID/mwsJKM+f
+   8v/FMmtqIRa4tle1giOs4uyYNo+iJU+cYl5FVn1LdIt9qc5xuQuBuxk26
+   88wIp3E8yEgEl13jP6sm0YAtpZRyfgCLXc0eP+xXZHweAnjoyDJUfTcFQ
+   w==;
+X-CSE-ConnectionGUID: OXiFJj6xTz+fE9Wnoa/u/A==
+X-CSE-MsgGUID: RKGGdDCISEOh+duDm40M4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31899879"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31899879"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 18:39:25 -0700
+X-CSE-ConnectionGUID: ivQGbxgCR3a8hFE/jjo/7g==
+X-CSE-MsgGUID: Ttu0Sd/GRdeaxNfmb6/gwQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="77867587"
-Received: from allen-box.sh.intel.com ([10.239.159.127])
-  by orviesa007.jf.intel.com with ESMTP; 13 Oct 2024 18:42:27 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] iommu/vt-d: Fix incorrect pci_for_each_dma_alias() for non-PCI devices
-Date: Mon, 14 Oct 2024 09:37:44 +0800
-Message-ID: <20241014013744.102197-2-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241014013744.102197-1-baolu.lu@linux.intel.com>
-References: <20241014013744.102197-1-baolu.lu@linux.intel.com>
+   d="scan'208";a="78252560"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 18:39:22 -0700
+Message-ID: <e81fb7bb-4a80-4c45-b9fa-5fc485e134ca@linux.intel.com>
+Date: Mon, 14 Oct 2024 09:39:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Todd Brandt <todd.e.brandt@intel.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] iommu/vt-d: Fix incorrect pci_for_each_dma_alias()
+ for non-PCI devices
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>
+References: <20241012030720.90218-1-baolu.lu@linux.intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241012030720.90218-1-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Previously, the domain_context_clear() function incorrectly called
-pci_for_each_dma_alias() to set up context entries for non-PCI devices.
-This could lead to kernel hangs or other unexpected behavior.
+On 2024/10/12 11:07, Lu Baolu wrote:
+> Previously, the domain_context_clear() function incorrectly called
+> pci_for_each_dma_alias() to set up context entries for non-PCI devices.
+> This could lead to kernel hangs or other unexpected behavior.
+> 
+> Add a check to only call pci_for_each_dma_alias() for PCI devices. For
+> non-PCI devices, domain_context_clear_one() is called directly.
+> 
+> Reported-by: Todd Brandt<todd.e.brandt@intel.com>
+> Closes:https://bugzilla.kernel.org/show_bug.cgi?id=219363
+> Fixes: 9a16ab9d6402 ("iommu/vt-d: Make context clearing consistent with context mapping")
+> Cc:stable@vger.kernel.org
+> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+> ---
+>   drivers/iommu/intel/iommu.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 
-Add a check to only call pci_for_each_dma_alias() for PCI devices. For
-non-PCI devices, domain_context_clear_one() is called directly.
+Queued for v6.12-rc.
 
-Reported-by: Todd Brandt <todd.e.brandt@intel.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219363
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219349
-Fixes: 9a16ab9d6402 ("iommu/vt-d: Make context clearing consistent with context mapping")
-Cc: stable@vger.kernel.org
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 9f6b0780f2ef..e860bc9439a2 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3340,8 +3340,10 @@ static int domain_context_clear_one_cb(struct pci_dev *pdev, u16 alias, void *op
-  */
- static void domain_context_clear(struct device_domain_info *info)
- {
--	if (!dev_is_pci(info->dev))
-+	if (!dev_is_pci(info->dev)) {
- 		domain_context_clear_one(info, info->bus, info->devfn);
-+		return;
-+	}
- 
- 	pci_for_each_dma_alias(to_pci_dev(info->dev),
- 			       &domain_context_clear_one_cb, info);
--- 
-2.43.0
-
+Thanks,
+baolu
 
