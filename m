@@ -1,434 +1,187 @@
-Return-Path: <linux-kernel+bounces-364816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E934599D9CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:30:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5483F99D9CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88EDA2827A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:30:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C040D1F22DD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415581CC179;
-	Mon, 14 Oct 2024 22:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FaN9WySO"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869261CF2AF;
+	Mon, 14 Oct 2024 22:32:54 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A62B38DE9
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A7C1CC179
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728945040; cv=none; b=KknyiEXyzky5xfszds+0/j5MXrXUXBfa4BG0XTtXoqM2qlV4443XQNQJkrxbxFLsD7A9CwebGAeWudYrQNg0nwYahhW/B7XTlZE1TwTJVJ3gWYj4/m+3XRa1oxDIbvCvrfnCsTrqCCFBBsF0MKCxLOW2+qodp04icbo82RzsSxo=
+	t=1728945174; cv=none; b=BJirKk+5CrJSazV44PhId5xQ9X77LmzTyiZNklOhG7sxirsBRXgM533R4p3Wtf2Iearj2cLuV3FYM0p2qPuDOGIZeXlHedaRXdpD/GDCzYBOGg/EeCmmznLPG0knitAZVQPkkpHevsSzhhPu9+4+Rj8GEfbz7koi/2JgTPGX6fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728945040; c=relaxed/simple;
-	bh=YS0WL2wSshDqg4ZN0Y9GMH+BTMd8jkOr+ANJqwSFaL4=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mfnQ/iZWYKzvnrhbb2lWYkQThZq0vPqEYWGxuiyJcXMhsxQSCB8w/DEv39g2Usw+Iu7jTeJ1rXPVWsMddF12GSjNFQOqFEDwqgSc50XfNfRudGM1w4nacMTxIws85vjJ4flcXnLazPWdDgE+B/AmfrdjC1rOvsRoYHY3iiqaVG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FaN9WySO; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1728945033; x=1729204233;
-	bh=7xC9oVdcV9Xlb05b3B6P5qkDc7QSTcaEfnnGUqbbNTE=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=FaN9WySO6vLWnAL1K7cTuAOibDxljretOVAtYP59RGRs2GESYZrtRZb6D3H+OGIpt
-	 bBfbWHRnsTkwRir5yxbzscYSBSdJhpJxa6S1AQBw2PL/8YvWhYEB/bEf7LqCy/s6ag
-	 nd7kk2vbLU7s+2C6dkis8sxhlvfYHOs11wSskiWD2PSaWWlVsl0wZziMSH527EW7j3
-	 VFhNUOPJXusXnwaDZji9SuDVurpu2ThCsqS0DAMhwBeWNaMTEg751t0LuTnmSwHcvM
-	 YH5DptlvFbMoqg7bkVAFQ5YZIuOpEG2pieYf9yfriYxqgibPGqW0wMRkNlvGaLnBCE
-	 db6Bxt5GmVpSw==
-Date: Mon, 14 Oct 2024 22:30:27 +0000
-To: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH v5] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <20241014222022.571819-4-pZ010001011111@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 7fb4f50f8934437703505aab2a582868ebe96dbd
+	s=arc-20240116; t=1728945174; c=relaxed/simple;
+	bh=lOgJFq0LLEJA0XwyBLiDDV1tjkLg9QoAS9sBzOHo3SU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=llusKAwsSmRiPqYz+k1O5aXJTp/DYjfFGSYrP1oZJYzbhtsnP+8LuX7k9oJmH60KT/O1+P1sfx/GrgLbFtZjoGMX4kURYRke10ph+OxtWZfWWKu7YtxPYDxkAfcQ2x00d2OI9VMCpJ3AeGG6tUsUxlEPAaQWrrTDWwwjPOKtoko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-248-g4t_2AaNPGeNePHQ-LTnjg-1; Mon, 14 Oct 2024 23:32:49 +0100
+X-MC-Unique: g4t_2AaNPGeNePHQ-LTnjg-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 14 Oct
+ 2024 23:32:48 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 14 Oct 2024 23:32:48 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Eric Biggers' <ebiggers@kernel.org>
+CC: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, "Josh
+ Poimboeuf" <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: RE: [PATCH 3/3] crypto: x86/crc32c - eliminate jump table and
+ excessive unrolling
+Thread-Topic: [PATCH 3/3] crypto: x86/crc32c - eliminate jump table and
+ excessive unrolling
+Thread-Index: AQHbHfE2Of1hyBaCckeJTHnfIiWE7LKGaWewgAAg9QCAADe7IA==
+Date: Mon, 14 Oct 2024 22:32:48 +0000
+Message-ID: <00c9c7c84e9043689942fc1f36e28591@AcuMS.aculab.com>
+References: <20241014042447.50197-1-ebiggers@kernel.org>
+ <20241014042447.50197-4-ebiggers@kernel.org>
+ <a6c0c04a0486404ca4db3fd57a809d5b@AcuMS.aculab.com>
+ <20241014190142.GA1137@sol.localdomain>
+In-Reply-To: <20241014190142.GA1137@sol.localdomain>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Add support for gamma LUT in VOP2 driver. The implementation was inspired
-by one found in VOP1 driver. Blue and red channels in gamma LUT register
-write were swapped with respect to how gamma LUT values are written in
-VOP1. Gamma LUT port selection was added before the write of new gamma LUT=
-=20
-table. If the current SoC is RK3588, "seamless" gamma lut update is=20
-performed similarly to how it was done in the case of RK3399 in VOP1[1]. In
-seamless update gamma LUT disable before the write isn't necessary,=20
-different register is being used to select gamma LUT port[2] and after=20
-setting DSP_LUT_EN bit, GAMMA_UPDATE_EN bit is set[3]. Gamma size is set=20
-and drm color management is enabled for each video port's CRTC except ones=
-=20
-which have no associated device.=20
+...
+> > Do you need to unroll it at all?
 
-Solution was tested on RK3566 (Pinetab2). When using userspace tools
-which set eg. constant color temperature no issues were noticed. When
-using userspace tools which adjust eg. color temperature the slight screen
-flicker is visible probably because of gamma LUT disable.
+> It looks like on most CPUs, no.  On Haswell, Emerald Rapids, Zen 2 it doe=
+s not
+> make a significant difference.  However, it helps on Zen 5.
 
-Compare behaviour of eg.:
-```
-gammastep -O 3000
-```
+I wonder if one of the loop instructions is using the ALU
+unit you really want to be processing a crc32?
+If the cpu has fused arithmetic+jump u-ops then trying to get the
+decoder to use one of those may help.
 
-To eg.:
-```
-gammastep -l 53:23 -t 6000:3000
-```
+Is Zen 5 actually slower than the other systems?
+I've managed to get clock cycle counts using the performance counters
+that more of less match the predicted values.
+You can't use 'rdtsc' because the cpu frequence isn't stable.
 
-In latter case color temperature is slowly adjusted at the beginning which
-causes screen to slighly flicker. Then it adjusts every few seconds which=
-=20
-also causes slight screen flicker.
+...
+> > If you are really lucky you'll get two memory reads/clock.
+> > So you won't ever to do than two crc32/clock.
+> > Looking at Agner's instruction latency tables I don't think
+> > any cpu can do more that one per clock, or pipeline them.
+> > I think that means you don't even need two (never mind 3)
+> > buffers.
+>=20
+> On most Intel and AMD CPUs (I tested Haswell for old Intel, Emerald Rapid=
+s for
+> new Intel, and Zen 2 for slightly-old AMD), crc32q has 3 cycle latency an=
+d 1 per
+> cycle throughput.  So you do need at least 3 streams.
 
-[1] https://lists.infradead.org/pipermail/linux-rockchip/2021-October/02813=
-2.html
-[2] https://lore.kernel.org/linux-rockchip/48249708-8c05-40d2-a5d8-23de960c=
-5a77@rock-chips.com/
-[3] https://github.com/radxa/kernel/blob/linux-6.1-stan-rkr1/drivers/gpu/dr=
-m/rockchip/rockchip_drm_vop2.c#L3437
+Bah, I missed the latency column :-)
 
-Helped-by: Daniel Stone <daniel@fooishbar.org>
-Helped-by: Dragan Simic <dsimic@manjaro.org>
-Helped-by: Diederik de Haas <didi.debian@cknow.org>
-Helped-by: Andy Yan <andy.yan@rock-chips.com>
-Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
----
+> AMD Zen 5 has much higher crc32q throughput and seems to want up to 7 str=
+eams.
+> This is not implemented yet.
 
-Notes:
-    Changes in v5:
-        - Do not trigger full modeset in case seamless gamma lut update
-=09=09  isn't possible (eg. rk356x case). It was discovered that with=20
-=09=09  full modeset, userspace tools which adjust color temperature with
-          high frequency cause screen to go black and reduce overall
-          performance. Instead, revert to previous behaviour of lut update
-=09=09  happening in atomic_begin or (in case there is a modeset) in
-=09=09  atomic_enable. Also, add unrelated to modeset trigger
-=09=09  changes/improvements from v4 on top. Improve code readability
-=09=09  too.
+The copy of the tables I have is old - doesn't contain Zen-5.
+Does that mean that 2 (or more) of its alu 'units' can do crc32
+so you can do more than 1/clock (along with the memory reads).
 
-    Changes in v4:
-        - rework the implementation to better utilize DRM atomic updates[2]
-        - handle the RK3588 case[2][3]
-   =20
-    Changes in v3:
-        - v3 is patch v2 "resend", by mistake the incremental patch was
-        sent in v2
-   =20
-    Changes in v2:
-        - Apply code styling corrections[1]
-        - Move gamma LUT write inside the vop2 lock
-=09
-=09Link to v4: https://lore.kernel.org/linux-rockchip/20240815124306.189282=
--2-pZ010001011111@proton.me/
-    Link to v3: https://lore.kernel.org/linux-rockchip/TkgKVivuaLFLILPY-n3i=
-Zo_8KF-daKdqdu-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKe=
-FZr-MJzJMtw0=3D@proton.me/
-    Link to v2: https://lore.kernel.org/linux-rockchip/Hk03HDb6wSSHWtEFZHUy=
-e06HR0-9YzP5nCHx9A8_kHzWSZawDrU1o1pjEGkCOJFoRg0nTB4BWEv6V0XBOjF4-0Mj44lp2Tr=
-jaQfnytzp-Pk=3D@proton.me/T/#u
-    Link to v1: https://lore.kernel.org/linux-rockchip/9736eadf6a9d8e97eef9=
-19c6b3d88828@manjaro.org/T/#t
-   =20
-    [1] https://lore.kernel.org/linux-rockchip/d019761504b540600d9fc7a585d6=
-f95f@manjaro.org
-    [2] https://lore.kernel.org/linux-rockchip/CAPj87rOM=3Dj0zmuWL9frGKV1xz=
-PbJrk=3DQ9ip7F_HAPYnbCqPouw@mail.gmail.com
-    [3] https://lore.kernel.org/linux-rockchip/7d998e4c-e1d3-4e8b-af76-c5bc=
-83b43647@rock-chips.com
+One thought is how much of it is actually worth while!
+If the data isn't already in the L1 data cache then the cache
+loads almost certainly dominate - especially if you have to
+do out to 'real memory'.
+You can benchmark the loops by repeatedly accessing the same
+data - but that isn't what will actually happen.
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 161 +++++++++++++++++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.h |   5 +
- 2 files changed, 166 insertions(+)
+> > Most modern x86 can do 4 or 5 (or even more) ALU operations
+> > per clock - depending on the combination of instructions.
+> >
+> > Replace the loop termination with a comparison of 'bufp'
+> > against a pre-calculated limit and you get two instructions
+> > (that might get merged into one u-op) for the loop overhead.
+> > They'll run in parallel with the crc32q instructions.
+>=20
+> That's actually still three instructions: add, cmp, and jne.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm=
-/rockchip/rockchip_drm_vop2.c
-index 9873172e3fd3..a6a2d7df5ecc 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -278,6 +278,15 @@ static u32 vop2_readl(struct vop2 *vop2, u32 offset)
- =09return val;
- }
-=20
-+static u32 vop2_vp_read(struct vop2_video_port *vp, u32 offset)
-+{
-+=09u32 val;
-+
-+=09regmap_read(vp->vop2->map, vp->data->offset + offset, &val);
-+
-+=09return val;
-+}
-+
- static void vop2_win_write(const struct vop2_win *win, unsigned int reg, u=
-32 v)
- {
- =09regmap_field_write(win->reg[reg], v);
-@@ -998,6 +1007,55 @@ static void vop2_disable(struct vop2 *vop2)
- =09clk_disable_unprepare(vop2->hclk);
- }
-=20
-+static bool vop2_vp_dsp_lut_is_enabled(struct vop2_video_port *vp)
-+{
-+=09return (u32) (vop2_vp_read(vp, RK3568_VP_DSP_CTRL) & RK3568_VP_DSP_CTRL=
-__DSP_LUT_EN) >
-+=09    0;
-+}
-+
-+static void vop2_vp_dsp_lut_disable(struct vop2_video_port *vp)
-+{
-+=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-+
-+=09dsp_ctrl &=3D ~RK3568_VP_DSP_CTRL__DSP_LUT_EN;
-+=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-+}
-+
-+static bool vop2_vp_dsp_lut_poll_disable(struct vop2_video_port *vp)
-+{
-+=09u32 dsp_ctrl;
-+=09int ret =3D readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl=
-,
-+=09=09=09=09!dsp_ctrl, 5, 30 * 1000);
-+=09if (ret) {
-+=09=09drm_err(vp->vop2->drm, "display LUT RAM enable timeout!\n");
-+=09=09return false;
-+=09}
-+
-+=09return true;
-+}
-+
-+static void vop2_vp_dsp_lut_enable(struct vop2_video_port *vp)
-+{
-+=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-+
-+=09dsp_ctrl |=3D RK3568_VP_DSP_CTRL__DSP_LUT_EN;
-+=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-+}
-+
-+static void vop2_vp_dsp_lut_update_enable(struct vop2_video_port *vp)
-+{
-+=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-+
-+=09dsp_ctrl |=3D RK3588_VP_DSP_CTRL__GAMMA_UPDATE_EN;
-+=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-+}
-+
-+static inline bool vop2_supports_seamless_gamma_lut_update(struct vop2 *vo=
-p2)
-+{
-+=09return (vop2->data->soc_id =3D=3D 3588);
-+}
-+
-+
- static void vop2_crtc_atomic_disable(struct drm_crtc *crtc,
- =09=09=09=09     struct drm_atomic_state *state)
- {
-@@ -1482,6 +1540,66 @@ static bool vop2_crtc_mode_fixup(struct drm_crtc *cr=
-tc,
- =09return true;
- }
-=20
-+static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct drm_crtc *=
-crtc)
-+{
-+=09const struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
-+=09const struct vop2_video_port_data *vp_data =3D &vop2->data->vp[vp->id];
-+
-+=09struct drm_color_lut *lut =3D crtc->state->gamma_lut->data;
-+=09unsigned int i, bpc =3D ilog2(vp_data->gamma_lut_len);
-+=09u32 word;
-+
-+=09for (i =3D 0; i < crtc->gamma_size; i++) {
-+=09=09word =3D (drm_color_lut_extract(lut[i].blue, bpc) << (2 * bpc)) |
-+=09=09    (drm_color_lut_extract(lut[i].green, bpc) << bpc) |
-+=09=09    drm_color_lut_extract(lut[i].red, bpc);
-+
-+=09=09writel(word, vop2->lut_regs + i * 4);
-+=09}
-+}
-+
-+static void vop2_crtc_atomic_try_set_gamma(struct vop2 *vop2,
-+=09=09=09=09=09struct vop2_video_port *vp,
-+=09=09=09=09=09struct drm_crtc *crtc,
-+=09=09=09=09=09struct drm_crtc_state *crtc_state)
-+{
-+
-+=09if (vop2->lut_regs && crtc_state->color_mgmt_changed) {
-+=09=09if (!crtc_state->gamma_lut) {
-+=09=09=09vop2_vp_dsp_lut_disable(vp);
-+=09=09=09return;
-+=09=09}
-+
-+=09=09if (vop2_supports_seamless_gamma_lut_update(vop2)) {
-+=09=09=09vop2_writel(vop2, RK3568_LUT_PORT_SEL, FIELD_PREP(
-+=09=09=09=09RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL,
-+=09=09=09=09vp->id));
-+=09=09=09vop2_crtc_write_gamma_lut(vop2, crtc);
-+=09=09=09vop2_vp_dsp_lut_enable(vp);
-+=09=09=09vop2_vp_dsp_lut_update_enable(vp);
-+=09=09} else {
-+=09=09=09vop2_vp_dsp_lut_disable(vp);
-+=09=09=09vop2_cfg_done(vp);
-+=09=09=09if (!vop2_vp_dsp_lut_poll_disable(vp))
-+=09=09=09=09return;
-+
-+=09=09=09vop2_writel(vop2, RK3568_LUT_PORT_SEL, vp->id);
-+=09=09=09vop2_crtc_write_gamma_lut(vop2, crtc);
-+=09=09=09vop2_vp_dsp_lut_enable(vp);
-+=09=09}
-+=09}
-+}
-+
-+static inline void vop2_crtc_atomic_try_set_gamma_locked(struct vop2 *vop2=
-,
-+=09=09=09=09=09struct vop2_video_port *vp,
-+=09=09=09=09=09struct drm_crtc *crtc,
-+=09=09=09=09=09struct drm_crtc_state *crtc_state)
-+{
-+=09vop2_lock(vop2);
-+=09vop2_crtc_atomic_try_set_gamma(vop2, vp, crtc, crtc_state);
-+=09vop2_unlock(vop2);
-+}
-+
- static void vop2_dither_setup(struct drm_crtc *crtc, u32 *dsp_ctrl)
- {
- =09struct rockchip_crtc_state *vcstate =3D to_rockchip_crtc_state(crtc->st=
-ate);
-@@ -2057,11 +2175,35 @@ static void vop2_crtc_atomic_enable(struct drm_crtc=
- *crtc,
-=20
- =09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-=20
-+=09vop2_crtc_atomic_try_set_gamma(vop2, vp, crtc, crtc_state);
-+
- =09drm_crtc_vblank_on(crtc);
-=20
- =09vop2_unlock(vop2);
- }
-=20
-+static int vop2_crtc_atomic_check_gamma(struct vop2_video_port *vp,
-+=09=09=09=09=09struct drm_crtc *crtc,
-+=09=09=09=09=09struct drm_atomic_state *state,
-+=09=09=09=09=09struct drm_crtc_state *crtc_state)
-+{
-+=09struct vop2 *vop2 =3D vp->vop2;
-+=09unsigned int len;
-+
-+=09if (!vp->vop2->lut_regs || !crtc_state->color_mgmt_changed ||
-+=09    !crtc_state->gamma_lut)
-+=09=09return 0;
-+
-+=09len =3D drm_color_lut_size(crtc_state->gamma_lut);
-+=09if (len !=3D crtc->gamma_size) {
-+=09=09drm_dbg(vop2->drm, "Invalid LUT size; got %d, expected %d\n",
-+=09=09=09=09      len, crtc->gamma_size);
-+=09=09return -EINVAL;
-+=09}
-+
-+=09return 0;
-+}
-+
- static int vop2_crtc_atomic_check(struct drm_crtc *crtc,
- =09=09=09=09  struct drm_atomic_state *state)
- {
-@@ -2069,6 +2211,11 @@ static int vop2_crtc_atomic_check(struct drm_crtc *c=
-rtc,
- =09struct drm_plane *plane;
- =09int nplanes =3D 0;
- =09struct drm_crtc_state *crtc_state =3D drm_atomic_get_new_crtc_state(sta=
-te, crtc);
-+=09int ret;
-+
-+=09ret =3D vop2_crtc_atomic_check_gamma(vp, crtc, state, crtc_state);
-+=09if (ret)
-+=09=09return ret;
-=20
- =09drm_atomic_crtc_state_for_each_plane(plane, crtc_state)
- =09=09nplanes++;
-@@ -2456,9 +2603,12 @@ static void vop2_setup_dly_for_windows(struct vop2 *=
-vop2)
- =09vop2_writel(vop2, RK3568_SMART_DLY_NUM, sdly);
- }
-=20
-+
- static void vop2_crtc_atomic_begin(struct drm_crtc *crtc,
- =09=09=09=09   struct drm_atomic_state *state)
- {
-+=09struct drm_crtc_state *crtc_state =3D
-+=09=09drm_atomic_get_new_crtc_state(state, crtc);
- =09struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
- =09struct vop2 *vop2 =3D vp->vop2;
- =09struct drm_plane *plane;
-@@ -2482,6 +2632,11 @@ static void vop2_crtc_atomic_begin(struct drm_crtc *=
-crtc,
- =09vop2_setup_layer_mixer(vp);
- =09vop2_setup_alpha(vp);
- =09vop2_setup_dly_for_windows(vop2);
-+
-+=09// NOTE: in case of modeset gamma lut update
-+=09// already happened in atomic enable
-+=09if (!drm_atomic_crtc_needs_modeset(crtc_state))
-+=09=09vop2_crtc_atomic_try_set_gamma_locked(vop2, vp, crtc, crtc_state);
- }
-=20
- static void vop2_crtc_atomic_flush(struct drm_crtc *crtc,
-@@ -2790,7 +2945,13 @@ static int vop2_create_crtcs(struct vop2 *vop2)
- =09=09}
-=20
- =09=09drm_crtc_helper_add(&vp->crtc, &vop2_crtc_helper_funcs);
-+=09=09if (vop2->lut_regs && vp->crtc.dev !=3D NULL) {
-+=09=09=09const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp-=
->id];
-=20
-+=09=09=09drm_mode_crtc_set_gamma_size(&vp->crtc, vp_data->gamma_lut_len);
-+=09=09=09drm_crtc_enable_color_mgmt(&vp->crtc, 0, false,
-+=09=09=09=09=09=09   vp_data->gamma_lut_len);
-+=09=09}
- =09=09init_completion(&vp->dsp_hold_completion);
- =09}
-=20
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm=
-/rockchip/rockchip_drm_vop2.h
-index 615a16196aff..510dda6f9092 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-@@ -394,6 +394,7 @@ enum dst_factor_mode {
- #define RK3568_REG_CFG_DONE__GLB_CFG_DONE_EN=09=09BIT(15)
-=20
- #define RK3568_VP_DSP_CTRL__STANDBY=09=09=09BIT(31)
-+#define RK3568_VP_DSP_CTRL__DSP_LUT_EN=09=09=09BIT(28)
- #define RK3568_VP_DSP_CTRL__DITHER_DOWN_MODE=09=09BIT(20)
- #define RK3568_VP_DSP_CTRL__DITHER_DOWN_SEL=09=09GENMASK(19, 18)
- #define RK3568_VP_DSP_CTRL__DITHER_DOWN_EN=09=09BIT(17)
-@@ -408,6 +409,8 @@ enum dst_factor_mode {
- #define RK3568_VP_DSP_CTRL__CORE_DCLK_DIV=09=09BIT(4)
- #define RK3568_VP_DSP_CTRL__OUT_MODE=09=09=09GENMASK(3, 0)
-=20
-+#define RK3588_VP_DSP_CTRL__GAMMA_UPDATE_EN=09=09BIT(22)
-+
- #define RK3588_VP_CLK_CTRL__DCLK_OUT_DIV=09=09GENMASK(3, 2)
- #define RK3588_VP_CLK_CTRL__DCLK_CORE_DIV=09=09GENMASK(1, 0)
-=20
-@@ -460,6 +463,8 @@ enum dst_factor_mode {
- #define RK3588_DSP_IF_POL__DP1_PIN_POL=09=09=09GENMASK(14, 12)
- #define RK3588_DSP_IF_POL__DP0_PIN_POL=09=09=09GENMASK(10, 8)
-=20
-+#define RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL=09GENMASK(13, 12)
-+
- #define RK3568_VP0_MIPI_CTRL__DCLK_DIV2_PHASE_LOCK=09BIT(5)
- #define RK3568_VP0_MIPI_CTRL__DCLK_DIV2=09=09=09BIT(4)
-=20
---=20
-2.47.0
+I was really thinking of the loop I quoted later.
+The one that uses negative offsets from the end of the buffer.
+That has an 'add' and a 'jnz' - which might even fuse into a
+single u-op.
+Maybe even constrained to p6 - so won't go near p1.
+(I don't have a recent AMD cpu)
 
+It may not actually matter.
+The add/subtract/cmp are only dependant on themselves.
+Similarly the jne is only dependant on the result of the sub/cmp.
+In principle they can all run in the same clock (for different
+loop cycles) since the rest of the loop only needs one of the
+ALU blocks (on Intel only P1 can do crc).
+But I failed to get a 1 clock loop (using ADC - which doesn't
+have a latency issue).
+It might be impossible because a predicted-taken conditional jmp
+has a latency of 2.
+
+> I tried it on both Intel and AMD, and it did not help.
+>=20
+> > I've never managed to get a 1-clock loop, but two is easy.
+> > You might find that just:
+> > 10:
+> > =09crc32q=09(bufp), crc
+> > =09crc32q=098(bufp), crc
+> > =09add=09=09$16, bufp
+> > =09cmp=09=09bufp, buf_lim
+> > =09jne=09=0910b
+> > will run at 8 bytes/clock on modern intel cpu.
+>=20
+> No, the latency of crc32q is still three cycles.  You need three streams.
+
+If you need three streams to get one crc32/clock then, in theory,
+you can get two more simple ALU ops, at least one memory read and
+a jump in every clock - even on Sandy bridge.
+So they are unlikely to dominate the loop whatever you do.
+
+If the loop is too long you can get a stall (probably) because a register
+has to be read back from the real register file and not just forwarded
+from a previous use/alu result.
+I've gained a clock back by adding an extra instruction in the middle
+of a loop!
+But the not-unrolled (multi-stream) loop isn't long enough for that
+to be an issue.
+
+Enough rambling.
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
