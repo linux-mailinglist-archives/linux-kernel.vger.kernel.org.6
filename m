@@ -1,150 +1,143 @@
-Return-Path: <linux-kernel+bounces-364729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5268E99D885
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:50:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 522AB99D887
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811A21C211AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:50:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0655A1F219C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B841D0E05;
-	Mon, 14 Oct 2024 20:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061121D0F5D;
+	Mon, 14 Oct 2024 20:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Qn7p/5u8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oiklqbPy"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JtS4/JYs"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A49A14D439;
-	Mon, 14 Oct 2024 20:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB611D0B91
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728939053; cv=none; b=O05AMU2dUSJ+OT2qNicAnGLF5kv6RG5jJ7NKGDS09CxcH2/wvF0lKA3nA5Jum5gkCrKryRy17OH7V1yrHmDtm+ycvecs5Ue1TMaDRl2UmURmo6SRZPA8LNTREARL7Dlh/hM3Yhk5wm1IFHoFnT/hC5m8Z+EwYjgUxp01/fGMaqM=
+	t=1728939060; cv=none; b=YwSGPw68AiZOGaLF46onZ3C6z8vo/aZgGFmiCAWzj/S0FOBbQjjMmx3KGI+nkqNSJuH5s9gp9ZTBtpBYz22kpQ9OYjLWZRuTcFn0g0gVYufdSBHmiYBcR61dysMljp1EaUHcCdMBcvTEK/1NVlLXewKP62dfRzNvZQ2hNkZP2eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728939053; c=relaxed/simple;
-	bh=MFSqcmv5mo5wth8zzxQu2vIn2rZtGDVYxVmiNss7a4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JNkdiRAOwt4WOACKY0dg5LQ+ocLRKILnUUbCxgC0YvXVcfZW77AX84/8lWrfmr+yZxTYTMC+ZNY/RtJCk0DMH8joWvVp5QGBR+2Oa8ZvKzEFZKAOgPq4O62CCj5b+0ajvXlwgfpXc3L1nBCjkv8QG+STXURrP/dkm3HOu+ppu64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Qn7p/5u8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oiklqbPy; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 24E2513805E7;
-	Mon, 14 Oct 2024 16:50:49 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Mon, 14 Oct 2024 16:50:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1728939049;
-	 x=1729025449; bh=w9YMR57cvzUfCNAMCQSKbu+O9RIDGvbwoJsod76P/6o=; b=
-	Qn7p/5u82udD6Vho/E5Bw5pGIzCfKjT4u5PgCtLFlIa/VfJW7TanYFbslPUbcgOE
-	dg00kBNKQ57dC0JgkYfPXSM7KYf2y6dJqoBZ8FXbxNbz4zobF+5cSjt6hDcn5RPv
-	tbpwWDniNj6Zk2T+MQh2xAVGtS1khUftAvONRIwrqTmX+UTBM92AZWz7V4nlMYcl
-	0+sWD2NAi/l2dED5iiDZdl0jk6wdISzmkhGHPwpPY2rmYdXi7ilFUW7mpuE8y1r8
-	5zfSq79Kr4u8XylGIO5yoM1E0mCFEG/s0vWgf4/TeRV/K9854im+MQ7OHHIjQbSQ
-	IamBYGgn5/bPEuUQVhjR9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728939049; x=
-	1729025449; bh=w9YMR57cvzUfCNAMCQSKbu+O9RIDGvbwoJsod76P/6o=; b=o
-	iklqbPyYUuGFmnF66gT+kn0T/eOQFBHXbYOAgJUPLsRQZecn3JiEFeX/+iRnNFMi
-	M93AXyytyYv5jGiRKJNe76W7NZkjz825A+G7ihF1E+B+uvrHlIWeYTtgYWmqAvFd
-	klTGZZMPjb3xdzTrct5gKxxcGPSc+JTCXdDM+uhNqCeIYPpyt8DdL8aLgMnAunQF
-	j3XoURI2uNy6QIb3EsdYh3Saq/T5T/cEebu8kOIMoRsepAoPuCl4IgKkkPegooJH
-	5M4TRdNn5u8lIYbpAKmTl+pEZkItrHSmFQIhJ5XgqxEyvob9AYsEY6n5tufoLBFK
-	sVAW7hmhEXMAmwfAPLKUA==
-X-ME-Sender: <xms:KIQNZ2dp0tdQCfkBIiaUNkxgmkyYhQacsODc6bnioiOF2lwLVpDQHA>
-    <xme:KIQNZwOHM7TB8IB9JSzaaWCWK-2ilPECc5rH6Tk9EVrSsbmMXcJz2qN7Alcd1pBda
-    ealWEbgfKMaBU7ztN8>
-X-ME-Received: <xmr:KIQNZ3iGYQ3p8xzmLgQpnt4CcDxGYmf8xuq5uaQuOGNHOek_tiBcIJ3M3NxND785yzHpueuQsDv-egITr_ia5MGvXxzmd1XoPg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgudehgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
-    guvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveet
-    gedtvddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhs
-    ohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepuddtpd
-    hmohguvgepshhmthhpohhuthdprhgtphhtthhopeifrghnghhhrghifeeksehhuhgrfigv
-    ihdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtg
-    hpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgs
-    rgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtg
-    homhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopeiihhgr
-    nhhggihirghogihuheeshhhurgifvghirdgtohhmpdhrtghpthhtohepnhgvthguvghvse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgr
-    shdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:KIQNZz992ZzhrgjfNQee3HA-x7A5AmtfWameHw8vOp55Q80xan3Zzw>
-    <xmx:KIQNZyuyeIO1E1ARyiAVouK9KDcQaL3x-BwqbqsPwItQ2w_SKLi8IA>
-    <xmx:KIQNZ6EaAXUu07uB8cvPK6XfmBToFhkHMRXs78Dl9EpySkcdQw9cwQ>
-    <xmx:KIQNZxOObmy05iQ9HF_ej1MxwOPRiUD0q7OWUPQFLxAGX6bPKzPOHw>
-    <xmx:KYQNZzkl7L6rPihQn6DowucmgiiN8bVNmhTfXlyBHrtHGzBiTF3_EGqE>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Oct 2024 16:50:47 -0400 (EDT)
-Date: Mon, 14 Oct 2024 22:50:44 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Wang Hai <wanghai38@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew@lunn.ch, zhangxiaoxu5@huawei.com,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: ethernet: rtsn: fix potential memory leak in
- rtsn_start_xmit()
-Message-ID: <20241014205044.GA2838422@ragnatech.se>
-References: <20241014144250.38802-1-wanghai38@huawei.com>
+	s=arc-20240116; t=1728939060; c=relaxed/simple;
+	bh=OtHecDzCY0maqojKB8QVAPvBWoIk1Y8ZPHcQ2Ta6zg8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Njz78Vcj5Vab5DVOKrcKxmwlTFMvIj2CfEpb06iIu8jLNP+IIiYoQYE820/mwb4/QlQDeJW4eVxDJ5ntxZcj71RSH2nTQHf24xYv4v3l0+eYHk8fiPp1ysmqX1BVrlxoyk+DM5Ursi0KFEruK6pSTlYI9N+VxKZqCGiwd4vZ+OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JtS4/JYs; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so29248a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:50:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728939057; x=1729543857; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rassIsgglA7eP8y4DjUfZA8yriOc/wKgAZKpicjPuHw=;
+        b=JtS4/JYszIy+wjf0j4Cq+dCLjZ2nhnFqgRmDHN5IRHMelcr4Gx+KOs1EBlYBTHshxu
+         YoLLyqx2BsZTJiGcHIxiIrWYhsHRyX05lRkOookLryHJpIKxAO3NDERfY1gzlGLmduhy
+         dNK/6O/coz4jOB3bzi+7Y0UBsS0WwiZ5/wIP2Ho7DQtH6HXgRgSuwK9K+B/O/qmjkqfC
+         5WFIvBbKD8zV9KY6PjlMDhBMoBKToqVrz2RSU+hwyofEql29uw2OwTbBJfUFis1lhwP8
+         GlooTREEKqVaJWTOfgkZwo8NYFbv1tOe7tPqDbcKxLrAjMVeHafyrd+v7iSbFe4Wg7Mj
+         GmUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728939057; x=1729543857;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rassIsgglA7eP8y4DjUfZA8yriOc/wKgAZKpicjPuHw=;
+        b=QQU8jlUZizqnNpCbZ6W33/tGb3wE8ioMmX66ef3KdR4+44lmCzWFAYdcfBoZXseRDk
+         RukfPvID0IN9MnGeHVg0jF1Caj4vkhL92qd5zM9JQ4i5eGqGhi/WSUdQ8hydj7MGO1hl
+         sN0y5eJ9E7oNWvQEnzW4NpyMW1bQOlBP8o34d7tZzuaauOMyXVKRyawIPM8xiz/wLhWB
+         8llbR/J1ntzjjPiYXOn5vNLNrygFr3g/cBisyC3j4EQWCqZjJSRIr2yCsrcAXrQSVWJM
+         fQY8IONAKCtAqJSBshtXHjTFSRYYalAbKbPmZGh14iz73jdGnQaL2zljYjcCBRk+eVQW
+         NfmQ==
+X-Gm-Message-State: AOJu0Yx6Hlvi8WMckl1iMkRS1KebwLXo+iaXIdhd2Z9XEvc0GE9GyB1z
+	vekKrR0rV45oT0Gi0CcHtFZX8EImr9Xqcvu2q5ePLS2pAYH0Jo9o4hNsGlyKOw==
+X-Google-Smtp-Source: AGHT+IFVxzlvWgPLnj+2KGiihqAFv2pUR2ON96tGXsZszxCBooQUjViChFGR2gUTGYwYOCsYvwpiqg==
+X-Received: by 2002:a05:6402:26c1:b0:5c2:5641:af79 with SMTP id 4fb4d7f45d1cf-5c95b0bd39amr490306a12.0.1728939056542;
+        Mon, 14 Oct 2024 13:50:56 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:76ed:8ce0:df7b:3495])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6cfb35sm12291395f8f.52.2024.10.14.13.50.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 13:50:55 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Mon, 14 Oct 2024 22:50:50 +0200
+Subject: [PATCH] comedi: Flush partial mappings in error case
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241014144250.38802-1-wanghai38@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241014-comedi-tlb-v1-1-4b699144b438@google.com>
+X-B4-Tracking: v=1; b=H4sIACmEDWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0MT3eT83NSUTN2SnCRdEwOgoJmpgamlmaESUENBUWpaZgXYsOjY2lo
+ ATjBYEVwAAAA=
+To: Ian Abbott <abbotti@mev.co.uk>, 
+ H Hartley Sweeten <hsweeten@visionengravers.com>, 
+ Frank Mori Hess <fmhess@users.sourceforge.net>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728939052; l=1653;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=OtHecDzCY0maqojKB8QVAPvBWoIk1Y8ZPHcQ2Ta6zg8=;
+ b=QT8NZT5LU+8E+Jdiko/6ghEHwPkTP23BVw6zr+FrjYfPeLwp7kNjDzH3th5JO18g8ph8KRhwK
+ X2NJORZVu+MCszf63PEaILffPREd+ipK9WklLW64aVPjr8XMWh25Ao3
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-Hello Wang,
+If some remap_pfn_range() calls succeeded before one failed, we still have
+buffer pages mapped into the userspace page tables when we drop the buffer
+reference with comedi_buf_map_put(bm). The userspace mappings are only
+cleaned up later in the mmap error path.
 
-Thanks for finding this.
+Fix it by explicitly flushing all mappings in our VMA on the comedi_mmap()
+error path.
 
-On 2024-10-14 22:42:50 +0800, Wang Hai wrote:
-> The rtsn_start_xmit() returns NETDEV_TX_OK without freeing skb
-> in case of skb->len being too long, add dev_kfree_skb_any() to fix it.
-> 
-> Fixes: b0d3969d2b4d ("net: ethernet: rtsn: Add support for Renesas Ethernet-TSN")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+See commit 79a61cc3fc04 ("mm: avoid leaving partial pfn mappings around in
+error case").
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Cc: stable@vger.kernel.org
+Fixes: ed9eccbe8970 ("Staging: add comedi core")
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Note: compile-tested only; I don't actually have comedi hardware, and I
+don't know anything about comedi.
+---
+ drivers/comedi/comedi_fops.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> ---
->  drivers/net/ethernet/renesas/rtsn.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/renesas/rtsn.c
-> index f9f63c61d792..6b3f7fca8d15 100644
-> --- a/drivers/net/ethernet/renesas/rtsn.c
-> +++ b/drivers/net/ethernet/renesas/rtsn.c
-> @@ -1057,6 +1057,7 @@ static netdev_tx_t rtsn_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->  	if (skb->len >= TX_DS) {
->  		priv->stats.tx_dropped++;
->  		priv->stats.tx_errors++;
-> +		dev_kfree_skb_any(skb);
->  		goto out;
->  	}
->  
-> -- 
-> 2.17.1
-> 
+diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
+index 1b481731df96..0e573df8646f 100644
+--- a/drivers/comedi/comedi_fops.c
++++ b/drivers/comedi/comedi_fops.c
+@@ -2414,6 +2414,15 @@ static int comedi_mmap(struct file *file, struct vm_area_struct *vma)
+ 		vma->vm_private_data = bm;
+ 
+ 		vma->vm_ops->open(vma);
++	} else {
++		/*
++		 * Leaving behind a partial mapping of a buffer we're about to
++		 * drop is unsafe, see remap_pfn_range_notrack().
++		 * We need to zap the range here ourselves instead of relying
++		 * on the automatic zapping in remap_pfn_range() because we call
++		 * remap_pfn_range() in a loop.
++		 */
++		zap_page_range_single(vma, vma->vm_start, size, NULL);
+ 	}
+ 
+ done:
 
+---
+base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
+change-id: 20241014-comedi-tlb-400246505961
 -- 
-Kind Regards,
-Niklas Söderlund
+Jann Horn <jannh@google.com>
+
 
