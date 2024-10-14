@@ -1,152 +1,201 @@
-Return-Path: <linux-kernel+bounces-364835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D545A99DA02
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:11:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64CC99DA03
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D581F2205F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:11:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7772B215F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1E11D967E;
-	Mon, 14 Oct 2024 23:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF9E1D6DA1;
+	Mon, 14 Oct 2024 23:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cZHQLh9V"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bZ6yJ2xY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412231CC171;
-	Mon, 14 Oct 2024 23:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826C3148826
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728947507; cv=none; b=lhqBsn/S+mBkl+bLjJT3Wpc/+PHv3JMiTPW88ceYcafHoAuxyv72L2D+eKjV3u6CnMogR+g6VOhLHL6k+PH5igAcS2N+oO97ue0xMzcCuRomA7eTY/5ydGCsqsQxDvUzRDUZXyJywBL0NIyZq788/WAyOka0jrborcwks0APXyA=
+	t=1728947541; cv=none; b=h92rN9MO+FrQVOovlxHuwb2/o6GfGQ5N4oD1s8xUigBl4g22gBNzyEHAnTCx03ExS3BQujH3J3Oe5KMYLzhaFQbgu827Zh16RlzKdVj5HkIjJnJ5DPJLHJkxu50ru20xayURb7WKGZuP3l3OEWHS7u2XL6XmGqlHOZa4+gR21Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728947507; c=relaxed/simple;
-	bh=0OlHTYSU8m0cSZI3HARsRgj2FYT0otKcUxEpy8LehY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=no0LXTEfoKIlGNOOxldeQMDEguub6bKKI5nxOBHYS2klpGI/bgeqcJty1yT73y8JvBP2MW+PeptKUMm2pAzpHy1FYuqF03HKo1iOY64LaNfEtutZNf9cfLrZV407nV8plLI6nlIftCkuVcVxI7nIXidLa3IFwg1zwTAfnvdWedA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cZHQLh9V; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-46040dadedfso50720371cf.1;
-        Mon, 14 Oct 2024 16:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728947505; x=1729552305; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6oi9dQhp7OSCDbmVBcF/Y1KF6KiC7vfiQfndyxaqHK8=;
-        b=cZHQLh9V9cDDVSyv0uqFoKmNFwmw/oXghiZy4pEbK3c0909bl9s9gldc+gq6WOOgVl
-         OhdIHrKRyfbzNi61HfgXCRuQiBkQe5rh26R8hpP72cnGoHpA7Wf8VUKGf28u5M/NWXdI
-         4UyZ0A+MHGwykHORe0rb813VUzq+mHDjAWo7xvL18zDzglgWo74+EFczSVvl0lNawZW6
-         uMp67tHf/+RHBKrFlwPcZ3s8wesgs5Rc1Pgb4CfpHUnGJ+42Y6MTdotkiqmEfk5w0lII
-         S7pUu8MkhRujs85vXZ+51S+Ufv5qOBchrcT2p+P6tMn4qGJT2FeYiATvsW4DZ0diG+br
-         638g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728947505; x=1729552305;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6oi9dQhp7OSCDbmVBcF/Y1KF6KiC7vfiQfndyxaqHK8=;
-        b=qGuqlN9Dv0EfPK7gosouprOQBCqqZ4VbZm7Wakd589fyn4qKJnSdV/mqHV70rup7Ks
-         rPHR+JGFgHEsTzhUR2kqFWc4Samd//72SMSGmLV7stEJ8J7oIw22oCbFdTEjYNrzocCz
-         QnPAJdgwwniKMX/OYN47qudZHoSeB7TECltQpCY79f7Ma54lW9WzdeDjRG+gd+jJCbdV
-         TNgQlsYHV+MQdXczlhwcLpA2UXbRB0ev3PakAgIlr9ZawoC1OIuHg2wV+kH3DdYtRaDV
-         wD1Qft9uXWcIuMP08V/BoV4IcQryX6RuA0IrxrGdh5ZDel5rhc0SrvH46fWkbo20HuE5
-         0GUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsvwA6b5oeDoWzOnTeSLajLz0SAUOe+zc1+g+4I9TbetGIHx/3fIJy4GJF0pZCTM5I7ibS+g8f@vger.kernel.org, AJvYcCWkG8jpjkjx0nJxNG7TB2r/HPkx6LZh31DoI2x7GuMerr+fOMTYfQWqLWlDe3FpHkmagk17ZmQRizML97o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZxXyVcF53AbN2FYuUxEAq51OlsuvJNUk6N8FH1aSCMW7c1cvi
-	mjFmMvnrR5w830xTHHNM4HUhd8GwY5fWk1PLWN9wA8GTuos8UGuQ
-X-Google-Smtp-Source: AGHT+IFADHk8dYtSwzMGcPFUCy+MuN+u0cuK3gY/XtkRMI+BAsJ0Yd8g2ckBCRNg83HOFeNCkPiE5A==
-X-Received: by 2002:a05:622a:19a1:b0:458:36c0:f5b8 with SMTP id d75a77b69052e-4604bbf24demr194568271cf.36.1728947505018;
-        Mon, 14 Oct 2024 16:11:45 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1363b471dsm4222685a.105.2024.10.14.16.11.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 16:11:43 -0700 (PDT)
-Message-ID: <5d7cd644-a9e2-488d-b220-e8d01972b8a4@gmail.com>
-Date: Mon, 14 Oct 2024 16:11:40 -0700
+	s=arc-20240116; t=1728947541; c=relaxed/simple;
+	bh=v+9INytRCxk6pm0d5DHKwAHLCzqBrioorlu7gWDS7Fw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dt4cpfvSRCsuctGKZ0KdZOnRABpygzk+AujTuQRtN14m4DyYJMaAcs5FWDUMGlgCaPSudLSTPYV/mSEBgzmUkRAyx9F3kk8HRqzRViTyplrDat0nvclq8yV1GZmq3awEudQ/TnHKR/TAMP9iuBfwopUmn8GKstgzYe4R2m0oIRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bZ6yJ2xY; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728947540; x=1760483540;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=v+9INytRCxk6pm0d5DHKwAHLCzqBrioorlu7gWDS7Fw=;
+  b=bZ6yJ2xYMCp4Z7McbR1rREli2E0cjT0DDWoOqiHBxQYHdLRIvUJnxqQa
+   JAW02w/KGCWGeXS7AV1yl+H/znYT4QUgegQZH9LIbEHSb4O+GoZ4/3Nk8
+   4Jd+YPKXq9aCqttEQgPMpESstyjRN5Viv3AmufChf3Hbz6dR123gFmcjD
+   VsxqS3QS83hkw0ztBEkPIc0iWrWfGQZOG4YQ4+fAx3wnqoo0s2E/zeaij
+   L61Vhk9vJ34eCvjAv3mxrCyIboJdXVCl123vHmsXfdh3aOW+sChN2Qlxy
+   TYC5rV0/K5OfeRdkEXJlS/n8Qay4L75nSEB8aHr1mDYSmgwn7SXR6ZUnw
+   Q==;
+X-CSE-ConnectionGUID: RTQneDlRRnyDBQXs2ifBig==
+X-CSE-MsgGUID: Gv2gJd+QR0GQ0QOunxu52g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="50849030"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="50849030"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 16:12:19 -0700
+X-CSE-ConnectionGUID: f1kfSAY3SWuClTYUrGSBLg==
+X-CSE-MsgGUID: 9pzGx3MVS5uN76D7k+YaeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,203,1725346800"; 
+   d="scan'208";a="82332348"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 14 Oct 2024 16:12:12 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0UEU-000HIh-0C;
+	Mon, 14 Oct 2024 23:12:10 +0000
+Date: Tue, 15 Oct 2024 07:11:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>,
+	Theodore Ts'o <tytso@mit.edu>
+Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v20 2/6] security: Add EXEC_RESTRICT_FILE and
+ EXEC_DENY_INTERACTIVE securebits
+Message-ID: <202410150702.GVWMEEA4-lkp@intel.com>
+References: <20241011184422.977903-3-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.11 000/214] 6.11.4-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241014141044.974962104@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCZtdNBQUJMNWh3gAKCRBhV5kVtWN2DhBgAJ9D8p3pChCfpxunOzIK7lyt
- +uv8dQCgrNubjaY9TotNykglHlGg2NB0iOLOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
- X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20241014141044.974962104@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241011184422.977903-3-mic@digikod.net>
 
-On 10/14/24 07:17, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.4 release.
-> There are 214 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Mickaël,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+kernel test robot noticed the following build warnings:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+[auto build test WARNING on 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/exec-Add-a-new-AT_CHECK-flag-to-execveat-2/20241012-024801
+base:   8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+patch link:    https://lore.kernel.org/r/20241011184422.977903-3-mic%40digikod.net
+patch subject: [PATCH v20 2/6] security: Add EXEC_RESTRICT_FILE and EXEC_DENY_INTERACTIVE securebits
+config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20241015/202410150702.GVWMEEA4-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241015/202410150702.GVWMEEA4-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410150702.GVWMEEA4-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/securebits.h:5,
+                    from include/linux/init_task.h:13,
+                    from init/init_task.c:2:
+>> include/uapi/linux/securebits.h:135:23: warning: "/*" within comment [-Wcomment]
+     135 |  *       (e.g. sh /tmp/*.sh).  This makes sense for (semi-restricted) user
+         |                        
+
+
+vim +135 include/uapi/linux/securebits.h
+
+    97	
+    98	#define SECBIT_EXEC_RESTRICT_FILE (issecure_mask(SECURE_EXEC_RESTRICT_FILE))
+    99	#define SECBIT_EXEC_RESTRICT_FILE_LOCKED \
+   100				(issecure_mask(SECURE_EXEC_RESTRICT_FILE_LOCKED))
+   101	
+   102	/*
+   103	 * When SECBIT_EXEC_DENY_INTERACTIVE is set, a process should never interpret
+   104	 * interactive user commands (e.g. scripts).  However, if such commands are
+   105	 * passed through a file descriptor (e.g. stdin), its content should be
+   106	 * interpreted if a call to execveat(2) with the related file descriptor and
+   107	 * the AT_CHECK flag succeed.
+   108	 *
+   109	 * For instance, script interpreters called with a script snippet as argument
+   110	 * should always deny such execution if SECBIT_EXEC_DENY_INTERACTIVE is set.
+   111	 *
+   112	 * This secure bit may be set by user session managers, service managers,
+   113	 * container runtimes, sandboxer tools...  Except for test environments, the
+   114	 * related SECBIT_EXEC_DENY_INTERACTIVE_LOCKED bit should also be set.
+   115	 *
+   116	 * See the SECBIT_EXEC_RESTRICT_FILE documentation.
+   117	 *
+   118	 * Here is the expected behavior for a script interpreter according to
+   119	 * combination of any exec securebits:
+   120	 *
+   121	 * 1. SECURE_EXEC_RESTRICT_FILE=0 SECURE_EXEC_DENY_INTERACTIVE=0 (default)
+   122	 *    Always interpret scripts, and allow arbitrary user commands.
+   123	 *    => No threat, everyone and everything is trusted, but we can get ahead of
+   124	 *       potential issues thanks to the call to execveat with AT_CHECK which
+   125	 *       should always be performed but ignored by the script interpreter.
+   126	 *       Indeed, this check is still important to enable systems administrators
+   127	 *       to verify requests (e.g. with audit) and prepare for migration to a
+   128	 *       secure mode.
+   129	 *
+   130	 * 2. SECURE_EXEC_RESTRICT_FILE=1 SECURE_EXEC_DENY_INTERACTIVE=0
+   131	 *    Deny script interpretation if they are not executable, but allow
+   132	 *    arbitrary user commands.
+   133	 *    => The threat is (potential) malicious scripts run by trusted (and not
+   134	 *       fooled) users.  That can protect against unintended script executions
+ > 135	 *       (e.g. sh /tmp/*.sh).  This makes sense for (semi-restricted) user
+   136	 *       sessions.
+   137	 *
+   138	 * 3. SECURE_EXEC_RESTRICT_FILE=0 SECURE_EXEC_DENY_INTERACTIVE=1
+   139	 *    Always interpret scripts, but deny arbitrary user commands.
+   140	 *    => This use case may be useful for secure services (i.e. without
+   141	 *       interactive user session) where scripts' integrity is verified (e.g.
+   142	 *       with IMA/EVM or dm-verity/IPE) but where access rights might not be
+   143	 *       ready yet.  Indeed, arbitrary interactive commands would be much more
+   144	 *       difficult to check.
+   145	 *
+   146	 * 4. SECURE_EXEC_RESTRICT_FILE=1 SECURE_EXEC_DENY_INTERACTIVE=1
+   147	 *    Deny script interpretation if they are not executable, and also deny
+   148	 *    any arbitrary user commands.
+   149	 *    => The threat is malicious scripts run by untrusted users (but trusted
+   150	 *       code).  This makes sense for system services that may only execute
+   151	 *       trusted scripts.
+   152	 */
+   153	#define SECURE_EXEC_DENY_INTERACTIVE		10
+   154	#define SECURE_EXEC_DENY_INTERACTIVE_LOCKED	11  /* make bit-10 immutable */
+   155	
+
 -- 
-Florian
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
