@@ -1,97 +1,123 @@
-Return-Path: <linux-kernel+bounces-363526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5FA99C37C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:36:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334B699C37D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3474B1F21D84
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE631C221A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4A914B086;
-	Mon, 14 Oct 2024 08:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0140D13D8B0;
+	Mon, 14 Oct 2024 08:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M7Hw4Sss"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ta1hmdfu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC49C1A270;
-	Mon, 14 Oct 2024 08:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5361A270
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728894972; cv=none; b=DOyTlb09anaz7sCnl2T3k8nAGoIuaj3otYm1QdnSGk9Cm8KGhO0mdTkzZRVPImko9xztbiOBhkqWogCOsSrReUWa46snaDoIS21z8JmYg6BNgXtuDydYSmi1jFDP2Ac4oOHYOHD2W1xQIwdp82rMLjxmgw7N8xxfpcb7HbOFWYk=
+	t=1728894983; cv=none; b=pU5IyQgCIM+/YZqIjcWacxjNarGgs4HOtkYg1kL/9Xo3CqpfY2F8LXYLpxbhlwGM9OS51izRdJKpTjDLIDj6JAcymt7rDRgbzAU1EILcHmb2zvuMIGjhpqKkx6Ge94DWsXmJXBsZUHtKyOOKd9jo6hViv1rJaoRyZEYj0PMrOj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728894972; c=relaxed/simple;
-	bh=SLDPRDnmzXBGPmmHTDtmyHRfMMr7+XIbsyjLdVTqizA=;
+	s=arc-20240116; t=1728894983; c=relaxed/simple;
+	bh=m5aniVC3Z+WNaDtIgb27OroQtk71olXhdhms+he20T8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMleA1e3+5vWd9QYRPwlhqIroWEo2cUPV0hP+zBRto9eJcbuEObuo7kXlDVno8D9CsoOae+Too4xJ2SrPI2Xmqxlx111IO8XYcajr/fsGYjwyjOnNnMrOcJYDkCW1BTvMYZ4okZ8LFTkwokfS0ll+dAbjWSM5Z22EQ27uoqMCEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M7Hw4Sss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 175CCC4CECE;
-	Mon, 14 Oct 2024 08:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728894971;
-	bh=SLDPRDnmzXBGPmmHTDtmyHRfMMr7+XIbsyjLdVTqizA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M7Hw4SssMZFDsY+na2IdKE69/fzqcJ5xdw3VG0UM6EVuwZnSgdFv6/tZU6K2vhVKi
-	 6VPYB7bSV7bLBmtsAdlK9DE8At05k2qmU1cF7eJ3OhEMba3IhgcI046spE+7eWkRdI
-	 ln8YjL0kn6AsCeAvJ0zF2uSOv1L+QPcN1nTPAEn0=
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oj4QGGiUWRK6SC7f9AwblxvBRYBjTW+Ntg8QwNSWmqV1ALdWTFZE3LXSThUbwwRTgNf7Pfx3nQiW1u16pqrpCzaK5JcCdswWQNQAvmlc9VSp/8kRZZjw+VWcBXPy1foJPulSUiXABZq+3FVK8gWEFHomUI5tNjUIIwggMHr380E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ta1hmdfu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tqdzksLr8USjqPwEK4fkd6EbSESCupOIPQ8Ly0wBFr0=; b=Ta1hmdfuRjHq7MhsCKOGpzksfG
+	VpkJq1nwZKQbxayzZ5hpBvmaWFlm1SHuWxHWoETXgpgHnawFQQQK+dsBCimvcM8O3xK/Gt1hrOh99
+	vuEAHYpPdVcrpiiRxBUiHPPsKQvhmYBkVBNVgM7cOQ08yEqtCuOz7r0+KqVmf3zuzbQO3oa8VeEfw
+	ty6/fqWnRzoly3koMPdR3pzMXh6IpoYTtrOT9Hqp7mKmhC8Vj9EEtKMgzYirJCY9a+16ATribTYpe
+	2cpTfhBRr+FBZ9dpQC/i27z+l6BgGOKSBXMma8cg+2WQXdAQLWnfbexy1+JrD6kf5MfedlID1+2ha
+	bVoiLvug==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0GYh-000000015cF-3hMi;
+	Mon, 14 Oct 2024 08:36:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1F9DB300777; Mon, 14 Oct 2024 10:36:08 +0200 (CEST)
 Date: Mon, 14 Oct 2024 10:36:08 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Sherry Yang <sherry.yang@oracle.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-stable <stable@vger.kernel.org>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"sashal@kernel.org" <sashal@kernel.org>
-Subject: Re: [PATCH 5.4.y 0/2] tracing/kprobes: Backport request about
-Message-ID: <2024101452-getup-legal-355f@gregkh>
-References: <20240927214359.7611-1-sherry.yang@oracle.com>
- <2024100111-alone-fructose-1103@gregkh>
- <D99F1DB5-4DDE-478A-BCB6-C510CAFC1C67@oracle.com>
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrea Righi <andrea.righi@linux.dev>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Always call put_prev_task() with scx enabled
+Message-ID: <20241014083608.GU17263@noisy.programming.kicks-ass.net>
+References: <20241013173928.20738-1-andrea.righi@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D99F1DB5-4DDE-478A-BCB6-C510CAFC1C67@oracle.com>
+In-Reply-To: <20241013173928.20738-1-andrea.righi@linux.dev>
 
-On Fri, Oct 11, 2024 at 04:55:15PM +0000, Sherry Yang wrote:
-> Hi Greg,
+On Sun, Oct 13, 2024 at 07:39:28PM +0200, Andrea Righi wrote:
+> With the consolidation of put_prev_task/set_next_task(), we are now
+> skipping the sched_ext ops.stopping/running() transitions when the
+> previous and next tasks are the same, see commit 436f3eed5c69 ("sched:
+> Combine the last put_prev_task() and the first set_next_task()").
 > 
-> > On Oct 1, 2024, at 1:11 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > 
-> > On Fri, Sep 27, 2024 at 02:43:57PM -0700, Sherry Yang wrote:
-> >> The new test case which checks non unique symbol kprobe_non_uniq_symbol.tc 
-> >> failed because of missing kernel functionality support from commit 
-> >> b022f0c7e404 ("tracing/kprobes: Return EADDRNOTAVAIL when func matches several symbols"). 
-> >> Backport it and its fix commit to 5.4.y together. Resolved minor context change conflicts.
-> >> 
-> >> Andrii Nakryiko (1):
-> >>  tracing/kprobes: Fix symbol counting logic by looking at modules as
-> >>    well
-> >> 
-> >> Francis Laniel (1):
-> >>  tracing/kprobes: Return EADDRNOTAVAIL when func matches several
-> >>    symbols
-> > 
-> > As per the documentation, we can't take patches for older kernels and
-> > not newer ones, otherwise you will have regressions when you finally
-> > move off this old kernel to a modern one :)
-> > 
-> > Please resend ALL of the needed backports, not just one specific kernel.
-> > I'm dropping these from my review queue now.
+> While this optimization makes sense in general, it can negatively impact
+> performance in some user-space schedulers, that expect to handle such
+> transitions when tasks exhaust their timeslice (see SCX_OPS_ENQ_LAST).
 > 
-> I have sent the backports to 5.10.y, and Sasha queued them up. Can we get this series in your 5.4.y review queue again?
+> For example, scx_rustland suffers a significant performance regression
+> (e.g., gaming benchmarks drop from ~60fps to ~10fps).
+> 
+> To fix this, ensure that put_prev_task()/set_next_task() are never
+> skipped when the scx scheduling class is enabled, allowing the scx class
+> to handle such transitions.
+> 
+> This change restores the previous behavior, fixing the performance
+> regression in scx_rustland.
+> 
+> Link: https://github.com/sched-ext/scx/issues/788
 
-Please resend them as they are long gone from my queue.
+How persistent are links like that? In general I strongly discourage
+links to things not pointing to kernel.org resources.
 
-thanks,
+> @@ -2523,6 +2508,21 @@ DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+>  #define scx_switched_all()	false
+>  #endif /* !CONFIG_SCHED_CLASS_EXT */
+>  
+> +static inline void put_prev_set_next_task(struct rq *rq,
+> +					  struct task_struct *prev,
+> +					  struct task_struct *next)
+> +{
+> +	WARN_ON_ONCE(rq->curr != prev);
+> +
+> +	__put_prev_set_next_dl_server(rq, prev, next);
+> +
+> +	if (next == prev && !scx_enabled())
+> +		return;
 
-greg k-h
+Does that not also want to include a 'next->sched_class ==
+&ext_sched_class' clause ? And a comment?
+
+> +
+> +	prev->sched_class->put_prev_task(rq, prev, next);
+> +	next->sched_class->set_next_task(rq, next, true);
+> +}
+
+And is there really no way scx can infer this happened? We just did pick
+after all, that can see this coming a mile of.
 
