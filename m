@@ -1,142 +1,267 @@
-Return-Path: <linux-kernel+bounces-363658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1051599C5AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0339399C56B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C6FB2E9CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:19:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CD89B2EBD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466E815665C;
-	Mon, 14 Oct 2024 09:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4937119C551;
+	Mon, 14 Oct 2024 09:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDF0E9D0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HUTyjlge"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A2028E3F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE0A156678
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897089; cv=none; b=t2SYnV4fw/tH3aSBYGyUfBS017iv/Hl9svgkU9JN4d+QMSesLxMrOGKIlAeDbqKWebPro38g/0R8DZULW/P/ZDqLo32NykLoWKkUOnMKbjE64yHbLe3BAxC7mll9k11x2M4MU/sQX6cTtYsz+dtirld/EADN9H0Tco4lbaqRMW4=
+	t=1728897133; cv=none; b=aOx5k9hzGFSj49qKLvIk0Rpz4enhTGJIORyNvIawcfF61Dtb3hPRUnGFBygUIMDfePyY332y5t11G4q7JKHXgSz/Xg9nK8ir6lMohUavbvkThIdVON28fmyVMiivUKjcesE+YcHZl7w2dBTannjmMJNolgOsUOZylH1Tel54PE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897089; c=relaxed/simple;
-	bh=SlaebBS2ppBrYdGnnlU+AGBrj7EoGmHJWqIrxyVn5lY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L7AjygMmZSNAYY+HbYBlTSw0O0kYU+copH1WLTPnUGjrEK/v/UDA07H9XxcX0C0vFY5B3BJPcAV6R8/7hD12zqfraBb89MUjVMT31onOrdurjGWW4OJV6/I+P2/yH2jfj9iy/NlFowUxERSt2ohDppyXYIkTSg7U7tz+2Db9nrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDF0E9D0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BF6C4CEC3;
-	Mon, 14 Oct 2024 09:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728897089;
-	bh=SlaebBS2ppBrYdGnnlU+AGBrj7EoGmHJWqIrxyVn5lY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oDF0E9D07vUn6KfLxMTUuW6oR3VlXybRsE9MIzx0HwJJcc5sBW+m1yuAGCPuzAuVI
-	 jvPYDCbbf2DzQUWnhWGNmC8dO4e0H1E6yaUdoaHhkLSx8MM20VYstjscXNm43RSwfa
-	 k9ebzWVfj7VF5AOIoJejafGAtpA6uRvKsx9ZAJSpBZjc2sdREiaO06bHsq0GKe7QQk
-	 Sb4uoW+IQw5MdiGcMEPsPVUBIMQUsHDMX0BxJkEihmNLt+uI/reZ64VN5mUraJpVE7
-	 1xRXkpWvkFhM2rOz0I6/UehfXHniAEGtVBktZe6ENy34sArCZSzJS1spB/v4HsSfyh
-	 dksa1zpHV/9TA==
-Date: Mon, 14 Oct 2024 11:11:26 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, christian.koenig@amd.com, ray.huang@amd.com, 
-	dmitry.baryshkov@linaro.org, dave.stevenson@raspberrypi.com, mcanal@igalia.com, 
-	quic_jjohnson@quicinc.com, karolina.stolarek@intel.com, Arunpravin.PaneerSelvam@amd.com, 
-	thomas.hellstrom@linux.intel.com, asomalap@amd.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] drm/connector: hdmi: Fix memory leak in
- drm_display_mode_from_cea_vic()
-Message-ID: <20241014-fervent-whimsical-oyster-b0926d@houat>
-References: <20241014071632.989108-1-ruanjinjie@huawei.com>
- <20241014071632.989108-2-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1728897133; c=relaxed/simple;
+	bh=X6kY1iJ7DeXV7dzOM/Quy8TkeUIc2RgmP57BuSAG348=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LHUhNRHC3mXr3aSED0u2ep5KU9lerpaNdT8E9GVXcJ0UbKpMkxrhnOh7r4ZkGwqqkEVZi4POwZ7ggui35Ht7bv4Iw+MLhNM6+0KSV5e4yShADuvQqDxblUwPUC5vrDFRizLrgjpQbiu7UqwYX7dTREA5e2mQeVCI2ofo7GlBogE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HUTyjlge; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728897130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=efYEDzJoXvnSDmPZhcwgS+G1MqF2s5kTREhSaGYut/4=;
+	b=HUTyjlgeFceJqihqg6Rgr5eSgMTf4AyWsRiI+28eO8PlwmGPZze0TaiUxI/okLbYFID8nE
+	XRTLYtedaGGVce8vfS5sVC5Wb6ExB4hblwv51M+wg9+DOsaYc9EpCrrO2QWmgP5IWWEMWD
+	RmJzg9WhgGt6THrNZFH4N6W/DIbSMdA=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-382-BhjBgDr-PqaNMXte9sagBg-1; Mon, 14 Oct 2024 05:12:09 -0400
+X-MC-Unique: BhjBgDr-PqaNMXte9sagBg-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a93d0b27d37so357971366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:12:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728897128; x=1729501928;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=efYEDzJoXvnSDmPZhcwgS+G1MqF2s5kTREhSaGYut/4=;
+        b=pSVVBDqULb3fS00BOFm1iQQGrTd8do/VuqdLOmaX3LH/Rk5tG0yJQXI/NpaUn/Joig
+         +4/QFlVwvqDGoWjRXWUEF2i5eHk1pN+kBF6M2u9YZYYD/QChMceGw0w1z9MM+0YzD4HM
+         y7OsKT7uOfcmOVS+UJZNUt6NzHgt+wHlBFTE7aG0ecHkWLfXOW79jB2qyewQsaXNWR9K
+         wq1HmpvXQMQAYCSw8NwzYN8+IaGh+KK69eZRNtfeZ0cpN8Nb7O7GqTMyDEIH1KusGtt1
+         RDDZyok0Y37r5lFCY5QTvRbrfxJJbFnKAoGz+1pBVGPenKOCp2orSbxU33dspEPftPnN
+         bHRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMe7CXZO1gPltxgDNzy+bd8dTK7FJLmEOhvD6sXTUEMHBoqAZY5CnA0IVy9ClisNknqOBm1QTTrASNWXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/xeMH08+whKUv4LaYOI4piPMjNRLfh6yP36sinhcHCtgDZ2mO
+	uTPZzNWTh0dc+nmLkxnNzcmPnc2yW+hGRSDEFDlkBECbiHVcal5IkkvKbcgdqZmtOU7fCy1/9Kx
+	lEdux5mKPzXMnINMQ6CdFaZS2iY7nT9Fsbd14em9a0BpXONrDFuRSjtsBcWx7LQ==
+X-Received: by 2002:a17:907:9611:b0:a99:36ab:d843 with SMTP id a640c23a62f3a-a99b940ff26mr1050656866b.38.1728897127739;
+        Mon, 14 Oct 2024 02:12:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnnCmW/otcj2gQQZVhAW9woFCE4udOO76Y7RHXvuu8hpYM4Kp8213Cwui9o9/A0ZQF2FNuJw==
+X-Received: by 2002:a17:907:9611:b0:a99:36ab:d843 with SMTP id a640c23a62f3a-a99b940ff26mr1050652366b.38.1728897127228;
+        Mon, 14 Oct 2024 02:12:07 -0700 (PDT)
+Received: from ?IPv6:2001:16b8:2d37:9800:1d57:78cf:c1ae:b0b3? (200116b82d3798001d5778cfc1aeb0b3.dip.versatel-1u1.de. [2001:16b8:2d37:9800:1d57:78cf:c1ae:b0b3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f07c842csm290736366b.54.2024.10.14.02.12.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 02:12:06 -0700 (PDT)
+Message-ID: <3515493a0d0dd8f1b7df5a5677042946325ea6a8.camel@redhat.com>
+Subject: Re: [RFC PATCH 01/13] PCI: Prepare removing devres from pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ Sergey Shtylyov <s.shtylyov@omp.ru>, Basavaraj Natikar
+ <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
+ Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
+ Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
+ <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Rasesh Mody <rmody@marvell.com>,
+ GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
+ Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+ Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, Chen
+ Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
+ <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Mostafa Saleh
+ <smostafa@google.com>, Hannes Reinecke <hare@suse.de>, John Garry
+ <john.g.garry@oracle.com>, Soumya Negi <soumya.negi97@gmail.com>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, "Dr. David Alan
+ Gilbert" <linux@treblig.org>, Christian Brauner <brauner@kernel.org>, Ankit
+ Agrawal <ankita@nvidia.com>, Reinette Chatre <reinette.chatre@intel.com>,
+ Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>, Marek
+ =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
+ <kai.vehmanen@linux.intel.com>,  Peter Ujfalusi
+ <peter.ujfalusi@linux.intel.com>, Rui Salvaterra <rsalvaterra@gmail.com>,
+ Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-input@vger.kernel.org,
+ netdev@vger.kernel.org,  linux-wireless@vger.kernel.org,
+ ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
+ linux-staging@lists.linux.dev, kvm@vger.kernel.org, 
+ xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
+Date: Mon, 14 Oct 2024 11:12:03 +0200
+In-Reply-To: <ZwktO8AUmFEakhVP@smile.fi.intel.com>
+References: <20241009083519.10088-1-pstanner@redhat.com>
+	 <20241009083519.10088-2-pstanner@redhat.com>
+	 <ZwfnULv2myACxnVb@smile.fi.intel.com>
+	 <f65e9fa01a1947782fc930876e5f84174408db67.camel@redhat.com>
+	 <ZwktO8AUmFEakhVP@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="djulfyohgymknlbz"
-Content-Disposition: inline
-In-Reply-To: <20241014071632.989108-2-ruanjinjie@huawei.com>
 
-
---djulfyohgymknlbz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 14, 2024 at 03:16:30PM GMT, Jinjie Ruan wrote:
-> modprobe drm_connector_test and then rmmod drm_connector_test,
-> the following memory leak occurs.
+On Fri, 2024-10-11 at 16:50 +0300, Andy Shevchenko wrote:
+> On Fri, Oct 11, 2024 at 02:16:06PM +0200, Philipp Stanner wrote:
+> > On Thu, 2024-10-10 at 17:40 +0300, Andy Shevchenko wrote:
+> > > On Wed, Oct 09, 2024 at 10:35:07AM +0200, Philipp Stanner wrote:
+> > > > pci_intx() is a hybrid function which sometimes performs devres
+> > > > operations, depending on whether pcim_enable_device() has been
+> > > > used
+> > > > to
+> > > > enable the pci_dev. This sometimes-managed nature of the
+> > > > function
+> > > > is
+> > > > problematic. Notably, it causes the function to allocate under
+> > > > some
+> > > > circumstances which makes it unusable from interrupt context.
+> > > >=20
+> > > > To, ultimately, remove the hybrid nature from pci_intx(), it is
+> > > > first
+> > > > necessary to provide an always-managed and a never-managed
+> > > > version
+> > > > of that function. Then, all callers of pci_intx() can be ported
+> > > > to
+> > > > the
+> > > > version they need, depending whether they use
+> > > > pci_enable_device()
+> > > > or
+> > > > pcim_enable_device().
 >=20
-> The `mode` allocated in drm_mode_duplicate() called by
-> drm_display_mode_from_cea_vic() is not freed, which cause the memory leak:
+> > > > An always-managed function exists, namely pcim_intx(), for
+> > > > which
+> > > > __pcim_intx(), a never-managed version of pci_intx() had been
+> > > > implemented.
+> > >=20
+> > > > Make __pcim_intx() a public function under the name
+> > > > pci_intx_unmanaged(). Make pcim_intx() a public function.
 >=20
-> 	unreferenced object 0xffffff80cb0ee400 (size 128):
-> 	  comm "kunit_try_catch", pid 1948, jiffies 4294950339
-> 	  hex dump (first 32 bytes):
-> 	    14 44 02 00 80 07 d8 07 04 08 98 08 00 00 38 04  .D............8.
-> 	    3c 04 41 04 65 04 00 00 05 00 00 00 00 00 00 00  <.A.e...........
-> 	  backtrace (crc 90e9585c):
-> 	    [<00000000ec42e3d7>] kmemleak_alloc+0x34/0x40
-> 	    [<00000000d0ef055a>] __kmalloc_cache_noprof+0x26c/0x2f4
-> 	    [<00000000c2062161>] drm_mode_duplicate+0x44/0x19c
-> 	    [<00000000f96c74aa>] drm_display_mode_from_cea_vic+0x88/0x98
-> 	    [<00000000d8f2c8b4>] 0xffffffdc982a4868
-> 	    [<000000005d164dbc>] kunit_try_run_case+0x13c/0x3ac
-> 	    [<000000006fb23398>] kunit_generic_run_threadfn_adapter+0x80/0xec
-> 	    [<000000006ea56ca0>] kthread+0x2e8/0x374
-> 	    [<000000000676063f>] ret_from_fork+0x10/0x20
-> 	......
+> It seems I got confused by these two paragraphs. Why the double
+> underscored
+> function is even mentioned here?
+
+It's mentioned because it's being moved.
+
 >=20
-> Free `mode` by calling drm_mode_destroy() to fix it.
+> > > To avoid an additional churn we can make just completely new
+> > > APIs,
+> > > namely:
+> > > pcim_int_x()
+> > > pci_int_x()
+> > >=20
+> > > You won't need all dirty dances with double underscored function
+> > > naming and
+> > > renaming.
+> >=20
+> > =C3=84hm.. I can't follow. The new version doesn't use double
+> > underscores
+> > anymore. __pcim_intx() is being removed, effectively.
+> > After this series, we'd end up with a clean:
+> >=20
+> > 	pci_intx() <-> pcim_intx()
+> >=20
+> > just as in the other PCI APIs.
 >=20
-> Cc: stable@vger.kernel.org
-> Fixes: abb6f74973e2 ("drm/tests: Add HDMI TDMS character rate tests")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/gpu/drm/tests/drm_connector_test.c | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+> ...
 >=20
-> diff --git a/drivers/gpu/drm/tests/drm_connector_test.c b/drivers/gpu/drm=
-/tests/drm_connector_test.c
-> index 15e36a8db685..9c94d26b3486 100644
-> --- a/drivers/gpu/drm/tests/drm_connector_test.c
-> +++ b/drivers/gpu/drm/tests/drm_connector_test.c
-> @@ -1004,6 +1004,8 @@ static void drm_test_drm_hdmi_compute_mode_clock_rg=
-b(struct kunit *test)
->  	rate =3D drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
->  	KUNIT_ASSERT_GT(test, rate, 0);
->  	KUNIT_EXPECT_EQ(test, mode->clock * 1000ULL, rate);
-> +
-> +	drm_mode_destroy(drm, mode);
->  }
+> > > > +	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
+> > > > +
+> > > > +	if (enable)
+> > > > +		new =3D pci_command & ~PCI_COMMAND_INTX_DISABLE;
+> > > > +	else
+> > > > +		new =3D pci_command | PCI_COMMAND_INTX_DISABLE;
+> > > > +
+> > > > +	if (new !=3D pci_command)
+> > >=20
+> > > I would use positive conditionals as easy to read (yes, a couple
+> > > of
+> > > lines
+> > > longer, but also a win is the indentation and avoiding an
+> > > additional
+> > > churn in
+> > > the future in case we need to add something in this branch.
+> >=20
+> > I can't follow. You mean:
+> >=20
+> > if (new =3D=3D pci_command)
+> > =C2=A0=C2=A0=C2=A0 return;
+> >=20
+> > ?
+> >=20
+> > That's exactly the same level of indentation.
+>=20
+> No, the body gets one level off.
+>=20
+> > Plus, I just copied the code.
+> >=20
+> > > > +		pci_write_config_word(pdev, PCI_COMMAND, new);
+>=20
+> 	if (new =3D=3D pci_command)
+> 		return;
+>=20
+> 	pci_write_config_word(pdev, PCI_COMMAND, new);
+>=20
+> See the difference?
+> Also, imaging adding a new code in your case:
+>=20
+> 	if (new !=3D pci_command)
+> 		pci_write_config_word(pdev, PCI_COMMAND, new);
+>=20
+> =3D=3D>
+>=20
+> 	if (new !=3D pci_command) {
+> 		...foo...
+> 		pci_write_config_word(pdev, PCI_COMMAND, new);
+> 		...bar...
+> 	}
+>=20
+> And in mine:
+>=20
+> 	if (new =3D=3D pci_command)
+> 		return;
+>=20
+> 	...foo...
+> 	pci_write_config_word(pdev, PCI_COMMAND, new);
+> 	...bar...
+>=20
+> I hope it's clear now what I meant.
 
-If KUNIT_ASSERT_GT triggers, then we would end up leaking the mode as well.
+It is clear.. I'm not necessarily convinced that it's better to review
+than just copying the pre-existing code, but if you really want it we
+can do it I guess.
 
-I think we should create a kunit_drm_display_mode_from_cea_vic()
-function that registers a kunit action to free the mode when the test is
-done.
+P.
 
-Maxime
-
---djulfyohgymknlbz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZwzgPgAKCRAnX84Zoj2+
-dteBAX9sZC/yS8WOODm2wDyaXfjYOgqVF69VSbh4LDQnHqKFPbOpF0pD8QeumUjs
-jAHAFdsBgIGEMTbjs1RdQl0X+E5YvMxs7+ne7Y+v92mgY/wghTGznn7IYKkjTtne
-O350WS17qg==
-=s+qI
------END PGP SIGNATURE-----
-
---djulfyohgymknlbz--
 
