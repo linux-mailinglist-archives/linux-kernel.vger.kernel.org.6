@@ -1,108 +1,152 @@
-Return-Path: <linux-kernel+bounces-364139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1A899CB8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:25:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9B999CB92
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B471C2178D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E1E2833DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE041A4F20;
-	Mon, 14 Oct 2024 13:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C521A76D4;
+	Mon, 14 Oct 2024 13:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qwkdnois"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vENYb/E2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16E54A3E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5594A3E;
+	Mon, 14 Oct 2024 13:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728912340; cv=none; b=RIVa+JPA/ihqFVuRCAJBtAQR7eueK3tVVGf1MZS+pkpyU7q7UPKfoIv2yE7SWGVQXfWTKnYW4J70PwOq6zMS9ljHSe3NpA8ECQ8SJGurtp4dm29b71wLKj2ljJS540T08XL/3PzYjXH4cJZhU5KbPbGyD9X9iUdGS3Ydvz/30Bg=
+	t=1728912527; cv=none; b=RZl/+++YPtK9i1Gyzfg7XQ77iKAi6xoqf7pqcQM9aym+VtUTJYm1jLn7NWxBe6U+jq/BgmvwSaBYfouTeVmHcVDOVVM+tn2t3F5eWkTOa/zZEgzM8Ntk6S+SQ/Cpy+pGU3f13OisaVJOftGsuN1fuB93jTkgadVPDHTgpfhrRcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728912340; c=relaxed/simple;
-	bh=D9ULmpwo07CAG1hQ8yl0FcU2WXv6pGnxGIrk1yXQUBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDYqLsgL0VXj1PILer0y6JNBY2bp2IFLX6TzSA0ONdqbLf/KABtZ24aeOAjz+ePQP8Nkt19HiCSb4kAz2muWndoRtJ7hMPj38T/7wts4JWOxRGt21Ca7RUoKHg0KGhvEhs+MamZ6bSeqKxsLi1pfUTmUPJxluyP6X4tGwkHtFDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qwkdnois; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d4612da0fso3078561f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728912337; x=1729517137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qcw6vFzAeM6V1uYExGMaM9DjMaXwb3dLyeYvVAn2Ehw=;
-        b=qwkdnoisiZ8HyWGLX2ltPO04PWpqxbe52Ns1KcVKy9Om+k7y8CpUSHqDTZcDQwJu+H
-         XLUhuBfqR0URS6iWS7xkqcH/BvH9bM45RqftYo5sZP6llVffshpRo8zpp5S4Kk7JXEsS
-         AvarNxHQY8KSchz146CD9VgEZgEG3DXZXLTxW7cpuHwGe7iqKqBYKg53CgQMzjvXLEBg
-         9j+oty1eM6PGw5wFXlpPANWPJ+h4ZWf6nC5bmri7q0+BzKH8Oy83o/UcqcI+u04xDlYv
-         zCYX4LdajnOEfUssrEcPFBFFNcp668bu5Yx25iVEhYtYVFRAn7s4I7T6/WVadRidYghZ
-         WS6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728912337; x=1729517137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qcw6vFzAeM6V1uYExGMaM9DjMaXwb3dLyeYvVAn2Ehw=;
-        b=HwgzcjF/2Dht88im8hXl6w0zWcYW1eHva15FF/MzTIXDlOSpHedhc2F4QZ+RfSKSDm
-         VTzJrZhvf/QaXOuc1pKksWssLopAMCEFgSr0bPXOJHUQoztSoKM8XBFVNaHuJvJ/UN5G
-         WH1Tc2hkhun2ImhUQHm+fIew7HmjpWkSQv9JgN/cTC8EuyCR8vOcDIIa0TRkSmY/7hF6
-         DnfpjWya4DMPK1jZOt+VtRItggzblGe4rQT+urd8/+jWFpIcrZICeUWfxED501RIBCIl
-         n411i2hxJA0qibjp6r+uxOqcqMY/tj+qaOBM59rJzl9K2EbUCMbfJEYULeI7TqXF1PGj
-         9Ghw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlfYsHLmeu5GO6vsr0wA0VtQwQTfTXWu0KY7oTHHjMtikbMKKCMkdqcUR/ygTcUub0RFBCrU7PYylGJyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3qXsd0bjnTYfAXw1P+z1XfwgdfXu0rQSyOF/VWalrZTy5VpNz
-	6yS54iSeRc6udRnYQgB8EMBwdCCB/fiB/1jJj8T609mYCrNFn/oEL6q7jIpnRYkNAmQbNwrL0bC
-	x/jUUqheaQYrOQQw3Hf5LQ7OAX2SUAFs0r3dR
-X-Google-Smtp-Source: AGHT+IGh9g25AxERQtC7Q/z3tZszAdR6jVdmK0ErRScTUABwGozUjqMJMTLChIuJXgSGz4cvgAjijGBqFoiI0/5liCU=
-X-Received: by 2002:a5d:53cd:0:b0:37c:ca20:52a with SMTP id
- ffacd0b85a97d-37d551d4f7cmr7789713f8f.8.1728912336980; Mon, 14 Oct 2024
- 06:25:36 -0700 (PDT)
+	s=arc-20240116; t=1728912527; c=relaxed/simple;
+	bh=IJC/r/I8ibvGLVsU2Qx09C27Zj6TxnkngFFKIcYbnnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxvA4r+zHUmuKopXz6dKm8rj7mRJO0TdOLojoMmEmb9qhZVipa2SQhPiYd5vcRBmBQM4WuW2c5BVqdNB2GUSIkFF4zMoeLR89ZBXBLvJnpZPFLQbPSiMF1F30py9YunOOUOVtZksi1t+T+xm70r36+r4e5zgjYHle5JWeSxhsRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vENYb/E2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4855DC4CEC3;
+	Mon, 14 Oct 2024 13:28:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728912526;
+	bh=IJC/r/I8ibvGLVsU2Qx09C27Zj6TxnkngFFKIcYbnnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vENYb/E2rDJtJ21mQgAB845FLopbOAlQDyBka97Azx/VEzDHK1e4IcGlX/URWDbqh
+	 OIOsbNXlYR7Rc8Jtn/y7nAuOV/aOblvGeDNzVUqJEPVwszkA5PFF2eHBLB5RD7mDB8
+	 k4Kga91MJoC9VHwO4bf3vjvZFD59FKDfTDEiwis4qLu6xJq8wZYQtc55dtGCSErw5w
+	 tSPEXgHV8jJeM1HwYkpLQ7ChqBJUZpszOlR2vI/h7q6jyea7+97bNkCpDiBAw+/cas
+	 DnQvFsJYFfNF2Yd0IEu8Sdgx/PJ8aKsEFnWZ9Q+D/Lrw56aDowVYxO9ofPnQ32UJ35
+	 gFkZR19klhbQA==
+Date: Mon, 14 Oct 2024 14:28:41 +0100
+From: Will Deacon <will@kernel.org>
+To: Besar Wicaksono <bwicaksono@nvidia.com>
+Cc: suzuki.poulose@arm.com, robin.murphy@arm.com, catalin.marinas@arm.com,
+	mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+	rwiley@nvidia.com, rknight@nvidia.com
+Subject: Re: [PATCH 3/3] perf: arm_cspmu: nvidia: enable NVLINK-C2C port
+ filtering
+Message-ID: <20241014132839.GC17353@willie-the-truck>
+References: <20240918215846.1424282-1-bwicaksono@nvidia.com>
+ <20240918215846.1424282-4-bwicaksono@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912-shrinker-v1-1-18b7f1253553@google.com> <20240914140745.7b0e5d5c.gary@garyguo.net>
-In-Reply-To: <20240914140745.7b0e5d5c.gary@garyguo.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 14 Oct 2024 15:25:24 +0200
-Message-ID: <CAH5fLgjqksLOOzEyPBDN6Ym9DKpuifdxte2a+NJ-GNQoyUe35g@mail.gmail.com>
-Subject: Re: [PATCH] rust: shrinker: add shrinker abstraction
-To: Gary Guo <gary@garyguo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Dave Chinner <david@fromorbit.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918215846.1424282-4-bwicaksono@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sat, Sep 14, 2024 at 3:07=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
->
-> On Thu, 12 Sep 2024 09:54:01 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
-> > +/// This struct is used to pass information from page reclaim to the s=
-hrinkers.
-> > +pub struct ShrinkControl<'a> {
-> > +    ptr: NonNull<bindings::shrink_control>,
-> > +    _phantom: PhantomData<&'a bindings::shrink_control>,
-> > +}
->
-> I feel like this can just be a wrapper of `Opaque<ShrinkControl>` and
-> we hand out `&'a ShrinkControl`?
+On Wed, Sep 18, 2024 at 09:58:46PM +0000, Besar Wicaksono wrote:
+> Enable NVLINK-C2C port filtering to distinguish traffic from
+> different GPUs connected to NVLINK-C2C.
+> 
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+> ---
+>  Documentation/admin-guide/perf/nvidia-pmu.rst | 32 +++++++++++++++++++
+>  drivers/perf/arm_cspmu/nvidia_cspmu.c         |  7 ++--
+>  2 files changed, 36 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/perf/nvidia-pmu.rst b/Documentation/admin-guide/perf/nvidia-pmu.rst
+> index 2e0d47cfe7ea..6d1d3206b4ad 100644
+> --- a/Documentation/admin-guide/perf/nvidia-pmu.rst
+> +++ b/Documentation/admin-guide/perf/nvidia-pmu.rst
+> @@ -86,6 +86,22 @@ Example usage:
+>  
+>     perf stat -a -e nvidia_nvlink_c2c0_pmu_3/event=0x0/
+>  
+> +The NVLink-C2C has two ports that can be connected to one GPU (occupying both
+> +ports) or to two GPUs (one GPU per port). The user can use "port" bitmap
+> +parameter to select the port(s) to monitor. Each bit represents the port number,
+> +e.g. "port=0x1" corresponds to port 0 and "port=0x3" is for port 0 and 1. The
+> +PMU will monitor both ports by default if not specified.
+> +
+> +Example for port filtering:
+> +
+> +* Count event id 0x0 from the GPU connected with socket 0 on port 0::
+> +
+> +   perf stat -a -e nvidia_nvlink_c2c0_pmu_0/event=0x0,port=0x1/
+> +
+> +* Count event id 0x0 from the GPUs connected with socket 0 on port 0 and port 1::
+> +
+> +   perf stat -a -e nvidia_nvlink_c2c0_pmu_0/event=0x0,port=0x3/
+> +
+>  NVLink-C2C1 PMU
+>  -------------------
+>  
+> @@ -116,6 +132,22 @@ Example usage:
+>  
+>     perf stat -a -e nvidia_nvlink_c2c1_pmu_3/event=0x0/
+>  
+> +The NVLink-C2C has two ports that can be connected to one GPU (occupying both
+> +ports) or to two GPUs (one GPU per port). The user can use "port" bitmap
+> +parameter to select the port(s) to monitor. Each bit represents the port number,
+> +e.g. "port=0x1" corresponds to port 0 and "port=0x3" is for port 0 and 1. The
+> +PMU will monitor both ports by default if not specified.
+> +
+> +Example for port filtering:
+> +
+> +* Count event id 0x0 from the GPU connected with socket 0 on port 0::
+> +
+> +   perf stat -a -e nvidia_nvlink_c2c1_pmu_0/event=0x0,port=0x1/
+> +
+> +* Count event id 0x0 from the GPUs connected with socket 0 on port 0 and port 1::
+> +
+> +   perf stat -a -e nvidia_nvlink_c2c1_pmu_0/event=0x0,port=0x3/
+> +
+>  CNVLink PMU
+>  ---------------
+>  
+> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> index d1cd9975e71a..cd51177347e5 100644
+> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> @@ -149,6 +149,7 @@ static struct attribute *pcie_pmu_format_attrs[] = {
+>  
+>  static struct attribute *nvlink_c2c_pmu_format_attrs[] = {
+>  	ARM_CSPMU_FORMAT_EVENT_ATTR,
+> +	ARM_CSPMU_FORMAT_ATTR(port, "config1:0-1"),
+>  	NULL,
+>  };
+>  
+> @@ -193,7 +194,7 @@ static u32 nv_cspmu_event_filter(const struct perf_event *event)
+>  	const struct nv_cspmu_ctx *ctx =
+>  		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
+>  
+> -	if (ctx->filter_mask == 0)
+> +	if (ctx->filter_mask == 0 || event->attr.config1 == 0)
+>  		return ctx->filter_default_val;
 
-We need mutable access, but using a pinned mutable reference is too
-inconvenient. I prefer this.
+Isn't this a bit too broad? It looks like this filter function is used
+beyond the C2C PMU (i.e. the PCIe PMU) and you're also checking the whole
+of config1 rather than just the port field.
 
-Alice
+Will
 
