@@ -1,90 +1,130 @@
-Return-Path: <linux-kernel+bounces-363110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805D899BDF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:04:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B9E99BDF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC8B1B22032
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:04:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A8628292E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDB05588E;
-	Mon, 14 Oct 2024 03:04:06 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB6D57C8E;
+	Mon, 14 Oct 2024 03:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U41PJ2iQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BA5196;
-	Mon, 14 Oct 2024 03:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4B28467;
+	Mon, 14 Oct 2024 03:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728875046; cv=none; b=a/dTDeBjvdhWXL8PHohb6BgEDplJS4SbZSi1S9xAwEkJK72gDLNJZFbgzifb58WauvOv6ok1bqI1rESbGiqubdnrNRTU1qPQEPvMXu+WpzV2lrydL4E4ZrnSVigQtydhnNTAPsu/tYlXqdNt0292dkzWR84VyL2SJSZ9sGu5338=
+	t=1728875425; cv=none; b=TVyQn4Y8b9MmSBVCp4s7UlvziBKpnmUcWNGmND5mWfrxLWtU3rDzb9rf+P1+XIkLechGy/F71frEDR/q6KnwaYEWIYcuCCZ2/WwkIVOG5nj8E5y6RPEVS/WthMeY5DMugAbZ0s4k3kmBwbbF3zgsilac007Ic0WIuLvUN2oHNYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728875046; c=relaxed/simple;
-	bh=wi//xKA17vRkcbTb40CDhI5yUW/c0y31lrn/7YX8/Ys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jidrrh0X75Ya0S5WKfLGIuG4JZY708doPyWFJX+Tc7oKNAal6GDAAnU+LkC9nIPFLw93WIgsLaOSmNJ8R4yI0/a4wVi+pQh0wkFg1E2wmX6321rXFOqueOVSDOwoV7eQ+xNroF6uB8x+3ltcH+gviFhp8fiewt1NuVCgsDEO4sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso72507566b.1;
-        Sun, 13 Oct 2024 20:04:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728875042; x=1729479842;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wi//xKA17vRkcbTb40CDhI5yUW/c0y31lrn/7YX8/Ys=;
-        b=dmyfYtCU1dhNC5L0OT9a2cpT5ZrsqlxxA7T4DDQUCXREetaDYpO6VFBreMWueUiHuG
-         E63kv/88zXMqnKXw41KAdBVLIVn+QMeuXrDw9Hc5Ji6micRswSkfTSLKyj6naO/DylO7
-         YVWj5maurl7uHXY7s1pPaRh8ZMORhLiVnKjdb+Nd8xkCshngEe88KaC67KWYtuBzVJGQ
-         iqDrcBQKDPHOJVQbdF0gYhG6de5RaCl22WGuTePHBmyU9YCn6rlv3N5BKeODUt4G7bSg
-         wiKKqvXif6+e2aMCRg5vemK4NfRzkolxzW0UxzQxHpZmrJcHxjMJ/nAHnwoF2BQv9eLX
-         7c7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUbW0pjVYzq4/ipE8SbdvMMtNQ7fCBblWtQiJFTffyzXAu2H/UvYRDkKrjTyQHF9hzJhxqmrPRr@vger.kernel.org, AJvYcCUqnxA7WW/p7DQuJzf+LiEqs1sJLWifDe5eyiRTUCwjPVROpvO5G2cvQZwgoKlW7K9g3mezcJ+awJEvG2/dMv0=@vger.kernel.org, AJvYcCX2yXFKcJYSS5ObWPXKWm2QH9BuFf1LJ1QeKqdS3+d1PVuLO8SUAyQlQA75KgxWGiDpd+a6dLBSfAJG@vger.kernel.org, AJvYcCXZIB9VxP74OBl1EW7bgXzWsWmOD5MSlEmyDawl3DkDCj8hwEDsnJiCN7oyWJhvlf5bJtgCQfaQJ0tGQ/15@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7vbP85qbKacFkQ4TXfjcJGWDiR+tiwK1Mx9CasZix9GsFJ+I1
-	joIzhyMFs4sbpFcDYnK+TZhDp4vu+xmaQ2c1eEfP6K4XG6BpIhx1e6R1g2/C49CKMzbiql2xN/a
-	L0YOhIco/wM8rITA18aWz+hnkc8Y=
-X-Google-Smtp-Source: AGHT+IFNiMGbY/5Zo805pZfKtRSxuh/9OJ5e3DgonSSpqNK1J1+bOAyc8dhhBwU4LB+KnrEKnjMkRHHeVnQRBcJhBGw=
-X-Received: by 2002:a17:907:3e23:b0:a99:43e1:21ad with SMTP id
- a640c23a62f3a-a99b9585822mr939308266b.45.1728875042463; Sun, 13 Oct 2024
- 20:04:02 -0700 (PDT)
+	s=arc-20240116; t=1728875425; c=relaxed/simple;
+	bh=DdQ/o5IyAE1ef2BCYx1IXwALl3MWzI8TPRzuZrl3jQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Bx0gcKospiDcEC9NimPDtETJYhbSpbyD7Jn6hGdzm20wPEsQsGiREshjVpEPmIfdICVBgcG0wouHSEb6dH4pqCCgkv+SU1aqOtCZoDiuRrN21yyE6GLrwWIoup31fcaf+wK2iPaNGobVC1KZX7Ae6BLMiUMDvrSdNHPZ8JumnUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U41PJ2iQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E0NYdo001018;
+	Mon, 14 Oct 2024 03:10:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KeAYuDGyuiL1QDxIhtx6FIuHKkO563Nn7tQ/PODSPfY=; b=U41PJ2iQw6SWw75s
+	0Wu6y5K3GO0jt+/xL2yL6921Zl5bmNqJ7aIVPYRNpsEooSKqR7pv6zmqmNiVsEIk
+	+4wlCXQdwLESfCN1I8/vlpxrM+zvsR1kMrizDaOEntEzpK/cpqKQLRCaMyEeRPcz
+	oHBeeM/jl9tLDaa32BLKlipWRymfw8hn+EJVwwgrw8bG9hYR5vBoSkuNqSyda3B2
+	U8rROn8qUNYN2o0avgB1lWKKByKxZ0pkOa+3ENdClQaV+vJEZB/QQfs0wZMHOJin
+	tYSl3pU5ut/IBDnblyWgz7ikp8ba5Vlr/0y1JWIzoVOE0uJ4DWnAzLX5belhaI2E
+	19DzJA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427jd8u1k1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 03:10:01 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49E3A1bE010849
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 03:10:01 GMT
+Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 13 Oct
+ 2024 20:09:57 -0700
+Message-ID: <2224b2fe-4e72-4371-9f0b-d5ee211c2210@quicinc.com>
+Date: Mon, 14 Oct 2024 11:09:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr> <20241013201704.49576-11-Julia.Lawall@inria.fr>
-In-Reply-To: <20241013201704.49576-11-Julia.Lawall@inria.fr>
-From: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
-Date: Mon, 14 Oct 2024 12:03:51 +0900
-Message-ID: <CAMZ6RqL2+srRF15spoLqXhe40w02TEDpAzb+gnbVgD-os-f87Q@mail.gmail.com>
-Subject: Re: [PATCH 10/17] can: gw: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, kernel-janitors@vger.kernel.org, vbabka@suse.cz, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	linux-can <linux-can@vger.kernel.org>, netdev <netdev@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: arm-smmu: Document Qualcomm QCS615 apps
+ smmu
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <robimarko@gmail.com>, <quic_gurus@quicinc.com>,
+        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+References: <20241011063112.19087-1-quic_qqzhou@quicinc.com>
+ <20241011063112.19087-3-quic_qqzhou@quicinc.com>
+ <af81be27-fdfa-4dec-a18c-56c7022e3c75@kernel.org>
+From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+In-Reply-To: <af81be27-fdfa-4dec-a18c-56c7022e3c75@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wm-Jb0utSsOu_EBBr2vz4zGZn5fUxE4A
+X-Proofpoint-ORIG-GUID: wm-Jb0utSsOu_EBBr2vz4zGZn5fUxE4A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140022
 
-Hi Julia,
 
-Thanks for the patch.
 
-On Mon. 14 Oct. 2024, 05:21, Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
->
-> The changes were made using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+在 10/11/2024 2:48 PM, Krzysztof Kozlowski 写道:
+> On 11/10/2024 08:31, Qingqing Zhou wrote:
+>> Add devicetree binding for apps smmu on Qualcomm QCS615 SoC. SMMU function
+>> is required by multiple functions including USB/UFS/Ethernet.
+> 
+> Do not explain what SMMU is, because it is obvious, but explain how this
+> hardware differs from everything existing.
+OK, will improve the comments in next patch version.
+> 
+>>
+>> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+>> ---
+>>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+>> index 92d350b8e01a..9e62c2cdda08 100644
+>> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+>> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+>> @@ -36,6 +36,7 @@ properties:
+>>          items:
+>>            - enum:
+>>                - qcom,qcm2290-smmu-500
+>> +              - qcom,qcs615-smmu-500
+> 
+> This is incomplete? No clocks? No power-domains?
+This is APPS SMMU, no clocks and no power-domains are needed for DT.
+> 
+> Best regards,
+> Krzysztof
+> 
 
