@@ -1,128 +1,230 @@
-Return-Path: <linux-kernel+bounces-364818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C5899D9D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5691799D9D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4408AB21DC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:34:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06D91F22B18
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6101D3184;
-	Mon, 14 Oct 2024 22:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9CD1D3184;
+	Mon, 14 Oct 2024 22:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Iqkn3Wiv"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VZZ4a7DI"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113051D014A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5C71D0F61
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728945284; cv=none; b=Zwr209nOue+/j6EccPU9ppdRONytP9X3FWz2/UZntJXLsqzvm41AJ3mYjNapfKmx2ExohZAAapNwWunahTCaSdfDP2Elo5fs4xjaU9xlEG07j3AnpfvVM4/R401y0i0ybILnn9ynDiFfMwhiVgtzg1stFhJzN1AWuuUYD7gEBS4=
+	t=1728945508; cv=none; b=ew15Z70n+PPb+2Xk2r4MqC2w3n9IwvSUqbxqnwaCNpMRFEq8VxlTjNMfmlCl99WSXRX45jJDDibndn6SyGxEt6RxoUSWbS+9T4ayr3WqCY8cs4NsgG+AnWqMQ0tNKTY7+ipNROPHgD6K647pISTPj6lEipKUdmm7jIAQzuqYSPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728945284; c=relaxed/simple;
-	bh=0svh9Uot8vREZKTrMbrDMI2/+fvvVG4XSf//0Rw2jkQ=;
+	s=arc-20240116; t=1728945508; c=relaxed/simple;
+	bh=O8OKq8HDwbJjRTWzd1uS/ZHiUvAuLk/CNimbphejG5k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q8DPLei4iMNrZsTLoQ1Kp3c/OfDY5NmStqajyv4km9tXY/yk/xyHgp/PJd2TPjbObc9T5ocr5KAnWx+xOOHOn+Ui6865hZIaxccIh8SH/aPlb9nKLxG1z+wmQWI6KP7FlhN9JHEMCnk47sZuKqvx8F8RjZ89suFCz8pgqgl2oUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Iqkn3Wiv; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ebd6486a-f4b8-40c7-9221-86d1a97c6adb@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728945279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tIBWRVchPRccvlCmxWKjuSOmpx3Nqox2GMVKFrMi5s4=;
-	b=Iqkn3WivAiA3hZpoeofAP+PFOofRDWyMh31/E/XYt4cUZdNcmpcqH9yZcsVVg6VEYbZXqj
-	F2JBfN40R7k7BcHJp3pvj2GlsGa7tqPL4CrdgHFnD6iSpSDGDf/1f7h4L14hPm3mtBQjcW
-	1lbIEefpqXcRwgEw/xdJ5QcKvV6ZHGw=
-Date: Mon, 14 Oct 2024 15:34:33 -0700
+	 In-Reply-To:Content-Type; b=KSiZCVQ0znTjRk273gGIqTNtfvW1J9cWHM5VGCyRNWK/uF4GiNqYIzX4jVFIWx3618N7cx72kWmBcIe9XVk6CAtOhtJXDDu93twd9fadKPOi0pxaVJzJU1QVHkMrzN/DYtNPd8m/+TPqkfnyGVvxTspuMpLyUC44cXOAZCK5lEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VZZ4a7DI; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8354851fbfaso228809939f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:38:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728945505; x=1729550305; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AIonu1LkVfLUVFewo4PfSaVbZJxpryIcr1kRznLAruM=;
+        b=VZZ4a7DIWxFBF0w8QLIdIo8HJb4VFhtbJBzwzfBqk2m3Vcwup/o5hZqVCFbfixo1QI
+         A5QfemGgqOtmsK68txPRIFCGDL9yilI+qvRdhhRPGe+y1yFnxlmC+ZoVOpg6FSnrDsoG
+         TmWeM/kVU7bji2IZFQaQgIhdhXrJ8DtEFd9go=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728945505; x=1729550305;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AIonu1LkVfLUVFewo4PfSaVbZJxpryIcr1kRznLAruM=;
+        b=fFBHLCdRdO4Ho4SqejhZGVV+TDYPKdCVW3qTOYRJTUUIb4mOQqF5aQLAGAx4sjRDQY
+         CSiaKRPshSBt487VxH4wimnPcqoMzSfq6WN5Nb7aBPSmPIL6eP7V4gQHpnJwnQ6kRwQ5
+         tYmtrPc1nRtD/pQZSgfYPwTAT4SiJKLTsyeLcY6nHvPK2gV1+H5jcU3cYQ5JyTQWKsQK
+         WG3EUnxc8t8dpwqAEO371jBQvX644+u+brHc/rG2SEPuXH1p/kZADkavXlidV+FT+lkn
+         10YfFZTZ/CCpAq5sMe+rLVbpuJ1LdBcCVjaFc55Kv+w0n3r8h9oLDnG0dTYlRbdwBvdm
+         XguA==
+X-Gm-Message-State: AOJu0YwQ7LRAQXCQxPfmNqSsAoRNun/dwuPn+DqSBcNIScn4Bp6agLlJ
+	iiCDHRs//vZUyXRBWSq27kJ9RrEI+/2B89GeeD2rXr0wTkAvJrk0oBXkfxcuf8c=
+X-Google-Smtp-Source: AGHT+IHpEqUp+akex3EK/CJOQyx8TJduGjR4UjuL/G45Ogs0SFpV2pbARlLAAZYTHhTjtTIubmr86g==
+X-Received: by 2002:a05:6e02:1a0b:b0:39f:5efe:ae73 with SMTP id e9e14a558f8ab-3a3b5f1deaamr118636665ab.5.1728945505169;
+        Mon, 14 Oct 2024 15:38:25 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec837620sm25823173.0.2024.10.14.15.38.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 15:38:24 -0700 (PDT)
+Message-ID: <0f79692e-ed68-462d-8ec7-955219116282@linuxfoundation.org>
+Date: Mon, 14 Oct 2024 16:38:23 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] tools/resolve_btfids: Fix 'variable' may be used
- uninitialized warnings
-Content-Language: en-GB
-To: Eder Zulian <ezulian@redhat.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, acme@redhat.com, vmalik@redhat.com,
- williams@redhat.com
-References: <20241011200005.1422103-1-ezulian@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20241011200005.1422103-1-ezulian@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: clone3: Use the capget and capset syscall
+ directly
+To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org, shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ zhouyuhang <zhouyuhang@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241010121612.2601444-1-zhouyuhang1010@163.com>
+ <5b471a5c-c99d-42a5-943d-bb253127a202@linuxfoundation.org>
+ <a2ab9671-5095-47bf-82cf-0e167320772f@163.com>
+ <b2e02494-0f22-476e-bb79-f3a133b7fa07@linuxfoundation.org>
+ <714162ff-a2f8-4fc6-91af-0ecd6376bc7f@163.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <714162ff-a2f8-4fc6-91af-0ecd6376bc7f@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+On 10/12/24 02:28, zhouyuhang wrote:
+> 
+> On 2024/10/11 22:21, Shuah Khan wrote:
+>> On 10/11/24 00:59, zhouyuhang wrote:
+>>>
+>>> On 2024/10/10 23:50, Shuah Khan wrote:
+>>>> On 10/10/24 06:16, zhouyuhang wrote:
+>>>>> From: zhouyuhang <zhouyuhang@kylinos.cn>
+>>>>>
+>>>>> The libcap commit aca076443591 ("Make cap_t operations thread safe.") added a
+>>>>> __u8 mutex at the beginning of the struct _cap_struct,it changes the offset of
+>>>>> the members in the structure that breaks the assumption made in the "struct libcap"
+>>>>> definition in clone3_cap_checkpoint_restore.c.So use the capget and capset syscall
+>>>>> directly and remove the libcap library dependency like the commit 663af70aabb7
+>>>>> ("bpf: selftests: Add helpers to directly use the capget and capset syscall") does.
+>>>>>
+>>>>
+>>>> NIT: grammar and comma spacing. Please fix those for readability.
+>>>> e.g: Change "struct _cap_struct,it" to "struct _cap_struct, it"
+>>>> Fix others as well.
+>>>>
+>>>
+>>> Thanks, I'll fix it in V2
+>>>
+>>>
+>>>>> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+>>>>> ---
+>>>>>   tools/testing/selftests/clone3/Makefile       |  1 -
+>>>>>   .../clone3/clone3_cap_checkpoint_restore.c    | 60 +++++++++----------
+>>>>>   2 files changed, 28 insertions(+), 33 deletions(-)
+>>>>>
+>>>>> diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+>>>>> index 84832c369a2e..59d26e8da8d2 100644
+>>>>> --- a/tools/testing/selftests/clone3/Makefile
+>>>>> +++ b/tools/testing/selftests/clone3/Makefile
+>>>>> @@ -1,6 +1,5 @@
+>>>>>   # SPDX-License-Identifier: GPL-2.0
+>>>>>   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
+>>>>> -LDLIBS += -lcap
+>>>>>     TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+>>>>>       clone3_cap_checkpoint_restore
+>>>>> diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>>>> index 3c196fa86c99..111912e2aead 100644
+>>>>> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>>>> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>>>> @@ -15,7 +15,7 @@
+>>>>>   #include <stdio.h>
+>>>>>   #include <stdlib.h>
+>>>>>   #include <stdbool.h>
+>>>>> -#include <sys/capability.h>
+>>>>> +#include <linux/capability.h>
+>>>>>   #include <sys/prctl.h>
+>>>>>   #include <sys/syscall.h>
+>>>>>   #include <sys/types.h>
+>>>>> @@ -27,6 +27,13 @@
+>>>>>   #include "../kselftest_harness.h"
+>>>>>   #include "clone3_selftests.h"
+>>>>>   +#ifndef CAP_CHECKPOINT_RESTORE
+>>>>> +#define CAP_CHECKPOINT_RESTORE 40
+>>>>> +#endif
+>>>>> +
+>>>>
+>>>> Why is this necessary? This is defined in linux/capability.h.
+>>>>
+>>>>> +int capget(cap_user_header_t header, cap_user_data_t data);
+>>>>> +int capset(cap_user_header_t header, const cap_user_data_t data);
+>>>>
+>>>> In general prototypes such as these should be defined in header
+>>>> file. Why are we defining these here?
+>>>>
+>>>> These are defined in sys/capability.h
+>>>>
+>>>> I don't understand this change. You are removing sys/capability.h
+>>>> which requires you to add these defines here. This doesn't
+>>>> sound like a correct solution to me.
+>>>>
+>>>
+>>> I tested it on my machine without libcap-dev installed, the /usr/include/linux/capability.h
+>>>
+>>> is on this machine by default. Successfully compiled using #include <linux/capability.h>
+>>>
+>>> but not with #include <sys/capability.h>. This patch removes libcap library dependencies.
+>>>
+>>> And we don't use any part of sys/capability.h other than these two syscalls. So I think that's why it's necessary.
+>>
+>> You are changing the code to not include sys/capability.h
+>> What happens if sys/capability.h along with linux/capability.h
+>>
+>> Do you see problems?
+>>
+> 
+> I'm sorry, maybe I wasn't clear enough.
+> When we install the libcap library it will have the following output:
+> 
+> test@test:~/work/libcap$ sudo make install | grep capability
+> install -m 0644 include/sys/capability.h /usr/include/sys
+> install -m 0644 include/sys/capability.h /usr/include/sys
+> /usr/share/man/man5 capability.conf.5 \
+> 
+> It installs sys/capability.h in the correct location, but does not
+> 
+> install linux/capability.h, so sys/capability.h is bound to the libcap library
 
-On 10/11/24 1:00 PM, Eder Zulian wrote:
-> - tools/bpf/resolve_btfids/main.c: Initialize 'set' and 'set8' pointers
->    to NULL in to fix compiler warnings.
->
-> - tools/lib/bpf/btf_dump.c: Initialize 'new_off' and 'pad_bits' to 0 and
->    'pad_type' to  NULL to prevent compiler warnings.
->
-> - tools/lib/subcmd/parse-options.c: Initiazlide pointer 'o' to NULL
->    avoiding a compiler warning.
->
-> Tested on x86_64 with clang version 17.0.6 and gcc (GCC) 13.3.1.
->
-> $ cd tools/bpf/resolve_btfids
-> $ for c in gcc clang; do \
-> for o in fast g s z $(seq 0 3); do \
-> make clean && \
-> make HOST_CC=${c} "HOSTCFLAGS=-O${o} -Wall" 2>&1 | tee ${c}-O${o}.out; \
-> done; done && grep 'warning:\|error:' *.out
->
-> [...]
-> clang-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-> clang-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-> clang-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-> clang-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-> clang-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-> clang-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-> clang-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-> clang-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-> clang-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
-> clang-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
-> clang-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
-> clang-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-> clang-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-> gcc-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-> gcc-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-> gcc-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-> gcc-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-> gcc-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-> gcc-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-> gcc-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-> gcc-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-> gcc-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
-> gcc-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
-> gcc-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
-> gcc-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-> gcc-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
->
-> The above warnings and/or errors are not observed after applying this
-> patch.
->
-> Signed-off-by: Eder Zulian <ezulian@redhat.com>
+It won't install inux/capability.h unless you run "make headers" in
+the kernel repo.
 
-Currently compilation is okay although it uses -O0.
+> 
+> and they will either exist or disappear together. Now I want to remove
+> 
+> the dependency of the test on libcap library so I changed the code that it
+> 
+> does not contain sys/capability.h but instead linux/capability.h,
+> 
+> so that the test can compile successfully without libcap being installed,
+> 
+> these two syscalls are not declared in linux/capability.h(It is sufficient for test use except for these two syscalls)
+> 
+> so we need to declare them here. I think that's why the commit 663af70aabb7
+> 
+> ("bpf: selftests: Add helpers to directly use the capget and capset syscall") I refered to
+> 
+> does the same thing. As for your question "What happens if sys/capability.h along
+> 
+> with linux/capability.h", I haven't found the problem yet, I sincerely hope you can
+> 
+> help me improve this code. Thank you very much.
 
-One choice is to move from -O0 to -O2 and fix corresponding -Wmaybe-uninitialized issues.
-Otherwise, since there is no bug, not sure whether we should make changes or not.
-Maintainers can decide the next step.
+Try this:
 
+Run make headers in the kernel repo.
+Build without making any changes.
+Then add you changes and add linux/capability.h to include files
+
+Tell me what happens.
+
+The change you are making isn't correct. Because you don't want to
+define system calls locally in your source file.
+
+thanks,
+-- Shuah
 
