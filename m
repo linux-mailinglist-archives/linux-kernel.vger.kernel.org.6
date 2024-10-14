@@ -1,39 +1,37 @@
-Return-Path: <linux-kernel+bounces-363911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CFA99C85F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:13:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304A099C87C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36EC9283078
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8391C23AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2C61A7257;
-	Mon, 14 Oct 2024 11:10:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AAF12C475;
-	Mon, 14 Oct 2024 11:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F92F19ABDE;
+	Mon, 14 Oct 2024 11:13:08 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9062617BECA
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728904238; cv=none; b=HwgCwW3IR28urISkJtUhFb1Ey/1T8hrEVEWLuXd7Ez8fQAXOdd/OKQlY2Aoi0mzMHcAZ58KvSX+a/DU3UgDPjz3ViyehvNJvIWtl7Ke1XrRdLrlhO5Z9L2V2bRiT0P0o+K6fkmsL6eFtstQXcrnO4vftsfBx/OOJxRN0P25iOyE=
+	t=1728904387; cv=none; b=DfCxtp5bfqgPZUtETKkbMQx22Uatq9VG5EoF8bFSvMIuW6I5Jxsd9jn/Mq6pL09b+wQe+JioMXOrE9qmUA5UA+5yfLJo8BTsgUDRG9fkWG/uhJP98LW8dAbA76X3u20oX5LpIHueqlmRq4++eg0KS2sPGgUIwXTQw3LSXbWcv3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728904238; c=relaxed/simple;
-	bh=PojU6kypepWIWq7RgQl7oNjMigZv2wfzBGIf4mzcW6U=;
+	s=arc-20240116; t=1728904387; c=relaxed/simple;
+	bh=sf73umAdsshCxjnI1FBaiVERr9V5mGYONtFk0jvxidY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lJfb62EovKJNDacKEKnZ0dtWazJvhlnRZ5QrRM9eieuYjgtx8JV1b5gyF1F4ZrA/VeL+v6bWiYrJ0BeX5n5anEOO5y9qvMYqIYUcGC9Vg2TxoJMKJeru9PjqvGjs5Q1HUUBF7TzoG4NzY3Rqeeplrotfw6aWV4Y8I9S8ed3ThOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49AFC1007;
-	Mon, 14 Oct 2024 04:11:06 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E88E13F51B;
-	Mon, 14 Oct 2024 04:10:31 -0700 (PDT)
-Message-ID: <b3b77c4a-67fe-4052-92db-fd2aabfa2ba3@arm.com>
-Date: Mon, 14 Oct 2024 12:10:30 +0100
+	 In-Reply-To:Content-Type; b=cQEMyJeoP3kqRPQTNkI2kPXZCXt6OYSNuNlhRp/h/z08DuCou/qMBqFPEsDGaVonZHyEQ4zdtOvZBtSCPXCVDW3gtVk/eWAMEEXFRzWjde+rKlUfz6xSBppi4AtNgR8eqKXDSd+3ZkWHUl9G66yEeZomkFIjBLDwvOnrULmDWlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A82F01C0003;
+	Mon, 14 Oct 2024 11:12:53 +0000 (UTC)
+Message-ID: <8138c729-8a30-454d-8422-234cead415ab@ghiti.fr>
+Date: Mon, 14 Oct 2024 13:12:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,114 +39,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V13 11/14] perf tools: Add missing_features for
- aux_start_paused, aux_pause, aux_resume
-To: Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Hendrik Brueckner <brueckner@linux.ibm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
- <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- H Peter Anvin <hpa@zytor.com>, Kan Liang <kan.liang@linux.intel.com>,
- Zhenyu Wang <zhenyuw@linux.intel.com>, mizhang@google.com,
- kvm@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20241014105124.24473-1-adrian.hunter@intel.com>
- <20241014105124.24473-12-adrian.hunter@intel.com>
+Subject: Re: [PATCH v2 1/2] riscv: vdso: Prevent gcc from inserting calls to
+ memset()
 Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20241014105124.24473-12-adrian.hunter@intel.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>, alexghiti@rivosinc.com
+Cc: vladimir.isaev@syntacore.com, roman.artemev@syntacore.com,
+ guoren@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+ aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <mhng-b17acfa9-03e8-4ef7-a24f-a133b2dbf31a@palmer-ri-x1c9>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <mhng-b17acfa9-03e8-4ef7-a24f-a133b2dbf31a@palmer-ri-x1c9>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
+
+Hi Palmer,
+
+On 17/09/2024 17:41, Palmer Dabbelt wrote:
+> On Thu, 04 Jul 2024 23:09:01 PDT (-0700), alexghiti@rivosinc.com wrote:
+>> gcc is smart enough to insert a call to memset() in
+>> riscv_vdso_get_cpus(), which generates a dynamic relocation.
+>>
+>> So prevent gcc from doing that by using the
+>> -fno-tree-loop-distribute-patterns option.
+>
+> This option doesn't exist on LLVM (at least on whatever version I'm 
+> using), and I'm not getting any memset()s generated locally so I'm not 
+> sure what to look for over there.
+>
+
+When compiling a rv32_defconfig (still on 6.12), I get:
+
+~/linux$ riscv64-unknown-elf-readelf -r 
+build_defconfig_rv32/arch/riscv/kernel/vdso/vdso.so
+
+Relocation section '.rela.dyn' at offset 0x5a0 contains 1 entry:
+  Offset     Info    Type            Sym.Value  Sym. Name + Addend
+00000314  00000205 R_RISCV_JUMP_SLOT 00000000   memset + 0
 
 
+> From poking around GCC it looks like we might want -fno-tree-ccp too? 
+> That seems to be able to convert assignments into builtins as well...
 
-On 10/14/24 11:51, Adrian Hunter wrote:
-> 
-> 
-> Display "feature is not supported" error message if aux_start_paused,
-> aux_pause or aux_resume result in a perf_event_open() error.
-> 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> Acked-by: Ian Rogers <irogers@google.com>
-> Reviewed-by: Andi Kleen <ak@linux.intel.com>
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+I gave a try at -fno-tree-ccp, but it did not remove this relocation.
 
-> ---
-> 
-> 
-> Changes in V13:
->          Add error message also in EOPNOTSUPP case (Leo)
-> 
-> 
->   tools/perf/util/evsel.c | 12 ++++++++++++
->   tools/perf/util/evsel.h |  1 +
->   2 files changed, 13 insertions(+)
-> 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 9621c8c12406..fd28ff5437b5 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -2177,6 +2177,12 @@ bool evsel__detect_missing_features(struct evsel *evsel)
->                  perf_missing_features.inherit_sample_read = true;
->                  pr_debug2("Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.\n");
->                  return true;
-> +       } else if (!perf_missing_features.aux_pause_resume &&
-> +           (evsel->core.attr.aux_pause || evsel->core.attr.aux_resume ||
-> +            evsel->core.attr.aux_start_paused)) {
-> +               perf_missing_features.aux_pause_resume = true;
-> +               pr_debug2_peo("Kernel has no aux_pause/aux_resume support, bailing out\n");
-> +               return false;
->          } else if (!perf_missing_features.branch_counters &&
->              (evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS)) {
->                  perf_missing_features.branch_counters = true;
-> @@ -3397,6 +3403,10 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
->                          return scnprintf(msg, size,
->          "%s: PMU Hardware doesn't support 'aux_output' feature",
->                                           evsel__name(evsel));
-> +               if (evsel->core.attr.aux_action)
-> +                       return scnprintf(msg, size,
-> +       "%s: PMU Hardware doesn't support 'aux_action' feature",
-> +                                       evsel__name(evsel));
->                  if (evsel->core.attr.sample_period != 0)
->                          return scnprintf(msg, size,
->          "%s: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'",
-> @@ -3427,6 +3437,8 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
->                          return scnprintf(msg, size, "clockid feature not supported.");
->                  if (perf_missing_features.clockid_wrong)
->                          return scnprintf(msg, size, "wrong clockid (%d).", clockid);
-> +               if (perf_missing_features.aux_pause_resume)
-> +                       return scnprintf(msg, size, "The 'aux_pause / aux_resume' feature is not supported, update the kernel.");
->                  if (perf_missing_features.aux_output)
->                          return scnprintf(msg, size, "The 'aux_output' feature is not supported, update the kernel.");
->                  if (!target__has_cpu(target))
-> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> index bd08d94d3f8a..d40df2051718 100644
-> --- a/tools/perf/util/evsel.h
-> +++ b/tools/perf/util/evsel.h
-> @@ -221,6 +221,7 @@ struct perf_missing_features {
->          bool weight_struct;
->          bool read_lost;
->          bool branch_counters;
-> +       bool aux_pause_resume;
->          bool inherit_sample_read;
->   };
-> 
-> --
-> 2.43.0
-> 
-> 
+I now see this relocation in llvm too, so it would be nice to find a 
+common option or another way to do it, any idea is welcome!
+
+Thanks,
+
+Alex
+
+
+>
+>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>> ---
+>>  arch/riscv/kernel/vdso/Makefile | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/riscv/kernel/vdso/Makefile 
+>> b/arch/riscv/kernel/vdso/Makefile
+>> index f7ef8ad9b550..c7e40bf36371 100644
+>> --- a/arch/riscv/kernel/vdso/Makefile
+>> +++ b/arch/riscv/kernel/vdso/Makefile
+>> @@ -18,6 +18,7 @@ obj-vdso = $(patsubst %, %.o, $(vdso-syms)) note.o
+>>
+>>  ccflags-y := -fno-stack-protector
+>>  ccflags-y += -DDISABLE_BRANCH_PROFILING
+>> +ccflags-y += -fno-tree-loop-distribute-patterns
+>>
+>>  ifneq ($(c-gettimeofday-y),)
+>>    CFLAGS_vgettimeofday.o += -fPIC -include $(c-gettimeofday-y)
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
