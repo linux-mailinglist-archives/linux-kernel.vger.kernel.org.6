@@ -1,93 +1,132 @@
-Return-Path: <linux-kernel+bounces-364777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0DB99D937
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:36:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A0499D93A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E126B1C24B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11141F212E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72ACE1D1518;
-	Mon, 14 Oct 2024 21:35:39 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DF41D14F3;
+	Mon, 14 Oct 2024 21:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r2tK3ENy"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCE91AA7AF;
-	Mon, 14 Oct 2024 21:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DCB26296
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728941739; cv=none; b=HgaxkllnVHSd7PZyzyE3Kj/aATyGk9D67rYizxlQp2K6ymwKGaeBHoxxzTdah6SvHe9CCHjTm1jXkIMkyHHJr0ddvAyjfaawJZr+ADnG95pBnTiBciOPjPWeaVNcl0AokaokytR9oWi6QZMmG+Lm+Bq9INxCroM5a+ncOLmunIM=
+	t=1728941815; cv=none; b=UzkaafEXq6n01CDjK/dHyWNd5giNM6g9zrIhHOdQQ1H0kLvBtw3s4CX92icmzen6rPcaV8mPBOcsjcZInjnnREi3lezuQryTG5NSUCZz+gAr7AF56BMOSmvQFN13w0+jrZHbh76ulpcygEIm9sDCxQUADPShB/jCfRkJJOX3zW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728941739; c=relaxed/simple;
-	bh=QMyBife+gcnqO0eW+6Pm94ukAcP4n02KobpnpnqFXjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjUOIx5LQeSeifPIy18rnAv/M2SroA/ouaofgcjXXDLnXDS7zDhT7qROL4vRWjRqrCUjeHrLyKGHt0PhyT3h7R5RrSQLMGO2oNa/d+35WwbUJHP2lkwRaO0GLVhJDWBw4OfqFJtKIB53aqj+PDqPjHlewJ5xiI6gtQWU6RMGxDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 36A977BA; Mon, 14 Oct 2024 16:35:34 -0500 (CDT)
-Date: Mon, 14 Oct 2024 16:35:34 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-	linux-security-module@vger.kernel.org, jmorris@namei.org,
-	keescook@chromium.org, john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-	mic@digikod.net
-Subject: Re: [PATCH v2 0/6] LSM: Replace secctx/len pairs with lsm_context
-Message-ID: <20241014213534.GB1100381@mail.hallyn.com>
-References: <20241014151450.73674-1-casey.ref@schaufler-ca.com>
- <20241014151450.73674-1-casey@schaufler-ca.com>
- <20241014212937.GA1100381@mail.hallyn.com>
+	s=arc-20240116; t=1728941815; c=relaxed/simple;
+	bh=k4SFlVjh+uR65uwdgKDRqHhs8xqLl0Ct7TG7dQW52lw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=owXgy1YBnghiQLbReXoo24Kgdj1jiDB3Ak5APMqbrZUYZ98fVEPfN85L2JcdZH9Fupkje3GCHh0kaWCVC/h4c2gkmGn7AN3c30hqIk/7ZRuWQrcOMIBJ9YhsUiw/JoE1Cyj30+NKympoCypfhkDFGDnvuwQKFMoIfMBxFRxGWxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r2tK3ENy; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99650da839so820261566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:36:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728941812; x=1729546612; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=aS5oHRHtEas82fi6dLQvcPoGTT6ij1fnB8J0TcYqkvo=;
+        b=r2tK3ENyMKvhrCAi7B1+Nfz/vQgmfUumEGaeN64F7XDwtJdB1HlrbmkFbY55dup8lE
+         E2dSqcbaVhJkNM5X8aJdgcQzUn3MST+uryw3S/Cqsh59egA1iVcGYsLH2ftMPsKYHELY
+         f77S1/zYmf/Bkfet+eQuvx5FDvh1/mCy+kzXWlnIb8RKQqnlSoLjIC0Nz9UBkMHCX8eb
+         BFDDBzQ6EMldAAzRYnJC5ylqzonKLkQHYbPlLBntZE3RBFiu4mzFglwJtlm9XCMb0kuN
+         hNK15wK+5GoyUPXByKgdGyRBQ7SD/TqrSFeaAX7EeLI78LzVnFnqo2R4cMX57VdopjBO
+         uhFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728941812; x=1729546612;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aS5oHRHtEas82fi6dLQvcPoGTT6ij1fnB8J0TcYqkvo=;
+        b=FH3bp53IizKOoI457QrBV84fjIaEwbmi7RObhn9aIzbdC8J2dpanECgk1d9iupZFti
+         WU4iCaHFH++TaihO6F9Z5VY70eaH38paCE43lVB+9h+BHhICPLhC1aPKQ8laY+j7kfUL
+         jTURpjvgndV9+WoaBzDHs/ZStaa5WrKZOqfbh/T7S5ByokcLJc/BWiUXjbyWiP/EO7Ad
+         dNLuVCxneDEmZrRdzj4TqkwOSZVXOyFNKZIrjJlMLt9oCsRTLld8dDL/Ih4VRojrp3I/
+         CbjfrhyiH+iMPhnI/zoUUfVYcbsI/GKodJdXRiHXwjb6LV50xFxGcBg3ZccfZh2RDbp7
+         mhcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpcVUKV3b/Xzm59QCb8lYG5pNAb/+XCIGsrm3d+BNcqg0aTAcLLPKv5P1/6I4pe7mmHBg1FFegZgfpW9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz55bGayH/P2fIstwwBCGv/c8/QzKAX9KqGFSE6JvvH5PrZpM2Q
+	znWxZIzYGWUXItq1SgwA/j9P0PsAJZzLHGFAYxQ3GlVMXjpJ+n9SfpzKGc6BTpQ=
+X-Google-Smtp-Source: AGHT+IGMbzqVMCN4nXkCJp0ZbA/DVg+/3LgMvva+vLk+OtvbPDG71diTtg6++8GyVXSdB/0w22sZkw==
+X-Received: by 2002:a17:907:e2d0:b0:a7a:aa35:408c with SMTP id a640c23a62f3a-a99e39e4fbbmr856093066b.8.1728941811683;
+        Mon, 14 Oct 2024 14:36:51 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a06169946sm260451066b.204.2024.10.14.14.36.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 14:36:51 -0700 (PDT)
+Message-ID: <6a060f86-82af-4d39-9ab8-a377650e6bf3@linaro.org>
+Date: Mon, 14 Oct 2024 22:36:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014212937.GA1100381@mail.hallyn.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
+ between two subsystems
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
+ vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
+ Frank.Li@nxp.com, konradybcio@kernel.org, krzk+dt@kernel.org, robh@kernel.org
+References: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
+ <20240927063108.2773304-5-quic_msavaliy@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240927063108.2773304-5-quic_msavaliy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 04:29:37PM -0500, Serge E. Hallyn wrote:
-> On Mon, Oct 14, 2024 at 08:14:44AM -0700, Casey Schaufler wrote:
-> > LSM: Replace secctx/len pairs with lsm_context
-> > 
-> > Several of the Linux Security Module (LSM) interfaces use a pair of
-> > pointers for transmitting security context data and data length. The
-> > data passed is refered to as a security context.  While all existing
-> > modules provide nul terminated strings, there is no requirement that
-> > they to so. Hence, the length is necessary.
-> > 
-> > Security contexts are provided by a number of interfaces. The interface
-> > security_release_secctx() is used when the caller is finished with the
-> > data. Each of the security modules that provide security contexts manages
-> > them differently. This was safe in the past, because only one security
-> > module that provides security contexts is allowed to be active. To allow
-> > multiple active modules that use security contexts it is necessary to
-> > identify which security module created a security context. Adding a third
-> > pointer to the interfaces for the LSM identification is not appealing.
-> > 
-> > A new structure, lsm_context, is created for use in these interfaces.
-> > It includes three members: the data pointer, the data length and
-> > the LSM ID of its creator. The interfaces that create contexts and
-> > security_release_secctx() now use a pointer to an lsm_context instead
-> > of a pointer pair.
-> > 
-> > The changes are mostly mechanical, and some scaffolding is used within
-> > the patch set to allow for smaller individual patches.
-> 
-> Hey Casey,
-> 
-> so this set is not bisectable.  Applying just patch 1 will no compile, right?
-> What is your plan for getting past that?  Squash some or all of them into one?
-> Or are you planning a wider reorg of the patches down the line, once the
-> basics of the end result are agreed upon?
+On 27/09/2024 07:31, Mukesh Kumar Savaliya wrote:
+> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
 
-Sorry, I may have misread that.  secids make my eyes glaze over.
+As I read this the question jumps out "what is a subsystem" - in Linux 
+speak subsystem is say a bus or a memory management method but, here 
+what you really mean if I've understood the intent of this series is to 
+share the serial engine between two different bus-masters or perhaps a 
+better description is "system agent".
+
+Please make that delination clear - its not two Linux subsystems but two 
+different Qcom SoC bus masters right ?
+
+For example the APSS - Application Specific Sub Subsystem - where Linux 
+runs and say cDSP - the compute DSP on qcom SoCs.
+
+I'd rename this patch to make that clear - because "between two 
+subsystems" if you aren't intimately versed in qcom's architecture 
+suggests that a Linux i2c and spi driver are somehow muxing pins ..
+
+Really this is a type of AMP - asymmetric multi processing.
+
+"i2c: i2c-qcom-geni: Enable i2c controller sharing between two different 
+bus masters"
+
+And I'd mention in the commit log specific examples - APSS yes we get 
+but what is the other system agent in your use-case ?
+
+A DSP ? Some other processor in the SoC ?
+
+Anyway highlight one use-case for this AMP case, please.
+
+---
+bod
+
+
+
+
 
