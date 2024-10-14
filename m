@@ -1,69 +1,78 @@
-Return-Path: <linux-kernel+bounces-363027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34AB99BCF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:31:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0576899BD20
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4981F217EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DEC1F21515
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ECAE571;
-	Mon, 14 Oct 2024 00:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0071748D;
+	Mon, 14 Oct 2024 00:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9YqRKuw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PassxRw+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0F82595;
-	Mon, 14 Oct 2024 00:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA7E4A2F;
+	Mon, 14 Oct 2024 00:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728865891; cv=none; b=H17UGxqntZfMfCN1r+iBN8d17SkxMcQ2/GQObdppsiCKW5bXnE8Ho3ttxzg85UipCUdyJnCjr93Wai6+WUrjT7gwwm8vQnSpwjogLyX6fsnd+X5pnzysK5nMnoI9fHNY3R0EBt0goIHFG8KEcVokWcYO9Y8Bn+o0gZaNntsoxb0=
+	t=1728866427; cv=none; b=NSn4h1b9rMZ0KOLJ0/Gzq8+IJ61qzcE7I9aT3yIqKUEl3NNDCt05zqdCHyLlN7JPBnVVB/Wm3/AOcrX1t+A5qoWC1H/JmSCN9kmfI7kg7Za5D7iCFFkT/PTpM5RFbkcN19djnd0z+QKu8WEzzIm3730qk6UbokR1IbnMVSNcTpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728865891; c=relaxed/simple;
-	bh=XvIpO0hMtyh3Po24emY82DbVHrbP5ytugA80vx/L/C4=;
+	s=arc-20240116; t=1728866427; c=relaxed/simple;
+	bh=Dvpf7uGb45guqEjttgIF5nEh7hFJwy6SPLIRx7aPrJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U7dM2Mcd2Qlwain2vHbjwieEd40N0TVRIyRb2gUvDRMsr2Y9H0lmvnzak5s6cIx2l7wbPnd++vqqU45+Aa9q9Cq+rMMrdcBCk3z5cVf9TZTL0lPbyNAyG2EEJVg/D/pKFTgrH0qkU3xKQIJDMK95QQq3XlW5PV6+W2HPJBKdsKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9YqRKuw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E461C4CEC5;
-	Mon, 14 Oct 2024 00:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728865890;
-	bh=XvIpO0hMtyh3Po24emY82DbVHrbP5ytugA80vx/L/C4=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=r9YqRKuw96RsL0f2maCvk78OVekNkjc1FC0l5peRj1xFsFUp+Wk6XpDbm8K/I8Dat
-	 NtYj6Bt7tAjktwuIEYkK2pE6Nlz6suRz3IANFU3iMXWxI7B7SBdTbd2IFcE2RMqhNe
-	 Gzl7d51zCrp3PEv9lrIW1gc/wLVjkJdAhHf/b8suVLDK9/64J6axNZwU42guB6nhKd
-	 Bi+uaQAfSmkkbJhfVBfu3ahXZQy9cxY9cRnT2opvnrVBsZZFVpqu2kKlHbRWIQ75Yc
-	 VF5aZimutRyJow22wfPFMyDIphrxGhIuf1iV5oDIrKq8jmbchhfe2c3wMu4V4yxCL9
-	 zZuh3mAA+h63Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 043ABCE0D17; Sun, 13 Oct 2024 17:31:30 -0700 (PDT)
-Date: Sun, 13 Oct 2024 17:31:30 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	vbabka@suse.cz, Tom Talpey <tom@talpey.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>, Neil Brown <neilb@suse.de>,
-	linux-can@vger.kernel.org, bridge@lists.linux.dev,
-	b.a.t.m.a.n@lists.open-mesh.org, linux-kernel@vger.kernel.org,
-	wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
-	ecryptfs@vger.kernel.org, linux-block@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: Re: [PATCH 00/17] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <47a98e77-8bbf-48d7-bb52-50e85a5336a0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEYv6LZqkNmjG79p/adDwdAkbUSgylQ0fnvnOQ4cFFPY7VEEhswwsFOnjNcwJN5BXV97sFeVQ+PzKs3sVDNyrCtlk7DKU+B/HZ8P7/7NRFWYF1hrhHun9Xzg7VWU8HdAxPHrNGpNNJG8eutifYC24Gbzt0qUnx1E/GOfRHYvl4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PassxRw+; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728866425; x=1760402425;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Dvpf7uGb45guqEjttgIF5nEh7hFJwy6SPLIRx7aPrJE=;
+  b=PassxRw+IeDH0Q3o4SNRWm536EJfI7AuHhc+KZoGZWi2wjwUP0q+qewk
+   WCelS8pbzUIgDNhvWSUXP64OAAYAKJh64kMB/Wz3AH2oEN65nW+Yzw0/V
+   i5g9GCKcrZI7rrxb5oI0vGvdv2KzDQmwFjt3W74jvghvuWSyvpzxlFVsj
+   jVAshkO8slipcRgSdEdgX7eU3NxM++awe2Eo9IhPn3L33ILLcMJYsEafE
+   yJ6FM0QIZGe3B2WKURJN4iwxRmKOZdry0ZXT7b6g/PlgVHFIdPT+c1soP
+   +5Yvwh160hrunJy1bfatnBhubYz1CHev/PMrOSDdAphvWTnTrXp6fl2TB
+   w==;
+X-CSE-ConnectionGUID: PZEM4B5LSdGF4Ujvdn+kqA==
+X-CSE-MsgGUID: jnmwu6V1QAyGOTe1gMNd0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="45677351"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="45677351"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 17:40:24 -0700
+X-CSE-ConnectionGUID: GhojqkraTBuCXQBp+uJ35g==
+X-CSE-MsgGUID: TtZcJkDhS162jIvKGBQPWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="82207412"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 13 Oct 2024 17:40:22 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t098F-000EnP-1o;
+	Mon, 14 Oct 2024 00:40:19 +0000
+Date: Mon, 14 Oct 2024 08:40:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, broonie@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	tsbogend@alpha.franken.de
+Cc: oe-kbuild-all@lists.linux.dev, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH v3 3/3] spi: spi-mem: Add Realtek SPI-NAND controller
+Message-ID: <202410140710.qz1xiOo0-lkp@intel.com>
+References: <20241013223907.2459099-4-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,137 +81,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+In-Reply-To: <20241013223907.2459099-4-chris.packham@alliedtelesis.co.nz>
 
-On Sun, Oct 13, 2024 at 10:16:47PM +0200, Julia Lawall wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
-> 
-> The changes were done using the following Coccinelle semantic patch.
-> This semantic patch is designed to ignore cases where the callback
-> function is used in another way.
+Hi Chris,
 
-For the series:
+kernel test robot noticed the following build warnings:
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+[auto build test WARNING on broonie-spi/for-next]
+[also build test WARNING on robh/for-next linus/master v6.12-rc3 next-20241011]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> // <smpl>
-> #spatch --all-includes --include-headers
-> 
-> @r@
-> expression e;
-> local idexpression e2;
-> identifier cb,f,g;
-> position p;
-> @@
-> 
-> (
-> call_rcu(...,e2)
-> |
-> call_rcu(&e->f,cb@p)
-> |
-> call_rcu(&e->f.g,cb@p)
-> )
-> 
-> @r1@
-> type T,T1;
-> identifier x,r.cb;
-> @@
-> 
->  cb(...) {
-> (
->    kmem_cache_free(...);
-> |
->    T x = ...;
->    kmem_cache_free(...,(T1)x);
-> |
->    T x;
->    x = ...;
->    kmem_cache_free(...,(T1)x);
-> )
->  }
-> 
-> @s depends on r1@
-> position p != r.p;
-> identifier r.cb;
-> @@
-> 
->  cb@p
-> 
-> @script:ocaml@
-> cb << r.cb;
-> p << s.p;
-> @@
-> 
-> Printf.eprintf "Other use of %s at %s:%d\n" cb (List.hd p).file (List.hd p).line
-> 
-> @depends on r1 && !s@
-> expression e;
-> identifier r.cb,f,g;
-> position r.p;
-> @@
-> 
-> (
-> - call_rcu(&e->f,cb@p)
-> + kfree_rcu(e,f)
-> |
-> - call_rcu(&e->f.g,cb@p)
-> + kfree_rcu(e,f.g)
-> )
-> 
-> @r1a depends on !s@
-> type T,T1;
-> identifier x,r.cb;
-> @@
-> 
-> - cb(...) {
-> (
-> -  kmem_cache_free(...);
-> |
-> -  T x = ...;
-> -  kmem_cache_free(...,(T1)x);
-> |
-> -  T x;
-> -  x = ...;
-> -  kmem_cache_free(...,(T1)x);
-> )
-> - }
-> 
-> @r2 depends on !r1@
-> identifier r.cb;
-> @@
-> 
-> cb(...) {
->  ...
-> }
-> 
-> @script:ocaml depends on !r1 && !r2@
-> cb << r.cb;
-> @@
-> 
-> Printf.eprintf "need definition for %s\n" cb
-> // </smpl>
-> 
-> ---
-> 
->  arch/powerpc/kvm/book3s_mmu_hpte.c  |    8 ------
->  block/blk-ioc.c                     |    9 ------
->  drivers/net/wireguard/allowedips.c  |    9 +-----
->  fs/ecryptfs/dentry.c                |    8 ------
->  fs/nfsd/nfs4state.c                 |    9 ------
->  kernel/time/posix-timers.c          |    9 ------
->  net/batman-adv/translation-table.c  |   47 ++----------------------------------
->  net/bridge/br_fdb.c                 |    9 ------
->  net/can/gw.c                        |   13 ++-------
->  net/ipv4/fib_trie.c                 |    8 ------
->  net/ipv4/inetpeer.c                 |    9 +-----
->  net/ipv6/ip6_fib.c                  |    9 ------
->  net/ipv6/xfrm6_tunnel.c             |    8 ------
->  net/kcm/kcmsock.c                   |   10 -------
->  net/netfilter/nf_conncount.c        |   10 -------
->  net/netfilter/nf_conntrack_expect.c |   10 -------
->  net/netfilter/xt_hashlimit.c        |    9 ------
->  17 files changed, 23 insertions(+), 171 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/dt-bindings-spi-Add-realtek-rtl9300-snand/20241014-064017
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20241013223907.2459099-4-chris.packham%40alliedtelesis.co.nz
+patch subject: [PATCH v3 3/3] spi: spi-mem: Add Realtek SPI-NAND controller
+reproduce: (https://download.01.org/0day-ci/archive/20241014/202410140710.qz1xiOo0-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410140710.qz1xiOo0-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
+   Using alabaster theme
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
