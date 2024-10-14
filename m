@@ -1,61 +1,67 @@
-Return-Path: <linux-kernel+bounces-363880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93B699C81D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:06:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D14599C81F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A5E28B29B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76891F25B00
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6191CACE0;
-	Mon, 14 Oct 2024 11:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEB71CACF8;
+	Mon, 14 Oct 2024 11:01:20 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AB01CACD3;
-	Mon, 14 Oct 2024 11:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6372C1A4F03;
+	Mon, 14 Oct 2024 11:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903676; cv=none; b=LBMW0enOB9iOdIJ6RfOEYF8/W6mrjcEoxEYn/b/UH6pl29mSP/f6vDsuHIxSmVxVBgiR/K4DM+5t7Wyu0VMzQVjrOTOa1EQxB+ejresY0Q/xaVb38dg4Ehg5w8kz0dBYS1bXnAOD6T5G7uZmKorKbpllaFabdw3EiTjQdFk405U=
+	t=1728903679; cv=none; b=FGpslM2M1DCe35IYaL0Vy7N6ickhpF+40JZrB1Ic+ZOP3uPsyL4+vHW1kqgpkoM+/BjB/dVZdKmO90Jim/ohDHLYQ0YnXZDFB809QYxtL3iAoNE+CswfxHZgb0ybsG6vVVZRhIEka5OZ6I1lnq3Th+p705XHw+K47uDA/rlj/TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903676; c=relaxed/simple;
-	bh=1SsPpanNuV5EagXX5c22RJuoRdQa8WgepP88w60YNwI=;
+	s=arc-20240116; t=1728903679; c=relaxed/simple;
+	bh=gGmDIIzyy9IHazPso2R/WKF0iZif8zx/sBJb7QmIGlg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P72bnP6JnHM7GdkfQ5SkYl0LtNskQhn2ezK7dqLZIVRpgLFtiYhmaiCB2mmmJqmv2BdtB9zgfHpRBFQAV9J0TG8hR1Ic19bvlxGv/aiRumnvkd3yb32gB82aOpZd3tlUeQttWl1JZw3WIEuKpuuh8WakkJ8WUZEpNxPrRsLaxuw=
+	 MIME-Version; b=b65UB5V6zugMtMjyBtJbIXB+gI/wILq6RORvfof+QD0zt1MTP2YwYGJEIeBp2mfkaJGoCJw3CRdq0v8xcYr8FKp1cw20S+u0W+GohYP3nJZbwsHwiIa56QyIZe/8J2euZ5tL0xKG5IK/3il1TR8Pm6Ie6iZY7lmfR79dzJC0/wE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C49D916F8;
-	Mon, 14 Oct 2024 04:01:43 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 997AD16F8;
+	Mon, 14 Oct 2024 04:01:47 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 679B23F51B;
-	Mon, 14 Oct 2024 04:01:11 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 769A53F51B;
+	Mon, 14 Oct 2024 04:01:14 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
 	Ard Biesheuvel <ardb@kernel.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
 	David Hildenbrand <david@redhat.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
 	Greg Marsden <greg.marsden@oracle.com>,
 	Ivan Ivanov <ivan.ivanov@suse.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Kalesh Singh <kaleshsingh@google.com>,
+	Latchesar Ionkov <lucho@ionkov.net>,
 	Marc Zyngier <maz@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Matthias Brugger <mbrugger@suse.com>,
 	Miroslav Benes <mbenes@suse.cz>,
-	Niklas Cassel <cassel@kernel.org>,
 	Will Deacon <will@kernel.org>
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-ide@vger.kernel.org,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH v1 34/57] sata_sil24: Remove PAGE_SIZE compile-time constant assumption
-Date: Mon, 14 Oct 2024 11:58:41 +0100
-Message-ID: <20241014105912.3207374-34-ryan.roberts@arm.com>
+	linux-mm@kvack.org,
+	v9fs@lists.linux.dev,
+	virtualization@lists.linux.dev
+Subject: [RFC PATCH v1 35/57] virtio: Remove PAGE_SIZE compile-time constant assumption
+Date: Mon, 14 Oct 2024 11:58:42 +0100
+Message-ID: <20241014105912.3207374-35-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -72,10 +78,8 @@ To prepare for supporting boot-time page size selection, refactor code
 to remove assumptions about PAGE_SIZE being compile-time constant. Code
 intended to be equivalent when compile-time page size is active.
 
-Convert "struct sil24_ata_block" and "struct sil24_atapi_block" to use a
-flexible array member for their sge[] array. The previous static size of
-SIL24_MAX_SGE depends on PAGE_SIZE so doesn't work for boot-time page
-size.
+Updated multiple BUILD_BUG_ON() instances to test against page size
+limits.
 
 Wrap global variables that are initialized with PAGE_SIZE derived values
 using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
@@ -88,118 +92,88 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- drivers/ata/sata_sil24.c | 46 +++++++++++++++++++---------------------
- 1 file changed, 22 insertions(+), 24 deletions(-)
+ drivers/block/virtio_blk.c      |  2 +-
+ drivers/virtio/virtio_balloon.c | 10 ++++++----
+ net/9p/trans_virtio.c           |  4 ++--
+ 3 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/ata/sata_sil24.c b/drivers/ata/sata_sil24.c
-index 72c03cbdaff43..85c6382976626 100644
---- a/drivers/ata/sata_sil24.c
-+++ b/drivers/ata/sata_sil24.c
-@@ -42,26 +42,25 @@ struct sil24_sge {
- 	__le32	flags;
- };
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 194417abc1053..8a8960b609bc9 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -899,7 +899,7 @@ static ssize_t serial_show(struct device *dev,
+ 	int err;
  
-+/*
-+ * sil24 fetches in chunks of 64bytes.  The first block
-+ * contains the PRB and two SGEs.  From the second block, it's
-+ * consisted of four SGEs and called SGT.  Calculate the
-+ * number of SGTs that fit into one page.
-+ */
-+#define SIL24_PRB_SZ	(sizeof(struct sil24_prb) + 2 * sizeof(struct sil24_sge))
-+#define SIL24_MAX_SGT	((PAGE_SIZE - SIL24_PRB_SZ) / (4 * sizeof(struct sil24_sge)))
-+
-+/*
-+ * This will give us one unused SGEs for ATA.  This extra SGE
-+ * will be used to store CDB for ATAPI devices.
-+ */
-+#define SIL24_MAX_SGE	(4 * SIL24_MAX_SGT + 1)
+ 	/* sysfs gives us a PAGE_SIZE buffer */
+-	BUILD_BUG_ON(PAGE_SIZE < VIRTIO_BLK_ID_BYTES);
++	BUILD_BUG_ON(PAGE_SIZE_MIN < VIRTIO_BLK_ID_BYTES);
  
- enum {
- 	SIL24_HOST_BAR		= 0,
- 	SIL24_PORT_BAR		= 2,
+ 	buf[VIRTIO_BLK_ID_BYTES] = '\0';
+ 	err = virtblk_get_id(disk, buf);
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 54469277ca303..3818d894bd212 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -25,6 +25,7 @@
+  * page units.
+  */
+ #define VIRTIO_BALLOON_PAGES_PER_PAGE (unsigned int)(PAGE_SIZE >> VIRTIO_BALLOON_PFN_SHIFT)
++#define VIRTIO_BALLOON_PAGES_PER_PAGE_MAX (unsigned int)(PAGE_SIZE_MAX >> VIRTIO_BALLOON_PFN_SHIFT)
+ #define VIRTIO_BALLOON_ARRAY_PFNS_MAX 256
+ /* Maximum number of (4k) pages to deflate on OOM notifications. */
+ #define VIRTIO_BALLOON_OOM_NR_PAGES 256
+@@ -138,7 +139,7 @@ static u32 page_to_balloon_pfn(struct page *page)
+ {
+ 	unsigned long pfn = page_to_pfn(page);
  
--	/* sil24 fetches in chunks of 64bytes.  The first block
--	 * contains the PRB and two SGEs.  From the second block, it's
--	 * consisted of four SGEs and called SGT.  Calculate the
--	 * number of SGTs that fit into one page.
--	 */
--	SIL24_PRB_SZ		= sizeof(struct sil24_prb)
--				  + 2 * sizeof(struct sil24_sge),
--	SIL24_MAX_SGT		= (PAGE_SIZE - SIL24_PRB_SZ)
--				  / (4 * sizeof(struct sil24_sge)),
--
--	/* This will give us one unused SGEs for ATA.  This extra SGE
--	 * will be used to store CDB for ATAPI devices.
--	 */
--	SIL24_MAX_SGE		= 4 * SIL24_MAX_SGT + 1,
--
+-	BUILD_BUG_ON(PAGE_SHIFT < VIRTIO_BALLOON_PFN_SHIFT);
++	BUILD_BUG_ON(PAGE_SHIFT_MIN < VIRTIO_BALLOON_PFN_SHIFT);
+ 	/* Convert pfn from Linux page size to balloon page size. */
+ 	return pfn * VIRTIO_BALLOON_PAGES_PER_PAGE;
+ }
+@@ -228,7 +229,7 @@ static void set_page_pfns(struct virtio_balloon *vb,
+ {
+ 	unsigned int i;
+ 
+-	BUILD_BUG_ON(VIRTIO_BALLOON_PAGES_PER_PAGE > VIRTIO_BALLOON_ARRAY_PFNS_MAX);
++	BUILD_BUG_ON(VIRTIO_BALLOON_PAGES_PER_PAGE_MAX > VIRTIO_BALLOON_ARRAY_PFNS_MAX);
+ 
  	/*
- 	 * Global controller registers (128 bytes @ BAR0)
- 	 */
-@@ -244,13 +243,13 @@ enum {
- 
- struct sil24_ata_block {
- 	struct sil24_prb prb;
--	struct sil24_sge sge[SIL24_MAX_SGE];
-+	struct sil24_sge sge[];
- };
- 
- struct sil24_atapi_block {
- 	struct sil24_prb prb;
- 	u8 cdb[16];
--	struct sil24_sge sge[SIL24_MAX_SGE];
-+	struct sil24_sge sge[];
- };
- 
- union sil24_cmd_block {
-@@ -373,7 +372,7 @@ static struct pci_driver sil24_pci_driver = {
+ 	 * Set balloon pfns pointing at this page.
+@@ -1042,8 +1043,9 @@ static int virtballoon_probe(struct virtio_device *vdev)
+ 		 * host's base page size. However, it needs more work to report
+ 		 * that value. The hard-coded order would be fine currently.
+ 		 */
+-#if defined(CONFIG_ARM64) && defined(CONFIG_ARM64_64K_PAGES)
+-		vb->pr_dev_info.order = 5;
++#if defined(CONFIG_ARM64)
++		if (PAGE_SIZE == SZ_64K)
++			vb->pr_dev_info.order = 5;
  #endif
+ 
+ 		err = page_reporting_register(&vb->pr_dev_info);
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 0b8086f58ad55..25b8253011cec 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -786,7 +786,7 @@ static struct virtio_driver p9_virtio_drv = {
+ 	.remove		= p9_virtio_remove,
  };
  
--static const struct scsi_host_template sil24_sht = {
-+static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(struct scsi_host_template, sil24_sht, {
- 	__ATA_BASE_SHT(DRV_NAME),
- 	.can_queue		= SIL24_MAX_CMDS,
- 	.sg_tablesize		= SIL24_MAX_SGE,
-@@ -382,7 +381,7 @@ static const struct scsi_host_template sil24_sht = {
- 	.sdev_groups		= ata_ncq_sdev_groups,
- 	.change_queue_depth	= ata_scsi_change_queue_depth,
- 	.device_configure	= ata_scsi_device_configure
+-static struct p9_trans_module p9_virtio_trans = {
++static DEFINE_GLOBAL_PAGE_SIZE_VAR(struct p9_trans_module, p9_virtio_trans, {
+ 	.name = "virtio",
+ 	.create = p9_virtio_create,
+ 	.close = p9_virtio_close,
+@@ -804,7 +804,7 @@ static struct p9_trans_module p9_virtio_trans = {
+ 	.pooled_rbuffers = false,
+ 	.def = 1,
+ 	.owner = THIS_MODULE,
 -};
 +});
  
- static struct ata_port_operations sil24_ops = {
- 	.inherits		= &sata_pmp_port_ops,
-@@ -1193,7 +1192,7 @@ static int sil24_port_start(struct ata_port *ap)
- 	struct device *dev = ap->host->dev;
- 	struct sil24_port_priv *pp;
- 	union sil24_cmd_block *cb;
--	size_t cb_size = sizeof(*cb) * SIL24_MAX_CMDS;
-+	size_t cb_size = PAGE_SIZE * SIL24_MAX_CMDS;
- 	dma_addr_t cb_dma;
- 
- 	pp = devm_kzalloc(dev, sizeof(*pp), GFP_KERNEL);
-@@ -1258,7 +1257,6 @@ static void sil24_init_controller(struct ata_host *host)
- 
- static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
--	extern int __MARKER__sil24_cmd_block_is_sized_wrongly;
- 	struct ata_port_info pi = sil24_port_info[ent->driver_data];
- 	const struct ata_port_info *ppi[] = { &pi, NULL };
- 	void __iomem * const *iomap;
-@@ -1266,9 +1264,9 @@ static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	int rc;
- 	u32 tmp;
- 
--	/* cause link error if sil24_cmd_block is sized wrongly */
--	if (sizeof(union sil24_cmd_block) != PAGE_SIZE)
--		__MARKER__sil24_cmd_block_is_sized_wrongly = 1;
-+	/* union sil24_cmd_block must be PAGE_SIZE */
-+	BUG_ON(struct_size_t(struct sil24_atapi_block, sge, SIL24_MAX_SGE) != PAGE_SIZE);
-+	BUG_ON(struct_size_t(struct sil24_ata_block, sge, SIL24_MAX_SGE) > PAGE_SIZE);
- 
- 	ata_print_version_once(&pdev->dev, DRV_VERSION);
- 
+ /* The standard init function */
+ static int __init p9_virtio_init(void)
 -- 
 2.43.0
 
