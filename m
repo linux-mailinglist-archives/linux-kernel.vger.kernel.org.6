@@ -1,117 +1,136 @@
-Return-Path: <linux-kernel+bounces-363432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD4399C259
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADF599C255
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E171F218C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857B71C26989
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9CB155725;
-	Mon, 14 Oct 2024 07:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67EC14F10E;
+	Mon, 14 Oct 2024 07:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kT6Uvwc1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="J1CbHuoa"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E1A155359;
-	Mon, 14 Oct 2024 07:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5042E14B946;
+	Mon, 14 Oct 2024 07:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892755; cv=none; b=IJWRPeAqMPC090B7J/uKRvepscJQFMn5kVFSKbru4ZbdxDKj4MGsQJBWcPZ8SOsznhTBQJC9mTckKopl/T/Q0+igMbfsbcOIG917fVswAcuC/aP0Ax1ZID0DtPNjlCArdM3aSP6YNyGKlPb8psf9Fjs8mLXFnyjLCbxwDigGjhc=
+	t=1728892750; cv=none; b=k1IXL3Kvy7ngtMURh8O/i1ZBsyX+PSjFqMCIq4pSsqs4ZRTeS5Vp4TRBMEDXGuAFO88CR5lpdawYgrrEmWPrh9Na67ykOQXV8HMMihLdgP/HxsBtPWy7TNDKDZOKRUjLBS87NedwmuKPNhsEpUue1ThEdqPE3JWJm/3iaLsysHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892755; c=relaxed/simple;
-	bh=lszqkzooi/14FP99VptZF43wt7uBIMlNx7+MBmNiqIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SxlkbwsLZBY4HHW3O5zKZ9SmAotkr6HTYygooftMRV7WNDYChDsbGpkAOpNjpiE3guj0MWnMtH6CdHJAnL1Wypccr7AuPCB7gX1DqaGKDrYs9aH9GHfdmoUe787ui/wzDP1Kz6cZ4UA+MYVyMs5WFM3EQJ75yosMRNZ6nfNLQq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kT6Uvwc1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0718C667;
-	Mon, 14 Oct 2024 09:57:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728892651;
-	bh=lszqkzooi/14FP99VptZF43wt7uBIMlNx7+MBmNiqIc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kT6Uvwc1VoOMx3WJ0Y8lQoateub1sA/c+//xoPAMtNhZKQCnq+JtkyZ1aQCOe2iKj
-	 d4jPffbVa2r1gMPIMbeuqSMdEnNUkc7naY7aMswECj5VLHskuk923UQnd5XmJx95Bk
-	 flqgP+VtnLpdUWQ13tmgf6KOnnwowqEEdSODeH/w=
-From: Umang Jain <umang.jain@ideasonboard.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	kernel-list@raspberrypi.com,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] staging: vchiq_arm: Utilize devm_kzalloc in the probe() function
-Date: Mon, 14 Oct 2024 13:29:00 +0530
-Message-ID: <20241014075900.86537-1-umang.jain@ideasonboard.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1728892750; c=relaxed/simple;
+	bh=W+cHl7IlQoiGhHQv9LKkyFt5GXD/dU8V71qLOXnRP/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GxAx61DYpV20SDrYxCgsErxYQOlk9mQ8zwlqMXk4CklyR502LCRqoiz9HbAW1YSb3AwSCQifJgGvZ1jFD/nsJWztR/HV0aShSty//R77ZT3sD/kQWf6ra0TScYUDW/t376bY/bicsgN06wcQylTG29DfjREvXNM7N2XHEROU37o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=J1CbHuoa; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728892746;
+	bh=W+cHl7IlQoiGhHQv9LKkyFt5GXD/dU8V71qLOXnRP/U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J1CbHuoa5+YDRoE0wlR5ZqbuEVKI6pMJOiObf3nRtXrcnFHIeJtFsAjayselWHdXU
+	 EoMxmYpXs3JcGk8s60E5PdahN9TRnl8mdDzqXwmBMmxJTIlReV6i3Y1r6I72RHi4oJ
+	 Lg45Tp+7FUc4Evr81rkWSnjxWxeWuoxzzLjrUe5hZb3cIb4mIlYtClB1GMlQnkpP23
+	 MSVfiD/yCIhuZM9D8E+EMc/fs0AUMVIqphcVvdOaRpemD/pV0KRNn8tcmY3pJl/q62
+	 7kSqXCR/h5SXM4yQJv9/0IDLHjVYm/GojExllNa9yjWXKMB+AMsLU1atDPENJb8gnj
+	 DIRiUovB1n1MQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E3E7C17E10C2;
+	Mon, 14 Oct 2024 09:59:05 +0200 (CEST)
+Message-ID: <66ad5cd6-cac2-400a-95c2-f72d68b2a706@collabora.com>
+Date: Mon, 14 Oct 2024 09:59:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 6/8] dt-bindings: pinctrl: mediatek: Add bindings for
+ MT6735 pin controller
+To: Yassine Oudjana <yassine.oudjana@gmail.com>,
+ Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
+ Andy Teng <andy.teng@mediatek.com>, linux-mediatek@lists.infradead.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241011120520.140318-1-y.oudjana@protonmail.com>
+ <20241011120520.140318-7-y.oudjana@protonmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241011120520.140318-7-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The two resources, 'mgmt' and 'platform_state' are currently allocated
-dynamically using kzalloc(). Unfortunately, both are subject to memory
-leaks in the error handling paths of the probe() function.
+Il 11/10/24 14:03, Yassine Oudjana ha scritto:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> 
+> Add DT bindings for the MT6735 pin controller, which consist of macros
+> to be used as values for the pinmux property. Each macro corresponds
+> to a unique possible pin-function combination.
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> ---
+>   MAINTAINERS                                   |    6 +
+>   .../pinctrl/mediatek,mt6735-pinctrl.h         | 1148 +++++++++++++++++
+>   2 files changed, 1154 insertions(+)
+>   create mode 100644 include/dt-bindings/pinctrl/mediatek,mt6735-pinctrl.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e336dab6fdd1a..f95ae886f9fd8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18311,6 +18311,12 @@ F:	drivers/pinctrl/mediatek/pinctrl-rt2880.c
+>   F:	drivers/pinctrl/mediatek/pinctrl-rt305x.c
+>   F:	drivers/pinctrl/mediatek/pinctrl-rt3883.c
+>   
+> +PIN CONTROLLER - MEDIATEK MT6735
+> +M:	Yassine Oudjana <y.oudjana@protonmail.com>
+> +L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	include/dt-bindings/pinctrl/mediatek,mt6735-pinctrl.h
+> +
+>   PIN CONTROLLER - MICROCHIP AT91
+>   M:	Ludovic Desroches <ludovic.desroches@microchip.com>
+>   L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> diff --git a/include/dt-bindings/pinctrl/mediatek,mt6735-pinctrl.h b/include/dt-bindings/pinctrl/mediatek,mt6735-pinctrl.h
+> new file mode 100644
+> index 0000000000000..1134caf9022c5
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/mediatek,mt6735-pinctrl.h
 
-To address this issue, use device resource management helper devm_kzalloc()
-for proper cleanup during allocation.
+They're all called "pinfunc", even the newest mt8188 one, so please:
 
-Cc: stable@vger.kernel.org
-Fixes: 1c9e16b73166 ("staging: vc04_services: vchiq_arm: Split driver static and runtime data")
-Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
----
- .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c   | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+mediatek,mt6735-pinfunc.h
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 29e78700463f..373cfdd5b020 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -285,7 +285,7 @@ vchiq_platform_init_state(struct vchiq_state *state)
- {
- 	struct vchiq_arm_state *platform_state;
- 
--	platform_state = kzalloc(sizeof(*platform_state), GFP_KERNEL);
-+	platform_state = devm_kzalloc(state->dev, sizeof(*platform_state), GFP_KERNEL);
- 	if (!platform_state)
- 		return -ENOMEM;
- 
-@@ -1344,7 +1344,7 @@ static int vchiq_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	mgmt = kzalloc(sizeof(*mgmt), GFP_KERNEL);
-+	mgmt = devm_kzalloc(&pdev->dev, sizeof(*mgmt), GFP_KERNEL);
- 	if (!mgmt)
- 		return -ENOMEM;
- 
-@@ -1402,8 +1402,6 @@ static void vchiq_remove(struct platform_device *pdev)
- 
- 	arm_state = vchiq_platform_get_arm_state(&mgmt->state);
- 	kthread_stop(arm_state->ka_thread);
--
--	kfree(mgmt);
- }
- 
- static struct platform_driver vchiq_driver = {
--- 
-2.45.2
+just for consistency and nothing else
 
+> @@ -0,0 +1,1148 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (C) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
+> + */
+> +
+> +#ifndef __DT_BINDINGS_PINCTRL_MEDIATEK_MT6735_PINFUNC_H__
+> +#define __DT_BINDINGS_PINCTRL_MEDIATEK_MT6735_PINFUNC_H__
+
+#ifndef _DT_BINDINGS_PINCTRL_MEDIATEK_MT6735_PINFUNC_H
+#define _DT_BINDINGS_PINCTRL_MEDIATEK_MT6735_PINFUNC_H
+
+#endif /* _DT_BINDINGS_PINCTRL_MEDIATEK_MT6735_PINFUNC_H */
+
+Cheers,
+Angelo
 
