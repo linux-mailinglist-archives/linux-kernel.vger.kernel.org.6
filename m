@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-364846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC11F99DA2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:37:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D860799DA2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34ED71F22DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 744CE283096
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981FC1D9A67;
-	Mon, 14 Oct 2024 23:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44E41DAC80;
+	Mon, 14 Oct 2024 23:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q5Qbr6Ma"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1IiPZ3D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A110D1D9A46
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A511D9A6F;
+	Mon, 14 Oct 2024 23:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728949016; cv=none; b=iKIRMu+3D+VT2jXK01GtN75rtsNwOFZIkhVJEPQgsFEa9bDDngyJ7ZDszD3ArE89I7ly76i5QcsQQ9s7/r1nOa3YkhnVTe0eQC5bGzCRuCbl2p8p1TKIPRtMzqJkow478lP+2k6ND6DxmTU9TTQFmEknbFY9Ii2tIXHnr4TNRnU=
+	t=1728949017; cv=none; b=SXlWJuptPq5hen3YqlUMLQqoy3FiKJW5/eczb1HP7wTJOy40jK4sXR+BNq7qi6fc+A0ShJAeIFxuHEjz8JKTC0bm6t5g0bAWu3oLjIXVc94oKWKdHvvtaEREzkPV/KLO/bUaf6JtNw3GSlLmDzNYSlPKDvMMBDbBl57JqMuAY0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728949016; c=relaxed/simple;
-	bh=9lQ11KBt43uQ5J9JR5JWrhkSeYstXcy9pl4223UHEE0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UAz88izB//PwDRl0kysOCeMWm/lXLfAsI3ENIMXPW75w3WSiZfv68UyYvg9RwwNhMq1kXVUF12RdzguGschf0xLLiqQFm2rTAQl+DIlctbo4Laa+KuZKaRZUsuiwShbfKV+HmnaJrX6QKMQjki9coaZFlZFw4aF9Mubu3woN39U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q5Qbr6Ma; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3204db795so70017217b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728949013; x=1729553813; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zm6GRvpYVPkv4rqmcHo9pBIrnZWQHVu3C3S3LK/OgI4=;
-        b=q5Qbr6MaqI7zz/3A99gTIAbvhpULKJUA3yL3NQotwIJ286dQE9tiW2xwSkioFwixiG
-         16tXjs+9iN/bAC8aMP2ms4c/2UmYVhUSUSCjFsQzuzrWrIRgb7W/dI74V/fEwS4tq8Ix
-         wVhBELhd2r3XZRkahlrfO3rYWd5nrGIrG1rrudcNoaMBbkLbMvw7DHwtr2S+E/vK27hu
-         UB7UxMfYszMXhIJ3W3gQDv7Yee/PG1PH47q9bTD3yjpWEYIaeHCbVN2w17XPhneJtqvn
-         ORBrIcZChjtwhSHR+TCrrxNV9Df87tfejS8gQmMbZXR7o0cMGX04NhjXTJxFccvw6E0n
-         n59w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728949013; x=1729553813;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zm6GRvpYVPkv4rqmcHo9pBIrnZWQHVu3C3S3LK/OgI4=;
-        b=KrC9yOrsHTiMK5JZZMz+OAkumOfQyl1a81AukdWyBzTgzBXReLSAtoTS8+7mYiimWS
-         C/sVETA9KC/b6D/jVVCLX43O0fAG0jnVxDEivJ9Z7ZTtQXVBjN1lrN6h1ad80WO/N+vV
-         +mES+dOhlVUevM6CQSvRNuQQeZaC0DOhh/CvbYs35o/QcJm2BqFGBLZW9oYMAXld6s8+
-         AdyOJnYrbil1+pjSzZipZVImnln5pHmrk8r7SXRYnelZviio5pZo0d3/rM5wTIs3Hhry
-         lPIuWQn4+pMbaBV5vH9pO8Q3T4V3fnQw2UWc8+b8QQ+28/ZFfCkAxk1FJUnAuKktuGox
-         2AEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVL0mimjAn1rvw6nW3GSJQ8zVxwZ8B+/4P0gmsVkKpzcOyAeZbGZ88OuDoP+66UEiPJVytulgykwOTxaoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymjbNVzZVSDwdoS5MG4wtz+flySN/txOKN+19b0GSaYUbsIPfo
-	rzqWKjLEg/GBOkizxKe6Grsp1HGhz2fPe99HmQ2QbtY1WdErUNwFaHoxdpnxeLXNo2vu9vumEtt
-	how==
-X-Google-Smtp-Source: AGHT+IGrlmmIMbrq1eDFzk8slt5Bv/bjfFyuOUS+xM//3TUnJKMB1jMjboz4gv8IycU3lIMwe83TEFFGqyA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:2e02:0:b0:e22:5fcb:5e22 with SMTP id
- 3f1490d57ef6-e2919d75c76mr8304276.3.1728949013311; Mon, 14 Oct 2024 16:36:53
- -0700 (PDT)
-Date: Mon, 14 Oct 2024 16:36:51 -0700
-In-Reply-To: <20241004140810.34231-1-nikwip@amazon.de>
+	s=arc-20240116; t=1728949017; c=relaxed/simple;
+	bh=aEYfd+irzfCo/P1ISiBPvIl+H1cO9NIiTbWBKh5EdkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K5euqDbRs3RdtdeFB5CAenVIltH0whgydf1x6See5oSOIHm7fQpRXuiK0O9wviS2TuJPoMKrSJ965cGo2mKbplG01Vtghvq+mXlTECssfSe2eaOtTZ+0A1yVIeqBIneM/IoFcHVfzWNrYjyJiJXcReoqmvW+EX8rPx10wb2jSSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1IiPZ3D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C035C4CEC7;
+	Mon, 14 Oct 2024 23:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728949016;
+	bh=aEYfd+irzfCo/P1ISiBPvIl+H1cO9NIiTbWBKh5EdkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q1IiPZ3DYRgiO+7kFv+VsXTKeFc2fYBVAt7Wv9GnoIQyRH+eMVFgqCi0wfxNPwlY4
+	 f7JBOehb0Y2t2KHfzY/feU2W1d1/uenOlFOD/vIPBgYq4s83KM476ftqyhmfcZI2Bb
+	 k9ZVUeuYdqP/oXqqlyTiOGTohjNqvFreRR1lgKzSP6/K550836hEX8Ve9/j4K9AvTW
+	 NENPNOpQU8FS8qLMTjzCi9fkgk4jRymmd9ftJg0DUknryH4sl8klqHbIS2Hptt8onE
+	 QKc2R0fLmKxQGuUjhC/icrBIz6df26qSImiBZJU48doCFKfh0K8noa3SxzOjp5kmV0
+	 71knPoZgdUZQw==
+Date: Mon, 14 Oct 2024 18:36:53 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: anish kumar <yesanishhere@gmail.com>
+Cc: mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: elf_loader: redundant check remove
+Message-ID: <jerzlrs3vwtf6wb4bhgprmsdmfm7usv7qec34hfzj7q6oxhqwd@7isqdegmqwei>
+References: <20241014054820.59860-1-yesanishhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241004140810.34231-1-nikwip@amazon.de>
-Message-ID: <Zw2rE7-ZTCFpNE5G@google.com>
-Subject: Re: [PATCH 0/7] KVM: x86: Introduce new ioctl KVM_HYPERV_SET_TLB_FLUSH_INHIBIT
-From: Sean Christopherson <seanjc@google.com>
-To: Nikolas Wipper <nikwip@amazon.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, Nicolas Saenz Julienne <nsaenz@amazon.com>, 
-	Alexander Graf <graf@amazon.de>, James Gowans <jgowans@amazon.com>, nh-open-source@amazon.com, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Nikolas Wipper <nik.wipper@gmx.de>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	x86@kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014054820.59860-1-yesanishhere@gmail.com>
 
-On Fri, Oct 04, 2024, Nikolas Wipper wrote:
-> This series introduces a new ioctl KVM_HYPERV_SET_TLB_FLUSH_INHIBIT. It
-> allows hypervisors to inhibit remote TLB flushing of a vCPU coming from
-> Hyper-V hyper-calls (namely HvFlushVirtualAddressSpace(Ex) and
-> HvFlushirtualAddressList(Ex)). It is required to implement the
-> HvTranslateVirtualAddress hyper-call as part of the ongoing effort to
-> emulate VSM within KVM and QEMU. The hyper-call requires several new KVM
-> APIs, one of which is KVM_HYPERV_SET_TLB_FLUSH_INHIBIT.
+On Sun, Oct 13, 2024 at 10:48:20PM GMT, anish kumar wrote:
+> offset will always be positive number and adding
+> and comparing to the same variable 'size' will
+> always result in check being false always.
+> Remove this superfluous check.
 > 
-> Once the inhibit flag is set, any processor attempting to flush the TLB on
-> the marked vCPU, with a HyperV hyper-call, will be suspended until the
-> flag is cleared again. During the suspension the vCPU will not run at all,
-> neither receiving events nor running other code. It will wake up from
-> suspension once the vCPU it is waiting on clears the inhibit flag. This
-> behaviour is specified in Microsoft's "Hypervisor Top Level Functional
-> Specification" (TLFS).
+
+What if offset + size overflows?
+
+Regards,
+Bjorn
+
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+>  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The vCPU will block execution during the suspension, making it transparent
-> to the hypervisor.
- 
-s/hypervisor/VMM.  In the world of KVM, the typical terminology is that KVM itself
-is the hypervisor, and the userspace side is the VMM.  It's not perfect, but it's
-good enough and fairly ubiquitous at this point, and thus many readers will be
-quite confused as to how a vCPU blocking is transparent to KVM :-)
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index 94177e416047..c6d893e9c15e 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -278,7 +278,7 @@ find_table(struct device *dev, const struct firmware *fw)
+>  		table = (struct resource_table *)(elf_data + offset);
+>  
+>  		/* make sure we have the entire table */
+> -		if (offset + size > fw_size || offset + size < size) {
+> +		if (offset + size > fw_size) {
+>  			dev_err(dev, "resource table truncated\n");
+>  			return NULL;
+>  		}
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
 
