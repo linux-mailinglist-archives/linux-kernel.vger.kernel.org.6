@@ -1,339 +1,197 @@
-Return-Path: <linux-kernel+bounces-364700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E062899D821
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:23:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D2A99D825
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3712CB212A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:23:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1A4F282AAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1951F1D07BC;
-	Mon, 14 Oct 2024 20:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01921D0DEB;
+	Mon, 14 Oct 2024 20:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4HwZa2o"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mn3ShdzU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B5C149C47
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7066A1D0490;
+	Mon, 14 Oct 2024 20:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728937415; cv=none; b=XxaopuJZDu7tKEu2yvFiUtnoz2RlpSDzkDSPAt6lvYBGwKi5SB+HstRj7eElhD3LiDXhkw+q+PxiJuQSXVCQzCBMWRc+m6ocGm56f88OmZ+XKtkaj4LUH1WRJvkqGDcPUaaQzDq3wwDb9UIw5/awBdX12wGZs/U+Rq1b31LAZcw=
+	t=1728937429; cv=none; b=ncwte0u5qKhE0970p+TtpOawk1SrV3za5IsNw5kt2RE3D7qgtkJ9W3I/WlSY5Ph+DEPLmbU7B33p1owTKrqREhz/EZ5lxTqbQRB/FGfqJJRpv4oDWF/zB64P6pvSGAKh2QLUeTBygZ/4oXIvjTsaxw9q5pV4rY91SaMqUUachV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728937415; c=relaxed/simple;
-	bh=WcMzyO4cJE+xvcZaXtDnD3jDU3z5Pc5fL5vfePv30TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aW+BV9BJIrePlgWhfj67jqKCLCp+IqVG3iTNAHHt/b+VDUijj1vjff6LiVM2ovHMpmhkKX4S/+/uJGENK1irjttlUbZic0Wuldc2rdksiLD5tVmM39cZNhxCFEyu1PosLqICiNrBp+Mdoba2oTyQCzMJHMl1U046l+RnDAONH8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4HwZa2o; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4604b48293dso30796451cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728937412; x=1729542212; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pt98ZiFFLOkpjChOt0j7iW9N/0ozbXeRldYiUup84+8=;
-        b=h4HwZa2oG6mdW2Bi6n1oimHGU1XdJubYCsO0pMJRmPtNSyLNRrKMULGYgG//580oeS
-         9IXiw960l8Js68neaWyOdPeaNIMxyB5ecUMTJnNlL6H+G1J/ZG/xPyXKlricyNAzAnzu
-         YK8Z3oP5XK7fkWKb+wbCEKk2+F/yuOLHT/QIVNn+adGMqSSAQGnoAFoDD3i9LUtYf6Fd
-         Sh69Tuoo7f3SDzCezae/Vuw2DspJ1OpOgeXv62AtRLEli6at5wI1SuYEKZWR3/xYShdt
-         KLBduojDK85LZPCv5kOtV694/6sWRsomdxyIQWeOUUH9grUuvYGsmTllS8sFAFCUhQV2
-         Pmmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728937412; x=1729542212;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pt98ZiFFLOkpjChOt0j7iW9N/0ozbXeRldYiUup84+8=;
-        b=XJxSN+/4Z1ff/4dQEXt+PkUa3Oy0FpBL97U9VNm5lvRc/hWSlB6oMIwXlaz7qXnVp1
-         FDBfM9cMKzwuCYethc7Rl+BSMtWJPbvxlzRKfMoui4w/OTAQf93nJCC+jpsbQ0/GuTM3
-         i5AoPRijpDdwwn+WpbgrwG/rG5kaQqIdnn8KTMFfclsSL3StBWFzMgnRFxWtF2/8qG3a
-         +6XDfG0hKyG/RQLboYjSAZahayvJbg5iacx97dYr39Uisrb3z6+rz6YLsEjfLoqp1upf
-         2zdT+rwvAKXcS6dzSqW7gQ0dPkZupPfrHk6+LcHknkEYMgeFbzi34t1SAgfB+tDrgh9K
-         qm0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVOvdG9IxsieQFDshRwtK5YMSEeRV0sF3iwmbSu0DcrEv3kcU6qSZQ+XY5O5r8vvsoSacyEuBzgcgsm6sE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8pr7O2QP6WFt03HCMOcxGfwucq0TSIZypU3uX5P1uybt+hMtz
-	VxF8UtsW4qqIyma9ICIp5oEpu6lHWKF7bXojUDvOGSHHfvy7O8Qh
-X-Google-Smtp-Source: AGHT+IHAy7D5m6nzCEmeeIBtaV1KQgHkqVsgWc0XqOfW6IWQYQVTUlDYJIy8MgPdjyJkr7unlpQ/iQ==
-X-Received: by 2002:a05:6214:c87:b0:6cb:c892:8c17 with SMTP id 6a1803df08f44-6cbe52a1cb3mr316148016d6.22.1728937412013;
-        Mon, 14 Oct 2024 13:23:32 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8679a41sm49222006d6.139.2024.10.14.13.23.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 13:23:31 -0700 (PDT)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id CFF1E1200075;
-	Mon, 14 Oct 2024 16:23:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Mon, 14 Oct 2024 16:23:30 -0400
-X-ME-Sender: <xms:wn0NZ3HXYJeiKokFJRo2H2VHQDj-UJ6J10nIkw9PYP5lNqOA0aRtQg>
-    <xme:wn0NZ0Vd7VeGSPYPHRqE1d383kbIlfXDRliN-yCXj37dvasC-TE3CQwD5BMgl6vAL
-    KJAg0QA_4HdDus3Dg>
-X-ME-Received: <xmr:wn0NZ5IM2XqtHBuPNeGrF6fk5A51VQAy5-1a9xUXvy8W_RDIy9sYJnvCiN7IXw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgudeglecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    udenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpedtgeehleevffdujeffgedvlefghffhleek
-    ieeifeegveetjedvgeevueffieehhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepuddupdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehthhhomhgrshdrhhgvlhhlshhtrhhomh
-    eslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehinhhtvghlqdigvgeslhhi
-    shhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehpvghtvghriiesih
-    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonh
-    hgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnheslhgrnhhk
-    hhhorhhsthdrshgvpdhrtghpthhtoheptghhrhhishhtihgrnhdrkhhovghnihhgsegrmh
-    gurdgtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggv
-    shhkthhophdrohhrgh
-X-ME-Proxy: <xmx:wn0NZ1HyMMew2x3WWs5Zc7DoWSo7xtn6nCqdO00LZv6gSjBuhVygJg>
-    <xmx:wn0NZ9W2e6ay1FLFLTAKywjtjBHeQP0pnN2ocEkcBzPMnP5nh19jCg>
-    <xmx:wn0NZwPTMszivE8sH-hUF7eruGCGUYtXEqvB9fD1jzbpV4rd9F7PIg>
-    <xmx:wn0NZ80bmi4SqKYLPUEBHaBbaYwfaeudHXKxKi5u8TB5KbhFhPAg6A>
-    <xmx:wn0NZyXRRLzGqqZXDkjcJGpQaGNfWeZ3LlBvsXOUIfU9c2OtCnwWQm50>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Oct 2024 16:23:30 -0400 (EDT)
-Date: Mon, 14 Oct 2024 13:23:12 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-Cc: intel-xe@lists.freedesktop.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Maarten Lankhorst <maarten@lankhorst.se>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] locking/ww_mutex: Adjust to lockdep nest_lock
- requirements
-Message-ID: <Zw19sMtnKdyOVQoh@boqun-archlinux>
-References: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
+	s=arc-20240116; t=1728937429; c=relaxed/simple;
+	bh=LviqP7dfxzphekEg06s6g4kBqxHkUFlHvfJIaO/HC1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ECV5t8DnXA6DlUXZ0Hy/9TTHlQl5yQSjNVu/Fi6PCEWFXk5dcrZMKfKu7cJ3/6dK4fSPQnr759xeWu+WlEVTHIyKVW0rBTGdQGAlZVjs5HILRSHKR53XtUuLMB1H78eMdlWyI9naMRBgFfnxmcawfz81LOAPH621npe3/Ar/RvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mn3ShdzU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EBvZg7017256;
+	Mon, 14 Oct 2024 20:23:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Mvzjs9vn24PX6m8HBm1RR4yT3b4jLp9/QR1eizu7Iv0=; b=mn3ShdzUXeSpoyIi
+	ImoN/r/R+muNOyBoxUlhTg/O+oiT3r4vtWOnzaUQQ0S9SNrOwxk0hwPKBJzLM+DN
+	Pq6TRdYRRgODDqZqeyUeK7FlhNXlu7JbZZET4HPHyq5i3IRvNRvb7s7IT+6OpZes
+	2T3fXw5F9O+nRDbvjZS+acVy5EaJ3bSOIGyt0mUoC8IozZv/ybT/stOB9pUlxmj+
+	OmvodHshLuXs7kdU7ina4FCztqo9LxUTwepXzjb4dMprhYK0tVDD1kJ5Zat6yzti
+	qP/1crd3YYIlFLxUX76KVQiiv5gl95MUjjEDjyohz8qJ3qk/KmseF7mTLCO7JTWv
+	4pLXiw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427hb35dy1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 20:23:34 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EKNYtx019269
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 20:23:34 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
+ 2024 13:23:33 -0700
+Message-ID: <098b51a8-0165-4d14-9365-ef56ea2bcfae@quicinc.com>
+Date: Mon, 14 Oct 2024 13:23:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/msm/dpu: don't always activate merge_3d block
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241011-merge3d-fix-v2-1-2082470f573c@quicinc.com>
+ <kah73euzauizsxvcrgmfsatshfe4pytgb7xe5iprtajg7abhsv@l7jdcxza5gd2>
+ <0ca707a4-bd5f-4a31-a424-f466afa08e0d@quicinc.com>
+ <pahfbstxa6snym7bem456npsp6bdekjqhnjcsrlpbfn77hkrut@uviaesubwz2a>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <pahfbstxa6snym7bem456npsp6bdekjqhnjcsrlpbfn77hkrut@uviaesubwz2a>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cuVXLuwnSQvaTMs3JxINy6cUg0iFoGA5
+X-Proofpoint-GUID: cuVXLuwnSQvaTMs3JxINy6cUg0iFoGA5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 clxscore=1015 adultscore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140144
 
-Hi Thomas,
 
-On Wed, Oct 09, 2024 at 11:20:31AM +0200, Thomas Hellström wrote:
-> When using mutex_acquire_nest() with a nest_lock, lockdep refcounts the
-> number of acquired lockdep_maps of mutexes of the same class, and also
-> keeps a pointer to the first acquired lockdep_map of a class. That pointer
-> is then used for various comparison-, printing- and checking purposes,
-> but there is no mechanism to actively ensure that lockdep_map stays in
-> memory. Instead, a warning is printed if the lockdep_map is freed and
-> there are still held locks of the same lock class, even if the lockdep_map
-> itself has been released.
+
+On 10/14/2024 12:13 AM, Dmitry Baryshkov wrote:
+> On Sun, Oct 13, 2024 at 07:37:20PM -0700, Abhinav Kumar wrote:
+>> Hi Dmitry
+>>
+>> On 10/13/2024 5:20 PM, Dmitry Baryshkov wrote:
+>>> On Fri, Oct 11, 2024 at 10:25:13AM -0700, Jessica Zhang wrote:
+>>>> Only enable the merge_3d block for the video phys encoder when the 3d
+>>>> blend mode is not *_NONE since there is no need to activate the merge_3d
+>>>> block for cases where merge_3d is not needed.
+>>>>
+>>>> Fixes: 3e79527a33a8 ("drm/msm/dpu: enable merge_3d support on sm8150/sm8250")
+>>>> Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>>>> ---
+>>>> Changes in v2:
+>>>> - Added more detailed commit message
+>>>> - Link to v1: https://lore.kernel.org/r/20241009-merge3d-fix-v1-1-0d0b6f5c244e@quicinc.com
+>>>> ---
+>>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> LGTM now. Please clarify, is there any dependency between this patch and
+>>> [1]
+>>>
+>>
+>> No dependency as such. Both are tackling similar issues though. One for
+>> video mode and the other for writeback thats all. Namely:
+>>
+>> 1) We should not be enabling merge_3d block if two LMs are not being used as
+>> that block needs to be enabled only to merge two streams. If its always
+>> enabled, its incorrect programming because as per the docs its mentioned "if
+>> required". Even if thats not causing issues, I would prefer not to enable it
+>> always due to the "if required" clause and also we dont need to enable a
+>> hardware sub-block unnecessarily.
+>>
+>> 2) We should be flushing the merge_3d only if its active like Jessica wrote
+>> in the commit message of [1]. Otherwise, the flush bit will never be taken
+>> by hardware leading to the false timeout errors.
+>>
+>> It has been sent as two patches as one is for video mode and the other for
+>> writeback and for writeback it includes both (1) and (2) together in the
+>> same patch.
 > 
-> In the context of WW/WD transactions that means that if a user unlocks
-> and frees a ww_mutex from within an ongoing ww transaction, and that
-> mutex happens to be the first ww_mutex grabbed in the transaction,
-> such a warning is printed and there might be a risk of a UAF.
+> I think it's better to handle (1) in a single patch (both for video and
+> WB) and (2) in another patch. This way it becomes more obvious that WB
+> had two different independent issues issues.
+
+Hi Dmitry,
+
+Just to clarify, the patches are already being split this way.
+
+Thanks,
+
+Jessica Zhang
+
 > 
-> Note that this is only problem when lockdep is enabled and affects only
-> dereferences of struct lockdep_map.
+>>
+>> I thought this separation is fine, if we need to squash it, let me know.
+>>
+>> Thanks
+>>
+>> Abhinav
+>>
+>>> [1] https://lore.kernel.org/dri-devel/20241009-mode3d-fix-v1-1-c0258354fadc@quicinc.com/
+>>>
+>>>>
+>>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+>>>> index ba8878d21cf0e1945a393cca806cb64f03b16640..c5e27eeaff0423a69fad98122ffef7e041fbc68e 100644
+>>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+>>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+>>>> @@ -302,7 +302,7 @@ static void dpu_encoder_phys_vid_setup_timing_engine(
+>>>>    	intf_cfg.stream_sel = 0; /* Don't care value for video mode */
+>>>>    	intf_cfg.mode_3d = dpu_encoder_helper_get_3d_blend_mode(phys_enc);
+>>>>    	intf_cfg.dsc = dpu_encoder_helper_get_dsc(phys_enc);
+>>>> -	if (phys_enc->hw_pp->merge_3d)
+>>>> +	if (intf_cfg.mode_3d && phys_enc->hw_pp->merge_3d)
+>>>>    		intf_cfg.merge_3d = phys_enc->hw_pp->merge_3d->idx;
+>>>>    	spin_lock_irqsave(phys_enc->enc_spinlock, lock_flags);
+>>>>
+>>>> ---
+>>>> base-commit: a20a91fb1bfac5d05ec5bcf9afe0c9363f6c8c93
+>>>> change-id: 20240828-merge3d-fix-1a8d005e3277
+>>>>
+>>>> Best regards,
+>>>> -- 
+>>>> Jessica Zhang <quic_jesszhan@quicinc.com>
+>>>>
+>>>
 > 
-> Adjust to this by adding a fake lockdep_map to the acquired context and
-> make sure it is the first acquired lockdep map of the associated
-> ww_mutex class. Then hold it for the duration of the WW/WD transaction.
-> 
-> This has the side effect that trying to lock a ww mutex *without* a
-> ww_acquire_context but where a such context has been acquire, we'd see
-> a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
-> modify that particular test to not acquire a ww_acquire_context if it
-> is not going to be used.
-> 
-> v2:
-> - Lower the number of locks in the test-ww_mutex
->   stress(STRESS_ALL) test to accommodate the dummy lock
->   introduced in this patch without overflowing lockdep held lock
->   references.
-> 
-
-Have you tested your patch with lib/locking-selftests.c? It reported two
-errors for me:
-
-	[..]   | Wound/wait tests |
-	[..]   ---------------------
-	[..]                   ww api failures:  ok  |FAILED|  ok  |
-	[..]                ww contexts mixing:  ok  |  ok  |
-	[..]              finishing ww context:  ok  |  ok  |  ok  |  ok  |
-	[..]                locking mismatches:  ok  |  ok  |  ok  |
-	[..]                  EDEADLK handling:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |
-	[..]            spinlock nest unlocked:  ok  |
-	[..]                spinlock nest test:  ok  |
-	[..]   -----------------------------------------------------
-	[..]                                  |block | try  |context|
-	[..]   -----------------------------------------------------
-	[..]                           context:  ok  |  ok  |  ok  |
-	[..]                               try:  ok  |  ok  |  ok  |
-	[..]                             block:  ok  |  ok  |  ok  |
-	[..]                          spinlock:  ok  |  ok  |FAILED|
-
-The first one is a use case issue, I think and can be fixed similar to
-your changes in test-ww_mutex.c:
-
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 6f6a5fc85b42..6750321e3e9a 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -1720,8 +1720,6 @@ static void ww_test_normal(void)
- {
-        int ret;
-
--       WWAI(&t);
--
-        /*
-         * None of the ww_mutex codepaths should be taken in the 'normal'
-         * mutex calls. The easiest way to verify this is by using the
-@@ -1770,6 +1768,8 @@ static void ww_test_normal(void)
-        ww_mutex_base_unlock(&o.base);
-        WARN_ON(o.ctx != (void *)~0UL);
-
-+       WWAI(&t);
-+
-        /* nest_lock */
-        o.ctx = (void *)~0UL;
-        ww_mutex_base_lock_nest_lock(&o.base, &t);
-
-Please confirm whether this change is intended.
-
-The second is a case as follow:
-
-	ww_acquire_init(...);
-	spin_lock(...);
-	ww_mutex_lock(...); // this should trigger a context
-			    // invalidation. But the mutex was
-			    // initialized by ww_acquire_init() as a
-			    // LD_WAIT_INV lock.
-
-The following could fix this:
-
-diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-index a401a2f31a77..45ff6f7a872b 100644
---- a/include/linux/ww_mutex.h
-+++ b/include/linux/ww_mutex.h
-@@ -156,8 +156,8 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
-        debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
-        lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
-                         &ww_class->acquire_key, 0);
--       lockdep_init_map(&ctx->first_lock_dep_map, ww_class->mutex_name,
--                        &ww_class->mutex_key, 0);
-+       lockdep_init_map_wait(&ctx->first_lock_dep_map, ww_class->mutex_name,
-+                             &ww_class->mutex_key, 0, LD_WAIT_SLEEP);
-        mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
-        mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx->dep_map, _RET_IP_);
- #endif
-
-A v3 with all these fixed would look good to me, and I can add a
-Tested-by tag to it. Thanks!
-
-Regards,
-Boqun
-
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Maarten Lankhorst <maarten@lankhorst.se>
-> Cc: Christian König <christian.koenig@amd.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
-> ---
->  include/linux/ww_mutex.h       | 14 ++++++++++++++
->  kernel/locking/test-ww_mutex.c |  8 +++++---
->  2 files changed, 19 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-> index bb763085479a..a401a2f31a77 100644
-> --- a/include/linux/ww_mutex.h
-> +++ b/include/linux/ww_mutex.h
-> @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
->  #endif
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
->  	struct lockdep_map dep_map;
-> +	/**
-> +	 * @first_lock_dep_map: fake lockdep_map for first locked ww_mutex.
-> +	 *
-> +	 * lockdep requires the lockdep_map for the first locked ww_mutex
-> +	 * in a ww transaction to remain in memory until all ww_mutexes of
-> +	 * the transaction have been unlocked. Ensure this by keeping a
-> +	 * fake locked ww_mutex lockdep map between ww_acquire_init() and
-> +	 * ww_acquire_fini().
-> +	 */
-> +	struct lockdep_map first_lock_dep_map;
->  #endif
->  #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
->  	unsigned int deadlock_inject_interval;
-> @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
->  	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
->  	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
->  			 &ww_class->acquire_key, 0);
-> +	lockdep_init_map(&ctx->first_lock_dep_map, ww_class->mutex_name,
-> +			 &ww_class->mutex_key, 0);
->  	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
-> +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx->dep_map, _RET_IP_);
->  #endif
->  #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
->  	ctx->deadlock_inject_interval = 1;
-> @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
->  static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
->  {
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
->  	mutex_release(&ctx->dep_map, _THIS_IP_);
->  #endif
->  #ifdef DEBUG_WW_MUTEXES
-> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-> index 10a5736a21c2..5d58b2c0ef98 100644
-> --- a/kernel/locking/test-ww_mutex.c
-> +++ b/kernel/locking/test-ww_mutex.c
-> @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
->  	int ret;
->  
->  	ww_mutex_init(&mtx.mutex, &ww_class);
-> -	ww_acquire_init(&ctx, &ww_class);
-> +	if (flags & TEST_MTX_CTX)
-> +		ww_acquire_init(&ctx, &ww_class);
->  
->  	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
->  	init_completion(&mtx.ready);
-> @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
->  		ret = wait_for_completion_timeout(&mtx.done, TIMEOUT);
->  	}
->  	ww_mutex_unlock(&mtx.mutex);
-> -	ww_acquire_fini(&ctx);
-> +	if (flags & TEST_MTX_CTX)
-> +		ww_acquire_fini(&ctx);
->  
->  	if (ret) {
->  		pr_err("%s(flags=%x): mutual exclusion failure\n",
-> @@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
->  	if (ret)
->  		return ret;
->  
-> -	ret = stress(2047, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
-> +	ret = stress(2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
->  	if (ret)
->  		return ret;
->  
 > -- 
-> 2.46.0
-> 
+> With best wishes
+> Dmitry
+
 
