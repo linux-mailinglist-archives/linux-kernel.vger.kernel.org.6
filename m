@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-364437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620D299D4A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:28:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC2B99D4A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E5FF2880EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:28:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4286B254C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE2D1B4F2A;
-	Mon, 14 Oct 2024 16:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946821AE850;
+	Mon, 14 Oct 2024 16:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUg9pbJF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KCpOf0kv"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BC41AC887;
-	Mon, 14 Oct 2024 16:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992F61B4F04
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728923273; cv=none; b=Fve7T2/9VTJZjKlFc3+mUr0F6Ix1KvGF7PSbOvUlyKyiTzPTQ25Kt/iKMGouvDIRAT2cunzL5BNengb8sG/d3tJSPkUbPsl840KpEBJ0BWrf8WFpGAA+zXpuES9vg1R3ritcx28KTZsIhMG7KK4QGj2/2yZy0QsofuGKWPEBCSA=
+	t=1728923298; cv=none; b=lYNSqaekEG9N1C/0uaoDWNELlnwfkvHz83n0JeCM0N6hojjnHoohyQ0OWjyq1HwOG5JiRkXe8HKCwRLpFVHpL5eduyXk2adCzVpQPBosTbpSL5cDSeru0SXkXNLn3t2kkQId6FNJJuXMewBufMwMcmI5wgodfuNeI7eWZmgbUAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728923273; c=relaxed/simple;
-	bh=jwGpfimwWzt6q1jU1lTtwpABN94Ujy5vGGuJ89kzZ9o=;
+	s=arc-20240116; t=1728923298; c=relaxed/simple;
+	bh=3lfAMO91it2cDxvAsrXrdZ8WvRxbUyiDWy7XG1lwedI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VeSaFXrS9QrTnz5BvsKcq2nAimL/amEkKqtsRFJNcILglba73UgFwcIQYXusuhHuLvVhFEzeeCGKDtidFHUiBHOljx/KX82k1DTXgkYirdLzoWQumZdsRXkfXcmWubxf4ALCGDlQKPUvwHXoVY7NiV1C4YBbdxsaKsw+ISqeGXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUg9pbJF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28929C4CED4;
-	Mon, 14 Oct 2024 16:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728923273;
-	bh=jwGpfimwWzt6q1jU1lTtwpABN94Ujy5vGGuJ89kzZ9o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lUg9pbJFApuU7+cKFC8TJT9PLCMcC+2YmqTCXR7o2JFwZ+6haPcSJ9hof8c2ABbZo
-	 WrlYJpivucRzEXUrEvMn4NBP49o02nz4n53H0Vc0RfNGssziXNwAwrZ/xzuXQ54a2j
-	 w2FYV9RdYIyBqKjTIFHVEoQHKlrMWGTUhLVg1hetaEFhhjaMIEnepgfJInNaSnqIh0
-	 LhGTOUF0sR9vF5t+bIwSERkTh1n2U0dRpKja0+zDgs37STpHF1KY/UuJju2bERkyxV
-	 H0IxvTKDoPrvqRxm6NvUcUlDinzxtM9OZJq328syP7OpBePv6hFb/YPXYsaz1ExDJH
-	 mHja8eGE0PM+w==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e4b7409fso2260155e87.0;
-        Mon, 14 Oct 2024 09:27:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWSqKBDBH0lsBiAZcrC0t4Y3Vlj4i5Ekif78BnkjqXGwxXvFT2JY0fUYfY8oQ48Mj7dmAg/vYVq/ItYgeQY@vger.kernel.org, AJvYcCWZYOuNl8nOHuglBgmKcZBbcWXmYhxcSHddnUYwZnxu4mmOwGNvA+6q1NP+m2q1uamoJ4+UPVpXk9i73m0=@vger.kernel.org, AJvYcCXEVsugB+sj+vdGs6izRNhQcM5Hgy2hQTWU7LmLpujJRuxAhziWTSMoBZXJhyb1kDfb+cH/KW+98uARYwClTDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK5+jZBeNwCPtoJlf/bEi0xWJ1zB2g7XkEUYGnt02WZuaGgrEl
-	T1iYwZgw2P6cQo5TxEiCb+s6dDzwBw8R7OmibLF9L9mKcw/myv5zbAFuqRES0NFSYkjIjhzIGF2
-	dfVNhkTijrEvy2QIgnKxKXN/5obg=
-X-Google-Smtp-Source: AGHT+IHRF2uisuPIUJzp50NFyDqu/2E1pwV8KKK4/ZYkn1oh1Xf8Ul+foIxD0JDMpFxbu8Fe1rebinaBenD5NcvRsMQ=
-X-Received: by 2002:a05:6512:32c3:b0:536:7a79:b4df with SMTP id
- 2adb3069b0e04-539d6e6063amr3853452e87.14.1728923271760; Mon, 14 Oct 2024
- 09:27:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=anZmjpYaE/N6ilaOC3/qb5pRRZXhoH8orwlsDeXc5c/FRBapwJt/Fqp+GYb95R7lPqtlJ+VP2Yx9oqgeNA3jlN6UB2rPhAe004eAoea2gryj7FIi3DL8QtAoZ3XdsBR8uHRB1b9SgrwROXYIAeERCfqyO5sWCCiPFZxXl6uks90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KCpOf0kv; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-50d4a6ef70aso436414e0c.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728923295; x=1729528095; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3lfAMO91it2cDxvAsrXrdZ8WvRxbUyiDWy7XG1lwedI=;
+        b=KCpOf0kvas0rG+JxwSq3pjLpBf7lNlA9CppBSxjVwYjohTii1qgLDMDfbXiJlK35wD
+         9sxfcvJzJpmeFksBEw+ehd+vIUaW7UZ0vditu8Kj0FR8uNDxI5zEgFyMfQVIeFIqjzFk
+         sIY9+cYFS2+5AoSYOOOgWZZzxmDqIF7BUdQ7FVCUAw+W8Z6Y5KnMv3h+mcALGCSP/FBC
+         cptLdLCD9ywvVhypHYw/Afc1AMUZ8D+cULKn48cJQxK+45tM1pJdJ4dNW/tn5cbHYzM2
+         PpBE5zJ+U8GL7QQGHa+k+1xzHaObL5DJJTGnNGMoJfaj0ji2U+to6FEP0146YwIAgh4D
+         fwtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728923295; x=1729528095;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3lfAMO91it2cDxvAsrXrdZ8WvRxbUyiDWy7XG1lwedI=;
+        b=TkE23e0ubwNZrPe+baWu0YAZWU/oktAOZGCNzD6zTlbFoj6EIAqacKSZn51mIZ5F0F
+         PnkksHWwTPiB9bTk9nkQopel8ssSbJIACKNS9YRw6s1tQ4Sv+M+qSKgZebTnYr6b7xNE
+         gAeZWhfFozEk2rkeiZwQn+pYLcsvBhQopVatLXM29+Gk6cUjqF80hsxj1wbJ+77rv4mL
+         Vs/Z6lqMpLSD495ZdTWlH6QUKDv+UJ2lTGW0/4dVicGrZY5Ht4C3eYs6nRiIc8UUZFLA
+         BIsVzwQQWLOpAfXio8G5aq3jeWzt1RVn2cHxXKuQkyySD/nYmflHvlTW2jLV6WxeYKjF
+         q8Fw==
+X-Gm-Message-State: AOJu0Yz4crue372U4giJZugZG37Cbv0DX0xKMjVJoB3Ce5E1qK2H7EcG
+	lUqZdpyAwaK+wsfVzVuHwmm4F+doWfMzH34C0eeWIhPsfG/w6U6OJsJjTCuAggZeJ+NvRyoDP1h
+	v7L2Bsr/By8x3X8BfDCXYd2HnhgY=
+X-Google-Smtp-Source: AGHT+IE182Fb41RE9AOm8wcIYCzGGR+HdLS3F/hvPllVGWRy7W6ATYjwmFbsnKxabf5DFdYEnhTiw+22kGeCSq6OldE=
+X-Received: by 2002:a05:6122:791:b0:50a:b5a3:e00c with SMTP id
+ 71dfb90a1353d-50d374a2ed3mr4576421e0c.1.1728923295449; Mon, 14 Oct 2024
+ 09:28:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNARBXt=CWy5CgtHqdePw5L6EtD15emS2Fvre4QWfm_LjUg@mail.gmail.com>
- <20241011114040.3900487-1-gary@garyguo.net> <CANiq72ne6F1HpoA5gLYu9K0CcNB13JUFK5QgF_Cf4tAyvOm4qQ@mail.gmail.com>
- <20241011130641.4a8419c1@eugeo>
-In-Reply-To: <20241011130641.4a8419c1@eugeo>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 15 Oct 2024 01:27:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT99FbYh5nvUoEh9OHoPODYPEhyhaKAkELpi+3K0P8L-A@mail.gmail.com>
-Message-ID: <CAK7LNAT99FbYh5nvUoEh9OHoPODYPEhyhaKAkELpi+3K0P8L-A@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: rust: add `CONFIG_RUSTC_LLVM_VERSION`
-To: Gary Guo <gary@garyguo.net>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>, 
-	Yoann Congal <yoann.congal@smile.fr>, Randy Dunlap <rdunlap@infradead.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>, 
-	Mark Rutland <mark.rutland@arm.com>, kees@kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	rust-for-linux@vger.kernel.org, samitolvanen@google.com
+References: <20241010192626.1597226-1-daeho43@gmail.com> <ZwyyiG0pqXoBFIW5@infradead.org>
+In-Reply-To: <ZwyyiG0pqXoBFIW5@infradead.org>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Mon, 14 Oct 2024 09:28:04 -0700
+Message-ID: <CACOAw_yvb=jacbXVr76bSbCEcud=D1vw5rJVDO+TjZbMLYzdZQ@mail.gmail.com>
+Subject: Re: [PATCH v5] f2fs: introduce device aliasing file
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	kernel-team@android.com, Daeho Jeong <daehojeong@google.com>, Chao Yu <chao@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 9:06=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+On Sun, Oct 13, 2024 at 10:56=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
 >
-> On Fri, 11 Oct 2024 13:53:47 +0200
-> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
->
-> > On Fri, Oct 11, 2024 at 1:41=E2=80=AFPM Gary Guo <gary@garyguo.net> wro=
-te:
-> > >
-> > > The invocation of rustc-version is being moved from init/Kconfig to
-> > > scripts/Kconfig.include for consistency with cc-version.
+> On Thu, Oct 10, 2024 at 12:26:26PM -0700, Daeho Jeong wrote:
+> > From: Daeho Jeong <daehojeong@google.com>
 > >
-> > Yeah, I am ambivalent. Dropping them would minimize changes and avoid
-> > introducing something only used once, which would be nice too. Happy
-> > either way.
+> > F2FS should understand how the device aliasing file works and support
+> > deleting the file after use. A device aliasing file can be created by
+> > mkfs.f2fs tool and it can map the whole device with an extrent, not
 >
-> Another motivation is that in my helper inline series, I need to do
-> arithmetic on LLVM version (divide it by 10000 to get major verison),
-> which isn't possible for config options, but will work for variables
-> defiend in Kconfig.include.
+> s/extrent/extent/g
 >
-> I didn't mention it in the commit message for this patch because this
-> is not my patch series :)
+> > using node blocks. The file space should be pinned and normally used fo=
+r
+> > read-only usages.
+>
+> Is there an explanation somewhere what a 'device aliasing file' is?
 
+Plz, refer to this patch and the description there.
 
-I tend to agree with Muguel.
-The motivation of having cc-version in scripts/Kconfig.include
-is to check the presence of the supported C compiler, as C compiler
-is mandatory (in contrast, Rust compiler is optional).
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/comm=
+it/?h=3Ddev-test&id=3D8cc4e257ec20bee207bb034d5ac406e1ab31eaea
 
-If you have a reason to have it in scripts/Kconfig.include
-for your future works, it is OK with me, but I cannot judge it.
-
-
-
-
+Thank you,
 
 
 >
-> Best,
-> Gary
->
-> > > +if output=3D$("$@" --version --verbose 2>/dev/null | grep LLVM); the=
-n
-> >
-> > Similarly, I wonder if we should use '^LLVM version: ' here or similar
-> > to minimize the chances the "LLVM" string appears elsewhere in the
-> > future (perhaps in a custom string a vendor adds, though I would
-> > expect them to add it lowercase). We are relying on having a $3 when
-> > splitting anyway.
-> >
-> > Depending on what Masahiro prefers, I will take this one or the
-> > one-invocation-only one.
-> >
-> > Thanks Gary!
-> >
-> > Cheers,
-> > Miguel
->
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
