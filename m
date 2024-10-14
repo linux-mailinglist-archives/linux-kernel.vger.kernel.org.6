@@ -1,265 +1,295 @@
-Return-Path: <linux-kernel+bounces-364526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5AAD99D5B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:41:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A8D99D5BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A3F28378D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3932852C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8D61C57B1;
-	Mon, 14 Oct 2024 17:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECF21C7265;
+	Mon, 14 Oct 2024 17:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KxxgZoJE"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2052.outbound.protection.outlook.com [40.107.21.52])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="EI5Gkrfy"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C6F1B85C2;
-	Mon, 14 Oct 2024 17:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B6F1BFE10;
+	Mon, 14 Oct 2024 17:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728927665; cv=fail; b=LLPXgizL/b/pP34kyMyTeC5e/77lFOmpwq83pQPXweYuVVoeA1kVlW0AkYv/DsTEApU74LJhLlrnqzMxc89DTfRpBV8qpYwI9JfjxxC6OQ97BMdC76heGObu+uDoD6hXS9/O9H0c7LJBQd38KOlE6eiPoBucMi6aOlVwi0D2wDM=
+	t=1728927810; cv=pass; b=ZuKHVjsa2jY4/Ox6uoG6RH57xgQXAD5+Aub8GW5DrzXFleSdrSIMfdOglq6zbK10XFLrYizor1SgoVsjVXC/xbLuMM3nmSXSNHc4pUgWjzjy6DRvibF+0s3EfLqvcYUSkk4+ltGbEPLZhkoXp24BdVpfGR10lB9msZXtpmUGDgM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728927665; c=relaxed/simple;
-	bh=Ho9lssrAqKObnQiw+6aVmSoQQOgx+NnwZpLmA5AalbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uVGb7lPKKT1pIGLlbomknjsqpyMql83QChUQWX/Nkrxv/nBGZscRIC+fipu6JQ0QcpWmBMQeN3/c2mJ1beccADSsF3ietsyB+n+UFp2CzfWHAYrBBsz5nddMzndI1ypuFsOGeBbHQwfs6QDPEEazfJ0IDxJD9yJuY572k7ZLuts=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KxxgZoJE; arc=fail smtp.client-ip=40.107.21.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bz/13hwwoHHdRtWCpsgGxyw8Eb7NBmEec5lI/W+xwA2u0j/OZQku1p4SBnqIajRgKaWQHRlHvjz76b9b6nXJ40Wi0OycZQTxoR62Do/7bvk/nrN3ZwAAU76U+oc6g/GAuXwvvEhG93yZMv/8R1SOF6VwiW8hQUWfnESlEP7BjMHgJ0ObQJPgpNmE8IbQpKz7k/AwRzOnfNjOJHvrkv00uVJOS0Pf4PRtOrVbYx0foE11DIyQTJEsJ6I+uvO8f3hAe2aO88N6mLtWvGDotcvEd6S6kH5lgLRKCopoWdw72ASwVTiIPr7etybM/1ZO1FD4zq1IkrrXsdoP0w+J0qiIfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GniC2ibNaugTWczCKFRKq0QsgrHyjfIEAWfEcoge7Gw=;
- b=IjSpQSwPZkHl/kZEtakDpzO3bAuoxpymSdQ3/ZYqkms0bSyqIY+ZOXMmoPRGf2hhcZiWvXQacLI0YskrFrp7vtPxuImZyR3XsjYgcbiEdbM2ajOwfHUlgX+Exc+xfA8UpInlwsTcDOULEfhzaSJRa6CwIfqQSou4irXp4yG97KO83QcgMuYh2YJCdNHG9iMjZXKC4r3QBqI72DlcEabbC6IPq5yJVN9EW7B0H/0Ef4FIFDutvdNsFuiR+uFOkH92AwcxTH63Ha5vqF/eCDCyoRiLHiqaLDDdYaRlXjY3/446ygSflFsBUuWE9S+wchUTS80kJXMhIsMGyCZekMiXUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GniC2ibNaugTWczCKFRKq0QsgrHyjfIEAWfEcoge7Gw=;
- b=KxxgZoJEVwA8iorTLCwteQsV58jyLkUgO7ibCYgB1VeLRdCTvUqzTaNOCngfsSOscCTfFbHjUlKtxTJ1G+hOceyGMjL6Ysb3Ky8Mxfcsjd0msXhRgIiE3IiwlYkL34PbFrvAFCAq97p0WVHhv4X4UB3iOpzW7UYVkBT588sti5FZbAY18KL2QqUsOZzCZwstiL5Eg6fOWvKLNTNRIaA3cfyY08rfXk3dKLUEeAWAceT1ooxYPYytSj9EcTAonL5/wdRIA6nFqF28SgMZE0NuFKJ7vnP0bmWwEhwGIsnSUGR0dx+MPbOtLDMa2nFsDp04E1cIZTioMDIlvBxHcVTuyA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by DUZPR04MB9781.eurprd04.prod.outlook.com (2603:10a6:10:4e1::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
- 2024 17:40:59 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8048.013; Mon, 14 Oct 2024
- 17:40:59 +0000
-Date: Mon, 14 Oct 2024 20:40:56 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: systemport: avoid build warnings due to
- unused I/O helpers
-Message-ID: <20241014174056.sxcgikf4hhw2olp7@skbuf>
-References: <20241014150139.927423-1-vladimir.oltean@nxp.com>
- <c5ffe617-e182-4561-95d4-5f635fda53db@broadcom.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5ffe617-e182-4561-95d4-5f635fda53db@broadcom.com>
-X-ClientProxiedBy: VI1P190CA0037.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:800:1bb::12) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	s=arc-20240116; t=1728927810; c=relaxed/simple;
+	bh=CMQ5aEKoPJ8Yjt4bYFbMcMTcPpYh1IwTmFPdeQ0zY5Q=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ndFHJ119dn233YIZmrlvrGg0m9KIX8J+BL8i1Sn6Vuoxwhp9sRtaRXDNebvLJtKBc76bjrKsfYyiBpEZ0FNRK5YfEvGtHT0JlciniPE1hwsQgclcFHgWuF3MliIVQFf8D8MvGh1M9UBnK7CeDUwsZG55zLeuhCrYRJHXpV3IEhM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=EI5Gkrfy; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1728927792; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=eLCVRJdKExl6mMPF6kiha+MatIiJsh1lZkjUC29mWQp+BKyzQtYjaGjVda5Dv8dEK6Bz9g7t9vQ+mA72uG6JK630JtwPn+Mpt8RJnBMn1SEfQjkTNoQmQ/NCbtgP+ObI/5qE1/o6kHbCMAN7tRTYwDWlABsfCt6DYKQ8M6T7CIk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1728927792; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=MDhWxv3iV/paXTy7tIMf5UxS7BfHgZA0lyUUT/MwM7c=; 
+	b=KL+z+sYDT1Yt7FaJKm+iy7wxF6RJdFwbJa9dGHKDv0a/UvBj7YhlVHK6pTIS3osTrTJTRVjJCUiLaOxeZyj1/ySLCyFs2dOGefkeZwx0tDDcXRQAcw34Y40psCDhDhhLG7OWsr1+idbdoXFvuO8Pl1bsJthvkuesAs2VCaRExuc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728927792;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=MDhWxv3iV/paXTy7tIMf5UxS7BfHgZA0lyUUT/MwM7c=;
+	b=EI5GkrfyVnvJSE3zdbcNeatciL6LOato1ZkumWCJAWqiISMInpH4fsQyCJP0WDm5
+	DsN60WFrVM6OYBkNe7Lg9RWY992M7izI7tWvDzbsBZB8R3H2upRKsH0ulKuOqACmtVK
+	noZTK//UnhYHVYDDaxKWW4ylJ4HVyc1XOwXJiGMA=
+Received: by mx.zohomail.com with SMTPS id 1728927790947967.650983391245;
+	Mon, 14 Oct 2024 10:43:10 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DUZPR04MB9781:EE_
-X-MS-Office365-Filtering-Correlation-Id: 326fc1f7-c536-4099-7b25-08dcec775d70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?A2KXwMNM3msnmtKbhNm6w0a6WMEBUqnkdWV7dzfQ1JW+p8bA0zHvDY9dUQSu?=
- =?us-ascii?Q?N670Y1JMHzOfSibk05j190N9+YFgII7fU/9xthMYVW2ZJ12/UOtQtjFX2IJT?=
- =?us-ascii?Q?8R4Q8dOu8UDroHwRSc1mP6EkL1LcS5J3iBU/b9P4reGBGii33Sg8qDRtnL31?=
- =?us-ascii?Q?WsXoCJrbCXUTwurUxS681gxgzBFuaABH35MfMjsC9c06vUoIUI6Cux2mwrfA?=
- =?us-ascii?Q?0FKt6T2QrGHS4BeQdtheRTZlv4MZAS1ONRZePCI8r6nA+CFNh2Hsj4a6YUjc?=
- =?us-ascii?Q?16hjXvM47EMrNeoCs7tg0K5vJxrvkQKgNAld7pht69kg7svtssv+nyIdKxWV?=
- =?us-ascii?Q?vTGGe7sfCvTazBjMWjecq9uqrwVztCe0sXaUuGhayQAjpCMn9aHmNStxpmoN?=
- =?us-ascii?Q?TPHmYhCFgIEKk0OwfVjs4MUWr8RJaqskFYwjkuaXVCkYqI2Hn1gPiYABJO1o?=
- =?us-ascii?Q?Nn84byC6agRdubeiEKItLTHzbvogTgSy2so5lW8FPBNu7xMrQ3IqEW2F9Grh?=
- =?us-ascii?Q?Zjjgk9zkb+1RTnt0W8KQaN8I4pV/ax/WvwMBoks9CwMR5DNNSKaPWI9sbmWS?=
- =?us-ascii?Q?c7dW3T7LjOPvwQiuGxUbsiga0VQURfv3eA5ILxiHnBqo/mFNuWU9sfDfLjE9?=
- =?us-ascii?Q?0M/TLW9eTAMfCAV0LGYvTngMXqFlFL90NapMsSe/0ZruXto2tT2XhVqBTcjV?=
- =?us-ascii?Q?/rBllVYAiOXB/yGtkpdUXj62iVd3tAmoj2TMgKR65OXTwKjPUB4NxRzElN51?=
- =?us-ascii?Q?vJPmEibDSRyiaOkVlELKg22NN9tTKU4e0SawYOpm3gcxnd9gJE0TovW3X390?=
- =?us-ascii?Q?GmWvIKB9tyaCX7Rey+Ef3LJvvcCEIfl2PJxRHHQLcSSHYoUqA4Gl4Oom7Ds+?=
- =?us-ascii?Q?VerImShf0MhitxZNECHHFouXE1YeG+CLm+j42Xidony9bRRStmWLHNmVFb/m?=
- =?us-ascii?Q?ioJvqzY03kopDis2rOcMHlX3OMmWASbJxpM100BgdlYskSfzAUk9dALOimmx?=
- =?us-ascii?Q?awRKVquoP5Y01r4NxXSTHJ+AO1XjrABZmCLM97Xzie2iBsuod3CGfGpKNhMT?=
- =?us-ascii?Q?8vHvHGUgm/tB8segSxL3osUoYXemP4tb4lUfqmjculPRL19Uir3siLp5nEDU?=
- =?us-ascii?Q?WpJRMh0JG8wV8Ns+AlDtbLcsvCDMgwYiqI2u0dcGdXfNWqrX9AmI1Wm0jl8A?=
- =?us-ascii?Q?eI64W9FILocZauRC2RYMal+CPHYfp+sQxjgjA0yAB3oNNc5DHaCSYxJsnL1W?=
- =?us-ascii?Q?WqKWH7rLQDZzcNqRgvdt9yqTzM7QaHhUkZqjSCCFrw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6cw0Gln6cpM/xT8RrpYjYPSn7Kn0RLPuUbWw/tmtjiYz14Pk5uy4ebBc6Ewr?=
- =?us-ascii?Q?feCCqDaSCUniYoP36Yns3N/FG699/rPTzM5CWq4UsAWYG6ohPSksXrhxGYs0?=
- =?us-ascii?Q?RibbjjDuHcVxdFUpB4QnvEatI/Faf70ObEMDfLBocilf2buLJ2UlN5ilI1SM?=
- =?us-ascii?Q?Xubfbk608HGeZutNagrmraHkI3FBYuwW8Ck0D21ZIl/Hv2rfEM2ZMX9/xiL0?=
- =?us-ascii?Q?gHqZOXmhNWaW8VO2kftVO00e5eYiDDyLG0uhBJWCzN8F0My3zvprOh6mUPvx?=
- =?us-ascii?Q?Xuo6JvjHOR10mWnDizc1nlylXhmshNmmGX+Fkybr0LARqdXZkx8nLpUl6/Bc?=
- =?us-ascii?Q?ZZAEYsYMfgj9Jnr8KX+fPgNw4VOOriVoodd0cCRBOctOxNnyjSf32EkPbNK1?=
- =?us-ascii?Q?5Gpxs1HFPJYY+KEnOEd6FXk+GMxp9F5tgbbCJKRIo45kWXHhvZnanA6k9vcg?=
- =?us-ascii?Q?iGHXPC1rdGSz33QztOz1R0XwDGGch9+md9hKQqu0Pfh1/PgyJyuvDZXVnxkO?=
- =?us-ascii?Q?7iL+vLhEPle0iWyW2Q6HCquM6LsCOmH+X0JR9P4Wflt7aJGZNcXWGu0jFhbT?=
- =?us-ascii?Q?KmeR98IhSIkB4DSc2FTRvbTlVjIOIQGiQjZlBN5p5bLTshIc8e+Fw6LLh3tQ?=
- =?us-ascii?Q?ULBCy6WUczFrVHol+r/jx8dTNx39p8PdZvagvA1RY337cGvKnAU4BnWlj149?=
- =?us-ascii?Q?p0k75vmQgICXKnpp0f7d+lWXQP1g8g7Tnx5itXXDvKW89b5wcY1FaCbIhzZ1?=
- =?us-ascii?Q?L1ay9Wd4VgPTyCE1beZQixAaQJDK+8pcp7Mf7n03UQQnunqv3qbanEo0v3++?=
- =?us-ascii?Q?bl/VSZ94IfKKjeuKHVAZnUafMOiG9N2P6YbrhsjloSb/DjnH5xgGz+vF5juC?=
- =?us-ascii?Q?QwR9vY1ymD1caEtbJKEUdKRtm5xeOZEHh5f++s02avDA9cT0E57grGd7Xmeh?=
- =?us-ascii?Q?bDxdTkMz+WZXxEk31SY+vfuA8iAFCXJw4Gpk4PnfY0dc1PHJ4kgoz/hKvQ/j?=
- =?us-ascii?Q?+J64qgJvnvZ/RTSdCPmqigbTlagT5yS+eEeDiRR1aFdVlPU58+lqB3l6ZqpW?=
- =?us-ascii?Q?9O9YoHBk1hpW0orJqZQXaowNaUb1rvL5J57blusnhOwpio9jhe9A6B8b8od8?=
- =?us-ascii?Q?p+QM2fBmg0NzsuONVRzzv5DCqOLDZ9xT9Y50Uk+jME68Sd3YrPOjcgnXFJ3f?=
- =?us-ascii?Q?vZvTc+Eb1lRFrTlXfOg2wimxZnM/5qa/ymLKgqlez2u64lo0ESCNtSqH/A7W?=
- =?us-ascii?Q?wnJfiJe6Q2RQjeHA4txnZQljzFevPxHNdvsJkF1vYN0ecxx/HH44gTDrW6VG?=
- =?us-ascii?Q?ptMTTNcoDGyEHxAUw8XAzp0Mx/yn5I964HPi/vdhcyT3++CJHC9EcnoUPMmY?=
- =?us-ascii?Q?MDnKqZZwwRkZfh73Q4y1wXl2UGpSzZptaN1J+34RHtapq7zbMNBZu4v4iic3?=
- =?us-ascii?Q?f5zgvJ3Y8rtf+BEeEcL9hZr6B4ICDUR+IQE2KZdIJ5hJB6WICH2Rm/KlquVX?=
- =?us-ascii?Q?HZa/TksavbyIOXnxQ+P6xS2yb+ME7ctJmDz/H/3XVzfVxe4DROzmCi9oocr3?=
- =?us-ascii?Q?3KsXVgwU+m2YLjlhUpcsbkWVPsXO12YGIcQ+oNwLBKYAkiVewBufULVopE9O?=
- =?us-ascii?Q?Zw=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 326fc1f7-c536-4099-7b25-08dcec775d70
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 17:40:59.3946
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vGO97896tF+skq0vUfSd0EHCnbT6NxA2OdeEI7OTsjJOeSsFPwtFQrtfqURCAMxVAR4Q0MnYxigYE6Gru+UnVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9781
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH RFC v2 3/3] docs: media: Debugging guide for the media
+ subsystem
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240529-b4-media_docs_improve-v2-3-66318b2da726@collabora.com>
+Date: Mon, 14 Oct 2024 14:42:55 -0300
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org,
+ laurent.pinchart@ideasonboard.com,
+ hverkuil-cisco@xs4all.nl,
+ mauro.chehab@linux.intel.com,
+ kernel@collabora.com,
+ bob.beckett@collabora.com,
+ nicolas.dufresne@collabora.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <666F7E2C-A44B-4B09-AF8E-D29138DFDBD3@collabora.com>
+References: <20240529-b4-media_docs_improve-v2-0-66318b2da726@collabora.com>
+ <20240529-b4-media_docs_improve-v2-3-66318b2da726@collabora.com>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-ZohoMailClient: External
 
-On Mon, Oct 14, 2024 at 09:56:25AM -0700, Florian Fainelli wrote:
-> On 10/14/24 08:01, Vladimir Oltean wrote:
-> > A clang-16 W=1 build emits the following (abridged):
-> > 
-> > warning: unused function 'txchk_readl' [-Wunused-function]
-> > BCM_SYSPORT_IO_MACRO(txchk, SYS_PORT_TXCHK_OFFSET);
-> > note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
-> > 
-> > warning: unused function 'txchk_writel' [-Wunused-function]
-> > note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
-> > 
-> > warning: unused function 'tbuf_readl' [-Wunused-function]
-> > BCM_SYSPORT_IO_MACRO(tbuf, SYS_PORT_TBUF_OFFSET);
-> > note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
-> > 
-> > warning: unused function 'tbuf_writel' [-Wunused-function]
-> > note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
-> > 
-> > Annotate the functions with the __maybe_unused attribute to tell the
-> > compiler it's fine to do dead code elimination, and suppress the
-> > warnings.
-> > 
-> > Also, remove the "inline" keyword from C files, since the compiler is
-> > free anyway to inline or not.
-> > 
-> > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> 
-> clang is adequately warning that the txchk_{read,write}l functions are not
-> used at all, so while your patch is correct, I think we could also go with
-> this one liner in addition, or as a replacement to your patch:
-> 
-> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c
-> b/drivers/net/ethernet/broadcom/bcmsysport.c
-> index c9faa8540859..7cea30eac83a 100644
-> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
-> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-> @@ -46,7 +46,6 @@ BCM_SYSPORT_IO_MACRO(umac, SYS_PORT_UMAC_OFFSET);
->  BCM_SYSPORT_IO_MACRO(gib, SYS_PORT_GIB_OFFSET);
->  BCM_SYSPORT_IO_MACRO(tdma, SYS_PORT_TDMA_OFFSET);
->  BCM_SYSPORT_IO_MACRO(rxchk, SYS_PORT_RXCHK_OFFSET);
-> -BCM_SYSPORT_IO_MACRO(txchk, SYS_PORT_TXCHK_OFFSET);
->  BCM_SYSPORT_IO_MACRO(rbuf, SYS_PORT_RBUF_OFFSET);
->  BCM_SYSPORT_IO_MACRO(tbuf, SYS_PORT_TBUF_OFFSET);
->  BCM_SYSPORT_IO_MACRO(topctrl, SYS_PORT_TOPCTRL_OFFSET);
-> -- 
-> Florian
+Hi Sebastian,
 
-As a maintainer, you know best about how much to preserve from currently
-unused code, in the idea that it might get used later.
+> On 24 Sep 2024, at 05:45, Sebastian Fricke =
+<sebastian.fricke@collabora.com> wrote:
+>=20
+> Create a guides section for all documentation material, that isn't
+> strictly related to a specific piece of code.
+>=20
+> Provide a guide for developers on how to debug code with a focus on =
+the
+> media subsystem. This document aims to provide a rough overview over =
+the
+> possibilities and a rational to help choosing the right tool for the
+> given circumstances.
+>=20
+> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+> ---
+> Documentation/media/guides/debugging_issues.rst | 174 =
+++++++++++++++++++++++++
+> Documentation/media/guides/index.rst            |  11 ++
+> Documentation/media/index.rst                   |   1 +
+> 3 files changed, 186 insertions(+)
+>=20
+> diff --git a/Documentation/media/guides/debugging_issues.rst =
+b/Documentation/media/guides/debugging_issues.rst
+> new file mode 100644
+> index 000000000000..5f37801dd4ba
+> --- /dev/null
+> +++ b/Documentation/media/guides/debugging_issues.rst
+> @@ -0,0 +1,174 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. include:: <isonum.txt>
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Debugging and tracing in the media subsystem
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +This document serves as a starting point and lookup for debugging =
+device
+> +drivers in the media subsystem.
+> +
+> +.. contents::
+> +    :depth: 3
+> +
+> +General debugging advice
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 
-Should I also delete this?
+> +
+> +For general advice see the `general-debugging-guide =
+<../../debugging/index.html>`__.
+> +
+> +Available tools
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +dev_debug module parameter
+> +--------------------------
+> +
+> +For a general overview please see the =
+`driver-development-debugging-guide =
+<../../debugging/driver_development_debugging_guide.html>`__.
+> +
+> +Every video device provides a `dev_debug` parameter, which allows to =
+get further insights into the IOCTLs in the background.
+> +::
+> +
+> +  # cat /sys/class/video4linux/video3/name
+> +  rkvdec
+> +  # echo 0xff > /sys/class/video4linux/video3/dev_debug
+> +  # dmesg -wH
+> +  [...] videodev: v4l2_open: video3: open (0)
+> +  [  +0.000036] video3: VIDIOC_QUERYCAP: driver=3Drkvdec, =
+card=3Drkvdec, bus=3Dplatform:rkvdec, version=3D0x00060900, =
+capabilities=3D0x84204000, device_caps=3D0x04204000
+> +
+> +`Full documentation =
+<../../driver-api/media/v4l2-dev.html#video-device-debugging>`__
+> +
+> +dev_dbg / v4l2_dbg
+> +------------------
+> +
+> +- Difference between both?
+> +
+> +  - v4l2_dbg utilizes v4l2_printk under the hood, which further uses =
+printk directly, thus it cannot be targeted by dynamic debug
+> +  - dev_dbg can be targeted by dynamic debug
+> +  - v4l2_dbg has a more specific prefix format for the media =
+subsystem, while dev_dbg only highlights the driver name and the =
+location of the log
+> +
+> +Dynamic debug
+> +-------------
+> +
+> +For general advice see the `userspace-debugging-guide =
+<../../debugging/userspace_debugging_guide.html>`__.
+> +
+> +Here is one example, that enables all available `pr_debug()`'s within =
+the file:
+> +::
+> +
+> +  $ alias ddcmd=3D'echo $* > /proc/dynamic_debug/control'
+> +  $ ddcmd '-p; file v4l2-h264.c +p'
+> +  $ grep =3Dp /proc/dynamic_debug/control
+> +   drivers/media/v4l2-core/v4l2-h264.c:372 =
+[v4l2_h264]print_ref_list_b =3Dp "ref_pic_list_b%u (cur_poc %u%c) %s"
+> +   drivers/media/v4l2-core/v4l2-h264.c:333 =
+[v4l2_h264]print_ref_list_p =3Dp "ref_pic_list_p (cur_poc %u%c) %s\n"
+> +
+> +Ftrace
+> +------
+> +
+> +For general advice see the `userspace-debugging-guide =
+<../../debugging/userspace_debugging_guide.html>`__.
+> +
+> +Trace whenever the `rkvdec_try_ctrl` function is called
+> +::
+> +
+> +  $ cd /sys/kernel/tracing
+> +  $ echo function > /sys/kernel/tracing/current_tracer
+> +  $ echo rkvdec_try_ctrl > set_ftrace_filter
+> +  $ echo 1 > tracing_on
+> +  $ cat trace
+> +   h264parse0:sink-6359    [001] ...1. 172714.547523: rkvdec_try_ctrl =
+<-try_or_set_cluster
+> +   h264parse0:sink-6359    [005] ...1. 172714.567386: rkvdec_try_ctrl =
+<-try_or_set_cluster
+> +
+> +Find out from where the calls originate
+> +::
+> +
+> +  $ echo 1 > options/func_stack_trace
+> +   h264parse0:sink-6715    [002] ..... 172837.967762: rkvdec_try_ctrl =
+<-try_or_set_cluster
+> +   h264parse0:sink-6715    [002] ..... 172837.967773: <stack trace>
+> +   =3D> rkvdec_try_ctrl
+> +   =3D> try_or_set_cluster
+> +   =3D> try_set_ext_ctrls_common
+> +   =3D> try_set_ext_ctrls
+> +   =3D> v4l2_s_ext_ctrls
+> +   =3D> v4l_s_ext_ctrls
+> +   ...
+> +   h264parse0:sink-6715    [004] ..... 172837.985747: rkvdec_try_ctrl =
+<-try_or_set_cluster
+> +   h264parse0:sink-6715    [004] ..... 172837.985750: <stack trace>
+> +   =3D> rkvdec_try_ctrl
+> +   =3D> try_or_set_cluster
+> +   =3D> v4l2_ctrl_request_setup
+> +   =3D> rkvdec_run_preamble
+> +   =3D> rkvdec_h264_run
+> +   =3D> rkvdec_device_run
+> +   ...
+> +
+> +Trace the children of a function call and show the return values =
+(requires config `FUNCTION_GRAPH_RETVAL`)
+> +::
+> +
+> +  echo function_graph > current_tracer
+> +  echo rkvdec_h264_run > set_graph_function
+> +  echo 4 > max_graph_depth
+> +  echo do_interrupt_handler mutex_* > set_graph_notrace
+> +  echo 1 > options/funcgraph-retval
+> +   ...
+> +   4)               |  rkvdec_h264_run [rockchip_vdec]() {
+> +   4)               |    v4l2_ctrl_find [videodev]() {
+> +   ...
+> +   4)               |    rkvdec_run_preamble [rockchip_vdec]() {
+> +   4)   4.666 us    |      v4l2_m2m_next_buf [v4l2_mem2mem](); /* =3D =
+0xffff000005782000 */
+> +   ...
+> +   4)               |      v4l2_ctrl_request_setup [videodev]() {
+> +   4)   4.667 us    |        media_request_object_find [mc](); /* =3D =
+0xffff000005e3aa98 */
+> +   4)   1.750 us    |        find_ref [videodev](); /* =3D =
+0xffff00000833b2a0 */
+> +   ...
+> +   4)   1.750 us    |      v4l2_m2m_buf_copy_metadata =
+[v4l2_mem2mem](); /* =3D 0x0 */
+> +   4) ! 114.333 us  |    } /* rkvdec_run_preamble [rockchip_vdec] =3D =
+0x0 */
+> +   4)   2.334 us    |    v4l2_h264_init_reflist_builder =
+[v4l2_h264](); /* =3D 0x3e */
+> +   ...
+> +   4)               |    v4l2_h264_build_b_ref_lists [v4l2_h264]() {
+> +   ...
+> +   4)               |    rkvdec_run_postamble [rockchip_vdec]() {
+> +   ...
+> +   4) ! 444.208 us  |  } /* rkvdec_h264_run [rockchip_vdec] =3D 0x0 =
+*/
 
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index 9332a9390f0d..113d4251a243 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -46,9 +46,7 @@ BCM_SYSPORT_IO_MACRO(umac, SYS_PORT_UMAC_OFFSET);
- BCM_SYSPORT_IO_MACRO(gib, SYS_PORT_GIB_OFFSET);
- BCM_SYSPORT_IO_MACRO(tdma, SYS_PORT_TDMA_OFFSET);
- BCM_SYSPORT_IO_MACRO(rxchk, SYS_PORT_RXCHK_OFFSET);
--BCM_SYSPORT_IO_MACRO(txchk, SYS_PORT_TXCHK_OFFSET);
- BCM_SYSPORT_IO_MACRO(rbuf, SYS_PORT_RBUF_OFFSET);
--BCM_SYSPORT_IO_MACRO(tbuf, SYS_PORT_TBUF_OFFSET);
- BCM_SYSPORT_IO_MACRO(topctrl, SYS_PORT_TOPCTRL_OFFSET);
- 
- /* On SYSTEMPORT Lite, any register after RDMA_STATUS has the exact
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.h b/drivers/net/ethernet/broadcom/bcmsysport.h
-index 335cf6631db5..55d72a16efcc 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -168,10 +168,6 @@ struct bcm_rsb {
- #define RXCHK_BRCM_TAG_CID_SHIFT	16
- #define RXCHK_BRCM_TAG_CID_MASK		0xff
- 
--/* TXCHCK offsets and defines */
--#define SYS_PORT_TXCHK_OFFSET		0x380
--#define TXCHK_PKT_RDY_THRESH		0x00
--
- /* Receive buffer offset and defines */
- #define SYS_PORT_RBUF_OFFSET		0x400
- 
-@@ -202,16 +198,6 @@ struct bcm_rsb {
- #define RBUF_OVFL_DISC_CNTR		0x0c
- #define RBUF_ERR_PKT_CNTR		0x10
- 
--/* Transmit buffer offset and defines */
--#define SYS_PORT_TBUF_OFFSET		0x600
--
--#define TBUF_CONTROL			0x00
--#define  TBUF_BP_EN			(1 << 0)
--#define  TBUF_MAX_PKT_THRESH_SHIFT	1
--#define  TBUF_MAX_PKT_THRESH_MASK	0x1f
--#define  TBUF_FULL_THRESH_SHIFT		8
--#define  TBUF_FULL_THRESH_MASK		0x1f
--
- /* UniMAC offset and defines */
- #define SYS_PORT_UMAC_OFFSET		0x800
- 
+Maybe have a look at retsnoop?=20
 
-They shouldn't contribute to the generated code size anyway.
-Plus, __maybe_unused would allow only the readl() or the writel()
-function to be used, which doesn't seem to have been needed so far,
-though.
+To me, a very frustrating and very common issue is having to figure out =
+where
+exactly an error code was generated. Ftrace helps a great deal, but I =
+feel that
+retsnoop just takes it a step further. On top of that, you can retrace =
+the
+execution on a statement level. =20
 
-Something I haven't thought of, until now, is that if the I/O macros
-were defined as static inline in a header rather than C file, the
-compiler wouldn't have warned. So I guess that option is also on the
-table if we're keeping after all.
+That is, with the right options, it can tell you exactly what statements
+executed, which then lets you get very precise without any extra prints.
+
+See [0]. There=E2=80=99s a talk on KR2024 about it too [1].
+
+
+[0]: https://github.com/anakryiko/retsnoop
+
+[1]: https://www.youtube.com/watch?v=3DNvTBrx6EdF8=20
+
+=E2=80=94 Daniel=
 
