@@ -1,134 +1,125 @@
-Return-Path: <linux-kernel+bounces-364071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520B199CAC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:54:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D6599CACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60C65B20FA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:54:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBF661F23031
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDBF1AA7AE;
-	Mon, 14 Oct 2024 12:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6231A76C6;
+	Mon, 14 Oct 2024 12:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U7avgCd2"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eNwsM+gj"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9069C1A727D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05EA1A08A9
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728910426; cv=none; b=TIzrsa9psuWwN+nw9i8YE/gMfBEKmo/peKXkzis9tvEhbmtLgvEbh0iiEyHY/xhHScKGQDl2hhmQRvkNOpFDZyaMJsbStAizgt/PVapQTsJFecsmZjCDm81EyrZ78hASz8dLz5Cf63iYmyA4rxTMmrR0gA17N/r5f8YMz2kDLZw=
+	t=1728910632; cv=none; b=haIwxWVq0T8IOwu8bPUSXDdwVCFpTuie4LJSYszzwWzlCXBPnnSZtchv8PViW0PDJffQiTxlHyVJ8rKHshu40K4BJl7lOYckttYbxWFN3rEQiemBtCvVZ0pukNFzGuXS0v6V4HXLBNiOGNVWqm4Z1mNCogrv+mOFlPhwozyAMxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728910426; c=relaxed/simple;
-	bh=+pcu92eMqg+NHXSehZfy3gPTkISBMTAQR/PVez1N+qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFWZ43UdC6dDQMT2V40qkIyA+6AehzuY26asacsnb8uGHredm1LnbkLy+D+J8Y1LJPRQ7yTkIYejo4Kut0aetnlRm3ITQwIPntlE87XFtVgMAuAN1YaT9PsSHSgNnl4fC3eu/cUSk8U0veuG2Eg1rzdEOHl47U3DeHPAW46j4xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U7avgCd2; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a0084f703so229576266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:53:44 -0700 (PDT)
+	s=arc-20240116; t=1728910632; c=relaxed/simple;
+	bh=95q1qEv3AreD4xQZZYXqmAGp2B69fftSxlZEkzq05Vg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tMfTPg9gUCg4R1FSo0D8b2BcXe9vP0bE4Fl51YgPAPvw40AQEl7RtyCwRDhyREWTE20BpOCf3eByMIMpWHcfkQtTRzp0gc1Ati5KCjNa4XFS9GLtw6RnwIV49O/fg3SpPHkiNQPuFoO139A0rBrWAC0aUsJfCYBlwHRLvxpJpn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eNwsM+gj; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3204db795so60975327b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:57:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728910423; x=1729515223; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SyCHsuV/E8d70gfcK9ip53tgwN234YxCxe5zH8xLMPY=;
-        b=U7avgCd2Kq1XxkEYlk4PupuY4CHxpsGoPm4vKOF28tPALoNUKrgikVf5GGJ+wx5Nef
-         QtEA7ezPL+11HILyzfSu04/bPDphbjGhGLO6sBINBPdulB5rxnC9/Lt5xX3TDAIr/G3R
-         3b0iYAfgibyIYxkfJHDz21fztzlUeniDmMkTY8VOw6LYxRmAw2BcGMTFGtIFaSyW80TX
-         dqmg9VM/kliZkHjzW7mVfzpbsr9DVNDS5flwgBNMGrkgxlTCnjZxe7FJ+GmO5W0ynO3n
-         Kt1UmcV6GzF/zgslKdCfTpf5+0wzHlLcYlcKTCWZu7XOHIEwqIKnMqQbHyA2qTRb58cO
-         RWoQ==
+        d=google.com; s=20230601; t=1728910629; x=1729515429; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=t6li6wFeQ4E3rD2qiNU9/G5GhCLFz3hLIbapKHZloZU=;
+        b=eNwsM+gjRUpqYj+RgRbpG8Fk54P2nGeDnaTest7cbyD2at/6Xg+rz+9+OS1827FL/b
+         Bb18OsALStX8dzAAPUkA358aZE8ckR0vwZQsTrYK+matjs03OJw2RzibxNo/Kqe9HYQu
+         SFZhBryByqQFnTQJKg7jr2vyr8V2P8ZLPCXat6atzX8FS9pnNQO7VS4DI9SMzXJ54/9e
+         2puP9x2tf9fkqXL+gbK5k+3WDaygO+cwapCBiKRbP8j2o8ZpO1h9OdmqzzYxk4/ApDV8
+         ifygR4ZcDgP4PQqQYjDLkq2iyP/qVY43NvS6+z52FEV4yjwKDW1Pfw196EkAjQSW/SLS
+         pzFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728910423; x=1729515223;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SyCHsuV/E8d70gfcK9ip53tgwN234YxCxe5zH8xLMPY=;
-        b=Z807UraKBetM4Hm2pusMp91q2Rm8Kmu3IqOrFApgqFqT70wyh6J2zWLKlKwBCMsK35
-         uZdPPvKNo8HqGdXBMiEoa7q4/jzCCstmXDDUmi142fK+E6pxxKxOThy8Mrz8aOQRMxI8
-         QEnsmGcVQSV/79LM2B3HX58jqD1y8OjVJQ1HXDQkzXO8eWnW/o3Wk2bcj27ldXlHymG4
-         fm3TP1SRyeXkVDHB0bpBByRwT2VudLnh6BzTo8GuChkF3kHxEibIxqGPoFo5KH8D1H6A
-         sWAGpkfXSWQNxLYVfPhIZkzM48/vkTkuUllnh1bET2XEbF/mSB1o4seDWHcwurSpC32N
-         qF1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFKErBvt4ZqGoSThxYIeqT93A+vVHJWI5QlDdVXcmfl6hZ7zDWjyxcxQPyV2McmHyGjOEPxixRjJeHXoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmNus6vGR/s2ty1FksS3rIkEGqa2fD3JGhM4Z7oe0YfCcQ0bU7
-	YQJ5mn3Iig5wj+IFJtPyJEBMGQJYxIii3REV7/+UrdSJJjNHOS22hTKs9NvkFbE=
-X-Google-Smtp-Source: AGHT+IHqHcsA+FZtp+v7kI5pgeIQE8uQgQTumNO5wX6KZkk6/bkHGwus6vrXYrx9c73EQIuXhgDQGA==
-X-Received: by 2002:a17:906:c14c:b0:a99:6163:d4f8 with SMTP id a640c23a62f3a-a99b966b148mr1069583166b.58.1728910422787;
-        Mon, 14 Oct 2024 05:53:42 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f375db53sm303654866b.113.2024.10.14.05.53.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 05:53:42 -0700 (PDT)
-Date: Mon, 14 Oct 2024 15:53:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com,
-	sprasad@microsoft.com, stfrench@microsoft.com, tom@talpey.com,
-	bharathsm@microsoft.com, nathan@kernel.org, ndesaulniers@google.com,
-	morbo@google.com, justinstitt@google.com,
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] smb: client: fix possible double free in smb2_set_ea()
-Message-ID: <8bd0fae3-82fe-41c4-a4e8-3c28aa2b1826@stanley.mountain>
-References: <20241014113416.2280986-1-suhui@nfschina.com>
+        d=1e100.net; s=20230601; t=1728910629; x=1729515429;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t6li6wFeQ4E3rD2qiNU9/G5GhCLFz3hLIbapKHZloZU=;
+        b=fNx7oGeqs5Hn+Owo2zVaNv4vSLL9M0SmcbAD2BOMVan08Y5Gw2fpMIwPoGS8EqHOzm
+         ANDfE5ptgjyfBOXhp2DhNHVI0bjUX0KC478W97mwu6tpaztmUnprgqbGZXB/xAOsRco3
+         XgTD31NqHeP3QXR9xmkG8ZNiiVrwWy3o/dgiXW5ZgVkyxGBj6nNmtL/+l1oLc8wxEowT
+         y2Z1UEA+QKPfS5POU5TydqwIGWi7IuZk44gJWHl1Vd8UumaR2SvAhdclibRKxZ9TwrXJ
+         mFZLgajBiHIVEp7QvcEuDZBYJyzkR+Zme79YP+P8Ez1tL85fhnC9+EyrfBl5VRsE41ga
+         hjWA==
+X-Gm-Message-State: AOJu0YzPUCbuQ0QVX27bYpy8veVSgygj8cXXBkxQCNbWE2SCSmSfQhTs
+	aKCSuAAj4sv+cv2xkOvmrUcl0DScJwKVGOBv2umyXF0sN5mB1nsLeMrYWWkcjAMVupsdP5jMuEW
+	Rc+1vCnnYjqg8WHv1F8MfDJU4MD2ieG5LoJGmBA8Ma7VraO/ovYLm9yqPaY2+8iELTP5pmdDWf+
+	PFvtb7YRv7nEhKeR+TniZpdL4Z7O1DdQ==
+X-Google-Smtp-Source: AGHT+IGTU3Vxqy01+1H6TKajVNIl45h3QLSGp34rJErLGk2Yt75X/DddK3F0YmEjLLNQykAVyV0SclC8
+X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
+ (user=ardb job=sendgmr) by 2002:a05:690c:2e12:b0:6e2:371f:4aef with SMTP id
+ 00721157ae682-6e347b2fe3bmr274597b3.3.1728910629046; Mon, 14 Oct 2024
+ 05:57:09 -0700 (PDT)
+Date: Mon, 14 Oct 2024 14:57:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241014113416.2280986-1-suhui@nfschina.com>
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1194; i=ardb@kernel.org;
+ h=from:subject; bh=91Wge0c+Id4XIKd5WqFFlARMHKg7IsAMaPdrRhgkLZg=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIZ1XVCErR0q3bPvkx3mb+GYJN59u6CxbnyV960v5QsWAz
+ mvN7xw7SlkYxDgYZMUUWQRm/3238/REqVrnWbIwc1iZQIYwcHEKwETi7zH84TcyXWAgIuH+S3fS
+ S9+36odq19an2tZdvjxHnGHqtKMzFzH801ikayRtr2u99VqFsVtU9BvJn2LLGGYYVFyvmMx5744 MHwA=
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241014125703.2287936-4-ardb+git@google.com>
+Subject: [PATCH 0/2] Use dot prefixes for section names
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 14, 2024 at 07:34:17PM +0800, Su Hui wrote:
-> Clang static checker(scan-build) warning：
-> fs/smb/client/smb2ops.c:1304:2: Attempt to free released memory.
->  1304 |         kfree(ea);
->       |         ^~~~~~~~~
-> 
-> There is a double free in such case:
-> 'ea is initialized to NULL' -> 'first successful memory allocation for
-> ea' -> 'something failed, goto sea_exit' -> 'first memory release for ea'
-> -> 'goto replay_again' -> 'second goto sea_exit before allocate memory
-> for ea' -> 'second memory release for ea resulted in double free'.
-> 
-> Assign NULL value to 'ea' after 'kfree(ea)', it can fix this double free
-> problem.
-> 
-> Fixes: 4f1fffa23769 ("cifs: commands that are retried should have replay flag set")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  fs/smb/client/smb2ops.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 6b385fce3f2a..5b42b352b703 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -1302,6 +1302,7 @@ smb2_set_ea(const unsigned int xid, struct cifs_tcon *tcon,
->  
->   sea_exit:
->  	kfree(ea);
-> +	ea = NULL;
+From: Ard Biesheuvel <ardb@kernel.org>
 
-That's very clever.  But I think that it would be better to do the "ea = NULL"
-near to the replay_again label.  There are some lines where we re-initialize
-resp_buftype[], utf16_path and vars etc.
+Pre-existing code uses a dot prefix or double underscore to prefix ELF
+section names. strip_relocs on x86 relies on this, and other out of tree
+tools that mangle vmlinux (kexec or live patching) may rely on this as
+well.
 
-	ea = NULL;
-	resp_buftype[0] = resp_buftype[1] = resp_buftype[2] = CIFS_NO_BUFFER;
+So let's not deviate from this and use a dot prefix for runtime-const
+and alloc_tags sections.
 
-regards,
-dan carpenter
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-kbuild@vger.kernel.org
+
+Ard Biesheuvel (2):
+  codetag: Use dot prefix for section name
+  runtime-const: Use dot prefix for section names
+
+ arch/arm64/include/asm/runtime-const.h | 4 ++--
+ arch/s390/include/asm/runtime-const.h  | 4 ++--
+ arch/x86/include/asm/runtime-const.h   | 4 ++--
+ include/asm-generic/codetag.lds.h      | 2 +-
+ include/asm-generic/vmlinux.lds.h      | 4 ++--
+ include/linux/alloc_tag.h              | 4 ++--
+ 6 files changed, 11 insertions(+), 11 deletions(-)
+
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
 
