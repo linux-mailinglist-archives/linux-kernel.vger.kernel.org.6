@@ -1,160 +1,111 @@
-Return-Path: <linux-kernel+bounces-363619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CE699C4BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:07:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C77D99C4C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A631C22DBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 571B728482C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1C9159596;
-	Mon, 14 Oct 2024 09:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C8D15B54A;
+	Mon, 14 Oct 2024 09:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YXFTJtbv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S+cvuAl+"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1B0158DDC
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C13156F3A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728896777; cv=none; b=d4W4tVvCbUK+q6oB5cOVXPNXcymAiItTUWEHKbQMkteZ8YoOKiCRB6yx5Tto0XBYUxFQZZUp6sKbtHjLF7Xg6kxAKZQtY/l927GKVkpTTaAFqUK7xknfzGpsFojC9VtUcmK7rX68H9omvaPOeoD4mrkE+pmq5J8K4/tQBsYfsQE=
+	t=1728896792; cv=none; b=iXrNOt3wr2yhZbOUw+ZAYWKMRkapQ7UqIH9CDGNYC2Zr5PZFnxsMqtXZL7FSpf45oV4PeaciEP2BIRHoOLEzJSvTpH6D3uaDFWd6mLsKz3MqAYHr+dySlXH6p0PDWz+6JAkZBGYZt14PaWxY8SHPBd8cScIPXGF3addSCT02Wz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728896777; c=relaxed/simple;
-	bh=/NYDUbcYsfrPCw8OG9MBVDUi8PxJyMeQ6kptO07FNQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TYk6ajeWXWBsq0a/I4TPxsU2QWGCtKS43WkHTtjepMfqTsb4gh4v3qMdjmf1fdeTKen820HZtFC6Iwmx5MlBBTXtqpBeIF51+mfOiJDBalGU0yoc2hqgH2OfluL4tEXFi1eBFbrPLHRKv7Oc2+7dyQYMBLcXjZo68gFUuMbVCMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YXFTJtbv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728896774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F17udMnek9Ri4VpOz181mg426zHfJskr96SKZNMjm5U=;
-	b=YXFTJtbvcdEw2QMpQc6fHWLSRAvp1M/wgnotR0bwFbeEAdDTyrQj2LLQnUT6sJRUURJGHv
-	0lg2kX32hveVrMefw9Jxaiwke7pzxoO4zzmVgroAhQfNxZPdvisodr2x0jYO4EYkfgIUvu
-	ckeFpNRBCIah7bAQnwIGd4FPQtEyEPc=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-z4etaohFMsKE10SjTXoCKA-1; Mon, 14 Oct 2024 05:06:13 -0400
-X-MC-Unique: z4etaohFMsKE10SjTXoCKA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d4cf04be1so1914728f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:06:13 -0700 (PDT)
+	s=arc-20240116; t=1728896792; c=relaxed/simple;
+	bh=/6AkSe9ZsMWGEegbX5mWdCWRk8oikiSE5pvH24z3A2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxqLIx36vFI2S3tmk2NvKYQsg1/buH6Nx6hJ6bxNDbi5Ao5ly9rLrVbYICPplrKvYS2avsVVLdZ2s1s+sQe9kz+GjrgsUS4Ys4v5CfiW1LAWQd1PhAMM1saz6bvqzf14ElQAUQ0dsgLiTe3cUl+yPEC/a/Uz5yJ2HYlERkUvuGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S+cvuAl+; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c949d60d84so3347287a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:06:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728896789; x=1729501589; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yQ7N4NGsrBS9erfMRFf3mr/u/TsgsOX0nwQxEKrF5/8=;
+        b=S+cvuAl+91joN9GXT+YyP9LFuzkI7splVK5fOl4dzdY3NNElizERuhq+rqx3AMIrK/
+         mtaWUN4N0zWtjQlRQYOv/C34jeyK/V0ZtXMtjcHXOYFp3yVszwW2WvonnGzUQcGvAGPu
+         apm/zW6+v/mrTkAp9n7dc6DuyeMOGw8O1v91YLser01r+URuwm1Iwm1fvwpLZfdr0Gka
+         Q37hs2VLlxqVD8kLu789V5YCOkCzVdWWwZzSkKYGU9tizV/EE8SaH1tKPfJOVL2SNeQ1
+         pAOaeIXZRyZ4C6WCtvaNS5Gw7K5lsL1HhlWMB54BUQD4o46nWmprd8oWfkb1+2rPHGGt
+         0CBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728896772; x=1729501572;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F17udMnek9Ri4VpOz181mg426zHfJskr96SKZNMjm5U=;
-        b=ZneBqW9AoaCMi/6auHUZ3bSFp7fcxC8JjTYDuehZgxHbbKyCP1F3++9Tn3hOrgDTuZ
-         rGDg1slN3+IpdVYG5XAxzLY3mRJrMPljx4zpK1yT2hG0r9k+6oOmuW/K52T4/qt/EHtb
-         /pP9DBwKuZItklVFEpIzqz+vA8GLmichxIZtnQmYru69yHJufHORKBiCQfS9xx+EMOZG
-         HUSfNn56g7FI8G8rb5cJyOgIPHRqcEYcOdLaySg8i8PL9PVo5KHxanB9hSkwvt5eIIct
-         nL5KCdtPjrjCLrmRg6YU4CYgx6M/oHbstcuR0gHEUmEl8CJUvqmqpBW/Kj/1pAmi+HgL
-         m7MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYuh1wRy0OXxhYLpZwN2vdo+Bf0JGlv9ikfhv9RcFZZrjldWdAhsQ2OHYF1Qa8isw2ksMtntK5+xUXRyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyee18l6rGGkw11sjJPBXbxeU7yntAQdD2g5ciofW7yocvsxPsW
-	VV/Wx0uNFcafeK/8y6FugZBHvzv5vtYO0678WPzycxcZH1FOUrMvP9aYmjVThbAcSSBYRtIUT4h
-	GempzIx5WlzCzCQ6WvSowpPI6de51UYKEXEVHaqoeSxyUrlZ3Uy4W3BoUBNJT7w==
-X-Received: by 2002:a5d:424c:0:b0:37d:47f9:be8a with SMTP id ffacd0b85a97d-37d54e0b808mr8221819f8f.0.1728896772251;
-        Mon, 14 Oct 2024 02:06:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmaiFzGAr2+K2rmr2gQwMt3POCAx28GuVYLjzk3R6/H+xl7EfaOtsr7q3eGv0V1GoD7XacMw==
-X-Received: by 2002:a5d:424c:0:b0:37d:47f9:be8a with SMTP id ffacd0b85a97d-37d54e0b808mr8221783f8f.0.1728896771824;
-        Mon, 14 Oct 2024 02:06:11 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd057sm10790092f8f.35.2024.10.14.02.06.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 02:06:11 -0700 (PDT)
-Message-ID: <cfde8e06-0931-4a53-bae5-469219e77b49@redhat.com>
-Date: Mon, 14 Oct 2024 11:06:10 +0200
+        d=1e100.net; s=20230601; t=1728896789; x=1729501589;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yQ7N4NGsrBS9erfMRFf3mr/u/TsgsOX0nwQxEKrF5/8=;
+        b=xLPjj6fOXbmQd0V+doZRPRGOvFqFfpISXEIY5+Srl9jSA3ATF8mjO8afGLWapFXvyI
+         nQOuiyZeKrwm2NHnjNxJnwNWYS1f3y7rHX70kC/8RaysEKQrOnJ/sVh7UTlB5Kp8aMnB
+         2uQBSd4odTJvhqB20iHBlG6IR2BDGrz+we8RzeOdT1qd9erjJaprCTSZm48WM5suOWC2
+         LEo0cXPEAUcQ5bMpm7/zunqoHGSm/ABJn6PoIDq2hP06ooMlLmnyd5PafnWtXCIw4iTZ
+         hnySajqWFwCNuPRAiFjV7VxrmKehw4wS8do9qXCUBwWRY+CkLh/KFqDb8lNLDZbgocJx
+         8XaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdXtUVyKj7w4cEj4duNMSnzBF1t4GJgfGOBWhDmTE9m7b7eiZq5AkINNeN1AyVZ8SZIIW7Mm0/HyP+Nn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw726/fdWxdmVgVCEAlhTIHbZlTxqR3wQK6OmE8zCN2Jx7nlUz2
+	fj9W6YjwGcFymLp1/I0PF2eg3NlCe72AyLmU4377IEqFnmejR+2eAKwdDGVQYPA=
+X-Google-Smtp-Source: AGHT+IG3luq/hzR8Bl5xe7C7iS7FVcUq7MLtlNd/M/noM85vm/NAE/kbPKiFAuv1GvAh9JyzUb1NfA==
+X-Received: by 2002:a05:6402:3207:b0:5c8:f905:9fe4 with SMTP id 4fb4d7f45d1cf-5c948d6a54fmr9188289a12.28.1728896789469;
+        Mon, 14 Oct 2024 02:06:29 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c9370d25e8sm4699269a12.4.2024.10.14.02.06.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 02:06:29 -0700 (PDT)
+Date: Mon, 14 Oct 2024 12:06:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] staging: vchiq_arm: Fix missing refcount decrement in
+ error path for fw_node
+Message-ID: <63e1351e-d8f3-4b98-8abe-a2541f95281a@stanley.mountain>
+References: <20241013-vchiq_arm-of_node_put-v1-1-f72b2a6e47d0@gmail.com>
+ <a4283afc-f869-4048-90b4-1775acb9adda@stanley.mountain>
+ <47c7694c-25e1-4fe1-ae3c-855178d3d065@gmail.com>
+ <767f08b7-be82-4b5e-bf82-3aa012a2ca5a@stanley.mountain>
+ <8c0bbde9-aba9-433f-b36b-2d467f6a1b66@gmail.com>
+ <20d12a96-c06b-4204-9a57-69a4bac02867@stanley.mountain>
+ <a3a8418a-57f2-4f3e-80a3-011de2af1296@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] drm/panic: avoid reimplementing Iterator::find
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241012075312.16342-1-witcher@wiredspace.de>
- <CANiq72kG0Ai2DHfERD0aPDVuEpLYrZ_2uYdw17=eeHRp+2Q1Rg@mail.gmail.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <CANiq72kG0Ai2DHfERD0aPDVuEpLYrZ_2uYdw17=eeHRp+2Q1Rg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3a8418a-57f2-4f3e-80a3-011de2af1296@gmail.com>
 
-On 12/10/2024 13:04, Miguel Ojeda wrote:
-> Hi Thomas,
-> 
-> These commit logs are nicely explained -- thanks a lot for taking the
-> time to write each!
-> 
-> A couple nits below.
-> 
-> On Sat, Oct 12, 2024 at 9:53 AM Thomas Böhler <witcher@wiredspace.de> wrote:
->>
->> implementing the same logic itself.
->> Clippy complains about this in the `manual_find` lint:
-> 
-> Typically commit messages use newlines between paragraphs.
-> 
->> Reported-by: Miguel Ojeda <ojeda@kernel.org>
->> Closes: https://github.com/Rust-for-Linux/linux/issues/1123
-> 
-> Since each of these commits fixes part of the issue, I think these are
-> meant to be `Link:`s instead of `Closes:`s according to the docs:
-> 
->      https://docs.kernel.org/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes
-> 
-> In addition, these should probably have a `Fixes:` tag too -- I should
-> have mentioned that in the issue, sorry.
-> 
-> Finally, as a suggestion for the future: for a series like this, it
-> may make sense to have a small/quick cover letter saying something as
-> simple as: "Clippy reports some issues in ... -- this series cleans
-> them up.". Having a cover letter also allows you to give a title to
-> the series.
+On Mon, Oct 14, 2024 at 10:49:28AM +0200, Javier Carrasco wrote:
+> In this particular case, and as Greg pointed out, that is not a real
+> threat anyway. My digression comes to an end, and v2 is on its way.
 > 
 
-Hi Thomas,
+I mean the other thing that we would accept is if you moved the NULL check to
+be the first thing after the declaration block...
 
-If you want to send a v2, the easiest way is to download the mbox series 
-from https://patchwork.freedesktop.org/series/139924/
-and apply it with git am.
-
-That way you will have my reviewed-by automatically added.
-
-I can push this series through drm-misc-next if needed.
-
-Best regards,
-
---
-
-Jocelyn
-
-> Thanks again!
-> 
-> Cheers,
-> Miguel
-> 
+regards,
+dan carpenter
 
 
