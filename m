@@ -1,137 +1,80 @@
-Return-Path: <linux-kernel+bounces-364694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E6699D7FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6928F99D7FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A18FB20DFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:14:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA041B20F33
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD691CF7B4;
-	Mon, 14 Oct 2024 20:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DF31CF7AE;
+	Mon, 14 Oct 2024 20:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0qdaVLU"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UlElNun4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6561CDA36
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618AD1ABEA7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728936850; cv=none; b=acofDNrB/IQNlw+zMBTTZogEZKt3DIa0sSyT2zANfN+iAaQ23g5Gsog38k5m4T1PkWlYGHPZLob8TGRpWrhLPXtyqSAB+aZnuogVA5pWF0e4p1ylmmAnvoMQ9Fs/CdsXS9Bpi1d0MTb6zOkK0PsOw2X9b2U4PpGRexIPWqlrO6g=
+	t=1728936840; cv=none; b=THO/37AJI76Kd1e6RTwf5GG509/wikChw4RqgWtiR2ondWqHj2OywRvTlBnCrm/ErPyCMIcJqRY39wlDMTQKjP5Bqf0Sp2mQ8mDNipEOWeFCsqzviT3Y7KgD6REsKczAUMnejIdGIPWOONb3gGiyVj97jeZBVtgrtWPykdkVbiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728936850; c=relaxed/simple;
-	bh=2duR3Up0Fn5AOkwt8Y3KyMWalTj1cYda1NyQh+hNLQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KDJpJrkzREsS4xo9Nm0oTA6QDNGtcRNEObrZIT5y6MjqbVZE4HYdx1+q3qt4m6OybfCf1asTHolZ4iqDZZ2MI7kq4QSndJwxAiGtfFNN0fn5A8PQqvddxo2w3UNjMDwt+CFxlqEVg5Sbr3nIhB4T655eErm6KVC90LVE7JpCRa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0qdaVLU; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea8d7341e6so797661a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728936848; x=1729541648; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PFfdktb8rvun4C2wfO4YRLva+QImGAd9cuW+Tla0apA=;
-        b=d0qdaVLUUomwytgvLgVcbUBpGqZAn67e7NmFL1AHxj788yo5YIFFjhLnTZWiTJnp3L
-         +QfrxTEJk+eNzZfaEAFd+B+NnbGgSqL8YWYA3ffO7jzdWQEV3nytaQnP0eYmKilPzsyU
-         tu3VFdxoyqJbnFcCXh3vineEtqMBdjYsF3nDE0DtZqG2J2lySgQPg1bV9BJtapHuquql
-         NtQ6TArC743MLxI5cHh5NdFQ0OxILfXSRbq50VEA5ivT4nSTwCYiTpwIxureioA3r7ga
-         h/YugKdejfmiIdId+Ln02TDSWZX/zBT9dxSSK51zc8/5GouuZurgj9HSs4lf3ecdCfL2
-         geCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728936848; x=1729541648;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PFfdktb8rvun4C2wfO4YRLva+QImGAd9cuW+Tla0apA=;
-        b=Y0Y1PQBP5g18GrnYXFdO6Qghj5yVY4Pqe7MvDofgxK6m/dPs5TZt87kVsi7sf4Tk+J
-         KQPBu8K9w/ijtyhdvX8m5EBglHQZnnaX7cqw28keyp+bzBW5BL+TKpvVe8QFgaR+ixoP
-         UNYJ482Z+53vCT6pvYTyLGm73ekLf9J+2HjxDEHnDj0Y/zWJsHJAEleukq5FkNH96oMV
-         W0rD5a8QTcoWtxNrhlPvjQQKsTaEQkYkiqASkTtLrxdzO0oj66ejz9lsb/t6jU0wCx8x
-         2zDlUTwzjfBcu5Wqgwms2kadnA5N80M7IrQP+2Y/3r69lpa0FQkQxEWbg7H7hvU41VQ3
-         q7PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXsdmGMVYGxDce1yh4d49lj7T2SvHvuMQJ42tOZs609uLL5VEf4yh9MtvvowDFfHQWae+lf9YbDA5ElS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6CTTEJ4Ndpkg8hXu0c6X4gcj1J7+OYpgHmI4GRo8W1C6vlTE2
-	PhCKAyn8Wnd+U6EnfcdP7qaSxNMr1DbHb7jkiiMR9YCfDZHGWdzQVLJJXjVkw7NKmGCpTDW5aUV
-	OyCLNcfzOVL3KClNfff3dYIrIy5U=
-X-Google-Smtp-Source: AGHT+IGf5MMcJ2y8qfgoEJL7bFDS/ZZdYZAzuWh/eyTLLRCFeltSfO1qVJVuLGKhHCLCOPuuS5PiKfOACdNpMayGFtU=
-X-Received: by 2002:a05:6a20:2d22:b0:1cf:4fd9:61db with SMTP id
- adf61e73a8af0-1d8bcef1217mr22175364637.8.1728936847787; Mon, 14 Oct 2024
- 13:14:07 -0700 (PDT)
+	s=arc-20240116; t=1728936840; c=relaxed/simple;
+	bh=NST5pS34AXXGgy4PuoW2anMjNee9FdAayNuMIVaaUUY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=tMKjGwRfLWCle+YzQT5Uyb5ak8laqbLnRGrI0ZwdHN8Y9Y1PUEV1vbCe1s2D9TiDvTAxeb+i/iyUJ9bPYTbxxp6TCwcxJaVYrT5DCbQZZDuy08rhw0zPOO0M8v47Dsm2N1qOoP5OOE701fK6XuWvkuvKWxWuBbHNOyqKo96neCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UlElNun4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C231CC4CEC3;
+	Mon, 14 Oct 2024 20:13:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1728936840;
+	bh=NST5pS34AXXGgy4PuoW2anMjNee9FdAayNuMIVaaUUY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UlElNun4iTHHEvsMCSVlBBLid+PiFg8Lv7bhVhLHZAlXem46/mjHbSqjoRPsiUFVb
+	 42fBZ2DogvVqCDJ0r+AePkAvBGw33W1J9Vt4AMW0kfBcxm5HObvahc1SxBtveRGIMr
+	 GU9VME7jI64FCBU6nZwQ8vQG0JSgk1LEGMeYE1rE=
+Date: Mon, 14 Oct 2024 13:13:59 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] mm: swap: prevent possible data-race in
+ __try_to_reclaim_swap
+Message-Id: <20241014131359.4a4046efc464a6ce1dc38a4d@linux-foundation.org>
+In-Reply-To: <8C4EFDA4-A286-40C9-8F96-BD3EE07D6C45@gmail.com>
+References: <CAMgjq7Ah6PjeQuR3PRyRgCpH1ybj=76cmpMfvV50D1prjZpH+w@mail.gmail.com>
+	<8C4EFDA4-A286-40C9-8F96-BD3EE07D6C45@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <202410131412.5csjqw8L-lkp@intel.com>
-In-Reply-To: <202410131412.5csjqw8L-lkp@intel.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 14 Oct 2024 13:13:56 -0700
-Message-ID: <CAEf4BzZ=Rf+-_SSbtL+wZkX0XPrCfh3FBUCnR21qENAh0YMcFw@mail.gmail.com>
-Subject: Re: kernel/bpf/token.c:50:6-27: WARNING: atomic_dec_and_test
- variation before object free at line 54.
-To: kernel test robot <lkp@intel.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, oe-kbuild-all@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 12, 2024 at 11:58=E2=80=AFPM kernel test robot <lkp@intel.com> =
-wrote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
-> head:   36c254515dc6592c44db77b84908358979dd6b50
-> commit: 35f96de04127d332a5c5e8a155d31f452f88c76d bpf: Introduce BPF token=
- object
-> date:   9 months ago
-> config: alpha-randconfig-r054-20241012 (https://download.01.org/0day-ci/a=
-rchive/20241013/202410131412.5csjqw8L-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 13.3.0
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410131412.5csjqw8L-lkp=
-@intel.com/
->
-> cocci warnings: (new ones prefixed by >>)
-> >> kernel/bpf/token.c:50:6-27: WARNING: atomic_dec_and_test variation bef=
-ore object free at line 54.
+On Mon, 14 Oct 2024 13:08:29 +0900 Jeongjun Park <aha310510@gmail.com> wrote:
 
-Can someone please explain what this means and why the code below is
-broken, according to coccinelle?
+> >> As far as I can see, commit 862590ac3708 was applied starting
+> >> from 6.12-rc1, so it looks like no additional commits are needed
+> >> for the stable version.
+> > 
+> > Hi, sorry for the confusion, I meant mm-stable, not the stable branch.
+> > It's better to merge this in 6.12.
+> 
+> I agree with you. I think this vulnerability should be fixed quickly,
+> so it should be applied directly to the next rc version, not the
+> next tree. However, this vulnerability does not affect the stable 
+> version, so I think it is appropriate to move this patch to the
+> mm-hotfixes-unstable tree.
+> 
+> What do you think, Andrew?
 
->
-> vim +50 kernel/bpf/token.c
->
->     44
->     45  void bpf_token_put(struct bpf_token *token)
->     46  {
->     47          if (!token)
->     48                  return;
->     49
->   > 50          if (!atomic64_dec_and_test(&token->refcnt))
->     51                  return;
->     52
->     53          INIT_WORK(&token->work, bpf_token_put_deferred);
->   > 54          schedule_work(&token->work);
-
-this is not "object free", but even if it was, I still don't see the
-problem, tbh...
-
->     55  }
->     56
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+I moved it into the mm-hotfixes branch for a 6.12 merge.
 
