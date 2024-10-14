@@ -1,129 +1,309 @@
-Return-Path: <linux-kernel+bounces-363538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A3099C3A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:42:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E8399C3C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F5B01C228A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A822836C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBE81509A0;
-	Mon, 14 Oct 2024 08:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2949F155A5D;
+	Mon, 14 Oct 2024 08:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BwRhPvrf"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="buf5mhGD"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A104B14D70B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB481531C2;
+	Mon, 14 Oct 2024 08:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895340; cv=none; b=cCR+gxBYNTDtJTGKtWh42Dx1dAJdoF3qCIRhOYLci1DE6Cadgn+IitG7mpBQoUq2tWtDUTwleO2P/feBAwRk6oTewAwvDSbVJfkluG3w402TMwfJgg2wjPsHlcQv0aoaYAvAwkptD0Xn1I2mdiEUFJOxthAUb4VZ2Cr12n9qmqw=
+	t=1728895383; cv=none; b=ctFcGuOPSO8eB0oTWo/dtj07xeRMmyV+IiW6i1Dn3GQMYu4N47nG72bGsNexHdvVzcGf5Fdvz/v5Y+YQPr42n3r1GG79R4Os/FenavtYCp8EGZwQOW+SVjLc8zsMc3WtJa5XOgd6XnaLpP9cq31Wuq5ai4gSXnHvEnTRq4QGnz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895340; c=relaxed/simple;
-	bh=pVNVqOflLAb4pwR+4Zax7LKAmGo6qLEEWAyT6kznvU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S6ivS5XFlZ0X00SVH1fXm/SRoo6di2BbdF8hgypu1UDxrc2g1x3Ql6wG3nctNagPNlV6EAQITtGMv28qRfLfODzpjuPmGGFWmo9gda/bTkNq+Vkh88dB3xj8ihPCtPFhuUeSsuzgFG4LByO9eajt5af0uMX9Vck0mbzbgFMpmNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BwRhPvrf; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so2534285f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728895337; x=1729500137; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5QCLd+bM7rU2Jtjbpmv+0KusX3a8Gfz+6gEAH9B8n6A=;
-        b=BwRhPvrfgy5Wf0pWwU4G+lGeKQsBYTaPacoSduBe2CZajXxVaqRcSL5EC6qIm2lbeP
-         bW4E6F2Zaz2sCUWDwhwCXZTwyg+2DQZLtklJ95fVtgYJ7yNtkaycxdu1MpijBtfO5Z5i
-         s0f0+QTpXKeC+xC+cWhfSr1jqwJAHBpMFYtQTYJIaTK6iDTvHRPtHBl8pEUuR8AvuEYQ
-         Iv8JjYOxqys9Cu9jnmsImcgOZPbKp9/3dGHaSAn1lceiUEHGHgA1/jed0fIk2vDDiUQU
-         c2j+4y6JW00YMjIAV9BVG2qmkUyOaZws73UmAZWHhO1OHOAS9PSgiZxMGblPgVzJpMzb
-         /BwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728895337; x=1729500137;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5QCLd+bM7rU2Jtjbpmv+0KusX3a8Gfz+6gEAH9B8n6A=;
-        b=mg+m6Zu5lQGy2807r3MloOHl/WXJv7lKDarElzoT8cQzLtJNu+xdeQtYq2FB6AlEj+
-         yRjqonXBfR/h9+/x8itZ63t/ar+nmIDo/zS3T+1hjVODD8em9yoxpvgAzA5YC2NfJgK1
-         xy8dB73HP12sUZHiFhPXuT9OWw+/d6brrgWof2cqR8chIbTTf4xpf5B4bOR3mziwUq7a
-         lpZ/htIu9x45i+s+PNENrbp1ULK7m/iJ0fTfGDJtrcJYEZGQ2iJ38eeXU1iaOWw3YSXi
-         SMYWfvAep7fGowoTAUTL0DZ1BkiCDTvckShTCi3MK3tX9YsNKMB1plGIP9o/cPdEB4cE
-         Wsig==
-X-Forwarded-Encrypted: i=1; AJvYcCXJF3IcU+1vSyLQ1B0BqTOdow/Mm0bxejYYe5OsjqUHNhcx0THEi0X2/xdggkgdZv2tVkjOgcgrKKMFctA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf28a5k3o+DA8G4uR3jOCBqKBDOEiTrRk0agpTav3xiSBHk8RB
-	0Jorb+mSj1HmRAbE/9FMD7whM4yETRJqrql1zcj/jI+bi6k8Rwlp5v9hqTAl9Sc=
-X-Google-Smtp-Source: AGHT+IGOuUg1J6dHW8l3Gs80tJozrKGUmiq++4D3EjN95hL8PqbfNmH3UyP0hJyAinA1FIatqAVsyA==
-X-Received: by 2002:adf:f98a:0:b0:37d:39aa:b9f4 with SMTP id ffacd0b85a97d-37d551d416emr7300405f8f.26.1728895337023;
-        Mon, 14 Oct 2024 01:42:17 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6ebe2csm10757089f8f.65.2024.10.14.01.42.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 01:42:16 -0700 (PDT)
-Message-ID: <ca386344-cd1e-4667-b21e-318680f6cff3@linaro.org>
-Date: Mon, 14 Oct 2024 09:42:15 +0100
+	s=arc-20240116; t=1728895383; c=relaxed/simple;
+	bh=WeSAkX1MvMDMWy4naKwnTCQr6X1J5oxQy0hl5dwz1A4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jM4dgE8T2IP1UgEkBdegHDWZi6RCqva1yG0lPGRbKOu0+x8u5u5B8/L5f+yBuCQMwqHLNuFKOofcoLIyoI4vVxzOOytvHFQ+oKcClQ40l3xndxRhCsO9ZWgaafHbOngEibQY/4dsDb86QVGlfnkpm9ER8AFPPlP+kOlF72lcLxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=buf5mhGD; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728895377; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=gtVhAaEFtvj2lIX1mN+ixUOT+9B3L8M2ciNN0miyZ2k=;
+	b=buf5mhGD8TTdQyYsZRebYpiRYrQQYim84Ke5jpeM+755WYX2EdTlahUnWREBbFMJAhTeeoDYdkoaAmOSA+O8aLSTMwmY0i3v3JUkM/U4S+1gPX2Tnq9KF4wf6PvqAd3yB6TmVKGAIScNWf0NBHRHRj/1Pa1layK1fFfvjRVM+VE=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WH3mwJg_1728895360 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 14 Oct 2024 16:42:55 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	mingo@redhat.com,
+	robin.murphy@arm.com,
+	Jonathan.Cameron@Huawei.com,
+	bp@alien8.de,
+	rafael@kernel.org,
+	wangkefeng.wang@huawei.com,
+	tanxiaofei@huawei.com,
+	mawupeng1@huawei.com,
+	tony.luck@intel.com,
+	linmiaohe@huawei.com,
+	naoya.horiguchi@nec.com,
+	james.morse@arm.com,
+	tongtiangen@huawei.com,
+	gregkh@linuxfoundation.org,
+	will@kernel.org,
+	jarkko@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	linux-edac@vger.kernel.org,
+	x86@kernel.org,
+	xueshuai@linux.alibaba.com,
+	justin.he@arm.com,
+	ardb@kernel.org,
+	ying.huang@intel.com,
+	ashish.kalra@amd.com,
+	baolin.wang@linux.alibaba.com,
+	tglx@linutronix.de,
+	dave.hansen@linux.intel.com,
+	lenb@kernel.org,
+	hpa@zytor.com,
+	robert.moore@intel.com,
+	lvying6@huawei.com,
+	xiexiuqi@huawei.com,
+	zhuo.song@linux.alibaba.com
+Subject: [PATCH v14 0/3] ACPI: APEI: handle synchronous errors in task work
+Date: Mon, 14 Oct 2024 16:42:37 +0800
+Message-ID: <20241014084240.18614-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Document the 'perf test -w' workloads
- functionality
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Arnaldo Carvalho de Melo <acme@redhat.com>
-References: <20241011171449.1362979-1-acme@kernel.org>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241011171449.1362979-1-acme@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+## Changes Log
 
+changes since v12:
+- add reviewed-by tag from Jarkko
+- rename task_work to ghes_task_work (per Jarkko)
 
-On 11/10/2024 6:14 pm, Arnaldo Carvalho de Melo wrote:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> Hi,
-> 
->          I noticed that the 'perf test -w' code wasn't well exposed, so
-> add a '-w --list' option to list the existing workloads and document it
-> in the 'perf test' man page.
-> 
-> - Arnaldo
-> 
-> v2:
-> 
-> - Use --list-workloads, as suggesed by James Clark.
-> 
-> - Add info in the man page about the parameters the built-in workloads
->    accept.
-> 
-> Arnaldo Carvalho de Melo (3):
->    perf test: Introduce workloads__for_each()
->    perf test: Introduce '-w --list' to list the available workloads
->    perf test: Document the -w/--workload option
-> 
->   tools/perf/Documentation/perf-test.txt | 14 +++++++++++++
->   tools/perf/tests/builtin-test.c        | 27 ++++++++++++++++++++++----
->   2 files changed, 37 insertions(+), 4 deletions(-)
-> 
+changes since v12:
+- tweak error message for force kill (per Jarkko)
+- fix comments style (per Jarkko)
+- fix commit log typo (per Jarko)
 
-With the fix for the comment on patch 3:
+changes since v11:
+- rebase to Linux 6.11-rc6
+- fix grammer and typo in commit log (per Borislav)
+- remove `sync_` perfix of `sync_task_work`  (per Borislav)
+- comments flags and description of `task_work`  (per Borislav)
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+changes since v10:
+- rebase to v6.8-rc2
+
+changes since v9:
+- split patch 2 to address exactly one issue in one patch (per Borislav)
+- rewrite commit log according to template (per Borislav)
+- pickup reviewed-by tag of patch 1 from James Morse
+- alloc and free twcb through gen_pool_{alloc, free) (Per James)
+- rewrite cover letter
+
+changes since v8:
+- remove the bug fix tag of patch 2 (per Jarkko Sakkinen)
+- remove the declaration of memory_failure_queue_kick (per Naoya Horiguchi)
+- rewrite the return value comments of memory_failure (per Naoya Horiguchi)
+
+changes since v7:
+- rebase to Linux v6.6-rc2 (no code changed)
+- rewritten the cover letter to explain the motivation of this patchset
+
+changes since v6:
+- add more explicty error message suggested by Xiaofei
+- pick up reviewed-by tag from Xiaofei
+- pick up internal reviewed-by tag from Baolin
+
+changes since v5 by addressing comments from Kefeng:
+- document return value of memory_failure()
+- drop redundant comments in call site of memory_failure() 
+- make ghes_do_proc void and handle abnormal case within it
+- pick up reviewed-by tag from Kefeng Wang 
+
+changes since v4 by addressing comments from Xiaofei:
+- do a force kill only for abnormal sync errors
+
+changes since v3 by addressing comments from Xiaofei:
+- do a force kill for abnormal memory failure error such as invalid PA,
+unexpected severity, OOM, etc
+- pcik up tested-by tag from Ma Wupeng
+
+changes since v2 by addressing comments from Naoya:
+- rename mce_task_work to sync_task_work
+- drop ACPI_HEST_NOTIFY_MCE case in is_hest_sync_notify()
+- add steps to reproduce this problem in cover letter
+
+changes since v1:
+- synchronous events by notify type
+- Link: https://lore.kernel.org/lkml/20221206153354.92394-3-xueshuai@linux.alibaba.com/
+
+## Cover Letter
+
+There are two major types of uncorrected recoverable (UCR) errors :
+
+- Synchronous error: The error is detected and raised at the point of the
+  consumption in the execution flow, e.g. when a CPU tries to access
+  a poisoned cache line. The CPU will take a synchronous error exception
+  such as Synchronous External Abort (SEA) on Arm64 and Machine Check
+  Exception (MCE) on X86. OS requires to take action (for example, offline
+  failure page/kill failure thread) to recover this uncorrectable error.
+
+- Asynchronous error: The error is detected out of processor execution
+  context, e.g. when an error is detected by a background scrubber. Some data
+  in the memory are corrupted. But the data have not been consumed. OS is
+  optional to take action to recover this uncorrectable error.
+
+Currently, both synchronous and asynchronous error use
+memory_failure_queue() to schedule memory_failure() exectute in kworker
+context. As a result, when a user-space process is accessing a poisoned
+data, a data abort is taken and the memory_failure() is executed in the
+kworker context:
+
+  - will send wrong si_code by SIGBUS signal in early_kill mode, and
+  - can not kill the user-space in some cases resulting a synchronous
+    error infinite loop
+
+Issue 1: send wrong si_code in early_kill mode
+
+Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
+could be used to determine whether a synchronous exception occurs on
+ARM64 platform.  When a synchronous exception is detected, the kernel is
+expected to terminate the current process which has accessed poisoned
+page. This is done by sending a SIGBUS signal with an error code
+BUS_MCEERR_AR, indicating an action-required machine check error on
+read.
+
+However, when kill_proc() is called to terminate the processes who have
+the poisoned page mapped, it sends the incorrect SIGBUS error code
+BUS_MCEERR_AO because the context in which it operates is not the one
+where the error was triggered.
+
+To reproduce this problem:
+
+  # STEP1: enable early kill mode
+  #sysctl -w vm.memory_failure_early_kill=1
+  vm.memory_failure_early_kill = 1
+
+  # STEP2: inject an UCE error and consume it to trigger a synchronous error
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 5 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
+error and it is not fact.
+
+To fix it, queue memory_failure() as a task_work so that it runs in
+the context of the process that is actually consuming the poisoned data.
+
+After this patch set:
+
+  # STEP1: enable early kill mode
+  #sysctl -w vm.memory_failure_early_kill=1
+  vm.memory_failure_early_kill = 1
+
+  # STEP2: inject an UCE error and consume it to trigger a synchronous error
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 4 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
+error as we expected.
+
+Issue 2: a synchronous error infinite loop due to memory_failure() failed
+
+If a user-space process, e.g. devmem, a poisoned page which has been set
+HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
+current processs with error info. Because the memory_failure() is
+executed in the kworker contex, it will just do nothing but return
+EFAULT. So, devmem will access the posioned page and trigger an
+excepction again, resulting in a synchronous error infinite loop. Such
+loop may cause platform firmware to exceed some threshold and reboot
+when Linux could have recovered from this error.
+
+To reproduce this problem:
+
+  # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 4 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+  # STEP 2: access the same page and it will trigger a synchronous error infinite loop
+  devmem 0x4092d55b400
+
+To fix it, if memory_failure() failed, perform a force kill to current process.
+
+Issue 3: a synchronous error infinite loop due to no memory_failure() queued
+
+No memory_failure() work is queued unless all bellow preconditions check passed:
+
+- `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_memory_failure()
+- `if (flags == -1)` in ghes_handle_memory_failure()
+- `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_failure()
+- `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghes_do_memory_failure()
+
+If the preconditions are not passed, the user-space process will trigger SEA again.
+This loop can potentially exceed the platform firmware threshold or even
+trigger a kernel hard lockup, leading to a system reboot.
+
+To fix it, if no memory_failure() queued, perform a force kill to current process.
+
+And the the memory errors triggered in kernel-mode[5], also relies on this
+patchset to kill the failure thread.
+
+Lv Ying and XiuQi from Huawei also proposed to address similar problem[2][4].
+Acknowledge to discussion with them.
+
+[1] Add ARMv8 RAS virtualization support in QEMU https://patchew.org/QEMU/20200512030609.19593-1-gengdongjiu@huawei.com/
+[2] https://lore.kernel.org/lkml/20221205115111.131568-3-lvying6@huawei.com/
+[3] https://lkml.kernel.org/r/20220914064935.7851-1-xueshuai@linux.alibaba.com
+[4] https://lore.kernel.org/lkml/20221209095407.383211-1-lvying6@huawei.com/
+[5] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20240528085915.1955987-1-tongtiangen@huawei.com/
+Shuai Xue (3):
+  ACPI: APEI: send SIGBUS to current task if synchronous memory error
+    not recovered
+  mm: memory-failure: move return value documentation to function
+    declaration
+  ACPI: APEI: handle synchronous exceptions in task work
+
+ arch/x86/kernel/cpu/mce/core.c |  7 ---
+ drivers/acpi/apei/ghes.c       | 86 +++++++++++++++++++++-------------
+ include/acpi/ghes.h            |  3 --
+ include/linux/mm.h             |  1 -
+ mm/memory-failure.c            | 22 +++------
+ 5 files changed, 60 insertions(+), 59 deletions(-)
+
+-- 
+2.39.3
 
 
