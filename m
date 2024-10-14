@@ -1,110 +1,91 @@
-Return-Path: <linux-kernel+bounces-364210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F7499CCFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:27:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6622899CD03
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329D3282D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:27:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C4EF1C2244E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BC81ABEAD;
-	Mon, 14 Oct 2024 14:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16D21AB501;
+	Mon, 14 Oct 2024 14:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEO+2Bai"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lbmpeh+U"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3481AAC4;
-	Mon, 14 Oct 2024 14:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D819E1AAC4;
+	Mon, 14 Oct 2024 14:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916040; cv=none; b=H6nPwgHbv7Kfy92BQwB5njNZkM/8IiqwqhCa9Q+RyZUjHz60CV9HuipdUPBKxvUs/uTVIbocNHs6En2iNK7ML+85g2Knt2k7c1wdmpdbBj/Vd8WEahH4juzLA972o/SamkN/+5sJIVzNhtO0wrC88tkLYNThUl79YFWZLWywmAg=
+	t=1728916055; cv=none; b=BF2XBD7iLfWwy30O2A9WJ41Pq3hRdNX3ikFUwirLAu1yWgpFxgHSkt3jO+HGSRo5CZm9blAcyGUDuGnoGuVrm+ARHyWDb5aw1W4B9CoOY+j4rjBG/S8O3A6FBIwv3nsf/1Rj6bMjxnLzF6P0nYqcyiHkw7hkYim6LBKxBQtJG0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916040; c=relaxed/simple;
-	bh=WEDA3/5i1PMkYapLq8RmXqKUWXx3zwsyD6Bwe1ka4fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYyaaKzG3lm+ztSIqesqjMS9jf0cR7GwX57DSxDreX8zzMVhvXQ8QstHcDYUG528xebUQ7dKs4F6JGVOxxYeaQU7P/LYy90DJecy18hCFyuadnUgq9AcepwAomT5x5WkxiK1Ti3gv8jcc/7IlaCuJTjRy5+zk7BfaUH5I6ZUywE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEO+2Bai; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1728916055; c=relaxed/simple;
+	bh=7IXPUz8ydy3PQGytYh4w1aGLvxO912hKFGrv77OgNrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l7erVGvpLSnTaqn+UBcqdwvDSkM9y3Kk7GyjChxUjzOgNNi7YlH+9qJKCSZtRq3+mGX6CIOT5gbqrRZJIVGCLqzPLuOL+IiSN/TxEFK3NDulx86CvzVdUaPY9Eog+xH91/DF0d22repFf1O+UfeUgQo9NCia6UmtSTODJHY5WA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lbmpeh+U; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d5231f71cso166410f8f.2;
-        Mon, 14 Oct 2024 07:27:18 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e314136467so37362677b3.0;
+        Mon, 14 Oct 2024 07:27:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728916037; x=1729520837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4fI7ZFSKGrcvx+dthi4wOxiRSSJeKc/d/ltpVnmO6BA=;
-        b=ZEO+2BaiSEzo3ZgZftd7DsKHBCtog0VkS78asSVlJk3t0hZVNEbtztG8Kss50bdwRI
-         YZYvf+g1Hm8d2O3fkVzx8aAkBzXn0dIHc84YYa1I3+JcX+9iUVSAtLRVmmghgmoOldHk
-         SOq/juAFGZroysNXE3yutPrOgPLx8cSAZXbX5x+as8X0/bQmq2BVySa6LV2BzWjGAqW+
-         Svs6PPHIEy6gtO9jdAeiActSvnsmHHeEl1odUHZsx8dEcAyQ1T1gkZxSSwxzut2q0jiB
-         0Xt0ANOeMUC17TCvn+blSWISr3b0C/BBEbZ6BodBNFfoNt9I8yIkz0E/mvYRKQKRKcyN
-         Af8g==
+        d=gmail.com; s=20230601; t=1728916053; x=1729520853; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7IXPUz8ydy3PQGytYh4w1aGLvxO912hKFGrv77OgNrE=;
+        b=Lbmpeh+UrpuRlkjTVTgwGFBvZzIGajEVyNQIoWlD50h0L3GLeo9A/Szri1hGVzHNLG
+         t7kmUulfKKNwTHhlsdXaVVXgv10X2KJasXXYmE8p8I3rPKuwtz4GC1asHP4Wl8zvBUg/
+         wmykVHbWwe6v7/ZnLK6m/beJiKSuN3B0cWfunA6BhdhT+1ChuVczcfxFYZQPsoOuh5+Q
+         D3a9ZBvMcTSQtRmiR3fJC0aHB4bxxIyzBh9eND4W/X3mQE/4GgckZ/ifcIyrxCE700No
+         BfCRwiBLgp2ihXT9FDlyEEP/Mr6ZoWu8lQXvAXbCMMrhsfxuFTIUnSgf/2bkbPHH+Uua
+         JriA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728916037; x=1729520837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4fI7ZFSKGrcvx+dthi4wOxiRSSJeKc/d/ltpVnmO6BA=;
-        b=gZJmefv4neihAr8zN9StS6jGWZUX5w2og+ZX4OQf0ljTTmHkHDk1kElqjuK9oAlXna
-         XhnY+N3/uOUkuZgxxVImLRnAtbjmjumjJV05E2S1aF6eMYkwPUeOLHNvvHmwCnovTWOC
-         mt2AkHGZB7a3+JTogYAcR+QV4/euT7TuWK6DYvLfAtqawsgswqwnOxdTthRATZQUmJkc
-         MkrpmrVL8k5LgO3aPJKjJT2zJ1rE5DKvD/kqcNB3r8vITgiafz8mjuczgOLhhwlRJB9N
-         Hh70MK+ggnRuVJDxH+AV+P0SxV160BntJuVx9FQ1rufK6m2xcIFp7UJKzIA0rhdyDkRn
-         LP5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV88nhKi/FcQwHxfZ7HoxTT88cm2cDewqJK2J7Cpzx5Wl//Xp8H9qla/17Lle+fdmTGbJZRJnZd2GEujZo=@vger.kernel.org, AJvYcCV9X6/eQIFA+4t2WVA58Go48xxdt4Nd1Lz0W+HG42+/iGJY/TRrNJa/JFMxbF4b/ptV5TPn9yRG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDked5cRG6yHuRELpk70Dh7BBkojuZgf5zu5pMm84yNMk+1obV
-	+BL/dY8c0J7t2fDxR8XwZZkcVDTXCubWl7dXJWnOdHWPgLkrVuWyw3CXQqFV
-X-Google-Smtp-Source: AGHT+IHNAchLhtGUMOU9OShafD6JmcbWIxzB5YkF/e9JFt2C7kEkpnPVbGbyrepTyLlcxO/ZeBYkcQ==
-X-Received: by 2002:a5d:5989:0:b0:37d:2e83:bc44 with SMTP id ffacd0b85a97d-37d5533447dmr3804202f8f.9.1728916037024;
-        Mon, 14 Oct 2024 07:27:17 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937119cb7sm5084166a12.36.2024.10.14.07.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 07:27:16 -0700 (PDT)
-Date: Mon, 14 Oct 2024 17:27:13 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net-next 1/8] lib: packing: create __pack() and
- __unpack() variants without error checking
-Message-ID: <20241014142713.yst257gxlijdxdw2@skbuf>
-References: <20241011-packing-pack-fields-and-ice-implementation-v1-0-d9b1f7500740@intel.com>
- <20241011-packing-pack-fields-and-ice-implementation-v1-1-d9b1f7500740@intel.com>
+        d=1e100.net; s=20230601; t=1728916053; x=1729520853;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7IXPUz8ydy3PQGytYh4w1aGLvxO912hKFGrv77OgNrE=;
+        b=IVmlG1IoZPnwvSRk5K6RltsQFjlVh8Bph1xCVrTR1ujHxIimTLEzN/Zmqh0j9u+zWK
+         hLGK1kvjG8afOdq2kZ4HHw/mM4bLJyBDv/hxpkcf8aTScB23jmZBiZO9xUkrFRlau5ij
+         Xpvn6LDCO+ewdxVPKfmf4jsKaoQTBjpDWYd+lxuYgbA8W5bw2JBSBf+PptoLLkI4AM3L
+         t3pknBzpSHGnx4v8n5bsRfrSosqqDsta4NgFH7YrdFqsC1hrlLHPbWP/dRR7ykcSdWlM
+         F7tsiVeJiOEWZu5wU3NRDpD743VV1VThJiE48LEq06K4ra/o/I/6/wt4c0pIcwvc7k5s
+         XjxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+/zXOeJWRa6cycY/Nd6hSCRJ6EGGWkUc0TDXj0nnsGEKW31CWaWqzvO2L7hpC+eyMluKX4iiuIx+LvLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxNxUv1oi2s7xJQCTYghWoLL7Sr8pz1kL5wVkm99RWl+JJYQlZ
+	LIczKN2skdcA84FwfIJEclzpsKHFYmxMsjbR0U/4LQjy5xXDDW9z
+X-Google-Smtp-Source: AGHT+IFwZNYemI+McTCHhRTO+ryzjpc+VV1MLDatp6h63Jr3jjkSNMcZI7rpEQ4Bk6KAq0HTvBb/uQ==
+X-Received: by 2002:a05:690c:ed4:b0:6dd:f81a:80fb with SMTP id 00721157ae682-6e344c01e6amr71760087b3.1.1728916052849;
+        Mon, 14 Oct 2024 07:27:32 -0700 (PDT)
+Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332b6272esm15620357b3.4.2024.10.14.07.27.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 07:27:32 -0700 (PDT)
+Message-ID: <a7a90948-a78c-47f0-9c5f-e82e0a496cc8@gmail.com>
+Date: Mon, 14 Oct 2024 10:27:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011-packing-pack-fields-and-ice-implementation-v1-1-d9b1f7500740@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] linux-kbuild: fix: ensure all defaults are tracked
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ shuah@kernel.org, javier.carrasco.cruz@gmail.com
+References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
+ <20240913171205.22126-4-david.hunter.linux@gmail.com>
+Content-Language: en-US
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <20240913171205.22126-4-david.hunter.linux@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 11, 2024 at 11:48:29AM -0700, Jacob Keller wrote:
-> From: Vladimir Oltean <vladimir.oltean@nxp.com>
-> 
-> A future variant of the API, which works on arrays of packed_field
-> structures, will make most of these checks redundant. The idea will be
-> that we want to perform sanity checks only once at boot time, not once
-> for every function call. So we need faster variants of pack() and
-> unpack(), which assume that the input was pre-sanitized.
-> 
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> ---
-
-All patches with an author different than the submitter must have the
-submitter sign off on them as well.
-
-Please do not resend without some reviewer activity first on the code
-generation portion from patch 3/8, though.
+https://lore.kernel.org/all/20241014141345.5680-3-david.hunter.linux@gmail.com/
 
