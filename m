@@ -1,325 +1,95 @@
-Return-Path: <linux-kernel+bounces-364692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3D199D7FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:13:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E29F99D7F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2FE1B211CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:13:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C60A1C22C82
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7991CF7C9;
-	Mon, 14 Oct 2024 20:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0021CFED2;
+	Mon, 14 Oct 2024 20:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gfW8pToC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4xDbyNF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4088A14A4E7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728936766; cv=fail; b=dcgzPgCYRAD2l/LEeL+H6UgiE0bts1kzKfkegAg2gthPnMG1dHDuD1IM6HvFBAlNuRjGluG6sydI2NSdHEkK7GYNRpDZkTebbyAGtNvRPmcHKUnOtAY60x3zn2wWVU8+lk4UMryKE9r3+u+cn7EVeIdZebETgzh+MjUBF11xEZE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728936766; c=relaxed/simple;
-	bh=scWb2h0RHXn0che5028xR1ViVJmOlg2VjFhpNF2A3Lc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CgHSGv+LOyVX8mtjD5ewnUPxYeuPel0fo2chiHOxZnH4dxyFkvOvQ+c7EcQQm7EJFhVGH+KIny/FJNB63rvV5l/LzgzvFIvCLZucNewfT329eECWUDCT7w5MId0iOB/oR+eqqiDKP6fKC8O3XqlJj8PSCAJh5fPK/WFTVxNGUiM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gfW8pToC; arc=fail smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728936765; x=1760472765;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=scWb2h0RHXn0che5028xR1ViVJmOlg2VjFhpNF2A3Lc=;
-  b=gfW8pToCl1IPyegFPDwFsGD5cnF7t+7umxFczzJzQoG70B81JNevbHG+
-   al8lowickA5hcRlTeNhxD5DDvnZpOp2OpPn+hFe44GaL1V5+O3atss+lR
-   AQvlhX24AvfGa8GJeNKPvL1B/USP6k6RU9yrqFxUJ0C1f7wi/5GMFa8NH
-   qgs9VBnSIIcItPZ2FsQuEDZPDMPVny2VZwAK9ti45Lzle8Ui+ksWnT5Yh
-   RX2kQ0xeVKP3niVLlyz/3SXWmEGmkqYe1q16g7F/edoHakEDdD+d79/jr
-   NcQfsfNW7STStAW0JfkZnRK3rfNGO8HTJbuAV2Qj29wof1Esm1kCYjcR3
-   g==;
-X-CSE-ConnectionGUID: CPtgz+d7Tj277accP6wEwQ==
-X-CSE-MsgGUID: 6/RqJeFuT22iX1rMv42gHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28257749"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28257749"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 13:12:44 -0700
-X-CSE-ConnectionGUID: IrX2+oHsSfadbRUqMVgDkw==
-X-CSE-MsgGUID: TpwnpirhRYGi8UQZy4kmoA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,203,1725346800"; 
-   d="scan'208";a="82297142"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Oct 2024 13:12:43 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 14 Oct 2024 13:12:42 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 14 Oct 2024 13:12:42 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.40) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 14 Oct 2024 13:12:42 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iGgPUc5M1uuC/DlSlnIzetxBAy4jiJNE9iflZlvugVgRfS6xapd8XgitA73Glc6uDz114GVscer1U2icRI9E8FaCMJdT6tfURcIZyInbk5050ZnQAD+CawlDZeax+tqWyRBznHIUbUN8noYb3y8yqBYZpGFEOhm/LFhxktYP3gFIPHYc8+MGhATt9emSs+OzEdvbAJ+uGX1Grv2uFzZv6gUjWtRzIu3sfbrObUhf8eVWVkMuGYu9im5NJKSUjdT+MpnB+EwirG7hBCz2jqNjJUHRkB7RjPxWd4WGoa3GW13IYNniykZpUiRo0uhvUrExew9iXmcQJzID0rbAJPCNjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XHl61kP+53coDEScWTfFau9EBUvwztufvourbMoar8M=;
- b=A1tGeNuDpxZfRxzOvXrBdwb10QOddQPXl1yFTqVjZfuGg25OrD9RzySQcQGfpY6QNSv5oBJKMfOrwyVgtDqikFS2+8t2WbCyt2rI0Uv9pUzOeWXFjT9SbfoguU+5aaACpZD2TSc1IaEolL3CCjW2y+ueosPaEGudBpDHDIBoh+qWotR6sk0p4/+yJbu0tzH+YbDceZR20rk+gnDQ41CsjkQcIBN00Wa+AkFXtW0wqWuIrr4qWxMjOsk1gZXopWO9/qZwpWk01ZYRbHsvx+ROxjiGa6h3hpofQoW21zJ9QlHqY3RHpInYvJbTigaIaJKvlYIYwlM7pGVUHc2AszyF0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by PH8PR11MB8064.namprd11.prod.outlook.com (2603:10b6:510:253::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Mon, 14 Oct
- 2024 20:12:40 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
- 20:12:40 +0000
-Date: Mon, 14 Oct 2024 15:12:36 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>, "Ingo
- Molnar" <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	"Umesh Nerlige Ramappa" <umesh.nerlige.ramappa@intel.com>, Ian Rogers
-	<irogers@google.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: Re: [PATCH 3/5] perf: Add pmu get/put
-Message-ID: <jrjfdolkg5rfw2xtngqt2bc6ugssxralaqw4q6gyijlkuhyecm@kvyb3fkwngrr>
-References: <20241008183501.1354695-1-lucas.demarchi@intel.com>
- <20241008183501.1354695-4-lucas.demarchi@intel.com>
- <20241014173246.GI16066@noisy.programming.kicks-ass.net>
- <lunkl4llip7aafnyctwztggum37wsiznktb7z3ly73batmt6bu@m75kow4b4u6y>
- <20241014192519.GN16066@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241014192519.GN16066@noisy.programming.kicks-ass.net>
-X-ClientProxiedBy: MW4PR03CA0101.namprd03.prod.outlook.com
- (2603:10b6:303:b7::16) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9415314A4E7;
+	Mon, 14 Oct 2024 20:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728936760; cv=none; b=SbPps0Uj3ukZiT3PnEBt/1lY/9JXRa8GdN0+fOlBObaAyzvo7mhazBYpDkiEi8TEkmHRxi7dB0TkV9EnHMq8b3cJ6Dy00jQ38/8Ulo6VveN6flVulmqSYA/k8cukV9jVGFchyRWjkLTZDBY8399reAraBlYlGlHuw6lPCuAYwBQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728936760; c=relaxed/simple;
+	bh=ZTBxdRUCQr80BBF8O7VYgUYSjhbIYghb8AV3U3WUn/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ccCTEMyPXLLmqLa7wFZ4FAfEdBSs+1G7X4J7GAnx32pFtHVJaEDFY28aKA/HDuOE0Q0sjvLd/Yy9ocpBcRa5rUnavgsCQXh1ptv+o4DV2Tc1UItCRFMi1e2RVYogSkY3DsWf+HSptUyIk7gwNc89M3WB4GLQafwTsHtNF48KOgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4xDbyNF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2ED4C4CEC3;
+	Mon, 14 Oct 2024 20:12:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728936760;
+	bh=ZTBxdRUCQr80BBF8O7VYgUYSjhbIYghb8AV3U3WUn/o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l4xDbyNFEt5AbgSRRn6USSqmX4KqbacdsJnmKr1iUXlZc1hV+G0tPUz4bLCpYhrU7
+	 1BMbEuAzxNfPY5HZGTq27URh+n5VJQzOtXE8F/ArHmPO7Ou0nb1hRLM7QgX4rA1mZX
+	 +4WQHPIw3WKobqtPu13Gspjw8UOssLPxFXSpgSXtuUxoNAkgPTKp9rI+FvTPEFgKo/
+	 5t862vqDQuUfEMXaPyafwXPIhNAOpVsTdkPNSiA1wkib4U/fSIaItErgNbKNbUQEwN
+	 YilCTnDOxiI/0ehc/aBqZvVKjefh2pUgSyerPStonPQJ6dJ8hs+BnIterzf75wLWfD
+	 gS1zONSrqmJqQ==
+Date: Mon, 14 Oct 2024 13:12:37 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Richard Cochran <richardcochran@gmail.com>, Peter Hilber
+ <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Chashper,
+ David" <chashper@amazon.com>, "Mohamed Abuelfotoh, Hazem"
+ <abuehaze@amazon.com>, Paolo Abeni <pabeni@redhat.com>, "Christopher S .
+ Hall" <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>,
+ John Stultz <jstultz@google.com>, "Michael S . Tsirkin" <mst@redhat.com>,
+ netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier
+ <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, qemu-devel
+ <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net-next v7] ptp: Add support for the AMZNC10C 'vmclock'
+ device
+Message-ID: <20241014131238.405c1e58@kernel.org>
+In-Reply-To: <c20d5f27c9106f3cb49e2d8467ade680f0092f91.camel@infradead.org>
+References: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
+	<20241009173253.5eb545db@kernel.org>
+	<c20d5f27c9106f3cb49e2d8467ade680f0092f91.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|PH8PR11MB8064:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0750a947-b90a-46d0-aded-08dcec8c8dc8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?DTYjcJDycKpB9aXPHcNfsVPD777I2vYyWM1hhph4ZLItodSquWaUIuDoQpRQ?=
- =?us-ascii?Q?l6gVieR8iZOcA6BQP2s5YPf4pjGjB0Ua6Ud/dsca3C+MK+qDxtq0BvpAkntB?=
- =?us-ascii?Q?YPPad5ZL6DMy+k/zwxGCv1zKzfrxZL2zIdTGktDGJ4+zYEk4UcNUWXFHOalx?=
- =?us-ascii?Q?GpD28nXYqSZ196ZgABgYal4C5oUqXk6QwEX05+mjyyFxtirg/TTm9DuORvj8?=
- =?us-ascii?Q?f6gZDxZVRZgYY4hEm5rxx25xpe08E0ur+0wzCtw4qAm5+ZdUjh/O2M/1DNzf?=
- =?us-ascii?Q?47qwb/3ZcngADeAUsD+5nzJ7ZUVnuNwfcXHprgMfE+TG4vnnbXaWaThlceBX?=
- =?us-ascii?Q?Hc7xZ06Bui0WrrtnprHUBDuDmIC0i/Va3w2qCtQTFjpaBeBiWLHj6tgj/+GI?=
- =?us-ascii?Q?aWNTPfaxpov48mczv+uVttYozH5HurKRlJpYdHbveU0JHdCuC82XyIa899bg?=
- =?us-ascii?Q?OP9u0F+GRSvp3R5iJ6YiLV+GE6JZnb9JXn5TG405I5EuP0/gw+WnD69xLwqJ?=
- =?us-ascii?Q?ysPxWv7yF3iPC5VhegL5omYSgWybt7ibna8gYS5Q60LBTOfIAhuQTDrychHX?=
- =?us-ascii?Q?JgrItcDr6rRSyZV1CdpgfpBfK0yw3HVE1m0k/KGfcxzVbU/70vVPnU2T5XHr?=
- =?us-ascii?Q?wwiAkjXyl/TN5wn9IOT8DShR7FX/3nFHuEl6eXuUZ97FLIdtByOEucSQNWFw?=
- =?us-ascii?Q?7vVUcs1v0H1nvCuQhTnelm25fRftoeBMn+UnPRaqNIblLp2DMuzVhas6NA67?=
- =?us-ascii?Q?mw68+6d5KqLrepmo4PgqMSmwn4C1kK/HP9FDHn6rVkxvvNSXuNb64PKAgx7T?=
- =?us-ascii?Q?Xtvl9LtSR8TAPOdram0+LN5a14gcbv7h7ZdfriHGb1U/7hG2sCUmLwz8CIgy?=
- =?us-ascii?Q?5pHs3I2qzhHxQRkN7AChITnyyZgfBUQME5GudXvwqWK6GZSizAuTTH7aRI7f?=
- =?us-ascii?Q?I8OYVxfFvEWhHktePzje6U/IQ9bkkuJqaoKjYGJ7rq3frUnTCqjJtMipiFBR?=
- =?us-ascii?Q?Y+PbTpZu0zRPuUc5GSIfiO9bifeHTH6j1iVUXapYzWCM5VviqnIVoaVY+0ho?=
- =?us-ascii?Q?GgaszMYsyp/LIO7hMOOtsh/VscjusMPiN8M5WnNEt0suqmjdH1F29EUeIZo/?=
- =?us-ascii?Q?0cZK/BEKDAZfcvcx39MdhwiNxGp9g34MDlBCOtgvhMpfR9b81WP7PKgNStSF?=
- =?us-ascii?Q?aBFVDDyqehnsqBdOJAvdx1XSK1QZiEC5yC/HJXoXPDLyg7ffNWq9MfArAhzi?=
- =?us-ascii?Q?753EYvfhubkznrCDANbd3KmWTt12hkiWO40jZTRX/A=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4gScBC6Hp4NO76KvHoPm5PE5/V/mlKUqTY660UhaUzdSEifZ4cvUkzeNuQ3Q?=
- =?us-ascii?Q?/OYvfT+MeA+JxlgRKmttXTTgKia81NUMvSNXdtz7qiBOW5W41o/mEWxc3Hs7?=
- =?us-ascii?Q?YqxF5ahSI0P4B/tfeeyMXyrxk0PuC77fo/i1Gptb2dMfTNRAgzRMVtDuhYo4?=
- =?us-ascii?Q?eFE+BTpm974jk2G53VNoux1Cz0QdHPom2cc87rgtnPsL33ypFOZ9QkPlhkux?=
- =?us-ascii?Q?+eUihlK6QwyCJuCG9DIFETYER7w4zb7GQc+GMMVqZtaiEIOzNK6sFGAkXZka?=
- =?us-ascii?Q?27DtyTS8u1T1YbvhFruUS5EAYemw9Qthfn1Px9FH1Lhm1zN/PFNh42gXjU2x?=
- =?us-ascii?Q?OwefYT2XodKEgmtkRHN0TKXpEmqRKxZux37858GV/Je/TyUDkvtDOd1kOEVo?=
- =?us-ascii?Q?UxvEVxm9mrJVaBuKgZI6w+vYlEVHt1SFoxJ6KBWLrcA/CiT97UX0Ie8d/CVY?=
- =?us-ascii?Q?3lq2JEjjCS3B45A9cN9CZzVyaZPp69cDqGhy1JSHio/1aMwOvv4bvUwafKHW?=
- =?us-ascii?Q?f+WHmvRD/xMg846YoRzBgAY1FzCa+lb4Q8gFxuLUFGL1lYnN1KNprPhogsWR?=
- =?us-ascii?Q?W772FCmcp5EBTN/yw6DGHioSkz76LlQ0kpJhF1Mu4rD6JxyyzZW/rLG235c9?=
- =?us-ascii?Q?2MHN0vnbOp7CDFyOKoPReD3qQa8oxxPN2fGBMk6uSZW//rL6Om8GABqtzeXR?=
- =?us-ascii?Q?K4nvebj1ESkb8foZFGos7AGQaR29wFsb3QXUndQ8FmaEjLairZCdgTjCCuOb?=
- =?us-ascii?Q?fSKHBYge9HfzrWeusep9SoeD7C3Xq7MemAkM7lPexTGHp3KmCo9qQ2Is05fI?=
- =?us-ascii?Q?T0NLSN2GwADSjnBjkrTVXL8NxXB6v7NFrUHztMwhN8BkamOcbfWtUeUYb3yD?=
- =?us-ascii?Q?6dzSQAUP5jHyYhdDkn6gAX0UHLHm+OMxv4B69JlV9eLcHkw/JyR8vUBSawMi?=
- =?us-ascii?Q?m+w0Xfncl1/XZwLz3AzoWjj7oS96+wFyhaO967u7Lv408Nfni+57NNaLO4IY?=
- =?us-ascii?Q?9AGuP5OYMBsxREZ4AyFMp1/uWU5gZrC2qn6AwABLOiTxKUqwu+PLjvyPkhbX?=
- =?us-ascii?Q?kFg6II7m0wBJqQKMhV2Y5eWdDssvMDOmLBToD5Wg1lOlEdzYAPMlJuvrI2W0?=
- =?us-ascii?Q?Ux/y/CIU7KRg1SilGJvfS/NwPgqobL3NFOEWBO7jTpyR6PvifkAx5vuOQW2H?=
- =?us-ascii?Q?oR2HAydWZmB0+4kdJlocGJjGrTcOGNBkHz31iB4yVkM8u+tXiSm+etBTB+AS?=
- =?us-ascii?Q?Aa0thcWLKQD0MuJgpbUdD/7MACLrIRdfFsnLKFEzCx8CpJAPkgmEt4WgPGcj?=
- =?us-ascii?Q?Eo9ja9BsxDLT/7dSaec/x0ZTW4Ny9XIzc46j09XyNne5CEpE5kdvQo7NrxWT?=
- =?us-ascii?Q?CWAAYpRIOVjEHxa2iZduLlh1IC/QQfZ5vH59qA1QYwh8xPk6JsA94UJSrUaV?=
- =?us-ascii?Q?LGkbj46tWXado1aO/7n4FD2E8hMbWPgD0r/9V/sS4I2uVhshO6Wji81uVtva?=
- =?us-ascii?Q?vTHSNQxnUG7nFk1TZO9uJw5q959kjZOzd+XqYH6IUceXi9TMbaZ4COcpIVjB?=
- =?us-ascii?Q?nbbkP9Lzx/lkzgozWik+9B+2pYDCAvJiL0r6uXYG9tPHg2Oi1lfIwv1LY+6a?=
- =?us-ascii?Q?Vg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0750a947-b90a-46d0-aded-08dcec8c8dc8
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 20:12:40.0116
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Y5QuEI/Ekz7C3RkuDu1z/ApE6/esa4ynlLw03NXntHtX2rxIsN9iTzCG7KjWnjFb8LuJ4ucnclUvXZakRmNh/B4HZ0ivhkA8k0bLiac4myE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8064
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 09:25:19PM +0200, Peter Zijlstra wrote:
->On Mon, Oct 14, 2024 at 01:20:34PM -0500, Lucas De Marchi wrote:
->> On Mon, Oct 14, 2024 at 07:32:46PM +0200, Peter Zijlstra wrote:
->
->> > I'm confused.. probably because I still don't have any clue about
->> > drivers and the above isn't really telling me much either.
->> >
->> > I don't see how you get rid of the try_module_get() we do per event;
->> > without that you can't unload the module.
->>
->> I don't get rid of the try_module_get(). They serve diffeerent purposes.
->> Having a reference to the module prevents the _module_ going away (and
->> hence the function pointers we call into from perf). It doesn't prevent
->> the module unbinding from the HW.  A module may have N instances if it's
->> bound to N devices.
->>
->> This can be done today to unbind the HW (integrated graphics) from the
->> i915 module:
->>
->> 	# echo 0000:00:02.0 > /sys/bus/pci/drivers/i915/unbind
->>
->> The ref taken by these new get()/put() are related to preventing the
->> data going away - the driver can use that to take a ref on something
->> that will survive the unbind.
->
->OK, for some reason I thought to remember that you wanted to be able to
->unload the module too.
+On Mon, 14 Oct 2024 08:25:35 +0100 David Woodhouse wrote:
+> On Wed, 2024-10-09 at 17:32 -0700, Jakub Kicinski wrote:
+> > On Sun, 06 Oct 2024 08:17:58 +0100 David Woodhouse wrote: =20
+> > > +config PTP_1588_CLOCK_VMCLOCK
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tristate "Virtual machine =
+PTP clock"
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on X86_TSC || ARM_=
+ARCH_TIMER
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on PTP_1588_CLOCK =
+&& ACPI && ARCH_SUPPORTS_INT128
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default y =20
+> >=20
+> > Why default to enabled? Linus will not be happy.. =20
+>=20
+> Want an incremental patch to change that?
 
-humn... maybe because in the first version we were talking about
-shortcutting all the function calls. If made by the driver, it'd allow
-to remove the ugly `if (pmu->closed)`, and if made by perf itself, it
-would  allow to drop the module ref since we would guarantee we are not
-calling into the module anymore.
-
-But I think that's orthogonal to what we really care about: once the HW
-vanishes underneath us, stop accessing it and unregister the PMU in a
-way that if the HW shows up again we can still register it and nothing
-explodes.
-
->
->> > And I don't see how you think it is safe to free a pmu while there are
->> > still events around.
->>
->> so, we don't actually free it - the pmu is unregistered but the
->> `struct pmu` and (possibly) its container are still around after unregister.
->> When the get/put are used, the driver can keep the data around, which is
->> then free'd when the last reference is put.
->
->Aaaaah, okay. So the implementation knows to nop out all device
->interaction when it gets unbound, but the events and pmu data stick
->around until they're naturally killed off?
->
->Ah, reading the below patches that is indeed what i915 does. pmu->closed
->makes this so.
-
-yes. Without these patches it doesn't work well though, particuarly
-because
-
-a) even if we protected the methods with pmu->closed(), the data is
-freed when we call perf_pmu_unregister(), making the whole pmu pointer
-invalid
-b) kernel/core/events.c still accesss the pmu after calling
-event->destroy() - we can't really hook on that to destroy the pmu like
-is done today.
-
->
->The dummy thing you posted in this thread, does perf_event_disable() on
-
-that's optional and I think we could live without. The main issue is
-completely crashing the kernel if we do:
-
-	# perf stat -e i915/rc6-residency/ -I1000 &
-	# echo 0000:00:02.0 > /sys/bus/pci/drivers/i915/unbind
-
-... which these patches are fixing regardless of calling
-perf_event_disable().
-
->all previously created events, and this is not sound. Userspace can do
->PERF_EVENT_IOC_ENABLE on them and then things will go side-ways fast.
->And I was afraid i915 was doing this same.
-
-For the i915 series, that would be "[PATCH 8/8] drm/i915/pmu: Release
-open events when unregistering". See release_active_events()
-
-I was just wanting a smoke signal/hint for userspace that "something
-went wrong" with this counter.
-
->
->> - Subject: [PATCH 3/8] drm/i915/pmu: Fix crash due to use-after-free
->
->So reading that Changelog, you would like a replacement for pmu->closed
->as well.
->
->I suppose, one way to go about doing this is to have
->perf_pmu_unregister() replace a bunch of methods. Notably you have
->pmu->closed in:
->
->  - event_init()
->  - read()
->  - start()
->  - stop()
->  - add()
->
->Having perf_pmu_unregister() overwrite those function pointers with
->something akin to your pmu->closed would go a long way, right? It would
-
-it would help if we want to unload the module, to make it work for
-other drivers without having to add similar flag and to make those
-drivers less ugly with those checks. However grepping the
-kernel for calls to perf_pmu_register(), it seems there are only 3
-candidates, all in drm: i915, amdgpu and xe (the xe is a pending patch
-series waiting on the resolution of this issue).  There is
-drivers/powercap/intel_rapl_common.c with its `bool registered` flag,
-but that is basically doing multiple register/unregister to replace the pmu
-rather than working with HW that can be removed.
-
->require using READ_ONCE() for calling the methods, which would make
->things a little ugly :/
->
->But I also think we want to force all the events into STATE_ERROR, and
-
-yeah...  When I was looking for the smoke signal I mentioned, I wanted
-something to move the event into that state, but couldn't find one. The
-best I found was to disable it.
-
->I'm not immediately sure how best to go about doing that. Adding better
->return value handling to ->add() is trivial enough, and perhaps calling
->perf_pmu_resched() is sufficient to cycle everything.
->
->Let me ponder that a little bit.
-
-thanks for the help
-
-Lucas De Marchi
-
->
+Yes please and thank you! We gotta straighten it out before=20
+the merge window.
 
