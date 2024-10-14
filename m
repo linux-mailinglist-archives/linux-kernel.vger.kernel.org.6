@@ -1,90 +1,98 @@
-Return-Path: <linux-kernel+bounces-364767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5803B99D90B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:31:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1EB99D911
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDD81C22462
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:31:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39335B20DB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4997B1D172F;
-	Mon, 14 Oct 2024 21:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8F31D1E9D;
+	Mon, 14 Oct 2024 21:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgd+oAMG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="b8NUoVQm"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97528156872;
-	Mon, 14 Oct 2024 21:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E784613BC02;
+	Mon, 14 Oct 2024 21:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728941492; cv=none; b=rrvdbRSPUgKQdkTh8571yAeZBsg+WRjoH3C3l993iJiUT1ZbZjmL7kU6MuPZh5Rs72UxbA2VPd+hhJMHY6waJoeTLlnT2P8LYHIaJvwyp7OI7Ui2fP3XTK/S1ziKlTmWZMFye4Aj4QPjIn6pa0pTTtATcBfigShG4YnXvsMTdIo=
+	t=1728941565; cv=none; b=MB8j9/wiwzkoV1vJ6R01YbnSe85lvcUajVyQ4/Stk8PEwD3XO42YZZMJV7zE/5a4lrLGLphxB2rrRj2zfuatimRUkrYBm2F99+nigbuOPVWLNUDIF9HmIt5IB1KV1CcxiJ+Cns2gAInCIkIcB6lyJODI40jfnfzp1OEgQiCWH4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728941492; c=relaxed/simple;
-	bh=EgMQlfc0cmrFZVzE8nyOZnscIVnJZk6lOm9VCl01x7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kuj8Z5srRbOzxrLf4AbwlIrQ1Yguc+VmaYd6SfNcj1q5xoHY7FvtSFRCv4Sm5mYFGq5pNZwNnBsejNauO9aewGdPDz/l3JSd9UbDPRWSmrjb44ahZn8bwdFChNjKf5WDpTqhQxj09IRM5oYZVzWM3CAqfH3ZqLlF7RAUPqOTqkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgd+oAMG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C263C4CEC3;
-	Mon, 14 Oct 2024 21:31:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728941492;
-	bh=EgMQlfc0cmrFZVzE8nyOZnscIVnJZk6lOm9VCl01x7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hgd+oAMGq93Ttuj7W2ajGu3dzQ2KxgauThHh5ERDQah5zBX7eHC4JRNlV+bf0bmdK
-	 mW54ynU//45aGK2pJw4mXWLkBWJ0pt1bsOXztxkelP+9/AyjSZNlXhnfjfcz7y5t3g
-	 vOYjZEZYnaWfQLT0YJUBB9IPv2XC5eLoJSX0D7ZJFCmHdlPHXSkSVlbaSxFLu1HHb0
-	 b5oQJly/RtrhQIjrbC6u6Yl0FMeeqOYIB4K8OSgQRjgbBn/2QSP8AQWhfnyKm9wNd/
-	 h+tTQMfcm3UNYXkiJ01EZ000u9JpzbNHA6Ke68fBeRFYXWOWdPjkek7BQqWpwJttYx
-	 nGhimkwCOC03Q==
-Date: Mon, 14 Oct 2024 14:31:29 -0700
-From: Kees Cook <kees@kernel.org>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] tracing: replace multiple deprecated strncpy with
- memcpy
-Message-ID: <202410141423.2C30F35EE0@keescook>
-References: <20241014-strncpy-kernel-trace-trace_events_filter-c-v2-1-d821e81e371e@google.com>
+	s=arc-20240116; t=1728941565; c=relaxed/simple;
+	bh=m8lw1DtTZ1MZP+UllJpZatRafL9M9FoviwWn3MUnSTU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T8YmVv3r3oEFyoWty4t86Zi60GA59eZ+ITcDJTLTbBPGpZIXNoyM1396P/glxTGIep5hcvhxAQa5ZKRRUfXJaUOX5mtUzAiG8vqb24UHa4mqDUmrS3ImImBjUtJOPUyAXh6GU4rM/oEk1NoTMb6t1clSImOo4ofnD2rzhlYT7Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=b8NUoVQm; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1728941565; x=1760477565;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=anau8ITUOh9ZDx4HIGjWJQXF+uE125DcReJ9DX4QlEs=;
+  b=b8NUoVQmJgmLT8d7L5T1zIFlRgXfPMAwubPjAvuYyw17pej0h39ZEYVC
+   AeRWPR/XUuzFUJwYqxvE2NeScdHH9HbVEllZt7mxiSvVJApvlx6E9TRAD
+   BD3Q9jeNL5zO/alW5DOh8Jy3WagI0LB/vQlUsOuFhaawduBb2tpkf+IMy
+   0=;
+X-IronPort-AV: E=Sophos;i="6.11,203,1725321600"; 
+   d="scan'208";a="666126587"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 21:32:40 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:61887]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.49.108:2525] with esmtp (Farcaster)
+ id 089fae70-b9df-4653-8713-50e6dc2106ba; Mon, 14 Oct 2024 21:32:38 +0000 (UTC)
+X-Farcaster-Flow-ID: 089fae70-b9df-4653-8713-50e6dc2106ba
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 14 Oct 2024 21:32:38 +0000
+Received: from 6c7e67c6786f.amazon.com (10.106.101.44) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Mon, 14 Oct 2024 21:32:32 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <ignat@cloudflare.com>
+CC: <alex.aring@gmail.com>, <alibuda@linux.alibaba.com>,
+	<davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<johan.hedberg@gmail.com>, <kernel-team@cloudflare.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-bluetooth@vger.kernel.org>,
+	<linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-wpan@vger.kernel.org>, <luiz.dentz@gmail.com>,
+	<mailhol.vincent@wanadoo.fr>, <marcel@holtmann.org>,
+	<miquel.raynal@bootlin.com>, <mkl@pengutronix.de>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <socketcan@hartkopp.net>, <stefan@datenfreihafen.org>,
+	<willemdebruijn.kernel@gmail.com>
+Subject: Re: [PATCH net-next v3 4/9] net: af_can: do not leave a dangling sk pointer in can_create()
+Date: Mon, 14 Oct 2024 14:32:28 -0700
+Message-ID: <20241014213228.98842-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20241014153808.51894-5-ignat@cloudflare.com>
+References: <20241014153808.51894-5-ignat@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014-strncpy-kernel-trace-trace_events_filter-c-v2-1-d821e81e371e@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D033UWC004.ant.amazon.com (10.13.139.225) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, Oct 14, 2024 at 02:13:14PM -0700, Justin Stitt wrote:
-> strncpy() is deprecated for use on NUL-terminated destination strings [1] and
-> as such we should prefer more robust and less ambiguous string interfaces.
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Mon, 14 Oct 2024 16:38:03 +0100
+> On error can_create() frees the allocated sk object, but sock_init_data()
+> has already attached it to the provided sock object. This will leave a
+> dangling sk pointer in the sock object and may cause use-after-free later.
 > 
-> String copy operations involving manual pointer offset and length
-> calculations followed by explicit NUL-byte assignments are best changed
-> to either strscpy or memcpy.
-> 
-> strscpy is not a drop-in replacement as @len would need a one subtracted
-> from it to avoid truncating the source string.
-> 
-> To not sabotage readability of the current code, use memcpy (retaining
-> the manual NUL assignment) as this unambiguously describes the desired
-> behavior.
+> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-We know the destination must have a NUL-terminated string. Is the src
-NUL terminated? Looking at parse_pred(), it seems like no? And we can't
-use memtostr_pad() here because the source buffer size isn't known at
-compile time. Okay then. And there are no NUL bytes in the "str + s"
-span, so yeah, it looks like memcpy() is best.
-
-Reviewed-by: Kees Cook <kees@kernel.org>
-
--- 
-Kees Cook
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
