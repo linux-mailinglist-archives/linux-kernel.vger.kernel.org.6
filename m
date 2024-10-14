@@ -1,205 +1,132 @@
-Return-Path: <linux-kernel+bounces-363936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03F599C8AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:22:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9400C99C8AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379B11F225DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3360E28A960
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A8C156C74;
-	Mon, 14 Oct 2024 11:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A1915350B;
+	Mon, 14 Oct 2024 11:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2oNtDd4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ANehEhzO"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA18132117
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5490F19340F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728904906; cv=none; b=lsrky4pcGXJdg+ySL3VbRUG6Nk1DUV4dqCkR06ljWfsU5/u7516ShcIjAOtg4Ni1IE38RWhZPM2pTM79bq65P4JFPh6cr8myCTHhtUN9yPV0A9dibV/tDa7Jj5+QuDyJgT8bAlwig96SFAGDSxw+O0aMBR5u62q6WEI4DhcrvcQ=
+	t=1728904927; cv=none; b=cMH3pSgwM7Xvw2JWyDYfLpz30YwD0WR/T3kfZfjCxFUaaMGesZ/y9okrdClXa4BUMkO0E3lz0mnjS5ZwBzf/3VDSNOzvD3FolD2iBCPpqPh/jg+cZZBpq4+H03qiC2lxQlmLPQYaSFMuTQfl18+MmmU++MNnLOVjvq/7Lup6ZzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728904906; c=relaxed/simple;
-	bh=+7T/y8axk+fY+zCEhjt1LeFQcJ0MRlfZp7zXj0VpMvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nG7JYVUXG7Ibyn5rpd88c2LggCeV0cQd+FMXnwY0BTyI5tRj00dZplZ3BWkuZNmKzq7kvgyajMmwC6rcJg5CxBmnV4z0WG9amoDKJm92Ei+2IOfeN1M3I/ndsRVNt0Dsqaax6XMsuDODWHEOCcJFv8SKIiqEgpdvbncE0lp8OOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2oNtDd4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 381F4C4CEC7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728904906;
-	bh=+7T/y8axk+fY+zCEhjt1LeFQcJ0MRlfZp7zXj0VpMvA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=o2oNtDd4EX3QAO0cLSRzaHtc7sMJ8uFx7OBuh122aMuiZddEVLeaQ9NTH9bIPUVOe
-	 hy0F/wFh+vsefp0v3F3e+N+JRCUDKe8+Y/wj5tp9v5g4d4yPWds5C3hnAvK/Z0lGm9
-	 wYkPSHRNfIC8/kOXwKExZSQZ50Aq2hKKmyxJDgv4wpl+G6UDEQX82DasKW0htZ7pu8
-	 5wpMcmu7lTfnhoeDP0CrqMs4Lv7F/L9ILPYcD6uy5r/EPgtQc5Oi6eZaAXC4/iPln+
-	 QZes3GAjAE++28hai0N/K/4ZZlWbvpNcc9YNHVMsUj/nk39pdGzhhia8G6Z0RBKULs
-	 ZwdAqpRpJJK9A==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so1175510e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:21:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBhVa44MsTe2sxMzkznlA0oknfW3vM7zzCJQ8tRzHaTrGqonRQDJvnF7xxfIcDyKLuED8VvDEp3QaieNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyStx8ChC/4vletTJ63n3O9uETC3wplaKI0J/wwn/StXjW9lnwE
-	rE3NXHnINAbQA+Y3sYukXclboCuCsQRsTXTPZ4qfYHmp87/ld6UVSKfnKHT+Efxj2KKVkSaDwyT
-	Rf6Xc6dBOlHSH94FI4ZHegH9o4lY=
-X-Google-Smtp-Source: AGHT+IEqaJeyEBwK7hZ31LhkdFi1dlMxvxTeV2ekzn+xlpJY+hKsvIJBOiqhNyJ8gi3i7z4QCwpyA1gQ1aVdx1vFAI8=
-X-Received: by 2002:a05:6512:2256:b0:539:945a:cb4a with SMTP id
- 2adb3069b0e04-539da4d65e3mr4478951e87.30.1728904904526; Mon, 14 Oct 2024
- 04:21:44 -0700 (PDT)
+	s=arc-20240116; t=1728904927; c=relaxed/simple;
+	bh=r8uHLvAgChkdDFULHnIzZARobpeBkRPSAmDsg7UaSXo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=akmx1/+9LFO0+gBlqkL4XImkQ2lBIQ7jfYpCtSE9x6zPDEbeJVbXJXPjq0qS16hd5nuJAi1M25BRx8CU75uCvlC3m+j/I5eV+e66m16yc9Z5Yos0X7rTNHFpwVR+76yEmoU5HGXIRRNtucY8ZzTIUNy2qiIyK5mEB/Sbr8kg3Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ANehEhzO; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so2755038f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728904924; x=1729509724; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/2/ZBK2VdVmT0ti0GWpWf9A3brA+cjwHMxX/7nDvK8U=;
+        b=ANehEhzOavsFr02SPoWY9bmjeeI4XPsaaHMzFYxsmx0Bur/AlXo09XYs6YKwhzj+Nh
+         Xt0Gk1HSU6h1w1xRBea0EOzvPYJGc0EIzyCcaO7aQNEM8kRTRfRHFmjbS+MHgcSGw8Lw
+         37yEZz0xXnqA/+sgOi4RX4RZL0fr0GW5bhRKOggngDZHgEkVuoG6MUO5E7hDLJTbrd9A
+         aPG3Q8mzMc+CVatJkq8SYaWkD23K3BUGmb8Q612Ib/vWmNAhQeyo1kt6MNmdQUaC2/6g
+         k8QMu3CKKaBEeaJ5YPc3jYuddtlexawGRWv6incLaIGp7R55AdeyGN9uz+cI/vjr/DA5
+         mN/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728904924; x=1729509724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/2/ZBK2VdVmT0ti0GWpWf9A3brA+cjwHMxX/7nDvK8U=;
+        b=iKSAbkDdS0vm3UXdKkAwVKEpoGZXxM94SXqW/OeAoZE3xJBWczuk/OZs8L+2iKM89p
+         hNKbI2tIPWn1ysfcAiHn9YQJvU4O7cxXUXigcx/k6Fk2YaiXD38wr0dZHRf7Wg0PBhK/
+         X7pzq3DF6SoFttc6JUaO8atM4+N7hqz8F2gvnpWnQNdktuZ0NeP4ZgChuYxC4YQ/WsnH
+         eQkbDLXcg2UgEVNdMeOF1tjAKABluVZoYh+cGnKfvtZshImkqKov4CYE4vE7fvyMg4Cw
+         mpHZ2lpjmfbiuj38jqP5gaNqM/Nri1Lp/8Vm/vsorJERpy5DQ7qachvQR8LRPTw5Ls3F
+         +SBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwkWM1ZYNmdA3bB3crsXo6wDaRyfdkXWjXZeMKVzIkwd8326ghVsQhAx5vaB5eC22LDy8KHf5zpvBtprs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaRFo3ABS9B6oPP4yBmJz8SPHiM+aEzZ59OrCOo4W+T6rGuWN/
+	ZRMaon79jblqmEHFDewc2YJGn+Me2fhzjsHDDqyvbsX9Oow58JBaooenc6cpreQ=
+X-Google-Smtp-Source: AGHT+IFp5a6oUCJ5JK9FimqbiklIdZ6wigQ10WlYJ6Aja8n2a95nBbdr4l0FOvTpUDt3uTtWSQHGIg==
+X-Received: by 2002:adf:fe47:0:b0:378:fe6e:50ef with SMTP id ffacd0b85a97d-37d551ab389mr9168001f8f.5.1728904923609;
+        Mon, 14 Oct 2024 04:22:03 -0700 (PDT)
+Received: from [127.0.1.1] ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8666sm11098702f8f.22.2024.10.14.04.22.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 04:22:03 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH 0/2] arm64: dts: qcom: x1e80100: Drop orientation-switch
+ from USB SS[0-1] QMP PHYs
+Date: Mon, 14 Oct 2024 14:21:47 +0300
+Message-Id: <20241014-x1e80100-dts-drop-orientation-switch-v1-0-26afa6d4afd9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com> <20241014105912.3207374-55-ryan.roberts@arm.com>
-In-Reply-To: <20241014105912.3207374-55-ryan.roberts@arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 14 Oct 2024 13:21:33 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHt9eCoPgJLo0kJ1TuSQ71dpnjB1pLdRO0HiOA3jFNd7w@mail.gmail.com>
-Message-ID: <CAMj1kXHt9eCoPgJLo0kJ1TuSQ71dpnjB1pLdRO0HiOA3jFNd7w@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 55/57] arm64: TRAMP_VALIAS is no longer
- compile-time constant
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Hildenbrand <david@redhat.com>, Greg Marsden <greg.marsden@oracle.com>, 
-	Ivan Ivanov <ivan.ivanov@suse.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMv+DGcC/x2NMQ6DMAwAv4I815Id0Zb2KxVDIG7xkqA4apEQf
+ 8fqeMPd7WBSVQye3Q5VvmpasgNfOpiXmD+CmpwhUOiZuMeNZSAmwtQMUy0rFg/kFpubaD9t84L
+ h+pDpdh8ihQk8tVZ56/bfvMbjOAGfdW4EdgAAAA==
+X-Change-ID: 20241014-x1e80100-dts-drop-orientation-switch-259eb678a02b
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=879; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=r8uHLvAgChkdDFULHnIzZARobpeBkRPSAmDsg7UaSXo=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDP7SX9XZnlGPV8Bat8gT3d3h2+Jv1ZkKMEhhQ
+ iv7v8YKr4GJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZwz+0gAKCRAbX0TJAJUV
+ Vl6QD/wIEWDUGvfPzQWTEzswXqwW+WHSqpAylbv8bMb345tMhM+yIGFDDuxm+UEs+AC1Lu3N90O
+ 2n+LWeOkUSbzpPViCwF9yYRniSNuk3yn2bOkNAf9ZybQEwciWOcLq4Uo2SCXhUHTrcNyKFhlyXi
+ eLnmH1FLnJFEjrEoPUJsJ0ODxeNjukEXpn50nWeKh04FDkv7TlO0UfEOktIyHVDSnpPsI7Arn+t
+ de4pNlzqfungGVt4MIu84/0XtQIW/cmKutS32DxdhSDqZR/svsgipfnFmadd/Hjtue8lWpg69uQ
+ 2GrM3DllKsE5tKdGIsHs8iI7yVT12jl9krMAfsAjgkltMtIe2oN+NnfGK+wkd5rNtDmN47gWWE3
+ Bk3ZLltadEL/eNJf22eR6EgJQ6ZQxbw4q3l+c1e9TKOivXSEucYL5ehrKDT0CNlghzHA9+UFwO2
+ yQJzdwELmgc4ybMs6qpAs9yo5/QziJMe8yvKijllY4NlqXSoBIZjCzHOBfH/YuVyiCMsjVrgLwW
+ o3onHWwtRDoCy6OT4RzRD7IKfYsP7obQNgSo65Uma/GOFH8CMZD8O1rcqQgkcE7PPUmmmkIbu9O
+ VCblfXvBvKdqKMzMjFyvqhWIIIYXCZzHUwJtvdRpXnWYoJti8muMXllkB2j1nTO3495ggcKa9CE
+ nmSQ5H6uypDLKsA==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Hi Ryan,
+The Slim 7X and Vivobook S15 are the only remaining X Elite platforms
+which still unnecessarily describe the orientation-switch in the USB
+SS0 and SS1 QMP PHYs. So drop these properties from the board specific
+dts as the SoC dtsi already describes them.
 
-On Mon, 14 Oct 2024 at 13:02, Ryan Roberts <ryan.roberts@arm.com> wrote:
->
-> When boot-time page size is in operation, TRAMP_VALIAS is no longer a
-> compile-time constant, because the VA of a fixmap slot depends upon
-> PAGE_SIZE.
->
-> Let's handle this by instead exporting the slot index,
-> FIX_ENTRY_TRAMP_BEGIN,to assembly, then do the TRAMP_VALIAS calculation
-> per page size and use alternatives to decide which variant to activate.
->
-> Note that for the tramp_map_kernel case, we are one instruction short of
-> space in the vector to have NOPs for all 3 page size variants. So we do
-> if/else for 16K/64K and branch around it for the 4K case. This saves 2
-> instructions.
->
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->
-> ***NOTE***
-> Any confused maintainers may want to read the cover note here for context:
-> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
->
->  arch/arm64/kernel/asm-offsets.c |  2 +-
->  arch/arm64/kernel/entry.S       | 50 ++++++++++++++++++++++++++-------
->  2 files changed, 41 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-> index f32b8d7f00b2a..c45fa3e281884 100644
-> --- a/arch/arm64/kernel/asm-offsets.c
-> +++ b/arch/arm64/kernel/asm-offsets.c
-> @@ -172,7 +172,7 @@ int main(void)
->    DEFINE(ARM64_FTR_SYSVAL,     offsetof(struct arm64_ftr_reg, sys_val));
->    BLANK();
->  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-> -  DEFINE(TRAMP_VALIAS,         TRAMP_VALIAS);
-> +  DEFINE(FIX_ENTRY_TRAMP_BEGIN,        FIX_ENTRY_TRAMP_BEGIN);
->  #endif
->  #ifdef CONFIG_ARM_SDE_INTERFACE
->    DEFINE(SDEI_EVENT_INTREGS,   offsetof(struct sdei_registered_event, interrupted_regs));
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index 7ef0e127b149f..ba47dc8672c04 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -101,11 +101,27 @@
->  .org .Lventry_start\@ + 128    // Did we overflow the ventry slot?
->         .endm
->
-> +#define TRAMP_VALIAS(page_shift)       (FIXADDR_TOP - (FIX_ENTRY_TRAMP_BEGIN << (page_shift)))
-> +
->         .macro  tramp_alias, dst, sym
-> -       .set    .Lalias\@, TRAMP_VALIAS + \sym - .entry.tramp.text
-> -       movz    \dst, :abs_g2_s:.Lalias\@
-> -       movk    \dst, :abs_g1_nc:.Lalias\@
-> -       movk    \dst, :abs_g0_nc:.Lalias\@
-> +alternative_if ARM64_USE_PAGE_SIZE_4K
-> +       .set    .Lalias4k\@, TRAMP_VALIAS(ARM64_PAGE_SHIFT_4K) + \sym - .entry.tramp.text
-> +       movz    \dst, :abs_g2_s:.Lalias4k\@
-> +       movk    \dst, :abs_g1_nc:.Lalias4k\@
-> +       movk    \dst, :abs_g0_nc:.Lalias4k\@
-> +alternative_else_nop_endif
-> +alternative_if ARM64_USE_PAGE_SIZE_16K
-> +       .set    .Lalias16k\@, TRAMP_VALIAS(ARM64_PAGE_SHIFT_16K) + \sym - .entry.tramp.text
-> +       movz    \dst, :abs_g2_s:.Lalias16k\@
-> +       movk    \dst, :abs_g1_nc:.Lalias16k\@
-> +       movk    \dst, :abs_g0_nc:.Lalias16k\@
-> +alternative_else_nop_endif
-> +alternative_if ARM64_USE_PAGE_SIZE_64K
-> +       .set    .Lalias64k\@, TRAMP_VALIAS(ARM64_PAGE_SHIFT_64K) + \sym - .entry.tramp.text
-> +       movz    \dst, :abs_g2_s:.Lalias64k\@
-> +       movk    \dst, :abs_g1_nc:.Lalias64k\@
-> +       movk    \dst, :abs_g0_nc:.Lalias64k\@
-> +alternative_else_nop_endif
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Abel Vesa (2):
+      arm64: dts: qcom: x1e80100-slim7x: Drop orientation-switch from USB SS[0-1] QMP PHYs
+      arm64: dts: qcom: x1e80100-vivobook-s15: Drop orientation-switch from USB SS[0-1] QMP PHYs
 
-Since you're changing these, might as well drop the middle movk as the
-fixmap is now always in the top 2 GiB of the VA space.
+ arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts  | 4 ----
+ arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts | 4 ----
+ 2 files changed, 8 deletions(-)
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241014-x1e80100-dts-drop-orientation-switch-259eb678a02b
 
-However, wouldn't it be better to reuse the existing callback
-alternative stuff that Marc added for KVM?
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
-Same applies below, I reckon.
-
->         .endm
->
->         /*
-> @@ -627,16 +643,30 @@ SYM_CODE_END(ret_to_user)
->         bic     \tmp, \tmp, #USER_ASID_FLAG
->         msr     ttbr1_el1, \tmp
->  #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
-> -alternative_if ARM64_WORKAROUND_QCOM_FALKOR_E1003
-> +alternative_if_not ARM64_WORKAROUND_QCOM_FALKOR_E1003
-> +       b       .Lskip_falkor_e1003\@
-> +alternative_else_nop_endif
->         /* ASID already in \tmp[63:48] */
-> -       movk    \tmp, #:abs_g2_nc:(TRAMP_VALIAS >> 12)
-> -       movk    \tmp, #:abs_g1_nc:(TRAMP_VALIAS >> 12)
-> -       /* 2MB boundary containing the vectors, so we nobble the walk cache */
-> -       movk    \tmp, #:abs_g0_nc:((TRAMP_VALIAS & ~(SZ_2M - 1)) >> 12)
-> +alternative_if ARM64_USE_PAGE_SIZE_4K
-> +       movk    \tmp, #:abs_g2_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_4K) >> 12)
-> +       movk    \tmp, #:abs_g1_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_4K) >> 12)
-> +       movk    \tmp, #:abs_g0_nc:((TRAMP_VALIAS(ARM64_PAGE_SHIFT_4K) & ~(SZ_2M - 1)) >> 12)
-> +       b       .Lfinish_falkor_e1003\@
-> +alternative_else_nop_endif
-> +alternative_if ARM64_USE_PAGE_SIZE_16K
-> +       movk    \tmp, #:abs_g2_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_16K) >> 12)
-> +       movk    \tmp, #:abs_g1_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_16K) >> 12)
-> +       movk    \tmp, #:abs_g0_nc:((TRAMP_VALIAS(ARM64_PAGE_SHIFT_16K) & ~(SZ_2M - 1)) >> 12)
-> +alternative_else /* ARM64_USE_PAGE_SIZE_64K */
-> +       movk    \tmp, #:abs_g2_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_64K) >> 12)
-> +       movk    \tmp, #:abs_g1_nc:(TRAMP_VALIAS(ARM64_PAGE_SHIFT_64K) >> 12)
-> +       movk    \tmp, #:abs_g0_nc:((TRAMP_VALIAS(ARM64_PAGE_SHIFT_64K) & ~(SZ_2M - 1)) >> 12)
-> +alternative_endif
-> +.Lfinish_falkor_e1003\@:
->         isb
->         tlbi    vae1, \tmp
->         dsb     nsh
-> -alternative_else_nop_endif
-> +.Lskip_falkor_e1003\@:
->  #endif /* CONFIG_QCOM_FALKOR_ERRATUM_1003 */
->         .endm
->
-> --
-> 2.43.0
->
 
