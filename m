@@ -1,89 +1,93 @@
-Return-Path: <linux-kernel+bounces-363669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C2D99C573
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F012E99C574
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631461F24582
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DAB1C2222C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80A615820C;
-	Mon, 14 Oct 2024 09:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XNZqVbGx"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0520C149011
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B500215D5B8;
+	Mon, 14 Oct 2024 09:19:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37C115855D
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897566; cv=none; b=pex6sHGfYN2npmtwLDDwnr9qFKkWFiAB0Vvlny6Iu+oEFTYF1NAdRq4sbHXxI4EpXwGvHiXNtLiVFrnjG2GsKdF12hbucpOERj2FFM2uP0jp6ZsN37qf5XZ66qaEKTwvuIj6TAPNSEWTqkjsz+Rpfn6iNjIViOgXTD2vKS1m88s=
+	t=1728897569; cv=none; b=jeGtFQtQu6GLJlJ+9nC95E6ryLq5TC6joLRrH/Gufc8aJ0kP2D91yLZstQMyxRvZN1foG1uZB9NggG7k8oA9piP/QUFMtKPSp4a5W2hv6rTcEVdYRkfKfnCrk9FwBjbh6KlqKWj5nXmcLtr6c5WfuHOQtsuCecbSc3mPROySRqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897566; c=relaxed/simple;
-	bh=wVNYUbvUl3sPG53le+WJDckMtDV+JM8zWMYsaYz1umk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hm0IdmnsZFsuPRAZxJAK7313UqwWX0Yu/QyfOcgbe0kIkZBh+H9jxPni+5KH0wdyaJZYwF27FyxH2dbJeKqBl3F12lW4IR8iUhxi3FmjX20r9JiWF2MafxCnqIf4jkQipgmVFG4DalxBqwQxbFYI/S8ifjRhdUxzUgMKmgMlFrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XNZqVbGx; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728897560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Dj7fxHIiOkLjML343LBKlVwG31MU/qAIpzhZyO5s5uo=;
-	b=XNZqVbGxPAt4UpWQJEvW9S6vOheuiEE+d+ckHEJ4Dkn0nJ7iFM5gbzGHS7oVKxebT+Jm8e
-	v2r2JQHQFi9t+gamFt0DGppufz9iJZIM0gcBrUB72qlywyg0N8gIFjQyG1Bg4nFNwHxXa6
-	6BFmFUv4Q9+At1ZRicReL7Zj9QvROPE=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kconfig: nconf: Use TAB to cycle thru dialog buttons
-Date: Mon, 14 Oct 2024 11:18:28 +0200
-Message-ID: <20241014091828.23446-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1728897569; c=relaxed/simple;
+	bh=KdUNh8cTWZXP0zrc3aBQnLNwg+SEPL6DwK5KqdksqbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hw8XsulnAWMWZgY8xbFkpWw7RXKZPlZZPkkDpX9PqRMQlxd62Eyo5GC/P/LLjUWEgWxNd5UGDef8gKwTvUQCALRcEjc7wJuijTRCh6FK/3KG0fOzfNpAwfKV6E1K4Is/VGgmMCRQ9gDKdmXd69KzWypEeUtNwM1W3SfXJ9hLWiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B27901007;
+	Mon, 14 Oct 2024 02:19:56 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 375EA3F71E;
+	Mon, 14 Oct 2024 02:19:26 -0700 (PDT)
+Date: Mon, 14 Oct 2024 10:19:23 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ba Jing <bajing@cmss.chinamobile.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH] perf: arm-ccn: remove unused macros
+Message-ID: <ZwziGzex9RmVlcNa@J2N7QTR9R3>
+References: <20241012091629.2369-1-bajing@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012091629.2369-1-bajing@cmss.chinamobile.com>
 
-Add the ability to cycle through dialog buttons with the TAB key.
+On Sat, Oct 12, 2024 at 05:16:29PM +0800, Ba Jing wrote:
+> By reading the code, I found these marcos are never
+> referenced in the code. Just remove them.
+> 
+> Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- scripts/kconfig/nconf.gui.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+These are control bit values, so I don't see a strong reason to delete
+them unless we're certain we're not going to use them in future.
 
-diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
-index 72b605efe549..aeac9e5b06ee 100644
---- a/scripts/kconfig/nconf.gui.c
-+++ b/scripts/kconfig/nconf.gui.c
-@@ -277,6 +277,15 @@ int btn_dialog(WINDOW *main_window, const char *msg, int btn_num, ...)
- 		case KEY_RIGHT:
- 			menu_driver(menu, REQ_RIGHT_ITEM);
- 			break;
-+		case 9: /* TAB */
-+			if (btn_num > 1) {
-+				/* cycle through buttons */
-+				if (item_index(current_item(menu)) == btn_num-1)
-+					menu_driver(menu, REQ_FIRST_ITEM);
-+				else
-+					menu_driver(menu, REQ_NEXT_ITEM);
-+			}
-+			break;
- 		case 10: /* ENTER */
- 		case 27: /* ESCAPE */
- 		case ' ':
--- 
-2.47.0
+Anyhow, Robin Murphy wrote this driver, so its up to him. Please Cc him
+for any changes to this driver in future.
 
+Mark.
+
+> ---
+>  drivers/perf/arm-ccn.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+> index 5c66b9278862..ea878b025d32 100644
+> --- a/drivers/perf/arm-ccn.c
+> +++ b/drivers/perf/arm-ccn.c
+> @@ -28,12 +28,7 @@
+>  
+>  #define CCN_MN_ERRINT_STATUS		0x0008
+>  #define CCN_MN_ERRINT_STATUS__INTREQ__DESSERT		0x11
+> -#define CCN_MN_ERRINT_STATUS__ALL_ERRORS__ENABLE	0x02
+> -#define CCN_MN_ERRINT_STATUS__ALL_ERRORS__DISABLED	0x20
+>  #define CCN_MN_ERRINT_STATUS__ALL_ERRORS__DISABLE	0x22
+> -#define CCN_MN_ERRINT_STATUS__CORRECTED_ERRORS_ENABLE	0x04
+> -#define CCN_MN_ERRINT_STATUS__CORRECTED_ERRORS_DISABLED	0x40
+> -#define CCN_MN_ERRINT_STATUS__CORRECTED_ERRORS_DISABLE	0x44
+>  #define CCN_MN_ERRINT_STATUS__PMU_EVENTS__ENABLE	0x08
+>  #define CCN_MN_ERRINT_STATUS__PMU_EVENTS__DISABLED	0x80
+>  #define CCN_MN_ERRINT_STATUS__PMU_EVENTS__DISABLE	0x88
+> -- 
+> 2.33.0
+> 
+> 
+> 
 
