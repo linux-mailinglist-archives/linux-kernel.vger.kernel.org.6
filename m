@@ -1,138 +1,134 @@
-Return-Path: <linux-kernel+bounces-363322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45EC99C0A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:04:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247F399C0AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B67282EA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:04:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A112CB2360F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E9F1465BA;
-	Mon, 14 Oct 2024 07:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2518C33C9;
+	Mon, 14 Oct 2024 07:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="1qlRRVC5"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cAbzGWCs"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8989C13C9CF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A77143890
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728889462; cv=none; b=Q+C0+lQeukgk55BO+ai63twsQFcIK31NLJldaRf7IF6lFa80UfLolT8FyQ5z5il/ZFRaA/A/rTrHHl1wzg13US6D0m9WzBnuH+somia7yTKtFuYAdDn7aZr+2VjZKb6OjbGyzkiMkCbICkA7oOdQfpOGeA+s5HrLdIxLAMjqHeY=
+	t=1728889469; cv=none; b=U4eOm/Nn3nnin9HCMpnctCimRneBt98+4fZtFNYUg8U2e5Lf/GGJuIP/9n72odBC3R1GWSBt09vIHsfwAsmeGbvA6kczCZ3hB9/ku46QLbAPyL6QRn0+6x7ERvZYH+acAIadb0CL6953EphSzm1dVGgNqBX1m10q7ZgNycRqYdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728889462; c=relaxed/simple;
-	bh=NNv6gvfmx2HjUFMGU+o2ltt/UiZOt25h1rUaIZXBx2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mnkscYN+X68Iy9mmyXv2U0HCFlExLatvSsFEMQgxJxy4eakrcSfYSkaYHTOP3MKjNyaJ1nWS5FtWU+SOcFvQop3MEgg/C32IzxtPkvKNriPH8eRhlrQNb9IG+aMqyAsM3J+PXbP48hU1tkXgDgVJ9ovz22CjudC/ABmCa/tL+Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=1qlRRVC5; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb443746b8so5130861fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:04:20 -0700 (PDT)
+	s=arc-20240116; t=1728889469; c=relaxed/simple;
+	bh=1tnQkcrlnmhSLkcCnpIoVZ9FM8DguvSHLh+6Afm+r9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=euNETyDKGtiGpijf/Fp2GybbFpYUQ4sNVRTYhUEB4QUF4iLoVQMM7PJngRJBIHWUI1erAjNds+BpUVtngMD8N5TUICpnF0uFAX2nOikYk59TLuLfrFHLchF9oLRDLergwq9JuKWAAvp8DFKUuz5Z1PSEl8jjYuIqdaYTqaAxYqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cAbzGWCs; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4311d972e3eso20192605e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728889459; x=1729494259; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vGaIhPPoqC5MI9WRgwGY99B8fU3f7PY4Vcuv5+yQqFs=;
-        b=1qlRRVC5r5zo5QpkK4ITdgJm27XooPDYEPA9lLISmwFFfWFtpUAVjGtp1M50zt6vzE
-         6d3ocD9PKu7DPWMe6eD3POXL5jASG6wVGhCu/e5Y7Bv8uLDP/oBTsj82LzCsAfIkqNM7
-         fswnm54f2Po2PNeSSvl9/AKPW2eyuXPKE3JmSYtuPlwp8PsnLrQcfUabpKHikwyVeV89
-         GFDnBftcA7RC8JAZzIxHc77uhWD/vHNK8x5dmVkQU8kPSEFy76djUNKE2SviqJeJJWHV
-         /p4HScwn4u7+yoBwYmX6neZAtHgvEmIeI7UBn+nCkq/QfCfDCfYlNsQT0zOgRqz4dkOm
-         leKw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728889466; x=1729494266; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FZPk1p46Il+cHBCE9t0JeMt9zPjBTrGoxmAeiUZmgWE=;
+        b=cAbzGWCszz7nsUSp+8tLwOU5JhdCRI2TSMfEDqJFFItcx7+5kV2GrT2xoYYSoGjM/U
+         PxMeYkcKHu+mn3dW48PSRciL17K3z2VELCNmQzB6d2fN55xoGCWF9xwN0wgp+Ff7eM0+
+         PPbhm26kYgpYJ6I134JAbYOVUSTVZ/9aa4OvnHHA7Zn4O3EtKVXFJOUDEIDRxCXMCcGl
+         cdMbDYeQXJfmqB98oi8k8Vt1o4kzVasLF94URMQekWUA06UEWOomLFsfaIFD88hau1iD
+         oc53x3gZTthB3d6AYn4ebnXBjD6secf5Dz+HqZLKrtR790pe/jcvJlPQ5KGPvN66dvur
+         eXog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728889459; x=1729494259;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vGaIhPPoqC5MI9WRgwGY99B8fU3f7PY4Vcuv5+yQqFs=;
-        b=a0NxLPyK8gbt/XAzPx48AifjyECxplI74DKwQ58Z9kHZR5Fft9jCB87aVRhRI5NiYN
-         GAWtuLZjkJp0XATm9yBxEQZgbse//4PxWcBwRps/gq3hf0HXom+/tK1aqdflPz9fIiTx
-         8vfjvIxXISdNUKgOQwaKJJQKbPLjbtmEWHyrgWhMMelb4WoUQsEW+kCIEOJvdAL4GDJ7
-         0wxqqP0g1WvKofBzVY5Y2AMn83A+uaHkgsSWvzwe7Sq3o3BP4YUx3drbLNdgBiY/e7Zc
-         kKTa3VtG+IWmCECSDNCdjoK+w49DqP8VBqOe7wW7IpzRFwOXTTzDcsiqAM1PwOpBphdQ
-         y7sA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsyvb9NL2J6tmyxiMTYjvWwJwxe0cubXXMHiHGHhCMZNnL3DsmLMqzZyCPWwvZP/WIyTcyM7FHl5TWRgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpKEGv099lqjSHe3Fqw0+OjSWw24RFd1aO49vpFjndKK/F0Z+s
-	xvExgwd3Gu4n9U6cN4aMgueuWVQak5UDD7ReelP9XF9aE9dhrQh3WvzYu8/tl+o=
-X-Google-Smtp-Source: AGHT+IEm+t/0wxGBRiGGCCWGQXQM/paXJQi/z5wDFT45Y4vSsDzbKlZTz1XXD3y2hVv/E6wIFsje1Q==
-X-Received: by 2002:a2e:6111:0:b0:2f9:ce91:dea9 with SMTP id 38308e7fff4ca-2fb327a6df0mr33120871fa.32.1728889458495;
-        Mon, 14 Oct 2024 00:04:18 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c9370d2196sm4631649a12.7.2024.10.14.00.04.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 00:04:18 -0700 (PDT)
-Message-ID: <7982b197-8ca6-4621-b983-2a6b24aad2b6@blackwall.org>
-Date: Mon, 14 Oct 2024 10:04:16 +0300
+        d=1e100.net; s=20230601; t=1728889466; x=1729494266;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FZPk1p46Il+cHBCE9t0JeMt9zPjBTrGoxmAeiUZmgWE=;
+        b=YKkBOAMzrAzKgweJ+Bdm9YZaXpMWpxGZwkHYyiAro08ZAm8AeaPkLKLcx6Ea7zXj+n
+         JFNqsGTNxwM2osn5FYv57O5ZYtZPuuW6TjMVr1xhmf9O0fyIIcSBTDpcqlMI9WRiAgel
+         P+YW7zoU58L4YOMFvJYP2DFMzRs1VPBQQ9exaDbuaTETpMyyQfysJSyOI1FKmKcljCbb
+         gPMaZW71umLPN9FoDxOz/oTBgQGG/oxJY/Dnv2qHTpgqaHTJcQrOg0juimSmNLEcvhdD
+         jDufSW9pUNvrOoxcsK6VItOuBgw4Pkv7HJlbAHkrvw3xP1L23nvJbIZKPANEaSSYyAj7
+         Fw0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVWYCT6Ighlba2EEZvBhHA0xwcLpyub+Z5FcDWGVqFncX24HXUCX3qM7sFrFMyrIQ48u+vo3bENeEgQ2FE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmu1todr+82JeQup+gsUw3wzyH2qDeVGvTPLP2o9DVUVp7iwmp
+	Ri3vV3kwZXI7t0uWYf+tmYZVVIfqF/wpigivwXY38wrjbzCoJ36uNf/Nv0ZeEZs=
+X-Google-Smtp-Source: AGHT+IFXZQD/K1TLeG6NfOcqX47mkpjTTLPrGn0buq1ncVnep+McVxEHfHC0HAl+62igUxMhH42q8A==
+X-Received: by 2002:a05:600c:1c9d:b0:430:57f1:d6d with SMTP id 5b1f17b1804b1-431255d5099mr63896535e9.1.1728889465611;
+        Mon, 14 Oct 2024 00:04:25 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de54:ebb2:31be:53a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d7487c4csm143659185e9.32.2024.10.14.00.04.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 00:04:24 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	joel@jms.id.au,
+	andrew@codeconstruct.com.au,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	BMC-SW@aspeedtech.com,
+	Peter.Yin@quantatw.com,
+	Jay_Zhang@wiwynn.com,
+	Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: (subset) [PATCH v7 0/7] Add Aspeed G7 gpio support
+Date: Mon, 14 Oct 2024 09:04:23 +0200
+Message-ID: <172888945458.6232.12570065156992505241.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241008081450.1490955-1-billy_tsai@aspeedtech.com>
+References: <20241008081450.1490955-1-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/17] net: bridge: replace call_rcu by kfree_rcu for
- simple kmem_cache_free callback
-To: Julia Lawall <Julia.Lawall@inria.fr>, Roopa Prabhu <roopa@nvidia.com>
-Cc: kernel-janitors@vger.kernel.org, vbabka@suse.cz, paulmck@kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- bridge@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
- <20241013201704.49576-9-Julia.Lawall@inria.fr>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20241013201704.49576-9-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 13/10/2024 23:16, Julia Lawall wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
-> 
-> The changes were made using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  net/bridge/br_fdb.c |    9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-> index 642b8ccaae8e..1cd7bade9b3b 100644
-> --- a/net/bridge/br_fdb.c
-> +++ b/net/bridge/br_fdb.c
-> @@ -73,13 +73,6 @@ static inline int has_expired(const struct net_bridge *br,
->  	       time_before_eq(fdb->updated + hold_time(br), jiffies);
->  }
->  
-> -static void fdb_rcu_free(struct rcu_head *head)
-> -{
-> -	struct net_bridge_fdb_entry *ent
-> -		= container_of(head, struct net_bridge_fdb_entry, rcu);
-> -	kmem_cache_free(br_fdb_cache, ent);
-> -}
-> -
->  static int fdb_to_nud(const struct net_bridge *br,
->  		      const struct net_bridge_fdb_entry *fdb)
->  {
-> @@ -329,7 +322,7 @@ static void fdb_delete(struct net_bridge *br, struct net_bridge_fdb_entry *f,
->  	if (test_and_clear_bit(BR_FDB_DYNAMIC_LEARNED, &f->flags))
->  		atomic_dec(&br->fdb_n_learned);
->  	fdb_notify(br, f, RTM_DELNEIGH, swdev_notify);
-> -	call_rcu(&f->rcu, fdb_rcu_free);
-> +	kfree_rcu(f, rcu);
->  }
->  
->  /* Delete a local entry if no other port had the same address.
-> 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
 
+On Tue, 08 Oct 2024 16:14:43 +0800, Billy Tsai wrote:
+> The Aspeed 7th generation SoC features two GPIO controllers: one with 12
+> GPIO pins and another with 216 GPIO pins. The main difference from the
+> previous generation is that the control logic has been updated to support
+> per-pin control, allowing each pin to have its own 32-bit register for
+> configuring value, direction, interrupt type, and more.
+> This patch serial also add low-level operations (llops) to abstract the
+> register access for GPIO registers and the coprocessor request/release in
+> gpio-aspeed.c making it easier to extend the driver to support different
+> hardware register layouts.
+> 
+> [...]
+
+Applied, thanks!
+
+[3/7] gpio: aspeed: Change the macro to support deferred probe
+      commit: f1bc03e7e9bbbb18ad60ad6c6908b16fb7f40545
+[4/7] gpio: aspeed: Remove the name for bank array
+      commit: d787289589202cd449cabed3d7fde84e18fb6dd6
+[5/7] gpio: aspeed: Create llops to handle hardware access
+      commit: 79fc9a2fcc457f4375118fbcdb6767163870b5ff
+[6/7] dt-bindings: gpio: aspeed,ast2400-gpio: Support ast2700
+      commit: bef6959a3746fc8207a0ca75e239c95d7409fd90
+[7/7] gpio: aspeed: Support G7 Aspeed gpio controller
+      commit: b2e861bd1eaf4c5f75139df9b75dade3334a5b6c
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
