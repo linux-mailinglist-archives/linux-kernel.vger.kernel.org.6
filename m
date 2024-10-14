@@ -1,141 +1,244 @@
-Return-Path: <linux-kernel+bounces-363266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B7699BFD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:10:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B8A99BFD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A33284240
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:10:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A93121C221CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C2C13D893;
-	Mon, 14 Oct 2024 06:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e5kxh8wd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6366314036E;
+	Mon, 14 Oct 2024 06:11:32 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF7314375D;
-	Mon, 14 Oct 2024 06:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FA713CFA3
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728886240; cv=none; b=gwI0pXf/1WwMVQtyWJY3NMe8wVXYrLmugVms92n0oE2oYls597XHiUpH47nIM4Ni/jtLkdTbe3Ey4ZzBVyvpiX4Z/IHQzv2n5mqSHq/Z6zYqITI3wYty1dlHkMsygut8xeIMamnLOVqbR7VqSmQnKuwA/4LBF1F/SYfRLNleQ28=
+	t=1728886291; cv=none; b=FPCV0SS4YF+8T3Hm6sz78tvhakEGtbqWlFYXb496ikgCmKXxq2aWRLvtV+C+P9BFNv/r9Gdi+Bzq5qfQW7xxBkJWtn37VPZ9mDiUOYv/7GZVe/V1JRphUjvSj0OgNTQzJdwWOsVMaX1RAYy+hag3MXlbnk8MvOqj83eiiBWKHWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728886240; c=relaxed/simple;
-	bh=vtOULXzKh1W2zjoRRH7MNf2bpYcEKecnN3dY3aNLMSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqclVnQcdKc1Pm50jiEmXbiWQENGq4CsAGgWDyw/OHzUjeYn1Q+5ZYAPLFEbgTl00Ujv1UkWbK+krUfd63wHsoSbGUYXiYvn6hpUlUJhwQ4MV3fQluiwWluZuQ+sMPcdOE7VJAUtchuXsBG6kxjDJgx5GOA+JRHYHHmT1B+fGQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e5kxh8wd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44453C4CEC3;
-	Mon, 14 Oct 2024 06:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728886239;
-	bh=vtOULXzKh1W2zjoRRH7MNf2bpYcEKecnN3dY3aNLMSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e5kxh8wdesQJ0pTug01/NkZeExuwthoVgZUktUVr+s/szlFweo7jeFGN5DGAw641X
-	 1HqC/vulNeN0xjiBXuGBENKV/QLDFKwV/tobl31ROkTUGKA/9r+x/rAa1R/qNGU/b1
-	 mJIYxxMrwmdXVJ2c+gJB78DB7j/keAhi5pGYExM4=
-Date: Mon, 14 Oct 2024 08:10:37 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] tty: hvc: riscv_sbi: instantiate the legcay console
- earlier
-Message-ID: <2024101402-starlet-riverside-02d4@gregkh>
-References: <20241014000857.3032-1-jszhang@kernel.org>
+	s=arc-20240116; t=1728886291; c=relaxed/simple;
+	bh=jXZu+jwnZtNiiZzdkWY9TNELbHfPDBDiOC4Wh3Dq5ng=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=O4B6VmbFUrQEYlvl1se+HbekeSX7OJHhKJrxGkHbiNgpRmLb+tCYN3eAFR0Z3N8ZQlgzYL5KkGLodd5+NC3IrIFQ/PEYhlkK4mk0TBoq40LejKnJ40Ivj7WpihW084gmE5cCPvTUoGxUWcXhynZCE6MzgJECm9HB782p8/MmOuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8354dae2e52so313528839f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:11:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728886289; x=1729491089;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KAwTPqEyGyOrmmEsiyfcIP87G1YgVMRbUzNYraNxtcE=;
+        b=KZGOF0DTEd8Nw3yqZ9NrmSElLuCB+dijJ58ml4s84zo3J1qs71uIt/DxTIF7imw+Fx
+         EDgTOT4i0t1ECtJjfSRp9xXP++gIa3mTCw99KLP8OZa61CcSVJ5Lw1eLMSHlkw8Sok7j
+         C6Nk3vnLDj4tT0txfUAUHhVZwh3OtIYS3rKTQS3l/qOEwx+C/FufJKuBBc2/vBGMgrJz
+         V6zNvLEFbEW+sGW5viEXq4+3DGm5mxFMPJ2EO/HI/upEABs60amVylzJqepZYLHvTNkk
+         9PRF2dZHmuUGOBbTJHgZlYwtf/8aR7dG2L5xNcn9Ocb//In/4R1esyYlI37XNpIyPwp8
+         RKNw==
+X-Gm-Message-State: AOJu0YzgECk1rPTCioclyYRJFzGDD4MHCf4e7NIR7bqIXeN0G+zziyOa
+	s41DwyOcQrRyAgfS0j56ifEBXWYhr108MUTwj7aqH9WsG3nxa2p7WvDCuzJsxtxBOwrvILxtSxV
+	j7lcdFA008uhPaO4VhWfavF0dwSUzsz6C+ZrMcvqjCYNNE6PIjZfimnk=
+X-Google-Smtp-Source: AGHT+IH0mtP29tXuQOKaQuuYOWiOZo16WQQxpPEYRQ3LRP5Q/DmXNkR5cFkdFLnezXI7X+7Z4kRyMNQkebR68ofGFFQQcl6nVHZC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014000857.3032-1-jszhang@kernel.org>
+X-Received: by 2002:a05:6e02:1a2e:b0:3a3:96c4:29bc with SMTP id
+ e9e14a558f8ab-3a3b5f70adfmr92007305ab.11.1728886289376; Sun, 13 Oct 2024
+ 23:11:29 -0700 (PDT)
+Date: Sun, 13 Oct 2024 23:11:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670cb611.050a0220.3e960.0055.GAE@google.com>
+Subject: [syzbot] [media?] KASAN: slab-use-after-free Read in __video_register_device
+From: syzbot <syzbot+65e7f3352b7346273644@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-usb@vger.kernel.org, mchehab@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 14, 2024 at 08:08:57AM +0800, Jisheng Zhang wrote:
-> The hvc_instantiate() is an early console discovery mechanism, it is
-> usually called before allocating hvc terminal devices. In fact, if
-> we check hvc_riscv_sbi's hvc_instantiate() return value, we'll find
-> that it's -1. So the calling hvc_instantiate() is too late.
-> 
-> We can remove the hvc_instantiate() to only rely on the hvc_alloc() to
-> register the kernel console. We can also move its calling earlier so
-> the kernel console is registered earlier, so that we can get kernel
-> console msg earlier. We take the 2nd choice in this patch.
-> 
-> Before the patch:
-> [    0.367440] printk: legacy console [hvc0] enabled
-> [    0.401397] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
-> 
-> After the patch:
-> 
-> [    0.004665] printk: legacy console [hvc0] enabled
-> [    0.050183] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=100000)
-> 
-> As can be seen, now the kernel console is registered much earlier before
-> the BogoMIPS calibrating.
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Hello,
 
-What commit id does this fix?
+syzbot found the following issue on:
 
-> ---
->  drivers/tty/hvc/hvc_riscv_sbi.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/hvc/hvc_riscv_sbi.c b/drivers/tty/hvc/hvc_riscv_sbi.c
-> index cede8a572594..d2ecfbf7c84a 100644
-> --- a/drivers/tty/hvc/hvc_riscv_sbi.c
-> +++ b/drivers/tty/hvc/hvc_riscv_sbi.c
-> @@ -68,12 +68,10 @@ static int __init hvc_sbi_init(void)
->  		err = PTR_ERR_OR_ZERO(hvc_alloc(0, 0, &hvc_sbi_dbcn_ops, 256));
->  		if (err)
->  			return err;
-> -		hvc_instantiate(0, 0, &hvc_sbi_dbcn_ops);
->  	} else if (IS_ENABLED(CONFIG_RISCV_SBI_V01)) {
->  		err = PTR_ERR_OR_ZERO(hvc_alloc(0, 0, &hvc_sbi_v01_ops, 256));
->  		if (err)
->  			return err;
-> -		hvc_instantiate(0, 0, &hvc_sbi_v01_ops);
->  	} else {
->  		return -ENODEV;
->  	}
-> @@ -81,3 +79,18 @@ static int __init hvc_sbi_init(void)
->  	return 0;
->  }
->  device_initcall(hvc_sbi_init);
-> +
-> +static int __init hvc_sbi_console_init(void)
-> +{
-> +	int err;
-> +
-> +	if (sbi_debug_console_available)
-> +		err = hvc_instantiate(0, 0, &hvc_sbi_dbcn_ops);
-> +	else if (IS_ENABLED(CONFIG_RISCV_SBI_V01))
-> +		err = hvc_instantiate(0, 0, &hvc_sbi_v01_ops);
-> +	else
-> +		return -ENODEV;
-> +
-> +	return err < 0 ? -ENODEV : 0;
+HEAD commit:    9852d85ec9d4 Linux 6.12-rc1
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=159d5527980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=65e7f3352b7346273644
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Please spell out a ? : line, it's not required here.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> +}
-> +console_initcall(hvc_sbi_console_init);
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d44acbbed8bd/disk-9852d85e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8e54c80139e6/vmlinux-9852d85e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/35f22e8643ee/bzImage-9852d85e.xz
 
-Are you sure this will always work properly?  For some reason the
-original code did not do this, you might want to check the
-lore.kernel.org archives to find out why.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+65e7f3352b7346273644@syzkaller.appspotmail.com
 
-thanks,
+pwc: recv_control_msg error -71 req 04 val 1100
+pwc: recv_control_msg error -71 req 04 val 1200
+==================================================================
+BUG: KASAN: slab-use-after-free in get_index drivers/media/v4l2-core/v4l2-dev.c:512 [inline]
+BUG: KASAN: slab-use-after-free in __video_register_device+0x4a2d/0x5aa0 drivers/media/v4l2-core/v4l2-dev.c:1028
+Read of size 8 at addr ffff88811258c720 by task kworker/1:4/4947
 
-greg k-h
+CPU: 1 UID: 0 PID: 4947 Comm: kworker/1:4 Not tainted 6.12.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ get_index drivers/media/v4l2-core/v4l2-dev.c:512 [inline]
+ __video_register_device+0x4a2d/0x5aa0 drivers/media/v4l2-core/v4l2-dev.c:1028
+ video_register_device include/media/v4l2-dev.h:383 [inline]
+ usb_pwc_probe+0xc69/0x1d40 drivers/media/usb/pwc/pwc-if.c:1123
+ usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3675
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3675
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2e58/0x4f40 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 2511:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x8f/0xa0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ em28xx_v4l2_init+0x114/0x4050 drivers/media/usb/em28xx/em28xx-video.c:2534
+ em28xx_init_extension+0x137/0x200 drivers/media/usb/em28xx/em28xx-core.c:1117
+ request_module_async+0x61/0x70 drivers/media/usb/em28xx/em28xx-cards.c:3457
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Freed by task 2511:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x37/0x50 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2343 [inline]
+ slab_free mm/slub.c:4580 [inline]
+ kfree+0x130/0x480 mm/slub.c:4728
+ em28xx_free_v4l2 drivers/media/usb/em28xx/em28xx-video.c:2120 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ em28xx_v4l2_init+0x22a4/0x4050 drivers/media/usb/em28xx/em28xx-video.c:2903
+ em28xx_init_extension+0x137/0x200 drivers/media/usb/em28xx/em28xx-core.c:1117
+ request_module_async+0x61/0x70 drivers/media/usb/em28xx/em28xx-cards.c:3457
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+The buggy address belongs to the object at ffff88811258c000
+ which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 1824 bytes inside of
+ freed 8192-byte region [ffff88811258c000, ffff88811258e000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x112588
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x200000000000040(head|node=0|zone=2)
+page_type: f5(slab)
+raw: 0200000000000040 ffff888100042280 ffffea0004856c00 dead000000000004
+raw: 0000000000000000 0000000080020002 00000001f5000000 0000000000000000
+head: 0200000000000040 ffff888100042280 ffffea0004856c00 dead000000000004
+head: 0000000000000000 0000000080020002 00000001f5000000 0000000000000000
+head: 0200000000000003 ffffea0004496201 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4999, tgid 4999 (kworker/1:5), ts 478011086957, free_ts 477789466413
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0xd5c/0x2630 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x221/0x22a0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0xeb/0x400 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2413 [inline]
+ allocate_slab mm/slub.c:2579 [inline]
+ new_slab+0x2ba/0x3f0 mm/slub.c:2632
+ ___slab_alloc+0xd45/0x1760 mm/slub.c:3819
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3909
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_noprof+0x325/0x3c0 mm/slub.c:4277
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ usb_get_configuration+0x122/0x5e50 drivers/usb/core/config.c:894
+ usb_enumerate_device drivers/usb/core/hub.c:2483 [inline]
+ usb_new_device+0x1189/0x1a10 drivers/usb/core/hub.c:2621
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
