@@ -1,95 +1,60 @@
-Return-Path: <linux-kernel+bounces-364109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F7D99CB44
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:13:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C882C99CB45
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 212EEB25BA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9F0E1C21B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CAF1A76C4;
-	Mon, 14 Oct 2024 13:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FfMDbpv1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f8YLxQaJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FfMDbpv1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f8YLxQaJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12391AB6DC;
+	Mon, 14 Oct 2024 13:12:39 +0000 (UTC)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884A01A0B08
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98041AB6D4;
+	Mon, 14 Oct 2024 13:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911533; cv=none; b=GcdjhTLrNWMujKRjjnzqRw/sLiiWi/nW8GqP0M5urTYhfBvnhJjnIqtjd/gt3BJtdJTotI6uI+VQJgPNnjt+HqmhIerWbOcsjWz0PkjK+7L2RhvliT2qdbXJZcZ0m1EM35W1rr0zEunPNE94sJYQtsSch9GJhlwCY5dViLiCNCw=
+	t=1728911559; cv=none; b=GlPV4q1t//wuoYmkd1BSwB8WwrFuqNWi4GcKyshRM5GNgUSz0B/IP6NyYDgbdjXYBDJVSCf9g416pnT3tI3mXLThsIje6F+beITxgS0ZzmtMgj+i1yK976CyPpFvNs2SfR1jGzSzY9pwRsB28fZ43jkObqDWTrbPnoUdYqUg954=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911533; c=relaxed/simple;
-	bh=a2Bn1VKga7M2ELS7uMwMKcaMGi3JbPfV/eGtuenVZ7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BrpUZJtyRSKX+xwmqzOykYaeKsFipM1TvCLcPmu1s/E0bJ8WjG+NRmPKuG8Rgd0xSvZUYQWNX0+oZVhXo1xxSKDvSYkn+G5iCSqgLOjKqTTxHaZZ97ohTOm9D2EiaLo8Vpx1XthDJ0i5c9D3CyW/Ah/q4U2es/x108prdJS/zyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FfMDbpv1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f8YLxQaJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FfMDbpv1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f8YLxQaJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AC7991FE53;
-	Mon, 14 Oct 2024 13:12:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728911529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zqarmSZKN2z2nIPNDdOcCc2rTYxaKohP7Uy1zHoY2f0=;
-	b=FfMDbpv1l2NtnzMw1Gbcz/vX1m1TNLxMqS84ge53GI/pqNfzz9Uw5XbO2JA/2wrrkFU9lC
-	jSo/ylkJZcGz54O4RuUg20lu/od9J4zc651nxRaA1+N4hP7uYdLy/hclUt5v1/L0mpCHIy
-	5TgIxpe2MPTJEtSLM/BXJCZbtiR+/R4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728911529;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zqarmSZKN2z2nIPNDdOcCc2rTYxaKohP7Uy1zHoY2f0=;
-	b=f8YLxQaJYHtPhhrTQpBYViIIXrdvgsp7zqMU+e6rEnlnfu2ngOrQ+KDmzMTVjo1zsxK9oN
-	eGytFjrqbMumSJCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=FfMDbpv1;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=f8YLxQaJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728911529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zqarmSZKN2z2nIPNDdOcCc2rTYxaKohP7Uy1zHoY2f0=;
-	b=FfMDbpv1l2NtnzMw1Gbcz/vX1m1TNLxMqS84ge53GI/pqNfzz9Uw5XbO2JA/2wrrkFU9lC
-	jSo/ylkJZcGz54O4RuUg20lu/od9J4zc651nxRaA1+N4hP7uYdLy/hclUt5v1/L0mpCHIy
-	5TgIxpe2MPTJEtSLM/BXJCZbtiR+/R4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728911529;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zqarmSZKN2z2nIPNDdOcCc2rTYxaKohP7Uy1zHoY2f0=;
-	b=f8YLxQaJYHtPhhrTQpBYViIIXrdvgsp7zqMU+e6rEnlnfu2ngOrQ+KDmzMTVjo1zsxK9oN
-	eGytFjrqbMumSJCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B26513A42;
-	Mon, 14 Oct 2024 13:12:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3oR5HakYDWeOUAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 14 Oct 2024 13:12:09 +0000
-Message-ID: <0e8d49d2-e89b-44df-9dff-29e8f24de105@suse.cz>
-Date: Mon, 14 Oct 2024 15:12:09 +0200
+	s=arc-20240116; t=1728911559; c=relaxed/simple;
+	bh=jXm9TbjqBeQWtyHCvOYjBbhr713exhMgeuP72Cvq6ak=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FuvpSEzbvH/DNyzkkqzxRI91+1ORFHGpG57Q4JRQPT5pOMIeiopH4qtftjOVKoSEmLp32/1PccB4kv+1g+Y+ODSa7dkqNBOvWPxakhstpCvXVdiUU6T4tLzMgSBtNtsRQ3dowJmFwUVan9lSGS/zG8fhy1Gu/UxXUTABmW7dfSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d462c91a9so2729183f8f.2;
+        Mon, 14 Oct 2024 06:12:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728911556; x=1729516356;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wo4CgvRHn8lqyM0D2yk3fYpnSFaoDD/eEVtfCkBAYPw=;
+        b=r9j3+/tmjwPvfCuHFjl9Dzvv5ufvNO5Z1V55XjVguchRI+qfw65CJG2Nhm94fRw42s
+         RRPr0WMTSFl93HBW3yTdKbuDbH+osjSsbA5ZOSelj6AA6+KyVUXC9eV1FKUsevBVneNa
+         pDJtOxjcmPq1OXeK41jNoTVvsEj+lazZOhgPQ3pRmWxm+iMFtbtyJquRrCEx1sugy9vc
+         4OaGEC5vsEIVOrFdw9iuMcxiQAJCjRj0b1vSC0kuAOUixnPLuZ9N0tM34RsF7UAtGf1w
+         03p+JebtOtpkeOp/oR6HtvIEAwO4geAJ9rnx3gl2IQ1pQzIB0gLnJ0D8NM+OLPX6cgh2
+         R/RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDIJBnIotkQkrOjPDx3C/mQhokbFc6aivJwiIvhTTg/+F7Jc3K7D5+74Oej3c7Vp5T/x9AIAHY24K3G6U=@vger.kernel.org, AJvYcCW0U1CjsS6TXEDe2oc/S6LQUfFhH4uvMfcKM4iWwqHLzPRQ5ubz93uPzks5Alu/uYrcPg/zhCAifrXiCIu82xPdlg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/55H9Doth/fawoWkG4yABIAZoymp/8keW3r9yrPyTGBaLLaAM
+	Ym1iUp9RfiYHezqyy0r6z7/Me1MR3NhXLQO5LSuugYzhZ8E9U4Ck
+X-Google-Smtp-Source: AGHT+IEfBwCDvgI9ySbpB6OybyUDGZq74DoiweninPpuFWII3/UfU7oLnw38Kce57ToKotsLLjQVeg==
+X-Received: by 2002:adf:ff8c:0:b0:37d:3939:ad98 with SMTP id ffacd0b85a97d-37d55184684mr8178236f8f.3.1728911555950;
+        Mon, 14 Oct 2024 06:12:35 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6cfb35sm11291673f8f.52.2024.10.14.06.12.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 06:12:35 -0700 (PDT)
+Message-ID: <28f63302-f443-487d-a5ff-528d103c3701@kernel.org>
+Date: Mon, 14 Oct 2024 15:12:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,216 +62,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] mm/slub: Improve data handling of krealloc() when
- orig_size is enabled
+Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
+ syscall ids in syscalltbl->entries
+From: Jiri Slaby <jirislaby@kernel.org>
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Howard Chu <howardchu95@gmail.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <0f841525-e02a-4e11-b5f8-1acc61979ccf@kernel.org>
+ <ZtYJ0z8f-1jwYSbV@x1> <c279ad02-2543-4a95-9404-9304e1e704da@kernel.org>
+ <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
+ <ZwYbQswnGHSstClc@google.com>
+ <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
+ <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
+ <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
+ <ZwgAzde-jVyo4cSu@google.com> <ZwgBenahw7EImQLk@google.com>
+ <ZwhA1SL706f60ynd@x1> <2a91f9d0-8950-4936-9776-7ba59ab1d42a@kernel.org>
+ <CA+JHD937angqu=48-kPC7LvtMMQPgUGp+2x5b+JKVNoFa3+9HQ@mail.gmail.com>
+ <5c2151fc-d7ed-4677-9456-4589f67d5f51@kernel.org>
 Content-Language: en-US
-To: Feng Tang <feng.tang@intel.com>, Kees Cook <keescook@chromium.org>
-Cc: Marco Elver <elver@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Andrey Konovalov
- <andreyknvl@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>,
- David Gow <davidgow@google.com>, Danilo Krummrich <dakr@kernel.org>,
- Alexander Potapenko <glider@google.com>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, Dmitry Vyukov
- <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Eric Dumazet <edumazet@google.com>
-References: <20240911064535.557650-1-feng.tang@intel.com>
- <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
- <CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com>
- <49ef066d-d001-411e-8db7-f064bdc2104c@suse.cz>
- <2382d6e1-7719-4bf9-8a4a-1e2c32ee7c9f@suse.cz>
- <ZwzNtGALCG9jUNUD@feng-clx.sh.intel.com>
- <a34e6796-e550-465c-92dc-ee659716b918@suse.cz>
- <Zw0UKtx5d2hnHvDV@feng-clx.sh.intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <Zw0UKtx5d2hnHvDV@feng-clx.sh.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <5c2151fc-d7ed-4677-9456-4589f67d5f51@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: AC7991FE53
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,linux-foundation.org,linux.com,kernel.org,lge.com,linux.dev,gmail.com,linuxfoundation.org,arm.com,kvack.org,googlegroups.com,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 10/14/24 14:52, Feng Tang wrote:
-> On Mon, Oct 14, 2024 at 10:53:32AM +0200, Vlastimil Babka wrote:
->> On 10/14/24 09:52, Feng Tang wrote:
->> > On Fri, Oct 04, 2024 at 05:52:10PM +0800, Vlastimil Babka wrote:
->> > Thanks for the suggestion!
->> > 
->> > As there were error report about the NULL slab for big kmalloc object, how
->> > about the following code for 
->> > 
->> > __do_krealloc(const void *p, size_t new_size, gfp_t flags)
->> > {
->> > 	void *ret;
->> > 	size_t ks = 0;
->> > 	int orig_size = 0;
->> > 	struct kmem_cache *s = NULL;
->> > 
->> > 	/* Check for double-free. */
->> > 	if (likely(!ZERO_OR_NULL_PTR(p))) {
->> > 		if (!kasan_check_byte(p))
->> > 			return NULL;
->> > 
->> > 		ks = ksize(p);
->> 
->> I think this will result in __ksize() doing
->>   skip_orig_size_check(folio_slab(folio)->slab_cache, object);
->> and we don't want that?
+On 14. 10. 24, 15:04, Jiri Slaby wrote:
+> On 14. 10. 24, 14:43, Arnaldo Carvalho de Melo wrote:
+>> And works? :-)
 > 
-> I think that's fine. As later code will re-set the orig_size anyway.
-
-But you also read it first.
-
->> > 		/* Some objects have no orig_size, like big kmalloc case */
->> > 		if (is_kfence_address(p)) {
->> > 			orig_size = kfence_ksize(p);
->> > 		} else if (virt_to_slab(p)) {
->> > 			s = virt_to_cache(p);
->> > 			orig_size = get_orig_size(s, (void *)p);
-
-here.
-
->> > 		}
-
->> Also the checks below repeat some of the checks of ksize().
+> I cannot tell :P.
 > 
-> Yes, there is some redundancy, mostly the virt_to_slab() 
+>> I need to get access to a 32-bit arm distro that I can use with qemu 
+>> or with one of the libre computer arm64 boards I have, can you point 
+>> me to one? :-)
 > 
->> So I think in __do_krealloc() we should do things manually to determine ks
->> and not call ksize(). Just not break any of the cases ksize() handles
->> (kfence, large kmalloc).
+> The former might be openSUSE. I have just booted:
+> https://download.opensuse.org/ports/armv7hl/tumbleweed/appliances/openSUSE-Tumbleweed-ARM-JeOS-efi.armv7l.raw.xz
 > 
-> OK, originally I tried not to expose internals of __ksize(). Let me
-> try this way.
+> with (when unpacked and aavmf-aarch32-vars.bin copied to /tmp/arm.bin):
+> qemu-system-arm -cpu cortex-a15 -M virt -hda 
+> /tmp/openSUSE-Tumbleweed-ARM-JeOS-efi.armv7l.raw -nographic -drive 
+> if=pflash,format=raw,unit=0,readonly=on,file=/usr/share/qemu/aavmf-aarch32-code.bin -drive if=pflash,format=raw,unit=1,file=/tmp/arm.bin -m 2000
 
-ksize() makes assumptions that a user outside of slab itself is calling it.
+Ok, so I installed the new perf and perf record+report and perf top seem 
+to do the right thing. But I have no proof.
 
-But we (well mostly Kees) also introduced kmalloc_size_roundup() to avoid
-querying ksize() for the purposes of writing beyond the original
-kmalloc(size) up to the bucket size. So maybe we can also investigate if the
-skip_orig_size_check() mechanism can be removed now?
-
-Still I think __do_krealloc() should rather do its own thing and not call
-ksize().
-
-> Thanks,
-> Feng
-> 
->> 
->> > 
->> > 	} else {
->> > 		goto alloc_new;
->> > 	}
->> > 
->> > 	/* If the object doesn't fit, allocate a bigger one */
->> > 	if (new_size > ks)
->> > 		goto alloc_new;
->> > 
->> > 	/* Zero out spare memory. */
->> > 	if (want_init_on_alloc(flags)) {
->> > 		kasan_disable_current();
->> > 		if (orig_size && orig_size < new_size)
->> > 			memset((void *)p + orig_size, 0, new_size - orig_size);
->> > 		else
->> > 			memset((void *)p + new_size, 0, ks - new_size);
->> > 		kasan_enable_current();
->> > 	}
->> > 
->> > 	/* Setup kmalloc redzone when needed */
->> > 	if (s && slub_debug_orig_size(s) && !is_kfence_address(p)) {
->> > 		set_orig_size(s, (void *)p, new_size);
->> > 		if (s->flags & SLAB_RED_ZONE && new_size < ks)
->> > 			memset_no_sanitize_memory((void *)p + new_size,
->> > 						SLUB_RED_ACTIVE, ks - new_size);
->> > 	}
->> > 
->> > 	p = kasan_krealloc((void *)p, new_size, flags);
->> > 	return (void *)p;
->> > 
->> > alloc_new:
->> > 	ret = kmalloc_node_track_caller_noprof(new_size, flags, NUMA_NO_NODE, _RET_IP_);
->> > 	if (ret && p) {
->> > 		/* Disable KASAN checks as the object's redzone is accessed. */
->> > 		kasan_disable_current();
->> > 		memcpy(ret, kasan_reset_tag(p), orig_size ?: ks);
->> > 		kasan_enable_current();
->> > 	}
->> > 
->> > 	return ret;
->> > }
+-- 
+js
+suse labs
 
 
