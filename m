@@ -1,138 +1,123 @@
-Return-Path: <linux-kernel+bounces-364829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A07999D9F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:01:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7325D99D9F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9EF8282D5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:01:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A13FB1C21526
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65C01D9588;
-	Mon, 14 Oct 2024 23:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBBA1D9588;
+	Mon, 14 Oct 2024 23:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nhaE/t44"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4N/dLyk"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B80C1448DF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135901448DF;
+	Mon, 14 Oct 2024 23:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728946871; cv=none; b=jUN4/2RB/g87GWWF9paNWHfIGyxXFHs6yOYsrkBLgh+KmG8jZfDLqnY4qC0dBd+1GdZGND+jcCE+PAyYVw8oOOnoa5Q92Q76C7oqU4szw35oy3VjPyOJEzo4Z3ZoAs5qKXrZTEzq6jyO72y/Ms6PSruvAXLtgHveFUlDlk4eyBM=
+	t=1728946925; cv=none; b=tcctjGw/Ze9Va8n6yzNt0/tngxC6yhUIkgEwtSsldcU0SNpKCqZOZt7msCPsh03x1w00Z/vGxBMo9yGiY6oGpwS1/40McIRj0k0v+UeElX9CPr7CNVcGVAFpcpZ84TizhH9v8EyJ7evFBQU5FrWlM7Nrjm8T3/TaQ9Yw/W9PPyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728946871; c=relaxed/simple;
-	bh=pdm0OrgR020m1wg0Z5PfCUimmSwEKwH8LVeO6mpjzpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=to02iDVysiN0b/+ZKRVR2yV7uxQyRsBYmNuWeHb5EnAjhvh1tRDctqjuhqR0loIbz0S/92+MKzV2WrFv7VRd2Tx1qPxnjoGdxVdefOqL7u+w9feCkVO1LLGTDvgPEg+YvPx3BeqnTYhVLJeOX+quVzwmPK4HWX1ehbRfzMmfrug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nhaE/t44; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso6873574a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:01:09 -0700 (PDT)
+	s=arc-20240116; t=1728946925; c=relaxed/simple;
+	bh=isxeY2F05qQsZ2WKXbGh/MaxpRRZpflVYsLI4JN7mzA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=s9m9ve3iDSlVs2t/uRHC1cut5yvXMZO9qq4u7Rw8Kgrp7tA2tw9d5mkrcA6JpzUnnN+Kkn7df2uhIYPDpaXxKSIZqMaVNa08mx6cVCvxUg2KWbnzfjma9rafgiZaCsQ+NOkFXZlywAd/SV0c3daguWMaJqhjwYPM9CFBbFpxt5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4N/dLyk; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d49a7207cso3042232f8f.0;
+        Mon, 14 Oct 2024 16:02:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728946868; x=1729551668; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728946922; x=1729551722; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IEvhOYbhIILLB1qSYINeHhmw2BARcJ2f8Nui9BVtChY=;
-        b=nhaE/t44I9fO4AVQxYIY6EGuYZ1RXOyEw8veMBkCH4Mno7SffuESfJKbP3W/zgSTaL
-         tB7iHQvYuheB1RdOZQ3rZTHOdDUygBipctJFDRZkag6JIqO5249Z00fld5NNKMSkX5Ji
-         nQJe9P+i8PnOXbGfjKrN/QguQ1HdxTvHBmSfPA6PiJ7PYq7G4xCnNi/KO9jZxRPZvIXE
-         NXz9BIxmdscK92emPnUspaYLvZRoC7ROIfyMW5KHxzNwIDMqqcyhETLpjeDfYiso3J6k
-         PRRZA9yvAZKXx8knnyrRi5ArPZBh4ZTd5TZbDQNF79+j0g39eNAzVrPT5WQ2tGnpB1g6
-         8PTw==
+        bh=fIkS7pzP1CV8VNgOcTKZ+pJdHHTX/0kd0qi96EfGmwA=;
+        b=b4N/dLyk4Pu54nZpS8+5FCEeXtWYA5XmucQvLXafmYnihamCgzXOI1FWfLMyq9K6au
+         VgIwAXNw3NCXJVwi3GlJ4izxGLYqX10Dj9WJxk7heZspNpGJgT8+oEf2/KAYPdXpqueg
+         AUvVZa5Hn0IKKwILsGPikB6vO4EtdlMHaLQ12PuOG9junGLE8oG/OZv0wCL7aGjRQHQs
+         MKUUI4vs2MlvrSAHqvxIVsot7UL6wsor9O1vjCxhQ4LmxV3izUxVAu0bQG+Cytp1A8kB
+         DqjSRXfBMX1hli3bJnHNxIqEL1PWfcYTQuU/F+CQUjEGgxFEpVbJ9ICxHvr2WXnlZ6xZ
+         wmyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728946868; x=1729551668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IEvhOYbhIILLB1qSYINeHhmw2BARcJ2f8Nui9BVtChY=;
-        b=tU62vXZPw8FwRJyDRBI1bPglkSylXV4dyk4+bOXwykzccsCb2FHmVpmKvlfA9HSG4a
-         IqFHqQ5Bh4ec55gsR75K8TVWCKePwjsLXb8WXHRvbRCwhoNoyN94tkLXdWxL+WuYI/a2
-         4Y8soa75f339xL66WyNIQ7abuOUPmmgCf7PI8G09XjvrhAX5DRQQg2B4nNma2zRB/wN9
-         N4YCUH6Chltrjw3kgegT3nl6xRRAJ9Six6LKqeNrkOsaBSGaajAHgoi/7v8IDsBpljOR
-         BOR4oFRFpNSKLP8W5S08KONIdmqg+KFx36LqXPgSs8lu3jNzOYjpPMm4rLhxhUKAeHJC
-         hf5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXnW/T6KDFYxqmplktXJbnH2eWtTO+U07biFJAhYTgaNld0J62fKGSVFozpkfPTlNJnvorgN6NfOqE/bM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKvHqm1iXOiL/NQOMs9fR2JZiCC3ZKoM48pxsyKsh/Z5h4jhv0
-	xd8Pmxv6bgjx6BEeoObMPNdIRAxW85qjz1Kvlf6PGUjKzXwv7YxTO2lcYyunYRIbrjEfi05GNSc
-	SHpHVxnu9FnXJqUF05CRSXtOKIEw9Ddn13DEJ
-X-Google-Smtp-Source: AGHT+IEF7BAH7BBqfFSuPVqFExLRaO9MfAeZQxaesgLe9iVoNzAIzQCDm8YKsl92mGXc4xE+dvinxkXcT4d7/GZsF20=
-X-Received: by 2002:a05:6402:2352:b0:5c9:813a:b1c1 with SMTP id
- 4fb4d7f45d1cf-5c9813ab2e9mr3253152a12.1.1728946867821; Mon, 14 Oct 2024
- 16:01:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728946922; x=1729551722;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fIkS7pzP1CV8VNgOcTKZ+pJdHHTX/0kd0qi96EfGmwA=;
+        b=LuvAYlX1LHGWwWkKdP+DBsBSA7kDu+f3wCdmxTMwrYNS+lVY9MPDXdKWTYa4uOb/Rg
+         CaDSbFjgErCKlko803T2FdLJViL2o01HlojPLBDZHQ3qy/fBuUXo+WommaNJ+lQcq6AD
+         4j2DZ+HoJVfI1pSXDhNAXOpleqCfAhQjdxs/aoOohKXjd1YBugu1DEYZ24GNBmwkqose
+         fJtrq1wDhIywmODwCfLejuzjgOOZz28WqKXXMVUxs3m5I379J9VHNUelsyiFJlJ7nKWP
+         G6I7pIqqn9SNCY35ZsQeFCQ0y5Ej7iKMiT+JdWo4N1EI89br1vp06/Ae4nl2UcLzDZ/1
+         CChw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDLsv99vFSquiM400rRIRXRlZ7CXgXMQOZ7p8KJBTCCGKFIFtnSrdLC80ztqZdBwWivkNKeN359305ZOPazA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd3ZcqDMwwWPWS7yloVtlhiP1MWsQ7OyWIdSaPVrPfpb1lHhnn
+	/yAS64VkaO1y4gtYE7LtBdHFjkiFjoxpoisxFLOyYMSFV4Y3WevCEh5qTg==
+X-Google-Smtp-Source: AGHT+IGtA4bl0vTDiM0+34/hmRCDBCj/NNYNNYyHfcFZcCHzGIIQMEEMETQwN5PfPgRBOylVg4J0pA==
+X-Received: by 2002:a5d:4d8c:0:b0:374:bd48:fae9 with SMTP id ffacd0b85a97d-37d5ff2a6fbmr7178985f8f.20.1728946922222;
+        Mon, 14 Oct 2024 16:02:02 -0700 (PDT)
+Received: from [192.168.1.240] ([194.120.133.80])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d7fa87c7dsm105712f8f.42.2024.10.14.16.02.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 16:02:00 -0700 (PDT)
+Message-ID: <9c02683d-c688-4e39-913e-6b20b3bd76a0@gmail.com>
+Date: Tue, 15 Oct 2024 00:02:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829175201.670718-1-oneukum@suse.com> <CANn89i+m69mWQw+V6XWCzmF84s6uQV15m_YdkPDQptoxUks4=w@mail.gmail.com>
- <fd906211-7f31-4daf-8935-2be1378a75f8@suse.com>
-In-Reply-To: <fd906211-7f31-4daf-8935-2be1378a75f8@suse.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 15 Oct 2024 01:00:53 +0200
-Message-ID: <CANn89iJWATVhMVDgq3fcV9zpZRt8nd_bWp3=qRHo8L3tJP==Kg@mail.gmail.com>
-Subject: Re: [PATCHv2 net] usbnet: modern method to get random MAC
-To: Oliver Neukum <oneukum@suse.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@kernel.org, 
-	John Sperbeck <jsperbeck@google.com>, Brian Vazquez <brianvv@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+Subject: incorrect shift and mask operation in
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 12:24=E2=80=AFAM Oliver Neukum <oneukum@suse.com> w=
-rote:
->
-> On 14.10.24 21:59, Eric Dumazet wrote:
->
-> > As diagnosed by John Sperbeck :
-> >
-> > This patch implies all ->bind() method took care of populating net->dev=
-_addr ?
-> >
-> > Otherwise the following existing heuristic is no longer working
-> >
-> > // heuristic:  "usb%d" for links we know are two-host,
-> > // else "eth%d" when there's reasonable doubt.  userspace
-> > // can rename the link if it knows better.
-> > if ((dev->driver_info->flags & FLAG_ETHER) !=3D 0 &&
-> >      ((dev->driver_info->flags & FLAG_POINTTOPOINT) =3D=3D 0 ||
-> >       (net->dev_addr [0] & 0x02) =3D=3D 0))
-> > strscpy(net->name, "eth%d", sizeof(net->name));
-> >
->
-> Hi,
->
-> you need to have a MAC to be an ethernet device, don't you?
+Hi,
 
-Before or after your patch, there was/is a MAC address, eventually random.
+Static analysis on 
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c has found 
+an issue with a mask and shift operation in function 
+wlc_phy_rxcal_radio_setup_nphy() as follows:
 
-The problem is about the test, which is now done while dev->dev_addr
-is full of zeroes, which is not a valid address,
-as shown by :
+lines 26326-26330:
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index e4775fb5a2f6..1a316773319f 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -1750,7 +1750,8 @@ usbnet_probe (struct usb_interface *udev, const
-struct usb_device_id *prod)
-                // can rename the link if it knows better.
-                if ((dev->driver_info->flags & FLAG_ETHER) !=3D 0 &&
-                    ((dev->driver_info->flags & FLAG_POINTTOPOINT) =3D=3D 0=
- ||
--                    (net->dev_addr [0] & 0x02) =3D=3D 0))
-+                    (is_valid_ether_addr(net->dev_addr) &&
-+                     (net->dev_addr [0] & 0x02) =3D=3D 0)))
-                        strscpy(net->name, "eth%d", sizeof(net->name));
-                /* WLAN devices should always be named "wlan%d" */
-                if ((dev->driver_info->flags & FLAG_WLAN) !=3D 0)
+         offtune_val =
+                 (pi->tx_rx_cal_radio_saveregs
+                  [2] & 0xF0) >> 8;
+         offtune_val =
+                 (offtune_val <= 0x7) ? 0xF : 0;
 
-To be clear : We are hitting a regression after your patch was
-backported to stable versions.
+and similar in lines 26376-26381 too.
+
+The issue is that the expression pi->tx_rx_cal_radio_saveregs[2] & 0xF0
+when shifted 8 places right is always zero, so this looks like a mistake 
+since some value value between 0..0xf is expected in the second statement.
+
+Since pi->tx_rx_cal_radio_saveregs[2] is a u16 value the expression 
+could plausible be:
+
+	(pi->tx_rx_cal_radio_saveregs[2] & 0xf0) >> 4
+or
+	(pi->tx_rx_cal_radio_saveregs[2] & 0xf00) >> 8
+
+I don't have knowledge of the hardware so I'm not sure what a suitable 
+fix is.
+
+Regards,
+
+Colin
+
 
