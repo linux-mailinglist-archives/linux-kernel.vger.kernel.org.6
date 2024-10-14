@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-364231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CA499CE43
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:41:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0845599CE50
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 769B81F23CE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB781C22D78
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF451AB6D4;
-	Mon, 14 Oct 2024 14:41:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58831AAE37
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564271AA797;
+	Mon, 14 Oct 2024 14:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mvse/qDo"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB071AB6FC;
+	Mon, 14 Oct 2024 14:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916911; cv=none; b=hILveIGynaR55axjvBFC8eY7RbUniOi8Cleqno3ECyrKyRZqo5aOOaHsHXGrKWPnAeSG3FcbYCnWwHnOKrun04Qjt/KZuIxuLitxuSfttEmTGeFbqC2Bm0NUnaaIo9Bxm3aUCywpJ3CMwP4f9svtFU/z7PyUbjVXDRqnZdEM1o8=
+	t=1728916941; cv=none; b=sI2Qi99hGajziSzrP0tESqHvqNoyw4aXtUzNtULyejcmt5HJ0tB5LtAmcqa3t6/LuZpAlAQZmY7L6ulYHym61xxexQKJHQpfWmNs4EjpX3zWz0vENMI5MgecWAsIYKalvdeW2EYGH+xjBqnP64S0gD6CBTsgPZIjkPhYa0od+Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916911; c=relaxed/simple;
-	bh=hhtfj4TP8D3Fn35HAWNyNPAJgI+6Yz55diScInh50tM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WbB3qWulwIRz84v4s56z2QkKwlZpgS640SPecq8KmxFrjKqZnWew9AOcCN5VvCI9fvklVyyZ0BgK6bNVvMuVIphI5/t9PkYawVCSGDff3OHiT7qafGgAqBMP206HXVd7U5YMkq1i76iRr16Wjw4xkcMuHwbbnJZk7dbI6o0Rtyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 05FF31007;
-	Mon, 14 Oct 2024 07:42:19 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFB763F51B;
-	Mon, 14 Oct 2024 07:41:48 -0700 (PDT)
-Date: Mon, 14 Oct 2024 15:41:46 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Gavin Shan <gshan@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	shan.gavin@gmail.com
-Subject: Re: [PATCH] firmware: arm_ffa: Fix warning caused by export_uuid()
-Message-ID: <Zw0tqoVCU0xPS-X1@bogus>
-References: <20241014004724.991353-1-gshan@redhat.com>
- <ZwztgGdmNMrsqO7c@bogus>
- <2ea2b741-3abd-4fe1-b622-b6a4a3c2a92b@redhat.com>
+	s=arc-20240116; t=1728916941; c=relaxed/simple;
+	bh=yp/vq9zlbq1HhG6QQGenrbEj/Q0rtKpwP4zYqsnuJjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lvsngb7xyjgTcjQLOOT6p6lGlH2w5dxU5m35k38pFJ3EVtoGw7R3D0A0BSptTnwxxMTruoEWc/7zgtScmdPa5uF5LGhcRSZj5wMCkktfS5sWuhN+ece0KTyaG7R9onTsap8UtERuKDkgahjPbEuzECSIbCUXqCVk/GDqBeNwyJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mvse/qDo; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2e4d16c2fso36812227b3.3;
+        Mon, 14 Oct 2024 07:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728916939; x=1729521739; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b7yd6ocGPa+qHv0lpNEK+1T1208owehkBcsL1QtHm1E=;
+        b=Mvse/qDoDBR/cwSUlSlaOarM8nvWCigOAWkCRpNXPf/nY/0TSCqyNrwsstgIHEYkAP
+         WhmOhvPE+kwnY5E9lRymqOsTntcWJhgVQxgzuawUi/m2jma3VNP3lTNglQdZ/NWt5c/V
+         bP2AaqqFOViaY9aCR8wEATnMebJJb6ZL+tHkbZJu8qxSKA+hOY6BYYcz82m9GSaTAKqf
+         9dPyFQk4IX1FTchFOeFocpWh1kFSZ4eLnV/VN2UIsbPdIgQxRPSs38VRuQ9m8OSQ0QaQ
+         btunCAtETWutaBd639CGxueiMGh9+cGcMKWaXfQrCAWrW9rFCfIDcMkUEKVUzkYmu72O
+         qTgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728916939; x=1729521739;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7yd6ocGPa+qHv0lpNEK+1T1208owehkBcsL1QtHm1E=;
+        b=ssM/bp2ZZGHQsMB6f25hVN6ScUY5QG6n11GViWtmFKcPbEHONn9DLkQWBH84x61YZh
+         u9wCXFNBUc6YtrsvCLY82sMWeCACa0xF+DSTka6AmB3IeppjitQynN6YlkV/lExrz2WE
+         wl1WfN1tr6MbqEc2MKrevEHDEapE32IFiQblwonh536s90ujpSKoUt7anVt5v1KqA2bV
+         xzHurw6bgAGfe7gnpZZQq9gP6DlTyL5GF6ftQTQC/9USRQrT7OiwKsvDj1PF7FQcxJHl
+         U5qD5urL+P1AiO/0Ib+bojMh8sFSo58sQggYG1JxkoWPyj86NaglBSE3/RYsIjxQpFDY
+         JboQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGuDjLOXQs+9Y60cojrM24k7Gmc7k0qHbS8xAVoiFduADgB+GXB/0z/lZlNFZjMVGYm+pAvwftkljGqUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/IZbPDftZNSVjwF04ZsLe/cNXF7oTvyGmUIvsso9jC4DZ9TSY
+	JQmLH3dSupbJ6VL2fwZW3qV+J/YeCDR864FCL6UXnrPVPZgnHfPhv8+DGA==
+X-Google-Smtp-Source: AGHT+IFrpVozxAesIjCHUikzshrhyh8y99zvIO4C2XJjdes/VeBu3a+00IFj9Z4GGk++ezrzMs0IYA==
+X-Received: by 2002:a05:690c:6711:b0:6db:deb7:d693 with SMTP id 00721157ae682-6e364347ac3mr62466697b3.22.1728916939240;
+        Mon, 14 Oct 2024 07:42:19 -0700 (PDT)
+Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332bad8basm15669867b3.70.2024.10.14.07.42.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 07:42:18 -0700 (PDT)
+Message-ID: <c1485484-15c1-4be5-b320-01443f4f3ae2@gmail.com>
+Date: Mon, 14 Oct 2024 10:42:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2ea2b741-3abd-4fe1-b622-b6a4a3c2a92b@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] linux-kbuild: fix: process config options set to "y"
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ shuah@kernel.org, javier.carrasco.cruz@gmail.com
+References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
+ <20240913171205.22126-8-david.hunter.linux@gmail.com>
+ <CAK7LNATf=1WD5a8azGZGJ73-irm8uvBZujvuW3CUncXbix+10w@mail.gmail.com>
+Content-Language: en-US
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <CAK7LNATf=1WD5a8azGZGJ73-irm8uvBZujvuW3CUncXbix+10w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 08:25:54PM +1000, Gavin Shan wrote:
-> On 10/14/24 8:08 PM, Sudeep Holla wrote:
-> > On Mon, Oct 14, 2024 at 10:47:24AM +1000, Gavin Shan wrote:
-> > > Run into build warning caused by export_uuid() where the UUID's
-> > > length exceeds that of ffa_value_t::a2, as the following warning
-> > > messages indicate.
-> > > 
-> > > In function ‘fortify_memcpy_chk’,
-> > > inlined from ‘export_uuid’ at ./include/linux/uuid.h:88:2,
-> > > inlined from ‘ffa_msg_send_direct_req2’ at drivers/firmware/arm_ffa/driver.c:488:2:
-> > > ./include/linux/fortify-string.h:571:25: error: call to ‘__write_overflow_field’ \
-> > > declared with attribute warning: detected write beyond size of field (1st parameter); \
-> > > maybe use struct_group()? [-Werror=attribute-warning]
-> > > 571 |                         __write_overflow_field(p_size_field, size);
-> > >      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > 
-> > > Fix it by not passing a plain buffer to memcpy() to avoid the overflow
-> > > and underflow warning, similar to what have been done to copy over the
-> > > struct ffa_send_direct_data2.
-> > > 
-> > 
-> > Are you observing this just on the upstream or -next as well? There is a
-> > fix in the -next which I haven't sent to soc team yet, will do so soon.
-> > 
-> 
-> I just tried the upstream when the patch was posted. I just have a try with -next
-> and similar error exists.
-> 
-> [root@nvidia-grace-hopper-01 linux-next]# git remote -v
-> origin	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git (fetch)
-> origin	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git (push)
-> [root@nvidia-grace-hopper-01 linux-next]# make W=1 drivers/firmware/arm_ffa/driver.o
->    :
-> In function ‘fortify_memcpy_chk’,
->     inlined from ‘ffa_msg_send_direct_req2’ at drivers/firmware/arm_ffa/driver.c:504:3:
-> ./include/linux/fortify-string.h:580:25: error: call to ‘__read_overflow2_field’ declared with attribute warning: \
-> detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
->   580 |                         __read_overflow2_field(q_size_field, size);
->       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
-> 
-> 
-> Part of the changes included this patch is still needed by -next. Could you please
-> squeeze the changes to that one to be pulled?
-
-Sure I can do that. Can you share the build command(specifically if any
-extra warning are enabled) and the toolchain used ? I am unable to reproduce
-it with clang 20.0.0, not sure if it my toolchain or build command/flags that
-differs here.
-
---
-Regards,
-Sudeep
+Version 2: 
+https://lore.kernel.org/all/20241014141345.5680-7-david.hunter.linux@gmail.com/
 
