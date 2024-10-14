@@ -1,134 +1,176 @@
-Return-Path: <linux-kernel+bounces-363326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28D099C0B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:07:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE8E99C0BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855A81F235BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33D9283C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D395145FEB;
-	Mon, 14 Oct 2024 07:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D082B14600F;
+	Mon, 14 Oct 2024 07:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uyWkLWnQ"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="iiraORVc"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126101304AB
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728889625; cv=none; b=gY4hL9T4+xoePVXu2rh2rvTcfDU/x1cJ8mM4IkC8vz/ErQYJ/wyUWtJqUju6fUO7pPj+3QIsroW9TxRis4Hwa8Fo+BTcJSBbNj7FR2VwKmKhDJsiFbvZ2vOOOP+OAVAiJ+FK6gVGH+s5YvjAK5EY75dmsm4SRxhSk6Z7PxUctXQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728889625; c=relaxed/simple;
-	bh=KWGyRtOe+d5eWEKkR8JItBQOun6IJ0kjNk0vi5LqyGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L+lhvTfSMrWY6mnREp/vbSYAVIuNoTAezHc0tQA8LOuH1zS6VnaIIPhUVW8mOSjyy8PvuSNU+tBGDajyJmUQPTW1pQFCR8SOp9RO4YAB8hr7PmEsSC2oI4gP8UawpOVo3EPvAnJykLq2y3bL0kKDzIRr4qUWHWj1J42IvTGEy70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uyWkLWnQ; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5398ec2f3c3so4624531e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728889622; x=1729494422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DGAZdY+3mMlegbLBhotjKigA3jsyDM7lCK6IChu1+M4=;
-        b=uyWkLWnQEKH6H2Pclv+rIyxkP7HdI4eWKKYd7DpLqcLbwK9D3xIT3ka+oUPJANuvRH
-         XSsStcHYZsiKnBmhLp1TxbgdVhwIQi3k1w+NbZnOqBg8VjMGJpHxBn9a4E/Q+swKWg5a
-         IZW1eGzC8YHjI2W3egxSayO/sHUl46SPwg2gB+8VjFEap+7+lKoLoN39zE2B5ArHeW+B
-         RivuqZEavjkeHYnOvJBu8zckGeFIQXi/alY4MoggaB3BJ4vg7g9PsCbnMh0gYyoFweE6
-         INfKuBoprd/GsLc2GwD7rODuaOK3d2JLSnfyMbgC0calOj9t64/XVap1ARPR0ZBWbU92
-         7xhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728889622; x=1729494422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DGAZdY+3mMlegbLBhotjKigA3jsyDM7lCK6IChu1+M4=;
-        b=xON6muUo2DykA0qTIJk6K5hT2eJsVgguMjiEKNc+LrCFXLuhGjCJqEQjGr4IqtjP4g
-         nSSABUZmUgEII6IWSYQjOeV6oPBvjV6YFpT2j5tjl3dcH6mpsCitk/mDVoioJfDjTU1C
-         KrP+MWzRWHMxNVHzVbx9ZPPKNtWb1RvZP5Geax05TSLAWxYDhJ+vOBpU1nwsp3Hl1Cr4
-         DJ1E/b0gDihyK/em/zYmaaX6rrjcNMcyvPleJxqMd7zBPgfgSgMY14PQ+dxK7Ld9aQtp
-         qLU95irFg+hMb+MTWdlvHrSu/dyeYTVqaqhogtViZYf2AQfOQ+K1WCf+zQ/OuD+Z4ZwX
-         aYig==
-X-Forwarded-Encrypted: i=1; AJvYcCWTn4lO8KTG4buV1njbbiiVkSiu8Yyrs+3TIBgKeve9FO0WO0ZMGE9G5hHqSQ7lHt4et38bfi6zdulXtz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4kuGa8gcdBzuDCj/GdY63SI1ld/xIHr0kxQPanBoR02T+YolW
-	mckSOvig7hK9qIf98Wa6FtU2zJaDbskmSPBKh58KOUZqR6sJjYVQd4an50ACOu7HmrqXDHJrvq8
-	O0pbH2hO0JF1JPYcPBPJi4CenT+KGznyUPtCaXg==
-X-Google-Smtp-Source: AGHT+IFnO48aGUpKmxvFD0o04bcR91QUkt1ZB3Pcb8GYRBZzTTyMcBni5r8seoxZT9HDgGHzFz8b7Seuy1zcTHncsSc=
-X-Received: by 2002:a05:6512:3ba5:b0:539:dca9:19cc with SMTP id
- 2adb3069b0e04-539e54d77e1mr2760395e87.4.1728889622082; Mon, 14 Oct 2024
- 00:07:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7004113FD83;
+	Mon, 14 Oct 2024 07:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728889650; cv=pass; b=W605tuOz+jDkw37tcGE+YIhGzVn+BrgmRhXYzTMh908nJ5Ow0c9wnXrtBN9sIjE113pH3QRfHTnxQhBr9/EqGykvKf2CnPjk+N7PT1CJGWNJxJAQRWyrN+ODdzEwD49BnoNmCZUOsSWAOrXMBTU8elI/5nLJs/OSch/pY2ArYpA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728889650; c=relaxed/simple;
+	bh=QmwV6ZRlTh3j+kOjLLxeD1k5Sgj8QIfovSHn2ug6unU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ggh0zcOHuzDjDBHfowKywXPyexuDwOXbjQmjnZWnyte6m2+j+shf5dhaz/IZt6TEfnWh6G8pU9MJPZFq5XFcDAjXIlCrBipsn2wN4AUyCbu867URUqzG82K5SNSlMtVCHxSFc9vale4Esr7uV1S1eQSPTCS8osdK7fa5QSZO/VA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=iiraORVc; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1728889626; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cnJQxBq2HoeZytIXgUdcyu7x9YJjdBWyDbit5LrOpybi/jEO98/XRBNp4wx2IJQcPnaK8YPn04E/0B9NKpaxdVvIADU7Cb0qtl7AQel4+X9D0bXfiwt731C1/LcWNBucPWOuV6NTog9MoP7ucJjF5Xgm9rslGWgQr7nO8Yu/bZ0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1728889626; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0A9IsFta4OZE0agwgaaWd+5WVs3WNNoO0kjYMJq+9Dc=; 
+	b=IkBl4/p7QP0bFJKd004aHiKvd5PfhAzMVu6PPG6y69kyxHH7bebPK6zrgT4vLVfOSTsaQSt9ztDPpVBwPivAz97RWVvw3LRErGbBhGRhx8ENi5kI/hEv6LMwOM+lruDS777EZH1KF5vC3KwBiTPpR2SbQnr+v01GMU7B11TXiDk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728889626;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=0A9IsFta4OZE0agwgaaWd+5WVs3WNNoO0kjYMJq+9Dc=;
+	b=iiraORVctYQj1JgJt4vSz1J8gD+Gz/slYEGQcSr5UzsWQAC54ezG4PjtCB5x4XDe
+	QZybkGSEw6sXeKwWTWoPsjcilMSZWfLpAFlMWtKLbodqP6u1KpSRJnLNH119b/wyCtq
+	dEiCw4dBJOBusf5fCwxh0FfoHQdcdNsFwaWQC4e0=
+Received: by mx.zohomail.com with SMTPS id 1728889625542850.7313795427783;
+	Mon, 14 Oct 2024 00:07:05 -0700 (PDT)
+Message-ID: <3017b1e4-ffa6-4601-b844-0e6f7d95a475@collabora.com>
+Date: Mon, 14 Oct 2024 09:07:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <37842441-e372-40e9-b0f5-cf69defc2db5@stanley.mountain>
-In-Reply-To: <37842441-e372-40e9-b0f5-cf69defc2db5@stanley.mountain>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 14 Oct 2024 09:06:50 +0200
-Message-ID: <CAMRc=MdFYTtosq53tDFaPSBn11V3P36DOX8xsxRqFhu5iPwUcw@mail.gmail.com>
-Subject: Re: [PATCH] fbdev/da8xx-fb: unlock on error paths in suspend/resume
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Helge Deller <deller@gmx.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Sekhar Nori <nsekhar@ti.com>, 
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/3] media: videodev2: Add flag to unconditionally
+ enumerate pixel formats
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
+ ezequiel@vanguardiasur.com.ar
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <20240826172407.140538-1-benjamin.gaignard@collabora.com>
+ <010201918fb77141-93148d3e-6899-4b09-bff3-5d4f146f1449-000000@eu-west-1.amazonses.com>
+ <250bf825-7e64-4132-9c70-fa25c5976ed3@xs4all.nl>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <250bf825-7e64-4132-9c70-fa25c5976ed3@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 11, 2024 at 9:42=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Add a missing console_unlock() in the suspend and resume functions on
-> the error paths.
->
-> Fixes: 611097d5daea ("fbdev: da8xx: add support for a regulator")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/video/fbdev/da8xx-fb.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-f=
-b.c
-> index fad1e13c6332..66ff8456b231 100644
-> --- a/drivers/video/fbdev/da8xx-fb.c
-> +++ b/drivers/video/fbdev/da8xx-fb.c
-> @@ -1610,8 +1610,10 @@ static int fb_suspend(struct device *dev)
->         console_lock();
->         if (par->lcd_supply) {
->                 ret =3D regulator_disable(par->lcd_supply);
-> -               if (ret)
-> +               if (ret) {
-> +                       console_unlock();
->                         return ret;
-> +               }
->         }
->
->         fb_set_suspend(info, 1);
-> @@ -1636,8 +1638,10 @@ static int fb_resume(struct device *dev)
->
->                 if (par->lcd_supply) {
->                         ret =3D regulator_enable(par->lcd_supply);
-> -                       if (ret)
-> +                       if (ret) {
-> +                               console_unlock();
->                                 return ret;
-> +                       }
->                 }
->         }
->
-> --
-> 2.45.2
->
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Le 11/10/2024 à 15:29, Hans Verkuil a écrit :
+> Hi Benjamin,
+>
+> On 26/08/2024 19:24, Benjamin Gaignard wrote:
+>> When the index is ORed with V4L2_FMTDESC_FLAG_ENUM_ALL the
+>> driver clears the flag and enumerate all the possible formats,
+>> ignoring any limitations from the current configuration.
+>> Drivers which do not support this flag yet always return an EINVAL.
+>>
+>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>> ---
+>> change in version 7:
+>> - Rework documentation about which drivers should use the flag
+>>
+>>   .../media/v4l/vidioc-enum-fmt.rst              | 18 +++++++++++++++++-
+>>   .../media/videodev2.h.rst.exceptions           |  1 +
+>>   include/uapi/linux/videodev2.h                 |  3 +++
+>>   3 files changed, 21 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+>> index 3adb3d205531..e39c87bcbfc3 100644
+>> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+>> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+>> @@ -85,7 +85,17 @@ the ``mbus_code`` field is handled differently:
+>>       * - __u32
+>>         - ``index``
+>>         - Number of the format in the enumeration, set by the application.
+>> -	This is in no way related to the ``pixelformat`` field.
+>> +        This is in no way related to the ``pixelformat`` field.
+>> +        When the index is ORed with ``V4L2_FMTDESC_FLAG_ENUM_ALL`` the
+>> +        driver clears the flag and enumerates all the possible formats,
+>> +        ignoring any limitations from the current configuration. Drivers
+>> +        which do not support this flag always return an ``EINVAL``
+>> +        error code.
+> I would like to add: " without clearing this flag."
+>
+>> +        Formats enumerated when using ``V4L2_FMTDESC_FLAG_ENUM_ALL`` flag
+>> +        shouldn't be used when calling :c:func:`VIDIOC_ENUM_FRAMESIZES`
+>> +        or :c:func:`VIDIOC_ENUM_FRAMEINTERVALS`.
+>> +        ``V4L2_FMTDESC_FLAG_ENUM_ALL`` should only be used by drivers that
+>> +        can return different format list depending on this flag.
+>>       * - __u32
+>>         - ``type``
+>>         - Type of the data stream, set by the application. Only these types
+>> @@ -234,6 +244,12 @@ the ``mbus_code`` field is handled differently:
+>>   	valid. The buffer consists of ``height`` lines, each having ``width``
+>>   	Data Units of data and the offset (in bytes) between the beginning of
+>>   	each two consecutive lines is ``bytesperline``.
+>> +    * - ``V4L2_FMTDESC_FLAG_ENUM_ALL``
+>> +      - 0x80000000
+>> +      - When the applications ORs ``index`` with ``V4L2_FMTDESC_FLAG_ENUM_ALL`` flag
+>> +        the driver enumerates all the possible pixel formats without taking care
+>> +        of any already set configuration. Drivers which do not support this flag,
+>> +        always return ``EINVAL``.
+> Ditto.
+>
+> If you agree, then I can make that change myself, no need to post a new version.
+
+Of I agree :-)
+
+Thanks a lot.
+Benjamin
+
+>
+> Regards,
+>
+> 	Hans
+>
+>>   
+>>   Return Value
+>>   ============
+>> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>> index bdc628e8c1d6..0a9ea9686c24 100644
+>> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>> @@ -216,6 +216,7 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
+>>   replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
+>>   replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
+>>   replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
+>> +replace define V4L2_FMTDESC_FLAG_ENUM_ALL fmtdesc-flags
+>>   
+>>   # V4L2 timecode types
+>>   replace define V4L2_TC_TYPE_24FPS timecode-type
+>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>> index 4e91362da6da..421a30cb0c51 100644
+>> --- a/include/uapi/linux/videodev2.h
+>> +++ b/include/uapi/linux/videodev2.h
+>> @@ -904,6 +904,9 @@ struct v4l2_fmtdesc {
+>>   #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
+>>   #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
+>>   
+>> +/*  Format description flag, to be ORed with the index */
+>> +#define V4L2_FMTDESC_FLAG_ENUM_ALL		0x80000000
+>> +
+>>   	/* Frame Size and frame rate enumeration */
+>>   /*
+>>    *	F R A M E   S I Z E   E N U M E R A T I O N
+>
 
