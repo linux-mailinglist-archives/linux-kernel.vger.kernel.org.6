@@ -1,105 +1,117 @@
-Return-Path: <linux-kernel+bounces-364514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7CB99D598
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:29:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204AA99D59B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82CD282689
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:29:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF4FDB23555
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C6C1C302B;
-	Mon, 14 Oct 2024 17:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C591C3027;
+	Mon, 14 Oct 2024 17:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXk9bav3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KQkuyJpa"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7FE1B85C2;
-	Mon, 14 Oct 2024 17:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EA21BDABD
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728926973; cv=none; b=AZup8qe9gRhV3JrvQLPteVGFMam9RkJWEpSJhDlO27kVZzg8nxPd2H+ksYYfzHUC6UrR6wg6NUTYP70Tr9rUAyo1wqr+Ja7/8xQ5HXLtVpv87pSdiHZfDgqHjRvArFMb6/k+BpZQCLGlBg5CUxvCWKvbt3DgWDs+JzyADfOshao=
+	t=1728926997; cv=none; b=p4lznztD6+omzktMX2nS+QFkEMEC1I2Nt0ZAqNw4MIdHGLocOHz8yXdpLddzFPZLEp9O0vHhVkoIYidcoP8vPFdFdqfOKEreqYlKZ9fuF5ySSYSDtiV78yVPTgT3lcqnuQDaBFjxGnDRYu03bUK1jat60Y7KSnDHtS+sv9hRrhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728926973; c=relaxed/simple;
-	bh=UYsXEf6G0HnwwBXdadcjdUX9XZ4CIA8TewE2uVy2MiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SwQkiaalDg9+fhyNj865gPGF7w42t7tvuSdELJHJ2crtopNcAHlH6k3Pgi3gtJomisqa5N5xOVx5dTPfyaGSHN3SQ0I1YpqI3Z0n7ZkEVoVllmSthGUWqE4FftsKvrQ1owmqEFLsyDGYzJjcJeD9DgGxZeTzlwOWC5PCSwoqm1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXk9bav3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B8E2C4CEC3;
-	Mon, 14 Oct 2024 17:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728926972;
-	bh=UYsXEf6G0HnwwBXdadcjdUX9XZ4CIA8TewE2uVy2MiY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=BXk9bav3KMeceQzMIW0JiD1qjXZa+9KEQ/jWc+X4FgSdbKaDgzxPdXyKvoTXpcwLZ
-	 rY1/SJYE6URPC+NhMGmjL9uWmtX1SWTSiyFZ987hv7IaOXS0raS/TbklFyWo9+if2y
-	 4Nezs8HfdgNua2YPsE9cFvmM5fhCsPXesoHy2X/M89WlHK2rpCocdKQ6di+JN+INxs
-	 n47n1D9+ltQDl3pceruS9QVGroWBp6Cm2e8Hi2nZCk3W1NozdxcMme1gbL8tJ+OBYF
-	 oYCquTREPByC13zxmuMPmHvgZmCa9+QkTG6R1HW5tt+m+9r5TeNxXB4S1Rm6QSR5Yg
-	 Nw7l9Zo2W1msw==
-Date: Mon, 14 Oct 2024 12:29:30 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Terry Bowman <Terry.Bowman@amd.com>
-Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, mahesh@linux.ibm.com, oohall@gmail.com,
-	Benjamin.Cheatham@amd.com, rrichter@amd.com,
-	nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
-Subject: Re: [PATCH 0/15] Enable CXL PCIe port protocol error handling and
- logging
-Message-ID: <20241014172930.GA612951@bhelgaas>
+	s=arc-20240116; t=1728926997; c=relaxed/simple;
+	bh=CSNMcFDDijo4DbM019qkbO66k2XIx9LLGy8ogcn3trE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lvBk4zKkHBCS09Hrc2nmYDzzDXgWbhjs+AyLWnqt4LuiwZdRnf2Fwo5sUROXlhxQuxTd52SMBtH/9Mh8/xvB5rRI9NNhQt47V5Ldg6JTQmwJZM5kBL4j8gxRcvjWmk62cB0EavFP4Q+sMDu4yb5GkeGWsg7DspQQzcJsM7NybB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KQkuyJpa; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a01810fffso239394166b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:29:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1728926993; x=1729531793; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jvsjTSFhK62MPvXHA5L9zbPkhQe3PYzLzcOgzWx9lrk=;
+        b=KQkuyJpaey1t0ZAJigEbOBg7DLEkWgBYwh/nxtuk9laSaHZz+NSiIvB0jl9n73xsm3
+         LVllI5HkbKsBZT0fJ0TYBqrxuPUY4ZMHLJGE+NFg7IUGJHBiPO0wcrdWrepXbaFdsAyv
+         cX5WCwFV01s7UBVJBeXzvWr9gh5t5a9X8HqCw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728926993; x=1729531793;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jvsjTSFhK62MPvXHA5L9zbPkhQe3PYzLzcOgzWx9lrk=;
+        b=GVTEgqAwwPjQDUwn1cLYcUq67+8NeZlZ+kl5h4PG/Gf0trltIi28+YvNMdTnX1klQl
+         HQTbhRCJOYPxa89F2ch2sHTkb7eQRDCp7+OAWvz40+pi+sFF1utWSpmak9IRv5l7pqd6
+         isBuwStnn2949xUpuXfpTfewo+oPO6DZza92aHNtiIlU6ur1QXxcAk7LALNx1NcfJ2OV
+         LjpOx3SQzmdBcS40vySc560KFOJiMxDXhDjL+4ax7jnV2UTQDrJXTEw2xiwbrVaQdQGU
+         iwfQ/auW/lRUPkFC+UNGUVn7e5mMqDngOvWrahhCO8XQb1a4oTRFkDYu7Xah1RUjw57O
+         zwkQ==
+X-Gm-Message-State: AOJu0YxMRLLmV1MnRdif2uTmo4l3bl3LIjfMIpDsbfdzrk4pXXRWqwvq
+	5zen8UEprr9kixhckzFcowL6nWgzRM4M2F0uJ4z7OCZhBSLzgo/umbt9iFvx2aaiAstSuntC8xY
+	JSIKrkw==
+X-Google-Smtp-Source: AGHT+IEthVhU31roBJIYPA3Q/ez9Ng8iT5AloxOJjrbdAVBKW3ac3Xx1qWynoKesHdzxdmdW62prtA==
+X-Received: by 2002:a17:907:9452:b0:a99:379b:6b2c with SMTP id a640c23a62f3a-a99e3e3f8f9mr786188366b.42.1728926993373;
+        Mon, 14 Oct 2024 10:29:53 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f2536984sm349496866b.10.2024.10.14.10.29.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 10:29:52 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99650da839so792393766b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:29:52 -0700 (PDT)
+X-Received: by 2002:a17:907:3f23:b0:a9a:a32:bbe4 with SMTP id
+ a640c23a62f3a-a9a0a32bcb5mr437123266b.12.1728926991727; Mon, 14 Oct 2024
+ 10:29:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17857590-4fca-4c55-b1d7-85a0b22519b6@amd.com>
+References: <20241014125703.2287936-4-ardb+git@google.com>
+In-Reply-To: <20241014125703.2287936-4-ardb+git@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 14 Oct 2024 10:29:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wit+BLbbLPYOdoODvUYcZX_Gv8o-H7_usyEoAVO1YSJdg@mail.gmail.com>
+Message-ID: <CAHk-=wit+BLbbLPYOdoODvUYcZX_Gv8o-H7_usyEoAVO1YSJdg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Use dot prefixes for section names
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 14, 2024 at 12:22:08PM -0500, Terry Bowman wrote:
-> On 10/10/24 14:07, Bjorn Helgaas wrote:
-> > On Tue, Oct 08, 2024 at 05:16:42PM -0500, Terry Bowman wrote:
-> >> This is a continuation of the CXL port error handling RFC from earlier.[1]
-> >> The RFC resulted in the decision to add CXL PCIe port error handling to
-> >> the existing RCH downstream port handling. This patchset adds the CXL PCIe
-> >> port handling and logging.
-> ...
+On Mon, 14 Oct 2024 at 05:57, Ard Biesheuvel <ardb+git@google.com> wrote:
+>
+> Pre-existing code uses a dot prefix or double underscore to prefix ELF
+> section names. strip_relocs on x86 relies on this, and other out of tree
+> tools that mangle vmlinux (kexec or live patching) may rely on this as
+> well.
+>
+> So let's not deviate from this and use a dot prefix for runtime-const
+> and alloc_tags sections.
 
-> >>     Downstream switch port CE:
-> >>     root@tbowman-cxl:~/aer-inject# ./ds-ce-inject.sh
-> >>     [  177.114442] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00004000/00000000 into device 0000:0e:00.0
-> >>     [  177.115602] pcieport 0000:0c:00.0: AER: Correctable error message received from 0000:0e:00.0
-> >>     [  177.116973] pcieport 0000:0e:00.0: PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
-> >>     [  177.117985] pcieport 0000:0e:00.0:   device [19e5:a129] error status/mask=00004000/0000a000
-> >>     [  177.118809] pcieport 0000:0e:00.0:    [14] CorrIntErr
-> >>     [  177.119521] aer_event: 0000:0e:00.0 PCIe Bus Error: severity=Corrected, Corrected Internal Error, TLP Header=Not available
-> >>     [  177.119521]
-> >>     [  177.122037] cxl_port_aer_correctable_error: device=0000:0e:00.0 host=0000:0d:00.0 status='Received Error From Physical Layer'
-> > 
-> > Thanks for the hints about how to test this; it's helpful to have
-> > those in the email archives.  Remove the timestamps and non-relevant
-> > call trace entries unless they add useful information.  AFAICT they're
-> > just distractions in this case.
-> 
-> I'll remove the test logging and details from the cover sheet. I'm
-> unable to find how to attach using git tools. Instead of an
-> atatachment, I can locate the log files and details on a public
-> github. Let me know if this is not acceptable.
+I'm not following what the actual problem is. Yes, I see that you
+report that it results in section names like ".relaalloc_tags", but
+what's the actual _issue_ with that? It seems entirely harmless.
 
-It's fine to keep this in the cover sheet, and I'd rather have it
-there, where lore will archive it reliably forever, than to have a
-pointer to some other github that may eventually disappear even though
-it's public today.
+In fact, when I was going the runtime sections, I was thinking how
+convenient it was for the linker to generate the start/stop symbols
+for us, and that we should perhaps *expand* on that pattern.
 
-I just meant to remove irrelevant information like the timestamps.
+So this seems a step backwards to me, with no real explanation of what
+the actual problem is.
 
-Bjorn
+Yes, we have (two different) pre-existing patterns, but neither
+pattern seems to be an actual improvement.
+
+           Linus
 
