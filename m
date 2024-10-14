@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-364702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02C799D827
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:27:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEEB99D82A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15713281CCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937B21F22DB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030761D0E05;
-	Mon, 14 Oct 2024 20:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B091D0BA4;
+	Mon, 14 Oct 2024 20:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkD6iDOw"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="lZYwal+F"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2771D0490;
-	Mon, 14 Oct 2024 20:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A316B231C94;
+	Mon, 14 Oct 2024 20:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728937645; cv=none; b=hAwF1jx79IjxeWL+uRht4ChYa/50R47GYEC8huUMhPoB9vWgG02eC7SQ9q6rC4GdeQPiJp+dCjlxZckLP0Fbot3GvslDbFgKvVc4/IO37XfN5MkznpCSXEJE8a8VOf4EKYdcUbOK7/xMap8YkXGszzDpKRghmxh/RXAFvNCDGek=
+	t=1728937687; cv=none; b=O2ULu9QsvVUFF8B/RgxewTdq8BhVjEjWM6PlYk9OJJcP4nKZoWHANjzb+WttgEbnpO9VPM8SZZSvsYxg/Lmat/KAPnZbKvWdmFTvFgwfwyENabs/2X+Dk+PfY0zc/9KI+jV6LgBoSGSO3ANsnMomiJ9A+FHpODwKAPFe3A5gez4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728937645; c=relaxed/simple;
-	bh=T7hR8tJ06xrBOZxmj2ZoouJ4PMBncoMUs3f9JxO7pTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kkJE65HgZRwjdmhcurGRP//xD1o6Rh5a2jVaNkvp01DfisukrRhUaQsifhydQYKiwIDVfs00MgEcmhsoIDklFSWO6lmOsXCBR56o3u5QYL07YVlr4zqzbO/EuMDDXT/x6ta1p2IiD9bLmxIz+TVAoLeFY28Xe1TowG/QS30tiPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkD6iDOw; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e6d988ecfso757063b3a.0;
-        Mon, 14 Oct 2024 13:27:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728937643; x=1729542443; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T7hR8tJ06xrBOZxmj2ZoouJ4PMBncoMUs3f9JxO7pTk=;
-        b=FkD6iDOwnmCyFYc41DhVMGuVK11pNPMDB8LuCWWmtKPtO3rYc6H/kjLpa14OAplFOo
-         CEOTIA6TBKUtMkYbcfgEOmAOfYyyY//yLW59gSYzQN4KsQVo4d1jYYQV1+8DEFpGorti
-         Qhb7k27LZ0jfxhW2189T4I+Q7U2cezo2VgXRMIaPDpOC3lMndOsrzIZIWx9fsRaGcFsn
-         mKd7nMyRgL8+0GIai3rWTE+Se4jZqijJhTHzi2cd89eBEp0grD7s9wJgYV/fdd9Xbh8a
-         9WeNVdEGqhd3TNrwquxQMeAQIbQFAqBPxl2TOPkSvsAAKuC6PDuOU7f3bJd81T+5VjnE
-         pQsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728937643; x=1729542443;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T7hR8tJ06xrBOZxmj2ZoouJ4PMBncoMUs3f9JxO7pTk=;
-        b=OBs2Sn5hJX/3ndukjg8YevntP6GIbQRtRrjzSKQQhlTi9HLdIRCRfyHFO0sQNyFdAK
-         1s1VO/dzt+44CmiWDWI9zcskQYtwYpX0eToQWlNT9R4uSIkgrx0mFoC23F7eiWcyywEL
-         wxwheSL5MbdjWo6Q65Z83/rwo7QYUrSG/axS9ltiC+XLxsALCsdizb4eEmqmNWkmmabB
-         dJnc5mVbSAlaAwVSkdo0DBWzHJThFtK+HCUhzUFhjz3BOryAgHhPAH+xxbVOFErLcO0Y
-         DHXdKYwE3dqtpzHaMDbyjGkA3TlKkFs8QZ9RbpVymRiKLAiOBg6AKsUCZ3Cn4dOC4WO+
-         Qe/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUX5T9J6KrmjJk9MINDbRm+aAuxB4Xpk7rdZP73KKBrL6nFMgrvrReDRDuq249/rEgn0I3gX0h+NMxrJ2pt@vger.kernel.org, AJvYcCVuH5uVzFpwEJLkecg6xU6n5ZrxBF8mWWHFWNDbTs6iToc+LlvQgnO3mQg/s2WVUIaS0po=@vger.kernel.org, AJvYcCW343Jzh9g1e+TPUFm/2lr0fv3S+OWj4+I/oRpLSmKiP2BYAtFVuU8aFk1cB/4FRCmiWHslrdk10jVsbeMurEa55eaO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhCgxKT8iOKS1MBAFUAwNhfjFGVx34tdXBLfh7FeSYFJQVXV6N
-	Qpnnt+HqANsSwU9Z7XLckjBUw6sl4pukcsCzW/gWEtKq2Sc5ILtbN+U88kZ8u5VeMfK8Nd3dNre
-	0zuwkwxfs3/Z6pkMBsqK/YZlvS5anKQ==
-X-Google-Smtp-Source: AGHT+IFwGAVjPCdEfP0TFh0THmiQ2svUymXIDU62M+8OYi04yZko9TY8AU62qmmEpn/aJdwuEt6QmxmqOdM2SpHuNKk=
-X-Received: by 2002:a05:6a00:8d3:b0:71e:5a6a:94ca with SMTP id
- d2e1a72fcca58-71e5a6a9589mr10680912b3a.19.1728937643345; Mon, 14 Oct 2024
- 13:27:23 -0700 (PDT)
+	s=arc-20240116; t=1728937687; c=relaxed/simple;
+	bh=/vHGSU34qDtaxKOjbL6OXDPlmp1Gri+djVQ2DMGbd4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MqtLuyQuRhjhUxHWS/plPB7BccA8R0rflH8DLkc+77ss9dUutOI0BanDbexnpz5tCuMso/ZS7Njc/AVscgI+qoEwHzwC3BHHcZiwy3SAtcFxeBinmqpcqzMkoJWM33ningxG8V5f1ORZe/Kd+qR839IL1BcCcvmAx7DqvN5ehH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=lZYwal+F; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=HhkcX725e/3oAWjz9xZVWQiKXqdRkr07/xexm6SenoI=; b=lZYwal+FxlOb7aLLzWJsDONhrL
+	DaHhLlN9YQQTB/thexylNscem+ElDuw8zEc3SrbSzTkisNiWjYaS7PA3CI+3eFVdX9iN5uBwGKbCx
+	3TDR/OQZresaAepfP/oNvjtP0yELldkRAdKnyY+7ybzBumz1SwW+qitha/+yGjd/lcbbNpStIypmZ
+	rxJ+et0dfo3mF8MEqvBHTrCXU2hq379X5FY8c+Nr1IG7Yo6bC77jAuPwYrwRedLfAHyNwaZzn0st0
+	PUzlKWtFNf4f4SUQ/LGnmS7FdE/xD7rdyFxvhSNdOo/DHIPhRaWq25++4RJGOkbbxGY2BO6Vyt9lR
+	DY5Udb0A==;
+Received: from ohm.aurel32.net ([2001:bc8:30d7:111::2] helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1t0RfJ-003pXv-2A;
+	Mon, 14 Oct 2024 22:27:41 +0200
+Date: Mon, 14 Oct 2024 22:27:41 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Jack Zhu <jack.zhu@starfivetech.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	E Shattow <lucent@gmail.com>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbdjM=?= =?utf-8?Q?=5D?= riscv: dts:
+ starfive: jh7110: Add camera subsystem nodes
+Message-ID: <Zw1-vcN4CoVkfLjU@aurel32.net>
+Mail-Followup-To: Changhuang Liang <changhuang.liang@starfivetech.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jack Zhu <jack.zhu@starfivetech.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	E Shattow <lucent@gmail.com>
+References: <ZQ0PR01MB13026F78B2580376095AF7E7F2442@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010205644.3831427-1-andrii@kernel.org> <20241010205644.3831427-2-andrii@kernel.org>
- <haivdc546utidpbb626qsmuwsa3f3aorurqn5khwsqqxflpu3w@xbdqwoty4blv>
-In-Reply-To: <haivdc546utidpbb626qsmuwsa3f3aorurqn5khwsqqxflpu3w@xbdqwoty4blv>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 14 Oct 2024 13:27:11 -0700
-Message-ID: <CAEf4BzYRiE9vYCRLmiRHD+fqb_ROwqrb0sX6sktqDNdfeH85DA@mail.gmail.com>
-Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce mmap_lock_speculation_{start|end}
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, peterz@infradead.org, oleg@redhat.com, 
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
-	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org, 
-	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, mhocko@kernel.org, 
-	vbabka@suse.cz, hannes@cmpxchg.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZQ0PR01MB13026F78B2580376095AF7E7F2442@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Sun, Oct 13, 2024 at 12:56=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> On Thu, Oct 10, 2024 at 01:56:41PM GMT, Andrii Nakryiko wrote:
-> > From: Suren Baghdasaryan <surenb@google.com>
-> >
-> > Add helper functions to speculatively perform operations without
-> > read-locking mmap_lock, expecting that mmap_lock will not be
-> > write-locked and mm is not modified from under us.
-> >
-> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > Link: https://lore.kernel.org/bpf/20240912210222.186542-1-surenb@google=
-.com
->
-> Looks good to me. mmap_lock_speculation_* functions could use kerneldoc
-> but that can be added later.
+Hi,
 
-Yep, though probably best if Suren can do that in the follow up, as he
-knows all the right words to use :)
+On 2024-10-14 01:08, Changhuang Liang wrote:
+> Hi, Aurelien
+> 
+> > 
+> > Hi,
+> > 
+> > On 2024-02-18 19:27, Changhuang Liang wrote:
+> > > Add camera subsystem nodes for the StarFive JH7110 SoC. They contain
+> > > the dphy-rx, csi2rx, camss nodes.
+> > >
+> > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> > > ---
+> > >  .../jh7110-starfive-visionfive-2.dtsi         | 49 ++++++++++++++
+> > >  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 67
+> > +++++++++++++++++++
+> > >  2 files changed, 116 insertions(+)
+> > 
+> > We have been asked to enable CONFIG_VIDEO_STARFIVE_CAMSS in the
+> > Debian kernel, which from my understanding and given the device tree shown
+> > below also requires enabling CONFIG_VIDEO_CADENCE_CSI2RX. That said
+> > doing so triggers the following error in dmesg:
+> > 
+> > [   25.143282] cdns-csi2rx 19800000.csi: probe with driver cdns-csi2rx
+> > failed with error -22
+> > 
+> > From a quick look it seems there is something in the port@0 csi2rx entry. Do
+> > you happen to know what is wrong?
+> > 
+> 
+> You need to add your sensor node. You can refer to this patch:
+> https://patchwork.kernel.org/project/linux-riscv/patch/20240119100639.84029-3-changhuang.liang@starfivetech.com/
+> 
+> We suggest that using the imx219
 
->
-> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
->
+Thanks for your answer. I do not have any sensor attached, the goal is
+to build a generic kernel, and people can use overlays or patch their
+device tree to add support for additional devices.
 
-Thanks!
+In that regard, I have the impression that csi2rx device (and maybe the
+camss device?) should not be marked as enabled in the default device
+tree. I think they could be enabled by users as part of the change need
+to add the sensor node.
 
->
+Regards
+Aurelien
+
+-- 
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
