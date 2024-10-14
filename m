@@ -1,119 +1,167 @@
-Return-Path: <linux-kernel+bounces-364428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C0399D489
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:23:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3545699D48E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4175283F44
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:22:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C431C22EE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81BD1B85CB;
-	Mon, 14 Oct 2024 16:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjvASecr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7B71B4F1C;
+	Mon, 14 Oct 2024 16:23:21 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3226C28FC;
-	Mon, 14 Oct 2024 16:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561D1139D0B;
+	Mon, 14 Oct 2024 16:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728922969; cv=none; b=IRAS71gf3qvxOBzQ69rz568bl1v9YF1qYiZdTDH/Zqd0uiSVt0aiCkZO9iplI6NdkWE3hfqzEAAaI+4uWeJetEcQhIgWUF7NImMbmToAEIwwvr0LAfSOdkwU0YsKRWR9u4K2LBxR10nqgkBxcogDf83tYrXa196s4ks3OY7lMAs=
+	t=1728923001; cv=none; b=FZRB8oB/tFyx7vwKcG+Kf3oRJ1HHUD/oowMToMca1rDPl/LJkfx6aInvpr75i8fhlL7o3l5yFjsQRCng9MBrUguhAuhFI9IGicbBiTY4apANDDJQ2TsIaCt7BsTnRjx5cC7ejoM5pLwB+HJO5U0UkPudXVbLGNs0C7dSn7Ei7cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728922969; c=relaxed/simple;
-	bh=bOmZl1NspXLcp+g5lMmcQ+7bUkVBQAQpj9wx9QBEe50=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m86DeGKPH0LdBmi/G5IAqYFFew+nqzsVW9It8kNaVtCMFVpM0+pN/p4vgOgaU5R2nEj7hEIBZG/tKFY5/P9QFGTfSY2LAfuXE/fFZLaZ5cN2c3/FSY4jLsikUna34+xVSkXsNFsCHA4odXXYO72FMhqykU4NZDQoZB2i3zRO4o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjvASecr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98083C4CEC3;
-	Mon, 14 Oct 2024 16:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728922968;
-	bh=bOmZl1NspXLcp+g5lMmcQ+7bUkVBQAQpj9wx9QBEe50=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RjvASecrxZpOpjKcvFG+IN8xFnp2LLI7I/RQfDEumNR/fQ3dS3+ADtMMRqHsQLGWi
-	 EiXcmJWG9MDl8SGDSw1DA484/IMjM+uzu5CzVDAq1/IZ1dfy10hZAX9QXRftnPsrA6
-	 v7nW9WsF7Me3GHVXmVVLGWhDBdcmlR96zubbrpQBmVXykyz0gLJxLv+tGOX0yPBgaW
-	 wNNbKikiZGTeIOLxImqJAKhdV5na4sITHxDQQ+sWwUK9V8CsgLugxk6mMLUctaJkSS
-	 rhI/oQh4z6V+zVrzmrZ5VVbpUJF+CUwKegliRYJmKRWN42rdZBaGoSPWbfHa9aKxxF
-	 ZN7b3RxDizdUQ==
-From: Mark Brown <broonie@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, rust-for-linux@vger.kernel.org, 
- Alice Ryhl <aliceryhl@google.com>, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
- Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
- damon@lists.linux.dev, linux-mm@kvack.org, SeongJae Park <sj@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
- Heiner Kallweit <hkallweit1@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Andy Whitcroft <apw@canonical.com>, 
- Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, netdev@vger.kernel.org, 
- linux-sound@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
- Nathan Lynch <nathanl@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-In-Reply-To: <20241014-devel-anna-maria-b4-timers-flseep-v3-0-dc8b907cb62f@linutronix.de>
-References: <20241014-devel-anna-maria-b4-timers-flseep-v3-0-dc8b907cb62f@linutronix.de>
-Subject: Re: (subset) [PATCH v3 00/16] timers: Cleanup delay/sleep related
- mess
-Message-Id: <172892295715.1548.770734377772758528.b4-ty@kernel.org>
-Date: Mon, 14 Oct 2024 17:22:37 +0100
+	s=arc-20240116; t=1728923001; c=relaxed/simple;
+	bh=/5Y56NXMxu6hrsRPBDx9TFFwv1dz2Qoek3MY3otzMCk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WBN/XTkOowGeHVynp2/1s5WK/HLMJD+QphThZNUccNfVDFB+sx6Vrc1A7Fkou5uCPQt0FKcXuvL/1JmQRIORvCtxgp10wdtiSadOFOh4InW9ElDz/b+L80D0Cs+/YjKebvP8zpPWwc23G7L4i3fIdImSTZ6LEq2FbIGDr8huU2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS2ZW3DWfz6HJp7;
+	Tue, 15 Oct 2024 00:22:43 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 95297140B55;
+	Tue, 15 Oct 2024 00:23:15 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
+ 2024 18:23:14 +0200
+Date: Mon, 14 Oct 2024 17:23:12 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH v13 15/18] EDAC: Add memory repair control feature
+Message-ID: <20241014172312.00007034@Huawei.com>
+In-Reply-To: <20241009124120.1124-16-shiju.jose@huawei.com>
+References: <20241009124120.1124-1-shiju.jose@huawei.com>
+	<20241009124120.1124-16-shiju.jose@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, 14 Oct 2024 10:22:17 +0200, Anna-Maria Behnsen wrote:
-> a question about which sleeping function should be used in acpi_os_sleep()
-> started a discussion and examination about the existing documentation and
-> implementation of functions which insert a sleep/delay.
+On Wed, 9 Oct 2024 13:41:16 +0100
+<shiju.jose@huawei.com> wrote:
+
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> The result of the discussion was, that the documentation is outdated and
-> the implemented fsleep() reflects the outdated documentation but doesn't
-> help to reflect reality which in turns leads to the queue which covers the
-> following things:
+> Add generic EDAC memory repair control, eg. PPR(Post Package Repair),
+> memory sparing etc, control driver in order to control memory repairs
+> in the system. Supports sPPR(soft PPR), hPPR(hard PPR), soft/hard memory
+> sparing, memory sparing at cacheline/row/bank/rank granularity etc.
+> Device with memory repair features registers with EDAC device driver,
+> which retrieves memory repair descriptor from EDAC memory repair driver and
+> exposes the sysfs repair control attributes to userspace in
+> /sys/bus/edac/devices/<dev-name>/mem_repairX/.
 > 
-> [...]
+> The common memory repair control interface abstracts the control of an
+> arbitrary memory repair functionality to a common set of functions.
+> The sysfs memory repair attribute nodes would be present only if the client
+> driver has implemented the corresponding attribute callback function and
+> passed in ops to the EDAC device driver during registration.
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+The question inline that we discussed offlist.
 
-Applied to
+Whether it makes sense to potentially have one device provide
+several mem_repairX differing in granularity (and may type) of
+repair, or one mem_repairX that has a control over granularity?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+The CXL spec has it designed as separate control interfaces but
+I'm not sure if we should follow that precedence or not.
 
-Thanks!
+> ---
+>  .../ABI/testing/sysfs-edac-mem-repair         | 152 +++++++++
+>  drivers/edac/Makefile                         |   2 +-
+>  drivers/edac/edac_device.c                    |  31 ++
+>  drivers/edac/mem_repair.c                     | 317 ++++++++++++++++++
+>  include/linux/edac.h                          |  67 ++++
+>  5 files changed, 568 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-edac-mem-repair
+>  create mode 100755 drivers/edac/mem_repair.c
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-edac-mem-repair b/Documentation/ABI/testing/sysfs-edac-mem-repair
+> new file mode 100644
+> index 000000000000..9a8712ed9d47
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-edac-mem-repair
+> @@ -0,0 +1,152 @@
+> +What:		/sys/bus/edac/devices/<dev-name>/mem_repairX
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		The sysfs EDAC bus devices /<dev-name>/mem_repairX subdirectory
+> +		belongs to the memory media repair features control, such as
+> +		PPR (Post Package Repair), memory sparing etc, where<dev-name>
+> +		directory corresponds to a device registered with the EDAC
+> +		device driver for the memory repair features.
+> +		/mem_repairX belongs to either sPPR (Soft PPR) or hPPR (Hard PPR)
+> +		feature of PPR feature, hard or soft memory sparing etc. The memory
+> +		sparing is a repair function that replaces a portion of memory
+> +		(spared memory) with a portion of functional memory. The memory
+> +		sparing has cacheline/row/bank/rank sparing granularities.
+> +		The sysfs memory repair attr nodes would be only present if a
+> +		memory repair feature is supported.
+> +
+> +What:		/sys/bus/edac/devices/<dev-name>/mem_repairX/repair_type
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(RO) Type of the repair instance. For eg. sPPR, hPPR, cacheline/
+> +		row/bank/rank memory sparing etc.
+So this is the open question for me with this feature.
+Do we do a monolithic 'device' that does all repair types for which we pick a mode
+or do we (as here) allow for one mem_repairX for each supported type?
 
-[11/16] regulator: core: Use fsleep() to get best sleep mechanism
-        commit: f20669fbcf99d0e15e94fb50929bb1c41618e197
+I don't particularly mind but it is a design question I'd like input on
+from a wider audience.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+> +
+> +What:		/sys/bus/edac/devices/<dev-name>/mem_repairX/hpa
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(WO) Set HPA (Host Physical Address) for memory repair.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Can we not just read back what was written?  Seems like userspace
+might expect that?
 
 
