@@ -1,95 +1,137 @@
-Return-Path: <linux-kernel+bounces-364691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E29F99D7F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:12:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E6699D7FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C60A1C22C82
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:12:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A18FB20DFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0021CFED2;
-	Mon, 14 Oct 2024 20:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD691CF7B4;
+	Mon, 14 Oct 2024 20:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4xDbyNF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0qdaVLU"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9415314A4E7;
-	Mon, 14 Oct 2024 20:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6561CDA36
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728936760; cv=none; b=SbPps0Uj3ukZiT3PnEBt/1lY/9JXRa8GdN0+fOlBObaAyzvo7mhazBYpDkiEi8TEkmHRxi7dB0TkV9EnHMq8b3cJ6Dy00jQ38/8Ulo6VveN6flVulmqSYA/k8cukV9jVGFchyRWjkLTZDBY8399reAraBlYlGlHuw6lPCuAYwBQ=
+	t=1728936850; cv=none; b=acofDNrB/IQNlw+zMBTTZogEZKt3DIa0sSyT2zANfN+iAaQ23g5Gsog38k5m4T1PkWlYGHPZLob8TGRpWrhLPXtyqSAB+aZnuogVA5pWF0e4p1ylmmAnvoMQ9Fs/CdsXS9Bpi1d0MTb6zOkK0PsOw2X9b2U4PpGRexIPWqlrO6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728936760; c=relaxed/simple;
-	bh=ZTBxdRUCQr80BBF8O7VYgUYSjhbIYghb8AV3U3WUn/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ccCTEMyPXLLmqLa7wFZ4FAfEdBSs+1G7X4J7GAnx32pFtHVJaEDFY28aKA/HDuOE0Q0sjvLd/Yy9ocpBcRa5rUnavgsCQXh1ptv+o4DV2Tc1UItCRFMi1e2RVYogSkY3DsWf+HSptUyIk7gwNc89M3WB4GLQafwTsHtNF48KOgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4xDbyNF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2ED4C4CEC3;
-	Mon, 14 Oct 2024 20:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728936760;
-	bh=ZTBxdRUCQr80BBF8O7VYgUYSjhbIYghb8AV3U3WUn/o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l4xDbyNFEt5AbgSRRn6USSqmX4KqbacdsJnmKr1iUXlZc1hV+G0tPUz4bLCpYhrU7
-	 1BMbEuAzxNfPY5HZGTq27URh+n5VJQzOtXE8F/ArHmPO7Ou0nb1hRLM7QgX4rA1mZX
-	 +4WQHPIw3WKobqtPu13Gspjw8UOssLPxFXSpgSXtuUxoNAkgPTKp9rI+FvTPEFgKo/
-	 5t862vqDQuUfEMXaPyafwXPIhNAOpVsTdkPNSiA1wkib4U/fSIaItErgNbKNbUQEwN
-	 YilCTnDOxiI/0ehc/aBqZvVKjefh2pUgSyerPStonPQJ6dJ8hs+BnIterzf75wLWfD
-	 gS1zONSrqmJqQ==
-Date: Mon, 14 Oct 2024 13:12:37 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>, Peter Hilber
- <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
- virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Chashper,
- David" <chashper@amazon.com>, "Mohamed Abuelfotoh, Hazem"
- <abuehaze@amazon.com>, Paolo Abeni <pabeni@redhat.com>, "Christopher S .
- Hall" <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>,
- John Stultz <jstultz@google.com>, "Michael S . Tsirkin" <mst@redhat.com>,
- netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier
- <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, qemu-devel
- <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v7] ptp: Add support for the AMZNC10C 'vmclock'
- device
-Message-ID: <20241014131238.405c1e58@kernel.org>
-In-Reply-To: <c20d5f27c9106f3cb49e2d8467ade680f0092f91.camel@infradead.org>
-References: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
-	<20241009173253.5eb545db@kernel.org>
-	<c20d5f27c9106f3cb49e2d8467ade680f0092f91.camel@infradead.org>
+	s=arc-20240116; t=1728936850; c=relaxed/simple;
+	bh=2duR3Up0Fn5AOkwt8Y3KyMWalTj1cYda1NyQh+hNLQU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KDJpJrkzREsS4xo9Nm0oTA6QDNGtcRNEObrZIT5y6MjqbVZE4HYdx1+q3qt4m6OybfCf1asTHolZ4iqDZZ2MI7kq4QSndJwxAiGtfFNN0fn5A8PQqvddxo2w3UNjMDwt+CFxlqEVg5Sbr3nIhB4T655eErm6KVC90LVE7JpCRa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0qdaVLU; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea8d7341e6so797661a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728936848; x=1729541648; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PFfdktb8rvun4C2wfO4YRLva+QImGAd9cuW+Tla0apA=;
+        b=d0qdaVLUUomwytgvLgVcbUBpGqZAn67e7NmFL1AHxj788yo5YIFFjhLnTZWiTJnp3L
+         +QfrxTEJk+eNzZfaEAFd+B+NnbGgSqL8YWYA3ffO7jzdWQEV3nytaQnP0eYmKilPzsyU
+         tu3VFdxoyqJbnFcCXh3vineEtqMBdjYsF3nDE0DtZqG2J2lySgQPg1bV9BJtapHuquql
+         NtQ6TArC743MLxI5cHh5NdFQ0OxILfXSRbq50VEA5ivT4nSTwCYiTpwIxureioA3r7ga
+         h/YugKdejfmiIdId+Ln02TDSWZX/zBT9dxSSK51zc8/5GouuZurgj9HSs4lf3ecdCfL2
+         geCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728936848; x=1729541648;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PFfdktb8rvun4C2wfO4YRLva+QImGAd9cuW+Tla0apA=;
+        b=Y0Y1PQBP5g18GrnYXFdO6Qghj5yVY4Pqe7MvDofgxK6m/dPs5TZt87kVsi7sf4Tk+J
+         KQPBu8K9w/ijtyhdvX8m5EBglHQZnnaX7cqw28keyp+bzBW5BL+TKpvVe8QFgaR+ixoP
+         UNYJ482Z+53vCT6pvYTyLGm73ekLf9J+2HjxDEHnDj0Y/zWJsHJAEleukq5FkNH96oMV
+         W0rD5a8QTcoWtxNrhlPvjQQKsTaEQkYkiqASkTtLrxdzO0oj66ejz9lsb/t6jU0wCx8x
+         2zDlUTwzjfBcu5Wqgwms2kadnA5N80M7IrQP+2Y/3r69lpa0FQkQxEWbg7H7hvU41VQ3
+         q7PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXsdmGMVYGxDce1yh4d49lj7T2SvHvuMQJ42tOZs609uLL5VEf4yh9MtvvowDFfHQWae+lf9YbDA5ElS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6CTTEJ4Ndpkg8hXu0c6X4gcj1J7+OYpgHmI4GRo8W1C6vlTE2
+	PhCKAyn8Wnd+U6EnfcdP7qaSxNMr1DbHb7jkiiMR9YCfDZHGWdzQVLJJXjVkw7NKmGCpTDW5aUV
+	OyCLNcfzOVL3KClNfff3dYIrIy5U=
+X-Google-Smtp-Source: AGHT+IGf5MMcJ2y8qfgoEJL7bFDS/ZZdYZAzuWh/eyTLLRCFeltSfO1qVJVuLGKhHCLCOPuuS5PiKfOACdNpMayGFtU=
+X-Received: by 2002:a05:6a20:2d22:b0:1cf:4fd9:61db with SMTP id
+ adf61e73a8af0-1d8bcef1217mr22175364637.8.1728936847787; Mon, 14 Oct 2024
+ 13:14:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <202410131412.5csjqw8L-lkp@intel.com>
+In-Reply-To: <202410131412.5csjqw8L-lkp@intel.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 14 Oct 2024 13:13:56 -0700
+Message-ID: <CAEf4BzZ=Rf+-_SSbtL+wZkX0XPrCfh3FBUCnR21qENAh0YMcFw@mail.gmail.com>
+Subject: Re: kernel/bpf/token.c:50:6-27: WARNING: atomic_dec_and_test
+ variation before object free at line 54.
+To: kernel test robot <lkp@intel.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Oct 2024 08:25:35 +0100 David Woodhouse wrote:
-> On Wed, 2024-10-09 at 17:32 -0700, Jakub Kicinski wrote:
-> > On Sun, 06 Oct 2024 08:17:58 +0100 David Woodhouse wrote: =20
-> > > +config PTP_1588_CLOCK_VMCLOCK
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tristate "Virtual machine =
-PTP clock"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on X86_TSC || ARM_=
-ARCH_TIMER
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on PTP_1588_CLOCK =
-&& ACPI && ARCH_SUPPORTS_INT128
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default y =20
-> >=20
-> > Why default to enabled? Linus will not be happy.. =20
->=20
-> Want an incremental patch to change that?
+On Sat, Oct 12, 2024 at 11:58=E2=80=AFPM kernel test robot <lkp@intel.com> =
+wrote:
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
+> head:   36c254515dc6592c44db77b84908358979dd6b50
+> commit: 35f96de04127d332a5c5e8a155d31f452f88c76d bpf: Introduce BPF token=
+ object
+> date:   9 months ago
+> config: alpha-randconfig-r054-20241012 (https://download.01.org/0day-ci/a=
+rchive/20241013/202410131412.5csjqw8L-lkp@intel.com/config)
+> compiler: alpha-linux-gcc (GCC) 13.3.0
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410131412.5csjqw8L-lkp=
+@intel.com/
+>
+> cocci warnings: (new ones prefixed by >>)
+> >> kernel/bpf/token.c:50:6-27: WARNING: atomic_dec_and_test variation bef=
+ore object free at line 54.
 
-Yes please and thank you! We gotta straighten it out before=20
-the merge window.
+Can someone please explain what this means and why the code below is
+broken, according to coccinelle?
+
+>
+> vim +50 kernel/bpf/token.c
+>
+>     44
+>     45  void bpf_token_put(struct bpf_token *token)
+>     46  {
+>     47          if (!token)
+>     48                  return;
+>     49
+>   > 50          if (!atomic64_dec_and_test(&token->refcnt))
+>     51                  return;
+>     52
+>     53          INIT_WORK(&token->work, bpf_token_put_deferred);
+>   > 54          schedule_work(&token->work);
+
+this is not "object free", but even if it was, I still don't see the
+problem, tbh...
+
+>     55  }
+>     56
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
