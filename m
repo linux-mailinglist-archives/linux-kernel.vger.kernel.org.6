@@ -1,157 +1,134 @@
-Return-Path: <linux-kernel+bounces-363576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86BF99C42D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2584999C431
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBC31C227EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE761280845
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472C215667B;
-	Mon, 14 Oct 2024 08:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002531487F4;
+	Mon, 14 Oct 2024 08:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M2tcCt/6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YqiJ0JbC"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2291A155C98
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18DC231C8E;
+	Mon, 14 Oct 2024 08:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728896065; cv=none; b=ON5hD3//juAzu4OW8QpV/IKi8a+IiY37P597zz/Ry+9OyqSvDwQBJOXRwFU0VAC79pHGS5wEtOc6bnun0IbGBB9a6ovRv4X8pGT+V9UULNJrWqs4B1CGXP04MZTtQNikq/ODOdEk8lsh0pb7WpUgQB88x29vgAq1aBq9OugN6x8=
+	t=1728896094; cv=none; b=hkp5Z16Vm8IrhuCQrQydQHC4YT47c/TBbSAEeL2VMe8FTfLdwCs2gzHqzsqgslis+pID9vvwKk2558STZsjGjZMCDnjEfHrWzPtH5EimeVi4FlHvkv+TV4WmbbFqTPy4YXWN3HVNZzc9IMinHzqvh+S7h17mKnGUfZsZk4Oe6NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728896065; c=relaxed/simple;
-	bh=6gnTFO1vIDG9cuD06qbAgaUIu2KYjppFxFWbpu5YnOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mvn8Fjqc7KOl5RvDz4VrSD0JMe5r4Jq4w9E4i9G5wfs9qLSbaSst+f+YY7EFpFeAivjcAvePLs5gEIY+DzzpgHBPQdTyUcaCkH0oBpxXBeJfbpPFF/8r2WE5nw+lVPtM36GQxWXnkdbPHqgZHcpusouwUAGHI92LsYLs8aO//lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M2tcCt/6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728896063;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AAPK65oHQu3J50zOzXdJ8U1r5A0VvZcKfNK05jHZJ2c=;
-	b=M2tcCt/69V5qdDvQZ44ghtl/CbOHLWlsmVU1bLF4azjPVco7ikcX5s3qCl0WE860L04Pmt
-	ME6r+TAIoc27Kr0exba3wWkAUVFAx6x9yIWcNt8kYn77XUCGpp4Xms/qCMq+VkWq7LV6h1
-	AMO+NM4i6BW9W8ci6GausczcY/O7rmA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-52-WGxGLLXqOFCMVLpJ1gyP6Q-1; Mon, 14 Oct 2024 04:54:21 -0400
-X-MC-Unique: WGxGLLXqOFCMVLpJ1gyP6Q-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4311db0f3f1so19417985e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:54:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728896060; x=1729500860;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AAPK65oHQu3J50zOzXdJ8U1r5A0VvZcKfNK05jHZJ2c=;
-        b=aBuSYB5v80fFeu7k785uQgckHrEFVd92/iwtnPQ2SJQgJ60Vtj5COaQysNHkxPzmhQ
-         dz+vSWLb2SkJPiqTDqD49w9ZfRMOVGd0ks/0hYuw8h15Lasn4lJtViMlxJ4RbE26ZX8J
-         3SBWU6JK7vfc+DX55ZtEmjQT+j98PdoFnKw3kKMQqqWn9LXa/47UdQJL13C5V9HJWjIm
-         ufihtPyMO+isgpkah/HXt5oi0c+vxzVxB6iNcnBBnocfWo13Vm28FtIW0ehpc3oozWWu
-         LzJpNELLV39V6IXmQx0VmLlAJH1rl4Uz6Weacwch+SQZdOZm5q1S9ROO4qRHCu4OTXo5
-         I2cA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYR4CwLxBTXrG5K5zp+nBKYtW8V8ZNwMdUNKUCJxULQfeMfvPcIgxY9OLjq1x44UVNIoBrhuyymJrN7ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwggptuVVGBXkzy3eB9Ope20lOsHVTmRjQ5E+Kqnk1397vffjaY
-	RuhWchEwxFhz2FUfTxey09JOc45b7cwGMdL5vNZ1QGg66VYplC3mr6uzexqSwuBvdu1krCUFZzE
-	4vXTDejQJTOeruiwZz3wp0Kze33y+GDV8OoI5iOFEZgbk2LSRlBaGsxojXSceow==
-X-Received: by 2002:a05:600c:190d:b0:430:53f6:f20b with SMTP id 5b1f17b1804b1-4311df56f1amr97192095e9.23.1728896060195;
-        Mon, 14 Oct 2024 01:54:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEo+wwhLLKeEcT9mtsJSQ+F8zv3iqBMb6ip3yhfZKGYz75i1oN0Ri8sKd/qmDLPCYq8GV+9Q==
-X-Received: by 2002:a05:600c:190d:b0:430:53f6:f20b with SMTP id 5b1f17b1804b1-4311df56f1amr97191725e9.23.1728896059688;
-        Mon, 14 Oct 2024 01:54:19 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf45df4sm146139445e9.13.2024.10.14.01.54.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 01:54:19 -0700 (PDT)
-Message-ID: <13f6f904-bd2c-4b0a-914e-0715d22a7ff5@redhat.com>
-Date: Mon, 14 Oct 2024 10:54:18 +0200
+	s=arc-20240116; t=1728896094; c=relaxed/simple;
+	bh=334/kP1ZS9qqdH61za7BkXxyez1dWPdwP5jxmw2QOgc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EqciLPWRe6j53FvXlpBbaQW2tB/EahaxhcC21hwAlASevQynblqJt/pe9JoN1p2drsvht2DK9dwJ6H2EB598xZzK1D4UDAwuJsEm6F3AM1XHx2Ha82/yL7kS2lE7SzDvxDp5hN+oWeM3T1CmnKjVmdZm89FGRPoxArlGJs36vrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YqiJ0JbC; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E8LkHf026351;
+	Mon, 14 Oct 2024 08:54:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
+	g20+vSwQPCR+VxKd35Vza9wQi09ArdNbwM3n/b5/10w=; b=YqiJ0JbCyE8gGssW
+	ZM8K3f7M+CZziAbwJuAVxqAnz95lBx4tZCAZjFb7PdMrbHEdbeH+5yHIVavgYeeC
+	ZixJEqDToRA2ncV2qqjVBsRcmmIhRX4gMj7agqmq32O073cMcSXG9kQwgZHtaCtx
+	AHGCNRqLJdDk+EvSa34lrw201IfD6Y742MIKVZe3id/xyy8mBmRD4qlL5PeIarKw
+	NgQUKZ8s83jR81T0rCKa7DsiOOt0QKgdJcsmfxoxMdMaUKT8h7qqIX//gbzyATsm
+	/m/AvPpkerYHQc9AeZ6kzN7erbqdtmBjBuKSPomBehsu8aAtbWmDhUVKmhw+OIwc
+	9vM7kw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 428yq4046p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 08:54:33 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49E8QQse006843;
+	Mon, 14 Oct 2024 08:54:33 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xjwdpy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 08:54:33 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49E8sTBO23790106
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 08:54:29 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5774920043;
+	Mon, 14 Oct 2024 08:54:29 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0AB3D2004B;
+	Mon, 14 Oct 2024 08:54:29 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Oct 2024 08:54:28 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 0/2] s390: two bugfixes (for kunit)
+In-Reply-To: <20241014-s390-kunit-v1-0-941defa765a6@linutronix.de> ("Thomas
+	=?utf-8?Q?Wei=C3=9Fschuh=22's?= message of "Mon, 14 Oct 2024 07:50:05
+ +0200")
+References: <20241014-s390-kunit-v1-0-941defa765a6@linutronix.de>
+Date: Mon, 14 Oct 2024 10:54:28 +0200
+Message-ID: <yt9dmsj712uz.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] drm/panic: allow verbose boolean for clarity
-To: =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241012075312.16342-1-witcher@wiredspace.de>
- <20241012075312.16342-6-witcher@wiredspace.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20241012075312.16342-6-witcher@wiredspace.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: IMkdp4OlovZoU_cFZnvrm2k4wYUXoIk-
+X-Proofpoint-GUID: IMkdp4OlovZoU_cFZnvrm2k4wYUXoIk-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_07,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=548 priorityscore=1501 adultscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140060
 
-On 12/10/2024 09:52, Thomas Böhler wrote:
-> Clippy complains about a non-minimal boolean expression with
-> `nonminimal_bool`:
-> 
->      error: this boolean expression can be simplified
->         --> drivers/gpu/drm/drm_panic_qr.rs:722:9
->          |
->      722 |         (x < 8 && y < 8) || (x < 8 && y >= end) || (x >= end && y < 8)
->          |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->          |
->          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#nonminimal_bool
->          = note: `-D clippy::nonminimal-bool` implied by `-D warnings`
->          = help: to override `-D warnings` add `#[allow(clippy::nonminimal_bool)]`
->      help: try
->          |
->      722 |         !(x >= 8 || y >= 8 && y < end) || (x >= end && y < 8)
->          |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->      722 |         (y >= end || y < 8) && x < 8 || (x >= end && y < 8)
->          |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> While this can be useful in a lot of cases, it isn't here because the
-> line expresses clearly what the intention is. Simplifying the expression
-> means losing clarity, so opt-out of this lint for the offending line.
+Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de> writes:
 
-Thanks, I also prefer to keep the non-minimal boolean.
-
-With the suggestions from Alice Ryhl to not introduce a return, and use 
-expect:
-
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
-> 
-> Reported-by: Miguel Ojeda <ojeda@kernel.org>
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1123
-> Signed-off-by: Thomas Böhler <witcher@wiredspace.de>
+> When trying to use kunit for s390 with
+> ./tools/testing/kunit/kunit.py run --arch=3Ds390 --kunitconfig drivers/ba=
+se/test --cross_compile=3D$CROSS_COMPILE
+> I ran into some bugs.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 > ---
->   drivers/gpu/drm/drm_panic_qr.rs | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index 58c46f366f76..226107c02679 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -719,7 +719,8 @@ fn draw_finders(&mut self) {
->   
->       fn is_finder(&self, x: u8, y: u8) -> bool {
->           let end = self.width - 8;
-> -        (x < 8 && y < 8) || (x < 8 && y >= end) || (x >= end && y < 8)
-> +        #[allow(clippy::nonminimal_bool)]
-> +        return (x < 8 && y < 8) || (x < 8 && y >= end) || (x >= end && y < 8);
->       }
->   
->       // Alignment pattern: 5x5 squares in a grid.
+> Thomas Wei=C3=9Fschuh (2):
+>       s390/sclp: deactivate sclp after all its users
+>       s390/sclp_vt220: convert newlines to CRLF instead of LFCR
+>
+>  drivers/s390/char/sclp.c       | 3 ++-
+>  drivers/s390/char/sclp_vt220.c | 4 ++--
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> ---
+> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
+> change-id: 20241014-s390-kunit-47cbc26a99e6
 
+Looks good to me. For both patches:
+
+Reviewed-by: Sven Schnelle <svens@linux.ibm.com>
+
+Thanks!
+Sven
 
