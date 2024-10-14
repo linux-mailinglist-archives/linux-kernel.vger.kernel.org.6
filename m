@@ -1,128 +1,132 @@
-Return-Path: <linux-kernel+bounces-364002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9116E99C9AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA37999C6E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302521F22E6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7411C23097
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CB619F436;
-	Mon, 14 Oct 2024 12:04:42 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F9E158853;
-	Mon, 14 Oct 2024 12:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121AE161902;
+	Mon, 14 Oct 2024 10:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="LEXhWo72"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6CC15DBD5;
+	Mon, 14 Oct 2024 10:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728907481; cv=none; b=DTbGw4tIwCooXNU7YLykb3986JPPeE9QqnDhaqFlIU6nT9hPagnVfRsZScVNk5BXRhzjPYcCD6Afg+c1ZCAPnBARVjm12Thq5KHRseiq1FcOhJyT2DWsjZEnuFrK0yM/95TzY34/iLJLgiOVvEa1uykejRooEr7xsSCnWup7Wg4=
+	t=1728900613; cv=none; b=Fkoyrx0rsyFrl/0eN6Z8f2Scli4wqrnAl8QigVFBWnhFSoXBnbtxIUHf5H3bMwOIkows8rYmcThyK5DtkYK24Yyd11fAXKp9Dm/0xpd5jKl6pOYSHR4vUoiIr9JvqYOea210X5W++iTlRSA5yFgU3xA0lnNoG4GVf2Tws0GHqkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728907481; c=relaxed/simple;
-	bh=fg3fTJ5VYz/p+QTt7x8s+mXKsYLH63g3EFVGYZqcGlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3q10rUXETgqY5GREnulYqZwsMLdURqZ6yIgoSyo5SiOEl8De0bRS22KKqIR0ilXsuMIteNckX/RPUyjZVz8y42EF08oOIrzSb7SrIUfaC8M/78pAtCE71ri4iQt5j+Tlk5GWug6qBNO6SkyAAMgiC+PMEE1ajmX1fKlG2FZ7/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1t0GMH-0005eb-00; Mon, 14 Oct 2024 10:23:17 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 4F922C0161; Mon, 14 Oct 2024 10:23:09 +0200 (CEST)
-Date: Mon, 14 Oct 2024 10:23:09 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] MAINTAINERS: Retire Ralf Baechle
-Message-ID: <ZwzU7c9qlxxKckGI@alpha.franken.de>
-References: <alpine.DEB.2.21.2410131952550.40463@angie.orcam.me.uk>
- <alpine.DEB.2.21.2410132006220.40463@angie.orcam.me.uk>
+	s=arc-20240116; t=1728900613; c=relaxed/simple;
+	bh=R9nDdMYCodv3mgjnQ3UUV16ToRI3sVOOcpQ/+cwAnTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q6LeCWNmKpCdLuQiGYfs2LLZtz2x0S+3+mLkCoGB50BtgselN/KegKSCHnhcJLWeMLGvfTWk8NyM4zOr5eTWyePEiMzUsPXHymP6VaScWdRa8Pc+RVVMi1rkvaMEb3+rXzBLXWpRjr/IzsfLRnKdfy+IxBHeyJzLsaFhs9fGyO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=LEXhWo72; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id B3B7589041;
+	Mon, 14 Oct 2024 12:10:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1728900609;
+	bh=QiUcJ5vcf2TcgSQTpOZdp1C5MCiNDwYEw8zZRWzqkOQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LEXhWo72oK2AmGD8j3W9kqbymw42C0DBbUTfe37wOqQys1PXaBp6JVKvvAH5GnACD
+	 ek6Em+m1PMzxDRFjkHwSbGeDCe0bgFoNT5hAzDDUNVGbjDIJtY3sgkV2l9vwWwXfDX
+	 z6lzHMIVks6PVUSEVTwYeFMRevzWp1zwI0m9nu02C8JwirmjCmu85DgG+r0dqbdPLa
+	 eCDQ3/WEnp2EAkSzxzclufuRqiLXeNVfr9g+spBiXgvvQXhxAlzoG60kjC5nH39eQo
+	 cKC2Y844XhDSVurTFJ8YG/ZJe0MeUN6UoMJPkK0liyrcZcnXEVJC8ugStDdiSPfUva
+	 PfwrYm3wh3WFw==
+Message-ID: <8c13b0aa-7fb1-493c-9abc-5e5cfd982855@denx.de>
+Date: Mon, 14 Oct 2024 10:52:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2410132006220.40463@angie.orcam.me.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
+ platforms
+To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+ Olivia Mackall <olivia@selenic.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Lionel Debieve <lionel.debieve@foss.st.com>
+Cc: linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
+ <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
+ <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
+ <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Sun, Oct 13, 2024 at 08:34:44PM +0100, Maciej W. Rozycki wrote:
-> Ralf Baechle has been inactive for years now and the linux-mips.org site 
-> has gone down.  No replacement contact information is available.  Thomas 
-> has been kind enough to step up as a maintainer for EDAC-CAVIUM OCTEON 
-> and IOC3 ETHERNET DRIVER.
+On 10/14/24 10:38 AM, Gatien CHEVALLIER wrote:
 > 
-> Update MAINTAINERS, CREDITS, and .get_maintainer.ignore accordingly.
 > 
-> Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> ---
->  .get_maintainer.ignore |    1 +
->  CREDITS                |    5 +++++
->  MAINTAINERS            |   13 +++++--------
->  3 files changed, 11 insertions(+), 8 deletions(-)
+> On 10/11/24 18:17, Marek Vasut wrote:
+>> On 10/11/24 5:41 PM, Gatien Chevallier wrote:
+>>
+>> [...]
+>>
+>>> @@ -551,6 +565,41 @@ static int stm32_rng_probe(struct 
+>>> platform_device *ofdev)
+>>>       priv->rng.read = stm32_rng_read;
+>>>       priv->rng.quality = 900;
+>>> +    if (!priv->data->nb_clock || priv->data->nb_clock > 2)
+>>> +        return -EINVAL;
+>>> +
+>>> +    priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * 
+>>> sizeof(*priv->clk_bulk),
+>>> +                      GFP_KERNEL);
+>>> +    if (!priv->clk_bulk)
+>>> +        return -ENOMEM;
+>>
+>> Try this:
+>>
+>> ret = devm_clk_bulk_get(dev, priv->data->nb_clock, priv->clk_bulk);
+>> ...
+>> // Swap the clock if they are not in the right order:
+>> if (priv->data->nb_clock == 2 &&
+>>      strcmp(__clk_get_name(priv->clk_bulk[0].clk), "core"))
+>> {
+>>   const char *id = priv->clk_bulk[1].id;
+>>   struct clk *clk = priv->clk_bulk[1].clk;
+>>   priv->clk_bulk[1].id = priv->clk_bulk[0].id;
+>>   priv->clk_bulk[1].clk = priv->clk_bulk[0].clk;
+>>   priv->clk_bulk[0].id = id;
+>>   priv->clk_bulk[0].clk = clk;
+>> }
+>>
 > 
-> linux-maintainers-ralf.diff
-> Index: linux-macro/.get_maintainer.ignore
-> ===================================================================
-> --- linux-macro.orig/.get_maintainer.ignore
-> +++ linux-macro/.get_maintainer.ignore
-> @@ -3,3 +3,4 @@ Alan Cox <root@hraefn.swansea.linux.org.
->  Christoph Hellwig <hch@lst.de>
->  Jeff Kirsher <jeffrey.t.kirsher@intel.com>
->  Marc Gonzalez <marc.w.gonzalez@free.fr>
-> +Ralf Baechle <ralf@linux-mips.org>
-> Index: linux-macro/CREDITS
-> ===================================================================
-> --- linux-macro.orig/CREDITS
-> +++ linux-macro/CREDITS
-> @@ -185,6 +185,11 @@ P: 1024/AF7B30C1 CF 97 C2 CC 6D AE A7 FE
->  D: Linux/MIPS port
->  D: Linux/68k hacker
->  D: AX25 maintainer
-> +D: EDAC-CAVIUM OCTEON maintainer
-> +D: IOC3 ETHERNET DRIVER maintainer
-> +D: NETROM NETWORK LAYER maintainer
-> +D: ROSE NETWORK LAYER maintainer
-> +D: TURBOCHANNEL SUBSYSTEM maintainer
->  S: Hauptstrasse 19
->  S: 79837 St. Blasien
->  S: Germany
-> Index: linux-macro/MAINTAINERS
-> ===================================================================
-> --- linux-macro.orig/MAINTAINERS
-> +++ linux-macro/MAINTAINERS
-> @@ -8081,10 +8081,10 @@ S:	Maintained
->  F:	drivers/edac/highbank*
->  
->  EDAC-CAVIUM OCTEON
-> -M:	Ralf Baechle <ralf@linux-mips.org>
-> +M:	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
->  L:	linux-edac@vger.kernel.org
->  L:	linux-mips@vger.kernel.org
-> -S:	Supported
-> +S:	Maintained
->  F:	drivers/edac/octeon_edac*
->  
->  EDAC-CAVIUM THUNDERX
-> @@ -11902,7 +11902,7 @@ F:	Documentation/devicetree/bindings/iio
->  F:	drivers/iio/gyro/mpu3050*
->  
->  IOC3 ETHERNET DRIVER
-> -M:	Ralf Baechle <ralf@linux-mips.org>
-> +M:	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
->  L:	linux-mips@vger.kernel.org
->  S:	Maintained
->  F:	drivers/net/ethernet/sgi/ioc3-eth.c
-> @@ -16043,9 +16043,8 @@ F:	net/netfilter/
->  F:	tools/testing/selftests/net/netfilter/
+> Hi Marek,
+> 
+> This won't work as the name returned by this API is clk->core->name.
+> AFAICT, it doesn't correspond to the names present in the device tree
+> under the "clock-names" property.
+> Any other idea or are you fine with what's below?
+Hmmm, it is not great, but at least it reduces the changes throughout 
+the driver, so that is an improvement.
 
-Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+I guess one could do some of_clk_get() and clk_is_match() in probe to 
+look up the clock in OF by name and then compare which clock is which 
+before swapping them in clk_bulk[] array, but that might be too convoluted?
 
