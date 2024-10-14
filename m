@@ -1,170 +1,58 @@
-Return-Path: <linux-kernel+bounces-363042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3039B99BD3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:19:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2727599BD41
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9C2D28154A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A10281D8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE485E57D;
-	Mon, 14 Oct 2024 01:19:24 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9841BC2A;
-	Mon, 14 Oct 2024 01:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D941C2C9;
+	Mon, 14 Oct 2024 01:23:16 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474534A24
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728868764; cv=none; b=oGW3e7Lf90pdElgBhgRYLxFEIFIEQIukhunCnQ3J/3VDMuPwyjeZZn0iGH8xAR3z5cPX9qRRuxIsRtmfKFBGIii9OUJJuYJYkdLpnnkwaYCRjhvUlxant8ezNSyquZrSRbl1PFc3xCqFjQwzifSjvtvEyigcJNxYmCnDpivmjOw=
+	t=1728868996; cv=none; b=XNei9MJKfMTZ2/NzgzSnfZo9A2dzQTKU4F1fYjrNUPdBmlWdPoHH46WhxOa54mu4SRqFdFIvorNEgss4tZaFuZ7Nl+TVreVAsoCqmGZXScE7kFXPzsKLCLRxW8BV4qbGWS711t4wOqoGmVSNrDp0tB/T+QqvHbGc0XMwxN2gceE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728868764; c=relaxed/simple;
-	bh=zUv6ILKKCU7ghNWQyBMVZ63qcvkg6BgiCPLp6kS4zzQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=HjnjAPXVQK0ib6yU+C8vLXBoz4q61jdL+qooAoTEvJV8DUMS5vuUs5kBeQPhY417rxRS3MU8bRfCmKOAtdYGvCCyHY/Lj3NzfzX3+p10ps94XgOXE6eVrR3zp0ekxN3ihEGzK6iOc2dVQNHkRS2BV8qAJB+nHnbtdLamErkmYvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Dxn_GQcQxns7MZAA--.41498S3;
-	Mon, 14 Oct 2024 09:19:12 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMAx_9WNcQxn32goAA--.13131S3;
-	Mon, 14 Oct 2024 09:19:11 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: Mark hrtimer to expire in hard interrupt
- context
-To: Huacai Chen <chenhuacai@loongson.cn>, Paolo Bonzini
- <pbonzini@redhat.com>, Huacai Chen <chenhuacai@kernel.org>,
- Tianrui Zhao <zhaotianrui@loongson.cn>
-Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>
-References: <20241013090136.1254036-1-chenhuacai@loongson.cn>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <395a4ab9-ee2b-618d-3836-3ff041582ab2@loongson.cn>
-Date: Mon, 14 Oct 2024 09:18:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1728868996; c=relaxed/simple;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	h=Message-ID:Date:MIME-Version:To:From:Content-Type; b=NqcIP2CmIvY2vqBUGFWd1FqkKHtHpn9MkZVmLokmJZ0py2b92MNzkCei59cU3XxsTKWlw0SPPPUAmTsL0OPlRmNPLrA0OEOEf+d1hET3nk+xgZwAEN+tGb+Jgg9U2Cz/Aw4X/x7EAVDmUcEE1frOoYvgPBQN9SpfQxrUsgxgPIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XRfb640k1z1j9nm
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:21:54 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6C3C71A0188
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:23:05 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 14 Oct 2024 09:23:05 +0800
+Message-ID: <4a698a82-61d7-63c4-3a79-19af29dcf978@huawei.com>
+Date: Mon, 14 Oct 2024 09:23:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241013090136.1254036-1-chenhuacai@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+To: <linux-kernel@vger.kernel.org>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAx_9WNcQxn32goAA--.13131S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxGF13tF4xur4kAw47Gr4kAFc_yoWrtF1fpr
-	WUAr48Gr48Jr17tw1jyFyDuF45Xw4DCF1xXFWUAry8Ar17Wrn8XF18KrW3JFs8Jw4UAF1x
-	Xr18tr1aqF15J3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
-	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jepB-UUUUU=
-
-
-
-On 2024/10/13 下午5:01, Huacai Chen wrote:
-> Like commit 2c0d278f3293fc5 ("KVM: LAPIC: Mark hrtimer to expire in hard
-> interrupt context"), On PREEMPT_RT enabled kernels unmarked hrtimers are
-> moved into soft interrupt expiry mode by default.
-> 
-> While that's not a functional requirement for the KVM constant timer
-> emulation, it is a latency issue which can be avoided by marking the
-> timer so hard interrupt context expiry is enforced.
-> 
-> This fix a "scheduling while atomic" bug for PREEMPT_RT enabled kernels:
-> 
->   BUG: scheduling while atomic: qemu-system-loo/1011/0x00000002
->   Modules linked in: amdgpu rfkill nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat ns
->   CPU: 1 UID: 0 PID: 1011 Comm: qemu-system-loo Tainted: G        W          6.12.0-rc2+ #1774
->   Tainted: [W]=WARN
->   Hardware name: Loongson Loongson-3A5000-7A1000-1w-CRB/Loongson-LS3A5000-7A1000-1w-CRB, BIOS vUDK2018-LoongArch-V2.0.0-prebeta9 10/21/2022
->   Stack : ffffffffffffffff 0000000000000000 9000000004e3ea38 9000000116744000
->           90000001167475a0 0000000000000000 90000001167475a8 9000000005644830
->           90000000058dc000 90000000058dbff8 9000000116747420 0000000000000001
->           0000000000000001 6a613fc938313980 000000000790c000 90000001001c1140
->           00000000000003fe 0000000000000001 000000000000000d 0000000000000003
->           0000000000000030 00000000000003f3 000000000790c000 9000000116747830
->           90000000057ef000 0000000000000000 9000000005644830 0000000000000004
->           0000000000000000 90000000057f4b58 0000000000000001 9000000116747868
->           900000000451b600 9000000005644830 9000000003a13998 0000000010000020
->           00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
->           ...
->   Call Trace:
->   [<9000000003a13998>] show_stack+0x38/0x180
->   [<9000000004e3ea34>] dump_stack_lvl+0x84/0xc0
->   [<9000000003a71708>] __schedule_bug+0x48/0x60
->   [<9000000004e45734>] __schedule+0x1114/0x1660
->   [<9000000004e46040>] schedule_rtlock+0x20/0x60
->   [<9000000004e4e330>] rtlock_slowlock_locked+0x3f0/0x10a0
->   [<9000000004e4f038>] rt_spin_lock+0x58/0x80
->   [<9000000003b02d68>] hrtimer_cancel_wait_running+0x68/0xc0
->   [<9000000003b02e30>] hrtimer_cancel+0x70/0x80
->   [<ffff80000235eb70>] kvm_restore_timer+0x50/0x1a0 [kvm]
->   [<ffff8000023616c8>] kvm_arch_vcpu_load+0x68/0x2a0 [kvm]
->   [<ffff80000234c2d4>] kvm_sched_in+0x34/0x60 [kvm]
->   [<9000000003a749a0>] finish_task_switch.isra.0+0x140/0x2e0
->   [<9000000004e44a70>] __schedule+0x450/0x1660
->   [<9000000004e45cb0>] schedule+0x30/0x180
->   [<ffff800002354c70>] kvm_vcpu_block+0x70/0x120 [kvm]
->   [<ffff800002354d80>] kvm_vcpu_halt+0x60/0x3e0 [kvm]
->   [<ffff80000235b194>] kvm_handle_gspr+0x3f4/0x4e0 [kvm]
->   [<ffff80000235f548>] kvm_handle_exit+0x1c8/0x260 [kvm]
-> 
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
->   arch/loongarch/kvm/timer.c | 7 ++++---
->   arch/loongarch/kvm/vcpu.c  | 2 +-
->   2 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/loongarch/kvm/timer.c b/arch/loongarch/kvm/timer.c
-> index 74a4b5c272d6..32dc213374be 100644
-> --- a/arch/loongarch/kvm/timer.c
-> +++ b/arch/loongarch/kvm/timer.c
-> @@ -161,10 +161,11 @@ static void _kvm_save_timer(struct kvm_vcpu *vcpu)
->   	if (kvm_vcpu_is_blocking(vcpu)) {
->   
->   		/*
-> -		 * HRTIMER_MODE_PINNED is suggested since vcpu may run in
-> -		 * the same physical cpu in next time
-> +		 * HRTIMER_MODE_PINNED_HARD is suggested since vcpu may run in
-> +		 * the same physical cpu in next time, and the timer should run
-> +		 * in hardirq context even in the PREEMPT_RT case.
->   		 */
-> -		hrtimer_start(&vcpu->arch.swtimer, expire, HRTIMER_MODE_ABS_PINNED);
-> +		hrtimer_start(&vcpu->arch.swtimer, expire, HRTIMER_MODE_ABS_PINNED_HARD);
->   	}
->   }
->   
-> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-> index 0697b1064251..174734a23d0a 100644
-> --- a/arch/loongarch/kvm/vcpu.c
-> +++ b/arch/loongarch/kvm/vcpu.c
-> @@ -1457,7 +1457,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->   	vcpu->arch.vpid = 0;
->   	vcpu->arch.flush_gpa = INVALID_GPA;
->   
-> -	hrtimer_init(&vcpu->arch.swtimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
-> +	hrtimer_init(&vcpu->arch.swtimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED_HARD);
->   	vcpu->arch.swtimer.function = kvm_swtimer_wakeup;
->   
->   	vcpu->arch.handle_exit = kvm_handle_exit;
-> 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
 
