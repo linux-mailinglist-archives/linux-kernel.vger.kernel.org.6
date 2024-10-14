@@ -1,188 +1,176 @@
-Return-Path: <linux-kernel+bounces-364609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47CF99D6D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:55:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2842299D801
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472531F23055
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1EC61F22233
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70D01CACD0;
-	Mon, 14 Oct 2024 18:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA421D0437;
+	Mon, 14 Oct 2024 20:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AV/kwmOl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="xEiUNz/G"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAD41AC45F;
-	Mon, 14 Oct 2024 18:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CAD1CDA36;
+	Mon, 14 Oct 2024 20:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728932106; cv=none; b=GW0t3W6DSXaOzTOsBnAFU62RLX7LlZ+6TWH0pZSo1mySouzdNNOjtrWzL81C/EDKFsZgLrCkZ2AteunnnokEyIU5xRJWMhzs3GPyK9sqEkZ7WqkXvEntDhxqP7+jm3cjRj5kuVft2ZqDhstjLe9Z/oss0XAqoPSgElbOAtqHlQA=
+	t=1728936859; cv=none; b=DdQli+AvM48aGq5VSQ7Geo+pbhdQYJYY7NsNUi2Si85aJ9yrDoNpFQyHr/y5zby2i1paK4ejNJ2dqQ361tEco2HkphaAk73a6MXvWaOmfJG+5DoGqB09fVv/IBNqay8CTNmuoe7WwWHWCzu2C9AURkOcfFIHff8mmA7WS4lta1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728932106; c=relaxed/simple;
-	bh=8zP52/Vyia2XoM5u4/Yc0Vbx9/5orkfaOzFGqEIi2YI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KFq26EQ2ChEdPslmVUTMRD2av7rg2n7AZYaL2wcG947qrRadVrvRB7lPOgTMcdmFzCcZ9slEvd2gH4eFI8//XIPk45X8Ue96WnD9ueIn0899IRnXoP9NDwau/dGck1VVSID7STsf2mxsElTj6DY4UGXRM9SMlLUKBF+xKwIWN/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AV/kwmOl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB23C4CEC3;
-	Mon, 14 Oct 2024 18:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728932105;
-	bh=8zP52/Vyia2XoM5u4/Yc0Vbx9/5orkfaOzFGqEIi2YI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=AV/kwmOlhqV5F/7KXGU8RcezH4AIElbtXM/c6yU2tC5AjRSBl9EeDMp4it2ykFf2B
-	 44lrN/TXaNjnewMVr/a4Qi9Z3jF4YzACWwT14UwfYF4FL6G4Wavqhzx1WiehxOP30E
-	 TGBzOpkaJf31OHKRb+prolVQ/3gdp6EC7x52ZJn3Ki0/fKmp7Zl9aUcD/nzPht18BZ
-	 i4vvqVJDT15jrkEl+7fBghK9OaCXmN3WJpGMXdMffzh8ssrpWnYtM5fy2+AbbUwpe1
-	 WacIFLTKsdG4PMo4KRblREb4SK6V2MJGyE5N9yYZxyL6+ekL5csg0jrBWJlXttRfiQ
-	 oiu2OAz1fzD2Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 15D39CE13B1; Mon, 14 Oct 2024 11:55:05 -0700 (PDT)
-Date: Mon, 14 Oct 2024 11:55:05 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <b9064ed8-387d-47ce-ad0a-7642ad180fc3@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ac93f995-09bc-4d2c-8159-6afbfbac0598@paulmck-laptop>
- <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
- <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
- <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
- <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
- <CAP4=nvTeawTjhWR0jKNGweeQFvcTr8S=bNiLsSbaKiz=od+EOA@mail.gmail.com>
- <35e44f60-0a2f-49a7-b44b-c6537544a888@paulmck-laptop>
- <fe2262ff-2c3d-495a-8ebb-c34485cb62a2@paulmck-laptop>
+	s=arc-20240116; t=1728936859; c=relaxed/simple;
+	bh=Cu4BzJViP5i7qWOMh2TAQRd5Q+ATHHI112T1tzy/vQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C+UXVXY4OSAJRu9Q3MzIuwlNlRn5GxuQy4oXRfKKw5Sq24DWWWdObsZOvVAqN7/RWuwW6CbZJ2EcAjGBLJWM4rV8JusFmYmh3quxK/iXmIEw1JIoofToxYpg7iwY8CqC9vP25X6w+57OfupUCkpe2uZ67DhYjo39J98xB/8RTgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=xEiUNz/G; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id AC58789018;
+	Mon, 14 Oct 2024 22:14:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1728936855;
+	bh=Xb9CBRgvPOEpxga3+Wbc1szUOkY/ao1dzvTPIwjUP3o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=xEiUNz/GObmtvWPz61uJu77G0Jn4coceO8KwxpAXsGvRmTR66LBk7EftBsGwcnF3x
+	 qCoPs0UVNrKj5jALk4qSWwuSgwvbth2+a7bMQLSzDuSdcEvhPzOLcoDe6gKqTgk/WR
+	 wh7TyeAdMz0StdJOMDEzXl5+8IldCLzg317YcDv6Pw27Ji1TlcyACfcfuwVgRsolHS
+	 +BztRJZrPUPAcnvJUWZJ7vcgVTwWa75MAa80RLhBe55mWmvUmQqthN+i5iRzJeRfpP
+	 E8Zh2ic4KbHCGYU05M27Lu7g1txO4o36rBR62Y9fS9tpxq1oYVUAF/Gyu5+jNUOITn
+	 AUa1h9bWc1OTA==
+Message-ID: <dca83197-3484-4d6b-8507-118bf9e80e19@denx.de>
+Date: Mon, 14 Oct 2024 20:55:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
+ platforms
+To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+ Olivia Mackall <olivia@selenic.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Lionel Debieve <lionel.debieve@foss.st.com>
+Cc: linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
+ <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
+ <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
+ <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
+ <8c13b0aa-7fb1-493c-9abc-5e5cfd982855@denx.de>
+ <d862765e-e396-4f7c-97ff-76df9aa03216@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <d862765e-e396-4f7c-97ff-76df9aa03216@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe2262ff-2c3d-495a-8ebb-c34485cb62a2@paulmck-laptop>
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Thu, Oct 10, 2024 at 04:28:38PM -0700, Paul E. McKenney wrote:
-> On Thu, Oct 10, 2024 at 08:01:35AM -0700, Paul E. McKenney wrote:
-> > On Thu, Oct 10, 2024 at 01:24:11PM +0200, Tomas Glozar wrote:
-> > > st 2. 10. 2024 v 11:01 odes�latel Tomas Glozar <tglozar@redhat.com> napsal:
-> > > >
-> > > > FYI I have managed to reproduce the bug on our infrastructure after 21
-> > > > hours of 7*TREE03 and I will continue with trying to reproduce it with
-> > > > the tracers we want.
-> > > >
-> > > > Tomas
-> > > 
-> > > I successfully reproduced the bug also with the tracers active after a
-> > > few 8-hour test runs on our infrastructure:
-> > > 
-> > > [    0.000000] Linux version 6.11.0-g2004cef11ea0-dirty (...) #1 SMP
-> > > PREEMPT_DYNAMIC Wed Oct  9 12:13:40 EDT 2024
-> > > [    0.000000] Command line: debug_boot_weak_hash panic=-1 selinux=0
-> > > initcall_debug debug console=ttyS0 rcutorture.n_barrier_cbs=4
-> > > rcutorture.stat_interval=15 rcutorture.shutdown_secs=25200
-> > > rcutorture.test_no_idle_hz=1 rcutorture.verbose=1
-> > > rcutorture.onoff_interval=200 rcutorture.onoff_holdoff=30
-> > > rcutree.gp_preinit_delay=12 rcutree.gp_init_delay=3
-> > > rcutree.gp_cleanup_delay=3 rcutree.kthread_prio=2 threadirqs
-> > > rcutree.use_softirq=0
-> > > trace_event=sched:sched_switch,sched:sched_wakeup
-> > > ftrace_filter=dl_server_start,dl_server_stop trace_buf_size=2k
-> > > ftrace=function torture.ftrace_dump_at_shutdown=1
-> > > ...
-> > > [13550.127541] WARNING: CPU: 1 PID: 155 at
-> > > kernel/sched/deadline.c:1971 enqueue_dl_entity+0x554/0x5d0
-> > > [13550.128982] Modules linked in:
-> > > [13550.129528] CPU: 1 UID: 0 PID: 155 Comm: rcu_torture_rea Tainted: G
-> > >        W          6.11.0-g2004cef11ea0-dirty #1
-> > > [13550.131419] Tainted: [W]=WARN
-> > > [13550.131979] Hardware name: Red Hat KVM/RHEL, BIOS 1.16.3-2.el9 04/01/2014
-> > > [13550.133230] RIP: 0010:enqueue_dl_entity+0x554/0x5d0
-> > > ...
-> > > [13550.151286] Call Trace:
-> > > [13550.151749]  <TASK>
-> > > [13550.152141]  ? __warn+0x88/0x130
-> > > [13550.152717]  ? enqueue_dl_entity+0x554/0x5d0
-> > > [13550.153485]  ? report_bug+0x18e/0x1a0
-> > > [13550.154149]  ? handle_bug+0x54/0x90
-> > > [13550.154792]  ? exc_invalid_op+0x18/0x70
-> > > [13550.155484]  ? asm_exc_invalid_op+0x1a/0x20
-> > > [13550.156249]  ? enqueue_dl_entity+0x554/0x5d0
-> > > [13550.157055]  dl_server_start+0x36/0xf0
-> > > [13550.157709]  enqueue_task_fair+0x220/0x6b0
-> > > [13550.158447]  activate_task+0x26/0x60
-> > > [13550.159131]  attach_task+0x35/0x50
-> > > [13550.159756]  sched_balance_rq+0x663/0xe00
-> > > [13550.160511]  sched_balance_newidle.constprop.0+0x1a5/0x360
-> > > [13550.161520]  pick_next_task_fair+0x2f/0x340
-> > > [13550.162290]  __schedule+0x203/0x900
-> > > [13550.162958]  ? enqueue_hrtimer+0x35/0x90
-> > > [13550.163703]  schedule+0x27/0xd0
-> > > [13550.164299]  schedule_hrtimeout_range_clock+0x99/0x120
-> > > [13550.165239]  ? __pfx_hrtimer_wakeup+0x10/0x10
-> > > [13550.165954]  torture_hrtimeout_us+0x7b/0xe0
-> > > [13550.166624]  rcu_torture_reader+0x139/0x200
-> > > [13550.167284]  ? __pfx_rcu_torture_timer+0x10/0x10
-> > > [13550.168019]  ? __pfx_rcu_torture_reader+0x10/0x10
-> > > [13550.168764]  kthread+0xd6/0x100
-> > > [13550.169262]  ? __pfx_kthread+0x10/0x10
-> > > [13550.169860]  ret_from_fork+0x34/0x50
-> > > [13550.170424]  ? __pfx_kthread+0x10/0x10
-> > > [13550.171020]  ret_from_fork_asm+0x1a/0x30
-> > > [13550.171657]  </TASK>
-> > > 
-> > > Unfortunately, the following rcu stalls appear to have resulted in
-> > > abnormal termination of the VM, which led to the ftrace buffer not
-> > > being dumped into the console. Currently re-running the same test with
-> > > the addition of "ftrace_dump_on_oops panic_on_warn=1" and hoping for
-> > > the best.
-> > 
-> > Another approach would be rcupdate.rcu_cpu_stall_suppress=1.
-> > 
-> > We probably need to disable RCU CPU stall warnings automatically while
-> > dumping ftrace buffers, but the asynchronous nature of printk() makes
-> > it difficult to work out when to automatically re-enable them...
+On 10/14/24 2:36 PM, Gatien CHEVALLIER wrote:
 > 
-> And in the meantime, for whatever it is worth...
 > 
-> The pattern of failures motivated me to add to rcutorture a real-time
-> task that randomly preempts a randomly chosen online CPU.  Here are
-> the (new and not-to-be-trusted) commits on -rcu's "dev" branch:
+> On 10/14/24 10:52, Marek Vasut wrote:
+>> On 10/14/24 10:38 AM, Gatien CHEVALLIER wrote:
+>>>
+>>>
+>>> On 10/11/24 18:17, Marek Vasut wrote:
+>>>> On 10/11/24 5:41 PM, Gatien Chevallier wrote:
+>>>>
+>>>> [...]
+>>>>
+>>>>> @@ -551,6 +565,41 @@ static int stm32_rng_probe(struct 
+>>>>> platform_device *ofdev)
+>>>>>       priv->rng.read = stm32_rng_read;
+>>>>>       priv->rng.quality = 900;
+>>>>> +    if (!priv->data->nb_clock || priv->data->nb_clock > 2)
+>>>>> +        return -EINVAL;
+>>>>> +
+>>>>> +    priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * 
+>>>>> sizeof(*priv->clk_bulk),
+>>>>> +                      GFP_KERNEL);
+>>>>> +    if (!priv->clk_bulk)
+>>>>> +        return -ENOMEM;
+>>>>
+>>>> Try this:
+>>>>
+>>>> ret = devm_clk_bulk_get(dev, priv->data->nb_clock, priv->clk_bulk);
+>>>> ...
+>>>> // Swap the clock if they are not in the right order:
+>>>> if (priv->data->nb_clock == 2 &&
+>>>>      strcmp(__clk_get_name(priv->clk_bulk[0].clk), "core"))
+>>>> {
+>>>>   const char *id = priv->clk_bulk[1].id;
+>>>>   struct clk *clk = priv->clk_bulk[1].clk;
+>>>>   priv->clk_bulk[1].id = priv->clk_bulk[0].id;
+>>>>   priv->clk_bulk[1].clk = priv->clk_bulk[0].clk;
+>>>>   priv->clk_bulk[0].id = id;
+>>>>   priv->clk_bulk[0].clk = clk;
+>>>> }
+>>>>
+>>>
+>>> Hi Marek,
+>>>
+>>> This won't work as the name returned by this API is clk->core->name.
+>>> AFAICT, it doesn't correspond to the names present in the device tree
+>>> under the "clock-names" property.
+>>> Any other idea or are you fine with what's below?
+>> Hmmm, it is not great, but at least it reduces the changes throughout 
+>> the driver, so that is an improvement.
+>>
+>> I guess one could do some of_clk_get() and clk_is_match() in probe to 
+>> look up the clock in OF by name and then compare which clock is which 
+>> before swapping them in clk_bulk[] array, but that might be too 
+>> convoluted?
 > 
-> d1b99fa42af7 ("torture: Add dowarn argument to torture_sched_setaffinity()")
-> aed555adc22a ("rcutorture: Add random real-time preemption")
-> b09bcf8e1406 ("rcutorture: Make the TREE03 scenario do preemption")
-> 
-> Given these, the following sort of command, when run on dual-socket
-> systems, reproduces a silent failure within a few minutes:
-> 
-> tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 4h --configs "4*TREE03" --kconfig "CONFIG_NR_CPUS=4" --trust-make
-> 
-> But on my laptop, a 30-minute run resulted in zero failures.  I am now
-> retrying with a four-hour laptop run.
+> Yes, probably too much. What's present in the patch is not close to
+> perfection but has the advantage of being straightforward. If we agree
+> on that, I'll send a V3 containing the modifications in the bindings
+> file.
+Errr, I'm sorry, maybe there is a way to do this better. Look at 
+drivers/clk/clk-bulk.c :
 
-And this silent failure was me hurting myself with a change to scripting
-to better handle test hosts disappearing (it does sometimes happen).
-With the scripting fixed, I am getting simple too-short grace periods,
-though only a few per 8-hour 400*TREE03 4-CPU guest-OS run.
+  15 static int __must_check of_clk_bulk_get(struct device_node *np, int 
+num_clks,
+  16                                         struct clk_bulk_data *clks)
+  17 {
+  18         int ret;
+  19         int i;
+  20
+  21         for (i = 0; i < num_clks; i++) {
+  22                 clks[i].id = NULL;
+  23                 clks[i].clk = NULL;
+  24         }
+  25
+  26         for (i = 0; i < num_clks; i++) {
+  27                 of_property_read_string_index(np, "clock-names", i, 
+&clks[i].id);
+  28                 clks[i].clk = of_clk_get(np, i);
 
-> I am also adjusting the preemption duration and frequency to see if a
-> more edifying failure mode might make itself apparent.  :-/
+If I read this right, then clks[i].id should be the DT clock name. So 
+the swap conditional above could use .id to identify whether the first 
+position is core clock or not, like this:
 
-But no big wins thus far, so this will be a slow process.  My current test
-disables CPU hotplug.  I will be disabling other things in the hope of
-better identifying the code paths that should be placed under suspicion.
+if (priv->data->nb_clock == 2 &&
+     strcmp(__clk_get_name(priv->clk_bulk[0].id), "core"))
+                                             ^^
 
-							Thanx, Paul
+You might need to use devm_clk_bulk_get_all() to access the 
+of_clk_bulk_get() .
+
+Or am I missing something still ?
 
