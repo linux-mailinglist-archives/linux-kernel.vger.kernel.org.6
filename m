@@ -1,136 +1,119 @@
-Return-Path: <linux-kernel+bounces-364608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6930599D6D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD8099D6D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265E0283522
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:54:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 109531C22952
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2111CACEF;
-	Mon, 14 Oct 2024 18:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E091CC163;
+	Mon, 14 Oct 2024 18:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EU4NiTB0"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+QYDmC9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7AD1C9EDB;
-	Mon, 14 Oct 2024 18:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63BC1AC45F;
+	Mon, 14 Oct 2024 18:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728932037; cv=none; b=ig1Cvfl+Ba0UBrANiCYpRfWFEINLI1X9lHqDlUyQ9HvFHu4hrj83tfpz7CyWRn18Qoypf2TADrI6wSQp69mRSt4Bm310WlXUA5O3qKcOTOTJcQQ8BZl1o0bVKlG9a9JkF4P8yYwiyZtnJDyogmmeJRA+7B0MGUT4oQwYuPtPDsw=
+	t=1728932109; cv=none; b=k1vZEfro2UoYm1x1i28bwLBwyPcuxtmHrOLSbqfzc2Hal5Xx3ClAbuC3ZXb7TXzRoSi0GS4dtbtxFkJ+zFWvb9lGNWa5xmXBoEbkbZG8TrMS6FmFtlL0ftrnoxRZ+NtcHZAVkxAuQI+IWVfY5CciqITZvxyeel50C61p9Cn1Au0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728932037; c=relaxed/simple;
-	bh=Q23Dqecm4rQW4LbmLu/fWqBs/g2VUgntNVy/XHd1CiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U9JymTX31oKHX12ZQB8upF/HYMeMpEH0rW/ufyb8OqHtFa2NNz4CkUUwtxrjCD/1qMvZT3C4gwOlGHdqbHs6KgWqUCaV9XH5uK8dcoBG1f6EZ9PI/2ZG+bWMT/mWPreZk0v7/cQ6RSkGaLEkL1BZGYy+YEocfjnRmEES0w1WDL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EU4NiTB0; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EGLr5W024481;
-	Mon, 14 Oct 2024 18:53:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=qli9+AqdmrYjqn+I9SUah+tTjB2
-	z+FoJZ2DPQzlDrTY=; b=EU4NiTB02AP+nBsUzH3YrsoNJoQJJLvgBgartXQslh/
-	VZPgKbRTlO2YMs/6IXykmT3npBElHcFI6m7qKXQfyhxVaTpJDX3bONmGHSNGFqjU
-	NmkAuutJkQkf4LyS7jO66DXit5SdyMNuKzU8hexRErSnTdn+t3LcuoHeynuGd38K
-	RU7M5wNBM9EGLZA1efsV6JsdKwCg3+eO3+d2IrMmVCJS10TSMtwZb5/JQhkmpucN
-	aLTmntYTdHitdYJY132t+Mo0KL8w9tvLpk4Dx9cv7jXP0E9lRb+tlZSCPm+PVtCT
-	wrfrx8PSJis4VRLIQBahyPeib6a4smO18I5cMGW0nrw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4296r30nd9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:53:48 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EIrlD7020744;
-	Mon, 14 Oct 2024 18:53:47 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4296r30ncy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:53:47 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EHtfve002408;
-	Mon, 14 Oct 2024 18:53:46 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emg2ys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:53:45 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EIrgPS43123138
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 18:53:42 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 38CE92004B;
-	Mon, 14 Oct 2024 18:53:42 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0A39C20040;
-	Mon, 14 Oct 2024 18:53:41 +0000 (GMT)
-Received: from osiris (unknown [9.171.66.174])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 14 Oct 2024 18:53:40 +0000 (GMT)
-Date: Mon, 14 Oct 2024 20:53:39 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-Subject: Re: [PATCH v2 6/7] lib/Kconfig.debug: default STRICT_DEVMEM to "y"
- on s390
-Message-ID: <20241014185339.10447-G-hca@linux.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-7-david@redhat.com>
+	s=arc-20240116; t=1728932109; c=relaxed/simple;
+	bh=MEnARyCy8ZhQv5hcAqw282lo3d4lT4pcqhEA+2UdDrg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s/NsncBp8KjDimLn5vRk67Ud09Gvto2BFxdub4WCpvuVP6PRaEcX2dtmjgQDyrY53inH0u+IiubWOpNikWDqFekWXWInj31H+p2a5zFmTTeu6vrSDK09TK+XAFBumgX9j4Wv4vAY7iN6zsZW3uPTulMpLyK7zBJ+ADqlv2L0Qb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+QYDmC9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E58C4CECE;
+	Mon, 14 Oct 2024 18:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728932109;
+	bh=MEnARyCy8ZhQv5hcAqw282lo3d4lT4pcqhEA+2UdDrg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=V+QYDmC99fszEIk3HlXB8O6GjJLEOYQ5uaZhSEU1gg2vN9IVRJ3YS1SG+Hg0CsHBX
+	 yGChbHNPxdIOXbOq+G2gsqsaI1jOb9lOiyrL9I6bjHcb4lKPw/Y9Ek5RmqwqqBm+GY
+	 LLWkucAXtNcopZcFEjY2hQFcSMy6RpGK43Mp8Fyr+my4eWg6ITndqmCPozR0za7Xko
+	 PBh2F3/5jZcx9gK91uy3WAUjN1efdpqNXCvyrY9JuqCF6L8+5CR22Q+e5SS9jZxARa
+	 x8wPNsUkF2DUeqsIJ3fGF9mDf/KZbmUKUBoA5zsA7cT6h2WRHYtKINpeq04Bs4Z7aL
+	 tHfaXlm0J4K7w==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jayesh Choudhary <j-choudhary@ti.com>
+Cc: linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: rng: Add Marvell Armada RNG support
+Date: Mon, 14 Oct 2024 13:54:57 -0500
+Message-ID: <20241014185457.1827734-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014144622.876731-7-david@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: mAW_T_fBPvj4hf4pGvS0idwYV0lYsd3R
-X-Proofpoint-GUID: cFbrqvSxhg3gJUt9lCJvsb6mg8EdgPi_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_12,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- suspectscore=0 malwarescore=0 lowpriorityscore=0 mlxscore=0 clxscore=1015
- mlxlogscore=457 spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410140135
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 04:46:18PM +0200, David Hildenbrand wrote:
-> virtio-mem currently depends on !DEVMEM | STRICT_DEVMEM. Let's default
-> STRICT_DEVMEM to "y" just like we do for arm64 and x86.
-> 
-> There could be ways in the future to filter access to virtio-mem device
-> memory even without STRICT_DEVMEM, but for now let's just keep it
-> simple.
-> 
-> Tested-by: Mario Casquero <mcasquer@redhat.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  lib/Kconfig.debug | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The Marvell Armada RNG uses the same IP as TI from Inside Secure and is
+already using the binding. The only missing part is the
+"marvell,armada-8k-rng" compatible string.
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Rename the binding to inside-secure,safexcel-eip76.yaml to better
+reflect it is multi-vendor, licensed IP and to follow the naming
+convention using compatible string.
+
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ ...g.yaml => inside-secure,safexcel-eip76.yaml} | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+ rename Documentation/devicetree/bindings/rng/{omap_rng.yaml => inside-secure,safexcel-eip76.yaml} (79%)
+
+diff --git a/Documentation/devicetree/bindings/rng/omap_rng.yaml b/Documentation/devicetree/bindings/rng/inside-secure,safexcel-eip76.yaml
+similarity index 79%
+rename from Documentation/devicetree/bindings/rng/omap_rng.yaml
+rename to Documentation/devicetree/bindings/rng/inside-secure,safexcel-eip76.yaml
+index c0ac4f68ea54..0877eb44f9ed 100644
+--- a/Documentation/devicetree/bindings/rng/omap_rng.yaml
++++ b/Documentation/devicetree/bindings/rng/inside-secure,safexcel-eip76.yaml
+@@ -1,20 +1,25 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/rng/omap_rng.yaml#
++$id: http://devicetree.org/schemas/rng/inside-secure,safexcel-eip76.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: OMAP SoC and Inside-Secure HWRNG Module
++title: Inside-Secure HWRNG Module
+ 
+ maintainers:
+   - Jayesh Choudhary <j-choudhary@ti.com>
+ 
+ properties:
+   compatible:
+-    enum:
+-      - ti,omap2-rng
+-      - ti,omap4-rng
+-      - inside-secure,safexcel-eip76
++    oneOf:
++      - enum:
++          - ti,omap2-rng
++          - ti,omap4-rng
++          - inside-secure,safexcel-eip76
++      - items:
++          - enum:
++              - marvell,armada-8k-rng
++          - const: inside-secure,safexcel-eip76
+ 
+   ti,hwmods:
+     const: rng
+-- 
+2.45.2
+
 
