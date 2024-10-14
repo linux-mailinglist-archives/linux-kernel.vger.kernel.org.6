@@ -1,247 +1,235 @@
-Return-Path: <linux-kernel+bounces-363742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CB999C671
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:52:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3552199C673
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FBC71C22B8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:52:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9758281EAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7212B157A55;
-	Mon, 14 Oct 2024 09:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3606D15886C;
+	Mon, 14 Oct 2024 09:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="W5SrG1sB"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2ds1tB0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5431A270;
-	Mon, 14 Oct 2024 09:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2E8157494;
+	Mon, 14 Oct 2024 09:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728899541; cv=none; b=aG+6yn6I8w163f9eC6chb5sxiaWXFVb8Itie2xSXObsn+o3zoEMgyI7XUx51CKHLew7eAX/Hx+LD/CWwkaQFFbLV1LpkrH/3ALa8bKaL9ljKyh59PtjgllvrvySgoUHHJR3UNl7Gmcr2FF/incDVhscaS4o37qL4QXybFjbMn5Q=
+	t=1728899542; cv=none; b=MP38NIKKeUJULQFQJ0Mu0V8dsmjNzDm1fUeYg4FFP81C5NWZewFHQquj5YWXl/r6zjVQL1jiAm/sMPDMOK1AEeY18OnOwFM9Ma1SsSTKQ1RX/Yyt+9wkeuXTKGUn6HSRgAi4GNbPKEIZcjxtvh1OwBewBS+x9uVyusa9GrMfGsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728899541; c=relaxed/simple;
-	bh=mHicux2Sghghav0Fe+EOW1urQ3BtJ5/XdCcM/5RLHl8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r9CO96PRckkz+kX2Gp/KHbrLknar0YcXaHu/QgT2JRr+5wmDFbHS5r1953bgtDOYSSpkiobhMjv3zXv4abAT6w8S1j6KWOXxO9faChutcQE6fI9Jsugi0rRAXnZfD1Ct5J8aD4N3ZjN2H35q5lFtMTsWwCtn173RwBlgxlfnda4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=W5SrG1sB; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E4q9EO011934;
-	Mon, 14 Oct 2024 04:52:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=BV5XTXQFrXhWMcDr
-	AKJXjLWD0xeZGGeZFGmj7EbRxYU=; b=W5SrG1sBpvRP5+U575d5cd63RU0FflDY
-	T94mzJieNOdGTdZpUj1uH1ZJ0Oy1yHUBW0t5AzQb8U2JjXLsbfuFfT9TQATBTdOz
-	CTjoPibOmXacXOyQXlwyWQwAYTqfrnKeb/ZNz9W8tNfuIQyv6ME7bhdAdVPiFcCm
-	CsoW7KlUslWzVfRWib7UQWUmRI2PNWR0pvgEb2ub7A3YZOegZJR/Fc3sXUzvt2bP
-	x0RV29jDE40NFveCgE5FgiOIMpyOhD/naYZMvkgl5T1XPrP0sKja4oOlAWnhh2WY
-	/adK7Q63L6ezdn9OczIVW//BgVRed38pprwtlqoD6VNyJ2Av6gelnw==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 427nhk1ppp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 04:52:03 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
- 2024 10:52:02 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 14 Oct 2024 10:52:02 +0100
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 1CE6B820248;
-	Mon, 14 Oct 2024 09:52:02 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <lee@kernel.org>, <broonie@kernel.org>
-CC: <lgirdwood@gmail.com>, <linux-sound@vger.kernel.org>,
-        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mfd: cs42l43: Disable IRQs during suspend
-Date: Mon, 14 Oct 2024 10:52:02 +0100
-Message-ID: <20241014095202.828194-1-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728899542; c=relaxed/simple;
+	bh=7G2rTAKiIHvqKGEL3BERg1CQ7sWLWd/WC84/5LIrGJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4tk17eoFZJ5xqE/dddS4+M8ADstxPDofWCcudBuaH64zOrg7sqriZfnijjkL+TzH1TB0bTARNsxbmtFqrfOqeT3t4prck7sxOXutcG5Foh2kqXK4HT7sge+0CUWjWyNHHneFgCMhFAba6rOTWulTUlBD8UQM6BttFp1a7u9I+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2ds1tB0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7085C4CEC3;
+	Mon, 14 Oct 2024 09:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728899542;
+	bh=7G2rTAKiIHvqKGEL3BERg1CQ7sWLWd/WC84/5LIrGJc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J2ds1tB0p5clgZySms+JjjMYVGy5O4FdI8MqKAaZ+klDNiKsbSWvivx6TZVRsweDJ
+	 U31CQXur1wqwAmU5Vvkb2GyLog35LayuPVnUB0EfddkLMpU8aMvU0S35BSobq/e8TJ
+	 TQXL2efYj+C9T/p9iMsblNR/VortbDmDrQbcOahPAkhyDZqxfDRmthJBQTVjSDRgtd
+	 v55indsD9kLWJCjXrimttt7x6dSAr3wwJvpaDL7o6/RwDuOsWblMGPKWJxGwL1uFE7
+	 cRqhM1ZuJryFKisaP2qoDn5BlCKIe6diTAMyyAdM1dF0fQGOUK6UKjc9OPxg1xt6hW
+	 dhNxBB9XrpFPQ==
+Received: by pali.im (Postfix)
+	id 981C29DA; Mon, 14 Oct 2024 11:52:15 +0200 (CEST)
+Date: Mon, 14 Oct 2024 11:52:15 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] cifs: Fix parsing native symlinks directory/file
+ type
+Message-ID: <20241014095215.nae6hnwo23tk6yjs@pali>
+References: <20240929185053.10554-1-pali@kernel.org>
+ <20241005140300.19416-1-pali@kernel.org>
+ <20241005140300.19416-5-pali@kernel.org>
+ <CAH2r5mtbK7vRVHs6rosrvGuer52cyfdsyCt1FL3TFg4RXxULuA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: paWG5mel22cDprWMLeYMvIvGHLvFWP90
-X-Proofpoint-ORIG-GUID: paWG5mel22cDprWMLeYMvIvGHLvFWP90
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <CAH2r5mtbK7vRVHs6rosrvGuer52cyfdsyCt1FL3TFg4RXxULuA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-The ASoC CODEC driver masks the IRQs whilst entering and exiting
-system suspend to avoid issues where the IRQ handler can run but PM
-runtime is disabled. However, as the IRQs could also be used from
-other parts of the driver, it would be better to move this handling to
-the MFD level.
+I see what you mean. The last check in smb2_fix_symlink_target_type
+will disallow to use symlinks to "." and ".." created by older linux
+client as it created it as symlink to file, instead of symlink to dir.
 
-Remove the handling from the ASoC driver and move it to the MFD
-driver. Whilst moving also ensure the IRQs are all masked at the device
-level before powering down the device, as per hardware recommendations.
+This is a good point. I can send a new version with dropped last check
+in smb2_fix_symlink_target_type.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/mfd/cs42l43.c      | 62 +++++++++++++++++++++++++++++++++-----
- sound/soc/codecs/cs42l43.c | 42 --------------------------
- 2 files changed, 54 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/mfd/cs42l43.c b/drivers/mfd/cs42l43.c
-index 3b4efb294471..e5f17fc430e4 100644
---- a/drivers/mfd/cs42l43.c
-+++ b/drivers/mfd/cs42l43.c
-@@ -1109,16 +1109,39 @@ EXPORT_SYMBOL_NS_GPL(cs42l43_dev_remove, MFD_CS42L43);
- static int cs42l43_suspend(struct device *dev)
- {
- 	struct cs42l43 *cs42l43 = dev_get_drvdata(dev);
-+	static const struct reg_sequence mask_all[] = {
-+		{ CS42L43_DECIM_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_EQ_MIX_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_ASP_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_PLL_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_SOFT_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_SWIRE_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_MSM_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_ACC_DET_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_I2C_TGT_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_SPI_MSTR_MASK,		0xFFFFFFFF, },
-+		{ CS42L43_SW_TO_SPI_BRIDGE_MASK,	0xFFFFFFFF, },
-+		{ CS42L43_OTP_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_CLASS_D_AMP_MASK,		0xFFFFFFFF, },
-+		{ CS42L43_GPIO_INT_MASK,		0xFFFFFFFF, },
-+		{ CS42L43_ASRC_MASK,			0xFFFFFFFF, },
-+		{ CS42L43_HPOUT_MASK,			0xFFFFFFFF, },
-+	};
- 	int ret;
- 
--	/*
--	 * Don't care about being resumed here, but the driver does want
--	 * force_resume to always trigger an actual resume, so that register
--	 * state for the MCU/GPIOs is returned as soon as possible after system
--	 * resume. force_resume will resume if the reference count is resumed on
--	 * suspend hence the get_noresume.
--	 */
--	pm_runtime_get_noresume(dev);
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(cs42l43->dev, "Failed to resume for suspend: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* The IRQs will be re-enabled on resume by the cache sync */
-+	ret = regmap_multi_reg_write_bypassed(cs42l43->regmap,
-+					      mask_all, ARRAY_SIZE(mask_all));
-+	if (ret) {
-+		dev_err(cs42l43->dev, "Failed to mask IRQs: %d\n", ret);
-+		return ret;
-+	}
- 
- 	ret = pm_runtime_force_suspend(dev);
- 	if (ret) {
-@@ -1133,6 +1156,26 @@ static int cs42l43_suspend(struct device *dev)
- 	if (ret)
- 		return ret;
- 
-+	disable_irq(cs42l43->irq);
-+
-+	return 0;
-+}
-+
-+static int cs42l43_suspend_noirq(struct device *dev)
-+{
-+	struct cs42l43 *cs42l43 = dev_get_drvdata(dev);
-+
-+	enable_irq(cs42l43->irq);
-+
-+	return 0;
-+}
-+
-+static int cs42l43_resume_noirq(struct device *dev)
-+{
-+	struct cs42l43 *cs42l43 = dev_get_drvdata(dev);
-+
-+	disable_irq(cs42l43->irq);
-+
- 	return 0;
- }
- 
-@@ -1145,6 +1188,8 @@ static int cs42l43_resume(struct device *dev)
- 	if (ret)
- 		return ret;
- 
-+	enable_irq(cs42l43->irq);
-+
- 	ret = pm_runtime_force_resume(dev);
- 	if (ret) {
- 		dev_err(cs42l43->dev, "Failed to force resume: %d\n", ret);
-@@ -1212,6 +1257,7 @@ static int cs42l43_runtime_resume(struct device *dev)
- 
- EXPORT_NS_GPL_DEV_PM_OPS(cs42l43_pm_ops, MFD_CS42L43) = {
- 	SYSTEM_SLEEP_PM_OPS(cs42l43_suspend, cs42l43_resume)
-+	NOIRQ_SYSTEM_SLEEP_PM_OPS(cs42l43_suspend_noirq, cs42l43_resume_noirq)
- 	RUNTIME_PM_OPS(cs42l43_runtime_suspend, cs42l43_runtime_resume, NULL)
- };
- 
-diff --git a/sound/soc/codecs/cs42l43.c b/sound/soc/codecs/cs42l43.c
-index d0098b4558b5..3ede0e3110f3 100644
---- a/sound/soc/codecs/cs42l43.c
-+++ b/sound/soc/codecs/cs42l43.c
-@@ -2402,49 +2402,7 @@ static int cs42l43_codec_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
--static int cs42l43_codec_suspend(struct device *dev)
--{
--	struct cs42l43_codec *priv = dev_get_drvdata(dev);
--	struct cs42l43 *cs42l43 = priv->core;
--
--	disable_irq(cs42l43->irq);
--
--	return 0;
--}
--
--static int cs42l43_codec_suspend_noirq(struct device *dev)
--{
--	struct cs42l43_codec *priv = dev_get_drvdata(dev);
--	struct cs42l43 *cs42l43 = priv->core;
--
--	enable_irq(cs42l43->irq);
--
--	return 0;
--}
--
--static int cs42l43_codec_resume(struct device *dev)
--{
--	struct cs42l43_codec *priv = dev_get_drvdata(dev);
--	struct cs42l43 *cs42l43 = priv->core;
--
--	enable_irq(cs42l43->irq);
--
--	return 0;
--}
--
--static int cs42l43_codec_resume_noirq(struct device *dev)
--{
--	struct cs42l43_codec *priv = dev_get_drvdata(dev);
--	struct cs42l43 *cs42l43 = priv->core;
--
--	disable_irq(cs42l43->irq);
--
--	return 0;
--}
--
- static const struct dev_pm_ops cs42l43_codec_pm_ops = {
--	SYSTEM_SLEEP_PM_OPS(cs42l43_codec_suspend, cs42l43_codec_resume)
--	NOIRQ_SYSTEM_SLEEP_PM_OPS(cs42l43_codec_suspend_noirq, cs42l43_codec_resume_noirq)
- 	RUNTIME_PM_OPS(NULL, cs42l43_codec_runtime_resume, NULL)
- };
- 
--- 
-2.39.5
-
+On Sunday 13 October 2024 12:56:23 Steve French wrote:
+> Would this break any pure Linux client example, mounted to Windows,
+> where previously the Linux client created all symlinks as file
+> symlinks?  e.g. If there were two Linux clients writing to the share,
+> one that included this fix and one that did not.
+> 
+> On Sat, Oct 5, 2024 at 9:03 AM Pali Rohár <pali@kernel.org> wrote:
+> >
+> > As SMB protocol distinguish between symlink to directory and symlink to
+> > file, add some mechanism to disallow resolving incompatible types.
+> >
+> > When SMB symlink is of the directory type, ensure that its target path ends
+> > with slash. This forces Linux to not allow resolving such symlink to file.
+> >
+> > And when SMB symlink is of the file type and its target path ends with
+> > slash then returns an error as such symlink is unresolvable. Such symlink
+> > always points to invalid location as file cannot end with slash.
+> >
+> > As POSIX server does not distinguish between symlinks to file and symlink
+> > directory, do not apply this change for symlinks from POSIX SMB server. For
+> > POSIX SMB servers, this change does nothing.
+> >
+> > This mimics Windows behavior of native SMB symlinks.
+> >
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > ---
+> >  fs/smb/client/inode.c     |  5 ++++
+> >  fs/smb/client/smb2file.c  | 55 +++++++++++++++++++++++++++++++++++++++
+> >  fs/smb/client/smb2inode.c |  4 +++
+> >  fs/smb/client/smb2proto.h |  1 +
+> >  4 files changed, 65 insertions(+)
+> >
+> > diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+> > index 0fe54b2d2561..aa38a3935f8f 100644
+> > --- a/fs/smb/client/inode.c
+> > +++ b/fs/smb/client/inode.c
+> > @@ -1110,6 +1110,11 @@ static int reparse_info_to_fattr(struct cifs_open_info_data *data,
+> >                                                               full_path,
+> >                                                               iov, data);
+> >                 }
+> > +
+> > +               if (data->reparse.tag == IO_REPARSE_TAG_SYMLINK && !rc) {
+> > +                       bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
+> > +                       rc = smb2_fix_symlink_target_type(&data->symlink_target, directory, cifs_sb);
+> > +               }
+> >                 break;
+> >         }
+> >
+> > diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
+> > index dc52995f5591..149449d9c1c0 100644
+> > --- a/fs/smb/client/smb2file.c
+> > +++ b/fs/smb/client/smb2file.c
+> > @@ -63,6 +63,56 @@ static struct smb2_symlink_err_rsp *symlink_data(const struct kvec *iov)
+> >         return sym;
+> >  }
+> >
+> > +int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb)
+> > +{
+> > +       char *buf;
+> > +       int len;
+> > +
+> > +       /*
+> > +        * POSIX server does not distinguish between symlinks to file and
+> > +        * symlink directory. So nothing is needed to fix on the client side.
+> > +        */
+> > +       if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS)
+> > +               return 0;
+> > +
+> > +       len = strlen(*target);
+> > +       if (!len)
+> > +               return -EIO;
+> > +
+> > +       /*
+> > +        * If this is directory symlink and it does not have trailing slash then
+> > +        * append it. Trailing slash simulates Windows/SMB behavior which do not
+> > +        * allow resolving directory symlink to file.
+> > +        */
+> > +       if (directory && (*target)[len-1] != '/') {
+> > +               buf = kzalloc(len+2, GFP_KERNEL);
+> > +               if (!buf)
+> > +                       return -ENOMEM;
+> > +               memcpy(buf, *target, len);
+> > +               buf[len] = '/';
+> > +               kfree(*target);
+> > +               *target = buf;
+> > +       }
+> > +
+> > +       /*
+> > +        * If this is a symlink which points to file name with trailing slash,
+> > +        * or to file named "." or file named ".." then this symlink cannot be
+> > +        * resolved on Linux because Linux does not allow files with such names.
+> > +        * So return an error to prevent resolving this file type symlink to
+> > +        * directory, as it do not point to directory at all.
+> > +        */
+> > +       if (!directory) {
+> > +               const char *basename = kbasename(*target);
+> > +               int basename_len = strlen(basename);
+> > +               if (basename_len == 0 || /* symname ends with slash */
+> > +                   (basename_len == 1 && basename[0] == '.') || /* last component is "." */
+> > +                   (basename_len == 2 && basename[0] == '.' && basename[1] == '.')) /* or ".." */
+> > +                       return -EIO;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> >  int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb, const struct kvec *iov,
+> >                                 const char *full_path, char **path)
+> >  {
+> > @@ -133,6 +183,11 @@ int smb2_open_file(const unsigned int xid, struct cifs_open_parms *oparms, __u32
+> >                                                NULL, NULL, NULL);
+> >                                 oparms->create_options &= ~OPEN_REPARSE_POINT;
+> >                         }
+> > +                       if (!rc) {
+> > +                               bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
+> > +                               rc = smb2_fix_symlink_target_type(&data->symlink_target,
+> > +                                                                 directory, oparms->cifs_sb);
+> > +                       }
+> >                 }
+> >         }
+> >
+> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> > index 9a28a30ec1a3..06bb6f7fbf0f 100644
+> > --- a/fs/smb/client/smb2inode.c
+> > +++ b/fs/smb/client/smb2inode.c
+> > @@ -960,6 +960,10 @@ int smb2_query_path_info(const unsigned int xid,
+> >                 rc = smb2_compound_op(xid, tcon, cifs_sb, full_path,
+> >                                       &oparms, in_iov, cmds, num_cmds,
+> >                                       cfile, NULL, NULL, NULL);
+> > +               if (data->reparse.tag == IO_REPARSE_TAG_SYMLINK && !rc) {
+> > +                       bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
+> > +                       rc = smb2_fix_symlink_target_type(&data->symlink_target, directory, cifs_sb);
+> > +               }
+> >                 break;
+> >         case -EREMOTE:
+> >                 break;
+> > diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
+> > index aa01ae234732..1828b825c7d3 100644
+> > --- a/fs/smb/client/smb2proto.h
+> > +++ b/fs/smb/client/smb2proto.h
+> > @@ -113,6 +113,7 @@ extern int smb3_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
+> >                           struct cifs_sb_info *cifs_sb,
+> >                           const unsigned char *path, char *pbuf,
+> >                           unsigned int *pbytes_read);
+> > +int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb);
+> >  int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
+> >                               bool unicode, bool relative,
+> >                               const char *full_path,
+> > --
+> > 2.20.1
+> >
+> >
+> 
+> 
+> -- 
+> Thanks,
+> 
+> Steve
 
