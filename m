@@ -1,121 +1,89 @@
-Return-Path: <linux-kernel+bounces-364063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0912699CAB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF49799CABA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86E351F2121E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:51:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF0DD1C21594
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E671A7275;
-	Mon, 14 Oct 2024 12:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyh6bQ8W"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFAC1A76C8;
+	Mon, 14 Oct 2024 12:52:56 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D04D1E4A6
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F8D16FF25
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728910281; cv=none; b=et+ltWrilsiJJ0T+29OBYk5sYPCdhQL9z24C3pU4F77eiR9einVZ2iw1bIE0u9OirK073XHmsFpQzy0hgaotSu03RqjaUdyA9P8fyi7rheMd63IGfNEv8ydYbz4/0c66Jb6FH6elTFgeBXlbLHe199j9WvsHGxje8AsXrLS3I/E=
+	t=1728910376; cv=none; b=lJR1nrWZXh0HlOnxNImcute0qpuSCbMW6JyqjFxEOaqu2lKa73ceBUvWrqlpPX56M7pzS90L61tX5yZ60qDL+NoYRBbY+wQ0VZyUT31k+olT9NePrDzJoLo+6MFLXhTNNnfyjKASFZFq4EnhMf1mvOzeLYoZuf1kGvIBRE6Dz88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728910281; c=relaxed/simple;
-	bh=gHhsAOC3U2cihF/qlkuCA+W4SjKaaladfJPd4frAlhM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uj57pEkFewdtu4NYkNZJwMt/B1SwAzkqJYztTifRZEPaFKdP9tXWtArfbFZy9gnIoVF9tjtmPOVP/7DmIiFIM1wSXC+A959o5IxLqAbBYiJypDca6YuUJNJIhKMLrBNh1XbYQHjL4YZw9eNZipE69XlFVSSTR/Qg9VrOwbNZQAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kyh6bQ8W; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4311bb9d4beso26940015e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728910279; x=1729515079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LTj+KrwAbzaTCdU6CLaQDg0rSRCy4G4QoJfQLN+pOnw=;
-        b=kyh6bQ8Wp45U8AKFvFB5+eQhYzsiypnAnfF//ZOEQxDi5T9BaLzaSMRoDXlJ21sY2J
-         GB1Now5RIKAnO8RmOpSOcfIAOCJAkpjLTfFcD93rB5WIfjMB7a1hIwhnypVnPFo/F9S2
-         e3A0EDS3IvKegEc9Avzj7KgLW8chkUJaJc3dy0s9p82pMXFCVjjJkXsimiBg1MpuSR5C
-         Z5K0WlQC/YLFN9pvXWsj0/VAKY/j7K0V9vkr127aM4HY78776awEXtvz1z+QfVCID4/D
-         LG94ITprW5XaJ0dsAQ1xBiR0FWiouXo1o7TMcEelBMcUK7jenRKPLkvPQu36UhXNClLm
-         3nuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728910279; x=1729515079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LTj+KrwAbzaTCdU6CLaQDg0rSRCy4G4QoJfQLN+pOnw=;
-        b=ApYme07t3uc7/2LVch/RYKPnECrITImoE3YSRTPMPzaYZmy1VMDMDFihuxJiL0d22T
-         IEUJgI3YkpnFcsGnvYHoo3+XbFuY+xIKVY2ahsCnLKgQWbwQNhSRwj2sggWSaZFmfDlr
-         xOaTVQmfBqG26jQ4Qzy0Yur2MZXedoRHiThAwvs8YcEBPm2zaIrhMd69sI5od8EbPfnY
-         bUPGUMT3r4KLARInDgdI2h9VVek+AhZwXWCPLFVunLyZkeimSK2bsy54MiOv/vKECFT0
-         HUZLNYl37Z65e3tzdB5itXKB+uNIEgEH7a2aw6SRvreR+T4+xVICVLUqA0fK5wsx/s9+
-         y6bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVei+mHduc4zskLTnQbh5PY+5V2hifHs5/GwC/4OT3UjRPuFAMeFq5trwnyL+73pRcIcqOLodpzJRPaysY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIXEGB6TJ9YTrQsxNzITKDmL9HqSjZrmYPWFOgd5xUY0FHmoQo
-	0Llz0vT/7EYBmpexzvRjMd5Sf63QEJVJTff2gg8KK3iYOa7VsIc5BwMnUHsJ5arN/Hht/g8Wh6X
-	kshK0pGYG/+UgIGy1qxsyDeN9LGw=
-X-Google-Smtp-Source: AGHT+IEsZHLFXBrY9HEdog2g0szs2BzXi3YXDG4qk4mTBIdEbLat39nT4Dmp3v+TSVAyGbAIzkG5WUbb1+4D/DbyFss=
-X-Received: by 2002:a05:600c:8714:b0:430:57f2:baef with SMTP id
- 5b1f17b1804b1-4312561a03amr80486185e9.32.1728910278570; Mon, 14 Oct 2024
- 05:51:18 -0700 (PDT)
+	s=arc-20240116; t=1728910376; c=relaxed/simple;
+	bh=xW9oEo5DehtY5VokJce8Mi0GTqMebgcZ+RXMVa3dgxA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A6oEGt1VX9bHm+EtzEJksviJYnJ0k54XB7TKH/LRzYJXRG0ebNUYvkkjer4HImwVHlY6rJJ1jy+TQCPSWFvtdSjzjF2xBemu6oWFgSKXZvc7pWgTfBEj8kgw5sO0PMuJPyvnDNrWCnFqg4QKIUvDAM0mnssSaMAzg3u6L+YkCq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XRxtD4dsCz10N3c;
+	Mon, 14 Oct 2024 20:51:00 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id E06BF180106;
+	Mon, 14 Oct 2024 20:52:50 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 14 Oct
+ 2024 20:52:50 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<christian.koenig@amd.com>, <ray.huang@amd.com>,
+	<dmitry.baryshkov@linaro.org>, <dave.stevenson@raspberrypi.com>,
+	<mcanal@igalia.com>, <ruanjinjie@huawei.com>, <quic_jjohnson@quicinc.com>,
+	<skhan@linuxfoundation.org>, <davidgow@google.com>,
+	<karolina.stolarek@intel.com>, <Arunpravin.PaneerSelvam@amd.com>,
+	<thomas.hellstrom@linux.intel.com>, <asomalap@amd.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/4] drm: Fix some memory leaks
+Date: Mon, 14 Oct 2024 20:52:00 +0800
+Message-ID: <20241014125204.1294934-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241012225524.117871-1-andrey.konovalov@linux.dev> <CACT4Y+YS4UTMwk_j+Fjah3bCQd0zFcr2XqsUJ5K8HC991Soyhg@mail.gmail.com>
-In-Reply-To: <CACT4Y+YS4UTMwk_j+Fjah3bCQd0zFcr2XqsUJ5K8HC991Soyhg@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Mon, 14 Oct 2024 14:51:07 +0200
-Message-ID: <CA+fCnZfkurMxTyf0ivF8uffeO+S0piqFuZ975SSxmjr_V2OrHg@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: kasan, kcov: add bugzilla links
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: andrey.konovalov@linux.dev, Andrew Morton <akpm@linux-foundation.org>, 
-	Marco Elver <elver@google.com>, Alexander Potapenko <glider@google.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Mon, Oct 14, 2024 at 10:08=E2=80=AFAM Dmitry Vyukov <dvyukov@google.com>=
- wrote:
->
-> On Sun, 13 Oct 2024 at 00:55, <andrey.konovalov@linux.dev> wrote:
-> >
-> > From: Andrey Konovalov <andreyknvl@gmail.com>
-> >
-> > Add links to the Bugzilla component that's used to track KASAN and KCOV
-> > issues.
-> >
-> > Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
-> > ---
-> >  MAINTAINERS | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 7ad507f49324a..c9b6fc55f84a6 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -12242,6 +12242,7 @@ R:      Dmitry Vyukov <dvyukov@google.com>
-> >  R:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-> >  L:     kasan-dev@googlegroups.com
-> >  S:     Maintained
-> > +B:     https://bugzilla.kernel.org/buglist.cgi?component=3DSanitizers&=
-product=3DMemory%20Management
->
-> Do we want a link to buglist.cgi, or to enter_bug.cgi, or both? =F0=9F=A4=
-=94
+Fix some memory leaks in drm.
 
-I think buglist.cgi makes more sense - people can check the list of
-existing bugs before filing a new one. Finding a link to the right
-enter_bug.cgi page once you know the component name should not be hard
-(but IMO Bugzilla should just provide that link when viewing bugs for
-a component).
+Changes in v2:
+- Fix it with new introduced helper instead of drm_mode_destroy().
+- Update the commit message.
+- Add Reviewed-by.
+
+Jinjie Ruan (4):
+  drm/tests: helpers: Add helper for drm_display_mode_from_cea_vic()
+  drm/connector: hdmi: Fix memory leak in
+    drm_display_mode_from_cea_vic()
+  drm/ttm/tests: Fix memory leak in ttm_tt_simple_create()
+  drm/tests: hdmi: Fix memory leaks in drm_display_mode_from_cea_vic()
+
+ drivers/gpu/drm/tests/drm_connector_test.c    | 24 +++++------
+ .../drm/tests/drm_hdmi_state_helper_test.c    |  8 ++--
+ drivers/gpu/drm/tests/drm_kunit_helpers.c     | 40 +++++++++++++++++++
+ drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c |  1 +
+ include/drm/drm_kunit_helpers.h               |  6 +++
+ 5 files changed, 63 insertions(+), 16 deletions(-)
+
+-- 
+2.34.1
+
 
