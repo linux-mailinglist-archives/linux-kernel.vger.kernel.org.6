@@ -1,147 +1,135 @@
-Return-Path: <linux-kernel+bounces-364500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9937399D562
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:15:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FC299D565
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5941328534E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:15:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAD291F24686
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7B41C2DB2;
-	Mon, 14 Oct 2024 17:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26801C0DD6;
+	Mon, 14 Oct 2024 17:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OH/sT1rM"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PX/geZ6o";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lV9OJCJq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7A61C3025
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65141AB507;
+	Mon, 14 Oct 2024 17:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728926103; cv=none; b=JD0EwfghehpqaDX02C3q11aOHp/qaTu1zVvkBarsdU1ItcFgmkUvyUH+Y3GjoAPc2DpUj7iOJXuIwt+7SwEft6K/U0IL0cjfhH/A1TggjdTGLrTdNwCxTockmUzK6CcLaVGwk4AgkvOKT5EN+PShwHGMDPaNx4lt1aplbHK1gLg=
+	t=1728926130; cv=none; b=qyL2AuxtpRm5YP5qGlvXQhlH2rj/aQcOw27/Keb5Vec/DRYeb1+qf+rx5zs66Hr9VW39AFYkPIhwap2I9PPGCKgkD8GEUklGHPRjaCQmRFardgUJ/bRNYKdmVYGGauIJawXyb9YjSvBokj6qFlXdcx6kFYk3NTH8oOxsUEn5rX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728926103; c=relaxed/simple;
-	bh=9tMAZ4/lLhW25KA/UTyPMo0N+dbxrLMb53tQL5+tA7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fuo2BEob0sPf62NtATsNZpiCn44IrRx6Hly8RJIsCp7EpvuU0Nq+mIoZHJ/diy10z9hFqEgK0RWikY3SG018Q8a486v3DLrp+lH3HWR1cR7oD7qcq5G11TXy46YCcGrWJ63E1Yuf1kCbrG8O2QZch9YRrNmIfWhvaFo7rRpgwKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OH/sT1rM; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea78037b7eso1480384a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728926101; x=1729530901; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=aYZBceN6A5bX1UTNgQ19ERdjfVEaNHXWPg8Ji2U1Otk=;
-        b=OH/sT1rM8+7rkzCdnxTnIuX1HGw5JIq6bwuMwls1rDd5ksG5hRo/fSvUC8SXy1840S
-         +jLunF3bs4LJT+1QoUgPJ9JF5nOx32ceoOb6gEUO3a3XZVFZSk/AB/uV1Z13dl9Oy0Od
-         2Rn4IP39HbGDLTP5v851+u5J5bb72OVbEMtBw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728926101; x=1729530901;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aYZBceN6A5bX1UTNgQ19ERdjfVEaNHXWPg8Ji2U1Otk=;
-        b=Z2Dkd1D9sk9kqVybtc+Z9yMu2j6cePU19EoGQ1Rvdje2ZQwETrdohUe7N4fXSqZ1oC
-         L3SSt2gs9gaGNPsdOpJiS4BQ7K6zx9Xfoz1sVbj5uwS7vGc+CMGr2W+C3IlFMezzWpRa
-         EwgOc2surqynH/kQPaEzwmbuFOLlnrlbwTYvBjaNg87ZG9xOqVqxMOG6KhlSqTlYZQcQ
-         4xWRuIENg4poih7wEQjTznJeA2m7AfOt+2VdOJFEoUx57vtn78OcVzinMpb0TqoWB7xF
-         /Y7JiHKu70cp8Ty2c+4VrF4Pc1QQAgY+y51fMJ5CtfbugyPZuVm4XvmKWyXsHEREgjRd
-         BUrw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7wKuUtWbZStAi+poi9Wg64rMZGGFWyJzXIHYPjENe/vZsjhKtlDRwPptaNx7JzuxINUIxmW30P2ZNVmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo70lYMsD5/LT/5+tCPDoOIUJl6gwhzWMjvfsXBD9azy2sta1b
-	H3hx7HnLJI2CvwM2dIpEA73eCJGsm63dMu83ar3EiDcVh7suDNG+/l7QdUdHFw==
-X-Google-Smtp-Source: AGHT+IE+rE3Mgc2JS0CQF/Hq3A1u5IFn9LZ6UjMRKkUWSfkrpyObvnNb7UR1JkMFuTayeGTmi8wtqQ==
-X-Received: by 2002:a17:902:f745:b0:20c:aed1:813a with SMTP id d9443c01a7336-20caed18554mr147125745ad.14.1728926101618;
-        Mon, 14 Oct 2024 10:15:01 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c0e7666sm68491595ad.124.2024.10.14.10.15.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 10:15:00 -0700 (PDT)
-Message-ID: <924f6a1b-17af-4dc8-80e3-7c7df687131a@broadcom.com>
-Date: Mon, 14 Oct 2024 10:14:59 -0700
+	s=arc-20240116; t=1728926130; c=relaxed/simple;
+	bh=n5Kbeynb9dYQqAYNARe8OK4pIiXFkQVB7iVuUzmt4lA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=dwOoIsvcT7Vjs1BH6lvG110C3+B821jVbmveKU5g3pmmzkt3mSwzgmXXaQHtLyv+qh1if5Mtt+z76+CSbJPW1/869ylzxVIwyS0waanpKcpE2t41c00l4zT6tQm2R1EkK/sA83IXvJrKU7oRMxDuFf4j3++GZYIfFVsxayFfBk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PX/geZ6o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lV9OJCJq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 14 Oct 2024 17:15:25 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728926126;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OjGR580tfrYCHIjnzfz5A20mun0pLBD6siz0jwVGOYw=;
+	b=PX/geZ6oCLoM7/6+6BNJO0kXM35KUPHlBq791e2SCC+kzHezNQZ7WsiRVOuLiRw3E4uJ21
+	iUq6SvppO6n+1gAZHYB3h2/TXB2UlbdnTFZi3oc6+TZidq1VF1lpOTIChPCNApDZGhdCe/
+	uw9puIEHhG6twKDA0+tyztx9gOGDJ/99nSZaKYH3bQDtZDkRFMpBGNSqDxsBCmd79/0/F/
+	ORRbfmX0b+mS6tPZyNuQZ0JJ6g/D1xgKPGroCAuPRoftvjHPnzBLfutUcqEqBha5fEACPv
+	N7+KEr54ji45KyfMI2L5qQ1M5JGwGLKY6zuHAHrNkPctIRda6fCGvFFZJhUVqA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728926126;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OjGR580tfrYCHIjnzfz5A20mun0pLBD6siz0jwVGOYw=;
+	b=lV9OJCJqUe3Dd0aLtqZbgJMVfKsMcD35ZtasObDTsJtJPRb2Vhf5Nk1URp1iPIFZZAmSyL
+	lZ4bYsFJQJuR4UBQ==
+From: "tip-bot2 for Christophe JAILLET" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cache] x86/resctrl: Slightly clean-up mbm_config_show()
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3Cb2ebc809c8b6c6440d17b12ccf7c2d29aaafd488=2E17208?=
+ =?utf-8?q?68538=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
+References: =?utf-8?q?=3Cb2ebc809c8b6c6440d17b12ccf7c2d29aaafd488=2E172086?=
+ =?utf-8?q?8538=2Egit=2Echristophe=2Ejaillet=40wanadoo=2Efr=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: bcmasp: fix potential memory leak in
- bcmasp_xmit()
-To: Wang Hai <wanghai38@huawei.com>, justin.chen@broadcom.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, zhangxiaoxu5@huawei.com
-Cc: bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241014145901.48940-1-wanghai38@huawei.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241014145901.48940-1-wanghai38@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <172892612576.1442.8509245466738133480.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 10/14/24 07:59, Wang Hai wrote:
-> The bcmasp_xmit() returns NETDEV_TX_OK without freeing skb
-> in case of mapping fails, add dev_kfree_skb() to fix it.
-> 
-> Fixes: 490cb412007d ("net: bcmasp: Add support for ASP2.0 Ethernet controller")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
-> ---
->   drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c b/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-> index 82768b0e9026..9ea16ef4139d 100644
-> --- a/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-> +++ b/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-> @@ -322,6 +322,7 @@ static netdev_tx_t bcmasp_xmit(struct sk_buff *skb, struct net_device *dev)
->   			}
->   			/* Rewind so we do not have a hole */
->   			spb_index = intf->tx_spb_index;
-> +			dev_kfree_skb(skb);
+The following commit has been merged into the x86/cache branch of tip:
 
-Similar reasoning to the change proposed to bcmsysport.c, we already 
-have a private counter tracking DMA mapping errors, therefore I would 
-consider using dev_consume_skb_any() here.
--- 
-Florian
+Commit-ID:     29eaa79583671f1e1b468760d505ef837317ab15
+Gitweb:        https://git.kernel.org/tip/29eaa79583671f1e1b468760d505ef837317ab15
+Author:        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+AuthorDate:    Sat, 13 Jul 2024 13:02:32 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 14 Oct 2024 18:58:24 +02:00
+
+x86/resctrl: Slightly clean-up mbm_config_show()
+
+'mon_info' is already zeroed in the list_for_each_entry() loop below.  There
+is no need to explicitly initialize it here. It just wastes some space and
+cycles.
+
+Remove this un-needed code.
+
+On a x86_64, with allmodconfig:
+
+  Before:
+  ======
+     text	   data	    bss	    dec	    hex	filename
+    74967	   5103	   1880	  81950	  1401e	arch/x86/kernel/cpu/resctrl/rdtgroup.o
+
+  After:
+  =====
+     text	   data	    bss	    dec	    hex	filename
+    74903	   5103	   1880	  81886	  13fde	arch/x86/kernel/cpu/resctrl/rdtgroup.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Link: https://lore.kernel.org/r/b2ebc809c8b6c6440d17b12ccf7c2d29aaafd488.1720868538.git.christophe.jaillet@wanadoo.fr
+---
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index d7163b7..d906a1c 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1596,7 +1596,7 @@ static void mondata_config_read(struct rdt_mon_domain *d, struct mon_config_info
+ 
+ static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid)
+ {
+-	struct mon_config_info mon_info = {0};
++	struct mon_config_info mon_info;
+ 	struct rdt_mon_domain *dom;
+ 	bool sep = false;
+ 
 
