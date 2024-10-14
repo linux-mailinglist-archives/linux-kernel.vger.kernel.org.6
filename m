@@ -1,194 +1,148 @@
-Return-Path: <linux-kernel+bounces-364046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9105699CA76
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:44:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF1E99CA7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EA21C223D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A19351C22908
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FF51A7270;
-	Mon, 14 Oct 2024 12:44:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7632A1A76AF;
+	Mon, 14 Oct 2024 12:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gThvu3nu"
+Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2941A7249
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF5B15A87C;
+	Mon, 14 Oct 2024 12:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728909844; cv=none; b=m0VorcH8Gk7cv0CUxCEC/Pqa2Vat4EdM4D8cvvA5HsMFt8qiEhR0vDErwj3VWc2BkXrX3ptatP9yqVZ8QBTuevnD6P0I9dZFh86+X1GcYEG2apSNG1T+iwMabTRNYMPGn94rRQjH/LOzSppfxEEhRBrvHxMYqQTwKIVlBrp4vkQ=
+	t=1728909869; cv=none; b=A8fSfR5lDp6R7BOOxCGJHTJHb0eucGJ7nBMldo5duMYI4ldhVhcYiDEDJ1O/34qjlt/g4SQxi+c4DtAyn60xedE5PD8XuOWWVeQ3/XyDDsgxDVXH/Ik4MxPwtH6zoydC+2NC/eXfX0QcjoRLb6pKFP7lhi4e0tzeQAjE5mm5jCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728909844; c=relaxed/simple;
-	bh=Nrm6CobH2PcPQoFxlIHXCOXyowwDYXzhDflpLcLtC3s=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=Nb4WV5zFGPK5OMd+PBnXqlSQ+KsHM//XjfEksrYwYh8JeS3fS5e+DN69fZ2LRakAZM3Xd+ovmg4eBQTPq1SQrNSYjyGTbBobKWLW2LX2OWnQLr9BJxJGOrbTpgTmvq84VzBeBAmypvGWtaBnoqrgJ0XXXybiwPGghI6q/9Ff9ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPV6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	(Exim 4.92)
-	(envelope-from <s.kerkmann@pengutronix.de>)
-	id 1t0KQH-0005bm-OI; Mon, 14 Oct 2024 14:43:41 +0200
-Message-ID: <c2cdfba1-afcc-4a77-8890-7da49c4b73c2@pengutronix.de>
-Date: Mon, 14 Oct 2024 14:43:39 +0200
+	s=arc-20240116; t=1728909869; c=relaxed/simple;
+	bh=OTNra8UpT1H9QV0NcWfsZ6RoWqvXPbMa/Wpns9ASq7g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PEymP/GEXabaVeP6guYLI2yTMBER6j4+pWLN0v2xnhhQIooa8BsJkcYAXyCX6Te9b/H/P2Yu3mVsOdZLrHwZtF+UgPtZmt2Kl2zcXllszOqywt+VjeAu3pPZnOLkZzBiJK7/pQ0+UAsKWUH4lmvSLVnQsnYs2zglwk+3EYLuFYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gThvu3nu; arc=none smtp.client-ip=209.85.128.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-6e214c3d045so30812447b3.0;
+        Mon, 14 Oct 2024 05:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728909867; x=1729514667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EKaKf6K0lMfEPAUX3tm6OhH+0miEV1nfLfpCNX5G+vI=;
+        b=gThvu3nuAevhNMcfc1xv2IeqSgQ6axxZZZoQotwH7PZx3Qq8CNhnQt9dogZtMXPQT9
+         PVM7swBwqR244ssK0euahsRV7e0ufDKiSaMqxwwuR9wQMgBNfUtNpOPWHwMFrtVAFK3j
+         AMX2vNitB9Lx6WZQqYTuBO7NA2EPEAyNzzbeih0z3npLRviqqGd4ZAS9i43xt7VhMbSS
+         a/LL9m+yMbqi9IAKgwsqtibWSH1u2scmWhcjRJiBEEws8j82xT7UU66JTnjMtdkICyy2
+         Q1fRimWjN+PmUQPxaR+jDdQ48lt62ZQF/Eg4iuV4HUtK+6vgKbv0XDf5E90lFcwJGJFJ
+         OfLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728909867; x=1729514667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EKaKf6K0lMfEPAUX3tm6OhH+0miEV1nfLfpCNX5G+vI=;
+        b=sjiUgKyEzktugZzEG5pDMH4cf3Yj2ry6SJX8zWjq7hkHjdd+YAhm4p6gDdRDb/m0XQ
+         Q/9g904lyw24WiG8EE2etUC4wGl735L+K0TN8tKE89Ci0ftEGFxrSeG8yEXEAxDcYSVx
+         O3k/gaSv+RYDpbrcbIryncnEiv4rEMFurbVQu2CMsd/JxRnqNW0sOVp/oo/lIblDUZ0O
+         7RwvANMFz1Va8gf2dT3PBJYq9JdYx4gDVtQu8SuNUmWCs6P42uAIocmIIS0+KJtfQpnQ
+         HZVEAhylxDN3sQ8o1kAvneYor2VtHy5Apon07sjSLJ6GHynsayD4envKcCM/5Ofgou7T
+         SlOA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4MjdNjrlU1F5Lo5Mo5YtjWqibjoyYb66grpwauVAbbCkfaIh0OFDZtSwxONqxxYePOtvGC8RYm2h6WGI=@vger.kernel.org, AJvYcCULzbuRPgVesFfIWiESAsbmwsyyL6MQcjl0jpG2jQ/1r1N5n5Z5n+TeOwh5GDDo6WvspUQhN9bm@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH180tdM7AsLN0f+4/znRoI99m52qLt2nAKg21hyLPM8QN0Dwn
+	6Lj4lRQKRppT12pZtJuJqNYXC0XlcDJkmGbN2Ilja58jLRLnsuhCNScdfZcKyUtPaw/qUY8lhoa
+	NEkkSV5huq72HCM/poU3uYWom7yA=
+X-Google-Smtp-Source: AGHT+IGkMh8YvcEzFZwNeJ8uqlNWdzrx1eQt4TmWoZ7Jr1bL4vc2QgvjpdK+OE/xElJ5xWW7qVPd63Eg9hU2ljYdnI0=
+X-Received: by 2002:a05:690c:23c1:b0:6d3:be51:6d03 with SMTP id
+ 00721157ae682-6e364349001mr60262517b3.23.1728909867379; Mon, 14 Oct 2024
+ 05:44:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US, de-DE
-From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
-To: regressions@lists.linux.dev
-Cc: Dhruva Gole <d-gole@ti.com>, Yoshitaka Ikeda <ikeda@nskint.co.jp>,
- Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@pengutronix.de
-Subject: [REGRESSION] spi: cadence-quadspi: STIG mode results in timeouts for
- Micron MT25QL01 flash
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241009022830.83949-1-dongml2@chinatelecom.cn>
+ <20241009022830.83949-7-dongml2@chinatelecom.cn> <Zwuxwavki0lL01Ox@shredder.mtl.com>
+In-Reply-To: <Zwuxwavki0lL01Ox@shredder.mtl.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Mon, 14 Oct 2024 20:44:27 +0800
+Message-ID: <CADxym3b5ONVmiG8WhSsGs0zVGKwu6S=E759EsgiodZOXQ_y43g@mail.gmail.com>
+Subject: Re: [PATCH net-next v7 06/12] net: vxlan: make vxlan_snoop() return
+ drop reasons
+To: Ido Schimmel <idosch@nvidia.com>
+Cc: kuba@kernel.org, aleksander.lobakin@intel.com, horms@kernel.org, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
+	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
+	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, Oct 13, 2024 at 7:41=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> wr=
+ote:
+>
+> On Wed, Oct 09, 2024 at 10:28:24AM +0800, Menglong Dong wrote:
+> > Change the return type of vxlan_snoop() from bool to enum
+> > skb_drop_reason. In this commit, two drop reasons are introduced:
+> >
+> >   SKB_DROP_REASON_MAC_INVALID_SOURCE
+> >   SKB_DROP_REASON_VXLAN_ENTRY_EXISTS
+> >
+> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > Reviewed-by: Simon Horman <horms@kernel.org>
+>
+> Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+>
+> IMO the second reason is quite obscure and unlikely to be very useful,
+> but time will tell. The closest thing in the bridge driver is 802.1X /
+> MAB support (see "locked" and "mab" bridge link attributes in "man
+> bridge"), but I don't think it's close enough to allow us making this
+> reason more generic.
 
-I have run into the same regression when probing a Micron MT25QL01 SPI-NOR flash
-on a Intel CycloneV platform (socfpga) as Yoshitaka Ikeda[1]. The regression
-manifests in read timeouts. Bisecting the issue tracked it down to commit
-"d403fb6e76bf8 spi: cadence-quadspi: use STIG mode for small reads". Reverting
-the commit resolves the issue on v6.12-rc3. There are no custom patches applied,
-except for the debugging output mentioned in the linked thread.
+Yeah, the concept of the second reason is a little obscure to
+the users.
 
-The good case is as follows:
+>
+> [...]
+>
+> > diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_c=
+ore.c
+> > index 34b44755f663..1a81a3957327 100644
+> > --- a/drivers/net/vxlan/vxlan_core.c
+> > +++ b/drivers/net/vxlan/vxlan_core.c
+> > @@ -1437,9 +1437,10 @@ static int vxlan_fdb_get(struct sk_buff *skb,
+> >   * and Tunnel endpoint.
+> >   * Return true if packet is bogus and should be dropped.
+>
+> The last line is no longer correct so please remove it in a follow up
+> patch (unless you need another version).
+>
 
-```
-[    1.063171] **********spi_mem_op dump**************
-[    1.063183] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-[    1.068093] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x9F
-[    1.073837] data: nbytes:0x6 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    1.079823] ***************************************
-[    1.086068] **********spi_mem_op dump**************
-[    1.090931] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
-[    1.095815] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-[    1.101543] data: nbytes:0x10 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    1.107547] ***************************************
-[    1.113835] **********spi_mem_op dump**************
-[    1.118695] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x10
-[    1.123573] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-[    1.129395] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    1.135392] ***************************************
-[    1.141592] **********spi_mem_op dump**************
-[    1.146471] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
-[    1.151335] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-[    1.157072] data: nbytes:0x88 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    1.163058] ***************************************
-[    1.169341] **********spi_mem_op dump**************
-[    1.174219] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x30
-[    1.179082] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-[    1.184904] data: nbytes:0x40 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    1.190890] ***************************************
-[    1.197183] **********spi_mem_op dump**************
-[    1.202045] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x80
-[    1.206925] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-[    1.212740] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    1.218736] ***************************************
-[    1.224916] **********spi_mem_op dump**************
-[    1.229776] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-[    1.234649] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x6
-[    1.240376] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
-[    1.246283] ***************************************
-[    1.252443] **********spi_mem_op dump**************
-[    1.257314] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-[    1.262176] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0xB7
-[    1.267917] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
-[    1.273914] ***************************************
-[    1.280074] **********spi_mem_op dump**************
-[    1.284946] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-[    1.289809] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x4
-[    1.295544] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
-[    1.301444] ***************************************
-[    1.307694] 5 fixed-partitions partitions found on MTD device ff705000.spi.0
-[    1.319593] Creating 5 MTD partitions on "ff705000.spi.0":
-[    1.325080] 0x000000000000-0x000000040000 : "preloader"
-[    1.331825] 0x000000040000-0x0000000c0000 : "bootloader"
-[    1.338645] 0x0000000c0000-0x0000000e0000 : "barebox-environment"
-[    1.346299] 0x0000000e0000-0x000000110000 : "state-storage"
-[    1.353319] 0x000000110000-0x000008000000 : "ubi"
-```
+Okay, I'll remove it in the next version.
 
-With the STIG short read optimization enabled, the read timeouts occur:
+Thanks!
+Menglong Dong
 
-```
-[    0.931469] **********spi_mem_op dump**************
-[    0.931482] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-[    0.936398] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x9F
-[    0.942129] data: nbytes:0x6 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    0.948132] ***************************************
-[    0.954369] **********spi_mem_op dump**************
-[    0.959233] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
-[    0.964117] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-[    0.969845] data: nbytes:0x10 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    0.975844] ***************************************
-[    1.482104] cadence-qspi ff705000.spi: Flash command execution timed out.
-[    1.493754] **********spi_mem_op dump**************
-[    1.493759] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x10
-[    1.498623] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-[    1.504451] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
-[    1.510438] ***************************************
-[    1.516611] spi-nor spi0.0: operation failed with -110
-[    2.026639] cadence-qspi ff705000.spi: Flash command execution timed out.
-[    2.033430] **********spi_mem_op dump**************
-[    2.033437] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-[    2.038300] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x6
-[    2.044041] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
-[    2.049942] ***************************************
-[    2.056112] spi-nor spi0.0: operation failed with -110
-[    2.066110] spi-nor spi0.0: probe with driver spi-nor failed with error -110
-```
-
-The DT node for the flash is as follows:
-
-```
-&qspi {
-	status = "okay";
-
-	flash0: flash@0 {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		/* Micron MT25QL01 */
-		compatible = "n25q00", "jedec,spi-nor";
-		reg = <0>;	/* chip select */
-		spi-max-frequency = <100000000>;
-		m25p,fast-read;
-		cdns,page-size = <256>;
-		cdns,block-size = <16>;   /* 2^16, 64KB */
-		cdns,read-delay = <4>;    /* delay value in read data capture register */
-		cdns,tshsl-ns = <50>;
-		cdns,tsd2d-ns = <50>;
-		cdns,tchsh-ns = <4>;
-		cdns,tslch-ns = <4>;
-	};
-};
-```
-
-Regards,
-Stefan Kerkmann
-
-[1]:
-https://lore.kernel.org/lkml/OSZPR01MB70048CE259A3D63C4179199A8B659@OSZPR01MB7004.jpnprd01.prod.outlook.com/#t
-
-#regzbot introduced: d403fb6e76bf854ef0f7d84e797e51b9494788e0
-
--- 
-Pengutronix e.K.                       | Stefan Kerkmann             |
-Steuerwalder Str. 21                   | https://www.pengutronix.de/ |
-31137 Hildesheim, Germany              | Phone: +49-5121-206917-128  |
-Amtsgericht Hildesheim, HRA 2686       | Fax:   +49-5121-206917-9    |
-
+> >   */
+> > -static bool vxlan_snoop(struct net_device *dev,
+> > -                     union vxlan_addr *src_ip, const u8 *src_mac,
+> > -                     u32 src_ifindex, __be32 vni)
+> > +static enum skb_drop_reason vxlan_snoop(struct net_device *dev,
+> > +                                     union vxlan_addr *src_ip,
+> > +                                     const u8 *src_mac, u32 src_ifinde=
+x,
+> > +                                     __be32 vni)
+> >  {
+> >       struct vxlan_dev *vxlan =3D netdev_priv(dev);
+> >       struct vxlan_fdb *f;
 
