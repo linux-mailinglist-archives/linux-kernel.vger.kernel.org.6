@@ -1,313 +1,408 @@
-Return-Path: <linux-kernel+bounces-363585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C70599C444
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:57:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168FA99C46E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51EE4285CCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:57:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A83C2B294A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8A81581F8;
-	Mon, 14 Oct 2024 08:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F1B154C0F;
+	Mon, 14 Oct 2024 08:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VniLSdMR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="rqMJRPT5";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="rqMJRPT5"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2043.outbound.protection.outlook.com [40.107.20.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DD8156C62
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728896220; cv=none; b=n0BSw89228qWu+wiwJX/infjBOZMpMcfAj8Dk7ma02bprvkg1pP1iG4mI5xb4R6eRuIkYJjYQ6ZQj5tFGUPFlSWyoamotoHmnxECEUTd44YW0HSs5MPBnHH05MAWfj4ZzDSytxSfo88ok9Ur4N+SZkOF3PZiO6Iqt0InfnUEXfU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728896220; c=relaxed/simple;
-	bh=7PQCc5ZPvesJubjCVCYp0o4cv/kIIAwXvMmv5eCDMPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WRET29tV1Qt4WTudRauIFkbN5Zt5psxS2fx/xFbxVufuhfmaf1BKs5FRG/YqmxRAohnkXyRPpnJk6e6Rf/hZH63TZVeqyg7zg73ixWq/BL9Ue/4pclCmU70fJepco6ErN0/11dV+BQ/DPXDOLA+CQOctlbtn7vEqZ+h+tXezDYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VniLSdMR; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728896218; x=1760432218;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7PQCc5ZPvesJubjCVCYp0o4cv/kIIAwXvMmv5eCDMPc=;
-  b=VniLSdMRdadXaXDIVQcNaO2uUDO9gJUaF0rz+fsq5+9dktkjpZtUxX4N
-   +oxV+lWVkoXaowImeqGhipKxMKkOqLX5lHPf+1LaGCD0usJmE7UVZkE6A
-   9z4Ui4YYK6Q/8ipSr2zw2TzjIjMTUt68TCdFBiFzDARL0qTrlCoUkKk1i
-   xKP50Lajo3/zHk4UIPwN1KERmsEKRjDd2aeU7DGqYK6n3+qZvjYt9crhS
-   +PdJP4s2DCzd21csK3VfD8wnhto0NM1sZbWUNk6xLeJ4x6RUsj0zMV/4T
-   mcbTayJ44VMQ1qnFG85Ou7PkzDk2xPVYhIoWonlLFbNTijtU5gFdHC4AG
-   w==;
-X-CSE-ConnectionGUID: r/O7AUVxQ/egcc8FFkE0rw==
-X-CSE-MsgGUID: Dyb6iLivRkuDtzolJ4vXWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="53654505"
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="53654505"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 01:56:57 -0700
-X-CSE-ConnectionGUID: O8FvCSjcT6qND7fvE9nJtw==
-X-CSE-MsgGUID: BSVfV5QYR/qAcWD6fOLIeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="108308189"
-Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.161.23])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 01:56:54 -0700
-Date: Mon, 14 Oct 2024 16:55:56 +0800
-From: "Lai, Yi" <yi1.lai@linux.intel.com>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	phillip.lougher@gmail.com,
-	syzbot+604424eb051c2f696163@syzkaller.appspotmail.com,
-	yi1.lai@intel.com
-Subject: Re: [PATCH] Squashfs: Fix variable overflow triggered by sysbot
-Message-ID: <ZwzcnCAosIPqQ9Ie@ly-workstation>
-References: <20231113160901.6444-1-phillip@squashfs.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DE01487F4;
+	Mon, 14 Oct 2024 08:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.43
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728896194; cv=fail; b=i3QeNAZQ/BWAl+mC+C84NvDeYaRLH2p5lucylRE16i5j0gUWT9Aycmd7zV+hC9fYU/nwQglgSOSGW9oRrX7CKQgHCRq1XvZToYSIXCWn5sjbMkHAQGcAFtE5NWa7pHM3+bbB8HqvhimThqmYcbIue4bfELw8xfyKQ9HhqtihE0Y=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728896194; c=relaxed/simple;
+	bh=2eoOI3q5LEDLsLx+6KrYEkKYva2Gf3F23zpdQFClKPg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ErdVPQPsUfsAiaj/ST24GzZaudb4SBRT2vClZ1eJE6kZmi8PgjESzuZS0Y8QNYIrrcc4Fb+PT+sTNm1aZczVCABeth3mTJyE/btCEE+tctRm35sgF0R+Y3EYqOk9eqU+z7sWJnTr/MtcWJeFQlEWGoVZAOhD/1zgYWapJdUiyNo=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=rqMJRPT5; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=rqMJRPT5; arc=fail smtp.client-ip=40.107.20.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=vRlbNpmBi8Bv6XxWbk4Md4DOBWVU3++Bjv+mnKoLP1yZU6HYJ3ZL1iurkotbgEFgo6qrcwBuKEI6GiC9DnyWdRyWy0mP/8YNXqPTmDHiBhQ2yeTHZ+c4C8P8qc2pqd+u8UdkR3xApCOGIDZGf6nuzq7S1R4Hy1reVK/tjL6me6UmkxpVNCjFI7l4az+GMmywZwjptVkpZFIgfkJbM99u4Jt7PcdTEx1Gm99oyTbIszbwRpbk3Qzkm5E6xZ80LKc93BWzM9DDCeNqZ0gvxIYSgX5+e6OWGSJ2i73g7hdpa02ShjomA1eKvykQDvO5e2D3inPB3oFxr1Df5Q+XWyEaZQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hj9ulef/ECGcrazQrOsCM2HA8rJXxjA+D3YADl+rRpc=;
+ b=qm/YHO7y/3tEV23ddjkWUGjAqCfLmMG04BkiKcmqXoPThcKNe2I3tduyheOw4J0tQtp6aKpvvRA9h/8RdtlDpxzVUyD3W6ZZeSinbo0czGYquaZX5pxqaZjKd8/h+9TPwnkrrUJ01HyRmxO4N79pFkVH5WYgKBC6jbmHlwk+ghA6hG+fB6cvGrvQaZs+l/GBWMb0Lcju6XOJyizm5EYObUNiMYinBeAjaVE/v5ZZq5HslVGmaAYECcw5yeZEGHqOu7F0Y+shB9PHgHx0eHYDAFya8iRhfHndDk1fZfNw+ygiuAecXXGvbV+3OgefY4J9rk3/TD7x8EQJIlNos2OZvQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hj9ulef/ECGcrazQrOsCM2HA8rJXxjA+D3YADl+rRpc=;
+ b=rqMJRPT5EZx2QuzL4Yv5JpE0/astDsMZ9ifWGxF57SqRajpOGKCw9fCYF6PrNs4a0yKXqwr/7g65Fy92aPcIDF3LXe4S8bj28ywxJr5QlgaxrBCbeL1LzP3U1/YNk81QTgWhg14Ye8vLyKhrHRAWqBhudXOuh47nrhyNQDCy3dw=
+Received: from AS8P189CA0011.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:31f::24)
+ by DB9PR08MB8740.eurprd08.prod.outlook.com (2603:10a6:10:3d0::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.25; Mon, 14 Oct
+ 2024 08:56:24 +0000
+Received: from AMS0EPF000001AF.eurprd05.prod.outlook.com
+ (2603:10a6:20b:31f:cafe::be) by AS8P189CA0011.outlook.office365.com
+ (2603:10a6:20b:31f::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26 via Frontend
+ Transport; Mon, 14 Oct 2024 08:56:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AMS0EPF000001AF.mail.protection.outlook.com (10.167.16.155) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7918.13
+ via Frontend Transport; Mon, 14 Oct 2024 08:56:23 +0000
+Received: ("Tessian outbound cd6aa7fa963a:v473"); Mon, 14 Oct 2024 08:56:22 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 5604085107f330c0
+X-TessianGatewayMetadata: W6TcyfcGyEb/Vei9lv8HJAMQDmox2ER3Xj/Q7v5gcGrudAF4tophR2DDHYk4E6jgVVNIlXoPhPV/+dWEfjKObt1KDzMDejO3FdOAh6NXlXzi9I06h/kh78ZIQqqHgmF4oMJIvLS2Mmh6DFpY3NgQn/CNty9XeonbYn1R2R1b4VU=
+X-CR-MTA-TID: 64aa7808
+Received: from L7b83a0262f09.2
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 5C623BA8-42A4-41E5-B140-CC887C14EC62.1;
+	Mon, 14 Oct 2024 08:56:11 +0000
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L7b83a0262f09.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Mon, 14 Oct 2024 08:56:11 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yV2WQoR6LbK0ThR5Iiv1bo/S/tBCuPV+EE/kqW0CEk8qoGCtCQj7r60KP8cMGmlziO4uM0g1u0AC6TzaJ9YmFPlq8+8TreTV33G440xsMHF1gRyxX7DifWCAamanuTyU1fDCADAxRWWLWmgIacnUQDsRYerLRILoRgGKAEkoYDrp/caqPoE71PFzM2igjvn4F0X7O3Ukv4uzhHb9zK9QAKIOC2FTdMIy80ypWNrOS6cLMIiySIawJ0Gt+UXIy6Uong+CI4fV0Td0+ser5S2Yr8W5LkAmWxOSngSKVN5ZFvIJE2xE3rJH5j8ldpoR3GujviV9EiaKyRGO/n4u+EDkRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hj9ulef/ECGcrazQrOsCM2HA8rJXxjA+D3YADl+rRpc=;
+ b=vOOfVkOUWcavzruWP2vIUJCxzIIZP04ZfTnA624yscqa4BpUBXDAjNOTi02JPueerX3aLW/CJZC3jh9Fb1OjkxwlyNh2yTsk9j6sfDuYIyN+TCsGNIh+/Xbz/z5vZJdI28OsmJnp1r3cicqZwOAQbyuPmvq5EaFaTYwJV0u3HHV6d+XE2DTSj+eLX1a1jccIGkm/l+fdg+sj5exLQWe/GFPmdKvdnP9oc/E6ZvuY8eOz9ShPD0nTwhyhAOtI9Dk8/xLQJWEAnOuZTj50S+KsYnsLLawFoJ8q5cJAo/WlknmTEgRVMaBMY/di8bWX2+JSc337Bquct5eiqs6Ype4tbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hj9ulef/ECGcrazQrOsCM2HA8rJXxjA+D3YADl+rRpc=;
+ b=rqMJRPT5EZx2QuzL4Yv5JpE0/astDsMZ9ifWGxF57SqRajpOGKCw9fCYF6PrNs4a0yKXqwr/7g65Fy92aPcIDF3LXe4S8bj28ywxJr5QlgaxrBCbeL1LzP3U1/YNk81QTgWhg14Ye8vLyKhrHRAWqBhudXOuh47nrhyNQDCy3dw=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GVXPR08MB7727.eurprd08.prod.outlook.com (2603:10a6:150:6b::6)
+ by VI1PR08MB10297.eurprd08.prod.outlook.com (2603:10a6:800:1be::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.25; Mon, 14 Oct
+ 2024 08:56:05 +0000
+Received: from GVXPR08MB7727.eurprd08.prod.outlook.com
+ ([fe80::9672:63f7:61b8:5469]) by GVXPR08MB7727.eurprd08.prod.outlook.com
+ ([fe80::9672:63f7:61b8:5469%7]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
+ 08:56:04 +0000
+Message-ID: <11cff100-3406-4608-9993-c29caf3d086d@arm.com>
+Date: Mon, 14 Oct 2024 09:56:01 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 10/11] virt: arm-cca-guest: TSM_REPORT support for
+ realms
+Content-Language: en-GB
+To: Gavin Shan <gshan@redhat.com>, Steven Price <steven.price@arm.com>,
+ kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Sami Mujawar <sami.mujawar@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, Dan Williams <dan.j.williams@intel.com>,
+ "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20241004144307.66199-1-steven.price@arm.com>
+ <20241004144307.66199-11-steven.price@arm.com>
+ <5a3432d1-6a79-434c-bc93-6317c8c6435c@redhat.com>
+ <6c306817-fbd7-402c-8425-a4523ed43114@arm.com>
+ <7a83461d-40fd-4e61-8833-5dae2abaf82b@arm.com>
+ <5999b021-0ae3-4d90-ae29-f18f187fd115@redhat.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <5999b021-0ae3-4d90-ae29-f18f187fd115@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0197.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:318::13) To GVXPR08MB7727.eurprd08.prod.outlook.com
+ (2603:10a6:150:6b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231113160901.6444-1-phillip@squashfs.org.uk>
+X-MS-TrafficTypeDiagnostic:
+	GVXPR08MB7727:EE_|VI1PR08MB10297:EE_|AMS0EPF000001AF:EE_|DB9PR08MB8740:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4234b47-b686-4ac1-59cf-08dcec2e14b7
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?d2xIbC9oQkpQc3FKc0M1MEVuNWhUU3pGWmovS3d1UkxPcGJDb2t4ZVJ2ZXBk?=
+ =?utf-8?B?K29SZzFtT3dFZFo5WGxIbG9IQ1NGR2U1M0NPYlgzZ1dKNnBNZktUTm1Tak1K?=
+ =?utf-8?B?TFpqbXorWjVVOVVzelhvOEpCR3ZRYS9BOVl6SXRJSitlak11SXFhd1lQRG1M?=
+ =?utf-8?B?OVlyZzVTc3h2cjlmOUhOSGgySzRsSHh6S0NURG5GbzNadlJsTnpadE03aWRV?=
+ =?utf-8?B?NWtDN0JwOENpNGt0SU12MWJWZkprWDFwbElBb21qMnYrR0hhaDBFQnZpZkxM?=
+ =?utf-8?B?aVFHOExzNWJydzY5NUc3R24zUGE2cDRiUEVFbVVSelBNMUtOdUl5REt6WnNG?=
+ =?utf-8?B?MEdrdWswWXFESURkMDFYd2liZFFpd3VweW8wRTZaOFArNkh5SjA1TnFTRERC?=
+ =?utf-8?B?VlEzY0syOVYzZDNsbU56UllRamYyUFh1ZDJxOGxxcEhLaHFkc2NMNU9VdlRR?=
+ =?utf-8?B?a1dHTlJxOE0yZXN5d1ptem5NS1IzVy9xUkx5b2hUZmx1c1c0UGkrOEFVcDBw?=
+ =?utf-8?B?WUF1cVhmVTdqOEJ6SDhYZzhHRHVPQXBvaGFZbklsMVlkeTlSa1NDOS84akdw?=
+ =?utf-8?B?TnVEdFZ4QmphdDkwenVBRzA4Q1Q0aGJQam5objEvUEowbkRVNlF2c1REY3NL?=
+ =?utf-8?B?RlF4cEV5WnBDNlNudGE2UjU2WmM5VkxyTHo5WXc2Z0E4S1ZMK2ZaVHlwU09P?=
+ =?utf-8?B?S1poRnJ5ZnVvRENZS0lqVVVsOWE0U2Fqdncwd1NvWGtuMFN6TXlsVFVwQ0NU?=
+ =?utf-8?B?WC83SGJCV0dBOFhHK0kyK05RRlRUcSt4N2x0U1NmS3cvZDNTSm5hcmpsV3JU?=
+ =?utf-8?B?eDR0M0RiQnVCMWRvK1ZrM2dvV2haTUNxZGhWclU0YjVqY2tST0I2WG8vRWcx?=
+ =?utf-8?B?czJTYkYwNS93MTVuY0psVEExZ1pSTlFHOS9zRkErdGY4dERJRDJITlRjVmFB?=
+ =?utf-8?B?ZGlNTjlOZ1ZBbUFIMkdlNjZDMldEdUxKMTM3RnhvcUc0VGI3dzVjNGxOR3pF?=
+ =?utf-8?B?aXBNY0R6T0duY3B2dlBxeHFJMGEyVVo1ME1vbXRsVzQ2b0cxa0o5anlPSkMy?=
+ =?utf-8?B?Tzc4R2pTS2ZPN1BkMTMrRG1YeXBrWTFnOFdlb3VkQmVqeURxYUJFMWRhUG16?=
+ =?utf-8?B?SFpnb1BHSzhwaFNWeUJmcndVVGJwZW5tSjNyK0p3UU5WRFNYamFubE42VGk2?=
+ =?utf-8?B?ZEdvT0Urb0VXbXNsWlJ3SjhmaEhKaC9sN2FjdS9HQVpYempaa3pXYUF0SHlL?=
+ =?utf-8?B?TkxPbjVCOE9McER5NG9KdE54V1hMRHFoTkRyaG1Wa0lQeEVvKzNtanNUYXM3?=
+ =?utf-8?B?ZnUzeDZwRGJhL3VXalVnQW80SE8yY2pTblhTdFJYK21qbWtxYm1rN1drdFQy?=
+ =?utf-8?B?THFsb3VwbWtxS2toYlA4Ym4wM1FyV3RtaFVEOC9OcmswVzBzaTIxamJ5aHVE?=
+ =?utf-8?B?R2RGZnhDdE5vdlU3TGFuQ3JWT3M5RGFJN3hsWFdwMHpDaXExMldPUUdtd1BZ?=
+ =?utf-8?B?S3ZEc2RKUjlrbUxJdTlyMUVmb2pZTFhoWWlxbE1ldUNNelNkY010eFJXZmhL?=
+ =?utf-8?B?b245bUE2SnpJQUt6d1M4NTZPcEZOK1NJRmFBOWJXT3pIRDJQRkllUlgrSG8w?=
+ =?utf-8?B?ZjN6YXlVcDVqRUtGaUx0dFJ2bzlHK1p6a1JON056TTU4c3ZrUUFtZ1huSUdn?=
+ =?utf-8?B?WG95TnFTOWgwQjNBUzNqTGdYMksvT3pEQWtNYUZxTWVXMHozU1B1dkRnPT0=?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR08MB7727.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB10297
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-SkipListedInternetSender:
+ ip=[2603:10a6:150:6b::6];domain=GVXPR08MB7727.eurprd08.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF000001AF.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	c84eb775-37d5-4ef3-5296-08dcec2e08fc
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|35042699022|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N3VqdTBEb1RCOXh2VWpUc3JMOFJORGUrQlduaDhpY0JkVzlWNmVucUwwUWF2?=
+ =?utf-8?B?NjlJN3luSTVZdUc4NEdNNEZseW5IaHZQdU5GemRQdXpEV2JoMXNtQUwvY1FN?=
+ =?utf-8?B?N3luVWNiRmFpVCsxYndGMngrUlJiZDdVQ0NkNEZSZWxGUTBvekFwc3k0YS9Z?=
+ =?utf-8?B?NTFmMzNhTnEzNzVvMk9WTHVQcDdkNnRhODR3Z0F1eFd1QlBOSks4RHhJNkY5?=
+ =?utf-8?B?eTFnOFN2K2d6czYybWdCSmp0eGFIRk05VlNWVU9ETVA2MnJTcFRpUlpRTXpu?=
+ =?utf-8?B?eUtXdHN1aFo5Ti9CSzREWWVYTUdzT0kwWjAxT0Q2M3V1NlAvVHgrN29xaEtW?=
+ =?utf-8?B?WW5CdE9EZ1VJTkNIVkdVTFpINnVDQlRpNGNCcDdYWWsybXMrcW1kUlNGMi82?=
+ =?utf-8?B?Q0VNQ1BNWGYrVDNEb0x6eVBKNFB2MTk4RGRKRXNjYkxjWDRGZDk3SnhaQkpa?=
+ =?utf-8?B?Uy9LS2tsTjZtK0h2OTU2M2EyalFTZGpML1FZbWZ5YktpWUlObTBMTkFCUGRZ?=
+ =?utf-8?B?T1RBRHY0cExYcGgrSThtbnF0YTh0RjZKL09TRXAzdDY1ZWdUcUxpdit1UjhJ?=
+ =?utf-8?B?dXdDVzRFRVVRVmtxdUdiZ1Q5b2g1aEptUzc3MHo2Rml0RzB0ZmsyYldZVVlh?=
+ =?utf-8?B?QnFZdXRod24xQ0VqclprcVZqZDBpWWY0NTlIMG5yYnZYYkhZY2MvWDV5cUR4?=
+ =?utf-8?B?eUlsVjU0VDdMZGhFRyt0WlRrbjNLQWU3Ulg1a2o3UTRJc2JHUlliYktvcGcz?=
+ =?utf-8?B?NkVQb0tmTEY0TkFhRzFaWkswNjRzTEtNd09jWkJYQlA0YmR0NHE3VWVNVDlE?=
+ =?utf-8?B?OE5NTU8yWXlRaXFDVGdxMmpkMEhVZm1ydFZRRmUzbmt6RGZRU2RmOG8zVS93?=
+ =?utf-8?B?b2lnd0hkSHFrUVBycEcxNVlXeE9CM0ZWUmpuazZCM0JLV0o4Y3ZoR2ZZMGZh?=
+ =?utf-8?B?SkNpR0NUTWdJTVRsalJlS0JhVEhVajMvRkdIbFlIaHNZcXNTd2JsNklNdG5U?=
+ =?utf-8?B?cnhualkyOU92czl0eEtqclN6QnRxMWtzejlFSmNieFJHeXQ4c1cvTHNIcmwz?=
+ =?utf-8?B?eCtLaE1tYWRPb2xMd1I4ZXFPaVlTZnNDQ0cyZjd4c1N3R2N2Y29oaWVsSFBB?=
+ =?utf-8?B?VWUzSEZlMUtpMkRSR1IycE8wUlN1K1dkT3hQNmJ4NU5INHRLT2xGZTM3QTlm?=
+ =?utf-8?B?WHBOMU1vV2c4cUxhRHh5MUhTa0VlV1UxTEIrYjBtUzB3c0JlWW9saVVQOWNo?=
+ =?utf-8?B?cVUyMjZBYTNLRGVRbmpVNkZtU2tMdEsydFpFc2RHQXNMSkpyNVliQWJ3Q1Mv?=
+ =?utf-8?B?cTFKZm1NR1pNSm9kZ3d1SWZ6cEFNZXdiTm4rRWFERWYxblA2YTlyQ2JOMU5M?=
+ =?utf-8?B?TTY5S05NQm9LaWdXZlVuME1JTzl2TXlUVkw4b2o1MzIwRjMrNVIydDVRUEVP?=
+ =?utf-8?B?bmNZMUtMaDJjMHZJdDJFbno2QVdXU2JBdkUwbCszYXpRV2hzRFJmSWQ4OHA2?=
+ =?utf-8?B?aE9DOThVNnAzbE1GYXFFR01KSG5FV3lrQkJYMTh0a0VQZGNXWWZ1T1lEZHJH?=
+ =?utf-8?B?aDRIdlJWTXlaZC92UTlpUjZ0VjBWNEpuOHdLdE5MWUpsSUNvUTVSUkVRTTRI?=
+ =?utf-8?B?VFE5NUxmVThIbkdHK0duQkd0Nk93QnZzdC9yYURONUtIUmFXRmkyWC9BZmVI?=
+ =?utf-8?B?S3ZSWEFpNUpabkw1WDZIQjhFWmFCankzYit0WW1rMjBNdytQYjZEOGovajNK?=
+ =?utf-8?B?THVwekx0ZFRBbi9xdXM0Mk5yTTZRRnNVbXhhelZEOFhFUlFJQUNjRVV5R3BV?=
+ =?utf-8?B?KzJicTk3bzZOL0xtbUV6VGJYTXI4Ly9ZNTA3Yi8xUklSaSsxT2FReVB3L1hQ?=
+ =?utf-8?Q?bWWLLkc4X8KFb?=
+X-Forefront-Antispam-Report:
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(35042699022)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 08:56:23.7478
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4234b47-b686-4ac1-59cf-08dcec2e14b7
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001AF.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB8740
 
-Hi Phillip,
-
-Greetings!
-
-I used Syzkaller and found that there is KASAN: slab-out-of-bounds Write in squashfs_readpage_block
-
-After bisection and the first bad commit is:
-"
-12427de9439d Squashfs: fix variable overflow triggered by sysbot
-"
-
-All detailed into can be found at:
-https://github.com/laifryiee/syzkaller_logs/tree/main/241014_011832_squashfs_readpage_block
-Syzkaller repro code:
-https://github.com/laifryiee/syzkaller_logs/tree/main/241014_011832_squashfs_readpage_block/repro.c
-Syzkaller repro syscall steps:
-https://github.com/laifryiee/syzkaller_logs/tree/main/241014_011832_squashfs_readpage_block/repro.prog
-Syzkaller report:
-https://github.com/laifryiee/syzkaller_logs/tree/main/241014_011832_squashfs_readpage_block/repro.report
-Kconfig(make olddefconfig):
-https://github.com/laifryiee/syzkaller_logs/tree/main/241014_011832_squashfs_readpage_block/kconfig_origin
-Bisect info:
-https://github.com/laifryiee/syzkaller_logs/tree/main/241014_011832_squashfs_readpage_block/bisect_info.log
-bzImage:
-https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/241014_011832_squashfs_readpage_block/bzImage_9852d85ec9d492ebef56dc5f229416c925758edc
-Issue dmesg:
-https://github.com/laifryiee/syzkaller_logs/blob/main/241014_011832_squashfs_readpage_block/9852d85ec9d492ebef56dc5f229416c925758edc_dmesg.log
-
-"
-[   16.081397] SQUASHFS error: read_indexes: reading block [6dc:0]
-[   16.081825] SQUASHFS error: Failed to read block 0x0: -5
-[   16.083147] ==================================================================
-[   16.083508] BUG: KASAN: slab-out-of-bounds in squashfs_readpage_block+0xa3b/0xbd0
-[   16.083941] Write of size 8 at addr ffff88800eab5800 by task repro/726
-[   16.084234] 
-[   16.084315] CPU: 1 UID: 0 PID: 726 Comm: repro Not tainted 6.12.0-rc1-9852d85ec9d4+ #1
-[   16.084671] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
-[   16.085207] Call Trace:
-[   16.085327]  <TASK>
-[   16.085471]  dump_stack_lvl+0xea/0x150
-[   16.085657]  print_report+0xce/0x610
-[   16.085834]  ? squashfs_readpage_block+0xa3b/0xbd0
-[   16.086063]  ? kasan_complete_mode_report_info+0x40/0x200
-[   16.086332]  ? squashfs_readpage_block+0xa3b/0xbd0
-[   16.086562]  kasan_report+0xcc/0x110
-[   16.086794]  ? squashfs_readpage_block+0xa3b/0xbd0
-[   16.087025]  __asan_report_store8_noabort+0x1b/0x30
-[   16.087257]  squashfs_readpage_block+0xa3b/0xbd0
-[   16.087486]  squashfs_read_folio+0x4c7/0x9c0
-[   16.087715]  ? __pfx_squashfs_read_folio+0x10/0x10
-[   16.087968]  ? down_read+0x143/0x4d0
-[   16.088151]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
-[   16.088426]  ? __pfx_squashfs_read_folio+0x10/0x10
-[   16.088688]  filemap_read_folio+0x52/0x1c0
-[   16.088913]  filemap_fault+0x451/0x27f0
-[   16.089110]  ? __pfx_filemap_fault+0x10/0x10
-[   16.089385]  ? __pfx_lock_release+0x10/0x10
-[   16.089605]  __do_fault+0x112/0x870
-[   16.089806]  do_fault+0xb76/0x1470
-[   16.089977]  __handle_mm_fault+0x1589/0x2e60
-[   16.090205]  ? __pfx___handle_mm_fault+0x10/0x10
-[   16.090505]  ? __pfx_lock_release+0x10/0x10
-[   16.090732]  ? follow_page_pte+0x53f/0x1860
-[   16.090944]  handle_mm_fault+0x2c4/0x890
-[   16.091159]  __get_user_pages+0x589/0x40b0
-[   16.091388]  ? __pfx___get_user_pages+0x10/0x10
-[   16.091670]  ? __this_cpu_preempt_check+0x21/0x30
-[   16.091943]  ? lock_is_held_type+0xef/0x150
-[   16.092158]  populate_vma_page_range+0x1fa/0x2e0
-[   16.092426]  ? __pfx_populate_vma_page_range+0x10/0x10
-[   16.092703]  ? userfaultfd_unmap_complete+0x227/0x340
-[   16.092981]  __mm_populate+0x119/0x3e0
-[   16.093183]  ? __pfx___mm_populate+0x10/0x10
-[   16.093391]  ? up_write+0x1c0/0x550
-[   16.093579]  ? lock_is_held_type+0xef/0x150
-[   16.093862]  vm_mmap_pgoff+0x2c4/0x390
-[   16.094086]  ? __pfx_vm_mmap_pgoff+0x10/0x10
-[   16.094293]  ? __fget_files+0x23c/0x4b0
-[   16.094533]  ksys_mmap_pgoff+0x3dc/0x520
-[   16.094729]  __x64_sys_mmap+0x139/0x1d0
-[   16.094923]  x64_sys_call+0x18c6/0x20d0
-[   16.095114]  do_syscall_64+0x6d/0x140
-[   16.095296]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   16.095537] RIP: 0033:0x7f022363ee5d
-[   16.095711] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 93 af 1b 00 f7 d8 64 89 01 48
-[   16.096544] RSP: 002b:00007ffe7d28fdd8 EFLAGS: 00000216 ORIG_RAX: 0000000000000009
-[   16.096912] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f022363ee5d
-[   16.097268] RDX: 000000000000000c RSI: 0000000000002000 RDI: 0000000020000000
-[   16.097613] RBP: 00007ffe7d28fe00 R08: 0000000000000004 R09: 0020000000000000
-[   16.097974] R10: 0000000000012812 R11: 0000000000000216 R12: 00007ffe7d28ff18
-[   16.098312] R13: 00000000004026a9 R14: 0000000000404e08 R15: 00007f0223a00000
-[   16.098762]  </TASK>
-[   16.098871] 
-[   16.098964] Allocated by task 726:
-[   16.099195]  kasan_save_stack+0x2c/0x60
-[   16.099431]  kasan_save_track+0x18/0x40
-[   16.099615]  kasan_save_alloc_info+0x3c/0x50
-[   16.099846]  __kasan_kmalloc+0x88/0xa0
-[   16.100057]  __kmalloc_noprof+0x1cd/0x4a0
-[   16.100335]  squashfs_readpage_block+0x269/0xbd0
-[   16.100581]  squashfs_read_folio+0x4c7/0x9c0
-[   16.100785]  filemap_read_folio+0x52/0x1c0
-[   16.101083]  filemap_fault+0x451/0x27f0
-[   16.101275]  __do_fault+0x112/0x870
-[   16.101475]  do_fault+0xb76/0x1470
-[   16.101692]  __handle_mm_fault+0x1589/0x2e60
-[   16.101951]  handle_mm_fault+0x2c4/0x890
-[   16.102149]  __get_user_pages+0x589/0x40b0
-[   16.102414]  populate_vma_page_range+0x1fa/0x2e0
-[   16.102705]  __mm_populate+0x119/0x3e0
-[   16.102926]  vm_mmap_pgoff+0x2c4/0x390
-[   16.103113]  ksys_mmap_pgoff+0x3dc/0x520
-[   16.103333]  __x64_sys_mmap+0x139/0x1d0
-[   16.103607]  x64_sys_call+0x18c6/0x20d0
-[   16.103795]  do_syscall_64+0x6d/0x140
-[   16.104024]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   16.104376] 
-[   16.104460] The buggy address belongs to the object at ffff88800eab5000
-[   16.104460]  which belongs to the cache kmalloc-2k of size 2048
-[   16.105085] The buggy address is located 0 bytes to the right of
-[   16.105085]  allocated 2048-byte region [ffff88800eab5000, ffff88800eab5800)
-[   16.105826] 
-[   16.105908] The buggy address belongs to the physical page:
-[   16.106190] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xeab0
-[   16.106686] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-[   16.107042] flags: 0xfffffc0000040(head|node=0|zone=1|lastcpupid=0x1fffff)
-[   16.107363] page_type: f5(slab)
-[   16.107572] raw: 000fffffc0000040 ffff88800d442000 ffffea0000518200 dead000000000002
-[   16.107934] raw: 0000000000000000 0000000080080008 00000001f5000000 0000000000000000
-[   16.108289] head: 000fffffc0000040 ffff88800d442000 ffffea0000518200 dead000000000002
-[   16.108770] head: 0000000000000000 0000000080080008 00000001f5000000 0000000000000000
-[   16.109147] head: 000fffffc0000003 ffffea00003aac01 ffffffffffffffff 0000000000000000
-"
-
-I hope you find it useful.
-
-Regards,
-Yi Lai
-
----
-
-If you don't need the following environment to reproduce the problem or if you
-already have one reproduced environment, please ignore the following information.
-
-How to reproduce:
-git clone https://gitlab.com/xupengfe/repro_vm_env.git
-cd repro_vm_env
-tar -xvf repro_vm_env.tar.gz
-cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
-  // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
-  // You could change the bzImage_xxx as you want
-  // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
-You could use below command to log in, there is no password for root.
-ssh -p 10023 root@localhost
-
-After login vm(virtual machine) successfully, you could transfer reproduced
-binary to the vm by below way, and reproduce the problem in vm:
-gcc -pthread -o repro repro.c
-scp -P 10023 repro root@localhost:/root/
-
-Get the bzImage for target kernel:
-Please use target kconfig and copy it to kernel_src/.config
-make olddefconfig
-make -jx bzImage           //x should equal or less than cpu num your pc has
-
-Fill the bzImage file into above start3.sh to load the target kernel in vm.
-
-
-Tips:
-If you already have qemu-system-x86_64, please ignore below info.
-If you want to install qemu v7.1.0 version:
-git clone https://github.com/qemu/qemu.git
-cd qemu
-git checkout -f v7.1.0
-mkdir build
-cd build
-yum install -y ninja-build.x86_64
-yum -y install libslirp-devel.x86_64
-../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
-make
-make install 
-
-On Mon, Nov 13, 2023 at 04:09:01PM +0000, Phillip Lougher wrote:
-> Sysbot reports a slab out of bounds write in squashfs_readahead().
+On 12/10/2024 07:06, Gavin Shan wrote:
+> On 10/12/24 2:22 AM, Suzuki K Poulose wrote:
+>> On 11/10/2024 15:14, Steven Price wrote:
+>>> On 08/10/2024 05:12, Gavin Shan wrote:
+>>>> On 10/5/24 12:43 AM, Steven Price wrote:
+>>>>> From: Sami Mujawar <sami.mujawar@arm.com>
+>>>>>
+>>>>> Introduce an arm-cca-guest driver that registers with
+>>>>> the configfs-tsm module to provide user interfaces for
+>>>>> retrieving an attestation token.
+>>>>>
+>>>>> When a new report is requested the arm-cca-guest driver
+>>>>> invokes the appropriate RSI interfaces to query an
+>>>>> attestation token.
+>>>>>
+>>>>> The steps to retrieve an attestation token are as follows:
+>>>>>     1. Mount the configfs filesystem if not already mounted
+>>>>>        mount -t configfs none /sys/kernel/config
+>>>>>     2. Generate an attestation token
+>>>>>        report=/sys/kernel/config/tsm/report/report0
+>>>>>        mkdir $report
+>>>>>        dd if=/dev/urandom bs=64 count=1 > $report/inblob
+>>>>>        hexdump -C $report/outblob
+>>>>>        rmdir $report
+>>>>>
+>>>>> Signed-off-by: Sami Mujawar <sami.mujawar@arm.com>
+>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>>> Signed-off-by: Steven Price <steven.price@arm.com>
+>>>>> ---
+>>>>> v3: Minor improvements to comments and adapt to the renaming of
+>>>>> GRANULE_SIZE to RSI_GRANULE_SIZE.
+>>>>> ---
+>>>>>    drivers/virt/coco/Kconfig                     |   2 +
+>>>>>    drivers/virt/coco/Makefile                    |   1 +
+>>>>>    drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
+>>>>>    drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
+>>>>>    .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211 ++++++++++++ 
+>>>>> ++++++
+>>>>>    5 files changed, 227 insertions(+)
+>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
+>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
+>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
 > 
-> This is ultimately caused by a file reporting an (infeasibly) large file
-> size (1407374883553280 bytes) with the minimum block size of 4K.
+> [...]
 > 
-> This causes variable overflow.
+>>>>> +/**
+>>>>> + * arm_cca_report_new - Generate a new attestation token.
+>>>>> + *
+>>>>> + * @report: pointer to the TSM report context information.
+>>>>> + * @data:  pointer to the context specific data for this module.
+>>>>> + *
+>>>>> + * Initialise the attestation token generation using the challenge 
+>>>>> data
+>>>>> + * passed in the TSM descriptor. Allocate memory for the attestation
+>>>>> token
+>>>>> + * and schedule calls to retrieve the attestation token on the 
+>>>>> same CPU
+>>>>> + * on which the attestation token generation was initialised.
+>>>>> + *
+>>>>> + * The challenge data must be at least 32 bytes and no more than 64
+>>>>> bytes. If
+>>>>> + * less than 64 bytes are provided it will be zero padded to 64 
+>>>>> bytes.
+>>>>> + *
+>>>>> + * Return:
+>>>>> + * * %0        - Attestation token generated successfully.
+>>>>> + * * %-EINVAL  - A parameter was not valid.
+>>>>> + * * %-ENOMEM  - Out of memory.
+>>>>> + * * %-EFAULT  - Failed to get IPA for memory page(s).
+>>>>> + * * A negative status code as returned by 
+>>>>> smp_call_function_single().
+>>>>> + */
+>>>>> +static int arm_cca_report_new(struct tsm_report *report, void *data)
+>>>>> +{
+>>>>> +    int ret;
+>>>>> +    int cpu;
+>>>>> +    long max_size;
+>>>>> +    unsigned long token_size;
+>>>>> +    struct arm_cca_token_info info;
+>>>>> +    void *buf;
+>>>>> +    u8 *token __free(kvfree) = NULL;
+>>>>> +    struct tsm_desc *desc = &report->desc;
+>>>>> +
+>>>>> +    if (!report)
+>>>>> +        return -EINVAL;
+>>>>> +
+>>>>
+>>>> This check seems unnecessary and can be dropped.
+>>>
+>>> Ack
+>>>
+>>>>> +    if (desc->inblob_len < 32 || desc->inblob_len > 64)
+>>>>> +        return -EINVAL;
+>>>>> +
+>>>>> +    /*
+>>>>> +     * Get a CPU on which the attestation token generation will be
+>>>>> +     * scheduled and initialise the attestation token generation.
+>>>>> +     */
+>>>>> +    cpu = get_cpu();
+>>>>> +    max_size = rsi_attestation_token_init(desc->inblob,
+>>>>> desc->inblob_len);
+>>>>> +    put_cpu();
+>>>>> +
+>>>>
+>>>> It seems that put_cpu() is called early, meaning the CPU can go away 
+>>>> before
+>>>> the subsequent call to arm_cca_attestation_continue() ?
+>>>
+>>> Indeed, good spot. I'll move it to the end of the function and update
+>>> the error paths below.
+>>
+>> Actually this was on purpose, not to block the CPU hotplug. The
+>> attestation must be completed on the same CPU.
+>>
+>> We can detect the failure from "smp_call" further down and make sure
+>> we can safely complete the operation or restart it.
+>>
 > 
-> Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
-> Reported-by: syzbot+604424eb051c2f696163@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/000000000000b1fda20609ede0d1@google.com/
-> ---
->  fs/squashfs/file.c        | 3 ++-
->  fs/squashfs/file_direct.c | 6 +++---
->  2 files changed, 5 insertions(+), 4 deletions(-)
+> Yes, It's fine to call put_cpu() early since we're tolerant to error 
+> introduced
+> by CPU unplug. It's a bit confused that rsi_attestation_token_init() is 
+> called
+> on the local CPU while arm_cca_attestation_continue() is called on same CPU
+> with help of smp_call_function_single(). Does it make sense to unify so 
+> that
+> both will be invoked with the help of smp_call_function_single() ?
 > 
-> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-> index 8ba8c4c50770..e8df6430444b 100644
-> --- a/fs/squashfs/file.c
-> +++ b/fs/squashfs/file.c
-> @@ -544,7 +544,8 @@ static void squashfs_readahead(struct readahead_control *ractl)
->  	struct squashfs_page_actor *actor;
->  	unsigned int nr_pages = 0;
->  	struct page **pages;
-> -	int i, file_end = i_size_read(inode) >> msblk->block_log;
-> +	int i;
-> +	loff_t file_end = i_size_read(inode) >> msblk->block_log;
->  	unsigned int max_pages = 1UL << shift;
->  
->  	readahead_expand(ractl, start, (len | mask) + 1);
-> diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
-> index f1ccad519e28..763a3f7a75f6 100644
-> --- a/fs/squashfs/file_direct.c
-> +++ b/fs/squashfs/file_direct.c
-> @@ -26,10 +26,10 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
->  	struct inode *inode = target_page->mapping->host;
->  	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
->  
-> -	int file_end = (i_size_read(inode) - 1) >> PAGE_SHIFT;
-> +	loff_t file_end = (i_size_read(inode) - 1) >> PAGE_SHIFT;
->  	int mask = (1 << (msblk->block_log - PAGE_SHIFT)) - 1;
-> -	int start_index = target_page->index & ~mask;
-> -	int end_index = start_index | mask;
-> +	loff_t start_index = target_page->index & ~mask;
-> +	loff_t end_index = start_index | mask;
->  	int i, n, pages, bytes, res = -ENOMEM;
->  	struct page **page;
->  	struct squashfs_page_actor *actor;
-> -- 
-> 2.35.1
+>      int cpu = smp_processor_id();
 > 
+>      /*
+>       * The calling and target CPU can be different after the calling 
+> process
+>       * is migrated to another different CPU. It's guaranteed the 
+> attestatation
+>       * always happen on the target CPU with smp_call_function_single().
+>       */
+>      ret = smp_call_function_single(cpu, 
+> rsi_attestation_token_init_wrapper,
+>                                     (void *)&info, true);
+
+Well, we want to allocate sufficient size buffer (size returned from
+token_init())  outside an atomic context (thus not in smp_call_function()).
+
+May be we could make this "allocation" restriction in a comment to
+make it clear, why we do it this way.
+
+Suzuki
+
+
+
+
+>      if (ret) {
+>          ...
+>      }
+> 
+> Thanks,
+> Gavin
+> 
+
 
