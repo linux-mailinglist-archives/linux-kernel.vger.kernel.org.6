@@ -1,40 +1,39 @@
-Return-Path: <linux-kernel+bounces-363900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62BF499C839
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:10:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36A399C83A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EF9EB250DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:10:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F1A28E9A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CAE1D967E;
-	Mon, 14 Oct 2024 11:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121151D9A72;
+	Mon, 14 Oct 2024 11:02:14 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6801A7ADD;
-	Mon, 14 Oct 2024 11:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CFF1D9A66
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728903730; cv=none; b=dJVgbh0Yy4gldKAH1dI1gDAE/UJj0tlmmazQrJsfosLdcpb+KNBmaUdLzoXs3Bt79mUCML9iJOPGLw0+3murbszNdnuTJnb05xr7b9w1dSA+XWwEXUicwgy1y+7rKzlatN0/exrG/wX+HKW9m/lVuxm/cJGHrX/NOoepsrmaNPw=
+	t=1728903733; cv=none; b=MGAfLGkVmnfsRiWU5z2MqWOWgOLLVb9O2M9xhwFnCwy5qHRsBp+7V6hsqe1vEiYwlH0CMIhiACggmcd3fqtpfpVP8wK+rzIs1Rn8GLzMn6gonINCC54MaXhZvdBARps33taOXCa5M45/UYaUdCSZNJtlRk3z0jl/y6i2eJGETCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728903730; c=relaxed/simple;
-	bh=cdF7k0JsDR53oZjM+CReXrKImAQ0AxOb85WhdpVuhCc=;
+	s=arc-20240116; t=1728903733; c=relaxed/simple;
+	bh=LvH7Th5+xLJ7P3eRD+AcldaKQ8Vt13Giclt14TbToh8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=heyLcUIgMWjMVXrr6CERGg6onRYoN5o+kMD3YIJyixhONZNbFG/o/XMsYRnQRv3D+fZk5PClmsR/VlOAVAA+yOqIW3Bp75k5eAmao7gLMBWcVSDUQV58SjKkIjn/JxwW3PBr9xkSaP8iu1tzWHQ61zHXo281s3NEm8Ag9nyIuwI=
+	 MIME-Version; b=m10fmsEMd8vPdxFirJmkIk/vl2EIBtTuO31l6ya3BGv2TDvQgFOkbITAkuatf7sIrTjtZN3uGm1CUKOgtbT+7PMi+/VVdH90/+4gOZ0j+5T0nun/cainTHWDNqIX43bohzVlvpgnrG9vVG1DegGBKX0flhnXrY5LP2BL3QA+r2A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08F6A1713;
-	Mon, 14 Oct 2024 04:02:38 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD6AF1763;
+	Mon, 14 Oct 2024 04:02:40 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 44CBF3F51B;
-	Mon, 14 Oct 2024 04:02:05 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE3BE3F51B;
+	Mon, 14 Oct 2024 04:02:08 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
+To: Andrew Morton <akpm@linux-foundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
 	Ard Biesheuvel <ardb@kernel.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
@@ -46,19 +45,14 @@ To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Matthias Brugger <mbrugger@suse.com>,
 	Miroslav Benes <mbenes@suse.cz>,
-	Nick Piggin <npiggin@gmail.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
 	Will Deacon <will@kernel.org>
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	kvmarm@lists.linux.dev,
-	linux-arch@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v1 53/57] arm64: Runtime-fold pmd level
-Date: Mon, 14 Oct 2024 11:59:00 +0100
-Message-ID: <20241014105912.3207374-53-ryan.roberts@arm.com>
+Subject: [RFC PATCH v1 54/57] arm64: Support runtime folding in idmap_kpti_install_ng_mappings
+Date: Mon, 14 Oct 2024 11:59:01 +0100
+Message-ID: <20241014105912.3207374-54-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
@@ -71,19 +65,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For a given VA size, the number of levels of lookup depends on the page
-size. With boot-time page size selection, we therefore don't know how
-many levels of lookup we require until boot time. So we need to
-runtime-fold some levels of lookup.
-
-We already have code to runtime-fold p4d and pud levels; that exists for
-LPA2 fallback paths and can be repurposed for our needs. But pmd level
-also needs to support runtime folding; for example, 16K/36-bit and
-64K/42-bit configs require only 2 levels.
-
-So let's add the required code. However, note that until we actually add
-the boot-time page size config, pgtable_l3_enabled() simply returns the
-compile-time determined answer.
+TODO:
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
@@ -92,400 +74,298 @@ Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 Any confused maintainers may want to read the cover note here for context:
 https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
- arch/arm64/include/asm/pgalloc.h |  16 +++-
- arch/arm64/include/asm/pgtable.h | 123 +++++++++++++++++++++++--------
- arch/arm64/include/asm/tlb.h     |   3 +
- arch/arm64/kernel/cpufeature.c   |   4 +-
- arch/arm64/kvm/mmu.c             |   9 +--
- arch/arm64/mm/fixmap.c           |   2 +-
- arch/arm64/mm/hugetlbpage.c      |  16 ++--
- arch/arm64/mm/init.c             |   2 +-
- arch/arm64/mm/mmu.c              |   2 +-
- arch/arm64/mm/ptdump.c           |   3 +-
- 10 files changed, 126 insertions(+), 54 deletions(-)
+ arch/arm64/include/asm/assembler.h |   5 ++
+ arch/arm64/kernel/cpufeature.c     |  21 +++++-
+ arch/arm64/mm/proc.S               | 107 ++++++++++++++++++++++-------
+ 3 files changed, 108 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
-index 8ff5f2a2579e4..51cc2f32931d2 100644
---- a/arch/arm64/include/asm/pgalloc.h
-+++ b/arch/arm64/include/asm/pgalloc.h
-@@ -15,6 +15,7 @@
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 6424fd6be1cbe..0cfa7c3efd214 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -919,6 +919,11 @@ alternative_cb_end
+ 	value_for_page_size \val, \val, SZ_4K, SZ_16K, SZ_64K
+ 	.endm
  
- #define __HAVE_ARCH_PGD_FREE
- #define __HAVE_ARCH_PUD_FREE
-+#define __HAVE_ARCH_PMD_FREE
- #include <asm-generic/pgalloc.h>
- 
- #define PGD_SIZE	(PTRS_PER_PGD * sizeof(pgd_t))
-@@ -23,7 +24,8 @@
- 
- static inline void __pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
- {
--	set_pud(pudp, __pud(__phys_to_pud_val(pmdp) | prot));
-+	if (pgtable_l3_enabled())
-+		set_pud(pudp, __pud(__phys_to_pud_val(pmdp) | prot));
- }
- 
- static inline void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmdp)
-@@ -33,6 +35,18 @@ static inline void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmdp)
- 	pudval |= (mm == &init_mm) ? PUD_TABLE_UXN : PUD_TABLE_PXN;
- 	__pud_populate(pudp, __pa(pmdp), pudval);
- }
++	.macro	get_page_shift, val
++	get_tg0 \val
++	value_for_page_size \val, \val, ARM64_PAGE_SHIFT_4K, ARM64_PAGE_SHIFT_16K, ARM64_PAGE_SHIFT_64K
++	.endm
 +
-+static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
-+{
-+	struct ptdesc *ptdesc = virt_to_ptdesc(pmd);
-+
-+	if (!pgtable_l3_enabled())
-+		return;
-+
-+	BUG_ON((unsigned long)pmd & (PAGE_SIZE-1));
-+	pagetable_pmd_dtor(ptdesc);
-+	pagetable_free(ptdesc);
-+}
- #else
- static inline void __pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
- {
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index fd47f70a42396..8ead41da715b0 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -672,15 +672,21 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- #define pmd_leaf_size(pmd)	(pmd_cont(pmd) ? CONT_PMD_SIZE : PMD_SIZE)
- #define pte_leaf_size(pte)	(pte_cont(pte) ? CONT_PTE_SIZE : PAGE_SIZE)
- 
--#if defined(CONFIG_ARM64_64K_PAGES) || CONFIG_PGTABLE_LEVELS < 3
--static inline bool pud_sect(pud_t pud) { return false; }
--static inline bool pud_table(pud_t pud) { return true; }
--#else
--#define pud_sect(pud)		((pud_val(pud) & PUD_TYPE_MASK) == \
--				 PUD_TYPE_SECT)
--#define pud_table(pud)		((pud_val(pud) & PUD_TYPE_MASK) == \
--				 PUD_TYPE_TABLE)
--#endif
-+static inline bool pgtable_l3_enabled(void);
-+
-+static inline bool pud_sect(pud_t pud)
-+{
-+	if (PAGE_SIZE == SZ_64K || !pgtable_l3_enabled())
-+		return false;
-+	return (pud_val(pud) & PUD_TYPE_MASK) == PUD_TYPE_SECT;
-+}
-+
-+static inline bool pud_table(pud_t pud)
-+{
-+	if (PAGE_SIZE == SZ_64K || !pgtable_l3_enabled())
-+		return true;
-+	return (pud_val(pud) & PUD_TYPE_MASK) == PUD_TYPE_TABLE;
-+}
- 
- extern pgd_t init_pg_dir[];
- extern pgd_t init_pg_end[];
-@@ -699,12 +705,10 @@ static inline bool in_swapper_pgdir(void *addr)
- 
- static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
- {
--#ifdef __PAGETABLE_PMD_FOLDED
--	if (in_swapper_pgdir(pmdp)) {
-+	if (!pgtable_l3_enabled() && in_swapper_pgdir(pmdp)) {
- 		set_swapper_pgd((pgd_t *)pmdp, __pgd(pmd_val(pmd)));
- 		return;
- 	}
--#endif /* __PAGETABLE_PMD_FOLDED */
- 
- 	WRITE_ONCE(*pmdp, pmd);
- 
-@@ -749,20 +753,27 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
- 
- #if CONFIG_PGTABLE_LEVELS > 2
- 
-+static __always_inline bool pgtable_l3_enabled(void)
-+{
-+	return true;
-+}
-+
-+static inline bool mm_pmd_folded(const struct mm_struct *mm)
-+{
-+	return !pgtable_l3_enabled();
-+}
-+#define mm_pmd_folded  mm_pmd_folded
-+
- #define pmd_ERROR(e)	\
- 	pr_err("%s:%d: bad pmd %016llx.\n", __FILE__, __LINE__, pmd_val(e))
- 
--#define pud_none(pud)		(!pud_val(pud))
--#define pud_bad(pud)		(!pud_table(pud))
--#define pud_present(pud)	pte_present(pud_pte(pud))
--#ifndef __PAGETABLE_PMD_FOLDED
--#define pud_leaf(pud)		(pud_present(pud) && !pud_table(pud))
--#else
--#define pud_leaf(pud)		false
--#endif
--#define pud_valid(pud)		pte_valid(pud_pte(pud))
--#define pud_user(pud)		pte_user(pud_pte(pud))
--#define pud_user_exec(pud)	pte_user_exec(pud_pte(pud))
-+#define pud_none(pud)		(pgtable_l3_enabled() && !pud_val(pud))
-+#define pud_bad(pud)		(pgtable_l3_enabled() && !pud_table(pud))
-+#define pud_present(pud)	(!pgtable_l3_enabled() || pte_present(pud_pte(pud)))
-+#define pud_leaf(pud)		(pgtable_l3_enabled() && pte_present(pud_pte(pud)) && !pud_table(pud))
-+#define pud_valid(pud)		(pgtable_l3_enabled() && pte_valid(pud_pte(pud)))
-+#define pud_user(pud)		(pgtable_l3_enabled() && pte_user(pud_pte(pud)))
-+#define pud_user_exec(pud)	(pgtable_l3_enabled() && pte_user_exec(pud_pte(pud)))
- 
- static inline bool pgtable_l4_enabled(void);
- 
-@@ -783,7 +794,8 @@ static inline void set_pud(pud_t *pudp, pud_t pud)
- 
- static inline void pud_clear(pud_t *pudp)
- {
--	set_pud(pudp, __pud(0));
-+	if (pgtable_l3_enabled())
-+		set_pud(pudp, __pud(0));
- }
- 
- static inline phys_addr_t pud_page_paddr(pud_t pud)
-@@ -791,25 +803,74 @@ static inline phys_addr_t pud_page_paddr(pud_t pud)
- 	return __pud_to_phys(pud);
- }
- 
-+#define pmd_index(addr)		(((addr) >> PMD_SHIFT) & (PTRS_PER_PMD - 1))
-+
-+static inline pmd_t *pud_to_folded_pmd(pud_t *pudp, unsigned long addr)
-+{
-+	return (pmd_t *)pudp;
-+}
-+
- static inline pmd_t *pud_pgtable(pud_t pud)
- {
- 	return (pmd_t *)__va(pud_page_paddr(pud));
- }
- 
--/* Find an entry in the second-level page table. */
--#define pmd_offset_phys(dir, addr)	(pud_page_paddr(READ_ONCE(*(dir))) + pmd_index(addr) * sizeof(pmd_t))
-+static inline phys_addr_t pmd_offset_phys(pud_t *pudp, unsigned long addr)
-+{
-+	BUG_ON(!pgtable_l3_enabled());
-+
-+	return pud_page_paddr(READ_ONCE(*pudp)) + pmd_index(addr) * sizeof(pmd_t);
-+}
-+
-+static inline pmd_t *pmd_offset_lockless(pud_t *pudp, pud_t pud,
-+					 unsigned long addr)
-+{
-+	if (!pgtable_l3_enabled())
-+		return pud_to_folded_pmd(pudp, addr);
-+	return (pmd_t *)__va(pud_page_paddr(pud)) + pmd_index(addr);
-+}
-+#define pmd_offset_lockless pmd_offset_lockless
- 
--#define pmd_set_fixmap(addr)		((pmd_t *)set_fixmap_offset(FIX_PMD, addr))
--#define pmd_set_fixmap_offset(pud, addr)	pmd_set_fixmap(pmd_offset_phys(pud, addr))
--#define pmd_clear_fixmap()		clear_fixmap(FIX_PMD)
-+static inline pmd_t *pmd_offset(pud_t *pudp, unsigned long addr)
-+{
-+	return pmd_offset_lockless(pudp, READ_ONCE(*pudp), addr);
-+}
-+#define pmd_offset pmd_offset
- 
--#define pud_page(pud)			phys_to_page(__pud_to_phys(pud))
-+static inline pmd_t *pmd_set_fixmap(unsigned long addr)
-+{
-+	if (!pgtable_l3_enabled())
-+		return NULL;
-+	return (pmd_t *)set_fixmap_offset(FIX_PMD, addr);
-+}
-+
-+static inline pmd_t *pmd_set_fixmap_offset(pud_t *pudp, unsigned long addr)
-+{
-+	if (!pgtable_l3_enabled())
-+		return pud_to_folded_pmd(pudp, addr);
-+	return pmd_set_fixmap(pmd_offset_phys(pudp, addr));
-+}
-+
-+static inline void pmd_clear_fixmap(void)
-+{
-+	if (pgtable_l3_enabled())
-+		clear_fixmap(FIX_PMD);
-+}
- 
- /* use ONLY for statically allocated translation tables */
--#define pmd_offset_kimg(dir,addr)	((pmd_t *)__phys_to_kimg(pmd_offset_phys((dir), (addr))))
-+static inline pmd_t *pmd_offset_kimg(pud_t *pudp, u64 addr)
-+{
-+	if (!pgtable_l3_enabled())
-+		return pud_to_folded_pmd(pudp, addr);
-+	return (pmd_t *)__phys_to_kimg(pmd_offset_phys(pudp, addr));
-+}
-+
-+#define pud_page(pud)			phys_to_page(__pud_to_phys(pud))
- 
- #else
- 
-+static inline bool pgtable_l3_enabled(void) { return false; }
-+
- #define pud_valid(pud)		false
- #define pud_page_paddr(pud)	({ BUILD_BUG(); 0; })
- #define pud_user_exec(pud)	pud_user(pud) /* Always 0 with folding */
-diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-index a947c6e784ed2..527630f0803c6 100644
---- a/arch/arm64/include/asm/tlb.h
-+++ b/arch/arm64/include/asm/tlb.h
-@@ -92,6 +92,9 @@ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
- {
- 	struct ptdesc *ptdesc = virt_to_ptdesc(pmdp);
- 
-+	if (!pgtable_l3_enabled())
-+		return;
-+
- 	pagetable_pmd_dtor(ptdesc);
- 	tlb_remove_ptdesc(tlb, ptdesc);
- }
+ 	.macro	get_page_mask, val
+ 	get_tg0 \val
+ 	value_for_page_size \val, \val, (~(SZ_4K-1)), (~(SZ_16K-1)), (~(SZ_64K-1))
 diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index e5618423bb99d..663cc76569a27 100644
+index 663cc76569a27..ee94de556d3f0 100644
 --- a/arch/arm64/kernel/cpufeature.c
 +++ b/arch/arm64/kernel/cpufeature.c
-@@ -1923,8 +1923,10 @@ static int __init __kpti_install_ng_mappings(void *__unused)
+@@ -1908,11 +1908,27 @@ static phys_addr_t __init kpti_ng_pgd_alloc(int shift)
+ 	return kpti_ng_temp_alloc;
+ }
  
- 	if (levels == 5 && !pgtable_l5_enabled())
- 		levels = 4;
--	else if (levels == 4 && !pgtable_l4_enabled())
-+	if (levels == 4 && !pgtable_l4_enabled())
- 		levels = 3;
-+	if (levels == 3 && !pgtable_l3_enabled())
-+		levels = 2;
- 
- 	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
- 
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index 248a2d7ad6dbb..146ecdaaaf647 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -1370,12 +1370,11 @@ static int get_vma_page_shift(struct vm_area_struct *vma, unsigned long hva)
- 
- 	pa = (vma->vm_pgoff << PAGE_SHIFT) + (hva - vma->vm_start);
- 
--#ifndef __PAGETABLE_PMD_FOLDED
--	if ((hva & (PUD_SIZE - 1)) == (pa & (PUD_SIZE - 1)) &&
-+	if (pgtable_l3_enabled() &&
-+	    (hva & (PUD_SIZE - 1)) == (pa & (PUD_SIZE - 1)) &&
- 	    ALIGN_DOWN(hva, PUD_SIZE) >= vma->vm_start &&
- 	    ALIGN(hva, PUD_SIZE) <= vma->vm_end)
- 		return PUD_SHIFT;
--#endif
- 
- 	if ((hva & (PMD_SIZE - 1)) == (pa & (PMD_SIZE - 1)) &&
- 	    ALIGN_DOWN(hva, PMD_SIZE) >= vma->vm_start &&
-@@ -1487,12 +1486,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 		vma_shift = get_vma_page_shift(vma, hva);
- 	}
- 
--#ifndef __PAGETABLE_PMD_FOLDED
--	if (vma_shift == PUD_SHIFT) {
-+	if (pgtable_l3_enabled() && vma_shift == PUD_SHIFT) {
- 		if (!fault_supports_stage2_huge_mapping(memslot, hva, PUD_SIZE))
- 			vma_shift = PMD_SHIFT;
- 	}
--#endif
- 	if (vma_shift == CONT_PMD_SHIFT) {
- 		vma_shift = PMD_SHIFT;
- 	}
-diff --git a/arch/arm64/mm/fixmap.c b/arch/arm64/mm/fixmap.c
-index a0dcf2375ccb4..f2c6678046a96 100644
---- a/arch/arm64/mm/fixmap.c
-+++ b/arch/arm64/mm/fixmap.c
-@@ -87,7 +87,7 @@ static void __init early_fixmap_init_pud(p4d_t *p4dp, unsigned long addr,
- 	p4d_t p4d = READ_ONCE(*p4dp);
- 	pud_t *pudp;
- 
--	if (CONFIG_PGTABLE_LEVELS > 3 && !p4d_none(p4d) &&
-+	if (ptg_pgtable_levels > 3 && !p4d_none(p4d) &&
- 	    p4d_page_paddr(p4d) != __pa_symbol(bm_pud)) {
- 		/*
- 		 * We only end up here if the kernel mapping and the fixmap
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index bc98c20655bba..2add0839179e3 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -51,10 +51,9 @@ void __init arm64_hugetlb_cma_reserve(void)
- 
- static bool __hugetlb_valid_size(unsigned long size)
++struct install_ng_pgtable_geometry {
++	unsigned long ptrs_per_pte;
++	unsigned long ptrs_per_pmd;
++	unsigned long ptrs_per_pud;
++	unsigned long ptrs_per_p4d;
++	unsigned long ptrs_per_pgd;
++};
++
+ static int __init __kpti_install_ng_mappings(void *__unused)
  {
--#ifndef __PAGETABLE_PMD_FOLDED
--	if (size == PUD_SIZE)
-+	if (pgtable_l3_enabled() && size == PUD_SIZE)
- 		return pud_sect_supported();
+-	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
++	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long,
++				     struct install_ng_pgtable_geometry *);
+ 	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+ 	kpti_remap_fn *remap_fn;
++	struct install_ng_pgtable_geometry geometry = {
++		.ptrs_per_pte = PTRS_PER_PTE,
++		.ptrs_per_pmd = PTRS_PER_PMD,
++		.ptrs_per_pud = PTRS_PER_PUD,
++		.ptrs_per_p4d = PTRS_PER_P4D,
++		.ptrs_per_pgd = PTRS_PER_PGD,
++	};
+ 
+ 	int cpu = smp_processor_id();
+ 	int levels = CONFIG_PGTABLE_LEVELS;
+@@ -1957,7 +1973,8 @@ static int __init __kpti_install_ng_mappings(void *__unused)
+ 	}
+ 
+ 	cpu_install_idmap();
+-	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
++	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA,
++		 &geometry);
+ 	cpu_uninstall_idmap();
+ 
+ 	if (!cpu) {
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index ab5aa84923524..11bf6ba6dac33 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -190,7 +190,7 @@ SYM_FUNC_ALIAS(__pi_idmap_cpu_replace_ttbr1, idmap_cpu_replace_ttbr1)
+ 	.pushsection ".idmap.text", "a"
+ 
+ 	.macro	pte_to_phys, phys, pte
+-	and	\phys, \pte, #PTE_ADDR_LOW
++	and	\phys, \pte, pte_addr_low
+ #ifdef CONFIG_ARM64_PA_BITS_52
+ 	and	\pte, \pte, #PTE_ADDR_HIGH
+ 	orr	\phys, \phys, \pte, lsl #PTE_ADDR_HIGH_SHIFT
+@@ -198,7 +198,8 @@ SYM_FUNC_ALIAS(__pi_idmap_cpu_replace_ttbr1, idmap_cpu_replace_ttbr1)
+ 	.endm
+ 
+ 	.macro	kpti_mk_tbl_ng, type, num_entries
+-	add	end_\type\()p, cur_\type\()p, #\num_entries * 8
++	lsl	scratch, \num_entries, #3
++	add	end_\type\()p, cur_\type\()p, scratch
+ .Ldo_\type:
+ 	ldr	\type, [cur_\type\()p], #8	// Load the entry and advance
+ 	tbz	\type, #0, .Lnext_\type		// Skip invalid and
+@@ -220,14 +221,18 @@ SYM_FUNC_ALIAS(__pi_idmap_cpu_replace_ttbr1, idmap_cpu_replace_ttbr1)
+ 	.macro	kpti_map_pgtbl, type, level
+ 	str	xzr, [temp_pte, #8 * (\level + 2)]	// break before make
+ 	dsb	nshst
+-	add	pte, temp_pte, #PAGE_SIZE * (\level + 2)
++	mov	scratch, #(\level + 2)
++	mul	scratch, scratch, page_size
++	add	pte, temp_pte, scratch
+ 	lsr	pte, pte, #12
+ 	tlbi	vaae1, pte
+ 	dsb	nsh
+ 	isb
+ 
+ 	phys_to_pte pte, cur_\type\()p
+-	add	cur_\type\()p, temp_pte, #PAGE_SIZE * (\level + 2)
++	mov	scratch, #(\level + 2)
++	mul	scratch, scratch, page_size
++	add	cur_\type\()p, temp_pte, scratch
+ 	orr	pte, pte, pte_flags
+ 	str	pte, [temp_pte, #8 * (\level + 2)]
+ 	dsb	nshst
+@@ -235,7 +240,8 @@ SYM_FUNC_ALIAS(__pi_idmap_cpu_replace_ttbr1, idmap_cpu_replace_ttbr1)
+ 
+ /*
+  * void __kpti_install_ng_mappings(int cpu, int num_secondaries, phys_addr_t temp_pgd,
+- *				   unsigned long temp_pte_va)
++ *				   unsigned long temp_pte_va,
++ *				   struct install_ng_pgtable_geometry *geometry)
+  *
+  * Called exactly once from stop_machine context by each CPU found during boot.
+  */
+@@ -251,6 +257,8 @@ SYM_TYPED_FUNC_START(idmap_kpti_install_ng_mappings)
+ 	temp_pgd_phys	.req	x2
+ 	swapper_ttb	.req	x3
+ 	flag_ptr	.req	x4
++	geometry	.req	x4
++	scratch		.req	x4
+ 	cur_pgdp	.req	x5
+ 	end_pgdp	.req	x6
+ 	pgd		.req	x7
+@@ -264,18 +272,45 @@ SYM_TYPED_FUNC_START(idmap_kpti_install_ng_mappings)
+ 	valid		.req	x17
+ 	cur_p4dp	.req	x19
+ 	end_p4dp	.req	x20
+-
+-	mov	x5, x3				// preserve temp_pte arg
+-	mrs	swapper_ttb, ttbr1_el1
+-	adr_l	flag_ptr, __idmap_kpti_flag
++	page_size	.req	x21
++	ptrs_per_pte	.req	x22
++	ptrs_per_pmd	.req	x23
++	ptrs_per_pud	.req	x24
++	ptrs_per_p4d	.req	x25
++	ptrs_per_pgd	.req	x26
++	pte_addr_low	.req	x27
+ 
+ 	cbnz	cpu, __idmap_kpti_secondary
+ 
+-#if CONFIG_PGTABLE_LEVELS > 4
+-	stp	x29, x30, [sp, #-32]!
++	/* Preserve callee-saved registers */
++	stp	x19, x20, [sp, #-96]!
++	stp	x21, x22, [sp, #80]
++	stp	x23, x24, [sp, #64]
++	stp	x25, x26, [sp, #48]
++	stp	x27, x28, [sp, #32]
++	stp	x29, x30, [sp, #16]
+ 	mov	x29, sp
+-	stp	x19, x20, [sp, #16]
 -#endif
 +
- 	if (size == CONT_PMD_SIZE || size == PMD_SIZE || size == CONT_PTE_SIZE)
- 		return true;
++	/* Load pgtable geometry parameters */
++	get_page_size page_size
++	ldr	ptrs_per_pte, [geometry, #0]
++	ldr	ptrs_per_pmd, [geometry, #8]
++	ldr	ptrs_per_pud, [geometry, #16]
++	ldr	ptrs_per_p4d, [geometry, #24]
++	ldr	ptrs_per_pgd, [geometry, #32]
++
++	/* Precalculate pte_addr_low mask */
++	get_page_shift x0
++	mov	pte_addr_low, #50
++	sub	pte_addr_low, pte_addr_low, x0
++	mov	scratch, #1
++	lsl	pte_addr_low, scratch, pte_addr_low
++	sub	pte_addr_low, pte_addr_low, #1
++	lsl	pte_addr_low, pte_addr_low, x0
++
++	mov	temp_pte, x3
++	mrs	swapper_ttb, ttbr1_el1
++	adr_l	flag_ptr, __idmap_kpti_flag
  
-@@ -100,13 +99,10 @@ static inline int num_contig_ptes(unsigned long size, size_t *pgsize)
+ 	/* We're the boot CPU. Wait for the others to catch up */
+ 	sevl
+@@ -290,7 +325,6 @@ SYM_TYPED_FUNC_START(idmap_kpti_install_ng_mappings)
+ 	msr	ttbr1_el1, temp_pgd_phys
+ 	isb
  
- 	*pgsize = size;
+-	mov	temp_pte, x5
+ 	mov_q	pte_flags, KPTI_NG_PTE_FLAGS
  
--#ifndef __PAGETABLE_PMD_FOLDED
--	if (size == PUD_SIZE) {
-+	if (pgtable_l3_enabled() && size == PUD_SIZE) {
- 		if (pud_sect_supported())
- 			contig_ptes = 1;
--	} else
+ 	/* Everybody is enjoying the idmap, so we can rewrite swapper. */
+@@ -320,7 +354,7 @@ alternative_else_nop_endif
+ 	/* PGD */
+ 	adrp		cur_pgdp, swapper_pg_dir
+ 	kpti_map_pgtbl	pgd, -1
+-	kpti_mk_tbl_ng	pgd, PTRS_PER_PGD
++	kpti_mk_tbl_ng	pgd, ptrs_per_pgd
+ 
+ 	/* Ensure all the updated entries are visible to secondary CPUs */
+ 	dsb	ishst
+@@ -331,21 +365,33 @@ alternative_else_nop_endif
+ 	isb
+ 
+ 	/* Set the flag to zero to indicate that we're all done */
++	adr_l	flag_ptr, __idmap_kpti_flag
+ 	str	wzr, [flag_ptr]
+-#if CONFIG_PGTABLE_LEVELS > 4
+-	ldp	x19, x20, [sp, #16]
+-	ldp	x29, x30, [sp], #32
 -#endif
--	if (size == PMD_SIZE) {
-+	} else if (size == PMD_SIZE) {
- 		contig_ptes = 1;
- 	} else if (size == CONT_PMD_SIZE) {
- 		*pgsize = PMD_SIZE;
-@@ -331,10 +327,8 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
- {
- 	unsigned long hp_size = huge_page_size(h);
++
++	/* Restore callee-saved registers */
++	ldp	x29, x30, [sp, #16]
++	ldp	x27, x28, [sp, #32]
++	ldp	x25, x26, [sp, #48]
++	ldp	x23, x24, [sp, #64]
++	ldp	x21, x22, [sp, #80]
++	ldp	x19, x20, [sp], #96
++
+ 	ret
  
--#ifndef __PAGETABLE_PMD_FOLDED
--	if (hp_size == PUD_SIZE)
-+	if (pgtable_l3_enabled() && hp_size == PUD_SIZE)
- 		return PGDIR_SIZE - PUD_SIZE;
--#endif
- 	if (hp_size == CONT_PMD_SIZE)
- 		return PUD_SIZE - CONT_PMD_SIZE;
- 	if (hp_size == PMD_SIZE)
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 4d24034418b39..62587104f30d8 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -396,7 +396,7 @@ void __init mem_init(void)
- 	 * scratch using the virtual address range and page size.
- 	 */
- 	VM_BUG_ON(ARM64_HW_PGTABLE_LEVELS(CONFIG_ARM64_VA_BITS) !=
--		  CONFIG_PGTABLE_LEVELS);
-+		  ptg_pgtable_levels);
+ .Lderef_pgd:
+ 	/* P4D */
+ 	.if		CONFIG_PGTABLE_LEVELS > 4
+ 	p4d		.req	x30
++	cmp		ptrs_per_p4d, #1
++	b.eq		.Lfold_p4d
+ 	pte_to_phys	cur_p4dp, pgd
+ 	kpti_map_pgtbl	p4d, 0
+-	kpti_mk_tbl_ng	p4d, PTRS_PER_P4D
++	kpti_mk_tbl_ng	p4d, ptrs_per_p4d
+ 	b		.Lnext_pgd
++.Lfold_p4d:
++	mov		p4d, pgd		// fold to next level
++	mov		cur_p4dp, end_p4dp	// must be equal to terminate loop
++	b		.Lderef_p4d
+ 	.else		/* CONFIG_PGTABLE_LEVELS <= 4 */
+ 	p4d		.req	pgd
+ 	.set		.Lnext_p4d, .Lnext_pgd
+@@ -355,10 +401,16 @@ alternative_else_nop_endif
+ 	/* PUD */
+ 	.if		CONFIG_PGTABLE_LEVELS > 3
+ 	pud		.req	x10
++	cmp		ptrs_per_pud, #1
++	b.eq		.Lfold_pud
+ 	pte_to_phys	cur_pudp, p4d
+ 	kpti_map_pgtbl	pud, 1
+-	kpti_mk_tbl_ng	pud, PTRS_PER_PUD
++	kpti_mk_tbl_ng	pud, ptrs_per_pud
+ 	b		.Lnext_p4d
++.Lfold_pud:
++	mov		pud, p4d		// fold to next level
++	mov		cur_pudp, end_pudp	// must be equal to terminate loop
++	b		.Lderef_pud
+ 	.else		/* CONFIG_PGTABLE_LEVELS <= 3 */
+ 	pud		.req	pgd
+ 	.set		.Lnext_pud, .Lnext_pgd
+@@ -368,10 +420,16 @@ alternative_else_nop_endif
+ 	/* PMD */
+ 	.if		CONFIG_PGTABLE_LEVELS > 2
+ 	pmd		.req	x13
++	cmp		ptrs_per_pmd, #1
++	b.eq		.Lfold_pmd
+ 	pte_to_phys	cur_pmdp, pud
+ 	kpti_map_pgtbl	pmd, 2
+-	kpti_mk_tbl_ng	pmd, PTRS_PER_PMD
++	kpti_mk_tbl_ng	pmd, ptrs_per_pmd
+ 	b		.Lnext_pud
++.Lfold_pmd:
++	mov		pmd, pud		// fold to next level
++	mov		cur_pmdp, end_pmdp	// must be equal to terminate loop
++	b		.Lderef_pmd
+ 	.else		/* CONFIG_PGTABLE_LEVELS <= 2 */
+ 	pmd		.req	pgd
+ 	.set		.Lnext_pmd, .Lnext_pgd
+@@ -381,7 +439,7 @@ alternative_else_nop_endif
+ 	/* PTE */
+ 	pte_to_phys	cur_ptep, pmd
+ 	kpti_map_pgtbl	pte, 3
+-	kpti_mk_tbl_ng	pte, PTRS_PER_PTE
++	kpti_mk_tbl_ng	pte, ptrs_per_pte
+ 	b		.Lnext_pmd
  
- 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
- 		extern int sysctl_overcommit_memory;
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index ad7fd3fda705a..b78a341cd9e70 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -1046,7 +1046,7 @@ static void free_empty_pmd_table(pud_t *pudp, unsigned long addr,
- 		free_empty_pte_table(pmdp, addr, next, floor, ceiling);
- 	} while (addr = next, addr < end);
+ 	.unreq	cpu
+@@ -408,6 +466,9 @@ alternative_else_nop_endif
  
--	if (CONFIG_PGTABLE_LEVELS <= 2)
-+	if (!pgtable_l3_enabled())
- 		return;
+ 	/* Secondary CPUs end up here */
+ __idmap_kpti_secondary:
++	mrs	swapper_ttb, ttbr1_el1
++	adr_l	flag_ptr, __idmap_kpti_flag
++
+ 	/* Uninstall swapper before surgery begins */
+ 	__idmap_cpu_set_reserved_ttbr1 x16, x17
  
- 	if (!pgtable_range_aligned(start, end, floor, ceiling, PUD_MASK))
-diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-index 6986827e0d645..045a4188afc10 100644
---- a/arch/arm64/mm/ptdump.c
-+++ b/arch/arm64/mm/ptdump.c
-@@ -230,7 +230,8 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 
- 	/* check if the current level has been folded dynamically */
- 	if ((level == 1 && mm_p4d_folded(st->mm)) ||
--	    (level == 2 && mm_pud_folded(st->mm)))
-+	    (level == 2 && mm_pud_folded(st->mm)) ||
-+	    (level == 3 && mm_pmd_folded(st->mm)))
- 		level = 0;
- 
- 	if (level >= 0)
 -- 
 2.43.0
 
