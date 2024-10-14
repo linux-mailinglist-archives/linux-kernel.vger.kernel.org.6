@@ -1,474 +1,256 @@
-Return-Path: <linux-kernel+bounces-363292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DEE99C019
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:35:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BE299C02E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB4271C222D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D521F21A03
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6E614601F;
-	Mon, 14 Oct 2024 06:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF1C146592;
+	Mon, 14 Oct 2024 06:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XrSrkX54"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NU2+SkDV"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE29313B5B4;
-	Mon, 14 Oct 2024 06:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3641B145B25;
+	Mon, 14 Oct 2024 06:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728887741; cv=none; b=ARuQDs7em9BbcsAEToiyIi4zcImCW0utCr3mwZC9ffrfg3Q+j+W+v3Fln+FUVKXY6K4JTlBcEXqpfTuqt/83tjmDs35Qd7vbnycr9UOLefB/36qH8CVF3KhpnIyzvO1/AA1UMlxqCUo+Xlc/09hNJtEwB3emUE6fLpAZj/XoD0E=
+	t=1728888022; cv=none; b=UxL0hX5njRkKVsJUWBWKyFGDXvOENtYAXTCrUUab4D4Gl4yOuPPSIiidtXAKVLUW8KMQnIK6h56RBH5AGcX2WxJxE+4d+Ud2ubhPLgth9Q1xCoHHcJT8tcBcvhp6g+HOkaJIwx4q3G/FMzEyeK/OVwic+65OU4wN7+uAAjIz5e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728887741; c=relaxed/simple;
-	bh=ZkgW5vYO4joq2Z/uGOt5rwCB6DTYX7lp7/3pY/P6+nU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GjGKQjdicpq7BB0aPJA2i/R384fXHPHqCLEnxMIuHEuEyruwRwb8P2Hwv811s5uKbIDqbmUhGcYs++P8QYwIXEchAWibKQRn8LRNGzbi6BdZqQ3aT55i2qmFfRXquqO0t5Rjg9+yyORU8eLvly9t02fpdSob8/CPRyxpNJXvReU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XrSrkX54; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1728888022; c=relaxed/simple;
+	bh=qeMWDu12NNYM+7QV9eOamgVscxaBtn9XX7DSuKmcOuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k+AYLPjn2rjqHb8tbVtfs6g+z0fB4DMFh3oP9cq6VFQxxFPmXDCP5iFxy8e9DsMnm2IyxEOXCTpzjq8ihcEpAcJjJRu89waTWHcNzwvg7eqEYSMKOREJwDnrdSrT4xBfQNSQQA9n7AagktC/ai+4/QJujL5hYwHx9MAaeW42HTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NU2+SkDV; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4311420b63fso29116025e9.2;
-        Sun, 13 Oct 2024 23:35:39 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a998a5ca499so590039966b.0;
+        Sun, 13 Oct 2024 23:40:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728887738; x=1729492538; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZkgW5vYO4joq2Z/uGOt5rwCB6DTYX7lp7/3pY/P6+nU=;
-        b=XrSrkX54hvQw5WTUEXWXsGy/zKCQkLzLAMziJLQqqJeRWkDDlh5tJyc9JaedUiavUH
-         gea0JcwFbn9yo5ZKrrGZKb1sEiaW+/V8eFf/K7Ki7v3HZQ75P0IQa7VcJivuBfDqka6k
-         Aa2uQfLLpu7fisYYfqmH8VIKTZ3BoL1NnMhHLHiGCy/HBPk/+6PLIw2165lPaGJDEZ4o
-         A1+MD/leXPvS19A7Y+94eXdOGYyvRJNpCfNdfcaItWoE+X2ChfDMfL1P52hOReWwVbBl
-         b0Dxd3JUx3y/Fp5J2GusWM7PwAYq5VH0IhYAeqsKUnf0QIy83/m4eXwtI+Jn4qjEJhYg
-         b5kw==
+        d=gmail.com; s=20230601; t=1728888017; x=1729492817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TR0VkSzHgQed4LGhsboXO1HzDsdYANLCRc7hah45+yU=;
+        b=NU2+SkDVHtv9eIx8wM2yx6rHcrLmRNloiMUDe3roOJ8cUFWB3kT1gTw5LmtRcg8UbI
+         wXaylKB4ohKywqxutReVd9lx18XXlBTWFJRIgNYSaa1Qeg5VSBQ2NZeTNGmiV88R0tdN
+         ph4LATz7Ssst4e8EtzfI0gUnupeSq/Q/HeSEcNsRL3uPgN0Za1ixJYS7CBWL1scRkUq2
+         2Qyb8MFnKVDzyBROMbi8pFItB3OtKYZo+HrALm3ipyyYtive8fW6kHt33iqxWZj+Grah
+         vr7iCMvwA/lPXCh4mgK5IaUAks9UtG0WJCE1egNC82PtRlgKnFe1wu6avBFw6gdbXmaX
+         N0Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728887738; x=1729492538;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZkgW5vYO4joq2Z/uGOt5rwCB6DTYX7lp7/3pY/P6+nU=;
-        b=IxdIvQSKODD9kC0qjW/VmfKqoxyU02rB9uxXk1bM1qREHp4mZIzwQ0VkUr8GrKmlQN
-         3mFj+rhMymMWAzPo7QpjH6Eltv4pER5WkkMygdBJn2YPeqzvNka9LKusHtlZH3KcdDBm
-         Y0mucV5+e0xK8SBCASp763kcUz1NPsgnaczzEedOGFDPvwHYlJZ43YrvIi5DlZ5NTs7Y
-         Ir5esMK0YjG4ZnEPBk44BBy2Qh2kJTyTEEU/2maXS/8ZnFl7pnbQP1nP+RPqUU6ExS/D
-         d7Yo5PWPz9bibUhS32wlp8TLjmsbmpHokr2irDE0ODdQjrZVQ9jix+iT0KgwUaR/bJXx
-         jW6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVsP94ofoIwTKU2DEjsjVJwRAOBKRr0eOuzXEGBbLTpgE5zThjXS/M62FXDTcEgTpgxB+NrSvDcTFfLFIUF@vger.kernel.org, AJvYcCWH8LyWstQy/axjtvbw7oH6e/+a6IUUVo1zIjWZKwus1xUFShQvPCZ6nizYgGoxntoLCysshLA8SRA=@vger.kernel.org, AJvYcCX5khlFR4SPRvDSSB6bCiPhH32SAET5BOSmVI20zUw35LzYJ870NHMLnAplMQUwmJc44X4jT5uvBTD4jw==@vger.kernel.org, AJvYcCXLT6+AnmWUOJ+BnZLkqYqP8/YlFGbemll4oTrSpVAfeGMHTlu2lHo+7z1+OKCm87tzUIJGQk+ceO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygyNFjgBzujkGDhrXuBksCpyglMGyrQNeDYhZKr7jH0T6k4YJd
-	uSOu5qDgQcR8KlLgdudWEJ5fveK1jiR/J1GqyoO2x+rPZDMsuFH1
-X-Google-Smtp-Source: AGHT+IFHO+5s6Fw09SE6aT49ckvKglgKqyMSHdvbyT7PrkepR+1k6oGCdyf9Vm714qtnk+/QNrPBqg==
-X-Received: by 2002:a05:600c:1d8c:b0:424:ad14:6b79 with SMTP id 5b1f17b1804b1-431255dc78bmr56827765e9.8.1728887737673;
-        Sun, 13 Oct 2024 23:35:37 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef15:2100:2c2b:bcc5:835e:c2dd? (p200300f6ef1521002c2bbcc5835ec2dd.dip0.t-ipconnect.de. [2003:f6:ef15:2100:2c2b:bcc5:835e:c2dd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa54sm10517019f8f.84.2024.10.13.23.35.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 23:35:37 -0700 (PDT)
-Message-ID: <f17530fc6ae51292117eae4d3e00a3c922386f47.camel@gmail.com>
-Subject: Re: [PATCH v2 5/7] iio: inkern: copy/release available info from
- producer
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Matteo Martelli <matteomartelli3@gmail.com>, Jonathan Cameron
-	 <jic23@kernel.org>
-Cc: Alisa-Dariana Roman <alisa.roman@analog.com>, Christian Eggers	
- <ceggers@arri.de>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich	
- <Michael.Hennerich@analog.com>, Paul Cercueil <paul@crapouillou.net>, Peter
- Rosin <peda@axentia.se>, Sebastian Reichel <sre@kernel.org>,
- linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, 	linux-pm@vger.kernel.org
-Date: Mon, 14 Oct 2024 08:39:53 +0200
-In-Reply-To: <172877455634.1202.4959444122842083990@njaxe.localdomain>
-References: <20241007-iio-read-avail-release-v2-0-245002d5869e@gmail.com>
-	 <20241007-iio-read-avail-release-v2-5-245002d5869e@gmail.com>
-	 <8a5f6f12c2cb6989cef1d09957fc0f6f7a512b26.camel@gmail.com>
-	 <172837007815.3337.5869213289160447430@njaxe.localdomain>
-	 <8241b4caf9ebacb116f50bfe1503f325cc576066.camel@gmail.com>
-	 <172837459910.12274.5022869861872605261@njaxe.localdomain>
-	 <27e0d7b2a70015300047d9388edc87a8ece0c0dc.camel@gmail.com>
-	 <172849861528.354008.17477801981314044908@njaxe.localdomain>
-	 <20241012164732.518f86a5@jic23-huawei>
-	 <172877455634.1202.4959444122842083990@njaxe.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+        d=1e100.net; s=20230601; t=1728888017; x=1729492817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TR0VkSzHgQed4LGhsboXO1HzDsdYANLCRc7hah45+yU=;
+        b=btG4IEJDSdy9NE67lCmsWVWg8W3jHsbJAtM61CumKxzlsvekGsDVYaaWWpwm/NK0WY
+         eNrSmRpPUIlB5cMMg79pmNSrfjPLiYi3N+20VIIY4RSpo8e0065xeutI1dHxr4rTc93w
+         LZ95RW8qK3UUpe1ksWkNJZCZXpbBGyKMoG4UeXBs1aVTKp3Oe+CCcfL/3RtndZz1iphA
+         +VnRv0jopSMzZP8mnQvJEcuh/NcuSMwuOFLaxT8fTCXS0yzadrcgO83L31jEeUiwgHFr
+         MR3ORBkwV2V/z80zG0mOoCdy/tVKtxfKMqgDq0R4f/RA/2d1hetYsJQE30i7Y+Y2AptV
+         +wwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQVSJusjmfoaoQOZCyDaeJPVcg4uJEI7tUl/sRHjdjjfZHhHZqOFx89PVv073zTD2p1UlcVSCEu3e1QQ+9@vger.kernel.org, AJvYcCVJ5IHAVn/brBZQPhoegexlIODLYv22pUCkGmF3UeDCtpflJpoLeNyyPIl6Yz2E88OqeQsYJ+6SCj8uouuG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZsMVw8K/toPaBDrRMtwTzmsMKJurfqDbrwhzoZVSRo7m28rfs
+	Viqusyx6cu1uL5kMcfRCtmTrY4WeKZUXr2wHCos0ezAVg6qTf5gAv/51Xfy97L5k2OWPKkMWIJY
+	Elzb1a4DfQMW2PdMAxQfCZaecIgQ=
+X-Google-Smtp-Source: AGHT+IExpJghYioV548dHA4Vly+YTesctkQRh7Suh3jV5PgqvkuqJWKYh/PFxaOj5DjRa0XLAezNCR3pXRc8LJZOTw8=
+X-Received: by 2002:a17:906:da83:b0:a99:77f0:51f7 with SMTP id
+ a640c23a62f3a-a99e3e9c139mr665660066b.61.1728888017171; Sun, 13 Oct 2024
+ 23:40:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <670cb562.050a0220.4cbc0.0042.GAE@google.com>
+In-Reply-To: <670cb562.050a0220.4cbc0.0042.GAE@google.com>
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Date: Mon, 14 Oct 2024 11:40:05 +0500
+Message-ID: <CACzwLxgJb=xUCO+TFN_Y6SZ6YxoRn=pg0yfif3+GuHK8kL3x0Q@mail.gmail.com>
+Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in xas_create / xas_find (8)
+To: syzbot <syzbot+b79be83906cd9bab16ff@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2024-10-13 at 01:09 +0200, Matteo Martelli wrote:
-> Quoting Jonathan Cameron (2024-10-12 17:47:32)
-> > On Wed, 09 Oct 2024 20:30:15 +0200
-> > Matteo Martelli <matteomartelli3@gmail.com> wrote:
-> >=20
-> > > Quoting Nuno S=C3=A1 (2024-10-08 14:37:22)
-> > > > On Tue, 2024-10-08 at 10:03 +0200, Matteo Martelli wrote:=C2=A0=20
-> > > > > Quoting Nuno S=C3=A1 (2024-10-08 09:29:14)=C2=A0=20
-> > > > > > On Tue, 2024-10-08 at 08:47 +0200, Matteo Martelli wrote:=C2=A0=
-=20
-> > > > > > > Quoting Nuno S=C3=A1 (2024-10-07 17:15:13)=C2=A0=20
-> > > > > > > > On Mon, 2024-10-07 at 10:37 +0200, Matteo Martelli wrote:=
-=C2=A0=20
-> > > > > > > > > Consumers need to call the read_avail_release_resource af=
-ter
-> > > > > > > > > reading
-> > > > > > > > > the
-> > > > > > > > > available info. To call the release with info_exists lock=
-ed,
-> > > > > > > > > copy the
-> > > > > > > > > available info from the producer and immediately call its
-> > > > > > > > > release
-> > > > > > > > > callback. With this change, users of
-> > > > > > > > > iio_read_avail_channel_raw() and
-> > > > > > > > > iio_read_avail_channel_attribute() must free the copied a=
-vail
-> > > > > > > > > info
-> > > > > > > > > after
-> > > > > > > > > calling them.
-> > > > > > > > >=20
-> > > > > > > > > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com=
+On Mon, Oct 14, 2024 at 11:08=E2=80=AFAM syzbot
+<syzbot+b79be83906cd9bab16ff@syzkaller.appspotmail.com> wrote:
 >
-> > > > > > > > > ---
-> > > > > > > > > =C2=A0drivers/iio/inkern.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 64
-> > > > > > > > > +++++++++++++++++++++++++++++++++--
-> > > > > > > > > ----
-> > > > > > > > > -----
-> > > > > > > > > =C2=A0include/linux/iio/consumer.h |=C2=A0 4 +--
-> > > > > > > > > =C2=A02 files changed, 50 insertions(+), 18 deletions(-)
-> > > > > > > > >=20
-> > > > > > > > > diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> > > > > > > > > index
-> > > > > > > > > 7f325b3ed08fae6674245312cf8f57bb151006c0..cc65ef79451e5aa=
-2cea4
-> > > > > > > > > 47e16800
-> > > > > > > > > 7a44
-> > > > > > > > > 7ffc0d91
-> > > > > > > > > 100644
-> > > > > > > > > --- a/drivers/iio/inkern.c
-> > > > > > > > > +++ b/drivers/iio/inkern.c
-> > > > > > > > > @@ -760,9 +760,25 @@ static int iio_channel_read_avail(st=
-ruct
-> > > > > > > > > iio_channel
-> > > > > > > > > *chan,
-> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!iio_channel_has_avail=
-able(chan->channel, info))
-> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
-> > > > > > > > > =C2=A0
-> > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0 if (iio_info->read_avail)
-> > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return iio_info->read_avail(chan->indio_dev,
-> > > > > > > > > chan-=C2=A0=20
-> > > > > > > > > > channel,=C2=A0=20
-> > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 vals, type, length,
-> > > > > > > > > info);
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (iio_info->read_avail) {
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 const int *vals_tmp;
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 int ret;
-> > > > > > > > > +
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ret =3D iio_info->read_avail(chan->indio_dev,
-> > > > > > > > > chan-=C2=A0=20
-> > > > > > > > > > channel,=C2=A0=20
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 =C2=A0=C2=A0 &vals_tmp, type,
-> > > > > > > > > length,
-> > > > > > > > > info);
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (ret < 0)
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return r=
-et;
-> > > > > > > > > +
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 *vals =3D kmemdup_array(vals_tmp, *length,
-> > > > > > > > > sizeof(int),
-> > > > > > > > > GFP_KERNEL);
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (!*vals)
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -=
-ENOMEM;
-> > > > > > > > > +=C2=A0=20
-> > > > > > > >=20
-> > > > > > > > Not a big deal but I would likely prefer to avoid yet anoth=
-er
-> > > > > > > > copy. If
-> > > > > > > > I'm
-> > > > > > > > understanding things correctly, I would rather create an in=
-kern
-> > > > > > > > wrapper
-> > > > > > > > API
-> > > > > > > > like=20
-> > > > > > > > iio_channel_read_avail_release_resource() - maybe something=
- with
-> > > > > > > > a
-> > > > > > > > smaller
-> > > > > > > > name :).
-> > > > > > > > Hence, the lifetime of the data would be only controlled by=
- the
-> > > > > > > > producer
-> > > > > > > > of
-> > > > > > > > it. It
-> > > > > > > > would also produce a smaller diff (I think). I just find it=
- a
-> > > > > > > > bit
-> > > > > > > > confusing
-> > > > > > > > that we
-> > > > > > > > duplicate the data in here and the producer also duplicates=
- it
-> > > > > > > > on the -=C2=A0=20
-> > > > > > > > > read_avail()=C2=A0=20
-> > > > > > > > call. Another advantage I see is that often the available d=
-ata
-> > > > > > > > is indeed
-> > > > > > > > const in
-> > > > > > > > which case no kmemdup_array() is needed at all.=C2=A0=20
-> > > > > > >=20
-> > > > > > >=20
-> > > > > > > If I understand correctly your suggestion you would leave the
-> > > > > > > inkern
-> > > > > > > iio_channel_read_avail() untouched, then add a new inkern wra=
-pper,
-> > > > > > > something
-> > > > > > > like iio_channel_read_avail_release_resource(), that would ca=
-ll
-> > > > > > > the
-> > > > > > > producer's
-> > > > > > > read_avail_release_resource(). The consumer would invoke this=
- new
-> > > > > > > wrapper
-> > > > > > > in
-> > > > > > > its
-> > > > > > > own read_avail_release_resource() avoiding the additional cop=
-y.
-> > > > > > > The call
-> > > > > > > stack
-> > > > > > > would look something like the following:
-> > > > > > >=20
-> > > > > > > iio_read_channel_info_avail() {
-> >=20
-> > Here you are talking about the core code that produces a string.
-> > But you've done that in reply to v5 which is about inkern interfaces
-> > that don't work in strings...
-> >=20
-> >=20
-> >=20
-> > > > > > > =C2=A0=C2=A0=C2=A0 consumer->read_avail() {
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio_read_avail_cha=
-nnel_raw() {
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 iio_channel_read_avail() {
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 producer->read_avail() {
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kmemdup_array();
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 }
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > > > > =C2=A0=C2=A0=C2=A0 }
-> > > > > > >=20
-> > > > > > > =C2=A0=C2=A0=C2=A0 iio_format_list();
-> > That's effectively making the safe copy that is handed back to the
-> > caller. So this is fine.
-> > > > > > >=20
-> > > > > > > =C2=A0=C2=A0=C2=A0 consumer->read_avail_release_resource() {
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio_read_avail_cha=
-nnel_release_resource() {
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 producer->read_avail_release_resource() {
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kfree();
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 }
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > > > > =C2=A0=C2=A0=C2=A0 }
-> > > > > > > }=C2=A0=20
-> > > > > >=20
-> > > > > > Yeah, exactly what came to mind...
-> >=20
-> > I'm very confused what scope of comments here is. Maybe the easiest thi=
-ng is
-> > to send the code.
-> >=20
->=20
-> The function call graph example and the related comments above were just
-> to show the full flow of a read_avail() call on a consumer driver in
-> case an inkern release_resource() wrapper was used instead of an
-> additional consumer copy. This just to confirm that I was on the same
-> page as what Nuno suggested.
->=20
-> >=20
-> > > > > > =C2=A0=20
-> > > > > > >=20
-> > > > > > >=20
-> > > > > > > I was going with the simpler solution you described, but my
-> > > > > > > concern with
-> > > > > > > it
-> > > > > > > was
-> > > > > > > that the info_exists_lock mutex would be unlocked between a
-> > > > > > > iio_channel_read_avail()
-> > > > > > > call and its corresponding
-> > > > > > > iio_channel_read_avail_release_resource() call.
-> > > > > > > To my understanding, this could potentially allow for the dev=
-ice
-> > > > > > > to be
-> > > > > > > unregistered between the two calls and result in a memleak of=
- the
-> > > > > > > avail
-> > > > > > > buffer
-> > > > > > > allocated by the producer.
-> >=20
-> > Yes. That's why we have to free the produced copy under the exist_lock
-> > (and take yet another copy).
-> >=20
-> > > > > > >=20
-> > > > > > > However, I have been trying to reproduce a similar case by ad=
-ding
-> > > > > > > a delay
-> > > > > > > between the consumer->read_avail() and the
-> > > > > > > consumer->read_avail_release_resources(), and by unbinding th=
-e
-> > > > > > > driver
-> > > > > > > during
-> > > > > > > that delay, thus with the info_exists_lock mutex unlocked. In=
- this
-> > > > > > > case
-> > > > > > > the
-> > > > > > > driver is not unregistered until the iio_read_channel_info_av=
-ail()
-> > > > > > > function
-> > > > > > > completes, likely because of some other lock on the sysfs fil=
-e
-> > > > > > > after the
-> > > > > > > call
-> > > > > > > of
-> > > > > > > cdev_device_del() in iio_device_unregister().
-> > > > > > > =C2=A0=20
-> > > > > >=20
-> > > > > > Yes, you need to have some sync point at the kernfs level other=
-wise
-> > > > > > we could
-> > > > > > always be handling a sysfs attr while the device is being remov=
-ed
-> > > > > > under our
-> > > > > > feet. But I'm not sure what you're trying to do... IIUC, the pr=
-oblem
-> > > > > > might
-> > > > > > come
-> > > > > > if have:
-> > > > > >=20
-> > > > > > consumer->read_avail_channel_attribute()
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 producer->info_lock(=
-)
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 producer->read_avail=
-()
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 producer->kmalloc()
-> > > > > >=20
-> > > > > > ...
-> > > > > > // producer unbound
-> > > > > > ...
-> > > > > > consumer->read_avail_release()
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENODEV;
-> > > > > >=20
-> > > > > > // producer->kmalloc() never get's freed...
-> > > > > >=20
-> > > > > > The above is your problem right? And I think it should be a val=
-id
-> > > > > > one since
-> > > > > > between ->read_avail_channel_attribute() and read_avail_release=
-()
-> > > > > > there's
-> > > > > > nothing preventing the producer from being unregistered...=C2=
-=A0=20
-> > > > >=20
-> > > > > Yes, that's the problem.
-> > > > > =C2=A0=20
-> > > > > >=20
-> > > > > > If I'm not missing nothing one solution would be for the produc=
-er to
-> > > > > > do
-> > > > > > devm_kmalloc() and devm_kfree() on read_avail() and
-> > > > > > release_resources() but
-> > > > > > at
-> > > > > > that point I'm not sure it's better than what you have since it=
-'s
-> > > > > > odd enough
-> > > > > > for
-> > > > > > being missed in reviews...=C2=A0=20
-> >=20
-> > If it's an allocation to keep a copy for an active consumer then that i=
-s
-> > nasty
-> > as the lifetime is completely untidied.=C2=A0 Effectively you are garba=
-ge
-> > collecting.
-> >=20
-> > > > >=20
-> > > > > I honestly didn't think of this and it would in fact prevent the
-> > > > > additional copy. But I agree that it could be missed in new drive=
-rs,
-> > > > > maybe a comment in the iio_info read_avail_release_resource() cal=
-lback
-> > > > > declaration would help?=C2=A0=20
-> > > > > > =C2=A0=20
-> > > > At this point I would say whatever you or Jonathan prefer :)
-> > > > =C2=A0=20
-> > >=20
-> > > I run some quick tests with this approach and haven't found any issue=
- so
-> > > far.=20
-> >=20
-> > I can't see what is preventing the race you describe where the
-> > release callback is swept out by a driver unbind of the provider.
-> > So unless we can show that is safe I don't see a way to avoid a consume=
-r
-> > copy.
-> >=20
-> > Long shot, Lars-Peter I think you fixed up most of the previous races i=
-n
-> > this
-> > code, don't suppose you remember how it works?
-> >=20
-> > > I would personally switch to this approach as it would be much
-> > > simpler and easier to understand, and since the avail lists are const
-> > > for most of the current drivers I would not expect many new drivers
-> > > needing a dynamic available list. However, I will wait Jonathan feedb=
-ack
-> > > first.
-> > The idea here is almost no one actually makes a copy in the producer.
-> > The consumer copy is a necessity to my thinking because we are effectiv=
-ely
-> > passing the ownership of the data.=C2=A0 Unfortunately we have no idea =
-how
-> > the producer would free it so we need to create our own copy.
-> >=20
->=20
-> You are indeed right. During the last comment reviews I focused on the
-> fact that using a devm_kfree() in the producer's read_avail_release()
-> would prevent the memleak but I completely missed that it would not
-> prevent the race condition: without the consumer copy, the consumer or
-> core code could still try to access a freed buffer after the producer
-> driver gets unregistered.
->=20
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    2f91ff27b0ee Merge tag 'sound-6.12-rc2' of git://git.kern=
+e..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D155c879f98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D95098faba89c7=
+0c9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Db79be83906cd9ba=
+b16ff
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/14933c4ac457/dis=
+k-2f91ff27.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/6725831fc1a1/vmlinu=
+x-2f91ff27.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/98d64e038e72/b=
+zImage-2f91ff27.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+b79be83906cd9bab16ff@syzkaller.appspotmail.com
+>
+> loop4: detected capacity change from 0 to 4096
+> EXT4-fs: Ignoring removed nobh option
+> EXT4-fs: Ignoring removed i_version option
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KCSAN: data-race in xas_create / xas_find
+>
+> write to 0xffff888106819919 of 1 bytes by task 3435 on cpu 0:
+>  xas_expand lib/xarray.c:613 [inline]
+>  xas_create+0x666/0xbd0 lib/xarray.c:654
+>  xas_store+0x6f/0xc90 lib/xarray.c:788
 
-Yeah, this would be indeed an issue... Good catch!
+AFAIU, xas_store() itself, doesn't have a locking mechanism,
+but is locked in xa_* functions. Example:
 
-- Nuno S=C3=A1
+void *xa_store_range(...)
+{
+   XA_STATE(xas, xa, 0);
+   ...
+   do {
+      xas_lock(&xas);
+      if (entry) {
+      ...
+         xas_create(&xas, true);
+   }
+...
+unlock:
+   xas_unlock(&xas);
+}
 
+Same thing is for the another racing xas_find() function:
+
+void *xa_find(...)
+{
+   XA_STATE(xas, xa, *indexp);
+   void *entry;
+   rcu_read_lock();
+   do {
+      if (...)
+         entry =3D xas_find_marked(&xas, max, filter);
+      else
+         entry =3D xas_find(&xas, max);
+      ...
+   rcu_read_unlock();
+}
+
+In this KCSAN report, xas_create() and xas_find() are racing for `offset` f=
+ield.
+
+>  __filemap_add_folio+0x3cc/0x6f0 mm/filemap.c:916
+>  filemap_add_folio+0x9c/0x1b0 mm/filemap.c:972
+>  page_cache_ra_unbounded+0x175/0x310 mm/readahead.c:268
+>  do_page_cache_ra mm/readahead.c:320 [inline]
+>  force_page_cache_ra mm/readahead.c:349 [inline]
+>  page_cache_sync_ra+0x252/0x670 mm/readahead.c:562
+>  page_cache_sync_readahead include/linux/pagemap.h:1394 [inline]
+>  filemap_get_pages+0x2c1/0x10e0 mm/filemap.c:2547
+>  filemap_read+0x216/0x680 mm/filemap.c:2645
+>  blkdev_read_iter+0x20e/0x2c0 block/fops.c:765
+>  new_sync_read fs/read_write.c:488 [inline]
+>  vfs_read+0x5f6/0x720 fs/read_write.c:569
+>  ksys_read+0xeb/0x1b0 fs/read_write.c:712
+>  __do_sys_read fs/read_write.c:722 [inline]
+>  __se_sys_read fs/read_write.c:720 [inline]
+>  __x64_sys_read+0x42/0x50 fs/read_write.c:720
+>  x64_sys_call+0x27d3/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:=
+1
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> read to 0xffff888106819919 of 1 bytes by task 9109 on cpu 1:
+>  xas_find+0x372/0x3f0 lib/xarray.c:1278
+>  find_get_entry+0x66/0x390 mm/filemap.c:1992
+>  find_get_entries+0xa4/0x220 mm/filemap.c:2047
+>  truncate_inode_pages_range+0x4ac/0x6b0 mm/truncate.c:378
+>  truncate_inode_pages+0x24/0x30 mm/truncate.c:423
+>  kill_bdev block/bdev.c:91 [inline]
+>  set_blocksize+0x258/0x270 block/bdev.c:173
+>  sb_set_blocksize block/bdev.c:182 [inline]
+>  sb_min_blocksize+0x63/0xe0 block/bdev.c:198
+>  ext4_load_super fs/ext4/super.c:4992 [inline]
+>  __ext4_fill_super fs/ext4/super.c:5213 [inline]
+>  ext4_fill_super+0x38b/0x3a10 fs/ext4/super.c:5686
+>  get_tree_bdev+0x256/0x2e0 fs/super.c:1635
+>  ext4_get_tree+0x1c/0x30 fs/ext4/super.c:5718
+>  vfs_get_tree+0x56/0x1e0 fs/super.c:1800
+>  do_new_mount+0x227/0x690 fs/namespace.c:3507
+>  path_mount+0x49b/0xb30 fs/namespace.c:3834
+>  do_mount fs/namespace.c:3847 [inline]
+>  __do_sys_mount fs/namespace.c:4055 [inline]
+>  __se_sys_mount+0x27c/0x2d0 fs/namespace.c:4032
+>  __x64_sys_mount+0x67/0x80 fs/namespace.c:4032
+>  x64_sys_call+0x203e/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:=
+166
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> value changed: 0x0e -> 0x00
+>
+> Reported by Kernel Concurrency Sanitizer on:
+> CPU: 1 UID: 0 PID: 9109 Comm: syz.4.1794 Not tainted 6.12.0-rc1-syzkaller=
+-00257-g2f91ff27b0ee #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> EXT4-fs (loop4): mounted filesystem 00000000-0000-0000-0000-000000000000 =
+r/w without journal. Quota mode: writeback.
+> EXT4-fs (loop4): unmounting filesystem 00000000-0000-0000-0000-0000000000=
+00.
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
 
