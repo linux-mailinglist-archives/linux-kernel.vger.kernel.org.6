@@ -1,105 +1,89 @@
-Return-Path: <linux-kernel+bounces-364152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFF399CBD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA57099CBDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447501F23E7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF7F283D5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B741AB535;
-	Mon, 14 Oct 2024 13:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7C414A4DE;
+	Mon, 14 Oct 2024 13:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbvpbFLG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8421AAE39
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HDHwkhyT"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BEA18638;
+	Mon, 14 Oct 2024 13:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728913646; cv=none; b=P8NVENaAnMyHsGpMmozJ7n7cAK5/FKhz0j6akbeQ0Ajyrk6GB129S6f1yfO/goisjVgNGJoTJtlJlbWglFxm+aeHRwJ0RagRXSWgmIA0DXGxzhZYRaT2rEYtJfOgUDiE6YaG9WoCeA2yrpmupST+C760CXIJH9dJnemOYG/Wym8=
+	t=1728913759; cv=none; b=RhG0eiOpE4f9LBAcTd1tAIV/r7d/+Iw5NEoI3GAowTdP7HLSGh8Wm9pwoTxu8xch3WKzAIyoKstD3sDmzFhGPZfS26kBbjhik/3fwz+hu2jpmBpyWqe/Yt4xRC2Qchzt3FlE46rnz50wRUX69eKHLRYdBCU2BKb/cFK7R+ZZd/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728913646; c=relaxed/simple;
-	bh=nwwq7OHMaX1nC9S9saGAcAH78OrbUQ+EHs3XR03niTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Xan+9PDrRU1h4C+Klg9KLJ848bP7k2P00c+wLwjm+2D6HvbSkbd44rWTGjrmFDY4vB+wtj2tOJMFQ+LKLXLVNiyYT8hrpcHbM2cbF8qxC7N3clmlGVGf3CwBNjaOtJkv4FF3aVp3W7FOa+YNAjjgDk8LWc4FEZxkngGVHqTGSn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbvpbFLG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2CBEC4CED0;
-	Mon, 14 Oct 2024 13:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728913646;
-	bh=nwwq7OHMaX1nC9S9saGAcAH78OrbUQ+EHs3XR03niTg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fbvpbFLGJacz7KdskTSpqFr5dESrRgMLSudV03eEwOE4BWmMszKDkhE9Dc6HvVQmB
-	 BObfvY03gdlnj5csdiKAZ+YCh/Vf1+fna4ecPxhyuqQtZIxd3xo+bolmddD4HGdTgk
-	 MSj95NwsdWsQt8Yy7/R9IrSWxaQ2nvV1rU74FgXyHrBy7eXRiHfY3VSXdMLoDDwoAL
-	 PWpIsayPhR5TP90B9XtJ/QWAPdJ5HpNSUB/2UmdCs/bWuzotr/vW0V+/GAXT4cuqcb
-	 okXyEKXhUAENIBQhpH/98qS9M5jqYJOpEICzqKW+h1eaJ38dXTsJG9UEsIMT6B0lcE
-	 pHLgCpJfAG7tg==
-Date: Mon, 14 Oct 2024 21:47:19 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	chao@kernel.org
-Subject: [GIT PULL] erofs fixes for 6.12-rc4
-Message-ID: <Zw0g5xS5WXYve0Hj@debian>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	chao@kernel.org
+	s=arc-20240116; t=1728913759; c=relaxed/simple;
+	bh=oPkmE0aNJR2zZY61xEXGvtbgSlAweUgRLOYeDwL02EA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tEL9RZYinjpVbiBgw8EXKAdyy9tuvHcqws7J5mti4WF4j1TOveaJ8hUKpk3IH8b5jU/w/I+EHN5VXcjZeSMd5VxA2NsfKgxNNYIRMy08fKl+Gm8bWkuzFNKzQENVsA7oYbR2DdF3gupYYrWFnAOGP2kFSsGx4g0xKMF0qcFTxiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HDHwkhyT; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=S8rTG
+	iq7SnFK4SfAjJXmtENG0UkwLoAYhI6EzKbcjzg=; b=HDHwkhyTPUMb50KbpibDr
+	uWTIjm4C9PM0tBNOuBorWvxBqgIoScZAGllcq0JS1udehugcwNV3NjPtpoDbe0+O
+	TLKTYw8FCLyagzygmv63+jfMos9knvWQFYXqqhM+fUnSp6HsXVWf3xzKG+4mDHMG
+	dUHUJHppgJ/4OltdGMVnC4=
+Received: from tcy.localdomain (unknown [120.136.174.178])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3vaA1IQ1nMAVNBA--.5990S2;
+	Mon, 14 Oct 2024 21:48:51 +0800 (CST)
+From: ChunyouTang <tangchunyou@163.com>
+To: manivannan.sadhasivam@linaro.org,
+	fancer.lancer@gmail.com,
+	vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tangchunyou@163.com
+Subject: [PATCH] dma/dw-edma: chip regs base should add the offset
+Date: Mon, 14 Oct 2024 21:48:32 +0800
+Message-Id: <20241014134832.4505-1-tangchunyou@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3vaA1IQ1nMAVNBA--.5990S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtFyrtrWxuFW8KFyftr15twb_yoW3Crb_C3
+	s8XrWxXrZ8tFnxAF9rCrsxZr98u3s7Zr4fuF18tF90qF43ZF909r4UZrnrZr12g347GF9x
+	AF45Zr48Zr4UKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWT5dJUUUUU==
+X-CM-SenderInfo: 5wdqwu5kxq50rx6rljoofrz/1tbiZQx4UWcNEzXYngAAsK
 
-Hi Linus,
+From: tangchunyou <tangchunyou@163.com>
 
-Could you consider these three fixes for 6.12-rc4?
+fix the regs base with offset.
 
-The main one fixes a syzbot issue due to the invalid inode type out
-of file-backed mounts.  The others are minor cleanups without actual
-logic changes.
+Signed-off-by: tangchunyou <tangchunyou@163.com>
+---
+ drivers/dma/dw-edma/dw-edma-pcie.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-All commits have been in -next and no potential merge conflict is
-observed.
+diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
+index 1c6043751dc9..2918b64708f9 100644
+--- a/drivers/dma/dw-edma/dw-edma-pcie.c
++++ b/drivers/dma/dw-edma/dw-edma-pcie.c
+@@ -234,6 +234,8 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+ 	if (!chip->reg_base)
+ 		return -ENOMEM;
+ 
++	chip->reg_base += vsec_data.rg.off;
++
+ 	for (i = 0; i < chip->ll_wr_cnt; i++) {
+ 		struct dw_edma_region *ll_region = &chip->ll_region_wr[i];
+ 		struct dw_edma_region *dt_region = &chip->dt_region_wr[i];
+-- 
+2.25.1
 
-Thanks,
-Gao Xiang
-
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.12-rc4-fixes
-
-for you to fetch changes up to ae54567eaa87fd863ab61084a3828e1c36b0ffb0:
-
-  erofs: get rid of kaddr in `struct z_erofs_maprecorder` (2024-10-11 13:36:58 +0800)
-
-----------------------------------------------------------------
-Changes since last update:
-
- - Make sure only regular inodes can be used for file-backed mounts;
-
- - Two minor codebase cleanups.
-
-----------------------------------------------------------------
-Gao Xiang (3):
-      erofs: ensure regular inodes for file-backed mounts
-      erofs: get rid of z_erofs_try_to_claim_pcluster()
-      erofs: get rid of kaddr in `struct z_erofs_maprecorder`
-
- fs/erofs/super.c | 13 ++++++++++---
- fs/erofs/zdata.c | 29 +++++++++--------------------
- fs/erofs/zmap.c  | 32 ++++++++++++--------------------
- 3 files changed, 31 insertions(+), 43 deletions(-)
 
