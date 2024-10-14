@@ -1,199 +1,140 @@
-Return-Path: <linux-kernel+bounces-364194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77A799CC8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:16:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A97199CC8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064EF1C22E7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 436E91F23A3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BB81A0BE7;
-	Mon, 14 Oct 2024 14:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7D817C8D;
+	Mon, 14 Oct 2024 14:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WrqWDkmy"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pZt3Ldo3"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3596B17C8D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4166D79C4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728915382; cv=none; b=ff019KSbGVH0ZNL4T5r4vg3TSoKMS2rkP+T7C2UsfimzFi5+q7KO3og4NsXhBGvPYEq5UpLBWTQQXXi80Bm0gcoxeby9tc0Qs9bOGwlYFbCd0ir0jSmyS7WBQvnkclSD24aMnkogni/HSm0LNJ03vTSjmtpIR3oyHX2WuSvC3n8=
+	t=1728915308; cv=none; b=niQODiiGEBczoHEyy30i+XgfP0KJ7ahooygad3XwEHNgjDFfBro+qhYXKuNCkUhAWuI0rtAIpHGNSU8ZzLzsYhPlfEUUu3AhCldjKQPpPPPcS/Y0vL/KxP+32a5Z5RnC3eIGaP7cHhyLrhrgIqQxychNq6hZrWq9nY+cqnWsUCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728915382; c=relaxed/simple;
-	bh=+3JoPyfViDOSYGIGmaDGQ5GejIpMVlgVxF1zysFNY2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q2zU7kop8s7Fnbh/TXgvGKYzgFpCB7HLj8c8eF4jc5mTduDaUEFsvnswBFx/VDveFE126gqFvmSvl8hk3iXvRCOkYM8ho4a5FDr5NrQIL5VrKqstQedM7ZETgFNh6y5aOUEYo8SuT+VaRCVZiUu1Nk7qrLY81VC4ys2LTfUdOY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WrqWDkmy; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f6fede4dso1075284e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:16:18 -0700 (PDT)
+	s=arc-20240116; t=1728915308; c=relaxed/simple;
+	bh=K0bOWEC+HE1kkNV0lJmyf9eNjeLakCtO0ersbpJzOt8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A+bUIraBPAwn5xTZtLU+XzHnmhLP2wXsI1gMg6mMwW+qryCb8vTHq9shOLF2iFHSEA1v9DBHyst4dcZ0GJsRV/nCbDB+GtG1BrG1xA+leJvaI4R+MsrgC4vAVKvw+kE2DtFmI04cJXR18evSLPYBILNO1/SevYhJhj+MDPyttE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pZt3Ldo3; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d50fad249so2763122f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728915377; x=1729520177; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FS5y6tjwukPP7nUod0+Z8GD04hhTWg7qrJ6MFmiMFQM=;
-        b=WrqWDkmyfNwqYQ/OEnzatpvVygtFF3q7RUpR351ZB4cFpPy83MgeUkO2WnQPydv7Yy
-         IOkkVyz+0rshhOqAKQbOMDPBc5c1KdapjGSI9msGmpyxJ11RB2yEmEvJlYTp3v8qLkZ9
-         W9jOHgQrMICpc/ogUNKbaRC7t5bqITlqw1y6YZdJY/UCSNxBPDyYPpEz0UUYGoWeuJC1
-         ZWfGFI9DT9BbILnEo6hNTyA7PBlq6RopFySMJ5eGl5BjkbzF1YIdROGUMIvF6E0sDUUJ
-         DsbNRQW2SSHmTNH/rWKNm84lW9x6404Kaz8DlBCZ5USrxa/3qRwXdzDlvOwBkU/YeopB
-         K7AQ==
+        d=linaro.org; s=google; t=1728915304; x=1729520104; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mW2Gu00UK++/xXWN5E2WTl/GlqCg0a99qal31mqPqL4=;
+        b=pZt3Ldo3Q5igYGdD5d6kOkQM4YgHnT/yMpn/afw4SfpNWRzgvmU+DbW5ijw2iIdpbd
+         p2R1yIn+M1pL5iu888FjcDT6bDQTFrmjf0mZzDHef9phcchrfrdWHcfNu+toKvlsOXFe
+         13JXSHfY8D6wV6uuxb4bhHPYwj1zSoLxqMJBu0GZYhIjnmyvRiQuqFQCpBlVuTn4k1Oq
+         nvaoSSeyWLuhBTR3j1IxvQ8NfhOrVSC6S+LQztfK+Gb5k4wh9i0N94WvRDwuZ76Zcvz3
+         ZXDJhLtBs8NvpPz/SK9LQMoo+faHOYAJIXV4k+P717yMEuRYJu52gA9B2qnMJ2bOJd69
+         n2Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728915377; x=1729520177;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1728915304; x=1729520104;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FS5y6tjwukPP7nUod0+Z8GD04hhTWg7qrJ6MFmiMFQM=;
-        b=woIqQQVvebSu8CQJmMmuUJG5gac19HAQj3FM61VS1HiHtiPjkJIhBkSiD0b869fljJ
-         V5NJL1ogS1m0Ka/t0JEyOV1syUQhPnKW4wBkAGbrT7sqI/1pS8RcwsTdn74Gs2VKzQr6
-         hVt7YDG9srlNkQDyTPc89i4vt2l13EpFGFGN03gIjksRs00UUXVHI1CgiqFKGY99FtbE
-         ECaKRyonk4xWDvcwqp5w3tzZKw178TSOEF+dXP2e5U8AUwp+A22Jy93EKebfmdqJQJxR
-         Wg+l6ZkPWWUC9QuFy/YkoSX184Swe0JUhP9IjgMTKe39J29n376iIbVwBxIVBp6Pl51q
-         Nxrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmoNH9u5JCmJc1YXBYCy6FuQERle78AbROfp7OWz0/60+YLS05ETh4WiRuDp96hJsSNLybLvu6z35JHE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmOoyuaMjhxAh7p6VZR61mRb/iDaMlQJoIwn8Y6BeFR6NRfVgq
-	OKkn88t4hqcoNQp1n2GQvBLI7ryZxOZcmeHfFHfRCbEuCYkQgt3sUSCBghbBe1w=
-X-Google-Smtp-Source: AGHT+IH+x6gckUKGQPodmKlRhU6+eUFT5W7nAxkPdJHXwHqYmJ+m5hPXdXqYMM6344OIvumOQrL8eg==
-X-Received: by 2002:a05:6512:2207:b0:539:f748:b568 with SMTP id 2adb3069b0e04-539f748b8f0mr1708206e87.32.1728915377153;
-        Mon, 14 Oct 2024 07:16:17 -0700 (PDT)
-Received: from dhcp161.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf22d46sm154251805e9.10.2024.10.14.07.16.16
+        bh=mW2Gu00UK++/xXWN5E2WTl/GlqCg0a99qal31mqPqL4=;
+        b=Ehp207W6FH+p0M43DrCAZm4+jljhkbDK8O9hNQebzWZ4hzBOUbUokb/Gi6TlACBY4L
+         1IpohF36r0NmQZoaxuciD/pscScRS2umU2fos3FMb9uAGqt39uHzLFuAqJHJ6BetuLUk
+         HjZLEUxpt+PB4mzLSW/M+moXidxiGYNWZVb4dp7vU+h4fOLSjjpWbntu/uNSPr2a/5oH
+         Gg2bnY6Re4Q3DwX+ConMx9lx+sYXaysPGgGOgvxLEW9z0M2y7UZwuIuZlAZlpIIqLdcq
+         Ia5Ed8gT3/3RNzkwot9WKUpP8HlQl5yanMaPUz089fIZBoct93gwCri/6GY2TnbtSgjr
+         HX5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXNs68IbGqxqqo6uIVCSa26fe00GFgQGVwtKErX0x2r3SSBeblVQqchx6wH/sKOK5FoJPGVu8t11tNTrP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJb/YxkOjhqA0cs77KZXjf0f8yMn90mDAg4o6Kzp4gQlJTSyG4
+	jCuHUaNn6T+68RYahUswZrfqpADbiuNoqg9IytqCckXMaB47TVwr+kj2uGEy+TA=
+X-Google-Smtp-Source: AGHT+IH842xmdL5bgstxtrmHRDZldATMix1NsKVGEEADafMqa0y/TCecTEVTp7Q6EJfpih1E+b+IEw==
+X-Received: by 2002:a5d:67d2:0:b0:37d:492c:4f54 with SMTP id ffacd0b85a97d-37d5518e02fmr8134392f8f.3.1728915304493;
+        Mon, 14 Oct 2024 07:15:04 -0700 (PDT)
+Received: from [127.0.1.1] ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf45d49sm154135035e9.12.2024.10.14.07.15.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 07:16:16 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH] ring-buffer: Fix reader locking when changing the sub buffer order
-Date: Mon, 14 Oct 2024 16:14:16 +0200
-Message-ID: <20241014141554.10484-1-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.43.0
+        Mon, 14 Oct 2024 07:15:04 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Mon, 14 Oct 2024 17:14:51 +0300
+Subject: [PATCH] arm64: dts: qcom: x1e80100: Force host dr_mode for usb_2
+ controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241014-x1e80100-usb2-dwc3-set-dr-mode-host-v1-1-3baab3ad17d8@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAFonDWcC/x3NQQ6CQAxA0auQrm3SdiAxXsW4EFqkCxkzRSQh3
+ N0Jy7f5f4ew4hZwa3Yotnp4niv40sAwPeeXoWs1CEnLxC1ubFdiIvxGL6i/IWHYglrwndVwyrF
+ g6hKLskrXC9TSp9jo23m5P47jD07N0Bh1AAAA
+X-Change-ID: 20241014-x1e80100-usb2-dwc3-set-dr-mode-host-35312d1d25b2
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1025; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=K0bOWEC+HE1kkNV0lJmyf9eNjeLakCtO0ersbpJzOt8=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDSdhH2/cZLsXmymGJqy7UxGVRgwXHjFlNiBcS
+ P0vJuqejsuJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZw0nYQAKCRAbX0TJAJUV
+ Vt0+D/90zb+NBqLdICEDlaiQgWoO6WnVto3rxw2B497MTfOCFvx4cnqbaoEGTM9o3NC85DvL1ht
+ 0TG/+CA0kqqkUdFggDHf5RuF+xc87v0sVQrkL2kqV3iFLlXgpcNXWirQHeWyAMNj66EVMh0KuUt
+ 1xCU7Rk2OyamOSAz+58yRhqBs5zEX0gksWOFL4+9bf2EJeJuQu2E2NdIYxBGFtUBvL45PuZYEf6
+ E0d1Bocj0eHvKsaw93fVhQ+4LAPvddYhYb1Ilcf5Lz0Z6hHtBk5tBua8pBlPkYabhT61Lu5Ljx7
+ Tp1B7RTq7kzgMRl8NXTzZ5P0aBPHhqaG2tUdULxkrG5y0M91/v/0FWkG0hocnm7Qz0JntSWSaDO
+ yElIkHDnD5lUUjXcPcAFbbRrYPW7fXv3PoOjCTWAVwSIs2a/x8MhAkZjGhsjqjJS/VSPlYzzvsq
+ SZLAEL19dkuaRoHSB4jeFTwshdMp3Gmd6uAvrcbjKhpTJ18LeCbawVbVjpeWfTzKZ5Wajoqwe0A
+ qQw8sa3iXWujHWHVMUYvfrRFU0uwGVAS/OSt8FAqJJTjzpKEfSt25mLSj4PL6vtW/7EqdNNZZXm
+ jZEAolQB+IoD/dxNm11eUsbkuu0mUiMtr8sM9ORb6k/GLZJAdBVL4IbicJ3M2H/KMbWkXRmGndl
+ 091ciVll+DrEpQQ==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-The function ring_buffer_subbuf_order_set() updates each
-ring_buffer_per_cpu and installs new sub buffers that match the requested
-page order. This operation may be invoked concurrently with readers that
-rely on some of the modified data, such as the head bit (RB_PAGE_HEAD), or
-the ring_buffer_per_cpu.pages and reader_page pointers. However, no
-exclusive access is acquired by ring_buffer_subbuf_order_set(). Modifying
-the mentioned data while a reader also operates on them can then result in
-incorrect memory access and various crashes.
+The usb_2 controller has only a USB 2.0 PHY connected to it. There is no
+USB 3.x PHY fot it. So since dual-role is not an option, explicitly set
+the dr_mode to host to match the hardware.
 
-Fix the problem by taking the reader_lock when updating a specific
-ring_buffer_per_cpu in ring_buffer_subbuf_order_set().
-
-Fixes: 8e7b58c27b3c ("ring-buffer: Just update the subbuffers when changing their allocation order")
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
-References:
-https://lore.kernel.org/linux-trace-kernel/20240715145141.5528-1-petr.pavlu@suse.com/
-https://lore.kernel.org/linux-trace-kernel/20241010195849.2f77cc3f@gandalf.local.home/
-https://lore.kernel.org/linux-trace-kernel/20241011112850.17212b25@gandalf.local.home/
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
- kernel/trace/ring_buffer.c | 44 ++++++++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 18 deletions(-)
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 0e6802c1d2d8375987c614ec69c440e2f38d25c6..4da13c8472392d842442193dc740027fa011ee1f 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -4143,6 +4143,7 @@ usb_2_dwc3: usb@a200000 {
+ 				iommus = <&apps_smmu 0x14e0 0x0>;
+ 				phys = <&usb_2_hsphy>;
+ 				phy-names = "usb2-phy";
++				dr_mode = "host";
+ 				maximum-speed = "high-speed";
+ 
+ 				ports {
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 4c24191fa47d..adde95400ab4 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -6773,41 +6773,40 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
- 	}
- 
- 	for_each_buffer_cpu(buffer, cpu) {
-+		struct buffer_data_page *old_free_data_page;
-+		struct list_head old_pages;
-+		unsigned long flags;
- 
- 		if (!cpumask_test_cpu(cpu, buffer->cpumask))
- 			continue;
- 
- 		cpu_buffer = buffer->buffers[cpu];
- 
-+		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-+
- 		/* Clear the head bit to make the link list normal to read */
- 		rb_head_page_deactivate(cpu_buffer);
- 
--		/* Now walk the list and free all the old sub buffers */
--		list_for_each_entry_safe(bpage, tmp, cpu_buffer->pages, list) {
--			list_del_init(&bpage->list);
--			free_buffer_page(bpage);
--		}
--		/* The above loop stopped an the last page needing to be freed */
--		bpage = list_entry(cpu_buffer->pages, struct buffer_page, list);
--		free_buffer_page(bpage);
--
--		/* Free the current reader page */
--		free_buffer_page(cpu_buffer->reader_page);
-+		/*
-+		 * Collect buffers from the cpu_buffer pages list and the
-+		 * reader_page on old_pages, so they can be freed later when not
-+		 * under a spinlock. The pages list is a linked list with no
-+		 * head, adding old_pages turns it into a regular list with
-+		 * old_pages being the head.
-+		 */
-+		list_add(&old_pages, cpu_buffer->pages);
-+		list_add(&cpu_buffer->reader_page->list, &old_pages);
- 
- 		/* One page was allocated for the reader page */
- 		cpu_buffer->reader_page = list_entry(cpu_buffer->new_pages.next,
- 						     struct buffer_page, list);
- 		list_del_init(&cpu_buffer->reader_page->list);
- 
--		/* The cpu_buffer pages are a link list with no head */
-+		/* Install the new pages, remove the head from the list */
- 		cpu_buffer->pages = cpu_buffer->new_pages.next;
--		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
--		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
-+		list_del_init(&cpu_buffer->new_pages);
- 		cpu_buffer->cnt++;
- 
--		/* Clear the new_pages list */
--		INIT_LIST_HEAD(&cpu_buffer->new_pages);
--
- 		cpu_buffer->head_page
- 			= list_entry(cpu_buffer->pages, struct buffer_page, list);
- 		cpu_buffer->tail_page = cpu_buffer->commit_page = cpu_buffer->head_page;
-@@ -6815,11 +6814,20 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
- 		cpu_buffer->nr_pages = cpu_buffer->nr_pages_to_update;
- 		cpu_buffer->nr_pages_to_update = 0;
- 
--		free_pages((unsigned long)cpu_buffer->free_page, old_order);
-+		old_free_data_page = cpu_buffer->free_page;
- 		cpu_buffer->free_page = NULL;
- 
- 		rb_head_page_activate(cpu_buffer);
- 
-+		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-+
-+		/* Free old sub buffers */
-+		list_for_each_entry_safe(bpage, tmp, &old_pages, list) {
-+			list_del_init(&bpage->list);
-+			free_buffer_page(bpage);
-+		}
-+		free_pages((unsigned long)old_free_data_page, old_order);
-+
- 		rb_check_pages(cpu_buffer);
- 	}
- 
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241014-x1e80100-usb2-dwc3-set-dr-mode-host-35312d1d25b2
 
-base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
-prerequisite-patch-id: 0aa81c18abaac4990d14c431e12b9e91696aa053
+Best regards,
 -- 
-2.43.0
+Abel Vesa <abel.vesa@linaro.org>
 
 
