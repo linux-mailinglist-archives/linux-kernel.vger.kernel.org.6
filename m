@@ -1,206 +1,244 @@
-Return-Path: <linux-kernel+bounces-364440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EC599D4A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:30:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A8F99D4AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80911C24E62
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:30:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455DC1C24F29
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427861A76DE;
-	Mon, 14 Oct 2024 16:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076121B4F04;
+	Mon, 14 Oct 2024 16:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="hg+tPGH8"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jAMmC2iW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LAM0rKnx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jAMmC2iW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LAM0rKnx"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D22B2595;
-	Mon, 14 Oct 2024 16:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45482231C92;
+	Mon, 14 Oct 2024 16:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728923432; cv=none; b=cC9/pDMOUj1ztDRqcyyuIQQb9KCrX+oX5p9ATQIT4iIOxZZWAuTHkBGa2Ehmj8XEuQtyWtchxgJy8QD65gqu+d/oDB8wW1pnED7IaWVUnbUh9yiO9unEMHLOa2lvceaswf2KXVrLl/8c+VtmpN5aQeiFYypI6xVlHz22C2UPFtM=
+	t=1728923485; cv=none; b=hh84cBVkuGIoVWtjQNie0G5twPeCMTgpOHNabSpSbUVx7Lgrd1xbAwv36oDSBP51hN9XJBBkM9zxKmU2FvzoMCOjMp7NjPErskxh/INPLJyEtBYykTxGhaxVlWLfHcDEjSnX3w5fU+lqnLnP+nDtGjT4U4wDS45Uheg3oaBOTCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728923432; c=relaxed/simple;
-	bh=e8/3uxk2MTpVSNgKUiAWycXneXmQ7a/GiQDrcIGVaG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NwibnxlUeou5I3A4pb7HKOSGl9ZQkqZ6xNpC5QMfBSoDBP8V25HTESIEXrKwFKPOgOxWdgXH0Mg/F8LlmivmLdFLuIAjpknvDutmxmgvIO614I3fJacceFnAwNerJnsqiSZwOkJOzDvnzkYncMmYAJKRNAbhmd8YEVfLzBB48tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=hg+tPGH8; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1728923422; x=1729528222; i=w_armin@gmx.de;
-	bh=xPK992Gl04Ko7oieqDNyzfneYG2qaqjxZZEtGBl0bAY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=hg+tPGH8A+HgAQyirk6RsvJwrHvvjCJ5ScKbkeqCUuCtV+JErFVaX5BzrZ6xG/Tm
-	 oxvISrRwcQb4OZGyK2yKqbBQNpnrBqbsMcc1oUU/OksGuMbxkt8Ub3NT06Yd9egMS
-	 OZdt0aL4w4lzSwRyMcVy4mOO7KqN/uTZrTGAwqOTWK8hbNrzHo7ktHPQP4AcWMgE2
-	 E0s8BujkhK6DVlc/h33hp0KLKg7D7K9rP6SVYQpjdq8PUHCV10lENQJu4c31qF89i
-	 mrJvI4L6TnBRse4/3nKQ2DBWd+mkQTtnZ4rG1GfvfKS9L0yRBJkNfAh+48CuTIDHu
-	 KoXbyabjCKP0B5CmVw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M3DNt-1swoWR2n5Z-008QJg; Mon, 14
- Oct 2024 18:30:22 +0200
-Message-ID: <3fe7c4e0-c24a-4205-a870-0fcc6e76f1af@gmx.de>
-Date: Mon, 14 Oct 2024 18:30:21 +0200
+	s=arc-20240116; t=1728923485; c=relaxed/simple;
+	bh=AZFOPJj+z+E7HOyr0IfZb0QvrjK3TVWMJuVeJTFglNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uyeFh9mPOck/PA9X6jBX45+f3jkZFqTuVyHmy6nG2W3jj9lg1AToBcVjVG+xe2csG6XEoTt3gNvM534pQUMwiXe6SW6rFbalIoHfS/n/89OWWdUWPOyJOoCCbGMvZTsAxsdLWzU72oe4jlpvkMA/EuevxHrSm4Tm1SKRTLAs3Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jAMmC2iW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LAM0rKnx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jAMmC2iW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LAM0rKnx; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5A0E51FE87;
+	Mon, 14 Oct 2024 16:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728923481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GMSvSwEinMbWBDsy63k3v3dPvLeoUCIAjXKJaTuFbjg=;
+	b=jAMmC2iWP83lNj9CZWkFG7Z64BV3VKgtHA9SR5CUK7RfocqMP5vqGtjoBrlSsvAmlzjLja
+	QdDQRIcmBT2sQJj4YskFDfg1sPzRx/V06ueFkuil7kcKoQg2Pv7FZ3mRiL0bVz0eyn23rR
+	0njeItmjY9XUo2BC4X3cuzF4kadsm7o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728923481;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GMSvSwEinMbWBDsy63k3v3dPvLeoUCIAjXKJaTuFbjg=;
+	b=LAM0rKnxwqFzWBT6CPRuPEgXd3Zew54inH0pdVN1eZZADpz/zlZJ3iRttR1D58W1wzfsQe
+	rKAcO+mxo66/ZSCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728923481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GMSvSwEinMbWBDsy63k3v3dPvLeoUCIAjXKJaTuFbjg=;
+	b=jAMmC2iWP83lNj9CZWkFG7Z64BV3VKgtHA9SR5CUK7RfocqMP5vqGtjoBrlSsvAmlzjLja
+	QdDQRIcmBT2sQJj4YskFDfg1sPzRx/V06ueFkuil7kcKoQg2Pv7FZ3mRiL0bVz0eyn23rR
+	0njeItmjY9XUo2BC4X3cuzF4kadsm7o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728923481;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GMSvSwEinMbWBDsy63k3v3dPvLeoUCIAjXKJaTuFbjg=;
+	b=LAM0rKnxwqFzWBT6CPRuPEgXd3Zew54inH0pdVN1eZZADpz/zlZJ3iRttR1D58W1wzfsQe
+	rKAcO+mxo66/ZSCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A31C13A42;
+	Mon, 14 Oct 2024 16:31:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /Rw1EllHDWccDwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 16:31:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D3F97A0896; Mon, 14 Oct 2024 18:31:20 +0200 (CEST)
+Date: Mon, 14 Oct 2024 18:31:20 +0200
+From: Jan Kara <jack@suse.cz>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, Qianqiang Liu <qianqiang.liu@163.com>,
+	tytso@mit.edu, adilger.kernel@dilger.ca,
+	syzbot <syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, Yang Erkun <yangerkun@huawei.com>
+Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
+Message-ID: <20241014163120.hinbd5jc6mp4vev7@quack3>
+References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
+ <66efba95.050a0220.3195df.008c.GAE@google.com>
+ <Zu+8aQBJgMn7xVws@thinkpad.lan>
+ <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
+ <20241009155028.u7jpzrw6txldt43j@quack3>
+ <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] alienware-wmi: alienware_wmax_command() is now
- input size agnostic
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20241012015849.19036-3-kuurtb@gmail.com>
- <20241012020149.19700-3-kuurtb@gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241012020149.19700-3-kuurtb@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hHWQ/FrJsNANXRgCw69KUAB7/JPXlrBoC/XB+drzswf8DQ3mrws
- 2iBTtUgQbP+IP/C/2aplqfDn6YFdgSmFI2mdKyfYpOnRaDwEI0IzINudfLVVOGE69zbl7cC
- pMCThraOgrMRK2s56kvaumKtGbmrDIvs7c6BZeabLF5mbRFVApCTfKwTXA37o21E0B09Y59
- SguWcrn/G5VbkFgaUe8fg==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[f792df426ff0f5ceb8d1];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[163.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,163.com,mit.edu,dilger.ca,syzkaller.appspotmail.com,vger.kernel.org,googlegroups.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.30
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WMhy5ylRckg=;JWV9YaEWK+fcE1+H2gepZ1lceZJ
- xFVviZdmknWmQIMXvcN30SOxQFcD3rThQQZ3Wk0wUktrUOINRWqxgZBGWRJCkQlUK2mfknpBu
- MdI6SeF3ngAZkCjBkVuwgWbHTAlelrCe9EbxUKqUk8m/8yhchKD0CAyvOMfsy2CZ28yE9A/pI
- 2mRSE23EsoZKd8Fr0ZspZ54NKKmYCYxMf0aS42pJhbT2oyM2dce7EY/otdePfD5odb0bUA/+R
- n3dxhwIvkFDhKY8JjmEHPheK9RuF3ZYFkB0GfPmZHzylHTBhYLdLYcVVvBVRn+8bItB5wavgh
- bHwqWJFQQU/3xC1B8Beg4IASXnAZNqHuaqMhhwZGxq+bWyqc4+3ZD4fyoLa5SqSYUrXGSTK9d
- QrkLUjWmOn3s/9p9YGEiGWCkObPzguemwLu+ytFZU/nM4N2wHKMcmCuy2gn32nkrz8i5fo7ra
- 3LLN58SSuUhtO21kkgsCxmQevc1Y2LtfuXxHVDsbrCkGkXON2pQ7YysTeu2mVTDfXIGCAIJU4
- i2P5/BPtNf5mp2kbXKAILRZ2jerbaS3JScJtB2MW0fWGt4GsgDB4w1zC0LIDxMDS/7ogNVmu1
- nCWhTNrD7olKkxWow0PETLskytsmD9FJ4fLlMjJP/rDu820e2kGSwLV7w1mlHW+OqL/DJD99p
- BNBXgJVA7jebh2uALIIMzgthzIlpD86tuzq1X8vRPF2ooIkX16UFKD7ly1EIU8jACLr7nRCfO
- zmLXmeXAxxu8TLpP8ouXy4F0lcTrGyjthVgMW5T/zzGDUmXey1ZMC8zbPaEKov4dk46e6Gkvj
- KZd92g+ILNVtRIMhuxl4nHBw==
 
-Am 12.10.24 um 04:01 schrieb Kurt Borja:
+On Fri 11-10-24 10:18:04, Baokun Li wrote:
+> On 2024/10/9 23:50, Jan Kara wrote:
+> > > Or go one step further and add a mechanism like xfs Reverse-Mapping, which
+> > > makes sure that allocated blocks do point to the target inode, which could
+> > > replace the current block_validity, and could also be used in future online
+> > > fscks.
+> > Well, that is a rather big change. It requires significant on-disk format
+> > change and also performance cost when to maintain. Furthermore for xattr
+> > blocks which can be shared by many inodes it is not even clear how to
+> > implement this... So I'm not sure we really want to do this either.
+> 
+> Yes, there can be a lot of work involved.
+> 
+>  * Perhaps we could create an rmap file to store the rmap tree to avoid
+>    on-disk format changes.
+>  * The performance impact of maintaining rmap really needs to be evaluated,
+>    perhaps by writing a simple DEMO to test it.
+>  * XFS supports shared blocks(A.K.A. reflink.), so even if the physical
+>    blocks are the same, but the inodes are different or the logical blocks
+>    are different, they will be recorded multiple times in the tree. So the
+>    shared xattr block can be handled similarly.
+> 
+> We have plans to support online fsck in the future, and implementing rmap
+> is one of the steps. Perhaps one can wait until rmap is implemented to
+> assess whether it is worth a strict check here.
 
-> alienware_wmax_command() now takes void * and size_t instead of struct
-> wmax_basic_args to extend support to new WMAX methods. Also int *out_dat=
-a
-> was changed to u32 *out_data, because new interface specifies u32 as out=
-put
-> parameter and all previous callers would pass u32 * regardless.
+Yes, we could implement something like this be as you wrote, it's going to
+be a lot of work. We've briefly discussed this with Ted on ext4 call and we
+came to a conclusion that this is a type of corruption ext4 may never
+protect agaist. You simply should not mount arbitrarily corrupted
+filesystems... But if you want to try, sure go ahead :)
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+One relatively easy solution to similar class of problems would be to store
+the type of metadata buffer inside the buffer_head when we are verifying
+checksum, clear the info when freeing the block in __ext4_forget(), and
+fail with EFSCORRUPTED error when one type -> another type transition would
+happen.
 
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
->   drivers/platform/x86/dell/alienware-wmi.c | 29 ++++++++++++-----------
->   1 file changed, 15 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platfor=
-m/x86/dell/alienware-wmi.c
-> index 16a3fe9ac..b27f3b64c 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi.c
-> @@ -500,15 +500,15 @@ static void alienware_zone_exit(struct platform_de=
-vice *dev)
->   	kfree(zone_attrs);
->   }
->
-> -static acpi_status alienware_wmax_command(struct wmax_basic_args *in_ar=
-gs,
-> -					  u32 command, int *out_data)
-> +static acpi_status alienware_wmax_command(void *in_args, size_t in_size=
-,
-> +					  u32 command, u32 *out_data)
->   {
->   	acpi_status status;
->   	union acpi_object *obj;
->   	struct acpi_buffer input;
->   	struct acpi_buffer output;
->
-> -	input.length =3D sizeof(*in_args);
-> +	input.length =3D in_size;
->   	input.pointer =3D in_args;
->   	if (out_data) {
->   		output.length =3D ACPI_ALLOCATE_BUFFER;
-> @@ -541,8 +541,8 @@ static ssize_t show_hdmi_cable(struct device *dev,
->   		.arg =3D 0,
->   	};
->   	status =3D
-> -	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_CABLE,
-> -				   &out_data);
-> +	    alienware_wmax_command(&in_args, sizeof(in_args),
-> +				   WMAX_METHOD_HDMI_CABLE, &out_data);
->   	if (ACPI_SUCCESS(status)) {
->   		if (out_data =3D=3D 0)
->   			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-> @@ -562,8 +562,8 @@ static ssize_t show_hdmi_source(struct device *dev,
->   		.arg =3D 0,
->   	};
->   	status =3D
-> -	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_STATUS,
-> -				   &out_data);
-> +	    alienware_wmax_command(&in_args, sizeof(in_args),
-> +				   WMAX_METHOD_HDMI_STATUS, &out_data);
->
->   	if (ACPI_SUCCESS(status)) {
->   		if (out_data =3D=3D 1)
-> @@ -589,7 +589,8 @@ static ssize_t toggle_hdmi_source(struct device *dev=
-,
->   		args.arg =3D 3;
->   	pr_debug("alienware-wmi: setting hdmi to %d : %s", args.arg, buf);
->
-> -	status =3D alienware_wmax_command(&args, WMAX_METHOD_HDMI_SOURCE, NULL=
-);
-> +	status =3D alienware_wmax_command(&args, sizeof(args),
-> +					WMAX_METHOD_HDMI_SOURCE, NULL);
->
->   	if (ACPI_FAILURE(status))
->   		pr_err("alienware-wmi: HDMI toggle failed: results: %u\n",
-> @@ -642,8 +643,8 @@ static ssize_t show_amplifier_status(struct device *=
-dev,
->   		.arg =3D 0,
->   	};
->   	status =3D
-> -	    alienware_wmax_command(&in_args, WMAX_METHOD_AMPLIFIER_CABLE,
-> -				   &out_data);
-> +	    alienware_wmax_command(&in_args, sizeof(in_args),
-> +				   WMAX_METHOD_AMPLIFIER_CABLE, &out_data);
->   	if (ACPI_SUCCESS(status)) {
->   		if (out_data =3D=3D 0)
->   			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-> @@ -694,8 +695,8 @@ static ssize_t show_deepsleep_status(struct device *=
-dev,
->   	struct wmax_basic_args in_args =3D {
->   		.arg =3D 0,
->   	};
-> -	status =3D alienware_wmax_command(&in_args, WMAX_METHOD_DEEP_SLEEP_STA=
-TUS,
-> -					&out_data);
-> +	status =3D alienware_wmax_command(&in_args, sizeof(in_args),
-> +					WMAX_METHOD_DEEP_SLEEP_STATUS, &out_data);
->   	if (ACPI_SUCCESS(status)) {
->   		if (out_data =3D=3D 0)
->   			return sysfs_emit(buf, "[disabled] s5 s5_s4\n");
-> @@ -723,8 +724,8 @@ static ssize_t toggle_deepsleep(struct device *dev,
->   		args.arg =3D 2;
->   	pr_debug("alienware-wmi: setting deep sleep to %d : %s", args.arg, bu=
-f);
->
-> -	status =3D alienware_wmax_command(&args, WMAX_METHOD_DEEP_SLEEP_CONTRO=
-L,
-> -					NULL);
-> +	status =3D alienware_wmax_command(&args, sizeof(args),
-> +					WMAX_METHOD_DEEP_SLEEP_CONTROL, NULL);
->
->   	if (ACPI_FAILURE(status))
->   		pr_err("alienware-wmi: deep sleep control failed: results: %u\n",
+> Implementing rmap may take some time, until then we can avoid the problem
+> as much as possible by checking the magic and xattr block csum.
+> Maybe something like this?
+> 
+> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> index 7647e9f6e190..cd3ae1e3371c 100644
+> --- a/fs/ext4/xattr.c
+> +++ b/fs/ext4/xattr.c
+> @@ -1676,6 +1676,13 @@ static int ext4_xattr_set_entry(struct
+> ext4_xattr_info *i,
+>                 }
+>         }
+> 
+> +       if (WARN_ON_ONCE(last < here)) {
+> +               EXT4_ERROR_INODE(inode, "corrupted xattr entries in %s",
+> +                                       is_block ? "block" : "ibody");
+> +               ret = -EFSCORRUPTED;
+> +               goto out;
+> +       }
+> +
+>         /* Check whether we have enough space. */
+>         if (i->value) {
+>                 size_t free;
+> @@ -1923,6 +1930,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode
+> *inode,
+>         }
+> 
+>         if (s->base) {
+> +               struct ext4_xattr_header *hdr;
+>                 int offset = (char *)s->here - bs->bh->b_data;
+> 
+>                 BUFFER_TRACE(bs->bh, "get_write_access");
+> @@ -1932,6 +1940,16 @@ ext4_xattr_block_set(handle_t *handle, struct inode
+> *inode,
+>                         goto cleanup;
+> 
+>                 lock_buffer(bs->bh);
+> +               hdr = header(s->base);
+> +
+> +               if (hdr->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
+> +                   (ext4_has_metadata_csum(inode->i_sb) &&
+> +                    (ext4_xattr_block_csum(inode, bs->bh->b_blocknr, hdr)
+> !=
+> +                     hdr->h_checksum))) {
+> +                       unlock_buffer(bs->bh);
+> +                       error = -EFSCORRUPTED;
+> +                       goto bad_block;
+> +               }
+> 
+>                 if (header(s->base)->h_refcount == cpu_to_le32(1)) {
+>                         __u32 hash = le32_to_cpu(BHDR(bs->bh)->h_hash);
+
+Hum, there are more places in xattr code that access a buffer that could
+have been modified. So why do you add check into this place? Is it somehow
+special?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
