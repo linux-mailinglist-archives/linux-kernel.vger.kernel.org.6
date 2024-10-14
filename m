@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-363049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB84D99BD4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:27:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB48399BD51
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BDAC1F21E55
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:27:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0009281DA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBDB1804E;
-	Mon, 14 Oct 2024 01:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c4lORWFQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773E41798F;
+	Mon, 14 Oct 2024 01:32:36 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDA4134BD
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128F68467;
+	Mon, 14 Oct 2024 01:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728869259; cv=none; b=N5xjRmeXPwQYtMay9owO37nXm8H5Xex6ZSwNknWndpUTNvgQpM2pJu0SVi+tTdcjIXDEiEd+fllaOREG+oiJRLPF+1KImh5EIKD/i04GDZEJXfxb19Pec/jQvaMkZWnx7N6WGX/UBnm3yPi4gNP5jr+ta+Up8MXUPIBhKXC56mA=
+	t=1728869556; cv=none; b=iLLMviTT45lCApT/yKXjhQ7G+TBjzwMqJJYc4pRq6i8QyMNZ9+L1ms7oRCHlNkOKDoUAnng6omI/a2jeUUOThC/sJKGZ1vUd4FIx0CuZU2ywsbU+XH/XrhB0aWFH2G3BvVEoSOEGpl2B9p7dm6uUeiSu7kQSUq2Sc1LMHZCWXbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728869259; c=relaxed/simple;
-	bh=4ZUXS+fpXMj0rqGVsOfAWazL9hWyK+uoeVHAyuMdy7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tYg2BDRtthtOU1WZyqy7HryYpnckVzINZoJNG7ppFiy8U6zYq2E1X0JtVWeo+LzlwWVFg4Tflnp9VdmXQQkeQvka3SHDiDP3ntCTFlY8f7Ca3eFIfC3dE6xqqPJN8WR/YpIpYoNroW4YGVC+FuIVbpdNHstuEk0E2Tb070mtIk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c4lORWFQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728869256;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=4ZUXS+fpXMj0rqGVsOfAWazL9hWyK+uoeVHAyuMdy7c=;
-	b=c4lORWFQ59uo07lNiK0FI5oMWxWXToaWhzrPL983WH8BDkCtFI6ncRZNAWPBSMrmaaHsiu
-	XJN2+NJGEQN4ZmIWMguMOAod1f60poRHGahU7Ea4wu4KllSJsJbiKCWUBGiblZq4fMVL5D
-	C8YiBCqIBC/hICnP7xmti4VmYCqEO5g=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-580-xMTe649hPVCV0sK32Rfkpw-1; Sun,
- 13 Oct 2024 21:27:31 -0400
-X-MC-Unique: xMTe649hPVCV0sK32Rfkpw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A80619560B1;
-	Mon, 14 Oct 2024 01:27:29 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.46])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3794819560AA;
-	Mon, 14 Oct 2024 01:27:22 +0000 (UTC)
-Date: Mon, 14 Oct 2024 09:27:17 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Hamza Mahfooz <someguy@effective-light.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Dan Williams <dan.j.williams@intel.com>
-Cc: ming.lei@redhat.com, linux-block@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-raid@vger.kernel.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
- overlapping mappings aren't supported"
-Message-ID: <ZwxzdWmYcBK27mUs@fedora>
+	s=arc-20240116; t=1728869556; c=relaxed/simple;
+	bh=KVDrxYKHYjVA7XmZNJSQ+lLsGlGS6ctGVksU9NQCHTo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ABxQr9qgZte2TZtvxBopYA/r6aTO7f41YKtGeDP5Sh4TbhNxopbqlQ8u2GkR84/vL9+euLkp0eVZcGfa9bhQ40mTAIwK+VLSToaF1aHJn8cwGn0aB2byfM70j4WKZtVUXzotvTvtaYhKNUVnTEO8pUZj83tw2jjcvd0qKmyZmco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XRfnF6VcQz1T8Zh;
+	Mon, 14 Oct 2024 09:30:41 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 472F0140137;
+	Mon, 14 Oct 2024 09:32:31 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 14 Oct
+ 2024 09:32:30 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <mazziesaccount@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] iio: gts-helper: Fix memory leaks for i = 1 error path
+Date: Mon, 14 Oct 2024 09:31:44 +0800
+Message-ID: <20241014013144.576701-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Hello Guys,
+If i = 1, and per_time_scales[i] or per_time_gains[i] kcalloc fails in
+iio_gts_build_avail_scale_table(), the err_free_out will fail to enter
+kfree for loop because i-- is 0, and all the per_time_scales[0] and
+per_time_gains[0] will not be freed, which will cause memory leaks.
 
-I got more and more reports on DMA debug warning "cacheline tracking EEXIST,
-overlapping mappings aren't supported" in storage related tests:
+Fix it by checking if i >= 0.
 
-1) liburing
-- test/iopoll-overflow.t
-- test/sq-poll-dup.t
+Cc: stable@vger.kernel.org
+Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/iio/industrialio-gts-helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Same buffer is used in more than 1 IO.
-
-2) raid1 driver
-
-- same buffer is used in more than 1 bio
-
-3) some storage utilities
-- dm thin provisioning utility of thin_check
-- `dt`(https://github.com/RobinTMiller/dt)
-
-I looks like same user buffer is used in more than 1 dio.
-
-4) some self cooked test code which does same thing with 1)
-
-In storage stack, the buffer provider is far away from the actual DMA
-controller operating code, which doesn't have the knowledge if
-DMA_ATTR_SKIP_CPU_SYNC should be set.
-
-And suggestions for avoiding this noise?
-
-Thanks,
-Ming
+diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
+index 7326c7949244..5f131bc1a01e 100644
+--- a/drivers/iio/industrialio-gts-helper.c
++++ b/drivers/iio/industrialio-gts-helper.c
+@@ -315,7 +315,7 @@ static int iio_gts_build_avail_scale_table(struct iio_gts *gts)
+ 	return 0;
+ 
+ err_free_out:
+-	for (i--; i; i--) {
++	for (i--; i >= 0; i--) {
+ 		kfree(per_time_scales[i]);
+ 		kfree(per_time_gains[i]);
+ 	}
+-- 
+2.34.1
 
 
