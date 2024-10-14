@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-363686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1AA99C5A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFE899C5C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5661C2255E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:29:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ED191F23CC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73165156227;
-	Mon, 14 Oct 2024 09:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B44B13DDAA;
+	Mon, 14 Oct 2024 09:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="w8/AEkM8"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZvdRwl5o"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631CE1BC58
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79F4155727
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898153; cv=none; b=qPJ8AhCuP93dXpmUql1ZR2x5JAG1dKsuKatNJ4wdacvOPPE45hB3aBFliHKcLEQnrc3zB2hL6Q2NkdgjpWpmiZ7+ri0CfhTvAztmX/8qcRKOHyp0ljd+fi6vctCzzjzLcslRPchemyWPNqzmVTdS1n6zezOLA49Ev47DGYuCeUg=
+	t=1728898361; cv=none; b=OWYeXz66oAWeBQ25MvbSkejk6tUA1g2ictvhZLu5pWcm51KtFgJsJtOnzSQuPSNL/TLgPUYR8ZMeUNWRUpWF73xhY4AjnDxNetPCVCig2Q58jF2KPIi6L6/3Tms+ZtY3IL98BtvpI/AgMni72QDCCnjNlA09RM6oRs+b5xD9U5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898153; c=relaxed/simple;
-	bh=WLA9L9pdv3sxmXcLYM9Ypg7L2IaBx3L9nrYm4gJtSHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DrvlvYFaMvmwBGeaZjmwmd8HgOkxctAX7DA/MTldxVJxzmbNRwkx7BB7sAMJ2Xs+WvdY27H4vcQ1mN87NpnvqO/wizhZNV01S4Jp0+TCIxUFBVqtXSWXQZpe0FuNmwdKG2kFyaQ08q+J2RWoXMKNCJQpMdIVMkezFIUaLTLnKP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=w8/AEkM8; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d4ba20075so2629648f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:29:12 -0700 (PDT)
+	s=arc-20240116; t=1728898361; c=relaxed/simple;
+	bh=paxtq8DGH1QuphnI3BlUnhiBze44+6OFfkrMCUBsYNI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U3x4NvUImQRDanpb8yBHR7tnzzU8Rfz50qm5LQ4LUW8ZwvfbW8T2QldIICsdMEnWnFywaENaVTVxXOlqLEPJktsz7FOAFp4q2mOPgoVBt9REnk8WPRgeXuV1LwW58KuBU+PPcLLGfVIB56loFgWgK6qqmicZBtJKs8nat7Ldb/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZvdRwl5o; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea784aea63so361131a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:32:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728898151; x=1729502951; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1728898359; x=1729503159; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iT0S1elQH6COXcV2ZCabsoooWG/D7LPeGbtOThLu/1I=;
-        b=w8/AEkM848+g97QzL4DQjj4ZC4LVMYMYtdJ/FVrxvBM5Kqa8PR9+nF7vOVq3OAcNk9
-         LAFOlpFrc/xMIFQy9TVHJscIAzO2umV6913c/7SrE2Yi979rxRLnOoBGij7zITtC+WQE
-         tY0LpiaCBtyWlaanEXsEMuvYH24gBwo2nrE+SRHmkozh7XKm1P64qR7OZz3UCqH2YBlv
-         dTMqevvVOUoA7ho45NKtgt339C7SlXSTXVZVcHyPVzEqSt7nvsX/a5WfmGSwqL5+ZnR+
-         S54gjD2Ng45AiBSIHWwil1mAf7WGWctERx1cVxgURZJNlrBLiN9BIL/kM1Ym2nAIVRzY
-         DJXQ==
+        bh=/2a46OQ5WaS5274HZtlPL6nHGoqHOePxGG4Boyap1o8=;
+        b=ZvdRwl5o7BmRELvsR5m1sE/NY/pKsV8dmIQRUKm3UfWaHltUZhyGkAHI39mstUzbqp
+         e/H9hWbqEym5UZ2W2b15jGgNhbR3DuxNpSFCa7uUp8gHEMeFy0sbk7IkFhzMdQrOSob0
+         zj9n2O0deaoxS9P0ROIOwu7Y8/wzIMp8y7b/Z2R/2HOgjdrfF64d3fCn44D+R+exgowe
+         KgYzknAscuJJDMENglrRhL1ALLMbNGUJFmO3eywOc6Po8QozY8TTVQSQ3q5LcvHcsVKF
+         4Ac6Y8FwU0KbLBnPJaFH0Q5Xlhor7ppqXpYFLI0Fbr1qfyG8HLHO2hOaXo7l7MqjfrIN
+         I9vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728898151; x=1729502951;
+        d=1e100.net; s=20230601; t=1728898359; x=1729503159;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iT0S1elQH6COXcV2ZCabsoooWG/D7LPeGbtOThLu/1I=;
-        b=uFlpsm1+9muWktUJalckxfCnN4ZOIn0u45+gWWHtfS5mfq799TUnNWqeUBH6cLNFmC
-         vgecJdnTCf49iKRgY1HLWQILEGsYCRdiU+5FwPwLgbLLE+DIRX6axksKTxwbSCrVDPlk
-         1pO3spaTiozTrZLRnHRGpixZrJwOco11hx0ih0qOOG0/VDGTf4iR9v+gDOCSy3Uh7dAy
-         iYoQtbTxWQ8JXdLbt1LHm5teC2sTnboxFhYWtJ73weiQTt9awHSGSazSwnlwhpVo4ar1
-         EspG7NqsMghmOs9/fHqRE5zbA4HTncZVWiAjslVxHdS7/nch72nI8e/IxZlgySV3jL09
-         KSaA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+5ZiBjvMdMjx6Iu6HS4JEV8bFjQGWo67qMuMxOqmh7PRypAu8LsRxoBfLXnQsCAf+fgk/uxywR0qRlSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLJzmhiaBJGV7/Bl3NrlmIvrIAfNX+QYiDK6k+zDahz6LwnHNq
-	/E2WvkuvEvsikBiK97HTjBJl9h2un3uRDVMjFoPwSpmiB2TWLt0yO/fhHN+1J7I=
-X-Google-Smtp-Source: AGHT+IF52oSlvv3yB48bMA6zpJaOLlCUS9OYV+iikvcgWp6N41ZQRFgI8YhtZ53eiXef8MY7Ayvvjg==
-X-Received: by 2002:adf:f38b:0:b0:37d:3541:5643 with SMTP id ffacd0b85a97d-37d552cb091mr6799074f8f.51.1728898150556;
-        Mon, 14 Oct 2024 02:29:10 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de54:ebb2:31be:53a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ee49bsm10875384f8f.100.2024.10.14.02.29.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 02:29:10 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
+        bh=/2a46OQ5WaS5274HZtlPL6nHGoqHOePxGG4Boyap1o8=;
+        b=RUbjEZ1ro77pfjuPfgxFEOsLBwsk2m3li2/l7v+iDAI9QRK5Sv5jM5weUnQP18jXAD
+         GaURilSvcxOXXCu7r3Zy1uSsed7iRTNmSAgS/WCbmTGTOUrbltfZQoVTZR7uF8u2QUR6
+         gf7Y/PQTwU0njYlxntAWh0MsJkVUHX5yTFKpuCa0y3+U5TzmtGLbUQ09bnS7lxMBXJDB
+         cPEmTIwmOlaebEVQIfPWu6P5t2pqYSLCcN3VmWFw4Jz3WTHg9t7H/szxZlHrvcUqEsGv
+         InqJKOyZNK2isjIZoX0bubnEC11tEsjatNg2RQXmsm9mL3+zmxrW7ojl3vH55gM22KV4
+         EmEA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4tQepBVLFjrxC+FaNVfa1ZqAdvEAoLa1ZyX+BfIv9mz1rM0n2f78FXF1DftkisQ071k4T5zfAWZm0TCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu3E5UlCYE/Mlb6yZWLMBxmu+n72+Fh4YN8elTKY6LZyYYXaMK
+	cLQGflSFC5ArPh0IduqKmuN9WXnd7ld7c+CkHYfVU5vwBEQ7z3Eq12dDgN4MCDdkzshqHoQ1CyM
+	xtGk=
+X-Google-Smtp-Source: AGHT+IE3QonfzctOIyuGHOkWcEXy23f9rkntZUePeqmkYtiTJFgr1do91bHAzWnzlxzIr73qa/S40A==
+X-Received: by 2002:a05:6a21:a4c1:b0:1d8:aadd:64f2 with SMTP id adf61e73a8af0-1d8bcf449d4mr18377246637.22.1728898359111;
+        Mon, 14 Oct 2024 02:32:39 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([61.213.176.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e60bbec80sm2339338b3a.95.2024.10.14.02.32.34
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 14 Oct 2024 02:32:38 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: axboe@kernel.dk,
+	ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: amdpt: remove remove()
-Date: Mon, 14 Oct 2024 11:29:09 +0200
-Message-ID: <20241014092909.90607-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	muchun.song@linux.dev,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH RESEND v3 0/3] Fix some starvation problems in block layer
+Date: Mon, 14 Oct 2024 17:29:31 +0800
+Message-Id: <20241014092934.53630-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,52 +84,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+We encounter a problem on our servers where hundreds of UNINTERRUPTED
+processes are all waiting in the WBT wait queue. And the IO hung detector
+logged so many messages about "blocked for more than 122 seconds". The
+call trace is as follows:
 
-Use the managed variant of gpiochip_add_data() and remove the remove()
-callback.
+    Call Trace:
+        __schedule+0x959/0xee0
+        schedule+0x40/0xb0
+        io_schedule+0x12/0x40
+        rq_qos_wait+0xaf/0x140
+        wbt_wait+0x92/0xc0
+        __rq_qos_throttle+0x20/0x30
+        blk_mq_make_request+0x12a/0x5c0
+        generic_make_request_nocheck+0x172/0x3f0
+        submit_bio+0x42/0x1c0
+        ...
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-amdpt.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+The WBT module is used to throttle buffered writeback, which will block
+any buffered writeback IO request until the previous inflight IOs have
+been completed. So I checked the inflight IO counter. That was one meaning
+one IO request was submitted to the downstream interface like block core
+layer or device driver (virtio_blk driver in our case). We need to figure
+out why the inflight IO is not completed in time. I confirmed that all
+the virtio ring buffers of virtio_blk are empty and the hardware dispatch
+list had one IO request, so the root cause is not related to the block
+device or the virtio_blk driver since the driver has never received that
+IO request.
 
-diff --git a/drivers/gpio/gpio-amdpt.c b/drivers/gpio/gpio-amdpt.c
-index 0a2ea9db4682..b70036587d9c 100644
---- a/drivers/gpio/gpio-amdpt.c
-+++ b/drivers/gpio/gpio-amdpt.c
-@@ -106,7 +106,7 @@ static int pt_gpio_probe(struct platform_device *pdev)
- 	pt_gpio->gc.free             = pt_gpio_free;
- 	pt_gpio->gc.ngpio            = (uintptr_t)device_get_match_data(dev);
- 
--	ret = gpiochip_add_data(&pt_gpio->gc, pt_gpio);
-+	ret = devm_gpiochip_add_data(dev, &pt_gpio->gc, pt_gpio);
- 	if (ret) {
- 		dev_err(dev, "Failed to register GPIO lib\n");
- 		return ret;
-@@ -122,13 +122,6 @@ static int pt_gpio_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static void pt_gpio_remove(struct platform_device *pdev)
--{
--	struct pt_gpio_chip *pt_gpio = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&pt_gpio->gc);
--}
--
- static const struct acpi_device_id pt_gpio_acpi_match[] = {
- 	{ "AMDF030", PT_TOTAL_GPIO },
- 	{ "AMDIF030", PT_TOTAL_GPIO },
-@@ -143,7 +136,6 @@ static struct platform_driver pt_gpio_driver = {
- 		.acpi_match_table = ACPI_PTR(pt_gpio_acpi_match),
- 	},
- 	.probe = pt_gpio_probe,
--	.remove_new = pt_gpio_remove,
- };
- 
- module_platform_driver(pt_gpio_driver);
+We know that block core layer could submit IO requests to the driver
+through kworker (the callback function is blk_mq_run_work_fn). I thought
+maybe the kworker was blocked by some other resources causing the callback
+to not be evoked in time. So I checked all the kworkers and workqueues and
+confirmed there was no pending work on any kworker or workqueue.
+
+Integrate all the investigation information, the problem should be in the
+block core layer missing a chance to submit that IO request. After
+some investigation of code, I found some scenarios which could cause the
+problem.
+
+Changes in v3:
+  - Collect RB tag from Ming Lei.
+  - Adjust text to fit maximum 74 chars per line from Jens Axboe.
+
+Changes in v2:
+  - Collect RB tag from Ming Lei.
+  - Use barrier-less approach to fix QUEUE_FLAG_QUIESCED ordering problem
+    suggested by Ming Lei.
+  - Apply new approach to fix BLK_MQ_S_STOPPED ordering for easier
+    maintenance.
+  - Add Fixes tag to each patch.
+
+Muchun Song (3):
+  block: fix missing dispatching request when queue is started or
+    unquiesced
+  block: fix ordering between checking QUEUE_FLAG_QUIESCED and adding
+    requests
+  block: fix ordering between checking BLK_MQ_S_STOPPED and adding
+    requests
+
+ block/blk-mq.c | 55 ++++++++++++++++++++++++++++++++++++++------------
+ block/blk-mq.h | 13 ++++++++++++
+ 2 files changed, 55 insertions(+), 13 deletions(-)
+
 -- 
-2.43.0
+2.20.1
 
 
