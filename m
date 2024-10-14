@@ -1,130 +1,180 @@
-Return-Path: <linux-kernel+bounces-364696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E4399D803
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:14:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8871399D830
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50931C22C1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC0F282ED4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3FD1D07AB;
-	Mon, 14 Oct 2024 20:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1D01D1507;
+	Mon, 14 Oct 2024 20:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDsW238a"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ryKw7AOS"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF1C1D0492;
-	Mon, 14 Oct 2024 20:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21990231C94;
+	Mon, 14 Oct 2024 20:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728936869; cv=none; b=jtETQuhXE6TugSjJMEow/T6LDBszlQTph3+KOXn+UOaQQ0ixSPXjHiZJaaFbEyTBhZLodbA0xz1xSsEjU3w6K+p7VMepuN8lAg760xAsvUvVW2KNcRJ5fvlhVZWBPTTlX82tOCnpvzm+vzWbGmY05P+AsoV69xxkVLQ/RyZGMjE=
+	t=1728937762; cv=none; b=tNft9clRzcctuQsDn/W/23+tA9for6jUedHEGhVwg7NnDcchbRonlZOBoEP7Uhlp2ORtaFck9yhfsJW+XHz+QBTZ4N5JBVNBxPLRDBof1dMfgq4lbFpB6hjyQEWteV43y4H8WBLqQzTd2WiTc7M06F4Ffzktm2Q5c6L4/NrDKKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728936869; c=relaxed/simple;
-	bh=nGwpSRDiREpgO3GfqtyYak2rOwDtzQPR/ga2NpQROhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VljHpVitA1X160nxgD4VpvDsDLKKSFH2XfS1ZEyRTh9AZwoO17Sz4A6p70ZzMbMye6j1jPD8lQnpet82nzgavG7kBNSvLf3FFUCErhvca5soEJVLaf3ndsOgENX4lCSFHnAixpi71w3Gx9J0Rd9YsYk2V8OGJwjZRupENXwXiu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDsW238a; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-431160cdbd0so29552925e9.1;
-        Mon, 14 Oct 2024 13:14:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728936866; x=1729541666; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BuTgoSmAu7R32A26a6EEGJkODHQDPwpdQJUMBsyfaMc=;
-        b=QDsW238a0Xv6k48YfnihD3Y7fLyRRmganTcmNAEQK69nEag6bKA8ncr1HuW7PmH7KI
-         IpK1Lb/azV/tu8W8Z1+qL3CWYVEEsF7gqyStV5c6ANEiEpdKwThdvXpl9JfjxuViGkVp
-         nnf0/Gof1DqQ/fURCvJLKWnJCS1568lNutaPu5/IctXCpy1dCzV6A77fIdxuRRqq/g/M
-         weNWAg43iPfRkbV3uhoqWuvfN44M8w9di3OKAYlaEf7EQjUnhW/5rl4dWSVfCrdsqBEl
-         lEdERzFqJycpCTaCzICiLYWYDyqVXquA93+1XiePfyr6BM1wSsEvDd2jSmZuXbP8AUAT
-         IsfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728936866; x=1729541666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BuTgoSmAu7R32A26a6EEGJkODHQDPwpdQJUMBsyfaMc=;
-        b=BE6sA9uhIFlFoLik26OyEqUvh2bcP+DLbhmzzaDmHf+kIgqSDLGwLDFg4upEFVkWJX
-         aP6Cf0n3KxgZ2najUYE1a7hi2wne2LHdotKKLLIFylGDor2eCQdotEi5erqQaAZxYksb
-         9nyRjaGQSDGaPNSw1/lD8RErf4fJh6BhROSeN2QKhnH10GB0O5PT87wACIMQWI6AvpbL
-         ymDHcfJOaUvDA3WgyY2Ng66kEV3NWkfJKwA7ZEhHGi2xVFgMMkOUgsc5/hKvuFggNwd1
-         MIjmcEDXq3AdEmy72omFhNVk+DF/8pcdKuZZRCmOzwmNxK8hrRI9j3gCZm3zfMc9i53m
-         iYqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVY8reQqyH5+ZlTckyeLZrWKO4Yd68UbrFy2fXFyMakc6cq+0xC7amaGKEH8TeYBO3CSaGfJKh76i/@vger.kernel.org, AJvYcCWkH6Ta0f5H/OdbHeJQp4uOShTdML4NdP/X8OIyc94Uh+B0FCfQ+rK2np70+ImjgEiwuDoJ2FyQtYyMZALU@vger.kernel.org, AJvYcCXus9SZwOaG5+3x4SyPMZGMM6fuHAm5RbMK0dys/wzd5xxNXJB+Zp7MzyuVFGXXfHEttFDKppIdMTXf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqlXfc/OSxy1LlvsQMsxhBKacAyguP3D6Tw990pXjT5NSrKKdl
-	hhGPPfviK5ULfkZBq9SmNUNFut6AruQy+fcXUrmGdYEZkmvMFWBjxg3yHiqM
-X-Google-Smtp-Source: AGHT+IEVVoJsZ0UeZgR/yhPNu16KKqW10F1kgvMH6JC1UCKxFBvNmFIkzhhqC+AwAL5HIQhWp0ph/g==
-X-Received: by 2002:a5d:4c92:0:b0:374:c6b6:c656 with SMTP id ffacd0b85a97d-37d5529cb41mr10209582f8f.21.1728936865698;
-        Mon, 14 Oct 2024 13:14:25 -0700 (PDT)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:e435:fb96:76da:7162])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b918073sm12245045f8f.113.2024.10.14.13.14.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 13:14:25 -0700 (PDT)
-Date: Mon, 14 Oct 2024 22:14:23 +0200
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
-	andriy.shevchenko@linux.intel.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 09/13] iio: chemical: bme680: Move ambient temperature
- to attributes
-Message-ID: <Zw17n7DB2LdgDct3@vamoirid-laptop>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
- <20241010210030.33309-10-vassilisamir@gmail.com>
- <20241012130124.44c69521@jic23-huawei>
+	s=arc-20240116; t=1728937762; c=relaxed/simple;
+	bh=XaDIO2IuND1/j9idtykS1sX9MRhoJ+szidhKrSx3ems=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UCaIh/Q3qZU8ixF2+TAKskc/ctdosHzbwXN/VLQVDsNSNNWqGOnmKWhgraS/e+5K2abTDQTOuMQA7RT9UcjmM+/Zmpr8olxoIqvygTntK9VFYkNfBom7i5XxMLjauN+SoiIdb4yvLijLpQ8wVsymWgQ8Ll7+wPx0vkhFxzC+HUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ryKw7AOS; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 0RA7t2ZE7WNPK0RA7tHNhp; Mon, 14 Oct 2024 21:55:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728935735;
+	bh=hD0vo8WyvWoRZVSSpg8GQUmRbzOmqsIeAIrHbUQl8aQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ryKw7AOSpn/wl0TBFALbQKCMzujsKExflrgTqF7ZEXTsrRCAQTl5s4ZqIibRF7uah
+	 C9ngNMq+wfQW+1s2zt15bLZH3gZTh1JlqP3ZCnt+KrY5GIkPX2tQPcBniGngQ2xVrf
+	 /dIu/+1+I61yHh8GDcg0Yd6doVt4Wr7sgk9aV5O5/Fii2hjCyQ+IZ33M7vDxlcnNmU
+	 fKvcRscxKLhS10cDzWqFKcgI5/Yxuzk4Udx2CB+YB2+Q3DQAvkylsBVp5BVs4haXFU
+	 6yS/MXpVKXIGyhXIb/xFcfz1uFte4pUs43gcsK4lQ+nmwQdYWgYHbHipK24aYeJkPp
+	 A2XVNxVOQngYg==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 14 Oct 2024 21:55:35 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	qat-linux@intel.com,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH] crypto: qat - Constify struct pm_status_row
+Date: Mon, 14 Oct 2024 21:55:17 +0200
+Message-ID: <ab26d264baec1f3233e832c0c2fa723e3be21a04.1728935687.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241012130124.44c69521@jic23-huawei>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 12, 2024 at 01:01:24PM +0100, Jonathan Cameron wrote:
-> On Thu, 10 Oct 2024 23:00:26 +0200
-> vamoirid <vassilisamir@gmail.com> wrote:
-> 
-> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > 
-> > Remove the ambient temperature from being a macro and implement it as
-> > an attribute. This way, it is possible to dynamically configure the
-> > ambient temperature of the environment to improve the accuracy of the
-> > measurements.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> New ABI? Would need docs.
-> 
-> However, I 'think' we have a few cases where we handle this via the slightly
-> odd interface of out_temp_processed / _raw with a label saying it's
-> ambient temperature.
-> 
-> The tenuous argument is that we have heaters that actually control the
-> temperature and the affect of either heating the thing or just happening
-> to know the external temperature ends up being the same. Hence use
-> an output channel for this control.
-> 
-> Jonathan
+'struct pm_status_row' are not modified in this driver.
 
-Hi Jonathan,
+Constifying this structure moves some data to a read-only section, so
+increases overall security.
 
-Thanks for taking the time to review this. I saw your previous messages,
-and I am not responding to all of them so as to not flood you with ACK
-messages.
+Update the prototype of some functions accordingly.
 
-For this one though I have to ask. The last commit of this series is
-adding support for an output current channel that controls the current
-that is being inserted into an internal plate that is heated up in order
-to have more precise acquisition of humidity and gas measurement. Does
-it makes sense to add an ambient temp output channel as well?
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   4400	   1059	      0	   5459	   1553	drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.o
 
-Cheers,
-Vasilis
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   5216	    243	      0	   5459	   1553	drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ .../intel/qat/qat_common/adf_gen4_pm_debugfs.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c b/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
+index ee0b5079de3e..2e4095c4c12c 100644
+--- a/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
++++ b/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
+@@ -42,13 +42,13 @@ struct pm_status_row {
+ 	const char *key;
+ };
+ 
+-static struct pm_status_row pm_fuse_rows[] = {
++static const struct pm_status_row pm_fuse_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(fusectl0, ENABLE_PM),
+ 	PM_INFO_REGSET_ENTRY(fusectl0, ENABLE_PM_IDLE),
+ 	PM_INFO_REGSET_ENTRY(fusectl0, ENABLE_DEEP_PM_IDLE),
+ };
+ 
+-static struct pm_status_row pm_info_rows[] = {
++static const struct pm_status_row pm_info_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(pm.status, CPM_PM_STATE),
+ 	PM_INFO_REGSET_ENTRY(pm.status, PENDING_WP),
+ 	PM_INFO_REGSET_ENTRY(pm.status, CURRENT_WP),
+@@ -59,7 +59,7 @@ static struct pm_status_row pm_info_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(pm.main, THR_VALUE),
+ };
+ 
+-static struct pm_status_row pm_ssm_rows[] = {
++static const struct pm_status_row pm_ssm_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(ssm.pm_enable, SSM_PM_ENABLE),
+ 	PM_INFO_REGSET_ENTRY32(ssm.active_constraint, ACTIVE_CONSTRAINT),
+ 	PM_INFO_REGSET_ENTRY(ssm.pm_domain_status, DOMAIN_POWER_GATED),
+@@ -83,7 +83,7 @@ static struct pm_status_row pm_ssm_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(ssm.pm_managed_status, WCP_MANAGED_COUNT),
+ };
+ 
+-static struct pm_status_row pm_log_rows[] = {
++static const struct pm_status_row pm_log_rows[] = {
+ 	PM_INFO_REGSET_ENTRY32(event_counters.host_msg, HOST_MSG_EVENT_COUNT),
+ 	PM_INFO_REGSET_ENTRY32(event_counters.sys_pm, SYS_PM_EVENT_COUNT),
+ 	PM_INFO_REGSET_ENTRY32(event_counters.local_ssm, SSM_EVENT_COUNT),
+@@ -91,7 +91,7 @@ static struct pm_status_row pm_log_rows[] = {
+ 	PM_INFO_REGSET_ENTRY32(event_counters.unknown, UNKNOWN_EVENT_COUNT),
+ };
+ 
+-static struct pm_status_row pm_event_rows[ICP_QAT_NUMBER_OF_PM_EVENTS] = {
++static const struct pm_status_row pm_event_rows[ICP_QAT_NUMBER_OF_PM_EVENTS] = {
+ 	PM_INFO_REGSET_ENTRY32(event_log[0], EVENT0),
+ 	PM_INFO_REGSET_ENTRY32(event_log[1], EVENT1),
+ 	PM_INFO_REGSET_ENTRY32(event_log[2], EVENT2),
+@@ -102,14 +102,14 @@ static struct pm_status_row pm_event_rows[ICP_QAT_NUMBER_OF_PM_EVENTS] = {
+ 	PM_INFO_REGSET_ENTRY32(event_log[7], EVENT7),
+ };
+ 
+-static struct pm_status_row pm_csrs_rows[] = {
++static const struct pm_status_row pm_csrs_rows[] = {
+ 	PM_INFO_REGSET_ENTRY32(pm.fw_init, CPM_PM_FW_INIT),
+ 	PM_INFO_REGSET_ENTRY32(pm.status, CPM_PM_STATUS),
+ 	PM_INFO_REGSET_ENTRY32(pm.main, CPM_PM_MASTER_FW),
+ 	PM_INFO_REGSET_ENTRY32(pm.pwrreq, CPM_PM_PWRREQ),
+ };
+ 
+-static int pm_scnprint_table(char *buff, struct pm_status_row *table,
++static int pm_scnprint_table(char *buff, const struct pm_status_row *table,
+ 			     u32 *pm_info_regs, size_t buff_size, int table_len,
+ 			     bool lowercase)
+ {
+@@ -131,7 +131,7 @@ static int pm_scnprint_table(char *buff, struct pm_status_row *table,
+ 	return wr;
+ }
+ 
+-static int pm_scnprint_table_upper_keys(char *buff, struct pm_status_row *table,
++static int pm_scnprint_table_upper_keys(char *buff, const struct pm_status_row *table,
+ 					u32 *pm_info_regs, size_t buff_size,
+ 					int table_len)
+ {
+@@ -139,7 +139,7 @@ static int pm_scnprint_table_upper_keys(char *buff, struct pm_status_row *table,
+ 				 table_len, false);
+ }
+ 
+-static int pm_scnprint_table_lower_keys(char *buff, struct pm_status_row *table,
++static int pm_scnprint_table_lower_keys(char *buff, const struct pm_status_row *table,
+ 					u32 *pm_info_regs, size_t buff_size,
+ 					int table_len)
+ {
+-- 
+2.47.0
+
 
