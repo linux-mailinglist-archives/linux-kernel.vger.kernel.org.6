@@ -1,77 +1,87 @@
-Return-Path: <linux-kernel+bounces-364154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D377C99CBE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:50:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC54799CBE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27CBFB237B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EEF81F22983
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE7A1A0BC4;
-	Mon, 14 Oct 2024 13:50:26 +0000 (UTC)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69A318A93E;
+	Mon, 14 Oct 2024 13:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6lvXUQI"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097FF4A24;
-	Mon, 14 Oct 2024 13:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9914A24;
+	Mon, 14 Oct 2024 13:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728913826; cv=none; b=n31LeqYNAawwU1edMrPMcluXv2p6OWFdhx1+jP1QGJ/dF1G8qs+zrOJPmvHDHVOjLp7Tsa0itfYPyLpWEfF0CxYIDW9LXOJwsKEMhTvzIAFPb/GLhjj3NCGqb9lSId/neEq8B5gAJQl8Lp29gWnXDrE9mwrRT0w53c8dOQ/Ky2g=
+	t=1728913947; cv=none; b=hqbOm9p/JkO1Cr4tOFaGH8OgXtGfT/sxP9ZD4FzFrIy6eJrBwl9YwCxwRCS3U4pbOqJLCvIeII93nhafirmahXXn3MEwj205agER3uK9awRsiO8WuhioGGqTqIbEY33XJlpbWZglyclZ5oXKq4HLR4zwMfMCm5AgkDeW0gNU2zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728913826; c=relaxed/simple;
-	bh=YM3jE6uO5zbzS6uUAjTQGkZ/PQcX27KI0Q9AH3cHfwc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ceFdpaXLqWfdO/+Pg59wZQp0n9Wv4CirJGss49aUMla8BLTFuChhLWq1uMdSJpbaKY/qn3MqAf8nw7LMgyfbgUtsPR4eu4ABm/dPETygXxnCviVA8nA0/yuaNv4bKafFVyo5SMykcd+8SHaDYZ9di8yfvyqWeCHARKvtY0MT0rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1728913947; c=relaxed/simple;
+	bh=3CJtddor8kAQcEyzr0jmju5ajzdiZarXzV5DPnZaSiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g3fK3mDCPk5ERriPikZ42iE3aYbvChjNVOI5GHmiOeEXtRlXhW4+hzeE0bFNwP32ZRiEo7+4ibAEdgOSjyELGsgCJnwc2JgM28PAI8Eh5mME6E3J21lGQWW1NCJhb/iWGT6o25D6TpU+sS0Z5JLsVniiNkevTdiJjTwaCYI1Jz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6lvXUQI; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d518f9abcso2324194f8f.2;
-        Mon, 14 Oct 2024 06:50:23 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cbca51687so17731865ad.1;
+        Mon, 14 Oct 2024 06:52:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728913945; x=1729518745; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mEet+VxNwfbUuCPrGHnyzyOobmPKfSoDJ8KD89KQIo=;
+        b=E6lvXUQI+wfJMJOPRqfg0HL/FTrwYj0NdgI62ZggtduWWc0SCszckntx9d62/93j0i
+         erUHQmNRnykoXbRTmk5sA6BDbRGK9ZeXQfIb5eabZmWa0dhqJjyogtm8+ToG3T2nPPXI
+         N2sdFL0Z3jQmnLenttMWg+N4tUgURC75w8MumJvQUY3G7kSTpY7DVMMt3Qe+7UP8AIAD
+         ba6P9tZsfw2nfoxvGI17E/rEMaExbZOn0bDoJ+J+K7T5HBz0AoPDJRu2u1NS0Tezs5sK
+         YgbeJNN2Iw8gD5BmYKZIZAe6mUOYLKOlrTkjfLjCqINEap0Jr/Y2YcNC23sUlQsgzhGv
+         rCqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728913822; x=1729518622;
+        d=1e100.net; s=20230601; t=1728913945; x=1729518745;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2qewEKJ9t1V9rZ0obD8eIxk5ts6msWZv2OXjyGUHdW8=;
-        b=T01oqrb9X4a/iwrqvhckyzMnH3UZnxRKJBFtTLYcl/GPDcZokXe387tnS3yzh9Wouh
-         Dqq0J0kqeW1/M+CG6Z8+C4tmqred6HyaQJhxBpFrRYIdHB53CkTt+LrJPiUgik6FDu28
-         V52PFcNy5UyIjWkEw8BoXS8mjpcm83yRcxrdtFqavFnleVv3tgsWQ3sH2KZfEvEkwWzX
-         5llos9zOg+XiwIK28vzYAgIcl7OZk13/oOE8O7pfxiZ3pICcMDnhjIOC11ohahPLNfA3
-         q5rK+g1iv9qXos23GxrZNB4WKGI+omQa9Z9XDsNyFmVEKaGsDk6y+uWdX0Pkw6U3adVl
-         EWaA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0xQ1DB9MdGNieCInnX6yZOSJINZ6gzjwiQJgAlrpuCDs5siUSoUpR2YJBNuIaeGCJKh0jg9x+@vger.kernel.org, AJvYcCUPkunEFRrO5wP6BSkGORm2NIW0JShciVpBl27Ny9LZZtAm9hgq6bf4ZV5WAXYFXDU4fRmvTUcT1+0=@vger.kernel.org, AJvYcCVYXHyC7RIvhwbAFYQknpPr/D6697ec9gh1+rQzm6l/E8Jma7kHZR1rQQ3jZC+feLITohTLjqm8Hwi18y1e@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO/lHfYjfQbHSXObXtzPngaT+NuxlaJ3rYSjiCw9DmPXK4UGcq
-	pqV3fqrkQUYp5PbnZs5dE5rk0k9o49HkaVIrEb0A+p3SLKRmsQDP
-X-Google-Smtp-Source: AGHT+IEzSIe7EocxWLvavDStYPgdbg7K6/S9hiSWSwMG8bpMDlXj/jQoc8iwn3IWd3D5ooUzbZBvGg==
-X-Received: by 2002:a5d:4acc:0:b0:37d:54a0:d0a1 with SMTP id ffacd0b85a97d-37d552cdd6dmr7349113f8f.56.1728913822021;
-        Mon, 14 Oct 2024 06:50:22 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-113.fbsv.net. [2a03:2880:30ff:71::face:b00c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8666sm11390320f8f.22.2024.10.14.06.50.21
+        bh=4mEet+VxNwfbUuCPrGHnyzyOobmPKfSoDJ8KD89KQIo=;
+        b=RH5WcfGxJYLBmN1PhzIl2vH9a/IJqqbvLh4W0qftjlFEb6wiybFz+lKEchBwz5HSPt
+         gRhVM0SZR7rdDBhRJ1jevBJ7k89Frow8V0n1JLydhx80Jaahdwjs/Hpf7tCj4uGvhaYL
+         TzLw3AefiBMNCmeP8dMEz+hTYZOwheWtHGZZa84jo7uFyAWCFijzSIg4Q8usmbeY7Wfd
+         z+/CGTJ0uaIidGEuysp/NV4wmgF146F2Jv5oFtPIwC4JZYc4LrjQeKHcziWxJBpULs3R
+         5T3NESbBUIelzLOoF+Va4ECk63jPiLbL/oj6dtjXx1BvfdN+YblY3qXY7xnRAfa2UZWw
+         flBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwghuofTXT54bpJrYi7Jd8+7NS8tbbs2LNuyikCY2SG60MZFaObSS5SyCTtSZCv8d6gcbF+Am89pShIyA=@vger.kernel.org, AJvYcCV5yaJe7n60jAJdFSkPw7ezFCZ7a3MC9eVPGcXykl8m9kZ51f8JsbmrHHuD4qLmZ8fjDZJlXZLIriat@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUGFj6f1jZollql4UwKz30sTSuuhGl4csXAK1J3kaGrELVoSFb
+	dBcjB8+FG5n4pK6GXAYpUOLq7SektM9WfSlMwel7nP2IochFl+Qbj43Ibw==
+X-Google-Smtp-Source: AGHT+IFSkC4chkVqozNqzmopyEX8/RuItKUwhS/QRqadp/zTqqldezvzhK0XtlNQSDIdQ+EpPjg3zQ==
+X-Received: by 2002:a17:902:f68b:b0:20c:85db:fb6e with SMTP id d9443c01a7336-20cbb1a9689mr105050535ad.8.1728913945161;
+        Mon, 14 Oct 2024 06:52:25 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c0e74d6sm66469135ad.166.2024.10.14.06.52.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 06:50:21 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Akinobu Mita <akinobu.mita@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-team@meta.com,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
-Subject: [PATCH net-next v3] net: Implement fault injection forcing skb reallocation
-Date: Mon, 14 Oct 2024 06:50:00 -0700
-Message-ID: <20241014135015.3506392-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+        Mon, 14 Oct 2024 06:52:24 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-pci@vger.kernel.org (open list:PCIE DRIVER FOR ROCKCHIP),
+	linux-rockchip@lists.infradead.org (open list:PCIE DRIVER FOR ROCKCHIP),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v8 0/3] PCIe RK3399 clock and reset using new helper functions
+Date: Mon, 14 Oct 2024 19:22:01 +0530
+Message-ID: <20241014135210.224913-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,300 +90,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a fault injection mechanism to force skb reallocation. The
-primary goal is to catch bugs related to pointer invalidation after
-potential skb reallocation.
+Following changes are used to reduce the code and used new
+clk_bulk and reset_control_bulk helper functions.
 
-The fault injection mechanism aims to identify scenarios where callers
-retain pointers to various headers in the skb but fail to reload these
-pointers after calling a function that may reallocate the data. This
-type of bug can lead to memory corruption or crashes if the old,
-now-invalid pointers are used.
+Additional to the PCie core controller changes
+added some new PHY changes to help improve and clean up
+the code.
 
-By forcing reallocation through fault injection, we can stress-test code
-paths and ensure proper pointer management after potential skb
-reallocations.
+Made lots of silly mistakes, will try to improve in the futuree.
 
-Add a hook for fault injection in the following functions:
+Thanks
+-Anand
 
- * pskb_trim_rcsum()
- * pskb_may_pull_reason()
- * pskb_trim()
+Previous changes.
+v7: 
+https://lore.kernel.org/all/20241012050611.1908-2-linux.amoon@gmail.com/
+v6:
+https://lore.kernel.org/r/20241006182445.3713-2-linux.amoon@gmail.com/
+v5:
+https://lore.kernel.org/all/20240901183221.240361-2-linux.amoon@gmail.com/
+V4:
+ https://lore.kernel.org/all/20240625104039.48311-1-linux.amoon@gmail.com/
+V3:
+ https://lore.kernel.org/all/20240622061845.3678-1-linux.amoon@gmail.com/
+V2:
+ https://lore.kernel.org/all/20240621064426.282048-1-linux.amoon@gmail.com/
+V1:
+ https://lore.kernel.org/all/20240618164133.223194-2-linux.amoon@gmail.com/
 
-As the other fault injection mechanism, protect it under a debug Kconfig
-called CONFIG_FAIL_SKB_FORCE_REALLOC.
 
-This patch was *heavily* inspired by Jakub's proposal from:
-https://lore.kernel.org/all/20240719174140.47a868e6@kernel.org/
+Anand Moon (3):
+  PCI: rockchip: Simplify clock handling by using clk_bulk*() function
+  PCI: rockchip: Simplify reset control handling by using
+    reset_control_bulk*() function
+  PCI: rockchip: Refactor rockchip_pcie_disable_clocks() function
+    signature
 
-CC: Akinobu Mita <akinobu.mita@gmail.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changelog:
-v3:
- * Remove decision part of skb_might_realloc() into a new function
-   should_fail_net_realloc_skb(). Marked it as ALLOW_ERROR_INJECTION,
-   so it could be controlled by fail_function and BPF (Paolo)
+ drivers/pci/controller/pcie-rockchip.c | 223 +++++--------------------
+ drivers/pci/controller/pcie-rockchip.h |  35 ++--
+ 2 files changed, 61 insertions(+), 197 deletions(-)
 
-v2:
- * Moved the CONFIG_FAIL_SKB_FORCE_REALLOC Kconfig entry closer to other
-   fault injection Kconfigs.  (Kuniyuki Iwashima)
- * Create a filter mechanism (Akinobu Mita)
- * https://lore.kernel.org/all/20241008111358.1691157-1-leitao@debian.org/
 
-v1:
- * https://lore.kernel.org/all/20241002113316.2527669-1-leitao@debian.org/
-
- .../fault-injection/fault-injection.rst       |  35 ++++++
- include/linux/skbuff.h                        |   9 ++
- lib/Kconfig.debug                             |  10 ++
- net/core/Makefile                             |   1 +
- net/core/skb_fault_injection.c                | 103 ++++++++++++++++++
- 5 files changed, 158 insertions(+)
- create mode 100644 net/core/skb_fault_injection.c
-
-diff --git a/Documentation/fault-injection/fault-injection.rst b/Documentation/fault-injection/fault-injection.rst
-index 8b8aeea71c68..bb19638d5317 100644
---- a/Documentation/fault-injection/fault-injection.rst
-+++ b/Documentation/fault-injection/fault-injection.rst
-@@ -45,6 +45,28 @@ Available fault injection capabilities
-   ALLOW_ERROR_INJECTION() macro, by setting debugfs entries
-   under /sys/kernel/debug/fail_function. No boot option supported.
- 
-+- fail_net_force_skb_realloc
-+
-+  inject skb (socket buffer) reallocation events into the network path. The
-+  primary goal is to identify and prevent issues related to pointer
-+  mismanagement in the network subsystem.  By forcing skb reallocation at
-+  strategic points, this feature creates scenarios where existing pointers to
-+  skb headers become invalid.
-+
-+  When the fault is injected and the reallocation is triggered, these pointers
-+  no longer reference valid memory locations. This deliberate invalidation
-+  helps expose code paths where proper pointer updating is neglected after a
-+  reallocation event.
-+
-+  By creating these controlled fault scenarios, the system can catch instances
-+  where stale pointers are used, potentially leading to memory corruption or
-+  system instability.
-+
-+  To select the interface to act on, write the network name to the following file:
-+  `/sys/kernel/debug/fail_net_force_skb_realloc/devname`
-+  If this field is left empty (which is the default value), skb reallocation
-+  will be forced on all network interfaces.
-+
- - NVMe fault injection
- 
-   inject NVMe status code and retry flag on devices permitted by setting
-@@ -216,6 +238,18 @@ configuration of fault-injection capabilities.
- 	use a negative errno, you better use 'printf' instead of 'echo', e.g.:
- 	$ printf %#x -12 > retval
- 
-+- /sys/kernel/debug/fail_net_force_skb_realloc/devname:
-+
-+        Specifies the network interface on which to force SKB reallocation.  If
-+        left empty, SKB reallocation will be applied to all network interfaces.
-+
-+        Example usage:
-+        # Force skb reallocation on eth0
-+        echo "eth0" > /sys/kernel/debug/fail_net_force_skb_realloc/devname
-+
-+        # Clear the selection and force skb reallocation on all interfaces
-+        echo "" > /sys/kernel/debug/fail_net_force_skb_realloc/devname
-+
- Boot option
- ^^^^^^^^^^^
- 
-@@ -227,6 +261,7 @@ use the boot option::
- 	fail_usercopy=
- 	fail_make_request=
- 	fail_futex=
-+	fail_net_force_skb_realloc=
- 	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
- 
- proc entries
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 48f1e0fa2a13..6a77dabd86c3 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2681,6 +2681,12 @@ static inline void skb_assert_len(struct sk_buff *skb)
- #endif /* CONFIG_DEBUG_NET */
- }
- 
-+#if defined(CONFIG_FAIL_SKB_FORCE_REALLOC)
-+void skb_might_realloc(struct sk_buff *skb);
-+#else
-+static inline void skb_might_realloc(struct sk_buff *skb) {}
-+#endif
-+
- /*
-  *	Add data to an sk_buff
-  */
-@@ -2781,6 +2787,7 @@ static inline enum skb_drop_reason
- pskb_may_pull_reason(struct sk_buff *skb, unsigned int len)
- {
- 	DEBUG_NET_WARN_ON_ONCE(len > INT_MAX);
-+	skb_might_realloc(skb);
- 
- 	if (likely(len <= skb_headlen(skb)))
- 		return SKB_NOT_DROPPED_YET;
-@@ -3216,6 +3223,7 @@ static inline int __pskb_trim(struct sk_buff *skb, unsigned int len)
- 
- static inline int pskb_trim(struct sk_buff *skb, unsigned int len)
- {
-+	skb_might_realloc(skb);
- 	return (len < skb->len) ? __pskb_trim(skb, len) : 0;
- }
- 
-@@ -3970,6 +3978,7 @@ int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
- 
- static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
- {
-+	skb_might_realloc(skb);
- 	if (likely(len >= skb->len))
- 		return 0;
- 	return pskb_trim_rcsum_slow(skb, len);
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7315f643817a..fa65e14f7c61 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2115,6 +2115,16 @@ config FAIL_SUNRPC
- 	  Provide fault-injection capability for SunRPC and
- 	  its consumers.
- 
-+config FAIL_SKB_FORCE_REALLOC
-+	bool "Fault-injection capability forcing skb to reallocate"
-+	depends on FAULT_INJECTION_DEBUG_FS
-+	help
-+	  Provide fault-injection capability that forces the skb to be
-+	  reallocated, caughting possible invalid pointers to the skb.
-+
-+	  For more information, check
-+	  Documentation/dev-tools/fault-injection/fault-injection.rst
-+
- config FAULT_INJECTION_CONFIGFS
- 	bool "Configfs interface for fault-injection capabilities"
- 	depends on FAULT_INJECTION
-diff --git a/net/core/Makefile b/net/core/Makefile
-index 5a72a87ee0f1..14bdc63e4b71 100644
---- a/net/core/Makefile
-+++ b/net/core/Makefile
-@@ -46,3 +46,4 @@ obj-$(CONFIG_OF)	+= of_net.o
- obj-$(CONFIG_NET_TEST) += net_test.o
- obj-$(CONFIG_NET_DEVMEM) += devmem.o
- obj-$(CONFIG_DEBUG_NET_SMALL_RTNL) += rtnl_net_debug.o
-+obj-$(CONFIG_FAIL_SKB_FORCE_REALLOC) += skb_fault_injection.o
-diff --git a/net/core/skb_fault_injection.c b/net/core/skb_fault_injection.c
-new file mode 100644
-index 000000000000..7839519a0a5f
---- /dev/null
-+++ b/net/core/skb_fault_injection.c
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/fault-inject.h>
-+#include <linux/netdevice.h>
-+#include <linux/debugfs.h>
-+#include <linux/skbuff.h>
-+
-+static struct {
-+	struct fault_attr attr;
-+	char devname[IFNAMSIZ];
-+	bool filtered;
-+} skb_realloc = {
-+	.attr = FAULT_ATTR_INITIALIZER,
-+	.filtered = false,
-+};
-+
-+static bool should_fail_net_realloc_skb(struct sk_buff *skb)
-+{
-+	struct net_device *net = skb->dev;
-+
-+	if (skb_realloc.filtered &&
-+	    strncmp(net->name, skb_realloc.devname, IFNAMSIZ))
-+		/* device name filter set, but names do not match */
-+		return false;
-+
-+	if (!should_fail(&skb_realloc.attr, 1))
-+		return false;
-+
-+	return true;
-+}
-+ALLOW_ERROR_INJECTION(should_fail_net_realloc_skb, TRUE);
-+
-+void skb_might_realloc(struct sk_buff *skb)
-+{
-+	if (!should_fail_net_realloc_skb(skb))
-+		return;
-+
-+	pskb_expand_head(skb, 0, 0, GFP_ATOMIC);
-+}
-+EXPORT_SYMBOL(skb_might_realloc);
-+
-+static int __init skb_realloc_setup(char *str)
-+{
-+	return setup_fault_attr(&skb_realloc.attr, str);
-+}
-+__setup("skb_realloc=", skb_realloc_setup);
-+
-+static void reset_settings(void)
-+{
-+	skb_realloc.filtered = false;
-+	memzero_explicit(&skb_realloc.devname, IFNAMSIZ);
-+}
-+
-+static ssize_t devname_write(struct file *file, const char __user *buffer,
-+			     size_t count, loff_t *ppos)
-+{
-+	ssize_t ret;
-+
-+	reset_settings();
-+	ret = simple_write_to_buffer(&skb_realloc.devname, IFNAMSIZ,
-+				     ppos, buffer, count);
-+	if (ret < 0)
-+		return ret;
-+	strim(skb_realloc.devname);
-+
-+	if (strnlen(skb_realloc.devname, IFNAMSIZ))
-+		skb_realloc.filtered = true;
-+
-+	return count;
-+}
-+
-+static ssize_t devname_read(struct file *file,
-+			    char __user *buffer,
-+			    size_t size, loff_t *ppos)
-+{
-+	if (!skb_realloc.filtered)
-+		return 0;
-+
-+	return simple_read_from_buffer(buffer, size, ppos, &skb_realloc.devname,
-+				       strlen(skb_realloc.devname));
-+}
-+
-+static const struct file_operations devname_ops = {
-+	.write = devname_write,
-+	.read = devname_read,
-+};
-+
-+static int __init fail_net_force_skb_realloc_debugfs(void)
-+{
-+	umode_t mode = S_IFREG | 0600;
-+	struct dentry *dir;
-+
-+	dir = fault_create_debugfs_attr("fail_net_force_skb_realloc", NULL,
-+					&skb_realloc.attr);
-+	if (IS_ERR(dir))
-+		return PTR_ERR(dir);
-+
-+	debugfs_create_file("devname", mode, dir, NULL, &devname_ops);
-+
-+	return 0;
-+}
-+
-+late_initcall(fail_net_force_skb_realloc_debugfs);
+base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
 -- 
-2.43.5
+2.44.0
 
 
