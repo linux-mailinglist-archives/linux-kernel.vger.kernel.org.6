@@ -1,171 +1,184 @@
-Return-Path: <linux-kernel+bounces-363797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD09F99C732
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:31:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA69A99C735
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74EAE28341A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AE36B21358
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022A215E5C2;
-	Mon, 14 Oct 2024 10:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="REEWkd0b"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1DA1714BC;
+	Mon, 14 Oct 2024 10:33:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BE51465BA
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39CF1465BA
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728901852; cv=none; b=m9/uPlUmYeXfu4jLT2uUBtaX78E/1hCUtelChCKa8NDS1uTG1Yn396+0jl3MgPCTjNGr5sry7hGcBoUrGDw3bjZvw2+bBicBM1VX16Bp2XQU6M45/aMcz4Y5grBcY570Anws+NMaq46mSFm0eLpLUbzHKXF4ybBf9w3AbW/p310=
+	t=1728901985; cv=none; b=a2SHI5RpnyePcUxkGIc6uB3RQxo2Q+8hUEoWDjvPq8S1Uqof4dXFmiPwaatJTPO2pGF27vIpwktNd5GZ0LLWaPXhyJrqBzlkYshZtUc+pE3Y8J/shoyLwAF29ZfRsNUmPhwoVp9oogchSR/GCXpKuCi7v8NI/Ve46Tyd/HbdxVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728901852; c=relaxed/simple;
-	bh=rpvuXrvRr4//uCUvY95pj2LgNDIGGKmQHBnPsBpGWZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h8mMwXnBB5h0p3i8tHz3uEEiP7qOO4CRbFxrGcsCEYmLwD0ogTbRhno35FO3BcwTZUGYmj5YWasupedLrKSzNfcmSkbtjtRTdimiUBvhxuiz5Nd5A1MRiUMPa/JvhZ/yQz0VE8bddV3f8s7UfyScSauboRsVxM+Yck+n0ZVuA+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=REEWkd0b; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fadb636abaso35170811fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:30:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728901849; x=1729506649; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3j3CT4e29Wa6bMmt4qsURtu3xAM86L4gd5WtQj9z6/8=;
-        b=REEWkd0bFen9APfRcMFgV3vnpLlyTHmo6fX4yqiJksHIgdpa/V6U/r1UVc7LBt5YRp
-         wHBzHVS2bpS/4ynWqj3N4uD9Y2EXEg/7G6VOuTkl61NgJoG3A1R7UGhKJa0WWcYaXo4X
-         uURgaFpCWjmuvtNpaVaj3jq5KXgLaemWJIvF5aBVj0QM1LwPs2eNhOI4U73zpkwNUCZz
-         8NKhG+LejKZkcrEyL8CYTcJYWxmsZT05BpJASM44NAOOHk/nkTgIKl/q+EoWcFIWj7kt
-         SSb/ZWHWmQ2HJ6drrcFlV8H0THagnNhbYe1OACNpUAoEUrVzqUwMe5/CipX7XmFpE8Jf
-         K0aw==
+	s=arc-20240116; t=1728901985; c=relaxed/simple;
+	bh=enCS0UDILsaQgI38JMIGuMBM4r2c+JYT3EfunWUi+3c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AEDB7P67/6ZPUbmHvg4A98IFk2gJq0FJUojOB7DQon1OCQVjP+lHrVAsrVlU1TmfnqlKgMMnVHPKCIBarcKC6MBTATKvZANOVjUQhu7X8lYMcE8jmWRJKjxVoKrItukhMFE8Wvw6oMNpCiSXAf3rssGMDVPn4l75HcyVf72075Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso5636735ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:33:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728901849; x=1729506649;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3j3CT4e29Wa6bMmt4qsURtu3xAM86L4gd5WtQj9z6/8=;
-        b=WbFXbthPgX5LmGIFSBTaTEFSf/AqUmyOC5PvOSZi7Jhnu1lkYHM+hpRhIdbmrsJr9R
-         c1Vge1IiDlt4c4OQi99qGzY/jbNZndLrkkZFfwRo2PGraytwV1zUgy1zfuEqZdjYHR0N
-         bEhXksLVxxdlRD23sEB/ss0oDqssp1yahzrPDtiqurrgMSG0jA0Im15mPnH9J6IsmANF
-         UoAWqsbvP8Mc5oEpbmUwbQr52R1UbySE32OxS9zA7RpTsmOiDIeJxcyttFpMXa9p9Iav
-         Eudr2BlAisG6Hus1rNDV2/upv5PPitvvZExp6gpOl7oFmo7gq8CuYbpp+145bLjyN2j+
-         nieg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOC47vngBIzkhNhG0c3v4DZugqFO6+52tX2Vnr0BM/ytDrp9pnUM504+zZB15Nle+AkN0FbN73Uai77wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVdn7wAVF95H+gFIgZ6LVYFx0DgSTfEM6nAM/Gn5Aeek9bV1qE
-	ZpwuNGlJZX/p5ZIP6MDS641nNUFlCf2D8L0cNtnsS3ZOPDpjxXMCh/DzAy3HqoOLA0PahkSNG4W
-	JGVs7RoMnb+Fkh87hYYYjhl9eIueNZVyJeT+k
-X-Google-Smtp-Source: AGHT+IEOvjYTiW2P+zWYcakBgwi8n5DXV1DD1oHdg2+1AAtihEHUYlZTYNfLwQ6CzrBLwsP/b0tN6awt89vNby1H9jQ=
-X-Received: by 2002:a05:651c:1990:b0:2fb:4f0c:e3d8 with SMTP id
- 38308e7fff4ca-2fb4f0cea31mr12438521fa.27.1728901848500; Mon, 14 Oct 2024
- 03:30:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728901983; x=1729506783;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KnsVvwI++J6jhoMKa5Fu2HfTtWWqHkXlXJy48EZJO3s=;
+        b=tpqDTCRPZsUf4fRab1z9LKJ1cNS/IfkGWkBnBLQ+ypKO2UqMMEfmzydRjy/UcZA+j+
+         knc3IiFonAbpqXFw/8wk1xvKFZ4kI7crgFNko1Jov+V3fj34fE1LpsXUClY7IN1uM9pv
+         mndZjZqj3IM4pr7W+66fq2T/HFJ0DuZ9ttXl06dVPg7C9vjIv3uj2O1GcwoVhZF8Sq0B
+         mJ9KW89748fXFgvEmb0CeNrXOznfC0TpWlXbG6Pg/fmXEqYxPvYLIntKpnkxuSoEkKUW
+         ISHGv7FXD1mJrWgrQHdCPYhLkLA3AnjO+wh6YUf1wkm7tu+yspuNDQHGdFn2pzWHGAEc
+         0k+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV/DOg+kAwKCbm2zvX20uLCm5otu+z/xef998NyiqYCKfdVT4enrhvCXRvqdeaMCy7jOBmI8Z2MV28uV58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvh0xaZQRCLySsFV3rxPSa+Cx8Tkn/dugHhtlupPJkteanCTCV
+	nJofcQ4mx/QKjIr4fnO1B/HUikORswSeu/cQspDVnsGsA+x85ZyBFMEhOnBwly8bqP7ETSXTL6A
+	YsXlKPi4tqpq3fcXkv4/HwcKqMGMelDMsnC+eRU4AxGEIcC8bE1PlUZ0=
+X-Google-Smtp-Source: AGHT+IHyJsSLC+q0OKPkuTkXufCg5Ynt4/TZ3HTfX+dtIsTfFFyullo8gdOPsrkIBFrwdNm7LOjs8Twm7exVmqk4ayzSOVgoNEWH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <670cb595.050a0220.4cbc0.0043.GAE@google.com> <CACT4Y+ZQzOQZqGZ17KsPmsTNTtZx1k8iQDdpggdEhBqoWBo3qg@mail.gmail.com>
- <CANpmjNP=7q2aX2O5_HVLvW9PnqAM79FpN-Oer-TbG_rAz5B5kA@mail.gmail.com>
-In-Reply-To: <CANpmjNP=7q2aX2O5_HVLvW9PnqAM79FpN-Oer-TbG_rAz5B5kA@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 14 Oct 2024 12:30:37 +0200
-Message-ID: <CACT4Y+asVHVjKSC3YxwdeoAwxhWzp1K7hU4spdxQjN==N34+eQ@mail.gmail.com>
-Subject: Re: [syzbot] [perf?] KCSAN: data-race in _free_event /
- perf_pending_task (2)
-To: Marco Elver <elver@google.com>
-Cc: syzbot <syzbot+e75157f5b04f8ff40e17@syzkaller.appspotmail.com>, acme@kernel.org, 
-	adrian.hunter@intel.com, alexander.shishkin@linux.intel.com, 
-	irogers@google.com, jolsa@kernel.org, kan.liang@linux.intel.com, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	mark.rutland@arm.com, mingo@redhat.com, namhyung@kernel.org, 
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com
+X-Received: by 2002:a05:6e02:19cb:b0:3a2:463f:fd9e with SMTP id
+ e9e14a558f8ab-3a3bcdbb642mr54724555ab.6.1728901982844; Mon, 14 Oct 2024
+ 03:33:02 -0700 (PDT)
+Date: Mon, 14 Oct 2024 03:33:02 -0700
+In-Reply-To: <PUZPR04MB631693FECECE4D3F4A51900D81442@PUZPR04MB6316.apcprd04.prod.outlook.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670cf35e.050a0220.3e960.005c.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
+From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 14 Oct 2024 at 11:41, Marco Elver <elver@google.com> wrote:
->
-> On Mon, 14 Oct 2024 at 10:30, Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > On Mon, 14 Oct 2024 at 08:09, syzbot
-> > <syzbot+e75157f5b04f8ff40e17@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    87d6aab2389e Merge tag 'for_linus' of git://git.kernel.org..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=10104f9f980000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=a2f7ae2f221e9eae
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=e75157f5b04f8ff40e17
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > >
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > >
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/cce40536bdc3/disk-87d6aab2.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/479edc06c8d8/vmlinux-87d6aab2.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/9d377c65ffca/bzImage-87d6aab2.xz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+e75157f5b04f8ff40e17@syzkaller.appspotmail.com
-> > >
-> > > ==================================================================
-> > > BUG: KCSAN: data-race in _free_event / perf_pending_task
-> > >
-> > > write to 0xffff8881155361e8 of 4 bytes by task 9574 on cpu 1:
-> > >  perf_pending_task+0xe8/0x220 kernel/events/core.c:6976
-> > >  task_work_run+0x13a/0x1a0 kernel/task_work.c:228
-> > >  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-> > >  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-> > >  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> > >  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> > >  syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
-> > >  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >
-> > > read to 0xffff8881155361e8 of 4 bytes by task 9573 on cpu 0:
-> > >  perf_pending_task_sync kernel/events/core.c:5302 [inline]
-> >
-> > +Marco, IIRC we assumed event->pending_work should only be accessed by
-> > the owner task.
-> > Here it's concurrently modified/changed. The other task calls
-> > task_work_cancel on current based on the valus of this field, this
-> > looks bad.
->
-> On freeing an event it can be any other task, AFAIK. There's this comment:
->
-> > * All accesses related to the event are within the same RCU section in
-> > * perf_pending_task(). The RCU grace period before the event is freed
-> > * will make sure all those accesses are complete by then.
->
-> So there is no risk of UAF.
->
-> All that may happen is that on concurrent free of an event with a
-> pending SIGTRAP, it's possible the SIGTRAP may or may not be
-> delivered. But I think that's perfectly reasonable if the event is in
-> the process of being closed.
->
-> Did I miss something?
+Hello,
 
-I have not recap all logic, but what looked suspicious on the first glance:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in __exfat_get_dentry_set
 
-The task doing _free_event->perf_pending_task_sync is not the owner of
-the event (the other task is the owner?).
+loop0: detected capacity change from 0 to 256
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
+=====================================================
+BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
+ __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
+ exfat_get_dentry_set+0x58/0xec0 fs/exfat/dir.c:859
+ __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
+ __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
+ exfat_truncate+0x154/0x330 fs/exfat/file.c:260
+ exfat_write_failed fs/exfat/inode.c:421 [inline]
+ exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
+ generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
+ __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
+ exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:601
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-But that task is later using 'current' to do something with regard to
-this event:
+Uninit was stored to memory at:
+ memcpy_to_iter lib/iov_iter.c:65 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
+ copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
+ shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_read+0x278/0x760 fs/read_write.c:923
+ lo_read_simple drivers/block/loop.c:283 [inline]
+ do_req_filebacked drivers/block/loop.c:516 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-/*
-* If the task is queued to the current task's queue, we
-* obviously can't wait for it to complete. Simply cancel it.
-*/
-if (task_work_cancel(current, head)) {
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
+ copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
+ generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
+ shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
+ lo_write_bvec drivers/block/loop.c:243 [inline]
+ lo_write_simple drivers/block/loop.c:264 [inline]
+ do_req_filebacked drivers/block/loop.c:511 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Is this current wrong here? So it may both not cancel it for the real
-owner, and cancel something else for itself (?).
+Uninit was created at:
+ __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+ alloc_pages_noprof mm/mempolicy.c:2345 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
+ __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
+ block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
+ exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
+ exfat_extend_valid_size fs/exfat/file.c:556 [inline]
+ exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:591
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 6021 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-g6485cf5ea253-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+
+
+Tested on:
+
+commit:         6485cf5e Merge tag 'hid-for-linus-2024101301' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b50030580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
+dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1151c727980000
+
 
