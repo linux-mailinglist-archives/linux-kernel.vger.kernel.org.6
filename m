@@ -1,147 +1,158 @@
-Return-Path: <linux-kernel+bounces-363947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A71799C8CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:25:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F52B99C91E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 316C01F222F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:25:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3398B2EC15
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DA31607B7;
-	Mon, 14 Oct 2024 11:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8288E19E990;
+	Mon, 14 Oct 2024 11:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bMb0FBKm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HPvLcjgs"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AC915350B;
-	Mon, 14 Oct 2024 11:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D9133C5;
+	Mon, 14 Oct 2024 11:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728905136; cv=none; b=KIJe25Wzej0Xlnt0CobX0lYOEHDXmjV30eV20vUGfI1vU5N5J9BqaXpiSFAk7u793sNcfGgZODMWBllH1LQjULNRkzt7kuAj3s0yNPGOjLjLDLqO0Nzq5npapAc+dzCAPVSd7mtxfDqkYrpCp5tGNEbQDeKkqvBBJjkrkJvkcUQ=
+	t=1728905176; cv=none; b=LKu5jR/ETDL6FgNzsZhXCCHeaPCM9cGq1YyUrqjUi+Wsu5vAqvjwpekIlw5DPLXIM0/r7dT5tVvzZ853B/aOG5TseOc86c8W7sMuiKKexBzDAU8CDH/YM4+03VLyzuHnoBU2fiVenITVG44RHf/U6NLjq0VLjImORw8lswRcygM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728905136; c=relaxed/simple;
-	bh=SLqJFOsn5q2qjbckf2ljncx5lrxLVkzu1xfzSt7sS5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EzcKioPSYdZlfQZ0p3/ZYPEmvNM7CENFcdZBuVbk/DODY9B6PClEhALQvWbFMFFl8Sqp2zQ3gNtEyMvIdQu88YhDscNhPJ7Ti4Ci+ORVFlG3BdS0AEbd1sdNXe8RDztHw5Kd46wZn8MKkw+dnK6kbs6BapzXTjaUil3apa1Tz4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bMb0FBKm; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728905135; x=1760441135;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=SLqJFOsn5q2qjbckf2ljncx5lrxLVkzu1xfzSt7sS5w=;
-  b=bMb0FBKmECzSEsP6Q9dmlqRyieWfBKheOSXiKZGzSMCApNjoIyllFS3I
-   JfgsbLma9/FbLXYUPR0vX3ERNQYjYS5UybYvT3vfRctcz90vuzYiNZCH3
-   jJfkhoItEIzjhKpUSbMzmog8WDssUeWd789B3u3ZEFb5xZRqVCM42MYHD
-   1fTmv2tO1S8isj5ouf579w6KO/mGM2O2ZTq9miJEjhJaO1+6jR52TFLvU
-   EnV0Z4OCCP3wWQpCRiEDLzMa83EiX09AFGJoN7p32aIA4sH3O6JlvQHsM
-   ZnkQ0WMO6TMLRgsmVPFBzaYk+OlXFFWP87xhgl3YGyR2dab9mMeK7iimM
-   w==;
-X-CSE-ConnectionGUID: ItiP64g0QQmkKPnql+XhHg==
-X-CSE-MsgGUID: +eeLnZEuQIq0dlD6f1tWWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="32165961"
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="32165961"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:25:34 -0700
-X-CSE-ConnectionGUID: yYETopAaQiGK1J/Khy5GJw==
-X-CSE-MsgGUID: 7exEHq4kQwagftdiOKZAgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="82116585"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:25:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t0JCZ-00000002sYA-2ZwM;
-	Mon, 14 Oct 2024 14:25:27 +0300
-Date: Mon, 14 Oct 2024 14:25:27 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v8 7/8] platform/chrome: Introduce device tree hardware
- prober
-Message-ID: <Zwz_p3o1PJF6sl2Y@smile.fi.intel.com>
-References: <20241008073430.3992087-1-wenst@chromium.org>
- <20241008073430.3992087-8-wenst@chromium.org>
- <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
- <CAGXv+5FAhZQR+Tah_6Qxp4O7=x2RawfWuMh29_FT4mGQGQF84w@mail.gmail.com>
+	s=arc-20240116; t=1728905176; c=relaxed/simple;
+	bh=lO2hoQzycVO4vY/kM7XL90ut+mcmjH5DnO6Bb7YBeGs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Msm4M+NB7fbONbdedq3I2iUZP0sNIs+lTB+DnkePYWYY6e634SITQuK5t9srQoNHZbDDZMMqD3Da95HRoXrfIolLldoHjpqU5J9wHLRa1dgIBWY8BsboSWXVxOSszH3/i9lflVYx0R6hxVaoFzEWWT9zZqKJMFjqNcec9dcPTWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HPvLcjgs; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EBJnxT005618;
+	Mon, 14 Oct 2024 11:25:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=pp1; bh=i7XDuizXL
+	S5XIPcoAE9bkjxG3lEIOziJCAhniyzLsnQ=; b=HPvLcjgsmznVXDad6N7Ib6HsJ
+	Rj0GE+5E4FesYbWBhd6j6VyodMoFTPtZCHJq6d8kciS0qUBVRVWuI+ZS29oljX06
+	2YP0aNf2pJNyyD75B8gP2NTg+jm+JSIfI01fjCfJkFxJmrgIuSWjwGkWq0T9Pugk
+	zqGiV9i0VSyaRAAn6weGjlx998MCd8EUHjJCrDDTGaCGZgr1b/ZSe63l+Yj9tMhP
+	QFWAi78gPQ61BsI2+1zZhX6Ig+FCBHhFLnYRseES6hA7O+T3hqFQnquaKda9tUEY
+	VBAqvAD4gkBLTKdTDZ6MgUUoSkjGBsMY39aqkpHnGiAH+KCUcuFSP9YeiwQFw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4292ax00re-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 11:25:57 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49E90AuS004965;
+	Mon, 14 Oct 2024 11:25:57 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285nhwww0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 11:25:57 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EBPu8S30933358
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 11:25:56 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6CD6D5805D;
+	Mon, 14 Oct 2024 11:25:56 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4554258054;
+	Mon, 14 Oct 2024 11:25:55 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 14 Oct 2024 11:25:55 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Date: Mon, 14 Oct 2024 13:25:42 +0200
+Subject: [PATCH] watchdog: Add HAS_IOPORT dependency for SBC8360 and
+ SBC7240
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5FAhZQR+Tah_6Qxp4O7=x2RawfWuMh29_FT4mGQGQF84w@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241014-watchdog_sbc_ioport-v1-1-896ccf311839@linux.ibm.com>
+X-B4-Tracking: v=1; b=H4sIALX/DGcC/x3MQQqAIBBA0avErBPURKirREjppLPJ0KhAvHvS8
+ i3+L5AxEWaYugIJb8oUjwbRd2DDenhk5JpBcqkEF4o962WDi97kzRqKZ0wXc5vkgx6VQ6WhlWf
+ Cnd7/Oi+1fuVpnjhlAAAA
+X-Change-ID: 20241014-watchdog_sbc_ioport-db203694de46
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@kernel.org>
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1630;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=lO2hoQzycVO4vY/kM7XL90ut+mcmjH5DnO6Bb7YBeGs=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNJ5/u/dPyFX+ZyPlvNK5abwScGTOBx2VEutv7ni1owvO
+ VOvn86U6ShlYRDjYpAVU2RZ1OXst65giumeoP4OmDmsTCBDGLg4BWAioSsYGf48cF7+JC6PuWY6
+ cwbXpncRuw9pbrT55Gu0O6/9TKFmw3mGvyK/pTT43UtF483WCrNt0Kq//ydwjnjSqtM3FhxevsZ
+ 5OjMA
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: piKwdC9rv2w6ogSCGUJcXQu053stVgLx
+X-Proofpoint-GUID: piKwdC9rv2w6ogSCGUJcXQu053stVgLx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_10,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=753 malwarescore=0 suspectscore=0
+ mlxscore=0 phishscore=0 spamscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410140080
 
-On Mon, Oct 14, 2024 at 03:04:44PM +0800, Chen-Yu Tsai wrote:
-> On Thu, Oct 10, 2024 at 11:29 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Tue, Oct 08, 2024 at 03:34:26PM +0800, Chen-Yu Tsai wrote:
+Both drivers use I/O port accesses without declaring a dependency on
+CONFIG_HAS_IOPORT. For sbc8360_wdt this causes a compile error on UML
+once inb()/outb() helpers become conditional.
 
-...
+For sbc7240_wdt this causes no such errors with UML because this driver
+depends on both x86_32 and !UML. Nevertheless add HAS_IOPORT as
+a dependency for both drivers to be explicit and drop the !UML
+dependency for sbc7240_wdt as it is now redundant since UML implies no
+HAS_IOPORT.
 
-> > > +static const struct chromeos_i2c_probe_data chromeos_i2c_probe_hana_trackpad = {
-> > > +     .cfg = &chromeos_i2c_probe_simple_trackpad_cfg,
-> >
-> >         .cfg = DEFINE_I2C_OF_PROBE_CFG(trackpad, i2c_of_probe_simple_ops),
-> >
-> > Or even
-> >
-> > #define DEFINE_I2C_OF_PROBE_CFG_SIMPLE(_type_)                  \
-> >         DEFINE_I2C_OF_PROBE_CFG(type, &i2c_of_probe_simple_ops)
-> >
-> > > +     .opts = &(const struct i2c_of_probe_simple_opts) {
-> >
-> > Perhaps also DEFINE_xxx for this compound literal?
-> 
-> I think it's better to leave this one as is.
+Fixes: 52df67b6b313 ("watchdog: add HAS_IOPORT dependencies")
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+---
+ drivers/watchdog/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Using a compound literal like this questions the entire approach.
-Why you can't you drop it and use the static initializers?
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 684b9fe84fff5b08a35693aefa57db135196b909..94c96bcfefe34778588febba935664158840aae7 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1509,7 +1509,7 @@ config 60XX_WDT
+ 
+ config SBC8360_WDT
+ 	tristate "SBC8360 Watchdog Timer"
+-	depends on X86_32
++	depends on X86_32 && HAS_IOPORT
+ 	help
+ 
+ 	  This is the driver for the hardware watchdog on the SBC8360 Single
+@@ -1522,7 +1522,7 @@ config SBC8360_WDT
+ 
+ config SBC7240_WDT
+ 	tristate "SBC Nano 7240 Watchdog Timer"
+-	depends on X86_32 && !UML
++	depends on X86_32 && HAS_IOPORT
+ 	help
+ 	  This is the driver for the hardware watchdog found on the IEI
+ 	  single board computers EPIC Nano 7240 (and likely others). This
 
-> Not every entry will
-> use the same combination of parameters. And having the entry spelled
-> out like this makes it easier to read which value is for what
-> parameter, instead of having to go up to the macro definition.
-> 
-> For comparison, this entry uses just two of the parameters, while for
-> another platform I'm working on the full set of parameters is needed.
-> 
-> > > +             .res_node_compatible = "elan,ekth3000",
-> > > +             .supply_name = "vcc",
-> > > +             /*
-> > > +              * ELAN trackpad needs 2 ms for H/W init and 100 ms for F/W init.
-> > > +              * Synaptics trackpad needs 100 ms.
-> > > +              * However, the regulator is set to "always-on", presumably to
-> > > +              * avoid this delay. The ELAN driver is also missing delays.
-> > > +              */
-> > > +             .post_power_on_delay_ms = 0,
-> > > +     }
-> > > +};
+---
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241014-watchdog_sbc_ioport-db203694de46
 
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Niklas Schnelle
 
 
