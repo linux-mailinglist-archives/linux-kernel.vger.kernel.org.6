@@ -1,79 +1,59 @@
-Return-Path: <linux-kernel+bounces-365942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F12A299EE37
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3511699EE3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A36511F239F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03110283A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCF61AF0BC;
-	Tue, 15 Oct 2024 13:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C5C1B21AC;
+	Tue, 15 Oct 2024 13:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HYJUyb6E"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCbD61NR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640521FC7D1;
-	Tue, 15 Oct 2024 13:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDCB1B219B;
+	Tue, 15 Oct 2024 13:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000466; cv=none; b=MT70uUZqasvVk3MrxT2H5lbSb3DFGrDsllTM9XVuUUobHwFrSWxOiJasx4kbp6vmNSdmSljh7mI07SUZI+aDavSk6EpIPv/CwxuJCJbtKmiu3aY/OO0orfkfWHx0P6RZcL44cOVstgr0Mcb+hgRCw5Kje6840NsAx44z5KdZZeA=
+	t=1729000468; cv=none; b=VLuqdWn5ZkUSQ0+RgBAsFyHcoms1ObvX8WBXWHdRB2hoLX6pssq3284OmON7o0FORvEd94vVNAiRufvaRSC+M3By+K0UoXdGgjdhoppTdvLhTiwF8wYMZ0575Kx/oBEmuNK6O9IaFn/9gt2R8qnUrAxBMJNlN07HGKmdZS5bo/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000466; c=relaxed/simple;
-	bh=o0S1qVw0y5bambm4KtSzE6iXeatOB6ZyfvSnqPbiKlw=;
+	s=arc-20240116; t=1729000468; c=relaxed/simple;
+	bh=tIsMM7fX/CrMgwmOAdB9kTlSRTDalPOoc2fQSb66mKU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ueAdJkRsgpEp4DuDpgWpBHCCyFKN+fjk26N/dOiFmAC8UFOcyFuekqOnubhqA0grRHhkrmGzBstTFKUDD1vRX5G7aNv3S3BTmuXx7CJHOg5GAtoXwPHuzLd+dKWHdAEiD5c6EjwsC5LYyVAZQWY+t4YosoHheWzfylUBz0WCDPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HYJUyb6E; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729000464; x=1760536464;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=o0S1qVw0y5bambm4KtSzE6iXeatOB6ZyfvSnqPbiKlw=;
-  b=HYJUyb6EU59ay88FrUEzsmYUsL7rl0LKQOgZjMzWxHsc3TMTy0lVDouY
-   OVEHbrF9raiDDA4IEWrQwnZL3xxO9dYX3+EhS0/rWYtezWWYz8KzWWMGz
-   u6duLFwpr9OXCCdNEoiGnOA8OyP+JkM7yAx14bKRPa6vIAaJHVeQG9LHt
-   UIWw6H3u+AiJYCENRbo1kOYY5IpDXXzrC3plo3Etmk4Ig3eY/FUUiA9RY
-   n7W9GOdl8U8REgry5xfgNqe3fmlsZK//egGB+goriwDBEjO4UMMJEVzwM
-   QKlT9jIc6yW4H4gGKAg13KPoPkQm3z5JnqtzANURqBMzNnMArPjcS+EHj
-   Q==;
-X-CSE-ConnectionGUID: QjxFZpZ1TuS5VxYfz8PgRw==
-X-CSE-MsgGUID: UFjbuBYBQLKTFWCPZP1U+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="38970599"
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="38970599"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 06:54:23 -0700
-X-CSE-ConnectionGUID: MIMMorjKTj2y+QkHdIM62Q==
-X-CSE-MsgGUID: /a2NuIqcRz2b7CHSyAsSVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="77518082"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 15 Oct 2024 06:54:20 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 80749329; Tue, 15 Oct 2024 16:54:19 +0300 (EEST)
-Date: Tue, 15 Oct 2024 16:54:19 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Binbin Wu <binbin.wu@intel.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH] x86/kvm: Override default caching mode for SEV-SNP and
- TDX
-Message-ID: <sr2au3c5me6nexco46sqmld25nxonpg4ry3vf7ody5yw6dyjpc@m77cc2nnksdp>
-References: <20241015095818.357915-1-kirill.shutemov@linux.intel.com>
- <294ce9a5-09b8-4248-85ad-18bdea479c73@suse.com>
- <3ae51aac-085a-44f6-9f6f-565c7c5687ad@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnPcftpt2MW80PGL6dHeirerFI4VSM0BfK8A/f21UCqefx82vpzMlyfJThjNqLT3lunuO5yJjadsVwElmPTy6u1DlAbrZP0zsotQHl+64ibciPwHTJZ8RbzvMRmo3266QWIoIdVEKZGGHgkDhua/LbEInGEEZAApMMPDtvESe5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCbD61NR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1939CC4CED1;
+	Tue, 15 Oct 2024 13:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729000467;
+	bh=tIsMM7fX/CrMgwmOAdB9kTlSRTDalPOoc2fQSb66mKU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eCbD61NRnFFntH0NX/eddn0x3225iMNzntGFOyJjmbT0eiLZZqww1thuJSGRYKhed
+	 FudtrU9x5Dsav8253kwjtRDC4ZBzU5+xUztMMfCSe7CwydaW2FTWlc0IEKCTZhXwvn
+	 skdjHbSevEY2qixx8NLqs81jFKDTLDMEBwLa2IitGijMQiKJT529jWcvWzhyBlH20/
+	 bot7hNxRjEZEl4zX/MPLwAdjEfLCqHd1pgXRIL7j1Tc2vO+m8ZE85ctmPIJOLJW4QH
+	 9vITjCng2aWpnvEa6mZYZqWfvSpgDPMlW4HSlRVj7rxYrnnTtaGigwPyGO5jxyzD8B
+	 qHy1KoUQBXKFA==
+Date: Tue, 15 Oct 2024 15:54:24 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH v3 09/16] timers: Add a warning to usleep_range_state()
+ for wrong order of arguments
+Message-ID: <Zw50EGyh3DwA8wX4@localhost.localdomain>
+References: <20241014-devel-anna-maria-b4-timers-flseep-v3-0-dc8b907cb62f@linutronix.de>
+ <20241014-devel-anna-maria-b4-timers-flseep-v3-9-dc8b907cb62f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,31 +63,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3ae51aac-085a-44f6-9f6f-565c7c5687ad@intel.com>
+In-Reply-To: <20241014-devel-anna-maria-b4-timers-flseep-v3-9-dc8b907cb62f@linutronix.de>
 
-On Tue, Oct 15, 2024 at 06:14:29AM -0700, Dave Hansen wrote:
-> On 10/15/24 03:12, Jürgen Groß wrote:
-> >>
-> >> +    /* Set WB as the default cache mode for SEV-SNP and TDX */
-> >> +    mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
-> > 
-> > Do you really want to do this for _all_ KVM guests?
-> > 
-> > I'd expect this call to be conditional on TDX or SEV-SNP.
+Le Mon, Oct 14, 2024 at 10:22:26AM +0200, Anna-Maria Behnsen a écrit :
+> There is a warning in checkpatch script that triggers, when min and max
+> arguments of usleep_range_state() are in reverse order. This check does
+> only cover callsites which uses constants. Add this check into the code as
+> a WARN_ON_ONCE() to also cover callsites not using constants and fix the
+> miss usage by resetting the delta to 0.
 > 
-> I was confused by this as well.
-> 
-> Shouldn't mtrr_overwrite_state() be named something more like:
-> 
-> 	guest_force_mtrr_state()
-> 
-> or something?
-> 
-> The mtrr_overwrite_state() comment is pretty good, but it looks quite
-> confusing from the caller.
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-I can submit a following up patch with rename if it is fine.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
