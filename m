@@ -1,354 +1,362 @@
-Return-Path: <linux-kernel+bounces-365047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0739199DCB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFDB99DCB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EED282536
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BE79282FDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B19617085C;
-	Tue, 15 Oct 2024 03:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D762E154456;
+	Tue, 15 Oct 2024 03:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dJ6fSiCa"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKHYp8vi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C482BD19;
-	Tue, 15 Oct 2024 03:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728962761; cv=fail; b=tQELBbFRzAdB3SA0E7YB1iedY5v2MOjQP0FSDXqcKvEV8mYzGdO/KmfJ9Oi6pRaC4jkHRsydaNT78IwqaDiFByf/JopjlILlj9nklvbJkHtc5MyrbEbPXk7wi6XGUs61niskisQlY9O7A/ruUplUSPMXF3I2E/EDzKJitGuNipw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728962761; c=relaxed/simple;
-	bh=SwVPbpaJHRyv0DpRnG6X/Bl5mqB2O3tbGcK2Y9Wwvts=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cbN0R0V28+lHXrlysKJBqXhmPn9zCvxj49/86WSSY+YUYSx6k3/ZJuADCue/usgU+frLnk9d4PANMbU1/exLcPATsuQiFPqiqTAMvaLHLTGr0n4c7lS8TGy4PfVPvYDDdV4fkxmAAbc3l8oLOgzEBBgZuUywC13A02tr6ghAIeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dJ6fSiCa; arc=fail smtp.client-ip=40.107.93.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WfADRauKQbwMHPa7EcAPREsjzib88s2Al6ZLONjmHgC8msRJtqdpRtzzsOlm2Aq62lrnB/YAKaCS9y7YTe2jd0YpCJVGMo5M0/ZGY1G4xmYBLhMUWcPho7dSlHFWp5zVmdDLe1W97m8kF0RNCR95+iyU9iBSleDLhDJY7vcohqmtgOaEFaOVs8FoDi7Fu+7lPXn0BgsjyHOb1zz65NGUtrcejmuCAd8D5gBDU4CWh1TnBOuoI5Yny28vlh76mCzvSXuIK4RuL2hl21FpyVJhY/Lpxh7B4oGn9tOlRBqRuBwLbL6MqYDJmd7GzqSSla1fhnv9fID4XFZWxoeG/1hOvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A7o8IKUURrAtW7ATKpEDBVycOw3tZqygA4dtlwDHh6Q=;
- b=VgSU/wygnivKrP8cDQ2DPdDmMWAVJCWT3Bfm+qKf1tybk+2Da5MHe2y/NjjJJYTrrZ4cEVAYI0+ydJWy0fI7YnoVZ79YmdTMFjFEVdpM8V6Y0aM/9D5P4Go7Cb4pnNbWG019gj2gAB5aGZ25rCowobbBw3/Z/ndb4OidticZfGxbfbKAeHZ7Hgv5L3RRwjoQIZycc7gESuHCGdvFeowQtmM/7I6MTc9UWQyBpfOQPpWN6w5JirANILTuz50DKjjySC1rK8jYzgN6sJTOzaF5TLX21qZmxAcDKNGJKe20kT4prSwFUhOCM0ozXvE5Tyhh9VjS0n6TDlwVR0LxwFj3Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A7o8IKUURrAtW7ATKpEDBVycOw3tZqygA4dtlwDHh6Q=;
- b=dJ6fSiCasHW2BEFG2O2RxuB9MCz3fW+Uy3pVhuy3hVUMmKC9UUrwerqr8Da7F3cl3O1qpwhACp10FGincBSSej5biFiecf2aFp2YNf4FTB63QtYeXFFRa0LOWrkFTFhOcNPraAwupRVs1tEuzVAyj9iIRVp49XBCTA0h44bJI0k=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
- SJ2PR12MB8009.namprd12.prod.outlook.com (2603:10b6:a03:4c7::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Tue, 15 Oct
- 2024 03:25:56 +0000
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627%3]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 03:25:56 +0000
-Message-ID: <f623f471-e874-4271-8469-8754a87c154e@amd.com>
-Date: Tue, 15 Oct 2024 08:55:47 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH rcu 03/12] srcu: Renaming in preparation for additional
- reader flavor
-Content-Language: en-US
-To: paulmck@kernel.org
-Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com, rostedt@goodmis.org,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
- <20241009180719.778285-3-paulmck@kernel.org>
- <6853d494-0262-4a6a-b538-338695677f57@amd.com>
- <36076d14-6732-4bbc-b96e-9bab1212c9dd@paulmck-laptop>
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-In-Reply-To: <36076d14-6732-4bbc-b96e-9bab1212c9dd@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0186.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:e8::13) To DS0PR12MB6608.namprd12.prod.outlook.com
- (2603:10b6:8:d0::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FBA16EBEE;
+	Tue, 15 Oct 2024 03:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728962788; cv=none; b=ZuCdcUDXpMF/dIJ6R2ZMa+bEbcgSA3LDbmDQzM4A5HgeVzaCD1ykdbLGLCkf5ayeWnRY4NhE9M7g8/4+E6C/Z/6cGPmUVNQ7q7o/qwd+K8cc2NhT0GGLwprd4BU6JB2qhk6HUmeQypSiRu1tXTmdnhjV7a5KJBOy9rXnBUu9UyQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728962788; c=relaxed/simple;
+	bh=XmffroT3hKWg09jU2zIjArfgpvPRLrdeG8pz8QLaLvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISeTZpJMae4D4nv01HkmsU+vhi1DwF8RhMGzlZR8nvJxNq+JeP9qmUOvBzRlMh+HIc2gU6REWp3RdF8erz2WCr6cNZOJ9lnCt6JkwBtWWSjxkG1sg319vf5ypNF7LssEFEH++OIYTDx/BcRaxi8EnoUTROvaECQhwcQFEMpXpvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKHYp8vi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22C87C4CEC3;
+	Tue, 15 Oct 2024 03:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728962787;
+	bh=XmffroT3hKWg09jU2zIjArfgpvPRLrdeG8pz8QLaLvQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aKHYp8vip+f23G2xPCo1W/K1rZZITRicIv3fV4Zu2JBUd74HgNbYWcFELPD5Nk1Dv
+	 8eG/m7jxEva1iLI/Azn+kzZJGl8r9d5DnnsImBcNT8oKpPJ3r0hKP9vY/koYpUqDGq
+	 Ve+Sr5WOB3BPUbXcf00nOdLkabSeuJDOTH2ySn1GJMXoUNGN+hxk4iYtZf6KKXYfnU
+	 UGV0EkIcB2Ntl8uBQhz5TQXKa4zI0KOAp1c79pi8hJYLTVjc0Pkx4zb9qzzhODR9Qy
+	 BjpauXy6qriKckutAjTcw6VOeXsdqWH0aJDluCAfYXPvlVo1cMmqadVhldqutNJENK
+	 w09gEmvDUfuPw==
+Date: Tue, 15 Oct 2024 03:26:14 +0000
+From: sergeh@kernel.org
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	Yin Fengwei <fengwei.yin@intel.com>,
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v20 2/6] security: Add EXEC_RESTRICT_FILE and
+ EXEC_DENY_INTERACTIVE securebits
+Message-ID: <Zw3g1vv_mbbuzBVv@lei>
+References: <20241011184422.977903-1-mic@digikod.net>
+ <20241011184422.977903-3-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|SJ2PR12MB8009:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5bff13e-ea50-4059-b6ae-08dcecc914e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qks4SVl3NDczUGNwa28wR0NGT01PSWVrVEt6T0VxN0ZOb0t6djZOYlBwV0kw?=
- =?utf-8?B?WjBSeW56cFNaREpkUnp1OVh5K1N4NThlVGhuUjhoa1VsTHVLOTZBWFU3Y2xQ?=
- =?utf-8?B?Q3lkY21rUjh1aVdkNXdjWURQeWpnR2Exa0lBZlM3eGo5L254MTdJQXdMck80?=
- =?utf-8?B?ZEs2aEZrSlBuQTFVT1BFYlVnRG5kaXZlUmdsb2FQYVhaZ1hDOHdtdldSVUtG?=
- =?utf-8?B?cnZJU212elpQa2tsREtRVVVkWUsyaGxaRE10T2pmd1V6cTlUM2FpbjFqMnhU?=
- =?utf-8?B?eEFhUE9aUDVMZ0VINUg0ZG03aEdKS0EwWVN5MDNJdGRqZm44SzNSQktBY0Zj?=
- =?utf-8?B?ZUdRNlhEZFBNejVKWjREcXZnbHQrWXhLQklTUHB1TG9tcVE2Um1hekxRRTBn?=
- =?utf-8?B?MXZlekpDUS96Qytta2lDMEpWd3g1eVNpY0s0NFVoczRRcVA1VFNuT3NrVlFW?=
- =?utf-8?B?OHI5ckFDVFJBUWxoRnEyRkZ4U1NUdFFvUXpQNFVkcERMOS9uNnV1LzBMeXpt?=
- =?utf-8?B?eURjYk8reFo3NGhzWTdpWEkva09lZjNlTWs3akM5S3VYNnBWRk5yM1pPc2U0?=
- =?utf-8?B?VVRmRUQxemdJWlRXeEFYREtDdHFTUC9NTzR2bXBjRTdaYm1RZVppYUF6UFRt?=
- =?utf-8?B?RjNSMkdkOXAxRCtjT2k3STYxL0VrRGpjanZhZEMvOG9pRmdvdW5UTnRZTEJY?=
- =?utf-8?B?cElnZXlPci9hMm1NYTRDekZ5eTBQMW1rR1VHRFRiS3BFTnUrSHY0Rm00UERY?=
- =?utf-8?B?cm5mL29Cb0x6M1p6ZXhmWXhhNFpYdnVvblhVZzJZYU50OU5oOUZtVG96aGNl?=
- =?utf-8?B?WHhDc2dqN0pVTkpZYzFnTUdzTzkyN0ZJdVgzazBjK2N0ZC9ZY011UVdnMTVO?=
- =?utf-8?B?VW1CaXZlS2xhRVp4N1NyZFI4dXhnZ2xxZ2wrWjVhaWNmNXR1SjZQQUx2TVpx?=
- =?utf-8?B?ZXNac2UyS2k0YlhPWE1oaG5aVXFkZkpIb0dKZ0VIbVpUV2dZOEFsOURCbDZU?=
- =?utf-8?B?eUxJMjYyU3pvc00wbGl2QVVBUThsR04vVGRWaytuSlR1UThabVA0OHErbSt4?=
- =?utf-8?B?SmNRYnVEaGUyQkk2d3dld082ZEtJS2FMWUQ1Um5COW1LNVlIY2pyRy9ZSFl0?=
- =?utf-8?B?MFBUM1Q5QTNPV0kvRDlwZFNuSDdwcUtveVBiK2NpUXhtUS9GdW5OTmFjVjZW?=
- =?utf-8?B?NzFWRTYvSlEzUWdVVGRvbWowREhHV0xQOEpMWnZoRXBnZUJ1dGVFSGRzaTVn?=
- =?utf-8?B?cm1sMzlWTHZHMHVpMWJQaVJBblM1dHZBV3JRQnMySlBlSVdJYjNzcUJPRzZu?=
- =?utf-8?B?OStTZXV5NDEyRnUwTHJYQkJYVGNlSlkwRGFrZEozUllONDdjaCsvT1RWS3I3?=
- =?utf-8?B?WERBbzdGNWVsNkxQUmdRTG1UcmNxYjRYZjBPN0Z5dGpza2s5RU42bk5HbnlH?=
- =?utf-8?B?L1B4TmxGam11QWpHME5yb2pBV3czWjlxbFRMbC9pZVc4TVQzdnpENFZ0eGpx?=
- =?utf-8?B?aU1ZZk5sMUlFejNNbGdBTHloOGFoNE80enRHcmgvT2VIdTB2TzZNNU5LakRV?=
- =?utf-8?B?WGN0dVVUUnU3YWdNZzEyeTBFZDJSN0dMMkZYWW96bGxCMGp2Sm9XQTl4ZzBx?=
- =?utf-8?B?c3lyOS9IRkVUTjZYWTNRZ2pHa1RFOVJyQnhLMGZrMjkrVmhnbUFNNzhCY3N3?=
- =?utf-8?B?b3FhQVdxOUFNWnJONUdaZGJsWWhvUmFXU1czK0dqWm05eklLazBlL1dBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d0Vqa0N2TzVUUFBMQTFYbFlHc1gyaTNHVFpGRWk3bnQ5aGlWQzlxY2w0cVl3?=
- =?utf-8?B?cHBZMkJpczlOSkRVVnpwYnVHcGpsQTE2eGdjUkdlemxFM0NlOG5GZjJnclRx?=
- =?utf-8?B?SmxnNGVUVEQ3ZDZWOGgzeFNJZU95L2RmY1hrLzhZemJDcXMxL0ZXdlFQNUUw?=
- =?utf-8?B?YjN4MDBwT2VZdXVISzlFNWVMYXBUZjZKeDZUT0xRcDNhRUxvaklqRFliTFk0?=
- =?utf-8?B?bFJrVGRZcTFBZUNpcVdtMUV4Q3p5ZWxSUE9MUjlob001VGdSR0VDQWJsMEcz?=
- =?utf-8?B?MXZWMUR2dFZvZ1BZekNCRUpvSTJyeTB1MVVJeUFSbk93TkY5MGN2Z2tMbWRi?=
- =?utf-8?B?bUdwYU9aVUlsNnRFS2NwQ3pvUlZrSVlwMTRodjlUYXJPWmc5MmJUOVZyT21C?=
- =?utf-8?B?cEZiRlpQd2ZTWXByOUp1Vm9xRU1MVTdEVXArbDViMGJqSXVPcjRKVEt2NlRH?=
- =?utf-8?B?WE51eTFiNVU0NjdPYkkrVTY2VDdzbFI5N1RYYzhMOFV3WEVQcGJFNDZsMzI0?=
- =?utf-8?B?b1E3aytnMXVUSEE4c2hodnQ1VUgzVHpIVFV6UU9pYVVheWpxdndmdzcwMStN?=
- =?utf-8?B?Zi9GZlhncWdLVFdYaXdJRHhpQjY1d2JlVUJaRDgwNUFkanRZeHhYSWQwOGZt?=
- =?utf-8?B?dDNhdUJENWN1SFNFZ1g4dlpNSFg2eGtjS0d0dTB0Ym5UVFFobVZOYWh3clA1?=
- =?utf-8?B?WXhmM1hjSGFkeEZpMjV2Uk5seE5MN1BKSVVxTFIvVCtKL0VjQjJvUFEyaE1u?=
- =?utf-8?B?dVNXaVE0LzYxYitSUXE3dGU0WWtFOVVKSG95eVVmNHlxa3lOQmNMWE5OcGI1?=
- =?utf-8?B?biszeml4Q1MrYXRzdHFnRWdJOGVTd0kyMEg0bG1MbDFvL1g1cy82N2JGeWpH?=
- =?utf-8?B?NkNURS9RSDBDL0FwRm1VQkdINzBIWHNrKzA1eEphUE1XYUl2OVdXWEhUZUNS?=
- =?utf-8?B?RFU1OGRLNVErZDExWDRWYW5qcGRYR3dLbVBiVktRUjRTOUZnY0NRY2FlTndi?=
- =?utf-8?B?bitUTjQ2WUxUK2M2ODdTb3VaWU9zZURJOGtTMW5xTjdSTE1IMmcxVWZEVldX?=
- =?utf-8?B?VUtSc3lhemNKbmVSbkVMSlNmQjREc2JjRW9qaWwxaExLS24rNTkzUHB0VGhL?=
- =?utf-8?B?U1FJcDBFdE1DVGJjVkNUQXRjd2c5Zmpyd09UQlphVXhnenltYm1FcVkyNWJJ?=
- =?utf-8?B?UWRWNlpHREFGTDNLeUtmUjVETnR5NmxpeklFTFFWdFJzOXpzZkI3Z0xHWFc1?=
- =?utf-8?B?T1J1V3YrM0FaTThpSW1MMldiU0JBdXdWWktzVGwxSU1vVzd0cjFhV0gxZEth?=
- =?utf-8?B?SmNrMjIwYTRuQVF1Qzl1U1N4dEhRU0syNHBmSDdZekhuaHZhNzQ3TjNxRDBN?=
- =?utf-8?B?NTR3NldSTWR2bHF0WHh3Zi8wcHB3bGhndnMyckFDd1hCM1gxQWJ0ZXowZ0t3?=
- =?utf-8?B?eDFBZnhZK3FKd25jTmxkY1lWN1l2WVNSNlFjbU94UDdhc1NQeEdJVEFkYyt0?=
- =?utf-8?B?M29FNzhOOHU2cU4rMUIxVU1xbnBGNk1zUDlUREdDZmR1Z3RxWEJjM3VFenM4?=
- =?utf-8?B?TUhSdmlHYmJ2c1RQZm5TNFQ2d0RySkxWc1ArOHhKZFh4WHlDclpIbExvQnAx?=
- =?utf-8?B?NjhVN0J2dSs2a1Y5UHRzazhtOTY0aGpGOExIVDdBdVU2dGFuZGJaY1VqT3FZ?=
- =?utf-8?B?cjc5dldVQzB6Z2I2THJmWXJkWlMyMTNpKzBNQ28rRnhSQVh1aDJYWVJZNEJq?=
- =?utf-8?B?SGRrdDJydmpVaHFXM1FKaXVyTFVzb2crVjJDZXFXWnRJMGpjb1lNc3Z1WWs4?=
- =?utf-8?B?cUZkejVIV0lvaml1WitRemsvRDZHMTlHRDJWNXBBdXVVSVN5QnpqaHZicGsz?=
- =?utf-8?B?eUtSSDhvamxlRTlJeHBMRzd3NDZzK3djMVlzNVU0SFN5VXZyekZqSDZTdUE4?=
- =?utf-8?B?bGkvdHc2UGxmTVE3RmVnWHQ4RFd5aHlHVTQ2cllEQ25IVDNoUHdPM1RIYnVY?=
- =?utf-8?B?MXFnUWwvRENKTGl2dUxQWHRjRThYVml1STFxa2dXZjRxZmVMQUxqYWtrY21j?=
- =?utf-8?B?azhLVUE5TTEzeG84UkRrVXllR0xwYXlEazkySWhaN1JoTCtZQjBIOUtBM2sr?=
- =?utf-8?Q?1of0LQGDWMZD3BquFcAtyXyr8?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5bff13e-ea50-4059-b6ae-08dcecc914e8
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 03:25:56.6302
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zve4MGdfb9TOyGSKkMjjlb4p8UMWvNj5iFIG+DLfIvQ8DLdGlLnHMK6XHvPez+qzsMC0UZ5rB+mW3wohut4ZgA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8009
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241011184422.977903-3-mic@digikod.net>
 
-
-
-On 10/14/2024 10:22 PM, Paul E. McKenney wrote:
-> On Mon, Oct 14, 2024 at 02:40:35PM +0530, Neeraj Upadhyay wrote:
->> On 10/9/2024 11:37 PM, Paul E. McKenney wrote:
->>> Currently, there are only two flavors of readers, normal and NMI-safe.
->>> A number of fields, functions, and types reflect this restriction.
->>> This renaming-only commit prepares for the addition of light-weight
->>> (as in memory-barrier-free) readers.  OK, OK, there is also a drive-by
->>> white-space fixeup!
->>>
->>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->>> Cc: Alexei Starovoitov <ast@kernel.org>
->>> Cc: Andrii Nakryiko <andrii@kernel.org>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Kent Overstreet <kent.overstreet@linux.dev>
->>> Cc: <bpf@vger.kernel.org>
->>> ---
->>>  include/linux/srcu.h     | 21 ++++++++++-----------
->>>  include/linux/srcutree.h |  2 +-
->>>  kernel/rcu/srcutree.c    | 22 +++++++++++-----------
->>>  3 files changed, 22 insertions(+), 23 deletions(-)
->>>
->>> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
->>> index 835bbb2d1f88a..06728ef6f32a4 100644
->>> --- a/include/linux/srcu.h
->>> +++ b/include/linux/srcu.h
->>> @@ -181,10 +181,9 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
->>>  #define SRCU_NMI_SAFE		0x2
->>>  
->>>  #if defined(CONFIG_PROVE_RCU) && defined(CONFIG_TREE_SRCU)
->>> -void srcu_check_nmi_safety(struct srcu_struct *ssp, bool nmi_safe);
->>> +void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
->>>  #else
->>> -static inline void srcu_check_nmi_safety(struct srcu_struct *ssp,
->>> -					 bool nmi_safe) { }
->>> +static inline void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor) { }
->>>  #endif
->>>  
->>>  
->>> @@ -245,7 +244,7 @@ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
->>>  {
->>>  	int retval;
->>>  
->>> -	srcu_check_nmi_safety(ssp, false);
->>> +	srcu_check_read_flavor(ssp, false);
->>
->> As srcu_check_read_flavor() takes an "int" now, passing a macro for the type of reader would
->> be better here?
+On Fri, Oct 11, 2024 at 08:44:18PM +0200, Mickaël Salaün wrote:
+> The new SECBIT_EXEC_RESTRICT_FILE, SECBIT_EXEC_DENY_INTERACTIVE, and
+> their *_LOCKED counterparts are designed to be set by processes setting
+> up an execution environment, such as a user session, a container, or a
+> security sandbox.  Unlike other securebits, these ones can be set by
+> unprivileged processes.  Like seccomp filters or Landlock domains, the
+> securebits are inherited across processes.
 > 
-> Agreed, and a later commit does introduce macros.
+> When SECBIT_EXEC_RESTRICT_FILE is set, programs interpreting code should
+> control executable resources according to execveat(2) + AT_CHECK (see
+> previous commit).
 > 
->>>  	retval = __srcu_read_lock(ssp);
->>>  	srcu_lock_acquire(&ssp->dep_map);
->>>  	return retval;
->>> @@ -262,7 +261,7 @@ static inline int srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires(ssp
->>>  {
->>>  	int retval;
->>>  
->>> -	srcu_check_nmi_safety(ssp, true);
->>> +	srcu_check_read_flavor(ssp, true);
->>>  	retval = __srcu_read_lock_nmisafe(ssp);
->>>  	rcu_try_lock_acquire(&ssp->dep_map);
->>>  	return retval;
->>> @@ -274,7 +273,7 @@ srcu_read_lock_notrace(struct srcu_struct *ssp) __acquires(ssp)
->>>  {
->>>  	int retval;
->>>  
->>> -	srcu_check_nmi_safety(ssp, false);
->>> +	srcu_check_read_flavor(ssp, false);
->>>  	retval = __srcu_read_lock(ssp);
->>>  	return retval;
->>>  }
->>> @@ -303,7 +302,7 @@ srcu_read_lock_notrace(struct srcu_struct *ssp) __acquires(ssp)
->>>  static inline int srcu_down_read(struct srcu_struct *ssp) __acquires(ssp)
->>>  {
->>>  	WARN_ON_ONCE(in_nmi());
->>> -	srcu_check_nmi_safety(ssp, false);
->>> +	srcu_check_read_flavor(ssp, false);
->>>  	return __srcu_read_lock(ssp);
->>>  }
->>>  
->>> @@ -318,7 +317,7 @@ static inline void srcu_read_unlock(struct srcu_struct *ssp, int idx)
->>>  	__releases(ssp)
->>>  {
->>>  	WARN_ON_ONCE(idx & ~0x1);
->>> -	srcu_check_nmi_safety(ssp, false);
->>> +	srcu_check_read_flavor(ssp, false);
->>>  	srcu_lock_release(&ssp->dep_map);
->>>  	__srcu_read_unlock(ssp, idx);
->>>  }
->>> @@ -334,7 +333,7 @@ static inline void srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
->>>  	__releases(ssp)
->>>  {
->>>  	WARN_ON_ONCE(idx & ~0x1);
->>> -	srcu_check_nmi_safety(ssp, true);
->>> +	srcu_check_read_flavor(ssp, true);
->>>  	rcu_lock_release(&ssp->dep_map);
->>>  	__srcu_read_unlock_nmisafe(ssp, idx);
->>>  }
->>> @@ -343,7 +342,7 @@ static inline void srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
->>>  static inline notrace void
->>>  srcu_read_unlock_notrace(struct srcu_struct *ssp, int idx) __releases(ssp)
->>>  {
->>> -	srcu_check_nmi_safety(ssp, false);
->>> +	srcu_check_read_flavor(ssp, false);
->>>  	__srcu_read_unlock(ssp, idx);
->>>  }
->>>  
->>> @@ -360,7 +359,7 @@ static inline void srcu_up_read(struct srcu_struct *ssp, int idx)
->>>  {
->>>  	WARN_ON_ONCE(idx & ~0x1);
->>>  	WARN_ON_ONCE(in_nmi());
->>> -	srcu_check_nmi_safety(ssp, false);
->>> +	srcu_check_read_flavor(ssp, false);
->>>  	__srcu_read_unlock(ssp, idx);
->>>  }
->>>  
->>> diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
->>> index ed57598394de3..ab7d8d215b84b 100644
->>> --- a/include/linux/srcutree.h
->>> +++ b/include/linux/srcutree.h
->>> @@ -25,7 +25,7 @@ struct srcu_data {
->>>  	/* Read-side state. */
->>>  	atomic_long_t srcu_lock_count[2];	/* Locks per CPU. */
->>>  	atomic_long_t srcu_unlock_count[2];	/* Unlocks per CPU. */
->>> -	int srcu_nmi_safety;			/* NMI-safe srcu_struct structure? */
->>> +	int srcu_reader_flavor;			/* Reader flavor for srcu_struct structure? */
->>
->> This is a mask for the reader flavor, so s/srcu_reader_flavor/srcu_reader_flavor_mask ?
+> When SECBIT_EXEC_DENY_INTERACTIVE is set, a process should deny
+> execution of user interactive commands (which excludes executable
+> regular files).
 > 
-> Yes, it is a mask, but one that should only ever have a single bit set.
-> So calling it a mask might or might not be a service to the reader.
+> Being able to configure each of these securebits enables system
+> administrators or owner of image containers to gradually validate the
+> related changes and to identify potential issues (e.g. with interpreter
+> or audit logs).
 > 
+> It should be noted that unlike other security bits, the
+> SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE bits are
+> dedicated to user space willing to restrict itself.  Because of that,
+> they only make sense in the context of a trusted environment (e.g.
+> sandbox, container, user session, full system) where the process
+> changing its behavior (according to these bits) and all its parent
+> processes are trusted.  Otherwise, any parent process could just execute
+> its own malicious code (interpreting a script or not), or even enforce a
+> seccomp filter to mask these bits.
+> 
+> Such a secure environment can be achieved with an appropriate access
+> control (e.g. mount's noexec option, file access rights, LSM policy) and
+> an enlighten ld.so checking that libraries are allowed for execution
+> e.g., to protect against illegitimate use of LD_PRELOAD.
+> 
+> Ptrace restrictions according to these securebits would not make sense
+> because of the processes' trust assumption.
+> 
+> Scripts may need some changes to deal with untrusted data (e.g. stdin,
+> environment variables), but that is outside the scope of the kernel.
+> 
+> See chromeOS's documentation about script execution control and the
+> related threat model:
+> https://www.chromium.org/chromium-os/developer-library/guides/security/noexec-shell-scripts/
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge Hallyn <serge@hallyn.com>
 
-Ok. The usage of reader_flavor as a shifted val here and without
-shift as arg of srcu_check_read_flavor() was a bit confusing.
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
+thanks,
+-serge
 
-- Neeraj
-
-...
-
->>>  
->>>  #ifdef CONFIG_PROVE_RCU
->>>  /*
->>> - * Check for consistent NMI safety.
->>> + * Check for consistent reader flavor.
->>>   */
->>> -void srcu_check_nmi_safety(struct srcu_struct *ssp, bool nmi_safe)
->>> +void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor)
->>>  {
->>> -	int nmi_safe_mask = 1 << nmi_safe;
->>> -	int old_nmi_safe_mask;
->>> +	int reader_flavor_mask = 1 << read_flavor;
->>> +	int old_reader_flavor_mask;
->>>  	struct srcu_data *sdp;
->>>  
->>>  	/* NMI-unsafe use in NMI is a bad sign */
->>> -	WARN_ON_ONCE(!nmi_safe && in_nmi());
->>> +	WARN_ON_ONCE(!read_flavor && in_nmi());
->>>  	sdp = raw_cpu_ptr(ssp->sda);
->>> -	old_nmi_safe_mask = READ_ONCE(sdp->srcu_nmi_safety);
->>> -	if (!old_nmi_safe_mask) {
->>> -		WRITE_ONCE(sdp->srcu_nmi_safety, nmi_safe_mask);
->>> +	old_reader_flavor_mask = READ_ONCE(sdp->srcu_reader_flavor);
->>> +	if (!old_reader_flavor_mask) {
->>> +		WRITE_ONCE(sdp->srcu_reader_flavor, reader_flavor_mask);
->>>  		return;
->>>  	}
->>> -	WARN_ONCE(old_nmi_safe_mask != nmi_safe_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_nmi_safe_mask, nmi_safe_mask);
->>> +	WARN_ONCE(old_reader_flavor_mask != reader_flavor_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_reader_flavor_mask, reader_flavor_mask);
->>>  }
->>> -EXPORT_SYMBOL_GPL(srcu_check_nmi_safety);
->>> +EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
->>>  #endif /* CONFIG_PROVE_RCU */
->>>  
->>>  /*
->>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241011184422.977903-3-mic@digikod.net
+> ---
+> 
+> Changes since v19:
+> * Replace SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT with
+>   SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE:
+>   https://lore.kernel.org/all/20240710.eiKohpa4Phai@digikod.net/
+> * Remove the ptrace restrictions, suggested by Andy.
+> * Improve documentation according to the discussion with Jeff.
+> 
+> New design since v18:
+> https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
+> ---
+>  include/uapi/linux/securebits.h | 113 +++++++++++++++++++++++++++++++-
+>  security/commoncap.c            |  29 ++++++--
+>  2 files changed, 135 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/securebits.h
+> index d6d98877ff1a..351b6ecefc76 100644
+> --- a/include/uapi/linux/securebits.h
+> +++ b/include/uapi/linux/securebits.h
+> @@ -52,10 +52,121 @@
+>  #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
+>  			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
+>  
+> +/*
+> + * The SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE securebits
+> + * are intended for script interpreters and dynamic linkers to enforce a
+> + * consistent execution security policy handled by the kernel.
+> + *
+> + * Whether an interpreter should check these securebits or not depends on the
+> + * security risk of running malicious scripts with respect to the execution
+> + * environment, and whether the kernel can check if a script is trustworthy or
+> + * not.  For instance, Python scripts running on a server can use arbitrary
+> + * syscalls and access arbitrary files.  Such interpreters should then be
+> + * enlighten to use these securebits and let users define their security
+> + * policy.  However, a JavaScript engine running in a web browser should
+> + * already be sandboxed and then should not be able to harm the user's
+> + * environment.
+> + *
+> + * When SECBIT_EXEC_RESTRICT_FILE is set, a process should only interpret or
+> + * execute a file if a call to execveat(2) with the related file descriptor and
+> + * the AT_CHECK flag succeed.
+> + *
+> + * This secure bit may be set by user session managers, service managers,
+> + * container runtimes, sandboxer tools...  Except for test environments, the
+> + * related SECBIT_EXEC_RESTRICT_FILE_LOCKED bit should also be set.
+> + *
+> + * Programs should only enforce consistent restrictions according to the
+> + * securebits but without relying on any other user-controlled configuration.
+> + * Indeed, the use case for these securebits is to only trust executable code
+> + * vetted by the system configuration (through the kernel), so we should be
+> + * careful to not let untrusted users control this configuration.
+> + *
+> + * However, script interpreters may still use user configuration such as
+> + * environment variables as long as it is not a way to disable the securebits
+> + * checks.  For instance, the PATH and LD_PRELOAD variables can be set by a
+> + * script's caller.  Changing these variables may lead to unintended code
+> + * executions, but only from vetted executable programs, which is OK.  For this
+> + * to make sense, the system should provide a consistent security policy to
+> + * avoid arbitrary code execution e.g., by enforcing a write xor execute
+> + * policy.
+> + *
+> + * SECBIT_EXEC_RESTRICT_FILE is complementary and should also be checked.
+> + */
+> +#define SECURE_EXEC_RESTRICT_FILE		8
+> +#define SECURE_EXEC_RESTRICT_FILE_LOCKED	9  /* make bit-8 immutable */
+> +
+> +#define SECBIT_EXEC_RESTRICT_FILE (issecure_mask(SECURE_EXEC_RESTRICT_FILE))
+> +#define SECBIT_EXEC_RESTRICT_FILE_LOCKED \
+> +			(issecure_mask(SECURE_EXEC_RESTRICT_FILE_LOCKED))
+> +
+> +/*
+> + * When SECBIT_EXEC_DENY_INTERACTIVE is set, a process should never interpret
+> + * interactive user commands (e.g. scripts).  However, if such commands are
+> + * passed through a file descriptor (e.g. stdin), its content should be
+> + * interpreted if a call to execveat(2) with the related file descriptor and
+> + * the AT_CHECK flag succeed.
+> + *
+> + * For instance, script interpreters called with a script snippet as argument
+> + * should always deny such execution if SECBIT_EXEC_DENY_INTERACTIVE is set.
+> + *
+> + * This secure bit may be set by user session managers, service managers,
+> + * container runtimes, sandboxer tools...  Except for test environments, the
+> + * related SECBIT_EXEC_DENY_INTERACTIVE_LOCKED bit should also be set.
+> + *
+> + * See the SECBIT_EXEC_RESTRICT_FILE documentation.
+> + *
+> + * Here is the expected behavior for a script interpreter according to
+> + * combination of any exec securebits:
+> + *
+> + * 1. SECURE_EXEC_RESTRICT_FILE=0 SECURE_EXEC_DENY_INTERACTIVE=0 (default)
+> + *    Always interpret scripts, and allow arbitrary user commands.
+> + *    => No threat, everyone and everything is trusted, but we can get ahead of
+> + *       potential issues thanks to the call to execveat with AT_CHECK which
+> + *       should always be performed but ignored by the script interpreter.
+> + *       Indeed, this check is still important to enable systems administrators
+> + *       to verify requests (e.g. with audit) and prepare for migration to a
+> + *       secure mode.
+> + *
+> + * 2. SECURE_EXEC_RESTRICT_FILE=1 SECURE_EXEC_DENY_INTERACTIVE=0
+> + *    Deny script interpretation if they are not executable, but allow
+> + *    arbitrary user commands.
+> + *    => The threat is (potential) malicious scripts run by trusted (and not
+> + *       fooled) users.  That can protect against unintended script executions
+> + *       (e.g. sh /tmp/*.sh).  This makes sense for (semi-restricted) user
+> + *       sessions.
+> + *
+> + * 3. SECURE_EXEC_RESTRICT_FILE=0 SECURE_EXEC_DENY_INTERACTIVE=1
+> + *    Always interpret scripts, but deny arbitrary user commands.
+> + *    => This use case may be useful for secure services (i.e. without
+> + *       interactive user session) where scripts' integrity is verified (e.g.
+> + *       with IMA/EVM or dm-verity/IPE) but where access rights might not be
+> + *       ready yet.  Indeed, arbitrary interactive commands would be much more
+> + *       difficult to check.
+> + *
+> + * 4. SECURE_EXEC_RESTRICT_FILE=1 SECURE_EXEC_DENY_INTERACTIVE=1
+> + *    Deny script interpretation if they are not executable, and also deny
+> + *    any arbitrary user commands.
+> + *    => The threat is malicious scripts run by untrusted users (but trusted
+> + *       code).  This makes sense for system services that may only execute
+> + *       trusted scripts.
+> + */
+> +#define SECURE_EXEC_DENY_INTERACTIVE		10
+> +#define SECURE_EXEC_DENY_INTERACTIVE_LOCKED	11  /* make bit-10 immutable */
+> +
+> +#define SECBIT_EXEC_DENY_INTERACTIVE \
+> +			(issecure_mask(SECURE_EXEC_DENY_INTERACTIVE))
+> +#define SECBIT_EXEC_DENY_INTERACTIVE_LOCKED \
+> +			(issecure_mask(SECURE_EXEC_DENY_INTERACTIVE_LOCKED))
+> +
+>  #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
+>  				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
+>  				 issecure_mask(SECURE_KEEP_CAPS) | \
+> -				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
+> +				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
+> +				 issecure_mask(SECURE_EXEC_RESTRICT_FILE) | \
+> +				 issecure_mask(SECURE_EXEC_DENY_INTERACTIVE))
+>  #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
+>  
+> +#define SECURE_ALL_UNPRIVILEGED (issecure_mask(SECURE_EXEC_RESTRICT_FILE) | \
+> +				 issecure_mask(SECURE_EXEC_DENY_INTERACTIVE))
+> +
+>  #endif /* _UAPI_LINUX_SECUREBITS_H */
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index cefad323a0b1..52ea01acb453 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -1302,21 +1302,38 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  		     & (old->securebits ^ arg2))			/*[1]*/
+>  		    || ((old->securebits & SECURE_ALL_LOCKS & ~arg2))	/*[2]*/
+>  		    || (arg2 & ~(SECURE_ALL_LOCKS | SECURE_ALL_BITS))	/*[3]*/
+> -		    || (cap_capable(current_cred(),
+> -				    current_cred()->user_ns,
+> -				    CAP_SETPCAP,
+> -				    CAP_OPT_NONE) != 0)			/*[4]*/
+>  			/*
+>  			 * [1] no changing of bits that are locked
+>  			 * [2] no unlocking of locks
+>  			 * [3] no setting of unsupported bits
+> -			 * [4] doing anything requires privilege (go read about
+> -			 *     the "sendmail capabilities bug")
+>  			 */
+>  		    )
+>  			/* cannot change a locked bit */
+>  			return -EPERM;
+>  
+> +		/*
+> +		 * Doing anything requires privilege (go read about the
+> +		 * "sendmail capabilities bug"), except for unprivileged bits.
+> +		 * Indeed, the SECURE_ALL_UNPRIVILEGED bits are not
+> +		 * restrictions enforced by the kernel but by user space on
+> +		 * itself.
+> +		 */
+> +		if (cap_capable(current_cred(), current_cred()->user_ns,
+> +				CAP_SETPCAP, CAP_OPT_NONE) != 0) {
+> +			const unsigned long unpriv_and_locks =
+> +				SECURE_ALL_UNPRIVILEGED |
+> +				SECURE_ALL_UNPRIVILEGED << 1;
+> +			const unsigned long changed = old->securebits ^ arg2;
+> +
+> +			/* For legacy reason, denies non-change. */
+> +			if (!changed)
+> +				return -EPERM;
+> +
+> +			/* Denies privileged changes. */
+> +			if (changed & ~unpriv_and_locks)
+> +				return -EPERM;
+> +		}
+> +
+>  		new = prepare_creds();
+>  		if (!new)
+>  			return -ENOMEM;
+> -- 
+> 2.46.1
+> 
 
