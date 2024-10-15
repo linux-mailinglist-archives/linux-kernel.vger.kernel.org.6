@@ -1,131 +1,117 @@
-Return-Path: <linux-kernel+bounces-366699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7138299F8BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:10:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3857899F8C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5B49B20E1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:10:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11AB2853B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BA71FBF6D;
-	Tue, 15 Oct 2024 21:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149C51FAF1C;
+	Tue, 15 Oct 2024 21:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XZ2uVbbq"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kZAUdQC4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFD51FBF57
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B611CBE8A;
+	Tue, 15 Oct 2024 21:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729026535; cv=none; b=JgkVO3TaPBJ6tNPMhShkfwQOGbsu9YJuZHCkUSnGPaUOFJnPhDGVGKCg3PtPNoX9A0iggKvGJucYzmT4VA4MEzor+SnPox6tYr5k/MWddpGycE5xpFOTI5weTQoZbPBaq4L/CS2bZcQkvJK49KpuDZcGhGrCoSfsOKF4PmYkwKU=
+	t=1729026609; cv=none; b=mKZ51bKUP57IuUgMTgGAQ6+ua2lc2CluWqeeR7zRIhuodfStHzgurw6CqbPuy5rBG+wi9W2wsG63WRKirbRTrkJh58H04+NZsAgPyczmoAhzEZozXVTvFJTPkO/gvd+5uo7ogDsOUdja6LoOyyyKIz4aMSdJ+N9DXf2HfTeL/1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729026535; c=relaxed/simple;
-	bh=kGiBdQ5J5H7gRrebhKiFtxxwc8DYEtmcnydecYzxn5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fx8eGEvssKNhaG95td+WaOqEonTQvUea32lKIlh0t7nwQdjfohcg/Bfuoo82WokDO9QfbhdLUmiqfNR9emOFPyTUzWAcQj+wYuzrXlLjzqt5LDn48wGnr6R32jvuHoOwd8gCA3qsL1h5zIcsH7GJ3G1HJl2cbF/WjexXhuJJM1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XZ2uVbbq; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 15 Oct 2024 14:08:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729026530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eSynVCGUx/bo0b2uALTE+vNPBiF1i+qQIdLst2WgqkE=;
-	b=XZ2uVbbqJA7f6oIYdyRA5IQCTZBHNtxCKfVwUW+gGGJfh9UwP4wYoTAMO2wzcCxYKZ/UTZ
-	TqXufj4xQgoGWWrVNAiLVaOi9ZUUGpGPRe360Wt+GJHPz9foOFziZzPW2LgDB1gmWtG1Wp
-	OFWOS5TLcg1WIfDTJLPlkPjCZrOGd5Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kent.overstreet@linux.dev, 
-	corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, 
-	paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
-	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, vbabka@suse.cz, 
-	mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, jhubbard@nvidia.com, 
-	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, 
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-mm@kvack.org, linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 2/5] alloc_tag: load module tags into separate
- contiguous memory
-Message-ID: <k4uejpziyyhcuozdpm6x6iy5zuugfhozilmgmjvo574yuq2oen@zvdoiqmk2mii>
-References: <20241014203646.1952505-1-surenb@google.com>
- <20241014203646.1952505-3-surenb@google.com>
- <20241014165149.6adebbf38fdc0a1f79ded66b@linux-foundation.org>
- <CAJuCfpETusPzdjEg01zahF7NOStQJZmoM5Jabqd5tJpCCQrj2g@mail.gmail.com>
+	s=arc-20240116; t=1729026609; c=relaxed/simple;
+	bh=xqOa6G756NMOtetoInuJj4cWSAKwUBCQfwynNvNH9dU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dkL5EyZDq0YbBVhccCR23vmpERELm6kv/kxItnQZgVcNyYGI9Y2PNgMj/678gmZA8Nw4RJ113coeRumxUVukbywFpzeK6vkyhdYyTk39HXvrIv7nGbM5knQHzondg5f7E3PpRUVWmm/iQIuUM4uzWlXs/w28izbEhAn1UBB++gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kZAUdQC4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729026603;
+	bh=qd+YMdAiJqR9qcsHpdm3fIxbZYDRFF9q0MqESabU+Hs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kZAUdQC4nfWGLceo2oD0aV4BP7pijotbNbP2XK6n1Ip2P+LrD9u3c7XPKmLQAr0iw
+	 AQppQSiadeT9dcSix9ujZwGgei6WLx9dlC3ZG/EUe8PpgYR7DQ7HntMh4+GOYjES/5
+	 3m38YYMuhwHdl76UiHHoCopKDmRvnXLVQq/6JIjGxcG6hv/iVAv2IBoGU2ikv4vBEG
+	 okwvwSb0sHomc1jvr/4hOVOHrKBoAxvKv/OC7DhasXuTxbmsycuGzTLZGkYFpxaXnj
+	 gh+vl+594ZNJ6a45xmaH2QmGyoe9TUTz8mo+ImqUNQkB8GjdBH5kU/B06xij1iPSS2
+	 Mi8Et063EZsSA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XSmvb1rsVz4wd6;
+	Wed, 16 Oct 2024 08:10:03 +1100 (AEDT)
+Date: Wed, 16 Oct 2024 08:10:03 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Bill O'Donnell <bodonnel@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the vfs-brauner tree
+Message-ID: <20241016081003.23b90c5c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpETusPzdjEg01zahF7NOStQJZmoM5Jabqd5tJpCCQrj2g@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/VdLj8RWdRiLdka74.CalS/6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Oct 14, 2024 at 07:10:56PM GMT, Suren Baghdasaryan wrote:
-> On Mon, Oct 14, 2024 at 4:51 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Mon, 14 Oct 2024 13:36:43 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
-> >
-> > > When a module gets unloaded there is a possibility that some of the
-> > > allocations it made are still used and therefore the allocation tags
-> > > corresponding to these allocations are still referenced. As such, the
-> > > memory for these tags can't be freed. This is currently handled as an
-> > > abnormal situation and module's data section is not being unloaded.
-> > > To handle this situation without keeping module's data in memory,
-> > > allow codetags with longer lifespan than the module to be loaded into
-> > > their own separate memory. The in-use memory areas and gaps after
-> > > module unloading in this separate memory are tracked using maple trees.
-> > > Allocation tags arrange their separate memory so that it is virtually
-> > > contiguous and that will allow simple allocation tag indexing later on
-> > > in this patchset. The size of this virtually contiguous memory is set
-> > > to store up to 100000 allocation tags.
-> > >
-> > > ...
-> > >
-> > > --- a/kernel/module/main.c
-> > > +++ b/kernel/module/main.c
-> > > @@ -1254,22 +1254,17 @@ static int module_memory_alloc(struct module *mod, enum mod_mem_type type)
-> > >       return 0;
-> > >  }
-> > >
-> > > -static void module_memory_free(struct module *mod, enum mod_mem_type type,
-> > > -                            bool unload_codetags)
-> > > +static void module_memory_free(struct module *mod, enum mod_mem_type type)
-> > >  {
-> > >       struct module_memory *mem = &mod->mem[type];
-> > > -     void *ptr = mem->base;
-> > >
-> > >       if (mem->is_rox)
-> > >               vfree(mem->rw_copy);
-> > >
-> > > -     if (!unload_codetags && mod_mem_type_is_core_data(type))
-> > > -             return;
-> > > -
-> > > -     execmem_free(ptr);
-> > > +     execmem_free(mem->base);
-> > >  }
-> >
-> > The changes around here are dependent upon Mike's "module: make
-> > module_memory_{alloc,free} more self-contained", which is no longer in
-> > mm-unstable.  I assume Mike is working on a v2 so I'll park this series
-> > for now.
-> 
-> Looks like the last update on Mike's patchset was back in May. Let me
-> check with Mike if he is planning to get it out soon. I would like my
-> patchset to get into 6.12 if possible.
+--Sig_/VdLj8RWdRiLdka74.CalS/6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-6.12 or 6.13?
+Hi all,
+
+In commit
+
+  51ceeb1a8142 ("efs: fix the efs new mount api implementation")
+
+Fixes tag
+
+  Fixes: 39a6c668e4 efs: convert efs to use the new mount api.
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    This can be fixed for the future by setting core.abbrev to 12 (or
+    more) or (for git v2.11 or later) just making sure it is not set
+    (or set to "auto").
+  - Subject does not match target commit subject
+    Just use
+        git log -1 --format=3D'Fixes: %h ("%s")'
+
+Also, please keep all the commit message tags together at the end fo
+the commit message.
+
+Thus:
+
+Fixes: 39a6c668e4e7 ("efs: convert efs to use the new mount api")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/VdLj8RWdRiLdka74.CalS/6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcO2isACgkQAVBC80lX
+0Gx57QgApcrxkpihORwAFMjNZyCzu3QEs5rVjvEUTqUTiP81v16ivCAcEVuHXg4U
+NjOhanwh5ejY9UtyT4KaNGh/MrsCI5gK8rh4VhPdQj1P6BJT7UT7scHMV+neqFcw
+QdZwzeaYo5HZ9Ysb1Ds1/+LaPNDKInyV8Z2pflFs9i9WU/UF1r+XTp/vCbeSFBgu
+mng9wHdEvVWG6gjVY/GOjUS3txJGP0lWqoy8f72cvtMBW1xLt/TZJa3S5qcaRZ/P
+7JR/N6cSH9Whb67Q0RbPxZi1gahk4A3Di4QbLoqxvr07WpJ9GaPTdqR20PgCgHDZ
+66wa4t6mCxEQRjRbbtq85sn8zyQ/yQ==
+=uO8Q
+-----END PGP SIGNATURE-----
+
+--Sig_/VdLj8RWdRiLdka74.CalS/6--
 
