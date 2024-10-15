@@ -1,88 +1,86 @@
-Return-Path: <linux-kernel+bounces-365963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2899999EEA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:03:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D6099EEAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1702284ABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9CAB1F250F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99331B2190;
-	Tue, 15 Oct 2024 14:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piIauhHh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2257B1B21A3;
+	Tue, 15 Oct 2024 14:04:56 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F9F1AF0C7;
-	Tue, 15 Oct 2024 14:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1B31FC7C2;
+	Tue, 15 Oct 2024 14:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000969; cv=none; b=B0r/N9KG/vpFcZ/GR9g09jIF1T5rHd1vLAREDMhF1fZYvhqNuwE5Y+eLa5pA/MN+oKCa/jJmi2TyuA/muQdmz6m1SrZ5HLG+veyjNscXjg9HHkodgeM2tqYaNitwWgOhN29Q777VZj+jEluYYipIN3L/6BbIB2DGNNASKwrBeBE=
+	t=1729001095; cv=none; b=ApVqxfp/nOc7I7viOf1/PfCGTQ4DhqFez7dq/gn91ZlGdb40Mp5bEMmscuoGyJvvViF2MFQG+xOFiVpOvIgV9v7P1kc+jK9sWUWH3ipUPsE/GiSvjL1Z0WlWGjvomZJuTOHR7iiiFIWf6xPKkbCRWI6G8nFhsiJ64NUzHlAXmfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000969; c=relaxed/simple;
-	bh=VOPRsFCcHP3X4Pbl31ecirEAIYmkUpxu3sZJdwIwleI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LdAluKGeK4iOWbNkaZIY1h61msi0QDdMWLWN4HOckvh2e5OKe9NjeUDd/CDHbBIzoYRvwN5D6OfPoYVDvzceTPZjzeilZmzHIgyBseccdq1a5WK457awXMcBHm9d0EPrOI+9x+FYE0ECi5Bi3DYSLbUEe2mHYEPNjRYuTdLA6OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piIauhHh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21BA3C4CEC6;
-	Tue, 15 Oct 2024 14:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729000968;
-	bh=VOPRsFCcHP3X4Pbl31ecirEAIYmkUpxu3sZJdwIwleI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=piIauhHhux1D1CgO1fWb+zaRBaHCj6G7sNmbv6U22DFNoPFNkrECwVKBUDBf3OQ3x
-	 gSETwc1SCGMcZjmGhxpElT4tpJqr7L99Nqnn56TJeQnR4xHTksBjnlI+MnyKtJEhT7
-	 o2maGizjj5VcYSIgTre+GJePQg4qZnPpqD5Gds4rGUlfhQkteprcsKT59JpUGC39dE
-	 Z5gHbRXYrZvpjVA088T6Uh1r8njiUpqEcCl91MJlWw0gDT6OXWSxPvzci5J9MgYlki
-	 m1ZbprzipB0DWuNj4yinCHZI/iln6F1G1taCk5pe0SRmFR7Ca9hQYi0Ay1mZ9XpoFD
-	 lHikpJ8tNpXCg==
-Date: Tue, 15 Oct 2024 16:02:34 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, viro@zeniv.linux.org.uk, jack@suse.cz, kees@kernel.org, 
-	j.granados@samsung.com, willy@infradead.org, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	lorenzo.stoakes@oracle.com, trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com, 
-	jlayton@kernel.org, neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, 
-	tom@talpey.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, paul@paul-moore.com, jmorris@namei.org, linux-sh@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	dhowells@redhat.com, haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, 
-	shikemeng@huaweicloud.com, dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, 
-	hannes@cmpxchg.org, rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
-	wangkefeng.wang@huawei.com, sunnanyong@huawei.com
-Subject: Re: [PATCH v3 -next 10/15] fs: drop_caches: move sysctl to
- fs/drop_caches.c
-Message-ID: <20241015-vielzahl-tonleiter-70f712519227@brauner>
-References: <20241010152215.3025842-1-yukaixiong@huawei.com>
- <20241010152215.3025842-11-yukaixiong@huawei.com>
+	s=arc-20240116; t=1729001095; c=relaxed/simple;
+	bh=WvuxKAE+SlWRB5IfVx0UDTjPV9gmUsnR31vBYZGm6tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ooeg7ANDwXz9nYOSulHmEnlOLfujVct23OSf4LNx8LJDr3hbQYR5A9PV63+kWzAYTVOtg3FE0XzPJSeezqncxzuRNk/VZ7MI5nP+tPv5cjxJFfy0rZneSIqslgvJZxyY3LFXqEIf0glOO4Ltam+ODbhh2fvUJ8FrAk4PNoD7sws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29ED1C4CEC6;
+	Tue, 15 Oct 2024 14:04:54 +0000 (UTC)
+Date: Tue, 15 Oct 2024 10:05:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: syzbot <syzbot+list3bf21e6ac0139f8d008d@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ mhiramat@kernel.org, syzkaller-bugs@googlegroups.com, Jens Axboe
+ <axboe@kernel.dk>, linux-block@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [syzbot] Monthly trace report (Oct 2024)
+Message-ID: <20241015100512.54e5e840@gandalf.local.home>
+In-Reply-To: <CANp29Y4KERQxwOwMCW5a4+YahhA8gWyJ=btE=OxnNgrF6puFgw@mail.gmail.com>
+References: <67094369.050a0220.4cbc0.000d.GAE@google.com>
+	<20241011120028.1e4ed71c@gandalf.local.home>
+	<CANp29Y4KERQxwOwMCW5a4+YahhA8gWyJ=btE=OxnNgrF6puFgw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241010152215.3025842-11-yukaixiong@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 11:22:10PM +0800, Kaixiong Yu wrote:
-> The sysctl_drop_caches to fs/drop_caches.c, move it to
-> fs/drop_caches.c from /kernel/sysctl.c. And remove the
-> useless extern variable declaration from include/linux/mm.h
+On Tue, 15 Oct 2024 12:05:29 +0200
+Aleksandr Nogikh <nogikh@google.com> wrote:
+
+> > None of these look like they are tracing infrastructure related.  
 > 
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> ---
+> Like get_maintainer.pl, syzbot relies on the MAINTAINERS file to
+> attribute bugs to the individual kernel subsystems. If several ones
+> are suitable, the bug is assigned several labels at once. It's now
+> actually the case for all open "trace" findings:
+> 
+> https://syzkaller.appspot.com/upstream/s/trace
+> 
+> (FWIW it's also possible to manually overwrite these labels and remove
+> specific bugs from the monthly reports).
+> 
+> I could make syzbot set "trace" only if there's no other good
+> candidate, but I wonder if that could hide the findings in the trace
+> infrastructure that manifested themselves in some specific traced
+> subsystem.
+> 
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+I don't mind being Cc'd to these bugs. What I do mind is that only the
+tracing maintainers are Cc'd. I still care about these, because they do
+depend on the tracing code, and it could be the tracing infrastructure's
+fault. But if an error is in a file that is explicitly called out in the
+maintainers file, such as, blktrace.c and bpf_trace.c, then PLEASE also Cc
+the maintainers of those files!
+
+I had to manually add those maintainers when I replied to the initial
+email. That is something I shouldn't need to do.
+
+-- Steve
 
