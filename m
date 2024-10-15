@@ -1,185 +1,247 @@
-Return-Path: <linux-kernel+bounces-365412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6631D99E1EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:00:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A746399E1F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C80B4B24D65
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07222B21C66
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4061CDA1C;
-	Tue, 15 Oct 2024 09:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED391CC8B9;
+	Tue, 15 Oct 2024 09:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBMbIueZ"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2341B0137;
-	Tue, 15 Oct 2024 09:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Nz+R/8cT"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0861E29A0;
+	Tue, 15 Oct 2024 09:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728982844; cv=none; b=mDiqCySWuGZCLQQs0YsU9/X9LrzRhZyK4BcRJKE3q+q2raR7jo1ofOPmDrPOs1nBksdYkXDLdwIj0Qsv/3UwZJQ3BcGtOHHp7AlVG0fac7mwXs0HW4Ne5gTxYnBFfd0NqKxpKury/Y+KVkG3rbPXsOrKgplodsQ39mKY4PBAiZ4=
+	t=1728982892; cv=none; b=WmZWZbHKEypmZBEcIppdC1blQ5vFpMK3MkReph9k98FKGYt/MjxOBZ3IAqoKGr3yRlLGQunlA/lUqCjseWj3W1tNb9dyYrKPbi4d2EeKUh0SYi2g8UdbO3qjy0R2ZXys67/1UIg257TwfFc399lmngr8AbFg4mLqnjhYlCcEIt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728982844; c=relaxed/simple;
-	bh=qe+VieO/eCTvYDsrp/UAKb2T83UiGqmE9oBxmFoHN+4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nCfilgkD8SdJ6NMcFiKVnhLkGQQ6S+2ScRte3AO0nQrpzEU7zMVJlEmxNpAS/6sTWCorQdjnPcg0vz3OA7lWg9h9qWPI/PzFAlgIOBvuKPOA4wyecBUD4MTt6MFy0u0JSa7qhQolMxzhV4ZvLsq6HOOr432+jAMdoz+z0ssErxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBMbIueZ; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-287b8444ff3so1889544fac.1;
-        Tue, 15 Oct 2024 02:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728982842; x=1729587642; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RLp6JVFP095nF2eYEIFQ7G5HMe9lih7YXmsVYNx7OwQ=;
-        b=BBMbIueZXl0oaApXRDpD4EY1fSsNv0KXG2/5qHQtYM5qHNI3kvBXBOcWXWfd9x41it
-         GscZ85aHygfjlGx252VjWg3oSk4Ozb8DfJTYesZEgEup215uzjeS+hnva4/EiPjFxwL/
-         esiEAghHlVjv70uvYozDK8nGiYPAUZuH1jRATquTWrYWFHbeGpgvUORB7xiWtmR8m9gx
-         nWqJvqzkOnlCNKe1oS/lHYC8OAlYSTDPJQMrSaUZ7p9pKaVz8zik8IqPXsBlkpLZRvLT
-         QVFN5AHzoWSqo9xBfh59PN4bnyFAq8dPcem6aHsjqxkYOi89uI4kj4YQ7y7sXsnTNNbg
-         AI7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728982842; x=1729587642;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RLp6JVFP095nF2eYEIFQ7G5HMe9lih7YXmsVYNx7OwQ=;
-        b=XrafhARqKYHhZ3ipLqVIk51/IqV6UK5SrHLuZVvXnn/dw6+H2e++ON7+qaN1W+PGQ1
-         eR7RwWNExDNTP7og0bebESBlJZtiGd0DNtJX6NfUAwxfl2giOgrAuIBV61cMhuYN9zUs
-         OkZvF0U92AUjX97zYD4U4Ykx3dVk4VigK3HxUEt2PTq6IVXv8sDnBFVV1l4KewJNff+E
-         ai2n5GrhbBdfAeXg1hYpgmgoO0NpYLEoOkcXUYPdBA43V/O21izYkXmzyAR+QbG/yd94
-         3K57MYSteq7rC9xOawDB5To4ASwXDNB+nrqQ5hWb3o0eDhC9cZLc+u6Oz7T0kq/57G/c
-         DYWA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+g4CHIAJlQuxroYL08aTrCW1jmqJMjRjHo/Z1LPJ9QCsIlIk8ZuZ1XCL6gyDY50yuk+pxr9EYZtKnTQE=@vger.kernel.org, AJvYcCWwPM92xMO9ufPKvdCWw3/cog4yE2RVYbFhdX+RjbiEnfTZVe3iwPFGfg5hx8rx9Z0MAmpVmGBt91nH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwshgqZZ9fgE9XL44UuLdqfqyPODdwIXWi1XTxt5gGi90zpEuOK
-	OloWfdnyDzHKixC5HogOyop3qOAg+5aaRMc/1OiRN3Hya9hvfcILz3Zqlq1QZXqZ5gEa9nJAI3y
-	qLUkDXbzJF/9rjKuO91eKavZVZHA=
-X-Google-Smtp-Source: AGHT+IGFGtlzDsf36x9uxxnLnYaB/UrLJC/zDnON1yPfZ7aozRRs96CNtkoqkrN3NerehmbM1Xihyj4mT9OyRW0OvyU=
-X-Received: by 2002:a05:6871:250c:b0:288:aad0:b098 with SMTP id
- 586e51a60fabf-288aad0b2a3mr2635253fac.46.1728982840464; Tue, 15 Oct 2024
- 02:00:40 -0700 (PDT)
+	s=arc-20240116; t=1728982892; c=relaxed/simple;
+	bh=c/vVix7pdj1nwQwH6DyIBMW8KgTC3cw8UjOEoy/HijY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WSkEb595yYQeXOMYg/lAvIHCK+2nDMDe1KLMg2aRS5Zg3ZeRIsorEpTQrOfTyvrvHaREtqx/WGXUGWy5KI3/kCy/F5thIJITHkKgQK+Ct4TWLD2NsKP3s9q9TAR5Vrr0e93MFQxKXL3cQ1dEj8OwtRX2Kiu+BiH+ywHMG3CKY0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Nz+R/8cT; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=rHwpWLvt8XnLwVrX/JUeWFo05r4tBAC5fiNuOPeiw6c=;
+	b=Nz+R/8cTxbPUepAKHiitk1iS8e8hhlMlvFVvx8c7xm7HsDWornsKHIxnHKK6+V
+	nF2tBveuOVst2Q3XSzc00RlOY7KKDU18gjFecjnhEaJEXn+uNrWcm9h9xeC5YcZb
+	Ffkg3g1/ln9hmoAmkBo6X/ttVclOMej2lh8bWJWo0RzJ8=
+Received: from [10.42.12.92] (unknown [111.48.69.246])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wBnb0gxLw5npU01Ag--.63997S2;
+	Tue, 15 Oct 2024 17:00:33 +0800 (CST)
+Message-ID: <5c4272c4-3f9c-4ce8-ba73-50b5f16ab605@163.com>
+Date: Tue, 15 Oct 2024 17:00:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014135210.224913-1-linux.amoon@gmail.com>
- <20241014135210.224913-3-linux.amoon@gmail.com> <20241015051141.g6fh222zrkvnn4l6@thinkpad>
-In-Reply-To: <20241015051141.g6fh222zrkvnn4l6@thinkpad>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 15 Oct 2024 14:30:23 +0530
-Message-ID: <CANAwSgSEkFtY6-i3TOPZbwB5EuD4BHboh_jsTwByQw7NLLrstQ@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] PCI: rockchip: Simplify reset control handling by
- using reset_control_bulk*() function
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, 
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>, 
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>, 
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: clone3: Use the capget and capset syscall
+ directly
+To: Shuah Khan <skhan@linuxfoundation.org>, brauner@kernel.org,
+ shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ zhouyuhang <zhouyuhang@kylinos.cn>
+References: <20241010121612.2601444-1-zhouyuhang1010@163.com>
+ <5b471a5c-c99d-42a5-943d-bb253127a202@linuxfoundation.org>
+ <a2ab9671-5095-47bf-82cf-0e167320772f@163.com>
+ <b2e02494-0f22-476e-bb79-f3a133b7fa07@linuxfoundation.org>
+ <714162ff-a2f8-4fc6-91af-0ecd6376bc7f@163.com>
+ <0f79692e-ed68-462d-8ec7-955219116282@linuxfoundation.org>
+Content-Language: en-US
+From: zhouyuhang <zhouyuhang1010@163.com>
+In-Reply-To: <0f79692e-ed68-462d-8ec7-955219116282@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBnb0gxLw5npU01Ag--.63997S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Jr18uF17JFW8Zw1kAryUtrb_yoWxGr4kp3
+	W8AF4UKFs5Jr4xJr1qkwsxtF10yFW8Xr17XryUG34UZrnIqr1xtr40yFyUCFyDX397Wa45
+	ZrWxXFWfuF4DJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jvLvtUUUUU=
+X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiLwd5JmcOLWIswAAAs9
 
-Hi Manivannan,
 
-Thanks for your review comments.
+在 2024/10/15 06:38, Shuah Khan 写道:
+> On 10/12/24 02:28, zhouyuhang wrote:
+>>
+>> On 2024/10/11 22:21, Shuah Khan wrote:
+>>> On 10/11/24 00:59, zhouyuhang wrote:
+>>>>
+>>>> On 2024/10/10 23:50, Shuah Khan wrote:
+>>>>> On 10/10/24 06:16, zhouyuhang wrote:
+>>>>>> From: zhouyuhang <zhouyuhang@kylinos.cn>
+>>>>>>
+>>>>>> The libcap commit aca076443591 ("Make cap_t operations thread 
+>>>>>> safe.") added a
+>>>>>> __u8 mutex at the beginning of the struct _cap_struct,it changes 
+>>>>>> the offset of
+>>>>>> the members in the structure that breaks the assumption made in 
+>>>>>> the "struct libcap"
+>>>>>> definition in clone3_cap_checkpoint_restore.c.So use the capget 
+>>>>>> and capset syscall
+>>>>>> directly and remove the libcap library dependency like the commit 
+>>>>>> 663af70aabb7
+>>>>>> ("bpf: selftests: Add helpers to directly use the capget and 
+>>>>>> capset syscall") does.
+>>>>>>
+>>>>>
+>>>>> NIT: grammar and comma spacing. Please fix those for readability.
+>>>>> e.g: Change "struct _cap_struct,it" to "struct _cap_struct, it"
+>>>>> Fix others as well.
+>>>>>
+>>>>
+>>>> Thanks, I'll fix it in V2
+>>>>
+>>>>
+>>>>>> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+>>>>>> ---
+>>>>>>   tools/testing/selftests/clone3/Makefile       |  1 -
+>>>>>>   .../clone3/clone3_cap_checkpoint_restore.c    | 60 
+>>>>>> +++++++++----------
+>>>>>>   2 files changed, 28 insertions(+), 33 deletions(-)
+>>>>>>
+>>>>>> diff --git a/tools/testing/selftests/clone3/Makefile 
+>>>>>> b/tools/testing/selftests/clone3/Makefile
+>>>>>> index 84832c369a2e..59d26e8da8d2 100644
+>>>>>> --- a/tools/testing/selftests/clone3/Makefile
+>>>>>> +++ b/tools/testing/selftests/clone3/Makefile
+>>>>>> @@ -1,6 +1,5 @@
+>>>>>>   # SPDX-License-Identifier: GPL-2.0
+>>>>>>   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
+>>>>>> -LDLIBS += -lcap
+>>>>>>     TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+>>>>>>       clone3_cap_checkpoint_restore
+>>>>>> diff --git 
+>>>>>> a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c 
+>>>>>> b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>>>>> index 3c196fa86c99..111912e2aead 100644
+>>>>>> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>>>>> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>>>>> @@ -15,7 +15,7 @@
+>>>>>>   #include <stdio.h>
+>>>>>>   #include <stdlib.h>
+>>>>>>   #include <stdbool.h>
+>>>>>> -#include <sys/capability.h>
+>>>>>> +#include <linux/capability.h>
+>>>>>>   #include <sys/prctl.h>
+>>>>>>   #include <sys/syscall.h>
+>>>>>>   #include <sys/types.h>
+>>>>>> @@ -27,6 +27,13 @@
+>>>>>>   #include "../kselftest_harness.h"
+>>>>>>   #include "clone3_selftests.h"
+>>>>>>   +#ifndef CAP_CHECKPOINT_RESTORE
+>>>>>> +#define CAP_CHECKPOINT_RESTORE 40
+>>>>>> +#endif
+>>>>>> +
+>>>>>
+>>>>> Why is this necessary? This is defined in linux/capability.h.
 
-On Tue, 15 Oct 2024 at 10:41, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+Sorry for not noticing this before.
+This is to be compatible with some older versions of linux/capability.h 
+that do not define this macro.
+
+>>>>>
+>>>>>> +int capget(cap_user_header_t header, cap_user_data_t data);
+>>>>>> +int capset(cap_user_header_t header, const cap_user_data_t data);
+>>>>>
+>>>>> In general prototypes such as these should be defined in header
+>>>>> file. Why are we defining these here?
+>>>>>
+>>>>> These are defined in sys/capability.h
+>>>>>
+>>>>> I don't understand this change. You are removing sys/capability.h
+>>>>> which requires you to add these defines here. This doesn't
+>>>>> sound like a correct solution to me.
+>>>>>
+>>>>
+>>>> I tested it on my machine without libcap-dev installed, the 
+>>>> /usr/include/linux/capability.h
+>>>>
+>>>> is on this machine by default. Successfully compiled using #include 
+>>>> <linux/capability.h>
+>>>>
+>>>> but not with #include <sys/capability.h>. This patch removes libcap 
+>>>> library dependencies.
+>>>>
+>>>> And we don't use any part of sys/capability.h other than these two 
+>>>> syscalls. So I think that's why it's necessary.
+>>>
+>>> You are changing the code to not include sys/capability.h
+>>> What happens if sys/capability.h along with linux/capability.h
+>>>
+>>> Do you see problems?
+>>>
+>>
+>> I'm sorry, maybe I wasn't clear enough.
+>> When we install the libcap library it will have the following output:
+>>
+>> test@test:~/work/libcap$ sudo make install | grep capability
+>> install -m 0644 include/sys/capability.h /usr/include/sys
+>> install -m 0644 include/sys/capability.h /usr/include/sys
+>> /usr/share/man/man5 capability.conf.5 \
+>>
+>> It installs sys/capability.h in the correct location, but does not
+>>
+>> install linux/capability.h, so sys/capability.h is bound to the 
+>> libcap library
 >
-> On Mon, Oct 14, 2024 at 07:22:03PM +0530, Anand Moon wrote:
-> > Refactor the reset control handling in the Rockchip PCIe driver,
-> > introduce a more robust and efficient method for assert and
-> > deassert reset controller using reset_control_bulk*() API. Using the
-> > reset_control_bulk APIs, the reset handling for the core clocks reset
-> > unit becomes much simpler.
-> >
-> > Spilt the reset controller in two groups as per the
-> >  RK3399 TM  17.5.8.1 PCIe Initialization Sequence
-> >     17.5.8.1.1 PCIe as Root Complex.
-> >
-> > 6. De-assert the PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N
-> >    simultaneously.
-> >
+> It won't install inux/capability.h unless you run "make headers" in
+> the kernel repo.
 >
-> I'd reword it slightly:
+>>
+>> and they will either exist or disappear together. Now I want to remove
+>>
+>> the dependency of the test on libcap library so I changed the code 
+>> that it
+>>
+>> does not contain sys/capability.h but instead linux/capability.h,
+>>
+>> so that the test can compile successfully without libcap being 
+>> installed,
+>>
+>> these two syscalls are not declared in linux/capability.h(It is 
+>> sufficient for test use except for these two syscalls)
+>>
+>> so we need to declare them here. I think that's why the commit 
+>> 663af70aabb7
+>>
+>> ("bpf: selftests: Add helpers to directly use the capget and capset 
+>> syscall") I refered to
+>>
+>> does the same thing. As for your question "What happens if 
+>> sys/capability.h along
+>>
+>> with linux/capability.h", I haven't found the problem yet, I 
+>> sincerely hope you can
+>>
+>> help me improve this code. Thank you very much.
 >
-> Following the recommendations in 'Rockchip RK3399 TRM v1.3 Part2':
+> Try this:
 >
-> 1. Split the reset controls into two groups as per section '17.5.8.1.1 PC=
-Ie
-> as Root Complex'.
+> Run make headers in the kernel repo.
+> Build without making any changes.
+> Then add you changes and add linux/capability.h to include files
 >
-> 2. Deassert the 'Pipe, MGMT Sticky, MGMT, Core' resets in groups as per s=
-ection
-> '17.5.8.1.1 PCIe as Root Complex'. This is accomplished using the
-> reset_control_bulk APIs.
+> Tell me what happens.
 >
-> > - devm_reset_control_bulk_get_exclusive(): Allows the driver to get all
-> >   resets defined in the DT thereby removing the hardcoded reset names
-> >   in the driver.
-> > - reset_control_bulk_assert(): Allows the driver to assert the resets
-> >   defined in the driver.
-> > - reset_control_bulk_deassert(): Allows the driver to deassert the rese=
-ts
-> >   defined in the driver.
-> >
->
-> No need to list out the APIs. Just add them to the first paragraph itself=
- to
-> explain how they are used.
+> The change you are making isn't correct. Because you don't want to
+> define system calls locally in your source file.
 >
 
-Here is a short version of the commit message.
+Thanks, I see.
+Maybe I should move them to a new header file and resend a patch.
 
-Introduce a more robust and efficient method for assert and deassert
-the reset controller using the reset_control_bulk*() API.
-Simplify reset handling for the core clocks reset unit with the
-reset_control_bulk APIs.
+> thanks,
+> -- Shuah
 
-devm_reset_control_bulk_get_exclusive(): Obtain all resets from the
-            device tree, removing hardcoded names.
-reset_control_bulk_assert(): assert the resets defined in the driver.
-reset_control_bulk_deassert(): deassert the resets defined in the driver..
-
-Following the recommendations in 'Rockchip RK3399 TRM v1.3 Part2':
-
-1. Split the reset controls into two groups as per section '17.5.8.1.1 PCIe
-as Root Complex'.
-
-2. Deassert the 'Pipe, MGMT Sticky, MGMT, Core' resets in groups as per sec=
-tion
-'17.5.8.1.1 PCIe as Root Complex'. This is accomplished using the
-reset_control_bulk APIs.
-
-Does this look good to you? Let me know if you need any further adjustments=
-!
-
-I will fix this for CLK bulk as well.
-
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->
-> Some nitpicks below. Rest looks good.
-
-I will fix these in the next version.
-
-> - Mani
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
-
-Thanks
--Anand
 
