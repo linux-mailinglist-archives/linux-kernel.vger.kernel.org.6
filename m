@@ -1,170 +1,162 @@
-Return-Path: <linux-kernel+bounces-365289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5384C99E009
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84EFF99E00C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B2B7B242FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:58:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0E10B22580
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA701D6DA1;
-	Tue, 15 Oct 2024 07:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEB01BD01F;
+	Tue, 15 Oct 2024 07:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Un5fbx4j"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j1H5Iosx"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E521CF7DD;
-	Tue, 15 Oct 2024 07:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7B21B85CC
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728979071; cv=none; b=iGpfysoO500WHqpjDZkIbshekmezoLyXEUWikeIBgq+ZawqrfT8dNGkjhqy+sOY4ENp3UG7gjYrcniQCxwEBlvYW9tSS9jLOctidvoB7x1c29zg5pQDBiQRhr5u7Deihoec3HkShf9RAYloqhGwXfqb8fRQcYPeKpI1ZJBQ62YQ=
+	t=1728979099; cv=none; b=rOltRmmfibWZkFCEo3/tJM+3TZyPs63syf2bdV5Wn1pqyOQm/HinPn2L2y5fuJOk8txq/PW/oONbsxU8Hu1TjLO3raocM8DXIpBvxmd89boyIEX0WIGmm984O9t4EvDZ1a/Cx4X9+AQ4AxqNdxCq3ZkD9I8mYGLzxRk+YQ82v/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728979071; c=relaxed/simple;
-	bh=LysHzPd7dlLah+lHs5TKm6/+zie9DVyHTUp7iGUpusc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ig0IuKg6r0v59gnhvi1MSqEkXWVOSn6wb0AcXhA7qMofXYrb0zknVLhU0CCjE4rMXMCrAZhYUcicE5SiFD3FY6buN5w+1g2hsbSlDfe/rXquuLj2TfsEBXmo+x1JwbiCJmBV2Pu00T4F4+sCd9f5RyAPs04kf8kIwUylrXlc7Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Un5fbx4j; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F6Pkxu026413;
-	Tue, 15 Oct 2024 07:57:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=QSrseP
-	fkB5K2VV335DeClzFbTBNk++ahYm8ulSAy/iQ=; b=Un5fbx4jaUVIRMkcttwIy/
-	aUUf01mo/c3G3RVrKcUEQZbc+uCc/zUSXz2WveTmZSAzBlUy+BtQVLgqONH4pttO
-	fFQQ3TlIRmKgr4L91BKyuFfRyXR0/wDZVfTG7BQy9rc7GWJDnEKfuXz02uk6IL0p
-	G+0J9l4AMeiBh71UBzEf2RvaUsT/cW28vx9eE4T1lkdmPBEu6FoYYZ0krjrPv4Wb
-	+IL17qNlZYQfgRHdjn7JBTKKrE2rQuEAOUwq8j8DmQuDth8AlpHB7OJT5CPSkgEj
-	NSe4EAQS/kQb8Lb4Sh8ntlNAmJi7dnx9mkhvtyCguImE4ann5vj0knOOMQnyRjFQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429k3xrdss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 07:57:42 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49F7ugM0021951;
-	Tue, 15 Oct 2024 07:57:41 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429k3xrdsk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 07:57:41 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F5eTLT005906;
-	Tue, 15 Oct 2024 07:57:40 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428650t844-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 07:57:40 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49F7vbri32833968
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 07:57:37 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 06C7620040;
-	Tue, 15 Oct 2024 07:57:37 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 73CE320049;
-	Tue, 15 Oct 2024 07:57:36 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 07:57:36 +0000 (GMT)
-Date: Tue, 15 Oct 2024 09:57:35 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-s390@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas
- Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank
- <frankja@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang
- <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio
- =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v2 0/7] virtio-mem: s390 support
-Message-ID: <20241015095735.189a93a9@p-imbrenda.boeblingen.de.ibm.com>
-In-Reply-To: <20241014185659.10447-H-hca@linux.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
-	<20241014185659.10447-H-hca@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1728979099; c=relaxed/simple;
+	bh=xqbnlLiVNwKqNk4B6zxRxQlS9F/oHJRfBlpXtgY8Yeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q+QAP0J1UxRIBAeEARnA7Ut6lOKG7xZTMxagCu/WhTMhhRKw7qwhA48SajTyU68Tc13CtPtqdTikhUhkGaKI/lvgFoyY1nVubWYMZz6ctPSencTTn7W7XjpHt9o2eTQVNJ+f+y8yRjMsIHlRLiWyjxHH4GKJSwXAkO4I2PpVTW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j1H5Iosx; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e4b7409fso2829852e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:58:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728979096; x=1729583896; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eC4BB+tDEl8JjaqDwzWgkstqnxwTVkHhasRVEYNy6PE=;
+        b=j1H5IosxH8aclbmF/IGO8/trWO+AKt1YcExrJNOpKE6PMDwQkWYtnYvk+LM2yWq2dm
+         ykvMMKuHL1quG6EOHKC/Ibg+ZZbQDaaHxckr38zqCoe7dCswdGVm29g3ck7cewNK4UB9
+         xzIY3o25jnPK7br2vkwDUDIZqns3UnVBKfF2A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728979096; x=1729583896;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eC4BB+tDEl8JjaqDwzWgkstqnxwTVkHhasRVEYNy6PE=;
+        b=q0j/xj81GGv9tojW1QOvir8Ayyy4gRNy3RLOCKZgblPh/EDJ4RY/+/y/Z2mQvV659E
+         trQVG4OTcmdYCtJneuHwPlsG1njkc37+l/PY+YA+0x2/RT22r6oZNfEvK+I/gr+SLToB
+         WzhDiLfE6vQV5eqQN1jG4Cg7aAaBHzLU1lw0Up0RRbBQPG6Qm1q8DxfMxyUC9tXjBIEw
+         RhdWQgUTiqQxxDt1KpDBb5aME/CddnDKtfw5OtgjSNorxGtsfIjQNtKanJVaijhLagyS
+         xmhtLZX6v98eBfUS7weY6cLu9LcqyP94PBZ5lM8RnhYwp4Sq/8SXROyKjZ0r7zzUn3fh
+         AGFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCeM6kCgeaSNSi2pmuJiBn/aU1noT+CiPYN/uCfhr+RJRothdlLt8UVwDTWn5GX0oODmEoiQeqJno29Sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEHMI22MdnGDdKHxrMJuTYPcWNn2p0dMVIWsCQQ3g0Oy4jYMIg
+	J9RCZp8138C1XVpQ60Sxo2jTuV5Ii3Oiin8A+GuAuHF1UwybnblizsjjiShmktB0eeDHr2tfpPL
+	TwaII9Ett9neRRz8pi+cuQcQIhBpVEob6+aT6
+X-Google-Smtp-Source: AGHT+IGjJNGNwEUDC+KZo44b4hUQtyEA+RBC3R7OuIVRUtmEkMET/oSfQ/G/cmV6HDCYX8i5o2poiLBvda9ljao0a+8=
+X-Received: by 2002:a05:6512:2254:b0:539:f775:c0bc with SMTP id
+ 2adb3069b0e04-539f775c343mr1766569e87.29.1728979096001; Tue, 15 Oct 2024
+ 00:58:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Du4l9sP7TVUAjH_iYt432adQvi2pGWuw
-X-Proofpoint-ORIG-GUID: uFXJhMFRxlEgNTc8MZnarzacqCG1ep_i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- adultscore=0 clxscore=1011 priorityscore=1501 phishscore=0 mlxlogscore=999
- impostorscore=0 lowpriorityscore=0 bulkscore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410150052
+References: <20241014073314.18409-1-yunfei.dong@mediatek.com> <20241014073314.18409-3-yunfei.dong@mediatek.com>
+In-Reply-To: <20241014073314.18409-3-yunfei.dong@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 15 Oct 2024 15:58:05 +0800
+Message-ID: <CAGXv+5H4FsadBheokwO7hTxDxAtYakL15Ki+EcnhQ3Unbz3o9w@mail.gmail.com>
+Subject: Re: [PATCH 2/6] media: mediatek: vcodec: remove parse nal info in kernel
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
+	Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Oct 2024 20:56:59 +0200
-Heiko Carstens <hca@linux.ibm.com> wrote:
+On Mon, Oct 14, 2024 at 3:33=E2=80=AFPM Yunfei Dong <yunfei.dong@mediatek.c=
+om> wrote:
+>
+> Hardware can parse the slice synatx to get nal information in
+> scp, needn't to parse it in kernel again.
 
-> On Mon, Oct 14, 2024 at 04:46:12PM +0200, David Hildenbrand wrote:
-> > Let's finally add s390 support for virtio-mem; my last RFC was sent
-> > 4 years ago, and a lot changed in the meantime.
-> > 
-> > The latest QEMU series is available at [1], which contains some more
-> > details and a usage example on s390 (last patch).
-> > 
-> > There is not too much in here: The biggest part is querying a new diag(500)
-> > STORAGE_LIMIT hypercall to obtain the proper "max_physmem_end".
-> > 
-> > The last two patches are not strictly required but certainly nice-to-have.
-> > 
-> > Note that -- in contrast to standby memory -- virtio-mem memory must be
-> > configured to be automatically onlined as soon as hotplugged. The easiest
-> > approach is using the "memhp_default_state=" kernel parameter or by using
-> > proper udev rules. More details can be found at [2].
-> > 
-> > I have reviving+upstreaming a systemd service to handle configuring
-> > that on my todo list, but for some reason I keep getting distracted ...
-> > 
-> > I tested various things, including:
-> >  * Various memory hotplug/hotunplug combinations
-> >  * Device hotplug/hotunplug
-> >  * /proc/iomem output
-> >  * reboot
-> >  * kexec
-> >  * kdump: make sure we don't hotplug memory
-> > 
-> > One remaining work item is kdump support for virtio-mem memory. This will
-> > be sent out separately once initial support landed.  
-> 
-> Besides the open kdump question, which I think is quite important, how
-> is this supposed to go upstream?
-> 
-> This could go via s390, however in any case this needs reviews and/or
-> Acks from kvm folks.
+Does this apply to all existing shipped SCP firmware? If not, please
+put this behind a vdec firmware flag.
 
-we're working on it :)
+ChenYu
+
+
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> ---
+>  .../vcodec/decoder/vdec/vdec_h264_req_multi_if.c    | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h26=
+4_req_multi_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec=
+_h264_req_multi_if.c
+> index d3f8d62238c0..76b96924a2a7 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_m=
+ulti_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_m=
+ulti_if.c
+> @@ -634,11 +634,10 @@ static int vdec_h264_slice_lat_decode(void *h_vdec,=
+ struct mtk_vcodec_mem *bs,
+>         struct vdec_h264_slice_inst *inst =3D h_vdec;
+>         struct vdec_vpu_inst *vpu =3D &inst->vpu;
+>         struct mtk_video_dec_buf *src_buf_info;
+> -       int nal_start_idx, err, timeout =3D 0;
+> +       int err, timeout =3D 0;
+>         unsigned int data[2];
+>         struct vdec_lat_buf *lat_buf;
+>         struct vdec_h264_slice_share_info *share_info;
+> -       unsigned char *buf;
+>
+>         if (vdec_msg_queue_init(&inst->ctx->msg_queue, inst->ctx,
+>                                 vdec_h264_slice_core_decode,
+> @@ -662,14 +661,6 @@ static int vdec_h264_slice_lat_decode(void *h_vdec, =
+struct mtk_vcodec_mem *bs,
+>         share_info =3D lat_buf->private_data;
+>         src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
+ffer);
+>
+> -       buf =3D (unsigned char *)bs->va;
+> -       nal_start_idx =3D mtk_vdec_h264_find_start_code(buf, bs->size);
+> -       if (nal_start_idx < 0) {
+> -               err =3D -EINVAL;
+> -               goto err_free_fb_out;
+> -       }
+> -
+> -       inst->vsi->dec.nal_info =3D buf[nal_start_idx];
+>         lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
+>         v4l2_m2m_buf_copy_metadata(&src_buf_info->m2m_buf.vb, &lat_buf->t=
+s_info, true);
+>
+> @@ -677,7 +668,7 @@ static int vdec_h264_slice_lat_decode(void *h_vdec, s=
+truct mtk_vcodec_mem *bs,
+>         if (err)
+>                 goto err_free_fb_out;
+>
+> -       vdec_h264_insert_startcode(inst->ctx->dev, buf, &bs->size,
+> +       vdec_h264_insert_startcode(inst->ctx->dev, bs->va, &bs->size,
+>                                    &share_info->h264_slice_params.pps);
+>
+>         *res_chg =3D inst->resolution_changed;
+> --
+> 2.46.0
+>
+>
 
