@@ -1,128 +1,206 @@
-Return-Path: <linux-kernel+bounces-365119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB3999DDD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:58:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0566599DDBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5E01C21802
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11C21F21EF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03828188717;
-	Tue, 15 Oct 2024 05:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37957178368;
+	Tue, 15 Oct 2024 05:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jG5sGGJ/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Haw9srrH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E31B173357;
-	Tue, 15 Oct 2024 05:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0034173357
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728971904; cv=none; b=h0HLH9OOFqKGG0f6gIwNXysULgsyFEjhbuYIVpVlGurbxUtAe+Tlx0X/mA0mZdooB0sVx1sF+LoZnAuWbKDfA+xwCUVhpDpw1a8dmfZjJpw6B36+jYY/8hgLlP18DhD3nv0t4fARBYE7faNU6xgkl1gRehvfjUgDCSFhZslFYP8=
+	t=1728971728; cv=none; b=hI5LJ/65na5L/YHkm3CSUZViPY3MD6TZHoS1jXQuqTOkTqwwK92tGXD/Hc235oDICC2jA9ZQ0ObgxsdHB0zSTOrTmVVz6MWbt1zdko9gClZs8zG6STKWUKrjGkiUBHlVk4+E+2mS1vWBx3JnR3HCw2JISOPvjtCld6QEc37E9r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728971904; c=relaxed/simple;
-	bh=Bo5YA9yZSBe+D0lpdePuveWlpCV5YIVCk7/YdaIdQ1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uEr/lbh2hSO/E6wSSsvOP4Tr952+NELX0LoBSuKZSp1sSKTpVcYGFI6mX9vm7dI7OgmLRpb21bpQL8YN+52qfbuyA3c+9ZINPWjazVMGdflxQ2GCcbL41amK8koQk4VQCaEsqgtqkNBwDGjez1P1xXgfC12yqbTd3H8ANyHWUvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jG5sGGJ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 325E1C4CEC7;
-	Tue, 15 Oct 2024 05:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728971903;
-	bh=Bo5YA9yZSBe+D0lpdePuveWlpCV5YIVCk7/YdaIdQ1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jG5sGGJ/uyj72sfIjEOgM3YbtVaq12kKOCpq+pn5nPbrPsQT2kC9ydtk/YzTUly5r
-	 4eVw7lpNOy5kN1mWcmFmO7tb0cYSymlnAwpq2Wio7c3ZyfvyaEwu9JPC9amMYfUYbj
-	 MtCJD0izwYdWw2k3enQm6TEHcbCSImNPeik7wVIFjejDi/qTBQORJWwxVSIAEvqN5Q
-	 l9yRtb72GuYxy6JDeT8CrEewKpTCwuiujl9ZpZL5V+ZbK8ZPy8dUW/6qHkWufpsPdi
-	 7qTmnW97lTs/3celEWZrNKMwS30XeMtKFXPBKIkve6XIFrcQu+bxXeiRq9P0LbGJXD
-	 wA3RYW8I7S+NQ==
-Date: Tue, 15 Oct 2024 08:54:29 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 7/8] execmem: add support for cache of large ROX pages
-Message-ID: <Zw4DlTTbz4QwhOvU@kernel.org>
-References: <20241009180816.83591-1-rppt@kernel.org>
- <20241009180816.83591-8-rppt@kernel.org>
- <Zwd7GRyBtCwiAv1v@infradead.org>
- <ZwfPPZrxHzQgYfx7@kernel.org>
- <ZwjXz0dz-RldVNx0@infradead.org>
- <ZwuIPZkjX0CfzhjS@kernel.org>
- <20241013202626.81f430a16750af0d2f40d683@linux-foundation.org>
- <Zw1uBBcG-jAgxF_t@bombadil.infradead.org>
- <Zw3rDS3GRWZe4CBu@bombadil.infradead.org>
+	s=arc-20240116; t=1728971728; c=relaxed/simple;
+	bh=x69P0Z65oXCH9k7dXC/rZ9aJQ5P/0luVc80ETZqatuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hD5wNoSNTk+BA89JYEjS4l+0LjVY96/zjBuVuU+VQmDmRIqWJFknYQaQih0Bdxsqf50n6nelYnXvY2+mIVBIIGps48Wy2vRvWdw635tPBB2E+K2Er2TGTrnJnJ9DSeS+GHn8oBAEeRB7aDXmRlyfFzOk9saAYeM2EnySF8+Yv1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Haw9srrH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728971725;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nLop8z2nADHha6QKe8wKTicygsTgRvsS7+q08jtnUQY=;
+	b=Haw9srrHp7cb9JEW7R6dyCd33pB3im/kZJMrULqGorfqeNiJXHnHOQD8+jO9P8jq9g8PWt
+	lC2E4HqdlFdRVz622B+tQUlCWdSpuX91kJOcLhm3ar309Zpd90elAqmD6g/0JxqZoaRB1o
+	rl3mRNGp4tAiHLpCw7Zszfxah3rjpec=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-575-T4Y7XtC2OXOThYFGKxCxtA-1; Tue, 15 Oct 2024 01:55:23 -0400
+X-MC-Unique: T4Y7XtC2OXOThYFGKxCxtA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a9a2c3e75f0so15280966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:55:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728971722; x=1729576522;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nLop8z2nADHha6QKe8wKTicygsTgRvsS7+q08jtnUQY=;
+        b=ds2LliHG69cRdLtU/7YwAdIiYiP1XF2fK8P00wqsr1ss86KVpCyGlSvFKVaEzwTa4N
+         O37WbTDPqMFwB2ymy8wPoLIQotoe8W7XgszqF2ywln0GaP9aU7Ffu3bEEJ4kyezuy8fz
+         F9cUvdB31Cy0iSHwZxF1je+JoVo+8tukyR/JvKyOMJdan9nkbt/Jlcwhj27xZDSOsGxL
+         CNbu9ayBh3aELxWpqA27iGWEJW5eZAjxAzThghUT1FBo+8XONcJxeZ2XSqNU42zjAjdt
+         Qbq8n/enUD4O0Ta31Oj3OCXTE9HDhjGzMAdhXh0yjfLTo465SBWRo49FLyND/bDbeUg1
+         7KCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWC6feXmjJ63lQjtSVe9uIN1EQm6+KaB/oXljsUoHrMBJNxJMex/BKW4QCbbkwGwalhBtP0KvcrRV+fHZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzEu8Za/eYp3UbloKPKLwmjzjeKx3VGUDTIo5y6t49Ny3llSfr
+	nFI9ehJwdyjbnsUOXW4C0+Z9rYWcL8S2c5EapRhTpy9eWbs+gCbBn1QZ6A13KcMPs98dKJek9of
+	zUKbCsZgm6jekRaHzY46Agkl8fMp5q0O+vJ8h8Q7Hmev5HUhnO6uPD//zlDRAKk4DBWxPiK3+IS
+	GZOECOpUZtNhm+NqQ0L2e5iZNiNv6dkdBVPARy
+X-Received: by 2002:a17:907:846:b0:a99:4eac:bb98 with SMTP id a640c23a62f3a-a99e3e3e61bmr1001505066b.51.1728971721978;
+        Mon, 14 Oct 2024 22:55:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjt5CGZTGpCyBOXaYD1O5WADuUpaIz5hSp3KPQ1fxEr1hHSQgXOGp8y5FVkyhKceluqiCgv5Ijc+HLMtC+mvE=
+X-Received: by 2002:a17:907:846:b0:a99:4eac:bb98 with SMTP id
+ a640c23a62f3a-a99e3e3e61bmr1001503966b.51.1728971721556; Mon, 14 Oct 2024
+ 22:55:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw3rDS3GRWZe4CBu@bombadil.infradead.org>
+References: <20241004015937.2286459-1-lulu@redhat.com> <20241004015937.2286459-4-lulu@redhat.com>
+ <4z4lgkittsui6xv26h4gwo4o4xuut4sbcih6p7jxajwignftyq@catixvwskk5m>
+In-Reply-To: <4z4lgkittsui6xv26h4gwo4o4xuut4sbcih6p7jxajwignftyq@catixvwskk5m>
+From: Cindy Lu <lulu@redhat.com>
+Date: Tue, 15 Oct 2024 13:54:44 +0800
+Message-ID: <CACLfguVyO-L4z9qjVYnCLZvoGkYwLxViY7VWjrWsoHXzM7mW5w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] vhost: Add kthread support in function vhost_workers_free()
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: jasowang@redhat.com, mst@redhat.com, michael.christie@oracle.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 14, 2024 at 09:09:49PM -0700, Luis Chamberlain wrote:
-> Mike, please run this with kmemleak enabled and running, and also try to get
-> tools/testing/selftests/kmod/kmod.sh to pass.
+On Mon, 7 Oct 2024 at 21:33, Stefano Garzarella <sgarzare@redhat.com> wrote:
+>
+> On Fri, Oct 04, 2024 at 09:58:17AM GMT, Cindy Lu wrote:
+> >Added back the previously removed function vhost_workers_free() and
+> >renamed it to vhost_workers_free_khtread(). The new vhost_workers_free()
+> >will select the different mode based on the value of the parameter.
+> >
+> >The old function vhost_workers_free was change to support task in
+> >commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads")
+> >also changed in
+> >commit a284f09effea ("vhost: Fix crash during early vhost_transport_send_pkt calls")
+> >change to xarray in
+> >commit 1cdaafa1b8b4 ("vhost: replace single worker pointer with xarray")
+> >
+> >Signed-off-by: Cindy Lu <lulu@redhat.com>
+> >---
+> > drivers/vhost/vhost.c | 52 ++++++++++++++++++++++++++++++++++++++-----
+> > 1 file changed, 47 insertions(+), 5 deletions(-)
+> >
+> >diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> >index ad359d4b725f..fed6671c1ffb 100644
+> >--- a/drivers/vhost/vhost.c
+> >+++ b/drivers/vhost/vhost.c
+> >@@ -648,8 +648,21 @@ static void vhost_detach_mm(struct vhost_dev *dev)
+> >       dev->mm = NULL;
+> > }
+> >
+> >-static void vhost_worker_destroy(struct vhost_dev *dev,
+> >-                               struct vhost_worker *worker)
+> >+static void vhost_worker_destroy_kthread(struct vhost_dev *dev,
+> >+                                       struct vhost_worker *worker)
+> >+{
+> >+      if (!worker)
+> >+              return;
+> >+
+> >+      WARN_ON(!llist_empty(&worker->work_list));
+> >+
+> >+      xa_erase(&dev->worker_xa, worker->id);
+> >+      kthread_stop(worker->task);
+> >+      kfree(worker);
+> >+}
+> >+
+> >+static void vhost_worker_destroy_task(struct vhost_dev *dev,
+> >+                                    struct vhost_worker *worker)
+> > {
+> >       if (!worker)
+> >               return;
+> >@@ -660,7 +673,7 @@ static void vhost_worker_destroy(struct vhost_dev *dev,
+> >       kfree(worker);
+> > }
+> >
+> >-static void vhost_workers_free(struct vhost_dev *dev)
+> >+static void vhost_workers_free_task(struct vhost_dev *dev)
+> > {
+> >       struct vhost_worker *worker;
+> >       unsigned long i;
+> >@@ -675,10 +688,36 @@ static void vhost_workers_free(struct vhost_dev *dev)
+> >        * created but couldn't clean up (it forgot or crashed).
+> >        */
+> >       xa_for_each(&dev->worker_xa, i, worker)
+> >-              vhost_worker_destroy(dev, worker);
+> >+              vhost_worker_destroy_task(dev, worker);
+> >       xa_destroy(&dev->worker_xa);
+> > }
+> >
+> >+static void vhost_workers_free_kthread(struct vhost_dev *dev)
+> >+{
+> >+      struct vhost_worker *worker;
+> >+      unsigned long i;
+> >+
+> >+      if (!dev->use_worker)
+> >+              return;
+> >+
+> >+      for (i = 0; i < dev->nvqs; i++)
+> >+              rcu_assign_pointer(dev->vqs[i]->worker, NULL);
+> >+      /*
+> >+       * Free the default worker we created and cleanup workers userspace
+> >+       * created but couldn't clean up (it forgot or crashed).
+> >+       */
+> >+      xa_for_each(&dev->worker_xa, i, worker)
+> >+              vhost_worker_destroy_kthread(dev, worker);
+> >+      xa_destroy(&dev->worker_xa);
+> >+}
+> >+
+> >+static void vhost_workers_free(struct vhost_dev *dev)
+> >+{
+> >+      if (enforce_inherit_owner)
+> >+              vhost_workers_free_task(dev);
+> >+      else
+> >+              vhost_workers_free_kthread(dev);
+> >+}
+>
+> nit: new line here
+>
+sure, will fix this
+> > static struct vhost_worker *vhost_worker_create(struct vhost_dev *dev)
+> > {
+> >       struct vhost_worker *worker;
+> >@@ -846,7 +885,10 @@ static int vhost_free_worker(struct vhost_dev *dev,
+> >       __vhost_worker_flush(worker);
+> >       mutex_unlock(&worker->mutex);
+> >
+> >-      vhost_worker_destroy(dev, worker);
+> >+      if (enforce_inherit_owner)
+> >+              vhost_worker_destroy_task(dev, worker);
+> >+      else
+> >+              vhost_worker_destroy_kthread(dev, worker);
+> >       return 0;
+> > }
+> >
+> >--
+> >2.45.0
+> >
+> >
+>
 
-There was an issue with kmemleak, I fixed it here:
-
-https://lore.kernel.org/linux-mm/20241009180816.83591-1-rppt@kernel.org/T/#m020884c1795218cc2be245e8091fead1cda3f3e4
-
-> I run into silly boot issues with just a guest.
-
-Was it kmemleak or something else?
- 
->   Luis
-
--- 
-Sincerely yours,
-Mike.
 
