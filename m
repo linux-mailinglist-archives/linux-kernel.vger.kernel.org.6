@@ -1,70 +1,81 @@
-Return-Path: <linux-kernel+bounces-365086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342AF99DD54
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:59:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC77799DD58
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBACB1F21F04
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE99F1C2141D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53F4175D29;
-	Tue, 15 Oct 2024 04:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA11C172BB9;
+	Tue, 15 Oct 2024 05:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="TzjQcEEO"
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="g2C4DFKy"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4CB442F;
-	Tue, 15 Oct 2024 04:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D30416D9B8
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728968362; cv=none; b=aN2QP3EhzEcOs/EJ0gDJ7vOEer5eZwjPtHc3Js6V7rDUEkNUgtrDbeN9r7z/jAbkwMOKJnYdh3NslimYwXdBJu4tlNYHlx2WAdKUdNzx8dxNZ0OB8dZIriWpU1LzG9iC+lTIyqMh5jwgpPbV55lPeeHwgmGOYGzD8ac9QIckKhQ=
+	t=1728968412; cv=none; b=MJrXH4fLu7h1B8nHQ0L5Ntzzo0zEH/JyfAb2e5ZNbvWXM9pfeRT6Dm1nMJddIycLfrlfiXwZFXIKlWkZbOC3yZsZq5zznzF0QSJGW3RW7oGwkyVV2Ihzm79geHx3eResWuXEfXvabeeOp/bEcbvidR5qGKE6mhB2uKbbUwM6vnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728968362; c=relaxed/simple;
-	bh=XFugerY3y5irdTOz31VIwqmf/328N1n+8mSFvShFKc4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KwiRFdruNt0p365UZOBUaP/vo0kg5R43TnSxM62WmhNVCSgN5DrESQKeth3vBfQs64ebeo1PYoNqESc9z2MG/C15kEJEClyqt7oVvGPHOHARl3vgDqMD8EY7ngWIoZosX44xZtpuy4ceYv49/R157DjskiGP3TTLWcXakbgmnNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=TzjQcEEO; arc=none smtp.client-ip=216.71.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1728968361; x=1760504361;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=XFugerY3y5irdTOz31VIwqmf/328N1n+8mSFvShFKc4=;
-  b=TzjQcEEOqyU08B80mqxq6kuqo2wAnzCarxAHME21q2aC3ZpjzV4TBm1n
-   gVTSOftkH3cSdptE6Ken3+gPD/dGAun3BLw/+z1czUjJHrR9g3N3b00Xt
-   DiSR3veXEp0kUyVOIzluWLwdw59qOlHHpi0gK4vXw6EYFRdpMDSIBE5en
-   x5S2yKBK7RC8aNzaw4KTEmDgV5Cacycp/oZeHD6I3bPWxwrvfnHcVUn1z
-   CJVHhYgriOFZFqTh5izjHi6SQYsCxPxbUvvpxLqi5MHssWlkfciXOhPuS
-   88ZDtaODC04O36gerWGzpdr8hazJfDZQYZVunS5sghD3oaWm/8U/P0R+s
-   g==;
-X-CSE-ConnectionGUID: gMsMZGvgQf6ZnTyZqKrWEA==
-X-CSE-MsgGUID: t9zoLfUoQPmujMognTa86g==
-X-IronPort-AV: E=Sophos;i="6.11,204,1725292800"; 
-   d="scan'208";a="29055186"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Oct 2024 12:59:13 +0800
-IronPort-SDR: 670de851_H+FJSLQ4nCyn5wKMhAcoxb9FVdzAkCXDwOP2JZsafGfeBrh
- AyZRqjD67olZhN0nsIiajlJTBEnCoJ725sHwYng==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Oct 2024 20:58:10 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Oct 2024 21:59:12 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH] scsi: ufs: Use wait-for-reg in HCE init
-Date: Tue, 15 Oct 2024 07:57:11 +0300
-Message-Id: <20241015045711.394434-1-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728968412; c=relaxed/simple;
+	bh=nMXhqh4HzokCG/i4LxOBg3hOYxhW1ngv6Tb8E8kN4Wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eed32JvDrjNoKOuteg0sVVisMSh02CcFrJH35EgxxfVftGmA+1L5RszbUkiu5egD409+Lovpm055bEmvY9Fa6AyVvj0amO+F7EQ03Y4cjowBbEk41XHzcchfz/MgfTw6LXaSYjGrAkRJ8sQDw5yBR+jN+C90jEMUgdvJtBrIZwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=g2C4DFKy; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-71e49ef3b2bso2293279b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:00:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728968410; x=1729573210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UDE8ae4KGAACvTonZkpDinm//oEQtAd/MtLLCfcVh7M=;
+        b=g2C4DFKyDe3l+Fzyu7zFErMJ3To8sKhu16V1BPylJQ7vw5WY4FNcCZQ2/YYYsZuCdo
+         aY/6Sd04H4QxEYNKi2+PuZ4AmcHq9Y8Kd3HFnuWg+3OjeghaoOnFYOd9Q30Np7Jg54h4
+         iTvf9otptP1Q+NOlBC5CgC9rE4vqh3BMAgDwqKSrWlsh6/Bk9xoBJZScKebIe8uzK17u
+         pxobPNjJyvNXXU6k3/nB8/3Xx0otXeV/Ib7V3to3yOVVzMKTUe5KU0IqpBD7T/tkt15Q
+         0xsUv5+WR7+nKpgr+Exv2UyS1QnYqr1ELsKLXtF6xecpWistpmXRnm7+U0wNPyUZ6BSY
+         Tk8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728968410; x=1729573210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UDE8ae4KGAACvTonZkpDinm//oEQtAd/MtLLCfcVh7M=;
+        b=ts83g3eu5iFxpYa0BlT2Dh23fQ8i3tHk6WRHSlmpjANpTapBYjAY52EzR+OWb8tvWP
+         2p/jJuRhaztsYCr/K5Rwr8TlRcAhRwZ59Sm4tyUWxNbEh6VOygVEO8XsBgfZcd4QrGf2
+         17V8ZX7rCCGxWnM1tJABfJjXialGeGSqmDn0hFfTzlEMKE7c8VziQaHRMgWwLP8mt8Q8
+         W0+yx1uUL9yEZ+8LvDQTOTewdsAriYUfaAIv92GS8lWGK5T6MTG7f/zYPAuEVUP3xTaz
+         QCnnYSx6NToyHFhvGr6al5vIVkWxdYtS1B6GiZcGLj/7L6jtA9pEIw9nN3Nrkig5MaIi
+         kL/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVnGey1CJnK/NwaPiSuXcn90xXqACc1w9nT4CvNugDeJGGe5fDeDHlxfDapiHPqJUfvQo6oF54ZmAdb9UU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJM2UW66PCN/cRTHAMIjcapJDM3WLKG6dZaSUi+AWPqUcrglPO
+	fQe+FqlH39dNvybdEXTR73BoeHi6HZbEksuKCCOkbbVwG673deGo/1lQCrbm9ss=
+X-Google-Smtp-Source: AGHT+IGPdj8U1y9DYvRNnq4n+Baw1Zig5U/2Z3A5zNqzr6z2E57ek3/4AKtQDKOOKtFDMh3GKw4CrQ==
+X-Received: by 2002:a05:6a00:3e25:b0:71e:6489:d06 with SMTP id d2e1a72fcca58-71e6489127amr9511479b3a.0.1728968409796;
+        Mon, 14 Oct 2024 22:00:09 -0700 (PDT)
+Received: from localhost.localdomain ([138.199.9.153])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ea9c61c839sm439758a12.0.2024.10.14.22.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 22:00:09 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	kernel-janitors@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2][next] Bluetooth: btintel_pcie: Remove structually deadcode
+Date: Mon, 14 Oct 2024 22:58:41 -0600
+Message-ID: <20241015045843.20134-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,61 +84,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of open-coding it.  Code simplification - no functional change.
+The switch case statement has a default branch. Thus, the return
+statement at the end of the function can never be reached.
+Fix it by removing the return statement at the end of the
+function.
+The intel bluetooth module was successfully built after the change
+without any errors.
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
+This issue was reported by Coverity Scan.
+https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600709
+
+Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between driver and firmware")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
 ---
- drivers/ufs/core/ufshcd.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+V1 -> V2: - Changed "Fixing" to "Fix" in the changelog
+          - Added that the change was successfully built
+          - Added kernel-janitors mailing list to CC
+ 
+ drivers/bluetooth/btintel_pcie.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 9e6d008f4ea4..f23d37c227e1 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -4818,8 +4818,7 @@ EXPORT_SYMBOL_GPL(ufshcd_hba_stop);
-  */
- static int ufshcd_hba_execute_hce(struct ufs_hba *hba)
- {
--	int retry_outer = 3;
--	int retry_inner;
-+	int retry = 3;
- 
- start:
- 	if (ufshcd_is_hba_active(hba))
-@@ -4847,22 +4846,20 @@ static int ufshcd_hba_execute_hce(struct ufs_hba *hba)
- 	ufshcd_delay_us(hba->vps->hba_enable_delay_us, 100);
- 
- 	/* wait for the host controller to complete initialization */
--	retry_inner = 50;
--	while (!ufshcd_is_hba_active(hba)) {
--		if (retry_inner) {
--			retry_inner--;
-+	while (retry) {
-+		if (!ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE, CONTROLLER_ENABLE,
-+					      CONTROLLER_ENABLE, 1000, 50)) {
-+			break;
- 		} else {
--			dev_err(hba->dev,
--				"Controller enable failed\n");
--			if (retry_outer) {
--				retry_outer--;
--				goto start;
--			}
--			return -EIO;
-+			dev_err(hba->dev, "Controller enable failed\n");
-+			retry--;
-+			goto start;
- 		}
--		usleep_range(1000, 1100);
+diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
+index e4ae8c898dfd..660496e55276 100644
+--- a/drivers/bluetooth/btintel_pcie.c
++++ b/drivers/bluetooth/btintel_pcie.c
+@@ -391,7 +391,6 @@ static inline char *btintel_pcie_alivectxt_state2str(u32 alive_intr_ctxt)
+ 	default:
+ 		return "unknown";
  	}
+-	return "null";
+ }
  
-+	if (!retry)
-+		return -EIO;
-+
- 	/* enable UIC related interrupts */
- 	ufshcd_enable_intr(hba, UFSHCD_UIC_MASK);
- 
+ /* This function handles the MSI-X interrupt for gp0 cause (bit 0 in
 -- 
-2.25.1
+2.43.0
 
 
