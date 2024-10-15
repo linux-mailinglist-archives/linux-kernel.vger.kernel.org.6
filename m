@@ -1,174 +1,94 @@
-Return-Path: <linux-kernel+bounces-365356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A558F99E118
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:31:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C31D99E11E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19011B23115
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:31:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0C681F2230C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BFC1C8776;
-	Tue, 15 Oct 2024 08:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117FE1C8776;
+	Tue, 15 Oct 2024 08:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C5Pr17Sh"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTK4HbXA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EF620EB;
-	Tue, 15 Oct 2024 08:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FEE185936;
+	Tue, 15 Oct 2024 08:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728981057; cv=none; b=dhNdAe44rwUSykxhcjClw0Lkr8KOEe6toUJ9qAqwFx823d2k9DqYx1WbmhB+Dmcsj3uowXH7XkLrifO5CgVv5rNQoaODMzP2Bjwd9oFEh2CA2j532DUbRSuTkQu3dVyQJh/SygNjHQ0Osy/cnMfq1xEuhWhUuo6TVLoOLpLacI8=
+	t=1728981115; cv=none; b=cnshZbkf73MgnhmA2qO3s7pGuQGsqcsRxfe3XE4xpo6sodmCC2rCy/ILGmZmCLl6dkyEPNS2yFaDLPjYaHSojgbQsh5kC4xuox/ceE1huU4h1maAR1TT9tYWzLPwqEi/ujHxX8XQAQQ+rQw+jDDObggzLf5DgAQJvAvmh/4eknI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728981057; c=relaxed/simple;
-	bh=NZogJTqwE3+iAzauO0rol1tMx6AnCvQkjO6kq9LSwbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YgiCIMcJTryzWehFnfsgvj2rodupcrQytlGBoXEHi0yOkwO39kgCqCAu8bJxpc5enDHSfo3gkpOg37TKS9jPpXo8AElh3iHNjouZzEnLL+s8YeYV2UMtv9qeiT0+qfFbGP0/zFW8swXps01K41UB/hkn9n65bfwqOvBY4ZT2ltw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C5Pr17Sh; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F8PZcA024028;
-	Tue, 15 Oct 2024 08:30:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=IE4Ofqj1wFLXj4ZSqKW5+xLXr/77Os
-	ziB9/RuCpA9XA=; b=C5Pr17Shb56/6mLJ3iERofYB//d0rtG9UucRGlloqJiyr8
-	fLy0oxFKu/4YNhPtUGWIvvUngrKaWT+yd/cUZW1A1Kjp/oH20AE+GQxXD0OHhh9Y
-	M0pO2oIT8mJ8A0nrjCv+WygqZzFZF2CMvU1VApc3qWOIMYxiIf5SRogljPZdWFFC
-	UAelL3AqHo+CtkTiuVH3hy1OCXAU32iU4AmN1WqRwxqbE5QWX/0Fc2TSmfqiW/jb
-	aHbCEIbYnEW9kWgdDuFJNiUfOSCsMSbBDsJJAqqxPia1Ut8gaMKWn3ELJ9mz6nxV
-	sj5nyB1QKlapcILSEDO6YgjCCYzTZ22Ol8lKlfbQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429mv4r0wj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 08:30:48 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49F8Ul8m003486;
-	Tue, 15 Oct 2024 08:30:47 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429mv4r0we-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 08:30:47 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7bpIT027464;
-	Tue, 15 Oct 2024 08:30:46 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txjtyy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 08:30:46 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49F8UgQ754133178
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 08:30:42 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4DFE720043;
-	Tue, 15 Oct 2024 08:30:42 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0C69A20040;
-	Tue, 15 Oct 2024 08:30:42 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 15 Oct 2024 08:30:41 +0000 (GMT)
-Date: Tue, 15 Oct 2024 10:30:40 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
-Message-ID: <20241015083040.7641-C-hca@linux.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-2-david@redhat.com>
- <20241014182054.10447-D-hca@linux.ibm.com>
- <f93b2c89-821a-4da1-8953-73ccd129a074@redhat.com>
+	s=arc-20240116; t=1728981115; c=relaxed/simple;
+	bh=czGm3bsjbOginSrzN3yTJzEs4FxqKQu7b+ZKVUrchuk=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WFxyqE5duKaTvkY8xqIsw7EapGkwQ5Fzpn4fZZKzvF4Z4sr2zjfWBNYRJrkRhiMG8+aiu7Mt1FgbnTdQjoZ+nze3/Df2r2OPCqrG12Btjz0xloGZIBHZKEKN44t1aAezkBSRxzYZW1gsU27ePusDJSzszuJXMRTDURoVA4dmzMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTK4HbXA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECED0C4CEC7;
+	Tue, 15 Oct 2024 08:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728981115;
+	bh=czGm3bsjbOginSrzN3yTJzEs4FxqKQu7b+ZKVUrchuk=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=gTK4HbXA/7vb70s7Zutj2rEn64AKAmOMgyYLGQCfqs6FhyT0Y5XbcUhiQQVcs1W1g
+	 MPDBUKlqFBEF5qGtFJbxpO7Egxsuh9uoFRk2cpPAjNf45HUyREVoKIMxh0PlXT0lw3
+	 O39L+x3JdHwQUduLSL/3j8gSy4CKfq3Jiz3icOzDlJ1f5fmziEeX1ctUTrC+jIsYGl
+	 tJz7mibI42FYaelzjPuvVtyNCpuHkhkD5RtsbMyXzIlKX03jvI5Xs0xdc3SWGMt5GF
+	 pohvpF43mlH+2yLnA0Zk4ChseNxCoMbO4s7GmccVe27g3ULtGh0oVsogkZJCHCD/a1
+	 wMj4zhVo7vUkg==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Xu Liang <lxu@maxlinear.com>, Christian Marangi <ansuelsmth@gmail.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Robert Marko <robimarko@gmail.com>, 
+ Russell King <rmk+kernel@armlinux.org.uk>, 
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>
+In-Reply-To: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
+References: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
+Subject: Re: (subset) [PATCH net-next v2 1/5] dt-bindings: leds: add
+ 'active-high' property
+Message-Id: <172898111066.383402.12632073984288018090.b4-ty@kernel.org>
+Date: Tue, 15 Oct 2024 09:31:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f93b2c89-821a-4da1-8953-73ccd129a074@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -AyqpN-uN4c-bHJlXc5K2WqcxF25sGU_
-X-Proofpoint-ORIG-GUID: FOpmIxPaiaZwA4qPJKRUNqvsir83gI5C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- mlxscore=0 suspectscore=0 phishscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 bulkscore=0 malwarescore=0 mlxlogscore=515
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150056
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Mon, Oct 14, 2024 at 09:26:03PM +0200, David Hildenbrand wrote:
-> On 14.10.24 20:20, Heiko Carstens wrote:
-> > Looks like this could work. But the comment in smp.c above
-> > dump_available() needs to be updated.
+On Thu, 10 Oct 2024 13:53:36 +0100, Daniel Golle wrote:
+> Other than described in commit c94d1783136e ("dt-bindings: net: phy:
+> Make LED active-low property common") the absence of the 'active-low'
+> property means not to touch the polarity settings which are inherited
+> from reset defaults, the bootloader or bootstrap configuration. Hence,
+> in order to override a LED pin being active-high in case of the default,
+> bootloader or bootstrap setting being active-low an additional property
+> 'active-high' is required. Document that property and make it mutually
+> exclusive to the existing 'active-low' property.
 > 
-> A right, I remember that there was some outdated documentation.
-> 
-> > 
-> > Are you willing to do that, or should I provide an addon patch?
-> > 
-> 
-> I can squash the following:
-> 
-> diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
-> index 4df56fdb2488..a4f538876462 100644
-> --- a/arch/s390/kernel/smp.c
-> +++ b/arch/s390/kernel/smp.c
-> @@ -587,16 +587,16 @@ int smp_store_status(int cpu)
->   *    with sigp stop-and-store-status. The firmware or the boot-loader
->   *    stored the registers of the boot CPU in the absolute lowcore in the
->   *    memory of the old system.
-> - * 3) kdump and the old kernel did not store the CPU state,
-> - *    or stand-alone kdump for DASD
-> - *    condition: OLDMEM_BASE != NULL && !is_kdump_kernel()
-> + * 3) kdump or stand-alone kdump for DASD
-> + *    condition: OLDMEM_BASE != NULL && !is_ipl_type_dump() == false
->   *    The state for all CPUs except the boot CPU needs to be collected
->   *    with sigp stop-and-store-status. The kexec code or the boot-loader
->   *    stored the registers of the boot CPU in the memory of the old system.
-> - * 4) kdump and the old kernel stored the CPU state
-> - *    condition: OLDMEM_BASE != NULL && is_kdump_kernel()
-> - *    This case does not exist for s390 anymore, setup_arch explicitly
-> - *    deactivates the elfcorehdr= kernel parameter
-> + *
-> + * Note that the old Kdump mode where the old kernel stored the CPU state
+> [...]
 
-To be consistent with the rest of the comment, please write kdump in
-all lower case characters, please.
+Applied, thanks!
 
-> + * does no longer exist: setup_arch explicitly deactivates the elfcorehdr=
-> + * kernel parameter. The is_kudmp_kernel() implementation on s390 is independent
+[1/5] dt-bindings: leds: add 'active-high' property
+      commit: fcaade450ea25e0162ee4a28ac0c7b911fa25674
 
-Typo: kudmp.
+--
+Lee Jones [李琼斯]
 
-> Does that sound reasonable? I'm not so sure about the "2) stand-alone kdump for
-> SCSI/NVMe (zfcp/nvme dump with swapped memory)": is that really "kdump" ?
-
-Yes, it is some sort of kdump, even though a bit odd. But the comment
-as it is doesn't need to be changed. Only at the very top, please also
-change: "There are four cases" into "There are three cases".
-
-Then it all looks good. Thanks a lot!
 
