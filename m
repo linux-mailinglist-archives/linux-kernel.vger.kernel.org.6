@@ -1,109 +1,164 @@
-Return-Path: <linux-kernel+bounces-365309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4745799E040
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:04:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2382399E047
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4AD2817B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:04:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07821F21EB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A72D1C9EDF;
-	Tue, 15 Oct 2024 08:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5692A1B85E3;
+	Tue, 15 Oct 2024 08:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hnQu98/6"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="LejBiwmz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gxZKk+7d"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375E21C57A5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E68417E016;
+	Tue, 15 Oct 2024 08:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728979464; cv=none; b=X9jfDI22PqJx4SFmfkfL6/PlK9HMfHoeDG6lmiJaY9JROHW8cDKNfMQOlPIGwWIrOmSlUxxAohARXu5w3bOv8h0KhlkmbR9Yv20wTMRsO7FCnYmyb1qpm5U0ugP8VAXuUPpQ9yovRM7/nSPHz4XdFHzW0c3OFDRLEETK4fGZJwc=
+	t=1728979511; cv=none; b=HU26WbQAkdAkBYiln+CIEN7siTdQdPVeewKHpjUNHS45wbASoDpdw5eaTjc3zXnzCRjauSlsOj/l6IMqJlkvtQVXRhtQImsGxmRm46HHC9AhpNbCP8dSA5qqXDiShogHlc9gEoitW+D6uTix0kPIeMl+rTr696ZzB74oPFq5s8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728979464; c=relaxed/simple;
-	bh=jjdIGCXHtqrrmc4Zac1h6TFtk7ByfeGFj5BklO3jkIU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fSISC6D+oolz6LBOB04Yeycn9OzM+QihIwXkVRDeeFk0Si54L8qZ5Ts9RcuKLSczTW5mi2WvCRQPtyElDL2vKLCsH8RHWzrZVxE8MCEGNfe5MP5FnBarjrjUSTbGbQXeMQ8p4KhtSrCvxlAWtxfj9XBLZN+kJz9HIkK17Ph+olU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hnQu98/6; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so9651264a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728979461; x=1729584261; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jjdIGCXHtqrrmc4Zac1h6TFtk7ByfeGFj5BklO3jkIU=;
-        b=hnQu98/6K8SfIZ+dZFCoVE4e3xhktR+KfmU5DsMYkyCurs6E//JqSiMA2A789KPzpe
-         BG7ka08xP3QYQ4vgIhQNXCzJr+93S2xq9YTll6CfXlktnSbaKnQNn2pFS+nWPyk6k3hG
-         Em65NimtywSQ34dbgDVQ/hYVA8K7ugXXPtSboyZyt/qEOQJposkJO5qAAq+4ADq0t7aD
-         38EXzUyZEW+4D+SlhNZ5RrnaUzx9JZfl2sV2sHwRK469n8kHWM5TNydQi/z47zkysnI9
-         jBea0/FDWp/BL0wVA1b+4b7Yl3pE14YOBqUFiCUKOgYJrjZ7EWJPvaexBhq+diT69fKt
-         7/lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728979461; x=1729584261;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jjdIGCXHtqrrmc4Zac1h6TFtk7ByfeGFj5BklO3jkIU=;
-        b=wIbEfNApfZv/NEGgqX7Mr5nJSJm2WdfzXT9W3Z8nyRg+K8upy5J71OKvJrlDqxqCAW
-         /+b+n2kOdZ+n+pQPlbKQr0vbyE9LW3kv1s1vbFMVv7qLmRxey/nKHMmevBVDAyYQWcYA
-         GbYWBwfmzLMrRcWlXN0kKC7gso6QJfIOzX7470zy3kHduyq50Y/9cLqsUr18e0FULQKW
-         Fzo/isqAElo6KUbAdFITCJDaDuq6RRLIKql0X25Pz/dSrQDcUkR+cQhK8gUY89pxVZRT
-         Hg8QjhH9fneuRp0schKg8j87WEjtGj9UwX6RoLGVr2KUUAOVzxhzDIrGLLORr5gQQ5CN
-         +htQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV68KoSLpGcqOSWBq15oUJi6UZsrTUW2tmxMEM41Ty/OqqyYKnA9rGmZIaEUlvrMUFuKBoN3tet9d/vEJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGYoyWDeY+zQ/GZl+pnyKOjV7r5oWGObq/7PB3Pfr952pHO8m6
-	e9/gXGW4cD/f24bkJjVizX3Cu9y+nwgZkwo1E+RyTrr1bl+JvUWT39MNXKcaEjBEoSFv6ghaofH
-	4WsUUi+74qrNvoMdlWSHez/GjsnpnBaEASZwG
-X-Google-Smtp-Source: AGHT+IFVLMYXDjozz3EMts1UX9Vb6aOFr9R871a4tPL9AtIGRY0LFuArOfvBuHL22PThUNhjYOA3RaMjZm6fTzoit6o=
-X-Received: by 2002:a05:6402:1ed0:b0:5c9:87a3:628f with SMTP id
- 4fb4d7f45d1cf-5c987a3637dmr2709862a12.10.1728979461246; Tue, 15 Oct 2024
- 01:04:21 -0700 (PDT)
+	s=arc-20240116; t=1728979511; c=relaxed/simple;
+	bh=x/TeRj6cEpOdaGdpxqJpNOT4NsSJ7ImzlvyFM3qEBCg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=G8eYHkmcyRUsl/A9u2eYQ2L7lUzg7Lj9CwkdFnwJUtLy6NgicWMHEekMFiJzrQk/14ca9UMdo1DVhQ5N45BntpGriMEeUGqo+jm9WHavhPh4/08TgHxYzefVJ7YPbrQUayNIJ3bLvjUhKSh5kQxcfjpsRLxf89SmNlnts/Zv2zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=LejBiwmz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gxZKk+7d; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id A4EDA138060C;
+	Tue, 15 Oct 2024 04:05:07 -0400 (EDT)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-08.internal (MEProxy); Tue, 15 Oct 2024 04:05:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1728979507;
+	 x=1729065907; bh=2tg0AJwlbHilJUx1GHU+g8sA1HCyQhKZDaJQ8Aaub10=; b=
+	LejBiwmzhvrWszfCK+0j5DznXwrfltvaYZzRuyBUq9JzOA1sngjyN/mhsW7Vbu5n
+	T2zExFV6ngL4yNTxHzR2Lqe+Tk8HKSTDMkZOIcGmxWnqDer9gG8KevGtv5EEw5OC
+	enWc70FxPifjThN59HZ7MSFCkEebM0OYSD608PCb6ubQnPJ5Mkvvw7ufXZhKNv1R
+	NwRgP1mREXphRxmWXCupw7x4AdbNR38QDR73ui7AnmNsIOTl1GHHd3XW8fpXTZf/
+	hS/6WQcJ4JbSY8e7ZOb91e3gSSJ+7HZiE0T9ytszP31B0qtBzt4vdz0aaJA8ok5j
+	eyh30hAwFuPhFfiICjKqkg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728979507; x=
+	1729065907; bh=2tg0AJwlbHilJUx1GHU+g8sA1HCyQhKZDaJQ8Aaub10=; b=g
+	xZKk+7dc2OPTmUSLNH/aoB9RjLxWOH+lWW4YU/2ohFgTNm8c0lECO3AM0KclLH/a
+	qFpqlXqi5xnysXMsZToSCD34L6bOhBtidW9gBDNVRFaOL1NZQDeugtorZSQdXCT4
+	ULK4RDzlt0QXBI79WFvh35xsJdOU41rPRTFJOHPo7HrzSlPs7BpCqqKbMF2LvkZ8
+	zfCXsdcU+5/qG3wT0kbrP1JewODoOoQGf0dTQJanGZ0RUeP9YKBD8reQPBQ3eQuf
+	eAERcg5Xm57IAvZKMaqlvhBKsa4/ZbTlwdwCdsnOTzMjH+WErDHegIMjCQzY73al
+	rJF6XFg+QfM4EF6LCgiRQ==
+X-ME-Sender: <xms:MyIOZ7uUg5fISSUqy7lPRbBFuFpfmONn0oRxoq9ljT5Yq5DGG68IYg>
+    <xme:MyIOZ8dxAEnxU7tkc_N2NrQNj2kXEzaj4QXnryAx07s8ZzUN5ozo1-LVufkIiSy5s
+    h4pqQl6AIhKWG6SAVc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegiedguddvlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfnuhhkvgculfhonhgvshdfuceolhhukhgvsehljhhonhgvshdrug
+    gvvheqnecuggftrfgrthhtvghrnheptdehuefhhedvhffgvdeludfhhfdufefggfdvhffh
+    teejjefhudduhfefjeeghfdunecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorh
+    hgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhu
+    khgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtoheprghlvgigrghnuggvrhdruggvuhgthhgvrhesrghmugdrtgho
+    mhdprhgtphhtthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpd
+    hrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehs
+    uhhpvghrmhdusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlse
+    hlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:MyIOZ-yTPejwj26-tsNUkBhERX80fpimUiqlXDEUoiO3u139qvxrvw>
+    <xmx:MyIOZ6NvkX8MQGnozecvZgrCH0Z1mFSDnpZ_DhLFDaJ11id81c-Arw>
+    <xmx:MyIOZ7--wHsw3i27Cb4g4t3BfrvyN7NcDoEbSmXLu7ID4QTzgT0ddw>
+    <xmx:MyIOZ6Vta9cgfxnO4FqS2LB8ekD1BIrcnrB4OgZOcE7OYu1-dFLPwA>
+    <xmx:MyIOZ2k_yqJI8rAvoUdJoiP1uVkXyWjSxkgWfHO7PFmITVcRDCI0XSes>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 5EEC13360077; Tue, 15 Oct 2024 04:05:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014153808.51894-4-ignat@cloudflare.com> <20241014212956.98604-1-kuniyu@amazon.com>
-In-Reply-To: <20241014212956.98604-1-kuniyu@amazon.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 15 Oct 2024 10:04:10 +0200
-Message-ID: <CANn89iL7tdEr6_gpQCsLncNW4d2NonTVR0pTgxY4-O556ZQiJg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 3/9] Bluetooth: RFCOMM: avoid leaving dangling
- sk pointer in rfcomm_sock_alloc()
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: ignat@cloudflare.com, alex.aring@gmail.com, alibuda@linux.alibaba.com, 
-	davem@davemloft.net, dsahern@kernel.org, johan.hedberg@gmail.com, 
-	kernel-team@cloudflare.com, kuba@kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wpan@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	miquel.raynal@bootlin.com, mkl@pengutronix.de, netdev@vger.kernel.org, 
-	pabeni@redhat.com, socketcan@hartkopp.net, stefan@datenfreihafen.org, 
-	willemdebruijn.kernel@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Tue, 15 Oct 2024 10:04:47 +0200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Mario Limonciello" <superm1@kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>
+Cc: "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ "open list" <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
+ "Mario Limonciello" <mario.limonciello@amd.com>,
+ "Alex Deucher" <alexander.deucher@amd.com>
+Message-Id: <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
+In-Reply-To: <20241014152502.1477809-1-superm1@kernel.org>
+References: <20241014152502.1477809-1-superm1@kernel.org>
+Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot VGA device
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 11:30=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.c=
-om> wrote:
+On Mon, 14 Oct 2024, at 5:25 PM, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
 >
-> From: Ignat Korchagin <ignat@cloudflare.com>
-> Date: Mon, 14 Oct 2024 16:38:02 +0100
-> > bt_sock_alloc() attaches allocated sk object to the provided sock objec=
-t.
-> > If rfcomm_dlc_alloc() fails, we release the sk object, but leave the
-> > dangling pointer in the sock object, which may cause use-after-free.
-> >
-> > Fix this by swapping calls to bt_sock_alloc() and rfcomm_dlc_alloc().
-> >
-> > Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display device.
 >
-> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> ```
+> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeForce 
+> RTX 4070 Max-Q / Mobile] (rev a1)
+> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI] 
+> Strix [Radeon 880M / 890M] (rev c1)
+> ```
+>
+> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU as the
+> boot VGA device, but really the eDP is connected to the AMD PCI display
+> device.
+>
+> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA device.
+>
+> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+> Reported-by: Luke D. Jones <luke@ljones.dev>
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/pci/vgaarb.c | 7 -------
+>  1 file changed, 7 deletions(-)
+>
+> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+> index 78748e8d2dba..05ac2b672d4b 100644
+> --- a/drivers/pci/vgaarb.c
+> +++ b/drivers/pci/vgaarb.c
+> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_device *vgadev)
+>  		return true;
+>  	}
+> 
+> -	/*
+> -	 * Vgadev has neither IO nor MEM enabled.  If we haven't found any
+> -	 * other VGA devices, it is the best candidate so far.
+> -	 */
+> -	if (!boot_vga)
+> -		return true;
+> -
+>  	return false;
+>  }
+> 
+> -- 
+> 2.43.0
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Hi Mario,
+
+I can verify that this does leave the `boot_vga` attribute set as 0 for the NVIDIA device.
+
+Tested-by: Luke D. Jones <luke@ljones.dev>
 
