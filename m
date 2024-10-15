@@ -1,209 +1,112 @@
-Return-Path: <linux-kernel+bounces-365504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC10A99E35E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:05:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7D499E365
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACD62830F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:05:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A30F2B21B12
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D001E32AB;
-	Tue, 15 Oct 2024 10:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V6lwJAi9"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86181E2031;
+	Tue, 15 Oct 2024 10:07:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903D9166F34
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E006B155CB0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728986745; cv=none; b=ikI984eLxbzKkqOrjCFdnHaDsknPFFtcnMNZM0ppNl0NVWPh/ou9T3pDFbANZUcCP90E1kDO8H/OoFgbNp9v2cln5ze+JHDCQSWEspRXngZGE82WTPw+BfXUOXyYxfsiEWOHmpikXd18ClgZ02wfJWEwRy3Mc4zWocVWyDj8A14=
+	t=1728986846; cv=none; b=qbAVUtjg7MV2Rj/He7i1RJn79byHenNqyyQptPzIrpUQXFRubAM0YUxkuyr2iBIPrelXQ/vo/4FHoWz4V2V6cJqDPLOx2Qb/BDehLmG0Q6DPZAbXYwMTnNvDg0Xo6arNDbRnaiqh5fehPFcrp2dftgpFUOMBMwbjOUruLRwQFfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728986745; c=relaxed/simple;
-	bh=BPsnlM4jiS7NsX7J2NdZKdPrFoWf/4f2HMA3nR+Yv3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J+tjGN/lMyvZK95ai2KOuEOIjlXOqxeKpljF4qUpDyL43hFLgZ7+lAdFqJ4LsOF3l1CStmnio64C8GWs3jbV8v9oSjlaTDVI9AmVcG4K9LpvzcUROoPiU4hZZKv3gEBl+S+c8Qq7jCibwPbIOS4wKl3UDAVmrLeg0PDBVrO15o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V6lwJAi9; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e31af47681so2144610a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728986743; x=1729591543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Qrkg/ZRV10IdU56/7mYKjiH6Upw8Qx1eT1zUM9r+QU=;
-        b=V6lwJAi9ATBprSXBlwBEAF/EGPX0fGKWZ5th8Gob+kRbtYG9mJs2uKI9PkK7Y0NN+H
-         mUhOao3UYL2oE5vUuQFyLVjiUeGDpPeeEKqiSioPCd8IqttXBZtZSjFlFvbO7wZ+Oati
-         NxNyw+6EhjvGJGDLKIN35YUJ6mQXyqkkmFlNAcszDk7mFsg3mLDB0ACbWEtav9EFsVik
-         XxN5Su2yG0Rvi//ID9/qiV+AAqgCl2H9BTAP7b5NXKALPLLJfjUmg4dHl9szGAJUl9pw
-         N/PcITj00ryexU6JjyWFleZzQYpxfQvcsx/9PlBcG1PgcB+LfV4ieboFg9rkyBAylrZV
-         VStA==
+	s=arc-20240116; t=1728986846; c=relaxed/simple;
+	bh=BJtB8MWXsIQNS0vTJNxQDJbVaeSTry/iBJdz0mO6874=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AGN1pB6+GIZyd86mufDj5wZuCnLJDbqMUe+aeu9IHmfChDbW/urF2yx9j9OoEhpo42ogNkL1h82ZgcYbZziPQDpCY71wwf+WRewgMRhzMxFtZ+ARbYTDdxQcQL+RAI01pmzrFMztUdv+qIKUrYauyrJHo8T5WDy6gd0ai1Zjoto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3ae775193so38528795ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:07:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728986743; x=1729591543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Qrkg/ZRV10IdU56/7mYKjiH6Upw8Qx1eT1zUM9r+QU=;
-        b=l70Nc+wGXEsyikpkkcd9lnTCSCpSYH22RJ1e53zELEr2iVgzA/lx7MFrZcGnGd0TA2
-         59OIv2e7d6vpQ7cHcWILV6QMqAeBDgxbll6sOryS3j+8MG1jLTqiGlaT0ZJ/OjZ9lhKH
-         ncxOhyOSFYni+U5FaRlF3bP+oHnMEJH+YPE7cp1fRk0nQuhk7uRe4aAMnDCAPfno7zCc
-         9FIAWlWfGtubF3Lh/STtfLmJSkW3bdW1ZKKa3FWpULZGN8l3knKQAxfF+hcccOFX4y7x
-         cXbh5jzOTYEqt17hKgkokpkmc2gxb4TR9Hjba6Dr/2xygXcF5yEY4/iNuUnnBFU7NDnm
-         pr/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUsFIDK2cMtMF/lJJgHVFxJTvNwdXdsSeNcHjLjhX9tUb4wrbtxcXYG9qnnXvduHZlZ5+P9TERh0oq3FgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxixCY4AatKfXs0n04lMNY5ganZWEtlOaYVzMbYoWJxwgP/AXJr
-	j4Oc+FX2SP6cco1IELbFEa+lmrWpOHBrNmdrUaAaQfcNuYf5ytfOrf3OjoVu56zZdB+vpaL5nV9
-	byVdr3W+6rUtKyJ4vFDRqYM3EQgcA8xO4DGfG
-X-Google-Smtp-Source: AGHT+IHbXOGzJCKOgpup02dkaO5xVaIhqtf9TGZtn/M5v/vKmEv8ALqVeLPqkRz25CJYOQrboeLU0AvZT7KH0o5zi68=
-X-Received: by 2002:a17:90a:ee85:b0:2e2:e8fc:e0dd with SMTP id
- 98e67ed59e1d1-2e2f0dc33f8mr15829263a91.35.1728986742588; Tue, 15 Oct 2024
- 03:05:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728986844; x=1729591644;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HvLlDdzWlqELfwvc9RKRh3E/6y1R6ap4spML5744gV4=;
+        b=K8AP8fc6iI+lsUwi3m6dCqmvaf6q0dpzHsku8eLLRr/L0qSGc3cxjXbE6/9thWjtnO
+         Y7839ckqWHIwPv/hO/89qvjjzbHM0qI0tk1e4FwSG8d4WnVVNXbrr5erGRPo1gSgeSab
+         Xuy8rGmJq3jfIxvo/mSZ0GW3XieMdVbQMiNivLOmsresbIdN1vS4mI9mhkbjd5O6aZ8G
+         k17ZLHAtjEK8WGbX4r+cEJ93cL3k40SwxEddvkLrHswkKsRVUQ+VR9sZfF/TcWILz+PK
+         Vrp+HoSVMGY0IHXwKVph5XuJuExUvMIfXqOwS0s6HSE84ikZu2Uv+j9dl84ZWM88hm3w
+         Qraw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpPXYqmVnUbz+8tu+qcLYG5gR9XVNiKTPlr3/T4msNUuHcsqtc5itRdNwONtIxgo+QJx0XoVrAb/qOsqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLoIojn2fS0grWBOLHtBqjXSHVTLf5oZJgYzNplQLgdd1JHDdS
+	ff3mFgIT90Dexnzdh4ufXCDHfp8txl4Xj+5a6bFw2S2YpczuEcT54Ciue97poACTyRp2BtvYuEJ
+	BE+8SBrUXuP1U8Myh9MZ1gmMCbvc3UG6lUjgx2BPllvFJD7hZqKX6JFE=
+X-Google-Smtp-Source: AGHT+IFevwuuuwoQevOeV7O7PwoCtBDM6E8VUrattDKZ4QxsbBYhLe+yeMHezFwHW7trvTGH5wDgSv8tVeoGpTn8w2HdkBeBuJVq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67094369.050a0220.4cbc0.000d.GAE@google.com> <20241011120028.1e4ed71c@gandalf.local.home>
-In-Reply-To: <20241011120028.1e4ed71c@gandalf.local.home>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Tue, 15 Oct 2024 12:05:29 +0200
-Message-ID: <CANp29Y4KERQxwOwMCW5a4+YahhA8gWyJ=btE=OxnNgrF6puFgw@mail.gmail.com>
-Subject: Re: [syzbot] Monthly trace report (Oct 2024)
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: syzbot <syzbot+list3bf21e6ac0139f8d008d@syzkaller.appspotmail.com>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mhiramat@kernel.org, syzkaller-bugs@googlegroups.com, 
-	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, bpf@vger.kernel.org
+X-Received: by 2002:a05:6e02:1489:b0:3a3:af94:461f with SMTP id
+ e9e14a558f8ab-3a3bcd95e9emr92313395ab.1.1728986844074; Tue, 15 Oct 2024
+ 03:07:24 -0700 (PDT)
+Date: Tue, 15 Oct 2024 03:07:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670e3edc.050a0220.d9b66.014f.GAE@google.com>
+Subject: [syzbot] Monthly kernfs report (Oct 2024)
+From: syzbot <syzbot+list4a84ad01115222f5ebad@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Steven,
+Hello kernfs maintainers/developers,
 
-Thanks for the analysis!
+This is a 31-day syzbot report for the kernfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/kernfs
 
-On Fri, Oct 11, 2024 at 6:00=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Fri, 11 Oct 2024 08:25:29 -0700
-> syzbot <syzbot+list3bf21e6ac0139f8d008d@syzkaller.appspotmail.com> wrote:
->
-> > Hello trace maintainers/developers,
-> >
-> > This is a 31-day syzbot report for the trace subsystem.
-> > All related reports/information can be found at:
-> > https://syzkaller.appspot.com/upstream/s/trace
-> >
-> > During the period, 1 new issues were detected and 0 were fixed.
-> > In total, 10 issues are still open and 38 have been fixed so far.
-> >
-> > Some of the still happening issues:
-> >
-> > Ref Crashes Repro Title
-> > <1> 34      Yes   INFO: task hung in blk_trace_ioctl (4)
-> >                   https://syzkaller.appspot.com/bug?extid=3Ded812ed4614=
-71ab17a0c
->
-> If you check the maintainers file, blktrace.c has:
->
-> BLOCK LAYER
-> M:      Jens Axboe <axboe@kernel.dk>
-> L:      linux-block@vger.kernel.org
+During the period, 4 new issues were detected and 0 were fixed.
+In total, 21 issues are still open and 21 have been fixed so far.
 
-Judging by MAINTAINERS and ./scripts/get_maintainer.pl,
-kernel/trace/blktrace.c belongs to both "BLOCK LAYER" and "TRACING".
+Some of the still happening issues:
 
-$ ./scripts/get_maintainer.pl kernel/trace/blktrace.c
-< ... >
-linux-block@vger.kernel.org (open list:BLOCK LAYER)
-linux-kernel@vger.kernel.org (open list:TRACING)
+Ref  Crashes Repro Title
+<1>  264     Yes   WARNING in kernfs_remove_by_name_ns (3)
+                   https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
+<2>  183     No    possible deadlock in input_inject_event
+                   https://syzkaller.appspot.com/bug?extid=79c403850e6816dc39cf
+<3>  145     Yes   INFO: rcu detected stall in sys_openat (3)
+                   https://syzkaller.appspot.com/bug?extid=23d96fb466ad56cbb5e5
+<4>  92      Yes   WARNING in kernfs_get (5)
+                   https://syzkaller.appspot.com/bug?extid=2f44671e54488d20f0e6
+<5>  62      Yes   INFO: task hung in kernfs_dop_revalidate (4)
+                   https://syzkaller.appspot.com/bug?extid=da20d108162166514db6
+<6>  47      Yes   INFO: task hung in kernfs_add_one
+                   https://syzkaller.appspot.com/bug?extid=e4804edf2708e8b7d2a5
+<7>  44      Yes   INFO: task hung in fdget_pos
+                   https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
+<8>  13      Yes   INFO: task hung in kernfs_remove_by_name_ns (2)
+                   https://syzkaller.appspot.com/bug?extid=6d5664213a6db9a5a72c
+<9>  7       Yes   INFO: rcu detected stall in kernfs_fop_read_iter (4)
+                   https://syzkaller.appspot.com/bug?extid=c403e932e9c6662dd4f2
+<10> 4       No    WARNING in kernfs_new_node (3)
+                   https://syzkaller.appspot.com/bug?extid=306212936b13e520679d
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->
->
->
-> > <2> 32      Yes   WARNING in bpf_get_stack_raw_tp
-> >                   https://syzkaller.appspot.com/bug?extid=3Dce35de20ed6=
-652f60652
->
-> bpf_trace.c has:
->
-> M:      Alexei Starovoitov <ast@kernel.org>
-> M:      Daniel Borkmann <daniel@iogearbox.net>
-> M:      Andrii Nakryiko <andrii@kernel.org>
-> R:      Martin KaFai Lau <martin.lau@linux.dev>
-> R:      Eduard Zingerman <eddyz87@gmail.com>
-> R:      Song Liu <song@kernel.org>
-> R:      Yonghong Song <yonghong.song@linux.dev>
-> R:      John Fastabend <john.fastabend@gmail.com>
-> R:      KP Singh <kpsingh@kernel.org>
-> R:      Stanislav Fomichev <sdf@fomichev.me>
-> R:      Hao Luo <haoluo@google.com>
-> R:      Jiri Olsa <jolsa@kernel.org>
-> L:      bpf@vger.kernel.org
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-Same for kernel/trace/bpf_trace.c:
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-$ ./scripts/get_maintainer.pl kernel/trace/bpf_trace.c
-< ... >
-Matt Bobrowski <mattbobrowski@google.com> (maintainer:BPF [SECURITY &
-LSM] (Security Audit and Enforc...)
-Steven Rostedt <rostedt@goodmis.org> (maintainer:TRACING)
-
->
-> > <3> 13      Yes   WARNING in get_probe_ref
-> >                   https://syzkaller.appspot.com/bug?extid=3D8672dcb9d10=
-011c0a160
-> > <4> 6       Yes   INFO: task hung in blk_trace_remove (2)
-> >                   https://syzkaller.appspot.com/bug?extid=3D2373f6be3e6=
-de4f92562
-> > <5> 4       Yes   possible deadlock in __mod_timer (4)
-> >                   https://syzkaller.appspot.com/bug?extid=3D83a876aef81=
-c9a485ae8
->
-> None of these look like they are tracing infrastructure related.
-
-Like get_maintainer.pl, syzbot relies on the MAINTAINERS file to
-attribute bugs to the individual kernel subsystems. If several ones
-are suitable, the bug is assigned several labels at once. It's now
-actually the case for all open "trace" findings:
-
-https://syzkaller.appspot.com/upstream/s/trace
-
-(FWIW it's also possible to manually overwrite these labels and remove
-specific bugs from the monthly reports).
-
-I could make syzbot set "trace" only if there's no other good
-candidate, but I wonder if that could hide the findings in the trace
-infrastructure that manifested themselves in some specific traced
-subsystem.
-
---=20
-Aleksandr
-
->
-> -- Steve
->
->
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > To disable reminders for individual bugs, reply with the following comm=
-and:
-> > #syz set <Ref> no-reminders
-> >
-> > To change bug's subsystems, reply with:
-> > #syz set <Ref> subsystems: new-subsystem
-> >
-> > You may send multiple commands in a single email message.
->
+You may send multiple commands in a single email message.
 
