@@ -1,218 +1,85 @@
-Return-Path: <linux-kernel+bounces-365277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C3F99DFC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:54:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0ACC99DFC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA73C1F2389E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:54:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A074B23127
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EE31AB526;
-	Tue, 15 Oct 2024 07:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gJ5y9blY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m6QrOVvc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gJ5y9blY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m6QrOVvc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F2A1B85E3;
+	Tue, 15 Oct 2024 07:54:25 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4774D18A6D9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0B91AAE2C;
+	Tue, 15 Oct 2024 07:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978862; cv=none; b=ON8bZkGWrVhCLTAd6YO9KNjQxBWljzCa7z3VdYO8dPofJZtDV93bPXc8AuHmJhOU3hgGjVy6BiCGwBNstCYIb5C1FxntyrmTxpCD0mKBjiF+DFMs27O54Un3L4ROJTGNx/tDyhSGKvvSMJS32Qfxufr0AILK7GZu4wlznmjlmvo=
+	t=1728978864; cv=none; b=YlIGaXKm41q8j8oU9yvXkaHpCNgPdM86iiHU+37lxDnkk4EJWeYXhv0CtfURoep+miG0ZWdnfFrsvkPTeRmlQ/7K1QCsdkB6O0W6qgbII+AUAI1pbp/7zs398ZCXM8FRYDANug+kTd9mLr4/6BtHlXLJV9Bh6wc+hiUMVmWF+6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978862; c=relaxed/simple;
-	bh=7WvKUna3Uu5pDPrgRqAVIF3CUvJaKxBjb1breZDY7js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kMeWV4bSWh+YbJMfdABjAbWbF9YonmUbJ+PavlKJ0/BStZlj30NYmFq6nSlHtN2Rkm9P6R8Y5dfGMho1fIfwwYzvFgZRTWOLqJ+r7PwdAJZBe/0NiWFnsOm2L/3nHql4rK8+Qo81zO8hVSghz9Du6h3hTdWP+q/J/TqeVMO4Tco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gJ5y9blY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m6QrOVvc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gJ5y9blY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m6QrOVvc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4AC251F7E0;
-	Tue, 15 Oct 2024 07:54:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728978856; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5zUg67JN1WX7ialY+lGaQwXwV1MJY7ptXVYTPq+CbKs=;
-	b=gJ5y9blY4KHsCLKuL0Y7yON2t73vpkvNCmif5CgijW3SxkmlZa6l9tauXulfZNQim0e4pd
-	kuGhpYThLQXnymBBY+i8Pv8UJJPZHBQDQyrb9ecz4MGp4tpabtOX4A+AehDKZM7vudePMS
-	CaEA4aFs2WtwJ03EVAiLwstu33zbGsw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728978856;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5zUg67JN1WX7ialY+lGaQwXwV1MJY7ptXVYTPq+CbKs=;
-	b=m6QrOVvcEZ93h4bSDykrfOKWXblb6aIcof/0NTl8FpAx+14qjF0b0R/8aUUHBeiLYJ4lKP
-	Mxqlm2odq4wsbLAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728978856; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5zUg67JN1WX7ialY+lGaQwXwV1MJY7ptXVYTPq+CbKs=;
-	b=gJ5y9blY4KHsCLKuL0Y7yON2t73vpkvNCmif5CgijW3SxkmlZa6l9tauXulfZNQim0e4pd
-	kuGhpYThLQXnymBBY+i8Pv8UJJPZHBQDQyrb9ecz4MGp4tpabtOX4A+AehDKZM7vudePMS
-	CaEA4aFs2WtwJ03EVAiLwstu33zbGsw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728978856;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5zUg67JN1WX7ialY+lGaQwXwV1MJY7ptXVYTPq+CbKs=;
-	b=m6QrOVvcEZ93h4bSDykrfOKWXblb6aIcof/0NTl8FpAx+14qjF0b0R/8aUUHBeiLYJ4lKP
-	Mxqlm2odq4wsbLAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 34F6413A53;
-	Tue, 15 Oct 2024 07:54:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x+AxDKgfDmebBAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 15 Oct 2024 07:54:16 +0000
-Message-ID: <163f4e41-fa6b-4b79-bad4-62daf9ebbb76@suse.cz>
-Date: Tue, 15 Oct 2024 09:54:15 +0200
+	s=arc-20240116; t=1728978864; c=relaxed/simple;
+	bh=81PWpKBiCuQR9qayZ+gc7K8ZHTHGC6P8ZEbv2PsYCz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NynmYG+o+qeiOISZj+rFD13ihl1zngaSQxm+JSFT0ix7LJ+SWC87OfRM4879w77Lji/LSxsreRV7pRVakFbFdzkLsObfP8p0FdW22msjLy9MS9IOyGyK/mf5jlBsGHSS19NFFvyOAaYTZfBTmN2zWuL+0Mkf10+Ckik3moADrJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D4B5E227AA8; Tue, 15 Oct 2024 09:54:18 +0200 (CEST)
+Date: Tue, 15 Oct 2024 09:54:18 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Hamza Mahfooz <someguy@effective-light.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
+ overlapping mappings aren't supported"
+Message-ID: <20241015075418.GA25487@lst.de>
+References: <ZwxzdWmYcBK27mUs@fedora> <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de> <20241014074151.GA22419@lst.de> <ZwzPDU5Lgt6MbpYt@fedora> <7411ae1d-5e36-46da-99cf-c485ebdb31bc@arm.com> <20241015045413.GA18058@lst.de> <Zw4camcCvclL4Q_6@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add myself as memory mapping/VMA reviewer
-To: Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20241014-maintainers-mmap-reviewer-v1-1-50dce0514752@google.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241014-maintainers-mmap-reviewer-v1-1-50dce0514752@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.993];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw4camcCvclL4Q_6@fedora>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 10/14/24 22:50, Jann Horn wrote:
-> Add myself as a reviewer for memory mapping / VMA code.
-> I will probably only reply to patches sporadically, but hopefully this will
-> help me keep up with changes that look interesting security-wise.
-
-Great, security-related feedback is always better to receive earlier than
-later :)
-
-> Signed-off-by: Jann Horn <jannh@google.com>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-Thanks,
-Vlastimil
-
-> ---
-> (as discussed with Lorenzo)
-> ---
->  MAINTAINERS | 2 ++
->  1 file changed, 2 insertions(+)
+On Tue, Oct 15, 2024 at 03:40:26PM +0800, Ming Lei wrote:
+> > Yes, active_cacheline_insert only complains for FROM_DEVICE or
+> > BIDIRECTIONAL mappings.  I can't see how raid 1 would trigger that
+> > given that it only reads from one leg at a time.
+> > 
+> > Ming, can you look a bit more into what is happening here?
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 659aca7cfad3..6978444f81d5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14918,6 +14918,7 @@ M:	Andrew Morton <akpm@linux-foundation.org>
->  M:	Liam R. Howlett <Liam.Howlett@oracle.com>
->  M:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->  R:	Vlastimil Babka <vbabka@suse.cz>
-> +R:	Jann Horn <jannh@google.com>
->  L:	linux-mm@kvack.org
->  S:	Maintained
->  W:	http://www.linux-mm.org
-> @@ -24733,6 +24734,7 @@ M:	Andrew Morton <akpm@linux-foundation.org>
->  M:	Liam R. Howlett <Liam.Howlett@oracle.com>
->  M:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->  R:	Vlastimil Babka <vbabka@suse.cz>
-> +R:	Jann Horn <jannh@google.com>
->  L:	linux-mm@kvack.org
->  S:	Maintained
->  W:	https://www.linux-mm.org
-> 
-> ---
-> base-commit: d4e7ab0ed929645bee32538532039d3d451efb00
-> change-id: 20241014-maintainers-mmap-reviewer-82a031ff2425
+> All should be READ IO which is FROM_DEVICE, please see my reply:
 
+Yes, reads translate to DMA_FROM_DEVICE.
+
+> https://lore.kernel.org/linux-block/Zw3MZrK_l7DuFfFd@fedora/
+> 
+> And the raid1 warning is actually from raid1_sync_request().
+
+In that case the warnings are perfectly valid because the I/O patterns
+will create data corruption on non-coherent architectures.  For direct
+I/O from userspace the kernel can't prevent it, but for raid1 we should
+be able to do something better.  As raid1_sync_request is a convoluted
+and undocumented mess I don't have a straigh shot answer to what it is
+doing (wrong) and how to fix it unfortunately.
+
+> 
+> 
+> Thanks,
+> Ming
+---end quoted text---
 
