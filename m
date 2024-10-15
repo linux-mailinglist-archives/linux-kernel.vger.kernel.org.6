@@ -1,50 +1,81 @@
-Return-Path: <linux-kernel+bounces-365695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C784999E647
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:40:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA9899E653
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7A31F21418
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:40:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B41289542
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037631F7088;
-	Tue, 15 Oct 2024 11:39:28 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1781F12E4;
-	Tue, 15 Oct 2024 11:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDBA1EC000;
+	Tue, 15 Oct 2024 11:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KsNdsbRK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914811E9078;
+	Tue, 15 Oct 2024 11:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728992367; cv=none; b=Nv7hQWYtCALyfB84jajHugKIb5Yp4TRNLy5ABgR2a/+2jcmOxdUPF4L4AWcfHsJiEngPH2fbbvGCA8PNbxmC+Ozvs7Nw+RHgorYNveoe7vm43ZJCbUW2RNRIhA86GobPD3GedONO85sBGuhjXiadUqmHo29CSpnpZSAOdTkOQNY=
+	t=1728992388; cv=none; b=qQvFJQZSYGedJQld6tqQ5ffj8gnyPJXgmbSwKSsN1Q6dPys+wPX/OJXaIZkljwFCLeTHtijNCz05lg+JPVqTRyfVLWvLyua/pxyhftV9U3n6rzXkq+ZAmiXM1bXBmdqK1fInAirNQpAdyyRyAMQjXqoLVQYCYaxRFUA3+vX1zAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728992367; c=relaxed/simple;
-	bh=rr0nWEYrqLlVaPbZ9c1h3jCsPjkNEijFpvF3AjTKWk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gaz3hhUTwnSlNxLsXOkAHzP6e5PFSyFI3jouAPJ1tOD5u1ubWRB8AwPmdim7f1BkYLeGVfGbl0ikOatDh7yXlcJiLNlDMVmwjr6hyqXwTwBy/fpor7ACdjbTYZyeD7pzSx8Sf744rIBjKol+Z5pIYhYOhhbAfSIzdh+lCKAk/ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Cx44hpVA5nAIAdAA--.42657S3;
-	Tue, 15 Oct 2024 19:39:21 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front2 (Coremail) with SMTP id qciowMCxbcdkVA5n6E0uAA--.9583S8;
-	Tue, 15 Oct 2024 19:39:21 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: loongarch@lists.linux.dev,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 6/6] objtool/LoongArch: Add support for goto table
-Date: Tue, 15 Oct 2024 19:39:15 +0800
-Message-ID: <20241015113915.12623-7-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20241015113915.12623-1-yangtiezhu@loongson.cn>
-References: <20241015113915.12623-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1728992388; c=relaxed/simple;
+	bh=gQqdXQ2J1PoTP9aWhFNa7muRxUtDQXAKCylURmoV1/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DVW8Kqu5NcgZolUG2y8FOEG57/r9rH/qphpnP6zrzHVkJHVBLzeUzpwo4AIA1NRkix1aKRLB759ahf2y3o7B9hsexZygG1YJr+EgQk05jGqWRJdC3hf//geM4AFfkfKGT/jnZ0kvDSWIjx7XG9/UhXoup9Zn4pfjFOFEe5K/C/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KsNdsbRK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FAqBRU014260;
+	Tue, 15 Oct 2024 11:39:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=WnHdtTw/R44vIE6j//c43L8mfMVlmhKrmZe2QWXsa
+	Vg=; b=KsNdsbRKqbY8950uR/hXcpt3Pf2zg8pD1jZRkSO87NcjAlAKIYLn8SsQi
+	kw6RuEf5Oenrx4s/oH++JIeUfBqTBDoHtlYNfLJe2TcmgZ0VfoE2Iy9AYenJIREB
+	Qpz4PAdFrgjs8QekOXYHtsdCrM1y/pO2RyKxUDDU+Ph6uv/aR2lHIwbnnJNYUAZO
+	+25BiZht3UxtP04pzeZSJPEURgD2S4mHA26T/CudByicXljIBIHF7pIYQgW+VTP1
+	Z/KARHMC8/gan67Gla6M6tuj52bhoZzqy6ipcSh31H2Rot3yV41vvqDd5pdJHn9a
+	P0vAAFG5tIW+SGW7sUJRoblPBf9qg==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429q0gg7n5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 11:39:45 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FAsGEZ002473;
+	Tue, 15 Oct 2024 11:39:44 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emkjdp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 11:39:44 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FBdeqf39846348
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 11:39:40 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6C72F2004B;
+	Tue, 15 Oct 2024 11:39:40 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 43F8F20040;
+	Tue, 15 Oct 2024 11:39:40 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 15 Oct 2024 11:39:40 +0000 (GMT)
+From: Steffen Eiden <seiden@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+Subject: [PATCH v3 0/2] s390/uv: Provide host-key hashes in sysfs
+Date: Tue, 15 Oct 2024 13:39:38 +0200
+Message-ID: <20241015113940.3088249-1-seiden@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,64 +83,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qciowMCxbcdkVA5n6E0uAA--.9583S8
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KFWktry3tF13Ar4UZryfZrc_yoW8GFykpa
-	13C3s8Kw45XrWxKr13tay8uFy3Aa1xW3W2grWIkr93Zw43XF4rtF1SvF98tFWxWw4rtr4I
-	qrs5Kr15AF1UA3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
-	0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
-	xVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
-	xhVjvjDU0xZFpf9x07jz2NtUUUUU=
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Ksv0WLPP3A9_qspHcWv4WzR0kcsKiL2M
+X-Proofpoint-GUID: Ksv0WLPP3A9_qspHcWv4WzR0kcsKiL2M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 mlxlogscore=718
+ priorityscore=1501 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410150078
 
-If find_reloc_by_table_annotate() failed, it means that there
-is no relocation info of switch table address in the section
-".rela.discard.tablejump_annotate", then objtool can find the
-relocation against the nearest instruction before the jump
-instruction with find_reloc_by_dest_range(), which points to
-the goto table.
+List the installed host-keys in the sysfs if the machine supports the
+Query Ultravisor Keys UVC.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- tools/objtool/arch/loongarch/special.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+As of now, two types of host-keys are available:
+The used/primary host key, and the backup host-key both hastes are
+available in a sysfs file.
+For forwards compatibility an `all` file is also available that displays
+the whole payload (15*32 bytes) and therefore future key hashes.
 
-diff --git a/tools/objtool/arch/loongarch/special.c b/tools/objtool/arch/loongarch/special.c
-index 65b1ed297d57..d2a6071d772f 100644
---- a/tools/objtool/arch/loongarch/special.c
-+++ b/tools/objtool/arch/loongarch/special.c
-@@ -47,8 +47,18 @@ struct reloc *arch_find_switch_table(struct objtool_file *file,
- 	unsigned long table_offset;
- 
- 	annotate_reloc = find_reloc_by_table_annotate(file, insn);
--	if (!annotate_reloc)
--		return NULL;
-+	if (!annotate_reloc) {
-+		annotate_reloc = find_reloc_by_dest_range(file->elf, insn->sec,
-+							  insn->offset, insn->len);
-+		if (!annotate_reloc)
-+			return NULL;
-+
-+		if (!annotate_reloc->sym->sec->rodata)
-+			return NULL;
-+
-+		if (reloc_type(annotate_reloc) != R_LARCH_NONE)
-+			return NULL;
-+	}
- 
- 	table_sec = annotate_reloc->sym->sec;
- 	table_offset = annotate_reloc->sym->offset;
+Sice v2:
+	* add rb from Janosch (& fix nits)
+	* slightly refactor sysfs directory creation (Heiko)
+
+Since v1:
+	* add r-b's from Janoch & Christoph
+	* fix minor issues (Janosch)
+	* remove an unnecessary UVC availability-check in uv_query_keys
+		-> remove Christoph's r-b from patch 2
+
+Steffen Eiden (2):
+  s390/uv: Refactor uv-sysfs creation
+  s390/uv: Provide host-key hashes in sysfs
+
+ arch/s390/include/asm/uv.h |  17 ++++++
+ arch/s390/kernel/uv.c      | 103 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 110 insertions(+), 10 deletions(-)
+
 -- 
-2.42.0
+2.43.0
 
 
