@@ -1,138 +1,156 @@
-Return-Path: <linux-kernel+bounces-366218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7863C99F255
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:08:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A35EE99F252
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AFF21F23D36
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266D21F23C24
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73291F668D;
-	Tue, 15 Oct 2024 16:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7DD1F6664;
+	Tue, 15 Oct 2024 16:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="3Pm+NbJN"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="i/dXZ2II"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB541EB9E6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5C1CB9EB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729008506; cv=none; b=aPVxtWn0Ms4EjtzQ1yax1OqagwQ+ZV+1+5jCRAt14KCKOufNxkneX5ajARB/UVAby2EaKmmSXxFIOmNPN1J/j4ALZ3rJJQUtIFrz1cHTWPhtp44c/GXSycooAiO+PqfwbtZpxHNClurfU897kyzFqYYl999RjQfVdeq+NNHEjiY=
+	t=1729008503; cv=none; b=lOB/PGtDMXhxxeMrcOx/yn4nTr/H4ahVAGsjC82/RvL6JPK0q4/1ucvEQN2dRwKqOGePX8w+KJZrvG042RJYEka5+mP1WWb/Wtudt6EKz7wnPmbkeluI/5LuO0Pq35cJMDbAhRpVHT+qJ2b1bt+JqAIMC/NBWc1rMngFWVsRtYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729008506; c=relaxed/simple;
-	bh=WiqpiwDzUYkC077ztu3DufJPODl6f22FLm0mT9Fb7/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hRXAJ5c8d/x4v0YQ/bD6VzAhiGvmq9RnkD7yccy/JqpLgjo2OL0aZPfQE1cQtHJo4AyAt2+g4NnLexBXBIpFeeCkjQF7RaHwt4k9jzKAdqxgSXxsxjwQwskVirnTLBr16EmmUJaq2kHbmnQ2OCgp8D13HSMMvQ/xK9CPUH2nCpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=3Pm+NbJN; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c973697b52so3490478a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:08:22 -0700 (PDT)
+	s=arc-20240116; t=1729008503; c=relaxed/simple;
+	bh=4Bzdfhl+m7ShnIiiJTobPwP7Xgi6C+hX2rwg3xphCJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mL54pbq/J/EmLIyGIp0zgz/zahVhrU9w58R3A2+Ha72nvSvIP0YGSlGg9CohiuXWFpGcGfzDhB0KHW9RK2GdfJ7wK9QkOhklnSkZPszLISiRukiVeu2JssNCgucqcv77dB6QOSp9lE7O93POOgCUigO2BKnt8Ja5acVJvHdSfJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=i/dXZ2II; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-716a6e6d5a3so3784401a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729008501; x=1729613301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q3vlLGwfnymGKKL7YQ406or/3aMD1YTZLJ0wPM3KKl8=;
-        b=3Pm+NbJNJN41KerGe/KUtpm6LgPhYSDygvr5EBl/bCOYprjrnYAne9BgVjyqRAJe1D
-         bBpbfzh1WAfOj8UEM3BMUynspcFEwPwgnZAHW56Pdt5fzdt/x4ge3njgxBFt9gUOWPwx
-         ZtEARVBGpkN+lrltODkjEGE6P8tbhIYzlarWJ7pB94bAK0K4VR9XwgpkhwDQYa7B5Q4i
-         +4ZXVKTCMnsCvZQK+8I1zI+qwKQrkuwWY0QHkV0KG+C8xUK4aGzgyViM2WzEe/Ftk1BY
-         09nOjoxy1uHQ2Qh29AuqsFedvIqybOGwoj+wQ/lEi95544JCAYWYowxSsPq1MmzoR76p
-         auYQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729008500; x=1729613300; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=swtPW+tLLd0OzR6ekCZ+L05YNw5hBkLTnVHdB063/5s=;
+        b=i/dXZ2IIxke8jaX3Vdp7BpaSW/1VCxIE32jLHX0OXehjHTiwukbn+e5ozb1jqMNFIQ
+         E5GWz8ALGnxe20sCyiFp+l5iMpoUi3ywzhq6qu/DEVcvABQjEyOsytKm7IMZ/cE5o9WN
+         JQ1C6BgHvH/nWN7H5dKYYHqQLrnBoqpCnBxqN6yLk5Su+t9TuuvNt/2p3WphC9MylTk9
+         ZIlznqIGkTJTnu64EQOj/aT6RqtyrpSCcTz0UP8R824NQ8HKGTfw2Kw6PlJyYxUUF4ga
+         yoZgAwoEHHXI/vJSJ9oqZCIVblYnWlnBX+iaOLKIHVxl7EHu8/85GvRy7QsdLVFIfzhC
+         yzow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729008501; x=1729613301;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q3vlLGwfnymGKKL7YQ406or/3aMD1YTZLJ0wPM3KKl8=;
-        b=R454vSvVY89VEyY5w5irW/xeRFxuEJ35j0WIaVT5fp+GjDOHCRJ5wUBXjL/gsM9CZe
-         UQwADiv/ugnPQ3zdJdxuPuQY5V65t2n1MMTr5teRdS85f0Dqvrgn1n/JO2UO5uDUrUU4
-         tE9rbTpaTutgDu7rpkEX89qMYRjUL47z6ZoSWQgGk/SNVhp6JmC2npVvOUUDmg9kLhKz
-         6gc1Qr+/mAJTHCFaXT+cH8/oTY9XIKhDe5Nu3MD+GLWIQw/9J1lWfivBieTuHLg8Oaja
-         /GMiU+6tQSwPRE0xQ6pkN2twlyK8TujWPAAQkbQ/3xTlhOVLERcWHPsCCFcRk3Wdmfh1
-         wIwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOZk0llKYPHFePb83wTpt17g6kD/Kg/rnmq66wtO6T16dDUqEIyyQy+dVpFC9lCH6MMyqEGGLxBKMprIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSMbQIywz7oGhXuGRprd+g47Guw6tENSgyzIbEGVOq8sovW60S
-	rSOoM7Aq/64/y+nCFeWwfR8whbwBpTQFtQUOKpAIQJY6/hCxaqnM15jZezwaJxqVtUgNeD7XJaO
-	AUPDAEZ8gzpe4FKKZvU5kZg6W5AeNJMImQNeykg==
-X-Google-Smtp-Source: AGHT+IFH5JbPxMBrzP8FWhiekFLqguHvxnMhTcdjHCyZvnDqz7WkpfNvQoEN3IT/O5g8P9yT90njC7pVBFDQtbTc4N4=
-X-Received: by 2002:a05:6402:3513:b0:5c9:57bd:e9d with SMTP id
- 4fb4d7f45d1cf-5c957bd0fc9mr10577952a12.19.1729008501135; Tue, 15 Oct 2024
- 09:08:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729008500; x=1729613300;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=swtPW+tLLd0OzR6ekCZ+L05YNw5hBkLTnVHdB063/5s=;
+        b=cCBssqDwguj1asiEPL4zc+A0ytxEXb90lAF9U4FCEfKpbeJd+yUiK65Hl9Era2BiWf
+         2X7nkBWDYMeLjYS3nGfssoiQl/aqUiSx7KJc95bkmoN16G9HpUvAd+vJT5R3bRZZeH9Z
+         8WgI9B+/IAXgaZtvdEYShRq1m/tgsHum01nvn4cuBksReca7M1YfUOSQp0qJO4L4ECnA
+         yEyJ2SlULfi3jxn0MZZNIrShJFMcig6SfG/RZ4haDR5jnsu4RObvbucnqwXOUe4t9z/E
+         5sIrvDKQ2jZhYkY2vdj7ClscinSjZbEttk7ORQl5UNVqJ1sSPbiYap3nrtkmHGS5Nppf
+         ShdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkaUEneWAfvtO17ivuhHGrvektF6pASDbf6YtsLOytnMtJIZFThMHxCq6Iaijtw2UC2V8F5gnkxbQNOGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySs8HKoaZTtwxoJ7hWV/xthb/opxOMz7pJQ0PrMD1bH6C74Bys
+	f9I/WRsxWNWQMukA7akwZtj8JBqSToXBfbheWrWsKgCJbk/0+M6Xu3sexT+VWEI=
+X-Google-Smtp-Source: AGHT+IEwPPYkT6dxAxzECLc4uz6QgfRyPeTxs3ZCoeVmhMjxDE6Q2Jva1e5+jR93VB23GYq/ngQhtA==
+X-Received: by 2002:a05:6830:3688:b0:717:d601:eb42 with SMTP id 46e09a7af769-7180350411amr1306094a34.31.1729008500459;
+        Tue, 15 Oct 2024 09:08:20 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-717fb9ee9d6sm347988a34.21.2024.10.15.09.08.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 09:08:19 -0700 (PDT)
+Message-ID: <704f4440-9699-48ef-acd7-e0bf9c4ae5b0@baylibre.com>
+Date: Tue, 15 Oct 2024 11:08:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015045843.20134-1-everestkc@everestkc.com.np>
- <8a4a8915-d59a-407d-9f93-f047370cca62@stanley.mountain> <43eff9c9-9a23-46ac-9015-dbee35562848@linuxfoundation.org>
-In-Reply-To: <43eff9c9-9a23-46ac-9015-dbee35562848@linuxfoundation.org>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Tue, 15 Oct 2024 10:08:09 -0600
-Message-ID: <CAEO-vhFO9-htOazTzUKA_xMS8S+a5MAZpOi40GPF38m66a+89A@mail.gmail.com>
-Subject: Re: [PATCH V2][next] Bluetooth: btintel_pcie: Remove structually deadcode
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, marcel@holtmann.org, luiz.dentz@gmail.com, 
-	kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
+To: Andy Shevchenko <andy@kernel.org>, Jonathan Cameron <jic23@kernel.org>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Ivan Mikhaylov <fr0st61te@gmail.com>,
+ Marius Cristea <marius.cristea@microchip.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Mike Looijmans <mike.looijmans@topic.nl>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
+ <20241014094154.9439-6-antoniu.miclaus@analog.com>
+ <Zw0ZM0vQXJep3dFJ@smile.fi.intel.com> <20241014201515.463c7c07@jic23-huawei>
+ <Zw5N_fxdDKQxlPoj@smile.fi.intel.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <Zw5N_fxdDKQxlPoj@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 10:01=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.=
-org> wrote:
-Hi Shuah,
-> On 10/15/24 03:48, Dan Carpenter wrote:
-> > The subject has a typo.  s/structually/structurally/
-> >
-> >> The intel bluetooth module was successfully built after the change
-> >> without any errors.
-> >>
-> >
-> > Delete this sentence.  It should just be assumed that changes don't bre=
-ak the
-> > build.  You can put that code isn't tested under the --- cut off line, =
-if you
-> > want to put a warning message.  But we don't need this in the permanent=
- git log.
+On 10/15/24 6:11 AM, Andy Shevchenko wrote:
+> On Mon, Oct 14, 2024 at 08:15:15PM +0100, Jonathan Cameron wrote:
+>> On Mon, 14 Oct 2024 16:14:27 +0300
+>> Andy Shevchenko <andy@kernel.org> wrote:
+>>> On Mon, Oct 14, 2024 at 12:40:40PM +0300, Antoniu Miclaus wrote:
+> 
+> ...
+> 
+>>>> +config AD4851
+>>>> +	tristate "Analog Device AD4851 DAS Driver"
+>>>> +	depends on SPI
+>>>> +	select REGMAP_SPI
+>>>> +	select IIO_BACKEND
+>>>> +	help
+>>>> +	  Say yes here to build support for Analog Devices AD4851, AD4852,
+>>>> +	  AD4853, AD4854, AD4855, AD4856, AD4857, AD4858, AD4858I high speed
+>>>> +	  data acquisition system (DAS).  
+>>>
+>>> I think I already commented on this... Anyway, it's much better to support when
+>>> this list is broke down on per device per line. In such a case it's less churn
+>>> if we need to remove or add an entry in the future.
+>>>
+>>>> +	  To compile this driver as a module, choose M here: the module will be
+>>>> +	  called ad4851.  
+>>>
+>>> Also, with all these devices to be supported why not ad485x as the name of
+>>> the driver? Is it a preference by the IIO subsystem?
+>>
+>> Don't.  We've been bitten by too many cases of manufacturers noticing
+>> a hole in their part numbers and 'slotting' something unrelated in.
+>> So it just causes confusion.  Hence strong preference for any new code
+>> is pick a name from the list.  The wild card also implies restrictions
+>> that tend to break overtime when other part numbers outside the range
+>> are used.  Not using a wildcard keeps it consistently wrong so people
+>> get used to it :)
+> 
+> I see your point!
+> 
+> But shouldn't we have a formal criteria for choosing that one from the list?
+> I would go with "most featured device" as it may be aligned with all enabled
+> features that otherwise would be questionable / confusing for the chips that
+> do not support them or support in a limited manner.
+> 
 
-Should I remove the line that says the module was successfully built
-after the change,
-as Dan suggested ?
-
-> >
-> >> This issue was reported by Coverity Scan.
-> >> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIss=
-ue=3D1600709
->
-> Restating what I said in your other coverity patch, include
-> the coverity warning. This link requires login and no use
-> for people who don't have coverity account.
-
-The coverity scan dashboard no longer has the issue. So,I don't have
-access to the coverity
-warning.
-
-> In the future don't include link that require login in the
-> commit logs.
-Got it.
-> >>
-> >> Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between d=
-river and firmware")
-> >> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> >> ---
-> >    ^^^
-> > Cut off line.
-> >
-> > regards,
-> > dan carpenter
-> >
->
-> thanks,
-> -- Shuah
+I always go with the lowest number supported by the driver at the time
+the driver was created. It is a simple, objective criteria and no one
+has to spend time looking through features to decide which one is "best".
 
