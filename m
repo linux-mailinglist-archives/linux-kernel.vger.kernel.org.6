@@ -1,154 +1,214 @@
-Return-Path: <linux-kernel+bounces-365642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A951B99E558
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:15:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B98C99E563
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63EE82848D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:15:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0981F23F91
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C898D1D89F8;
-	Tue, 15 Oct 2024 11:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hwE0CfQ6"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7C0156872
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BCD1C7274;
+	Tue, 15 Oct 2024 11:16:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF2D189BB2;
+	Tue, 15 Oct 2024 11:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990947; cv=none; b=JnK2PM0H4ffbMDe/uVsYP5bLikghNDfD/OvtUzzQ0fq5aze9y+DSKSOXdaC5a8qMdE2ePAzc8QjRa6QRATgVZw+z6SHfECQeDXIYL7Hfs8AIvb8cv93fIHwETxrkl/AO6N4mHw2He9jNhhk1hZpiTHGY1ztRgMIx4yrppNxkLto=
+	t=1728990986; cv=none; b=cCJ9DQCOVcPk0T50RYPeFPq9kBuJKBciOy9hkj6VVg6AM9mBwtm/UjCOcCQCJLrUJzRguuq1uRqS0ga6ortG8xKqFW2oonHHJpcBGSqYoFFisSJx4tj+ooGCWano6qiy3S7NnHU50kE1ZtHtKj9js9qsOepajDnhkgOMQWAPUdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990947; c=relaxed/simple;
-	bh=ssmqsWWS81Vg0uTaEuJJktUUR/hioVtLY2g+nX1p7M8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CLLm9w4OyHj319M9B9zwyC59pObuEwF0OjrQaA2f2c8ZzKz6VTF/wdBvOUgmZhFBQtWnxKeuWtRmmOe9z4gUZB7gpgXC6kWTSRQ0JTiO+WDLp6//TP5Hl0nnyQkwZPmZGWxBmcMhRbRRKM669bXKrUg2EnkqY0YSePw05Cw8pOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hwE0CfQ6; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728990942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ucQtvznDemSDFD+kG00/HvX/vw51G6Sc6n843ys325E=;
-	b=hwE0CfQ6zx5RuK8fo0dhqMPrV6DJKqfw01P+l6q1t/dOTG+tcASPg4MJRgpNPZn1TUXss9
-	iUYoJrknU87/9Cy/XIxRrHNxfysegb3M1fRNJ/HpSadnin1HDRLKzfrnsyvb6CB/JmoCo+
-	lsgbqfDDgAVEbhdHFEbtPevoTIB+k/w=
-From: Andrea Righi <andrea.righi@linux.dev>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH v4] sched_ext: Trigger ops.update_idle() from pick_task_idle()
-Date: Tue, 15 Oct 2024 13:15:39 +0200
-Message-ID: <20241015111539.12136-1-andrea.righi@linux.dev>
+	s=arc-20240116; t=1728990986; c=relaxed/simple;
+	bh=uw0HbJ0kiobzTbS5RjhFjh8Y60N2Q6x4PT1X8C2PtW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GBl8/rbz6mCsa/wPYYs6ZXEWXwYt7BDGDHtvl/eNY5M3273pefkLo891o3SBnM3ChV3wFR7YaptaeZFziFYmFA4mooY7UM5xJOrh0GhbPrTifAdVqM9SDIUbzpmjHJJc7B2Ww3KsYD1HJRjX4hoBIWRxBuyqg8Z4sK4erJVkKVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBF221063;
+	Tue, 15 Oct 2024 04:16:53 -0700 (PDT)
+Received: from [10.57.86.207] (unknown [10.57.86.207])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 613183F51B;
+	Tue, 15 Oct 2024 04:16:14 -0700 (PDT)
+Message-ID: <c04323d5-6dcd-4391-81bb-94ee580ae98f@arm.com>
+Date: Tue, 15 Oct 2024 12:16:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 01/57] mm: Add macros ahead of supporting boot-time
+ page size selection
+Content-Language: en-GB
+To: Pingfan Liu <piliu@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Chris Zankel <chris@zankel.net>, Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, Dinh Nguyen <dinguyen@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Greg Marsden <greg.marsden@oracle.com>, Helge Deller <deller@gmx.de>,
+ Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Ivan Ivanov <ivan.ivanov@suse.com>, Johannes Berg
+ <johannes@sipsolutions.net>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Jonas Bonn <jonas@southpole.se>, Kalesh Singh <kaleshsingh@google.com>,
+ Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Matthias Brugger <mbrugger@suse.com>, Max Filippov <jcmvbkbc@gmail.com>,
+ Miroslav Benes <mbenes@suse.cz>, Rich Felker <dalias@libc.org>,
+ Richard Weinberger <richard@nod.at>, Stafford Horne <shorne@gmail.com>,
+ Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, x86@kernel.org,
+ linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ sparclinux@vger.kernel.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com> <Zw0iegwMp5ZVGypy@fedora>
+ <9b7e4f65-a171-4574-bd53-580e79527fbc@arm.com>
+ <CAF+s44QbdPBN-8EcPiWiZgYgZY4v8RK-wA0VEaVXbfnc9_HQ9Q@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAF+s44QbdPBN-8EcPiWiZgYgZY4v8RK-wA0VEaVXbfnc9_HQ9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-With the consolidation of put_prev_task/set_next_task(), see
-commit 436f3eed5c69 ("sched: Combine the last put_prev_task() and the
-first set_next_task()"), we are now skipping the transition between
-these two functions when the previous and the next tasks are the same.
+On 15/10/2024 04:04, Pingfan Liu wrote:
+> On Mon, Oct 14, 2024 at 10:07 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 14/10/2024 14:54, Pingfan Liu wrote:
+>>> Hello Ryan,
+>>>
+>>> On Mon, Oct 14, 2024 at 11:58:08AM +0100, Ryan Roberts wrote:
+>>>> arm64 can support multiple base page sizes. Instead of selecting a page
+>>>> size at compile time, as is done today, we will make it possible to
+>>>> select the desired page size on the command line.
+>>>>
+>>>> In this case PAGE_SHIFT and it's derivatives, PAGE_SIZE and PAGE_MASK
+>>>> (as well as a number of other macros related to or derived from
+>>>> PAGE_SHIFT, but I'm not worrying about those yet), are no longer
+>>>> compile-time constants. So the code base needs to cope with that.
+>>>>
+>>>> As a first step, introduce MIN and MAX variants of these macros, which
+>>>> express the range of possible page sizes. These are always compile-time
+>>>> constants and can be used in many places where PAGE_[SHIFT|SIZE|MASK]
+>>>> were previously used where a compile-time constant is required.
+>>>> (Subsequent patches will do that conversion work). When the arch/build
+>>>> doesn't support boot-time page size selection, the MIN and MAX variants
+>>>> are equal and everything resolves as it did previously.
+>>>>
+>>>
+>>> MIN and MAX appear to construct a boundary, but it may be not enough.
+>>> Please see the following comment inline.
+>>>
+>>>> Additionally, introduce DEFINE_GLOBAL_PAGE_SIZE_VAR[_CONST]() which wrap
+>>>> global variable defintions so that for boot-time page size selection
+>>>> builds, the variable being wrapped is initialized at boot-time, instead
+>>>> of compile-time. This is done by defining a function to do the
+>>>> assignment, which has the "constructor" attribute. Constructor is
+>>>> preferred over initcall, because when compiling a module, the module is
+>>>> limited to a single initcall but constructors are unlimited. For
+>>>> built-in code, constructors are now called earlier to guarrantee that
+>>>> the variables are initialized by the time they are used. Any arch that
+>>>> wants to enable boot-time page size selection will need to select
+>>>> CONFIG_CONSTRUCTORS.
+>>>>
+>>>> These new macros need to be available anywhere PAGE_SHIFT and friends
+>>>> are available. Those are defined via asm/page.h (although some arches
+>>>> have a sub-include that defines them). Unfortunately there is no
+>>>> reliable asm-generic header we can easily piggy-back on, so let's define
+>>>> a new one, pgtable-geometry.h, which we include near where each arch
+>>>> defines PAGE_SHIFT. Ugh.
+>>>>
+>>>> -------
+>>>>
+>>>> Most of the problems that need to be solved over the next few patches
+>>>> fall into these broad categories, which are all solved with the help of
+>>>> these new macros:
+>>>>
+>>>> 1. Assignment of values derived from PAGE_SIZE in global variables
+>>>>
+>>>>   For boot-time page size builds, we must defer the initialization of
+>>>>   these variables until boot-time, when the page size is known. See
+>>>>   DEFINE_GLOBAL_PAGE_SIZE_VAR[_CONST]() as described above.
+>>>>
+>>>> 2. Define static storage in units related to PAGE_SIZE
+>>>>
+>>>>   This static storage will be defined according to PAGE_SIZE_MAX.
+>>>>
+>>>> 3. Define size of struct so that it is related to PAGE_SIZE
+>>>>
+>>>>   The struct often contains an array that is sized to fill the page. In
+>>>>   this case, use a flexible array with dynamic allocation. In other
+>>>>   cases, the struct fits exactly over a page, which is a header (e.g.
+>>>>   swap file header). In this case, remove the padding, and manually
+>>>>   determine the struct pointer within the page.
+>>>>
+>>>
+>>> About two years ago, I tried to do similar thing in your series, but ran
+>>> into problem at this point, or maybe not exactly as the point you list
+>>> here. I consider this as the most challenged part.
+>>>
+>>> The scenario is
+>>> struct X {
+>>>       a[size_a];
+>>>       b[size_b];
+>>>       c;
+>>> };
+>>>
+>>> Where size_a = f(PAGE_SHIFT), size_b=g(PAGE_SHIFT). One of f() and g()
+>>> is proportional to PAGE_SHIFT, the other is inversely proportional.
+>>>
+>>> How can you fix the reference of X.a and X.b?
+>>
+>> If you need to allocate static memory, then in this scenario, assuming f() is
+>> proportional and g() is inversely-proportional, then I guess you need
+>> size_a=f(PAGE_SIZE_MAX) and size_b=g(PAGE_SIZE_MIN). Or if you can allocate the
+> 
+> My point is that such stuff can not be handled by scripts
+> automatically and needs manual intervention.
 
-As a result, ops.update_idle() is now called only once when the CPU
-transitions to the idle class. If the CPU stays active (e.g., through a
-call to scx_bpf_kick_cpu()), ops.update_idle() will not be triggered
-again since the task remains unchanged (rq->idle).
+Yes agreed. I spent some time thinking about how much of this could be automated
+(i.e. with Cochinelle or otherwise), but concluded that it's very difficult. As
+a result, all of the patches in this series are manually created.
 
-While this behavior seems generally correct, it can cause issues in
-certain sched_ext scenarios.
+> 
+>> memory dynamically, then make a and b pointers to dynamically allocated buffers.
+>>
+> 
+> This seems a better way out.
+> 
+>> Is there a specific place in the source where this pattern is used today? It
+>> might be easier to discuss in the context of the code if so.
+>>
+> 
+> No such code at hand. Just throw out the potential issue and be
+> curious about it which frustrates me.
+> I hope people can reach an agreement on it and turn this useful series
+> into reality.
 
-For example, a BPF scheduler might use logic like the following to keep
-the CPU active under specific conditions:
+Yes, hope so!
 
-void BPF_STRUCT_OPS(sched_update_idle, s32 cpu, bool idle)
-{
-	if (!idle)
-		return;
-	if (condition)
-		scx_bpf_kick_cpu(cpu, 0);
-}
-
-A call to scx_bpf_kick_cpu() wakes up the CPU, so in theory,
-ops.update_idle() should be triggered again until the condition becomes
-false. However, this doesn't happen, and scx_bpf_kick_cpu() doesn't
-produce the expected effect.
-
-In practice, this change badly impacts performance in user-space
-schedulers that rely on ops.update_idle() to activate user-space
-components.
-
-For instance, in the case of scx_rustland, performance drops
-significantly (e.g., gaming benchmarks fall from ~60fps to ~10fps).
-
-To address this, trigger ops.update_idle() also from pick_task_idle()
-when the idle task keeps running on the CPU. This restores the correct
-behavior of ops.update_idle() and it allows to fix the performance
-regression in scx_rustland.
-
-Fixes: 7c65ae81ea86 ("sched_ext: Don't call put_prev_task_scx() before picking the next task")
-Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
----
- kernel/sched/idle.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-ChangeLog v3 -> v4:
-  - handle the core-sched case that may ignore the result of
-    pick_task(), triggering spurious ops.update_idle() events
-
-ChangeLog v2 -> v3:
-  - add a comment to clarify why we need to update the scx idle state in
-    pick_task()
-
-ChangeLog v1 -> v2:
-  - move the logic from put_prev_set_next_task() to scx_update_idle()
-
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index d2f096bb274c..3e76b11237a9 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -466,6 +466,20 @@ static void set_next_task_idle(struct rq *rq, struct task_struct *next, bool fir
- 
- struct task_struct *pick_task_idle(struct rq *rq)
- {
-+	/*
-+	 * When switching from a non-idle to the idle class, .set_next_task()
-+	 * is called only once during the transition.
-+	 *
-+	 * However, the CPU may remain active for multiple rounds running the
-+	 * idle task (e.g., by calling scx_bpf_kick_cpu() from the
-+	 * ops.update_idle() callback).
-+	 *
-+	 * In such cases, we need to keep updating the scx idle state to
-+	 * properly re-trigger the ops.update_idle() callback and ensure
-+	 * correct handling of scx idle state transitions.
-+	 */
-+	if (rq->curr == rq->idle)
-+		scx_update_idle(rq, true);
- 	return rq->idle;
- }
- 
--- 
-2.47.0
+> 
+> Thanks,
+> 
+> Pingfan
+> 
 
 
