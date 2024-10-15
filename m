@@ -1,94 +1,101 @@
-Return-Path: <linux-kernel+bounces-366321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B1B99F3B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF5299F3BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E8B28358C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7FA62833E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3451F9EB2;
-	Tue, 15 Oct 2024 17:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1884C1F9EA6;
+	Tue, 15 Oct 2024 17:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="agQXY3yB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LtE5tCH1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F591F8F17;
-	Tue, 15 Oct 2024 17:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AA117335C;
+	Tue, 15 Oct 2024 17:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729012226; cv=none; b=oFMeswViohkmGPp8pW3dkXmd+GyznabrFsZ/G9HhadWJJSsqg2xvQxVN8yBbeOz2CmZa2JHeCZRAc+94OxGHwM/h4auwLlSEbaCT7nZVPF1EglyCVXoktOkhZQULNl3uq27YhVeYfYnL0YK114KESOI5cfvq3x5coNxsStXBBqk=
+	t=1729012448; cv=none; b=qs0MLI4Kz5L0Z/GNPBha40fCZ2gnnK0DCcItuCKXLDBmLXSLmYaigLCf8kcjNCXR5lNihXcw6HTUpMGHhnimvMg7plU+0rtzJQEIVQBAZ/YC0eZpXQNIDSdGYqI8cbh7wZ7YdlJGZ62EwjBfOhVWk/FtKZkKwkzg609csPM+vLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729012226; c=relaxed/simple;
-	bh=SeocKlWpY9uJKoRjT7puY8a93bGWzTdbQ1UEs7shokY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=VFku1tOARwbnwVUkDPG8Qej1H1g1ZBLJLggJ42yjAoVRfZ9slBjYWTcEHnik8WvTidWokRkt7wZDs1OzFlUS17SRxS08V3naP0oU+8OXI2tgEssK073hb6xFRwc6WoBEa5MX+hpLDkD73s7qiadaWOnhIn0YcvJ78KYJWWdc3q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=agQXY3yB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85932C4CEC6;
-	Tue, 15 Oct 2024 17:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729012226;
-	bh=SeocKlWpY9uJKoRjT7puY8a93bGWzTdbQ1UEs7shokY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=agQXY3yBM3ocbFS7wOBlyYnRe60ctpgexxuHNA1QArqGwUFQ4xc6VFZsejBNxuwKd
-	 61PTTp1BxW44kljp931K5BAk911hZwv0VACsFXmSQgmWubNRSBy1ZAWKDA6HsKKUMJ
-	 bQIddrqX3t4g5jWFE2gB7EvWI1IhXzxPbFV3x4uaa54vYi1P1vna9H31ukaWjOuBtR
-	 dTx6T1BoIZO/uH+eBX/gqNjZVImmkwtAlOc3WCs3Z4PJa7t07Ui5celsM8PZXUs8rX
-	 HwIB29qAefAk0cwjEfPAMazz1lz9ucoh/b3Zru1qmxNTpWZuP1HcWJJ0g/1Ztme/h2
-	 H4Q5IMx0regLA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB5EF3809A8A;
-	Tue, 15 Oct 2024 17:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729012448; c=relaxed/simple;
+	bh=6hhjjX296MgLHzT7WDibRPRupKhNhJn+ECmZjq6lcxI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=VnRrd/bqlMlo3ZH6ugSb/ySZO/tAWHJTJTzVX1Ch0mLnsHv/BiAom9gp/iA9gE3IwfK6sY7wfGv/NbWlnIVbAFB7FgdrSy9No9ItX1hlfLJIwZrP0edGO9HHRy2o379kSxgzgrK4F4HyBclElwot6w9+O3vlPiZHTWU1FLubSqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LtE5tCH1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FBZ6en005958;
+	Tue, 15 Oct 2024 17:13:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6hhjjX296MgLHzT7WDibRPRupKhNhJn+ECmZjq6lcxI=; b=LtE5tCH1P7Hskj3N
+	Oow7Vw1oIFSoRD56HvCGnNQ4N66kk34irvHjfI/9KkT8PnWOHQ3iFHpapaTX4Is9
+	2b23h7/XEemeZGCeOLzGp31lAY9TCdAm5Gft+/et4MN5MssuCRItUJYScHsaZwNe
+	yiYBd3dzHHr8E+lA7Vemb+OMeJSSh+ZvUVDhBb25j7qXb4oM4A5tV9luFjWKghGh
+	ef2ut9MTXrvzR7QrDMdc9naE4wyNREgJxki5dPHHoJGWTqFyrtqD47ne8JjoXWAE
+	QSnH39jNI86FQfm+0ayTUP8KAGytRt5AE9YHoTag5Z/MGIAbvHQ8INRXJu7NrL2l
+	zVwyDg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427g2rrdyh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 17:13:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FHDvCl031597
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 17:13:57 GMT
+Received: from [10.48.240.238] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Oct
+ 2024 10:13:55 -0700
+Message-ID: <fd99a66e-edd7-4c01-bc10-3596fb24f637@quicinc.com>
+Date: Tue, 15 Oct 2024 10:13:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] net: ethernet: aeroflex: fix potential memory leak in
- greth_start_xmit_gbit()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172901223148.1230547.8385233189191215729.git-patchwork-notify@kernel.org>
-Date: Tue, 15 Oct 2024 17:10:31 +0000
-References: <20241012110434.49265-1-wanghai38@huawei.com>
-In-Reply-To: <20241012110434.49265-1-wanghai38@huawei.com>
-To: Wang Hai <wanghai38@huawei.com>
-Cc: andreas@gaisler.com, gerhard@engleder-embedded.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- zhangxiaoxu5@huawei.com, kristoffer@gaisler.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] wifi: ath12k: fix warning when unbinding
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>, <kvalo@kernel.org>,
+        <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <ath12k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <stable@vger.kernel.org>
+References: <20241010175102.207324-1-jtornosm@redhat.com>
+ <20241010175102.207324-3-jtornosm@redhat.com>
+ <2f6f7649-772e-42e6-a762-f2d66b7e3b22@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <2f6f7649-772e-42e6-a762-f2d66b7e3b22@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rwkCopgQ4arcmTJS5_JcF7MkiKjuCRS3
+X-Proofpoint-GUID: rwkCopgQ4arcmTJS5_JcF7MkiKjuCRS3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 adultscore=0 mlxlogscore=624 impostorscore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150118
 
-Hello:
+On 10/15/2024 9:48 AM, Jeff Johnson wrote:
+> On 10/10/2024 10:48 AM, Jose Ignacio Tornos Martinez wrote:
+>> If there is an error during some initialization realated to firmware,
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat, 12 Oct 2024 19:04:34 +0800 you wrote:
-> The greth_start_xmit_gbit() returns NETDEV_TX_OK without freeing skb
-> in case of skb->len being too long, add dev_kfree_skb() to fix it.
-> 
-> Fixes: d4c41139df6e ("net: Add Aeroflex Gaisler 10/100/1G Ethernet MAC driver")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
-> ---
-> v1->v2: Using dev_kfree_skb() in error handling.
->  drivers/net/ethernet/aeroflex/greth.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [v2,net] net: ethernet: aeroflex: fix potential memory leak in greth_start_xmit_gbit()
-    https://git.kernel.org/netdev/net/c/cf57b5d7a2aa
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+s/realated/related/ (also in 1/2)
 
 
