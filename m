@@ -1,157 +1,83 @@
-Return-Path: <linux-kernel+bounces-365146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A02699DE2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:23:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9F799DE29
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAF8C1C212A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:23:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A675B1F23017
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B669F18A6B7;
-	Tue, 15 Oct 2024 06:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE00189BB5;
+	Tue, 15 Oct 2024 06:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dJPBkla0"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdYWXV2R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33170189BB8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A37C185936;
+	Tue, 15 Oct 2024 06:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728973379; cv=none; b=iOEPWKyJoX1r//lPB5RAUzZjpt9bsHebti8opoo27Ko45hQDv4adfvgm7FDBKdLznvFes34fG5Vlt0A1kb7vMB6iTADQuVR/SQ4G/XgG5cBTHpc/aCk3d8KCuGY7TCzrgOqzhdleeckfZ4/qYp1VV28anZVNxEw5RLplAP2RH9Y=
+	t=1728973376; cv=none; b=hP2dayUNzK1rgxMnFrNxf0e55JNriJiJB1NM8VmYVpIWrAAX5vl+Q548RSbC6KBwF0cfUf1boAxQrgHbq8CrM8XOzJvW04nHc1+ry2tPHDUsUvUZjs9cP3Grgj+G25MQ58wShTEjRNZ033LFNIp76kKWa9IT/Xq/2b+9A/CAip4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728973379; c=relaxed/simple;
-	bh=WhJWhAbq0UVdVTbBtMSmvTKOy1yBEbfuRj6REU2MJ5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJf4e0Qay1N59B0xLPQJnLVl0gTd6zY+X6O/8nXK7UViVkd+x1xx/O+XSdT3ZvnfBfeCKQTlVhb4zIndGRa9EsJvj4B76M0dsVmQTqpG9G92m3/QdhvG+gqTbYUbiywpQyjIfmh9gDAPp+NjyNKqdDoTMJaYUQNN38glf4uVveU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dJPBkla0; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728973374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=xV2Yn9Bz9oRhnkXtJemv6T7ztjEHIIDMEfp++wcVRdY=;
-	b=dJPBkla0CzIQt1/oCLTl+pyBwsupuDADTe3AMaNaRjSbkYP42m30f4ofdFd5LRYo9NRlmI
-	AiJiV7ef9EpEWCpe55/OYaVyye+0s06QQXtww2oGxuAR5qko658/weME0PXIKGBiuJnJLz
-	FpJN01awZym+VFUgSI0s7Tvjo4WOxIU=
-From: Andrea Righi <andrea.righi@linux.dev>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH v3] sched_ext: Trigger ops.update_idle() from pick_task_idle()
-Date: Tue, 15 Oct 2024 08:22:50 +0200
-Message-ID: <20241015062250.55350-1-andrea.righi@linux.dev>
+	s=arc-20240116; t=1728973376; c=relaxed/simple;
+	bh=V9KJcARXDedlgSnmljYjhAlMHx38oslz1LVgv0iCuZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ufPToSJaawB/5ydt4xIZOUNS6x8LReTBIF8XCHuxJOLAHvxMuTT/TgZcOEDDopOCIZIdf0iKPQ5G+iFPe7LLQZD/kWe2L/NYxas1qBNFDdaoRSh2CitPgYzSs/5JseNnTs86xF4HaUxNwKYiX8AvHcYs5opgfJ4gxN6CnmiLG04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdYWXV2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEDDC4CECD;
+	Tue, 15 Oct 2024 06:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728973376;
+	bh=V9KJcARXDedlgSnmljYjhAlMHx38oslz1LVgv0iCuZk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NdYWXV2RaZCVrgCnKfaKvl5kTEvgrchehunbdh0S0wmJgMCRIqoPqbIl4upbWyy6D
+	 JP1M3EBOD/UY1CEe2GojGrBhJL440d+1IU1P/RDCfvH3ojTcuPh4U5MWqcfm49ZKq4
+	 p7n2U0vKIG+N8YVA7EKStTcOp7mCXP4I5M0N1kTLzw/BErWxUYMBmJ32EzD8GktC6r
+	 bglN8sE1bxWkFJIb6lfkt4Qqo2cPqOPekAFQuwuKWkaJvW95JlJ2WIw504NlI7lMYM
+	 CDnS/k4vUgaHG5hgQ3Sqz2H2NOspWywlYPw6rGATt6WzFVHI5/36+8c9ITrGw5nNOl
+	 ojKZqCsTmfe2w==
+Date: Tue, 15 Oct 2024 08:22:51 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <quic_bjorande@quicinc.com>, 
+	Wesley Cheng <quic_wcheng@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-phy@lists.infradead.org, quic_ppratap@quicinc.com, 
+	quic_jackp@quicinc.com
+Subject: Re: [PATCH 3/5] dt-bindings: phy: qcom,msm8998-qmp-usb3-phy: Add
+ support for QCS615
+Message-ID: <6mma3sulerihegjsmkje574f6gkg5qdduq5b52nttpeevdcj5v@ri2q2hstfyr5>
+References: <20241014084432.3310114-1-quic_kriskura@quicinc.com>
+ <20241014084432.3310114-4-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241014084432.3310114-4-quic_kriskura@quicinc.com>
 
-With the consolidation of put_prev_task/set_next_task(), see
-commit 436f3eed5c69 ("sched: Combine the last put_prev_task() and the
-first set_next_task()"), we are now skipping the transition between
-these two functions when the previous and the next tasks are the same.
+On Mon, Oct 14, 2024 at 02:14:30PM +0530, Krishna Kurapati wrote:
+> Update dt-bindings to add QCS615 to QMP Phy list.
+> 
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
+>  .../devicetree/bindings/phy/qcom,msm8998-qmp-usb3-phy.yaml      | 2 ++
+>  1 file changed, 2 insertions(+)
 
-As a result, ops.update_idle() is now called only once when the CPU
-transitions to the idle class. If the CPU stays active (e.g., through a
-call to scx_bpf_kick_cpu()), ops.update_idle() will not be triggered
-again since the task remains unchanged (rq->idle).
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-While this behavior seems generally correct, it can cause issues in
-certain sched_ext scenarios.
-
-For example, a BPF scheduler might use logic like the following to keep
-the CPU active under specific conditions:
-
-void BPF_STRUCT_OPS(sched_update_idle, s32 cpu, bool idle)
-{
-	if (!idle)
-		return;
-	if (condition)
-		scx_bpf_kick_cpu(cpu, 0);
-}
-
-A call to scx_bpf_kick_cpu() wakes up the CPU, so in theory,
-ops.update_idle() should be triggered again until the condition becomes
-false. However, this doesn't happen, and scx_bpf_kick_cpu() doesn't
-produce the expected effect.
-
-In practice, this change badly impacts performance in user-space
-schedulers that rely on ops.update_idle() to activate user-space
-components.
-
-For instance, in the case of scx_rustland, performance drops
-significantly (e.g., gaming benchmarks fall from ~60fps to ~10fps).
-
-To address this, trigger ops.update_idle() from pick_task_idle() rather
-than set_next_task_idle(). This restores the correct behavior of
-ops.update_idle() and it allows to fix the performance regression in
-scx_rustland.
-
-Fixes: 7c65ae81ea86 ("sched_ext: Don't call put_prev_task_scx() before picking the next task")
-Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
----
- kernel/sched/idle.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-ChangeLog v2 -> v3:
-  - add a comment to clarify why we need to update the scx idle state in
-    pick_task()
-
-ChangeLog v1 -> v2:
-  - move the logic from put_prev_set_next_task() to scx_update_idle()
-
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index d2f096bb274c..d336a05a6006 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -459,13 +459,26 @@ static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct t
- static void set_next_task_idle(struct rq *rq, struct task_struct *next, bool first)
- {
- 	update_idle_core(rq);
--	scx_update_idle(rq, true);
- 	schedstat_inc(rq->sched_goidle);
- 	next->se.exec_start = rq_clock_task(rq);
- }
- 
- struct task_struct *pick_task_idle(struct rq *rq)
- {
-+	/*
-+	 * When switching from a non-idle to the idle class, .set_next_task()
-+	 * is called only once during the transition.
-+	 *
-+	 * However, the CPU may remain active for multiple rounds (e.g., by
-+	 * calling scx_bpf_kick_cpu() from the ops.update_idle() callback).
-+	 *
-+	 * In such cases, we need to keep updating the scx idle state to
-+	 * properly re-trigger the ops.update_idle() callback.
-+	 *
-+	 * Updating the state in .pick_task(), instead of .set_next_task(),
-+	 * ensures correct handling of scx idle state transitions.
-+	 */
-+	scx_update_idle(rq, true);
- 	return rq->idle;
- }
- 
--- 
-2.47.0
+Best regards,
+Krzysztof
 
 
