@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-365535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D5499E3C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:24:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F3699E3C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A8828488B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F6FFB22856
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57211E7C2A;
-	Tue, 15 Oct 2024 10:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD551E379C;
+	Tue, 15 Oct 2024 10:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUDrhd7i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T0NJ+Yzc"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F91F1E7640;
-	Tue, 15 Oct 2024 10:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5661E282C;
+	Tue, 15 Oct 2024 10:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728987800; cv=none; b=WSACnn+/w1w7ccF+OROp5Usnr4iDwp01L797KBqPP0oSCXsRQY47VYfU5GcpHcrN1F3H90h2bIeLkfu34SiBr7OgmZSFsm95TpjY/OEwIPB1ge/7inxBwNyQlUzZ0MhQ2J7XT7K1YvIz+MbeDPSvB6KaqrtUwT2IFpOwrPzawcM=
+	t=1728987863; cv=none; b=YdyQUKO2hL+LJCkGhHKf3Zo/C0cgadcJZw+hn4Qad80fj52cz69SXC3JwKClVmeJ4VgbvYNbbErFvkH0zvmXxnsaZUHP31hHd7ZADpUtxHNDJxHXWwc/jGhqstS1y95mm5qahPAb3CjVS3wBkeZdp8QC15U/OYtZG4R/fdsV3ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728987800; c=relaxed/simple;
-	bh=oRNGjrDKi2Hm53gnbXJGC6YvgFgibQ8fpuTcUT3TPMo=;
+	s=arc-20240116; t=1728987863; c=relaxed/simple;
+	bh=M0PmfAVWgVnsL9LOrta8g9LxKUtGd5IsoppQXp4hILE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3ToSpAT2ufrlkiv66669hMYHhy6PksHS87rc0vURWMCPtpSUeaDENIWp0HMhfUHHp0dPKc6klcv7l7lpJ9kKLuV1OwWK+bxtJ557hk1OQ/puxdsyvpJ4YrHeLht9ZmHO8XHlaxbAyve1zLomC5Nf5DlWTFbZGcukGKAXfhVi8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUDrhd7i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D8F5C4CED0;
-	Tue, 15 Oct 2024 10:23:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728987799;
-	bh=oRNGjrDKi2Hm53gnbXJGC6YvgFgibQ8fpuTcUT3TPMo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9dEDGNIB5rEoSB0JOmZzMkUOovQrDg+V0AonapnFikgryUnC+Rmaf757VAFYnZ63QQX2JegiPqGvK7lmjW8HYwSg1aXAo9xsHq2udO7DMKibJmeBe8GQPnv5K8UJ5OCwVIVEle0ZiMbDbcCL1q4blSwcRmja6vRUQnfqD8gcPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=T0NJ+Yzc; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [185.143.39.11])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EB1649CE;
+	Tue, 15 Oct 2024 12:22:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728987759;
+	bh=M0PmfAVWgVnsL9LOrta8g9LxKUtGd5IsoppQXp4hILE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jUDrhd7iBnTe8hchjCw5VvonV+PgBwSvS/GHTMQ6R+uLbL7GLKLUrqBdYaOpocZg2
-	 XOBj0U2iJqzyrNtzp/xltjrfltk89lvoFBIinHdOb7/jhNAwewxxiu9GgjdQb/zVi9
-	 +jh5+pe0hHv6RCObDWSSn4jEzqoMwDOuQ2ZUl0SukCfcnYcc5gqStIfzh+1TDaox1D
-	 EhGVFCG6RWiljEMPUVVHXJAGei93AZupBXttsjrilUfB2A8XoORAYz6txpbZAgG5SB
-	 ZHFQcdb2xMIMDvxvx5KQ8RmNoH15sC0chi2GlcsvaAEtYWDjf2UGle336VjWUC1LrQ
-	 NejxIe3pfn3wQ==
-Date: Tue, 15 Oct 2024 11:23:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Martin Botka <martin.botka@somainline.org>,
-	Chris Morgan <macromorgan@hotmail.com>
-Subject: Re: [PATCH v2 5/5] regulator: axp20x: add support for the AXP323
-Message-ID: <20241015102314.GG8348@google.com>
-References: <20241007001408.27249-1-andre.przywara@arm.com>
- <20241007001408.27249-6-andre.przywara@arm.com>
+	b=T0NJ+YzcgTw6mMWQfCcUGr1v/eT/hFpfIZDytfDPWJVWNfLrfY/f3aG1NaBIH+al9
+	 KnTZfQDqrCM3M+iqFSM/zSHXriWqAe95QrsQBgSKKy3ursOfwlWcCpWyuI9PdPFOu5
+	 Qccc1VeQV4g+JBCdU5PMCrbTCSuSSJ4AXy3Cl4qg=
+Date: Tue, 15 Oct 2024 13:24:17 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v5 14/22] media: rzg2l-cru: Inline calculating
+ bytesperline
+Message-ID: <20241015080121.GA20855@pendragon.ideasonboard.com>
+References: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241011173052.1088341-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,26 +64,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241007001408.27249-6-andre.przywara@arm.com>
+In-Reply-To: <20241011173052.1088341-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Mon, 07 Oct 2024, Andre Przywara wrote:
+Hi Prabhakar,
 
-> The X-Powers AXP323 is a very close sibling of the AXP313A. The only
-> difference seems to be the ability to dual-phase the first two DC/DC
-> converters.
+Thank you for the patch.
+
+On Fri, Oct 11, 2024 at 06:30:44PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Place the new AXP323 ID next to the existing AXP313A checks, to let
-> them share most code.
-> The only difference is the poly-phase detection code, which gets
-> extended to check the respective bit in a newly used register.
+> Remove the `rzg2l_cru_format_bytesperline()` function and inline the
+> calculation of `bytesperline` directly in `rzg2l_cru_format_align()`.
+> This simplifies the code by removing an unnecessary function call and
+> directly multiplying the image width by the `bpp` (bytes per pixel)
+> from the format structure.
 > 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Mark, can I take this without issuing a PR?
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> ---
+>  .../platform/renesas/rzg2l-cru/rzg2l-video.c     | 16 ++++++----------
+>  1 file changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index a0fa4542ac43..8932fab7c656 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -812,20 +812,16 @@ int rzg2l_cru_dma_register(struct rzg2l_cru_dev *cru)
+>   * V4L2 stuff
+>   */
+>  
+> -static u32 rzg2l_cru_format_bytesperline(struct v4l2_pix_format *pix)
+> +static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
+> +				   struct v4l2_pix_format *pix)
+>  {
+>  	const struct rzg2l_cru_ip_format *fmt;
+>  
+>  	fmt = rzg2l_cru_ip_format_to_fmt(pix->pixelformat);
+> -
+> -	return pix->width * fmt->bpp;
+> -}
+> -
+> -static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
+> -				   struct v4l2_pix_format *pix)
+> -{
+> -	if (!rzg2l_cru_ip_format_to_fmt(pix->pixelformat))
+> +	if (!fmt) {
+>  		pix->pixelformat = RZG2L_CRU_DEFAULT_FORMAT;
+> +		fmt = rzg2l_cru_ip_format_to_fmt(pix->pixelformat);
+> +	}
+>  
+>  	switch (pix->field) {
+>  	case V4L2_FIELD_TOP:
+> @@ -844,7 +840,7 @@ static void rzg2l_cru_format_align(struct rzg2l_cru_dev *cru,
+>  	v4l_bound_align_image(&pix->width, 320, RZG2L_CRU_MAX_INPUT_WIDTH, 1,
+>  			      &pix->height, 240, RZG2L_CRU_MAX_INPUT_HEIGHT, 2, 0);
+>  
+> -	pix->bytesperline = rzg2l_cru_format_bytesperline(pix);
+> +	pix->bytesperline = pix->width * fmt->bpp;
+>  	pix->sizeimage = pix->bytesperline * pix->height;
+>  
+>  	dev_dbg(cru->dev, "Format %ux%u bpl: %u size: %u\n",
 
 -- 
-Lee Jones [李琼斯]
+Regards,
+
+Laurent Pinchart
 
