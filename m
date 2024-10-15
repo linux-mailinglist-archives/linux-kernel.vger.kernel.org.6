@@ -1,130 +1,295 @@
-Return-Path: <linux-kernel+bounces-365106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC6199DD92
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:36:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A800F99DD96
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F17E1C2135F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:36:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09FD3B211FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259D8176231;
-	Tue, 15 Oct 2024 05:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC85176FB4;
+	Tue, 15 Oct 2024 05:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s6IErQUx"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="u38bTrUp"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AEC3C3C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185C63C3C;
+	Tue, 15 Oct 2024 05:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728970573; cv=none; b=asqRr62I9gNTKcEjBSB8QwUjOVOBdmBMMurPwwWTP4ZR/EnjRh2IQZFUc+vTvUxOyD74rwr4avCoxzS/MCppKNSroHqhrhdU6zkacdlwmVsHltHqO48T0SFL3WG40/w17JiNDdfe9Ddzjbj4N9ucnfClAGU4J9lBTD1H1f+qrCM=
+	t=1728971037; cv=none; b=Bd+aKucjyZw7wJpCMq2Cl3/DOxyi8N/TMM8Arh6zo9jnlfJlpJQfIfe9/mz56P+fhPKrees+hZe6kPIq8YZMbkCNAaMt+7NC47kWQMpG1PCD7tA97gRnEZijduC5VkNvPhB4CiutK0tOWc4WWWBpQ8Px6Hc1hHWwWomFKJzS8tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728970573; c=relaxed/simple;
-	bh=yszwKQ9Uc/WwDVgcbv1zceidlzSiESQI89BBRJB+3gA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y0PL7yDXlu+mzy/rNQoMqW5fJRCwjnD4iWJTZSSDvNXuqUVep6pzFN0tcIUCgXY3FU7cvaDi+q4BDAzj7ZI9grgeR9Lm2lyBFq4PQhPI5hsIkiinXNnj4f/JdMJjIb4xoudvnsMCqRVMPAFtv6aE592LiD3VMteCGNA1LTZ09fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s6IErQUx; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7e9fd82f1a5so3191518a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728970571; x=1729575371; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GXgy8197OqSzaMzOs/kBSKtlaDYzOu3RBo5ZvMdUY68=;
-        b=s6IErQUxrsbeD52exQ6LC/Ir/5H2cS8Dd6+Q8IqUwIdx3HhIdgPSeKD851TQ4fOI5y
-         Ppjp8+kDOSWY2pqiKP6Py6pDauEpUtq+5dqm9TR8o7+wFp7k22TiiLUEplMQ2/JzZnhf
-         HbsqGHJKW4bse/WNSISBYbnUijHNXOXqcrWletzr+5NycNpjU682geizqihyI4fz/O0H
-         nHMo4Ls1vt+TLD2cOcUSvr7t+fg6Y5ruo3ntGT3svsLawhwbedN8ROeI+o6slZjF94W2
-         lKW4Eyr5hncbcWx3d/NnPMKtsSFunb3lJf25oJHGe1wmQd2zT9J50UicosIagfc1nN4V
-         G+PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728970571; x=1729575371;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GXgy8197OqSzaMzOs/kBSKtlaDYzOu3RBo5ZvMdUY68=;
-        b=XIcPqn6N7YV/J66M+4xL8iL/dY7zoa3rLa1NrMak6Jlfrp0zsZ5XY97po8CcoRG5mt
-         Xk7PBWCzVJUlhRfCKFXPsnBax24pv3oZAzdcDmeNGBvAZ3eY3ALE3WcJphS6ZvOs1i90
-         VeWekSxx2d0gEDG0HuHGEiFrsvy9ibZnnYWIIUdKnAwR+U92fieSZtCDiu0nCEwAx95g
-         ZyAXPkdXNpzcvQBJdcUuGqY5u2mPAEOHF60rRF7HCWm8i8Cgb59pJZuLS4Q8/6Z8P+N/
-         AvBmtL1ZBxd2QJaScSCxixZgKcwWF0/pofAdP02p4UddOi2Dswy5CV6ffxLJdE9M9qet
-         fwgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2x0NHHRXaLN5Zka94eFxaB4hNXvEiGNxY+3Sq7N1NRTQLcpWfy8p2yB2rpBPyjBvkqgYcPU0VYa1slJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn6aPwMZXwa5pS7HmQDzs4WY3iyxFjuXQbC+D5dAmJl+Jlb92m
-	GtyUg8CiNzxmSX2Sf5otgKrJaPQRuLdvrpsAoBb4HZ2n8VQ+OdqDK8ZytXWXEuAjIpqQs67Mx7o
-	=
-X-Google-Smtp-Source: AGHT+IGfog2Fs+KHlICZ0Il/O7zt2ISKY4xDwFmjK7Hgr2698r5tPxk4iA9eMgOYKQ8Np1SqclTKcQ==
-X-Received: by 2002:a05:6a20:d49b:b0:1d6:e5bf:f95a with SMTP id adf61e73a8af0-1d8c955c8f6mr17286863637.2.1728970571441;
-        Mon, 14 Oct 2024 22:36:11 -0700 (PDT)
-Received: from thinkpad ([220.158.156.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a2b20sm463266b3a.122.2024.10.14.22.36.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 22:36:11 -0700 (PDT)
-Date: Tue, 15 Oct 2024 11:06:08 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: ChunyouTang <tangchunyou@163.com>
-Cc: fancer.lancer@gmail.com, vkoul@kernel.org, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma/dw-edma: chip regs base should add the offset
-Message-ID: <20241015053608.h2avloxfak5yagyd@thinkpad>
-References: <20241014134832.4505-1-tangchunyou@163.com>
+	s=arc-20240116; t=1728971037; c=relaxed/simple;
+	bh=moV4sxH55Ox3TTHD1hguVzsrAIYKDUV1NAlVGvqipLY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ZOLRYVp0OP13wZSQwgaf/4+/4eejyGuGFM0nQkdSw9kzm0ytoZxPLGB/gCZEOqlETJvDLvNRzzCvR++oJ/hYIASQ64jEJtj/gKgHMpxgBt25i3XAZdocIyanFX3qdzpRerfjfyJ6e8ny/CU46qb4EzE5BjuymxSoFCJi13uHNi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=u38bTrUp; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728971031; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
+	bh=eVk2nCe8WNju0eF7pl3D8RNXuWVV58ocJy3rDZxMFzY=;
+	b=u38bTrUpXyVtwHREucpJjyrIuAHmMEltKTb4YjJEaWnyGDlaxmB5ZPSPh5tRMR+4rIS84LQ7XyU+vOOI2pS4ZtkQL2z5dBv2p8x0l4Or8itf/w+rgEhz/XThqnBeE69uOd8IsViKXb21SUWrRPgX+90LSyle1rf7XaauMEJdPSQ=
+Received: from smtpclient.apple(mailfrom:mqaio@linux.alibaba.com fp:SMTPD_---0WHC93cj_1728971029 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Oct 2024 13:43:51 +0800
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241014134832.4505-1-tangchunyou@163.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] uprobe: avoid out-of-bounds memory access of fetching
+ args
+From: "maqiao.mq" <mqaio@linux.alibaba.com>
+In-Reply-To: <20241014234028.6dc14fe26dce74f2b90a8a4f@kernel.org>
+Date: Tue, 15 Oct 2024 13:43:39 +0800
+Cc: "maqiao.mq" <mqaio@linux.alibaba.com>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ linux-trace-kernel@vger.kernel.org,
+ rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com,
+ namhyung.kim@lge.com,
+ Oleg Nesterov <oleg@redhat.com>,
+ linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <40197A50-CE74-4240-BBED-BE832A3905B6@linux.alibaba.com>
+References: <20241014061405.3139467-1-mqaio@linux.alibaba.com>
+ <20241014234028.6dc14fe26dce74f2b90a8a4f@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Mon, Oct 14, 2024 at 09:48:32PM +0800, ChunyouTang wrote:
-> From: tangchunyou <tangchunyou@163.com>
-> 
-> fix the regs base with offset.
-> 
 
-Initially I thought that this patch is a spam, but it is not. It is indeed
-fixing a real bug in the driver. But the subject and description made it look
-like a spam. Please follow the process defined in:
-Documentation/process/5.Posting.rst to send the patches.
 
-Essentially you need to properly describe what the patch does and how it impacts
-the driver etc... Then there needs to be a valid 'Fixes' tag and stable list
-should be CCed to backport to stable kernels.
+> 2024=E5=B9=B410=E6=9C=8814=E6=97=A5 =E4=B8=8B=E5=8D=8810:40=EF=BC=8CMasa=
+mi Hiramatsu (Google) <mhiramat@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Mon, 14 Oct 2024 14:14:05 +0800
+> Ma Qiao <mqaio@linux.alibaba.com> wrote:
+>=20
+>> From: Qiao Ma <mqaio@linux.alibaba.com>
+>>=20
+>> Uprobe needs to fetch args into a percpu buffer, and then copy to =
+ring
+>> buffer to avoid non-atomic context problem.
+>>=20
+>> Sometimes user-space strings, arrays can be very large, but the size =
+of
+>> percpu buffer is only page size. And store_trace_args() won't check
+>> whether these data exceeds a single page or not, caused out-of-bounds
+>> memory access.
+>>=20
+>> It could be reproduced by following steps:
+>> 1. build kernel with CONFIG_KASAN enabled
+>> 2. save follow program as test.c
+>>=20
+>> ```
+>> \#include <stdio.h>
+>> \#include <stdlib.h>
+>> \#include <string.h>
+>>=20
+>> // If string length large than MAX_STRING_SIZE, the =
+fetch_store_strlen()
+>> // will return 0, cause __get_data_size() return shorter size, and
+>> // store_trace_args() will not trigger out-of-bounds access.
+>> // So make string length less than 4096.
+>> \#define STRLEN 4093
+>>=20
+>> void generate_string(char *str, int n)
+>> {
+>>    int i;
+>>    for (i =3D 0; i < n; ++i)
+>>    {
+>>        char c =3D i % 26 + 'a';
+>>        str[i] =3D c;
+>>    }
+>>    str[n-1] =3D '\0';
+>> }
+>>=20
+>> void print_string(char *str)
+>> {
+>>    printf("%s\n", str);
+>> }
+>>=20
+>> int main()
+>> {
+>>    char tmp[STRLEN];
+>>=20
+>>    generate_string(tmp, STRLEN);
+>>    print_string(tmp);
+>>=20
+>>    return 0;
+>> }
+>> ```
+>> 3. compile program
+>> `gcc -o test test.c`
+>>=20
+>> 4. get the offset of `print_string()`
+>> ```
+>> objdump -t test | grep -w print_string
+>> 0000000000401199 g     F .text  000000000000001b              =
+print_string
+>> ```
+>>=20
+>> 5. configure uprobe with offset 0x1199
+>> ```
+>> off=3D0x1199
+>>=20
+>> cd /sys/kernel/debug/tracing/
+>> echo "p /root/test:${off} arg1=3D+0(%di):ustring arg2=3D\$comm =
+arg3=3D+0(%di):ustring"
+>>> uprobe_events
+>> echo 1 > events/uprobes/enable
+>> echo 1 > tracing_on
+>> ```
+>>=20
+>> 6. run `test`, and kasan will report error.
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> BUG: KASAN: use-after-free in strncpy_from_user+0x1d6/0x1f0
+>> Write of size 8 at addr ffff88812311c004 by task test/499CPU: 0 UID: =
+0 PID: 499 Comm: test Not tainted 6.12.0-rc3+ #18
+>> Hardware name: Red Hat KVM, BIOS 1.16.0-4.al8 04/01/2014
+>> Call Trace:
+>> <TASK>
+>> dump_stack_lvl+0x55/0x70
+>> print_address_description.constprop.0+0x27/0x310
+>> kasan_report+0x10f/0x120
+>> ? strncpy_from_user+0x1d6/0x1f0
+>> strncpy_from_user+0x1d6/0x1f0
+>> ? rmqueue.constprop.0+0x70d/0x2ad0
+>> process_fetch_insn+0xb26/0x1470
+>> ? __pfx_process_fetch_insn+0x10/0x10
+>> ? _raw_spin_lock+0x85/0xe0
+>> ? __pfx__raw_spin_lock+0x10/0x10
+>> ? __pte_offset_map+0x1f/0x2d0
+>> ? unwind_next_frame+0xc5f/0x1f80
+>> ? arch_stack_walk+0x68/0xf0
+>> ? is_bpf_text_address+0x23/0x30
+>> ? kernel_text_address.part.0+0xbb/0xd0
+>> ? __kernel_text_address+0x66/0xb0
+>> ? unwind_get_return_address+0x5e/0xa0
+>> ? __pfx_stack_trace_consume_entry+0x10/0x10
+>> ? arch_stack_walk+0xa2/0xf0
+>> ? _raw_spin_lock_irqsave+0x8b/0xf0
+>> ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+>> ? depot_alloc_stack+0x4c/0x1f0
+>> ? _raw_spin_unlock_irqrestore+0xe/0x30
+>> ? stack_depot_save_flags+0x35d/0x4f0
+>> ? kasan_save_stack+0x34/0x50
+>> ? kasan_save_stack+0x24/0x50
+>> ? mutex_lock+0x91/0xe0
+>> ? __pfx_mutex_lock+0x10/0x10
+>> prepare_uprobe_buffer.part.0+0x2cd/0x500
+>> uprobe_dispatcher+0x2c3/0x6a0
+>> ? __pfx_uprobe_dispatcher+0x10/0x10
+>> ? __kasan_slab_alloc+0x4d/0x90
+>> handler_chain+0xdd/0x3e0
+>> handle_swbp+0x26e/0x3d0
+>> ? __pfx_handle_swbp+0x10/0x10
+>> ? uprobe_pre_sstep_notifier+0x151/0x1b0
+>> irqentry_exit_to_user_mode+0xe2/0x1b0
+>> asm_exc_int3+0x39/0x40
+>> RIP: 0033:0x401199
+>> Code: 01 c2 0f b6 45 fb 88 02 83 45 fc 01 8b 45 fc 3b 45 e4 7c b7 8b =
+45 e4 48 98 48 8d 50 ff 48 8b 45 e8 48 01 d0 ce
+>> RSP: 002b:00007ffdf00576a8 EFLAGS: 00000206
+>> RAX: 00007ffdf00576b0 RBX: 0000000000000000 RCX: 0000000000000ff2
+>> RDX: 0000000000000ffc RSI: 0000000000000ffd RDI: 00007ffdf00576b0
+>> RBP: 00007ffdf00586b0 R08: 00007feb2f9c0d20 R09: 00007feb2f9c0d20
+>> R10: 0000000000000001 R11: 0000000000000202 R12: 0000000000401040
+>> R13: 00007ffdf0058780 R14: 0000000000000000 R15: 0000000000000000
+>> </TASK>
+>>=20
+>> This commit enforces the buffer's maxlen less than a page-size to =
+avoid
+>> store_trace_args() out-of-memory access.
+>>=20
+>> Fixes: dcad1a204f72 ("tracing/uprobes: Fetch args before reserving a =
+ring buffer")
+>> Signed-off-by: Qiao Ma <mqaio@linux.alibaba.com>
+>> ---
+>> kernel/trace/trace_probe_tmpl.h | 2 +-
+>> kernel/trace/trace_uprobe.c     | 6 ++++++
+>> 2 files changed, 7 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/kernel/trace/trace_probe_tmpl.h =
+b/kernel/trace/trace_probe_tmpl.h
+>> index 2caf0d2afb322..0338d9468bb4d 100644
+>> --- a/kernel/trace/trace_probe_tmpl.h
+>> +++ b/kernel/trace/trace_probe_tmpl.h
+>> @@ -269,7 +269,7 @@ store_trace_args(void *data, struct trace_probe =
+*tp, void *rec, void *edata,
+>> ret =3D process_fetch_insn(arg->code, rec, edata, dl, base);
+>> if (arg->dynamic && likely(ret > 0)) {
+>> dyndata +=3D ret;
+>> - maxlen -=3D ret;
+>> + maxlen =3D max(maxlen - ret, 0);
+>=20
+> Hmm, do you see this part does something wrong?
+> If this exceed maxlen here, that means a buffer overflow. Please make =
+it WARN_ON_ONCE().
 
-- Mani
+Hmmm, I was wrong, maxlen can never be negative, even this patch set =
+ucb->dsize less than the real size of args.
 
-> Signed-off-by: tangchunyou <tangchunyou@163.com>
-> ---
->  drivers/dma/dw-edma/dw-edma-pcie.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
-> index 1c6043751dc9..2918b64708f9 100644
-> --- a/drivers/dma/dw-edma/dw-edma-pcie.c
-> +++ b/drivers/dma/dw-edma/dw-edma-pcie.c
-> @@ -234,6 +234,8 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
->  	if (!chip->reg_base)
->  		return -ENOMEM;
->  
-> +	chip->reg_base += vsec_data.rg.off;
-> +
->  	for (i = 0; i < chip->ll_wr_cnt; i++) {
->  		struct dw_edma_region *ll_region = &chip->ll_region_wr[i];
->  		struct dw_edma_region *dt_region = &chip->dt_region_wr[i];
-> -- 
-> 2.25.1
-> 
+And even if some weird bugs really cause maxlen to be negative, it is =
+too late here to WARN(),
+because out-of-memory access has been occured.
 
--- 
-மணிவண்ணன் சதாசிவம்
+So maybe the best way is not modify here?
+
+>=20
+>> }
+>> }
+>> }
+>> diff --git a/kernel/trace/trace_uprobe.c =
+b/kernel/trace/trace_uprobe.c
+>> index c40531d2cbadd..e972855a5a6bf 100644
+>> --- a/kernel/trace/trace_uprobe.c
+>> +++ b/kernel/trace/trace_uprobe.c
+>> @@ -875,6 +875,7 @@ struct uprobe_cpu_buffer {
+>> };
+>> static struct uprobe_cpu_buffer __percpu *uprobe_cpu_buffer;
+>> static int uprobe_buffer_refcnt;
+>> +#define MAX_UCB_BUFFER_SIZE PAGE_SIZE
+>>=20
+>> static int uprobe_buffer_init(void)
+>> {
+>> @@ -979,6 +980,11 @@ static struct uprobe_cpu_buffer =
+*prepare_uprobe_buffer(struct trace_uprobe *tu,
+>> ucb =3D uprobe_buffer_get();
+>> ucb->dsize =3D tu->tp.size + dsize;
+>>=20
+>> + if (WARN_ON_ONCE(ucb->dsize > MAX_UCB_BUFFER_SIZE)) {
+>> + ucb->dsize =3D MAX_UCB_BUFFER_SIZE;
+>> + dsize =3D MAX_UCB_BUFFER_SIZE - tu->tp.size;
+>> + }
+>> +
+>=20
+> This part looks good to me.
+>=20
+> Thank you!
+>=20
+>> store_trace_args(ucb->buf, &tu->tp, regs, NULL, esize, dsize);
+>>=20
+>> *ucbp =3D ucb;
+>> --=20
+>> 2.39.3
+>>=20
+>=20
+>=20
+> --=20
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+
 
