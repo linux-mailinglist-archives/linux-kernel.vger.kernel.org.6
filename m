@@ -1,99 +1,102 @@
-Return-Path: <linux-kernel+bounces-366354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D078899F43B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:40:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B9299F43E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F776B22813
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:40:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD9661F21D0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CE01FAEF2;
-	Tue, 15 Oct 2024 17:40:20 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C241FAEED;
+	Tue, 15 Oct 2024 17:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iXdlvoSn"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305D81F6690;
-	Tue, 15 Oct 2024 17:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AC01F6690;
+	Tue, 15 Oct 2024 17:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729014020; cv=none; b=MWxiuil4uGLipEe2D0mhxdqfnIou/YUPKjSY9cB+ru6Sg7QzxeNY1pEQkO55jDsE38i8CGNAHgJ5HHe9Gu8T3OSG1Y+RZ3Z5Cvt50jsg8qd4STtn72hHHtkfwOlCFO1biS62bz5ACiyxtSzsYZN2paImWxvJTIQXj45Ip+QRtGU=
+	t=1729014034; cv=none; b=SOdipmdLLxTpKGWwJUoJKnA4mnxaoKuWcYayE1IdAQooI7kOFU79tpwlHBJP2yaTlC0ZzyI61yKW45/xPRy72X81/hx2cUOx6WOMFSh+mSESFFwILFH3PzuHyuXZQDP3v9dhHy3E8lBl6D/TNamVyVDYmUGOhusdBwSs4JDiCOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729014020; c=relaxed/simple;
-	bh=SXa0grFaq7RR+AfMviCRfUEadq71ICMwPBX1B8iFRoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aY/VWKCRpJ0XvG7ft0fbYpMCkBVZxV453sV3WjiZMkKZ6URBGtEfUss0nHYEO1TrNp9nLkVRuo9u+foO7t5ngi8f9GexY210FMoU7eIbvmgdjvdUeO5EaNZxibMA6NWOTwPYrTNMw0clNL6++WJmoD5MHa6hoGxsLSGlCPJ4+jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD607C4CEC6;
-	Tue, 15 Oct 2024 17:40:14 +0000 (UTC)
-Date: Tue, 15 Oct 2024 18:40:12 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-pm@vger.kernel.org,
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com,
-	wanpengli@tencent.com, vkuznets@redhat.com, rafael@kernel.org,
-	daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de,
-	lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com,
-	mtosatti@redhat.com, sudeep.holla@arm.com,
-	misono.tomohiro@fujitsu.com, maobibo@loongson.cn,
-	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
- smp_cond_load_relaxed()
-Message-ID: <Zw6o_OyhzYd6hfjZ@arm.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
- <20240925232425.2763385-2-ankur.a.arora@oracle.com>
- <Zw5aPAuVi5sxdN5-@arm.com>
- <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org>
- <Zw6dZ7HxvcHJaDgm@arm.com>
- <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
+	s=arc-20240116; t=1729014034; c=relaxed/simple;
+	bh=MHvPlcz5YqNRrAbith9dTdFU2xPMCmADsPrY2LV6BAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KwZr9VcBrLdlNFZ0flxSYjUkbX+Dm5/4aXetPwh/6a3g9EH9yZsxdMFGqr3G6am8src6oHWFvtxb0hMwOvOicDQnQ1oj0qPODhr/ccriF97WllflzNNljW2fCf/MMGPUK0sMLhzaByrzYkgk/1RYY67szjfAIgN+xvCeR6WUOp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iXdlvoSn; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XShFj2kPVz6ClPR7;
+	Tue, 15 Oct 2024 17:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1729014021; x=1731606022; bh=74WZZsZopHSTbp9X+PrKeK/K
+	wyyZ+BgSxXQ+iN684SA=; b=iXdlvoSnevGx1RdsxnJvmRUdxMRpGb/DtU81pIsc
+	I1wWYaIK9T91e7I2ECkD2M+HimwWNb10I3TNpTeQGz4uWcj2lrSblZrhBnLpsFP8
+	6Ri7p+53EFwhXeKutrEJw4YU4VwlHhPZp2ZPyaJFB53pDm8KN5kcIlRYjJd7gXyl
+	yWGvHe88Z5HMzcmZz0vIdvJERegMfyOLVmYTZwUt6X04nMUgiYMaX/G2fjcHwB+I
+	fmDsxG3a8gEWV8rG38ALUW40PI11+wFSM3TKdYKXdEgfbQjRDI/FmMXcLMDJx8To
+	HRdRsGVyHiRzR8P5YtBJ1yQFN5KKSAt04jNfwSS/CfZlDQ==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id IgEtxsNTMSnv; Tue, 15 Oct 2024 17:40:21 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XShFc3zNRz6ClPR5;
+	Tue, 15 Oct 2024 17:40:20 +0000 (UTC)
+Message-ID: <4a54b449-802b-4d76-9551-038a0b05cc51@acm.org>
+Date: Tue, 15 Oct 2024 10:40:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: Use wait-for-reg in HCE init
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241015045711.394434-1-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241015045711.394434-1-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 10:17:13AM -0700, Christoph Lameter (Ampere) wrote:
-> On Tue, 15 Oct 2024, Catalin Marinas wrote:
-> > > Setting of need_resched() from another processor involves sending an IPI
-> > > after that was set. I dont think we need to smp_cond_load_relaxed since
-> > > the IPI will cause an event. For ARM a WFE would be sufficient.
-> >
-> > I'm not worried about the need_resched() case, even without an IPI it
-> > would still work.
-> >
-> > The loop_count++ side of the condition is supposed to timeout in the
-> > absence of a need_resched() event. You can't do an smp_cond_load_*() on
-> > a variable that's only updated by the waiting CPU. Nothing guarantees to
-> > wake it up to update the variable (the event stream on arm64, yes, but
-> > that's generic code).
-> 
-> Hmm... I have WFET implementation here without smp_cond modelled after
-> the delay() implementation ARM64 (but its not generic and there is
-> an additional patch required to make this work. Intermediate patch
-> attached)
+On 10/14/24 9:57 PM, Avri Altman wrote:
+> Instead of open-coding it.  Code simplification - no functional change.
 
-At least one additional patch ;). But yeah, I suggested hiding all this
-behind something like smp_cond_load_timeout() which would wait on
-current_thread_info()->flags but with a timeout. The arm64
-implementation would follow some of the logic in __delay(). Others may
-simply poll with cpu_relax().
+Please use full sentences in the patch description.
 
-Alternatively, if we get an IPI anyway, we can avoid smp_cond_load() and
-rely on need_resched() and some new delay/cpu_relax() API that waits for
-a timeout or an IPI, whichever comes first. E.g. cpu_relax_timeout()
-which on arm64 it's just a simplified version of __delay() without the
-'while' loops.
+> +	while (retry) {
 
--- 
-Catalin
+Please change this loop from a while-loop into a for-loop.
+
+> +		if (!ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE, CONTROLLER_ENABLE,
+> +					      CONTROLLER_ENABLE, 1000, 50)) {
+> +			break;
+>   		} else {
+
+"else" is not needed after a "break" statement, isn't it?
+
+> +			dev_err(hba->dev, "Controller enable failed\n");
+
+Please fix the grammar of this message, e.g. by changing this message
+into "Enabling controller failed" or "Enabling the controller failed".
+
+Thanks,
+
+Bart.
 
