@@ -1,172 +1,180 @@
-Return-Path: <linux-kernel+bounces-366280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB88399F318
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:47:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EFC99F31D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011361C21F0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C1C286B85
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602A91F9EA2;
-	Tue, 15 Oct 2024 16:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F8E1F76AC;
+	Tue, 15 Oct 2024 16:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCsBMBtc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YdZcjEDf"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915961D5169;
-	Tue, 15 Oct 2024 16:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D511F76A7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729010771; cv=none; b=PaIkHJ46uMXqyAn8HfJKwiryxl61JNXda65VC5/MD9p2tNv1TcR97z60DP1ZTUo/ffZ30+tawZUveEQT7RxOIR/8K0YNN08+Q+NiXAb0ujASqe+LLrM8DOubjP0hMD+q4eTUOxFS3z08CpkxuG75iwLlCGpMNTuRRoCWFpBRylg=
+	t=1729010880; cv=none; b=SNkT/u16Bt1uIDNLvZwTWQnEj6J3EWhiaYtmKjGvD1+1JIEu/VKG3n9mc1B56TZXPWg8dJIBRLjlnCh36uyfqdF8+rqvXYvZWkTBdLOTmu8d8UGu+vVmI+tTao6C2Nsn41vjAR7qmNywkP3hacltD3iKTPq89Pcw1mh/6P5a/yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729010771; c=relaxed/simple;
-	bh=ty485hgQRf36tvCdf7hLCpqH8wPJP/ov3etpcqFjYBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A55+WbkrObhGcxpWS9TXBHU/l6BgCg0SLECN0RuErtsBgNE7UlPNDhVwZr3yFae26RVMYpuEXxnw01NKS88Tfs5uwP/pWl7PFOc3mCuAO6MwkLHeOw/LacyFTGNYhNuPT8kJsAzE7ZJ7p6tetaX3m9Tb2R5sfL8Cp0gY4bqBClw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCsBMBtc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9660C4CEC6;
-	Tue, 15 Oct 2024 16:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729010771;
-	bh=ty485hgQRf36tvCdf7hLCpqH8wPJP/ov3etpcqFjYBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QCsBMBtcCWJ6BusDVYweMMvwHStKIq9JHRukZj/8ReMVp/piTWhlQAiNOCUn00IDT
-	 KW9tfaN4Op8u0JikMfXBgS8HaSOBo1FDnUsHzFJb8e2UKdW5s8G8zg6taztjhTeWe/
-	 G+THbdgIw4Nuezq2itQRuQJsHwJe71+7nQOsgS/XVanPnTEIUAgIgBsb+jU2qut9iz
-	 NwIRhfqgXLwcaEABQk4e3E0zK/8Y7JpwEB2RMc5napn7msbHYyNRA5oN8zEXA/+fcB
-	 MthVhQ4oWpMs9mJZXhusjDSHsRhA6yIuTYJkhI9l4CvKuLDbKKg67vLo/JKFzjWw0x
-	 q1MKryp1rv7vw==
-Date: Tue, 15 Oct 2024 11:46:09 -0500
-From: Rob Herring <robh@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	"Paul J. Murphy" <paul.j.murphy@intel.com>,
-	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	Martin Hecht <martin.hecht@avnet.eu>,
-	Zhi Mao <zhi.mao@mediatek.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Ricardo Ribalda <ribalda@kernel.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Dongchun Zhu <dongchun.zhu@mediatek.com>,
-	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-	Todor Tomov <todor.too@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] media: dt-bindings: Remove assigned-clock-* from
- various schema
-Message-ID: <20241015164609.GA1235530-robh@kernel.org>
-References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
- <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-1-a2bb12a1796d@linaro.org>
- <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
- <20241014203441.GF5522@pendragon.ideasonboard.com>
- <b0154e75-370e-4a5f-9309-6a3ae5d85b5c@kernel.org>
- <20241015112922.GB2712@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1729010880; c=relaxed/simple;
+	bh=Rfdl8vCaCgCBwnWghnvEo1yd6nA2LiUGF75OpPkqLJg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ME8hyvEoYitEYoFd+ZfX1qy2i5ElL0iauLXPYobyNuR/izF616clVnJidt93VJ655ClYeUig+Ttj3whUS9XJKoBfK6DQP39rJqbZ4p0+0lKPHyuZnpb7x+6LEedcTTcmjGNaveUY+Uo4DsYXKZVK4x0eGVD1uPTGWFjhY+fpfBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YdZcjEDf; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43055b43604so53826145e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:47:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1729010877; x=1729615677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2AR2YrUQqk7+xhhqenve/PPACMkVnDOGTvsrnF2dq74=;
+        b=YdZcjEDfq/J+Z3YHHh0pQpap/YGfBY+dzQN+qIcnGF4Clrq2O3TfVr5jWZIZfm6Y4b
+         xbBBXruAUYpa06Og3lqAl5asC6RDlZOZPDubNhShHo+l9etKaaNBXD2ZYZmgiXUe/WGi
+         kPh102rRpFCf2DO0Znknj+EqiZjddKXQGReaDO0uRcnwEsn/bZlqKvLVRiuN6g0NwrEP
+         5gYgrbkDyuP/frjjNX93UzYsIUzMi9ZlDDB0kFxnkeDtY3UjXqDcHLgvsgNoO3zSzoVj
+         5NhDoarB5pyb7ntKKIrUsY+/4VSHXrClw+Y9ko+a56Y5BsN8yoduKFwJWa67GnuJt2hT
+         15Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729010877; x=1729615677;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2AR2YrUQqk7+xhhqenve/PPACMkVnDOGTvsrnF2dq74=;
+        b=YBKy3vxqblU4yNvyMvZnwHtClNHCFHkSkZ2KeAjbVCIa9aoxCf2ddmymRrYt6cQu7y
+         vQFSt3zqf2lzpNM3s4zAhz/XtPUsPOV8CnSeclW74YdrsBF5B4umxobspQy9ATtp6LMA
+         UKv571NvacMSNyQlhrMoWCzAPf5DDUNl5uVmkOYhrmiaTjm74KOdjGacBWxU+sK/CXFL
+         H5KJLUpGh8rxAxS9yD1wCzf6TJAIfNUwvEVOZNgYyYmJmVkJzutC2L93GzGv8fFQo+Uq
+         Jn/O403DmqjL5ZDsUws3NDZRsRzcvX49bHV1ZBZT7Uu/8IrI6ESZv6G+DVaJeBQsMB1l
+         Vwxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUndoMz3DjL7P3bdAEUxfrF+DWIsyvWz4o7C7gV3mu7qA+omGsv/mw+My6XihjU/hosyUGOcGVTdGZkSgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY1Fwzu2EnFvA04bRmc0tUAWmEtaM+wfQtGYk+n8wmuTs2qsAR
+	PNtEbGCE0FT1+SgQKQgnceZ9QhkVsBkBpipTvp29nvaEAtpzYEAxhoB1oofTxMo=
+X-Google-Smtp-Source: AGHT+IEdGlWQWan5QcF5MUQh7T+UcHlApVXWyd8jtWLk9XCMAYKoLdf78C58GnMJlSXZGx70acXOsw==
+X-Received: by 2002:a05:600c:1991:b0:431:44aa:ee2e with SMTP id 5b1f17b1804b1-4314a29549amr10259345e9.4.1729010876670;
+        Tue, 15 Oct 2024 09:47:56 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56eab2sm22882045e9.26.2024.10.15.09.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 09:47:55 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	ulf.hansson@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 0/4] watchdog: rzg2l_wdt: Enable properly the watchdog clocks and power domain
+Date: Tue, 15 Oct 2024 19:47:28 +0300
+Message-Id: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015112922.GB2712@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 15, 2024 at 02:29:22PM +0300, Laurent Pinchart wrote:
-> On Tue, Oct 15, 2024 at 08:13:19AM +0200, Krzysztof Kozlowski wrote:
-> > On 14/10/2024 22:34, Laurent Pinchart wrote:
-> > > On Mon, Oct 14, 2024 at 09:43:07AM +0200, Krzysztof Kozlowski wrote:
-> > >> On Sat, Oct 12, 2024 at 04:02:50PM +0100, Bryan O'Donoghue wrote:
-> > >>> Remove extraneous assigned-clock* from media/i2c/* schemas, retain in the
-> > >>> relevant examples.
-> > >>>
-> > >>> Link: https://lore.kernel.org/linux-media/j7kgz2lyxnler5qwd7yiazdq6fmsv77kyozdrxf33h54ydakjz@uqjhwhoyv6re
-> > >>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > >>> ---
-> > >>>  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml | 8 --------
-> > >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov5648.yaml | 8 --------
-> > >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov8865.yaml | 8 --------
-> > >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov9282.yaml | 4 ----
-> > >>>  Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml | 4 ----
-> > >>>  Documentation/devicetree/bindings/media/i2c/sony,imx334.yaml | 4 ----
-> > >>>  Documentation/devicetree/bindings/media/i2c/sony,imx335.yaml | 4 ----
-> > >>>  Documentation/devicetree/bindings/media/i2c/sony,imx412.yaml | 4 ----
-> > >>>  8 files changed, 44 deletions(-)
-> > >>>
-> > >>> diff --git a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> > >>> index 60f19e1152b33128cf3baa15b8c70a874ca6d52e..d18ead8f7fc43bfacc291aed85b5ca9166c46edb 100644
-> > >>> --- a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> > >>> +++ b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> > >>> @@ -28,12 +28,6 @@ properties:
-> > >>>      items:
-> > >>>        - description: Reference to the mclk clock.
-> > >>>  
-> > >>> -  assigned-clocks:
-> > >>> -    maxItems: 1
-> > >>> -
-> > >>> -  assigned-clock-rates:
-> > >>> -    maxItems: 1
-> > >>> -
-> > >>>    reset-gpios:
-> > >>>      description: Reference to the GPIO connected to the RESETB pin. Active low.
-> > >>>      maxItems: 1
-> > >>> @@ -82,8 +76,6 @@ required:
-> > >>>    - compatible
-> > >>>    - reg
-> > >>>    - clocks
-> > >>> -  - assigned-clocks
-> > >>> -  - assigned-clock-rates
-> > >>
-> > >> That's not extraneous, but has a meaning that without assigned-clocks
-> > >> this device or driver will not operate.
-> > > 
-> > > How so ? Even if we assume that the device requires a specific clock
-> > > frequency (which is often not the case for camera sensors, the
-> > > limitation usually comes from drivers, so the constraint shouldn't be
-> > > expressed in the bindings in that case), there is no overall requirement
-> > > to assign a clock rate as in many cases the clock will come from a
-> > > fixed-frequency oscillator. This seems to be a constraint that is
-> > > outside of the scope of DT bindings. It is similar to regulators, where
-> > > the regulator consumer doesn't have a way to express supported voltages
-> > > in its DT bindings.
-> > 
-> > This property does not say it comes from a fixed-frequency oscillator,
-> > so I do not understand why you think it is unreasonable constraint. I
-> > have no clue what the author wanted to say here, so I just explained
-> > that there is a meaning behind requiring such properties. If you claim
-> > device or implementations do not have such requirement, after
-> > investigating each case, feel free to drop this. I think I also stated
-> > this already in other reply.
-> 
-> For camera sensor drivers I'm pretty sure we can drop those properties
-> when they're marked as required, as there's no intrinsic characteristics
-> of camera sensors that would require assigned-clock*.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-I tend to agree, and would take it one step further to say that applies 
-everywhere. Whatever clock setup needed is outside the scope of a 
-binding. The simplest case is all input clocks are fixed. The next 
-simplest case is firmware did all clock setup needed for a specific 
-board and the boot time default works.
+Hi,
 
-Rob
+Watchdog device available on RZ/G3S SoC is part of a software-controlled
+power domain. The watchdog driver implements struct
+watchdog_ops::restart() handler which is called in atomic context via
+this call chain:
+
+kernel_restart() ->
+  machine_restart() ->
+    do_kernel_restart() ->
+      atomic_notifier_call_chain() ->
+        watchdog_restart_notifier()
+          rzg2l_wdt_restart()
+
+When the rzg2l_wdt_restart() is called it may happen that the watchdog
+clocks to be disabled and the associated power domain to be off.
+Accessing watchdog registers in this state leads to aborts and system
+blocks.
+
+To solve this issue the watchdog power domain was marked as IRQ safe
+as well as watchdog device (as proposed by Ulf Hansson). Along with
+it the clk_prepare_enable() calls from the watchdog restart() handler
+were removed and all is based now on pm_runtime_resume_and_get()
+as explained in patch 03/03.
+
+Series contains also power domain driver changes to be able to
+register the watchdog PM domain as an IRQ safe one.
+
+Initial RFC series for solving this issue was posted at [1].
+
+It is safe to merge watchdog and PM domain driver changes though
+different trees.
+
+Thank you,
+Claudiu Beznea
+
+[1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
+
+Changes in v4:
+- in patch 1/1, function rzg2l_cpg_pd_setup():
+-- call rzg2l_cpg_power_on() unconditionally of governor
+-- drop governor's parameter and decide what governor to use based on
+   always_on
+- collected tags
+
+Changes in v3:
+- added patch "clk: renesas: rzg2l-cpg: Move PM domain power on in
+  rzg2l_cpg_pd_setup()"
+- addressed review comments
+- collected tags
+- per-patch changes are listed in individual patches
+
+Changes in v2:
+- adjusted patch title for patch 02/03
+- adjusted description for patch 03/03 along with comment
+  from code
+
+Changes since RFC:
+- dropped patches 01/03, 02/03 from RFC
+- adjusted power domain driver to be able to register the
+  watchdog PM domain as an IRQ safe one
+- drop clock prepare approach from watchdog driver presented in RFC
+  and rely only on pm_runtime_resume_and_get()
+- mark the watchdog device as IRQ safe
+
+
+Claudiu Beznea (4):
+  clk: renesas: rzg2l-cpg: Move PM domain power on in
+    rzg2l_cpg_pd_setup()
+  clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
+  clk: renesas: r9a08g045: Mark the watchdog and always-on PM domains as
+    IRQ safe
+  watchdog: rzg2l_wdt: Power on the watchdog domain in the restart
+    handler
+
+ drivers/clk/renesas/r9a08g045-cpg.c | 52 +++++++++++------------------
+ drivers/clk/renesas/rzg2l-cpg.c     | 41 ++++++++++++-----------
+ drivers/clk/renesas/rzg2l-cpg.h     | 10 ++----
+ drivers/watchdog/rzg2l_wdt.c        | 20 +++++++++--
+ 4 files changed, 63 insertions(+), 60 deletions(-)
+
+-- 
+2.39.2
+
 
