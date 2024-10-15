@@ -1,211 +1,167 @@
-Return-Path: <linux-kernel+bounces-365666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9221C99E5A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:29:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F95C99E5AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5228D28535B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE012852E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31C21E9063;
-	Tue, 15 Oct 2024 11:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0BB1E766C;
+	Tue, 15 Oct 2024 11:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Hk4X9Rbr"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BsfB7f4X"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D7E1D90DC;
-	Tue, 15 Oct 2024 11:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1EF1EF957;
+	Tue, 15 Oct 2024 11:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728991748; cv=none; b=HX/JGcyOSLddJlC75ED9XL+KZmrLkL1gDBMg4FZOAl7Nb3pmZNI/r78UYsTNbDCH2noPZF0VFWaLoRXiIq/ZfwhT9rzveUJy/wwqj5htvDIeP1aJ5nQB3GgxOqbM7hNJb3TqJVW0REggNg1rsaG6Na19I1Fn8vk2gzFExptMwIc=
+	t=1728991768; cv=none; b=ZKrTCBxoaUUf75m2qRgm3ECYfD5HNVaRjVg9CKE3lIXbD1Ef6rsu+5HJEe/xGH8qt65C4ZFMwdf46VJNhrSZyMYeC+d26f+UkLDpCIqcN0E0AFe+9B8gBT0v3H+PHsXO8mFRm3daJrpGLEdvOcOYA3BOIwC6J6AqOUW0gBLb74w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728991748; c=relaxed/simple;
-	bh=3oJlOFC+/viLUq7EoxBu1cXSAeaiQ64PDkqEoUZrSuA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DHIZUIYbkIfr8uqOoum01bKycqnqfts+HBPYct5XZhD52LEqkro7t3TmvHHTh7yCDlC2yb+kx5WGkWe2i0kUe7QhAQ4hkUydRVeO9yaY5IALr5xklHsf1EHLrADnEeKKuQw1RI7WfzypRgP4ru/K1Xtiqljqoxh9jTI+hW7bFpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Hk4X9Rbr; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FApREO013734;
-	Tue, 15 Oct 2024 11:29:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=kDMx+b3NA0SMQ9hQR
-	JTG3fXF7OlwjD/EZUny+rQIbkw=; b=Hk4X9RbrTcnPMKEUlPjTlmw/xVOjW9btf
-	tNHBHgnke/1xluqPCm2nW3kpxpaQYRFmiSFTupelxHd+HnG/tzuf2QjrRMJQ61Ix
-	ekZUaS4BxVkbE4wdYO2I6QrPBH6dHybOPK4oDCLQ1j/2EwY5vZhPIZ/DPC9IRh8F
-	h/kzT85Dnoon30+CKNU71pfzp/Dcl+0KOreNIT6qXiwYfrw9ZJ71mhM49Rm/k8n7
-	Gx2iupS2M0aEObwrn3JN5Axwmxcr5nfdUoQrbzV7C3+fNT4FuHGXVoaNlPL/LXGW
-	YXnvPdyX2Kqb8+uECpH+1rYmwrth8CABVN6Tcg7xLQN2vEYd28GIQ==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429q0gg699-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 11:29:05 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F9Bl8f006338;
-	Tue, 15 Oct 2024 11:29:04 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428650u5jy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 11:29:04 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FBT15145220276
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 11:29:01 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 07E122004E;
-	Tue, 15 Oct 2024 11:29:01 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E0C9E20043;
-	Tue, 15 Oct 2024 11:29:00 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 11:29:00 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: [PATCH v3 6/6] s390/uv: Retrieve UV secrets sysfs support
-Date: Tue, 15 Oct 2024 13:28:59 +0200
-Message-ID: <20241015112859.3069210-7-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241015112859.3069210-1-seiden@linux.ibm.com>
-References: <20241015112859.3069210-1-seiden@linux.ibm.com>
+	s=arc-20240116; t=1728991768; c=relaxed/simple;
+	bh=LQ802dW6TeDGMKvnzEmkaej9MKzu8pkK0gnpmFcRfMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Azz10f50GVP2kGECG4QUpWNmkRgzwmIOD8Ss7uVJly5viD1r2uyl9uqTNdDSHqFokqXcPiLlx0bE4Gz3e0KQdEOpvvzWHOI2Yi6sxXEWKaMtBPplmZ60Q9ujoFpUrG0gQsq0/8GZWJqFbHdZhC4QxIzOoKgOQZeDSKgcXn4nh6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BsfB7f4X; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [185.143.39.11])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 13536A27;
+	Tue, 15 Oct 2024 13:27:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728991664;
+	bh=LQ802dW6TeDGMKvnzEmkaej9MKzu8pkK0gnpmFcRfMw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BsfB7f4XcazqbeTwWU1UzCJqE4X9ABOmaTlksLl31FGV9jK3eZQuzUbmfRj+2t1dE
+	 wz/TzkgbY7HB/74TYSB6i49UJSbWodzFRYHAggWP88bGt6N7/DnkolXzboMgndEP/p
+	 xdzo+vOWThWjIK94TwxVut15XqU9i3gfqiI6bAn0=
+Date: Tue, 15 Oct 2024 14:29:22 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	"Paul J. Murphy" <paul.j.murphy@intel.com>,
+	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Martin Hecht <martin.hecht@avnet.eu>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Mikhail Rudenko <mike.rudenko@gmail.com>,
+	Ricardo Ribalda <ribalda@kernel.org>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Dongchun Zhu <dongchun.zhu@mediatek.com>,
+	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+	Todor Tomov <todor.too@gmail.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] media: dt-bindings: Remove assigned-clock-* from
+ various schema
+Message-ID: <20241015112922.GB2712@pendragon.ideasonboard.com>
+References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
+ <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-1-a2bb12a1796d@linaro.org>
+ <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
+ <20241014203441.GF5522@pendragon.ideasonboard.com>
+ <b0154e75-370e-4a5f-9309-6a3ae5d85b5c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZchDVYvTm25Yp-vx1pO1ADzehwuntxHa
-X-Proofpoint-GUID: ZchDVYvTm25Yp-vx1pO1ADzehwuntxHa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 phishscore=0 clxscore=1015 mlxlogscore=859
- priorityscore=1501 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
- adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410150078
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b0154e75-370e-4a5f-9309-6a3ae5d85b5c@kernel.org>
 
-Reflect the updated content in the query information UVC to the sysfs at
-/sys/firmware/query
+On Tue, Oct 15, 2024 at 08:13:19AM +0200, Krzysztof Kozlowski wrote:
+> On 14/10/2024 22:34, Laurent Pinchart wrote:
+> > On Mon, Oct 14, 2024 at 09:43:07AM +0200, Krzysztof Kozlowski wrote:
+> >> On Sat, Oct 12, 2024 at 04:02:50PM +0100, Bryan O'Donoghue wrote:
+> >>> Remove extraneous assigned-clock* from media/i2c/* schemas, retain in the
+> >>> relevant examples.
+> >>>
+> >>> Link: https://lore.kernel.org/linux-media/j7kgz2lyxnler5qwd7yiazdq6fmsv77kyozdrxf33h54ydakjz@uqjhwhoyv6re
+> >>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> >>> ---
+> >>>  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml | 8 --------
+> >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov5648.yaml | 8 --------
+> >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov8865.yaml | 8 --------
+> >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov9282.yaml | 4 ----
+> >>>  Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml | 4 ----
+> >>>  Documentation/devicetree/bindings/media/i2c/sony,imx334.yaml | 4 ----
+> >>>  Documentation/devicetree/bindings/media/i2c/sony,imx335.yaml | 4 ----
+> >>>  Documentation/devicetree/bindings/media/i2c/sony,imx412.yaml | 4 ----
+> >>>  8 files changed, 44 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> >>> index 60f19e1152b33128cf3baa15b8c70a874ca6d52e..d18ead8f7fc43bfacc291aed85b5ca9166c46edb 100644
+> >>> --- a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> >>> +++ b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> >>> @@ -28,12 +28,6 @@ properties:
+> >>>      items:
+> >>>        - description: Reference to the mclk clock.
+> >>>  
+> >>> -  assigned-clocks:
+> >>> -    maxItems: 1
+> >>> -
+> >>> -  assigned-clock-rates:
+> >>> -    maxItems: 1
+> >>> -
+> >>>    reset-gpios:
+> >>>      description: Reference to the GPIO connected to the RESETB pin. Active low.
+> >>>      maxItems: 1
+> >>> @@ -82,8 +76,6 @@ required:
+> >>>    - compatible
+> >>>    - reg
+> >>>    - clocks
+> >>> -  - assigned-clocks
+> >>> -  - assigned-clock-rates
+> >>
+> >> That's not extraneous, but has a meaning that without assigned-clocks
+> >> this device or driver will not operate.
+> > 
+> > How so ? Even if we assume that the device requires a specific clock
+> > frequency (which is often not the case for camera sensors, the
+> > limitation usually comes from drivers, so the constraint shouldn't be
+> > expressed in the bindings in that case), there is no overall requirement
+> > to assign a clock rate as in many cases the clock will come from a
+> > fixed-frequency oscillator. This seems to be a constraint that is
+> > outside of the scope of DT bindings. It is similar to regulators, where
+> > the regulator consumer doesn't have a way to express supported voltages
+> > in its DT bindings.
+> 
+> This property does not say it comes from a fixed-frequency oscillator,
+> so I do not understand why you think it is unreasonable constraint. I
+> have no clue what the author wanted to say here, so I just explained
+> that there is a meaning behind requiring such properties. If you claim
+> device or implementations do not have such requirement, after
+> investigating each case, feel free to drop this. I think I also stated
+> this already in other reply.
 
-* new UV-query sysfs entry for the maximum number of retrievable
-  secrets the UV can store for one secure guest.
-* new UV-query sysfs entry for the maximum number of association
-  secrets the UV can store for one secure guest.
-* max_secrets contains the sum of max association and max retrievable
-  secrets.
+For camera sensor drivers I'm pretty sure we can drop those properties
+when they're marked as required, as there's no intrinsic characteristics
+of camera sensors that would require assigned-clock*.
 
-Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
----
- arch/s390/boot/uv.c        |  3 ++-
- arch/s390/include/asm/uv.h | 10 ++++++----
- arch/s390/kernel/uv.c      | 24 +++++++++++++++++++++++-
- 3 files changed, 31 insertions(+), 6 deletions(-)
-
-diff --git a/arch/s390/boot/uv.c b/arch/s390/boot/uv.c
-index 2a71e759dc42..4568e8f81dac 100644
---- a/arch/s390/boot/uv.c
-+++ b/arch/s390/boot/uv.c
-@@ -46,7 +46,8 @@ void uv_query_info(void)
- 		uv_info.supp_add_secret_req_ver = uvcb.supp_add_secret_req_ver;
- 		uv_info.supp_add_secret_pcf = uvcb.supp_add_secret_pcf;
- 		uv_info.supp_secret_types = uvcb.supp_secret_types;
--		uv_info.max_secrets = uvcb.max_secrets;
-+		uv_info.max_assoc_secrets = uvcb.max_assoc_secrets;
-+		uv_info.max_retr_secrets = uvcb.max_retr_secrets;
- 	}
- 
- 	if (test_bit_inv(BIT_UVC_CMD_SET_SHARED_ACCESS, (unsigned long *)uvcb.inst_calls_list) &&
-diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-index bc61cf3e689b..371bbaf3dbe9 100644
---- a/arch/s390/include/asm/uv.h
-+++ b/arch/s390/include/asm/uv.h
-@@ -143,9 +143,10 @@ struct uv_cb_qui {
- 	u64 reservedf0;				/* 0x00f0 */
- 	u64 supp_add_secret_req_ver;		/* 0x00f8 */
- 	u64 supp_add_secret_pcf;		/* 0x0100 */
--	u64 supp_secret_types;			/* 0x0180 */
--	u16 max_secrets;			/* 0x0110 */
--	u8 reserved112[0x120 - 0x112];		/* 0x0112 */
-+	u64 supp_secret_types;			/* 0x0108 */
-+	u16 max_assoc_secrets;			/* 0x0110 */
-+	u16 max_retr_secrets;			/* 0x0112 */
-+	u8 reserved114[0x120 - 0x114];		/* 0x0114 */
- } __packed __aligned(8);
- 
- /* Initialize Ultravisor */
-@@ -530,7 +531,8 @@ struct uv_info {
- 	unsigned long supp_add_secret_req_ver;
- 	unsigned long supp_add_secret_pcf;
- 	unsigned long supp_secret_types;
--	unsigned short max_secrets;
-+	unsigned short max_assoc_secrets;
-+	unsigned short max_retr_secrets;
- };
- 
- extern struct uv_info uv_info;
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index 588caf5d4f0c..d6079aa9b57b 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -696,12 +696,32 @@ static struct kobj_attribute uv_query_supp_secret_types_attr =
- static ssize_t uv_query_max_secrets(struct kobject *kobj,
- 				    struct kobj_attribute *attr, char *buf)
- {
--	return sysfs_emit(buf, "%d\n", uv_info.max_secrets);
-+	return sysfs_emit(buf, "%d\n",
-+			  uv_info.max_assoc_secrets + uv_info.max_retr_secrets);
- }
- 
- static struct kobj_attribute uv_query_max_secrets_attr =
- 	__ATTR(max_secrets, 0444, uv_query_max_secrets, NULL);
- 
-+static ssize_t uv_query_max_retr_secrets(struct kobject *kobj,
-+					 struct kobj_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", uv_info.max_retr_secrets);
-+}
-+
-+static struct kobj_attribute uv_query_max_retr_secrets_attr =
-+	__ATTR(max_retr_secrets, 0444, uv_query_max_retr_secrets, NULL);
-+
-+static ssize_t uv_query_max_assoc_secrets(struct kobject *kobj,
-+					  struct kobj_attribute *attr,
-+					  char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", uv_info.max_assoc_secrets);
-+}
-+
-+static struct kobj_attribute uv_query_max_assoc_secrets_attr =
-+	__ATTR(max_assoc_secrets, 0444, uv_query_max_assoc_secrets, NULL);
-+
- static struct attribute *uv_query_attrs[] = {
- 	&uv_query_facilities_attr.attr,
- 	&uv_query_feature_indications_attr.attr,
-@@ -719,6 +739,8 @@ static struct attribute *uv_query_attrs[] = {
- 	&uv_query_supp_add_secret_pcf_attr.attr,
- 	&uv_query_supp_secret_types_attr.attr,
- 	&uv_query_max_secrets_attr.attr,
-+	&uv_query_max_assoc_secrets_attr.attr,
-+	&uv_query_max_retr_secrets_attr.attr,
- 	NULL,
- };
- 
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
 
