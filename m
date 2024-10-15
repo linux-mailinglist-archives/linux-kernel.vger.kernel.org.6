@@ -1,300 +1,250 @@
-Return-Path: <linux-kernel+bounces-364874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559C599DA72
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:02:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A1B99DA73
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 792481C21386
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADEB283053
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C912DDDBB;
-	Tue, 15 Oct 2024 00:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34964B658;
+	Tue, 15 Oct 2024 00:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z1zdDSwB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hlrBSlu1"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3461C442F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8681D29B0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728950517; cv=none; b=hEZohLoDDwILS0C793+e0fIC3vbpiIpVB8ztTfbJNak4jW2KwgYuJa9jUGiVBANaMY7R3toggdaYhvkqBhT0a+va7pZEWZ7PBYP6hG8V6d7xUY+lZ9zLiKPvk7d+j8oh72OG2YGKE20zUbYER2cvGaqjTKzMb3yAkmnvGn+n14I=
+	t=1728950526; cv=none; b=tEuiA6Wvdv8utoYav0NJrbIDvoIZjgDUbMxLwVcbmfVIllFyT1/e33EiQE+wlSl7e1W8TEkV96WNx5aNB9BCFEgbJi325Mou2uxhy910/yV0euC8eB2mrVI/77mTqxSK6bRfhptdARSlWJ3wfCGf0rwCtKW8LhyUNgf83HYYr6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728950517; c=relaxed/simple;
-	bh=Q8iS8IxHSVGTjbc9AGbpjOQg0EWYXS/kKQdTlWSiROE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xg4IsZtXLp7N8UvxSDUHFBS/hT5/2kj6ZNcB+PEmiPofmx9cq1q35nhDCfAZmItE9iN35R4fIBpMVDa8V86/O/hkAnPxDoE+w/ftVZ5c1LIp8E8cNjVpsOmzPE4ER88RVyvYLjt1MadE/lSsK/bRjMgXI2d0IRsXlYbPRRB16hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z1zdDSwB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728950514;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3fVXTa8XIsbgoiuVpOKk+BswyA+FGg23RGxfcTSTItE=;
-	b=Z1zdDSwBvS65yDKt3QQGiqPZwVwExnejo9v3mcSYv0K6cwRK8TW0YSFcb990LbF+QkgBaP
-	QHG57V5UFi9OX2gXtK8ZlI8rOmATATMUv05Yw3r9QNMR3xchT0rero+Z5OhoVpFRC0Lh59
-	H65EPoc3xXCRREajxEf2Fr6IJAGEkh4=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-324-duS_OnTUOF-U9ipdXA7nuQ-1; Mon, 14 Oct 2024 20:01:52 -0400
-X-MC-Unique: duS_OnTUOF-U9ipdXA7nuQ-1
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-6c8f99fef10so6276513a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:01:51 -0700 (PDT)
+	s=arc-20240116; t=1728950526; c=relaxed/simple;
+	bh=+rxryxOQHkZdgHYAqWw/VS2szzAnEupTKSmElKJsiNA=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=T4rSoUX1RZBQAMkP0Ke4+Fb5Kd6EKQV1ASW4faOjvIvDNAz7vV35u/umTBPCPYf0BF1dWEcxapJqCxtZvD+SIku1jUtv+hEW4Cc8oMB7v6DYZMVswKuUDUhinKtk/x192w4VnTYUbkDuVAnnH1YqKnI9PZzVuLBX0zuDyWHKUxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hlrBSlu1; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e355f1ff4bso40635517b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728950523; x=1729555323; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lpVYqTqakCwPUiKlO3zjPeSJzwD+j1X//3FbjHx6SHU=;
+        b=hlrBSlu1y57MiMe1qAfFhZPi5XCjTvprPa/bMg8Rr0gVhVBhQnS1m2IOPV97p+FTB9
+         P/vWM9DEhteFP4xcTBqsxHLllvTBgeqbwmkBwOmauuVPwaSHZk2Lbc2XfiFMFR5pTjZ6
+         WXBMEINcBsjxK9pUiEGZdsg58EIHlU/oGb63baU3966TMIgdA6FlUA1/qu01523K/rGV
+         rFZV5UBXT5lJ+9x+n4z5io+aX3+iunRXkreF38wzbHFu35BC+uR0oD8JiUmTV2wOvW4E
+         2v9Dx+dP/NejOJbVKNxNhUgBytPzVLq3SzYIGut2xpOCKm/9mP1LpcGsNwMI+OMNx+1l
+         aWDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728950510; x=1729555310;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3fVXTa8XIsbgoiuVpOKk+BswyA+FGg23RGxfcTSTItE=;
-        b=LzDKom8trZ0MvZ5GHxH/9CjYBpopXA9ZLWS2l/BZIK4zwO3jCitK8yFyEZrdN6yPmm
-         8wcP7NLja2LVQRNxtftBaGQksi4fZLIPtueYENimhJQBe8bLlNPSG/3ixreKAqe4gR7c
-         YKXyODQpZYcx0Vu8hJsGbsjxD0l6E71tCP/9tMhx4PGED5NBSm2vS4Lutg0RHgVQ1AkZ
-         SjTAlumWwMpohbrjH3Loy1X19N86xr88I/UMsVbenhN9S8HHGKPgl9QY9npULRaePbI+
-         rW8DJPoDNR2NULhBeEucYmtS/HpLw6YunhmDVZLWYbvIyw5JRA1Nza+o1ZNjnm0vrs3J
-         i79w==
-X-Forwarded-Encrypted: i=1; AJvYcCWtfZmaEn0fHdbniIvmgDLVTXLNFS45FhczoZ9gKEvbVG6VBuSbaX08eopLGpdU2MOxdzy5BZtFVlnzmQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbWZZCgDflaSAywyWWw7aB5g/P+OaMolw+VXi+hF1vwCl7k8Jb
-	PFrcjqOBBHPZIRvz0qAzExIQTpGO3E0bavt8n0uoUJQqlmtxZY4P7IemqnzZXYzJP0vokRtx82n
-	9otMelikyAFepaMxQLb8BSAshIcn7bQbBxH3k6uu5kytqXPyooZ6IMNfSj7phcg==
-X-Received: by 2002:a05:6a20:d501:b0:1d2:ea38:39bc with SMTP id adf61e73a8af0-1d8c9594e7dmr14937923637.11.1728950510196;
-        Mon, 14 Oct 2024 17:01:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJcAFjePFn8mOJXk/8VHRUXLze+FJupfXBRL7K3VuUoXPsbgGUDvbOUz+Vrv3oSTsD9DVmWw==
-X-Received: by 2002:a05:6a20:d501:b0:1d2:ea38:39bc with SMTP id adf61e73a8af0-1d8c9594e7dmr14937869637.11.1728950509802;
-        Mon, 14 Oct 2024 17:01:49 -0700 (PDT)
-Received: from [192.168.68.54] ([180.233.125.129])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c71a8aesm114810a12.81.2024.10.14.17.01.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 17:01:49 -0700 (PDT)
-Message-ID: <6d6253a6-c113-44af-856e-118d02e1e409@redhat.com>
-Date: Tue, 15 Oct 2024 10:01:39 +1000
+        d=1e100.net; s=20230601; t=1728950523; x=1729555323;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lpVYqTqakCwPUiKlO3zjPeSJzwD+j1X//3FbjHx6SHU=;
+        b=n+D4g7YYE8lMfVjbDXSBWADw1mWdcI5wPZyShNx7bw/W5z788UiCgpAaQ+Gvh+7iiK
+         z+7sU4iJeVlircXEGX3vtKPVqGIuao6kiPmZ1QerqCN9NzG2Ltuo8Qa2GW7tbN+a3lkA
+         gO8+v0NbYiQJE05I85+g/Qc/MDKL9CcLsAILUpICRyxT/3261adetGoLa9vLgbR7PMPU
+         VpRas3plAgOLPIfuqrprnkChIWItEJ8Vqyrr172HrAHZzZ5CQkkjaTOjXnlB92VMLqcX
+         97BZ9fn7kO8ng2NtU5XJT1L8R+JkJRrrwxTIs8Q1HbLdrshcMraAykrg4iclyg23dPFe
+         5oow==
+X-Forwarded-Encrypted: i=1; AJvYcCV8bl0lnRFD6xPs7HCieRVDNvF9zqCA88GvEz7te8FWyORWwi436SP7DIaflQnRO1NaDvwoyl2SUSS+x8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOzMA25sApHl4GIvNLSfkzbBl4VhnzB0W1CyIaTbnmKjY6mcrC
+	mYGXCVTN95p2PtnKhQ+34fdzeS1gdrRQhVBa8epQ0AldiJyUAZc+LJjUo+fsILnuC2nEpk55O+Z
+	elHxnsw==
+X-Google-Smtp-Source: AGHT+IFn7RW4A+NhhePaa6d8PAFoTugBI7glIea25mnv8/8OfaQ+Jv6KthT7fYH+cQj6brMY5eqzs2mw1EFl
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:f1f9:f6b6:68bc:5a14])
+ (user=irogers job=sendgmr) by 2002:a05:690c:3588:b0:6e2:e462:e191 with SMTP
+ id 00721157ae682-6e347c67c26mr3300437b3.6.1728950523426; Mon, 14 Oct 2024
+ 17:02:03 -0700 (PDT)
+Date: Mon, 14 Oct 2024 17:01:55 -0700
+Message-Id: <20241015000158.871828-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/11] virt: arm-cca-guest: TSM_REPORT support for
- realms
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Sami Mujawar <sami.mujawar@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, Dan Williams <dan.j.williams@intel.com>,
- "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004144307.66199-1-steven.price@arm.com>
- <20241004144307.66199-11-steven.price@arm.com>
- <5a3432d1-6a79-434c-bc93-6317c8c6435c@redhat.com>
- <6c306817-fbd7-402c-8425-a4523ed43114@arm.com>
- <7a83461d-40fd-4e61-8833-5dae2abaf82b@arm.com>
- <5999b021-0ae3-4d90-ae29-f18f187fd115@redhat.com>
- <11cff100-3406-4608-9993-c29caf3d086d@arm.com>
- <f3ce0718-064d-48e4-a681-7058157127b0@arm.com>
- <56d9edcb-2574-43fe-8ebb-65cc4fdbc3d0@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <56d9edcb-2574-43fe-8ebb-65cc4fdbc3d0@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Subject: [PATCH v2 0/3] Make "Setup struct perf_event_attr" a shell test
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Leo Yan <leo.yan@linux.dev>, 
+	Howard Chu <howardchu95@gmail.com>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/15/24 12:46 AM, Suzuki K Poulose wrote:
-> On 14/10/2024 15:41, Steven Price wrote:
->> On 14/10/2024 09:56, Suzuki K Poulose wrote:
->>> On 12/10/2024 07:06, Gavin Shan wrote:
->>>> On 10/12/24 2:22 AM, Suzuki K Poulose wrote:
->>>>> On 11/10/2024 15:14, Steven Price wrote:
->>>>>> On 08/10/2024 05:12, Gavin Shan wrote:
->>>>>>> On 10/5/24 12:43 AM, Steven Price wrote:
->>>>>>>> From: Sami Mujawar <sami.mujawar@arm.com>
->>>>>>>>
->>>>>>>> Introduce an arm-cca-guest driver that registers with
->>>>>>>> the configfs-tsm module to provide user interfaces for
->>>>>>>> retrieving an attestation token.
->>>>>>>>
->>>>>>>> When a new report is requested the arm-cca-guest driver
->>>>>>>> invokes the appropriate RSI interfaces to query an
->>>>>>>> attestation token.
->>>>>>>>
->>>>>>>> The steps to retrieve an attestation token are as follows:
->>>>>>>>      1. Mount the configfs filesystem if not already mounted
->>>>>>>>         mount -t configfs none /sys/kernel/config
->>>>>>>>      2. Generate an attestation token
->>>>>>>>         report=/sys/kernel/config/tsm/report/report0
->>>>>>>>         mkdir $report
->>>>>>>>         dd if=/dev/urandom bs=64 count=1 > $report/inblob
->>>>>>>>         hexdump -C $report/outblob
->>>>>>>>         rmdir $report
->>>>>>>>
->>>>>>>> Signed-off-by: Sami Mujawar <sami.mujawar@arm.com>
->>>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>>>>> Signed-off-by: Steven Price <steven.price@arm.com>
->>>>>>>> ---
->>>>>>>> v3: Minor improvements to comments and adapt to the renaming of
->>>>>>>> GRANULE_SIZE to RSI_GRANULE_SIZE.
->>>>>>>> ---
->>>>>>>>     drivers/virt/coco/Kconfig                     |   2 +
->>>>>>>>     drivers/virt/coco/Makefile                    |   1 +
->>>>>>>>     drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
->>>>>>>>     drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
->>>>>>>>     .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211
->>>>>>>> ++++++++++++ ++++++
->>>>>>>>     5 files changed, 227 insertions(+)
->>>>>>>>     create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
->>>>>>>>     create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
->>>>>>>>     create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
->>>>
->>>> [...]
->>>>
->>>>>>>> +/**
->>>>>>>> + * arm_cca_report_new - Generate a new attestation token.
->>>>>>>> + *
->>>>>>>> + * @report: pointer to the TSM report context information.
->>>>>>>> + * @data:  pointer to the context specific data for this module.
->>>>>>>> + *
->>>>>>>> + * Initialise the attestation token generation using the
->>>>>>>> challenge data
->>>>>>>> + * passed in the TSM descriptor. Allocate memory for the attestation
->>>>>>>> token
->>>>>>>> + * and schedule calls to retrieve the attestation token on the
->>>>>>>> same CPU
->>>>>>>> + * on which the attestation token generation was initialised.
->>>>>>>> + *
->>>>>>>> + * The challenge data must be at least 32 bytes and no more than 64
->>>>>>>> bytes. If
->>>>>>>> + * less than 64 bytes are provided it will be zero padded to 64
->>>>>>>> bytes.
->>>>>>>> + *
->>>>>>>> + * Return:
->>>>>>>> + * * %0        - Attestation token generated successfully.
->>>>>>>> + * * %-EINVAL  - A parameter was not valid.
->>>>>>>> + * * %-ENOMEM  - Out of memory.
->>>>>>>> + * * %-EFAULT  - Failed to get IPA for memory page(s).
->>>>>>>> + * * A negative status code as returned by
->>>>>>>> smp_call_function_single().
->>>>>>>> + */
->>>>>>>> +static int arm_cca_report_new(struct tsm_report *report, void *data)
->>>>>>>> +{
->>>>>>>> +    int ret;
->>>>>>>> +    int cpu;
->>>>>>>> +    long max_size;
->>>>>>>> +    unsigned long token_size;
->>>>>>>> +    struct arm_cca_token_info info;
->>>>>>>> +    void *buf;
->>>>>>>> +    u8 *token __free(kvfree) = NULL;
->>>>>>>> +    struct tsm_desc *desc = &report->desc;
->>>>>>>> +
->>>>>>>> +    if (!report)
->>>>>>>> +        return -EINVAL;
->>>>>>>> +
->>>>>>>
->>>>>>> This check seems unnecessary and can be dropped.
->>>>>>
->>>>>> Ack
->>>>>>
->>>>>>>> +    if (desc->inblob_len < 32 || desc->inblob_len > 64)
->>>>>>>> +        return -EINVAL;
->>>>>>>> +
->>>>>>>> +    /*
->>>>>>>> +     * Get a CPU on which the attestation token generation will be
->>>>>>>> +     * scheduled and initialise the attestation token generation.
->>>>>>>> +     */
->>>>>>>> +    cpu = get_cpu();
->>>>>>>> +    max_size = rsi_attestation_token_init(desc->inblob,
->>>>>>>> desc->inblob_len);
->>>>>>>> +    put_cpu();
->>>>>>>> +
->>>>>>>
->>>>>>> It seems that put_cpu() is called early, meaning the CPU can go
->>>>>>> away before
->>>>>>> the subsequent call to arm_cca_attestation_continue() ?
->>>>>>
->>>>>> Indeed, good spot. I'll move it to the end of the function and update
->>>>>> the error paths below.
->>>>>
->>>>> Actually this was on purpose, not to block the CPU hotplug. The
->>>>> attestation must be completed on the same CPU.
->>>>>
->>>>> We can detect the failure from "smp_call" further down and make sure
->>>>> we can safely complete the operation or restart it.
->>>>>
->>>>
->>>> Yes, It's fine to call put_cpu() early since we're tolerant to error
->>>> introduced
->>>> by CPU unplug. It's a bit confused that rsi_attestation_token_init()
->>>> is called
->>>> on the local CPU while arm_cca_attestation_continue() is called on
->>>> same CPU
->>>> with help of smp_call_function_single(). Does it make sense to unify
->>>> so that
->>>> both will be invoked with the help of smp_call_function_single() ?
->>>>
->>>>       int cpu = smp_processor_id();
->>>>
->>>>       /*
->>>>        * The calling and target CPU can be different after the calling
->>>> process
->>>>        * is migrated to another different CPU. It's guaranteed the
->>>> attestatation
->>>>        * always happen on the target CPU with smp_call_function_single().
->>>>        */
->>>>       ret = smp_call_function_single(cpu,
->>>> rsi_attestation_token_init_wrapper,
->>>>                                      (void *)&info, true);
->>>
->>> Well, we want to allocate sufficient size buffer (size returned from
->>> token_init())  outside an atomic context (thus not in smp_call_function()).
->>>
->>> May be we could make this "allocation" restriction in a comment to
->>> make it clear, why we do it this way.
->>
->> So if I've followed this correctly the get_cpu() route doesn't work
->> because of the need to allocate outblob. So using
->> smp_call_function_single() for all calls seems to be the best approach,
->> along with a comment explaining what's going on. So how about:
->>
->>     /*
->>      * The attestation token 'init' and 'continue' calls must be
->>      * performed on the same CPU. smp_call_function_single() is used
->>      * instead of simply calling get_cpu() because of the need to
->>      * allocate outblob based on the returned value from the 'init'
->>      * call and that cannot be done in an atomic context.
->>      */
->>     cpu = smp_processor_id();
->>
->>     info.challenge = desc->inblob;
->>     info.challenge_size = desc->inblob_len;
->>
->>     ret = smp_call_function_single(cpu, arm_cca_attestation_init,
->>                        &info, true);
->>     if (ret)
->>         return ret;
->>     max_size = info.result;
->>
->> (with appropriate updates to the 'info' struct and a new
->> arm_cca_attestation_init() wrapper for rsi_attestation_token_init()).
-> 
-> That sounds good to me.
-> 
+The path detection for "Setup struct perf_event_attr" test is brittle
+and leads to the test frequently not running. Running shell tests is
+reasonably robust, so make the test a shell test. Move the test files
+to reflect this.
 
-+1, it looks good to me as well.
+Before, if you build perf like `make -C tools/perf O=/tmp/perf` then
+run the built perf test for the "Setup struct perf_event_attr" it
+skips (causing the tests to bitrot, fixes to be sent, etc.):
+```
+$ sudo /tmp/perf/perf test -vv perf_event_attr
+capget syscall failed (No such file or directory - 2) fall back on root check
+17: Setup struct perf_event_attr:
+17: Setup struct perf_event_attr:
+--- start ---
+test child forked, pid 806601
+Using CPUID GenuineIntel-6-8D-1
+---- end(-2) ----
+17: Setup struct perf_event_attr                                    : Skip
+```
 
-Thanks,
-Gavin
+The issue is around the path set up, the test has a few path
+expectations but they are brittle as shown above. While we could
+endeavour to set up the path in C code, it makes sense to migrate the
+test to a shell test due to the tests smaller size, ease of
+environment variable manipulation, existing perf test support for
+better path setup, etc. Ie let's not reinvent the shell test
+infrastructure that handles python tests for the sake of one C test.
+
+After this change:
+```
+$ sudo /tmp/perf/perf test attribute
+76: Perf attribute expectations test                                : Ok
+```
+
+v2: Add __SANE_USERSPACE_TYPES__ to fix PowerPC build, Tested-by
+    Athira Rajeev <atrajeev@linux.vnet.ibm.com> and Stephen Rothwell
+    <sfr@canb.auug.org.au>.
+
+Ian Rogers (3):
+  perf test: Add a shell wrapper for "Setup struct perf_event_attr"
+  perf test: Remove C test wrapper for attr.py
+  perf test: Move attr files into shell directory where they are used
+
+ tools/perf/Makefile.perf                      |   5 +-
+ tools/perf/perf.c                             |   2 -
+ tools/perf/tests/Build                        |   1 -
+ tools/perf/tests/attr.c                       | 218 ------------------
+ tools/perf/tests/builtin-test.c               |   1 -
+ tools/perf/tests/shell/attr.sh                |  22 ++
+ tools/perf/tests/{ => shell}/attr/README      |   0
+ tools/perf/tests/{ => shell}/attr/base-record |   0
+ .../tests/{ => shell}/attr/base-record-spe    |   0
+ tools/perf/tests/{ => shell}/attr/base-stat   |   0
+ .../tests/{ => shell}/attr/system-wide-dummy  |   0
+ .../tests/{ => shell}/attr/test-record-C0     |   0
+ .../tests/{ => shell}/attr/test-record-basic  |   0
+ .../{ => shell}/attr/test-record-branch-any   |   0
+ .../attr/test-record-branch-filter-any        |   0
+ .../attr/test-record-branch-filter-any_call   |   0
+ .../attr/test-record-branch-filter-any_ret    |   0
+ .../attr/test-record-branch-filter-hv         |   0
+ .../attr/test-record-branch-filter-ind_call   |   0
+ .../attr/test-record-branch-filter-k          |   0
+ .../attr/test-record-branch-filter-u          |   0
+ .../tests/{ => shell}/attr/test-record-count  |   0
+ .../tests/{ => shell}/attr/test-record-data   |   0
+ .../{ => shell}/attr/test-record-dummy-C0     |   0
+ .../tests/{ => shell}/attr/test-record-freq   |   0
+ .../attr/test-record-graph-default            |   0
+ .../attr/test-record-graph-default-aarch64    |   0
+ .../{ => shell}/attr/test-record-graph-dwarf  |   0
+ .../{ => shell}/attr/test-record-graph-fp     |   0
+ .../attr/test-record-graph-fp-aarch64         |   0
+ .../attr/test-record-group-sampling           |   0
+ .../attr/test-record-group-sampling1          |   0
+ .../attr/test-record-group-sampling2          |   0
+ .../tests/{ => shell}/attr/test-record-group1 |   0
+ .../tests/{ => shell}/attr/test-record-group2 |   0
+ .../tests/{ => shell}/attr/test-record-group3 |   0
+ .../{ => shell}/attr/test-record-no-buffering |   0
+ .../{ => shell}/attr/test-record-no-inherit   |   0
+ .../{ => shell}/attr/test-record-no-samples   |   0
+ .../tests/{ => shell}/attr/test-record-period |   0
+ .../{ => shell}/attr/test-record-pfm-period   |   0
+ .../tests/{ => shell}/attr/test-record-raw    |   0
+ .../{ => shell}/attr/test-record-spe-period   |   0
+ .../attr/test-record-spe-period-term          |   0
+ .../attr/test-record-spe-physical-address     |   0
+ .../attr/test-record-user-regs-no-sve-aarch64 |   0
+ .../test-record-user-regs-old-sve-aarch64     |   0
+ .../attr/test-record-user-regs-sve-aarch64    |   0
+ .../perf/tests/{ => shell}/attr/test-stat-C0  |   0
+ .../tests/{ => shell}/attr/test-stat-basic    |   0
+ .../tests/{ => shell}/attr/test-stat-default  |   0
+ .../{ => shell}/attr/test-stat-detailed-1     |   0
+ .../{ => shell}/attr/test-stat-detailed-2     |   0
+ .../{ => shell}/attr/test-stat-detailed-3     |   0
+ .../tests/{ => shell}/attr/test-stat-group1   |   0
+ .../{ => shell}/attr/test-stat-no-inherit     |   0
+ tools/perf/tests/{ => shell/lib}/attr.py      |   0
+ tools/perf/util/evsel.c                       | 127 +++++++++-
+ tools/perf/util/util.h                        |   7 -
+ 59 files changed, 147 insertions(+), 236 deletions(-)
+ delete mode 100644 tools/perf/tests/attr.c
+ create mode 100755 tools/perf/tests/shell/attr.sh
+ rename tools/perf/tests/{ => shell}/attr/README (100%)
+ rename tools/perf/tests/{ => shell}/attr/base-record (100%)
+ rename tools/perf/tests/{ => shell}/attr/base-record-spe (100%)
+ rename tools/perf/tests/{ => shell}/attr/base-stat (100%)
+ rename tools/perf/tests/{ => shell}/attr/system-wide-dummy (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-C0 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-basic (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-any (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_call (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_ret (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-hv (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-ind_call (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-k (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-u (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-count (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-data (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-dummy-C0 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-freq (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-default (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-default-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-dwarf (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group-sampling (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group-sampling1 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group-sampling2 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group1 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group2 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group3 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-no-buffering (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-no-inherit (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-no-samples (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-period (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-pfm-period (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-raw (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-spe-period (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-spe-period-term (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-spe-physical-address (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-no-sve-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-old-sve-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-sve-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-C0 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-basic (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-default (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-1 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-2 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-3 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-group1 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-no-inherit (100%)
+ rename tools/perf/tests/{ => shell/lib}/attr.py (100%)
+
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
 
