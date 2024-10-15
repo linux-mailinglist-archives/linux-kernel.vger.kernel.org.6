@@ -1,83 +1,145 @@
-Return-Path: <linux-kernel+bounces-366934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC41D99FC66
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:22:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE18C99FC6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9486A1F216B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9A42865D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6AE1DBB24;
-	Tue, 15 Oct 2024 23:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8561E00BE;
+	Tue, 15 Oct 2024 23:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCavwmTh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="sGGm/Emc"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A38519C542;
-	Tue, 15 Oct 2024 23:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FB01B0F1F;
+	Tue, 15 Oct 2024 23:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729034549; cv=none; b=mwupl2wlXaw3yBfafcoEmkkymwih+pIbrnxjb8rP3zWMDV630wawbbXT8i39nJ8drfVo5YT62PEwQdH0I9eI1sfz7c/70C+16A+XkoKe3exIj87nPUHyar7Cpo1RpdcgpHpeJFusTy8XNl8J+wyo2bjaPhHTSd6qEOnTAfQXI64=
+	t=1729034725; cv=none; b=Atgmt5Ejsf3hQN2yvj9jv96rOb+SsWPcLGtTqVjNjXHsFCSaLVyCtQVvp1sLrXKt+LjOKZEt1mfs0DHtv6fRxMmCXu3KKFiN+tS+83kxB4pFanUVY5M9BEAXYTZiJGyP6jL0UHxeOxTVXxKWcErtb151TuNvijsCQ+gBVTtD1hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729034549; c=relaxed/simple;
-	bh=SZbokGXMJZ3coHJvqdScXDpyPhe0Y00MZjJqgrpRdPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BDz4jMiq/q/el6vETfCBqi49LDVfBvEyhiBg+aW+tiXh7Q+tp4jVR8DytX5jYdC2tLn3e6/+R4ObpPrWJ39us/ap+v9VPW8KFpZd+fNTeRyzpqf8krClaBmDHZOrxq2zfhSRSi4qKHEn70m9Gs0OcPNGfr1XpZ2zqkZtZXtF9G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCavwmTh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE0F3C4CEC6;
-	Tue, 15 Oct 2024 23:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729034549;
-	bh=SZbokGXMJZ3coHJvqdScXDpyPhe0Y00MZjJqgrpRdPs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MCavwmThkKLRCH1gx9a9O0fFGORP/RNa+Dv9/0uvpZkeiuCXPVI+M9vzStMaV8jLK
-	 D+dc33UWSljwE/fv6MKsEdjawDnxveO7My8XzRmVn5nr3DtGE3zpZzuIOeSX7A3pFG
-	 iPyiNW0j3kOws/JWEjZwo+b/1PkI0g/jSNFWCzQVfKFLGglTLQQ1xtenTSDph9cFnY
-	 AZz3mWaFyBoMAwNPi+eZd4oe/S5NfKfE4AxNM/B3EQQ6RS76QFIffgO03DA9c5TvuM
-	 YaS9OrzjlmpVOnbGXkG8+ySVGvrppcUvbu1wfrFxUm7VvaPlvz4YFwoZhK90aiKm4N
-	 YzR9HO48LPNPg==
-Date: Tue, 15 Oct 2024 16:22:27 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>, bryan.whitehead@microchip.com,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- anna-maria@linutronix.de, frederic@kernel.org, richardcochran@gmail.com,
- johnstul@us.ibm.com, UNGLinuxDriver@microchip.com, jstultz@google.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 RESEND 1/2] posix-clock: Fix missing timespec64 check
- in pc_clock_settime()
-Message-ID: <20241015162227.4265d7b2@kernel.org>
-In-Reply-To: <87v7xtc7z5.ffs@tglx>
-References: <20241009072302.1754567-1-ruanjinjie@huawei.com>
-	<20241009072302.1754567-2-ruanjinjie@huawei.com>
-	<20241011125726.62c5dde7@kernel.org>
-	<87v7xtc7z5.ffs@tglx>
+	s=arc-20240116; t=1729034725; c=relaxed/simple;
+	bh=MO/d8y22yd9+R8DCo/6DM4XMZfwj3ZpCLs5XzbAPYxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UMlzq5zT/9EIaIDIqjTVZLrDGLphJf/ZHmnEQm6uiDEngiy+StBLlGcgl4jYKLb1QCC3kd4rwqHXipHWZjTIKv5ejE0l70CW86ESKJDFkL5dlU7AfNKxIuObfA6AKmxXgjAKc2ObSW5vvK9F7XAv3qkbwUAAx83JU6nnCy1bl5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=sGGm/Emc; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 4D98688995;
+	Wed, 16 Oct 2024 01:25:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1729034721;
+	bh=0Bz4RfHxv606uIgq/gZ+gAZ121e33kO0fly1mdHub/Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sGGm/Emc5YzA4oV8BSOBF1lQ9CCFTFtxNiXgaIlL9Ef/OZcalsz8Wk9sMO/WdNmA8
+	 UNRmB58j55ebyvUTQ8KupzHmF6WyQv/H+Muoo+1vWCZRFJLtjznUTgBVLPFC19OpSW
+	 r+rukM/R+mQj2cs0xUToXbgtR/V3CAtJWYipAc4ETcxXeQbd0DZTQgBwUiKNa/79uw
+	 Nlx0lj6VSGdNOULi/XyLPA9B6f+Xk0Q1XJB+cx4PaWNuuvZoGwjC3Oye6I7thLQDtC
+	 DMzJjiGwBY31QnGOI9B25b7hCYzuk8igPlZyJHEV0ZMshdxnzEc7eXkcTbCsy/5THj
+	 mxcf9Z6fWeqxw==
+From: Marek Vasut <marex@denx.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marex@denx.de>,
+	Christoph Niedermaier <cniedermaier@dh-electronics.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	kernel@dh-electronics.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: imx6qdl-dhcom-pdk2: Fill in missing panel power-supply
+Date: Wed, 16 Oct 2024 01:24:51 +0200
+Message-ID: <20241015232509.101206-1-marex@denx.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, 16 Oct 2024 00:33:02 +0200 Thomas Gleixner wrote:
-> > I'm guessing we can push this into 6.12-rc and the other patch into
-> > net-next. I'll toss it into net on Monday unless someone objects.  
-> 
-> Can you folks please at least wait until the maintainers of the code in
-> question had a look ?
+Add missing panel power-supply property to DT to fix the following warning.
+The power supply on this device is very simple chain of regulators from the
+main 24V input, describe those.
 
-You are literally quoting the text where I say I will wait 3 more days.
-Unfortunately "until the maintainers respond" leads to waiting forever
-50% of the time, and even when we cap at 3 working days we have 300
-patches in the queue (292 right now, and I already spent 2 hours
-reviewing today). Hope you understand.
+"
+arch/arm/boot/dts/nxp/imx/imx6q-dhcom-pdk2.dtb: panel: 'power-supply' is a required property
+"
 
-Sorry if we applied too early, please review, I'll revert if it's no
-good.
+Signed-off-by: Marek Vasut <marex@denx.de>
+---
+Cc: Christoph Niedermaier <cniedermaier@dh-electronics.com>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: kernel@dh-electronics.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ .../boot/dts/nxp/imx/imx6qdl-dhcom-pdk2.dtsi  | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-dhcom-pdk2.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-dhcom-pdk2.dtsi
+index 773fdcfcd0015..d7c2b30aecfd1 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6qdl-dhcom-pdk2.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-dhcom-pdk2.dtsi
+@@ -143,6 +143,7 @@ led-8 {
+ 	panel {
+ 		backlight = <&display_bl>;
+ 		compatible = "edt,etm0700g0edh6";
++		power-supply = <&reg_panel_3v3>;
+ 
+ 		port {
+ 			lcd_panel_in: endpoint {
+@@ -151,6 +152,25 @@ lcd_panel_in: endpoint {
+ 		};
+ 	};
+ 
++	/* Filtered supply voltage */
++	reg_pdk2_24v: regulator-pdk2-24v {
++		compatible = "regulator-fixed";
++		regulator-always-on;
++		regulator-max-microvolt = <24000000>;
++		regulator-min-microvolt = <24000000>;
++		regulator-name = "24V_PDK2";
++	};
++
++	/* 560-200 U1 */
++	reg_panel_3v3: regulator-panel-3v3 {
++		compatible = "regulator-fixed";
++		regulator-always-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-name = "3V3_PANEL";
++		vin-supply = <&reg_pdk2_24v>;
++	};
++
+ 	sound {
+ 		audio-codec = <&sgtl5000>;
+ 		audio-routing =
+-- 
+2.45.2
+
 
