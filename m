@@ -1,75 +1,64 @@
-Return-Path: <linux-kernel+bounces-365965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC08999EEAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 513BE99EEB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B4B31F258F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:05:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 091231F257C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2301B2197;
-	Tue, 15 Oct 2024 14:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868241B2188;
+	Tue, 15 Oct 2024 14:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay4Jf513"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gqAyl/AE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9E21AF0DF;
-	Tue, 15 Oct 2024 14:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D5C1FC7C2;
+	Tue, 15 Oct 2024 14:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729001121; cv=none; b=hQfT/FIKcF9f48+sdY80VM0voXH7ENZnyci1WOOgk+GCoOiliHMmF9NwoDX5+7eOWK3JCBenfrQE8lGvFrW9KgGOP0xOmLfJTwJXEJeUtK92DMM4oz3iZEn9wy0NlLKaYD6j2VZCInNsV8RHXYGbvBkx04Qd+zwaVHxUzY/KbM4=
+	t=1729001164; cv=none; b=GftPcsB4gjmxiv050afd6iix5JS6mMfhck7+T4h1iQcmNCMdRQfo/DuM7g30SL/0SIwrWE/9IC85WoBstqwNNMVqtykfZe+MS3eVmEGoDW5X20IAP6OSZC0IvfGbr0SO9+/9dG5jGv6t9NfatZDcP5lllkcRF1zVzx+62bBczUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729001121; c=relaxed/simple;
-	bh=ZuSKa6RtEAwqSzF0Imu8HavW2XrXsY8QUCnRQPs4zCQ=;
+	s=arc-20240116; t=1729001164; c=relaxed/simple;
+	bh=27r1rSES3j8OsA1TExPXvfMgHp9/LLg3V6a5TV01u5U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b+gL/vXw6LQr0ruFy3NHQTTz89r/RuM3+vp12H9uBiEGaFIIaNHP2ctWzciJeYlkEqh26RR64DGcNL+7weFGFIwlkRmcUVmRd1y8BhYE9InFW5drGYknaCv9t1MZvhIV1U/jLH+r9KP6oxaSjP/vSanTVqv5rAVm5m6r6YORwn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ay4Jf513; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e1c91fe739so4173570a91.2;
-        Tue, 15 Oct 2024 07:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729001118; x=1729605918; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=sINTlp+lAb8Vry6g4stAnZM3QNEY9NvOkRtit9foqPU=;
-        b=Ay4Jf513AkLUaCAPJ7SWxEg0IshVUJLBsbEzSyLq84yIXDDiruZSrRdePHHCs7LGu1
-         FnI7IiyUOK4y92KzK53lYz2f/Qe6Tx3m32RtXfoFyG8hzbVGsX8zsimYYPBhvxT5IhfC
-         Z9bhuoRjRvKmfBowR2oYaBGThaDVib+zRKjNBpmLpx6tkUzWzBrYjNKioKfYQ+ifX3e9
-         ZWAD+2YHh3xUOJ4MGR5s4K4ouNBudNYGFrLlu/jdx3ZQNnRwP8UnKg21lPyyocOVu+Sk
-         WzzxswOmmKr4YlaXMj3Q4Pyf7lelQG4Oggncv2U6AFgLU6/vrT8lVg45MeWKTTntR7iI
-         ZCig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729001118; x=1729605918;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sINTlp+lAb8Vry6g4stAnZM3QNEY9NvOkRtit9foqPU=;
-        b=qOcE1SIdrIlTwY+vqwE1O+SRNu1eboSl6Oe5GufqbSCUmgEHI+5Vvn8LRyoe5ZANPe
-         XJ6DOqkF6msipUf/8BVFzvqJ23bbHNTd7n1kWPTNkBHqdVDf/8tY+f7XmHCMuE9ezNSC
-         KOPw5wY+O6Ddu37QHmQr4J0Tbfiznrmmr1HtEHVU3mriuu2q/Ya6/jcxnJ/Cd5sFw+aT
-         gTyUqKkM5fvK2s/ShLGbzGM0S+v44qI/aDr5Wyo2wYpiL8myVQHCX9tncwBiqufBCj2u
-         CO03Shy8hQNZmK8cEWjkcwa61iqVF7yvxzyGHfpDjHhTMhtOchU2o85lbzEMCIsRuSx1
-         42VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW70cJdepZjzatOa02xVQdiPe7Tq+E3XXvy1BwaxYpcVL7tu7f59PzYgi+JXMG/sg9X5ZHpvWcSk/7abrc=@vger.kernel.org, AJvYcCWmfZbHAuU14h1VKNewjg/PSZJQtbV24lCylLGt69ssIl0xRn5bMiLPnMCIaVG6ydbhL+J62THzLi5vXAebAwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUuDHpu8iNH7iNbYkukMZwpA+tR7PDwcDiecznWdOZ609wJpWJ
-	RwAcNguV+ZExkDTRRFTfB6J75LB2fKXXGFUQnjyTy7LnfBTdj2iw
-X-Google-Smtp-Source: AGHT+IFXhpVdTgwZKve0IhbN7lXgT7nISMjj7hVxoGUOg8J8BnWpxVaf4gy61Ncyy2MFOaDxLesMpg==
-X-Received: by 2002:a17:90a:1f4f:b0:2d3:c638:ec67 with SMTP id 98e67ed59e1d1-2e2f0825fc1mr16573225a91.0.1729001118380;
-        Tue, 15 Oct 2024 07:05:18 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392f0394asm1798799a91.30.2024.10.15.07.05.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 07:05:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <424ffa29-5d05-4a58-9fd1-09ae177ad781@roeck-us.net>
-Date: Tue, 15 Oct 2024 07:05:14 -0700
+	 In-Reply-To:Content-Type; b=llc1chzFfftvkT6ajBctOTQc2QvPFi/ldE1gGc9Xvs5aW5gGDqf33OOfXrfWUfo9LhIW2Ws0hHxmzVpFALi8c4Qza31qdcQc5pqYFJ6AUkCdyJCAlxzjjwYIR0NmV23XAjSjSItOfi8249n1H2f2dcvuEZMSR2rInWq4N/dqa1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gqAyl/AE; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729001162; x=1760537162;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=27r1rSES3j8OsA1TExPXvfMgHp9/LLg3V6a5TV01u5U=;
+  b=gqAyl/AEKY4ZG7us/DUZ5yDFpWKbTwGWlOzxadU6iqSFTuPxZjg1XdaU
+   v8wnkWCQKyqH2CIKp205CeVqT2dW1Yr2QgyrG0ZFm4rq8M/vr2svDVJGw
+   M33EThwYdnfw1274OG7CmuhzebSiKZii26khb82vVCGJTJYspJ+gWPa6b
+   a3xmocwHoYZpz2YM0D+6ePVzMMxs1wVcmP71+Oy9U+vJnCrHr8T7SAFXI
+   FWfqhxR4hQg+ndGgzx5kp28C/DZY8HnrdfKWqJDn138sddNlT7KMnncct
+   gJKywtseehL/yTmWRKGb3l+uO14Y0B3YV1cAXE2TsX56BoHNQGbIC4WVt
+   A==;
+X-CSE-ConnectionGUID: 47rypLQ9RtKxewLwwgUmHQ==
+X-CSE-MsgGUID: U/g9tqBjSrChj9K7nUF3UQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28523532"
+X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
+   d="scan'208";a="28523532"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 07:06:02 -0700
+X-CSE-ConnectionGUID: lHd+9ScYQiWAUQn2Cej4dg==
+X-CSE-MsgGUID: BZp6zln0RGa6PMkeK2H5Mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
+   d="scan'208";a="78721214"
+Received: from sabrown-mobl1.amr.corp.intel.com (HELO [10.125.224.227]) ([10.125.224.227])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 07:06:00 -0700
+Message-ID: <9ed4ce15-68b8-4604-bbe1-34fb8ca1f9eb@linux.intel.com>
+Date: Tue, 15 Oct 2024 07:05:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,79 +66,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] watchdog: Delete the cpu5wdt driver
-To: Jean Delvare <jdelvare@suse.de>, linux-watchdog@vger.kernel.org
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20241015133701.35e26fe5@endymion.delvare>
+Subject: Re: [PATCH 1/6] x86/bugs: Create single parameter for VERW based
+ mitigations
+To: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, "Kaplan, David"
+ <David.Kaplan@amd.com>, Jonathan Corbet <corbet@lwn.net>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>
+References: <20240924223140.1054918-2-daniel.sneddon@linux.intel.com>
+ <LV3PR12MB92651F4DF654C886B9F2BCF7947E2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20241010045219.vgpcl7nfqaimqrne@treble.attlocal.net>
+ <20241010145737.GOZwfrYaGxCOOlaVhy@fat_crate.local>
+ <88baaae8-d9fe-4c8a-a5e2-383d6b641e2c@linux.intel.com>
+ <20241015135231.GCZw5zn0fnI8dXpHtw@fat_crate.local>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241015133701.35e26fe5@endymion.delvare>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+In-Reply-To: <20241015135231.GCZw5zn0fnI8dXpHtw@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/15/24 04:37, Jean Delvare wrote:
-> This driver has a number of issues (accesses arbitrary I/O ports
-> without identifying the hardware, doesn't document what hardware it
-> supports, suspiciously inconsistent locking model, doesn't implement
-> WDIOC_SETTIMEOUT, potential integer overflow...)
+On 10/15/24 06:52, Borislav Petkov wrote:
+> On Mon, Oct 14, 2024 at 08:42:26AM -0700, Daniel Sneddon wrote:
+>> The reason I did the patches this way wasn't so much "need" as it just seemed a
+>> simpler way to do it. Why have 4 knobs when there is really only 1 mitigation
+>> under the hood? My question for you then is what you mean by "proper sync"? I'm
+>> guessing you mean that if any one of those 4 mitigations is set to off then
+>> assume all are off? 
 > 
-> The driver was added in 2003 and there's no evidence that it has any
-> recent user, all changes seem to be tree-wide, subsystem-wide, or the
-> result of static code analysis. So I believe we should simply drop
-> this legacy piece of code.
+> Well, up until now at least, we have handled under the assumption that not
+> every user knows exactly what needs to be configured in order to be safe.
 > 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Message-ID: <20241011170710.484a257a@endymion.delvare>
+> So, we have always aimed for a sane default.
+> 
+> IOW, if a user wants to disable one mitigation but all 4 are mitigated by the
+> same thing, then we probably should issue a warning saying something like:
+> 
+> 	"If you want to disable W, then you need to disable W, X and Y too in
+> 	order to disable W effectively as all 4 are mitigated by the same
+> 	mechanism."
+> 
+> And problem solved.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Makes sense. I'll drop the new parameter and add a warning.
 
-Ultimately we should consider removing all watchdog drivers not implementing
-the watchdog API, or at least declare them deprecated.
-
-Guenter
+Thanks,
+Dan
+> 
+> IOW, I don't expect someone would consciously want to disable a subset of
+> those mitigations but leave the remaining ones on. What usually happens, is
+> people do "mitigations=off" in order to regain their performance but not do
+> this selective thing which doesn't make a whole lot sense to me anyway.
+> 
+> Thx.
+> 
 
 
