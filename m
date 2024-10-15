@@ -1,272 +1,351 @@
-Return-Path: <linux-kernel+bounces-366516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FEE99F6B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:04:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAA599F6BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F30781C22055
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1121F241B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234301F80CB;
-	Tue, 15 Oct 2024 19:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D481F80C5;
+	Tue, 15 Oct 2024 19:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KSJBgzwL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="SedXyKGs"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D4E1F80AB;
-	Tue, 15 Oct 2024 19:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582691F80A1;
+	Tue, 15 Oct 2024 19:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729019059; cv=fail; b=KQLVZ4q9/vOKRUCell1cm7yl5AByK8LQQlgrQurLbzpqT0o8EfyBsLHRIGn5B7nWp00VyiYcUCY0JrXngSOROB8jEQ/hv6y896DDCgoBy0dlWY3YfD9tgkRg1uFV+qhU7/o6ecK5ALOou/TjSErI2nlbHEkNQuBA8Ejt30CflL0=
+	t=1729019192; cv=pass; b=GR2h8OOvid4xQsonj5ABV04z3WBumUwjU3Ylp7aBqwPTJkc+2+s4r2pyo6tUFeDqfJEYeK6mofkgTkBc5CmyIPVeDgU3Rdef1XvFFsoSDPbIrnPj+dhpabmWwW76gsZY7JNV/9L0NhQqXFewQTCl0dzh+TQfs+n2yijyWZYZa+E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729019059; c=relaxed/simple;
-	bh=1irnCYyE+IKX3XfzfnBEGqKPA1ykSpF+imcG/QYGOQc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QGfx56wfuBkDQ0yD4eeLbn7Kz1MamiAUp7/0LPX8YBJp4hJ2YjMRlL9mRQykFg0palaUqU/Dlj0fUR/vdMToJiZK7nw6BZN2lLhQ2VNpX8a3ZwJMtBdjH5gkj4ayhvl20d2DGopd9fHN25FDn4HiAeGxlCD0fm6PEPYLllvcjUE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KSJBgzwL; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729019057; x=1760555057;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=1irnCYyE+IKX3XfzfnBEGqKPA1ykSpF+imcG/QYGOQc=;
-  b=KSJBgzwLfAXFTJNwCcjFv2CfdBqTGkh35uNjCf74Y5yGeV0pEWni0CnD
-   A9x+9WSk6p3Or520s+w8VuoTVQ4DoJPrhi+McqkXIpyFODFir1PBJMIqh
-   xhw6rlu4Z8qFPO/db9+6KyqMY9EzYXpDEzpVh7IIy9eTWwKmdJ0P1zSVk
-   wrcVtz8sLIdxbDr+udjwpj4PbBu2Adv68KEM9xmq6XktyyeH+4IqQA40b
-   NlUdxzwFTmSYtG8ZQKAfHrWj9l88VdfmAtyXoxaiff97SU2ThHCgMznO0
-   0Mlw8REM3JyhUjGU2c0kfxXZf0GHdE0J8zS4gy5+V4BZfZGfRW57OVPGZ
-   w==;
-X-CSE-ConnectionGUID: MtF9+3L5TYWd9UNkCa6fLQ==
-X-CSE-MsgGUID: ecljrSchQKS1YbtnjGMIrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="53844766"
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="53844766"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 12:04:17 -0700
-X-CSE-ConnectionGUID: OL2tHE4mSteq7lJlXq2lXg==
-X-CSE-MsgGUID: vMhOG1k9QsextPlMasJ1UQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="77870865"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Oct 2024 12:04:16 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 15 Oct 2024 12:04:15 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 15 Oct 2024 12:04:15 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 15 Oct 2024 12:04:15 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.172)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 15 Oct 2024 12:04:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wub0GqddifsbpjzDxmbmHuy9WWEBOPpVhHln3Gcj41PAsSlml0tFXJvDevA5Zaqt66DkuXJaCMpHDj83rQpA7i2DlxZj5spTqcpXorxyKjH7dTJkNW2FXXcHF1+hsclMKXEM8780iVO2BMSnqYxCvkCJs5U2Sn8QjxreuKRyBU40htne1N+lAiMcxsvcphd9fOLsgSey6d87I5dPAVxnb3E1yxHSUkU/a+OtWm5DQaSctqMoBKU6Aj9jzELnRnsAiiHkcuv0Jid0O48pbu1N1LNwp5vP2Z+v8UtPukGr89yLu21c2+Vcq44oL9Tm50VStMwafWN1vMPNixC7FmL5Nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4tzK62p/pBsRAentbN4ocX2nJngwBXcnY+wiHQoUTUg=;
- b=w0eVFlJVjpJkfrPWo/QPjfb1mRVudVsOpjrL9Ap94JGImCwPsFxdv/VFW6Z/+x2JbceiVTwvL1DA1CSTcsOagqPDm11r6H6i4NpeQuMYv41YvjJP52KyxTqVBhpvsVIFcyzNn6vGK7EB8plf/CL8fm5RQyY2Epd+udkMm2vahg2/TEn6jP1jvcrxnLXmvCdWM0N2F3cMFgJC3APIn3eZKDYRu75GFJY6R+Uba73+enFY0POD1/4cGxo4t7L4u2qvuD8wtyBY61BeBtvYK0Zum+y7kZPu305t2y1OI2OWidlUiAxXFWSr3YBSYiU+0BqriRChHZjUMLm72HY4DHg4GA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by IA0PR11MB7864.namprd11.prod.outlook.com (2603:10b6:208:3df::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
- 2024 19:04:11 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 19:04:10 +0000
-Date: Tue, 15 Oct 2024 12:04:07 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Dave Hansen <dave.hansen@intel.com>
-CC: Kai Huang <kai.huang@intel.com>, <kirill.shutemov@linux.intel.com>,
-	<tglx@linutronix.de>, <bp@alien8.de>, <peterz@infradead.org>,
-	<mingo@redhat.com>, <hpa@zytor.com>, <dan.j.williams@intel.com>,
-	<seanjc@google.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <rick.p.edgecombe@intel.com>,
-	<isaku.yamahata@intel.com>, <adrian.hunter@intel.com>, <nik.borisov@suse.com>
-Subject: Re: [PATCH v5 0/8] TDX host: metadata reading tweaks, bug fix and
- info dump
-Message-ID: <670ebca6e8aa0_3f14294cf@dwillia2-xfh.jf.intel.com.notmuch>
-References: <cover.1728903647.git.kai.huang@intel.com>
- <f25673ea-08c5-474b-a841-095656820b67@intel.com>
- <CABgObfYXUxqQV_FoxKjC8U3t5DnyM45nz5DpTxYZv2x_uFK_Kw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABgObfYXUxqQV_FoxKjC8U3t5DnyM45nz5DpTxYZv2x_uFK_Kw@mail.gmail.com>
-X-ClientProxiedBy: MW4PR04CA0389.namprd04.prod.outlook.com
- (2603:10b6:303:81::34) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	s=arc-20240116; t=1729019192; c=relaxed/simple;
+	bh=CarnKUlhEU03dHn4YNQcPgKD7oX57DpUNhiC4PewB1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuIUgI1bD0tseTcgaLHz4v06YRpDYy6BEb1hqhD+/GuTKWqoaP8TSsazkC2n47Ehi4Sfj85hJCc+kZRZkXPojhtssdfmsGkVHWpoOLISipyoWBhsbuHDpbpS00+lD8faaIzBer0zIhmm7C5tZoJvxFt9Zv0Ymn6YDvmvC9abCXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=SedXyKGs; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729019147; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dB1vlzJPn4ZQ9O+yJ3xePEbvZOkN4EjPA6hUzpPQgt6DEN19OmLbv2RsgLNszKADe30OX/QA6dhvq33Yr7Vfatb1PotiEmWedb4oeE54xBMZ7eDPvIlPqhaWZ411QH6XsBzaRPLYDxKHgUxhcx9WVM7mvT0cFtwbyDZ76L3cnks=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729019147; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wDPu8Hrc9URjHX/IjEjHZZ5zhMpMQLyvAxJls66kHv8=; 
+	b=HmflID4oApGQv5At/vq+zdX+oEH1qi4AihKG1O/fzJsTLcq9PyihhjoiB0qFuHdVReG7c/5rCCOSYN+laqxFHLd+s4plN/bF1A26QlaryCTBzh6HX3woP4W2ex4yIy9Cu/fHwG8RagDKnkCfdez2AcD0HOQZ5AVqAWcJOg2n2N4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729019147;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=wDPu8Hrc9URjHX/IjEjHZZ5zhMpMQLyvAxJls66kHv8=;
+	b=SedXyKGs5Iry/O4Y7FG1ui3dQYsY0YavLWQFDO7UAxLusfYLLOQRgLEypDqr/roA
+	TqqNW+DaCgxBNigxqyCL9IbDo+gAaCvIKJ7JuHsYCC/dEUdDUzB5aHWjHWKp6JYXdtK
+	+3uYOUvAcP2Zp7II3ml6zB8oo3WryGLZQ2Ch3UmE=
+Received: by mx.zohomail.com with SMTPS id 1729019145808902.2055791020094;
+	Tue, 15 Oct 2024 12:05:45 -0700 (PDT)
+Date: Tue, 15 Oct 2024 20:05:40 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Steven Price <steven.price@arm.com>, Melissa Wen <mwen@igalia.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org
+Subject: Re: [RFC PATCH 1/2] drm/drm_file: Add display of driver's internal
+ memory size
+Message-ID: <5h4vxk6hw7fkw4rebqprfdf3tmz7skdxfh6qgljcd4thxkpobu@jly67q62us4b>
+References: <20241002234531.3113431-1-adrian.larumbe@collabora.com>
+ <20241002234531.3113431-2-adrian.larumbe@collabora.com>
+ <6657b080-f41e-4c95-8895-e474f1ca5d57@ursulin.net>
+ <p72rfjerzsg4wsp6rgfcoo5fmlu77jmzdynosflj2hlos63pql@mnetv3t66wsc>
+ <87a21c19-8fd2-492a-a620-243cd9c642dc@ursulin.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|IA0PR11MB7864:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e096bd3-626e-43c9-243e-08dced4c2695
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aTlJay9OU3RjdkVGVVU3Y2VVVVVvSTV2NjIyWDlINkFNZEh6SGFVUW1QY29V?=
- =?utf-8?B?SmdFd1Y2bEM1VFdWOGtrR0pFZVVSWDVCa21ndmdDcmluZ1NqS1Q0U21lOURw?=
- =?utf-8?B?cG0zZ0FMOHRmdnl3eE1VVWRGbktjWk02QXVPeGRqS1JLTHFqSWpXa1RXRXZR?=
- =?utf-8?B?bzF3V3RPWjZ3QjVvWm5ZVm95UDliZEZyN1RyOEpQbVlVMXkwY1hVNVZNQkw2?=
- =?utf-8?B?S2FwN0JMRGV6VzJEc1hqUkh1YmFXM3VwU2hmM3AwL0NyMFBsRWhsUWZjTm8v?=
- =?utf-8?B?K0hhb0ptV3BaMUExUkF4TlVjL1FCdjBjSGQ0aWRqRlFJNTlMaTRPVHF5anZx?=
- =?utf-8?B?ZzRqYUY2MVpGZWVmdXI4V3pxMGxrSE14eFRTdEtId2hwQkc0REx1Ynk0S213?=
- =?utf-8?B?MzVMQ2tTTmZVVm5KYTJtY2syQldXZDYxc1lJbElqTkxiOHY3dDR1ZXVrcUVo?=
- =?utf-8?B?MDV5RE8vRjd0aFZqTm91UDhYazVOdXRSV2ltMHVseDRKakdsY081TjU3ZXlh?=
- =?utf-8?B?aUE3RU5na2VGQWVHSGZWYjFTczN0enRmTjdMR0hrTXdvdWcxSDg0aTh1UU1q?=
- =?utf-8?B?c0R2OTRzUGJQTzhpWTlmK0ZkTGRDYVl2UjJzQWVNM2Raa2RwaFZUVjRQYVFn?=
- =?utf-8?B?NGRBcVlVR0srYmgrUVByWHdRMGNWdU92YXFlV3k4eXlzMHBvMmhJYVBQanJY?=
- =?utf-8?B?cmRUY1dNQ2RQMVVWdmZQbjRMdTIyTFRBU3ZBT3BLcmk2YjRkSFFLdW01YzNU?=
- =?utf-8?B?QkU5eHRlOGd2ZThyYlhRbzErSDdQeWRteVdIL1liWWlwMi82ZXlVNEV0NVlu?=
- =?utf-8?B?S1ExNmhwcUVLM0k5aHlISFVBaVIxem93cmp6ZDRzSTQ4YzBqTmJVcjJVV1dZ?=
- =?utf-8?B?eklFaDFMQ0ZwUkJZVlJTNlh4NlVkc1ZlbE94c3BsalpGYURPR3FRNnJKMVpH?=
- =?utf-8?B?SisvcVhsTExiWk9Yck9ra29oRFVyb3I4bVdscXM1ZUlIV1VuQVJKLzVnaUFK?=
- =?utf-8?B?ZWNZeDlKVnNuOVVUamxydHUvbEJDWjhrQUE2cGxEZnpwVi94NExkMllUNE9l?=
- =?utf-8?B?MWdxTXcxeGthVzNseGozSG1QV0RPTTJpZXRyTmdxQlBSbHhYZE5Ham1OY2Nx?=
- =?utf-8?B?Z1VxTVNYamk2YTVoSkp0SHBTcFIwUGFoTmR1SFNuSGdTcTdjZ0s3RVMxUVpE?=
- =?utf-8?B?b2FjMFVva05WQ1pLSFZPajVhalVJV004YjU2WkxXUldya2NQV0QvQzluQ1BI?=
- =?utf-8?B?SlJ1aThYNDR6NU16Q1RrOS81cytaaHhGQiswUnlGVTYxNnYzM1NEM2duUFZN?=
- =?utf-8?B?UWoxTFpHQWxhU204ZHRzbFY3SzVHTzhuQVhDd0d1bEt0Wll5ZmRtZ20xNm5X?=
- =?utf-8?B?OTdzY0tGL2w1d1NqUDR2Z0VTNW1XZ1JEaENLL1E4c21PTkhTY0lMallWK24v?=
- =?utf-8?B?Q0tJd1pZeWUybGx0THhsUGZLeDFBVkcyakpRUENwRmtZeURYQmhxa0VETjcr?=
- =?utf-8?B?WG0rLytVa3U3S2NTWGJnbDVuTkRYb2dZbG1qakRpUzZEeEJReSsyOXFlREVW?=
- =?utf-8?B?L0pZbWZOQ0RMc2lWaTZOMStBSFZXN1hUdjkvcFZIcWE4N3piRXlra0NlVDFL?=
- =?utf-8?B?MVhyMHlldVVXV0JEUGNLdnRXLzREV0JkRFJNek9BWkV6UFR5T3FuWjJZdW1S?=
- =?utf-8?B?elJ3WGJrY2k1WkJob1hUOWFka2JRRHoySGJDWVNFR1JIQkFKbC9OTkhBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q2FBeDM2NDFNbWJoelpkSUFKc2Q3SGUva2U4SDJGMml2SWs5NFU1b1hnYkpn?=
- =?utf-8?B?SDQ3QnFFVUkvcy9kNjlINE52cGxna2NUaHBUSE1Eajk3a08wcU5xNkdUWVJu?=
- =?utf-8?B?di8vajhRaEh3bFkrMHorRnlBVmJGcUxpYm5Ydi9BNUtNdGZsMVlVeXNNcmNu?=
- =?utf-8?B?KytWdXNxV21XdmI0eWFoNXhxcFQ2MGVpcjd5WDI3TndBSW9tWlJRKzQrT1Z2?=
- =?utf-8?B?ZmZ5cWhsVWpuV3cyQXk3SGJIWUU3TmdsMWFCcEN1dHh4WG5WaTFOd1pmdGtl?=
- =?utf-8?B?OGRsOHB2SXI3d05XNkkvSHVCVWp3Y1Y2M1d4TU1VUXJPN2hHSmRjYUQrc0ZH?=
- =?utf-8?B?ZnBua0dldy9JaVI5U0tyOGRaY0FaK3V6S3lZalpDYUxTVmRlOXArQjN6VkZr?=
- =?utf-8?B?VU9sLzNUdTZYTGhCME5NYnhvSnNtZ2JtNysvNG43SWdxckhmeFEwRHZTRjEy?=
- =?utf-8?B?OWFmdFFVaWVDZzAxMk5HTXJoRy83SDdrS3V1bzhsdWRPRERTSi9jZFZHaEo3?=
- =?utf-8?B?ZmlPSXBSekJiem92MVhWdEo2eHlJVUd2Z1JPR2h0UXhtQUFjODc0eXFaMnUr?=
- =?utf-8?B?R3F3aUU1L0RlVy9Kc2xrVVh1NXF4MzNlTzlxbmNpWTVsN1dVNG9icEF3QzIz?=
- =?utf-8?B?eDE0TEYydko1eStGUXVPRjFRNTI1UFJaUHk2TkJuK2ovMWI1K0pNbmlURXM3?=
- =?utf-8?B?RWwvSDFubDF4V1BQSXU0b1BHSHZWQUs2ZkE5QjhGTE1VTCtORGVFTGhVYk5w?=
- =?utf-8?B?eVFYYm50Q3VMUExGTGYwQ2ZXc0N6aVNlT3c5bGdScFlSY2RobE5hY1RoRitF?=
- =?utf-8?B?RmpNS2U0NUhRWE9XakMzRFdYREYxNG5QUE1lWlpxZldyTWFUUFZlTy9PVW1m?=
- =?utf-8?B?a0MrQmdHTk1zUE0rb3pyUEJTL3dIcjVSbUtpWFpwcTdERWVzUkNIN2d1Yis0?=
- =?utf-8?B?bFFKZHZ6aVVmemhQNXlBVFREdTZFTDlHM0pXV3JrdUUxRjJUMXY1YXlCSkFv?=
- =?utf-8?B?bncwQVdVYkZ3U3VYOGEvM0pFS2ZJMThtYnF5bURKQmowcXpPdlA5UzdTQXRD?=
- =?utf-8?B?Z21va285MllEOE4zVmRENFZHWTlpb0FXUFFXTXhPWTJxNXNLdEtrN1Zxd1E0?=
- =?utf-8?B?Mlg3WVpocjRMbDNLa1ptVzI3U2VhY3RWa0dTdTMyMjdEKzN1NFlFclduTXYx?=
- =?utf-8?B?Z3Rxb3g1dFMvQ1ZmOHFDaWQ3aEV3WVliVGN1ZWRpdXlQd29Ub3BNNE5zMnY1?=
- =?utf-8?B?QS9oOWRlVlE0S2tEbEZPbXRCSTd2MkUyYnNhcFYxNTNqaUd2Z21HV0EvYys1?=
- =?utf-8?B?TjlVdE1LdTA1M2gvc1U5bXQxNk9DVXVONEoyQlJYeU00ajB6WFlyb0lkSUV2?=
- =?utf-8?B?ZG1ySGdTOWZ3WW9veTI1ZjVLVEZKLzNMdk5nVDFmZk5IckQ0THdhcWpnRGpr?=
- =?utf-8?B?QWg3Q2NvajdsRE9wN1Jtd1hFK3dvaHJRRDJxcmJuY3dOeUc1TmhjclNDNFFH?=
- =?utf-8?B?eTRaS0ZzTHgvUHhIa0QzTWhySldRVEQwTU01UWtldDhSaWdxanlxalpVY3dh?=
- =?utf-8?B?dEY4cDVjSDZjakZiQ2YzRnBTNjYxS01GN1ZHNjU3dHR5R3I2cUg0ZlQ5MmxL?=
- =?utf-8?B?aUF3YWhpMnRQUmMrUmp2RHQvUnY3Sm0vUHBLK0Y2elZnUXZ4UVY3S3JtampY?=
- =?utf-8?B?RkFXZkhmeTRLL3FudXhhQTNzbEtRRVF1SHNiSUMwTjRXZzY2WEFNV3V3SS9M?=
- =?utf-8?B?Q0lIUC9hNHA3Rmt3SnpGOGFnbFB5NGpadzBTZStIQ2dJRWhVbjh5cG1yRCtN?=
- =?utf-8?B?K3JjSk1WUEMyYkZhLyt0cjdBdm1qdWg3T3RsOC92WUUyY28wbStUV0o2aTB6?=
- =?utf-8?B?UnZ6WFlrK0NaMXUyNWpIb1VTanRXek8xcU5KWnB6TjAzb0hTZC92S0pyTXVz?=
- =?utf-8?B?Vnl5d0NNMG5Sb1BTVXdHV25Jc1lWeFoyVXBCamVZQzdBYXVCRlhWWGxXYk1i?=
- =?utf-8?B?WlpIV0hUc25pMFN4eWx1RktYM0s4TGlPdjk2cUhmUDlCNGhPSGIzbS9tOHA3?=
- =?utf-8?B?ZlJpeEg4Lzg4YzZvYlJ1MzltOUVGMzQ0TlZMeUlaUzFLdWVGN1I4ODZtcUNH?=
- =?utf-8?B?VzFkYmx4cFh5ZWFoWkRDUjc3YzltSHJSNnBzWnhEcFRha2s1ZmNCUTRCTTl6?=
- =?utf-8?B?clE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e096bd3-626e-43c9-243e-08dced4c2695
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 19:04:10.1869
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dbiHQhVSK4/NGvlIFA5jtXL25oFEySsOVTG0enHZFMk7KP1ILI2hMNHBiZw8oSfD2UB/tiPSRPgwommIC68Vb6wPYxkOu5phTHto7mSzrO0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7864
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87a21c19-8fd2-492a-a620-243cd9c642dc@ursulin.net>
 
-Paolo Bonzini wrote:
-> On Tue, Oct 15, 2024 at 5:30 PM Dave Hansen <dave.hansen@intel.com> wrote:
-> >
-> > I'm having one of those "I hate this all" moments.  Look at what we say
-> > in the code:
-> >
-> > >   * See the "global_metadata.json" in the "TDX 1.5 ABI definitions".
-> >
-> > Basically step one in verifying that this is all right is: Hey, humans,
-> > please go parse a machine-readable format.  That's insanity.  If Intel
-> > wants to publish JSON as the canonical source of truth, that's fine.
-> > It's great, actually.  But let's stop playing human JSON parser and make
-> > the computers do it for us, OK?
-> >
-> > Let's just generate the code.  Basically, as long as the generated C is
-> > marginally readable, I'm OK with it.  The most important things are:
-> >
-> >  1. Adding a field is dirt simple
-> >  2. Using the generated C is simple
-> >
-> > In 99% of the cases, nobody ends up having to ever look at the generated
-> > code.
-> >
-> > Take a look at the attached python program and generated C file.  I
-> > think they qualify.  We can check the script into tools/scripts/ and it
-> > can get re-run when new json comes out or when a new field is needed.
-> > You'd could call the generated code like this:
-> 
-> Ok, so let's move this thing forward. Here is a more polished script
-> and the output. Untested beyond compilation.
-> 
-> Kai, feel free to include it in v6 with my
-> 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.om>
-> 
-> I made an attempt at adding array support and using it with the CMR
-> information; just to see if Intel is actually trying to make
-> global_metadata.json accurate. The original code has
-> 
->   for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
->     READ_SYS_INFO(CMR_BASE + i, cmr_base[i]);
->     READ_SYS_INFO(CMR_SIZE + i, cmr_size[i]);
->   }
-> 
-> The generated code instead always tries to read 32 fields and returns
-> non-zero from get_tdx_sys_info_cmr if they are missing. If it fails to
-> read the fields above NUM_CMRS, just remove that part of the tdx.py
-> script and make sure that a comment in the code shames the TDX ABI
-> documentation adequately. :)
+Hi Tvrtko,
 
-Thanks for doing this Paolo, I regret not pushing harder [1] / polishing
-up the bash+jq script I threw together to do the same.
+On 10.10.2024 10:50, Tvrtko Ursulin wrote:
+> 
+> On 09/10/2024 23:55, Adrián Larumbe wrote:
+> > Hi Tvrtko,
+> > 
+> > On 04.10.2024 14:41, Tvrtko Ursulin wrote:
+> > > 
+> > > Hi Adrian,
+> > > 
+> > > On 03/10/2024 00:45, Adrián Larumbe wrote:
+> > > > Some drivers must allocate a considerable amount of memory for bookkeeping
+> > > > structures and GPU's MCU-kernel shared communication regions. These are
+> > > > often created as a result of the invocation of the driver's ioctl()
+> > > > interface functions, so it is sensible to consider them as being owned by
+> > > > the render context associated with an open drm file.
+> > > > 
+> > > > However, at the moment drm_show_memory_stats only traverses the UM-exposed
+> > > > drm objects for which a handle exists. Private driver objects and memory
+> > > > regions, though connected to a render context, are unaccounted for in their
+> > > > fdinfo numbers.
+> > > > 
+> > > > Add a new drm_memory_stats 'internal' memory category.
+> > > > 
+> > > > Because deciding what constitutes an 'internal' object and where to find
+> > > > these are driver-dependent, calculation of this size must be done through a
+> > > > driver-provided function pointer, which becomes the third argument of
+> > > > drm_show_memory_stats. Drivers which have no interest in exposing the size
+> > > > of internal memory objects can keep passing NULL for unaltered behaviour.
+> > > > 
+> > > > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> > > > Cc: Rob Clark <robdclark@gmail.com>
+> > > > Cc: Tvrtko Ursulin <tursulin@ursulin.net>
+> > > > Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+> > > > ---
+> > > >    drivers/gpu/drm/drm_file.c              | 6 +++++-
+> > > >    drivers/gpu/drm/msm/msm_drv.c           | 2 +-
+> > > >    drivers/gpu/drm/panfrost/panfrost_drv.c | 2 +-
+> > > >    drivers/gpu/drm/v3d/v3d_drv.c           | 2 +-
+> > > >    include/drm/drm_file.h                  | 7 ++++++-
+> > > >    5 files changed, 14 insertions(+), 5 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
+> > > > index ad1dc638c83b..937471339c9a 100644
+> > > > --- a/drivers/gpu/drm/drm_file.c
+> > > > +++ b/drivers/gpu/drm/drm_file.c
+> > > > @@ -856,6 +856,7 @@ void drm_print_memory_stats(struct drm_printer *p,
+> > > >    	print_size(p, "total", region, stats->private + stats->shared);
+> > > >    	print_size(p, "shared", region, stats->shared);
+> > > >    	print_size(p, "active", region, stats->active);
+> > > > +	print_size(p, "internal", region, stats->internal);
+> > > >    	if (supported_status & DRM_GEM_OBJECT_RESIDENT)
+> > > >    		print_size(p, "resident", region, stats->resident);
+> > > > @@ -873,7 +874,7 @@ EXPORT_SYMBOL(drm_print_memory_stats);
+> > > >     * Helper to iterate over GEM objects with a handle allocated in the specified
+> > > >     * file.
+> > > >     */
+> > > > -void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file)
+> > > > +void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file, internal_bos func)
+> > > >    {
+> > > >    	struct drm_gem_object *obj;
+> > > >    	struct drm_memory_stats status = {};
+> > > > @@ -919,6 +920,9 @@ void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file)
+> > > >    	}
+> > > >    	spin_unlock(&file->table_lock);
+> > > > +	if (func)
+> > > > +		func(&status, file);
+> > > > +
+> > > >    	drm_print_memory_stats(p, &status, supported_status, "memory");
+> > > >    }
+> > > >    EXPORT_SYMBOL(drm_show_memory_stats);
+> > > > diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+> > > > index edbc1ab0fbc8..2b3feb79afc4 100644
+> > > > --- a/drivers/gpu/drm/msm/msm_drv.c
+> > > > +++ b/drivers/gpu/drm/msm/msm_drv.c
+> > > > @@ -880,7 +880,7 @@ static void msm_show_fdinfo(struct drm_printer *p, struct drm_file *file)
+> > > >    	msm_gpu_show_fdinfo(priv->gpu, file->driver_priv, p);
+> > > > -	drm_show_memory_stats(p, file);
+> > > > +	drm_show_memory_stats(p, file, NULL);
+> > > >    }
+> > > >    static const struct file_operations fops = {
+> > > > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > > > index 04d615df5259..aaa8602bf00d 100644
+> > > > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > > > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > > > @@ -609,7 +609,7 @@ static void panfrost_show_fdinfo(struct drm_printer *p, struct drm_file *file)
+> > > >    	panfrost_gpu_show_fdinfo(pfdev, file->driver_priv, p);
+> > > > -	drm_show_memory_stats(p, file);
+> > > > +	drm_show_memory_stats(p, file, NULL);
+> > > >    }
+> > > >    static const struct file_operations panfrost_drm_driver_fops = {
+> > > > diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+> > > > index fb35c5c3f1a7..314e77c67972 100644
+> > > > --- a/drivers/gpu/drm/v3d/v3d_drv.c
+> > > > +++ b/drivers/gpu/drm/v3d/v3d_drv.c
+> > > > @@ -195,7 +195,7 @@ static void v3d_show_fdinfo(struct drm_printer *p, struct drm_file *file)
+> > > >    			   v3d_queue_to_string(queue), jobs_completed);
+> > > >    	}
+> > > > -	drm_show_memory_stats(p, file);
+> > > > +	drm_show_memory_stats(p, file, NULL);
+> > > >    }
+> > > >    static const struct file_operations v3d_drm_fops = {
+> > > > diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
+> > > > index 8c0030c77308..661d00d5350e 100644
+> > > > --- a/include/drm/drm_file.h
+> > > > +++ b/include/drm/drm_file.h
+> > > > @@ -469,6 +469,7 @@ void drm_send_event_timestamp_locked(struct drm_device *dev,
+> > > >     * @resident: Total size of GEM objects backing pages
+> > > >     * @purgeable: Total size of GEM objects that can be purged (resident and not active)
+> > > >     * @active: Total size of GEM objects active on one or more engines
+> > > > + * @internal: Total size of GEM objects that aren't exposed to user space
+> > > >     *
+> > > >     * Used by drm_print_memory_stats()
+> > > >     */
+> > > > @@ -478,16 +479,20 @@ struct drm_memory_stats {
+> > > >    	u64 resident;
+> > > >    	u64 purgeable;
+> > > >    	u64 active;
+> > > > +	u64 internal;
+> > > 
+> > > So equally as in the last round of discussion back in June, internal in my
+> > > mind still does not fit alongside the categories.
+> > > 
+> > > Reason is that in some drivers, at least such as i915, "internal" can be:
+> > > 
+> > > a) Backed by either system memory or device memory - so this does not provice
+> > > that visibility;
+> > > 
+> > > b) They can also be resident or not, active or not, etc - so from that angle
+> > > it also does not fit.
+> > > 
+> > > Do you lose anything if you add the internal objects into their respective
+> > > regions and under the existing categories? Like do you have an use case in
+> > > mind which needs to be able to distinguish between userspace and internal, or
+> > > the problem simply is internal are unaccounted for?
+> > 
+> > The main use case we have in mind is exposing the size of driver buffer
+> > allocations that are triggered in respone to an ioctl(), and so linked to an
+> 
+> Most of this and below is old and clear - but to this specific point - so you
+> do have an use case which specifically wants to know about the internal
+> allocations separately from the rest? Could you describe what it is?
+> 
+> > open file. I gave a summary of what these could be in the patch description, but
+> > in Panthor's case all these allocations are done with drm shmem functions
+> > because it makes it easier to retrieve the sgtable that gives us their system
+> > memory layout so that we can more easily map them onto the MMU's address space
+> > for a Pantor VM. These BO's, though managed by the drm shmem API, are never
+> > added to the open file list of user-exposed drm objects but we would still like
+> > to tell UM how much memory they take up.
+> > 
+> > In the case of Panthor, they all add into the resident tally because all these
+> > internal BO's are immediately pinned so that they can also be accessed by the
+> > HW, but it doesn't have to be so for other drivers which might also keep track
+> > of similar allocations.
+> > 
+> > I think maybe naming that tag as 'internal' is a bit of a misnomer and I could
+> > pick one that more accurately represents its meaning? Something like 'file-internal'
+> > or else 'file-private'.
+> > 
+> > Regarding a), I don't think where the allocations happen (system or device memory)
+> > is relevant in this case, just that the allocations are tied to an open file, but
+> > not exposed to UM through a DRM buffer object handle.
+> 
+> On this last paragraph - right.. I possibly got confused on a). Which is why I
+> always say it is good to include example output at least in the cover letter,
+> if not the commit message.
+> 
+> How would it look on this driver?
+> 
+> drm-total-$what: ..
+> drm-resident-$what: ..
+> drm-internal-$what: ...
 
-I took a look at your script and the autogenerated code and it looks good
-to me.
+In the case of Panthor, it would look like this:
 
-Feel free to add my Reviewed-by on a patch that adds that collateral to
-the tools/ directory.
+drm-driver:     panthor
+drm-client-id:  3
+drm-engine-panthor:     611046570346 ns
+drm-cycles-panthor:     1172733302061
+drm-maxfreq-panthor:    1000000000 Hz
+drm-curfreq-panthor:    1000000000 Hz
+drm-total-memory:       16480 KiB
+drm-shared-memory:      0
+drm-active-memory:      16200 KiB
+drm-internal-memory:    10396 KiB
+drm-resident-memory:    26876 KiB
+drm-purgeable-memory:   0
 
-[1]: http://lore.kernel.org/66b19beaadd28_4fc729410@dwillia2-xfh.jf.intel.com.notmuch
+Then in Panfrost:
+
+drm-driver:     panfrost
+drm-client-id:  6
+drm-engine-fragment:    481941638 ns
+drm-cycles-fragment:    60243117
+drm-maxfreq-fragment:   799999987 Hz
+drm-curfreq-fragment:   124999998 Hz
+drm-engine-vertex-tiler:        55546675 ns
+drm-cycles-vertex-tiler:        6943796
+drm-maxfreq-vertex-tiler:       799999987 Hz
+drm-curfreq-vertex-tiler:       124999998 Hz
+drm-total-memory:       138420 KiB
+drm-shared-memory:      7200 KiB
+drm-active-memory:      0
+drm-internal-memory:    0
+drm-resident-memory:    2196 KiB
+drm-purgeable-memory:   128 KiB
+
+
+> b) still stands though in that internal can be resident or not, purgeable or
+> not.. Which is why I would like to know about the use case.
+
+This is true, DRM file-internal objects or memory allocations could fall
+into any of these categories, and adding their sizes to the right one would
+be the responsibility of the function pointer passed to drm_show_memory_stats(),
+because that decision would have to be made on a per-driver basis.
+
+> Also if you add drm-internal for any driver calling drm_print_memory_stats I
+> think you "break" at least i915. There internal objects are already accounted
+> in the existing categories. And printing out internal with zero would be very
+> misleading.
+
+I wasn't aware of this. So i915 is already doing this kind of accounting for internal
+memory allocations. In that case, maybe printing of the 'drm-internal-memory' could
+be done conditionally when it's greater than 0 to avoid 'breaking' existing drivers,
+or else renaming it to 'drm-file-memory' would be seen as less invasive?
+
+I'm asking this because if, at the end of the day, making this change part of the 
+drm fdinfo core is going to clash with existing accounting in other DRM drivers, perhaps
+it'd be easier to keep it Panthor-specific and add that tag together with its meaning
+to Documentation/gpu/panfrost.rst.
+
+I thought about this at first, but it also struck me as something other drivers might
+want to do in the future in a sort of unified way, since internal allocations happening
+in response to an ioctl() is a common thing.
+
+Cheers,
+Adrian
+
+> Regards,
+> 
+> Tvrtko
+> 
+> > 
+> > Regards,
+> > Adrian
+> > 
+> > > Regards,
+> > > 
+> > > Tvrtko
+> > > 
+> > > >    };
+> > > >    enum drm_gem_object_status;
+> > > > +typedef void (*internal_bos)(struct drm_memory_stats *status,
+> > > > +			     struct drm_file *file);
+> > > > +
+> > > >    void drm_print_memory_stats(struct drm_printer *p,
+> > > >    			    const struct drm_memory_stats *stats,
+> > > >    			    enum drm_gem_object_status supported_status,
+> > > >    			    const char *region);
+> > > > -void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file);
+> > > > +void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file, internal_bos func);
+> > > >    void drm_show_fdinfo(struct seq_file *m, struct file *f);
+> > > >    struct file *mock_drm_getfile(struct drm_minor *minor, unsigned int flags);
+
 
