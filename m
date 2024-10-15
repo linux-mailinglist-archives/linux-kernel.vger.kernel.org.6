@@ -1,86 +1,127 @@
-Return-Path: <linux-kernel+bounces-366396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DE499F4BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:02:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4601899F4C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BA11C211BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:02:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C34DB211C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561271FAF1C;
-	Tue, 15 Oct 2024 18:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A131FC7F6;
+	Tue, 15 Oct 2024 18:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+8XGD9b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j7DpASe7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5E91B3951;
-	Tue, 15 Oct 2024 18:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0165E28691;
+	Tue, 15 Oct 2024 18:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015316; cv=none; b=bJ6S4vwSXghYYBEy2opy4hOtxja3BCsxVmvE5FFd/1CPd9nfy1B7n2Pf2tXHFX6HwKJxeRapT2Fm4zNVlX0tCn9zf64/f9zkA34nCx51eBxJ1tk7Fcn2blu5ax9DL4Fm5jQOdatG+GXn5kq4+UIW1l4SrZuJa1LJlLEOZyOmS5U=
+	t=1729015403; cv=none; b=TeznQ/U6gpq1THQJPZMicdrBMDjia8JgYPf4zr0Vjx8J8Yf2kR/UoalmE+0dtepqUkepMR8qDJOVGajoT82j0UVQGRZOcsW7goE2yd54KzdczPWfcqzHCB0BJjAoGP15uAsp5Lo2+lTKzH0809gZkNGOV9KyMIwGXGsSH+Qq7CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015316; c=relaxed/simple;
-	bh=HA8CX7ZDuJjXJbrLWnHGcY5BUOIC9mBPvBR99OrS7hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GOCP5rC4xWhH1XuZSA5zEh5QoArBp6p6Jn9xZSt0BWBtQ6Y5tGQLMhsX9/TI4AB3xE6y+TMjoH3bYQEudYI5Zt6fXzc+pyCVhSlnhxLycO9Lbq+sb47/WRLpC1paqraIMRgiv+HM3/E7TDdEPTj4i+ao59W1TuOAiBGEoQbnoFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+8XGD9b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5F0C4CEC6;
-	Tue, 15 Oct 2024 18:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729015316;
-	bh=HA8CX7ZDuJjXJbrLWnHGcY5BUOIC9mBPvBR99OrS7hc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z+8XGD9bWJyRfKlUy0OWXJvcLuBZEf35qUoyP/VOL6JnFJ8UuVqoEWETshnLfB+Ys
-	 np00WqYiSHMVvGwKWNX/GtJfsfTOi4Ek/OpugEE+jJ3M7jCf2swW3y82r0rHd5CI1W
-	 V5s32wgqCIvpKoJ8cyTp4Syb1KhPFtc6bStYVsjr+5AojkdHOpgJ1NnA/DfFSwfyhW
-	 aPLTjgrKhqfV45AJTweZQOL27gr8OH8RFfJ2GsqBDai8P6dSD8Cn/k3PMiZcLYYh4C
-	 zwHnBtmUQqaI2p5H+xlCLkFDnp/gytdBFUR+ztGZwXM9UV2L3i2EOaeqrT1SAA4DmU
-	 McFQW8/+JkuSw==
-Date: Tue, 15 Oct 2024 11:01:54 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Wang Hai <wanghai38@huawei.com>, bcm-kernel-feedback-list@broadcom.com,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- zhangxiaoxu5@huawei.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: systemport: fix potential memory leak in
- bcm_sysport_xmit()
-Message-ID: <20241015110154.55c7442f@kernel.org>
-In-Reply-To: <0c21ac6a-fda4-4924-9ad1-db1b549be418@broadcom.com>
-References: <20241014145115.44977-1-wanghai38@huawei.com>
-	<0c21ac6a-fda4-4924-9ad1-db1b549be418@broadcom.com>
+	s=arc-20240116; t=1729015403; c=relaxed/simple;
+	bh=eh6byDyRvz0D0m9V0d4eNpB5N5SL207MeVOFPzaUivs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZQzurUa3RA8MyvO5cy7nTNhimLk2o4JgW7U96edxmVVRJSEZ1d3kHOGg8npaIPxP6Tw37lESKq/1kjVWQHH5p9n1fLf8hRG/tbnAuImBNJw2e6W/8MTrtFDeOvtnaGOL2pJR3BkSEBnSiRDqNQmYtl/5lQy8bIcU1iWz725HLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j7DpASe7; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729015402; x=1760551402;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=eh6byDyRvz0D0m9V0d4eNpB5N5SL207MeVOFPzaUivs=;
+  b=j7DpASe7RLW9RIYZjwlhNO/THE0O8BNdUQqyYwYp2heZMqP2W4vvY9Vy
+   Zf/dY3vQc1om0tt1gxjakXUOd+TjrL0SuIcFOzF9Os7ewn0eosaxYPyeu
+   TjUBU9QjKpRxvhGCum5lPHjrjnCN6zkD97HpCptsIX+LDW5lm13cL6n3q
+   hUVQLyvoiZl2XVUTFWRN0jYAwf6Eoc+zzI45OFj2B656+HWcsgBHh8HQ4
+   C+FSzG9ZO+u2+8ywF1hGTwKKdsT/guWffMJhc4vkfC9zu2mMQ2Vy5YFuC
+   YdfJadfudEN/iGgLDEUtwPrf6LraRENnhuFx75Uh029GXpkNOmCVtVhSl
+   g==;
+X-CSE-ConnectionGUID: s8bFPH9sTeaQ6rtL5FqcOA==
+X-CSE-MsgGUID: ROYQJQqsQfeov0EdIMS0yA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28558236"
+X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
+   d="scan'208";a="28558236"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 11:03:21 -0700
+X-CSE-ConnectionGUID: jDCVe1NaS82xc497trlqsA==
+X-CSE-MsgGUID: 0g268ps7TfOSgloJEy9fVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
+   d="scan'208";a="77988218"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 11:03:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t0lt4-00000003Tee-1SQx;
+	Tue, 15 Oct 2024 21:03:14 +0300
+Date: Tue, 15 Oct 2024 21:03:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v8 4/8] i2c: Introduce OF component probe function
+Message-ID: <Zw6uYl0CXhl_ru08@smile.fi.intel.com>
+References: <20241008073430.3992087-1-wenst@chromium.org>
+ <20241008073430.3992087-5-wenst@chromium.org>
+ <CAD=FV=WRSjk3U9Kau0wqkgv3KB=9jM6wCM9Gs-WxWai35sfxTg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=WRSjk3U9Kau0wqkgv3KB=9jM6wCM9Gs-WxWai35sfxTg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, 14 Oct 2024 09:59:27 -0700 Florian Fainelli wrote:
-> > diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/e=
-thernet/broadcom/bcmsysport.c
-> > index c9faa8540859..0a68b526e4a8 100644
-> > --- a/drivers/net/ethernet/broadcom/bcmsysport.c
-> > +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-> > @@ -1359,6 +1359,7 @@ static netdev_tx_t bcm_sysport_xmit(struct sk_buf=
-f *skb,
-> >   		netif_err(priv, tx_err, dev, "DMA map failed at %p (len=3D%d)\n",
-> >   			  skb->data, skb_len);
-> >   		ret =3D NETDEV_TX_OK;
-> > +		dev_kfree_skb_any(skb); =20
->=20
-> Since we already have a private counter tracking DMA mapping errors, I=20
-> would follow what the driver does elsewhere in the transmit path,=20
-> especially what bcm_sysport_insert_tsb() does, and just use=20
-> dev_consume_skb_any() here.
+On Tue, Oct 15, 2024 at 10:58:31AM -0700, Doug Anderson wrote:
+> On Tue, Oct 8, 2024 at 12:35 AM Chen-Yu Tsai <wenst@chromium.org> wrote:
 
-Are you saying that if the packet drop is accounted is some statistics
-we should not inform drop monitor about it? =F0=9F=A4=94=EF=B8=8F=20
-That wasn't my understanding of kfree_skb vs consume_skb..
+...
+
+> > +       struct device_node *i2c_node __free(device_node) = i2c_of_probe_get_i2c_node(dev, type);
+> > +       if (IS_ERR(i2c_node))
+> > +               return PTR_ERR(i2c_node);
+> 
+> I'm still getting comfortable with the __free() syntax so sorry if I'm
+> wrong, but I _think_ the above is buggy. I believe that the definition
+> of the free function for "device_node" is from:
+> 
+> DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
+> 
+> ...which means it'll call of_node_put() to free "i2c_node" when it
+> goes out of scope. of_node_put() handles NULL pointers but _not_ ERR
+> pointers. So I think that if you get an error back and then return via
+> the PTR_ERR(i2c_node) then it'll crash because it will try to free an
+> ERR pointer. Did I get that right? Presumably you need to instead do:
+> 
+>   return PTR_ERR(no_free_ptr(i2c_node));
+> 
+> ...or change of_node_put() to be a noop for error pointers?
+
+I could state that device_node FREE class has to be updated for these cases.
+fwnode, for example, handles both error pointers and NULL.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
