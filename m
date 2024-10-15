@@ -1,203 +1,165 @@
-Return-Path: <linux-kernel+bounces-366710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9977799F8F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:18:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654B099F8F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0742829B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:18:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02BD4B21770
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BA31F81B1;
-	Tue, 15 Oct 2024 21:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C471FAEFE;
+	Tue, 15 Oct 2024 21:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E94PCxDH"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lMzCwXOa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b0uSlpQH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F250F1FBF7E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD591F80BC;
+	Tue, 15 Oct 2024 21:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729027050; cv=none; b=qSserLpwCCBRk0b4cbjIAok9qB79uWfpr3cKRAWGfm1CMb3bO1AEOTFrxiHiB3fiSUfLD0ocLrY+43u7SEq3PHBLCr1PvYqv+M55yyp/qIQ9WtHdibsR/xQd5sbP0+ZtCxx5B9VOEqS8YObKPobQrwFsYU6qeTOohG/Tl4BZY54=
+	t=1729027143; cv=none; b=l8s1KI3GLDAxXgl/ixvIOLDq4HYevm717mtFhjIyuBqOqUyTZsQ0F68kQpxucF16pterf6LYrBkpyKbGN9KwjJnV4nkl/n2npf92pRMba+92qm/IUXIF2Khwqb/KVymbr92oLbpotMkmwU+NjxLtBTUl/ZUYre5+xVNYkDCsiSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729027050; c=relaxed/simple;
-	bh=kBpbcw1zYMMwWP/n8mwopVROyJozEpjDPvBdKUBkL5w=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=TOLhP8EEK+BXFhEXdis4A1Skj8Cvq2DOjKfAaH13mQIhh9Pla6J8qbwEYynbjc1XkSYh1Eil/TJ8whtYZ/XhlCqRJRtHeyarYuK1a9S/Vzh4Jj/vi69rXBa5kDdyAkzYz3R0xaqhyL4LwMxPtn5P3MdCeGPn44Sar7+mcA12PE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E94PCxDH; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e35bdb6a31so66911117b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729027048; x=1729631848; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WKU5Ql8c4lOWuBE9mb5dgHxWXN25Z3UPK2tc2nBX/Hw=;
-        b=E94PCxDHtENYiiEsiuWSjIqS/FxmIlkMyGe6OWanHoWBuzkwRtxadYyXrrqT7EBDlv
-         Uyy5VC0c7SZXD7tMhAiqorZEJuEcMTjydD1Gl6D2dzVsOWUvnhMZMFYb6s5xBF7NuQ/Y
-         TeyuvZHuFTtziM9R636JLXP4hsMRCQ069Yce6aFSDnV6lM8W3/VoMA3/+ojOc+o/7YM4
-         0WKukLX1zD9et+pf9idLqDoRk69hPBwNlDUJ845fhWZZsh7Rn/L8ibIosKqeUPgAEpN8
-         WCNzsYBiDlcNdkOm0qRzR/WKJznT3SKj6k6ScZnrmOCaBl78/T6JVx1RKwAIMi5ZL5Co
-         BSwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729027048; x=1729631848;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WKU5Ql8c4lOWuBE9mb5dgHxWXN25Z3UPK2tc2nBX/Hw=;
-        b=Ofw+CKPDRp9lTK8lTvk+FKq348uIMDoSOdpWvPlry+E9/sRU82Yl4+fc1E0xR0UsE7
-         mvr0vA0SKiSyXQu0GFvmM/sfKj12l+7QCtCon4Tykf60Ellk5l3+4KrWPov8EVfcAxa1
-         4nUv+lTjr4Cm04exrvZBdzwPcdCQ7sdf4Z6OzE4jt6gOMp/Y4F+kTgF85gKwR7cMJbNS
-         MnlljWjbeJC6CnaN6shXzCuMg8/j91wL6cESxkQshl5Z9aPgYUkLm8wHSZljrut+e3Wh
-         lyM9fU1/bpXLBColnx56wW/jjSWCxdCZoNmEj5bxINvVd9ZNdRR2djovVf4TCC0gZXgD
-         modQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXL0Q0IVsKPSbiRWmSc8cLj4/NWzVi3Cl5GuYHM/1wBfWeaG+qN8Qq1CyLIlkVoxXZ7IiPsuFvok0FwE1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgDS8rX96qTRvx1AaANVHaeGlvxSXLBv3Y9HSled9X1WEQ5XII
-	7Tc1I4+YXol/pAxc8tuFiIBZdgB0ultBwCtitd01P+CgJIOWr9r894WScuIowrjQb6nZeEUQvOM
-	S+HjQ0Q==
-X-Google-Smtp-Source: AGHT+IETvJtGSVidjurE+k5FibZOHgtYv0ZzxgqNHn8C/rHRsq8sjnXk5FCqfV1MPhDQwBmALvvUhYa1EhM9
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:61a1:4d9d:aca1:ada])
- (user=irogers job=sendgmr) by 2002:a05:690c:2fc9:b0:66a:764f:e57f with SMTP
- id 00721157ae682-6e3d41fb686mr13757b3.7.1729027047836; Tue, 15 Oct 2024
- 14:17:27 -0700 (PDT)
-Date: Tue, 15 Oct 2024 14:17:19 -0700
-In-Reply-To: <20241015211719.1152862-1-irogers@google.com>
-Message-Id: <20241015211719.1152862-3-irogers@google.com>
+	s=arc-20240116; t=1729027143; c=relaxed/simple;
+	bh=lzCi6iGOatafE9aZ4G3mjwjwAGpRQ12FEeuWFZ6t/Qc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=BY49INSLDpTcy0bNcMPkR7uUgzkG1xAezQ10qL2c+11fnqiZXCvIet/gtv8ARsTW/tyihzYKnPWBTlfAK/rkC8QamnQ/49kZW53B+G4w5WXuzhSCIhbRM5aElPHeuO8glFpCm370t9Phk46r24qZd5scwleGDbif2CCCxxGTZsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lMzCwXOa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b0uSlpQH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Oct 2024 21:18:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729027137;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V4iYpyOdNDmsi0oFEdjrnW+kJsotysukE0rF7ltM4fw=;
+	b=lMzCwXOa5zO3uhfTyA93JuiLb2PfpX3JV5JlPAXLcjNMKhEe1sfEGtSaU//3L/P4h9aTxI
+	OCZv7srufnfJbYGPze6gHpqXgt67xDxpuFrEoyNpPb63/OW2O3foh/CN3avfgfoXAVWhSI
+	hLK2DR8ULe0Brndam4sLCfZQ4HgKq0jWLUmguxD5DNdTroKJZ2A8cku2kECD6Y6qAIl4fU
+	e/SNae2WN//q0luorqAWvge0aJblbs0ng0/7CO+N6coKIVU476u7tAAOx7Su5vuO2oTZIr
+	tnNtBr4IPQHdlj9SRm5mWMHM74jgAue+EdGJFttl47KOKwZ+gdAK5k3b3hdJzg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729027137;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V4iYpyOdNDmsi0oFEdjrnW+kJsotysukE0rF7ltM4fw=;
+	b=b0uSlpQHuelR3KnCApYlCig7UUAiNB94gexgTUYPnZ8XBevQbj57c4ok+Xyxn/mDgdnrlN
+	xTG37mphLHoI4iDQ==
+From: "tip-bot2 for Sunil V L" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/riscv-intc: Fix SMP=n boot with ACPI
+Cc: bjorn@kernel.org, Sunil V L <sunilvl@ventanamicro.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>, Anup Patel <anup@brainfault.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20241014065739.656959-1-sunilvl@ventanamicro.com>
+References: <20241014065739.656959-1-sunilvl@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241015211719.1152862-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Subject: [PATCH v2 3/3] proc_pid_fdinfo.5: Add DRM subsection
-From: Ian Rogers <irogers@google.com>
-To: Alejandro Colomar <alx@kernel.org>, "G . Branden Robinson" <g.branden.robinson@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-man@vger.kernel.org, Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Message-ID: <172902713689.1442.17389879630721887035.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add description of DRM fdinfo information based on the Linux kernel's
-`Documentation/gpu/drm-usage-stats.rst`:
-https://docs.kernel.org/gpu/drm-usage-stats.html
+The following commit has been merged into the irq/urgent branch of tip:
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+Commit-ID:     a98a0f050ced4bd4ecb59e92412916012b7c2917
+Gitweb:        https://git.kernel.org/tip/a98a0f050ced4bd4ecb59e92412916012b7=
+c2917
+Author:        Sunil V L <sunilvl@ventanamicro.com>
+AuthorDate:    Mon, 14 Oct 2024 12:27:39 +05:30
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 15 Oct 2024 23:14:25 +02:00
+
+irqchip/riscv-intc: Fix SMP=3Dn boot with ACPI
+
+When CONFIG_SMP is disabled, the static array rintc_acpi_data with size
+NR_CPUS is not sufficient to hold all RINTC structures passed from the
+firmware.
+
+All RINTC structures are required to configure IMSIC/APLIC/PLIC properly
+irrespective of SMP in the OS. So, allocate dynamic memory based on the
+number of RINTC structures in MADT to fix this issue.
+
+Fixes: f8619b66bdb1 ("irqchip/riscv-intc: Add ACPI support for AIA")
+Reported-by: Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org>
+Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Link: https://lore.kernel.org/all/20241014065739.656959-1-sunilvl@ventanamicr=
+o.com
+Closes: https://github.com/linux-riscv/linux-riscv/actions/runs/11280997511/j=
+ob/31375229012
 ---
- man/man5/proc_pid_fdinfo.5 | 94 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ drivers/irqchip/irq-riscv-intc.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/man/man5/proc_pid_fdinfo.5 b/man/man5/proc_pid_fdinfo.5
-index 02eceac04..bb6c07527 100644
---- a/man/man5/proc_pid_fdinfo.5
-+++ b/man/man5/proc_pid_fdinfo.5
-@@ -300,5 +300,99 @@ fields contain the values that
- .BR timerfd_gettime (2)
- on this file descriptor would return.)
- .RE
-+.SS Direct Rendering Manager
-+.P
-+DRM drivers can optionally choose to expose usage stats through
-+/proc/pid/fdinfo/. For example:
-+.P
-+.in +4n
-+.EX
-+pos:    0
-+flags:  02100002
-+mnt_id: 26
-+ino:    284
-+drm-driver:     i915
-+drm-client-id:  39
-+drm-pdev:       0000:00:02.0
-+drm-total-system0:      6044 KiB
-+drm-shared-system0:     0
-+drm-active-system0:     0
-+drm-resident-system0:   6044 KiB
-+drm-purgeable-system0:  1688 KiB
-+drm-total-stolen-system0:       0
-+drm-shared-stolen-system0:      0
-+drm-active-stolen-system0:      0
-+drm-resident-stolen-system0:    0
-+drm-purgeable-stolen-system0:   0
-+drm-engine-render:      346249 ns
-+drm-engine-copy:        0 ns
-+drm-engine-video:       0 ns
-+drm-engine-capacity-video:      2
-+drm-engine-video-enhance:       0 ns
-+.EE
-+.TP
-+.IR drm-driver: " .+  (mandatory)"
-+The name this driver registered.
-+.TP
-+.IR drm-pdev: " <aaaa:bb:cc.d>"
-+For PCI devices this should contain the PCI slot address of the device
-+in question.
-+.TP
-+.IR drm-client-id: " [0-9]+"
-+Unique value relating to the open DRM file descriptor used to
-+distinguish duplicated and shared file descriptors.
-+.P
-+GPUs usually contain multiple execution engines. Each shall be given a
-+stable and unique name (<engine_name>), with possible values
-+documented in the driver specific documentation.
-+.TP
-+.IR drm-engine-<engine_name>: " [0-9]+ ns"
-+GPU engine utilization, time spent busy executing workloads for this client.
-+.TP
-+.IR drm-engine-capacity-<engine_name>: " [0-9]+"
-+Capacity of the engine if not 1, cannot be 0.
-+.TP
-+.IR drm-cycles-<engine_name>: " [0-9]+"
-+Contains the number of busy cycles for the given engine.  Values are
-+not required to be constantly monotonic, but are required to catch up
-+with the previously reported larger value within a reasonable
-+period. Upon observing a value lower than what was previously read,
-+userspace is expected to stay with that larger previous value until a
-+monotonic update is seen.
-+.TP
-+.IR drm-total-cycles-<engine_name>: " [0-9]+"
-+Contains the total number cycles for the given engine.  This is a
-+timestamp in GPU unspecified unit that matches the update rate of
-+drm-cycles-<engine_name>. For drivers that implement this interface,
-+the engine utilization can be calculated entirely on the GPU clock
-+domain, without considering the CPU sleep time between 2 samples.
-+.P
-+Each possible memory type which can be used to store buffer objects by
-+the GPU in question shall be given a stable and unique name <region>.
-+The name "memory" is reserved to refer to normal system memory.
-+.TP
-+.IR drm-memory-<region>: " [0-9]+ [KiB|MiB]"
-+The amount of storage currently consumed by the buffer objects belong
-+to this client, in the respective memory region.
-+.IP
-+Default unit shall be bytes with optional unit specifiers of 'KiB' or 'MiB'
-+indicating kibi- or mebi-bytes.
-+.TP
-+.IR drm-shared-<region>: " [0-9]+ [KiB|MiB]"
-+The total size of buffers that are shared with another file (e.g., have more
-+than a single handle).
-+.TP
-+.IR drm-total-<region>: " [0-9]+ [KiB|MiB]"
-+The total size of buffers that including shared and private memory.
-+.TP
-+.IR drm-resident-<region>: " [0-9]+ [KiB|MiB]"
-+The total size of buffers that are resident in the specified region.
-+.TP
-+.IR drm-purgeable-<region>: " [0-9]+ [KiB|MiB]"
-+The total size of buffers that are purgeable.
-+.TP
-+.IR drm-active-<region>: " [0-9]+ [KiB|MiB]"
-+The total size of buffers that are active on one or more engines.
+diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-int=
+c.c
+index 8c54113..f653c13 100644
+--- a/drivers/irqchip/irq-riscv-intc.c
++++ b/drivers/irqchip/irq-riscv-intc.c
+@@ -265,7 +265,7 @@ struct rintc_data {
+ };
+=20
+ static u32 nr_rintc;
+-static struct rintc_data *rintc_acpi_data[NR_CPUS];
++static struct rintc_data **rintc_acpi_data;
+=20
+ #define for_each_matching_plic(_plic_id)				\
+ 	unsigned int _plic;						\
+@@ -329,13 +329,30 @@ int acpi_rintc_get_imsic_mmio_info(u32 index, struct re=
+source *res)
+ 	return 0;
+ }
+=20
++static int __init riscv_intc_acpi_match(union acpi_subtable_headers *header,
++					const unsigned long end)
++{
++	return 0;
++}
 +
- .SH SEE ALSO
- .BR proc (5)
--- 
-2.47.0.rc1.288.g06298d1525-goog
-
+ static int __init riscv_intc_acpi_init(union acpi_subtable_headers *header,
+ 				       const unsigned long end)
+ {
+ 	struct acpi_madt_rintc *rintc;
+ 	struct fwnode_handle *fn;
++	int count;
+ 	int rc;
+=20
++	if (!rintc_acpi_data) {
++		count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_RINTC, riscv_intc_acpi_matc=
+h, 0);
++		if (count <=3D 0)
++			return -EINVAL;
++
++		rintc_acpi_data =3D kcalloc(count, sizeof(*rintc_acpi_data), GFP_KERNEL);
++		if (!rintc_acpi_data)
++			return -ENOMEM;
++	}
++
+ 	rintc =3D (struct acpi_madt_rintc *)header;
+ 	rintc_acpi_data[nr_rintc] =3D kzalloc(sizeof(*rintc_acpi_data[0]), GFP_KERN=
+EL);
+ 	if (!rintc_acpi_data[nr_rintc])
 
