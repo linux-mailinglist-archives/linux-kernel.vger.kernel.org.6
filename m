@@ -1,248 +1,222 @@
-Return-Path: <linux-kernel+bounces-365036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E122C99DC90
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:04:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDEBC99DC9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0510B1C2167A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:04:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A72BCB21F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB42B16E863;
-	Tue, 15 Oct 2024 03:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C5E16E89B;
+	Tue, 15 Oct 2024 03:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Him/c0js"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aN4FeQeF"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB3420EB
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728961477; cv=none; b=CecZBlEadvftkaku9pJH22VUzbuW8a1+F7778rxHc8Gdp3vX3RX6mADGNmZuOBH+rVWrVWDw3GKzwsGGikwJNgZ4hKi2V8lZU9+/mJC35WhAMi735b0G+yXsn4rAcXn/bxO6YsmmEAFe0ffXpOVklc0umpE2QfKHkOeYXPlD0PY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728961477; c=relaxed/simple;
-	bh=J9AXBLqUsBJ/yA85UVfPqaFq4TQ2jxzhw2ers6Fj2jQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F5Y1kebrvF5OPabztoL7qSz3A2aiOKctTWoSJTBhfzQM0pYIGldi+zmXjvITL7626K40ypZmqPaqhwwLbWxGNbrWo0CJk3L81wYMKBUPl8HWusIRpemmtZfVtEDWBuH/gCfOywqtXDzuy6pm9SnGpc8TQ/3D7wmFRCIiMKkdxNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Him/c0js; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728961474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LILJl12FRTprkZPDsnRty3i0K05AFLZzsWu9wwpXxI=;
-	b=Him/c0jsL8CUmV1MJxP6pba9WywmnC17cRbgZob/DKRUjJLioRs1rzGByjes37SgyCEBo4
-	yHLjTcTjjVq0SoPOEdlK+EpG+DPEt5Za1V3BgUvO6szv3I6TmA1BUyqukJROjRlUrqgH3C
-	X+NCdBRjxhPecXkXpzf5y3T3Keq8LAY=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-654-Ht-GSiIUOhi5yKPEAuaVrQ-1; Mon, 14 Oct 2024 23:04:33 -0400
-X-MC-Unique: Ht-GSiIUOhi5yKPEAuaVrQ-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbf039dccfso77512126d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:04:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728961472; x=1729566272;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2LILJl12FRTprkZPDsnRty3i0K05AFLZzsWu9wwpXxI=;
-        b=Ahce/Ps8/kaq9vVzN1wFf+uO6vMhC8DGO0n3mILv0QTeXuOM/LfsKxpHelRa7NcVCm
-         mU64B6iXn3P/rWUiegY/qztJFvuWEak0CXpj4ukRA5LZWJQ4CSwvrcYPiIFu50vZ7KIY
-         7/sDzo7nxy8x5kEnx9FBbSMjPHZMDVB2lx2qKK7Z0LUXXXmtpYZttc/Z65DVxB2y7hL0
-         qvOf1PV6WdFCi3Ggs042AyhDT8Rr2JVnLoSi1d8DZhhW6Bw4GyS1MVsyBbONIYZ+fmxW
-         p2vEZYkAI5kHv5hKmmvoU7tHOqZ0OTq3eWoZy8p8vkk6sxfhnEB8yi0N1rT6eNRgnx+p
-         PscA==
-X-Forwarded-Encrypted: i=1; AJvYcCXffP1UviQPJNxX3iiYe5C/9IHsI8My2Zm8DVoT8ZZiahsNDgcTM5LK2E64Cvz4fBHit7VLAE54so/5nG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqvghs2dAfsGwKfpyoMrYnlZt6md3wYVVg9x53kp7kjojEciyo
-	6LNOD7FTahLM7qsGxN/SO3sr0oHSvYSpFZoEc2TC3jzCtJSvNzBZ9Mvqwtsl2LRnAOc5S27v486
-	hu6123xKUh0IVKx8xL+3JaNwXoWxGiV4jxFYBnVCR9kMEphCTpehUgykZqAPk9PgAQbNSQp69Ya
-	JupooyxWecfozlxwwPHLcLFOvi10aERFGM/Si7
-X-Received: by 2002:a05:6214:5347:b0:6cb:e9eb:1b24 with SMTP id 6a1803df08f44-6cbeff63948mr208010256d6.24.1728961472390;
-        Mon, 14 Oct 2024 20:04:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGp3T4Yepy5h5DQueUeaIl2hWfHF7EpApBAxl9jBnWIq5Z+upYe1XYSqd8+UMzLGOwXgyDg2kobb+ggSdFvo7w=
-X-Received: by 2002:a05:6214:5347:b0:6cb:e9eb:1b24 with SMTP id
- 6a1803df08f44-6cbeff63948mr208010076d6.24.1728961472016; Mon, 14 Oct 2024
- 20:04:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6046220EB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728961908; cv=fail; b=aE1S1btINcu7bktncY7xjEVKNjSgN68ZhhL/OEGISQQ3SKa2f26Wu6P5tDnS7uAyhklr8ASpDlnyFEAXosZ4IinDRuZEN9hNl8n6C2nEzeoGMSQPgfRb83Se3r7v8oISgTEGfSB6rbZzneIWMwPBcpQkWQ+V9Nlf3rkmVbPoBRs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728961908; c=relaxed/simple;
+	bh=tVTLWzubpqS97ll49bE/7IMSvGK76UNRWMaBQSBfce8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=b6cMvHD1vul8lmt4pVAmCtN5O3p3AdquRKXXGjFpQvCCbzPMVX8qqAl9x1kLu4ZiSyGQjjRrtZ5tHNwbZYUtcPAm+XSn80nMJ3jj8KTh67MDVnGd63VMRz6yQxN1dW1tChu36KYUvhh1If2HaStYQqxYu3A7AtsXpbS6CQHWI1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aN4FeQeF; arc=fail smtp.client-ip=40.107.223.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jF2vMquQnbdVfMUXT5MHY9ZVf6yE4ETcMftvM3GfFUE5yMPrYDLtr8eLIyBZNxGik+iJV9gu5e0b9x4TTWbnaqcw5gr9LkQEgIeo9D+NhnfhlVUodGRokPkmwiw1OuVTC8T1YOajHBQ0M3IiM9ZwtDOOu+OkJEniS86l/wp+nyx7rndyh+jg7g82f6q9N9uhIgGMdu9XvZmZNXh8I1G676sb3UKndewBfrmxwaOKaj2dLsxzgxnH4JQJS0A7kdooo8RRlBGrE4aBSfmXnHUwthIOpy1OZmdtBmONe511jXLUVybN73Dtqbg3Z2Wpim7PTS+V5GgYzyjulFfrCAMO8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P7Ruk5P45/oJwnlgqwBxa7KHVFPS68nl+9FOdXZ8vbc=;
+ b=gIgNaT94lnYRl241jlxwtuW4D+2V40xMJUCLz025Jcyr1ZceMA4mjBnN71pigTVC1OiRdZ6L0YfZZPLqHH0K7kP4wKezmqvLaA9KmrUWc1mElgZJYscaxwclwHJ817A7wGJUe/A3vRhxlX1dcS62FTOGztFAE7fzRN28vGMqQwVnfbTonQLAfh6Q47vnc2VMYrHpY5Xs4Rj/guL5EmxwMbySdfFHZNIndP14mTCwzGYO5SkQSRpa9BAfxITckuKQl72HNYU+U8DFzXIQznjlTXIk3B0cQjRddOJj4+d3D41VGGkhQRCkP30msl6iM0qLXsdndv76189hmmR0BsKGUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=cmpxchg.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P7Ruk5P45/oJwnlgqwBxa7KHVFPS68nl+9FOdXZ8vbc=;
+ b=aN4FeQeFvZbRknG/cfmvtOmVkTYxcP+Ad3LjDAsPZ0YCYceL5XZWymtjcEdwkHdTDIcaS8ZVqFFHOz4DupOnrKMPEGasPWXRglpxwBP+z4iWRxNi4Yk9/HL0CEgGosmHTi+EC34+q3nIocI3r4b7BMP9Qcxpfi1MG/c+a3aN8bk=
+Received: from BN0PR07CA0009.namprd07.prod.outlook.com (2603:10b6:408:141::8)
+ by IA1PR12MB6531.namprd12.prod.outlook.com (2603:10b6:208:3a4::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 03:11:42 +0000
+Received: from BL02EPF00021F6F.namprd02.prod.outlook.com
+ (2603:10b6:408:141:cafe::ea) by BN0PR07CA0009.outlook.office365.com
+ (2603:10b6:408:141::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27 via Frontend
+ Transport; Tue, 15 Oct 2024 03:11:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF00021F6F.mail.protection.outlook.com (10.167.249.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8069.17 via Frontend Transport; Tue, 15 Oct 2024 03:11:42 +0000
+Received: from [10.136.43.96] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 14 Oct
+ 2024 22:11:34 -0500
+Message-ID: <2b211cf7-4800-564d-d39c-8013081afee0@amd.com>
+Date: Tue, 15 Oct 2024 08:41:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com> <Zw0iegwMp5ZVGypy@fedora> <9b7e4f65-a171-4574-bd53-580e79527fbc@arm.com>
-In-Reply-To: <9b7e4f65-a171-4574-bd53-580e79527fbc@arm.com>
-From: Pingfan Liu <piliu@redhat.com>
-Date: Tue, 15 Oct 2024 11:04:21 +0800
-Message-ID: <CAF+s44QbdPBN-8EcPiWiZgYgZY4v8RK-wA0VEaVXbfnc9_HQ9Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 01/57] mm: Add macros ahead of supporting boot-time
- page size selection
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Andreas Larsson <andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Chris Zankel <chris@zankel.net>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Greg Marsden <greg.marsden@oracle.com>, Helge Deller <deller@gmx.de>, 
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Ivan Ivanov <ivan.ivanov@suse.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Jonas Bonn <jonas@southpole.se>, 
-	Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>, 
-	Max Filippov <jcmvbkbc@gmail.com>, Miroslav Benes <mbenes@suse.cz>, Rich Felker <dalias@libc.org>, 
-	Richard Weinberger <richard@nod.at>, Stafford Horne <shorne@gmail.com>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Will Deacon <will@kernel.org>, Yoshinori Sato <ysato@users.sourceforge.jp>, x86@kernel.org, 
-	linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-mm@kvack.org, linux-openrisc@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH 3/3] sched/core: Indicate a sched_delayed task was
+ migrated before wakeup
+Content-Language: en-US
+To: Johannes Weiner <hannes@cmpxchg.org>, Peter Zijlstra
+	<peterz@infradead.org>
+CC: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>, Suren Baghdasaryan
+	<surenb@google.com>, <linux-kernel@vger.kernel.org>, Dietmar Eggemann
+	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
+	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
+	<vschneid@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Klaus Kudielka
+	<klaus.kudielka@gmail.com>, Chris Bainbridge <chris.bainbridge@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Youssef Esmat
+	<youssefesmat@google.com>, Paul Menzel <pmenzel@molgen.mpg.de>, "Bert
+ Karwatzki" <spasswolf@web.de>, <regressions@lists.linux.dev>
+References: <20241010082838.2474-1-kprateek.nayak@amd.com>
+ <20241010082838.2474-4-kprateek.nayak@amd.com>
+ <20241010130316.GA181795@cmpxchg.org>
+ <20241010130621.GH17263@noisy.programming.kicks-ass.net>
+ <20241010193712.GC181795@cmpxchg.org>
+ <20241011083323.GL17263@noisy.programming.kicks-ass.net>
+ <20241011100803.GA331616@cmpxchg.org>
+ <20241011103958.GO17263@noisy.programming.kicks-ass.net>
+ <20241014144358.GB1021@cmpxchg.org>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20241014144358.GB1021@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6F:EE_|IA1PR12MB6531:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7eee668-4948-429b-c887-08dcecc7181d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|376014|30052699003|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QXVNeGRvQThkajdVdlFBT1cvd2xGdGRKYkc3SXpoSTRiRk14NHVkVnM1VzIr?=
+ =?utf-8?B?Z3FpbmNOdkhXZnFMU3Z0N3FLMHF6cjZNLzQrSGFoMWVNQ1ZkalhMU1BwQjRO?=
+ =?utf-8?B?MFNHYlFNOVcyUjFsYXJNc3F1WVArUHU1Z2x4LzJkVVhGaG54T0t4OWZKdkw3?=
+ =?utf-8?B?aDh4SkxTNU1JM0YvQVdPM0xRUmRTWkdvT21EVXhRVU8xTUZ5VXcrK2RGSWhY?=
+ =?utf-8?B?VmNKRlZaSlVqMHBKWWtNajJxNFU1aUc0S0FIdGxKcFR6bWpBVHk1S054TE1y?=
+ =?utf-8?B?Y0RoUE95dGhodG5mTHNUdE9YaThPOE9iWmJBdUx2NzV2MUZmWlc4NmJTeHBS?=
+ =?utf-8?B?ZkJ3TWZNL0JaQTF1OFJ6SUpvcWJYMzVRZW1WZ3UvcTNNUURUdHBxUlJoWUda?=
+ =?utf-8?B?Q0Q5LzhWQ0VhRDhWRU1QODQ2WEV0Vzkwd3JQMXB5M2ZnZWZJeHBMdlQrRDBW?=
+ =?utf-8?B?UW0yWFQ0OEp4UEpiUm4zZmNNYmlkL2w3b3BHMkIzTlFCNE5UTUp0TTRHTk45?=
+ =?utf-8?B?blM0OCs0T0pXczFweENRM0VueDFIQlJ3SkVkUC9XQjBlazMrLzdYaGlhRGdj?=
+ =?utf-8?B?UGJxVVdQRE1WWWIvTEJBMVZsY1NPSnoxZDZLVkxDTEZ4YTJVSG9HbFVZdkFm?=
+ =?utf-8?B?Rkloa2VqNWdmTU9pekJYeXl6cUF4ejFMTkl3YlQzaG1qK1BzRlFRNGY2Y1Zr?=
+ =?utf-8?B?Y0hPa2ZBMkJ3MkxOZlZMNkFZdEZYV2VHaVRzMDFkQmV3VWhyYlVEaE1YRVd2?=
+ =?utf-8?B?Smo2TmU4WjdhOGpwZmJHRExoL084WVVZK0NCT2x2SXVNVlVoaHBELzE4YWVh?=
+ =?utf-8?B?RlpRSUdFR1dtdFRVbklvRVQrOHNSZjMxOFRyMGZUa1RlQXl5eEVvOGZqL0NQ?=
+ =?utf-8?B?bFNVdlJQd3J6UHlBL042VzJQTXVUTVRBM2gzTUxMOCt2dHRodmhnWkRxQkpV?=
+ =?utf-8?B?YmdQbzBrc04xa0xhUVhIcnNZeFIxMlB4eFQvZVdOV25EcytseHNpQXBUR0d6?=
+ =?utf-8?B?NGM3SUpjTU5OSTJteHBGWTdHcmdWUk14K3IwZ0VzZFdYaVRPb3Fad2JJdnJX?=
+ =?utf-8?B?WFgxVmQ2RHo1QnA5bTVmUG5XOFl4bkhUT2ZEbTFQNnFORUxGMHpIOEoxdXYr?=
+ =?utf-8?B?WCtTL1BOYnlkeHp3eDhiOGxXUUYwVDdNRklVV3Fsd0NCRDNqVVl3aDAzRHBB?=
+ =?utf-8?B?SXRKakM2VWQrSEJLbFN4dHRsWHRQZHBXV2x4RDNyem5EUyt0NFdYRnFyZVNC?=
+ =?utf-8?B?S3cydS9jWVZWZW5reE9tT0grY1k1eUNsSXE3QzI1NjhVRjNUYXU2Nms2Y084?=
+ =?utf-8?B?clozU0VUR0M4OFU2d1BwWUNDR3cvSUNFVnBsR1RQY1NzZ3B5U3JxWERuSTJv?=
+ =?utf-8?B?b01vNVVHamd1VmFzUit3WUtRclNDd3duWVNRL1ViWW1sZlB1aWovc3NGTXJZ?=
+ =?utf-8?B?VmMvM0NVODdwNktqcUxtdG5QdTNHT2svZFBoRVV4TThRUU5KYjE3elEvRitI?=
+ =?utf-8?B?K3ROSE9sMFhBVitCMENJV0Y1d1FkS3hzRlh0eGxqYllESG1wclE3bWN6NUd6?=
+ =?utf-8?B?eHlyR1BKVTNpOStwN0hHbXZFbTR2SWc0RytvTmtuYjQvQVFhY2lwZ295MmxW?=
+ =?utf-8?B?OVJ5VDByeTNBSTI4TlBQM0dOYXRYUHBEMnl3RC9uTElpMnA5bGQyeXk2MmVq?=
+ =?utf-8?B?d0c3MXNtWWRFa3RzcS9ubUtaZ1dKQzkyYUFmbFhTVnA2VDdGd3lsS20xUm9B?=
+ =?utf-8?B?VVNoeS9nSm0wdXI4c21RaUx1dk51ekNHRTc2UDlnUGMvcjdKbmJkZ09SblEr?=
+ =?utf-8?B?OGF0VnhTRG1KanZwcFVBNG9yYWdlUWQrVUZCZW96MWcvOG5oZVlRVzc5MVlY?=
+ =?utf-8?Q?L8N3c+jW/7/C6?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(376014)(30052699003)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 03:11:42.6394
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7eee668-4948-429b-c887-08dcecc7181d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6F.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6531
 
-On Mon, Oct 14, 2024 at 10:07=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com=
-> wrote:
->
-> On 14/10/2024 14:54, Pingfan Liu wrote:
-> > Hello Ryan,
-> >
-> > On Mon, Oct 14, 2024 at 11:58:08AM +0100, Ryan Roberts wrote:
-> >> arm64 can support multiple base page sizes. Instead of selecting a pag=
-e
-> >> size at compile time, as is done today, we will make it possible to
-> >> select the desired page size on the command line.
-> >>
-> >> In this case PAGE_SHIFT and it's derivatives, PAGE_SIZE and PAGE_MASK
-> >> (as well as a number of other macros related to or derived from
-> >> PAGE_SHIFT, but I'm not worrying about those yet), are no longer
-> >> compile-time constants. So the code base needs to cope with that.
-> >>
-> >> As a first step, introduce MIN and MAX variants of these macros, which
-> >> express the range of possible page sizes. These are always compile-tim=
-e
-> >> constants and can be used in many places where PAGE_[SHIFT|SIZE|MASK]
-> >> were previously used where a compile-time constant is required.
-> >> (Subsequent patches will do that conversion work). When the arch/build
-> >> doesn't support boot-time page size selection, the MIN and MAX variant=
-s
-> >> are equal and everything resolves as it did previously.
-> >>
-> >
-> > MIN and MAX appear to construct a boundary, but it may be not enough.
-> > Please see the following comment inline.
-> >
-> >> Additionally, introduce DEFINE_GLOBAL_PAGE_SIZE_VAR[_CONST]() which wr=
-ap
-> >> global variable defintions so that for boot-time page size selection
-> >> builds, the variable being wrapped is initialized at boot-time, instea=
-d
-> >> of compile-time. This is done by defining a function to do the
-> >> assignment, which has the "constructor" attribute. Constructor is
-> >> preferred over initcall, because when compiling a module, the module i=
-s
-> >> limited to a single initcall but constructors are unlimited. For
-> >> built-in code, constructors are now called earlier to guarrantee that
-> >> the variables are initialized by the time they are used. Any arch that
-> >> wants to enable boot-time page size selection will need to select
-> >> CONFIG_CONSTRUCTORS.
-> >>
-> >> These new macros need to be available anywhere PAGE_SHIFT and friends
-> >> are available. Those are defined via asm/page.h (although some arches
-> >> have a sub-include that defines them). Unfortunately there is no
-> >> reliable asm-generic header we can easily piggy-back on, so let's defi=
-ne
-> >> a new one, pgtable-geometry.h, which we include near where each arch
-> >> defines PAGE_SHIFT. Ugh.
-> >>
-> >> -------
-> >>
-> >> Most of the problems that need to be solved over the next few patches
-> >> fall into these broad categories, which are all solved with the help o=
-f
-> >> these new macros:
-> >>
-> >> 1. Assignment of values derived from PAGE_SIZE in global variables
-> >>
-> >>   For boot-time page size builds, we must defer the initialization of
-> >>   these variables until boot-time, when the page size is known. See
-> >>   DEFINE_GLOBAL_PAGE_SIZE_VAR[_CONST]() as described above.
-> >>
-> >> 2. Define static storage in units related to PAGE_SIZE
-> >>
-> >>   This static storage will be defined according to PAGE_SIZE_MAX.
-> >>
-> >> 3. Define size of struct so that it is related to PAGE_SIZE
-> >>
-> >>   The struct often contains an array that is sized to fill the page. I=
-n
-> >>   this case, use a flexible array with dynamic allocation. In other
-> >>   cases, the struct fits exactly over a page, which is a header (e.g.
-> >>   swap file header). In this case, remove the padding, and manually
-> >>   determine the struct pointer within the page.
-> >>
-> >
-> > About two years ago, I tried to do similar thing in your series, but ra=
-n
-> > into problem at this point, or maybe not exactly as the point you list
-> > here. I consider this as the most challenged part.
-> >
-> > The scenario is
-> > struct X {
-> >       a[size_a];
-> >       b[size_b];
-> >       c;
-> > };
-> >
-> > Where size_a =3D f(PAGE_SHIFT), size_b=3Dg(PAGE_SHIFT). One of f() and =
-g()
-> > is proportional to PAGE_SHIFT, the other is inversely proportional.
-> >
-> > How can you fix the reference of X.a and X.b?
->
-> If you need to allocate static memory, then in this scenario, assuming f(=
-) is
-> proportional and g() is inversely-proportional, then I guess you need
-> size_a=3Df(PAGE_SIZE_MAX) and size_b=3Dg(PAGE_SIZE_MIN). Or if you can al=
-locate the
+Hello Johannes,
 
-My point is that such stuff can not be handled by scripts
-automatically and needs manual intervention.
+On 10/14/2024 8:13 PM, Johannes Weiner wrote:
+> On Fri, Oct 11, 2024 at 12:39:58PM +0200, Peter Zijlstra wrote:
+>> On Fri, Oct 11, 2024 at 06:08:03AM -0400, Johannes Weiner wrote:
+>>> Completely untested. But if it looks good, I'll send a proper patch.
+>>
+>> Sure. Thanks for doing this.
+> 
+> Ok here goes. Built, booted and runtime-tested.
+> 
+> ---
+> 
+>  From 91f230caa0119877cb861047e1af1371bf00d908 Mon Sep 17 00:00:00 2001
+> From: Johannes Weiner <hannes@cmpxchg.org>
+> Date: Fri, 11 Oct 2024 06:18:07 -0400
+> Subject: [PATCH] sched: psi: pass enqueue/dequeue flags to psi callbacks
+>   directly
+> 
+> What psi needs to do on each enqueue and dequeue has gotten more
+> subtle, and the generic sched code trying to distill this into a bool
+> for the callbacks is awkward.
+> 
+> Pass the flags directly and let psi parse them. For that to work, the
+> #include "stats.h" (which has the psi callback implementations) needs
+> to be below the flag definitions in "sched.h". Move that section
+> further down, next to some of the other accounting stuff.
+> 
+> This also puts the ENQUEUE_SAVE/RESTORE branch behind the psi jump
+> label, slightly reducing overhead when PSI=y but runtime disabled.
+> 
+> Link: https://lore.kernel.org/lkml/20241011083323.GL17263@noisy.programming.kicks-ass.net/
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 
-> memory dynamically, then make a and b pointers to dynamically allocated b=
-uffers.
->
+I tested this series on top of tip:sched/urgent at commit cd9626e9ebc7
+("sched/fair: Fix external p->on_rq users") and did not observe any
+splats related to PSI or otherwise. Please feel free to add:
 
-This seems a better way out.
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
-> Is there a specific place in the source where this pattern is used today?=
- It
-> might be easier to discuss in the context of the code if so.
->
+-- 
+Thanks and Regards,
+Prateek
 
-No such code at hand. Just throw out the potential issue and be
-curious about it which frustrates me.
-I hope people can reach an agreement on it and turn this useful series
-into reality.
+> ---
+>   kernel/sched/core.c  | 12 +++++-----
+>   kernel/sched/sched.h | 56 ++++++++++++++++++++++----------------------
+>   kernel/sched/stats.h | 29 +++++++++++++++--------
+>   3 files changed, 53 insertions(+), 44 deletions(-)
+> 
+> [..snip..]
 
-Thanks,
-
-Pingfan
 
 
