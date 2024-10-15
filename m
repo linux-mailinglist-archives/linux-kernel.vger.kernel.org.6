@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-364973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50C299DBC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD3A99DBCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDA791C23500
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C505C1F2346B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105C515A856;
-	Tue, 15 Oct 2024 01:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E66155A4D;
+	Tue, 15 Oct 2024 01:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E4ErzauT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SeEYUOzS"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BB813DBBC;
-	Tue, 15 Oct 2024 01:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB390231C83;
+	Tue, 15 Oct 2024 01:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728956183; cv=none; b=pID7t9UCpzXR9THzIEjnsUn2O+h4uQbbCTtlWsgoKKFTCqJxfiFATJQyW7E11C7oyF/PfFxMY8KC+nKOJUQ5KwuWMwlTcbajrmwYb1vA3IaVJ5jZOmZ3GEMe9xo5xhhJVQ8EYWTmGxT4qjOsF4B1rGG+OzghKWrG1HdO1leqjNM=
+	t=1728956446; cv=none; b=a7KP1Ptt9PeFh7kTVcuCNq0X2SD2kegc+nMJ8QshiwCS/ebUi1x7c8hg7Osqhkh02KBHX6uA0LIl7kam4UqxGbMviyfa2koplQ6f6Av0U51Ty2FOdbJ+Vxj0hJlLhv5MDcNQ71bKs6vNHSHlNi0L657SVmoazuw78TLFsNgD7kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728956183; c=relaxed/simple;
-	bh=BxunOLC7SLYiMYlnQtABF4rqOdPefSeGirsL1mlD6ZA=;
+	s=arc-20240116; t=1728956446; c=relaxed/simple;
+	bh=5Y6P3r7lGQ0FUFEUbLl6wZzzcLKJ72EWtvdXrw4jLNU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzjpbcpoKK2rEuqGiTkyXLNOAiddLTN0/z1RSZRlNjfSajcTXdaCeZjSOoBBMfPZk1C6mraWm+M3yDNgjQ8Sdpj1gUEjSGRsp4g7GrBiQM4zx56cA/S2f0abrMUQutJXiWje9bK1MTIXPL7xmZ2q71gxiXnpJ+IioWRIOtfsYDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E4ErzauT; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728956182; x=1760492182;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BxunOLC7SLYiMYlnQtABF4rqOdPefSeGirsL1mlD6ZA=;
-  b=E4ErzauTuREde4iXU9beK0WMlbXeBcDlNELH6/XupgQ2KYTO3ksKG80r
-   hAbQZHtSXSH9PegqXNWCC71ZeZrOIIjSizr6Nei7qQJDfEYAF+fOeJnN2
-   MH0kLvOTAfDkCRO1K4ahQeQ1hNqKgmziaVJBZzEauA2oxoPv3TJTsIm6a
-   013NapRk1eM7QTBpds/IUdZA6yJBZQk+Jhlc4BkQNY8A0FlswxUl1AiJF
-   kctUjaF3ZA6eV/rWRf6gRrck4+rD+TMlz9aqtp+xQHiWGjxbPDFowBfA/
-   Y0JiP6J+yNUkYMeeewYy02jofB6XGA+u47PS2R4pWOJOOwScorTPYANsJ
-   g==;
-X-CSE-ConnectionGUID: PLhTiosGSGyKP1a2Urp2Jg==
-X-CSE-MsgGUID: 6Y7b11+mSHCLyhZ9mUwk3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="38961852"
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="38961852"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 18:36:21 -0700
-X-CSE-ConnectionGUID: A+HDiqjaRMGA/VUwCnfLbQ==
-X-CSE-MsgGUID: gxxyTZ14QXWROMXSgMy4/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="77604846"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 14 Oct 2024 18:36:19 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t0WTw-000HRe-25;
-	Tue, 15 Oct 2024 01:36:16 +0000
-Date: Tue, 15 Oct 2024 09:35:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH v3] alienware-wmi: Dell AWCC platform_profile support
-Message-ID: <202410150939.BgH8WpE3-lkp@intel.com>
-References: <20241008195642.36677-2-kuurtb@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RyPAMi7ifI1Im2yQ2seRKMIS2InmALuxBnuLmP8t8+d4aBuFBm+5UvkmgSE1CWnQfyDf/DOiNm3E6Z4cWWj2mP42lY3Jn8iyNxhh4nP7sSv3+Wal0re9GcQFC2f/2Lee10QgFuQpEAxbpk9qkZpnZDCa3YUzooiQIO7kYLU47RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SeEYUOzS; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gL9eg7AaSPXqzlXNIhBfZZxk+kS0I3YiOjFS+/uT7A8=; b=SeEYUOzSZyOqn7LIjB4X9+wHY5
+	YIzZrSCOQkjE+WyPlKKBnGsEZvyVSoAkqYO6CHYoJp6rJI7ild63hVYGcQjvH2EeUEckgfuKHj6bQ
+	EA8LnAU1v6aT56qTf+iIJhuVEve5OodtWcYWMrvSRRh38aJH811muk7lakYjsir1UjQJayTVmFE0f
+	8ja8caoySLSqXyGTK2uoW5LwwIyM8PaJubNm3SE4NQH2gLYIpbDP+PJbedEZMQbCdssa7OF95EpBw
+	NEcRO7I1CijWlAzjBzQVqXMHYw8VbE1KH5bpXaOWMtP2/ZLBDckOgKxFA9yBRLAw5/D3b3iJ7um06
+	rdWHUA0g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0WXn-00000003Oqq-1E82;
+	Tue, 15 Oct 2024 01:40:15 +0000
+Date: Tue, 15 Oct 2024 02:40:15 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>,
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
+	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com,
+	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org,
+	roman.gushchin@linux.dev, dave@stgolabs.net,
+	liam.howlett@oracle.com, pasha.tatashin@soleen.com,
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
+	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org,
+	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com,
+	kaleshsingh@google.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+Message-ID: <Zw3H_7mlrqxRwz_H@casper.infradead.org>
+References: <20241014203646.1952505-1-surenb@google.com>
+ <20241014203646.1952505-6-surenb@google.com>
+ <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
+ <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
+ <CAJD7tkY8LKVGN5QNy9q2UkRLnoOEd7Wcu_fKtxKqV7SN43QgrA@mail.gmail.com>
+ <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,50 +79,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008195642.36677-2-kuurtb@gmail.com>
+In-Reply-To: <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com>
 
-Hi Kurt,
+On Mon, Oct 14, 2024 at 05:03:32PM -0700, John Hubbard wrote:
+> > > Or better yet, *always* fall back to page_ext, thus leaving the
+> > > scarce and valuable page flags available for other features?
+> > > 
+> > > Sorry Suren, to keep coming back to this suggestion, I know
+> > > I'm driving you crazy here! But I just keep thinking it through
+> > > and failing to see why this feature deserves to consume so
+> > > many page flags.
+> > 
+> > I think we already always use page_ext today. My understanding is that
+> > the purpose of this series is to give the option to avoid using
+> > page_ext if there are enough unused page flags anyway, which reduces
+> > memory waste and improves performance.
+> > 
+> > My question is just why not have that be the default behavior with a
+> > config option, use page flags if there are enough unused bits,
+> > otherwise use page_ext.
+> 
+> I agree that if you're going to implement this feature at all, then
+> keying off of CONFIG_MEM_ALLOC_PROFILING seems sufficient, and no
+> need to add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS on top of that.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.12-rc3 next-20241014]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kurt-Borja/alienware-wmi-Dell-AWCC-platform_profile-support/20241011-184337
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241008195642.36677-2-kuurtb%40gmail.com
-patch subject: [PATCH v3] alienware-wmi: Dell AWCC platform_profile support
-config: x86_64-buildonly-randconfig-004-20241015 (https://download.01.org/0day-ci/archive/20241015/202410150939.BgH8WpE3-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241015/202410150939.BgH8WpE3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410150939.BgH8WpE3-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/platform/x86/dell/alienware-wmi.c: In function 'profile_to_wmax_arg':
->> drivers/platform/x86/dell/alienware-wmi.c:822:16: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
-     822 |         return FIELD_PREP(PROFILE_MASK, prof) | PROFILE_ACTIVATE;
-         |                ^~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/FIELD_PREP +822 drivers/platform/x86/dell/alienware-wmi.c
-
-   819	
-   820	static u32 profile_to_wmax_arg(enum WMAX_THERMAL_PROFILE prof)
-   821	{
- > 822		return FIELD_PREP(PROFILE_MASK, prof) | PROFILE_ACTIVATE;
-   823	}
-   824	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Maybe the right idea is to use all the bits which are unused in this
+configuration for the first N callsites, then use page_ext for all the
+ones larger than N.  It doesn't save any memory, but it does have the
+performance improvement.
 
