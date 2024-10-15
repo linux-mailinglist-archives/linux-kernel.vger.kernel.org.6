@@ -1,248 +1,110 @@
-Return-Path: <linux-kernel+bounces-366133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B3E99F13C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:31:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C1D99F140
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A8D287969
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85EB32876D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B371F1F6684;
-	Tue, 15 Oct 2024 15:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135081F76AC;
+	Tue, 15 Oct 2024 15:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Toiw5qMh"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuK9DjVk"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48CE1D5152
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BB51DD0DF;
+	Tue, 15 Oct 2024 15:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006276; cv=none; b=NmgcwrrVu82re8gE0dpfIyc/AsTEpbwExZrH4R3GjiQSQRy9SYnE8VilKX0jOOD59bpXN/LrELS2FwvnFFU18A8maC47ProMIoOYBxVpB2cKQH8x59akP38w1saBty1BfsxMrLaDluxlhDDVlyVJ0hvHM7iueZ5q3wDkrttdmCg=
+	t=1729006285; cv=none; b=JFpXNSRGiFGeEbJhvKN9Uzl1CbwZmrmfQhSmHZJldznLIp40zTegr7GTP1PXhkkoN+b+FfB76/dM5i4mhpiCn8c8vNJ36g36nduu/F+r45R1zWxlecFLIka6QGyDTB2REK2W58QHTcJ+F+f6EOx482UN1U4KMPRg+/KnAMRJr8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006276; c=relaxed/simple;
-	bh=hhDCucaZ1PzlX1SWh5P/3nZNBB7Y1Px3LSdrjKDdTjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VYsib6+f7iZpGd392OyOaNaXavN/2oneQ78RFRzku0NgP5ncsCyjuH3dYicPtdpgqg0Q/RyVWkEO3g1qSjUDB8Kq4AT+/j4u55HMSU1LC1fYFWsaeDCy5Z5KlRcBQxaqk1a6vFdDAZImtMsrVL7Ljje1aMlQoXd6/nBBGNG4vcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Toiw5qMh; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8377fd760b0so176639139f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:31:13 -0700 (PDT)
+	s=arc-20240116; t=1729006285; c=relaxed/simple;
+	bh=XYJf7hrcLT7Ow0dgGMK3ItjJvo1qX/WLHMjBflskpp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TQ3goPXzUCyoi7KG8YZhEarDQcKguEsyyYR25mAXMqDGZigHr/1SZns1zqOV5Q1e5QIYrVC6ZjsJpGsnHnJBUJ82hWzkQ5G/IQYGWLeDxA6Lu5Y+JXFrHuDW0854vlTJGumWlSnJ6CevEb/zGGk7aD0lkmFY2huOFct0NeTH57g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GuK9DjVk; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c83c2e967so4569645ad.1;
+        Tue, 15 Oct 2024 08:31:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729006273; x=1729611073; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9wBjrXmfB1qExnYUI70ZkbU7dHuoAtow6T1PTtZYfg0=;
-        b=Toiw5qMh+kf/uOAbsiySdVrHcfoivRSct940XD3y7j4V5l1Iv3mKq8LEHX/BB5NHsT
-         b7LlJfUOrxw5u50KlnPO5amJY8h9/vVJfjwn3CTZwubYiVHxWMhZJWJwmAe5iwrVS5Wi
-         ropMVPjBD++IbTcRPoABG4vlUNht/CoHk6GPw=
+        d=gmail.com; s=20230601; t=1729006283; x=1729611083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XYJf7hrcLT7Ow0dgGMK3ItjJvo1qX/WLHMjBflskpp8=;
+        b=GuK9DjVk64kafU2trISty/DJmJ6dlByLrc/IqM4E4aJeI+yh2M7hN3GJcVNrIYzmDd
+         zO/bBcjX2bFQxpnBoTsMTIQgBRQ3lqWDRTuqhx+BE1X2msmjFTxuF2moBAoSQKgeMifh
+         71I+d94Lykl6gzxwHrvj/TL3kTA7wauv2QIdjEYCHq7iuBOoLgbw7U73e8Ia1sllAjSd
+         73ZvY4xGyKnfw1RhnhfRidSNpTeC/g78TZ7/SPperExO3Yhq6SbI9qS/Q7x4R3+zwJ23
+         a7O5b2HhU2iV8moc2BVwKrStd+88mztUqt8t0iu5ELdWCTJgWugTo/yOurpR80yEypl0
+         Y7+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729006273; x=1729611073;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9wBjrXmfB1qExnYUI70ZkbU7dHuoAtow6T1PTtZYfg0=;
-        b=EkTybB0X/Crt5tFPV+pjmPRabS2QbqK7e0KBF1r6nZkCMTatgcw351LPnV2kvsvv96
-         SjuSrqENHr9ArBr57lb0ahs5XBcDtR3Mj8PEp5Pl3w4WY03xuf8MqhQyazV5pqR8Igtg
-         sbNB6MaIlx81UXCArXi7Rto8VHkoxMj0zrP4TP10/Mc98E4yDFFTGRwRytJ1D4KGyPak
-         Xoi+ppowU1Y0dP3XEGikQ6P7gia3S1kPQfG21pY1ihBm6z9OnrOddEeZodiokHAbHU+a
-         yBRNvtYKVjyKVPW7dbsdERZnqmoX9ezxPFZW7PP+HSWzWsBhEOSL3bkW1ueQvK8wnRA8
-         8RtQ==
-X-Gm-Message-State: AOJu0Yw0x2buTENNKwUwPuls66RcPgOn54A8wfZw5CCDYRIZdANL7YJX
-	7aAu2mspPPHw9SEt4a6yel4MJjYmmEsPnGH10CsFDH9Vuin4PwB100FlMKnrTJ8=
-X-Google-Smtp-Source: AGHT+IE91cJLGTmXV+ieSM/eGbv+ULQ3XXk007BVO80y68MdV31lmqHtde5RuS0uFROozmcADM5jgA==
-X-Received: by 2002:a05:6602:618c:b0:82c:edd4:f0a6 with SMTP id ca18e2360f4ac-83a946f27e5mr108236839f.12.1729006272737;
-        Tue, 15 Oct 2024 08:31:12 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbecc6a612sm362791173.162.2024.10.15.08.31.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 08:31:12 -0700 (PDT)
-Message-ID: <806bee31-d740-49c9-abe0-06820cfa7395@linuxfoundation.org>
-Date: Tue, 15 Oct 2024 09:31:11 -0600
+        d=1e100.net; s=20230601; t=1729006283; x=1729611083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XYJf7hrcLT7Ow0dgGMK3ItjJvo1qX/WLHMjBflskpp8=;
+        b=MU4TAbvn7sHns2txCtHflhXQkvsNTRmoRYPSxiBzopNLU86SDufsa4PZh7NyyKXDEE
+         nrWtNR/P8VVjBkda/4z3FAQU+yEZD4sqEH8AWBm8Cud15ygpRF+WoZ6ctfwqNpdnuDtc
+         faSkRLNLsK/pst08mfEdhc+8mvwd/R5erO9B2mAAjZO5SnA/2iCtsATrWX7ROgrQ2woX
+         S4kApeysAPf17/O9LP1YKdW2AJ0EqMA7sQdvvemXY3mLsJYhsVLMUIW46rozXtyCbT9/
+         D2MZYstQsdJPOJ6fH1pR5Tu5+53f08Tbz5YaWF4M111FRNIbuqrenNndD+VH7isHLbBK
+         qLvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiq0/7u1auK6zczJ0h1/B1iEWy7HuGmDRPKfnawqWlndtkc9SJ0GZpPwyQtkSWlS+HZnsz5BS/T4c7U3PVt5I=@vger.kernel.org, AJvYcCVBQKPnJfpePCp1lEhnE1mbYy1w0q3oWhY3GNKu0OZ5KWl5SSic4IEAdjXwUpbJZGN3dyAFuHVn1mfwcx+2@vger.kernel.org, AJvYcCXCpE1Sj/4TuQ09NSHz7iAwKyavQGPOTMeVx2qi2J3d6fW/r+hFe13ey+4GS0m3pSMW5uQ0yLxiwaw3mavyBvyY0IgK@vger.kernel.org, AJvYcCXRbrPILczxCpYJ/Xza7bCX9toOsM5wYQtsPUC3WdEBcqmZwK/Y0uf+7EoqGD8tw1EmsWc6lphjc7Il@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDfPfAZEngGHbbhmR06AA9GVxwkGC+cZTjVeqHFBZAYIXyHN5g
+	E5eI/y/pNVPh3EnMIycgjqRXx4Qln0SsBuSfaNMvTSjL8tJn0jlnvmRBxPYG7jCPiQdZlO42+PS
+	KNvp/nA3YAuDhs1ajE4hgNfBY92c=
+X-Google-Smtp-Source: AGHT+IFgGW52eztBAkDuewDmtmXhOGFk9GZOZdh7DbttGzN3ZkEhOvpiLgnEe8CkavcbYb8B+mBuvtNrTixMpXJBb9s=
+X-Received: by 2002:a17:902:c402:b0:20b:99cd:c27e with SMTP id
+ d9443c01a7336-20ca1425487mr86305455ad.3.1729006283310; Tue, 15 Oct 2024
+ 08:31:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: clone3: Use the capget and capset syscall
- directly
-To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org, shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- zhouyuhang <zhouyuhang@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241015105955.126994-1-zhouyuhang1010@163.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241015105955.126994-1-zhouyuhang1010@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241011-tracepoint-v10-5-7fbde4d6b525@google.com>
+ <202410151814.WmLlAkCq-lkp@intel.com> <CANiq72nn6zv9MOD2ifTXbWV3W1AgiXL=6zTX_-eGL5ggLj4fbw@mail.gmail.com>
+ <CAH5fLghJrrq2nJu7S08bBg2sAjdibkZ4D14K9cqETafnr4CR4w@mail.gmail.com>
+ <CANiq72kRiQvw3xWbMGRxcVJhHN0LMRa0RewxnkofVr=71KQvEA@mail.gmail.com> <CAH5fLgjFFmm-m8=4Qbad6X-EOjKfCytE3ncevO1u-sSn-jJF9w@mail.gmail.com>
+In-Reply-To: <CAH5fLgjFFmm-m8=4Qbad6X-EOjKfCytE3ncevO1u-sSn-jJF9w@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 15 Oct 2024 17:31:11 +0200
+Message-ID: <CANiq72nHnecUS1H2t8AMx1oyY8j35HcEzMxeZDTp2aqjv+qksg@mail.gmail.com>
+Subject: Re: [PATCH v10 5/5] rust: add arch_static_branch
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: kernel test robot <lkp@intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	oe-kbuild-all@lists.linux.dev, linux-trace-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/15/24 04:59, zhouyuhang wrote:
-> From: zhouyuhang <zhouyuhang@kylinos.cn>
-> 
-> The libcap commit aca076443591 ("Make cap_t operations thread safe.")
-> added a __u8 mutex at the beginning of the struct _cap_struct, it changes
-> the offset of the members in the structure that breaks the assumption
-> made in the "struct libcap" definition in clone3_cap_checkpoint_restore.c.
-> This will make the test fail. So use the capget and capset syscall
-> directly and remove the libcap library dependency like the
-> commit 663af70aabb7 ("bpf: selftests: Add helpers to directly use
-> the capget and capset syscall") does.
-> 
-> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
-> ---
->   tools/testing/selftests/clone3/Makefile       |  1 -
->   .../clone3/clone3_cap_checkpoint_restore.c    | 53 ++++++++-----------
->   .../selftests/clone3/clone3_cap_helpers.h     | 23 ++++++++
->   3 files changed, 44 insertions(+), 33 deletions(-)
->   create mode 100644 tools/testing/selftests/clone3/clone3_cap_helpers.h
-> 
-> diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
-> index 84832c369a2e..59d26e8da8d2 100644
-> --- a/tools/testing/selftests/clone3/Makefile
-> +++ b/tools/testing/selftests/clone3/Makefile
-> @@ -1,6 +1,5 @@
->   # SPDX-License-Identifier: GPL-2.0
->   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
-> -LDLIBS += -lcap
->   
->   TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
->   	clone3_cap_checkpoint_restore
-> diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> index 3c196fa86c99..242088eeec88 100644
-> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> @@ -15,7 +15,6 @@
->   #include <stdio.h>
->   #include <stdlib.h>
->   #include <stdbool.h>
-> -#include <sys/capability.h>
->   #include <sys/prctl.h>
->   #include <sys/syscall.h>
->   #include <sys/types.h>
-> @@ -26,6 +25,7 @@
->   
->   #include "../kselftest_harness.h"
->   #include "clone3_selftests.h"
-> +#include "clone3_cap_helpers.h"
->   
->   static void child_exit(int ret)
->   {
-> @@ -87,47 +87,36 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
->   	return ret;
->   }
->   
-> -struct libcap {
-> -	struct __user_cap_header_struct hdr;
-> -	struct __user_cap_data_struct data[2];
-> -};
-> -
->   static int set_capability(void)
->   {
-> -	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
-> -	struct libcap *cap;
-> -	int ret = -1;
-> -	cap_t caps;
-> -
-> -	caps = cap_get_proc();
-> -	if (!caps) {
-> -		perror("cap_get_proc");
-> +	struct __user_cap_data_struct data[2];
-> +	struct __user_cap_header_struct hdr = {
-> +		.version = _LINUX_CAPABILITY_VERSION_3,
-> +	};
-> +	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
-> +	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
-> +	int ret;
-> +
-> +	ret = capget(&hdr, data);
-> +	if (ret) {
-> +		perror("capget");
->   		return -1;
->   	}
->   
->   	/* Drop all capabilities */
-> -	if (cap_clear(caps)) {
-> -		perror("cap_clear");
-> -		goto out;
-> -	}
-> +	memset(&data, 0, sizeof(data));
->   
-> -	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
-> -	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-> +	data[0].effective |= cap0;
-> +	data[0].permitted |= cap0;
->   
-> -	cap = (struct libcap *) caps;
-> +	data[1].effective |= cap1;
-> +	data[1].permitted |= cap1;
->   
-> -	/* 40 -> CAP_CHECKPOINT_RESTORE */
-> -	cap->data[1].effective |= 1 << (40 - 32);
-> -	cap->data[1].permitted |= 1 << (40 - 32);
-> -
-> -	if (cap_set_proc(caps)) {
-> -		perror("cap_set_proc");
-> -		goto out;
-> +	ret = capset(&hdr, data);
-> +	if (ret) {
-> +		perror("capset");
-> +		return -1;
->   	}
-> -	ret = 0;
-> -out:
-> -	if (cap_free(caps))
-> -		perror("cap_free");
->   	return ret;
->   }
->   
-> diff --git a/tools/testing/selftests/clone3/clone3_cap_helpers.h b/tools/testing/selftests/clone3/clone3_cap_helpers.h
-> new file mode 100644
-> index 000000000000..3fa59ef68fb8
-> --- /dev/null
-> +++ b/tools/testing/selftests/clone3/clone3_cap_helpers.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __CLONE3_CAP_HELPERS_H
-> +#define __CLONE3_CAP_HELPERS_H
-> +
-> +#include <linux/capability.h>
-> +
-> +/*
-> + * Compatible with older version
-> + * header file without defined
-> + * CAP_CHECKPOINT_RESTORE.
-> + */
-> +#ifndef CAP_CHECKPOINT_RESTORE
-> +#define CAP_CHECKPOINT_RESTORE 40
-> +#endif
-> +
-> +/*
-> + * Removed the libcap library dependency.
-> + * So declare them here directly.
-> + */
-> +int capget(cap_user_header_t header, cap_user_data_t data);
-> +int capset(cap_user_header_t header, const cap_user_data_t data);
+On Tue, Oct 15, 2024 at 4:46=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> Too late! But I can do that if I send yet another version.
 
-Sorry you haven't addressed my comments on your v1 yet.
+Yeah, I meant after the one you already sent :)
 
-I repeat that this is not the right direction to define system
-calls locally.
-
-Try this:
-
-Run make headers in the kernel repo.
-Build without making any changes.
-Then add you changes and add linux/capability.h to include files
-
-Tell me what happens.
-
-thanks,
--- Shuah
+Cheers,
+Miguel
 
