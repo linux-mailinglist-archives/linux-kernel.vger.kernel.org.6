@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-366288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E9299F339
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:49:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D33E99F35E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967CD1C23BC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C172B2894CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3761F76AE;
-	Tue, 15 Oct 2024 16:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9351FAEF5;
+	Tue, 15 Oct 2024 16:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFW+sTyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="FUNz7yL7"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B7E1F6668;
-	Tue, 15 Oct 2024 16:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003F81F669D;
+	Tue, 15 Oct 2024 16:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729010924; cv=none; b=pCttVxgXhvuRJ9jQyB/zObLofYPQE6dRrtklo0MmDb5I4f2iniHjhrcaxTgsRY1l6E9/asKhXxyi77t0GcaXCKujooj4eU5vohTLjMG34ijXgRbmedJaMNJoPwztPKYFfkWup8PbOiur2R+TZeFy/UgEwaKdFzNI+5jG4zOWES0=
+	t=1729011088; cv=none; b=PnMrJr7+IdPJ0jHbuzklQ79DLAOhjSk+mykbd+ooCdQ4J5EG1VDxXooz6El3i+X4CMu3scTOtSOd0o5wpxcHJc/ZXUrMbNjVFPTVaxeXo5Zs1HpfFa6dRJ0gPTf4XQq04fLV44GaJ1uEzBkyKN3CZ/wK6f7zFFtkWapqm2SEUP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729010924; c=relaxed/simple;
-	bh=sZgmHv7WOct0dDmINL6cHDdyXXKW+oXErjp5naFf/J0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z37400ZlgIDQNnNQnSoIOMRGrBHX8jSBHm9yuIuOVhn7VxcKjHJ5mrTJcOf1vL2m8Y0sZhTtHwf97/qZFhcfq0ZioYZjKMLfawGBlGwQeNYc2MWaT8L4BzQRt59x/jsbI/FcL1rSG41bqhC9tGReRyumbCuk3VTGhyQVzO5W4CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFW+sTyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77303C4CEC6;
-	Tue, 15 Oct 2024 16:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729010923;
-	bh=sZgmHv7WOct0dDmINL6cHDdyXXKW+oXErjp5naFf/J0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qFW+sTyt9jCaEfWRHArr3mg7h1ao/4pKK7jjNpoj0x5N7luTViZAMm3nMTnyAxVCP
-	 FDBIofWjYfFfpPl/xnHx/c1EXE4H/K1v8VpBw3O5mXMwD6LWiXPRxadMzIyXQdWDnQ
-	 +zKN4Ibkxnq97wR3x9fOjM8dGTB3BuDojgr1Vtaa5HbJ7Yw30XXVLF5jmtucELlZyT
-	 XNvvRzM7lO20E1iR4XsXNFPRzYHRY0rtfKIWQJhqLtZz1XY6XvXyLB5pX+HUt9tWne
-	 fVAanrU6EdYrhF40Y/fMX2fZGcnXhBuhArcypBAJCLO4OVO6waesUXc4zDiZhmt8d+
-	 PyNGHNQCRDD2A==
-Date: Tue, 15 Oct 2024 09:48:41 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>, Liam Howlett
- <liam.howlett@oracle.com>, "edumazet@google.com" <edumazet@google.com>,
- "pabeni@redhat.com" <pabeni@redhat.com>, "mingo@redhat.com"
- <mingo@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
- "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
- "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
- "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
- "rostedt@goodmis.org" <rostedt@goodmis.org>, "bsegall@google.com"
- <bsegall@google.com>, "mgorman@suse.de" <mgorman@suse.de>,
- "vschneid@redhat.com" <vschneid@redhat.com>, "jiri@resnulli.us"
- <jiri@resnulli.us>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "akpm@linux-foundation.org"
- <akpm@linux-foundation.org>, "shuah@kernel.org" <shuah@kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, Pei Li
- <peili.io@oracle.com>
-Subject: Re: [PATCH net-next v1 0/3] Threads support in proc connector
-Message-ID: <20241015094841.2acd5a50@kernel.org>
-In-Reply-To: <1CCDA7B3-F43B-485A-9950-85AA272D79B1@oracle.com>
-References: <20241013170617.2139204-1-anjali.k.kulkarni@oracle.com>
-	<20241015090148.72e83f7f@kernel.org>
-	<1CCDA7B3-F43B-485A-9950-85AA272D79B1@oracle.com>
+	s=arc-20240116; t=1729011088; c=relaxed/simple;
+	bh=JryX6b3LVldHmvTQJWdxsA1RA8IMwc+do66RZno+uk0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=ZbFf9gHW44MsIFdHh62SrD7G+o00hD9TnvLV0NtfH8GyNYSDly4bi2YJYD7ceGDAh0YMNO7IpsBu6xM89g66SkFBWTV/0ys0a4Uk49vpwmykJWjb9Hbk9c+N8dDysRzYbLeYUUWW3nuJubacR4Wsy2+lzvZ8ql/akiowGl3+bC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=FUNz7yL7; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FCDp8w021367;
+	Tue, 15 Oct 2024 18:51:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=T93sAc/spARN1FDC+Kwa2t
+	Z2jrQAQ6WiRfZ/tiID6UU=; b=FUNz7yL7poJsAnRc3ffMBjXHn3pWBmH/jCABMo
+	sXbtulDn23XeCT5m2cgtI0jxVjsfpkDNK0pgdPzky5fIhzhhVpXAZbyXExoGPug+
+	XhKB5NZYBzbPXX26oul1bdqBK/3JpDXhAnPJXoZBw0KoJnKPjteF/bkyL2zBTXzk
+	sEJTA3pI3PoIIhmTprzv1AW5ZDqzN5HwW9cZDSUeBbtNtjBhcVYWYAoZuWnq+E7E
+	DdOzgGSLJo+eWXfcc64ssFbMJx1rd5CAb6/6iXbL+LLb9kIttFtvQI8+BHnXRJT2
+	L0xzCEaDnhmRovXT5uYBJjyvwvZEWLuIflKQI4y5JOgSfk9Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 427g0bp7se-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 18:51:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1F3C340069;
+	Tue, 15 Oct 2024 18:49:45 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C8840220B59;
+	Tue, 15 Oct 2024 18:48:57 +0200 (CEST)
+Received: from localhost (10.48.86.225) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 15 Oct
+ 2024 18:48:57 +0200
+From: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Subject: [PATCH v3 0/4] Add support for stm32mp25x RNG
+Date: Tue, 15 Oct 2024 18:48:53 +0200
+Message-ID: <20241015-rng-mp25-v2-v3-0-87630d73e5eb@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPWcDmcC/22MQQ6CMBBFr0JmbclMxWJceQ/DQssUuqAlHdJoS
+ O9uZW3yN+8n7+0gnDwL3JodEmcvPoYK51MDdn6GiZUfK4NG3RESqRQmtaz6orJWL9MZZEfE5KA
+ aa2Ln30ftMVSevWwxfY541r/3f6cOVW/caKhHfUV7d1Gkla21cYGhlPIFyem/jqgAAAA=
+X-Change-ID: 20241011-rng-mp25-v2-b6460ef11e1f
+To: Olivia Mackall <olivia@selenic.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Lionel Debieve <lionel.debieve@foss.st.com>, <marex@denx.de>
+CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Gatien Chevallier <gatien.chevallier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, 15 Oct 2024 16:22:24 +0000 Anjali Kulkarni wrote:
-> Thank you! However, looking at the MAINTAINERS file,
-> drivers/connector/ is listed under NETWORKING DRIVERS.
-> Hence sending on net-next is the most appropriate place?   
+This patchset adds support for the Random Number
+Generator(RNG) present on the stm32mp25x platforms.
+On these platforms, the clock management and the RNG
+parameters are different.
 
-Hm. It was done relatively recently in
+While there, update the RNG max clock frequency on
+stm32mp15 platforms according to the latest specs.
 
-commit 46cf789b68b25744be3dc99efd4afce4a5381b5c
-Author: David S. Miller <davem@davemloft.net>
-Date:   Thu Sep 10 08:40:13 2020 -0700
+Tested on the stm32mp257f-ev1 platform with a deep
+power sequence with rngtest before/after the sequence with
+satisfying results.
 
-    connector: Move maintainence under networking drivers umbrella.
-    
-    Evgeniy does not have the time nor capacity to maintain the
-    connector subsystem any longer, so just move it under networking
-    as that is effectively what has been happening lately.
-    
-    Signed-off-by: David S. Miller <davem@davemloft.net>
+Same was done on stm32mp135f-dk to make sure no regression was added.
 
-There wasn't much development in this code for a long while,
-so I guess it was done just to make sure patches don't fall
-thru the cracks. But you seem to be trying to develop it more
-actively.
+On stm32mp157c-dk2, I didn't perform a power sequence but the rngtest
+results were satisfying.
 
-Okay, if nobody else who want to take these patches into their tree
-raises their hand - we can try to continue to process the patches,
-as long as Peter or someone else with the expertise acks them.
+Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+---
+Changes in v3:
+- Add restriction on clock-names some compatibles
+- Use clk_bulk APIs in the RNG driver to avoid manually handling clocks.
+- Link to v2: https://lore.kernel.org/r/20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com
+
+Changes in V2:
+	-Fixes in bindings
+	-Removed MP25 RNG example
+	-Renamed RNG clocks for mp25 to "core" and "bus"
+
+---
+Gatien Chevallier (4):
+      dt-bindings: rng: add st,stm32mp25-rng support
+      hwrng: stm32 - implement support for STM32MP25x platforms
+      hwrng: stm32 - update STM32MP15 RNG max clock frequency
+      arm64: dts: st: add RNG node on stm32mp251
+
+ .../devicetree/bindings/rng/st,stm32-rng.yaml      | 34 +++++++++-
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             | 10 +++
+ drivers/char/hw_random/stm32-rng.c                 | 76 ++++++++++++++++------
+ 3 files changed, 100 insertions(+), 20 deletions(-)
+---
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241011-rng-mp25-v2-b6460ef11e1f
+
+Best regards,
+-- 
+Gatien Chevallier <gatien.chevallier@foss.st.com>
+
 
