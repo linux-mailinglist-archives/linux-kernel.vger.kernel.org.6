@@ -1,197 +1,98 @@
-Return-Path: <linux-kernel+bounces-366620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157E699F7E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6744199F7E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93A831F2239A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:10:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F8B1F22332
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648D31F76B4;
-	Tue, 15 Oct 2024 20:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C1C1F8184;
+	Tue, 15 Oct 2024 20:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfIeVi2w"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSVxLUjO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E991B3936
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280E51B3936;
+	Tue, 15 Oct 2024 20:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729023036; cv=none; b=MbFRj82gf4qMf325a9oXv3o9HGAWLuAYO93Kt5P8Yc4r5n/hCzahuJiTm4u9eSQdooAVp2Tqs/j1E+RhZRr/f4pKOuroJN2ohb8kb3aKrOHjuAZ+UAka3Wob5i9mB8GoP9Jx9HTS1ToAPq3coLiLadkE+w6iTMZAM1Li5pkmYgQ=
+	t=1729023102; cv=none; b=nhE/DZ07fc2r6n/09w5RE9a9dyVvHLK2v+UgzARaMPaPJyGm8xR5ZiKE0VGZt3GkJ/L/NJ/Rm8xCnu9et7NJiZtmF780/XZdhTEn9maLdiToAeial6hCvS68qj1tUlJ5ICeTZaq6bVkfY9sHvwFLW+clGZZQ0YnTcjWZRhJKMuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729023036; c=relaxed/simple;
-	bh=+IZLUbdC3a5VkG6ekzM6z6vzbHg+prIGmN6C1yRHEsE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WDb9axVPKgGzgBiJlbut3Ae0zTkG+y7TsaqCZmE2o6hxuy4i3CpWC96mNizuzH2/7rAkVadEML1dj3t3A4411OtgVDZYeGCYdGGZbKcjMZHMX1d6hPTDZ+7uRFwg5hwMP4/ftb5JJxLX2zno3x2diwU8O2F+a5OXW3ONJrBKufw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfIeVi2w; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-50d431b0ae2so120269e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729023033; x=1729627833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uoX7+hLaC0C/69Spu6+hOK+MSkV4/XZ7Txsz18m8pxg=;
-        b=OfIeVi2wNm+DtPsLDRerkuZv8c5upZl4OoNPLJP+OWSj1M8QEBX2z76icG+/T9Hy+e
-         OAcUT0hX6psc7D0445gd7I5NRrpwlXj0RBBHgfIq1HEduMORoNlHXML8CV/OGPfnib5Y
-         cDy1f25CoPzKSJwuIAmf4CT8x56bDQxVlCEXOu6z0gNSQ+JBS5ayzUI2hwJQn1fcYNWt
-         lLTLJ0zpq4xyJvW8vrc0XA8at32/h9e5VpOzvJSQkaAhakLNxfx5jlAnvk/y/s3FZl9j
-         DTXcrXnHQ6z+tKmVk/zEGRQrJPqdZaoeIsKZmy2/rSYsKB1OfqGD5ikm8EE7IRU5GrQJ
-         zStw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729023033; x=1729627833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uoX7+hLaC0C/69Spu6+hOK+MSkV4/XZ7Txsz18m8pxg=;
-        b=BljV0ByFBzJjiBkDxdEeaxM9pv9dTqaeq0aVy9RomX+rLpqD9YDo9MoQpzgcYJW22g
-         n53negeF1fBc3yXrNO0XarlsJaX+Z4iSTMoYOXHU/dlOjeEiCYw7gpbU7SIqy6wSGG9T
-         ApbNkopZzIQE8/2k0eE2rHK1VQCdc41ga4qqOl8HvFN1HerMumZl0indy0iP/9XKO+dq
-         o4WP4u9cxL6gl+LesD5crzRLWdu23VcBmjScWOiwYrSXeURKIDbGvb82d/6zEpSra/jL
-         iDwuAJqdNScGgn59lWTwefbAXSUMlOQFj8tDrMtBGo75xIwY7Neln5DzalH5sbymwjvx
-         9nWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLHdBSsNB0C2G749M17aLQaicCMkDk8qOJZF97cvNV5aBJoCp4W4nVYBTiTu3vTQx+KbOOSccuKqzuGME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoHlTI0rQbKBRfzeLBkhq/p8qxpmNNJrJ+8JJOB9yPYkwuxMSV
-	QBVqQ08SSOhBqFmL3VueuQfaSbSoWQ2msteJnQTjW9NVihsL+/RWHXo729oVlKDXgeOpwfZOjoG
-	b+SUu3wyQZUy8imhx/3a02G2qADc=
-X-Google-Smtp-Source: AGHT+IEsYPsTX4eylMTds43/bzmQobTVe9+2pqaFnScuD8Bd/Iwkduivlw6dP8DrCJn+8z6kLaQ0xdwcdJurNvKh8Ag=
-X-Received: by 2002:a05:6122:2216:b0:50c:ef20:6bed with SMTP id
- 71dfb90a1353d-50d1bb18ba6mr11219904e0c.3.1729023032911; Tue, 15 Oct 2024
- 13:10:32 -0700 (PDT)
+	s=arc-20240116; t=1729023102; c=relaxed/simple;
+	bh=ch+bU3YCeAL9AGC+OR03PPFSLvIjMObE1/y1gqTqgWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bySBxFQuVypVo4Iw0/H5/4T8l4GQoJ7v7eDkK4X6LiO8uUFnxPBlzcrN8GRWaw3j18//3MVBCA15CXPey+wKWpOSqVIG7csiBylyxl+KgS0XTc5FVsa6PYMgW5eBbyEHot0JezUxhbQS733GKYxDhCovW8a8G4r7bktNsOE438o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSVxLUjO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A02C4CEC6;
+	Tue, 15 Oct 2024 20:11:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729023101;
+	bh=ch+bU3YCeAL9AGC+OR03PPFSLvIjMObE1/y1gqTqgWY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aSVxLUjO5MT7Aro1Wr0ura4irHKfPboHSiKqyOHXoCK244uHQEeUNPNbReEGwD4Zk
+	 2kRt8/kW2sWtNjKCd/zr06e9kn0nmT1kVnLcFSr4dfnkVAWp2HFjNcMwiHfEM9UYRi
+	 XJ6E1Vq28LqsE+5r1PK/dOmfUyBEzL+IRFFxg7RL/kpMBNptnbBwAtS+tR/BORKV0X
+	 uCXePKO8UfFVbMaQUIFebFM9ORBQws/657/ktitvK3xOBotlKPfoem6xoL/WLY8b1T
+	 ok6kWPnBDE/HflRGWoVlK0NEdLMdJgRCeN48wzQ20KbfB8+vs9HAVn30yCfkYNk8R/
+	 cjw2xUkE7Jlpw==
+Date: Tue, 15 Oct 2024 15:11:40 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	devicetree@vger.kernel.org, Phil Elwell <phil@raspberrypi.com>,
+	linux-kernel@vger.kernel.org, Jim Quinlan <jim2101024@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v3 01/11] dt-bindings: interrupt-controller: Add bcm2712
+ MSI-X DT bindings
+Message-ID: <172902309954.1771543.1322600375013063730.robh@kernel.org>
+References: <20241014130710.413-1-svarbanov@suse.de>
+ <20241014130710.413-2-svarbanov@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240914063746.46290-1-21cnbao@gmail.com> <92f97c8e-f23d-4c6e-9f49-230fb4e96c46@redhat.com>
- <CAGsJ_4zdqXtvUS8fHzUhM=iGrPpC8X7uw8wt4sSfCvsrh7um3w@mail.gmail.com> <7dcd3446cd8c4da69242e5d6680c1429@honor.com>
-In-Reply-To: <7dcd3446cd8c4da69242e5d6680c1429@honor.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 16 Oct 2024 09:10:21 +1300
-Message-ID: <CAGsJ_4xF6FuncfErMmMotkOYNGZcqPXqS20zORAyVZ4LYbO0_w@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: mglru: provide a separate list for lazyfree anon folios
-To: gaoxu <gaoxu2@honor.com>
-Cc: David Hildenbrand <david@redhat.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"mhocko@suse.com" <mhocko@suse.com>, "hailong.liu@oppo.com" <hailong.liu@oppo.com>, 
-	"kaleshsingh@google.com" <kaleshsingh@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lokeshgidra@google.com" <lokeshgidra@google.com>, "ngeoffray@google.com" <ngeoffray@google.com>, 
-	"shli@fb.com" <shli@fb.com>, "surenb@google.com" <surenb@google.com>, "yuzhao@google.com" <yuzhao@google.com>, 
-	"minchan@kernel.org" <minchan@kernel.org>, Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014130710.413-2-svarbanov@suse.de>
 
-On Tue, Oct 15, 2024 at 11:03=E2=80=AFPM gaoxu <gaoxu2@honor.com> wrote:
->
-> >
-> > On Wed, Sep 18, 2024 at 12:02=E2=80=AFAM David Hildenbrand <david@redha=
-t.com>
-> > wrote:
-> > >
-> > > On 14.09.24 08:37, Barry Song wrote:
-> > > > From: Barry Song <v-songbaohua@oppo.com>
-> > > >
-> > > > This follows up on the discussion regarding Gaoxu's work[1]. It's
-> > > > unclear if there's still interest in implementing a separate LRU
-> > > > list for lazyfree folios, but I decided to explore it out of
-> > > > curiosity.
-> > > >
-> > > > According to Lokesh, MADV_FREE'd anon folios are expected to be
-> > > > released earlier than file folios. One option, as implemented by Ga=
-o
-> > > > Xu, is to place lazyfree anon folios at the tail of the file's
-> > > > `min_seq` generation. However, this approach results in lazyfree
-> > > > folios being released in a LIFO manner, which conflicts with LRU
-> > > > behavior, as noted by Michal.
-> > > >
-> > > > To address this, this patch proposes maintaining a separate list fo=
-r
-> > > > lazyfree anon folios while keeping them classified under the "file"
-> > > > LRU type to minimize code changes. These lazyfree anon folios will
-> > > > still be counted as file folios and share the same generation with
-> > > > regular files. In the eviction path, the lazyfree list will be
-> > > > prioritized for scanning before the actual file LRU list.
-> > > >
-> > >
-> > > What's the downside of another LRU list? Do we have any experience on=
- that?
-> >
-> > Essentially, the goal is to address the downsides of using a single LRU=
- list for files
-> > and lazyfree anonymous pages - seriously more files re-faults.
-> >
-> > I'm not entirely clear on the downsides of having an additional LRU lis=
-t. While it
-> > does increase complexity, it doesn't seem to be significant.
-> >
-> > Let's wait for Gaoxu's test results before deciding on the next steps.
-> > I was just
-> > curious about how difficult it would be to add a separate list, so I to=
-ok two hours
-> > to explore it :-)
-> Hi song,
-> I'm very sorry, various reasons combined have caused the delay in the res=
-ults.
->
-> Basic version=EF=BC=9Aandroid V (enable Android ART use MADV_FREE)
-> Test cases: 60 apps repeatedly restarted, tested for 8 hours;
-> The test results are as follows:
->         workingset_refault_anon   workingset_refault_file
-> base        42016805                92010542
-> patch       19834873                49383572
-> % diff       -52.79%                  -46.33%
->
-> Additionally, a comparative test was conducted on
-> add-lazyfree-folio-to-lru-tail.patch[1], and the results are as follows:
->                workingset_refault_anon   workingset_refault_file
-> lazyfree-tail        20313395                 52203061
-> patch             19834873                 49383572
-> % diff              -2.36%                    -5.40%
->
-> From the results, it can be seen that this patch is very beneficial and
-> better than the results in [1]; it can solve the performance issue of hig=
-h
-> IO caused by extensive use of MADV_FREE on the Android platform.
->
 
-Thank you for the testing and data. The results look promising. Would you
-mind if I send a v2 with the test data and your tag included in the changel=
-og?
-I mean:
+On Mon, 14 Oct 2024 16:07:00 +0300, Stanimir Varbanov wrote:
+> Adds DT bindings for bcm2712 MSI-X interrupt peripheral controller.
+> 
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> ---
+> v2 -> v3:
+>  - dropped '>' from the description entry (Rob)
+>  - dropped interrupt-controller and interrupt-cells properties (Rob)
+>  - dropped msi-controller and use 'unevaluatedProperties' (Rob)
+>  - use const: 0 in msi-cells (Rob)
+>  - dropped msi-ranges property (Rob)
+>  - re-introduce brcm,msi-offset private property,
+>    which looks unavoidable at that time
+> 
+> .../brcm,bcm2712-msix.yaml                    | 60 +++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+> 
 
-Tested-by: Gao Xu <gaoxu2@hihonor.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> Test case notes: There is a discrepancy between the test results mentione=
-d in
-> [1] and the current test results because the test cases are different. Th=
-e test
-> case used in [1] involves actions such as clicking and swiping within the=
- app
-> after it starts; For the sake of convenience and result stability, the cu=
-rrent
-> test case only involves app startup without clicking and swiping, and the=
- number
-> of apps has been increased (30->60).
->
-> 1. https://lore.kernel.org/all/f29f64e29c08427b95e3df30a5770056@honor.com=
-/T/#u
-> >
-> > >
-> > > --
-> > > Cheers,
-> > >
-> > > David / dhildenb
-> > >
-> >
-
-Thanks
-Barry
 
