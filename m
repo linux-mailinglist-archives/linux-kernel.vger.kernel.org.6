@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-365983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6006299EEFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:13:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D2599EF03
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 009451F22B04
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:13:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DF741C21FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68E51D5153;
-	Tue, 15 Oct 2024 14:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485FC1DD0C3;
+	Tue, 15 Oct 2024 14:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+saE+hY"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJSfsARD"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C761C07D5;
-	Tue, 15 Oct 2024 14:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BD91AF0DF;
+	Tue, 15 Oct 2024 14:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729001417; cv=none; b=KySc4E147+Q17FAFgG6U2GXhbwEy2nqZFPcfnm+Oxbp4BAU31qpLg/qxyGAhq33gUyFG/7dfJS8JfAubDbc1A3Kl2pW5SFzRjg2MpPnXPDA521FTY1+aNaRGuDXMQf+sf7Yrmp9FKKkUDSgrtXhDYWpEztWV89RLMIyaVX4ugoo=
+	t=1729001464; cv=none; b=MGOS84mVSe5E3fkgpBg/VZyYBj6XP5Y4k014ERtycX14c/ttnBYo1ggadtJrCaSgR/7EpqZp/f9dAGZZrxOIZAitwCHlemYL50ew43GAGaluyQejYX8Fvi1VTFCwyPDga+WdjjY5USnD1G4eYRd56nlTD+S6ivWoj1zYUjv83lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729001417; c=relaxed/simple;
-	bh=OCRhYLNXOugWZzNhEPUMgUEAfnigcDm7KPLLQGKvXow=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MQVdBfgNheOOYJp89BHZxI0y6aoqHwXS08HCbLO2lliuG9Gpwy6GJR2fk9sC2V1e3rnEdPfwbixeiu+J7aOFlkg60cyWHBafhDfaLH8aHbIZRh5bZp7UT9mQ01deiU85JJaRfzsyqel7sSERR4Rf+IB4PU+w+VJomQIg6H9xTvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L+saE+hY; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1729001464; c=relaxed/simple;
+	bh=hFYqIA0hGGtzf239HaOGXHnxOyrXYhfyUMPpWEoSETk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lwX0wYls6um6sadOmC+4ISxCWM56Gij8eQgcuNIuaR5iffPjDeXw+UVBb0fn5v8kPUxzvprHNtO7sQoXe7SaNDBQ2b8AzmywFeBGS1Qt6kj58CLreImwaHHAp0zrgWgw4zdt9uiVV4iiQfk/hEfX5+k3hEQuaFppgOc+G+M6DQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BJSfsARD; arc=none smtp.client-ip=209.85.161.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43117ed8adbso60935265e9.2;
-        Tue, 15 Oct 2024 07:10:15 -0700 (PDT)
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5d5eec95a74so2477832eaf.1;
+        Tue, 15 Oct 2024 07:11:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729001414; x=1729606214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d0S6YMoGPkQS3jMGBGZ20kgoq+vZUxOnC0t6FsdhxLU=;
-        b=L+saE+hYM8e6v0jItBvTXTFkjpxtst06ujoj2eCGHmChpRMn7JX3gljOtcMN4AFCAG
-         3aId0aXDZ0EykTQXCFkJqRWFgxzCFNBD5XYl4xk2SE83SHzAwAjf8PW5b9Z/jN8+9rbk
-         I5WtPNYNPeo5TLYf2K3Pj9f9GMD2TTPuJlHvX/OaYfZgm2bcQVv1YhQ0kf1W0l0qfMGC
-         kbofAcwUXNQN3jP3uojyfBnfTAsmAdafwOFyJTYQvJ1k2IaprBKHybVNK5zwYEbCaByu
-         bqhFzHHwrdZpeEdy1poCqsgb3vQISALt0fPsrGUoXYWk60KSwUVlMOJ1OhS8aM8MK8YA
-         wQQw==
+        d=gmail.com; s=20230601; t=1729001462; x=1729606262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yU7SIHnP46WmT+FWC/zVEM9bHxNRFsvDbjjWknoaYZI=;
+        b=BJSfsARDf4pDkrs60VHBJnLZNt+fGQ7fQBhAKMMy4//21rlU9hSGDhnkus2mXgbY5C
+         wqnH8UKp8La+Y4EwCIGuXOEV+3vzntRnOHzs8zczsvoTZL7+HObE0lAoFOtygVJdSCrY
+         USYwPEODbsv7J2giL/L+8u+07g1rFGHsBXdIAtiNobBLSzaDeM2k1vwgiNuHINgwcQWl
+         ZzxFyskoHPVqWNZFbT9xPLNt3BKeaLbZczIdJc83PjINUY3Kx428wn5imi/fbrkbrPdz
+         HCUdLgcZ4Qu/9E1G3APD8ss7Vv+TFO0WLfdG85u0SzO4CuzpjuZ1+xvYHTg2Ku5cwfT1
+         KQ5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729001414; x=1729606214;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d0S6YMoGPkQS3jMGBGZ20kgoq+vZUxOnC0t6FsdhxLU=;
-        b=kShVI4efmtyeBVyJwjMddrTsTBVJjAanGTF6j+Z3EfWs/2FPlt9XJ/DNAexhPuQQhh
-         Qg47erJ0sHMK0q3/Xz71WAeTSvBNUVS0D9XgJiC+85u1b2OVpZpVfmMednACH+DiL27Z
-         vZBqE0L/RhqlGe8JwgypvZTqLL5W7lQtfBCL3qmkl25CMgc8QLgkxxNn+jkJBs7XyaZG
-         MDVKf2OQ6Z5xNZ2YeTpwuYzVhJ4u4bK7nYWNFLPlvvjRtb/DUdYEv7obGRX4MR9KikH7
-         OcEvek+vtqpEamFpMvjTRFNczV9FN2/acVw1rzujQFWLqhKuwyo+d0JEj/aW1GCux1NB
-         72CA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuBNvfh0AS01diyTHOicG+G/E3fd2FL9UvxyKLGUYG1hfj8lFJaYPYHpteKVYvwAswAeaVB4ef9XdNAOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4H9Swt5SnlQNlph8LNFIHA/3ETLFiykJ45kuGLVH/9stGJC8f
-	JTeJ9fA5rHODHBWA5cQWo0tWPRFnG1vkrS9mjBI32WptfmDLMks0
-X-Google-Smtp-Source: AGHT+IHp4e5RHLdoduJkY+KzguH7RjGzLSJHN735+mjgkEary+e1KlddLzkEUjNNgR+FRgq+djFEUw==
-X-Received: by 2002:a05:600c:3acd:b0:42c:df29:2366 with SMTP id 5b1f17b1804b1-431256166e5mr131924165e9.33.1729001414085;
-        Tue, 15 Oct 2024 07:10:14 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f55defbsm19257855e9.7.2024.10.15.07.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 07:10:13 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/omap: clean up error exit path on omap_encoder allocation failure
-Date: Tue, 15 Oct 2024 15:10:12 +0100
-Message-Id: <20241015141012.155559-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1729001462; x=1729606262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yU7SIHnP46WmT+FWC/zVEM9bHxNRFsvDbjjWknoaYZI=;
+        b=TcoVYOcF8Ln7FCfNyHVUPgzoHeIj6FA/rvfgYD7OCD0v83YQfJ2IBUhWoA+n2BeF+U
+         a6MxMxC/2JZ/Ba8EHPNWMSDtzj30uBnuPxXFSEipCQ7FiUKF1o8VFVn25W9nKT9ClSEh
+         KkNc8LsLb9jgL08EAECASNbu77KwCmbH4E0gLl9Grf2UAOpdrSUeJLVZt4HJ7rdC4Qtm
+         wa8ult5SXtYs6OtnNl8zSNH7nZgTtmtUZAH1Hj3vWG2E+gnxqDll+erxpUSSn71zoF2e
+         T1yM1c3r10v0q3eatHuqB4G+VlGcoPAGXnTlQ1LUVgJ8MTx8N5ukk6SPNnGuR2fQ2eF0
+         F5Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyiVElNsUtqvSkQGa21Kxul9t0TeqlnvB2UBNEoGC8fdtAwzUOP3SuyvLW5SHoo9h+v305MEL1L1gH@vger.kernel.org, AJvYcCWtlzD7/QvBULv1CRPRTr44BquhMLRz+I91AqbD7WjW526fDfT7I5BJZR9kYfwardnCIdy45LjskDofxWpE@vger.kernel.org, AJvYcCXgy4jkNMn4Ivw81yIcxGh8TzXyxecDbcrKRojhss/8SApi7YByIxWH+c/zj+bJvy3TclTCO5ZHp58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz5HENpd4JB4glndvqARRTA5TaEqTgXINHbMMVdWgwlW8DPgeN
+	xvvvxNyNOpkbFzxLxRQLPhaPui+PLaZyDKDLdH6g75cD9LFqUv344vxIa/gW+DKY/zkiy9V5+E0
+	A/HPREj3caKjHbtvBH2UHnUwodMo=
+X-Google-Smtp-Source: AGHT+IG+aX9tgn9yna2FiY5Sm8AUzbZwsX8KxALnzkDdrtouHEhubIt7dztuPzDYw19in5mE73KB9z9keGZs1cEZkJ8=
+X-Received: by 2002:a05:6870:ac87:b0:288:666b:9c5e with SMTP id
+ 586e51a60fabf-2886dd70e90mr10741729fac.17.1729001462320; Tue, 15 Oct 2024
+ 07:11:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20241015140159.8082-1-tttturtleruss@hust.edu.cn>
+In-Reply-To: <20241015140159.8082-1-tttturtleruss@hust.edu.cn>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
+Date: Tue, 15 Oct 2024 22:10:35 +0800
+Message-ID: <CAD-N9QWdqPaZSh=Xi_CWcKyNmxCS0WOteAtRvwHLZf16fab3eQ@mail.gmail.com>
+Subject: Re: [PATCH] docs/dev-tools: fix a typo
+To: Haoyang Liu <tttturtleruss@hust.edu.cn>
+Cc: Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	hust-os-kernel-patches@googlegroups.com, kasan-dev@googlegroups.com, 
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently when an allocation failure occurs for omap_encoder the exit
-path will destroy encoder via omap_encoder_destroy  if it is not null.
-However, encoder is always null at this point, so the check and destroy
-is redundant and can be removed. Clean up the code by removing the exit
-path and redundant omap_encoder_destroy call, and just return NULL.
+On Tue, Oct 15, 2024 at 10:09=E2=80=AFPM Haoyang Liu <tttturtleruss@hust.ed=
+u.cn> wrote:
+>
+> fix a typo in dev-tools/kmsan.rst
+>
+> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
+> ---
+>  Documentation/dev-tools/kmsan.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/dev-tools/kmsan.rst b/Documentation/dev-tools/=
+kmsan.rst
+> index 6a48d96c5c85..0dc668b183f6 100644
+> --- a/Documentation/dev-tools/kmsan.rst
+> +++ b/Documentation/dev-tools/kmsan.rst
+> @@ -133,7 +133,7 @@ KMSAN shadow memory
+>  -------------------
+>
+>  KMSAN associates a metadata byte (also called shadow byte) with every by=
+te of
+> -kernel memory. A bit in the shadow byte is set iff the corresponding bit=
+ of the
+> +kernel memory. A bit in the shadow byte is set if the corresponding bit =
+of the
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/omapdrm/omap_encoder.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+This is not a typo. iff is if and only if
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_encoder.c b/drivers/gpu/drm/omapdrm/omap_encoder.c
-index 4dd05bc732da..a99022638a2c 100644
---- a/drivers/gpu/drm/omapdrm/omap_encoder.c
-+++ b/drivers/gpu/drm/omapdrm/omap_encoder.c
-@@ -126,21 +126,15 @@ struct drm_encoder *omap_encoder_init(struct drm_device *dev,
- 
- 	omap_encoder = kzalloc(sizeof(*omap_encoder), GFP_KERNEL);
- 	if (!omap_encoder)
--		goto fail;
-+		return NULL;
- 
- 	omap_encoder->output = output;
- 
- 	encoder = &omap_encoder->base;
- 
- 	drm_encoder_init(dev, encoder, &omap_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 	drm_encoder_helper_add(encoder, &omap_encoder_helper_funcs);
- 
- 	return encoder;
--
--fail:
--	if (encoder)
--		omap_encoder_destroy(encoder);
--
--	return NULL;
- }
--- 
-2.39.5
+Dongliang Mu
 
+>  kernel memory byte is uninitialized. Marking the memory uninitialized (i=
+.e.
+>  setting its shadow bytes to ``0xff``) is called poisoning, marking it
+>  initialized (setting the shadow bytes to ``0x00``) is called unpoisoning=
+.
+> --
+> 2.25.1
+>
+>
 
