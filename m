@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-365450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0C199E270
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:12:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6010899E277
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44793B21A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24DBA283534
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78BE1E7668;
-	Tue, 15 Oct 2024 09:10:44 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90EE1EABC3;
+	Tue, 15 Oct 2024 09:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rCl6tHSh"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5C31E7658;
-	Tue, 15 Oct 2024 09:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC551E8833;
+	Tue, 15 Oct 2024 09:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728983444; cv=none; b=o/88z3VU2xbpHyUA3let5aMV78GnHM/PNVtHyqqSklPPLYouJQgAvVnqtVYfP+OxhBo9/KbohIkTZAsVYtRVSgFlg/fpLPQyzbEeXFQVx2EaD51fN+x+guxBMYxceVo3mK5kHksuWljjz3Cw8X7u7MskwbzlpQzwQkzz1lLdkow=
+	t=1728983454; cv=none; b=QnRofdlP5fr4bPX35p/DsJRAa1ABu1LdATfgqiO4fQ4YMcalMmg3GDKVShZHIi+djhxzfhBjiq9SvxP97My9V2SKhAZeH1TX3T3XS/tQ8kQxejmVixRosDP8Tdi8ASH7L5VZMPAbuMdioQ8l0WyD1m8q3nFtXazJ+d9a2zI+xQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728983444; c=relaxed/simple;
-	bh=3NIexYHb3oKJa4jdkE7d25U0gkswgtbHF4VH6JcS+cc=;
+	s=arc-20240116; t=1728983454; c=relaxed/simple;
+	bh=8xehucyXkfFfHp6IAPa2xOvlPkm5n/BEyTygnCKw0b4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=b5W8/zZUtg39A9lFn7xX9GJSQ0Hz63g44oGKJXVWNDYyqx8JomrC+SEkLiOFFnUPjfHM/q83kGHlS6pA0zOw1tN7k94bjPfvtLkbt/NookmWD/XiqUqsDFfPQny2mK0QQ6ru147naDPkCihdie0ZakmKi84BABitjuVkYp3PsXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XSSxd1X38z1yn8h;
-	Tue, 15 Oct 2024 17:10:45 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8A4551A0188;
-	Tue, 15 Oct 2024 17:10:39 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 15 Oct 2024 17:10:38 +0800
-Message-ID: <ec2e2c43-e369-e932-0344-9bbbfea735b5@huawei.com>
-Date: Tue, 15 Oct 2024 17:10:38 +0800
+	 In-Reply-To:Content-Type; b=r+OTQCkhSCEeo8lh0jm2SY3BemEkADru8ig4UnDzBgva6Hf6q+KkE5aQqkjdGaoNRZNj/1Oni6vLobM89lgg0w0nXYEMUKEAv/pQw45HlSGixXBvcUJm+p09XNX3W5EsNWFyig1bT4GwNp/O6FVjSUufcHGz984uyj+5CmSn2TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rCl6tHSh; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728983448; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=h5D/bFMKCf9XcwyqPiJ32DXbOFzCGsMRYuzWv6PI5jA=;
+	b=rCl6tHShAPVKzFXuNZ1rJehpV6vGG/CY05/eTDh58fYqriNbPTfEGzQhhpkAjeb34hVY8C1xI8VD4lUCLRWx8RlerXopTX9ohoEnjAsA3GIErw+408Y1sR3C2fWUavJTIPsOWePEwGbTJIonLl85ldRWz976LMj2Fl+8xd3AGlw=
+Received: from 30.221.130.176(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHD3S.B_1728983446 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Oct 2024 17:10:47 +0800
+Message-ID: <5f85c28d-5d06-4639-9453-41c38854173e@linux.alibaba.com>
+Date: Tue, 15 Oct 2024 17:10:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] iio: gts-helper: Fix memory leaks for i = 1 error path
-Content-Language: en-US
-To: Matti Vaittinen <mazziesaccount@gmail.com>, <jic23@kernel.org>,
-	<lars@metafoo.de>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241014013144.576701-1-ruanjinjie@huawei.com>
- <76d96ab6-4e13-42b9-bff0-03a2e1b96f57@gmail.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <76d96ab6-4e13-42b9-bff0-03a2e1b96f57@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [iomap?] WARNING in iomap_iter (3)
+To: syzbot <syzbot+74cc7d98ae5484c2744d@syzkaller.appspotmail.com>,
+ brauner@kernel.org, chao@kernel.org, dhavale@google.com, djwong@kernel.org,
+ huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, xiang@kernel.org
+References: <670e2fe1.050a0220.d5849.0004.GAE@google.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <670e2fe1.050a0220.d5849.0004.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
+On 2024/10/15 17:03, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    d61a00525464 Add linux-next specific files for 20241011
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=175a3b27980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8554528c7f4bf3fb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=74cc7d98ae5484c2744d
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1513b840580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1313b840580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f615720e9964/disk-d61a0052.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c4a45c7583c6/vmlinux-d61a0052.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d767ab86d0d0/bzImage-d61a0052.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/fce276498eea/mount_0.gz
+> 
+> The issue was bisected to:
+> 
+> commit 56bd565ea59192bbc7d5bbcea155e861a20393f4
+> Author: Gao Xiang <hsiangkao@linux.alibaba.com>
+> Date:   Thu Oct 10 09:04:20 2024 +0000
+> 
+>      erofs: get rid of kaddr in `struct z_erofs_maprecorder`
 
-On 2024/10/15 17:03, Matti Vaittinen wrote:
-> Thanks a lot Jinjie. I appreciate your fixes!
-> 
-> On 14/10/2024 04:31, Jinjie Ruan wrote:
->> If i = 1, and per_time_scales[i] or per_time_gains[i] kcalloc fails in
->> iio_gts_build_avail_scale_table(), the err_free_out will fail to enter
->> kfree for loop because i-- is 0, and all the per_time_scales[0] and
->> per_time_gains[0] will not be freed, which will cause memory leaks.
-> 
-> I guess the loop never frees the memory pointed by the first pointer in
-> these arrays. I mean, the freeing is not working as it should even if
-> the 'i' was something else but 1.
+I will look into that, but it seems it's just a trivial cleanup,
+not quite sure what happens here...
 
-Yes, the title is not very clear. In fact, all the per_time_scales[0] or
-per_time_scales[0] in the function error path are not released.
+Thanks,
+Gao Xiang
 
-> 
->>
->> Fix it by checking if i >= 0.
-> 
-> The fix seems good to me. So, with a tiny change in commit message:
-> 
-> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>   drivers/iio/industrialio-gts-helper.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iio/industrialio-gts-helper.c
->> b/drivers/iio/industrialio-gts-helper.c
->> index 7326c7949244..5f131bc1a01e 100644
->> --- a/drivers/iio/industrialio-gts-helper.c
->> +++ b/drivers/iio/industrialio-gts-helper.c
->> @@ -315,7 +315,7 @@ static int iio_gts_build_avail_scale_table(struct
->> iio_gts *gts)
->>       return 0;
->>     err_free_out:
->> -    for (i--; i; i--) {
->> +    for (i--; i >= 0; i--) {
->>           kfree(per_time_scales[i]);
->>           kfree(per_time_gains[i]);
->>       }
-> 
 
