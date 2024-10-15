@@ -1,61 +1,38 @@
-Return-Path: <linux-kernel+bounces-365192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B543299DED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:56:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6409A99DED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C022836BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:56:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 954791C21996
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35BA18B478;
-	Tue, 15 Oct 2024 06:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mRirC9dM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D09D172BCE;
-	Tue, 15 Oct 2024 06:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A2818A6DB;
+	Tue, 15 Oct 2024 06:55:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E21185936
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975378; cv=none; b=ttIR94b5Ckk6dVIl32I2GE3wh9b7P9Gfm1bdZVFsVq1Rn8Z1QuCaoSzzveWeSIAWg5qIxLPk8nBCHxx1G3LFRvCJUlDd6gRe9ngG/HUD5lnttE5950KvDabsgc1WN+u0Gh4OnqT7eoQ3u1szNr5fl/gvjpG1hZYsFY4GY2TAXWc=
+	t=1728975346; cv=none; b=jYW3Qb/oR2ErXfn5F5p8x4O+KleQ3UA02YWOzjtunCTU8ABeyAVQiIbC7OFd8e2XwU+N/4UF/gBNPG/YlKwGT19uN50CBf0moBOn6OJarn89THN9QCSqJ0yaEFr6fQZcO7Yj6XRFgDrmLv/nDffUYOpTEvBi+2gAicul4CYpjd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975378; c=relaxed/simple;
-	bh=+nQP6eJhMiZzGVV66R/8Ed88FNxusvsppCO/EBXDr1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EHZKxaaOuoH0zCDd3BE3GHxVUmbR5+TTFe/jgAv7iFWr3QY6os9hn/vbwsqw+zDLByCGv4T5gFF5ah1qFiR6qUfCxvDR0imMNKc8Tn4tOpDpyJY9uL1BxBLvaqrtdhqzRWuMn6keWhhPhv11NDwGT50vC1QPQfItcNl2q+9wiwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mRirC9dM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EN8sGp004088;
-	Tue, 15 Oct 2024 06:55:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7+qha58JH9zVKNMewdUHx/Z8o3FV1Ey1Zp9hHpUhxno=; b=mRirC9dMBaAJ+bTX
-	be2+KF9tpPer29aJpcs6s52muo81KJ1I9oH83LK4PYBuqX1hHtdn1VjYDI8bWgw5
-	icqASDoU+0iSCQPmTN9160c6I3DrV2LaRIWHCKWOezDhZu5Cy3fiViBsIT2jJupX
-	KRrTh9JMZL9BllXp98mVdRW2KLR4o3yRhFS3TwYzOQ/FI2As9yupfrSuBqhkFORv
-	dipfn1k2b/MOndvy/YAxeID3WCL/XrW3shEIDa0YN2NPC69zgsT9UpxVKzSbUh3r
-	EAAr4FFSldluiw3KRWf/2SksuDFIBUpXRy/pXRO14ejRFko1/O1tIaIW9BTvL5qk
-	0izdeQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427jd8xkbt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 06:55:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49F6tnl3021793
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 06:55:49 GMT
-Received: from [10.204.67.70] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
- 2024 23:55:41 -0700
-Message-ID: <e22b28d6-7b01-4cef-9826-b4eb86a17acc@quicinc.com>
+	s=arc-20240116; t=1728975346; c=relaxed/simple;
+	bh=XFtOcK6cW5q2TN85YbMm7gAqu9WmsY9zhmgQ56U0ysI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hNlmyQbZLG8eyQzhUGRU+NfLmbCsg2KY6IjpCMKUHHqqSdHShNdXrqRAF602jZIbsR5O6WLaLeYutBxAa5y0tOnCqeCSqIciJNE9URqAtzk9BUGaCDWfjrJE2NJJuxFlT64Cb0itB2gafxAs3ePgZg7UYzZN3ideMkOfdwSgPT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 761811063;
+	Mon, 14 Oct 2024 23:56:13 -0700 (PDT)
+Received: from [10.162.16.109] (a077893.blr.arm.com [10.162.16.109])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F0CB23F51B;
+	Mon, 14 Oct 2024 23:55:40 -0700 (PDT)
+Message-ID: <cbf8475d-5c79-4fa4-b2a1-f553166b0afd@arm.com>
 Date: Tue, 15 Oct 2024 12:25:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,105 +41,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
+Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
+To: "Kirill A. Shutemov" <kirill@shutemov.name>,
+ Chen Ridong <chenridong@huaweicloud.com>
+Cc: akpm@linux-foundation.org, david@fromorbit.com,
+ zhengqi.arch@bytedance.com, roman.gushchin@linux.dev, muchun.song@linux.dev,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, chenridong@huawei.com,
+ wangweiyang2@huawei.com
+References: <20241014032336.482088-1-chenridong@huaweicloud.com>
+ <m3cjozicivz4ydv6ovzkupuzpcvc7uptlhjd3bndpsak3z7ill@6txhj7tpejir>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <konradybcio@kernel.org>,
-        <andersson@kernel.org>, <simona@ffwll.ch>, <abel.vesa@linaro.org>,
-        <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <quic_khsieh@quicinc.com>,
-        <konrad.dybcio@linaro.org>, <quic_parellan@quicinc.com>,
-        <quic_bjorande@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <quic_riteshk@quicinc.com>,
-        <quic_vproddut@quicinc.com>
-References: <20241004103046.22209-1-quic_mukhopad@quicinc.com>
- <20241004103046.22209-6-quic_mukhopad@quicinc.com>
- <wdslr77zwyyyesf47qmem3wmextrjfh5do4ckrk6vvzeqwi5gu@x3sxgiusspqp>
-From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-In-Reply-To: <wdslr77zwyyyesf47qmem3wmextrjfh5do4ckrk6vvzeqwi5gu@x3sxgiusspqp>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <m3cjozicivz4ydv6ovzkupuzpcvc7uptlhjd3bndpsak3z7ill@6txhj7tpejir>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: iM0lY5ZWPwxGXr_ZKHmvMDPY1e0jCioS
-X-Proofpoint-ORIG-GUID: iM0lY5ZWPwxGXr_ZKHmvMDPY1e0jCioS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 bulkscore=0
- mlxscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150046
 
 
-On 10/7/2024 1:21 AM, Dmitry Baryshkov wrote:
-> On Fri, Oct 04, 2024 at 04:00:46PM GMT, Soutrik Mukhopadhyay wrote:
->> The Qualcomm SA8775P platform comes with 2 DisplayPort controllers
->> for each mdss, having different base offsets than the previous
->> SoCs. The support for all 4 DPTX have been added here, and
->> validation of only MDSS0 DPTX0 and DPTX1 have been conducted.
+
+On 10/14/24 16:59, Kirill A. Shutemov wrote:
+> On Mon, Oct 14, 2024 at 03:23:36AM +0000, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
 >>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+>> A memleak was found as bellow:
+>>
+>> unreferenced object 0xffff8881010d2a80 (size 32):
+>>   comm "mkdir", pid 1559, jiffies 4294932666
+>>   hex dump (first 32 bytes):
+>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>     40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
+>>   backtrace (crc 2e7ef6fa):
+>>     [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+>>     [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+>>     [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+>>     [<ffffffff81198dd9>] online_css+0x29/0xa0
+>>     [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+>>     [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+>>     [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+>>     [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+>>     [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+>>     [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+>>     [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+>>     [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>
+>> In the alloc_shrinker_info function, when shrinker_unit_alloc return
+>> err, the info won't be freed. Just fix it.
+>>
+>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 >> ---
->> v2: No change
+>>  mm/shrinker.c | 1 +
+>>  1 file changed, 1 insertion(+)
 >>
->> v3: Fixed review comments from Konrad and Bjorn
->> 	-Added all the necessary DPTX controllers for this platform.
->>
->> v4: Updated commit message
->>
->> ---
->>   drivers/gpu/drm/msm/dp/dp_display.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
->> index e1228fb093ee..2195779584dc 100644
->> --- a/drivers/gpu/drm/msm/dp/dp_display.c
->> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
->> @@ -118,6 +118,14 @@ struct msm_dp_desc {
->>   	bool wide_bus_supported;
->>   };
->>   
->> +static const struct msm_dp_desc sa8775p_dp_descs[] = {
->> +	{ .io_start = 0xaf54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
->> +	{ .io_start = 0xaf5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
->> +	{ .io_start = 0x22154000, .id = MSM_DP_CONTROLLER_2, .wide_bus_supported = true },
->> +	{ .io_start = 0x2215c000, .id = MSM_DP_CONTROLLER_3, .wide_bus_supported = true },
-> Please take a look at other device descriptions in the file, note the
-> difference and fix your DP description accordingly.
+>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>> index dc5d2a6fcfc4..92270413190d 100644
+>> --- a/mm/shrinker.c
+>> +++ b/mm/shrinker.c
+>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>  
+>>  err:
+>>  	mutex_unlock(&shrinker_mutex);
+>> +	kvfree(info);
+>>  	free_shrinker_info(memcg);
+>>  	return -ENOMEM;
+>>  }
+> 
+> NAK. If in the future there going to one more error case after
+> rcu_assign_pointer() we will end up with double free.
+> 
+> This should be safer:
+> 
+> diff --git a/mm/shrinker.c b/mm/shrinker.c
+> index dc5d2a6fcfc4..763fd556bc7d 100644
+> --- a/mm/shrinker.c
+> +++ b/mm/shrinker.c
+> @@ -87,8 +87,10 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>  		if (!info)
+>  			goto err;
+>  		info->map_nr_max = shrinker_nr_max;
+> -		if (shrinker_unit_alloc(info, NULL, nid))
+> +		if (shrinker_unit_alloc(info, NULL, nid)) {
+> +			kvfree(info);
+>  			goto err;
+> +		}
+>  		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>  	}
+>  	mutex_unlock(&shrinker_mutex);
 
+Agreed, this is what I mentioned earlier as well.
 
-Sure, we will update the device descriptions, specifically the address 
-under io_start, for DP_CONTROLLER_0 and DP_CONTROLLER_1
-
-in the next version.
-
-
->
->> +	{}
->> +};
->> +
->>   static const struct msm_dp_desc sc7180_dp_descs[] = {
->>   	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
->>   	{}
->> @@ -162,6 +170,7 @@ static const struct msm_dp_desc x1e80100_dp_descs[] = {
->>   };
->>   
->>   static const struct of_device_id dp_dt_match[] = {
->> +	{ .compatible = "qcom,sa8775p-dp", .data = &sa8775p_dp_descs },
->>   	{ .compatible = "qcom,sc7180-dp", .data = &sc7180_dp_descs },
->>   	{ .compatible = "qcom,sc7280-dp", .data = &sc7280_dp_descs },
->>   	{ .compatible = "qcom,sc7280-edp", .data = &sc7280_dp_descs },
->> -- 
->> 2.17.1
->>
+------------------------------------------------------------------
+I guess kvfree() should be called just after shrinker_unit_alloc()
+fails but before calling into "goto err"
+------------------------------------------------------------------
 
