@@ -1,176 +1,208 @@
-Return-Path: <linux-kernel+bounces-366408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C26F99F4E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:11:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60A599F4E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835D41F25DD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:11:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D97F31C22958
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1BB1FC7D2;
-	Tue, 15 Oct 2024 18:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB321FC7CB;
+	Tue, 15 Oct 2024 18:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="12qg7+Sc"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JQeCr7/p"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0061F76C6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E8C1F667F;
+	Tue, 15 Oct 2024 18:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015855; cv=none; b=tMnbIOSo10LHDhRmC80MYO+mez4yZVaCVr2fHfYbwV48N0un29DkHg9hkSkDpxx4L+Ji9tdw2b7RP85pMo40kFesbKNxjNJZxFOP6e5onBIf+MkYLr2u58NvpPolZXVI8V5j+Yxpm7L1fFxE84m1+cyNahaJD1M2lnUiWPnUOd4=
+	t=1729015872; cv=none; b=tsEL2nJaxS7wcxPI4BKD0JFJ9DJTtYiOOQZq0LmgjlAPPFNcZIBZ+OtFdifzI3sGOLJi/elQ+rmInieouiNGu0tbp1eSl4hSWr2ATYmZu91muQXG9w18X/Der9dwGy4dJ9W/JMoWARlauiLdrUQmSyUiz7prR4J8Kb32h52aRW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015855; c=relaxed/simple;
-	bh=onARMYvCe4MEVctCzTmFfC9c9hckqdb5NrW57WWe4fY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iAGS6V7PWLkGAkDlxo/O6EawDs08qddM1Qk62+wRr2LVQ53KJvSiaf355xUQvFpo24gnQiXSgTvdWj8KgUNS4gOf5tG8NHnTOFTRe7wwd4EMJmUHpONf/XQFL15QakX8DsQYMKMVzzD7SBokH5h2Sqrihkn/440DxIZX3a+2adA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=12qg7+Sc; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e297a366304so370711276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729015853; x=1729620653; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xkQVBApGBnsFauh/NRUkLSuJKpKjtmpIspmB3NqO1qM=;
-        b=12qg7+SclH3foH+QFnrlHYEJuVgiyun3lojQ8iMgUEnH2pp1k9JODEiCOBnn9I+QXs
-         oO+AgTtVurJ5iGKtKuR82mJUoId9y004GYN9vHAJKNbRcRXRHwiA5Q6mRg7GTxm/JaLE
-         xouHtQd0zFTjh/TiF7UmliYUY8lviLGeNo6AnIMwMsRVh4+ZsdEBJ+aJG5tw6PujGyi4
-         c7OBAlLIvqBUj1zYdZXwVe7zysJgFCHE5wW4meftNq0Y6ugpLlyJk3Z5jT1NWgPq3p3M
-         g7tK9GpcIWmdqH8Ro3GhEEGRUV3ypV/+oudjWYQQwzXgxZcCHW2iKiiWcV6rAEoJW7NX
-         DtSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729015853; x=1729620653;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xkQVBApGBnsFauh/NRUkLSuJKpKjtmpIspmB3NqO1qM=;
-        b=bh4+KLC4Ltf72TCvhWWMPpNSFKyPK1ewx+1TvIJLQxSzmAh/FcSNGXXTWVjQTXJcuS
-         K1u2ToGTU6pjRXzQ96xjtAKOjrJwNTZ6b5UeuK6J5q4SXWXra591IjlkQJLCv7gIcCeH
-         QY0SkN72H2rNBTaUiOBCRsD4zC4P0y3yxc7nGlkFnxEP+70CgVsaNnkhAEYG4gW4glV7
-         C3wsDtNcVLL6oxCEjuS7iM26iv4QCjK9bimVQE/0nGar5zi7JDBcfi/iADrmq57V43Gb
-         24L6H2bIHxSfzXrAIP1rfX4xn4IecL9pOhzRyBIrXB4iKvMK1cmb+Gkqr6S+73Z6o33o
-         xRZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVHfnbdA1mMx3MfaJLBcMUY8rlybVu7LQfAWi+eQIHw0OdT8+YzVj2NHLY5uLL6BJLzEjyWSI2txCkLzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG838oaRDhI3Rw/E9VgsCJyNE9QvLrcFj7WGJdlby0zE037uWw
-	tL1D8wOqrytL4LcQSPLutMtSksMZELLIFWrZmPW6iBxYZdSJYzRdALk3ZIEMhuJOs4cr1pbB7Fm
-	4Sw==
-X-Google-Smtp-Source: AGHT+IG5g2O//zMCPKGiWKKREPFUIbatrbPoLXHOrf551PzbHYpXNxKLEQfE9nef7o/Ugk4b+yX13BYXYnc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6902:112:b0:e29:7587:66db with SMTP id
- 3f1490d57ef6-e29782b20edmr1102276.2.1729015852814; Tue, 15 Oct 2024 11:10:52
- -0700 (PDT)
-Date: Tue, 15 Oct 2024 11:10:51 -0700
-In-Reply-To: <058a6302-3444-4fd6-a154-b81f384b63fc@gmx.de>
+	s=arc-20240116; t=1729015872; c=relaxed/simple;
+	bh=XAlwUBAiZ2E3jswvMROzLoftINMnoDe4ju4Zy4isOUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W8kldGeeR+vgbelIP1QKTsCc5upf+F+1bfazzSP868A/dXBu5jVhCNyCum3OuveknnJqgs6iQyPh+qUGGGO93Fbr3OqRT1XUfLYtFchI0nfzSh3nzjXpOKXed9hOSQOb02a8wfpubzzRR8s6RME3XeuEX364cXGsncZIHusBw4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JQeCr7/p; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=A54Vq6G3DIWEbChUUIbdpVXmCGGWCTgYDROxKPHY1HY=; b=JQeCr7/psRpgMh1ovKaVTzLR5j
+	W2FJyUTClN1I02YTCLsOYio+SuytXbiKH9lPqHD8cLmMvM220me/FLO/WCxsbKriNNTMMskFbiJei
+	annwr8bBqOlRhPna6JBKd8s0n7VrUGO50oibjYjEgKftqoLxdmdvKFMkYJQhZTNUeNtHAXh+UC4FB
+	vW3rH7C3jWp/qdMK/1/aC+klImRw0dolua+mTg/hyKdKu12YPsgrhIubKvsQ/h+RO0tnTBpJl8evV
+	JihDZMSdqPsEwS90l0e76nd3vO84Oac2Eh79aJ7pKsCeY2vbTGVv7UKXK+GO4oqjOaZ5fsR8Yu0AE
+	xaJxZ9Lw==;
+Received: from [50.53.2.24] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0m0k-0000000999s-0VxW;
+	Tue, 15 Oct 2024 18:11:10 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Horia Geanta <horia.geanta@freescale.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH] kernel-doc: allow object-like macros in ReST output
+Date: Tue, 15 Oct 2024 11:11:07 -0700
+Message-ID: <20241015181107.536894-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241004140810.34231-1-nikwip@amazon.de> <20241004140810.34231-3-nikwip@amazon.de>
- <875xq0gws8.fsf@redhat.com> <9ef935db-459a-4738-ab9a-4bd08828cb60@gmx.de>
- <87h69dg4og.fsf@redhat.com> <Zw6PlAv4H5rNZsBf@google.com> <058a6302-3444-4fd6-a154-b81f384b63fc@gmx.de>
-Message-ID: <Zw6wKwHQJcGPfxwn@google.com>
-Subject: Re: [PATCH 2/7] KVM: x86: Implement Hyper-V's vCPU suspended state
-From: Sean Christopherson <seanjc@google.com>
-To: Nikolas Wipper <nik.wipper@gmx.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, Nikolas Wipper <nikwip@amazon.de>, 
-	Nicolas Saenz Julienne <nsaenz@amazon.com>, Alexander Graf <graf@amazon.de>, James Gowans <jgowans@amazon.com>, 
-	nh-open-source@amazon.com, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 15, 2024, Nikolas Wipper wrote:
-> On 15.10.24 17:58, Sean Christopherson wrote:
-> > ...
-> >
-> > And from a performance perspective, synchronizing on kvm->srcu is going to be
-> > susceptible to random slowdowns, because writers will have to wait until all vCPUs
-> > drop SRCU, even if they have nothing to do with PV TLB flushes.  E.g. if vCPUs
-> > are faulting in memory from swap, uninhibiting a TLB flushes could be stalled
-> > unnecessarily for an extended duration.
-> >
-> 
-> This should be an easy fix, right? Just create an SRCU only for the TLB flushes only.
+output_function_rst() does not handle object-like macros. It presents
+a trailing "()" while output_function_man() handles these macros
+correctly.
 
-Yes, this is a very solvable problem.  But while SRCU objects aren't expensive,
-they aren't entirely free either.
+Update output_function_rst() to handle object-like macros.
+Don't show the "Parameters" heading if there are no parameters.
+
+For output_function_man(), don't show the "ARGUMENTS" heading if there
+are no parameters.
+
+I have tested this quite a bit with my ad hoc test files for both ReST
+and man format outputs. The generated output looks good.
+
+Fixes: cbb4d3e6510b ("scripts/kernel-doc: handle object-like macros")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Horia Geanta <horia.geanta@freescale.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+---
+Cc: linux-doc@vger.kernel.org
+
+@Jon, feel free to update the attribution for your patch or I can do it
+and send a v2 if you like.
+
+ scripts/kernel-doc |   43 ++++++++++++++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 13 deletions(-)
+
+--- linux-next-20241009.orig/scripts/kernel-doc
++++ linux-next-20241009/scripts/kernel-doc
+@@ -569,6 +569,8 @@ sub output_function_man(%) {
+     my %args = %{$_[0]};
+     my ($parameter, $section);
+     my $count;
++    my $func_macro = $args{'func_macro'};
++    my $paramcount = $#{$args{'parameterlist'}}; # -1 is empty
  
-> > Lastly, KVM_REQ_EVENT is a big hammer (triggers a lot of processing) and semantically
-> > misleading (there is no event to process).  At a glance, KVM_REQ_UNBLOCK is likely
-> > more appropriate.
-> >
-> > Before we spend too much time cleaning things up, I want to first settle on the
-> > overall design, because it's not clear to me that punting HvTranslateVirtualAddress
-> > to userspace is a net positive.  We agreed that VTLs should be modeled primarily
-> > in userspace, but that doesn't automatically make punting everything to userspace
-> > the best option, especially given the discussion at KVM Forum with respect to
-> > mplementing VTLs, VMPLs, TD partitions, etc.
-> >
-> 
-> I wasn't at the discussion, so maybe I'm missing something, but the hypercall
-> still needs VTL awareness. 
-
-Yeah, the KVM Forum discussion is relevant, because one of the key takeaways from
-that discussion was that KVM will need some amount of VTL awareness.
-
-> For one, it is primarily executed from VTL0 and primarily targets VTL1
-> (primarily here means "thats what I see when I boot Windows Server 2019"), so
-> it would need to know which vCPU is the corresponding VTL (this assumes one
-> vCPU per VTL, as in the QEMU implementation).
-
-Right, but even without the takeways from KVM Forum, we need to look at big picture
-and come up with a design that makes the most sense.  E.g. if making KVM aware
-of "struct kvm" objects that represent different VTLs in the same VM greatly
-simplifies supporting HvTranslateVirtualAddress, then it's likely worth doing.
-
-> To make matters worse, the hypercall can also arbitrarily choose to target a
-> different VP.  This would require a way to map (VP index, VTL) -> (vcpu_id)
-> within KVM.
-
-I don't think so.  The TLFS definition for TlbFlushInhibit give KVM a _lot_ of
-wiggle room, e.g. KVM can retry the hypercall as many times as necessary.  To
-honor TlbFlushInhibit, KVM just needs to ensure that flushes are blocked if any
-vCPU at the target VTL is blocking flushes.  And to avoid hanging a vCPU, KVM
-only needs to ensure a vCPU is awakened if it _might_ be able to make forward
-progress.
-
-I.e. I don't think KVM needs to be super precise when waking blocking vCPUs, and
-thus there's no need to precisely track who is blocking whom.  I think :-)
+     print ".TH \"$args{'function'}\" 9 \"$args{'function'}\" \"$man_date\" \"Kernel Hacker's Manual\" LINUX\n";
  
-> > The cover letters for this series and KVM_TRANSLATE2 simply say they're needed
-> > for HvTranslateVirtualAddress, but neither series nor Nicolas' patch to punt
-> > HVCALL_TRANSLATE_VIRTUAL_ADDRESS[*] justifies the split between userspace and
-> > KVM.  And it very much is a split, because there are obviously a lot of details
-> > around TlbFlushInhibit that bleed into KVM.
-> >
-> > Side topic, what actually clears HvRegisterInterceptSuspend.TlbFlushInhibit?  The
-> > TLFS just says
-> >
-> >   After the memory intercept routine performs instruction completion, it should
-> >   clear the TlbFlushInhibit bit of the HvRegisterInterceptSuspend register.
-> >
-> > but I can't find anything that says _how_ it clears TlbFlushInhibit.
-> >
-> 
-> The register cannot be accessed using the HvSetVpRegisters hypercall, but the TLFS
-> talks about it elsewhere. I'm assuming this is a formatting issue (there are a few
-> elsewhere). In 15.5.1.3 it says
-> 
->   To unlock the TLB, the higher VTL can clear this bit. Also, once a VP returns
->   to a lower VTL, it releases all TLB locks which it holds at the time.
-> 
-> The QEMU implementation also just uninhibits on intercept exit, and that, at least,
-> does not crash.
-
-Hmm, it would be nice to bottom out on whether the higher VLT or the VMM/hypervisor
-is responsible for clearing TlbFlushInhibit, because that may influence KVM's
-design.
+@@ -600,7 +602,10 @@ sub output_function_man(%) {
+         $parenth = "";
+     }
+ 
+-    print ".SH ARGUMENTS\n";
++    $paramcount = $#{$args{'parameterlist'}}; # -1 is empty
++    if ($paramcount >= 0) {
++    	print ".SH ARGUMENTS\n";
++	}
+     foreach $parameter (@{$args{'parameterlist'}}) {
+         my $parameter_name = $parameter;
+         $parameter_name =~ s/\[.*//;
+@@ -822,10 +827,16 @@ sub output_function_rst(%) {
+     my $oldprefix = $lineprefix;
+ 
+     my $signature = "";
+-    if ($args{'functiontype'} ne "") {
+-        $signature = $args{'functiontype'} . " " . $args{'function'} . " (";
+-    } else {
+-        $signature = $args{'function'} . " (";
++    my $func_macro = $args{'func_macro'};
++    my $paramcount = $#{$args{'parameterlist'}}; # -1 is empty
++
++	if ($func_macro) {
++        $signature = $args{'function'};
++	} else {
++		if ($args{'functiontype'}) {
++        	$signature = $args{'functiontype'} . " ";
++		}
++		$signature .= $args{'function'} . " (";
+     }
+ 
+     my $count = 0;
+@@ -844,7 +855,9 @@ sub output_function_rst(%) {
+         }
+     }
+ 
+-    $signature .= ")";
++    if (!$func_macro) {
++    	$signature .= ")";
++    }
+ 
+     if ($sphinx_major < 3) {
+         if ($args{'typedef'}) {
+@@ -888,9 +901,11 @@ sub output_function_rst(%) {
+     # Put our descriptive text into a container (thus an HTML <div>) to help
+     # set the function prototypes apart.
+     #
+-    print ".. container:: kernelindent\n\n";
+     $lineprefix = "  ";
+-    print $lineprefix . "**Parameters**\n\n";
++	if ($paramcount >= 0) {
++    	print ".. container:: kernelindent\n\n";
++   		print $lineprefix . "**Parameters**\n\n";
++    }
+     foreach $parameter (@{$args{'parameterlist'}}) {
+         my $parameter_name = $parameter;
+         $parameter_name =~ s/\[.*//;
+@@ -1704,7 +1719,7 @@ sub check_return_section {
+ sub dump_function($$) {
+     my $prototype = shift;
+     my $file = shift;
+-    my $noret = 0;
++    my $func_macro = 0;
+ 
+     print_lineno($new_start_line);
+ 
+@@ -1769,7 +1784,7 @@ sub dump_function($$) {
+         # declaration_name and opening parenthesis (notice the \s+).
+         $return_type = $1;
+         $declaration_name = $2;
+-        $noret = 1;
++        $func_macro = 1;
+     } elsif ($prototype =~ m/^()($name)\s*$prototype_end/ ||
+         $prototype =~ m/^($type1)\s+($name)\s*$prototype_end/ ||
+         $prototype =~ m/^($type2+)\s*($name)\s*$prototype_end/)  {
+@@ -1796,7 +1811,7 @@ sub dump_function($$) {
+     # of warnings goes sufficiently down, the check is only performed in
+     # -Wreturn mode.
+     # TODO: always perform the check.
+-    if ($Wreturn && !$noret) {
++    if ($Wreturn && !$func_macro) {
+         check_return_section($file, $declaration_name, $return_type);
+     }
+ 
+@@ -1814,7 +1829,8 @@ sub dump_function($$) {
+                             'parametertypes' => \%parametertypes,
+                             'sectionlist' => \@sectionlist,
+                             'sections' => \%sections,
+-                            'purpose' => $declaration_purpose
++                            'purpose' => $declaration_purpose,
++							'func_macro' => $func_macro
+                            });
+     } else {
+         output_declaration($declaration_name,
+@@ -1827,7 +1843,8 @@ sub dump_function($$) {
+                             'parametertypes' => \%parametertypes,
+                             'sectionlist' => \@sectionlist,
+                             'sections' => \%sections,
+-                            'purpose' => $declaration_purpose
++                            'purpose' => $declaration_purpose,
++							'func_macro' => $func_macro
+                            });
+     }
+ }
 
