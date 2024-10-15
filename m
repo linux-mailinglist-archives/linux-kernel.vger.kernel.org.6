@@ -1,143 +1,126 @@
-Return-Path: <linux-kernel+bounces-365346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E5E99E0E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:22:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F3899E0E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58250282633
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C96282B3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EA31D220A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7AE1CFED9;
 	Tue, 15 Oct 2024 08:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="anUFVOvv"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFJMKtO5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986FE1C9B87;
-	Tue, 15 Oct 2024 08:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5CE1C8767;
+	Tue, 15 Oct 2024 08:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980525; cv=none; b=ZBSgAFS24tsYQIXvYT0K7KHMqmxWTSxLUEEc7Ac02wKUvcFNEE3SpN9ndP5fdlwofQuVnUdEPVjrjubSn3ZU/Ratoso20bYFKQfb+mHEOM63Nk5e9XRU4/tFcvgOBta8+HX0O59fb/DLheUK1K7G3/UwNYwyv9ecTjn3kTfp0ok=
+	t=1728980524; cv=none; b=Fn+jnCwUzx5otHlxp1XyK9QlXkqpytArv0UeiVdcDyobCD0tw9L3CJ/2RamHInbTe7iVbVGjmm/ognHQFe8bKDeHrfw608PW/CTdNpmNcd5QFFyzXcNqPMF0NK9hAN+hxNcYUQGrzdOYf2ZBgDZGL4O+En6PGwPZYlvkxxyyK34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980525; c=relaxed/simple;
-	bh=ZyMJa6Jwuka2TO342RkLAb6dF7EpFvQESmiJFUd2SSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oyx9/V5yr/C6AjZZiiFKiHZpSBALJBe3iDf66DWGV3JlVqTkThZ49RnyEd02XtS8zdvZ7mAls4qsrTmOWfn4ZRlsXIKdOS5nUvpQpp221idE2iLT5GrGxQ0QlHNFCgPuI8x6VIkW5Nqgb6I1dOK0HVJjlU67iYtKTqowz6ggtuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=anUFVOvv; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7PlOs027400;
-	Tue, 15 Oct 2024 08:21:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=c5lhar7v4eLS49jskAhJTfiKUSi6Am
-	BfPG1gKlXciwU=; b=anUFVOvvzBObet737suFF6+eMr94CEC/9Sqz5ahW4205AX
-	EwkNqsEyF73bGMJwQl5p78s7HluYc7ZF9rTKACz3eAG/HtvzwQDUOAEV/dAHj7aH
-	Gz/B+VKzY9GjviSfgbetNlxdVQRF93NFIAfiSrY2NrC3JP/692+b/eLKNTTCYXdu
-	iBqVABhfIcN6FNEhGMFnCwoC1TrdeOzlvyUgDSQEO5ZE3p4kJEe8fKCxupAzpxnr
-	wOcfZDhLAVLlV7cWfJ1R5sNwPPuJscXsm3M8/8FPQWcJ/B2hMcHNPkvf9SPlj2q6
-	9der7guBj0iBo28mqi8VZKz9ORQy43i0HdhsLNgQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429m0588nk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 08:21:56 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49F8LtqZ015991;
-	Tue, 15 Oct 2024 08:21:56 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429m0588nc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 08:21:55 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7gvOI027451;
-	Tue, 15 Oct 2024 08:21:54 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txjsbe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 08:21:54 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49F8LoqK19988858
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 08:21:50 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A276120043;
-	Tue, 15 Oct 2024 08:21:50 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0CE2820040;
-	Tue, 15 Oct 2024 08:21:50 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 15 Oct 2024 08:21:49 +0000 (GMT)
-Date: Tue, 15 Oct 2024 10:21:48 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v2 2/7] Documentation: s390-diag.rst: make diag500 a
- generic KVM hypercall
-Message-ID: <20241015082148.7641-B-hca@linux.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-3-david@redhat.com>
- <20241014180410.10447-C-hca@linux.ibm.com>
- <78e8794a-d89f-4ded-b102-afc7cea20d1d@redhat.com>
- <20241015081212.7641-A-hca@linux.ibm.com>
- <8e39522c-2853-4d1f-b5ec-64fabcca968b@redhat.com>
+	s=arc-20240116; t=1728980524; c=relaxed/simple;
+	bh=LhX4A2/IU3gw5LJIwJf6jfIT3FuEJKMSqsSvKL6s8L4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FbGsD1Tgn+gWdehhFySO6MS/ofj32OcGlI1XrU9e7Xdqm2pjCpnMQBMi/0HGAQd8mMC13ll5GbcLBYLg5QgpJMu5L5a8Rc2bE13a8BBgXZ9AJ+lEmbSh/PJ1/y3z3maei0R3R4OUcn9mf7BEODShCFdGohSqIfKYpl0BhJV384w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFJMKtO5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A0CCC4CEC7;
+	Tue, 15 Oct 2024 08:21:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728980524;
+	bh=LhX4A2/IU3gw5LJIwJf6jfIT3FuEJKMSqsSvKL6s8L4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OFJMKtO5Q2LZtxPHHPxHF4/gRdN5mquQPDq7bpfg4rv+E5VG49yKFZRrGlNlo64Bo
+	 Ao6P0I+rDGKrYg7P9cw0l38afVBB/o0NS7CJXLifhnriPetsTFNxoOUdeTPrVZTcmu
+	 kYoUYT6aVUxW6uOhzF5H9U3/O/VZ33Nhw4qF8256grOmBQsdJ8ylqQGJE0phtzzp/6
+	 PVn5KAqfxQAAffb+siSSD7sxxBmo8YtEg4Ijnx+0THamNphBqcP9iPH0pdLjA0x4q0
+	 T/FQRcCLC64h9kjrJJ4qDY+MsjJIkNz75sMR0wl6q799f77r+zSAV001xRPFApY/iA
+	 YqEAlwf29B1wg==
+Message-ID: <a08e76a7-8e68-4ae6-9b83-67e5d20468b9@kernel.org>
+Date: Tue, 15 Oct 2024 10:21:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e39522c-2853-4d1f-b5ec-64fabcca968b@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 84a_QRz4QyxkwKqhc4fD72zEUsnc0y0v
-X-Proofpoint-GUID: oPIUMjN_VobXTVvYRnEV425WV2FcuVkA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxlogscore=398 phishscore=0 spamscore=0 suspectscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150052
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: firmware: qcom,scm: document QCS615
+ SCM
+To: Qingqing Zhou <quic_qqzhou@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, robimarko@gmail.com, will@kernel.org,
+ robin.murphy@arm.com, joro@8bytes.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20241015081603.30643-1-quic_qqzhou@quicinc.com>
+ <20241015081603.30643-2-quic_qqzhou@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241015081603.30643-2-quic_qqzhou@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 10:16:20AM +0200, David Hildenbrand wrote:
-> On 15.10.24 10:12, Heiko Carstens wrote:
-> > On Mon, Oct 14, 2024 at 09:35:27PM +0200, David Hildenbrand wrote:
-> > > On 14.10.24 20:04, Heiko Carstens wrote:
-> > "If only there would be a query subcode available, so that the program
-> > check handling would not be necessary; but in particular my new subcode
-> > is not worth adding it" :)
-> > 
-> > Anyway, I do not care too much.
-> > 
+On 15/10/2024 10:16, Qingqing Zhou wrote:
+> Add the compatible for Qualcomm QCS615 SCM.
 > 
-> Okay, I see your point: it would allow for removing the program check
-> handling from the STORAGE LIMIT invocation.
-> 
-> ... if only we wouldn't need the exact same program check handling for the
-> new query subfunction :P
+> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
 
-Yeah yeah, but I think you got that this might help in the future.
+I give up on this.
+
+Please reach internally to get proper guidance how to send patches and
+what to do with tags.
+
+I am not going to do the work twice.
+
+Best regards,
+Krzysztof
+
 
