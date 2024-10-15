@@ -1,39 +1,45 @@
-Return-Path: <linux-kernel+bounces-365602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D9B99E4D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:59:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F4D99E4D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77DA71C23E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:59:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E9BDB21893
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F581E7669;
-	Tue, 15 Oct 2024 10:57:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05F51E04BD;
-	Tue, 15 Oct 2024 10:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D381E9063;
+	Tue, 15 Oct 2024 10:58:46 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D421E490B;
+	Tue, 15 Oct 2024 10:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989848; cv=none; b=OOUGYe7Uv+snpw15v5JCsmWgr3p2FkXukICSci/dcBTtqqHUX2xyffDU4hTQ3Hrjt0bHf9YHlOUs8k6jsZtLUkaJ6dR3EmHX8FvyPz/ruf7lOpJQgJiq9AbsgO0o7L2yhEm84u03UkinyUnZExYublDfGW56iRGMMReMjD/FuNQ=
+	t=1728989926; cv=none; b=bcHMqDAARinrov7KhI/MEH6okBtFKGAYRapbaxnzG9HyN2ePZTmylefVWlPwgEdnzBf8DZ/AZbE4I+OU7anF8LVLRqazfvIAKA20G+Uh7MIax0Y3qW46y+Nb4rL4hoYZOMqeQheiWADnBeXPiFx1/iMjXxGIwGXdMPHG05RKlnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989848; c=relaxed/simple;
-	bh=oL/7xt4Yqvn+9Rro4TMVQYhXaWG/t1gVhjh4J2cuoJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a9Ehszijs4T1gkdod1A8W5Ua1ofSgRvMe2cecmSTkpQp6iimA/HNOWFpe/oA3s/fZaCaMQ4EdTRJl/aPSRaUIZ9lQFOvAyrjGFf9WecTtg65Itbwn26lleJ+Ruy3LZ4dcGq5Vd1xU9mUU4RVfAfuFxZH8g56P/zsFUa+YuOerKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE54D1007;
-	Tue, 15 Oct 2024 03:57:55 -0700 (PDT)
-Received: from [10.57.86.207] (unknown [10.57.86.207])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 020BA3F51B;
-	Tue, 15 Oct 2024 03:57:22 -0700 (PDT)
-Message-ID: <ba0ddcf0-c251-46a0-8354-587e49c81399@arm.com>
-Date: Tue, 15 Oct 2024 11:57:21 +0100
+	s=arc-20240116; t=1728989926; c=relaxed/simple;
+	bh=zMHsowq5udoENrH4VBjjEDVjw8UknD0mJVneCrtHFs4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rbC+OIZqJ635vjuoIIKeE8fso20PF/USSuuvpFWmgvmGBlsBAkdWLch82IoIKtRi8geTqhWPLcQ+u2EhLOOsOkuAb5cyOwO+jXUA8qFT5O/47DGhecgykxEbNc96StwOvMug5sIcWCQOJYplK4mOBxP5kdPIJKrdOh3I0mcFAfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XSWJY5zD0zySdf;
+	Tue, 15 Oct 2024 18:57:17 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id A66D1180AE9;
+	Tue, 15 Oct 2024 18:58:40 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Oct 2024 18:58:40 +0800
+Message-ID: <d814c044-8a0d-48fd-9fc1-06aa457c46c6@huawei.com>
+Date: Tue, 15 Oct 2024 18:58:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,62 +47,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 17/57] kvm: Remove PAGE_SIZE compile-time constant
- assumption
-Content-Language: en-GB
-To: Sean Christopherson <seanjc@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-17-ryan.roberts@arm.com>
- <Zw2PBJsC99L4y_7c@google.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Zw2PBJsC99L4y_7c@google.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH net-next v21 13/14] mm: page_frag: update documentation
+ for page_frag
+To: Bagas Sanjaya <bagasdotme@gmail.com>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: Linux Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Alexander Duyck <alexander.duyck@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>, Linux Documentation
+	<linux-doc@vger.kernel.org>
+References: <20241012112320.2503906-1-linyunsheng@huawei.com>
+ <20241012112320.2503906-14-linyunsheng@huawei.com>
+ <Zw37nCqT4RY1udAK@archie.me>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <Zw37nCqT4RY1udAK@archie.me>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 14/10/2024 22:37, Sean Christopherson wrote:
-> Nit, "KVM:" for the scope.
+On 2024/10/15 13:20, Bagas Sanjaya wrote:
 
-Thanks, will fix.
+...
 
-> 
-> On Mon, Oct 14, 2024, Ryan Roberts wrote:
->> To prepare for supporting boot-time page size selection, refactor code
->> to remove assumptions about PAGE_SIZE being compile-time constant. Code
->> intended to be equivalent when compile-time page size is active.
->>
->> Modify BUILD_BUG_ON() to compare with page size limit.
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>
->> ***NOTE***
->> Any confused maintainers may want to read the cover note here for context:
->> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
-> 
-> The patch should still stand on its own.  Most people can probably suss out what
-> PAGE_SIZE_MIN is, but at the same time, it's quite easy to provide a more verbose
-> changelog that's tailored to the actual patch.  E.g.
-> 
->   To prepare for supporting boot-time page size selection, refactor KVM's
->   check on the size of the kvm_run structure to assert that the size is less
->   than the smallest possible page size, i.e. that kvm_run won't overflow its
->   page regardless of what page size is chosen at boot time.
-> 
-> With something like the above,
-> 
-> Reviewed-by: Sean Christopherson <seanjc@google.com>
+>>  
+>> +/**
+>> + * page_frag_cache_is_pfmemalloc() - Check for pfmemalloc.
+>> + * @nc: page_frag cache from which to check
+>> + *
+>> + * Used to check if the current page in page_frag cache is pfmemalloc'ed.
+>                                                            is allocated by pfmemalloc()?
 
-Thanks! I'll update this for the next version.
+There seems to be no pfmemalloc() function.
 
+Perhaps change it to something like below as the comment in
+page_is_pfmemalloc():
+Used to check if the current page in page_frag cache is allocated from the
+pfmemalloc reserves.
+
+
+>> + * It has the same calling context expectation as the alloc API.
+>> + *
+>> + * Return:
+>> + * true if the current page in page_frag cache is pfmemalloc'ed, otherwise
+>> + * return false.
+>> + */
+>>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
+>>  {
+>>  	return encoded_page_decode_pfmemalloc(nc->encoded_page);
+>>  }
+>>  
+>> +/**
+>> + * page_frag_cache_page_offset() - Return the current page fragment's offset.
+>> + * @nc: page_frag cache from which to check
+>> + *
+>> + * The API is only used in net/sched/em_meta.c for historical reason, do not use
+>> + * it for new caller unless there is a strong reason.
+> 
+> Then what does page_frag_cache_page_offset() do then?
+
+It is used to replace the the below direct access of 'page_frag_cache':
+https://elixir.bootlin.com/linux/v6.11/source/net/sched/em_meta.c#L585
+
+Each one of 'page_frag_cache' instance has its own allocation context
+to ensure lockless access, it is not encouraged to access 'page_frag_cache'
+directly outside of the allocation context as the accessing is unreliable.
 
