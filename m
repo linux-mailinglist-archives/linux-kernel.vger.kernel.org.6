@@ -1,192 +1,168 @@
-Return-Path: <linux-kernel+bounces-366650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBEE99F843
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:46:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A5B99F844
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612691C22662
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F4F1F213F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9EF1F81BC;
-	Tue, 15 Oct 2024 20:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E491F8186;
+	Tue, 15 Oct 2024 20:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RxzU04ba"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aqo+bFd9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495AE1F80DD
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F191B6CF3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729025189; cv=none; b=XBLXTNbDZfzusx0unv3BNE+jVA5wf+qKhEHe63Aiv+fLo4oGsn/hm6xBruxKQosBIygzo2l2eOwiTU92hTmhiuZRDf9svyMlG+SQausM6aeQsKyzceIi1Ln6IZd0zlg3VWYPPWz/v30A0rnkruYlIkFt2m4jwwQOr5vJtvIaiwM=
+	t=1729025214; cv=none; b=Y4fUCKR9Z9FA5BtemrNkG2FjCd5JC6w6Whr1AW4gJp6HWvf16sfcvAfIJPDHg11jmArcZhO3EcGdmHSgIUTnqcpMjNzZI0eEDiK92d2aYEFUgE+RGq9RxAx4XwMKlYf39q66Buhb9KsBSt+TxKlnrcs9J0jRusK7l3XjX7529vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729025189; c=relaxed/simple;
-	bh=AqUdafXKTY6DDHGLzTGsizAxqmBoMgpVRl5AemWKIAg=;
+	s=arc-20240116; t=1729025214; c=relaxed/simple;
+	bh=j3GtmwhKFyJfeeyHi+++6iBfpxuD/xvW8TWBFyVPnsk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgrBDmxEGgerR7AxxXq5L/iE4mqiYXex604DoV3Q0K4hs8BN2rvlP9YCEdyOl16hikgdSIrOEIXEcOn3g2a285AqQyv6EbWhKHsl/hTEP1Fmqp7rLRAhJS+TapDycj4Wswt+0lqrJ5JTp1IWHUhzn/c3NHstZFsKCUAAN94xVhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RxzU04ba; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4601a471aecso868441cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:46:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729025187; x=1729629987; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hADrE+uGTtibEvTH0s90QZJmBdYKfXijYp7a8XNC0gY=;
-        b=RxzU04ba3Lmk/Zs/I/wzKrca5WFbJKJ2Hg4RoTg7X3ZxloAxbQzFUXW7lOLxyUKsUC
-         p3hGA/7vnFbiqrsbKh/5lNmbgijeEopsGaHaG1SEcgeHv5eNHdAk6J+4+BVhcg97dMMU
-         cFurJp1CyFP/N0al4tmw3PPuqtaO5C24Ehgf/I1w6Bod+Jqmfc5H/Uvg2pVOE5RwoZF9
-         UfkSfiEt0Vlt2PgAc0O+qhfJhZSbW6u/4WYRNdBvFgjMVFv7Dn4l8cTiQoMaUI9nR8hV
-         lu1BMTBrgbK82iuUCPE1lSlg1hFCCuqtugju4CmEvTTM4+93wYL6A+UrqtxBwqkEZKDT
-         yH8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729025187; x=1729629987;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hADrE+uGTtibEvTH0s90QZJmBdYKfXijYp7a8XNC0gY=;
-        b=JPj/u1i20s0s77Kfk0ZKAvyNTTuAyWK6sb8uMd2LbLMzlri0pqgH8MgHoALX52nw1v
-         78rWxdXvAasftC3iwtvS236OAJaAs8CuPqFSEHu8ENCgJ1p3aKa4reb95YZNkUG2ALYM
-         Hc0yX95b237JMa6xs+JiMnKdklw/OduJOw1Tpb0zl5Pd3DPwyTUDdkvX/p1KAayRVdAV
-         DQ/TobJLkZo7F0LP32lKpVmG+e7tDtLpQmbkohckRyp9JOuhO2KRsU+QK9Bc1ntdofju
-         tWTdpCrVFRUxkdnUlx4HXpFV7eDi+DvKc2lBEG4xpV/SQkIwFZYfDucVQKRe20ditpxO
-         fYlA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+eLYlfe2cbg3ylOiEPrsOWTQxOKPi/L+ybPiNpbvSpFKSO0IZUVbUKWqruvU5STn3z/m6LgN1xdKSgzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/UYTRsx7BsUNR8OB2dOnSpFKGq5hVOKCosN6NRWsPWYQ5R6MM
-	2IHK7wEt9HFiWXD9Gf86CeZRwXYcSS885/UFGRhnIC0dAk2y2Q8ZZg7Wj7uMjA==
-X-Google-Smtp-Source: AGHT+IETthPrudZ1fSdhkTk5TGYZfzkYyH24kZnnVgT0XIy0sRJSH6T8V1s8YXXPWc2XhTzfDsBVJA==
-X-Received: by 2002:a05:622a:47cd:b0:453:5b5a:e77c with SMTP id d75a77b69052e-4608db32e70mr907251cf.10.1729025186861;
-        Tue, 15 Oct 2024 13:46:26 -0700 (PDT)
-Received: from google.com (131.65.194.35.bc.googleusercontent.com. [35.194.65.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1363c9d24sm108524485a.133.2024.10.15.13.46.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 13:46:26 -0700 (PDT)
-Date: Tue, 15 Oct 2024 16:46:23 -0400
-From: Brian Geffon <bgeffon@google.com>
-To: brauner@kernel.org
-Cc: bristot@redhat.com, bsegall@google.com, cmllamas@google.com,
-	dietmar.eggemann@arm.com, ebiggers@kernel.org, jack@suse.cz,
-	jing.xia@unisoc.com, juri.lelli@redhat.com, ke.wang@unisoc.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org,
-	rostedt@goodmis.org, vincent.guittot@linaro.org,
-	viro@zeniv.linux.org.uk, vschneid@redhat.com,
-	xuewen.yan94@gmail.com, xuewen.yan@unisoc.com,
-	Benoit Lize <lizeb@google.com>
-Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for
- ep_poll_callback
-Message-ID: <Zw7Un-Cr8JA4oMv0@google.com>
-References: <20240426-zupfen-jahrzehnt-5be786bcdf04@brauner>
- <20240919123635.2472105-1-bgeffon@google.com>
- <CADyq12w2KRUZCu0hLA8TJH-e+766Jq_vG9SDYtDBYXzR=r9wvg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dfVypB2N+w/Opz3cXmKswLUH/2rwfWdB3Vp83y24y/hrvsR07TS+8JMo+otCrWVr+05G13uZ5ChXd7Dgti4oS43jAgD4DCGhZuAEwC3bg+8EtDMJfRChAAxa+NWFE2+dnhKio1Z0KsmhepJ/NsBBfPUB5d2GkD41Oo/skksH6mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aqo+bFd9; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729025213; x=1760561213;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j3GtmwhKFyJfeeyHi+++6iBfpxuD/xvW8TWBFyVPnsk=;
+  b=aqo+bFd9/jhdPghTj9pAFT3NDK4p79BAi0BwVBEMBOEwi6kATjfvixNj
+   mgdyIn0Cax47e7xyiaq3vLJmFxL1neRdx+SDot/8pA0e10gKeZuLfgCuq
+   vRbxX3YYkI4c5kKGVvXCSx7nJzIA9F95izpYI9/bv3IIsVFMQO423LPVW
+   JQiCB5NXcrGVTxb0Z7Dohhd8iar0o/duu9a+IE3RoTQlaSCCudVsTVdFL
+   OQ9Om5Uyufrudvfbz2GA/zno1zOQxuNFCsgoWnPRA2gWanqT/SNAwPCfU
+   XBG4EuEC/EfrjAQgwMcXJCWjcKI6ImeXcOHf7SznvQek1OO0ql/YLXDGL
+   w==;
+X-CSE-ConnectionGUID: C8NxEH09Ra27XZuH7an1tg==
+X-CSE-MsgGUID: DBjoZMnCR0iIpktpaoqu7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="39078686"
+X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
+   d="scan'208";a="39078686"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 13:46:52 -0700
+X-CSE-ConnectionGUID: WDAobR3nTzqwxv22AgNFzw==
+X-CSE-MsgGUID: vgqutLJFRCuptDVHZpbwCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="82814929"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 15 Oct 2024 13:46:50 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0oRL-000JvP-1H;
+	Tue, 15 Oct 2024 20:46:47 +0000
+Date: Wed, 16 Oct 2024 04:46:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrew Davis <afd@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Hari Nagalla <hnagalla@ti.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Andrew Davis <afd@ti.com>
+Subject: Re: [PATCH 2/2] mailbox: ti-msgmgr: Allow building under COMPILE_TEST
+Message-ID: <202410160435.WzzQa1p5-lkp@intel.com>
+References: <20241014144821.15094-3-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADyq12w2KRUZCu0hLA8TJH-e+766Jq_vG9SDYtDBYXzR=r9wvg@mail.gmail.com>
+In-Reply-To: <20241014144821.15094-3-afd@ti.com>
 
-On Wed, Sep 25, 2024 at 02:38:02PM -0400, Brian Geffon wrote:
-> I think this patch really needs help with the commit message, something like:
-> 
-> wait_queue_func_t accepts 4 arguments (struct wait_queue_entry
-> *wq_entry, unsigned mode, int flags, void *key);
-> 
-> In the case of poll and select the wait queue function is pollwake in
-> fs/select.c, this wake function passes
-> the third argument flags as the sync parameter to the
-> default_wake_function defined in kernel/sched/core.c. This
-> argument is passed along to try_to_wake_up which continues to pass
-> down the wake flags to select_task_rq and finally
-> in the case of CFS select_task_rq_fair. In select_task_rq_fair the
-> sync flag is passed down to the wake_affine_* functions
-> in kernel/sched/fair.c which accept and honor the sync flag.
-> 
-> Epoll however when reciving the WF_SYNC flag completely drops it on
-> the floor, the wakeup function used
-> by epoll is defined in fs/eventpoll.c, ep_poll_callback. This callback
-> receives a sync flag just like pollwake;
-> however, it never does anything with it. Ultimately it wakes up the
-> waiting task directly using wake_up.
-> 
-> This shows that there seems to be a divergence between poll/select and
-> epoll regarding honoring sync wakeups.
-> 
-> I have tested this patch through self tests and numerous runs of the
-> perf benchmarks for epoll. All tests past and
-> I did not see any observable performance changes in epoll_wait.
-> 
-> Reviewed-by: Brian Geffon <bgeffon@google.com>
-> Tested-by: Brian Geffon <bgeffon@google.com>
-> Reported-by: Benoit Lize <lizeb@google.com>
+Hi Andrew,
 
-Friendly ping on this. Would someone mind taking a look and picking this
-up?
+kernel test robot noticed the following build warnings:
 
-> 
-> 
-> On Thu, Sep 19, 2024 at 8:36 AM Brian Geffon <bgeffon@google.com> wrote:
-> >
-> > We've also observed this issue on ChromeOS, it seems like it might long-standing epoll bug as it diverges from the behavior of poll. Any chance a maintainer can take a look?
-> >
-> > Thanks
-> > Brian
-> >
-> > On Fri, Apr 26, 2024 at 04:05:48PM +0800, Xuewen Yan wrote:
-> > > Now, the epoll only use wake_up() interface to wake up task.
-> > > However, sometimes, there are epoll users which want to use
-> > > the synchronous wakeup flag to hint the scheduler, such as
-> > > Android binder driver.
-> > > So add a wake_up_sync() define, and use the wake_up_sync()
-> > > when the sync is true in ep_poll_callback().
-> > >
-> > > Co-developed-by: Jing Xia <jing.xia@unisoc.com>
-> > > Signed-off-by: Jing Xia <jing.xia@unisoc.com>
-> > > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> > > ---
-> > >  fs/eventpoll.c       | 5 ++++-
-> > >  include/linux/wait.h | 1 +
-> > >  2 files changed, 5 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > > index 882b89edc52a..9b815e0a1ac5 100644
-> > > --- a/fs/eventpoll.c
-> > > +++ b/fs/eventpoll.c
-> > > @@ -1336,7 +1336,10 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
-> > >                               break;
-> > >                       }
-> > >               }
-> > > -             wake_up(&ep->wq);
-> > > +             if (sync)
-> > > +                     wake_up_sync(&ep->wq);
-> > > +             else
-> > > +                     wake_up(&ep->wq);
-> > >       }
-> > >       if (waitqueue_active(&ep->poll_wait))
-> > >               pwake++;
-> > > diff --git a/include/linux/wait.h b/include/linux/wait.h
-> > > index 8aa3372f21a0..2b322a9b88a2 100644
-> > > --- a/include/linux/wait.h
-> > > +++ b/include/linux/wait.h
-> > > @@ -221,6 +221,7 @@ void __wake_up_pollfree(struct wait_queue_head *wq_head);
-> > >  #define wake_up_all(x)                       __wake_up(x, TASK_NORMAL, 0, NULL)
-> > >  #define wake_up_locked(x)            __wake_up_locked((x), TASK_NORMAL, 1)
-> > >  #define wake_up_all_locked(x)                __wake_up_locked((x), TASK_NORMAL, 0)
-> > > +#define wake_up_sync(x)                      __wake_up_sync(x, TASK_NORMAL)
-> > >
-> > >  #define wake_up_interruptible(x)     __wake_up(x, TASK_INTERRUPTIBLE, 1, NULL)
-> > >  #define wake_up_interruptible_nr(x, nr)      __wake_up(x, TASK_INTERRUPTIBLE, nr, NULL)
-> > > --
-> > > 2.25.1
-> > >
-> >
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on linus/master v6.12-rc3 next-20241015]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrew-Davis/mailbox-ti-msgmgr-Remove-use-of-of_match_ptr-helper/20241014-225353
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20241014144821.15094-3-afd%40ti.com
+patch subject: [PATCH 2/2] mailbox: ti-msgmgr: Allow building under COMPILE_TEST
+config: hexagon-randconfig-r131-20241015 (https://download.01.org/0day-ci/archive/20241016/202410160435.WzzQa1p5-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
+reproduce: (https://download.01.org/0day-ci/archive/20241016/202410160435.WzzQa1p5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410160435.WzzQa1p5-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/firmware/ti_sci.c:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/firmware/ti_sci.c:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/firmware/ti_sci.c:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   drivers/firmware/ti_sci.c:200:20: warning: unused function 'ti_sci_debugfs_destroy' [-Wunused-function]
+     200 | static inline void ti_sci_debugfs_destroy(struct platform_device *dev,
+         |                    ^~~~~~~~~~~~~~~~~~~~~~
+>> drivers/firmware/ti_sci.c:3285:34: warning: unused variable 'ti_sci_of_match' [-Wunused-const-variable]
+    3285 | static const struct of_device_id ti_sci_of_match[] = {
+         |                                  ^~~~~~~~~~~~~~~
+   8 warnings generated.
+
+
+vim +/ti_sci_of_match +3285 drivers/firmware/ti_sci.c
+
+aa276781a64a5f Nishanth Menon 2016-10-18  3284  
+aa276781a64a5f Nishanth Menon 2016-10-18 @3285  static const struct of_device_id ti_sci_of_match[] = {
+aa276781a64a5f Nishanth Menon 2016-10-18  3286  	{.compatible = "ti,k2g-sci", .data = &ti_sci_pmmc_k2g_desc},
+754c9477ae7872 Peter Ujfalusi 2019-04-30  3287  	{.compatible = "ti,am654-sci", .data = &ti_sci_pmmc_am654_desc},
+aa276781a64a5f Nishanth Menon 2016-10-18  3288  	{ /* Sentinel */ },
+aa276781a64a5f Nishanth Menon 2016-10-18  3289  };
+aa276781a64a5f Nishanth Menon 2016-10-18  3290  MODULE_DEVICE_TABLE(of, ti_sci_of_match);
+aa276781a64a5f Nishanth Menon 2016-10-18  3291  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
