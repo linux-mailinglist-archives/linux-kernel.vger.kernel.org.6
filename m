@@ -1,182 +1,137 @@
-Return-Path: <linux-kernel+bounces-365305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AF099E034
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4705D99E058
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C7828239D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BAE32821CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F386B1BBBCC;
-	Tue, 15 Oct 2024 08:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B40F1B85D4;
+	Tue, 15 Oct 2024 08:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZnTg+VYs"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XhkG5Py+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981D41714C4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF21B4F3E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728979415; cv=none; b=UT3xwiTipjxUSJqfS+UC2hxFm77RCj2PapFf78/VevMzsAtQPOc4xZ/RDYk7Fh10BeGYYnkPRqICN25zCfYtQVyD/K/S7npKD8VqhJjAT2hy4UmD9WJksE0EvubvhtT19VJ9mrO9ClGGu/JoJuN5X1KqgdHypvc7ZNbD/nMS8Zc=
+	t=1728979620; cv=none; b=nWwtLwY9NqttjxpSXaAvixSU3sIHW4Xy327bJWraf57uzlypu+Lrl5vHjaXd1YRGnOdvBQcVL/Hc93uzqj1/6IwH5nZBK1gdDaxduTQlcmf370EBwR5VJMrTDKfCV3fBXR/hHHPusoMw4z8PQ5nzl2myFozH3FEGGMoc9PgosQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728979415; c=relaxed/simple;
-	bh=EInbJTWQIXN5jkIPg2sKpT7dUQFA8FtF+mTLVVrhm0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kw9TG2X7Q5J9IH2ZtZ2bIwm+dqcGpRAyynpLILlRY5Yn+BtXUL4bOD+0YrD+ZQpTUFCZdYJPw60YQQM24M3dhLKe7ffIOARAPgOohF5HlX4xopMu5WT2j0JUmJe862SsFWPLa5uqp+BBC4dr3Zcl+j2qiDkoisamu+ve3zEkIWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZnTg+VYs; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539eb97f26aso2503901e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728979411; x=1729584211; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N3sV+MUjmkm/3ouMm/VZqChWo6gbDHYg+6Mp7oGExyw=;
-        b=ZnTg+VYsSV6PHM8jxNR3P1xYZp8uLraKqunRH4V5w56zdABWefNOwupQnEUEDokEJ/
-         JGCs06aLbiTyCj4lHR8qDBvCz1WWy9zCK14d9bZUBjr0cNi2oIOPdDHq+sHsWbX/8Qlq
-         usqWvHz5azFz1PdoB/NY9c530kHkgNdQOS2Hu54DeHUfZUprH0XBBmRWufQqqKTYThmN
-         GUosmVrPkJZH1U0gfdXBPi9xrcITtwTt5qCV5AIQlNEwIc5xpvZ/hC6fDRTKMlTV3PZK
-         RbE9E2sY8ZPCDn5DWr7ou/dIxsnIouZutGXv2MzXnCf6b6wyhhRhhWtu6/Y76rJGcR7i
-         KQ0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728979411; x=1729584211;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N3sV+MUjmkm/3ouMm/VZqChWo6gbDHYg+6Mp7oGExyw=;
-        b=ahb4BUaQ5S5AX4gVzNcVLRegT983ZWrnzJtxapnPNe2Z7Awux97fMW321BOY28NnBs
-         wuVUdKIwkEJinBHN6aiU9f9jt0bH2ZbDsCLZZNg+Pgplj0D2Xov7w2r0lTh2UJyfkbvd
-         lD5d84Cu9DCJHOb9XEJ8EA3JU7fqpjIEV+wS8kRqLKnkORW6oe9+V2WTKgQ8q7VtKG/b
-         42TmQo4ExlGZDQP/kmUpybzA9vcN0S4QFsuT/Vz2nCi1R7RkiXZCFwBjQ4/iRQF9WlBi
-         CfCKZxzWUZeQNlODFZqnf1qf3s+hjKbqdsRkWdqH6u4w4BhbVQ/IT5MiFJUjoVL0Q6Dl
-         jb+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWBXX95+gr5dX0Q5PkyKtzq3riIbFT+Ey3ckJ5gHfTRQ+Ndppyvyjg+Tj4EXFHM9WJxbnsMurB3B2Neag4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy91l30/XAu58GqzDEDjlTghrcMAnwNxGpGoBcW+zfxFDHsSpRd
-	Hl6GPwKKXgO3TxngMCmPvb1B903yl1q571ZcKJsrJh8I0nx84FhUcjD+Pil27gjPDiBvxGgLmuN
-	5EhETSlmJc0mFVGOeZh0De960AB8fc8wpQMIx
-X-Google-Smtp-Source: AGHT+IFuAWCk0O3DiGt2jLIMMRZ+47uA58eN9z+L/2D1jR0fxGLSvk7WvgKy8tyjVoe9CKGvpjScJIML7omeA5rPTic=
-X-Received: by 2002:a05:6512:3f02:b0:536:5625:511a with SMTP id
- 2adb3069b0e04-539da59516cmr7172856e87.47.1728979410474; Tue, 15 Oct 2024
- 01:03:30 -0700 (PDT)
+	s=arc-20240116; t=1728979620; c=relaxed/simple;
+	bh=2dprieRmK8rkpW+7/3CVZPJ2i3vksh9KUR+silX+sr8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k6fKrGqwRpBF4TkfWaVzwf+J3PV1agypQnRfvChtK96i86eeGKnyX/EWaTwKSLJwcfjHaSrJTIPLczgrZJOwHV9AU5V62Nx+4+C7oTkWELzhTSB4lXlhUyzxUS46pY9oi8unAj0kC9J9RKj7OoyxU95pMDP1t7vx0/Kp2vzJdj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XhkG5Py+; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728979616; x=1760515616;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=2dprieRmK8rkpW+7/3CVZPJ2i3vksh9KUR+silX+sr8=;
+  b=XhkG5Py+p9NtsEkT6tSxwiayQ0BD5bVLZ2X8630a3jS7zfY2Ik2aRsLz
+   EUVFKzey9uLuXFr/a7wgdod1xtHNm7L6XApBbYlOhRhZSwYpSdqJaRDPV
+   3Iv8WMhPF8kbganAvSPhd45mpr2966fqyWCkj+tjS6fzmyEnj+N1Mv2Yu
+   FNnYzGY4upKZMl6zLile+uC2eQ9YoNRn3D5eWWtmsK+nGXNkMzQXfyQdo
+   STS+msbEmCILsHY7b6JD93Xwy0FPkfq94cn93IdLW2oVtORSHvBUbKdFT
+   qYWaQly/CbkbfiM2JNoHS4bZUCEdAbdAN7CrnlpI76PD79JnNhYcVjS++
+   w==;
+X-CSE-ConnectionGUID: O21JyTTFRWKf6LjRH9mAog==
+X-CSE-MsgGUID: z0+qYSqhTGauDG7EU8VhXw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="38910396"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="38910396"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 01:06:56 -0700
+X-CSE-ConnectionGUID: 4PEoWR3PRQmptDQYjDN9pA==
+X-CSE-MsgGUID: mh2wWuA9Th2QPj4OuAihsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="115265001"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 01:06:53 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  Guenter Roeck <linux@roeck-us.net>,
+  Nathan Chancellor <nathan@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,
+  Dan Williams <dan.j.williams@intel.com>,  Jonathan Cameron
+ <jonathan.cameron@huawei.com>
+Subject: Re: [PATCH] resource: Remove dependency on SPARSEMEM from
+ GET_FREE_REGION
+In-Reply-To: <942d18c3-f9a8-482e-a166-c7c9d6fb28d7@redhat.com> (David
+	Hildenbrand's message of "Tue, 15 Oct 2024 09:07:07 +0200")
+References: <20241015051554.294734-1-ying.huang@intel.com>
+	<942d18c3-f9a8-482e-a166-c7c9d6fb28d7@redhat.com>
+Date: Tue, 15 Oct 2024 16:03:20 +0800
+Message-ID: <878qup94jb.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010003550.3695245-1-shakeel.butt@linux.dev>
- <CAJD7tkYq+dduc7+M=9TkR6ZAiBYrVyUsF_AuwPqaQNrsfH_qfg@mail.gmail.com>
- <20241009210848.43adb0c3@gandalf.local.home> <CAJD7tkaLQwVphoLiwh8-NTyav36_gAVdzB=gC_qXzv7ti9TzmA@mail.gmail.com>
- <mt474r4yn346in5akhyziwxrh4ip5wukh4fjbhwzfl26wq64nf@xgbv4dtfs3ak>
- <CAJD7tkYzo_K9uF7GOO3yoKzTSbFWuNTUG3O6w1VrGCQvgWhsoQ@mail.gmail.com> <cwibnvqnbtfc7sgpkidh24dcnj2xdb462rf6hndgynqezbzbaf@qog4zl25sqry>
-In-Reply-To: <cwibnvqnbtfc7sgpkidh24dcnj2xdb462rf6hndgynqezbzbaf@qog4zl25sqry>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 15 Oct 2024 01:02:52 -0700
-Message-ID: <CAJD7tkYhYiDj5RSvRnK7uLG82pPLv_f5c4nBgQQCGNJWn9qRjw@mail.gmail.com>
-Subject: Re: [PATCH] memcg: add tracing for memcg stat updates
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>, bpf@vger.kernel.org, 
-	Martin KaFai Lau <martin.lau@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-> > > > > > > @@ -682,7 +686,9 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
-> > > > > > >                 return;
-> > > > > > >
-> > > > > > >         __this_cpu_add(memcg->vmstats_percpu->state[i], val);
-> > > > > > > -       memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val));
-> > > > > > > +       val = memcg_state_val_in_pages(idx, val);
-> > > > > > > +       memcg_rstat_updated(memcg, val);
-> > > > > > > +       trace_mod_memcg_state(memcg, idx, val);
-> > > > > >
-> > > > > > Is it too unreasonable to include the stat name?
-> > > > > >
-> > > > > > The index has to be correlated with the kernel config and perhaps even
-> > > > > > version. It's not a big deal, but if performance is not a concern when
-> > > > > > tracing is enabled anyway, maybe we can lookup the name here (or in
-> > > > > > TP_fast_assign()).
-> > > > >
-> > > > > What name? Is it looked up from idx? If so, you can do it on the reading of
-> > >
-> > > Does reading side mean the one reading /sys/kernel/tracing/trace will do
-> > > the translation from enums to string?
-> > >
-> > > > > the trace event where performance is not an issue. See the __print_symbolic()
-> > > > > and friends in samples/trace_events/trace-events-sample.h
-> > > >
-> > > > Yeah they can be found using idx. Thanks for referring us to
-> > > > __print_symbolic(), I suppose for this to work we need to construct an
-> > > > array of {idx, name}. I think we can replace the existing memory_stats
-> > > > and memcg1_stats/memcg1_stat_names arrays with something that we can
-> > > > reuse for tracing, so we wouldn't need to consume extra space.
-> > > >
-> > > > Shakeel, what do you think?
-> > >
-> > > Cc Daniel & Martin
-> > >
-> > > I was planning to use bpftrace which can use dwarf/btf to convert the
-> > > raw int to its enum string. Martin provided the following command to
-> > > extract the translation from the kernel.
-> > >
-> > > $ bpftool btf dump file /sys/kernel/btf/vmlinux | grep -A10 node_stat_item
-> > > [2264] ENUM 'node_stat_item' encoding=UNSIGNED size=4 vlen=46
-> > >         'NR_LRU_BASE' val=0
-> > >         'NR_INACTIVE_ANON' val=0
-> > >         'NR_ACTIVE_ANON' val=1
-> > >         'NR_INACTIVE_FILE' val=2
-> > >         'NR_ACTIVE_FILE' val=3
-> > >         'NR_UNEVICTABLE' val=4
-> > >         'NR_SLAB_RECLAIMABLE_B' val=5
-> > >         'NR_SLAB_UNRECLAIMABLE_B' val=6
-> > >         'NR_ISOLATED_ANON' val=7
-> > >         'NR_ISOLATED_FILE' val=8
-> > > ...
-> > >
-> > > My point is userspace tools can use existing infra to extract this
-> > > information.
-> > >
-> > > However I am not against adding __print_symbolic() (but without any
-> > > duplication), so users reading /sys/kernel/tracing/trace directly can
-> > > see more useful information as well. Please post a follow up patch after
-> > > this one.
-> >
-> > I briefly looked into this and I think it would be annoying to have
-> > this, unfortunately. Even if we rework the existing arrays with memcg
-> > stat names to be in a format conforming to tracing, we would need to
-> > move them out to a separate header to avoid a circular dependency.
-> >
-> > Additionally, for __count_memcg_events() things will be more
-> > complicated because the names are not in an array in memcontrol.c, but
-> > we use vm_event_name() and the relevant names are part of a larger
-> > array, vmstat_text, which we would need to rework similarly.
-> >
-> > I think this would be easier to implement if we can somehow provide a
-> > callback that returns the name based on the index, rather than an
-> > array. But even then, we would need to specify a different callback
-> > for each event, so it won't be as simple as specifying the callback in
-> > the event class.
-> >
-> > All in all, unless we realize there is something that is fundamentally
-> > more difficult to do in userspace, I think it's not worth adding this
-> > unfortunately :/
->
-> Turned out to be quite straightforward to do in userspace:
-> https://github.com/bpftrace/bpftrace/pull/3515 .
->
-> A nice property is the resolution occurs out of line and saves the
-> kernel some cycles in the fast path.
+Hi, David,
 
-This is really neat, thanks for doing this! Native support in bpftrace
-is definitely better than manually correlating the values, especially
-with large enums with 10s of values like the ones we are talking about
-here.
+David Hildenbrand <david@redhat.com> writes:
+
+> On 15.10.24 07:15, Huang Ying wrote:
+>> We want to use the functions configured via GET_FREE_REGION in
+>> resource kunit tests.  However, GET_FREE_REGION depends on SPARSEMEM.
+>> This makes resource kunit tests cannot be built on some architectures
+>> lacking SPARSEMEM.  In fact, these functions doesn't depend on
+>> SPARSEMEM now.  So, remove dependency on SPARSEMEM from
+>> GET_FREE_REGION.
+>> Link:
+>> https://lore.kernel.org/lkml/20240922225041.603186-1-linux@roeck-us.net/
+>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+>> Tested-by: Guenter Roeck <linux@roeck-us.net>
+>> Cc: Nathan Chancellor <nathan@kernel.org>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Dan Williams <dan.j.williams@intel.com>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+>> ---
+>>   mm/Kconfig | 1 -
+>>   1 file changed, 1 deletion(-)
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index 4c9f5ea13271..33fa51d608dc 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -1085,7 +1085,6 @@ config HMM_MIRROR
+>>   	depends on MMU
+>>     config GET_FREE_REGION
+>> -	depends on SPARSEMEM
+>>   	bool
+>>     config DEVICE_PRIVATE
+>
+> Added by
+>
+> commit 14b80582c43e4f550acfd93c2b2cadbe36ea0874
+> Author: Dan Williams <dan.j.williams@intel.com>
+> Date:   Fri May 20 13:41:24 2022 -0700
+>
+>     resource: Introduce alloc_free_mem_region()
+>
+> @Dan, any insight why that dependency was added?
+
+Dan has explain it some what in the following email,
+
+https://lore.kernel.org/lkml/66f5abd431dce_964f2294b9@dwillia2-xfh.jf.intel.com.notmuch/
+
+This is reachable from the "Link:" tag in the patch.
+
+--
+Best Regards,
+Huang, Ying
 
