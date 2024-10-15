@@ -1,101 +1,138 @@
-Return-Path: <linux-kernel+bounces-365803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B829D99EA24
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE2E99E9F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9691C225E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E287D1C21F09
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43662101AE;
-	Tue, 15 Oct 2024 12:41:50 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196B0209F4D;
+	Tue, 15 Oct 2024 12:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYhWLkIR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB80C2281DF;
-	Tue, 15 Oct 2024 12:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717AE1F941C;
+	Tue, 15 Oct 2024 12:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728996110; cv=none; b=J3R5DLUv18J2tgQbmowJOe1f9gEB32AklidWyS1TcwH3I29xpKiuneaa8cFuvNUJA3+jwrbenTLuWqFIOAWMHu0U6k0qg0g65hE2iNhx4zSBQd8Sizt5GXX97fmVLfbRCYSvbgH2MiCiJhGxw7AomsOo2Cl7VTZShl4pPdXpTiE=
+	t=1728995822; cv=none; b=sn6BdzPY8vgiOIoJKLLLEJmbHinGVs6JcAxD/6u6MhYcjDDQi74zMHT5K/7dB6IYm/YvDHmNAwMlT0i1s2wESXkW34dZgosDYuycZW3rmYz84BjaWGDT9ypBne5/+LDoRax28FUilyrOqU7Hv7s1bC2KqFzTy0Oeg3UBJXUtop4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728996110; c=relaxed/simple;
-	bh=ZAaOgVmO3LVGg2S+VqLswSzGdiIeG38JaxHZdu0HdBM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dryABu0ODwcenTlbKBw8nvtxyN2FUF0Ro6Nx+MFIsshMDwiJ+PEJjgoqGTiztG3B9ySXrE6jQox3Y02jqhCWJ50sBasejW/W/mz8IyFeet4LjU7iMiJBIhiCwWjwyeEqdPwxJlcrrTcEcTrypnqnLEEhHRp4ZucSbjGtZTO3Fo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XSYbh26nBz1gx27;
-	Tue, 15 Oct 2024 20:40:32 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id E0AA31400D2;
-	Tue, 15 Oct 2024 20:41:45 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 15 Oct 2024 20:41:45 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<andrew@lunn.ch>, <jdamato@fastly.com>, <horms@kernel.org>,
-	<kalesh-anakkur.purayil@broadcom.com>, <christophe.jaillet@wanadoo.fr>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH V12 RESEND net-next 10/10] net: hibmcge: Add maintainer for hibmcge
-Date: Tue, 15 Oct 2024 20:35:16 +0800
-Message-ID: <20241015123516.4035035-11-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241015123516.4035035-1-shaojijie@huawei.com>
-References: <20241015123516.4035035-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1728995822; c=relaxed/simple;
+	bh=3xY3hfcRWr6Ylg7ojVLDvQmHojwLA7BHcTJWc1fwP2w=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UX1T5SG5Uz0tKJ2LEhJSvbr8hxTVDJcdyXQneO4swC/OLQ2tQmS435ym790C5HB6oQEfV/TtgMnWTT04s7t5aPwZdiryT7Qoliwayl/61nKT+lGdYKdEXbWwWtzBwqByfyiAa4AlUe7GxPG00CQlZCwqDjJXczC9aXasGw7gfq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYhWLkIR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B9BC4CEC6;
+	Tue, 15 Oct 2024 12:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728995822;
+	bh=3xY3hfcRWr6Ylg7ojVLDvQmHojwLA7BHcTJWc1fwP2w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UYhWLkIRdJ/jMJ38Sja9hZVy0vFI1xYl7QgS3djQO4j1hYlbYNMr1GXoqpNEFUiQA
+	 DIHdTOCUJFOd/xGZbjtAhVrheZFXTRnBzj0Wgk2d/Ef6W4lmsjsuokxJREGOs5p+wW
+	 qhu/bGrdsXITi+U4DzxBhX8dgFbtWi7PeAIxbHgwHN+zf3XhGhaQkN3d+a9PY+HtaV
+	 hhyhYsBTkh2J1hLsgzjovPPbTKnv2yrwDzoj8/3mIorPJHuf6BRF5+GuGQAWuJxaOn
+	 3e2At4/mQJ+EjiqHDxzp3DWFdzrafzyw0/q3dCHIr8jeKwdkBFwlb8fke/B/SxzSHI
+	 28tsCOxBRJgCA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t0gnL-003iTc-Av;
+	Tue, 15 Oct 2024 13:36:59 +0100
+Date: Tue, 15 Oct 2024 13:36:58 +0100
+Message-ID: <8634kx5yqd.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-pm@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	pbonzini@redhat.com,
+	wanpengli@tencent.com,
+	vkuznets@redhat.com,
+	rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	peterz@infradead.org,
+	arnd@arndb.de,
+	lenb@kernel.org,
+	mark.rutland@arm.com,
+	harisokn@amazon.com,
+	mtosatti@redhat.com,
+	sudeep.holla@arm.com,
+	cl@gentwo.org,
+	misono.tomohiro@fujitsu.com,
+	maobibo@loongson.cn,
+	joao.m.martins@oracle.com,
+	boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v8 00/11] Enable haltpoll on arm64
+In-Reply-To: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ankur.a.arora@oracle.com, linux-pm@vger.kernel.org, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, wanpengli@tencent.com, vkuznets@redhat.com, rafael@kernel.org, daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com, cl@gentwo.org, misono.tomohiro@fujitsu.com, maobibo@loongson.cn, joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Add myself as the maintainer for the hibmcge ethernet driver.
+On Thu, 26 Sep 2024 00:24:14 +0100,
+Ankur Arora <ankur.a.arora@oracle.com> wrote:
+> 
+> This patchset enables the cpuidle-haltpoll driver and its namesake
+> governor on arm64. This is specifically interesting for KVM guests by
+> reducing IPC latencies.
+> 
+> Comparing idle switching latencies on an arm64 KVM guest with 
+> perf bench sched pipe:
+> 
+>                                      usecs/op       %stdev   
+> 
+>   no haltpoll (baseline)               13.48       +-  5.19%
+>   with haltpoll                         6.84       +- 22.07%
+> 
+> 
+> No change in performance for a similar test on x86:
+> 
+>                                      usecs/op        %stdev   
+> 
+>   haltpoll w/ cpu_relax() (baseline)     4.75      +-  1.76%
+>   haltpoll w/ smp_cond_load_relaxed()    4.78      +-  2.31%
+> 
+> Both sets of tests were on otherwise idle systems with guest VCPUs
+> pinned to specific PCPUs. One reason for the higher stdev on arm64
+> is that trapping of the WFE instruction by the host KVM is contingent
+> on the number of tasks on the runqueue.
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
-ChangeLog:
-v11 -> v12:
-  - remove the W entry of hibmcge driver from MAINTAINERS, suggested by Jakub.
-  v11: https://lore.kernel.org/all/20241008022358.863393-1-shaojijie@huawei.com/
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+Sorry to state the obvious, but if that's the variable trapping of
+WFI/WFE is the cause of your trouble, why don't you simply turn it off
+(see 0b5afe05377d for the details)? Given that you pin your vcpus to
+physical CPUs, there is no need for any trapping.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 560a65b85297..b5242fdb564d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10278,6 +10278,12 @@ S:	Maintained
- W:	http://www.hisilicon.com
- F:	drivers/net/ethernet/hisilicon/hns3/
- 
-+HISILICON NETWORK HIBMCGE DRIVER
-+M:	Jijie Shao <shaojijie@huawei.com>
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	drivers/net/ethernet/hisilicon/hibmcge/
-+
- HISILICON NETWORK SUBSYSTEM DRIVER
- M:	Jian Shen <shenjian15@huawei.com>
- M:	Salil Mehta <salil.mehta@huawei.com>
+	M.
+
 -- 
-2.33.0
-
+Without deviation from the norm, progress is not possible.
 
