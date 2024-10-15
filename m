@@ -1,188 +1,117 @@
-Return-Path: <linux-kernel+bounces-366209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A09299F233
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:00:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F8499F237
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB75C1C2238F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:00:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA5B5B2269E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696181F667E;
-	Tue, 15 Oct 2024 15:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBB01F76C2;
+	Tue, 15 Oct 2024 15:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="InYUrCyF"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="gHZ4donL"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1F81F667C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2F41F7065;
+	Tue, 15 Oct 2024 15:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729007955; cv=none; b=hwrunH2/HecWXnBF5L/2/DW6Uqk3uBmWJG7BN+bE2on0JjFhIsiV8lqEvFSJO1Xc9vo4eEupoNAApkIFrFKyaT3qJM9/2W4x/iplxfJXfV2mF1OSspGE43FTRIZniRliIk+iA++jh3lcBcetw6toDSBpLBg6GydfIzrlIDHRRl4=
+	t=1729007997; cv=none; b=gxHNS05JyDEkapOzzrSAM4XwBZhKMI/Oih4YXyrMnESqFgBHizArothtL/u/TcUq6hGo6BJH4QLaW7km2m82tI7fKgqZSvolEEkgMcjW/NUMNPPW2sZsJDrsv5kr7zOTiUPKz18ayQ91M+n7IYn3NVAlT7ryF7DRd1+w5kvUh6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729007955; c=relaxed/simple;
-	bh=XE41Ka7vKxZjagEXLHac+Fwc56DYu0ANyHcZAa6jXdw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TB2X5Owjl6MslV9F8i/MhUESWJkB2nzzzWT+qNCdUsI1tp4swhjkOpbq0OrZnUBx8HrroHE1rA6xqJOpzyskNARvfTHBWS4JfDEdUGoJf1wgwJ76uFUstmm4mEuaG2XBdJSIwoIkTEDeW+/cO9roEqFGxdt2l6PbD1kuqBacjWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=InYUrCyF; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-45fb0ebb1d0so723081cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729007953; x=1729612753; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XE41Ka7vKxZjagEXLHac+Fwc56DYu0ANyHcZAa6jXdw=;
-        b=InYUrCyF1rEOsYNSVAHRT+QpeORYlDOg0R9f1bATZsSE/a5ljFOeiaptj2jum+sDAX
-         0lRFmdxIS1u8eJQ84mnPKZAKR12ik+LepB87gcmnQzz+O/wQ4aUXtrcDTrJ7BIrva3Qs
-         e4V888udjmjBsVm2SW1iyJBPaDueyJ+F/8wUB64Lc5Mj6t1U7IFWzF8Bq9RRUHXIpIMo
-         9JWqc3pNV4MP0D5/NVKhIMZQRSejoDe9qMGSdKd6HddesKjtKw39vr2QWr6hGhA6/Ae7
-         8614dwy8S66dF7jqMN6oOE5yhSU4E9h4YdZkDNe7Y1i5KTZIpj30uX69gXpbhLkgk/u7
-         r2tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729007953; x=1729612753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XE41Ka7vKxZjagEXLHac+Fwc56DYu0ANyHcZAa6jXdw=;
-        b=Pf3wurLRE0ldMKgl0BR3Vkppj+JpJY+xyO62iHQdYosaXcqkU1r5DPsOEFr2BPclRm
-         HoQ41N6CQY/0m30lB3t01omMcnuCyw7aUux84Q8ol439qsqo10WMNq36goPLDDOo9BQD
-         nHtlb+22uFmCpmZLN9t4LmsD1+kuYOeJ0ibnO4T3RPq7oV9wWoixBlVCWY2bOzwy4c3e
-         2jkvkXRL8haevLrhCFBHxc2S3A7P62T7T/zfrhFJIXK6eF0RQeAbpITVccR/0K9SF61V
-         yeaVOvL1uaXSeIzH26KinWDiuuBpWn+edMYCtXWntzxgkNZ2irXCJufk/+CmahEU14E2
-         hRVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLC163oCTmuXBHul+0PWqRtullXw/KDM3PBO+khffhEU4pUXkO0Ju+hXHeldt8SF7vOwZfljR5uc+8rrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/vtGS5qf24XlYupFQCxadEmoBPJ9yoYlNKaFFB3aBoS5p9GVj
-	xBF97J+fSr9bdK39UtXbZAY6GdutjIt6doWrkO1/eAfpEjKKiDs/zF3ZIPV+WiEn0A4ZifF1E34
-	Na7cJ1zA5r25p6b4xscN6el1jDixj38IBmvI7
-X-Google-Smtp-Source: AGHT+IF6xgKzdwApAz/tp26tbpQrjDXqxixmCCmxzkzM5PRyG4nrJ8/4jSASshjSbXG9ZNd4t2I6D2nt4kc3vxb6XWk=
-X-Received: by 2002:a05:622a:4b05:b0:453:56e7:c62b with SMTP id
- d75a77b69052e-46058ec036amr9300601cf.12.1729007952467; Tue, 15 Oct 2024
- 08:59:12 -0700 (PDT)
+	s=arc-20240116; t=1729007997; c=relaxed/simple;
+	bh=2mK+ZWFmR/HEmxNXgK8igOSG3DBZjetA7eR4+41kzn4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bA/z7G4WrOUWUvPQOWbK8nd3jhabxI7N+sRY39Cw+Vd93WKjKTZ3lZ2M0j9EDKneJEpeioHfyx/wqNi2EWYWCn+fFZDCCwr2gGTAfvTv4FZ4JLUZ9NPs5o1pErqxJi34NNyTl+Al618Kg4CMPzT+6DFKuVUtwCS0GQjsRh0stDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=gHZ4donL; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1A7E3240003;
+	Tue, 15 Oct 2024 15:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1729007992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=muVbXj6XjdM0+48mRJ+sHlgnyRTe+ujByi/N8a3eBTU=;
+	b=gHZ4donLANwwj7WEZd0j8tA3ic8bZf2ia6q3HlhTGiET+Nvgh3TjDYlHXDistcF+lyHcx2
+	K0qrxStda8Eaw46w7rFD+mE5WWeXz86nJ/rdcqf4KW8x7aRh8RY0xKv0MhmQB/IYWJIOkH
+	vSYxKazzw+dMgcNmipFPOlMp0aeRSfpjfHdvgRLzAhiIdVV5VjEEIYgW2MaT91tyOhb9V7
+	0QwsOwXm0Y32jnBFs52zUfvQC8j8Lbx45RjU/hdZMntyh5dWa11406j3HEDbsTtdVoRNAU
+	bWTDsEOH8FtsM0mwmj7RBwRUOepKNZt8+Y0Glwd+RaU+SntsCTlxJ0ZXfT7Img==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Theodore Ts'o
+ <tytso@mit.edu>,  Andreas Dilger <adilger.kernel@dilger.ca>,  Hugh Dickins
+ <hughd@google.com>,  Andrew Morton <akpm@linux-foundation.org>,  Jonathan
+ Corbet <corbet@lwn.net>,  smcv@collabora.com,  kernel-dev@igalia.com,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-ext4@vger.kernel.org,  linux-mm@kvack.org,
+  linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 01/10] libfs: Create the helper function
+ generic_ci_validate_strict_name()
+In-Reply-To: <20241010-tonyk-tmpfs-v6-1-79f0ae02e4c8@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Thu, 10 Oct 2024 16:39:36 -0300")
+References: <20241010-tonyk-tmpfs-v6-0-79f0ae02e4c8@igalia.com>
+	<20241010-tonyk-tmpfs-v6-1-79f0ae02e4c8@igalia.com>
+Date: Tue, 15 Oct 2024 11:59:48 -0400
+Message-ID: <87bjzls6ff.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-6-surenb@google.com>
- <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
- <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com> <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
- <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com> <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
-In-Reply-To: <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 15 Oct 2024 08:58:59 -0700
-Message-ID: <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-To: David Hildenbrand <david@redhat.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net, 
-	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
-	xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
-	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gabriel@krisman.be
 
-On Tue, Oct 15, 2024 at 8:42=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 15.10.24 16:59, Suren Baghdasaryan wrote:
-> > On Tue, Oct 15, 2024 at 12:32=E2=80=AFAM David Hildenbrand <david@redha=
-t.com> wrote:
-> >>
-> >> On 15.10.24 01:53, John Hubbard wrote:
-> >>> On 10/14/24 4:48 PM, Yosry Ahmed wrote:
-> >>>> On Mon, Oct 14, 2024 at 1:37=E2=80=AFPM Suren Baghdasaryan <surenb@g=
-oogle.com> wrote:
-> >>>>>
-> >>>>> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
-> >>>>> references directly in the page flags. This eliminates memory
-> >>>>> overhead caused by page_ext and results in better performance
-> >>>>> for page allocations.
-> >>>>> If the number of available page flag bits is insufficient to
-> >>>>> address all kernel allocations, profiling falls back to using
-> >>>>> page extensions with an appropriate warning to disable this
-> >>>>> config.
-> >>>>> If dynamically loaded modules add enough tags that they can't
-> >>>>> be addressed anymore with available page flag bits, memory
-> >>>>> profiling gets disabled and a warning is issued.
-> >>>>
-> >>>> Just curious, why do we need a config option? If there are enough bi=
-ts
-> >>>> in page flags, why not use them automatically or fallback to page_ex=
-t
-> >>>> otherwise?
-> >>>
-> >>> Or better yet, *always* fall back to page_ext, thus leaving the
-> >>> scarce and valuable page flags available for other features?
-> >>>
-> >>> Sorry Suren, to keep coming back to this suggestion, I know
-> >>> I'm driving you crazy here! But I just keep thinking it through
-> >>> and failing to see why this feature deserves to consume so
-> >>> many page flags.
-> >>
-> >> My 2 cents: there is nothing wrong about consuming unused page flags i=
-n
-> >> a configuration. No need to let them stay unused in a configuration :)
-> >>
-> >> The real issue starts once another feature wants to make use of some o=
-f
-> >> them ... in such configuration there would be less available for
-> >> allocation tags and the performance of allocations tags might
-> >> consequently get worse again.
-> >
-> > Thanks for the input and indeed this is the case. If this happens, we
-> > will get a warning telling us that page flags could not be used and
-> > page_ext will be used instead. I think that's the best I can do given
-> > that page flag bits is a limited resource.
->
-> Right, I think what John is concerned about (and me as well) is that
-> once a new feature really needs a page flag, there will be objection
-> like "no you can't, we need them for allocation tags otherwise that
-> feature will be degraded".
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-I do understand your concern but IMHO the possibility of degrading a
-feature should not be a reason to always operate at degraded capacity
-(which is what we have today). If one is really concerned about
-possible future regression they can set
-CONFIG_PGALLOC_TAG_USE_PAGEFLAGS=3Dn and keep what we have today. That's
-why I'm strongly advocating that we do need
-CONFIG_PGALLOC_TAG_USE_PAGEFLAGS so that the user has control over how
-this scarce resource is used.
+> +static inline bool generic_ci_validate_strict_name(struct inode *dir, st=
+ruct qstr *name)
+> +{
+> +	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
+> +		return true;
+> +
+> +	/*
+> +	 * A casefold dir must have a encoding set, unless the filesystem
+> +	 * is corrupted
+> +	 */
+> +	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
+> +		return true;
+> +
+> +	return utf8_validate(dir->i_sb->s_encoding, name);
 
->
-> So a "The Lord has given, and the Lord has taken away!" mentality might
-> be required when consuming that many scarce resources, meaning, as long
-> as they are actually unused, use them, but it should not block other
-> features that really need them.
+There is something fishy here.  Concerningly, the fstests test doesn't
+catch it.
 
-I agree and I think that's what I implemented here. If there are
-enough page flag bits we use them, otherwise we automatically fall
-back to page_ext.
+utf8_validate is defined as:
 
->
-> Does that make sense?
+  int utf8_validate(const struct unicode_map *um, const struct qstr *str)
 
-Absolutely and thank you all for the feedback.
+Which returns 0 on success and !0 on error. Thus, when casting to bool,
+the return code should be negated.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+But generic/556 doesn't fail. That's because we are over cautious, and
+also check the string at the end of generic_ci_d_hash.  So we never
+really reach utf8_validate in the tested case.
+
+But if you comment the final if in generic_ci_d_hash, you'll see this
+patchset regresses the fstests case generic/556 over ext4.
+
+We really need the check in both places, though.  We don't want to rely
+on the behavior of generic_ci_d_hash to block invalid filenames, as that
+might change.
+
+--=20
+Gabriel Krisman Bertazi
 
