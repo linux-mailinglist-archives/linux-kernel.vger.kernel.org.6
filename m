@@ -1,79 +1,73 @@
-Return-Path: <linux-kernel+bounces-365566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B5D99E472
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF71E99E475
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7FD282D31
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:46:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDE7CB22271
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DA21D2B21;
-	Tue, 15 Oct 2024 10:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69211E764B;
+	Tue, 15 Oct 2024 10:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U4F7Y0ga"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="wn4XhrL9"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5F1146D55
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40831C7608
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989203; cv=none; b=dblx1WjG4h1taaAbkPkeApzu0BLbYrTeKy0uP1VtWGIPSjwB1wqFTSwmzoE8BxGjm0V3DFe+m23rlitECT4z/sNpsSpZbOUrjkR3I698VFi7111kE7Fzm2G+WC7SCfVGbKkSnYVt0zYsixa1Pb6ykyMorbl0bNygpAs/ERa51OA=
+	t=1728989220; cv=none; b=PLhzcDnQYpD4STD0gyvfzHmVIeCg4I/RjzPI0Y1Jk+VzS/w2xJOBUg6za0s9KIGpOvj93Us/jtWJO8q88fqs2SNNIs169SEeBKSKwRHcmpx2iM0KEm5XSXeUBKEcIaeeLdB0ke5qicRgPoAV66TzHWP0dwiUo3z4+lhzHeQDR1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989203; c=relaxed/simple;
-	bh=fW476nZCmDCSRgye7UwJvzeVl9dNa+iwAAalvvIkHZM=;
+	s=arc-20240116; t=1728989220; c=relaxed/simple;
+	bh=JbGYC94SBTd36kaLgYONpoB5/edTGqERj6FLvw8mhTc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ROMA5l2RTiK2NpaP00SY4BdWHD10AtKO0tgtzwVq2AiJ0bt1NwBispqkEJ0FQ+U7GOouL1oMCPYJjVKzoD5dJNMILX1oESTCbRwmiWk/pwLtZEWWxJ4oyvTyBrr0HgEO1E2ciePN8w64qcmjyMWCYqCv77F2QYC1BiHOrUWTCz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U4F7Y0ga; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728989200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IDU1D/r+iHdlN/95BqAJt4M/vmdPwT06riD32mBzX2I=;
-	b=U4F7Y0ga9ueo4j4fdoDJgbi2y6dXhtVj6v9EIPMmgqMtpg1+gjUyNrQNN1ajumbixAAue8
-	6FlTmwZGr4t9VJBnBYNORj3h+QkW99T9NFMrx3bgmwhj6xD+OElt8UEZGClPoEGg96g2vB
-	UzSDGD0BJsar/5b3wwmOFia9a4IK9jY=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-119-nsQ-24BTNBatpgatfrMQEQ-1; Tue, 15 Oct 2024 06:46:39 -0400
-X-MC-Unique: nsQ-24BTNBatpgatfrMQEQ-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431159f2864so27302175e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:46:39 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ZCI/1O1Dq+/NcuuUDIYrbwMU+H/PdVhlVZU1c2P1YJJtV25R3bsf0WXczLQEec5TFdxf5gycvExfhT4WN8sKFYoN9u+gfO9zb++QnARbORbYky4FZ8SEnXWOh/aso33dIRZHcGvi59bbnNCauU0WWHAzIsJzk6RvXRSaKOdHorQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=wn4XhrL9; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so287458566b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728989215; x=1729594015; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=520DfjHdYRRP2GFNU0/yY3BItKCuA8awUDQGTCRwXIQ=;
+        b=wn4XhrL9MzyE5n8dTaoMUuLsz46qXnHMgX4rnDetwZT+LzGAqgdcMLGRlZYTcFsb7F
+         f7n0i3JXxEpXuJrinPOqmgdNp3Xag33AnbACdsCIol1VBJZ9YdHN8SjPo85tJU++9ZtH
+         qEVIgzDiwewMB7RERWGGplQAdE69GtQl1ppHyOUZ4/pnvs0OzcrMqKTP/8I2Ok7/IB13
+         ES5I0NqwqVx+Nd2QWt5DMvUmqqNnvxmSnr38R40oY6cp2pe5kc5pHTqGNTWeElYcmhv3
+         z9CDCr6kMnxRpd6kCGK3tSm+2AeNGb/T16GCVqfE8fc6KJLPLIjlx8rwM1HPAN0UZ5CL
+         bu7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728989198; x=1729593998;
+        d=1e100.net; s=20230601; t=1728989215; x=1729594015;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IDU1D/r+iHdlN/95BqAJt4M/vmdPwT06riD32mBzX2I=;
-        b=YWrgoPC9ukbxYDIcaLL3vrvqW167kTB/OWvWrKH4Tnni81oMfcpOoDd1FaBvI/dpdk
-         4s4dqV7boErwjpabyxaHEpUPurEI/EdRaGfIKs+rXRC5X2aVDrmAi38l/DHZJuqL4XKy
-         y2owTE9IJkXPnCbMQyMtXoAXDehcWsvM/iThanPVSeMAfxPXrEB/nwnlaf1u7dNuNMxl
-         RWr3gucf+XayypsIB+Ui6xoME2uSKtLeE3BO92ept3E5kNwGy5x9UmeWdPKrHggA/Bie
-         P3AzbBztqm+JougF8344wuvLS52PKub3EIRqYSRz22AlUiEDh8WFfiRuEEH/mDKY1N7o
-         Qlyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWihUjZaoD17553tnvx/zA+UyKYm5OiGCSffYbxNYFmcPFRWAniAL3MQ0JesCEqbmli3F7jTP/N3FKltMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymT3Zk1w6T4DEw9AIz1K/uLCxYjy6Fl3wcaQhcQNfFI2YrYP3u
-	UdVxdrohLomEGuyEryjWg5fEGb9dKNzKsNPVlZ1aa9o3hty6f0VowQ1Wg96Kgnavo6ejlyX5NAR
-	Bp+TaONgXRJ9Dt7uhJ+9cOpBWBfiFg6sH81TlRin4y5rvVB8ES3Bkm+1r5LKljw==
-X-Received: by 2002:a05:600c:1c03:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-4314a35ee09mr387505e9.26.1728989198391;
-        Tue, 15 Oct 2024 03:46:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH5tzDNsvw78nPVMi9k1REjGUg4XGV2iEzziTWMsPaqrmq2TWxV+DN6MD4mOFzehVuI5P/yng==
-X-Received: by 2002:a05:600c:1c03:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-4314a35ee09mr387165e9.26.1728989197940;
-        Tue, 15 Oct 2024 03:46:37 -0700 (PDT)
-Received: from [10.202.147.124] (nat-pool-brq-u.redhat.com. [213.175.37.12])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56ea05sm14089065e9.23.2024.10.15.03.46.36
+        bh=520DfjHdYRRP2GFNU0/yY3BItKCuA8awUDQGTCRwXIQ=;
+        b=jyPqiQBGYh4jav5XLmKZc+PRNKDwjaRH8pX1ipP+RHXFQaIt2FVfvFs09ZFgblUaH0
+         wzzLc0Rnu02PqIYJpNzWqJcPUXqd34+JeCEABHMRbCZ+iS906kz2FW7I9zkYvZ06/4pO
+         nMabodjvYmST4eTjM/jdQ6FD+drzi6bbIZf1+717DNXGaBD3Qv78teA8HC9BxgNTggis
+         uUaJNWf9rxsV6XvTf3zvKJWVf0hBIoOZj/7Fa/KVJ798gzavCVizxBIrekKm5K7nSQnR
+         OqHq4boMxSOkfjWD0o3bcIJFC2Tr1b1gAn+UMtjlRh29XLVVSMb0iORCKrFID07/ekP6
+         ZZOw==
+X-Forwarded-Encrypted: i=1; AJvYcCULOVxbOq2IHkSMboP3ue0DOlZ3qpIQDh2BdMZpdJSxuUJvXz/3sXqVWIBA7SIKZGzyW0AIn32whaLI7GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzSZVZcuMgKVgchPGRrf0XokfOVWpKg03B7Cxg3lB2IcGMIXFR
+	gvy+gvZxnLLyJToTZX2XF2/aRE4xTrGJIp+r5pn4sW8Yo6UkYj+kBxwegyv9a5c=
+X-Google-Smtp-Source: AGHT+IFD6hmt8hzEHRuoWoYB8e9k1HX3rhZ3I7fiMF/ztMLUUs26xHrhkT81z761RfYRJPnjMCr2Bg==
+X-Received: by 2002:a17:907:2cc2:b0:a8d:439d:5c3c with SMTP id a640c23a62f3a-a99e3b20d62mr1070172866b.8.1728989215149;
+        Tue, 15 Oct 2024 03:46:55 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29717303sm56424566b.7.2024.10.15.03.46.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 03:46:37 -0700 (PDT)
-Message-ID: <2a212bcf-a8ee-4f10-9c5b-948b9f6895f3@redhat.com>
-Date: Tue, 15 Oct 2024 12:46:35 +0200
+        Tue, 15 Oct 2024 03:46:54 -0700 (PDT)
+Message-ID: <8088f2a7-3ab1-4a1e-996d-c15703da13cc@blackwall.org>
+Date: Tue, 15 Oct 2024 13:46:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,120 +75,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf test: Fix probe testsuite with a new error message
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-perf-users <linux-perf-users@vger.kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Michael Petlan <mpetlan@redhat.com>
-References: <20241010051620.1066407-1-namhyung@kernel.org>
- <ZwfNL2sLL8cDy2au@x1> <ZwfNmDNzQAXf0ZQV@x1>
- <af8c186d-72ba-4fcb-8737-84b665017cdd@redhat.com>
- <CA+JHD91skZHrEanhANQzWaq=4wpZomTn8Vab4j+wT2kHdibTkA@mail.gmail.com>
+Subject: Re: [PATCH net] bpf: xdp: fallback to SKB mode if DRV flag is absent.
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Alexei Starovoitov <ast@kernel.org>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>,
+ Jussi Maki <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ Liang Li <liali@redhat.com>
+References: <20241015033632.12120-1-liuhangbin@gmail.com>
+ <8ef07e79-4812-4e02-a5d1-03a05726dd07@iogearbox.net>
+ <2cdcad89-2677-4526-8ab5-3624d0300b7f@blackwall.org>
+ <Zw5GNHSjgut12LEV@fedora>
 Content-Language: en-US
-From: Veronika Molnarova <vmolnaro@redhat.com>
-In-Reply-To: <CA+JHD91skZHrEanhANQzWaq=4wpZomTn8Vab4j+wT2kHdibTkA@mail.gmail.com>
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <Zw5GNHSjgut12LEV@fedora>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-On 10/10/24 16:40, Arnaldo Carvalho de Melo wrote:
-> On Thu, Oct 10, 2024, 10:31 AM Veronika Molnarova <vmolnaro@redhat.com>
-> wrote:
-> 
->>
->>
->> On 10/10/24 14:50, Arnaldo Carvalho de Melo wrote:
->>> On Thu, Oct 10, 2024 at 09:48:52AM -0300, Arnaldo Carvalho de Melo wrote:
->>>> On Wed, Oct 09, 2024 at 10:16:20PM -0700, Namhyung Kim wrote:
->>>>> On my system, it's constantly failing because of new error message from
->>>>> perf probe.  It should update the regex pattern to match the message -
->>>>> "A function DIE doesn't have decl_line. Maybe broken DWARF?".
->>>>>
->>>>>   $ sudo head -n 2 /sys/kernel/debug/kprobes/blacklist | cut -f2
->>>>>   warn_thunk_thunk
->>>>>   asm_exc_divide_error
->>>>>
->>>>>   $ sudo perf probe warn_thunk_thunk
->>>>>   A function DIE doesn't have decl_line. Maybe broken DWARF?
->>>>>   A function DIE doesn't have decl_line. Maybe broken DWARF?
->>>>>   Probe point 'warn_thunk_thunk' not found.
->>>>>     Error: Failed to add events.
->>>>>
->>>>>   $ sudo perf probe asm_exc_overflow
->>>>>   Failed to find scope of probe point.
->>>>>     Error: Failed to add events.
+On 15/10/2024 13:38, Hangbin Liu wrote:
+> On Tue, Oct 15, 2024 at 12:53:08PM +0300, Nikolay Aleksandrov wrote:
+>> On 15/10/2024 11:17, Daniel Borkmann wrote:
+>>> On 10/15/24 5:36 AM, Hangbin Liu wrote:
+>>>> After commit c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags
+>>>> specified"), the mode is automatically set to XDP_MODE_DRV if the driver
+>>>> implements the .ndo_bpf function. However, for drivers like bonding, which
+>>>> only support native XDP for specific modes, this may result in an
+>>>> "unsupported" response.
 >>>>
->>>> We discussed this in the past, I came up with a similar patch, Veronika
->>>> rightly pointed out that this may point to a real problem, Masami said
->>>> that since these are for DWARF from assembly those are known issues, I
->>>> suggested Veronika checked if the CU where the function came from was
->>>> generated from Assembly (there are DWARF tags that have that info), IIRC
->>>> she said she would try to do it.
+>>>> In such cases, let's fall back to SKB mode if the user did not explicitly
+>>>> request DRV mode.
 >>>>
->>>> I'll try to find out the threads and see what happened.
->>>
->>> https://lore.kernel.org/all/ZvXhJLkJcR99Y2sF@google.com/T/#u
->>>
->>> Veronika, was there a v3?
->>>
->>> Thanks,
->> Well the patch was already applied upstream so we are talking about a fix
->> not v3, right?
-> 
-> 
-> 
-> 
-> Can you provide a url for the patch that was applied upstream?
-> 
-> I just checked at
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh?h=perf-tools-next
-> 
-> And I'm not seeing it.
-
-Well the patch adding the failing test case that you can see at
-
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh?h=perf-tools-next
-
-There was the whole patchset that contained the failing probe test case.
-The patchset was applied and merged upstream so there won't be a v3 for 
-the failing test case, instead we will send a fix patch resolving the 
-mentioned issue. Hopefully this explains the confusion that I think
-happened.
-
-We will send the next patchset soon containing also the patch fixing
-the probe issue with bad dwarf so if there will still be some confusion 
-that should resolve that.
-
-- Veronika
-
-> 
-> - Arnaldo
-> 
-> As Arnaldo mentioned, I got together a fix patch that checks
-> 
->> the CU for the Assembly for blacklisted probe. Michael also suggested the
->> possibility to check multiple blacklisted probes if we are not able to
->> check
->> for the Assembly, so I also added that.
 >>
->> I will send the fix patch soon as part of the perftool upstreaming patchset
->> to prevent conflicts happening. Hopefully, this can be at the start of the
->> next week if all of the checks pass.
->>
->> Thanks,
->> Veronika
->>>
->>> - Arnaldo
->>>
->>
->>
+>> So behaviour changed once, now it's changing again.. 
 > 
+> This should not be a behaviour change, it just follow the fallback rules.
+> 
+
+hm, what fallback rules? I see dev_xdp_attach() exits on many errors
+with proper codes and extack messages, am I missing something, where's the
+fallback?
+
+>> IMO it's better to explicitly
+>> error out and let the user decide how to resolve the situation. 
+> 
+> The user feels confused and reported a bug. Because cmd
+> `ip link set bond0 xdp obj xdp_dummy.o section xdp` failed with "Operation
+> not supported" in stead of fall back to xdpgeneral mode.
+> 
+
+Where's the nice extack msg then? :)
+
+We can tell them what's going on, maybe they'll want to change the bonding mode
+and still use this mode rather than falling back to another mode silently.
+That was my point, fallback is not the only solution.
+
+>> The above commit
+>> is 4 years old, surely everyone is used to the behaviour by now. If you insist
+>> to do auto-fallback, then at least I'd go with Daniel's suggestion and do it
+>> in the bonding device. Maybe it can return -EFALLBACK, or some other way to
+>> signal the caller and change the mode, but you assume that's what the user
+>> would want, maybe it is and maybe it's not - that is why I'd prefer the
+>> explicit error so conscious action can be taken to resolve the situation.
+>>
+>> That being said, I don't have a strong preference, just my few cents. :)
+>>
+>>>> Fixes: c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags specified")
+>>>> Reported-by: Liang Li <liali@redhat.com>
+>>>> Closes: https://issues.redhat.com/browse/RHEL-62339
+>>>
+>>> nit: The link is not accessible to the public.
+> 
+> I made it public now.
+> 
+>>>
+>>> Also, this breaks BPF CI with regards to existing bonding selftest :
+>>>
+>>>   https://github.com/kernel-patches/bpf/actions/runs/11340153361/job/31536275257
+> 
+> The following should fix the selftest error.
+> 
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index 18d1314fa797..0c380558a25d 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -5705,7 +5705,7 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
+>                 if (dev_xdp_prog_count(slave_dev) > 0) {
+>                         SLAVE_NL_ERR(dev, slave_dev, extack,
+>                                      "Slave has XDP program loaded, please unload before enslaving");
+> -                       err = -EOPNOTSUPP;
+> +                       err = -EEXIST;
+>                         goto err;
+>                 }
+> 
+> But it doesn't solve the problem if the slave has xdp program loaded while
+> using an unsupported bond mode, which will return too early.
+> 
+> If there is not other driver has this problem. I can try fix this on
+> bonding side.
+> 
+> Thanks
+> Hangbin
 
 
