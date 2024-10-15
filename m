@@ -1,170 +1,175 @@
-Return-Path: <linux-kernel+bounces-365890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D7299ED8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:31:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCA299ED9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE851F21DEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623EE28609F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C08A6F06B;
-	Tue, 15 Oct 2024 13:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6FC1AF0A3;
+	Tue, 15 Oct 2024 13:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqZdsK9l"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pwLTvBhF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE041FC7D4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B201FC7C9;
+	Tue, 15 Oct 2024 13:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999092; cv=none; b=ZSEB7Pn0FZEn6PDgVhezTMvq7JhkG1IGUv8yaiZqMpkajWmLKydDkQPFBElaDDfOp8whV5PXUOO0tKAHgt4GA9DUNTTlLM4p2cDtg96hG54/XugRjoDIEAqzZX3Y9sMjDBumyCbNVqwIYq4nPDi/sLosjUs0rYjV4HmePlIXONw=
+	t=1728999122; cv=none; b=gfLbb/4WZIFkIe4naT6NHTxeD6ZLiEpXCe82VGTGOlwRpJEAxiIrxcM5KP3GaLlEahPQ2FQjZ34RIiZQMd6WyOc8YkCe/EqMS6iuec0P2rQ1N5rEm9gfXvhbq3ANtaGfAYS21M6TzwrrEMxjQZ5KZVWDJdO2//SDZVm8KkcbHD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999092; c=relaxed/simple;
-	bh=92jATEcaogAVLPkZ5Iw9Kn3gy7UuMqNrjmOi0wbTjyM=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MY/UY4hMAgsAwdMOcnIOYzB2oVLdK17hkyhKDghrEMiuUvna1kTf2dq1EVf8DqBp934EmGW7TTyYPyfTL5UKep3M0AX+b2ikQM4zIybY0BsCVb4ryD2/vsNhGk7iLDQq1GgJlSzWq2H2vtXNyENdgsHacEPr2xzuTel/wJRATVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YqZdsK9l; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb51f39394so20460301fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728999089; x=1729603889; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=46mrZaJz5A8gmyf2ZZGCnAO8T2IkKjPfrsulNuqAvpk=;
-        b=YqZdsK9lHYMByOshTjGVWH1kFAnpXd9C+i0qW9h9Li57mNpmpT2x9+5hHgHWrWZH+4
-         no4D9ab8r0En+N4poqH9Goy9PSXGzYvQXSuyRJJiIk8WujGo1jUZi4CghdWVB9WKnR0R
-         PbS6m/1PTKkxhx65gkpV8YRfltFYEVkdsJOAvOcEGod64rb4CosSABSUW0JJjDTZSFLF
-         I89YGVAWpPA0HMIXnuhBupEzvMU9bCAcRM0VXdXDi3bT/kQqxSC4vINwZXxx17pcenjR
-         oC51gmIc9spo3vyWbSYLPEANbR3YSGdumnkdW419pPu+9VRaXhb5GMm7z+HJmr5FH/2r
-         RhfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728999089; x=1729603889;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=46mrZaJz5A8gmyf2ZZGCnAO8T2IkKjPfrsulNuqAvpk=;
-        b=Nhbk9Bp9anuUNTio+wvN6x8T1ZnVv/q37h5oD7yfE6ekJ0d4WB08gOYdxdmHCDujK9
-         WdKx5SF3gQEF8Djw7dHKgnVbeIWvVtl3dXQUwNHXFd1AexLpiGu+3+rXMZBcgz24vIhA
-         Nx8/7u4LMoEYZ6lvO7P1E9G8L1ADZ6X59WN+hg8NAksqqNbwpYzJgLJFfVjsproV5jeR
-         +fs8yxihmtIvieEMYg1nA20IEJ3qXVUEuz9nG11uzA3tL0qPmw8ilX6uC0DlAWY4jXrD
-         cqDrKU8dlBG/5tm1FSPMhrzNckNSnnWNHsIA6xiNScsvcuzgrCvblD+6zEjcxVu64KA1
-         /8KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwE60b8xvU8wqNd3zio3P3V5Zm9LwDtd/gEfwH4lO06AvUHmE6RDG6LgRmkiehR+wXVY1MX9b2tN3XbZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNMwO2U8TKiD5gRSHI2TeJGutl94SHiyAe/lYeXGxiT+p18H+w
-	GlxgC2tCVruvVeOoPyTbgLwjc6KzzeIYB/iiSBkzZSPiXy0rs+D6
-X-Google-Smtp-Source: AGHT+IGSNcimW+7z1u8OqBLcuUwQwNc6Lat0Yu/fYMeyYqUjgyYErLJUwCcTDxvOejHs/ry0iXaHAg==
-X-Received: by 2002:a05:651c:b06:b0:2fb:b8a:7abb with SMTP id 38308e7fff4ca-2fb61b6ebbemr3222721fa.21.1728999088592;
-        Tue, 15 Oct 2024 06:31:28 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4d6851sm709470a12.5.2024.10.15.06.31.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Oct 2024 06:31:26 -0700 (PDT)
-Date: Tue, 15 Oct 2024 13:31:25 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jiazi Li <jqqlijiazi@gmail.com>, linux-kernel@vger.kernel.org,
-	maple-tree@lists.infradead.org
-Subject: Re: [PATCH 2/2] maple_tree: Add some alloc node test case
-Message-ID: <20241015133125.aixhbw5kunbme2nt@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240626160631.3636515-1-Liam.Howlett@oracle.com>
- <20240626160631.3636515-2-Liam.Howlett@oracle.com>
- <20241011011759.wbw56sqgmhzjwo4k@master>
- <juxyinlfa5gn6pbhvae34xamz4zx6d5lmbkfeo5uwg5hu4ctj2@ruvlfmtbx7ji>
+	s=arc-20240116; t=1728999122; c=relaxed/simple;
+	bh=zcN5Xlyqvbbdst9rfv6DJMy58JEgi17eQkmigmRX3n8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IW/M2FXdWYZTbgNuK9BINUw1a/0Swa+pTVedwoUOpGG0/VF7E4PAzKtgwLb6ZS0QtnmD1P7hGg7j/rBFQ2Ak2/h462MpB7adMhhIfj+gJiwEmwhBJJCoq3GKobLBQ6f0jqFt93EEAQ9CNp/3ypLrrV+jMGc+uxGH9hWLbk/SVFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pwLTvBhF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FC6w7P012825;
+	Tue, 15 Oct 2024 13:31:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kA4AcdIzhQcdO4VO4nfKsSVq2Fnc0aE3VWrEIVio3s4=; b=pwLTvBhFoURX8EdS
+	yVolPTqMsxrN2BonyROYGPD2FOgK1id3jEuC2egfK1oldYhDbDhAPGVAEPv5e862
+	w9ID7Mwyknx+1x93IgqJkZTSFxuoMhY2SJjBYcggD5b9TqiqdApyaxYtEocgt8ug
+	n3EqCR5CBE4VYfrEBU8GjtR/nFYhHK4bXdyxiDI7bxBdUuOuFKaNhav3vOTsWYGd
+	O51z8zo0PctdYBVemBStAvxn8Pgx0KwMANNErsbU44OdIYsDGqaHLepCuLoyBj52
+	N+qdluXIYLPgXlWGmk0EuI+gxG885OBbS9WEfMohNtVtkcaVb4fT5taY828m5rwT
+	x9DI/w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429e5g1qdb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 13:31:38 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FDVb8S015831
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 13:31:37 GMT
+Received: from [10.216.56.224] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Oct
+ 2024 06:31:33 -0700
+Message-ID: <d4a52579-0e2a-4df3-a1fa-e8e154ff1e90@quicinc.com>
+Date: Tue, 15 Oct 2024 19:01:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <juxyinlfa5gn6pbhvae34xamz4zx6d5lmbkfeo5uwg5hu4ctj2@ruvlfmtbx7ji>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/arm-smmu: Defer probe of clients after smmu
+ device bound
+Content-Language: en-US
+To: <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@ziepe.ca>,
+        <jsnitsel@redhat.com>, <robdclark@chromium.org>,
+        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>, <quic_charante@quicinc.com>,
+        <stable@vger.kernel.org>, Prakash Gupta
+	<quic_guptap@quicinc.com>
+References: <20241004090428.2035-1-quic_pbrahma@quicinc.com>
+From: Pratyush Brahma <quic_pbrahma@quicinc.com>
+In-Reply-To: <20241004090428.2035-1-quic_pbrahma@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: D576OjrQQ18vkOw66nyELqYH4K7rmAq7
+X-Proofpoint-ORIG-GUID: D576OjrQQ18vkOw66nyELqYH4K7rmAq7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ adultscore=0 impostorscore=0 mlxscore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410150092
 
-On Mon, Oct 14, 2024 at 09:15:07PM -0400, Liam R. Howlett wrote:
->* Wei Yang <richard.weiyang@gmail.com> [241010 21:18]:
->> On Wed, Jun 26, 2024 at 12:06:31PM -0400, Liam R. Howlett wrote:
->> >From: Jiazi Li <jqqlijiazi@gmail.com>
->> >
->> >Add some maple_tree alloc node tese case.
->> >
->> >Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
->> >Signed-off-by: Jiazi Li <jqqlijiazi@gmail.com>
->> >Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
->> >---
->> > tools/testing/radix-tree/maple.c | 22 ++++++++++++++++++++++
->> > 1 file changed, 22 insertions(+)
->> >
->> >diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
->> >index 11f1efdf83f9..b4b5fd9f294d 100644
->> >--- a/tools/testing/radix-tree/maple.c
->> >+++ b/tools/testing/radix-tree/maple.c
->> >@@ -462,6 +462,28 @@ static noinline void __init check_new_node(struct maple_tree *mt)
->> > 	MT_BUG_ON(mt, mas_allocated(&mas) != 10 + MAPLE_ALLOC_SLOTS - 1);
->> > 	mas_destroy(&mas);
->> > 
->> >+	mas.node = MA_ERROR(-ENOMEM);
->> >+	mas_node_count(&mas, MAPLE_ALLOC_SLOTS + 1); /* Request */
->> >+	mas_nomem(&mas, GFP_KERNEL); /* Fill request */
->> 
->> I am not sure why mas_nomem() is here.
->> 
->> Without this one, we still can trigger the original bug.
+
+On 10/4/2024 2:34 PM, Pratyush Brahma wrote:
+> Null pointer dereference occurs due to a race between smmu
+> driver probe and client driver probe, when of_dma_configure()
+> for client is called after the iommu_device_register() for smmu driver
+> probe has executed but before the driver_bound() for smmu driver
+> has been called.
 >
->It will fill the maple state allocation.  Might not be needed but
->doesn't hurt.
+> Following is how the race occurs:
 >
+> T1:Smmu device probe		T2: Client device probe
+>
+> really_probe()
+> arm_smmu_device_probe()
+> iommu_device_register()
+> 					really_probe()
+> 					platform_dma_configure()
+> 					of_dma_configure()
+> 					of_dma_configure_id()
+> 					of_iommu_configure()
+> 					iommu_probe_device()
+> 					iommu_init_device()
+> 					arm_smmu_probe_device()
+> 					arm_smmu_get_by_fwnode()
+> 						driver_find_device_by_fwnode()
+> 						driver_find_device()
+> 						next_device()
+> 						klist_next()
+> 						    /* null ptr
+> 						       assigned to smmu */
+> 					/* null ptr dereference
+> 					   while smmu->streamid_mask */
+> driver_bound()
+> 	klist_add_tail()
+>
+> When this null smmu pointer is dereferenced later in
+> arm_smmu_probe_device, the device crashes.
+>
+> Fix this by deferring the probe of the client device
+> until the smmu device has bound to the arm smmu driver.
+>
+> Fixes: 021bb8420d44 ("iommu/arm-smmu: Wire up generic configuration support")
+> Cc: stable@vger.kernel.org
+> Co-developed-by: Prakash Gupta <quic_guptap@quicinc.com>
+> Signed-off-by: Prakash Gupta <quic_guptap@quicinc.com>
+> Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
+> ---
+> Changes in v2:
+>   Fix kernel test robot warning
+>   Add stable kernel list in cc
+>   Link to v1: https://lore.kernel.org/all/20241001055633.21062-1-quic_pbrahma@quicinc.com/
+>
+>   drivers/iommu/arm/arm-smmu/arm-smmu.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> index 723273440c21..7c778b7eb8c8 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> @@ -1437,6 +1437,9 @@ static struct iommu_device *arm_smmu_probe_device(struct device *dev)
+>   			goto out_free;
+>   	} else {
+>   		smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
+> +		if (!smmu)
+> +			return ERR_PTR(dev_err_probe(dev, -EPROBE_DEFER,
+> +						"smmu dev has not bound yet\n"));
+>   	}
+>   
+>   	ret = -EINVAL;
 
-I took another look at it. We really need mas_nomem() here, since we call
-mt_set_non_kernel(0) at the beginning of check_new_node(). 
 
-So mas_node_count() just set the request count and mas_nomem() does the real
-allocation.
+Hi
+Can someone please review this patch? Let me know if any further 
+information is required.
 
-Any reason to design test case like this?
-
->> 
->> >+	MT_BUG_ON(mt, mas_allocated(&mas) != MAPLE_ALLOC_SLOTS + 1);
->> >+	mas.node = MA_ERROR(-ENOMEM);
->> >+	mas_node_count(&mas, MAPLE_ALLOC_SLOTS * 2 + 2); /* Request */
->> >+	mas_nomem(&mas, GFP_KERNEL); /* Fill request */
->> >+	mas.status = ma_start;
->> >+	MT_BUG_ON(mt, mas_allocated(&mas) != MAPLE_ALLOC_SLOTS * 2 + 2);
->> >+	mas_destroy(&mas);
->> >+
->> >+	mas.node = MA_ERROR(-ENOMEM);
->> >+	mas_node_count(&mas, MAPLE_ALLOC_SLOTS * 2 + 1); /* Request */
->> >+	mas_nomem(&mas, GFP_KERNEL); /* Fill request */
->> >+	MT_BUG_ON(mt, mas_allocated(&mas) != MAPLE_ALLOC_SLOTS * 2 + 1);
->> >+	mas.node = MA_ERROR(-ENOMEM);
->> >+	mas_node_count(&mas, MAPLE_ALLOC_SLOTS * 3 + 2); /* Request */
->> >+	mas_nomem(&mas, GFP_KERNEL); /* Fill request */
->> >+	mas.status = ma_start;
->> >+	MT_BUG_ON(mt, mas_allocated(&mas) != MAPLE_ALLOC_SLOTS * 3 + 2);
->> >+	mas_destroy(&mas);
->> >+
->> > 	mtree_unlock(mt);
->> > }
->> > 
->> >-- 
->> >2.43.0
->> >
->> 
->> -- 
->> Wei Yang
->> Help you, Help me
-
--- 
-Wei Yang
-Help you, Help me
+Thanks
+Pratyush
 
