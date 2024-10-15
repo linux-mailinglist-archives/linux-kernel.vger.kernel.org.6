@@ -1,197 +1,141 @@
-Return-Path: <linux-kernel+bounces-365005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9F999DC20
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:15:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D4E99DC22
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FAC62833F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:15:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 780AE1C213B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B9D166F32;
-	Tue, 15 Oct 2024 02:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F1B15C145;
+	Tue, 15 Oct 2024 02:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4gD5wU2"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pAVxhODn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E29721364;
-	Tue, 15 Oct 2024 02:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF11F21364;
+	Tue, 15 Oct 2024 02:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728958505; cv=none; b=HRPwgxWCtJsM+O+lOw9eZ22OtGGOzRPOjX0pXcWHCsYM0/TC9rD0cJv8B/9+ld0V3cnRORLo+aDEANbMCNWL+CvAySqIW9UfmZTio28u62zXQ3p4zz9umRNyPh0I4xUe9+QsaPRlPHwkGAZj9VkUmP9HLfP774tdYQSQd8dd0Ks=
+	t=1728958552; cv=none; b=r0MAWqd/TYdhddkqgGXt1Tc+uDl6El5hsuEk0xI5zjP8jQj7fd48W3VV3WI2i8HZqTUW2UyEvYrnUuuhzTS78tqbIR9MHwMMgaoP2tkmvwNg9d3SRb1X/pI17gXOW0lU+i3agKQbw1+ZWpLaGIBrGI+mZqCUxgWlM/YX7DKbGKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728958505; c=relaxed/simple;
-	bh=cvPwE7Ccm3dtNT8yv++QYNX7qSCy12SZIh02AvYmv40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bpbMgmJbAK3zHfYKHfTDpNAy/G7DlyE5NwS1MH9ToaSUFx8t6HuOf8BAPi3OnhBjzmiwBE+h6NyMt7JAzGehOm1C7X08kBX7tcVvqCZbc3HXfHi+7DrqzqWbsGeo8ytQXhN/GYIB2NnYOo9Yzu+qeS9mF1n0dY3+5yczrMED6J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4gD5wU2; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c693b68f5so48997375ad.1;
-        Mon, 14 Oct 2024 19:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728958503; x=1729563303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1r9Bc90Xo2DPDhdR1f1BgFICZEW/Z+12gs6EtdMifJU=;
-        b=Q4gD5wU2mI3Ir9wkFEldd8TK+SiNuxtS2U7lGaK2OSUrmcdWwCUpd8GJL7xCNxv7oh
-         w5zvFV4n2raPU3SFXlEq4eI2xLnK1NsDmun7d2IE1SPuHkSjitnmwo6/r5LXP4P4+KhI
-         wyGoa0CRFDBFoQe3d37vmJ90yyDO3dSbnErpXhN0T9ul5UHa1wQnKT5Vm8q8M6T3LkeH
-         /E2Hr1GvBiw08jkjCX+UQWINJJ6riLR/9XtwRKmnotlfbw+oEBuqtOn4964dHWUolNO0
-         ZQWaNp9HonJ7Pm4ZmHbVfBdO8K1T+VikagN/qmZ69pWJDwrK3Dm/io3EU5/7hQmf5QWU
-         5U9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728958503; x=1729563303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1r9Bc90Xo2DPDhdR1f1BgFICZEW/Z+12gs6EtdMifJU=;
-        b=icvtVooh51c7TkijYCxGWN0Hy3lHdAfakfpJNpOuiIw182Ycyuj4/46knUDjfPlR9p
-         ju6pxnhcofVYtHkNZc/kjhasOHO5d8z0a7INUXTRF8iHLAr6fgjj9O3zreuitpShkZ/+
-         OW3WlZMA838hjhcTpQrD14zQ0SziFuf4OgWxN5zSIofH3U4NLw/LjdK9U1GA9qOTdCw7
-         ISRh47mcVDYEqamdHb+QPqq+Ec7PSXd+M+LV9DG/Jy/AkQo4llsvwZKAqOQGmhF5bgPq
-         dBe6EYYYsf6M2Xv6fWLQHZY8DjkOA1VLFO9AHlMfFdqqZUu9doliyQrOGZlUW319vdYR
-         G4Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEbDEBl2zA+IUtG2MsZJbKnZbe7FVhlpX9H6dFjL/QEllLJYermS2Z1dd+Mc3a0oYUgixjEPIp6Od8tAw=@vger.kernel.org, AJvYcCWv8Om3ooNw67nMNYWFvusVWlpIU1Y+Xgx5URZzkCGC0p4nXOD2mZ7Br73Aewb/o+O1MV6W9SDXeAGJNNjJNDpJYrRWAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr/Lv7qwzCT75CBeeBglrmNpkC65/sZcMAQAjBnBNzEeTpyqwU
-	dAS10Fy1vPmSr2LvrX+diRWrkwqXcILq1JBN8D++BNZjhtjCP6nOYdvT1Hxm
-X-Google-Smtp-Source: AGHT+IF3tlHNcfBq9Fz+V3k11ANwPeKVPuG8BxlwslfsWz4R4JcW1jPgX4DM8SDq4KOudWru5D2URA==
-X-Received: by 2002:a17:902:d4ca:b0:20b:7a46:1071 with SMTP id d9443c01a7336-20ca13f7200mr198919415ad.4.1728958503240;
-        Mon, 14 Oct 2024 19:15:03 -0700 (PDT)
-Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1803627bsm2074185ad.151.2024.10.14.19.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 19:15:02 -0700 (PDT)
-Date: Mon, 14 Oct 2024 23:14:58 -0300
-From: Kurt Borja <kuurtb@gmail.com>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] alienware-wmi: alienware_wmax_command() is now
- input size agnostic
-Message-ID: <wqnmzzln5ikostiwbciucqt6rud75igm2uia6kzt5tsaafop3e@jucdbbfjmk6d>
-References: <20241012015849.19036-3-kuurtb@gmail.com>
- <20241012020149.19700-3-kuurtb@gmail.com>
- <3fe7c4e0-c24a-4205-a870-0fcc6e76f1af@gmx.de>
+	s=arc-20240116; t=1728958552; c=relaxed/simple;
+	bh=zj+yKT66Ya6lE8e0vnuh5UqbKInuSzhnI7Xg6h665bc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CtTvetEwlvy8ZsAmNwcQr02/GY4AvtbkDLB4GtiYTx1OGVzOnt1M4n3IYq/nOv5L4j3uxcfY2wvrpzrOwYpooLhVB0vTkDA9Y2IniAQnRVnsVzyhLhToJdmQQAo2KKy6g0RlC1Zm/nZxImaOQf92RDMtxXyJzQhfDfPaWdT8sXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pAVxhODn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7384FC4CEC7;
+	Tue, 15 Oct 2024 02:15:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728958552;
+	bh=zj+yKT66Ya6lE8e0vnuh5UqbKInuSzhnI7Xg6h665bc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pAVxhODn/epIL4ZAHa1mqm+0EvAFdiIKLAHgRb8EeTeYRlzGp2hki6/gQu9q9/ZK/
+	 L32dYXlMN/0H4hTby7cwdCQK4ruiQglk1nAC6YYFkANsAi5FZvESPkfbaAYbtTUWlU
+	 F4jd+j9P8RoeD4ew/6b5kSmqAsNNcn8XjaDGKN/9MMnEEPT3zo7+AEEN0iHD2HGhVl
+	 wc/xLoieYSW7Ulmw4JJrJwBir2vUwJZxb8URdvUubbM75dGd7VSZcd3dJgA6C4mdkR
+	 O+oFPwSNpOLdgVKws1nCnU/yM50BHZwS3zTVB2hebvwesey8NSepoEP+jeHh1lnXZw
+	 uL1/nKKDSKzlg==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99e3b3a411so432484366b.0;
+        Mon, 14 Oct 2024 19:15:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0d30itF6sasuryfdrhJqvAPwyv248s5ZjwOaCCjbM6JYiGLRnJHnr3kZb34Ov/Pz3EipUnUlHqVtlySM=@vger.kernel.org, AJvYcCXCJhb7Ma3tXpmCkO/KaavAn86YIQsZsWzJ3/q0wOiDhEmT1NSL1asDFBrfq2x+fOjU18XWM3cZHzhEJeGbBI3O@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWY+HBk6oBvjykpM0l1J2O8vonpXJMrDt/yj+3rteZK8tKxai8
+	BAhqTEXbqgaJEijyckWr2yoJjs/ndIYq50HcWHT2phH3eW6a07Q/EnATbqjE7jQ5kndm1MxDFuT
+	n4TOnrX+O4/bsbq5WADZg6x0U7lQ=
+X-Google-Smtp-Source: AGHT+IHB9ev+VUIapJ7FJ/lYxOacP14DRgTA+8WKy/oS+q4Ei90J54hQUfqyaSpYCMxhQAA7jAhetAjk7RTHQwBSNdc=
+X-Received: by 2002:a17:907:7204:b0:a99:6958:a8ba with SMTP id
+ a640c23a62f3a-a99a10ede1emr1682134466b.12.1728958550924; Mon, 14 Oct 2024
+ 19:15:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3fe7c4e0-c24a-4205-a870-0fcc6e76f1af@gmx.de>
+References: <20241014-kunit-loongarch-v1-0-1699b2ad6099@linutronix.de> <20241014-kunit-loongarch-v1-1-1699b2ad6099@linutronix.de>
+In-Reply-To: <20241014-kunit-loongarch-v1-1-1699b2ad6099@linutronix.de>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 15 Oct 2024 10:15:39 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4GvYVphn+srVFEdPboxCz-z04vXa-=e5ptJpdJZgPp=g@mail.gmail.com>
+Message-ID: <CAAhV-H4GvYVphn+srVFEdPboxCz-z04vXa-=e5ptJpdJZgPp=g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] LoongArch: Don't crash in stack_top() for tasks
+ without vDSO
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: WANG Xuerui <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 06:30:21PM +0200, Armin Wolf wrote:
-> Am 12.10.24 um 04:01 schrieb Kurt Borja:
-> 
-> > alienware_wmax_command() now takes void * and size_t instead of struct
-> > wmax_basic_args to extend support to new WMAX methods. Also int *out_data
-> > was changed to u32 *out_data, because new interface specifies u32 as output
-> > parameter and all previous callers would pass u32 * regardless.
-> 
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> 
+Hi, Thomas,
 
-Thank you very much.
+I can take this patch to the loongarch tree, but I think others should
+get upstream via kselftests tree?
 
-Kurt
+Huacai
 
-> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> > ---
-> >   drivers/platform/x86/dell/alienware-wmi.c | 29 ++++++++++++-----------
-> >   1 file changed, 15 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-> > index 16a3fe9ac..b27f3b64c 100644
-> > --- a/drivers/platform/x86/dell/alienware-wmi.c
-> > +++ b/drivers/platform/x86/dell/alienware-wmi.c
-> > @@ -500,15 +500,15 @@ static void alienware_zone_exit(struct platform_device *dev)
-> >   	kfree(zone_attrs);
-> >   }
-> > 
-> > -static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
-> > -					  u32 command, int *out_data)
-> > +static acpi_status alienware_wmax_command(void *in_args, size_t in_size,
-> > +					  u32 command, u32 *out_data)
-> >   {
-> >   	acpi_status status;
-> >   	union acpi_object *obj;
-> >   	struct acpi_buffer input;
-> >   	struct acpi_buffer output;
-> > 
-> > -	input.length = sizeof(*in_args);
-> > +	input.length = in_size;
-> >   	input.pointer = in_args;
-> >   	if (out_data) {
-> >   		output.length = ACPI_ALLOCATE_BUFFER;
-> > @@ -541,8 +541,8 @@ static ssize_t show_hdmi_cable(struct device *dev,
-> >   		.arg = 0,
-> >   	};
-> >   	status =
-> > -	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_CABLE,
-> > -				   &out_data);
-> > +	    alienware_wmax_command(&in_args, sizeof(in_args),
-> > +				   WMAX_METHOD_HDMI_CABLE, &out_data);
-> >   	if (ACPI_SUCCESS(status)) {
-> >   		if (out_data == 0)
-> >   			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-> > @@ -562,8 +562,8 @@ static ssize_t show_hdmi_source(struct device *dev,
-> >   		.arg = 0,
-> >   	};
-> >   	status =
-> > -	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_STATUS,
-> > -				   &out_data);
-> > +	    alienware_wmax_command(&in_args, sizeof(in_args),
-> > +				   WMAX_METHOD_HDMI_STATUS, &out_data);
-> > 
-> >   	if (ACPI_SUCCESS(status)) {
-> >   		if (out_data == 1)
-> > @@ -589,7 +589,8 @@ static ssize_t toggle_hdmi_source(struct device *dev,
-> >   		args.arg = 3;
-> >   	pr_debug("alienware-wmi: setting hdmi to %d : %s", args.arg, buf);
-> > 
-> > -	status = alienware_wmax_command(&args, WMAX_METHOD_HDMI_SOURCE, NULL);
-> > +	status = alienware_wmax_command(&args, sizeof(args),
-> > +					WMAX_METHOD_HDMI_SOURCE, NULL);
-> > 
-> >   	if (ACPI_FAILURE(status))
-> >   		pr_err("alienware-wmi: HDMI toggle failed: results: %u\n",
-> > @@ -642,8 +643,8 @@ static ssize_t show_amplifier_status(struct device *dev,
-> >   		.arg = 0,
-> >   	};
-> >   	status =
-> > -	    alienware_wmax_command(&in_args, WMAX_METHOD_AMPLIFIER_CABLE,
-> > -				   &out_data);
-> > +	    alienware_wmax_command(&in_args, sizeof(in_args),
-> > +				   WMAX_METHOD_AMPLIFIER_CABLE, &out_data);
-> >   	if (ACPI_SUCCESS(status)) {
-> >   		if (out_data == 0)
-> >   			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-> > @@ -694,8 +695,8 @@ static ssize_t show_deepsleep_status(struct device *dev,
-> >   	struct wmax_basic_args in_args = {
-> >   		.arg = 0,
-> >   	};
-> > -	status = alienware_wmax_command(&in_args, WMAX_METHOD_DEEP_SLEEP_STATUS,
-> > -					&out_data);
-> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
-> > +					WMAX_METHOD_DEEP_SLEEP_STATUS, &out_data);
-> >   	if (ACPI_SUCCESS(status)) {
-> >   		if (out_data == 0)
-> >   			return sysfs_emit(buf, "[disabled] s5 s5_s4\n");
-> > @@ -723,8 +724,8 @@ static ssize_t toggle_deepsleep(struct device *dev,
-> >   		args.arg = 2;
-> >   	pr_debug("alienware-wmi: setting deep sleep to %d : %s", args.arg, buf);
-> > 
-> > -	status = alienware_wmax_command(&args, WMAX_METHOD_DEEP_SLEEP_CONTROL,
-> > -					NULL);
-> > +	status = alienware_wmax_command(&args, sizeof(args),
-> > +					WMAX_METHOD_DEEP_SLEEP_CONTROL, NULL);
-> > 
-> >   	if (ACPI_FAILURE(status))
-> >   		pr_err("alienware-wmi: deep sleep control failed: results: %u\n",
+On Mon, Oct 14, 2024 at 7:36=E2=80=AFPM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> Not all tasks have a vDSO mapped, for example kthreads never do.
+> If such a task ever ends up calling stack_top(), it will derefence the
+> NULL vdso pointer and crash.
+>
+> This can for example happen when using kunit:
+>
+>         [<9000000000203874>] stack_top+0x58/0xa8
+>         [<90000000002956cc>] arch_pick_mmap_layout+0x164/0x220
+>         [<90000000003c284c>] kunit_vm_mmap_init+0x108/0x12c
+>         [<90000000003c1fbc>] __kunit_add_resource+0x38/0x8c
+>         [<90000000003c2704>] kunit_vm_mmap+0x88/0xc8
+>         [<9000000000410b14>] usercopy_test_init+0xbc/0x25c
+>         [<90000000003c1db4>] kunit_try_run_case+0x5c/0x184
+>         [<90000000003c3d54>] kunit_generic_run_threadfn_adapter+0x24/0x48
+>         [<900000000022e4bc>] kthread+0xc8/0xd4
+>         [<9000000000200ce8>] ret_from_kernel_thread+0xc/0xa4
+>
+> Fixes: 803b0fc5c3f2 ("LoongArch: Add process management")
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+> ---
+>  arch/loongarch/kernel/process.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/loongarch/kernel/process.c b/arch/loongarch/kernel/proc=
+ess.c
+> index f2ff8b5d591e4fd638109d2c98d75543c01a112c..6e58f65455c7ca3eae2e88ed8=
+52c8655a6701e5c 100644
+> --- a/arch/loongarch/kernel/process.c
+> +++ b/arch/loongarch/kernel/process.c
+> @@ -293,13 +293,15 @@ unsigned long stack_top(void)
+>  {
+>         unsigned long top =3D TASK_SIZE & PAGE_MASK;
+>
+> -       /* Space for the VDSO & data page */
+> -       top -=3D PAGE_ALIGN(current->thread.vdso->size);
+> -       top -=3D VVAR_SIZE;
+> -
+> -       /* Space to randomize the VDSO base */
+> -       if (current->flags & PF_RANDOMIZE)
+> -               top -=3D VDSO_RANDOMIZE_SIZE;
+> +       if (current->thread.vdso) {
+> +               /* Space for the VDSO & data page */
+> +               top -=3D PAGE_ALIGN(current->thread.vdso->size);
+> +               top -=3D VVAR_SIZE;
+> +
+> +               /* Space to randomize the VDSO base */
+> +               if (current->flags & PF_RANDOMIZE)
+> +                       top -=3D VDSO_RANDOMIZE_SIZE;
+> +       }
+>
+>         return top;
+>  }
+>
+> --
+> 2.47.0
+>
 
