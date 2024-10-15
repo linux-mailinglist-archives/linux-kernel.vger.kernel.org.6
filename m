@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-366789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D6199FA6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:47:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2588999FA72
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389CD284C30
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:47:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578811C23785
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EAA1FDFA5;
-	Tue, 15 Oct 2024 21:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845B21FE0F7;
+	Tue, 15 Oct 2024 21:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrTvL0Dg"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bVztYQXJ"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886821B0F08
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500C51FDFBD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729028309; cv=none; b=o35jTZu1wGr5ikAg/KzxJ8vEAdFUvGZmb75XMXDRzb/dryr3mG6z6lttKokRDNcInaHByuOa4XO146HFcmvftB2LiaygxPxb1y8PmjfCij5DWsvtjvTJp+J1E/9r+cOkAYaBmNrlU45A9ET69kFnyMjn0cP2GHBJSBpzAvQhQK8=
+	t=1729028375; cv=none; b=pFvEw5J/HRxENe7aYJVEZQ0MGMIKz7rwJfRo5pmeP3pNbn7yYmlMWGuzqHjZFLf2Vxy6UzMujsGpDvWhU+T2NU7/aMK7RtJSjf8adRvo4fox/FJhrkil/a6DB3yAY8zk5w+Qs7eQyBt7ldStn662iTVsUqJP9A0JyYqQu2H8hnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729028309; c=relaxed/simple;
-	bh=HzjDQzMj04wkguHCoDjg6H7HxJYdJ2jX1/fBnJipXRE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j0LdUce0h/sovV1yQ090miAD/d7Tg1dFOLoH8mC1PBhz7RwYiDoZ3jFd6FRtJifoj3gcERLe7LsyS313Gjll2Arr8Ks+rufxMGzz6t/5Y0p992mkEJInOa5Diu0TShf8lvXG2XqwhZE1924gjiBfZO/sAHjezdzRLS0WFC24H8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrTvL0Dg; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cbca51687so32311305ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:38:28 -0700 (PDT)
+	s=arc-20240116; t=1729028375; c=relaxed/simple;
+	bh=NY5tsDG+TepaBzQoeKpnr+oeJW9vQFfX1a5J87FfW34=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kz2ZzKAi/6kPbU4ROXg9LJthOg2FqEHvJmrCfWN9xtTurW6CTf5+dhWnzs/WD09Sj8CX5K3tIyQni1HORTG+p9ApXIaP0TA8m3XuBje+MZOlR9lk3wNHVK1+dgE3chYS5Bu3PIE8mNAdV4k5k/+SgHbpsWxJ4xUU+U6Obo/pkcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bVztYQXJ; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb3110b964so49227421fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:39:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729028308; x=1729633108; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1729028372; x=1729633172; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2AhpjpBe61RNEZbJYjD51EaXDTChOz8XDZqFL5apPYE=;
-        b=SrTvL0Dg40HILO7QAWoHUePKw92Rs73B2oQFHChNC0FgwrbF2hjbQFUdVu0tZ4FQXX
-         hTiYjuykWnyd97XuRt95qdPe1jUtWMXs/2JA9umjzCbwjgfYYAInIpBL+7Cc3egQ9sRH
-         57kVKAau3RA8Ma9IbRe3r78+rATAqg983cTfY0lhUix+t+03FNgq1QLodzyWu543rj+I
-         ImfyriP+GYM8HbWx2jf/YRjCyA4+Zf12MCe99ZyfSR+4WCV9cRkVJiES8Z/47uX2lXBE
-         QL1VPDurXduTfks8tJmqjbY4TIrpi+HwsNyoIXQHTlcKhpa4kGmI6D9AIgEbJNSH/kfy
-         U/sQ==
+        bh=Mt1uVRncBKO3P0OnuzsWJGZJCb1Wq0MWXLMHVEHZjFk=;
+        b=bVztYQXJ30hYLQ+Qy7++h3B3ZwpKaf0H1eyIPEWW3ZAFwDJm5owoR6jO4IGclK0LDB
+         Awx9gc7A+/n/D7hKW/duBwHIbX6qCFomfBhnUV12jFkinf0HOJ/TPl0vV4hq40jdz0vZ
+         oxQmfUffmixFc6CbSkNkiMhR1Lz0Yz7Jcco7UNZalHvjiQi3VcHFGHExhnEkubgHAGYp
+         pnsOn0P/MMLFwQ3bjFg0sSWsj0CGpoee79yewNpvH416/jf+c96uYPT1VuJ9aBgeKWEy
+         gujDPHln2njgnWt+w4exBRru6Q5RNDsrwYpQ9bVfGG0zzv+QEVAvb73MvtzQeTicZvtj
+         mUdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729028308; x=1729633108;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729028372; x=1729633172;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2AhpjpBe61RNEZbJYjD51EaXDTChOz8XDZqFL5apPYE=;
-        b=WhO4siwX8FmFMPXazx0S7xDp4NhagDg7Wr65rjRajEe6oXgfLg2U6AE3sywIilOqu1
-         S/LZcjFCbpzHDazf2SDrt/UTkfkVFGssKi+Xr/5CyCbD39SMWWyRSj26dSLhG/tUZA0A
-         FvL7YNX8fDBHzR1njBHrDurcRIC1Stc2bEGFCR9RHN6OrJ9SHFhbAG6/uULTsLP/7/WD
-         CINK4/dW6sm7w+qaS0xf7fmQ7bBVn9bTANVxiDGsMGFzSvnfbnOmJs9UwbtIhamYp1Jo
-         8hH6OlaD9bGDEtbZY/JTZjKYunDPkpYY3CMmPnPffWo70U3EqpzJ8pPXV+YlzzeJq/in
-         s2ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqXG6tGusuN0VHsheqO5DX3qf7b1UuxD+ISmL3+wVdJFz36Hqjf13Y5T23xl6o4nO1rd1OkblQM1uhu04=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx77rZseQnaW3ioQwwZ/l7sSed8AJMHbz+HLS0ca4WjvWYL3FpH
-	r2YjnqQlPmiBuXeq7G1HjFfMylmwcHR7FKeDgAkbu/vSi1YqcAd7
-X-Google-Smtp-Source: AGHT+IEQs6xsl2HEoYJ2NqDLcqPih/PJJ526xSta+EqFTRGnPxi5jq4xSbKGnW3sYhPcJGUPnlU/mg==
-X-Received: by 2002:a17:902:e5cd:b0:20c:8dff:b4ed with SMTP id d9443c01a7336-20cbb1bb3a4mr203705755ad.16.1729028307690;
-        Tue, 15 Oct 2024 14:38:27 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:934d:dff7:4914:60fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f844d5sm16947325ad.31.2024.10.15.14.38.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 14:38:27 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: dan.carpenter@linaro.org
-Cc: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	philipp.g.hortmann@gmail.com,
-	rodrigo.gobbi.7@gmail.com,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH 1/2] staging: rtl8723bs: change remaining printk to proper api
-Date: Tue, 15 Oct 2024 18:38:22 -0300
-Message-Id: <20241015213822.8070-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <d20087fc-586e-4a52-99e6-6a09b33ed00e@stanley.mountain>
-References: <d20087fc-586e-4a52-99e6-6a09b33ed00e@stanley.mountain>
+        bh=Mt1uVRncBKO3P0OnuzsWJGZJCb1Wq0MWXLMHVEHZjFk=;
+        b=k72WlPagNJx9FvHRLtk2Sl8gVTiPJzNQjq/JUSO15hD4IBWwh7KtarfQy7V/NLywvr
+         5cdU+m4j5lzMzRfJWjWAcqzrwnFGYCQE6vhs2uue6PntggTClPecjgNRebdyIgQRI95x
+         SzSN0MmQ3+9+DLOsSsepSPenp/gkbRr8bJun17eOzP4D/dD0Ga+BwKzhZRC+igJLf7Ve
+         jmKzQWdCeffWBZLWZ9QNvFWhLjJefuJlJB90Dn7xUm7tPN7MmyJcWqr3wOBcE/l6zCyo
+         qCkIBedMe+WBO98DR9UEjds7PuagQzdxAAyRwWsxplg6pZrF0JANNzM1mP4UMwIDJ6xe
+         yjYg==
+X-Forwarded-Encrypted: i=1; AJvYcCViMcXMfGdDJpxz8TvIzT2I/tLXbt2Sr64eXAkuxCIulsR7slNerbK975LiUfhLyd5u6ZciqeznCUt0pEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRNktlPmleoC3YgLtNvUZVRel6hddtcb1FfwL7ODxBAYshXLlK
+	U630dTskw52BT5YQVGwoJ9KkJXHPQohaNx/7iHx0/2DRRTp788XACZxU0ef1G12MGe5i/5W8w7L
+	R1Fj/Ew43gwVPSh5Id3ai9lre8ZYD9/WDxauOzw==
+X-Google-Smtp-Source: AGHT+IHa2frolcu/goJFwMBAu6bA/ZWorjW/fjQ26j0X/sDgzZ923uAKQjIodHfeTUJpoVqJmFqouNcmF7KCP+Bru7g=
+X-Received: by 2002:a2e:b8c6:0:b0:2fb:565a:d918 with SMTP id
+ 38308e7fff4ca-2fb565adc3bmr43605611fa.12.1729028372533; Tue, 15 Oct 2024
+ 14:39:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241015151126.2401855-1-arnd@kernel.org>
+In-Reply-To: <20241015151126.2401855-1-arnd@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Oct 2024 23:39:21 +0200
+Message-ID: <CACRpkdZwG0Qgxjy-tmh34Pjd5YzMmNXM=PktKMgd+rwbfPRSPg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: th1520: add a CONFIG_OF dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Drew Fustini <dfustini@tenstorrent.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> No, this isn't right.  You'd need to use a mix of dev_dbg() and pr_cont().
-> Basically in drivers it should always be dev_ printks except for pr_cont().
+On Tue, Oct 15, 2024 at 5:11=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
 
-Tks, Dan, for the answer and suggestion. In this case, rather the dev_xxx(),
-do you think we can go with netdev_dbg() since this is a network driver and around
-the rtw_mlme_ext.c is already being used? (actually, I don't see a direct reference for struct device).
-If yes, I would mix the netdev_dbg() and pr_cont().
+> When compile-testing without CONfIG_OF:
+>
+> drivers/pinctrl/pinctrl-th1520.c: In function 'th1520_pinctrl_dt_node_to_=
+map':
+> drivers/pinctrl/pinctrl-th1520.c:455:23: error: implicit declaration of f=
+unction 'pinconf_generic_parse_dt_config'; did you mean 'pinconf_generic_du=
+mp_config'? [-Wimplicit-function-declaration]
+>   455 |                 ret =3D pinconf_generic_parse_dt_config(child, pc=
+tldev, &configs, &nconfigs);
+>       |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>       |                       pinconf_generic_dump_config
+>
+> Enforce this using Kconig dependencies.
+>
+> Fixes: bed5cd6f8a98 ("pinctrl: Add driver for the T-Head TH1520 SoC")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-About [2], it is acceptable to remove the statements like I'm proposing?
-Tks and regards.
+Patch applied!
 
-[2] https://lore.kernel.org/linux-staging/20241015014738.41685-1-rodrigo.gobbi.7@gmail.com/T/#m85d88af4dd8158a8e62ccb6c7257478b7de46d95
+Yours,
+Linus Walleij
 
