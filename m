@@ -1,162 +1,200 @@
-Return-Path: <linux-kernel+bounces-366276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E7499F311
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:46:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D0D99F315
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FCF71C214C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21FA81F21DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B50229122;
-	Tue, 15 Oct 2024 16:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386CC1F76B4;
+	Tue, 15 Oct 2024 16:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZytbZPv4"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVs8Df2o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65C51F76D1;
-	Tue, 15 Oct 2024 16:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F21F6671;
+	Tue, 15 Oct 2024 16:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729010616; cv=none; b=AQ6auebO/ut1oj9XuEW1r/FyDBjCbYMNqOARMfYdbagrss8Fe2ZRZtkIYKSXdxtQfgm0Xqu2az8G1NBOvnf5t12DH8Jz5U+RTWdzHuVfeCCfUtjRfn0XTJtpy4JJvHUNpZ1duUGckh3+tidXgXbfH63zHhQ993JXZSo/OBIG7WY=
+	t=1729010659; cv=none; b=ryjYNaaQOA/t83wyK5gpELRjuyeWzXDbHjB61u3HrNzPpA/SSmL+Nk27lcM7qgOS5EyGfNGa8epgef+Bav7xEE+3LsqmZFmcHfTO2jwwnWbymW6s5+49WCdYU914LSeQx/tRPFB0NSvKbAKDymiNp6PcU6OHc0M1si2DvOl2Lf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729010616; c=relaxed/simple;
-	bh=OD/CTOrwcg6OiHs7buhnlA46yO9ruiybpAnnQ2ioFXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gamNBTTcBoKjIAmoXzOu6NO2u24X6mQT12/saMGjSzOpdkrBqJP8ygxFUDXCiEXWIv7wgcQJCdk1PdCCf83mJAW3diRIYkNTkL3Jj4asg5CBLYDcDivphgD26sYzIxpksdP+M9Bee7E59NEjxHL+SITlc0Hw2SdISFTD4rhJotw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZytbZPv4; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FFoWDb031605;
-	Tue, 15 Oct 2024 16:43:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=b1hrL5t3INOADSR8l
-	YZwbXlFlIC3oQgm2SthebZwLds=; b=ZytbZPv4e3P1bzMOue/sbbzVsbqPyTIrJ
-	ZzWDvHW9Z7VNzYfy+az5kh5PvwZVVrOKujAzxBWHB4iZP33ibMJv+vVv2YKzdTfW
-	c4yGTP42d+L1cY5FF9MwvXFdDqXCuUWahUY1ix/Zo1JqK4A6d6rUI7RHd0GenP3x
-	hAkzLrEQCFig3JfwutXa5eGNNF1KPc4zjadXlNZXu35wVfTIgN2oqmJ2NId1PbFI
-	1w2Hd1o4DomMYmkZAdZkwF0ZL9vDZcj9sBPoucmpsiuRFd5gG6ZYZMdxiDh3xHxp
-	GClhUJqyWetYgCtCaMnnRRUNFJFXlLH37VcGWbrraO3x0kN+B9bZg==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429ucwg8m0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 16:43:33 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FEmnAp007025;
-	Tue, 15 Oct 2024 16:43:32 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk4tre-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 16:43:32 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FGhSqp50069782
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 16:43:29 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DDC952004B;
-	Tue, 15 Oct 2024 16:43:28 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B70A320040;
-	Tue, 15 Oct 2024 16:43:28 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 16:43:28 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: borntraeger@de.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
-        frankja@linux.ibm.com, seiden@linux.ibm.com, hca@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH v3 11/11] s390/mm: Convert to LOCK_MM_AND_FIND_VMA
-Date: Tue, 15 Oct 2024 18:43:26 +0200
-Message-ID: <20241015164326.124987-12-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241015164326.124987-1-imbrenda@linux.ibm.com>
-References: <20241015164326.124987-1-imbrenda@linux.ibm.com>
+	s=arc-20240116; t=1729010659; c=relaxed/simple;
+	bh=1Yzhnbim0NFkYWi4viU/6zv+YCq/dxIxbqmb+G1U/uA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKMM2nDe8EYIL9h9QvFpQmFklVXkXCVelP7yMM357j91vOZ66/qfmZuGj5mYpj7hXuvfDdNCf7cY1KydE4tGPYKBYo7LwyDc/FbP/cp2RVfwjsLjU8wZOpEGfgxwhesJi5ptHpNhrBL7z4dOrgLrmYbG/4byokTi8sba4PTfhRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVs8Df2o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10108C4CEC6;
+	Tue, 15 Oct 2024 16:44:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729010659;
+	bh=1Yzhnbim0NFkYWi4viU/6zv+YCq/dxIxbqmb+G1U/uA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PVs8Df2oWaAYxMWxxlXM02rbRSnryokH/HKXZjhOaLzdyuFgiQK98ogayz/SlLaI8
+	 nR+vzjBRdvMqL7n9UF8q+UXAKU5pPF13q0UV3uAXRAv536lg+zYnXLwv0t0TIQuaNo
+	 p8cxLNNhISYH2suyl//gZd7eyMvxWCfCBJ1NL4ruMh7h4neWE+2eQJLMFqXTfzL1v8
+	 1FOvdv2bZIsGsTFGirrU0BBHw9Aw4im0cUlUbWrPjawYjSBkDBp67PFKImA3Bbk626
+	 FoydSwzUvnWpxJ3lq0DtIqWnHGyHhsRxWqaGdJk1TXyMegxYx0uYKc3Ln+P8pmxqC2
+	 62Yw+e8Cwab0A==
+Date: Tue, 15 Oct 2024 18:44:13 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Zheng Zengkai <zhengzengkai@huawei.com>
+Cc: guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com,
+	maz@kernel.org, rafael@kernel.org, lenb@kernel.org,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ACPI: GTDT: Tighten the check for the array of
+ platform timer structures
+Message-ID: <Zw6b3V5Mk2tIGmy5@lpieralisi>
+References: <20241015152602.184108-1-zhengzengkai@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: mIwXe_1YdEff2xHHUJkxrOJMh3WJJF-U
-X-Proofpoint-GUID: mIwXe_1YdEff2xHHUJkxrOJMh3WJJF-U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxlogscore=641 spamscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015152602.184108-1-zhengzengkai@huawei.com>
 
-From: Heiko Carstens <hca@linux.ibm.com>
+On Tue, Oct 15, 2024 at 11:26:02PM +0800, Zheng Zengkai wrote:
+> As suggested by Marc and Lorenzo, first we need to check whether the
 
-With the gmap code gone s390 can be easily converted to
-LOCK_MM_AND_FIND_VMA like it has been done for most other
-architectures.
+I would just describe the change, the tags and Link: are there to
+describe this patch history.
 
-Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
-Reviewed-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
----
- arch/s390/Kconfig    |  1 +
- arch/s390/mm/fault.c | 13 ++-----------
- 2 files changed, 3 insertions(+), 11 deletions(-)
+> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+> de-referencing what it points at to detect the length of the platform
+> timer struct and then check that the length of current platform_timer
+> struct is also valid, i.e. the length is not zero and within gtdt_end.
+> Now next_platform_timer() only checks against gtdt_end for the entry of
+> subsequent platform timer without checking the length of it and will
+> not report error if the check failed and the existing check in function
+> acpi_gtdt_init() is also not enough.
+> 
+> Modify the for_each_platform_timer() iterator and use it combined with
+> a dedicated check function platform_timer_valid() to do the check
+> against table length (gtdt_end) for each element of platform timer
+> array in function acpi_gtdt_init(), making sure that both their entry
+> and length actually fit in the table.
+> 
+> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Co-developed-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> ---
+> Changes in v3:
+> - based on Marc's patch and reuse the for_each_platform_timer() loop
+> 
+> Changes in v2:
+> - Check against gtdt_end for both entry and len of each array element
+> Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
+> 
+> Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
+> ---
+>  drivers/acpi/arm64/gtdt.c | 32 +++++++++++++++++++++-----------
+>  1 file changed, 21 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> index c0e77c1c8e09..3583c99afb0d 100644
+> --- a/drivers/acpi/arm64/gtdt.c
+> +++ b/drivers/acpi/arm64/gtdt.c
+> @@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
+>  
+>  static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
+>  
+> -static inline __init void *next_platform_timer(void *platform_timer)
+> +static __init bool platform_timer_valid(void *platform_timer)
+>  {
+>  	struct acpi_gtdt_header *gh = platform_timer;
+>  
+> -	platform_timer += gh->length;
+> -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
+> -		return platform_timer;
+> +	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
+> +		platform_timer < acpi_gtdt_desc.gtdt_end &&
+> +		gh->length != 0 &&
+> +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
+> +}
+> +
+> +static __init void *next_platform_timer(void *platform_timer)
+> +{
+> +	struct acpi_gtdt_header *gh = platform_timer;
+>  
+> -	return NULL;
+> +	return platform_timer + gh->length;
+>  }
+>  
+> -#define for_each_platform_timer(_g)				\
+> -	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
+> +#define for_each_platform_timer(_g, first_entry)	\
+> +	for (_g = first_entry; platform_timer_valid(_g);	\
+>  	     _g = next_platform_timer(_g))
+>  
+>  static inline bool is_timer_block(void *platform_timer)
+> @@ -155,8 +161,9 @@ bool __init acpi_gtdt_c3stop(int type)
+>  int __init acpi_gtdt_init(struct acpi_table_header *table,
+>  			  int *platform_timer_count)
+>  {
+> -	void *platform_timer;
+> +	void *platform_timer, *tmp;
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index d339fe4fdedf..8109446f7b24 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -224,6 +224,7 @@ config S390
- 	select HAVE_VIRT_CPU_ACCOUNTING_IDLE
- 	select IOMMU_HELPER		if PCI
- 	select IOMMU_SUPPORT		if PCI
-+	select LOCK_MM_AND_FIND_VMA
- 	select MMU_GATHER_MERGE_VMAS
- 	select MMU_GATHER_NO_GATHER
- 	select MMU_GATHER_RCU_TABLE_FREE
-diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-index 93ae097ef0e0..8bd2b8d64273 100644
---- a/arch/s390/mm/fault.c
-+++ b/arch/s390/mm/fault.c
-@@ -308,18 +308,10 @@ static void do_exception(struct pt_regs *regs, int access)
- 		return;
- 	}
- lock_mmap:
--	mmap_read_lock(mm);
- retry:
--	vma = find_vma(mm, address);
-+	vma = lock_mm_and_find_vma(mm, address, regs);
- 	if (!vma)
--		return handle_fault_error(regs, SEGV_MAPERR);
--	if (unlikely(vma->vm_start > address)) {
--		if (!(vma->vm_flags & VM_GROWSDOWN))
--			return handle_fault_error(regs, SEGV_MAPERR);
--		vma = expand_stack(mm, address);
--		if (!vma)
--			return handle_fault_error_nolock(regs, SEGV_MAPERR);
--	}
-+		return handle_fault_error_nolock(regs, SEGV_MAPERR);
- 	if (unlikely(!(vma->vm_flags & access)))
- 		return handle_fault_error(regs, SEGV_ACCERR);
- 	fault = handle_mm_fault(vma, address, flags, regs);
-@@ -337,7 +329,6 @@ static void do_exception(struct pt_regs *regs, int access)
- 	}
- 	if (fault & VM_FAULT_RETRY) {
- 		flags |= FAULT_FLAG_TRIED;
--		mmap_read_lock(mm);
- 		goto retry;
- 	}
- 	mmap_read_unlock(mm);
--- 
-2.47.0
+It makes more sense - thank you and Marc.
 
+Nit: you don't really need another pointer (ie tmp) but you may keep
+it if that makes the code clearer - all you need to do is using
+platform_timer as an iterator and initialize
+
+	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+
+if all checks passed (you are using tmp just because after the loop
+platform_timer can't be used to initialize acpi_gtdt_desc.platform_timer).
+
+Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+
+(now let's see if this survives GTDTs out there :))
+
+>  	struct acpi_table_gtdt *gtdt;
+> +	int cnt = 0;
+>  
+>  	gtdt = container_of(table, struct acpi_table_gtdt, header);
+>  	acpi_gtdt_desc.gtdt = gtdt;
+> @@ -177,7 +184,10 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+>  	}
+>  
+>  	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+> +	for_each_platform_timer(tmp, platform_timer)
+> +		cnt++;
+> +
+> +	if (cnt != gtdt->platform_timer_count) {
+>  		pr_err(FW_BUG "invalid timer data.\n");
+>  		return -EINVAL;
+>  	}
+> @@ -305,7 +315,7 @@ int __init acpi_arch_timer_mem_init(struct arch_timer_mem *timer_mem,
+>  	void *platform_timer;
+>  
+>  	*timer_count = 0;
+> -	for_each_platform_timer(platform_timer) {
+> +	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
+>  		if (is_timer_block(platform_timer)) {
+>  			ret = gtdt_parse_timer_block(platform_timer, timer_mem);
+>  			if (ret)
+> @@ -398,7 +408,7 @@ static int __init gtdt_sbsa_gwdt_init(void)
+>  	if (ret || !timer_count)
+>  		goto out_put_gtdt;
+>  
+> -	for_each_platform_timer(platform_timer) {
+> +	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
+>  		if (is_non_secure_watchdog(platform_timer)) {
+>  			ret = gtdt_import_sbsa_gwdt(platform_timer, gwdt_count);
+>  			if (ret)
+> -- 
+> 2.20.1
+> 
 
