@@ -1,131 +1,155 @@
-Return-Path: <linux-kernel+bounces-365468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E2E99E2C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:25:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F74F99E2C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33AB7B24A50
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:25:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5142AB2137A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DF81DACA6;
-	Tue, 15 Oct 2024 09:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCFD1DD880;
+	Tue, 15 Oct 2024 09:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ro7U3eON"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VJ25AqOi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224901BE854
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FEE1BE854;
+	Tue, 15 Oct 2024 09:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728984345; cv=none; b=EKLTWddOWvYu7aEp/CqsHI41I3feyHzPewpztDagKtbSvxWPXb5qaiuBXkLBOh3IQf2pJKcNHgopgOiSWwQ2T8+Ap40RiTafcP0mfoQN0lfRQl2LvBRlrjBTd7CZ73v/FGWYCRzE8fT6vpacA43t9LTaEFPhwasgbQabX0pyzxk=
+	t=1728984442; cv=none; b=Q1Y6TRi6GvGTQKt7ynsR1oX3otBEd+BDhJHoPC6E030DckyucwTxomSlIaXXyBnE7FyZqK35U3g5NuNkeloMQevC6E6sMnXnf3miq8kJ4i3oPvAFy3y8kXu3odu/W+kB1qJhgOjCxMAKY92NetNtqdUGHbTUghSEwuqAi59S2o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728984345; c=relaxed/simple;
-	bh=LBwRXkAIdv1AimxyczECxXGj9by0IZ10c25ZcV9tBtE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HM5tQhkvQ5WHHbrkAklMBxNIvzoEhi5djgwN2CtJNUvgvY8sOwWN5Lp0hIIrT4kVBFoOkvtkRVlInaNFnsiyHOyRhKHqyMzBJPYHzlTnq+qWFeZ19B4ghVpg/7tQpC5CrwpH7zz9e17DZU4ZeYJRWS4Ke8OX5vW1pz1lG9YZjXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ro7U3eON; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728984343; x=1760520343;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=LBwRXkAIdv1AimxyczECxXGj9by0IZ10c25ZcV9tBtE=;
-  b=Ro7U3eONFOgU2/9zUuqlpmQWT8LrIW961JjSmwyDDeIfvaGt2DSzb1Km
-   idOBdrWDOqtbcNqGJI40oX3sOUqtf93KUOxRqPFx3R7a+05p4diYr1Uv9
-   L/uZEf98FO3znxPuavRt/2joSFbRDkvczfwRiisG+q+g111Zpwwr60mY2
-   Eha9q7nUsJ/tQX0AHrf/TThOSKpwSRr9OcTf+3vfNwe+/n8Qc6yOGmSSI
-   J5j/f/LFfdf8Qb5oTMmcdIHRIUtpBjgj2Q+PRKgBwRzJSGkHtEpCfuKbq
-   3c4E+hciZTPacTakYkF9XjL8W8h0n+/XItN0lRjhIB5QtiWy80JT24eJG
-   w==;
-X-CSE-ConnectionGUID: qAPUyyeoSd+Ibm03N6fgVg==
-X-CSE-MsgGUID: aiEHH07FStOWPh0s5vGkkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="38997772"
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="38997772"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 02:25:42 -0700
-X-CSE-ConnectionGUID: 9X81IRDMTxOE0jJ7zKZwJw==
-X-CSE-MsgGUID: qHE+LER4R2m09qKI09dR3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="77850866"
-Received: from lfiedoro-mobl.ger.corp.intel.com ([10.245.246.32])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 02:25:40 -0700
-Message-ID: <0feb16b0bc3515b0a77f33a3e18568f62236b691.camel@linux.intel.com>
-Subject: Re: [PATCH 1/1] nvme-pci: Add CPU latency pm-qos handling
-From: Tero Kristo <tero.kristo@linux.intel.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-kernel@vger.kernel.org, axboe@kernel.dk, 
-	linux-nvme@lists.infradead.org, sagi@grimberg.me, kbusch@kernel.org
-Date: Tue, 15 Oct 2024 12:25:37 +0300
-In-Reply-To: <accb9ceb501197b71259d8d3996c461dcef1e7d6.camel@linux.intel.com>
-References: <20241004101014.3716006-1-tero.kristo@linux.intel.com>
-	 <20241004101014.3716006-2-tero.kristo@linux.intel.com>
-	 <20241007061926.GA800@lst.de>
-	 <913b063d0638614bc95d92969879d2096ffc0722.camel@linux.intel.com>
-	 <20241009080052.GA16711@lst.de>
-	 <accb9ceb501197b71259d8d3996c461dcef1e7d6.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1728984442; c=relaxed/simple;
+	bh=sUyNLwgvdyHnZjnJWQfiCuf+BL42Uc3XJFAl7cruPN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fr72Y7gNctucuOIaqVJO2epJAE7ADNtXcraiRhR1uU2kDIe645jDfz/2BLFD4a9BTrixV0Y7DJkninJDNbKdXn6GKwS47stQcCLzGTGVvIlrg1bjXhl5STaoUIWhN6VmW5Z8gbhrXStKnFkOUEoJP2usK/KWIxEIq9pl+toSbAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VJ25AqOi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296C8C4CEC6;
+	Tue, 15 Oct 2024 09:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728984441;
+	bh=sUyNLwgvdyHnZjnJWQfiCuf+BL42Uc3XJFAl7cruPN8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VJ25AqOiDE0QjNFKL5wK+Bhf81LORAA+oOT4+xHtugKBpF2VZhMvIGJxM8XBPqvYW
+	 6K3r6edYD14b5c0oFFne5a3zpVTJV469BNm1sFVezo444pvFwCPvsj11reNHlpcHnT
+	 KSmsLF1rCTDDWON1bOeH2kWvqYW51418mEAzl4zA=
+Date: Tue, 15 Oct 2024 11:27:18 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kent Gibson <warthog618@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 2/2] gpio: create the /sys/class/gpio mount point with
+ GPIO_SYSFS disabled
+Message-ID: <2024101510-shifter-pursuable-ded5@gregkh>
+References: <20241015-gpio-class-mountpoint-v2-0-7709301876ef@linaro.org>
+ <20241015-gpio-class-mountpoint-v2-2-7709301876ef@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015-gpio-class-mountpoint-v2-2-7709301876ef@linaro.org>
 
-On Wed, 2024-10-09 at 11:24 +0300, Tero Kristo wrote:
-> On Wed, 2024-10-09 at 10:00 +0200, Christoph Hellwig wrote:
-> > On Wed, Oct 09, 2024 at 09:45:07AM +0300, Tero Kristo wrote:
-> > > Initially, I posted the patch against block layer, but there the
-> > > recommendation was to move this closer to the HW; i.e. NVMe
-> > > driver
-> > > level.
-> >=20
-> > Even if it is called from NVMe, at lot of the code is not nvme
-> > specific.
-> > Some of it appears block specific and other pats are entirely
-> > generic.
-> >=20
-> > But I still don't see how walking cpumasks and updating paramters
-> > in
-> > far away (in terms of cache lines and pointer dereferences) for
-> > every
-> > single I/O could work without having a huge performance impact.
-> >=20
->=20
-> Generally, the cpumask only has a couple of CPUs on it; yes its true
-> on
-> certain setups every CPU of the system may end up on it, but then the
-> user has the option to not enable this feature at all. In my testing
-> system, there is a separate NVME irq for each CPU, so the affinity
-> mask
-> only contains one bit.
->=20
-> Also, the code tries to avoid calling the heavy PM QoS stuff, by
-> checking if the request is already active, and updating the values in
-> a
-> workqueue later on. Generally the heavy-ish parameter update only
-> happens on the first activity of a burst of NVMe accesses.
+On Tue, Oct 15, 2024 at 10:00:24AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> User-space may want to use some kind of a compatibility layer for the
+> deprecated GPIO sysfs ABI. This would typically involve mounting
+> a fuse-based filesystem using the GPIO character device to emulate the
+> sysfs behavior and layout.
 
-I've been giving this some thought offline, but can't really think of
-how this could be done in the generic layers; the code needs to figure
-out the interrupt that gets fired by the activity, to prevent the CPU
-that is going to handle that interrupt to go into deep idle,
-potentially ruining the latency and throughput of the request. The
-knowledge of this interrupt mapping only resides in the driver level,
-in this case NVMe.
+Ick, no, don't mount a filesystem in /sys/class/ that's crazy, and
+wrong.  See my other response for why.
 
-One thing that could be done is to prevent the whole feature to be used
-on setups where the number of cpus per irq is above some threshold;
-lets say 4 as an example.
+> With GPIO_SYSFS disabled, the /sys/class/gpio directory doesn't exist
+> and user-space cannot create it.
 
--Tero
+userspace should NOT be creating it.
+
+> In order to facilitate moving away from
+> the sysfs, add a new Kconfig option that indicates to GPIOLIB that is
+> should create an always-empty directory where the GPIO class interface
+> would exist and enable this option by default if GPIO_SYSFS is not
+> selected.
+
+No, either support a real sysfs api here, or don't.  Don't paper over
+the api change by allowing this type of fake interface to live here,
+that is just going to be a maintance nightmare.  Attempting to push the
+"we don't support this user/kernel api anymore" off to a userspace
+developer is not how to do kernel development.
+
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/gpio/Kconfig   | 18 ++++++++++++++++++
+>  drivers/gpio/gpiolib.c |  6 ++++++
+>  2 files changed, 24 insertions(+)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index efddc6455315..1a3535bda779 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -69,6 +69,24 @@ config GPIO_SYSFS
+>  	  use the character device /dev/gpiochipN with the appropriate
+>  	  ioctl() operations instead.
+>  
+> +config GPIO_SYSFS_CLASS_MOUNT_POINT
+> +	bool "Create empty /sys/class/gpio directory" if EXPERT
+> +	depends on !GPIO_SYSFS
+> +	default y
+
+Only "default y" if you can not boot without this enabled.  I doubt
+that's the case here.  If it is the case here, then don't remove the
+sysfs api in the first place.
+
+And why is it being removed?  Who relies on it that can't live with it
+being gone?
+
+
+> +	help
+> +	  Say Y here to create an empty /sys/class/gpio directory.
+> +
+> +	  User-space may want to use some kind of a compatibility layer for the
+> +	  deprecated GPIO sysfs ABI. This would typically involve mounting
+> +	  a fuse-based filesystem using the GPIO character device to emulate
+> +	  the sysfs behavior and layout.
+> +
+> +	  This option makes GPIOLIB create an empty directory at /sys/class/gpio
+> +	  where user-space can mount the sysfs replacement and avoid having to
+> +	  change existing programs to adjust to different filesystem paths.
+> +
+> +	  If unsure, say Y.
+> +
+>  config GPIO_CDEV
+>  	bool
+>  	prompt "Character device (/dev/gpiochipN) support" if EXPERT
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 97346b746ef5..1c8bd765d8e1 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -4899,6 +4899,12 @@ static int __init gpiolib_dev_init(void)
+>  		return ret;
+>  	}
+>  
+> +#if IS_ENABLED(CONFIG_GPIO_SYSFS_CLASS_MOUNT_POINT)
+> +	ret = sysfs_create_mount_point(class_kobj, "gpio");
+> +	if (ret)
+> +		pr_err("gpiolib: failed to create the GPIO class mountpoint\n");
+> +#endif /* CONFIG_GPIO_SYSFS_CLASS_MOUNT_POINT */
+
+Nit, I think we know what the #endif is for, it was only 3 lines above :)
+
+thanks,
+
+greg k-h
 
