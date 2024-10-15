@@ -1,149 +1,517 @@
-Return-Path: <linux-kernel+bounces-366402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AAB899F4D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:07:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EB799F4D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE083284E92
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2BB1F21D2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3E31FC7F6;
-	Tue, 15 Oct 2024 18:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3550C1F8EF2;
+	Tue, 15 Oct 2024 18:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="B6u/r6Lc"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zw+byhxs"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7562F1B21BA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6798E28691
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015655; cv=none; b=fDxIduwD4KF55lKR0y0XrpWED5phbp7xKt5aS2kp9jOfj/Ttyls2tK3Qtlev3bPQkujHCsVHjdJnBhfRYlgv34XBpl0NdjWxSM8E5CLZjt38iwnI0IAGpDEp4Mca+9A0526w9FeIs3uttClJA39Lm6bQhuMLC1QOpYzpmmF5aHU=
+	t=1729015785; cv=none; b=TcQUdNarpt6HU4wStHYTGyJSqxizdh8hNaU/blDgip7rJ78O/UYzhSv6OXuVLzPngvd3q0BaG+lIYmYo8/OzJSIMFSb+V2ZZY4tcVRef/i/nAaGNsFRekWL9J+P+ru1oVzzyO+ua/jjCxUY2KddMhTW4kXPzvDpEspcf2cIZWNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015655; c=relaxed/simple;
-	bh=mp2svKcmNny1JZ8mUVCe1St4WuevGVB4bca4Z482AGM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r79tMCT4NWpJDx6EA+OUOSCCE61uEyye+4jwqWz1dppz+v/k+8lt1ZMvesQCLPktbDAcnPUCCacXb2sl2I+IKPDUJWYgJbaQStjtiqJBImPyibqnwQveR/q0YVRlHbmj2obqFN6y56o8GwQRJG9rLyFeIyrE+4IqbUdUVdvt0eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=B6u/r6Lc; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e74900866so910721b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:07:32 -0700 (PDT)
+	s=arc-20240116; t=1729015785; c=relaxed/simple;
+	bh=ENUVOthTyASGcf8mdbAmVoT3dOTPJqQIyt9lfrdDDpM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s3ltlj6uUO2DouFmLykk3243v+ylN9lIt+Pl9rh8oK+oHrHmlvlBFAT3GiK60N37RrogV2h+i04TfgwkGoF1T76NdmAzJ0ZUYQ4GElqFiGTTa0UZ6Y6rIM4FKfXJtSyEJBe3CrSHm9olKWLPKuw+kzTZGpXZKlJu3vs4qG97lN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zw+byhxs; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c714cd9c8so45863085ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1729015652; x=1729620452; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=uyplW89FHBeoQEYicibHANYldii1FOFczTEx2pQXNVc=;
-        b=B6u/r6Lc8t2noN5Xd7C8kLdrJgNksClxutdcKxkz2mimW2OcbbIbDsPDbsW7NRpSj/
-         yHwIT316lwgZVuioIQoBHW26lb+7gXKyL6kk21O5dl9BYSlYb7cYXmvqefHNGXU3MARQ
-         meu8PFf84YwvvrwTHBDHMaT+73zbU6mMHQ4JM=
+        d=gmail.com; s=20230601; t=1729015782; x=1729620582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mhRRsLR/T1fXOW5zZC3UCwsnfkeGEX7bunbKOXTaB2s=;
+        b=Zw+byhxsiZHi+iOnODfURfAenXhT283uf8DG0p5tSwyLDciF9N1mw/NIUZTrDVdBI9
+         j+WQYBrD7WCnB0Th9zlmckJj7tZTNfS0mPNIul7KWOAJOt/0hGXlYOZZRCoRF5knAzwf
+         db2VXaaY++0k4AMfKE0OWqhYPu2TXAhrr4YHEDqtsSOh0vz4pHvFoZuNxdU/91aTLTCR
+         9hz0oLuzag1YhmQDrOxfy7fTaG3NA8dkj39QoBVocLybTjoZvNwYnr/Kli/7H2ov2CuV
+         cgzhh7v87+yhQ3a1KIeg8aHEso08mf7YHfTR3HUS3X1pddE6V5th3b3Uun34M03ifTkD
+         CzlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729015652; x=1729620452;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uyplW89FHBeoQEYicibHANYldii1FOFczTEx2pQXNVc=;
-        b=O+n0WAkUjTBLRolTeoYJptACbHbVwi4Hd6IV1ty7C0UaGore43Qoc9SVFFbs5LNLzM
-         pDJrbHw63za/UldvpvD6EudAozjUkTHsRoXrUJDOq5GXlHgNhoRDgBQzVln6o2TYhm0c
-         dRXB76AKPfdbddsj8gLMsLZ35DApzHvl1dcCafB3iQkuEN322CCiRGvqwRb1Rj+oi1HP
-         ShIbn2CC2DnZUEv4z5DFslpbpsR8Pd9Nq0gTMiZveji6ygtZP3r9IgCEvRKwD5VbUlq0
-         8b+9nsjV/Gh6P0PSYG0WVDywdiDYdgJRRNXBP2tgXsVpcBf1sBwj2+hhSvO75hLLQAZ3
-         IhyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVReU7+20OfcFRPAx6CwQsoz7YalnLCaf6V0ANJNNnfEpjZqjOcLX9Jj20AlDgEP0FdciSX0XQQi9DPkt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJV6sriMtWH/MZJQAqxspX4bN85sUTGb+d9XLKxEsihJ7UmKEr
-	EAnvz3sPHO2peOJv1PR77zplRcPFbN/0fVZheOGtjSHPh35qcZ1rR5A8YRJjOA==
-X-Google-Smtp-Source: AGHT+IGkgFxmWu3ONSnK7BzmVrFic2xtXKYm0lvFrM56CsdAhB3PKvklnkPE6VXQrWi3toc6W5vxhA==
-X-Received: by 2002:a05:6a00:178b:b0:717:9154:b5d6 with SMTP id d2e1a72fcca58-71e7daef79amr1507687b3a.22.1729015651593;
-        Tue, 15 Oct 2024 11:07:31 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77507db4sm1571983b3a.188.2024.10.15.11.07.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 11:07:30 -0700 (PDT)
-Message-ID: <ed541d60-46dd-4b23-b810-548166b7a826@broadcom.com>
-Date: Tue, 15 Oct 2024 11:07:29 -0700
+        d=1e100.net; s=20230601; t=1729015782; x=1729620582;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mhRRsLR/T1fXOW5zZC3UCwsnfkeGEX7bunbKOXTaB2s=;
+        b=SjxVcD9t+FVAT4N5TXaG6AWrt4DUe170CHC6JAHyQwVRTG6WdnyVHoAIpwVTrZ7SAZ
+         mp0T5DkEKlXdEaoYjY82NAUhRVqVnVxpcr2HuWAakiM/aM9f0npSMgL7WOuWhJopKCJ4
+         QJqPFyed1YMeMyMls856bfesspeJd7O7tQ2qzr6bWF60ShGqt+6Wvynk6R0m/lm5X4fo
+         JvVYNXwAUnGXTL5VN6m8FBsE1qlv1d26U6zZUIaOfH8a4XvjL/vTLQrRRwWCxhxk5RJR
+         dpEXiuA9yV8dMqcIhvDXwkS62wafKxaz8fzyfg5vhlXNmeyySZfWeXrAzyGvMrier1wg
+         Q2vA==
+X-Gm-Message-State: AOJu0YxuxIFZaPU3rQTcGXIRukSizPVGUNugRoF2ihi1ZdB+ItfWO+Qm
+	9pXCFNbTkEkwab+e+oBqjvljd04xSHe7A/eJmHuaXcov0ecFhPKh29JjUw==
+X-Google-Smtp-Source: AGHT+IEZ+AVOBChrHTOrRx0mM+NJXJyqrdMA0PK+l/5g0k1zAZekaqIZ48kpdQ/+Bmt2qg08ZHWrfQ==
+X-Received: by 2002:a17:902:ecc1:b0:20c:c482:1d62 with SMTP id d9443c01a7336-20cc4821f06mr132887725ad.61.1729015782284;
+        Tue, 15 Oct 2024 11:09:42 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:efdb:1582:924:51c3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d180366a8sm14970675ad.165.2024.10.15.11.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 11:09:41 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v6] f2fs: introduce device aliasing file
+Date: Tue, 15 Oct 2024 11:09:36 -0700
+Message-ID: <20241015180936.1180394-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: systemport: fix potential memory leak in
- bcm_sysport_xmit()
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Wang Hai <wanghai38@huawei.com>, bcm-kernel-feedback-list@broadcom.com,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- zhangxiaoxu5@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241014145115.44977-1-wanghai38@huawei.com>
- <0c21ac6a-fda4-4924-9ad1-db1b549be418@broadcom.com>
- <20241015110154.55c7442f@kernel.org>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241015110154.55c7442f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/15/24 11:01, Jakub Kicinski wrote:
-> On Mon, 14 Oct 2024 09:59:27 -0700 Florian Fainelli wrote:
->>> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
->>> index c9faa8540859..0a68b526e4a8 100644
->>> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
->>> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
->>> @@ -1359,6 +1359,7 @@ static netdev_tx_t bcm_sysport_xmit(struct sk_buff *skb,
->>>    		netif_err(priv, tx_err, dev, "DMA map failed at %p (len=%d)\n",
->>>    			  skb->data, skb_len);
->>>    		ret = NETDEV_TX_OK;
->>> +		dev_kfree_skb_any(skb);
->>
->> Since we already have a private counter tracking DMA mapping errors, I
->> would follow what the driver does elsewhere in the transmit path,
->> especially what bcm_sysport_insert_tsb() does, and just use
->> dev_consume_skb_any() here.
-> 
-> Are you saying that if the packet drop is accounted is some statistics
-> we should not inform drop monitor about it? 🤔️
-> That wasn't my understanding of kfree_skb vs consume_skb..
+From: Daeho Jeong <daehojeong@google.com>
 
-Yes that's my reasoning here, now given that we have had packet drops on 
-transmit that took forever to track down, maybe I better retract that 
-statement and go with v1.
+F2FS should understand how the device aliasing file works and support
+deleting the file after use. A device aliasing file can be created by
+mkfs.f2fs tool and it can map the whole device with an extent, not
+using node blocks. The file space should be pinned and normally used for
+read-only usages.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+Reviewed-by: Chao Yu <chao@kernel.org>
+---
+v6: added the description in the kernel doc.
+v5: added a ioctl to know whether a file is for device aliasing
+v4: added file pinning check in sanity check
+v3: merged Chao's extent cache sanity check.
+    prevented device aliasing support with noextent mount option
+v2: changed the position of f2fs_destroy_extent_tree() only for device
+    aliasing files
+---
+ Documentation/filesystems/f2fs.rst | 45 ++++++++++++++++++++++++++++++
+ fs/f2fs/data.c                     |  5 ++++
+ fs/f2fs/extent_cache.c             | 45 +++++++++++++++++++++++++++++-
+ fs/f2fs/f2fs.h                     |  5 ++++
+ fs/f2fs/file.c                     | 44 ++++++++++++++++++++++++++---
+ fs/f2fs/inode.c                    | 19 ++++++++++++-
+ fs/f2fs/super.c                    |  4 +++
+ fs/f2fs/sysfs.c                    |  2 ++
+ include/uapi/linux/f2fs.h          |  1 +
+ 9 files changed, 164 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 68a0885fb5e6..e61e8c630ecd 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -943,3 +943,48 @@ NVMe Zoned Namespace devices
+   can start before the zone-capacity and span across zone-capacity boundary.
+   Such spanning segments are also considered as usable segments. All blocks
+   past the zone-capacity are considered unusable in these segments.
++
++Device aliasing feature
++-----------------------
++
++f2fs can utilize a special file called a "device aliasing file." This file allows
++the entire storage device to be mapped with a single, large extent, not using
++the usual f2fs node structures. This mapped area is pinned and primarily intended
++for holding the space.
++
++Essentially, this mechanism allows a portion of the f2fs area to be temporarily
++reserved and used by another filesystem or for different purposes. Once that
++external usage is complete, the device aliasing file can be deleted, releasing
++the reserved space back to F2FS for its own use.
++
++<use-case>
++
++# ls /dev/vd*
++/dev/vdb (32GB) /dev/vdc (32GB)
++# mkfs.ext4 /dev/vdc
++# mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
++# mount /dev/vdb /mnt/f2fs
++# ls -l /mnt/f2fs
++vdc.file
++# df -h
++/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
++
++# mount -o loop /dev/vdc /mnt/ext4
++# df -h
++/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
++/dev/loop7                          32G   24K   30G   1% /mnt/ext4
++# umount /mnt/ext4
++
++# f2fs_io getflags /mnt/f2fs/vdc.file
++get a flag on /mnt/f2fs/vdc.file ret=0, flags=nocow(pinned),immutable
++# f2fs_io setflags noimmutable /mnt/f2fs/vdc.file
++get a flag on noimmutable ret=0, flags=800010
++set a flag on /mnt/f2fs/vdc.file ret=0, flags=noimmutable
++# rm /mnt/f2fs/vdc.file
++# df -h
++/dev/vdb                            64G  753M   64G   2% /mnt/f2fs
++
++So, the key idea is, user can do any file operations on /dev/vdc, and
++reclaim the space after the use, while the space is counted as /data.
++That doesn't require modifying partition size and filesystem format.
++
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 94f7b084f601..90fa8ab85194 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3441,6 +3441,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 
+ 	if (!f2fs_lookup_read_extent_cache_block(inode, index,
+ 						 &dn.data_blkaddr)) {
++		if (IS_DEVICE_ALIASING(inode)) {
++			err = -ENODATA;
++			goto out;
++		}
++
+ 		if (locked) {
+ 			err = f2fs_reserve_block(&dn, index);
+ 			goto out;
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 62ac440d9416..019c1f7b7fa5 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -24,6 +24,7 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct f2fs_extent *i_ext = &F2FS_INODE(ipage)->i_ext;
+ 	struct extent_info ei;
++	int devi;
+ 
+ 	get_read_extent_info(&ei, i_ext);
+ 
+@@ -38,7 +39,36 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
+ 			  ei.blk, ei.fofs, ei.len);
+ 		return false;
+ 	}
+-	return true;
++
++	if (!IS_DEVICE_ALIASING(inode))
++		return true;
++
++	for (devi = 0; devi < sbi->s_ndevs; devi++) {
++		if (FDEV(devi).start_blk != ei.blk ||
++				FDEV(devi).end_blk != ei.blk + ei.len - 1)
++			continue;
++
++		if (devi == 0) {
++			f2fs_warn(sbi,
++			    "%s: inode (ino=%lx) is an alias of meta device",
++			    __func__, inode->i_ino);
++			return false;
++		}
++
++		if (bdev_is_zoned(FDEV(devi).bdev)) {
++			f2fs_warn(sbi,
++			    "%s: device alias inode (ino=%lx)'s extent info "
++			    "[%u, %u, %u] maps to zoned block device",
++			    __func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
++			return false;
++		}
++		return true;
++	}
++
++	f2fs_warn(sbi, "%s: device alias inode (ino=%lx)'s extent info "
++			"[%u, %u, %u] is inconsistent w/ any devices",
++			__func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
++	return false;
+ }
+ 
+ static void __set_extent_info(struct extent_info *ei,
+@@ -76,6 +106,9 @@ static bool __init_may_extent_tree(struct inode *inode, enum extent_type type)
+ 
+ static bool __may_extent_tree(struct inode *inode, enum extent_type type)
+ {
++	if (IS_DEVICE_ALIASING(inode) && type == EX_READ)
++		return true;
++
+ 	/*
+ 	 * for recovered files during mount do not create extents
+ 	 * if shrinker is not registered.
+@@ -401,6 +434,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
+ 	if (atomic_read(&et->node_cnt) || !ei.len)
+ 		goto skip;
+ 
++	if (IS_DEVICE_ALIASING(inode)) {
++		et->largest = ei;
++		goto skip;
++	}
++
+ 	en = __attach_extent_node(sbi, et, &ei, NULL,
+ 				&et->root.rb_root.rb_node, true);
+ 	if (en) {
+@@ -463,6 +501,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+ 		goto out;
+ 	}
+ 
++	if (IS_DEVICE_ALIASING(inode)) {
++		ret = false;
++		goto out;
++	}
++
+ 	en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
+ 	if (!en)
+ 		goto out;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 33f5449dc22d..b6ba22a1da47 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -213,6 +213,7 @@ struct f2fs_mount_info {
+ #define F2FS_FEATURE_CASEFOLD			0x00001000
+ #define F2FS_FEATURE_COMPRESSION		0x00002000
+ #define F2FS_FEATURE_RO				0x00004000
++#define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
+ 
+ #define __F2FS_HAS_FEATURE(raw_super, mask)				\
+ 	((raw_super->feature & cpu_to_le32(mask)) != 0)
+@@ -3046,6 +3047,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+ #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
+ #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+ #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
++#define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
+ 
+ #define F2FS_QUOTA_DEFAULT_FL		(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
+ 
+@@ -3061,6 +3063,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+ /* Flags that are appropriate for non-directories/regular files. */
+ #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
+ 
++#define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
++
+ static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
+ {
+ 	if (S_ISDIR(mode))
+@@ -4510,6 +4514,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
+ F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
+ F2FS_FEATURE_FUNCS(compression, COMPRESSION);
+ F2FS_FEATURE_FUNCS(readonly, RO);
++F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+ static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9ae54c4c72fe..25d934357d3c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -725,6 +725,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 
+ 	trace_f2fs_truncate_blocks_enter(inode, from);
+ 
++	if (IS_DEVICE_ALIASING(inode) && from) {
++		err = -EINVAL;
++		goto out_err;
++	}
++
+ 	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
+ 
+ 	if (free_from >= max_file_blocks(inode))
+@@ -739,6 +744,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 		goto out;
+ 	}
+ 
++	if (IS_DEVICE_ALIASING(inode)) {
++		struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
++		struct extent_info ei = et->largest;
++		unsigned int i;
++
++		for (i = 0; i < ei.len; i++)
++			f2fs_invalidate_blocks(sbi, ei.blk + i);
++
++		dec_valid_block_count(sbi, inode, ei.len);
++		f2fs_update_time(sbi, REQ_TIME);
++
++		f2fs_put_page(ipage, 1);
++		goto out;
++	}
++
+ 	if (f2fs_has_inline_data(inode)) {
+ 		f2fs_truncate_inline_inode(inode, ipage, from);
+ 		f2fs_put_page(ipage, 1);
+@@ -774,7 +794,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 	/* lastly zero out the first data page */
+ 	if (!err)
+ 		err = truncate_partial_data_page(inode, from, truncate_page);
+-
++out_err:
+ 	trace_f2fs_truncate_blocks_exit(inode, err);
+ 	return err;
+ }
+@@ -992,7 +1012,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		return -EPERM;
+ 
+ 	if ((attr->ia_valid & ATTR_SIZE)) {
+-		if (!f2fs_is_compress_backend_ready(inode))
++		if (!f2fs_is_compress_backend_ready(inode) ||
++				IS_DEVICE_ALIASING(inode))
+ 			return -EOPNOTSUPP;
+ 		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
+ 			!IS_ALIGNED(attr->ia_size,
+@@ -1860,7 +1881,7 @@ static long f2fs_fallocate(struct file *file, int mode,
+ 		return -EIO;
+ 	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
+ 		return -ENOSPC;
+-	if (!f2fs_is_compress_backend_ready(inode))
++	if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
+ 		return -EOPNOTSUPP;
+ 
+ 	/* f2fs only support ->fallocate for regular file */
+@@ -3296,6 +3317,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 
++	if (IS_DEVICE_ALIASING(inode))
++		return -EINVAL;
++
+ 	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
+ 		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
+ 			  __func__, inode->i_ino, fi->i_gc_failures);
+@@ -3326,6 +3350,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+ 	if (f2fs_readonly(sbi->sb))
+ 		return -EROFS;
+ 
++	if (!pin && IS_DEVICE_ALIASING(inode))
++		return -EOPNOTSUPP;
++
+ 	ret = mnt_want_write_file(filp);
+ 	if (ret)
+ 		return ret;
+@@ -3391,6 +3418,12 @@ static int f2fs_ioc_get_pin_file(struct file *filp, unsigned long arg)
+ 	return put_user(pin, (u32 __user *)arg);
+ }
+ 
++static int f2fs_ioc_get_dev_alias_file(struct file *filp, unsigned long arg)
++{
++	return put_user(IS_DEVICE_ALIASING(file_inode(filp)) ? 1 : 0,
++			(u32 __user *)arg);
++}
++
+ int f2fs_precache_extents(struct inode *inode)
+ {
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+@@ -4490,6 +4523,8 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_decompress_file(filp);
+ 	case F2FS_IOC_COMPRESS_FILE:
+ 		return f2fs_ioc_compress_file(filp);
++	case F2FS_IOC_GET_DEV_ALIAS_FILE:
++		return f2fs_ioc_get_dev_alias_file(filp, arg);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -4764,7 +4799,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
+ 	else
+ 		return 0;
+ 
+-	map.m_may_create = true;
++	if (!IS_DEVICE_ALIASING(inode))
++		map.m_may_create = true;
+ 	if (dio) {
+ 		map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
+ 						inode->i_write_hint);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 1ed86df343a5..194dc0f53ad8 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -372,6 +372,19 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+ 		return false;
+ 	}
+ 
++	if (IS_DEVICE_ALIASING(inode)) {
++		if (!f2fs_sb_has_device_alias(sbi)) {
++			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
++				  __func__, inode->i_ino);
++			return false;
++		}
++		if (!f2fs_is_pinned_file(inode)) {
++			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but is not pinned",
++				  __func__, inode->i_ino);
++			return false;
++		}
++	}
++
+ 	return true;
+ }
+ 
+@@ -823,7 +836,8 @@ void f2fs_evict_inode(struct inode *inode)
+ 	f2fs_bug_on(sbi, get_dirty_pages(inode));
+ 	f2fs_remove_dirty_inode(inode);
+ 
+-	f2fs_destroy_extent_tree(inode);
++	if (!IS_DEVICE_ALIASING(inode))
++		f2fs_destroy_extent_tree(inode);
+ 
+ 	if (inode->i_nlink || is_bad_inode(inode))
+ 		goto no_delete;
+@@ -879,6 +893,9 @@ void f2fs_evict_inode(struct inode *inode)
+ 		goto retry;
+ 	}
+ 
++	if (IS_DEVICE_ALIASING(inode))
++		f2fs_destroy_extent_tree(inode);
++
+ 	if (err) {
+ 		f2fs_update_inode_page(inode);
+ 		if (dquot_initialize_needed(inode))
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 87ab5696bd48..30646418241c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -834,6 +834,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 			set_opt(sbi, READ_EXTENT_CACHE);
+ 			break;
+ 		case Opt_noextent_cache:
++			if (F2FS_HAS_FEATURE(sbi, F2FS_FEATURE_DEVICE_ALIAS)) {
++				f2fs_err(sbi, "device aliasing requires extent cache");
++				return -EINVAL;
++			}
+ 			clear_opt(sbi, READ_EXTENT_CACHE);
+ 			break;
+ 		case Opt_noinline_data:
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index c56e8c873935..e51304bc65ea 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -1313,6 +1313,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
+ F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
+ F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
+ F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
++F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
+ 
+ static struct attribute *f2fs_sb_feat_attrs[] = {
+ 	ATTR_LIST(sb_encryption),
+@@ -1329,6 +1330,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
+ 	ATTR_LIST(sb_casefold),
+ 	ATTR_LIST(sb_compression),
+ 	ATTR_LIST(sb_readonly),
++	ATTR_LIST(sb_device_alias),
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(f2fs_sb_feat);
+diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
+index 955d440be104..f7aaf8d23e20 100644
+--- a/include/uapi/linux/f2fs.h
++++ b/include/uapi/linux/f2fs.h
+@@ -43,6 +43,7 @@
+ #define F2FS_IOC_DECOMPRESS_FILE	_IO(F2FS_IOCTL_MAGIC, 23)
+ #define F2FS_IOC_COMPRESS_FILE		_IO(F2FS_IOCTL_MAGIC, 24)
+ #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
++#define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
+ 
+ /*
+  * should be same as XFS_IOC_GOINGDOWN.
 -- 
-Florian
+2.47.0.rc1.288.g06298d1525-goog
+
 
