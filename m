@@ -1,120 +1,159 @@
-Return-Path: <linux-kernel+bounces-365230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF4899DF3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:25:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D3799DF43
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37FE1F21E80
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6F41F22543
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4DD18BC21;
-	Tue, 15 Oct 2024 07:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AD119F132;
+	Tue, 15 Oct 2024 07:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="enm5A3wM"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GQdc9DVF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66D49474;
-	Tue, 15 Oct 2024 07:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE719474;
+	Tue, 15 Oct 2024 07:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728977123; cv=none; b=OwIK7O+o+roxKM0qimB9LpZzZ4TJkr4z69AaGnqrSQeaBal6yMzeFcyKKcF2ZqSp/dn/ZHy/lqCzJbPS78rj1++E7mxfX/ZfNILP+aYH/NvFwU82QJ4VkNRw5wkt29GM9OQRigDd1eWohC4S0EOiMrmHTr58O9eoR2KnFkDq308=
+	t=1728977211; cv=none; b=FXkYfJkdi75rFLdhdXF7RY3bAmnX1ZfyDuDHI7RxY43XvMypbNNTUaud/P0tWhWFDTyIUsbXsW4oItR1mPRgRghLlP7VtlVtWsmiPamXYD4iLxLQWvLhWxDTbL8IDi7u/zInWPo5lmZSmfkhsCqKqoSmgxFfmJajx+bm2XjKulY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728977123; c=relaxed/simple;
-	bh=HNwnXbZISPM5dAQq/ufCyRD5g/sXSG37J6CeuntZpr4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IejXiVas4rN7tIeTkJ+KzDZJUZfEFSdXj9xrwEtQvDHhItLBTSJjtHBqM5J334Oay2jeQQcYmilJnupUfnA0mUGM+R3DDi7A7bZp+BACkWIeNJUW+HdamOIa89ziRhLsCySdHAOdLogUPaHmydkQK6ujFnza9XCqUvqaTnFnI18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=enm5A3wM; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728977121; x=1760513121;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HNwnXbZISPM5dAQq/ufCyRD5g/sXSG37J6CeuntZpr4=;
-  b=enm5A3wMgstEBGcqglLUQY4/tGdv+9d1X9zz4XGCwPc68m+tmFKLXlBW
-   3SPcYtXvNfpInviT7uUp84GTbnxuC/Fkicata3jF+cvjT61+ZQ42PN7Pk
-   wnMpfF2qswBT5KLoRThxGSfTTiheEE6i6aOMe9vtiTdPPbVo6sGTvRIwK
-   rPSG6COqMy+RdRDfDgu0dGb+G894u9mPreSPC5AD4ILXXRNmkET4aybyY
-   Leg3Vxy7YqBn1EwVhOXiHtVcHIQP2BwYJrw22ndZVQQ/x3lwR7ukjdpX4
-   der6Vhvkldigz0FNlgQdK2Vv/GJU+sL5KV9M/0RLf3yCxRuj31ZZuhTn5
-   A==;
-X-CSE-ConnectionGUID: VOCQDlkbTci7FliPfYogbQ==
-X-CSE-MsgGUID: CzdCf0pGQ9+wU5rW2LqoTg==
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="36374574"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Oct 2024 00:25:20 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 15 Oct 2024 00:24:50 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 15 Oct 2024 00:24:48 -0700
-Date: Tue, 15 Oct 2024 07:24:48 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Simon Horman <horms@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Pantelis Antoniou <pantelis.antoniou@gmail.com>, Geert
- Uytterhoeven <geert@linux-m68k.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 0/2] net: ethernet: freescale: Use %pa to format
- resource_size_t
-Message-ID: <20241015072448.6ssv6vsyjpv4vnhi@DEN-DL-M70577>
-References: <20241014-net-pa-fmt-v1-0-dcc9afb8858b@kernel.org>
+	s=arc-20240116; t=1728977211; c=relaxed/simple;
+	bh=AFwOLTJBM7YSONnnjQ8PrBR6mSkmXeYFl9Z1iatT4Vc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QeEWRUi3NLGuSbCZDbmeDWJAQ2i3/aRHuEKi4UJXAV4Aznfr4ZVesOd+wIAr23omM3x35gtFdKv+kLlUQyavpr7pK/w6OW4Il5Udp0kLH14fCUHLkfI0LWa69WVkqlb4NbD6JFw/+aWoALP9KHl01dC10IYfDnwrSk/ARh+otwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GQdc9DVF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F0l0KZ011535;
+	Tue, 15 Oct 2024 07:26:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Q526+r0Dcxm3qRY0GFP4GetrV21kKQI4ls6mq6CHL6w=; b=GQdc9DVFk8PN8GUS
+	5RHr19x5Ruoc/tMxM9VValt5R8ZURrju0GflIkHimqVS6wCP+cac58UF2AThebGs
+	vARlrt4QRFg6g1Lf+t1RGsnmrWLlEAPuk4YKW8qGzGr4eM08HFXwnBQalUnlYGa/
+	SvYZRtPsxNFAsG1fPQ64ZS5rOW1F/7c7HE9e3X1U9FwDGUzKDS5xv/LBVDvbV49B
+	LY//cyD2snH+mIl5zu19aGhAzBK//JvkBEwAfIb8u6BLsKaZK3pGhxySg3Zd7J2q
+	UaggEYW54SN0UkgfXJPmJ7esldj+eOl0bHYeX83lFG7qOM+jqOhwsCcR5ZbPJpBJ
+	7ugwJQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429e5g0s8a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 07:26:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49F7Qfce007232
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 07:26:41 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Oct
+ 2024 00:26:36 -0700
+Message-ID: <ba4620df-7933-3730-eb9a-ffdd5cd98adb@quicinc.com>
+Date: Tue, 15 Oct 2024 12:56:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241014-net-pa-fmt-v1-0-dcc9afb8858b@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 00/28] Qualcomm iris video decoder driver
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: Hans Verkuil <hverkuil@xs4all.nl>,
+        Sebastian Fricke
+	<sebastian.fricke@collabora.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <e954a3b7-296f-4dbf-8325-b5993d11da92@kernel.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <e954a3b7-296f-4dbf-8325-b5993d11da92@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3FJMYedsetfFeeXfYQEGnrlFEi1Ss1a5
+X-Proofpoint-ORIG-GUID: 3FJMYedsetfFeeXfYQEGnrlFEi1Ss1a5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ adultscore=0 impostorscore=0 mlxscore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=880 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410150049
 
-> Hi,
-> 
-> This short series addersses the formatting of variables of
-> type resource_size_t in freescale drivers.
-> 
-> The correct format string for resource_size_t is %pa which
-> acts on the address of the variable to be formatted [1].
-> 
-> [1] https://elixir.bootlin.com/linux/v6.11.3/source/Documentation/core-api/printk-formats.rst#L229
-> 
-> These problems were introduced by
-> commit 9d9326d3bc0e ("phy: Change mii_bus id field to a string")
-> 
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Closes: https://lore.kernel.org/netdev/711d7f6d-b785-7560-f4dc-c6aad2cce99@linux-m68k.org/
-> 
-> ---
-> Simon Horman (2):
->       net: fec_mpc52xx_phy: Use %pa to format resource_size_t
->       net: ethernet: fs_enet: Use %pa to format resource_size_t
-> 
->  drivers/net/ethernet/freescale/fec_mpc52xx_phy.c     | 2 +-
->  drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> base-commit: 6aac56631831e1386b6edd3c583c8afb2abfd267
-> 
 
-Hi Simon,
 
-Is this for net-next? I dont see a target tree name :-)
+On 10/14/2024 5:24 PM, Krzysztof Kozlowski wrote:
+> On 14/10/2024 11:07, Dikshita Agarwal wrote:
+>> Introduce support for Qualcomm new video acceleration hardware i.e.
+>> iris, used for video stream decoding.
+>>
+>> Iris is a multi pipe based hardware that offloads video stream decoding
+>> from the application processor (AP). It supports H.264 decoding.
+>> The AP communicates with hardware through a well defined protocol,
+>> called as host firmware interface (HFI), which provides fine-grained
+>> and asynchronous control over individual hardware features.
+>>
+>> This driver implements upgraded HFI gen2 to communicate with firmware.
+>> It supports SM8550 which is based out of HFI gen 2. It also supports
+>> SM8250 which is based out of HFI gen1.
+>>
+>> This driver comes with below capabilities:
+>> - V4L2 complaint video driver with M2M and STREAMING capability.
+>> - Supports H264 decoder.
+>>
+>> This driver comes with below features:
+>> - Centralized resource management.
+>> - Centralized management of core and instance states.
+>> - Defines platform specific capabilities and features. As a results, it
+>>   provides a single point of control to enable/disable a given feature
+>>   depending on specific platform capabilities.
+>> - Handles various video recommended sequences, like DRC, Drain, Seek,
+>>   EOS.
+>> - Implements asynchronous communication with hardware to achieve better
+>>   experience in low latency usecases.
+>> - Output and capture planes are controlled independently. Thereby
+>>   providing a way to reconfigure individual plane.
+>> - Native hardware support of LAST flag which is mandatory to align with
+>>   port reconfiguration and DRAIN sequence as per V4L guidelines.
+>>
+>> Changes since v3:
+> 
+> You send the patches with b4, so why do you strip the link to previous
+> series? It makes out life just more difficult. Include the link, how the
+> b4 instructs you.
+> 
+Sure, Noted.
 
-Looking at the docs, %pa seems correct to me.
+Link to v3 -
+https://lore.kernel.org/linux-media/9b116753-9a21-4f9c-b86f-dded20713b53@linaro.org/
 
-For the series:
+Thanks,
+Dikshita
 
-Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
-
+> Best regards,
+> Krzysztof
+> 
 
