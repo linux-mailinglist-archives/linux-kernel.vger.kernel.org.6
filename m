@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-366151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F370199F170
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:37:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C67D99F16B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54BC3B210CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:37:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 576B3B21B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EC31F76AE;
-	Tue, 15 Oct 2024 15:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CEB1B395B;
+	Tue, 15 Oct 2024 15:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tUt6FaJP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="weUPZRZ7"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dr7JQ+yR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OZIRcZF2"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB8E1DD0F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2081DD0FF;
 	Tue, 15 Oct 2024 15:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006583; cv=none; b=BF4zxYAzZNOVqk2i/ExPnuI06Pa9eaidpoXwYwYwrrkM25Wy78HYQ+JUkAJMtvf2pN/rv3sQH6yL2Vbt5CMQxAClEUeVqgKxCXY0Uu/7gGGgPnk3Dk+34EmfP92PGnjIAHFwyJYmTkUzsyGr8wQt1KDAuJJeGeJtaCC84rmY7sQ=
+	t=1729006582; cv=none; b=TVd3WAvtkOTqiBF5wOl3esxpnF8w2SGQykUClaUSV7doxk1VeCmpzH3i+1eNjaZBNhwNzuXsJg4xPrwAs/Anl34Y+pscJpllYty2hgvAv6ZDPZYdawCcs7pyXjeHy//61rnDze725SRRfUCUBxS9QRQdzm5XBeRthuNkzwCPfW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006583; c=relaxed/simple;
-	bh=y8NW0/ODy/M2xS0n7MxRoL0eNcRBohP5O74/G8tdK8I=;
+	s=arc-20240116; t=1729006582; c=relaxed/simple;
+	bh=MwrQTQJiDVuTov9rG29tvk973EHbkoWlxkA596/nl0Y=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=sMpJM/oxLFZHyQiVTgQlpWDvgQey3NrlK0vPCDCzrmt3ApjIhPBjiLyUZ40yRWoPTwpXELihU5pWywUE8cfs/vnlL36/jqHtsGwN3e0P4A3kUZXFjf2z8XEFghxgstDFRH4UjWcwp66+/nsKYF2LaQGmObTrCuRUJ9U/wKMOm+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tUt6FaJP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=weUPZRZ7; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=SE6uRs5VCY7D1Q0JAnWsSWH+Hbzu4r+IwVBBBNrzusQ5gma+Xga3Fxir25atZQXRHjKUI1M2570fTn4cKfJCN1hx3WELSSVmBJFiI1n2P9SpN0kg4kX3y0rTO3buc2J3ohkGZ33SUqxT2wSr2l5xe9a2Trzk6Mv533GZvnbB7es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dr7JQ+yR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OZIRcZF2; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 15:36:17 -0000
+Date: Tue, 15 Oct 2024 15:36:18 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729006578;
+	s=2020; t=1729006579;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3WApvTTVeHgql4F2NeZsocgsLy8BoFHUkdV6/5J6F5s=;
-	b=tUt6FaJP9Rt05jVlVLvfWoMBH9Lh6dBofhVbBv38NzN11gK2qWJB8/ntWXq+HqT2wkzJP9
-	0Y/ve9ie23881PH0xs9cJmHmdLcLU8eKlIjfKf1e6HsjqEndcRdPzXN9vb6nhEmjAjCppW
-	DEYPFy7QoZHKMA5w39UU6WEqXJzY0ixW6Qm/gjNGGUme8sgGYpIo4BKo5ZQ4QXW+SvbjfD
-	YDxFWuAdAagC/6czQOrKcyicciq4uMKGIGUS9VoBEEL0ODSuBzwsB8ZQT8VCjIMYgKAm0B
-	H/JSDuiZGnjEHwycgfmaiOnztXDgwuF0N1rzK53XTNUfKEs/SiN8kV5PvgY58w==
+	bh=OGii3Fox/QspOdS4WzLturssJ7cKe2tOuh5fBOCCCgM=;
+	b=dr7JQ+yRhIvjfgM6I/OEB9z5oOyI78NK/9/QiGcVr2npoZLW61VQF/89nYy17cbpGHP6C1
+	cJUeT5GOiF8jJkeT+py8Vwa3QkRK+FmZXvz0FN4EQ1REZb0ImdfxlMD5gEfanNYpU2Jsg6
+	Bwc+R+sl77EBWedjyZu78GcsQwEiLWiPVqcP2nGb/PRlS1jktW0CdQqsRjB1yOrQcxBv9m
+	rCZKajbNin6xhXZlNw5O11H5LqXq1lWSUCOGJRea6dgGCBXNmz+8GFRvvzkau1K8tGtbot
+	GiPovq5oirvLy3UeL7DC7QDd6gOf+nq8yP5ih/uT9mW6ScxpUrlALC2A9uIf4g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729006578;
+	s=2020e; t=1729006579;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3WApvTTVeHgql4F2NeZsocgsLy8BoFHUkdV6/5J6F5s=;
-	b=weUPZRZ7rQmpndO/C6JRuK6wpxtqnGKT2SkJ4rsWXKFhIs4U8gY3kBLVBodlgECthN9bkt
-	Jbk34htUJPnxUpDQ==
+	bh=OGii3Fox/QspOdS4WzLturssJ7cKe2tOuh5fBOCCCgM=;
+	b=OZIRcZF2YDq9Q5O2x5ToOcPA2RIPCuo3OYvNxWqG7Kxbg6kOyL28cGirFbTnDzODCOlaga
+	BYeD0rJGc5ekglDg==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/debugobjects] debugobjects: Prepare kmem_cache allocations
- for batching
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+Subject: [tip: core/debugobjects] debugobjects: Prepare for batching
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Zhen Lei <thunder.leizhen@huawei.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241007164914.198647184@linutronix.de>
-References: <20241007164914.198647184@linutronix.de>
+In-Reply-To: <20241007164914.139204961@linutronix.de>
+References: <20241007164914.139204961@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172900657776.1442.15684540069417364601.tip-bot2@tip-bot2>
+Message-ID: <172900657834.1442.1085292605110155401.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,161 +81,84 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the core/debugobjects branch of tip:
 
-Commit-ID:     aebbfe0779b271c099cc80c5e2995c2087b28dcf
-Gitweb:        https://git.kernel.org/tip/aebbfe0779b271c099cc80c5e2995c2087b28dcf
+Commit-ID:     74fe1ad4132234f04fcc75e16600449496a67b5b
+Gitweb:        https://git.kernel.org/tip/74fe1ad4132234f04fcc75e16600449496a67b5b
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 07 Oct 2024 18:50:15 +02:00
+AuthorDate:    Mon, 07 Oct 2024 18:50:14 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 15 Oct 2024 17:30:32 +02:00
 
-debugobjects: Prepare kmem_cache allocations for batching
+debugobjects: Prepare for batching
 
-Allocate a batch and then push it into the pool. Utilize the
-debug_obj::last_node pointer for keeping track of the batch boundary.
+Move the debug_obj::object pointer into a union and add a pointer to the
+last node in a batch. That allows to implement batch processing efficiently
+by utilizing the stack property of hlist:
+
+When the first object of a batch is added to the list, then the batch
+pointer is set to the hlist node of the object itself. Any subsequent add
+retrieves the pointer to the last node from the first object in the list
+and uses that for storing the last node pointer in the newly added object.
+
+Add the pointer to the data structure and ensure that all relevant pool
+sizes are strictly batch sized. The actual batching implementation follows
+in subsequent changes.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241007164914.198647184@linutronix.de
+Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
+Link: https://lore.kernel.org/all/20241007164914.139204961@linutronix.de
 
 ---
- lib/debugobjects.c | 80 +++++++++++++++++++++++++++------------------
- 1 file changed, 49 insertions(+), 31 deletions(-)
+ include/linux/debugobjects.h | 12 ++++++++----
+ lib/debugobjects.c           | 10 +++++++---
+ 2 files changed, 15 insertions(+), 7 deletions(-)
 
+diff --git a/include/linux/debugobjects.h b/include/linux/debugobjects.h
+index 3244468..8b95545 100644
+--- a/include/linux/debugobjects.h
++++ b/include/linux/debugobjects.h
+@@ -23,13 +23,17 @@ struct debug_obj_descr;
+  * @state:	tracked object state
+  * @astate:	current active state
+  * @object:	pointer to the real object
++ * @batch_last:	pointer to the last hlist node in a batch
+  * @descr:	pointer to an object type specific debug description structure
+  */
+ struct debug_obj {
+-	struct hlist_node	node;
+-	enum debug_obj_state	state;
+-	unsigned int		astate;
+-	void			*object;
++	struct hlist_node		node;
++	enum debug_obj_state		state;
++	unsigned int			astate;
++	union {
++		void			*object;
++		struct hlist_node	*batch_last;
++	};
+ 	const struct debug_obj_descr *descr;
+ };
+ 
 diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 2fed7b8..cdd5d23 100644
+index 65cce4c..2fed7b8 100644
 --- a/lib/debugobjects.c
 +++ b/lib/debugobjects.c
-@@ -164,6 +164,22 @@ static bool pool_move_batch(struct obj_pool *dst, struct obj_pool *src)
- 	return true;
- }
+@@ -21,11 +21,15 @@
+ #define ODEBUG_HASH_BITS	14
+ #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
  
-+static bool pool_push_batch(struct obj_pool *dst, struct hlist_head *head)
-+{
-+	struct hlist_node *last;
-+	struct debug_obj *obj;
-+
-+	if (dst->cnt >= dst->max_cnt)
-+		return false;
-+
-+	obj = hlist_entry(head->first, typeof(*obj), node);
-+	last = obj->batch_last;
-+
-+	hlist_splice_init(head, last, &dst->objects);
-+	WRITE_ONCE(dst->cnt, dst->cnt + ODEBUG_BATCH_SIZE);
-+	return true;
-+}
-+
- static bool pool_pop_batch(struct hlist_head *head, struct obj_pool *src)
- {
- 	if (!src->cnt)
-@@ -288,6 +304,28 @@ static void fill_pool_from_freelist(void)
- 	clear_bit(0, &state);
- }
+-#define ODEBUG_POOL_SIZE	1024
+-#define ODEBUG_POOL_MIN_LEVEL	256
+-#define ODEBUG_POOL_PERCPU_SIZE	64
++/* Must be power of two */
+ #define ODEBUG_BATCH_SIZE	16
  
-+static bool kmem_alloc_batch(struct hlist_head *head, struct kmem_cache *cache, gfp_t gfp)
-+{
-+	struct hlist_node *last = NULL;
-+	struct debug_obj *obj;
++/* Initial values. Must all be a multiple of batch size */
++#define ODEBUG_POOL_SIZE	(64 * ODEBUG_BATCH_SIZE)
++#define ODEBUG_POOL_MIN_LEVEL	(ODEBUG_POOL_SIZE / 4)
 +
-+	for (int cnt = 0; cnt < ODEBUG_BATCH_SIZE; cnt++) {
-+		obj = kmem_cache_zalloc(cache, gfp);
-+		if (!obj) {
-+			free_object_list(head);
-+			return false;
-+		}
-+		debug_objects_allocated++;
++#define ODEBUG_POOL_PERCPU_SIZE	(4 * ODEBUG_BATCH_SIZE)
 +
-+		if (!last)
-+			last = &obj->node;
-+		obj->batch_last = last;
-+
-+		hlist_add_head(&obj->node, head);
-+	}
-+	return true;
-+}
-+
- static void fill_pool(void)
- {
- 	static atomic_t cpus_allocating;
-@@ -302,25 +340,14 @@ static void fill_pool(void)
- 
- 	atomic_inc(&cpus_allocating);
- 	while (pool_should_refill(&pool_global)) {
--		struct debug_obj *new, *last = NULL;
- 		HLIST_HEAD(head);
--		int cnt;
- 
--		for (cnt = 0; cnt < ODEBUG_BATCH_SIZE; cnt++) {
--			new = kmem_cache_zalloc(obj_cache, __GFP_HIGH | __GFP_NOWARN);
--			if (!new)
--				break;
--			hlist_add_head(&new->node, &head);
--			if (!last)
--				last = new;
--		}
--		if (!cnt)
-+		if (!kmem_alloc_batch(&head, obj_cache, __GFP_HIGH | __GFP_NOWARN))
- 			break;
- 
- 		guard(raw_spinlock_irqsave)(&pool_lock);
--		hlist_splice_init(&head, &last->node, &pool_global.objects);
--		debug_objects_allocated += cnt;
--		WRITE_ONCE(pool_global.cnt, pool_global.cnt + cnt);
-+		if (!pool_push_batch(&pool_global, &head))
-+			pool_push_batch(&pool_to_free, &head);
- 	}
- 	atomic_dec(&cpus_allocating);
- }
-@@ -1302,26 +1329,18 @@ void __init debug_objects_early_init(void)
- static bool __init debug_objects_replace_static_objects(struct kmem_cache *cache)
- {
- 	struct debug_bucket *db = obj_hash;
--	struct debug_obj *obj, *new;
- 	struct hlist_node *tmp;
-+	struct debug_obj *obj;
- 	HLIST_HEAD(objects);
- 	int i;
- 
--	for (i = 0; i < ODEBUG_POOL_SIZE; i++) {
--		obj = kmem_cache_zalloc(cache, GFP_KERNEL);
--		if (!obj)
-+	for (i = 0; i < ODEBUG_POOL_SIZE; i += ODEBUG_BATCH_SIZE) {
-+		if (!kmem_alloc_batch(&objects, cache, GFP_KERNEL))
- 			goto free;
--		hlist_add_head(&obj->node, &objects);
-+		pool_push_batch(&pool_global, &objects);
- 	}
- 
--	debug_objects_allocated = ODEBUG_POOL_SIZE;
--	pool_global.cnt = ODEBUG_POOL_SIZE;
--
--	/*
--	 * Move the allocated objects to the global pool and disconnect the
--	 * boot pool.
--	 */
--	hlist_move_list(&objects, &pool_global.objects);
-+	/* Disconnect the boot pool. */
- 	pool_boot.first = NULL;
- 
- 	/* Replace the active object references */
-@@ -1329,9 +1348,8 @@ static bool __init debug_objects_replace_static_objects(struct kmem_cache *cache
- 		hlist_move_list(&db->list, &objects);
- 
- 		hlist_for_each_entry(obj, &objects, node) {
--			new = hlist_entry(pool_global.objects.first, typeof(*obj), node);
--			hlist_del(&new->node);
--			pool_global.cnt--;
-+			struct debug_obj *new = pcpu_alloc();
-+
- 			/* copy object data */
- 			*new = *obj;
- 			hlist_add_head(&new->node, &db->list);
-@@ -1340,7 +1358,7 @@ static bool __init debug_objects_replace_static_objects(struct kmem_cache *cache
- 	return true;
- free:
- 	/* Can't use free_object_list() as the cache is not populated yet */
--	hlist_for_each_entry_safe(obj, tmp, &objects, node) {
-+	hlist_for_each_entry_safe(obj, tmp, &pool_global.objects, node) {
- 		hlist_del(&obj->node);
- 		kmem_cache_free(cache, obj);
- 	}
+ #define ODEBUG_CHUNK_SHIFT	PAGE_SHIFT
+ #define ODEBUG_CHUNK_SIZE	(1 << ODEBUG_CHUNK_SHIFT)
+ #define ODEBUG_CHUNK_MASK	(~(ODEBUG_CHUNK_SIZE - 1))
 
