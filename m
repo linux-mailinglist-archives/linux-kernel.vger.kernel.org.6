@@ -1,80 +1,97 @@
-Return-Path: <linux-kernel+bounces-366394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AF599F4BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:02:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8F899F4A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2779B20D7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025451F21A7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B4E227BB2;
-	Tue, 15 Oct 2024 18:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC76B227B81;
+	Tue, 15 Oct 2024 18:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONKR8oEy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EatNm/cB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7592F229114;
-	Tue, 15 Oct 2024 18:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112731B3950;
+	Tue, 15 Oct 2024 18:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015244; cv=none; b=dvcwwtIoTc4keis9zVmjAKk4lKUGB6UWFpu+Z8K1Ih6HNrbfs/VA1c+IEu0u/IlWMe4ZL2qoCtrkIZT1KHRZ83o/FOxZX0gf75rnyPOws+WF6YgTG07E2Digh+M8z9NFt6fsEV8NVrfQPWDenKPQnQiNt14OlbjQAef7mobni0g=
+	t=1729015230; cv=none; b=Oc1tcRBI7feudVYKSpbB11qbxoG/+HYhH3HLIPJVqWM6aMhM6ElXjboyIfIJInbo/QjieRIynSZddBzOjbW0jBkSEhkpk+/7HEgQGcEB2caQViLf03GbijzIXC53p9psEkAiodB/p3wLRIBtwqa5Mk/m94PoXLY+ErzxGm/Gxow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015244; c=relaxed/simple;
-	bh=6BAMH+Px+76REEHH++B/Lc+QYvBL3VcxAy72V4ZN4Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s1nYVbpwBKKIOPyil3u1m+pV5fGnciaPDFLQkmkyCL58h/UFT8x4uLfvkQqKH9k7NpW+lj7Z5rJU5CTjKJuniFgJ8YgVCKAlMKCjJ6oMfq7zNiqjseKzDxjzU10hkD+bXuacQ67cspDN1Ul8+IGBlPoQKK+Iz4tL7pNRPe8n1yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONKR8oEy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CD9C4CEC7;
-	Tue, 15 Oct 2024 18:00:38 +0000 (UTC)
+	s=arc-20240116; t=1729015230; c=relaxed/simple;
+	bh=lpbB4zBvabiC+qAlL68upeccQ4XTAZm+z7OB3LiXtIY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=p5rV3dCnSuZoRFtsFEuBaRrmDwrWXkN07aQT5nu8+pogbWsqMunhCePCqed5psjMsHHLx8a060wczlOoRA3DCXT8m4qasK2bjFm/0+zpKn9nLGqNjsR62/8Wq/sa2kMpdCBZwrGeT31rBZnNDsQZysODNGegMO1vRaajF6BImuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EatNm/cB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4ABC4CED0;
+	Tue, 15 Oct 2024 18:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729015244;
-	bh=6BAMH+Px+76REEHH++B/Lc+QYvBL3VcxAy72V4ZN4Lk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ONKR8oEyIWD64bnr9k3vrIb8fy7uiel4qC7K0XlOVM2F1vE1DzYnwgz1xgZEtJ219
-	 WPGyXHqtA2XLYzCl8ZumyRpEtAwVTAAmYpjcc3UI8kYek/q0PatGJywMgYafAcieLj
-	 oBrESgZz/Fa8ovD6jTp2oUfsTJIlHWt6D2nipWCB8pJSO/iw3O1j/kKUhw+HsTExYA
-	 qlSnSIHRwTd1381Ku77bxi9HOtFGHMQ/NgA89I68LXZkgnG2pee4szdCMQIq16557J
-	 nw3NwYCsHtdzjR18kfT2/ZGSmSjNqou2Fe3PaJ8xOxaP8u2ZO7B64CmhGuuGx9BwzX
-	 f+FuegrTqKiJg==
-Date: Tue, 15 Oct 2024 19:00:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Trevor Gamblin <tgamblin@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, David
- Lechner <dlechner@baylibre.com>, Uwe Kleine-Konig
- <u.kleine-koenig@baylibre.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] docs: iio: new docs for ad7625 driver
-Message-ID: <20241015190034.3a6f6761@jic23-huawei>
-In-Reply-To: <20240909-ad7625_r1-v5-3-60a397768b25@baylibre.com>
-References: <20240909-ad7625_r1-v5-0-60a397768b25@baylibre.com>
-	<20240909-ad7625_r1-v5-3-60a397768b25@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1729015229;
+	bh=lpbB4zBvabiC+qAlL68upeccQ4XTAZm+z7OB3LiXtIY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EatNm/cB8Ug5PL8M8DCox35cExWgIaqGH2Sa9LYNCQy9IjRzt0eTV1+xfUAsUzlsa
+	 /3V2DhyXsqcwcvv3/Se6D8iGctkkzcqx/GCPBEbdvFM/3pPa8gdM6E8ejEtW76A/de
+	 DX3LCH0CaasGt4Z3EgATy7jICY59ZXAfLiMI/91vG3WCpEoC+EuTDrN7DW6F+oEa9G
+	 qBX1KFtwwi/jPskGD0EXydzKC1cop4//x+AgTfC/wtdX3dw6JXlYqKU50iX3ey5Zco
+	 afkMS0jmJ184G3vOo3DNhea+4O3OX1YYDfMou3TgjlXCkKYw+WGy9n+0l9wDHpTLbi
+	 8x+UIBPyWytFw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0813809A8A;
+	Tue, 15 Oct 2024 18:00:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2 0/2] mptcp: prevent MPC handshake on port-based
+ signal endpoints
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172901523474.1243233.15564285937564337583.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Oct 2024 18:00:34 +0000
+References: <20241014-net-mptcp-mpc-port-endp-v2-0-7faea8e6b6ae@kernel.org>
+In-Reply-To: <20241014-net-mptcp-mpc-port-endp-v2-0-7faea8e6b6ae@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ shuah@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, cong.wang@bytedance.com,
+ stable@vger.kernel.org, syzbot+f4aacdfef2c6a6529c3e@syzkaller.appspotmail.com
 
-On Mon, 09 Sep 2024 10:30:49 -0400
-Trevor Gamblin <tgamblin@baylibre.com> wrote:
+Hello:
 
-> Add documentation for the AD7625/AD7626/AD7960/AD7961 ADCs.
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 14 Oct 2024 16:05:59 +0200 you wrote:
+> MPTCP connection requests toward a listening socket created by the
+> in-kernel PM for a port based signal endpoint will never be accepted,
+> they need to be explicitly rejected.
 > 
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-Bot picked up that this wasn't added to index.rst. I fixed up.
+> - Patch 1: Explicitly reject such requests. A fix for >= v5.12.
+> 
+> - Patch 2: Cover this case in the MPTCP selftests to avoid regressions.
+> 
+> [...]
 
-Thanks,
+Here is the summary with links:
+  - [net,v2,1/2] mptcp: prevent MPC handshake on port-based signal endpoints
+    https://git.kernel.org/netdev/net/c/3d041393ea8c
+  - [net,v2,2/2] selftests: mptcp: join: test for prohibited MPC to port-based endp
+    https://git.kernel.org/netdev/net/c/5afca7e996c4
 
-Jonathan
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
