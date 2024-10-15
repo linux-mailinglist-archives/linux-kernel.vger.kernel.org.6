@@ -1,221 +1,102 @@
-Return-Path: <linux-kernel+bounces-366045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD67899F021
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:51:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7949499F026
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D86C1F2121D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20DB91F2310C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2304E1B21A9;
-	Tue, 15 Oct 2024 14:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835521C4A2F;
+	Tue, 15 Oct 2024 14:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OIobMkJd"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGKC7Fha"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B395A1FC7EC;
-	Tue, 15 Oct 2024 14:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95881B21A9;
+	Tue, 15 Oct 2024 14:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003869; cv=none; b=hFt+KkUFupYWDD+qJLrz2jb6osYUXDgz1njlsTZadZXzlc6StWRmyvozrJC40wrSkM2xZVjStBezfWAKhVEGSoYnunYVv1juXxrQipvgnyqB7wqrKNm4o2YEWkfqnvz2qJ3T1d0Xy7WBY+O3l1HRl7Qq1sVZaqmMuRo7QjsNvUc=
+	t=1729003898; cv=none; b=C2O27Ry3ufNyF1I1GDWdzhUopSBDjg+GzRokUVwUmbUBCKkIHKFjaJuQwbvGX2FX5jNXTCUosivHagM9BOekbgEoZg+p9TZ+PKkVsr756m836pmK0b/HglhmSDS6FSpPe291vG8cfskJxUgTMvAWRJ4GFhRjL+EjDL6Jpp8Dg9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003869; c=relaxed/simple;
-	bh=hgD1NQuV6c1EquNomdM4Uaq7heJhYt8dxANTZPH3SDU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=l3VHMbHGCgAfcss9LpWCW7oV9GCP7gCkToiDSU+kbaZKdOS7g6GaMAJkea76hoeolL18ViI40VlESHlkMm82zx1gd9svd3jzEEnXIH4BgasOO03FsDmCXTR7vFQvgyClb0YyNKlkMMXgb99zg5qEQJryiXTdytw+YgizPY5HDPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OIobMkJd; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so3017801e87.1;
-        Tue, 15 Oct 2024 07:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729003866; x=1729608666; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hgD1NQuV6c1EquNomdM4Uaq7heJhYt8dxANTZPH3SDU=;
-        b=OIobMkJd2f66YyDGfaNcXMImvPHY+qguuvLu8PqZkK1rZGURc9a+T4bqTZRrxwYXeU
-         dQhlBr42osu1sOdlm4MoFuGeYt8UGN3zarK7UlP/aczs0eYt82RwkJvuWl/eQnudjEgR
-         6WLZZjjoIZ3488GA+cSxwJtyaUXnzSDg8ATSVCieVeXLAIpS7kfKzWZ1szTvPitkkdIF
-         wpfAcYSL9FCBq2zLlWJ1hz+H+PlanmJZN80iK/T+LTYVwVDlgZZHEKQmqgHnXWxgCLhn
-         qgh+R8/t9azvSrVU86uF1MvFBze8NkkCyPWVb9HY3qrWY7H3MdBYlOIeBtSdhO6Cs/eb
-         BjJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729003866; x=1729608666;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hgD1NQuV6c1EquNomdM4Uaq7heJhYt8dxANTZPH3SDU=;
-        b=cNphpssF/miGgdu51PJV8kz6QkyNM1oodRJ8+6nWiUGJ8unWUHV6CykSvATZ2KK5R6
-         EgKWp43raQ058PpvqOc3oNP6puzCQ5L4RleecCQhznXVyVXcXCgNoEfuUVnIMHdggXli
-         Sb3WNhJnsQfvwogc971Bj4ouElo90TaEnyRA2lnbC14TbxK4v8amHhu68vGUYeouYrAK
-         6dqgUidbuxJeBuEq4N7aVj2aRKz1PzL/z9a++GUwNoXzcaA8ZF3vuWLdJc/M/iisLGMC
-         Awtf/cFEbhopsrj4MWWUO+WyLD+fgzZaS248jU/no4bVZWF9BSYPggjEpmJptpGO9Kth
-         MPSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN5KfkNi5VBUXIPQ+Juvcmt+DkRY0JjzpQF6OlZt3/SXlf2PawG+uSn+EIKwZPKdEaoniUFRFiOMH7y6mp@vger.kernel.org, AJvYcCWwF4Rb1TapEPHTV1WMjTKgCL6CtHitR2tQTaZOWIlGk0mSHOY2o3Y99ZyNYQP+i5/qDWbUKvqloVTP@vger.kernel.org, AJvYcCX2HtU/6NNXQAwUOqVtorZIYo3tfeZfx9gphEjJVnsfBLTKdRv1vy4RSFhDP4r2gs++FHJHbSz2wtlR@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP5aZ5VYeV9cqWbdzdqb5407nhz+YjGFqDlvXpWpRTf7p+VbMn
-	JBGCNimzEedkVFq83HB3UhqNkMl51wc90Exx0RX/41nGZEfQzKjWl/sKdtr0
-X-Google-Smtp-Source: AGHT+IEeHBH0J94yh7upWaIEeIPoADr7/e9oYZKG3/6jmeYTf6MFZcnC+Aoecy3dD0DxnNb597+A+A==
-X-Received: by 2002:a05:6512:1595:b0:530:c239:6fad with SMTP id 2adb3069b0e04-53a03e9e097mr468107e87.0.1729003865596;
-        Tue, 15 Oct 2024 07:51:05 -0700 (PDT)
-Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56eb0bsm19864735e9.22.2024.10.15.07.51.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 07:51:05 -0700 (PDT)
-Message-ID: <35d247418b8bd43695644f395901b117a1014109.camel@gmail.com>
-Subject: Re: [PATCH v6 2/8] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
- axi variant
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
-	 <adureghello@baylibre.com>
-Cc: Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Lars-Peter Clausen
-	 <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron
-	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
-	 <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown
-	 <broonie@kernel.org>
-Date: Tue, 15 Oct 2024 16:51:04 +0200
-In-Reply-To: <776ed45e-7ca8-42e8-9050-86928f223965@baylibre.com>
-References: 
-	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
-	 <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-2-eeef0c1e0e56@baylibre.com>
-	 <a27eb208-0fa1-45cc-bb0c-18a03b6cce4e@baylibre.com>
-	 <imlhddzkf5eefr64n73pgtbvyax54746v6wzlwngryzzwrbw4h@uaaom7tbod5m>
-	 <776ed45e-7ca8-42e8-9050-86928f223965@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729003898; c=relaxed/simple;
+	bh=YQHSY9AN8O1RQP1NhpxBl1Ry2Sc9D2DLqRRMCMqpuIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EtxHM3gPuJLMZDJjD5/QePV1PAUk+Zy0aLaYN3yFW8QrMqq7YrGZD0zgx3w/UY3GiSsq1zQ9nHyWAl4sRIWYVznzNZKe7VnzJwII1uAo/rHmiCKl1Gzafl3FcDsyepxogcKAtGcEk1m7vdY/RjQo4rjVzNoaPcdPT/YeSYiWVCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGKC7Fha; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5867DC4CEC6;
+	Tue, 15 Oct 2024 14:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729003898;
+	bh=YQHSY9AN8O1RQP1NhpxBl1Ry2Sc9D2DLqRRMCMqpuIY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bGKC7FhazJld3PWPtrYBY6Mw5dCeWt0EpA983RIcfYjiAW8n8JMSTK3rIVHHMuesQ
+	 qEzpu+aIC+QzmT/qWY0koaQk3IAX5koGoovwre379nDx4Msmm4iMIfXHQy0f01tFSz
+	 NV84IPgWK+arutyDBoryPyjMe6fbDIlvRPQG23Joj997zxe4m3HCZlox0iKOOEOyHT
+	 0hzdd4vOABRUeUDx4mhDGhVm/hzAd1kBUuLyDbszzOKqGJdKLYqVuwmL5LyCoLwfCE
+	 1KJmiDCZgqdGWk2rkVKkL40BG2JurLtdphJOGj2nL8ZhPyB/CcDZjbW4DQ9mZe7b9s
+	 OsPgL4E1dd2JA==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f72c913aso2543083e87.1;
+        Tue, 15 Oct 2024 07:51:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWElYjFvHtk7MCpzf5LrbGywl5nlKQiNhCDnxPJFnM2Gnh5sOfFo0BM5MMNlfLapBMaVh22k2cPkVlu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+ycYkj0Ng6XYttE+A6eUyaowAohPqHgqDbzpMTkx1Hrr+qtzb
+	skE/+KIHg1fMmRCdio6oFI0n5/PQeG9jJar3r3QmzNBeB+Vxokl7A1lPXe9A5Wyw8HCmsUSgbBt
+	/hDVu5Rfjq9j2FzgYoAOwmKX6Vg==
+X-Google-Smtp-Source: AGHT+IGCVsSYZe2XPgtmyAoF6cvPSHVASVcNcEaxEV50+uL1FqcGxNzdn21vcYStjBFX3X3i33kdTtmDBOD+4T5VI8A=
+X-Received: by 2002:a05:6512:e88:b0:539:e60a:6dd0 with SMTP id
+ 2adb3069b0e04-53a03f91042mr534113e87.51.1729003896735; Tue, 15 Oct 2024
+ 07:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241015164453.09845d09@canb.auug.org.au>
+In-Reply-To: <20241015164453.09845d09@canb.auug.org.au>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 15 Oct 2024 09:51:24 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+84Ara9+pk=HnZvxA+a2f1OfthSz5dy7zWY5F09feCNQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+84Ara9+pk=HnZvxA+a2f1OfthSz5dy7zWY5F09feCNQ@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the devicetree tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-10-15 at 09:40 -0500, David Lechner wrote:
-> On 10/15/24 2:44 AM, Angelo Dureghello wrote:
-> > On 14.10.2024 16:13, David Lechner wrote:
-> > > On 10/14/24 5:08 AM, Angelo Dureghello wrote:
-> > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > >=20
-> > > > Add a new compatible and related bindigns for the fpga-based
-> > > > "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
-> > > >=20
-> > > > The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-> > > > generic AXI "DAC" IP, intended to control ad3552r and similar chips=
-,
-> > > > mainly to reach high speed transfer rates using a QSPI DDR
-> > > > (dobule-data-rate) interface.
-> > > >=20
-> > > > The ad3552r device is defined as a child of the AXI DAC, that in
-> > > > this case is acting as an SPI controller.
-> > > >=20
-> > > > Note, #io-backend is present because it is possible (in theory anyw=
-ay)
-> > > > to use a separate controller for the control path than that used
-> > > > for the datapath.
-> > > >=20
-> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > > ---
-> > > > =C2=A0.../devicetree/bindings/iio/dac/adi,axi-dac.yaml=C2=A0=C2=A0 =
-| 56
-> > > > ++++++++++++++++++++--
-> > > > =C2=A01 file changed, 53 insertions(+), 3 deletions(-)
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.=
-yaml
-> > > > b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > > index a55e9bfc66d7..2b7e16717219 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > > @@ -19,11 +19,13 @@ description: |
-> > > > =C2=A0=C2=A0 memory via DMA into the DAC.
-> > > > =C2=A0
-> > > > =C2=A0=C2=A0 https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
-> > > > +=C2=A0 https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/=
-index.html
-> > > > =C2=A0
-> > > > =C2=A0properties:
-> > > > =C2=A0=C2=A0 compatible:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0 enum:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - adi,axi-dac-9.1.b
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - adi,axi-ad3552r
-> > > > =C2=A0
-> > > > =C2=A0=C2=A0 reg:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > > @@ -36,7 +38,14 @@ properties:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: tx
-> > > > =C2=A0
-> > > > =C2=A0=C2=A0 clocks:
-> > > > -=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > > +=C2=A0=C2=A0=C2=A0 minItems: 1
-> > > > +=C2=A0=C2=A0=C2=A0 maxItems: 2
-> > > > +
-> > > > +=C2=A0 clock-names:
-> > > > +=C2=A0=C2=A0=C2=A0 minItems: 1
-> > > > +=C2=A0=C2=A0=C2=A0 items:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: s_axi_aclk
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: dac_clk
-> > > > =C2=A0
-> > > > =C2=A0=C2=A0 '#io-backend-cells':
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0 const: 0
-> > > > @@ -47,7 +56,16 @@ required:
-> > > > =C2=A0=C2=A0 - reg
-> > > > =C2=A0=C2=A0 - clocks
-> > > > =C2=A0
-> > > > -additionalProperties: false
-> > > > +allOf:
-> > > > +=C2=A0 - if:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- const: adi,axi-ad3552r
-> > > > +=C2=A0=C2=A0=C2=A0 then:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 $ref: /schemas/spi/spi-controller.y=
-aml#
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks:
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 minIte=
-ms: 2
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 minIte=
-ms: 2
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 required:
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0 else:
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks:
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxIte=
-ms: 1
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
-> > > =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxIte=
-ms: 1
-> > >=20
-> > > We could make the checking of clocks more strict to show
-> > > the intent:
-> > >=20
-> > > adi,axi-dac-9.1.b only has 1 clock and clock-names is optional.
-> > >=20
-> > > adi,axi-ad3552r always has 2 clocks and clock-names is required.
-> > >=20
-> > is this really necessary ? At v.6 would not fix things
-> > not reallyh necessary.
-> > =C2=A0
-> It is just a suggestion from me. I will leave it to the maintainers
-> to say if it is necessary or not. (If they don't say anything, then
-> we'll take it to mean it isn't necessary.)
->=20
+On Tue, Oct 15, 2024 at 12:45=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+>
+> Hi all,
+>
+> After merging the devicetree tree, today's linux-next build (powerpc
+> allnoconfig) produced this warning:
+>
+> drivers/of/address.c: In function 'of_pci_range_to_resource':
+> drivers/of/address.c:244:45: warning: passing argument 1 of 'pci_register=
+_io_range' discards 'const' qualifier from pointer target type [-Wdiscarded=
+-qualifiers]
+>   244 |                 err =3D pci_register_io_range(&np->fwnode, range-=
+>cpu_addr,
+>       |                                             ^~~~~~~~~~~
+> In file included from drivers/of/address.c:12:
+> include/linux/pci.h:2022:63: note: expected 'struct fwnode_handle *' but =
+argument is of type 'const struct fwnode_handle *'
+>  2022 | static inline int pci_register_io_range(struct fwnode_handle *fwn=
+ode,
+>       |                                         ~~~~~~~~~~~~~~~~~~~~~~^~~=
+~~~
+>
+> Introduced by commit
+>
+>   1957da25d023 ("of: Constify struct device_node function arguments")
 
-Not a DT maintainer but IMHO, having these kind of checks in the bindings i=
-s very
-useful.
+Missed the static inline. Now fixed up. Thanks.
 
-- Nuno S=C3=A1
+Rob
 
