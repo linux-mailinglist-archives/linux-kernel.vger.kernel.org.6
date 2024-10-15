@@ -1,205 +1,142 @@
-Return-Path: <linux-kernel+bounces-365547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A366299E422
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:36:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C918699E47D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15643B2384C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E61A1C23365
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBA11EC014;
-	Tue, 15 Oct 2024 10:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7021E765B;
+	Tue, 15 Oct 2024 10:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cSjS2pr4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dIZg9dNZ"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731171E5727
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6008B16A92D;
+	Tue, 15 Oct 2024 10:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728988411; cv=none; b=slAYYqr8UvdlXBR/jO4liTD08+wOrX4+ygVUKZypjVTrME1H4jd8Xd7I3wor5SrUBxm4qLKeTTCJwjAQ2VCcprkExNzVPfDdA0jVbStYRQle4b5DwcGAdyc947/DoF+DjDhKl0BCq6MSHFKi8WlPw3EWz0dRN7eyBE2I3EP7UV8=
+	t=1728989355; cv=none; b=STjyJ9OQSZah0BJcJaTeoncG21PVactACcHQ5pvEnhDonCpy6AU6NVRgd0h/1tRf/ah6+SXgVDVdkbinoXv/sudVUNahLunrKmVH5vmdUyjavw/4sGRUH8H8mRIObQ4ZyfYWeghPQJiQux5HTJmsZwCUyDPFaF7X2aFyLiDnG9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728988411; c=relaxed/simple;
-	bh=Be/C9dHeiyzbKwkG5Ivvq2mk7fcANdPT1HC8X0oXbYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UN+8bEClSFQXGior2l2JEWhpTOnGtcddTUSZKFUxfDT0LSAf976kVaivcwHVsei1XbKZW/SSvBt5lOyoC+aMr5Q7KnDFw7bjuA0VmZDyzL6ProOgo78bOEcWN/sTldDEZqMqGPX2ou07JW+xptYQHb79L53nuOq11BuT6V0T3Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cSjS2pr4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728988408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rmVwCF3kwaW5cNmBpn+TAV42k6/YVVPhCjEHwXEd0HU=;
-	b=cSjS2pr4giIwbkJsi5c3ljoZCaURCuGY7Q6h9lsYBEC2iNE+qrPW5EG42JmWhsizEDy7aN
-	2rajYn6UBlREACwFS2RD0Q2LJ0lYe+B7uizYgZLG96zzPaeDO8HrM40J3KSUWajNJLMt8P
-	yJIwWDdJhKyvh5pp1yGTGzLGbe3+fPw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-627-jfgNEGtkM_-fJG69yJigbA-1; Tue, 15 Oct 2024 06:33:27 -0400
-X-MC-Unique: jfgNEGtkM_-fJG69yJigbA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43056c979c9so32083435e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:33:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728988406; x=1729593206;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rmVwCF3kwaW5cNmBpn+TAV42k6/YVVPhCjEHwXEd0HU=;
-        b=PuG220uV9FJa09PVfTImSUmytublKH+qxM8wKEJ2GC5FQpgbKb067pbWn3NbZafH3/
-         S0wenhjcXrYBydYIra3RtAe3RVJu8TkWE1qjs/eKj3FNyrc38VxrzjptZyRaS8S3MPBn
-         GY3miXd7rH+lh4E9mJt4BJbu3kOqfBTbYTtHqvJD/7vDzIH16iZwARFyH87njA3ZeZgZ
-         6YDvgX/9z58DFsyP/FYEIS9dTYumha9WiWY/L5a82fvx30MPZSIrbsn/hM7YQPxCXizC
-         2F/voUDLkJMo7JHE8amRG9JhJJju0rFMAVpOXFOsFJhNZNg34RlfMeUrkLTIdj3G1s/+
-         lZJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpC3fKii75O+ll1XCs7h99ZVHNa/lNTouRNUG+nnHHtKzGqMu34gVBxRNaF132BKOUwoWdG6bE8hXU1mA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO3oXNxR2wz78N7LgLpdQc0JPxBfgelSXgboGiPOOx7qIrZ60u
-	GeFJ6837ftv8nJiQslzXSpW375yTa6mu9kkRBS7G9yb9D1rueff9TB8jvLgYAC/jpkDt7R8rjHt
-	w7JMNyQE61ZHzJTbmgo9VfJbOcREcETL1Tin7HXHMhQnp8GKcfl0sQYkmTo+oEw==
-X-Received: by 2002:a05:600c:3ba4:b0:42e:93af:61c5 with SMTP id 5b1f17b1804b1-4314a2f2543mr203675e9.14.1728988405962;
-        Tue, 15 Oct 2024 03:33:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE8bMeT4eJxmx0DFHtBYfG+wKdxJPd0lzwNjXMvl5Dlgbi87bcK3e/GXa+XEsiawR8KIiNCg==
-X-Received: by 2002:a05:600c:3ba4:b0:42e:93af:61c5 with SMTP id 5b1f17b1804b1-4314a2f2543mr203475e9.14.1728988405462;
-        Tue, 15 Oct 2024 03:33:25 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c730:9700:d653:fb19:75e5:ab5c? (p200300cbc7309700d653fb1975e5ab5c.dip0.t-ipconnect.de. [2003:cb:c730:9700:d653:fb19:75e5:ab5c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f55e054sm13910225e9.4.2024.10.15.03.33.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 03:33:25 -0700 (PDT)
-Message-ID: <3450df1e-dcb2-495a-8fe4-0a6e096429fd@redhat.com>
-Date: Tue, 15 Oct 2024 12:33:24 +0200
+	s=arc-20240116; t=1728989355; c=relaxed/simple;
+	bh=gSowaey9fHJcIYX6mmkBzqtjye8WHjyEg/klSDzQxE0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m2FteRyPPEQF5aEYcZPvd0A0lT7IHWoX5pAfndX7NlQo5hTq3FpI+5rahZVn6znh8qmh/StsnRewNL7lSh5ZaCqB3rtrkL2sWGCzzuxvhaz1RTNNQuQ8oPOK7r97XPGUSYZCK8zVCDZYUarXUIrwJQ6NQp9TOdXOVIdSBFdEvzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dIZg9dNZ; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: fca4a91c8ae011ef8b96093e013ec31c-20241015
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=a8qCVhVIWFAmnRKX3OXq2rlmCfjQb9p/E9Q29h/MGfI=;
+	b=dIZg9dNZ78CGEz1H5ECI36zLGdngdlbEClKELM1jSO3OqVVt2+Sw61arhAY6Kl88wQeVGbRUPm10bhca+TME1A5VUIvEB/IuXetLJYy/9DQOposl6Unkjt9cMg/WZTjPDxTudr9P/4n7VCa0zIgkAU9MQOPQomUjNat9ClSzQRM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:424b073b-aa29-43db-9b83-dac143259757,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:d85a4765-444a-4b47-a99a-591ade3b04b2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: fca4a91c8ae011ef8b96093e013ec31c-20241015
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 62356359; Tue, 15 Oct 2024 18:33:58 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 15 Oct 2024 18:33:56 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 15 Oct 2024 18:33:56 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, ChiYuan Huang
+	<cy_huang@richtek.com>, <linux-usb@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chris-qj chen
+	<chris-qj.chen@mediatek.com>
+Subject: [PATCH 1/2] dt-bindings: usb: mediatek,mt6360-tcpc: add ports properties
+Date: Tue, 15 Oct 2024 18:33:36 +0800
+Message-ID: <20241015103337.20479-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] resource: Remove dependency on SPARSEMEM from
- GET_FREE_REGION
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
- Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-References: <20241015051554.294734-1-ying.huang@intel.com>
- <942d18c3-f9a8-482e-a166-c7c9d6fb28d7@redhat.com>
- <878qup94jb.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <878qup94jb.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--5.840500-8.000000
+X-TMASE-MatchedRID: 6pbNFWS8cDsogNuHjUlKTcV1CHtMfzqgJNtuyL6mpIXfUZT83lbkEDQz
+	47GqDWjpiYeJX0ZLCFCwji3+hURDy7YCBNsYIDyvjtK7dC6UBnnlOkM7VYqzaZsoi2XrUn/Jn6K
+	dMrRsL14qtq5d3cxkNZGN3uF5aYuhkFr/Uz3mflTcBaWlN+Fm4iCeCicusNBiC3m0DNajQcvAvp
+	LE+mvX8g==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--5.840500-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	636958D15D9342168208B73159A0A722B66D6B91044804FA29D1FA68BA23E3B02000:8
+X-MTK: N
 
-On 15.10.24 10:03, Huang, Ying wrote:
-> Hi, David,
-> 
-> David Hildenbrand <david@redhat.com> writes:
-> 
->> On 15.10.24 07:15, Huang Ying wrote:
->>> We want to use the functions configured via GET_FREE_REGION in
->>> resource kunit tests.  However, GET_FREE_REGION depends on SPARSEMEM.
->>> This makes resource kunit tests cannot be built on some architectures
->>> lacking SPARSEMEM.  In fact, these functions doesn't depend on
->>> SPARSEMEM now.  So, remove dependency on SPARSEMEM from
->>> GET_FREE_REGION.
->>> Link:
->>> https://lore.kernel.org/lkml/20240922225041.603186-1-linux@roeck-us.net/
->>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->>> Tested-by: Guenter Roeck <linux@roeck-us.net>
->>> Cc: Nathan Chancellor <nathan@kernel.org>
->>> Cc: Arnd Bergmann <arnd@arndb.de>
->>> Cc: Dan Williams <dan.j.williams@intel.com>
->>> Cc: David Hildenbrand <david@redhat.com>
->>> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
->>> ---
->>>    mm/Kconfig | 1 -
->>>    1 file changed, 1 deletion(-)
->>> diff --git a/mm/Kconfig b/mm/Kconfig
->>> index 4c9f5ea13271..33fa51d608dc 100644
->>> --- a/mm/Kconfig
->>> +++ b/mm/Kconfig
->>> @@ -1085,7 +1085,6 @@ config HMM_MIRROR
->>>    	depends on MMU
->>>      config GET_FREE_REGION
->>> -	depends on SPARSEMEM
->>>    	bool
->>>      config DEVICE_PRIVATE
->>
->> Added by
->>
->> commit 14b80582c43e4f550acfd93c2b2cadbe36ea0874
->> Author: Dan Williams <dan.j.williams@intel.com>
->> Date:   Fri May 20 13:41:24 2022 -0700
->>
->>      resource: Introduce alloc_free_mem_region()
->>
->> @Dan, any insight why that dependency was added?
-> 
-> Dan has explain it some what in the following email,
-> 
-> https://lore.kernel.org/lkml/66f5abd431dce_964f2294b9@dwillia2-xfh.jf.intel.com.notmuch/
-> 
-> This is reachable from the "Link:" tag in the patch.
+Add 'ports' and sub node 'port' properties to specify connectors on the
+High-Speed/Super-Speed data bus, or Sideband Use (SBU) AUX lines
+endpoints of the USB controller.
 
-That should be part of the patch description then :)
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ .../bindings/usb/mediatek,mt6360-tcpc.yaml    | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/usb/mediatek,mt6360-tcpc.yaml b/Documentation/devicetree/bindings/usb/mediatek,mt6360-tcpc.yaml
+index 053264e60583..5b6ea0d734ea 100644
+--- a/Documentation/devicetree/bindings/usb/mediatek,mt6360-tcpc.yaml
++++ b/Documentation/devicetree/bindings/usb/mediatek,mt6360-tcpc.yaml
+@@ -32,6 +32,27 @@ properties:
+     description:
+       Properties for usb c connector.
+ 
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++    description:
++      Any connector to the data bus of this controller should be specified.
++    properties:
++      "#address-cells":
++        const: 1
++
++      "#size-cells":
++        const: 0
++
++    patternProperties:
++      "port@[0-2]$":
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          It could be one of the following interface types. High-Speed
++          (HS) data bus endpoint to the Type-C connector, SuperSpeed (SS)
++          data bus endpoint to the Type-C connector, or Sideband Use (SBU)
++          AUX lines endpoint to the Type-C connector for the purpose of
++          handling altmode muxing and orientation switching.
++
+ additionalProperties: false
+ 
+ required:
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
