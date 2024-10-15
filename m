@@ -1,117 +1,84 @@
-Return-Path: <linux-kernel+bounces-365423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9238999E218
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:04:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B2699E21B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570EF283CDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A67DC1C23085
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6A61DC182;
-	Tue, 15 Oct 2024 09:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5181DE2BC;
+	Tue, 15 Oct 2024 09:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLG5LHGY"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0XGuKRa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D8B1DAC81;
-	Tue, 15 Oct 2024 09:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DF91DE2C0;
+	Tue, 15 Oct 2024 09:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728982981; cv=none; b=MskqMHh9u4l9FUcqdQbOJdFCBJVvtjUgnqTBUvG3ID3SBIrIDBUrQzsVwPa+fOoITtfDp/paoX27xPgsVTnqRi2XFulekJYLy6AcXKsuH16HW3OjaquM2pe3epJjmFrTH5cQnMdN+vnysHuw0yzHjBMpfi6Ii6VDbm5A2fnZA4Q=
+	t=1728982993; cv=none; b=l3DiI4lrnpdOkbPf3eabH/ywe2uFTsuG0QOdcKEAAoBYynz99xFzaAQw1xteomjW78ifurC05XBiYKL0XQVAhrgt1+jdqtViWQLhYlaiEkMc045xu74NBmvKst2Eh8LR+efqgS2DBqykn4QOKFj6eX+lAJsFj0Jpil9NpEr/9sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728982981; c=relaxed/simple;
-	bh=nDX+lpEBz/d6rct1V9vrgEkXK/jOMKqnRBp3deU5cHU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TSPI1QBSwBRijmt0HCXQzPs8kzfnmm5hQNeT3aivAH3z5aL0T8Tx4kRPJQU2mB07GqFlRaI1XukAE2gyAK+yXGlGVexZVJY81St9YbR+5cwMDCxooVuYBJNxCGXFcNaG+bvR3wfuGFjXakWOkFe71SyEYYiCN72woqtX4q3rNQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLG5LHGY; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2e2cc47f1d7so3440139a91.0;
-        Tue, 15 Oct 2024 02:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728982979; x=1729587779; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PCBMt66PB2xv45t5KGFKbfvsEe/gEH6D+fe8Jj6bZu0=;
-        b=BLG5LHGYGIk6cRb9xRGiSA9+8rgVJL1dekT9reWn7cxqTX3gCu/JsUGyJfcQOxda5e
-         I4GyV3fMjO0mYcPGNK5dg45rkkoKVsrTBKCEkN1nph2IK4lC0rdGsoXeSoKj0BkFGcuS
-         beDvyFgAJhwG8/WN/wDN7qpetBdeITyh3wSAtg4XZDMRFZiXbFY/j+dQEoKTdRkB2UY5
-         ZZZBaJQXpgKS0YMTzCDjkzipMN0CWAjRrYcl21JSG54GlJFWBAQFRtNRP21sVIR7wv0K
-         1YNwmRHAY5xYGuTo9/jDThTNYUI6LEAOht51rlgxmiCO8Uj+Le2HiRnh7gFVtiI+uH/1
-         D1mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728982979; x=1729587779;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PCBMt66PB2xv45t5KGFKbfvsEe/gEH6D+fe8Jj6bZu0=;
-        b=hIkp2zG6djMzOgJ/SUSea8vWFBHMeh1lkWWMz2G+t/7vs0KVEXRqbvIhSwkBXs5JO4
-         /QiXMAZuLVxCPqnGc5v9E0GFnc9itS6dh7sTlQMgQVoZFMfLDAxe6W2luBgQolxJA/Vj
-         F9TQUsFNAQ1Dh68IJL3vZxpozmKHDrvTpW4pY9aHhHAneQjLy/C8zMkvf6bmQNRXN189
-         OLL3w6VaT2lbwrHgTgMmyjDRRjKdQu8qDQBTpzqR0ztTmo6VX5PSbLOqGdPtgf7WX85b
-         Tnyh1vsLUOa65aU07QAm/nUUTM6AaVsHhHeEPgvMcON6uRKuKLyy0xIw8Y/1lOyUw4Ln
-         cdlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGh/olHpBPqfLPX73xB5ERJDMaJqPG5qTx2yekPGvX0vI3clcEDe9nMoq2GTtQVxEXHAe0YD5IwmEGSRs=@vger.kernel.org, AJvYcCVtgu9EKK5YN7CAUzhxbVNFL/FesHodeEow1YSVdmLraI5XB/RSrgoygS1pohnJj0PMBIQ5eA2E@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaCuJo7h1VfPtxO/i2HSzl2zHKD5K3V9UDtuqWbapHAPD27ldj
-	Ql2DJsuWbBsK6GuT6zXzCJP6oh76Ck01Wd4R37uuzxrfoxAGKjFP
-X-Google-Smtp-Source: AGHT+IGZJm9v/GTX6rSlEvoRhlQOfUgBM2YAF0HxODX5dVlXsGFuSvBbYakcrE6VPAxn+HayoFfDng==
-X-Received: by 2002:a17:90b:11d2:b0:2e2:878a:fc6 with SMTP id 98e67ed59e1d1-2e2c81d36a4mr29250599a91.18.1728982979498;
-        Tue, 15 Oct 2024 02:02:59 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c715f3fsm852705a12.91.2024.10.15.02.02.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 02:02:59 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: idosch@nvidia.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	dongml2@chinatelecom.cn,
-	gnault@redhat.com,
-	aleksander.lobakin@intel.com,
-	b.galvani@gmail.com,
-	alce@lafranque.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: vxlan: update the document for vxlan_snoop()
-Date: Tue, 15 Oct 2024 17:02:44 +0800
-Message-Id: <20241015090244.36697-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728982993; c=relaxed/simple;
+	bh=I8EgceGKq0kuoqB8rUvXnfOYOa5rhiMU69cDp+diTww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vs0o+MgRebu9Xa2hvSAc+VADmK3OubuA1IIn2KC3DJ132IaTUSwnfL4N6U0T96dd9EJWqve0orxp6VspqfYejU495mopcu2EDX7P1AbAUA4vnGBYqbrHRhijjBA2CY2RdPhXpm111jTJ8penXX1+JC8B5n1LJWMCUMWbTCWQCds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0XGuKRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D65BC4CEC6;
+	Tue, 15 Oct 2024 09:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728982993;
+	bh=I8EgceGKq0kuoqB8rUvXnfOYOa5rhiMU69cDp+diTww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h0XGuKRab7Ngrru0ZGkccQejmFmsBexcL5IB/IW7gX+5yqoxLBPuBRg9g/M0JbnTQ
+	 j0B8TOe2kHbIf8j0yOe6RNOWFzaSiTwP6GD4UIxR1p2xLuaouKWWBw70ZQmVpW+Thf
+	 84EzJfVk6jpw70nHPUbzy7N6Kd0S748mDleCf+T0o1YtD2KWx9ZNyq40QoJdBIiMZK
+	 Yh9uByjT0DpBPXhmPmHQUDt0AUv+zkPANZN/IcEeZXvajTOuT1vVF/orr5iS5cQWc1
+	 5nh8CJqZ3CjNU7+H9Vi4z9tyDej9hmhteLeXyqRJp5PvE66RtcUpCTBWBx1E2Bx2/s
+	 Jd/sJyPNqwaKg==
+Date: Tue, 15 Oct 2024 10:03:08 +0100
+From: Lee Jones <lee@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] regulator: add s2dos05 regulator support
+Message-ID: <20241015090308.GE8348@google.com>
+References: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
+ <20241007-starqltechn_integration_upstream-v6-3-264309aa66de@gmail.com>
+ <ZwP2jpgdESV1XJ5D@finisterre.sirena.org.uk>
+ <20241009143116.GK276481@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241009143116.GK276481@google.com>
 
-The function vxlan_snoop() returns drop reasons now, so update the
-document of it too.
+On Wed, 09 Oct 2024, Lee Jones wrote:
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- drivers/net/vxlan/vxlan_core.c | 1 -
- 1 file changed, 1 deletion(-)
+> On Mon, 07 Oct 2024, Mark Brown wrote:
+> 
+> > On Mon, Oct 07, 2024 at 05:50:01PM +0300, Dzmitry Sankouski wrote:
+> > > S2DOS05 has 1 buck and 4 LDO regulators, used for powering
+> > > panel/touchscreen.
+> > 
+> > Reviewed-by: Mark Brown <broonie@kernel.org>
+> 
+> I think you can merge this.
 
-diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-index d507155e62ce..fd21a063db4e 100644
---- a/drivers/net/vxlan/vxlan_core.c
-+++ b/drivers/net/vxlan/vxlan_core.c
-@@ -1435,7 +1435,6 @@ static int vxlan_fdb_get(struct sk_buff *skb,
- 
- /* Watch incoming packets to learn mapping between Ethernet address
-  * and Tunnel endpoint.
-- * Return true if packet is bogus and should be dropped.
-  */
- static enum skb_drop_reason vxlan_snoop(struct net_device *dev,
- 					union vxlan_addr *src_ip,
+I didn't mean the whole set. *facepalm*
+
 -- 
-2.39.5
-
+Lee Jones [李琼斯]
 
