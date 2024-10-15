@@ -1,111 +1,309 @@
-Return-Path: <linux-kernel+bounces-366722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40BDA99F910
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E2099F919
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07841F23852
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A8EC1F23B1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6471FE10F;
-	Tue, 15 Oct 2024 21:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817011FBF71;
+	Tue, 15 Oct 2024 21:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Zx1Zwor5"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Itum5/FW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87E11FBF62
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F191FE105;
+	Tue, 15 Oct 2024 21:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729027668; cv=none; b=uMfyPSDBuOCHSPn3epDsJDdodDchZPQ1ubJw0U7vuevTMK+L6t1ugjRwl+rxMdj/66ol6ZxsV2CZgkZB/mCjY6FQv1IKGrJgWH4YIaYY/Fv1NkrBL7liXAQabWBxt5TSI1rBHccyEpIorV/J63jVe6z+LnL41NLPOYFPeywH9hk=
+	t=1729027736; cv=none; b=K9j+gmqaBtGUzWkITOiPyA6gu3NAFWYVMKx2qDmG7YY8ehT4bkKLoVbmfMV09GX/T7u2WSmUQutlPfSpkSDouraRE3sFwGdSsSAu85MTNOsF94F01orTG8L9yquRymS7OYPv3lUwMINgJnHSEsuAVKIjEaKGcD8Ddo6vtajfQV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729027668; c=relaxed/simple;
-	bh=Grd/N8W0rev00HUr5dtPwxf3w+rjHgNGnbAvxUJ+X4w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bR9Kp/NdZLxQK4dq5dz1KD3kSJ7OgpD97PmfRYjWv17PGnJeJhlLmmdHUrtF9P/v/dS+Wim3bvD2Lq6NWdHSkuHGne3InDqrwpO2TmlphL2JM13HQPcIoX1obG6PJz6w5nmb5m2wSIWtP0zN18e3e0W3UN4k/gakiULU6V6fUTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Zx1Zwor5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729027665;
-	bh=Grd/N8W0rev00HUr5dtPwxf3w+rjHgNGnbAvxUJ+X4w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Zx1Zwor5URoO04sYFWVQRp6urGyUKgY4X47uyhkAZtvXe3L0wkmLaUYcA0N8hK3wZ
-	 gk7R53CKK211eAkhFQ4YXXVbvW8LgoU2xIhs4GwZrvwUl48xLfRB0soiEhZuxvETSE
-	 NAZNEg9mcQ2w3fOs8v1+ySf5DGBV1zSCsaG9DLainIdSFvVEs0We+eBh5siX5Lkzk3
-	 D4P27vlfJjfhz7J6r3g6dCM8Gdkz/WGn8iWYywS2PpJET/fRgGt8Ec1P+FkqWLCELt
-	 F+yTAMZ+pH8WaEzNufTVSth4YaRZE6E0X41qvSh2katFeRbUQ/TOdUHhpN9doccMae
-	 ZpkYqW89P/qhg==
-Received: from [192.168.1.206] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E9E2E17E374F;
-	Tue, 15 Oct 2024 23:27:43 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 15 Oct 2024 17:27:18 -0400
-Subject: [PATCH v2 2/2] driver core: Don't log intentional skip of device
- link creation as error
+	s=arc-20240116; t=1729027736; c=relaxed/simple;
+	bh=xPCIn32QQfr54O0zHazFhSN5jue+7V076iFkE2q84Ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMcbt1vhFnG+4jf5nMNyQkJSO7ft9Rjz8I11zdnJ2/567ooBWBOtlkFO1iseye9UKx54G4eEt5rFde+G727vlQViJpO6U6wnM9WWm93fXROKnl+w1Q5frZo2NH+Wq8iGEfV2dG3nPSczLbjtrK8vgNzskC6wBtgEnnUFpF3HrIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Itum5/FW; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729027735; x=1760563735;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xPCIn32QQfr54O0zHazFhSN5jue+7V076iFkE2q84Ik=;
+  b=Itum5/FW6XD/fgdSiRUkMKmVDGPJ91QoXD6QAXPLKjWSHrUrXdEeBIKE
+   f9fBR7ZYF0Y6fXvdDgqOrSUtTY3H/wmyvKzsD3wzbB0tw60w/ayrO1bxe
+   43Sn+dTrRzRVXQ1APeD+vRewl4XX1ARW6nwzh0Zgm0di8knKk/158U33Y
+   ANPrwnvILwwzovj0p0z6rvLxbgzwmQ0Yq1ZojjV71apgF3zBIluz830zD
+   CtgW1wrETa2vsitYJYPPn/GSQlrAhQrtFnBN6bBIBOJCZZUu2enXJlDp/
+   dDmjWAQBVo6wwVeHOWCmJLH5VOH6DIHHwIz8aHBRVhiZu3IAaNfsovH9T
+   w==;
+X-CSE-ConnectionGUID: QcPSu1VYRfyzTlYRclyO0A==
+X-CSE-MsgGUID: vUbFVdfxRM2dbAtTZDGBQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="27891399"
+X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
+   d="scan'208";a="27891399"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 14:28:54 -0700
+X-CSE-ConnectionGUID: 9ed/BWG1Q563Zf26f963sw==
+X-CSE-MsgGUID: GLmnR+SHT5mHPhynDws5YQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
+   d="scan'208";a="78861952"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 15 Oct 2024 14:28:52 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0p61-000Jx7-0T;
+	Tue, 15 Oct 2024 21:28:49 +0000
+Date: Wed, 16 Oct 2024 05:27:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-crypto@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] lib/digsig: Use scope-based resource management
+ for two MPI variables in digsig_verify_rsa()
+Message-ID: <202410160438.SOIZeFku-lkp@intel.com>
+References: <300a0376-f003-4862-bb16-7e004733c9c1@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241015-fwdevlink-probed-no-err-v2-2-756c5e9cf55c@collabora.com>
-References: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
-In-Reply-To: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Saravana Kannan <saravanak@google.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
- Jon Hunter <jonathanh@nvidia.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <300a0376-f003-4862-bb16-7e004733c9c1@web.de>
 
-Commit ac66c5bbb437 ("driver core: Allow only unprobed consumers for
-SYNC_STATE_ONLY device links") introduced an early return in
-device_link_add() to prevent useless links from being created. However
-the calling function fw_devlink_create_devlink() unconditionally prints
-an error if device_link_add() didn't create a link, even in this case
-where it is intentionally skipping the link creation.
+Hi Markus,
 
-Add a check to detect if the link wasn't created intentionally and in
-that case don't log an error.
+kernel test robot noticed the following build warnings:
 
-Fixes: ac66c5bbb437 ("driver core: Allow only unprobed consumers for SYNC_STATE_ONLY device links")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/base/core.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
+[also build test WARNING on herbert-crypto-2.6/master herbert-cryptodev-2.6/master linus/master v6.12-rc3 next-20241015]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 88a47a6e26d69aacbaeb094c42be4fcf9dde4a6b..fc992b5a2f295d6bb23f50d32e5fddc59b32b840 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2189,8 +2189,11 @@ static int fw_devlink_create_devlink(struct device *con,
- 		}
- 
- 		if (con != sup_dev && !device_link_add(con, sup_dev, flags)) {
--			dev_err(con, "Failed to create device link (0x%x) with %s\n",
--				flags, dev_name(sup_dev));
-+			if (device_link_is_useless(flags, con))
-+				dev_dbg(con, "Skipping device link creation for probed device\n");
-+			else
-+				dev_err(con, "Failed to create device link (0x%x) with %s\n",
-+					flags, dev_name(sup_dev));
- 			ret = -EINVAL;
- 		}
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/crypto-lib-mpi-Extend-support-for-scope-based-resource-management/20241012-231156
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/300a0376-f003-4862-bb16-7e004733c9c1%40web.de
+patch subject: [PATCH v3 2/3] lib/digsig: Use scope-based resource management for two MPI variables in digsig_verify_rsa()
+config: arm-randconfig-002-20241016 (https://download.01.org/0day-ci/archive/20241016/202410160438.SOIZeFku-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410160438.SOIZeFku-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410160438.SOIZeFku-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from lib/digsig.c:25:
+   In file included from include/linux/mpi.h:21:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> lib/digsig.c:176:3: warning: label at end of compound statement is a C23 extension [-Wc23-extensions]
+     176 |                 }
+         |                 ^
+   lib/digsig.c:178:2: warning: label at end of compound statement is a C23 extension [-Wc23-extensions]
+     178 |         }
+         |         ^
+   3 warnings generated.
+
+
+vim +176 lib/digsig.c
+
+    16	
+    17	#include <linux/err.h>
+    18	#include <linux/module.h>
+    19	#include <linux/slab.h>
+    20	#include <linux/key.h>
+    21	#include <linux/crypto.h>
+    22	#include <crypto/hash.h>
+    23	#include <crypto/sha1.h>
+    24	#include <keys/user-type.h>
+  > 25	#include <linux/mpi.h>
+    26	#include <linux/digsig.h>
+    27	
+    28	static struct crypto_shash *shash;
+    29	
+    30	static const char *pkcs_1_v1_5_decode_emsa(const unsigned char *msg,
+    31							unsigned long  msglen,
+    32							unsigned long  modulus_bitlen,
+    33							unsigned long *outlen)
+    34	{
+    35		unsigned long modulus_len, ps_len, i;
+    36	
+    37		modulus_len = (modulus_bitlen >> 3) + (modulus_bitlen & 7 ? 1 : 0);
+    38	
+    39		/* test message size */
+    40		if ((msglen > modulus_len) || (modulus_len < 11))
+    41			return NULL;
+    42	
+    43		/* separate encoded message */
+    44		if (msg[0] != 0x00 || msg[1] != 0x01)
+    45			return NULL;
+    46	
+    47		for (i = 2; i < modulus_len - 1; i++)
+    48			if (msg[i] != 0xFF)
+    49				break;
+    50	
+    51		/* separator check */
+    52		if (msg[i] != 0)
+    53			/* There was no octet with hexadecimal value 0x00
+    54			to separate ps from m. */
+    55			return NULL;
+    56	
+    57		ps_len = i - 2;
+    58	
+    59		*outlen = (msglen - (2 + ps_len + 1));
+    60	
+    61		return msg + 2 + ps_len + 1;
+    62	}
+    63	
+    64	/*
+    65	 * RSA Signature verification with public key
+    66	 */
+    67	static int digsig_verify_rsa(struct key *key,
+    68			    const char *sig, int siglen,
+    69			       const char *h, int hlen)
+    70	{
+    71		int err = -EINVAL;
+    72		unsigned long len;
+    73		unsigned long mlen, mblen;
+    74		unsigned int l;
+    75		int head, i;
+    76		unsigned char *out1 = NULL;
+    77		const char *m;
+    78		MPI pkey[2];
+    79		uint8_t *p, *datap;
+    80		const uint8_t *endp;
+    81		const struct user_key_payload *ukp;
+    82		struct pubkey_hdr *pkh;
+    83	
+    84		down_read(&key->sem);
+    85		ukp = user_key_payload_locked(key);
+    86	
+    87		if (!ukp) {
+    88			/* key was revoked before we acquired its semaphore */
+    89			err = -EKEYREVOKED;
+    90			goto err1;
+    91		}
+    92	
+    93		if (ukp->datalen < sizeof(*pkh))
+    94			goto err1;
+    95	
+    96		pkh = (struct pubkey_hdr *)ukp->data;
+    97	
+    98		if (pkh->version != 1)
+    99			goto err1;
+   100	
+   101		if (pkh->algo != PUBKEY_ALGO_RSA)
+   102			goto err1;
+   103	
+   104		if (pkh->nmpi != 2)
+   105			goto err1;
+   106	
+   107		datap = pkh->mpi;
+   108		endp = ukp->data + ukp->datalen;
+   109	
+   110		for (i = 0; i < pkh->nmpi; i++) {
+   111			unsigned int remaining = endp - datap;
+   112			pkey[i] = mpi_read_from_buffer(datap, &remaining);
+   113			if (IS_ERR(pkey[i])) {
+   114				err = PTR_ERR(pkey[i]);
+   115				goto free_keys;
+   116			}
+   117			datap += remaining;
+   118		}
+   119	
+   120		mblen = mpi_get_nbits(pkey[0]);
+   121		mlen = DIV_ROUND_UP(mblen, 8);
+   122	
+   123		if (mlen == 0) {
+   124			err = -EINVAL;
+   125			goto free_keys;
+   126		}
+   127	
+   128		err = -ENOMEM;
+   129	
+   130		out1 = kzalloc(mlen, GFP_KERNEL);
+   131		if (!out1)
+   132			goto free_keys;
+   133	
+   134		{
+   135			unsigned int nret = siglen;
+   136			MPI in __free(mpi_free) = mpi_read_from_buffer(sig, &nret);
+   137	
+   138			if (IS_ERR(in)) {
+   139				err = PTR_ERR(in);
+   140				goto in_exit;
+   141			}
+   142	
+   143			{
+   144				MPI res __free(mpi_free) = mpi_alloc(mpi_get_nlimbs(in) * 2);
+   145	
+   146				if (!res)
+   147					goto res_exit;
+   148	
+   149				err = mpi_powm(res, in, pkey[1], pkey[0]);
+   150				if (err)
+   151					goto res_exit;
+   152	
+   153				if (mpi_get_nlimbs(res) * BYTES_PER_MPI_LIMB > mlen) {
+   154					err = -EINVAL;
+   155					goto res_exit;
+   156				}
+   157	
+   158				p = mpi_get_buffer(res, &l, NULL);
+   159				if (!p) {
+   160					err = -EINVAL;
+   161					goto res_exit;
+   162				}
+   163	
+   164				len = mlen;
+   165				head = len - l;
+   166				memset(out1, 0, head);
+   167				memcpy(out1 + head, p, l);
+   168	
+   169				kfree(p);
+   170	
+   171				m = pkcs_1_v1_5_decode_emsa(out1, len, mblen, &len);
+   172	
+   173				if (!m || len != hlen || memcmp(m, h, hlen))
+   174					err = -EINVAL;
+   175	res_exit:
+ > 176			}
+   177	in_exit:
+   178		}
+   179	
+   180		kfree(out1);
+   181	free_keys:
+   182		while (--i >= 0)
+   183			mpi_free(pkey[i]);
+   184	err1:
+   185		up_read(&key->sem);
+   186	
+   187		return err;
+   188	}
+   189	
 
 -- 
-2.47.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
