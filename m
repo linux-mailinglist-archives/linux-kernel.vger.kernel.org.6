@@ -1,185 +1,222 @@
-Return-Path: <linux-kernel+bounces-365958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D99099EE8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC73199EE4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED4E1C227FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BC2C1C22940
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BF21AF0D1;
-	Tue, 15 Oct 2024 14:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0671AF0BE;
+	Tue, 15 Oct 2024 13:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="J+pMv31Z"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Atfazspp"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2523A1B21B0;
-	Tue, 15 Oct 2024 14:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4984175D3A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000878; cv=none; b=KUw3+x+5/luB7P5p8HLDK9ycEKMs5nz1gtMv1SbRZdblQAMI5ZQMbdtRy5JqzMXWV7GuVR5hhpVgVJs6RwoGa3clksEd8iJ5n1TWV4SNhm3/fX3MDHHAD23GlZRCddyDGBPc7WOcgTmFFxnQRpbltGS2pPcKXQAkn9qPhdWWbkM=
+	t=1729000598; cv=none; b=FMdlAtGPj5jOnwd3jsddsjzvjX06yY6UjUpuAphRlKfE4BAZMlb0ctr8L0frpT19xX8UQKeOlhFmk0JgbK05s/Cio3s77KvAG18z4s6l6TeBBBtg3sWOMNZUA0vIyfvXtB3x8CLaP1UGInOYPaI05Jvwzg2/z1/O7hcO14DuJOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000878; c=relaxed/simple;
-	bh=Z0r/dHXVc0QwsPI8hR1fwuilSJ5GLHg7hj5KGYDBVCs=;
-	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
-	 References:To:MIME-Version; b=C9yUbAe/wldffsWp1Kwx9wA5ReVtHqOI5bIOoyqFauvuMdel/kojPMRhPNvRiablAUnAn9mkKXvrvg7WbPO5vOSgeJbQjcbBW1YmIY8BaxhmrM3bwGGmkE4TnR7NptFp1biGmP9lDIGkB9Brd2xrrtA2oEsKAT+DMBSyPt92Gxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=J+pMv31Z; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FDJYLB007785;
-	Tue, 15 Oct 2024 13:55:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=mB1V9/
-	hfZslMHKfRFaMtUHr1ZjB11GLtBtGZqeB7D+E=; b=J+pMv31ZDjpem9k8+S4yNz
-	q5ZRSRSzroOVTYQvC3RhAHyEWMERTfUK5dwDxnnpld2HuvsFS404+EtUPdbHsdrH
-	xU9Cp62iNUyPCnjOmW5MRW1TVHc+HxE/Lpvb7LueyLEIwMa5E9hGRbWZJ4jdqDeG
-	FjC1w6U20MWYv0El6j9afVcEXtj/EaLty//DOcX+3hN3vh0oQQojr0XfihTLI/LG
-	FJC9j00+KsJQXBUTXtzdjET6FZsMMGvK9lORpz5iHFN63+2wlHSNlxiTS1AG0oNn
-	6m5hQg6JMtmP4O/lroYPsJsfUfnH6EHwrdvirQWiMZcm+mBiqEmI3bfjl98ZtzqA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429s68g6hh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 13:55:53 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FDtq3g014593;
-	Tue, 15 Oct 2024 13:55:52 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429s68g6ha-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 13:55:52 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FCC8Vd005936;
-	Tue, 15 Oct 2024 13:55:51 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428650uth0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 13:55:51 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FDtoTw51511662
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 13:55:50 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E1E5B2004B;
-	Tue, 15 Oct 2024 13:55:49 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F302C20043;
-	Tue, 15 Oct 2024 13:55:43 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.243.49])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 15 Oct 2024 13:55:43 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
-Subject: Re: [PATCH 2/3] perf disasm: Use disasm_line__free() to properly free
- disasm_line
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <20241014114248.212711-2-lihuafei1@huawei.com>
-Date: Tue, 15 Oct 2024 19:25:29 +0530
-Cc: namhyung@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        kjain@linux.ibm.com, sesse@google.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <90BD7422-B738-4A35-8D45-51212E17716C@linux.vnet.ibm.com>
-References: <20241014114248.212711-1-lihuafei1@huawei.com>
- <20241014114248.212711-2-lihuafei1@huawei.com>
-To: Li Huafei <lihuafei1@huawei.com>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: qc84fsz6gJrz586ldqe9TYoXSK7dYkOX
-X-Proofpoint-ORIG-GUID: 8Ryjo94gFxI5NyUXif-eZdDhmwsOP6Sl
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729000598; c=relaxed/simple;
+	bh=mAvJUecqLZb8mQ7JA+zGw3XaC23jD7z91aCXiUApXpg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mmu+qqQ2z1tXHsU4Aq4iZn6hjlMwD6TjUmsmjTRyy/ZnmEWn/0AHHgsIPxZFlkTbC2nggtRybsMI/EFDQOd4VFu9Vuy+Gn69ExYf1/euOn41GRRKZjArphAoZqHa4pfDWzWZr+wD0S8q/4AZsar+VLzqTJ7DyeXE8K6zS++V1x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Atfazspp; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4311bb9d4beso36678255e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729000593; x=1729605393; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AbMeYD74pGk8oJktHViz+H/uCI+iSWvCml2RdzFQNPc=;
+        b=AtfazsppkQsom4ceXEJYPkPA8x1odwQI+tmwHZw9OBAIjkiiqE2yfcYELVfG68kzaa
+         h8EIoZgKwz9W/EQkUXqRMA5C3l0cbS7ZD7eSczrZU795q2pu1/YeB6eoc6FAu6wweFqT
+         6wVCU1XX5ZGdWVG2jLH16fDEIfkAEu5mCb06YVBmMaYMcfbur/2rygOGyB3ZxMwV+eeU
+         vb24oT1hUt8WUgpL/fMlcm8K0ztZzkJFiRYd8+tk3HTaMheag1VcDZNQY+BscJ3uX0El
+         0yJtm1N+aFx63Nd9C6evSWKm+b0KvzQ1Xml/O1ielgM3bY7OriM1xQTi//36k2xNPUv6
+         L4TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729000593; x=1729605393;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AbMeYD74pGk8oJktHViz+H/uCI+iSWvCml2RdzFQNPc=;
+        b=BpHiDmacc9eAxgQGMKhlAZVs0xfQb1+enUUZssytywL8g/bbtbXCTRkhswXDROGAFo
+         MTqCu8EMdsf1tPcK4NcMWyDEbw6OaEDruHazbq6SUgWjwmIZR9ePq7yf8IUIRmXItmS9
+         H9rDApXpQgO1tGCaEHZkjRiD93ge8g/QUVTU4LFV5eKlmIo0MKNdmnqgtIdi07ujn0Qm
+         ehJhejBLTCDFoVH4uGFf/TcW/bMiuG5ggvtzJx77DBBNz1PlGA5FqHHGM2OH0EpHbMEW
+         aaqqvCTrYrwUGFV4Z5gkSu0Rcxl20mX/PydXF0440LRGWSmHs8lDACGo0d70YTw9GdNQ
+         lV0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVf6QMMBFxDrRT8FM8EGktTFkV+7AJJS76+9sOPdZNVCrfwx2O+0mhO/GzYYGwgM8/5IFhhwR3RyNxDs8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZe03EGuPMJdkzNj1wmcC7HPzVAzNNvJnPrCRTOm05qRY1gqjX
+	xjpRmX9r8yimV8/tUD3Q0bMbWleOTC5EwxH8H1agXXdAxYKXut2kzWzv6AMY9hU=
+X-Google-Smtp-Source: AGHT+IFnMCPXiLFaoUymAEwxqVwbIQmmOBwrfONlvEq/fqSIvjjlH0Zwe7ri6z5v7v7UlXqJRK2Psw==
+X-Received: by 2002:a05:600c:510f:b0:42c:bf70:a303 with SMTP id 5b1f17b1804b1-43125619eb7mr101725465e9.29.1729000592871;
+        Tue, 15 Oct 2024 06:56:32 -0700 (PDT)
+Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56f241sm18848295e9.22.2024.10.15.06.56.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 06:56:32 -0700 (PDT)
+From: Guillaume Stols <gstols@baylibre.com>
+Subject: [PATCH v5 0/8] Add iio backend compatibility for ad7606
+Date: Tue, 15 Oct 2024 13:56:13 +0000
+Message-Id: <20241015-ad7606_add_iio_backend_support-v5-0-654faf1ae08c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- clxscore=1011 malwarescore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=999 adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150094
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH10DmcC/4XOTU7DMBCG4atEXhM0dsY/6Yp7IBSN7Qm1oElx0
+ oiq6t0xqQQIVcrym8Uz70VMnBNPYlddROYlTWkcytAPlQh7Gl65TrFsoUAhWKVritaA6SjGLqW
+ x8xTeeIjddDoexzzXAUE2oMm0CkVBjpn79Lk+eH657cwfp/Jnvh2Fp4nrMB4Oad5VaLRBpKBa3
+ ZgoQVrndSA0DiN4h9Zo3/aE4tvap2ke83ltX+SKrZlObmYusoY6MDUspZdE+OTp/J585seSsuq
+ L+hVbBZuiKiKwddYpYhvhjtj8iBIAN8WmiI2z2oJUgZ26I+Jfsd0UsYimtZJcgF5G/U+8Xq9fy
+ TCILxECAAA=
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
+ aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com, 
+ nuno.sa@analog.com, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Guillaume Stols <gstols@baylibre.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729000592; l=5611;
+ i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
+ bh=mAvJUecqLZb8mQ7JA+zGw3XaC23jD7z91aCXiUApXpg=;
+ b=eA4Nr5B5pKK3BOlqDyvr9iNlZJuWxGBi6BvNGQV27CiYwLbHaMOK2PUFIvM7T0/ULrUhykVbL
+ iYSaMY9Vq82DLnsAcvEJMAXmH7JFgTknN/hGvuMRm/PY6qGm1BVSHfZ
+X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
+ pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
 
+This series aims to add iio backend support for AD7606X ADCs.
 
+In a nutshell, iio backend is a paradigm to shift the logic establishing
+the connexion between iio buffers and backend buffers into the backend's
+driver.  This provides a more stable programming interface to the driver
+developers, and give more flexibility in the way the hardware communicates.
 
-> On 14 Oct 2024, at 5:12=E2=80=AFPM, Li Huafei <lihuafei1@huawei.com> wrot=
-e:
->=20
-> The structure disasm_line contains members that require dynamically
-> allocated memory and need to be freed correctly using
-> disasm_line__free().
->=20
-> This patch fixes the incorrect freeing in
-> symbol__disassemble_capstone_powerpc().  Also, since cs_disasm is not
-> enabled, it does not need to handle the situation described in
-> symbol__disassemble_capstone() where "offset !=3D len" may occur due to
-> unknown instructions.
->=20
-> Fixes: c5d60de1813a ("perf annotate: Add support to use libcapstone in po=
-werpc")
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+The support will be first added on AD7606B, and on next patches AD7606C16
+and AD7606C18 will be added.  The series have been tested on a Zedboard,
+using the latest HDL available, i.e
+https://github.com/analogdevicesinc/hdl/commit/7d0a4cee1b5fa403f175af513d7eb804c3bd75d0
+and an AD7606B FMCZ EKV.  This HDL handles both the conversion trigger
+(through a PWM), and the end of conversion interruption, and is compatible
+with axi-adc, which is "iio-backendable".
 
-For the patches
+More information about this HDL design can be found at:
+https://wiki.analog.com/resources/eval/user-guides/ad7606x-fmc/hdl
 
-Tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com <mailto:atrajeev@linu=
-x.vnet.ibm.com>>
+The support is thus separated in two parts:
 
-Thanks
-Athira
-> ---
-> tools/perf/util/disasm.c | 16 +---------------
-> 1 file changed, 1 insertion(+), 15 deletions(-)
->=20
-> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-> index 42222d61ceb5..40d99f4d5cc7 100644
-> --- a/tools/perf/util/disasm.c
-> +++ b/tools/perf/util/disasm.c
-> @@ -1580,20 +1580,6 @@ static int symbol__disassemble_capstone_powerpc(ch=
-ar *filename, struct symbol *s
-> offset +=3D 4;
-> }
->=20
-> - /* It failed in the middle */
-> - if (offset !=3D len) {
-> - struct list_head *list =3D &notes->src->source;
-> -
-> - /* Discard all lines and fallback to objdump */
-> - while (!list_empty(list)) {
-> - dl =3D list_first_entry(list, struct disasm_line, al.node);
-> -
-> - list_del_init(&dl->al.node);
-> - disasm_line__free(dl);
-> - }
-> - count =3D -1;
-> - }
-> -
-> out:
-> if (needs_cs_close)
-> cs_close(&handle);
-> @@ -1612,7 +1598,7 @@ static int symbol__disassemble_capstone_powerpc(cha=
-r *filename, struct symbol *s
-> */
-> list_for_each_entry_safe(dl, tmp, &notes->src->source, al.node) {
-> list_del(&dl->al.node);
-> - free(dl);
-> + disasm_line__free(dl);
-> }
-> }
-> count =3D -1;
-> --=20
-> 2.25.1
->=20
+- PWM support was first added.  My first intention was to make it available
+  for any version of the driver, but the time required to handle the
+  interruption is not neglectable, and I saw drifts that would eventually
+  cause an overlapping SPI read with a new conversion trigger, whith
+  catastrphic consequences. To mitigate this, CRC check must be
+  implemented, but indeed increasing the samplerate causes more sample to
+  be lost.  Therefore, I decided to only allow PWM for iio-backend
+  powered device as a first intention, leaving open the possibility to
+  add the general compatibility afterwards.
+
+- IIO backend support was added: Once the PWM support was ready, the driver
+  can be extended to iio-backend. The iio-backend powered version of the
+  driver is a platform driver, and an exemple devicetree node is available
+  in the bindings.
+
+The following features will be added in subsequent patch series:
+ - software mode for iio backend
+ - 18 bits mode (AD7606C18)
+ - single read (IIO_CHAN_READ_RAW)
+
+Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+---
+Changes in v5:
+- Removal of an useless instruction move.
+- Removal of extra checks on the PWM setters functions.
+- Renaming of buffer postenable/predisable functions.
+- Usage of device_property_present to check if there is a backend
+  property instead of trying to load the backend.
+- Improvement of error handling on PWM GPIO emulation, displaying an
+  error in the kernel log in case the duty cycle set fails.
+- Link to v4: https://lore.kernel.org/r/20241009-ad7606_add_iio_backend_support-v4-0-6971a8c0f1d5@baylibre.com
+
+Changes in v4:
+- Removal of accepted patches.
+- Correction on fsleep (missing semicolon and incorrect spelling !).
+- Correction on buffer initialization that should not be conditionned by
+  the presence or not of a PWM, but by the presence of a backend.
+- Addition of blank lines between blocks.
+- Modification of some declaration to switch variables to static.
+- Link to v3: https://lore.kernel.org/r/20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com
+
+Changes in v3:
+- Rebase on top of the series adding ad7606C16 and AD7606C18 support.
+- Addition of pwm-names actual values and improvement in the
+  description.
+- Introduction of .num_adc_channels field in ad7606_chip_info that
+  defines the number of hardware inputs.
+- Introduction of ad7606_bus_info which couples hardware and wiring
+  informations.
+- Addition of a delay in the scan_direct function for the backend.
+- Link to v2: https://lore.kernel.org/r/20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com
+
+Changes in v2:
+- Logical change in dt-bindings, using a flag for the interface instead of
+  infering it from the value of the "reg" property.
+- Removal of get_platform_match_data addition, instead the logic is
+  directly used in the file.
+- Removal of use and export of pwm_get_state_hw, returning the configured
+  frequency instead of the running one.
+- Correction on various typos, whitespaces, bad order of includes.
+- Separation of SPI conditions and PWM disabling for no backend in other
+  commits.
+- Link to v1: https://lore.kernel.org/r/20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com
+
+---
+Guillaume Stols (8):
+      dt-bindings: iio: adc: ad7606: Remove spi-cpha from required
+      dt-bindings: iio: adc: ad7606: Add iio backend bindings
+      Documentation: iio: Document ad7606 driver
+      iio: adc: ad7606: Add PWM support for conversion trigger
+      iio: adc: ad7606: Add compatibility to fw_nodes
+      iio: adc: ad7606: Introduce num_adc_channels
+      iio: adc: ad7606: Add iio-backend support
+      iio: adc: ad7606: Disable PWM usage for non backend version
+
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |  72 ++-
+ Documentation/iio/ad7606.rst                       | 145 ++++++
+ Documentation/iio/index.rst                        |   1 +
+ MAINTAINERS                                        |   1 +
+ drivers/iio/adc/Kconfig                            |   2 +
+ drivers/iio/adc/ad7606.c                           | 576 +++++++++++++++------
+ drivers/iio/adc/ad7606.h                           |  51 +-
+ drivers/iio/adc/ad7606_par.c                       | 122 ++++-
+ drivers/iio/adc/ad7606_spi.c                       |  96 ++--
+ 9 files changed, 838 insertions(+), 228 deletions(-)
+---
+base-commit: 465644ac29536d10178b5ca4684d0b84765b9fa4
+change-id: 20240725-ad7606_add_iio_backend_support-c401305a6924
+
+Best regards,
+--
+Guillaume Stols <gstols@baylibre.com>
 
 
