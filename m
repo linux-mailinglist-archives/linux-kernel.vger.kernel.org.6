@@ -1,233 +1,158 @@
-Return-Path: <linux-kernel+bounces-364901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14DE99DAC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:44:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D8999DACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F17D1C2140E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:44:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC5EB21F93
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFEF1B7F4;
-	Tue, 15 Oct 2024 00:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2717D1F94A;
+	Tue, 15 Oct 2024 00:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="hoWI8G7U"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="PiOv2Rv5"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5BA249F9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE5C4B5C1;
+	Tue, 15 Oct 2024 00:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728953042; cv=none; b=GiGW5mrQ+Wg4Z01LOx5Y1kl0LAzNyD5KgHWhEwlmAKHvi6wFNjjGJhu62dIk4pY4bMmu+1CxFZsj83570hOa2zmfwFnLOmjH2DDAGXBjJJKrI8V8MJP2aarL24zxfnY/U+8uwJqIz/bTElsPqejVBwgz+Qzi2uFSNjWcn8PKmnI=
+	t=1728953074; cv=none; b=n+vYIQHC+3IM306Rocu/xF26Do+FtEA5qHtRkxGDV/HdySgKP/kHG48V6Ju6nZFzURLkwt7g7gYDEh0BO/BSA47lGl3YAJxKWI3t4qFsyUaaesRUDKSamYcFy9MyjRa0uBJXqdhK21VTqSCWtsJnGtw4kpk//P7F7zzakPQaN2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728953042; c=relaxed/simple;
-	bh=Q24mWxkblhoaSuY+s+iKIMoUW/qc9/V8xFMymoxZ5Ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjAdowdPnsjR51bN918vP21dBexsIwaCIBvYC0fMPIHtkPhnDRnRaMoG9Q3pxVlNgz2UKNxL+45njExjFEf7hsZ8ppWVmQh4L8cH4RzgQ7O9/FgzMNni4zCYszWoHF+8Qur2iefxA7t6XI/oIK7jIzzYx1nwRuWmfMgurEafDaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=hoWI8G7U; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cbceb48613so31605046d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:44:00 -0700 (PDT)
+	s=arc-20240116; t=1728953074; c=relaxed/simple;
+	bh=aaOkoglpjn8F6wIEeDrouknk6uZHXWOFgzj2wxj00GQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pTsAk/JPAJmaRLhnk3bufn22EEZmRx3T7BQSSsIJ+/FKBXeCCCWzNrOx17JOJ7fQVChHg+Uqab91gVbBOEXrhW/ZKGGoDkKn34Xn8pKwrEmO1E3ipM1MV+2gdsdPcWigQA8kmJfm1A0pvr1wFcVruWBB5Ezm9R41N+8wmJvJH9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=PiOv2Rv5; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1728953039; x=1729557839; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UqFrj8VYyv8Qc9K7z7lW3wTCvtKg+g7E/0UBWBJIjZk=;
-        b=hoWI8G7UgOhjKnnweqKKi8x1cfxpQW3+TDuaCb6HL91AEwco02xQbKCCxQIT7QQRb8
-         ZYiABCH69nQWEpcXzrC/TwPzB8Sm4Gz+3cO2dZ+JQBmSOeSr7W2OOue5fNWceTBtJqhY
-         qQ51erc7lzYZS/jbw81b1TbDovUqTTpq3DWI0p1O+6hXNoMwI6wJYqCFseb42HY8/0vC
-         NvYiowq5eZtn0rHT0kfd/v7wTORykgL0J8YKbkdOGnWVRwj3krjB42Yp7UwCYBXOI8ri
-         viCZToDYkLm/krivSSfXAB/1+cGeW06ihPufymPEiAd8P6hI0vZiIY+Th5lrA6jdLMyy
-         Dd6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728953039; x=1729557839;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UqFrj8VYyv8Qc9K7z7lW3wTCvtKg+g7E/0UBWBJIjZk=;
-        b=bdHIVZGVm3zGrq47zgwC87igAXgHMi8/ZAXoEpcqY21QG70ZpeMBMP8jtq/A9AB9J5
-         vIf1huCAQl4zlhiaaETPtMffR/HzMlXs+eOFrZQl6YriCIlKfvZnQi/zYsiZ2mCurSWB
-         CF9eVo21WkXDGP7I1kyIG5+8eO6QVN5B2SLW2NLqikRakKIoIKkvb+YzxYQAwsaXszVl
-         8tUaEzwDiej+nH1oQKGPVnPXMMJdg3sltTWZ5pENZ+MJkQEdvkWSxfLo2OtWRtw+qATa
-         XdW7hGWA4DhF8lxbJEMnPgNkDtgPOSFIljDvQ/YcBreR/Nj8lgTNW4xjYAWeiw4sdGLw
-         rnbg==
-X-Gm-Message-State: AOJu0YyaqJrolCuhkyL/iPOmuWOPGgSIun6N6/hv9XVtfAYvXibyYfeB
-	eJyUf4Mc2cYyDOUj6Xrcn7K9Sbx2XzAv2gKX+gaTRnByN3eJ4Wqvz3U+R35Y5w==
-X-Google-Smtp-Source: AGHT+IF0sYnvzSGDVI8tN9GeQP2futsHC2cqZyIObTKH230LSvO7cpRhmBmxkmoydweXit7vBnIwNg==
-X-Received: by 2002:a05:6214:2d44:b0:6cc:42d:bbb with SMTP id 6a1803df08f44-6cc042d0d35mr90754186d6.53.1728953039521;
-        Mon, 14 Oct 2024 17:43:59 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::7dde])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc2291dae8sm1148886d6.33.2024.10.14.17.43.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 17:43:58 -0700 (PDT)
-Date: Mon, 14 Oct 2024 20:43:55 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-Message-ID: <1336ee1b-cf5d-4081-b4f1-512e2b29dace@rowland.harvard.edu>
-References: <d662ba74-2c02-4298-adfe-f12b3d65471c@rowland.harvard.edu>
- <670da1be.050a0220.f16b.0003.GAE@google.com>
+	d=codeconstruct.com.au; s=2022a; t=1728953070;
+	bh=2nnTU/ADEM4/VUxWefc0PONe2IBy5+5Jla7mbf0EfVs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=PiOv2Rv5D4gz2LFQ1h7BrLF79+/3pHIZJ+tJ9BELKEx57hW33NeTxupy4Zch8v+jg
+	 jwjE5z2HOStoVOfhe3YWxqNZz8A5gzBfWKlLw2THkfMIK9yGq94HOvEGsPn1JIs5Dl
+	 NvymJ7DbZDry2bLNbBhpAnAboweXTFHT2yvSzydX6gqxSv927YB4S/NfosYcGKmhb4
+	 o1lBI3qWsHSezjrDopLqLklQflemn37Y2NR7eMxSYhLxZhmoahwt6Ebp7bf+QVmpst
+	 hF2S+ArVf6lGiBsjQAahRkhReJjQ6gUrmfJPBnM4UjqszbGa/g0LupdNDFY5A4TIIQ
+	 Z+yYLAYSTiL6A==
+Received: from [192.168.68.112] (203-173-0-39.dyn.iinet.net.au [203.173.0.39])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 75277649A0;
+	Tue, 15 Oct 2024 08:44:29 +0800 (AWST)
+Message-ID: <b5919d904c9f06a618a54d49bc895c3081a511e4.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] ARM: dts: aspeed: Add device tree for Ampere's Mt.
+ Jefferson BMC
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Chanh Nguyen <chanh@os.amperecomputing.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Khanh Pham
+ <khpham@amperecomputing.com>, linux-arm-kernel@lists.infradead.org, Thang
+ Nguyen <thang@os.amperecomputing.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Phong Vo <phong@os.amperecomputing.com>, Conor Dooley
+ <conor+dt@kernel.org>, Rob Herring <robh+dt@kernel.org>, OpenBMC Maillist
+ <openbmc@lists.ozlabs.org>, Open Source Submission
+ <patches@amperecomputing.com>, Quan Nguyen <quan@os.amperecomputing.com>, 
+ linux-aspeed@lists.ozlabs.org
+Date: Tue, 15 Oct 2024 11:14:28 +1030
+In-Reply-To: <172891445289.1127319.4114892374425336022.robh@kernel.org>
+References: <20241014105031.1963079-1-chanh@os.amperecomputing.com>
+	 <172891445289.1127319.4114892374425336022.robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670da1be.050a0220.f16b.0003.GAE@google.com>
 
-On Mon, Oct 14, 2024 at 03:57:02PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot tried to test the proposed patch but the build/boot failed:
-> 
-> kernel clean failed: failed to run ["make" "-j" "0" "ARCH=x86_64" "distclean"]: exit status 2
-> make: the '-j' option requires a positive integer argument
+Hi Chanh,
 
-Don't know what that was about.  Let's try it on a more standard commit.
+On Mon, 2024-10-14 at 09:05 -0500, Rob Herring (Arm) wrote:
+> On Mon, 14 Oct 2024 10:50:31 +0000, Chanh Nguyen wrote:
+> > The Mt. Jefferson BMC is an ASPEED AST2600-based BMC for the Mt. Jeffer=
+son
+> > hardware reference platform with AmpereOne(TM)M processor.
+> >=20
+> > Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+> > ---
+> >  arch/arm/boot/dts/aspeed/Makefile             |   1 +
+> >  .../aspeed/aspeed-bmc-ampere-mtjefferson.dts  | 646 ++++++++++++++++++
+> >  2 files changed, 647 insertions(+)
+> >  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjeffer=
+son.dts
+> >=20
+>=20
+>=20
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>=20
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>=20
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>=20
+>   pip3 install dtschema --upgrade
+>=20
+>=20
+> New warnings running 'make CHECK_DTBS=3Dy aspeed/aspeed-bmc-ampere-mtjeff=
+erson.dtb' for 20241014105031.1963079-1-chanh@os.amperecomputing.com:
+>=20
+> arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /: compatible=
+: 'oneOf' conditional failed, one must be fixed:
+> 	'ampere,mtjefferson-bmc' is not one of ['delta,ahe50dc-bmc', 'facebook,g=
+alaxy100-bmc', 'facebook,wedge100-bmc', 'facebook,wedge40-bmc', 'microsoft,=
+olympus-bmc', 'quanta,q71l-bmc', 'tyan,palmetto-bmc', 'yadro,vesnin-bmc']
+> 	'ampere,mtjefferson-bmc' is not one of ['amd,daytonax-bmc', 'amd,ethanol=
+x-bmc', 'ampere,mtjade-bmc', 'aspeed,ast2500-evb', 'asrock,e3c246d4i-bmc', =
+'asrock,e3c256d4i-bmc', 'asrock,romed8hm3-bmc', 'asrock,spc621d8hm3-bmc', '=
+asrock,x570d4u-bmc', 'bytedance,g220a-bmc', 'facebook,cmm-bmc', 'facebook,m=
+inipack-bmc', 'facebook,tiogapass-bmc', 'facebook,yamp-bmc', 'facebook,yose=
+mitev2-bmc', 'facebook,wedge400-bmc', 'hxt,stardragon4800-rep2-bmc', 'ibm,m=
+ihawk-bmc', 'ibm,mowgli-bmc', 'ibm,romulus-bmc', 'ibm,swift-bmc', 'ibm,with=
+erspoon-bmc', 'ingrasys,zaius-bmc', 'inspur,fp5280g2-bmc', 'inspur,nf5280m6=
+-bmc', 'inspur,on5263m5-bmc', 'intel,s2600wf-bmc', 'inventec,lanyang-bmc', =
+'lenovo,hr630-bmc', 'lenovo,hr855xg2-bmc', 'portwell,neptune-bmc', 'qcom,ce=
+ntriq2400-rep-bmc', 'supermicro,x11spi-bmc', 'tyan,s7106-bmc', 'tyan,s8036-=
+bmc', 'yadro,nicole-bmc', 'yadro,vegman-n110-bmc', 'yadro,vegman-rx20-bmc',=
+ 'yadro,vegman-sx20-bmc']
+> 	'ampere,mtjefferson-bmc' is not one of ['ampere,mtmitchell-bmc', 'aspeed=
+,ast2600-evb', 'aspeed,ast2600-evb-a1', 'asus,x4tf-bmc', 'facebook,bletchle=
+y-bmc', 'facebook,catalina-bmc', 'facebook,cloudripper-bmc', 'facebook,elbe=
+rt-bmc', 'facebook,fuji-bmc', 'facebook,greatlakes-bmc', 'facebook,harma-bm=
+c', 'facebook,minerva-cmc', 'facebook,yosemite4-bmc', 'ibm,blueridge-bmc', =
+'ibm,everest-bmc', 'ibm,fuji-bmc', 'ibm,rainier-bmc', 'ibm,system1-bmc', 'i=
+bm,tacoma-bmc', 'inventec,starscream-bmc', 'inventec,transformer-bmc', 'jab=
+il,rbp-bmc', 'qcom,dc-scm-v1-bmc', 'quanta,s6q-bmc', 'ufispace,ncplite-bmc'=
+]
+> 	'aspeed,ast2400' was expected
+> 	'aspeed,ast2500' was expected
+> 	from schema $id: http://devicetree.org/schemas/arm/aspeed/aspeed.yaml#
+>=20
 
-Alan Stern
+This needs to be fixed as pointed out by Krzysztof.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git v6.12-rc3
+*snip*
 
-Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-===================================================================
---- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
-+++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -50,7 +50,7 @@
- #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
- #define POWER_BUDGET_3	900	/* in mA */
- 
--#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
-+#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
- 
- static const char	driver_name[] = "dummy_hcd";
- static const char	driver_desc[] = "USB Host+Gadget Emulator";
-@@ -257,6 +257,9 @@ struct dummy_hcd {
- 	unsigned			active:1;
- 	unsigned			old_active:1;
- 	unsigned			resuming:1;
-+
-+	bool				alanflag;
-+	const char			*alandbg;
- };
- 
- struct dummy {
-@@ -1303,9 +1306,11 @@ static int dummy_urb_enqueue(
- 		urb->error_count = 1;		/* mark as a new urb */
- 
- 	/* kick the scheduler, it'll do the rest */
--	if (!hrtimer_active(&dum_hcd->timer))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
-+	if (!hrtimer_active(&dum_hcd->timer)) {
-+		dum_hcd->alandbg = "s1";
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
- 				HRTIMER_MODE_REL_SOFT);
-+	}
- 
-  done:
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
-@@ -1325,9 +1330,19 @@ static int dummy_urb_dequeue(struct usb_
- 
- 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
- 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
--			!list_empty(&dum_hcd->urbp_list))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
--
-+			!list_empty(&dum_hcd->urbp_list)) {
-+		dev_info(dummy_dev(dum_hcd), "Dequeue restart %p\n", urb);
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
-+				HRTIMER_MODE_REL_SOFT);
-+		dum_hcd->alandbg = "s2";
-+	} else {
-+		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %d %d %p active %d %s\n",
-+				rc, dum_hcd->rh_state,
-+				list_empty(&dum_hcd->urbp_list), urb,
-+				hrtimer_active(&dum_hcd->timer),
-+				dum_hcd->alandbg);
-+	}
-+	dum_hcd->alanflag = true;
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
- 	return rc;
- }
-@@ -1813,10 +1828,14 @@ static enum hrtimer_restart dummy_timer(
- 
- 	/* look at each urb queued by the host side driver */
- 	spin_lock_irqsave(&dum->lock, flags);
-+	dum_hcd->alandbg = "cb1";
-+	if (dum_hcd->alanflag)
-+		dev_info(dummy_dev(dum_hcd), "Timer handler\n");
- 
- 	if (!dum_hcd->udev) {
- 		dev_err(dummy_dev(dum_hcd),
- 				"timer fired with no URBs pending?\n");
-+		dum_hcd->alandbg = "cb2";
- 		spin_unlock_irqrestore(&dum->lock, flags);
- 		return HRTIMER_NORESTART;
- 	}
-@@ -1984,6 +2003,8 @@ return_urb:
- 			ep->already_seen = ep->setup_stage = 0;
- 
- 		usb_hcd_unlink_urb_from_ep(dummy_hcd_to_hcd(dum_hcd), urb);
-+		if (dum_hcd->alanflag)
-+			dev_info(dummy_dev(dum_hcd), "Giveback %p\n", urb);
- 		spin_unlock(&dum->lock);
- 		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
- 		spin_lock(&dum->lock);
-@@ -1994,12 +2015,15 @@ return_urb:
- 	if (list_empty(&dum_hcd->urbp_list)) {
- 		usb_put_dev(dum_hcd->udev);
- 		dum_hcd->udev = NULL;
-+		dum_hcd->alandbg = "cb3";
- 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
--		/* want a 1 msec delay here */
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
-+		dum_hcd->alandbg = "scb";
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
- 				HRTIMER_MODE_REL_SOFT);
--	}
-+	} else
-+		dum_hcd->alandbg = "cb4";
- 
-+	dum_hcd->alanflag = false;
- 	spin_unlock_irqrestore(&dum->lock, flags);
- 
- 	return HRTIMER_NORESTART;
-@@ -2390,8 +2414,11 @@ static int dummy_bus_resume(struct usb_h
- 	} else {
- 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
- 		set_link_state(dum_hcd);
--		if (!list_empty(&dum_hcd->urbp_list))
--			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
-+		if (!list_empty(&dum_hcd->urbp_list)) {
-+			dum_hcd->alandbg = "s3";
-+			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
-+					HRTIMER_MODE_REL_SOFT);
-+			}
- 		hcd->state = HC_STATE_RUNNING;
- 	}
- 	spin_unlock_irq(&dum_hcd->dum->lock);
-@@ -2490,6 +2517,7 @@ static int dummy_start(struct usb_hcd *h
- {
- 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
- 
-+	dum_hcd->alandbg = "i";
- 	/*
- 	 * HOST side init ... we emulate a root hub that'll only ever
- 	 * talk to one device (the gadget side).  Also appears in sysfs,
-@@ -2521,6 +2549,7 @@ static void dummy_stop(struct usb_hcd *h
- {
- 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
- 
-+	dum_hcd->alandbg = "can";
- 	hrtimer_cancel(&dum_hcd->timer);
- 	device_remove_file(dummy_dev(dum_hcd), &dev_attr_urbs);
- 	dev_info(dummy_dev(dum_hcd), "stopped\n");
+> arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/apb/bus@=
+1e78a000/i2c@180/i2c-mux@70/i2c@0/psu@58: failed to match any schema with c=
+ompatible: ['pmbus']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/apb/bus@=
+1e78a000/i2c@180/i2c-mux@70/i2c@0/psu@59: failed to match any schema with c=
+ompatible: ['pmbus']
+
+These two should also be fixed. The compatible must describe the
+physical device, not the communication/application protocol. It may be
+necessary to add a binding if there's not one already for the device.
+
+Andrew
 
 
