@@ -1,195 +1,192 @@
-Return-Path: <linux-kernel+bounces-365952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896F699EE77
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:58:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3067B99EE7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A6A1C215AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBAC9281DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18801DD0E4;
-	Tue, 15 Oct 2024 13:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FE01B21B0;
+	Tue, 15 Oct 2024 13:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k86ZN16M"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EgRtZkr4"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BCF1AF0D3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC651B218C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000606; cv=none; b=bkRXyBIDrfJWR7zZ8hJ3mlfzI9atJ5TMQIo9tmJNOHyUw6gklpUZCY1PqCXqtq+zM8aMpDL0Wp5iEk6Pl7ffHvh/5pWx5Lr2LDgs9Gvmi4XVmHHd1/24Bx9PiX6E+LENQZqJWFkH+lrdW5dTm835a6Ni1iQY9ftXur+Nh3mWPJ4=
+	t=1729000679; cv=none; b=XC48HFbzw549pJoCw9LpkaxO4ajctS71n96NafzVkDdCjdOMZYZvi1nBV1t5GhQ1zoHrcdBFeyE6y10XPVeUUzlGUtLG77WnxO3WzAeIDUkvwDYPQbARSiydQ1f246oqgO7ksK7TKR+R+WbhY22X+GT+pvxdvxEu+TpZ05iHolQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000606; c=relaxed/simple;
-	bh=8sj2ik6YIhgGPpUYAJWB3DqY/rpxFFg132670LOYgCg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=el1W1C0K2eW6zmni8Qsd2RuGnhdc0QS3Oh6SIPLUlim0zZlFMB0Rh+WYeR7hyvF5BqW+S/LA0K/ahFA/F2bpOygWaDWrF1aZBilnPo6DZ1Kg6g32iU3dNEmcCscPXNMg/JKAuCOIgMMMCHWv+O3NKL2RRsZ6DDVpy+iL6P4GBJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k86ZN16M; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-430576ff251so47361255e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:56:41 -0700 (PDT)
+	s=arc-20240116; t=1729000679; c=relaxed/simple;
+	bh=u2mCihuTvpleeF6Wc8xqnOwQ2XtbUfQFjtxEvNderdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jBGjsPVgPFXuhnxq/2VBiUNeysRm10h/MuLr8dSVOrni9DINGJUw6Gu70V+PxY1IqQUh3K+FVITxYR/Co3AAXy2y+ynGZGxUiwFTesyfO3LHKSY76J6jQRIJXdQ9pJxVsi/FO/sy/G//Y8nOPf5XM/+I76S+V7R67YwuvNm5ODQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EgRtZkr4; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e2918664a3fso3254858276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:57:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729000599; x=1729605399; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wfimGBiPs/xd5kQ6SFTwCIGnDDLl5cZX78W/oQcH5gw=;
-        b=k86ZN16MyOFbYo+4JwKQ1xYBdHCj8NQ7vdKdaNWoDZEWrBO8ejFRucdjROOoFkC/gl
-         pmk11MKPXInSGbNBzM/cf0FMne9YQ0uFHNv7kLEY9TQQ7rajZwRjfJZnN+GdykPHkyD0
-         3ID4vhIk9+Uafm4PRoohApwNV9HkEcm8OXvKXVP1a4xDRzXj/8nDzr33ZMZUa0r4SFd9
-         dSmB937849lTZ5BGX/XvveaKx6MUMZv1xbgP+R0y6X+4kR8r/ufrEylPIAyCRlU0znwO
-         QIh1ZD5Y/es7U7z0fi110oiW1GVTjjz/yWL6zAKchw51P3mxfaVOkJX27AIjqnTq7S9r
-         ZYeg==
+        d=linaro.org; s=google; t=1729000677; x=1729605477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u2mCihuTvpleeF6Wc8xqnOwQ2XtbUfQFjtxEvNderdI=;
+        b=EgRtZkr4dAxpi6fzuYZsXi0VIzi0Pa9cWlbPD12UVPa5eD/sJGWiH1QaOq45FUot9S
+         leoEVyUvo8XkDxVLfgLUzzyUwPCjlhH3Q31LdnNhJ+SG0SXkS+mzfe5uN+rTWl++fSYd
+         f+9cgMbnIcajYQw1jI5yxdOqBeZ420V0EEqCQcl0R94wIYKDYHokmHloWNQb+PbJoilW
+         1bfcnExyP/jL5EzUZ4xl37D5zmQ93yka+cUBjQoVy1Ix+xDyRyXTFv66mrvcnREsglun
+         nmfMFg35zuaLmwM9LlwymaEdmzcT7nbEGwwVcWlPfWhyQMOBDP3TJv3BEPnP29YcakH2
+         nQYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729000599; x=1729605399;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729000677; x=1729605477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wfimGBiPs/xd5kQ6SFTwCIGnDDLl5cZX78W/oQcH5gw=;
-        b=rqH8DoBZly2OiacGD6WQRonH908nwFg8DcYOMuLmFsWTQDoBksAcMMnbX2CCCGfDnj
-         sNnXBgUyVpZRYF69AtVYC2DBvSfA0utORZLWEc6YhCzl5BMu5ILga/q2KJRUzeQ54ZJz
-         roqs0kI+ud5rXmkY2r6PvixR0g9+2eBBoHbhxMe1o71ndW1ZPyRht/1zmbPjDkXJcN4i
-         LiOsjC3Bd6JBlO5jwWPVqGSwKmVQobLsQsHDwf7g0RRS0jJy5JCU78y9ZrjN/uWRvBOz
-         vvzJLPtg05vQVkLCZWfMmpSSY9mlp/5w024Og8j7XxTmGIICgt9e4aY/T/+tvWkrUqMT
-         bTdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHILJTQ/XkaxQOK5kyfYeXNddJAeNqL1qlzA61ltO117xsiPRZ40ryJvyv4Zlp2hYRsvO6A2i9cYy3I+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcZIrkbjSBric3MfUFgEKQF7y36uqUPxeR2sLxflFgHo7/1jf8
-	MNi3dyOsl+qMf0nXNF+eO4LjImg6HL6hrk3u2Ayexh0x4Zd2XIPVUqncDouzmCw=
-X-Google-Smtp-Source: AGHT+IEKh3xWTi5hf4sbT5P8PdIbNsnQOa5kUn7o9v8bR0uMH7vd17OSHnnAv62Xz75tzpQ58/ip5g==
-X-Received: by 2002:a05:600c:1e18:b0:431:166b:fc1e with SMTP id 5b1f17b1804b1-4311df42cdamr131676955e9.25.1729000599280;
-        Tue, 15 Oct 2024 06:56:39 -0700 (PDT)
-Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56f241sm18848295e9.22.2024.10.15.06.56.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 06:56:38 -0700 (PDT)
-From: Guillaume Stols <gstols@baylibre.com>
-Date: Tue, 15 Oct 2024 13:56:21 +0000
-Subject: [PATCH v5 8/8] iio: adc: ad7606: Disable PWM usage for non backend
- version
+        bh=u2mCihuTvpleeF6Wc8xqnOwQ2XtbUfQFjtxEvNderdI=;
+        b=TDl1oUkROF84wTOc8QxWQiEFmnzMcE4rYTUZpKtzAAnqW1OG+R6AavlBcSWryzzwbR
+         A7XfLfzxdbiMXjpmaXD3wb/2QAfXSQJFtvTH7j0/GMScnC5Y3IK/3jZLEH6zJS+ei6a/
+         RvdU8N6llKjTlPP6BLxeO4x7d/cjgCpRnTQf4GnBWoJsa+FLYChWsHO9le+JuWeN4EpH
+         k2YapTBYXm5vlemZGp/Si/HiJVDSQwU0GckJxgvU8MF8VUPC7SDKCAezAEXNrYiUypP/
+         t3J258Pcf4yAMJQxzovUnm1STNz1tTEIWB12WPWcdxmjW0YuL478nIuSyYk04CjgTYGk
+         owBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUokl5HdwaNelB+Y1Xk6SHheCgNiEaTS7nkJgJpNQTQw0UMpt1+g1JRTr7qOHIGHLNsPn7JXdgdeIAlCVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE2D3zHaeevX52on6TJGeFBSSb1eIwXPeZdG+vJVZVoQ2p+zXB
+	Bv1Hl3PBYNSCc5N92UoIEfFaNIc4raczQybWA78Uic/kdDZJH64x0lqiBPs5uySxn21BbeXhmSk
+	RBx7aoOX7U5icYsu3/8HRxMZ9htZ15Dvuxo+7MA==
+X-Google-Smtp-Source: AGHT+IH+wdRwHX4jXkd5jbgY6RxIoOl7B6iZsFw2tckIVDtnpgDd20m+ArGtOdAV8MMt8x8cJaYXcykSNwRf8LiLooI=
+X-Received: by 2002:a05:6902:1603:b0:e28:c6be:4ce6 with SMTP id
+ 3f1490d57ef6-e2918427d8dmr10356808276.28.1729000676977; Tue, 15 Oct 2024
+ 06:57:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241015-ad7606_add_iio_backend_support-v5-8-654faf1ae08c@baylibre.com>
-References: <20241015-ad7606_add_iio_backend_support-v5-0-654faf1ae08c@baylibre.com>
-In-Reply-To: <20241015-ad7606_add_iio_backend_support-v5-0-654faf1ae08c@baylibre.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
- aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com, 
- nuno.sa@analog.com, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Guillaume Stols <gstols@baylibre.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729000592; l=2658;
- i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
- bh=8sj2ik6YIhgGPpUYAJWB3DqY/rpxFFg132670LOYgCg=;
- b=1u2rG+kjJiMqYohGDsnjVlDj3sIi34d9AcBG26SyutZ8VN80TTEQ0g/9rRT0jd/zVf+8HUkLX
- 24VBapyaxS3BkB8VGn298idC036IGXhLHEHFHfCi9s6y6b7XT1p5QNF
-X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
- pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
+References: <20240911073337.90577-1-quic_sibis@quicinc.com>
+ <20240911073337.90577-3-quic_sibis@quicinc.com> <pt4wtycddqhcvw2iblaojmzsdggmlafft4vu6lg5j2vstbhbqj@acenyi5k3yeq>
+ <eqy4yicgeqlgaytgzybnitvbrdr7jmjjk5k2swmadad6scwk77@ubaf7a2kgmdm>
+ <1BBC34CC-92D9-4F6E-8DFA-1F2DA36D545A@linaro.org> <20241001085105.iglzp3art5ysli2d@thinkpad>
+ <b1d982c1-f800-97eb-1be3-e77e04a8e81d@quicinc.com> <20241006180146.m6xvpwbvkiy7obpx@thinkpad>
+ <20241015135114.kbiyvymng4e6dmvb@thinkpad>
+In-Reply-To: <20241015135114.kbiyvymng4e6dmvb@thinkpad>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 15 Oct 2024 16:57:45 +0300
+Message-ID: <CAA8EJpombwmYimszNoQ51m+cfcNs9x+TQ39+-6kXXp+Ziq=d7Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windows
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org, 
+	krzk+dt@kernel.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	conor+dt@kernel.org, abel.vesa@linaro.org, srinivas.kandagatla@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since the pwm was introduced before backend, there was a mock use, with
-a GPIO emulation. Now that iio backend is introduced, the mock use can
-be removed.
+On Tue, 15 Oct 2024 at 16:51, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Sun, Oct 06, 2024 at 11:31:52PM +0530, Manivannan Sadhasivam wrote:
+> > On Sun, Oct 06, 2024 at 12:33:21AM +0530, Sibi Sankar wrote:
+> > >
+> > >
+> > > On 10/1/24 14:21, Manivannan Sadhasivam wrote:
+> > > > On Tue, Oct 01, 2024 at 09:56:30AM +0300, Dmitry Baryshkov wrote:
+> > > > > On October 1, 2024 5:42:35 AM GMT+03:00, Bjorn Andersson <anderss=
+on@kernel.org> wrote:
+> > > > > > On Wed, Sep 11, 2024 at 10:55:05AM GMT, Dmitry Baryshkov wrote:
+> > > > > > > On Wed, Sep 11, 2024 at 01:03:37PM GMT, Sibi Sankar wrote:
+> > > > > > [..]
+> > > > > > > > diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b=
+/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+> > > > > > [..]
+> > > > > > > > +
+> > > > > > > > +&pcie5 {
+> > > > > > > > + perst-gpios =3D <&tlmm 149 GPIO_ACTIVE_LOW>;
+> > > > > > > > + wake-gpios =3D <&tlmm 151 GPIO_ACTIVE_LOW>;
+> > > > > > > > +
+> > > > > > > > + vddpe-3v3-supply =3D <&vreg_wwan>;
+> > > > > > >
+> > > > > > > Please use pwrseq instead.
+> > > > > > >
+> > > > > >
+> > > > > > What benefit is there to wrap a single 3.3V regulator in pwrseq=
+ driver?
+> > > > >
+> > > > > First of all, is it really just a 3.3V? Second, is it actually po=
+wering up the host controller (as expressed in the device tree? Is it a pow=
+er supply to the slot (in this case, I think, it should be expressed differ=
+ently)? Or is it a power supply to the card itself?
+> > > > >
+> > > >
+> > > > Yeah, we should get into the details here. We were not paying atten=
+tion till
+> > > > now, but with the advent of pwrseq, we should describe the power su=
+pply properly
+> > > > in DT.
+> > > >
+> > > > Here I believe the supply is to the PCIe Mini Card connector where =
+a modem is
+> > > > connected. In that case, 3.3v supply should be connected to 3.3Vaux=
+ of the
+> > > > connector and we should have a generic pwrseq driver for the mini c=
+ards.
+> > > >
+> > >
+> > > Hey Mani, Dmitry,
+> > >
+> > > The schematics are identical to that of the X1E CRD with
+> > > the exception of the pcie daughter card having the rtl8125g
+> > > on it. Yes, the 3.3V supply is connected to the card as well.
+> > >
+> >
+> > Is this connected to the 3.3vaux of the card? Please specify the actual=
+ rail
+> > name as the 'PCI Express Mini Card Electromechanical Specification' spe=
+cifies
+> > only 3.3Vaux and 1.5v supplies.
+> >
+> > > Doesn't this mean all other x1e boards out there needs to be
+> > > updated with pwrseq as well? Anway will get that addressed in
+> > > v3.
+> > >
+> >
+> > pwrseq is the kernel driver abstraction, nothing to do with DT. But for=
+ making
+> > use of pwrseq, the supplies need to be described in the proper place. I=
+n this
+> > case most likely under a separate node of PCIe bridge. Then you'd need =
+a
+> > separate pwrseq driver in kernel to parse the supply and take care of i=
+t.
+> >
+> > I'm currently writing a pwrseq driver for standard slots (x8 for X1E) a=
+nd should
+> > be able to post it early next week. So you or someone could use it as a
+> > reference to add a new driver for m-pcie cards.
+> >
+> > If no one picks it up, I may just do it.
+> >
+>
+> Hi,
+>
+> The slot driver is taking more time than anticipated due to the pwrctl re=
+work.
+> So please go ahead with the current binding and we would switch to pwrseq
+> later once the driver is available.
 
-Signed-off-by: Guillaume Stols <gstols@baylibre.com>
----
- drivers/iio/adc/ad7606.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+I assume this applies only to the case of the actual 3.3V being used
+to power up the PCIe slot? Or to all existing pending items using
+vddpe-3v3-supply?
 
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index 7871552ce5ac..0e830a17fc19 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -470,8 +470,6 @@ static int ad7606_pwm_set_high(struct ad7606_state *st)
- 	cnvst_pwm_state.duty_cycle = cnvst_pwm_state.period;
- 
- 	ret = pwm_apply_might_sleep(st->cnvst_pwm, &cnvst_pwm_state);
--	/* sleep 2 µS to let finish the current pulse */
--	fsleep(2);
- 
- 	return ret;
- }
-@@ -486,8 +484,6 @@ static int ad7606_pwm_set_low(struct ad7606_state *st)
- 	cnvst_pwm_state.duty_cycle = 0;
- 
- 	ret = pwm_apply_might_sleep(st->cnvst_pwm, &cnvst_pwm_state);
--	/* sleep 2 µS to let finish the current pulse */
--	fsleep(2);
- 
- 	return ret;
- }
-@@ -563,13 +559,7 @@ static irqreturn_t ad7606_trigger_handler(int irq, void *p)
- error_ret:
- 	iio_trigger_notify_done(indio_dev->trig);
- 	/* The rising edge of the CONVST signal starts a new conversion. */
--	if (st->gpio_convst) {
--		gpiod_set_value(st->gpio_convst, 1);
--	} else {
--		ret = ad7606_pwm_set_high(st)
--		if (ret < 0)
--			dev_err(st->dev, "Could not set PWM to high.");
--	}
-+	gpiod_set_value(st->gpio_convst, 1);
- 
- 	return IRQ_HANDLED;
- }
-@@ -900,10 +890,7 @@ static int ad7606_buffer_postenable(struct iio_dev *indio_dev)
- {
- 	struct ad7606_state *st = iio_priv(indio_dev);
- 
--	if (st->gpio_convst)
--		gpiod_set_value(st->gpio_convst, 1);
--	else
--		return ad7606_pwm_set_high(st);
-+	gpiod_set_value(st->gpio_convst, 1);
- 
- 	return 0;
- }
-@@ -912,10 +899,7 @@ static int ad7606_buffer_predisable(struct iio_dev *indio_dev)
- {
- 	struct ad7606_state *st = iio_priv(indio_dev);
- 
--	if (st->gpio_convst)
--		gpiod_set_value(st->gpio_convst, 0);
--	else
--		return ad7606_pwm_set_low(st);
-+	gpiod_set_value(st->gpio_convst, 0);
- 
- 	return 0;
- }
-@@ -1210,6 +1194,12 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
- 
- 		indio_dev->setup_ops = &ad7606_backend_buffer_ops;
- 	} else {
-+
-+		/* Reserve the PWM use only for backend (force gpio_convst definition) */
-+		if (!st->gpio_convst)
-+			return dev_err_probe(dev, -EINVAL,
-+					     "No backend, connect convst to a GPIO");
-+
- 		init_completion(&st->completion);
- 		st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
- 						  indio_dev->name,
 
--- 
-2.34.1
-
+--
+With best wishes
+Dmitry
 
