@@ -1,131 +1,151 @@
-Return-Path: <linux-kernel+bounces-365495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072E399E32C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:54:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D07F99E338
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062B91C21C8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:54:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A901C21F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877551E282B;
-	Tue, 15 Oct 2024 09:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FDC1E282C;
+	Tue, 15 Oct 2024 09:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yn4Beh69"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FVkYoFdl"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D087F7FC;
-	Tue, 15 Oct 2024 09:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7563A1E0DB0;
+	Tue, 15 Oct 2024 09:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728986051; cv=none; b=HFzanGkt2HmcqFoKgZSVzgGbOkX3FFN7A4RtOov4LJ3oLQlLoMTaLxac1Udb/OOIyshsYQATYxYKtdHdHcDMbSw5jnNfzDt1fOa8nk/snebEWQi6WlzCah3qmvXeA9UQ4iD6t4NWz8jOj54DWUEe37W3uKyvp4ClwvD85uk9cnI=
+	t=1728986239; cv=none; b=B2WqPiVHiJlC0Wha//zcJQlagOLsL1fOsoRM0iGk4rS2yIK9OFLFYvGbxCConsvZ3ASchVXQGayOgCw2j2IRoQHt+59aJeMj5zL0bz2HQEyZXdYHSX6GyIOUaoj5R/GuwsDa+gATzXsw+hVWmL9sKppRhHbaQUuDxQskCzrhxQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728986051; c=relaxed/simple;
-	bh=VxH0d8OiCc+yI1zRcswIOsXhZoYIMl9urHl70yfxeao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LEqZn1r4XNO/U6rYzbePQAkMZJUHy/xlMO3MxbrGApGl+lsytLl/j0Pq63EbH4LMOMGlbscsqTNEwWPV6fACAK0a1pFUFLN5I2gLwPv3WECoo84aM/iDdrDoF1PcB/khCMiGIEgSTb/W4wGAXeR/vWBCbYlV9dxXprbGeq7rtcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yn4Beh69; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F9G5Xa019351;
-	Tue, 15 Oct 2024 09:53:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gIzGYTNAP570onZc1Q9SZ0BCayz48+49eB4KT3Q0w+o=; b=Yn4Beh69hIeMH9hG
-	TH8cCYS8Go5MVduJ8jKPA4IpQWYZQyyp95fsEjzTXKrab20KG9um2x+dVNyh4fXm
-	H8jYpU28rjYazd/xlWVMPix5hAPtdBDAfORLfRxlv3EljAxiJLaYy2l5k1rXaZ+e
-	liK1slAA+LgtWem3l7mZcUF3UX+IoqDX0VRHHhypmtt9xcKoAwdD2R7RXeSCBzuO
-	DlV/sIQpX1f8dhIICNt+2Fcsu/M85rSL8lYv1lD2MVjHglif477WfbD+cKnTuBu2
-	5c6CSXV36a0dJDhwzWamXJbhNacLh+rhZlI4qEIFReKZuinrr8wSXxpaTmg005GQ
-	xGsjwQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429nm3g306-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 09:53:59 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49F9rwD6001924
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 09:53:58 GMT
-Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Oct
- 2024 02:53:54 -0700
-Message-ID: <85a13e7c-b48c-4105-a633-a48ebebe9fdf@quicinc.com>
-Date: Tue, 15 Oct 2024 17:53:52 +0800
+	s=arc-20240116; t=1728986239; c=relaxed/simple;
+	bh=dftW7zcS2EBNTF8YK9j9q7zTGJtVX3ZG0gx0rptQNtk=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=TEtMbEMQk9M4cZT4PlQWDoXrJW5tu0zCw3GeoPBU9mZPmhQ/ZA5Qq6r5Rbdf38iN6GT0mdYuIQB8tjNVwZiARVqxgN52fW1MOq1C0oaBo75Kmp08DWsq/SlqBq91Qs6vRwGWZST1d7jYTNaotaK5DQAW7eAOOFv2TjZSCAG0PLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FVkYoFdl; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728986233; h=Message-ID:Subject:Date:From:To;
+	bh=Iaouv12bpH/2YtDLBwzWAXYEX0p/SxNsdOECyiypjOw=;
+	b=FVkYoFdlaCHud+YZbrTv8Z6R2O7gagja7k24TWVXn0ea3FDhyls626JYpvgvbhiKXKPsbNxqPajgZIstowhXQHwW1Rj+A7c6ezWr7irpvDl6VQQoF9kKqp1UitOfiDEntydzeNlxoKRvTFY5NmS26S7p4uwoOEaAAjFoAkauRzY=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WHDG-1b_1728986232 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Oct 2024 17:57:13 +0800
+Message-ID: <1728986129.331167-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: virtio_net: support device stats
+Date: Tue, 15 Oct 2024 17:55:29 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Colin King (gmail)" <colin.i.king@gmail.com>
+References: <eb09900a-8443-4260-9b66-5431a85ca102@gmail.com>
+ <20241014054305-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20241014054305-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] Add support for APPS SMMU on QCS615
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <robimarko@gmail.com>, <will@kernel.org>,
-        <robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-References: <20241015081603.30643-1-quic_qqzhou@quicinc.com>
- <e0bd108f-1133-473a-a0e5-6efe1b19f50d@kernel.org>
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-In-Reply-To: <e0bd108f-1133-473a-a0e5-6efe1b19f50d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: pkVBa3nGe1uQilYiIB6dfxCdyJpfAk4T
-X-Proofpoint-ORIG-GUID: pkVBa3nGe1uQilYiIB6dfxCdyJpfAk4T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 suspectscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150067
 
+On Mon, 14 Oct 2024 05:47:41 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> On Mon, Oct 14, 2024 at 10:39:26AM +0100, Colin King (gmail) wrote:
+> > Hi,
+> >
+> > Static analysis on Linux-next has detected a potential issue with the
+> > following commit:
+> >
+> > commit 941168f8b40e50518a3bc6ce770a7062a5d99230
+> > Author: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > Date:   Fri Apr 26 11:39:24 2024 +0800
+> >
+> >     virtio_net: support device stats
+> >
+> >
+> > The issue is in function virtnet_stats_ctx_init, in drivers/net/virtio_net.c
+> > as follows:
+> >
+> >         if (vi->device_stats_cap & VIRTIO_NET_STATS_TYPE_CVQ) {
+> >                 queue_type = VIRTNET_Q_TYPE_CQ;
+> >
+> >                 ctx->bitmap[queue_type]   |= VIRTIO_NET_STATS_TYPE_CVQ;
+> >                 ctx->desc_num[queue_type] +=
+> > ARRAY_SIZE(virtnet_stats_cvq_desc);
+> >                 ctx->size[queue_type]     += sizeof(struct
+> > virtio_net_stats_cvq);
+> >         }
+> >
+> >
+> > ctx->bitmap is declared as a u32 however it is being bit-wise or'd with
+> > VIRTIO_NET_STATS_TYPE_CVQ and this is defined as 1 << 32:
+> >
+> > include/uapi/linux/virtio_net.h:#define VIRTIO_NET_STATS_TYPE_CVQ (1ULL <<
+> > 32)
+> >
+> > ..and hence the bit-wise or operation won't set any bits in ctx->bitmap
+> > because 1ULL < 32 is too wide for a u32.
+>
+> Indeed. Xuan Zhuo how did you test this patch?
 
+In our machines, cvq type is not supported. ^_^
 
-在 10/15/2024 4:20 PM, Krzysztof Kozlowski 写道:
-> On 15/10/2024 10:15, Qingqing Zhou wrote:
->> Enable APPS SMMU function on QCS615 platform. APPS SMMU is required
->> for address translation in devices including Ethernet/UFS/USB and
->> so on.
->>
->> Add the SCM node for SMMU probing normally. SMMU driver probe will
->> check qcom_scm ready or not, without SCM node, SMMU driver probe will
->> defer.
->> The dmesg log without SCM node:
->> platform 15000000.iommu: deferred probe pending: arm-smmu: qcom_scm not ready
->>
->> With the SCM node, SMMU can probe normally, but SCM driver still fails
->> to probe because of one SCM bug:
->> qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
->> qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
->> The above SCM bug is fixed by:
->> https://lore.kernel.org/all/20241005140150.4109700-2-quic_kuldsing@quicinc.com/
->> But above patch doesn't impact building of current patch series, this patch
->> series can build successfully without above patch.
->>
->> Dependency:
->> https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
->>
->> Changes in v2:
->> - Address the comments on bindings from Krzysztof.
-> 
-> Which comments? Be specific what changed.
-Got it, will change into "Add QCS615 into compatibles disallowing clocks in arm,smmu.yaml to address the comments in arm,smmu bindings patch from Krzysztof." in next version. Is it fine?
-> 
-> Best regards,
-> Krzysztof
-> 
+Why gcc has not warning for this, or I missed it.
 
+>
+> > I suspect ctx->bitmap should be
+> > declared as u64.
+> >
+> > Colin
+> >
+> >
+>
+> In fact, it is read into a u64:
+>
+>        u64 offset, bitmap;
+> ....
+>         bitmap = ctx->bitmap[queue_type];
+>
+> we'll have to reorder fields to avoid wasting memory.
+> Like this I guess:
+>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+
+Thanks
+
+>
+> Colin, can you confirm pls?
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index c6af18948092..ef221429f784 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -4111,12 +4111,12 @@ struct virtnet_stats_ctx {
+>  	/* Used to calculate the offset inside the output buffer. */
+>  	u32 desc_num[3];
+>
+> -	/* The actual supported stat types. */
+> -	u32 bitmap[3];
+> -
+>  	/* Used to calculate the reply buffer size. */
+>  	u32 size[3];
+>
+> +	/* The actual supported stat types. */
+> +	u64 bitmap[3];
+> +
+>  	/* Record the output buffer. */
+>  	u64 *data;
+>  };
+> --
+> MST
+>
 
