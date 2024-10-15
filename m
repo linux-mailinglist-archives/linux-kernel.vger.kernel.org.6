@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-366940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A3D99FC79
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:29:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD4C99FC7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9606EB21C79
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:29:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329DD2827C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D381D63FE;
-	Tue, 15 Oct 2024 23:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81D61D9A69;
+	Tue, 15 Oct 2024 23:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XZk+Oo+/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KfgB6TsH"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7F41D2B34
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A221D2B34
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729034949; cv=none; b=Z+99Dq1JRh6QzIbyr3FeqnKZ4kt+QHpzCkjyudunQ8PFILrYwhlW0vUu7B3jhZVL9mlbp1Vap1C0rWFpyLfleZCB6Ycv9WtUKAbXJf9WmW4OK5ZgyFW2w9BTaKwDNcfkuH226ZlkHeOL3Xiq9IHUD/duLfVLVocCDuxUbEEUXxE=
+	t=1729034964; cv=none; b=AKV0r4sR/yYz3TBdx4zsoyq//TPpFE8vtvzB1BbcNoFv/6fs96u7WNhATM47ihFJSXblzxIPtf1n8Cv/kuNnfG5p4D/A430RulbaEqfq8DMhYseVKc42KZEfV8JEo0j/eYycRSGmFwSea+A/deZr5PuqHeBw4nAGaxEln72TAV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729034949; c=relaxed/simple;
-	bh=oh6/s/+JCpbzRz14BY0hEXJT1wEU6TbgEQaQA6kvSmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gh+/gp/wqQ/IgdsM/b9kla8J4uf+oYqvOmrSNjQIf+ZUb+RpdQNdrGwzOF3QTYMEbRAzGGTN8KJyTe6QTuEF3hxMdK0gEpZIWjeuZE8TU0GpCcgv3I8uhByZiUg3dfhxfz2NUsqzNRTu8enQBlbGdSWaFltF3aFBBDtlxfoq3Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XZk+Oo+/; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729034948; x=1760570948;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oh6/s/+JCpbzRz14BY0hEXJT1wEU6TbgEQaQA6kvSmg=;
-  b=XZk+Oo+/If9xmRZ0vMLBZ/3tTg9pWBcdky4cwRtD/dyK1GCory3bXu6w
-   HvZlUNZZf8/64yTptoDyLbpHTINv1gIl9SD0DKy2JVGefAlt8I4A7fMyg
-   AKQAd+edkf4BeXU21Ztot28ocNrmRAWyLyhoxGSt6itIv22VKwSgjyHns
-   lMwknL6/Uks/XME0lfy0Am9rzOwj57fknd7i6vo4PCQRzbr+UIrEfUemT
-   jvruvsJPyx7z4JJ3ZWF4nBr/dmssNCFB7YKlNpYn0C5zWtr7cTYNTx+IO
-   ggHwm/U8fhMHHF+KaRrK1BDFLmNgBxJgnsF1l0FCzbYyoCC4KF8FEoR2/
-   w==;
-X-CSE-ConnectionGUID: 2PxwPuazRGylD8vhqDW8aQ==
-X-CSE-MsgGUID: Y7SjzXDDR2e+0MRLmL8EAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39011700"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="39011700"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 16:29:07 -0700
-X-CSE-ConnectionGUID: +UE3xrSUS3K+WIYPdlTSKQ==
-X-CSE-MsgGUID: 9f14yDEMQReNMiuKFFfkIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
-   d="scan'208";a="115491165"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 16:29:05 -0700
-Date: Tue, 15 Oct 2024 16:29:04 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: James Morse <james.morse@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: Re: [PATCH v5 06/40] x86/resctrl: Remove data_width and the tabular
- format
-Message-ID: <Zw76wLvdGax2eSiP@agluck-desk3.sc.intel.com>
-References: <20241004180347.19985-1-james.morse@arm.com>
- <20241004180347.19985-7-james.morse@arm.com>
+	s=arc-20240116; t=1729034964; c=relaxed/simple;
+	bh=aSwLkbAg43vtDDBoHNNuZ5YDhsqlgniTJuAAONwuPS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y9KK4mf2lMt6y88fnSU5puyhP4C7Axhspzz9+7MnaHGkcy5PW3vTcymgSVp6a92yuxNTeTaGwbOFCQytpfJorilXki/9LxV3YdcXyahKRk/RBf9LkjqZ7tgtsoxnolUPd6yjBaRWC23+GPMiO3qeJ6Ox74nykHXSeb/tS9MO0FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KfgB6TsH; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-8354c496c90so205320039f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729034961; x=1729639761; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qiwQWjNAYRLv98HF5mn8aLwRjPp1fG7H9swFAKakcak=;
+        b=KfgB6TsHLvnjhg5SblPvmJIrHVBi2df+vvclX+ebosY3TNaGDmS+ngahTNZpNRqf0M
+         GMqDiChWpdZ42smlHGwi5+is7rAvgJ2Me+v9Gj9A4aPDD4bsyaWDHZSr26HFNAwxwfB+
+         5JsFkUAD5QnW2L9uUf/tTdsYig7gpYf7Iwhbs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729034961; x=1729639761;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qiwQWjNAYRLv98HF5mn8aLwRjPp1fG7H9swFAKakcak=;
+        b=VnhqQPIKg/jLV4UEQmIIyLw7/m6zF8Tx1p4zdZ8hXgXt0y0bTp3n7QPt+W+ct1GTvs
+         SGiMcQfx9MZ6dXbkrzkV2DNwfChhV6TdW5Ml/4PWTTFHApaCdPRWMmcGeqzofErCSAVE
+         WdRSLPSpuTsq0hF0uS8m7Qx52Jm48HazhiMmgnneav0wJ/VvgWQ4MCPoW55AJ1pfN9bP
+         E37JKL5McjfYg+dRC+cFmkxVd7DhxGKG0InmiHl+NYS5l/pRDL/8SMfkw/HrUcK3vtDH
+         zUDHXkcVLy5qCj1G7KQOo/0FzwPHOEBHUTclwPn2vIJTmuzr0Tu/xJv2IqHyZ3wZmBxI
+         Enww==
+X-Forwarded-Encrypted: i=1; AJvYcCU9L3DO2Zm9M+MBt+WK2PBwGB77XRZBnGhwrvnct229kiwmzYaUWhZjY2XSiyHt3l3BbqWtsQiFeJU78a4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeU1UyXSCAm+0okWSpeNKfsTF35vJkThmOsINCNPVAHGGJ8SHO
+	qEC9rXPLqGlHjQFwJDmZGPb8DOOGcFuujpsDbIwHUI2YieH4xhEk5uC4uMPBV64=
+X-Google-Smtp-Source: AGHT+IG9/ijx8O8bt0d/vr41CJMfHDoF/ElE4j1gdOio/SpELPQZGy06Sl7jg/vuUeDNiohtllal/Q==
+X-Received: by 2002:a05:6e02:1885:b0:39d:637f:97bc with SMTP id e9e14a558f8ab-3a3bccda708mr124780335ab.0.1729034961366;
+        Tue, 15 Oct 2024 16:29:21 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3d70cd2f2sm5419945ab.43.2024.10.15.16.29.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 16:29:20 -0700 (PDT)
+Message-ID: <748e78b9-3c70-4300-9de4-6df00dffe4c3@linuxfoundation.org>
+Date: Tue, 15 Oct 2024 17:29:20 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004180347.19985-7-james.morse@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: gpib: Move free after the variable use has been
+ completed
+To: "Everest K.C." <everestkc@everestkc.com.np>
+Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241015215157.18571-1-everestkc@everestkc.com.np>
+ <99056bd3-748f-42e8-a25a-131f7b194f55@linuxfoundation.org>
+ <CAEO-vhEwkQKnPprdw_r=mg6KRbadY6B4A3R_sOsyH0ds78wb2g@mail.gmail.com>
+ <f53523ff-1222-4fc0-9069-10ab895e1136@linuxfoundation.org>
+ <CAEO-vhEGJ-5vX6=32VwNfiV7nSkDL4iEJVti8U0=q=NfOKrSAA@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CAEO-vhEGJ-5vX6=32VwNfiV7nSkDL4iEJVti8U0=q=NfOKrSAA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 04, 2024 at 06:03:13PM +0000, James Morse wrote:
-> The resctrl architecture code provides a data_width for the controls of
-> each resource. This is used to zero pad all control values in the schemata
-> file so they appear in columns. The same is done with the resource names
-> to complete the visual effect. e.g.
-> | SMBA:0=2048
-> |   L3:0=00ff
-> 
-> AMD platforms discover their maximum bandwidth for the MB resource from
-> firmware, but hard-code the data_width to 4. If the maximum bandwidth
-> requires more digits - the tabular format is silently broken.
-> If new schema are added resctrl will need to be able to determine the
-> maximum width. The benefit of this pretty-printing is questionable.
+On 10/15/24 17:04, Everest K.C. wrote:
+> On Tue, Oct 15, 2024 at 4:55 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> On 10/15/24 16:48, Everest K.C. wrote:
+>>> On Tue, Oct 15, 2024 at 4:35 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>>>
+>>>> On 10/15/24 15:51, Everest K.C. wrote:
+>>>>> The variable `in_data` is freed, but used later in the code.
+>>>>> Fix it by moving the freeing the memory after it use has been
+>>>>> completed.
+>>>>>
+>>>>> This issue was reported by Coverity Scan.
+>>>>> Report:
+>>>>> CID 1600783: (#1 of 1): Use after free (USE_AFTER_FREE)
+>>>>> 19. pass_freed_arg: Passing freed pointer in_data as an argument to
+>>>>> ni_usb_dump_raw_block.
+>>>>>
+>>>>> Fixes: 4e127de14fa7 ("staging: gpib: Add National Instruments USB GPIB driver")
+>>>>> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+>>>>> ---
+>>>>>     drivers/staging/gpib/ni_usb/ni_usb_gpib.c | 2 +-
+>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+>>>>> index 1da263676f2a..75f39e1f3ed1 100644
+>>>>> --- a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+>>>>> +++ b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+>>>>> @@ -690,12 +690,12 @@ static int ni_usb_read(gpib_board_t *board, uint8_t *buffer, size_t length,
+>>>>>                 kfree(in_data);
+>>>>>                 return parse_retval;
+>>>>>         }
+>>>>> -     kfree(in_data);
+>>>>>         if (actual_length != length - status.count) {
+>>>>>                 pr_err("%s: actual_length=%i expected=%li\n",
+>>>>>                        __func__, actual_length, (long)(length - status.count));
+>>>>>                 ni_usb_dump_raw_block(in_data, usb_bytes_read);
+>>>>>         }
+>>>>> +     kfree(in_data);
+>>>>>         switch (status.error_code) {
+>>>>>         case NIUSB_NO_ERROR:
+>>>>>                 retval = 0;
+>>>>
+>>>> Looks good to me. Isn't this on next though. Don't forget to
+>>>> indicate it is against next.
+>>> No, it was fixed in the linux-staging repo.
+>>>> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+>>>>
+>>
+>> Okay - by the way the same problem is in ni_usb_write_registers().
+>> Did coverity catch that one?
+> No, there were no similar issues caught by coverity.
+> Also, I just checked the function. I didn't see the variable being
+> accessed after
+> it had been freed.
 
-Agreed. It's particularly non-useful for L2 resources on systems with
-hundred+ cores. The L2 line in schemata is very long and doesn't look
-"pretty" at all. Padding may make it even longer.
+Yeah. You are right. It was out_data that was freed after
+last access. in_data is fine.
 
-It never worked with the mba_MBps mount option because the field
-width wasn't updated for prettiness. E.g.
+thanks,
+-- Shuah
 
-$ cat schemata
-MB:0=4294967295;1=4294967295
-L3:0=fff;1=fff
-
-> Instead of handling runtime discovery of the data_width for AMD platforms,
-> remove the feature. These fields are always zero padded so should be
-> harmless to remove if the whole field has been treated as a number.
-> In the above example, this would now look like this:
-
-Huzzah!
-
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-
--Tony
 
