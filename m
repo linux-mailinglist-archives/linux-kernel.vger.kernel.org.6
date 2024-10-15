@@ -1,151 +1,99 @@
-Return-Path: <linux-kernel+bounces-365688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF4F99E62D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D5499E63A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705931C234AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05EF31C238C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E341D9A42;
-	Tue, 15 Oct 2024 11:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pouJ4Feg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECB81E7669
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE251EBA14;
+	Tue, 15 Oct 2024 11:39:23 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174971E7C34;
+	Tue, 15 Oct 2024 11:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728992325; cv=none; b=ApQckXtI7Zl+3QvZzAhpPSWCx75iTUwBRVgtR8HT5rKYc/AcNeADg0WUfej7NzYAclwmAty4UH6zw2GVanB6vhemtRj+sBEEy/SyaZ3Lnt1I/Px5edgoOEVvoRb+Qz8J1A0uuqDstwbjaDI1pslJ1vRzNWRXVmph1e+jsqDrrv4=
+	t=1728992362; cv=none; b=I4xr2kzwNOvXtizF2PC7lRL/KuNzxOQ07za09WneaIje3Eq09mjUg/bPX6frd2GAbFJsAvc9RINHz4dKrM3bTdUmoqEkC2i+41cAKsH5CFwwZiyetKcJ/SE7FQV7e5L2p9vQYlbKbJ3jTFguZgxfPuZdw42e3y8S23odnGidxjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728992325; c=relaxed/simple;
-	bh=KsRWXz5u8e6OVOdYCyQDUwhXWrP8yPzKCvpfJwOeZXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fK4/POrTsLSC4qIMCwcttVpy2TN5Ezt4lJCI9uXVMt3UxomobCwrvjwyZEWad5jw9mCh0AYy35iUaoXlglBQFxLPjaoVV0PNqR1r7rVJrt4BSEzb3ooesdk36aWpmaWIMMHi8GozPXG63uo6jxft+VK5jDu3P4h8iJpCbrODC7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pouJ4Feg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0754EC4CECF;
-	Tue, 15 Oct 2024 11:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728992325;
-	bh=KsRWXz5u8e6OVOdYCyQDUwhXWrP8yPzKCvpfJwOeZXU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pouJ4FegQuYCCW2e/sUfaqciQg2sOVTOAAICttnqwEdCo34+z+pSJLmGOwpP1vsu/
-	 ucr6xrWhZ46sozmRM6PvGdnsRMLCp2AHFkUapyXH77eccuxECLFu1GGQm/355H/mNV
-	 SFnyHKMYqxWIXeKITWk4oZXa+JFwBaz+s9dfIa9gl75EPEEp3NfLJu83iM0FpPiL+5
-	 0uuSp59cQtIdVFzq4Tkl/Pq1dU71km3foQ40/flFdqGOS+ZxXreknOkxKzxfj2iup9
-	 AvE45bYAEILFX5eQJmTDh/p9y4qF8k6n+oNQEhlpJsf+aobPJOC1/S0I2u8EBK36go
-	 39x1kGd7o4Lbg==
-Date: Tue, 15 Oct 2024 12:38:41 +0100
-From: Lee Jones <lee@kernel.org>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: linux@ew.tq-group.com, linux-kernel@vger.kernel.org,
-	Gregor Herburger <gregor.herburger@tq-group.com>
-Subject: Re: [PATCH v4 5/5] mfd: tqmx86: add I2C IRQ support
-Message-ID: <20241015113841.GH8348@google.com>
-References: <cover.1728286453.git.matthias.schiffer@ew.tq-group.com>
- <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1728992362; c=relaxed/simple;
+	bh=Qoevy3HsJ2F1T21Ko4XdJUAf8D3PMpWFP3mtbgztVfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P0mFPHSsXQYBtSme6MfJdu+vryT7Tlj7Jc8iznYqCm+YgknyvGduD0vKFyU7u00yj4EZsU19HWv2YPBiDKf0CuB4AnzhV+S/O8Q1/uAGDPr8lViFCH8bV+4jkDE4qG5BOewWW95/LZ+g01eiAeBqxWnZarhIY1zEwJs1IokAJy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8AxQYhlVA5n4n8dAA--.42725S3;
+	Tue, 15 Oct 2024 19:39:17 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front2 (Coremail) with SMTP id qciowMCxbcdkVA5n6E0uAA--.9583S2;
+	Tue, 15 Oct 2024 19:39:17 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: loongarch@lists.linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/6] Add jump table support for objtool on LoongArch
+Date: Tue, 15 Oct 2024 19:39:09 +0800
+Message-ID: <20241015113915.12623-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
+X-CM-TRANSID:qciowMCxbcdkVA5n6E0uAA--.9583S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoWrtrW3JrW7JryUJw1ftrWfXrc_yoWDKFc_Gw
+	n3ua4kCr4rWay7tFyjqrn5WryjkF48XFZYya4vvr47Gry5Ar1DWF4j93Z0vrWkKrWfuFs8
+	GrWktF1vkr1j9osvyTuYvTs0mTUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb7AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1EksDUUUUU==
 
-On Mon, 07 Oct 2024, Matthias Schiffer wrote:
+This series is based on 6.12-rc3, tested with the latest (20241012)
+upstream mainline binutils and gcc.
 
-> From: Gregor Herburger <gregor.herburger@tq-group.com>
-> 
-> The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
-> Add module parameter to allow configuring the IRQ number, similar to the
-> handling of the GPIO IRQ.
-> 
-> Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> ---
-> 
-> v2: improve module parameter description (was patch 4/4)
-> v3: replace IRQ 0 resource with an empty placeholder to simplify error handling
-> v4: no changes
-> 
->  drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-> index e444fcd2a3e9d..057d035b71d33 100644
-> --- a/drivers/mfd/tqmx86.c
-> +++ b/drivers/mfd/tqmx86.c
-> @@ -50,6 +50,7 @@
->  #define TQMX86_REG_IO_EXT_INT_9			2
->  #define TQMX86_REG_IO_EXT_INT_12		3
->  #define TQMX86_REG_IO_EXT_INT_MASK		0x3
-> +#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
->  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
->  #define TQMX86_REG_SAUC		0x17
->  
-> @@ -60,7 +61,16 @@ static uint gpio_irq;
->  module_param(gpio_irq, uint, 0);
->  MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
->  
-> -static const struct resource tqmx_i2c_soft_resources[] = {
-> +static uint i2c_irq;
-> +module_param(i2c_irq, uint, 0);
-> +MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9, 12)");
-> +
-> +static struct resource tqmx_i2c_soft_resources[] = {
-> +	/*
-> +	 * Placeholder for IRQ resource - must come first to be filled in by the
-> +	 * probe function.
-> +	 */
-> +	{},
+The first three patches are to support the jump table of switch cases,
+the last three patches are to support the jump table of computed gotos,
+patch #4 is a small change of kernel/bpf/core.c, the other patches are
+related with tools/objtool and arch/loongarch.
 
-Having a NULLed entry in the first slot doesn't sit well with me at all.
+Tiezhu Yang (6):
+  objtool: Check various symbol types for jump table
+  objtool/LoongArch: Add support for jump table
+  LoongArch: Enable jump table for objtool
+  bpf, core: Add weak arch_prepare_goto()
+  LoongArch: Define specified arch_prepare_goto()
+  objtool/LoongArch: Add support for goto table
 
-In order for us to avoid wasting memory, it would be better to place the
-entry at the end of the array with a blank entry:
-
-  DEFINE_RES_IRQ(0),
-
-Later comes the matching code which updates the 0 value to something sane.
-
-Before you call to the add the devices, check to see if the value has
-changed.  If it hasn't, deprecate num_resources, effectively masking the
-last entry in the array.  Then when platform_device_add_resources()
-comes to duplicate the array, it will only copy the relevant entries.
-
->  	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
->  };
->  
-> @@ -263,6 +273,14 @@ static int tqmx86_probe(struct platform_device *pdev)
->  	ocores_platform_data.clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
->  
->  	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
-> +		if (i2c_irq) {
-> +			err = tqmx86_setup_irq(dev, "I2C", i2c_irq, io_base,
-> +					       TQMX86_REG_IO_EXT_INT_I2C_SHIFT);
-> +			if (!err)
-> +				/* Assumes the IRQ resource placeholder is first */
-> +				tqmx_i2c_soft_resources[0] = DEFINE_RES_IRQ(i2c_irq);
-> +		}
-> +
->  		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
->  					   tqmx86_i2c_soft_dev,
->  					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
-> -- 
-> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht München, HRB 105018
-> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-> https://www.tq-group.com/
-> 
+ arch/loongarch/Kconfig                 |  9 +++-
+ arch/loongarch/Makefile                |  5 +-
+ arch/loongarch/include/asm/compiler.h  | 13 ++++++
+ kernel/bpf/core.c                      |  9 ++++
+ tools/objtool/arch/loongarch/special.c | 63 +++++++++++++++++++++++++-
+ tools/objtool/check.c                  | 20 ++++++--
+ 6 files changed, 109 insertions(+), 10 deletions(-)
+ create mode 100644 arch/loongarch/include/asm/compiler.h
 
 -- 
-Lee Jones [李琼斯]
+2.42.0
+
 
