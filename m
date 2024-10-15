@@ -1,77 +1,390 @@
-Return-Path: <linux-kernel+bounces-365610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2013C99E4EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:01:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A7599E4F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB97E1F243DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FEDD1C25C5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DF615821A;
-	Tue, 15 Oct 2024 11:01:22 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E981D432F;
+	Tue, 15 Oct 2024 11:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CdJf0mh5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4648214AD38
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ED7140E50
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990081; cv=none; b=ZS04hIla5DbsjcumJYXHU7luJXqtr2z91CHHwgPly5P1tjHtkgQLHjr13vggps1yu34kp3Yjel5o3b6Nkw4DVEwsXB4E+JmJVze3372ko0fdaNo5gtY1Au0XYYOMDpwn0dbz6ETeIePDnRU1wM3g8FWQOA51AL5s5lhdQ6peeCs=
+	t=1728990230; cv=none; b=CPXXHu/RQdl5O0VPPAoAwHCLb2fPKSuS5ueEP01iQIlGZaYI3VxtQAwlBVlXxgPTb9PmPPRr5NdkQojWKD8+AluWIwT+sk12uHm59H5Xaz+1a6MJMumWAE7tR7vWG2H6yGj/bP+/vSczkg4dntcuVl6XjuNS3oS7rB6qXZlPvFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990081; c=relaxed/simple;
-	bh=v+agA1GzMbSPyko2lfKWPfx4t+1C0NQ1LVVBokmMLiI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ua+frGCy1sFT3twnV+c2d5iutFH3o5Onw6zCQ4JUEn9pG1E1QZG/E7PcMlthB2/JGDQ1vFS63NbePNy47KRRgBof5bx+PSMWIEayrZY+ETK9r3WlV+/NXXq5D3iCK6EzF67NmNeJzU1F9MTUTZQVdpsLcVGJaJJ3iWB1tojrwVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso13603465ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:01:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728990079; x=1729594879;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v+agA1GzMbSPyko2lfKWPfx4t+1C0NQ1LVVBokmMLiI=;
-        b=E0u9T7glff8DECnjMIIdkOs4B9B57/9cArhs/5S2RLIwwUD19AJ0dqcRp7diiLFolC
-         iCK9sCZjFTKc3XhjCUJz71VoxBt/f7RSBRbO3sxd8tuwhpYsJ0beHjHdwo9iLB1+WXZU
-         bIT6gMjD0UH/47d7IP9JPyiYhac7hlWXLnAnlX1CnJPAqV6pEpN3BeojvE5ky1arN8Bz
-         UVkn2CccV2CZzg9+ujL0CFQagdaqk/UW29PApNH/BoXbz68BdzYAnuzcd80H13m7YuFz
-         ncUJzHYL/hkT6lGxNW8DNB1BYYTEAwKnjP3YbzUtZ+mob4KJVOJlbhoqgSS0SIrgloz1
-         OnCA==
-X-Gm-Message-State: AOJu0YxI/tWoi8HQAVXMen+BPhYPJA6zB7edQDlEL11bkkt7Qzl2dNfC
-	AdSODVQwZN6WR5NVdoDt+2FXOLkw18mk+z8kmK4BRxDJmMqfO+DDmweT/Y1QTNTGKIy+k5w9+RB
-	84FYKpea13qEpiLLRe21j0efArIj/AX8FJW0L9C6Kv445rZ9kgx7DS+w=
-X-Google-Smtp-Source: AGHT+IF3UO+9znhMBBWyr5FkbNQMQt7VYKc1Vmq0Dtmiz75JxxOFfRxEJReQHy2sMZ60AGBYnzrtfpbizF4lDEtR1LOV8vJfwNv2
+	s=arc-20240116; t=1728990230; c=relaxed/simple;
+	bh=CbIoJv4nl7FUpwdgXc/cGPMPVeg1HwrqVU8Y+F0EhTQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cmt5VELUNoPZvKOa0rWnyPwFSjf2tIAnvBcYOHN9mr7Gdp2lxQFIXV6uuEE5+G3PEa4Px3JUf71IBxvFynI8x73ZMsY8bPyHLs1GgB08+CPjsDZWsOUEfjzihKUsXjtILSCCc5aBnJVnmlF6jGUNfptZfD76MfFREv8lcoYP3N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CdJf0mh5; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728990229; x=1760526229;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=CbIoJv4nl7FUpwdgXc/cGPMPVeg1HwrqVU8Y+F0EhTQ=;
+  b=CdJf0mh5SZQKGgAMndPeAvXHSxK828Z84AWjq7gQbN35yp0v2YLmIuz5
+   YYDiXR+rQd51zY272u+FfWqjPDSaRudDvf5U/7KnN2ouCChyOYOuVBWXM
+   FhVYt95NjnT5Qz7zMg5fQOgwBFe0utcVoEGNNWmPPZ6KREP7gADFjiANA
+   j1iZjHr37Fam9/H8egwF9XDwEQgZCxk0RYbf8tm8uv3mMGru3282b2zZc
+   3K76EwWdDZBtCCsIGvOYlLAIjIoMC9oC/vZ52um3ZxZepLxD5MJ5pwJtK
+   5bNu5xVD+gX82QbJ308CWdH2vSRcG/S5i7q0hAzX936w+biYDxFApSUy4
+   w==;
+X-CSE-ConnectionGUID: gsodYjnnQC62LAltbiSPHg==
+X-CSE-MsgGUID: eziqKkZsTVyWPKsG2RTcMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="32294440"
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="32294440"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 04:03:48 -0700
+X-CSE-ConnectionGUID: KLRmAs3jT7ud0CdsbFXEMw==
+X-CSE-MsgGUID: NmfAgaIpT6qsMfTmW4COlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="78043485"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO [10.245.246.43]) ([10.245.246.43])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 04:03:44 -0700
+Message-ID: <927c0a1b7708500a4c0ba19cbee3353d8a83f093.camel@linux.intel.com>
+Subject: Re: [PATCH v2] locking/ww_mutex: Adjust to lockdep nest_lock
+ requirements
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: intel-xe@lists.freedesktop.org, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long
+ <longman@redhat.com>, Maarten Lankhorst <maarten@lankhorst.se>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 15 Oct 2024 13:03:41 +0200
+In-Reply-To: <Zw19sMtnKdyOVQoh@boqun-archlinux>
+References: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
+	 <Zw19sMtnKdyOVQoh@boqun-archlinux>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1446:b0:3a3:67b1:3080 with SMTP id
- e9e14a558f8ab-3a3bcdbb5acmr96144655ab.7.1728990079310; Tue, 15 Oct 2024
- 04:01:19 -0700 (PDT)
-Date: Tue, 15 Oct 2024 04:01:19 -0700
-In-Reply-To: <66f574eb.050a0220.211276.0076.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670e4b7f.050a0220.d5849.0005.GAE@google.com>
-Subject: Re: [syzbot] Re: Fix NULL pointer dereference in read_cache_folio
-From: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
+Hi!
 
-Subject: Re: Fix NULL pointer dereference in read_cache_folio
-Author: gianf.trad@gmail.com
+On Mon, 2024-10-14 at 13:23 -0700, Boqun Feng wrote:
+> Hi Thomas,
+>=20
+> On Wed, Oct 09, 2024 at 11:20:31AM +0200, Thomas Hellstr=C3=B6m wrote:
+> > When using mutex_acquire_nest() with a nest_lock, lockdep refcounts
+> > the
+> > number of acquired lockdep_maps of mutexes of the same class, and
+> > also
+> > keeps a pointer to the first acquired lockdep_map of a class. That
+> > pointer
+> > is then used for various comparison-, printing- and checking
+> > purposes,
+> > but there is no mechanism to actively ensure that lockdep_map stays
+> > in
+> > memory. Instead, a warning is printed if the lockdep_map is freed
+> > and
+> > there are still held locks of the same lock class, even if the
+> > lockdep_map
+> > itself has been released.
+> >=20
+> > In the context of WW/WD transactions that means that if a user
+> > unlocks
+> > and frees a ww_mutex from within an ongoing ww transaction, and
+> > that
+> > mutex happens to be the first ww_mutex grabbed in the transaction,
+> > such a warning is printed and there might be a risk of a UAF.
+> >=20
+> > Note that this is only problem when lockdep is enabled and affects
+> > only
+> > dereferences of struct lockdep_map.
+> >=20
+> > Adjust to this by adding a fake lockdep_map to the acquired context
+> > and
+> > make sure it is the first acquired lockdep map of the associated
+> > ww_mutex class. Then hold it for the duration of the WW/WD
+> > transaction.
+> >=20
+> > This has the side effect that trying to lock a ww mutex *without* a
+> > ww_acquire_context but where a such context has been acquire, we'd
+> > see
+> > a lockdep splat. The test-ww_mutex.c selftest attempts to do that,
+> > so
+> > modify that particular test to not acquire a ww_acquire_context if
+> > it
+> > is not going to be used.
+> >=20
+> > v2:
+> > - Lower the number of locks in the test-ww_mutex
+> > =C2=A0 stress(STRESS_ALL) test to accommodate the dummy lock
+> > =C2=A0 introduced in this patch without overflowing lockdep held lock
+> > =C2=A0 references.
+> >=20
+>=20
+> Have you tested your patch with lib/locking-selftests.c? It reported
+> two
+> errors for me:
 
-#syz test
+Let me take a look at these. Thanks for the report.
+
+/Thomas
+=20
+
+>=20
+> 	[..]=C2=A0=C2=A0 | Wound/wait tests |
+> 	[..]=C2=A0=C2=A0 ---------------------
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ww api failures:=C2=A0 ok=C2=A0 =
+|FAILED|=C2=A0 ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 ww contexts mixing:=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=
+=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 finishing ww context:=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |=C2=A0 =
+ok=C2=A0
+> |=C2=A0 ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 locking mismatches:=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=
+=A0 |=C2=A0 ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EDEADLK handling:=C2=A0 ok=C2=A0 |=C2=
+=A0 ok=C2=A0 |=C2=A0 ok=C2=A0
+> |=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |=C2=
+=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 s=
+pinlock nest unlocked:=C2=A0 ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 spinlock nest test:=C2=A0 ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0 -----------------------------------------------------
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |block | try=C2=
+=A0
+> |context|
+> 	[..]=C2=A0=C2=A0 -----------------------------------------------------
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 context:=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 try:=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=
+=A0 |=C2=A0 ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 block:=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |=C2=A0 =
+ok=C2=A0 |
+> 	[..]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 spinlock:=C2=A0 ok=C2=A0 |=C2=A0 ok=C2=A0 |FAILED|
+>=20
+> The first one is a use case issue, I think and can be fixed similar
+> to
+> your changes in test-ww_mutex.c:
+>=20
+> diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+> index 6f6a5fc85b42..6750321e3e9a 100644
+> --- a/lib/locking-selftest.c
+> +++ b/lib/locking-selftest.c
+> @@ -1720,8 +1720,6 @@ static void ww_test_normal(void)
+> =C2=A0{
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
+>=20
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WWAI(&t);
+> -
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * None of the ww_mutex c=
+odepaths should be taken in the
+> 'normal'
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * mutex calls. The easie=
+st way to verify this is by using
+> the
+> @@ -1770,6 +1768,8 @@ static void ww_test_normal(void)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ww_mutex_base_unlock(&o.base);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON(o.ctx !=3D (void *)~0U=
+L);
+>=20
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WWAI(&t);
+> +
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* nest_lock */
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 o.ctx =3D (void *)~0UL;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ww_mutex_base_lock_nest_lock(&=
+o.base, &t);
+>=20
+> Please confirm whether this change is intended.
+>=20
+> The second is a case as follow:
+>=20
+> 	ww_acquire_init(...);
+> 	spin_lock(...);
+> 	ww_mutex_lock(...); // this should trigger a context
+> 			=C2=A0=C2=A0=C2=A0 // invalidation. But the mutex was
+> 			=C2=A0=C2=A0=C2=A0 // initialized by ww_acquire_init() as a
+> 			=C2=A0=C2=A0=C2=A0 // LD_WAIT_INV lock.
+>=20
+> The following could fix this:
+>=20
+> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+> index a401a2f31a77..45ff6f7a872b 100644
+> --- a/include/linux/ww_mutex.h
+> +++ b/include/linux/ww_mutex.h
+> @@ -156,8 +156,8 @@ static inline void ww_acquire_init(struct
+> ww_acquire_ctx *ctx,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 debug_check_no_locks_freed((vo=
+id *)ctx, sizeof(*ctx));
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lockdep_init_map(&ctx->dep_map=
+, ww_class->acquire_name,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &w=
+w_class->acquire_key, 0);
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lockdep_init_map(&ctx->first_lock_d=
+ep_map, ww_class-
+> >mutex_name,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &ww_clas=
+s->mutex_key, 0);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lockdep_init_map_wait(&ctx->first_l=
+ock_dep_map, ww_class-
+> >mutex_name,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 &ww_class->mutex_key, 0,
+> LD_WAIT_SLEEP);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_acquire(&ctx->dep_map, 0=
+, 0, _RET_IP_);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_acquire_nest(&ctx->first=
+_lock_dep_map, 0, 0, &ctx-
+> >dep_map, _RET_IP_);
+> =C2=A0#endif
+>=20
+> A v3 with all these fixed would look good to me, and I can add a
+> Tested-by tag to it. Thanks!
+>=20
+> Regards,
+> Boqun
+>=20
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Waiman Long <longman@redhat.com>
+> > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > Cc: Maarten Lankhorst <maarten@lankhorst.se>
+> > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > Cc: dri-devel@lists.freedesktop.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> > ---
+> > =C2=A0include/linux/ww_mutex.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14=
+ ++++++++++++++
+> > =C2=A0kernel/locking/test-ww_mutex.c |=C2=A0 8 +++++---
+> > =C2=A02 files changed, 19 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+> > index bb763085479a..a401a2f31a77 100644
+> > --- a/include/linux/ww_mutex.h
+> > +++ b/include/linux/ww_mutex.h
+> > @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
+> > =C2=A0#endif
+> > =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> > =C2=A0	struct lockdep_map dep_map;
+> > +	/**
+> > +	 * @first_lock_dep_map: fake lockdep_map for first locked
+> > ww_mutex.
+> > +	 *
+> > +	 * lockdep requires the lockdep_map for the first locked
+> > ww_mutex
+> > +	 * in a ww transaction to remain in memory until all
+> > ww_mutexes of
+> > +	 * the transaction have been unlocked. Ensure this by
+> > keeping a
+> > +	 * fake locked ww_mutex lockdep map between
+> > ww_acquire_init() and
+> > +	 * ww_acquire_fini().
+> > +	 */
+> > +	struct lockdep_map first_lock_dep_map;
+> > =C2=A0#endif
+> > =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+> > =C2=A0	unsigned int deadlock_inject_interval;
+> > @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct
+> > ww_acquire_ctx *ctx,
+> > =C2=A0	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
+> > =C2=A0	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
+> > =C2=A0			 &ww_class->acquire_key, 0);
+> > +	lockdep_init_map(&ctx->first_lock_dep_map, ww_class-
+> > >mutex_name,
+> > +			 &ww_class->mutex_key, 0);
+> > =C2=A0	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
+> > +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx-
+> > >dep_map, _RET_IP_);
+> > =C2=A0#endif
+> > =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+> > =C2=A0	ctx->deadlock_inject_interval =3D 1;
+> > @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct
+> > ww_acquire_ctx *ctx)
+> > =C2=A0static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
+> > =C2=A0{
+> > =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> > +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
+> > =C2=A0	mutex_release(&ctx->dep_map, _THIS_IP_);
+> > =C2=A0#endif
+> > =C2=A0#ifdef DEBUG_WW_MUTEXES
+> > diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-
+> > ww_mutex.c
+> > index 10a5736a21c2..5d58b2c0ef98 100644
+> > --- a/kernel/locking/test-ww_mutex.c
+> > +++ b/kernel/locking/test-ww_mutex.c
+> > @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
+> > =C2=A0	int ret;
+> > =C2=A0
+> > =C2=A0	ww_mutex_init(&mtx.mutex, &ww_class);
+> > -	ww_acquire_init(&ctx, &ww_class);
+> > +	if (flags & TEST_MTX_CTX)
+> > +		ww_acquire_init(&ctx, &ww_class);
+> > =C2=A0
+> > =C2=A0	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
+> > =C2=A0	init_completion(&mtx.ready);
+> > @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
+> > =C2=A0		ret =3D wait_for_completion_timeout(&mtx.done,
+> > TIMEOUT);
+> > =C2=A0	}
+> > =C2=A0	ww_mutex_unlock(&mtx.mutex);
+> > -	ww_acquire_fini(&ctx);
+> > +	if (flags & TEST_MTX_CTX)
+> > +		ww_acquire_fini(&ctx);
+> > =C2=A0
+> > =C2=A0	if (ret) {
+> > =C2=A0		pr_err("%s(flags=3D%x): mutual exclusion failure\n",
+> > @@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
+> > =C2=A0	if (ret)
+> > =C2=A0		return ret;
+> > =C2=A0
+> > -	ret =3D stress(2047, hweight32(STRESS_ALL)*ncpus,
+> > STRESS_ALL);
+> > +	ret =3D stress(2046, hweight32(STRESS_ALL)*ncpus,
+> > STRESS_ALL);
+> > =C2=A0	if (ret)
+> > =C2=A0		return ret;
+> > =C2=A0
+> > --=20
+> > 2.46.0
+> >=20
 
 
