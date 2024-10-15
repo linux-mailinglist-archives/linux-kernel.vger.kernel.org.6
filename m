@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-366158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4057699F17B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:38:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CBE499F17E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D291C21FA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:38:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA011F2642D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890661FAF0A;
-	Tue, 15 Oct 2024 15:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA036207A2F;
+	Tue, 15 Oct 2024 15:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RKzYMnFm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e7SvZ9k8"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LZoTTsNg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q6kuzpPx"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAEB1F76DB;
-	Tue, 15 Oct 2024 15:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CAA1F9EC4;
+	Tue, 15 Oct 2024 15:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006586; cv=none; b=QKbyPDkcJArswYwTc8resp35OPuDbsvCgPGeLhiRxTs07nlUp893YJs0cXW1GmEnS8Bc9DLJ49Bj8c7m0FTwhy+NPTQceXNhHevp6EUMkh3kvOpEpCYr0EBw2n3P85b29oyoo5b/LAj+MFwEUM306X4IO7WgGPqUmwcwcAU/H6U=
+	t=1729006588; cv=none; b=I7y3YHFByHlcsOwURW0+Ooh7bfLq8X6QvpxyA4rIDpIlEXGgytcoGzu+t2FrsihRdZkjwsQOTr5O9q1cXHtoQk6YdEuFsZYy4j3rAixpGuiSg1FBP1lDwpRNKA3QitB7nOpjaU/HZL5nrjG50BIWCR/Z46/t36QE8cjOaIsVXHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006586; c=relaxed/simple;
-	bh=093RwuXNStv/BnZOXai0S9lBMJv6yEOr5pByWAfRORU=;
+	s=arc-20240116; t=1729006588; c=relaxed/simple;
+	bh=vQWBXnrl0Yb0Yhu/20TUoigwWCyUXAzSeIvLWIYjWxA=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RHO6BYVUcQMX4hNrj3U5U3AsWpX9F8ypSvkyMVGqvI2V9vwoUiUYLRX+XpsC9iyg6O83eGBVFVmwXUYfs6QyCShpbxVLeDnozWPN/1+ehbACJExj/kAo3vzzzvnx9OcY0R5EgTkWnxSE3zoseD55/xezgl2EL4i+FQZQHGXbg1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RKzYMnFm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e7SvZ9k8; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=fTJTEbwHVsjlxzdC66DjXEIjT1GPSZSuVzBE1dip0dYIU4IunNZWcYzvqZ/zSWwjIexH/wYnXs2VMzoJij+/3dwaxfcsyBUS4MHL9l31QqPeDD8FL67IPacH13KjaNMY0td9U6iuXyBvDw5c42SQcTteNrM8wrYBTkMOmIexT6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LZoTTsNg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q6kuzpPx; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 15:36:22 -0000
+Date: Tue, 15 Oct 2024 15:36:23 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729006583;
+	s=2020; t=1729006584;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ABbcLSEJBX3T0vXZKv5LaSocGQ96fc5uM+wKqgqQXS8=;
-	b=RKzYMnFm6irJW7tjLaYPMjSB0EqIpzhO8QqeJyWyx0IUyUxX2HwCR5CT2z4ANg991GGLLy
-	tk3rkwtMtFnqd3Zf1nNdT3+BMlgZNBmpCP3UtWB/gJSdHlilhuL8qKqyGiRV+aUimI4hLh
-	A0soH+CpLzRfEMF1Ai/wxaWw/i7YJ33vn3b5uNzT5foUUcRg0Hi7uHnZ3TcujEooOWWiSP
-	k0c50d6LfYuMtPQSDPqTEojKbltP6/4oqdLJY5nFDipqq9RrVGs6jcFGGjH0W9p7X/BLrZ
-	wYyJkeJzUR+tGinL0fDdmTbeHd6jeVDEu03m79gpBfGj4OOhg794xsETEJ/uLQ==
+	bh=z5v3lyzIFrMGg4BoiY7vYqY1cTz0umuiQt5qVrOXcfU=;
+	b=LZoTTsNgc4H8F+N23RavuguqBXZFMOP96GYdeX6KcgjlsJ7JE07cSVM15MQ2KwMU3+vZhx
+	Au4fYaK79OkkjFBcMD7CNoEbca8BRlYICF2xQiQU4kmvcSMFSKtEzwXpwzdjfvUqow/WhK
+	TQVWiwoc31M0YIPDa+2dHpWB+0DobXQUCAVuHvd4WpK+ssIQYMTCgSUfcwuNT+yzgPMhl4
+	RLCzV909BqmUn9E5GTGEuh6EdwXFcOzXA0O5rMxd8sn8+SHYjI/7R6HT4ORrl0RXXXUmBP
+	ZyVtW1vaG3A3ZCXELz3D/4fqKtJG4LsUNTvkmIse6jkigEjtqNcc/zLHyA5jWw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729006583;
+	s=2020e; t=1729006584;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ABbcLSEJBX3T0vXZKv5LaSocGQ96fc5uM+wKqgqQXS8=;
-	b=e7SvZ9k8wl1+Rl+XnZJbN4ld/XKc3bSRxHBFf31JCqhIw6YhLrIHVlcjE4D3SF+PWA5O+2
-	sj6FOfPUMkqurvAw==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+	bh=z5v3lyzIFrMGg4BoiY7vYqY1cTz0umuiQt5qVrOXcfU=;
+	b=Q6kuzpPx92XSh3Kartgr+oAUVmYfB6pbAFY0eVWh8iIRA5xKWnMo2BYfTuXy5hJm8A0r+S
+	Dw8IuGXSlfjBCHCw==
+From: "tip-bot2 for Zhen Lei" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: core/debugobjects] debugobjects: Use separate list head for boot pool
+ [tip: core/debugobjects] debugobjects: Reduce parallel pool fill attempts
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  Zhen Lei <thunder.leizhen@huawei.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241007164913.708939081@linutronix.de>
-References: <20241007164913.708939081@linutronix.de>
+In-Reply-To: <20240911083521.2257-4-thunder.leizhen@huawei.com->
+References: <20240911083521.2257-4-thunder.leizhen@huawei.com->
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172900658269.1442.7040661143707170729.tip-bot2@tip-bot2>
+Message-ID: <172900658393.1442.10481214578253137724.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,118 +82,175 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the core/debugobjects branch of tip:
 
-Commit-ID:     cb58d190843059d5dc50d6ac483647ba61001e8f
-Gitweb:        https://git.kernel.org/tip/cb58d190843059d5dc50d6ac483647ba61001e8f
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 07 Oct 2024 18:50:05 +02:00
+Commit-ID:     d8c6cd3a5c8008f5d42c7763a93b43d7f3a40e94
+Gitweb:        https://git.kernel.org/tip/d8c6cd3a5c8008f5d42c7763a93b43d7f3a40e94
+Author:        Zhen Lei <thunder.leizhen@huawei.com>
+AuthorDate:    Mon, 07 Oct 2024 18:50:03 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 15 Oct 2024 17:30:31 +02:00
 
-debugobjects: Use separate list head for boot pool
+debugobjects: Reduce parallel pool fill attempts
 
-There is no point to handle the statically allocated objects during early
-boot in the actual pool list. This phase does not require accounting, so
-all of the related complexity can be avoided.
+The contention on the global pool_lock can be massive when the global pool
+needs to be refilled and many CPUs try to handle this.
 
+Address this by:
+
+  - splitting the refill from free list and allocation.
+
+    Refill from free list has no constraints vs. the context on RT, so
+    it can be tried outside of the RT specific preemptible() guard
+
+  - Let only one CPU handle the free list
+
+  - Let only one CPU do allocations unless the pool level is below
+    half of the minimum fill level.
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
-Link: https://lore.kernel.org/all/20241007164913.708939081@linutronix.de
+Link: https://lore.kernel.org/all/20240911083521.2257-4-thunder.leizhen@huawei.com-
+Link: https://lore.kernel.org/all/20241007164913.582118421@linutronix.de
+
+--
+ lib/debugobjects.c |   84 +++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 59 insertions(+), 25 deletions(-)
 
 ---
- lib/debugobjects.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ lib/debugobjects.c | 84 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 59 insertions(+), 25 deletions(-)
 
 diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index fcba13d..0b29a25 100644
+index 0d69095..64a72d4 100644
 --- a/lib/debugobjects.c
 +++ b/lib/debugobjects.c
-@@ -68,6 +68,8 @@ static DEFINE_RAW_SPINLOCK(pool_lock);
- static struct obj_pool		pool_global;
- static struct obj_pool		pool_to_free;
+@@ -138,14 +138,10 @@ static void free_object_list(struct hlist_head *head)
+ 	debug_objects_freed += cnt;
+ }
  
-+static HLIST_HEAD(pool_boot);
-+
- /*
-  * Because of the presence of percpu free pools, obj_pool_free will
-  * under-count those in the percpu free pools. Similarly, obj_pool_used
-@@ -278,6 +280,9 @@ alloc_object(void *addr, struct debug_bucket *b, const struct debug_obj_descr *d
- 			percpu_pool->obj_free--;
- 			goto init_obj;
- 		}
-+	} else {
-+		obj = __alloc_object(&pool_boot);
-+		goto init_obj;
- 	}
- 
- 	raw_spin_lock(&pool_lock);
-@@ -381,12 +386,14 @@ static void __free_object(struct debug_obj *obj)
- 	struct debug_obj *objs[ODEBUG_BATCH_SIZE];
- 	struct debug_percpu_free *percpu_pool;
- 	int lookahead_count = 0;
+-static void fill_pool(void)
++static void fill_pool_from_freelist(void)
+ {
+-	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
++	static unsigned long state;
+ 	struct debug_obj *obj;
 -	unsigned long flags;
- 	bool work;
+-
+-	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+-		return;
  
--	local_irq_save(flags);
--	if (!obj_cache)
--		goto free_to_obj_pool;
+ 	/*
+ 	 * Reuse objs from the global obj_to_free list; they will be
+@@ -154,32 +150,58 @@ static void fill_pool(void)
+ 	 * obj_nr_tofree is checked locklessly; the READ_ONCE() pairs with
+ 	 * the WRITE_ONCE() in pool_lock critical sections.
+ 	 */
+-	if (READ_ONCE(obj_nr_tofree)) {
+-		raw_spin_lock_irqsave(&pool_lock, flags);
+-		/*
+-		 * Recheck with the lock held as the worker thread might have
+-		 * won the race and freed the global free list already.
+-		 */
+-		while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
+-			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+-			hlist_del(&obj->node);
+-			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
+-			hlist_add_head(&obj->node, &obj_pool);
+-			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+-		}
+-		raw_spin_unlock_irqrestore(&pool_lock, flags);
++	if (!READ_ONCE(obj_nr_tofree))
++		return;
++
++	/*
++	 * Prevent the context from being scheduled or interrupted after
++	 * setting the state flag;
++	 */
 +	guard(irqsave)();
 +
-+	if (unlikely(!obj_cache)) {
-+		hlist_add_head(&obj->node, &pool_boot);
++	/*
++	 * Avoid lock contention on &pool_lock and avoid making the cache
++	 * line exclusive by testing the bit before attempting to set it.
++	 */
++	if (test_bit(0, &state) || test_and_set_bit(0, &state))
 +		return;
-+	}
++
++	guard(raw_spinlock)(&pool_lock);
++	/*
++	 * Recheck with the lock held as the worker thread might have
++	 * won the race and freed the global free list already.
++	 */
++	while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
++		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
++		hlist_del(&obj->node);
++		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
++		hlist_add_head(&obj->node, &obj_pool);
++		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+ 	}
++	clear_bit(0, &state);
++}
  
- 	/*
- 	 * Try to free it into the percpu pool first.
-@@ -395,7 +402,6 @@ static void __free_object(struct debug_obj *obj)
- 	if (percpu_pool->obj_free < ODEBUG_POOL_PERCPU_SIZE) {
- 		hlist_add_head(&obj->node, &percpu_pool->free_objs);
- 		percpu_pool->obj_free++;
--		local_irq_restore(flags);
+-	if (unlikely(!obj_cache))
++static void fill_pool(void)
++{
++	static atomic_t cpus_allocating;
++
++	/*
++	 * Avoid allocation and lock contention when:
++	 *   - One other CPU is already allocating
++	 *   - the global pool has not reached the critical level yet
++	 */
++	if (READ_ONCE(obj_pool_free) > (debug_objects_pool_min_level / 2) &&
++	    atomic_read(&cpus_allocating))
  		return;
- 	}
  
-@@ -410,7 +416,6 @@ static void __free_object(struct debug_obj *obj)
- 		percpu_pool->obj_free--;
- 	}
++	atomic_inc(&cpus_allocating);
+ 	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
+ 		struct debug_obj *new, *last = NULL;
+ 		HLIST_HEAD(head);
+ 		int cnt;
  
--free_to_obj_pool:
- 	raw_spin_lock(&pool_lock);
- 	work = (pool_global.cnt > debug_objects_pool_size) && obj_cache &&
- 	       (pool_to_free.cnt < ODEBUG_FREE_WORK_MAX);
-@@ -455,7 +460,6 @@ free_to_obj_pool:
+ 		for (cnt = 0; cnt < ODEBUG_BATCH_SIZE; cnt++) {
+-			new = kmem_cache_zalloc(obj_cache, gfp);
++			new = kmem_cache_zalloc(obj_cache, __GFP_HIGH | __GFP_NOWARN);
+ 			if (!new)
+ 				break;
+ 			hlist_add_head(&new->node, &head);
+@@ -187,14 +209,14 @@ static void fill_pool(void)
+ 				last = new;
  		}
+ 		if (!cnt)
+-			return;
++			break;
+ 
+-		raw_spin_lock_irqsave(&pool_lock, flags);
++		guard(raw_spinlock_irqsave)(&pool_lock);
+ 		hlist_splice_init(&head, &last->node, &obj_pool);
+ 		debug_objects_allocated += cnt;
+ 		WRITE_ONCE(obj_pool_free, obj_pool_free + cnt);
+-		raw_spin_unlock_irqrestore(&pool_lock, flags);
  	}
- 	raw_spin_unlock(&pool_lock);
--	local_irq_restore(flags);
++	atomic_dec(&cpus_allocating);
  }
  
  /*
-@@ -1341,10 +1345,9 @@ void __init debug_objects_early_init(void)
- 	for (i = 0; i < ODEBUG_HASH_SIZE; i++)
- 		raw_spin_lock_init(&obj_hash[i].lock);
+@@ -597,6 +619,18 @@ static struct debug_obj *lookup_object_or_alloc(void *addr, struct debug_bucket 
  
-+	/* Keep early boot simple and add everything to the boot list */
- 	for (i = 0; i < ODEBUG_POOL_SIZE; i++)
--		hlist_add_head(&obj_static_pool[i].node, &pool_global.objects);
--
--	pool_global.cnt = ODEBUG_POOL_SIZE;
-+		hlist_add_head(&obj_static_pool[i].node, &pool_boot);
- }
- 
- /*
-@@ -1372,10 +1375,11 @@ static bool __init debug_objects_replace_static_objects(struct kmem_cache *cache
- 	pool_global.cnt = ODEBUG_POOL_SIZE;
- 
+ static void debug_objects_fill_pool(void)
+ {
++	if (unlikely(!obj_cache))
++		return;
++
++	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
++		return;
++
++	/* Try reusing objects from obj_to_free_list */
++	fill_pool_from_freelist();
++
++	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
++		return;
++
  	/*
--	 * Replace the statically allocated objects list with the allocated
--	 * objects list.
-+	 * Move the allocated objects to the global pool and disconnect the
-+	 * boot pool.
- 	 */
- 	hlist_move_list(&objects, &pool_global.objects);
-+	pool_boot.first = NULL;
- 
- 	/* Replace the active object references */
- 	for (i = 0; i < ODEBUG_HASH_SIZE; i++, db++) {
+ 	 * On RT enabled kernels the pool refill must happen in preemptible
+ 	 * context -- for !RT kernels we rely on the fact that spinlock_t and
 
