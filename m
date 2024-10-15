@@ -1,201 +1,210 @@
-Return-Path: <linux-kernel+bounces-365433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F5999E233
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:07:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564E099E23F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA4E5B246AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80E31F2120E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDAD1D0942;
-	Tue, 15 Oct 2024 09:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8551D9A60;
+	Tue, 15 Oct 2024 09:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ScLJNoIJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fzt3LlLL"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2043.outbound.protection.outlook.com [40.107.244.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2421E2850;
-	Tue, 15 Oct 2024 09:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728983153; cv=none; b=IsfqTyRAZFh7aspPBpP1wPk18CKMk426L7F+9xGjrZAGrhroIIy0LA9FaHxaIVN33n/8jU4txGiofaYSSZsL/W35boubm/N+QKN5u8UIvbwYjCDE0BqiWKfg+Evn0rBwDqd1TWwE6Jh+lIF5Z4Fe6uM/q1YUlmE4XvifvqoCErM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728983153; c=relaxed/simple;
-	bh=xpt5/P5gxckwngVS4eHLKkUF3nHcEvbihEL3m6a1BNA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CEeqpjWDE+VIHZUtu5SutqnMYH7zXxDugLZRuEEl6y7PS85G7JUQWaUhuBF84//6W4vHU2v9IvHzbJfHjcCjWkAfWTX0CTdCLUXKY2pZK6ZhJz+ZH2FR3kfXnQvXm74WCaZMVblWiEZrbRHMUjw1/cRuEfnx8OVwTzu+Sx0KM4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ScLJNoIJ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728983152; x=1760519152;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=xpt5/P5gxckwngVS4eHLKkUF3nHcEvbihEL3m6a1BNA=;
-  b=ScLJNoIJqZrrqoUyP3zX4LbO0yYX06nLbO+sSwsWxS7TLvqt3I6tZfYr
-   oq+D9/O4mcVFPcodoIIVDxONavltFM+hU6j4noRyHmJGxs38Z/5/21q1g
-   nsJkxFLkehPvZyp3Gz2l6LjxyCoJ+rHqsmimDuWaOE04MK+Vc/+xnawG/
-   mBZP3yfXDdCHwxxsynDe6C0xe2VEh3hCfEae/iLl59QpDhW4ONACOuz6p
-   O2R+M9bV3/jbkS83b7TVtIPbE7XUaX1zsRI6FMXJhldu7C+qnL/y8utqb
-   BdRv40ZcCXq7M6Qa2byKqaGc1uhLd17IGJR3DEfxDu4XZk1ercBho0fGj
-   w==;
-X-CSE-ConnectionGUID: 3Jtg0LYPTwGxd5XoQeZPhA==
-X-CSE-MsgGUID: PNLorBRQTFqkndaOC0+BLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="38938132"
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="38938132"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 02:05:51 -0700
-X-CSE-ConnectionGUID: qWcthfRdTym9/EPxMYssig==
-X-CSE-MsgGUID: /yrrZ0CgRdymVI3tZzVSLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="77847197"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.12])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 02:05:48 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 15 Oct 2024 12:05:45 +0300 (EEST)
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    linux-kbuild@vger.kernel.org
-cc: Tero Kristo <tero.kristo@linux.intel.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, David Gow <davidgow@google.com>, 
-    Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [rfc, PATCH v1 1/1] platform/x86: intel: Add 'intel' prefix to
- the modules automatically
-In-Reply-To: <20241011172531.3407093-1-andriy.shevchenko@linux.intel.com>
-Message-ID: <caa4b5e0-742b-a4f4-d4c8-8e14cc99eefc@linux.intel.com>
-References: <20241011172531.3407093-1-andriy.shevchenko@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DAC1CF7AA;
+	Tue, 15 Oct 2024 09:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728983251; cv=fail; b=YwMZVzBF3NTwGmktSXDMuWgWGzbjCqCCvi8tuuXoEMKZLTrt7kFTlZmqJV0HjTAn5PJsHItlOH/CV5ud/Mj6i8SnTx19DE4/9wee01RotsDwU2gCH5/A5c1wV9M02EFfkpWfSecsiT2jn4DXj9zStYTRNF9IHdUrKmDgpOCf3p0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728983251; c=relaxed/simple;
+	bh=qePJD/WS799IFmWEicHCV2oRabH10V//R3Q+ZOV52qs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pHHST0Bnho9blG9NXwzKWtSn/QPfb7V3gZuBAz4NgMRyi1blO2P2WGeI1Giy2KGbi8U1UoqmF5z0xFXNiGP+kNgu19rlKmHAFPJ0CwoSloGsv9sevPO5eBRO9PaVIrLo6h7oqPoc0P25cF+0LXNQ1zyTTNGlh8YAyleuEDjtM3s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fzt3LlLL; arc=fail smtp.client-ip=40.107.244.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tKulEZ9p8tq1orqesL6bA5QoABsyVP/CI/0pSWMGMRvI2/QVTIkvCwzYZBKtvkKeU5JjcuV/Rj8jgBokQLQyBfIUll/cXQ8ZVNssTbDnKz3zF+Nft+1KrFlXxk+uane55nuf+NUkQmeECi651DSsZukkmQDaBiTUqnt1y6VMU3CyAyPVeMrgwyy2oIj2438Gbv/25rCe02gtyoM8gj4cQXxekYmHs/pVjlVZvcBeNA5ZvX/FdbvHKgWeS15ifRgszhMqz0GOuZnUcz/KeToQYGS09MYPjYBbTBaHvq2YYGsPPsP8gjI3HrNrHqAjiGh0fEGdner6DSRiI6rrxgMAJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZG1Rb5+M5jVbvdsqO7BqEvrzqO4lZFdFRPE13aN3J+4=;
+ b=hsytA0wQrfPFEol9fvXM0amQt4IKmIiyS+VNGp/Yg+wpmbq5gAE4e8B1w469Rg7GyoaZMRV1RSGDkdjE1u0Zy/L78CLVXcL7YWrBA8LoPD3lefHuyXFzYeTY3vzWK+m1ZG3ItPqfAcy1Bo+iJZKhMNN+wYyesYM55pLJMpCFJ73YFGQPRP3OcqItjc51NwMNvtuB+Ay05+OT6hzUkiHbDbAobPGE6HDCGGvBA7TXAIf5lKFnCt4S30Qd2jD6deeQJqwlbg63yldzqOQmv4wCOyy6umna8+kTecYzZSJxi2dsFSJNZXKSEarBzm1QGb2i4AVk7KPbAkoQwVv3MiHNoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZG1Rb5+M5jVbvdsqO7BqEvrzqO4lZFdFRPE13aN3J+4=;
+ b=fzt3LlLLbL0YW7YGm0WP2JndT2VCQbhZgIk7ROjdZwOfeBQEVWEF9HxfpVlefLJpaNzyAOs9Dxz3s4o9ebmOt10ijobOezErbA40FoPXb0MYbf4Gxtb1eBoLPiRlR+1v7yKzNwyg7vEpBwmpbFkIi//kIM3f2tVq1qFZjoC1N2Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
+ by PH7PR12MB5760.namprd12.prod.outlook.com (2603:10b6:510:1d3::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 09:07:23 +0000
+Received: from LV8PR12MB9207.namprd12.prod.outlook.com
+ ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
+ ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8048.017; Tue, 15 Oct 2024
+ 09:07:23 +0000
+Message-ID: <adf0c052-81f9-4a7f-939a-8a6f553721ca@amd.com>
+Date: Tue, 15 Oct 2024 14:37:16 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] cpufreq/amd-pstate: Drop needless EPP initialization
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+Cc: Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20241012174519.897-1-mario.limonciello@amd.com>
+ <20241012174519.897-4-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <20241012174519.897-4-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0089.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:23::34) To LV8PR12MB9207.namprd12.prod.outlook.com
+ (2603:10b6:408:187::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|PH7PR12MB5760:EE_
+X-MS-Office365-Filtering-Correlation-Id: e28ef1f0-26c0-464b-1a86-08dcecf8c7b3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NVhaeVBvSXo1ZXhVYmxXMjBPaVh0T25KU0VESUc4ZFYyYjdHT3Ayb1NLN2p4?=
+ =?utf-8?B?RHlpMWdYKy9LZWVGbzlGQzZsM2VPMjhQaGVrRDlkU29ndCs4dFdtWW40Rmhn?=
+ =?utf-8?B?ZnBRTmRLdXYwSUU0ZERxVUtzQ2VZRThYeEpaZllNdGRMampxdExIQUdvLytp?=
+ =?utf-8?B?NXp2U1hXOUxmQ0Q1WUhEK3prSUxBWXJsMUlXZ0VNc3BwSGpmUk9XaTRGLzZm?=
+ =?utf-8?B?Rzd5NCtISXQyakxpZkg2aElzMWJqQWlRUjZFTlJpZXhtTGhrQ3YyV2R5S2RE?=
+ =?utf-8?B?NjJrYlBrUGtrbVhIWEppKzFlUUI1cVVURkQxSmN4SDdZZHY5dlhxcElBVk1N?=
+ =?utf-8?B?a1dZSDlyU2tJZEY5WXJKaGlOdnJOOWpMQm9tWmIwc29sb2R6aW42K0FXbVlU?=
+ =?utf-8?B?SWhLT0QzQk1kUFg5Mk9VbUtpZE9IVmNBOVdxK2tFS3hhSTNDOFkwci8wYTNZ?=
+ =?utf-8?B?T0JqNXdqZjhXTWR0M28zS1YvejN2T2FSN24xS2ZGZVlLdElPNmUrd2UyQXox?=
+ =?utf-8?B?S0VuOGRlODBjVEFlODR6eDdrM2JhTmRCbWRxemJ6Q28zT3gxdHB2WTFJRks2?=
+ =?utf-8?B?Tjl4ZGZ0SjJOeGttUW5EcHMzR3RWTmFUbU5JVTJ4WGhQSkFLNHNOTVovYi82?=
+ =?utf-8?B?SFJPTzlLc1VLdWtKVExyKzczQy9JVkhUbjV0N0x5eUFUdjNES0RzWE8wR2hS?=
+ =?utf-8?B?SUpXSlc5V0RuY1hscUNEbWIyeTZtYUF3YWJrUTBiMjd0K2ljcm1rd3FZR24y?=
+ =?utf-8?B?NXUrRVVBZ05DdjRpM3V1d2xkUTVhem9hMXZCNVA5QmVFN3lhb0hOUWI2bHZD?=
+ =?utf-8?B?MkVpMlM3alpBc3d0alFhd09tMnZBRlRaU0ZORkZyWTViYk1xcmJMKzJxMytx?=
+ =?utf-8?B?WWRsVUVJV29jWE5hVnZZcXQydG92U2pjZDgzUzBCR2ovVXByK0I1NzJVSEVu?=
+ =?utf-8?B?dFhiOWRtRUJtU0ZUdUlPV29Eai9EWUJ0L0tWb3NLTFpYQmlVdUJScDFrYkVo?=
+ =?utf-8?B?UUNHY3lBUjljcHZxL3NYNWxCRnVKNnFWMkh3UklPcVQxSDFEWXI3VWJYRlIx?=
+ =?utf-8?B?SHI0SzhkbUY3VThYNENTWWF1RmZOUVg4QmhTakRZUnFDQjdCaXYzNmoxWHBN?=
+ =?utf-8?B?SlJLNFRGa2tQYmRCUXd5NGIzZzdxWXpUNjhZS1hQNTRnbU1DSG0vQy8rWm1w?=
+ =?utf-8?B?WkxxbWtVQnkremkvejlmOGVzM2lBTXlKUlRSZmhUeVRCdWJNUEtpK3MyazA2?=
+ =?utf-8?B?dWp0QVZWNlhRNHdvM3lhdWFUMjF5WHA2Y25GMU9hNnZ1SHo5SXJmcWhpNHEv?=
+ =?utf-8?B?MCtFTWIvSHducWZ1NVcrZkZFK3VOWExScC9QVCtkWjVvTzFvQkRld0xrUFZH?=
+ =?utf-8?B?bmY3UWUyNVZWeng1Z211UW9Qa3NKMkgvdzhieUtaeFRpUkZWNnIvSmFTeFFz?=
+ =?utf-8?B?bFpWanlRU1pVbEVQVFQ4eWtkWnpFMkVzeW1yRXdMQUNrN05CMjBxd3RmamE0?=
+ =?utf-8?B?MitLaUFuQVJmbWZvOEpKOTdlc1NTUEZ5b0JpWERYRG14TUUzZk1mcnNRTGQ2?=
+ =?utf-8?B?eWNYSTRXTmo4VGFEc2Eva2lGM0hPelIwR1pOR3NuY3k3RitGSDh3YlF5YmpP?=
+ =?utf-8?B?Z3hZWGVPTmpHSXd1NEtNT21DNkQ0S1dtaW5lY2lTWndoQ0tLa1ZLSzV3T3JW?=
+ =?utf-8?B?dHBiTVZ0U3lTRzluWVBUaE45a0dObFdwSzRmODE0cjRmMFNzOHZPR2t3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z1c5OG1tTlJodnhoSXdQUWRJZVVZSkJzQk5IdEhJQVBpcFJ5Q3JNRy8rWmtD?=
+ =?utf-8?B?Mm1iTDhIYjUyam9aZk9LK25YMENyRzhZMmQzTlArbC9hSFdDd3JROFQyVlp3?=
+ =?utf-8?B?S2VLUWJuSjl6cW1YbDlZWHVCaGFVaVdRTXNlcWhKREtmenVRNHo4ZHY0MkFZ?=
+ =?utf-8?B?LzJ0MXRlM3Z1cE96c2o2cDl2UUVnektNR1BDaUQveFdhenVRLzZacEpUenZu?=
+ =?utf-8?B?b2dzTDJKS1cvU2luNDRrRTkxVnlXcUgxdi9oeFcxWHBncUJHTUNpSkdJRCtz?=
+ =?utf-8?B?bk9zT09rbjRGc3JraklrWmZpNmFtY2lLbGJqV244eDZ6NVBTSGxyYzhXaHhY?=
+ =?utf-8?B?RHRaMHUrQ081VnBadXNqVmsrb0NxSS95Sk1wMVd3MEhwRVhVSEJDR082ZGRh?=
+ =?utf-8?B?eHdNdFFHRVRSNE1idENXN3VLQ3V6V0owcnNOSGIvZDlqak9VTnNHNU1nU3No?=
+ =?utf-8?B?S2gvb1lGenNTYUVIVlhGS0YrdjNLRkZHQ0pMYXhBZnRpZkRHL3FqRHduM0VE?=
+ =?utf-8?B?bGJTMWxRZlFYdWNHM0xIcEVadDN2VVMva0N3ZWFaQ0tpUUR5emFyQkVRZmV6?=
+ =?utf-8?B?Z0RPQ05lcnhnd3pFeFp3R2pCblJMMHdpUGdBTjNnUlVubHRVOVJtajErUFg5?=
+ =?utf-8?B?S1FQTkxwZ1NlNGhQVE9GOHZURVNjbWlUYWtIR2NIbTRzNit2NFV0MkpncDFS?=
+ =?utf-8?B?UTNhbytheWZOTVBkV0pIWnY3dVZxb09kYy91SVpGeVRhYUJyNEV5ZnhEeHlj?=
+ =?utf-8?B?bTUwdVJJSGRNS0orMDkxcjlQcDlzTUkvZWx2NlRxNzlpb0g4UFhsc1o0U0RL?=
+ =?utf-8?B?YTAyeWRSQUlpV2tWZGZ1aE5mVTNzR2hhdFQ1aUFqOXVqUjQxZmpQMW9VSWN0?=
+ =?utf-8?B?UWZoVk56Z05aTEhUY0R0V3FpZDExaVFPaEs0SmkvQ2MxOWlpV3JvdXFzRWFs?=
+ =?utf-8?B?b0lXc055Rk5CS004SnpwYktsNUtBU3N3aVdKQjU4c2ZzdlYySjlXNEVOK2dL?=
+ =?utf-8?B?QW5ScXFVMS9Vd2p6UkVMd0xQR1l3NC9VSFJNb0ZXN0Y4d1ZMU25LdmRHNUpM?=
+ =?utf-8?B?b2VaQWZaQXZRaWVEMlhibkFkMUpuSnprOURqemxsVFMyOFhUbGgvMUF6N0V2?=
+ =?utf-8?B?QUxnNUcxS3J6bzFvc2ZyWnIzTXNuZWIrckN0UTI1cUEzdTFBSWhYYVJLMmRW?=
+ =?utf-8?B?TzNYcmUwRzRzcjhCQ1JWNHBGdTdOSDlTK1lYcDBRaURJWnV2aXFJdXFYWmJI?=
+ =?utf-8?B?STZSY0pyd2pwNmIrYlZpbkw3b0d2S0tRR1JvMnBzMlFtbkgyeTh1eXNIbnZp?=
+ =?utf-8?B?WU5mMkRMOEd1Q2N2cEtYQkxSMDczWG5GVUdBcS9VaDl4Z1orNTVFMzlhNUpW?=
+ =?utf-8?B?L0hTK3JIQXAyUEp2eUxwNHJMN01KUzZ2bStlcU1LTGpod2hETU9GTGk1LzBt?=
+ =?utf-8?B?aEwxOTJJU01ybU5XVDN6Q1J4d0w0Wnh3WmpwWEp0cnAvWExvek5NamV4ZGhG?=
+ =?utf-8?B?OXJFUzhhMmJDRkJELzVqVk1ONWF0N3I3N25uOXNPTG1OTHVMektNWVU0RVk5?=
+ =?utf-8?B?U1g5OFFlVktiQXJ4RjlvR0ltVXdQRzZtWVNWUVBVYzU2SlJNN0MwNEJBSVM2?=
+ =?utf-8?B?bkVSWmIwL1JNeUlwOFlPUmU5b2dMSjdNWEFWNy9RdTkwK1dFOXMydVBKdHVM?=
+ =?utf-8?B?Q2FiM2lRQWo5Qy95YU9xeWhiV25SalEwYlgrSXhaMXVucmZ6TzV5ZVVVRkRT?=
+ =?utf-8?B?SnNTbHlkVjc4VmRRVUoxSDh5bWZWd082dnF1RVhFMFdpMHdrQTNsOWRnemJu?=
+ =?utf-8?B?M2RjRVNHc0JTYXNNQ01EOVFDVDNLdmcvc2g0Vm91d21lL0FnNThIN2pvSjZs?=
+ =?utf-8?B?UmdHM2lEbzdhMzVhdHRtazM4NndhZktPM1FJOGV6MGg2WTNQZHhrQXorMFFW?=
+ =?utf-8?B?anRnYVduVS9McmxHTkRLRmF6YkJEY3BmT09YQmpJRlJCV3RYT2lxSUg5aDBS?=
+ =?utf-8?B?QzlMeDE0cUhaZW0xZWdTY3o0T2JJUmVtWEt4VGhSNHBjQ2dHNkVjU1Zib0N2?=
+ =?utf-8?B?NkhhMkVIdHhKWSs2Z2xxZmtlVzkwWU1WYzdXcENMSDRWbExYN1pmK3JxM2tV?=
+ =?utf-8?Q?HCDhMs3gEffQd2LXLNI+Yd551?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e28ef1f0-26c0-464b-1a86-08dcecf8c7b3
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 09:07:22.9139
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4gv+SVxTF7j89HYtzSmgurP+4BG6WolymDdKT9if6MuNtnPPYktAE6A2+Wxuu7CNChNGwfVBDyAYkNddx8X28A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5760
 
-On Fri, 11 Oct 2024, Andy Shevchenko wrote:
+Hello Mario,
 
-> Rework Makefile to add 'intel' prefix to the modules automatically.
-> This removes a lot of boilerplate code in it and also makes robust
-> against mistypos in the prefix.
+On 10/12/2024 11:15 PM, Mario Limonciello wrote:
+> The EPP value doesn't need to be cached to the CPPC request in
+> amd_pstate_epp_update_limit() because it's passed as an argument
+> at the end to amd_pstate_set_epp() and stored at that time.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Tested this on an AMD Zen4 EPYC server system, ran some sanity tests, 
+both modes (active and passive) seem to be working fine with the boost 
+disabled and enabled.
+
+You may add,
+Tested-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+
+Regards,
+Dhananjay
+
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
+>  drivers/cpufreq/amd-pstate.c | 6 ------
+>  1 file changed, 6 deletions(-)
 > 
-> Send as RFC because TBH I rather want to have something like this to be
-> available on the level of Kbuild for any of the subdirectories in
-> question. Also I haven't done any comprehensive build tests on this,
-> let's see what CIs think about this...
-
-It feels useful to have this automatically available for the folder one 
-level towards root... (perhaps two levels).
-
-But you didn't include kbuild ML (now added).
-
->  drivers/platform/x86/intel/Makefile           | 68 ++++++++-----------
->  .../intel/{intel_plr_tpmi.c => plr_tpmi.c}    |  0
->  2 files changed, 29 insertions(+), 39 deletions(-)
->  rename drivers/platform/x86/intel/{intel_plr_tpmi.c => plr_tpmi.c} (100%)
-> 
-> diff --git a/drivers/platform/x86/intel/Makefile b/drivers/platform/x86/intel/Makefile
-> index 74db065c82d6..21e9e21e0142 100644
-> --- a/drivers/platform/x86/intel/Makefile
-> +++ b/drivers/platform/x86/intel/Makefile
-> @@ -17,50 +17,40 @@ obj-$(CONFIG_INTEL_UNCORE_FREQ_CONTROL)	+= uncore-frequency/
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 8d2541f2c74b..90868c8b214e 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1528,12 +1528,6 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
+>  	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
+>  		epp = 0;
 >  
->  
->  # Intel input drivers
-> -intel-hid-y				:= hid.o
-> -obj-$(CONFIG_INTEL_HID_EVENT)		+= intel-hid.o
-> -intel-vbtn-y				:= vbtn.o
-> -obj-$(CONFIG_INTEL_VBTN)		+= intel-vbtn.o
-> +intel-target-$(CONFIG_INTEL_HID_EVENT)		+= hid.o
-> +intel-target-$(CONFIG_INTEL_VBTN)		+= vbtn.o
->  
->  # Intel miscellaneous drivers
-> -obj-$(CONFIG_INTEL_ISHTP_ECLITE)	+= ishtp_eclite.o
-> -intel_int0002_vgpio-y			:= int0002_vgpio.o
-> -obj-$(CONFIG_INTEL_INT0002_VGPIO)	+= intel_int0002_vgpio.o
-> -intel_oaktrail-y			:= oaktrail.o
-> -obj-$(CONFIG_INTEL_OAKTRAIL)		+= intel_oaktrail.o
-> -intel_sdsi-y				:= sdsi.o
-> -obj-$(CONFIG_INTEL_SDSI)		+= intel_sdsi.o
-> -intel_vsec-y				:= vsec.o
-> -obj-$(CONFIG_INTEL_VSEC)		+= intel_vsec.o
-> +intel-target-$(CONFIG_INTEL_ISHTP_ECLITE)	+= ishtp_eclite.o
-> +
-> +intel-target-$(CONFIG_INTEL_INT0002_VGPIO)	+= int0002_vgpio.o
-> +intel-target-$(CONFIG_INTEL_OAKTRAIL)		+= oaktrail.o
-> +intel-target-$(CONFIG_INTEL_SDSI)		+= sdsi.o
-> +intel-target-$(CONFIG_INTEL_VSEC)		+= vsec.o
->  
->  # Intel PMIC / PMC / P-Unit drivers
-> -intel_bxtwc_tmu-y			:= bxtwc_tmu.o
-> -obj-$(CONFIG_INTEL_BXTWC_PMIC_TMU)	+= intel_bxtwc_tmu.o
-> -intel_crystal_cove_charger-y		:= crystal_cove_charger.o
-> -obj-$(CONFIG_X86_ANDROID_TABLETS)	+= intel_crystal_cove_charger.o
-> -intel_bytcrc_pwrsrc-y			:= bytcrc_pwrsrc.o
-> -obj-$(CONFIG_INTEL_BYTCRC_PWRSRC)	+= intel_bytcrc_pwrsrc.o
-> -intel_chtdc_ti_pwrbtn-y			:= chtdc_ti_pwrbtn.o
-> -obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
-> -intel_chtwc_int33fe-y			:= chtwc_int33fe.o
-> -obj-$(CONFIG_INTEL_CHTWC_INT33FE)	+= intel_chtwc_int33fe.o
-> -intel_mrfld_pwrbtn-y			:= mrfld_pwrbtn.o
-> -obj-$(CONFIG_INTEL_MRFLD_PWRBTN)	+= intel_mrfld_pwrbtn.o
-> -intel_punit_ipc-y			:= punit_ipc.o
-> -obj-$(CONFIG_INTEL_PUNIT_IPC)		+= intel_punit_ipc.o
-> +intel-target-$(CONFIG_INTEL_BXTWC_PMIC_TMU)	+= bxtwc_tmu.o
-> +intel-target-$(CONFIG_X86_ANDROID_TABLETS)	+= crystal_cove_charger.o
-> +intel-target-$(CONFIG_INTEL_BYTCRC_PWRSRC)	+= bytcrc_pwrsrc.o
-> +intel-target-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= chtdc_ti_pwrbtn.o
-> +intel-target-$(CONFIG_INTEL_CHTWC_INT33FE)	+= chtwc_int33fe.o
-> +intel-target-$(CONFIG_INTEL_MRFLD_PWRBTN)	+= mrfld_pwrbtn.o
-> +intel-target-$(CONFIG_INTEL_PUNIT_IPC)		+= punit_ipc.o
->  
->  # TPMI drivers
-> -intel_vsec_tpmi-y			:= tpmi.o
-> -obj-$(CONFIG_INTEL_TPMI)		+= intel_vsec_tpmi.o
-> -obj-$(CONFIG_INTEL_PLR_TPMI)		+= intel_plr_tpmi.o
+> -	/* Set initial EPP value */
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> -		value &= ~GENMASK_ULL(31, 24);
+> -		value |= (u64)epp << 24;
+> -	}
 > -
-> -intel_tpmi_power_domains-y		:= tpmi_power_domains.o
-> -obj-$(CONFIG_INTEL_TPMI_POWER_DOMAINS)	+= intel_tpmi_power_domains.o
-> +intel-target-$(CONFIG_INTEL_TPMI)		+= vsec_tpmi.o
-> +intel-target-$(CONFIG_INTEL_PLR_TPMI)		+= plr_tpmi.o
-> +intel-target-$(CONFIG_INTEL_TPMI_POWER_DOMAINS)	+= tpmi_power_domains.o
->  
->  # Intel Uncore drivers
-> -intel-rst-y				:= rst.o
-> -obj-$(CONFIG_INTEL_RST)			+= intel-rst.o
-> -intel-smartconnect-y			:= smartconnect.o
-> -obj-$(CONFIG_INTEL_SMARTCONNECT)	+= intel-smartconnect.o
-> -intel_turbo_max_3-y			:= turbo_max_3.o
-> -obj-$(CONFIG_INTEL_TURBO_MAX_3)		+= intel_turbo_max_3.o
-> +intel-target-$(CONFIG_INTEL_RST)		+= rst.o
-> +intel-target-$(CONFIG_INTEL_SMARTCONNECT)	+= smartconnect.o
-> +intel-target-$(CONFIG_INTEL_TURBO_MAX_3)	+= turbo_max_3.o
-> +
-> +define INTEL_OBJ_TARGET
-> +intel-$(1)-y := $(1).o
-> +obj-$(2) += intel-$(1).o
-> +endef
-> +
-> +$(foreach target-y, $(basename $(intel-target-m)), $(eval $(call INTEL_OBJ_TARGET,$(target-y),y)))
-> +$(foreach target-m, $(basename $(intel-target-m)), $(eval $(call INTEL_OBJ_TARGET,$(target-m),m)))
-> diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/plr_tpmi.c
-> similarity index 100%
-> rename from drivers/platform/x86/intel/intel_plr_tpmi.c
-> rename to drivers/platform/x86/intel/plr_tpmi.c
-
-Why call these intel-target-*, wouldn't intel-obj-* be more consistent?
-
--- 
- i.
-
-
+>  	WRITE_ONCE(cpudata->cppc_req_cached, value);
+>  	return amd_pstate_set_epp(cpudata, epp);
+>  }
 
