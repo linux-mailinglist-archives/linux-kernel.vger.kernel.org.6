@@ -1,155 +1,155 @@
-Return-Path: <linux-kernel+bounces-366915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF8699FC36
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:17:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3701399FC4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 105221C24A3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:17:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2691F2243A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C6C1FAF1B;
-	Tue, 15 Oct 2024 23:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0675E1F80D6;
+	Tue, 15 Oct 2024 23:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WqE24gxc"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OgCYCei1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TlUIewWr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76441F80A9;
-	Tue, 15 Oct 2024 23:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98761D63EA;
+	Tue, 15 Oct 2024 23:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729034227; cv=none; b=Hf799l0M3QufUverjeIKz1lmvDOZFHCW3yv1PoOysHrdXyITukE38JGgsdL9ya7Qotiq51a9gTRQa1A/yy8LzoPUDoCJ7tZunRYnHQgzn2/roe5rSLV3lomXCgW4tqFbQJ7wa1phGMDrddGjhzGzRON/V1lTqMN3lxxkNQ4oWdE=
+	t=1729034262; cv=none; b=srwK77+lMcE6IgluBKa9LaI4zxHZ1ZzU2glHSbxghBels23aaz0Nt2XT07STAd6CPKXGHMhXW8NV0cjo24rVLvjHUfJOfFwR78d4XWw6l12amyJp8meGpAUmu6QEREwYGhBL5QMhwgu2IdG4nfxwl2+0XAUHq9HheNkQshibHpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729034227; c=relaxed/simple;
-	bh=yNEQTDJYd3zDwO4vw237JOdlRcVHD6pdhGX8t7IxIyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DgAAQ0q+qm5XeWE1kNmPbaRmXUPTUnlVG9PMFgcl6XVT80oR/oGPiPfVvk8OtUbd4nEoWARRaD6mqJ/0rMW/rnlXr6xTgT02wmZ2ILhaQOJK0sbIbStmbFPfZEKyVjeK1asfTuWx8K8dKycf8x9xCzwquue9/WiBhsyD0JDfy0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WqE24gxc; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431481433bdso7947595e9.3;
-        Tue, 15 Oct 2024 16:17:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729034224; x=1729639024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eD4CywG5G4jHbhFsfPy0Spq5T4P0b6fgkLacmkiZ4vE=;
-        b=WqE24gxcIlP/4XzHylmsty6ybZdFKSt28A5tEbGj2Qgvoc/tMogVcCy4WLXiVFk+wP
-         P+QTdnLAOZnmjMfT6mXNuKppXpWXazrDHFOxePQuQLUDkLNCFrQnA7Qfxaf2EahV9rnQ
-         zcATysD2Xuw08EnQX7GJEh4cM55m+IcY7DfgHonvu3qmQ73hpthwG8zFh1Go8Bm6LmfV
-         lHpJViQGdbawC/Dx4JWeoYnO1vBuUTlEbx8OAIisiRkU4+uoC8LHGFfKgR1xQRZAKtQb
-         T5NXNMcFEAKYeBp3IvYTPf/n/hmylmlcvs+uRsPBBGgqPFMgjroA3ZcgyeoR0qZ8+TkK
-         e37w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729034224; x=1729639024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eD4CywG5G4jHbhFsfPy0Spq5T4P0b6fgkLacmkiZ4vE=;
-        b=wHpe5SAyfvQ4EUJMvMshZXR86vi15ccOmhMpC010txbOPEi8vNwCoyjdGC2n5Y/mqa
-         1a1R1JQqOLgrqoyEkcIpFIGu4D0bL01UlI8dDw7k+30HRIAFuhnUcP5zrWCexqwaFnjx
-         KH8tvLG9ca3b/3T4C1zk2FLSyk1L94zgHohc7ctzgbKwi9HMU1pP2F08wNaLVO5Ez2x1
-         vN9yrycXQwBcfDl6OTELiv/HNdsVJyyLRdZrYrg+w9jPVMzSkw0eFZi6gcfCtqcchw0A
-         dLF6ik8MxYcuQTRIba4dHPiNZkzZb7/LXIH2OPDv3L4J75pqPOJV4jBOA3rPXSb578DJ
-         BYJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVF3vZV/F2QbtYucPXtvrXA7S9dzjZKLR26MqNmnjyexeB77h9VleAnh5Y+Gf/MMQ+Lh7FlhtvdSkB3@vger.kernel.org, AJvYcCWjkI6lLoB/+RkJAPAeMtH8+N4nIpfhKcdfjGuUcI6VvEQ+BwYc8VvPJmph3XrkxSGCKCJz3od+35o=@vger.kernel.org, AJvYcCX8s++bfvinDkcq7dkIfMDssJpWaRmjm9UOSAfTLSeg/i1lGbazGHEc0QvZwJhY9oKTh6Maq9yVUYApUT5p@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+I0855fF6h+N1x4r8x6G3xbnb7oE0ZT9vFCTKb7gAcunyUQ/e
-	NQ8XMzerp/2//QFlCPb+uV2Njt1cWuxBSY17oY3rszBynGQR5GxX6Bx+n7eCkiyQE3w5BSrfmEL
-	4YFOWTib4vLCmb0pjgn+DZIWJmOE=
-X-Google-Smtp-Source: AGHT+IFfPTgIz4rA2XwAvHVPueqtZhJGmRZFRE4ddHUTGZk/+1SCzJOPWNfvCkOwGnD81zjFhcwyV1EKACC9Xm8QGCQ=
-X-Received: by 2002:a5d:6647:0:b0:37d:453f:4469 with SMTP id
- ffacd0b85a97d-37d551d506amr10150361f8f.22.1729034223715; Tue, 15 Oct 2024
- 16:17:03 -0700 (PDT)
+	s=arc-20240116; t=1729034262; c=relaxed/simple;
+	bh=93Qu79RPdzYWuS8VluUwYI+mQdW76BAI+YjRY05mE/s=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=T/mTDLisaypXhpT+ChCKAkZCDzgvxJsFj5Zsb6VnroFOo67iT7AZs6BSA1y9nR+AJD8x7DjhZObKa8USnWnWab1sybcUB1fT6Xcwm1q6pdOOJQJm6W3cWSrz0hw1N3csVBx6+5tQ17AYXsFgGFCnoW2p+ntHO0/yj/3jAk33ZJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OgCYCei1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TlUIewWr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Oct 2024 23:17:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729034258;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=eNy1vrS5muq8I9suz0muKX9xgO9wzg64nRRAc9865gY=;
+	b=OgCYCei1jCfw1xTKQT40QiX48LtJuBRjfFCCnVaugSrl3+t3Uabv/Vj9zqIoQF3cx2Gm6U
+	sMmK5G9HCqtXQyenUAc0yZoXSFp2Sah6pUm3RdyoKAIxa1b5Sa8xnaRY9znih57h4kwiV4
+	CNZkuzEmPMQ9wucwkFGn+7Kne08M7b944oV14NVl7GjGgbOYH1mQMhgCvyWyJ2j/7e/mdM
+	0uPTxD3FyXoXMlaeXLsTZKxUELBnx5+8Fm8rxXm89orud28lMAL/Catg58cA8eB6LzJlm8
+	L7aL2cm+fCmJRXvQhPGOb3QFcg+wXa2UKzih6wiVxSzE5lqzQdl5NY5qJ7t//g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729034258;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=eNy1vrS5muq8I9suz0muKX9xgO9wzg64nRRAc9865gY=;
+	b=TlUIewWr1B1CW7imp63X8bIGentD8gndlb1ywct3KyoQLZ2tIKLWChyDjXZ8FLfQwDy+bS
+	lSoDk/cdSM0ohwBQ==
+From: "tip-bot2 for Zhang Rui" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/apic: Always explicitly disarm TSC-deadline timer
+Cc: Dave Hansen <dave.hansen@intel.com>, Zhang Rui <rui.zhang@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Todd Brandt <todd.e.brandt@intel.com>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+fCnZcyrGf5TBdkaG4M+r9ViKDwdCHZg12HUeeoTV3UNZnwBg@mail.gmail.com>
- <20241014025701.3096253-1-snovitoll@gmail.com> <20241014025701.3096253-3-snovitoll@gmail.com>
- <20241014161042.885cf17fca7850b5bbf2f8e5@linux-foundation.org>
- <CA+fCnZcwoL3qWhKsmgCCPDeAW0zpKGn=H7F8w8Fmsg+7-Y8p3g@mail.gmail.com> <CACzwLxgJaOL9RXkhAZEosmFDzp-D4=gGfhSh3d5scBRBaq76pw@mail.gmail.com>
-In-Reply-To: <CACzwLxgJaOL9RXkhAZEosmFDzp-D4=gGfhSh3d5scBRBaq76pw@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Wed, 16 Oct 2024 01:16:52 +0200
-Message-ID: <CA+fCnZf8YRH=gkmwU8enMLnGi7hHfVP4DSE2TLrmmVsHT10wRQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v3 2/3] kasan: migrate copy_user_test to kunit
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 2023002089@link.tyut.edu.cn, 
-	alexs@kernel.org, corbet@lwn.net, dvyukov@google.com, elver@google.com, 
-	glider@google.com, kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryabinin.a.a@gmail.com, 
-	siyanteng@loongson.cn, vincenzo.frascino@arm.com, workflows@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <172903425753.1442.3391146920591310820.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 12:52=E2=80=AFPM Sabyrzhan Tasbolatov
-<snovitoll@gmail.com> wrote:
->
-> > Too bad. I guess we have to duplicate both kasan_check_write and
-> > check_object_size before both do_strncpy_from_user calls in
-> > strncpy_from_user.
->
-> Shall we do it once in strncpy_from_user() as I did in v1?
-> Please let me know as I've tested in x86_64 and arm64 -
-> there is no warning during kernel build with the diff below.
->
-> These checks are for kernel pointer *dst only and size:
->    kasan_check_write(dst, count);
->    check_object_size(dst, count, false);
->
-> And there are 2 calls of do_strncpy_from_user,
-> which are implemented in x86 atm per commit 2865baf54077,
-> and they are relevant to __user *src address, AFAIU.
->
-> long strncpy_from_user()
->    if (can_do_masked_user_access()) {
->       src =3D masked_user_access_begin(src);
->       retval =3D do_strncpy_from_user(dst, src, count, count);
->       user_read_access_end();
->    }
->
->    if (likely(src_addr < max_addr)) {
->       if (user_read_access_begin(src, max)) {
->          retval =3D do_strncpy_from_user(dst, src, count, max);
->          user_read_access_end();
->
-> ---
-> diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-> index 989a12a6787..6dc234913dd 100644
-> --- a/lib/strncpy_from_user.c
-> +++ b/lib/strncpy_from_user.c
-> @@ -120,6 +120,9 @@ long strncpy_from_user(char *dst, const char
-> __user *src, long count)
->         if (unlikely(count <=3D 0))
->                 return 0;
->
-> +       kasan_check_write(dst, count);
-> +       check_object_size(dst, count, false);
-> +
->         if (can_do_masked_user_access()) {
->                 long retval;
->
-> @@ -142,8 +145,6 @@ long strncpy_from_user(char *dst, const char
-> __user *src, long count)
->                 if (max > count)
->                         max =3D count;
->
-> -               kasan_check_write(dst, count);
-> -               check_object_size(dst, count, false);
->                 if (user_read_access_begin(src, max)) {
->                         retval =3D do_strncpy_from_user(dst, src, count, =
-max);
->                         user_read_access_end();
+The following commit has been merged into the x86/urgent branch of tip:
 
-Ok, let's do this. (What looked concerning to me with this approach
-was doing the KASAN/userscopy checks outside of the src_addr <
-max_addr, but I suppose that should be fine.)
+Commit-ID:     ffd95846c6ec6cf1f93da411ea10d504036cab42
+Gitweb:        https://git.kernel.org/tip/ffd95846c6ec6cf1f93da411ea10d504036cab42
+Author:        Zhang Rui <rui.zhang@intel.com>
+AuthorDate:    Tue, 15 Oct 2024 14:15:22 +08:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Tue, 15 Oct 2024 05:45:18 -07:00
 
-Thank you!
+x86/apic: Always explicitly disarm TSC-deadline timer
+
+New processors have become pickier about the local APIC timer state
+before entering low power modes. These low power modes are used (for
+example) when you close your laptop lid and suspend. If you put your
+laptop in a bag and it is not in this low power mode, it is likely
+to get quite toasty while it quickly sucks the battery dry.
+
+The problem boils down to some CPUs' inability to power down until the
+CPU recognizes that the local APIC timer is shut down. The current
+kernel code works in one-shot and periodic modes but does not work for
+deadline mode. Deadline mode has been the supported and preferred mode
+on Intel CPUs for over a decade and uses an MSR to drive the timer
+instead of an APIC register.
+
+Disable the TSC Deadline timer in lapic_timer_shutdown() by writing to
+MSR_IA32_TSC_DEADLINE when in TSC-deadline mode. Also avoid writing
+to the initial-count register (APIC_TMICT) which is ignored in
+TSC-deadline mode.
+
+Note: The APIC_LVTT|=APIC_LVT_MASKED operation should theoretically be
+enough to tell the hardware that the timer will not fire in any of the
+timer modes. But mitigating AMD erratum 411[1] also requires clearing
+out APIC_TMICT. Solely setting APIC_LVT_MASKED is also ineffective in
+practice on Intel Lunar Lake systems, which is the motivation for this
+change.
+
+1. 411 Processor May Exit Message-Triggered C1E State Without an Interrupt if Local APIC Timer Reaches Zero - https://www.amd.com/content/dam/amd/en/documents/archived-tech-docs/revision-guides/41322_10h_Rev_Gd.pdf
+
+Fixes: 279f1461432c ("x86: apic: Use tsc deadline for oneshot when available")
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Tested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Tested-by: Todd Brandt <todd.e.brandt@intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20241015061522.25288-1-rui.zhang%40intel.com
+---
+ arch/x86/kernel/apic/apic.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 6513c53..c5fb28e 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -440,7 +440,19 @@ static int lapic_timer_shutdown(struct clock_event_device *evt)
+ 	v = apic_read(APIC_LVTT);
+ 	v |= (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
+ 	apic_write(APIC_LVTT, v);
+-	apic_write(APIC_TMICT, 0);
++
++	/*
++	 * Setting APIC_LVT_MASKED (above) should be enough to tell
++	 * the hardware that this timer will never fire. But AMD
++	 * erratum 411 and some Intel CPU behavior circa 2024 say
++	 * otherwise.  Time for belt and suspenders programming: mask
++	 * the timer _and_ zero the counter registers:
++	 */
++	if (v & APIC_LVT_TIMER_TSCDEADLINE)
++		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
++	else
++		apic_write(APIC_TMICT, 0);
++
+ 	return 0;
+ }
+ 
 
