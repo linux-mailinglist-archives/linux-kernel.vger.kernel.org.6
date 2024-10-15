@@ -1,96 +1,110 @@
-Return-Path: <linux-kernel+bounces-364977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C079699DBD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:47:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE7F99DBD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BD7C282707
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:47:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19FA1B2178A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DD1155A4D;
-	Tue, 15 Oct 2024 01:47:09 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1BE156C40;
+	Tue, 15 Oct 2024 01:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etfDcGeD"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF4A8468;
-	Tue, 15 Oct 2024 01:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670C38468;
+	Tue, 15 Oct 2024 01:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728956829; cv=none; b=TJTms/234dnUDbNNYJNMJTZ5HI7eUdUCXdtkuMySSBsbpzcDa0aR/hHfLzLuDEdJ004PFJCTnZaTS9t51f9k+8ip1WmE2IY4airmCN5fXqTojOnp2kwii7zTcX7eYMrUCCusb2ioG6z/YTQ8O8/XE1MrjYfnn9FGzv0kaySVYAY=
+	t=1728956792; cv=none; b=C8uqSvWFFAKxfJflojjnoX92UsQP/WkFU2NGUuX7pMR8NTEdRYjKBrOkBKB5o0Dkuckgw46a2LYSboUP5MsQ2aT6d3ItADMz3j6Ev8xIrCrVsTQ5x6dD4WOiLJXLQTzIALaA69U4zqMZ8ksUkmkvM+Zqe4dbTwI6YvZ0KLAbbeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728956829; c=relaxed/simple;
-	bh=igBZYiHlzAituf/psbEZa0SdcnGgUrsMstspMASXq18=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZKCeAtmbCtsGgyNS0t0b2mHT37Ic3RiB6UVnwZylFUHHFiKVbq8J6OANtf2qP5rI4AX6slsngw1WCF/JsgvMYOO5cYMD8dk0m0ffaz48prCzX2Foy2ZyPBv6Stu3O0EePxwY1svcYYq1L0iXfFlkG3ngNOVe//7+GnzJANDaQNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XSH4G5bb6z1gx1K;
-	Tue, 15 Oct 2024 09:45:50 +0800 (CST)
-Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
-	by mail.maildlp.com (Postfix) with ESMTPS id CA82E1A0188;
-	Tue, 15 Oct 2024 09:47:03 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by kwepemg200013.china.huawei.com
- (7.202.181.64) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 15 Oct
- 2024 09:47:03 +0800
-From: Liu Shixin <liushixin2@huawei.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Naoya Horiguchi
-	<nao.horiguchi@gmail.com>, Muchun Song <muchun.song@linux.dev>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>, Liu Shixin <liushixin2@huawei.com>
-Subject: [PATCH] mm/swapfile: skip HugeTLB pages for unuse_vma
-Date: Tue, 15 Oct 2024 09:45:21 +0800
-Message-ID: <20241015014521.570237-1-liushixin2@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728956792; c=relaxed/simple;
+	bh=1LOSpeTDcBfNC7lfaD4GUxd3xiGukOwPWLHbATyJKHk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BqYsOB2v5cSI6J50L+Pn3ySERtp9kiKK+aIiE3N5iXjn41V1Od3lQuRwIURXD+/V1qgir/nSn0CnukZI0JxlGrxZywbzDyxe/pt7yrkzjJIA4VORF7rIkGjPXHmWsCA4KnOkXJeIv2Yekk9n+yBTJ5D/kW0JMyJsNTtQFFJE6q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etfDcGeD; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so15047281fa.3;
+        Mon, 14 Oct 2024 18:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728956789; x=1729561589; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1LOSpeTDcBfNC7lfaD4GUxd3xiGukOwPWLHbATyJKHk=;
+        b=etfDcGeDrq/mqDltvH7+/mmGwoBpr+ANIsNE3nCGiT09NUtaFuIBvozmY25Iy+UobY
+         pHvJdfh++Yeej3hoIIq4r7wZzozwx1d0nc7reJ5naNEIveepITMwfavLM4zoM5rzdvJb
+         +1l1k6HPhIhxt//52ZfJ9vik8+rygEktuwvkL4nkeyc9JQDK9h09p5phTsgqssVXnWrV
+         P7nhLIfOYLhSwwvQmklwhBwb9ApLYsiyb91S2MQ5htArCkRYk/+l/9TkiTrBxtU5y/qg
+         LwyDx2irsG/NmbNNyeMEV0yeIpwfmBEgCZlsjZuMVeAagSHYBRHmCI/eLhE9irXfTb4z
+         29nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728956789; x=1729561589;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1LOSpeTDcBfNC7lfaD4GUxd3xiGukOwPWLHbATyJKHk=;
+        b=b+pKI9fO3/HuV1lGMW9ZTotryC0EnojxGKjyfsOFPbm2Q01Dy3V5s0IbgpQXVt6a6J
+         tdw00nj2E6+vRXypbaXbQyhY4ogoMY17ki4gX6vGbCYrRxVfTVu/R/7dKzGFLnUn6n/I
+         echPsj3247IrKXWFV/T8J7g/EaVT5iefZpNisbUdlRsj8PGFfJxIT8xkDPGTGoYvTZI0
+         sUdh35FEdu2ZNZIwQA/LxZTgPfQm+XIZt3rZGee5ZlEmPGwdF3FXcGcvpoPvjJRutZKK
+         NYQ2E9BHWSknXJb5M1MKMsn+La8FzJT65y6+RjIHiQggFRflsYrCwhdWWQx+g+/AKlKv
+         0vng==
+X-Forwarded-Encrypted: i=1; AJvYcCVqCX800naZv3Btl0V4DZMsjjJlSUP2TLZDWnumNZG1JPLxQGXJSASh2pFVpy0PqABi0OSwEjPXmVPx4Zn1@vger.kernel.org, AJvYcCWJwo7raCG5kykF8LOSWLuQ+w3whIh++6Pxytoo8d7JeAtXky7uaeUn6XaupAeb1pHFa/9l2Cs2@vger.kernel.org, AJvYcCXEuUkhgh7CLYULR2SRpbZDTyKr1cIAev/pvLZwj53Eneq5MSVcVga/DH5upoqmCWzNDt5LgF8FRT6XNx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCCLt6Y5nOx+UUX9ULcVETssPinWrv2VtVZfIaPUfFpmxAbM3X
+	lXw6zWpHWRMrWNlGNtJOmzoA8lpaaDzJPjr8cmu3ZLFacjN7fDehugmEme3d3JvzaliJkBZYQKr
+	FpuoZg6p++z9Nobwzn4Esugy7D82o8AQcLOc=
+X-Google-Smtp-Source: AGHT+IG4go9cTfMsoy7KIZm+tBl9/AfmWuFk/WTV50i1VYxt9hID/QmhVd4Jm6Ik2WNcB3HM63fHGdfPFScPsXcwD8g=
+X-Received: by 2002:a05:651c:b13:b0:2fb:597e:28d9 with SMTP id
+ 38308e7fff4ca-2fb597e2cebmr12254341fa.14.1728956788362; Mon, 14 Oct 2024
+ 18:46:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg200013.china.huawei.com (7.202.181.64)
+References: <20241011014724.2199182-1-xiuhong.wang@unisoc.com> <dgfa2ehxmdixfi2fu32b5kjoyfpbd3ew5e6rmzxpcy7crwctaf@st4s4df6nvuo>
+In-Reply-To: <dgfa2ehxmdixfi2fu32b5kjoyfpbd3ew5e6rmzxpcy7crwctaf@st4s4df6nvuo>
+From: Xiuhong Wang <xiuhong.wang.cn@gmail.com>
+Date: Tue, 15 Oct 2024 09:46:17 +0800
+Message-ID: <CAOsHCa0wyTtA65mGBB_8YM7vmQyvkTDcwwvELEEMJ5WKu2QNhw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "blk-throttle: Fix IO hang for a corner case"
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Xiuhong Wang <xiuhong.wang@unisoc.com>, tj@kernel.org, josef@toxicpanda.com, 
+	axboe@kernel.dk, cgroups@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com, ke.wang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I got a bad pud error and lost a 1GB HugeTLB when calling swapoff.
-The problem can be reproduced by the following steps:
+Hi Michal,
 
- 1. Allocate an anonymous 1GB HugeTLB and some other anonymous memory.
- 2. Swapout the above anonymous memory.
- 3. run swapoff and we will get a bad pud error in kernel message:
+Remove this patch to make the code clearer and easier to understand.
 
-  mm/pgtable-generic.c:42: bad pud 00000000743d215d(84000001400000e7)
-
-We can tell that pud_clear_bad is called by pud_none_or_clear_bad
-in unuse_pud_range() by ftrace. And therefore the HugeTLB pages will
-never be freed because we lost it from page table. We can skip
-HugeTLB pages for unuse_vma to fix it.
-
-Fixes: 0fe6e20b9c4c ("hugetlb, rmap: add reverse mapping for hugepage")
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
----
- mm/swapfile.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 0cded32414a1..f4ef91513fc9 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2312,7 +2312,7 @@ static int unuse_mm(struct mm_struct *mm, unsigned int type)
- 
- 	mmap_read_lock(mm);
- 	for_each_vma(vmi, vma) {
--		if (vma->anon_vma) {
-+		if (vma->anon_vma && !is_vm_hugetlb_page(vma)) {
- 			ret = unuse_vma(vma, type);
- 			if (ret)
- 				break;
--- 
-2.34.1
-
+Michal Koutn=C3=BD <mkoutny@suse.com> =E4=BA=8E2024=E5=B9=B410=E6=9C=8815=
+=E6=97=A5=E5=91=A8=E4=BA=8C 00:45=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hello.
+>
+> On Fri, Oct 11, 2024 at 09:47:24AM GMT, Xiuhong Wang <xiuhong.wang@unisoc=
+.com> wrote:
+> > This reverts commit 5b7048b89745c3c5fb4b3080fb7bced61dba2a2b.
+> >
+> > The throtl_adjusted_limit function was removed after
+> > commit bf20ab538c81 ("blk-throttle: remove
+> > CONFIG_BLK_DEV_THROTTLING_LOW"), so the problem of not being
+> > able to scale after setting bps or iops to 1 will not occur.
+> > So revert this commit that bps/iops can be set to 1.
+>
+> What is the use case where the difference between 1 or 2 matters?
+> (Unless this is meant as a cleanup, then it makes sense to me.)
+>
+> Thanks
+> Michal
 
