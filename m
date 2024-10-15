@@ -1,97 +1,118 @@
-Return-Path: <linux-kernel+bounces-365736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2359999E91F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:13:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0794A99E931
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15CC1F240CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:13:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED2E2839EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B107A1F4FD7;
-	Tue, 15 Oct 2024 12:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4464B1F8F04;
+	Tue, 15 Oct 2024 12:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DY2EWXdA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2uKkv4K"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168251EBA12;
-	Tue, 15 Oct 2024 12:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D8F1EC006;
+	Tue, 15 Oct 2024 12:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728994318; cv=none; b=g/OGfOExH61Z7N00+ZjiaCLiEa7MzCF6Dp+Clbs+2uuhzIZnnDmbGDQPZkJLf1+ecBsZ3fLPImd06NU1RnrYah9d2zQv5Ua16yULov5+VpPTU75hWHpGZD8E2AeQoHNCRbB0DjDtWmUNW85s20vymd0UhzitumVuO2KQL7aDZKo=
+	t=1728994342; cv=none; b=LDg/KC58s9PFEFIUFtahdPUQAPuD7R0Xol1kYkZM8Lbny7D4AzVv7F6N9qy1Qe5JBTV5goiFBJpY0OOh3HJN18CCwps8pVcDZu+SYqJXILR3eKhIeaa+qGPSOYWRX7ODEFwFD8HjAM9Zi+l3Ck7uqjhbE9XqRX8KwtBEzEcyhZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728994318; c=relaxed/simple;
-	bh=L9y9LhgVbtXtCJLQ+SqlqMstU/OUmA+S4rCHfFpeW9w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tzmPQI9QVKIjZRk6XvD1x4rSrzeLVmSr1vqdL+gQhIXHWcMvYaTaslsORDS8Q16g/FyQRydeJUBO2j1xEg5q8sNyaDVZ4lCVLcpenVoeUnlD+PXFjji5aL9EUlufsuJ4/uv8QhLGYRHMPE52XuL7iVZMFAY4sGEThAVpW/rW1ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DY2EWXdA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC27C4CECF;
-	Tue, 15 Oct 2024 12:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728994317;
-	bh=L9y9LhgVbtXtCJLQ+SqlqMstU/OUmA+S4rCHfFpeW9w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DY2EWXdAox7pZL9DABK9p6Cs6SLUFc6tl1csk/KCkp4j6vcFKtWVyCo8lJ5cyrctL
-	 7p2sBh6vMu4WRYnGNoKG3QixDqLRYYoZqdk4Vnsupwc2X4y4/V5E6P0s+Req4gsmGE
-	 g5xF+XgvTF0NCFA3SoVObE1T6mvdTAvU2gryxBQiZ4LqiSxrYtZlwWRR1jTkn+Vyaj
-	 Wpy9lbQK18xg4fH3qBzR75Ork6wFFNGswShjyudt8ZSax6RBEt1mzPE5o0IsxoIWOm
-	 K+mNH7keZsaVLE/vfzBUijZoWWHj5yfW1WlUB1BYuO5PEUGSMDqAQT98eq1ucpZ4M0
-	 An6e9zP1Kkjug==
-Message-ID: <fe9261d8-1e1d-4060-9a7e-1902d75cff7a@kernel.org>
-Date: Tue, 15 Oct 2024 13:11:48 +0100
+	s=arc-20240116; t=1728994342; c=relaxed/simple;
+	bh=0EytnEVYueFI5FkuBE6fvq65mtK2QNMq/P8GFScIGVY=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BEOa+vkRWY3jGcMGBM2fvGlwgh2qUv25dNGwkh4oXibBiNtKzTjT0o1i5Z9G/8tYDkjXhb4kmCrN+jVwYS5U6G3pDnS48Yk0qIOFGignYyd2DE8MhITFw6TU3RUSKVD0eWtUXR6x3BiLx1mFBKGFZSkFxlSzCHtIkvs1uxDcWw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2uKkv4K; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2dc61bc41so3335232a91.1;
+        Tue, 15 Oct 2024 05:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728994340; x=1729599140; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/OZGwvaXz1qhmiYlAOr7Vkc79vDlIxdvnur4NOMqdC0=;
+        b=G2uKkv4KVnoi7xBWvOLCYMPlEOmgIuveSFLj9zTIVDGf4wxDlEdjwj14LZnhNEoW3W
+         TkTG9wdKxqoroqymSi17MowKnEwlEHbdmKhyAglKLHHU0K+1sH+125kuTCGkiAbDHfHL
+         nCJjrNuxpwbPHVz/YtcMjnloP1MkSfjTQRiDuOIP9qXd/xO9nGaz9j/InuzYIpdOkRq8
+         2C04sZbqqf3onJpasEI9Owjq6itTtS0SdrAn2Kwm96MpMH1fv8UhBAfrZ3ax0GphMOeV
+         eVokDYIn+xwoR/WslAZ6OSqebKW6tseWzFsvWRfDopRXn1NBWYBqukEhLx7a7bE3SXTq
+         fhsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728994340; x=1729599140;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/OZGwvaXz1qhmiYlAOr7Vkc79vDlIxdvnur4NOMqdC0=;
+        b=d6LGbpHACfwDrd385+jEWtTPDHLor3qkvcquKHSxsHRXGK/863oSG/KpccEhnO6GrQ
+         I0Esk2ZR/0giIjBUYhYgdLe723IWr1KxDI08NjMDiGCXfIw8k53eBBl8/FgJXotm8MFt
+         Yjq21jMigYT84tPYdYzBoElrDNlnPrwPyI/0juuXmJgCCGcTIbSnPSQaoN7aZsUqp9iv
+         MAIHGySvs9jsC7C9r02U7ZDwbhgTTP5pRM9f1QY908ipfb+88ty5ziaDtl9U4MtHJh4z
+         yCkLkk9IkRtnOtP81pxXbtYCBUS+w2OKRi75yPDoqZnrumDgKbjfhRR6UoqB0OJ+hvUP
+         Bg+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUuUzFZGAbCCBSPptBWjrIWhWTkXV4EfgodkGYkCq9Cwus+J99XIpqqAPoaEm7gkY2mF5nBOEPmzK2GzCucLnc=@vger.kernel.org, AJvYcCV4qpJW77bRNaULDxNU2yVRU05Hfl0UbTfRGU+povhVZZDPr259eKTe3c6e8Ev3Vfse4lZd14kv@vger.kernel.org, AJvYcCXp2QpTHWFPpmFl7h4ekaC79En8Rlp24z8tawJ9NOpPPmTn4ACIbKnXrrQOHmwT6YRZId7FZSILkaBno4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYzy862VzzGyzdxN2/UQ9luNLeZbK0nalAH6SF6PtAYVvmE0LF
+	FPq925sm5LuwGdLscI2GAqhGnZVQWiv8dqjOtocDI4xwcLmozZzS
+X-Google-Smtp-Source: AGHT+IHgG1qhPjkaEMUuo8+ebYTUokTMKvZtaT2Lp7J8A+pJHdqpiVC4zBvQMqfCzZ5IBLu98Q8kmQ==
+X-Received: by 2002:a17:90a:bf0c:b0:2e2:b45f:53b4 with SMTP id 98e67ed59e1d1-2e31536de0dmr13383839a91.25.1728994340498;
+        Tue, 15 Oct 2024 05:12:20 -0700 (PDT)
+Received: from localhost (p4468007-ipxg23001hodogaya.kanagawa.ocn.ne.jp. [153.204.200.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392e8cdc7sm1559086a91.10.2024.10.15.05.12.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 05:12:20 -0700 (PDT)
+Date: Tue, 15 Oct 2024 21:12:07 +0900 (JST)
+Message-Id: <20241015.211207.1963272330702106304.fujita.tomonori@gmail.com>
+To: andrew@lunn.ch
+Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, hkallweit1@gmail.com, tmgross@umich.edu,
+ ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com,
+ aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
+ tglx@linutronix.de, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/6] rust: time: Introduce Delta type
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <3848736d-7cc8-44f4-9386-c30f0658ed9b@lunn.ch>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+	<20241005122531.20298-3-fujita.tomonori@gmail.com>
+	<3848736d-7cc8-44f4-9386-c30f0658ed9b@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bpftool: optimize if statement code
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241015110944.6975-1-liujing@cmss.chinamobile.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20241015110944.6975-1-liujing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
-2024-10-15 19:09 UTC+0800 ~ Liu Jing <liujing@cmss.chinamobile.com>
-> Since both conditions are used to check whether len is valid, we can combine the two conditions into a single if statement
-> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
-> ---
->   tools/bpf/bpftool/feature.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
+On Sat, 5 Oct 2024 20:02:55 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
+
+>> +/// A span of time.
+>> +#[derive(Copy, Clone)]
+>> +pub struct Delta {
+>> +    nanos: i64,
 > 
-> diff --git a/tools/bpf/bpftool/feature.c b/tools/bpf/bpftool/feature.c
-> index 4dbc4fcdf473..0121e0fd6949 100644
-> --- a/tools/bpf/bpftool/feature.c
-> +++ b/tools/bpf/bpftool/feature.c
-> @@ -158,10 +158,9 @@ static int get_vendor_id(int ifindex)
->   
->   	len = read(fd, buf, sizeof(buf));
->   	close(fd);
-> -	if (len < 0)
-> -		return -1;
-> -	if (len >= (ssize_t)sizeof(buf))
-> +	if ((len < 0) || (len >= (ssize_t)sizeof(buf)))
->   		return -1;
-> +
->   	buf[len] = '\0';
->   
->   	return strtol(buf, NULL, 0);
+> Is there are use case for negative Deltas ? Should this be u64?
+
+After investigating ktime_us_delta() and ktime_ms_delta() users, I
+found that ten or so places which use nagative Deltas like:
+
+timedout_ktime = ktime_add_us(ktime_get(), some_usecs);
+// Do something that takes time
+remaining = ktime_us_delta(timedout_ktime, ktime_get());
+if (remaining > 0)
+     fsleep(remaining)
 
 
-Thanks. I'm not strictly opposed to the change, but it doesn't bring 
-much value in my opinion. I don't think this will "optimize" the 
-statement beyond what the compiler does already.
+Looks straightforward. On second thought, I feel it would be better to
+support nagative Deltas. We could use i64 everywhere.
 
-Quentin
+And i64 is more compatible with Ktime Delta APIs; ktime_us_delta and
+ktime_ms_delta returns s64; we create Delta without type conversion.
 
