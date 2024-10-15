@@ -1,110 +1,91 @@
-Return-Path: <linux-kernel+bounces-364974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD3A99DBCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:40:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D4499DBCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C505C1F2346B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:40:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25651C219D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E66155A4D;
-	Tue, 15 Oct 2024 01:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SeEYUOzS"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9086615531B;
+	Tue, 15 Oct 2024 01:42:35 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB390231C83;
-	Tue, 15 Oct 2024 01:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0243231C83;
+	Tue, 15 Oct 2024 01:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728956446; cv=none; b=a7KP1Ptt9PeFh7kTVcuCNq0X2SD2kegc+nMJ8QshiwCS/ebUi1x7c8hg7Osqhkh02KBHX6uA0LIl7kam4UqxGbMviyfa2koplQ6f6Av0U51Ty2FOdbJ+Vxj0hJlLhv5MDcNQ71bKs6vNHSHlNi0L657SVmoazuw78TLFsNgD7kI=
+	t=1728956555; cv=none; b=pwKQkdNNm76nEduzx8GgVtFilIuAN1soz/FGCRTyCcVZ16tyOdoq2dRfZNte5aVFaTypKdaRNLa6P/OO80xTgRykuSRGoC1igt7p7NHVE6z37YJeIscgOJi7YbWTs8nN38InNy8+qDg/oIS+yuXwf5+fMsuYE4TJ8+IwTHV2kmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728956446; c=relaxed/simple;
-	bh=5Y6P3r7lGQ0FUFEUbLl6wZzzcLKJ72EWtvdXrw4jLNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RyPAMi7ifI1Im2yQ2seRKMIS2InmALuxBnuLmP8t8+d4aBuFBm+5UvkmgSE1CWnQfyDf/DOiNm3E6Z4cWWj2mP42lY3Jn8iyNxhh4nP7sSv3+Wal0re9GcQFC2f/2Lee10QgFuQpEAxbpk9qkZpnZDCa3YUzooiQIO7kYLU47RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SeEYUOzS; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gL9eg7AaSPXqzlXNIhBfZZxk+kS0I3YiOjFS+/uT7A8=; b=SeEYUOzSZyOqn7LIjB4X9+wHY5
-	YIzZrSCOQkjE+WyPlKKBnGsEZvyVSoAkqYO6CHYoJp6rJI7ild63hVYGcQjvH2EeUEckgfuKHj6bQ
-	EA8LnAU1v6aT56qTf+iIJhuVEve5OodtWcYWMrvSRRh38aJH811muk7lakYjsir1UjQJayTVmFE0f
-	8ja8caoySLSqXyGTK2uoW5LwwIyM8PaJubNm3SE4NQH2gLYIpbDP+PJbedEZMQbCdssa7OF95EpBw
-	NEcRO7I1CijWlAzjBzQVqXMHYw8VbE1KH5bpXaOWMtP2/ZLBDckOgKxFA9yBRLAw5/D3b3iJ7um06
-	rdWHUA0g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t0WXn-00000003Oqq-1E82;
-	Tue, 15 Oct 2024 01:40:15 +0000
-Date: Tue, 15 Oct 2024 02:40:15 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>,
-	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
-	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com,
-	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org,
-	roman.gushchin@linux.dev, dave@stgolabs.net,
-	liam.howlett@oracle.com, pasha.tatashin@soleen.com,
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
-	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org,
-	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com,
-	kaleshsingh@google.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-modules@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-Message-ID: <Zw3H_7mlrqxRwz_H@casper.infradead.org>
-References: <20241014203646.1952505-1-surenb@google.com>
- <20241014203646.1952505-6-surenb@google.com>
- <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
- <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
- <CAJD7tkY8LKVGN5QNy9q2UkRLnoOEd7Wcu_fKtxKqV7SN43QgrA@mail.gmail.com>
- <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com>
+	s=arc-20240116; t=1728956555; c=relaxed/simple;
+	bh=4JSQUriljyvh23qQwYuuRmuTN4NwLKLToX4bqCC1j7I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G/4PpWzt5QprjG5c+OQQyJp/S0Xw9zb3YA5jwkmMyhbBFH7JyLrecj+Gxvw/yiCj/2fVsapegpFd1v/spJ+ucYbe/G11BylB0EEOldlv57o9ULVJPcH5ZdA8fwPSM3vjQdt7zJSa5GXBhCq0BUP8vy0PVnKCbf6mf+uxLw5fnas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XSGxV33VbzfdCN;
+	Tue, 15 Oct 2024 09:39:58 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id CFB4C1400D5;
+	Tue, 15 Oct 2024 09:42:24 +0800 (CST)
+Received: from thunder-town.china.huawei.com (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Oct 2024 09:42:24 +0800
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+	<openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+CC: Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] media: nuvoton: Fix an error check in npcm_video_ece_init()
+Date: Tue, 15 Oct 2024 09:40:53 +0800
+Message-ID: <20241015014053.669-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.37.3.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On Mon, Oct 14, 2024 at 05:03:32PM -0700, John Hubbard wrote:
-> > > Or better yet, *always* fall back to page_ext, thus leaving the
-> > > scarce and valuable page flags available for other features?
-> > > 
-> > > Sorry Suren, to keep coming back to this suggestion, I know
-> > > I'm driving you crazy here! But I just keep thinking it through
-> > > and failing to see why this feature deserves to consume so
-> > > many page flags.
-> > 
-> > I think we already always use page_ext today. My understanding is that
-> > the purpose of this series is to give the option to avoid using
-> > page_ext if there are enough unused page flags anyway, which reduces
-> > memory waste and improves performance.
-> > 
-> > My question is just why not have that be the default behavior with a
-> > config option, use page flags if there are enough unused bits,
-> > otherwise use page_ext.
-> 
-> I agree that if you're going to implement this feature at all, then
-> keying off of CONFIG_MEM_ALLOC_PROFILING seems sufficient, and no
-> need to add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS on top of that.
+When function of_find_device_by_node() fails, it returns NULL instead of
+an error code. So the corresponding error check logic should be modified
+to check whether the return value is NULL and set the error code to be
+returned as -ENODEV.
 
-Maybe the right idea is to use all the bits which are unused in this
-configuration for the first N callsites, then use page_ext for all the
-ones larger than N.  It doesn't save any memory, but it does have the
-performance improvement.
+Fixes: 46c15a4ff1f4 ("media: nuvoton: Add driver for NPCM video capture and encoding engine")
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/media/platform/nuvoton/npcm-video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/nuvoton/npcm-video.c b/drivers/media/platform/nuvoton/npcm-video.c
+index 60fbb91400355c2..db454c9d2641f8f 100644
+--- a/drivers/media/platform/nuvoton/npcm-video.c
++++ b/drivers/media/platform/nuvoton/npcm-video.c
+@@ -1667,9 +1667,9 @@ static int npcm_video_ece_init(struct npcm_video *video)
+ 		dev_info(dev, "Support HEXTILE pixel format\n");
+ 
+ 		ece_pdev = of_find_device_by_node(ece_node);
+-		if (IS_ERR(ece_pdev)) {
++		if (!ece_pdev) {
+ 			dev_err(dev, "Failed to find ECE device\n");
+-			return PTR_ERR(ece_pdev);
++			return -ENODEV;
+ 		}
+ 		of_node_put(ece_node);
+ 
+-- 
+2.34.1
+
 
