@@ -1,1915 +1,263 @@
-Return-Path: <linux-kernel+bounces-365188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4115B99DEC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:54:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7878A99DEC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF47283BA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1911C2188B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538F01A7AF1;
-	Tue, 15 Oct 2024 06:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E133418BB8F;
+	Tue, 15 Oct 2024 06:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bGSitnGQ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fcJvtPtt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EC9189B8C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975229; cv=none; b=ggHnvsXXgdUPDC5Pwo2uR+nIB+AhPhm6Hfs33Pl0/+YjhHdryvITeqVZVoFlm5U3HVNo20rtuKoxCJs96dRxQB8zr2xK8+usRmIqbVOZjPS701cwdKtVaDBfFNKkkdT6Y8mG9hRSxVUeY/72aEGKmlZcKv3H/+2a5UR6qA/7lxk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975229; c=relaxed/simple;
-	bh=/ZZIWqE6EJWjIggsS29eFUYWse0i1tNZRLe29mcBXUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j7yqzyG9E7DRQk/LqwLOi0ZyYJuWuVe32APZUsqqR9qC2OXrt5YiL8m1IOdZs/hDxW12XSqe6Dm6tkc127ti++CyC6VEA4a2jeqORlh4UzyoYDFvX5TO/9xf53EtuFQo3vUkIHVqu19BuCxynELefaPs6iVTfsqqSDuaeNq+hQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bGSitnGQ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e690479cso2664219e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728975223; x=1729580023; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rdajnSevFPdjjhlc70MlXwoMV1aQszC/fBEMiCvpI8g=;
-        b=bGSitnGQsVT5pkbGWkJSyNZCo6ziPg/CXNlODOhMR2H0j9kNEXH51R4PaMTntfmi/c
-         iD+Zoy/yLbkm+f0ITOgjM13NEd3dxS3JT6p0e9cDv1GMXOTLGQ7aGVKL1gzYq3T2Hm0Q
-         tU+HfqMROIN0V8+co23PorteESAfkf4DXYHZA0TdpIxjEmT2k4APTkz4BjbYa4dq4rY0
-         McBdlU7o60e1i3EDGvut+ebwOF2e3nd0wC4D7q0hy9jimMPNqmCnVW152wjfziZZG5Dj
-         mUYG6aET02t0WyEJyxhMMUFL08ZuofanarOEELekhzSqaVPKyCIZKA513nuSwTaaGCno
-         1Dyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728975223; x=1729580023;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rdajnSevFPdjjhlc70MlXwoMV1aQszC/fBEMiCvpI8g=;
-        b=b0ty6f5FiO/ijd990aL94AtPG2BbhBI+vLb20N4Rf4TxY4OffN4HOTh9Dn27nlbWbN
-         LcXuMzHRK4Du803omJ506S9TNETiv2ekNuG3wYCItVE3Jjsn/g9io38Ji1kVFTFHefvL
-         vxrkOz756g96Ds5WikMv3SjZGZemom0U+gV43brykZQsVz6ri7X9Ye/BoZ1Fd+Q74pml
-         ZTgqE+Zp8TUCfx22tbSrUxAEmEpBCgLhhXp2bYUZI6ltlEafXdIu9sUQRGdkOGimoeFw
-         sV1cwHz3Go48q0y9pYWol8NJ7wSSCfdER5fw6olKlR7ZqRjBwG68Tky6VpKVxpR1Gvjv
-         8YLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQGgiETkZ9gKU5sVSVn0kRJnvdDgfGWa2nb6biTBgGBpJp2a0npLo3/Plf8IUt0i6YY2kMfN2N1sIsJng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEQhgQm5BlnUspCOCDKiXiukENwVX+cwqr5UN4LAMhvqXd6R7F
-	EWCZSwoxCleL84ZKG8IFYy46tYiwY2OfhcS943pecUY6R7tqD1EI6gjMP4YqAQw=
-X-Google-Smtp-Source: AGHT+IHd2rI4DfNXiGnBFpC5XSYVget/AKXJIADPaz5VkCEMAUV7EMXTb+9frH8e3KA54+b+h4SHcg==
-X-Received: by 2002:a05:6512:39c6:b0:52c:df6f:a66 with SMTP id 2adb3069b0e04-539e572a1admr3976256e87.58.1728975222279;
-        Mon, 14 Oct 2024 23:53:42 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:d382:b11b:c441:d747])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6c60e3sm8397995e9.43.2024.10.14.23.53.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 23:53:41 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Helge Deller <deller@gmx.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	David Lechner <david@lechnology.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] fbdev: da8xx: remove the driver
-Date: Tue, 15 Oct 2024 08:53:29 +0200
-Message-ID: <20241015065329.12732-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE7918BBA2;
+	Tue, 15 Oct 2024 06:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728975228; cv=fail; b=CIGxg6gl+7exjImu3nhPo4GuFhnZ7n+o94AJS+uZ6Cqa6TTGcRkpxI43F+yyBNayw1sShPa9wO9od4sSW6p6OIFMJGnr8qTgP8U9pnMXiDMEUkRt4Qj5uo9CS/h+9gb97WZJ7dNBYfLv/Z80OXgCiZSB92CEtMR4VtcNb6F9BgU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728975228; c=relaxed/simple;
+	bh=j3USFEroM2DyFMU6Qiay6u0Gx0SOHO0Cq59DJ6avLD4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=SEHtWk++/WvK2IBKfxoeGQLvogNcA+bdMNo48SJJthYbnG5nTVjPlb95w3CpgntDx5dgd2F52r5d2m8NFrZqo1rNQfam7jO8QI7ANd93UpMsQR1MYf395/KoiJEhrwCYDPzwU7Eu/vS/r8UI9uGLwP6SWIUe6Nk2uTneIZUyHVA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fcJvtPtt; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728975226; x=1760511226;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=j3USFEroM2DyFMU6Qiay6u0Gx0SOHO0Cq59DJ6avLD4=;
+  b=fcJvtPttwHPjmz5QLjnf1Nrl7ghTJ7yEjXXJrV7u1nk2ewAw08Jk3BnN
+   NNW/xC5lvRVSID4bl+65g7wSUkvpR95QtYKDFteT7P7E9G8oMZucv/eMU
+   dzynn52EFeaYx66bKVT7CY+bu5p9rWpeFNM1sVGsSWJRC07zvLpGNJqJp
+   mlkiUaS55haAiUUOmMtGw73xC/hb9E8m0OjjmkvcdsTrO43KRnoCcu/3G
+   Nu0PD3idD1RV2XNIPKAP8YMf6aIGUKO32nf0cy+FaR/6sLj9PMofUAmOh
+   V9pcMsWEWI7tXnZn2kmpiFkqbTqglbpdg7av421I0kdg1eoID1/iQ4qVA
+   A==;
+X-CSE-ConnectionGUID: arW5mOUrTF6BfNSwPrsF9g==
+X-CSE-MsgGUID: n7yhhYObS7GrsFSxtKUBxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="38903129"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="38903129"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 23:53:45 -0700
+X-CSE-ConnectionGUID: hFJw/rg7TTSUCd7vYl+jtA==
+X-CSE-MsgGUID: 0Eair/klR+e1TxCPlXu9jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="77412803"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Oct 2024 23:53:46 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 14 Oct 2024 23:53:44 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 14 Oct 2024 23:53:44 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.170)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 14 Oct 2024 23:53:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mxAMM1yJiwReZvHTwlchfFKTrRcRoLvzSvxQOL0FME+liErzSkzzerEodYKDsGoNopWN8gk6C6PG9sebDzh9/drG2tnLo7LUacRTPXQrpFRSHIdq++eeGSnGxfdUMinM5dx6CPsmm8Y6k58Q7CtlBJ+EOso0TX1MW/G7jhPrTMDA1yY782GfnXeKcrS2oziB+B114A4cVMOoC5fs+kAusJQCf4T6GWn/LPrSDLZkdZXSibmWbMp70csGYzGFMEAYK32pTbSzWJjHUSvZ9/cj7wvha32Uqt7flRgaLacY6W0Im3UFn0f6gAJjlj1el8U8ifuTqydn1K3A76faQbSmKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UM2nkophHyTLgtVs0aIHcDsk/+0l8asvB+L8CwqIHoI=;
+ b=unJInTvKB0YGmNByqVSb3KXh3bRaWL3fm8UcU94Sm0VDG2en9shHU/FbZI9Stsz/lkqMtUDRgaYoV2wcyhJhtxi0reTCf1qz04X7yc+COzOBItfktGxDN1EilyQGgvKOOMzQyXMp3x/yEG1RnoW6z6bYPr26yfe0SJjJUTfHqI9C+K5ZoTtIQN1DBetZrD/jbi8L2g+f3KqD5ENhwlAKB8mIlRpG1Qb6lBTL7B+ZvdtKRMXSiwgXlXw5HzZpX0fS2ovzivPE2oGEGo68htK9DviAQoqTCMORs3s8s+eNJD+hKwhS+Is1hVb5xjXqOWmITpbAKzzEsgF5k8xR88aDpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
+ by SA1PR11MB6784.namprd11.prod.outlook.com (2603:10b6:806:24c::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 06:53:41 +0000
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d%7]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 06:53:41 +0000
+From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+To: Avadhut Naik <avadhut.naik@amd.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>, "lenb@kernel.org"
+	<lenb@kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>,
+	"james.morse@arm.com" <james.morse@arm.com>, "airlied@gmail.com"
+	<airlied@gmail.com>, "yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
+	"john.allen@amd.com" <john.allen@amd.com>, "avadnaik@amd.com"
+	<avadnaik@amd.com>
+Subject: RE: [PATCH v5 1/5] x86/mce: Add wrapper for struct mce to export
+ vendor specific info
+Thread-Topic: [PATCH v5 1/5] x86/mce: Add wrapper for struct mce to export
+ vendor specific info
+Thread-Index: AQHbFC4gq0D4a7cjHUu601KFGBrzrLKHaUHw
+Date: Tue, 15 Oct 2024 06:53:41 +0000
+Message-ID: <CY8PR11MB713406B2C492D55428397AFA89452@CY8PR11MB7134.namprd11.prod.outlook.com>
+References: <20241001181617.604573-1-avadhut.naik@amd.com>
+ <20241001181617.604573-2-avadhut.naik@amd.com>
+In-Reply-To: <20241001181617.604573-2-avadhut.naik@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|SA1PR11MB6784:EE_
+x-ms-office365-filtering-correlation-id: a8b13087-38ee-443f-56c6-08dcece61aba
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?omRyrZ6HCJEf1WJsSmvCQklglSUZVIizwia1iZ4muDZT5mRcMtsCR5XbcThi?=
+ =?us-ascii?Q?29EkagLGpNt7I6EjdwVEOvcMohn9dIpg/eqMUY0KlkKOg3WOqerbgcoc/i+n?=
+ =?us-ascii?Q?ixBhBjtkliG0SfKcETg3xIi289Hul6B+DCLldqjEjB7t9gwrkpjL/iUhz9Cq?=
+ =?us-ascii?Q?Uq7vHyivVcCWIV405apDv3SERVZEUNwYffVjELbCYCcXie1kSs0ccnIOvX/L?=
+ =?us-ascii?Q?kAAx5MfdwBYtAPhxxRlv+tAl0k574uWlpUyun9W8xoaJO1XeieEW+H2Ac/YZ?=
+ =?us-ascii?Q?r2SCsq8TrMSaz9zxXN7gnLgAfz7dYPJQLESxBi5xlZF30telSLRIfE5Lkaax?=
+ =?us-ascii?Q?i9j3jqDtGm7BmUT8uANoDl6yuVWGCfEg3c2Rj2rw0TTBlDcaJLzWaW0JfyHW?=
+ =?us-ascii?Q?I7PDy5uHreVjCB9trkRBseMTRdF7NFu5C7bzT1/cb+7f9c0/Gn+NKqNrh5Q9?=
+ =?us-ascii?Q?vKPmEms7a8/PV8CQmLOpnsVFIPkkSUUoK6fa8tYUnGe3OSU0hLk+gYasdrDk?=
+ =?us-ascii?Q?lvJwL9uw0ldTRSaNotCfjhTXW4NT7F0JuplcAOX9CXlDv2RfkPfSqtgu5ZBN?=
+ =?us-ascii?Q?cyBfiunO107aHBme+j0QlFpo/ZnxnFkTfsOVKrNvGzhPBsuWHvOnEwv20VC1?=
+ =?us-ascii?Q?Dq4OYjUsW3fGuoxPipZoCOXI6BS0YM/gPtKsdjbe76M5I/S7UDIN3Hg04bbT?=
+ =?us-ascii?Q?/+Li5TlOLdEOo1g4y+p/F/bucrunHw5IkPBeR5j68WEf3YWby2stTXk8dndU?=
+ =?us-ascii?Q?qFlBdB3X4zTfdEPdXCqtybMxurH8QqcqupV31ZdApZvIunOOeZJqFwre/vMX?=
+ =?us-ascii?Q?87czJTeJneyyG0s9BQ6sCy2Z0WwY9dJcjLtBROYinTXzttDFFTQJOP5GLMu9?=
+ =?us-ascii?Q?ZMmgI4n2gWNJcVQ3OksrXvZ2/0BbBKlpHQDzemFVrAxC6Y9sw2TONZQvtZrv?=
+ =?us-ascii?Q?7UWjwPq3tTdmdJie9eeumMvfDb/ZFDgP7ubrxTUw2s418sMiT1JNFzqiigfi?=
+ =?us-ascii?Q?jHx1nWoc6az+lBXA7K+SxfwuXdEhutqwAu/x/A+m+EPZsUqf4DSp4DmMAKYm?=
+ =?us-ascii?Q?MCO0G5b/+e3t0ea7EgG+fgFRm5Hbj+9dourHPkAWcxBy7PgcQOdVEAS3dQRf?=
+ =?us-ascii?Q?MRMudPLRGRgAIqv1bB7JSxWZ2dx9w3lmGxrJ9pI/pkuDU+2oZpek7Yo+5G89?=
+ =?us-ascii?Q?F/GPiMoQgdEv9eGTkqH+pla3mS3fM/Bv+dJAgYOeyQ5H2Hysd+NhaHmRGZ4V?=
+ =?us-ascii?Q?5dT0BYOMeXU5npr1XDRnaWN0zbbp5U8sPDv/SkYeX0AObqrhrNRZnOfYRhEG?=
+ =?us-ascii?Q?E3lC8azJcv3MyxWKzal+FzwIJKITw1Ki/JXniMXNxFMhmQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?txD+sECV6N8a9kLPVD6Fk2lvGl+5bm3egVekCe46W2cWarLsF4X1qqDDd6gN?=
+ =?us-ascii?Q?2RQyM2wAb6p7V8WzS+ljih+iJ1IFctsFgHDXhy2OXx4xRCesvyABJ/hIygUH?=
+ =?us-ascii?Q?FFG+/5vVgJGrAhXKODAJ3msCgQ7sSFXmcUPF0nIVTAXM5qkT77uq5aMO2EVd?=
+ =?us-ascii?Q?ffjhv1dRVfGCBUiOc0TitT6v7iNgyXB5EOGYvHCpDT9eshyKWJR2FyK2wtAA?=
+ =?us-ascii?Q?fJHJ/fqwgBZcUJxk1nx+lqX0bWR2QpofS1msWOBKI+3weIplD17I5WRay9ZL?=
+ =?us-ascii?Q?BuY94vhF/R5CXXrtRA0LNw5rFouPG60cILeuJjG3H8N+H1d+nUs8tO/kSYMx?=
+ =?us-ascii?Q?uujTSeYHTRdYolMmVY/2CJtU6b+MduoX2i1oNiXZYYW2oygRLqtUKgkcueR3?=
+ =?us-ascii?Q?g/VmOgILzuOcIzEAnUrI/x4YI/PUVL5lnQCAoyjjs0RxSnyFb3ttZneCtZcW?=
+ =?us-ascii?Q?zjISCgW9KIlgCF7rYxk1++LF5OQvqCSre3ucp2fsClnRBrZ34jI0lT/xado7?=
+ =?us-ascii?Q?XTb6ofA5RNOphhNfupESb28tzCxPSyyRd4DBQ7unx2uHpe1iQuAiRN4Tu/+r?=
+ =?us-ascii?Q?jD1gmfsbwJ1PVYFToDEMjm6S5cKtpUobyMdC0C1b02Sik+LEi6k3yuTDg1tm?=
+ =?us-ascii?Q?NOo0Gc6VwS3hKIk30QO4IHgIHF6EQogX7ASyIiE3cfp0LniiuiIl/C1hU3ir?=
+ =?us-ascii?Q?RqV8sio/gLNN7+DJwtG7kAjMY9Z3OUCNxjbF4d5JsCL8IbpqEQxRj6nhBwRU?=
+ =?us-ascii?Q?rpC3ZIY9i6H3TcLSjFnlGoXIWcdyXBrh41BFwNv8fC0WCRJL/zDvZVvc9+BX?=
+ =?us-ascii?Q?/leJW33G100jpv0eqblJefwzQ6qSNgy2lfk5f8PZPZkTieCxvVZWCJXip17n?=
+ =?us-ascii?Q?91SyCgs/4hk36KP+3iwTN7YWMbjDXMgEZ4wdtbS/CO32PpRwg1KC9HWGIiFT?=
+ =?us-ascii?Q?pFWHeAJ/YDAISCS7aCNkIehjvXJuJboeyswTLEM12+tjijv266LnB8FlMctQ?=
+ =?us-ascii?Q?nyH5NDNmxvZkw3VfJXXzO7eY8Iu57BZ/4aJOcC63vprYVC/3oFWGNbLkroLn?=
+ =?us-ascii?Q?DSSeilb+0QU8D81p0dM9pJsiQ69S6/bGf3eY9Vf/HE3dbIOH2DxsbOikdC3T?=
+ =?us-ascii?Q?gxcC+KdvukWwLbQj988nIs6OxOIhElBVAf1KX20gFiAx2smcM1NWx7zYyD7T?=
+ =?us-ascii?Q?ZjDTO69xM6PT/D2yaOIji4zLyOotCoP2S2LckKlCFdDsB3U1TUlkUIp0OBk7?=
+ =?us-ascii?Q?UDPV4VpImbhTK7gjkuijKk+i2tDWya4Ul24pv7Wdup/yBRD1djfb2dwTrkLY?=
+ =?us-ascii?Q?oNeoW/58YZXZnPdaUSqas6KZT8rShMWxiTtG4UuFKsnSfDSVMFG1YqAU9nRZ?=
+ =?us-ascii?Q?Twc7poe1hwGQ3ipzOnMBrnmfQGQNJ2xenNkY97ZOpUQYVLHRokdmqB0Qdrn3?=
+ =?us-ascii?Q?2FEt7i5sn/NOW35SPLSJgH+j9V+/+nShW0htNWRA36sQRr8OgErMIWZ7kaNb?=
+ =?us-ascii?Q?rBPrf+DSa3ZU0BRCGoCURHKix/7Hnu6j2dCK5fe+01HeZvuDHz7CAspBPZ8R?=
+ =?us-ascii?Q?/FoYmsyZsJiHlgsoymOt+hnf25rLln7l05a6cpxg?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8b13087-38ee-443f-56c6-08dcece61aba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2024 06:53:41.4807
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: X7YkzjP4d5ArHYjOJCoqPktYAgIrYCYaEEEX/iZ7uPxleNi+HZ2EmN1PBDTG2MeVQWRjzx/arx3FBO3fEjKA+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6784
+X-OriginatorOrg: intel.com
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> From: Avadhut Naik <avadhut.naik@amd.com>
+> [...]
+> diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h inde=
+x
+> 3b9970117a0f..3c86b838b541 100644
+> --- a/arch/x86/include/asm/mce.h
+> +++ b/arch/x86/include/asm/mce.h
+> @@ -187,6 +187,14 @@ enum mce_notifier_prios {
+>  	MCE_PRIO_HIGHEST =3D MCE_PRIO_CEC
+>  };
+>=20
+> +/**
+> + * struct mce_hw_err - Hardware Error Record.
+> + * @m:		Machine Check record.
+> + */
+> +struct mce_hw_err {
+> +	struct mce m;
 
-This driver is no longer used on any platform. It has been replaced by
-tilcdc on the two DaVinci boards we still support and can be removed.
+The word 'mce' isn't too long. IMHO using 'mce' instead of 'm' as
+a variable name is more meaningful :-).
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/video/fbdev/Kconfig    |   13 -
- drivers/video/fbdev/Makefile   |    1 -
- drivers/video/fbdev/da8xx-fb.c | 1665 --------------------------------
- include/video/da8xx-fb.h       |   94 --
- 4 files changed, 1773 deletions(-)
- delete mode 100644 drivers/video/fbdev/da8xx-fb.c
- delete mode 100644 include/video/da8xx-fb.h
+    struct mce mce;
+=20
+> [...]
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/cor=
+e.c
+> index 2a938f429c4d..d9d1af7227ce 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> [...]
+>=20
+>  /* Do initial initialization of a struct mce */
 
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index ea36c6956bf3..5eded4148672 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -1660,19 +1660,6 @@ config FB_SH7760
- 	  and 8, 15 or 16 bpp color; 90 degrees clockwise display rotation for
- 	  panels <= 320 pixel horizontal resolution.
- 
--config FB_DA8XX
--	tristate "DA8xx/OMAP-L1xx/AM335x Framebuffer support"
--	depends on FB && HAVE_CLK && HAS_IOMEM
--	depends on ARCH_DAVINCI_DA8XX || SOC_AM33XX || COMPILE_TEST
--	select FB_CFB_REV_PIXELS_IN_BYTE
--	select FB_IOMEM_HELPERS
--	select FB_MODE_HELPERS
--	select VIDEOMODE_HELPERS
--	help
--	  This is the frame buffer device driver for the TI LCD controller
--	  found on DA8xx/OMAP-L1xx/AM335x SoCs.
--	  If unsure, say N.
--
- config FB_VIRTUAL
- 	tristate "Virtual Frame Buffer support (ONLY FOR TESTING!)"
- 	depends on FB
-diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
-index 3eecd51267fa..b3d12f977c06 100644
---- a/drivers/video/fbdev/Makefile
-+++ b/drivers/video/fbdev/Makefile
-@@ -121,7 +121,6 @@ obj-$(CONFIG_FB_VESA)             += vesafb.o
- obj-$(CONFIG_FB_EFI)              += efifb.o
- obj-$(CONFIG_FB_VGA16)            += vga16fb.o
- obj-$(CONFIG_FB_OF)               += offb.o
--obj-$(CONFIG_FB_DA8XX)		  += da8xx-fb.o
- obj-$(CONFIG_FB_SSD1307)	  += ssd1307fb.o
- obj-$(CONFIG_FB_SIMPLE)           += simplefb.o
- 
-diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-fb.c
-deleted file mode 100644
-index fad1e13c6332..000000000000
---- a/drivers/video/fbdev/da8xx-fb.c
-+++ /dev/null
-@@ -1,1665 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- * Copyright (C) 2008-2009 MontaVista Software Inc.
-- * Copyright (C) 2008-2009 Texas Instruments Inc
-- *
-- * Based on the LCD driver for TI Avalanche processors written by
-- * Ajay Singh and Shalom Hai.
-- */
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/fb.h>
--#include <linux/dma-mapping.h>
--#include <linux/device.h>
--#include <linux/platform_device.h>
--#include <linux/uaccess.h>
--#include <linux/pm_runtime.h>
--#include <linux/interrupt.h>
--#include <linux/wait.h>
--#include <linux/clk.h>
--#include <linux/cpufreq.h>
--#include <linux/console.h>
--#include <linux/regulator/consumer.h>
--#include <linux/spinlock.h>
--#include <linux/slab.h>
--#include <linux/delay.h>
--#include <linux/lcm.h>
--#include <video/da8xx-fb.h>
--#include <asm/div64.h>
--
--#define DRIVER_NAME "da8xx_lcdc"
--
--#define LCD_VERSION_1	1
--#define LCD_VERSION_2	2
--
--/* LCD Status Register */
--#define LCD_END_OF_FRAME1		BIT(9)
--#define LCD_END_OF_FRAME0		BIT(8)
--#define LCD_PL_LOAD_DONE		BIT(6)
--#define LCD_FIFO_UNDERFLOW		BIT(5)
--#define LCD_SYNC_LOST			BIT(2)
--#define LCD_FRAME_DONE			BIT(0)
--
--/* LCD DMA Control Register */
--#define LCD_DMA_BURST_SIZE(x)		((x) << 4)
--#define LCD_DMA_BURST_1			0x0
--#define LCD_DMA_BURST_2			0x1
--#define LCD_DMA_BURST_4			0x2
--#define LCD_DMA_BURST_8			0x3
--#define LCD_DMA_BURST_16		0x4
--#define LCD_V1_END_OF_FRAME_INT_ENA	BIT(2)
--#define LCD_V2_END_OF_FRAME0_INT_ENA	BIT(8)
--#define LCD_V2_END_OF_FRAME1_INT_ENA	BIT(9)
--#define LCD_DUAL_FRAME_BUFFER_ENABLE	BIT(0)
--
--/* LCD Control Register */
--#define LCD_CLK_DIVISOR(x)		((x) << 8)
--#define LCD_RASTER_MODE			0x01
--
--/* LCD Raster Control Register */
--#define LCD_PALETTE_LOAD_MODE(x)	((x) << 20)
--#define PALETTE_AND_DATA		0x00
--#define PALETTE_ONLY			0x01
--#define DATA_ONLY			0x02
--
--#define LCD_MONO_8BIT_MODE		BIT(9)
--#define LCD_RASTER_ORDER		BIT(8)
--#define LCD_TFT_MODE			BIT(7)
--#define LCD_V1_UNDERFLOW_INT_ENA	BIT(6)
--#define LCD_V2_UNDERFLOW_INT_ENA	BIT(5)
--#define LCD_V1_PL_INT_ENA		BIT(4)
--#define LCD_V2_PL_INT_ENA		BIT(6)
--#define LCD_MONOCHROME_MODE		BIT(1)
--#define LCD_RASTER_ENABLE		BIT(0)
--#define LCD_TFT_ALT_ENABLE		BIT(23)
--#define LCD_STN_565_ENABLE		BIT(24)
--#define LCD_V2_DMA_CLK_EN		BIT(2)
--#define LCD_V2_LIDD_CLK_EN		BIT(1)
--#define LCD_V2_CORE_CLK_EN		BIT(0)
--#define LCD_V2_LPP_B10			26
--#define LCD_V2_TFT_24BPP_MODE		BIT(25)
--#define LCD_V2_TFT_24BPP_UNPACK		BIT(26)
--
--/* LCD Raster Timing 2 Register */
--#define LCD_AC_BIAS_TRANSITIONS_PER_INT(x)	((x) << 16)
--#define LCD_AC_BIAS_FREQUENCY(x)		((x) << 8)
--#define LCD_SYNC_CTRL				BIT(25)
--#define LCD_SYNC_EDGE				BIT(24)
--#define LCD_INVERT_PIXEL_CLOCK			BIT(22)
--#define LCD_INVERT_LINE_CLOCK			BIT(21)
--#define LCD_INVERT_FRAME_CLOCK			BIT(20)
--
--/* LCD Block */
--#define  LCD_PID_REG				0x0
--#define  LCD_CTRL_REG				0x4
--#define  LCD_STAT_REG				0x8
--#define  LCD_RASTER_CTRL_REG			0x28
--#define  LCD_RASTER_TIMING_0_REG		0x2C
--#define  LCD_RASTER_TIMING_1_REG		0x30
--#define  LCD_RASTER_TIMING_2_REG		0x34
--#define  LCD_DMA_CTRL_REG			0x40
--#define  LCD_DMA_FRM_BUF_BASE_ADDR_0_REG	0x44
--#define  LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG	0x48
--#define  LCD_DMA_FRM_BUF_BASE_ADDR_1_REG	0x4C
--#define  LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG	0x50
--
--/* Interrupt Registers available only in Version 2 */
--#define  LCD_RAW_STAT_REG			0x58
--#define  LCD_MASKED_STAT_REG			0x5c
--#define  LCD_INT_ENABLE_SET_REG			0x60
--#define  LCD_INT_ENABLE_CLR_REG			0x64
--#define  LCD_END_OF_INT_IND_REG			0x68
--
--/* Clock registers available only on Version 2 */
--#define  LCD_CLK_ENABLE_REG			0x6c
--#define  LCD_CLK_RESET_REG			0x70
--#define  LCD_CLK_MAIN_RESET			BIT(3)
--
--#define LCD_NUM_BUFFERS	2
--
--#define PALETTE_SIZE	256
--
--#define	CLK_MIN_DIV	2
--#define	CLK_MAX_DIV	255
--
--static void __iomem *da8xx_fb_reg_base;
--static unsigned int lcd_revision;
--static irq_handler_t lcdc_irq_handler;
--static wait_queue_head_t frame_done_wq;
--static int frame_done_flag;
--
--static unsigned int lcdc_read(unsigned int addr)
--{
--	return (unsigned int)__raw_readl(da8xx_fb_reg_base + (addr));
--}
--
--static void lcdc_write(unsigned int val, unsigned int addr)
--{
--	__raw_writel(val, da8xx_fb_reg_base + (addr));
--}
--
--struct da8xx_fb_par {
--	struct device		*dev;
--	dma_addr_t		p_palette_base;
--	unsigned char *v_palette_base;
--	dma_addr_t		vram_phys;
--	unsigned long		vram_size;
--	void			*vram_virt;
--	unsigned int		dma_start;
--	unsigned int		dma_end;
--	struct clk *lcdc_clk;
--	int irq;
--	unsigned int palette_sz;
--	int blank;
--	wait_queue_head_t	vsync_wait;
--	int			vsync_flag;
--	int			vsync_timeout;
--	spinlock_t		lock_for_chan_update;
--
--	/*
--	 * LCDC has 2 ping pong DMA channels, channel 0
--	 * and channel 1.
--	 */
--	unsigned int		which_dma_channel_done;
--#ifdef CONFIG_CPU_FREQ
--	struct notifier_block	freq_transition;
--#endif
--	unsigned int		lcdc_clk_rate;
--	struct regulator	*lcd_supply;
--	u32 pseudo_palette[16];
--	struct fb_videomode	mode;
--	struct lcd_ctrl_config	cfg;
--};
--
--static struct fb_var_screeninfo da8xx_fb_var;
--
--static struct fb_fix_screeninfo da8xx_fb_fix = {
--	.id = "DA8xx FB Drv",
--	.type = FB_TYPE_PACKED_PIXELS,
--	.type_aux = 0,
--	.visual = FB_VISUAL_PSEUDOCOLOR,
--	.xpanstep = 0,
--	.ypanstep = 1,
--	.ywrapstep = 0,
--	.accel = FB_ACCEL_NONE
--};
--
--static struct fb_videomode known_lcd_panels[] = {
--	/* Sharp LCD035Q3DG01 */
--	[0] = {
--		.name           = "Sharp_LCD035Q3DG01",
--		.xres           = 320,
--		.yres           = 240,
--		.pixclock       = KHZ2PICOS(4607),
--		.left_margin    = 6,
--		.right_margin   = 8,
--		.upper_margin   = 2,
--		.lower_margin   = 2,
--		.hsync_len      = 0,
--		.vsync_len      = 0,
--		.sync           = FB_SYNC_CLK_INVERT,
--	},
--	/* Sharp LK043T1DG01 */
--	[1] = {
--		.name           = "Sharp_LK043T1DG01",
--		.xres           = 480,
--		.yres           = 272,
--		.pixclock       = KHZ2PICOS(7833),
--		.left_margin    = 2,
--		.right_margin   = 2,
--		.upper_margin   = 2,
--		.lower_margin   = 2,
--		.hsync_len      = 41,
--		.vsync_len      = 10,
--		.sync           = 0,
--		.flag           = 0,
--	},
--	[2] = {
--		/* Hitachi SP10Q010 */
--		.name           = "SP10Q010",
--		.xres           = 320,
--		.yres           = 240,
--		.pixclock       = KHZ2PICOS(7833),
--		.left_margin    = 10,
--		.right_margin   = 10,
--		.upper_margin   = 10,
--		.lower_margin   = 10,
--		.hsync_len      = 10,
--		.vsync_len      = 10,
--		.sync           = 0,
--		.flag           = 0,
--	},
--	[3] = {
--		/* Densitron 84-0023-001T */
--		.name           = "Densitron_84-0023-001T",
--		.xres           = 320,
--		.yres           = 240,
--		.pixclock       = KHZ2PICOS(6400),
--		.left_margin    = 0,
--		.right_margin   = 0,
--		.upper_margin   = 0,
--		.lower_margin   = 0,
--		.hsync_len      = 30,
--		.vsync_len      = 3,
--		.sync           = 0,
--	},
--};
--
--static bool da8xx_fb_is_raster_enabled(void)
--{
--	return !!(lcdc_read(LCD_RASTER_CTRL_REG) & LCD_RASTER_ENABLE);
--}
--
--/* Enable the Raster Engine of the LCD Controller */
--static void lcd_enable_raster(void)
--{
--	u32 reg;
--
--	/* Put LCDC in reset for several cycles */
--	if (lcd_revision == LCD_VERSION_2)
--		/* Write 1 to reset LCDC */
--		lcdc_write(LCD_CLK_MAIN_RESET, LCD_CLK_RESET_REG);
--	mdelay(1);
--
--	/* Bring LCDC out of reset */
--	if (lcd_revision == LCD_VERSION_2)
--		lcdc_write(0, LCD_CLK_RESET_REG);
--	mdelay(1);
--
--	/* Above reset sequence doesnot reset register context */
--	reg = lcdc_read(LCD_RASTER_CTRL_REG);
--	if (!(reg & LCD_RASTER_ENABLE))
--		lcdc_write(reg | LCD_RASTER_ENABLE, LCD_RASTER_CTRL_REG);
--}
--
--/* Disable the Raster Engine of the LCD Controller */
--static void lcd_disable_raster(enum da8xx_frame_complete wait_for_frame_done)
--{
--	u32 reg;
--	int ret;
--
--	reg = lcdc_read(LCD_RASTER_CTRL_REG);
--	if (reg & LCD_RASTER_ENABLE)
--		lcdc_write(reg & ~LCD_RASTER_ENABLE, LCD_RASTER_CTRL_REG);
--	else
--		/* return if already disabled */
--		return;
--
--	if ((wait_for_frame_done == DA8XX_FRAME_WAIT) &&
--			(lcd_revision == LCD_VERSION_2)) {
--		frame_done_flag = 0;
--		ret = wait_event_interruptible_timeout(frame_done_wq,
--				frame_done_flag != 0,
--				msecs_to_jiffies(50));
--		if (ret == 0)
--			pr_err("LCD Controller timed out\n");
--	}
--}
--
--static void lcd_blit(int load_mode, struct da8xx_fb_par *par)
--{
--	u32 start;
--	u32 end;
--	u32 reg_ras;
--	u32 reg_dma;
--	u32 reg_int;
--
--	/* init reg to clear PLM (loading mode) fields */
--	reg_ras = lcdc_read(LCD_RASTER_CTRL_REG);
--	reg_ras &= ~(3 << 20);
--
--	reg_dma  = lcdc_read(LCD_DMA_CTRL_REG);
--
--	if (load_mode == LOAD_DATA) {
--		start    = par->dma_start;
--		end      = par->dma_end;
--
--		reg_ras |= LCD_PALETTE_LOAD_MODE(DATA_ONLY);
--		if (lcd_revision == LCD_VERSION_1) {
--			reg_dma |= LCD_V1_END_OF_FRAME_INT_ENA;
--		} else {
--			reg_int = lcdc_read(LCD_INT_ENABLE_SET_REG) |
--				LCD_V2_END_OF_FRAME0_INT_ENA |
--				LCD_V2_END_OF_FRAME1_INT_ENA |
--				LCD_FRAME_DONE | LCD_SYNC_LOST;
--			lcdc_write(reg_int, LCD_INT_ENABLE_SET_REG);
--		}
--		reg_dma |= LCD_DUAL_FRAME_BUFFER_ENABLE;
--
--		lcdc_write(start, LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
--		lcdc_write(end, LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
--		lcdc_write(start, LCD_DMA_FRM_BUF_BASE_ADDR_1_REG);
--		lcdc_write(end, LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG);
--	} else if (load_mode == LOAD_PALETTE) {
--		start    = par->p_palette_base;
--		end      = start + par->palette_sz - 1;
--
--		reg_ras |= LCD_PALETTE_LOAD_MODE(PALETTE_ONLY);
--
--		if (lcd_revision == LCD_VERSION_1) {
--			reg_ras |= LCD_V1_PL_INT_ENA;
--		} else {
--			reg_int = lcdc_read(LCD_INT_ENABLE_SET_REG) |
--				LCD_V2_PL_INT_ENA;
--			lcdc_write(reg_int, LCD_INT_ENABLE_SET_REG);
--		}
--
--		lcdc_write(start, LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
--		lcdc_write(end, LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
--	}
--
--	lcdc_write(reg_dma, LCD_DMA_CTRL_REG);
--	lcdc_write(reg_ras, LCD_RASTER_CTRL_REG);
--
--	/*
--	 * The Raster enable bit must be set after all other control fields are
--	 * set.
--	 */
--	lcd_enable_raster();
--}
--
--/* Configure the Burst Size and fifo threhold of DMA */
--static int lcd_cfg_dma(int burst_size, int fifo_th)
--{
--	u32 reg;
--
--	reg = lcdc_read(LCD_DMA_CTRL_REG) & 0x00000001;
--	switch (burst_size) {
--	case 1:
--		reg |= LCD_DMA_BURST_SIZE(LCD_DMA_BURST_1);
--		break;
--	case 2:
--		reg |= LCD_DMA_BURST_SIZE(LCD_DMA_BURST_2);
--		break;
--	case 4:
--		reg |= LCD_DMA_BURST_SIZE(LCD_DMA_BURST_4);
--		break;
--	case 8:
--		reg |= LCD_DMA_BURST_SIZE(LCD_DMA_BURST_8);
--		break;
--	case 16:
--	default:
--		reg |= LCD_DMA_BURST_SIZE(LCD_DMA_BURST_16);
--		break;
--	}
--
--	reg |= (fifo_th << 8);
--
--	lcdc_write(reg, LCD_DMA_CTRL_REG);
--
--	return 0;
--}
--
--static void lcd_cfg_ac_bias(int period, int transitions_per_int)
--{
--	u32 reg;
--
--	/* Set the AC Bias Period and Number of Transisitons per Interrupt */
--	reg = lcdc_read(LCD_RASTER_TIMING_2_REG) & 0xFFF00000;
--	reg |= LCD_AC_BIAS_FREQUENCY(period) |
--		LCD_AC_BIAS_TRANSITIONS_PER_INT(transitions_per_int);
--	lcdc_write(reg, LCD_RASTER_TIMING_2_REG);
--}
--
--static void lcd_cfg_horizontal_sync(int back_porch, int pulse_width,
--		int front_porch)
--{
--	u32 reg;
--
--	reg = lcdc_read(LCD_RASTER_TIMING_0_REG) & 0x3ff;
--	reg |= (((back_porch-1) & 0xff) << 24)
--	    | (((front_porch-1) & 0xff) << 16)
--	    | (((pulse_width-1) & 0x3f) << 10);
--	lcdc_write(reg, LCD_RASTER_TIMING_0_REG);
--
--	/*
--	 * LCDC Version 2 adds some extra bits that increase the allowable
--	 * size of the horizontal timing registers.
--	 * remember that the registers use 0 to represent 1 so all values
--	 * that get set into register need to be decremented by 1
--	 */
--	if (lcd_revision == LCD_VERSION_2) {
--		/* Mask off the bits we want to change */
--		reg = lcdc_read(LCD_RASTER_TIMING_2_REG) & ~0x780000ff;
--		reg |= ((front_porch-1) & 0x300) >> 8;
--		reg |= ((back_porch-1) & 0x300) >> 4;
--		reg |= ((pulse_width-1) & 0x3c0) << 21;
--		lcdc_write(reg, LCD_RASTER_TIMING_2_REG);
--	}
--}
--
--static void lcd_cfg_vertical_sync(int back_porch, int pulse_width,
--		int front_porch)
--{
--	u32 reg;
--
--	reg = lcdc_read(LCD_RASTER_TIMING_1_REG) & 0x3ff;
--	reg |= ((back_porch & 0xff) << 24)
--	    | ((front_porch & 0xff) << 16)
--	    | (((pulse_width-1) & 0x3f) << 10);
--	lcdc_write(reg, LCD_RASTER_TIMING_1_REG);
--}
--
--static int lcd_cfg_display(const struct lcd_ctrl_config *cfg,
--		struct fb_videomode *panel)
--{
--	u32 reg;
--	u32 reg_int;
--
--	reg = lcdc_read(LCD_RASTER_CTRL_REG) & ~(LCD_TFT_MODE |
--						LCD_MONO_8BIT_MODE |
--						LCD_MONOCHROME_MODE);
--
--	switch (cfg->panel_shade) {
--	case MONOCHROME:
--		reg |= LCD_MONOCHROME_MODE;
--		if (cfg->mono_8bit_mode)
--			reg |= LCD_MONO_8BIT_MODE;
--		break;
--	case COLOR_ACTIVE:
--		reg |= LCD_TFT_MODE;
--		if (cfg->tft_alt_mode)
--			reg |= LCD_TFT_ALT_ENABLE;
--		break;
--
--	case COLOR_PASSIVE:
--		/* AC bias applicable only for Pasive panels */
--		lcd_cfg_ac_bias(cfg->ac_bias, cfg->ac_bias_intrpt);
--		if (cfg->bpp == 12 && cfg->stn_565_mode)
--			reg |= LCD_STN_565_ENABLE;
--		break;
--
--	default:
--		return -EINVAL;
--	}
--
--	/* enable additional interrupts here */
--	if (lcd_revision == LCD_VERSION_1) {
--		reg |= LCD_V1_UNDERFLOW_INT_ENA;
--	} else {
--		reg_int = lcdc_read(LCD_INT_ENABLE_SET_REG) |
--			LCD_V2_UNDERFLOW_INT_ENA;
--		lcdc_write(reg_int, LCD_INT_ENABLE_SET_REG);
--	}
--
--	lcdc_write(reg, LCD_RASTER_CTRL_REG);
--
--	reg = lcdc_read(LCD_RASTER_TIMING_2_REG);
--
--	reg |= LCD_SYNC_CTRL;
--
--	if (cfg->sync_edge)
--		reg |= LCD_SYNC_EDGE;
--	else
--		reg &= ~LCD_SYNC_EDGE;
--
--	if ((panel->sync & FB_SYNC_HOR_HIGH_ACT) == 0)
--		reg |= LCD_INVERT_LINE_CLOCK;
--	else
--		reg &= ~LCD_INVERT_LINE_CLOCK;
--
--	if ((panel->sync & FB_SYNC_VERT_HIGH_ACT) == 0)
--		reg |= LCD_INVERT_FRAME_CLOCK;
--	else
--		reg &= ~LCD_INVERT_FRAME_CLOCK;
--
--	lcdc_write(reg, LCD_RASTER_TIMING_2_REG);
--
--	return 0;
--}
--
--static int lcd_cfg_frame_buffer(struct da8xx_fb_par *par, u32 width, u32 height,
--		u32 bpp, u32 raster_order)
--{
--	u32 reg;
--
--	if (bpp > 16 && lcd_revision == LCD_VERSION_1)
--		return -EINVAL;
--
--	/* Set the Panel Width */
--	/* Pixels per line = (PPL + 1)*16 */
--	if (lcd_revision == LCD_VERSION_1) {
--		/*
--		 * 0x3F in bits 4..9 gives max horizontal resolution = 1024
--		 * pixels.
--		 */
--		width &= 0x3f0;
--	} else {
--		/*
--		 * 0x7F in bits 4..10 gives max horizontal resolution = 2048
--		 * pixels.
--		 */
--		width &= 0x7f0;
--	}
--
--	reg = lcdc_read(LCD_RASTER_TIMING_0_REG);
--	reg &= 0xfffffc00;
--	if (lcd_revision == LCD_VERSION_1) {
--		reg |= ((width >> 4) - 1) << 4;
--	} else {
--		width = (width >> 4) - 1;
--		reg |= ((width & 0x3f) << 4) | ((width & 0x40) >> 3);
--	}
--	lcdc_write(reg, LCD_RASTER_TIMING_0_REG);
--
--	/* Set the Panel Height */
--	/* Set bits 9:0 of Lines Per Pixel */
--	reg = lcdc_read(LCD_RASTER_TIMING_1_REG);
--	reg = ((height - 1) & 0x3ff) | (reg & 0xfffffc00);
--	lcdc_write(reg, LCD_RASTER_TIMING_1_REG);
--
--	/* Set bit 10 of Lines Per Pixel */
--	if (lcd_revision == LCD_VERSION_2) {
--		reg = lcdc_read(LCD_RASTER_TIMING_2_REG);
--		reg |= ((height - 1) & 0x400) << 16;
--		lcdc_write(reg, LCD_RASTER_TIMING_2_REG);
--	}
--
--	/* Set the Raster Order of the Frame Buffer */
--	reg = lcdc_read(LCD_RASTER_CTRL_REG) & ~(1 << 8);
--	if (raster_order)
--		reg |= LCD_RASTER_ORDER;
--
--	par->palette_sz = 16 * 2;
--
--	switch (bpp) {
--	case 1:
--	case 2:
--	case 4:
--	case 16:
--		break;
--	case 24:
--		reg |= LCD_V2_TFT_24BPP_MODE;
--		break;
--	case 32:
--		reg |= LCD_V2_TFT_24BPP_MODE;
--		reg |= LCD_V2_TFT_24BPP_UNPACK;
--		break;
--	case 8:
--		par->palette_sz = 256 * 2;
--		break;
--
--	default:
--		return -EINVAL;
--	}
--
--	lcdc_write(reg, LCD_RASTER_CTRL_REG);
--
--	return 0;
--}
--
--#define CNVT_TOHW(val, width) ((((val) << (width)) + 0x7FFF - (val)) >> 16)
--static int fb_setcolreg(unsigned regno, unsigned red, unsigned green,
--			      unsigned blue, unsigned transp,
--			      struct fb_info *info)
--{
--	struct da8xx_fb_par *par = info->par;
--	unsigned short *palette = (unsigned short *) par->v_palette_base;
--	u_short pal;
--	int update_hw = 0;
--
--	if (regno > 255)
--		return 1;
--
--	if (info->fix.visual == FB_VISUAL_DIRECTCOLOR)
--		return 1;
--
--	if (info->var.bits_per_pixel > 16 && lcd_revision == LCD_VERSION_1)
--		return -EINVAL;
--
--	switch (info->fix.visual) {
--	case FB_VISUAL_TRUECOLOR:
--		red = CNVT_TOHW(red, info->var.red.length);
--		green = CNVT_TOHW(green, info->var.green.length);
--		blue = CNVT_TOHW(blue, info->var.blue.length);
--		break;
--	case FB_VISUAL_PSEUDOCOLOR:
--		switch (info->var.bits_per_pixel) {
--		case 4:
--			if (regno > 15)
--				return -EINVAL;
--
--			if (info->var.grayscale) {
--				pal = regno;
--			} else {
--				red >>= 4;
--				green >>= 8;
--				blue >>= 12;
--
--				pal = red & 0x0f00;
--				pal |= green & 0x00f0;
--				pal |= blue & 0x000f;
--			}
--			if (regno == 0)
--				pal |= 0x2000;
--			palette[regno] = pal;
--			break;
--
--		case 8:
--			red >>= 4;
--			green >>= 8;
--			blue >>= 12;
--
--			pal = (red & 0x0f00);
--			pal |= (green & 0x00f0);
--			pal |= (blue & 0x000f);
--
--			if (palette[regno] != pal) {
--				update_hw = 1;
--				palette[regno] = pal;
--			}
--			break;
--		}
--		break;
--	}
--
--	/* Truecolor has hardware independent palette */
--	if (info->fix.visual == FB_VISUAL_TRUECOLOR) {
--		u32 v;
--
--		if (regno > 15)
--			return -EINVAL;
--
--		v = (red << info->var.red.offset) |
--			(green << info->var.green.offset) |
--			(blue << info->var.blue.offset);
--
--		((u32 *) (info->pseudo_palette))[regno] = v;
--		if (palette[0] != 0x4000) {
--			update_hw = 1;
--			palette[0] = 0x4000;
--		}
--	}
--
--	/* Update the palette in the h/w as needed. */
--	if (update_hw)
--		lcd_blit(LOAD_PALETTE, par);
--
--	return 0;
--}
--#undef CNVT_TOHW
--
--static void da8xx_fb_lcd_reset(void)
--{
--	/* DMA has to be disabled */
--	lcdc_write(0, LCD_DMA_CTRL_REG);
--	lcdc_write(0, LCD_RASTER_CTRL_REG);
--
--	if (lcd_revision == LCD_VERSION_2) {
--		lcdc_write(0, LCD_INT_ENABLE_SET_REG);
--		/* Write 1 to reset */
--		lcdc_write(LCD_CLK_MAIN_RESET, LCD_CLK_RESET_REG);
--		lcdc_write(0, LCD_CLK_RESET_REG);
--	}
--}
--
--static int da8xx_fb_config_clk_divider(struct da8xx_fb_par *par,
--					      unsigned lcdc_clk_div,
--					      unsigned lcdc_clk_rate)
--{
--	int ret;
--
--	if (par->lcdc_clk_rate != lcdc_clk_rate) {
--		ret = clk_set_rate(par->lcdc_clk, lcdc_clk_rate);
--		if (ret) {
--			dev_err(par->dev,
--				"unable to set clock rate at %u\n",
--				lcdc_clk_rate);
--			return ret;
--		}
--		par->lcdc_clk_rate = clk_get_rate(par->lcdc_clk);
--	}
--
--	/* Configure the LCD clock divisor. */
--	lcdc_write(LCD_CLK_DIVISOR(lcdc_clk_div) |
--			(LCD_RASTER_MODE & 0x1), LCD_CTRL_REG);
--
--	if (lcd_revision == LCD_VERSION_2)
--		lcdc_write(LCD_V2_DMA_CLK_EN | LCD_V2_LIDD_CLK_EN |
--				LCD_V2_CORE_CLK_EN, LCD_CLK_ENABLE_REG);
--
--	return 0;
--}
--
--static unsigned int da8xx_fb_calc_clk_divider(struct da8xx_fb_par *par,
--					      unsigned pixclock,
--					      unsigned *lcdc_clk_rate)
--{
--	unsigned lcdc_clk_div;
--
--	pixclock = PICOS2KHZ(pixclock) * 1000;
--
--	*lcdc_clk_rate = par->lcdc_clk_rate;
--
--	if (pixclock < (*lcdc_clk_rate / CLK_MAX_DIV)) {
--		*lcdc_clk_rate = clk_round_rate(par->lcdc_clk,
--						pixclock * CLK_MAX_DIV);
--		lcdc_clk_div = CLK_MAX_DIV;
--	} else if (pixclock > (*lcdc_clk_rate / CLK_MIN_DIV)) {
--		*lcdc_clk_rate = clk_round_rate(par->lcdc_clk,
--						pixclock * CLK_MIN_DIV);
--		lcdc_clk_div = CLK_MIN_DIV;
--	} else {
--		lcdc_clk_div = *lcdc_clk_rate / pixclock;
--	}
--
--	return lcdc_clk_div;
--}
--
--static int da8xx_fb_calc_config_clk_divider(struct da8xx_fb_par *par,
--					    struct fb_videomode *mode)
--{
--	unsigned lcdc_clk_rate;
--	unsigned lcdc_clk_div = da8xx_fb_calc_clk_divider(par, mode->pixclock,
--							  &lcdc_clk_rate);
--
--	return da8xx_fb_config_clk_divider(par, lcdc_clk_div, lcdc_clk_rate);
--}
--
--static unsigned da8xx_fb_round_clk(struct da8xx_fb_par *par,
--					  unsigned pixclock)
--{
--	unsigned lcdc_clk_div, lcdc_clk_rate;
--
--	lcdc_clk_div = da8xx_fb_calc_clk_divider(par, pixclock, &lcdc_clk_rate);
--	return KHZ2PICOS(lcdc_clk_rate / (1000 * lcdc_clk_div));
--}
--
--static int lcd_init(struct da8xx_fb_par *par, const struct lcd_ctrl_config *cfg,
--		struct fb_videomode *panel)
--{
--	u32 bpp;
--	int ret = 0;
--
--	ret = da8xx_fb_calc_config_clk_divider(par, panel);
--	if (ret) {
--		dev_err(par->dev, "unable to configure clock\n");
--		return ret;
--	}
--
--	if (panel->sync & FB_SYNC_CLK_INVERT)
--		lcdc_write((lcdc_read(LCD_RASTER_TIMING_2_REG) |
--			LCD_INVERT_PIXEL_CLOCK), LCD_RASTER_TIMING_2_REG);
--	else
--		lcdc_write((lcdc_read(LCD_RASTER_TIMING_2_REG) &
--			~LCD_INVERT_PIXEL_CLOCK), LCD_RASTER_TIMING_2_REG);
--
--	/* Configure the DMA burst size and fifo threshold. */
--	ret = lcd_cfg_dma(cfg->dma_burst_sz, cfg->fifo_th);
--	if (ret < 0)
--		return ret;
--
--	/* Configure the vertical and horizontal sync properties. */
--	lcd_cfg_vertical_sync(panel->upper_margin, panel->vsync_len,
--			panel->lower_margin);
--	lcd_cfg_horizontal_sync(panel->left_margin, panel->hsync_len,
--			panel->right_margin);
--
--	/* Configure for disply */
--	ret = lcd_cfg_display(cfg, panel);
--	if (ret < 0)
--		return ret;
--
--	bpp = cfg->bpp;
--
--	if (bpp == 12)
--		bpp = 16;
--	ret = lcd_cfg_frame_buffer(par, (unsigned int)panel->xres,
--				(unsigned int)panel->yres, bpp,
--				cfg->raster_order);
--	if (ret < 0)
--		return ret;
--
--	/* Configure FDD */
--	lcdc_write((lcdc_read(LCD_RASTER_CTRL_REG) & 0xfff00fff) |
--		       (cfg->fdd << 12), LCD_RASTER_CTRL_REG);
--
--	return 0;
--}
--
--/* IRQ handler for version 2 of LCDC */
--static irqreturn_t lcdc_irq_handler_rev02(int irq, void *arg)
--{
--	struct da8xx_fb_par *par = arg;
--	u32 stat = lcdc_read(LCD_MASKED_STAT_REG);
--
--	if ((stat & LCD_SYNC_LOST) && (stat & LCD_FIFO_UNDERFLOW)) {
--		lcd_disable_raster(DA8XX_FRAME_NOWAIT);
--		lcdc_write(stat, LCD_MASKED_STAT_REG);
--		lcd_enable_raster();
--	} else if (stat & LCD_PL_LOAD_DONE) {
--		/*
--		 * Must disable raster before changing state of any control bit.
--		 * And also must be disabled before clearing the PL loading
--		 * interrupt via the following write to the status register. If
--		 * this is done after then one gets multiple PL done interrupts.
--		 */
--		lcd_disable_raster(DA8XX_FRAME_NOWAIT);
--
--		lcdc_write(stat, LCD_MASKED_STAT_REG);
--
--		/* Disable PL completion interrupt */
--		lcdc_write(LCD_V2_PL_INT_ENA, LCD_INT_ENABLE_CLR_REG);
--
--		/* Setup and start data loading mode */
--		lcd_blit(LOAD_DATA, par);
--	} else {
--		lcdc_write(stat, LCD_MASKED_STAT_REG);
--
--		if (stat & LCD_END_OF_FRAME0) {
--			par->which_dma_channel_done = 0;
--			lcdc_write(par->dma_start,
--				   LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
--			lcdc_write(par->dma_end,
--				   LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
--			par->vsync_flag = 1;
--			wake_up_interruptible(&par->vsync_wait);
--		}
--
--		if (stat & LCD_END_OF_FRAME1) {
--			par->which_dma_channel_done = 1;
--			lcdc_write(par->dma_start,
--				   LCD_DMA_FRM_BUF_BASE_ADDR_1_REG);
--			lcdc_write(par->dma_end,
--				   LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG);
--			par->vsync_flag = 1;
--			wake_up_interruptible(&par->vsync_wait);
--		}
--
--		/* Set only when controller is disabled and at the end of
--		 * active frame
--		 */
--		if (stat & BIT(0)) {
--			frame_done_flag = 1;
--			wake_up_interruptible(&frame_done_wq);
--		}
--	}
--
--	lcdc_write(0, LCD_END_OF_INT_IND_REG);
--	return IRQ_HANDLED;
--}
--
--/* IRQ handler for version 1 LCDC */
--static irqreturn_t lcdc_irq_handler_rev01(int irq, void *arg)
--{
--	struct da8xx_fb_par *par = arg;
--	u32 stat = lcdc_read(LCD_STAT_REG);
--	u32 reg_ras;
--
--	if ((stat & LCD_SYNC_LOST) && (stat & LCD_FIFO_UNDERFLOW)) {
--		lcd_disable_raster(DA8XX_FRAME_NOWAIT);
--		lcdc_write(stat, LCD_STAT_REG);
--		lcd_enable_raster();
--	} else if (stat & LCD_PL_LOAD_DONE) {
--		/*
--		 * Must disable raster before changing state of any control bit.
--		 * And also must be disabled before clearing the PL loading
--		 * interrupt via the following write to the status register. If
--		 * this is done after then one gets multiple PL done interrupts.
--		 */
--		lcd_disable_raster(DA8XX_FRAME_NOWAIT);
--
--		lcdc_write(stat, LCD_STAT_REG);
--
--		/* Disable PL completion inerrupt */
--		reg_ras  = lcdc_read(LCD_RASTER_CTRL_REG);
--		reg_ras &= ~LCD_V1_PL_INT_ENA;
--		lcdc_write(reg_ras, LCD_RASTER_CTRL_REG);
--
--		/* Setup and start data loading mode */
--		lcd_blit(LOAD_DATA, par);
--	} else {
--		lcdc_write(stat, LCD_STAT_REG);
--
--		if (stat & LCD_END_OF_FRAME0) {
--			par->which_dma_channel_done = 0;
--			lcdc_write(par->dma_start,
--				   LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
--			lcdc_write(par->dma_end,
--				   LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
--			par->vsync_flag = 1;
--			wake_up_interruptible(&par->vsync_wait);
--		}
--
--		if (stat & LCD_END_OF_FRAME1) {
--			par->which_dma_channel_done = 1;
--			lcdc_write(par->dma_start,
--				   LCD_DMA_FRM_BUF_BASE_ADDR_1_REG);
--			lcdc_write(par->dma_end,
--				   LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG);
--			par->vsync_flag = 1;
--			wake_up_interruptible(&par->vsync_wait);
--		}
--	}
--
--	return IRQ_HANDLED;
--}
--
--static int fb_check_var(struct fb_var_screeninfo *var,
--			struct fb_info *info)
--{
--	int err = 0;
--	struct da8xx_fb_par *par = info->par;
--	int bpp = var->bits_per_pixel >> 3;
--	unsigned long line_size = var->xres_virtual * bpp;
--
--	if (var->bits_per_pixel > 16 && lcd_revision == LCD_VERSION_1)
--		return -EINVAL;
--
--	switch (var->bits_per_pixel) {
--	case 1:
--	case 8:
--		var->red.offset = 0;
--		var->red.length = 8;
--		var->green.offset = 0;
--		var->green.length = 8;
--		var->blue.offset = 0;
--		var->blue.length = 8;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		var->nonstd = 0;
--		break;
--	case 4:
--		var->red.offset = 0;
--		var->red.length = 4;
--		var->green.offset = 0;
--		var->green.length = 4;
--		var->blue.offset = 0;
--		var->blue.length = 4;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		var->nonstd = FB_NONSTD_REV_PIX_IN_B;
--		break;
--	case 16:		/* RGB 565 */
--		var->red.offset = 11;
--		var->red.length = 5;
--		var->green.offset = 5;
--		var->green.length = 6;
--		var->blue.offset = 0;
--		var->blue.length = 5;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		var->nonstd = 0;
--		break;
--	case 24:
--		var->red.offset = 16;
--		var->red.length = 8;
--		var->green.offset = 8;
--		var->green.length = 8;
--		var->blue.offset = 0;
--		var->blue.length = 8;
--		var->nonstd = 0;
--		break;
--	case 32:
--		var->transp.offset = 24;
--		var->transp.length = 8;
--		var->red.offset = 16;
--		var->red.length = 8;
--		var->green.offset = 8;
--		var->green.length = 8;
--		var->blue.offset = 0;
--		var->blue.length = 8;
--		var->nonstd = 0;
--		break;
--	default:
--		err = -EINVAL;
--	}
--
--	var->red.msb_right = 0;
--	var->green.msb_right = 0;
--	var->blue.msb_right = 0;
--	var->transp.msb_right = 0;
--
--	if (line_size * var->yres_virtual > par->vram_size)
--		var->yres_virtual = par->vram_size / line_size;
--
--	if (var->yres > var->yres_virtual)
--		var->yres = var->yres_virtual;
--
--	if (var->xres > var->xres_virtual)
--		var->xres = var->xres_virtual;
--
--	if (var->xres + var->xoffset > var->xres_virtual)
--		var->xoffset = var->xres_virtual - var->xres;
--	if (var->yres + var->yoffset > var->yres_virtual)
--		var->yoffset = var->yres_virtual - var->yres;
--
--	var->pixclock = da8xx_fb_round_clk(par, var->pixclock);
--
--	return err;
--}
--
--#ifdef CONFIG_CPU_FREQ
--static int lcd_da8xx_cpufreq_transition(struct notifier_block *nb,
--				     unsigned long val, void *data)
--{
--	struct da8xx_fb_par *par;
--
--	par = container_of(nb, struct da8xx_fb_par, freq_transition);
--	if (val == CPUFREQ_POSTCHANGE) {
--		if (par->lcdc_clk_rate != clk_get_rate(par->lcdc_clk)) {
--			par->lcdc_clk_rate = clk_get_rate(par->lcdc_clk);
--			lcd_disable_raster(DA8XX_FRAME_WAIT);
--			da8xx_fb_calc_config_clk_divider(par, &par->mode);
--			if (par->blank == FB_BLANK_UNBLANK)
--				lcd_enable_raster();
--		}
--	}
--
--	return 0;
--}
--
--static int lcd_da8xx_cpufreq_register(struct da8xx_fb_par *par)
--{
--	par->freq_transition.notifier_call = lcd_da8xx_cpufreq_transition;
--
--	return cpufreq_register_notifier(&par->freq_transition,
--					 CPUFREQ_TRANSITION_NOTIFIER);
--}
--
--static void lcd_da8xx_cpufreq_deregister(struct da8xx_fb_par *par)
--{
--	cpufreq_unregister_notifier(&par->freq_transition,
--				    CPUFREQ_TRANSITION_NOTIFIER);
--}
--#endif
--
--static void fb_remove(struct platform_device *dev)
--{
--	struct fb_info *info = platform_get_drvdata(dev);
--	struct da8xx_fb_par *par = info->par;
--	int ret;
--
--#ifdef CONFIG_CPU_FREQ
--	lcd_da8xx_cpufreq_deregister(par);
--#endif
--	if (par->lcd_supply) {
--		ret = regulator_disable(par->lcd_supply);
--		if (ret)
--			dev_warn(&dev->dev, "Failed to disable regulator (%pe)\n",
--				 ERR_PTR(ret));
--	}
--
--	lcd_disable_raster(DA8XX_FRAME_WAIT);
--	lcdc_write(0, LCD_RASTER_CTRL_REG);
--
--	/* disable DMA  */
--	lcdc_write(0, LCD_DMA_CTRL_REG);
--
--	unregister_framebuffer(info);
--	fb_dealloc_cmap(&info->cmap);
--	pm_runtime_put_sync(&dev->dev);
--	pm_runtime_disable(&dev->dev);
--	framebuffer_release(info);
--}
--
--/*
-- * Function to wait for vertical sync which for this LCD peripheral
-- * translates into waiting for the current raster frame to complete.
-- */
--static int fb_wait_for_vsync(struct fb_info *info)
--{
--	struct da8xx_fb_par *par = info->par;
--	int ret;
--
--	/*
--	 * Set flag to 0 and wait for isr to set to 1. It would seem there is a
--	 * race condition here where the ISR could have occurred just before or
--	 * just after this set. But since we are just coarsely waiting for
--	 * a frame to complete then that's OK. i.e. if the frame completed
--	 * just before this code executed then we have to wait another full
--	 * frame time but there is no way to avoid such a situation. On the
--	 * other hand if the frame completed just after then we don't need
--	 * to wait long at all. Either way we are guaranteed to return to the
--	 * user immediately after a frame completion which is all that is
--	 * required.
--	 */
--	par->vsync_flag = 0;
--	ret = wait_event_interruptible_timeout(par->vsync_wait,
--					       par->vsync_flag != 0,
--					       par->vsync_timeout);
--	if (ret < 0)
--		return ret;
--	if (ret == 0)
--		return -ETIMEDOUT;
--
--	return 0;
--}
--
--static int fb_ioctl(struct fb_info *info, unsigned int cmd,
--			  unsigned long arg)
--{
--	struct lcd_sync_arg sync_arg;
--
--	switch (cmd) {
--	case FBIOGET_CONTRAST:
--	case FBIOPUT_CONTRAST:
--	case FBIGET_BRIGHTNESS:
--	case FBIPUT_BRIGHTNESS:
--	case FBIGET_COLOR:
--	case FBIPUT_COLOR:
--		return -ENOTTY;
--	case FBIPUT_HSYNC:
--		if (copy_from_user(&sync_arg, (char *)arg,
--				sizeof(struct lcd_sync_arg)))
--			return -EFAULT;
--		lcd_cfg_horizontal_sync(sync_arg.back_porch,
--					sync_arg.pulse_width,
--					sync_arg.front_porch);
--		break;
--	case FBIPUT_VSYNC:
--		if (copy_from_user(&sync_arg, (char *)arg,
--				sizeof(struct lcd_sync_arg)))
--			return -EFAULT;
--		lcd_cfg_vertical_sync(sync_arg.back_porch,
--					sync_arg.pulse_width,
--					sync_arg.front_porch);
--		break;
--	case FBIO_WAITFORVSYNC:
--		return fb_wait_for_vsync(info);
--	default:
--		return -EINVAL;
--	}
--	return 0;
--}
--
--static int cfb_blank(int blank, struct fb_info *info)
--{
--	struct da8xx_fb_par *par = info->par;
--	int ret = 0;
--
--	if (par->blank == blank)
--		return 0;
--
--	par->blank = blank;
--	switch (blank) {
--	case FB_BLANK_UNBLANK:
--		lcd_enable_raster();
--
--		if (par->lcd_supply) {
--			ret = regulator_enable(par->lcd_supply);
--			if (ret)
--				return ret;
--		}
--		break;
--	case FB_BLANK_NORMAL:
--	case FB_BLANK_VSYNC_SUSPEND:
--	case FB_BLANK_HSYNC_SUSPEND:
--	case FB_BLANK_POWERDOWN:
--		if (par->lcd_supply) {
--			ret = regulator_disable(par->lcd_supply);
--			if (ret)
--				return ret;
--		}
--
--		lcd_disable_raster(DA8XX_FRAME_WAIT);
--		break;
--	default:
--		ret = -EINVAL;
--	}
--
--	return ret;
--}
--
--/*
-- * Set new x,y offsets in the virtual display for the visible area and switch
-- * to the new mode.
-- */
--static int da8xx_pan_display(struct fb_var_screeninfo *var,
--			     struct fb_info *fbi)
--{
--	int ret = 0;
--	struct fb_var_screeninfo new_var;
--	struct da8xx_fb_par         *par = fbi->par;
--	struct fb_fix_screeninfo    *fix = &fbi->fix;
--	unsigned int end;
--	unsigned int start;
--	unsigned long irq_flags;
--
--	if (var->xoffset != fbi->var.xoffset ||
--			var->yoffset != fbi->var.yoffset) {
--		memcpy(&new_var, &fbi->var, sizeof(new_var));
--		new_var.xoffset = var->xoffset;
--		new_var.yoffset = var->yoffset;
--		if (fb_check_var(&new_var, fbi))
--			ret = -EINVAL;
--		else {
--			memcpy(&fbi->var, &new_var, sizeof(new_var));
--
--			start	= fix->smem_start +
--				new_var.yoffset * fix->line_length +
--				new_var.xoffset * fbi->var.bits_per_pixel / 8;
--			end	= start + fbi->var.yres * fix->line_length - 1;
--			par->dma_start	= start;
--			par->dma_end	= end;
--			spin_lock_irqsave(&par->lock_for_chan_update,
--					irq_flags);
--			if (par->which_dma_channel_done == 0) {
--				lcdc_write(par->dma_start,
--					   LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
--				lcdc_write(par->dma_end,
--					   LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
--			} else if (par->which_dma_channel_done == 1) {
--				lcdc_write(par->dma_start,
--					   LCD_DMA_FRM_BUF_BASE_ADDR_1_REG);
--				lcdc_write(par->dma_end,
--					   LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG);
--			}
--			spin_unlock_irqrestore(&par->lock_for_chan_update,
--					irq_flags);
--		}
--	}
--
--	return ret;
--}
--
--static int da8xxfb_set_par(struct fb_info *info)
--{
--	struct da8xx_fb_par *par = info->par;
--	int ret;
--	bool raster = da8xx_fb_is_raster_enabled();
--
--	if (raster)
--		lcd_disable_raster(DA8XX_FRAME_WAIT);
--
--	fb_var_to_videomode(&par->mode, &info->var);
--
--	par->cfg.bpp = info->var.bits_per_pixel;
--
--	info->fix.visual = (par->cfg.bpp <= 8) ?
--				FB_VISUAL_PSEUDOCOLOR : FB_VISUAL_TRUECOLOR;
--	info->fix.line_length = (par->mode.xres * par->cfg.bpp) / 8;
--
--	ret = lcd_init(par, &par->cfg, &par->mode);
--	if (ret < 0) {
--		dev_err(par->dev, "lcd init failed\n");
--		return ret;
--	}
--
--	par->dma_start = info->fix.smem_start +
--			 info->var.yoffset * info->fix.line_length +
--			 info->var.xoffset * info->var.bits_per_pixel / 8;
--	par->dma_end   = par->dma_start +
--			 info->var.yres * info->fix.line_length - 1;
--
--	lcdc_write(par->dma_start, LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
--	lcdc_write(par->dma_end, LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
--	lcdc_write(par->dma_start, LCD_DMA_FRM_BUF_BASE_ADDR_1_REG);
--	lcdc_write(par->dma_end, LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG);
--
--	if (raster)
--		lcd_enable_raster();
--
--	return 0;
--}
--
--static const struct fb_ops da8xx_fb_ops = {
--	.owner = THIS_MODULE,
--	FB_DEFAULT_IOMEM_OPS,
--	.fb_check_var = fb_check_var,
--	.fb_set_par = da8xxfb_set_par,
--	.fb_setcolreg = fb_setcolreg,
--	.fb_pan_display = da8xx_pan_display,
--	.fb_ioctl = fb_ioctl,
--	.fb_blank = cfb_blank,
--};
--
--static struct fb_videomode *da8xx_fb_get_videomode(struct platform_device *dev)
--{
--	struct da8xx_lcdc_platform_data *fb_pdata = dev_get_platdata(&dev->dev);
--	struct fb_videomode *lcdc_info;
--	int i;
--
--	for (i = 0, lcdc_info = known_lcd_panels;
--		i < ARRAY_SIZE(known_lcd_panels); i++, lcdc_info++) {
--		if (strcmp(fb_pdata->type, lcdc_info->name) == 0)
--			break;
--	}
--
--	if (i == ARRAY_SIZE(known_lcd_panels)) {
--		dev_err(&dev->dev, "no panel found\n");
--		return NULL;
--	}
--	dev_info(&dev->dev, "found %s panel\n", lcdc_info->name);
--
--	return lcdc_info;
--}
--
--static int fb_probe(struct platform_device *device)
--{
--	struct da8xx_lcdc_platform_data *fb_pdata =
--						dev_get_platdata(&device->dev);
--	struct lcd_ctrl_config *lcd_cfg;
--	struct fb_videomode *lcdc_info;
--	struct fb_info *da8xx_fb_info;
--	struct da8xx_fb_par *par;
--	struct clk *tmp_lcdc_clk;
--	int ret;
--	unsigned long ulcm;
--
--	if (fb_pdata == NULL) {
--		dev_err(&device->dev, "Can not get platform data\n");
--		return -ENOENT;
--	}
--
--	lcdc_info = da8xx_fb_get_videomode(device);
--	if (lcdc_info == NULL)
--		return -ENODEV;
--
--	da8xx_fb_reg_base = devm_platform_ioremap_resource(device, 0);
--	if (IS_ERR(da8xx_fb_reg_base))
--		return PTR_ERR(da8xx_fb_reg_base);
--
--	tmp_lcdc_clk = devm_clk_get(&device->dev, "fck");
--	if (IS_ERR(tmp_lcdc_clk))
--		return dev_err_probe(&device->dev, PTR_ERR(tmp_lcdc_clk),
--				     "Can not get device clock\n");
--
--	pm_runtime_enable(&device->dev);
--	pm_runtime_get_sync(&device->dev);
--
--	/* Determine LCD IP Version */
--	switch (lcdc_read(LCD_PID_REG)) {
--	case 0x4C100102:
--		lcd_revision = LCD_VERSION_1;
--		break;
--	case 0x4F200800:
--	case 0x4F201000:
--		lcd_revision = LCD_VERSION_2;
--		break;
--	default:
--		dev_warn(&device->dev, "Unknown PID Reg value 0x%x, "
--				"defaulting to LCD revision 1\n",
--				lcdc_read(LCD_PID_REG));
--		lcd_revision = LCD_VERSION_1;
--		break;
--	}
--
--	lcd_cfg = (struct lcd_ctrl_config *)fb_pdata->controller_data;
--
--	if (!lcd_cfg) {
--		ret = -EINVAL;
--		goto err_pm_runtime_disable;
--	}
--
--	da8xx_fb_info = framebuffer_alloc(sizeof(struct da8xx_fb_par),
--					&device->dev);
--	if (!da8xx_fb_info) {
--		ret = -ENOMEM;
--		goto err_pm_runtime_disable;
--	}
--
--	par = da8xx_fb_info->par;
--	par->dev = &device->dev;
--	par->lcdc_clk = tmp_lcdc_clk;
--	par->lcdc_clk_rate = clk_get_rate(par->lcdc_clk);
--
--	par->lcd_supply = devm_regulator_get_optional(&device->dev, "lcd");
--	if (IS_ERR(par->lcd_supply)) {
--		if (PTR_ERR(par->lcd_supply) == -EPROBE_DEFER) {
--			ret = -EPROBE_DEFER;
--			goto err_release_fb;
--		}
--
--		par->lcd_supply = NULL;
--	} else {
--		ret = regulator_enable(par->lcd_supply);
--		if (ret)
--			goto err_release_fb;
--	}
--
--	fb_videomode_to_var(&da8xx_fb_var, lcdc_info);
--	par->cfg = *lcd_cfg;
--
--	da8xx_fb_lcd_reset();
--
--	/* allocate frame buffer */
--	par->vram_size = lcdc_info->xres * lcdc_info->yres * lcd_cfg->bpp;
--	ulcm = lcm((lcdc_info->xres * lcd_cfg->bpp)/8, PAGE_SIZE);
--	par->vram_size = roundup(par->vram_size/8, ulcm);
--	par->vram_size = par->vram_size * LCD_NUM_BUFFERS;
--
--	par->vram_virt = dmam_alloc_coherent(par->dev,
--					     par->vram_size,
--					     &par->vram_phys,
--					     GFP_KERNEL | GFP_DMA);
--	if (!par->vram_virt) {
--		dev_err(&device->dev,
--			"GLCD: kmalloc for frame buffer failed\n");
--		ret = -EINVAL;
--		goto err_disable_reg;
--	}
--
--	da8xx_fb_info->screen_base = (char __iomem *) par->vram_virt;
--	da8xx_fb_fix.smem_start    = par->vram_phys;
--	da8xx_fb_fix.smem_len      = par->vram_size;
--	da8xx_fb_fix.line_length   = (lcdc_info->xres * lcd_cfg->bpp) / 8;
--
--	par->dma_start = par->vram_phys;
--	par->dma_end   = par->dma_start + lcdc_info->yres *
--		da8xx_fb_fix.line_length - 1;
--
--	/* allocate palette buffer */
--	par->v_palette_base = dmam_alloc_coherent(par->dev, PALETTE_SIZE,
--						  &par->p_palette_base,
--						  GFP_KERNEL | GFP_DMA);
--	if (!par->v_palette_base) {
--		dev_err(&device->dev,
--			"GLCD: kmalloc for palette buffer failed\n");
--		ret = -EINVAL;
--		goto err_release_fb;
--	}
--
--	par->irq = platform_get_irq(device, 0);
--	if (par->irq < 0) {
--		ret = -ENOENT;
--		goto err_release_fb;
--	}
--
--	da8xx_fb_var.grayscale =
--	    lcd_cfg->panel_shade == MONOCHROME ? 1 : 0;
--	da8xx_fb_var.bits_per_pixel = lcd_cfg->bpp;
--
--	/* Initialize fbinfo */
--	da8xx_fb_info->fix = da8xx_fb_fix;
--	da8xx_fb_info->var = da8xx_fb_var;
--	da8xx_fb_info->fbops = &da8xx_fb_ops;
--	da8xx_fb_info->pseudo_palette = par->pseudo_palette;
--	da8xx_fb_info->fix.visual = (da8xx_fb_info->var.bits_per_pixel <= 8) ?
--				FB_VISUAL_PSEUDOCOLOR : FB_VISUAL_TRUECOLOR;
--
--	ret = fb_alloc_cmap(&da8xx_fb_info->cmap, PALETTE_SIZE, 0);
--	if (ret)
--		goto err_disable_reg;
--	da8xx_fb_info->cmap.len = par->palette_sz;
--
--	/* initialize var_screeninfo */
--	da8xx_fb_var.activate = FB_ACTIVATE_FORCE;
--	fb_set_var(da8xx_fb_info, &da8xx_fb_var);
--
--	platform_set_drvdata(device, da8xx_fb_info);
--
--	/* initialize the vsync wait queue */
--	init_waitqueue_head(&par->vsync_wait);
--	par->vsync_timeout = HZ / 5;
--	par->which_dma_channel_done = -1;
--	spin_lock_init(&par->lock_for_chan_update);
--
--	/* Register the Frame Buffer  */
--	if (register_framebuffer(da8xx_fb_info) < 0) {
--		dev_err(&device->dev,
--			"GLCD: Frame Buffer Registration Failed!\n");
--		ret = -EINVAL;
--		goto err_dealloc_cmap;
--	}
--
--#ifdef CONFIG_CPU_FREQ
--	ret = lcd_da8xx_cpufreq_register(par);
--	if (ret) {
--		dev_err(&device->dev, "failed to register cpufreq\n");
--		goto err_cpu_freq;
--	}
--#endif
--
--	if (lcd_revision == LCD_VERSION_1)
--		lcdc_irq_handler = lcdc_irq_handler_rev01;
--	else {
--		init_waitqueue_head(&frame_done_wq);
--		lcdc_irq_handler = lcdc_irq_handler_rev02;
--	}
--
--	ret = devm_request_irq(&device->dev, par->irq, lcdc_irq_handler, 0,
--			       DRIVER_NAME, par);
--	if (ret)
--		goto irq_freq;
--	return 0;
--
--irq_freq:
--#ifdef CONFIG_CPU_FREQ
--	lcd_da8xx_cpufreq_deregister(par);
--err_cpu_freq:
--#endif
--	unregister_framebuffer(da8xx_fb_info);
--
--err_dealloc_cmap:
--	fb_dealloc_cmap(&da8xx_fb_info->cmap);
--
--err_disable_reg:
--	if (par->lcd_supply)
--		regulator_disable(par->lcd_supply);
--err_release_fb:
--	framebuffer_release(da8xx_fb_info);
--
--err_pm_runtime_disable:
--	pm_runtime_put_sync(&device->dev);
--	pm_runtime_disable(&device->dev);
--
--	return ret;
--}
--
--#ifdef CONFIG_PM_SLEEP
--static struct lcdc_context {
--	u32 clk_enable;
--	u32 ctrl;
--	u32 dma_ctrl;
--	u32 raster_timing_0;
--	u32 raster_timing_1;
--	u32 raster_timing_2;
--	u32 int_enable_set;
--	u32 dma_frm_buf_base_addr_0;
--	u32 dma_frm_buf_ceiling_addr_0;
--	u32 dma_frm_buf_base_addr_1;
--	u32 dma_frm_buf_ceiling_addr_1;
--	u32 raster_ctrl;
--} reg_context;
--
--static void lcd_context_save(void)
--{
--	if (lcd_revision == LCD_VERSION_2) {
--		reg_context.clk_enable = lcdc_read(LCD_CLK_ENABLE_REG);
--		reg_context.int_enable_set = lcdc_read(LCD_INT_ENABLE_SET_REG);
--	}
--
--	reg_context.ctrl = lcdc_read(LCD_CTRL_REG);
--	reg_context.dma_ctrl = lcdc_read(LCD_DMA_CTRL_REG);
--	reg_context.raster_timing_0 = lcdc_read(LCD_RASTER_TIMING_0_REG);
--	reg_context.raster_timing_1 = lcdc_read(LCD_RASTER_TIMING_1_REG);
--	reg_context.raster_timing_2 = lcdc_read(LCD_RASTER_TIMING_2_REG);
--	reg_context.dma_frm_buf_base_addr_0 =
--		lcdc_read(LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
--	reg_context.dma_frm_buf_ceiling_addr_0 =
--		lcdc_read(LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
--	reg_context.dma_frm_buf_base_addr_1 =
--		lcdc_read(LCD_DMA_FRM_BUF_BASE_ADDR_1_REG);
--	reg_context.dma_frm_buf_ceiling_addr_1 =
--		lcdc_read(LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG);
--	reg_context.raster_ctrl = lcdc_read(LCD_RASTER_CTRL_REG);
--	return;
--}
--
--static void lcd_context_restore(void)
--{
--	if (lcd_revision == LCD_VERSION_2) {
--		lcdc_write(reg_context.clk_enable, LCD_CLK_ENABLE_REG);
--		lcdc_write(reg_context.int_enable_set, LCD_INT_ENABLE_SET_REG);
--	}
--
--	lcdc_write(reg_context.ctrl, LCD_CTRL_REG);
--	lcdc_write(reg_context.dma_ctrl, LCD_DMA_CTRL_REG);
--	lcdc_write(reg_context.raster_timing_0, LCD_RASTER_TIMING_0_REG);
--	lcdc_write(reg_context.raster_timing_1, LCD_RASTER_TIMING_1_REG);
--	lcdc_write(reg_context.raster_timing_2, LCD_RASTER_TIMING_2_REG);
--	lcdc_write(reg_context.dma_frm_buf_base_addr_0,
--			LCD_DMA_FRM_BUF_BASE_ADDR_0_REG);
--	lcdc_write(reg_context.dma_frm_buf_ceiling_addr_0,
--			LCD_DMA_FRM_BUF_CEILING_ADDR_0_REG);
--	lcdc_write(reg_context.dma_frm_buf_base_addr_1,
--			LCD_DMA_FRM_BUF_BASE_ADDR_1_REG);
--	lcdc_write(reg_context.dma_frm_buf_ceiling_addr_1,
--			LCD_DMA_FRM_BUF_CEILING_ADDR_1_REG);
--	lcdc_write(reg_context.raster_ctrl, LCD_RASTER_CTRL_REG);
--	return;
--}
--
--static int fb_suspend(struct device *dev)
--{
--	struct fb_info *info = dev_get_drvdata(dev);
--	struct da8xx_fb_par *par = info->par;
--	int ret;
--
--	console_lock();
--	if (par->lcd_supply) {
--		ret = regulator_disable(par->lcd_supply);
--		if (ret)
--			return ret;
--	}
--
--	fb_set_suspend(info, 1);
--	lcd_disable_raster(DA8XX_FRAME_WAIT);
--	lcd_context_save();
--	pm_runtime_put_sync(dev);
--	console_unlock();
--
--	return 0;
--}
--static int fb_resume(struct device *dev)
--{
--	struct fb_info *info = dev_get_drvdata(dev);
--	struct da8xx_fb_par *par = info->par;
--	int ret;
--
--	console_lock();
--	pm_runtime_get_sync(dev);
--	lcd_context_restore();
--	if (par->blank == FB_BLANK_UNBLANK) {
--		lcd_enable_raster();
--
--		if (par->lcd_supply) {
--			ret = regulator_enable(par->lcd_supply);
--			if (ret)
--				return ret;
--		}
--	}
--
--	fb_set_suspend(info, 0);
--	console_unlock();
--
--	return 0;
--}
--#endif
--
--static SIMPLE_DEV_PM_OPS(fb_pm_ops, fb_suspend, fb_resume);
--
--static struct platform_driver da8xx_fb_driver = {
--	.probe = fb_probe,
--	.remove = fb_remove,
--	.driver = {
--		   .name = DRIVER_NAME,
--		   .pm	= &fb_pm_ops,
--		   },
--};
--module_platform_driver(da8xx_fb_driver);
--
--MODULE_DESCRIPTION("Framebuffer driver for TI da8xx/omap-l1xx");
--MODULE_AUTHOR("Texas Instruments");
--MODULE_LICENSE("GPL");
-diff --git a/include/video/da8xx-fb.h b/include/video/da8xx-fb.h
-deleted file mode 100644
-index 1d19ae62b844..000000000000
---- a/include/video/da8xx-fb.h
-+++ /dev/null
-@@ -1,94 +0,0 @@
--/*
-- * Header file for TI DA8XX LCD controller platform data.
-- *
-- * Copyright (C) 2008-2009 MontaVista Software Inc.
-- * Copyright (C) 2008-2009 Texas Instruments Inc
-- *
-- * This file is licensed under the terms of the GNU General Public License
-- * version 2. This program is licensed "as is" without any warranty of any
-- * kind, whether express or implied.
-- */
--
--#ifndef DA8XX_FB_H
--#define DA8XX_FB_H
--
--enum panel_shade {
--	MONOCHROME = 0,
--	COLOR_ACTIVE,
--	COLOR_PASSIVE,
--};
--
--enum raster_load_mode {
--	LOAD_DATA = 1,
--	LOAD_PALETTE,
--};
--
--enum da8xx_frame_complete {
--	DA8XX_FRAME_WAIT,
--	DA8XX_FRAME_NOWAIT,
--};
--
--struct da8xx_lcdc_platform_data {
--	const char manu_name[10];
--	void *controller_data;
--	const char type[25];
--};
--
--struct lcd_ctrl_config {
--	enum panel_shade panel_shade;
--
--	/* AC Bias Pin Frequency */
--	int ac_bias;
--
--	/* AC Bias Pin Transitions per Interrupt */
--	int ac_bias_intrpt;
--
--	/* DMA burst size */
--	int dma_burst_sz;
--
--	/* Bits per pixel */
--	int bpp;
--
--	/* FIFO DMA Request Delay */
--	int fdd;
--
--	/* TFT Alternative Signal Mapping (Only for active) */
--	unsigned char tft_alt_mode;
--
--	/* 12 Bit Per Pixel (5-6-5) Mode (Only for passive) */
--	unsigned char stn_565_mode;
--
--	/* Mono 8-bit Mode: 1=D0-D7 or 0=D0-D3 */
--	unsigned char mono_8bit_mode;
--
--	/* Horizontal and Vertical Sync Edge: 0=rising 1=falling */
--	unsigned char sync_edge;
--
--	/* Raster Data Order Select: 1=Most-to-least 0=Least-to-most */
--	unsigned char raster_order;
--
--	/* DMA FIFO threshold */
--	int fifo_th;
--};
--
--struct lcd_sync_arg {
--	int back_porch;
--	int front_porch;
--	int pulse_width;
--};
--
--/* ioctls */
--#define FBIOGET_CONTRAST	_IOR('F', 1, int)
--#define FBIOPUT_CONTRAST	_IOW('F', 2, int)
--#define FBIGET_BRIGHTNESS	_IOR('F', 3, int)
--#define FBIPUT_BRIGHTNESS	_IOW('F', 3, int)
--#define FBIGET_COLOR		_IOR('F', 5, int)
--#define FBIPUT_COLOR		_IOW('F', 6, int)
--#define FBIPUT_HSYNC		_IOW('F', 9, int)
--#define FBIPUT_VSYNC		_IOW('F', 10, int)
--
--/* Proprietary FB_SYNC_ flags */
--#define FB_SYNC_CLK_INVERT 0x40000000
--
--#endif  /* ifndef DA8XX_FB_H */
--
--- 
-2.43.0
+s/mce/mce_hw_err/
 
+> -void mce_prep_record(struct mce *m)
+> +void mce_prep_record(struct mce_hw_err *err)
+>  {
+> +	struct mce *m =3D &err->m;
+> +
+> +	memset(err, 0, sizeof(struct mce_hw_err));
+>  	mce_prep_record_common(m);
+>  	mce_prep_record_per_cpu(smp_processor_id(), m);  } @@ -148,9
+> +149,9 @@ void mce_prep_record(struct mce *m)  DEFINE_PER_CPU(struct
+> mce, injectm);  EXPORT_PER_CPU_SYMBOL_GPL(injectm);
+> [...]
+>  static __always_inline int
+> -__mc_scan_banks(struct mce *m, struct pt_regs *regs, struct mce *final,
+> +__mc_scan_banks(struct mce_hw_err *err, struct pt_regs *regs, struct mce=
+ *final,
+
+The 'final' parameter should also be a pointer to this_cpu_ptr(&hw_errs_see=
+n).
+So, it's the final value with an entire 'mce_hw_err' structure stored to=20
+' hw_errs_seen ',  not just a 'mce' structure got stored in 'hw_errs_seen'.
+
+So,
+   __mc_scan_banks(struct mce_hw_err *err, struct pt_regs *regs, struct mce=
+_hw_err *final, ...
+
+>  		unsigned long *toclear, unsigned long *valid_banks, int no_way_out,
+>  		int *worst)
+> [...]
 
