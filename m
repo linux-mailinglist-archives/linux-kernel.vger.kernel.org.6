@@ -1,142 +1,111 @@
-Return-Path: <linux-kernel+bounces-365576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E293F99E48A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:52:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4AB099E485
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6194EB23A4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46491C23D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA281EABD7;
-	Tue, 15 Oct 2024 10:51:27 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336E81E5725;
+	Tue, 15 Oct 2024 10:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HSYRKC/7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1B11E377E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874AC4683;
+	Tue, 15 Oct 2024 10:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989487; cv=none; b=m0zGnbA7MqUqoPmTS3qcjGWfxCkWTh0xXuwiJ76N7oO3vDq0N/Xrh3sKV+Q3mIoOJsRYU2whjkAYMOC9NKL95mKKFNVbmTX8279IA8fnqA4jLjcJCuzz/hT91Vb+sGBbTGacWhs+QegJ76YaNoqMlDCzJAqSOxCsTEDKfB9ekao=
+	t=1728989475; cv=none; b=RMpR1ZYRklZFv/A28a7UhsxADW5kH6BPJFwUA3pZ5SzN1xUL0eDkPNq0hq2ppY59bVnyIXAfZ2rijLbR2VvhSU3RD3EyP/FY0N0iHDTwXGY9EGUZYtkPBsHkt5lDVCof2dBmFousCFrACiKnnNiMuc4+Oi9IFuF2wPbq8XZ2ZRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989487; c=relaxed/simple;
-	bh=9GZgHLphi5Wk4HmWN/Gm+S5zsftBa7bRNsvRGrRRmL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZjmAD/MPRgS6YttFQ7wgUALwWjs1wO9D7G03Ixz1Bs+zRag2tVoySBOhr4cSxWxFpyRGweiVqbLYqjMp1lnndT2S8yjXD2ZdOOnfxO+9niiDIXHTAXw5j9avBqxpzz3zO6PWz9fz1dSsJTFIvgp+I9opJ0YY4wpTIJPa2Ym2N94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4311bb9d4beso34961855e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:51:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728989484; x=1729594284;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kvs4LqINVgBhaSBAT3DZgAdv6NUP3/EwAoWMF6a1O7M=;
-        b=XlY6MKRfKWf6h5xfjlwBGc84iF2xEjcTum164McGVdD6wpn/sq1fmhBMKLPpYJSN+o
-         GpqbHOiXqPrAn50tUyNjclM7MgceBDAgTz6SWDhOlIIwaWGdO8pMlfNT5k6xkin+OD44
-         9wEimJIxHJ93rxgezIEq9K38f3JnpKza5a3o52bYwkGognKowH2tNSYsArdjRWrKeXHL
-         KEWCuCarmLCzYwKQCzrlGU21yU7Tx/vaQj227CTs4w8Ol1UFAwmdVOm9lrpzGMKj3c+9
-         B41hNt+xOB2i9agNVApN1izgVcjPJ+FwVTk8u81m/bwdqVvW7JuJCpyOrnP185bSdvnX
-         b5yw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8j+nRNNYIae/qyDWYJWmy8o0IxHF9FLek5wsqpVWz4oy468L9+WJkDpoHZ5sdgVs9lI6TsnJrkpLfeWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznlTqKeU6hxaVyfChVd1GiaSnZMRKHj+j+kHf1ojrxYBjUUHiB
-	w2usTMGuNQln9KJ2pPxhKmJfakDRVbcZCuPUHpqYCA0qw3ZoOVzC
-X-Google-Smtp-Source: AGHT+IEwHPS3iHYo8pijwkLDsdDwhNILMyZpgoa9CuaZDjtL+cklX5ongFxs+cHJsA0PAjOFXMp4NA==
-X-Received: by 2002:a05:600c:3496:b0:42c:b22e:fbfa with SMTP id 5b1f17b1804b1-431255e765amr101656005e9.21.1728989483296;
-        Tue, 15 Oct 2024 03:51:23 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf8228sm1247443f8f.81.2024.10.15.03.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 03:51:22 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: bp@alien8.de,
-	x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] x86/bugs: spectre user default must depend on MITIGATION_SPECTRE_V2
-Date: Tue, 15 Oct 2024 03:51:06 -0700
-Message-ID: <20241015105107.496105-3-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241015105107.496105-1-leitao@debian.org>
-References: <20241015105107.496105-1-leitao@debian.org>
+	s=arc-20240116; t=1728989475; c=relaxed/simple;
+	bh=yhtwM+ih4E6+2BNcAKYUr+xWjXfcylje/HzRXgzQnnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFNeRQ5XKSuQiZkLSei5q2GTVvMHuJRg5aVM2earWaGv9UAuuItL63gUl2cyh+qqlEFuMOO8gZ3pOyldYcq8uSf4+K4xGaQe+kKv0BVeZqcBsp3/pAWivJ4c962H+x3FP8zODvW8kQRDWqqsNV6CWtH6y0uHzaDTtLuTneCe+cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HSYRKC/7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F86C4CEC6;
+	Tue, 15 Oct 2024 10:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728989475;
+	bh=yhtwM+ih4E6+2BNcAKYUr+xWjXfcylje/HzRXgzQnnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HSYRKC/7uzB1PQ/QRQTg+P7JmGZ/JhLOQQbXUwwYpm6LsAhRy5HB7tggyHb5zthKE
+	 ShraFLkrk4eGlgAav4WAdLs9z2ihBKZqS7KXQ852RmxbJFJtnyL8jkOMVEAnkDvIjS
+	 TgeSGoZlaBNeVBloHesRozLcQMgkURgOO5/LTEFU=
+Date: Tue, 15 Oct 2024 12:51:12 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] rpmb: Remove usage of the deprecated ida_simple_xx()
+ API
+Message-ID: <2024101529-shakiness-cognition-dab2@gregkh>
+References: <df8bfbe2a603c596566a4f967e37d10d208bbc3f.1728507153.git.christophe.jaillet@wanadoo.fr>
+ <CAHUa44GU=SR9MgBaXJi1yEbvg5Bb73FV4n8erGhN4s_qioKNCw@mail.gmail.com>
+ <1c421f69-7bad-4251-94dd-2ebde618be3c@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c421f69-7bad-4251-94dd-2ebde618be3c@wanadoo.fr>
 
-Change the default value of spectre v2 in user mode to respect the
-CONFIG_MITIGATION_SPECTRE_V2 config option.
+On Mon, Oct 14, 2024 at 06:53:56PM +0200, Christophe JAILLET wrote:
+> Le 14/10/2024 à 12:38, Jens Wiklander a écrit :
+> > On Wed, Oct 9, 2024 at 10:53 PM Christophe JAILLET
+> > <christophe.jaillet@wanadoo.fr> wrote:
+> > > 
+> > > ida_alloc() and ida_free() should be preferred to the deprecated
+> > > ida_simple_get() and ida_simple_remove().
+> > > 
+> > > This is less verbose.
+> > > 
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > > The ida_simple_get()/ida_simple_remove() API was close to be removed (see
+> > > [1]). A usage has been re-introduced with this new driver :(
+> > > 
+> > > [1]: https://lore.kernel.org/all/cover.1722853349.git.christophe.jaillet@wanadoo.fr/
+> > 
+> > I'm picking up this for v6.13. I guess your patch set now depends on
+> > this patch. I can ack the patch instead and let you include it in your
+> > patch set if it's more convenient. Please let me know what you prefer
+> > to avoid potential conflicts.
+> 
+> Greg has already picked both patches in char-misc-testing. [1], [2].
+> 
+> Let it flow from his trees.
+> 
+> I'll wait the next cycle to resend my serie [3] or char-misc could take it
+> as well. Both solution are fine with me.
+> 
+> 
+> Greg, if you prefer the later, I can resend the serie if more convenient to
+> you.
+> 
+> CJ
+> 
+> 
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/commit/?h=char-misc-testing&id=dfc881abca4247dcf453ce206f05fe09b51be158
+> 
+> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/commit/?h=char-misc-testing&id=3b0889f95789aa90b0f1a6921d5d6b151f2e53ae
+> 
+> [3]: https://lore.kernel.org/all/cover.1722853349.git.christophe.jaillet@wanadoo.fr/
 
-Currently, user mode spectre v2 is set to auto
-(SPECTRE_V2_USER_CMD_AUTO) by default, even if
-CONFIG_MITIGATION_SPECTRE_V2 is disabled.
+If this is the last users that got taken away in my tree, I'll be glad
+to take the removal series as well, so please send it on!
 
-Set the spectre_v2 value to auto (SPECTRE_V2_USER_CMD_AUTO) if the
-Spectre v2 config (CONFIG_MITIGATION_SPECTRE_V2) is enabled, otherwise
-set the value to none (SPECTRE_V2_USER_CMD_NONE).
+thanks,
 
-Important to say the command line argument "spectre_v2_user" overwrites
-the default value in both cases.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- arch/x86/kernel/cpu/bugs.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 6d3b61d7be9c..c21ff072e048 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1277,9 +1277,13 @@ static __ro_after_init enum spectre_v2_mitigation_cmd spectre_v2_cmd;
- static enum spectre_v2_user_cmd __init
- spectre_v2_parse_user_cmdline(void)
- {
-+	enum spectre_v2_user_cmd mode;
- 	char arg[20];
- 	int ret, i;
- 
-+	mode = IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?
-+		SPECTRE_V2_USER_CMD_AUTO : SPECTRE_V2_USER_CMD_NONE;
-+
- 	switch (spectre_v2_cmd) {
- 	case SPECTRE_V2_CMD_NONE:
- 		return SPECTRE_V2_USER_CMD_NONE;
-@@ -1292,7 +1296,7 @@ spectre_v2_parse_user_cmdline(void)
- 	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
- 				  arg, sizeof(arg));
- 	if (ret < 0)
--		return SPECTRE_V2_USER_CMD_AUTO;
-+		return mode;
- 
- 	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
- 		if (match_option(arg, ret, v2_user_options[i].option)) {
-@@ -1302,8 +1306,8 @@ spectre_v2_parse_user_cmdline(void)
- 		}
- 	}
- 
--	pr_err("Unknown user space protection option (%s). Switching to AUTO select\n", arg);
--	return SPECTRE_V2_USER_CMD_AUTO;
-+	pr_err("Unknown user space protection option (%s). Switching to default\n", arg);
-+	return mode;
- }
- 
- static inline bool spectre_v2_in_ibrs_mode(enum spectre_v2_mitigation mode)
--- 
-2.43.5
-
+greg k-h
 
