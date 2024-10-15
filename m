@@ -1,175 +1,179 @@
-Return-Path: <linux-kernel+bounces-366075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF5B99F079
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:01:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8AB99F09A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5F92819E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:01:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28AE21C23579
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699431FAEEB;
-	Tue, 15 Oct 2024 14:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9D51CB9EB;
+	Tue, 15 Oct 2024 15:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nbUwBxfg"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="uWWWDsB0"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18541FAEE7
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA0C1CB9E5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729004139; cv=none; b=VSLgwZ4ruyaCc2iE8tiDGIu/l/YdrlxUUiTe/sEdDO0pHrZq6s0ML0DC1fCGuqWHZZqWjGkU3w5zV0blCcqaid6oT84KcyofKf62yKgnuUnhBHc8VlfQ1pS9Sn8gV06LRoqmNliYqpugG9K/v1xFMOSl9jcLPo9uThiIelfwK1I=
+	t=1729004585; cv=none; b=Lo/WfBuJ12CH2Pz7+MGs4kRkTvixd45QYrd1b8JhSa3iMnaJCOTayVLJUaZkXKpChLPJWdT8PZPxDHoOjJrjuIj+wMyJHWhtKImm8JUIfhFE0mhfO830sED88u+pVmfffolb3Omih8Fq67WYXdfSmtEqShpGBum+1b6ksZea7IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729004139; c=relaxed/simple;
-	bh=VeHVtin04YMbNdDANnwUhAhwv4ZW4ddx4mf/rqjQ9vo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TK94x0TtoYlj6fYk66MvakXSJV/UwDeLgZFazEyCGpCGuexBKE7NpvsTQ6fZLw/kTEC1o+qKcJQXnbA/eAHuAu9jBEukRepSQyu99q8VzuZPuM2rRk/K4lv54DHQcxscaCfoOMBh1FFm0nGL3MJdE+W/CKurQc7xTneeMU0aHoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nbUwBxfg; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb58980711so16931921fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729004136; x=1729608936; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VeHVtin04YMbNdDANnwUhAhwv4ZW4ddx4mf/rqjQ9vo=;
-        b=nbUwBxfgPT9dpu9EUAuzNg+LmUgR9MZCNDDZ09fQajxXEL+3rjGenykA5Obz06O6He
-         hUG9I9mCxpbk6JtSWpG/Lyza1aoNGRGpJfwZ4zt/ENa3PIklfZSRU3tl8PdoG1dvcv1J
-         8Rs3CHIZTlI1Pau7RN7SdkG7uqEw+JOzHrZsqv4eZ4berXbqKYPD1vhccUgXA7ob3mec
-         7A/w/452LxWZg+Pz/zYGwMTZ+XM+7017dwreEOEVZ9AmvOON8BDCx9mq0kXDG/78Gdoo
-         rf2SeBe1od6mX0WJh3Kh8roF/2FNyeA1Y9ELj1um3pAmPTtXerbk5EdL025QS1zk67CK
-         +X0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729004136; x=1729608936;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VeHVtin04YMbNdDANnwUhAhwv4ZW4ddx4mf/rqjQ9vo=;
-        b=ah7Oue8RsQrhugKX61ldyKkTJhDJjfoOG2l0qPoPLmXGQ0voHq0iMNTW9OncFpLfHV
-         8wuNkqG2KZ9agMqUPB00JzTdPe/PvCKqe5qKBgBctQUkdOVV2VLUOh2vtccKS1UIeMIJ
-         EDTT0v8Co+IXoXzdRQ1Tl6hkBfSwkwIeJfYWVh/eWsgqtKpFxcX0UCi2IEyyRR+sHIOb
-         R6ljXDgDi6rCfpoTWSMmEF5u9Q1YsRPhK/An3+Iw7bA4sbae6GlsZt8XVqUc3OXBcXRX
-         n8eEyN6naj9aNBDMwYJMorHNwaF6LFDSdAd7H23zpNg2z9C20SAh1ttOJLCDz6+kqqo6
-         ibIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvStuJ30lsfJTHvbjmM3mwJaIQcNPHn1aeabuJ0/j2SIHCddJCRcTwi/O4A9tXfFKaBrbD6sIC+WMk2OI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBTSxNSpOciETyR2TK5cpLIDsVUvHJCM3MdlPGpJ8YEvxSscqR
-	ij9orqYRg5415bOE6xXkSNZYZb6PQs09fEGHuLkFUMGoaNn0ee2/yWOTHGY9gD5BWYfDsm69Lro
-	aJ2RfMYSHWEBk2c2TnBq0iFK2JpD3LRjV02wZQQ==
-X-Google-Smtp-Source: AGHT+IHe1hepoC1K7fGWGmywx94Jj36HM8McPm3iSpQxje7/hhxzz3+rcx6aXTe1IeAO7GFfcjjO1asR7o77DGG5xN0=
-X-Received: by 2002:a2e:5109:0:b0:2fb:60d8:744d with SMTP id
- 38308e7fff4ca-2fb61b585cemr4274281fa.19.1729004135784; Tue, 15 Oct 2024
- 07:55:35 -0700 (PDT)
+	s=arc-20240116; t=1729004585; c=relaxed/simple;
+	bh=vlyzC5BUbbJNVNWScwOO85MGiapIng12QT6Y4wU6baY=;
+	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eRDWCBlVIefjRBRRPe6ZkmCCh2lgigs5YAjhdTWPhbhRh4I69hhVwwUkKedeOC5sACYNMh2sQR9cDQkgBrkb81oW6knPrqfbL4m5jM7irsx5U4AuaTElZljh0/OHiimjnLdPJFQLCY0WTASEWxxkEGHY6tp3GpAvypCH1bYVv2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=uWWWDsB0; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4XScbd3N0vz9skM;
+	Tue, 15 Oct 2024 16:55:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1729004141;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KSIjeIVkRNDw92J7H472zgM1PRJ1wxwFlN1v7e85EYw=;
+	b=uWWWDsB0hcyw+DfJI27FfJl3Uv39GXthwnjhASdkfpao3VruviGbYuq12OrZYXixZiHjPb
+	tupIS29zmFZUfObsA3/zBIfZOa/RXCzRRJsaAv8c8iGEY1QTaR4CuDy4aQL7qoog5f6ITw
+	f1/qooi4E/QdntSEuRjOLIW1HzpUs9iz5lJnDAJ4lS3uXKiXf5bDt0BquYKNfyG7oVnos8
+	bH66SC79WrQEOde8FkdW07CIszFHTpA2J/EaSLpD6IXo5NDh8dSiPMLWPbk0jaHMYP2Ftb
+	AG+KZyO93n9TwIgDj/CSRK97RYBH0IrBLkU/hxmx+lJxJa0NOpL1QKPkEjjE9w==
+Date: Tue, 15 Oct 2024 16:55:39 +0200
+From: Erhard Furtner <erhard_f@mailbox.org>
+To: linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+ max8rr8@gmail.com
+Subject: Re: "WARNING: CPU: 0 PID: 67 at arch/x86/mm/ioremap.c:461
+ iounmap+0xda/0xe0" at initializing PCMCIA serial card (Thinkpad T60,
+ v6.12-rc2)
+Message-ID: <20241015165539.35fb42b8@yea>
+In-Reply-To: <20241009191507.7ed7511b@yea>
+References: <20241009191507.7ed7511b@yea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
- <Zw5D2aTkkUVOK89g@J2N7QTR9R3> <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
- <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
- <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
-In-Reply-To: <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 15 Oct 2024 16:55:24 +0200
-Message-ID: <CACRpkdbwS8L9_O_paqiW3B3x_-CmrQeYajhO7jBW4-c2+D9gyg@mail.gmail.com>
-Subject: Re: Crash on armv7-a using KASAN
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Clement LE GOFFIC <clement.legoffic@foss.st.com>, 
-	Russell King <linux@armlinux.org.uk>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	Antonio Borneo <antonio.borneo@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 9909428950e9d4acda7
+X-MBO-RS-META: mutm9ftonxgmc4w95c8nxwddn3sjmnsh
 
-On Tue, Oct 15, 2024 at 4:45=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
-> On Tue, 15 Oct 2024 at 16:35, Mark Rutland <mark.rutland@arm.com> wrote:
-> >
-> > On Tue, Oct 15, 2024 at 04:22:20PM +0200, Ard Biesheuvel wrote:
-> > > On Tue, 15 Oct 2024 at 16:00, Mark Rutland <mark.rutland@arm.com> wro=
-te:
-> > > >
-> > > > On Tue, Oct 15, 2024 at 03:51:02PM +0200, Linus Walleij wrote:
-> > > > > On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mark Rutland <mark.rutla=
-nd@arm.com> wrote:
-> > > > > > On Mon, Oct 14, 2024 at 03:19:49PM +0200, Clement LE GOFFIC wro=
-te:
-> > > > >
-> > > > > > I think what's happening here is that when switching from prev =
-to next
-> > > > > > in the scheduler, we switch to next's mm before we actually swi=
-tch to
-> > > > > > next's register state, and there's a transient window where pre=
-v is
-> > > > > > executed using next's mm. AFAICT we don't map prev's KASAN stac=
-k shadow
-> > > > > > into next's mm anywhere, and so inlined KASAN_STACK checks recu=
-rsively
-> > > > > > fault on this until we switch to the overflow stack.
-> >
-> > [...]
-> >
-> > > > > Yeah it looks like a spot-on identification of the problem, I can=
- try to
-> > > > > think about how we could fix this if I can reproduce it, I keep t=
-rying
-> > > > > to provoke the crash :/
-> > > >
-> > > > It's a bit grotty -- AFAICT you'd either need to prefault in the
-> > > > specific part of the vmalloc space when switching tasks, or we'd ne=
-ed to
-> > > > preallocate all the shared vmalloc tables at the start of time so t=
-hat
-> > > > they're always up-to-date.
-> > > >
-> > > > While we could disable KASAN_STACK, that's only going to mask the
-> > > > problem until this happens for any other vmalloc shadow...
-> > >
-> > > Is the other vmalloc shadow not covered by the ordinary on-demand fau=
-lting?
-> >
-> > It depends on what the vmalloc memory is used for; if it's anything els=
-e
-> > used in the fault handling path, that'll fault recursively, and it's
-> > possible that'll happen indirectly via other instrumentation.
-> >
-> > > When I implemented VMAP_STACK for ARM, I added an explicit load from
-> > > the new stack while still running from the old one (in __switch_to) s=
-o
-> > > that the ordinary faulting code can deal with it. Couldn't we do the
-> > > same for the vmalloc shadow of the new stack?
-> >
-> > We could do something similar, but note that it's backwards: we need to
-> > ensure that the old/current stack shadow will be mapped in the new mm.
-> >
-> > So the usual fault handling can't handle that as-is, because you need t=
-o
-> > fault-in pages for an mm which isn't yet in use. That logic could be
-> > factored out and shared, though.
-> >
->
-> Not sure I follow you here. The crash is in the kernel, no?
->
-> So there is only a single vmalloc space where all the mappings should
-> reside, but each process has its own copy of the top level page table,
-> which needs to be synced up when it goes stale.
+On Wed, 9 Oct 2024 19:15:07 +0200
+Erhard Furtner <erhard_f@mailbox.org> wrote:
 
-That's how it works AFAICT.
+> On kernel v6.12-rc2 this warning shows up when my PCMCIA serial card gets initialized on my Thinkpad T60:
+> 
+> [...]
+> pcmcia_socket pcmcia_socket0: pccard: PCMCIA card inserted into slot 0
+> pcmcia_socket pcmcia_socket0: cs: memory probe 0xe46d0000-0xe7ffffff:
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 67 at arch/x86/mm/ioremap.c:461 iounmap+0xda/0xe0
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 67 Comm: pccardd Tainted: G        W          6.12.0-rc2-P3 #3
+> Tainted: [W]=WARN
+> Hardware name: LENOVO 2007F2G/2007F2G, BIOS 79ETE7WW (2.27 ) 03/21/2011
+> EIP: iounmap+0xda/0xe0
+> Code: c7 75 2b 89 f8 e8 6a 27 16 00 5e 5f 5b 5d 31 c0 31 c9 31 d2 c3 56 68 9c 8e 92 c9 e8 e8 c3 73 00 83 c4 08 e8 3c 33 74 00 eb e0 <0f> 0b eb dc 0f 0b 55 89 e5 56 89 c6 25 00 f0 ff ff 31 d2 b9 00 10
+> EAX: f7dfe000 EBX: c1b7b578 ECX: 00000000 EDX: 00000000
+> ESI: 00000000 EDI: c1a95e40 EBP: c1a95e10 ESP: c1a95e04
+> DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010286
+> CR0: 80050033 CR2: ffbff000 CR3: 09b7c000 CR4: 000006f0
+> Call Trace:
+>  ? show_regs+0x4e/0x5c
+>  ? __warn+0x87/0xdc
+>  ? iounmap+0xda/0xe0
+>  ? report_bug+0x94/0x108
+>  ? exc_overflow+0x3c/0x3c
+>  ? handle_bug+0x41/0x60
+>  ? exc_invalid_op+0x17/0x40
+>  ? handle_exception+0x101/0x101
+>  ? exc_overflow+0x3c/0x3c
+>  ? iounmap+0xda/0xe0
+>  ? exc_overflow+0x3c/0x3c
+>  ? iounmap+0xda/0xe0
+>  readable+0x69/0xb8
+>  ? do_mem_probe+0x190/0x190
+>  do_validate_mem+0x8a/0x154
+>  do_mem_probe+0xa8/0x190
+>  ? do_mem_probe+0x190/0x190
+>  pcmcia_nonstatic_validate_mem+0x45/0x80
+>  ? do_mem_probe+0x190/0x190
+>  ? readable+0xb8/0xb8
+>  pcmcia_validate_mem+0x14/0x1c
+>  pcmcia_card_add+0x3c/0xb0
+>  pcmcia_bus_add+0x3a/0x44
+>  socket_insert+0xc7/0xcc
+>  pccardd+0x143/0x370
+>  kthread+0xc4/0xd0
+>  ? pcmcia_register_socket+0x28c/0x28c
+>  ? kthread_blkcg+0x24/0x24
+>  ? kthread_blkcg+0x24/0x24
+>  ret_from_fork+0x31/0x3c
+>  ret_from_fork_asm+0x12/0x18
+>  entry_INT80_32+0xf0/0xf0
+> ---[ end trace 0000000000000000 ]---
+>  excluding 0xe4df4000-0xe5185fff 0xe5fce000-0xe635ffff 0xe6e16000-0xe71a7fff 0xe7ff0000-0xe8381fff
+> pcmcia (null): pcmcia: registering new device pcmcia(null) (IRQ: 16)
+> serial_cs 0.0: trying to set up [0x0279:0x950b] (pfc: 0, multi: 2, quirk: c980f7c0)
+> 0.0: ttyS4 at I/O 0xa108 (irq = 16, base_baud = 115200) is a 16450
+> [...]
 
-The vmalloc/kernel space is mapped using the very same
-actual page tables in all per-process MM contexts, so I also
-think it's just a matter of syncing the top-level page table (PGD),
-so I will try to do that.
+I successfully bisected the issue back to:
 
-Yours,
-Linus Walleij
+ # git bisect bad
+50c6dbdfd16e312382842198a7919341ad480e05 is the first bad commit
+commit 50c6dbdfd16e312382842198a7919341ad480e05 (HEAD)
+Author: Max Ramanouski <max8rr8@gmail.com>
+Date:   Sun Aug 25 01:01:11 2024 +0300
+
+    x86/ioremap: Improve iounmap() address range checks
+    
+    Allowing iounmap() on memory that was not ioremap()'d in the first
+    place is obviously a bad idea.  There is currently a feeble attempt to
+    avoid errant iounmap()s by checking to see if the address is below
+    "high_memory".  But that's imprecise at best because there are plenty
+    of high addresses that are also invalid to call iounmap() on.
+    
+    Thankfully, there is a more precise helper: is_ioremap_addr().  x86
+    just does not use it in iounmap().
+    
+    Restrict iounmap() to addresses in the ioremap region, by using
+    is_ioremap_addr(). This aligns x86 closer to the generic iounmap()
+    implementation.
+    
+    Additionally, add a warning in case there is an attempt to iounmap()
+    invalid memory.  This replaces an existing silent return and will
+    help alert folks to any incorrect usage of iounmap().
+    
+    Due to VMALLOC_START on i386 not being present in asm/pgtable.h,
+    include for asm/vmalloc.h had to be added to include/linux/ioremap.h.
+    
+    [ dhansen: tweak subject and changelog ]
+    
+    Signed-off-by: Max Ramanouski <max8rr8@gmail.com>
+    Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Reviewed-by: Alistair Popple <apopple@nvidia.com>
+    Link: https://lore.kernel.org/all/20240824220111.84441-1-max8rr8%40gmail.com
+
+ arch/x86/mm/ioremap.c   | 3 ++-
+ include/linux/ioremap.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+
+And indeed reverting 50c6dbdfd16e312382842198a7919341ad480e05 on top of v6.12-rc3 makes the warning disappear.
+
+Regards,
+Erhard
 
