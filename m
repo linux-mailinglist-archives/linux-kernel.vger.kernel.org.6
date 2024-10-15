@@ -1,119 +1,187 @@
-Return-Path: <linux-kernel+bounces-365882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A70799ED68
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:27:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840D899ED73
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34012853AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:27:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCEA4B22EF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4821C4A1F;
-	Tue, 15 Oct 2024 13:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E660D1C4A3B;
+	Tue, 15 Oct 2024 13:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g+67O5yB"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c2TXlRo1"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082931AF0B0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B3D1C4A36
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728998675; cv=none; b=suf8W3ux9sDAZ82a4kVC3qttlfFDPIHt6bmLGg/D4m9/dQs5e6ymNZHrUzDkn8cCr/ZL7pR5XBJxM7Nz42mmPdugpQ9pbCJ+5zdYk9N8enh18Y/BBay10ssOAMbtS1LiJfuhBlBmd5yPOHw5QujEfQ7Gp+LrG9vViN9hT3FtCBg=
+	t=1728998790; cv=none; b=sIECGZ5v/Po/OlUsZlXwmMI5DH0bdvLvDxMdHhqdlHbFFcBEAybKCHi2X4UiiyQHVovdsUk0J59ITbnmWSuyBfZW7cS/A50WqXpgvpAZ/EHSzBR+en9wVu91JMPFGcJ2lUM6tBjx9BqG/4IPn5JUMbeUNwAmS351kImDrE6RTrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728998675; c=relaxed/simple;
-	bh=Yto6XsPX307BnN/gUZ9s+Z2mufkFGjyCQ15rsIyKa1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aq0NYGTM2f/ps5Fvs3PlNaCPA+nZF7/jG/hy/aJEDsQ5aBIMGShvoPlJXwEqej5eRuzSpwQKfv7751JnSs7pxzX71I0IRE3GnZL6garSc1g6fxcinV1yjsMBd7LyG62h3l8VzcIkv6oZDS7KSuOxiJYSRcsoJtrSn6jDgGRRxdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g+67O5yB; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1728998790; c=relaxed/simple;
+	bh=OL59YxyGuA494Wfw38yvK0hm/yLF6VVSmMi4N4v67js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O6ZpvW879hwHNzwU6Mybj7d0wZk9Ubch/NwGD+3c9zKMIC8AsWUDbwRU1PMhhx80x5geAzekI0hN0o7/F7LB9BSZNDY0OLIXA9sZEssh+1OKUOAOv3t3cqzGLrzJn7kCAw4ia2kGUuiBXYd8IkhjBRwP+KaXov9uNovEn+UCkcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c2TXlRo1; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e1543ab8so6091070e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:24:32 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cbcd71012so29346935ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:26:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728998671; x=1729603471; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f3HPN0Wb5LO49XK1vdWh1amy3jYUqFLvzrYUchAGQ7w=;
-        b=g+67O5yB5L8zA2+1QlEO/4X/VEUb3Z+jlvH4C/kkQ5dbnJfJ6GHZ4iiqV6CSEyzUmm
-         6C4gBGmblv+rvE2NzeMNpkVDJMON1dPoI1/MITAS4PNKHrd+kQgOHjbbEW0xq1YaOs/1
-         2lCSzAwpcsBeC1hSdnCXB3dsBjCG7cbh0AIi1c1RyvFr9930+6o8N5i5WibndFvKgPzk
-         GowlAL4vMoG7P9abF6xf0OLBx2NxdS+YzL8zMVn2acmYGZ2XAdXFwPjw492DRaznJB8v
-         K1ZY1xbyAloT7WD1yo2TXwlAtAfqqwhFxWsMDfeLTYiEdjUo2XsW4WHeLAsxw+UwBTMG
-         9YLg==
+        d=linaro.org; s=google; t=1728998788; x=1729603588; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gn7YXVR2lRLUfWbvrEqfSP4ATfs9xGerpp/s7n0TqQI=;
+        b=c2TXlRo1yE7UddezN8KNdGtkoZkDyg0M9iH8pcPpqgTP5CwIvAR4nRCaGShtrvipRw
+         fLvFqyXMOMb0LSclDpNcxTF5XgHfRKW+6I4lT2QSNtjwbvCnjHAWO0KzQEq6fCsrIudN
+         Sj4i6hFOFOfltAa3RiIiHyI3oZVAVBk0gv569VY9AUlspe+1l9viNfptjIUqGtl9oP3S
+         ArsxteRQG1tB8bMotLCCo6qmVm4EqIFewf7KHjRBzsluRXJfzRvZ6Lgp8D9PUBuETvSA
+         5ZiHiuksC4dCevMRQYqZ+7n5/w1hOUs85Rof2RML0DoE2TKNux+aoSS6zZCOgrVmaR47
+         Mx6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728998671; x=1729603471;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f3HPN0Wb5LO49XK1vdWh1amy3jYUqFLvzrYUchAGQ7w=;
-        b=ee8Gu2+KzvvPqwcEqaV+9EoN1XcBzPgdfDgJfIYAHHKPT2P2g4Lh5L/yDhNuqbklaY
-         X/IGeKQVUWqs8cBMwQqVIe7cCgzlXsMO3K1YviAbjRhMm36+fpAiWWvB1SqxpmFMfB+A
-         Xxz9MEA6xz85rkfG6UIuuonhxdOXUnrdFRY+T0Si/6vJlgefYOKzRo1yg7UAqXw55qTn
-         +/x5BxgvpnhofGUMzGOlUAVefS/4DjRsgjihC8UR5rwNO1TeWjNgK2suwfwKL2BAuhPH
-         XgMIiPk3LXZhODLja51Pkj5socAQi2eoQh4ZMVWLmsykRBJgnKepsaaIoo8n40ezApjB
-         gBcg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7u8sbhdYOzKIlHoD0HkTSf2lrHDGenJA5pXchAf1jhcc5KiEZPuFXGoHCFuci/8lyRhhsTKapx4Rjmww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3LX8nTYHf2YQRrcScsGP9+x5PqvS+kSaZrJYv8x1einbiFg6v
-	5QzoROuYIz2zUGcYZgYxYoQ1IzbASOi2DdupEq5A95dWEOPC49NkKOLIrJ/K/ro=
-X-Google-Smtp-Source: AGHT+IHgr9LmpYpCXWcLMeJQh5/sdLZ7i0a0+HgofYe7nVBOCqrwB/tlVIYrp4mOmwYvq5oHjf6buA==
-X-Received: by 2002:a05:6512:3402:b0:539:9ee4:baab with SMTP id 2adb3069b0e04-539e55187c4mr7106085e87.30.1728998671049;
-        Tue, 15 Oct 2024 06:24:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a00006dc0sm168280e87.205.2024.10.15.06.24.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 06:24:30 -0700 (PDT)
-Date: Tue, 15 Oct 2024 16:24:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: x1e80100-crd: describe HID supplies
-Message-ID: <oj73sm4mrcdcvntyzk5pab57j7xt6x67uftt7znsc5hc66vlpx@rtzvks73hlyy>
-References: <20241015122427.15995-1-johan+linaro@kernel.org>
+        d=1e100.net; s=20230601; t=1728998788; x=1729603588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gn7YXVR2lRLUfWbvrEqfSP4ATfs9xGerpp/s7n0TqQI=;
+        b=FFESiElyccraublKQW8fKCsuAeoV2v/sHxaqdAIUP7fyTpApZVB7rN/IAHKanSLA0z
+         CLaKxJ2Wn/cGtAkojsiGReoPwFV/yDvA4bmkjXPwq4a+SxsZ1jogHeu8XiTJ3z8BT5lo
+         B4HCozDrQtCxKf0/42lsKpT3U7Xqqu8DXivSJp9CgQhaoOpjSz4wX1a4XRlNjt5M0vxZ
+         phQ7aTsZBsbmdA0nBfzrfGKpJ/8DAuHYxrf8hW3nS4uMIpeyeJNuJupiCJ+sHPuzh3Bp
+         /7erNHSTIvuwk1eDG265vVGyzLLZZ+J3clonVISlgQrPZc2rJ3U7Ga8EqVcR+wJGxZlw
+         EFng==
+X-Forwarded-Encrypted: i=1; AJvYcCXsg0pzgFkfTGmoabn45fsEhjyF1l3CFEX5QEXbXpBkOMytpe2alyZ98Rjso88qYgq/IxjVHADtey5wY+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz9jbPU4n5ar9UF6p1rgaf+4Wsm9DvA0xGaWXerwUuaNNcX3NJ
+	0bZfJ57TqYIRD/73mGNDIZPlFJL62BaXtDwKnYaZ+syXEmAHCjBjDbklkGHQ9ni04Phzb0NciBV
+	Q0q4+VDIIiHX7R12FG3FR4Ioj99j2CkDQeki1zgRkmqPIJ784r5E=
+X-Google-Smtp-Source: AGHT+IF1Vsr1NyD0DsCZ8nNKKC+tM5iar25bAiL29IU7deOi4hzpMNWOWx5caCqI2G8PEjD50AbSWqksNuv9NOZM26M=
+X-Received: by 2002:a17:903:1c4:b0:20c:7c09:b2a4 with SMTP id
+ d9443c01a7336-20cbb2a0b7cmr189290585ad.50.1728998787904; Tue, 15 Oct 2024
+ 06:26:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015122427.15995-1-johan+linaro@kernel.org>
+References: <20241010114019.1734573-1-0x1207@gmail.com> <601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
+ <20241011101455.00006b35@gmail.com> <CAC_iWjL7Z6qtOkxXFRUnnOruzQsBNoKeuZ1iStgXJxTJ_P9Axw@mail.gmail.com>
+ <20241011143158.00002eca@gmail.com> <21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
+ <CAC_iWjLE+R8sGYx74dZqc+XegLxvd4GGG2rQP4yY_p0DVuK-pQ@mail.gmail.com>
+ <d920e23b-643d-4d35-9b1a-8b4bfa5b545f@huawei.com> <20241014143542.000028dc@gmail.com>
+ <14627cec-d54a-4732-8a99-3b1b5757987d@huawei.com> <CAC_iWjKWjRbhfHz4CJbq-SXEd=rDJP+Go0bfLQ4pMxFNNuPXNQ@mail.gmail.com>
+ <625cdab0-7348-41a1-b07f-6e5fe7962eec@huawei.com>
+In-Reply-To: <625cdab0-7348-41a1-b07f-6e5fe7962eec@huawei.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Tue, 15 Oct 2024 16:25:51 +0300
+Message-ID: <CAC_iWjKr7ZBmYT+pp-hWRGWJfWiC5TmzEDPtkorqiL9WQOHtJQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Furong Xu <0x1207@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	xfr@outlook.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 15, 2024 at 02:24:27PM +0200, Johan Hovold wrote:
-> Add the missing HID supplies to avoid relying on other consumers to keep
-> them on.
-> 
-> This also avoids the following warnings on boot:
-> 
-> 	i2c_hid_of 0-0010: supply vdd not found, using dummy regulator
-> 	i2c_hid_of 0-0010: supply vddl not found, using dummy regulator
-> 	i2c_hid_of 1-0015: supply vdd not found, using dummy regulator
-> 	i2c_hid_of 1-0015: supply vddl not found, using dummy regulator
-> 	i2c_hid_of 1-003a: supply vdd not found, using dummy regulator
-> 	i2c_hid_of 1-003a: supply vddl not found, using dummy regulator
-> 
-> Note that VREG_MISC_3P3 is also used for things like the fingerprint
-> reader which are not yet fully described so mark the regulator as always
-> on for now.
-> 
-> Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 34 +++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
+Apologies for the noise. The last message was not clear text...
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
--- 
-With best wishes
-Dmitry
+On Tue, 15 Oct 2024 at 14:06, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>
+> On 2024/10/15 15:43, Ilias Apalodimas wrote:
+> > Hi Yunsheng,
+> >
+> > On Mon, 14 Oct 2024 at 15:39, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+> >>
+> >> On 2024/10/14 14:35, Furong Xu wrote:
+> >>> Hi Yunsheng,
+> >>>
+> >>> On Sat, 12 Oct 2024 14:14:41 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+> >>>
+> >>>> I would prefer to add a new api to do that, as it makes the semantic
+> >>>> more obvious and may enable removing some checking in the future.
+> >>>>
+> >>>> And we may need to disable this 'feature' for frag relate API for now,
+> >>>> as currently there may be multi callings to page_pool_put_netmem() for
+> >>>> the same page, and dma_sync is only done for the last one, which means
+> >>>> it might cause some problem for those usecases when using frag API.
+> >>>
+> >>> I am not an expert on page_pool.
+> >>> So would you mind sending a new patch to add a non-dma-sync version of
+> >>> page_pool_put_page() and CC it to me?
+> >>
+> >> As I have at least two patchsets pending for the net-next, which seems
+> >> it might take a while, so it might take a while for me to send another
+> >> new patch.
+> >>
+> >> Perhaps just add something like page_pool_put_page_nosync() as
+> >> page_pool_put_full_page() does for the case of dma_sync_size being
+> >> -1? and leave removing of extra checking as later refactoring and
+> >> optimization.
+> >>
+> >> As for the frag related API like page_pool_alloc_frag() and
+> >> page_pool_alloc(), we don't really have a corresponding free side
+> >> API for them, instead we reuse page_pool_put_page() for the free
+> >> side, and don't really do any dma sync unless it is the last frag
+> >> user of the same page, see the page_pool_is_last_ref() checking in
+> >> page_pool_put_netmem().
+> >>
+> >> So it might require more refactoring to support the usecase of
+> >> this patch for frag API, for example we might need to pull the
+> >> dma_sync operation out of __page_pool_put_page(), and put it in
+> >> page_pool_put_netmem() so that dma_sync is also done for the
+> >> non-last frag user too.
+> >> Or not support it for frag API for now as stmmac driver does not
+> >> seem to be using frag API, and put a warning to catch the case of
+> >> misusing of the 'feature' for frag API in the 'if' checking in
+> >> page_pool_put_netmem() before returning? something like below:
+> >>
+> >> --- a/include/net/page_pool/helpers.h
+> >> +++ b/include/net/page_pool/helpers.h
+> >> @@ -317,8 +317,10 @@ static inline void page_pool_put_netmem(struct page_pool *pool,
+> >>          * allow registering MEM_TYPE_PAGE_POOL, but shield linker.
+> >>          */
+> >>  #ifdef CONFIG_PAGE_POOL
+> >> -       if (!page_pool_is_last_ref(netmem))
+> >> +       if (!page_pool_is_last_ref(netmem)) {
+> >> +               /* Big comment why frag API is not support yet */
+> >> +               DEBUG_NET_WARN_ON_ONCE(!dma_sync_size);
+>
+> Note, the above checking is not 100% reliable, as which frag user
+> is the last one depending on runtime execution.
+
+I am not sure I understand the problem here. If we are about to call
+page_pool_return_page() we don't care what happens to that page.
+If we end up calling __page_pool_put_page() it's the *callers* job now
+to sync the page now once all fragments are released. So why is this
+different from syncing an entire page?
+
+>
+> >
+> > Ok, since we do have a page_pool_put_full_page(), adding a variant for
+> > the nosync seems reasonable.
+> > But can't the check above be part of that function instead of the core code?
+>
+> I was thinking about something like below mirroring page_pool_put_full_page()
+> for simplicity:
+> static inline void page_pool_put_page_nosync(struct page_pool *pool,
+>                                              struct page *page, bool allow_direct)
+> {
+>         page_pool_put_netmem(pool, page_to_netmem(page), 0, allow_direct);
+> }
+>
+
+Yes, that's ok. But the question was about moving the !dma_sync_size warning.
+On second thought I think it's better if we leave it on the core code.
+But as I said above I am not sure why we need it.
+
+Thanks
+/Ilias
+> And do the dma_sync_size checking as this patch does in
+> page_pool_dma_sync_for_device().
 
