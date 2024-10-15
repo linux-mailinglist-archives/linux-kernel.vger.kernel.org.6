@@ -1,188 +1,182 @@
-Return-Path: <linux-kernel+bounces-365103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC0E599DD89
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:34:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B3999DD8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 231811C21830
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:34:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2530A1F24442
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6719176227;
-	Tue, 15 Oct 2024 05:34:17 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63759176AC7;
+	Tue, 15 Oct 2024 05:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fqqI43QN"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3921684A1
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EB43C3C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728970457; cv=none; b=n/5QzMlHG2mu3O6lPC1asNd754fA79x5S+oBKBHmYc0pMWZNKzthNFemfrbL6I9i3mOYRwm//7yNa+4gLxChM5we0eXJgNDu8hb7BpJ2Mcc2x/07RaMw3UBhICeHUcntLqAw4eab8H24DZKW7F2cU4Atl1nJab1cM0YuzhiXCe0=
+	t=1728970506; cv=none; b=muVflEl2sxuWniVTnEW+kWUBgUAV6cWUsmcG5K9T1ScWJ6EVDXwllHEIslNx968Iq5lxYuYtfwIzjgFHLdhBCUs84Mp+hnypPYFEM9i8k2tk5TPxxrYVuELen+AezuyPEIyE4bfcPS35c3utzQsJW8MtQT011yiL5XtyLnCuxP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728970457; c=relaxed/simple;
-	bh=FmlK0HMqmmvLXSbBJfw5vApljF4hO647iRg6Ztk0VHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fq3OFjAxR3+W8v5yO1LxY0N2opO9bgfZn4fR7NCcO9ks1NnJJNq4DPhs5F7U2RouEFwZfkG94ehELUw6qiNLXJp1xubr1XsVwUJ5z2XP7CT5VFuuNYDixLHKIqEQyoN9UIErn1YbwbZGLQ+OrjQkbKv72FGFFX9MCkAvd+kDk+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9F7D61C0002;
-	Tue, 15 Oct 2024 05:34:08 +0000 (UTC)
-Message-ID: <dbc33dea-6b6b-4b6b-88af-c6662004e909@ghiti.fr>
-Date: Tue, 15 Oct 2024 07:34:06 +0200
+	s=arc-20240116; t=1728970506; c=relaxed/simple;
+	bh=JR6gZ2MYyBQRhGGMVIzq353IT1yqvpAlneMgFsqBvhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a/k1E0ClwDtrXstYe9BPsQxEhJX0ihRdZ6m0TQNOFc72eHiEpwtOZnpskNRQsBsuIUAl0SWKsgnZej5l3Q2vqUp7NxZmc+1b/377svEoTQBn88yAnVmrT3dRkdXoxWjGyvLPDtKd5rwthc/0XFEuDSTjTtfK4/emtgoUL/WfhhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fqqI43QN; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso2347080e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:35:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728970503; x=1729575303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2HWrH+K7cTgTjTPYZ+dL7fGmCBNocSiDK/Hn2JY2vEs=;
+        b=fqqI43QNkB+bJpOjwnY8O0LZdEmGzSYuVG+oUajBkNI19xNVzxaF4A5pGBDvsp22Dp
+         BNdSOvhl1OE1mqcug0JrlBYvF+dtgplaJckilfupNJGH+05Uptj67GNow7t9tXsLmbfO
+         9bbqsnFPZ2htEJODKmaCx0JPvqdoY9vHBvvYk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728970503; x=1729575303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2HWrH+K7cTgTjTPYZ+dL7fGmCBNocSiDK/Hn2JY2vEs=;
+        b=gIc/G65L4oddc5MfJU+qOat5Z8H+uixc4UdqtrqKnI0Llqq1/czUCqUCU7mf+y+UkX
+         ksWAQJ/4fyI/qFmfeDYOSQ5YosrVeB9vVagrHJeRxnJqcejwet9F2VjgZboYuaYdVN0w
+         p33jY3bRJI8wuzSHBoWt0iK93zpEqh85gYduNT/7B6Okbu883Hg6e59xtNJg8WoEcrcZ
+         FHXcTubcmbkZKVFNGKJoVR0E967YEWJhGcjTaWg/pb1uH2XqHCx/F7ZUbiQmWk0WZEpI
+         pWtyJWsObrdzWomnxu6Xm5nefbq85F40zAWBofQWE+NZhMf8+v950g7oNDBugvL8sDPi
+         zLSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEXkXZi171fz3nw7dwZxf/n0K1v32st/5VlQypIlIKA6r7PN0iWsYBKAb+6+iwehlC/5hXHuF0iNT3cUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO+vC4eReYBLBt6MNoPnr9LNS+09cXMJrvHJkDIuS+kSmXPvrL
+	uQ1iyqGBFSqQ6/weEEYChnyQe+KwweLC22axXJLkIbLtYGyxQETIBHb8ffseIFkDAMTszUk9kwG
+	K/z7vgKZDXPOcKQbvtnwkzj7szp2QL3JK0ETF
+X-Google-Smtp-Source: AGHT+IE/CwxLRzqmXVYjkMDrcTm2+DQg9NcGd7Zyw9exDfJ8teYEZF+svaLAA8rUa5571DxzVoiZK6455ROycmYsGCQ=
+X-Received: by 2002:a05:6512:1598:b0:539:9155:e8d4 with SMTP id
+ 2adb3069b0e04-539e54d77ecmr4621333e87.8.1728970503111; Mon, 14 Oct 2024
+ 22:35:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] irqchip/riscv-intc: Fix no-SMP boot with ACPI
-Content-Language: en-US
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Sunil V L <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alexghiti@rivosinc.com>, Anup Patel <anup@brainfault.org>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Thomas Gleixner <tglx@linutronix.de>
-References: <20241014065739.656959-1-sunilvl@ventanamicro.com>
- <87cyk2zpgt.fsf@all.your.base.are.belong.to.us>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <87cyk2zpgt.fsf@all.your.base.are.belong.to.us>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
+References: <20241008073430.3992087-1-wenst@chromium.org> <20241008073430.3992087-7-wenst@chromium.org>
+ <Zwfwv-O9ln-PVMdc@smile.fi.intel.com> <CAGXv+5F=5f4R5AExANxOwgTL6_VbpHdNKKhHnzy_PDcxtcFoEQ@mail.gmail.com>
+ <Zwz-benEP4PHbRb2@smile.fi.intel.com>
+In-Reply-To: <Zwz-benEP4PHbRb2@smile.fi.intel.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 15 Oct 2024 13:34:52 +0800
+Message-ID: <CAGXv+5HtDqf9MbGc53axP276fFA6riM85+Sa7nXHPvZcCb5-Pg@mail.gmail.com>
+Subject: Re: [PATCH v8 6/8] i2c: of-prober: Add GPIO support to simple helpers
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sunil,
-
-On 14/10/2024 17:14, Björn Töpel wrote:
-> Thanks for fixing this, Sunil!
+On Mon, Oct 14, 2024 at 7:20=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> Sunil V L <sunilvl@ventanamicro.com> writes:
+> On Mon, Oct 14, 2024 at 12:06:16PM +0800, Chen-Yu Tsai wrote:
+> > On Thu, Oct 10, 2024 at 11:20=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Tue, Oct 08, 2024 at 03:34:25PM +0800, Chen-Yu Tsai wrote:
+> > > > Add GPIO support to the simple helpers for the I2C OF component pro=
+ber.
+> > > > Components that the prober intends to probe likely require their
+> > > > regulator supplies be enabled, and GPIOs be toggled to enable them =
+or
+> > > > bring them out of reset before they will respond to probe attempts.
+> > > > Regulator supplies were handled in the previous patch.
+> > > >
+> > > > The assumption is that the same class of components to be probed ar=
+e
+> > > > always connected in the same fashion with the same regulator supply
+> > > > and GPIO. The names may vary due to binding differences, but the
+> > > > physical layout does not change.
+> > > >
+> > > > This supports at most one GPIO pin. The user must specify the GPIO =
+name,
+> > > > the polarity, and the amount of time to wait after the GPIO is togg=
+led.
+> > > > Devices with more than one GPIO pin likely require specific power
+> > > > sequencing beyond what generic code can easily support.
 >
->> When CONFIG_SMP is disabled, the static array rintc_acpi_data with size
->> NR_CPUS will not be sufficient to hold all RINTC structures passed from
->> the firmware. All RINTC structures are required to configure
->> IMSIC/APLIC/PLIC properly irrespective of SMP in the OS. So, allocate
->> dynamic memory based on the number of RINTC structures in MADT to fix
->> this issue.
-> To clarify; QEMU is constructing an ACPI table for multiple harts
-> (multiple RINTC), but the kernel build is NO_SMP.
+> ...
 >
->> Fixes: f8619b66bdb1 ("irqchip/riscv-intc: Add ACPI support for AIA")
->> Reported-by: Björn Töpel <bjorn@kernel.org>
->> Closes: https://github.com/linux-riscv/linux-riscv/actions/runs/11280997511/job/31375229012
->> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
->> ---
->>   drivers/irqchip/irq-riscv-intc.c | 19 ++++++++++++++++++-
->>   1 file changed, 18 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
->> index 8c5411386220..f653c13de62b 100644
->> --- a/drivers/irqchip/irq-riscv-intc.c
->> +++ b/drivers/irqchip/irq-riscv-intc.c
->> @@ -265,7 +265,7 @@ struct rintc_data {
->>   };
->>   
->>   static u32 nr_rintc;
->> -static struct rintc_data *rintc_acpi_data[NR_CPUS];
->> +static struct rintc_data **rintc_acpi_data;
->>   
->>   #define for_each_matching_plic(_plic_id)				\
->>   	unsigned int _plic;						\
->> @@ -329,13 +329,30 @@ int acpi_rintc_get_imsic_mmio_info(u32 index, struct resource *res)
->>   	return 0;
->>   }
->>   
->> +static int __init riscv_intc_acpi_match(union acpi_subtable_headers *header,
->> +					const unsigned long end)
->> +{
->> +	return 0;
->> +}
->> +
->>   static int __init riscv_intc_acpi_init(union acpi_subtable_headers *header,
->>   				       const unsigned long end)
->>   {
->>   	struct acpi_madt_rintc *rintc;
->>   	struct fwnode_handle *fn;
->> +	int count;
->>   	int rc;
->>   
->> +	if (!rintc_acpi_data) {
->> +		count = acpi_table_parse_madt(ACPI_MADT_TYPE_RINTC, riscv_intc_acpi_match, 0);
->> +		if (count <= 0)
->> +			return -EINVAL;
->> +
->> +		rintc_acpi_data = kcalloc(count, sizeof(*rintc_acpi_data), GFP_KERNEL);
->> +		if (!rintc_acpi_data)
->> +			return -ENOMEM;
->> +	}
->> +
->>   	rintc = (struct acpi_madt_rintc *)header;
->>   	rintc_acpi_data[nr_rintc] = kzalloc(sizeof(*rintc_acpi_data[0]), GFP_KERNEL);
->>   	if (!rintc_acpi_data[nr_rintc])
->> -- 
->> 2.43.0
-> For context, this is the splat:
+> > > > +     /* An empty string signals an unnamed GPIO */
+> > > > +     if (!ctx->opts->gpio_name[0])
+> > > > +             con_id =3D NULL;
+> > > > +     else
+> > > > +             con_id =3D ctx->opts->gpio_name;
+> > >
+> > > Can it use positive conditional?
+> > >
+> > >         if (ctx->opts->gpio_name[0])
+> > >                 con_id =3D ctx->opts->gpio_name;
+> > >         else
+> > >                 con_id =3D NULL;
+> >
+> > You suggested writing it this way in your reply to v7. Please pick one.
 >
->    | Unable to handle kernel paging request at virtual address ff6000000000000c
->    | Oops [#1]
->    | Modules linked in:
->    | CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.0-rc2-g2255fe696ded #1
->    | epc : acpi_rintc_index_to_hartid+0x2c/0x3c
->    |  ra : imsic_get_parent_hartid+0x54/0xb6
->    | epc : ffffffff8046b788 ra : ffffffff80a1fe74 sp : ffffffff81403af0
->    |  gp : ffffffff815181b8 tp : ffffffff8140c780 t0 : ffffffff81403b58
->    |  t1 : 00000000000003ff t2 : 0000000000000004 s0 : ffffffff81403b90
->    |  s1 : ff60000080057060 a0 : 0000000000000008 a1 : 0000000000000000
->    |  a2 : 0000000000000000 a3 : ffffffff81403b58 a4 : ffffffff80e0dd80
->    |  a5 : ff60000000000004 a6 : 0000000000000001 a7 : 0000000000000400
->    |  s2 : ffffffff81403bb0 s3 : 0000000000000001 s4 : ff1bfffffea790e8
->    |  s5 : ffffffff81403da0 s6 : 0000000000000000 s7 : ffffffff8151c9e8
->    |  s8 : 0000000000000001 s9 : 0000000000000003 s10: 0000000000000000
->    |  s11: ffffffff81403da0 t3 : 0000000000000400 t4 : 0000000000000401
->    |  t5 : 0000000000000001 t6 : 0000000000000400
->    | status: 0000000200000100 badaddr: ff6000000000000c cause: 000000000000000d
->    | [<ffffffff8046b788>] acpi_rintc_index_to_hartid+0x2c/0x3c
->    | [<ffffffff80a20008>] imsic_setup_state+0xe8/0x83a
->    | [<ffffffff80a208f8>] imsic_early_acpi_init+0x50/0xd2
->    | [<ffffffff80a23536>] acpi_match_madt+0x2e/0x5a
->    | [<ffffffff80a1f5f4>] acpi_parse_entries_array+0x164/0x230
->    | [<ffffffff80a222ba>] acpi_table_parse_entries_array+0x86/0xc2
->    | [<ffffffff80a2234a>] acpi_table_parse_entries+0x54/0x7c
->    | [<ffffffff80a22410>] acpi_table_parse_madt+0x22/0x2a
->    | [<ffffffff80a2389c>] __acpi_probe_device_table+0x78/0xc8
->    | [<ffffffff80a1f98a>] irqchip_init+0x36/0x3e
->    | [<ffffffff80a03d2e>] init_IRQ+0x30/0x52
->    | [<ffffffff80a00c08>] start_kernel+0x4b4/0x800
->    | Code: d513 01d7 1797 010b 8793 2507 97aa 639c 60a2 6402 (6788) 0141
->    | ---[ end trace 0000000000000000 ]---
+> Oh, whatever you will finish with then, sorry for the noise.
 >
-> (Alex just kicked a build w/ this patch)
+> ...
+>
+> > > > +static void i2c_of_probe_simple_disable_gpio(struct device *dev, s=
+truct i2c_of_probe_simple_ctx *ctx)
+> > > > +{
+> > > > +     if (!ctx->gpiod)
+> > > > +             return;
+> > >
+> > > Do you need this check for the future patches?
+> >
+> > Not sure I follow. The check is needed because this function is called
+> > in i2c_of_probe_simple_cleanup(), but the GPIO could have been released
+> > earlier in i2c_of_probe_simple_cleanup_early(), and that makes this
+> > function a no-op.
+>
+> Do you have a known race condition then? This is bad. You shouldn't rely =
+on
+> the sequence of events here, or the serialisation has to be added.
+>
+> > The helpers for the release side are quite short, but the ones on the
+> > request side wrap some conditional and error handling. I think it's
+> > better to keep it symmetric?
+>
+> Yes, but why do you need the above check, I didn't still get...
+> I.o.w. you think that there is a gap in time that (if no check) the GPIO
+> descriptor might be changed? But then how does it affect anyway the possi=
+bility
+> that it becomes not NULL even with the current code.
 
+The opposite actually. Either it is always NULL, or it was initially valid,
+but the early cleanup function released it and thus it became NULL by the
+time this function gets called.
 
-The tests ran here 
-https://github.com/linux-riscv/linux-riscv/actions/runs/11330279867/job/31507748208?pr=1587 
-and there were no "nosmp" failures compared to without this patch, so 
-you can add:
+ChenYu
 
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
-
+> > > > +     /* Ignore error if GPIO is not in output direction */
+> > > > +     gpiod_set_value(ctx->gpiod, !ctx->opts->gpio_assert_to_enable=
+);
+> > > > +}
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 >
 >
-> Björn
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
