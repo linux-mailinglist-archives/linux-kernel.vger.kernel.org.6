@@ -1,72 +1,164 @@
-Return-Path: <linux-kernel+bounces-365336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D992999E0C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:18:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789D799E0D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE5B280E1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3511F21E57
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB481C879E;
-	Tue, 15 Oct 2024 08:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="e7GHw8iU"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8893C1C68AA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980310; cv=none; b=B7w0pME3I5grjiLjwfO37M9tmb7Dko0jRoyN1Wyrk6+gCMU6hDgHSbmayZ59V6VNIbJhg+1O5jlGwniBHN1ttKpGXh7sPPrqZQYhJ2eMQv0+r2dOiP8DFzIufZdzRP7NrFi13Vy9B7XNEoVDZvnspL7iGF5q0imCxNjjRGI7t8k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980310; c=relaxed/simple;
-	bh=nfHbvO1IcVF9bicFNj/hF4m7F4P30o3eCLyPRgiKEws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJNyC336KIo2ctsq4yWdHIBzdSyYrvzcAsNBuKngcBJSdOBrqXFcRMp3ae3+uaeXhzE/DRRHmW1xBEm+vr7RhDIFrEZT1YG4dcx/e3dk0ap1z6YBhiiwKdFChKGSL5Ijvc2Dfs+/HZAtUNdP6OfCfmCw/wxUERRLAhx8wS7n0xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=e7GHw8iU; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3E01AC887;
+	Tue, 15 Oct 2024 08:19:11 +0000 (UTC)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 7BA2C2A7853;
-	Tue, 15 Oct 2024 10:18:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1728980307;
-	bh=nfHbvO1IcVF9bicFNj/hF4m7F4P30o3eCLyPRgiKEws=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e7GHw8iUL6gYOLbo/xQ+4PjV9tQlNRmNMz9311Zoj4kATtnB1Hf/r3uV+4J4DSXlL
-	 K2f7/HTNp+2E/bhM2bjRFdiAJH0UKpkDZlkrEvP/aqovP5lOjMH0UOKEg5ioHxHgra
-	 wVgwFSEZ/tlbFpTmMUq5tYIqZUr8cgg/OsvSLkxVpEtkuBbpo9QL6OaY12teBFPW6m
-	 1Mi3Ki6fEhV5xr+9F4z1UQY0D3/fwDFF7x7/JS8H4OYRD8SPL7IcXvhwZAP1qzZWYV
-	 drSQbQhl1GIiCxBh/oA8v0HD39RJ5KP7YnT/hHO313iqEawqBCkUxR+dyrM/Y1KqI0
-	 z8fTWaj9R/DHg==
-Date: Tue, 15 Oct 2024 10:18:26 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] [PULL REQUEST] iommu/vt-d: Fixes for v6.12-rc
-Message-ID: <Zw4lUhuPmbYDPK59@8bytes.org>
-References: <20241014013744.102197-1-baolu.lu@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161AC1C57B1
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728980350; cv=none; b=TbDsr3yQIYIvnKFiBZWrLhFksV82KGcy+5sVeT4gbwScVcXjELd6voUkCYbTGsbEr4FjymSc8etBgs8SOS4jk5YZwI87UIiUq/GZi1336FlEpZ70OGH4Wo+RCCCdvqyFDiH5L0MqKQ066je0hgc1+AOipe0rEdd+sF+LFIrhbog=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728980350; c=relaxed/simple;
+	bh=kwl0owW73BYdPW1E5Ew0XHsSqEYd8D7V7ba+pUNrsrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hwYEOZSrXbrUls3pGrScBjj+Gx5ylOvUxrte1SOsbCPeM9NsyaxRR/ZNBR+/dzB8cxtJuaW/IRTu/saiNgy+r3FEXly0mIvoV4v+F76H2l0zGphkacVDtE4LsPqDE3UBKcxc7FIuoMh7lXSWqRDHDrL0dKdlaSPuC43uFfmHj3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so48946885e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:19:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728980347; x=1729585147;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OpUSrE25/rm5MDlnPbwNjTDl54kOR07EvH4by7qsm9U=;
+        b=RcAUZhSVP5HKgQm/rktflbD+hW/YIPr/Eu7asFZnHVwrxuJ7aeWl+fJvf8vjyy7cGc
+         8+LE9nyEKz7Sw5MyJOBv2r9rA6sIQt6Q7+gzp2Z5rCo3fNZMOssgvrMxAHNf+umN2Uk9
+         +/Vt+WD5S8w2l/7jxOofaKvf5sVbGIs6RwbYsKbShmIt25qjLBZEYTmoNdrnSciYWzzY
+         C+EF+bhUDst7L+oBYcIQkPyWQF82J97xL/lQFsiyqb0R5T3Xmar2zlGkkd+k/B9nDfiy
+         6HuQ/L/edXYdwdgYZWp6wasdw8O7etFXmxEN6bybCX61x3LoFrYvEL4NA134ttJzLbxG
+         aK+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW1xl5dvi63/k/YziiUKCtPm0n8mENeJh53cq8My38pGibEF0xxICsX70fUkWyMrfj2WbjrTRGEkfvOy/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJAEy7IDdFZ+kho4hJr7tGdAEdWzJST5Dx2miV8ESqXt08IHNh
+	D6N/a0WATVaSkdIeSiuF1MIMXr6rRdpvxkkC9UsHwcD7ZRUdDIBP
+X-Google-Smtp-Source: AGHT+IFuKS+SLVZJMuiIzvt28PWPUcLQqBWUb6YSy7sRl522hL5lmzOT/Ia4WylpWY+UOOnnq/NpJw==
+X-Received: by 2002:a05:600c:1383:b0:42c:b1e1:a45b with SMTP id 5b1f17b1804b1-4311dee81famr130392735e9.19.1728980347090;
+        Tue, 15 Oct 2024 01:19:07 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f569ef4sm10426325e9.18.2024.10.15.01.19.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 01:19:06 -0700 (PDT)
+Message-ID: <60488994-e8bc-4f50-a592-8dc539d396d7@kernel.org>
+Date: Tue, 15 Oct 2024 10:19:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014013744.102197-1-baolu.lu@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kfifo: don't include dma-mapping.h in kfifo.h
+To: Christoph Hellwig <hch@lst.de>
+Cc: stefani@seibold.net, jassisinghbrar@gmail.com,
+ linux-kernel@vger.kernel.org
+References: <20241014144643.51917-1-hch@lst.de>
+ <2861f304-c8d9-4e56-8a91-9ddf6d7b05a5@kernel.org>
+ <20241015074043.GB24501@lst.de>
+ <7f723486-237f-47d2-b9c1-e5312876dfb5@kernel.org>
+ <20241015075613.GB25487@lst.de>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20241015075613.GB25487@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 09:37:43AM +0800, Lu Baolu wrote:
-> Lu Baolu (1):
->   iommu/vt-d: Fix incorrect pci_for_each_dma_alias() for non-PCI devices
+On 15. 10. 24, 9:56, Christoph Hellwig wrote:
+> On Tue, Oct 15, 2024 at 09:53:52AM +0200, Jiri Slaby wrote:
+>>> DMA_MAPPING_ERROR is never used by kfifo.h itself.  It is used
+>>> by user of the header that instanciate one of the macros that use
+>>> it.
+>>
+>> Well, I don't understand. Looking at:
+>> #define kfifo_dma_in_prepare(fifo, sgl, nents, len) \
+>>          kfifo_dma_in_prepare_mapped(fifo, sgl, nents, len,
+>> DMA_MAPPING_ERROR)
+>>
+>> You'd have to include dma-mapping.h if you used this macro.
 > 
->  drivers/iommu/intel/iommu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Yes, obviously.
+> 
+>> Even though you
+>> do not explicitly use any other def from the dma header.
+> 
+> Sure.
+> 
+>> Well, this is not a definition of self-containment.
+> 
+> Yes, it is the exact definition of it.
 
-Applied, thanks Baolu.
+Then it depends on which one, apparently.
+
+So I disagree, but I don't mind either (meaning: I don't oppose to the 
+patch any longer either).
+
+>> If you use every macro
+>> from a header and it does not need any other include, then it is
+>> self-contained.
+> 
+> No, that goes way beyond the self containedness.  In fact these days
+> the main reason to use macros is exactly to avoid these kinds of
+> dependencies.
+
+
+-- 
+js
+suse labs
+
 
