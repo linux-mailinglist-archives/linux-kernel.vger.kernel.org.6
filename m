@@ -1,189 +1,537 @@
-Return-Path: <linux-kernel+bounces-364884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B0999DA8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FE699DA8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12727B213F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60EC81F2350E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6D42582;
-	Tue, 15 Oct 2024 00:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B00231C87;
+	Tue, 15 Oct 2024 00:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="fTOaOf/k"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011039.outbound.protection.outlook.com [40.107.74.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0X0NFE24"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E03191;
-	Tue, 15 Oct 2024 00:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728951023; cv=fail; b=lriqe2DH/gtesavMIPJTvKZbsIDHm8w/P5e0iwesEtslpgAF0kiJgK4BnchlXPjGr3c4LNfVdF1gRNnn3D3/2tili752Eca0Wf2DDQ2ap0A0rTFQ/3ttpO6eh2nGPty17btz8iguuKQ3O93cXf0/M7vH1FQ585XNIe7wTjOsXjc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728951023; c=relaxed/simple;
-	bh=YHaIfhbo9pLq7o/x9bZn6J9HRh8JxWn358clxAk6xsA=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=ThvM7FdHaP6auMYLGp46975RG0uyEvKzn3wpASEvJoKLaY2tfx6SxpOIX519qj30bBwaQq50qAIZESyhs1MKv0C6M3fo2cAm1Qsa8z7f9x1KEVsHTKi7JAEiJUtGv4Q9huuC+G0X1cwk90U0B1H8ssK/y83a/2NB5h3PFx7XXM8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=fTOaOf/k; arc=fail smtp.client-ip=40.107.74.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F0Sm7MHCJin1sf8Z3N0DLnSzsWEMo9gvRcTP+VJ+RDkqjF3s0ivBAkd4D5wpDIxt5/oDirvtl08fBb1LZF4oKPjY6psqDKxnp4WFNnR7Q3iB/4KG2VgZbgFw5Qy/9JMN7ZJchLv9TZ6Am+hyFcNUJipsKglb987MJ1SBDJ1FU2rdgh0yNkHcXxpX+VxZEC3Jz7kc2iSQapB7VThe97fFeMju7JUEGg8R1k3IJaSh41OPXkFx8J8YIxdm46DLZIr7lmOrMX+NTQuwGtTL7ENGPF+YiD2YDaF1H10LQbQF8aPahOZJb3Oy5q4d+JY67gwxgWW7d4yssYlvi6GDsXUjlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zmg5jonAwhXVIISLfp2E6LZU3duVPioO1CVeK6wx5BI=;
- b=ELUdCO7jNVvyeC6XlW4qhg8SV2pYWWmwLFtf3DHA5UnrW9At9Uug30qFJcE9HEnvGM+zoKwJecwql3sYdGFUDqdL+s9wIDMv/OF6rznlI3JKaWpE5AfgiCs0Tsk87UN5dkXk231DDtoJW4jNKXzg10e47y9Ekx/CN/9KM46n7lT6HYrWn2Ug9VidYg2Z9+oXrbZ5hbft3YJ7SzFJnvxkJ+PBBGVqB+RLvdJfhbePbC6dKf8Pywv6iLlb5eW6KDz3s+l9epr9/FrqYhwO09YyNdjG4MIUwbFRL0JhoC0cBITZ18LToEcCw7+lg9M26qsdmJU6k8OudZcrXwgqQDRfeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zmg5jonAwhXVIISLfp2E6LZU3duVPioO1CVeK6wx5BI=;
- b=fTOaOf/kWntEgnzQmpH3jrvgp+1whHcSQeRtOVRoFpKmdtobcPE9WqdF40ZT7q9nMXpwLBSyhRubBNoKjJqRvtg9WSSvKy2TXtGNXi3PzEGcj9rmDu99D+shQ9J6MzYk1BD4F+QLkb069L4a29Hg8P73KhB7CnUiDrZlU0JQQuc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TY3PR01MB9948.jpnprd01.prod.outlook.com
- (2603:1096:400:1ab::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Tue, 15 Oct
- 2024 00:10:16 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 00:10:16 +0000
-Message-ID: <87r08iql93.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] ASoC: rsnd: Refactor port handling with helper for endpoint node selection
-In-Reply-To: <20241011175346.1093649-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241011175346.1093649-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 15 Oct 2024 00:10:16 +0000
-X-ClientProxiedBy: TYCP286CA0025.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:263::16) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AF4136A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728951149; cv=none; b=Ol/CrAwFNObAmRbZcIAFDR08gSELgcBd0WiPOPDHKkoHH+VqMesphwZj+Yf9+dUaioIpWuTu60PehTVaQOZdyeJB1c5g4ghBDpDGUtDOWyCcFsndRRfDr+v6JKGw9/atty+iyN/C1vu2LrF5CnQzQQ9/6Fv3Sv8riC9flwN+jEE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728951149; c=relaxed/simple;
+	bh=q+OgFmqhk/HJD3GVdmya2ZCFmSEpTmfeM4Ui3XhpTVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JvYQ9YzhmvHiCAR1ZUPNAGtiUNL294+0UmYUEqs+7r74QbhsRunR7QVg4v24HLs+eXynmwuzQ7WWq5BpoO6xEDqFK5qI5KIPIWBpbTtJT+epEj6LHF/dEjt3oY8GhBwH3dlo8ED664wBPA1D9tOoclLVRg5BSEXYN0+aIOYiumY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0X0NFE24; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-717d2b8c08aso1807625a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728951145; x=1729555945; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2nJK5ypxzPre+b3iZgUs3/o2UAwXiSSl8CirXUM73cg=;
+        b=0X0NFE24xO13NwRWEWVkZUBgCjXcSbRTof86LqpGCOL1/oPisu56ditiUGgHwEdXVn
+         GKx4pZOjVnZHVXC2hKFy12tiUQk+Ku90AFn9jL6MjgLR7536/uAiROzVs4wngoUGOIUl
+         d0A8IYYACn0xyuhyuJC6160bPMxvsxHAGM9oCw2mH9YtWVqTT/EU7HtR7HY/4hyZux95
+         pj9hxS4Hihf0BInePdpXZo4vgAPOeSr3cr0+bw7EpzSlu09sLo1t+2OFrdyXppWeh7QG
+         g/TLwePIfV58ed4kH6ZnP9fpIHC/1DDimUn2ePNnb6mkmI76G2ukIr4hJe4O1lhl0Y6d
+         nkug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728951145; x=1729555945;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2nJK5ypxzPre+b3iZgUs3/o2UAwXiSSl8CirXUM73cg=;
+        b=GlDx3pqDZ7fIb6ZygTocLvT659wCOsLRrSJFc2m1EqxX2+eChDcm7z2LPO8oQMWXtu
+         Pdq6ERpuWEgEObxXmOumND7YsRF3hs68F4O3KPwF1cD4/+BeTizfOB2DUoDwJEyGEDyO
+         PdCKsXHKtkLbnTya/NiDOLlSZdZ8BrqS7u9KidVsV1gc+6qcCwCfb+PPcOvuxMejg60F
+         o/br3lBsXQ8YPEOjo58C+oHA868rnSHCXOxNIUUa0RpYS4XHncwipTMA1xksKFqanx2K
+         9zRPkMa+2/DV0bs/CFjnH0Uu8QhBasviJMKboC3tT5rCLu95qC/r5xq8aVI7o/qL6Uhu
+         xdaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTq8ZFN7AVxia9SVgmwxtxhTiBXnXT6cS+Fq/f16hfPn7GK4pM+Go3sQaem4JPnDsKNSoEblaL1N/FURU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUe5xBQPNGgvf20HsCz9WWJ94LzZ+/ZJ/OAO3kDCU0+JxWaWnD
+	w0CtFkAwnaMgIKV2xVTRRo/sLlMjUOS3CQ6HbPUM5Qp41Fi2HIQyTnhN3nlZZGg=
+X-Google-Smtp-Source: AGHT+IFUmS4kVr2Pv7oFj7W8MKvd6iijlrriku8hfRtZ9uKSfBSxmXMv7Q8VVGLYVLbT+xWg7qohAQ==
+X-Received: by 2002:a05:6830:2b0f:b0:716:a7fc:20b1 with SMTP id 46e09a7af769-717d63eb003mr8735657a34.6.1728951145153;
+        Mon, 14 Oct 2024 17:12:25 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-717fba4196csm82237a34.77.2024.10.14.17.12.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 17:12:23 -0700 (PDT)
+Message-ID: <60452f83-28a1-4a80-8e90-1f1ed32a594e@baylibre.com>
+Date: Mon, 14 Oct 2024 19:12:22 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TY3PR01MB9948:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2d065cda-4a46-4df6-70f0-08dcecadbf65
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uvUC8StXKDIXhs7A/geET5PsnAWf5guHrHnxa9K/Q2PuoLUWv8+JhTq/NgJ/?=
- =?us-ascii?Q?jgZmikT5lJNjcinK0sqvOBx96avtfT2vkdupdsrR9TPrjtyVNgY+ilh11NC2?=
- =?us-ascii?Q?kU8M1qhAW6FYBplEMYMpzArJz1Eh4Gx5maFAvmOZ0hYX/Ik+w+y9wJaTGR2A?=
- =?us-ascii?Q?P3NffpsFt6hbtuzgv8/Iq+GAmkXtWamz16rP0ZQHtjKL47yzU4xX6Z7FWmzf?=
- =?us-ascii?Q?+suaITwNJLKs89AV0Qc+GHp0QPBCVe6tVuvAsMpseJFGV3HCNfuC7XVutGzk?=
- =?us-ascii?Q?9mctB4B9Pn2XTCrBGQVyAUx+3PSM5Q6bmn6QqE9h0JeDJ1DupLIvnlFUOs2T?=
- =?us-ascii?Q?RE1G87yZ129rgEHwHZ3oXZdM094Q3M8mAh3zPlUvOoCULNsPZ2o1OK7Smnbn?=
- =?us-ascii?Q?4OKaeBEilalmCnRyqfjkrUo+qcdFSdkmgveuJhZ77eMOeiXZdpYHvIQNiuKx?=
- =?us-ascii?Q?bCTOxG1OIdk31Aiw+O8Ey9ZuNojxTRw4gi4lBwaeIx6GTCKSoMr1Hqt05526?=
- =?us-ascii?Q?t8hW8SI5ZU3qj2HLSToTa8f+qp5+1EvjsSxnmBNJhyXJ7INSGAsMh7fpefFB?=
- =?us-ascii?Q?jgIZ05qhEbFVQUexfRsTxwS/yfhW3+0sJtOJD8ccSFZZCXnK7fQX1sNqtcOp?=
- =?us-ascii?Q?WWcCFcmLSPn+pMw5VeAO2K30J8LSR62kccqjFBLbFTCzXQDX4chXhSIZs9ZA?=
- =?us-ascii?Q?NcvkLX0ggh8CGjlK7B0hBPjwJFfhBtZEfkhuuY6zmE8c2bEj3/Gr407aYKYs?=
- =?us-ascii?Q?K/W2jd8JW+g+I9InVqEk9Qcqobel+bi/lCF7AFwk/q6zgJWAqCDlhfZyd8/0?=
- =?us-ascii?Q?mtspYu+b9FmIeLMKC2w4gCHFRhP4q2oq7kHU2dm6AfQxHsRqXY6bNvDiylTU?=
- =?us-ascii?Q?QEh19b6xQS66nnWLe7UV9TyGsPS7qAt6rzxLQyuqjeqG8UTaWtrKpqgMYTKb?=
- =?us-ascii?Q?6ArfZHqSRwB6v27odhI4F80DlxSrtfWokm7jPvQ6xgxKC5Mt1G88oxtFf7j3?=
- =?us-ascii?Q?7o6uGofB6zBa1zPbSEdAlY67bCmAL40eNQ1ePeqKw8s0389rsOq4hY7tro8D?=
- =?us-ascii?Q?y52XUihSzgjeifh7p1z3uQjw4ujAncQrURl9x7KpVNGOGxZyHaA1doY4H0t5?=
- =?us-ascii?Q?ozhwGeuqirbkILkPZfQ6r3gWcmdTDV5Q/FWtxWmj+opLenS3DgGxT4Dorj0m?=
- =?us-ascii?Q?j9MQiQGK8fStcK3QwaRmJCfL3EjUr1TN/tfAuHqICUUob6DzyUfMtjLMDKfj?=
- =?us-ascii?Q?rBE3gKHh72RuiV23F+vQM4TCv9OXS1OXPP0RtomjFlQuqHAHVfAzqKq0T0Iy?=
- =?us-ascii?Q?vdg3I6uJz8FEmz7R/UmJCztyHz7lvHoo7LK/Gk94S2UC3g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YW8kl+qLAQLjcxPURZ+ky2Fdp29H1sZZ1r+O20U68OVQ/NYl9TEC7rLadKUf?=
- =?us-ascii?Q?3P4oHS8s40ojNAt9VQYCpYzVWNVEHZZYrzG+pIhVSojBa1jcA6+LtmpgEnmh?=
- =?us-ascii?Q?Mw3rXoYw06IVnGYo/5XLX2j/l9Ga9bGcEeVwSXrXgFUPHHjepnlGZDdQ0qjv?=
- =?us-ascii?Q?Hpfw4CkO76Md41wFir2z1SBWeQdT+WarVHEA7CPoZ5QB0Jbu7CLt37UQVrb8?=
- =?us-ascii?Q?dJv1W1nEnwf8RsDPhIWruGrg0RKVw85fAAm9ggAmr7DKCsfZyic99Ka0Vtkw?=
- =?us-ascii?Q?QGg0HrPP5ilKHDW6GLXMnEZEeQQ0vqz7BakXffm1mFjKoKq4yrf09o2r88Aj?=
- =?us-ascii?Q?5btA9RnQSyyYknm9WF/+nOPTXlrs1NVw/f39XBAsdCSoJ1shx1N9zWmDI1dl?=
- =?us-ascii?Q?/987ElpG1gg7XUsp25lN0pp5+fg6LoT+boeKk5kwFcXWtjLLZfSh58OA5noP?=
- =?us-ascii?Q?C9Hlqr0Jb3feUokXCeQcsKCuBnoLKxf82fSNvcw8g66FJBz38mpFtQUaFjI7?=
- =?us-ascii?Q?lI1UbjJmLzlpvCYFcKCYDaTsp6i5XMFTXCccyx2iV4BYnaEE/9H5mKOsn732?=
- =?us-ascii?Q?ZM1eZt1fvDqBGETtZRnQZoBZlFafe8vzPCW1q1F4sdAeXLXzkHLZAlTdHbZB?=
- =?us-ascii?Q?EkfvjbE5AIdgUqriTKeLz3Dtl5WTloZvVrm3h7X01u9xVbZBPzYzL7hRocVm?=
- =?us-ascii?Q?VZYFuIP5tDciCW9Tx2O6VCZiYIAO8GvKgNdDhKg9XWjqPfx5Bcn/L8c1VPMe?=
- =?us-ascii?Q?dsOGUIpcErfp3F6butQNqLzri0Re2D+/U+34A8cfsvw3sBy0Q76wddjfDSwB?=
- =?us-ascii?Q?AZwrH+D6CGCWNVCp2CQ3CB8HPx7QwyGTQfzViFT5e7RsB2G6FcVHz/Bz95U/?=
- =?us-ascii?Q?bMsSGtW8zh1RsaC+R3iPVAxoLTGEAdYHKoTWZhL/4kaxsVp3gQ5+TKxgijRy?=
- =?us-ascii?Q?7ohANPdknnllHdIw5GZS2oDih6rzMf2vrOOI8ci181YHRODZjVSc796TMdL5?=
- =?us-ascii?Q?qE1hXdIwVtJ/9o//jaOtTFcKj/q91gCO8h8/JKyuPLvelI18NA8/EWFnijGE?=
- =?us-ascii?Q?Zr5gZUe8LYlBUqnFKKlqpVoMKM/klGR/vsm3Ck51p2MESlOo4kmey1TG+zY5?=
- =?us-ascii?Q?3A5lvFYhw/aKgjm53vEIjtHGdzhw0ucEHecuaAmLox+LmGRFZCy7UHQ7RRGZ?=
- =?us-ascii?Q?9prhRvLTXKPmWTulbySYc4xfEoiiWPfGq3CJbp23CDzhJ/H4Fl/n+fqDK1ak?=
- =?us-ascii?Q?c4MrRe4pslE7o6lRKJ95e57pSYlW2X/yQJOgNLFCdlt9PqJw8KWpme7nBUnF?=
- =?us-ascii?Q?KGIBOIaorzpN1NKe5naGugHVJ91QqISiiHLQcZnciwX6iqMWF0WRc6jTfVul?=
- =?us-ascii?Q?RtTQjU6u3z+FOdq+1SoFDib13p8PymCVWzkDLyW6bh547f+hbQuEJ2R1EvvT?=
- =?us-ascii?Q?W6tZK1han0I9BQ7eEK10VQIVE8GKJggngF7Hak+EMrk6s6yZ3R9lWF3bUG0y?=
- =?us-ascii?Q?J0e+eqTzYEbeXhwcS6wfqfLT3qjtJGSC4/5yEXv+itnlBXb//Fi/YVv+TK0e?=
- =?us-ascii?Q?BWgSYC8Tyo9BRLMUPJkQzVzTLQLXWWhEg7kUipgimmgd5p1ZUvVj9XSMrWOv?=
- =?us-ascii?Q?6L1gCFSUsxgzWuZWcgyFqmE=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d065cda-4a46-4df6-70f0-08dcecadbf65
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 00:10:16.5558
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OpeYVc1CBFWHqhQa8Y6IiBFpFZCupgSaIPfHeg8L7J7XgNiZNkPTFAybLm7HZNj9FBaT3nSbHjq0ojLOXQzPHpgk0KIIXXpg/DMqL4XDC5Q3205X+UgvAJHixuox3I5r
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB9948
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Ivan Mikhaylov <fr0st61te@gmail.com>,
+ Marius Cristea <marius.cristea@microchip.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Mike Looijmans <mike.looijmans@topic.nl>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
+ <20241014094154.9439-6-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241014094154.9439-6-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-Hi Prabhakar
-
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 10/14/24 4:40 AM, Antoniu Miclaus wrote:
+> Add support for the AD485X a fully buffered, 8-channel simultaneous
+> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
+> differential, wide common-mode range inputs.
 > 
-> Refactor the code responsible for selecting the correct device node for
-> audio endpoint parsing in the rsnd driver. A new helper function
-> `rsnd_pick_endpoint_node_for_ports()` is introduced to handle the
-> selection of the endpoint node by checking whether the port is named
-> 'port' or 'ports'.
-> 
-> This change simplifies the logic in both `rsnd_dai_of_node()` and
-> `rsnd_dai_probe()` functions by replacing repetitive condition checks
-> with the new helper.
-> 
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 > ---
 
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+...
 
-Thank you for your help !!
+> +static int ad4851_set_sampling_freq(struct ad4851_state *st, unsigned int freq)
+> +{
+> +	struct pwm_state cnv_state = {
+> +		.duty_cycle = AD4851_T_CNVH_NS,
 
-Best regards
----
-Kuninori Morimoto
+PWM drivers typically round down, so this mimimum required
+high time may not be met if pwm_apply cannot make an exact
+match.
+
+> +		.enabled = true,
+> +	};
+> +	int ret;
+> +
+> +	freq = clamp(freq, 1, st->info->throughput);
+> +
+> +	cnv_state.period = DIV_ROUND_CLOSEST_ULL(GIGA, freq);
+
+As Uwe mentioned in v2, ROUND_CLOSEST doesn't seem like the
+best choice here.
+
+And usually we use NSEC_PER_SEC for this instead of GIGA.
+
+> +
+> +	ret = pwm_apply_might_sleep(st->cnv, &cnv_state);
+> +	if (ret)
+> +		return ret;
+
+pwm_get_state_hw() is currently not public. But it would be nice
+to make it public and use it here to assign st->sampling_freq to
+the actual frequency the hardware is capable of instead of the
+requested frequency. This way users can read back the sampling
+frequency attribute to know what the real sample rate is in case
+the exact requested rate was not possible.
+
+> +
+> +	st->sampling_freq = freq;
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+> +static int ad4851_set_oversampling_ratio(struct ad4851_state *st,
+> +					 const struct iio_chan_spec *chan,
+> +					 unsigned int osr)
+> +{
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	if (osr == 1) {
+> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
+> +					 AD4851_OS_EN_MSK, 0);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
+> +					 AD4851_OS_EN_MSK, AD4851_OS_EN_MSK);
+> +		if (ret)
+> +			return ret;
+
+regmap_clear_bits() and regmap_set_bits() would make this a bit
+less verbose and consistent with the effort started in [1].
+
+[1]: https://lore.kernel.org/linux-iio/20240617-review-v3-0-88d1338c4cca@baylibre.com/
+
+
+> +
+> +		val = ad4851_osr_to_regval(osr);
+> +		if (val < 0)
+> +			return -EINVAL;
+> +
+> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
+> +					 AD4851_OS_RATIO_MSK, val);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	switch (chan->scan_type.realbits) {
+> +	case 20:
+> +		switch (osr) {
+> +		case 1:
+> +			val = 20;
+> +			break;
+> +		default:
+> +			val = 24;
+> +			break;
+> +		}
+> +		break;
+> +	case 16:
+> +		val = 16;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = iio_backend_data_size_set(st->back, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
+> +				  AD4851_PACKET_FORMAT_MASK, (osr == 1) ? 0 : 1);
+> +}
+> +
+> +static int ad4851_get_oversampling_ratio(struct ad4851_state *st, unsigned int *val)
+> +{
+> +	unsigned int osr;
+> +	int ret;
+> +
+> +	ret = regmap_read(st->regmap, AD4851_REG_OVERSAMPLE, &osr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!FIELD_GET(AD4851_OS_EN_MSK, osr))
+> +		*val = 1;
+> +	else
+> +		*val = ad4851_oversampling_ratios[FIELD_GET(AD4851_OS_RATIO_MSK, osr)];
+
+Why is 1 not in the table?
+
+> +
+> +	return IIO_VAL_INT;
+> +}
+> +
+> +static int ad4851_setup(struct ad4851_state *st)
+> +{
+> +	unsigned int product_id;
+> +	int ret;
+> +
+
+Would be nice to do a hard reset here if possible using st->pd_gpio
+(datasheet says to cycle this twice and then wait 1 ms).
+
+> +	ret = ad4851_set_sampling_freq(st, HZ_PER_MHZ);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_A,
+> +			   AD4851_SW_RESET);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_B,
+> +			   AD4851_SINGLE_INSTRUCTION);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_A,
+> +			   AD4851_SDO_ENABLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(st->regmap, AD4851_REG_PRODUCT_ID_L, &product_id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (product_id != st->info->product_id)
+> +		dev_info(&st->spi->dev, "Unknown product ID: 0x%02X\n",
+> +			 product_id);
+> +
+> +	ret = regmap_write(st->regmap, AD4851_REG_DEVICE_CTRL,
+> +			   AD4851_ECHO_CLOCK_MODE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_write(st->regmap, AD4851_REG_PACKET, 0);
+> +}
+> +
+
+...
+
+> +
+> +static int ad4851_set_calibscale(struct ad4851_state *st, int ch, int val,
+> +				 int val2)
+> +{
+> +	unsigned long long gain;
+
+	u64
+
+> +	u8 buf[0];
+> +	int ret;
+> +
+> +	if (val < 0 || val2 < 0)
+> +		return -EINVAL;
+> +
+> +	gain = val * MICRO + val2;
+> +	gain = DIV_U64_ROUND_CLOSEST(gain * 32768, MICRO);
+> +
+> +	put_unaligned_be16(gain, buf);
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	ret = regmap_write(st->regmap, AD4851_REG_CHX_GAIN_MSB(ch),
+> +			   buf[0]);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_write(st->regmap, AD4851_REG_CHX_GAIN_LSB(ch),
+> +			    buf[1]);
+> +}
+> +
+
+...
+
+> +
+> +static int ad4851_set_offset(struct ad4851_state *st,
+> +			     const struct iio_chan_spec *chan, int val)
+> +{
+> +	guard(mutex)(&st->lock);
+> +
+> +	if (val != st->offsets[chan->channel])
+> +		return 0;
+> +
+> +	st->offsets[chan->channel] = val;
+> +	/* Restore to the default range if offset changes */
+> +	if (st->offsets[chan->channel])
+> +		return regmap_write(st->regmap,
+> +					AD4851_REG_CHX_SOFTSPAN(chan->channel),
+> +					AD4851_SOFTSPAN_N40V_40V);
+> +	return regmap_write(st->regmap,
+> +				AD4851_REG_CHX_SOFTSPAN(chan->channel),
+> +				AD4851_SOFTSPAN_0V_40V);
+
+Pretty sure I mentioned this in a previous review...
+
+I don't see how changing the softspan affects the offset. A raw value
+of 0 is still 0V either way.
+
+It should only affect the scale and signed vs. unsigned data.
+
+> +}
+> +
+
+...
+
+> +
+> +#define AD4851_IIO_CHANNEL(index, real, storage)			\
+> +{									\
+> +	.type = IIO_VOLTAGE,						\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
+> +		BIT(IIO_CHAN_INFO_CALIBBIAS) |				\
+> +		BIT(IIO_CHAN_INFO_SCALE) |				\
+> +		BIT(IIO_CHAN_INFO_OFFSET),				\
+> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),			\
+> +	.info_mask_shared_by_type_available =				\
+> +		BIT(IIO_CHAN_INFO_SCALE) |				\
+> +		BIT(IIO_CHAN_INFO_OFFSET) |				\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),			\
+> +	.indexed = 1,							\
+> +	.channel = index,						\
+
+These chips are fully differential, so I would expect:
+
+	.differential = 1,
+	.channel = 2 * index,
+	.channel2 = 2 * index + 1,
+
+Or alternatly, if we use the devicetree to specify the type of input
+attached, (differential or signle-ended) then this would be dynamically
+configured.
+
+> +	.scan_index = index,						\
+> +	.scan_type = {							\
+> +		.sign = 's',						\
+> +		.realbits = real,					\
+> +		.storagebits = storage,					\
+
+Since enabling oversampling can change realbits, this driver will likely
+need to implement scan_type_ext so that userspace is aware of the
+difference when oversampling is enabled. (Adding support for oversampling
+could always be a followup patch instead of trying to do everything
+all at once.)
+
+See the ad7380 driver as an example of how to impelemt this. [2]
+
+[2]: https://lore.kernel.org/linux-iio/20240530-iio-add-support-for-multiple-scan-types-v3-5-cbc4acea2cfa@baylibre.com/
+
+Also, I would expect the .sign value to depend on how the
+input is being used. If it is differential or single-ended
+bipolar, then it is signed, but if it is signle-ended unipoloar
+then it is unsiged.
+
+Typically, this is coming from the devicetree because it
+depends on what is wired up to the input.
+
+> +	},								\
+> +}
+
+...
+
+> +static int ad4851_probe(struct spi_device *spi)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct ad4851_state *st;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(indio_dev);
+> +	st->spi = spi;
+> +
+> +	ret = devm_mutex_init(&spi->dev, &st->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_regulator_bulk_get_enable(&spi->dev,
+> +					     ARRAY_SIZE(ad4851_power_supplies),
+> +					     ad4851_power_supplies);
+> +	if (ret)
+> +		return dev_err_probe(&spi->dev, ret,
+> +				     "failed to get and enable supplies\n");
+> +
+> +	ret = devm_regulator_get_enable_optional(&spi->dev, "vddh");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(&spi->dev, ret, "failed to get vddh voltage\n");
+> +
+> +	ret = devm_regulator_get_enable_optional(&spi->dev, "vddl");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(&spi->dev, ret, "failed to get vddl voltage\n");
+> +
+> +	ret = devm_regulator_get_enable_optional(&spi->dev, "vrefbuf");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(&spi->dev, ret, "failed to get vrefbuf voltage\n");
+
+According to the datasheet, if there is a supply cconnected to the
+REFBUF pin, then "Disable the internal band-gap reference and the
+internal reference buffer through the DEVICE_CTRL register in this
+configuration and connect the REFIO pin to the GND pins."
+
+So we probably shoudn't be enabling this supply until after
+configuring the registers.
+
+> +
+> +	ret = devm_regulator_get_enable_optional(&spi->dev, "vddl");
+
+Should be "vrefio", not vddl".
+
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(&spi->dev, ret, "failed to get vrefio voltage\n");
+
+We need to keep track if this supply is present or not and set
+REF_SEL in the DEVICE_CTRL register accordingly.
+
+> +
+> +	st->pd_gpio = devm_gpiod_get_optional(&spi->dev, "pd", GPIOD_OUT_LOW);
+> +	if (IS_ERR(st->pd_gpio))
+> +		return dev_err_probe(&spi->dev, PTR_ERR(st->pd_gpio),
+> +				     "Error on requesting pd GPIO\n");
+> +
+> +	st->cnv = devm_pwm_get(&spi->dev, NULL);
+> +	if (IS_ERR(st->cnv))
+> +		return dev_err_probe(&spi->dev, PTR_ERR(st->cnv),
+> +				     "Error on requesting pwm\n");
+> +
+> +	st->info = spi_get_device_match_data(spi);
+> +	if (!st->info)
+> +		return -ENODEV;
+> +
+> +	st->regmap = devm_regmap_init_spi(spi, &regmap_config);
+> +	if (IS_ERR(st->regmap))
+> +		return PTR_ERR(st->regmap);
+> +
+> +	ret = ad4851_scale_offset_fill(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ad4851_setup(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	indio_dev->name = st->info->name;
+> +	indio_dev->channels = st->info->channels;
+> +	indio_dev->num_channels = st->info->num_channels;
+> +	indio_dev->info = &ad4851_iio_info;
+> +
+> +	st->back = devm_iio_backend_get(&spi->dev, NULL);
+> +	if (IS_ERR(st->back))
+> +		return PTR_ERR(st->back);
+> +
+> +	ret = devm_iio_backend_request_buffer(&spi->dev, st->back, indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_iio_backend_enable(&spi->dev, st->back);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ad4851_calibrate(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_iio_device_register(&spi->dev, indio_dev);
+> +}
+> +
+> +static const struct of_device_id ad4851_of_match[] = {
+> +	{ .compatible = "adi,ad4858", .data = &ad4851_info, },
+> +	{ .compatible = "adi,ad4857", .data = &ad4852_info, },
+> +	{ .compatible = "adi,ad4856", .data = &ad4853_info, },
+> +	{ .compatible = "adi,ad4855", .data = &ad4854_info, },
+> +	{ .compatible = "adi,ad4854", .data = &ad4855_info, },
+> +	{ .compatible = "adi,ad4853", .data = &ad4856_info, },
+> +	{ .compatible = "adi,ad4852", .data = &ad4857_info, },
+> +	{ .compatible = "adi,ad4851", .data = &ad4858_info, },
+> +	{ .compatible = "adi,ad4858i", .data = &ad4858i_info, },
+> +	{}
+
+As requested in previous reviews, { } is preferred to be consistent.
+
+And more importantly, it looks like compatible strings are in
+reverse order compared to info structs.
+
+> +};
+> +
+
 
