@@ -1,211 +1,143 @@
-Return-Path: <linux-kernel+bounces-366250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8EF99F2AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:26:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD8A99F2B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B4A2831D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D32B21C22292
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F5D1F6674;
-	Tue, 15 Oct 2024 16:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C447E1F4FCA;
+	Tue, 15 Oct 2024 16:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BaUSYaDS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dceeE9jM"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A8114F117;
-	Tue, 15 Oct 2024 16:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5861EC006
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729009557; cv=none; b=nw41uHNTQ7hOvR087jmH5ApJMWjdGBnm1jDaiMpdUhB6pmLW6Nb28m55YCyaIHWae7cT3vzfoZ88fh3dn3GRTtnnC7X57nLXtHXBLEaNdyYeZH6osk3b1Sr4mQwqQJhjBaf7HYagreMWGM/SytDZ0aT3WqLluE33yoUBOkWhHd4=
+	t=1729009598; cv=none; b=TckfI1XhKi586RYaanSCoWrk+eLrzQEMPEhZm6ECIk5rBCUjqsrCVvnwuO0fy3RIYgKyLVeYjoy73XY+jJtop0S3UuU+LUYGLsU4SF/AYtlEK+J52+ksfa9sZ6hg8qM8xy6lx8EB9pooS2t72sfgEwGkc1aNusfl6Gbnuv/4h3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729009557; c=relaxed/simple;
-	bh=IV/xSFUw7wmphZ9Zlh83uECq8gkLlX3aWIi48pezwUY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GkEXVnmzkxhke9K1mgrSjT1rMRiCVIyx18JnENMs5Rb3UUTNEnMHhn0onsMEMwVmBi53kfSDqRZNdotZtPB/3vZtiuJ7vkICk8KJ6sBFaywlHrsqVVP8XhrlYCloEgP+QiTlfCeRBRURmaK9CkrSjvXJ5rK/hC/066vSQTGItwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BaUSYaDS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FEQpiK025590;
-	Tue, 15 Oct 2024 16:25:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=g2mqnzR6d9P4pMwJewFimp
-	TdHzAITZ7rab6MAtKIprk=; b=BaUSYaDSJxZiSvJb+c4rUTzf3155Y9PwzRG9h/
-	vT8sys9H1NBZwqQvlwqxjyN8CHPnmWEVQ71gsSZ3P7IQz4olFTOiEt4/kYlYZvm4
-	Jjc5mnr0MCRy2acDDWeygier39TcEaWll7tg5NtWjYvxh+E1oewmqgoPS7EGuP/T
-	7OamrN83gZr3l9INTJ3B887nuG3r8xzGcsx2ii6bTX6fveCiiQP0CI9EXsGEsfCu
-	H1GevlCLB7j0r3XrkkgOHN/wd+ruy08hVdQ7eRMVkDzD6mms/Y2rbiaGuNTarKeF
-	vDgJHNmkUzt21T+Kin4T4AXswBm+TB53m+GF2o3xH/X6CFlg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429t5kgd13-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 16:25:49 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FGPmLc016757
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 16:25:48 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 15 Oct 2024 09:25:46 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mukesh Ojha
-	<quic_mojha@quicinc.com>
-Subject: [PATCH] leds: class: Protect brightness_show() with led_cdev->led_access mutex
-Date: Tue, 15 Oct 2024 21:55:32 +0530
-Message-ID: <20241015162532.2292871-1-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729009598; c=relaxed/simple;
+	bh=r/LUYHfo0b2oPsQBnswC2i/HWfTInJ4Wj1YFss1OM0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eQLi137xoNts0Gam8n+HF4IjQzUkxgUgWYU8zedoXKVqOvar6t9savSBwHQom/Xaal3mFxjGNODxrDDvrgpPkHypvw8eeal03sbJfzU5gNcSNOyEBhlj/LJyPrwvNzlB5oTiXBb4EGcoNn/deHqpAfQwwdYIkHIEutxK2sHcKDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dceeE9jM; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-45fb0ebb1d0so735491cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:26:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729009596; x=1729614396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ByNOtnqk52ePIj5atFjVP7CCcQ9LOwoYrSe4G9dfPzk=;
+        b=dceeE9jMcx5ICYSFz8cO505jHTInVLzivWeO58vZkYzaQTAqGPDgZt2Wa+/bvDFSdD
+         U7KHzgB5Zofr6CT/qM+np5ihKnQc0/YvpyjG9UA4dCyddatP5GO+q1yJsaK/8yXAX4Tp
+         gShJUkXlW9RhPfywCLTsPKFSOuE2RTIEsc3HORYutBCvh1bfralHG/bTNd9+omHqUoRy
+         SvkdV1Fx6J0TCGhIf/N61l23yvuYwpRP/1iAGZIFX2La/k0cFVx2wxtji+BJkrlxuAaH
+         mtwh5c2Pxoa1RZR+gmz18/5yqh5Rvk1ETPlftuVvVxuti6To/lCKR4kmVjOAWezSfRp/
+         1Ozw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729009596; x=1729614396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ByNOtnqk52ePIj5atFjVP7CCcQ9LOwoYrSe4G9dfPzk=;
+        b=WAPmBg100/mj8ClIwPCfziE+Gq/FoFSO+dVLvZXLa5C6AcBKC6dx/C1xUE+hf3WBJI
+         fCTKT5ujlmqVkA/HFmh2J/T5cjYZQzmK9xCfAD0pARHkBMBPFWoig66v524MuqINRe7H
+         bDLkhYGo4R9Ho1s7DkxTRTEVZjfimQuFUL7/HBkNS0DXirW/+/enuxUKc+ozKWzS/DDa
+         IyIcPIxzAUZC4d3sWPyMcNwS3gNpL6YkdaZTqITu1p88nBg7E1A3xBYwuuAai2Sou9a9
+         pMG6xqhTTS7+jjb5xH1V66eWrPNCw8GD6k5xgsgjMaf1fx1yVdJwfDvQbXyaDqjnUjYN
+         CNZg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9tVyxeKRe/ipoca2o29Kcu9QN8wm/6yIObhJFCo28ZuFeXH67w/9i7qO4SO18Off8gpC4xuItrwZc/ks=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yynar85hwPxvH2DtBGdCzIrH11iW00Br4hJzhrCeQhVpsJ07jNW
+	NiY1nMcwITC8ZLVCNNGH+pvSXiblVss6tm57pGSEEC4X3RfDiGQ+kqtJbyFPatNV/x27flIVGEJ
+	HZhaE2TMSqJarpQ9PXdFs5jJY+U6t1WPNzbAq
+X-Google-Smtp-Source: AGHT+IEJf/zEbvfRLlUBkavHUP4hlRMi5TuBiNYWQTdXNa6kRDfahgq4f8DAV0x/WUWXlEXeRgomzUcU5kxGSCng7Vk=
+X-Received: by 2002:a05:622a:848e:b0:458:17ac:2913 with SMTP id
+ d75a77b69052e-46059c43d71mr9480531cf.11.1729009595317; Tue, 15 Oct 2024
+ 09:26:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pi7E0JT45Z1U1llTrU1ef--8RJlo-Tn6
-X-Proofpoint-GUID: pi7E0JT45Z1U1llTrU1ef--8RJlo-Tn6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- bulkscore=0 mlxscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- malwarescore=0 phishscore=0 clxscore=1011 suspectscore=0 mlxlogscore=702
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410150110
+References: <20241014203646.1952505-1-surenb@google.com> <20241014163231.9ef058c82de8a6073b3edfdc@linux-foundation.org>
+ <CAJuCfpHo=gu-JJ-N_nU_3hX4HEsfsQ6=ff19vU=NCrp1y3abiw@mail.gmail.com>
+In-Reply-To: <CAJuCfpHo=gu-JJ-N_nU_3hX4HEsfsQ6=ff19vU=NCrp1y3abiw@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 15 Oct 2024 09:26:24 -0700
+Message-ID: <CAJuCfpHMRM1GyzCA_=v5V2kUZbprvNJD1aFmpF58vm0w4eWBHw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] page allocation tag compression
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, 
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
+	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
+	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
+	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is NULL pointer issue observed if from Process A where hid device
-being added which results in adding a led_cdev addition and later a
-another call to access of led_cdev attribute from Process B can result
-in NULL pointer issue.
+On Mon, Oct 14, 2024 at 6:48=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Mon, Oct 14, 2024 at 4:32=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
+ion.org> wrote:
+> >
+> > On Mon, 14 Oct 2024 13:36:41 -0700 Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+> >
+> > > Patch #2 copies module tags into virtually contiguous memory which
+> > > serves two purposes:
+> > > - Lets us deal with the situation when module is unloaded while there
+> > > are still live allocations from that module. Since we are using a cop=
+y
+> > > version of the tags we can safely unload the module. Space and gaps i=
+n
+> > > this contiguous memory are managed using a maple tree.
+> >
+> > Does this make "lib: alloc_tag_module_unload must wait for pending
+> > kfree_rcu calls" unneeded?
+>
+> With this change we can unload a module even when tags from that
+> module are still in use. However "lib: alloc_tag_module_unload must
+> wait for pending kfree_rcu calls" would still be useful because it
+> will allow us to release the memory occupied by module's tags and let
+> other modules use that memory.
+>
+> >  If so, that patch was cc:stable (justifyably), so what to do about tha=
+t?
+>
+> Now that I posted this patchset I'll work on backporting "lib:
+> alloc_tag_module_unload must wait for pending kfree_rcu calls" and its
+> prerequisites to 6.10 and 6.11. I'll try to get backports out
+> tomorrow.
 
-Use mutex led_cdev->led_access to protect access to led->cdev and its
-attribute inside brightness_show().
+I prepared 6.10 and 6.11 backports for
+https://lore.kernel.org/all/20241007205236.11847-1-fw@strlen.de but
+will wait for it to get merged into Linus' tree before posting them to
+stable.
+Thanks,
+Suren.
 
-	Process A 				Process B
-
- kthread+0x114
- worker_thread+0x244
- process_scheduled_works+0x248
- uhid_device_add_worker+0x24
- hid_add_device+0x120
- device_add+0x268
- bus_probe_device+0x94
- device_initial_probe+0x14
- __device_attach+0xfc
- bus_for_each_drv+0x10c
- __device_attach_driver+0x14c
- driver_probe_device+0x3c
- __driver_probe_device+0xa0
- really_probe+0x190
- hid_device_probe+0x130
- ps_probe+0x990
- ps_led_register+0x94
- devm_led_classdev_register_ext+0x58
- led_classdev_register_ext+0x1f8
- device_create_with_groups+0x48
- device_create_groups_vargs+0xc8
- device_add+0x244
- kobject_uevent+0x14
- kobject_uevent_env[jt]+0x224
- mutex_unlock[jt]+0xc4
- __mutex_unlock_slowpath+0xd4
- wake_up_q+0x70
- try_to_wake_up[jt]+0x48c
- preempt_schedule_common+0x28
- __schedule+0x628
- __switch_to+0x174
-						el0t_64_sync+0x1a8/0x1ac
-						el0t_64_sync_handler+0x68/0xbc
-						el0_svc+0x38/0x68
-						do_el0_svc+0x1c/0x28
-						el0_svc_common+0x80/0xe0
-						invoke_syscall+0x58/0x114
-						__arm64_sys_read+0x1c/0x2c
-						ksys_read+0x78/0xe8
-						vfs_read+0x1e0/0x2c8
-						kernfs_fop_read_iter+0x68/0x1b4
-						seq_read_iter+0x158/0x4ec
-						kernfs_seq_show+0x44/0x54
-						sysfs_kf_seq_show+0xb4/0x130
-						dev_attr_show+0x38/0x74
-						brightness_show+0x20/0x4c
-						dualshock4_led_get_brightness+0xc/0x74
-
-[ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
-[ 3313.874301][ T4013] Mem abort info:
-[ 3313.874303][ T4013]   ESR = 0x0000000096000006
-[ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
-[ 3313.874307][ T4013]   SET = 0, FnV = 0
-[ 3313.874309][ T4013]   EA = 0, S1PTW = 0
-[ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
-[ 3313.874313][ T4013] Data abort info:
-[ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-[ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
-..
-
-[ 3313.874332][ T4013] Dumping ftrace buffer:
-[ 3313.874334][ T4013]    (ftrace buffer empty)
-..
-..
-[ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
-[ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
-[ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
-[ 3313.874656][ T4013] sp : ffffffc0b910bbd0
-..
-..
-[ 3313.874685][ T4013] Call trace:
-[ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
-[ 3313.874690][ T4013]  brightness_show+0x20/0x4c
-[ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
-[ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
-[ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
-[ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
-[ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
-[ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
-[ 3313.874711][ T4013]  ksys_read+0x78/0xe8
-[ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
-[ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
-[ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
-[ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
-[ 3313.874727][ T4013]  el0_svc+0x38/0x68
-[ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
-[ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
-
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- drivers/leds/led-class.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 06b97fd49ad9..e3cb93f19c06 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
- {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
- 
--	/* no lock needed for this */
-+	mutex_lock(&led_cdev->led_access);
- 	led_update_brightness(led_cdev);
-+	mutex_unlock(&led_cdev->led_access);
- 
- 	return sprintf(buf, "%u\n", led_cdev->brightness);
- }
--- 
-2.34.1
-
+> I don't think we need to backport this patchset to pre-6.12 kernels
+> since this is an improvement and not a bug fix. But if it's needed I
+> can backport it as well.
+> Thanks,
+> Suren.
 
