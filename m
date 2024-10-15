@@ -1,249 +1,134 @@
-Return-Path: <linux-kernel+bounces-366823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8680E99FAF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:09:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A096999FB02
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFC53B22EDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:09:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D411C23B1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5712B1FAF1C;
-	Tue, 15 Oct 2024 22:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742F91B6D05;
+	Tue, 15 Oct 2024 22:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KYtdnDXi"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010038.outbound.protection.outlook.com [52.101.69.38])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Y8MlYOVa"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F181F80C9;
-	Tue, 15 Oct 2024 22:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1021B0F2A;
+	Tue, 15 Oct 2024 22:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729030104; cv=fail; b=uxI/J0Z4r5HfjavCa+HVxqe574YnX1qsrq1/PipLWQ3AdOlArrZQ877KA/nRANODPdyeS1nwC3EZIERf+gWHKYuZjQiKQeocoXFeOsSOaybe+xK831WWybcHzdUmxRcYTzWL1MZk/wSf1f3iHgEZH/KohA8RWHE3PMLAa2Xptz0=
+	t=1729030314; cv=pass; b=PIqqmk11RtR5IIUBqRkbvDHy5A3n2ENkFKEKTfnREW1EB83tlFQF0e9bQJ1fu919sATwrjQowPV4ZDFLX6PAqwf3Qb1ak2QbsdC1G5OlHyjh6xI0sI6r+lpbXMD7IiU4DEBbH+35NggLmgcQ0inLuN0c/wPEfH0qYQhitUF44cs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729030104; c=relaxed/simple;
-	bh=oLfeRG2JJa/EVak0ZqRbgfNgEQ6xhDK04ybgk4QBnh0=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=cLrrJ36LvMGMaaNTZZXXaFAV/pOHD/bXkEgTGscFeju7fbIoRnJr4eJYEaGQEuQkzWyUvrJp146eQIjh88N/xlEQVPqiaMqdP7PRwee/95C0AAs7S0EORWyMWtolZYJoAw6srkqe5TH+zClUJkWPvIHOOTfLagCvQhm27cXezoc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KYtdnDXi; arc=fail smtp.client-ip=52.101.69.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s8WBViq283QXcCinzg3aplHWoRzFUnl8i3FDBhYiPtKAA9xSSxhDdmjI6DIyF7iXNpjo5MRPjpzMp8fqHSyxYspk0LnzTRM4fYBTr4IEQObc5Zo3Z5dVH4X87XtnaaVCA1mkbmcRdQCl+Z/WjnSeMuHZVI97dd68hTDUNAz8Xy39jCGt5noXY4tcAitreTSlHQw5VKqS+WXZ611lQuks8BkhppqLFg+rhCptvZ1b5sgDHOi0J5HxHoHYaQETpCiKzcbPZqbmFYuwp9g2MCdmrGsXweXdje6P8PU+aM2XBQ/jFHTeLx+Fz7qG4wXV/Yq71ubF4KtGtsN4I1or74GRqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HRw0nM+ngMAE6u8ALv623oDL1F1mp7li7piBbTWnJ98=;
- b=w4A3a/zZKuEeGeqz8d/W1Qx4TIbXkAtMNpBOtpd6BPzNhWiN+NEDxoT2vmZui3/cYGqify9UMilIvC3NZLV7//+vCAsvKVhS8q3KRVjcTIPKookdoDE1Ag8EggZ/Zj9YUuFdSsBftCL+ftni5kXZtg4C9Bfv78TV8kVLwyrKAIUoTk0aIJCGxMz3IbpUg0FpHjRLpgfwUCSuYKEGN4RjncaV3ayRL98bPPRElWBwi7t/n3KTn8q04mmwnJOKMJoH4lOUuPPA1sp2ad4mozlkbKHC1IUs0XDaqnYpxaEQcYtMg9RfP+gQeXoPxcZEo4DUP3xU4EtvpqdpaVe8UUEdJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HRw0nM+ngMAE6u8ALv623oDL1F1mp7li7piBbTWnJ98=;
- b=KYtdnDXiQaRnKJ9eb98BnsnQx/tg7iTwqStAs+4LOCVuFjsog2VSuR+2P2AwUSWtjdAqmECPATtx8I/NWWbbFU1tmGavZQKfKjaLhhKeggCQSRqJ4BARj0LGAFJICqBpYku6nKGl0976/AI/k3aYBGVhT1LXyXYV5vL68LVkQ6nfQuZPhOVnNEpo+Bv79rbX4EZ03kqpLIpTaqvJwFrB9KZmrk9uZ7+e9Duo/ypvKqFApgqG7DHsFET221fTOfPng0LyNSsdIoyC1KtJVTPMo819spBEd5Cmv69tDvuLPGyzORKxbVmRpQrEIwZyzPZYh0DnG0LTq3fe23zryhGNAQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DBBPR04MB7788.eurprd04.prod.outlook.com (2603:10a6:10:1e4::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Tue, 15 Oct
- 2024 22:08:21 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.016; Tue, 15 Oct 2024
- 22:08:21 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Tue, 15 Oct 2024 18:07:19 -0400
-Subject: [PATCH v3 6/6] tools: PCI: Add 'B' option for test doorbell
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241015-ep-msi-v3-6-cedc89a16c1a@nxp.com>
-References: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
-In-Reply-To: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, 
- maz@kernel.org, tglx@linutronix.de, jdmason@kudzu.us, 
- Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729030073; l=1769;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=oLfeRG2JJa/EVak0ZqRbgfNgEQ6xhDK04ybgk4QBnh0=;
- b=ggtUqSjG0x79ltLdbRziV+1fQMtLGonP7mytNXC8zbANXa9FirOFw5AzTBQStHed8I7eXFU4x
- 3OLE48THL6dDKyaXkJxOOuEoKxuWLFFdAQrxKVHBU+4XNxPUlWck2K4
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: SJ0PR13CA0059.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::34) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	s=arc-20240116; t=1729030314; c=relaxed/simple;
+	bh=HMj/ZyO9zNpccPB0josTS7wpa0dytJ4KoeNtxF9AKRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gPU2uKOiMT9DXVSv4rLRj9kQ9nOm07xcQiH0p9HbcN9c+TUF/VLv3KBr4x5msGln81CpUni8HOtRii8g/JuK8yC8Nc9iwDLUDM4/G3cmXwH0CN4AwGFCkP+pwgLZuuNaHBicb+yz0+m0AzLsm2SDMv6cWrWX82x7TCCSOT8mzzY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Y8MlYOVa; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729030293; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JvPspVLsF+z9g2UWZCKpHn+pWhy37tJ9ndVdbmFdzRYnovcBFYNv8zVZKou8o3B+VFftpcJpy2ge4hJh2xigOa+EPmxlwATMSGmW1XltIxVw74/CdH9UiqRAgoP6QRmabvdke+65H9jszG9flVxo6i0WqIooBCNyf3xGrlzwXog=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729030293; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=HMj/ZyO9zNpccPB0josTS7wpa0dytJ4KoeNtxF9AKRA=; 
+	b=G2pUFb4TDq2aT4WM7TFjsULRNIMTP18C4V9zDvuZfAPpP66Kge+2Qe4uzN7YNmnNon/g/GF15HBtrV3s0Z+V1Xx3gxchBffp5AoGToOa9WTfQtcnt0HNF9HDR7UzFFfFaSZZyLq2TETckbk6U3sJRG3QF2dvcMAq+IXXvTx0xUA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729030293;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=HMj/ZyO9zNpccPB0josTS7wpa0dytJ4KoeNtxF9AKRA=;
+	b=Y8MlYOVantCVrTrickvcshdEGEY58KLgbYcyZ+a8Eo8pEWNrbx7UVYCiHEKXsuFH
+	kgH0JeSbnlC4uF97D+iCnHXfsM/5F0B0ApOIgaNRbp1FMQKV+9BsJUGwrOFmGKVDm/o
+	PPq4xBK/p1yd/RmKwULLjavvEo40PeQJRZepOanM=
+Received: by mx.zohomail.com with SMTPS id 1729030292653381.82924626488114;
+	Tue, 15 Oct 2024 15:11:32 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 90E5F1060433; Wed, 16 Oct 2024 00:11:15 +0200 (CEST)
+Date: Wed, 16 Oct 2024 00:11:15 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+	linux-kernel@vger.kernel.org, tony@atomide.com, Rob Herring <robh@kernel.org>, 
+	linux-pm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, khilman@baylibre.com, 
+	linux-omap@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v4 3/4] power: supply: initial support for TWL6030/32
+Message-ID: <7ucahlofrnajeb7z3tmkx2aninkxpbwx3mdykeeugtsct2o5gh@5dxrvnl23dsy>
+References: <20241007150120.1416698-1-andreas@kemnade.info>
+ <20241007150120.1416698-4-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7788:EE_
-X-MS-Office365-Filtering-Correlation-Id: c910bd8f-30d0-47f0-522d-08dced65e172
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TjR4RlFvWUxBSkx0bEZRSGhPU21JY01FamxJSXNuek9iRXpmSG5xOFdLRTY5?=
- =?utf-8?B?QldTdml6N2RiZVhwd21yWkt5RU9JM2V6TURjWHQrdWlUcFFwZmtoeEV4SllR?=
- =?utf-8?B?aWZnMXpqTVZGZjMxL25xTnVOZGVPMTlUVitNdEpacnNsQzg5cEVqOWpXNDVl?=
- =?utf-8?B?c3l2U3d6OWcvZVJhWUVMSEJoNVgvS3A2Qjc2NHB4dXlDRHFSRlo2am1iTGo0?=
- =?utf-8?B?MUVuYlF1UEZxN1FFV0tkL3dmZXl1WEJYUnhMQmtKM3UxZUZtMkc3VnU1NUxB?=
- =?utf-8?B?c0dqenFmbkg1aFBBcXlXTVFqdXpZbnFHOHJ3S21iUTdreEhrODRpUzczSDhs?=
- =?utf-8?B?cTI4czJ2anlEcEpSUU55YWtuSHBlTUhvWis2a2s0TSt0Y0tXa3pySHF1TS95?=
- =?utf-8?B?QTZFa0VOZ1JHV3oybHFvbmo1QzczMzVRM1VXRHJwOXFRbXJQQm1BbGpMamNl?=
- =?utf-8?B?M3VxdXNJWG5QRUwrMjc0VU1Oa1I4QWRtZG11bUhDT3hvcTF5bUUybVlOVGNN?=
- =?utf-8?B?WVMzRmYzWUhUMzJWdzFtZFMvb2xhSXNTd1pMSVhuUERQaXF3R3d5dWdtYUs2?=
- =?utf-8?B?WTdCcTB5N2loQnBMT3Vjc1AyQW5pOG9KdEpQR1M5czJPU0xCWkpEbXRNYXEy?=
- =?utf-8?B?Mm4yOHlaOTY3MkNHQnczdmZhdGFEc3Rtc1hxMUJwSXVBWnZxL0ZnYWU4aXhJ?=
- =?utf-8?B?VCt6TUppZGZiS2UwbHNrUm5QbEN4bW1iV1FUa0xhY09QNWp6ZFZwcmdPOHFT?=
- =?utf-8?B?aG9SZnI1bXIwMkJGUHJmZWFIc2JKc29lZXkvRHpOa3FmcC9vY3M5RXpsa1RV?=
- =?utf-8?B?Yi9JalYyMStwQzFmdVIzMzBvMnp4eEFCUHlETEZlK3hkdU0vaWRsN3hlUkFM?=
- =?utf-8?B?QVc1MmZSeWpCMUNROStRY2NDUGwzb1I3QlFhSG5IaUNDRDRYZUV6WC9NNExC?=
- =?utf-8?B?NUtvdnRuOHd5dFBrWTk1cCtINHp3YkVrVWMwc1pNK000cERQeDJqM3ozUGt4?=
- =?utf-8?B?UStDMWpXcTdRa3hWZWtUWDBaRUNvemphK1hoUmJ0djJ5b25EVTZRVlRWTlBX?=
- =?utf-8?B?NGlhTGRWRVQrb0hoTkxxUDRpbnFZZStqZmxyelRTT09ESWZ4OTR5SmZMZzJS?=
- =?utf-8?B?cHNjT0ZHakdSNDJtdW5COGZoTUlab2I5V3JEeWVoUVdsTm5rUUFIYTRJYVJz?=
- =?utf-8?B?QTZQZFMzS25FVlc5S2RkdkR0RTJrZlp2K01LOS9BdllyVGQxdEVUcFlHT3E1?=
- =?utf-8?B?WWc5L3dNbUtWT1p2U0EzZjA3aHFwcDVkMEd0TE9kb2FHR2NxMU9DVTNSaUxE?=
- =?utf-8?B?Zkc2Nmtza2wwWm9KV1hWNWZSV1hmNE1BQitiWWk1QjN0b2JFeW15cUgySVpE?=
- =?utf-8?B?U0lKQm9tWUY3WDZYTVpZSjd6QkcxeVNYU3lSNHBhaE1WNjVVSlVuNXQ0N0ph?=
- =?utf-8?B?MWFDdTVjbjNleFhEbGJLd1NqMWxLS1JRWk5MUEk3empRR2t0NHp4ME1UN1p0?=
- =?utf-8?B?TmxkQ2s2bGI0c1I4WFdjRGR1dGRrYVFWRHVnQnZyRmNzWlY1Qlg5Uzd5NXhS?=
- =?utf-8?B?eTVqay9QOWJCNDRUNWVZOXNPbFBaVTdtYngrUjJPanIyUnZGVEcwbC9nc2xN?=
- =?utf-8?B?RU9iZkpKTnhWS3BTRTVZOW5rbXJtMGJKaGlFZWRVODR1dVl3Z2NQOHhNQ3M1?=
- =?utf-8?B?TkJoUk5DbjVVNlJWVzVpVU8ydmVjWGs2QUVIN3dFVWkvTHFGemF3S05qKzhp?=
- =?utf-8?B?SXlZaEJjYnJWSDJCdXQ5WCtqSXozVGFRc3RLa0ROZGNySmVkZWludXpZRStE?=
- =?utf-8?B?UzN1WGJwaU80elVUMUh1dz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z3B3bUwvcWxtQ0tYdFZLMHpvVGJ4b2JUV1lzT0o4U2UrVXIxVU5PYUR5SXds?=
- =?utf-8?B?bWZhaVpJTmpzOVFrYzdMT2J3WXVrekJ2cllJbUJuaVJxRmJ6U2N3SENMb1B3?=
- =?utf-8?B?NE4xNWxrTjEycG5MK2ZsQ3JqOU5IR29uTVY3bWw5N3dFL1MyU1V6Z3N6cmJo?=
- =?utf-8?B?anJscGVTT1cxNjFMWUl4R1dpOUdjVXNNemt6SUc1ekUxRFlTc01BZ29YNzln?=
- =?utf-8?B?U0ZhbTVkeTloUkZGZDlnYnJhOVlQYVJ5Q0pYVkw0bXpQL1JZV1pZOHc1NGt4?=
- =?utf-8?B?Vk4vbThZWlJSakhzM3FxcHNqVXhwQjBJcm80NVBZNC9DMXVDWDdjNk1Kb1FZ?=
- =?utf-8?B?MDVaYTJsNEIrN21DcjJLa0tlaHh4OURzOUJEb3ZrcW1zaTRYMzlGNGpwTXdI?=
- =?utf-8?B?N2lEdGk2QXpNOUNIU2NQY0Z5YzhuR1paVzJPTEFhbHFZcEpXd25ZMlpSclY5?=
- =?utf-8?B?WlRlbmprVVR3QkkzY1NNVGdzNzExbHNENk9ENEcwRTV5ZzQ0dzZzWVM3WXd0?=
- =?utf-8?B?bVpsZ2FQdDVkNG9hOVRIOUgvaSttYkNhdjlvZ3Z5enZMZnRQMks0bXpsYlhX?=
- =?utf-8?B?aGRJTkQ2R1J5YWFVR1hwZXg4YW5wb2tnUHhWcElMaEZhS1NGUldEcFZaTTc3?=
- =?utf-8?B?VENFd01OSkhFNTJiTmkvUWl4YjA3anMvVFAvQUFIOFR1L2lzWXN0MkRyOUpz?=
- =?utf-8?B?RHFlc1IwbE9VV3RBbnZHN290TmpjVEh6a09IaHhOZ1Q3eExkQjJMSXRCVHdZ?=
- =?utf-8?B?STZtNnA0MzNoeTFaclBOYnV3RnNrU1l5OFRsNlB0cEtyRWkyVGd1dHYvazRE?=
- =?utf-8?B?TTQ4YjI4VmRRSDZPZkNMRm5FeWs4TnpqNTl0WGwyWjd0aFcxOVJTN1RscUs5?=
- =?utf-8?B?eG1adGk0TXowSjhCaTEyY3NVaE1LUEtPTDc3RENZUWhzQSt1dXZlWEJ3TjJW?=
- =?utf-8?B?VWFVSmJBcWw1S0Z3SmxKanppN1JsS21GTEFGZkJrQ0xiWlRoeXZLQnN2b0wr?=
- =?utf-8?B?WEVXb3dXY25rK2dpaVRocjQrOFBZYVNmdUFBNmpvS21ROEUwQ2h2dGxHSk5t?=
- =?utf-8?B?azByZk5IamxPRStlZi9tRjlQbUpoNFhQZFdWNzA2Zlg2WnU3NGRPMGFpVUdn?=
- =?utf-8?B?NGoydHNrRkw4QjU4d3YwYU9vZVdZay9vd0JJOWM3MEpwTStDbzIzeDRlYUFl?=
- =?utf-8?B?bzBBTklndDBDUWE5bUhON0pVNzBxSXV1NVFnUUFCZ2xldmR1cFhxa0w2QlNp?=
- =?utf-8?B?Y0VNQWg0VnBhZW4rTlRzZi85ZUJ6QnFQeFRUbDJ1b1FTT3NZa2RidzVzM0dK?=
- =?utf-8?B?NURvTm5kcm5JRkIyb0lONEZHOUdqT1g0cXBpenIzUUhyRHdrcXdXNzc2N1F5?=
- =?utf-8?B?YW1ucFZoNlBIUFRrMlAzK0k1U3RRdXVQRENZeVNvd0hpcUFVYWw3SHM4QU9S?=
- =?utf-8?B?QWtLb1hjUTBZbDQyS1RLRVFKYmtHRHNkME0rUjJFQ25FdTJVV1NaQ0lDWWNy?=
- =?utf-8?B?MlQyelVNeEo1NHNkcGN2T1VpUWxabFJHeHJsaFFaUC9od0w0dWErNXB0Ymtp?=
- =?utf-8?B?U1I0Q0R6b3MyQk1ZSGR4ZlZybHlHOWovaGVzTTVjNjFFTFNBeVJyTWQ5UVVo?=
- =?utf-8?B?ZXh6V1JvaGhQcWZJelpMZ0dNTHhIeitYZ0poMlhNT3IyN0NFOXlxQWpNb2F4?=
- =?utf-8?B?cWRTWmorTm5aclozcGs4YzZHTVpRK0NrWEJzZlhVVy9FTU9tZ3J1NmlLTFlr?=
- =?utf-8?B?SUdtallwbm1NYndaWXNWZFBUMnJYTXp6bnY2SE96OFpmNHo1M0ZPZnEzQ3Jm?=
- =?utf-8?B?MnhMaE4vanhESUdVNEZnVEoreTZwMFNRdVV6bWx0enlyQTBsTGtSL045aDZU?=
- =?utf-8?B?a0JKNXpoTTBIM0I4YzlOVWhIajFKaTlhbHRSbjdrTUEvM2ZtNnBaYitLTHVp?=
- =?utf-8?B?N2lKbDczdlhFenZOSTA4aXNuWVhTeWpuL0JOVmdFSmNyYi9FenlCNUlMNzlY?=
- =?utf-8?B?NzZLWlc0ZEhEWXVCcG9xRVZqUHo3REszVWwxYUdPKzNJU1A0RlMwT0ZlUC9Q?=
- =?utf-8?B?MnFSZnN4TkpNcUx0dXVNRUh3Nkg4MWN4YnUvUGw3YTFHNm5lYTFSV1RmeS9N?=
- =?utf-8?Q?42YY=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c910bd8f-30d0-47f0-522d-08dced65e172
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 22:08:21.0568
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AQhKV8F1fCrWYN3UEyX2/sm+pn1RkrqftuCWNcMDAkQqoIhbYRrQlocwHyFweNArQobKSIJNG/XEeAWtxYYAwA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7788
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="feqi6aul6coybbv6"
+Content-Disposition: inline
+In-Reply-To: <20241007150120.1416698-4-andreas@kemnade.info>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/228.353.45
+X-ZohoMailClient: External
 
-Add doorbell test support.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- tools/pci/pcitest.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+--feqi6aul6coybbv6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 3/4] power: supply: initial support for TWL6030/32
+MIME-Version: 1.0
 
-diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
-index 470258009ddc2..bbe26ebbfd945 100644
---- a/tools/pci/pcitest.c
-+++ b/tools/pci/pcitest.c
-@@ -34,6 +34,7 @@ struct pci_test {
- 	bool		copy;
- 	unsigned long	size;
- 	bool		use_dma;
-+	bool		doorbell;
- };
- 
- static int run_test(struct pci_test *test)
-@@ -147,6 +148,15 @@ static int run_test(struct pci_test *test)
- 			fprintf(stdout, "%s\n", result[ret]);
- 	}
- 
-+	if (test->doorbell) {
-+		ret = ioctl(fd, PCITEST_DOORBELL, 0);
-+		fprintf(stdout, "Ringing doorbell on the EP\t\t");
-+		if (ret < 0)
-+			fprintf(stdout, "TEST FAILED\n");
-+		else
-+			fprintf(stdout, "%s\n", result[ret]);
-+	}
-+
- 	fflush(stdout);
- 	close(fd);
- 	return (ret < 0) ? ret : 1 - ret; /* return 0 if test succeeded */
-@@ -172,7 +182,7 @@ int main(int argc, char **argv)
- 	/* set default endpoint device */
- 	test->device = "/dev/pci-endpoint-test.0";
- 
--	while ((c = getopt(argc, argv, "D:b:m:x:i:deIlhrwcs:")) != EOF)
-+	while ((c = getopt(argc, argv, "D:b:m:x:i:BdeIlhrwcs:")) != EOF)
- 	switch (c) {
- 	case 'D':
- 		test->device = optarg;
-@@ -222,6 +232,9 @@ int main(int argc, char **argv)
- 	case 'd':
- 		test->use_dma = true;
- 		continue;
-+	case 'B':
-+		test->doorbell = true;
-+		continue;
- 	case 'h':
- 	default:
- usage:
-@@ -241,6 +254,7 @@ int main(int argc, char **argv)
- 			"\t-w			Write buffer test\n"
- 			"\t-c			Copy buffer test\n"
- 			"\t-s <size>		Size of buffer {default: 100KB}\n"
-+			"\t-B			Doorbell test\n"
- 			"\t-h			Print this help message\n",
- 			argv[0]);
- 		return -EINVAL;
+Hi,
 
--- 
-2.34.1
+On Mon, Oct 07, 2024 at 05:01:19PM +0200, Andreas Kemnade wrote:
+> Add a driver for the charger in the TWL6030/32. For now it does not report
+> much in sysfs but parameters are set up for USB, charging is enabled with
+> the specified parameters. It stops charging when full and also restarts
+> charging.
+> This prevents ending up in a system setup where you run out of battery
+> although a charger is plugged in after precharge completed.
+>=20
+> Battery voltage behavior was checked via the GPADC.
+>=20
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
 
+Looks mostly good, but the driver should set the fwnode for the
+power_supply device to be ready for better battery support in
+the future:
+
+psy_cfg.fwnode =3D dev_fwnode(&pdev->dev);
+
+Greetings,
+
+-- Sebastian
+
+--feqi6aul6coybbv6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcO6HkACgkQ2O7X88g7
++pqLdQ/+PXvfJs7me93/MDmbZz1KCEnmFhnBP3VDUkgMuOeF0/AtoiXKlImJOjSl
+Vd8WmGESe5nbalm0muNz9j83t96RxDZaBJl1wS637l3A760SyMuBrLJaQ6WNPNnW
+kW8VUW4uzPRLPs9/QjxVaeYqAnPG/xaavLiuWvbh3LJcgnNEgwTlWjqOKr1qtAr8
+1GuhPGndgRMIPfdWrwXMZH5ovXGRTcGCaXsBgKrqodsE9fF0C50ZM7+JluOD8aRX
+SnrC61Ik+WEJ8J1aHgwg20dhK4TmcpTjRRPHbZlFgGv3wLUapuCr4ngZdxUyDuOJ
+A6VSxvVd7dJmbz1UQkOwCJcDQBtTUTMKu5si4f3gw8SoGpjuFCuwkphF1YWaOQ/+
+8AON8jOAJLotGQ692uirk/7XbNJv2/oEtM8Rb/rj96sY7veumxEqW79o9HhzhT+/
+u9r0HB/em0nCOxHZthflcK3oSGKi7tR9HHiEO/P7cncztqZHyL5SHb4T6/6hgt8a
+GKYVC58MK0VomCMOe1Du/YOFw0y+ldtoCGpanTMcUC1ZbIn/k8M65ikSTQgfxjCo
+NwfaH5hSSo+YxeSolMyPtvFRB/vkadBmvPy3MsTuEv6vzQbaw6EmowqJa1uxRBwM
+CUw5YY1XiunxmbDO4eZpFeK5qgmwiA0DdrgcKSsdpLoCOt+DoQg=
+=iWqU
+-----END PGP SIGNATURE-----
+
+--feqi6aul6coybbv6--
 
