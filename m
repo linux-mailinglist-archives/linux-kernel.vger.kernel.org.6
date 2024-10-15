@@ -1,89 +1,122 @@
-Return-Path: <linux-kernel+bounces-365189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F3299DECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:55:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9928799DED1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3B86B230DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:55:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554D2283588
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BA518A956;
-	Tue, 15 Oct 2024 06:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00EC18B46A;
+	Tue, 15 Oct 2024 06:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SHqVTHaj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DJBhNaMp"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EF9172BCE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0DF172BCE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975301; cv=none; b=C9jP/Qy0SxFijHuGRcWBhDQxJAN+LGhG8wT3MzK7q5iK9t1hwWApsBmIGE1JwSxsczETomLnlwYR3sZke2YCXPWFKcI0kJ54Etb8eAmIrtYCvu+d/tywuRm86D4/zvea5CbvR1ViFH0R0Pc6oZtHNaZcAVg142sGPQS0eWBHjAY=
+	t=1728975331; cv=none; b=P8T/55jZi3h5Sn8zrmUXfPLZqfjXNV3IDTkehmH5YXOUtI1IAhfV3gEzD5JRD/P3DuD5Yqj0lB7GeUwL1jvAZ7/CfxH/mw0DygzXWrWzy6IBFetoQCemtquvBBcRxKrWuw4uS5dWskp9gmFf4DHaLmvGzhL5DJrdRA8tMCrmVy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975301; c=relaxed/simple;
-	bh=QBfRr33XPaqKkgF7ME2PD+/ZxPGLqwI2g+WHuNvDTMs=;
+	s=arc-20240116; t=1728975331; c=relaxed/simple;
+	bh=jZYLrJ8xNerZp9HBuiAh6NFLS8vq3D27IZacqxGdRQI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QGgL5LgvoaIAinCuzogNvW/P0rsyR8JHSFokQfTiU9vVNkTLmD15SbyDnBup5j+u0+6oH6riBdaw9HNjWKN5SsUokOp1rUpZC8rv49ZsgIKLoa8EHO1IT9iwil4+W85Waj44sy5PSpT7xxkLLYL7qETNO16rRa1qomwPEwEqYvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SHqVTHaj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E26CDC4CECE;
-	Tue, 15 Oct 2024 06:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728975300;
-	bh=QBfRr33XPaqKkgF7ME2PD+/ZxPGLqwI2g+WHuNvDTMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SHqVTHajwpQjvTLtehNGRsmEHBLtLw3wkYhcIj3CNxeJbci+CcEgthqkZ5WmsPqGH
-	 jHOSQWzPhQV2usAyb5Rl2mhOOWnTYSWQJ1xeJM2+NJfIQZeAM2f0fKQ8+1n7yDGTaD
-	 md2w07n7k28TfmFh/KWj5qRZsJ3IyJQ3G+yt030w=
-Date: Tue, 15 Oct 2024 08:54:54 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Ryder Wang <rydercoding@hotmail.com>
-Cc: Chenyuan Yang <chenyuan0y@gmail.com>,
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-	"richard@nod.at" <richard@nod.at>,
-	"miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	"vigneshr@ti.com" <vigneshr@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
-	Zijie Zhao <zzjas98@gmail.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [Linux Kernel Bug] memory leak in ubi_attach
-Message-ID: <2024101539-ravage-talon-d70c@gregkh>
-References: <CALGdzuo8_EXr4aUAw6X9S+yzMPi25Y82netPLWsd+3n-Ov9Pnw@mail.gmail.com>
- <10779b09-3413-6374-b4a1-1efd8821c5f2@huawei.com>
- <CALGdzuryBbCqGAhox9ZWaQHD5dSQNApfGmCP+rYZ7O4MCRH+rw@mail.gmail.com>
- <7138a98c-1562-3059-07b6-4d918bec9d1a@huawei.com>
- <CALGdzuokUpWhUk7uvWcDT2tXRRMk07dmKGS-rFANOE6ZwZZW8w@mail.gmail.com>
- <0171b6cc-95ee-3538-913b-65a391a446b3@huawei.com>
- <CALGdzuoWvy5WvpttC1pab309kZ9cUyfT5O7JB8VjsqwU2HD0Xg@mail.gmail.com>
- <MEYP282MB31641A7FD666B1EA23C1C22FBF452@MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VOQgcYZuET3StiVtaTdCBWL9XA+12LQSnXfSWhA2FLfwPLSjaWnO58UvXggWyomnGvb6k7cD8AoA3pYVkqMGHeSKtl6yyuP/mmXeS2Xk8E/deuNCzYzWPrboJGoa+zG0LJ2z4bEyD0wC8DKospgfb3XuOIAuaTkoOmx9ybQitYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DJBhNaMp; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c94dd7e1c0so5040674a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728975325; x=1729580125; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jZYLrJ8xNerZp9HBuiAh6NFLS8vq3D27IZacqxGdRQI=;
+        b=DJBhNaMpiVBtBq452bFdJjImy5Cf2/D9thLja+6BEzfcTd2/mDbXbLmFP02Y+jlNV1
+         85MKukkZN7J//J0uzI4o3grvlgzNAadBijyzJCu6nSCaAM+lq+XVB9qbk4IWpZYU799w
+         tEVp1rxErMMASXDlvaw8yFK9G02jzCNwj0/5nBjcuD2ndGpj3NeMexgr5Xg1OmXL7YwD
+         +bWnDP9SEK2osvtz9WIhMzhd00zM12MU1TUDiAFZoapYTtN+P/XIefCkPvIELR1bQm9b
+         KYnlQJW1p308iBwAw0yb1c1HFCECJceufex/WCcuKpmi+38ao25YwrZt5nq3Gm/3AyFG
+         Ud2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728975325; x=1729580125;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jZYLrJ8xNerZp9HBuiAh6NFLS8vq3D27IZacqxGdRQI=;
+        b=Jzr4VCAdTyRgWFQ8JNaLuy3nJDPFXKxnMaNDGdHNmo5w+zqXtpnvloH1gtDDmS0oQ7
+         9FOmCS9Sx92IfybxCiggyuGFQIyIYJr0+9Ep1BdxHurfiJJbgL2A6sEjMbfRur9e1vYH
+         N3ecxxa6iRyzOt03qmkDnRVLiPxYvDsIQTQhsChx8HfOegyoaeBBjZKcpky9+9fraher
+         MvnVnC1xvKEMZkVEnD/wwzapOFSeRDKjxmXL2iOa47Koe/Almr2qWTpKbO3EFx4/AFgk
+         KEoj0v4ybkcm21X4mzUmgnfOKdWap/KkCOKj0WzCnkJoeimaX7hxG2zty8V7ktmiNU2A
+         yycw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlr7ZiZXcmm4/RzRcVSW+c6N25hgBklpUBdeGNCLmVqrTF6DB+3rXU6VH6Lh3BGQvgmtNSlKzwToTwUtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqgJGYSPlVK60fhAYRUElTgS8PuKzdf5KQrIhb9HowtYthtfTX
+	XlUAyW/9iSR42tFar1ooXAjLQD2+CTAPpZ5dQGiRzLY1OA/AcSZ21ckEAjLn5RI=
+X-Google-Smtp-Source: AGHT+IEiUXLB/52gD1Dyr15xJWH+67WAw/ukSLd5WNLqUeBey2zQoDpyevrWkTJhbeKimw0i5WN3YA==
+X-Received: by 2002:a17:907:c8a4:b0:a99:7bc0:bca9 with SMTP id a640c23a62f3a-a99e3b21469mr872943566b.3.1728975325105;
+        Mon, 14 Oct 2024 23:55:25 -0700 (PDT)
+Received: from localhost (p200300f65f19e3002f38cf427133ca7b.dip0.t-ipconnect.de. [2003:f6:5f19:e300:2f38:cf42:7133:ca7b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29844cc9sm32689666b.182.2024.10.14.23.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 23:55:24 -0700 (PDT)
+Date: Tue, 15 Oct 2024 08:55:22 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, jacob.e.keller@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [net-next] net: ftgmac100: corrcet the phy interface of NC-SI
+ mode
+Message-ID: <mtaia5jqcpyx4bbybsvqa3kyl7o6mlavbhn3jk5gdb42ftypxn@jeydtf7ldprv>
+References: <20241015020610.1824763-1-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="penfhnhf3dcru6gk"
 Content-Disposition: inline
-In-Reply-To: <MEYP282MB31641A7FD666B1EA23C1C22FBF452@MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM>
+In-Reply-To: <20241015020610.1824763-1-jacky_chou@aspeedtech.com>
 
-On Tue, Oct 15, 2024 at 03:41:24AM +0000, Ryder Wang wrote:
-> By walking through all the related code, it looks to be a bug in slub.c rather than kobject or ubifs.
-> 
-> sysfs_slab_add() calls kobject_init_and_add():
->   - If kobject_init_and_add fails, sysfs_slab_add()  will go to *out*. But unluckily, *out* code block will never release s->kobj, but it is expected to do so.
-> 
-> Below is the function comment of kobject_init_and_add():
-> * If this function returns an error, kobject_put() must be called to properly clean up the memory associated with the object. *
-> ==> It means sysfs_slab_add() shall release the related kobject.
 
-Yup, that's a bug, please send a patch to fix this!
+--penfhnhf3dcru6gk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [net-next] net: ftgmac100: corrcet the phy interface of NC-SI
+ mode
+MIME-Version: 1.0
 
-thanks,
+Hello,
 
-greg k-h
+no idea about the patch content, just noticed a typo:
+$Subject ~= s/corrcet/correct/;
+
+But maybe that's only a joke I didn't understand.
+
+Best regards
+Uwe
+
+--penfhnhf3dcru6gk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcOEdgACgkQj4D7WH0S
+/k4FzQf+PpjBrNaJOvtSSJHiZCkYh4tGYOLluXkZ6lozMPVxQerH8Ay/C40IBNao
+pEjbfu7qfbyyPRoWLmfidswj0OiXvqO+CP9dkWokaeRI61EC+xbd9QQo00yrWlbZ
++mYjOZ52MyRoN3vVc2P0uo5t2K4UijIM2EovFDWKk82nfynUjfO34nm392qsv1so
+oY6ADrcpcz7C8xhbHZ/jRmhp56ZzBmlLKi6z5fTET78PoNNbXoy/wMPpiKc62sHA
+WF4rro263ztndp7vKyO2Zhr/kMrw0HoJNWLalXDpNBSlXREDGFNR5XiLm6/9d/wZ
+oS7K4lIaLGaqfQlCbZNUiKjXBYiB+w==
+=Mwzx
+-----END PGP SIGNATURE-----
+
+--penfhnhf3dcru6gk--
 
