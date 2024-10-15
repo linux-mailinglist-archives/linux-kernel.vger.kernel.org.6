@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-366512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D8B99F6A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:00:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7217699F6AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14E0F286973
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:59:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35710286DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FB21F8193;
-	Tue, 15 Oct 2024 18:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE301FBF74;
+	Tue, 15 Oct 2024 18:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBrfsuQw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjBwSsNh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17D21D5152;
-	Tue, 15 Oct 2024 18:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0611F582F;
+	Tue, 15 Oct 2024 18:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729018602; cv=none; b=oViv4/m1EvWirwreDc2qqMmuIl1Qv7xNKTrqTIr7hVli7+RvMFtxfusO3dgkAcjBJb6dWuZowu8j+sq4qBsVurdhBmbkzIy+0s6TCUTjmBS9JCGn5J+Snu/Z7i35rw+3hwyvO/S/N1vJBczpWhJjfpWtpEITWePQmn2Smwbj1Ow=
+	t=1729018645; cv=none; b=TcSgB5+1DyedGosxd06enB3sXu6ncGmkJ2AV+GiRGjkliiXWoZxSNtYHftuv/bLRcPhcNZUSlBgV/HaG6yxzIXEHQjdQaf3ycai42w6Goz6h/jvLXAlaLSpok0J3+eb7lpqWirOa0F6ThFn3HNkR1MgZwjctSo4Ld9Rhccoj5qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729018602; c=relaxed/simple;
-	bh=kuYHadpRDCGe/ZwW/bqcFD3qY9po7lfFGs8NnInWIVY=;
+	s=arc-20240116; t=1729018645; c=relaxed/simple;
+	bh=390dvdqxwk2fe3c97f0YQRd7FIbixI55hWq7oUyetL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUBZcEWaw4O0M20I8oKO+259LHMMfhujOl8d011kCi8xEAejhZFkSeG6BL+8RkBTAzyD+SKH2ecr+LVGnYcx7bNY40r40JFfRDk526yzDgtDLx8EFfynksegT48uq1p9lh9dXUGvSS08gvRQRixkoT7JBEr5+XYLtSLX/uYpJxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBrfsuQw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C6E7C4CEC6;
-	Tue, 15 Oct 2024 18:56:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=vBlub0P8idUGDoK01coHkkXtaGJyu0xoaV2p8Wf4oNmsmDbWvsbu2aA3ec2GoU0RBWIvt294ELxHdiMc6FBfao0zW34uism+jSxv8hWeZtvqhhLUASIvl0HARxHDDzZiz7jovpLvjG0GXd2NrGt4ph3mK7jSlw44/JYvekmv4YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjBwSsNh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31FFC4CEC6;
+	Tue, 15 Oct 2024 18:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729018600;
-	bh=kuYHadpRDCGe/ZwW/bqcFD3qY9po7lfFGs8NnInWIVY=;
+	s=k20201202; t=1729018644;
+	bh=390dvdqxwk2fe3c97f0YQRd7FIbixI55hWq7oUyetL4=;
 	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=uBrfsuQwhZKBqWuSMMOpiQPRAro0nYKwoVzfHlGrRXoB0uQUSm4cIBRqPafAZNQir
-	 J9LhSXtYqrvva32NVINZ7cH6Z2cdUnaJ/hDKlda2E15aetWXs1CSYH3X6Qsu//KZCS
-	 hJNxy29lLILzjZCJ+NMc2T+kB9hCdQwqY+OCNDdK8ZYLSTXAF0A2XulYyGbIZnWQld
-	 z7QjfQiMQqgHWEQ5c3Rx2TMsHgaV6QAGgazsW4C8czUBnpzX9MyqBUoYP7PlHKV4BO
-	 8oNQP7klHb9EwYTbWlgFoFaYb1qJLbgPc+pINZSbz7RPB0/mePm/p6cMZQXRn3+scX
-	 4zc6I7WoT9OvA==
+	b=KjBwSsNhtCYmnPm4/pj5328UwUZtS7j0GUM6o7BDOmW+25Q4+gvlXpy73vtx/1QYc
+	 d7OMWEinJrD/I5JyHPYeRdf/PJCekPFOSjYGCzFcFkrNFnn0VUp4CQvzaijgiE1XCq
+	 1PZuJF812ckC1x+uQEqaYWs/3JefdbbL/4RBgOvDJ5+5DMHrUhBvhUscou9jkGwYQq
+	 smNt8cRm8UeRKNrIlswusSwjwL3ZhRoFC36YXzlyUyfvaNVoSAZMRe7m7LlB/jGOqk
+	 G5A934mSVRBf879yvrSsc0tqIM77GHHx8K+eczuphPCT2F/sbNMs8gzJdzrFB4tyAn
+	 U3yirhFu8m9vA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 05022CE098E; Tue, 15 Oct 2024 11:56:40 -0700 (PDT)
-Date: Tue, 15 Oct 2024 11:56:40 -0700
+	id 91AF2CE098E; Tue, 15 Oct 2024 11:57:24 -0700 (PDT)
+Date: Tue, 15 Oct 2024 11:57:24 -0700
 From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, sfr@canb.auug.org.au, jpoimboe@kernel.org,
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: dmitry.torokhov@gmail.com, bentiss@kernel.org, sfr@canb.auug.org.au,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
 	linux-toolchains@vger.kernel.org
-Subject: Re: [PATCH] HID: simplify code in fetch_item()
-Message-ID: <e5ccd299-3afd-40c0-9de6-125deeee2ed5@paulmck-laptop>
+Subject: Re: [BUG] -next objtool build failure (bisected)
+Message-ID: <688a88d8-0b40-486b-abc7-cf7c4a5f68d6@paulmck-laptop>
 Reply-To: paulmck@kernel.org
-References: <ZvwYbESMZ667QZqY@google.com>
- <20241010222451.GA3571761@thelio-3990X>
- <Zw60Sj-iFh1KWwWG@google.com>
+References: <fe8c909e-bf02-4466-b3eb-0a4747df32e3@paulmck-laptop>
+ <20241015184507.hiepeqrjgcjssvoj@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,120 +61,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zw60Sj-iFh1KWwWG@google.com>
+In-Reply-To: <20241015184507.hiepeqrjgcjssvoj@treble>
 
-On Tue, Oct 15, 2024 at 11:28:26AM -0700, Dmitry Torokhov wrote:
-> Hi Nathan,
+On Tue, Oct 15, 2024 at 01:45:07PM -0500, Josh Poimboeuf wrote:
+> On Tue, Oct 15, 2024 at 11:10:11AM -0700, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > The next-20241011 release gets me build errors like the following:
+> > 
+> > 	vmlinux.o: warning: objtool: fetch_item() falls through to next function
+> > 
+> > Bisection leads me here:
+> > 
+> > 	61595012f280 ("HID: simplify code in fetch_item()")
+> > 
+> > This diff looks inoffensive to me, but I get this error on this commit
+> > and not on its predecessor.
+> > 
+> > This build failure happens on quite a few different kernel configurations.
+> > I bisected using this particular reproducer:
+> > 
+> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --buildonly --configs SRCU-T
 > 
-> On Thu, Oct 10, 2024 at 03:24:51PM -0700, Nathan Chancellor wrote:
-> > Hi Dmitry,
-> > 
-> > On Tue, Oct 01, 2024 at 08:42:36AM -0700, Dmitry Torokhov wrote:
-> > > We can easily calculate the size of the item using arithmetic (shifts).
-> > > This allows to pull duplicated code out of the switch statement, making
-> > > it cleaner.
-> > > 
-> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > ---
-> > >  drivers/hid/hid-core.c | 31 ++++++++++++++-----------------
-> > >  1 file changed, 14 insertions(+), 17 deletions(-)
-> > > 
-> > > diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> > > index 988d0acbdf04..00942d40fe08 100644
-> > > --- a/drivers/hid/hid-core.c
-> > > +++ b/drivers/hid/hid-core.c
-> > > @@ -754,35 +754,32 @@ static u8 *fetch_item(__u8 *start, __u8 *end, struct hid_item *item)
-> > >  	}
-> > >  
-> > >  	item->format = HID_ITEM_FORMAT_SHORT;
-> > > -	item->size = b & 3;
-> > > +	item->size = BIT(b & 3) >> 1; /* 0, 1, 2, 3 -> 0, 1, 2, 4 */
-> > > +
-> > > +	if (end - start < item->size)
-> > > +		return NULL;
-> > >  
-> > >  	switch (item->size) {
-> > >  	case 0:
-> > > -		return start;
-> > > +		break;
-> > >  
-> > >  	case 1:
-> > > -		if ((end - start) < 1)
-> > > -			return NULL;
-> > > -		item->data.u8 = *start++;
-> > > -		return start;
-> > > +		item->data.u8 = *start;
-> > > +		break;
-> > >  
-> > >  	case 2:
-> > > -		if ((end - start) < 2)
-> > > -			return NULL;
-> > >  		item->data.u16 = get_unaligned_le16(start);
-> > > -		start = (__u8 *)((__le16 *)start + 1);
-> > > -		return start;
-> > > +		break;
-> > >  
-> > > -	case 3:
-> > > -		item->size++;
-> > > -		if ((end - start) < 4)
-> > > -			return NULL;
-> > > +	case 4:
-> > >  		item->data.u32 = get_unaligned_le32(start);
-> > > -		start = (__u8 *)((__le32 *)start + 1);
-> > > -		return start;
-> > > +		break;
-> > > +
-> > > +	default:
-> > > +		unreachable();
-> > >  	}
-> > >  
-> > > -	return NULL;
-> > > +	return start + item->size;
-> > >  }
-> > 
-> > I am noticing some interesting behavior when building with clang, namely
-> > some objtool warnings and a failed boot when LTO is enabled, which I
-> > bisected to this change as commit 61595012f280 ("HID: simplify code in
-> > fetch_item()"), such as:
-> > 
-> >   $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 mrproper defconfig vmlinux
-> >   vmlinux.o: warning: objtool: hid_open_report() falls through to next function hid_parser_main()
-> >   vmlinux.o: warning: objtool: hid_scan_report() falls through to next function hid_allocate_device()
-> > 
-> > With LTO enabled, the warning becomes:
-> > 
-> >   vmlinux.o: warning: objtool: hid_open_report+0x21b: can't find jump dest instruction at .text.hid_open_report+0x40f
-> > 
-> > A bare unreachable(), especially in the default case of a switch
-> > statement, is generally considered harmful in my experience, as it can
-> > introduce undefined behavior, which can mess up how a compiler might
-> > optimize a function. Commit d652d5f1eeeb ("drm/edid: fix objtool warning
-> > in drm_cvt_modes()") and commit 3764647b255a ("bcachefs: Remove
-> > undefined behavior in bch2_dev_buckets_reserved()") have some good
-> > commit messages talking about it.
-> > 
-> > Getting rid of the unreachable() in some way resolves the issue. I
-> > tested using BUG() in lieu of unreachable() like the second change I
-> > mentioned above, which resolves the issue cleanly, as the default case
-> > clearly cannot happen. Another option I tested was some sort of printk
-> > statement and returning NULL, which some maintainers prefer, even in
-> > spite of impossible conditions. I am happy to send a patch with one of
-> > those changes or open to other suggestions.
+> The problem is likely this:
 > 
-> Oh well, if our toolchain does not like "unreachable()" then we can
-> simply remove it - the switch does cover all possible values and the
-> "return" statement should be valid even if compiler somehow decides that
-> "switch" statement can be skipped.
+> +	default:
+> +		unreachable();
 > 
-> If you can send a patch that would be great.
+> The unreachable() annotation by itself produces undefined behavior, as
+> it will just fall off the edge of the function if the default case is
+> ever executed.
 > 
-> I'm adding Paul and a few others to CC who apparently seeing the same
-> issue.
+> Better to do
+> 
+> 	default:
+> 		BUG();
+> 
+> which makes the behavior defined.
 
-Commenting out the unreachable() fixes things for me, as does
-replacing the unreachable() with BUG().  So, for either solution:
-
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+And this fixes things for me, thank you!
 
 							Thanx, Paul
 
