@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-365079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C2299DD3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:48:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EB399DD3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03AD41C212B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4152E1F23181
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055AB1741D4;
-	Tue, 15 Oct 2024 04:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1336172BD5;
+	Tue, 15 Oct 2024 04:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QXz1assA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="gf4uaJZO"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FCE4428;
-	Tue, 15 Oct 2024 04:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBEB4428
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728967711; cv=none; b=rz5h0YIU+V8OKkFHYizQMfl0J+kSL8JgJzRL1gFC6NmALBczvuu/HxLpoH0n+cKeA1uVZy65GyCTamcPHz+gszm3E/vnOAZaIsCrrUUlA6hoy5sc1xEuZVW29aFhoUWMuzCyRv0tCOzYS9wSpsZdN9bVphBMEcIWYhrXqTafunQ=
+	t=1728967822; cv=none; b=Do2PGVHG29HD3ShP61VDO9SzaX90++5TcwYVHy8WiA7ipFKX0tt3Qzm971/V/82quc9R9THO2iwt8TzrpT6QHXhXRv943OcdgdXi9TYqCydxkLc4UYeXMUnA9lbwOKCq+vFtpcXNv6z2BpNSB0RT2jRmdOe4Tyc1RiQreeNiPKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728967711; c=relaxed/simple;
-	bh=Q6vGslhy7cEyzOgdV9Kt50rKZs8AFmPnEbqbeHRB5N8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OhiePnnPQCblZCiIKjC0ciEiJu0R1ZxSf4HlyBcyjGwsTnTbggM8RqzPITzJjGm3kfWzxLjMaIEGW6Igs9TesoXPz06+nCBDfqqAsB8Jpgxi1YDeIxitGXqMGYLuquulOBaICfAKXrLrkdNEXhrzz3itC2+YKWiD4g8reYrsegs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QXz1assA; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728967710; x=1760503710;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Q6vGslhy7cEyzOgdV9Kt50rKZs8AFmPnEbqbeHRB5N8=;
-  b=QXz1assAWfDKoDi0Gux/g0/X8IiFxMVSXY8UrJtP1T8fkdBOaV5K8HJ7
-   3c7xniK1zFnm2S2wgamWIOAxHOQtgVEu6zrr4DeHaP3qVDAM+oNun7Ap8
-   GP7bIQ//yNcQONDW1toZJ3ZfrtiHZ6EkAJyQWgjWhBYh4Pkdbg3mkGg6s
-   gtD8tN4NvxgdxhFMNvU1R1FL434s0bTyX97za+W20VTAIB99/lOVfALeB
-   FVmTUjSGIw7l3IbUlN96t1UKc635oSC3Ex4gHBkcKVZo0jraNiWy41TTc
-   i7nw8Bsmd02AgdGvLA5Yz9pLYssCWJMthtlu3UBICTflJKG/NgBGz8l0u
-   A==;
-X-CSE-ConnectionGUID: CsSfbPqHQB6vUWp4dXVL7w==
-X-CSE-MsgGUID: OUzbKeVzR5i2WUFVswBNPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28438645"
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="28438645"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 21:48:29 -0700
-X-CSE-ConnectionGUID: 7+OuBUtMQR6gaq7E8rOOqg==
-X-CSE-MsgGUID: vumhu9OCSH6IhQzQfXR4vA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="108508106"
-Received: from rzhang1-mobl7.sh.intel.com ([10.238.6.124])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 21:48:26 -0700
-From: Zhang Rui <rui.zhang@intel.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org
-Cc: rui.zhang@intel.com,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V3] x86/apic: Always explicitly disarm TSC-deadline timer
-Date: Tue, 15 Oct 2024 12:48:17 +0800
-Message-Id: <20241015044817.5375-1-rui.zhang@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728967822; c=relaxed/simple;
+	bh=k6Kv3lKI80jc4q0HshBLsWjzwBMvbttBxLCVbkm6Tok=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=eaA3mlxlzWDqJ9X5Fjaz2947LPBYpXIfd0GBF8/wZyREc8kbRF/G9wEOiDcOPKjndK+VufN3y9KSIow93UmgkeiFLbhWaiBYZEvVkPxx8joCXEaQwczbjJ+UqCr6pG9q5DQeXC7XntcZbr7VSrgcv1gIF1XrexHLctaV96RTdM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=gf4uaJZO; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728967812; bh=YHRkU0CiN5ncRK2HdxA/z4C8I36aZYKlBbJ6eiOEQKU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=gf4uaJZO8VFtokNnHlaHbmrT+tKn5hB3DwiH/8NswSsQOSbkEKkmm96GYQc+E4u+N
+	 CRIeYwCmipoeCasGfZtfa+O85MUqo6hrEfIWxnCCtj8mBkZPK4Wa+/3LMCyxxdsJME
+	 odIjCpWWH2s0kazo4KXHII4n3lmhjocqzQe3JVBk=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id C8518C73; Tue, 15 Oct 2024 12:50:05 +0800
+X-QQ-mid: xmsmtpt1728967805tzhy9bh7f
+Message-ID: <tencent_7C86DFB364837BA979A3B0A44CF768577205@qq.com>
+X-QQ-XMAILINFO: OKkKo7I1HxIew+Fm4chwnmYQ763zfiiYi98bnmAItmG6QXG0FygBfZpgHxuZUr
+	 UQKy/IGB3wkihFzF0abOdwTctwgf2hpOK/N8solYpTQRMWufteIpwa465+7jNu+Grww4zfc4jcmZ
+	 QwYU48fEo6TPh2S4xDtLp1P5suqcxODXqQjp/30ATgpBWW5BEUy80r3k/3S+2tbHcTAQIapD+Nbo
+	 kzUVd1q6dSqZqYh3Zjgha7JjJnj9Fl8PYRvOOlBVpW6eDlMjL7ZZRs42bBmJjb7edILhHQnj0CYh
+	 xo/hjWpVLlRz8UTehamEid9fIUXDACBz9KkWagRK1HhkPzgYe5I52tfCYsfedRkVacXdq7OdKR4L
+	 R3vlp0uV6oYq/owh0raJ+LGn7hXcrDYwVOcQ+p1Qy01CDG9ApBeIOTXfOFmptE/lUIcp9zRjgLB3
+	 z6hGF2HOaVFKkmHd7oae/TZQJAenMZbh5pn/qWMlCi0tceLYHzcl1sRrHiTT/4zsAISK7jl8iOjH
+	 qknuX1v1ALWWkOGAS59KvWqpckIEW2SoHN9uGcQqm6g18ISh6dM11kJACT7SYyp5tIsNfHCmUdQU
+	 oTzaAm3y66JZYK+EpnTdRtln5IRvlWeJWtGHSr8OxGznm6nu9avNEWppHrP6J6p4KMUsHjsE/rKO
+	 J1EEibNBkVs62rzJP5ntQ5FkhEsJgZwHVu8PLsfmAnbK2FP0+SnvxhCB9AWTY9S8hOiaWlQOijS1
+	 L4y/tErBFSlbEojcxNQGg4+Dfv2OYZ4+34ltWHKhn6UlpoGbBYcyyjFI/p4tV0L6344lOO4Lans0
+	 CvEwCYfsKCDmAIStnfifZQWU6Q3nUJaFPz2uTzi+Rj+wsG+9oT/akUv+eGTnq9Qz1/JccU8Wi6dr
+	 20G8kdBzzpV3+nbePqacO2giXvTo86GufUCSXMJ8OPoaGNp0xBSyp5Sqd850Nz7xDcCCEnrF2h
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: guohui.study@gmail.com
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	lizhi.xu@windriver.com,
+	shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	willy@infradead.org
+Subject: [PATCH] jfs: Fix null-ptr-deref in write_special_inodes
+Date: Tue, 15 Oct 2024 12:50:05 +0800
+X-OQ-MSGID: <20241015045004.3908269-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <CAHOo4gKf2mjPX8oAxCBUc74=+OToMdu6pe6iALGCOmXjToFaKw@mail.gmail.com>
+References: <CAHOo4gKf2mjPX8oAxCBUc74=+OToMdu6pe6iALGCOmXjToFaKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,75 +79,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-New processors have become pickier about the local APIC timer state
-before entering low power modes. These low power modes are used (for
-example) when you close your laptop lid and suspend. If you put your
-laptop in a bag in this unnecessarily-high-power state, it is likely
-to get quite toasty while it quickly sucks the battery dry.
+There is a race condition when accessing ipimap and ipbmap.
 
-The problem boils down to some CPUs' inability to power down until the
-kernel fully disables the local APIC timer. The current kernel code
-works in one-shot and periodic modes but does not work for deadline
-mode. Deadline mode has been the supported and preferred mode on
-Intel CPUs for over a decade and uses an MSR to drive the timer
-instead of an APIC register.
+        CPU1                              CPU2
+	====                              ====
+	jfs_umount
+	sbi->ipimap = NULL;               lmLogSync
+	sbi->ipbmap = NULL;               write_special_inodes
+	lmLogClose			  writer(sbi->ipbmap->i_mapping);
+					  writer(sbi->ipimap->i_mapping);
 
-Disable the TSC Deadline timer in lapic_timer_shutdown() by writing to
-MSR_IA32_TSC_DEADLINE when in TSC-deadline mode. Also avoid writing
-to the initial-count register (APIC_TMICT) which is ignored in
-TSC-deadline mode.
+The jfs umount and lmLogSync compete to access ipimap and ipbmap, resulting in
+null pointer access to ipimap and ipbmap when executing write_special_inodes.
 
-Note: The APIC_LVTT|=APIC_LVT_MASKED operation should theoretically be
-enough to tell the hardware that the timer will not fire in any of the
-timer modes. But mitigating AMD erratum 411[1] also requires clearing
-out APIC_TMICT. Solely setting APIC_LVT_MASKED is also ineffective in
-practice on Intel Lunar Lake systems, which is the motivation for this
-change.
+We can fix it by first closing the log in jfs umount, and then releasing
+ipimap/ipbmap.
 
-1. 411 Processor May Exit Message-Triggered C1E State Without an Interrupt if Local APIC Timer Reaches Zero - https://www.amd.com/content/dam/amd/en/documents/archived-tech-docs/revision-guides/41322_10h_Rev_Gd.pdf
-
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Tested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Tested-by: Todd Brandt <todd.e.brandt@intel.com>
+Reported-by: Hui Guo<guohui.study@gmail.com>
+Link: https://lore.kernel.org/all/CAHOo4gKf2mjPX8oAxCBUc74=+OToMdu6pe6iALGCOmXjToFaKw@mail.gmail.com/
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
-V2
-- Improve changelog
-V3
-- Subject and changelog rewrite
-- Check LAPIC Timer mode using APIC_LVTT value instead of extra CPU feature flag check
-- Avoid APIC_TMICT write which is ignored in TSC-deadline mode
----
- arch/x86/kernel/apic/apic.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ fs/jfs/jfs_umount.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 6513c53c9459..5436a4083065 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -440,7 +440,19 @@ static int lapic_timer_shutdown(struct clock_event_device *evt)
- 	v = apic_read(APIC_LVTT);
- 	v |= (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
- 	apic_write(APIC_LVTT, v);
--	apic_write(APIC_TMICT, 0);
-+
-+	/*
-+	 * Setting APIC_LVT_MASKED should be enough to tell the
-+	 * hardware that this timer will never fire. But AMD
-+	 * erratum 411 and some Intel CPU behavior circa 2024
-+	 * say otherwise. Time for belt and suspenders programming,
-+	 * mask the timer and zero the counter registers:
-+	 */
-+	if (v & APIC_LVT_TIMER_TSCDEADLINE)
-+		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
-+	else
-+		apic_write(APIC_TMICT, 0);
-+
- 	return 0;
- }
+diff --git a/fs/jfs/jfs_umount.c b/fs/jfs/jfs_umount.c
+index 8ec43f53f686..c5fda516ca85 100644
+--- a/fs/jfs/jfs_umount.c
++++ b/fs/jfs/jfs_umount.c
+@@ -42,7 +42,7 @@ int jfs_umount(struct super_block *sb)
+ 	struct inode *ipaimap = sbi->ipaimap;
+ 	struct inode *ipaimap2 = sbi->ipaimap2;
+ 	struct jfs_log *log;
+-	int rc = 0;
++	int rc = 0, sb_update = 0;
  
+ 	jfs_info("UnMount JFS: sb:0x%p", sb);
+ 
+@@ -51,11 +51,19 @@ int jfs_umount(struct super_block *sb)
+ 	 *
+ 	 * if mounted read-write and log based recovery was enabled
+ 	 */
+-	if ((log = sbi->log))
++	if ((log = sbi->log)) {
+ 		/*
+ 		 * Wait for outstanding transactions to be written to log:
+ 		 */
+ 		jfs_flush_journal(log, 2);
++		/*
++		 * close log:
++		 *
++		 * remove file system from log active file system list.
++		 */
++		rc = lmLogClose(sb);
++		sb_update = 1;
++	}
+ 
+ 	/*
+ 	 * close fileset inode allocation map (aka fileset inode)
+@@ -103,15 +111,8 @@ int jfs_umount(struct super_block *sb)
+ 	 * consistent state) and log superblock active file system
+ 	 * list (to signify skip logredo()).
+ 	 */
+-	if (log) {		/* log = NULL if read-only mount */
++	if (sb_update) {		/* log = NULL if read-only mount */
+ 		updateSuper(sb, FM_CLEAN);
+-
+-		/*
+-		 * close log:
+-		 *
+-		 * remove file system from log active file system list.
+-		 */
+-		rc = lmLogClose(sb);
+ 	}
+ 	jfs_info("UnMount JFS Complete: rc = %d", rc);
+ 	return rc;
 -- 
-2.34.1
+2.43.0
 
 
