@@ -1,243 +1,118 @@
-Return-Path: <linux-kernel+bounces-365769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F0199E9BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:26:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C4499E9C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C475281EC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85DA1F21E8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F0B1EF934;
-	Tue, 15 Oct 2024 12:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2491EBFFF;
+	Tue, 15 Oct 2024 12:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2ttCNO4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="RGo218E0"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625C31EC009;
-	Tue, 15 Oct 2024 12:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21A51EBFF7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728995158; cv=none; b=FJAyh5mXRXMX+HRCiQsaVg+cxgsZvtzn/qSUNFzsUd1+YZvL9DMsxKkSrU4tqq7JOs4+kHNBEiBYyK4hD2Mbso7QzjvDrhZXq1SeexOSJEROOspC8YScyBBurmhcJ1aru6Ru/qPYktfaDz2cIBOmP6jIrq3vMQhD0PX/gyfvHVA=
+	t=1728995184; cv=none; b=aYchSuijyF2QrJQNpIG+cdJcsgkVfjuXbGLwmNoyJ/9bjOYrJiVXq5hAPw1Z5+jtl9WM8PZ3debEfkI++iHdR300GQIOGEM09facpb36zugFcvVAP0PzBh2DvKQOPxaJF3DyNNxFRj37glCI8KHOLfm1Alx7/wB8PmHkUYueCP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728995158; c=relaxed/simple;
-	bh=7zldfmMuhDk//2zSd5O20XcO7pAQ8G5PPY70CN0hlIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s25GnSLmJskOjwXzVIKOkkmsw5ZyJtSeQHDf0iu3mMqJ09rEogDGQ1pDaJyfE8Q/oEqX/lbXgtFo6SiEgBLLwcVymAZR3vAJ59fZvnRuflIfFfuyF2bEF/CgOnvjLw6znLcLXiJ/JMcLioyGrlSB5+pSAaigNw+kD75mCEm4VlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2ttCNO4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBBD9C4CEC6;
-	Tue, 15 Oct 2024 12:25:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728995157;
-	bh=7zldfmMuhDk//2zSd5O20XcO7pAQ8G5PPY70CN0hlIY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=R2ttCNO4fiW44N9YTgSROJuqJuJALjyyNgfaRl9hVfVFAAiWxQob+063FPiZZAss9
-	 ZSpjJ1PzRdx8MtbezVbKfiK9a3HbMdmUAPAkax0iVgvYGhzFzX7amVA4Sl29+5y2d9
-	 9zwbkxTQNHUBxw4u2yBJ/TMXAt2QM46FnoL6yyvxij5aUDiaThW7d7QNDNj2xCkv5l
-	 M8Vr89l9LhGM+JopEQMQ5ayIf24mvAm0q3pr8K39j8XXhu1eBKtLVj7UcfW5tVdTOr
-	 rj5qosCzfn5h64Kyyz6ElnZISqOUbKur1N6rVqnkn9gXm1W8piVGb1xVb8JyTYQeBh
-	 oreCQVnDDS2mg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1t0gcl-000000004CI-0rIa;
-	Tue, 15 Oct 2024 14:26:03 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1728995184; c=relaxed/simple;
+	bh=gChLEHUCAnqMN06YDXJelEvnMMv6kyMMOFwpvnoEE6w=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=K6tCNYN0pGMBEQaznRWYJj2dMuGGgktcUUduxEJ1YgtRgqeA0amH1W8un5HGTVLoRGZLFQwM0Ul7UvTV5lWEIcQiuHLkthDa342xCSXHoGtBweRLQqLucAVcmiGUdQyzLFNTZjUGm51h2TJ3fAt+KQSz65mqrcOgaNF0YtHe7RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=RGo218E0; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2e31aacbbso401303a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1728995182; x=1729599982; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TAxqVXv28hN1E9g2AdYt07OnRxWBCBISUSonsrhZhRw=;
+        b=RGo218E0NaLOh7uqqQBnv5iWQqOjQMfPbXoPfBXdXMOFstDClGP5G17Bs7UszbRrb7
+         JvnhyAjmftOfnpfMqfTCLvuMYJQZmzRK7Uuu5EbpbXTEMeH2I/dZYwOiKQEEhCTYTfyL
+         e2wKuCEZO/RAqwNUjzUaA7pQge03cVHItA2EAlLQ9aOhS7BGe8ww/kgIWA2oNS6QXKen
+         EODd0AhvVsNn3rS6sKBwS1LCn/DK0YGUvLJycA2cxZa7nV9wlFuGIoE6Ui0aRMwIT8fL
+         XfUgGkK7c5If3sNJlAWlk6sNWbCtCV9faO6dWIyevKBGf5QSlXaPqGFI1N7XYfvjOytc
+         +ahA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728995182; x=1729599982;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TAxqVXv28hN1E9g2AdYt07OnRxWBCBISUSonsrhZhRw=;
+        b=dIPMlT0GJ5UkR+FrDnD4yO48cV/eyrW8+vFH9jjhlQqcF+2RhlK8kkmKBnXCRhEEk4
+         elh6Nw2WzCzx69ozjnCFoyQSEM4ZHSJl2csvkwGPNxjtJqzHOdd/Y9neoTPjQdK6Wudt
+         o/5cCg00g6QUkIE+leiL3ttMwBpdYLHwytzy2AteKBYjfm103QzkAB4OS0Z/fB/LdStB
+         Oi5cqEtS9uTK6NmOfZOc+xFOxbs0PJngtSvccRRFlZzWERY/+hvbX3JlkF370k7IYVaj
+         oOLCvq8LfQ4IODHgWiAxSL+eRMgOt1Ve0LvjI736xWKmKVBYO+TtCsckS94hYZWTg+q9
+         DWzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTlrlZBFkew3jVBx9rAiYXtGZIbj1tyyHCDTX5KxqvlOlNaCZBi1l230bn6IYKhY1HnqsRTwFv9LJCfso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFqRf/8ob35YU6Ln81GLVZV9yQBN+e+JZepMpoiZ9S+eIuvZFv
+	PkAvCyO3p3W720PpHT964JzCNRUJPeiQ8S9w2US7Y0HDMWYpWljGVYRRG8wJ2X8=
+X-Google-Smtp-Source: AGHT+IEGHlpnJAZtdipLy3VlbZOb3D+QyT0Utpz7dB0pTEMkZhLWJL4iV3YD01cqEygPQrp+ZAwIVQ==
+X-Received: by 2002:a17:90b:1d01:b0:2e3:1af7:6ead with SMTP id 98e67ed59e1d1-2e31af76f40mr5840571a91.5.1728995182180;
+        Tue, 15 Oct 2024 05:26:22 -0700 (PDT)
+Received: from ubuntu.huaqin.com ([116.66.212.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392e8cdc7sm1592844a91.10.2024.10.15.05.26.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 05:26:21 -0700 (PDT)
+From: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
+To: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH] arm64: dts: qcom: x1e80100: rename vph-pwr regulator nodes
-Date: Tue, 15 Oct 2024 14:26:00 +0200
-Message-ID: <20241015122601.16127-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	wenst@chromium.org,
+	hsinyi@chromium.org,
+	rafal@milecki.pl,
+	macpaul.lin@mediatek.com,
+	sean.wang@mediatek.com,
+	Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
+Subject: [PATCH v1 0/3] Add MT8186 Chinchou Chromebooks
+Date: Tue, 15 Oct 2024 20:26:05 +0800
+Message-Id: <20241015122608.24569-1-xiazhengqiao@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Rename the x1e80100 vph-pwr regulator nodes to use "regulator" as a
-prefix for consistency with the other fixed regulators.
+MT8186 chinchou, known as ASUS Chromebook CZ12 Flip, is a
+MT8186 based laptop. It is based on the "corsola" design.
+It includes chinchou and chinchou360, including LTE, stylus,
+touchscreen combinations.
 
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- .../dts/qcom/x1e80100-asus-vivobook-s15.dts   | 22 +++++++++----------
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts     | 22 +++++++++----------
- .../dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  | 22 +++++++++----------
- .../dts/qcom/x1e80100-microsoft-romulus.dtsi  | 22 +++++++++----------
- 4 files changed, 44 insertions(+), 44 deletions(-)
+Zhengqiao Xia (3):
+  dt-bindings: arm: mediatek: Add MT8186 Chinchou Chromebook
+  arm64: dts: mediatek: Add MT8186 Chinchou Chromebooks
+  arm64: dts: mediatek: Add exton node for DP bridge
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-index 20616bd4aa6c..b1f190a9686f 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -94,17 +94,6 @@ linux,cma {
- 		};
- 	};
- 
--	vph_pwr: vph-pwr-regulator {
--		compatible = "regulator-fixed";
--
--		regulator-name = "vph_pwr";
--		regulator-min-microvolt = <3700000>;
--		regulator-max-microvolt = <3700000>;
--
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
- 	vreg_edp_3p3: regulator-edp-3p3 {
- 		compatible = "regulator-fixed";
- 
-@@ -135,6 +124,17 @@ vreg_nvme: regulator-nvme {
- 		pinctrl-0 = <&nvme_reg_en>;
- 		pinctrl-names = "default";
- 	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
- };
- 
- &apps_rsc {
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-index 4ab7078f76e0..4ab9e0ca4591 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-@@ -261,17 +261,6 @@ platform {
- 		};
- 	};
- 
--	vph_pwr: vph-pwr-regulator {
--		compatible = "regulator-fixed";
--
--		regulator-name = "vph_pwr";
--		regulator-min-microvolt = <3700000>;
--		regulator-max-microvolt = <3700000>;
--
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
- 	vreg_edp_3p3: regulator-edp-3p3 {
- 		compatible = "regulator-fixed";
- 
-@@ -319,6 +308,17 @@ vreg_nvme: regulator-nvme {
- 		pinctrl-0 = <&nvme_reg_en>;
- 	};
- 
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	vreg_wwan: regulator-wwan {
- 		compatible = "regulator-fixed";
- 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index 3c13331a9ef4..10ba934652c3 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -166,17 +166,6 @@ platform {
- 		};
- 	};
- 
--	vph_pwr: vph-pwr-regulator {
--		compatible = "regulator-fixed";
--
--		regulator-name = "vph_pwr";
--		regulator-min-microvolt = <3700000>;
--		regulator-max-microvolt = <3700000>;
--
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
- 	vreg_edp_3p3: regulator-edp-3p3 {
- 		compatible = "regulator-fixed";
- 
-@@ -206,6 +195,17 @@ vreg_nvme: regulator-nvme {
- 		pinctrl-0 = <&nvme_reg_en>;
- 		pinctrl-names = "default";
- 	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
- };
- 
- &apps_rsc {
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-index 42e02ad6a9c3..c47a63b5c85b 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-@@ -125,17 +125,6 @@ linux,cma {
- 		};
- 	};
- 
--	vph_pwr: vph-pwr-regulator {
--		compatible = "regulator-fixed";
--
--		regulator-name = "vph_pwr";
--		regulator-min-microvolt = <3700000>;
--		regulator-max-microvolt = <3700000>;
--
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
- 	vreg_edp_3p3: regulator-edp-3p3 {
- 		compatible = "regulator-fixed";
- 
-@@ -165,6 +154,17 @@ vreg_nvme: regulator-nvme {
- 		pinctrl-0 = <&nvme_reg_en>;
- 		pinctrl-names = "default";
- 	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
- };
- 
- &apps_rsc {
+ .../devicetree/bindings/arm/mediatek.yaml     |  26 ++
+ arch/arm64/boot/dts/mediatek/Makefile         |   3 +
+ .../mediatek/mt8186-corsola-chinchou-sku0.dts |  18 ++
+ .../mediatek/mt8186-corsola-chinchou-sku1.dts |  34 ++
+ .../mt8186-corsola-chinchou-sku16.dts         |  28 ++
+ .../dts/mediatek/mt8186-corsola-chinchou.dtsi | 296 ++++++++++++++++++
+ .../boot/dts/mediatek/mt8186-corsola.dtsi     |   6 +
+ 7 files changed, 411 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+
 -- 
-2.45.2
+2.17.1
 
 
