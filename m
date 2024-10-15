@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-364917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7D599DB18
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BC399DB26
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6053F2831E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93AE1F236D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCB313B791;
-	Tue, 15 Oct 2024 01:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AF014D439;
+	Tue, 15 Oct 2024 01:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQcyO9tx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C276D13A3ED;
-	Tue, 15 Oct 2024 01:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38073BBF6;
+	Tue, 15 Oct 2024 01:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728954507; cv=none; b=Nar7cVK7uFtVis7LTfhd3N2zeB3dDkgotvlO5bbDD1XSiEG+0HaHk0HhromwJ3aFwuk8yx16tPf0XrR6ne7KGPDnWtCBqDAAiPqtwytB01rItUKfnr8VHmBjBg3tKHznvL5sTNnDVAd2S7GmSkmJwZCFP7luKpp//uFmbY7Ne04=
+	t=1728954632; cv=none; b=Tc08MVL4PYvWVkcEZCvzDxcF3CzqBBfcKCRk0cJzCYuOWfxDJUvv9bNVLM6D7NpsMHD17MpGdJ7gUCVGZb4xStoLSauGlYdXDhcGnEgfETM3wNygaK07ElOCqyT8482GzxaU3dTaeoNbQfVkfah1pvhsn0WPxx+hd1enRJ4E6M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728954507; c=relaxed/simple;
-	bh=7fi11oqdsEvU7LXkhsaTVxgl7Dg+idIz/SLSOKSmIOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PH3ALl9c8kMF03uVXAftXzobw5v3nFjE8kBE+EMQYACJwbPalxVBkE2osPoRwHL6AL7xjT4vLQIbgbWve8lgJoswITWl2LnzRM7gvEaHzTf3zvRNKxNu7Lbz2tX62yYAjM0bkIhWERHuHG8qQY7buVlqt3ErhfGYfPFkHA2qrMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3C32C4CEC3;
-	Tue, 15 Oct 2024 01:08:23 +0000 (UTC)
-Date: Mon, 14 Oct 2024 21:08:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Jose E. Marchesi" <jemarch@gnu.org>, Indu Bhagat
- <indu.bhagat@oracle.com>, Nick Desaulniers <ndesaulniers@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra
- <peterz@infradead.org>, Zheng Yejian <zhengyejian@huaweicloud.com>, Andrii
- Nakryiko <andrii.nakryiko@gmail.com>
-Subject: Have compiler remove __fentry locations from overwritten weak
- functions
-Message-ID: <20241014210841.5a4764de@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728954632; c=relaxed/simple;
+	bh=rVAgkhvYvFX2PSpXyOhsMPNCZ0R/2JRF6RV4qQPo9lw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=D83PhVx0x2gnmJyWjB5E0mtc6G8w/UL2XLZtbr4dP2Plt+DnsUB4QfC3D5nCOXylgM/BBUc0sAu5Ty7qXXrCSr81MbHMzSwm3R4BN1yhA3D/C2eeRc9MYiuA7QQZnSUbp7VrAOy0yra9UEWjV6fwguObnl+shTz3KxhQBzkNUZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQcyO9tx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63710C4CEC3;
+	Tue, 15 Oct 2024 01:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728954631;
+	bh=rVAgkhvYvFX2PSpXyOhsMPNCZ0R/2JRF6RV4qQPo9lw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=TQcyO9tx7sGkph8gD0p2y1qkrVqIIl8T6mDtLXWikymynriRzqHdQ9pWvlrVTrZ31
+	 ewDVc8rXNJbEUomVxFSqQ2maMjmsRc1BFljrLaUsYr7L7or8JZ8B/iNrwg9dGkPte0
+	 ajU4Sqbe+GWQrlYJCM4sYJO/h1ksHVaa4FY4xSd646gVUinpoWTbwo0QJJT5n6nQNE
+	 2u2h4qnrTTroW4Q14iij3m52GmTVrNepA5VicXIqKHDgWOnFuPnpTYTIr3sxrg8++X
+	 Q2RwH3QH9miTeHUiRRb4uESBR6iOhxP03uuTWdjRGoJMc719DZeytIb3KwR420mIW8
+	 Z4Aeb0tG9luyQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE12C3822E4C;
+	Tue, 15 Oct 2024 01:10:37 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [net-next v6 0/9] Add support for per-NAPI config via netlink
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172895463623.686374.12703675923446130811.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Oct 2024 01:10:36 +0000
+References: <20241011184527.16393-1-jdamato@fastly.com>
+In-Reply-To: <20241011184527.16393-1-jdamato@fastly.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
+ sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+ edumazet@google.com, aleksander.lobakin@intel.com, leitao@debian.org,
+ danielj@nvidia.com, dsahern@kernel.org, davem@davemloft.net,
+ donald.hunter@gmail.com, kuba@kernel.org, hawk@kernel.org, jiri@resnulli.us,
+ johannes.berg@intel.com, corbet@lwn.net, leon@kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, lorenzo@kernel.org, michael.chan@broadcom.com,
+ almasrymina@google.com, pabeni@redhat.com, saeedm@nvidia.com,
+ bigeasy@linutronix.de, tariqt@nvidia.com, xuanzhuo@linux.alibaba.com
 
-There's a long standing issue with having fentry in weak functions that
-were overwritten. This was first caught when a "notrace" function was
-showing up in the /sys/kernel/tracing/available_filter_functions list.
+Hello:
 
-   https://lore.kernel.org/all/20220412094923.0abe90955e5db486b7bca279@kernel.org/
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-What was happening is that ftrace uses kallsyms (what is basically listed
-by nm) to map the location of __fentry to the previous symbol ahead of it.
-Then it says that function is the name of the function for that __fentry.
-But when you have weak functions, you can have this:
+On Fri, 11 Oct 2024 18:44:55 +0000 you wrote:
+> Greetings:
+> 
+> Welcome to v6. Minor changes from v5 [1], please see changelog below.
+> 
+> There were no explicit comments from reviewers on the call outs in my
+> v5, so I'm retaining them from my previous cover letter just in case :)
+> 
+> [...]
 
+Here is the summary with links:
+  - [net-next,v6,1/9] net: napi: Make napi_defer_hard_irqs per-NAPI
+    https://git.kernel.org/netdev/net-next/c/f15e3b3ddb9f
+  - [net-next,v6,2/9] netdev-genl: Dump napi_defer_hard_irqs
+    https://git.kernel.org/netdev/net-next/c/516010460011
+  - [net-next,v6,3/9] net: napi: Make gro_flush_timeout per-NAPI
+    https://git.kernel.org/netdev/net-next/c/acb8d4ed5661
+  - [net-next,v6,4/9] netdev-genl: Dump gro_flush_timeout
+    https://git.kernel.org/netdev/net-next/c/0137891e7457
+  - [net-next,v6,5/9] net: napi: Add napi_config
+    https://git.kernel.org/netdev/net-next/c/86e25f40aa1e
+  - [net-next,v6,6/9] netdev-genl: Support setting per-NAPI config values
+    https://git.kernel.org/netdev/net-next/c/1287c1ae0fc2
+  - [net-next,v6,7/9] bnxt: Add support for persistent NAPI config
+    https://git.kernel.org/netdev/net-next/c/419365227496
+  - [net-next,v6,8/9] mlx5: Add support for persistent NAPI config
+    https://git.kernel.org/netdev/net-next/c/2a3372cafe02
+  - [net-next,v6,9/9] mlx4: Add support for persistent NAPI config to RX CQs
+    https://git.kernel.org/netdev/net-next/c/c9191eaa7285
 
-  int notrace do_not_watch_me(void)
-  {
-	return whatever;
-  }
-
-  void __weak define_me_in_arch(void)
-  {
-	return;
-  }
-
-The define_me_in_arch() gets a __fentry, but because it is overwritten, it
-becomes attached to the end of do_not_watch_me(). When ftrace asks kallsyms
-for the symbol name of that __fentry location, it returns
-do_not_watch_me(), and ftrace will simply list that.
-
-I currently have a hack in the kernel that has:
-
-	ret = kallsyms_lookup(ip, NULL, &offset, &modname, str);
-	/* Weak functions can cause invalid addresses */
-	if (!ret || offset > FTRACE_MCOUNT_MAX_OFFSET) {
-		snprintf(str, KSYM_SYMBOL_LEN, "%s_%ld",
-			 FTRACE_INVALID_FUNCTION, offset);
-		ret = NULL;
-	}
-
-Which checks if the __fentry is too far away from the start of the symbol
-returned and if so, it uses the name: __ftrace_invalid_address__
-
-Then when you cat /sys/kernel/tracing/available_filter_functions you get:
-
-   [..]
-   do_one_initcall
-   __ftrace_invalid_address___884
-   rootfs_init_fs_context
-   wait_for_initramfs
-   __ftrace_invalid_address___84
-   calibration_delay_done
-   calibrate_delay
-   [..]
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-The order of available_filter_functions matter as you can enable the filter
-via the index into that file.
-
-   seq 50 100 > /sys/kernel/tracing/set_ftrace_filter
-
-will enable all the functions in available_filter_functions from index of
-50 through 100 (it does it in n*log(n) time, where as echoing the names in
-takes n^2 time). It also allows you to differentiate between different
-functions with the same name.
-
-That means the weak functions found still need to be listed, otherwise it
-will make the index lookup not match what is shown.
-
-But I was thinking, since gcc (and perhaps clang?) now has:
-
-  -mrecord-mcount
-
-that creates the __mcount_loc section that ftrace uses to find where the
-__fentry's are. Perhaps the compiler can simply remove any of those
-__fentry's that happen to exist in a weak function that was overridden.
-
-Would this be something that the compiler could do?
-
--- Steve
 
