@@ -1,115 +1,207 @@
-Return-Path: <linux-kernel+bounces-366006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B79C99EF96
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E7D99EFA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0478DB212E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:29:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96388B21245
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9171B21AE;
-	Tue, 15 Oct 2024 14:29:31 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516A11C4A12;
+	Tue, 15 Oct 2024 14:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcfsMWz/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01121FC7CF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13811C07D5;
+	Tue, 15 Oct 2024 14:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729002571; cv=none; b=mt8joILpysMXyX14HY8aDHQxBAA2ZDvEbV1hhEeHpN4BZOcLk+cU4RuoEJqnWmoMNwC2B5/u5VdwiEsRmXamG9N/uLElUoVqFdpjPp0cN4jotDn0BhoqKyH0rYTYwLB1485u+l1na01p9VW36AjIdfRZpPe37+8xCexiSjbGAOI=
+	t=1729002775; cv=none; b=SEMBQjfezO5lPpmohXJpFPoWTRg4Al+MwMzzW3F1fxIoVkSySKjZaKp/zhSMBXhcpj4kDiGSxoX3zwtcBoIFpLY+IItp1C1ESwaJDSubPj/6ost2YRffyio02izEchGCJKV0n6uK7d5B1n7tD6A4fNXV7Gt9xqROtiLtSZNOFxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729002571; c=relaxed/simple;
-	bh=Rr2uBg7XmaP4MLCUH2K4xP2ccL4kGu46qQHyGxhImy4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eOETdS+PB/sFcohv1XktlqAmVKjfJa/ZVbsSq66nDIR1+PWmetaWw6iPk7ITsDbcpm/lloZeulxdNNPJ7W1lTzV+cEzKJQnC1FR1shDasNhow1Zs7aSVJ2by59D2ONUu0Pg5I6q5QIu7F6qO0M4L0niIGC/0lypevzPGxED4Sm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XSc0V4TmDz20qQg;
-	Tue, 15 Oct 2024 22:28:42 +0800 (CST)
-Received: from kwepemg200007.china.huawei.com (unknown [7.202.181.34])
-	by mail.maildlp.com (Postfix) with ESMTPS id D1BCB1A0188;
-	Tue, 15 Oct 2024 22:29:25 +0800 (CST)
-Received: from huawei.com (7.223.141.1) by kwepemg200007.china.huawei.com
- (7.202.181.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 15 Oct
- 2024 22:29:24 +0800
-From: Zhang Qiao <zhangqiao22@huawei.com>
-To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, Ingo Molnar
-	<mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
-	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <zhangqiao22@huawei.com>
-Subject: [PATCH] sched_ext: Fix missing unlock in consume_dispatch_q()
-Date: Tue, 15 Oct 2024 22:29:17 +0800
-Message-ID: <20241015142917.83397-1-zhangqiao22@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1729002775; c=relaxed/simple;
+	bh=4hPyx84sqeP0w3qqjsq0CThSwEoBq4IyT4MO1kC5hCk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=indhbKY7vVadram2WmXzkNQSI+mrVTchqISpnfqkf4YbPyhNA8/2v7gFAcWYeEiAfx4pac7iKJyALaans9lw1cq00WhtZgKtuiwX/i4n9F1pV4juMmLjvu4P8s7dVHUnyHp3f/GlMhpn2DtViBWpZbwTgWI2LW6c7egAYt7l0iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcfsMWz/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F1EC4CECE;
+	Tue, 15 Oct 2024 14:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729002775;
+	bh=4hPyx84sqeP0w3qqjsq0CThSwEoBq4IyT4MO1kC5hCk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bcfsMWz/HhOgrw/haMDGYKRQGfwIcdJZbwakhFplKlM2LwZYuo8rXaqIqt2Yn4RFT
+	 pbryoBnuOAltEbprCLfDLru1YYeuVoFAgJ8kS0wBOxVCPrSZF3BxHXgtseABhvj62b
+	 +StBqZ2vuf0SatQHq9ALIQyEznEOAu/CFoWu+KuZLM5UE668saiia0FBWgTOe6JFLd
+	 gdjAh122pgsj74htxrq5wJ7NIJph8kpnTXQSlj59/8UiOMi0F89Wz3yTMR4czS08r5
+	 FtI9DFykgaULhDd12msoaRB9JUbR90ZFPape5OqpEKzGzB/83dHzd2Yac2L5UOgbKd
+	 OWVieYel2bUdg==
+Received: by pali.im (Postfix)
+	id 4B8CC79D; Tue, 15 Oct 2024 16:32:48 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] cifs: Fix parsing native symlinks directory/file type
+Date: Tue, 15 Oct 2024 16:30:41 +0200
+Message-Id: <20241015143041.23721-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241005140300.19416-5-pali@kernel.org>
+References: <20241005140300.19416-5-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg200007.china.huawei.com (7.202.181.34)
 
-When the function consume_dispatch_q() returns true, the dsq lock may
-remains held and is not unlocked.
+As SMB protocol distinguish between symlink to directory and symlink to
+file, add some mechanism to disallow resolving incompatible types.
 
-Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
+When SMB symlink is of the directory type, ensure that its target path ends
+with slash. This forces Linux to not allow resolving such symlink to file.
+
+And when SMB symlink is of the file type and its target path ends with
+slash then returns an error as such symlink is unresolvable. Such symlink
+always points to invalid location as file cannot end with slash.
+
+As POSIX server does not distinguish between symlinks to file and symlink
+directory, do not apply this change for symlinks from POSIX SMB server. For
+POSIX SMB servers, this change does nothing.
+
+This mimics Windows behavior of native SMB symlinks.
+
+Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- kernel/sched/ext.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Changes in v3:
+* Relax non-directory case condition in smb2_fix_symlink_target_type()
+  for compatibility with older Linux clients.
+* Use krealloc() instead of kzalloc()+memcpy()
+---
+ fs/smb/client/inode.c     |  5 ++++
+ fs/smb/client/smb2file.c  | 48 +++++++++++++++++++++++++++++++++++++++
+ fs/smb/client/smb2inode.c |  4 ++++
+ fs/smb/client/smb2proto.h |  1 +
+ 4 files changed, 58 insertions(+)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 410a4df8a121..4d80aa3de00e 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2377,7 +2377,8 @@ static inline bool consume_remote_task(struct rq *this_rq, struct task_struct *p
- static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
- {
- 	struct task_struct *p;
--retry:
-+	bool ret = false;
-+
- 	/*
- 	 * The caller can't expect to successfully consume a task if the task's
- 	 * addition to @dsq isn't guaranteed to be visible somehow. Test
-@@ -2394,19 +2395,20 @@ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
- 		if (rq == task_rq) {
- 			task_unlink_from_dsq(p, dsq);
- 			move_local_task_to_local_dsq(p, 0, dsq, rq);
--			raw_spin_unlock(&dsq->lock);
--			return true;
-+			ret = true;
-+			break;
+diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+index 2ac9cc8d327d..3fd625b356bd 100644
+--- a/fs/smb/client/inode.c
++++ b/fs/smb/client/inode.c
+@@ -1140,6 +1140,11 @@ static int reparse_info_to_fattr(struct cifs_open_info_data *data,
+ 							      full_path,
+ 							      iov, data);
  		}
++
++		if (data->reparse.tag == IO_REPARSE_TAG_SYMLINK && !rc) {
++			bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
++			rc = smb2_fix_symlink_target_type(&data->symlink_target, directory, cifs_sb);
++		}
+ 		break;
+ 	}
  
- 		if (task_can_run_on_remote_rq(p, rq, false)) {
--			if (likely(consume_remote_task(rq, p, dsq, task_rq)))
--				return true;
--			goto retry;
-+			if (likely(consume_remote_task(rq, p, dsq, task_rq))) {
-+				ret = true;
-+				break;
+diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
+index e836bc2193dd..4b07274e824a 100644
+--- a/fs/smb/client/smb2file.c
++++ b/fs/smb/client/smb2file.c
+@@ -63,6 +63,49 @@ static struct smb2_symlink_err_rsp *symlink_data(const struct kvec *iov)
+ 	return sym;
+ }
+ 
++int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb)
++{
++	char *buf;
++	int len;
++
++	/*
++	 * POSIX server does not distinguish between symlinks to file and
++	 * symlink directory. So nothing is needed to fix on the client side.
++	 */
++	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS)
++		return 0;
++
++	len = strlen(*target);
++	if (!len)
++		return -EIO;
++
++	/*
++	 * If this is directory symlink and it does not have trailing slash then
++	 * append it. Trailing slash simulates Windows/SMB behavior which do not
++	 * allow resolving directory symlink to file.
++	 */
++	if (directory && (*target)[len-1] != '/') {
++		buf = krealloc(*target, len+2, GFP_KERNEL);
++		if (!buf)
++			return -ENOMEM;
++		buf[len] = '/';
++		buf[len+1] = '\0';
++		*target = buf;
++		len++;
++	}
++
++	/*
++	 * If this is a file (non-directory) symlink and it points to path name
++	 * with trailing slash then this is an invalid symlink because file name
++	 * cannot contain slash character. File name with slash is invalid on
++	 * both Windows and Linux systems. So return an error for such symlink.
++	 */
++	if (!directory && (*target)[len-1] == '/')
++		return -EIO;
++
++	return 0;
++}
++
+ int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb, const struct kvec *iov,
+ 				const char *full_path, char **path)
+ {
+@@ -133,6 +176,11 @@ int smb2_open_file(const unsigned int xid, struct cifs_open_parms *oparms, __u32
+ 					       NULL, NULL, NULL);
+ 				oparms->create_options &= ~OPEN_REPARSE_POINT;
+ 			}
++			if (!rc) {
++				bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
++				rc = smb2_fix_symlink_target_type(&data->symlink_target,
++								  directory, oparms->cifs_sb);
 +			}
  		}
  	}
  
- 	raw_spin_unlock(&dsq->lock);
--	return false;
-+	return ret;
- }
- 
- static bool consume_global_dsq(struct rq *rq)
+diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+index a188908914fe..b8ccc8fd88f2 100644
+--- a/fs/smb/client/smb2inode.c
++++ b/fs/smb/client/smb2inode.c
+@@ -960,6 +960,10 @@ int smb2_query_path_info(const unsigned int xid,
+ 		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path,
+ 				      &oparms, in_iov, cmds, num_cmds,
+ 				      cfile, NULL, NULL, NULL);
++		if (data->reparse.tag == IO_REPARSE_TAG_SYMLINK && !rc) {
++			bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
++			rc = smb2_fix_symlink_target_type(&data->symlink_target, directory, cifs_sb);
++		}
+ 		break;
+ 	case -EREMOTE:
+ 		break;
+diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
+index db93447f0f5a..5390d5a61039 100644
+--- a/fs/smb/client/smb2proto.h
++++ b/fs/smb/client/smb2proto.h
+@@ -113,6 +113,7 @@ extern int smb3_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
+ 			  struct cifs_sb_info *cifs_sb,
+ 			  const unsigned char *path, char *pbuf,
+ 			  unsigned int *pbytes_read);
++int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb);
+ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
+ 			      bool unicode, bool relative,
+ 			      const char *full_path,
 -- 
-2.33.0
+2.20.1
 
 
