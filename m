@@ -1,224 +1,121 @@
-Return-Path: <linux-kernel+bounces-365353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CB199E0FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:27:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3517899E111
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27CC2283281
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08861F21DF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF541CACFD;
-	Tue, 15 Oct 2024 08:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC371D9A60;
+	Tue, 15 Oct 2024 08:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qiL+6Aep"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gERxb1hA"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5C917335E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AF71D5AC0;
+	Tue, 15 Oct 2024 08:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980846; cv=none; b=M+5vZx1q0cWBzTpqtKmZISwdpnpIB/sO5KXUZywXH4dR6+C8JKvlrAdU1C6WqeXOBquGk47jYcBz1uVu+5uoV+J2BeJSGV9R4NNRLVDc35f64AFugl6jkep02n3AlJ2EDsSxFzSFJkxAXZRKSDefumlzkDArauKR3eTfaEGlJ/E=
+	t=1728980953; cv=none; b=nXbdA716opLzQGVTz9gSKxJvM3ecJik8ieAoD8l+flJrkrAYQFrwEmfjaGSKThjS+2bwYFABunIge6GDa+ZzgZaO/Ima814I3cTQZtd4QYc3ksXcy68jqKCYPqcBFmlOib99FRgmJttw9FRwZ+0HPh+ZEuOFrFOOUe3vV2RfjlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980846; c=relaxed/simple;
-	bh=2rPMDg9/t/w3G0K3y2gXVBxMKzjXfjCzHeqESJZkYtc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BnQdrJMI6Zmn9azDjmBTzIfXfEBWWXv2KFMEtWt5eMLu08qG93s2xukbaPAkZJ7JYuuVRKbbfMEzZkqe1TCOU19Sef+DoV+z09bsUwsNEoBDHghk0SGtdnEBjHsZuNtlqBdRGnAzYaXNyr8d+kJwBfBB2IP8JWogGLelH0g127g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qiL+6Aep; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e2915f00c12so3820424276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:27:24 -0700 (PDT)
+	s=arc-20240116; t=1728980953; c=relaxed/simple;
+	bh=4LcEGxdt1RrkLz4bv3qr2V0k7GnVFca0cynmiSPO1r4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J09kwAnhyLPqz7QLFFIXkQyS/iRh5jSPTZpdC8+sZPsb9j2733Tc0aJNlO1MbX4vo7sQsOIs/0pzzAqqvFFNC1aI8vUaqjRiM4VxTquFfhWQAL3PvMlX3HaZKKpPOWrkE3mw/akr4LdIoXgjD9ZIjhzfv6FXY5MKdvuawSvvs9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gERxb1hA; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-20c70abba48so33147455ad.0;
+        Tue, 15 Oct 2024 01:29:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728980843; x=1729585643; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kh7NkmDAM9m5O1uSrySh2RZX18Uua/RhFygWOGIe73E=;
-        b=qiL+6AepYPevLSJOFp22+tPi2acq+OunVin4e2WNSn48kT/UyiDAZz7vOpUzSR6wpj
-         1d7XIiF5BxdoFG15E/NGz0yZvhxmHVGire23CL+nIXZMklcuWSHzsoVkMtZ/NwHvoI7t
-         WUkjW0C4IPwWF+roCyOC7IyYalw/28TGM7/AGu7QApaFEanrAED2fMT8C+yOod9iT6OY
-         8C9C/YxSqmHtr7D1xxrHEkGA+LD6Wg2lzrti1Yj4OB2JA2YvYhvGJgY2V8TJFYVGWucR
-         8uuQE+pyEfUWdQ4/YTTK9lccGnXXQNcsNERRr50FxWk/SfXRTtujCk4B87046TgzNtXW
-         T2Ag==
+        d=gmail.com; s=20230601; t=1728980951; x=1729585751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hD4sXw2oQIO63uT3+cbcMmwkiQ0b3X0XBEuwM9efjPI=;
+        b=gERxb1hAVAVwzBnxmbrsOv8Vyfx68OoT014y6SMsHfVn9b4R5/xcs8jspdaLlg9Qd7
+         Bo9Po6WejUPOnZNg7dKbS0dxsZ+Ad/bVlIm2HZkQJBDlUlpaZVIVSQZmI7cuXplXSk0D
+         7mb1B9rZXGJMH2ml6npoVKW+K/olXF/zslsOghSs2OBChI15iNx5TJrck/dqOdt5Fg52
+         omBe6gmwbKpeA0HTWt5/dmgUzOZ5CT/VGH7ZqTzcwrSTJJ/+ecotU8jHHp7SSQVRQ8zy
+         aHFM/zc3jycyocXfnxI1rT8uheYRDyG4kkK/5X3k7GA+kSeoX+/T+xJqSIkH0TrpdcZB
+         ARKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728980843; x=1729585643;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kh7NkmDAM9m5O1uSrySh2RZX18Uua/RhFygWOGIe73E=;
-        b=MTUMmzIVZOh18I//pTwk1mvHG+XngwEtVR/yabOSSIwS2z4IMgc2HqldRJQIXn6ILi
-         NJUa8aE8U4lob+NHns8164ybPz7qmfQNFUo6MARBdVMzCLdghx6iTuIW/GN02NKBe7I3
-         s0pqVTdnLbxEWMRo4QjRoleV/1GKdxCpYYcX5Hr51mZUfrm2KGZ+YcWrnCpbSoHmErfv
-         djFxVdrviMtbJndqNE+MaPuQiU43G2IkRNrz+xSIEqzv4lUVFp6KMMAHTTtnQTmjdkaF
-         mefIxq4UPFfieGiaYR9iypLxHHhKKH49w2MdwBKdOJHkmgBy2OXpWv41s+lY9b/pfHXP
-         yCtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeQDxgtLhnBv3XpO4Gnj7eZX0BeKrtJpPYCc6PC4XJ3dJ6KZ1UOTEuSHC0yuj/pK+NeRDhwqRJ1nQS2MA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqivYHlSm18CBzETQaqiEtapJ4KzCeQ4UR3A0WlgEx1365EVMq
-	8+7glPsE1wPyUI0xsqCNuiUWd6E9TBeiF7ZLu1JO30w6rzBvSLcqWUgGJDeQy2RFCNONrnpAzgL
-	u2i6jjfK8Zlowkee2PCTsexcZ94Bz2bIcZu4vJ9TolvWeDCTI3zAly/X1
-X-Google-Smtp-Source: AGHT+IFkKg4baqyI1mR+ynKg6uqf1M6RVbil+T3rXQaW6Bdg4AXGejHp/kAEANso21Z43EVZ9cmSocT4SYoeks7pIAU=
-X-Received: by 2002:a05:6902:1893:b0:e29:2f00:803e with SMTP id
- 3f1490d57ef6-e292f00c843mr9386451276.33.1728980843258; Tue, 15 Oct 2024
- 01:27:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728980951; x=1729585751;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hD4sXw2oQIO63uT3+cbcMmwkiQ0b3X0XBEuwM9efjPI=;
+        b=Zk9YbtlnhVR2DIZP2dsTkDz87jgrCCPTXRxhI4nmk9RoxTI/dpXX1/Dy6YcDD473Va
+         0Mh5uNfnKmXCDY99zCIa8x6WjdOR8Qh5ThFzZYEoTTBHmSgaRyFB1dyW/j8vmIU6mQiy
+         /U5wmwIP2U6OhXQSFJSdoJ7xRHgp5d5nqDsdLtTq+RGhartLleDd66mqXHjAMjiUSJYW
+         66kS5ULGqlpbfE+GwP12rhggI9oTPyZWUsKoEAigwX2UhLeOpMEPhRmEjeGsr5zFd+Rk
+         FdABPKzvZd4cfs5Xid+88Oj+9TwyY5lhBKAtipu8PnB4qIRgvci2i4iAcKd2F07iT2DI
+         uUzg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+pu1FsWUJuX6s+fpBCQs3zIxhX+2WRLfXJKMLdKGKuVjuQXNbGNuZ+OdE6noUzSzobYCSIyzE@vger.kernel.org, AJvYcCWFWACp2VDe7a/p7LvlWB/pK/hJkJF3fF0H1QMF2W7h8NQmFHLwhNyMLwH/wNmf8MHzZPvLWlipyGx+KCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6u04bGnSxhKHRKnFb3Sh8EZvgizx65AEaUMVuP4M2H4Vb0tIM
+	gnxydKanxAAHqdoXZKw5dwEja3uzLbHhskemFXnzeqwlTwHQKtnF
+X-Google-Smtp-Source: AGHT+IHEG/VC+yVh/uS0VtxQ/EqWvPx4wSevYNRNSEWSKulaKnwkNhFewXt7osct/EZXBUNQHaUlqA==
+X-Received: by 2002:a17:902:dac9:b0:20c:a0a5:a181 with SMTP id d9443c01a7336-20cbb1a482dmr152416035ad.19.1728980951223;
+        Tue, 15 Oct 2024 01:29:11 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1803669asm7177445ad.159.2024.10.15.01.29.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 01:29:10 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: kuba@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	dongml2@chinatelecom.cn,
+	gnault@redhat.com,
+	aleksander.lobakin@intel.com,
+	leitao@debian.org,
+	b.galvani@gmail.com,
+	alce@lafranque.net,
+	kalesh-anakkur.purayil@broadcom.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: vxlan: replace VXLAN_INVALID_HDR with VNI_NOT_FOUND
+Date: Tue, 15 Oct 2024 16:28:30 +0800
+Message-Id: <20241015082830.29565-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-9-76d4f5d413bf@linaro.org>
- <zig5zuf6hjcrkwmsdiahtzz3t3mxrmwxj65l43xij3zhfcyidn@fuisasnavvo3>
- <CABymUCP7bVBSWXCNp33x_B8KaZSFU-Dx+bU5ctkgDGXrzURrXQ@mail.gmail.com>
- <CAA8EJpovnEq_ciO0YmiREhwvxv6yGKnRMPx5=6G7R+Ob6Hy_hA@mail.gmail.com>
- <CABymUCPdu5+iz-amwv_O999sLUOmUMczo_v=1aUpJGpHo5f8CA@mail.gmail.com> <CAA8EJppMu5o7juhKUN2Y_4CRYKtaWN9G01aPU2ZfksE_tzjqCQ@mail.gmail.com>
-In-Reply-To: <CAA8EJppMu5o7juhKUN2Y_4CRYKtaWN9G01aPU2ZfksE_tzjqCQ@mail.gmail.com>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Tue, 15 Oct 2024 16:27:12 +0800
-Message-ID: <CABymUCNbwY5hoaOxydPccFAdbnCQgUMspJLHkNziQyf=NxOj2A@mail.gmail.com>
-Subject: Re: [PATCH v2 09/14] drm/msm/dpu: blend pipes per mixer pairs config
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=E6=
-=9C=8811=E6=97=A5=E5=91=A8=E4=BA=94 15:13=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Fri, 11 Oct 2024 at 10:11, Jun Nie <jun.nie@linaro.org> wrote:
-> >
-> > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=
-=E6=9C=8811=E6=97=A5=E5=91=A8=E4=BA=94 15:03=E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > On Fri, 11 Oct 2024 at 09:40, Jun Nie <jun.nie@linaro.org> wrote:
-> > > >
-> > > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=
-=B410=E6=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:15=E5=86=99=E9=81=93=EF=BC=
-=9A
-> > > > >
-> > > > > On Wed, Oct 09, 2024 at 04:50:22PM GMT, Jun Nie wrote:
-> > > > > > Blend pipes by set of mixer pair config. The first 2 pipes are =
-for left
-> > > > > > half screen with the first set of mixer pair config. And the la=
-ter 2 pipes
-> > > > > > are for right in quad pipe case.
-> > > > > >
-> > > > > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 38 +++++++++++++=
-+++++-----------
-> > > > > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
-> > > > > >  2 files changed, 25 insertions(+), 14 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers=
-/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > > > > index 43d9817cd858f..66f745399a602 100644
-> > > > > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > > > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > > > > @@ -442,7 +442,7 @@ static void _dpu_crtc_blend_setup_mixer(str=
-uct drm_crtc *crtc,
-> > > > > >       const struct msm_format *format;
-> > > > > >       struct dpu_hw_ctl *ctl =3D mixer->lm_ctl;
-> > > > > >
-> > > > > > -     uint32_t lm_idx, i;
-> > > > > > +     uint32_t lm_idx, lm_pair, i, pipe_idx;
-> > > > > >       bool bg_alpha_enable =3D false;
-> > > > > >       DECLARE_BITMAP(fetch_active, SSPP_MAX);
-> > > > > >
-> > > > > > @@ -463,15 +463,20 @@ static void _dpu_crtc_blend_setup_mixer(s=
-truct drm_crtc *crtc,
-> > > > > >               if (pstate->stage =3D=3D DPU_STAGE_BASE && format=
-->alpha_enable)
-> > > > > >                       bg_alpha_enable =3D true;
-> > > > > >
-> > > > > > -             for (i =3D 0; i < PIPES_PER_LM_PAIR; i++) {
-> > > > > > -                     if (!pstate->pipe[i].sspp)
-> > > > > > -                             continue;
-> > > > > > -                     set_bit(pstate->pipe[i].sspp->idx, fetch_=
-active);
-> > > > > > -                     _dpu_crtc_blend_setup_pipe(crtc, plane,
-> > > > > > -                                                mixer, cstate-=
->num_mixers,
-> > > > > > -                                                pstate->stage,
-> > > > > > -                                                format, fb ? f=
-b->modifier : 0,
-> > > > > > -                                                &pstate->pipe[=
-i], i, stage_cfg);
-> > > > > > +             /* loop pipe per mixer pair */
-> > > > > > +             for (lm_pair =3D 0; lm_pair < PIPES_PER_PLANE / 2=
-; lm_pair++) {
-> > > > > > +                     for (i =3D 0; i < PIPES_PER_LM_PAIR; i++)=
- {
-> > > > > > +                             pipe_idx =3D i + lm_pair * PIPES_=
-PER_LM_PAIR;
-> > > > > > +                             if (!pstate->pipe[pipe_idx].sspp)
-> > > > > > +                                     continue;
-> > > > > > +                             set_bit(pstate->pipe[pipe_idx].ss=
-pp->idx, fetch_active);
-> > > > > > +                             _dpu_crtc_blend_setup_pipe(crtc, =
-plane,
-> > > > > > +                                                        mixer,=
- cstate->num_mixers,
-> > > > > > +                                                        pstate=
-->stage,
-> > > > > > +                                                        format=
-, fb ? fb->modifier : 0,
-> > > > > > +                                                        &pstat=
-e->pipe[pipe_idx], i,
-> > > > > > +                                                        &stage=
-_cfg[lm_pair]);
-> > > > > > +                     }
-> > > > > >               }
-> > > > > >
-> > > > > >               /* blend config update */
-> > > > > > @@ -503,7 +508,7 @@ static void _dpu_crtc_blend_setup(struct dr=
-m_crtc *crtc)
-> > > > > >       struct dpu_crtc_mixer *mixer =3D cstate->mixers;
-> > > > > >       struct dpu_hw_ctl *ctl;
-> > > > > >       struct dpu_hw_mixer *lm;
-> > > > > > -     struct dpu_hw_stage_cfg stage_cfg;
-> > > > > > +     struct dpu_hw_stage_cfg stage_cfg[LM_PAIRS_PER_PLANE];
-> > > > >
-> > > > > After seeing this code, can we define STAGES_PER_PLANE (and
-> > > > > also keep PLANES_PER_STAGE defined to 2)?
-> > > > >
-> > > > Could you elaborate it? Stages describe how many layers to be blend=
-ed.
-> > > > Plane is a DRM concept that describe a buffer to be display in spec=
-ific
-> > > > display driver. Plane is already mapped to SSPP/multi-rect in DPU d=
-river
-> > > >  in blending stage level. So I am confused here.
-> > >
-> > > We have dpu_hw_stage_cfg, you are adding a second instance of it. So
-> > > we now have two stages per plane.
-> >
-> > So you suggest to replace LM_PAIRS_PER_PLANE with STAGES_PER_PLANE,
-> > right? I assume a stage is coupled with a LM pair.
-> >
-> > But for PLANES_PER_STAGE, I am still confused. A stage or a LM pair can
-> > involve many SSPP layers. How it related to planes? Plane is a concepts=
- from
-> > higher level.
->
-> PIPES_PER_STAGE, excuse me.
+Replace the drop reason "SKB_DROP_REASON_VXLAN_INVALID_HDR" with
+"SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND" in encap_bypass_if_local(), as the
+latter is more accurate.
 
-Do you mean to keep PIPES_PER_STAGE and do not introduce PIPES_PER_LM_PAIR,
-or use both? Looks like they are equal in hardware nature. A stage
-structure serves
-a mixer pair with 2 pipes. We can use PIPES_PER_LM_PAIR and add comment to
- indicate it, thus avoid defining too many macro.
+Fixes: 790961d88b0e ("net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()")
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+ drivers/net/vxlan/vxlan_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> --
-> With best wishes
-> Dmitry
+diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
+index fd21a063db4e..841b59d1c1c2 100644
+--- a/drivers/net/vxlan/vxlan_core.c
++++ b/drivers/net/vxlan/vxlan_core.c
+@@ -2340,7 +2340,7 @@ static int encap_bypass_if_local(struct sk_buff *skb, struct net_device *dev,
+ 			DEV_STATS_INC(dev, tx_errors);
+ 			vxlan_vnifilter_count(vxlan, vni, NULL,
+ 					      VXLAN_VNI_STATS_TX_ERRORS, 0);
+-			kfree_skb_reason(skb, SKB_DROP_REASON_VXLAN_INVALID_HDR);
++			kfree_skb_reason(skb, SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND);
+ 
+ 			return -ENOENT;
+ 		}
+-- 
+2.39.5
+
 
