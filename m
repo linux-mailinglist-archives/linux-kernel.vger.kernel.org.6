@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-366011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEC999EFAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:34:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83C099EFB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 710931F2591E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:34:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CEBB22BEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5712B1B21BA;
-	Tue, 15 Oct 2024 14:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyqCVfn/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56B21FC7F6;
-	Tue, 15 Oct 2024 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C8F1B21BF;
+	Tue, 15 Oct 2024 14:35:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC271FC7D6
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729002870; cv=none; b=he1moADn3XQob6KJ2i+sVAPa7oWCPnnnF11Hh9ndauOQFDR/fphzctFVtxHXB76IriZLRTaWZVkb5aP5ZV1HVI4INUBEQQrv19DRJ4RnKf1pr2NnP7BmjVGKAfjwlvpTrg0h4e0pYdQwdRrSPgYAfai/erF0RvkB2enOkgiRJF4=
+	t=1729002958; cv=none; b=TKr9DRgWmEyEreuiNzuvQoQ5jHLqS9NZiX9RIShiuIo3jJxqS/iGSx54+sOHa8r2lJTkoHTVvoPYhn8OgySYkwu8g404+86gNe5j7zv9VH56BJ8boeKt61twI9d3PEnifOyRAXIzKMHYdDGrFENqvX9OWkD5H8mzZQ84GxS5JxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729002870; c=relaxed/simple;
-	bh=/zCdooE819i7xDtG3txZiBijfesvKbqWcuvhOrqvJfA=;
+	s=arc-20240116; t=1729002958; c=relaxed/simple;
+	bh=/qF9LjHhXfoXqAH8MpAcqPtVoNTl7hz5XNjJnyX+BmM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/GTWQXswR4ge4NcnpV1zBXnlv0pziW+7/W7vCTU9X5CraL9+JdX9Uk1JKImUzkdAr+ROsX2wHYVWe5RCz2wAdM8VgS1suAObIrMxLKGEfIlUjOcgbjFLn//l03DTDXlNM5fugzrHx489e7nMVUvxt/JtsSIIOZ5zZ00iyKLcQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyqCVfn/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE6AC4CEC6;
-	Tue, 15 Oct 2024 14:34:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729002870;
-	bh=/zCdooE819i7xDtG3txZiBijfesvKbqWcuvhOrqvJfA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pyqCVfn/XZ/NRpCYx81j//goKU2q5femDNqlNjExinmcKOT78oCti0LLDOTPJybop
-	 BYGe+zNsc1Ga2NWRwtrL6FtjzQ2FeFDGC55d8/vvVHv4X7B2CGBIbO6hdA1IIBHOGx
-	 Fx8QWeG5dGUjZz7qriNtfoQdCBpNs4CT8/TBqD9808dbf3XT2EN91eJ+Y94zi1lS32
-	 TAwJrM+Ld/uPcLoOjQs+QaJ+R7Cy60COfFo1pfe+h1pcJrjqHbkJK5pOOLKvz4IB2k
-	 BUC7m0MwUz2/YkYWK0J0OyeHGox5YVsOgJbz57selgV5H/Wsag7DccCERiAbnQoGW9
-	 aOrDZfiSVIcjg==
-Date: Tue, 15 Oct 2024 15:34:26 +0100
-From: Lee Jones <lee@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, lgirdwood@gmail.com,
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: cs42l43: Disable IRQs during suspend
-Message-ID: <20241015143426.GK8348@google.com>
-References: <20241014095202.828194-1-ckeepax@opensource.cirrus.com>
- <Zw0AlU9QsWpZs2Sh@finisterre.sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rzWVV9FPF6JwQ14ZdOkhb6QLTyXmf5IFGeA8DcfwXVMEcnHSUV9AEKYE8GmowCVGFhFX9u0NOsuElF8vIlRRdzKZrLQ/7C4qfwoeVTOYDvjUAE4Sk0cuO5/+fZeUqgcbwcSUDXZCMCjAisRRYhpaXtiSnQtWLnf986DpTes5Lac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53B29FEC;
+	Tue, 15 Oct 2024 07:36:25 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6F993F71E;
+	Tue, 15 Oct 2024 07:35:53 -0700 (PDT)
+Date: Tue, 15 Oct 2024 15:35:51 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Clement LE GOFFIC <clement.legoffic@foss.st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Kees Cook <kees@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Antonio Borneo <antonio.borneo@foss.st.com>
+Subject: Re: Crash on armv7-a using KASAN
+Message-ID: <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com>
+References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
+ <Zw5D2aTkkUVOK89g@J2N7QTR9R3>
+ <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
+ <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com>
+ <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,21 +61,53 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zw0AlU9QsWpZs2Sh@finisterre.sirena.org.uk>
+In-Reply-To: <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
 
-On Mon, 14 Oct 2024, Mark Brown wrote:
+On Tue, Oct 15, 2024 at 04:22:20PM +0200, Ard Biesheuvel wrote:
+> On Tue, 15 Oct 2024 at 16:00, Mark Rutland <mark.rutland@arm.com> wrote:
+> >
+> > On Tue, Oct 15, 2024 at 03:51:02PM +0200, Linus Walleij wrote:
+> > > On Tue, Oct 15, 2024 at 12:28 PM Mark Rutland <mark.rutland@arm.com> wrote:
+> > > > On Mon, Oct 14, 2024 at 03:19:49PM +0200, Clement LE GOFFIC wrote:
+> > >
+> > > > I think what's happening here is that when switching from prev to next
+> > > > in the scheduler, we switch to next's mm before we actually switch to
+> > > > next's register state, and there's a transient window where prev is
+> > > > executed using next's mm. AFAICT we don't map prev's KASAN stack shadow
+> > > > into next's mm anywhere, and so inlined KASAN_STACK checks recursively
+> > > > fault on this until we switch to the overflow stack.
 
-> On Mon, Oct 14, 2024 at 10:52:02AM +0100, Charles Keepax wrote:
-> > The ASoC CODEC driver masks the IRQs whilst entering and exiting
-> > system suspend to avoid issues where the IRQ handler can run but PM
-> > runtime is disabled. However, as the IRQs could also be used from
-> > other parts of the driver, it would be better to move this handling to
-> > the MFD level.
+[...]
+
+> > > Yeah it looks like a spot-on identification of the problem, I can try to
+> > > think about how we could fix this if I can reproduce it, I keep trying
+> > > to provoke the crash :/
+> >
+> > It's a bit grotty -- AFAICT you'd either need to prefault in the
+> > specific part of the vmalloc space when switching tasks, or we'd need to
+> > preallocate all the shared vmalloc tables at the start of time so that
+> > they're always up-to-date.
+> >
+> > While we could disable KASAN_STACK, that's only going to mask the
+> > problem until this happens for any other vmalloc shadow...
 > 
-> Acked-by: Mark Brown <broonie@kernel.org.
+> Is the other vmalloc shadow not covered by the ordinary on-demand faulting?
 
-Do you want a PR?
+It depends on what the vmalloc memory is used for; if it's anything else
+used in the fault handling path, that'll fault recursively, and it's
+possible that'll happen indirectly via other instrumentation.
 
--- 
-Lee Jones [李琼斯]
+> When I implemented VMAP_STACK for ARM, I added an explicit load from
+> the new stack while still running from the old one (in __switch_to) so
+> that the ordinary faulting code can deal with it. Couldn't we do the
+> same for the vmalloc shadow of the new stack?
+
+We could do something similar, but note that it's backwards: we need to
+ensure that the old/current stack shadow will be mapped in the new mm.
+
+So the usual fault handling can't handle that as-is, because you need to
+fault-in pages for an mm which isn't yet in use. That logic could be
+factored out and shared, though.
+
+Mark.
 
