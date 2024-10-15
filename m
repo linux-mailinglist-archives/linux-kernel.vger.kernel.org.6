@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-366255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C904899F2BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E0299F2C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16B61C21DCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:32:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 208C31C20DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264361F76A2;
-	Tue, 15 Oct 2024 16:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D47E1F669F;
+	Tue, 15 Oct 2024 16:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ak4o3Cmp"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5UKNoVi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297081F6668;
-	Tue, 15 Oct 2024 16:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF391F6668;
+	Tue, 15 Oct 2024 16:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729009915; cv=none; b=jx8BGY2vkCuSgm9ob6HU3QvfCCJ9rX2HxW1aMak6rq50gGKw2UuUOq1AFIZp4ZFs60P0emcbWancUEkHIgWz6LVcNn348sYmmBJR8ICYVvcyWWFBZa7qYm/ux2jKgKpA/UzwXp5lYvl6KNo+KOrET/R6QGThf+aeOEBp/8R3SKE=
+	t=1729009922; cv=none; b=ZXQGRAPEUfTdsT46PpRmQb1qMPQ6lBdu58ibktnIOAl5a2Y0NChUBsXKYeb4/pVHG/x9tXJjnfUJk5qvLflwwz6zdkGAofilRMsjvKyMubFdJ97x489sePtydOGtgnjUqgoxr3XSOyO+dPKfKgbGIR7u7qjY/XA1k4/RehF8g34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729009915; c=relaxed/simple;
-	bh=/sDqHOs2CraTyNXk7KQexVK8gi7AvoziwNQ+gBLJHjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ijCVIxwFzl2YYQXM9yCY5MBWEmqbWJdzcaKnXk0bJ44AzPhmxHGGtAVFu+pmSEHwpplnQZoYgPVj8ssdNatlDEP8rvr4RWgcn40QIKCnw1vmvbDY5tuyeSZnVpF8fi8wWfElvI0R2byTBZSfDD5RKeqwhcIEiO3/FtVlg6ECmys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ak4o3Cmp; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b13b3fa372so44153785a.0;
-        Tue, 15 Oct 2024 09:31:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729009913; x=1729614713; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XchPzXKco182AVL6YvZhYqZjtDpLA7br0rvyko/9TYo=;
-        b=Ak4o3CmppeFur72UFxhUq146Vy17B/LWoiF2VvNplKnfOIT2ShnW/iTgb6eSmEuv2m
-         BVnPzshNXzFNtllSNAOG/jy7348FCQft+UgqsjVwwTnFdxnOg9rn5aBwEYWazjOSpMps
-         SmFJLXIXBYPcnhIQHkt1GyyBRin6on85sT1Jx+L8gUb9p4C+WUW9+4m8qp1OvEAJHyLy
-         SulAz4IO3y8pTM79TabHdR3iMnMCup7adTaTQSSeYvbihGHYLsN/yMW+T4+LDwB/lmR1
-         0W3a26BXaK4cglrDAcy8pVMmOtgKQOYXBpCBHojRWN9BenbWcFugDSZ9pcwq3/GjK0Ke
-         1pbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729009913; x=1729614713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XchPzXKco182AVL6YvZhYqZjtDpLA7br0rvyko/9TYo=;
-        b=M44WRkfdlvVGKxaK9DNRMxIGBBTRCrTZCa5vIdcSXH/W0OZjqsGAUbOjPfcc6f5Nnq
-         6jy0/3TNEPh7Z5cAxzFd+qFebp03LqvRFLO2VKeH0b3lg7iL6WudqxC3ssGWtf6Ir4U4
-         Uus5BofYx/45Yzg7+oz2qvcS7tjNwmWVjlMNx8qmzswnKV4kmcMs3hocxNofmI0iJyYZ
-         pzYocTWjP9XIE90OUqZnPEQykXlXL4/1b5HhSeBzH/cm+3zbPLJysZJq2On0PKECbKSr
-         9nVyCvKFgtcIXDj/PxFJdXWrSTKHqTwLa2QccHqedgyxWSn33PfAO4kVNnrZjRR4EWWn
-         d8fA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3HFBTZO57NANRolSE6Z2jDhGlqr3TdU8IavRepzZ4RxxUNNhSF+hZGyy/wufV2Pf5aBDSwpkOtOlRJIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6OFGAT7eeFRtrSQKIDwP+Jblu9CgkPUYQDmPXtrbCYslf3uEW
-	WEIn4hnGQXd4GVC2JJSDBUem6qz8SUelXX6juU8bYWG+otuLs4ic
-X-Google-Smtp-Source: AGHT+IGwmklZ8hcxUZ+LnFL5K1eJCxbfEhmqAS28KuwM2Xf5XnjyXiRnVDC0PmxdMen0TBaJZi6eCw==
-X-Received: by 2002:a05:620a:485:b0:7b1:4327:7b63 with SMTP id af79cd13be357-7b143278197mr63514885a.32.1729009913015;
-        Tue, 15 Oct 2024 09:31:53 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1145:4:8629:aa69:8faa:971? ([2620:10d:c091:500::6:ed8e])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136395215sm87616685a.75.2024.10.15.09.31.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 09:31:52 -0700 (PDT)
-Message-ID: <43a98a99-4c79-4954-82f1-b634e4d1be82@gmail.com>
-Date: Tue, 15 Oct 2024 12:31:51 -0400
+	s=arc-20240116; t=1729009922; c=relaxed/simple;
+	bh=rSaBxEWooctyUex7WQS1Iy+/fA3GFDfNlKTOE4OycsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jtSkQghL7kAh5pMPAoi6DOmvrZNeJA2XknJXK+BCL9iB3Pm1gku3RC0fCz4LEJ+aWLHy+pVLwswPuEbG1B4412CUQLFMtaO91XH4s80IpHaSvvCqLKKl5Nrg2FJ7qho/PfNuUX5jqN6I2Sbc/2vxUlUksx+og59wyKgpECScp44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5UKNoVi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E4AC4CEC6;
+	Tue, 15 Oct 2024 16:32:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729009922;
+	bh=rSaBxEWooctyUex7WQS1Iy+/fA3GFDfNlKTOE4OycsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M5UKNoVioHrCt8gD7BOi+QZD48JEHtTs5Bz5O72L1MPjv/NdcYQ++mKfsb3iyqHCH
+	 lLKRllUxoYnlPO+E0UMcYpYh5tzf8IdqHLAR3Y+L8ZixnW+7SHJGxd5igOTNKwaL4t
+	 pdtI5pYnsCVAxGA5p92j0r+hFYSO/hd2fg0itsv8vewoRBlKrVSbIRyexOS6gGecvX
+	 90v7nJyj6i6CtApCP5OoxB2GkhdoBP6T4GALweRn7QQ9gTcI1zmhZof68XU5Jjrmn2
+	 VGZ+W6uWDPUTpLbKmsCfXJZhl1EFSezPIRztJjkBhvYrWNlieeLd7L1tMwUxrgxFTu
+	 dj6r38gCOW1QA==
+Date: Tue, 15 Oct 2024 11:32:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	justin.chen@broadcom.com
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: brcm,bcm7038: Document the
+ 'open-drain' property
+Message-ID: <20241015163200.GA1220909-robh@kernel.org>
+References: <20241012025603.1644451-1-florian.fainelli@broadcom.com>
+ <20241012025603.1644451-2-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] ethtool: rss: prevent rss ctx deletion when
- in use
-To: Edward Cree <ecree.xilinx@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241011183549.1581021-1-daniel.zahka@gmail.com>
- <20241011183549.1581021-2-daniel.zahka@gmail.com>
- <966a82d9-c835-e87e-2c54-90a9a2552a21@gmail.com>
-Content-Language: en-US
-From: Daniel Zahka <daniel.zahka@gmail.com>
-In-Reply-To: <966a82d9-c835-e87e-2c54-90a9a2552a21@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012025603.1644451-2-florian.fainelli@broadcom.com>
 
+On Fri, Oct 11, 2024 at 07:56:02PM -0700, Florian Fainelli wrote:
+> Document the 'open-drain' property that allows configuring the PWM
+> controller outputs in open drain versus totem pole.
+> 
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/brcm,bcm7038-pwm.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/brcm,bcm7038-pwm.yaml b/Documentation/devicetree/bindings/pwm/brcm,bcm7038-pwm.yaml
+> index 119de3d7f9dd..12851c43a612 100644
+> --- a/Documentation/devicetree/bindings/pwm/brcm,bcm7038-pwm.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/brcm,bcm7038-pwm.yaml
+> @@ -25,6 +25,12 @@ properties:
+>    clocks:
+>      maxItems: 1
+>  
+> +  open-drain:
+> +    type: boolean
+> +    description:
+> +      Configure the outputs with open-drain structure, if omitted totem pole
+> +      structure is used.
+> +
 
-On 10/14/24 6:10 AM, Edward Cree wrote:
-> Imho it would make more sense to add core tracking of ntuple
->   filters, along with a refcount on the rss context.  That way
->   context deletion just has to check the count is zero.
->
-> -ed
+There's one other PWM with 'open-drain' so move the definition to 
+pwm.yaml.
 
-That sounds good to me. Is that something you are planning on sending 
-patches for?
+Alternatively, 'drive-open-drain' is a much more commonly used 
+variation.
 
+Another thing to consider is for any PWM controller with more than 
+1 output, you might want this to be per output and therefore should be 
+a flag in the cells.
+
+Rob
 
