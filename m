@@ -1,162 +1,216 @@
-Return-Path: <linux-kernel+bounces-365778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30C099E9D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF7A99E9DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB00C1C21361
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B447284095
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E72C1F4734;
-	Tue, 15 Oct 2024 12:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332F220111A;
+	Tue, 15 Oct 2024 12:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mvHFbJS6"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKRcuqPu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AC9206E62
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF9E207A1E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728995262; cv=none; b=mT0yRRXV/RQu8y+2wD5tt3DK9GdXmBklkEgHQUqYEAZRnB0W8Lpb8as9Rf/tUcqmHkKzNOSsawtmT6R3PoLiZJAQCny02yUM0v9c7wwxSy+9nCJYwzhwQuRIvXyAE/M5F0RqbZ0Kaodp9s+4O3Gdwg/89BIIaMXeW+rGQWOl//s=
+	t=1728995280; cv=none; b=YX56aja4W8PtgABncRPCsNl25P1cvZnQigRqp1Rj2qREeYNm0IJ0OxEjwRo/nWChwQ38uXVqCMR8Rv8Xd7M6CNDzhQ6iveQjNsnDgq4uH3oA375e96S4ATQ8FG4taiZlh5u0fHPQgvW9A3Sn6hUhjtynvF5uh2kzvHiCyvA7Kn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728995262; c=relaxed/simple;
-	bh=feQDBjUKAiUPRO0p3liJWLuxYKg2KJKcrPn67v5j4ng=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=m8q71MESh+MFZ88QtXg4UOBxGS4j3ooq20wyQxqC2LH0VgqJdVYR84MdD69+IN7gIywQWm4Nm5qr7xzdcyhDpFTKqmF6BZKmglBwhmrb0CfUeJp+W0EDqZSsXZSTaxiY+N2+bsM0dHJ0yyLlRtbaK46RJNKnzaddyBlAXma9rg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mvHFbJS6; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431286f50e1so34827075e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728995258; x=1729600058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/jp7MnEnWaCupoBR7Ejaobihsf5bkTsK/bDvsZp/OLs=;
-        b=mvHFbJS6pnd99uv2KAVWpwj5h98frz9DFwf+ADO+wdNgr5wBN0IEQWCFjcF2Weu5Ot
-         h7+DtdO23Lig1DkInfMdw4GZImILuQ8WluWcqb4U3uYXChmEkm0rsfxFNX4MfEaxVUYt
-         tO2AL0JOnxLtLd4L6PmPBOqGB4NdBUUhP1ZLtKm2xvE8BmP3xkuKzQpPqcut3gjc4FyF
-         T4kZLE72ROetet9H4MafbreEKUBGpxGcChJrdaP8nGRcESLerEcjz/NoFPJh02izwV7X
-         qGNknFNidxaZdyQHU7aDvCZ96dWjwxyEv4xwoglNtJRJ16M1zMOjYzRlBG7cuEzcVV77
-         moxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728995258; x=1729600058;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/jp7MnEnWaCupoBR7Ejaobihsf5bkTsK/bDvsZp/OLs=;
-        b=EV7i7NBOjD5x1sXmZLwOCQwarS2oWZ/wbJn1zOKy3iQiQSM/mPBg+5TOjzotiXHA2F
-         PL7Rx4krL83zqf9Swai+otnbYvMsNrkfAQvTtD9J98ybfudlnfzTpOfNOinSHJADsL7Q
-         eU+0tF/RPgm6tbjiV0DZk1zelpYlbM3on6D6i2MEJL1kjE0yutKBREdKz9k7PQrUlVMi
-         m/V15ana3LXyweZ+NbMtyYA93LP7s8izWPMmYcXzCGztj4r27ubfqz4mZ6gxpPttoJsi
-         a474wjdPkcwXcl8pOInI1p0JaIpGjWFzwGuk7azoDhvbJ5hauN/nPHWCsM/SoZwKfSo0
-         +94w==
-X-Forwarded-Encrypted: i=1; AJvYcCUjfncpPeOU6jeaFA6F9KaIXYH4YUZ6goFlmZCu4E1hjPrtu2EkIxQ5rsXITguM4Ucizl6RqWNcA68/PzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCLFfI+D2/tI/cKK8lV9bZ5sRhG1YJt5Qw+WSm9fOg3H2KLBxA
-	zPVV06vu8mByBM+wl16ZW7SNVsOb1MOzFFO+6ZzhuDKCIUiXlthhXRU4XKE/F3x2HPald2bwAsc
-	+wbo=
-X-Google-Smtp-Source: AGHT+IF5nBLO8Fh0jojEAcLQEJwPyUp6jyRdDuWX0jMQK/+gUYhmGD66OBVnQzWcvbP+N3t1yUIrjw==
-X-Received: by 2002:a05:600c:1c13:b0:426:6e9a:7a1e with SMTP id 5b1f17b1804b1-43125617834mr113128555e9.35.1728995257803;
-        Tue, 15 Oct 2024 05:27:37 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:e686:73e1:36a8:3467? ([2a01:e0a:982:cbb0:e686:73e1:36a8:3467])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6b323asm16450925e9.36.2024.10.15.05.27.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 05:27:36 -0700 (PDT)
-Message-ID: <0f3d1827-c3b0-4e58-95bf-7ccfb1366928@linaro.org>
-Date: Tue, 15 Oct 2024 14:27:36 +0200
+	s=arc-20240116; t=1728995280; c=relaxed/simple;
+	bh=PNLn1/pCtXUyStU0U2BVMLfpIt+9X20DAEgGORY0iH4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nyv4S111gQJt3ZpE+L+NwRY6TCoIAtPBEWTnQNynOCcQM22ogJDw6E25bUztpUUFpq3FQZO8X00aELN1YO3mkRqJZ7G/mtZXzMNskm4v0VzDJj2QrWe3pOC8YoIadOm1m/8gBsfRGIGE2+z9dgIekqg5eP675O1idzumdyXIz3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKRcuqPu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A98DC4CEC6
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728995280;
+	bh=PNLn1/pCtXUyStU0U2BVMLfpIt+9X20DAEgGORY0iH4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DKRcuqPufglS2KDcdgst9CtDv9nI0ZLxzJ6tvHWGLDLJ0fQDbK31YVylSYaLqcq0i
+	 Uxkg+ll5WZV+HMnHSv1bqOEcntWVPdennBVpf/oiBeaMyR+ysDH+0ceixuwOJrgl3G
+	 veEGqMZEuNR3/dTgJqknrlBGhyLsp4om/nl9FPotEgoDsp0VCuai7u4F/RU+K8OYlj
+	 rJL6/ZwRQ5ucGp5CCwd+9gfcAPKwH49ZGqZE/j6gwrCko1vhQkkXGfXEA7Gs/Xkw9a
+	 XEqI1cNbTm9KN78ga0Y86dynyneFcuGeDqb22sjVSAsk6uphgCXGDOBpqbQhQw6fD9
+	 3tLgDjQ999qsg==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso178747066b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:28:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXD424ahFYpBSOAGlYuLRucCb0AH07ToYxKSzoX0rj2JaCbbBF2owmHLAqoqQOYOhIFfFFA4ng4v4wnpfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy71C3WB47Lh8YhMgx2I9utBU3TK6BzvCHpPIfv0RZraXiFkkP
+	St/VLeaMKPsUgyPD55F1WNYRuNEQV67xsQJkBmujS+xzW1Y4JiaSM1yV2TFyeP78BxN3i72QsEU
+	DwZil51M6E2t7S0EfTgtEiMqHPMg=
+X-Google-Smtp-Source: AGHT+IF7wVxa4z12T17CxaCFQcgsO/SFzkpZWZ6Gldwe9M2owZr6r0gxkCYAZsQRGltQQSnQfoF0tccs3lOOlaBOnJY=
+X-Received: by 2002:a17:907:934e:b0:a9a:26dd:16bc with SMTP id
+ a640c23a62f3a-a9a34d3b5dcmr396366b.5.1728995278707; Tue, 15 Oct 2024 05:27:58
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] phy: qcom: qmp-pcie: drop bogus x1e80100 qref supplies
-To: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241015121406.15033-1-johan+linaro@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241015121406.15033-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241014035855.1119220-1-maobibo@loongson.cn> <20241014035855.1119220-3-maobibo@loongson.cn>
+ <CAAhV-H6nkiw_eOS3jFdojJsCJOA2yiprQmaT5c=SnPhJTOyKkQ@mail.gmail.com> <e7c06bf4-897a-7060-61f9-97435d2af16e@loongson.cn>
+In-Reply-To: <e7c06bf4-897a-7060-61f9-97435d2af16e@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 15 Oct 2024 20:27:46 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6H=Q=1KN5q8kR3j55Ky--FRNifCT93axhqE=vNMArDaQ@mail.gmail.com>
+Message-ID: <CAAhV-H6H=Q=1KN5q8kR3j55Ky--FRNifCT93axhqE=vNMArDaQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] LoongArch: Add barrier between set_pte and memory access
+To: maobibo <maobibo@loongson.cn>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/10/2024 14:14, Johan Hovold wrote:
-> The PCIe PHYs on x1e80100 do not a have a qref supply so stop requesting
-> one. This also avoids the follow warning at boot:
-> 
-> 	qcom-qmp-pcie-phy 1bfc000.phy: supply vdda-qref not found, using dummy regulator
-> 
-> Fixes: 9dab00ee9544 ("phy: qcom: qmp-pcie: Add Gen4 4-lanes mode for X1E80100")
-> Fixes: 606060ce8fd0 ("phy: qcom-qmp-pcie: Add support for X1E80100 g3x2 and g4x2 PCIE")
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index f71787fb4d7e..36aaac34e6c6 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -3661,8 +3661,8 @@ static const struct qmp_phy_cfg x1e80100_qmp_gen4x2_pciephy_cfg = {
->   
->   	.reset_list		= sdm845_pciephy_reset_l,
->   	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
-> -	.vreg_list		= sm8550_qmp_phy_vreg_l,
-> -	.num_vregs		= ARRAY_SIZE(sm8550_qmp_phy_vreg_l),
-> +	.vreg_list		= qmp_phy_vreg_l,
-> +	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
->   	.regs			= pciephy_v6_regs_layout,
->   
->   	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
-> @@ -3695,8 +3695,8 @@ static const struct qmp_phy_cfg x1e80100_qmp_gen4x4_pciephy_cfg = {
->   
->   	.reset_list		= sdm845_pciephy_reset_l,
->   	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
-> -	.vreg_list		= sm8550_qmp_phy_vreg_l,
-> -	.num_vregs		= ARRAY_SIZE(sm8550_qmp_phy_vreg_l),
-> +	.vreg_list		= qmp_phy_vreg_l,
-> +	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
->   	.regs			= pciephy_v6_regs_layout,
->   
->   	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
+On Tue, Oct 15, 2024 at 10:54=E2=80=AFAM maobibo <maobibo@loongson.cn> wrot=
+e:
+>
+>
+>
+> On 2024/10/14 =E4=B8=8B=E5=8D=882:31, Huacai Chen wrote:
+> > Hi, Bibo,
+> >
+> > On Mon, Oct 14, 2024 at 11:59=E2=80=AFAM Bibo Mao <maobibo@loongson.cn>=
+ wrote:
+> >>
+> >> It is possible to return a spurious fault if memory is accessed
+> >> right after the pte is set. For user address space, pte is set
+> >> in kernel space and memory is accessed in user space, there is
+> >> long time for synchronization, no barrier needed. However for
+> >> kernel address space, it is possible that memory is accessed
+> >> right after the pte is set.
+> >>
+> >> Here flush_cache_vmap/flush_cache_vmap_early is used for
+> >> synchronization.
+> >>
+> >> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >> ---
+> >>   arch/loongarch/include/asm/cacheflush.h | 14 +++++++++++++-
+> >>   1 file changed, 13 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/loongarch/include/asm/cacheflush.h b/arch/loongarch/=
+include/asm/cacheflush.h
+> >> index f8754d08a31a..53be231319ef 100644
+> >> --- a/arch/loongarch/include/asm/cacheflush.h
+> >> +++ b/arch/loongarch/include/asm/cacheflush.h
+> >> @@ -42,12 +42,24 @@ void local_flush_icache_range(unsigned long start,=
+ unsigned long end);
+> >>   #define flush_cache_dup_mm(mm)                         do { } while =
+(0)
+> >>   #define flush_cache_range(vma, start, end)             do { } while =
+(0)
+> >>   #define flush_cache_page(vma, vmaddr, pfn)             do { } while =
+(0)
+> >> -#define flush_cache_vmap(start, end)                   do { } while (=
+0)
+> >>   #define flush_cache_vunmap(start, end)                 do { } while =
+(0)
+> >>   #define flush_icache_user_page(vma, page, addr, len)   do { } while =
+(0)
+> >>   #define flush_dcache_mmap_lock(mapping)                        do { =
+} while (0)
+> >>   #define flush_dcache_mmap_unlock(mapping)              do { } while =
+(0)
+> >>
+> >> +/*
+> >> + * It is possible for a kernel virtual mapping access to return a spu=
+rious
+> >> + * fault if it's accessed right after the pte is set. The page fault =
+handler
+> >> + * does not expect this type of fault. flush_cache_vmap is not exactl=
+y the
+> >> + * right place to put this, but it seems to work well enough.
+> >> + */
+> >> +static inline void flush_cache_vmap(unsigned long start, unsigned lon=
+g end)
+> >> +{
+> >> +       smp_mb();
+> >> +}
+> >> +#define flush_cache_vmap flush_cache_vmap
+> >> +#define flush_cache_vmap_early flush_cache_vmap
+> >  From the history of flush_cache_vmap_early(), It seems only archs with
+> > "virtual cache" (VIVT or VIPT) need this API, so LoongArch can be a
+> > no-op here.
+OK,  flush_cache_vmap_early() also needs smp_mb().
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>
+> Here is usage about flush_cache_vmap_early in file linux/mm/percpu.c,
+> map the page and access it immediately. Do you think it should be noop
+> on LoongArch.
+>
+> rc =3D __pcpu_map_pages(unit_addr, &pages[unit * unit_pages],
+>                                       unit_pages);
+> if (rc < 0)
+>      panic("failed to map percpu area, err=3D%d\n", rc);
+>      flush_cache_vmap_early(unit_addr, unit_addr + ai->unit_size);
+>      /* copy static data */
+>      memcpy((void *)unit_addr, __per_cpu_load, ai->static_size);
+> }
+>
+>
+> >
+> > And I still think flush_cache_vunmap() should be a smp_mb(). A
+> > smp_mb() in flush_cache_vmap() prevents subsequent accesses be
+> > reordered before pte_set(), and a smp_mb() in flush_cache_vunmap()
+> smp_mb() in flush_cache_vmap() does not prevent reorder. It is to flush
+> pipeline and let page table walker HW sync with data cache.
+>
+> For the following example.
+>    rb =3D vmap(pages, nr_meta_pages + 2 * nr_data_pages,
+>                    VM_MAP | VM_USERMAP, PAGE_KERNEL);
+>    if (rb) {
+> <<<<<<<<<<< * the sentence if (rb) can prevent reorder. Otherwise with
+> any API kmalloc/vmap/vmalloc and subsequent memory access, there will be
+> reorder issu. *
+>        kmemleak_not_leak(pages);
+>        rb->pages =3D pages;
+>        rb->nr_pages =3D nr_pages;
+>        return rb;
+>    }
+>
+> > prevents preceding accesses be reordered after pte_clear(). This
+> Can you give an example about such usage about flush_cache_vunmap()? and
+> we can continue to talk about it, else it is just guessing.
+Since we cannot reach a consensus, and the flush_cache_* API look very
+strange for this purpose (Yes, I know PowerPC does it like this, but
+ARM64 doesn't). I prefer to still use the ARM64 method which means add
+a dbar in set_pte(). Of course the performance will be a little worse,
+but still better than the old version, and it is more robust.
+
+I know you are very busy, so if you have no time you don't need to
+send V3, I can just do a small modification on the 3rd patch.
+
+
+Huacai
+
+>
+> Regards
+> Bibo Mao
+> > potential problem may not be seen from experiment, but it is needed in
+> > theory.
+> >
+> > Huacai
+> >
+> >> +
+> >>   #define cache_op(op, addr)                                          =
+   \
+> >>          __asm__ __volatile__(                                        =
+   \
+> >>          "       cacop   %0, %1                                  \n"  =
+   \
+> >> --
+> >> 2.39.3
+> >>
+> >>
+>
+>
 
