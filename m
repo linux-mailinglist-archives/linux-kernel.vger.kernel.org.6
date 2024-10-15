@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-365639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D32999E550
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:14:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4D499E554
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58CC42844DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:14:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61197B22A96
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0BD1E5022;
-	Tue, 15 Oct 2024 11:14:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9161E8834;
+	Tue, 15 Oct 2024 11:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SE1f2BDD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B281D8DE2
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36EB31D8DE2;
+	Tue, 15 Oct 2024 11:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990847; cv=none; b=dWoE2oyG6FSohQJqBcU3SKH3/EEOEq4DAjg4MgRACFbAFlB1Bkh95FPDVwQv6UY0nKXOtRhWVkNLA94B72SHWicZvVU68GYV/+krkgZeu2OxAGK5uWxTQpECY16X0BxdxBjPUXXl5iBG08x8kq3UjZ32khqKnOpz6IBXoCT3mQc=
+	t=1728990862; cv=none; b=ryrkKS10rrE6ol2akOI2kwVk/3MsDY4AOT37y9fzDprrmoXeUJGdsuElBhyiyzaa1PPJs2qygylQl8HAdLl0Z/DNUTfFUJWUZy9PJJLE4H0RbgA78BN8twyFUAnckiTPuOThcFzw6fYQWgAMhqiYbGClwAnXAlkWVIZgJL32xNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990847; c=relaxed/simple;
-	bh=k+obqg8ez/kSYPrpCwInoZCgoVi5lbYkCXruaWxb8/o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=or+EzYOEYidDfr8QeiClvM0ZPG0CcLBNbGncOp4vDHiUN9c2qTxhCXowPANovaMz1pRbJj72V6ldztEtvhJ25PImPPkU3KL1V/NKGseBukuBZz03iuDnV8AzYwRZiwb2pu4Dyrf0l3mmYLtXNn9Xrx8MU21n+WQIjQotWomtEMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso13697185ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:14:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728990845; x=1729595645;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tEhk+TpqMKJ9G+Us2Yb7tiq8D+TvLmpB6pPJUPZauiA=;
-        b=crXVG1XZGaPcGAZC8Sfl8F+ECUp0BJUZMXUIFB8AIbhQxOIZePZH8DWjUmyQmnZ2C2
-         bAtsPr6lRTIVt0hIoyjKjTTcV7hbn2tOG89cJOs4piuXqsDSmevHJjFIc4tk10KUvI03
-         FqYExJpcbk59SvV+KWzLf/RQ1A+bQm6E1MwQjKlwfUQHmHBHJrdZY4VC1nZ4DCWcVX6h
-         K8CMRsVYU1BjrN/geA6Pc9Tb+F4TfWy9Qw8XySiVhVi5OpGDftLgIFU7PPQRXETegg1A
-         cadGCL3vdNVB1c4OCvAPJZr0Gr0j7jQyOlImbmyNv4MF3PYSOW0TYSNN4yvswqqjw1jQ
-         pKAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWP8zubfDX7Nlv2Xp4Y+WmwBIehxXZclO0eVUndJYsKigdd248dA8DkNxWqOB3fUFrEEpgawqGL6K/Ydz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS4D9fGOpSJtKXuXZHh4qSvylg4TS0Z7IsZ5QGzkm7mn/zM/Zx
-	FyVlupjT0toJkY5wgGG7rNuaHPCsrbDNoaAEfyRRWWmD+8ZQXiDMtyw8RQosECe7xH620NNb5tj
-	l124PJYn3xaRkAq2XHZyfJrW87of9lEaQK0cl0lMOLFPTKMUjdhWA9m8=
-X-Google-Smtp-Source: AGHT+IHXesyNdgyZZeho/BS9jHfkCc9WHMifKPZ92CHfRQgwg4mrpdBO59kJHlA5JY+d8fL0SNb8noMhH7cm8xCklvgoGlliQfLC
+	s=arc-20240116; t=1728990862; c=relaxed/simple;
+	bh=Ww7I9qP9b+gQT6n8y5YBtyJZUxROCz7Fcg7oOE0SK0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OB22Oyg3r297yyXq2TQx0Tg3auEm8ZpBd7OK5Rr4ImVAaiZPiTN3qtWU5gn9ytNRNNA5tL5QFLuuaC/gxW8EjRKfzON5urfAKjDL/WNORTDXaUOa+Zh0fL+IufNpxvPBKzvdwKGmr1qzUZfsy/Uh+he0Y5ShSoTPxrnInsfrnUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SE1f2BDD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D607C4CEC6;
+	Tue, 15 Oct 2024 11:14:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728990861;
+	bh=Ww7I9qP9b+gQT6n8y5YBtyJZUxROCz7Fcg7oOE0SK0w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SE1f2BDD/RciteVCvrKm+seK1CXQDh5xrSyicPArx0Q/OJU22BkSaoTT/RRSTk8Zs
+	 Fk8tlDglHip8qZt53zvfwzVHkirIiKYMsjHRxSM5N52jH1+mHvG1iEpsiqE22Dtj9X
+	 zAW5rbWubeCnABr2rpT4q4BRjpXVzULc12CKuX2c=
+Date: Tue, 15 Oct 2024 13:14:18 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	linux-s390@vger.kernel.org, Sven Schnelle <svens@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
+Message-ID: <2024101509-cesspool-sensation-f3f3@gregkh>
+References: <20241014141217.941104064@linuxfoundation.org>
+ <CA+G9fYuaZVQL_h1BYX4LajoMgUzZxJUH5ipdyO_4k36F62Z5DA@mail.gmail.com>
+ <20241015095013.7641-H-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178b:b0:39f:36f3:1957 with SMTP id
- e9e14a558f8ab-3a3bcd9575fmr75597205ab.3.1728990844839; Tue, 15 Oct 2024
- 04:14:04 -0700 (PDT)
-Date: Tue, 15 Oct 2024 04:14:04 -0700
-In-Reply-To: <tencent_C4C8065D09956EC9EED90C8727FC06D75206@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670e4e7c.050a0220.d9b66.0151.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] KASAN: slab-use-after-free Read in add_delayed_ref
-From: syzbot <syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015095013.7641-H-hca@linux.ibm.com>
 
-Hello,
+On Tue, Oct 15, 2024 at 11:50:13AM +0200, Heiko Carstens wrote:
+> On Tue, Oct 15, 2024 at 02:23:32PM +0530, Naresh Kamboju wrote:
+> > On Mon, 14 Oct 2024 at 20:20, Greg Kroah-Hartman
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > 
+> > The bisection pointing to,
+> >   73e9443b9ea8d5a1b9b87c4988acc3daae363832
+> >   s390/traps: Handle early warnings gracefully
+> >     [ Upstream commit 3c4d0ae0671827f4b536cc2d26f8b9c54584ccc5 ]
+> > 
+> > 
+> > Build log:
+> > -------
+> > arch/s390/kernel/early.c: In function '__do_early_pgm_check':
+> > arch/s390/kernel/early.c:154:30: error: implicit declaration of
+> > function 'get_lowcore'; did you mean 'S390_lowcore'?
+> > [-Werror=implicit-function-declaration]
+> >   154 |         struct lowcore *lc = get_lowcore();
+> >       |                              ^~~~~~~~~~~
+> >       |                              S390_lowcore
+> > arch/s390/kernel/early.c:154:30: warning: initialization of 'struct
+> > lowcore *' from 'int' makes pointer from integer without a cast
+> > [-Wint-conversion]
+> > cc1: some warnings being treated as errors
+> 
+> Same here, please drop this patch.
+>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Now dropped from 6.1.y and 6.6.y, thanks!
 
-Reported-by: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
-Tested-by: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         b852e1e7 Add linux-next specific files for 20241015
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=143ec030580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3cb0191818709a2b
-dashboard link: https://syzkaller.appspot.com/bug?extid=c3a3a153f0190dca5be9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ced727980000
-
-Note: testing is done by a robot and is best-effort only.
+greg k-h
 
