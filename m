@@ -1,132 +1,135 @@
-Return-Path: <linux-kernel+bounces-365437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDAE99E241
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:08:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496D899E245
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C818B1C2171F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:08:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 088822840CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D171CFEB5;
-	Tue, 15 Oct 2024 09:08:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302ED1741D4;
-	Tue, 15 Oct 2024 09:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B9C1CFED9;
+	Tue, 15 Oct 2024 09:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eW2Bhrer"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8831CFECF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728983313; cv=none; b=B8oukx2wFzkQjizgdBLhaDnmASgSRxY2R/1uZH1SS7DlqfPgu4FCLUYRXpE5sxEisveROHQ5I14HjMigXICMpYpVmbCJORcNrAeYn2HaUJAGxcC/UbFTfVqKqSY+25g3QFXpDS/BskqCPNtEhzJ7cAkaE4O9R/rD9RMWZ5VHFkI=
+	t=1728983349; cv=none; b=Wo3jR0vuTCQgkSNBFqVKAyKrzxxwim4Mldc4eL2bGZZ9+IlEMHFXKQ4rxtlMU0I9t0rTwh4piz9HmmhgbVg/yZ3UpebSQRmWr0Rm0Q6H2IE1hQ1h5MNIb1BzZw/0a/90NxziCWTtMGHx+tjXySniRPGpEOZYac4/AFbpfcNL0JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728983313; c=relaxed/simple;
-	bh=283QZq5IAbGhv0OVut1nalndoywJzzjatqkhXYC1l9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bbh8/BUJxugYHdhwuAxCk3+WITOHUKDWqEuVWyDa1l7peKbUhp28fv33RiUD3zhGA0EoqUr3gvC6w9T+hD62B7FXG8QjGlwo6YDDlExBoZiqO9nsFIYBtcqiy1djoQZiZAmb6KVQmnUDSOAQ7WJChh+HjkQfHibtYn50c3ZPoE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBFCF1007;
-	Tue, 15 Oct 2024 02:08:59 -0700 (PDT)
-Received: from [10.1.30.47] (e122027.cambridge.arm.com [10.1.30.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 076173F51B;
-	Tue, 15 Oct 2024 02:08:25 -0700 (PDT)
-Message-ID: <e69536dd-aab2-49de-a026-506e09359207@arm.com>
-Date: Tue, 15 Oct 2024 10:08:24 +0100
+	s=arc-20240116; t=1728983349; c=relaxed/simple;
+	bh=LtzIlROurSiaY9C3qcwo268+cnEG6r5bRRRuf9pnuPk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EpCjBg9HwDefgQf3WBiq8ECNKwNLjYS4f8cBpP7NzovdkFMr+drSuQcLVdYUWx7TB/U/WGPnuiA1xq5iwLC++9neUxYlG1ccy3N3aBSFP8qm77RvvC3EEe7KvuOL8KQMVAEAEAb9BEcVk3vApy82BewWpoDKDzvUBcQc1nnzMOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eW2Bhrer; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43124843b04so27457475e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:09:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728983346; x=1729588146; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zo4oi4aky+ivt1/kLLwbqQ8oWOYu1u0gufAG02tiQEU=;
+        b=eW2BhrerPpfsGyT/ac8N3PHatG5Tw25Zn6rKaw3/3X/cRfw95zsKTn8Z74KlaT+aqI
+         YqPL77VUIss/X7R+ioQBFpwzll88bUUfV96zGSbpE3dvZPlN3v3gL08JKs9jiWx+3THG
+         Ynq4gBrPg1rYPAqzbKdD3aeR8+Y+JdUzpl7Q2xmhIVmfF0yo/m/49I7QR5vq79f7YD0p
+         2JaCi1xoxkMwqbjy9O897ZeYLGH5BPm3ZKI2It8oJ9vXZcJfax52wuqXQC6d11YgVnmO
+         6nHSxm8Ct0mrhsf9uWm7zZFUHtALkRx8XZHP0Q1IUgeFDviRckPreptTMCr40bUGcdEY
+         BZpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728983346; x=1729588146;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zo4oi4aky+ivt1/kLLwbqQ8oWOYu1u0gufAG02tiQEU=;
+        b=v/Y8Vz/BTTB/xjFmJBO7RYSI2ddt8mmJkWOvB/XCZQKHEmN0XfYRcRDIytbj2+VDih
+         R23xwb1fzLeb3ochKdGYHXV1q91RYsOt887C/MyINs7y0+0Z0PIcHxcLKR/b2FFBkNc5
+         /SKmblSXXAFE1NaE4YljjljAqCmypxMLnKBqE/I5aOHlb8F8RafyXDy7snOoyOhLtBzb
+         ktbcur/EmuLxl9jdhmVDjKQ9LgLhF9ngIQ3U5VcaAA1cx8pJJmd+9g3mCHpsyWaZ8IHg
+         algVJiBaT9IUie5qCRYWR+BnrGyc8KE7OUtjZcLFttU9thpgeVGKXvp/RY6fZLe99IVy
+         eU7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVoZfV63nAQTdzaPtUqDTPENj+O9jNHLnRlR1zOsgeT+6aq1izVOlj2RhYq7KgIJdJL3LQOFcTtP30JhPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxmgTSovOvkUpY4jvs/s7P+bYUyv2YckRqcgoQMlX5yG3HiH7w
+	GtTxKqi9uN/BnR58+0Ga3Q37PsPpW05hfEsdfTLkfCa68zZ3qAkiuiqBHxI3bzI=
+X-Google-Smtp-Source: AGHT+IEilcQqGZU77u5s49pKan4uTKo0ZlBRqQasDoTCdTFyKhvCZ4pBrcIKYkMF4Iz33U7oU75T6A==
+X-Received: by 2002:a05:600c:1551:b0:42f:8515:e48c with SMTP id 5b1f17b1804b1-4311deb6142mr126238045e9.3.1728983346102;
+        Tue, 15 Oct 2024 02:09:06 -0700 (PDT)
+Received: from [192.168.1.64] (2a02-842a-d52e-6101-6fd0-06c4-5d68-f0a5.rev.sfr.net. [2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc123dasm1012882f8f.94.2024.10.15.02.09.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 02:09:05 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH RFC 0/4] ad7380: add adaq4370-4 and adaq4380-4 support
+Date: Tue, 15 Oct 2024 11:09:05 +0200
+Message-Id: <20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/11] arm64: realm: Query IPA size from the RMM
-To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004144307.66199-1-steven.price@arm.com>
- <20241004144307.66199-4-steven.price@arm.com>
- <2352629a-3742-45e9-a38f-196989918c9b@redhat.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <2352629a-3742-45e9-a38f-196989918c9b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADExDmcC/02PwWrDMAyGXyXoPIPlOLWXa2EPsGvpQZaVzbA2q
+ Z2WQum7T2s32EGIT4Jfn27QpBZpMHY3qHIprcxHBXzpgD/p+CGmZGVw1nm0OBjKoY9WW9aik/8
+ Bb9p5Wea6GvSZMQhb615BM5YqU7k+8nfw/raF/XNY5XTWW+vvJlETw/PhUNaxi0mojyESDoiJh
+ TK7KU0u+mRtYh7IiVKG/45j9zS0/s9Q7z60vvQ9029C6DcDT5FovCDs7/dv9Ue4dfsAAAA=
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Julien Stephan <jstephan@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On 15/10/2024 04:55, Gavin Shan wrote:
-> On 10/5/24 12:42 AM, Steven Price wrote:
->> The top bit of the configured IPA size is used as an attribute to
->> control whether the address is protected or shared. Query the
->> configuration from the RMM to assertain which bit this is.
->>
->> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
->> Reviewed-by: Gavin Shan <gshan@redhat.com>
->> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v4:
->>   * Make PROT_NS_SHARED check is_realm_world() to reduce impact on
->>     non-CCA systems.
->> Changes since v2:
->>   * Drop unneeded extra brackets from PROT_NS_SHARED.
->>   * Drop the explicit alignment from 'config' as struct realm_config now
->>     specifies the alignment.
->> ---
->>   arch/arm64/include/asm/pgtable-prot.h | 4 ++++
->>   arch/arm64/include/asm/rsi.h          | 2 +-
->>   arch/arm64/kernel/rsi.c               | 8 ++++++++
->>   3 files changed, 13 insertions(+), 1 deletion(-)
->>
-> 
-> [...]
-> 
->> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
->> index 9bf757b4b00c..a6495a64d9bb 100644
->> --- a/arch/arm64/kernel/rsi.c
->> +++ b/arch/arm64/kernel/rsi.c
->> @@ -8,6 +8,11 @@
->>   #include <linux/psci.h>
->>   #include <asm/rsi.h>
->>   +struct realm_config config;
->> +
-> 
-> Nit: I think this variable is file-scoped since it has a generic name.
-> In this case, 'static' is needed to match with the scope.
+Hello,
 
-Good spot - it should definitely be static.
+This series add support for adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS)
+which are quad-channel precision data acquisition signal chain μModule
+solutions compatible with the ad738x family, with the following differences:
 
-Thanks,
-Steve
+- configurable gain in front of each 4 adc
+- internal reference is 3V derived from refin-supply (5V)
+- additional supplies
 
->> +unsigned long prot_ns_shared;
->> +EXPORT_SYMBOL(prot_ns_shared);
->> +
->>   DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
->>   EXPORT_SYMBOL(rsi_present);
->>   @@ -67,6 +72,9 @@ void __init arm64_rsi_init(void)
->>           return;
->>       if (!rsi_version_matches())
->>           return;
->> +    if (WARN_ON(rsi_get_realm_config(&config)))
->> +        return;
->> +    prot_ns_shared = BIT(config.ipa_bits - 1);
->>         arm64_rsi_setup_memory();
->>   
-> 
-> Thanks,
-> Gavin
-> 
+This series depends on [1] which fix several supplies issues
+
+[1]: https://lore.kernel.org/all/20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com/
+
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Julien Stephan (4):
+      dt-bindings: iio: adc: ad7380: add adaq4370-4 and adaq4380-4 compatible parts
+      iio: adc: ad7380: fix oversampling formula
+      iio: adc: ad7380: add support for adaq4370-4 and adaq4380-4
+      docs: iio: ad7380: add adaq4370-4 and adaq4380-4
+
+ .../devicetree/bindings/iio/adc/adi,ad7380.yaml    | 117 ++++++++++++++++++
+ Documentation/iio/ad7380.rst                       |  15 +++
+ drivers/iio/adc/ad7380.c                           | 135 +++++++++++++++++++--
+ 3 files changed, 258 insertions(+), 9 deletions(-)
+---
+base-commit: 8bea3878a1511bceadc2fbf284b00bcc5a2ef28d
+change-id: 20241015-ad7380-add-adaq4380-4-support-14dc17ec0029
+prerequisite-change-id: 20241004-ad7380-fix-supplies-3677365cf8aa:v1
+prerequisite-patch-id: 6d87f69eed38931663a1fe4035d92bdddcc06da2
+prerequisite-patch-id: 337292de00e31ecc2f71eac207542f236d8c0ff4
+prerequisite-patch-id: 7dee57142d0d12682b0be3b62f1c16851aeac069
+prerequisite-patch-id: 4ca1d234fa53f27d4e73150df5b00e245a142f67
+prerequisite-patch-id: d42f3c478b92a6f97194853fac271add226803cf
+prerequisite-patch-id: 972bdbf06bafa7c56f604dbe8eb7d236aadaad99
+
+Best regards,
+-- 
+Julien Stephan <jstephan@baylibre.com>
 
 
