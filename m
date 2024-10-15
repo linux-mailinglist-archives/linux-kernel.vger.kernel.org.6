@@ -1,90 +1,110 @@
-Return-Path: <linux-kernel+bounces-366038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D442099EFFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:47:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD7399F00A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B07D1F24B86
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:47:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25584280BEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0D71C4A0C;
-	Tue, 15 Oct 2024 14:47:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237391F61C;
-	Tue, 15 Oct 2024 14:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5A81D5153;
+	Tue, 15 Oct 2024 14:48:26 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D4B18A6D9;
+	Tue, 15 Oct 2024 14:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003637; cv=none; b=lnrvSNKFvIgrjGX3+tKfIdO5CGhdxsC55Qgf1ks7086R0bekMb/6tAY+fb5YH8mk8TfhFPo+/B50E0wDieQwlKUrMGDqrF35JhyLaTyAjRpeCei03PwfsRlh5Kx/cNG4v1KyE81EpaK/LXKd+dNTQpxR9DfiId1jNC7KBv1u5/4=
+	t=1729003706; cv=none; b=lWM851250S4zMu/5KRcSVyOVpFZZSmwS1gIamj4KRGXSU2gqKpomAW4hVrW+k7N2cS2z+QnK8mYcHIXxEjPGY2ZgOSjeY0bOJ/pEKGEYo1uRCrQ4I+HRfPbPKU4L+DPs5oVrMhrEYjvi4MzU4lbBGCdnJih2CR1/NUAi+Nk5cbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003637; c=relaxed/simple;
-	bh=MP9cwT7tF4h/zPcm+gSYgwsGGRaT2JCrT66NUZwYfFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Es9X1u7sNlYbwxsh5ikq0ZXpnmAPzzm9dbkq2Cds41eI74aIoRtipMkCAlotkHq6SZ0P+DfQzMa4lRessas5lP2CHYPxqXkd7NKzZ+APhZexx3HMm6lFVgFNh+TjFn8lcUi+BPg4Oe+UWU6uCIQvd7KvJHgawo/cQ9/7EkUp2gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37591FEC;
-	Tue, 15 Oct 2024 07:47:43 -0700 (PDT)
-Received: from [10.57.87.12] (unknown [10.57.87.12])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 731B63F71E;
-	Tue, 15 Oct 2024 07:47:11 -0700 (PDT)
-Message-ID: <a8c42a6c-bac3-4ebc-8a29-e6c0ed4567c3@arm.com>
-Date: Tue, 15 Oct 2024 15:47:05 +0100
+	s=arc-20240116; t=1729003706; c=relaxed/simple;
+	bh=XgoA3+FERjry6apyY/FxUCOBF3D/pHuQU1olz/NGBvM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TtiaE80wF1lS0ioM5S6XsLjCf0rTsXEwb9KDzBKKGG50JFDncNRezUs6fAVZgO72XUwW1FmXjANTXdtsZVwbZ201NB7bTvczLStkvZlTAy6KH7uOIpMyPAR35a/7SsbC4G2xcmJcMbFhNi+lOafZKhLxuZMQl4BOF3pmRNjFr0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XScPk4T1xz1j9qX;
+	Tue, 15 Oct 2024 22:47:06 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 909BE180043;
+	Tue, 15 Oct 2024 22:48:19 +0800 (CST)
+Received: from huawei.com (10.175.113.133) by kwepemm600001.china.huawei.com
+ (7.193.23.3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 15 Oct
+ 2024 22:48:18 +0800
+From: Wang Hai <wanghai38@huawei.com>
+To: <ajit.khaparde@broadcom.com>, <horms@kernel.org>,
+	<sriharsha.basavapatna@broadcom.com>, <somnath.kotur@broadcom.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <VenkatKumar.Duvvuru@Emulex.Com>,
+	<zhangxiaoxu5@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<wanghai38@huawei.com>
+Subject: [PATCH v2 net] be2net: fix potential memory leak in be_xmit()
+Date: Tue, 15 Oct 2024 22:48:02 +0800
+Message-ID: <20241015144802.12150-1-wanghai38@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/2] iommu/arm-smmu-v3: bypass streamid zero on i.MX95
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>,
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Joy Zou <joy.zou@nxp.com>, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
- Jason Gunthorpe <jgg@ziepe.ca>
-References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
 
-On 2024-10-15 4:14 am, Peng Fan (OSS) wrote:
-> i.MX95 eDMA3 connects to DSU ACP, supporting dma coherent memory to
-> memory operations. However TBU is in the path between eDMA3 and ACP,
-> need to bypass the default SID 0 to make eDMA3 work properly.
+The be_xmit() returns NETDEV_TX_OK without freeing skb
+in case of be_xmit_enqueue() fails, add dev_kfree_skb_any() to fix it.
 
-I'm confused, why not just describe that the device owns this StreamID 
-in the DT the normal way, i.e, "iommus = <&smmu 0>;"?
+Fixes: 760c295e0e8d ("be2net: Support for OS2BMC.")
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+v1->v2: Add label drop_skb for dev_kfree_skb_any()
+ drivers/net/ethernet/emulex/benet/be_main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Thanks,
-Robin.
-
-> I was also thinking to introduce "bypass-sids = <0xA 0xB 0xC ...>" to
-> make this reusable for others, but not sure. I could switch to
-> "bypass-sids" if you prefer.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Peng Fan (2):
->        dt-bindings: iommu: arm,smmu-v3: introduce nxp,imx95-bypass-sid-zero
->        iommu/arm-smmu-v3: Bypass SID0 for NXP i.MX95
-> 
->   .../devicetree/bindings/iommu/arm,smmu-v3.yaml        |  4 ++++
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c           | 19 ++++++++++++++++---
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h           |  1 +
->   3 files changed, 21 insertions(+), 3 deletions(-)
-> ---
-> base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
-> change-id: 20241014-smmuv3-120b24bc4659
-> 
-> Best regards,
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index a8596ebcdfd6..875fe379eea2 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -1381,10 +1381,8 @@ static netdev_tx_t be_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	be_get_wrb_params_from_skb(adapter, skb, &wrb_params);
+ 
+ 	wrb_cnt = be_xmit_enqueue(adapter, txo, skb, &wrb_params);
+-	if (unlikely(!wrb_cnt)) {
+-		dev_kfree_skb_any(skb);
+-		goto drop;
+-	}
++	if (unlikely(!wrb_cnt))
++		goto drop_skb;
+ 
+ 	/* if os2bmc is enabled and if the pkt is destined to bmc,
+ 	 * enqueue the pkt a 2nd time with mgmt bit set.
+@@ -1393,7 +1391,7 @@ static netdev_tx_t be_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 		BE_WRB_F_SET(wrb_params.features, OS2BMC, 1);
+ 		wrb_cnt = be_xmit_enqueue(adapter, txo, skb, &wrb_params);
+ 		if (unlikely(!wrb_cnt))
+-			goto drop;
++			goto drop_skb;
+ 		else
+ 			skb_get(skb);
+ 	}
+@@ -1407,6 +1405,8 @@ static netdev_tx_t be_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 		be_xmit_flush(adapter, txo);
+ 
+ 	return NETDEV_TX_OK;
++drop_skb:
++	dev_kfree_skb_any(skb);
+ drop:
+ 	tx_stats(txo)->tx_drv_drops++;
+ 	/* Flush the already enqueued tx requests */
+-- 
+2.17.1
 
 
