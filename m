@@ -1,295 +1,189 @@
-Return-Path: <linux-kernel+bounces-365107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A800F99DD96
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:44:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6314A99DD99
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09FD3B211FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:44:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F0F1F24392
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC85176FB4;
-	Tue, 15 Oct 2024 05:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE18C17623C;
+	Tue, 15 Oct 2024 05:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="u38bTrUp"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEiYZMcf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185C63C3C;
-	Tue, 15 Oct 2024 05:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F462175D5A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728971037; cv=none; b=Bd+aKucjyZw7wJpCMq2Cl3/DOxyi8N/TMM8Arh6zo9jnlfJlpJQfIfe9/mz56P+fhPKrees+hZe6kPIq8YZMbkCNAaMt+7NC47kWQMpG1PCD7tA97gRnEZijduC5VkNvPhB4CiutK0tOWc4WWWBpQ8Px6Hc1hHWwWomFKJzS8tU=
+	t=1728971073; cv=none; b=Gh5nf6/7+tPuFJxkb0kffiLrF0PmiOn33McHwRbiEP0R6UH7Lm0YMu++iAXM6ZbWXmX86cMhW+quN2JW/D0o54QjIFAYhok+vEqeInbHurNgMAdFUk1RdJZ2GlAwt71YWP8UFv8OJaWHVGEDZ/u2KvbEGDvNyYhzklf0kr/JFi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728971037; c=relaxed/simple;
-	bh=moV4sxH55Ox3TTHD1hguVzsrAIYKDUV1NAlVGvqipLY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ZOLRYVp0OP13wZSQwgaf/4+/4eejyGuGFM0nQkdSw9kzm0ytoZxPLGB/gCZEOqlETJvDLvNRzzCvR++oJ/hYIASQ64jEJtj/gKgHMpxgBt25i3XAZdocIyanFX3qdzpRerfjfyJ6e8ny/CU46qb4EzE5BjuymxSoFCJi13uHNi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=u38bTrUp; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728971031; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	bh=eVk2nCe8WNju0eF7pl3D8RNXuWVV58ocJy3rDZxMFzY=;
-	b=u38bTrUpXyVtwHREucpJjyrIuAHmMEltKTb4YjJEaWnyGDlaxmB5ZPSPh5tRMR+4rIS84LQ7XyU+vOOI2pS4ZtkQL2z5dBv2p8x0l4Or8itf/w+rgEhz/XThqnBeE69uOd8IsViKXb21SUWrRPgX+90LSyle1rf7XaauMEJdPSQ=
-Received: from smtpclient.apple(mailfrom:mqaio@linux.alibaba.com fp:SMTPD_---0WHC93cj_1728971029 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Oct 2024 13:43:51 +0800
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1728971073; c=relaxed/simple;
+	bh=q/YuYoJtkGMscUSXLS8goVgt9nKzbq0PN/p0QP0L4oM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OUaHkQ+ssYqsAptQcxO+6g4lpS1Yz1hnwR5BJnAziTdYzHmWw7uFfuoq6SNK5PAPaGfmz4fC99Fn2+fqJLUyN7YsS64XvUI19QoY8Jh4K78C0o1UvLrO51YKV0v/Aoefg3tfuz2ULDo2ThYBx3vKOIi+ZfRCiofZNlHNI37xO6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bEiYZMcf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728971070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rqDVypNeTlyROBtcFAcxa7fIkYW5RvLiVqxfFzE+jtk=;
+	b=bEiYZMcf8orkE61PE6khv0yOejz3sTQoTbaDzuJtSrpfI0yqWG1Pxyae5Tl4idJju3POWI
+	CClOaxEuenScdEepns39VZ+R/8HKqb1nDCOTKesV6qRJrfvNO4aKAYnn6vXZLm+IE+V3Co
+	/L5ycIBv5reDj9kBQmZFtWGSjbwXfFE=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-501-JOxzhRJKMUmnbur1MrgL8Q-1; Tue, 15 Oct 2024 01:44:29 -0400
+X-MC-Unique: JOxzhRJKMUmnbur1MrgL8Q-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c9217064f6so3841644a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:44:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728971068; x=1729575868;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rqDVypNeTlyROBtcFAcxa7fIkYW5RvLiVqxfFzE+jtk=;
+        b=JGnlHYAsQJn50+Ue/VYVuvROXnBm9wcWXdy1VP60h9phBO63RRwQf/dAtzF7vq745d
+         RAX9FmPduWEpAOaOAq1uqFfzu+2TgH2uaexC7Y+VjR1Ezy8SDknuRhVCKtcDczxgFB5v
+         InuLnHKSVALKrGhYsLz8q2QwhNcJ2Om7cXou4Y8va8jEjYAh8YOvEhrR5X9b9oRaK9y/
+         RP9d2NikrOcc2fTK2NE3qcZXRDr+40xSYLXUyHqVNNTHbA9Xr1PbO10tUG84Cbq7ew0H
+         LCdmk4A4d9lZ5kcoiKkFkNwrCTxBTUUG/pC18r+Bg/jI2uNRiwn5pI1c+acFbmpK8rSY
+         gGHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaJmcnFcCEE1txOGw4nO8r4aJJ4hrPaPLgzLAceSFphzGX+4qOpnYwpE8U5qxddm37cTPq62YaHw+FTuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhiPDxoeSuI5/LiAtmC0auC0y/lYTRv7lUSHeCh4wwJzoUkYEz
+	eTqV3dMqcO4cc8ZF/A0w8CAj3QXiKQOv5Zm84QRxENppW9haCZdKjqt/bd444z6mBhoKPe6M3nR
+	6Q7PA+F+3q64ruIxWAHcaHZGwzvcnSS8Njj/GHqpQQCPWqaNx300a2hD+zZvYuA==
+X-Received: by 2002:a05:6402:2547:b0:5c9:5dff:c059 with SMTP id 4fb4d7f45d1cf-5c95dffc856mr6694740a12.33.1728971067795;
+        Mon, 14 Oct 2024 22:44:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHphJL5D9sYrOvCoKG6zISeYBgA11R+H0fJZX97o5TSea54XK259kqw1/JPqXeoKRwu0LnFcw==
+X-Received: by 2002:a05:6402:2547:b0:5c9:5dff:c059 with SMTP id 4fb4d7f45d1cf-5c95dffc856mr6694718a12.33.1728971067197;
+        Mon, 14 Oct 2024 22:44:27 -0700 (PDT)
+Received: from [192.168.0.7] (ip-109-42-48-109.web.vodafone.de. [109.42.48.109])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d7b7a96sm283304a12.93.2024.10.14.22.44.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 22:44:26 -0700 (PDT)
+Message-ID: <c5c5f85b-06aa-46c1-8a2f-439ae5e90f11@redhat.com>
+Date: Tue, 15 Oct 2024 07:44:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] uprobe: avoid out-of-bounds memory access of fetching
- args
-From: "maqiao.mq" <mqaio@linux.alibaba.com>
-In-Reply-To: <20241014234028.6dc14fe26dce74f2b90a8a4f@kernel.org>
-Date: Tue, 15 Oct 2024 13:43:39 +0800
-Cc: "maqiao.mq" <mqaio@linux.alibaba.com>,
- Andrii Nakryiko <andrii@kernel.org>,
- linux-trace-kernel@vger.kernel.org,
- rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com,
- namhyung.kim@lge.com,
- Oleg Nesterov <oleg@redhat.com>,
- linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <40197A50-CE74-4240-BBED-BE832A3905B6@linux.alibaba.com>
-References: <20241014061405.3139467-1-mqaio@linux.alibaba.com>
- <20241014234028.6dc14fe26dce74f2b90a8a4f@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] asm-generic: add an optional pfn_valid check to
+ pfn_valid
+To: Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-arch@vger.kernel.org
+References: <20241014144506.51754-1-hch@lst.de>
+ <20241014144506.51754-3-hch@lst.de>
+Content-Language: en-US
+From: Thomas Huth <thuth@redhat.com>
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <20241014144506.51754-3-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 14/10/2024 16.44, Christoph Hellwig wrote:
+> page_to_pfn is usually implemented by pointer arithmetics on the memory
+> map, which means that bogus input can lead to even more bogus output.
+> 
+> Powerpc had a pfn_valid check on the regult to it's page_to_phys
 
+s/regult/result/
 
-> 2024=E5=B9=B410=E6=9C=8814=E6=97=A5 =E4=B8=8B=E5=8D=8810:40=EF=BC=8CMasa=
-mi Hiramatsu (Google) <mhiramat@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Mon, 14 Oct 2024 14:14:05 +0800
-> Ma Qiao <mqaio@linux.alibaba.com> wrote:
->=20
->> From: Qiao Ma <mqaio@linux.alibaba.com>
->>=20
->> Uprobe needs to fetch args into a percpu buffer, and then copy to =
-ring
->> buffer to avoid non-atomic context problem.
->>=20
->> Sometimes user-space strings, arrays can be very large, but the size =
-of
->> percpu buffer is only page size. And store_trace_args() won't check
->> whether these data exceeds a single page or not, caused out-of-bounds
->> memory access.
->>=20
->> It could be reproduced by following steps:
->> 1. build kernel with CONFIG_KASAN enabled
->> 2. save follow program as test.c
->>=20
->> ```
->> \#include <stdio.h>
->> \#include <stdlib.h>
->> \#include <string.h>
->>=20
->> // If string length large than MAX_STRING_SIZE, the =
-fetch_store_strlen()
->> // will return 0, cause __get_data_size() return shorter size, and
->> // store_trace_args() will not trigger out-of-bounds access.
->> // So make string length less than 4096.
->> \#define STRLEN 4093
->>=20
->> void generate_string(char *str, int n)
->> {
->>    int i;
->>    for (i =3D 0; i < n; ++i)
->>    {
->>        char c =3D i % 26 + 'a';
->>        str[i] =3D c;
->>    }
->>    str[n-1] =3D '\0';
->> }
->>=20
->> void print_string(char *str)
->> {
->>    printf("%s\n", str);
->> }
->>=20
->> int main()
->> {
->>    char tmp[STRLEN];
->>=20
->>    generate_string(tmp, STRLEN);
->>    print_string(tmp);
->>=20
->>    return 0;
->> }
->> ```
->> 3. compile program
->> `gcc -o test test.c`
->>=20
->> 4. get the offset of `print_string()`
->> ```
->> objdump -t test | grep -w print_string
->> 0000000000401199 g     F .text  000000000000001b              =
-print_string
->> ```
->>=20
->> 5. configure uprobe with offset 0x1199
->> ```
->> off=3D0x1199
->>=20
->> cd /sys/kernel/debug/tracing/
->> echo "p /root/test:${off} arg1=3D+0(%di):ustring arg2=3D\$comm =
-arg3=3D+0(%di):ustring"
->>> uprobe_events
->> echo 1 > events/uprobes/enable
->> echo 1 > tracing_on
->> ```
->>=20
->> 6. run `test`, and kasan will report error.
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> BUG: KASAN: use-after-free in strncpy_from_user+0x1d6/0x1f0
->> Write of size 8 at addr ffff88812311c004 by task test/499CPU: 0 UID: =
-0 PID: 499 Comm: test Not tainted 6.12.0-rc3+ #18
->> Hardware name: Red Hat KVM, BIOS 1.16.0-4.al8 04/01/2014
->> Call Trace:
->> <TASK>
->> dump_stack_lvl+0x55/0x70
->> print_address_description.constprop.0+0x27/0x310
->> kasan_report+0x10f/0x120
->> ? strncpy_from_user+0x1d6/0x1f0
->> strncpy_from_user+0x1d6/0x1f0
->> ? rmqueue.constprop.0+0x70d/0x2ad0
->> process_fetch_insn+0xb26/0x1470
->> ? __pfx_process_fetch_insn+0x10/0x10
->> ? _raw_spin_lock+0x85/0xe0
->> ? __pfx__raw_spin_lock+0x10/0x10
->> ? __pte_offset_map+0x1f/0x2d0
->> ? unwind_next_frame+0xc5f/0x1f80
->> ? arch_stack_walk+0x68/0xf0
->> ? is_bpf_text_address+0x23/0x30
->> ? kernel_text_address.part.0+0xbb/0xd0
->> ? __kernel_text_address+0x66/0xb0
->> ? unwind_get_return_address+0x5e/0xa0
->> ? __pfx_stack_trace_consume_entry+0x10/0x10
->> ? arch_stack_walk+0xa2/0xf0
->> ? _raw_spin_lock_irqsave+0x8b/0xf0
->> ? __pfx__raw_spin_lock_irqsave+0x10/0x10
->> ? depot_alloc_stack+0x4c/0x1f0
->> ? _raw_spin_unlock_irqrestore+0xe/0x30
->> ? stack_depot_save_flags+0x35d/0x4f0
->> ? kasan_save_stack+0x34/0x50
->> ? kasan_save_stack+0x24/0x50
->> ? mutex_lock+0x91/0xe0
->> ? __pfx_mutex_lock+0x10/0x10
->> prepare_uprobe_buffer.part.0+0x2cd/0x500
->> uprobe_dispatcher+0x2c3/0x6a0
->> ? __pfx_uprobe_dispatcher+0x10/0x10
->> ? __kasan_slab_alloc+0x4d/0x90
->> handler_chain+0xdd/0x3e0
->> handle_swbp+0x26e/0x3d0
->> ? __pfx_handle_swbp+0x10/0x10
->> ? uprobe_pre_sstep_notifier+0x151/0x1b0
->> irqentry_exit_to_user_mode+0xe2/0x1b0
->> asm_exc_int3+0x39/0x40
->> RIP: 0033:0x401199
->> Code: 01 c2 0f b6 45 fb 88 02 83 45 fc 01 8b 45 fc 3b 45 e4 7c b7 8b =
-45 e4 48 98 48 8d 50 ff 48 8b 45 e8 48 01 d0 ce
->> RSP: 002b:00007ffdf00576a8 EFLAGS: 00000206
->> RAX: 00007ffdf00576b0 RBX: 0000000000000000 RCX: 0000000000000ff2
->> RDX: 0000000000000ffc RSI: 0000000000000ffd RDI: 00007ffdf00576b0
->> RBP: 00007ffdf00586b0 R08: 00007feb2f9c0d20 R09: 00007feb2f9c0d20
->> R10: 0000000000000001 R11: 0000000000000202 R12: 0000000000401040
->> R13: 00007ffdf0058780 R14: 0000000000000000 R15: 0000000000000000
->> </TASK>
->>=20
->> This commit enforces the buffer's maxlen less than a page-size to =
-avoid
->> store_trace_args() out-of-memory access.
->>=20
->> Fixes: dcad1a204f72 ("tracing/uprobes: Fetch args before reserving a =
-ring buffer")
->> Signed-off-by: Qiao Ma <mqaio@linux.alibaba.com>
->> ---
->> kernel/trace/trace_probe_tmpl.h | 2 +-
->> kernel/trace/trace_uprobe.c     | 6 ++++++
->> 2 files changed, 7 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/kernel/trace/trace_probe_tmpl.h =
-b/kernel/trace/trace_probe_tmpl.h
->> index 2caf0d2afb322..0338d9468bb4d 100644
->> --- a/kernel/trace/trace_probe_tmpl.h
->> +++ b/kernel/trace/trace_probe_tmpl.h
->> @@ -269,7 +269,7 @@ store_trace_args(void *data, struct trace_probe =
-*tp, void *rec, void *edata,
->> ret =3D process_fetch_insn(arg->code, rec, edata, dl, base);
->> if (arg->dynamic && likely(ret > 0)) {
->> dyndata +=3D ret;
->> - maxlen -=3D ret;
->> + maxlen =3D max(maxlen - ret, 0);
->=20
-> Hmm, do you see this part does something wrong?
-> If this exceed maxlen here, that means a buffer overflow. Please make =
-it WARN_ON_ONCE().
+> implementation when CONFIG_DEBUG_VIRTUAL is defined, which seems
+> generally useful, so add that to the generic version.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   include/asm-generic/memory_model.h | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/include/asm-generic/memory_model.h b/include/asm-generic/memory_model.h
+> index a73a140cbecdd7..6d1fb6162ac1a6 100644
+> --- a/include/asm-generic/memory_model.h
+> +++ b/include/asm-generic/memory_model.h
+> @@ -64,7 +64,17 @@ static inline int pfn_valid(unsigned long pfn)
+>   #define page_to_pfn __page_to_pfn
+>   #define pfn_to_page __pfn_to_page
+>   
+> +#ifdef CONFIG_DEBUG_VIRTUAL
+> +#define page_to_phys(page)						\
+> +({									\
+> +	unsigned long __pfn = page_to_pfn(page);			\
+> +									\
+> +	WARN_ON_ONCE(!pfn_valid(__pfn));				\
+> +	PFN_PHYS(__pfn);						\
+> +})
+> +#else
+>   #define page_to_phys(page)	PFN_PHYS(page_to_pfn(page))
+> +#endif /* CONFIG_DEBUG_VIRTUAL */
+>   #define phys_to_page(phys)	pfn_to_page(PHYS_PFN(phys))
+>   
+>   #endif /* __ASSEMBLY__ */
 
-Hmmm, I was wrong, maxlen can never be negative, even this patch set =
-ucb->dsize less than the real size of args.
-
-And even if some weird bugs really cause maxlen to be negative, it is =
-too late here to WARN(),
-because out-of-memory access has been occured.
-
-So maybe the best way is not modify here?
-
->=20
->> }
->> }
->> }
->> diff --git a/kernel/trace/trace_uprobe.c =
-b/kernel/trace/trace_uprobe.c
->> index c40531d2cbadd..e972855a5a6bf 100644
->> --- a/kernel/trace/trace_uprobe.c
->> +++ b/kernel/trace/trace_uprobe.c
->> @@ -875,6 +875,7 @@ struct uprobe_cpu_buffer {
->> };
->> static struct uprobe_cpu_buffer __percpu *uprobe_cpu_buffer;
->> static int uprobe_buffer_refcnt;
->> +#define MAX_UCB_BUFFER_SIZE PAGE_SIZE
->>=20
->> static int uprobe_buffer_init(void)
->> {
->> @@ -979,6 +980,11 @@ static struct uprobe_cpu_buffer =
-*prepare_uprobe_buffer(struct trace_uprobe *tu,
->> ucb =3D uprobe_buffer_get();
->> ucb->dsize =3D tu->tp.size + dsize;
->>=20
->> + if (WARN_ON_ONCE(ucb->dsize > MAX_UCB_BUFFER_SIZE)) {
->> + ucb->dsize =3D MAX_UCB_BUFFER_SIZE;
->> + dsize =3D MAX_UCB_BUFFER_SIZE - tu->tp.size;
->> + }
->> +
->=20
-> This part looks good to me.
->=20
-> Thank you!
->=20
->> store_trace_args(ucb->buf, &tu->tp, regs, NULL, esize, dsize);
->>=20
->> *ucbp =3D ucb;
->> --=20
->> 2.39.3
->>=20
->=20
->=20
-> --=20
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
+With the typo fixed:
+Reviewed-by: Thomas Huth <thuth@redhat.com>
 
 
