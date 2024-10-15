@@ -1,351 +1,172 @@
-Return-Path: <linux-kernel+bounces-366517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAA599F6BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1BC699F6C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1121F241B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:06:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FCAF1F23F80
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D481F80C5;
-	Tue, 15 Oct 2024 19:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="SedXyKGs"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F31F80C0;
+	Tue, 15 Oct 2024 19:09:28 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582691F80A1;
-	Tue, 15 Oct 2024 19:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729019192; cv=pass; b=GR2h8OOvid4xQsonj5ABV04z3WBumUwjU3Ylp7aBqwPTJkc+2+s4r2pyo6tUFeDqfJEYeK6mofkgTkBc5CmyIPVeDgU3Rdef1XvFFsoSDPbIrnPj+dhpabmWwW76gsZY7JNV/9L0NhQqXFewQTCl0dzh+TQfs+n2yijyWZYZa+E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729019192; c=relaxed/simple;
-	bh=CarnKUlhEU03dHn4YNQcPgKD7oX57DpUNhiC4PewB1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuIUgI1bD0tseTcgaLHz4v06YRpDYy6BEb1hqhD+/GuTKWqoaP8TSsazkC2n47Ehi4Sfj85hJCc+kZRZkXPojhtssdfmsGkVHWpoOLISipyoWBhsbuHDpbpS00+lD8faaIzBer0zIhmm7C5tZoJvxFt9Zv0Ymn6YDvmvC9abCXs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=SedXyKGs; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729019147; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dB1vlzJPn4ZQ9O+yJ3xePEbvZOkN4EjPA6hUzpPQgt6DEN19OmLbv2RsgLNszKADe30OX/QA6dhvq33Yr7Vfatb1PotiEmWedb4oeE54xBMZ7eDPvIlPqhaWZ411QH6XsBzaRPLYDxKHgUxhcx9WVM7mvT0cFtwbyDZ76L3cnks=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729019147; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wDPu8Hrc9URjHX/IjEjHZZ5zhMpMQLyvAxJls66kHv8=; 
-	b=HmflID4oApGQv5At/vq+zdX+oEH1qi4AihKG1O/fzJsTLcq9PyihhjoiB0qFuHdVReG7c/5rCCOSYN+laqxFHLd+s4plN/bF1A26QlaryCTBzh6HX3woP4W2ex4yIy9Cu/fHwG8RagDKnkCfdez2AcD0HOQZ5AVqAWcJOg2n2N4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729019147;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=wDPu8Hrc9URjHX/IjEjHZZ5zhMpMQLyvAxJls66kHv8=;
-	b=SedXyKGs5Iry/O4Y7FG1ui3dQYsY0YavLWQFDO7UAxLusfYLLOQRgLEypDqr/roA
-	TqqNW+DaCgxBNigxqyCL9IbDo+gAaCvIKJ7JuHsYCC/dEUdDUzB5aHWjHWKp6JYXdtK
-	+3uYOUvAcP2Zp7II3ml6zB8oo3WryGLZQ2Ch3UmE=
-Received: by mx.zohomail.com with SMTPS id 1729019145808902.2055791020094;
-	Tue, 15 Oct 2024 12:05:45 -0700 (PDT)
-Date: Tue, 15 Oct 2024 20:05:40 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Steven Price <steven.price@arm.com>, Melissa Wen <mwen@igalia.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [RFC PATCH 1/2] drm/drm_file: Add display of driver's internal
- memory size
-Message-ID: <5h4vxk6hw7fkw4rebqprfdf3tmz7skdxfh6qgljcd4thxkpobu@jly67q62us4b>
-References: <20241002234531.3113431-1-adrian.larumbe@collabora.com>
- <20241002234531.3113431-2-adrian.larumbe@collabora.com>
- <6657b080-f41e-4c95-8895-e474f1ca5d57@ursulin.net>
- <p72rfjerzsg4wsp6rgfcoo5fmlu77jmzdynosflj2hlos63pql@mnetv3t66wsc>
- <87a21c19-8fd2-492a-a620-243cd9c642dc@ursulin.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783F21F80A0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 19:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729019368; cv=none; b=OErTNlR+wkQqNOyquQAHuHU31pgwpNFqnv0HRke5uAuawGf/cMD0mxn2PYLuSeOW4LHRZNdmJpMsK48+h9zMtxHLY5dCvHYDl6SrK4t7B6yAWAzVZFJdcWG6+Pwypwvly8VHYOuOSclvn/FvF6Ru+eZb49VFLi2RizfKy4DzDaM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729019368; c=relaxed/simple;
+	bh=u1uAwktf6kk8nVT1WwQn5qWjduf1jXs8aWE0d1BVCG4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Y/3oMSNPzTryaEAdGT5ZiuMfu+PBytZca4LafakMThxD2jOm6TGm/hF7HUs+Z2ch7cHzNGYqABX2ATrdJU0SC006G+ji31SSvViwDHreUmRv+cvvoyJr8nM6cPOZq8+h0OhA8AOrCkaEmRLy8YDwrHHiUet9G3uC/Uhl+P7G+j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3466d220dso54553795ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:09:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729019365; x=1729624165;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ITeBmiKPxke1DH9sYqgNIlVHlUNkQ0WHvvDjCpx3+Bc=;
+        b=TjDbaO3tAxFQmtkuPWmHvHPN4VC6Tpbj6wi7IWTnYYZhNB+/Uzsa00qI110ICD8qFT
+         Uw/JQaI630W4pwgH700hB/NjiS6gJHKesWrjWS1Cf65cgp+L8CUSmRWDJWQpG7KL5nB1
+         RsJTghXru4DmTQwOdE5SyOwBmq40dFv+zsGMVej1dZ38PKj+xq6ULofBD7+RJBZfrfql
+         fvkq1bVC3IxQOfxby19zNTi1efRkKvuCffhiOOb0hMpTvQIkaUJpuzjMb524Bbf435ud
+         J1dpDMO6yFwFhWkYcgILHBG17afh6IBdRLzwbjP9S3lQgc5w4OmS7h9TvX6+i3YSXdAo
+         C5+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUKbujciPCHo2HMU08Y5PpvrihqSRpapVLEIy1ewp769l61YsTmOibSH34HE5Vl/zBDjSIcjKfNb2Gogbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNUdcQnUDYhtk5F3gzZ0qVhk7WDiLqWPHc3wh3HNHWNAaz3g/6
+	fvxV3eOqE41NKmHWaj57ypNvYRKSxWapePvmeJgupwFKM+UU7BvIUOD3/c8Wqx690HF/OwSMKaT
+	/+nkOwfwfVVAY7ZR4VQvCoPml9d6D80S/vkj5O1fe4xAZcmEbzP1d5sc=
+X-Google-Smtp-Source: AGHT+IGpa/p4mxM4VBJEqmkiVGZ8cJWslOWsSMrxRUbbSmaJdDs5orv+v+JB1Enu97wMr+0RJBPRjJkwpL520np+r35DT4O/0bZ6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87a21c19-8fd2-492a-a620-243cd9c642dc@ursulin.net>
+X-Received: by 2002:a05:6e02:188e:b0:3a3:afa3:5155 with SMTP id
+ e9e14a558f8ab-3a3b6050e70mr145590025ab.25.1729019365547; Tue, 15 Oct 2024
+ 12:09:25 -0700 (PDT)
+Date: Tue, 15 Oct 2024 12:09:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670ebde5.050a0220.d9b66.0154.GAE@google.com>
+Subject: [syzbot] [iommu?] kernel BUG in dma_alloc_attrs
+From: syzbot <syzbot+b4bfacdec173efaa8567@syzkaller.appspotmail.com>
+To: hch@lst.de, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	m.szyprowski@samsung.com, robin.murphy@arm.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Tvrtko,
+Hello,
 
-On 10.10.2024 10:50, Tvrtko Ursulin wrote:
-> 
-> On 09/10/2024 23:55, Adrián Larumbe wrote:
-> > Hi Tvrtko,
-> > 
-> > On 04.10.2024 14:41, Tvrtko Ursulin wrote:
-> > > 
-> > > Hi Adrian,
-> > > 
-> > > On 03/10/2024 00:45, Adrián Larumbe wrote:
-> > > > Some drivers must allocate a considerable amount of memory for bookkeeping
-> > > > structures and GPU's MCU-kernel shared communication regions. These are
-> > > > often created as a result of the invocation of the driver's ioctl()
-> > > > interface functions, so it is sensible to consider them as being owned by
-> > > > the render context associated with an open drm file.
-> > > > 
-> > > > However, at the moment drm_show_memory_stats only traverses the UM-exposed
-> > > > drm objects for which a handle exists. Private driver objects and memory
-> > > > regions, though connected to a render context, are unaccounted for in their
-> > > > fdinfo numbers.
-> > > > 
-> > > > Add a new drm_memory_stats 'internal' memory category.
-> > > > 
-> > > > Because deciding what constitutes an 'internal' object and where to find
-> > > > these are driver-dependent, calculation of this size must be done through a
-> > > > driver-provided function pointer, which becomes the third argument of
-> > > > drm_show_memory_stats. Drivers which have no interest in exposing the size
-> > > > of internal memory objects can keep passing NULL for unaltered behaviour.
-> > > > 
-> > > > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > > > Cc: Rob Clark <robdclark@gmail.com>
-> > > > Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-> > > > Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-> > > > ---
-> > > >    drivers/gpu/drm/drm_file.c              | 6 +++++-
-> > > >    drivers/gpu/drm/msm/msm_drv.c           | 2 +-
-> > > >    drivers/gpu/drm/panfrost/panfrost_drv.c | 2 +-
-> > > >    drivers/gpu/drm/v3d/v3d_drv.c           | 2 +-
-> > > >    include/drm/drm_file.h                  | 7 ++++++-
-> > > >    5 files changed, 14 insertions(+), 5 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-> > > > index ad1dc638c83b..937471339c9a 100644
-> > > > --- a/drivers/gpu/drm/drm_file.c
-> > > > +++ b/drivers/gpu/drm/drm_file.c
-> > > > @@ -856,6 +856,7 @@ void drm_print_memory_stats(struct drm_printer *p,
-> > > >    	print_size(p, "total", region, stats->private + stats->shared);
-> > > >    	print_size(p, "shared", region, stats->shared);
-> > > >    	print_size(p, "active", region, stats->active);
-> > > > +	print_size(p, "internal", region, stats->internal);
-> > > >    	if (supported_status & DRM_GEM_OBJECT_RESIDENT)
-> > > >    		print_size(p, "resident", region, stats->resident);
-> > > > @@ -873,7 +874,7 @@ EXPORT_SYMBOL(drm_print_memory_stats);
-> > > >     * Helper to iterate over GEM objects with a handle allocated in the specified
-> > > >     * file.
-> > > >     */
-> > > > -void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file)
-> > > > +void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file, internal_bos func)
-> > > >    {
-> > > >    	struct drm_gem_object *obj;
-> > > >    	struct drm_memory_stats status = {};
-> > > > @@ -919,6 +920,9 @@ void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file)
-> > > >    	}
-> > > >    	spin_unlock(&file->table_lock);
-> > > > +	if (func)
-> > > > +		func(&status, file);
-> > > > +
-> > > >    	drm_print_memory_stats(p, &status, supported_status, "memory");
-> > > >    }
-> > > >    EXPORT_SYMBOL(drm_show_memory_stats);
-> > > > diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-> > > > index edbc1ab0fbc8..2b3feb79afc4 100644
-> > > > --- a/drivers/gpu/drm/msm/msm_drv.c
-> > > > +++ b/drivers/gpu/drm/msm/msm_drv.c
-> > > > @@ -880,7 +880,7 @@ static void msm_show_fdinfo(struct drm_printer *p, struct drm_file *file)
-> > > >    	msm_gpu_show_fdinfo(priv->gpu, file->driver_priv, p);
-> > > > -	drm_show_memory_stats(p, file);
-> > > > +	drm_show_memory_stats(p, file, NULL);
-> > > >    }
-> > > >    static const struct file_operations fops = {
-> > > > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> > > > index 04d615df5259..aaa8602bf00d 100644
-> > > > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> > > > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> > > > @@ -609,7 +609,7 @@ static void panfrost_show_fdinfo(struct drm_printer *p, struct drm_file *file)
-> > > >    	panfrost_gpu_show_fdinfo(pfdev, file->driver_priv, p);
-> > > > -	drm_show_memory_stats(p, file);
-> > > > +	drm_show_memory_stats(p, file, NULL);
-> > > >    }
-> > > >    static const struct file_operations panfrost_drm_driver_fops = {
-> > > > diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-> > > > index fb35c5c3f1a7..314e77c67972 100644
-> > > > --- a/drivers/gpu/drm/v3d/v3d_drv.c
-> > > > +++ b/drivers/gpu/drm/v3d/v3d_drv.c
-> > > > @@ -195,7 +195,7 @@ static void v3d_show_fdinfo(struct drm_printer *p, struct drm_file *file)
-> > > >    			   v3d_queue_to_string(queue), jobs_completed);
-> > > >    	}
-> > > > -	drm_show_memory_stats(p, file);
-> > > > +	drm_show_memory_stats(p, file, NULL);
-> > > >    }
-> > > >    static const struct file_operations v3d_drm_fops = {
-> > > > diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
-> > > > index 8c0030c77308..661d00d5350e 100644
-> > > > --- a/include/drm/drm_file.h
-> > > > +++ b/include/drm/drm_file.h
-> > > > @@ -469,6 +469,7 @@ void drm_send_event_timestamp_locked(struct drm_device *dev,
-> > > >     * @resident: Total size of GEM objects backing pages
-> > > >     * @purgeable: Total size of GEM objects that can be purged (resident and not active)
-> > > >     * @active: Total size of GEM objects active on one or more engines
-> > > > + * @internal: Total size of GEM objects that aren't exposed to user space
-> > > >     *
-> > > >     * Used by drm_print_memory_stats()
-> > > >     */
-> > > > @@ -478,16 +479,20 @@ struct drm_memory_stats {
-> > > >    	u64 resident;
-> > > >    	u64 purgeable;
-> > > >    	u64 active;
-> > > > +	u64 internal;
-> > > 
-> > > So equally as in the last round of discussion back in June, internal in my
-> > > mind still does not fit alongside the categories.
-> > > 
-> > > Reason is that in some drivers, at least such as i915, "internal" can be:
-> > > 
-> > > a) Backed by either system memory or device memory - so this does not provice
-> > > that visibility;
-> > > 
-> > > b) They can also be resident or not, active or not, etc - so from that angle
-> > > it also does not fit.
-> > > 
-> > > Do you lose anything if you add the internal objects into their respective
-> > > regions and under the existing categories? Like do you have an use case in
-> > > mind which needs to be able to distinguish between userspace and internal, or
-> > > the problem simply is internal are unaccounted for?
-> > 
-> > The main use case we have in mind is exposing the size of driver buffer
-> > allocations that are triggered in respone to an ioctl(), and so linked to an
-> 
-> Most of this and below is old and clear - but to this specific point - so you
-> do have an use case which specifically wants to know about the internal
-> allocations separately from the rest? Could you describe what it is?
-> 
-> > open file. I gave a summary of what these could be in the patch description, but
-> > in Panthor's case all these allocations are done with drm shmem functions
-> > because it makes it easier to retrieve the sgtable that gives us their system
-> > memory layout so that we can more easily map them onto the MMU's address space
-> > for a Pantor VM. These BO's, though managed by the drm shmem API, are never
-> > added to the open file list of user-exposed drm objects but we would still like
-> > to tell UM how much memory they take up.
-> > 
-> > In the case of Panthor, they all add into the resident tally because all these
-> > internal BO's are immediately pinned so that they can also be accessed by the
-> > HW, but it doesn't have to be so for other drivers which might also keep track
-> > of similar allocations.
-> > 
-> > I think maybe naming that tag as 'internal' is a bit of a misnomer and I could
-> > pick one that more accurately represents its meaning? Something like 'file-internal'
-> > or else 'file-private'.
-> > 
-> > Regarding a), I don't think where the allocations happen (system or device memory)
-> > is relevant in this case, just that the allocations are tied to an open file, but
-> > not exposed to UM through a DRM buffer object handle.
-> 
-> On this last paragraph - right.. I possibly got confused on a). Which is why I
-> always say it is good to include example output at least in the cover letter,
-> if not the commit message.
-> 
-> How would it look on this driver?
-> 
-> drm-total-$what: ..
-> drm-resident-$what: ..
-> drm-internal-$what: ...
+syzbot found the following issue on:
 
-In the case of Panthor, it would look like this:
+HEAD commit:    1d227fcc7222 Merge tag 'net-6.12-rc3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c56f07980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=b4bfacdec173efaa8567
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14572840580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12572840580000
 
-drm-driver:     panthor
-drm-client-id:  3
-drm-engine-panthor:     611046570346 ns
-drm-cycles-panthor:     1172733302061
-drm-maxfreq-panthor:    1000000000 Hz
-drm-curfreq-panthor:    1000000000 Hz
-drm-total-memory:       16480 KiB
-drm-shared-memory:      0
-drm-active-memory:      16200 KiB
-drm-internal-memory:    10396 KiB
-drm-resident-memory:    26876 KiB
-drm-purgeable-memory:   0
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-1d227fcc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ea82465646ea/vmlinux-1d227fcc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f764dd6d008a/bzImage-1d227fcc.xz
 
-Then in Panfrost:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b4bfacdec173efaa8567@syzkaller.appspotmail.com
 
-drm-driver:     panfrost
-drm-client-id:  6
-drm-engine-fragment:    481941638 ns
-drm-cycles-fragment:    60243117
-drm-maxfreq-fragment:   799999987 Hz
-drm-curfreq-fragment:   124999998 Hz
-drm-engine-vertex-tiler:        55546675 ns
-drm-cycles-vertex-tiler:        6943796
-drm-maxfreq-vertex-tiler:       799999987 Hz
-drm-curfreq-vertex-tiler:       124999998 Hz
-drm-total-memory:       138420 KiB
-drm-shared-memory:      7200 KiB
-drm-active-memory:      0
-drm-internal-memory:    0
-drm-resident-memory:    2196 KiB
-drm-purgeable-memory:   128 KiB
+------------[ cut here ]------------
+kernel BUG at arch/x86/mm/physaddr.c:28!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5114 Comm: syz-executor411 Not tainted 6.12.0-rc2-syzkaller-00205-g1d227fcc7222 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__phys_addr+0x162/0x170 arch/x86/mm/physaddr.c:28
+Code: e8 23 e8 51 00 48 c7 c7 c0 86 7a 8e 4c 89 f6 4c 89 fa e8 f1 98 b1 03 e9 45 ff ff ff e8 07 e8 51 00 90 0f 0b e8 ff e7 51 00 90 <0f> 0b e8 f7 e7 51 00 90 0f 0b 0f 1f 40 00 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90002d4f4c0 EFLAGS: 00010293
+RAX: ffffffff8142ff51 RBX: 0000000000000001 RCX: ffff88800023a440
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90002d4f5e8 R08: ffffffff8142fe9c R09: 312e64313a30303a
+R10: dffffc0000000000 R11: fffff91ffff86755 R12: ffffe8ffffc33a60
+R13: dffffc0000000000 R14: 000040800b111000 R15: 000000000000002e
+FS:  0000555576947380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffabc3020f0 CR3: 000000004020a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ virt_to_phys arch/x86/include/asm/io.h:131 [inline]
+ perf_trace_dma_alloc+0x3dd/0x620 include/trace/events/dma.h:117
+ trace_dma_alloc include/trace/events/dma.h:117 [inline]
+ dma_alloc_attrs+0x46c/0x4e0 kernel/dma/mapping.c:622
+ usbdev_mmap+0x247/0x900 drivers/usb/core/devio.c:251
+ call_mmap include/linux/fs.h:2172 [inline]
+ mmap_region+0x1add/0x2990 mm/mmap.c:1440
+ do_mmap+0x8f0/0x1000 mm/mmap.c:496
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+ ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ffabc28b979
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd4658b118 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ffabc28b979
+RDX: 0000000001000002 RSI: 0000000000400000 RDI: 0000000020000000
+RBP: 00007ffabc2fe5f0 R08: 0000000000000004 R09: 0000000000000000
+R10: 0000000000011012 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__phys_addr+0x162/0x170 arch/x86/mm/physaddr.c:28
+Code: e8 23 e8 51 00 48 c7 c7 c0 86 7a 8e 4c 89 f6 4c 89 fa e8 f1 98 b1 03 e9 45 ff ff ff e8 07 e8 51 00 90 0f 0b e8 ff e7 51 00 90 <0f> 0b e8 f7 e7 51 00 90 0f 0b 0f 1f 40 00 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90002d4f4c0 EFLAGS: 00010293
+RAX: ffffffff8142ff51 RBX: 0000000000000001 RCX: ffff88800023a440
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90002d4f5e8 R08: ffffffff8142fe9c R09: 312e64313a30303a
+R10: dffffc0000000000 R11: fffff91ffff86755 R12: ffffe8ffffc33a60
+R13: dffffc0000000000 R14: 000040800b111000 R15: 000000000000002e
+FS:  0000555576947380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffabc3020f0 CR3: 000000004020a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-> b) still stands though in that internal can be resident or not, purgeable or
-> not.. Which is why I would like to know about the use case.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-This is true, DRM file-internal objects or memory allocations could fall
-into any of these categories, and adding their sizes to the right one would
-be the responsibility of the function pointer passed to drm_show_memory_stats(),
-because that decision would have to be made on a per-driver basis.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> Also if you add drm-internal for any driver calling drm_print_memory_stats I
-> think you "break" at least i915. There internal objects are already accounted
-> in the existing categories. And printing out internal with zero would be very
-> misleading.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-I wasn't aware of this. So i915 is already doing this kind of accounting for internal
-memory allocations. In that case, maybe printing of the 'drm-internal-memory' could
-be done conditionally when it's greater than 0 to avoid 'breaking' existing drivers,
-or else renaming it to 'drm-file-memory' would be seen as less invasive?
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-I'm asking this because if, at the end of the day, making this change part of the 
-drm fdinfo core is going to clash with existing accounting in other DRM drivers, perhaps
-it'd be easier to keep it Panthor-specific and add that tag together with its meaning
-to Documentation/gpu/panfrost.rst.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-I thought about this at first, but it also struck me as something other drivers might
-want to do in the future in a sort of unified way, since internal allocations happening
-in response to an ioctl() is a common thing.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Cheers,
-Adrian
-
-> Regards,
-> 
-> Tvrtko
-> 
-> > 
-> > Regards,
-> > Adrian
-> > 
-> > > Regards,
-> > > 
-> > > Tvrtko
-> > > 
-> > > >    };
-> > > >    enum drm_gem_object_status;
-> > > > +typedef void (*internal_bos)(struct drm_memory_stats *status,
-> > > > +			     struct drm_file *file);
-> > > > +
-> > > >    void drm_print_memory_stats(struct drm_printer *p,
-> > > >    			    const struct drm_memory_stats *stats,
-> > > >    			    enum drm_gem_object_status supported_status,
-> > > >    			    const char *region);
-> > > > -void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file);
-> > > > +void drm_show_memory_stats(struct drm_printer *p, struct drm_file *file, internal_bos func);
-> > > >    void drm_show_fdinfo(struct seq_file *m, struct file *f);
-> > > >    struct file *mock_drm_getfile(struct drm_minor *minor, unsigned int flags);
-
+If you want to undo deduplication, reply with:
+#syz undup
 
