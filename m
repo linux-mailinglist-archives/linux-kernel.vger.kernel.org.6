@@ -1,167 +1,89 @@
-Return-Path: <linux-kernel+bounces-365670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F95C99E5AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCBC999E5B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE012852E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E31E280DC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0BB1E766C;
-	Tue, 15 Oct 2024 11:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BsfB7f4X"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892431D89F8;
+	Tue, 15 Oct 2024 11:31:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1EF1EF957;
-	Tue, 15 Oct 2024 11:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A417113F435
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728991768; cv=none; b=ZKrTCBxoaUUf75m2qRgm3ECYfD5HNVaRjVg9CKE3lIXbD1Ef6rsu+5HJEe/xGH8qt65C4ZFMwdf46VJNhrSZyMYeC+d26f+UkLDpCIqcN0E0AFe+9B8gBT0v3H+PHsXO8mFRm3daJrpGLEdvOcOYA3BOIwC6J6AqOUW0gBLb74w=
+	t=1728991866; cv=none; b=cCdy7daA3QqY3qMmg+f6Y+sDPwJ1qmGo65nTJV1cBxdp9Mj3U9xDwmpoVPivzZhLOgMpzaHO8vX406uIR2K5QuagCDdZY99FHPAgeILm/1RdYJBSd6G9RTzy2aYHIyg+ORlRGuZzEDMbVQb9HREoavFqCVY4AX4mZCkUCZaHpog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728991768; c=relaxed/simple;
-	bh=LQ802dW6TeDGMKvnzEmkaej9MKzu8pkK0gnpmFcRfMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Azz10f50GVP2kGECG4QUpWNmkRgzwmIOD8Ss7uVJly5viD1r2uyl9uqTNdDSHqFokqXcPiLlx0bE4Gz3e0KQdEOpvvzWHOI2Yi6sxXEWKaMtBPplmZ60Q9ujoFpUrG0gQsq0/8GZWJqFbHdZhC4QxIzOoKgOQZeDSKgcXn4nh6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BsfB7f4X; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [185.143.39.11])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 13536A27;
-	Tue, 15 Oct 2024 13:27:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728991664;
-	bh=LQ802dW6TeDGMKvnzEmkaej9MKzu8pkK0gnpmFcRfMw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BsfB7f4XcazqbeTwWU1UzCJqE4X9ABOmaTlksLl31FGV9jK3eZQuzUbmfRj+2t1dE
-	 wz/TzkgbY7HB/74TYSB6i49UJSbWodzFRYHAggWP88bGt6N7/DnkolXzboMgndEP/p
-	 xdzo+vOWThWjIK94TwxVut15XqU9i3gfqiI6bAn0=
-Date: Tue, 15 Oct 2024 14:29:22 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	"Paul J. Murphy" <paul.j.murphy@intel.com>,
-	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	Martin Hecht <martin.hecht@avnet.eu>,
-	Zhi Mao <zhi.mao@mediatek.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Ricardo Ribalda <ribalda@kernel.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Dongchun Zhu <dongchun.zhu@mediatek.com>,
-	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-	Todor Tomov <todor.too@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] media: dt-bindings: Remove assigned-clock-* from
- various schema
-Message-ID: <20241015112922.GB2712@pendragon.ideasonboard.com>
-References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
- <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-1-a2bb12a1796d@linaro.org>
- <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
- <20241014203441.GF5522@pendragon.ideasonboard.com>
- <b0154e75-370e-4a5f-9309-6a3ae5d85b5c@kernel.org>
+	s=arc-20240116; t=1728991866; c=relaxed/simple;
+	bh=lbMANV6i+vFbwLAM/G1QAPyKJ6sE3XA7EOdDQXG5nUM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uD+uEfibFscR/uXM5z4L+XvuWaYp9Fpcim9wB2ED3HrWCm1ULDAq+Gj91v5ZpCtKwl/yG1RMcx2FOaeJ0ebRkpllqT0G1FBGP7jVjFxEGKIlijCDUTVBMmynWybBYyybHdM3VvDfyP6a7wB21CLg9rB8Dt9c9By0F/7XhXVIKao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso14060895ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:31:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728991864; x=1729596664;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M+krgq/2z1Q4xwidgLSWThtCh/McBHQeyUArhpH3pCs=;
+        b=BgjqlRE8HieYpySNMr2y0jalD9jFdEpgXt8AevNlcFILRnCX/VzRJVzI9iVsw+23o5
+         cXwDeepuo310cDarLKX06RaDXWq7LnqPHVwZdFCLQi9xWjGHk/TUFmyP5rGv5xlOkrYc
+         YokI0eCInlDIIlVclSEhxnzHaoDQHVo5pPhluX6m+/GRCSfJu904c4gyZUrmNGol385q
+         wBGn0md7nejCC5hJBUpbVOU1qHQAyjTvlpDZpu4N4lcIMPtD6tm+EhJwYQjitOcgea5V
+         6KtcBaCWf5Gm4h23Mt8F0As4Rk3EsxHVI6ormD3pHgU8MRXkRIAlbtUwrhnpvUU/we41
+         DKCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqI3zaTvKrJJXuCwsx4fEGFj9zz3sTc2TSYleHQL12UPkXCWZkfcL8s9DvNKzegOwFmY3ew1OKP+cO8BU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzeez2eo3S248rSsO2t02a016Oc1pkPzdRinY5ONMEfrwSj7ah0
+	+tBluo7qQfr/wE4phttN3T3I+oJz527eh3ll7O2rn+U7XMZC+jM6ppHefP+KPUz1EwAdQm6pWEx
+	chWEVeLOlztHCnIitdLs3AGhLlItNOfNSewyYBQP9Ag8L6Cm2LHgd76s=
+X-Google-Smtp-Source: AGHT+IGzaxf430CJXWqCwUwhi7z2ON7qpFJLdTX1WUISZdYLLmVfVNPjvQm2XMzGckdLKn7bV/Z7p0Os87fFoGjvguNJiapl9Vq2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b0154e75-370e-4a5f-9309-6a3ae5d85b5c@kernel.org>
+X-Received: by 2002:a05:6e02:20ca:b0:3a3:35f0:4c19 with SMTP id
+ e9e14a558f8ab-3a3bcdfe2c3mr68524175ab.21.1728991863707; Tue, 15 Oct 2024
+ 04:31:03 -0700 (PDT)
+Date: Tue, 15 Oct 2024 04:31:03 -0700
+In-Reply-To: <fe328157-01ab-4e51-95d5-957a1cc6362d@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670e5277.050a0220.f16b.000d.GAE@google.com>
+Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
+ dereference in read_cache_folio
+From: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>
+To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 15, 2024 at 08:13:19AM +0200, Krzysztof Kozlowski wrote:
-> On 14/10/2024 22:34, Laurent Pinchart wrote:
-> > On Mon, Oct 14, 2024 at 09:43:07AM +0200, Krzysztof Kozlowski wrote:
-> >> On Sat, Oct 12, 2024 at 04:02:50PM +0100, Bryan O'Donoghue wrote:
-> >>> Remove extraneous assigned-clock* from media/i2c/* schemas, retain in the
-> >>> relevant examples.
-> >>>
-> >>> Link: https://lore.kernel.org/linux-media/j7kgz2lyxnler5qwd7yiazdq6fmsv77kyozdrxf33h54ydakjz@uqjhwhoyv6re
-> >>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml | 8 --------
-> >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov5648.yaml | 8 --------
-> >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov8865.yaml | 8 --------
-> >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov9282.yaml | 4 ----
-> >>>  Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml | 4 ----
-> >>>  Documentation/devicetree/bindings/media/i2c/sony,imx334.yaml | 4 ----
-> >>>  Documentation/devicetree/bindings/media/i2c/sony,imx335.yaml | 4 ----
-> >>>  Documentation/devicetree/bindings/media/i2c/sony,imx412.yaml | 4 ----
-> >>>  8 files changed, 44 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> >>> index 60f19e1152b33128cf3baa15b8c70a874ca6d52e..d18ead8f7fc43bfacc291aed85b5ca9166c46edb 100644
-> >>> --- a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> >>> +++ b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> >>> @@ -28,12 +28,6 @@ properties:
-> >>>      items:
-> >>>        - description: Reference to the mclk clock.
-> >>>  
-> >>> -  assigned-clocks:
-> >>> -    maxItems: 1
-> >>> -
-> >>> -  assigned-clock-rates:
-> >>> -    maxItems: 1
-> >>> -
-> >>>    reset-gpios:
-> >>>      description: Reference to the GPIO connected to the RESETB pin. Active low.
-> >>>      maxItems: 1
-> >>> @@ -82,8 +76,6 @@ required:
-> >>>    - compatible
-> >>>    - reg
-> >>>    - clocks
-> >>> -  - assigned-clocks
-> >>> -  - assigned-clock-rates
-> >>
-> >> That's not extraneous, but has a meaning that without assigned-clocks
-> >> this device or driver will not operate.
-> > 
-> > How so ? Even if we assume that the device requires a specific clock
-> > frequency (which is often not the case for camera sensors, the
-> > limitation usually comes from drivers, so the constraint shouldn't be
-> > expressed in the bindings in that case), there is no overall requirement
-> > to assign a clock rate as in many cases the clock will come from a
-> > fixed-frequency oscillator. This seems to be a constraint that is
-> > outside of the scope of DT bindings. It is similar to regulators, where
-> > the regulator consumer doesn't have a way to express supported voltages
-> > in its DT bindings.
-> 
-> This property does not say it comes from a fixed-frequency oscillator,
-> so I do not understand why you think it is unreasonable constraint. I
-> have no clue what the author wanted to say here, so I just explained
-> that there is a meaning behind requiring such properties. If you claim
-> device or implementations do not have such requirement, after
-> investigating each case, feel free to drop this. I think I also stated
-> this already in other reply.
+Hello,
 
-For camera sensor drivers I'm pretty sure we can drop those properties
-when they're marked as required, as there's no intrinsic characteristics
-of camera sensors that would require assigned-clock*.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--- 
-Regards,
+Reported-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+Tested-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
 
-Laurent Pinchart
+Tested on:
+
+commit:         eca631b8 Merge tag 'f2fs-6.12-rc4' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1551045f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=15af561474a22223
+dashboard link: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=142e045f980000
+
+Note: testing is done by a robot and is best-effort only.
 
