@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-365118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F5D99DDC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:57:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD1F99DDD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E03284D58
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55E01F222E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C048F17DFFA;
-	Tue, 15 Oct 2024 05:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F33E184101;
+	Tue, 15 Oct 2024 05:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt60iYJ3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLR5p9h+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20468173357;
-	Tue, 15 Oct 2024 05:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04512173357;
+	Tue, 15 Oct 2024 05:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728971826; cv=none; b=qU3gWd0fkPb1TEV+jTmd087ul6Re645zPg3Jko/lYn5AEEmGnpoG7uFwj2Jz2YHoe6fz/o8WIXQxBWQhfmfk2OFOz51GgKtBR5TalJZiyffT5Nm8+4PdRNu4jI1QjVNuWV2sLUTwgQ9UKz8ARSOmtbIhstj2ib2IMj/RzFu0t48=
+	t=1728971995; cv=none; b=S1xmazmnelwslQrkR/EF0/j/ojLBDhe00yYTmP/3BAoo7T0TeBFEVQ/ysHMyvOh/YBw1eIQ5l/YOVRhRyB62zb6LD2Bt/Le3KuJDBcxL0kyad2r+Uaq+lWyTYuufRnAD1w0NAK+K+plK9y7e76wmVM+mwwKJNu5DotA4PRF22M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728971826; c=relaxed/simple;
-	bh=jh3FS2NplQHmnYRTMHu/6cEeELYhB+WGx4QCqrWjDCI=;
+	s=arc-20240116; t=1728971995; c=relaxed/simple;
+	bh=0Ra8CCMbg3ZRBIPWHy4Ub9PO/HhTwfF7f9lE/56wZQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCvde8ASlEMJnAx6nNYtpNigXQ9R0RUuXKUeWfDpXxBVc3m+0MJCvqwUcXnzaH/wxNdftaDcQn+TLFxNmC6nQ2dKcr21tyLC77GsT4T+gcXHPpg90JLdh3T4ii0UI0rcOnJeyrTjwCoku0UKg00tRMP41gN7RXHPh507g1SlJbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt60iYJ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 815B9C4CEC7;
-	Tue, 15 Oct 2024 05:57:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LVMKMaffb5dEvA3P8RdAL3FnduR/rA4HrEX15lVz+uXk+1PaEDcktYX8Pbd7Q+7RCURDjshFhvijX/mIhUf4GC7Z2glRnjAZ+UaqGzXRdn11Qe2HKzqrFaVGm3wIHrdjnbd+rRharsnWlcBr4UdDnW2NjpBc2F0qGvFH7JepSdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLR5p9h+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42377C4CEC7;
+	Tue, 15 Oct 2024 05:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728971825;
-	bh=jh3FS2NplQHmnYRTMHu/6cEeELYhB+WGx4QCqrWjDCI=;
+	s=k20201202; t=1728971994;
+	bh=0Ra8CCMbg3ZRBIPWHy4Ub9PO/HhTwfF7f9lE/56wZQg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xt60iYJ3Entkh3D5XzExsObjSiudTP7BXRUFl8zaqxvYcbf92zXDuxJDqZAdval0v
-	 cNWZ9x55Uymj3qL64yQ6XCme6i3gDafRRGNXKXcGKIA+8ELf857FwBMsbGlKKAh0/M
-	 UmdfFgGbF8/in9C74/+sm6ms/KmYwkxS/pd1SY4wysx2yp+jRTcJtpsIa9WHDs27uK
-	 fx5NxbE4XRhlZTH9M9kA6yLUL2BHaRymvHs5m8jgRdiLp2xJ6/hEUt56uQABBigDKK
-	 e4rp+W5YTRpVvX2F+MfaFdza+pRWqlhTuMhfHqdCEkUDeTjQQ9mkhiIsgR/U+oUmqT
-	 yqvai6eUrQaAw==
-Date: Tue, 15 Oct 2024 07:57:01 +0200
+	b=sLR5p9h+4z4+In8S1EerfKLedkQPAGen1+dqrGPyppIFDaCAqM7jVOhUQifwHk/Go
+	 X7XVdbrjV2fMdLVXpJNX68E9YHJVlHPuAHbMGMx7lcwEQo7/iPoim0g3fORWY5ziz6
+	 5WGqwBYNa5b1lG18pQ+JbqZtvovQWHbzKZYwgOlnONrgONewD4U3kCkORJJqVV87ac
+	 A4vilIEX1pW3sB+hN0/BbxpsWiKiQGO7rJR7+DSuODAYvd1JY8nP5oEezmuWLn9apZ
+	 jrjSSX7+xzunrYjejByq1qvUPHB1WWiUY0q2gRPEm8RyBuQ+TIcj+sygcyocdDecLr
+	 50heymx4iTvuw==
+Date: Tue, 15 Oct 2024 07:59:49 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: guoniu.zhou@oss.nxp.com
-Cc: linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com, 
-	jacopo@jmondi.org, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] dt-bindings: media: nxp,imx8-isi: Add i.MX8ULP
- ISI compatible string
-Message-ID: <zkcihcydz4xsr7htmiy5gvatc7ojpgn66jhc6ki744pb4qz7r7@4aokg7rd422p>
-References: <20241014093312.1588304-1-guoniu.zhou@oss.nxp.com>
- <20241014093312.1588304-3-guoniu.zhou@oss.nxp.com>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Add support for Amlogic A4
+ SoCs
+Message-ID: <u4afxqc3ludsic4n3hs3r3drg3ftmsbcwfjltic2mb66foo47x@xe57gltl77hq>
+References: <20241014-a4_pinctrl-v2-0-3e74a65c285e@amlogic.com>
+ <20241014-a4_pinctrl-v2-1-3e74a65c285e@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,22 +63,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241014093312.1588304-3-guoniu.zhou@oss.nxp.com>
+In-Reply-To: <20241014-a4_pinctrl-v2-1-3e74a65c285e@amlogic.com>
 
-On Mon, Oct 14, 2024 at 05:33:14PM +0800, guoniu.zhou@oss.nxp.com wrote:
-> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+On Mon, Oct 14, 2024 at 05:05:51PM +0800, Xianwei Zhao wrote:
+> Add the new compatible name for Amlogic A4 pin controller, and add
+> a new dt-binding header file which document the detail pin names.
 > 
-> Add the compatible string support for i.MX8ULP ISI.
-> 
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->  Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml | 2 ++
->  1 file changed, 2 insertions(+)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+...
 
-Best regards,
-Krzysztof
+> +++ b/include/dt-bindings/gpio/amlogic-a4-gpio.h
+> @@ -0,0 +1,38 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AMLOGIC_A4_GPIO_H
+> +#define _DT_BINDINGS_AMLOGIC_A4_GPIO_H
+> +
+> +/* Standard port */
+> +#define GPIOB_START	0
+> +#define GPIOB_NUM	14
+> +
+> +#define GPIOD_START	(GPIOB_START + GPIOB_NUM)
+> +#define GPIOD_NUM	16
+> +
+> +#define GPIOE_START	(GPIOD_START + GPIOD_NUM)
+> +#define GPIOE_NUM	2
+> +
+> +#define GPIOT_START	(GPIOE_START + GPIOE_NUM)
+> +#define GPIOT_NUM	23
+> +
+> +#define GPIOX_START	(GPIOT_START + GPIOT_NUM)
+> +#define GPIOX_NUM	18
+> +
+> +#define PERIPHS_PIN_NUM	(GPIOX_START + GPIOX_NUM)
+> +
+> +/* Aobus port */
+> +#define GPIOAO_START	0
+> +#define GPIOAO_NUM	7
+> +
+> +/* It's a special definition, put at the end, just 1 num */
+> +#define	GPIO_TEST_N	(GPIOAO_START +  GPIOAO_NUM)
+> +#define	AOBUS_PIN_NUM	(GPIO_TEST_N + 1)
+> +
+> +#define AMLOGIC_GPIO(port, offset)	(port##_START + (offset))
 
+I do not think you implemented previous feedback. None of above are
+bindings. Drop.
+
+> +
+> +#endif /* _DT_BINDINGS_AMLOGIC_A4_GPIO_H */
+> 
+> -- 
+> 2.37.1
+> 
 
