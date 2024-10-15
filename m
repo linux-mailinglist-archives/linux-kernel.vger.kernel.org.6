@@ -1,148 +1,156 @@
-Return-Path: <linux-kernel+bounces-366103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036D799F0E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:20:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A35299F0EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350831C21C59
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2B381F2202A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104181CBA08;
-	Tue, 15 Oct 2024 15:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55E2189BB2;
+	Tue, 15 Oct 2024 15:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TpHTiMsV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k6yYxi0C"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DBA1CB9FE;
-	Tue, 15 Oct 2024 15:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE1E1CB9E2
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729005625; cv=none; b=Q1cprr0AMJv98VOgwzgRcSj5Cul5XqISgC2EvR3+0+EaTCO33ikGOc0fxLYllq+u1yIyAf8max0q9Io5jn0O9M+VFQ1Vi18jsIiiFjl9ss/RmI/XARru0MLCQ/JextviBLcegIaFcayX3M3hKK8a7ND3X3glDkiz/DvlY/Px3Y8=
+	t=1729005671; cv=none; b=aaE3tPZ4dZsk63YcgDjUR9dPawbNzAIX9pH9iVmXPqXl6EZ5cqwzCjgxCXi6M4Pf/px/37SYWmVjMFEMc5+7segEIYjAPoVIOM64ys2WRFRgmujMPeynPCogT/EiN6shP5cR3tPiPlxCRfA5xWsm/gmG89HPf0DeBsCIH8qtjtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729005625; c=relaxed/simple;
-	bh=lVkV1vFjNJEMDvdyimYUH+siM7VBxYLLrgPg2wIHi2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IQgD4wYbTVn50HTqWxwWhxF+ak7OqGEIM1R06df/PquIlWME75WdJ6r4lg9VL0vBkas2x8NeNKdL/GXBqepzKX2uk5DsKh2uI8mbdTUSVWVC3eu0YibpL4sCwN18oOueyLMZrffizfrUbUW7eAeHm3D1vwa/oPzXjM11yYw+DKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TpHTiMsV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FFJqMo016714;
-	Tue, 15 Oct 2024 15:20:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=iGuQeqwI6HZC3u7lEqO9aIAaSIscVF
-	1CMX/wdfvit/s=; b=TpHTiMsV7gss9CE2gbTv2CeHsBmwRk9TsMr12i/hKys93P
-	WKlRkjvobxfliO1vTzhtIxt+eW5FfqcrDXvU1ucgCaZCC8y4F+nwbiO7zezxjUOk
-	TUwI9kmcCTCGDAd9VrQ4PoTD9oO0joSVgiuTDmBl4io9IwAaF71Y7u168DIqGS4+
-	MokAYq7Sl1D3LCgAi0k9IuBtPoJirNfIt7OmSf0A5WLM0LzpVjTrq59FBGwRbNKT
-	Q+TYgxxaHAyejOuT3a7N/lXpAr4gdzStgwz8h5PRBpDmgFGvR0gFCNBtbXqtz8gt
-	s8j/VF7dXYidIvDu/zIsipCnLc2M6oPxIFVCSW6A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429txf004v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 15:20:16 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FFKFsp017969;
-	Tue, 15 Oct 2024 15:20:15 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429txf004n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 15:20:15 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FEdsIN006401;
-	Tue, 15 Oct 2024 15:20:14 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk4fps-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 15:20:14 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FFKA2H57999682
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 15:20:10 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AA9F62004F;
-	Tue, 15 Oct 2024 15:20:10 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 133C420040;
-	Tue, 15 Oct 2024 15:20:10 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 15 Oct 2024 15:20:10 +0000 (GMT)
-Date: Tue, 15 Oct 2024 17:20:08 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Eric Farman <farman@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-s390@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT)
- to support QEMU/KVM memory devices
-Message-ID: <20241015152008.7641-P-hca@linux.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-5-david@redhat.com>
- <20241014184339.10447-E-hca@linux.ibm.com>
- <8131b905c61a7baf4bd09ec4a08e1ace84d36754.camel@linux.ibm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8131b905c61a7baf4bd09ec4a08e1ace84d36754.camel@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: i1zBRW8UGLcWVcN5Coobxt0ARxFddDl7
-X-Proofpoint-ORIG-GUID: Ub7xaX8YqTGNc9RIsPz804moAAXEwY3a
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729005671; c=relaxed/simple;
+	bh=DcpXe0rDKDGHa0cbcPjBzn88kBgoLehqrzdUH0t8x0Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RtGPEbrrA7hKeLw/W8hv9sHk8sgySOhFS+5HMhV+q0USTrs/O/XCu9fhrfjTZW2tHSv3yCMgE/i5L6iJsPvJefbdmc8/mq/u3uYz7SupwP9Qx1oluoW0H7i0aNFreqGKyQ5HC65Ktn+u3IH1iEnz2buDg+t00fBLR+8W5KdLcDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k6yYxi0C; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c94861ee25so3398463a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729005668; x=1729610468; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TYhhbcR1Takf0YpFPAeVQ89eAuhMKlhCQIC4Y6jSJvc=;
+        b=k6yYxi0CvMyldIANmJw2ixRta0efPFprEKpNqFI/f036dDn4PCTLMTOLMmjFdzRFp+
+         UGi1tAemzMFF4Ke2zjqSsW9k9OqBC3jkpI1CXVcp2Ipr6FeW1pLO1qg0EmmigURMYunh
+         GRVhEvlfCUfUn/qMBGoDyUOxLtKlfplh8HDNAlmeHe8He2Cy+1mewHJ2YhngX8NM0TJK
+         XRvu9z4c4G0G+a49IHqwqUuUr5GPzfNDopw2wOGCDCUFt4F7VACswwJ5XuVu7xB90xCV
+         IT69ZSnGhB8s042vRp/i1jDVRrHgfAiQ4UxgqGZpT+e27zEm5TS/EfOIHr1YBAyWBViZ
+         1W1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729005668; x=1729610468;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TYhhbcR1Takf0YpFPAeVQ89eAuhMKlhCQIC4Y6jSJvc=;
+        b=TVfjvpmamtImxg05nI+plURkAunR7RjE5zTw8V9e/Gmn7g7etZG8HDT3m/p0pZsvHS
+         9qQ7kfgcmPXvNeNhOfwXoJ+U0VNfn8YRgAsfzlQH0Osl0gAI6faZn/SXr2O0yIZuQZzD
+         JXjlDkX/7PwCIWCvVwsxZnx8uUEan8+Opp5wFiPJyQPJO0Th65WGeElElB47LURPE5L+
+         vfiJ5zKD85B3EvJ/r3gJn8ZTMNJ6Rzwi/VmCsDpxww7FTACUEetLp2PRL8tML9XwZSp4
+         XNVb/ExKtp/cm4K1I8u6FuOBt/jYs9Nzr+aFpSIoZ0oi4Uhs5rz4+LZv2B4cFbLtiORi
+         BBPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7bSarUxEfizu73P1AnZ/VRYrT9m8Urt+F06gwGnF62Cxn+MMucirO+Y7lSqQ4zm+o+Rq+JwwVWOq5eK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI7RZOKBHlxepL83k0x/w80ZxK4LxlM0C76U+3AcRFbmVYsTN7
+	vhhgo7J2drC2PtRh7o5B0/JWtNH1JVL6K4c0bpb1yk2aP1RxNqhmpRv8qDLp57bsF1eFyc67hcI
+	89KhejRWAPwD6OW3mxHAosW1Of30uagr+xteU
+X-Google-Smtp-Source: AGHT+IE8RQoQAaRaQqCr05P7KuLClpFxNUSz6wreyijStOyA7RkSKYlSxaijdkZn8mr1tJmV5CqKn/25SIPok5RfhqQ=
+X-Received: by 2002:a05:6402:40c8:b0:5c9:34b4:69a8 with SMTP id
+ 4fb4d7f45d1cf-5c95ac09860mr17739267a12.6.1729005667756; Tue, 15 Oct 2024
+ 08:21:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 phishscore=0 priorityscore=1501 suspectscore=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 mlxscore=0 adultscore=0
- mlxlogscore=649 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150105
+References: <20241015151045.2353801-1-arnd@kernel.org>
+In-Reply-To: <20241015151045.2353801-1-arnd@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 15 Oct 2024 17:20:53 +0200
+Message-ID: <CANn89iJCU7trenNNozL3quNDVZHuqDizF02N+uFbmE9kunuVeQ@mail.gmail.com>
+Subject: Re: [PATCH] rtnetlink: wire up rtnl_net_debug_exit
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, Arnd Bergmann <arnd@arndb.de>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 11:01:44AM -0400, Eric Farman wrote:
-> On Mon, 2024-10-14 at 20:43 +0200, Heiko Carstens wrote:
-> > On Mon, Oct 14, 2024 at 04:46:16PM +0200, David Hildenbrand wrote:
-...
-> > +#define DIAG500_SC_STOR_LIMIT 4
-...
-> I like the idea of a defined constant here instead of hardcoded, but maybe it should be placed
-> somewhere in include/uapi so that QEMU can pick it up with update-linux-headers.sh and be in sync
-> with the kernel, instead of just an equivalent definition in [1] ?
-> 
-> [1] https://lore.kernel.org/qemu-devel/20241008105455.2302628-8-david@redhat.com/
+On Tue, Oct 15, 2024 at 5:10=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The function is never called, but causes a build warning:
+>
+> net/core/rtnl_net_debug.c:125:20: error: 'rtnl_net_debug_exit' defined bu=
+t not used [-Werror=3Dunused-function]
+>   125 | static void __exit rtnl_net_debug_exit(void)
+>       |                    ^~~~~~~~~~~~~~~~~~~
+> WARNING: modpost: vmlinux: section mismatch in reference: rtnl_net_debug_=
+exit+0x1c (section: .exit.text) -> rtnl_net_debug_net_ops (section: .init.d=
+ata)
+>
+> Use this as the exitcall as was clearly intended and remove the __net_ini=
+tdata
+> annotation on rtnl_net_debug_net_ops to ensure the structure remains ther=
+e.
+>
+> Fixes: 03fa53485659 ("rtnetlink: Add ASSERT_RTNL_NET() placeholder for ne=
+tdev notifier.")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-It is already a mess; we have already subcode 3 defined:
+This was fixed with :
 
-#define KVM_S390_VIRTIO_CCW_NOTIFY 3
+commit bb9df28e6fcda6a96860e7b77f3912ef50e06793
+Author: Kuniyuki Iwashima <kuniyu@amazon.com>
+Date:   Thu Oct 10 10:24:33 2024 -0700
 
-in
+    rtnl_net_debug: Remove rtnl_net_debug_exit().
 
-arch/s390/include/uapi/asm/virtio-ccw.h
+    kernel test robot reported section mismatch in rtnl_net_debug_exit().
 
-which for some reason is uapi. But it doesn't make sense to put the
-new subcode 4 there too. So what is the end result?
+      WARNING: modpost: vmlinux: section mismatch in reference:
+rtnl_net_debug_exit+0x20 (section: .exit.text) ->
+rtnl_net_debug_net_ops (section: .init.data)
 
-Another uapi file? I think resolving this would be a project on its own.
+    rtnl_net_debug_exit() uses rtnl_net_debug_net_ops() that is annotated
+    as __net_initdata, but this file is always built-in.
+
+    Let's remove rtnl_net_debug_exit().
+
+    Fixes: 03fa53485659 ("rtnetlink: Add ASSERT_RTNL_NET() placeholder
+for netdev notifier.")
+    Reported-by: kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410101854.i0vQCaDz-lkp=
+@intel.com/
+    Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+    Link: https://patch.msgid.link/20241010172433.67694-1-kuniyu@amazon.com
+    Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+diff --git a/net/core/rtnl_net_debug.c b/net/core/rtnl_net_debug.c
+index e90a32242e22b6d1d4d4a7888b19a9d8137f8fc4..f406045cbd0e60653af480270bc=
+45928f9e92839
+100644
+--- a/net/core/rtnl_net_debug.c
++++ b/net/core/rtnl_net_debug.c
+@@ -122,10 +122,4 @@ static int __init rtnl_net_debug_init(void)
+        return ret;
+ }
+
+-static void __exit rtnl_net_debug_exit(void)
+-{
+-       unregister_netdevice_notifier(&rtnl_net_debug_block);
+-       unregister_pernet_device(&rtnl_net_debug_net_ops);
+-}
+-
+ subsys_initcall(rtnl_net_debug_init);
 
