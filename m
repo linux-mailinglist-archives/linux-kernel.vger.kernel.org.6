@@ -1,134 +1,77 @@
-Return-Path: <linux-kernel+bounces-366825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A096999FB02
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:12:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2255F99FAFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D411C23B1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:12:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7831F2282D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742F91B6D05;
-	Tue, 15 Oct 2024 22:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08F21B0F3B;
+	Tue, 15 Oct 2024 22:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Y8MlYOVa"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpofgbVm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1021B0F2A;
-	Tue, 15 Oct 2024 22:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729030314; cv=pass; b=PIqqmk11RtR5IIUBqRkbvDHy5A3n2ENkFKEKTfnREW1EB83tlFQF0e9bQJ1fu919sATwrjQowPV4ZDFLX6PAqwf3Qb1ak2QbsdC1G5OlHyjh6xI0sI6r+lpbXMD7IiU4DEBbH+35NggLmgcQ0inLuN0c/wPEfH0qYQhitUF44cs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729030314; c=relaxed/simple;
-	bh=HMj/ZyO9zNpccPB0josTS7wpa0dytJ4KoeNtxF9AKRA=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7371B0F22;
+	Tue, 15 Oct 2024 22:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729030288; cv=none; b=JoAV/Zz/dhxP4D3AVlZqbSsZOasrhTGz/UhH7sXaDmXnKOYhf27soZW12EZb8R0uRavc3ve2HZDKtfCoSRMcBxUZMvWLgk61xq2jQZaEVB2pMDnavbyMFXZrOYjlGung8LqhQsmJRSuFsIr/EWvb2u3uu0z2+GlLQO4yLIh7UJM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729030288; c=relaxed/simple;
+	bh=0JOVtQjXTsgrrYUt0yYT9G9Itd9AK2ia3bpVre4KJ/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gPU2uKOiMT9DXVSv4rLRj9kQ9nOm07xcQiH0p9HbcN9c+TUF/VLv3KBr4x5msGln81CpUni8HOtRii8g/JuK8yC8Nc9iwDLUDM4/G3cmXwH0CN4AwGFCkP+pwgLZuuNaHBicb+yz0+m0AzLsm2SDMv6cWrWX82x7TCCSOT8mzzY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Y8MlYOVa; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729030293; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JvPspVLsF+z9g2UWZCKpHn+pWhy37tJ9ndVdbmFdzRYnovcBFYNv8zVZKou8o3B+VFftpcJpy2ge4hJh2xigOa+EPmxlwATMSGmW1XltIxVw74/CdH9UiqRAgoP6QRmabvdke+65H9jszG9flVxo6i0WqIooBCNyf3xGrlzwXog=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729030293; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=HMj/ZyO9zNpccPB0josTS7wpa0dytJ4KoeNtxF9AKRA=; 
-	b=G2pUFb4TDq2aT4WM7TFjsULRNIMTP18C4V9zDvuZfAPpP66Kge+2Qe4uzN7YNmnNon/g/GF15HBtrV3s0Z+V1Xx3gxchBffp5AoGToOa9WTfQtcnt0HNF9HDR7UzFFfFaSZZyLq2TETckbk6U3sJRG3QF2dvcMAq+IXXvTx0xUA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729030293;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=HMj/ZyO9zNpccPB0josTS7wpa0dytJ4KoeNtxF9AKRA=;
-	b=Y8MlYOVantCVrTrickvcshdEGEY58KLgbYcyZ+a8Eo8pEWNrbx7UVYCiHEKXsuFH
-	kgH0JeSbnlC4uF97D+iCnHXfsM/5F0B0ApOIgaNRbp1FMQKV+9BsJUGwrOFmGKVDm/o
-	PPq4xBK/p1yd/RmKwULLjavvEo40PeQJRZepOanM=
-Received: by mx.zohomail.com with SMTPS id 1729030292653381.82924626488114;
-	Tue, 15 Oct 2024 15:11:32 -0700 (PDT)
-Received: by mercury (Postfix, from userid 1000)
-	id 90E5F1060433; Wed, 16 Oct 2024 00:11:15 +0200 (CEST)
-Date: Wed, 16 Oct 2024 00:11:15 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, 
-	linux-kernel@vger.kernel.org, tony@atomide.com, Rob Herring <robh@kernel.org>, 
-	linux-pm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, khilman@baylibre.com, 
-	linux-omap@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v4 3/4] power: supply: initial support for TWL6030/32
-Message-ID: <7ucahlofrnajeb7z3tmkx2aninkxpbwx3mdykeeugtsct2o5gh@5dxrvnl23dsy>
-References: <20241007150120.1416698-1-andreas@kemnade.info>
- <20241007150120.1416698-4-andreas@kemnade.info>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rzD2IDXhtt9qBXqO1Oax0wvlNdMmpjePOiruuaLJDvLVQV+q/qb9oYZ27Yop0Go1+d3lRQk9zyzfODu+CkWn5EvnH4oj9aN0HJeIf/01lrXYXcd8tO7joOPJktqocQs95Rvkw8fAqo5DZrk5aVHQPxhkQdHfffZmpKjegNzIq3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpofgbVm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 759BDC4CEC6;
+	Tue, 15 Oct 2024 22:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729030287;
+	bh=0JOVtQjXTsgrrYUt0yYT9G9Itd9AK2ia3bpVre4KJ/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NpofgbVmwmXDHb/t4/9KGaUOeo1byED/ciDeL46FoDiJ4Rh+JDAsZMhPVbMXhgj01
+	 5jNtzQLIBaiKgae/PdIF5zObg/LEpVH3BXdLXt9i6J7ymcV7E0KADa4LYjxs5Vizhd
+	 SFRDB8FYvCIV3j9ettPZfG8+FgQhCbbXbvwe3m3Ay6kmDTCsIRdhfzpiRkDyfY7oCH
+	 Am4Ql2zELygd5+4q9+CEAX5Y2uQqW2aR+b3hay5xnnvhrDkflIgrp7LGMMM9pnwcbv
+	 iCbwiWOW6er08/qO0CxakfPpuC+uITV/85qeErCkS0qxBWOPhSOQ9B8rYYz4IWUc4c
+	 2zTv6rDr7WAOA==
+Date: Tue, 15 Oct 2024 17:11:26 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: George Stark <gnstark@salutedevices.com>
+Cc: conor+dt@kernel.org, pavel@ucw.cz, linux-kernel@vger.kernel.org,
+	kernel@salutedevices.com, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, krzk+dt@kernel.org, lee@kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: leds: pwm: Add default-brightness
+ property
+Message-ID: <172903027805.2098225.17117451766986744466.robh@kernel.org>
+References: <20241015151410.2158102-1-gnstark@salutedevices.com>
+ <20241015151410.2158102-2-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="feqi6aul6coybbv6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007150120.1416698-4-andreas@kemnade.info>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/228.353.45
-X-ZohoMailClient: External
+In-Reply-To: <20241015151410.2158102-2-gnstark@salutedevices.com>
 
 
---feqi6aul6coybbv6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 3/4] power: supply: initial support for TWL6030/32
-MIME-Version: 1.0
-
-Hi,
-
-On Mon, Oct 07, 2024 at 05:01:19PM +0200, Andreas Kemnade wrote:
-> Add a driver for the charger in the TWL6030/32. For now it does not report
-> much in sysfs but parameters are set up for USB, charging is enabled with
-> the specified parameters. It stops charging when full and also restarts
-> charging.
-> This prevents ending up in a system setup where you run out of battery
-> although a charger is plugged in after precharge completed.
->=20
-> Battery voltage behavior was checked via the GPADC.
->=20
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+On Tue, 15 Oct 2024 18:14:09 +0300, George Stark wrote:
+> Optional default-brightness property specifies brightness value to be
+> used if default LED state is on.
+> 
+> Signed-off-by: George Stark <gnstark@salutedevices.com>
 > ---
+>  Documentation/devicetree/bindings/leds/leds-pwm.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
-Looks mostly good, but the driver should set the fwnode for the
-power_supply device to be ready for better battery support in
-the future:
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-psy_cfg.fwnode =3D dev_fwnode(&pdev->dev);
-
-Greetings,
-
--- Sebastian
-
---feqi6aul6coybbv6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcO6HkACgkQ2O7X88g7
-+pqLdQ/+PXvfJs7me93/MDmbZz1KCEnmFhnBP3VDUkgMuOeF0/AtoiXKlImJOjSl
-Vd8WmGESe5nbalm0muNz9j83t96RxDZaBJl1wS637l3A760SyMuBrLJaQ6WNPNnW
-kW8VUW4uzPRLPs9/QjxVaeYqAnPG/xaavLiuWvbh3LJcgnNEgwTlWjqOKr1qtAr8
-1GuhPGndgRMIPfdWrwXMZH5ovXGRTcGCaXsBgKrqodsE9fF0C50ZM7+JluOD8aRX
-SnrC61Ik+WEJ8J1aHgwg20dhK4TmcpTjRRPHbZlFgGv3wLUapuCr4ngZdxUyDuOJ
-A6VSxvVd7dJmbz1UQkOwCJcDQBtTUTMKu5si4f3gw8SoGpjuFCuwkphF1YWaOQ/+
-8AON8jOAJLotGQ692uirk/7XbNJv2/oEtM8Rb/rj96sY7veumxEqW79o9HhzhT+/
-u9r0HB/em0nCOxHZthflcK3oSGKi7tR9HHiEO/P7cncztqZHyL5SHb4T6/6hgt8a
-GKYVC58MK0VomCMOe1Du/YOFw0y+ldtoCGpanTMcUC1ZbIn/k8M65ikSTQgfxjCo
-NwfaH5hSSo+YxeSolMyPtvFRB/vkadBmvPy3MsTuEv6vzQbaw6EmowqJa1uxRBwM
-CUw5YY1XiunxmbDO4eZpFeK5qgmwiA0DdrgcKSsdpLoCOt+DoQg=
-=iWqU
------END PGP SIGNATURE-----
-
---feqi6aul6coybbv6--
 
