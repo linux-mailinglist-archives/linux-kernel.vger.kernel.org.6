@@ -1,161 +1,256 @@
-Return-Path: <linux-kernel+bounces-366426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B029199F528
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:24:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E00A99F52A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6241F23434
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839E31F244FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21A622739E;
-	Tue, 15 Oct 2024 18:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8812101A7;
+	Tue, 15 Oct 2024 18:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOD/JAw2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6lH2Jpw"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39319212640;
-	Tue, 15 Oct 2024 18:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074A11F9ED1;
+	Tue, 15 Oct 2024 18:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729016652; cv=none; b=S1cIuvmVLC6IheBRrg6DmNQ+sdOImAqMMlFBLmkCg7tOK8i5XrNnDjDqECCpidr/aNaxUbRSteN6cuPBmBv3L36674hTWN1s4NVaE9R9k0gE3pqOgm2TkQgJUIcWNt0/rCq+25yqC8kdTTEXgLTSS3bvxsBf9EbJKgFWqxHcIXQ=
+	t=1729016704; cv=none; b=O5Y93TjV5v1NKizzV6xOpHOtUOVJph4IL4pIKPmGrpJLKAIwNYDpHnUqgeIwO7LQIv5/Fu+SAgcPWgs4R7x60VWwvLjI/9Cxck0FAiwGgLd4CEFkH0TlAggUDP4ofYCCx0pYMT4PgPBXLu7zt9Ws6siQTyPODYiKAVw4ZsVux/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729016652; c=relaxed/simple;
-	bh=upWiI//rYiJLMKe4yJasEb1zsuVr65vUUAay7scsqIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ahwWb9X34R/xdX411XqESahlustFXtPv/xHKNj/DJF6NB+1642ujwEJQV1SbLFbLPEGIs38Bm/mX4KqzCazFSYyPrQfQmLXorDImLGCyESHhbBNDb/rMWW5Y8gZbtapfnCBG/EFozR3lkTTxYL9AFaU7/16AbzfZO4kPPYVc4kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOD/JAw2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A13C4AF09;
-	Tue, 15 Oct 2024 18:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729016651;
-	bh=upWiI//rYiJLMKe4yJasEb1zsuVr65vUUAay7scsqIo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gOD/JAw2huOzSx4oo6mE2aERtlExe+t8XzFk2ho0psqIPh1eENDUjwTTRyGIgxoed
-	 HCuAgzTdhffQqxj9YPG4aeHxOOs4HnOGxTWt4uZwZ2I9PHzpY3wu89n5yY8a2BBCni
-	 5yhn/XwjxeV61UhQ5v1ZIzZVilmgK6KUpQUdlo7wUXx9G9ReMXFrAHukv9Hg3S665d
-	 qwliX/lGIwUwZUWw/gb/rXu/1UgA9XNlnQ3b9SVYblgitqSJc+OBZIuK2uH6CT/D8J
-	 oDJ4W35GckOEy2WFWTjpiVcW+/Q6Tz6y9Sw14oILXhEHhvCSotpd5yK0bM2UmUA3Rh
-	 DCnnE2wh3q8uw==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f84907caso2914509e87.3;
-        Tue, 15 Oct 2024 11:24:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6HKL/Qxqzjnxn8Qb8Xxndx3seUNr6IkTy6nXffJ3gXghhtS4dNzpp68MOY7UPtmYWvcZFJ3H/9DQ=@vger.kernel.org, AJvYcCWUCBMn7+pQASEpnDE7TPJOLd6vrnJCoX9qsj6DESp+wbWlFBdxg7CT34UnnAQVQKJGYCc3kwUrJePZB/cG@vger.kernel.org
-X-Gm-Message-State: AOJu0YydRwa9CIIyiFT8ZMsxGkfSXn25KCWmhOfKeWeamvA2oZ5o3HsZ
-	J8ncl45ktIGGISyC1nU+bg3J4FZCgiSSkb5QijK/RpAcUQ7hOmnst/QnP3pBZFUPkOPf+nUxpEd
-	3eK4HBSrLuk7KwEBsLNlO6qs8veo=
-X-Google-Smtp-Source: AGHT+IEqxVDXB+67x2LNye5De4wern0VGF7eTCBuNTaTpqVe3ApOmkkxRNI+6XI3r/iORIhQq67NA6NmjkUJKvg1GQM=
-X-Received: by 2002:a05:6512:3d24:b0:539:f4d8:ee43 with SMTP id
- 2adb3069b0e04-53a03f29dacmr951250e87.22.1729016649970; Tue, 15 Oct 2024
- 11:24:09 -0700 (PDT)
+	s=arc-20240116; t=1729016704; c=relaxed/simple;
+	bh=MHfDhPw3x+eqogNdMWlOEjEMcbzb70Y543iyq242vuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRckyOUy3hHVo3IoZYc9TWyuad24sFSdTr2JVdBGp35RFI2VLMxjZ1WBqaKbu66gPmW/nJsLvlTGgYmGnsJkVBDLENQ5TIN6KUrdpxJ/ANDFmp1GTS9ms7+ah/MB2p6Dpll5pfAQQxjATB/Q3lEVJoCLJcLTieCC1VpItP0TVj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j6lH2Jpw; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbcc2bd7fcso36430836d6.1;
+        Tue, 15 Oct 2024 11:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729016702; x=1729621502; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3tcyge6OIeXu/wRZZVMsNbQ6waba0dvaHmzi9agE6E4=;
+        b=j6lH2Jpwx+sc8ai+FwkMY8eF11EPCHREgEUn1p9GATDEhKn7M3UQ4rLxShGBLJXvdU
+         TXJH38xfESNDjI59MSQjbxRdKX5LatO84e8rIzoQoMrssmABfoiR0EroPgVcLvOY8iu4
+         Khaz6AXboyXkO3CM8V/4/O5k8xvPkOqimgIyS0fO/73XpjeR4T6DalKhqnf+XeqV+9bJ
+         D4clsk/Rx8E+VOTS9vyRW8Cc7zzIiGa79N2PIS/lBee+kdIYFeGa7lEt49b857lj2pjl
+         VgC1tMlTjrPml3Y5xlIeotgEp4M6ziDrTVtj8J1++ay1crTIZAoQrd2tC/1oEn9FSTBO
+         6qAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729016702; x=1729621502;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3tcyge6OIeXu/wRZZVMsNbQ6waba0dvaHmzi9agE6E4=;
+        b=fTFxMLZacNR97NUA95TQvoAXSNRbw1U8lw5pLCvkiGx4SL5Fgo5+xg2kyfuwEOFpQb
+         fYC2rNJxaonG2wueN9zS5mBqG0C0+WwKjogSykd3myQ+uoVxQdSAfoXATgg//65lxBX+
+         NwDJKO30FvX1HcrHekYsdKlUoRtDMBp4OX3mZwYA6VoCCpHTEug9XSCp7syOTMNolzJ0
+         ukFPxphHy9BPJVkuJxfSmU5EIiNA0mSTsvENl3MhFiSG8cBVZpzVbj6hWeNf/6TEZcSY
+         I6WULrxttoFf8uagc8Ls/D94h48fAHjFEyYIL1sVrXIlM5aM6xqAUmpw5lSVMyhK9dl6
+         nApw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4vpR2HBNvGRmbCmSMaGnjFKxGx9gUbL+vyOWUHDwKdCfJT7FucIVvPfIwYMMtvhIlpQGYXkmJ2tz6/rBd@vger.kernel.org, AJvYcCUGjfy/evBXu4zX52GvJMjMnwyBuEhZtFq+Q2Cr9Ygdr+DpkxoVIRtOXFCU7pS145XCvzY8aKcP7O5S+1dIZX4=@vger.kernel.org, AJvYcCW5U7Tw0iu+yT65FfHr3/j97siY53T9ytdUI3z0MzhgNkUEh1BXIBcFX3Xecwpo4NIPuM5KwNpBu52ff+nG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw4I2csU4aTsGU4Y/EXMZhANSO1YBWyVUI25YM+zs0QhYioQyA
+	/CkI8AqIyl6pm8vspMi/k4nxDA69lsd7WDfyyFlLeT5rmqxvBsbQ
+X-Google-Smtp-Source: AGHT+IFXLH+1m4nMK8l1UUao6Y6fnQb8jyKmsdLjUAcQyV3jd78eMa2Phpz5Dwm0AITrVDZ1BPMezw==
+X-Received: by 2002:ad4:42c5:0:b0:6cb:f7dd:b6a8 with SMTP id 6a1803df08f44-6cbf7ddb70amr188637736d6.26.1729016701664;
+        Tue, 15 Oct 2024 11:25:01 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc229698bcsm9395756d6.107.2024.10.15.11.25.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 11:25:01 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id E95B81200043;
+	Tue, 15 Oct 2024 14:25:00 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 15 Oct 2024 14:25:00 -0400
+X-ME-Sender: <xms:fLMOZzmaqeWVmPzK2aU3lhc8rzAa3WQC4lDBVoONcx5NSpVRxGUtVg>
+    <xme:fLMOZ238RwyF-_aChyxMAR5W9grzs9D2S97fACEi7XwMWfASIxwAtMKNwWID9OmnQ
+    aUi2RCXK0PjmzF8mA>
+X-ME-Received: <xmr:fLMOZ5rATBk0ntxsRT4HVumDqX2_eAmLTMP0MmkK7984tILPbcs17dWSgL7PJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegjedguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephffhkeehffefkefhteeifefggeejhfevieeh
+    ffetuedufffhuddvveefkeevheelnecuffhomhgrihhnpehgvghtrdhgrhhouhhppdgrsh
+    gpphhtrhdrghhrohhuphdpghgvthdrphhiugdprghspghpthhrrdhpihgunecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvsh
+    hmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheeh
+    vddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpd
+    hnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghl
+    ihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtth
+    hopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehg
+    mhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtg
+    hpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthht
+    ohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgv
+X-ME-Proxy: <xmx:fLMOZ7nJkxmifaa8u9DObC9NCqW-gQF7NziH41u0DlA_QYUIoXzBig>
+    <xmx:fLMOZx3e-Ev6wTzSDlL5ipX1gI0Ioqga8p9F6aecASFLfE6c-yJFqA>
+    <xmx:fLMOZ6s8J1r0G16KmsdEuQ1HPoH5Rn6TRXZcdeI7n8vkIjszLesuow>
+    <xmx:fLMOZ1UIeE2UqSG77VADbQdnmr5NzW3oAvYwSjoGqBQY8JTbmGjrrw>
+    <xmx:fLMOZw23pEDyAAbn-WE3BG_5GmTBSfj3gDB5xGvgF1jgGyVWe0UQ8TQq>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Oct 2024 14:25:00 -0400 (EDT)
+Date: Tue, 15 Oct 2024 11:24:39 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, linux-fsdevel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: task: adjust safety comments in Task methods
+Message-ID: <Zw6zZ00LOa1fkTTF@boqun-archlinux>
+References: <20241015-task-safety-cmnts-v1-1-46ee92c82768@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001032028.483199-1-jeremy.linton@arm.com>
- <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
- <CAC_iWjJH8JwdPbL9Et6xNLf4vV1AQDm8ZZh8zYVkb+VFLXedTg@mail.gmail.com>
- <0bed3801-47c0-439a-8b46-53c2704e9bb0@arm.com> <CAC_iWjLo3j73J1x1Bw01szxN4uHUU+tPstWkYk3=+7t7DziHpw@mail.gmail.com>
- <c0121455-6c46-468e-a386-6be2180dd7a3@arm.com> <CAC_iWjKB479Wbg01bgbo46rM_OyNzDmxqH9OkusNr8+8GafcPQ@mail.gmail.com>
-In-Reply-To: <CAC_iWjKB479Wbg01bgbo46rM_OyNzDmxqH9OkusNr8+8GafcPQ@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 15 Oct 2024 20:23:58 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFYqon3u74_cV9v-UtQs2UQR6bVkdieW0b7QsX42AMfVg@mail.gmail.com>
-Message-ID: <CAMj1kXFYqon3u74_cV9v-UtQs2UQR6bVkdieW0b7QsX42AMfVg@mail.gmail.com>
-Subject: Re: [PATCH] efi/libstub: measure initrd to PCR9 independent of source
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Jeremy Linton <jeremy.linton@arm.com>, linux-efi@vger.kernel.org, bp@alien8.de, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015-task-safety-cmnts-v1-1-46ee92c82768@google.com>
 
-On Wed, 2 Oct 2024 at 20:25, Ilias Apalodimas
-<ilias.apalodimas@linaro.org> wrote:
->
-> Hi Jeremy,
->
-> [...]
->
-> > >>>
-> > >>> Back when we added this we intentionally left loading an initramfs
-> > >>> loaded via the command line out.
-> > >>> We wanted people to start using the LoadFile2 protocol instead of the
-> > >>> command line option, which suffered from various issues  -- e.g could
-> > >>> only be loaded if it resided in the same filesystem as the kernel and
-> > >>> the bootloader had to reason about the kernel memory layout.
-> > >>> I don't think measuring the command line option as well is going to
-> > >>> cause any problems, but isn't it a step backward?
-> > >>
-> > >> Thanks for looking at this. Since no one else seems to have commented, I
-> > >> will just express IMHO, that both methods are useful in differing
-> > >> circumstances.
-> > >>
-> > >> For a heavyweight Linux aware bootloader like grub/sd-boot the
-> > >> INITRD_MEDIA_GUID is obviously preferred. But, for booting strictly out
-> > >> out of a pure UEFI environment or Linux unaware bootloader (ex: UEFI
-> > >> shell),
-> > >
-> > > I am not sure I am following on the EfiShell. It has to run from an
-> > > EFI firmware somehow. The two open-source options I am aware of are
-> > > U-Boot and EDK2.
-> > > U-Boot has full support for the LoadFile2 protocol (and the
-> > > INITRD_MEDIA_GUID). In fact, you can add the initramfs/dtb/kernel
-> > > triplets as your boot options, supported by the EfiBoot manager and
-> > > you don't need grub/systemd boot etc.
-> > >
-> > > I don't think you can do that from EDK2 -- encode the initrd in a boot
-> > > option, but you can configure the initramfs to be loaded via LoadFile2
-> > > in OMVF via the 'initrd' shell command.
-> >
-> > Oh, I guess the shell is a bad example because I was unaware that there
-> > was a initrd option in it now. I'm buying into the boot loader/boot
-> > manager distinction, where the manager is largely unaware of the target
-> > OS's specific needs (in this case, having the initrd GUID set).
->
-> Yes, FWIW what was added in U-Boot needs to be aware of the
-> Linux-specific GUID, but as far as the EFI BootOptions defined in the
-> Boot manager, we aren't violating anything in the EFI spec. On the
-> contrary, we use the _EFI_LOAD_OPTION exactly as the spec describes.
->
-> >
-> >
-> > >
-> > >> the commandline based initrd loader is a useful function.
-> > >> Because, the kernel stub should continue to serve as a complete, if
-> > >> minimal implementation for booting Linux out of a pure UEFI environment
-> > >> without additional support infrastructure (shim/grub/etc). So, it seems
-> > >> that unless there is a reason for divergent behavior it shouldn't exist.
-> > >> And at the moment, the two primary linux bootloaders grub2 and sdboot
-> > >> are both using the INITRD_MEDIA_GUID. Given the battering ram has been
-> > >> successful, it isn't a step backward.
-> > >
-> > > I am not saying we shouldn't. As I said I don't think this patch
-> > > breaks anything. I am just wondering if enhancing EDK2 to load the
-> > > initramfs via LoadFile2 for more than OVMF is a better option.
-> >
-> > There is a separation of concerns argument here. People regularly
-> > complain about firmware implementations tuned for windows, but making
-> > the FW aware of this GUID is doing the same thing for Linux.
-> > So, IMHO
-> > that should be avoided, rather assuring the firmware is made as OS
-> > agnostic as possible, and the OS specifics are moved into the OS boot
-> > loader, one of which is this stub. It would make more logical sense to
-> > have the stub set the GUID from built in command line defaults. To be
-> > clear, i'm not suggesting that.
->
-> I get the separation point but ....
-> If you do it the other way around you *force* people to use specific
-> OS loaders that implement OS-specific protocols. And the EFI stub is
-> not the problem here nor are distros that use such loaders. However,
-> vertical distros for embedded boards which don't need all the added
-> complexity have a reasonable way out.
->
-> Anyway, since Ard doesn't plan to deprecate initrd=, the patch is
-> reasonable, I have no objections
->
+On Tue, Oct 15, 2024 at 02:02:12PM +0000, Alice Ryhl wrote:
+> The `Task` struct has several safety comments that aren't so great. For
+> example, the reason that it's okay to read the `pid` is that the field
+> is immutable, so there is no data race, which is not what the safety
+> comment says.
+> 
+> Thus, improve the safety comments. Also add an `as_ptr` helper. This
+> makes it easier to read the various accessors on Task, as `self.0` may
+> be confusing syntax for new Rust users.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> This is based on top of vfs.rust.file as the file series adds some new
+> task methods. Christian, can you take this through that tree?
+> ---
+>  rust/kernel/task.rs | 43 ++++++++++++++++++++++++-------------------
+>  1 file changed, 24 insertions(+), 19 deletions(-)
+> 
+> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+> index 1a36a9f19368..080599075875 100644
+> --- a/rust/kernel/task.rs
+> +++ b/rust/kernel/task.rs
+> @@ -145,11 +145,17 @@ fn deref(&self) -> &Self::Target {
+>          }
+>      }
+>  
+> +    /// Returns a raw pointer to the task.
+> +    #[inline]
+> +    pub fn as_ptr(&self) -> *mut bindings::task_struct {
 
-I've queued this up now - thanks all.
+FWIW, I think the name convention is `as_raw()` for a wrapper type of
+`Opaque<T>` to return `*mut T`, e.g. `kernel::device::Device`.
+
+Otherwise this looks good to me.
+
+Regards,
+Boqun
+
+> +        self.0.get()
+> +    }
+> +
+>      /// Returns the group leader of the given task.
+>      pub fn group_leader(&self) -> &Task {
+> -        // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
+> -        // have a valid `group_leader`.
+> -        let ptr = unsafe { *ptr::addr_of!((*self.0.get()).group_leader) };
+> +        // SAFETY: The group leader of a task never changes after initialization, so reading this
+> +        // field is not a data race.
+> +        let ptr = unsafe { *ptr::addr_of!((*self.as_ptr()).group_leader) };
+>  
+>          // SAFETY: The lifetime of the returned task reference is tied to the lifetime of `self`,
+>          // and given that a task has a reference to its group leader, we know it must be valid for
+> @@ -159,42 +165,41 @@ pub fn group_leader(&self) -> &Task {
+>  
+>      /// Returns the PID of the given task.
+>      pub fn pid(&self) -> Pid {
+> -        // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
+> -        // have a valid pid.
+> -        unsafe { *ptr::addr_of!((*self.0.get()).pid) }
+> +        // SAFETY: The pid of a task never changes after initialization, so reading this field is
+> +        // not a data race.
+> +        unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
+>      }
+>  
+>      /// Returns the UID of the given task.
+>      pub fn uid(&self) -> Kuid {
+> -        // SAFETY: By the type invariant, we know that `self.0` is valid.
+> -        Kuid::from_raw(unsafe { bindings::task_uid(self.0.get()) })
+> +        // SAFETY: It's always safe to call `task_uid` on a valid task.
+> +        Kuid::from_raw(unsafe { bindings::task_uid(self.as_ptr()) })
+>      }
+>  
+>      /// Returns the effective UID of the given task.
+>      pub fn euid(&self) -> Kuid {
+> -        // SAFETY: By the type invariant, we know that `self.0` is valid.
+> -        Kuid::from_raw(unsafe { bindings::task_euid(self.0.get()) })
+> +        // SAFETY: It's always safe to call `task_euid` on a valid task.
+> +        Kuid::from_raw(unsafe { bindings::task_euid(self.as_ptr()) })
+>      }
+>  
+>      /// Determines whether the given task has pending signals.
+>      pub fn signal_pending(&self) -> bool {
+> -        // SAFETY: By the type invariant, we know that `self.0` is valid.
+> -        unsafe { bindings::signal_pending(self.0.get()) != 0 }
+> +        // SAFETY: It's always safe to call `signal_pending` on a valid task.
+> +        unsafe { bindings::signal_pending(self.as_ptr()) != 0 }
+>      }
+>  
+>      /// Returns the given task's pid in the current pid namespace.
+>      pub fn pid_in_current_ns(&self) -> Pid {
+> -        // SAFETY: We know that `self.0.get()` is valid by the type invariant, and passing a null
+> -        // pointer as the namespace is correct for using the current namespace.
+> -        unsafe { bindings::task_tgid_nr_ns(self.0.get(), ptr::null_mut()) }
+> +        // SAFETY: It's valid to pass a null pointer as the namespace (defaults to current
+> +        // namespace). The task pointer is also valid.
+> +        unsafe { bindings::task_tgid_nr_ns(self.as_ptr(), ptr::null_mut()) }
+>      }
+>  
+>      /// Wakes up the task.
+>      pub fn wake_up(&self) {
+> -        // SAFETY: By the type invariant, we know that `self.0.get()` is non-null and valid.
+> -        // And `wake_up_process` is safe to be called for any valid task, even if the task is
+> +        // SAFETY: It's always safe to call `signal_pending` on a valid task, even if the task
+>          // running.
+> -        unsafe { bindings::wake_up_process(self.0.get()) };
+> +        unsafe { bindings::wake_up_process(self.as_ptr()) };
+>      }
+>  }
+>  
+> @@ -202,7 +207,7 @@ pub fn wake_up(&self) {
+>  unsafe impl crate::types::AlwaysRefCounted for Task {
+>      fn inc_ref(&self) {
+>          // SAFETY: The existence of a shared reference means that the refcount is nonzero.
+> -        unsafe { bindings::get_task_struct(self.0.get()) };
+> +        unsafe { bindings::get_task_struct(self.as_ptr()) };
+>      }
+>  
+>      unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+> 
+> ---
+> base-commit: 22018a5a54a3d353bf0fee7364b2b8018ed4c5a6
+> change-id: 20241015-task-safety-cmnts-a7cfe4b2c470
+> 
+> Best regards,
+> -- 
+> Alice Ryhl <aliceryhl@google.com>
+> 
 
