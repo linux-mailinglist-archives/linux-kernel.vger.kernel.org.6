@@ -1,262 +1,155 @@
-Return-Path: <linux-kernel+bounces-366475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051B299F5CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:40:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FA699F5D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E5181F251AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E13E1F22CF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ED42036F5;
-	Tue, 15 Oct 2024 18:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B52203714;
+	Tue, 15 Oct 2024 18:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gK5O0U6F"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LCLpr7FH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9hnA2yNo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115742036E3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4C1203709;
+	Tue, 15 Oct 2024 18:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729017600; cv=none; b=TEx5NpePW5Ipq7mrKCwxJqiOfPG9XI70JJzsv35aOoPeZ+afBcVcTMMK50Jfi454hpPX0s3Yueg6z+HjjfgfRBfeg1MB5hJ9z98HodvD8OQFagxlFwTbS94C/QyFtM2cTnjpdFQoVtxWu1qKVG19SeSA1cZZ7Pvx/CUB6tC6i4Y=
+	t=1729017610; cv=none; b=NIUmsPnMGTUZCTE2NZl6MIVxeeO5Y6+HGjeWuvWcqOb/huJo3eYMIGgQ7/EG4qS1BIfauoTAaRW0vh92tHh2/EBwQUoU1XfTlvr6Vl2JcOSkYH53pJikDzl9+Vk9L/pyCk9+VkItcnL95+7pGFFYNmjV1pW2oK0pShtPryc8yak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729017600; c=relaxed/simple;
-	bh=MEtSRz4Hi9F2cFGXHYiu6WiuFmRrbySRokMjFEcAF3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t0IZ4w3p3RGqGD7Nm2pJeN8JdzQWE5q8+XUHRsFN2p8LEZzBGvgamUOxBdHPUfmBkvis1+u2vitznzCqrQl+iEtsEA6KDbs9HL0KICaSS+fY+FlGMvqj6X0b59P0mTtZh04KKCKLAiMc5jJm6uZZjSwfuryzr7HS4BEHEqnR5dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gK5O0U6F; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 15 Oct 2024 11:39:49 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729017596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1729017610; c=relaxed/simple;
+	bh=XhKboLW9iyqU7rF9WbsPBFtPw/DRoddFe7IEZRxnHZg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=FldeWo9IS0FGZKw3nNXAP3D09YXyeAvZ+nsGSp729pZS7zh2a+Vh5lG4vQgIXE2NLe/nJ8YTA0Pf/fv9tEG1LkLcKHjtdptaSRFcQx+qkjXtqFoOqzm/bNYRtDkD+EnUTXFWFPfp7C56ro/obZ3UM92a2yS3+nk98XZjT5jqvN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LCLpr7FH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9hnA2yNo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Oct 2024 18:40:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729017606;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FlbzcQpu5GWkPP9o7pT9LceNEMQSVIKeLV87OlrVJ+I=;
-	b=gK5O0U6FvMq1snMMBlg6SI+rj2WSWU40BUGuuN0mmpAom/kOcDVTGCPbsIL/IcR68J4XMW
-	K2u9S0vvk3KjZGL+gYVPpiTlM8nFYWUza9rfbBStEeodcnuWTp87gBOt8hQULvNELAZgT0
-	9zuttan0WDCEVECf2W2Jl8FnbKvzfjo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Steven Rostedt <rostedt@goodmis.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: add tracing for memcg stat updates
-Message-ID: <t6y4ocz7pxktqoktd4h5qc3jkuxifisvnwlahmpgeyitmfk5j3@fs7q2jaxchif>
-References: <20241010003550.3695245-1-shakeel.butt@linux.dev>
- <CAJD7tkZJcnpREVdfJDMiM5y-UTX=Fby0LqQar3N9LCFeyOsn+Q@mail.gmail.com>
+	bh=tmH4J6TjbgAWONfB5GdzMYuIzCSedUioCTLTyHeSSME=;
+	b=LCLpr7FHxTdMUR6uv7M7qU+H9EhIPNEMg67YYdD6UNsCxKXgAgcwkfrdUFAmaeYcbgD2TK
+	20doW2pd9upeaID8MnfccFueELRoRgfjSdRd6wAHP4BFuAGi7ZIUkC2nyx+405oNkGTliK
+	uljDoTlxkF/P+ybIMW5+EYyjySAeCranNdxtQNdD/UScN63526ilBknoO/b98ne7IDXAGl
+	aiAPEsoia3IY4bK2jft8Dr72gjBVub/T3oRxgFvnWziGvwQMxrvLsC1CvckBB+2yauh8+6
+	G2bUYWemOG7ckig5L0Wqwgx5gaxfffy0P2q0bpCcX2/h5jQ3laoj7EwhJGv/fQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729017606;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tmH4J6TjbgAWONfB5GdzMYuIzCSedUioCTLTyHeSSME=;
+	b=9hnA2yNoWenFkidugNLTn48UjmpFYBcHFdQNAmLVL3idWx4vxFOvqe35tsbOdiwyKJazaP
+	Hvq/MA5dJFyxVsCw==
+From: "tip-bot2 for Pavan Kumar Paluri" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/sev] x86/virt: Provide "nosnp" boot option for sev kernel
+ command line
+Cc: Eric Van Tassell <Eric.VanTassell@amd.com>,
+ Pavan Kumar Paluri <papaluri@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241014130948.1476946-3-papaluri@amd.com>
+References: <20241014130948.1476946-3-papaluri@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkZJcnpREVdfJDMiM5y-UTX=Fby0LqQar3N9LCFeyOsn+Q@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Message-ID: <172901760536.1442.16894857501256114810.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 01:07:30AM GMT, Yosry Ahmed wrote:
-> On Wed, Oct 9, 2024 at 5:36 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > The memcg stats are maintained in rstat infrastructure which provides
-> > very fast updates side and reasonable read side. However memcg added
-> > plethora of stats and made the read side, which is cgroup rstat flush,
-> > very slow. To solve that, threshold was added in the memcg stats read
-> > side i.e. no need to flush the stats if updates are within the
-> > threshold.
-> >
-> > This threshold based improvement worked for sometime but more stats were
-> > added to memcg and also the read codepath was getting triggered in the
-> > performance sensitive paths which made threshold based ratelimiting
-> > ineffective. We need more visibility into the hot and cold stats i.e.
-> > stats with a lot of updates. Let's add trace to get that visibility.
-> >
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> 
-> One question below, otherwise:
-> 
-> Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
-> 
-> > ---
-> >  include/trace/events/memcg.h | 59 ++++++++++++++++++++++++++++++++++++
-> >  mm/memcontrol.c              | 13 ++++++--
-> >  2 files changed, 70 insertions(+), 2 deletions(-)
-> >  create mode 100644 include/trace/events/memcg.h
-> >
-> > diff --git a/include/trace/events/memcg.h b/include/trace/events/memcg.h
-> > new file mode 100644
-> > index 000000000000..913db9aba580
-> > --- /dev/null
-> > +++ b/include/trace/events/memcg.h
-> > @@ -0,0 +1,59 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#undef TRACE_SYSTEM
-> > +#define TRACE_SYSTEM memcg
-> > +
-> > +#if !defined(_TRACE_MEMCG_H) || defined(TRACE_HEADER_MULTI_READ)
-> > +#define _TRACE_MEMCG_H
-> > +
-> > +#include <linux/memcontrol.h>
-> > +#include <linux/tracepoint.h>
-> > +
-> > +
-> > +DECLARE_EVENT_CLASS(memcg_rstat,
-> > +
-> > +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> > +
-> > +       TP_ARGS(memcg, item, val),
-> > +
-> > +       TP_STRUCT__entry(
-> > +               __field(u64, id)
-> > +               __field(int, item)
-> > +               __field(int, val)
-> > +       ),
-> > +
-> > +       TP_fast_assign(
-> > +               __entry->id = cgroup_id(memcg->css.cgroup);
-> > +               __entry->item = item;
-> > +               __entry->val = val;
-> > +       ),
-> > +
-> > +       TP_printk("memcg_id=%llu item=%d val=%d",
-> > +                 __entry->id, __entry->item, __entry->val)
-> > +);
-> > +
-> > +DEFINE_EVENT(memcg_rstat, mod_memcg_state,
-> > +
-> > +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> > +
-> > +       TP_ARGS(memcg, item, val)
-> > +);
-> > +
-> > +DEFINE_EVENT(memcg_rstat, mod_memcg_lruvec_state,
-> > +
-> > +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> > +
-> > +       TP_ARGS(memcg, item, val)
-> > +);
-> > +
-> > +DEFINE_EVENT(memcg_rstat, count_memcg_events,
-> > +
-> > +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> > +
-> > +       TP_ARGS(memcg, item, val)
-> > +);
-> > +
-> > +
-> > +#endif /* _TRACE_MEMCG_H */
-> > +
-> > +/* This part must be outside protection */
-> > +#include <trace/define_trace.h>
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index c098fd7f5c5e..17af08367c68 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -71,6 +71,10 @@
-> >
-> >  #include <linux/uaccess.h>
-> >
-> > +#define CREATE_TRACE_POINTS
-> > +#include <trace/events/memcg.h>
-> > +#undef CREATE_TRACE_POINTS
-> > +
-> >  #include <trace/events/vmscan.h>
-> >
-> >  struct cgroup_subsys memory_cgrp_subsys __read_mostly;
-> > @@ -682,7 +686,9 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
-> >                 return;
-> >
-> >         __this_cpu_add(memcg->vmstats_percpu->state[i], val);
-> > -       memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val));
-> > +       val = memcg_state_val_in_pages(idx, val);
-> > +       memcg_rstat_updated(memcg, val);
-> > +       trace_mod_memcg_state(memcg, idx, val);
-> >  }
-> >
-> >  /* idx can be of type enum memcg_stat_item or node_stat_item. */
-> > @@ -741,7 +747,9 @@ static void __mod_memcg_lruvec_state(struct lruvec *lruvec,
-> >         /* Update lruvec */
-> >         __this_cpu_add(pn->lruvec_stats_percpu->state[i], val);
-> >
-> > -       memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val));
-> > +       val = memcg_state_val_in_pages(idx, val);
-> > +       memcg_rstat_updated(memcg, val);
-> > +       trace_mod_memcg_lruvec_state(memcg, idx, val);
-> >         memcg_stats_unlock();
-> >  }
-> >
-> > @@ -832,6 +840,7 @@ void __count_memcg_events(struct mem_cgroup *memcg, enum vm_event_item idx,
-> >         memcg_stats_lock();
-> >         __this_cpu_add(memcg->vmstats_percpu->events[i], count);
-> >         memcg_rstat_updated(memcg, count);
-> > +       trace_count_memcg_events(memcg, idx, count);
-> 
-> count here is an unsigned long, and we are casting it to int, right?
-> 
-> Would it be slightly better if the tracepoint uses a long instead of
-> int? It's still not ideal but probably better than int.
-> 
+The following commit has been merged into the x86/sev branch of tip:
 
-Do you mean something line the following? If this looks good to you then
-we can ask Andrew to squash this in the patch.
+Commit-ID:     2db67aaca578ec4998b78dc85e2af214bc2e2770
+Gitweb:        https://git.kernel.org/tip/2db67aaca578ec4998b78dc85e2af214bc2e2770
+Author:        Pavan Kumar Paluri <papaluri@amd.com>
+AuthorDate:    Mon, 14 Oct 2024 08:09:48 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 15 Oct 2024 20:22:18 +02:00
 
+x86/virt: Provide "nosnp" boot option for sev kernel command line
 
-diff --git a/include/trace/events/memcg.h b/include/trace/events/memcg.h
-index 913db9aba580..37812900acce 100644
---- a/include/trace/events/memcg.h
-+++ b/include/trace/events/memcg.h
-@@ -11,14 +11,14 @@
- 
- DECLARE_EVENT_CLASS(memcg_rstat,
- 
--	TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-+	TP_PROTO(struct mem_cgroup *memcg, int item, long val),
- 
- 	TP_ARGS(memcg, item, val),
- 
- 	TP_STRUCT__entry(
- 		__field(u64, id)
- 		__field(int, item)
--		__field(int, val)
-+		__field(long, val)
- 	),
- 
- 	TP_fast_assign(
-@@ -33,21 +33,21 @@ DECLARE_EVENT_CLASS(memcg_rstat,
- 
- DEFINE_EVENT(memcg_rstat, mod_memcg_state,
- 
--	TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-+	TP_PROTO(struct mem_cgroup *memcg, int item, long val),
- 
- 	TP_ARGS(memcg, item, val)
- );
- 
- DEFINE_EVENT(memcg_rstat, mod_memcg_lruvec_state,
- 
--	TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-+	TP_PROTO(struct mem_cgroup *memcg, int item, long val),
- 
- 	TP_ARGS(memcg, item, val)
- );
- 
- DEFINE_EVENT(memcg_rstat, count_memcg_events,
- 
--	TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-+	TP_PROTO(struct mem_cgroup *memcg, int item, long val),
- 
- 	TP_ARGS(memcg, item, val)
- );
+Provide a "nosnp" kernel command line option to prevent enabling of the RMP
+and SEV-SNP features in the host/hypervisor. Not initializing the RMP
+removes system overhead associated with RMP checks.
 
+  [ bp: Actually make it a HV-only cmdline option. ]
+
+Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
+Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
+Signed-off-by: Pavan Kumar Paluri <papaluri@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Link: https://lore.kernel.org/r/20241014130948.1476946-3-papaluri@amd.com
+---
+ Documentation/arch/x86/x86_64/boot-options.rst |  5 +++++
+ arch/x86/virt/svm/cmdline.c                    | 12 ++++++++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/Documentation/arch/x86/x86_64/boot-options.rst b/Documentation/arch/x86/x86_64/boot-options.rst
+index 98d4805..d69e3cf 100644
+--- a/Documentation/arch/x86/x86_64/boot-options.rst
++++ b/Documentation/arch/x86/x86_64/boot-options.rst
+@@ -305,3 +305,8 @@ The available options are:
+ 
+    debug
+      Enable debug messages.
++
++   nosnp
++     Do not enable SEV-SNP (applies to host/hypervisor only). Setting
++     'nosnp' avoids the RMP check overhead in memory accesses when
++     users do not want to run SEV-SNP guests.
+diff --git a/arch/x86/virt/svm/cmdline.c b/arch/x86/virt/svm/cmdline.c
+index add4bae..affa275 100644
+--- a/arch/x86/virt/svm/cmdline.c
++++ b/arch/x86/virt/svm/cmdline.c
+@@ -10,6 +10,7 @@
+ #include <linux/string.h>
+ #include <linux/printk.h>
+ #include <linux/cache.h>
++#include <linux/cpufeature.h>
+ 
+ #include <asm/sev-common.h>
+ 
+@@ -25,6 +26,17 @@ static int __init init_sev_config(char *str)
+ 			continue;
+ 		}
+ 
++		if (!strcmp(s, "nosnp")) {
++			if (!cpu_feature_enabled(X86_FEATURE_HYPERVISOR)) {
++				setup_clear_cpu_cap(X86_FEATURE_SEV_SNP);
++				cc_platform_clear(CC_ATTR_HOST_SEV_SNP);
++				continue;
++			} else {
++				goto warn;
++			}
++		}
++
++warn:
+ 		pr_info("SEV command-line option '%s' was not recognized\n", s);
+ 	}
+ 
 
