@@ -1,165 +1,128 @@
-Return-Path: <linux-kernel+bounces-366243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFEA99F295
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:21:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C12E99F292
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 534BFB21099
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D4271C21DBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE1B1EBA0A;
-	Tue, 15 Oct 2024 16:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228141EBA0A;
+	Tue, 15 Oct 2024 16:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOX+3JVU"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="E2a6/OG4"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E8D1714BE;
-	Tue, 15 Oct 2024 16:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540D61714BE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729009285; cv=none; b=KTw6okwYVssVWdP0A3ehbxTq5GIwEct0406Q2FGEkhISoTjULbGTrOtxbCbph9IMta5bMnFE9o+gRkZ7QPaR7gmmhQGjYaHO/yI30SaIl9Fs66eD/8Bfllj5cNPlS1qCniZ1mTNlwG0X+omwj3aS0zwYt4cpAs1ktWA3r3Jb0qc=
+	t=1729009249; cv=none; b=f/d/6FvExhglv5d5zqecwM9VDm024t7WLh5qD334Et/I0dQPwejPnKVNnbFcEI6a7SG3LydZ/JYwbyb3m3aQZRW2SKZGA883IksCJXciMYKDURJreir6UxqBR1PQ+nRsdzl3wn4c68RO2GJbRNtu4QkXywwZXwDt1V0HxHpHSnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729009285; c=relaxed/simple;
-	bh=6NEO3vbuN+t5fT74F3+Wb2C+YHLJ0N/rpcZ6snYcpbU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uGiEaJKVInozAO+639VMmkRbHDG5TqlaNW6eatVW8HWn1CBizRNm7PPHqZRvFbJFPh4Y3vEmlxrp/VR25eiMquTPr3g8sjYd1xpexKBxvmov9n9k1XG0G0l+eDyCtV0K8G/5e1im2QjmJ6PsVkYRbohVVvopMJbCYwe8kSSxs+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOX+3JVU; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539983beb19so5968051e87.3;
-        Tue, 15 Oct 2024 09:21:23 -0700 (PDT)
+	s=arc-20240116; t=1729009249; c=relaxed/simple;
+	bh=GKD35OEDDKtMzVLFMvSyT8zat97kb+O+cKvE4YkLIpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=csJeo5c6j8LkuyFVwyIe0fElqlhDtNhXF8CEFW4WCM5+t+LRTNDVUNRTkPj2/6H3yrft6ch5K99PwmNkguNghwhbKQUFoapiC4KyHwc4gsPjAVjCyjOKIcFgxzz5JAIkOL5YSTMEGATZZcVUDjWf4RtPUP9LUHxyieVu8sulzls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=E2a6/OG4; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cbe68f787dso34860456d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:20:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729009282; x=1729614082; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LAWUM9s5lyGhWTb1ehJ6NHCU3ChMEB/laYBZwYTZb00=;
-        b=hOX+3JVUmocfB5aSVim+WZQnuoYrAYO4qY1eFS0S/kWgRty3NRrRj47z/naehLhCcj
-         9yG+FzKGyWG8AWwxkWlK21N+aBHs7qg6oepqFXKWNogrGSkj5mRuFekhna4R16gPRAE8
-         33GuqleRiJZP2a4RJ0Y8kLQ31WMONLCl87jXQBwB1FHJ9X0/x9tEQyKnN8StXAcp7Gsn
-         DnM5kQjENf95XZjuPY0tPvwS3E43LUYlqnOAvL2S0WVuBc15kpsv3DCzIGAtr7S7k0XJ
-         mi7v2vSwdSTmUCsYSRYMfoutE4bXiydIRFbvqRR4azuv9v1UZhTP2t8GN8QamFnmIcMe
-         wcNQ==
+        d=ziepe.ca; s=google; t=1729009246; x=1729614046; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DtJ+WCcZlnqJEtBJ5ahUedtheIBoZsN5YCfn7xZAGeE=;
+        b=E2a6/OG4G8EWuQprTfXnJ+qwCOIV79DT8iN/++zEzUS/qJDMpHoKAFD3Kynk5+TgMS
+         VffntilQkERhJp4SzlF5w+4KCW8G4LndS20G1ka2EI0RNcLQAFq67/5cAG1iz1UC+VXE
+         5Gew4NiQYuuwXEPFHybVXIln9yqzWiEcr+9arj8BSGh2VtF5GD8q2nDe0N8D/Q1nDFTX
+         rbCPnpSMmR/2lDvbBJKSPZDhH/WBGmQ64KKNtdRjYvpYLY0eeb+q3auXgR8uQfotJrPc
+         2GjuBpHUho0OHJrpjjXDINtek2Ldnky7oDUNvasqBCCqeViFhw+cOU57vuDaxOODZRjE
+         ewag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729009282; x=1729614082;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LAWUM9s5lyGhWTb1ehJ6NHCU3ChMEB/laYBZwYTZb00=;
-        b=qYQiFgVy1gkiXqOBRhrm36/kJrjcI6V3hnkVGAEY+/+YGNILP1T1vGHBLYuO4dRpHb
-         J26ra2fmV5hqukEjXpOHUoPXCb0aHZND+vP2Dz6QQBST0QAEZjKA3qNJEfG//lmRK0cq
-         VkWtMyTqZDXtf93xhkw8oTNPrtQUczj/VE9omBuRyrvuJjHvC6Q9aVTWtKbwMqxBZOZs
-         kCr6VsT9DdLAa4f+zN8OyvgAjDSNmJ6/FD7viTlVFgLwGOtdA1x9PsF5CobuxNMKYstY
-         8YUCEaLjpdMXk7Sn0woemI4fZ/k7vumOSZZZgr9jJUcIrUN9pojCj+2X7GahDajjBc7L
-         WjCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHkwt1QvMV440MbSnCwvt0wmpeTa9eT1ZdCK4FTEclz8ve9GYjDDx8rN4EEFIZaa3jP99W0Vsnv1OO@vger.kernel.org, AJvYcCXlbxB/dF8NopZ8E0DCZbq50Q9CIa09svZuSqlfPHaZtOrxqaa6nEgRDcyeVDnyQKq+SX8GLUTyQcTuh545ty+iZoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXOB5WaPS/qGR3miQ5nTrj6U/DKqk9UX+a5XUgi3TIYJsPTy4k
-	zFHvBbwp8hB+dTrMPT/DOl5DPTo1Hyazj++Y3Zrb+r8m4KNHDUrD
-X-Google-Smtp-Source: AGHT+IFal2H6gY5olqIuu6+pF6H3H9Cp0rg+2bZLSTyU8liwGiN2tKc7WP1k4NKaLVIwTtSUr+VchA==
-X-Received: by 2002:ac2:4c53:0:b0:539:9720:99d4 with SMTP id 2adb3069b0e04-539da4e2598mr7779312e87.28.1729009281639;
-        Tue, 15 Oct 2024 09:21:21 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56eab2sm22288325e9.26.2024.10.15.09.21.20
+        d=1e100.net; s=20230601; t=1729009246; x=1729614046;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DtJ+WCcZlnqJEtBJ5ahUedtheIBoZsN5YCfn7xZAGeE=;
+        b=Cy0VIJSSscnmjAKJQPZXxS+xeM/XlILr+DuesWhTeki8Ngbwq7QN222QqxMjGxuPvn
+         ECfOE78ksFfYUGyElFA+PmkxyvOOR2O17/paqu33KhLAAQJh9eebA1J5AbA/PR7nXD+Y
+         eUlsgdRVWh/sljUpMY4G/4r64CLpflaU2CR7312rUQZhqK1AnaGL01UJwZTmSHdiVoaw
+         +wQOAZmR2bhlFu4HdjLr0fmoHP705gMS7JZbhBEM3ta6XN9Nzoub4gBWdOKmwO0VZn3H
+         LSThZbRbQmaTeUrXDNrawxueDONFmqIRAU83ZWkkNwn8Nv/7EocTTlS8zOJ5GVsDmq40
+         SJiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuKHVqipQkiK2Yy5VCf600ZFr55oBu51foKR68LWgcCSTcbpQrzQupG00kGYYoLcn/CU/TZzWBdOrVbEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJFocu2UR8KCaJRAhbGnhk2wES9Bz8BbuISLXCcc/BkNg6tJ5M
+	9WfbCxUQ25EYxQ222jgGb8CnZ/9fPKpk061yZfPgH33mbdNSwkRXxcGmZCw/SoI=
+X-Google-Smtp-Source: AGHT+IEOm3RZ0qr3XQeoZ584E3gMolo8dla+rxJiMl2IgTVjvh9zKfMlP0bSl5xGgTacD1zRpQZ8Zg==
+X-Received: by 2002:a05:6214:4345:b0:6cb:ead8:c53b with SMTP id 6a1803df08f44-6cbf009b929mr198694786d6.31.1729009246110;
+        Tue, 15 Oct 2024 09:20:46 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc2291da47sm8321016d6.48.2024.10.15.09.20.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 09:21:20 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC PATCH] pinctrl: pinmux: Introduce API to check if a pin is requested
-Date: Tue, 15 Oct 2024 17:20:43 +0100
-Message-ID: <20241015162043.254517-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        Tue, 15 Oct 2024 09:20:45 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t0kHt-00Dw7g-4A;
+	Tue, 15 Oct 2024 13:20:45 -0300
+Date: Tue, 15 Oct 2024 13:20:45 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Tomasz Jeznach <tjeznach@rivosinc.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Sebastien Boeuf <seb@rivosinc.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux@rivosinc.com,
+	Lu Baolu <baolu.lu@linux.intel.com>, Zong Li <zong.li@sifive.com>
+Subject: Re: [PATCH v9 7/7] iommu/riscv: Paging domain support
+Message-ID: <20241015162045.GO1825128@ziepe.ca>
+References: <cover.1728579958.git.tjeznach@rivosinc.com>
+ <3d0f71ee9178c9fcb9d62db135776895a91c3d70.1728579958.git.tjeznach@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d0f71ee9178c9fcb9d62db135776895a91c3d70.1728579958.git.tjeznach@rivosinc.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Oct 10, 2024 at 12:48:10PM -0700, Tomasz Jeznach wrote:
 
-Introduce `pin_requestesd` API to check if a pin is currently requested.
-This API allows pinctrl drivers to verify whether a pin is requested or
-not by checking if the pin is owned by either `gpio_owner` or `mux_owner`.
+> @@ -856,7 +1445,7 @@ static struct iommu_domain riscv_iommu_identity_domain = {
+>  
+>  static int riscv_iommu_device_domain_type(struct device *dev)
+>  {
+> -	return IOMMU_DOMAIN_IDENTITY;
+> +	return 0;
+>  }
 
-GPIO pins used as interrupts through the `interrupts` DT property do not
-follow the usual `gpio_request`/`pin_request` path, unlike GPIO pins used
-as interrupts via the `gpios` property. As a result, such pins were
-reported as `UNCLAIMED` in the `pinmux-pins` sysfs file, even though they
-were in use as interrupts.
+Remove the function please instead of returning 0
 
-With the newly introduced API, pinctrl drivers can check if a pin is
-already requested by the pinctrl core and ensure that pin is requested
-during when using as irq. This helps to ensure that the `pinmux-pins`
-sysfs file reflects the correct status of the pin.
+> +static void riscv_iommu_release_device(struct device *dev)
+> +{
+> +	struct riscv_iommu_info *info = dev_iommu_priv_get(dev);
+> +
+> +	synchronize_rcu();
+> +	kfree(info);
+> +}
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/pinctrl/pinmux.c | 14 ++++++++++++++
- drivers/pinctrl/pinmux.h |  5 +++++
- 2 files changed, 19 insertions(+)
+Just call kfree_rcu() ? We have a variation that doesn't require the
+rcu_head now.
 
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index 02033ea1c643..19c68e174c36 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -99,6 +99,20 @@ bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev, unsigned int pin)
- 	return !(ops->strict && !!desc->gpio_owner);
- }
- 
-+bool pin_requestesd(struct pinctrl_dev *pctldev, int pin)
-+{
-+	struct pin_desc *desc;
-+
-+	desc = pin_desc_get(pctldev, pin);
-+	if (!desc)
-+		return false;
-+
-+	if (!desc->gpio_owner && !desc->mux_owner)
-+		return false;
-+
-+	return true;
-+}
-+
- /**
-  * pin_request() - request a single pin to be muxed in, typically for GPIO
-  * @pctldev: the associated pin controller device
-diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
-index 2965ec20b77f..550cb3b4c068 100644
---- a/drivers/pinctrl/pinmux.h
-+++ b/drivers/pinctrl/pinmux.h
-@@ -42,6 +42,7 @@ int pinmux_map_to_setting(const struct pinctrl_map *map,
- void pinmux_free_setting(const struct pinctrl_setting *setting);
- int pinmux_enable_setting(const struct pinctrl_setting *setting);
- void pinmux_disable_setting(const struct pinctrl_setting *setting);
-+bool pin_requestesd(struct pinctrl_dev *pctldev, int pin);
- 
- #else
- 
-@@ -100,6 +101,10 @@ static inline void pinmux_disable_setting(const struct pinctrl_setting *setting)
- {
- }
- 
-+bool pin_requestesd(struct pinctrl_dev *pctldev, int pin)
-+{
-+	return false;
-+}
- #endif
- 
- #if defined(CONFIG_PINMUX) && defined(CONFIG_DEBUG_FS)
--- 
-2.43.0
-
+Jason
 
