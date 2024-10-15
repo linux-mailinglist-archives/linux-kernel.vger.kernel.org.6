@@ -1,149 +1,122 @@
-Return-Path: <linux-kernel+bounces-365841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8726899EB81
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:07:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE2D99EB8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF30283789
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:07:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A76E1F2622D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2E31CFEA9;
-	Tue, 15 Oct 2024 13:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED641D5AD3;
+	Tue, 15 Oct 2024 13:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="i/Xfs3Ef";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="E7ya//8L"
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="LghZXKpr"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79961C07FF;
-	Tue, 15 Oct 2024 13:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A0F1AF0A9;
+	Tue, 15 Oct 2024 13:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728997666; cv=none; b=RMgU2OA6Ef8ObQwSv9arT/jmTRk6y2qHRwwAWPumxsu1itL3R2+qfS+i9lUT6/5l5qr3kjH9osRTUhlQ2tM8pSymzVU5pe/SDOPv/9pr/QfZn9MRjKZC+dNme/t0fdxF2+cWAh6YbIl9oHRIT3c0s+4U/pRdkPLlTpWPtaT1azU=
+	t=1728997686; cv=none; b=ZanZcQrtI2m7SNWLmsFl2n8RZ6aVzvQ7npdBqEUZ57piM0f6JPjqpMoTgWn6mibfT2C5eQ9WbMSf0+L+4bwHxVb0Ye71rOUpP+CA3Pz0MOf5lgOQ+W07b55SqR2ti0/qy3f17EtvLTyMl07rbWlsete+iQeBlU3NT40Ezb/DLN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728997666; c=relaxed/simple;
-	bh=z8CMqF1Qkrr11chR38o4qGiOfMIibQckV72yf00J/J8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+gL9Bvy1V4X2gmIiHqqjBTW29sTCb3vIlA99FgvvFEq5xkAvfJESARS2hmCbA4P1t4yZbmDncyv7SdltLBffIuDoMbEsfr6mLUaPPiV66kqSpZjdyMW9AIv9vmQNbFHWn6hZ/XjBRH4smAMvMn6qUdmXgD2MDKaJgUCXAtPP+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=i/Xfs3Ef; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=E7ya//8L; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 68EC7122FE21;
-	Tue, 15 Oct 2024 06:07:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1728997656; bh=z8CMqF1Qkrr11chR38o4qGiOfMIibQckV72yf00J/J8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i/Xfs3EfOWgr0NZuSh+H4k6e3qGH2F/B9PnPqW3VW+740K0nPmK9nkFAsT667IK/A
-	 Xmt2BLwhU2JZsCkN+DGTH8bNVCIZZyivM6+cQxxLdr0TrrdXs8Gj6OE0qZLsNKXJs9
-	 lfsp53kARAC1XHOb9bkKmzeYPh4UKZFdZTudtpaQ9rBxszrF2EiE8l2VoUC0gxv31k
-	 mTDERgn4QqE9TDGyiStvylX5DwNyAUig/AwXzovZoE3EMUtBQi77zEdu0K19X8mR7H
-	 mCzwRy+xbrdybg7HI1UqhkT2vQBHTDmuwkb4WACoXGxrZXynuqZ9J4VlEH73C/x1qS
-	 PMKgMYZ9suxfA==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id OkmRudQO2a8g; Tue, 15 Oct 2024 06:07:33 -0700 (PDT)
-Received: from ketchup (unknown [110.52.220.241])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 99CB0122FE1E;
-	Tue, 15 Oct 2024 06:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1728997653; bh=z8CMqF1Qkrr11chR38o4qGiOfMIibQckV72yf00J/J8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E7ya//8LT+6l88z0sqOEUvAZ3tXkFMTajQE+HilwRcmp3JqyvcM+MDr75SHUiiUEX
-	 kdqUQojZVzKbbrVTh3WKRguUqy5uWAO9FMg/TAjgltU+QIlBzz0g1wpdkRB7lhNBLO
-	 zR3BOol17M6FEribXcTnomnXCm/jxaZxfrGrmxNlBVcI6mmTiHtHmtsa34IrsI05yj
-	 NNP3I+Vtjwgq6M5D2+OLvukn9uG2X4lNgteg8lEXh+8/Twv+Tq3wpEPSAtSKp4tWvq
-	 Jftbn2xZoBeEtkPKz5y3SWiRs6YcgGlwj8tiTOY9ZIpYk7Ceu0Tzmz+AFfVg99511x
-	 ihEp6vcWORHiA==
-Date: Tue, 15 Oct 2024 13:07:19 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
- Sophgo CV1800 thermal
-Message-ID: <Zw5pB_tPuOgIbaxV@ketchup>
-References: <20241014073813.23984-1-heylenay@4d2.org>
- <20241014073813.23984-2-heylenay@4d2.org>
- <cycdlsi3tb6nqgbzzmypmblpcxxqmn3slqcbf5mq2okw3lqrdr@ghvswymvnslp>
+	s=arc-20240116; t=1728997686; c=relaxed/simple;
+	bh=a3nB+9tQPAJSsl8Qm2/pe8fFu9bJdaYkRXWc1LV5jmw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MNL+y9TVvJWOfLi7QchNE7rcamDBuXP5wW/zhxP6+F2C3s+NBkyI1NmSeoux5kYwNHdfx8oIXWrXpoBS63+8ezTvSAnGYwn8SCdx0j/ACRuHJfTe3vgOPPsTLvkWVzZLGGX4MxIlWWkpEDwz2B7oY4SfHHZWz3p/gslEG93spwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=LghZXKpr; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=p5BHUyPt1EyFTjMoAsnVPZVSP1YnGZbvLucwi3hkXsc=; b=LghZXKprKdh4ZKP8MMVtLHKtNQ
+	0aWIrf57zzmuxOu2+1wHVipPHf5I5kH4/MyyXF2wdk6ZjtA0WMRAMQd+ZYJ1/siIrF+XsH1dCLLkt
+	HsPGXeNgxJ+QCxa+O7HvSVgtEznp5ish9tOfkEBTCEG3SfibiXIQzPCaK1Hxvp1Js1NI=;
+Received: from p54ae9bfc.dip0.t-ipconnect.de ([84.174.155.252] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1t0hHC-0099iN-2Y;
+	Tue, 15 Oct 2024 15:07:50 +0200
+Message-ID: <695421bb-6f31-4bae-8c8c-6d4fccf1b497@nbd.name>
+Date: Tue, 15 Oct 2024 15:07:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cycdlsi3tb6nqgbzzmypmblpcxxqmn3slqcbf5mq2okw3lqrdr@ghvswymvnslp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 4/4] net: ethernet: mtk_eth_soc: optimize dma
+ ring address/index calculation
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
+ Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241015110940.63702-1-nbd@nbd.name>
+ <20241015110940.63702-4-nbd@nbd.name>
+ <e67883e3-b278-4052-849c-8a9a8ef145f0@lunn.ch>
+From: Felix Fietkau <nbd@nbd.name>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <e67883e3-b278-4052-849c-8a9a8ef145f0@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 07:52:33AM +0200, Krzysztof Kozlowski wrote:
-> On Mon, Oct 14, 2024 at 07:38:11AM +0000, Haylen Chu wrote:
-> > Add devicetree binding documentation for thermal sensors integrated in
-> > Sophgo CV1800 SoCs.
-> > 
-> > Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> > ---
-> >  .../thermal/sophgo,cv1800-thermal.yaml        | 57 +++++++++++++++++++
-> >  1 file changed, 57 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml b/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
-> > new file mode 100644
-> > index 000000000000..14abeb7a272a
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
-> > @@ -0,0 +1,57 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/thermal/sophgo,cv1800-thermal.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Sophgo CV1800 on-SoC Thermal Sensor
-> > +
-> > +maintainers:
-> > +  - Haylen Chu <heylenay@4d2.org>
-> > +
-> > +description: Sophgo CV1800 on-SoC thermal sensor
-> > +
-> > +$ref: thermal-sensor.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - sophgo,cv1800-thermal
+On 15.10.24 14:54, Andrew Lunn wrote:
+> On Tue, Oct 15, 2024 at 01:09:38PM +0200, Felix Fietkau wrote:
+>> Since DMA descriptor sizes are all power of 2, we can avoid costly integer
+>> division in favor or simple shifts.
 > 
-> Not much improved, judging by other patches there is no "CV1800" SoC,
-> but that's a family name.  Otherwise please point us to bindings or DTS
-> using this SoC.
+> Could a BUILD_BUG_ON() be added to validate this?
 
-"cv1800" is referenced in the clock binding[1] and usb binding[2]. I
-don't think there are other CV1800 SoC variants. Usage of "CV1800"
-should be specific and unambiguous.
+Not sure if that would be useful. I can't put the BUILD_BUG_ON in the 
+initializer macro, so I could only add it for the individual dma 
+descriptor structs.
+Since the size of those structs will not be changed (otherwise it would 
+immediately visibly break with existing hw), the remaining possibility 
+would be adding new structs that violate this expectation. However, 
+those would then not be covered by the BUILD_BUG_ON.
 
-Best regards,
-Haylen Chu
+> Do you have some benchmark data for this series? It would be good to
+> add to a patch 0/4.
 
-[1]: https://elixir.bootlin.com/linux/v6.11.3/source/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
-[2]: https://elixir.bootlin.com/linux/v6.11.3/source/Documentation/devicetree/bindings/usb/dwc2.yaml#L62
+No, I just ran basic tests that everything still works well and looked 
+at the assembly diff to ensure that the generated code seems sane.
+
+- Felix
 
