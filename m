@@ -1,103 +1,120 @@
-Return-Path: <linux-kernel+bounces-365271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA44699DFBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:52:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7F499DFBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3A21F23657
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:52:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B1E81F23A8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FF01B4F3D;
-	Tue, 15 Oct 2024 07:52:13 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4281AB525;
+	Tue, 15 Oct 2024 07:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uSicGcjR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94E41B4F3E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0AF18A6D9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978733; cv=none; b=iF3ODGoJ35dEZKkGFTYib/0Nja/IV9vnPTKtyR3wxQqBgGV5xQdPGeFB1Kd9LOY7M2ExGo9yj4obQ3J03Gs0pYWNlFlKq7VmGjdS0gUo2WPs8XgBgZSzKcxlme3eFOL/fzl9gBLFWG1luo09PYOHTz44ODvFlVZ1PD4qAcSdKBA=
+	t=1728978763; cv=none; b=Luz5lx5OQmEbl4wGjIc3NY4R5tqWj2lFl5iOVk/2AbPJh2Tln5RBKsohG43G4H2+MoJr8hb9bN+rbbBvSYjayWCyDIJ5HbMe1c2V2ju/NeEaAIDLdycRdfxt0k9z7pEA35IeDShmjjWMOo6Bu17Fdi7aY4d0hxO0Fh5qecOgv4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978733; c=relaxed/simple;
-	bh=mMBF0bybCnBv6xfZH8e7a1EYIWo0H6TAcmc0BZbtBJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B/RgnSIgIywIOeZ1HZUeEREFyNDsUQKpTpOwwk8Z6PDcXl5L6/0UFiuLy7o9Nlco78hAdtf62tFn2x8jCKnkcvGYB4A0smAbGGVmihgIDG40nyN7SDXn3SeBQ+XsnqVkxrsolc0ayKKM8JKUMyLfcd8a0BMekHGAZ++Jf4T0h/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XSR640dfQz1HKpS;
-	Tue, 15 Oct 2024 15:47:56 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 318021402CA;
-	Tue, 15 Oct 2024 15:52:08 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 15 Oct 2024 15:52:07 +0800
-Message-ID: <d32b15fa-3b4b-d0ef-ade3-dda44e4abc4d@huawei.com>
-Date: Tue, 15 Oct 2024 15:52:06 +0800
+	s=arc-20240116; t=1728978763; c=relaxed/simple;
+	bh=f6IfP+O7cjF7cgzm5+yoPGrfpsdmInWbz6qcwnUWuxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxX0LiEDDTqGGsG+bFstLHsYkGN2WZbr/C4uCQZCu84DZ4+iigM471AiAR3iKNv+BgytckVZ8p6aW1ZEjei0faaLATqKhWL30laZXN2TypsTxzB1/dEgIfMC5P4K51cNiGhzMeyrq4quqSKBw0iqqUPhoLHPztCJJ9z9T5769Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uSicGcjR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0312AC4CEC7;
+	Tue, 15 Oct 2024 07:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728978762;
+	bh=f6IfP+O7cjF7cgzm5+yoPGrfpsdmInWbz6qcwnUWuxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uSicGcjRdObzSdpiEOY4GorI9w9SJ4sImK860WiUCXAmSwhRC0jO7vPF7+dz1QIe+
+	 jdENboj4HzLo4MtDzOK0NIjzXWhbkqoDY+HIFExYjinHTuKbkd3aDRp53lXxYGTg7E
+	 tcZxtAGR1EP+8CrwUyYhSGnT/ssgKmO+Wc3qh148=
+Date: Tue, 15 Oct 2024 09:52:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vimal Agrawal <avimalin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, vimal.agrawal@sophos.com
+Subject: Re: [PATCH v2] misc: misc_minor_alloc to use ida for all
+ dynamic/misc dynamic minors
+Message-ID: <2024101520-banana-agreed-4a83@gregkh>
+References: <2024101416-scouring-upbeat-b658@gregkh>
+ <20241015070226.15790-1-vimal.agrawal@sophos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] drm/panel: s6e3ha8: select CONFIG_DRM_DISPLAY_DSC_HELPER
-Content-Language: en-US
-To: Arnd Bergmann <arnd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Dzmitry Sankouski <dsankouski@gmail.com>
-CC: Arnd Bergmann <arnd@arndb.de>, Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241015073115.4128727-1-arnd@kernel.org>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20241015073115.4128727-1-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015070226.15790-1-vimal.agrawal@sophos.com>
 
-
-
-On 2024/10/15 15:30, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Tue, Oct 15, 2024 at 07:02:26AM +0000, Vimal Agrawal wrote:
+> misc_minor_alloc was allocating id using ida for minor only in case of
+> MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
+> using ida_free causing a mismatch and following warn:
+> > > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
+> > > ida_free called for id=127 which is not allocated.
+> > > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+> ...
+> > > [<60941eb4>] ida_free+0x3e0/0x41f
+> > > [<605ac993>] misc_minor_free+0x3e/0xbc
+> > > [<605acb82>] misc_deregister+0x171/0x1b3
 > 
-> The new driver needs the dsc helper code to be available:
+> misc_minor_alloc is changed to allocate id from ida for all minors
+> falling in the range of dynamic/ misc dynamic minors
 > 
-> x86_64-linux-ld: vmlinux.o: in function `s6e3ha8_amb577px01_wqhd_prepare':
-> panel-samsung-s6e3ha8.c:(.text+0x16b1e65): undefined reference to `drm_dsc_pps_payload_pack'
-> 
-> Select it from Kconfig as we do for other similar drivers.
-> 
-> Fixes: 779679d3c164 ("drm/panel: Add support for S6E3HA8 panel driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 0ad35fed618c ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
+> Signed-off-by: Vimal Agrawal <vimal.agrawal@sophos.com>
 > ---
->  drivers/gpu/drm/panel/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/char/misc.c   | 35 +++++++++++++++++-----
+>  lib/Kconfig.debug     | 11 +++++++
+>  lib/Makefile          |  1 +
+>  lib/test_misc_minor.c | 67 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 107 insertions(+), 7 deletions(-)
+>  create mode 100644 lib/test_misc_minor.c
 > 
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index ddfaa99ea9dd..ffe7eff71496 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -626,6 +626,7 @@ config DRM_PANEL_SAMSUNG_AMS639RQ08
->  config DRM_PANEL_SAMSUNG_S6E88A0_AMS452EF01
->  	tristate "Samsung AMS452EF01 panel with S6E88A0 DSI video mode controller"
->  	depends on OF
-> +	select DRM_DISPLAY_DSC_HELPER
 
-It seems that it uses DRM_DISPLAY_DP_HELPER in mainline but use
-DRM_DISPLAY_DSC_HELPER in next.
+Hi,
 
->  	select DRM_MIPI_DSI
->  	select VIDEOMODE_HELPERS
->  
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
