@@ -1,142 +1,148 @@
-Return-Path: <linux-kernel+bounces-366086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04B399F0B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:08:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD13C99F0AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8445828284D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090A41C21D3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C1A1BF2B;
-	Tue, 15 Oct 2024 15:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBCC1CB9FF;
+	Tue, 15 Oct 2024 15:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JkWSKLCH"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vzP8M5Jc"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16411CB9E4;
-	Tue, 15 Oct 2024 15:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C97D1CB9E4
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729004897; cv=none; b=YKLcke6rg6S885orKjavy85TOaGBbNcOXvw/9CvRO9C+I3bhc4LdnSw+x5iV0IGzbz0rQ3U5R1Zc5B9U04HPy8sIE8FcXf+xL7UW97woTWvcaYU6jDjk8KT8vTJC/nf3inCeYVhaZNlYR8rIGmD8U/ccqjfJ28sxwOyJhXfpnyk=
+	t=1729004865; cv=none; b=fX0vVbr1JEDIPPTZkX3LA1cHVBaqXytCNtE7xfS21xRw2+DYhvHIYiAKQ8+AjWL08soH3i+pFzYkGv9LEI44BkrVJAJSByYoMNn9ZcPjNfdl6V3HnC2ZXladWR4tl9hdPPdLB/leqsMqCkg00Pr/3MW/P4LqBXPcBQgcVGMPiEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729004897; c=relaxed/simple;
-	bh=gdlIJel0Ab3zWpaPit2XyOzQkLrTxP7jMksrMJtCHWY=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=A4y/P13dZJozQm6naLYvsBXxWRWMtGxVyOzc/MYaJH/2uVVa0fKy1VzzJIno1szpaOI9+0LFb6Sqv8ViML4TfXZbrykU8qKKveJo/45nvdxAJ6wm0jgophrq2sza7JzHQkFHnwN4g8dLrbUCZl4LbkDj02niPFVePm4x5McijIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JkWSKLCH; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729004844; x=1729609644; i=markus.elfring@web.de;
-	bh=MaPDtsAu0VZDFqGSAskos6W/UUdZXWKX1E7T5Bfhlow=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=JkWSKLCHNB8kaCB9g1M8JfiGz1Gc0l/VhPaxS0LQyKyNL/hgDWVKNb3srRuEKEV1
-	 OSdGLy/YNoAZux0fmVRS3T2XdOaX6I3IPylYFKFqxx04UJCMnEF8CP3AvdQFxKxvQ
-	 QELr7IBxX6mXLCRqW80dxQOcHQoapzDhuSZpEt/qN2ZHxaN2DaQKZA5ufDHVEJ0rt
-	 15BKgS/qTaIxHvWTFhjOK7WENeRRsD3e9c/h26tNeLzithewjXBEDGRsw4hjK9ef2
-	 2Spz92VNA2FajUcCL4rVaC5p5ZLd+EhLpj8uVEDjS+5QY0MaLg7TR1XWcJ3SdunEM
-	 G8vDReVBL52VFyrYPw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [94.31.89.95] ([94.31.89.95]) by web-mail.web.de
- (3c-app-webde-bap19.server.lan [172.19.172.19]) (via HTTP); Tue, 15 Oct
- 2024 17:07:24 +0200
+	s=arc-20240116; t=1729004865; c=relaxed/simple;
+	bh=f4WuBg7WlMrKS0da9MDKLt/3P+sLy8hGoRgtuR/wpwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGlWOCyY6XsLGeUcBIq7a1WDHC8Jnw+R8D8cDMASfZezYVf8u+uKG38J5RL6Z0PinaTnOVS8mdDTbXQ/emjYt8/08rf6PzPu/lyTFIzcdfKhTx+Q7QOFAhvujE4yJ2oG3wyGEiTfgxEkbmMgE84KTnd1FTvGr81w9J2zdd8HNq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vzP8M5Jc; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c8ac50b79so506885ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:07:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729004863; x=1729609663; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PlA/wii2bh+bHrcTk784szy5HvJLhrYuLgVdXpT1LYk=;
+        b=vzP8M5JcqhbzuzunnR2SonGUJkvZUCWQZacWfn8/PrqV86plgTSDZC4Z6Zqv82ikag
+         OW1Ikw7KORUohCDqm10+XiNkXRHz0BqJoij5sPxUnZd3C7AVDKaiwMsu1iT6EBp3Pbm4
+         n39tQWDw+mtKtvavzsXkLJW0DgUwOL074N5IsbLjRDE+r62Odz+2gkYVIUgFJcMGVFWv
+         LH1jyC0YRD1S8RdCKxphhYc6ucU5b9ruAdeyzJBjYepugChQYCiaxHifwFM944l0gdcW
+         CuVlTvsTcVBUfJ1AgOrDw3kAa+Mw05+kN0nJSA3kME0sAS7ENBV4JKU7ECDU4oqYIonV
+         NYuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729004863; x=1729609663;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PlA/wii2bh+bHrcTk784szy5HvJLhrYuLgVdXpT1LYk=;
+        b=jd+0aW+0mQYzTWcimsz5ejKF5wFOzKnsskh/mn34ypYUSgc7lXmu5RYIcOwLkvT2SC
+         ztvby/SOh90Vzkr7kyEMRmy/qMAf1Wfo9eD1p4bu1vbLWMC3IXm9XQl8tfjzpkn1L/g9
+         fdCHzfKJW/03VGe+kgtbY8FSilYOnaOLaRNdu6G40sDjbtfbX691rY35BnSiym0o0q1B
+         4Ccv6aA0i94jXy94j7R5cXaIk5SYmHpf+1rIhzSPeO2BRECG0MwDzFMxaSfVOySx0us9
+         iZ2pYlaY7hSDnnvtze5Q8y3c1GrC2NrFHlHGGhBzPR3J0H7j847ExG2uYJq0ZH0Pa+me
+         PhsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwdllySkaFW4WMRgUIyN9BE2IEUXEXnr4pbp91EfLl65RJQtkTGqveqzr6LcSZN9gvstIr8lCJ+UJBtoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmik0mbLzxpxCj2FFaaINr64ErcHthIxgMEZA1sjh3hNIXm+Wa
+	J7BEp6R+ERI2d9lupgfic1dlTYKNjUJ2Qqgbh4h98TSRnsvC8RxxCVyGsh4G3A==
+X-Google-Smtp-Source: AGHT+IF1l7OR0X37A5QzB6dpGx5CADv36IvHuR768YDJl8fOGKf/Ye/4uOiLVbH4UsZhcLQQ270hKA==
+X-Received: by 2002:a17:902:e890:b0:20c:805a:22b with SMTP id d9443c01a7336-20cbced5496mr6942145ad.24.1729004862458;
+        Tue, 15 Oct 2024 08:07:42 -0700 (PDT)
+Received: from google.com (62.166.143.34.bc.googleusercontent.com. [34.143.166.62])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6ba33csm1451237a12.17.2024.10.15.08.07.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 08:07:41 -0700 (PDT)
+Date: Tue, 15 Oct 2024 15:07:32 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joy Zou <joy.zou@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH RFC 2/2] iommu/arm-smmu-v3: Bypass SID0 for NXP i.MX95
+Message-ID: <Zw6FNCACa03nE5Cx@google.com>
+References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
+ <20241015-smmuv3-v1-2-e4b9ed1b5501@nxp.com>
+ <Zw4kKDFOcXEC78mb@google.com>
+ <20241015124723.GI1825128@ziepe.ca>
+ <Zw6DekI9X7lL4f1G@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-8fef4ba2-f5ab-4b78-b3de-aa1dc7d2fa33-1729004844102@3c-app-webde-bap19>
-From: Markus Elfring <Markus.Elfring@web.de>
-To: Kevin Chen <kevin_chen@aspeedtech.com>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-aspeed@lists.ozlabs.org
-Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, BMC-SW
- <BMC-SW@aspeedtech.com>, kernel-janitors@vger.kernel.org
-Subject: RE: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX
- INTC
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 15 Oct 2024 17:07:24 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <PSAPR06MB49496CC4F25425753EA4252C89452@PSAPR06MB4949.apcprd06.prod.outlook.com>
-References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
- <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
- <PSAPR06MB4949904D1FA95DBD3EF5288A89792@PSAPR06MB4949.apcprd06.prod.outlook.com>
- <0b995a34-28c4-4ba6-8ad2-e8413c6a63f5@web.de>
- <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
- <trinity-a5696b99-bf11-4ae3-8b00-20db116f86e4-1728911450361@3c-app-webde-bs22>
- <PSAPR06MB49496CC4F25425753EA4252C89452@PSAPR06MB4949.apcprd06.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:F3RU5HNCdI/jhBQpl+toJRa3DuBoVXM/3J7YtGQP8UK7HGzSQbDWkPV1QXbhmYa1fJYWS
- OT3rKdiRCJX+9hUs/QEWqw7bYCjq5DB6X9H1nPG5sBtFSjbelw9+KJRI6BrjJvEzHmSWCDSYYuVF
- MhqAxLP9hbrZtcjr58Pyok9idl9H8LpMsJCOMB8mAfnUL/YivF3D6ymuyUXT0cuW8g7l1JB65aXy
- vmPBcROpJgZfpg24+QtdQlF6FlL4XVIdNgFDbTIU1ei0HczxdoqplmDaAViogKxnqCdBRkVWF7e4
- mM=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dD4MnKQdevg=;PGRHMRrbx68AQKUlksNjQBeq6CZ
- 0U6ABRx88Ioju0X2E5N/+H0j2oCYnZ1Q99BM9ThJXW6seOOSEj7zeRqoDzfJlqx8nnMQyQ688
- ZuQgWhBKfNB0jgNSvqi1qIX19OD18UjPzLPm001jOmf9CRu5CFX9K+7d+pUrWYlEsGN2TM6tV
- YfM3FshPbU68Z/Bk8Lli5C4pF7abi06j0/UgKE1rjG1IzvuecELoUxx6j8aoMtpdwhvoXfZW7
- LyLmWmZEFUmLvGPyOuif9XN55EK7aDJJaTTwIMKlBz/1V0a0wE/9rMNp/ZFzKqWA3xLXvEVmZ
- PRSMC5apha1Y7Epxf2JKIAnoiS1u8SZFgxp67tH6Pf1ED1AJJFgoiNP9XhDctNnuT30RD69Td
- Z52BDQgTxEVPeK6XYKgCtFAlptWh5VpSEXKsrySIO+YDGC1dJKLDQSvdwj6EF7hbBnBuCBB/S
- GgI+K/Bb3272qz30qxXj8dzKh3LcM7gaIdwfLnLw4J9x1VXi3y4qVVUIiSh37g9e4OVh//QWs
- yockuvjNsyTIg/bWkzOmV3S6U8GFRbRMW76jf/k9/Mq8acx9IhzsZk3Yv0/vuBZJWNrT+9wos
- ULhFGGq9+IeR8SA4waEHtPk1JDQDyN624qb2M2yTtQcSYcf7o1JHBzewZShncbE/xdtmGlQgk
- qTuldRrUkZoo2g27bf9qhhWTL+KSeyUWRjp0Uwnpbw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw6DekI9X7lL4f1G@google.com>
 
-=E2=80=A6
-> > > +static void aspeed_intc_ic_irq_handler(struct irq_desc *desc) {
-=E2=80=A6
-> > > +       guard(chained_irq)(desc);
-> >=20
-> > Using another macro call =E2=80=9Cscoped_guard(=E2=80=A6) { =E2=80=A6 =
-}=E2=80=9D?
-> Is it necessary to use scoped_guard(=2E=2E=2E) {=2E=2E=2E}?
+On Tue, Oct 15, 2024 at 03:00:10PM +0000, Pranjal Shrivastava wrote:
+> On Tue, Oct 15, 2024 at 09:47:23AM -0300, Jason Gunthorpe wrote:
+> > On Tue, Oct 15, 2024 at 08:13:28AM +0000, Pranjal Shrivastava wrote:
+> > 
+> > > Umm.. this was specific for rmr not a generic thing. I'd suggest to
+> > > avoid meddling with the STEs directly for acheiving bypass. Playing
+> > > with the iommu domain type could be neater. Perhaps, modify the
+> > > ops->def_domain_type to return an appropriate domain?
+> > 
+> > Yeah, that is the expected way, to force the def_domain_type to
+> > IDENTITY and refuse to attach a PAGING/BLOCKED domain.
+> > 
+> > If this is a common thing we could have the core code take on more of
+> > the job.
+> 
+> Yes! I've seen the IOMMU being bypassed at multiple places, primarily
+> for performance, people like bypassing the iommu for "trusted" devices.
+> A few examples that are publically accessible: Qcomm SoCs [1], [2].
+> Seems like Qualcomm have a DT property `qcomm-s1-bypass` to achieve
+> something similar.
+> 
+> In fact, *blast from the past*, I tried to do something similar sometime
+> ago with [3]. Although, perhaps that wasn't the best way (and I was a
+> kernel newbie :))
+> 
+> A little off-topic, but I think there has been some interest to bypass
+> the default substream as well while still maintaining PASID isolation.[4]
+> 
 
-It depends on corresponding case disintions=2E
+Agh, apologies, ignore the following part about rmr,
+it won't solve the problem here.
+> Although, as far as arm-smmu-v3 is concerned, IIRC, I think there was a
+> way to tell that the region is reserved and don't map it.
 
-
-> > > +       scoped_guard(raw_spinlock, &intc_ic->gic_lock) {
-> >=20
-> > Would you like to reconsider the proposed macro mixture once more?
-> Could I check the reason for once more?
-
-Coding style concerns =E2=80=A6?
-
-
-> > > +++ b/include/linux/irqchip/chained_irq=2Eh
-> > > @@ -38,4 +38,6 @@ static inline void chained_irq_exit(struct irq_chi=
-p *chip,
-> > >                 chip->irq_unmask(&desc->irq_data);
-> > >  }
-> > >
-> > > +DEFINE_GUARD(chained_irq, struct irq_desc *,
-> > chained_irq_exit((_T->irq_data=2Echip), (_T)),
-> > > +            chained_irq_enter((_T->irq_data=2Echip), (_T)))
-> >=20
-> > Would you like to add a #include directive in this header file accordi=
-ngly?
-> Can you give me an example?
-
-See also:
-https://elixir=2Ebootlin=2Ecom/linux/v6=2E12-rc3/source/include/linux/devi=
-ce=2Eh#L33
-
-Regards,
-Markus
+> 
+> > 
+> > Jason
+> 
+> Thanks,
+> Pranjal
+> 
+> [1]
+> https://github.com/realme-kernel-opensource/realme5-kernel-source/blob/master/arch/arm64/boot/dts/qcom/sa8155-vm-qupv3.dtsi#L22
+> 
+> [2] 
+> https://android.googlesource.com/kernel/msm/+/android-7.1.0_r0.2/Documentation/devicetree/bindings/platform/msm/ipa.txt#28
+> 
+> [3]
+> https://lore.kernel.org/all/20230707104857.348353-1-praan@google.com/
+> 
+> [4]
+> https://lore.kernel.org/all/CAGfWUPziSWNMc_px4E-i+_V_Jxdb_WSwOLXHZ+PANz2Tv5pFPA@mail.gmail.com/
 
