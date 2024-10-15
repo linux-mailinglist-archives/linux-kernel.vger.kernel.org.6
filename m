@@ -1,95 +1,108 @@
-Return-Path: <linux-kernel+bounces-365572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3144499E481
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:49:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B77A099E488
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC44D1F21095
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:49:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D646B237C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F801E571A;
-	Tue, 15 Oct 2024 10:49:53 +0000 (UTC)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6081E7C35;
+	Tue, 15 Oct 2024 10:51:23 +0000 (UTC)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1461E3DCF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F69E1E377E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989392; cv=none; b=K3JGYSp8TF0x/pl6L84f8DXaDOAy2gxncn1fOMvoQtyQAqXf3ZRuemQlGvngi8I2jDOdTeeVf9p4CC9KM+nsY4Em9oFS/gVNh0/CyFIKeaJhemKnnmIbCNNQIbs0yaftm668Nd+1RZOYQoUCROiFBQFNx/mBcIOM1RDcknjw9bQ=
+	t=1728989483; cv=none; b=RJNce7lhRrkSG0BLIN/yX25G7rG0EfV68QWqsFBj44KQAKPZl/yGNtAQH3XvXausyAgUzRNqcVXzIac6dWFiy21csuIvhTLeJEsgrauoyDYoxxGM+Guw7ecRSacWKLcZTFJksv9KGjbQiwlmMMeI//KUD0R56p53XyRdrbKNQI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989392; c=relaxed/simple;
-	bh=umAoHZaLg8OL5sN8+MqwYrOLLhFk3DJGmdHe+GY/UiI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mmKgmAkfiMIy2fCkYBO0596yhADNKOq08y8r4QC14NqKzclYx92rYOWD8EWFbVFb4zxDhUPzjXvQxl/xTmtiJqI/C4PCbYuFrZJK78q2bvR1JvUYvhIQ3rDsSkiBbkrzaqXpbQAVb4eAxlMyYtL5qqR3IIsv00UQ6zq76jdinug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2f01:8211:4b4e:86e2])
-	by baptiste.telenet-ops.be with cmsmtp
-	id Qapi2D00L4yGcJj01api09; Tue, 15 Oct 2024 12:49:42 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t0f7J-003nu7-FU;
-	Tue, 15 Oct 2024 12:49:42 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t0f7W-004oJp-HF;
-	Tue, 15 Oct 2024 12:49:42 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] PCI: Constify dummy pci_register_io_range() fwnode_handle
-Date: Tue, 15 Oct 2024 12:49:37 +0200
-Message-Id: <6a3ae390e2a978ec452ecbce3082cf51f7ee3076.1728989210.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728989483; c=relaxed/simple;
+	bh=3oVQ3SQncyYM2/01UQ5PDqqJTd10WleaD+VQ1SqIPHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dd27TyLrmvCe0ACgcALjixW3H1N2nWQzIcYHCjLFajGv82tBRNuzZP3M4kR/MbZRJMTeVqT3pTFC/0rkDvwBYuEUi+iYrHLlcQ9+1IZhG7eFc2LFNB7IDaFaPyNjG5x5yJaAS7lDb+8m8yoK7e7OkDjy0HSV+WWfElGzAxKrWk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-430576ff251so45552175e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:51:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728989480; x=1729594280;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3QVnM28C4/r4nOFvwzycVy86dkKWy8OvatRLOZVoPhU=;
+        b=Ia68DdtTBegT3srgbVQNnEiDTOIDr4tkc+EYJGrnwwnYQVewiMfFsWlDd+5uL/LQSu
+         ZgYfGCdEwAIh2r6Q9CEZf+fguGB1vD7bdyUuC7MA0ryH76j0UWVys8GYyL8dhQWU/ufK
+         QlRKad9DCxnYcsF5uOFGwRafe0B/i+cHplLKW8Jrgtwpsc9aovZsFwhN6DZv9KD8yF3p
+         UCkAvNcXIkjWD7fOrAjSi9AYBXBt2Ota8gA2o0P5mYLFkjJ+xH6Las6m14u6zguk16w4
+         Dz4ytSUWRYphW3cdz32Dtjdjw87xAa7yKg6f2pLbsvBRmMsNdwqct/1KSck87LP2aGs2
+         7iiA==
+X-Forwarded-Encrypted: i=1; AJvYcCU43XysYWOj/Lmi6FjHC3x7M1jC3FkFEcPMmvQPoAKtsBevNn7aDslTL0MBtK1IF+CJ5yt1HQGflq2Tj9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzADdFc1mCbJlJCyZ/CHm/LL15rkdmz0m2k5c0+i0P0Eqll660c
+	mwcUqz5pIiXz/dkN23KnvVe12R9P+VErNZipoNXSWK+xoArqcvES
+X-Google-Smtp-Source: AGHT+IFLP4BZ+/eds2drxiZWSbENqToHV5sW+4sCdyWTBt3MA+rLGYqezZWT1HQEBpA2pj02MbPkRg==
+X-Received: by 2002:a05:600c:1f8c:b0:42c:a89e:b0e6 with SMTP id 5b1f17b1804b1-4311ded4962mr125287535e9.11.1728989479480;
+        Tue, 15 Oct 2024 03:51:19 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf82b1sm1268224f8f.72.2024.10.15.03.51.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 03:51:18 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: bp@alien8.de,
+	x86@kernel.org
+Cc: kernel-team@meta.com,
+	jpoimboe@kernel.org,
+	pawan.kumar.gupta@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] x86/bugs: default spectre_v2_user_cmd depends on Kconfig
+Date: Tue, 15 Oct 2024 03:51:04 -0700
+Message-ID: <20241015105107.496105-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-If CONFIG_PCI=n:
+This series contains two patches that improve the handling of Spectre v2
+user mitigations in the x86 architecture:
 
-    drivers/of/address.c: In function ‘of_pci_range_to_resource’:
-    drivers/of/address.c:247:45: error: passing argument 1 of ‘pci_register_io_range’ discards ‘const’ qualifier from pointer target type [-Werror=discarded-qualifiers]
-      247 |                 err = pci_register_io_range(&np->fwnode, range->cpu_addr,
-	  |                                             ^~~~~~~~~~~
-    In file included from drivers/of/address.c:12:
-    include/linux/pci.h:2022:63: note: expected ‘struct fwnode_handle *’ but argument is of type ‘const struct fwnode_handle *’
-     2022 | static inline int pci_register_io_range(struct fwnode_handle *fwnode,
-	  |                                         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+1. Make spectre_v2_user_cmd default depend on Kconfig
+2. Simplify spectre_v2_user_select_mitigation() using cpu_smt_possible()
 
-Fixes: 6ad99a07e6d2ed91 ("PCI: Constify pci_register_io_range() fwnode_handle")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/linux/pci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The first patch was originally part of a larger patchset [1] but was
+removed in version 3 [2] to simplify the revision process. Now that the
+original patchset has been merged, I am resubmitting this patch
+separately.
 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 11421ae5c5586443..733ff6570e2d5544 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2019,7 +2019,7 @@ static inline int pci_request_regions(struct pci_dev *dev, const char *res_name)
- { return -EIO; }
- static inline void pci_release_regions(struct pci_dev *dev) { }
- 
--static inline int pci_register_io_range(struct fwnode_handle *fwnode,
-+static inline int pci_register_io_range(const struct fwnode_handle *fwnode,
- 					phys_addr_t addr, resource_size_t size)
- { return -EINVAL; }
- 
+This patch aligns the default configuration of spectre_v2_user_cmd with
+CONFIG_MITIGATION_SPECTRE_V2, consistent with other user-selectable
+mitigations.
+
+The other patch is a simple optimization that leverages the
+cpu_smt_possible() helper function to simplify the code in
+spectre_v2_user_select_mitigation().
+
+Together, these changes improve code consistency and simplify the
+configuration and selection of Spectre v2 user mitigations.
+
+[1] https://lore.kernel.org/all/20240118173213.2008115-4-leitao@debian.org/
+[2] https://lore.kernel.org/all/20240422165830.2142904-1-leitao@debian.org/
+
+Breno Leitao (2):
+  x86/bugs: Use cpu_smt_possible helper
+  x86/bugs: spectre user default must depend on MITIGATION_SPECTRE_V2
+
+ arch/x86/kernel/cpu/bugs.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
 -- 
-2.34.1
+2.43.5
 
 
