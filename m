@@ -1,117 +1,163 @@
-Return-Path: <linux-kernel+bounces-366383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B4D99F48F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:57:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD9199F491
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21872284578
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:57:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6248F1C2207A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD111FAF16;
-	Tue, 15 Oct 2024 17:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24D21FAF0C;
+	Tue, 15 Oct 2024 17:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gIm+WtgA"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LQ19fuTw"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CF316EBE8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B797016EBE8
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015041; cv=none; b=mnohq53tq9IHxng3kj6G1H9ROFZvLlptdvGZfFSpg1TOkPlJERmmJypdLAoxtWv483Q/T7ji/B7n4KbGZbFleLVkvxWN8dlsi3tW7bvUbhtcsGPISftvdofBQy1340CJHNUohZWjnEPZD9tlyBMVLZmUp+mPkljFbyYuDsEWL0U=
+	t=1729015134; cv=none; b=XYB6NtES+brNT1TdUhOzfM5TWu/DgurZwc+9j5teYyg+A43x+kZc6HwbDe4Gvrt6t6tOdOb2h3rjWXTkXvxMlsTD3urMy7t2EUBqjhaHqnV6rQx4dD470AdL9yS+UPoG8NSWlu7r1AYW6yy93JxwuVOGVkWq1DixVq0N1svNXEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015041; c=relaxed/simple;
-	bh=nv3qG9u+OKmIXIWmhaH262V2xcqKK6Xy1L3UzPQHK6o=;
+	s=arc-20240116; t=1729015134; c=relaxed/simple;
+	bh=14O5MDyat6CX8O123WRU/kCYMtgocuRDZbVVnnkI2Yk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kbt6eIKO2BcxYngZ0ZeUCtdfHDxdSA9z6KtUGESwHHauWSr2HS2GMo9+j4d0YbT3ETu9/ETnQpogd5qsHyNYHr4voCl69FNizVGEZEk57dprhx/vxAWSL9r9jhVQ+r3SzAzg0bcPwt5mam4sH1qLAS1eK0b/q9ZMmi3PHVR8j4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gIm+WtgA; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so55990a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:57:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=sg6QmkLvdoA1oGivtBirodZWxKfkgFqex6+AJJRgrcrE/Wyxu3ME1Z8YGDO73lc5jEDyKubK+Lm3p5edElhylX3EilEckeGj1l3yNrPFe2EZfabLoUqjGvNkLGyUzdShFhPN71oIu2WEsMYSBB8/Z6uFa/3EKh60ESL7Ci/vrc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LQ19fuTw; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e6c754bdso2945938e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:58:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729015037; x=1729619837; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1729015128; x=1729619928; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oy6hku2nGywb7rejUWih8IdQfUCvfFupUIO4ZBdAV6c=;
-        b=gIm+WtgADpKpMyZHaMyuMZEa2y5rm8H1nRnGhsJ/fGE+ZSSC5bZ9rbNsK6HUbGS5EK
-         ib14lLC/QxLQp6GEDcvJjwT9o/z7GTUPqoX36lqFUg2eGTpZTz5Rx/e6fIWof0q2WGAu
-         w79Z9kzkSY5QTwQuMkOGig6YDIJBngQ94RNIiqvMCTbI3v+vactihGFD5FlneEoGxvFz
-         rE4AMGhCSC08PTYiIM/wWTe2budlxEK8CHcqs+SFZPh6+e26MnxFy+gds8rsbjNI+SSm
-         qCWS96y3dWL7/p9F6rPBv1M3oOPzcuCuvIqEkV8+3/N64nAJPvX6dMORY338YnosVrTE
-         /uQQ==
+        bh=4Yio/gvv50Y6PZv0Xv308n7irKGS6U7Q/Fl4Lj32yaA=;
+        b=LQ19fuTw/08wVooh0hU7cfvMzD6rMk0HAaGXsaE7KEkUtVfo5r+RixKbPIluOL8TfG
+         tpLH89BkyCw3Bpev/lTVa5VowtF3b1BI3qEyZc4h2ya1205zjhWX2ZNn22tNg7iPZSqG
+         SEVmMdrV5LgCoTgyxCZcpzjLAfqboPLP/7Xbg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729015037; x=1729619837;
+        d=1e100.net; s=20230601; t=1729015128; x=1729619928;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oy6hku2nGywb7rejUWih8IdQfUCvfFupUIO4ZBdAV6c=;
-        b=ougNNYAt2Uagapag6llhM+478M2lkY1PJVi80tbH5Nx17eLo13xAxP9HNWnm8HyKLt
-         84QpHLyiDIMjh8geIwDGkwNWLJHNf22/W03UQQgbTuUOjEv5HQJtUM087agfDmzkicI0
-         joVYu35q0YJ/jcWbuO7GQ5stsGO6pXOnQjpk4babcOy6tjrJq1hmlD+ylsH3CODpzcGF
-         czjTQs/+N4oOFGvKJ4CiqIgG0PVTVkZDou8gjvaqBEKeaCnf7tq28/orQyAwlQO6rd9k
-         sn8KJ6MdENO+rLVL7SHtvJDfFj/KpWA+HTzmlYVwNad9qrJUf1XS+NHPaKImrdHaMdE2
-         BNAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpLBN8qdc3HmpcIN0tIty2o2QYgbxppK0DN2wSxc3vklJHzBAuUVkVz7bvpxFuqN9cQHaidFDC8ygmMHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywaz+p7crtRaZJ8tNUztdxCVHVr+itoY1HBOCas3iR7Eamal0VB
-	mgV4Kd7B6kj7S4N80jmAQKiX6e/VvewYg/iMoMw9tMu4y5+fT8eEptHMzxQFOjCB4OTj91zQA0d
-	Rh3y1PpuGjnZ67+2YtpbKAp0/Vmuk9UfrhGJk
-X-Google-Smtp-Source: AGHT+IHpC4Z2Brqidic9WYS1qahXmtTOICOECUsGWQtcS9MEDbuqtCQisOH/f0cbki1zFlHmf2Q4Vg+LPf0Vmm3cyu8=
-X-Received: by 2002:a05:6402:234a:b0:5c8:a0fd:64f0 with SMTP id
- 4fb4d7f45d1cf-5c9979d0b81mr8625a12.2.1729015036909; Tue, 15 Oct 2024 10:57:16
- -0700 (PDT)
+        bh=4Yio/gvv50Y6PZv0Xv308n7irKGS6U7Q/Fl4Lj32yaA=;
+        b=sD82PL8XYS/PXVOwg52a0g1GPsP+dP/aco9MVErVwGO3ZCRiBLfTOHWIpoy3hxhHyX
+         UWBsRh9kKWfsc7pXawepjW3T3jJ8BQZHc4Kj/h7HQK/TvLNhgDVG668C4D2ajBglzYom
+         SKUO1sCcbNBdDl3oPGB3cfbguqMHZqUBHwfafX5k1O7PnBD2Hd5M7ZPEC4f/XfG7HXsg
+         E3B9Oj1srzF3BY2GKNTMdXtpAIEaulTWhl6yT0AYBXhKFa+nhT3K1Bi12qoLZwNRkDY7
+         vNvM2/OO7iu97yM5uJqnRXxkAwxN6I/gPG+jOLV0iSZgYKoPRnHHoCO2P799hqeHfUji
+         w3TA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3nCxeL1lF8yup2mL00d45Hgm0WBFmcLaNLZTRapeXPgJ8bmKihYoLdHnTQHLUrJB1RzE6sJLKfm7/Jcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyFR6JIXO+RS7x66XoVaO0a69vfKeInuOyE+60P9sJhpp4jOmB
+	GsTO2SAim4Tpaj2pSl4hr/5jddXoW+ypiXqujLCx6KJ2fZFF15YSxz/Licqe9zdjFKU31cOs4RE
+	Chq88
+X-Google-Smtp-Source: AGHT+IH0+rdMUKRc0PRmUYKo5ziByRPPO/v4SbJfA9Z07XCxcdBthFQUQHxh1rKuoli1SPgscv+fYA==
+X-Received: by 2002:a05:6512:1044:b0:530:ae4a:58d0 with SMTP id 2adb3069b0e04-539da3c1d9bmr7375268e87.8.1729015127531;
+        Tue, 15 Oct 2024 10:58:47 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a000142d5sm223218e87.293.2024.10.15.10.58.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 10:58:47 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53a007743e7so1188551e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:58:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWvsiyDbkkmjz57Dr9gnC/quf/o79C/wuSs5XT5l0Q/1c59HEH/jOUsnxksbBjsxL2CRho8Bf9PI3OcUZU=@vger.kernel.org
+X-Received: by 2002:a05:6512:2c95:b0:539:e94d:2d3d with SMTP id
+ 2adb3069b0e04-539e94d2ea1mr5104630e87.7.1729015125333; Tue, 15 Oct 2024
+ 10:58:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015161135.2133951-1-Liam.Howlett@oracle.com>
-In-Reply-To: <20241015161135.2133951-1-Liam.Howlett@oracle.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 15 Oct 2024 19:56:39 +0200
-Message-ID: <CAG48ez0LJEFJgOeuKwh+enbbELtd5=SNGv1eiDvb8XDbLUvvyg@mail.gmail.com>
-Subject: Re: [PATCH] mm/mmap: Fix race in mmap_region() with ftrucate()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	David Hildenbrand <david@redhat.com>
+References: <20241008073430.3992087-1-wenst@chromium.org> <20241008073430.3992087-5-wenst@chromium.org>
+In-Reply-To: <20241008073430.3992087-5-wenst@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 15 Oct 2024 10:58:31 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WRSjk3U9Kau0wqkgv3KB=9jM6wCM9Gs-WxWai35sfxTg@mail.gmail.com>
+Message-ID: <CAD=FV=WRSjk3U9Kau0wqkgv3KB=9jM6wCM9Gs-WxWai35sfxTg@mail.gmail.com>
+Subject: Re: [PATCH v8 4/8] i2c: Introduce OF component probe function
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+	Jiri Kosina <jikos@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-i2c@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 6:12=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
-> Avoiding the zeroing of the vma tree in mmap_region() introduced a race
-> with truncate in the page table walk.  To avoid any races, create a hole
-> in the rmap during the operation by clearing the pagetable entries
-> earlier under the mmap write lock and (critically) before the new vma is
-> installed into the vma tree.  The result is that the old vma is still in
-> the vma tree, but the page tables are cleared while holding the
-> i_mmap_rwsem.
->
-> This change extends the fix required for hugetblfs and the call_mmap()
-> function by moving the cleanup higher in the function and running it
-> unconditionally.
->
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Fixes: f8d112a4e657 ("mm/mmap: avoid zeroing vma tree in mmap_region()")
-> Reported-by: Jann Horn <jannh@google.com>
-> Closes: https://lore.kernel.org/all/CAG48ez0ZpGzxi=3D-5O_uGQ0xKXOmbjeQ0Lj=
-ZsRJ1Qtf2X5eOr1w@mail.gmail.com/
-> Link: https://lore.kernel.org/all/CAG48ez0ZpGzxi=3D-5O_uGQ0xKXOmbjeQ0LjZs=
-RJ1Qtf2X5eOr1w@mail.gmail.com/
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Hi,
 
-Thanks, this looks good to me.
+On Tue, Oct 8, 2024 at 12:35=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> w=
+rote:
+>
+> +int i2c_of_probe_component(struct device *dev, const struct i2c_of_probe=
+_cfg *cfg, void *ctx)
+> +{
+> +       const struct i2c_of_probe_ops *ops;
+> +       const char *type;
+> +       struct i2c_adapter *i2c;
+> +       int ret;
+> +
+> +       ops =3D cfg->ops ?: &i2c_of_probe_dummy_ops;
+> +       type =3D cfg->type;
+> +
+> +       struct device_node *i2c_node __free(device_node) =3D i2c_of_probe=
+_get_i2c_node(dev, type);
+> +       if (IS_ERR(i2c_node))
+> +               return PTR_ERR(i2c_node);
 
-Reviewed-by: Jann Horn <jannh@google.com>
+I'm still getting comfortable with the __free() syntax so sorry if I'm
+wrong, but I _think_ the above is buggy. I believe that the definition
+of the free function for "device_node" is from:
+
+DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
+
+...which means it'll call of_node_put() to free "i2c_node" when it
+goes out of scope. of_node_put() handles NULL pointers but _not_ ERR
+pointers. So I think that if you get an error back and then return via
+the PTR_ERR(i2c_node) then it'll crash because it will try to free an
+ERR pointer. Did I get that right? Presumably you need to instead do:
+
+  return PTR_ERR(no_free_ptr(i2c_node));
+
+...or change of_node_put() to be a noop for error pointers?
+
+
+> +struct i2c_of_probe_ops {
+> +       /**
+> +        * @enable: Retrieve and enable resources so that the components =
+respond to probes.
+> +        *
+> +        * Resources should be reverted to their initial state before ret=
+urning if this fails.
+
+nit: might be worth explicitly noting that returning -EPROBE_DEFER is
+OK here because this both retrieves resources and enables.
+
+
+> +        */
+> +       int (*enable)(struct device *dev, struct device_node *bus_node, v=
+oid *data);
+> +
+> +       /**
+> +        * @cleanup_early: Release exclusive resources prior to enabling =
+component.
+
+nit: change the word "enabling" to "calling probe() on a detected"
+since otherwise it could be confused with the "enable" function above.
+
+
+-Doug
 
