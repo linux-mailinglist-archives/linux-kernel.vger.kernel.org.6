@@ -1,130 +1,147 @@
-Return-Path: <linux-kernel+bounces-366220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F2899F25C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284E899F25E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D452814E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF79A1F220E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C0C1F666F;
-	Tue, 15 Oct 2024 16:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E569F1F6681;
+	Tue, 15 Oct 2024 16:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tIwSb2gr"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="B6rtfej7"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98AB1EB9E6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E751E6DEE
 	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729008660; cv=none; b=dHpoXT2KZwO3oaGpM3xpzNnBhTGsuc4K1vKfFwOaPoN1iSA459xgOB5q11X8cvTt44KwTm5IEY5e3EJUNBFeElEPbFge7aFSBeGZWCbBeqF85ofGySFiInDVf0ZXNs0zt8O7h0hZnS8uDg1/hmDkbgic8SNb0qvMznOK+jAyYQo=
+	t=1729008661; cv=none; b=KV1b1qh+loby8AwCUjZhP9ew1GlPtpj8BS5PobTceLcFR4EkWfSidNWM7Bw98YLARwYwkLN/NlNj2tJ6VJUMXij/WaRNhkj9AuIsMlS5bgYq1R3D+XbzsqiKn/aKj7jKeMb6AMotKZTDJ/I6epw1OktuzGmfwMDkMOVzXB2QSRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729008660; c=relaxed/simple;
-	bh=GA7Fc81A7ztI7UbjRC/32RuEiP8RKKb4G220B9ue1HI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qwt+rLUjvOgWJ+OPj3/2ZQjAel/T+ujfvrrRB/nUhuSz2OyztYlN56PvYdDc7Nwq/TXTngUOOBtK1yOZUrdKouTTjgZcabuLjoIl7YabQS09543YrMjl6ruBj+X/DdBozsdnJcN92IbXUUvOLk6Jz1mQ+l2zQVkYhmrDnPPbHSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tIwSb2gr; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20ca03687fdso553875ad.0
+	s=arc-20240116; t=1729008661; c=relaxed/simple;
+	bh=4RbcfayKdnKH3L3jPRMwL0MZm90eH3B5hNj6Rkwgj1g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uGfTbFNi1V4SFzV1AdksJYlnUYDM6SxR+btShugFoAgSQvmyvmMNK3FYhrferjQXVDdGRWSBl/b86jFRpneVrvmYSI1aJEsAFx79buB0uhkqKD/PUZBerupZJagnIuAt5dUQGykAR9J3mh9Nw7nYHIUzHpITOyIRGUJ6XE0SGYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=B6rtfej7; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-8354c496c90so189523839f.3
         for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:10:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729008658; x=1729613458; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xGYhfp2OqW3Qzmg96OVHEI/GKpsDJXQmbA11pdTZQhk=;
-        b=tIwSb2grunQzvphk9vfpRKUs0laf2elGvUxLxWepdq7SEnQFamZn+G4XrZ0+1QOXuG
-         Jtk/7WS3pap3OcfOfJzxLEttVElxRvzMzrxs0dDFD+LAnGWYPiyVbiq84HQoPC6zXInB
-         lRKDDqLFJoH6NsIvC+ojEeM1nGmm3SLPHT78pteJbR1A11gVYcY+VqkdXssalBpIBqq+
-         1Ws2m7DtgIBCr6KWkP0Mo1sZoQU5khVIFctPJz9YckuZ3+0EJR+uEXkgjZkwbdQ78lHC
-         gwYakQ5jd9tZlq4EjQNvvkzgf0sDmNieYmwaFb78yCx6JFnHHglzFArUjcLKBVMnrP1p
-         SbVA==
+        d=linuxfoundation.org; s=google; t=1729008657; x=1729613457; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UnmsgX2S26Coo2y0EAeBt15/nTOUhtLVYSc0LBXy8PU=;
+        b=B6rtfej7Sj6TrWQX4nU0+X6V10tIVXB9Dx8Tim7t3xHLfm0pAFj+nqsALKHeMZJz3Y
+         DXcW/N8sYsVYHAFu7d2yo5PGtuXmEYrF9eNO3NzTBFul9T4VSNl5XTf4U3hZKoz2Sc4Y
+         wn8sC1VoaXT0zQXtaTEu1Vu74X4VP27geCivI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729008658; x=1729613458;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xGYhfp2OqW3Qzmg96OVHEI/GKpsDJXQmbA11pdTZQhk=;
-        b=w8+YMw8PphTPoOzyS8+/KitiYmltri/mVJBmaAT46hsVqNiyny8Duf2/D86GAE3n0g
-         6DNG4p2S49oVvW1uzlfa7oMdU9dF8lig8Fbu4O8oRHFNNBDVJeHG8ljOoeXFcusnzvRF
-         2kT/pk7Sn5xbiijOqRY9th40TcLR+V0xBiqx3/hXUBxxBdNCPvFVfDCPO7403ZBm4nu7
-         I7rJQMk9pSUHUo4pMI1NZ6UU/nIN2mNZwoO/2hjI69+GbidvH+6jZsDh0fGwgGnm6inB
-         x++h189qGPLTYCKexA3lvH3RKuEBgCwLCJlQAJ9QWK7f1Rel+DqhT60cSuR6/G2MT7mo
-         RX4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWoVNhapyUKlOSvJJDu7F4U34A3Wkq6+wIRlUe+e1LokyM52ULllH5EuCnUyswNbHF8ioP7PfSNTrjXpRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKRwBSCnf4fTiMvupeUDNiBQCnWV4zhgn9cEhSUmYsbXbtwXkz
-	5bXXi7DTZ43DlItcVQqMYD2P/3cXcwqAlSAQy+Rii70OKR0rO9onAJaeCcBMFw==
-X-Google-Smtp-Source: AGHT+IHSgi8+1o+3iy2Nr5pCUXFLnZB8SwGxpqHUBhSE2VfhssmbiQ27u4lhyDBdI5kO8qO8nZD2aQ==
-X-Received: by 2002:a17:903:22c6:b0:207:14ca:f0c1 with SMTP id d9443c01a7336-20cbce670dfmr7329985ad.16.1729008657827;
+        d=1e100.net; s=20230601; t=1729008657; x=1729613457;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UnmsgX2S26Coo2y0EAeBt15/nTOUhtLVYSc0LBXy8PU=;
+        b=n80v+z67MaIMCs+Nm87O2frCXXvEOxFgP7CyHr0aECySt0Hq0+G5+agykWxRxNWuBH
+         mGoA2HcGRY+2hJqBB0zyb88spL0Dxd7Hc2YeAZhozUA1giOphLHxhBCC7+bdNG/ZbvgS
+         qUClL027IQkN509xcP6H7kX7u2Pt1Jr7JvZHz6sCHiL34tPkWZc5zGAyu57fWQfEScHH
+         ucDAOTrKZUOglXsgbtCh4vOeS+nzZVuxAxZ8hPfQzf1hRYhAtwpRfuRpvXYJ1LFyQz01
+         QsRp6vF9tG/l2F99/NpMoy5F3xNrDZg+eJhUYNOOmThtXTNMs/XpLQF4nokKK8rGXhCi
+         TOoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDc0FRZwgXVpxSQdJHdPkHnVL1kAhIggsSRIKMeNpRHdlryYX5qBv2qjTnge+7pqu+j+0a7i7oHB3q4SE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww3hWS/MQze1K3OICsXfeDZ4NzX670AA7qxSqfppupvveqA78J
+	ErEebTdn7nB8wuAuR5fErAAfpazAgKtS4l+ZBMJ0ByZi0NgfaPunK0IXq6+OUJm5svZhYX8/qV7
+	n
+X-Google-Smtp-Source: AGHT+IHEnL+EgYGO8lX6dxU/xMmZOk3FtuBB48kIhLw61o4UybSaO0l3EEGWCUwwVU4D9lkw4wAa1A==
+X-Received: by 2002:a05:6602:1503:b0:82b:40f:63c6 with SMTP id ca18e2360f4ac-83a64d161a3mr1402302339f.4.1729008657256;
         Tue, 15 Oct 2024 09:10:57 -0700 (PDT)
-Received: from google.com (62.166.143.34.bc.googleusercontent.com. [34.143.166.62])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392e8ec9esm2017723a91.7.2024.10.15.09.10.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 09:10:57 -0700 (PDT)
-Date: Tue, 15 Oct 2024 16:10:48 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joy Zou <joy.zou@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH RFC 2/2] iommu/arm-smmu-v3: Bypass SID0 for NXP i.MX95
-Message-ID: <Zw6UCLprZj6aaajY@google.com>
-References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
- <20241015-smmuv3-v1-2-e4b9ed1b5501@nxp.com>
- <Zw4kKDFOcXEC78mb@google.com>
- <20241015124723.GI1825128@ziepe.ca>
- <ab21d602-5349-47be-b346-2fbc041fa13e@arm.com>
- <20241015153110.GM1825128@ziepe.ca>
- <ce7cc76f-426f-4d19-b4be-3964647a2f2d@arm.com>
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec9b0e8esm384747173.49.2024.10.15.09.10.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 09:10:56 -0700 (PDT)
+Message-ID: <5a90f092-6836-421c-b25c-2ef5b5233655@linuxfoundation.org>
+Date: Tue, 15 Oct 2024 10:10:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce7cc76f-426f-4d19-b4be-3964647a2f2d@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2][next] Bluetooth: btintel_pcie: Remove structually
+ deadcode
+To: "Everest K.C." <everestkc@everestkc.com.np>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, marcel@holtmann.org,
+ luiz.dentz@gmail.com, kernel-janitors@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241015045843.20134-1-everestkc@everestkc.com.np>
+ <8a4a8915-d59a-407d-9f93-f047370cca62@stanley.mountain>
+ <43eff9c9-9a23-46ac-9015-dbee35562848@linuxfoundation.org>
+ <CAEO-vhFO9-htOazTzUKA_xMS8S+a5MAZpOi40GPF38m66a+89A@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CAEO-vhFO9-htOazTzUKA_xMS8S+a5MAZpOi40GPF38m66a+89A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 15, 2024 at 04:37:25PM +0100, Robin Murphy wrote:
-> On 2024-10-15 4:31 pm, Jason Gunthorpe wrote:
-> > On Tue, Oct 15, 2024 at 04:13:13PM +0100, Robin Murphy wrote:
-> > > On 2024-10-15 1:47 pm, Jason Gunthorpe wrote:
-> > > > On Tue, Oct 15, 2024 at 08:13:28AM +0000, Pranjal Shrivastava wrote:
-> > > > 
-> > > > > Umm.. this was specific for rmr not a generic thing. I'd suggest to
-> > > > > avoid meddling with the STEs directly for acheiving bypass. Playing
-> > > > > with the iommu domain type could be neater. Perhaps, modify the
-> > > > > ops->def_domain_type to return an appropriate domain?
-> > > > 
-> > > > Yeah, that is the expected way, to force the def_domain_type to
-> > > > IDENTITY and refuse to attach a PAGING/BLOCKED domain.
-> > > 
-> > > There is no domain, this is bypassing an arbitrary StreamID not associated
-> > > with any device.
-> > 
-> > If the stream ID is going to flow traffic shouldn't it have a DT node
-> > for it? Something must be driving the DMA on this SID, and the kernel
-> > does need to know what that is in some way, even for basic security
-> > things like making sure VFIO doesn't get a hold of it :\
+On 10/15/24 10:08, Everest K.C. wrote:
+> On Tue, Oct 15, 2024 at 10:01 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+> Hi Shuah,
+>> On 10/15/24 03:48, Dan Carpenter wrote:
+>>> The subject has a typo.  s/structually/structurally/
+>>>
+>>>> The intel bluetooth module was successfully built after the change
+>>>> without any errors.
+>>>>
+>>>
+>>> Delete this sentence.  It should just be assumed that changes don't break the
+>>> build.  You can put that code isn't tested under the --- cut off line, if you
+>>> want to put a warning message.  But we don't need this in the permanent git log.
 > 
-> Exactly, hence this RFC is definitely not the right approach.
+> Should I remove the line that says the module was successfully built
+> after the change,
+> as Dan suggested ?
 
-Agreed. I assumed the bypass was needed for a registered SID.
+Yes - please.
 
 > 
-> Thanks,
-> Robin.
+>>>
+>>>> This issue was reported by Coverity Scan.
+>>>> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600709
+>>
+>> Restating what I said in your other coverity patch, include
+>> the coverity warning. This link requires login and no use
+>> for people who don't have coverity account.
+> 
+> The coverity scan dashboard no longer has the issue. So,I don't have
+> access to the coverity
+> warning.
 
-Thanks,
-Pranjal
+Remove this from the log in that case.
+
+> 
+>> In the future don't include link that require login in the
+>> commit logs.
+> Got it.
+>>>>
+>>>> Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between driver and firmware")
+>>>> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+>>>> ---
+>>>     ^^^
+>>> Cut off line.
+>>>
+>>> regards,
+>>> dan carpenter
+>>>
+>>
+
+thanks,
+-- Shuah
+
 
