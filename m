@@ -1,111 +1,95 @@
-Return-Path: <linux-kernel+bounces-365592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC24699E4B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3144499E481
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57BFF1F242C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC44D1F21095
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060D81EF929;
-	Tue, 15 Oct 2024 10:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ATp3a/Q5"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F801E571A;
+	Tue, 15 Oct 2024 10:49:53 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A351EF921
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1461E3DCF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989739; cv=none; b=PwFOiuIeAqmPDbQsP536p27M7zOG01MQMhNIR/tgFEB5obBkQrUgDUYb3IuDn8BDw/cQSgMENrWCiXR1t5iiCqX9dtkaFKoKbkS+mirKOwcLArC1QXUrf9dakKdqXKI1cG/STPg1gFy1hLh03nALSfgcCeU+PDlY3LQBdHHujXc=
+	t=1728989392; cv=none; b=K3JGYSp8TF0x/pl6L84f8DXaDOAy2gxncn1fOMvoQtyQAqXf3ZRuemQlGvngi8I2jDOdTeeVf9p4CC9KM+nsY4Em9oFS/gVNh0/CyFIKeaJhemKnnmIbCNNQIbs0yaftm668Nd+1RZOYQoUCROiFBQFNx/mBcIOM1RDcknjw9bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989739; c=relaxed/simple;
-	bh=4MzQu8RkYaVE25ff/bueC2yCjetJOfmkgdGcz5sa06w=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Nu/aL5YC5gtVaS4G6r7aLCBnjFzbu6RDzOZat4ZiwiT5z3JqNmX7E1Hlwhq53xaQ8znY34opvTEN2g/PVu+boP9JPu3Zb7AyVEV1Ha3suEFSuou7N1CNHP3WlHeaHuAwwemHFuim8ZHYr8CZ3AWlvGLLFsJZZwC57tcSRK+/raU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ATp3a/Q5; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1728989726; bh=m/5UhyVkXtYBOWH/LiMao4014tHkRSUcKPL2eFzIdNY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ATp3a/Q5EbSAYsDDrju6BOYrXjZVMKkLBC5GczXgxz70tnMucg1o54XXhz7CQex1r
-	 gmCSRzqioGzCDl7DTqgkInfgWAXnoTGB4No5Ud4jxhzMfodGmrOBDfqESp99LO46cw
-	 q4Grr0a5QRxsmsPIRHTsnQZ575q+LX2gItcauRHU=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id C498305E; Tue, 15 Oct 2024 18:49:09 +0800
-X-QQ-mid: xmsmtpt1728989349tzleicd27
-Message-ID: <tencent_C4C8065D09956EC9EED90C8727FC06D75206@qq.com>
-X-QQ-XMAILINFO: NY/MPejODIJVd1aLiI5anabvtnV9fBi6AcFEwTxpcolqcNOaL7SJbKYnyhy6Bf
-	 H/fqd1Kbza1s87knh70yk6e3ynWj/1NXl4ujZFG5s5uvOBVw9j0p8ORSEtAcXZMlnmBBrz6oPehB
-	 KSaR44oZAUPXTnuyILweSTCv4lcowQ0zml0RINXm2owx6nkCz7G97qgZQ2Xbu53Jr6drck58yAw7
-	 5onHZeK3wxo2JNnT33uxK4JvARZ9MfcvO5pcd+RfhygTav/0j7XUUwuhvmgHdY0QKQb2FAR2FMij
-	 43lUmBxbHMKdFavbJwebBPed1RlD/y1uglFLttdVEuH98UMaRyni8CbxpKyd4JL3aRcUI22WcR33
-	 /97IJ5ksF76cDPrMApVtoGUKqcI8SyyuI4eL83m6k6SaVeKxMS8U27zBjaaJLO81f5ZiXH7h68bX
-	 SnCEkyNCkFmZKqlbLuAsLVYkT011ESVI7epuJh5mp+/5d+n3cyw9KB8sNbkg6KlvFtw7A1kr/HSF
-	 rhR0d/9yEuSz8MvwdT5yxvnyIOw2y7nrPXjrn5Mk29dlDv/CYJfvd3ArpTnQR1VsXrQ6hqRByCcS
-	 juwLiR+7UBd2MTjAGIl7qQJlAjadTmsY1d2OhrNxIyjbSVwy8+wor7g5meiDnre5EvXZ2Ud+7vA3
-	 e/Mg5e/nZX3yFvTql66cVfnU2X5RtiTtW/b5uSUyQNOdBUcpCkYoHLMc+LYH9O0YAzaJr63arJFY
-	 VyH5nVhwlcaihDyypyqH60AvGAp48OhqaTZtRpIKNkCP2upedngw6FvKL5+NGqt9u31663L2aemw
-	 2mjFctrNnnJLqKagcGlyGOrE57IAlFMH80VLk4H96KbvUfEvIkrIQUOVvOYuCkwPzbh2LTZc4ZVa
-	 WkX6vc9ivJOZ0bOsSg/GxMvedNMgcuQVFV3OBvQnDj8lIcDs39yGy2CmfxXgoT+B/aJ4aAc1hAKe
-	 THVpXpJzE=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [btrfs?] KASAN: slab-use-after-free Read in add_delayed_ref
-Date: Tue, 15 Oct 2024 18:49:10 +0800
-X-OQ-MSGID: <20241015104909.45566-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <670d3f2c.050a0220.3e960.0066.GAE@google.com>
-References: <670d3f2c.050a0220.3e960.0066.GAE@google.com>
+	s=arc-20240116; t=1728989392; c=relaxed/simple;
+	bh=umAoHZaLg8OL5sN8+MqwYrOLLhFk3DJGmdHe+GY/UiI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mmKgmAkfiMIy2fCkYBO0596yhADNKOq08y8r4QC14NqKzclYx92rYOWD8EWFbVFb4zxDhUPzjXvQxl/xTmtiJqI/C4PCbYuFrZJK78q2bvR1JvUYvhIQ3rDsSkiBbkrzaqXpbQAVb4eAxlMyYtL5qqR3IIsv00UQ6zq76jdinug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2f01:8211:4b4e:86e2])
+	by baptiste.telenet-ops.be with cmsmtp
+	id Qapi2D00L4yGcJj01api09; Tue, 15 Oct 2024 12:49:42 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t0f7J-003nu7-FU;
+	Tue, 15 Oct 2024 12:49:42 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t0f7W-004oJp-HF;
+	Tue, 15 Oct 2024 12:49:42 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] PCI: Constify dummy pci_register_io_range() fwnode_handle
+Date: Tue, 15 Oct 2024 12:49:37 +0200
+Message-Id: <6a3ae390e2a978ec452ecbce3082cf51f7ee3076.1728989210.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-move head_ref->bytenr to the protection range of delayed_refs->lock
+If CONFIG_PCI=n:
 
-#syz test
+    drivers/of/address.c: In function ‘of_pci_range_to_resource’:
+    drivers/of/address.c:247:45: error: passing argument 1 of ‘pci_register_io_range’ discards ‘const’ qualifier from pointer target type [-Werror=discarded-qualifiers]
+      247 |                 err = pci_register_io_range(&np->fwnode, range->cpu_addr,
+	  |                                             ^~~~~~~~~~~
+    In file included from drivers/of/address.c:12:
+    include/linux/pci.h:2022:63: note: expected ‘struct fwnode_handle *’ but argument is of type ‘const struct fwnode_handle *’
+     2022 | static inline int pci_register_io_range(struct fwnode_handle *fwnode,
+	  |                                         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~
 
-diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-index 13c2e00d1270..f50fc05847a1 100644
---- a/fs/btrfs/delayed-ref.c
-+++ b/fs/btrfs/delayed-ref.c
-@@ -1012,6 +1012,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
- 	int action = generic_ref->action;
- 	bool merged;
- 	int ret;
-+	u64 bytenr;
+Fixes: 6ad99a07e6d2ed91 ("PCI: Constify pci_register_io_range() fwnode_handle")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/pci.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 11421ae5c5586443..733ff6570e2d5544 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -2019,7 +2019,7 @@ static inline int pci_request_regions(struct pci_dev *dev, const char *res_name)
+ { return -EIO; }
+ static inline void pci_release_regions(struct pci_dev *dev) { }
  
- 	node = kmem_cache_alloc(btrfs_delayed_ref_node_cachep, GFP_NOFS);
- 	if (!node)
-@@ -1056,6 +1057,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
- 		goto free_record;
- 	}
- 	head_ref = new_head_ref;
-+	bytenr = head_ref->bytenr;
+-static inline int pci_register_io_range(struct fwnode_handle *fwnode,
++static inline int pci_register_io_range(const struct fwnode_handle *fwnode,
+ 					phys_addr_t addr, resource_size_t size)
+ { return -EINVAL; }
  
- 	merged = insert_delayed_ref(trans, head_ref, node);
- 	spin_unlock(&delayed_refs->lock);
-@@ -1074,7 +1076,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
- 		kmem_cache_free(btrfs_delayed_ref_node_cachep, node);
- 
- 	if (qrecord_inserted)
--		return btrfs_qgroup_trace_extent_post(trans, record, head_ref->bytenr);
-+		return btrfs_qgroup_trace_extent_post(trans, record, bytenr);
- 	return 0;
- 
- free_record:
+-- 
+2.34.1
 
 
