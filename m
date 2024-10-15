@@ -1,56 +1,77 @@
-Return-Path: <linux-kernel+bounces-365243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BECF399DF66
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:40:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCB399DF6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8443B282C85
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0E61F22CDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B9518C324;
-	Tue, 15 Oct 2024 07:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84355199FA8;
+	Tue, 15 Oct 2024 07:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thoeWDpU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GNgaHIFn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC5B1741DC;
-	Tue, 15 Oct 2024 07:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791EF198826
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978031; cv=none; b=mzb9XlzLuLvFc3uLefkG7guLSfJ4F7zlDx1drcilXOxnFzielOosT4m+wuhql+//x00vsTFOhjo3ZriNfmcxhZc+0E0MO+zRIj9jxy2kUkwSxEKPSLne9AoXBZsibyEEKMxhh9F866zXbtGtZapeVLe+hPWauU0eDDEGntTLc7U=
+	t=1728978048; cv=none; b=RdWmw9clAR+6SI3D3RVi79FqqoRfFcR8VdG7E8UJCO+2UMDixTMIB5D3HYMTE9EQpIdejiTyivN5stiEflnm33pKvQEfNSWfKDcPPZrC4NYNSnxJjxRqN85tkEbUK4zKD9LH7mLoU+sBqH2sRIy/rGC9lSk+AjgKqFe7fmTOdmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978031; c=relaxed/simple;
-	bh=i0IgbTszex3b8pWJnGwsFMGwrh4Vucav33FzaKdJLfE=;
+	s=arc-20240116; t=1728978048; c=relaxed/simple;
+	bh=75YXEgfhVxmVvqkglTlOd3Hoon/k2wLrSm+Yrmv/aGc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GjuyiYS6pGonirh1l7Rr1gVJ6oWV7wjycxbhWHv78Y2gcHw+QrqVEHAhEiJUWadTouwBuHH/75VRDqFIbrnvzbyHEJaI83ViTQm8YHF/wg1MJoo7hhgctDI/V6a2jRXQ51qcok1CPsLaactxvvkEU1Cg3oESqIGm88Nd/zttQ3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thoeWDpU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F1E3C4CEC7;
-	Tue, 15 Oct 2024 07:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728978030;
-	bh=i0IgbTszex3b8pWJnGwsFMGwrh4Vucav33FzaKdJLfE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=thoeWDpUGybvhwHFztq9gaIBl1dLULO+lpocWpH+WDszPO5Nj976qvKDg/o4bWtEe
-	 qnrDkIUstKX+aMFSj9+/m0ZdQNgzkiaA6qQhRNjsDsOtxJdzm4z9vhwFresp33eUoa
-	 GtnKJtUL10fXJWjuZ7L+C0M49qFNDLwrovrF8Q6YGYFcdXBt6veUMRTRYCzSXzs0fh
-	 b33QTPkTShlHHAL13lODhLDsA4RIRXvwtilfGTRRYADeQGKbapCWLUG/Usp8G6ukU8
-	 rBjQgnQXrSNUwdBxdFIJWmJK/n8PxSEJLAQjAKnT8qA7JtQpEy/9z1s5zZ/2uJYdun
-	 EViPM3JTEXY2A==
-Date: Tue, 15 Oct 2024 08:40:25 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wang Hai <wanghai38@huawei.com>
-Cc: ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
-	somnath.kotur@broadcom.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	VenkatKumar.Duvvuru@emulex.com, zhangxiaoxu5@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] be2net: fix potential memory leak in be_xmit()
-Message-ID: <20241015074025.GB569285@kernel.org>
-References: <20241014144758.42010-1-wanghai38@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lagz1PXZlTFr3ca0rjACmr+Ff/F5gx+gwLhGZ57VBA48wJz9hCTqHsnClwsGewUQAD7pVvTRTmbr8jTteHrsF7duvHYgrsPnuaqo9GPwYoICCMz0vfr9girUzKcNcgFO0b/F5B5SnjfLzyas1Jofw2Wtofgk+aAelodtphcRFWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GNgaHIFn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728978045;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TUM9xt7Ssqk+VrwdFomi+mdTFeWpiU/lOCyhtNFd2vU=;
+	b=GNgaHIFnU4hSZdYlcfToQNwdGcrc3YpWjWlSpgk9YYZdklGB0omE7spnWYfdMZpbXWmIus
+	o4R2tqNNUibF6S+xGr/umjcu7qaq7XqjqaXFtRjbqG0M/qpUZN6lIeY4/Z3YUkg4KZoDRe
+	xt39mG9lnDCELQhGwuV/2MtDAGXQRcg=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-m-W-4jiSMFm2x1JWriD1UA-1; Tue,
+ 15 Oct 2024 03:40:40 -0400
+X-MC-Unique: m-W-4jiSMFm2x1JWriD1UA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 39F51195608F;
+	Tue, 15 Oct 2024 07:40:38 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.121])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D651E3000198;
+	Tue, 15 Oct 2024 07:40:31 +0000 (UTC)
+Date: Tue, 15 Oct 2024 15:40:26 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Robin Murphy <robin.murphy@arm.com>, Hannes Reinecke <hare@suse.de>,
+	Hamza Mahfooz <someguy@effective-light.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
+ overlapping mappings aren't supported"
+Message-ID: <Zw4camcCvclL4Q_6@fedora>
+References: <ZwxzdWmYcBK27mUs@fedora>
+ <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
+ <20241014074151.GA22419@lst.de>
+ <ZwzPDU5Lgt6MbpYt@fedora>
+ <7411ae1d-5e36-46da-99cf-c485ebdb31bc@arm.com>
+ <20241015045413.GA18058@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,57 +80,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241014144758.42010-1-wanghai38@huawei.com>
+In-Reply-To: <20241015045413.GA18058@lst.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Oct 14, 2024 at 10:47:58PM +0800, Wang Hai wrote:
-> The be_xmit() returns NETDEV_TX_OK without freeing skb
-> in case of be_xmit_enqueue() fails, add dev_kfree_skb_any() to fix it.
+On Tue, Oct 15, 2024 at 06:54:13AM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 14, 2024 at 07:09:08PM +0100, Robin Murphy wrote:
+> >>> The only case I fully understand without looking into the details
+> >>> is raid1, and that will obviously map the same data multiple times
+> >>
+> >> The other cases should be concurrent DIOs on same userspace buffer.
+> >
+> > active_cacheline_insert() does already bail out for DMA_TO_DEVICE, so it 
+> > returning -EEXIST to tickle the warning would seem to genuinely imply these 
+> > are DMA mappings requesting to *write* the same cacheline concurrently, 
+> > which is indeed broken in general.
 > 
-> Fixes: 760c295e0e8d ("be2net: Support for OS2BMC.")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+> Yes, active_cacheline_insert only complains for FROM_DEVICE or
+> BIDIRECTIONAL mappings.  I can't see how raid 1 would trigger that
+> given that it only reads from one leg at a time.
+> 
+> Ming, can you look a bit more into what is happening here?
+
+All should be READ IO which is FROM_DEVICE, please see my reply:
+
+https://lore.kernel.org/linux-block/Zw3MZrK_l7DuFfFd@fedora/
+
+And the raid1 warning is actually from raid1_sync_request().
+
 
 Thanks,
+Ming
 
-I agree that this is correct an din keeping with other
-drop handling within this function.
-
-I do, however, wonder if this logic could be expressed both
-more clearly and idiomatically like this (completely untested!):
-
-diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
-index a8596ebcdfd6..d171acb6544f 100644
---- a/drivers/net/ethernet/emulex/benet/be_main.c
-+++ b/drivers/net/ethernet/emulex/benet/be_main.c
-@@ -1381,10 +1381,8 @@ static netdev_tx_t be_xmit(struct sk_buff *skb, struct net_device *netdev)
- 	be_get_wrb_params_from_skb(adapter, skb, &wrb_params);
- 
- 	wrb_cnt = be_xmit_enqueue(adapter, txo, skb, &wrb_params);
--	if (unlikely(!wrb_cnt)) {
--		dev_kfree_skb_any(skb);
--		goto drop;
--	}
-+	if (unlikely(!wrb_cnt))
-+		goto drop_skb;
- 
- 	/* if os2bmc is enabled and if the pkt is destined to bmc,
- 	 * enqueue the pkt a 2nd time with mgmt bit set.
-@@ -1393,7 +1391,7 @@ static netdev_tx_t be_xmit(struct sk_buff *skb, struct net_device *netdev)
- 		BE_WRB_F_SET(wrb_params.features, OS2BMC, 1);
- 		wrb_cnt = be_xmit_enqueue(adapter, txo, skb, &wrb_params);
- 		if (unlikely(!wrb_cnt))
--			goto drop;
-+			goto drop_skb;
- 		else
- 			skb_get(skb);
- 	}
-@@ -1407,6 +1405,9 @@ static netdev_tx_t be_xmit(struct sk_buff *skb, struct net_device *netdev)
- 		be_xmit_flush(adapter, txo);
- 
- 	return NETDEV_TX_OK;
-+
-+drop_skb:
-+	dev_kfree_skb_any(skb);
- drop:
- 	tx_stats(txo)->tx_drv_drops++;
- 	/* Flush the already enqueued tx requests */
 
