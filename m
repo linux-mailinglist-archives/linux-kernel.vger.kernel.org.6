@@ -1,94 +1,103 @@
-Return-Path: <linux-kernel+bounces-365010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E4699DC2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:19:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D3E99DC2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B4528343A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:19:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30F26B2282F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D780016FF4E;
-	Tue, 15 Oct 2024 02:19:05 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650031662EF;
+	Tue, 15 Oct 2024 02:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itaC/tq9"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A9E21364
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B81157A6B;
+	Tue, 15 Oct 2024 02:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728958745; cv=none; b=DvEeQRx0g+GfK79TVE20hOaypCDN0J2w2O5L3QXEBsWE8jANIBdcF+DCOKTsG0N5ufZMvDTYgYfecSr9I2QL6IM9BusRkqi41KdCmRLNKwt8Xh7SnjTTIo3b6MeXhNacq0bz37/l2CNdGYX90ngYwqoa3Nj6eicvWwgMNJPVeYA=
+	t=1728958811; cv=none; b=Px8RNzmd1xyjPFBPFGks1iWyGIkf1u+eQkzYujmeMzMToo/0zmQH7Wqeml58pgIKZUL1egCRL/Dp7zLg405ZIVgbwfIWyd6e5O75AEM/dcvXcN51h2XP8AqFmkekCn4Jhn4FKHOztjIJUu8XUENcDSjzmovuwCb5p7fkLrhn7aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728958745; c=relaxed/simple;
-	bh=3s1o5xIx1Zjm6EeHTRXsAmNdpPkR4K3XSefdeeK3HdY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eVtqdJm2F9zgxeUs3doIpytv5i4Yziqdnn6zZGDAiP9k/1JOX5O/vuEJkX2ZTU/FIMxomjsOmtRT/N7f9WiNFyiIU/YSaPHcbyzWHdH3NUKrx3almxbRmMef2B/LHzrjb42yIRYFXHwyv2HhL9NOJsKhvyg51RN8oyUg/NgQNm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XSHn91fhkz2Ddfr;
-	Tue, 15 Oct 2024 10:17:49 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id AE4621400CB;
-	Tue, 15 Oct 2024 10:19:01 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 15 Oct 2024 10:19:00 +0800
-From: Yicong Yang <yangyicong@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
-	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>,
-	<dietmar.eggemann@arm.com>
-CC: <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
-	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
-	<guohanjun@huawei.com>
-Subject: [PATCH v6 4/4] arm64: Kconfig: Enable HOTPLUG_SMT
-Date: Tue, 15 Oct 2024 10:18:41 +0800
-Message-ID: <20241015021841.35713-5-yangyicong@huawei.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20241015021841.35713-1-yangyicong@huawei.com>
-References: <20241015021841.35713-1-yangyicong@huawei.com>
+	s=arc-20240116; t=1728958811; c=relaxed/simple;
+	bh=HS2thc/vvNiAP7WYGVy//vM2M7+3/EAEcq+ADqWi2wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kG034mtkkl30GUErT2TwToRNFTsicHpxuYlBcvZ1rganuEjP6swKOzIfWr8KdCvxMCWF3j9vpgJl9cINwIdyMKfJpbWv5Z5EodKDVfiudM8P+aaHb1KuoeLaMulQz3STfhVzrVw1W3h4i33G+eDlHw4ymNDS1eXFQK/e4qp/iPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=itaC/tq9; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b5affde14so28726975ad.3;
+        Mon, 14 Oct 2024 19:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728958810; x=1729563610; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HS2thc/vvNiAP7WYGVy//vM2M7+3/EAEcq+ADqWi2wc=;
+        b=itaC/tq9574Ij/NN3ZARQRgd9K/1T5TudGXw7M+vfQ4uy1Y/Qn24Q7GE999Vgxb52R
+         SWnrdcGagjUxN56mm9cnhK7Lk78lfrvcd3bUVbUWTPMahlFXxk1f2PzAueSEVItC6fkJ
+         e3KSG27BDW5W1QiQ1ehOFzOwj4X9++WXVISEVskEEp2UFr1WjuPzRFnh3/cxRe4MxLHO
+         yBSkl2TGMfD7XlkcYn2ENcE+kagVRyYZ/RwK9dHkdEwiVeAGroN0L4MoNYdivA4gQdB2
+         N1r3fuA414U64a7z1qUjFuxzWUkLAIYxpt+fOaT0WXuIVCLwWT0ps8XlEAV0ucTGn/ZE
+         s1HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728958810; x=1729563610;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HS2thc/vvNiAP7WYGVy//vM2M7+3/EAEcq+ADqWi2wc=;
+        b=YnbL1CKM2/FudQG3pU0mi680FZpScFlCknL0bYJuGaKk/cqvCdTdDekP87Kgvi67UE
+         ElCM3U/P751OkZthyFNwQYXeqmZnstpndBzJPPJfXBIC7sCzd9W2a0KFZxyu7Gk7UJw4
+         Xdxy7RvMSnbKHJ0sxe7r7Ne+7xs/RCzhwelqLmlRhdXq0ow5xzjiY+PGqLZyONK0tAV0
+         1uIEPcDfKnNm9cuu0DAES6VZcN6XPS1UgXhDcPhNgR0aJwBX/rbdAh2bfxKhOb5KXHUO
+         8kpK7zS4Q3wVd1M2CW16uPnXZf4BUu5F5ZA0gELxyp+WZgAj8xApyIjcGotPdtk2ZyTr
+         FuPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViyUydl668AAS32tOcpKh3t/0j9of718lu/EETAKjHpQk5HCU/2PC1xAnx1I87JGQn0MF2GMhaeboi@vger.kernel.org, AJvYcCVuJNlk5957pmZIV9dUtd6t5dsXhQDujmUxzLO7OGBug9pOG2lFZfBBxX/wRgXUl644q2M5AzAchyKRIxwz@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZR0HICChNcVyXJnEW9pfoyeqb12Are2TkwJAD+sG+ntrlh/G0
+	e6yNP7EnhW0FVpJHpKmqVaXMsGIcChIrMRoBapxn1bVtrrT3WJwj
+X-Google-Smtp-Source: AGHT+IGaKnw5lCo2Cleg0RPJQEGqdhSS+nxpd5GlbGADLOn+8UHhAFJbAoIilQZgcKT2Re/a9Z/bxw==
+X-Received: by 2002:a17:902:fc8f:b0:20b:cae5:dec4 with SMTP id d9443c01a7336-20ca146699emr195294395ad.24.1728958809744;
+        Mon, 14 Oct 2024 19:20:09 -0700 (PDT)
+Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f9d932sm2168495ad.90.2024.10.14.19.20.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 19:20:09 -0700 (PDT)
+Date: Tue, 15 Oct 2024 10:20:04 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpio: create empty /sys/class/gpio with SYSFS disabled
+Message-ID: <20241015022004.GA10899@rigel>
+References: <20241014121047.103179-1-brgl@bgdev.pl>
+ <CAMRc=McG9a9CKXAdyAwQ=65SUOg32ExgY-YGyCs7Rxb_XjEqDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+In-Reply-To: <CAMRc=McG9a9CKXAdyAwQ=65SUOg32ExgY-YGyCs7Rxb_XjEqDg@mail.gmail.com>
 
-From: Yicong Yang <yangyicong@hisilicon.com>
+On Mon, Oct 14, 2024 at 04:50:09PM +0200, Bartosz Golaszewski wrote:
+> On Mon, Oct 14, 2024 at 2:10 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+>
+> In any case: please let me know what you think about this change in general.
+>
 
-Enable HOTPLUG_SMT for SMT control.
+I've got no strong opinions either way.
 
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
----
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 3e29b44d2d7b..99493fb616c1 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -242,6 +242,7 @@ config ARM64
- 	select HAVE_KRETPROBES
- 	select HAVE_GENERIC_VDSO
- 	select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
-+	select HOTPLUG_SMT if HOTPLUG_CPU
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
- 	select KASAN_VMALLOC if KASAN
--- 
-2.24.0
-
+Cheers,
+Kent.
 
