@@ -1,340 +1,289 @@
-Return-Path: <linux-kernel+bounces-365207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8856899DEFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:02:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAFC99DEFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473D62814A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:02:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8754A281DEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF4B18B46C;
-	Tue, 15 Oct 2024 07:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB8A18A6C8;
+	Tue, 15 Oct 2024 07:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCaU+Hmu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FA15+yVl"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94104137930;
-	Tue, 15 Oct 2024 07:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8AC175D54
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975748; cv=none; b=IVXkroCDSwvpJnch8w97xlU7DZDtF8orjp0b84DuZtKXyAJO8wU1yoavboL/falggPMmmnQKethxaj26C5voUxIHo03hO294t/A1Six+SrXqBYsnUq1fVCmrA04BKgFObXZ6f2Cg+gRjji/A8HvFtN+PSPqQyQLlhe+/Ej68vqA=
+	t=1728975766; cv=none; b=IKiKkfxyH8oZQMjpliIJkmKSZ2ceWGp4LeOtmdexxWfl15nrUpL7Ptw74KQJhU5ee7VKIaAMuXk95l0UE+/EU6CdwJcpmx7dKxYTyq0vhUOcTqugEcU1GBaMN4tj8Y25puw2bOTTrD7G1GA+4K8EiIB9nZUO4BQNbKoCDH9gg8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975748; c=relaxed/simple;
-	bh=s4T8/jTVUn1rYhBlAL29+WbFoChCUfqqhBQWqGCSLJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=huR0Q/X7VAfkC4n1mSU8VB8jPv1pIWodjSxwD668kxSAlyo6KdgTWCYeUtzfJHiIayZCHqpsZ0XV+J0w+T7U4wiHUZJ9VUkUcpxdop30gtUngOZYCUu+32ERCf230C5zx8HbY0xLZFS5ZhD80srNRK9eB3/ls5y+vIZ+tjiXUr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCaU+Hmu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433B0C4CEC7;
-	Tue, 15 Oct 2024 07:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728975747;
-	bh=s4T8/jTVUn1rYhBlAL29+WbFoChCUfqqhBQWqGCSLJk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aCaU+Hmuc0t9ltne6NYfLFP8tYu+c6t++i7X2olSmlxHwNdBH23O+WAcwWO6OBMdd
-	 ATDFjE4wi4gAYGMFQqiKQO0K/3CuxJI28/br93Yl2fwdVwn/8x5G1/aqY9woltLGAi
-	 G+/J8gEls0pc5BG0+HQGzsbVop0yGykxbve0HUiLcOlDYHstg1ACIGzEhFCdfJwEtr
-	 xxbDfSMCTU9mbj/4Ftczqabbogk6qGv2FLGCj+HYmY1dnEyV1k9sXRB02l2gfkwUBf
-	 qqOA4BrZSo2SWetAGEFlQuHdGyGWcs2Paav9Prr2p/ivVOtrtbLWZunvIrM9ILKtAI
-	 XIsdTDxPxYuug==
-Message-ID: <2edf63cd-66e2-4050-80dd-800ed77ef5e1@kernel.org>
-Date: Tue, 15 Oct 2024 09:02:19 +0200
+	s=arc-20240116; t=1728975766; c=relaxed/simple;
+	bh=1CuoeGD+nlobMeGgiysWcd3yow7WVTLODfZKVj6O6Y0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=IuQeF4SFycQy3Yh61Nu1t2ekvEssWJ1aFHzqvxGFgiIOnjWd4fvP0QPJUOuqaztsAf2ls/3N2b8V4ruSTHHlYFFJK1hIhm/u6KOkdboGtr/NH/mvx3Rm7w1rN2D9bk/oUe3mKAZu+BU/Vwc1H972yVCVnyKJYRa4j1oObVTB+rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FA15+yVl; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6c5ab2de184so32237826d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728975763; x=1729580563; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+wZW/ZPoQ+q42jKxPUqYzpXPsInKUUO0HPGzoQL+qc4=;
+        b=FA15+yVlaHrSkmOrV8kKn+OUBFzNsJNGaUlcl2B9TZ0LgJs9PPmtrvxoc5FNkLFeP6
+         vROgprM8DcHh8bxJAwc8XrMc345d+2/X58E9E+POdg3E9a95vTxCsP8DiShiibT95m2W
+         rcmqu/ZFr6aW5ewpqEZgu2A4BMOfLvs8HdRbjZpB9MB3kpz3I416G+f8EaBlGHaCj3GJ
+         pl2fRchTmWlbzUNrlvCHEuFPBG5NfRM9++JV+G2NcfZKEMpVo8DNdTmlgloPfOcO7KPq
+         jNpN/O2X+dDbbbeaMx3LfcsXhW5COizEl12i8KGB7ZVQQRTh4WF0paHMqZaoYdv2HqJl
+         IhFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728975763; x=1729580563;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+wZW/ZPoQ+q42jKxPUqYzpXPsInKUUO0HPGzoQL+qc4=;
+        b=rJDShiZb26MI37vDGV1sr/ZGWwTaKdSNfEwiRv+E4qkcJ0NQwpvIY/4qSIbB7zyJ5N
+         ngBwtL+zXnd628PdOA0hHExR1j/JG5/02wfGanV5OgzPQvsKFgVVGIl+gFYX7SG65dua
+         Cx2KJ0UYr9U0WhO1TYSXfiDrRkLN1dkdOtgkNTZi1WwedyQ4lyrvznZZzunt2zFWQLG9
+         8U9MW9kOzPLJDbbVo9CBEi7h1fitvox3/NvFSfLXLVge2zE+MVWwMqUrDBx891iyfJAn
+         8XwVZyQoD47RCksQspXM8WLhwHvxMC8hZOs8O48izZ2zGcO3Bv/d2Y5oim2rrHAiwkiS
+         LMBw==
+X-Gm-Message-State: AOJu0Yx1nBf5/d7i+dD+ogJ5omQwE+ak2WmsyDMggXcvre3oIooh61w6
+	N98dL31zUOiRMyZa7R6fgMS0cy53yPAT958TBUxEa0d6xDKVgO38o/HTfE1Q
+X-Google-Smtp-Source: AGHT+IE4WZ4ZLafCvr5R4m7Vxl0ziHZ34bHU34F44cmFBZbfRHXUZzBOBUUfCC0ndWGFYpnlNWdpZg==
+X-Received: by 2002:ad4:410b:0:b0:6cb:f077:f2f4 with SMTP id 6a1803df08f44-6cbf077f3aemr183419566d6.17.1728975762487;
+        Tue, 15 Oct 2024 00:02:42 -0700 (PDT)
+Received: from localhost.localdomain ([66.198.16.131])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc2290fe8csm3401826d6.14.2024.10.15.00.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 00:02:42 -0700 (PDT)
+From: Vimal Agrawal <avimalin@gmail.com>
+X-Google-Original-From: Vimal Agrawal <vimal.agrawal@sophos.com>
+To: linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de
+Cc: avimalin@gmail.com,
+	vimal.agrawal@sophos.com
+Subject: [PATCH v2] misc: misc_minor_alloc to use ida for all dynamic/misc dynamic minors
+Date: Tue, 15 Oct 2024 07:02:26 +0000
+Message-Id: <20241015070226.15790-1-vimal.agrawal@sophos.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <2024101416-scouring-upbeat-b658@gregkh>
+References: <2024101416-scouring-upbeat-b658@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 6/7] arm64: dts: exynos: Add initial support for the
- Exynos 990 SoC
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, david@mainlining.org
-References: <20241015062746.713245-1-igor.belwon@mentallysanemainliners.org>
- <20241015062746.713245-7-igor.belwon@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241015062746.713245-7-igor.belwon@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 15/10/2024 08:27, Igor Belwon wrote:
-> The Exynos 990 SoC is an ARMv8 mobile SoC found in Samsung Galaxy N/S20
-> series phones (x1sxxx, c1sxxx). Add minimal support for this SoC,
-> including:
-> 
-
+misc_minor_alloc was allocating id using ida for minor only in case of
+MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
+using ida_free causing a mismatch and following warn:
+> > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
+> > ida_free called for id=127 which is not allocated.
+> > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 ...
+> > [<60941eb4>] ida_free+0x3e0/0x41f
+> > [<605ac993>] misc_minor_free+0x3e/0xbc
+> > [<605acb82>] misc_deregister+0x171/0x1b3
 
-> +	/* There's no PMU model for cluster2, which are the Mongoose cores. */
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&cpu0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&cpu1>;
-> +				};
-> +
-> +				core2 {
-> +					cpu = <&cpu2>;
-> +				};
-> +
-> +				core3 {
-> +					cpu = <&cpu3>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu = <&cpu4>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&cpu5>;
-> +				};
-> +			};
-> +
-> +			cluster2 {
-> +				core0 {
-> +					cpu = <&cpu6>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&cpu7>;
-> +				};
-> +			};
-> +		};
-> +
-> +		cpu0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			reg = <0x0>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu1: cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			reg = <0x1>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu2: cpu@2 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			reg = <0x2>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu3: cpu@3 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			reg = <0x3>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu4: cpu@100 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a76";
-> +			reg = <0x4>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu5: cpu@101 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a76";
-> +			reg = <0x5>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu6: cpu@200 {
-> +			device_type = "cpu";
-> +			compatible = "samsung,mongoose-m5";
-> +			reg = <0x6>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu7: cpu@201 {
-> +			device_type = "cpu";
-> +			compatible = "samsung,mongoose-m5";
-> +			reg = <0x7>;
-> +			enable-method = "psci";
-> +		};
-> +
+misc_minor_alloc is changed to allocate id from ida for all minors
+falling in the range of dynamic/ misc dynamic minors
 
-Stray blank line
+Fixes: 0ad35fed618c ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
+Signed-off-by: Vimal Agrawal <vimal.agrawal@sophos.com>
+---
+ drivers/char/misc.c   | 35 +++++++++++++++++-----
+ lib/Kconfig.debug     | 11 +++++++
+ lib/Makefile          |  1 +
+ lib/test_misc_minor.c | 67 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 107 insertions(+), 7 deletions(-)
+ create mode 100644 lib/test_misc_minor.c
 
-> +	};
-> +
-> +	psci {
-> +		compatible = "arm,psci-0.2";
-> +		method = "hvc";
-> +	};
-> +
-> +	oscclk: osc-clock {
-
-clock-osc and keep order by node name
-
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-output-names = "oscclk";
-> +	};
-> +
-> +	soc: soc@0 {
-> +		compatible = "simple-bus";
-> +		ranges = <0x0 0x0 0x0 0x20000000>;
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +
-> +		chipid@10000000 {
-> +			compatible = "samsung,exynos990-chipid",
-> +				     "samsung,exynos850-chipid";
-> +			reg = <0x10000000 0x100>;
-> +		};
-> +
-> +		gic: interrupt-controller@10101000 {
-> +			compatible = "arm,gic-400";
-> +			#interrupt-cells = <3>;
-> +			interrupt-controller;
-> +			reg = <0x10101000 0x1000>,
-> +			      <0x10102000 0x1000>,
-> +			      <0x10104000 0x2000>,
-> +			      <0x10106000 0x2000>;
-
-reg is the second property
-
-> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) |
-> +						 IRQ_TYPE_LEVEL_HIGH)>;
-> +			#address-cells = <0>;
-> +			#size-cells = <1>;
-> +		};
-> +
-> +		pinctrl_cmgp: pinctrl@15c30000 {
-
-Keep order by unit address.
-
-> +			compatible = "samsung,exynos990-pinctrl";
-> +			reg = <0x15c30000 0x1000>;
-> +		};
-> +
-> +		pinctrl_hsi1: pinctrl@13040000 {
-> +			compatible = "samsung,exynos990-pinctrl";
-> +			reg = <0x13040000 0x1000>;
-> +			interrupts = <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +		pinctrl_hsi2: pinctrl@13c30000 {
-> +			compatible = "samsung,exynos990-pinctrl";
-> +			reg = <0x13c30000 0x1000>;
-> +			interrupts = <GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +		pinctrl_peric0: pinctrl@10430000 {
-> +			compatible = "samsung,exynos990-pinctrl";
-> +			reg = <0x10430000 0x1000>;
-> +			interrupts = <GIC_SPI 392 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +		pinctrl_peric1: pinctrl@10730000 {
-> +			compatible = "samsung,exynos990-pinctrl";
-> +			reg = <0x10730000 0x1000>;
-> +			interrupts = <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +		pinctrl_vts: pinctrl@15580000 {
-> +			compatible = "samsung,exynos990-pinctrl";
-> +			reg = <0x15580000 0x1000>;
-> +		};
-> +
-> +		pinctrl_alive: pinctrl@15850000 {
-> +			compatible = "samsung,exynos990-pinctrl";
-> +			reg = <0x15850000 0x1000>;
-> +
-> +			wakeup-interrupt-controller {
-> +				compatible = "samsung,exynos990-wakeup-eint",
-> +					     "samsung,exynos7-wakeup-eint";
-> +			};
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-> +
-> +		/*
-> +		 * Non-updatable, broken stock Samsung bootloader does not
-> +		 * configure CNTFRQ_EL0
-> +		 */
-> +		clock-frequency = <26000000>;
-> +	};
-> +};
-> +
-> +#include "exynos990-pinctrl.dtsi"
-
-Best regards,
-Krzysztof
+diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+index 541edc26ec89..9d0cd3459b4f 100644
+--- a/drivers/char/misc.c
++++ b/drivers/char/misc.c
+@@ -63,16 +63,30 @@ static DEFINE_MUTEX(misc_mtx);
+ #define DYNAMIC_MINORS 128 /* like dynamic majors */
+ static DEFINE_IDA(misc_minors_ida);
+ 
+-static int misc_minor_alloc(void)
++static int misc_minor_alloc(int minor)
+ {
+ 	int ret;
+ 
+-	ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
+-	if (ret >= 0) {
+-		ret = DYNAMIC_MINORS - ret - 1;
+-	} else {
+-		ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
++	if (minor == MISC_DYNAMIC_MINOR) {
++		/* allocate free id */
++		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
++		if (ret >= 0) {
++			ret = DYNAMIC_MINORS - ret - 1;
++		} else {
++			ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
+ 				      MINORMASK, GFP_KERNEL);
++		}
++	} else {
++		/* specific minor, check if it is in dynamic or misc dynamic range  */
++		if (minor < DYNAMIC_MINORS) {
++			minor = DYNAMIC_MINORS - minor - 1;
++			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
++		} else if (minor > MISC_DYNAMIC_MINOR) {
++			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
++		} else {
++			/* case of non-dynamic minors, no need to allocate id */
++			ret = 0;
++		}
+ 	}
+ 	return ret;
+ }
+@@ -219,7 +233,7 @@ int misc_register(struct miscdevice *misc)
+ 	mutex_lock(&misc_mtx);
+ 
+ 	if (is_dynamic) {
+-		int i = misc_minor_alloc();
++		int i = misc_minor_alloc(misc->minor);
+ 
+ 		if (i < 0) {
+ 			err = -EBUSY;
+@@ -228,6 +242,7 @@ int misc_register(struct miscdevice *misc)
+ 		misc->minor = i;
+ 	} else {
+ 		struct miscdevice *c;
++		int i;
+ 
+ 		list_for_each_entry(c, &misc_list, list) {
+ 			if (c->minor == misc->minor) {
+@@ -235,6 +250,12 @@ int misc_register(struct miscdevice *misc)
+ 				goto out;
+ 			}
+ 		}
++
++		i = misc_minor_alloc(misc->minor);
++		if (i < 0) {
++			err = -EBUSY;
++			goto out;
++		}
+ 	}
+ 
+ 	dev = MKDEV(MISC_MAJOR, misc->minor);
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 7315f643817a..5a5d27284e0a 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2488,6 +2488,17 @@ config TEST_RHASHTABLE
+ config TEST_IDA
+ 	tristate "Perform selftest on IDA functions"
+ 
++config TEST_MISC_MINOR
++	tristate "Basic misc minor Kunit test" if !KUNIT_ALL_TESTS
++	depends on KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  Kunit test for the misc minor.
++	  It tests misc minor functions for dynamic and misc dynamic minor.
++	  This include misc_xxx functions
++
++	  If unsure, say N.
++
+ config TEST_PARMAN
+ 	tristate "Perform selftest on priority array manager"
+ 	depends on PARMAN
+diff --git a/lib/Makefile b/lib/Makefile
+index 773adf88af41..631d73f96f76 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -68,6 +68,7 @@ obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
+ obj-$(CONFIG_TEST_IOV_ITER) += kunit_iov_iter.o
+ obj-$(CONFIG_HASH_KUNIT_TEST) += test_hash.o
+ obj-$(CONFIG_TEST_IDA) += test_ida.o
++obj-$(CONFIG_TEST_MISC_MINOR) += test_misc_minor.o
+ obj-$(CONFIG_TEST_UBSAN) += test_ubsan.o
+ CFLAGS_test_ubsan.o += $(call cc-disable-warning, vla)
+ CFLAGS_test_ubsan.o += $(call cc-disable-warning, unused-but-set-variable)
+diff --git a/lib/test_misc_minor.c b/lib/test_misc_minor.c
+new file mode 100644
+index 000000000000..bcec3fb1c46a
+--- /dev/null
++++ b/lib/test_misc_minor.c
+@@ -0,0 +1,67 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <kunit/test.h>
++#include <kunit/test-bug.h>
++#include <linux/module.h>
++#include <linux/miscdevice.h>
++
++/* dynamic minor (2) */
++static struct miscdevice dev_dynamic_minor = {
++        .minor  = 2,
++        .name   = "dev_dynamic_minor",
++};
++
++/* static minor (LCD_MINOR) */
++static struct miscdevice dev_static_minor = {
++        .minor  = LCD_MINOR,
++        .name   = "dev_static_minor",
++};
++
++/* misc dynamic minor */
++static struct miscdevice dev_misc_dynamic_minor = {
++        .minor  = MISC_DYNAMIC_MINOR,
++        .name   = "dev_misc_dynamic_minor",
++};
++
++static void kunit_dynamic_minor(struct kunit *test)
++{
++	int ret;
++
++	ret=misc_register(&dev_dynamic_minor);
++	KUNIT_EXPECT_EQ(test, 0, ret);
++	KUNIT_EXPECT_EQ(test, 2, dev_dynamic_minor.minor);
++	misc_deregister(&dev_dynamic_minor);
++}
++
++static void kunit_static_minor(struct kunit *test)
++{
++	int ret;
++
++	ret=misc_register(&dev_static_minor);
++	KUNIT_EXPECT_EQ(test, 0, ret);
++	KUNIT_EXPECT_EQ(test, LCD_MINOR, dev_static_minor.minor);
++	misc_deregister(&dev_static_minor);
++}
++
++static void kunit_misc_dynamic_minor(struct kunit *test)
++{
++	int ret;
++
++	ret=misc_register(&dev_misc_dynamic_minor);
++	KUNIT_EXPECT_EQ(test, 0, ret);
++	misc_deregister(&dev_misc_dynamic_minor);
++}
++
++static struct kunit_case test_cases[] = {
++	KUNIT_CASE(kunit_dynamic_minor),
++	KUNIT_CASE(kunit_static_minor),
++	KUNIT_CASE(kunit_misc_dynamic_minor),
++	{}
++};
++
++static struct kunit_suite test_suite = {
++	.name = "misc_minor_test",
++	.test_cases = test_cases,
++};
++kunit_test_suite(test_suite);
++
++MODULE_LICENSE("GPL");
+-- 
+2.17.1
 
 
