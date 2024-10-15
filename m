@@ -1,129 +1,126 @@
-Return-Path: <linux-kernel+bounces-366195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA5599F205
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:53:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4591199F20F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF061F21AFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:53:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D65A1B224F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC271E6DDD;
-	Tue, 15 Oct 2024 15:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3936C1EB9E6;
+	Tue, 15 Oct 2024 15:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLLgjTc6"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YopLdicK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF2D1CBA18;
-	Tue, 15 Oct 2024 15:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860D11CB9EB;
+	Tue, 15 Oct 2024 15:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729007625; cv=none; b=eiq6VOJlfBC8rPCrWoCVpoYz8gOAElIiVRyAOWd4Jq81PPoO6xwMYcV8Rnb0VBZlYnHgYMrDewmxbYeuZRQRa+DgIhnuRJBRHfIO0tYUoRFQZZmMcZhrmDqUOJCPbpo8pnz1lWYw2eQNgvgON4nnd0vLdQcKeU3T1dREPooIEhQ=
+	t=1729007773; cv=none; b=Gu/8d5x20XseXsg2L8tXOI4XNNaST+B4d3m2kz3Rip2ZbIDqHjbKVSOEuopozfx57OChX1aKJ5EEIaC0ZQ9UG8NXZk+229mPgN+hdCn0YgFJo7MgErMxrRfIxZPjd/vp4Scft6cwvrUMjG27Haamzdg3Rq6kS5ifHXFuItr+jm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729007625; c=relaxed/simple;
-	bh=XCroxmP16g5LieWOzyd0XevG9tSkSKSKPsUmqqxthxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cmep0PjApc9m2UUrcEyg0dEP1FPEJ8+1THZtenIIKdDecr2OXKFCcS54u+fAvydlEeq9ul3BPN3kqOtqQKUFSuyHJRp8ItIV+sBGYYJ04V2yKgbIwcNUcmHGITiNfDwXkCVO55ArP36/MLogsLuftAkxU2o/qRc7PFnA87KZaCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bLLgjTc6; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso69748211fa.1;
-        Tue, 15 Oct 2024 08:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729007621; x=1729612421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XCroxmP16g5LieWOzyd0XevG9tSkSKSKPsUmqqxthxc=;
-        b=bLLgjTc6BAf2Z2Y+cPREeoK00ZmFlXwpvXAAe8rkB5F6UIAlx0CLujKfyjw+RlgKeH
-         ouiCQtIM2nQ2MogzV3Wbwtv6/5/9aOeTe1/jntWICS2KP3XG2aBNRZsIB7hEqY/JABuv
-         oyPuiEvdZndS5hixfUicquCJqtbdD/lox3Waf/zuJBjbb/xRyTk03mz+E32ScCtfs7sg
-         a+SXPb5fLBqZ6eiU9fAGGZsDVAm1mnOM9GZ6ONMEBRrpxACGINuKoQFx4h1sdueYifyL
-         6Qa1/WkejMdPj4SU6sVVuDGwGVHX9ORANUBbqms2n6mOAwXRDAOvExCttOXsATuR9/ic
-         Nrug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729007621; x=1729612421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XCroxmP16g5LieWOzyd0XevG9tSkSKSKPsUmqqxthxc=;
-        b=KGnm42Sbcej4JrL9wTMHMqkqQwD+Y1wKwaUAoEUwjXx1TwhlHj+kUdPKWpBp1meDeT
-         a1eFtktb1fK6Yvqr7/ZGJOhuOIwA1NWciZP3hGLeZM1rY7ZCEwxQO50/POGBYQbDuust
-         Ss77yROn/7xnM+LCq10TuIqy8YCP1nuS9ba2UXD0qD9HtwDR1iGl0bZueIz1cF4K9hrX
-         RYXT3Te17NdGlWafW0GDMH7sEQTzk+Ltcq6kJJqExRIro5fWfGVnrxelsObnthukDuee
-         zzauCCn5IpOw5JugO0Jwg+Xpe/WLaEFaXyWHuE+qJTWfO/8EfL6kKeX2xI4L1cSCVi7x
-         88hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWiRnsVjTY1Nu6QyHfSLxYyuRNt/cxbroi91CtURKxMoXOWek5A3Y+IalrqgVCC+oUnphzN4buJtwQUQOgRMc=@vger.kernel.org, AJvYcCUZOyw0SWfdS8q0Suw0pClfl5HOLE3fQau0JwuJKfeogYwGeIX3IpxWIhYuntkhEvXL8HDTQe6mKeasUSaY@vger.kernel.org, AJvYcCUw9dJ0ov5EqJcvDG7fAMSYST/eIlndjtmbzVErcGtAPxKU4SVbvErHGUVz21xxWcUFdwgW1ah0M+uVmZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCYmmGGjmHKOQtJgDVe3TlwQ4woaQTsDMxUeLGSESvysAdJjzH
-	k4unaO2oKcGodSDjdaKR4PTZyoJFHFFfvwNxF6ed/Og75uf9taQIIybXfi2HGmDKGbXco+c61/i
-	0haircQJVSG59fROOqltAhViSzu0=
-X-Google-Smtp-Source: AGHT+IFft0vihb1P44brRlcFMJA3m9oUaknSbFYSlrH+loum+22/xxBSO2MOhvQthOnOH8U8tjzeAS/ZcjaFN1xOUKk=
-X-Received: by 2002:a2e:8397:0:b0:2fb:3df8:6a8c with SMTP id
- 38308e7fff4ca-2fb3f1cf79cmr53366921fa.23.1729007621172; Tue, 15 Oct 2024
- 08:53:41 -0700 (PDT)
+	s=arc-20240116; t=1729007773; c=relaxed/simple;
+	bh=vIm5D+Nt5FDuEtC55CCb3arvTUdGz5H2q0PVfEd8fQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vBO7ULFtkS84YH76rnOGUgBi9AZDk6c3iROvcvNfeoSOeOpjwpbhyOulIuPbahFmHt/xstTbCSI16t29+RIVuFxt+FKxPDI3IA3nuLc9SXXn6Z8oJoi4EC7GK+g6Kj4ZYaiimNFgIQu3Q+0pORJ8tCMcWjXSFz1sZzcMBnHAABU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YopLdicK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2EC8C4CECF;
+	Tue, 15 Oct 2024 15:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729007773;
+	bh=vIm5D+Nt5FDuEtC55CCb3arvTUdGz5H2q0PVfEd8fQQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YopLdicKA9pmmyomjRmvMga2ZE8Wj+Sc7nsg//dFZVw7KA3GBJPjJ7wUYMnRcC1Q6
+	 tKpSlqzNEoDkTVddCXorIGjYh0M6WH6K+x17WnlAUFsx4IhenfuhsjwN0BCwPP+yTc
+	 6D86BmjIuQGN6d5w9SJn0ZPMgRQxDhYb9RFJ66hUuexEu15RSHEBXisYevgQNc948m
+	 qKtTS4wyA3fAsEjbovZSXn/oGJmb9Lskmd5L/0EUcy1FIyMgkO2u1ooGJAET6jFUEc
+	 ZqG8bQpLRWg34ko5taTTAz5j7/qZ4tOHLmRZ6ICqbbnONFhH8ZRa46rs3dY0sqktkK
+	 +NAT53tOEHdBQ==
+Message-ID: <713434a1-98fb-4e7d-b3b2-5bf4da99d615@kernel.org>
+Date: Tue, 15 Oct 2024 17:56:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
- <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
- <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
- <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
- <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com>
- <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com>
- <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com>
- <CAK7LNARg=ZvD14ARKw40uk0XNfE5qgWqsrM6H4jBJu0m5XYCWQ@mail.gmail.com>
- <CANiq72n6zkCZdUJ0A8enLW3BgmA_=eJKgDKwNCfs-q3dfeR2BA@mail.gmail.com>
- <CAJ-ks9==6mi7SF5rTR=YouwC6RwktJftqXHqhsBcHNTWxdbfig@mail.gmail.com>
- <CANiq72nBYswZs_m9Ky3KKNz_WmHrsSoRDJqcuHGt2WpvUogtqw@mail.gmail.com>
- <CAJ-ks9khX7Ha4iGWOkbHeXzJLPisE9r=+q54Z9HMQkojR=-a8Q@mail.gmail.com> <CANiq72=mUeMYvgfQVozr363juCuKmMVNx_13dj+q=3KKJ4DeHA@mail.gmail.com>
-In-Reply-To: <CANiq72=mUeMYvgfQVozr363juCuKmMVNx_13dj+q=3KKJ4DeHA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 15 Oct 2024 11:53:04 -0400
-Message-ID: <CAJ-ks9msDK9UAK5Pv2-TVWXv1-xYD3L0J=JKupN_Z5WW8VrX=g@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>
-Cc: Daniel Gomez <da.gomez@samsung.com>, rust-for-linux@vger.kernel.org, 
-	Fiona Behrens <me@kloenk.dev>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 1/8] spi: dt-bindings: Introduce qcom,spi-qpic-snand
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, manivannan.sadhasivam@linaro.org,
+ arnd@arndb.de, esben@geanix.com, nikita.shubin@maquefel.me,
+ linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org
+Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
+References: <20241010070510.1504250-1-quic_mdalam@quicinc.com>
+ <20241010070510.1504250-2-quic_mdalam@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241010070510.1504250-2-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 11:30=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> If a trick still requires a similar amount of changes to mainline,
-> then I think we should go for something better/more proper, i.e. the
-> idea is to minimize changes/complexity upstream, after all.
+On 10/10/2024 09:05, Md Sadre Alam wrote:
+> Document the QPIC-SPI-NAND flash controller present in the IPQ SoCs.
+> It can work both in serial and parallel mode and supports typical
+> SPI-NAND page cache operations.
+> 
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> ---
 
-In that case v5[0] is probably the way to go?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On Mon, Oct 14, 2024 at 2:45=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
-> This no-clean-files is meaningless and unnecessary.
-> This line exists inside the "ifdef CONFIG_RUST" ... "endif" block.
->
-> no-clean-files is only used by scripts/Makefile.clean,
-> which does not include include/config/auto.conf.
+Best regards,
+Krzysztof
 
-I see. Was it necessary before this patch? Looks like it came with the
-initial rust support patch.
-
-[0] https://lore.kernel.org/all/20241010142833.98528-2-tamird@gmail.com/
 
