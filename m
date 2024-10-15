@@ -1,116 +1,86 @@
-Return-Path: <linux-kernel+bounces-366395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CDA99F4BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:02:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DE499F4BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDC79B22653
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BA11C211BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4772D206E74;
-	Tue, 15 Oct 2024 18:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561271FAF1C;
+	Tue, 15 Oct 2024 18:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="Z0wZssuL"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+8XGD9b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB6B20FAA9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5E91B3951;
+	Tue, 15 Oct 2024 18:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015253; cv=none; b=szYfS+huX/HhcpjuW1dZCybbfPG4zDAWMOwQ5uoRzZ/FF81ef1vD3RpNxK4RaJOpcKAXCfmfeh5JNjhLLflr1pwo3pDOLLcecc+IPHTf+LMKoX1QVK0l/enDlN6ufrtpAmoBvEBAMaes8qL4ZENjySemsSToQZN/mugd4QGqVRU=
+	t=1729015316; cv=none; b=bJ6S4vwSXghYYBEy2opy4hOtxja3BCsxVmvE5FFd/1CPd9nfy1B7n2Pf2tXHFX6HwKJxeRapT2Fm4zNVlX0tCn9zf64/f9zkA34nCx51eBxJ1tk7Fcn2blu5ax9DL4Fm5jQOdatG+GXn5kq4+UIW1l4SrZuJa1LJlLEOZyOmS5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015253; c=relaxed/simple;
-	bh=5Sh7kJ87tPc/aZUgjzlccOuvyWIxgKzdoM+PZcxJTHE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SD/vst43ON6ewIe5UPlTC6idohmh7S+WxcpKhMHjSbrXQahjezSkGcDMqwxi/uEvhtxk4jTBgiXwqgYSzC0QeFs7aMzPKHUYF4EA8oA8Qak9oENs9yZ1oNdHeBF2lFC54InaKjvzEx/z7+8NMXsqTB2Sg61vCw02b5aEQPXR+fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=Z0wZssuL; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539eb97f26aso3341539e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:00:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1729015249; x=1729620049; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+PcYrNsbw6IHjYMTuNLxXkYIY5QAui2/Ey124pf7Vrs=;
-        b=Z0wZssuL6XDbaR7zjRVOQiAV7WQPWBoHXOcQjdtRYcg9ch5f3M0SZCxCKDZFQIWD9+
-         GGe/kKUBxK3WQNcO6kQ2c8mCSTfDBjYhJP5+jbnONugmRmehvD766VMOk55rJ7hTI46a
-         5A/pLXCVHsYGJqypRlxWm0fnCrd+/5hc10HfDmIsySKgVmq/Ik81o8sRiN199so4Ey9L
-         sL0KaQjmCkEODMldJh3S5xzZHt547Zjm5ySmTuOhwG66Z93yxh+7gbNny355dV7N2CSZ
-         S7DbkzJ+RE3HDnpiXrpNOqnStOWsW479/arkYhH/uEqVgKfk7ccdwgrrQsrJwmfFDAp2
-         W/Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729015249; x=1729620049;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+PcYrNsbw6IHjYMTuNLxXkYIY5QAui2/Ey124pf7Vrs=;
-        b=NCyIkLKktmOVlQP+uIY9R3D/+3rLC+x3YXIgL6lEDaoGvWCpl+yTJnLes4EyCzTmXu
-         A+T1d85fw6wzXV5f+ENAg3FKfMGN4Dfg5ykqfHylV7JWNJWSJvDFb9vGh65s89iYbzZn
-         AskE5sn0EO6LO5r+jzyo+eTlw72nS3nYm37KArF0wNKPDJwzZXgpJEvwLSurxnkq+n0z
-         fxHvSBFMcgXknj2Nld8BNH6ZgoZ0WLtAf7SOwK8jfU/NuxcvVgE1a3IXUPm8Daa0+ESf
-         KVFu5Ov5BloXbGkLvOoPQFWjzU1LxcKGBo6L1OBxV8tztAFbNtkp9qRz94ube9ubzplZ
-         dNFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Xm6UG32nyRT46Ly4dOmLsLyEBbH9JONZLtHEzsvYxJBLD7Qxyks8F3CbpCRds+rC7piEqGdx1jkfdJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSnPj/iaaEwBBZtB95q6xHocBrFbOlMSssyW20cZXEE/PxFHpv
-	qE7fIn8p9NiKf+7HKUVQO6GG4qmBP1k+aXNvRoHgj0o1zeA1E4UydIKS06QChjg=
-X-Google-Smtp-Source: AGHT+IFMXOsAcBZZWVStKfE7LLIYDhStyMbY8vO1MusS7LNjj6hRuLd7x4EWHUDsYOZy2yuZG6gRsw==
-X-Received: by 2002:a05:6512:3d26:b0:539:e67e:7dbf with SMTP id 2adb3069b0e04-539e67e7e4dmr4997923e87.61.1729015249316;
-        Tue, 15 Oct 2024 11:00:49 -0700 (PDT)
-Received: from blindfold.localnet (84-115-238-31.cable.dynamic.surfer.at. [84.115.238.31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f55de95sm24449795e9.5.2024.10.15.11.00.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 11:00:48 -0700 (PDT)
-From: Richard Weinberger <richard@sigma-star.at>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Richard Weinberger <richard@nod.at>, upstream@sigma-star.at, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, andersson@kernel.org, upstream+rproc@sigma-star.at, ohad@wizery.com, s-anna@ti.com, t-kristo@ti.com
-Subject: Re: [PATCH] rpmsg_ns: Work around TI non-standard message
-Date: Tue, 15 Oct 2024 20:00:47 +0200
-Message-ID: <3518312.cLl3JjQhRp@somecomputer>
-In-Reply-To: <Zw6suCNC62Cn4fE0@p14s>
-References: <20241011123922.23135-1-richard@nod.at> <3194112.zE8UqtGg2D@somecomputer> <Zw6suCNC62Cn4fE0@p14s>
+	s=arc-20240116; t=1729015316; c=relaxed/simple;
+	bh=HA8CX7ZDuJjXJbrLWnHGcY5BUOIC9mBPvBR99OrS7hc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GOCP5rC4xWhH1XuZSA5zEh5QoArBp6p6Jn9xZSt0BWBtQ6Y5tGQLMhsX9/TI4AB3xE6y+TMjoH3bYQEudYI5Zt6fXzc+pyCVhSlnhxLycO9Lbq+sb47/WRLpC1paqraIMRgiv+HM3/E7TDdEPTj4i+ao59W1TuOAiBGEoQbnoFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+8XGD9b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5F0C4CEC6;
+	Tue, 15 Oct 2024 18:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729015316;
+	bh=HA8CX7ZDuJjXJbrLWnHGcY5BUOIC9mBPvBR99OrS7hc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z+8XGD9bWJyRfKlUy0OWXJvcLuBZEf35qUoyP/VOL6JnFJ8UuVqoEWETshnLfB+Ys
+	 np00WqYiSHMVvGwKWNX/GtJfsfTOi4Ek/OpugEE+jJ3M7jCf2swW3y82r0rHd5CI1W
+	 V5s32wgqCIvpKoJ8cyTp4Syb1KhPFtc6bStYVsjr+5AojkdHOpgJ1NnA/DfFSwfyhW
+	 aPLTjgrKhqfV45AJTweZQOL27gr8OH8RFfJ2GsqBDai8P6dSD8Cn/k3PMiZcLYYh4C
+	 zwHnBtmUQqaI2p5H+xlCLkFDnp/gytdBFUR+ztGZwXM9UV2L3i2EOaeqrT1SAA4DmU
+	 McFQW8/+JkuSw==
+Date: Tue, 15 Oct 2024 11:01:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Wang Hai <wanghai38@huawei.com>, bcm-kernel-feedback-list@broadcom.com,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ zhangxiaoxu5@huawei.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: systemport: fix potential memory leak in
+ bcm_sysport_xmit()
+Message-ID: <20241015110154.55c7442f@kernel.org>
+In-Reply-To: <0c21ac6a-fda4-4924-9ad1-db1b549be418@broadcom.com>
+References: <20241014145115.44977-1-wanghai38@huawei.com>
+	<0c21ac6a-fda4-4924-9ad1-db1b549be418@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
 
-Am Dienstag, 15. Oktober 2024, 19:56:08 CEST schrieb Mathieu Poirier:
-> > > In my opinion the real fix here is to get TI to use the standard mess=
-age
-> > > announcement structure.  The ->desc field doesn't seem to be that use=
-ful since
-> > > it gets discarted.
-> >=20
-> > This is for the future, the goal of my patch is helping people to
-> > get existing DSP programs work with mainline.
-> > Not everyone can or want to rebuild theirs DSP programs when moving to =
-a mainline
-> > kernel.
+On Mon, 14 Oct 2024 09:59:27 -0700 Florian Fainelli wrote:
+> > diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/e=
+thernet/broadcom/bcmsysport.c
+> > index c9faa8540859..0a68b526e4a8 100644
+> > --- a/drivers/net/ethernet/broadcom/bcmsysport.c
+> > +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+> > @@ -1359,6 +1359,7 @@ static netdev_tx_t bcm_sysport_xmit(struct sk_buf=
+f *skb,
+> >   		netif_err(priv, tx_err, dev, "DMA map failed at %p (len=3D%d)\n",
+> >   			  skb->data, skb_len);
+> >   		ret =3D NETDEV_TX_OK;
+> > +		dev_kfree_skb_any(skb); =20
 >=20
-> That's an even better argument to adopt the standard structure as soon as
-> possible.  Modifying the mainline kernel to adapt to vendors' quirks does=
-n't
-> scale. =20
+> Since we already have a private counter tracking DMA mapping errors, I=20
+> would follow what the driver does elsewhere in the transmit path,=20
+> especially what bcm_sysport_insert_tsb() does, and just use=20
+> dev_consume_skb_any() here.
 
-Well, I can't speak for TI.
-But I have little hope.
-
-Thanks,
-//richard
-
-=2D-=20
-=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
-=2DGasse 6, 6020 Innsbruck, AUT
-UID/VAT Nr: ATU 66964118 | FN: 374287y
-
-
+Are you saying that if the packet drop is accounted is some statistics
+we should not inform drop monitor about it? =F0=9F=A4=94=EF=B8=8F=20
+That wasn't my understanding of kfree_skb vs consume_skb..
 
