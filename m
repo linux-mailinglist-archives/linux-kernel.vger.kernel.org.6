@@ -1,65 +1,68 @@
-Return-Path: <linux-kernel+bounces-365484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2D099E30B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:47:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F7199E310
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1341C21992
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7783D1F22CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B08818B488;
-	Tue, 15 Oct 2024 09:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7551E0B65;
+	Tue, 15 Oct 2024 09:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VxIrK3AN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WQ/kbyGh"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC8F1D14FF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCB8175A6
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728985655; cv=none; b=RwB5AxvLafn/cws3NfHMqOiBCUNAZ0ZEz979Y4d4RzEmKNgXjusae9V+5Llw/wx4LWRrruzNSFpgA17BPfCFQQBy61zI5rqf1mSDZX/ADY/e+QzcsBYx/Fyj/FVTdxepaVrN7uF4PsfVKTnGMRRAiixih/NJt9YORPj0oGi7qVw=
+	t=1728985736; cv=none; b=EVDj0Gxw1VtStyLkwLGx2IJC5IN7W3LdqriL4v62zqUqwSl/p2yl5Hvel4qdbc6PcAD7wWx/Epy6YLkcz0XhtvyXIhNqQ+PbPqt0MjYo9fLUwuBFQpe9xv2A+PuOalirzBhxVhs3A4haIoX+Er3PFC52NtuJFs1FWzULmonF6tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728985655; c=relaxed/simple;
+	s=arc-20240116; t=1728985736; c=relaxed/simple;
 	bh=ZJwWAQdxpAMShMB9x4KWTYOYFcgKfP3wtwMMUuZGdTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pVELZTsUfE7i4y0pvO4EE3TFou5np0MUm3PbRhRxwxpRIELvT2N1XODc5lmZwH6YQ727geE4+Ifpyn4E87dnWao9wLK+5r86Tv3zZZ7qG+NSXETJ8aLNRUV4wGLnT2zxyVTjQeMhihOZdbx1S6UVfkrI61Gh40fuBokLFSrYn9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VxIrK3AN; arc=none smtp.client-ip=170.10.133.124
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oerus/6JTK/tnzxzwCbizIEfu774n8q3mT/wGXbqVhupnjlVCuxz/OB/+aQlZlvWxcOeHp9yUOIFygWousJW4uv4zsWRdxkFKcqBQ9IgCocelnMBiEikalLnfpOc897j53qOBt2V0msJ2y0jD4sgpdFIbaBp+Kk9mYPguS89ZB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WQ/kbyGh; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728985651;
+	s=mimecast20190719; t=1728985732;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
 	bh=qDoQ6b8OVxyFQCqH0buKliXJ1kdplRKQIlq8njgQGpU=;
-	b=VxIrK3ANAEa4UGWyoseKGAJVHeClT0wVR33oNlds62L2AmMQpQsZvSSx9Z2j1kRYffO3Mb
-	cj/BklebrenGXdOjhdzZ2pjODYMno6TPeoV/tv+/AljYfW7zZCLYhFt2YuSGsZuh8gT3af
-	hDvk4bBYmraUIph4OiU4+mLw0F+q04E=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	b=WQ/kbyGh5CC7kJ0zQ+bp0h3QAJ11y20kgsLDFb2Kl4SXj5XKvVRzyv4cSEnZX9vtXRQWnP
+	QbMw0DU+nwATnNm1BzedU3MVU0z5zAZXv3kVCe9XReMvkjAaQb8NGXB0FimVZ+gdQ4zLcN
+	598vwzXmdW1wZDarwi6W47H6vfWRWqk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-664-b9w3C9HaMbSiPV20cMm2eA-1; Tue,
- 15 Oct 2024 05:47:30 -0400
-X-MC-Unique: b9w3C9HaMbSiPV20cMm2eA-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-248-Au_cok0SMzm5VXSl8Qm5KA-1; Tue,
+ 15 Oct 2024 05:48:49 -0400
+X-MC-Unique: Au_cok0SMzm5VXSl8Qm5KA-1
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 116F019560BD;
-	Tue, 15 Oct 2024 09:47:29 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C72831955E70;
+	Tue, 15 Oct 2024 09:48:47 +0000 (UTC)
 Received: from kate-fedora.redhat.com (unknown [10.39.192.47])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 605EB300019D;
-	Tue, 15 Oct 2024 09:47:24 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EB0DE3000198;
+	Tue, 15 Oct 2024 09:48:41 +0000 (UTC)
 From: Kate Hsuan <hpa@redhat.com>
-To: hpa@redhat.com
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
+	linux-kernel@vger.kernel.org,
+	Kate Hsuan <hpa@redhat.com>
 Subject: [PATCH v4] media: Add t4ka3 camera sensor driver
-Date: Tue, 15 Oct 2024 17:47:22 +0800
-Message-ID: <20241015094722.220990-1-hpa@redhat.com>
+Date: Tue, 15 Oct 2024 17:48:08 +0800
+Message-ID: <20241015094808.221215-1-hpa@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
