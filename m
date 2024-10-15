@@ -1,154 +1,117 @@
-Return-Path: <linux-kernel+bounces-366036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A0699EFF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF7899EFF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C411F24B47
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F002C1C227FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F5B1AF0D4;
-	Tue, 15 Oct 2024 14:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF4413E022;
+	Tue, 15 Oct 2024 14:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6vjcvjW"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wQWy9uv/"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40071FC7C4;
-	Tue, 15 Oct 2024 14:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240A954279
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003541; cv=none; b=VMi59d+DGHERp5omRGzmDHTK+c/1tcOUM+lLhSR/ZRDv049dYtgJH3vpv6lDTMqQ68vmPQMgYykeNNOC+hrNqkzAZ5az7h8dJRr52N8buOP8452KQN6RUeoLLaA87iuusN+ocBgDVyVpLzVqXR2JSe5Sz8GtzmmG/KTN/16/Xus=
+	t=1729003566; cv=none; b=oeGXowyaDd7K/e0r1fJdyPP01oRX7Iuhld9GHGxhhjuGs/ReLgqTmJHP7j71iRoSgsNvedpQa9aHhWpUiFipuxz5bkiJvIlHGaupeRaxz1j6PD1IVY5/Y+3UuZzz7i8qKLKwInEw9AVEqyhIc3s7DoVxSubBUc+Bk/WE4P+Me9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003541; c=relaxed/simple;
-	bh=c36HbQs0gJpyQFG4AYu2BErUBXyc17mTB5ULEPC4y3E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oZDt0IYxmgTDVEdz9cWPI1+NObo7609fuprwTSnAstlnk/R2rn3OAq2s0neLI5zzliJuOX/2XrClBLcokaaWud20hV6XTmIPByk7OENv8fvRIKtbG1IdUD0o/RwXTc9jmdcQGn/YJ9zyWDb1vCVi+KugAnPLco9CfZ1bMLhtTOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R6vjcvjW; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20c77459558so43154805ad.0;
-        Tue, 15 Oct 2024 07:45:39 -0700 (PDT)
+	s=arc-20240116; t=1729003566; c=relaxed/simple;
+	bh=1bEhqwEHmxJs9+B05nsJYv9A3NKyJkdV9GS5A58QEEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gmwRG+fE3V7/3WFQcu96dBdqARICxsF5s3S3oB/HRK4SEmTVQFpO23iTIOW6qa4n834WsOcXjhcGVc2u5yz1eGVwHKm/dJIe7MMbFVVYuIWb+XRhXHf6S6PLOy2lkG0FKLvQeAaz36hDrqBcBXuFhyy3z8DHL5DsNbVU1OWr5Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wQWy9uv/; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso1905921f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729003539; x=1729608339; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1729003563; x=1729608363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ofgu3iXnCYSQ3sJFxlEFNmaN7sQ5lnXtot0dUpXtI6g=;
-        b=R6vjcvjWUPTOsFvw8T9GBv8TYGLY0UWwLyBdTeKV+mBtc5I+H8ecB5Fd1Lu58RjPIO
-         Eo6rBCZ1osTHMO80mQuCqUz3J51tQcl4Q4KRtRRo++0HqKiR4+B1VUzBKfKtA5RTPmP+
-         BH6Rq2e6VWvBTZUVLlUsnxS5dG50gdA0KovFKgkbEZ1QFwsVVrDb52dJWGJ9cstMVRhS
-         o6QC+5BI8ckltWSrpRTyCHkXzkHZuyPpGorYKLE3bKhyV/RQp313bNfi84Ri8Nnn7y2q
-         xEr10ugMTXJb4Ys+T8XdPiDZKCkX5ENpE7BdLDxihpRO9nD2BeoKNQi1/BhFXKgjBFDV
-         gA1w==
+        bh=1bEhqwEHmxJs9+B05nsJYv9A3NKyJkdV9GS5A58QEEw=;
+        b=wQWy9uv//SfRwrrDqH78SDvEnd0GeE85qS6kcu0mPJZ4gJE8hzQVp4KPb1dF+1wmnc
+         /C9iAHWIhoLqKATCEWCOB0UqML95jjZAymJXa4PqQPPLkngmcYHhmaf0spO5I2SYAVH3
+         aZbrdm8oNuhbip+uFTT5TZxPKUGmL/HcCt33hxnnAlJ3NOqv+X4J0ej+z5R8/2GqVOZt
+         vLFX9lHEKiTVBkZFvuY3zp2CyKJ36Tzgqg/uc2kJewMzrtCKHQ66RTH4B/pRqg3wBJnU
+         D5LoOFKXYl61rXNxZP6DTf7TnijraWex7iJ+5k6AsBXZt5mNNKkoQkKM8tlQaz20NllZ
+         6JsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729003539; x=1729608339;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ofgu3iXnCYSQ3sJFxlEFNmaN7sQ5lnXtot0dUpXtI6g=;
-        b=K2Sa9tO3Wh1QCCOh7wCWIoHKGsVLXnZs466YvrSRUNUbGdbq4O9XyNfAyA9ahGMgRa
-         w1/Vb1xclIk1MATvdqvsT3/6u0ZnXDmKZJOdfeJckIacOKq4r9w4ekWKhSWvsJgH+ag3
-         +FNuhMwfmqlzDDJROjiFHuRIp7KQj/gL8NPwOWt9AUrAxR7Kox25oSHRF2j0/adCDR+5
-         9KBb1NtMiyyctDV3ORhlSdLhhUwVYix/EjhyssKRg3IM6HvE6sO/zgsRrsXy5YLjGrhG
-         8WsanhxiyaygmsOp/yzKS/pniYO//wbqmCcixLQ9lNJfwNo/yRq07tO4qsmrXG3vcZeK
-         27sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw1QR2/W+UBX4Y1Ux+dof9HaQ/eY+GZ+yJtGPaSdwnsDJWzopQ2n62dpPWFvRd6iK/pzQ4Tf2bumaGAfdx@vger.kernel.org, AJvYcCWUwy0AiSP57Q06EVEM0XXZ4kImHStuqhLEdfDJ/nt5vprJowHxSOvG5Za4oywaDVDIOHzJFj0U+mSt2DoKWuc=@vger.kernel.org, AJvYcCXaBARHSOmiwVOSDFApLo9CRAoBRpmY7pt7C3+LeVmu093OljcwV5yN4U0zrpNXUrN8vguDRMQB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGVx324dg9EEM3hY8TeFmnmhaviA0Pq3Rnbf9DtZ5uNWY6Pnvl
-	aLreD3TYgPBALaDZlOESXWEuhvvHv99AcrEhz3Yo2QgzL3OJO0Ig
-X-Google-Smtp-Source: AGHT+IG8W36j/qtZDwW2WA2jb0i/BTgkc8ZJA0sEHueOn6qFxt+Kh7GFqBij7XyJqwymRVZNuB/RlQ==
-X-Received: by 2002:a17:902:da84:b0:20b:6458:ec83 with SMTP id d9443c01a7336-20ca144ea0fmr212260065ad.4.1729003538995;
-        Tue, 15 Oct 2024 07:45:38 -0700 (PDT)
-Received: from [198.18.0.1] (n220246094186.netvigator.com. [220.246.94.186])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6bc015sm1412742a12.19.2024.10.15.07.45.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 07:45:38 -0700 (PDT)
-Message-ID: <b7b9fba3-819a-411f-9e67-d5eec9e63eaa@gmail.com>
-Date: Tue, 15 Oct 2024 22:45:34 +0800
+        d=1e100.net; s=20230601; t=1729003563; x=1729608363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1bEhqwEHmxJs9+B05nsJYv9A3NKyJkdV9GS5A58QEEw=;
+        b=X5DyS5yJ0bb+GzS7nFWHhDw05MHFwIkYGk6Nz+mBpC0XrtCWcksZSqJW9xvkvu49kq
+         qjG5ga/4vBGkPUKTVbwhE3gvy4KcrDP7eh4x8kkC02iNKto8OSSb0xlbtXwZmc+ssPXE
+         hefuhy4lKym1EwLHMg6UZ+qwMiTuUP8EwqKvlpeP6ocx2e2wGzwi1n2rDyj2qmrAW5NW
+         xfPKTVQRr3cdo/+mRJ/z7+E3mkxyj0LLaOxaFy7Saz3MrLyQaXLAXPybseQGISWNq+tn
+         gFLfgMabJtUVJTRApCVB7Z3WbbHMDKEu7B4ljp/iyR6bSltn1QxeGqKwn57tRWzasw8U
+         fzQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVO1z4Oalg/7ZHiLw2WCP/tFVUs1bTb6CHYfIWIAJWQBXTljV3i+m90BxKPr7W4z0wTsKNbxcnYL/Z9bNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7frMQwRQxhIKfOub4ZpVQXdUMHT0xCT5yPdE9W/PGfP6WLn2S
+	Q3kIGq/gw4tnt2PyeSSwgqwE2evzSDeogXDgWEV+xJdTGpnnNjwqsPM6O+ZL8z3xCYbNj7zOzr2
+	yrYe7fK9wRSSZ9c2dj1lMeCDDiY+Dw9zARHwt
+X-Google-Smtp-Source: AGHT+IEK4Wl6/jw5iBhBo/Fx/Cp0uqUqlmPb/nuYJU9OSwXavYyNFlXi/fqkdToVUNxEJNnuM34srOxgnvxgq3tp3J8=
+X-Received: by 2002:a5d:584f:0:b0:37d:5359:1ec1 with SMTP id
+ ffacd0b85a97d-37d86d793acmr386815f8f.57.1729003563300; Tue, 15 Oct 2024
+ 07:46:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pstore: Fix uaf when backend is unregistered
-From: Zach Wade <zachwade.k@gmail.com>
-To: Kees Cook <kees@kernel.org>
-Cc: tony.luck@intel.com, gpiccoli@igalia.com,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, lixingyang1@qq.com
-References: <2bf30957-ad04-473a-a72e-8baab648fb56@gmail.com>
- <202410081019.0E9DE76A@keescook>
- <6077c924-f975-49a0-8ee4-4e481664ac38@gmail.com>
-In-Reply-To: <6077c924-f975-49a0-8ee4-4e481664ac38@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241011-tracepoint-v10-5-7fbde4d6b525@google.com>
+ <202410151814.WmLlAkCq-lkp@intel.com> <CANiq72nn6zv9MOD2ifTXbWV3W1AgiXL=6zTX_-eGL5ggLj4fbw@mail.gmail.com>
+ <CAH5fLghJrrq2nJu7S08bBg2sAjdibkZ4D14K9cqETafnr4CR4w@mail.gmail.com> <CANiq72kRiQvw3xWbMGRxcVJhHN0LMRa0RewxnkofVr=71KQvEA@mail.gmail.com>
+In-Reply-To: <CANiq72kRiQvw3xWbMGRxcVJhHN0LMRa0RewxnkofVr=71KQvEA@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 15 Oct 2024 16:45:51 +0200
+Message-ID: <CAH5fLgjFFmm-m8=4Qbad6X-EOjKfCytE3ncevO1u-sSn-jJF9w@mail.gmail.com>
+Subject: Re: [PATCH v10 5/5] rust: add arch_static_branch
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	oe-kbuild-all@lists.linux.dev, linux-trace-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 15, 2024 at 4:44=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Tue, Oct 15, 2024 at 3:07=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > Thank you. I was able to reproduce the error locally. It only happens
+> > when CONFIG_JUMP_LABEL is disabled. I've verified that this fixes it.
+>
+> You're welcome!
+>
+> By the way, if you end up sending a new version, then you could
+> simplify to `ifdef CONFIG_JUMP_LABEL`.
 
+Too late! But I can do that if I send yet another version.
 
-On 2024/10/9 21:36, Zach Wade wrote:
-> 
-> 
-> On 2024/10/9 1:23, Kees Cook wrote:
->> On Wed, Oct 09, 2024 at 01:10:14AM +0800, Zach Wade wrote:
->>> when unload pstore_blk, we will unlink the pstore file and
->>> set pos->dentry to NULL, but simple_unlink(d_inode(root), pos->dentry)
->>> may free inode of pos->dentry and free pos by free_pstore_private,
->>> this may trigger uaf. kasan report:
->>
->> Thanks for this! I need to double check what happening here a bit more
->> closely, as maybe some ordering changed after a43e0fc5e913 ("pstore:
->> inode: Only d_invalidate() is needed")
->>
->>> @@ -316,9 +316,10 @@ int pstore_put_backend_records(struct 
->>> pstore_info *psi)
->>>           list_for_each_entry_safe(pos, tmp, &records_list, list) {
->>>               if (pos->record->psi == psi) {
->>>                   list_del_init(&pos->list);
->>> -                d_invalidate(pos->dentry);
->>> -                simple_unlink(d_inode(root), pos->dentry);
->>> +                unlink_dentry = pos->dentry;
->>>                   pos->dentry = NULL;
->>> +                d_invalidate(unlink_dentry);
->>> +                simple_unlink(d_inode(root), unlink_dentry);
->>
->> But on the face of it, this does solve the UAF. I'll double-check that
->> this isn't a result of the mentioned commit.
-> 
-> Hi Cook,
-> 
-> However, I think a more appropriate solution to the problem here is to
-> check the reference count when uninstalling the mount point.
-> 
-> At the same time, the test script is attached:
-> #!/bin/bash
-> modprobe pstore_blk
-> blkdev=/dev/sda2
-> best_effort=on
-> mount -t pstore pstore /sys/fs/pstore
-> sleep 2
-> umount /sys/fs/pstore
-> modprobe -r pstore_blk
-> 
-> Thanks,
-> Zach
-> 
->>
-> 
->> -Kees
->>
-> 
-
-friendly ping.
-
-Hi Cook,
-
-How are you doing? I really hope we can solve this problem.
-
-Thanks,
-Zach
+Alice
 
