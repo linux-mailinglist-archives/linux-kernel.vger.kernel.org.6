@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-366385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E3E99F494
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:59:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABF399F4CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656B51F22FCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA521C2254F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D7F1FAF1B;
-	Tue, 15 Oct 2024 17:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883361F76C6;
+	Tue, 15 Oct 2024 18:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KzwVth51"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FNYIJMR6"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1B21FAEFF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535FE1B3950
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015144; cv=none; b=GXz++MVimk47jF0a+nEwa6rcAFHyHq5H/rpTUUxAZtHA0yIquH8OLvMuNFF71GKTXmlS9iK71cxfz9WQQE3jUIME6AZrDpDNNUy4dmPto4k28V0o86rDd+CrZ4Ul5lglUrqL/a+ER3WTko86q7t2kVHUpzbfoVOuDubB1PcuNdk=
+	t=1729015489; cv=none; b=Oh8S8VohRXdVimMgKAvhBqJd/wH6DHXDF114CebGZFugKp1E6ynXTp+AoO35GKbdWNUe8uTQPiRi6o9o1O+CUkTo+xLtfkxqcdJAqO3+B52/ixHvmuR2qiyh66DFHgvi0u3UBixJ5WS8GJPWrbzyJG3HW1pumURK1doLvGWa3lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015144; c=relaxed/simple;
-	bh=d+ea8ccZvUXgrS7wSLnvXQm/IOSNZR9uPNXAF5KAZsk=;
+	s=arc-20240116; t=1729015489; c=relaxed/simple;
+	bh=8xSHcy2PuAPSvZBu9Eml4zzV7wYxfR0IjepjU1wiaRw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tU+Wn7ogL9hi1QcWMo44kZues79umy0D7jERWe9R+68uX5GuvNhItj70AQLpwW2XM7TmO2FXSDyG9o+dXUAPSH/UY5W6oUvyHLdYV9xYlkcqqmSXGEINAqhWeMKDBm8IwS8mGhE+NrYlApdi1WD2sdOOQXWHHH+K1qofAavwBi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KzwVth51; arc=none smtp.client-ip=209.85.167.44
+	 To:Cc:Content-Type; b=V10y79KA6YQnqnn2tb47RLzJ5I878kuoLokabbedyRGOGZnFW+8ti4qxY4KbVwwkOvWkr/ME87MM2ETTNJ/OGQsR0vbdY+9S+39K4FSxeHbU9MDcAexTMCoP8b26bdB6ugP726ltdX1tagU9VqSygsS/mhl2yJqF2WQfW8kP1p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FNYIJMR6; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f2b95775so3272390e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:59:02 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso388554166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:04:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729015140; x=1729619940; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1729015485; x=1729620285; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d+ea8ccZvUXgrS7wSLnvXQm/IOSNZR9uPNXAF5KAZsk=;
-        b=KzwVth51Sxy/l4Z+qzzQsabdaA7hTwk6TxVEBKjBFYxc0KzwT/cYK9c/2jcvfmf9ce
-         mO3rroUCsCrY8QG7YyCa5k9Wc9PsUU8KM6Xo8fpwqQvuIx3W5tgmPO44R+L4L5jDABvi
-         38nI7jLnJime/8mf90JftUTv4H9/efIcDZ/6E=
+        bh=FQgdud0CKtJUsCxMGehxz9oQ+EPp7xHVsXi0/0jf+Z0=;
+        b=FNYIJMR6BRji9GCx0ubUTbltj4BnBPuyETOpy3kcxN+v1NSf75S+lYsSs8ycFOccVF
+         8JtsOswR28IBEiykNawaoWZT0KgZmEkjyyFmdD3YcI1V/Ril45wDY/T5JLJDEXSQa/1H
+         CqbeeM2qaw9GPki1GGhIiiVDgYfjWvrVvI2vY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729015140; x=1729619940;
+        d=1e100.net; s=20230601; t=1729015485; x=1729620285;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d+ea8ccZvUXgrS7wSLnvXQm/IOSNZR9uPNXAF5KAZsk=;
-        b=TlJOs44NpKkn7ioyS82h133HZEk7WX+H/2SuJY1KKSEyfT/vLHvdYMW2Rtq99dvlwW
-         GnQPGknCJkNsd19czpinZBAeHeD5fDFKFUWDF8z1TPuT14GyakoYsLgp9bVo/doNxL3F
-         A84gCpiIPWtPnpr8VhO0I3/Tin/teDTR/uXDuGPEtNuFcXty2RFLFA/t3/t0od1JBQ1a
-         MqQuSwlylj9I8PQywv7RKtB+erZSnXiMaFVlmWV2qlSu4XxCSgyG2FGHRK4FUK+25IeJ
-         JcMI29a9yquEiqVOE6llLZIlXC9rnTW16LLfjPNtaMsae5Z1H1AEyaTXEtYz13wTy68l
-         v88w==
-X-Forwarded-Encrypted: i=1; AJvYcCUDb3UZnkoQQsAnjNYUtq657irnEygxnXUm8m2PK2iBHMX1Fevhr5+ZPP8ejrNhFeC7pOy4lXgbSC8CkDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yytjj4VypChwL0FzksjZx/zR32dFh4r0L5lj4Rd0QIFJZX27ClJ
-	DbsalNvwxNOdUOIYI0LTK/5TmQg/gsTIyW4jVP8Xn21SMtf/a9ocI0CQ3m/9QPxZaynscDQLkQx
-	Yfa1/
-X-Google-Smtp-Source: AGHT+IG7AJw+61o68Q5vBxNqbMZIK62Bo3FbiSAVThdeX//8Z15jN1WbFGmBbHTI1QifoLpuEXBm0Q==
-X-Received: by 2002:ac2:4c46:0:b0:533:483f:9562 with SMTP id 2adb3069b0e04-539e571d3c4mr9073744e87.42.1729015139533;
-        Tue, 15 Oct 2024 10:58:59 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffb1ebesm225668e87.105.2024.10.15.10.58.57
+        bh=FQgdud0CKtJUsCxMGehxz9oQ+EPp7xHVsXi0/0jf+Z0=;
+        b=QSKmj0Ys5p570jHiFtsqEOpov6xyugKOCKdQ+dn02GlDNBygwJYbDL7dc0Peyf3zL6
+         LuRlpKau5OwZGNpI0u6Nf3UWCmwjMLM8f98IGPXlZQwmP5bTAvmYWFwONK+6qULuHDVI
+         c9LGPdy7sL3RcxBf9fHJ7NW9u9ICqt16GhOI/8UlSGiVB3o4CoRkQhTP1iA+GngzLnnr
+         zGiqp565YDEEwIyLaBdEJm1D7UxF4NCwJVT7fJkZ3EZIhJGpHDMhgirGTvtkQ2EW+SOE
+         AlqJLQFU5lrl+PrAYy9Wyf/jSVy/ynnj9RvHZ9JRyI3mml7M8YJ9yaQqFTrchtRm1kcM
+         wqxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGROI/D1SfEG+PQycI0JXteb7n5bCCJbp1jIf/ss1pSv7/tmbS8QJQr4SAkTMoIpHG/4DarH6oHGSiLxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN9IEYOz7OLwbC5lx2RBVc2YNnypwYaQ8WAz9ev2jQDHwlLT0/
+	mD05rusGsP5EUik7zvzbNlC/R4SYJTEruO9yvogxhUMz/kOalnehpXuwkJC1ecLP3wtmRsv70kz
+	qxNr/
+X-Google-Smtp-Source: AGHT+IF/iSjcVApUiOtaoy0/OAZ/w/DZS3bidlGj6RhrUeMlR7Z2fo6A0DQK1ZV5MChSXBYHxIqEPQ==
+X-Received: by 2002:a17:907:e609:b0:a9a:1094:55de with SMTP id a640c23a62f3a-a9a34c7d7ddmr95154766b.13.1729015485299;
+        Tue, 15 Oct 2024 11:04:45 -0700 (PDT)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29817f00sm96311366b.126.2024.10.15.11.04.45
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 10:58:58 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e1543ab8so6722043e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:58:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV65gMOyIHyswuaNuJZ7lJuRl+/BBBPNSD0Y2XpDQBhG6VPvVAWwPanCtJL69X16qqQD+s5Avako/DZqrs=@vger.kernel.org
-X-Received: by 2002:a05:6512:3e01:b0:539:df2f:e114 with SMTP id
- 2adb3069b0e04-539e571c9femr7438846e87.45.1729015137476; Tue, 15 Oct 2024
- 10:58:57 -0700 (PDT)
+        Tue, 15 Oct 2024 11:04:45 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43115b31366so52147255e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:04:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUl4/x7QPVlhnu2Ts2vH6i9Ou6Smtaq0Ax9TxgwXI8SZ/nK9R8NCERIzVJx4P0xJh6qZbWctujumjQ8jJQ=@vger.kernel.org
+X-Received: by 2002:a05:6512:1091:b0:539:f13c:e5ce with SMTP id
+ 2adb3069b0e04-53a03f77ea6mr882102e87.46.1729015152112; Tue, 15 Oct 2024
+ 10:59:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008073430.3992087-1-wenst@chromium.org> <20241008073430.3992087-6-wenst@chromium.org>
-In-Reply-To: <20241008073430.3992087-6-wenst@chromium.org>
+References: <20241008073430.3992087-1-wenst@chromium.org> <20241008073430.3992087-7-wenst@chromium.org>
+In-Reply-To: <20241008073430.3992087-7-wenst@chromium.org>
 From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 15 Oct 2024 10:58:41 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Vs2bekyqBN_Lro_u32Dg9WM-bjDZr_tx-KyYH_toabVg@mail.gmail.com>
-Message-ID: <CAD=FV=Vs2bekyqBN_Lro_u32Dg9WM-bjDZr_tx-KyYH_toabVg@mail.gmail.com>
-Subject: Re: [PATCH v8 5/8] i2c: of-prober: Add simple helpers for regulator support
+Date: Tue, 15 Oct 2024 10:58:55 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=X+_iYi0_RSakh6bzVYuNpiqUvjHTrL81n8h4dO+WZf9g@mail.gmail.com>
+Message-ID: <CAD=FV=X+_iYi0_RSakh6bzVYuNpiqUvjHTrL81n8h4dO+WZf9g@mail.gmail.com>
+Subject: Re: [PATCH v8 6/8] i2c: of-prober: Add GPIO support to simple helpers
 To: Chen-Yu Tsai <wenst@chromium.org>
 Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
 	Matthias Brugger <matthias.bgg@gmail.com>, 
@@ -102,19 +102,34 @@ Hi,
 On Tue, Oct 8, 2024 at 12:35=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> w=
 rote:
 >
-> +/**
-> + * i2c_of_probe_simple_cleanup - Clean up and release resources for I2C =
-OF prober simple helpers
-> + * @dev: Pointer to the &struct device of the caller, only used for dev_=
-printk() messages
-> + * @data: Pointer to &struct i2c_of_probe_simple_ctx helper context.
-> + *
-> + * * If a regulator supply was found, disable that regulator and release=
- it.
+> +static void i2c_of_probe_simple_disable_gpio(struct device *dev, struct =
+i2c_of_probe_simple_ctx *ctx)
+> +{
+> +       if (!ctx->gpiod)
+> +               return;
+> +
+> +       /* Ignore error if GPIO is not in output direction */
+> +       gpiod_set_value(ctx->gpiod, !ctx->opts->gpio_assert_to_enable);
 
-nit: was the double "*" starting the line above intentional?
+I'm not sure I understand the comment. Does disable() ever get called
+when set() wasn't called beforehand? How could it not be in output
+direction?
 
-Other than the nit, this looks good to me:
+
+>  void i2c_of_probe_simple_cleanup(struct device *dev, void *data)
+>  {
+>         struct i2c_of_probe_simple_ctx *ctx =3D data;
+>
+> +       /* GPIO operations here are no-ops if a component was found and e=
+nabled. */
+
+Instead of the above, maybe:
+
+GPIO operations here are no-ops if i2c_of_probe_simple_cleanup_early()
+was called.
+
+
+Just commenting nits, so:
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
