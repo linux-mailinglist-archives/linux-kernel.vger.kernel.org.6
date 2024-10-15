@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-366169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE23599F191
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:41:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B73099F18E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51D86B22583
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:41:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D40DDB22E92
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97EE1DD0F9;
-	Tue, 15 Oct 2024 15:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079C12296F0;
+	Tue, 15 Oct 2024 15:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bD6eiSKd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bnh2a3nV"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XTW6IqaX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zYWkbU5g"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4F92281F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAEE2281F0;
 	Tue, 15 Oct 2024 15:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006595; cv=none; b=CJOBsX6Ge7q+crhTZ5kJ1mjn9tj8TsFPVY2x2BMWmupy2hREJVxy+M2AKMh2bXHVfSW4Nj9yTf7U/VozF188ZYhUutgMeprq9hcnQaH/JvhL0yGxgz6DefkbkZqJP6wyacYEaHhWLScTgVTNdKOHHFQ9GzXRh8TvwqDrXVptDxI=
+	t=1729006593; cv=none; b=u/mil9ryYUdWGNwFEUMulXG7R43Uq0Y+9+mqaxpmb2xQHw6YOK3kYuMMfwU9297yiw6wbWFn69QCh/a76L4NPyn4EshbW4eWu/HpemRe5wuQvFx3n/XE8Av19OSEiy3XPZpKK1UPeH8WxHOQA3W6QrGXgy3kDJ1DaVckM+0uMvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006595; c=relaxed/simple;
-	bh=+TTToxIAckF6B5/31g7PU/xr1bxQowI/4NqBGEb77to=;
+	s=arc-20240116; t=1729006593; c=relaxed/simple;
+	bh=ndqKHI7F/QtmjCvnqqeXqOOYG1ApmBSFDFQ1ghVZQgE=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dfltK4HDJV5oTkAmBnNv6h6j+iMGtxX28fdGLcXrusJLbjxeSLakXMnPPvGRN1A5HYVV3FY4ZpUc5LedAAG4KluDuvJNvHvtjCq5j8UunBn4wVJ6tLxC0hJ39s4y66AShHfoXVS7v/+pS30Bc1/93cGznGV3HhAwC+5WyopQlAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bD6eiSKd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bnh2a3nV; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=UsnPT/se7Yxf0y1IhGFGMS70qqEoSXi1MpBYeCszC7rFbinswSXVh1Ap4hmh/iIRdObB9/6rcjoqgZHMdozhndgKQVn1IfUm7Zy6rwUE8CHs52LS77EwJfUIEOo69zB7CcKtW9iHr6dVhMK/+YetoWQRse1EGFVXl20lw9IxX2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XTW6IqaX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zYWkbU5g; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 15:36:28 -0000
+Date: Tue, 15 Oct 2024 15:36:29 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729006588;
+	s=2020; t=1729006590;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hZ0QxoJd15i42g4eBX3HNknZvatVunZZH44FhpcC3JY=;
-	b=bD6eiSKdcdXjAb7zVuNjArZiorehYMJydUXfkXpl+fWSGcA1KAo5T6nQIFphOXlLPO0x5R
-	pUoRHkWKdVyjff3vDqt+eQA9zpSMiINLQoKMDZe15jUZjeObGo/qrVjTUeK2fXYdtG+wXt
-	gR7nLvB3uuxHSlcCkGLjr/GJYHmp1wHXtg8/LHQuAplwlO23OvvqR1L30gH8hkEXUbpPsX
-	mwy465fzqwfgWAusVyIR3tpjuNWWD+QZfs/qV4ty2ttIfs9G4m63ztocRJGcj1A2uEGk0c
-	pBiDs0PMOEg2qirWPWWz8fshhreH4IqD0OEw9+HUSMZwroIAFNbYCx26A+GrZQ==
+	bh=yDb63z2lIl0nZJ0uxyX+eD9hEE0VIdyWc8/NyMmiqq0=;
+	b=XTW6IqaX99NsYK26wKIi0sjhDwS8P9sUhJPvI0AMWGDmtltc9LRNFsP1pLxZrXWUjM3DMP
+	NlvDruqTo1AjX6zm7JtMvjwYNtolk2htjcAzC8q3tWxvdjKq4vLLOoPrPxDjRdZWEX5P8P
+	GbaZRaUU1bZsCGHhNe4Up3sW5FDp1rpL/B2JN1JfqH1IKpX6mBd0MToIuo3BiMB55YsW9x
+	fuOshnkJDrt1MHv4OM6DrK3c2W0qL6tTlEaptrZtYxpvQHEh0CjGiWtJbDw579Bmj2hXdS
+	pxQwOu5zOnjvX1npTAbDv2Di0QkyTjW1LUrU/+sYPy6bKP5Ic87R7b8Y3CoqOg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729006588;
+	s=2020e; t=1729006590;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hZ0QxoJd15i42g4eBX3HNknZvatVunZZH44FhpcC3JY=;
-	b=Bnh2a3nVdwz/fBCOFlqpRbwqsyqk48QosaHPFz4GuJMd26Qnc8SHHnfAdnaVuN77Qd3TyJ
-	rvCG8SXzImB+lHCg==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+	bh=yDb63z2lIl0nZJ0uxyX+eD9hEE0VIdyWc8/NyMmiqq0=;
+	b=zYWkbU5g7FjSCfS5ZipjQpMIWsqQwOlWJ4HfextRwY3g8iNGxj2+AB89me07TqNG284HAv
+	vMFBk7JVigQNBUAQ==
+From: "tip-bot2 for Zhen Lei" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: core/debugobjects] debugobjects: Dont destroy kmem cache in init()
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ [tip: core/debugobjects] debugobjects: Delete a piece of redundant code
+Cc: Zhen Lei <thunder.leizhen@huawei.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241007164913.137021337@linutronix.de>
-References: <20241007164913.137021337@linutronix.de>
+In-Reply-To: <20240911083521.2257-2-thunder.leizhen@huawei.com>
+References: <20240911083521.2257-2-thunder.leizhen@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172900658812.1442.13311113539403919906.tip-bot2@tip-bot2>
+Message-ID: <172900658932.1442.15852426163479944809.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,189 +82,49 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the core/debugobjects branch of tip:
 
-Commit-ID:     55fb412ef7d0c33226fcac4ebc68c60282e5f150
-Gitweb:        https://git.kernel.org/tip/55fb412ef7d0c33226fcac4ebc68c60282e5f150
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 07 Oct 2024 18:49:54 +02:00
+Commit-ID:     a0ae95040853aa05dc006f4b16f8c82c6f9dd9e4
+Gitweb:        https://git.kernel.org/tip/a0ae95040853aa05dc006f4b16f8c82c6f9dd9e4
+Author:        Zhen Lei <thunder.leizhen@huawei.com>
+AuthorDate:    Mon, 07 Oct 2024 18:49:52 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 15 Oct 2024 17:30:30 +02:00
 
-debugobjects: Dont destroy kmem cache in init()
+debugobjects: Delete a piece of redundant code
 
-debug_objects_mem_init() is invoked from mm_core_init() before work queues
-are available. If debug_objects_mem_init() destroys the kmem cache in the
-error path it causes an Oops in __queue_work():
+The statically allocated objects are all located in obj_static_pool[],
+the whole memory of obj_static_pool[] will be reclaimed later. Therefore,
+there is no need to split the remaining statically nodes in list obj_pool
+into isolated ones, no one will use them anymore. Just write
+INIT_HLIST_HEAD(&obj_pool) is enough. Since hlist_move_list() directly
+discards the old list, even this can be omitted.
 
- Oops: Oops: 0000 [#1] PREEMPT SMP PTI
- RIP: 0010:__queue_work+0x35/0x6a0
-  queue_work_on+0x66/0x70
-  flush_all_cpus_locked+0xdf/0x1a0
-  __kmem_cache_shutdown+0x2f/0x340
-  kmem_cache_destroy+0x4e/0x150
-  mm_core_init+0x9e/0x120
-  start_kernel+0x298/0x800
-  x86_64_start_reservations+0x18/0x30
-  x86_64_start_kernel+0xc5/0xe0
-  common_startup_64+0x12c/0x138
-
-Further the object cache pointer is used in various places to check for
-early boot operation. It is exposed before the replacments for the static
-boot time objects are allocated and the self test operates on it.
-
-This can be avoided by:
-
-     1) Running the self test with the static boot objects
-
-     2) Exposing it only after the replacement objects have been added to
-     	the pool.
-
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241007164913.137021337@linutronix.de
+Link: https://lore.kernel.org/all/20240911083521.2257-2-thunder.leizhen@huawei.com
+Link: https://lore.kernel.org/all/20241007164913.009849239@linutronix.de
+
 
 ---
- lib/debugobjects.c | 68 +++++++++++++++++++++++----------------------
- 1 file changed, 35 insertions(+), 33 deletions(-)
+ lib/debugobjects.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 798ce5a..1f6bf0f 100644
+index 5ce473a..df48acc 100644
 --- a/lib/debugobjects.c
 +++ b/lib/debugobjects.c
-@@ -1211,7 +1211,7 @@ static __initconst const struct debug_obj_descr descr_type_test = {
- 
- static __initdata struct self_test obj = { .static_init = 0 };
- 
--static void __init debug_objects_selftest(void)
-+static bool __init debug_objects_selftest(void)
- {
- 	int fixups, oldfixups, warnings, oldwarnings;
- 	unsigned long flags;
-@@ -1280,9 +1280,10 @@ out:
- 	descr_test = NULL;
- 
- 	local_irq_restore(flags);
-+	return !!debug_objects_enabled;
- }
- #else
--static inline void debug_objects_selftest(void) { }
-+static inline bool debug_objects_selftest(void) { return true; }
- #endif
- 
- /*
-@@ -1302,18 +1303,21 @@ void __init debug_objects_early_init(void)
- }
- 
- /*
-- * Convert the statically allocated objects to dynamic ones:
-+ * Convert the statically allocated objects to dynamic ones.
-+ * debug_objects_mem_init() is called early so only one CPU is up and
-+ * interrupts are disabled, which means it is safe to replace the active
-+ * object references.
-  */
--static int __init debug_objects_replace_static_objects(void)
-+static bool __init debug_objects_replace_static_objects(struct kmem_cache *cache)
- {
- 	struct debug_bucket *db = obj_hash;
--	struct hlist_node *tmp;
- 	struct debug_obj *obj, *new;
-+	struct hlist_node *tmp;
- 	HLIST_HEAD(objects);
- 	int i, cnt = 0;
- 
- 	for (i = 0; i < ODEBUG_POOL_SIZE; i++) {
--		obj = kmem_cache_zalloc(obj_cache, GFP_KERNEL);
-+		obj = kmem_cache_zalloc(cache, GFP_KERNEL);
- 		if (!obj)
- 			goto free;
- 		hlist_add_head(&obj->node, &objects);
-@@ -1322,12 +1326,6 @@ static int __init debug_objects_replace_static_objects(void)
- 	debug_objects_allocated += i;
- 
- 	/*
--	 * debug_objects_mem_init() is now called early that only one CPU is up
--	 * and interrupts have been disabled, so it is safe to replace the
--	 * active object references.
--	 */
--
--	/*
- 	 * Replace the statically allocated objects list with the allocated
- 	 * objects list.
+@@ -1325,10 +1325,10 @@ static int __init debug_objects_replace_static_objects(void)
+ 	 * active object references.
  	 */
-@@ -1347,15 +1345,14 @@ static int __init debug_objects_replace_static_objects(void)
- 		}
- 	}
  
--	pr_debug("%d of %d active objects replaced\n",
--		 cnt, obj_pool_used);
--	return 0;
-+	pr_debug("%d of %d active objects replaced\n", cnt, obj_pool_used);
-+	return true;
- free:
- 	hlist_for_each_entry_safe(obj, tmp, &objects, node) {
- 		hlist_del(&obj->node);
--		kmem_cache_free(obj_cache, obj);
-+		kmem_cache_free(cache, obj);
- 	}
--	return -ENOMEM;
-+	return false;
- }
+-	/* Remove the statically allocated objects from the pool */
+-	hlist_for_each_entry_safe(obj, tmp, &obj_pool, node)
+-		hlist_del(&obj->node);
+-	/* Move the allocated objects to the pool */
++	/*
++	 * Replace the statically allocated objects list with the allocated
++	 * objects list.
++	 */
+ 	hlist_move_list(&objects, &obj_pool);
  
- /*
-@@ -1366,6 +1363,7 @@ free:
-  */
- void __init debug_objects_mem_init(void)
- {
-+	struct kmem_cache *cache;
- 	int cpu, extras;
- 
- 	if (!debug_objects_enabled)
-@@ -1380,29 +1378,33 @@ void __init debug_objects_mem_init(void)
- 	for_each_possible_cpu(cpu)
- 		INIT_HLIST_HEAD(&per_cpu(percpu_obj_pool.free_objs, cpu));
- 
--	obj_cache = kmem_cache_create("debug_objects_cache",
--				      sizeof (struct debug_obj), 0,
--				      SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE,
--				      NULL);
-+	if (!debug_objects_selftest())
-+		return;
- 
--	if (!obj_cache || debug_objects_replace_static_objects()) {
-+	cache = kmem_cache_create("debug_objects_cache", sizeof (struct debug_obj), 0,
-+				  SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE, NULL);
-+
-+	if (!cache || !debug_objects_replace_static_objects(cache)) {
- 		debug_objects_enabled = 0;
--		kmem_cache_destroy(obj_cache);
--		pr_warn("out of memory.\n");
-+		pr_warn("Out of memory.\n");
- 		return;
--	} else
--		debug_objects_selftest();
--
--#ifdef CONFIG_HOTPLUG_CPU
--	cpuhp_setup_state_nocalls(CPUHP_DEBUG_OBJ_DEAD, "object:offline", NULL,
--					object_cpu_offline);
--#endif
-+	}
- 
- 	/*
--	 * Increase the thresholds for allocating and freeing objects
--	 * according to the number of possible CPUs available in the system.
-+	 * Adjust the thresholds for allocating and freeing objects
-+	 * according to the number of possible CPUs available in the
-+	 * system.
- 	 */
- 	extras = num_possible_cpus() * ODEBUG_BATCH_SIZE;
- 	debug_objects_pool_size += extras;
- 	debug_objects_pool_min_level += extras;
-+
-+	/* Everything worked. Expose the cache */
-+	obj_cache = cache;
-+
-+#ifdef CONFIG_HOTPLUG_CPU
-+	cpuhp_setup_state_nocalls(CPUHP_DEBUG_OBJ_DEAD, "object:offline", NULL,
-+				  object_cpu_offline);
-+#endif
-+	return;
- }
+ 	/* Replace the active object references */
 
