@@ -1,99 +1,103 @@
-Return-Path: <linux-kernel+bounces-365354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29DB99E10F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:29:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A558F99E118
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D40E1F22DD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:29:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19011B23115
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABEA1D0F79;
-	Tue, 15 Oct 2024 08:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BFC1C8776;
+	Tue, 15 Oct 2024 08:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egqvVNG6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C5Pr17Sh"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ACF17335E;
-	Tue, 15 Oct 2024 08:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EF620EB;
+	Tue, 15 Oct 2024 08:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980951; cv=none; b=BpGslpAjb/SScjF6F21OPKp+TH/nP5BXNhVm3OJC5e3DzloFNGYTrPaIPnn0Dk7o7T9A2nycDD/vwTKmZSI2CKBmmH6b/kkhIH1D6IN8DAE4N+qJwXMHLdhVE1es9xCY1Ve2RQwxYhxEKgbdSQecTTMFHsgdsr6ArDr2XY2z9MA=
+	t=1728981057; cv=none; b=dhNdAe44rwUSykxhcjClw0Lkr8KOEe6toUJ9qAqwFx823d2k9DqYx1WbmhB+Dmcsj3uowXH7XkLrifO5CgVv5rNQoaODMzP2Bjwd9oFEh2CA2j532DUbRSuTkQu3dVyQJh/SygNjHQ0Osy/cnMfq1xEuhWhUuo6TVLoOLpLacI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980951; c=relaxed/simple;
-	bh=DsgcZIwzu+lcz+sCcqq5yd6bbrmg5UWNN75kmiN7u1o=;
+	s=arc-20240116; t=1728981057; c=relaxed/simple;
+	bh=NZogJTqwE3+iAzauO0rol1tMx6AnCvQkjO6kq9LSwbY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXgvpzrUod20Noaa/8bLii5yxXW7uUaTmt925QivCJv8uQa6AikUCy3ZpfBJTKGT101k50Ih3SSxzVl5Hyzzprfk5FOq4MYDpyqpSLeM8erfL/Ek5qxul1RTIPsZUkbrF0f0xwW7lF6b937+FxTcq83N2lZgk/fmnsEzCciKrdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egqvVNG6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFDFC4CEC7;
-	Tue, 15 Oct 2024 08:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728980950;
-	bh=DsgcZIwzu+lcz+sCcqq5yd6bbrmg5UWNN75kmiN7u1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=egqvVNG6q9wlgpkO2ihI5nbC6bmr+MKMXS2UkyLdtZUnRa2mJjPhb/GoHeE8B3JIV
-	 VDOtfy1iCH02B47+vC2mLdYrhXPmRCcdJ1+Qf6WXe8/wfp0qMu9/oa8S2JtMyqJO/O
-	 ZmBQkqH3b1vcstwGj/aIQZ/QJ/x/VWHD7oxFh+9oQa2EPZRfC0PAr1bUMSRbgTw0WX
-	 C7Lug7jeKA6ulz3nyHPgkg0UGzQL6Atd/tuR2Y2ST5aOa7GcMnBjH9MVS3YMhP6L1x
-	 3BVwGozDPiF2n6afO7840UO9nN2SDmvcqv5gq/FNe0QhCmwM6wOayqIt/j1N459swo
-	 /mUI7oPo31iJQ==
-Date: Tue, 15 Oct 2024 01:29:05 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 6/8] x86/module: perpare module loading for ROX
- allocations of text
-Message-ID: <20241015082905.GA1235948@thelio-3990X>
-References: <20241009180816.83591-1-rppt@kernel.org>
- <20241009180816.83591-7-rppt@kernel.org>
- <20241010225411.GA922684@thelio-3990X>
- <Zwkg3LwlNJOwNWZh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgiCIMcJTryzWehFnfsgvj2rodupcrQytlGBoXEHi0yOkwO39kgCqCAu8bJxpc5enDHSfo3gkpOg37TKS9jPpXo8AElh3iHNjouZzEnLL+s8YeYV2UMtv9qeiT0+qfFbGP0/zFW8swXps01K41UB/hkn9n65bfwqOvBY4ZT2ltw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C5Pr17Sh; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F8PZcA024028;
+	Tue, 15 Oct 2024 08:30:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=IE4Ofqj1wFLXj4ZSqKW5+xLXr/77Os
+	ziB9/RuCpA9XA=; b=C5Pr17Shb56/6mLJ3iERofYB//d0rtG9UucRGlloqJiyr8
+	fLy0oxFKu/4YNhPtUGWIvvUngrKaWT+yd/cUZW1A1Kjp/oH20AE+GQxXD0OHhh9Y
+	M0pO2oIT8mJ8A0nrjCv+WygqZzFZF2CMvU1VApc3qWOIMYxiIf5SRogljPZdWFFC
+	UAelL3AqHo+CtkTiuVH3hy1OCXAU32iU4AmN1WqRwxqbE5QWX/0Fc2TSmfqiW/jb
+	aHbCEIbYnEW9kWgdDuFJNiUfOSCsMSbBDsJJAqqxPia1Ut8gaMKWn3ELJ9mz6nxV
+	sj5nyB1QKlapcILSEDO6YgjCCYzTZ22Ol8lKlfbQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429mv4r0wj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 08:30:48 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49F8Ul8m003486;
+	Tue, 15 Oct 2024 08:30:47 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429mv4r0we-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 08:30:47 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7bpIT027464;
+	Tue, 15 Oct 2024 08:30:46 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txjtyy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 08:30:46 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49F8UgQ754133178
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 08:30:42 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4DFE720043;
+	Tue, 15 Oct 2024 08:30:42 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0C69A20040;
+	Tue, 15 Oct 2024 08:30:42 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 15 Oct 2024 08:30:41 +0000 (GMT)
+Date: Tue, 15 Oct 2024 10:30:40 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
+Message-ID: <20241015083040.7641-C-hca@linux.ibm.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-2-david@redhat.com>
+ <20241014182054.10447-D-hca@linux.ibm.com>
+ <f93b2c89-821a-4da1-8953-73ccd129a074@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,89 +106,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zwkg3LwlNJOwNWZh@kernel.org>
+In-Reply-To: <f93b2c89-821a-4da1-8953-73ccd129a074@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -AyqpN-uN4c-bHJlXc5K2WqcxF25sGU_
+X-Proofpoint-ORIG-GUID: FOpmIxPaiaZwA4qPJKRUNqvsir83gI5C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ mlxscore=0 suspectscore=0 phishscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 malwarescore=0 mlxlogscore=515
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150056
 
-On Fri, Oct 11, 2024 at 03:58:04PM +0300, Mike Rapoport wrote:
-> I overlooked how cfi_*_callers routines update addr.
-> This patch should fix it:
-
-Thanks, can confirm. My boot is working again and LKDTM's
-CFI_FORWARD_PROTO test properly fails.
-
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 3b3fa93af3b1..cf782f431110 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -1148,11 +1148,13 @@ static int cfi_disable_callers(s32 *start, s32 *end, struct module *mod)
->  
->  	for (s = start; s < end; s++) {
->  		void *addr = (void *)s + *s;
-> -		void *wr_addr = module_writable_address(mod, addr);
-> +		void *wr_addr;
->  		u32 hash;
->  
->  		addr -= fineibt_caller_size;
-> -		hash = decode_caller_hash(addr);
-> +		wr_addr = module_writable_address(mod, addr);
-> +		hash = decode_caller_hash(wr_addr);
-> +
->  		if (!hash) /* nocfi callers */
->  			continue;
->  
-> @@ -1172,11 +1174,12 @@ static int cfi_enable_callers(s32 *start, s32 *end, struct module *mod)
->  
->  	for (s = start; s < end; s++) {
->  		void *addr = (void *)s + *s;
-> -		void *wr_addr = module_writable_address(mod, addr);
-> +		void *wr_addr;
->  		u32 hash;
->  
->  		addr -= fineibt_caller_size;
-> -		hash = decode_caller_hash(addr);
-> +		wr_addr = module_writable_address(mod, addr);
-> +		hash = decode_caller_hash(wr_addr);
->  		if (!hash) /* nocfi callers */
->  			continue;
->  
-> @@ -1249,11 +1252,12 @@ static int cfi_rand_callers(s32 *start, s32 *end, struct module *mod)
->  
->  	for (s = start; s < end; s++) {
->  		void *addr = (void *)s + *s;
-> -		void *wr_addr = module_writable_address(mod, addr);
-> +		void *wr_addr;
->  		u32 hash;
->  
->  		addr -= fineibt_caller_size;
-> -		hash = decode_caller_hash(addr);
-> +		wr_addr = module_writable_address(mod, addr);
-> +		hash = decode_caller_hash(wr_addr);
->  		if (hash) {
->  			hash = -cfi_rehash(hash);
->  			text_poke_early(wr_addr + 2, &hash, 4);
-> @@ -1269,14 +1273,15 @@ static int cfi_rewrite_callers(s32 *start, s32 *end, struct module *mod)
->  
->  	for (s = start; s < end; s++) {
->  		void *addr = (void *)s + *s;
-> -		void *wr_addr = module_writable_address(mod, addr);
-> +		void *wr_addr;
->  		u32 hash;
->  
->  		addr -= fineibt_caller_size;
-> -		hash = decode_caller_hash(addr);
-> +		wr_addr = module_writable_address(mod, addr);
-> +		hash = decode_caller_hash(wr_addr);
->  		if (hash) {
->  			text_poke_early(wr_addr, fineibt_caller_start, fineibt_caller_size);
-> -			WARN_ON(*(u32 *)(addr + fineibt_caller_hash) != 0x12345678);
-> +			WARN_ON(*(u32 *)(wr_addr + fineibt_caller_hash) != 0x12345678);
->  			text_poke_early(wr_addr + fineibt_caller_hash, &hash, 4);
->  		}
->  		/* rely on apply_retpolines() */
->  
-> > Cheers,
-> > Nathan
+On Mon, Oct 14, 2024 at 09:26:03PM +0200, David Hildenbrand wrote:
+> On 14.10.24 20:20, Heiko Carstens wrote:
+> > Looks like this could work. But the comment in smp.c above
+> > dump_available() needs to be updated.
 > 
-> -- 
-> Sincerely yours,
-> Mike.
+> A right, I remember that there was some outdated documentation.
+> 
+> > 
+> > Are you willing to do that, or should I provide an addon patch?
+> > 
+> 
+> I can squash the following:
+> 
+> diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
+> index 4df56fdb2488..a4f538876462 100644
+> --- a/arch/s390/kernel/smp.c
+> +++ b/arch/s390/kernel/smp.c
+> @@ -587,16 +587,16 @@ int smp_store_status(int cpu)
+>   *    with sigp stop-and-store-status. The firmware or the boot-loader
+>   *    stored the registers of the boot CPU in the absolute lowcore in the
+>   *    memory of the old system.
+> - * 3) kdump and the old kernel did not store the CPU state,
+> - *    or stand-alone kdump for DASD
+> - *    condition: OLDMEM_BASE != NULL && !is_kdump_kernel()
+> + * 3) kdump or stand-alone kdump for DASD
+> + *    condition: OLDMEM_BASE != NULL && !is_ipl_type_dump() == false
+>   *    The state for all CPUs except the boot CPU needs to be collected
+>   *    with sigp stop-and-store-status. The kexec code or the boot-loader
+>   *    stored the registers of the boot CPU in the memory of the old system.
+> - * 4) kdump and the old kernel stored the CPU state
+> - *    condition: OLDMEM_BASE != NULL && is_kdump_kernel()
+> - *    This case does not exist for s390 anymore, setup_arch explicitly
+> - *    deactivates the elfcorehdr= kernel parameter
+> + *
+> + * Note that the old Kdump mode where the old kernel stored the CPU state
+
+To be consistent with the rest of the comment, please write kdump in
+all lower case characters, please.
+
+> + * does no longer exist: setup_arch explicitly deactivates the elfcorehdr=
+> + * kernel parameter. The is_kudmp_kernel() implementation on s390 is independent
+
+Typo: kudmp.
+
+> Does that sound reasonable? I'm not so sure about the "2) stand-alone kdump for
+> SCSI/NVMe (zfcp/nvme dump with swapped memory)": is that really "kdump" ?
+
+Yes, it is some sort of kdump, even though a bit odd. But the comment
+as it is doesn't need to be changed. Only at the very top, please also
+change: "There are four cases" into "There are three cases".
+
+Then it all looks good. Thanks a lot!
 
