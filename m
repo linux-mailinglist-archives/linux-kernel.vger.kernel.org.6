@@ -1,118 +1,152 @@
-Return-Path: <linux-kernel+bounces-365739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0794A99E931
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:14:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0ACA99E930
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED2E2839EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:14:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DECEB2096E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4464B1F8F04;
-	Tue, 15 Oct 2024 12:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2uKkv4K"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6571F8EE2;
+	Tue, 15 Oct 2024 12:12:22 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D8F1EC006;
-	Tue, 15 Oct 2024 12:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AEE1EF945;
+	Tue, 15 Oct 2024 12:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728994342; cv=none; b=LDg/KC58s9PFEFIUFtahdPUQAPuD7R0Xol1kYkZM8Lbny7D4AzVv7F6N9qy1Qe5JBTV5goiFBJpY0OOh3HJN18CCwps8pVcDZu+SYqJXILR3eKhIeaa+qGPSOYWRX7ODEFwFD8HjAM9Zi+l3Ck7uqjhbE9XqRX8KwtBEzEcyhZg=
+	t=1728994342; cv=none; b=pTNwAnmK4OHo5mcmwBk6S8XPZFUaOrje4KOH2LxZIm8X99DWHr19DZADfU1fFn4Lm7L7BHi6gTZ6VSMWvJRhM0A03GKaL0ei539sosST+XQMrtl4bvYnxU7gZdDzFdKWmSRrKs9FMzikWMXWkEeQQL274c6ZpolOAj1EoBBscC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728994342; c=relaxed/simple;
-	bh=0EytnEVYueFI5FkuBE6fvq65mtK2QNMq/P8GFScIGVY=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=BEOa+vkRWY3jGcMGBM2fvGlwgh2qUv25dNGwkh4oXibBiNtKzTjT0o1i5Z9G/8tYDkjXhb4kmCrN+jVwYS5U6G3pDnS48Yk0qIOFGignYyd2DE8MhITFw6TU3RUSKVD0eWtUXR6x3BiLx1mFBKGFZSkFxlSzCHtIkvs1uxDcWw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2uKkv4K; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2dc61bc41so3335232a91.1;
-        Tue, 15 Oct 2024 05:12:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728994340; x=1729599140; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/OZGwvaXz1qhmiYlAOr7Vkc79vDlIxdvnur4NOMqdC0=;
-        b=G2uKkv4KVnoi7xBWvOLCYMPlEOmgIuveSFLj9zTIVDGf4wxDlEdjwj14LZnhNEoW3W
-         TkTG9wdKxqoroqymSi17MowKnEwlEHbdmKhyAglKLHHU0K+1sH+125kuTCGkiAbDHfHL
-         nCJjrNuxpwbPHVz/YtcMjnloP1MkSfjTQRiDuOIP9qXd/xO9nGaz9j/InuzYIpdOkRq8
-         2C04sZbqqf3onJpasEI9Owjq6itTtS0SdrAn2Kwm96MpMH1fv8UhBAfrZ3ax0GphMOeV
-         eVokDYIn+xwoR/WslAZ6OSqebKW6tseWzFsvWRfDopRXn1NBWYBqukEhLx7a7bE3SXTq
-         fhsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728994340; x=1729599140;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/OZGwvaXz1qhmiYlAOr7Vkc79vDlIxdvnur4NOMqdC0=;
-        b=d6LGbpHACfwDrd385+jEWtTPDHLor3qkvcquKHSxsHRXGK/863oSG/KpccEhnO6GrQ
-         I0Esk2ZR/0giIjBUYhYgdLe723IWr1KxDI08NjMDiGCXfIw8k53eBBl8/FgJXotm8MFt
-         Yjq21jMigYT84tPYdYzBoElrDNlnPrwPyI/0juuXmJgCCGcTIbSnPSQaoN7aZsUqp9iv
-         MAIHGySvs9jsC7C9r02U7ZDwbhgTTP5pRM9f1QY908ipfb+88ty5ziaDtl9U4MtHJh4z
-         yCkLkk9IkRtnOtP81pxXbtYCBUS+w2OKRi75yPDoqZnrumDgKbjfhRR6UoqB0OJ+hvUP
-         Bg+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUuUzFZGAbCCBSPptBWjrIWhWTkXV4EfgodkGYkCq9Cwus+J99XIpqqAPoaEm7gkY2mF5nBOEPmzK2GzCucLnc=@vger.kernel.org, AJvYcCV4qpJW77bRNaULDxNU2yVRU05Hfl0UbTfRGU+povhVZZDPr259eKTe3c6e8Ev3Vfse4lZd14kv@vger.kernel.org, AJvYcCXp2QpTHWFPpmFl7h4ekaC79En8Rlp24z8tawJ9NOpPPmTn4ACIbKnXrrQOHmwT6YRZId7FZSILkaBno4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYzy862VzzGyzdxN2/UQ9luNLeZbK0nalAH6SF6PtAYVvmE0LF
-	FPq925sm5LuwGdLscI2GAqhGnZVQWiv8dqjOtocDI4xwcLmozZzS
-X-Google-Smtp-Source: AGHT+IHgG1qhPjkaEMUuo8+ebYTUokTMKvZtaT2Lp7J8A+pJHdqpiVC4zBvQMqfCzZ5IBLu98Q8kmQ==
-X-Received: by 2002:a17:90a:bf0c:b0:2e2:b45f:53b4 with SMTP id 98e67ed59e1d1-2e31536de0dmr13383839a91.25.1728994340498;
-        Tue, 15 Oct 2024 05:12:20 -0700 (PDT)
-Received: from localhost (p4468007-ipxg23001hodogaya.kanagawa.ocn.ne.jp. [153.204.200.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392e8cdc7sm1559086a91.10.2024.10.15.05.12.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 05:12:20 -0700 (PDT)
-Date: Tue, 15 Oct 2024 21:12:07 +0900 (JST)
-Message-Id: <20241015.211207.1963272330702106304.fujita.tomonori@gmail.com>
-To: andrew@lunn.ch
-Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, hkallweit1@gmail.com, tmgross@umich.edu,
- ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com,
- aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
- tglx@linutronix.de, arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/6] rust: time: Introduce Delta type
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <3848736d-7cc8-44f4-9386-c30f0658ed9b@lunn.ch>
-References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
-	<20241005122531.20298-3-fujita.tomonori@gmail.com>
-	<3848736d-7cc8-44f4-9386-c30f0658ed9b@lunn.ch>
+	bh=JVaN+276foz8D467uVisbk7ZPfas8KFjh0xX60dO7v0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVdFpr2qXM1FPb7EKEL5FX9BpgRnta+nwpf756Ce2x/lQyEs8sIeTb8hxJHYXTRy0BShlh4P52ehWR/wg6aBoDGHGRUd2ywoPZQDO+KO5fOrwPYVxtH3BudCgNneBF+0Gy/LCEMBypqLr/5DtCYRnpVdb5+zAcVM2grhBfOpAHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 29EBB227AAC; Tue, 15 Oct 2024 14:12:13 +0200 (CEST)
+Date: Tue, 15 Oct 2024 14:12:12 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com,
+	hch@lst.de, cem@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v8 4/7] fs: iomap: Atomic write support
+Message-ID: <20241015121212.GA32583@lst.de>
+References: <20241015090142.3189518-1-john.g.garry@oracle.com> <20241015090142.3189518-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015090142.3189518-5-john.g.garry@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Sat, 5 Oct 2024 20:02:55 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
-
->> +/// A span of time.
->> +#[derive(Copy, Clone)]
->> +pub struct Delta {
->> +    nanos: i64,
+On Tue, Oct 15, 2024 at 09:01:39AM +0000, John Garry wrote:
+> Support direct I/O atomic writes by producing a single bio with REQ_ATOMIC
+> flag set.
 > 
-> Is there are use case for negative Deltas ? Should this be u64?
+> Initially FSes (XFS) should only support writing a single FS block
+> atomically.
+> 
+> As with any atomic write, we should produce a single bio which covers the
+> complete write length.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  .../filesystems/iomap/operations.rst          | 11 ++++++
+>  fs/iomap/direct-io.c                          | 38 +++++++++++++++++--
+>  fs/iomap/trace.h                              |  3 +-
+>  include/linux/iomap.h                         |  1 +
+>  4 files changed, 48 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index 8e6c721d2330..fb95e99ca1a0 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -513,6 +513,17 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+>     if the mapping is unwritten and the filesystem cannot handle zeroing
+>     the unaligned regions without exposing stale contents.
+>  
+> + * ``IOMAP_ATOMIC``: This write is being issued with torn-write
+> +   protection. Only a single bio can be created for the write, and the
+> +   write must not be split into multiple I/O requests, i.e. flag
+> +   REQ_ATOMIC must be set.
+> +   The file range to write must be aligned to satisfy the requirements
+> +   of both the filesystem and the underlying block device's atomic
+> +   commit capabilities.
+> +   If filesystem metadata updates are required (e.g. unwritten extent
+> +   conversion or copy on write), all updates for the entire file range
+> +   must be committed atomically as well.
+> +
+>  Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
+>  calling this function.
+>  
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f637aa0706a3..c968a0e2a60b 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -271,7 +271,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>   * clearing the WRITE_THROUGH flag in the dio request.
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua)
+> +		const struct iomap *iomap, bool use_fua, bool atomic)
+>  {
+>  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+>  
+> @@ -283,6 +283,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  		opflags |= REQ_FUA;
+>  	else
+>  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +	if (atomic)
+> +		opflags |= REQ_ATOMIC;
+>  
+>  	return opflags;
+>  }
+> @@ -293,7 +295,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> -	loff_t length = iomap_length(iter);
+> +	const loff_t length = iomap_length(iter);
+> +	bool atomic = iter->flags & IOMAP_ATOMIC;
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+> @@ -303,6 +306,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	size_t copied = 0;
+>  	size_t orig_count;
+>  
+> +	if (atomic && (length != fs_block_size))
 
-After investigating ktime_us_delta() and ktime_ms_delta() users, I
-found that ten or so places which use nagative Deltas like:
+Nit: no need for the inner braces here.
 
-timedout_ktime = ktime_add_us(ktime_get(), some_usecs);
-// Do something that takes time
-remaining = ktime_us_delta(timedout_ktime, ktime_get());
-if (remaining > 0)
-     fsleep(remaining)
+> +		if (atomic && n != length) {
+> +			/*
+> +			 * This bio should have covered the complete length,
+> +			 * which it doesn't, so error. We may need to zero out
+> +			 * the tail (complete FS block), similar to when
+> +			 * bio_iov_iter_get_pages() returns an error, above.
+> +			 */
+> +			ret = -EINVAL;
 
+Do we want a WARN_ON_ONCE here because this is a condition that should be
+impossible to hit?
 
-Looks straightforward. On second thought, I feel it would be better to
-support nagative Deltas. We could use i64 everywhere.
+Otherwise looks good:
 
-And i64 is more compatible with Ktime Delta APIs; ktime_us_delta and
-ktime_ms_delta returns s64; we create Delta without type conversion.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
