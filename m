@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-366087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EA999F0B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:09:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5111B99F0B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9B6283454
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D24C1C20CA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEA71CBA09;
-	Tue, 15 Oct 2024 15:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261C91CBA0C;
+	Tue, 15 Oct 2024 15:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eGIfYFSl"
-Received: from mail-io1-f65.google.com (mail-io1-f65.google.com [209.85.166.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pG/Gq1gy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3AD1CB9FD;
-	Tue, 15 Oct 2024 15:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD561CB9FF;
+	Tue, 15 Oct 2024 15:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729004980; cv=none; b=B6quGOoOZhO5l3tMaD5rLahUTGsKb969vwCzzU82RkmHtUcXH7NfMuTT8CSVvsOOqd86ZNOmhbQGQRDbB7nYT+Gn71sjjvYV5W61mBMknM1vyBbz7r3+YmxLCGJDUJKPtMw95afxMSzH/PPrAUey+37dMJe1cgpbdGcwsutvJYY=
+	t=1729005004; cv=none; b=LOkmLWw+g49EojrIsjSlCIAEZsWR+G4631nkNuSBpxbYs1VplbIiokyJfg/kPPZvW5EoQlJFweE0fV3LPIWfugyBv/Oclhw4/wjTxMoZzisBMGdUtadho68rsj06n9L4iGkk37xLI0f7PgYPJ9jnSL1Pj7aoxmVAAThko26jnNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729004980; c=relaxed/simple;
-	bh=B8ChUxBvAFtLMqKDKXjgchdjFht6tXh8QUoy24QiB9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mjkx8qK7Hvsddd5XUquV4anCmqhADditixWA78N6rOczpi08z5Kwe6YfmAziWFCkv4hOni8Grcio0CKGF/UXE5vI46IM+Tl/JBebkJevjJqnADOck16xrol0dmiOts3DtnabJ7MnCLgIL41ljJUMdASJU0FE45MBVMA7J3Pg+1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eGIfYFSl; arc=none smtp.client-ip=209.85.166.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f65.google.com with SMTP id ca18e2360f4ac-8353b41369fso353601539f.3;
-        Tue, 15 Oct 2024 08:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729004978; x=1729609778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0jFk0JoI0mzXirTKJ2ym3XvHzvgOMMC5dTTxSarG5vI=;
-        b=eGIfYFSlYD5bgXLpXBYgFM+RDao93/v+IYb9lgWPgmsmYJKFV8t58p9u+nxgSsExG9
-         OnFOJIWTyu6qq06838ArpzOlhnyYJUtP+FU219y2gQ3vLYLMnp3dcQnMcHbyzgCtWBKC
-         Y8bP21itMe1HeSrtuzT7rlpf0Avj4MlvzOSQUY2tpZVoVzUMPXZ2uw7NEj3JiWzoMVzP
-         xZ+lx4c4F8/+saagH/VAsByG3KDmEwEmHAu/HF9LRD/G+xGjAzJZlcg84s2xqWyMLapp
-         lO5p0VMzaEzrW0cGjbi/S6VGSBtKXT+UqGtWYMuJuBN66SHpOxejRa/jcKj5u2KSEXhV
-         Hp9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729004978; x=1729609778;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0jFk0JoI0mzXirTKJ2ym3XvHzvgOMMC5dTTxSarG5vI=;
-        b=ZkOpVO596aQXCVVxlJ7nMTnNkj81sSUeMEQ7H0Vb+YUbx5DVT6cVzWEKpT+AnAwQvR
-         vg4QBTLiz/id36LUJDpCeRJ3dEjxz/EIqv6m72pBaie6plXKZpDB2VpehtTXSx6OFi0m
-         3IF1nDZxpMkKzNXNLYcZohIiwoTo/MYvOm4xiJc7bXlMtxlvvz+oDBi2g+wPnrKsK3Xp
-         INLQWMv+tptvC11gm737E6v3HRCh0qWx6mYw7Y7JhRQcXk+jY8aM2OGlzp7FTea4vc5e
-         8b8ZBTol/Y4auMQoIHTB4SWksPcRgIqqYYim/Q23x2hXv/BU6ALQBigAe/r595DuWODe
-         8O1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW2b927CqWdS8HkoLFvR6TCv7bbELVuW76fQxUKTAePfL1qi+JeWASbOzbp67aty0crhAXVdeNZd2PHlSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8a6KnYNDGrnIpShSoorQ4D7iOqNoauL2gP1Giqzp6CRuvWOeR
-	O05/obL89zakWYBR1ojfygDBAuEOfnkK1Zi00zZlW1VC/XXUBrmh
-X-Google-Smtp-Source: AGHT+IHdb4DKuD8UI9qQvkOpboqxD26XUGSjN3VyUCARnSUSOGkRglKnUFhhRT2KKjLmh7Kgs5mNIw==
-X-Received: by 2002:a05:6e02:1c0a:b0:3a3:aff3:a02b with SMTP id e9e14a558f8ab-3a3bcdba90bmr96729065ab.6.1729004978169;
-        Tue, 15 Oct 2024 08:09:38 -0700 (PDT)
-Received: from localhost.localdomain ([2406:8dc0:b002:b20f:f975:8fff:9776:9f47])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6d58ddsm1458406a12.53.2024.10.15.08.09.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 08:09:37 -0700 (PDT)
-From: Kieran Moy <kfatyuip@gmail.com>
-To: shuah@kernel.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kieran Moy <kfatyuip@gmail.com>
-Subject: [PATCH] applyed suggested changes
-Date: Tue, 15 Oct 2024 23:09:20 +0800
-Message-ID: <20241015150921.78678-1-kfatyuip@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729005004; c=relaxed/simple;
+	bh=XNOT20YzB4vYewS+APrhVTDzfvkQCe35h99SfISE8h8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PDjjOvDnGoJAhb7jpMpryZGmVuBFsLLKfkAbWD7zIfuyFWdo1hBtZSIR5mGhpF+KFrfFHXUHmTg2moTBTs796/GB4G+eoZLU+2NLU9fpa5rBcxD288fsgOMo8Jkog2D5AnEw2FVCiUSc1z6m6yvefGdYb/SwUpHQkvW9f55v60s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pG/Gq1gy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06467C4CEC6;
+	Tue, 15 Oct 2024 15:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729005004;
+	bh=XNOT20YzB4vYewS+APrhVTDzfvkQCe35h99SfISE8h8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pG/Gq1gyPMhMtzDquoOzHLHu1hTZJCc22ixnM0lbTYg36EfNQ3JapbW2MJ9+rvkfg
+	 +cdpwUeTqzufgtQQaAzHDTNZxjdDeXXFPqNwxTU7sy9SInys/uiOq5Bx5dnl2YT+Vn
+	 +rPkOOFvQRAuiqWHgnQLP85xaKN2eziRqDVYahWEdZDkkmimYMFumMCdmHIXMvCkMu
+	 B7y6QSc/SdLRJq4MdQbvcauSATMQKOxNphvT5B3AaNsBha3VKnOoCx1RtPaTPzIRBL
+	 0CGLNeoUGY196b34z3praMGHpjlrveYNVKKCClFHuLXDuyRSSEaK4T93f/xztjX5sg
+	 a+hy1L41wzdgw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	tangbin <tangbin@cmss.chinamobile.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: loongson: make loongson-i2s.o a separate module
+Date: Tue, 15 Oct 2024 15:09:54 +0000
+Message-Id: <20241015150958.2294155-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
----
- tools/power/cpupower/po/zh_CN.po | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+From: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/tools/power/cpupower/po/zh_CN.po b/tools/power/cpupower/po/zh_CN.po
-index 456cde997..33fb3f000 100644
---- a/tools/power/cpupower/po/zh_CN.po
-+++ b/tools/power/cpupower/po/zh_CN.po
-@@ -19,11 +19,11 @@ msgstr ""
+An object file should not be linked into multiple modules and/or
+vmlinux:
+
+scripts/Makefile.build:221: /home/arnd/arm-soc/sound/soc/loongson/Makefile: loongson_i2s.o is added to multiple modules: snd-soc-loongson-i2s-pci snd-soc-loongson-i2s-plat
+
+Change this one to make it a library module with two exported symbols
+that will work in any configuration.
+
+Fixes: ba4c5fad598c ("ASoC: loongson: Add I2S controller driver as platform device")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/loongson/Makefile       | 10 ++++++----
+ sound/soc/loongson/loongson_i2s.c |  5 +++++
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/loongson/Makefile b/sound/soc/loongson/Makefile
+index f396259244a3..c0cb1acb36e3 100644
+--- a/sound/soc/loongson/Makefile
++++ b/sound/soc/loongson/Makefile
+@@ -1,10 +1,12 @@
+ # SPDX-License-Identifier: GPL-2.0
+ #Platform Support
+-snd-soc-loongson-i2s-pci-y := loongson_i2s_pci.o loongson_i2s.o loongson_dma.o
+-obj-$(CONFIG_SND_SOC_LOONGSON_I2S_PCI) += snd-soc-loongson-i2s-pci.o
++snd-soc-loongson-i2s-pci-y := loongson_i2s_pci.o loongson_dma.o
++obj-$(CONFIG_SND_SOC_LOONGSON_I2S_PCI) += snd-soc-loongson-i2s-pci.o snd-soc-loongson-i2s.o
  
- #: utils/idle_monitor/nhm_idle.c:36
- msgid "Processor Core C3"
--msgstr "处理器核心 C3"
-+msgstr "处理器 Core C3"
+-snd-soc-loongson-i2s-plat-y := loongson_i2s_plat.o loongson_i2s.o
+-obj-$(CONFIG_SND_SOC_LOONGSON_I2S_PLATFORM) += snd-soc-loongson-i2s-plat.o
++snd-soc-loongson-i2s-plat-y := loongson_i2s_plat.o
++obj-$(CONFIG_SND_SOC_LOONGSON_I2S_PLATFORM) += snd-soc-loongson-i2s-plat.o snd-soc-loongson-i2s.o
++
++snd-soc-loongson-i2s-y := loongson_i2s.o
  
- #: utils/idle_monitor/nhm_idle.c:43
- msgid "Processor Core C6"
--msgstr "处理器核心 C6"
-+msgstr "处理器 Core C6"
+ #Machine Support
+ snd-soc-loongson-card-y := loongson_card.o
+diff --git a/sound/soc/loongson/loongson_i2s.c b/sound/soc/loongson/loongson_i2s.c
+index 40bbf3205391..e8852a30f213 100644
+--- a/sound/soc/loongson/loongson_i2s.c
++++ b/sound/soc/loongson/loongson_i2s.c
+@@ -246,6 +246,7 @@ struct snd_soc_dai_driver loongson_i2s_dai = {
+ 	.ops = &loongson_i2s_dai_ops,
+ 	.symmetric_rate = 1,
+ };
++EXPORT_SYMBOL_GPL(loongson_i2s_dai);
  
- #: utils/idle_monitor/nhm_idle.c:51
- msgid "Processor Package C3"
-@@ -35,7 +35,7 @@ msgstr "处理器套件 C6"
- 
- #: utils/idle_monitor/snb_idle.c:33
- msgid "Processor Core C7"
--msgstr "处理器核心 C7"
-+msgstr "处理器 Core C7"
- 
- #: utils/idle_monitor/snb_idle.c:40
- msgid "Processor Package C2"
-@@ -47,7 +47,7 @@ msgstr "处理器套件 C7"
- 
- #: utils/idle_monitor/amd_fam14h_idle.c:56
- msgid "Package in sleep state (PC1 or deeper)"
--msgstr "处于睡眠状态的包（PC1 或更深）"
-+msgstr "Package in sleep state （PC1 或更深）"
- 
- #: utils/idle_monitor/amd_fam14h_idle.c:63
- msgid "Processor Package C1"
-@@ -59,11 +59,11 @@ msgstr "北桥 P1 布尔计数器（返回 0 或 1）"
- 
- #: utils/idle_monitor/mperf_monitor.c:35
- msgid "Processor Core not idle"
--msgstr "处理器核心不空闲"
-+msgstr "处理器 Core不空闲"
- 
- #: utils/idle_monitor/mperf_monitor.c:42
- msgid "Processor Core in an idle state"
--msgstr "处理器核心处于空闲状态"
-+msgstr "处理器 Core处于空闲状态"
- 
- #: utils/idle_monitor/mperf_monitor.c:50
- msgid "Average Frequency (including boost) in MHz"
+ static int i2s_suspend(struct device *dev)
+ {
+@@ -268,3 +269,7 @@ static int i2s_resume(struct device *dev)
+ const struct dev_pm_ops loongson_i2s_pm = {
+ 	SYSTEM_SLEEP_PM_OPS(i2s_suspend, i2s_resume)
+ };
++EXPORT_SYMBOL_GPL(loongson_i2s_pm);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Common functions for loongson I2S controller driver");
 -- 
-2.47.0
+2.39.5
 
 
