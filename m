@@ -1,231 +1,129 @@
-Return-Path: <linux-kernel+bounces-365775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AF099E9CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:27:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE2799EA00
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485291F238EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:27:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9A77284CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36803202F89;
-	Tue, 15 Oct 2024 12:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A956227B96;
+	Tue, 15 Oct 2024 12:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EwggUooR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="P97ClPkU"
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974B4206975;
-	Tue, 15 Oct 2024 12:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E85227B93;
+	Tue, 15 Oct 2024 12:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728995205; cv=none; b=UCz94UtV/zZAAFD0073iAN12/rbnuIBj0poOMaON/yQQs4kt3sZY2Z0487LRiYCQqGMbVwsLxk/6Qk3KVmZv/4c/PHcV45JSkVlGBg4TZiEFrqe+h5fEraFbqHgE+c8GgYI46q5/+oYQmY99/zj61IFQ7jO8uMiOEaGKEoWp4u8=
+	t=1728995962; cv=none; b=iUkFW5zHWUgfj9WEcnFDuG2A04F5BJEqVjW6Ie7kqfZruMMHK7QK9LgO2+vYc2i778dL76yTW1vN0eYCo6wuqF/T0/EVe6kixCtIqqPnkrtevRqSI+Wl+fkNT/BNbxB2srV/eAe+EQKcH7UqhZnnSq1+vE6a846py2aHZLvYn/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728995205; c=relaxed/simple;
-	bh=NYbHOMwMrdG/wiT8RCznhicJLT/5UcM5sidpVpTNIvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7aGNfXqwWSThW4M20knv2XDTk9M6HqgL5oFK3XAoVI2XFAuaISllxHPZ4X2qxm/C5qMsjippv6loThxd8hAOeNI3xp+RhRQiUAzerb/T+uotJc9Asr2wI+YJOsjthGb6OYXzBGQJ0pRCUzrmFVqHTcV43MHuLMmuIPh3WgApig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EwggUooR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3D8C4CEC6;
-	Tue, 15 Oct 2024 12:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728995205;
-	bh=NYbHOMwMrdG/wiT8RCznhicJLT/5UcM5sidpVpTNIvw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EwggUooRAbrIXkMRbaDLuwY6cbRSNxUb+yU2CwJ8fCkc/gqjuOIZLjldGepu1+/SE
-	 iQ9eC7BABbaFAqW41FBAwXx8xUaoYChyUjU5yEEYWLnI6S6eH2654d7JDoOp9oUAHZ
-	 J5vIVUt5tzvwtaBYO3Gadc0irVHL2LT8BK4gV9gAiiXE9ED7LV4KAHDgp2L0T44+3V
-	 q327O+flBAflHrT2wqg3/lq/fWKx+PyGbs1+ZQ09IpqNfsbcnsuE74maVopIa2X2uK
-	 pOSRS8G4kWcWoAQPdKhm8yuKOQ+kcRSzClntfW6W716yrOjj81aHuXUcb30OS8WKQQ
-	 hiiwZXIvaAgeg==
-Date: Tue, 15 Oct 2024 14:26:37 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Shivendra Pratap <quic_spratap@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_spratap@qucinc.com
-Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
-Message-ID: <Zw5ffeYW5uRpsaG3@lpieralisi>
-References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
- <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
- <ZrOMjomTTWZ91Uzf@lpieralisi>
- <20240807103245593-0700.eberman@hu-eberman-lv.qualcomm.com>
- <ZrYZ/i1QFhfmv0zi@lpieralisi>
- <20240809090339647-0700.eberman@hu-eberman-lv.qualcomm.com>
- <28c8bc92-4a55-8a07-1ece-333316d78410@quicinc.com>
- <Zr4Td7PiKhKl3Et3@lpieralisi>
- <20240815100749641-0700.eberman@hu-eberman-lv.qualcomm.com>
+	s=arc-20240116; t=1728995962; c=relaxed/simple;
+	bh=x+iDAAYTgZt7thPALE/GpuoN/+1g28XVcuiZEr2MEbk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=qFFxRW+BSTQ/sI/EbIEzSyfXT0z27rLqsh34xOxjr5NqE1BK7vzMbYe3n35+h9+8/1cbkoLaz28NPOJKALEAQEZDxPzT8Mhl8W25hY2CCsX/eifjJerscjSSdbLEbuGPbcKjq97Ogm4+/tQg/zs2DptSicddFeu88ZAANJDgqaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=P97ClPkU; arc=none smtp.client-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728995958; bh=6mzUwp6tTsQPmtvvHIUC4eTR4DQea9zTLMhz8Df/uUs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=P97ClPkUXGlR5ZxiiS1Jdwqv5wq16M56QYYXIMfSgRhptIZUn3OwITKJMJ/pgDvpw
+	 Qoq6NVXebNpsc9tGI1v7ZhY7VRwxnoaHLQPvYLr9uA0kmQn3OsmF1UCqnY0JUYTueN
+	 jr7s/bIwcV9xByybxXzdiQm7aC2owPWSNCJWflH8=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id 6AD19C34; Tue, 15 Oct 2024 20:26:45 +0800
+X-QQ-mid: xmsmtpt1728995205t9pig5lzf
+Message-ID: <tencent_0EBF9E731B704B091B022578BA9EBB8E3308@qq.com>
+X-QQ-XMAILINFO: NDz66ktblfzJrZJDwmHjGNtPHzbvecvgaHO9S260NFM0PyeeXQZAeHYqUX/EuD
+	 x/i7GprzXlhbKdlhEODCaiALa3OMv+dg4dY94//BbETSFOyxC6RqW3wvGDUMYyK2huoZm4iKOnV0
+	 zjpGHbWQeOj17p7eGMSQS3hfsyIzhHZO62AwN+XJckbTuCXIW+eQDpPLPOED6J02BNZkHvME4V3r
+	 sNNJflEY23E8lw2PVxyNmh/aDFiz6wGAf1WTSGmHWcRdyZknY9STw843auJWw4JBpwnA+maPfb5T
+	 i7YDOodrOdAycLqFEd9FsXtyVTKQcN+BSQd4eBXU3ZdwgF2B3wpO2mFLK0FBOcQakjcbIAMpLAaM
+	 n2MM1Jav6uGED56VveP9/KiPYMVbkmnEDaLZb0c0mW4nil/DO6+ke7CmK0K64vjpcaZVJgSi55I+
+	 zUTimoe8BvR6NV3T3lGANO4KAKpUY438yEPDcl//RJKJXRydQEUzomdcw3ghBAvnhWCKwP+x1NqQ
+	 zi/3Gb1lLjUd3CDerOChFkoqJJkBs0Ho2Wa3YfAH2k6jsC+NVKoXXWMJD5unZJkx5Uc4y7kiDA5U
+	 b8e0Y+VT8PZnJersrV3BKRfOsVOIZjQl4OMWrwWKPgdqiLNHnHh6Ecn6itN+OtWE88bWSRs+5RAl
+	 qsTIC0JeXp6U+MwQDaI+d/r2LNXHPEEFvT54bMPtaz7aHUsEBBdOmEysud2GJpqFkV60ht1Z4ALk
+	 HiiSAbQGYC4usk7kOMA/bdHC0tW7VHkoxMwHu6cStsNrq5pQ96D6i2xhFLTopZ17JFT7D4hwyYuM
+	 OkF3TcoeacP4WgY+Nl9Zpo71RylLZLVLdQe0FmR7e8OyVi3xlVQR6On3eyjEG5zbrJSGQNKYsf1r
+	 XGFe0s4Hqk3MJUEaqqfh7j+NMtWnP1bF55/7ejcPs4Ueu9ZmHjjADsPruCdY3NER8uXsX357i5Gq
+	 5bRSKJCXiE/B7KchFdJQ==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
+Cc: clm@fb.com,
+	dsterba@suse.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH next] btrfs: Accessing head_ref within delayed_refs lock
+Date: Tue, 15 Oct 2024 20:26:46 +0800
+X-OQ-MSGID: <20241015122645.136494-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <670d3f2c.050a0220.3e960.0066.GAE@google.com>
+References: <670d3f2c.050a0220.3e960.0066.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240815100749641-0700.eberman@hu-eberman-lv.qualcomm.com>
 
-On Thu, Aug 15, 2024 at 11:05:09AM -0700, Elliot Berman wrote:
-> On Thu, Aug 15, 2024 at 04:40:55PM +0200, Lorenzo Pieralisi wrote:
-> > On Mon, Aug 12, 2024 at 11:46:08PM +0530, Shivendra Pratap wrote:
-> > > 
-> > > 
-> > > On 8/9/2024 10:28 PM, Elliot Berman wrote:
-> > > > On Fri, Aug 09, 2024 at 03:30:38PM +0200, Lorenzo Pieralisi wrote:
-> > > >> On Wed, Aug 07, 2024 at 11:10:50AM -0700, Elliot Berman wrote:
-> > > >>
-> > > >> [...]
-> > > >>
-> > > >>>>> +static void psci_vendor_sys_reset2(unsigned long action, void *data)
-> > > >>>>
-> > > >>>> 'action' is unused and therefore it is not really needed.
-> > > >>>>
-> > > >>>>> +{
-> > > >>>>> +	const char *cmd = data;
-> > > >>>>> +	unsigned long ret;
-> > > >>>>> +	size_t i;
-> > > >>>>> +
-> > > >>>>> +	for (i = 0; i < num_psci_reset_params; i++) {
-> > > >>>>> +		if (!strcmp(psci_reset_params[i].mode, cmd)) {
-> > > >>>>> +			ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
-> > > >>>>> +					     psci_reset_params[i].reset_type,
-> > > >>>>> +					     psci_reset_params[i].cookie, 0);
-> > > >>>>> +			pr_err("failed to perform reset \"%s\": %ld\n",
-> > > >>>>> +				cmd, (long)ret);
-> > > >>>>> +		}
-> > > >>>>> +	}
-> > > >>>>> +}
-> > > >>>>> +
-> > > >>>>>  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
-> > > >>>>>  			  void *data)
-> > > >>>>>  {
-> > > >>>>> +	if (data && num_psci_reset_params)
-> > > >>>>
-> > > >>>> So, reboot_mode here is basically ignored; if there is a vendor defined
-> > > >>>> reset, we fire it off.
-> > > >>>>
-> > > >>>> I think Mark mentioned his concerns earlier related to REBOOT_* mode and
-> > > >>>> reset type (granted, the context was different):
-> > > >>>>
-> > > >>>> https://lore.kernel.org/all/20200320120105.GA36658@C02TD0UTHF1T.local/
-> > > >>>>
-> > > >>>> I would like to understand if this is the right thing to do before
-> > > >>>> accepting this patchset.
-> > > >>>>
-> > > >>>
-> > > >>> I don't have any concerns to move this part below checking reboot_mode.
-> > > >>> Or, I could add reboot_mode == REBOOT_COLD check.
-> > > >>
-> > > >> The question is how can we map vendor specific reboot magic to Linux
-> > > >> reboot modes sensibly in generic PSCI code - that's by definition
-> > > >> vendor specific.
-> > > >>
-> > > > 
-> > > > I don't think it's a reasonable thing to do. "reboot bootloader" or
-> > > > "reboot edl" don't make sense to the Linux reboot modes.
-> > > > 
-> > > > I believe the Linux reboot modes enum is oriented to perspective of
-> > > > Linux itself and the vendor resets are oriented towards behavior of the
-> > > > SoC.
-> > > > 
-> > > > Thanks,
-> > > > Elliot
-> > > > 
-> > > 
-> > > Agree.
-> > > 
-> > > from perspective of linux reboot modes, kernel's current
-> > > implementation in reset path is like:
-> > >
-> > > __
-> > > #1 If reboot_mode is WARM/SOFT and PSCI_SYSRESET2 is supported 
-> > >     Call PSCI - SYSTEM_RESET2 - ARCH RESET
-> > > #2 ELSE
-> > >     Call PSCI - SYSTEM_RESET COLD RESET
-> > > ___
-> > > 
-> > > ARM SPECS for PSCI SYSTEM_RESET2
-> > > This function extends SYSTEM_RESET. It provides:
-> > > • ARCH RESET: set Bit[31] to 0               = > This is already in place in condition #1.
-> > > • vendor-specific resets: set Bit[31] to 1.  = > current patchset adds this part before kernel's reboot_mode reset at #0.
-> > > 
-> > > 
-> > > In current patchset, we see a condition added at
-> > > #0-psci_vendor_reset2 being called before kernel’s current
-> > > reboot_mode condition and it can take any action only if all below
-> > > conditions are satisfied.
-> > > - PSCI SYSTEM_RESET2 is supported.
-> > > - psci dt node defines an entry "bootloader" as a reboot-modes.
-> > > - User issues reboot with a command say - (reboot bootloader).
-> > > - If vendor reset fails, default reboot mode will execute as is.
-> > > 
-> > > Don't see if we will skip or break the kernel reboot_mode flow with
-> > > this patch.  Also if user issues reboot <cmd> and <cmd> is supported
-> > > on SOC vendor reset psci node, should cmd take precedence over
-> > > kernel reboot mode enum? may be yes? 
-> > > 
-> > 
-> > Please wrap lines when replying.
-> > 
-> > I don't think it is a matter of precedence. reboot_mode and the reboot
-> > command passed to the reboot() syscall are there for different (?)
-> > reasons.
-> > 
-> > What I am asking is whether it is always safe to execute a PSCI vendor
-> > reset irrispective of the reboot_mode value.
-> 
-> The only way I see it to be unsafe is we need some other driver using
-> the reboot_mode to configure something and then the PSCI vendor reset
-> being incompatible with whatever that other driver did. I don't see that
-> happens today, so it is up to us to decide what the policy ought to be.
-> The PSCI spec doesn't help us here because the reboot_mode enum is
-> totally a Linux construct. In my opinion, firmware should be able to
-> deal with whatever the driver did or (less ideal) the driver need to be
-> aware of the PSCI vendor resets. Thus, it would be always safe to
-> execute a PSCI vendor reset regardless of the reboot_mode value.
+This is because the thread routine btrfs_work_helper released head_def after
+exiting delayed_refs->lock in add_delayed_ref.
+Causing add_delayed_ref to encounter uaf when accessing head_def->bytenr
+outside the delayed_refs->lock.
 
-It is hard to understand history behind reboot_mode and
-the LINUX_REBOOT_CMD_RESTART2 cmd, at least *I* don't
-understand it fully.
+Move head_ref->bytenr into the protection range of delayed_refs->lock 
+to avoid uaf in add_delayed_ref.
 
-What I do understand is:
+Fixes: a3aad8f4f5d9 ("btrfs: qgroups: remove bytenr field from struct btrfs_qgroup_extent_record")
+Reported-and-tested-by: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c3a3a153f0190dca5be9
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/btrfs/delayed-ref.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-- reboot_mode can be set from userspace and kernel params
-- It affects some drivers restart handler behaviours
-- Incidentally, I noticed that reboot_mode affects the EFI reset
-  being issued (and EFI ignores the cmd and platform specific
-  resets AFAICS). This is not related to this thread but may provide
-  some guidance
-- if reboot_mode is set to REBOOT_GPIO - it is impossible to understand
-  what PSCI code should do other than ignoring it ? It is not that
-  REBOOT_WARM/COLD/HARD/SOFT are easier to fathom either to be honest,
-  would be happy if anyone could chime in and shed some light.
+diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
+index 13c2e00d1270..f50fc05847a1 100644
+--- a/fs/btrfs/delayed-ref.c
++++ b/fs/btrfs/delayed-ref.c
+@@ -1012,6 +1012,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
+ 	int action = generic_ref->action;
+ 	bool merged;
+ 	int ret;
++	u64 bytenr;
+ 
+ 	node = kmem_cache_alloc(btrfs_delayed_ref_node_cachep, GFP_NOFS);
+ 	if (!node)
+@@ -1056,6 +1057,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
+ 		goto free_record;
+ 	}
+ 	head_ref = new_head_ref;
++	bytenr = head_ref->bytenr;
+ 
+ 	merged = insert_delayed_ref(trans, head_ref, node);
+ 	spin_unlock(&delayed_refs->lock);
+@@ -1074,7 +1076,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
+ 		kmem_cache_free(btrfs_delayed_ref_node_cachep, node);
+ 
+ 	if (qrecord_inserted)
+-		return btrfs_qgroup_trace_extent_post(trans, record, head_ref->bytenr);
++		return btrfs_qgroup_trace_extent_post(trans, record, bytenr);
+ 	return 0;
+ 
+ free_record:
+-- 
+2.43.0
 
-My biggest fear here is that after merging this code, various quirks
-based on what SYSTEM_RESET2 platform specific parameters are set-up
-will appear, whereby a driver needs to do this or that in its restart
-handler depending on the specific reset being issued in PSCI
-(an example was provided in this same thread).
-
-Thoughts ? I'd like to see some progress on this but it is proving
-to be ways more complex than I thought initially.
-
-Thanks,
-Lorenzo
 
