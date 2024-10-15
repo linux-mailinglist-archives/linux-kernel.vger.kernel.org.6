@@ -1,220 +1,151 @@
-Return-Path: <linux-kernel+bounces-366705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA24E99F8D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:15:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016F299F8DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41A43B22A8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7D62819CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825AA1FAF16;
-	Tue, 15 Oct 2024 21:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1809D1FBF4F;
+	Tue, 15 Oct 2024 21:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERO0r4Z3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hyun42B6"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA632176228;
-	Tue, 15 Oct 2024 21:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BCA1F81B4
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729026941; cv=none; b=nEe8gBb8wEE82YegoXS90sTE4oMc6WjDCPOrHVqRkcKV12esby9v1gyatKCjRSNo7meyS3sdlDeGQ8+kVpAkf5ntFFrfkiYXdSmVkcVKZh1xjc3h4cNDN6khahNjkhfQ3WNrr2UV3QI7fKfeVdSqz/KIkndGkcIawRtn4Js03rE=
+	t=1729026976; cv=none; b=BaJV9vGz0IYi/9mZNZPhSotQDnqULAcomACnljKVthG2yQ9eNH7ltvbjXJuYJVUQ9i431TBD5bdvp6qUJs+U1uYAyIO/bh8A79sYXCTdlxdLEr5/LWeWorXE335HQm5yA5vmEDxuCBdp4Umzi0XRJqrVJ+tYqwnIRzDcZN+uBsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729026941; c=relaxed/simple;
-	bh=yt1duf2stz7fs97tAvuTo8dAcFpcYAXJM9L9Chn7CT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkyiJy7cDY4ja+aUAEnjJAElZntkPR2e1cTFs45Mvdw16Pf2ZMvgJlXJRESMZnJOZGALXN00XyfwVhFuLb0NZJIAHfdc9A4iYV1NQoHZnLUTDjbbL11B7WV0TxwoxpfQUZC2iUhsFWv9H6cPHEqby8gK8mwwyuTL7oawtvSav2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERO0r4Z3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A42C4CEC6;
-	Tue, 15 Oct 2024 21:15:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729026941;
-	bh=yt1duf2stz7fs97tAvuTo8dAcFpcYAXJM9L9Chn7CT4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ERO0r4Z3F5D5H7CgQQTyalc+ktI+5et0ohuCLLEY3huL03Gv6adY2tCwwpZMivDyK
-	 IXAi0h2c2ZW5yBCcUxVuvE/eWf3H5vYzAaEwTqLL/qic7IxS/+09vfCjz/0nYKkhJP
-	 9q0peZGIMq3YLOJ169VSUu+CTkCqrta8spYdlHnaukR5U6hA/GZF+5kAKrqxUUM/j4
-	 tDIqBwEQdTqmXRPM5AcGJaYes4lpzGmtJaYucHTZ6x6uvnHI6zUjDMuNlpm7nvsve9
-	 k66n24EFU+7ibzHbRK3rS9Esv+71ZuqhtICHHS9mI7cdOFLxwnTtHw6SQx9Z90JNBs
-	 SAcsDl4RIyX0g==
-Date: Tue, 15 Oct 2024 16:15:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
- SoCs
-Message-ID: <20241015211540.GA1968867-robh@kernel.org>
-References: <20241015105133.656360-1-ciprianmarian.costea@oss.nxp.com>
- <20241015105133.656360-2-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1729026976; c=relaxed/simple;
+	bh=apgOJUyzRbuZaee4XpVPnPmNtrBW0Uxe2veHVmjM9VU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bni714a0Q9zM0pbL1zWauumjDRbbGLR/ZQ9oBTBKmwV2Y56y52aiqXKzHApFUR5qh/+VYR3+y7dJtzQ7+sgTAinKVWRymLl3qPlWpz07h9PZVlTvlsv6h2vQqXwvRvaymfetBEU5zYfjt80oUojhyEm6eHR61FrFf2C1+BqfoWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hyun42B6; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a3b3f4b2afso3435ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:16:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729026974; x=1729631774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O8t3MQX53gJacU2dQjrjSkqB49dUGpAYvqMTaTgZEsw=;
+        b=hyun42B6UD3ehnDregkMYAHGN2lH48336vO/9BJj/Ip2BZY5zGnthx3aSEWAuXCFiv
+         BpK03fIqXeW6J+TNFiErjRmMGhXDOUCBaxnqjIGZrnCi7+Rd7XXWfAaLb4WxHZLnPRa7
+         6GOAVyKEqYT906DWd3+xUcdaNpufkIgOaKRBMcT41mNIg2CSSi20dZeed8stNdTEFOnz
+         phxrSzJCotAUVr2sonSzR90tXGtbf8+TZwAfocuKdlobbnXgcxJyqKys48yQI0B+Xiaw
+         OryTK7wmqDe8niW/oxkV3VmR8oWLVX0Agz+yFrxKnN1xRtB86MqSGRsEpQhvAI0FzU0z
+         UK/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729026974; x=1729631774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O8t3MQX53gJacU2dQjrjSkqB49dUGpAYvqMTaTgZEsw=;
+        b=O8JhQsNyE/CIHsSXlW+hZp4Sr6JjXToYukqiOqSV92B/pWkNnA1pHAhvk8hXCzXZl0
+         Y/7HdrtsJ900m8tPz2aD+1y2HGAScRh2sebOOuc/+2cY7OhKJWyHqtdv5w2VvcpwfaCi
+         LdcGC0IsDn1bv1i0g3rnOSNk4Nff2ZkX0A1GkzyW6PH1MGOP0eNOoGQQiVxIz7tpYvV4
+         EjTv/SKbGGPNfL9SS+PJtIHFq5mKpkdaj9bCYJrVHB+8DtpOr+nTjg68nthaBBXGo54v
+         j1Wexe0rUpm734NlqUEb+Zwcct0Aeo1QpoOQkHvbObmm4yyCLe3m0RrsMJQWlEAaJdV3
+         EiGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXy/qH5QMtZBlY7X7qeP0cwVXjpW45L16KKk0CHKuoPNSccyP097Uvx/h9up5kEpl2hYk25kQVrg3IEQaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzUrXDPVxZ55vU1jk8ddHUGZF5KlO/IXy5RoPtY2wcHoLHH1JB
+	wx2em9dkOUsgvQh0mdKPSsyga9weim+1+18p+unlvvMVA4U/1Wnmkm2eykO9zKSSABaut7JMf5i
+	TSj+mnQHG/jyQxY8mww9aeoNee40zOEQFNDyt
+X-Google-Smtp-Source: AGHT+IHINpXEi5bb/dccSxtN8wJyzozbPFXJh2tHJWT4nH0CEB3DhiR+erAYo6ijlB3wG61HmbFlaLAczJD9QPgiALM=
+X-Received: by 2002:a05:6e02:1fc6:b0:39d:1b64:3551 with SMTP id
+ e9e14a558f8ab-3a3de7d1385mr347375ab.19.1729026973940; Tue, 15 Oct 2024
+ 14:16:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015105133.656360-2-ciprianmarian.costea@oss.nxp.com>
+References: <20241015183824.1014964-1-irogers@google.com> <20241015203202.vyfi4nykkid35luj@illithid>
+In-Reply-To: <20241015203202.vyfi4nykkid35luj@illithid>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 15 Oct 2024 14:16:00 -0700
+Message-ID: <CAP-5=fU1Rh8z0RdRri7+yw5ORDes3sCSLyaHf9UqZ6o1rygkrg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] proc_pid_fdinfo.5: Reduce indent for most of the page
+To: "G. Branden Robinson" <g.branden.robinson@gmail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-man@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 01:51:30PM +0300, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
-> This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
-> 
-> Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 102 ++++++++++++++++++
->  1 file changed, 102 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> new file mode 100644
-> index 000000000000..3a77d4dd8f3d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> @@ -0,0 +1,102 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP S32G2/S32G3 Real Time Clock (RTC)
-> +
-> +maintainers:
-> +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nxp,s32g2-rtc
-> +      - items:
-> +          - const: nxp,s32g3-rtc
-> +          - const: nxp,s32g2-rtc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: ipg clock drives the access to the
-> +          RTC iomapped registers
-> +
-> +  clock-names:
-> +    items:
-> +      - const: ipg
-> +
-> +  assigned-clocks:
-> +    minItems: 1
-> +    items:
-> +      - description: Runtime clock source. It must be a clock
-> +            source for the RTC module. It will be disabled by hardware
-> +            during Standby/Suspend.
-> +      - description: Standby/Suspend clock source. It is optional
-> +            and can be used in case the RTC will continue ticking during
-> +            platform/system suspend. RTC hardware module contains a
-> +            hardware mux for clock source selection.
+On Tue, Oct 15, 2024 at 1:32=E2=80=AFPM G. Branden Robinson
+<g.branden.robinson@gmail.com> wrote:
+>
+> At 2024-10-15T11:38:22-0700, Ian Rogers wrote:
+> > When /proc/pid/fdinfo was part of proc.5 man page the indentation made
+> > sense. As a standalone man page the indentation doesn't need to be so
+> > far over to the right.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  man/man5/proc_pid_fdinfo.5 | 50 +++++++++++++++++++-------------------
+> >  1 file changed, 25 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/man/man5/proc_pid_fdinfo.5 b/man/man5/proc_pid_fdinfo.5
+> > index 1e23bbe02..0c4950d5d 100644
+> > --- a/man/man5/proc_pid_fdinfo.5
+> > +++ b/man/man5/proc_pid_fdinfo.5
+> > @@ -8,8 +8,9 @@
+> >  .SH NAME
+> >  /proc/pid/fdinfo/ \- information about file descriptors
+> >  .SH DESCRIPTION
+> > -.TP
+> > +.TP 0
+> >  .IR /proc/ pid /fdinfo/ " (since Linux 2.6.22)"
+> > +.P
+> >  This is a subdirectory containing one entry for each file which the
+> >  process has open, named by its file descriptor.
+> >  The files in this directory are readable only by the owner of the proc=
+ess.
+>
+> I don't find this usage to be idiomatic.
+>
+> There's no point having a tagged paragraph if you want that paragraph's
+> indentation to be zero.
+>
+> I'll grant that it's also unusual to have a man page's "Description"
+> section lurch straight into a definition list without any preamble.
+>
+> Since the only topic of this man page is now the file (or class of
+> files) in question, I suggest dropping the paragraph tag altogether
+> since it duplicates the summary description.
+>
+> And as it happens, you can put font styling _in_ the summary desription.
+>
+> So I suggest something like:
+>
+> .SH NAME
+> .IR /proc/ pid /fdinfo " \- information about file descriptors"
+> .SH DESCRIPTION
+> Since Linux 2.6.22,
+> this subdirectory contains one entry for each file that process
+> .I pid
+> has open,
+> named for its file descriptor.
+>
+> This renders fine with groff and mandoc(1).
+>
+> Sample page attached.
 
-If the RTC h/w contains a mux, then your mux inputs should be listed in 
-'clocks', not here.
+Thanks for the advice on how to make things more idiomatic. I'll try
+to incorporate your feedback into v2.
 
-> +
-> +  assigned-clock-parents:
-> +    description: List of phandles to each parent clock.
-> +
-> +  assigned-clock-rates:
-> +    description: List of frequencies for RTC clock sources.
-> +            RTC module contains 2 hardware divisors which can be
-> +            enabled or not. Hence, available frequencies are the following
-> +            parent_freq, parent_freq / 512, parent_freq / 32 or
-> +            parent_freq / (512 * 32)
-
-In general, assigned-clocks* do not need to be documented and should 
-never be required.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +  - assigned-clocks
-> +  - assigned-clock-parents
-> +  - assigned-clock-rates
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    rtc0: rtc@40060000 {
-> +        compatible = "nxp,s32g3-rtc",
-> +                   "nxp,s32g2-rtc";
-> +        reg = <0x40060000 0x1000>;
-> +        interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> +        #clock-cells = <1>;
-> +        clocks = <&clks 54>;
-> +        clock-names = "ipg";
-> +        /*
-> +         * Configuration of default parent clocks.
-> +         * 'assigned-clocks' 0-3 IDs are Runtime clock sources
-> +         * 4-7 IDs are Suspend/Standby clock sources.
-> +         */
-> +        assigned-clocks = <&rtc0 2>, <&rtc0 4>;
-
-That's weird...
-
-> +        assigned-clock-parents = <&clks 56>, <&clks 55>;
-
-I'd expect these should be in 'clocks'. I don't think this node should 
-be a clock provider unless it provides a clock to something outside the 
-RTC.
-
-Looks like you are just using assigned-clocks to configure the clock mux 
-in the RTC. That's way over complicated. Just define a vendor specific 
-property with the mux settings. 
-
-> +        /*
-> +         * Clock frequency can be divided by value
-> +         * 512 or 32 (or both) via hardware divisors.
-> +         * Below configuration:
-> +         * Runtime clock source: FIRC (51 MHz) / 512 (DIV512)
-> +         * Suspend/Standby clock source: SIRC (32 KHz)
-> +         */
-> +        assigned-clock-rates = <99609>, <32000>;
-> +    };
-> -- 
-> 2.45.2
-> 
+Ian
 
