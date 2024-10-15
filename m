@@ -1,191 +1,187 @@
-Return-Path: <linux-kernel+bounces-365338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A9299E0CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:19:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8167999E0C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DAFB24BAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:19:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6F2FB22D2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC4C1C9EDF;
-	Tue, 15 Oct 2024 08:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526E71D5AD8;
+	Tue, 15 Oct 2024 08:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7aZlg7v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="mX7FJ7Wj"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537171B85F8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067C31C9B81;
+	Tue, 15 Oct 2024 08:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980320; cv=none; b=efkAbpP+quyznyQIa9UpcZhwg4iS/uITPhLMrlQ2++RRMx6ZaiUXdWbEqmgRI4Vk9LBmulrMwy4MxM0jduJn1Rgcz0rvWtsU0aP1DmMvh98ed8zmwj2qVFDWjs7FUTP9PvQp/qKhikX3G6/Go5IYIght9riiJO+ss/MG+rg6JFU=
+	t=1728980285; cv=none; b=KvXOz5MSDOBGltkWX8XUbx33bNYM/XAkRBMAqpwnS4+E4ntBxUhlKtJzMIBppTe8MGKsshluKT0qZl0qdMpoC+IygYfkw59fTtndPch0O8Ro98+hC/Mpl6lRnhOG/oWt9RxRKt2jFFXn1HIdiQgJ3e0Fb7wmyiYY+xomdkV2t14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980320; c=relaxed/simple;
-	bh=ahVaFIJ9Q4nkJPT/HtjQ9GsRX4RsaRaVXNn412Tk+HY=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=SSt/17LBngBDhxixG4Cb2FsunXV4Uq3K3DAT0802Z7UiHKp5PUCcJmp6v0DV38qK4yNe08Xej3u63ZDLCVDkP9o2TapLXcUo9YvFQCNKTgEH8A53qPOcXExzoRkVTfyx8o0NsNvxNf2DKMa9bboBRitDz5UlPo/A7DR24L66LMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7aZlg7v; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728980320; x=1760516320;
-  h=date:from:to:cc:subject:message-id;
-  bh=ahVaFIJ9Q4nkJPT/HtjQ9GsRX4RsaRaVXNn412Tk+HY=;
-  b=n7aZlg7vEdxNbvmYl3zUF8PlP5QM7yhuQ10drU0cXAhIesOhxqLXmekR
-   cq8BpXmKiss5+y+eSczeSbRKCggA9wseyQXHRMcYFd5UnIcVmueVWxuF+
-   RUHv1XLC2zSlHSQlRW0bSGsRO/eYoCPHoZ2k8yCow2Dbs70+ctE48ubQP
-   K/jYHaX8y71REo3rnuT6p08T5Gv+g1yMoM+PgNn0Gmpw+TZZatq/kzQUt
-   2RlgXNvdloujLjZlldKUKHiDsN2pHArnfe7Fb3xs/u3/CJcqoLr5Rblnk
-   eLd4//GD9XzCCRDOFI2LaCdoOxUuHY+wyOrn07eked2DyTZEVtAaLnrcc
-   g==;
-X-CSE-ConnectionGUID: NKMzkZwYQyiEVzSvWhjVog==
-X-CSE-MsgGUID: EXgfyBZGTyyghlX4gdpyJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="45830915"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="45830915"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 01:18:39 -0700
-X-CSE-ConnectionGUID: I1zoxudQRLCtSPQvIsiyLQ==
-X-CSE-MsgGUID: CbUcFP3iTw6sk0POgBx9RQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="77762566"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 15 Oct 2024 01:18:38 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t0clH-000Hnr-1L;
-	Tue, 15 Oct 2024 08:18:35 +0000
-Date: Tue, 15 Oct 2024 16:17:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cache] BUILD SUCCESS
- 29eaa79583671f1e1b468760d505ef837317ab15
-Message-ID: <202410151625.ELD6jCFy-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1728980285; c=relaxed/simple;
+	bh=yDldrIQfN+JjD+nSLTuzAAIkmWZg4sAuaCOImNcHHvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B6hjbUnxI/+9gkAKTVFxvDw5/GLm4g5G1hpA9OSnr2HVIIK+BvOKKMErSosEN22+WjUOkTWnTOEiZrGEJFCh0LovjKUvJLGjgI+81khTKcWXlsXIKicrAz3UCSUFMeKAx8Z4Ssu/8vOXgOJumEX2oAdTMojcP/Lnfmdl2vYMKyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=mX7FJ7Wj; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=S+rR7b/oNW0OxpsVU0UosRqvNoxokOSzvK4soixyYB4=; b=mX7FJ7WjS/kN6lur6I0PZgBj1x
+	8hncuREV/UKfxXiL4FbVU17UMjzJzCm1+2ojsA6rFOw653Nv/iUNubEnHDOInOIOSUqjiUVP/rM4e
+	2+7dNx5ofwkBvPZdDC3nek+9yyTl0wMk+5ftrtKyonRrv+fIAnQeAluqYCmm1dEyZw3Jd+B440xop
+	GIO6UgZwYIbxAlgAcEs21QGGOJOypzrm224q3vbjJ4lqIvid3smnlD0JRnf+NrRp3gqryfs+D4krk
+	q8m7NHhHKosZlVwOJC3GNsnn0WuRHccH1Y+3TeK8a5jmWyZAAPkzNIYIA5YZIwIFGxH5cAAIYEPMR
+	mckFnyXA==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1t0ckd-000FbI-Is; Tue, 15 Oct 2024 10:17:55 +0200
+Received: from [178.197.249.47] (helo=[192.168.1.114])
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1t0ckc-000DW8-1c;
+	Tue, 15 Oct 2024 10:17:54 +0200
+Message-ID: <8ef07e79-4812-4e02-a5d1-03a05726dd07@iogearbox.net>
+Date: Tue, 15 Oct 2024 10:17:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] bpf: xdp: fallback to SKB mode if DRV flag is absent.
+To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>,
+ Jussi Maki <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ Liang Li <liali@redhat.com>, Nikolay Aleksandrov <razor@blackwall.org>
+References: <20241015033632.12120-1-liuhangbin@gmail.com>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ xsFNBGNAkI0BEADiPFmKwpD3+vG5nsOznvJgrxUPJhFE46hARXWYbCxLxpbf2nehmtgnYpAN
+ 2HY+OJmdspBntWzGX8lnXF6eFUYLOoQpugoJHbehn9c0Dcictj8tc28MGMzxh4aK02H99KA8
+ VaRBIDhmR7NJxLWAg9PgneTFzl2lRnycv8vSzj35L+W6XT7wDKoV4KtMr3Szu3g68OBbp1TV
+ HbJH8qe2rl2QKOkysTFRXgpu/haWGs1BPpzKH/ua59+lVQt3ZupePpmzBEkevJK3iwR95TYF
+ 06Ltpw9ArW/g3KF0kFUQkGXYXe/icyzHrH1Yxqar/hsJhYImqoGRSKs1VLA5WkRI6KebfpJ+
+ RK7Jxrt02AxZkivjAdIifFvarPPu0ydxxDAmgCq5mYJ5I/+BY0DdCAaZezKQvKw+RUEvXmbL
+ 94IfAwTFA1RAAuZw3Rz5SNVz7p4FzD54G4pWr3mUv7l6dV7W5DnnuohG1x6qCp+/3O619R26
+ 1a7Zh2HlrcNZfUmUUcpaRPP7sPkBBLhJfqjUzc2oHRNpK/1mQ/+mD9CjVFNz9OAGD0xFzNUo
+ yOFu/N8EQfYD9lwntxM0dl+QPjYsH81H6zw6ofq+jVKcEMI/JAgFMU0EnxrtQKH7WXxhO4hx
+ 3DFM7Ui90hbExlFrXELyl/ahlll8gfrXY2cevtQsoJDvQLbv7QARAQABzSZEYW5pZWwgQm9y
+ a21hbm4gPGRhbmllbEBpb2dlYXJib3gubmV0PsLBkQQTAQoAOxYhBCrUdtCTcZyapV2h+93z
+ cY/jfzlXBQJjQJCNAhsDBQkHhM4ACAsJCAcNDAsKBRUKCQgLAh4BAheAAAoJEN3zcY/jfzlX
+ dkUQAIFayRgjML1jnwKs7kvfbRxf11VI57EAG8a0IvxDlNKDcz74mH66HMyhMhPqCPBqphB5
+ ZUjN4N5I7iMYB/oWUeohbuudH4+v6ebzzmgx/EO+jWksP3gBPmBeeaPv7xOvN/pPDSe/0Ywp
+ dHpl3Np2dS6uVOMnyIsvmUGyclqWpJgPoVaXrVGgyuer5RpE/a3HJWlCBvFUnk19pwDMMZ8t
+ 0fk9O47HmGh9Ts3O8pGibfdREcPYeGGqRKRbaXvcRO1g5n5x8cmTm0sQYr2xhB01RJqWrgcj
+ ve1TxcBG/eVMmBJefgCCkSs1suriihfjjLmJDCp9XI/FpXGiVoDS54TTQiKQinqtzP0jv+TH
+ 1Ku+6x7EjLoLH24ISGyHRmtXJrR/1Ou22t0qhCbtcT1gKmDbTj5TcqbnNMGWhRRTxgOCYvG0
+ 0P2U6+wNj3HFZ7DePRNQ08bM38t8MUpQw4Z2SkM+jdqrPC4f/5S8JzodCu4x80YHfcYSt+Jj
+ ipu1Ve5/ftGlrSECvy80ZTKinwxj6lC3tei1bkI8RgWZClRnr06pirlvimJ4R0IghnvifGQb
+ M1HwVbht8oyUEkOtUR0i0DMjk3M2NoZ0A3tTWAlAH8Y3y2H8yzRrKOsIuiyKye9pWZQbCDu4
+ ZDKELR2+8LUh+ja1RVLMvtFxfh07w9Ha46LmRhpCzsFNBGNAkI0BEADJh65bNBGNPLM7cFVS
+ nYG8tqT+hIxtR4Z8HQEGseAbqNDjCpKA8wsxQIp0dpaLyvrx4TAb/vWIlLCxNu8Wv4W1JOST
+ wI+PIUCbO/UFxRy3hTNlb3zzmeKpd0detH49bP/Ag6F7iHTwQQRwEOECKKaOH52tiJeNvvyJ
+ pPKSKRhmUuFKMhyRVK57ryUDgowlG/SPgxK9/Jto1SHS1VfQYKhzMn4pWFu0ILEQ5x8a0RoX
+ k9p9XkwmXRYcENhC1P3nW4q1xHHlCkiqvrjmWSbSVFYRHHkbeUbh6GYuCuhqLe6SEJtqJW2l
+ EVhf5AOp7eguba23h82M8PC4cYFl5moLAaNcPHsdBaQZznZ6NndTtmUENPiQc2EHjHrrZI5l
+ kRx9hvDcV3Xnk7ie0eAZDmDEbMLvI13AvjqoabONZxra5YcPqxV2Biv0OYp+OiqavBwmk48Z
+ P63kTxLddd7qSWbAArBoOd0wxZGZ6mV8Ci/ob8tV4rLSR/UOUi+9QnkxnJor14OfYkJKxot5
+ hWdJ3MYXjmcHjImBWplOyRiB81JbVf567MQlanforHd1r0ITzMHYONmRghrQvzlaMQrs0V0H
+ 5/sIufaiDh7rLeZSimeVyoFvwvQPx5sXhjViaHa+zHZExP9jhS/WWfFE881fNK9qqV8pi+li
+ 2uov8g5yD6hh+EPH6wARAQABwsF8BBgBCgAmFiEEKtR20JNxnJqlXaH73fNxj+N/OVcFAmNA
+ kI0CGwwFCQeEzgAACgkQ3fNxj+N/OVfFMhAA2zXBUzMLWgTm6iHKAPfz3xEmjtwCF2Qv/TT3
+ KqNUfU3/0VN2HjMABNZR+q3apm+jq76y0iWroTun8Lxo7g89/VDPLSCT0Nb7+VSuVR/nXfk8
+ R+OoXQgXFRimYMqtP+LmyYM5V0VsuSsJTSnLbJTyCJVu8lvk3T9B0BywVmSFddumv3/pLZGn
+ 17EoKEWg4lraXjPXnV/zaaLdV5c3Olmnj8vh+14HnU5Cnw/dLS8/e8DHozkhcEftOf+puCIl
+ Awo8txxtLq3H7KtA0c9kbSDpS+z/oT2S+WtRfucI+WN9XhvKmHkDV6+zNSH1FrZbP9FbLtoE
+ T8qBdyk//d0GrGnOrPA3Yyka8epd/bXA0js9EuNknyNsHwaFrW4jpGAaIl62iYgb0jCtmoK/
+ rCsv2dqS6Hi8w0s23IGjz51cdhdHzkFwuc8/WxI1ewacNNtfGnorXMh6N0g7E/r21pPeMDFs
+ rUD9YI1Je/WifL/HbIubHCCdK8/N7rblgUrZJMG3W+7vAvZsOh/6VTZeP4wCe7Gs/cJhE2gI
+ DmGcR+7rQvbFQC4zQxEjo8fNaTwjpzLM9NIp4vG9SDIqAm20MXzLBAeVkofixCsosUWUODxP
+ owLbpg7pFRJGL9YyEHpS7MGPb3jSLzucMAFXgoI8rVqoq6si2sxr2l0VsNH5o3NgoAgJNIg=
+In-Reply-To: <20241015033632.12120-1-liuhangbin@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27427/Mon Oct 14 10:48:30 2024)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
-branch HEAD: 29eaa79583671f1e1b468760d505ef837317ab15  x86/resctrl: Slightly clean-up mbm_config_show()
+On 10/15/24 5:36 AM, Hangbin Liu wrote:
+> After commit c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags
+> specified"), the mode is automatically set to XDP_MODE_DRV if the driver
+> implements the .ndo_bpf function. However, for drivers like bonding, which
+> only support native XDP for specific modes, this may result in an
+> "unsupported" response.
+> 
+> In such cases, let's fall back to SKB mode if the user did not explicitly
+> request DRV mode.
+> 
+> Fixes: c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags specified")
+> Reported-by: Liang Li <liali@redhat.com>
+> Closes: https://issues.redhat.com/browse/RHEL-62339
 
-elapsed time: 912m
+nit: The link is not accessible to the public.
 
-configs tested: 99
-configs skipped: 125
+Also, this breaks BPF CI with regards to existing bonding selftest :
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+   https://github.com/kernel-patches/bpf/actions/runs/11340153361/job/31536275257
 
-tested configs:
-alpha                             allnoconfig    gcc-14.1.0
-alpha                            allyesconfig    clang-20
-alpha                               defconfig    gcc-14.1.0
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.1.0
-arc                              allyesconfig    clang-20
-arc                                 defconfig    gcc-14.1.0
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.1.0
-arm                              allyesconfig    clang-20
-arm                                 defconfig    gcc-14.1.0
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.1.0
-arm64                               defconfig    gcc-14.1.0
-csky                              allnoconfig    gcc-14.1.0
-csky                                defconfig    gcc-14.1.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.1.0
-hexagon                          allyesconfig    clang-20
-hexagon                             defconfig    gcc-14.1.0
-i386                             allmodconfig    clang-18
-i386                              allnoconfig    clang-18
-i386                             allyesconfig    clang-18
-i386                                defconfig    clang-18
-loongarch                        allmodconfig    gcc-14.1.0
-loongarch                         allnoconfig    gcc-14.1.0
-loongarch                           defconfig    gcc-14.1.0
-m68k                             allmodconfig    gcc-14.1.0
-m68k                              allnoconfig    gcc-14.1.0
-m68k                             allyesconfig    gcc-14.1.0
-m68k                                defconfig    gcc-14.1.0
-microblaze                       allmodconfig    gcc-14.1.0
-microblaze                        allnoconfig    gcc-14.1.0
-microblaze                       allyesconfig    gcc-14.1.0
-microblaze                          defconfig    gcc-14.1.0
-mips                              allnoconfig    gcc-14.1.0
-nios2                             allnoconfig    gcc-14.1.0
-nios2                               defconfig    gcc-14.1.0
-openrisc                          allnoconfig    clang-20
-openrisc                         allyesconfig    gcc-14.1.0
-openrisc                            defconfig    gcc-12
-parisc                           allmodconfig    gcc-14.1.0
-parisc                            allnoconfig    clang-20
-parisc                           allyesconfig    gcc-14.1.0
-parisc                              defconfig    gcc-12
-parisc64                            defconfig    gcc-14.1.0
-powerpc                          allmodconfig    gcc-14.1.0
-powerpc                           allnoconfig    clang-20
-powerpc                          allyesconfig    gcc-14.1.0
-riscv                            allmodconfig    gcc-14.1.0
-riscv                             allnoconfig    clang-20
-riscv                            allyesconfig    gcc-14.1.0
-riscv                               defconfig    gcc-12
-s390                             allmodconfig    gcc-14.1.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.1.0
-s390                                defconfig    gcc-12
-sh                               allmodconfig    gcc-14.1.0
-sh                                allnoconfig    gcc-14.1.0
-sh                               allyesconfig    gcc-14.1.0
-sh                                  defconfig    gcc-12
-sparc                            allmodconfig    gcc-14.1.0
-sparc64                             defconfig    gcc-12
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-18
-x86_64                           allyesconfig    clang-18
-x86_64      buildonly-randconfig-001-20241015    clang-18
-x86_64      buildonly-randconfig-002-20241015    clang-18
-x86_64      buildonly-randconfig-003-20241015    clang-18
-x86_64      buildonly-randconfig-004-20241015    clang-18
-x86_64      buildonly-randconfig-005-20241015    clang-18
-x86_64      buildonly-randconfig-006-20241015    clang-18
-x86_64                              defconfig    clang-18
-x86_64                                  kexec    gcc-12
-x86_64                randconfig-001-20241015    clang-18
-x86_64                randconfig-002-20241015    clang-18
-x86_64                randconfig-003-20241015    clang-18
-x86_64                randconfig-004-20241015    clang-18
-x86_64                randconfig-005-20241015    clang-18
-x86_64                randconfig-006-20241015    clang-18
-x86_64                randconfig-011-20241015    clang-18
-x86_64                randconfig-012-20241015    clang-18
-x86_64                randconfig-013-20241015    clang-18
-x86_64                randconfig-014-20241015    clang-18
-x86_64                randconfig-015-20241015    clang-18
-x86_64                randconfig-016-20241015    clang-18
-x86_64                randconfig-071-20241015    clang-18
-x86_64                randconfig-072-20241015    clang-18
-x86_64                randconfig-073-20241015    clang-18
-x86_64                randconfig-074-20241015    clang-18
-x86_64                randconfig-075-20241015    clang-18
-x86_64                randconfig-076-20241015    clang-18
-x86_64                               rhel-8.3    gcc-12
-xtensa                            allnoconfig    gcc-14.1.0
+Given this issue is related to only bonding driver, could this be fixed
+there instead?
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> ---
+>   net/core/dev.c | 12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index ea5fbcd133ae..e32069d81cd7 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -9579,6 +9579,7 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
+>   
+>   	/* don't call drivers if the effective program didn't change */
+>   	if (new_prog != cur_prog) {
+> +reinstall:
+>   		bpf_op = dev_xdp_bpf_op(dev, mode);
+>   		if (!bpf_op) {
+>   			NL_SET_ERR_MSG(extack, "Underlying driver does not support XDP in native mode");
+> @@ -9586,8 +9587,17 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
+>   		}
+>   
+>   		err = dev_xdp_install(dev, mode, bpf_op, extack, flags, new_prog);
+> -		if (err)
+> +		if (err) {
+> +			/* The driver returns not supported even .ndo_bpf
+> +			 * implemented, fall back to SKB mode.
+> +			 */
+> +			if (err == -EOPNOTSUPP && mode == XDP_MODE_DRV &&
+> +			    !(flags & XDP_FLAGS_DRV_MODE)) {
+> +				mode = XDP_MODE_SKB;
+> +				goto reinstall;
+> +			}
+>   			return err;
+> +		}
+>   	}
+>   
+>   	if (link)
 
