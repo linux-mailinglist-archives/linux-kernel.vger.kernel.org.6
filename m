@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-366889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A24B99FBE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:00:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD4199FBE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBBC31C25073
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:00:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E5521C2526C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EB01F582A;
-	Tue, 15 Oct 2024 22:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEB71D63F9;
+	Tue, 15 Oct 2024 22:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="FLPpWC5o"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="peZMS2zK"
 Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABEF1D63FB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B71F1D63ED
 	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729033197; cv=none; b=RDxRPiam0bKRLEfqQwKlgiMhXJqZTZDS3BvP7X0ZQ4feIESEyIo9ppA9yAdfVEVA+lnOLcUObCGCWccRUsYflbz5EFN4ictmyxoTUNWTbL68o6fkhsH4GJddhVEk+tADFrCDxrECv+0yFNnp2Zck3FL978G+UAkq/iP3t6flJp8=
+	t=1729033198; cv=none; b=NZtb5o8fW2AYyW2wAUmel0rQWq9lYpzCzykXvnSlZV4MKWk6/g9BhPnzRGCEF79VcGOroJnjSjE4hg2jB3NUMhSvRVLwXJUYQw6GgK8aMe55Fv3RDS4OEh58IngSDY7nKCyGinA2a2LRh3jYdd91mfN5+DgIwRViai4uNl6pApg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729033197; c=relaxed/simple;
-	bh=AUq+DRuI2P8P4NGN1Z3bUH0LrDdXYBWBFbLpZVuzyOE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KPlL3cJXlJBmT4fqd+VnVKeCFgFXmnAg2tQX7hyK+pvtEnDYvNpCrnHzegyXr6f30dSOphlB4l+tZ86Pc950rETR60EXRxxl2l7uu4tCaVvYK+48MB0o1NMehGc5CDmuzjFLTzppV/M4FgcwMgi9bEKdnl/G6GcxKurlRAxw3Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=FLPpWC5o; arc=none smtp.client-ip=202.36.163.20
+	s=arc-20240116; t=1729033198; c=relaxed/simple;
+	bh=MHNNz6bVJciNmX//sIssJ7oLn0dKL19xFzYvBNSescA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OZ77r/KT8NzoPrqf04LgXUoMwskoemoM3Z50/juuNk8/TeA2U3mKKuKfsvxwaE2HjvImJ9JZFcNuUtFssZex9HCi1XVqhD0Mis8InuhXuBWpFuuoUeunbjMtN7CbPCaNQgUqGFz3Ie8TOmtFWwqIF364QKSEgUA7i3HKdteSnqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=peZMS2zK; arc=none smtp.client-ip=202.36.163.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
 Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 969592C038E;
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A685F2C03CB;
 	Wed, 16 Oct 2024 11:59:52 +1300 (NZDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
 	s=mail181024; t=1729033192;
-	bh=l07QL1OSHu0TgCuTqR1/PJIa1Ihp52ojcHC70VFVMJU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FLPpWC5o1gn7Fm4HjNPQg5Swb4J5bdX9yDCwysNKqfxRE+QX/S7otfUbqVpr5IKvj
-	 BTZG2kHYIm6EpqEoZ5XGMnFeqLrAY+dX4yiqPONIJ7RsPvh1+TXa7YmMkmJ+5LfGZe
-	 xcv5PjJEvVi0vVwcnAB7mgIn7c0enORF8QiSrOyjViW1WBywSkTgwmpEq8t/CghUjU
-	 jCtkLWuGS3T9/W3tNbJ4qY/2wGlLU1plFyjQ6HwCidmi64zu9Ux+QZijLwaRaMYxGr
-	 bGsv23U2cJKDuqTeL8uPjvVzYdQppUAP+8QTOl8p/E/cy0pIJWUv9AHRJ0GYFThDX9
-	 jheUczXP9qUVg==
+	bh=iLrdxpyxSpR+kGhAc2KHTt5bUnwB81R9SSd8nshCHps=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=peZMS2zKXZQaXlEBWMSBiiWvGhzh7f4e19eE1FtS1kmq2jxQNbRS/6cICQejbSLpq
+	 UW1HWAgpVD4tRX/stJFTCEHDxdPA/p7TgDEmXC2LCJMRaXjkyHe72ZCrMyNiAa+Z9p
+	 S+wf8sP0reuw6VCcRwFvbhhAC+4dA8BG7Ylko1D4gMNbe4fd764nNAnH0nh/KKYAWX
+	 5TwJ71uivz+ufjf8J6IvE7tLC08BLdS5wV1OgaJvLUgEQRE01jDv8NBnEXIeBCrxf5
+	 TC6XVhFlvdr3rJLAbC57PXwcEgU4yrYhMRLqoj6vCF9YzMQMzgs4fXy+y9HRmVvZ/H
+	 b7rppncx7QC3Q==
 Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670ef3e80000>; Wed, 16 Oct 2024 11:59:52 +1300
+	id <B670ef3e80001>; Wed, 16 Oct 2024 11:59:52 +1300
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 3B07013ED7B;
+	by pat.atlnz.lc (Postfix) with ESMTP id 3C38413EE85;
 	Wed, 16 Oct 2024 11:59:52 +1300 (NZDT)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 351802820D4; Wed, 16 Oct 2024 11:59:52 +1300 (NZDT)
+	id 3927B280407; Wed, 16 Oct 2024 11:59:52 +1300 (NZDT)
 From: Chris Packham <chris.packham@alliedtelesis.co.nz>
 To: andi.shyti@kernel.org,
 	robh@kernel.org,
@@ -67,10 +68,12 @@ Cc: linux-i2c@vger.kernel.org,
 	linux-pm@vger.kernel.org,
 	linux-mips@vger.kernel.org,
 	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v6 0/6] RTL9300 support for reboot and i2c
-Date: Wed, 16 Oct 2024 11:59:42 +1300
-Message-ID: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v6 1/6] dt-bindings: reset: syscon-reboot: Add reg property
+Date: Wed, 16 Oct 2024 11:59:43 +1300
+Message-ID: <20241015225948.3971924-2-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
+References: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,51 +81,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670ef3e8 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=bFzpBXSQfSLquZs-7NAA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670ef3e8 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=KKAkSRfTAAAA:8 a=8QneSPuuVenq9H3OMoEA:9 a=3ZKOabzyN94A:10 a=cvBusfyB2V15izCimMoJ:22
 X-SEG-SpamProfiler-Score: 0
 x-atlnz-ls: pat
 
-As requested I've combined my two series into a single one to provide som=
-e
-better context for reviewers. I'm not sure which trees the patches should=
- go in
-via. The first two are reasonably independent and could go in via linux-p=
-m. I
-guess technically the last one could go via linux-i2c but it needs the an=
-d the
-bindings/dts updates which would probably make sense to come via linux-mi=
-ps.
+The syscon-reboot binding used 'offset' for historical reasons. Having a
+reg property is appropriate when these nodes are children of a MMIO bus.
+Add a reg property and modify the constraints so that one of 'reg' or
+'offset' is expected.
 
---
-2.46.1
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
 
-Chris Packham (6):
-  dt-bindings: reset: syscon-reboot: Add reg property
-  power: reset: syscon-reboot: Accept reg property
-  dt-bindings: mfd: Add Realtek RTL9300 switch peripherals
-  mips: dts: realtek: Add syscon-reboot node
-  mips: dts: realtek: Add I2C controllers
-  i2c: Add driver for the RTL9300 I2C controller
+Notes:
+    Changes in v6:
+    - Add r-by from Krzysztof
+    Changes in v5:
+    - New, suggested by Krzysztof
 
- .../bindings/i2c/realtek,rtl9301-i2c.yaml     |  99 ++++
- .../bindings/mfd/realtek,rtl9301-switch.yaml  | 114 +++++
- .../bindings/power/reset/syscon-reboot.yaml   |  11 +-
- MAINTAINERS                                   |   7 +
- .../cameo-rtl9302c-2x-rtl8224-2xge.dts        |   2 +-
- arch/mips/boot/dts/realtek/rtl9302c.dtsi      |  15 +
- arch/mips/boot/dts/realtek/rtl930x.dtsi       |  29 ++
- drivers/i2c/busses/Kconfig                    |  10 +
- drivers/i2c/busses/Makefile                   |   1 +
- drivers/i2c/busses/i2c-rtl9300.c              | 425 ++++++++++++++++++
- drivers/power/reset/syscon-reboot.c           |   3 +-
- 11 files changed, 713 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9301=
--i2c.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl9301=
--switch.yaml
- create mode 100644 arch/mips/boot/dts/realtek/rtl9302c.dtsi
- create mode 100644 drivers/i2c/busses/i2c-rtl9300.c
+ .../bindings/power/reset/syscon-reboot.yaml           | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/power/reset/syscon-reboot.=
+yaml b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+index 75061124d9a8..19d3093e6cd2 100644
+--- a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
++++ b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+@@ -31,6 +31,10 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     description: Offset in the register map for the reboot register (in =
+bytes).
+=20
++  reg:
++    maxItems: 1
++    description: Base address and size for the reboot register.
++
+   regmap:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     deprecated: true
+@@ -45,9 +49,14 @@ properties:
+   priority:
+     default: 192
+=20
++oneOf:
++  - required:
++      - offset
++  - required:
++      - reg
++
+ required:
+   - compatible
+-  - offset
+=20
+ additionalProperties: false
+=20
 --=20
 2.47.0
 
