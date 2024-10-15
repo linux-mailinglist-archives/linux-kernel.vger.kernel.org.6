@@ -1,389 +1,116 @@
-Return-Path: <linux-kernel+bounces-365092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E6099DD67
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:11:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CAA99DD69
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5A7F1C21421
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:11:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480A61C21DF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA56A172BB9;
-	Tue, 15 Oct 2024 05:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DAA175D34;
+	Tue, 15 Oct 2024 05:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jkkw0air"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Oge2smce"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E08C171E76
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F06166F1B;
+	Tue, 15 Oct 2024 05:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728969110; cv=none; b=tLTbD6VggclLL6S+NtPXOA6bS25gA74vTFhG+0JS/0Xe7g49HZj95rskYDlpC7xQowiv94RkoVuHqfsKDgHugc6QyssnpUuFh6dFLaZcT3bc5KtaLz1zXECyg/30V70n3YQTMANpZMfFTS9HMbAqOy8c7/YXkQ6tet40jbOLRk0=
+	t=1728969199; cv=none; b=rMKjPd6eBEDoGyFwnNNiAhn+4OS4gWi696mROs9NSt+PVq3y1ffV7iMnLVNwR9B84pkn+WlaYkWcewU4Tutl//smWkLjP3WORv9EVCZhwhpNNNJtJLEqJ5zGVlV3FfP0A0ItN6lOGgYRwG39BapwTreYg4pP0vPtsp6UH8xH6HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728969110; c=relaxed/simple;
-	bh=DVTjuEMjHjJ2f0Y90QGBddcB1di19d4oyCbgmdK//CM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ti99d0A8Qnr8WEx5dH3a6HUSqGkW4QhUYtK9eJPKWsKA6czJL1WktgKShrYauAsJIW5VX3/iHqgzQoQMYqUlY2hb0t/9LJK2p9gH1B1v7lW3G3CVR9cJTrwry9U3lDZhkBUm+B7s5/Z7gGv0j1Hf1gXUYuU4SZ1bvT9Ar4Ewzjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jkkw0air; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so1985188b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:11:48 -0700 (PDT)
+	s=arc-20240116; t=1728969199; c=relaxed/simple;
+	bh=3uI3OWuZrMmEXJ8l28iAIG1EYkp1PvXzt0XnXFDbBLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F0OVRUnTi+GE/5v42Z6IuuNhgl3oNtWbBWJyc/xtUDqGwA/dPNLcDsWWMVv0G+C/pvVdKFEUzppBpiaD/x+6qIHEcmRt7nQ9jnw+H5mByb6gCQoagWb8GWRIns6ms/oCdVUcl1KsElMrYRmMd73erkywwgsIuvsZemklNgo4b28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Oge2smce; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-430558cddbeso33201725e9.1;
+        Mon, 14 Oct 2024 22:13:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728969108; x=1729573908; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=itcSJsJotSK/jcaVaV5tcZpuhtgwm01gUAjTOqSUyQM=;
-        b=jkkw0air61PO2aJMjzyv3zZRVLTFsgW3qTinIl8dxkgTI/oHG3D4qZ3jpHpCCC2/Lv
-         2MgWiwWrtL822wNrcBqLGteTxlCtkuh1pSfEuAnFQwBQX5sC/E92ystvIz4p0TPHv710
-         JT2WKOSrDUWzH/kaGVLNv4tfUY80lUG/Uj9WQnOifSfjn4y6/Be3eKrLvzoZmwG6nejQ
-         LJ80Uffc3G9j7oCdgJIoOBF0MSalMZbJw+SlovgYgv1BERdM5W8PhdU8zJFSrS7efuzA
-         p07zGc3i3Yw8XFOHDnmDmRnFXzawjNiqYIBBi0A3hRL3lktYTY54JkOOTjpfvMWORkh5
-         hm5Q==
+        d=googlemail.com; s=20230601; t=1728969196; x=1729573996; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PHik4U7KOw/4dIRDWl5VwjxD5vspBFtD0hwaXOoLj+8=;
+        b=Oge2smcedozPi+ww0MQuM6XA/D1JjAAajF0gTJDEnTkqTHL+AbaKK+3tYNG/JcMTgZ
+         ZOajsZ2LLRIuJEzout9DVkCi7NsOI72HNpnU85BZ/C3tK0NtE/UXy0xlGhyP0HStmfga
+         ViMbcGRxYRcSahFC9x+rGn9weMCH3rl661fAUqHN+fLg99d8L2rn0Syr8QvtOxaUYKtM
+         Dsr+/hI5Jj0zRq/jxJOBOzfd/eUAhm/zixx1MPvtv7IhT1XhLhLBmwEM7NZOEAh0vhD2
+         S54/OwoEN5t8BxSzAmAZo7uhj0tpdFHX9QRoxAzwLEh6wnL6/cYspIsATJbqFrTT8xMh
+         D41g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728969108; x=1729573908;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1728969196; x=1729573996;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=itcSJsJotSK/jcaVaV5tcZpuhtgwm01gUAjTOqSUyQM=;
-        b=wrWNiQIwGECt+a14gWEWgKekwoE1DXhSL0bkPQ6vzcCnhihC9aSKUtBwNSiTicMUiD
-         /Bd4CflNozTHDL8NJI5tkGBrqkirYdbnRmKMSf7vz6qIz0t7DxhrrqC1NZ0fTwd0qutE
-         bSIY91w1MqQLJgME+GsF+O6Nf9HEhJ41TWcSebioqgZIklzHXDyvzwt7rv9nFMqOwls0
-         x2bjlFe6Od2jQemgWrmdQP6NL4XAbfOg7Qa9t9OjD3RIfcJ6OT3UJdhsd6IYxD2N57Sv
-         3QAL98ZZVFvmbRoPqoSiZJFXepsLZVnb4FsqTAuU7mndCPXF+KVuS49WqY8T8l1Dba2x
-         QwYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTf97rqOZoEZHMhMjl9fhRgTdK+xN8OysxE7rFFpoD60KvSw6Tubj3IRXOcyQFox5cOH+O2A+MiXP0kFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEicI7ayX+f2mVUNXRs2qkqAZDRH8jo/+J1jQwvu+Ba8Julfn+
-	UQ8tktnidY1JJcugysYw6kDy3PdIyV1RIvx8QEWmMNOQ8lLPqBwpSqm4bmug1A==
-X-Google-Smtp-Source: AGHT+IGcczmm+9wAnSEP6Av3fDiqgeLou2z+jC7AbNImoY9K8bKikbyOt8wINuH5deg1mPWGxTr0NQ==
-X-Received: by 2002:a05:6a00:888:b0:71d:fd40:b484 with SMTP id d2e1a72fcca58-71e380c5033mr20946749b3a.24.1728969108206;
-        Mon, 14 Oct 2024 22:11:48 -0700 (PDT)
-Received: from thinkpad ([220.158.156.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e7737185dsm450968b3a.16.2024.10.14.22.11.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 22:11:47 -0700 (PDT)
-Date: Tue, 15 Oct 2024 10:41:41 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>,
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>,
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 2/3] PCI: rockchip: Simplify reset control handling by
- using reset_control_bulk*() function
-Message-ID: <20241015051141.g6fh222zrkvnn4l6@thinkpad>
-References: <20241014135210.224913-1-linux.amoon@gmail.com>
- <20241014135210.224913-3-linux.amoon@gmail.com>
+        bh=PHik4U7KOw/4dIRDWl5VwjxD5vspBFtD0hwaXOoLj+8=;
+        b=YuxqlKA1w8K+hQK0FClLAdVZfvl4yj4UfaCLJyZXviIe7y5vjblIswVLfnersVD75A
+         DgBc+SUFWqdIIQHlF+4R2ERm5NTOdGbDBq+EHg1hG6L3vItHNKw3l/WahEsGGeKANt0k
+         cKSWFRxprNOI5Poisxx+Bv1qtVP6MRvG6SKsIN6b3Fgsb0+GXgJ0ohAWlrWrwNPcdHYl
+         HQiVWMO5l3RRckTHEVafqjNON6FTygFQQWP72h6GdUAQKU7NoXAE7TewkUxl5gbp4Mto
+         VksUJt12lA9Z9O6R3nGoArZRcYXwCLGcn/9JCpIiQdPgax+P+tyOatpV28o2QgzufVkr
+         2Vjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvZAGqAgNhEO1RJqIKem2ZnTJADCDxFkXP3opuMP8ijO9RaYty/EGLLpQxvcf4W2W6zlhlD0AU@vger.kernel.org, AJvYcCV0jCcl6OA5LDcP0mw9mFx+UdCnwT6io1H/sW5poiB6dRkV9QBRvHy0ZjTH4vGaXEOWJS1FbTsYwlimWPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrFkW8rrr9NVPAePGvLc6UydzCdUT7SpvfIkrH/XAGXeJnP2sQ
+	ZbDvi78AsYJyT7HyGAhUlCyRCSpJYRYezQPOVNKDOFylAS2CkNI=
+X-Google-Smtp-Source: AGHT+IFYKWFkTetC2jsHx2cuWQS1f4EkFAT2Xy1LYi9zn5BWKEWr8Mg8OO1edr31ys6yhXGXTilGkQ==
+X-Received: by 2002:a05:600c:4e8e:b0:430:4db2:2b88 with SMTP id 5b1f17b1804b1-4311d891c4cmr103556005e9.5.1728969195718;
+        Mon, 14 Oct 2024 22:13:15 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4546.dip0.t-ipconnect.de. [91.43.69.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f55deeesm6519045e9.8.2024.10.14.22.13.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 22:13:15 -0700 (PDT)
+Message-ID: <09191ba7-304d-4e2d-b5ae-8ef0818e7675@googlemail.com>
+Date: Tue, 15 Oct 2024 07:13:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.11 000/214] 6.11.4-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241014141044.974962104@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20241014141044.974962104@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241014135210.224913-3-linux.amoon@gmail.com>
 
-On Mon, Oct 14, 2024 at 07:22:03PM +0530, Anand Moon wrote:
-> Refactor the reset control handling in the Rockchip PCIe driver,
-> introduce a more robust and efficient method for assert and
-> deassert reset controller using reset_control_bulk*() API. Using the
-> reset_control_bulk APIs, the reset handling for the core clocks reset
-> unit becomes much simpler.
-> 
-> Spilt the reset controller in two groups as per the
->  RK3399 TM  17.5.8.1 PCIe Initialization Sequence
->     17.5.8.1.1 PCIe as Root Complex.
-> 
-> 6. De-assert the PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N
->    simultaneously.
-> 
+Am 14.10.2024 um 16:17 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.11.4 release.
+> There are 214 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I'd reword it slightly:
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Following the recommendations in 'Rockchip RK3399 TRM v1.3 Part2':
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-1. Split the reset controls into two groups as per section '17.5.8.1.1 PCIe
-as Root Complex'.
-
-2. Deassert the 'Pipe, MGMT Sticky, MGMT, Core' resets in groups as per section
-'17.5.8.1.1 PCIe as Root Complex'. This is accomplished using the
-reset_control_bulk APIs.
-
-> - devm_reset_control_bulk_get_exclusive(): Allows the driver to get all
->   resets defined in the DT thereby removing the hardcoded reset names
->   in the driver.
-> - reset_control_bulk_assert(): Allows the driver to assert the resets
->   defined in the driver.
-> - reset_control_bulk_deassert(): Allows the driver to deassert the resets
->   defined in the driver.
-> 
-
-No need to list out the APIs. Just add them to the first paragraph itself to
-explain how they are used.
-
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-
-Some nitpicks below. Rest looks good.
-
-> ---
-> v8: I tried to address reviews and comments from Mani.
->     Follow the sequence of De-assert as per the driver code.
->     Drop the comment in the driver.
->     Improve the commit message with the description of the TMP section.
->     Improve the reason for the core functional changes in the commit
->     description.
->     Improve the error handling messages of the code.
-> v7: replace devm_reset_control_bulk_get_optional_exclusive()
->         with devm_reset_control_bulk_get_exclusive()
->     update the functional changes.
-> V6: Add reason for the split of the RESET pins.
-> v5: Fix the De-assert reset core as per the TRM
->     De-assert the PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N
->     simultaneously.
-> v4: use dev_err_probe in error path.
-> v3: Fix typo in commit message, dropped reported by.
-> v2: Fix compilation error reported by Intel test robot
->     fixed checkpatch warning.
-> ---
->  drivers/pci/controller/pcie-rockchip.c | 155 +++++--------------------
->  drivers/pci/controller/pcie-rockchip.h |  26 +++--
->  2 files changed, 49 insertions(+), 132 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
-> index 2777ef0cb599..43d83c1f3196 100644
-> --- a/drivers/pci/controller/pcie-rockchip.c
-> +++ b/drivers/pci/controller/pcie-rockchip.c
-> @@ -30,7 +30,7 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct device_node *node = dev->of_node;
->  	struct resource *regs;
-> -	int err;
-> +	int err, i;
->  
->  	if (rockchip->is_rc) {
->  		regs = platform_get_resource_byname(pdev,
-> @@ -69,55 +69,23 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
->  	if (rockchip->link_gen < 0 || rockchip->link_gen > 2)
->  		rockchip->link_gen = 2;
->  
-> -	rockchip->core_rst = devm_reset_control_get_exclusive(dev, "core");
-> -	if (IS_ERR(rockchip->core_rst)) {
-> -		if (PTR_ERR(rockchip->core_rst) != -EPROBE_DEFER)
-> -			dev_err(dev, "missing core reset property in node\n");
-> -		return PTR_ERR(rockchip->core_rst);
-> -	}
-> -
-> -	rockchip->mgmt_rst = devm_reset_control_get_exclusive(dev, "mgmt");
-> -	if (IS_ERR(rockchip->mgmt_rst)) {
-> -		if (PTR_ERR(rockchip->mgmt_rst) != -EPROBE_DEFER)
-> -			dev_err(dev, "missing mgmt reset property in node\n");
-> -		return PTR_ERR(rockchip->mgmt_rst);
-> -	}
-> -
-> -	rockchip->mgmt_sticky_rst = devm_reset_control_get_exclusive(dev,
-> -								"mgmt-sticky");
-> -	if (IS_ERR(rockchip->mgmt_sticky_rst)) {
-> -		if (PTR_ERR(rockchip->mgmt_sticky_rst) != -EPROBE_DEFER)
-> -			dev_err(dev, "missing mgmt-sticky reset property in node\n");
-> -		return PTR_ERR(rockchip->mgmt_sticky_rst);
-> -	}
-> -
-> -	rockchip->pipe_rst = devm_reset_control_get_exclusive(dev, "pipe");
-> -	if (IS_ERR(rockchip->pipe_rst)) {
-> -		if (PTR_ERR(rockchip->pipe_rst) != -EPROBE_DEFER)
-> -			dev_err(dev, "missing pipe reset property in node\n");
-> -		return PTR_ERR(rockchip->pipe_rst);
-> -	}
-> +	for (i = 0; i < ROCKCHIP_NUM_PM_RSTS; i++)
-> +		rockchip->pm_rsts[i].id = rockchip_pci_pm_rsts[i];
->  
-> -	rockchip->pm_rst = devm_reset_control_get_exclusive(dev, "pm");
-> -	if (IS_ERR(rockchip->pm_rst)) {
-> -		if (PTR_ERR(rockchip->pm_rst) != -EPROBE_DEFER)
-> -			dev_err(dev, "missing pm reset property in node\n");
-> -		return PTR_ERR(rockchip->pm_rst);
-> -	}
-> +	err = devm_reset_control_bulk_get_exclusive(dev,
-> +						    ROCKCHIP_NUM_PM_RSTS,
-> +						    rockchip->pm_rsts);
-> +	if (err)
-> +		return dev_err_probe(dev, err, "Cannot get the PM reset control\n");
-
-"Couldn't get PM resets"
-
->  
-> -	rockchip->pclk_rst = devm_reset_control_get_exclusive(dev, "pclk");
-> -	if (IS_ERR(rockchip->pclk_rst)) {
-> -		if (PTR_ERR(rockchip->pclk_rst) != -EPROBE_DEFER)
-> -			dev_err(dev, "missing pclk reset property in node\n");
-> -		return PTR_ERR(rockchip->pclk_rst);
-> -	}
-> +	for (i = 0; i < ROCKCHIP_NUM_CORE_RSTS; i++)
-> +		rockchip->core_rsts[i].id = rockchip_pci_core_rsts[i];
->  
-> -	rockchip->aclk_rst = devm_reset_control_get_exclusive(dev, "aclk");
-> -	if (IS_ERR(rockchip->aclk_rst)) {
-> -		if (PTR_ERR(rockchip->aclk_rst) != -EPROBE_DEFER)
-> -			dev_err(dev, "missing aclk reset property in node\n");
-> -		return PTR_ERR(rockchip->aclk_rst);
-> -	}
-> +	err = devm_reset_control_bulk_get_exclusive(dev,
-> +						    ROCKCHIP_NUM_CORE_RSTS,
-> +						    rockchip->core_rsts);
-> +	if (err)
-> +		return dev_err_probe(dev, err, "Cannot get the CORE reset control\n");
-
-"Couldn't get Core resets"
-
->  
->  	if (rockchip->is_rc) {
->  		rockchip->ep_gpio = devm_gpiod_get_optional(dev, "ep",
-> @@ -147,23 +115,10 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
->  	int err, i;
->  	u32 regs;
->  
-> -	err = reset_control_assert(rockchip->aclk_rst);
-> -	if (err) {
-> -		dev_err(dev, "assert aclk_rst err %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	err = reset_control_assert(rockchip->pclk_rst);
-> -	if (err) {
-> -		dev_err(dev, "assert pclk_rst err %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	err = reset_control_assert(rockchip->pm_rst);
-> -	if (err) {
-> -		dev_err(dev, "assert pm_rst err %d\n", err);
-> -		return err;
-> -	}
-> +	err = reset_control_bulk_assert(ROCKCHIP_NUM_PM_RSTS,
-> +					rockchip->pm_rsts);
-> +	if (err)
-> +		return dev_err_probe(dev, err, "Couldn't assert PM resets\n");
->  
->  	for (i = 0; i < MAX_LANE_NUM; i++) {
->  		err = phy_init(rockchip->phys[i]);
-> @@ -173,47 +128,17 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
->  		}
->  	}
->  
-> -	err = reset_control_assert(rockchip->core_rst);
-> -	if (err) {
-> -		dev_err(dev, "assert core_rst err %d\n", err);
-> -		goto err_exit_phy;
-> -	}
-> -
-> -	err = reset_control_assert(rockchip->mgmt_rst);
-> -	if (err) {
-> -		dev_err(dev, "assert mgmt_rst err %d\n", err);
-> -		goto err_exit_phy;
-> -	}
-> -
-> -	err = reset_control_assert(rockchip->mgmt_sticky_rst);
-> -	if (err) {
-> -		dev_err(dev, "assert mgmt_sticky_rst err %d\n", err);
-> -		goto err_exit_phy;
-> -	}
-> -
-> -	err = reset_control_assert(rockchip->pipe_rst);
-> -	if (err) {
-> -		dev_err(dev, "assert pipe_rst err %d\n", err);
-> -		goto err_exit_phy;
-> -	}
-> +	err = reset_control_bulk_assert(ROCKCHIP_NUM_CORE_RSTS,
-> +					rockchip->core_rsts);
-> +	if (err)
-> +		return dev_err_probe(dev, err, "Couldn't assert Core resets\n");
-
-"Couldn't assert Core resets\n"
-
->  
->  	udelay(10);
->  
-> -	err = reset_control_deassert(rockchip->pm_rst);
-> -	if (err) {
-> -		dev_err(dev, "deassert pm_rst err %d\n", err);
-> -		goto err_exit_phy;
-> -	}
-> -
-> -	err = reset_control_deassert(rockchip->aclk_rst);
-> +	err = reset_control_bulk_deassert(ROCKCHIP_NUM_PM_RSTS,
-> +					  rockchip->pm_rsts);
->  	if (err) {
-> -		dev_err(dev, "deassert aclk_rst err %d\n", err);
-> -		goto err_exit_phy;
-> -	}
-> -
-> -	err = reset_control_deassert(rockchip->pclk_rst);
-> -	if (err) {
-> -		dev_err(dev, "deassert pclk_rst err %d\n", err);
-> +		dev_err(dev, "Couldn't deassert PM resets %d\n", err);
-
-"Couldn't deassert PM resets: %d\n"
-
->  		goto err_exit_phy;
->  	}
->  
-> @@ -252,35 +177,15 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
->  		goto err_power_off_phy;
->  	}
->  
-> -	/*
-> -	 * Please don't reorder the deassert sequence of the following
-> -	 * four reset pins.
-> -	 */
-> -	err = reset_control_deassert(rockchip->mgmt_sticky_rst);
-> -	if (err) {
-> -		dev_err(dev, "deassert mgmt_sticky_rst err %d\n", err);
-> -		goto err_power_off_phy;
-> -	}
-> -
-> -	err = reset_control_deassert(rockchip->core_rst);
-> +	err = reset_control_bulk_deassert(ROCKCHIP_NUM_CORE_RSTS,
-> +					  rockchip->core_rsts);
->  	if (err) {
-> -		dev_err(dev, "deassert core_rst err %d\n", err);
-> -		goto err_power_off_phy;
-> -	}
-> -
-> -	err = reset_control_deassert(rockchip->mgmt_rst);
-> -	if (err) {
-> -		dev_err(dev, "deassert mgmt_rst err %d\n", err);
-> -		goto err_power_off_phy;
-> -	}
-> -
-> -	err = reset_control_deassert(rockchip->pipe_rst);
-> -	if (err) {
-> -		dev_err(dev, "deassert pipe_rst err %d\n", err);
-> +		dev_err(dev, "Couldn't deassert CORE err %d\n", err);
-
-"Couldn't deassert Core resets: %d\n"
-
->  		goto err_power_off_phy;
->  	}
->  
->  	return 0;
-> +
-
-Spurious change.
-
-- Mani
+Beste Grüße,
+Peter Schneider
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
