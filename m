@@ -1,73 +1,53 @@
-Return-Path: <linux-kernel+bounces-366217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35EE99F252
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:08:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0820199F378
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266D21F23C24
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A371F24527
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7DD1F6664;
-	Tue, 15 Oct 2024 16:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002C01F76CC;
+	Tue, 15 Oct 2024 16:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="i/dXZ2II"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="dyJ8JWfX"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5C1CB9EB
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBE1CBA1C;
+	Tue, 15 Oct 2024 16:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729008503; cv=none; b=lOB/PGtDMXhxxeMrcOx/yn4nTr/H4ahVAGsjC82/RvL6JPK0q4/1ucvEQN2dRwKqOGePX8w+KJZrvG042RJYEka5+mP1WWb/Wtudt6EKz7wnPmbkeluI/5LuO0Pq35cJMDbAhRpVHT+qJ2b1bt+JqAIMC/NBWc1rMngFWVsRtYw=
+	t=1729011345; cv=none; b=p+gxuj7Bj6XS78Dvnpzol0WD7KaAhleiISgxZBJJdheZC9E830Q4mzBGOKV4meFskZInoCKNru/fWcN9aW3C3YRSHwpA1fELbUYduBsr3JgKXswA/8MbALI5JTY8Z8r5FrzVWEaXp6TYbkBkDeudaKbjb61k91WqjWlHWX7gIVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729008503; c=relaxed/simple;
-	bh=4Bzdfhl+m7ShnIiiJTobPwP7Xgi6C+hX2rwg3xphCJY=;
+	s=arc-20240116; t=1729011345; c=relaxed/simple;
+	bh=k2jFwJTmdqC0fGzcYrR+i3TTR8BBLw7WSqbSYcCyFUw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mL54pbq/J/EmLIyGIp0zgz/zahVhrU9w58R3A2+Ha72nvSvIP0YGSlGg9CohiuXWFpGcGfzDhB0KHW9RK2GdfJ7wK9QkOhklnSkZPszLISiRukiVeu2JssNCgucqcv77dB6QOSp9lE7O93POOgCUigO2BKnt8Ja5acVJvHdSfJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=i/dXZ2II; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-716a6e6d5a3so3784401a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729008500; x=1729613300; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=swtPW+tLLd0OzR6ekCZ+L05YNw5hBkLTnVHdB063/5s=;
-        b=i/dXZ2IIxke8jaX3Vdp7BpaSW/1VCxIE32jLHX0OXehjHTiwukbn+e5ozb1jqMNFIQ
-         E5GWz8ALGnxe20sCyiFp+l5iMpoUi3ywzhq6qu/DEVcvABQjEyOsytKm7IMZ/cE5o9WN
-         JQ1C6BgHvH/nWN7H5dKYYHqQLrnBoqpCnBxqN6yLk5Su+t9TuuvNt/2p3WphC9MylTk9
-         ZIlznqIGkTJTnu64EQOj/aT6RqtyrpSCcTz0UP8R824NQ8HKGTfw2Kw6PlJyYxUUF4ga
-         yoZgAwoEHHXI/vJSJ9oqZCIVblYnWlnBX+iaOLKIHVxl7EHu8/85GvRy7QsdLVFIfzhC
-         yzow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729008500; x=1729613300;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=swtPW+tLLd0OzR6ekCZ+L05YNw5hBkLTnVHdB063/5s=;
-        b=cCBssqDwguj1asiEPL4zc+A0ytxEXb90lAF9U4FCEfKpbeJd+yUiK65Hl9Era2BiWf
-         2X7nkBWDYMeLjYS3nGfssoiQl/aqUiSx7KJc95bkmoN16G9HpUvAd+vJT5R3bRZZeH9Z
-         8WgI9B+/IAXgaZtvdEYShRq1m/tgsHum01nvn4cuBksReca7M1YfUOSQp0qJO4L4ECnA
-         yEyJ2SlULfi3jxn0MZZNIrShJFMcig6SfG/RZ4haDR5jnsu4RObvbucnqwXOUe4t9z/E
-         5sIrvDKQ2jZhYkY2vdj7ClscinSjZbEttk7ORQl5UNVqJ1sSPbiYap3nrtkmHGS5Nppf
-         ShdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkaUEneWAfvtO17ivuhHGrvektF6pASDbf6YtsLOytnMtJIZFThMHxCq6Iaijtw2UC2V8F5gnkxbQNOGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySs8HKoaZTtwxoJ7hWV/xthb/opxOMz7pJQ0PrMD1bH6C74Bys
-	f9I/WRsxWNWQMukA7akwZtj8JBqSToXBfbheWrWsKgCJbk/0+M6Xu3sexT+VWEI=
-X-Google-Smtp-Source: AGHT+IEwPPYkT6dxAxzECLc4uz6QgfRyPeTxs3ZCoeVmhMjxDE6Q2Jva1e5+jR93VB23GYq/ngQhtA==
-X-Received: by 2002:a05:6830:3688:b0:717:d601:eb42 with SMTP id 46e09a7af769-7180350411amr1306094a34.31.1729008500459;
-        Tue, 15 Oct 2024 09:08:20 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-717fb9ee9d6sm347988a34.21.2024.10.15.09.08.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 09:08:19 -0700 (PDT)
-Message-ID: <704f4440-9699-48ef-acd7-e0bf9c4ae5b0@baylibre.com>
-Date: Tue, 15 Oct 2024 11:08:18 -0500
+	 In-Reply-To:Content-Type; b=q3sghSmLdu4PwOE1LYfvH+sItMU9S47KJkMg8mEZXq4ZsD4QlzE095yxjlvDPfx8Im7MGA2aYOjfuBR84rFCIekXxKVHbyUiuHJYWphvkk9fuHvZSh9eIeTr3D3EUfPAnLsbxCZcc4lHyYrwiJEIXgwP0yrxZCcGD8ICPtEv9II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=dyJ8JWfX; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 3DE6488902;
+	Tue, 15 Oct 2024 18:55:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1729011336;
+	bh=QHhwrY1OnwvNGfEUyssvc2Kp8cTGixua2i+C3QVWTJA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dyJ8JWfXSmudK9OM2hQM9dVmZrvvT0iXNqJHyvWZ2VXUoxwgWLMBMweWn8T9fNOKs
+	 vxSZYUaq2/c1SZ86iItJjYMIilm+xFL2O2j2TGYi1u8bgAxShISfHxDeAE85OFCHEJ
+	 UhX8yVhFntN8moe94pz6c/4ZncANv18yFo9e2DHS0SVT6iXCuNFyQIyXm5FJohniSm
+	 kEwF7ivBjfZGaVAzP15erINsaoQggG02WZw7urXusgY3IuYGw9S69czOEfJv9HXIMm
+	 wJd2OzP1yAp9GleZrhHiUuLapMmg+NvX1xbspUSwJxv5yI0Nr1ZzSRlrRaDnel7Vh3
+	 ivKinliNgLcOg==
+Message-ID: <e5a21bb8-00c3-41f1-9a4d-856eb1465d45@denx.de>
+Date: Tue, 15 Oct 2024 17:39:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,82 +55,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
-To: Andy Shevchenko <andy@kernel.org>, Jonathan Cameron <jic23@kernel.org>
-Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Ivan Mikhaylov <fr0st61te@gmail.com>,
- Marius Cristea <marius.cristea@microchip.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Mike Looijmans <mike.looijmans@topic.nl>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org
-References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
- <20241014094154.9439-6-antoniu.miclaus@analog.com>
- <Zw0ZM0vQXJep3dFJ@smile.fi.intel.com> <20241014201515.463c7c07@jic23-huawei>
- <Zw5N_fxdDKQxlPoj@smile.fi.intel.com>
+Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
+ platforms
+To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+ Olivia Mackall <olivia@selenic.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Lionel Debieve <lionel.debieve@foss.st.com>
+Cc: linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
+ <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
+ <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
+ <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
+ <8c13b0aa-7fb1-493c-9abc-5e5cfd982855@denx.de>
+ <d862765e-e396-4f7c-97ff-76df9aa03216@foss.st.com>
+ <dca83197-3484-4d6b-8507-118bf9e80e19@denx.de>
+ <b06b5d09-190b-4567-aecd-4be1f1dee172@foss.st.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <Zw5N_fxdDKQxlPoj@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <b06b5d09-190b-4567-aecd-4be1f1dee172@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 10/15/24 6:11 AM, Andy Shevchenko wrote:
-> On Mon, Oct 14, 2024 at 08:15:15PM +0100, Jonathan Cameron wrote:
->> On Mon, 14 Oct 2024 16:14:27 +0300
->> Andy Shevchenko <andy@kernel.org> wrote:
->>> On Mon, Oct 14, 2024 at 12:40:40PM +0300, Antoniu Miclaus wrote:
+On 10/15/24 5:10 PM, Gatien CHEVALLIER wrote:
 > 
-> ...
 > 
->>>> +config AD4851
->>>> +	tristate "Analog Device AD4851 DAS Driver"
->>>> +	depends on SPI
->>>> +	select REGMAP_SPI
->>>> +	select IIO_BACKEND
->>>> +	help
->>>> +	  Say yes here to build support for Analog Devices AD4851, AD4852,
->>>> +	  AD4853, AD4854, AD4855, AD4856, AD4857, AD4858, AD4858I high speed
->>>> +	  data acquisition system (DAS).  
+> On 10/14/24 20:55, Marek Vasut wrote:
+>> On 10/14/24 2:36 PM, Gatien CHEVALLIER wrote:
 >>>
->>> I think I already commented on this... Anyway, it's much better to support when
->>> this list is broke down on per device per line. In such a case it's less churn
->>> if we need to remove or add an entry in the future.
 >>>
->>>> +	  To compile this driver as a module, choose M here: the module will be
->>>> +	  called ad4851.  
+>>> On 10/14/24 10:52, Marek Vasut wrote:
+>>>> On 10/14/24 10:38 AM, Gatien CHEVALLIER wrote:
+>>>>>
+>>>>>
+>>>>> On 10/11/24 18:17, Marek Vasut wrote:
+>>>>>> On 10/11/24 5:41 PM, Gatien Chevallier wrote:
+>>>>>>
+>>>>>> [...]
+>>>>>>
+>>>>>>> @@ -551,6 +565,41 @@ static int stm32_rng_probe(struct 
+>>>>>>> platform_device *ofdev)
+>>>>>>>       priv->rng.read = stm32_rng_read;
+>>>>>>>       priv->rng.quality = 900;
+>>>>>>> +    if (!priv->data->nb_clock || priv->data->nb_clock > 2)
+>>>>>>> +        return -EINVAL;
+>>>>>>> +
+>>>>>>> +    priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * 
+>>>>>>> sizeof(*priv->clk_bulk),
+>>>>>>> +                      GFP_KERNEL);
+>>>>>>> +    if (!priv->clk_bulk)
+>>>>>>> +        return -ENOMEM;
+>>>>>>
+>>>>>> Try this:
+>>>>>>
+>>>>>> ret = devm_clk_bulk_get(dev, priv->data->nb_clock, priv->clk_bulk);
+>>>>>> ...
+>>>>>> // Swap the clock if they are not in the right order:
+>>>>>> if (priv->data->nb_clock == 2 &&
+>>>>>>      strcmp(__clk_get_name(priv->clk_bulk[0].clk), "core"))
+>>>>>> {
+>>>>>>   const char *id = priv->clk_bulk[1].id;
+>>>>>>   struct clk *clk = priv->clk_bulk[1].clk;
+>>>>>>   priv->clk_bulk[1].id = priv->clk_bulk[0].id;
+>>>>>>   priv->clk_bulk[1].clk = priv->clk_bulk[0].clk;
+>>>>>>   priv->clk_bulk[0].id = id;
+>>>>>>   priv->clk_bulk[0].clk = clk;
+>>>>>> }
+>>>>>>
+>>>>>
+>>>>> Hi Marek,
+>>>>>
+>>>>> This won't work as the name returned by this API is clk->core->name.
+>>>>> AFAICT, it doesn't correspond to the names present in the device tree
+>>>>> under the "clock-names" property.
+>>>>> Any other idea or are you fine with what's below?
+>>>> Hmmm, it is not great, but at least it reduces the changes 
+>>>> throughout the driver, so that is an improvement.
+>>>>
+>>>> I guess one could do some of_clk_get() and clk_is_match() in probe 
+>>>> to look up the clock in OF by name and then compare which clock is 
+>>>> which before swapping them in clk_bulk[] array, but that might be 
+>>>> too convoluted?
 >>>
->>> Also, with all these devices to be supported why not ad485x as the name of
->>> the driver? Is it a preference by the IIO subsystem?
+>>> Yes, probably too much. What's present in the patch is not close to
+>>> perfection but has the advantage of being straightforward. If we agree
+>>> on that, I'll send a V3 containing the modifications in the bindings
+>>> file.
+>> Errr, I'm sorry, maybe there is a way to do this better. Look at 
+>> drivers/clk/clk-bulk.c :
 >>
->> Don't.  We've been bitten by too many cases of manufacturers noticing
->> a hole in their part numbers and 'slotting' something unrelated in.
->> So it just causes confusion.  Hence strong preference for any new code
->> is pick a name from the list.  The wild card also implies restrictions
->> that tend to break overtime when other part numbers outside the range
->> are used.  Not using a wildcard keeps it consistently wrong so people
->> get used to it :)
+>>   15 static int __must_check of_clk_bulk_get(struct device_node *np, 
+>> int num_clks,
+>>   16                                         struct clk_bulk_data *clks)
+>>   17 {
+>>   18         int ret;
+>>   19         int i;
+>>   20
+>>   21         for (i = 0; i < num_clks; i++) {
+>>   22                 clks[i].id = NULL;
+>>   23                 clks[i].clk = NULL;
+>>   24         }
+>>   25
+>>   26         for (i = 0; i < num_clks; i++) {
+>>   27                 of_property_read_string_index(np, "clock-names", 
+>> i, &clks[i].id);
+>>   28                 clks[i].clk = of_clk_get(np, i);
+>>
+>> If I read this right, then clks[i].id should be the DT clock name. So 
+>> the swap conditional above could use .id to identify whether the first 
+>> position is core clock or not, like this:
+>>
+>> if (priv->data->nb_clock == 2 &&
+>>      strcmp(__clk_get_name(priv->clk_bulk[0].id), "core"))
+>>                                              ^^
+>>
+>> You might need to use devm_clk_bulk_get_all() to access the 
+>> of_clk_bulk_get() .
+>>
+>> Or am I missing something still ?
 > 
-> I see your point!
-> 
-> But shouldn't we have a formal criteria for choosing that one from the list?
-> I would go with "most featured device" as it may be aligned with all enabled
-> features that otherwise would be questionable / confusing for the chips that
-> do not support them or support in a limited manner.
-> 
+> Oooooh I see, devm_clk_bulk_get() and devm_clk_bulk_get_all() use
+> a different path. I don't understand why, to be honest... The doc
+> doesn't state this difference either.
 
-I always go with the lowest number supported by the driver at the time
-the driver was created. It is a simple, objective criteria and no one
-has to spend time looking through features to decide which one is "best".
+Indeed, but maybe git log could clarify that ? I learnt about this 
+useful trick at last year Embedded Recipes:
+
+$ git log -L:clk_bulk_get_all:drivers/clk/clk-bulk.c
+
+> I'll give this a try while also correcting the issue that the robot
+> highlighted.
+Thank you !
 
