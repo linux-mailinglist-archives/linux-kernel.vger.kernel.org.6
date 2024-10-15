@@ -1,178 +1,155 @@
-Return-Path: <linux-kernel+bounces-365000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AF299DC12
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5782099DC15
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FA52830A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:09:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166D728353A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C009167D80;
-	Tue, 15 Oct 2024 02:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8616515ADAF;
+	Tue, 15 Oct 2024 02:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R45q3o+l"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y360Mv2d"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC3E2AEE0;
-	Tue, 15 Oct 2024 02:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5221B157A48
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728958166; cv=none; b=LI7Qpa/o6pegYC07SWGKo62wZLg/Csi1LVCCoHNAbKdLiPgGiMfJ0Is6RH8N8auur5sPSMMq9ikYf0sWj/uBAHhLwssEwUQ5YKQSSLAtP1I2uDuZDHcnQZ+PhT22gnp9gPWYObJ/xhi2m8U+V55v30KlfEiA+j0xzFj5uNg8UEA=
+	t=1728958269; cv=none; b=PjnpTjVX5MmUZcYx8oIGESckLEIOJuO2Kjn9lF9UYDjmyarFaI3gk5vg+k7tOcjfBn31np9oohpAI2VQCN8HUdCDmK0ajRdwlTuTKoweVs+FGAKNf4Ngv/a+purnX1Yt80MdCsHdKLahIcB+oxzw/LfeSBXZKrnIpfQeqv3WM0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728958166; c=relaxed/simple;
-	bh=urQTujlL+mXX00KaOkcwECReA/98PcrsWg4J5CM//nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rL1iUYkhUqek3auYgh4K5KLMDSv1c5FocxeRQlYgLLHlt5j//BelHUZhvKgnJd3LGJQQmHOi8yteBSGIG0xh4vEycI/CKAF41hGOSCf3E2yKjk3bj5N60sYYtgCF82oVIkBXxxvePT2JckznavHKUg+kqLAbi7eoI3k7SnkP6v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R45q3o+l; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728958165; x=1760494165;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=urQTujlL+mXX00KaOkcwECReA/98PcrsWg4J5CM//nk=;
-  b=R45q3o+l26cg4EwRMKXeeduvqzmVms2D+1JEN4UcjPhE+MFEMIZo7Z6n
-   3KM0MdZgAREfDCF13TdzOJ6dqGEpfr+eegdKjbNL0b6kzbHRcIY0Gnvka
-   jHpr/a8BmPKAOgB6qDUz/tECMqn5UWHa3A9/6+YOZRwsieUtpJV9B72wc
-   7sJ6e+U/scP8FTyul+BO2My2nbirL3ffXdvoK1olP/D0mGFUXCk9Z2ptP
-   I9yYkv2+cMhhwPg4Vohd1SdNvaPdNykUgxoPUREskWSH6LZ4oFCf2B/d1
-   wBsZW/bYHKmQSOvGBGMPJXW+pyspHf5y8qai+RhjcFvhtx5bVReMTmkCL
-   A==;
-X-CSE-ConnectionGUID: ZHYNBGqYRQin7YXNa7YEbg==
-X-CSE-MsgGUID: AYK+t0XFQP+DSY8tp8jKGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="45802472"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="45802472"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 19:09:24 -0700
-X-CSE-ConnectionGUID: jXhq2bYrSJCW/i13dUYxFw==
-X-CSE-MsgGUID: KXJTS7GvRxuRpjnD/nkwzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="82516590"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 14 Oct 2024 19:09:21 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t0Wzt-000HTU-3A;
-	Tue, 15 Oct 2024 02:09:17 +0000
-Date: Tue, 15 Oct 2024 10:08:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: haibo.chen@nxp.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
-	linux-mmc@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, imx@lists.linux.dev, haibo.chen@nxp.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, s32@nxp.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] mmc: host: sdhci-esdhc-imx: save tuning value for
- the SDIO card as wakeup source
-Message-ID: <202410150906.OEI0jyKN-lkp@intel.com>
-References: <20241014060130.1162629-4-haibo.chen@nxp.com>
+	s=arc-20240116; t=1728958269; c=relaxed/simple;
+	bh=cp5t3VeTtkuoMF2OUixwX5JKFXUbhGQ52ryZqxRB4Zw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fzln00QVuMKDyMnYY1D5nJ+bulE4qOx0YxmF4pDP0frKWmMxsOtjmENO6d/k91FwwLWbpnzQQuPIqBWP1zjY+/Cm2xGNKul3Uf3/Bdwe9XM06HjyUIvQ7qtpQWgpGutaq+7vfdclK1618firYikIP+RPSgdS7G6Yins5FL6d3v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y360Mv2d; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460395fb1acso577471cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 19:11:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728958267; x=1729563067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e4d393RqsyL/BJ4Co9qwq0LGbkJ+IqpYMBLpcbUgTRI=;
+        b=Y360Mv2dh+DrR/NbznQjhDsyIZUnSXqr3uY9OGnhkZuRoUiaUKI7bGAAm5atliSYYy
+         wLYONCu0g5evfshCyulyDLrRbMTKycGRRwqN4Taf+MSGHGBoGiNIx1f/eP1qPb/EKKrS
+         hjCPGrBprC0vckzeWGDRDPcvlPfb1kOogbxuqf5wyW/3YFTOz9bWjGrY+IJvzt9ruH4+
+         OrTotZNYJ4qEZ7hAAsRrurh5+p/81d6geFye5s5AQ3fSU+fVj4ujwC8ApsG7n/QNmdZV
+         wryqoHW4kFHDxGKJjIW+wJOm9FHu4K53bP+vBedHnzHiRwSQG1zJV9qNjyHCj5Lc/21n
+         cSkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728958267; x=1729563067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e4d393RqsyL/BJ4Co9qwq0LGbkJ+IqpYMBLpcbUgTRI=;
+        b=movJpMeMBAb2vh9sBP/q9GuSHY+qjFYPnJ+VachhLemDVIn7Z+Wd7hSYIl2anC3Ifo
+         LSsNK5Izzs0zMFNnp/s8yEkjQV33Z+7P1YNRvFWeIHTcyJDOwlAXnjcvhsWvLXhm4gwT
+         ochZzynu2PZfxrCqQeVIECukeEqAotdpeeJQ4JT0TQZ7fn9mXFtoxqfekfvD3gHIEhfv
+         DmAOxf+VGJrd7an4VnWqQWVB0E9yYS0A4/TAGXYInbqCMhFT0xF8WrHp6Go0VKKQ1US/
+         1oENSFO9VVxX+FEC8aBGDx7FU4+eo4CqACy9H3lLXm2yIhsHDzcOOjFm5AqOsifImotY
+         uHDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbeQVWuoun59WKllgtCZdWS4IidB33J/ofkQtfC9NgDx/1hUt/GniIoy0EtRum25Ih1FAiubU5N5ZLnWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTCV1igAQcd/ztHtIZGPgfBzr3AH2IV3IypUVTc9lZfxZN8YdF
+	4H3a5h76OQeY5rk8FTtCpR/4Uh+rZ7xkw1Ys17xwq1sKQ+J/Ch5KIewnLbG1zLQBMpcVf3Sfmt7
+	Ecw7Ct4pVjdhvntyw+WrFwejnKbtrO3+xBsYE
+X-Google-Smtp-Source: AGHT+IH2LRfRBm57PdBw/tS8q8+UtN+Kyr0mTZGba3MM4WXhOw4k5NEo7Tk1C6FhBp0+hTMOPWmhXG8Ppv2xTgArgLA=
+X-Received: by 2002:a05:622a:5b8a:b0:460:4777:b060 with SMTP id
+ d75a77b69052e-46059c777b6mr6458551cf.27.1728958266985; Mon, 14 Oct 2024
+ 19:11:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014060130.1162629-4-haibo.chen@nxp.com>
+References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-3-surenb@google.com>
+ <20241014165149.6adebbf38fdc0a1f79ded66b@linux-foundation.org>
+In-Reply-To: <20241014165149.6adebbf38fdc0a1f79ded66b@linux-foundation.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 14 Oct 2024 19:10:56 -0700
+Message-ID: <CAJuCfpETusPzdjEg01zahF7NOStQJZmoM5Jabqd5tJpCCQrj2g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] alloc_tag: load module tags into separate
+ contiguous memory
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, 
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
+	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
+	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
+	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Oct 14, 2024 at 4:51=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Mon, 14 Oct 2024 13:36:43 -0700 Suren Baghdasaryan <surenb@google.com>=
+ wrote:
+>
+> > When a module gets unloaded there is a possibility that some of the
+> > allocations it made are still used and therefore the allocation tags
+> > corresponding to these allocations are still referenced. As such, the
+> > memory for these tags can't be freed. This is currently handled as an
+> > abnormal situation and module's data section is not being unloaded.
+> > To handle this situation without keeping module's data in memory,
+> > allow codetags with longer lifespan than the module to be loaded into
+> > their own separate memory. The in-use memory areas and gaps after
+> > module unloading in this separate memory are tracked using maple trees.
+> > Allocation tags arrange their separate memory so that it is virtually
+> > contiguous and that will allow simple allocation tag indexing later on
+> > in this patchset. The size of this virtually contiguous memory is set
+> > to store up to 100000 allocation tags.
+> >
+> > ...
+> >
+> > --- a/kernel/module/main.c
+> > +++ b/kernel/module/main.c
+> > @@ -1254,22 +1254,17 @@ static int module_memory_alloc(struct module *m=
+od, enum mod_mem_type type)
+> >       return 0;
+> >  }
+> >
+> > -static void module_memory_free(struct module *mod, enum mod_mem_type t=
+ype,
+> > -                            bool unload_codetags)
+> > +static void module_memory_free(struct module *mod, enum mod_mem_type t=
+ype)
+> >  {
+> >       struct module_memory *mem =3D &mod->mem[type];
+> > -     void *ptr =3D mem->base;
+> >
+> >       if (mem->is_rox)
+> >               vfree(mem->rw_copy);
+> >
+> > -     if (!unload_codetags && mod_mem_type_is_core_data(type))
+> > -             return;
+> > -
+> > -     execmem_free(ptr);
+> > +     execmem_free(mem->base);
+> >  }
+>
+> The changes around here are dependent upon Mike's "module: make
+> module_memory_{alloc,free} more self-contained", which is no longer in
+> mm-unstable.  I assume Mike is working on a v2 so I'll park this series
+> for now.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on shawnguo/for-next]
-[also build test WARNING on linus/master v6.12-rc3 next-20241014]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/haibo-chen-nxp-com/mmc-sdhci-export-APIs-for-sdhci-irq-wakeup/20241014-140300
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241014060130.1162629-4-haibo.chen%40nxp.com
-patch subject: [PATCH 3/4] mmc: host: sdhci-esdhc-imx: save tuning value for the SDIO card as wakeup source
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241015/202410150906.OEI0jyKN-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241015/202410150906.OEI0jyKN-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410150906.OEI0jyKN-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/mmc/host/sdhci-esdhc-imx.c:1592:13: warning: 'sdhc_esdhc_tuning_restore' defined but not used [-Wunused-function]
-    1592 | static void sdhc_esdhc_tuning_restore(struct sdhci_host *host)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/mmc/host/sdhci-esdhc-imx.c:1569:13: warning: 'sdhc_esdhc_tuning_save' defined but not used [-Wunused-function]
-    1569 | static void sdhc_esdhc_tuning_save(struct sdhci_host *host)
-         |             ^~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/sdhc_esdhc_tuning_restore +1592 drivers/mmc/host/sdhci-esdhc-imx.c
-
-  1568	
-> 1569	static void sdhc_esdhc_tuning_save(struct sdhci_host *host)
-  1570	{
-  1571		struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-  1572		struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
-  1573		u32 reg;
-  1574	
-  1575		/*
-  1576		 * SD/eMMC do not need this tuning save because it will re-init
-  1577		 * after system resume back.
-  1578		 * Here save the tuning delay value for SDIO device since it may
-  1579		 * keep power during system PM. And for usdhc, only SDR50 and
-  1580		 * SDR104 mode for SDIO devide need to do tuning, and need to
-  1581		 * save/restore.
-  1582		 */
-  1583		if ((host->timing == MMC_TIMING_UHS_SDR50) |
-  1584				(host->timing == MMC_TIMING_UHS_SDR104)) {
-  1585			reg = readl(host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
-  1586			reg = (reg & ESDHC_TUNE_CTRL_STATUS_TAP_SEL_PRE_MASK) >>
-  1587					ESDHC_TUNE_CTRL_STATUS_TAP_SEL_PRE_SHIFT;
-  1588			imx_data->boarddata.saved_tuning_delay_cell = reg;
-  1589		}
-  1590	}
-  1591	
-> 1592	static void sdhc_esdhc_tuning_restore(struct sdhci_host *host)
-  1593	{
-  1594		struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-  1595		struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
-  1596		u32 reg;
-  1597	
-  1598		if ((host->timing == MMC_TIMING_UHS_SDR50) |
-  1599				(host->timing == MMC_TIMING_UHS_SDR104)) {
-  1600			/*
-  1601			 * restore the tuning delay value actually is a
-  1602			 * manual tuning method, so clear the standard
-  1603			 * tuning enable bit here. Will set back this
-  1604			 * ESDHC_STD_TUNING_EN in esdhc_reset_tuning()
-  1605			 * when trigger re-tuning.
-  1606			 */
-  1607			reg = readl(host->ioaddr + ESDHC_TUNING_CTRL);
-  1608			reg &= ~ESDHC_STD_TUNING_EN;
-  1609			writel(reg, host->ioaddr + ESDHC_TUNING_CTRL);
-  1610	
-  1611			reg = readl(host->ioaddr + ESDHC_MIX_CTRL);
-  1612			reg |= ESDHC_MIX_CTRL_SMPCLK_SEL | ESDHC_MIX_CTRL_FBCLK_SEL;
-  1613			writel(reg, host->ioaddr + ESDHC_MIX_CTRL);
-  1614	
-  1615			writel(imx_data->boarddata.saved_tuning_delay_cell <<
-  1616					ESDHC_TUNE_CTRL_STATUS_DLY_CELL_SET_PRE_SHIFT,
-  1617					host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
-  1618		}
-  1619	}
-  1620	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Looks like the last update on Mike's patchset was back in May. Let me
+check with Mike if he is planning to get it out soon. I would like my
+patchset to get into 6.12 if possible.
+Thanks,
+Suren.
 
