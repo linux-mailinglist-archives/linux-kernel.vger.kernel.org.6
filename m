@@ -1,142 +1,170 @@
-Return-Path: <linux-kernel+bounces-366420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBFE99F51A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:20:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E75499F4FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54596284938
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:20:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7C428216C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEC3227B99;
-	Tue, 15 Oct 2024 18:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F131FC7CB;
+	Tue, 15 Oct 2024 18:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jH4OoGPD"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S1uVf4xE"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E62122739B;
-	Tue, 15 Oct 2024 18:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799E61FAF13
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729016430; cv=none; b=efqtJclsLD80BniJNt+seEwj9m6FLAZB1TgK6V5j2UDhR/wBQgVMCbmiqyjBqH3OjONCFRbXAfxID/hbwAxLcErvZrLmUueWpFtvyGRhUNGMVmzWqOKyw4WzFlUyslwQAKb242W015chlBGpohfL4AmO3/3MQaRQNokwgdA2l4U=
+	t=1729016149; cv=none; b=ln0HGOzMNfNe09q4J5lC0+Lc6hiOeQc7uMwqvWd0ugGSsMhBWYzwjTALjRtRJX+qD0+yVJo7xa+0Iqb8u39RAWwBMoL4kqqc66Ip2cO98MptACqVI0qO7w6jcWAu1G5qvxgA4PFwckBQ2u4CpiaFB859GkVQfuvYRybhuBqifXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729016430; c=relaxed/simple;
-	bh=E2gOs3UqePmkVJladD+DLQjs/f55bJHoGr84z8564Nc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j075ShwcO+u+JuWKhxZLRFIRg5TAzx1w7PSHNxhodITR+XnY835FoFRkduooqOgyCmhSIKH+xmtO/31C5e+LwKMPM9G8FuF5/jgFRU2dMjiUbEHltKx0N38Ik+38Nvln0mkHg2sQD2xTnKsPBHsIeAOgz2HjF87eC9RrSdo2/vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jH4OoGPD; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729016426;
-	bh=E2gOs3UqePmkVJladD+DLQjs/f55bJHoGr84z8564Nc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jH4OoGPDk0aVyfiS/cLKMzw17XYyB94r8zru2XB5x1vumpgmLUYp43Uu08VsDvo+D
-	 LvwnBCKHcXC3kWjR9iMaTMPFbllHPgOACPH8YrgLgvuNDr1XOSPEdGgcY2Xa43LCyz
-	 KK+F37ETvJW4LX/Q3JKL4eKGntWxjo3fNxfel2FFT4r5HsWLUtUBw7hxsP8lnwXql+
-	 OYdzdjJEtT1dSinjiYq6WhpdkEJbDEZu5Zhs1X+tddRLNE42yPx/euBRk6HXnuEQBU
-	 wgJYTFAe9r3kVt7PqBbK/p1EZjTVVTumFHYih8mDCXdHU5BKPIPEiU1uZkyXH8txl0
-	 6itdU6TIKv6kg==
-Received: from [192.168.1.206] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AC39B17E369C;
-	Tue, 15 Oct 2024 20:20:24 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 15 Oct 2024 14:15:02 -0400
-Subject: [PATCH 2/2] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
- ethernet
+	s=arc-20240116; t=1729016149; c=relaxed/simple;
+	bh=OV7m/RIwDh9PI9C8iyhJxskFRtV54C0OMBLpxPdpxZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CXIrIg+ucDscG9VXBCc/NSWGOCYX4ezoZPHuO5eAwpJI4aZpejaNEFvHvMfiX+qA65QVRCK2YDfvVHKjfHh2+DH508jELCpu76uE3ql6sHPh05ZzF5ririlipAm6xq/usBozmSJqDJwrnH0Tc260ipOkly3e2aAQauFS0RVJgwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S1uVf4xE; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-83549342f09so4415939f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729016146; x=1729620946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nYDGK3P91Ny7tPifi6aUq0wsosqxVY/nTMFBHYgb2Kc=;
+        b=S1uVf4xE7VdMwo7e1pv8ecjrcrFyNEfltAV8gi5njiB6OBJ5dM/ztHbxTGpRQ6brPK
+         RtQwKAtenm/F/ksnPIPK6eQ4kn5CrzgGmGgbHGwseXlc3O9JzxlJ6VrOtKU7jTyiGG1z
+         FgXYjQ8wVxcgrVDljuM4pJST5vIn//ZKXdZ9k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729016146; x=1729620946;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nYDGK3P91Ny7tPifi6aUq0wsosqxVY/nTMFBHYgb2Kc=;
+        b=wSLiQ4eV3S6WIGEBk1pi5h0g7jG0IQbmGAPD1ryYBsywABK8plvIQzvxRiH4T15ARg
+         /3iJ+Mf/rWSZBoHfkBJW4GgaV05EwChtSSBzJa+KfMchmEWosAgHQWfAOy/MAZP0SNYL
+         19CKZIjKaLj0eHVoXsciYyn/yIn+BIPU3VPXL/ZAyCOqhjrQBC+qk+CBiKS7nkZwYnPh
+         uhhb4QRTSzHidgKMdnMeITnepQ6V4UYgK/81fcZKeiiu0FqG/r7GisfImeeCok7DqdwR
+         FbtbWZ098q759DCyOUhi/up+vLBW66gq5uGvoNfjRbz/47vyy5Ks46D+dTGuhMwaSCZj
+         CQbA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+G3qfRwd2sDZQ6lBvYF0RgSCL3hvG+kgqDuKDWpmtxR6G1QSpFfaj8dAqdCz4ZGjyy6Dehxhg53SYlU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSx79RtWvZAPYSEHKqrn0TwbNA6nsGtrHMOkiF0S5psXN8e+1S
+	BS7yC9TqQiagIxIvu9byP0bqHxumuEdQJlSQAEtyHHcjZ8Yfrf4cr4CVIGcafDs=
+X-Google-Smtp-Source: AGHT+IHjCRiCOpvYWGxfwHMRcBQPjCK7myqqLAhfpGz6N7ADNIYBFVv/mXoMGCkHL0O7vNzWDD/zbQ==
+X-Received: by 2002:a6b:4f06:0:b0:835:4552:6c36 with SMTP id ca18e2360f4ac-83a942d4c15mr107619139f.8.1729016146521;
+        Tue, 15 Oct 2024 11:15:46 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbecc4924dsm422077173.153.2024.10.15.11.15.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 11:15:46 -0700 (PDT)
+Message-ID: <4f645873-2ba8-415a-8ee1-c6779a189609@linuxfoundation.org>
+Date: Tue, 15 Oct 2024 12:15:45 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cpupower: Add Chinese Simplified translation
+To: Kieran Moy <kfatyuip@gmail.com>, shuah@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ccheng@linuxfoundation.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241015163319.9114-1-kfatyuip@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241015163319.9114-1-kfatyuip@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241015-genio700-eth-v1-2-16a1c9738cf4@collabora.com>
-References: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
-In-Reply-To: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Richard Cochran <richardcochran@gmail.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Jianguo Zhang <jianguo.zhang@mediatek.com>, 
- Macpaul Lin <macpaul.lin@mediatek.com>, 
- Hsuan-Yu Lin <shane.lin@canonical.com>, Pablo Sun <pablo.sun@mediatek.com>, 
- fanyi zhang <fanyi.zhang@mediatek.com>
-X-Mailer: b4 0.14.2
 
-Enable ethernet on the Genio 700 EVK board. It has been tested to work
-with speeds up to 1000Gbps.
+On 10/15/24 10:33, Kieran Moy wrote:
+> Sorry for disturbing, here is patch v2, thanks!
 
-Signed-off-by: Jianguo Zhang <jianguo.zhang@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Signed-off-by: Hsuan-Yu Lin <shane.lin@canonical.com>
-Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-Signed-off-by: fanyi zhang <fanyi.zhang@mediatek.com>
-[Cleaned up to pass dtbs_check, follow DTS style guidelines, and split
-between mt8188 and genio700 commits]
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- .../boot/dts/mediatek/mt8390-genio-700-evk.dts     | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+You still need change log. I can fix that when I apply.
+But this v2 isn't a complete patch. You have make changes
+to the original patch and then generate v2 with all the
+changes.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-index 0a6c9871b41e5f913740e68853aea78bc33d02aa..73e34e98726d36785e8b2cef73f532b6bb07c97f 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-@@ -24,6 +24,7 @@ / {
- 
- 	aliases {
- 		serial0 = &uart0;
-+		ethernet0 = &eth;
- 	};
- 
- 	chosen {
-@@ -845,6 +846,30 @@ pins-wifi-enable {
- 	};
- };
- 
-+&eth {
-+	phy-mode ="rgmii-rxid";
-+	phy-handle = <&ethernet_phy0>;
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&eth_default_pins>;
-+	pinctrl-1 = <&eth_sleep_pins>;
-+	snps,reset-gpio = <&pio 147 GPIO_ACTIVE_HIGH>;
-+	snps,reset-delays-us = <0 10000 10000>;
-+	mediatek,tx-delay-ps = <2030>;
-+	mediatek,mac-wol;
-+	status = "okay";
-+
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethernet_phy0: ethernet-phy@1 {
-+			compatible = "ethernet-phy-id001c.c916";
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
- &pmic {
- 	interrupt-parent = <&pio>;
- 	interrupts = <222 IRQ_TYPE_LEVEL_HIGH>;
+You patch one had all these changes:
 
--- 
-2.47.0
+tools/power/cpupower/Makefile    |   2 +-
+  tools/power/cpupower/po/zh_CN.po | 942 +++++++++++++++++++++++++++++++
+  2 files changed, 943 insertions(+), 1 deletion(-)
+  create mode 100644 tools/power/cpupower/po/zh_CN.po
 
+This patch doesn't have any of the above changes.
+Can you make the changes and send a single complete
+patch?
+
+Candice has been helping me with reviews - please cc
+ccheng@linuxfoundation.org
+
+> 
+> Changes in v2:
+>   - appplied sugested changes
+> 
+> Signed-off-by: Kieran Moy <kfatyuip@gmail.com>
+> ---
+>   tools/power/cpupower/po/zh_CN.po | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/power/cpupower/po/zh_CN.po b/tools/power/cpupower/po/zh_CN.po
+> index 456cde997..33fb3f000 100644
+> --- a/tools/power/cpupower/po/zh_CN.po
+> +++ b/tools/power/cpupower/po/zh_CN.po
+> @@ -19,11 +19,11 @@ msgstr ""
+>   
+>   #: utils/idle_monitor/nhm_idle.c:36
+>   msgid "Processor Core C3"
+> -msgstr "处理器核心 C3"
+> +msgstr "处理器 Core C3"
+>   
+>   #: utils/idle_monitor/nhm_idle.c:43
+>   msgid "Processor Core C6"
+> -msgstr "处理器核心 C6"
+> +msgstr "处理器 Core C6"
+>   
+>   #: utils/idle_monitor/nhm_idle.c:51
+>   msgid "Processor Package C3"
+> @@ -35,7 +35,7 @@ msgstr "处理器套件 C6"
+>   
+>   #: utils/idle_monitor/snb_idle.c:33
+>   msgid "Processor Core C7"
+> -msgstr "处理器核心 C7"
+> +msgstr "处理器 Core C7"
+>   
+>   #: utils/idle_monitor/snb_idle.c:40
+>   msgid "Processor Package C2"
+> @@ -47,7 +47,7 @@ msgstr "处理器套件 C7"
+>   
+>   #: utils/idle_monitor/amd_fam14h_idle.c:56
+>   msgid "Package in sleep state (PC1 or deeper)"
+> -msgstr "处于睡眠状态的包（PC1 或更深）"
+> +msgstr "Package in sleep state （PC1 或更深）"
+>   
+>   #: utils/idle_monitor/amd_fam14h_idle.c:63
+>   msgid "Processor Package C1"
+> @@ -59,11 +59,11 @@ msgstr "北桥 P1 布尔计数器（返回 0 或 1）"
+>   
+>   #: utils/idle_monitor/mperf_monitor.c:35
+>   msgid "Processor Core not idle"
+> -msgstr "处理器核心不空闲"
+> +msgstr "处理器 Core不空闲"
+>   
+>   #: utils/idle_monitor/mperf_monitor.c:42
+>   msgid "Processor Core in an idle state"
+> -msgstr "处理器核心处于空闲状态"
+> +msgstr "处理器 Core处于空闲状态"
+>   
+>   #: utils/idle_monitor/mperf_monitor.c:50
+>   msgid "Average Frequency (including boost) in MHz"
+
+thanks,
+-- Shuah
 
