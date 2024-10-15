@@ -1,133 +1,151 @@
-Return-Path: <linux-kernel+bounces-364882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926EA99DA84
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:06:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD9C99DA86
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5599C282BF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8302830C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01822582;
-	Tue, 15 Oct 2024 00:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1401833F9;
+	Tue, 15 Oct 2024 00:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="byeyIuGM"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mY8qu9Al"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3F3191
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06E87F6
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728950761; cv=none; b=Tdvh3TL9DmIw7qdMJnDRzmedo0GQJHBpRp9TRSGohQcWPhRyhVr0WKWPxKCsUjGBKXaRg/yAqzYOCd1oLTWL4CIpOP/DGatBqz2+CQFcYsq0Z/bIBUd0QeK84UNG3XogybRwPlwvx2LeR8h+4pyoE55ns/TA7crMP9L7Pu1ke3Y=
+	t=1728950876; cv=none; b=I1CuX5EA+PSJc1gS1MlOUystThVnlVCX0ovwr3HnWRGJdp0LvoXHvZTJIzAi4ezuaWIwYm8m8pw1NXti+671biaVEmXLygAkoK+0+U57J3Z+Qmr15j9TYPmAIF/8kk4MQyAQ4KdWa/iWB+SeUOK8Bnw4D4tCbMGBFnwFkAX+PIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728950761; c=relaxed/simple;
-	bh=ZehjK1rwhKlSbWRcVkYC8kqDslvkx7/iyzRyA+OQZ8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qtnop9vyO/88ov7ho4c2sOl+Ez87KBKnAXqMTc/dK2JdAdglPZivfQrmHO0HH/sTdLTZDVqQaALlCkj4H5kUxBnWMDyMxvX7PoEqkPUhT21JcJqH0HrZ+OpN8dpiTIYnL1XEH53J77/xGmfuoIGnd2Zo7gtVKPPoh8u4iNZUoMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=byeyIuGM; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-835453714e5so213635339f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:05:59 -0700 (PDT)
+	s=arc-20240116; t=1728950876; c=relaxed/simple;
+	bh=tF/wdh6eCNGHJyuFiF0zNCWlQfBb7gnQY3rCskvzGus=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=COgOOjJBLpPthdxMFuxaLrCJ5PnmTjmPcEIr6Z9iBDkrIlJ8WFVJl9t7kc1SIXEPT7tcQ5hfZs+9BYIX3srRdC3d2Dl1uaz4koG2G7gV26yf32YVUOElzTitUzBx+beuyb2cxERC/dkZM75L/MoiNtOV/uNlImoP0m+FAvGc/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mY8qu9Al; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e29327636f3so1995075276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:07:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728950759; x=1729555559; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2TwSGWYk37LzL+nB3Qm3Cccq9jA0yfLg7SdVrI2yTuI=;
-        b=byeyIuGMPm5tAdlcDfvC9Onc0kjkW+PQ578wqC9y8CNORMTu9UIDuqdapzR3sFn/1M
-         ivvRBdWEA//60NN5HnDdr775wMu8ieYrwVFeqO9Prk5aWD69rmrVqQlfedZafxyVQrO1
-         /5AApctqsRvVHkNgm2vP59kg6PvFZJ9C7lFYc=
+        d=google.com; s=20230601; t=1728950874; x=1729555674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0k5ziZv+luz4h4U9vFxjQyLKnmTaKDBU/6xsRlEbTbw=;
+        b=mY8qu9AloVYPABAXlBL4ADR5EujVh12wuWKzua94khC+WdJCw0GelAgqOfBhNjCBcm
+         Kd/SqhrvHaBcMjTneWR/sHvpWusln8GJFoIKPdFGYiEU7bpi3CakCZgZVENasU1eQnq0
+         ihCRUv7nJgQ/yqoKyPcNAd87cyC62gJt3KAwtom3hpS/dixOnBPrfsG5twv23OMfCCWn
+         JAKOwym5yXvTZCSL9wgGivKO3x3vndCUdKZQcM1JB0u1sMr1q/IFZwwQUcK+E3NY6P6f
+         vSiI9GWL0t5wPJXXua83s7vwgTsDT2ELV6vpPvURj3kb6C/AARSOgMz2PQseIQuybF3N
+         hqwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728950759; x=1729555559;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2TwSGWYk37LzL+nB3Qm3Cccq9jA0yfLg7SdVrI2yTuI=;
-        b=rEdvXA+vFf9rnEaxfkGRv0g8GzIIaW9eHc7DQtuLm3Wz0NZwHYkUbmrqXxmNUPCjOp
-         YDt9pkI1vhQM0H1yuJjO0Gqw8aTOJXNoapafRpfN00/m1uocctTpQZrGvjGd2goE7ICk
-         YepO6Tb4X/GkT96kc17oklDzcjr2/8WWgmZmtpBzMLCfbFoju1IxUeo1DTkXylm6jUeD
-         Uy35GUO62M6VGP67RiE3CA2LZnFUk6z8v4kzutlloKqwYd+GU7mB3BmZ4Hs/iIoMq/Cg
-         QfgRsGrw1nXnJZRLWhPhHS22fkpY8DoRmdzABfYEG3sytugJ7pKWlMXR1Lr/VUo8/7Oo
-         ML9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxfwpcEqDGsKnDLTs72thzM1MRhqaFq+wwN+rkIHA3ekqi877yHYZrg9b1JQHS0qwFJsn0Was4c61w2u4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7F5D9RDmTW8USE5lI0hALRf70zPeKcCK998qDYv3ePh95mGq5
-	5tL4nbn2Rx2EgWj3I510m2HR3pTh1yMCehyt3dmKDoz83CBJdOx29cKzuzgi8bhdWr6z2e5iUGa
-	x
-X-Google-Smtp-Source: AGHT+IGRqsQFDY3Ma0cJGFn2I+AneM+oWcFsIjl4jiCDBzYJaEobcPJEKkPQeLj5lCNCHDovZt411w==
-X-Received: by 2002:a05:6602:3fc6:b0:82a:4c58:e1e0 with SMTP id ca18e2360f4ac-837946843cbmr1166620739f.12.1728950758843;
-        Mon, 14 Oct 2024 17:05:58 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83a8b2aa095sm3961939f.19.2024.10.14.17.05.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 17:05:58 -0700 (PDT)
-Message-ID: <41d157fc-6413-4061-95af-518ec7b923f1@linuxfoundation.org>
-Date: Mon, 14 Oct 2024 18:05:57 -0600
+        d=1e100.net; s=20230601; t=1728950874; x=1729555674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0k5ziZv+luz4h4U9vFxjQyLKnmTaKDBU/6xsRlEbTbw=;
+        b=Q9io9UrLHBjtY3fkquTXWAlaL1rVU7vXaLAo+7XsTqTJ6usVdsFbDgubY1+VEsLbdi
+         xDc9R/MwDypC2qIA6GCKACPvFnz3JToewjapLVTUKkfxJ4tyelGM1kixVd8PM9tF9NLj
+         OdR/2I5afVhrvnVJbOCnedZSOWl4/EYZSQ7xdh6tSsCC4IjgyH9Rw2OhMrW15rT+oGs3
+         iuU4bv9q7w7NrvTP7qpeGFEoAmcjRy8pim3xzaofqM/FJHMBQBCKiUv0mNoDHQci7Htn
+         Not9j7s/6HZbgLsARYfHpl3wcyUtNcHJbKrD9tRkreW2AvuDKxDb+ch/N0yAKqpbNEvH
+         aSRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJSQeFip4qpO9ImrH91Waz3JzBDoTqPQyKuKnjg2Grv0OQnBVG777hTvRYV+dNAGC65vkPHdYGV+qMHh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWwKXGBnwyEEpMxqB7p5Eh567petPya6Ne6z+TPtksRH032+//
+	az9dORtfyC50h4bU9haZkOtDrwTQ01gATXiX2+2U1UUes95b4k5MuQiETyc9Jt0wtFiM/pQEFka
+	k3zwqCNLzJ8R4q2H+Isi/Q3ux1WlT2L1/tYGn
+X-Google-Smtp-Source: AGHT+IGPIi5KCS6+nJghaiqqBaIDBteS+Nw+yIW3S78bDe3HfZ8DlWRHR3b0JckOrBruI74JpMNZzOH6luJE20JY9vk=
+X-Received: by 2002:a05:6902:c07:b0:e29:29b0:2b2a with SMTP id
+ 3f1490d57ef6-e2931deb4c6mr7548470276.51.1728950873598; Mon, 14 Oct 2024
+ 17:07:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/intel_pstate: fix operand expected
-To: Alessandro Zanni <alessandro.zanni87@gmail.com>, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- anupnewsmail@gmail.com, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241014172149.324639-1-alessandro.zanni87@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241014172149.324639-1-alessandro.zanni87@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240926013506.860253-1-jthoughton@google.com> <Zw2no4OGDVK7m8QR@google.com>
+In-Reply-To: <Zw2no4OGDVK7m8QR@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Mon, 14 Oct 2024 17:07:17 -0700
+Message-ID: <CADrL8HUP1=eXE5QpVrKjgQGpusr_Raejr1sY2LLW1uSigpptOw@mail.gmail.com>
+Subject: Re: [PATCH v7 00/18] mm: multi-gen LRU: Walk secondary MMU page
+ tables while aging
+To: Sean Christopherson <seanjc@google.com>, Yu Zhao <yuzhao@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	David Stevens <stevensd@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/14/24 11:21, Alessandro Zanni wrote:
-> This fix solves theses errors, when calling kselftest with
-> targets "intel_pstate":
-> 
-> ./run.sh: line 90: / 1000: syntax error: operand expected (error token is "/ 1000")
-> 
-> ./run.sh: line 92: / 1000: syntax error: operand expected (error token is "/ 1000")
-> 
-> To error was found by running tests manually with the command:
-> make kselftest TARGETS=intel_pstate
-> 
-> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-> ---
-> 
-> Notes:
->      v2: removed debug echos
+On Mon, Oct 14, 2024 at 4:22=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Thu, Sep 26, 2024, James Houghton wrote:
+> > This patchset makes it possible for MGLRU to consult secondary MMUs
+> > while doing aging, not just during eviction. This allows for more
+> > accurate reclaim decisions, which is especially important for proactive
+> > reclaim.
+>
+> ...
+>
+> > James Houghton (14):
+> >   KVM: Remove kvm_handle_hva_range helper functions
+> >   KVM: Add lockless memslot walk to KVM
+> >   KVM: x86/mmu: Factor out spte atomic bit clearing routine
+> >   KVM: x86/mmu: Relax locking for kvm_test_age_gfn and kvm_age_gfn
+> >   KVM: x86/mmu: Rearrange kvm_{test_,}age_gfn
+> >   KVM: x86/mmu: Only check gfn age in shadow MMU if
+> >     indirect_shadow_pages > 0
+> >   mm: Add missing mmu_notifier_clear_young for !MMU_NOTIFIER
+> >   mm: Add has_fast_aging to struct mmu_notifier
+> >   mm: Add fast_only bool to test_young and clear_young MMU notifiers
+>
+> Per offline discussions, there's a non-zero chance that fast_only won't b=
+e needed,
+> because it may be preferable to incorporate secondary MMUs into MGLRU, ev=
+en if
+> they don't support "fast" aging.
+>
+> What's the status on that front?  Even if the status is "TBD", it'd be ve=
+ry helpful
+> to let others know, so that they don't spend time reviewing code that mig=
+ht be
+> completely thrown away.
 
-See my comments on your v1. It would help to wait a bit
-to send v2.
+The fast_only MMU notifier changes will probably be removed in v8.
 
-I can't reproduce this problem on Linux 6.12-rc3.
-What's you environment like?
+ChromeOS folks found that the way MGLRU *currently* interacts with KVM
+is problematic. That is, today, with the MM_WALK MGLRU capability
+enabled, normal PTEs have their Accessed bits cleared via a page table
+scan and then during an rmap walk upon attempted eviction, whereas,
+KVM SPTEs only have their Accessed bits cleared via the rmap walk at
+eviction time. So KVM SPTEs have their Accessed bits cleared less
+frequently than normal PTEs, and therefore they appear younger than
+they should.
 
-> 
->   tools/testing/selftests/intel_pstate/run.sh | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
-> index e7008f614ad7..0c1b6c1308a4 100755
-> --- a/tools/testing/selftests/intel_pstate/run.sh
-> +++ b/tools/testing/selftests/intel_pstate/run.sh
-> @@ -87,9 +87,9 @@ mkt_freq=${_mkt_freq}0
->   
->   # Get the ranges from cpupower
->   _min_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $1 } ')
-> -min_freq=$(($_min_freq / 1000))
-> +min_freq=$((_min_freq / 1000))
->   _max_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $2 } ')
-> -max_freq=$(($_max_freq / 1000))
-> +max_freq=$((_max_freq / 1000))
->   
->   
->   [ $EVALUATE_ONLY -eq 0 ] && for freq in `seq $max_freq -100 $min_freq`
+It turns out that this causes tab open latency regressions on ChromeOS
+where a significant amount of memory is being used by a VM. IIUC, the
+fix for this is to have MGLRU age SPTEs as often as it ages normal
+PTEs; i.e., it should call the correct MMU notifiers each time it
+clears A bits on PTEs. The final patch in this series sort of does
+this, but instead of calling the new fast_only notifier, we need to
+call the normal test/clear_young() notifiers regardless of how fast
+they are.
 
-thanks,
--- Shuah
+This also means that the MGLRU changes no longer depend on the KVM
+optimizations, as they can motivated independently.
+
+Yu, have I gotten anything wrong here? Do you have any more details to shar=
+e?
 
