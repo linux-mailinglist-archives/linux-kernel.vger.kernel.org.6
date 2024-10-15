@@ -1,82 +1,197 @@
-Return-Path: <linux-kernel+bounces-366855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5950299FB7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D38DE99FC1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FAD81C234E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:40:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC851C241AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FC11B0F39;
-	Tue, 15 Oct 2024 22:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5470E1D63E5;
+	Tue, 15 Oct 2024 23:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0+AbjJaN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="gkNOHaCx"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F31A21E3A4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F40F173357;
+	Tue, 15 Oct 2024 23:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729032000; cv=none; b=QzHD+6Tv2drnNxRJlqOEdYMrFcMMfJNKfkaNBLTlVVUTkXgkdrrNzT9SfI91cv7Jy0f5zoxMfk3vTkPQ0yP33mGRhIQ/0z2Fw89POy9PYwKNKToexmXjFhFJPbHYzs8nPiKU/lquKkX6v41ELx4cubSu3TsaG+tXQzq3vwtGpr8=
+	t=1729033850; cv=none; b=MLf4GR0jzqln0nUbPH2Kj/aox6kEuu16WW0/WSBYngF3WIfYrpRUvWeUea9EHsKREXnApaYu8K1fXEkWBhvYjGxV2W9B6x+scrI7rtSsEicr9iE1raXwvz6MgE1GGVR7QmsGKaygJsgJqjlceA3BMRtXCV63QmWmwLbDVoT6WD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729032000; c=relaxed/simple;
-	bh=q6bpVuKMTHOR5R+Wwj5sFoN19avvVIwzw3Pd88L15W4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=lirAIWHji/qPRolSCKz25XSCml3LdWk7b6AyDRtZaLG7a+7RZ9P5AdhKtUJt5Kz3+lDBOP/q7RoT/11oauqOp7GCjcOAB3fAPgWIAA4MpQ5wKd78TfwC9vES36tMpgpfWr3NIc8qDPVImICbR8L002LxevUewJko1w/DlEDvRz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0+AbjJaN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5712C4CEC6;
-	Tue, 15 Oct 2024 22:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1729031999;
-	bh=q6bpVuKMTHOR5R+Wwj5sFoN19avvVIwzw3Pd88L15W4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=0+AbjJaNR9Nb0ukXElz0mhePua1yo1/hxyVdNKbOTxRlNl2D4qP3Rrj5o82VDaiHk
-	 8jVg7W4LU+/BnvRfkGhOGOs7rOu0eqKUsK58FNGUUmGYDIkl7ow/wef+gJqF8h7ps9
-	 Zgvp+7Yv5K01RyyQI7XVMgp1vqRSN1kxSnScUw1g=
-Date: Tue, 15 Oct 2024 15:39:58 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: syzbot <syzbot+30eac43568e2b3d65728@syzkaller.appspotmail.com>
-Cc: linmiaohe@huawei.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- syzkaller-bugs@googlegroups.com, vitaly.wool@konsulko.com
-Subject: Re: [syzbot] [mm?] BUG: corrupted list in add_to_unbuddied
-Message-Id: <20241015153958.df4e735274e389999de60d2e@linux-foundation.org>
-In-Reply-To: <670e81a9.050a0220.d9b66.0153.GAE@google.com>
-References: <000000000000c6b91e0621a312f4@google.com>
-	<670e81a9.050a0220.d9b66.0153.GAE@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729033850; c=relaxed/simple;
+	bh=CrNU3zPe4V+PSWdy/5qXKcKFUpFWUo8dNTGLeeWXTak=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jmieylNxGL5OW6YCFvi22mb5K80bAXIwsckh/FqfpKkA2+RunLv1URBwhj/HJiTkEU2pxy5seM6TlvvMwFlYtSpuJ6/BFiTwkMQ7yX0JtwdhMpXWyHgq+dob7pJKnDnAilQoph20KSp1wDR5rEgXM+bzLmZHMczaMcUXKxSS7yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=gkNOHaCx; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1729032033;
+	bh=CrNU3zPe4V+PSWdy/5qXKcKFUpFWUo8dNTGLeeWXTak=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=gkNOHaCxYvhA1CiBD5NWIOWLJSFHbxggYZ/ekEHnVhTi/GOZWYN2D9D302L/VWlJ4
+	 PMSbWqw3Oi1lnz83Z7dbEaid/nmWmzbEgcM5PVetYPGgIytWzMbNFa/m9OLM/qpOqE
+	 iNRpt1jOxq39PkncVYT8TtY9ipFPSZ6genbbhkjw=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 1D6704040C; Tue, 15 Oct 2024 15:40:33 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 1C335400C9;
+	Tue, 15 Oct 2024 15:40:33 -0700 (PDT)
+Date: Tue, 15 Oct 2024 15:40:33 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+cc: Catalin Marinas <catalin.marinas@arm.com>, linux-pm@vger.kernel.org, 
+    kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de, 
+    mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+    x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, wanpengli@tencent.com, 
+    vkuznets@redhat.com, rafael@kernel.org, daniel.lezcano@linaro.org, 
+    peterz@infradead.org, arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com, 
+    harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com, 
+    misono.tomohiro@fujitsu.com, maobibo@loongson.cn, 
+    joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, 
+    konrad.wilk@oracle.com
+Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
+ smp_cond_load_relaxed()
+In-Reply-To: <87jze9rq15.fsf@oracle.com>
+Message-ID: <95ba9d4a-b90c-c8e8-57f7-31d82722f39e@gentwo.org>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com> <20240925232425.2763385-2-ankur.a.arora@oracle.com> <Zw5aPAuVi5sxdN5-@arm.com> <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org> <Zw6dZ7HxvcHJaDgm@arm.com> <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
+ <Zw6o_OyhzYd6hfjZ@arm.com> <87jze9rq15.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue, 15 Oct 2024 07:52:25 -0700 syzbot <syzbot+30eac43568e2b3d65728@syzkaller.appspotmail.com> wrote:
-
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    eca631b8fe80 Merge tag 'f2fs-6.12-rc4' of git://git.kernel..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14d0845f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-> dashboard link: https://syzkaller.appspot.com/bug?extid=30eac43568e2b3d65728
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16df4c40580000
-
-Something seems rather wrong with the "syz repro" page.
+Here is a patch that keeps the cpuidle stuiff generic but allows an
+override by arm64..
 
 
+From: Christoph Lameter (Ampere) <cl@linux.com>
+Subject: Revise cpu poll idle to make full use of wfet() and wfe()
 
+ARM64 has instructions that can wait for an event and timeouts.
 
-# https://syzkaller.appspot.com/bug?id=6b5f76b3a3783e6b1876d25b2d7a981ac0e0131f
-# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-#{"threaded":true,"repeat":true,"procs":6,"slowdown":1,"sandbox":"none","sandbox_arg":0,"tun":true,"netdev":true,"resetnet":true,"cgroups":true,"binfmt_misc":true,"close_fds":true,"usb":true,"vhci":true,"wifi":true,"ieee802154":true,"sysctl":true,"swap":true,"tmpdir":true,"segv":true}
-syz_mount_image$ntfs3(&(0x7f0000000000), &(0x7f0000000140)='./bus\x00', 0x19c6038, &(0x7f0000000180)=ANY=[], 0x1, 0x1f231, &(0x7f000003e780)="$eJzs3QmYTeUfB/D37Pu+XLvBWEO2RLLvsm+pZAvZyRalGhJRSSWpFElCQqhUEklEsi8JSZKQVEIS/2fu3JlmufOvadf7/TyPOfeee877nnu+94z5ne0ebz25edsGbRISEhKIzZAU50gGSSSJXIq9xsfGXYoNmdi/EZ3nV9ttftQreZxZcOVtoxYUXjVUa7/MfEsim+xOx09VOLwp3JT7+MW2vXoPSeg9JGHAwKEJXRO6DRw4tGu3fj0Suvce0rdsQst+PboO6ZHQe8CQHoMzvNyz38BBg0YmdB3Q3VAHDe4xZEhC1wEjE/r2GJkwdGDC0MEjE7re2rX3gISyZcsmGCqB36jd/H96CQAAAAAAAAAAAAAAAAAA4M9x6VLaoX0AAAAAAAAAAAAAAAAAAAC4TDVo3LR+OaKkPWcIQxoRhsxlCCH2L9OlXvfPZdNO8qRdoo9yRX82Sn10um/5fuf
-<and a huge amount more>
+Clean up the code in drivers/cpuidle/ to wait until the end
+of a period and allow the override of the handling of the
+waiting by an architecture.
+
+Provide an optimized wait function for arm64.
+
+Signed-off-by: Christoph Lameter <cl@linux.com>
+
+Index: linux/arch/arm64/lib/delay.c
+===================================================================
+--- linux.orig/arch/arm64/lib/delay.c
++++ linux/arch/arm64/lib/delay.c
+@@ -12,6 +12,8 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/timex.h>
++#include <linux/sched/clock.h>
++#include <linux/cpuidle.h>
+
+ #include <clocksource/arm_arch_timer.h>
+
+@@ -67,3 +69,27 @@ void __ndelay(unsigned long nsecs)
+ 	__const_udelay(nsecs * 0x5UL); /* 2**32 / 1000000000 (rounded up) */
+ }
+ EXPORT_SYMBOL(__ndelay);
++
++void cpuidle_wait_for_resched_with_timeout(u64 end)
++{
++	u64 start;
++
++	while (!need_resched() && (start = local_clock_noinstr()) < end) {
++
++		if (alternative_has_cap_unlikely(ARM64_HAS_WFXT)) {
++
++			/* Processor supports waiting for a specified period */
++			wfet(xloops_to_cycles((end - start) * 0x5UL));
++
++		} else
++		if (arch_timer_evtstrm_available() && start + ARCH_TIMER_EVT_STREAM_PERIOD_US * 1000 < end) {
++
++			/* We can wait until a periodic event occurs */
++			wfe();
++
++		} else
++			/* Need to spin until the end */
++			cpu_relax();
++	}
++}
++
+Index: linux/drivers/cpuidle/poll_state.c
+===================================================================
+--- linux.orig/drivers/cpuidle/poll_state.c
++++ linux/drivers/cpuidle/poll_state.c
+@@ -8,35 +8,29 @@
+ #include <linux/sched/clock.h>
+ #include <linux/sched/idle.h>
+
+-#define POLL_IDLE_RELAX_COUNT	200
++__weak void cpuidle_wait_for_resched_with_timeout(u64 end)
++{
++	while (!need_resched() && local_clock_noinstr() < end) {
++		cpu_relax();
++	}
++}
+
+ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+ 			       struct cpuidle_driver *drv, int index)
+ {
+-	u64 time_start;
+-
+-	time_start = local_clock_noinstr();
++	u64 time_start = local_clock_noinstr();
++	u64 time_end = time_start + cpuidle_poll_time(drv, dev);
+
+ 	dev->poll_time_limit = false;
+
+ 	raw_local_irq_enable();
+ 	if (!current_set_polling_and_test()) {
+-		unsigned int loop_count = 0;
+-		u64 limit;
+
+-		limit = cpuidle_poll_time(drv, dev);
++		cpuidle_wait_for_resched_with_timeout(time_end);
++
++		if (!need_resched())
++			dev->poll_time_limit = true;
+
+-		while (!need_resched()) {
+-			cpu_relax();
+-			if (loop_count++ < POLL_IDLE_RELAX_COUNT)
+-				continue;
+-
+-			loop_count = 0;
+-			if (local_clock_noinstr() - time_start > limit) {
+-				dev->poll_time_limit = true;
+-				break;
+-			}
+-		}
+ 	}
+ 	raw_local_irq_disable();
+
+Index: linux/include/linux/cpuidle.h
+===================================================================
+--- linux.orig/include/linux/cpuidle.h
++++ linux/include/linux/cpuidle.h
+@@ -202,6 +202,9 @@ extern int cpuidle_play_dead(void);
+ extern struct cpuidle_driver *cpuidle_get_cpu_driver(struct cpuidle_device *dev);
+ static inline struct cpuidle_device *cpuidle_get_device(void)
+ {return __this_cpu_read(cpuidle_devices); }
++
++extern __weak void cpuidle_wait_for_resched_with_timeout(u64);
++
+ #else
+ static inline void disable_cpuidle(void) { }
+ static inline bool cpuidle_not_available(struct cpuidle_driver *drv,
 
