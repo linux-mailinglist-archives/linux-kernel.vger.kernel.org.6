@@ -1,118 +1,158 @@
-Return-Path: <linux-kernel+bounces-365545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D236899E41E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:35:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28C699E420
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984D2282827
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:35:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5301F23710
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497DD1EABD6;
-	Tue, 15 Oct 2024 10:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059101E4110;
+	Tue, 15 Oct 2024 10:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QV0VGneu"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FLN1st6w"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556241E4110;
-	Tue, 15 Oct 2024 10:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BC81EABD1;
+	Tue, 15 Oct 2024 10:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728988401; cv=none; b=m6XDeuwSBrh25wG8YLaNGqIwBJOAxQw1oajOQTeSYC7wj7/usH+FFuzyblGrL1TNWb7SegVBbgABNoTuAozjVG2vLfOo286VDcUx+jw3RNvGlJgvV8Dhnp+qJ8D/+y4HRDG6JC1jyUmch0rH/blxUpcRSMQQtXic1LcFfFavGL0=
+	t=1728988404; cv=none; b=KaAK2ESVH1nf4iHKmFF8XzG15u7lpQuCDwmThs9AfuGMnlPuJGqqlcSlvUoE9DltzUJ486BmYKMBdiyx0H6o53rN5xKSCuwdYYstSO9ARhofvdX4G95bz+qKXHGAgY8ZgwnV+2JHInFu9LkXq8BNjulapaglPZLfFQxkrM6GE8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728988401; c=relaxed/simple;
-	bh=lXqo21sgwNqWP+gBle8iCEqt4Du1RWaVF9uzdyDLp3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pfqTM5/e6UxvO57liyR+XkDiZljUyWTYPCJV8KFD5Oumse8xiNmgEGwks0rDZ8+aB9ctigh0287dz7jfzNy19YWodEg5VujksTDCRVgS96Be7K8lq6P3T6iHe/AvBTqv2XOwtghc917GIT8T4Rzh4KgGYY+FuRhONM4Mekyl62M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QV0VGneu; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2d83f15f3so933168a91.0;
-        Tue, 15 Oct 2024 03:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728988399; x=1729593199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GltPBs08Kl/fytpBSYmRA40owGde5NS/uPC0UnXNWV0=;
-        b=QV0VGneu1/Mb8ck+HuH2zBdGt8aP58pg69CP5eVhOzB+cpO0r0xPc3bDLIDxcpD+9q
-         TQFP0cCwhmpREr4IoHAEzRZjq0NjSKUn0hMzdTgR1YVoQ9ZXOOvR92UJuZlkbeXp4Cq+
-         D2II2nE3UNtY2iafDdMGGuPrkK4yXv/n2pt61qsfsTO9cSYQgmj/ykMEfbKY3/GgiRkL
-         tIvJHwF0yFbBYU2bBZAXDzx8wQwE84dxaTt6HEPnPIkFVDnga1z60NPzt/w1txjNsbuh
-         0ORWDpIGosih3hY5R3HFIxTFjcqfnBOU5Hmql+99ANFrNcvvZabJ9sNL5QIh59QHTu64
-         LNTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728988399; x=1729593199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GltPBs08Kl/fytpBSYmRA40owGde5NS/uPC0UnXNWV0=;
-        b=BJYeoOzKf+jeGuKetBmK1Scm+4zMSXqG2BZhVzdqPrYkGzpv3bWWgm5Hz7IrcMmMod
-         kwi6diRIFyNy3VC+WXr+PYqD1QOkyWvneboea9PlyrMhWUjHbaUWmmESfNlXv11+UOgQ
-         0IEqCXveBXPO12Pw4zQA1MCpxsGZF2rLle6xJ4ekLRSnAHYJTZy2tK5owV8ReVlQ0qOq
-         qelwUwxyJMy2wgrc2Ct1hxBobkMpCD+R5ekeJDoRahvlF701Rw2YLWOWXjZfMNPR0s45
-         sB9Gc2iAMx9GCcRm9OgP9Oc1vBTsnnBqphqjUBk18MJFzL/IWTt1smHeXwj3F5MyW8af
-         7AlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSLkcnhczUIZ7svZAE6tb1fieiwLr04AfNWZ5b+wVXzUMrM7i9p2KsH2uOCQjnmnf31c5NNmaY2mKfIkE=@vger.kernel.org, AJvYcCWTzcw1CjE4xM7PXFQFWS+NvO+/M8goV8dS7enowiA0+W9umQ7wmx+YefIgb9xOfNQZM1uIv25uClNCz7z5@vger.kernel.org, AJvYcCXuXJr8ORvfDWEzKIuCkeSpU4MitUDxBg3stjQwo2nikty1qqON4AZjvDYVxQJei76L4xMEPezSf5ZNLZIVMc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRf33mOoK5DFMe9+8dBxdhMfU7VqJWD+BK4lTBIpu5FqATMhTO
-	8QwPFMAXCWfKgU0UeD3TihndFhLrzGbBmUWKnDuxznxInu46xsRLuM8EYSi/w4+UOMo0T2lXIhJ
-	5fxem4dsWOlc6lzr8cGvLNuoT3sY=
-X-Google-Smtp-Source: AGHT+IEOdEVCRTYytB+pvjhxhlGxQl5GWJcx0C3P97d0Hmb89OoPkN9b42EUAsEV0iGg2CbRiwajNuwdLBgx8+ycOYM=
-X-Received: by 2002:a17:90b:360b:b0:2e2:c04b:da94 with SMTP id
- 98e67ed59e1d1-2e2f0d77309mr7056673a91.5.1728988399600; Tue, 15 Oct 2024
- 03:33:19 -0700 (PDT)
+	s=arc-20240116; t=1728988404; c=relaxed/simple;
+	bh=2/4Bk4cdVMub6zRLUGlyW/pByzjfL6z36ldid4qPDdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pm2+Po/T3Q2yXInfDpVlLoWxCNaOYm/BQoRcv19h6apG+RpEPYx+31ckZftcWKC0Ex3Z8hOozgptbS2I4R2/zw5YbE3bo4e5pL304mowa+3VAgQEfZlc8G+Fak1eU6p2q9/4QPeqU2vOVP9gqHoCIw33Rg2dDEWhqzzkwEhdSe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FLN1st6w; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [185.143.39.11])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8B5439CE;
+	Tue, 15 Oct 2024 12:31:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728988299;
+	bh=2/4Bk4cdVMub6zRLUGlyW/pByzjfL6z36ldid4qPDdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FLN1st6wwAguQgsMaUKm8AYkeDjg8IOLzNSRyN4gPfkdyVP8AH2ds6acgtkrKXFhT
+	 fEGukvOq6WOngRpVD2AfKZbS5Q0V22g6lWSy8FiRJUkLz5rbiZ3u1P/GPqKA+5zSGM
+	 Lpj+uYCgAs8W4UPLsMpwJIjZ4UAbz7K9PwNN1bYU=
+Date: Tue, 15 Oct 2024 13:33:17 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v5 15/22] media: rzg2l-cru: Make use of
+ v4l2_format_info() helpers
+Message-ID: <20241015103317.GJ5682@pendragon.ideasonboard.com>
+References: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241011173052.1088341-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
- <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
- <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
- <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
- <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com>
- <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com>
- <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com>
- <CAK7LNARg=ZvD14ARKw40uk0XNfE5qgWqsrM6H4jBJu0m5XYCWQ@mail.gmail.com>
- <CANiq72n6zkCZdUJ0A8enLW3BgmA_=eJKgDKwNCfs-q3dfeR2BA@mail.gmail.com> <CAJ-ks9==6mi7SF5rTR=YouwC6RwktJftqXHqhsBcHNTWxdbfig@mail.gmail.com>
-In-Reply-To: <CAJ-ks9==6mi7SF5rTR=YouwC6RwktJftqXHqhsBcHNTWxdbfig@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 15 Oct 2024 12:33:05 +0200
-Message-ID: <CANiq72nBYswZs_m9Ky3KKNz_WmHrsSoRDJqcuHGt2WpvUogtqw@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Daniel Gomez <da.gomez@samsung.com>, 
-	rust-for-linux@vger.kernel.org, Fiona Behrens <me@kloenk.dev>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241011173052.1088341-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Tue, Oct 15, 2024 at 3:11=E2=80=AFAM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> I've opened https://github.com/rust-lang/rust/issues/131720, let's see
-> what the experts think.
+Hi Prabhakar,
 
-Thanks -- I added some context there and linked to it (and Lore) in our lis=
-t:
+Thank you for the patch.
 
-    https://github.com/Rust-for-Linux/linux/issues/355
+On Fri, Oct 11, 2024 at 06:30:45PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Make use of v4l2_format_info() helpers to determine the input and
+> output formats.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 22 ++++++-------------
+>  1 file changed, 7 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index 8932fab7c656..0cc69a7440bf 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -300,21 +300,12 @@ static void rzg2l_cru_initialize_axi(struct rzg2l_cru_dev *cru)
+>  	rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
+>  }
+>  
+> -static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, bool *input_is_yuv,
+> +static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+>  				 const struct rzg2l_cru_ip_format *ip_fmt,
+>  				 u8 csi_vc)
+>  {
+>  	u32 icnmc = ICnMC_INF(ip_fmt->datatype);
+>  
+> -	switch (ip_fmt->code) {
+> -	case MEDIA_BUS_FMT_UYVY8_1X16:
+> -		*input_is_yuv = true;
+> -		break;
+> -	default:
+> -		*input_is_yuv = false;
+> -		break;
+> -	}
+> -
+>  	icnmc |= (rzg2l_cru_read(cru, ICnMC) & ~ICnMC_INF_MASK);
+>  
+>  	/* Set virtual channel CSI2 */
+> @@ -327,19 +318,17 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  					   struct v4l2_mbus_framefmt *ip_sd_fmt,
+>  					   u8 csi_vc)
+>  {
+> +	const struct v4l2_format_info *src_finfo, *dst_finfo;
+>  	const struct rzg2l_cru_ip_format *cru_ip_fmt;
+> -	bool output_is_yuv = false;
+> -	bool input_is_yuv = false;
+>  	u32 icndmr;
+>  
+>  	cru_ip_fmt = rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
+> -	rzg2l_cru_csi2_setup(cru, &input_is_yuv, cru_ip_fmt, csi_vc);
+> +	rzg2l_cru_csi2_setup(cru, cru_ip_fmt, csi_vc);
+>  
+>  	/* Output format */
+>  	switch (cru->format.pixelformat) {
+>  	case V4L2_PIX_FMT_UYVY:
+>  		icndmr = ICnDMR_YCMODE_UYVY;
+> -		output_is_yuv = true;
+>  		break;
+>  	default:
+>  		dev_err(cru->dev, "Invalid pixelformat (0x%x)\n",
+> @@ -347,8 +336,11 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  		return -EINVAL;
+>  	}
+>  
+> +	src_finfo = v4l2_format_info(cru_ip_fmt->format);
+> +	dst_finfo = v4l2_format_info(cru->format.pixelformat);
 
-Cheers,
-Miguel
+It would be a bit more efficient to add a yuv boolean field to the
+rzg2l_cru_ip_format structure, as you already have looked up cru_ip_fmt
+for the IP subdev format.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> +
+>  	/* If input and output use same colorspace, do bypass mode */
+> -	if (output_is_yuv == input_is_yuv)
+> +	if (v4l2_is_format_yuv(src_finfo) == v4l2_is_format_yuv(dst_finfo))
+>  		rzg2l_cru_write(cru, ICnMC,
+>  				rzg2l_cru_read(cru, ICnMC) | ICnMC_CSCTHR);
+>  	else
+
+-- 
+Regards,
+
+Laurent Pinchart
 
