@@ -1,144 +1,155 @@
-Return-Path: <linux-kernel+bounces-366048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC02699F02A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:52:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECB799F030
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15C3281A55
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:52:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03AC1C22132
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A8D1C4A29;
-	Tue, 15 Oct 2024 14:52:28 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF571C4A3B;
+	Tue, 15 Oct 2024 14:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LhEqlfvw"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30211FC7EC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FC21AF0D5;
+	Tue, 15 Oct 2024 14:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003948; cv=none; b=WKZEK4PVWQvMnsSYQbd24NC0lYmKPFS1K1mLTEXf9W8aC/C9B6SenZMUEecZ4Ubf0raki1dRus0kKhj1sUhVoJ5D3qorsiwNRvX4cLBZNI5Yf7+YLMM6x6LElB4tW5uoxTWti3ktGLTnUIH6pbO6ABf9E73PqCXD7xjI8shYUcY=
+	t=1729003994; cv=none; b=NBz2Ei23O+42dveaRsOFc7uyq+5ARkaAHGsmP0ca7aLqrIFMGnM4qyOHht8zhilwVGvukf7uzwvGs0B2vju72n3i2neTHxogRiLSiPQkW3dXOp5R9v+U2x2iVk67OmxELHHxyuHE8fC+hjOBBhhYXo8mhb13tQ/+1PqJv7RIKsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003948; c=relaxed/simple;
-	bh=X3UOslAHpv0oVRMBpVAOzaa3HMqPJtHuEZ1xEUDrWKw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Q9K0XszZwwV/M2KrC7XNzgE4WesSCk446u5y2GJXOtXcoLWARSAdpEyWZVifPURv215e+BQkSDDDB8gEf8uNgN/r/XDg4+r5hR7wtie2sVQ53Wy6iUy7Ln83d1wYZxnsYJ4p4nco0anVavSjSXb/68rTlxTIN7bnMxvbQBOX+lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso42177145ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:52:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729003946; x=1729608746;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XO+GUzRmHdqNnyc7dwi6fD+423rtAZPTsedwNl5XHEc=;
-        b=X7GdAO4ji6CiEaHijDT0o6dvmCZfNe3J7R914nfwqFZ0OOW5Hx7E5XAL5z93eZimS1
-         ak/ioMO2WEMtr1K4vyGbXX3ns1VBMVuXJEn3QLBoQQAIoC0iiRqB5YccCQOCcsC34i4U
-         MZMZtucs9o8ikQVau4sZeVldi14zS7pDYwIUVv9YIy6pD71WcIcS970n6lqRv7vNmjYe
-         aY8iR9Wu0XpaPZRoANytnYqtX1Dy0XRFTI46ghxyAoV+pYb1u/OjfeLofTXqtZWf5JR7
-         EhexUs0itvIu1A8TWJfW9vJEk1/ScsbqDF2Pe1uAvXmjp1fbuMR9mOuw9QZV76dayic+
-         /d7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWfY095CiJa70xD97g9grTr4+5oLBpmVx8Yf2TZH2SS1jvVFP5/S0UMsN49rq6lgdiPapvVEkwgJIbOPf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzILb7U9Tf/Afz8Q32YXGJTeAbGlnjsqC/5OigHhcKgArFss6S7
-	UzGziYIL6CrzQSrU5lkpZWAKzu+OQ0R2JuWu/k/IM3NyfmYK5ruBnVuHv5PoI6drQzhqro8pti1
-	8HHFxyPQyZpNO0CECdR/rHz+1MDtNrhSEmz1iIXhOih6WhCFYahNNjNU=
-X-Google-Smtp-Source: AGHT+IEoJm9PjF6QOifHwNJPiBNytBOPAPjNYhK04sArKfWSnnvpFgbmFBTohYogPCH5zI4Xgf/tgrbovi3fqMJNu8t5SwY598Xo
+	s=arc-20240116; t=1729003994; c=relaxed/simple;
+	bh=TXL5ECwjpaQl9xrzbHeNrLMJad9K2tD5pt8Y+USrQcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ICvIUtd2ICUBh1ekMqkUf1TDcuBZD9U71aJFcE3fUYSsvL2BaFU2qUhT972KVpYKga+qdGIIK3OmWnU4g57oZOYUN42z4oHB9sqGCvWmCV5W3JOf+9SI/YMqd7vNqqdf2ycC9VbEVv1P9DKjiJ4Lh2PYGBrNSWegjepNghtZv70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LhEqlfvw; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A679740E0194;
+	Tue, 15 Oct 2024 14:53:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id eTQLnIpnaaak; Tue, 15 Oct 2024 14:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729003984; bh=IWu4dX3tvzxOwCtQqhtsDrxvJqZWaM0N7YGfox1xlSc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LhEqlfvwFailZ+MIpmFomDMYfFNQnVJTcMpPK31TtPGDjT2YbTH4rgGG4Pj02chhX
+	 7j66HnnZKf2bL+ontS+YzhtVtau4PD5ulUpVwt2fWWV2e/2QeYyyOMPAIj5HJsJSFM
+	 LOF/Osf1rGG2PQTvJG7B1Lq5bKTC8Ss7ap+G89YWLZt2hY90ExdDn8JMiG6lUt6iS4
+	 E7JEPDfrKGJq74CsZYzogfEGXit681oxix7iQ1nkr+Zh4Er+8WkpYkjjTU0Q7Hq7n0
+	 PREPPsbfQStwnfjsayZfUR7hJwa85PyNkjyDLxp8NU2DeiOsmvNedzSgn2eRbwHDoA
+	 Yhb9ZFhIN9tHHEYAR6T4eiTmlzzPsmRHgRDuQ3TUb/yMIfpiOPcChGgAK8mMKy60Tq
+	 7IAqvVEEQ42bPAENIriDrf6/miWqu6jKNuUqwGClT2Ef27azW7RhmMv7k8o8qrGxeE
+	 57r5uELf1Z6ZVWUZVb8FSpapTICC7EFUvGakVW3G6lV5DdBk346BgckLC4pWhTohFP
+	 5g2vhZxW14hWs2VjBM3B7r390mhDgRxt53thdFQ6Uw0jaycMmEJNlgqJF63REaQomp
+	 yxzsM4jcw/elUs79mvLMaybJ6Feskdqfl5ex5AglQfvmi8KkRdr8NfHWgOARSs5NRH
+	 jKYYjBC9wGkgNnD0XlBPK+VU=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 571FC40E0169;
+	Tue, 15 Oct 2024 14:52:42 +0000 (UTC)
+Date: Tue, 15 Oct 2024 16:52:34 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Ye Li <ye.li@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 5/6] EDAC/fsl_ddr: Add support for i.MX9 DDR controller
+Message-ID: <20241015145234.GRZw6BsqnIbaGWMzG_@fat_crate.local>
+References: <20241011-imx95_edac-v2-0-011b68290951@nxp.com>
+ <20241011-imx95_edac-v2-5-011b68290951@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17ce:b0:3a3:9337:4cf4 with SMTP id
- e9e14a558f8ab-3a3dc4a04ecmr6302055ab.4.1729003945886; Tue, 15 Oct 2024
- 07:52:25 -0700 (PDT)
-Date: Tue, 15 Oct 2024 07:52:25 -0700
-In-Reply-To: <000000000000c6b91e0621a312f4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670e81a9.050a0220.d9b66.0153.GAE@google.com>
-Subject: Re: [syzbot] [mm?] BUG: corrupted list in add_to_unbuddied
-From: syzbot <syzbot+30eac43568e2b3d65728@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linmiaohe@huawei.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, vitaly.wool@konsulko.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241011-imx95_edac-v2-5-011b68290951@nxp.com>
 
-syzbot has found a reproducer for the following issue on:
+On Fri, Oct 11, 2024 at 11:31:33AM -0400, Frank Li wrote:
+> From: Ye Li <ye.li@nxp.com>
+> 
+> Add support for the i.MX9 DDR controller, which has different register
+> offsets and some function changes compared to the existing fsl_ddr
+> controller. The ECC and error injection functions are almost the same, so
+> update and reuse the driver for i.MX9. A special type 'TYPE_IMX9' is added
+> specifically for the i.MX9 controller to distinguish the differences.
+> 
+> Signed-off-by: Ye Li <ye.li@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/edac/fsl_ddr_edac.c    | 48 ++++++++++++++++++++++++++++++++++++------
+>  drivers/edac/fsl_ddr_edac.h    | 10 +++++++++
+>  drivers/edac/layerscape_edac.c |  1 +
+>  3 files changed, 53 insertions(+), 6 deletions(-)
 
-HEAD commit:    eca631b8fe80 Merge tag 'f2fs-6.12-rc4' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d0845f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-dashboard link: https://syzkaller.appspot.com/bug?extid=30eac43568e2b3d65728
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16df4c40580000
+checking file drivers/edac/fsl_ddr_edac.c
+Hunk #1 FAILED at 31.
+Hunk #2 succeeded at 442 (offset 4 lines).
+Hunk #3 succeeded at 478 (offset 4 lines).
+Hunk #4 succeeded at 492 (offset 4 lines).
+Hunk #5 succeeded at 520 (offset 4 lines).
+Hunk #6 succeeded at 550 (offset 4 lines).
+Hunk #7 succeeded at 577 (offset 4 lines).
+1 out of 7 hunks FAILED
+checking file drivers/edac/fsl_ddr_edac.h
+Hunk #3 FAILED at 71.
+1 out of 3 hunks FAILED
+checking file drivers/edac/layerscape_edac.c
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-eca631b8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/830e1433408d/vmlinux-eca631b8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5538dfbaa4ef/bzImage-eca631b8.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/66bf3424533c/mount_0.gz
+What tree have you created your patches against?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+30eac43568e2b3d65728@syzkaller.appspotmail.com
+> diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> index ccc13c2adfd6f..3e4c2869a07cd 100644
+> --- a/drivers/edac/fsl_ddr_edac.c
+> +++ b/drivers/edac/fsl_ddr_edac.c
+> @@ -31,16 +31,28 @@
+>  
+>  static int edac_mc_idx;
 
-list_add corruption. next->prev should be prev (ffffe8ffffc31ed0), but was ffff88803ccdc800. (next=ffff88801e21b400).
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:31!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.12.0-rc3-syzkaller-00013-geca631b8fe80 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: zswap1 compact_page_work
-RIP: 0010:__list_add_valid_or_report+0xd6/0xf0 lib/list_debug.c:29
-Code: e8 1f 26 00 07 90 0f 0b 48 c7 c7 00 fe 60 8c e8 10 26 00 07 90 0f 0b 48 c7 c7 60 fe 60 8c 4c 89 e6 4c 89 f1 e8 fb 25 00 07 90 <0f> 0b 48 c7 c7 e0 fe 60 8c 4c 89 f6 4c 89 e1 e8 e6 25 00 07 90 0f
-RSP: 0000:ffffc900003d7ad0 EFLAGS: 00010246
-RAX: 0000000000000075 RBX: ffff88801e21b408 RCX: 18a79d2c00c9a300
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: ffffe8ffffc31ed0 R08: ffffffff8174afec R09: 1ffff9200007aef4
-R10: dffffc0000000000 R11: fffff5200007aef5 R12: ffffe8ffffc31ed0
-R13: dffffc0000000000 R14: ffff88801e21b400 R15: ffff8880400e6000
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c001e70000 CR3: 000000003dd36000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add include/linux/list.h:169 [inline]
- add_to_unbuddied+0x2e4/0x4d0 mm/z3fold.c:550
- do_compact_page+0x924/0xc50 mm/z3fold.c:772
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_add_valid_or_report+0xd6/0xf0 lib/list_debug.c:29
-Code: e8 1f 26 00 07 90 0f 0b 48 c7 c7 00 fe 60 8c e8 10 26 00 07 90 0f 0b 48 c7 c7 60 fe 60 8c 4c 89 e6 4c 89 f1 e8 fb 25 00 07 90 <0f> 0b 48 c7 c7 e0 fe 60 8c 4c 89 f6 4c 89 e1 e8 e6 25 00 07 90 0f
-RSP: 0000:ffffc900003d7ad0 EFLAGS: 00010246
-RAX: 0000000000000075 RBX: ffff88801e21b408 RCX: 18a79d2c00c9a300
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: ffffe8ffffc31ed0 R08: ffffffff8174afec R09: 1ffff9200007aef4
-R10: dffffc0000000000 R11: fffff5200007aef5 R12: ffffe8ffffc31ed0
-R13: dffffc0000000000 R14: ffff88801e21b400 R15: ffff8880400e6000
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c001e70000 CR3: 000000003dd36000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+I see here:
 
+|static int edac_mc_idx;
+|
+|static u32 orig_ddr_err_disable; 
+|static u32 orig_ddr_err_sbe;
+|static bool little_endian;
+|
+|static inline u32 ddr_in32(struct fsl_mc_pdata *pdata, unsigned int off)
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+and you don't have those in your diff.
+
+What's up?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
