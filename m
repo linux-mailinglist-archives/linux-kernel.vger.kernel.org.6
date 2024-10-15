@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-366156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D93E99F179
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:38:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3474F99F17A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2724C1C22804
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91932824E8
 	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2401FAEF7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3E51FAEFC;
 	Tue, 15 Oct 2024 15:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3oo2zO09";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sNWw2EWG"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ai0lmEB3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0x0fUYLO"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E0C1F76BC;
-	Tue, 15 Oct 2024 15:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8555B1F76CA;
+	Tue, 15 Oct 2024 15:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006586; cv=none; b=bXXVbEEIZkhBX2FnolostcBgsqU/xnPIcgXvOS5mxgLymb2pU8th3eCt+AzDzhUEPMPPHyLlJI49aMXyHfFaRkn0WE3VSkC9TJL5dTCRign2ffwLIBa5QPR7jMp07bU7Pkb7sl33wD+3TXy8PJxZJ7w81A2qPLI8JqEUoIQh1do=
+	t=1729006586; cv=none; b=cUMolzTlaKiGJW6Mi0eUS6NOU8//AbLBC0W0OLsoWwT1IW3exWavacWctPA7EKhuLnRRIdEYjqYRrxC2UldFcucndbJEn5HJ91BRjhfxXL4UvC8PwohR5vh37npZDYdHtKC8EsKV2a4ulZLioqR2kDz5GK/+iuQsywguuRq5rM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729006586; c=relaxed/simple;
-	bh=KvBZZXAvJ+IBNJ4PhH7Hyi0bU1GNf6ShVYHQUp0Yv8U=;
+	bh=zY9rGQdPXBGZTFGYD7aH/d6BU2N88BTOcMyFxHKzTj0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=HB7Vw4Wq/erYuqQLq5g66CBlQdbtOuGTQlsHRD2eQmYBSjdJm+1b8wtvGJUiGV+O2Q0rqxY8kqiVMuyu3mdRHWVsID7sakKdUO5QAj/pF8nnz/zBpXI8yk1E+NzPNiFIEjQ4tN7Wyze23+Uv7A3wT9UiDV0OdDF6MG2dwLURXiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3oo2zO09; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sNWw2EWG; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=TUpTw8f825q3QgkFYlHfRirXbwVyzpSIHhbUsMorylxgnpntgCOaYemfJ6Z8DnFf56DZdpIAhboQGOBeYzLcFCBiMUbf1jGGFXQIkGZfeLFwje5oxOlkkUDQnXGNKXmW1dcxUxlLp6wbIzy5Gp/S14dKe6lMhIrAnVVeXvXPdQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ai0lmEB3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0x0fUYLO; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 15:36:21 -0000
+Date: Tue, 15 Oct 2024 15:36:22 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1729006582;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5C7FtyXGYg1C1ZB13496uk0asqsL4M7Eeo8KsFBUUcM=;
-	b=3oo2zO09ZcmUCKC2FwselzuWXq5vbnPkBjhDgdXI2uPq0eBo9kWdEemIIAsJBIH6srJiC6
-	TwOSA3GYw5QP7eJzJiTL3toeEBL6tlVIgTt7MHekTDAvNI7TEbZVtTHgtYo6bPa3VZPnQM
-	qzfcNaZ44bt4veH8DiVsFtB5C5QkEaiAnLpxYOQnmXNnvY8wr5sIgBwI3hPTBF/t4jxVBk
-	fhFU0FN4jTbMkzZlJkt60HfsYiKm7x2Plh/vG56CB2rhA5UvLtA1zDJ8DlOzNwc+MqCcTl
-	yroQghUF5mwRtftzyYR54mmZ75KknhccvUf+RORVwxHwgFW2ztuch48uNRoD5w==
+	bh=3GQJvDdvCZcmFIPm035xm1OicTWa0btQdz2ma4VWPFE=;
+	b=Ai0lmEB3rBULX6DDE1FEKZq3C9GiLX3j4iDpZ04oviYn7W6HCno5alEkt/ZZ5Av5xE11mY
+	msWPaavDQWxO3aEIwdj5lhKp5VYzLzwcN0UW/Ow0d8hVTQbX0wxl/U4Jd1u+Clk+jfmXsm
+	ovpZKHboLY5q2dZRclKX0FaG9lavOLmvgWimylrBje1/3Yj9D1dmjdEYixqHGAcvYTmvcf
+	0pQmdeEhXjYgR9J/oL+uS/ML0Rf2mFybBRIZ008OQHkv0nDtS+KrzUGikKGTUSFxLAKwzv
+	GCdto4esmBBl4jUM5Qci+XeIBLS9SsT8hJQiZ6qCe8UuR/dklpI76HfUUuIYgg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1729006582;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,27 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5C7FtyXGYg1C1ZB13496uk0asqsL4M7Eeo8KsFBUUcM=;
-	b=sNWw2EWGZ6glwaOeANaOjvQ1rkRKQEyD+mEl4GCKInqoOBq5syesTUhtkQOQX6qrywV7MM
-	fn4pIbeDR7UoOrDw==
+	bh=3GQJvDdvCZcmFIPm035xm1OicTWa0btQdz2ma4VWPFE=;
+	b=0x0fUYLO2Mk1JR5EdRpcXZ6omMxP56CeF0mNfgmFcWszCmqKmisWRs3td8P2yM8XONKGu2
+	3kmzrQq6ixBUuJBA==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: core/debugobjects] debugobjects: Move min/max count into pool struct
+ [tip: core/debugobjects] debugobjects: Rename and tidy up per CPU pools
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  Zhen Lei <thunder.leizhen@huawei.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241007164913.831908427@linutronix.de>
-References: <20241007164913.831908427@linutronix.de>
+In-Reply-To: <20241007164913.770595795@linutronix.de>
+References: <20241007164913.770595795@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172900658123.1442.18160204929408712140.tip-bot2@tip-bot2>
+Message-ID: <172900658214.1442.7932676239510595531.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,182 +82,139 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the core/debugobjects branch of tip:
 
-Commit-ID:     96a9a0421c77301f9b551f3460ac04471a3c0612
-Gitweb:        https://git.kernel.org/tip/96a9a0421c77301f9b551f3460ac04471a3c0612
+Commit-ID:     18b8afcb37d8a72479892e080e4d37890f2bf353
+Gitweb:        https://git.kernel.org/tip/18b8afcb37d8a72479892e080e4d37890f2bf353
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 07 Oct 2024 18:50:08 +02:00
+AuthorDate:    Mon, 07 Oct 2024 18:50:07 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 15 Oct 2024 17:30:32 +02:00
+CommitterDate: Tue, 15 Oct 2024 17:30:31 +02:00
 
-debugobjects: Move min/max count into pool struct
+debugobjects: Rename and tidy up per CPU pools
 
-Having the accounting in the datastructure is better in terms of cache
-lines and allows more optimizations later on.
+No point in having a separate data structure. Reuse struct obj_pool and
+tidy up the code.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
-Link: https://lore.kernel.org/all/20241007164913.831908427@linutronix.de
+Link: https://lore.kernel.org/all/20241007164913.770595795@linutronix.de
 
 ---
- lib/debugobjects.c | 55 +++++++++++++++++++++++++--------------------
- 1 file changed, 31 insertions(+), 24 deletions(-)
+ lib/debugobjects.c | 43 +++++++++++++++++--------------------------
+ 1 file changed, 17 insertions(+), 26 deletions(-)
 
 diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 3d1d973..fbe8f26 100644
+index 0b29a25..3d1d973 100644
 --- a/lib/debugobjects.c
 +++ b/lib/debugobjects.c
-@@ -46,9 +46,14 @@ struct debug_bucket {
+@@ -43,21 +43,12 @@ struct debug_bucket {
+ 	raw_spinlock_t		lock;
+ };
+ 
+-/*
+- * Debug object percpu free list
+- * Access is protected by disabling irq
+- */
+-struct debug_percpu_free {
+-	struct hlist_head	free_objs;
+-	int			obj_free;
+-};
+-
  struct obj_pool {
  	struct hlist_head	objects;
  	unsigned int		cnt;
-+	unsigned int		min_cnt;
-+	unsigned int		max_cnt;
  } ____cacheline_aligned;
  
--static DEFINE_PER_CPU(struct obj_pool, pool_pcpu);
-+
-+static DEFINE_PER_CPU_ALIGNED(struct obj_pool, pool_pcpu)  = {
-+	.max_cnt	= ODEBUG_POOL_PERCPU_SIZE,
-+};
+-static DEFINE_PER_CPU(struct debug_percpu_free, percpu_obj_pool);
++static DEFINE_PER_CPU(struct obj_pool, pool_pcpu);
  
  static struct debug_bucket	obj_hash[ODEBUG_HASH_SIZE];
  
-@@ -56,8 +61,14 @@ static struct debug_obj		obj_static_pool[ODEBUG_POOL_SIZE] __initdata;
- 
- static DEFINE_RAW_SPINLOCK(pool_lock);
- 
--static struct obj_pool		pool_global;
--static struct obj_pool		pool_to_free;
-+static struct obj_pool pool_global = {
-+	.min_cnt	= ODEBUG_POOL_MIN_LEVEL,
-+	.max_cnt	= ODEBUG_POOL_SIZE,
-+};
-+
-+static struct obj_pool pool_to_free = {
-+	.max_cnt	= UINT_MAX,
-+};
- 
- static HLIST_HEAD(pool_boot);
- 
-@@ -79,13 +90,9 @@ static int __data_racy			debug_objects_fixups __read_mostly;
- static int __data_racy			debug_objects_warnings __read_mostly;
- static bool __data_racy			debug_objects_enabled __read_mostly
- 					= CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
--static int				debug_objects_pool_size __ro_after_init
--					= ODEBUG_POOL_SIZE;
--static int				debug_objects_pool_min_level __ro_after_init
--					= ODEBUG_POOL_MIN_LEVEL;
- 
--static const struct debug_obj_descr *descr_test  __read_mostly;
--static struct kmem_cache	*obj_cache __ro_after_init;
-+static const struct debug_obj_descr	*descr_test  __read_mostly;
-+static struct kmem_cache		*obj_cache __ro_after_init;
- 
- /*
-  * Track numbers of kmem_cache_alloc()/free() calls done.
-@@ -124,14 +131,14 @@ static __always_inline unsigned int pool_count(struct obj_pool *pool)
- 	return READ_ONCE(pool->cnt);
- }
- 
--static inline bool pool_global_should_refill(void)
-+static __always_inline bool pool_should_refill(struct obj_pool *pool)
+@@ -271,13 +262,13 @@ static struct debug_obj *__alloc_object(struct hlist_head *list)
+ static struct debug_obj *
+ alloc_object(void *addr, struct debug_bucket *b, const struct debug_obj_descr *descr)
  {
--	return READ_ONCE(pool_global.cnt) < debug_objects_pool_min_level;
-+	return pool_count(pool) < pool->min_cnt;
- }
+-	struct debug_percpu_free *percpu_pool = this_cpu_ptr(&percpu_obj_pool);
++	struct obj_pool *percpu_pool = this_cpu_ptr(&pool_pcpu);
+ 	struct debug_obj *obj;
  
--static inline bool pool_global_must_refill(void)
-+static __always_inline bool pool_must_refill(struct obj_pool *pool)
+ 	if (likely(obj_cache)) {
+-		obj = __alloc_object(&percpu_pool->free_objs);
++		obj = __alloc_object(&percpu_pool->objects);
+ 		if (obj) {
+-			percpu_pool->obj_free--;
++			percpu_pool->cnt--;
+ 			goto init_obj;
+ 		}
+ 	} else {
+@@ -304,8 +295,8 @@ alloc_object(void *addr, struct debug_bucket *b, const struct debug_obj_descr *d
+ 				obj2 = __alloc_object(&pool_global.objects);
+ 				if (!obj2)
+ 					break;
+-				hlist_add_head(&obj2->node, &percpu_pool->free_objs);
+-				percpu_pool->obj_free++;
++				hlist_add_head(&obj2->node, &percpu_pool->objects);
++				percpu_pool->cnt++;
+ 				obj_pool_used++;
+ 				WRITE_ONCE(pool_global.cnt, pool_global.cnt - 1);
+ 			}
+@@ -384,7 +375,7 @@ free_objs:
+ static void __free_object(struct debug_obj *obj)
  {
--	return READ_ONCE(pool_global.cnt) < (debug_objects_pool_min_level / 2);
-+	return pool_count(pool) < pool->min_cnt / 2;
- }
+ 	struct debug_obj *objs[ODEBUG_BATCH_SIZE];
+-	struct debug_percpu_free *percpu_pool;
++	struct obj_pool *percpu_pool;
+ 	int lookahead_count = 0;
+ 	bool work;
  
- static void free_object_list(struct hlist_head *head)
-@@ -178,7 +185,7 @@ static void fill_pool_from_freelist(void)
- 	 * Recheck with the lock held as the worker thread might have
- 	 * won the race and freed the global free list already.
- 	 */
--	while (pool_to_free.cnt && (pool_global.cnt < debug_objects_pool_min_level)) {
-+	while (pool_to_free.cnt && (pool_global.cnt < pool_global.min_cnt)) {
- 		obj = hlist_entry(pool_to_free.objects.first, typeof(*obj), node);
- 		hlist_del(&obj->node);
- 		WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt - 1);
-@@ -197,11 +204,11 @@ static void fill_pool(void)
- 	 *   - One other CPU is already allocating
- 	 *   - the global pool has not reached the critical level yet
- 	 */
--	if (!pool_global_must_refill() && atomic_read(&cpus_allocating))
-+	if (!pool_must_refill(&pool_global) && atomic_read(&cpus_allocating))
- 		return;
- 
- 	atomic_inc(&cpus_allocating);
--	while (pool_global_should_refill()) {
-+	while (pool_should_refill(&pool_global)) {
- 		struct debug_obj *new, *last = NULL;
- 		HLIST_HEAD(head);
- 		int cnt;
-@@ -337,7 +344,7 @@ static void free_obj_work(struct work_struct *work)
- 	if (!raw_spin_trylock_irqsave(&pool_lock, flags))
- 		return;
- 
--	if (pool_global.cnt >= debug_objects_pool_size)
-+	if (pool_global.cnt >= pool_global.max_cnt)
- 		goto free_objs;
- 
+@@ -398,10 +389,10 @@ static void __free_object(struct debug_obj *obj)
  	/*
-@@ -347,7 +354,7 @@ static void free_obj_work(struct work_struct *work)
- 	 * may be gearing up to use more and more objects, don't free any
- 	 * of them until the next round.
+ 	 * Try to free it into the percpu pool first.
  	 */
--	while (pool_to_free.cnt && pool_global.cnt < debug_objects_pool_size) {
-+	while (pool_to_free.cnt && pool_global.cnt < pool_global.max_cnt) {
- 		obj = hlist_entry(pool_to_free.objects.first, typeof(*obj), node);
- 		hlist_del(&obj->node);
- 		hlist_add_head(&obj->node, &pool_global.objects);
-@@ -408,7 +415,7 @@ static void __free_object(struct debug_obj *obj)
+-	percpu_pool = this_cpu_ptr(&percpu_obj_pool);
+-	if (percpu_pool->obj_free < ODEBUG_POOL_PERCPU_SIZE) {
+-		hlist_add_head(&obj->node, &percpu_pool->free_objs);
+-		percpu_pool->obj_free++;
++	percpu_pool = this_cpu_ptr(&pool_pcpu);
++	if (percpu_pool->cnt < ODEBUG_POOL_PERCPU_SIZE) {
++		hlist_add_head(&obj->node, &percpu_pool->objects);
++		percpu_pool->cnt++;
+ 		return;
+ 	}
+ 
+@@ -410,10 +401,10 @@ static void __free_object(struct debug_obj *obj)
+ 	 * of objects from the percpu pool and free them as well.
+ 	 */
+ 	for (; lookahead_count < ODEBUG_BATCH_SIZE; lookahead_count++) {
+-		objs[lookahead_count] = __alloc_object(&percpu_pool->free_objs);
++		objs[lookahead_count] = __alloc_object(&percpu_pool->objects);
+ 		if (!objs[lookahead_count])
+ 			break;
+-		percpu_pool->obj_free--;
++		percpu_pool->cnt--;
  	}
  
  	raw_spin_lock(&pool_lock);
--	work = (pool_global.cnt > debug_objects_pool_size) && obj_cache &&
-+	work = (pool_global.cnt > pool_global.max_cnt) && obj_cache &&
- 	       (pool_to_free.cnt < ODEBUG_FREE_WORK_MAX);
- 	obj_pool_used--;
+@@ -494,10 +485,10 @@ static void put_objects(struct hlist_head *list)
+ static int object_cpu_offline(unsigned int cpu)
+ {
+ 	/* Remote access is safe as the CPU is dead already */
+-	struct debug_percpu_free *pcp = per_cpu_ptr(&percpu_obj_pool, cpu);
++	struct obj_pool *pcp = per_cpu_ptr(&pool_pcpu, cpu);
  
-@@ -424,7 +431,7 @@ static void __free_object(struct debug_obj *obj)
- 			}
- 		}
+-	put_objects(&pcp->free_objs);
+-	pcp->obj_free = 0;
++	put_objects(&pcp->objects);
++	pcp->cnt = 0;
+ 	return 0;
+ }
+ #endif
+@@ -1076,7 +1067,7 @@ static int debug_stats_show(struct seq_file *m, void *v)
+ 	int cpu, obj_percpu_free = 0;
  
--		if ((pool_global.cnt > debug_objects_pool_size) &&
-+		if ((pool_global.cnt > pool_global.max_cnt) &&
- 		    (pool_to_free.cnt < ODEBUG_FREE_WORK_MAX)) {
- 			int i;
+ 	for_each_possible_cpu(cpu)
+-		obj_percpu_free += per_cpu(percpu_obj_pool.obj_free, cpu);
++		obj_percpu_free += per_cpu(pool_pcpu.cnt, cpu);
  
-@@ -629,13 +636,13 @@ static void debug_objects_fill_pool(void)
- 	if (unlikely(!obj_cache))
- 		return;
- 
--	if (likely(!pool_global_should_refill()))
-+	if (likely(!pool_should_refill(&pool_global)))
- 		return;
- 
- 	/* Try reusing objects from obj_to_free_list */
- 	fill_pool_from_freelist();
- 
--	if (likely(!pool_global_should_refill()))
-+	if (likely(!pool_should_refill(&pool_global)))
- 		return;
- 
- 	/*
-@@ -1427,8 +1434,8 @@ void __init debug_objects_mem_init(void)
- 	 * system.
- 	 */
- 	extras = num_possible_cpus() * ODEBUG_BATCH_SIZE;
--	debug_objects_pool_size += extras;
--	debug_objects_pool_min_level += extras;
-+	pool_global.max_cnt += extras;
-+	pool_global.min_cnt += extras;
- 
- 	/* Everything worked. Expose the cache */
- 	obj_cache = cache;
+ 	seq_printf(m, "max_chain     :%d\n", debug_objects_maxchain);
+ 	seq_printf(m, "max_checked   :%d\n", debug_objects_maxchecked);
 
