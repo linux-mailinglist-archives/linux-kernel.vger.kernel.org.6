@@ -1,112 +1,186 @@
-Return-Path: <linux-kernel+bounces-365812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E55E99EA3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30C299EA3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527792884CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F0928895F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139691C07EC;
-	Tue, 15 Oct 2024 12:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA891C07E5;
+	Tue, 15 Oct 2024 12:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="j2DLWB3P"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="MQ1+8rDx"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107C41C07D2
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0261C07CD;
+	Tue, 15 Oct 2024 12:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728996447; cv=none; b=e97z/YWYkoIo+AVhUomkS4h1Pdf5UNZPGTTnChf6HnVqR68v3IR44x+VDdqlEKxbb6tYRU1KEJJL8GXu3Jh+sbh8NOwQ2ZoQYlc+Fgu0wt+LaZ5BQhQu9xqI4gLi8B6GQGnR1N16gqKAPrObbgtuwI0fMjLWvqSUlKAI/puKGzA=
+	t=1728996470; cv=none; b=dGQ8C5cNqITLR4ii0kfCLtVx+LvSfjuKKet+I5yhosCL4ihflcbUeWfDixRylw17/SGVzZsPceh/Fdd06j8Naa1/7SafQ1iEGzWcQ5TlC3u9oixfq1Rg5EW1ouvZiZn/bHGXxR36Z7PzVH05A3iujM7Em50rxBGsHeS2QRgNJ1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728996447; c=relaxed/simple;
-	bh=9S1snqy0sUlcGrxSkmAISPY4bKaFGc5qSCVtFcrN4RE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=biLx6exSKirejWuxpCCWecrJVz5LWDdmxmx+BCuVQqM4LF84F8ru2iUn7F0l5GOVeFLzLI3WEge6Q7Lmrk8SZ60rzT8T+TuOOKqbdTHIbrdqFSPPaXe4JzfawUqDDmRZiX8yyEd6HcyengX/GUdvqdDc+0Y4ZRelanUbkQE+Bk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=j2DLWB3P; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-84fd057a973so1257241241.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1728996445; x=1729601245; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9S1snqy0sUlcGrxSkmAISPY4bKaFGc5qSCVtFcrN4RE=;
-        b=j2DLWB3Paan6KBP9L8uoyRVkBC4TNnT/hpUMlcw7GzrWf1k7WAfybHi/1u0hG1h+gV
-         Wxtbnke+cFZy2rfgug2oh02DdYq1NeejYggkKA8Pwa0KipziaEHdi15SxJdleT3OpOpi
-         McgjZr27Lf0Cca0lkXEuKnwwVh+w9yt5gdequkc1ric4a2AfN1jhNVxkzYWZp9PNrfCN
-         77zntjuP/Q1qAPlULLcDiVABb7mUaPgaNOLP6OkT6MrN0Lax0IMyrlbnhDc6eVM2C4qM
-         +gvKuihwpmnwfbFqvA97BJwen+JKbjXw4SjArky1+Z/uxaeoD+p5hHgWS4TnyRMCqQOW
-         gN2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728996445; x=1729601245;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9S1snqy0sUlcGrxSkmAISPY4bKaFGc5qSCVtFcrN4RE=;
-        b=kOY4yejdOMKvXaLfuyEhAnFkA2sT2J7eqNo8JAqqOF7Q1FnIUzS5OMvvIY1DgxrYk9
-         AMTQCDso5w37tMHdvLhtF9iUqSibb1TJ5IovNNkAC7iYYO7W4oExQD9dXaED2WyVtk0p
-         F/yl4GmtsHTL1bdY173qIB8JS4az6tF20rCpOsM6QY7PL7a/8BuQsANKG5RsSSmWGMva
-         yM1kS+PXWAi//GmNAr8ByTH2xGUj/OGRDrWMrv8yVlQVVeNnKxzDdgUe9ws+089Vi9j3
-         8SHoqu9VII2fqRVQCVWX6yPIyRAI/uQ1S5p5D2N4Fr45UNhlT3DtjM6zWxPBQnq20ZH+
-         Zx2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWdziYqcJxEEs+KfU53bDosd0mkGvDvQzBwUW1XHJM1Y3pbXf+35/UeWqCXq3lFN7SwlN4RQmM4VTcNd5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWHmQq2B7E4qiKww2V1gq2O7McR7a9sJ6PMR9/CzOJnxNq0Vnv
-	f92JZT1jTyyFI5Jv9CB0FFkfjXvdI38CiaoJwD28pgugAQ/fHT/5YAEfaaIAsPg=
-X-Google-Smtp-Source: AGHT+IHIRxePA9J/5yRqXfxDEQAMQhA+JMP40CVAOrPRfL5HhzVbrqqZKc4spR4QAm7PXjUlxeCV1g==
-X-Received: by 2002:a05:6102:3752:b0:4a4:9416:6a18 with SMTP id ada2fe7eead31-4a5b579b8e7mr231229137.0.1728996444983;
-        Tue, 15 Oct 2024 05:47:24 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b13616611csm67089085a.14.2024.10.15.05.47.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 05:47:24 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1t0gxP-00D2Mx-UU;
-	Tue, 15 Oct 2024 09:47:23 -0300
-Date: Tue, 15 Oct 2024 09:47:23 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Pranjal Shrivastava <praan@google.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joy Zou <joy.zou@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH RFC 2/2] iommu/arm-smmu-v3: Bypass SID0 for NXP i.MX95
-Message-ID: <20241015124723.GI1825128@ziepe.ca>
-References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
- <20241015-smmuv3-v1-2-e4b9ed1b5501@nxp.com>
- <Zw4kKDFOcXEC78mb@google.com>
+	s=arc-20240116; t=1728996470; c=relaxed/simple;
+	bh=K9D3hkjeg/gOkvrq0dJpGPHws4AK7bgMeTDsaOTFeyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d41IBxjTtewRCaOrCvaycXfAlGR1vdHrzx8tbvvfJvX6HO1ZOzPVi7UIjuvg79cg79P78QrudvCG5fNmJPGHTkQRrRKly2CtnQzMssm50x9xyaQ7s0o8SyA/Q9CK7QPh9KxYG1zfqYpy9CNJDcCr3/d5jSlt0nhfwk+YLkGxs9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=MQ1+8rDx; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.178.76] (host-212-18-30-247.customer.m-online.net [212.18.30.247])
+	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 9F7952FC0059;
+	Tue, 15 Oct 2024 14:47:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1728996458;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3mvGkJznbmh3jps4clef9o8wCS2/J44uxG/Nxu7qcpw=;
+	b=MQ1+8rDx790ZGrh/YMPgRtfVrESZIDTtyW2gIxC9L66o+J3Ag+yQGh8aPC/Eg+TZkb09aP
+	VGraZ542zKdYOBLrf7QREjmObpDYP+0xYrkinLWFTnsnyGpgt9r5njqWNqRrpsQINvbXH7
+	bOyPz5xfXdlSPwI0Jz4bKcasCV9NYdw=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=g.gottleuber@tuxedocomputers.com
+Message-ID: <4a517433-d105-4e2b-86f8-335e7c537d10@tuxedocomputers.com>
+Date: Tue, 15 Oct 2024 14:47:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw4kKDFOcXEC78mb@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: [RFC PATCH 1/1] mmc: sdhci-pci-gli: fix x86/S0ix SoCs suspend for
+ GL9767
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: victor.shih@genesyslogic.com.tw, Lucas.Lai@genesyslogic.com.tw,
+ Greg.tu@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw,
+ adrian.hunter@intel.com, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+ Georg Gottleuber <ggo@tuxedocomputers.com>
+References: <8235497b-421c-4af7-90e4-95ad4e271ead@tuxedocomputers.com>
+ <CAPDyKFrT6-nes784c9rCtqdJZ0nCFS3O5X=600OB6trbz2yJ2w@mail.gmail.com>
+Content-Language: en-US
+From: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
+In-Reply-To: <CAPDyKFrT6-nes784c9rCtqdJZ0nCFS3O5X=600OB6trbz2yJ2w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 08:13:28AM +0000, Pranjal Shrivastava wrote:
+Adapt commit 1202d617e3d04c ("mmc: sdhci-pci-gli: fix LPM negotiation
+so x86/S0ix SoCs can suspend") also for GL9767 card reader.
 
-> Umm.. this was specific for rmr not a generic thing. I'd suggest to
-> avoid meddling with the STEs directly for acheiving bypass. Playing
-> with the iommu domain type could be neater. Perhaps, modify the
-> ops->def_domain_type to return an appropriate domain?
+This patch was written without specs or deeper knowledge of PCI sleep
+states. Tests show that S0ix is reached and a lower power consumption
+when suspended (6 watts vs 1.2 watts for TUXEDO InfinityBook Pro Gen9
+Intel).
 
-Yeah, that is the expected way, to force the def_domain_type to
-IDENTITY and refuse to attach a PAGING/BLOCKED domain.
+The function of the card reader appears to be normal.
 
-If this is a common thing we could have the core code take on more of
-the job.
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219284
+Co-developed-by: Christoffer Sandberg <cs@tuxedo.de>
+Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
+Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
+---
+ drivers/mmc/host/sdhci-pci-gli.c | 65 +++++++++++++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 1 deletion(-)
 
-Jason
+diff --git a/drivers/mmc/host/sdhci-pci-gli.c
+b/drivers/mmc/host/sdhci-pci-gli.c
+index 0f81586a19df..40f43f5cd5c7 100644
+--- a/drivers/mmc/host/sdhci-pci-gli.c
++++ b/drivers/mmc/host/sdhci-pci-gli.c
+@@ -1205,6 +1205,32 @@ static void
+gl9763e_set_low_power_negotiation(struct sdhci_pci_slot *slot,
+        pci_write_config_dword(pdev, PCIE_GLI_9763E_VHS, value);
+ }
+
++static void gl9767_set_low_power_negotiation(struct sdhci_pci_slot *slot,
++                                            bool enable)
++{
++       struct pci_dev *pdev = slot->chip->pdev;
++       u32 value;
++
++       pci_read_config_dword(pdev, PCIE_GLI_9767_VHS, &value);
++       value &= ~GLI_9767_VHS_REV;
++       value |= FIELD_PREP(GLI_9767_VHS_REV, GLI_9767_VHS_REV_W);
++       pci_write_config_dword(pdev, PCIE_GLI_9767_VHS, value);
++
++       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
++
++       if (enable)
++               value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
++       else
++               value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
++
++       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
++
++       pci_read_config_dword(pdev, PCIE_GLI_9767_VHS, &value);
++       value &= ~GLI_9767_VHS_REV;
++       value |= FIELD_PREP(GLI_9767_VHS_REV, GLI_9767_VHS_REV_R);
++       pci_write_config_dword(pdev, PCIE_GLI_9767_VHS, value);
++}
++
+ static void sdhci_set_gl9763e_signaling(struct sdhci_host *host,
+                                        unsigned int timing)
+ {
+@@ -1470,6 +1496,42 @@ static int gl9763e_suspend(struct sdhci_pci_chip
+*chip)
+        gl9763e_set_low_power_negotiation(slot, false);
+        return ret;
+ }
++
++static int gl9767_resume(struct sdhci_pci_chip *chip)
++{
++       struct sdhci_pci_slot *slot = chip->slots[0];
++       int ret;
++
++       ret = sdhci_pci_gli_resume(chip);
++       if (ret)
++               return ret;
++
++       gl9767_set_low_power_negotiation(slot, false);
++
++       return 0;
++}
++
++static int gl9767_suspend(struct sdhci_pci_chip *chip)
++{
++       struct sdhci_pci_slot *slot = chip->slots[0];
++       int ret;
++
++       /*
++        * Certain SoCs can suspend only with the bus in low-
++        * power state, notably x86 SoCs when using S0ix.
++        * Re-enable LPM negotiation to allow entering L1 state
++        * and entering system suspend.
++        */
++       gl9767_set_low_power_negotiation(slot, true);
++
++       ret = sdhci_suspend_host(slot->host);
++       if (ret) {
++               gl9767_set_low_power_negotiation(slot, false);
++               return ret;
++       }
++
++       return 0;
++}
+ #endif
+
+ static int gli_probe_slot_gl9763e(struct sdhci_pci_slot *slot)
+@@ -1605,6 +1667,7 @@ const struct sdhci_pci_fixes sdhci_gl9767 = {
+        .probe_slot     = gli_probe_slot_gl9767,
+        .ops            = &sdhci_gl9767_ops,
+ #ifdef CONFIG_PM_SLEEP
+-       .resume         = sdhci_pci_gli_resume,
++       .resume         = gl9767_resume,
++       .suspend        = gl9767_suspend,
+ #endif
+ };
+-- 
+2.34.1
 
