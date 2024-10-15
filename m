@@ -1,91 +1,138 @@
-Return-Path: <linux-kernel+bounces-365022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B25299DC4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:34:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F44699DC52
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FEA4B2187A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:34:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4157C1C20D1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7091662EF;
-	Tue, 15 Oct 2024 02:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B891E1662EF;
+	Tue, 15 Oct 2024 02:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JmvGcGlb"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RLpuAbmT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900C51F61C;
-	Tue, 15 Oct 2024 02:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A645C8F0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728959652; cv=none; b=mY/eUpe3cW+mDc47iGg8DrTta83aG0r9ys6hXiWSwpHXKYbKP7w/+26UTicYbjkQ75k3HZSnEyd1a8RDHQhc1Me+8kE0iM42X1GuelIcQ+jsMISlcQ+2DkTXIsSm6f+NIPGuld4y/rOiov0k//7Q4B0a5YIyvbtjvf6ysg+eEgE=
+	t=1728959792; cv=none; b=iJUoXv2ULdpJDsZekRPqiN04mzbDz1LYIxOlp0LeqZ9X3pfui1T6ql8TgW3XuY3NwzSDW08DcRkvkIXauqX5jMcXLN3vkvumi7w03AvM6TPoicfONR27sCSStEysBz5H7UGfDTrGpxszr5wukWoVphtgDA8jyuSRwJOm9xbUh/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728959652; c=relaxed/simple;
-	bh=TBwO0AyTAVcfkeQ2eryFWXgTRaeM2PEuNXkVNhBfU7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dW8qVTfNh/O3sjNdvp0ZaIBxTvzD4oQUoYEtKGVlszzrZBhCkj0x0dClUPlZQN6CybRMBnrKxhDunYxwrz37Gc91SGyxHKREg+0PJ5wrXyHZfSvYd1xKm/hgjLUnlnaiCYOITyW2hBXU0SnAhE3Pc9M2FL6qHqDht9qowC5XmQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JmvGcGlb; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728959647; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=5SWTPrpRWV5oTpc4vCe8QJknxozDoWmECEzjBVIQIOY=;
-	b=JmvGcGlbw9o+Nj3AipRl9y01L3kla3aVZoXJuy8nTGD5V/ZRZLfwFQXu7Tenc4Ia9G7QY6XgN9FBLRUAfq/KLHHefQ2MCXUWjfnCfqrigS8ogkYisTuYZo1FG6slCy9KCQxEq5og84jz2O7HMZK9e7gttXuv0sM1dLMxZ/ShbaE=
-Received: from 30.74.144.137(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHBZZRf_1728959646 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Oct 2024 10:34:06 +0800
-Message-ID: <87af6d7a-3a55-4f7d-979d-820cc390e855@linux.alibaba.com>
-Date: Tue, 15 Oct 2024 10:34:05 +0800
+	s=arc-20240116; t=1728959792; c=relaxed/simple;
+	bh=ZyfwRkmYYo9902jpV4Xf4OPH2JQu291dWhcwEhB7NEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q5b/ph4wRBBuGxqWgxC7va9tChQ2FV1/e9heJLM913sdYKheJBU4y5UwVXVIbLhkfTFsL96/ny54GSY000b5ytsfQTCwzIvhUsR06DQWEl0TjpLneHH93h1EkRNy6a5WZ3XDRbkLw9vNDt2bJk8f1UpRzbJoP/BHhnWq7wW1mh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RLpuAbmT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728959789;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RepCkNLxrfOjiYjrBfat8VzhDr4hw0yzZI+H/gu/KcU=;
+	b=RLpuAbmTsEAv7Mh9L32P/rFxh9s5MglD5LAtejbRlPzeoJHEf85ifJ/a/euWeFk5++wea5
+	Aj54oPILuAMvGr4s9Lj4Qt2vlTvwVeuqT9Z43Tnglr1Q06qMEYG9TCL4uNKMZ8B7NOoLEw
+	qO7QDW6J9kR8rCbO4lD+QM+zeLw8ZWs=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-G2vjo-1nMbaXHevhPRA0Fw-1; Mon, 14 Oct 2024 22:36:28 -0400
+X-MC-Unique: G2vjo-1nMbaXHevhPRA0Fw-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a01cba9f7so127623666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 19:36:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728959787; x=1729564587;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RepCkNLxrfOjiYjrBfat8VzhDr4hw0yzZI+H/gu/KcU=;
+        b=fESBDYNYx+mOxWW+ngOJFS6R22Ii8njHhBOMNSWGGFPT7r1Shy2ay9lnMh1ynOJJaj
+         aSlqRPYJ0ClHIouG5TSWAVCzSChD35tUfMKV9rWrSxMWcYiLI/FQ/Vb5mIU8xi2elWip
+         Evz4fQzdjFbgOP/uL7so7auaO93Lp1XXPh0GyhJlz2fccBN5/x7qMOby6TePGPzGs7Ff
+         FPrtDZttTBz00JeGlyJd9Bq7l+mE2Ce/26WDVHHOPeqdf6PTJYgeqUrDhiUp3q8xXd3f
+         pnGyTqJu7DoRElv/VcphpOqIsGGC0ugmfU3ILsjrO99eE+XecqFkVMWGLnHci0yOMOk5
+         owUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHd6TxcKRwFFm1ABeWDwKoxyKWlxdxttHd1dilmmsaLDSFZjvwvIzwcTCGswq0LUNRh32Odh28gaXit6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5BUSgEQOnDfTrl8cwWVD+rrriZdWrPmGHIHRWo4Gb+UL8zO8K
+	ExWg0WHnBD469ldd6UpOqz6sQ5HJ96DaD/2LPt8WT3kGhMYeO9qfbmP+sQMP5/YLRTvCy2H6dFY
+	FUOVdIBJd7x1KQq+UeTAlj5By7q1HnCmT8qJtcqsGDkKZq3Jvi94GHFW7Fhk+99aNIjCv/dl4eT
+	6MniXas7dVtL7QFFJS9esD3C91l36i4jnDlbpy
+X-Received: by 2002:a17:907:9452:b0:a99:379b:6b2c with SMTP id a640c23a62f3a-a99e3e3f8f9mr877404066b.42.1728959786824;
+        Mon, 14 Oct 2024 19:36:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3XUGqLtf9WJVjnzTsPPwGijvC7KeImWI4dUv0/+mGZC7jS/6KZV4iT1QqrnGvBrVPKfLNnYQZSrHnSrEUZEA=
+X-Received: by 2002:a17:907:9452:b0:a99:379b:6b2c with SMTP id
+ a640c23a62f3a-a99e3e3f8f9mr877402866b.42.1728959786432; Mon, 14 Oct 2024
+ 19:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: mm: fix the incorrect usage() info of
- khugepaged
-To: Nanyong Sun <sunnanyong@huawei.com>, akpm@linux-foundation.org,
- shuah@kernel.org, zokeefe@google.com
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com
-References: <20241015020257.139235-1-sunnanyong@huawei.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20241015020257.139235-1-sunnanyong@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241004015937.2286459-1-lulu@redhat.com> <20241004015937.2286459-8-lulu@redhat.com>
+ <a6b0d25b-4b8c-4633-8900-978adf14795d@oracle.com>
+In-Reply-To: <a6b0d25b-4b8c-4633-8900-978adf14795d@oracle.com>
+From: Cindy Lu <lulu@redhat.com>
+Date: Tue, 15 Oct 2024 10:35:49 +0800
+Message-ID: <CACLfguXbMFZbGN+U1couZaJC7Sh3Qpg903W-DmFJjUtyECwT9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] vhost: Add new UAPI to support change to task mode
+To: Mike Christie <michael.christie@oracle.com>
+Cc: jasowang@redhat.com, mst@redhat.com, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 15 Oct 2024 at 04:56, Mike Christie <michael.christie@oracle.com> wrote:
+>
+> On 10/3/24 8:58 PM, Cindy Lu wrote:
+> > Add a new UAPI to support setting the vhost device to
+> > use task mode. The user space application needs to use
+> > VHOST_SET_INHERIT_FROM_OWNER to set the mode.
+> > This setting must be set before VHOST_SET_OWNER is set.
+> >
+> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > ---
+> >  drivers/vhost/vhost.c      | 18 +++++++++++++++++-
+> >  include/uapi/linux/vhost.h |  2 ++
+> >  2 files changed, 19 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > index 08c9e77916ca..0e5c81026acd 100644
+> > --- a/drivers/vhost/vhost.c
+> > +++ b/drivers/vhost/vhost.c
+> > @@ -2341,8 +2341,24 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
+> >  {
+> >       struct eventfd_ctx *ctx;
+> >       u64 p;
+> > -     long r;
+> > +     long r = 0;
+> >       int i, fd;
+> > +     bool inherit_owner;
+> > +
+> > +     if (ioctl == VHOST_SET_INHERIT_FROM_OWNER) {
+>
+> Maybe instead of a modparam and this ioctl we just want a new ioctl:
+>
+> /*
+>  * This will setup the owner based on the calling thread instead of
+>  * using kthread.
+>  */
+> #define VHOST_INHERIT_OWNER _IO(VHOST_VIRTIO, 0x83)
+>
+> It would initially be used by vhost-scsi when worker_per_virtqueue=true
+> since that is a new use case and there will be no regressions.
+>
+> For the other cases we default to VHOST_SET_OWNER. Other QEMU cases or
+> tool XYZ can use the new ioctl when they are ready.
+>
+If I understand correctly, this means the default vhost function is
+using kthread?
+Thanks
+Cindy
 
-
-On 2024/10/15 10:02, Nanyong Sun wrote:
-> The mount option of tmpfs should be huge=advise, not madvise
-> which is not supported and may mislead the users.
-> 
-> Fixes: 1b03d0d558a2 ("selftests/vm: add thp collapse file and tmpfs testing")
-> Signed-off-by: Nanyong Sun <sunnanyong@huawei.com>
-
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> ---
->   tools/testing/selftests/mm/khugepaged.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
-> index 56d4480e8d3c..8a4d34cce36b 100644
-> --- a/tools/testing/selftests/mm/khugepaged.c
-> +++ b/tools/testing/selftests/mm/khugepaged.c
-> @@ -1091,7 +1091,7 @@ static void usage(void)
->   	fprintf(stderr, "\n\t\"file,all\" mem_type requires kernel built with\n");
->   	fprintf(stderr,	"\tCONFIG_READ_ONLY_THP_FOR_FS=y\n");
->   	fprintf(stderr, "\n\tif [dir] is a (sub)directory of a tmpfs mount, tmpfs must be\n");
-> -	fprintf(stderr,	"\tmounted with huge=madvise option for khugepaged tests to work\n");
-> +	fprintf(stderr,	"\tmounted with huge=advise option for khugepaged tests to work\n");
->   	fprintf(stderr,	"\n\tSupported Options:\n");
->   	fprintf(stderr,	"\t\t-h: This help message.\n");
->   	fprintf(stderr,	"\t\t-s: mTHP size, expressed as page order.\n");
 
