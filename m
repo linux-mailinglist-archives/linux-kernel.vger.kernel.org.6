@@ -1,185 +1,108 @@
-Return-Path: <linux-kernel+bounces-366275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B7799F310
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:45:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1862799F2EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 978B1283F0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:45:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88C95B220A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D86229103;
-	Tue, 15 Oct 2024 16:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60BB1F76B5;
+	Tue, 15 Oct 2024 16:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LMl3GBR8"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VV+Qs+46"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419641F76A5;
-	Tue, 15 Oct 2024 16:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015191F6671;
+	Tue, 15 Oct 2024 16:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729010616; cv=none; b=K/ai+jrAytGME2cZ1dC1DZTopJr4e2USx4+D7hf7FGMOpuPXXNO6D6Epm7VM9tj42uKegJD1JAV/KRXWrLHjsesrQhSWs7AO1z+wTzo9qd1CqfnsOYNhGIregHQ4vxWw4qgSTTyxLPohhiMS4QTZRiQrYd1FeVOl7PR+v/y4bMA=
+	t=1729010604; cv=none; b=hLK8RDjWUim0Q0WXxDbtPI1SxDcRTGKKGShVhbWBY9TkmiBx+py0Idzm5TAariLrvq76MEvq4OqlnyyhS4IrUHG+8xCcYwu8VQwgSnAs2zFT0SUba6toC40aDjbJv77RrP8+ojBIWokc3AN2FSWHJ8rDQ9OMHuf1ihCDlPUAnuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729010616; c=relaxed/simple;
-	bh=QQvuMDB3i+1hQRxxMhfrS1fUCS2QiWa5R5FPahhxnCQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rDjGTa8IGHxkVvDE1oARLmFPSvu4HHVvN6bx0rTadfGrY3r3/veZBkS2M9Qf6ogUpQe4PX6/Ejl3iEgO36XdpuUbN0ly1cVMdkA0coFC33YqHEwLtqLXWdoKcwaLtFjK5p0L5j3fA7hA/VJeAzKkiEi61rc7jiut0tTCa5Kh7jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LMl3GBR8; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FDJiNC008390;
-	Tue, 15 Oct 2024 16:43:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=smPbVVUTPeubekiFB
-	5BI/e3FMoGPpsz1X34wv6nlTYY=; b=LMl3GBR8domXCMBHAciEKRP09HA8QXCLf
-	6HFOUuVWx3NyW6gFv0jLaYy68JEkdGitXcSBNXhK+IRimXh64AcwhTnkyu95Touo
-	4Q37rh1AhZC4mIfdPzHbh/gbC8NepJKceTUORDqR4gg2/b6m9kvSL5cxr+3CYvIk
-	wiERo9htE7TITErxtICKg7oOMSawOBTzMXXWO54b3HG0pM8pFkLwgMhbTTYwC6St
-	5Olwe0HajogZ6+TB7eHMr6w8y+GnflAqmSvPFXkLm3oO00H4KSItmE/JxAghW+/6
-	k3zW24QhaEah1WVH+HMrWA/A7qZ3TQNHxMUOQnLTvtXXbMcrToWtQ==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429s68h427-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 16:43:31 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FE4dMF001991;
-	Tue, 15 Oct 2024 16:43:31 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emmxav-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 16:43:30 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FGhRsF49545568
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 16:43:27 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 316C520040;
-	Tue, 15 Oct 2024 16:43:27 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0952A2004B;
-	Tue, 15 Oct 2024 16:43:27 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 16:43:26 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: borntraeger@de.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
-        frankja@linux.ibm.com, seiden@linux.ibm.com, hca@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH v3 02/11] s390/kvm: Remove kvm_arch_fault_in_page()
-Date: Tue, 15 Oct 2024 18:43:17 +0200
-Message-ID: <20241015164326.124987-3-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241015164326.124987-1-imbrenda@linux.ibm.com>
-References: <20241015164326.124987-1-imbrenda@linux.ibm.com>
+	s=arc-20240116; t=1729010604; c=relaxed/simple;
+	bh=Zp5x28awwso2vq4W5at6yDp0Z0E2vZCjRjcmFsBaAIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvER378eObX/ZBRX5B+TFbflCuOznBi333Ilrjkw9/LPCLqkJVtd6njQpCCle3Le3sRhfS/53gqD2qHSw4lmcKxSZieMN3wE+nucoynVxy/ul5JhasZx9FaTqE4azmwEbdmdVukqJOZGODDA5PXAUV3WQ3YhhXBu+6pen20e14w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VV+Qs+46; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFAA8C4CEC6;
+	Tue, 15 Oct 2024 16:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729010603;
+	bh=Zp5x28awwso2vq4W5at6yDp0Z0E2vZCjRjcmFsBaAIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VV+Qs+46ppTUZUXsf69B7hzmxiymCC0zQSOLcO4KNGzvpeGXGA9lK2U3R3C0CDU6k
+	 NGsl4KceqsPv12A62QirAGkNOTRYo8+NPjeUr9yOH9+Ew+07htvFgB6iYE0zK89JkQ
+	 vjUdqLJNTO5IfDxw1RV6n3B0lCrRDzHTjdq93WAL+mD6NmbeC/UgirUNObl91m4oru
+	 XgTwJootzavUxQTPxCY0ZJ/Z9251Jl5gTtX9NaPsGQKDvJAe3E2a/NvphbBgzdqtPb
+	 82dBz83EkEhvDuyrIiAivEm5aaMi7Np3wI/Muju+3JDf1fuRXou4qfRxacCI7Kt0t5
+	 AyleRtFbmvRhg==
+Date: Tue, 15 Oct 2024 17:43:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH RFC 0/4] ad7380: add adaq4370-4 and adaq4380-4 support
+Message-ID: <20241015-scoreless-carwash-9ac6047092fe@spud>
+References: <20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: fcOfuIXcB3I3Ax0CZ2Xalrx8EV9U60P3
-X-Proofpoint-ORIG-GUID: fcOfuIXcB3I3Ax0CZ2Xalrx8EV9U60P3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- clxscore=1015 malwarescore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=999 adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150113
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="FquwYMWZuCPTNX1G"
+Content-Disposition: inline
+In-Reply-To: <20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com>
 
-kvm_arch_fault_in_page() is a useless wrapper around gmap_fault(); just
-use gmap_fault() directly instead.
 
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
----
- arch/s390/kvm/intercept.c |  4 ++--
- arch/s390/kvm/kvm-s390.c  | 18 +-----------------
- arch/s390/kvm/kvm-s390.h  |  1 -
- 3 files changed, 3 insertions(+), 20 deletions(-)
+--FquwYMWZuCPTNX1G
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/s390/kvm/intercept.c b/arch/s390/kvm/intercept.c
-index b16352083ff9..5bbaadf75dc6 100644
---- a/arch/s390/kvm/intercept.c
-+++ b/arch/s390/kvm/intercept.c
-@@ -367,7 +367,7 @@ static int handle_mvpg_pei(struct kvm_vcpu *vcpu)
- 					      reg2, &srcaddr, GACC_FETCH, 0);
- 	if (rc)
- 		return kvm_s390_inject_prog_cond(vcpu, rc);
--	rc = kvm_arch_fault_in_page(vcpu, srcaddr, 0);
-+	rc = gmap_fault(vcpu->arch.gmap, srcaddr, 0);
- 	if (rc != 0)
- 		return rc;
- 
-@@ -376,7 +376,7 @@ static int handle_mvpg_pei(struct kvm_vcpu *vcpu)
- 					      reg1, &dstaddr, GACC_STORE, 0);
- 	if (rc)
- 		return kvm_s390_inject_prog_cond(vcpu, rc);
--	rc = kvm_arch_fault_in_page(vcpu, dstaddr, 1);
-+	rc = gmap_fault(vcpu->arch.gmap, dstaddr, FAULT_FLAG_WRITE);
- 	if (rc != 0)
- 		return rc;
- 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index bb7134faaebf..08f0c80ef5e9 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -4579,22 +4579,6 @@ int kvm_s390_try_set_tod_clock(struct kvm *kvm, const struct kvm_s390_vm_tod_clo
- 	return 1;
- }
- 
--/**
-- * kvm_arch_fault_in_page - fault-in guest page if necessary
-- * @vcpu: The corresponding virtual cpu
-- * @gpa: Guest physical address
-- * @writable: Whether the page should be writable or not
-- *
-- * Make sure that a guest page has been faulted-in on the host.
-- *
-- * Return: Zero on success, negative error code otherwise.
-- */
--long kvm_arch_fault_in_page(struct kvm_vcpu *vcpu, gpa_t gpa, int writable)
--{
--	return gmap_fault(vcpu->arch.gmap, gpa,
--			  writable ? FAULT_FLAG_WRITE : 0);
--}
--
- static void __kvm_inject_pfault_token(struct kvm_vcpu *vcpu, bool start_token,
- 				      unsigned long token)
- {
-@@ -4797,7 +4781,7 @@ static int vcpu_post_run(struct kvm_vcpu *vcpu, int exit_reason)
- 		if (kvm_arch_setup_async_pf(vcpu))
- 			return 0;
- 		vcpu->stat.pfault_sync++;
--		return kvm_arch_fault_in_page(vcpu, current->thread.gmap_addr, 1);
-+		return gmap_fault(vcpu->arch.gmap, current->thread.gmap_addr, FAULT_FLAG_WRITE);
- 	}
- 	return vcpu_post_run_fault_in_sie(vcpu);
- }
-diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
-index e680c6bf0c9d..0765ad1031c4 100644
---- a/arch/s390/kvm/kvm-s390.h
-+++ b/arch/s390/kvm/kvm-s390.h
-@@ -394,7 +394,6 @@ int kvm_s390_handle_sigp_pei(struct kvm_vcpu *vcpu);
- 
- /* implemented in kvm-s390.c */
- int kvm_s390_try_set_tod_clock(struct kvm *kvm, const struct kvm_s390_vm_tod_clock *gtod);
--long kvm_arch_fault_in_page(struct kvm_vcpu *vcpu, gpa_t gpa, int writable);
- int kvm_s390_store_status_unloaded(struct kvm_vcpu *vcpu, unsigned long addr);
- int kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu, unsigned long addr);
- int kvm_s390_vcpu_start(struct kvm_vcpu *vcpu);
--- 
-2.47.0
+On Tue, Oct 15, 2024 at 11:09:05AM +0200, Julien Stephan wrote:
+> Hello,
+>=20
+> This series add support for adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS)
+> which are quad-channel precision data acquisition signal chain =CE=BCModu=
+le
+> solutions compatible with the ad738x family, with the following differenc=
+es:
+>=20
+> - configurable gain in front of each 4 adc
+> - internal reference is 3V derived from refin-supply (5V)
+> - additional supplies
+>=20
+> This series depends on [1] which fix several supplies issues
+>=20
+> [1]: https://lore.kernel.org/all/20241007-ad7380-fix-supplies-v1-0-badcf8=
+13c9b9@baylibre.com/
 
+What exactly makes this series RFC rather than v1?
+
+--FquwYMWZuCPTNX1G
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZw6bpgAKCRB4tDGHoIJi
+0gW1AP48+cVNlb0SPPyBWZb3bp4yRzZlQBfrWiCLsO0pH/QZSQEAsbgWsUskqrtD
+yvKLDMW6F6ddCH4YHgLRdER2iz36DAM=
+=HG2C
+-----END PGP SIGNATURE-----
+
+--FquwYMWZuCPTNX1G--
 
