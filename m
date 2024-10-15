@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-365720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F6299E86C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:05:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CF399E5A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F77F1F217BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6FAE284EED
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6977B1EBA09;
-	Tue, 15 Oct 2024 12:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDD61E7653;
+	Tue, 15 Oct 2024 11:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CluNCIld"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UY3KbJJl"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B521D4154;
-	Tue, 15 Oct 2024 12:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727CF189BB2;
+	Tue, 15 Oct 2024 11:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728993939; cv=none; b=eKzlW1rWAQt+cZp0CBTai1nftVhPWLcS/+oks+huiTCS6DuKUFqPPCvSzFtbuT3Ui1mt47bu62IFwAhBR0qz3RyulsDvM1HvRpSHdI1aOGpK16paw7uX6q6/4ppN4zarP2u+r7VdzyRJn65iwGyGtfuo4ie5b/wbxovFRBXx+xQ=
+	t=1728991747; cv=none; b=KioYM5iREIfeJTSbXRMTLdKP6XBfhJmr96njQUHsV1i1G3Xyit+ZjJ0cRqmnpggbg7x9CXhi9n/E+EVlqYvubhdI0tCjc/MOKYn2GScl/vZ/g9R5UC3mWZ5j82QUWgd64gISqXlkvdnn+W4idx7WJI99kXLoaom9ctX6JBeCEtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728993939; c=relaxed/simple;
-	bh=yJwBOsx2FFF5UUXvkJc0NErh+4E988PPOj2Fqwi7sDs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EwEfrlMlkOpkNxD2kz4AxRqyngmWNljhC56rjc5oo4k5aPqcXq8JYxrb4cVYNZ0zVqHuK3nLVKAF0dIH90Cmtk0r3ZfHyujqyo0CHtlKQyrdPtjFobhB+9nXSl9c7y/XsUMltYye2Zd1dVUhVbMSmSD65bW8AF4JN/QnVsqBd9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CluNCIld; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48ADCC4CECE;
-	Tue, 15 Oct 2024 12:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728993939;
-	bh=yJwBOsx2FFF5UUXvkJc0NErh+4E988PPOj2Fqwi7sDs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CluNCIldZhji3lGI/SK2Kb18QD1TEU+GPvQktLsoeBqqPc76U/iVjDgcK4JNfaVP5
-	 toCkHhmG2fivPddpKoJUCOmwI48lQQEg2ENs84YI3QvW/nnWSJEdInuURZ11z03XVT
-	 3KHjDKWXFgnzM+eTDos70WLjBSJhFinVjf2WBP8Q=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Morse <james.morse@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.15 560/691] arm64: Add Cortex-715 CPU part definition
-Date: Tue, 15 Oct 2024 13:28:28 +0200
-Message-ID: <20241015112502.572209234@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241015112440.309539031@linuxfoundation.org>
-References: <20241015112440.309539031@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1728991747; c=relaxed/simple;
+	bh=fCcpbi/DMaiE9UkEgjGd/UHx8Y29H+4O5aEibvVOsio=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FOZEXZc4vjZG4lVLFEsiqyrAt1jVLuXq13gzW8WVpt4PZmWdPsBOS+0JFlZZeIpBPmTXzhQZL4yqMrXev2aksP8Fg3LGx1LlchgMWn8RdtWLMehrLH5CKWyxpJMSxc2XEYjiJLfFrlrV1BA9Z9kMyLLAEjX0rFEcWnQg46P+K1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UY3KbJJl; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FAO3H6004314;
+	Tue, 15 Oct 2024 11:29:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=RhwuawkRavgSoXL5Aj4QSrR4egpta7JnevFXoUhiO
+	8Y=; b=UY3KbJJlNuygd+i0jmd1d6vE749CmSk4z8gvkhC5CVxtfKS4uXlJkDRbo
+	E+nqyfdoHStxUXST5tHvIMbGYXYEETWTXvqDQ7MiCbbKXgAThjXSX55lDK/Mu13W
+	3/QBVdquzmHY0vSA1K/uaUEDGAlsGuTiJo6ajJq83uqAYfExrqH5qimtuvHXOCx8
+	dYeA/3V5msVTXH/X5StFnIV9R0wlh5yqMRBBteP94/2/90iI2HssVDFfEZIxu9u6
+	cvgeVNJll9TbmrmuS2ax2AjUdDPx4D79Nng3RY2tz1MiZxAIAbbgxaoBrd7zItaA
+	czPWo9YWmRFd76SfDqQ+eNRRIJ5JA==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429pkyg9h0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 11:29:04 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FAYtsu006674;
+	Tue, 15 Oct 2024 11:29:03 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4283eruq59-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 11:29:03 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FBT0sg48628014
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 11:29:00 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF26120043;
+	Tue, 15 Oct 2024 11:28:59 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C866520040;
+	Tue, 15 Oct 2024 11:28:59 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 15 Oct 2024 11:28:59 +0000 (GMT)
+From: Steffen Eiden <seiden@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+Subject: [PATCH v3 0/6] s390/uv: Retrieve Secrets Ultravisor Call support
+Date: Tue, 15 Oct 2024 13:28:53 +0200
+Message-ID: <20241015112859.3069210-1-seiden@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,57 +83,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: WNb7Gix-m0yrwepuIlHN3QN5e-5mm2I0
+X-Proofpoint-GUID: WNb7Gix-m0yrwepuIlHN3QN5e-5mm2I0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ mlxlogscore=358 mlxscore=0 adultscore=0 lowpriorityscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150078
 
-5.15-stable review patch.  If anyone has any objections, please let me know.
+A new secret type (group) allows SE-guests to retrieve the secret value
+from the UV secret store. All retrieved secrets (but plaintext) are
+retrieved as a PCMKO-wrapped key so that they will never appear in
+plaintext in the secure guest. Supported key/secret types are:
+AES, AES-XTS, HMAC, and EC. Add support for an in-kernel API and an UAPI
+to retrieve a previously added secret. If the Hardware supports it,
+adding secrets works with the same infrastructure that is used by
+associate secrets introduced with AP-pass-through support.
 
-------------------
+With this addition List Secret UVCs can report more-data now and may
+expect a starting index different to zero. This requires the addition of
+LIST_SECRET_EXT IOCTL that works the same as the non_EXT variant but
+additionally accepts an index (u16) as input.
 
-From: Anshuman Khandual <anshuman.khandual@arm.com>
+Since v3:
+	* rename BIT_UVC_CMD_RETR_SECRETS to BIT_UVC_CMD_RETR_SECRET
+	* Streamline list_secrets()
+	* Fix documentation styling issues
+	* Simplify conditional in find_secret()
+	* Add r-b from Christoph
 
-[ Upstream commit 07e39e60bbf0ccd5f895568e1afca032193705c0 ]
+Since v2:
+	* Simplify conditionals
+	* Fix documentation issues
+	* Simplify list_secrets()
+	* Add r-b from Christoph
 
-Add the CPU Partnumbers for the new Arm designs.
+Since v1:
+	* Add various r-b's
+	* Fix nits and minor issues
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Link: https://lore.kernel.org/r/20221116140915.356601-2-anshuman.khandual@arm.com
-Signed-off-by: Will Deacon <will@kernel.org>
-[ Mark: Trivial backport ]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm64/include/asm/cputype.h | 2 ++
- 1 file changed, 2 insertions(+)
+Steffen Eiden (6):
+  s390/boot/uv.c: Use a constant for more-data rc
+  s390/uv: Retrieve UV secrets support
+  s390/uvdevice: Add Retrieve Secret IOCTL
+  s390/uvdevice: Increase indent in IOCTL definitions
+  s390/uvdevice: Add List Secrets Ext IOCTL
+  s390/uv: Retrieve UV secrets sysfs support
 
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index 59f135b280a8a..75cbd3880b5c7 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -82,6 +82,7 @@
- #define ARM_CPU_PART_CORTEX_A510	0xD46
- #define ARM_CPU_PART_CORTEX_A520	0xD80
- #define ARM_CPU_PART_CORTEX_A710	0xD47
-+#define ARM_CPU_PART_CORTEX_A715	0xD4D
- #define ARM_CPU_PART_CORTEX_X2		0xD48
- #define ARM_CPU_PART_NEOVERSE_N2	0xD49
- #define ARM_CPU_PART_CORTEX_A78C	0xD4B
-@@ -144,6 +145,7 @@
- #define MIDR_CORTEX_A510 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A510)
- #define MIDR_CORTEX_A520 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A520)
- #define MIDR_CORTEX_A710 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A710)
-+#define MIDR_CORTEX_A715 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A715)
- #define MIDR_CORTEX_X2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X2)
- #define MIDR_NEOVERSE_N2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N2)
- #define MIDR_CORTEX_A78C	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78C)
+ arch/s390/boot/uv.c                   |   7 +-
+ arch/s390/include/asm/uv.h            | 146 +++++++++++++++++++++++-
+ arch/s390/include/uapi/asm/uvdevice.h |  36 +++---
+ arch/s390/kernel/uv.c                 | 153 ++++++++++++++++++++++++-
+ drivers/s390/char/uvdevice.c          | 154 +++++++++++++++++++++-----
+ 5 files changed, 442 insertions(+), 54 deletions(-)
+
 -- 
 2.43.0
-
-
 
 
