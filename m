@@ -1,186 +1,92 @@
-Return-Path: <linux-kernel+bounces-365218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0759C99DF1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:07:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6D599DF1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB65B2828C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF8F1F23B83
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F1218BB8D;
-	Tue, 15 Oct 2024 07:07:32 +0000 (UTC)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA59818B478;
+	Tue, 15 Oct 2024 07:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sdyg/g0j"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDF5137930;
-	Tue, 15 Oct 2024 07:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2C3137930
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728976051; cv=none; b=f3Jx3L8gMKFmqICC8Anqm4Ol+xHZbUPlTlHuJ00OLizmi/yh0GC+6oZz+DDXb4hCIqqRVSTIam11JgVY1GxxTcYRyGknDypnDDn0Oa9wyO+GVcngpn+K8GSC0BVyYbN8Bytv0C8ABc9JVc9sjt8gJvD+EahatQb9yFZX++xmDzc=
+	t=1728976100; cv=none; b=iovTP9ATOjjeQ1+k59KZbYZUCnO4uflzszPOAQP+ynRkPBY7dHioOHeLcYdNsBx2F9Akqgw9bjESmOa3VGIveMPcJW0ogQwgmIU9dHvMzNdvvLXTJdv4pzofjK1a6W2Nz6+2e2DFuLWxWcote+e38jgCW/Fs1kioSFbCSTGU318=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728976051; c=relaxed/simple;
-	bh=6dfEGaajQa2pJMeZNL7rrar7W6Le7Lr83zfKbQPXDzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ec9P5eShIhiGfbel9vDHll0pFw7uwGL4ZHTPQ28JsqJVxp22/yUMMFtYab7PNyWCcMQy91QfAwHXiIat2vpYKSujru+SuoZszJWGSqq+mLqBjqreEBQQNpGTlbVya99zEtDUWlsI409U7KXAZahi/z9Et7rg71sqpN4TzCiJLcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e28fe3b02ffso4335351276.3;
-        Tue, 15 Oct 2024 00:07:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728976048; x=1729580848;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JNBLoVY7KmTb//gQvb+nY+loZrEE+K14uHe+vpf2a3w=;
-        b=UJrDfBXUm2tZr+zpRQWsqs4DL7agTcQ/Rzh8WLelSWfZ/YudBNHPDR5RayjwqLEAp6
-         Duf+YM6Ul0lN8Xw9shj9uEI0u3nd/S6GZmFHg7KfCquGQTKTb/AQh5x7RcuVUuHUV3Yb
-         Gcb8eWeaO/PbdsSdhEps+gJAQ8EGvWoEm1MI0vtwUjMYAf0fKD+oRiA34XSRMXi+iWaj
-         wv06OlUq9D8xX/M7cwRZ76kZIqxSmWXyFQvQ1jMNjBXo7W3H7Ek/qfnr7kRuW66QizkK
-         T1TyjyOJOnX/cUrQrX7zSaKwN9NQwDbjIr0sbMg0fsQBFj+a/XrEtmSxdg8aeM/R/Si4
-         L7lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoCYooD2hwBJpWSGP5pc/rt6P0fZpwL7k0NzDzrhlSTU3LN3u3CPgdjcQ3JAP9TayYRS/+LbbRTk9MG24=@vger.kernel.org, AJvYcCVFhg0nNSN3PlX2tue9xkhO8HVA8fYp+36xtGhwy/+XIiwH2S5qKJ69+UqizF2jzbiTUb3g8Utx@vger.kernel.org, AJvYcCWtzVuGSchwuKX99GgRO+7oWGANMxQO/n0weaLuPtEQ/wnhBRrDDWoLBubMq/vEM1rkJT1OEhQ8YspepZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3iVeAAnSdDRzsPI2omYLn2QIl8OWBqLXsLfK+a+n4gSXI72Qv
-	jhuW1qLnPISWzyDlPRX++WAY5BmiGv5uWsIJ/oKlvZn1z5iNCQ67Bz6G8MDv
-X-Google-Smtp-Source: AGHT+IFlsjLpHOA4c9FtIckf+ML7mh8UBb0rQSqgW67SKPQs0scHNttzEK9zFwDzjEWM8DnxwdQB2w==
-X-Received: by 2002:a05:6902:2809:b0:e28:f402:cc6f with SMTP id 3f1490d57ef6-e2919febfbfmr8260965276.46.1728976047796;
-        Tue, 15 Oct 2024 00:07:27 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e296cbfb8c5sm142600276.3.2024.10.15.00.07.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 00:07:26 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6dde476d3dfso41729887b3.3;
-        Tue, 15 Oct 2024 00:07:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWxWv7Jp/qcjIVaRSOwcvmtt7kOzl5VdbDbN26nWv4Ko3RfZoqpPS/ehXJow7ueKmptdUVNMXiECgE0XGc=@vger.kernel.org, AJvYcCXKshhEKuMVp4/bOjQLjWGPt3idcP1UIOwsNXWi9FzgGaPC2yR9miRHdm7bNuXlVif07Mrjp2jf94OU3hg=@vger.kernel.org, AJvYcCXT/UaKiFxPIRdd5QzNuajmOxNg+mQfeb9MbNEhuq1Vw/GzTAMyyNmcDqNoKUYXH24nKzGPzV0+@vger.kernel.org
-X-Received: by 2002:a05:690c:5302:b0:6e2:43ea:55f with SMTP id
- 00721157ae682-6e347c68ffbmr75778377b3.38.1728976046499; Tue, 15 Oct 2024
- 00:07:26 -0700 (PDT)
+	s=arc-20240116; t=1728976100; c=relaxed/simple;
+	bh=JZe9/XrMpFaNoSVFNPsUO26nNc6OXny+uNP6tz4qzhw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eCyN52abFjd0tSCJq6Ac1Nt1tpVy2gvW48SEjrY8kbAqRSkyhMAYTXHZj/dW1/fHea+XUH7q0vQZJK51qlUGYXvgFS3ArVF0urfX4hYhewOU9RXcsRFgBF+8P2fA9llzfiRgL5qMyeqnRe4BIPSkvXNMfDxh3o7FFtXE9v2nCYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sdyg/g0j; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728976090; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=6gFoeTlFavv7EAeAASqltytkDM8bjC0/MUctFJ6l394=;
+	b=sdyg/g0jBiqlZjoaW9+SpJb3qZOzBBDxYn0jv994eTvBF053a21KYO3DsRlyvoQmMTKyHM9Oir1Gijy78LeVD+wr/bzsOmWadWrMjNnG6N3NxJpw0VTWSFvK+7m6YrMyzHieAINH68nEcUtg6QyI0AYaXx7agNuvkW0X012X0mg=
+Received: from localhost(mailfrom:hongzhen@linux.alibaba.com fp:SMTPD_---0WHCbt5k_1728976088 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Oct 2024 15:08:09 +0800
+From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org,
+	Hongzhen Luo <hongzhen@linux.alibaba.com>
+Subject: [PATCH v3] erofs: fix blksize < PAGE_SIZE for file-backed mounts
+Date: Tue, 15 Oct 2024 15:07:50 +0800
+Message-ID: <20241015070750.3489603-1-hongzhen@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014141217.941104064@linuxfoundation.org> <3ab1938a-6f6a-4664-9991-d196e684974d@nvidia.com>
- <CAMuHMdVHLiB7PWji9uRLZNWqFa1r7NiTv9MWCCAg=3-924M7tA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVHLiB7PWji9uRLZNWqFa1r7NiTv9MWCCAg=3-924M7tA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Oct 2024 09:07:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVcE1Wvi+g5P5CEe5RFEuBfSCmR+7HFVfiC1rG6bHdesA@mail.gmail.com>
-Message-ID: <CAMuHMdVcE1Wvi+g5P5CEe5RFEuBfSCmR+7HFVfiC1rG6bHdesA@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	pavel@denx.de, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-CC Oleksij
+Adjust sb->s_blocksize{,_bits} directly for file-backed
+mounts when the fs block size is smaller than PAGE_SIZE.
 
-On Tue, Oct 15, 2024 at 9:06=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Tue, Oct 15, 2024 at 7:32=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com>=
- wrote:
-> > On 14/10/2024 15:09, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 6.1.113 release.
-> > > There are 798 patches in this series, all will be posted as a respons=
-e
-> > > to this one.  If anyone has any issues with these being applied, plea=
-se
-> > > let me know.
-> > >
-> > > Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >       https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patc=
-h-6.1.113-rc1.gz
-> > > or in the git tree and branch at:
-> > >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git linux-6.1.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > >
-> > > -------------
-> > > Pseudo-Shortlog of commits:
-> >
-> > ...
-> >
-> > > Oleksij Rempel <linux@rempel-privat.de>
-> > >      clk: imx6ul: add ethernet refclock mux support
-> >
-> >
-> > I am seeing the following build issue for ARM multi_v7_defconfig and
-> > bisect is point to the commit ...
-> >
-> > drivers/clk/imx/clk-imx6ul.c: In function =E2=80=98imx6ul_clocks_init=
-=E2=80=99:
-> > drivers/clk/imx/clk-imx6ul.c:487:34: error: implicit declaration of fun=
-ction =E2=80=98imx_obtain_fixed_of_clock=E2=80=99; did you mean =E2=80=98im=
-x_obtain_fixed_clock=E2=80=99? [-Werror=3Dimplicit-function-declaration]
-> >    hws[IMX6UL_CLK_ENET1_REF_PAD] =3D imx_obtain_fixed_of_clock(ccm_node=
-, "enet1_ref_pad", 0);
-> >                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-> >                                    imx_obtain_fixed_clock
-> > drivers/clk/imx/clk-imx6ul.c:487:32: warning: assignment makes pointer =
-from integer without a cast [-Wint-conversion]
-> >    hws[IMX6UL_CLK_ENET1_REF_PAD] =3D imx_obtain_fixed_of_clock(ccm_node=
-, "enet1_ref_pad", 0);
-> >                                  ^
-> > drivers/clk/imx/clk-imx6ul.c:489:34: error: implicit declaration of fun=
-ction =E2=80=98imx_clk_gpr_mux=E2=80=99; did you mean =E2=80=98imx_clk_hw_m=
-ux=E2=80=99? [-Werror=3Dimplicit-function-declaration]
-> >    hws[IMX6UL_CLK_ENET1_REF_SEL] =3D imx_clk_gpr_mux("enet1_ref_sel", "=
-fsl,imx6ul-iomuxc-gpr",
-> >                                    ^~~~~~~~~~~~~~~
-> >                                    imx_clk_hw_mux
-> > drivers/clk/imx/clk-imx6ul.c:489:32: warning: assignment makes pointer =
-from integer without a cast [-Wint-conversion]
-> >    hws[IMX6UL_CLK_ENET1_REF_SEL] =3D imx_clk_gpr_mux("enet1_ref_sel", "=
-fsl,imx6ul-iomuxc-gpr",
-> >                                  ^
-> > drivers/clk/imx/clk-imx6ul.c:492:32: warning: assignment makes pointer =
-from integer without a cast [-Wint-conversion]
-> >    hws[IMX6UL_CLK_ENET2_REF_PAD] =3D imx_obtain_fixed_of_clock(ccm_node=
-, "enet2_ref_pad", 0);
-> >                                  ^
-> > drivers/clk/imx/clk-imx6ul.c:494:32: warning: assignment makes pointer =
-from integer without a cast [-Wint-conversion]
-> >    hws[IMX6UL_CLK_ENET2_REF_SEL] =3D imx_clk_gpr_mux("enet2_ref_sel", "=
-fsl,imx6ul-iomuxc-gpr",
->
-> Missing backports of the other clock-related patches in the original
-> series[1]?
-> imx_obtain_fixed_clock() was introduced in commit 7757731053406dd0
-> ("clk: imx: add imx_obtain_fixed_of_clock()"), but some of the other
-> patches from that series may be needed, too?
->
-> [1] https://lore.kernel.org/all/20230131084642.709385-1-o.rempel@pengutro=
-nix.de/
+Previously, EROFS used sb_set_blocksize(), which caused
+a panic if bdev-backed mounts is not used.
 
-Gr{oetje,eeting}s,
+Fixes: fb176750266a ("erofs: add file-backed mount support")
+Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+---
+v3: Fix trivial typos.
+v2: https://lore.kernel.org/linux-erofs/20241015064007.3449582-1-hongzhen@linux.alibaba.com/
+v1: https://lore.kernel.org/linux-erofs/20241015033601.3206952-1-hongzhen@linux.alibaba.com/
+---
+ fs/erofs/super.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-                        Geert
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 320d586c3896..ca45dfb17d7c 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -631,7 +631,11 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+ 			errorfc(fc, "unsupported blksize for fscache mode");
+ 			return -EINVAL;
+ 		}
+-		if (!sb_set_blocksize(sb, 1 << sbi->blkszbits)) {
++
++		if (erofs_is_fileio_mode(sbi)) {
++			sb->s_blocksize = (1 << sbi->blkszbits);
++			sb->s_blocksize_bits = sbi->blkszbits;
++		} else if (!sb_set_blocksize(sb, 1 << sbi->blkszbits)) {
+ 			errorfc(fc, "failed to set erofs blksize");
+ 			return -EINVAL;
+ 		}
+-- 
+2.43.5
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
