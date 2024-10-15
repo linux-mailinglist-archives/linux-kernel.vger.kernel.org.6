@@ -1,128 +1,94 @@
-Return-Path: <linux-kernel+bounces-366128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2300D99F134
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:30:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B189B99F136
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F402871BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD65287515
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997E41B393B;
-	Tue, 15 Oct 2024 15:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDfKbT8g"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45961D9A5E;
+	Tue, 15 Oct 2024 15:31:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991DE1B395C;
-	Tue, 15 Oct 2024 15:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC591B395C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006219; cv=none; b=GnWn7V1rDvPeMs3dVnI8LFwuYtILNzXkON1eJqxy0LsqhAJJ5SF3xUD3pY/US7QRxo/P9+mWTVIZLrwoaX4u3I9Zmo1eLJAy70Wl/KRWB5joknBTHKeXDd69fw/kRULqxHomg07ANf0CV6kNTzB7fL8TeIpImJMNsxk03bQ5lJ8=
+	t=1729006266; cv=none; b=ObqoKXI0Mb6KAtu9/Jlpp9voy+q2XBTkW4eMRGM/Ps2rNYChjRkYEcyu1FZwqbhHrdGW8a8LtbaEax44vS+x1tP36O0k6M8BbegNp8tFWCjwNPd1UMmp2+eO7WNg7KMpEkweU5U0/6KnuwOAE9V7pE6FGiTwZkuqd9dlVwDgGpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006219; c=relaxed/simple;
-	bh=sXzHZKex3O/R431ucGqv8oDbS25HcRRzrQ/UHyH0e7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HHPtqlZsXJkK8t1XYhNeRROq/s45hIG9IYC7jN7ZvJ+aCTHTyYdXLn+ZoAYJpcpTDhCayvBbDRX6Pm12ygQ54afQL7XpFUIv3krenaU6ZzQPeTgkSocfw8r0WUVyJ71Ks0IN7oTKDIpTiXPG3wjx8CcSlwYOJlgTGnRJsj/F6HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aDfKbT8g; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e29497f11cso1042701a91.2;
-        Tue, 15 Oct 2024 08:30:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729006217; x=1729611017; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sXzHZKex3O/R431ucGqv8oDbS25HcRRzrQ/UHyH0e7s=;
-        b=aDfKbT8gy6Hk3nbJXHyDqA7GF7bY6Wcf4u/7PmQWYjiHjt20HYtW6yRB/cvMM8uYiI
-         FuIIDTYBfNlONkipdXPif9Yw1Zo/QbhKiA3g5QdEIR//3RY8I2kNpSIl6QSj1dj8eStw
-         9Jrr8Y6r75rHFJoocjbzHrN4H4fxwfKhwHmwk/j6A9e4kZSGA6Ayeq8jpO1aakAm69q+
-         9JOgVAyANRAmOFQ0VYah1ad8OUoLeuzv0udPPwZUMmpEw6XCb/W+tfXrY8H55iZK85cs
-         aUJG0UBchdXHYTkaVfwR288K+O2iOIcajPfFNTYmpwmW+hc0aHAxKaNXa7Boj65rqotJ
-         0TPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729006217; x=1729611017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sXzHZKex3O/R431ucGqv8oDbS25HcRRzrQ/UHyH0e7s=;
-        b=i0z9zJ5y1wwMOwbFH/GxhWNIpRUfQIKWfr2k/BbtSgm5/ERkLnnw41scMY/oyOeApR
-         KKGc96L/5TO+GDyQ0ALECi/ajTVDIYkZ7KtsxhsajCPCmoM8slWoH5FUzXBubNN2f2Xs
-         Y3jxXBsBiXHyAmXtLKJbimZGJFa1+3oeL0TC4Pt4H/DSbwa2v2+55faRBwWQf3vPXaa2
-         nPIXE7nstljhZA7BbSSu0VTJaOvlxXW7fTAbHTZl7mW7/q/kPiLCWZvmJBKXHuU1TNkj
-         yFV9Ehh0isuEbec4gIZahKwwgs9Y1PV+wHR9jhGnCZ1Fl4qwZtiJJfL+p7hbxdARPiyV
-         qHXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdx0IKNK0gVi4bvdTdJ5pM4xx7b39HItodQy7T5vEONiyqDk9USZ1NwXMlD98l2OyjUXdMc8EUqJXiwHw=@vger.kernel.org, AJvYcCWCCRgweK77iIQLa1KESgUSYxpMWOXH6d2KKJ9Dk+pDDBxec6DnmW4770xcXbbW2MM1xf1LtGQy5qeUwOSD@vger.kernel.org, AJvYcCWWCGmDG/lSBwQnNGc+yUYbJo8aD2iu8M+UcPYrBEtdJmxarOBKY6cDmef/35wyDdK+FzGrWnvtyoJuqHAPfiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNsXqcnJ9ujVm8u1uW1igwyC0XwyYoQIImZJhFTlGHgWi8xpzg
-	YFXl0KUnesoXu49Lf/oUjLZ3GM+NVt3R6tFOT40DovqNH8xnsPPIj1vEKdulXUv++gXj4eth3cI
-	c/Cje7/qxOqR984QZy07akWlw4+Y=
-X-Google-Smtp-Source: AGHT+IFYPI1sS9Do3ij/vZWzq51w9UV/EVeANHg7gZjXr68H4ERjAqiXNMQxEm4o9oWPoPUFljYSgKcSY56/JMUvBVY=
-X-Received: by 2002:a17:90a:9606:b0:2e2:b20b:59de with SMTP id
- 98e67ed59e1d1-2e2f0a82042mr7735294a91.3.1729006216947; Tue, 15 Oct 2024
- 08:30:16 -0700 (PDT)
+	s=arc-20240116; t=1729006266; c=relaxed/simple;
+	bh=JSQyNLBxRPVAXXJ9vx2ZiVSFZk8hmcWcME6zlpWUfNY=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=t6PUf5S9yN9uns91sy4jk2+t5LfvYbHnSSST/0siT0heYVoYpG7P4302FBNUqzX9SP/DR49SZqsiLV1IBT7Ld2cbUo00oQ83eR8zWfDLdpoC3vTJSpsOg5znJQRnBAZ2DSVC8bqA8tWHVlK21ZK8ZV/dTstOiBiXRW1XOdvlX9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09018C4CEC6;
+	Tue, 15 Oct 2024 15:31:06 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1t0jW9-00000002z4B-1yaO;
+	Tue, 15 Oct 2024 11:31:25 -0400
+Message-ID: <20241015153105.843619901@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 15 Oct 2024 11:31:05 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/2] ring-buffer: Fixes for v6.12
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
- <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
- <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
- <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
- <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com>
- <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com>
- <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com>
- <CAK7LNARg=ZvD14ARKw40uk0XNfE5qgWqsrM6H4jBJu0m5XYCWQ@mail.gmail.com>
- <CANiq72n6zkCZdUJ0A8enLW3BgmA_=eJKgDKwNCfs-q3dfeR2BA@mail.gmail.com>
- <CAJ-ks9==6mi7SF5rTR=YouwC6RwktJftqXHqhsBcHNTWxdbfig@mail.gmail.com>
- <CANiq72nBYswZs_m9Ky3KKNz_WmHrsSoRDJqcuHGt2WpvUogtqw@mail.gmail.com> <CAJ-ks9khX7Ha4iGWOkbHeXzJLPisE9r=+q54Z9HMQkojR=-a8Q@mail.gmail.com>
-In-Reply-To: <CAJ-ks9khX7Ha4iGWOkbHeXzJLPisE9r=+q54Z9HMQkojR=-a8Q@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 15 Oct 2024 17:30:02 +0200
-Message-ID: <CANiq72=mUeMYvgfQVozr363juCuKmMVNx_13dj+q=3KKJ4DeHA@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Daniel Gomez <da.gomez@samsung.com>, 
-	rust-for-linux@vger.kernel.org, Fiona Behrens <me@kloenk.dev>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 5:06=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> I did more digging and I don't think this is going to be readily
-> fixable upstream:
-> see https://github.com/rust-lang/rust/issues/131720#issuecomment-24141799=
-41.
->
-> A symlink fixes the problem if we *never* specify a path to
-> libmacros.so, is that how we want to proceed? Note that currently we do
-> specify it in one place in rust/Makefile and again in
-> generate_rust_analyzer.py, so those would need updates.
 
-If a trick still requires a similar amount of changes to mainline,
-then I think we should go for something better/more proper, i.e. the
-idea is to minimize changes/complexity upstream, after all.
+ring-buffer: Fixes for v6.12
 
-Thanks!
+- Fix ref counter of buffers assigned at boot up
 
-Cheers,
-Miguel
+  A tracing instance can be created from the kernel command line.
+  If it maps to memory, it is considered permanent and should not
+  be deleted, or bad things can happen. If it is not mapped to memory,
+  then the user is fine to delete it via rmdir from the instances
+  directory. But the ref counts assumed 0 was free to remove and
+  greater than zero was not. But this was not the case. When an
+  instance is created, it should have the reference of 1, and if
+  it should not be removed, it must be greater than 1. The boot up
+  code set normal instances with a ref count of 0, which could get
+  removed if something accessed it and then released it. And memory
+  mapped instances had a ref count of 1 which meant it could be deleted,
+  and bad things happen. Keep normal instances ref count as 1, and
+  set memory mapped instances ref count to 2.
+
+- Protect sub buffer size (order) updates from other modifications
+
+  When a ring buffer is changing the size of its sub-buffers, no other
+  operations should be performed on the ring buffer. That includes
+  reading it. But the locking only grabbed the buffer->mutex that
+  keeps some operations from touching the ring buffer. It also must
+  hold the cpu_buffer->reader_lock as well when updates happen as
+  other paths use that to do some operations on the ring buffer.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ring-buffer/urgent
+
+Head SHA1: 09661f75e75cb6c1d2d8326a70c311d46729235f
+
+
+Petr Pavlu (1):
+      ring-buffer: Fix reader locking when changing the sub buffer order
+
+Steven Rostedt (1):
+      ring-buffer: Fix refcount setting of boot mapped buffers
+
+----
+ kernel/trace/ring_buffer.c | 44 ++++++++++++++++++++++++++------------------
+ kernel/trace/trace.c       |  6 +++---
+ 2 files changed, 29 insertions(+), 21 deletions(-)
 
