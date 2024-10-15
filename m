@@ -1,84 +1,49 @@
-Return-Path: <linux-kernel+bounces-365697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7596999E652
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0015699E665
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB3D1F24E7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CBCA1F24F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9663D1EBFFF;
-	Tue, 15 Oct 2024 11:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F86F1EF945;
+	Tue, 15 Oct 2024 11:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jIXDCNRv"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJMcicB6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DFE1D9A42;
-	Tue, 15 Oct 2024 11:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988521EF92C;
+	Tue, 15 Oct 2024 11:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728992387; cv=none; b=H8BtXmVQ3miv35gWvgGRlYKcuCMgv6H+MBgyALzlusrhenKZ8SiTqPXPIuNlrRt3YUfyE0jmh5Du3GZAfhZ0UcT49v6dDXlxoZYZvX27eJ07P2vo5AyMNMe2ikGCsQ1M8m0JDD4gIJNtN7YVxVTSlAYhOoy3b1rmA+SKNHTADos=
+	t=1728992427; cv=none; b=kj4Arwr4WHqOjYhlLIGVifEEZ9kypzQEd+KIJawV+rbDQIV+mbqUQIdSicGWyjlM/i31L0thV0oOD0HbcOAY0qzs0IR/uNI/Oaa/veAS7cEBU7ceZei3jRGit5PZONP8t5ClLT8vUt0BsiWBeIkJYGFgBr5VtdDiwKIimlKiPZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728992387; c=relaxed/simple;
-	bh=58uJnLDG+K1A6/sQwu2cMHBgb2mBKUVqonzE/zEVOaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=squdU/ysQyhsYM2cMMsidfwVXsyETXrypwKKBiHSntn9J2tyQoc4em78Dqh7tcZEpU7qPHNGFGl1S9560TnDUyvovLNzPGI4kPqNVm+RTE//XGaqGvG1qX8aRC7nMOwZaTzxlH1h0jMLmh+zea8Euigb1RvdBvedQiqIwP7aIf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jIXDCNRv; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FAtP5W013270;
-	Tue, 15 Oct 2024 11:39:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=fk76LQzDBx4kVEEhq
-	sBZ/E8kseSV0JsntjP6I3cX2rg=; b=jIXDCNRvPgdU7pLTYgV+Rss/FG9DdxT9Z
-	pkV5jzDG6e6D7vydYVJPO0nPyMy0ysdnIMGj3t6Y919xIodQ8/2Z2wPk/VHGbBNQ
-	Kk52yBccG+0S3WkWivw6rMf1w44eA8H09wryTgWCpwX4vjQW4NKPYphsYmXgRNhV
-	04bZIXh08LhZe5edBD5ezJVkkW5N9/KP4AhDigAYVPN1Y1l11Wl5WOaYYiLw9X8r
-	MuWUo9plsGUa24TGSYfHKnOy+9DWZtxg6tI/5H5Tsvgja/z4SLJsV9LA987XnpQL
-	n6l20vJuRUcnMBzYmigDgpg9GWot6ZbvvI+taovdPISlEjwW/Mn8A==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429q2fg6eu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 11:39:44 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F8uJH9005286;
-	Tue, 15 Oct 2024 11:39:44 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285nj394k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 11:39:44 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FBdeRZ43188688
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 11:39:40 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B2A4E2004D;
-	Tue, 15 Oct 2024 11:39:40 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 92D282004E;
-	Tue, 15 Oct 2024 11:39:40 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 11:39:40 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: [PATCH v3 2/2] s390/uv: Provide host-key hashes in sysfs
-Date: Tue, 15 Oct 2024 13:39:40 +0200
-Message-ID: <20241015113940.3088249-3-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241015113940.3088249-1-seiden@linux.ibm.com>
-References: <20241015113940.3088249-1-seiden@linux.ibm.com>
+	s=arc-20240116; t=1728992427; c=relaxed/simple;
+	bh=GgyyALiAHROOJ4yh2oDN4TdDkXimmPQpOKDE8hSo+0g=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tDhCgqWid+TmHjHUmG7VhRFcou/VrH968+W2R96D8ulMvh4k/wVEJ5cVfGCrFoDZtLltAszNFjXBKIjASerFC4dTseCFCXKQ2xWYtE0bIExCsmd8i/mrm++5if9L8uyH2uNf9b58aIqxYmV8IZa07WcfBoxpYe+dcHISHLKFumQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJMcicB6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DD3C4CEC6;
+	Tue, 15 Oct 2024 11:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728992427;
+	bh=GgyyALiAHROOJ4yh2oDN4TdDkXimmPQpOKDE8hSo+0g=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=vJMcicB6bn3kPZ8QfQGe3RjEytZWp7S3wU8vb9858KuBlpO+gxFbVWT6nLxmRi7Y0
+	 V97xNVd1Ltb6OpZeCL8fJwcjGajKHUxINzoYye3DdrlpDCfI+Bplkil5PrWr7Z+V5c
+	 /yJQRqfPUSC3q4/4Ks7rM7ny5VJlAYwqrBVWBB1qMSaSjyniGvrxWiKfu6klYak/PA
+	 0j4mdBX384YvAgSfqHGksZTVcU/AXUKEyBfyRj9AFoQVdzumoKZLXSmfr9Oo6smws8
+	 M213ahC44JctsthJfLDEJCe1yv1fu+t433q6TFrgLl4FNsNRjsDDRoKl8LqVXvxiCD
+	 LAl6jiYSPFsUA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AF4133809A8A;
+	Tue, 15 Oct 2024 11:40:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,176 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: JbJTIYzJ6PXVfEwUYm_km3Ex3eLqhiuB
-X-Proofpoint-GUID: JbJTIYzJ6PXVfEwUYm_km3Ex3eLqhiuB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- phishscore=0 malwarescore=0 suspectscore=0 mlxscore=0 spamscore=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 mlxlogscore=999
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150078
+Subject: Re: [PATCH][next][V2] octeontx2-af: Fix potential integer overflows on
+ integer shifts
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172899243250.1129876.14057410014037534113.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Oct 2024 11:40:32 +0000
+References: <20241010154519.768785-1-colin.i.king@gmail.com>
+In-Reply-To: <20241010154519.768785-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+ jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ naveenm@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Utilize the new Query Ultravisor Keys UVC to give user space the
-information which host-keys are installed on the system.
+Hello:
 
-Create a new sysfs directory 'firmware/uv/keys' that contains the hash
-of the host-key and the backup host-key of that system. Additionally,
-the file 'all' contains the response from the UVC possibly containing
-more key-hashes than currently known.
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
----
- arch/s390/include/asm/uv.h | 17 +++++++++
- arch/s390/kernel/uv.c      | 71 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 88 insertions(+)
+On Thu, 10 Oct 2024 16:45:19 +0100 you wrote:
+> The left shift int 32 bit integer constants 1 is evaluated using 32 bit
+> arithmetic and then assigned to a 64 bit unsigned integer. In the case
+> where the shift is 32 or more this can lead to an overflow. Avoid this
+> by shifting using the BIT_ULL macro instead.
+> 
+> Fixes: 019aba04f08c ("octeontx2-af: Modify SMQ flush sequence to drop packets")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> 
+> [...]
 
-diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-index 153d93468b77..6dab9757419b 100644
---- a/arch/s390/include/asm/uv.h
-+++ b/arch/s390/include/asm/uv.h
-@@ -31,6 +31,7 @@
- #define UVC_RC_NEED_DESTROY	0x8000
- 
- #define UVC_CMD_QUI			0x0001
-+#define UVC_CMD_QUERY_KEYS		0x0002
- #define UVC_CMD_INIT_UV			0x000f
- #define UVC_CMD_CREATE_SEC_CONF		0x0100
- #define UVC_CMD_DESTROY_SEC_CONF	0x0101
-@@ -94,6 +95,7 @@ enum uv_cmds_inst {
- 	BIT_UVC_CMD_ADD_SECRET = 29,
- 	BIT_UVC_CMD_LIST_SECRETS = 30,
- 	BIT_UVC_CMD_LOCK_SECRETS = 31,
-+	BIT_UVC_CMD_QUERY_KEYS = 34,
- };
- 
- enum uv_feat_ind {
-@@ -145,6 +147,21 @@ struct uv_cb_qui {
- 	u8 reserved112[0x120 - 0x112];		/* 0x0112 */
- } __packed __aligned(8);
- 
-+struct uv_key_hash {
-+	u64 dword[4];
-+} __packed __aligned(8);
-+
-+#define UVC_QUERY_KEYS_IDX_HK		0
-+#define UVC_QUERY_KEYS_IDX_BACK_HK		1
-+
-+/* Query Ultravisor Keys */
-+struct uv_cb_query_keys {
-+	struct uv_cb_header header;	/* 0x0000 */
-+	u64 reserved08[3];		/* 0x0008 */
-+	struct uv_key_hash key_hashes[15];	/* 0x0020 */
-+} __packed __aligned(8);
-+static_assert(sizeof(struct uv_cb_query_keys) == 0x200);
-+
- /* Initialize Ultravisor */
- struct uv_cb_init {
- 	struct uv_cb_header header;
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index ba514b9dca6a..3c74e6179cdc 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -722,10 +722,76 @@ static struct attribute *uv_query_attrs[] = {
- 	NULL,
- };
- 
-+static inline struct uv_cb_query_keys uv_query_keys(void)
-+{
-+	struct uv_cb_query_keys uvcb = {
-+		.header.cmd = UVC_CMD_QUERY_KEYS,
-+		.header.len = sizeof(uvcb)
-+	};
-+
-+	uv_call(0, (uint64_t)&uvcb);
-+	return uvcb;
-+}
-+
-+static inline ssize_t emit_hash(struct uv_key_hash *hash, char *buf, int at)
-+{
-+	return sysfs_emit_at(buf, at, "%016llx%016llx%016llx%016llx\n",
-+			    hash->dword[0], hash->dword[1], hash->dword[2], hash->dword[3]);
-+}
-+
-+static ssize_t uv_keys_host_key(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *buf)
-+{
-+	struct uv_cb_query_keys uvcb = uv_query_keys();
-+
-+	return emit_hash(&uvcb.key_hashes[UVC_QUERY_KEYS_IDX_HK], buf, 0);
-+}
-+
-+static struct kobj_attribute uv_keys_host_key_attr =
-+	__ATTR(host_key, 0444, uv_keys_host_key, NULL);
-+
-+static ssize_t uv_keys_backup_host_key(struct kobject *kobj,
-+				       struct kobj_attribute *attr, char *buf)
-+{
-+	struct uv_cb_query_keys uvcb = uv_query_keys();
-+
-+	return emit_hash(&uvcb.key_hashes[UVC_QUERY_KEYS_IDX_BACK_HK], buf, 0);
-+}
-+
-+static struct kobj_attribute uv_keys_backup_host_key_attr =
-+	__ATTR(backup_host_key, 0444, uv_keys_backup_host_key, NULL);
-+
-+static ssize_t uv_keys_all(struct kobject *kobj,
-+			   struct kobj_attribute *attr, char *buf)
-+{
-+	struct uv_cb_query_keys uvcb = uv_query_keys();
-+	ssize_t len = 0;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(uvcb.key_hashes); i++)
-+		len += emit_hash(uvcb.key_hashes + i, buf, len);
-+
-+	return len;
-+}
-+
-+static struct kobj_attribute uv_keys_all_attr =
-+	__ATTR(all, 0444, uv_keys_all, NULL);
-+
- static struct attribute_group uv_query_attr_group = {
- 	.attrs = uv_query_attrs,
- };
- 
-+static struct attribute *uv_keys_attrs[] = {
-+	&uv_keys_host_key_attr.attr,
-+	&uv_keys_backup_host_key_attr.attr,
-+	&uv_keys_all_attr.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group uv_keys_attr_group = {
-+	.attrs = uv_keys_attrs,
-+};
-+
- static ssize_t uv_is_prot_virt_guest(struct kobject *kobj,
- 				     struct kobj_attribute *attr, char *buf)
- {
-@@ -751,6 +817,7 @@ static const struct attribute *uv_prot_virt_attrs[] = {
- };
- 
- static struct kset *uv_query_kset;
-+static struct kset *uv_keys_kset;
- static struct kobject *uv_kobj;
- 
- static int __init uv_sysfs_dir_init(const struct attribute_group *grp,
-@@ -789,6 +856,10 @@ static int __init uv_sysfs_init(void)
- 	if (rc)
- 		goto out_ind_files;
- 
-+	/* Get installed key hashes if available, ignore any errors */
-+	if (test_bit_inv(BIT_UVC_CMD_QUERY_KEYS, uv_info.inst_calls_list))
-+		uv_sysfs_dir_init(&uv_keys_attr_group, &uv_keys_kset, "keys");
-+
- 	return 0;
- 
- out_ind_files:
+Here is the summary with links:
+  - [next,V2] octeontx2-af: Fix potential integer overflows on integer shifts
+    https://git.kernel.org/netdev/net/c/637c4f6fe40b
+
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
