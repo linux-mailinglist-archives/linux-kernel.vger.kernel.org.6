@@ -1,123 +1,181 @@
-Return-Path: <linux-kernel+bounces-365067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 260CC99DD0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:55:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F47799DCF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2861F23D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:55:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E311DB21750
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB14172BB9;
-	Tue, 15 Oct 2024 03:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22681714B0;
+	Tue, 15 Oct 2024 03:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJ/lnWLJ"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sM3IzIhw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E930F1714B5;
-	Tue, 15 Oct 2024 03:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB8B38DE9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728964505; cv=none; b=rhnQKwQfrDG3IS5Sk4iPRcnrZfF7l5T1AqtFvwW0hm4XUe4TFUyOc3+lxvjfyMJFisngfbDg1alG8R0BqEnSVAykZCZmKDMTDDpZRqLGAIFUiseY5oGpRMJw7cfAaD94xMpMzUr5mH2HrcsseDZwbcVfqi3XyIyBbj2Td0BwK4k=
+	t=1728963827; cv=none; b=CBavApT2H5Qa3LjumGZWiQ1NganRMsJDSYv452HEgVzpHc44osdv+YBEcLvIa/uMNLDg2Xy+fqIw7sgSd18tA4NNsuXAStCQLGgrp0FVRU9DMtK+W841JsT7mM9KIRB2RNpwjiAmU9JX1I3WEOI9EM/ReviBh6q8p+X+u9bcKpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728964505; c=relaxed/simple;
-	bh=KI/Qz7cxw65EHK5Bp+NdZUO/jaY8mHil+i/4r1vDHd0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=i4BkefY+uYuvADZNy+/rdP+9gitkrSaxh6zNMqmoj5Ag6A+KqcDJqvjAa3SPxEUIgn7anZZmzl3ERPOf0LkSSJnYTX64lb51LdqCcTpHDmbw1wfcjbGCJMrEEqXPSkWi5tXdFg5/o9et2RK3uPGxtPCB7C8LgU8e+e69RBBhVgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJ/lnWLJ; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2ed2230d8so2657319a91.0;
-        Mon, 14 Oct 2024 20:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728964503; x=1729569303; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EwhfU04qa08VdpSL0tNj51VKQuJPyj0qdelSnsnP5Es=;
-        b=SJ/lnWLJrjV5ZO312Efr6RFzVaSSpxRO7r4Uq8Cxq6kTT7fmRkNcknTC+dGp6ZBBCt
-         ecMLGnn2U0rCjfALBNaruPxNRIXFlze6GIEQf+6F5xv86c2/xoWJRUbpMUTEyH0QbUJL
-         oLemP/H66QwbVJp8q/4nLqC12w5idDK9GaaalNo8mZz1PZVKsyzhqyYQQ/P606E9klBN
-         uvopdt5xPU15utlHNWjNRHtRXek2X4nYodOdu2RI+pBV2ePPnOPBIDDLPssbA0KoDdt3
-         cCRbBZi2JuwQxppeIGTl3eryQY6fHnq3Gf684gRJVnOly7FskE6jUyszc7dnec/bWlkP
-         75zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728964503; x=1729569303;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwhfU04qa08VdpSL0tNj51VKQuJPyj0qdelSnsnP5Es=;
-        b=UcLqSTY7c/n6Ev0VCqpLJosQI7iW6Nw/1mmYLItM/FsoTGNFH17XpLwiZWalsCf+1A
-         cYTi2GBgg67N5qixG+8zMyhaJuS1besl+rRL/X8zo/MWZxImSsuRmaGt9LzEHSl0Sfn7
-         pb0x0iGHUvC8c19G34UximTQhwGG6TcqUyr5nchobH64xpUmtAU/nkPaS4ITUl3Uyopi
-         HG1tqT5E6s3LF2H7fSBzNKJyVZOiSGqBpTt+ktvFjVOnHNwtRgqj/nmDa5MtljoIrQBU
-         VGvEuO6T18oI+jomSAuoc8aO7k4Oyfg0eZ0hpLx1sYkzXz7oqgVjF0tPn6UGui3S3ghD
-         d1sA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjhMV70uvNglqxd8hGC2WCNEuCprkiyDM+xV7+Dgx8I+RzTDq8AszhDo5cdUazA0rLPH1gV0wcfY2b7et9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIt3Y1RFUYaVQleLSxTbHOjN0/6WWSvPW6QMmu7Gx3O4txNDFd
-	z658NYgTX8PeiZnTXbJvxkPNZ/TagcBBS65+N+Q5tEm/G9RJNAH2
-X-Google-Smtp-Source: AGHT+IE5uz8bQGnSjGv7Zq4zoHqC75C9XdFXBNAqfmc2Qvu6+tYDj3jsq21cphHruML1ji5dqk6CJg==
-X-Received: by 2002:a17:90b:1b42:b0:2e2:e91b:f0d3 with SMTP id 98e67ed59e1d1-2e315431d7amr12707892a91.29.1728964502982;
-        Mon, 14 Oct 2024 20:55:02 -0700 (PDT)
-Received: from dw-tp ([171.76.80.151])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392f5f6f4sm404415a91.43.2024.10.14.20.55.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 20:55:02 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>, Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 05/12] iomap: Introduce IOMAP_ENCODED
-In-Reply-To: <ZwehmQt52_iSMLeL@infradead.org>
-Date: Tue, 15 Oct 2024 09:13:32 +0530
-Message-ID: <878quqyqsb.fsf@gmail.com>
-References: <cover.1728071257.git.rgoldwyn@suse.com> <d886ab58b1754342797d84b1fa06fea98b6363f8.1728071257.git.rgoldwyn@suse.com> <ZwT_-7RGl6ygY6dz@infradead.org> <ZwehmQt52_iSMLeL@infradead.org>
+	s=arc-20240116; t=1728963827; c=relaxed/simple;
+	bh=MjCUBiWnp9PMS4F87LZ3PySPrHGyFoBvs6QlesZy16M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z1ANpY0fKuVEQPyOrhtgXVKBVGopnGfI9nAYTRCHXp5PARn6qjow3Tzt97OouPgIM9XbUA6miPcj5KmDPLKRZjvH4RuuQPfhsS0azA7DH/WpTq8wWvOs5MDrPiEKosmG7AF3OsaxMf6MozYdjab3K+bI90J2gHAasn3VEBWplQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sM3IzIhw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 358C4C4CEC7;
+	Tue, 15 Oct 2024 03:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728963826;
+	bh=MjCUBiWnp9PMS4F87LZ3PySPrHGyFoBvs6QlesZy16M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sM3IzIhwsVrUavZoQV0F6rbspUDHCJnAElwhgYn0Tbzvg7H8J8YMbKnoDhb2nQwsp
+	 t2as3W/T8hMqyF6nMRbe1oiYIHG5eE8diW3snDygg7JlS1u3Md1hppclS4yLX5DIBf
+	 i15xfXpOpYi69Rj64hHGFXUymLI4AG+w52Nu+OA/6JX95NI1rQ8xMzTzJb+6lKjfGg
+	 I5GcF57mfL2KNFj7N4s9DedmCvdbOF4MCd59N5TLILwpDzdCUrSYp+mWU9Gwjzkux1
+	 yxILwgIbyq1Mit6M44qQQZcfFVEPsRyNizc7Zp5+UeZvivrdAw+Jxj5BPWTuuttQ3h
+	 qyhU0OF1SaxuQ==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daniel Rosenberg <drosen@google.com>
+Subject: [PATCH] f2fs: fix to account dirty data in __get_secs_required()
+Date: Tue, 15 Oct 2024 11:43:39 +0800
+Message-Id: <20241015034339.3244676-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Christoph Hellwig <hch@infradead.org> writes:
+It will trigger system panic w/ testcase in [1]:
 
-> On Tue, Oct 08, 2024 at 02:48:43AM -0700, Christoph Hellwig wrote:
->> In general I'm not a huge fan of the encoded magic here, but I'll
->> need to take a closer look at the caller if I can come up with
->> something better.
->
-> I looked a bit more at the code.  I'm not entirely sure I fully
-> understand it yet, but:
->
-> I think most of the read side special casing would be handled by
-> always submitting the bio at the end of an iomap.  Ritesh was
-> looking into that for supporting ext2-like file systems that
-> read indirect block ondemand, but I think it actually is fundamentally
-> the right thing to do anyway.
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/segment.c:2752!
+RIP: 0010:new_curseg+0xc81/0x2110
+Call Trace:
+ f2fs_allocate_data_block+0x1c91/0x4540
+ do_write_page+0x163/0xdf0
+ f2fs_outplace_write_data+0x1aa/0x340
+ f2fs_do_write_data_page+0x797/0x2280
+ f2fs_write_single_data_page+0x16cd/0x2190
+ f2fs_write_cache_pages+0x994/0x1c80
+ f2fs_write_data_pages+0x9cc/0xea0
+ do_writepages+0x194/0x7a0
+ filemap_fdatawrite_wbc+0x12b/0x1a0
+ __filemap_fdatawrite_range+0xbb/0xf0
+ file_write_and_wait_range+0xa1/0x110
+ f2fs_do_sync_file+0x26f/0x1c50
+ f2fs_sync_file+0x12b/0x1d0
+ vfs_fsync_range+0xfa/0x230
+ do_fsync+0x3d/0x80
+ __x64_sys_fsync+0x37/0x50
+ x64_sys_call+0x1e88/0x20d0
+ do_syscall_64+0x4b/0x110
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-yes, it was... 
-    This patch optimizes the data access patterns for filesystems with
-    indirect block mapping by implementing BH_Boundary handling within
-    iomap.
+The root cause is if checkpoint_disabling and lfs_mode are both on,
+it will trigger OPU for all overwritten data, it may cost more free
+segment than expected, so f2fs must account those data correctly to
+calculate cosumed free segments later, and return ENOSPC earlier to
+avoid run out of free segment during block allocation.
 
-    Currently the bios for reads within iomap are only submitted at
-    2 places -
-    1. If we cannot merge the new req. with previous bio, only then we
-    submit the previous bio.
-    2. Submit the bio at the end of the entire read processing.
+[1] https://lore.kernel.org/fstests/20241015025106.3203676-1-chao@kernel.org/
 
-    This means for filesystems with indirect block mapping, we call into
-    ->iomap_begin() again w/o submitting the previous bios. That causes
-    unoptimized data access patterns for blocks which are of BH_Boundary type.
+Fixes: 4354994f097d ("f2fs: checkpoint disabling")
+Cc: Daniel Rosenberg <drosen@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/segment.h | 35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
 
-Here is the change which describes this [1]. The implementation part
-needed to be change to reduce the complexity. Willy gave a better
-implementation alternative here [2].  
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index e9cc73093417..55a01da6c4be 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -561,18 +561,21 @@ static inline int reserved_sections(struct f2fs_sb_info *sbi)
+ }
+ 
+ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+-			unsigned int node_blocks, unsigned int dent_blocks)
++			unsigned int node_blocks, unsigned int data_blocks,
++			unsigned int dent_blocks)
+ {
+ 
+-	unsigned segno, left_blocks;
++	unsigned int segno, left_blocks, blocks;
+ 	int i;
+ 
+-	/* check current node sections in the worst case. */
+-	for (i = CURSEG_HOT_NODE; i <= CURSEG_COLD_NODE; i++) {
++	/* check current data/node sections in the worst case. */
++	for (i = CURSEG_HOT_DATA; i < NR_PERSISTENT_LOG; i++) {
+ 		segno = CURSEG_I(sbi, i)->segno;
+ 		left_blocks = CAP_BLKS_PER_SEC(sbi) -
+ 				get_ckpt_valid_blocks(sbi, segno, true);
+-		if (node_blocks > left_blocks)
++
++		blocks = i <= CURSEG_COLD_DATA ? data_blocks : node_blocks;
++		if (blocks > left_blocks)
+ 			return false;
+ 	}
+ 
+@@ -586,8 +589,9 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+ }
+ 
+ /*
+- * calculate needed sections for dirty node/dentry
+- * and call has_curseg_enough_space
++ * calculate needed sections for dirty node/dentry and call
++ * has_curseg_enough_space, please note that, it needs to account
++ * dirty data as well in lfs mode when checkpoint is disabled.
+  */
+ static inline void __get_secs_required(struct f2fs_sb_info *sbi,
+ 		unsigned int *lower_p, unsigned int *upper_p, bool *curseg_p)
+@@ -596,19 +600,30 @@ static inline void __get_secs_required(struct f2fs_sb_info *sbi,
+ 					get_pages(sbi, F2FS_DIRTY_DENTS) +
+ 					get_pages(sbi, F2FS_DIRTY_IMETA);
+ 	unsigned int total_dent_blocks = get_pages(sbi, F2FS_DIRTY_DENTS);
++	unsigned int total_data_blocks = 0;
+ 	unsigned int node_secs = total_node_blocks / CAP_BLKS_PER_SEC(sbi);
+ 	unsigned int dent_secs = total_dent_blocks / CAP_BLKS_PER_SEC(sbi);
++	unsigned int data_secs = 0;
+ 	unsigned int node_blocks = total_node_blocks % CAP_BLKS_PER_SEC(sbi);
+ 	unsigned int dent_blocks = total_dent_blocks % CAP_BLKS_PER_SEC(sbi);
++	unsigned int data_blocks = 0;
++
++	if (f2fs_lfs_mode(sbi) &&
++		unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
++		total_data_blocks = get_pages(sbi, F2FS_DIRTY_DATA);
++		data_secs = total_data_blocks / CAP_BLKS_PER_SEC(sbi);
++		data_blocks = total_data_blocks % CAP_BLKS_PER_SEC(sbi);
++	}
+ 
+ 	if (lower_p)
+-		*lower_p = node_secs + dent_secs;
++		*lower_p = node_secs + dent_secs + data_secs;
+ 	if (upper_p)
+ 		*upper_p = node_secs + dent_secs +
+-			(node_blocks ? 1 : 0) + (dent_blocks ? 1 : 0);
++			(node_blocks ? 1 : 0) + (dent_blocks ? 1 : 0) +
++			(data_blocks ? 1 : 0);
+ 	if (curseg_p)
+ 		*curseg_p = has_curseg_enough_space(sbi,
+-				node_blocks, dent_blocks);
++				node_blocks, data_blocks, dent_blocks);
+ }
+ 
+ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+-- 
+2.40.1
 
-[1]: https://lore.kernel.org/all/4e2752e99f55469c4eb5f2fe83e816d529110192.1714046808.git.ritesh.list@gmail.com/
-[2]: https://lore.kernel.org/all/Zivu0gzb4aiazSNu@casper.infradead.org/
-
-Sorry once I am done with the other priority work on my plate - I can
-resume this work. Meanwhile I would be happy to help if someone would
-like to work on this.
-
--ritesh
 
