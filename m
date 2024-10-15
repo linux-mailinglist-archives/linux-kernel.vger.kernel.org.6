@@ -1,160 +1,145 @@
-Return-Path: <linux-kernel+bounces-365260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5629899DFA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:48:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA11899DF9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10EE3283FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:48:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A5F1283879
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123671B4F0A;
-	Tue, 15 Oct 2024 07:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="D5l+JJGI"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846891B85D7;
+	Tue, 15 Oct 2024 07:47:37 +0000 (UTC)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAF5231C95;
-	Tue, 15 Oct 2024 07:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755AB1AC450
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978472; cv=none; b=XtrfScH2CzLpuzSeX7i72qvpN2YOSIiV6BXtxi9w3PQsh0jhtvCKJq+lHX38EDDAl0Oc9kKtVG1K0Ioym2lWSDaKtyt/MxrJ5KjcExKoSNr5HiFcns+F1W4bXxxdLR/xF5mok+n58/JTxeIMisVGXJ+k8ptXIoqM41ID/23xhH0=
+	t=1728978457; cv=none; b=B6oyKcMAtvsBBpv0tpl2DY25xRRm8YniOFzxFezavgXxa6gGJIoqJGDvdzXnHxYrF08wenWR+NcxYEnTWUXMRtzffU75/kS63EEnSc0yNK9iLXBI+gguM/+N/G0SPHadfvdeiLZlGqH0rz+31bUY6R2tIABMJMOScgT4FbzZrJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978472; c=relaxed/simple;
-	bh=bjQqn46aGvfBXM/1EuRak8ND/FNHrfXMzpYKGjs4ayA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fztQynlVM1vOYtqZUzlgyQrd6TmL/EYIm/xtRalqTd9KWvlG4bak4Ca2xVJlaSHa3AkprQuCaDZjuw67NzfjqMXiuHnM3dc/oclF2Y+cdRYKec85kgRAAlyI9oyNFC5uZA9qhjbx/+DKW1SeIq7flV3bqn7pEfDJ57lwsTHUtrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=D5l+JJGI; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7KOrt031017;
-	Tue, 15 Oct 2024 07:47:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=FUw6yiePSnsbQ/cW85U02YPjxHS0W4rGT9lOjxkPw
-	Q4=; b=D5l+JJGIeOiFviFBWtOx6wxD2qbT2mD5HRitZjq7dTrbYpa8tREgC8gVn
-	K3cn+RBbz2nHD69ifyx4MhZDcv195tdBUKmvbxsz3a7Tzy5W3XOyPvEsGq1OcOGR
-	PatXbwpI2Lf1WqSUNMczczdGRUgu/lVJY0HvtxE+AErVKTXcCES4JruWwA4f4kY7
-	kve/v7jn1jmFNAPLlj9QVM7UjUc86sAX/CO3LwR9CmSQQQJuD7TFSLVJ6SsGHh9l
-	UBJOcMxDR8dzkWPTtpqf5Iibq8PBdW+WnZRv51m2CnrOOB4k64QJZqKme5Gfwy3B
-	po/xYQxReVQz/Zp+roZJ3HOT5t6uw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429kwvr470-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 07:47:40 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F4800l006401;
-	Tue, 15 Oct 2024 07:47:39 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk2evx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 07:47:39 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49F7laDr31588922
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 07:47:36 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2A3B120049;
-	Tue, 15 Oct 2024 07:47:36 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0018820040;
-	Tue, 15 Oct 2024 07:47:35 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 07:47:35 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, namhyung@kernel.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] perf test: Fix perf test case 84 on s390
-Date: Tue, 15 Oct 2024 09:47:26 +0200
-Message-ID: <20241015074726.268029-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728978457; c=relaxed/simple;
+	bh=gX3f+2FWsYw0jkSbN5H7fVFJERrgYBZ+pS71Wt3u8sE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NJTVeSmkvWihnIs1A9lQwm2fm+3DjcrNIH9qsxG4ClP4dTAzQ7POrSbyr+eyqgTSJ3frV80n/4HNd+obdvIwXVHqNMzfhO8xQq1IBGLft2UIvxnL6ObhuPmVE8WAgjFtz6cgHKYDiw5Bh7kvAjH6y09e/CDHoipWj6eo9L5zha0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e690479cso2722128e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:47:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728978454; x=1729583254;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Of1orp73ALcYZ60HGKc175ZnaLAK0MzDMBeIeyVHrCs=;
+        b=R4Lk7XdbaJKUpf6UR2+dfbJI5bTDpcmzbHEPGlRaXGmmIhKsJ84/95AifrD55HTSvn
+         EQXFuI1eQkbYY+IwYY2Acv3eKL0tQmbqc0jFVuOA8LfW8YUuxNyeGFqxWSrxJwEeGyme
+         3ysUcb+gFxaVqWHiBiwtpao46qC0L5T9xAaWUqyWkRIRJicTHbHh9mtUk5WNQRVecTib
+         HCaDM6St90N5YeXNQSHfs9A5DdadXOnyQtgWAJA7+U8m61JJyd6T/W8R9zT5TSI4qnxk
+         j738MJ3PS/V5uT+tkCe5OGCW53ENDf6RmrX1VQMQnmB4mb/osXUnc9janljF/JmYNd4W
+         d/Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCXM6c1xTUykCHBx1nq3D7XQdD5E+1/dOFf9hGA1lkNkejDIkqxqikgBtt6UAgNE3UY98tATQD/2JSS8k8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeNyCdVNY6JLfvy5lpS6OOWGqiVTuVZ4fC9E2W9yOqfDLmhcHI
+	atuUKy043KLULc1YXSniiLScdhTDK275foa/i05Ogj/phdW10MvtZPNMUKji
+X-Google-Smtp-Source: AGHT+IG/o5r8fkWv1A1tab1f2C4a8uSEqzJLfHvNVzOcDTorTwu2B1sH8sDU6jkJehbBVJVNUvg4OQ==
+X-Received: by 2002:a05:6512:2398:b0:52c:9468:c991 with SMTP id 2adb3069b0e04-539e54e72a2mr4913933e87.14.1728978453311;
+        Tue, 15 Oct 2024 00:47:33 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56f241sm9717755e9.22.2024.10.15.00.47.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 00:47:32 -0700 (PDT)
+Message-ID: <ab456339-18fd-45d8-abde-b04196e0f604@kernel.org>
+Date: Tue, 15 Oct 2024 09:47:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: x_9bzKsb9YCoEXrhLBvQ5ikC6DjQNHa4
-X-Proofpoint-ORIG-GUID: x_9bzKsb9YCoEXrhLBvQ5ikC6DjQNHa4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- clxscore=1011 phishscore=0 suspectscore=0 impostorscore=0 malwarescore=0
- mlxlogscore=999 lowpriorityscore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150049
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kfifo: don't include dma-mapping.h in kfifo.h
+To: Christoph Hellwig <hch@lst.de>, stefani@seibold.net
+Cc: jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org
+References: <20241014144643.51917-1-hch@lst.de>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20241014144643.51917-1-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Perf test case 84 'perf pipe recording and injection test'
-sometime fails on s390, especially on z/VM virtual machines.
+On 14. 10. 24, 16:46, Christoph Hellwig wrote:
+> Nothing in kfifo.h needs dma-mapping.h.  Drop the include to
+> reduce include bloat.
+> 
+> Fixes: d52b761e4b1a ("kfifo: add kfifo_dma_out_prepare_mapped()")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/mailbox/omap-mailbox.c | 1 +
+>   include/linux/kfifo.h          | 1 -
+>   samples/kfifo/dma-example.c    | 1 +
+>   3 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+> index 6797770474a55d..680243751d625f 100644
+> --- a/drivers/mailbox/omap-mailbox.c
+> +++ b/drivers/mailbox/omap-mailbox.c
+> @@ -15,6 +15,7 @@
+>   #include <linux/slab.h>
+>   #include <linux/kfifo.h>
+>   #include <linux/err.h>
+> +#include <linux/io.h>
 
-This is caused by a very short run time of workload
+Oh, I've just noticed this. Why io.h?
 
-  # perf test -w noploop
-
-which runs for 1 second. Occasionally this is not long
-enough and the perf report has no samples for symbol noploop.
-
-Fix this and enlarge the runtime for the perf work load
-to 3 seconds. This ensures the symbol noploop is always
-present.
-
-Output before:
- Inject -b build-ids test
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.195 MB - ]
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.277 MB - ]
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.195 MB - ]
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.160 MB
-			 /tmp/perf.data.ELzRdq (4031 samples) ]
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.195 MB - ]
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.195 MB - ]
- Inject -b build-ids test [Success]
-
- Inject --buildid-all build-ids test
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.195 MB - ]
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.014 MB - ]
- Inject --buildid-all build-ids test [Failed - cannot find
-				noploop function in pipe #2]
-
-Output after:
-Successful execution for over 10 times in a loop.
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
----
- tools/perf/tests/shell/pipe_test.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/tests/shell/pipe_test.sh b/tools/perf/tests/shell/pipe_test.sh
-index d4c8005ce9b9..02d9ef27c8e7 100755
---- a/tools/perf/tests/shell/pipe_test.sh
-+++ b/tools/perf/tests/shell/pipe_test.sh
-@@ -12,7 +12,7 @@ skip_test_missing_symbol ${sym}
- 
- data=$(mktemp /tmp/perf.data.XXXXXX)
- data2=$(mktemp /tmp/perf.data2.XXXXXX)
--prog="perf test -w noploop"
-+prog="perf test -w noploop 3"
- err=0
- 
- set -e
 -- 
-2.47.0
+js
+suse labs
 
 
