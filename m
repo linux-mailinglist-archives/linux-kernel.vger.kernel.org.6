@@ -1,195 +1,114 @@
-Return-Path: <linux-kernel+bounces-366305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0820199F378
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:55:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A68299F259
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A371F24527
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:55:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3CF1C20DD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002C01F76CC;
-	Tue, 15 Oct 2024 16:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBBC1EB9E6;
+	Tue, 15 Oct 2024 16:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="dyJ8JWfX"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PjZP+RiV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBE1CBA1C;
-	Tue, 15 Oct 2024 16:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAC11F4FA7;
+	Tue, 15 Oct 2024 16:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729011345; cv=none; b=p+gxuj7Bj6XS78Dvnpzol0WD7KaAhleiISgxZBJJdheZC9E830Q4mzBGOKV4meFskZInoCKNru/fWcN9aW3C3YRSHwpA1fELbUYduBsr3JgKXswA/8MbALI5JTY8Z8r5FrzVWEaXp6TYbkBkDeudaKbjb61k91WqjWlHWX7gIVc=
+	t=1729008600; cv=none; b=U2YAAXo/ozzkRvEoYq44xc4jS8z2SEDlfVN/Hr7y8IxU1ynfIEPXt/8dthLQu4OZMyQkB1IkbE0edgfSzmfHXcLCFKqMPgQlrS6V0v8SVkJK/zLw2H4Q3cEKp+eJxlrGEexvUrQKylxFXolpdJUluoixm9NsuKJfAo10+pfeOis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729011345; c=relaxed/simple;
-	bh=k2jFwJTmdqC0fGzcYrR+i3TTR8BBLw7WSqbSYcCyFUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q3sghSmLdu4PwOE1LYfvH+sItMU9S47KJkMg8mEZXq4ZsD4QlzE095yxjlvDPfx8Im7MGA2aYOjfuBR84rFCIekXxKVHbyUiuHJYWphvkk9fuHvZSh9eIeTr3D3EUfPAnLsbxCZcc4lHyYrwiJEIXgwP0yrxZCcGD8ICPtEv9II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=dyJ8JWfX; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	s=arc-20240116; t=1729008600; c=relaxed/simple;
+	bh=J4VTQJ1NLVLgh7XcjAsQLSHdH78+MgqnIqovjWPlaJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpSYdF4WYpi6UpUwAXGZPYwx84XY8nz8tDNquYyjoZRmPzZUxozulS5ShdGPCUGvTV2nPlGF3BCe77SctQH5tkbNdXMrgN5I8084eoTg0k0+6Q2GVxdE+g5YwNyrGgVNnXYZNpwdT8zMK7Y6VTeEdQzBcCIiHiUgEt9Jd5VgGxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PjZP+RiV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0FA5440E01A5;
+	Tue, 15 Oct 2024 16:09:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id iyw_ZyN03Y41; Tue, 15 Oct 2024 16:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729008586; bh=0ACTaEqDOJk25us7DX7NyLMS5zpdolAfD3J9jJAXmK4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PjZP+RiV4ak6IXFCThVYfty6P9QPAVorGOaThMZ5Oys0axaDbs6Yz5OtKu1EP1e7j
+	 0WCMAPVdgbWdf2NmwrwTtsYKKSJwy18DRh1tB2MskQ7NvTE7zIvKcLPzCmoLy2beKJ
+	 y2SouYs1/6wtqQnJpsKQO90fIk/UnCAiKdRzrS5tt98GvFZyXwHv+ryvpOV3F+4HwF
+	 Wpvhqw9QlkR9vSURnVcjNgcPmi/fFXZans5TjQCF5Ri1mAX3rH3Akechk1Wqb59JEB
+	 cdDwmac0vDEWxvAxO7Vs78EZXvFH55/u5fjxeTn6J1fYaxeB27Z6+5e10uOZXjStTs
+	 s75IBvJqzrEA6wc5r5R2vgE3wajvcYAQHlwgWFHdvABmP46GOgQd/pKZGgTvwu3gq9
+	 N3OqbT0PUE+d3IG+LlmUlPc/ZMZqc1WMlXvyseur9Q7Xnk79QL7JinZSyjanTQqsBd
+	 ExKilHACYzrlp/T3PNcTANB9Li63qYJYo4VKC3k7pKEZ2fmE45UPk7xc+4187ddDmI
+	 zWUqaJW1yn9pFyNGEkgLameLpuK3FlcbISrUApYQ9zqXbSBkghK9tOrj9xLN0ILtB2
+	 0Mdb7D2V4jcZF1RRzGuDjJmoXETRjyIqu/5PvafqnklOW1QNjYY79rFhwsMXOWQ+//
+	 5/tta4m4qKyhwuw611Pr98c4=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 3DE6488902;
-	Tue, 15 Oct 2024 18:55:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1729011336;
-	bh=QHhwrY1OnwvNGfEUyssvc2Kp8cTGixua2i+C3QVWTJA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dyJ8JWfXSmudK9OM2hQM9dVmZrvvT0iXNqJHyvWZ2VXUoxwgWLMBMweWn8T9fNOKs
-	 vxSZYUaq2/c1SZ86iItJjYMIilm+xFL2O2j2TGYi1u8bgAxShISfHxDeAE85OFCHEJ
-	 UhX8yVhFntN8moe94pz6c/4ZncANv18yFo9e2DHS0SVT6iXCuNFyQIyXm5FJohniSm
-	 kEwF7ivBjfZGaVAzP15erINsaoQggG02WZw7urXusgY3IuYGw9S69czOEfJv9HXIMm
-	 wJd2OzP1yAp9GleZrhHiUuLapMmg+NvX1xbspUSwJxv5yI0Nr1ZzSRlrRaDnel7Vh3
-	 ivKinliNgLcOg==
-Message-ID: <e5a21bb8-00c3-41f1-9a4d-856eb1465d45@denx.de>
-Date: Tue, 15 Oct 2024 17:39:51 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C8A3A40E0198;
+	Tue, 15 Oct 2024 16:09:23 +0000 (UTC)
+Date: Tue, 15 Oct 2024 18:09:18 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Ye Li <ye.li@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 5/6] EDAC/fsl_ddr: Add support for i.MX9 DDR controller
+Message-ID: <20241015160918.GDZw6TruESOa7_4pkd@fat_crate.local>
+References: <20241011-imx95_edac-v2-0-011b68290951@nxp.com>
+ <20241011-imx95_edac-v2-5-011b68290951@nxp.com>
+ <20241015145234.GRZw6BsqnIbaGWMzG_@fat_crate.local>
+ <Zw6IDnkVbN6aErTc@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
- platforms
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Lionel Debieve <lionel.debieve@foss.st.com>
-Cc: linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
- <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
- <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
- <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
- <8c13b0aa-7fb1-493c-9abc-5e5cfd982855@denx.de>
- <d862765e-e396-4f7c-97ff-76df9aa03216@foss.st.com>
- <dca83197-3484-4d6b-8507-118bf9e80e19@denx.de>
- <b06b5d09-190b-4567-aecd-4be1f1dee172@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <b06b5d09-190b-4567-aecd-4be1f1dee172@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zw6IDnkVbN6aErTc@lizhi-Precision-Tower-5810>
 
-On 10/15/24 5:10 PM, Gatien CHEVALLIER wrote:
+On Tue, Oct 15, 2024 at 11:19:42AM -0400, Frank Li wrote:
+> I base on linux-next: next-20241010.
+
+Found what the problem is. Your patch 2/6 was in my spam folder. And that one
+removes those variables.
+
+> I can rebase to edac-for-next
+> https://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git/
 > 
-> 
-> On 10/14/24 20:55, Marek Vasut wrote:
->> On 10/14/24 2:36 PM, Gatien CHEVALLIER wrote:
->>>
->>>
->>> On 10/14/24 10:52, Marek Vasut wrote:
->>>> On 10/14/24 10:38 AM, Gatien CHEVALLIER wrote:
->>>>>
->>>>>
->>>>> On 10/11/24 18:17, Marek Vasut wrote:
->>>>>> On 10/11/24 5:41 PM, Gatien Chevallier wrote:
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>> @@ -551,6 +565,41 @@ static int stm32_rng_probe(struct 
->>>>>>> platform_device *ofdev)
->>>>>>>       priv->rng.read = stm32_rng_read;
->>>>>>>       priv->rng.quality = 900;
->>>>>>> +    if (!priv->data->nb_clock || priv->data->nb_clock > 2)
->>>>>>> +        return -EINVAL;
->>>>>>> +
->>>>>>> +    priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * 
->>>>>>> sizeof(*priv->clk_bulk),
->>>>>>> +                      GFP_KERNEL);
->>>>>>> +    if (!priv->clk_bulk)
->>>>>>> +        return -ENOMEM;
->>>>>>
->>>>>> Try this:
->>>>>>
->>>>>> ret = devm_clk_bulk_get(dev, priv->data->nb_clock, priv->clk_bulk);
->>>>>> ...
->>>>>> // Swap the clock if they are not in the right order:
->>>>>> if (priv->data->nb_clock == 2 &&
->>>>>>      strcmp(__clk_get_name(priv->clk_bulk[0].clk), "core"))
->>>>>> {
->>>>>>   const char *id = priv->clk_bulk[1].id;
->>>>>>   struct clk *clk = priv->clk_bulk[1].clk;
->>>>>>   priv->clk_bulk[1].id = priv->clk_bulk[0].id;
->>>>>>   priv->clk_bulk[1].clk = priv->clk_bulk[0].clk;
->>>>>>   priv->clk_bulk[0].id = id;
->>>>>>   priv->clk_bulk[0].clk = clk;
->>>>>> }
->>>>>>
->>>>>
->>>>> Hi Marek,
->>>>>
->>>>> This won't work as the name returned by this API is clk->core->name.
->>>>> AFAICT, it doesn't correspond to the names present in the device tree
->>>>> under the "clock-names" property.
->>>>> Any other idea or are you fine with what's below?
->>>> Hmmm, it is not great, but at least it reduces the changes 
->>>> throughout the driver, so that is an improvement.
->>>>
->>>> I guess one could do some of_clk_get() and clk_is_match() in probe 
->>>> to look up the clock in OF by name and then compare which clock is 
->>>> which before swapping them in clk_bulk[] array, but that might be 
->>>> too convoluted?
->>>
->>> Yes, probably too much. What's present in the patch is not close to
->>> perfection but has the advantage of being straightforward. If we agree
->>> on that, I'll send a V3 containing the modifications in the bindings
->>> file.
->> Errr, I'm sorry, maybe there is a way to do this better. Look at 
->> drivers/clk/clk-bulk.c :
->>
->>   15 static int __must_check of_clk_bulk_get(struct device_node *np, 
->> int num_clks,
->>   16                                         struct clk_bulk_data *clks)
->>   17 {
->>   18         int ret;
->>   19         int i;
->>   20
->>   21         for (i = 0; i < num_clks; i++) {
->>   22                 clks[i].id = NULL;
->>   23                 clks[i].clk = NULL;
->>   24         }
->>   25
->>   26         for (i = 0; i < num_clks; i++) {
->>   27                 of_property_read_string_index(np, "clock-names", 
->> i, &clks[i].id);
->>   28                 clks[i].clk = of_clk_get(np, i);
->>
->> If I read this right, then clks[i].id should be the DT clock name. So 
->> the swap conditional above could use .id to identify whether the first 
->> position is core clock or not, like this:
->>
->> if (priv->data->nb_clock == 2 &&
->>      strcmp(__clk_get_name(priv->clk_bulk[0].id), "core"))
->>                                              ^^
->>
->> You might need to use devm_clk_bulk_get_all() to access the 
->> of_clk_bulk_get() .
->>
->> Or am I missing something still ?
-> 
-> Oooooh I see, devm_clk_bulk_get() and devm_clk_bulk_get_all() use
-> a different path. I don't understand why, to be honest... The doc
-> doesn't state this difference either.
+> Is it what you expect base?
 
-Indeed, but maybe git log could clarify that ? I learnt about this 
-useful trick at last year Embedded Recipes:
+Yes, please.
 
-$ git log -L:clk_bulk_get_all:drivers/clk/clk-bulk.c
+-- 
+Regards/Gruss,
+    Boris.
 
-> I'll give this a try while also correcting the issue that the robot
-> highlighted.
-Thank you !
+https://people.kernel.org/tglx/notes-about-netiquette
 
