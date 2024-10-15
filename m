@@ -1,252 +1,137 @@
-Return-Path: <linux-kernel+bounces-366578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DEF99F74C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:28:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF59D99F74F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07541C23AE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:28:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AB401F25191
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6506F1B6CF7;
-	Tue, 15 Oct 2024 19:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088721B3953;
+	Tue, 15 Oct 2024 19:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KWuLv9uU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="O9b57Osi"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0021F80B1;
-	Tue, 15 Oct 2024 19:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBD61F80D0;
+	Tue, 15 Oct 2024 19:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729020488; cv=none; b=g8Vcdlq4ub3xSYF0okzMFNWSmyVY27E8iPy/ONZPNf8n7PiH0SQkeVZ0+nbHTV42du/NNc01r3/sxCmY1B//e6W72iuPl6yWqoyqv1cNhYScPXmx/PVKtZN/TpeDMNnX8SSxlL4yQcG5gwU1bBlNgKO9AOcw7CSnIMFKEINzVR4=
+	t=1729020562; cv=none; b=H2O4toc9HtqBcfGDeG9WEERm1x8ygtRJt48M1/Z67GINtUQz6dfmWUMXrFdknEMqHHfLpDz6X/U/FicDpVoc7We3BcjvvUFWacGweTJHAdLSXsw7AMjjFfDMqJEDBtKj46+wyglgF1WIZTPwNBxWc5j1YkekZHa7zKAFo9ORATY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729020488; c=relaxed/simple;
-	bh=Teod+fiuy81NkI3YbMRgUElOe7cPv4xMZtFhA72GuMg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBu6o6e2H9mPcNufX9BkjTiyzEfNuR4BB1/e+nXKhdxJu+d02qdK1Cu23RFZlBRdIgURTyTfVZaKp4BuW8GVz/7THVvNvNDfygTUk6CRy+E0CttqlH2ig4xMjra4Nh42khKlZEwH7kVvEx/jildrMF2sx3IlbphG/vBbkPZ8Y5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KWuLv9uU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FC53gk023274;
-	Tue, 15 Oct 2024 19:27:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	luj3CV7m43y0dvWQjEsnkQUcqdCaiwRvLFmiH/clf88=; b=KWuLv9uUe6rnrv8v
-	0sBDYnLN+2iVACFWxLyL5whH4yMy5Nmf5LLVxxBHLlR4YefsTPtFISxw33ej0qS5
-	cN39LkYzdMnSvXXbi0VwfrsZKIeQk5NtbtTbFr5JI5mpPGPWsVDqYQ/tXGyKwcKP
-	mcBWFenICWY3unyI4XRX/CHuM4pE6/SdkmFKZV3tkJ1cYDWQXscD1GaQAcj64KjX
-	QdHIsFcUCe1XqRBz7PziPXNojMpEVM8wJEXqgAWZnm6UkuKe7v4XrAxHdP8U7+ax
-	M9w8pRrlwWabJP0CooU9FVQF76uAeXqPgqmnvgea9V4fg8y0HvZq2YYNDVmcRhiy
-	e+nfrA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429r3b9b7t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 19:27:59 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FJRwqP014716
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 19:27:58 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 15 Oct 2024 12:27:56 -0700
-Date: Wed, 16 Oct 2024 00:57:53 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: anish kumar <yesanishhere@gmail.com>
-CC: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] leds: class: Protect brightness_show() with
- led_cdev->led_access mutex
-Message-ID: <Zw7COXsvJsWq4db9@hu-mojha-hyd.qualcomm.com>
-References: <20241015162532.2292871-1-quic_mojha@quicinc.com>
- <CABCoZhB97E46NTRq-=JeUCH3V9fc45qC0WpA8qN2y6gxvWmbHA@mail.gmail.com>
+	s=arc-20240116; t=1729020562; c=relaxed/simple;
+	bh=T4QxYgvxCjcejnbOwMByRaNGZltIDpS2NRTCBzbkFXE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=WRiFpT88TRjs17AfJju+vGnQq/5tIFPJA7VFAjvGDNJ2+orlh/xxbSCHxSAYzCzhIeSjDGP37/RyBAsM8SSBeityCygkWf6YAo+KSe6U2JULmYVlcmTHVtl2JxPZXwoNMlURPt4ZYK20ruZ4r3vK1mcQKSLtwiEDDGTPvbdo0p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=O9b57Osi; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb6110c8faso9944911fa.1;
+        Tue, 15 Oct 2024 12:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1729020557; x=1729625357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ffK46DaQHiPwkYw7K81WBqFGG+/9qPysfgZJJ0kG6Pg=;
+        b=O9b57OsiKaU7FkXKgI92amkz1ihyi2pXXoD9QTvHXp5gbngYrqhaz/2c/5EFPeuw/U
+         tYmrYwEqWP1ke1FqIDE9OrczXfxvZknw69IpxK6R/pSyBs2YruhLIQ75GHXpqRNZPzEB
+         V3FuMOM3uZ7Zp5JRjkm9wSfBGm2YMerHpvHifAHVvmqPxIi5uceM0+DWyH9nQ3651ij3
+         1veTfgLM1viMbxV4ojnkCllDCnsnger2HpL7v+o9dK7NhiowFKWbgesZeibQMyGGxVWN
+         0q/aY6x/GoF8c2yAcfC4bVVyBzX7j5qyqhhewO8eUM5OCUOasW2lcc0/bfxDE0pbYVdr
+         ONYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729020557; x=1729625357;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ffK46DaQHiPwkYw7K81WBqFGG+/9qPysfgZJJ0kG6Pg=;
+        b=E2lJntDK2+Y6D6UbUZSHfllkElrPjbHkCB8QUpdHJRGgBMChRQF87rzGGyOFMp+9Se
+         CBtKTZSApsIXxDQMiHTZwIlVEVQ2TXr6A+hLs21xxM/O6N3iCdh6UrITrCwvHMkFUxTw
+         ae05IDADMCqUn+mFxvOPVGoFj8CDD3Nc/I+QM31OfPRZ+OOH0ildG/Qj6ONrvR4hcZw1
+         BZaVmDrDWveFG5O8nTIq04M9FSOgMBhIdLBcd/Ax7ppjDIsh+edciffj4f1Ybg04gvmw
+         10AuNo/UGs0Xqia/uDkLYw2jEL5qtkToR42OZyP73is6ddOLZizm7MMugILJ59PNtW4F
+         lNRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWesQCdvdfe6+i4nnwc3Ts7+zPqOwIYr5cVbr0vw99+F/qqUrIIIQ0dv+vFRC5+O+dhQ5Me5ggQEGUD4uZA@vger.kernel.org, AJvYcCXgnTG6kJgtoUr2T1o5vChyP7+86ikkYiTKZHrNcxW+zRy+WZBIr4ep6eud3XxV9o9TSrG2BubEiEZ8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGc+qDlVLjgJeuQVzx/L/A8YPTRV/tF215z8UNFkbRzT4hb+jr
+	OB9JOnmkjOuxBlAAFQW4yRAaUQBZmlQLJNsT53R+QYVqbAQU55V2
+X-Google-Smtp-Source: AGHT+IFbrG8/Thtvhxtu7bnxzwkT21F5l1gDv6pnVsJtlEKHnm6G/4UsP/zlXdJL/d/sZR3je+Ka+Q==
+X-Received: by 2002:a2e:a542:0:b0:2fb:6169:c42d with SMTP id 38308e7fff4ca-2fb61bc0be8mr11584851fa.41.1729020556456;
+        Tue, 15 Oct 2024 12:29:16 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:908:1587:1e60:43a9:8917:3db1:25e8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4f857bsm983917a12.21.2024.10.15.12.29.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 12:29:15 -0700 (PDT)
+From: Cenk Uluisik <cenk.uluisik@googlemail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Andy Yan <andyshrk@163.com>,
+	Tim Lunn <tim@feathertop.org>,
+	Jagan Teki <jagan@edgeble.ai>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	Jimmy Hon <honyuenkwun@gmail.com>,
+	Cenk Uluisik <cenk.uluisik@googlemail.com>,
+	Jing Luo <jing@jing.rocks>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 1/2] dt-bindings: arm: rockchip: Add Orange Pi 5b enum to Orange Pi 5 entry
+Date: Tue, 15 Oct 2024 21:28:35 +0200
+Message-ID: <20241015192905.28969-1-cenk.uluisik@googlemail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCoZhB97E46NTRq-=JeUCH3V9fc45qC0WpA8qN2y6gxvWmbHA@mail.gmail.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YOK3ukDIbhcVHzHZX8ynM3QYklpwSqIZ
-X-Proofpoint-GUID: YOK3ukDIbhcVHzHZX8ynM3QYklpwSqIZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- priorityscore=1501 clxscore=1011 adultscore=0 lowpriorityscore=0
- mlxlogscore=991 phishscore=0 malwarescore=0 suspectscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150130
 
-On Tue, Oct 15, 2024 at 10:59:12AM -0700, anish kumar wrote:
-> On Tue, Oct 15, 2024 at 9:26 AM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
-> >
-> > There is NULL pointer issue observed if from Process A where hid device
-> > being added which results in adding a led_cdev addition and later a
-> > another call to access of led_cdev attribute from Process B can result
-> > in NULL pointer issue.
-> 
-> Which pointer is NULL? Call stack shows that dualshock4_led_get_brightness
-> function could be culprit?
+This extends the Xunlong Orange Pi 5 device tree binding with an enum for
+the Orange Pi 5b, which is implemented before the device tree.
 
-in dualshock4_led_get_brightness()[1], led->dev is NULL here, as [2]
-is not yet completed.
+How does this board differ from the original Orange Pi 5?
+  - the Orange Pi 5 has a M.2 NVMe M-key PCI 2.0x1
+    slot (hooked to combphy0_ps) whereas the Orange Pi 5b uses combphy0_ps
+    for the WiFi.
+  - The Orange Pi 5 with the M.2 socket has a regulator defined hooked to
+    "GPIO0_C5" (i.e. PCIE_PWREN_H) whereas the Orange Pi 5B has GPIO0_C5
+    hooked to BT_WAKE_HOST.
+  - builtin eMMC storage
+  - no SPI NOR flash (u-boot, preboot etc. initiates
+      from within the eMMC
+      storage)
+  - ap6275p Wifi module (like the Orange Pi 5 Plus)
+  - builtin BlueTooth module
 
-[1]
- struct hid_device *hdev = to_hid_device(led->dev->parent);
+Signed-off-by: Cenk Uluisik <cenk.uluisik@googlemail.com>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-[2]
-led_cdev->dev = device_create_with_groups(&leds_class, parent, 0,
-                  led_cdev, led_cdev->groups, "%s", final_name);
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 687823e58c22..62bb6587da8f 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -1051,7 +1051,9 @@ properties:
+ 
+       - description: Xunlong Orange Pi 5
+         items:
+-          - const: xunlong,orangepi-5
++          - enum:
++              - xunlong,orangepi-5
++              - xunlong,orangepi-5b
+           - const: rockchip,rk3588s
+ 
+       - description: Zkmagic A95X Z2
+-- 
+2.46.1
 
-> 
-> >
-> > Use mutex led_cdev->led_access to protect access to led->cdev and its
-> > attribute inside brightness_show().
-> 
-> I don't think it is needed here because it is just calling the led driver
-> callback and updating the brightness. So, why would we need to serialize
-> that using mutex? Maybe the callback needs some debugging.
-> I'm curious if it is ready by the time the callback is invoked.
-
-Because, we should not be allowed to access led_cdev->dev as it is not
-completed and since, brightness_store() has this lock brightness_show()
-should also have this as we are seeing the issue without it.
-
-I hope, above might have answered your question.
-
--Mukesh
-> 
-> >
-> >         Process A                               Process B
-> >
-> >  kthread+0x114
-> >  worker_thread+0x244
-> >  process_scheduled_works+0x248
-> >  uhid_device_add_worker+0x24
-> >  hid_add_device+0x120
-> >  device_add+0x268
-> >  bus_probe_device+0x94
-> >  device_initial_probe+0x14
-> >  __device_attach+0xfc
-> >  bus_for_each_drv+0x10c
-> >  __device_attach_driver+0x14c
-> >  driver_probe_device+0x3c
-> >  __driver_probe_device+0xa0
-> >  really_probe+0x190
-> >  hid_device_probe+0x130
-> >  ps_probe+0x990
-> >  ps_led_register+0x94
-> >  devm_led_classdev_register_ext+0x58
-> >  led_classdev_register_ext+0x1f8
-> >  device_create_with_groups+0x48
-> >  device_create_groups_vargs+0xc8
-> >  device_add+0x244
-> >  kobject_uevent+0x14
-> >  kobject_uevent_env[jt]+0x224
-> >  mutex_unlock[jt]+0xc4
-> >  __mutex_unlock_slowpath+0xd4
-> >  wake_up_q+0x70
-> >  try_to_wake_up[jt]+0x48c
-> >  preempt_schedule_common+0x28
-> >  __schedule+0x628
-> >  __switch_to+0x174
-> >                                                 el0t_64_sync+0x1a8/0x1ac
-> >                                                 el0t_64_sync_handler+0x68/0xbc
-> >                                                 el0_svc+0x38/0x68
-> >                                                 do_el0_svc+0x1c/0x28
-> >                                                 el0_svc_common+0x80/0xe0
-> >                                                 invoke_syscall+0x58/0x114
-> >                                                 __arm64_sys_read+0x1c/0x2c
-> >                                                 ksys_read+0x78/0xe8
-> >                                                 vfs_read+0x1e0/0x2c8
-> >                                                 kernfs_fop_read_iter+0x68/0x1b4
-> >                                                 seq_read_iter+0x158/0x4ec
-> >                                                 kernfs_seq_show+0x44/0x54
-> >                                                 sysfs_kf_seq_show+0xb4/0x130
-> >                                                 dev_attr_show+0x38/0x74
-> >                                                 brightness_show+0x20/0x4c
-> >                                                 dualshock4_led_get_brightness+0xc/0x74
-> >
-> > [ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
-> > [ 3313.874301][ T4013] Mem abort info:
-> > [ 3313.874303][ T4013]   ESR = 0x0000000096000006
-> > [ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > [ 3313.874307][ T4013]   SET = 0, FnV = 0
-> > [ 3313.874309][ T4013]   EA = 0, S1PTW = 0
-> > [ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
-> > [ 3313.874313][ T4013] Data abort info:
-> > [ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-> > [ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > [ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > [ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
-> > ..
-> >
-> > [ 3313.874332][ T4013] Dumping ftrace buffer:
-> > [ 3313.874334][ T4013]    (ftrace buffer empty)
-> > ..
-> > ..
-> > [ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
-> > [ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
-> > [ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
-> > [ 3313.874656][ T4013] sp : ffffffc0b910bbd0
-> > ..
-> > ..
-> > [ 3313.874685][ T4013] Call trace:
-> > [ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
-> > [ 3313.874690][ T4013]  brightness_show+0x20/0x4c
-> > [ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
-> > [ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
-> > [ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
-> > [ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
-> > [ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
-> > [ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
-> > [ 3313.874711][ T4013]  ksys_read+0x78/0xe8
-> > [ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
-> > [ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
-> > [ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
-> > [ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
-> > [ 3313.874727][ T4013]  el0_svc+0x38/0x68
-> > [ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
-> > [ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
-> >
-> > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > ---
-> >  drivers/leds/led-class.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > index 06b97fd49ad9..e3cb93f19c06 100644
-> > --- a/drivers/leds/led-class.c
-> > +++ b/drivers/leds/led-class.c
-> > @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
-> >  {
-> >         struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> >
-> > -       /* no lock needed for this */
-> 
-> >> also you missed this.
-> 
-> > +       mutex_lock(&led_cdev->led_access);
-> >         led_update_brightness(led_cdev);
-> > +       mutex_unlock(&led_cdev->led_access);
-> >
-> >         return sprintf(buf, "%u\n", led_cdev->brightness);
-> >  }
-> > --
-> > 2.34.1
-> >
-> >
 
