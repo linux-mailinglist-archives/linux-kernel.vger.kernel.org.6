@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-366653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0623799F84D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A03399F84F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4761F22B76
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:54:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321A91F22B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361331F9ED8;
-	Tue, 15 Oct 2024 20:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D771FBF52;
+	Tue, 15 Oct 2024 20:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhbRwCJs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaSX1VpI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D691F80DD;
-	Tue, 15 Oct 2024 20:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FFC1FBF41;
+	Tue, 15 Oct 2024 20:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729025646; cv=none; b=KS6cWK9aYZzS/Tiq85QT/YIoxu4L6sjVXHrsySraxthgjhQZdYgTcD34VRsvBXcEgZMgy8m2AsN5v4AfRdK//wrboavPBEwBMfNibxQSZoOcKo2eQjRV8g/J/0xSgEzOJi+Qc17Tii/7d47KKU//ViaD3atk5hVjWNN6I+4KL4E=
+	t=1729025649; cv=none; b=i1ujXZSRBIPAKyQbUrXGcVhVPBmiGQW1hFrxetvnFwfRF3vzViyIoGYxnzm5dddugb9RHl7h4aF9+ydrDjpoDLKatArd9bJZc07Opmtd5uWd01pStordKru9h80eHSRDieuNgSOWYLAnG+ynW4mdSKml1fhjqrCAM1Wr+HfcFaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729025646; c=relaxed/simple;
-	bh=9wxjI5r/Gdefhk0EShbLW4iHqs+1lKibN5Vf788gSqs=;
+	s=arc-20240116; t=1729025649; c=relaxed/simple;
+	bh=dxLe8pq5mSXA6ZyikQ6T09dXj2SPF/PaIf6/4RUjGlU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0wl2/ARlffBjEbe5UmkNjevoCtz1SIMW3bDzZBTghcan6XnDwFCJvVp+3A0a5AvpTT4i9aYeF/gBXBmOHhq5ptNq4R6kg8JNmszol/SnW8rlCtH7uMvBW7sNDF4mELqhGZ1iiw8IhbYogruY2TPKsuqBwd4nVXrS9ehHrTlmJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhbRwCJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A719C4CEC6;
-	Tue, 15 Oct 2024 20:54:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZjH1dKkhLImqZUBfvCk7BMcRlM1Hy6atYAcP5maLNrxLbbE538HYjH8ZEp+zkzv03RKUUFbqTYPCriUfmiViNICLPhXkWhjTzdx+4RbGDPNLjp0qgtop03REb6SqN/o2yEUJvNXuVjgwb+Q2uwxsNx01tfm4f2VXaJ8McFhTvBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaSX1VpI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9900CC4CED1;
+	Tue, 15 Oct 2024 20:54:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729025646;
-	bh=9wxjI5r/Gdefhk0EShbLW4iHqs+1lKibN5Vf788gSqs=;
+	s=k20201202; t=1729025648;
+	bh=dxLe8pq5mSXA6ZyikQ6T09dXj2SPF/PaIf6/4RUjGlU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fhbRwCJsK0YIM74AH6OIEukQtGWuMTAcTKdSgRzAYswYMg/JugZFFYjjOjHy6Xluy
-	 XiAL4uQGLyDDumnbNRLtnHpl5Di2fZC6ja1sQr+kcvJNJOGy7fzna7zIXXDzR54wnu
-	 Q/10XN6kHU9gNXewPhTEOWKMjRR0w7dwcgHywbig8jQhGUu7Aud+GNedFfSOFWyYJW
-	 PjXqxmYO11X6UVr/n+xN6/areN0If7HKaS0Bpb8xomcAMZr7prPNVcQsQ7WU8E3/cS
-	 GlraG+jHbXXIwjAmrp9NUKmNfi2yluOF3STC7fFMMrHcd8FqI3HCRYZ+Eew0vx72Am
-	 Q27dT6e4GRYGQ==
-Date: Tue, 15 Oct 2024 15:54:05 -0500
-From: Rob Herring <robh@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	ChiYuan Huang <cy_huang@richtek.com>, linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	Chris-qj chen <chris-qj.chen@mediatek.com>
-Subject: Re: [PATCH 1/2] dt-bindings: usb: mediatek,mt6360-tcpc: add ports
- properties
-Message-ID: <20241015205405.GA1934266-robh@kernel.org>
-References: <20241015103337.20479-1-macpaul.lin@mediatek.com>
+	b=MaSX1VpIDaWjr+PVKj8bGzgc9Ohnj1XK9heWLlIQmOFARXxwjtxyX3leqNijRdssf
+	 BC0+MQ8fYZa1L8/LFnZV5+COBaJYPuvg0RMjQ5QUxi2AXyCIvKBGpp1KuyEKuPQFKf
+	 O+l7DDHJDEJKZ13PMAD5JyJ62oiDx8ZWVHpdPihLhou+EXQSCflDUwhkkH2DSv6sNY
+	 EGcen9Zh7PIXGeBogdau9wUoLV4P8FrgRyfk7RYtNS1KTLxlwOO6OK36zraQ/0z/5P
+	 bgh3YBoRlRJ2Aoz4Ny7k3Uqpk42RAKaIY8S4eLKTZ3Latf5074NjD3vvDQ9UUUBtS7
+	 iHOctD3I9RoAg==
+Date: Tue, 15 Oct 2024 13:54:06 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm <linux-mm@kvack.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH v5 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
+Message-ID: <Zw7WbhSXnOlUf1lD@google.com>
+References: <20241010232505.1339892-1-namhyung@kernel.org>
+ <20241010232505.1339892-3-namhyung@kernel.org>
+ <CAADnVQLN1De95WqUu2ESAdX-wNvaGhSNeboar1k-O+z_d7-dNA@mail.gmail.com>
+ <Zwl5BkB-SawgQ9KY@google.com>
+ <Zw1fN1WqjvoCeT_s@google.com>
+ <CAADnVQJ2M953da8_gnGgWR9x6_-ztqFO8xvRU=bKcwmsH4ewvg@mail.gmail.com>
+ <Zw6yToBbtOBPvUWx@google.com>
+ <CAADnVQ+Y8BG80=8vcipKVnOL0Htd7W60f4LOPB5shG4eSORVcg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241015103337.20479-1-macpaul.lin@mediatek.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQ+Y8BG80=8vcipKVnOL0Htd7W60f4LOPB5shG4eSORVcg@mail.gmail.com>
 
-On Tue, Oct 15, 2024 at 06:33:36PM +0800, Macpaul Lin wrote:
-> Add 'ports' and sub node 'port' properties to specify connectors on the
-> High-Speed/Super-Speed data bus, or Sideband Use (SBU) AUX lines
-> endpoints of the USB controller.
+On Tue, Oct 15, 2024 at 11:25:11AM -0700, Alexei Starovoitov wrote:
+> On Tue, Oct 15, 2024 at 11:20 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Mon, Oct 14, 2024 at 06:50:49PM -0700, Alexei Starovoitov wrote:
+> > > On Mon, Oct 14, 2024 at 11:13 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > Hi Alexei,
+> > > >
+> > > > On Fri, Oct 11, 2024 at 12:14:14PM -0700, Namhyung Kim wrote:
+> > > > > On Fri, Oct 11, 2024 at 11:35:27AM -0700, Alexei Starovoitov wrote:
+> > > > > > On Thu, Oct 10, 2024 at 4:25 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > > >
+> > > > > > > The bpf_get_kmem_cache() is to get a slab cache information from a
+> > > > > > > virtual address like virt_to_cache().  If the address is a pointer
+> > > > > > > to a slab object, it'd return a valid kmem_cache pointer, otherwise
+> > > > > > > NULL is returned.
+> > > > > > >
+> > > > > > > It doesn't grab a reference count of the kmem_cache so the caller is
+> > > > > > > responsible to manage the access.  The returned point is marked as
+> > > > > > > PTR_UNTRUSTED.  And the kfunc has KF_RCU_PROTECTED as the slab object
+> > > > > > > might be protected by RCU.
+> > > > > >
+> > > > > > ...
+> > > > > > > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RCU_PROTECTED)
+> > > > > >
+> > > > > > This flag is unnecessary. PTR_UNTRUSTED can point to absolutely any memory.
+> > > > > > In this case it likely points to a valid kmem_cache, but
+> > > > > > the verifier will guard all accesses with probe_read anyway.
+> > > > > >
+> > > > > > I can remove this flag while applying.
+> > > > >
+> > > > > Ok, I'd be happy if you would remove it.
+> > > >
+> > > > You will need to update the bpf_rcu_read_lock/unlock() in the test code
+> > > > (patch 3).  I can send v6 with that and Vlastimil's Ack if you want.
+> > >
+> > > Fixed all that while applying.
+> > >
+> > > Could you please follow up with an open-coded iterator version
+> > > of the same slab iterator ?
+> > > So that progs can iterate slabs as a normal for/while loop ?
+> >
+> > I'm not sure I'm following.  Do you want a new test program to iterate
+> > kmem_caches by reading list pointers manually?  How can I grab the
+> > slab_mutex then?
 > 
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->  .../bindings/usb/mediatek,mt6360-tcpc.yaml    | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/mediatek,mt6360-tcpc.yaml b/Documentation/devicetree/bindings/usb/mediatek,mt6360-tcpc.yaml
-> index 053264e60583..5b6ea0d734ea 100644
-> --- a/Documentation/devicetree/bindings/usb/mediatek,mt6360-tcpc.yaml
-> +++ b/Documentation/devicetree/bindings/usb/mediatek,mt6360-tcpc.yaml
-> @@ -32,6 +32,27 @@ properties:
->      description:
->        Properties for usb c connector.
->  
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +    description:
-> +      Any connector to the data bus of this controller should be specified.
-> +    properties:
+> No.
+> See bpf_iter_task_new/_next/_destroy kfuncs and
+> commit c68a78ffe2cb ("bpf: Introduce task open coded iterator kfuncs").
 
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
+Oh, ok.  Thanks for the pointer, I'll take a look and add the open code
+version.
 
-No need for these, already defined in the $ref'ed schema.
+Thanks,
+Namhyung
 
-> +
-> +    patternProperties:
-> +      "port@[0-2]$":
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          It could be one of the following interface types. High-Speed
-> +          (HS) data bus endpoint to the Type-C connector, SuperSpeed (SS)
-> +          data bus endpoint to the Type-C connector, or Sideband Use (SBU)
-> +          AUX lines endpoint to the Type-C connector for the purpose of
-> +          handling altmode muxing and orientation switching.
-
-You have to define what each port number is.
-
-However, I'm completely confused as to why you need any of this. The 
-description sounds like the usb-c-connector which is already defined as 
-a child node.
-
-Rob
 
