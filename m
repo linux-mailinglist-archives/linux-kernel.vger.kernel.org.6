@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-366667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCEC99F87D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:01:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6D999F87B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFC84B20ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:01:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3E7B286960
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04CD1FBF72;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0B01FBF6C;
 	Tue, 15 Oct 2024 21:01:26 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E991FAEF4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F56D1F9EB5;
 	Tue, 15 Oct 2024 21:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729026086; cv=none; b=ktBbFPBNQjfqzfscJhScl0miyPkgc+iEeqlG0E+Eyuc7Vd+JNUgUTwEuMi9QR23ig1GsbbkzHLWWZhMVt7jZNqhzCoZh4zUHC7VJI5VlN6m4K+YjqZ2yZmuDD9/LrB1QihVoyQHG7nFlOk3TWT42a5XkZZkfKauZrM2959lhbGE=
+	t=1729026086; cv=none; b=PvvTeQa1XYL5UPW30nNiDc+yRuyyWO+3Ge4hm+A57DQkJ2OwTzj0EctXuR3jMBwF3ZMxK2D+Ss5hvcPjS4CHuPtcPKq5GSvKNQOJfu3n+0VnPnmcIrijGdRUBncPsZryA+iKLQeflMffm7dXbcJtobG1O37rpn7jRSbdHrDc+Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729026086; c=relaxed/simple;
-	bh=iyfIE3tV4Y9GLhFcTONAKLm8L1+8vXX8JY52fi0VVqI=;
+	bh=rFP5aiFo5gPBll5iSGgzw2eSuiBpiYmPQVeMX6hiXHM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eqvxaKh34hbGsB6yYBXrBf6bmp8/qQtj402pbgOEjIL8Yuv+7rjvEBY3Q0vOHXvXHOplHVZRICgXZOahfBjfhVBBLNqkDtF81GMU1ysQuYeUVomvv13YAByjv8XT/uhEbhiLM6KDq/orXV3zozyQl9LjpVqK0VeD9J2fq2+9Lto=
+	 MIME-Version:Content-Type; b=YVo3dlClpJAzohBhVV1aJGX9jdpE3IPP+FQG4IrC24PFLxF1e5PoJ60Wa8At/XhVoLxsVu083z8MUtaGA8EjVuC/TEJI+r0unpcEYELKCumGOGGpufuHoaWWEg6yYmBzJmtwD9HQP3GSCDioRUSpkCEn+i4vfpNaLFb4Dyp3aGU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E453AC4AF09;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD191C4CED0;
 	Tue, 15 Oct 2024 21:01:25 +0000 (UTC)
 Received: by mercury (Postfix, from userid 1000)
-	id 7405D1060445; Tue, 15 Oct 2024 23:01:23 +0200 (CEST)
+	id 6595A1060433; Tue, 15 Oct 2024 23:01:23 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: sre@kernel.org, linus.walleij@linaro.org, 
- Shen Lichuan <shenlichuan@vivo.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, opensource.kernel@vivo.com
-In-Reply-To: <20240914085415.3886-1-shenlichuan@vivo.com>
-References: <20240914085415.3886-1-shenlichuan@vivo.com>
-Subject: Re: [PATCH v1] power: supply: Correct multiple typos in comments
-Message-Id: <172902608346.467915.3387692460713675814.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241005-power-supply-battery-const-v1-0-c1f721927048@weissschuh.net>
+References: <20241005-power-supply-battery-const-v1-0-c1f721927048@weissschuh.net>
+Subject: Re: [PATCH 0/7] power: supply: constify ocv and resistance tables
+Message-Id: <172902608335.467915.16942683889560111430.b4-ty@collabora.com>
 Date: Tue, 15 Oct 2024 23:01:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -47,30 +49,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 
 
-On Sat, 14 Sep 2024 16:54:15 +0800, Shen Lichuan wrote:
-> Fixed some spelling errors, the details are as follows:
+On Sat, 05 Oct 2024 12:04:16 +0200, Thomas Weißschuh wrote:
+> These tables are nevery modified. Reflect this in the API and constify
+> the table definitions.
 > 
-> -in the code comments:
-> 	dettached->detached
-> 	meausered->measured
-> 	meausurement->measurement
-> 	sholuld->should
-> 	Tempreture->Temperature
-> 	measuremnts->measurements
-> 	detecing->detecting
-> 	persent->percent
-> 	Parallell->Parallel
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] power: supply: Correct multiple typos in comments
-      commit: 570c2234d5d62d52be7e8e35169b96d98378a7ce
+[1/7] power: supply: core: constify power_supply_battery_info::resist_table
+      commit: 58797abed49d6b78c7af99b03b037f20c7ffb203
+[2/7] power: supply: ab8500: constify resistance table
+      commit: 40d00fa5a8be87812a7acb6524eb3d8fd3ea42b9
+[3/7] power: supply: samsung-sdi-battery: constify resistance table
+      commit: 27fde3aa4f924793966c8aa5b10506c41ce933e1
+[4/7] power: supply: sc27xx: use const reference to ocv table
+      commit: 840683c341907b37173e270798607a83462118f1
+[5/7] power: supply: core: constify power_supply_battery_info::ocv_table
+      commit: ce20d5b9e37099a035ab34d4d3f59e1744756385
+[6/7] power: supply: ab8500: constify ocv table
+      commit: b7b6bf444529c2ead9416e79d8dd8a2cb832cd24
+[7/7] power: supply: samsung-sdi-battery: constify ocv table
+      commit: b5289ba57a27a212acad14b81ec6597ce140e01d
 
 Best regards,
 -- 
