@@ -1,171 +1,214 @@
-Return-Path: <linux-kernel+bounces-366626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF2F99F7F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:14:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03E999F7FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5EBB1F22313
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:14:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF872B21E5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741181F76D2;
-	Tue, 15 Oct 2024 20:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7961F76D2;
+	Tue, 15 Oct 2024 20:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="N3q2vmdC"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uq8bOfXN"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE261F6695
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702F41B6D04
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729023244; cv=none; b=J3xCZVZB2krl9AoBmaMRJGcS7OQgVDtQ3LxsLRPw3Dvx1W2Ah6aba59kXhlO67+vqPk2nuqZlxS3v9/6Mbkftj8ENTB89iPgEjgcRquYqTi9MD9Y+KhwHIo0LUPvydvSAZsrR+fb8VnRwzmKR9h4HMxgL3YQ8hHHUKgXestCPqY=
+	t=1729023286; cv=none; b=QAz2vb85sdOqx8Espv6HjpDPcoomvEIOcBqNqIXxDY4mkNgQty2nzP0BSVibHMXjFcYClDnums0g5rXCNg4h1VgacD8iuewnHtLgEaU+C3ZvDdCkLSdn/DDpn2brqCdsXlNE07SwgmtUjYt9WotKqeHKETU0OjWdn6ChwdmbViQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729023244; c=relaxed/simple;
-	bh=oWZAEWmWn11pICS2WghDTqvtxTlwbis+AKwY8WLaaII=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VnSUollL4Qdi88C6ljSUNYSilijhfFTf4cpaR2h9KBSnT1MdFkkUiqRv48ZEeoCGqTWmO6/a39RKSGrf7+abeGD8oXgrnD1Hd201twSxFeyC8DARJE1I1L1jsNBx1W/QbtkmaMz0U1bT1An/+47N5EebpGCGmU7o+YVUc6p1F1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=N3q2vmdC; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1729023234; x=1729282434;
-	bh=oWZAEWmWn11pICS2WghDTqvtxTlwbis+AKwY8WLaaII=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=N3q2vmdCHEAzWfagD0SM+pZXcpUTWCzquQH0AbCpxZsxZolcyASpe6qALHsApCvzz
-	 fMmbnbAxPk3OpMQBg5kjZKRlUVT49Kd/Yo08Q9Ny5sUbUV0jX9/xbWDIH3tL8n291d
-	 GAMWj0pFpnMrQnKbeDuJFNEUkr5rlR5ZRPux5cGyrqkeEjOoHsWKg7p+hWerSWt+iS
-	 RLx/sOeAee0DWR6ZDooP1b3G1A3Obq6adcwyK8XftOREDpCrmc2x7Ylg2F9IWTRvuB
-	 NE/ltpZ+2dtazvzEWM4MYLC1UXGVADuQFVyrzLmaUGomvY7xeB1oTT/xo/U4P0Btk5
-	 rjcTlzl9Bso6Q==
-Date: Tue, 15 Oct 2024 20:13:40 +0000
-To: Andy Yan <andyshrk@163.com>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
-Subject: Re:Re:[PATCH v5] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <1974DYrs9gLrQrZ5VwCglFgKDDK686iyqnS_g6uPB-s9wZ_4CqfZXPjmYWihLgrkRu7ptNjpkFeqB0uTt73RFId6cL8FowQ8LFltPmaKCoI=@proton.me>
-In-Reply-To: <30940542.b36d.19290215124.Coremail.andyshrk@163.com>
-References: <20241014222022.571819-4-pZ010001011111@proton.me> <7b45f190.452f.1928e41b746.Coremail.andyshrk@163.com> <o_Cyz_ARcHj4zNlovv75MBwslIRhn3YWlscoNrlpLVobh7eWIMEQR5bNv0yhHx2KEx_gbYi_gH-8Y-CdvRZs9lZscz3-lhAbM50GXUdtSKY=@proton.me> <30940542.b36d.19290215124.Coremail.andyshrk@163.com>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 932c22f934c19cba4c98a2e1488d80d40e7faf7a
+	s=arc-20240116; t=1729023286; c=relaxed/simple;
+	bh=c/bKIOsvcd/ldDaqMA9ktiDp5SrgrMB7GIaoSV1abEc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gn0IkOeOXEqXT8M26c17GKdykKcbO0X6kPlMpxHG183OSFkFBlTHE5sXWIANLc7UHmIY0PejdADaRdl38XJHMPhzdmqtsZsL1gdUb3Bnuc8Y96lRH55sC/ojpmwKTsUrUzq7b6yUHneoqbI49KkhhDuuzz4DQvZslazt6ydjJ90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uq8bOfXN; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e28b624bfcso85982707b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729023283; x=1729628083; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UebaYyh75z6MJT0VxBr84RUXU8RvVMyK7KQq+4D8YPQ=;
+        b=uq8bOfXNM/7352Zwkk/zvQNOp6m9WdK1nxwL+oBcN68GLgiuBkt4mOyXjz9KyJLJpR
+         7F5sJ3YNsS65K3fcdXjBmuS0EPVcp7dE5GAq4w8Rh7tnOoPm8J0My/U8i5tyn0AprqNC
+         hBV++fjr+Si6PZJK6Mb/YY49LTW36HtWdUvXW6Dg8PXXELXaGY6d3aqL55pIGbb+Uvcb
+         Lico9Ulz/2NSCScW0I8Nud3c/YYcA5C2Qybs7aylvlzfPBKHcj1FGmGRnmqCDJ0Nr1+p
+         BfIFbAnugVFkUj9baVkuyJd41htd8cC7+QtGZKGVa5nVTJ2ogBfn2fXfQFchAaZ6hQQY
+         DBwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729023283; x=1729628083;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UebaYyh75z6MJT0VxBr84RUXU8RvVMyK7KQq+4D8YPQ=;
+        b=wa9DScvEo6g1mpNIDt8+mJ5wco9S65FNdstc+TMad/gwnm5e8vBVSjQ1mWEP3xTDCy
+         b1mDeSevZsST1KiW6C6gDIau5i1dox1JMft0qK3qkyS95qVsZVmapxrLNP5mGlQug56E
+         8MWR26OxBwpkG1eCaUAVskGJKzsMhoiYYmeQkzzDRcgvfPJ0r4sYHkC8bVhRv1gDmD/K
+         pcpqqzlwFLTZbgDdWVwdkVLV6Fg3OGKiy/31LwSU0t+HX6nKaqeDd+3BXHkG/RuppyLN
+         WyiOApEbDAXRe95VzlssjUc5qJdQiUox1gusj3PRXmiTJCU/azfx8HWN5Dm1JmgT91ak
+         cpGA==
+X-Gm-Message-State: AOJu0Yzm2pjwDgtRwddRqjLMBTMRnQMaDAN3IJCbN0Mv9TRJIae6TTAm
+	yxjCyvzt5TBAA0JZHVRvEWE0AKvfKpVLGyWZEYXrHS6zrHiBou3ux8oafLwo/ZswcA8/ekLNML8
+	MK5K+T/NsBaM2VVG1AxGcV9zywLPuTO4muzfrQPX+z1NHX0LhPGNgBVXnfxkiNk1jYiRhwMQ+3P
+	HqE04RyWQcpujVfbjoN/F7AXzOqdaG7Mrr9ByqSG4IBU3TydnbW/gisu5Kf0ZrK+GEJSc=
+X-Google-Smtp-Source: AGHT+IH3LV0vykkRQI21CsAiqWjAUAGcQV66bpXIuI+9nascUO4puiuz/cvcc+SQdRPIbWeMLCdflCLrFkG3djr7Qg==
+X-Received: from dionnaglaze.c.googlers.com ([fda3:e722:ac3:cc00:36:e7b8:ac13:c9e8])
+ (user=dionnaglaze job=sendgmr) by 2002:a05:690c:6906:b0:6e3:eda:5302 with
+ SMTP id 00721157ae682-6e3d41e8268mr245337b3.8.1729023282687; Tue, 15 Oct 2024
+ 13:14:42 -0700 (PDT)
+Date: Tue, 15 Oct 2024 20:14:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241015201424.2914652-1-dionnaglaze@google.com>
+Subject: [PATCH 1/1] firmware_loader: Move module refcounts to allow unloading
+From: Dionna Glaze <dionnaglaze@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ashish.Kalra@amd.com, Dionna Glaze <dionnaglaze@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andy
+If a kernel module registers a firmware upload API ops set, then it's
+unable to be moved due to effectively a cyclic reference that the module
+depends on the upload which depends on the module.
 
-On Tuesday, October 15th, 2024 at 2:22 PM, Andy Yan <andyshrk@163.com> wrot=
-e:
+Instead, only require the try_module_get when an upload is requested to
+disallow unloading a module only while the upload is in progress.
 
-> > > > + struct vop2_video_port *vp,
-> > > > + struct drm_crtc *crtc,
-> > > > + struct drm_crtc_state *crtc_state)
-> > > > +{
-> > > > +
-> > > > + if (vop2->lut_regs && crtc_state->color_mgmt_changed) {
-> > > > + if (!crtc_state->gamma_lut) {
-> > > > + vop2_vp_dsp_lut_disable(vp);
-> > > > + return;
-> > > > + }
-> > > > +
-> > > > + if (vop2_supports_seamless_gamma_lut_update(vop2)) {
-> > >=20
-> > > I think it's bettery to check for rk3568/rk3566 here, the newer soc w=
-ill all follow
-> > > rk3588 support seamless gamma lut update.
-> >=20
-> > I will change in the next version.
-> >=20
-> > > > + vop2_writel(vop2, RK3568_LUT_PORT_SEL, FIELD_PREP(
-> > > > + RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL,
-> > > > + vp->id));
-> > > > + vop2_crtc_write_gamma_lut(vop2, crtc);
-> > > > + vop2_vp_dsp_lut_enable(vp);
-> > > > + vop2_vp_dsp_lut_update_enable(vp);
-> > > > + } else {
-> > >=20
-> > > As for rk3566/68, we should do exclusive check here, because there is=
- only
-> > > one gamma , only one VP can use it at a time. See my comments in V3:
-> >=20
-> > What do you mean exactly by exclusive check in this case.It's true that
-> > gamma LUT is shared across video ports in rk356x but, if I correctly
-> > understand, this doesn't forbid to reprogram LUT port sel and allow oth=
-er
-> > VP to use gamma LUT.
->=20
->=20
-> Yes, we can reprogram LUT port sel, but we need to make sure the the dsp_=
-lut_en bit in VPx is cleared if we
-> want reprogram LUT port sel form VPx to VPy.
->=20
+CC: Luis Chamberlain <mcgrof@kernel.org>
+CC: Russ Weight <russ.weight@linux.dev>
+CC: Danilo Krummrich <dakr@redhat.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>
 
-Ok I get it now. Is such rework correct? - when gamma LUT for rk356x is
-being set, instead of disabling the LUT before the gamma LUT write for the
-current CRTC's video port, active video port is selected. Selection is=20
-based on if DSP LUT EN bit is set for particular video port. eg:
-```
-static struct vop2_video_port *vop2_vp_dsp_lut_get_active_vp(struct vop2 *v=
-op2)
-{
-=09struct vop2_video_port *vp;
-=09int i;
-=09for (i =3D 0; i < vop2->data->nr_vps; i++) {
-=09=09vp =3D &vop2->vps[i];
+Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
+---
+ drivers/base/firmware_loader/sysfs_upload.c | 28 ++++++++++++++-------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-=09=09if (vp->crtc.dev !=3D NULL && vop2_vp_dsp_lut_is_enabled(vp)) {
-=09=09=09return vp;
-=09=09}
-=09}
-=09return NULL;
-}
+diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
+index 829270067d16..97b0ae855b5f 100644
+--- a/drivers/base/firmware_loader/sysfs_upload.c
++++ b/drivers/base/firmware_loader/sysfs_upload.c
+@@ -103,6 +103,10 @@ static ssize_t cancel_store(struct device *dev, struct device_attribute *attr,
+ 	if (fwlp->progress == FW_UPLOAD_PROG_IDLE)
+ 		ret = -ENODEV;
+ 
++	/*
++	 * Not idle, so fw_upload_start already called try_module_get.
++	 * No need to get/put around cancel.
++	 */
+ 	fwlp->ops->cancel(fwlp->fw_upload);
+ 	mutex_unlock(&fwlp->lock);
+ 
+@@ -164,11 +168,13 @@ static void fw_upload_main(struct work_struct *work)
+ 	enum fw_upload_err ret;
+ 	struct device *fw_dev;
+ 	struct fw_upload *fwl;
++	struct module *module;
+ 
+ 	fwlp = container_of(work, struct fw_upload_priv, work);
+ 	fwl = fwlp->fw_upload;
+ 	fw_sysfs = (struct fw_sysfs *)fwl->priv;
+ 	fw_dev = &fw_sysfs->dev;
++	module = fwlp->module;
+ 
+ 	fw_upload_update_progress(fwlp, FW_UPLOAD_PROG_PREPARING);
+ 	ret = fwlp->ops->prepare(fwl, fwlp->data, fwlp->remaining_size);
+@@ -204,6 +210,7 @@ static void fw_upload_main(struct work_struct *work)
+ 		fwlp->ops->cleanup(fwl);
+ 
+ putdev_exit:
++	module_put(module);
+ 	put_device(fw_dev->parent);
+ 
+ 	/*
+@@ -238,7 +245,11 @@ int fw_upload_start(struct fw_sysfs *fw_sysfs)
+ 		return 0;
+ 	}
+ 
++
+ 	fwlp = fw_sysfs->fw_upload_priv;
++	if (!try_module_get(fwlp->module)) /* released in fw_upload_main */
++		return -EFAULT;
++
+ 	mutex_lock(&fwlp->lock);
+ 
+ 	/* Do not interfere with an on-going fw_upload */
+@@ -310,13 +321,10 @@ firmware_upload_register(struct module *module, struct device *parent,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	if (!try_module_get(module))
+-		return ERR_PTR(-EFAULT);
+-
+ 	fw_upload = kzalloc(sizeof(*fw_upload), GFP_KERNEL);
+ 	if (!fw_upload) {
+ 		ret = -ENOMEM;
+-		goto exit_module_put;
++		goto exit_err;
+ 	}
+ 
+ 	fw_upload_priv = kzalloc(sizeof(*fw_upload_priv), GFP_KERNEL);
+@@ -358,7 +366,7 @@ firmware_upload_register(struct module *module, struct device *parent,
+ 	if (ret) {
+ 		dev_err(fw_dev, "%s: device_register failed\n", __func__);
+ 		put_device(fw_dev);
+-		goto exit_module_put;
++		goto exit_err;
+ 	}
+ 
+ 	return fw_upload;
+@@ -372,8 +380,7 @@ firmware_upload_register(struct module *module, struct device *parent,
+ free_fw_upload:
+ 	kfree(fw_upload);
+ 
+-exit_module_put:
+-	module_put(module);
++exit_err:
+ 
+ 	return ERR_PTR(ret);
+ }
+@@ -387,7 +394,6 @@ void firmware_upload_unregister(struct fw_upload *fw_upload)
+ {
+ 	struct fw_sysfs *fw_sysfs = fw_upload->priv;
+ 	struct fw_upload_priv *fw_upload_priv = fw_sysfs->fw_upload_priv;
+-	struct module *module = fw_upload_priv->module;
+ 
+ 	mutex_lock(&fw_upload_priv->lock);
+ 	if (fw_upload_priv->progress == FW_UPLOAD_PROG_IDLE) {
+@@ -395,6 +401,11 @@ void firmware_upload_unregister(struct fw_upload *fw_upload)
+ 		goto unregister;
+ 	}
+ 
++	/*
++	 * No need to try_module_get/module_put around the op since only the
++	 * module itself will call unregister, usually when the refcount has
++	 * dropped to zero and it's cleaning up dependencies to destroy itself.
++	 */
+ 	fw_upload_priv->ops->cancel(fw_upload);
+ 	mutex_unlock(&fw_upload_priv->lock);
+ 
+@@ -403,6 +414,5 @@ void firmware_upload_unregister(struct fw_upload *fw_upload)
+ 
+ unregister:
+ 	device_unregister(&fw_sysfs->dev);
+-	module_put(module);
+ }
+ EXPORT_SYMBOL_GPL(firmware_upload_unregister);
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
-(...)
-
-struct vop2_video_port *active_vp =3D vop2_vp_dsp_lut_get_active_vp(vop2);
-
-if (active_vp) {
-=09vop2_vp_dsp_lut_disable(active_vp);
-=09vop2_cfg_done(active_vp);
-=09if (!vop2_vp_dsp_lut_poll_disable(active_vp))
-=09=09return;
-}
-
-vop2_writel(vop2, RK3568_LUT_PORT_SEL, vp->id);
-vop2_crtc_write_gamma_lut(vop2, crtc);
-vop2_vp_dsp_lut_enable(vp);
-```
-
-
-> > > >=20
-> > > > drm_crtc_helper_add(&vp->crtc, &vop2_crtc_helper_funcs);
-> > > > + if (vop2->lut_regs && vp->crtc.dev !=3D NULL) {
-> > > > + const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp-=
->id];
-> > > >=20
-> > > > + drm_mode_crtc_set_gamma_size(&vp->crtc, vp_data->gamma_lut_len);
-> > > > + drm_crtc_enable_color_mgmt(&vp->crtc, 0, false,
-> > > > + vp_data->gamma_lut_len);
-> > >=20
-> > > It seems that we can keep it in one line, the default limit of linux =
-kernel coding style is 100 characters now.
-> >=20
-> > Thanks. I didn't know, I will amend it.
->=20
->=20
-> See bdc48fa11e46("checkpatch/coding-style: deprecate 80-column warning")
->=20
-
-Interesting.
-
-Best regards, Piotr Zalewski
 
