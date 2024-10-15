@@ -1,122 +1,165 @@
-Return-Path: <linux-kernel+bounces-366241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D921899F28E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:19:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFEA99F295
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154501C21F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:19:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 534BFB21099
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263651F6662;
-	Tue, 15 Oct 2024 16:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE1B1EBA0A;
+	Tue, 15 Oct 2024 16:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f3hqesS/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOX+3JVU"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25634158DD8;
-	Tue, 15 Oct 2024 16:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E8D1714BE;
+	Tue, 15 Oct 2024 16:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729009173; cv=none; b=AfyebSCbzLwJ9k7foTVxnL0tFkidtJ93L+GUyO/JO0jQ12NVxzL1AtczIvZY28HNcKDkFkJ7OEae4fiuKP336dJ6MmbnFmcWvu3qn0a+8qnynl3mwHp8WtRtHxNL3fjAzf1XlMVdzx6jLdLRecygj/3KLoPtcA6ohne+Dc4+J2o=
+	t=1729009285; cv=none; b=KTw6okwYVssVWdP0A3ehbxTq5GIwEct0406Q2FGEkhISoTjULbGTrOtxbCbph9IMta5bMnFE9o+gRkZ7QPaR7gmmhQGjYaHO/yI30SaIl9Fs66eD/8Bfllj5cNPlS1qCniZ1mTNlwG0X+omwj3aS0zwYt4cpAs1ktWA3r3Jb0qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729009173; c=relaxed/simple;
-	bh=zmA/00I/rJT/tqnmzKp6XjapkqZfWbScm/Yeourf5vU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=C6mOgUTgvyvCC5SjvrzSQMg6gzNBPPNF60UNZXOnEkAlukb+kzwy5S+u/gKBhxxWwTnrn5XFI4+sUMYlJrWbb2bdN6ZHkg1MPoeJV37O74zEpPzIkEw3QX1egL9bg2pz2h7FG8uHDL2Lk145N58XsrCLbxLPJ/IU+yk/pl8WOKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f3hqesS/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F9qV3l027796;
-	Tue, 15 Oct 2024 16:18:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	r+FlGNemb68zVPoS1oWfgoA7NXvv0pIJi/EsE9mxPOI=; b=f3hqesS/1jiW0k2a
-	MCQ4x0nu7Fx7w15w7SBwqf8PnpvQWIUe+IqSsyTpCwVvyKZS0/nkwCDtJ0LsZz3J
-	KgLDgWP94jSZAqjlqHq30gw49hqhBKlpzvZb7z283emY5rOdZ7nAWVudU2P2h5Qh
-	7N0PP7qpFZ56N+3qwLPBfYamIN/Ru56Q1mg91h9J+RRMN3oNy7kKXk9C/PNKLKki
-	uUwB+VPdttT33x5REQ0Ek4J3Th8Il5aqbIAgZHI2jSH43KDXL1Jm8NU0GPPSTQOs
-	bmgUNB8hS4Gt6NQ2CV37ybqRPILVnbLd+t6+EskiuTtlSt52R0bVD3qZaP616j69
-	Dma9hA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427jd904tc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 16:18:47 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FGIkRa005017
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 16:18:46 GMT
-Received: from [10.216.57.188] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Oct
- 2024 09:18:38 -0700
-Message-ID: <382e2d4d-3bf8-d88b-29c1-37c1446a0843@quicinc.com>
-Date: Tue, 15 Oct 2024 21:48:21 +0530
+	s=arc-20240116; t=1729009285; c=relaxed/simple;
+	bh=6NEO3vbuN+t5fT74F3+Wb2C+YHLJ0N/rpcZ6snYcpbU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uGiEaJKVInozAO+639VMmkRbHDG5TqlaNW6eatVW8HWn1CBizRNm7PPHqZRvFbJFPh4Y3vEmlxrp/VR25eiMquTPr3g8sjYd1xpexKBxvmov9n9k1XG0G0l+eDyCtV0K8G/5e1im2QjmJ6PsVkYRbohVVvopMJbCYwe8kSSxs+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOX+3JVU; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539983beb19so5968051e87.3;
+        Tue, 15 Oct 2024 09:21:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729009282; x=1729614082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LAWUM9s5lyGhWTb1ehJ6NHCU3ChMEB/laYBZwYTZb00=;
+        b=hOX+3JVUmocfB5aSVim+WZQnuoYrAYO4qY1eFS0S/kWgRty3NRrRj47z/naehLhCcj
+         9yG+FzKGyWG8AWwxkWlK21N+aBHs7qg6oepqFXKWNogrGSkj5mRuFekhna4R16gPRAE8
+         33GuqleRiJZP2a4RJ0Y8kLQ31WMONLCl87jXQBwB1FHJ9X0/x9tEQyKnN8StXAcp7Gsn
+         DnM5kQjENf95XZjuPY0tPvwS3E43LUYlqnOAvL2S0WVuBc15kpsv3DCzIGAtr7S7k0XJ
+         mi7v2vSwdSTmUCsYSRYMfoutE4bXiydIRFbvqRR4azuv9v1UZhTP2t8GN8QamFnmIcMe
+         wcNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729009282; x=1729614082;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LAWUM9s5lyGhWTb1ehJ6NHCU3ChMEB/laYBZwYTZb00=;
+        b=qYQiFgVy1gkiXqOBRhrm36/kJrjcI6V3hnkVGAEY+/+YGNILP1T1vGHBLYuO4dRpHb
+         J26ra2fmV5hqukEjXpOHUoPXCb0aHZND+vP2Dz6QQBST0QAEZjKA3qNJEfG//lmRK0cq
+         VkWtMyTqZDXtf93xhkw8oTNPrtQUczj/VE9omBuRyrvuJjHvC6Q9aVTWtKbwMqxBZOZs
+         kCr6VsT9DdLAa4f+zN8OyvgAjDSNmJ6/FD7viTlVFgLwGOtdA1x9PsF5CobuxNMKYstY
+         8YUCEaLjpdMXk7Sn0woemI4fZ/k7vumOSZZZgr9jJUcIrUN9pojCj+2X7GahDajjBc7L
+         WjCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHkwt1QvMV440MbSnCwvt0wmpeTa9eT1ZdCK4FTEclz8ve9GYjDDx8rN4EEFIZaa3jP99W0Vsnv1OO@vger.kernel.org, AJvYcCXlbxB/dF8NopZ8E0DCZbq50Q9CIa09svZuSqlfPHaZtOrxqaa6nEgRDcyeVDnyQKq+SX8GLUTyQcTuh545ty+iZoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXOB5WaPS/qGR3miQ5nTrj6U/DKqk9UX+a5XUgi3TIYJsPTy4k
+	zFHvBbwp8hB+dTrMPT/DOl5DPTo1Hyazj++Y3Zrb+r8m4KNHDUrD
+X-Google-Smtp-Source: AGHT+IFal2H6gY5olqIuu6+pF6H3H9Cp0rg+2bZLSTyU8liwGiN2tKc7WP1k4NKaLVIwTtSUr+VchA==
+X-Received: by 2002:ac2:4c53:0:b0:539:9720:99d4 with SMTP id 2adb3069b0e04-539da4e2598mr7779312e87.28.1729009281639;
+        Tue, 15 Oct 2024 09:21:21 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56eab2sm22288325e9.26.2024.10.15.09.21.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 09:21:20 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH] pinctrl: pinmux: Introduce API to check if a pin is requested
+Date: Tue, 15 Oct 2024 17:20:43 +0100
+Message-ID: <20241015162043.254517-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v11 4/8] mtd: nand: Add qpic_common API file
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-        kernel test robot
-	<lkp@intel.com>
-CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <richard@nod.at>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <arnd@arndb.de>,
-        <esben@geanix.com>, <nikita.shubin@maquefel.me>,
-        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <oe-kbuild-all@lists.linux.dev>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241010070510.1504250-5-quic_mdalam@quicinc.com>
- <202410130129.M8J7VJoG-lkp@intel.com> <20241015172955.7b0b6708@xps-13>
-Content-Language: en-US
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <20241015172955.7b0b6708@xps-13>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8z6kBnp7XghZECOsLn3_bo8kKUAu8CXp
-X-Proofpoint-ORIG-GUID: 8z6kBnp7XghZECOsLn3_bo8kKUAu8CXp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 bulkscore=0
- mlxscore=0 mlxlogscore=857 malwarescore=0 priorityscore=1501 adultscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150111
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Introduce `pin_requestesd` API to check if a pin is currently requested.
+This API allows pinctrl drivers to verify whether a pin is requested or
+not by checking if the pin is owned by either `gpio_owner` or `mux_owner`.
 
-On 10/15/2024 8:59 PM, Miquel Raynal wrote:
-> Hi,
-> 
-> lkp@intel.com wrote on Sun, 13 Oct 2024 01:57:12 +0800:
-> 
->> Hi Md,
->>
->> kernel test robot noticed the following build errors:
-> 
-> The below errors seem like basic Kconfig misconfiguration. To be clear,
-> I usually don't review series getting kernel test robot failures and I
-> am expecting that you will fix these errors and post an updated version.
-Sure Will fix this, and post next revision.
-> 
-> Thanks,
-> Miquèl
-> 
+GPIO pins used as interrupts through the `interrupts` DT property do not
+follow the usual `gpio_request`/`pin_request` path, unlike GPIO pins used
+as interrupts via the `gpios` property. As a result, such pins were
+reported as `UNCLAIMED` in the `pinmux-pins` sysfs file, even though they
+were in use as interrupts.
+
+With the newly introduced API, pinctrl drivers can check if a pin is
+already requested by the pinctrl core and ensure that pin is requested
+during when using as irq. This helps to ensure that the `pinmux-pins`
+sysfs file reflects the correct status of the pin.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/pinctrl/pinmux.c | 14 ++++++++++++++
+ drivers/pinctrl/pinmux.h |  5 +++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index 02033ea1c643..19c68e174c36 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -99,6 +99,20 @@ bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev, unsigned int pin)
+ 	return !(ops->strict && !!desc->gpio_owner);
+ }
+ 
++bool pin_requestesd(struct pinctrl_dev *pctldev, int pin)
++{
++	struct pin_desc *desc;
++
++	desc = pin_desc_get(pctldev, pin);
++	if (!desc)
++		return false;
++
++	if (!desc->gpio_owner && !desc->mux_owner)
++		return false;
++
++	return true;
++}
++
+ /**
+  * pin_request() - request a single pin to be muxed in, typically for GPIO
+  * @pctldev: the associated pin controller device
+diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
+index 2965ec20b77f..550cb3b4c068 100644
+--- a/drivers/pinctrl/pinmux.h
++++ b/drivers/pinctrl/pinmux.h
+@@ -42,6 +42,7 @@ int pinmux_map_to_setting(const struct pinctrl_map *map,
+ void pinmux_free_setting(const struct pinctrl_setting *setting);
+ int pinmux_enable_setting(const struct pinctrl_setting *setting);
+ void pinmux_disable_setting(const struct pinctrl_setting *setting);
++bool pin_requestesd(struct pinctrl_dev *pctldev, int pin);
+ 
+ #else
+ 
+@@ -100,6 +101,10 @@ static inline void pinmux_disable_setting(const struct pinctrl_setting *setting)
+ {
+ }
+ 
++bool pin_requestesd(struct pinctrl_dev *pctldev, int pin)
++{
++	return false;
++}
+ #endif
+ 
+ #if defined(CONFIG_PINMUX) && defined(CONFIG_DEBUG_FS)
+-- 
+2.43.0
+
 
