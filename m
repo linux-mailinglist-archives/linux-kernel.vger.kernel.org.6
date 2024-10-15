@@ -1,67 +1,93 @@
-Return-Path: <linux-kernel+bounces-365779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D642599E9DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEF799E9DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6EE1F23D09
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:28:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D2A1F23BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E181FBCA8;
-	Tue, 15 Oct 2024 12:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAA62139D3;
+	Tue, 15 Oct 2024 12:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNAmI0bZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QA/bqYwl"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1C71FB3F5;
-	Tue, 15 Oct 2024 12:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B346E21263B;
+	Tue, 15 Oct 2024 12:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728995272; cv=none; b=YQV3SDxBVH6DAENlrNqk4c9OzHdJY82ijMpPqtE6voKbiwoG529y9DcARd6s36CpaGcAcQ8azeQkKBtkPcy+sIzTaGR6gN39LCyTrFVCS4B/EmUJQRWbzn/WdKDvJnOgZWwY5R5C68ayMWCSEmd47Z5HXOz/sTqpkf4B1GOgVAA=
+	t=1728995437; cv=none; b=rw/eTCIvnF3qhvM29k5yApBda2ex0mX3VMl/OkyAZEUItH4lGV9uEXfS1Vcjib/6Bo85uX8Hjf39EgTTJ3De47eAOxsAF6XEy3M8eiH/ABKeikTmDkf2195XKT49d1q6RXNaAyJpNgahApu21/HWLKCAfO/3XJJMDuWwnYZqSZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728995272; c=relaxed/simple;
-	bh=8fy0J7QKWsqZEyLpv5266Sfzp2jJFW062ct/mauQZMw=;
+	s=arc-20240116; t=1728995437; c=relaxed/simple;
+	bh=eL7JCKO9uu2d1gd8wDs3fExywNPWCIC7IBWB3q6aC6g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U91ddfrkB8nR2zQ3WPtg9N3Ym8C3y9lFfbZkk8yncalmGIiKK12ue2p4+oUWficQdYXFsMln+caFRd9IXVKzPmqzT+2a76h0wpQJ1I79cdO1nNpQhKU442noTLNwDgiOef5eCPrK6Ik1UEynPzpLTUXR6jyvGEcG8FS7COVuRXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNAmI0bZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A513EC4CEC6;
-	Tue, 15 Oct 2024 12:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728995271;
-	bh=8fy0J7QKWsqZEyLpv5266Sfzp2jJFW062ct/mauQZMw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qNAmI0bZlculCNQRCowjYaDn1O+7qRPhFEAdIp4dBKocomex+Fpv3AYqCqLyL1ldx
-	 5t6OnLagYsQuhe5KdlMxrfW6h5XXFOBzrA6j4qcWFm1p+DjmvceCG6MJD7U/VLU0UB
-	 X52jr9WeqbsWiiXEWfnVfaFIyauKgwjS9/eqlWwNXyUpeR4IMfZvRDU/YHo3IZUTXz
-	 hBm5n6tpmTmhgwc9WM0yVXapXwOOsz2JbvxGj5meTDtHIDhPnkcwY2u+jn+W2TLGeE
-	 WZrQPsCeRSFRE5I8LnZAlLu72V5H4wbMfipPMRObuaoDNz/AyK3QdsecmiSDichuZJ
-	 0WBZdNbcOUe2Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t0gea-000000004FQ-3eLq;
-	Tue, 15 Oct 2024 14:27:56 +0200
-Date: Tue, 15 Oct 2024 14:27:56 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
-Message-ID: <Zw5fzNZ_xCwPyw4G@hovoldconsulting.com>
-References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
- <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
- <ZweftESPrJNEsqGE@hovoldconsulting.com>
- <Zwj539cN2DJ7nd3A@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxhPHHLn/BcDttXVNK4S+y1llNsia0vf68t3UwJkxDMNGJv4RlxnRopdAUxv2/m79F/uSGLqKxUgTbrWdu19d65ZU4hOOr2hfFYzkMlEMnHX7bZZ60essoPj3j4WZkOXBsq8qWq+9FH/NZTbTCERki8lFY9J09ICH02f+giRdbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QA/bqYwl; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id ABFD11140225;
+	Tue, 15 Oct 2024 08:30:34 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 15 Oct 2024 08:30:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728995434; x=1729081834; bh=MwqVBPnTbXJp1eVz0QqOSSjQgJz9
+	OUv9qXtnOnH7KpM=; b=QA/bqYwllo/g1p7uXM2mBaH43oasEEVp0aneOX29TvE7
+	g9TVlowM3NHG7BYq0TkUnK69eSBXBNMm0qnXZcBtekkJncip1k7BVLSVwjJKTdMV
+	LK804gbxf4mAD3O3CRMOv75oz4rPnm8ELfj22dgiEli5820wRfwNeSEcgcqoMqvq
+	pGvsNS+lS4qraeM2z79x6lzzIV15MWFuRe9oWGUvWmQYDtCfHMI7mGYXAvLpM4fd
+	kLjuZY7luCp1mYERfemdoHKciVY7O8NCrNmeN3WIW4hRL1jhpCq/rvzemaEV42Jz
+	r7RGS3DVxN+PABq4uxwmmBSlk8oNz5YIqPCtxlxSnQ==
+X-ME-Sender: <xms:aWAOZ4yDAzxEY91zpQH1cbMsoB28aSShW0uSczGLHIj1zsqTGO_LAw>
+    <xme:aWAOZ8TmtKqNV_FH5o7mfepCjQ37YeT1LB0xlIVLeb4Id8k13ZHT1ZxLpz9TBdz7O
+    UNLMt87OTDPIeo>
+X-ME-Received: <xmr:aWAOZ6WxauIVFVaY48QzA5yq5naWnfqGpOB_0vU0h1zOItMJLqSJPsihgS_Z>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegjedghedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepkfguohcuufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdroh
+    hrgheqnecuggftrfgrthhtvghrnhepvddufeevkeehueegfedtvdevfefgudeifeduieef
+    gfelkeehgeelgeejjeeggefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepihguohhstghhsehiughoshgthhdrohhrghdpnhgspghrtghpthht
+    ohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmvghnghhlohhnghekrd
+    guohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtth
+    hopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhi
+    sehrvgguhhgrthdrtghomhdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopeguohhnghhmlhdvsegthhhinhgrthgvlhgvtghomhdrtghnpdhrtghp
+    thhtohepghhnrghulhhtsehrvgguhhgrthdrtghomhdprhgtphhtthhopegrlhgvkhhsrg
+    hnuggvrhdrlhhosggrkhhinhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:aWAOZ2hNB2IpMorYqDYkCRf8JHXtWGZRlMi6Wd3oVfDOWCjibLgAtQ>
+    <xmx:aWAOZ6ApyxSG71JkCwyy5AOquRSjgAP6vy2EeHhVn-Se4QSxaGGCrA>
+    <xmx:aWAOZ3IVTQLWhRxk59rS-B75dAVSXZTfO6QmqDa0TDxDCOXUpPtTig>
+    <xmx:aWAOZxAfzE_Ais1Cju9_FmhfrpViCDiXpksXQoJwvzpOtgq9-wvp-A>
+    <xmx:amAOZyaY9ZbqPriz0Qjg5rYK0ktC2HY2NAon-e0vuHp4ovB0hMD1Gmrg>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Oct 2024 08:30:32 -0400 (EDT)
+Date: Tue, 15 Oct 2024 15:30:30 +0300
+From: Ido Schimmel <idosch@idosch.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, dongml2@chinatelecom.cn,
+	gnault@redhat.com, aleksander.lobakin@intel.com, leitao@debian.org,
+	b.galvani@gmail.com, alce@lafranque.net,
+	kalesh-anakkur.purayil@broadcom.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: vxlan: replace VXLAN_INVALID_HDR with
+ VNI_NOT_FOUND
+Message-ID: <Zw5gZvIY9Tw8gIHe@shredder.mtl.com>
+References: <20241015082830.29565-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,39 +96,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zwj539cN2DJ7nd3A@linaro.org>
+In-Reply-To: <20241015082830.29565-1-dongml2@chinatelecom.cn>
 
-On Fri, Oct 11, 2024 at 12:11:43PM +0200, Stephan Gerhold wrote:
-> On Thu, Oct 10, 2024 at 11:34:44AM +0200, Johan Hovold wrote:
-
-> > Based on our discussions it seems we do not really need to describe the
-> > internal PMU at all for WCN7850 (as the bluetooth and wlan blocks can be
-> > enabled indepdendently) so perhaps we can just restore the old binding
-> > and drop most of this boilerplate for all boards.
-> > 
+On Tue, Oct 15, 2024 at 04:28:30PM +0800, Menglong Dong wrote:
+> Replace the drop reason "SKB_DROP_REASON_VXLAN_INVALID_HDR" with
+> "SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND" in encap_bypass_if_local(), as the
+> latter is more accurate.
 > 
-> I think there is no clear conclusion on that yet. The old bindings
-> didn't describe any power supplies for WiFi at all. The pwrseq bindings
-> are currently the only way to do that.
-> 
-> We could potentially move all the "PMU supplies" to the WiFi/BT nodes
-> and rely on reference counting to handle them. But I think it's better
-> to wait how the M.2/generic PCI power control discussion turns out
-> before investing any time to refactor the current solution.
-> 
-> There are existing users of qcom,wcn7850-pmu already in 6.11, so I think
-> it does not hurt to take this patch as-is for now. We can clean them up
-> together later if needed.
+> Fixes: 790961d88b0e ("net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()")
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
-Sounds good.
-
-But can you please address the following warning that I see with this
-series:
-
-	pwrseq-qcom_wcn wcn7850-pmu: supply vddio1p2 not found, using dummy regulator
-
-Not sure if it's the dtsi that's missing a supply if it's the driver
-that needs fixing.
-
-Johan
+Reviewed-by: Ido Schimmel <idosch@nvidia.com>
 
