@@ -1,157 +1,228 @@
-Return-Path: <linux-kernel+bounces-366172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3044999F197
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:42:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3831199F19F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D741F2870F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18761F287F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E711B1B3945;
-	Tue, 15 Oct 2024 15:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C9B1F76BC;
+	Tue, 15 Oct 2024 15:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aTxNGW9U"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YbWWujPV"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010061.outbound.protection.outlook.com [52.101.69.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6F63BBF6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006698; cv=none; b=lWI+ETAayfxfogEkAaKPCtVHcSvgzN2KD/cDbqoPM6Tgt/bzRTWGQoSKmIHXknJ9J5lzE94uSAqQy6z8d+B2YgdZbY6SGeTXxApeR/CPDgKaCxctRkqaQprqra7uPUDPHlfJWmo0T/4dGDk5bAbklDE1yrReOxX0HXKehPdMytg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006698; c=relaxed/simple;
-	bh=9IkhJfc5QpSe5Ycfce/KQFACj9NqrvLWWWTPi1poHG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=neowmhh0fUHdrkB7fgBSxYMEBGSUWn8652zCNQXHkwxci27xNgeB0SxoVH/YcisJ/iE07kfk6BltzBlKajNDoxgUkVmVT28vlbxtKcuW6E93AsqJGGi+wmMdv/WG73WO/5ev3CUPl5tyzRSDe+1GyGbYNpaOKOeqmV5P/5PKmUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aTxNGW9U; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a3b3f4a48bso15161245ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:38:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729006695; x=1729611495; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O06eHSDldhgqjot2xYme05dEKvAtgQt5byRk6hWnnBA=;
-        b=aTxNGW9UZGUjWwuZH9x2wnax0VhH5t6NGU+ns5fa9AYeGV4Kd0r5grLj8feowJnLeV
-         UKvxgiX06vqwuzTshJA2uxonczI9saqF6vlqLjtpxOkH9iPXZQd+C6unUmKRBoE/Bdkj
-         jScoeFd+6yZ0ovhcUTqUh8OOvQHk205I+zqao=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729006695; x=1729611495;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O06eHSDldhgqjot2xYme05dEKvAtgQt5byRk6hWnnBA=;
-        b=ioteXqbm1b8lGcSZcmpWI85vjVma2oUlRKDzicuVbdF/u7nRtSXyafA7X1vNFfEnca
-         LHrvpqMDdVyaIjaMS1HZdJ9g2P1R9oQz2z8zDkpApKXB9UijYW7XXYYVK8gm5SMGvmZB
-         7w0bFxxR01mZN5xQvAj5/X2c52lUAZR1yFfseuLP38tjINW21W/4do0fM6wHeg49RkAz
-         KMM2aQy7Rha2fjneRdI6s+NDmzysKZayXVZWbTjubaDP5kNj0qakA7NA8W6axSIy+RLt
-         Fo1cry4Ciupq6R8XqX3qzBBKfZZRNvim63tmCFyj7I7IBjUJZnmFCxvv6dnkHTQex9cv
-         EZVw==
-X-Gm-Message-State: AOJu0YzhBQXqU+gsH/n/psZqUlBiN4Cz6VBwBsouEMDMYXQC3si3TOMo
-	YOZCilH3tThKbYnIy2NJEIVNc5UQ7q4RaJcQyfyXhrIsrqPhb9Kx+m7sdl09r1MKDGnpDcVsJ+A
-	Z
-X-Google-Smtp-Source: AGHT+IErPoDY07cdU2Id448bxhTqRWglwEIUN25E7c/G0ifwlsCN+ejFyw+wLlbVN7TXikNgqGav6g==
-X-Received: by 2002:a05:6e02:1389:b0:3a2:6d54:33df with SMTP id e9e14a558f8ab-3a3dbe7bcc1mr7401335ab.4.1729006695432;
-        Tue, 15 Oct 2024 08:38:15 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec963450sm362850173.12.2024.10.15.08.38.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 08:38:14 -0700 (PDT)
-Message-ID: <087279ce-7fd0-49f3-b578-2d1b82852e3d@linuxfoundation.org>
-Date: Tue, 15 Oct 2024 09:38:14 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBC91DD0E6;
+	Tue, 15 Oct 2024 15:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729006860; cv=fail; b=JNM5MDA6Al89l+xtwzwJkWFkCLyM9RGRVKuY3iOH27vIkJ6ZdU8FvmWMmYmyGVshPHgHz8/AXbuF5pYcJ9qlEiL0zQJFpnNRXXtjSpxUyA8OdzETMNxQUNjsKohIrQgk2N/Pw5CY2Yq1oLqfn5Q0LAWnQJr+uUNOW8ngSIVgd6Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729006860; c=relaxed/simple;
+	bh=lEtoWVdvwNxZLX4oxyjhj/hK/nWjmGRluYUqFJD2rtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dArTAgkNj7LpBz8yxsFnW/AiymU9Oa4uambP2b87dwFDEv/jE1va8yN9VJRMM3yhIXBLA2taD9v3IxH9pc3qK3JEE1a7rrQsgOFMGHAwGTxPN7ielTBzDDOeq8fyMF6MsvRHF+C+b0r/Rw7p0qYOzeVrwyksHzOzqvtUU/9Qd5Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YbWWujPV; arc=fail smtp.client-ip=52.101.69.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ta30dHf+F0LLiKN2/iyL4lg12iLw/zOpzqyTRmLEy0aR/XWEe672ZQYTiJRXFRDZt7hD1xqyKjtXBtRwnL6VUM9O/hB1vORKQekz3aWb9KomMFDpwaU50r5zLgEF6trDQPQBORY9dCvQoAqnGgshUl83r0KatAd/tOiHZJm12n3v0JSvYj6L+Qf+HavTJw6HREVzCNc/4R1UUWloliHdTvZXxPsCQBhVYUJiMzyWw6T7EXkWHqeDV6JKY+HPXbB2vIe06aN50ZxRatXWF0PHUWWy3RUnkxjRBNkoZHsfNg5zGiQdhyXmN3Ga+r2EBiaCYgJubkqTt/U8JN6DLYaoYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q5Sx9DGOCgojvRmCrtucwdcYt6z+GwrlbDP7KXvjq+I=;
+ b=laKHcIym0Lu6Q6qqp8moVH0Cu7zbIHfhjve01eBghPmpduXZCPp9i9UwfWOwaFvcR9AoXwbnQY6OrineUboUO9iyV5wBhPIADeA3FQDHxkUpaWYf8PRzEPrQPGLhJNx9L6fnyCLGXzd/dlTTpVV55u+sOVIzx3UZomFPxrGF7X2bI9AwGtN8ROZV/o6o2ETuqGItirOW4CCJ+2ZaSNjxWn8Og4ecdmI5IptnilvoKDZhoYBeinBJm/CysLaBR1E3OdQ2uk649RZgzRhuj1qyxnuCnPmOIIqN+vtkw0fOjscwj1dvQ620/6Sz0oS7ebKlFp+Hvqrbk+4sjc6+XMDcTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q5Sx9DGOCgojvRmCrtucwdcYt6z+GwrlbDP7KXvjq+I=;
+ b=YbWWujPV5cUQ4G65H8610pNnj8J6jXhM/4LALNRI4lyUxsUqoUkpwIPYM1/VcBAjoO3TpBu5kBx/eE5HI8acHpRP00awdmRk/fVuj+u5W8y40iMwSg9b0fDeLPvKFjPtL0UQ5msPlzIwpEuTYvSc6rqK04u85U5E9sENf1bU5ForgEkIbokDwbr5n6H4BvXrj7uQ8mH0f7bRZMiA5ISFmDauZ8hhrdpocghWhZHLbUGn6ygszbG6niSyJthxTD/7sk9NaolrwjutszNa8DgzLwqACQT6HJqCdhDNm0J1hLV5ocPvcAySkMBgbU/kHLbJ2jLhSqIFpFLAWDEA3LXIjA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB9092.eurprd04.prod.outlook.com (2603:10a6:102:22a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 15:40:55 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.016; Tue, 15 Oct 2024
+ 15:40:55 +0000
+Date: Tue, 15 Oct 2024 11:40:46 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, vladimir.oltean@nxp.com,
+	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com,
+	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
+	bhelgaas@google.com, horms@kernel.org, imx@lists.linux.dev,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 02/13] dt-bindings: net: add i.MX95 ENETC
+ support
+Message-ID: <Zw6M/rjt6e6iZ2zd@lizhi-Precision-Tower-5810>
+References: <20241015125841.1075560-1-wei.fang@nxp.com>
+ <20241015125841.1075560-3-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015125841.1075560-3-wei.fang@nxp.com>
+X-ClientProxiedBy: SJ0PR13CA0035.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] selftests: Add a few missing gitignore files
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-kselftest@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241015010817.453539-1-lizhijian@fujitsu.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241015010817.453539-1-lizhijian@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9092:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9f2b6ed-c278-4829-9f04-08dced2fc1f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uJ8mS5I/41yqJsILuEBKVX/Mv8A9Yy7UpM8Rsz1X6RJPcPYBUv7+DKujQKFL?=
+ =?us-ascii?Q?SxUSI00KdkCgfbGZzx4io2sYktPRRK/zB/mWv2ai1i+oKbHNAzQZ7S7NfMaB?=
+ =?us-ascii?Q?NDrUWIE6BC1AORJ/1dOGEUKjJUQszW0wbrs4MKCJjFMFjLw5Oy7ZE0t5RHmt?=
+ =?us-ascii?Q?QQvgiVEX2CM5wzFXn5wX9TIMKZQcfSQLRzFeaN8EoRZHBu5E+kvGrJAD8D+W?=
+ =?us-ascii?Q?5R5u6BP8v8wl7CQuSOmmkR2UbmJVrUaG8ggoN06n18EaFJbMUQPg7Jiw3kF9?=
+ =?us-ascii?Q?5GHHeEfyoGh+53nD7l/a1Fjg5XEzKTKlDSsb/wGjrU5nJs9Z46i3ELPmxWL0?=
+ =?us-ascii?Q?YoVxxXWSmQch90s6y+Cea6WchIjMC7QA0fWnDeF83t7LpW0pm4KF8lmJyyxs?=
+ =?us-ascii?Q?tCYKIM4jcZInYhzFQEPCQUhyekPR8PdGC5yyE/ordgISgSPeqreVX25yGUGI?=
+ =?us-ascii?Q?RxM6owvBKXLOuunXetvW3BUEJLYCuYMn2o92mgpNa77XngN3gwzVJyk6NjJ6?=
+ =?us-ascii?Q?jYXllKbxiYjrxzCZB+WcxvMUneQAfgAy3Q/fGiCdP9UhQ2Ig6o5D5Z/Lktx6?=
+ =?us-ascii?Q?mXjr3Myq+KcIry8H/eCGWPLbdaZV/6GhJj1SCrlnBjcZxKKqZ1sCMMKpu5mf?=
+ =?us-ascii?Q?JYx3yFV105s3um43zJzjH2E4MpKgzndTytjaqdpErS7Qlrwarm41Ztr4gnjN?=
+ =?us-ascii?Q?MWBf3r7CYEGUEk4zrcU4tTKSil2L/+8CblSB/ePzp5RifvfmjTmVSa36KfJ8?=
+ =?us-ascii?Q?AYo5xqkudaApw51G5elp0ElkMQcxX4aQI2iQ2yVb7LuHZYU12N6YUT20VKzS?=
+ =?us-ascii?Q?WcwD/o5D08Tk0SyIOO2ECiCLWUD/kdRx4L/UTlYN/fkzkzs7tPtzOLM/t+0n?=
+ =?us-ascii?Q?kxSZJ+KRFxbC8o+ZNrKMNtT5ajgo6LdWflZPUQfX/oxZLVO8yw+Ek45fNcD/?=
+ =?us-ascii?Q?xHYlq1sMQV78wn2M+m1T3ttjPhE0a+ZuRtBySnnQn5B8PntO7EEfuP5iTJW2?=
+ =?us-ascii?Q?oCx+qeJHYMcy9qogel4sij59FvRXpotU1SYqAPz/W6S48UjNPW7TpfHWtmrF?=
+ =?us-ascii?Q?G5RP1yupUG1WRC2uGJPBm8hOez7t/gMuCZhsf+KiOH+chb2IScrEPEQUY9qV?=
+ =?us-ascii?Q?ABCV6pg+Q2HKzohkUHev/6uesdubWAwtiAReIIDCQ8RaT41rOLpZtnL0LPk5?=
+ =?us-ascii?Q?M5Mb41JhJk9uJUgLWxxGQhS/Dw8aj1wfFbr/H8HBd8Ik3i/cyUZff6nwVumU?=
+ =?us-ascii?Q?BbiFs7u1Zkuj85NEJCvtazO2ecjwOLBKhSbxJCBz1rw0q6u1oRwTu9edW00S?=
+ =?us-ascii?Q?xsX+lYshFxvvD95OylAn/e+zqC5awfU83SqzOxcVpJ3l2g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?POo2j9gRrvP5BMGRlXJ08RIdMOEEjWDzu9wKG5gPAZ5u9hVu7jHIb2DrQvmO?=
+ =?us-ascii?Q?yuaoiUJFu034Uc2E6XrwLKykx9Ehs+ABhVQh/HstThGP/NvtaHjT72RssxVJ?=
+ =?us-ascii?Q?cXkRwMMQeRXTTUfAEu4A+TYBBdAERKDfRf+ysZE5mz4u273mOSDbIncy3mU5?=
+ =?us-ascii?Q?Mg6Pd5/RPvuWWhx7JNyyEpYxfxr7848t+WpxPLl2dP7itzdNBdATfAHSL18e?=
+ =?us-ascii?Q?u4TP0eEALBzm0mylH9ZU4uZzBi7zxulnBD6sUwbEf1G0wJCUY3b2w1m27AEI?=
+ =?us-ascii?Q?LB5Ugm1zUy39zcPsJ37mhiiGlqoqXEdDX0oXfpLKbLHF/MtL3UPdlv2q3tmX?=
+ =?us-ascii?Q?1/feyQM09XgQu9Aq1LGDdPANVG9oLhIwOamlP9ozjti3KHsLT4iGBz4oRAD+?=
+ =?us-ascii?Q?OffjQHxaE5V3/ECNU0ycHbVIVCQ70RgXM8ZqO/e4moBjO2FFq1ZNpL11BpHm?=
+ =?us-ascii?Q?eG1ClAyp/oVAOVZQdLUSHR13zvnZ52pYvdXi3HZpcicaeZywGcJG+/gqgB0B?=
+ =?us-ascii?Q?n9ELQEf9yOeVw+eGzT2U3P2kEXzNSJPPjfZ/FLIOv5YNWnZ/BZnpcfmGqkvL?=
+ =?us-ascii?Q?MO16ZUTOB/Ckf7IhlBVuRbnUq5j+oOhvzDOGgk8NvuMWnBOFhMsRdrvBih3m?=
+ =?us-ascii?Q?eFvUUbA4MXk45ftf9n2FgnTC0b52FLH9IUA7jCqdlxUxlEZxUjcL6AE0dn5v?=
+ =?us-ascii?Q?b+gG9EmR0X2x3meeNMQRrDloztFN2sm8nVZagUD69OD0K5ESr4icrkwxWpaD?=
+ =?us-ascii?Q?2vm1jKuclUCBNAmdOK7GGuW5R3W4nanwbbKHworoiwxY63SCaZ/3ScYa+bP6?=
+ =?us-ascii?Q?nRtMFoOAXhTDGa04FYty1cyIQ/azOxZOzeByjiyYbMpX618fOVb53L6BW7GL?=
+ =?us-ascii?Q?WiIzYT5QIDAAql9TRSVW2g4vYzL6gmW71I8xnwKScbzSvvAZDubVM3LYxOgy?=
+ =?us-ascii?Q?waqbbhsIbm8U/sYkWafQSmiev2zYc9TxiKYok1atyUZZdOoXVGUKqIg53QLm?=
+ =?us-ascii?Q?zvidHSWCpQIQkcsxQ1l8pzGjRmpMDaSHoNsZnkkR8JYKuYhKvA+KQqqiUawH?=
+ =?us-ascii?Q?4AKDIfxKNIQVpjeHz0p4PRFWrJiL1QDXcMDttuOvkSJXBGy/JMl8mZcaPqC/?=
+ =?us-ascii?Q?aKTQdDo7HoWqmRcSnunq9qdFcSciIPGgqqvoj2+1II83fXSlnKzdamlr+1E5?=
+ =?us-ascii?Q?JpcziMUwxMxlKnlARdPgG6WfA9j9A+u3ne/Z9ttpuQdb7yQjzr5D50KAF4NF?=
+ =?us-ascii?Q?fnxcrt6N/YEIwNX7CL/IUEsof2PNDCXetllm2Y8rgPE8o3nCqQhKH2Px1Yqk?=
+ =?us-ascii?Q?V1JD+jC13hMWvN+KVI4zRYpGcP5/tV1hgTLO6xfGPdEsc2IAZFCUmnNN+Co9?=
+ =?us-ascii?Q?RIxgyc7xOuwvn3s1CT7OIRDBRaosfHUGShBGjZ1tqwB2XBEboL8AvaMwZHn7?=
+ =?us-ascii?Q?o5UA1b5bAmJJxvEihS+9DyxDees+fWODnRx9wCmut2rpuFsmCmPT7FTz9CXe?=
+ =?us-ascii?Q?gq2I5dp9XeB2pbP6LreWpOjGWWWiHoY8QLrPzZZSl0Za90j/QYjmJZ7MjS0C?=
+ =?us-ascii?Q?QG0MKY8Dwi5bnZ6aVv5XuiSj4WiwMNTVBXuWbB1Y?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9f2b6ed-c278-4829-9f04-08dced2fc1f5
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 15:40:55.4395
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eF269ghunLtt8kvr30rsEUSdRzXCS9sC8EHHbRIlw/r6jE3sSwLsudfWtJd1wimGcpYNFSRrMT+/TJ+9hW2iWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9092
 
-On 10/14/24 19:08, Li Zhijian wrote:
-> Binary files should be added to .gitignore
-> 
-> 'git status' complains:
-> Untracked files:
-> (use "git add <file>..." to include in what will be committed)
->       alsa/global-timer
->       alsa/utimer-test
->       filesystems/statmount/statmount_test_ns
->       mm/hugetlb_dio
->       mm/pkey_sighandler_tests_32
->       mm/pkey_sighandler_tests_64
->       net/netfilter/conntrack_reverse_clash
-> 
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+On Tue, Oct 15, 2024 at 08:58:30PM +0800, Wei Fang wrote:
+> The ENETC of i.MX95 has been upgraded to revision 4.1, and the vendor
+> ID and device ID have also changed, so add the new compatible strings
+> for i.MX95 ENETC. In addition, i.MX95 supports configuration of RGMII
+> or RMII reference clock.
+>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 > ---
->   tools/testing/selftests/alsa/.gitignore                  | 2 ++
->   tools/testing/selftests/filesystems/statmount/.gitignore | 1 +
->   tools/testing/selftests/mm/.gitignore                    | 2 ++
->   tools/testing/selftests/net/netfilter/.gitignore         | 1 +
+> v2 changes: remove "nxp,imx95-enetc" compatible string.
+> ---
+>  .../devicetree/bindings/net/fsl,enetc.yaml    | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> index e152c93998fe..409ac4c09f63 100644
+> --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> @@ -20,14 +20,25 @@ maintainers:
+>
+>  properties:
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - pci1957,e100
+> -      - const: fsl,enetc
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - pci1957,e100
+> +          - const: fsl,enetc
+> +      - items:
+> +          - const: pci1131,e101
+>
+>    reg:
+>      maxItems: 1
+>
+> +  clocks:
+> +    items:
+> +      - description: MAC transmit/receiver reference clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: enet_ref_clk
+> +
 
-You are sending 3 patches without a cover letter and you are missing
-key people who should review the patches.
+Need use allOf to keep old restriction
 
-Combining several subsystem changes in one patch leads to merge
-conflicts.
+allOf:
+  - if
+     ...
+  - then:
+      properties:
+        clocks:
+          minItems: 1
+        clock-names:
+          minItems: 1
+  - else
+      properties:
+        clocks: false
+        clock-names: false
 
-Run get_maintainers to see who all the patch should be sent.
 
->   4 files changed, 6 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/alsa/.gitignore b/tools/testing/selftests/alsa/.gitignore
-> index 12dc3fcd3456..1407fd24a97b 100644
-> --- a/tools/testing/selftests/alsa/.gitignore
-> +++ b/tools/testing/selftests/alsa/.gitignore
-> @@ -1,3 +1,5 @@
->   mixer-test
->   pcm-test
->   test-pcmtest-driver
-> +global-timer
-> +utimer-test
-> diff --git a/tools/testing/selftests/filesystems/statmount/.gitignore b/tools/testing/selftests/filesystems/statmount/.gitignore
-> index 82a4846cbc4b..66a21f289453 100644
-> --- a/tools/testing/selftests/filesystems/statmount/.gitignore
-> +++ b/tools/testing/selftests/filesystems/statmount/.gitignore
-> @@ -1,2 +1,3 @@
->   # SPDX-License-Identifier: GPL-2.0-only
->   /*_test
-> +statmount_test_ns
-> diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-> index da030b43e43b..2ac11b7fcb26 100644
-> --- a/tools/testing/selftests/mm/.gitignore
-> +++ b/tools/testing/selftests/mm/.gitignore
-> @@ -51,3 +51,5 @@ hugetlb_madv_vs_map
->   mseal_test
->   seal_elf
->   droppable
-> +hugetlb_dio
-> +pkey_sighandler_tests*
-> diff --git a/tools/testing/selftests/net/netfilter/.gitignore b/tools/testing/selftests/net/netfilter/.gitignore
-> index 0a64d6d0e29a..eef8d5784e94 100644
-> --- a/tools/testing/selftests/net/netfilter/.gitignore
-> +++ b/tools/testing/selftests/net/netfilter/.gitignore
-> @@ -4,3 +4,4 @@ connect_close
->   conntrack_dump_flush
->   sctp_collision
->   nf_queue
-> +conntrack_reverse_clash
-
-thanks,
--- Shuah
+>    mdio:
+>      $ref: mdio.yaml
+>      unevaluatedProperties: false
+> --
+> 2.34.1
+>
 
