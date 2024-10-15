@@ -1,85 +1,72 @@
-Return-Path: <linux-kernel+bounces-365508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337EB99E36F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:08:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C78499E372
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED04F2841D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:08:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A3E28405A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940E91E378C;
-	Tue, 15 Oct 2024 10:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8AE1E3763;
+	Tue, 15 Oct 2024 10:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFh2DOm1"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S/zonPv5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I1m7EZ40"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8902A1E2841
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7CD1B85DB;
+	Tue, 15 Oct 2024 10:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728986899; cv=none; b=Z0Cpfysi2tnk5f5s06WOHBtfnR/7m7boT+cFABDIWge45HN4kxJVUd1x6TY7Hhpfdy7/reBvC0U7vU4gjGl+8w0jlCkFIHr5/r477t9H7PlXDq/p+W3vrXnplysSGcvdtq/coRmXv2Qtm/uhNTuhkVjIje22cXXzKbFd9h/QHes=
+	t=1728986931; cv=none; b=meGgJHj1BeGpVMDqs2KKVHNst59ohXjE8QVSmqmlO60ZWoFtL1zDd3MDGJsMN49C0xz2XRmPXMh2dYs7BOovLCtwb+hz+uNKpRz0Yy22ZDnAo87Oe+w1rmN0OHLviS5w9+5AvNhUEmTKiKTtIiFovs0InCMbdo9Naq0P3DhKoss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728986899; c=relaxed/simple;
-	bh=8MvRA1R5gHTrY03aorsLgPFcXBTDxX4sVfrhHvZT1Zo=;
+	s=arc-20240116; t=1728986931; c=relaxed/simple;
+	bh=EHCunK0tNnJzLDrBNrEGt6/O0tl0OcBbv0nP8L8fgI4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uXL7yhFKah09XNH9mNyIqUYAH46E621Zze8Icw9IZfx5TM9GJzkfITD2mq3Fh7FT1i8MDydNMcnE7YehrYF5X749E8sFSZcNRNiAI9OqgQwpdY6oiQPQNPaI9yURNRcFyGm2c//e0Aw42afvHPnRRgB9+O2y6QhyphXxCce+Fs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mFh2DOm1; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-8354599fd8aso203998439f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:08:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728986896; x=1729591696; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PpvgnMomw0Uq56+eW9heIDg2o6H/iBcUs4/VOkLS8oc=;
-        b=mFh2DOm1gR83SaEt0vN3521vVl1cAS7IS8fvkHMyW8AaAkgyrS+53kjb5P2fZUEPwy
-         i4JRBriyiaNgS+6HcOMwFOzMWnRTl4/g/tsZHmkfsFAhBhXUNUGIVFf+gtWXlR8j6wiZ
-         co4j/2ivMSORjdhUYTdXFl8QrKT/o4F8mPz6/sd+N3hE6MDHIbYgvkXL0Jvkbp5N05mC
-         ciHdpPc5oDz2Dq33z+ayEihMGvQmTNGDqdI2V3DwqZFG+WYwqhYz0LpJu51NOeOmqaP+
-         Xs9h5Ur7YnYUukaKLaH/J6fh9nT/DNKhlODrniL9fWKBmTVwkClxDi4cFjaYQ5eBFJXS
-         eeDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728986896; x=1729591696;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PpvgnMomw0Uq56+eW9heIDg2o6H/iBcUs4/VOkLS8oc=;
-        b=Ib3b91oDVT7UdRIbsTqPh81w9mmMF7hOrYYdzYQ8pNpUePUr61eEJOm+QWHsGljQTw
-         tnRejP3HPVJAJOiq62h+cJwwRJGMrlImbcaGX3kghbiE9ngSC35YFE72g+grDqvur1kK
-         lFi3YNO0LMH2qiSQZ92adfNq7ISseEF3E4TstFP2QG/8ixZT13Wg79qzdPL2TaKcBUtA
-         u8VDrIAon1DNgT73v7F/CGht53Yk1qC3zBrDeCYjt8G/hiZi0no6LAWeMR9vA72sKF5E
-         rATbsvQLRHvt4Er18ExClE8mEi4VKeczXoKrNi31niZfanoH9K0UJGOAgHjQniZ6HDQv
-         tz7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWl9fK3MGmK91U6/rQs4MPazvJhx12AyUBOylHrAQu427QQ2ROs4Whda5XU6jf4gjZHuhww6O7GLuH3BYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrCz+gf+TNT1GBCFL8oZbX3Wd++kAymL4jDh/AA5EdHDpIkXWD
-	GBYg6OqmvkjtmpooIOVWDEbJYQpW74HbNCZhn0/yoiV2tHTKmxXB
-X-Google-Smtp-Source: AGHT+IE2DPjntaI4HEsSMYwUNRJ10+nrrbcsv/I0ULix1C0zQoZ3ELz+C4Gg6T4rh6U/IVcloMnjrw==
-X-Received: by 2002:a05:6602:1486:b0:82c:d744:2936 with SMTP id ca18e2360f4ac-8378f92ee97mr1440446739f.0.1728986896433;
-        Tue, 15 Oct 2024 03:08:16 -0700 (PDT)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp. [210.128.90.14])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83a8b28be7fsm23462739f.11.2024.10.15.03.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 03:08:15 -0700 (PDT)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: will@kernel.org
-Cc: broonie@kernel.org,
-	catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	ryotkkr98@gmail.com
-Subject: Re: [PATCH] arm64: Remove the check for CONFIG_TINY_RCU
-Date: Tue, 15 Oct 2024 19:08:09 +0900
-Message-Id: <20241015100809.15581-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241014131042.GA17353@willie-the-truck>
-References: <20241014131042.GA17353@willie-the-truck>
+	 MIME-Version; b=pFAiV1W9FiT90Y4lO6AdXCAoNA9swnqCJwBOPToQjynf+Cc4e4nK63nUhs/LBu4Y40t/ijIxGQ5Dcv/UDUXaO7BRNT2tmOojjFXuubHXn6arIV9vzIERdtBS6SAGwWEpG5TyPFbJz0d/369Lm36kgUt81FjKo2MkmYLRlsr+4QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S/zonPv5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I1m7EZ40; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728986927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s+p7lB4KSIBONCDXESGU7+14Hjp+qXhVN7uEJMiievw=;
+	b=S/zonPv5MX0edjNqz0wfyAX7ZBAcqDJ8YrmlHKOkwcXX3KQOBdaGZpjwXwiM7xkkgSaWTy
+	gDSkDW/JTt1BOD98+VArntKJcS8BGGSW5/f6HK0gdk94icVsebt5shzVCdEpQqoEdlIhCh
+	AOSox2KlFf4h4ic90UIrLx8biCoMg1KpbnLW8LiEaAPGfFE2xT0qcTYrIzXqwSS7ovE+ma
+	Riq7Mwxryn4qgTbR5Ky7wpIvQ6f++KyTlqlHiynD0v3Pt/7Yq9jouwAbQtSchjtHA/gJYw
+	VrPjljmCf7Bq2FWuINJlqFPGNgDKfAs9F+B24cInG/juK4Im0xURxD3peTpuKw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728986927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s+p7lB4KSIBONCDXESGU7+14Hjp+qXhVN7uEJMiievw=;
+	b=I1m7EZ40UMAOHzf+hvCeC2WHAjg8+6jZOwYWa8dAXVT/pUtOrtuZHLmQKo6zIzvNfWSQd5
+	fb8FRSDPLviVZRDw==
+To: John Stultz <jstultz@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Miroslav Lichvar <mlichvar@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Christopher S Hall <christopher.s.hall@intel.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: [PATCH v2a] timekeeping: Reorder struct timekeeper
+Date: Tue, 15 Oct 2024 12:08:39 +0200
+Message-Id: <20241015100839.12702-1-anna-maria@linutronix.de>
+In-Reply-To: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-6-554456a44a15@linutronix.de>
+References: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-6-554456a44a15@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,48 +75,197 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Will, 
+From: Thomas Gleixner <tglx@linutronix.de>
 
-On 2024-10-14, Will Deacon wrote:
->On Sat, Sep 14, 2024 at 06:00:40PM +0900, Ryo Takakura wrote:
->> Since the commit 4b3dc9679cf77 ("arm64: force CONFIG_SMP=y and remove
->> redundant #ifdefs"), arm64 defaults to CONFIG_SMP but TINY_RCU is cofigured
->> only for !SMP systems.
->> 
->> Remove the check for CONFIG_TINY_RCU as it should always be false.
->> 
->> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
->> ---
->>  arch/arm64/kernel/entry-common.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
->> index b77a15955f28..a9765364fc67 100644
->> --- a/arch/arm64/kernel/entry-common.c
->> +++ b/arch/arm64/kernel/entry-common.c
->> @@ -40,7 +40,7 @@ static __always_inline void __enter_from_kernel_mode(struct pt_regs *regs)
->>  {
->>  	regs->exit_rcu = false;
->>  
->> -	if (!IS_ENABLED(CONFIG_TINY_RCU) && is_idle_task(current)) {
->> +	if (is_idle_task(current)) {
->>  		lockdep_hardirqs_off(CALLER_ADDR0);
->>  		ct_irq_enter();
->>  		trace_hardirqs_off_finish();
->
->I think this code was deliberately written to follow kernel/entry/common.c
->as closely as possible, as we should be able to switch over to that at
->some point.
+struct timekeeper is ordered suboptimal vs. cachelines. The layout,
+including the preceding seqcount (see struct tk_core in timekeeper.c) is:
 
-Oh I see, thanks for taking a look at the patch!
+ cacheline 0:   seqcount, tkr_mono
+ cacheline 1:   tkr_raw, xtime_sec
+ cacheline 2:   ktime_sec ... tai_offset, internal variables
+ cacheline 3:	next_leap_ktime, raw_sec, internal variables
+ cacheline 4:	internal variables
 
->Come to think of it, Mark, what work is needed before we can move to the
->generic code? Is there anything you need a hand with?
->
->Will
+So any access to via ktime_get*() except for access to CLOCK_MONOTONIC_RAW
+will use either cachelines 0 + 1 or cachelines 0 + 2. Access to
+CLOCK_MONOTONIC_RAW uses cachelines 0 + 1 + 3.
 
-If there is anything I can be of help, let me know!
+Reorder the members so that the result is more efficient:
 
-Sincerely,
-Ryo Takakura
+ cacheline 0:   seqcount, tkr_mono
+ cacheline 1:   xtime_sec, ktime_sec ... tai_offset
+ cacheline 2:	tkr_raw, raw_sec
+ cacheline 3:	internal variables
+ cacheline 4:	internal variables
+
+That means ktime_get*() will access cacheline 0 + 1 and CLOCK_MONOTONIC_RAW
+access will use cachelines 0 + 2.
+
+Update kernel-doc and fix formatting issues while at it. Also fix a typo
+in struct tk_read_base kernel-doc.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Acked-by: John Stultz <jstultz@google.com>
+---
+ include/linux/timekeeper_internal.h | 106 +++++++++++++++++-----------
+ 1 file changed, 65 insertions(+), 41 deletions(-)
+
+diff --git a/include/linux/timekeeper_internal.h b/include/linux/timekeeper_internal.h
+index 902c20ef495a..a3b6380a7777 100644
+--- a/include/linux/timekeeper_internal.h
++++ b/include/linux/timekeeper_internal.h
+@@ -26,7 +26,7 @@
+  * occupies a single 64byte cache line.
+  *
+  * The struct is separate from struct timekeeper as it is also used
+- * for a fast NMI safe accessors.
++ * for the fast NMI safe accessors.
+  *
+  * @base_real is for the fast NMI safe accessor to allow reading clock
+  * realtime from any context.
+@@ -44,33 +44,41 @@ struct tk_read_base {
+ 
+ /**
+  * struct timekeeper - Structure holding internal timekeeping values.
+- * @tkr_mono:		The readout base structure for CLOCK_MONOTONIC
+- * @tkr_raw:		The readout base structure for CLOCK_MONOTONIC_RAW
+- * @xtime_sec:		Current CLOCK_REALTIME time in seconds
+- * @ktime_sec:		Current CLOCK_MONOTONIC time in seconds
+- * @wall_to_monotonic:	CLOCK_REALTIME to CLOCK_MONOTONIC offset
+- * @offs_real:		Offset clock monotonic -> clock realtime
+- * @offs_boot:		Offset clock monotonic -> clock boottime
+- * @offs_tai:		Offset clock monotonic -> clock tai
+- * @tai_offset:		The current UTC to TAI offset in seconds
+- * @clock_was_set_seq:	The sequence number of clock was set events
+- * @cs_was_changed_seq:	The sequence number of clocksource change events
+- * @next_leap_ktime:	CLOCK_MONOTONIC time value of a pending leap-second
+- * @raw_sec:		CLOCK_MONOTONIC_RAW  time in seconds
+- * @monotonic_to_boot:	CLOCK_MONOTONIC to CLOCK_BOOTTIME offset
+- * @cycle_interval:	Number of clock cycles in one NTP interval
+- * @xtime_interval:	Number of clock shifted nano seconds in one NTP
+- *			interval.
+- * @xtime_remainder:	Shifted nano seconds left over when rounding
+- *			@cycle_interval
+- * @raw_interval:	Shifted raw nano seconds accumulated per NTP interval.
+- * @ntp_error:		Difference between accumulated time and NTP time in ntp
+- *			shifted nano seconds.
+- * @ntp_error_shift:	Shift conversion between clock shifted nano seconds and
+- *			ntp shifted nano seconds.
+- * @last_warning:	Warning ratelimiter (DEBUG_TIMEKEEPING)
+- * @underflow_seen:	Underflow warning flag (DEBUG_TIMEKEEPING)
+- * @overflow_seen:	Overflow warning flag (DEBUG_TIMEKEEPING)
++ * @tkr_mono:			The readout base structure for CLOCK_MONOTONIC
++ * @xtime_sec:			Current CLOCK_REALTIME time in seconds
++ * @ktime_sec:			Current CLOCK_MONOTONIC time in seconds
++ * @wall_to_monotonic:		CLOCK_REALTIME to CLOCK_MONOTONIC offset
++ * @offs_real:			Offset clock monotonic -> clock realtime
++ * @offs_boot:			Offset clock monotonic -> clock boottime
++ * @offs_tai:			Offset clock monotonic -> clock tai
++ * @tai_offset:			The current UTC to TAI offset in seconds
++ * @tkr_raw:			The readout base structure for CLOCK_MONOTONIC_RAW
++ * @raw_sec:			CLOCK_MONOTONIC_RAW  time in seconds
++ * @clock_was_set_seq:		The sequence number of clock was set events
++ * @cs_was_changed_seq:		The sequence number of clocksource change events
++ * @monotonic_to_boot:		CLOCK_MONOTONIC to CLOCK_BOOTTIME offset
++ * @cycle_interval:		Number of clock cycles in one NTP interval
++ * @xtime_interval:		Number of clock shifted nano seconds in one NTP
++ *				interval.
++ * @xtime_remainder:		Shifted nano seconds left over when rounding
++ *				@cycle_interval
++ * @raw_interval:		Shifted raw nano seconds accumulated per NTP interval.
++ * @next_leap_ktime:		CLOCK_MONOTONIC time value of a pending leap-second
++ * @ntp_tick:			The ntp_tick_length() value currently being
++ *				used. This cached copy ensures we consistently
++ *				apply the tick length for an entire tick, as
++ *				ntp_tick_length may change mid-tick, and we don't
++ *				want to apply that new value to the tick in
++ *				progress.
++ * @ntp_error:			Difference between accumulated time and NTP time in ntp
++ *				shifted nano seconds.
++ * @ntp_error_shift:		Shift conversion between clock shifted nano seconds and
++ *				ntp shifted nano seconds.
++ * @ntp_err_mult:		Multiplication factor for scaled math conversion
++ * @skip_second_overflow:	Flag used to avoid updating NTP twice with same second
++ * @last_warning:		Warning ratelimiter (DEBUG_TIMEKEEPING)
++ * @underflow_seen:		Underflow warning flag (DEBUG_TIMEKEEPING)
++ * @overflow_seen:		Overflow warning flag (DEBUG_TIMEKEEPING)
+  *
+  * Note: For timespec(64) based interfaces wall_to_monotonic is what
+  * we need to add to xtime (or xtime corrected for sub jiffy times)
+@@ -88,10 +96,28 @@ struct tk_read_base {
+  *
+  * @monotonic_to_boottime is a timespec64 representation of @offs_boot to
+  * accelerate the VDSO update for CLOCK_BOOTTIME.
++ *
++ * The cacheline ordering of the structure is optimized for in kernel usage of
++ * the ktime_get() and ktime_get_ts64() family of time accessors. Struct
++ * timekeeper is prepended in the core timekeeping code with a sequence count,
++ * which results in the following cacheline layout:
++ *
++ * 0:	seqcount, tkr_mono
++ * 1:	xtime_sec ... tai_offset
++ * 2:	tkr_raw, raw_sec
++ * 3,4: Internal variables
++ *
++ * Cacheline 0,1 contain the data which is used for accessing
++ * CLOCK_MONOTONIC/REALTIME/BOOTTIME/TAI, while cacheline 2 contains the
++ * data for accessing CLOCK_MONOTONIC_RAW.  Cacheline 3,4 are internal
++ * variables which are only accessed during timekeeper updates once per
++ * tick.
+  */
+ struct timekeeper {
++	/* Cacheline 0 (together with prepended seqcount of timekeeper core): */
+ 	struct tk_read_base	tkr_mono;
+-	struct tk_read_base	tkr_raw;
++
++	/* Cacheline 1: */
+ 	u64			xtime_sec;
+ 	unsigned long		ktime_sec;
+ 	struct timespec64	wall_to_monotonic;
+@@ -99,31 +125,29 @@ struct timekeeper {
+ 	ktime_t			offs_boot;
+ 	ktime_t			offs_tai;
+ 	s32			tai_offset;
++
++	/* Cacheline 2: */
++	struct tk_read_base	tkr_raw;
++	u64			raw_sec;
++
++	/* Cachline 3 and 4 (timekeeping internal variables): */
+ 	unsigned int		clock_was_set_seq;
+ 	u8			cs_was_changed_seq;
+-	ktime_t			next_leap_ktime;
+-	u64			raw_sec;
++
+ 	struct timespec64	monotonic_to_boot;
+ 
+-	/* The following members are for timekeeping internal use */
+ 	u64			cycle_interval;
+ 	u64			xtime_interval;
+ 	s64			xtime_remainder;
+ 	u64			raw_interval;
+-	/* The ntp_tick_length() value currently being used.
+-	 * This cached copy ensures we consistently apply the tick
+-	 * length for an entire tick, as ntp_tick_length may change
+-	 * mid-tick, and we don't want to apply that new value to
+-	 * the tick in progress.
+-	 */
++
++	ktime_t			next_leap_ktime;
+ 	u64			ntp_tick;
+-	/* Difference between accumulated time and NTP time in ntp
+-	 * shifted nano seconds. */
+ 	s64			ntp_error;
+ 	u32			ntp_error_shift;
+ 	u32			ntp_err_mult;
+-	/* Flag used to avoid updating NTP twice with same second */
+ 	u32			skip_second_overflow;
++
+ #ifdef CONFIG_DEBUG_TIMEKEEPING
+ 	long			last_warning;
+ 	/*
+-- 
+2.39.5
+
 
