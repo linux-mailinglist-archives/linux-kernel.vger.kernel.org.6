@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-365900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D7299EDB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 143C499EDC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A8E28198E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:35:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C982858A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D08A1AF0C7;
-	Tue, 15 Oct 2024 13:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEA11514F8;
+	Tue, 15 Oct 2024 13:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUH47/d3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mtlw3P1b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71341FC7F4;
-	Tue, 15 Oct 2024 13:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820721FC7C9;
+	Tue, 15 Oct 2024 13:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999285; cv=none; b=R/3fy5SEU2zwRxYI62dNKBh3In3pEcEbF1+LQzayVtWcT+nNHqyB5LOgAalHXw80oZ3EX1FCvi3bEB9IZXW2GuusMwTHDkDYpPvrenkwNKpyQhSVA+GJ15SQSBzK6iuIK5gHjHvXU7RWfHzYC/u9crWeTSaaiuuQNL+bd3/zFy0=
+	t=1728999352; cv=none; b=rnFzFbEYZIQgke9LlNMKQ76eRyG/IooF06Nxm3fr/OKHg1tPcsftpW/w7YUb9xmo4q5m6kDfxKfuvwFlTtMFOi7zH747ix8pL6SyGJVHWhoE8W022EDkCTZhslFdKAyXGEvGq2R1DWdlHYbop6v0iAFeifsTxQwrjBMoArDF48g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999285; c=relaxed/simple;
-	bh=DInivVJx6ULUiRiKYPN/1tv/iN2VCfV/EcpnVIgPpfE=;
+	s=arc-20240116; t=1728999352; c=relaxed/simple;
+	bh=iWqukihIetnXFxIMSRJf6mjrnCnlfxnayzBqiz8bRnY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GuckYdEcNIOcgHkio+17id5vBWmaT3W+tiklTueVQU8MJDJCg9Vjv0/UivkOZOp9pp+OH+6ZO5G+6D6B0L+kvIg7EbJ89oEkatk2xmx8Oj5wbAklLAuATpWjbSa20077nEe+Qos3WXJ0PZ/JwOipwuLY53j79UD5LX40v/sB66Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUH47/d3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F0DC4CECE;
-	Tue, 15 Oct 2024 13:34:40 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=IF7J5l2uGfLifNC1u5beGMUDj4dARVCoFY3ZsvEDXBJ/1mWomH3lQon0dyKNszAOY4GautTF+4uAj+V44/m6I5wG29OlsIxYweaVNwKjUMWA+mDUrJTEnphPz5Z+q0b77Xo3IiRA/z8ELI1xsTIGmEbxTV/JjHRezmg5mrm4rcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mtlw3P1b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A65FC4CEC6;
+	Tue, 15 Oct 2024 13:35:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728999284;
-	bh=DInivVJx6ULUiRiKYPN/1tv/iN2VCfV/EcpnVIgPpfE=;
+	s=k20201202; t=1728999352;
+	bh=iWqukihIetnXFxIMSRJf6mjrnCnlfxnayzBqiz8bRnY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DUH47/d3OkK+DmDOw5pQVXd1wWE4eUSo1tTZdc/gtNRK585ubP3F/lbgWIjgiXhIx
-	 CgOKHbq4O9xRBMlF3tf12HyUyq5YRun23DYR3pVJutRBhEDSNm8uhL7LoJXyw6NEH9
-	 958iUuRVOgAFc0x+ZCNfQeSgcjxAZshX8Ipfn5ynU29MBauSr2VTLgkQqeiwPfWn1g
-	 I34Xhj71MJWQo9ZODn0wS0vQFHC6WEOfpqFSVb7xzNhq70fNKqgouNzKnxjnv48+8G
-	 fexa7nzKIjW73wVMdwlE1gWBZSznpP6V++QTF+ekUHkekBc1e9bikz7vHdP7thOTj5
-	 +p1uNTDm6DILQ==
-Message-ID: <e6012be3-01c8-4ff8-bb52-9334c7490c78@kernel.org>
-Date: Tue, 15 Oct 2024 15:34:39 +0200
+	b=Mtlw3P1bWQYcQxdXci7wwOz8Hy1DkvnYOvYplfMHvTejdKnUeG+pS6hmL8bPYpNDN
+	 GAyFx/ZYwZYi82WmEesfcrXljVPTuXcq597/C4Tucja62HoghI26C52oPaRC0F1XVS
+	 IZ7BSGjzXuyIYLy9MeB9n6nSDDboWFD3jjYH0pxkREuZUnY2Gdb8HPfWlj3xqXdQfi
+	 Sy/QScWmSgpezN2rlj7c4nzsMmgALGB1SXyHJCtouCPy8KyCuwwIvnXQHmxw7aK122
+	 Y17hkhyrmE3Ia0zoQxIaPVnlJAcuAA7B/gcu3g7kLqAyTMIxIu18RRijpRedPnZYNd
+	 SDuEzpSjXnTRA==
+Message-ID: <f0da1029-c8df-40e7-8312-a41a87b7b940@kernel.org>
+Date: Tue, 15 Oct 2024 15:35:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
- Sophgo CV1800 thermal
-To: Haylen Chu <heylenay@4d2.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20241014073813.23984-1-heylenay@4d2.org>
- <20241014073813.23984-2-heylenay@4d2.org>
- <cycdlsi3tb6nqgbzzmypmblpcxxqmn3slqcbf5mq2okw3lqrdr@ghvswymvnslp>
- <Zw5pB_tPuOgIbaxV@ketchup>
+Subject: Re: [PATCH v1 4/5] dt-bindings: remoteproc: add binding for Microchip
+ IPC remoteproc
+To: Valentina.FernandezAlanis@microchip.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, peterlin@andestech.com,
+ dminus@andestech.com, Conor.Dooley@microchip.com, conor+dt@kernel.org,
+ ycliang@andestech.com, jassisinghbrar@gmail.com, robh@kernel.org,
+ krzk+dt@kernel.org, andersson@kernel.org, mathieu.poirier@linaro.org
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+ <20240912170025.455167-5-valentina.fernandezalanis@microchip.com>
+ <fc541e78-5304-42be-a844-70935d66f151@kernel.org>
+ <82eae461-3cce-4e36-905c-34c147fabcb3@microchip.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,60 +107,86 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <Zw5pB_tPuOgIbaxV@ketchup>
+In-Reply-To: <82eae461-3cce-4e36-905c-34c147fabcb3@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/10/2024 15:07, Haylen Chu wrote:
-> On Tue, Oct 15, 2024 at 07:52:33AM +0200, Krzysztof Kozlowski wrote:
->> On Mon, Oct 14, 2024 at 07:38:11AM +0000, Haylen Chu wrote:
->>> Add devicetree binding documentation for thermal sensors integrated in
->>> Sophgo CV1800 SoCs.
+On 15/10/2024 14:09, Valentina.FernandezAlanis@microchip.com wrote:
+> On 16/09/2024 21:14, Krzysztof Kozlowski wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On 12/09/2024 19:00, Valentina Fernandez wrote:
+>>> Microchip family of RISC-V SoCs typically has or more clusters. These
+>>> clusters can be configured to run in Asymmetric Multi Processing (AMP)
+>>> mode
+>>
+>> A nit, subject: drop second/last, redundant "binding for". The
+>> "dt-bindings" prefix is already stating that these are bindings.
+>> See also:
+>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>>
 >>>
->>> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+>>> Add a dt-binding for the Microchip IPC Remoteproc platform driver.
+>>>
+>>
+>> Binding is for hardware, not driver. Please rephrase it to describe
+>> hardware.
+>>
+>>
+>>> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 >>> ---
->>>  .../thermal/sophgo,cv1800-thermal.yaml        | 57 +++++++++++++++++++
->>>  1 file changed, 57 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+>>>   .../remoteproc/microchip,ipc-remoteproc.yaml  | 84 +++++++++++++++++++
+>>>   1 file changed, 84 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
 >>>
->>> diff --git a/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml b/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
 >>> new file mode 100644
->>> index 000000000000..14abeb7a272a
+>>> index 000000000000..1765c68d22cf
 >>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
->>> @@ -0,0 +1,57 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
+>>> @@ -0,0 +1,84 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 >>> +%YAML 1.2
 >>> +---
->>> +$id: http://devicetree.org/schemas/thermal/sophgo,cv1800-thermal.yaml#
+>>> +$id: http://devicetree.org/schemas/remoteproc/microchip,ipc-remoteproc.yaml#
 >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >>> +
->>> +title: Sophgo CV1800 on-SoC Thermal Sensor
+>>> +title: Microchip IPC Remote Processor
+>>> +
+>>> +description:
+>>> +  Microchip family of RISC-V SoCs typically have one or more
+>>> +  clusters. These clusters can be configured to run in an Asymmetric
+>>> +  Multi Processing (AMP) mode where clusters are split in independent
+>>> +  software contexts.
+>>> +
+>>> +  This document defines the binding for the remoteproc component that
+>>> +  loads and boots firmwares on remote clusters.
+>>
+>> Don't say that binding is a binding for. Say what this hardware piece is.
+>>
+>>> +
+>>> +  This SBI interface is compatible with the Mi-V Inter-hart
+>>> +  Communication (IHC) IP.
 >>> +
 >>> +maintainers:
->>> +  - Haylen Chu <heylenay@4d2.org>
->>> +
->>> +description: Sophgo CV1800 on-SoC thermal sensor
->>> +
->>> +$ref: thermal-sensor.yaml#
+>>> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 >>> +
 >>> +properties:
 >>> +  compatible:
->>> +    enum:
->>> +      - sophgo,cv1800-thermal
+>>> +    const: microchip,ipc-remoteproc
 >>
->> Not much improved, judging by other patches there is no "CV1800" SoC,
->> but that's a family name.  Otherwise please point us to bindings or DTS
->> using this SoC.
+>> That's quite generic. Basically this says it will handle IPC of all
+>> possible Microchip SoCs, not only RISC-V but also ARM and whatever you
+>> come up with.
+> IPC is the actual name of the hardware block described in this binding. 
+> I'll update the description of the binding in v2 to mention this.
 > 
-> "cv1800" is referenced in the clock binding[1] and usb binding[2]. I
-> don't think there are other CV1800 SoC variants. Usage of "CV1800"
+> Additionally, I'll rename the compatible to microchip,ipc-sbi-remoteproc 
+> to further clarify that this binding is intended for devices using the 
+> Microchip IPC hardware block and for devices with an SBI interface (RISC-V).
 
-There are. git grep cv1800
-
-> should be specific and unambiguous.
-
-And other places have different name.
+Well, still generic. Explain why this deserves exception from specific
+SoC compatibles.
 
 Best regards,
 Krzysztof
