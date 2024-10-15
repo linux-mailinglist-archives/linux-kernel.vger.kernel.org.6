@@ -1,94 +1,175 @@
-Return-Path: <linux-kernel+bounces-366628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBF999F7FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:16:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80CEB99F7FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51E3BB21D71
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:16:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B53A2874B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF51F668B;
-	Tue, 15 Oct 2024 20:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B249A1B6D01;
+	Tue, 15 Oct 2024 20:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="IzUCzDB6"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="saVfkNRV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3F71B6D01
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1971EC006;
+	Tue, 15 Oct 2024 20:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729023375; cv=none; b=pc+pE3DSlPUq+G5VEeH6NrlQxRroODWBRidcKE7QCcPdEWxYF9vsVKeqsTy46CZo5h83+xtaoi2o2PqdMR5xmKLzU5g7CYOmeIOXFMHTWPzf+MiHySeRojBtS08oYgczBbk29YDlZT/aJ2bdMyI+qkHLlnBkNZQswB+2rhEqT00=
+	t=1729023389; cv=none; b=d0L+Y5RqiQy3bYEop3iVzp78PCRkrRigHxZ8Y+ZS+74r1ZkwyEGNY/zrcGjhlQr7zcS74tLNeR3QOPGLDbKZaveGDEtpCEwwce+FgHmb3otc2Dg1TC9EyJfcdZYbLhRU8gcXxSUBpJZcH1+l2DqfMOvX4an7ZhylyH2q+Idal3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729023375; c=relaxed/simple;
-	bh=tu1QoClbkObUUASz2k72n5n9x6U9Edk37FHc0RbrcK8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=OX1GvQi4Aut3cXI/ww27htOgj+8n1UWXHDm2bHe5/goEMT3+VApm1BBmFClVXx6+cJ7BxKQeLH35ECl09/1hcapoHtoIkSG8htmghCdhYJkr50jU5rLMSjnt7rCOtolfcYgtdy0EUfwnVV1S6F7xuZtnVsEnx1FsOxexXXNJuH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=IzUCzDB6; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E36A82C03CB;
-	Wed, 16 Oct 2024 09:16:09 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1729023369;
-	bh=n+f8WcwPeAeJHJNpFk2AM+E9vsZVL3Pq+k16AJ57gbQ=;
-	h=Date:From:Subject:To:From;
-	b=IzUCzDB64DbWMlDDv05shZusOcYCAhnUoQ1ji4XpnMSx94OqTIU+mkSWA87PxYULt
-	 axS4g3CZCjHsVm8KvQFyASTtuCtl6PuBPHD83W8b9dbDi3u6hG1NyPQPHTGrEoUATz
-	 yzzT041ANhXvp1D8SLDoyT94SF1T5IC5BgzvkP3csPIqqKaA+PHgBXJVMiF7NaGYQc
-	 EpTLnZnk35hmzjpQb4bQAacSmrxSxMCwdwI478nT5tqU76X4uUCbesvuX1mcLmbl/r
-	 qzlI7+bP05PBSYYRoVACM28CWTkJ86zizBKaH2Tol30RvJ8qFJ7E+bEBoYcMvky8mM
-	 8p8LiqeX8DBkA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670ecd890001>; Wed, 16 Oct 2024 09:16:09 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id AE02813ED7B;
-	Wed, 16 Oct 2024 09:16:09 +1300 (NZDT)
-Message-ID: <269854a8-1041-4ba6-b022-ba8ec15c6b78@alliedtelesis.co.nz>
-Date: Wed, 16 Oct 2024 09:16:09 +1300
+	s=arc-20240116; t=1729023389; c=relaxed/simple;
+	bh=3XU7Cf0i8FuoFLj0d1WainiX5TPPtsxGLKvRwUE6YCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aiN4uNwxDrfWjM0boPYaieE9Okzu9ohl8KldUiWsWMJDPEaWzJfbaQxfoTbDJpXzuSDxsRhXiGRE7uvXpnsMGJDxAOmR6ihxZYjhECLllD6lZkgR8ZAfa2qCOnECCe0Wn/CqtRdxoYo4mZKoAF93Yuta01MJ2ZSn69e7gl2tHn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=saVfkNRV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1207CC4CEC6;
+	Tue, 15 Oct 2024 20:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729023387;
+	bh=3XU7Cf0i8FuoFLj0d1WainiX5TPPtsxGLKvRwUE6YCg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=saVfkNRVXGjZAruWPwWn8yA5vH6/acmiof2Q59outIc3ywHIo50dkOwc6bPhBIsDg
+	 Thr9vznZXC2VLBCOb696UzwQ7ERKIlYWkicmXGrDLkB3+666SN7SplHCUsqKA0PU3Q
+	 bJdnjiMwc/r3yGwUUV3n46SCXeJhSfZ+g2HuScUKOBbpth2CInbr1cgnzBmE1+77CG
+	 eWH64ZQGbijF6hCmlWm7w0/GeLwiCJuiYHm9+nIYbho0d5wD8B+l49yCMewo8GvrzT
+	 RoFcOmjf6H9zSziJlPmECGeh0dYD62xOOWmVQe26n+dtYs0im1hdpkYNe4jJID5dsL
+	 tDnOZuz04wsNw==
+Date: Tue, 15 Oct 2024 17:16:24 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Song Liu <songliubraving@fb.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1 perf-tools] perf trace augmented_raw_syscalls: Add extra
+ array index bounds checking to satisfy some BPF verifiers
+Message-ID: <Zw7NmIep-PdhdKIB@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: Building out of tree dtbs
-To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670ecd89 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=p0WdMEafAAAA:8 a=YRHvXXt1AAAA:8 a=w3Su-nGi9A_OhNgBJrUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=9bw_jnHfPby8klRCszyn:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-(resend without HTML part)
+In a RHEL8 kernel (4.18.0-513.11.1.el8_9.x86_64), that, as enterprise
+kernels go, have backports from modern kernels, the verifier complains
+about lack of bounds check for the index into the array of syscall
+arguments, on a BPF bytecode generated by clang 17, with:
 
-Hi,
+  ; } else if (size < 0 && size >= -6) { /* buffer */
+  116: (b7) r1 = -6
+  117: (2d) if r1 > r6 goto pc-30
+   R0=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=inv-6 R2=map_value(id=0,off=16,ks=4,vs=8272,imm=0) R3=inv(id=0) R5=inv40 R6=inv(id=0,umin_value=18446744073709551610,var_off=(0xffffffff00000000; 0xffffffff)) R7=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8=invP6 R9=map_value(id=0,off=20,ks=4,vs=24,imm=0) R10=fp0 fp-8=mmmmmmmm fp-16=map_value fp-24=map_value fp-32=inv40 fp-40=ctx fp-48=map_value fp-56=inv1 fp-64=map_value fp-72=map_value fp-80=map_value
+  ; index = -(size + 1);
+  118: (a7) r6 ^= -1
+  119: (67) r6 <<= 32
+  120: (77) r6 >>= 32
+  ; aug_size = args->args[index];
+  121: (67) r6 <<= 3
+  122: (79) r1 = *(u64 *)(r10 -24)
+  123: (0f) r1 += r6
+  last_idx 123 first_idx 116
+  regs=40 stack=0 before 122: (79) r1 = *(u64 *)(r10 -24)
+  regs=40 stack=0 before 121: (67) r6 <<= 3
+  regs=40 stack=0 before 120: (77) r6 >>= 32
+  regs=40 stack=0 before 119: (67) r6 <<= 32
+  regs=40 stack=0 before 118: (a7) r6 ^= -1
+  regs=40 stack=0 before 117: (2d) if r1 > r6 goto pc-30
+  regs=42 stack=0 before 116: (b7) r1 = -6
+   R0_w=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=inv1 R2_w=map_value(id=0,off=16,ks=4,vs=8272,imm=0) R3_w=inv(id=0) R5_w=inv40 R6_rw=invP(id=0,smin_value=-2147483648,smax_value=0) R7_w=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8_w=invP6 R9_w=map_value(id=0,off=20,ks=4,vs=24,imm=0) R10=fp0 fp-8=mmmmmmmm fp-16_w=map_value fp-24_r=map_value fp-32_w=inv40 fp-40=ctx fp-48=map_value fp-56_w=inv1 fp-64_w=map_value fp-72=map_value fp-80=map_value
+  parent didn't have regs=40 stack=0 marks
+  last_idx 110 first_idx 98
+  regs=40 stack=0 before 110: (6d) if r1 s> r6 goto pc+5
+  regs=42 stack=0 before 109: (b7) r1 = 1
+  regs=40 stack=0 before 108: (65) if r6 s> 0x1000 goto pc+7
+  regs=40 stack=0 before 98: (55) if r6 != 0x1 goto pc+9
+   R0_w=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=invP12 R2_w=map_value(id=0,off=16,ks=4,vs=8272,imm=0) R3_rw=inv(id=0) R5_w=inv24 R6_rw=invP(id=0,smin_value=-2147483648,smax_value=2147483647) R7_w=map_value(id=0,off=40,ks=4,vs=8272,imm=0) R8_rw=invP4 R9_w=map_value(id=0,off=12,ks=4,vs=24,imm=0) R10=fp0 fp-8=mmmmmmmm fp-16_rw=map_value fp-24_r=map_value fp-32_rw=invP24 fp-40_r=ctx fp-48_r=map_value fp-56_w=invP1 fp-64_rw=map_value fp-72_r=map_value fp-80_r=map_value
+  parent already had regs=40 stack=0 marks
+  124: (79) r6 = *(u64 *)(r1 +16)
+   R0=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=map_value(id=0,off=0,ks=4,vs=8272,umax_value=34359738360,var_off=(0x0; 0x7fffffff8),s32_max_value=2147483640,u32_max_value=-8) R2=map_value(id=0,off=16,ks=4,vs=8272,imm=0) R3=inv(id=0) R5=inv40 R6_w=invP(id=0,umax_value=34359738360,var_off=(0x0; 0x7fffffff8),s32_max_value=2147483640,u32_max_value=-8) R7=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8=invP6 R9=map_value(id=0,off=20,ks=4,vs=24,imm=0) R10=fp0 fp-8=mmmmmmmm fp-16=map_value fp-24=map_value fp-32=inv40 fp-40=ctx fp-48=map_value fp-56=inv1 fp-64=map_value fp-72=map_value fp-80=map_value
+  R1 unbounded memory access, make sure to bounds check any such access
+  processed 466 insns (limit 1000000) max_states_per_insn 2 total_states 20 peak_states 20 mark_read 3
 
-I just noticed with the latest 6.12-rc I'm no longer able to build an 
-out of tree dtb by just copying it into arch/$ARCH/boot/dts (at least 
-for ARCH=mips and ARCH=arm64) and running `make my-board.dtb`. I believe 
-buildroot relies on this as well[1].
+If we add this line, as used in other BPF programs, to cap that index:
 
-Is this an intentional change? Is it too late to undo it (or provide an 
-alternative way of having out of tree dts that make use of in-tree dtsi).
+   index &= 7;
 
-Thanks,
-Chris
+The generated BPF program is considered safe by that version of the BPF
+verifier, allowing perf to collect the syscall args in one more kernel
+using the BPF based pointer contents collector.
 
---
+With the above one-liner it works with that kernel:
 
-[1] - 
-https://gitlab.com/buildroot.org/buildroot/-/blob/master/linux/linux.mk?ref_type=heads#L516
+  [root@dell-per740-01 ~]# uname -a
+  Linux dell-per740-01.khw.eng.rdu2.dc.redhat.com 4.18.0-513.11.1.el8_9.x86_64 #1 SMP Thu Dec 7 03:06:13 EST 2023 x86_64 x86_64 x86_64 GNU/Linux
+  [root@dell-per740-01 ~]# ~acme/bin/perf trace -e *sleep* sleep 1.234567890
+       0.000 (1234.704 ms): sleep/3863610 nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 234567890 })                  = 0
+  [root@dell-per740-01 ~]#
+
+As well as with the one in Fedora 40:
+
+  root@number:~# uname -a
+  Linux number 6.11.3-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Oct 10 22:31:19 UTC 2024 x86_64 GNU/Linux
+  root@number:~# perf trace -e *sleep* sleep 1.234567890
+       0.000 (1234.722 ms): sleep/14873 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 234567890 }, rmtp: 0x7ffe87311a40) = 0
+  root@number:~#
+
+I'll investigate using virtme-ng[1] to have all the perf BPF based
+functionality thoroughly tested over multiple kernels and clang
+versions.
+
+[1] https://kernel-recipes.org/en/2024/virtme-ng/
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alan Maguire <alan.maguire@oracle.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrea Righi <andrea.righi@linux.dev>
+Cc: Howard Chu <howardchu95@gmail.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Link: https://lore.kernel.org/lkml/Zw7JgJc0LOwSpuvx@x1
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+index b2f17cca014bcff4..f01c7cb84d22d181 100644
+--- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
++++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+@@ -477,6 +477,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+ 				augmented = true;
+ 		} else if (size < 0 && size >= -6) { /* buffer */
+ 			index = -(size + 1);
++			index &= 7; // To satisfy the bounds checking with the verifier in some kernels
+ 			aug_size = args->args[index];
+ 
+ 			if (aug_size > TRACE_AUG_MAX_BUF)
+-- 
+2.46.0
 
 
