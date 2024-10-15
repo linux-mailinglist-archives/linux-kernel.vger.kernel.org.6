@@ -1,106 +1,232 @@
-Return-Path: <linux-kernel+bounces-365371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5839F99E15A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:40:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F4EF99E15B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E4A2281FE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB7628189F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134A11CC891;
-	Tue, 15 Oct 2024 08:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D161CDA1C;
+	Tue, 15 Oct 2024 08:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tz67ruPL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dyPXJMzW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F83D17335E;
-	Tue, 15 Oct 2024 08:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4E51CB531
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728981651; cv=none; b=IpvuaGz6huyaEBQBjuZz5RDeMVoHS3u5BmqACWnKjOIs50DXA+FGbEhRIqWt9M1Q9kXdN+K2sLybr7KDHJIum0tu/FFzsBfOe74L2rdD0H9upxu+ObKsZzsd0tHTgkz+7Gmpaqko8CZWNIqXh2u1SoPtKG8e2eZm8tHrcKxyCJ0=
+	t=1728981689; cv=none; b=LTvcU/aocvmd1a/JrrQ8G12czbv2i9/nMXTOVGqxVSULyPTGyZ/MjC/Xozq8iF0K/ToWIkRYHJAssHEXZ+uVho+Um6feZqBH+lale4rer5zmFEAec5ooMr3DZSJsbRzfDEEWPVFFt759Xl1gznQnDKG8Ymeo/VcrChys/3X/+ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728981651; c=relaxed/simple;
-	bh=fnvz8GVQr2mnOGUgDHGqja/n6PQ9tkzXbBSmSbkZ3Kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iHFisS+IVocsHc8WcZLJXa5bKyhLLhQ80J9mKpngSyxiuS/apoS4NtULSMLCJLZpY60TuiH5WWzRigEPOng+OPRrNzfvnoDUh7PUG2buobDiD9Fj9harkrBKBivYj2fSpAEsX54TZ4dciXo3uShzNYIudc5b6SCnnP1jS5aGWYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tz67ruPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B10C4CEC7;
-	Tue, 15 Oct 2024 08:40:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728981651;
-	bh=fnvz8GVQr2mnOGUgDHGqja/n6PQ9tkzXbBSmSbkZ3Kw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tz67ruPLVDSsy2rPzDRsy1gn7KCMMXuD3oNvGcfWRwKjhQZ/bnQ5IPb+zBQUxEzMi
-	 1efJdMCzjpaK+K7GOQMeVRlv+JnqOJ9uFZHWU5cYUcjRWQiugMsEY8IUcdCnChYu6E
-	 f0yxgV1CtdSZSSPTfBypL+GvPvK2BDSz/GY4tVtwsyVv9KNIPCE8a/s3jaA/mOvJSq
-	 cbHLMdF+D5bCySlhs9VLnNgYT0nEbHrLiSaaRug5CJTGnAk6PKYXoaFzOFnBaDOwxa
-	 iiy49jQY4/n6Xb9/Y4wU5GWluiYA2ccJrCz5hNQl1BrhC/bbOmutP69xcF8BfaAzYH
-	 mVzm3Avtdj3Ww==
-Received: by pali.im (Postfix)
-	id E62C879D; Tue, 15 Oct 2024 10:40:43 +0200 (CEST)
-Date: Tue, 15 Oct 2024 10:40:43 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	siddharth.manthan@gmail.com
-Subject: Re: [PATCH] platform/x86: dell-wmi: Ignore suspend notifications
-Message-ID: <20241015084043.f2yzv4j7rvf6kajf@pali>
-References: <20241014220529.397390-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1728981689; c=relaxed/simple;
+	bh=4FRIdOjAlQ/qQDKesSjYAifVC92YFWjXAoPv2r/kGPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DXDLQSU+0AtK1Q9YMr9aR5VqYoODrdniXTi9KbDlBKexKsLobTNMBQON69KFejjFukHKiDXazZKwg1+79ZVkU7IVDGUG2AE9cApbXiwHVIkF9xFz64cx0iIF69zmrFN+Qt5jxNEBwst++0R0iRYVws2Hw1eneT1hn1uTo1uMyQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dyPXJMzW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728981686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=R6dQrHIK5ReTqnF0CzZPMpl0Tk4yRynTHPfhbhUh3Ns=;
+	b=dyPXJMzWEhyoQAfsL98/GL7JuIq5g1FeTR2NgofWpygsCFeFJi217W/ZZwtOvOysSQ45ov
+	JOvY8OuqjE5gsiJ5a3WgG4dTRrmUkfjB0W9/MN4SO2KhZUzD/DF3g8fpUS0MapvjlEcwPL
+	hVWu6SjvATGzLTdl2wBGlekwfZWySVc=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-392-rAttTbDbNriaVnGBTaxGZQ-1; Tue, 15 Oct 2024 04:41:25 -0400
+X-MC-Unique: rAttTbDbNriaVnGBTaxGZQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d59ad50f3so1286602f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:41:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728981684; x=1729586484;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=R6dQrHIK5ReTqnF0CzZPMpl0Tk4yRynTHPfhbhUh3Ns=;
+        b=PmPtiUfcKfR34vlfW4+Z2m8AaPEG2CfbQrGtuw9WvyerRqb3vRccAKGGqA2+Viej0F
+         6aYLiSmv8YrWdstaNjjZDYIymJxphqxf+W8IUtPg0BftZEu9V/oBnfY8oBoaHMtcArbV
+         ybJvdkbHsfNGBrUx76904FdPaajtzSAiyhOhRe0so3ULYVgQ7D+z+WbiP8uofWiuQ9eC
+         4hqB4jugdo0vrZPvUq9YN0VYO4pn5zA7bySC8yfyT5pj/BAxC+8c6LWud3oqBsl3Zpku
+         JWH2wtcaItBybEsEbayu128dhqpVjT/nksP0gzPH3ksWATsJcBa0QdlaFArJVGCvqht1
+         EwEA==
+X-Gm-Message-State: AOJu0Yyzm02drGX5BTraD/k1K7FYfk4Eq18xTwF/yPU5ocnmeB3hzq3f
+	X6L9vxm8aXINoqHjsR7DKirtH1YLx9KKr6ziYx1PMFr+xnsZvhaJlNIweRXYCxpHSeM14LYpER3
+	CriFdG9SudfZ56S86M2OIcyt8LCFDqJC4u3htCH3GlE4jaLBxdCaBichpzMUo/w==
+X-Received: by 2002:a5d:4e0f:0:b0:37c:c5be:1121 with SMTP id ffacd0b85a97d-37d55190237mr9169850f8f.9.1728981683775;
+        Tue, 15 Oct 2024 01:41:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZAdELzr5Ouos6fmEAgMTYb0O76aE5udbIfuFSIrv8YGlHK6qc4w4IDT3e+se4F4x2Of7teg==
+X-Received: by 2002:a5d:4e0f:0:b0:37c:c5be:1121 with SMTP id ffacd0b85a97d-37d55190237mr9169828f8f.9.1728981683310;
+        Tue, 15 Oct 2024 01:41:23 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c730:9700:d653:fb19:75e5:ab5c? (p200300cbc7309700d653fb1975e5ab5c.dip0.t-ipconnect.de. [2003:cb:c730:9700:d653:fb19:75e5:ab5c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf8228sm966430f8f.81.2024.10.15.01.41.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 01:41:22 -0700 (PDT)
+Message-ID: <0c7e876f-5648-4a82-b809-ca48f778b4a6@redhat.com>
+Date: Tue, 15 Oct 2024 10:41:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241014220529.397390-1-W_Armin@gmx.de>
-User-Agent: NeoMutt/20180716
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+ Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-2-david@redhat.com>
+ <20241014182054.10447-D-hca@linux.ibm.com>
+ <f93b2c89-821a-4da1-8953-73ccd129a074@redhat.com>
+ <20241015083040.7641-C-hca@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241015083040.7641-C-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tuesday 15 October 2024 00:05:29 Armin Wolf wrote:
-> Some machines like the Dell G15 5155 emit WMI events when
-> suspending/resuming. Ignore those WMI events.
+On 15.10.24 10:30, Heiko Carstens wrote:
+> On Mon, Oct 14, 2024 at 09:26:03PM +0200, David Hildenbrand wrote:
+>> On 14.10.24 20:20, Heiko Carstens wrote:
+>>> Looks like this could work. But the comment in smp.c above
+>>> dump_available() needs to be updated.
+>>
+>> A right, I remember that there was some outdated documentation.
+>>
+>>>
+>>> Are you willing to do that, or should I provide an addon patch?
+>>>
+>>
+>> I can squash the following:
+>>
+>> diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
+>> index 4df56fdb2488..a4f538876462 100644
+>> --- a/arch/s390/kernel/smp.c
+>> +++ b/arch/s390/kernel/smp.c
+>> @@ -587,16 +587,16 @@ int smp_store_status(int cpu)
+>>    *    with sigp stop-and-store-status. The firmware or the boot-loader
+>>    *    stored the registers of the boot CPU in the absolute lowcore in the
+>>    *    memory of the old system.
+>> - * 3) kdump and the old kernel did not store the CPU state,
+>> - *    or stand-alone kdump for DASD
+>> - *    condition: OLDMEM_BASE != NULL && !is_kdump_kernel()
+>> + * 3) kdump or stand-alone kdump for DASD
+>> + *    condition: OLDMEM_BASE != NULL && !is_ipl_type_dump() == false
+>>    *    The state for all CPUs except the boot CPU needs to be collected
+>>    *    with sigp stop-and-store-status. The kexec code or the boot-loader
+>>    *    stored the registers of the boot CPU in the memory of the old system.
+>> - * 4) kdump and the old kernel stored the CPU state
+>> - *    condition: OLDMEM_BASE != NULL && is_kdump_kernel()
+>> - *    This case does not exist for s390 anymore, setup_arch explicitly
+>> - *    deactivates the elfcorehdr= kernel parameter
+>> + *
+>> + * Note that the old Kdump mode where the old kernel stored the CPU state
 > 
-> Tested-by: siddharth.manthan@gmail.com
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> To be consistent with the rest of the comment, please write kdump in
+> all lower case characters, please.
 
-Looks good,
+It obviously was too late in the evening for me :) Thanks!
 
-Acked-by: Pali Rohár <pali@kernel.org>
+> 
+>> + * does no longer exist: setup_arch explicitly deactivates the elfcorehdr=
+>> + * kernel parameter. The is_kudmp_kernel() implementation on s390 is independent
+> 
+> Typo: kudmp.
+> 
+>> Does that sound reasonable? I'm not so sure about the "2) stand-alone kdump for
+>> SCSI/NVMe (zfcp/nvme dump with swapped memory)": is that really "kdump" ?
+> 
+> Yes, it is some sort of kdump, even though a bit odd.
 
-> ---
-> For some reason mjg59@srcf.ucam.org causes a local error in processing.
-> ---
->  drivers/platform/x86/dell/dell-wmi-base.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/dell/dell-wmi-base.c b/drivers/platform/x86/dell/dell-wmi-base.c
-> index 502783a7adb1..24fd7ffadda9 100644
-> --- a/drivers/platform/x86/dell/dell-wmi-base.c
-> +++ b/drivers/platform/x86/dell/dell-wmi-base.c
-> @@ -264,6 +264,15 @@ static const struct key_entry dell_wmi_keymap_type_0010[] = {
->  	/*Speaker Mute*/
->  	{ KE_KEY, 0x109, { KEY_MUTE} },
-> 
-> +	/* S2Idle screen off */
-> +	{ KE_IGNORE, 0x120, { KEY_RESERVED }},
-> +
-> +	/* Leaving S4 or S2Idle suspend */
-> +	{ KE_IGNORE, 0x130, { KEY_RESERVED }},
-> +
-> +	/* Entering S2Idle suspend */
-> +	{ KE_IGNORE, 0x140, { KEY_RESERVED }},
-> +
->  	/* Mic mute */
->  	{ KE_KEY, 0x150, { KEY_MICMUTE } },
-> 
-> --
-> 2.39.5
-> 
+My concern is that we'll now have
+
+bool is_kdump_kernel(void)
+{
+        return oldmem_data.start && !is_ipl_type_dump();
+}
+
+Which matches 3), but if 2) is also called "kdump", then should it 
+actually be
+
+bool is_kdump_kernel(void)
+{
+        return oldmem_data.start;
+}
+
+?
+
+When I wrote that code I was rather convinced that the variant in this 
+patch is the right thing to do.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
