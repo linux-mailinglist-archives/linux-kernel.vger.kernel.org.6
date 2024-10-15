@@ -1,121 +1,190 @@
-Return-Path: <linux-kernel+bounces-365355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3517899E111
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A29DB99E10F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08861F21DF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:29:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D40E1F22DD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC371D9A60;
-	Tue, 15 Oct 2024 08:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gERxb1hA"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AF71D5AC0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABEA1D0F79;
 	Tue, 15 Oct 2024 08:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egqvVNG6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ACF17335E;
+	Tue, 15 Oct 2024 08:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980953; cv=none; b=nXbdA716opLzQGVTz9gSKxJvM3ecJik8ieAoD8l+flJrkrAYQFrwEmfjaGSKThjS+2bwYFABunIge6GDa+ZzgZaO/Ima814I3cTQZtd4QYc3ksXcy68jqKCYPqcBFmlOib99FRgmJttw9FRwZ+0HPh+ZEuOFrFOOUe3vV2RfjlU=
+	t=1728980951; cv=none; b=BpGslpAjb/SScjF6F21OPKp+TH/nP5BXNhVm3OJC5e3DzloFNGYTrPaIPnn0Dk7o7T9A2nycDD/vwTKmZSI2CKBmmH6b/kkhIH1D6IN8DAE4N+qJwXMHLdhVE1es9xCY1Ve2RQwxYhxEKgbdSQecTTMFHsgdsr6ArDr2XY2z9MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980953; c=relaxed/simple;
-	bh=4LcEGxdt1RrkLz4bv3qr2V0k7GnVFca0cynmiSPO1r4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J09kwAnhyLPqz7QLFFIXkQyS/iRh5jSPTZpdC8+sZPsb9j2733Tc0aJNlO1MbX4vo7sQsOIs/0pzzAqqvFFNC1aI8vUaqjRiM4VxTquFfhWQAL3PvMlX3HaZKKpPOWrkE3mw/akr4LdIoXgjD9ZIjhzfv6FXY5MKdvuawSvvs9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gERxb1hA; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-20c70abba48so33147455ad.0;
-        Tue, 15 Oct 2024 01:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728980951; x=1729585751; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hD4sXw2oQIO63uT3+cbcMmwkiQ0b3X0XBEuwM9efjPI=;
-        b=gERxb1hAVAVwzBnxmbrsOv8Vyfx68OoT014y6SMsHfVn9b4R5/xcs8jspdaLlg9Qd7
-         Bo9Po6WejUPOnZNg7dKbS0dxsZ+Ad/bVlIm2HZkQJBDlUlpaZVIVSQZmI7cuXplXSk0D
-         7mb1B9rZXGJMH2ml6npoVKW+K/olXF/zslsOghSs2OBChI15iNx5TJrck/dqOdt5Fg52
-         omBe6gmwbKpeA0HTWt5/dmgUzOZ5CT/VGH7ZqTzcwrSTJJ/+ecotU8jHHp7SSQVRQ8zy
-         aHFM/zc3jycyocXfnxI1rT8uheYRDyG4kkK/5X3k7GA+kSeoX+/T+xJqSIkH0TrpdcZB
-         ARKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728980951; x=1729585751;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hD4sXw2oQIO63uT3+cbcMmwkiQ0b3X0XBEuwM9efjPI=;
-        b=Zk9YbtlnhVR2DIZP2dsTkDz87jgrCCPTXRxhI4nmk9RoxTI/dpXX1/Dy6YcDD473Va
-         0Mh5uNfnKmXCDY99zCIa8x6WjdOR8Qh5ThFzZYEoTTBHmSgaRyFB1dyW/j8vmIU6mQiy
-         /U5wmwIP2U6OhXQSFJSdoJ7xRHgp5d5nqDsdLtTq+RGhartLleDd66mqXHjAMjiUSJYW
-         66kS5ULGqlpbfE+GwP12rhggI9oTPyZWUsKoEAigwX2UhLeOpMEPhRmEjeGsr5zFd+Rk
-         FdABPKzvZd4cfs5Xid+88Oj+9TwyY5lhBKAtipu8PnB4qIRgvci2i4iAcKd2F07iT2DI
-         uUzg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+pu1FsWUJuX6s+fpBCQs3zIxhX+2WRLfXJKMLdKGKuVjuQXNbGNuZ+OdE6noUzSzobYCSIyzE@vger.kernel.org, AJvYcCWFWACp2VDe7a/p7LvlWB/pK/hJkJF3fF0H1QMF2W7h8NQmFHLwhNyMLwH/wNmf8MHzZPvLWlipyGx+KCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6u04bGnSxhKHRKnFb3Sh8EZvgizx65AEaUMVuP4M2H4Vb0tIM
-	gnxydKanxAAHqdoXZKw5dwEja3uzLbHhskemFXnzeqwlTwHQKtnF
-X-Google-Smtp-Source: AGHT+IHEG/VC+yVh/uS0VtxQ/EqWvPx4wSevYNRNSEWSKulaKnwkNhFewXt7osct/EZXBUNQHaUlqA==
-X-Received: by 2002:a17:902:dac9:b0:20c:a0a5:a181 with SMTP id d9443c01a7336-20cbb1a482dmr152416035ad.19.1728980951223;
-        Tue, 15 Oct 2024 01:29:11 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1803669asm7177445ad.159.2024.10.15.01.29.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 01:29:10 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: kuba@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	dongml2@chinatelecom.cn,
-	gnault@redhat.com,
-	aleksander.lobakin@intel.com,
-	leitao@debian.org,
-	b.galvani@gmail.com,
-	alce@lafranque.net,
-	kalesh-anakkur.purayil@broadcom.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: vxlan: replace VXLAN_INVALID_HDR with VNI_NOT_FOUND
-Date: Tue, 15 Oct 2024 16:28:30 +0800
-Message-Id: <20241015082830.29565-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728980951; c=relaxed/simple;
+	bh=DsgcZIwzu+lcz+sCcqq5yd6bbrmg5UWNN75kmiN7u1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DXgvpzrUod20Noaa/8bLii5yxXW7uUaTmt925QivCJv8uQa6AikUCy3ZpfBJTKGT101k50Ih3SSxzVl5Hyzzprfk5FOq4MYDpyqpSLeM8erfL/Ek5qxul1RTIPsZUkbrF0f0xwW7lF6b937+FxTcq83N2lZgk/fmnsEzCciKrdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egqvVNG6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFDFC4CEC7;
+	Tue, 15 Oct 2024 08:29:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728980950;
+	bh=DsgcZIwzu+lcz+sCcqq5yd6bbrmg5UWNN75kmiN7u1o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=egqvVNG6q9wlgpkO2ihI5nbC6bmr+MKMXS2UkyLdtZUnRa2mJjPhb/GoHeE8B3JIV
+	 VDOtfy1iCH02B47+vC2mLdYrhXPmRCcdJ1+Qf6WXe8/wfp0qMu9/oa8S2JtMyqJO/O
+	 ZmBQkqH3b1vcstwGj/aIQZ/QJ/x/VWHD7oxFh+9oQa2EPZRfC0PAr1bUMSRbgTw0WX
+	 C7Lug7jeKA6ulz3nyHPgkg0UGzQL6Atd/tuR2Y2ST5aOa7GcMnBjH9MVS3YMhP6L1x
+	 3BVwGozDPiF2n6afO7840UO9nN2SDmvcqv5gq/FNe0QhCmwM6wOayqIt/j1N459swo
+	 /mUI7oPo31iJQ==
+Date: Tue, 15 Oct 2024 01:29:05 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v5 6/8] x86/module: perpare module loading for ROX
+ allocations of text
+Message-ID: <20241015082905.GA1235948@thelio-3990X>
+References: <20241009180816.83591-1-rppt@kernel.org>
+ <20241009180816.83591-7-rppt@kernel.org>
+ <20241010225411.GA922684@thelio-3990X>
+ <Zwkg3LwlNJOwNWZh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zwkg3LwlNJOwNWZh@kernel.org>
 
-Replace the drop reason "SKB_DROP_REASON_VXLAN_INVALID_HDR" with
-"SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND" in encap_bypass_if_local(), as the
-latter is more accurate.
+On Fri, Oct 11, 2024 at 03:58:04PM +0300, Mike Rapoport wrote:
+> I overlooked how cfi_*_callers routines update addr.
+> This patch should fix it:
 
-Fixes: 790961d88b0e ("net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()")
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- drivers/net/vxlan/vxlan_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, can confirm. My boot is working again and LKDTM's
+CFI_FORWARD_PROTO test properly fails.
 
-diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-index fd21a063db4e..841b59d1c1c2 100644
---- a/drivers/net/vxlan/vxlan_core.c
-+++ b/drivers/net/vxlan/vxlan_core.c
-@@ -2340,7 +2340,7 @@ static int encap_bypass_if_local(struct sk_buff *skb, struct net_device *dev,
- 			DEV_STATS_INC(dev, tx_errors);
- 			vxlan_vnifilter_count(vxlan, vni, NULL,
- 					      VXLAN_VNI_STATS_TX_ERRORS, 0);
--			kfree_skb_reason(skb, SKB_DROP_REASON_VXLAN_INVALID_HDR);
-+			kfree_skb_reason(skb, SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND);
- 
- 			return -ENOENT;
- 		}
--- 
-2.39.5
-
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index 3b3fa93af3b1..cf782f431110 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -1148,11 +1148,13 @@ static int cfi_disable_callers(s32 *start, s32 *end, struct module *mod)
+>  
+>  	for (s = start; s < end; s++) {
+>  		void *addr = (void *)s + *s;
+> -		void *wr_addr = module_writable_address(mod, addr);
+> +		void *wr_addr;
+>  		u32 hash;
+>  
+>  		addr -= fineibt_caller_size;
+> -		hash = decode_caller_hash(addr);
+> +		wr_addr = module_writable_address(mod, addr);
+> +		hash = decode_caller_hash(wr_addr);
+> +
+>  		if (!hash) /* nocfi callers */
+>  			continue;
+>  
+> @@ -1172,11 +1174,12 @@ static int cfi_enable_callers(s32 *start, s32 *end, struct module *mod)
+>  
+>  	for (s = start; s < end; s++) {
+>  		void *addr = (void *)s + *s;
+> -		void *wr_addr = module_writable_address(mod, addr);
+> +		void *wr_addr;
+>  		u32 hash;
+>  
+>  		addr -= fineibt_caller_size;
+> -		hash = decode_caller_hash(addr);
+> +		wr_addr = module_writable_address(mod, addr);
+> +		hash = decode_caller_hash(wr_addr);
+>  		if (!hash) /* nocfi callers */
+>  			continue;
+>  
+> @@ -1249,11 +1252,12 @@ static int cfi_rand_callers(s32 *start, s32 *end, struct module *mod)
+>  
+>  	for (s = start; s < end; s++) {
+>  		void *addr = (void *)s + *s;
+> -		void *wr_addr = module_writable_address(mod, addr);
+> +		void *wr_addr;
+>  		u32 hash;
+>  
+>  		addr -= fineibt_caller_size;
+> -		hash = decode_caller_hash(addr);
+> +		wr_addr = module_writable_address(mod, addr);
+> +		hash = decode_caller_hash(wr_addr);
+>  		if (hash) {
+>  			hash = -cfi_rehash(hash);
+>  			text_poke_early(wr_addr + 2, &hash, 4);
+> @@ -1269,14 +1273,15 @@ static int cfi_rewrite_callers(s32 *start, s32 *end, struct module *mod)
+>  
+>  	for (s = start; s < end; s++) {
+>  		void *addr = (void *)s + *s;
+> -		void *wr_addr = module_writable_address(mod, addr);
+> +		void *wr_addr;
+>  		u32 hash;
+>  
+>  		addr -= fineibt_caller_size;
+> -		hash = decode_caller_hash(addr);
+> +		wr_addr = module_writable_address(mod, addr);
+> +		hash = decode_caller_hash(wr_addr);
+>  		if (hash) {
+>  			text_poke_early(wr_addr, fineibt_caller_start, fineibt_caller_size);
+> -			WARN_ON(*(u32 *)(addr + fineibt_caller_hash) != 0x12345678);
+> +			WARN_ON(*(u32 *)(wr_addr + fineibt_caller_hash) != 0x12345678);
+>  			text_poke_early(wr_addr + fineibt_caller_hash, &hash, 4);
+>  		}
+>  		/* rely on apply_retpolines() */
+>  
+> > Cheers,
+> > Nathan
+> 
+> -- 
+> Sincerely yours,
+> Mike.
 
