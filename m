@@ -1,134 +1,236 @@
-Return-Path: <linux-kernel+bounces-365591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1090299E4B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:56:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A41799E4F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8343FB23008
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0192B283AEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150DD1EBFF1;
-	Tue, 15 Oct 2024 10:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5536315821A;
+	Tue, 15 Oct 2024 11:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="FN/6EoI3"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QDYfLvVt"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D348C1E9082
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAC31D2F40;
+	Tue, 15 Oct 2024 11:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989735; cv=none; b=HG50N+Mg3QSHk7Fui3lxHOetqIzIR0dXYHIvxJF7ltUdB/VchnhylYSslqep/X8+0vIhuVURYxGC7Irhy6v6MEQARh2/n8Yd64Btv5PEpmB9yuXlJ29yYn0NeTgQGL6PGEGyE8JdJ+PIKcukBICRazbKbor6NJag5pRYRNYPnL4=
+	t=1728990101; cv=none; b=KYfyNcfAItS6UbLNAYUd+Vtdqfla0bWr8QzVdO8k6FXp7J2OBnm2N95NGcjZEb24b48FEXXPpNVLFITLkVoMxprdQ/qLlGKva086ifinGmAjI1Fp5ojo+aLOu2w9m8F7Zzeb+NZJlecB7e5M8kEtBcCJCjbAht2YdSWVhCyXfc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989735; c=relaxed/simple;
-	bh=dJZxNsHufyVnVkGZ7KBRcyWcePNegdl1XvkyiSwKVwI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=g3lwYdko3IJAoz2/qYjHxTYMd1VGDqdpZP199kkZUBHRHj8g2gig82vO5wEq2czVsM++q3cDPGRhbh75VCWVh7sY6duGZDWMp/CBPvZtlptthikg+fEhgc1hL/ZEJhSIINkTq/iRWuW41BRT9JDEO5SMryjDzc6Ijpn73w0ipCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=FN/6EoI3; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99cc265e0aso545596766b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728989732; x=1729594532; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qxWaIsUg6giBeZB/qFZgxvxYS8Q3WXg/pwadc9vI6U4=;
-        b=FN/6EoI3dCHV7bU1thwTZfY1F7axilseOO6PvuCCFqIViQo7ynHcdA50Q1Veb2YF3e
-         2SfW1VxpqGhfEvmUOwxhKlGDZJ/VoHa/hYEHIRvf0hQahpE6EsPY7V6alhxZSByTeucZ
-         zuKfbO16bFoc1oIDbkjKRrr+/gFvCGruvI3vWfvDdch9ixAMrY37lozB7gzMzEhpQntI
-         NP/0/vgQij5f0nbe6QfbHDa3+kmCnuOg8alnfmuBRKxd0Nkfnh0TWfzUb2xvmPjW9W1+
-         4bjUyQsGQzkCUHOrbs3N40LPyGy681QIpXlYG+epZgluLeja4Hbk6yEH5Q1UaZEfBi22
-         aXVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728989732; x=1729594532;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qxWaIsUg6giBeZB/qFZgxvxYS8Q3WXg/pwadc9vI6U4=;
-        b=mauP4voWGcsepiffRDfNHrA0oTKhyHZviCFDDfhQAQBWs0aILNdSGlJYZcKJuNeXSL
-         E87EESrk7bfTkTXYT1Px9YLCqmwHisfbmXg3L1Ul0z012Qf05ik7SBQYru9vpleR6abV
-         rdI971OHLl2FazFyWiiqoEQ4AYOnXGdFTGn2x/JuVCUT/zzOAq2VSHnVv2WF22xmyeRW
-         yruQ0xHJl+EhqwmJ4iDvl6GAxpqoUb2jGhuykocccD32lYFHyj/ORkdhHWAAQ7Dwbrer
-         PVsuRsnadVfDuvT1t68I6KuYg2jyLJe7tzT/5DM/868Dsm0BEn9VusnDk8GkexHtmSe2
-         aHPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLD8EcK596TY8bp4OeyxP83QM6zKVNqIIHo3Fytqt8ogHIJGgWRwIx+eLh6FRRpL2536TycB5l35RqCAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVtIWr1HA3n/6R2VqJsV1AVsHyfkbrinKWn0x5SDK0Ex3Iqycw
-	XK3XOv0Y/LN6oFeNAgiPvBgQF9ZgiEjlvYp6RzHGM0jFed3ICYhYNRdUpcBFchk=
-X-Google-Smtp-Source: AGHT+IENngL8kUtvdGqBvfWOeT0HU3Jz0wnco8VTc5j19kviovROQUzgBtOacG8vxlSE5QNA5vJkkA==
-X-Received: by 2002:a17:906:f59b:b0:a99:f7df:b20a with SMTP id a640c23a62f3a-a99f7dfb8ecmr782739366b.62.1728989731976;
-        Tue, 15 Oct 2024 03:55:31 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a298232f4sm56459066b.117.2024.10.15.03.55.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 03:55:31 -0700 (PDT)
-Message-ID: <7d4c49da-e071-4b74-85d8-f0b5efaa0cf3@blackwall.org>
-Date: Tue, 15 Oct 2024 13:55:30 +0300
+	s=arc-20240116; t=1728990101; c=relaxed/simple;
+	bh=7XhF8sLA70VTgAOREkJ4xOtXSDoUgK1wbm+FSs76mJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I2JyEDNBl7NPAo9qqvZxjIws0bN+5T4JUIbWLYyKSOFXE1fVhu2cUbRS30xskxpgToC1j+ZdO+eUukxbeJ41sVHvh51j5NyTBRTobeeIM8X0Lm9aMTVyZE6z4reuLqkL+EpgyHIhZPMguJQThoA7ZxG4vlzoFx3o426+omU95Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QDYfLvVt; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F9t14A030685;
+	Tue, 15 Oct 2024 10:56:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=LB7FsJPHDA9rdk+4dKBXnIGSzRIi5liTlRKzH/4/n
+	cU=; b=QDYfLvVtbTCXEAVj649bpIuroNr6bXtbQQkjwPE2oJm246L/+uhvxUNQ8
+	gTjRSZctmAgCvPqNadCAGqg+uCK/O5SBVaEKuQ5XtjXgetOYIsF1vms6bT9NDqe2
+	CCnNaRMVaeYycfWVxOUlxHS77OivI14Zvrl4I0tMvKpt8C/omfth3kszISa4JXpA
+	w7mUFsYe5+RxdPWmUdk+w5qUx5auxW6rU2/EkHmIGPpNUwX2JgUfcdInaEbiXsx0
+	zm8xxXwNyYqH4r+XMIYjQK3S3i4vQChvFlz5tNXJ0vRYRKSV2Ku6RuS28I3U/LPX
+	lNFEnEZvd/Kcy4mqzWJywXko3dyDQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429p6d092k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 10:56:24 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FAuNdR017447;
+	Tue, 15 Oct 2024 10:56:23 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429p6d092c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 10:56:23 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7WVeK002408;
+	Tue, 15 Oct 2024 10:56:22 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emkc5p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 10:56:22 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FAuHrs50856252
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 10:56:17 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A0D3A20063;
+	Tue, 15 Oct 2024 10:56:17 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3057320040;
+	Tue, 15 Oct 2024 10:56:15 +0000 (GMT)
+Received: from vishalc-ibm.ibmuc.com (unknown [9.39.24.36])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 15 Oct 2024 10:56:14 +0000 (GMT)
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Vishal Chourasia <vishalc@linux.ibm.com>
+Subject: [v2 PATCH 1/2] crypto/nx: Rename devdata_mutex to devdata_spinlock
+Date: Tue, 15 Oct 2024 16:25:51 +0530
+Message-ID: <20241015105551.1817348-2-vishalc@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: HKfRnHAqL1xiFkXwLc3bSU4HDEzsYXU-
+X-Proofpoint-ORIG-GUID: nU97NAV6X78iUj4JyH_ltF9gpyi0-IwX
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] bpf: xdp: fallback to SKB mode if DRV flag is absent.
-From: Nikolay Aleksandrov <razor@blackwall.org>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Jesper Dangaard Brouer
- <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>,
- Jussi Maki <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- Liang Li <liali@redhat.com>
-References: <20241015033632.12120-1-liuhangbin@gmail.com>
- <8ef07e79-4812-4e02-a5d1-03a05726dd07@iogearbox.net>
- <2cdcad89-2677-4526-8ab5-3624d0300b7f@blackwall.org>
- <Zw5GNHSjgut12LEV@fedora>
- <8088f2a7-3ab1-4a1e-996d-c15703da13cc@blackwall.org>
-Content-Language: en-US
-In-Reply-To: <8088f2a7-3ab1-4a1e-996d-c15703da13cc@blackwall.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 mlxscore=0 malwarescore=0 adultscore=0
+ impostorscore=0 phishscore=0 mlxlogscore=928 spamscore=0
+ lowpriorityscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410150072
 
-On 15/10/2024 13:46, Nikolay Aleksandrov wrote:
-> On 15/10/2024 13:38, Hangbin Liu wrote:
->> On Tue, Oct 15, 2024 at 12:53:08PM +0300, Nikolay Aleksandrov wrote:
->>> On 15/10/2024 11:17, Daniel Borkmann wrote:
->>>> On 10/15/24 5:36 AM, Hangbin Liu wrote:
->>>>> After commit c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags
->>>>> specified"), the mode is automatically set to XDP_MODE_DRV if the driver
->>>>> implements the .ndo_bpf function. However, for drivers like bonding, which
->>>>> only support native XDP for specific modes, this may result in an
->>>>> "unsupported" response.
->>>>>
->>>>> In such cases, let's fall back to SKB mode if the user did not explicitly
->>>>> request DRV mode.
->>>>>
->>>
->>> So behaviour changed once, now it's changing again.. 
->>
->> This should not be a behaviour change, it just follow the fallback rules.
->>
-> 
-> hm, what fallback rules? I see dev_xdp_attach() exits on many errors
-> with proper codes and extack messages, am I missing something, where's the
-> fallback?
-> 
+Rename devdata_mutex to devdata_spinlock to accurately reflect its
+implementation as a spinlock.
 
-Oh did you mean dev_xdp_mode()'s ndo_bpf check to decide which mode to use ?
+[1] v1 https://lore.kernel.org/all/ZwyqD-w5hEhrnqTB@linux.ibm.com
 
-So you'd like to do that for the unsupported bond modes as well, then I'd go
-with Daniel's suggestion in that case and keep it in the bonding until
-something else needs it.
+Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
+---
+ drivers/crypto/nx/nx-common-pseries.c | 34 +++++++++++++--------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/crypto/nx/nx-common-pseries.c b/drivers/crypto/nx/nx-common-pseries.c
+index 35f2d0d8507ed..a0eb900383af7 100644
+--- a/drivers/crypto/nx/nx-common-pseries.c
++++ b/drivers/crypto/nx/nx-common-pseries.c
+@@ -133,7 +133,7 @@ struct nx842_devdata {
+ };
+ 
+ static struct nx842_devdata __rcu *devdata;
+-static DEFINE_SPINLOCK(devdata_mutex);
++static DEFINE_SPINLOCK(devdata_spinlock);
+ 
+ #define NX842_COUNTER_INC(_x) \
+ static inline void nx842_inc_##_x( \
+@@ -750,15 +750,15 @@ static int nx842_OF_upd(struct property *new_prop)
+ 	if (!new_devdata)
+ 		return -ENOMEM;
+ 
+-	spin_lock_irqsave(&devdata_mutex, flags);
++	spin_lock_irqsave(&devdata_spinlock, flags);
+ 	old_devdata = rcu_dereference_check(devdata,
+-			lockdep_is_held(&devdata_mutex));
++			lockdep_is_held(&devdata_spinlock));
+ 	if (old_devdata)
+ 		of_node = old_devdata->dev->of_node;
+ 
+ 	if (!old_devdata || !of_node) {
+ 		pr_err("%s: device is not available\n", __func__);
+-		spin_unlock_irqrestore(&devdata_mutex, flags);
++		spin_unlock_irqrestore(&devdata_spinlock, flags);
+ 		kfree(new_devdata);
+ 		return -ENODEV;
+ 	}
+@@ -810,7 +810,7 @@ static int nx842_OF_upd(struct property *new_prop)
+ 			old_devdata->max_sg_len);
+ 
+ 	rcu_assign_pointer(devdata, new_devdata);
+-	spin_unlock_irqrestore(&devdata_mutex, flags);
++	spin_unlock_irqrestore(&devdata_spinlock, flags);
+ 	synchronize_rcu();
+ 	dev_set_drvdata(new_devdata->dev, new_devdata);
+ 	kfree(old_devdata);
+@@ -821,13 +821,13 @@ static int nx842_OF_upd(struct property *new_prop)
+ 		dev_info(old_devdata->dev, "%s: device disabled\n", __func__);
+ 		nx842_OF_set_defaults(new_devdata);
+ 		rcu_assign_pointer(devdata, new_devdata);
+-		spin_unlock_irqrestore(&devdata_mutex, flags);
++		spin_unlock_irqrestore(&devdata_spinlock, flags);
+ 		synchronize_rcu();
+ 		dev_set_drvdata(new_devdata->dev, new_devdata);
+ 		kfree(old_devdata);
+ 	} else {
+ 		dev_err(old_devdata->dev, "%s: could not update driver from hardware\n", __func__);
+-		spin_unlock_irqrestore(&devdata_mutex, flags);
++		spin_unlock_irqrestore(&devdata_spinlock, flags);
+ 	}
+ 
+ 	if (!ret)
+@@ -1045,9 +1045,9 @@ static int nx842_probe(struct vio_dev *viodev,
+ 		return -ENOMEM;
+ 	}
+ 
+-	spin_lock_irqsave(&devdata_mutex, flags);
++	spin_lock_irqsave(&devdata_spinlock, flags);
+ 	old_devdata = rcu_dereference_check(devdata,
+-			lockdep_is_held(&devdata_mutex));
++			lockdep_is_held(&devdata_spinlock));
+ 
+ 	if (old_devdata && old_devdata->vdev != NULL) {
+ 		dev_err(&viodev->dev, "%s: Attempt to register more than one instance of the hardware\n", __func__);
+@@ -1062,7 +1062,7 @@ static int nx842_probe(struct vio_dev *viodev,
+ 	nx842_OF_set_defaults(new_devdata);
+ 
+ 	rcu_assign_pointer(devdata, new_devdata);
+-	spin_unlock_irqrestore(&devdata_mutex, flags);
++	spin_unlock_irqrestore(&devdata_spinlock, flags);
+ 	synchronize_rcu();
+ 	kfree(old_devdata);
+ 
+@@ -1101,7 +1101,7 @@ static int nx842_probe(struct vio_dev *viodev,
+ 	return 0;
+ 
+ error_unlock:
+-	spin_unlock_irqrestore(&devdata_mutex, flags);
++	spin_unlock_irqrestore(&devdata_spinlock, flags);
+ 	if (new_devdata)
+ 		kfree(new_devdata->counters);
+ 	kfree(new_devdata);
+@@ -1122,12 +1122,12 @@ static void nx842_remove(struct vio_dev *viodev)
+ 
+ 	crypto_unregister_alg(&nx842_pseries_alg);
+ 
+-	spin_lock_irqsave(&devdata_mutex, flags);
++	spin_lock_irqsave(&devdata_spinlock, flags);
+ 	old_devdata = rcu_dereference_check(devdata,
+-			lockdep_is_held(&devdata_mutex));
++			lockdep_is_held(&devdata_spinlock));
+ 	of_reconfig_notifier_unregister(&nx842_of_nb);
+ 	RCU_INIT_POINTER(devdata, NULL);
+-	spin_unlock_irqrestore(&devdata_mutex, flags);
++	spin_unlock_irqrestore(&devdata_spinlock, flags);
+ 	synchronize_rcu();
+ 	dev_set_drvdata(&viodev->dev, NULL);
+ 	if (old_devdata)
+@@ -1257,11 +1257,11 @@ static void __exit nx842_pseries_exit(void)
+ 
+ 	crypto_unregister_alg(&nx842_pseries_alg);
+ 
+-	spin_lock_irqsave(&devdata_mutex, flags);
++	spin_lock_irqsave(&devdata_spinlock, flags);
+ 	old_devdata = rcu_dereference_check(devdata,
+-			lockdep_is_held(&devdata_mutex));
++			lockdep_is_held(&devdata_spinlock));
+ 	RCU_INIT_POINTER(devdata, NULL);
+-	spin_unlock_irqrestore(&devdata_mutex, flags);
++	spin_unlock_irqrestore(&devdata_spinlock, flags);
+ 	synchronize_rcu();
+ 	if (old_devdata && old_devdata->dev)
+ 		dev_set_drvdata(old_devdata->dev, NULL);
+-- 
+2.47.0
 
 
