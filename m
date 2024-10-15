@@ -1,180 +1,210 @@
-Return-Path: <linux-kernel+bounces-365074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF3FB99DD29
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:23:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0E099DD2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E1A2B224E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE69A1C2166E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAE0172BCE;
-	Tue, 15 Oct 2024 04:23:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5135A1714C9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728966190; cv=none; b=eWXfpFP4RiQlVbbAf94WpnEhjS7Spvidl2mVx0Z0BCCGRqkO7XIXBeHkctEGABeXTsdxEvJEMECAIK83fxTbDMFq2b4oLJYYMsqQ0pMlCEU/DlvJ7ISiIIr8caCmrY9FzvbD2Z2kx+hIydnKd93U+rB89PGOayzcwp5+g0MQJ8k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728966190; c=relaxed/simple;
-	bh=2MlNuKshvKT+hFZs8Xag3DHDJFhz1k8JQft+YDebBAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I/qn0/MKY97mbG3zWz6FiqnZnBcjaVZFv7Ype/SkTl4SlX36tnebpJvAK+LlT8A6eoz2cqLeb5X/5Ir8p17DPEwhopPkVzgTTgDrcXPuCJRF56sVZQ44yLa3EG0Wkbo8b2WhRbhJuKGv/RqsN8Oqp7SzQYeIXJDYaNvEn0NSX/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 370BE1007;
-	Mon, 14 Oct 2024 21:23:37 -0700 (PDT)
-Received: from [10.162.16.109] (a077893.blr.arm.com [10.162.16.109])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA08A3F71E;
-	Mon, 14 Oct 2024 21:23:04 -0700 (PDT)
-Message-ID: <8bd9481d-9579-4da3-9781-98ceb97ce838@arm.com>
-Date: Tue, 15 Oct 2024 09:53:02 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3477172BCC;
+	Tue, 15 Oct 2024 04:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C5nlbWi5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D49172BD5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728966216; cv=fail; b=jgFNQ7K15fpd+UIiX1ZyrMc758PrH0bWN0tczCTku0yzKH7LIprloPbOgHTfiZHyYpJ8a36Ask1K8fm3okr4mTJDXF3dRu5BsBSfIF7I3tLDMnG68oj/JffZB7wciDb+vY9QFUF0kqEKDH14tl+Yj9dl7+Lj65lhyY+GICod7js=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728966216; c=relaxed/simple;
+	bh=k2eRAe1H18RvwewdF+D8exdEa6DSsxYeuYWWy50JyAU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uQ0j79GqPDz1ya9NyminJVbbZVKfjbQtuhr9YXDC5SPtEudeiER3NJOgcdPaQ0inRDt99AjYXgOlQagLJEGTsQoD5AQbfnw85evH0YPllD/DFo2gwZJold53VnAy8hgXOagqeX+DYR6Pt55ncOuSdpe8SdjQ5hBSsdw+fyDJSPg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C5nlbWi5; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728966214; x=1760502214;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=k2eRAe1H18RvwewdF+D8exdEa6DSsxYeuYWWy50JyAU=;
+  b=C5nlbWi5VcW8NujMkq0306AmNLv/Hty+fCZUNQYColSVyTlPh2cP+buF
+   dlRnm2VYfAdJfVlLQX7F1nfojwa3K9nfN8Y9yAmhU2c73vd8U3TvpQGuO
+   wKhhZDvruOXyspCNPx2Dn8kp7d9HOwQRVxJqRNSVslmbSTodVOmKPD932
+   FLlk1wPF39fo8nuZWACBYTLP7A41KKSGnQ5SN2enqm3HGsp2L70FwncXs
+   CzMUI5vRdbktt7f6rnm4rRjnF2EXiqv77oO1gZ0G7psbL8i2DKtU2d+PP
+   JNcw+bpP8Egar3+mAiTizsixCgrj8T2L315MRYvoCcy0Xqkzel8ifU1tL
+   Q==;
+X-CSE-ConnectionGUID: X3w9sqFHT/OMF0q1FO8rEw==
+X-CSE-MsgGUID: dlS1YQx4TLqI1uV2pjxzSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28126244"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28126244"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 21:23:33 -0700
+X-CSE-ConnectionGUID: M2oM8YXvRTucPW68/HmaVA==
+X-CSE-MsgGUID: cD9Bfm4LR36wNIoDZ550Ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="77779648"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Oct 2024 21:23:33 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 14 Oct 2024 21:23:32 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 14 Oct 2024 21:23:32 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 14 Oct 2024 21:23:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U0uduY7BDnTRgvxnIblH+PG9iJMixAflEgJ8dBkF4y5Ma92aDUVh0S0lVsvgiCYS9aPCGzY/KHfWKCGsF8ImgsuIlXRkPsDPdmbDUIIkOtVia5GppEd6o7tREvtqvPIifLw8q51ZY8tcOW1A/XRmyKNYv79xrHcPe1XyvlFafA7t4hmt22M29BhQney5gbVzkmApaT5U6kxHypTElULSP+x75xCCs03Fhiu1S/GZmOA531jEmwO8PDyopwb8TVaxsWJrV6auyoP3incflW8HUPLxrd/L7aWO5sO0b0RyybUR9iXjBP5MTiQr+h0zwGAokrlABz6Kgc3ZpODjmuPZzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k2eRAe1H18RvwewdF+D8exdEa6DSsxYeuYWWy50JyAU=;
+ b=UDeUmKsyJDJMGRwkKGY+OUv0+BbzsJmi7ATGni/OCeazlkO+iAU6Ya3FVyT8+Gc16+OfRSxYu1aZ5i161DDvdX8tGjrRGeW9MDqH+B2+7H79oxHOO2WuIJOslvYwffM97zI0G35YR+lKq/UX3ClInNu725/ecaux7pjNnw8l8/Rz/A+rT4+DY66pkVRyckfZZPmCbyVbrOZCzB0QP9pzvzf2HyDIHoeB7G9lNUlz6Wu85zG/3g38fLoCCGVEcs57HG2JhfgFEwXvIVeNN2fLNy8wPQM1AqBnRZ36qNG++dNTC9PsX5XA0s2/C2qTi9HIZl5cgAyMWg6o/PYLGMWAog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by PH7PR11MB6795.namprd11.prod.outlook.com (2603:10b6:510:1b9::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 04:23:24 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 04:23:24 +0000
+Date: Mon, 14 Oct 2024 23:23:19 -0500
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo
+ Carvalho de Melo" <acme@kernel.org>, Umesh Nerlige Ramappa
+	<umesh.nerlige.ramappa@intel.com>, Ian Rogers <irogers@google.com>, "Tvrtko
+ Ursulin" <tvrtko.ursulin@igalia.com>
+Subject: Re: [PATCH 1/5] perf: Add dummy pmu module
+Message-ID: <xio3nq6fzigj2p3dm57bfbuia6lwfamyyrrybkmkmj7na7ogbz@auajowi3m56h>
+References: <20241008183501.1354695-1-lucas.demarchi@intel.com>
+ <20241008183501.1354695-2-lucas.demarchi@intel.com>
+ <1ad917db-6039-4269-8f59-a6d03557d27c@quicinc.com>
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1ad917db-6039-4269-8f59-a6d03557d27c@quicinc.com>
+X-ClientProxiedBy: MW4PR04CA0347.namprd04.prod.outlook.com
+ (2603:10b6:303:8a::22) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] arm64/mm: Drop pte_mkhuge()
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241005123824.1366397-1-anshuman.khandual@arm.com>
- <20241005123824.1366397-2-anshuman.khandual@arm.com>
- <a4372d54-34bb-4a32-8742-ea6aacc0848c@arm.com>
- <a91df2f6-e0d6-4902-ae22-5df132f00737@arm.com>
- <e8f8f9e8-b042-4df8-92ea-1439a5e1ffb4@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <e8f8f9e8-b042-4df8-92ea-1439a5e1ffb4@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|PH7PR11MB6795:EE_
+X-MS-Office365-Filtering-Correlation-Id: 588c2267-285e-4722-ffc0-08dcecd11bfb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5CV01hKalZGm8R0oTT6YfRVmmRpcCsBRya5DR3pLCyHJWVd8r4dj1+ub1hBw?=
+ =?us-ascii?Q?N8NCjuw7dyp/3rEIKm4wOlilfC1t6nNhhZLG3/5+GultJ1ReoLOEk2CdrN4M?=
+ =?us-ascii?Q?ZAlVk/GvrYSfxnKBDyvjZ01PX2JKbYFjzhO8PRMbgDYx7D+QvV+SLm0SUywA?=
+ =?us-ascii?Q?m9wnr8CGztm34BhlqPHZhBR3i+StTtA8C/qOQk5JDaYVN8ss2p1WczaxLtvx?=
+ =?us-ascii?Q?+yaBw4lTFe2P3o3Kg0xtNQMrMMdxn6TBdw9DEjef4iSK5ENaWQzujujGwrd4?=
+ =?us-ascii?Q?Z++/Y2pcufKTlEuUluBR09kmzSDgU3AaG5rj4rJi4jDqLfSw0ofXTTmky0z7?=
+ =?us-ascii?Q?QcTzEDxJznTrwJjtx9Qv1Y3CNigtQZ/S1Ikn1FHXca2mbMUZ2Fxn0hG5f/Wj?=
+ =?us-ascii?Q?EHvn6x1cHYtGc2PIYAkJ2nwarknc9EvqXN9rn5UvxBN08Va4tieUWWY/bO0i?=
+ =?us-ascii?Q?qvasFMPw9iXg7SMN/AaxPRMJeXtO3lqJm0dL9FaySw7EOOh4wDdkVGdv6H1c?=
+ =?us-ascii?Q?uWNJEnedmFl5GONCE/3klH4lMxm2nf7JDP8QG3I26Qo05CJK8t+s2PS6dT8c?=
+ =?us-ascii?Q?z3+dISWHaJO8JbOdrYpATa0fIv98rXOfMuRIyd4sa0OI+ToyAd2ifpw/AvyG?=
+ =?us-ascii?Q?t2pY5hPjqCfD6vmMPsRB3s7MBhLkgnE5aNkffZ/XAsuqrec+3k8BbPSUQz7c?=
+ =?us-ascii?Q?pVC/awGASdG1flkQv43vd6fkJul1IBgoMHJPwBUbZVv4jhxQHW3gvcC89s9j?=
+ =?us-ascii?Q?Ci9/ttbv6nNJLjmrwvjqX6cfuUZ/vDzhLYgOBxdfgXwVziPEbvKECImH7ufx?=
+ =?us-ascii?Q?roMrmD0IFmREd+1pMCnvSxNeXcbKpcJ4qVrOkBvM/nb5HucqlF1L4crwTFwo?=
+ =?us-ascii?Q?qwlJvup4z2PyWAqf+CdVJK1wpMPxR5KZsnmN49cT/XAWejjTf3CqqQ7woSYr?=
+ =?us-ascii?Q?byGsHN9M+kvNY5VSwNUSBki5H1P4vOcgcA7NlvhA2jR4lKrZucC/EZTYmHsc?=
+ =?us-ascii?Q?ney3mmlKU87BxmgaztY+fXgaHcd5exINXZgLgqP5CQDowoJbq3vlyD5Uec4Q?=
+ =?us-ascii?Q?WUMmYr0mk2e+FPaTQPtoQAu6wiU45a1LzqPtgWB3VMG9mxdOiRQZkB4+atIw?=
+ =?us-ascii?Q?BAgQaeI4mnV9v1TIchtafTP0cBphtb+xk7KCBdkJnUiJ0mHzgdsWDU4dALyK?=
+ =?us-ascii?Q?mVVvXqv2nJ5awvae3kE0fhyd92FZyUjRzOz02RRxS5Fb+AgvB/FMGwEt2tP4?=
+ =?us-ascii?Q?UPmAVidzeVAkuV21FZ2K8YC0BzVDsKPQy2MejRjV4A=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MAhQuSdxezUNgIVi9lVUNmWktBlKjrswbawEN8Zfv/0YiIx1BjUUi4P3XhYF?=
+ =?us-ascii?Q?yUy9pU/WnaUtMJ9n5KSk8Ohyw+0Kw6TDtRdk7JaZVQlkrwx0Q0QXHU2hu3XA?=
+ =?us-ascii?Q?DK/cduqOe8EXWjRBU+yuKXeGtLaCE0gw/Z8CYtF7Tw2Ysxp+SSU8B9iq2JTO?=
+ =?us-ascii?Q?UgaqvptN/7gFoQCnhCUPposiODQnMAspVQqKytkP0qa+f6blg7WXnXeZ7RJj?=
+ =?us-ascii?Q?8mZ76ILaW02hIGesQOD0su/1zrraj5LuzXZMLe72H+oeKSI/WJaEJs2s6pnP?=
+ =?us-ascii?Q?8xeSPyQtFjUAxs90y/d8q036yNBDW7yYSQtobR6hKmw8ogL5pwQ3U4dnZPw1?=
+ =?us-ascii?Q?L2s+sgj24N2CadUwtEi8+nlBcd9znXSiRitqGU1ScTqRz+NDcjyIIe8W0MUD?=
+ =?us-ascii?Q?JtLc1L4rxZJ6D6XKkZh3zi1CPMJsQtVxFc6DDotAXRnYk3gLIn05xWFbor8G?=
+ =?us-ascii?Q?9R2gnDxKzqHkQQv7X6FM4rVvIviQutUDTODTvZnGTtLoUNsaCLPRh3URxVCZ?=
+ =?us-ascii?Q?CVPQvcXw5R7Vn3tXy1Ig0qew1wpE02ppo18exlAe610VMxnRjOpb6mbOsXdH?=
+ =?us-ascii?Q?m7qrYWrBgyHf0N1S6cBObo3gcT+2+WDR8WyMmmAtzwBv75xstPTwt9mxtEci?=
+ =?us-ascii?Q?/V9PLoaG9UKQOt1mHlC232b490j/vbHnflXInnvfdVMj8DES4tDdKxyO4rpj?=
+ =?us-ascii?Q?XcvqBiQXJVNAJ65QYaod0AXuWgeIs/0brDNLWlmAO0KAYO/P4K6bWEcVoK15?=
+ =?us-ascii?Q?kEWSN9jsVlDhhS5Jl21r47rcZ2XXlUF+NkFtHxsz4JDVdooXEGu7QveX7egz?=
+ =?us-ascii?Q?HkA+pSFS8VfiwTiHLKwGeOwWLfv1S0ZugKQRPbonW2cCJxBdil1hmYREqUWD?=
+ =?us-ascii?Q?6l32mKbEFxI9jI04MohEe79I7jpqS5WLwLa5fIlIyzdaOBDPCNBR1MuZ8nw/?=
+ =?us-ascii?Q?vhYay5duVYCTEFASBy8mBq2tWGJbJ7WwwKhz8INGpYFTJl03N5y0Q/JBJN0u?=
+ =?us-ascii?Q?YDCyOidsUaBi/OArO0gYDsvFu4qzv/U3LQ4sQVyhvFEkfq+DYRLT3jYGc31S?=
+ =?us-ascii?Q?R/lmuTzazeetJgci6Qg4qH7n49T27fspZ9Z/CZDc11RsrZxItoq5plv5iDUd?=
+ =?us-ascii?Q?R5Mi+5qbvfiK+CeQp5LMYwrKZ/FBEnCQhV8b5RiW35zx5wFjl9TJXMvIspsh?=
+ =?us-ascii?Q?Y9Jqz6r9401vcpi+7rdNOuLpd3pj3eydyAa7eT6y/3a/1bi0dowZJtQBd765?=
+ =?us-ascii?Q?8tK4VY0f7pee3OtZY7BzopbVizEqrDemShImK4IiK9RC9Xl74pcYUeNfIwKj?=
+ =?us-ascii?Q?AdJAxf+FM6OdwgIhHINOKn+5Q7ec5esrlME38pQ+svtLnXpWzufjnz3KD9ek?=
+ =?us-ascii?Q?xcDQid9DkmHlKYpfG9iaucKVJCx3wUTT5oNoa9emUDJB6ISAJQVrdrNpQ/II?=
+ =?us-ascii?Q?6GkdHZOuS5wLeemRL3JLZkjAn1ca5dC01bAM/AFjDb8x1ejpXj/NIBCCfggs?=
+ =?us-ascii?Q?sCbyV23507QXNscfGcxLWo+C4/mD6xAyScCbHONxujB0zcvyG91Z2GRJqkOC?=
+ =?us-ascii?Q?UB6v1l4leuTVC5Kvlk86V4Db1kTghNcEVfFSzqZq1SUPtOFXnh6+gBxwCjiX?=
+ =?us-ascii?Q?VA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 588c2267-285e-4722-ffc0-08dcecd11bfb
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 04:23:24.2683
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tCn5YEmgJhI5q+4ZxTUQxK9eMsp7PMsUzJxu+qt1OCyu6FrDsLVnZXfQbSLw2dyRTzgjQ/nnhHSy8tt19OJG8ImegOvYDpQALLzI0ccChKk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6795
+X-OriginatorOrg: intel.com
 
+On Mon, Oct 14, 2024 at 05:26:19PM -0700, Jeff Johnson wrote:
+>On 10/8/24 11:34, Lucas De Marchi wrote:
+>...
+>> +module_init(dummy_init);
+>> +module_exit(dummy_exit);
+>> +
+>> +MODULE_AUTHOR("Lucas De Marchi <lucas.demarchi@intel.com>");
+>> +MODULE_LICENSE("GPL");
+>
+>Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+>description is missing"), a module without a MODULE_DESCRIPTION() will
+>result in a warning when built with make W=1. Recently, multiple
+>developers have been eradicating these warnings treewide, and very few
+>(if any) are left, so please don't introduce a new one :)
+>
+>Please add the missing MODULE_DESCRIPTION()
 
+Thanks. This patch is not intended to be applied - it serves only to
+demonstrate the issue solved by the other patches. But I will keep that
+in mind if I re-submit it.
 
-On 10/14/24 16:38, Ryan Roberts wrote:
-> On 14/10/2024 09:59, Anshuman Khandual wrote:
->>
->>
->> On 10/9/24 18:50, Ryan Roberts wrote:
->>> On 05/10/2024 13:38, Anshuman Khandual wrote:
->>>> Core HugeTLB defines arch_make_huge_pte() fallback definition, which calls
->>>> platform provided pte_mkhuge(). But if any platform already provides custom
->>>> arch_make_huge_pte(), then it does not need to provide pte_mkhuge(). arm64
->>>> defines arch_make_huge_pte(), but then also calls pte_mkhuge() internally.
->>>> This creates confusion as if both of these callbacks are being used in core
->>>> HugeTLB and required to be defined in the platform.
->>>>
->>>> This changes arch_make_huge_pte() to create block mapping directly and also
->>>> drops off now redundant helper pte_mkhuge(), making things clear. Also this
->>>> changes HugeTLB page creation from just clearing the PTE_TABLE_BIT (bit[1])
->>>> to actually setting bits[1:0] via PTE_TYPE_[MASK|SECT] instead.
->>>>
->>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>>> Cc: Will Deacon <will@kernel.org>
->>>> Cc: Ard Biesheuvel <ardb@kernel.org>
->>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>> Cc: Mark Rutland <mark.rutland@arm.com>
->>>> Cc: linux-arm-kernel@lists.infradead.org
->>>> Cc: linux-kernel@vger.kernel.org
->>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>>> ---
->>>>  arch/arm64/include/asm/pgtable-hwdef.h | 1 +
->>>>  arch/arm64/include/asm/pgtable.h       | 5 -----
->>>>  arch/arm64/mm/hugetlbpage.c            | 2 +-
->>>>  3 files changed, 2 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
->>>> index fd330c1db289..956a702cb532 100644
->>>> --- a/arch/arm64/include/asm/pgtable-hwdef.h
->>>> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
->>>> @@ -158,6 +158,7 @@
->>>>  #define PTE_VALID		(_AT(pteval_t, 1) << 0)
->>>>  #define PTE_TYPE_MASK		(_AT(pteval_t, 3) << 0)
->>>>  #define PTE_TYPE_PAGE		(_AT(pteval_t, 3) << 0)
->>>> +#define PTE_TYPE_SECT		(_AT(pteval_t, 1) << 0)
->>>>  #define PTE_TABLE_BIT		(_AT(pteval_t, 1) << 1)
->>>>  #define PTE_USER		(_AT(pteval_t, 1) << 6)		/* AP[1] */
->>>>  #define PTE_RDONLY		(_AT(pteval_t, 1) << 7)		/* AP[2] */
->>>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->>>> index c329ea061dc9..fa4c32a9f572 100644
->>>> --- a/arch/arm64/include/asm/pgtable.h
->>>> +++ b/arch/arm64/include/asm/pgtable.h
->>>> @@ -438,11 +438,6 @@ static inline void __set_ptes(struct mm_struct *mm,
->>>>  	}
->>>>  }
->>>>  
->>>> -/*
->>>> - * Huge pte definitions.
->>>> - */
->>>> -#define pte_mkhuge(pte)		(__pte(pte_val(pte) & ~PTE_TABLE_BIT))
->>>> -
->>>>  /*
->>>>   * Hugetlb definitions.
->>>>   */
->>>> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
->>>> index 5f1e2103888b..5922c95630ad 100644
->>>> --- a/arch/arm64/mm/hugetlbpage.c
->>>> +++ b/arch/arm64/mm/hugetlbpage.c
->>>> @@ -361,7 +361,7 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
->>>>  {
->>>>  	size_t pagesize = 1UL << shift;
->>>>  
->>>> -	entry = pte_mkhuge(entry);
->>>> +	entry = __pte((pte_val(entry) & ~PTE_TYPE_MASK) | PTE_TYPE_SECT);
->>>
->>> I think there may be an existing bug here; if pagesize == CONT_PTE_SIZE, then
->>> entry will be placed in the level 3 table. In this case, shouldn't bit 1 remain
->>> set, because at level 3, a page mapping is denoted by bits[1:0] = 3 ? Currently
->>> its being unconditionally cleared.
->>
->> That's not a problem, pte_mkcont() brings back both the bits
->> via PTE_TYPE_PAGE along with PTE_CONT.
->>
->>         if (pagesize == CONT_PTE_SIZE) {
->>                 entry = pte_mkcont(entry);
->>         } else if (pagesize == CONT_PMD_SIZE) {
->>                 entry = pmd_pte(pmd_mkcont(pte_pmd(entry)));
->>         } else if (pagesize != PUD_SIZE && pagesize != PMD_SIZE) {
->>                 pr_warn("%s: unrecognized huge page size 0x%lx\n",
->>                         __func__, pagesize);
->>         }
->>
->> static inline pte_t pte_mkcont(pte_t pte)
->> {
->> 	pte = set_pte_bit(pte, __pgprot(PTE_CONT));
->>       	return set_pte_bit(pte, __pgprot(PTE_TYPE_PAGE));
-> 
-> Oh wow, that's pretty hacky. Good job we never call pte_mkcont() on a
-> PTE_PRESENT_INVALID PTE. This would turn it valid again.
-
-Ideally each individual HW page table helper should not do more than one thing
-at a time. Here pte_mkcont() should just take a pte which is already a valid
-one with PTE_TYPE_PAGE and just set PTE_CONT.
-
-> 
->> }
->>
->> Although the same is not required for CONT_PMD_SIZE size huge
->> pages where only PTE_CONT is enough.
->>
->> static inline pmd_t pmd_mkcont(pmd_t pmd)
->> {
->>         return __pmd(pmd_val(pmd) | PMD_SECT_CONT);
->> }
->>  
->>>>  	if (pagesize == CONT_PTE_SIZE) {
->>>>  		entry = pte_mkcont(entry);
->>>>  	} else if (pagesize == CONT_PMD_SIZE) {
->>>
-> 
+Lucas De Marchi
 
