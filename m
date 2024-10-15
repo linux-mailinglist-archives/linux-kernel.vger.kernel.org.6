@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-365078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6485399DD3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:45:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C2299DD3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4DDAB22125
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03AD41C212B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6069172BCE;
-	Tue, 15 Oct 2024 04:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055AB1741D4;
+	Tue, 15 Oct 2024 04:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMNwVgC6"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QXz1assA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62FF231C83
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FCE4428;
+	Tue, 15 Oct 2024 04:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728967517; cv=none; b=eruH6oOhu12Lc193AuuJOmFQLAWlVsFu4yOyGsHqzCYW1iv3QDqu622VxEM+MpJIprEoE7EO+h5biepxWpD7VpfDEp/LBfABh52tGIfUsuwoidHkodvym3dDdu9/2h0lnQFVLxFRaeda0F0sBJLxwtWYoi5vzPAEBQ9dOkH7c6M=
+	t=1728967711; cv=none; b=rz5h0YIU+V8OKkFHYizQMfl0J+kSL8JgJzRL1gFC6NmALBczvuu/HxLpoH0n+cKeA1uVZy65GyCTamcPHz+gszm3E/vnOAZaIsCrrUUlA6hoy5sc1xEuZVW29aFhoUWMuzCyRv0tCOzYS9wSpsZdN9bVphBMEcIWYhrXqTafunQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728967517; c=relaxed/simple;
-	bh=nr7vPqhNXyEM90Os8vUTn4xf6V8sQONXlgNQRwPAmic=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FtF2Nt59kmoHXEA+FG3q9AekCJ/0pOQ+kUkCSN7tJj0YWCBqbm7qMXg6uvsmKHUHFNecyjyYeSD2lLdxmdy2zlgeReZG2TaqcmfwjyCOmVDImz51UvQJfCflE/JxkE0cu0bPH+pjIfpNusvnc1XtfAkJx/6+5/rkEy558R9ZAZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMNwVgC6; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cf6eea3c0so11915405ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728967515; x=1729572315; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C5Cq5fuPhEPF9ag2SmpAcodhv3GQamv100yrE+kyx8E=;
-        b=bMNwVgC6BMB9JZzNzsNG/PiXHVRFhRBOmiNEXKdeMvHtDOCpm/crH3Q+J5FfNl6ZaT
-         PQ1JLvyRveB05Spubm9ef/vpTnAVeZ4U87+6pfkw2k5XbeQJURopqCQBYML+tZm15z/v
-         M7aPd7LVQWK5cs1xdB3mLgNg8gOVps7ck7uaB8DdAGvVs0DpPyiFnZrq7HPhP8majHJg
-         akJk7jWNulq1fVWdyyR+tiAS+1ofLgaRX+PjLMKiQ1EA2k7Ftv1Vcs6QXwxRBrZMKQVB
-         C0psq4alHk56tQ85BV82bouYHccJGwWQ4t8NJvBdTt00/u7auEeTURz1nC3/qRSu27XI
-         il+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728967515; x=1729572315;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C5Cq5fuPhEPF9ag2SmpAcodhv3GQamv100yrE+kyx8E=;
-        b=hfAnva99AcSGNHLp+eGmFrVWJ0bPYFP/jOlSw/rcFHISdbgQG2Nrfx5AqzYQ2ZDRUD
-         8XxCKUs2xDOt2hhgkVRVgmtGirasKsTP5BtoVPfZmF6Y3HSJl3RxC54/r4WBP7gV+Zjj
-         Q6MSR2zX/lHoZwwHRC40xFuTvlC+cXLXOI+8h/nhxo/xbwtHH5jiDvKRhsG/ARQFHkyS
-         4FhHuWlwGnfbGSrEhvHx5GnwnTkWVdeam0hYP+t3bEreaYlCuyr1boPKnaTTvSY4JF22
-         4d49G1dUCgAQXfjTwpsKWI5y7btjLwSjmXVarOKjDUCgvCbojuvhQmvGiRUzSlhkYtsR
-         tBww==
-X-Gm-Message-State: AOJu0Yy2XmZZmiok+aHA17h7LIrm72Mcq/q7UjGGaAqD54+7MH5aj8Rw
-	370hd7+ROamRCnShmEBFfDsgCpu53LpAaH18UUCqz7GOz2DPm7dT
-X-Google-Smtp-Source: AGHT+IEap8jxtB7gtd5ELzblEsL8eqtZ29+LWepnInI9qDW9UvDu4Xx8gtVbFal2p0kngcth3RbK/Q==
-X-Received: by 2002:a17:902:cf11:b0:203:a0ea:63c5 with SMTP id d9443c01a7336-20ca131b66bmr194795635ad.0.1728967514697;
-        Mon, 14 Oct 2024 21:45:14 -0700 (PDT)
-Received: from august.lan (76-198-31-149.lightspeed.sntcca.sbcglobal.net. [76.198.31.149])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f87d2bsm3667325ad.56.2024.10.14.21.45.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 21:45:14 -0700 (PDT)
-From: Abhinav Srivastava <atg271@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Abhinav Srivastava <atg271@gmail.com>
-Subject: [PATCH] ethernet: Improve formatting of conditional statements
-Date: Mon, 14 Oct 2024 21:45:07 -0700
-Message-Id: <20241015044507.1177265-1-atg271@gmail.com>
+	s=arc-20240116; t=1728967711; c=relaxed/simple;
+	bh=Q6vGslhy7cEyzOgdV9Kt50rKZs8AFmPnEbqbeHRB5N8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OhiePnnPQCblZCiIKjC0ciEiJu0R1ZxSf4HlyBcyjGwsTnTbggM8RqzPITzJjGm3kfWzxLjMaIEGW6Igs9TesoXPz06+nCBDfqqAsB8Jpgxi1YDeIxitGXqMGYLuquulOBaICfAKXrLrkdNEXhrzz3itC2+YKWiD4g8reYrsegs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QXz1assA; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728967710; x=1760503710;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Q6vGslhy7cEyzOgdV9Kt50rKZs8AFmPnEbqbeHRB5N8=;
+  b=QXz1assAWfDKoDi0Gux/g0/X8IiFxMVSXY8UrJtP1T8fkdBOaV5K8HJ7
+   3c7xniK1zFnm2S2wgamWIOAxHOQtgVEu6zrr4DeHaP3qVDAM+oNun7Ap8
+   GP7bIQ//yNcQONDW1toZJ3ZfrtiHZ6EkAJyQWgjWhBYh4Pkdbg3mkGg6s
+   gtD8tN4NvxgdxhFMNvU1R1FL434s0bTyX97za+W20VTAIB99/lOVfALeB
+   FVmTUjSGIw7l3IbUlN96t1UKc635oSC3Ex4gHBkcKVZo0jraNiWy41TTc
+   i7nw8Bsmd02AgdGvLA5Yz9pLYssCWJMthtlu3UBICTflJKG/NgBGz8l0u
+   A==;
+X-CSE-ConnectionGUID: CsSfbPqHQB6vUWp4dXVL7w==
+X-CSE-MsgGUID: OUzbKeVzR5i2WUFVswBNPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28438645"
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="28438645"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 21:48:29 -0700
+X-CSE-ConnectionGUID: 7+OuBUtMQR6gaq7E8rOOqg==
+X-CSE-MsgGUID: vumhu9OCSH6IhQzQfXR4vA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="108508106"
+Received: from rzhang1-mobl7.sh.intel.com ([10.238.6.124])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 21:48:26 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org
+Cc: rui.zhang@intel.com,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3] x86/apic: Always explicitly disarm TSC-deadline timer
+Date: Tue, 15 Oct 2024 12:48:17 +0800
+Message-Id: <20241015044817.5375-1-rui.zhang@intel.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -79,63 +79,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Improve readability of conditional statements in the Octeon ethernet
-driver by removing unnecessary parentheses and adjusting line breaks.
-This change focuses on three functions:
+New processors have become pickier about the local APIC timer state
+before entering low power modes. These low power modes are used (for
+example) when you close your laptop lid and suspend. If you put your
+laptop in a bag in this unnecessarily-high-power state, it is likely
+to get quite toasty while it quickly sucks the battery dry.
 
-- cvm_oct_common_change_mtu()
-- cvm_oct_common_set_multicast_list()
-- cvm_oct_set_mac_filter()
+The problem boils down to some CPUs' inability to power down until the
+kernel fully disables the local APIC timer. The current kernel code
+works in one-shot and periodic modes but does not work for deadline
+mode. Deadline mode has been the supported and preferred mode on
+Intel CPUs for over a decade and uses an MSR to drive the timer
+instead of an APIC register.
 
-The modifications make the code more consistent with the Linux kernel
-coding style guidelines, specifically in regards to the formatting of
-multi-line conditional statements. No functional changes are made.
+Disable the TSC Deadline timer in lapic_timer_shutdown() by writing to
+MSR_IA32_TSC_DEADLINE when in TSC-deadline mode. Also avoid writing
+to the initial-count register (APIC_TMICT) which is ignored in
+TSC-deadline mode.
 
-Signed-off-by: Abhinav Srivastava <atg271@gmail.com>
+Note: The APIC_LVTT|=APIC_LVT_MASKED operation should theoretically be
+enough to tell the hardware that the timer will not fire in any of the
+timer modes. But mitigating AMD erratum 411[1] also requires clearing
+out APIC_TMICT. Solely setting APIC_LVT_MASKED is also ineffective in
+practice on Intel Lunar Lake systems, which is the motivation for this
+change.
+
+1. 411 Processor May Exit Message-Triggered C1E State Without an Interrupt if Local APIC Timer Reaches Zero - https://www.amd.com/content/dam/amd/en/documents/archived-tech-docs/revision-guides/41322_10h_Rev_Gd.pdf
+
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Tested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Tested-by: Todd Brandt <todd.e.brandt@intel.com>
 ---
- drivers/staging/octeon/ethernet.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+V2
+- Improve changelog
+V3
+- Subject and changelog rewrite
+- Check LAPIC Timer mode using APIC_LVTT value instead of extra CPU feature flag check
+- Avoid APIC_TMICT write which is ignored in TSC-deadline mode
+---
+ arch/x86/kernel/apic/apic.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
-index a5e99cc78a45..77044b7b40da 100644
---- a/drivers/staging/octeon/ethernet.c
-+++ b/drivers/staging/octeon/ethernet.c
-@@ -248,9 +248,8 @@ static int cvm_oct_common_change_mtu(struct net_device *dev, int new_mtu)
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 6513c53c9459..5436a4083065 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -440,7 +440,19 @@ static int lapic_timer_shutdown(struct clock_event_device *evt)
+ 	v = apic_read(APIC_LVTT);
+ 	v |= (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
+ 	apic_write(APIC_LVTT, v);
+-	apic_write(APIC_TMICT, 0);
++
++	/*
++	 * Setting APIC_LVT_MASKED should be enough to tell the
++	 * hardware that this timer will never fire. But AMD
++	 * erratum 411 and some Intel CPU behavior circa 2024
++	 * say otherwise. Time for belt and suspenders programming,
++	 * mask the timer and zero the counter registers:
++	 */
++	if (v & APIC_LVT_TIMER_TSCDEADLINE)
++		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
++	else
++		apic_write(APIC_TMICT, 0);
++
+ 	return 0;
+ }
  
- 	dev->mtu = new_mtu;
- 
--	if ((interface < 2) &&
--	    (cvmx_helper_interface_get_mode(interface) !=
--		CVMX_HELPER_INTERFACE_MODE_SPI)) {
-+	if (interface < 2 && cvmx_helper_interface_get_mode(interface) !=
-+	CVMX_HELPER_INTERFACE_MODE_SPI){
- 		int index = INDEX(priv->port);
- 		/* Add ethernet header and FCS, and VLAN if configured. */
- 		int max_packet = new_mtu + mtu_overhead;
-@@ -294,9 +293,8 @@ static void cvm_oct_common_set_multicast_list(struct net_device *dev)
- 	struct octeon_ethernet *priv = netdev_priv(dev);
- 	int interface = INTERFACE(priv->port);
- 
--	if ((interface < 2) &&
--	    (cvmx_helper_interface_get_mode(interface) !=
--		CVMX_HELPER_INTERFACE_MODE_SPI)) {
-+	if (interface < 2 && cvmx_helper_interface_get_mode(interface) !=
-+	CVMX_HELPER_INTERFACE_MODE_SPI) {
- 		union cvmx_gmxx_rxx_adr_ctl control;
- 		int index = INDEX(priv->port);
- 
-@@ -346,9 +344,8 @@ static int cvm_oct_set_mac_filter(struct net_device *dev)
- 	union cvmx_gmxx_prtx_cfg gmx_cfg;
- 	int interface = INTERFACE(priv->port);
- 
--	if ((interface < 2) &&
--	    (cvmx_helper_interface_get_mode(interface) !=
--		CVMX_HELPER_INTERFACE_MODE_SPI)) {
-+	if (interface < 2 && cvmx_helper_interface_get_mode(interface) !=
-+	CVMX_HELPER_INTERFACE_MODE_SPI) {
- 		int i;
- 		const u8 *ptr = dev->dev_addr;
- 		u64 mac = 0;
 -- 
 2.34.1
 
