@@ -1,302 +1,144 @@
-Return-Path: <linux-kernel+bounces-365825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7EE99EA60
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:53:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6435A99EA6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 248C3B211C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2399D287E8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3421AF0D5;
-	Tue, 15 Oct 2024 12:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8B81C07DF;
+	Tue, 15 Oct 2024 12:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfC8smwn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lf3FvcE+"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8794F1C07E5;
-	Tue, 15 Oct 2024 12:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0993E1C07D9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728996812; cv=none; b=RWDq5uwHdlO5fAKJV1kNDfOHqsJYPq3FIeCdWlRnaJ85ZG3rqa4Q3OZy3gXoJK1JpSaWORRo2Xi7YqEC35gc7QRy4ail8ZWecqqnaS0SBtoA7o67Xblxus7Ug4Wg44EoNhh9XzP7iE0+X7NCX5m3MrXTP4JSr4W3fyLWq9JbZy8=
+	t=1728996864; cv=none; b=kDINPyKH8Z4yiGMJrAso1djvvCJiSTnYqwkSWK61utR+dwBVExio2CTd6Vc2EXxhQ3Ow4yx6ceCiXuK8K5QgmwX9WywKbySXd/lSp/v7n0zXo3s/JKXRZOrzoPexiwsb1qJKet+Ie+uITvOQoY/im5jIOpAM5jjoE76019RNMMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728996812; c=relaxed/simple;
-	bh=Udnv1koDwbInVk0nEtEsG9PIAwZTO9fQsSD5ERFyx0Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VemFn+q2ufe1aXCqrIpPVHrkO74vDYsO0Plw8U6BSx3jx61TeRJl27q5aNXNlqEw9PhP+vtRaoHAgpsdLA4Sn/e2KSot/0/KLmGDgCR8KGe1dMPLQTJdsClti2JAzaCpb88f7xYPg3ZJhnxAEJwgnORok0QqO8LgEUeL5YFh4C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfC8smwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29C2CC4CED2;
-	Tue, 15 Oct 2024 12:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728996812;
-	bh=Udnv1koDwbInVk0nEtEsG9PIAwZTO9fQsSD5ERFyx0Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=AfC8smwnmghjBAVSSws9C+MKUkIKkYWPsE7UTBzl7Q3hpSImONJ70FotEYB2Z5y4m
-	 sz72barFcKYLrtP+1dG6e7uq1XDqvBHJxupt2nCpPenvJ9gIBn10bl9WQlzMeqlhO1
-	 BDbFnJEkLPKdKrLZMFTF1zDfh0SzXmecpvBwLFkHA9x3Zr8k6Iju98UZ5Hekxw/Lxr
-	 woZa874ilKx7Yc+4tRol1Q3u4QAaOVK29947kGYaTqebw1v+V9+Vj4ORBx5ZGs5uBj
-	 ZGOcpM1TmXlS5N3zt/Xvq6tYUYf/xS5yjRBBdBYRI5JCUYaL6j433btFB3qtLqodpu
-	 C3z0gtsB9rXZQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDDBD216A2;
-	Tue, 15 Oct 2024 12:53:32 +0000 (UTC)
-From: George Chan via B4 Relay <devnull+gchan9527.gmail.com@kernel.org>
-Date: Tue, 15 Oct 2024 20:53:31 +0800
-Subject: [PATCH RFC/RFT 3/3] dts: sm7125-xiaomi-joyeuse: Sample device tree
- for reference
+	s=arc-20240116; t=1728996864; c=relaxed/simple;
+	bh=i4IXolkJjiswk2VvQqrP3XoASrWnqInKJYEPGAho1LY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T4Ec899wsf4xceRQHaK8gFskIia1zNICf+LniXLJhGN3NTSE4YAgZDB0AaK5gntSbj2QChH5sI9JA9iQwGbUsvMR+ZDKjuIus97sMR1P0YTskzg0BC4D3xwOUvnMJyhnlzI3eG+qSKVn4O+RwYqbYdjH/PO8wL8r/55NCA4X1wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=lf3FvcE+; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b1363c7977so60525585a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1728996862; x=1729601662; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GXrdlSFMUk7+CH9DKGI8Zx5IfrY4LnBclgt58OvS+5w=;
+        b=lf3FvcE+j85GWqdS1fXbcwdsGwIIjTrcFpsMT6ZnNJ2WD+TpL8V/k9vWUvOQje/zTj
+         3WtTdbtfZUQfSgiKG1z2FnihYrpoP0xPtLfo68YxZhCM2pD2o5ArH9stC3356EcAbJje
+         zujZcKEHBzgR/LitfMWuvmd2/Xbc27ubiFNzFTqceqE/8MeumH58nc8Gq/lxbmF5dPGe
+         UPx61wTukjUiVOm74vbzOexKArzvVKq7ZZebcDlhcN3qfuobukGTZazj9IP3hzS4e42J
+         3JP8ed7sJcKSknYZFUDo2/19GsbK9ysym6Spi4VtRSxWvEHIMaGLMdLO2yZE5PZxcfQq
+         DxLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728996862; x=1729601662;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GXrdlSFMUk7+CH9DKGI8Zx5IfrY4LnBclgt58OvS+5w=;
+        b=hqVXfsPsPhaQrtIbpe4DdUb8pA5J3MyvjYwuAt0BmBHgNmbZg9wG960KVTF7CX3NtD
+         JNUxi+8BfyZY+yMuD0O7tmbIM7xd/jNiAtu+UC1mScxdRaFRTfEcfVCQbCjtyi3lSBVQ
+         bKonVBzyLcl/zBCsCSWmc4vmp4R4S3sFmh/gvBgJRW7TgsGV3Lwr7AoWlUHH6SEaKhoc
+         8ObMWD6JSJEhmedVmY6kfc9AfeSpfyLv38UBST90vbda0eqYeuychsHLIN6NMYGfedH1
+         YgKxH3AfmmVqtMw6DxTMrdJmIrolxKqOWCIrNgJEAeYRJn/wrwVOKqbzfFAk3FRkYA3d
+         HGmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHjaNqNOjYEmW5Fp8nL0GS+v9XTGi84rhK08cby1Wx80fyxd02Ek0lr2do375E5xJ2xT1omZo1bPLgEEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVRdi6xMBpbW0SD/kGNumPRJzhJ2QpP0T04MX2W91tQfC5Mq19
+	rlCNWFxae3PZJ3jazTD5lYl5Qq4K/h8medZZjG7svP6RHIo0cRmrte9ee5Q50EVCjO9AD6BupTA
+	V
+X-Google-Smtp-Source: AGHT+IEY7UaOsHtqws8kw4oYjkjQT/STsmKzQC1Y7WlXbDI4yfdqKavj7rrCgoa2GhsXIWLphKj2jg==
+X-Received: by 2002:a05:620a:1a03:b0:7a9:bf33:c174 with SMTP id af79cd13be357-7b1417cac1amr47266685a.16.1728996861913;
+        Tue, 15 Oct 2024 05:54:21 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136167139sm68208785a.26.2024.10.15.05.54.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 05:54:21 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t0h48-00D49x-If;
+	Tue, 15 Oct 2024 09:54:20 -0300
+Date: Tue, 15 Oct 2024 09:54:20 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH v8 07/10] iommufd: Fault-capable hwpt
+ attach/detach/replace
+Message-ID: <20241015125420.GK1825128@ziepe.ca>
+References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
+ <20240702063444.105814-8-baolu.lu@linux.intel.com>
+ <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241015-nt36xxx-v1-3-3919d0bffee6@gmail.com>
-References: <20241015-nt36xxx-v1-0-3919d0bffee6@gmail.com>
-In-Reply-To: <20241015-nt36xxx-v1-0-3919d0bffee6@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Del Regno <kholk11@gmail.com>, 
- Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, George Chan <gchan9527@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728996810; l=6157;
- i=gchan9527@gmail.com; s=20241015; h=from:subject:message-id;
- bh=tWQZcmPANb4gyYg3Iy7tm37YDTp8/euoXHalxbM18xI=;
- b=LpMt6KwLQJJNw2ApXjiVTFev3urGDEjLrV4ifAm4rghDhKju/6l5pSvCF1By3ymwJAdwDXGAl
- 4I6CBpnVE/IACDBLermLo56NxcrYbTBr/dDOEjn2heqvCAV/cAjwTXP
-X-Developer-Key: i=gchan9527@gmail.com; a=ed25519;
- pk=dscYWhT+BiQOBMpPE19NFQAjBBmcpipc6zdf2MTze/U=
-X-Endpoint-Received: by B4 Relay for gchan9527@gmail.com/20241015 with
- auth_id=248
-X-Original-From: George Chan <gchan9527@gmail.com>
-Reply-To: gchan9527@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
 
-From: George Chan <gchan9527@gmail.com>
+On Tue, Oct 15, 2024 at 11:19:33AM +0800, Zhangfei Gao wrote:
+> > +static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
+> > +{
+> > +       struct device *dev = idev->dev;
+> > +       int ret;
+> > +
+> > +       /*
+> > +        * Once we turn on PCI/PRI support for VF, the response failure code
+> > +        * should not be forwarded to the hardware due to PRI being a shared
+> > +        * resource between PF and VFs. There is no coordination for this
+> > +        * shared capability. This waits for a vPRI reset to recover.
+> > +        */
+> > +       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
+> > +               return -EINVAL;
+> 
+> I am using the SMMUv3 stall feature, and need to forward this to hardware,
+> And now I am hacking to comment this check.
+> Any suggestions?
 
-Provide a include-made-easy devicetree file for demo.
-This sample file aimed including novatek touch support.
+Are you using PCI SRIOV and stall together?
 
-Reviewers please ignore this patch.
+> > +       mutex_lock(&idev->iopf_lock);
+> > +       /* Device iopf has already been on. */
+> > +       if (++idev->iopf_enabled > 1) {
+> > +               mutex_unlock(&idev->iopf_lock);
+> > +               return 0;
+> > +       }
+> > +
+> > +       ret = iommu_dev_enable_feature(dev, IOMMU_DEV_FEAT_IOPF);
+> > +       if (ret)
+> > +               --idev->iopf_enabled;
+> > +       mutex_unlock(&idev->iopf_lock);
+> 
+> Also iommu_dev_enable_feature(idev->dev, IOMMU_DEV_FEAT_SVA); is required
+> In thinking how to add it properly.
 
-The full device tree is at below:
-https://github.com/99degree/linux/tree/working-20241015/arch/arm64/boot/dts/qcom
+FEAT_SVA needs to be deleted, not added too.
 
-Signed-off-by: George Chan <gchan9527@gmail.com>
----
- arch/arm64/boot/dts/qcom/Makefile                  |   1 +
- .../boot/dts/qcom/sm7125-xiaomi-joyeuse-touch.dts  | 183 +++++++++++++++++++++
- 2 files changed, 184 insertions(+)
+smmu-v3 needs some more fixing to move that
+arm_smmu_master_enable_sva() logic into domain attachment.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index aea1d69db5..ba9786555b 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -235,6 +235,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm6350-sony-xperia-lena-pdx213.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm6375-sony-xperia-murray-pdx225.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm7125-xiaomi-curtana.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm7125-xiaomi-joyeuse.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= sm7125-xiaomi-joyeuse-touch.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm7225-fairphone-fp4.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-hdk.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-microsoft-surface-duo.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse-touch.dts b/arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse-touch.dts
-new file mode 100644
-index 0000000000..4a43db701d
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse-touch.dts
-@@ -0,0 +1,183 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+#ifndef SM7125_XIAOMI_JOYEUSE_TOUCH_DTS
-+#define SM7125_XIAOMI_JOYEUSE_TOUCH_DTS
-+
-+#include <dt-bindings/dma/qcom-gpi.h>
-+#include <dt-bindings/gpio/gpio.h>
-+
-+#include "sm7125-xiaomi-joyeuse-display.dts"
-+
-+&soc {
-+	gpi_dma0: dma-controller@800000  {
-+		compatible = "qcom,sm7125-gpi-dma", "qcom,sm6350-gpi-dma";
-+		reg = <0 0x00800000 0 0x60000>;
-+		interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>;
-+		dma-channels = <10>;
-+		dma-channel-mask = <0x1f>;
-+		iommus = <&apps_smmu 0x56 0x0>;
-+		#dma-cells = <3>;
-+		
-+		status = "disabled";
-+	};
-+
-+	gpi_dma1: dma-controller@a00000 {
-+		compatible = "qcom,sm7125-gpi-dma", "qcom,sm6350-gpi-dma";
-+		reg = <0 0x00a00000 0 0x60000>;
-+		interrupts = <GIC_SPI 645 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 646 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 647 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 648 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 649 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 650 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 651 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 652 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 653 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 654 IRQ_TYPE_LEVEL_HIGH>;
-+		dma-channels = <10>;
-+		dma-channel-mask = <0x3f>;
-+		iommus = <&apps_smmu 0x4d6 0x0>;
-+		#dma-cells = <3>;
-+		
-+		status = "disabled";
-+	};
-+};
-+
-+//spi@880000
-+&spi0 {
-+	dmas = <&gpi_dma0 0 0 QCOM_GPI_SPI>,
-+		<&gpi_dma0 1 0 QCOM_GPI_SPI>;
-+	dma-names = "tx", "rx";
-+};
-+
-+//spi@884000
-+&spi1 {
-+	dmas = <&gpi_dma0 0 1 QCOM_GPI_SPI>,
-+		<&gpi_dma0 1 1 QCOM_GPI_SPI>;
-+	dma-names = "tx", "rx";
-+};
-+//spi@88c000
-+&spi3 {
-+	dmas = <&gpi_dma0 0 3 QCOM_GPI_SPI>,
-+		<&gpi_dma0 1 3 QCOM_GPI_SPI>;
-+	dma-names = "tx", "rx";
-+};
-+
-+//spi@88c000
-+&spi3 {
-+	dmas = <&gpi_dma0 0 3 QCOM_GPI_SPI>,
-+		<&gpi_dma0 1 3 QCOM_GPI_SPI>;
-+	dma-names = "tx", "rx";
-+};
-+
-+//spi@894000
-+&spi5 {
-+        dmas = <&gpi_dma0 0 5 QCOM_GPI_SPI>,
-+                <&gpi_dma0 1 5 QCOM_GPI_SPI>;
-+        dma-names = "tx", "rx";
-+};
-+
-+//spi@a80000
-+&spi6 {
-+	dmas = <&gpi_dma1 0 0 QCOM_GPI_SPI>,
-+		<&gpi_dma1 1 0 QCOM_GPI_SPI>;
-+	dma-names = "tx", "rx";
-+};
-+
-+//spi@a88000
-+&spi8 {
-+	dmas = <&gpi_dma1 0 2 QCOM_GPI_SPI>,
-+		<&gpi_dma1 1 2 QCOM_GPI_SPI>;
-+	dma-names = "tx", "rx";
-+};
-+
-+//spi@a90000
-+&spi10 {
-+	dma-names = "tx", "rx";
-+        dmas = <&gpi_dma1 0 4 QCOM_GPI_SPI>,
-+                <&gpi_dma1 1 4 QCOM_GPI_SPI>;
-+};
-+
-+//spi@a94000
-+&spi11 {
-+	dma-names = "tx", "rx";
-+	dmas = <&gpi_dma1 0 5 QCOM_GPI_SPI>,
-+		<&gpi_dma1 1 5 QCOM_GPI_SPI>;
-+};
-+
-+&spi11 {
-+        status = "okay";
-+
-+        touchscreen: touchscreen@0 {
-+                compatible = "novatek,nt36675-spi",
-+				"novatek,nt36xxx-spi",
-+				"novatek,NVT-ts-spi";
-+			
-+                reg = <0>;
-+
-+                /* caught from joyeuse dtb*/
-+                spi-max-frequency = <4000000>;
-+
-+                /* ts->irq report 194 */
-+                /* interrupts = <&tlmm 194 IRQ_TYPE_EDGE_FALLING>; */
-+                /* interrupt= <&tlmm 13 2>; */ //dtb specified, but GPIO13 is CAM_MCLK0
-+
-+                novatek,reset-gpio = <&tlmm 8 0x00>;
-+                novatek,irq-gpio = <&tlmm 9 0x2001>;
-+
-+                /* 672C */
-+                novatek,swrst-n8-addr = <0x03F0FE>;
-+                novatek,spi-rd-fast-addr = <0x03F310>;
-+
-+                reset-gpio = <&tlmm 8 0x00>;
-+                /* dtb show <&tlmm 13 2>*/
-+                irq-gpio = <&tlmm 9 0x2001>;
-+
-+/*
-+                touch_ibb-supply = <0x241>; //lcdb_ncp
-+                touch_lab-supply = <0x240>; //qcom,qpnp-lcdb-regulator ldo
-+                touch_vddio-supply = <0x33c>; //pm6150_l18
-+*/
-+
-+                vio-supply = <&vreg_l18a_3p0>;
-+                vdd-supply = <&vreg_l18a_3p0>;
-+
-+                panel = <&panel0>;
-+                status = "okay";
-+        };
-+};
-+
-+
-+&qup_spi11_spi {
-+        drive-strength = <2>;
-+        //bias-disable;
-+};
-+
-+&qup_spi11_cs {
-+        drive-strength = <2>;
-+        //bias-disable;
-+};
-+
-+&qup_spi11_cs_gpio {
-+        drive-strength = <2>;
-+        bias-disable;
-+};
-+
-+&gpi_dma0 {
-+	status = "okay";
-+};
-+
-+&gpi_dma1 {
-+        status = "okay";
-+};
-+
-+#endif
-
--- 
-2.43.0
-
-
+Jason
 
