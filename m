@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-366034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4654999EFEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:44:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3736599EFEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 556AB1C20DBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D30285015
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4530B1D515D;
-	Tue, 15 Oct 2024 14:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF42B1C4A2E;
+	Tue, 15 Oct 2024 14:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jshjfl8H"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPaMjyek"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152A41C4A2F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC2B1C4A0C;
+	Tue, 15 Oct 2024 14:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003442; cv=none; b=ba34Sjjdso9iXCIA/qgsKMgoibrdTqfmIZ3ps3iMn/PHWFGX9FXgSulcD0JmX2JcyKm5U61CfpOWfldir9UocKLuJvOz4EpAjozP3PkW/pYJxSH8axq1/PYZAlY9iftYDIzrAalrlWEn/t84o8sY9htiwdBZRy2Z+ijZ+31Gzuc=
+	t=1729003440; cv=none; b=tF7LyfcidX/fAysfZ8GfW6pdjMN5FBJfdM+sFufsgGq3MCRMttKAGa+TfAz8SUgN1zIleOV5KjjWL0yBecLZ26+DIDuuBLCWhX0d+ZkZgsYf2xGzAbLeOQRRUtc+LYKCMiV9BejW3Akq9rRNn7B0uJQ2CVdQGQILBRR4kRhaO0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003442; c=relaxed/simple;
-	bh=3lpMQC/f5DBAD5or9lbKKrPkKemScfy3OJSYurxvJuw=;
+	s=arc-20240116; t=1729003440; c=relaxed/simple;
+	bh=A7CxIg3FylzHgSJxPQ/0P9yWq+JAO79Um66+WxhE0R8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hFVG13qCM0UqTWgketSeGOYOFjmwS2uFDrsUyCn4e3krHPSVPAwa8i+qavavGpp68JD5YdBSxMD9hzdAx6T+q9Sv6UJkP9Ezabh4Xm/0qoS3OSD2ejzwgAvd0wXuU/ZSogqVLTv2U2C9QJBTBp4MpVqhNVmU3Q/TGMvfPNTjy+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jshjfl8H; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c934b2c991so5079a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:44:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=OEwtDQLYd2mK4KKyTlONxGGbVQSHcADm7i0Ob1GZ77uSxTth9FB49752uOUONUL/vt57+XjMAWKwLrPJvF01SSANS6VxAtpDFh9ukCO8H2AVfC76HxXOq5IlU0EwIuhlEBGDCs7evz9nkexR3fm0jPq0VBh8gLTry1rT3SAOQSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPaMjyek; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c53efc14fso3243605ad.0;
+        Tue, 15 Oct 2024 07:43:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729003439; x=1729608239; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729003438; x=1729608238; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3lpMQC/f5DBAD5or9lbKKrPkKemScfy3OJSYurxvJuw=;
-        b=Jshjfl8HoENTlJS5ZPdRhcVrv9kGtLkumWUd8F/jrq6egISr7gKnVSDa608pB18xKu
-         qd2NOhchVkcn8nMws6OGmtC8JKF07CdpUXpxv9dgOx9aUL1u2k1veXRzT76WMVuSwPEe
-         rXo91+KcavS2OF7Xi3wfi1G3ug0qVomPwB0xP9gnz8mLiVR6rv9bys4JouoH06oc5olr
-         +mwu4WIdHfWw1tByVQS7UB1wh16QuqxojNzrXVQCapMhQKxoEMpEfMdZ6F0qnpW/kpit
-         SZ58NTlIObHJalimkfNTFaQreSKiW7Ucr92wF9EP8qrEOHchLrHxX6d8cyoRNgnSagZC
-         k0SQ==
+        bh=A7CxIg3FylzHgSJxPQ/0P9yWq+JAO79Um66+WxhE0R8=;
+        b=IPaMjyekCcsDjjWOmDOQgvnLLW1bn1wuzuzvKihAo1iSSn5IphTlBnzGHkkrFxNh1o
+         sSb+t1DvKlA8/3ClgG1sSrqNS5jV8Z/1rrebUvxhD/HQ+kLpAQJDSEFAqaH1qU9mF6/v
+         2OOqRPA8QFV3TJyT4sbpo+n/QJtLvY956dztY6nVUHI5nl0mPWlm0ZX/TNpKfaih1gkr
+         s5gvRScQP9sko1YHMOZj5QsdBi3xFDV25tq/T7CM731qvaVOVWmhiZy1dKqEqjg77RbW
+         9cZH1ADByJU7+0+WfOZqqtIWXGinyuJ3rxRHpcxchjPHDBhYerQ0X/8i0BcDyUHo2WW8
+         ukkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729003439; x=1729608239;
+        d=1e100.net; s=20230601; t=1729003438; x=1729608238;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3lpMQC/f5DBAD5or9lbKKrPkKemScfy3OJSYurxvJuw=;
-        b=YXY1fISgwpA3tslGKvZtBC8roL45pzJeZ0P32OSOqaHLElphWzboEPloWD0LzcnORF
-         Rk2ldgH48e6W7ZNp8dlzYrcuWY2iYU5FIHZfZDePgW0ANktfOMHAu03ozwbVBSfDYQ2o
-         Cn/MFkcIA1umps/APghSEcpHRlZg30aSey4Yv6AGzKxvN+cbhoDKCp2dPZ4zwq0koki9
-         kYTQdXtgg240q8AUXgAr8MhhJn1rkZlwzpo6fO8d6opPohdZGvkLQ6I47BPFmJSollNv
-         MmQMNn0EoKSvrhFB5GUfpoF2mmx8aCRHQCaQ/f/56pPosrmFtuWixdwpeI2xq9Q/aQR+
-         vz0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUS/jshFa1Ya9+Q+GK0WzaGjR/pB2YgQE3h/i4+sO5kG/yNI6VZRbXiTpc4KyM6c3vitgB8PsWIzGlphxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIM9SWEsvPw3+IH2NL8Muvx0lLqWRXQ5qw6aD6MGe41YnpoGGJ
-	njX3kQrKHilosA+d4lyaJZVhQvKmQa7F1XnHm4P5px1AQmGWPYwSakqKtIxRZRs3PVoSwMr7Ew5
-	Bh2d+VohI7v7z1jFfGs7Yqb0lxByUQ0BQ6JGk
-X-Google-Smtp-Source: AGHT+IHbGmHwlXDagk/3SF+RGqhVu4RMoqkcx6gh6koiAXSvvuUvpR9ybPtB9PL+HL94OhwZsQuEVgsap2LDWyNUaRQ=
-X-Received: by 2002:a05:6402:520f:b0:5c2:5251:ba5c with SMTP id
- 4fb4d7f45d1cf-5c95b0cf230mr123871a12.0.1729003438690; Tue, 15 Oct 2024
+        bh=A7CxIg3FylzHgSJxPQ/0P9yWq+JAO79Um66+WxhE0R8=;
+        b=hcZGghSKxkJpiWORTQiAX/VN6x9luBXTyRz91lErzoXdJkM6RzPxbfitb8qTnuPAe7
+         R2AhE0hcLrQjl2u/6zLBW4rJZN2EjbYKBR0EyeeDOoD8i8hXf76mJs65Sy/Xc41tOVeJ
+         ptSO4FOXTp7C2+8PiTxVe1ay2bZ75UaaqVvxWiPz7/Vzo0cG2iWqAipL8HGKTmXki6DJ
+         OcxG3fEJc9yCG8s8APQWQcxxk38e58xvEZSRaBWvifjqhxVNNhcE0X88hvUhyI0sKeXK
+         /G6rmaHgqKDAQ9xfoPMtSWA6JpzdpoK5r6i/Rqc58TgWBk9dXFKcmZbOGGvOjW5BOd37
+         VLSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUixrvi37hvsNzjTeWKuX78aiY6kercAaz+pkkmxG1xLouk5pfb7GA2ZAnO0mJeONEB7xiOG9FCxw8SIHWHzw8=@vger.kernel.org, AJvYcCV5+GTE6y3EEiDL6CgBtEulDPnGh627R5xkBYfGK3HTn1P3yvw5Hzpb8f29gzpbKrwDWP2MVs+b3OB/1/BA@vger.kernel.org, AJvYcCVvaSzQMmZtHvLuwRajnPufZnrxg5gwprzg2fird5TPBADGHNIXixzEG12ewXJdRUV/SYWUzaFGYqrvC7NuSpIfQNPu@vger.kernel.org, AJvYcCW118WfRCmlyGV/UrU6Y2vSmc51HXmxukR4BkXgBr2uw8MWWTc8SCTeIYevUmK7yY+2zIm4yUnLiiun@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsldiTl0hiQKd1I7bUg6l8+WWAy2v4ohRqGB14w2k9hIUNwVjP
+	eTMVGmEk9KxQW5QY4VOnJ7PzpvdQGV89KTPL1mCMz2x8kU9sDk7CR1dqFIJNYgpzj5/g6YSj8L4
+	fj58p3hkt6YumsEQkpvpwJ/ge3dqFP0yF/G+tDQ==
+X-Google-Smtp-Source: AGHT+IFoXEBo1ZT1pXaD7KXeYP4P5odzuHy9MKmBB6t4PDsesuSr1w9SzhznkWVEoeEweWV6j6xd4RR7WhJRY5Fpauk=
+X-Received: by 2002:a17:903:2343:b0:20b:b93f:2fec with SMTP id
+ d9443c01a7336-20ca169ee11mr87190225ad.8.1729003438182; Tue, 15 Oct 2024
  07:43:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,45 +70,44 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015111236.1290921-1-david@redhat.com> <bu3aq2gxcfkjxocu3uzowvevlv6rgeihepc36cwuhh44xqydkc@3ghgml6xnlgx>
- <ef49981b-b4ae-4a39-bfb2-7c2065d7bc98@redhat.com>
-In-Reply-To: <ef49981b-b4ae-4a39-bfb2-7c2065d7bc98@redhat.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 15 Oct 2024 16:43:22 +0200
-Message-ID: <CAG48ez1Sf04jfwWM3J7XFQ2Y_ZP0CT75ASQHuFkgJLdQf2reYw@mail.gmail.com>
-Subject: Re: [PATCH v1] mm/pagewalk: fix usage of pmd_leaf()/pud_leaf()
- without present check
-To: David Hildenbrand <david@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzbot+7d917f67c05066cec295@syzkaller.appspotmail.com, 
-	Andrew Morton <akpm@linux-foundation.org>
+References: <20241011-tracepoint-v10-5-7fbde4d6b525@google.com>
+ <202410151814.WmLlAkCq-lkp@intel.com> <CANiq72nn6zv9MOD2ifTXbWV3W1AgiXL=6zTX_-eGL5ggLj4fbw@mail.gmail.com>
+ <CAH5fLghJrrq2nJu7S08bBg2sAjdibkZ4D14K9cqETafnr4CR4w@mail.gmail.com>
+In-Reply-To: <CAH5fLghJrrq2nJu7S08bBg2sAjdibkZ4D14K9cqETafnr4CR4w@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 15 Oct 2024 16:43:44 +0200
+Message-ID: <CANiq72kRiQvw3xWbMGRxcVJhHN0LMRa0RewxnkofVr=71KQvEA@mail.gmail.com>
+Subject: Re: [PATCH v10 5/5] rust: add arch_static_branch
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: kernel test robot <lkp@intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	oe-kbuild-all@lists.linux.dev, linux-trace-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 4:40=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
-> On 15.10.24 16:32, Kirill A. Shutemov wrote:
-> > On Tue, Oct 15, 2024 at 01:12:36PM +0200, David Hildenbrand wrote:
-> >> pmd_leaf()/pud_leaf() only implies a pmd_present()/pud_present() check=
- on
-> >> some architectures.
-> >
-> > Should we clarify what behaviour we actually want from arch code?
+On Tue, Oct 15, 2024 at 3:07=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
 >
-> We probably should document somewhere that things like pmd_special(),
-> pmd_leaf() ... should only be used when we know that the PMD is present.
->
-> I wonder if we should even add ways to detect mis-use
->
-> Jann also raised that recently in a private message, that it is rather
-> unclear (well, and repeatedly leads to issues) when pmd_leaf() is valid
-> to be called.
+> Thank you. I was able to reproduce the error locally. It only happens
+> when CONFIG_JUMP_LABEL is disabled. I've verified that this fixes it.
 
-I think one place where that should probably be addressed is in
-Documentation/mm/arch_pgtable_helpers.rst - that is supposed to be an
-overview of these helper functions and what they mean, but the only
-thing it currently says about pmd_leaf() is "Tests a leaf mapped PMD",
-which doesn't really tell you much more than the function name. It
-would be nice if that table contained information about the conditions
-under which these helpers may be used.
+You're welcome!
+
+By the way, if you end up sending a new version, then you could
+simplify to `ifdef CONFIG_JUMP_LABEL`.
+
+Cheers,
+Miguel
 
