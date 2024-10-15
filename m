@@ -1,79 +1,92 @@
-Return-Path: <linux-kernel+bounces-366669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8825299F882
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:02:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19FF99F87C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B87A01C209D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 969B82869D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D581FBF63;
-	Tue, 15 Oct 2024 21:02:21 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6771FBF44;
-	Tue, 15 Oct 2024 21:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AE51FBF6E;
+	Tue, 15 Oct 2024 21:01:26 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5C61F9ED8;
+	Tue, 15 Oct 2024 21:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729026141; cv=none; b=pcEWHrdgkTZDfx4rFsfQF/bibiP9J4f4tAYfx7SJn14DztSKyWWl+wjrRcJ9NWslskmfWYR7w/JMvbtSKtOafqdUydk01yJXc4Qe1xPbztK+OXr84QfhI+Wcqr0ZZexqxtachrcN6CgoeflBbNdc92oLVi8Fvt3C2U2C9CrYn8Y=
+	t=1729026086; cv=none; b=kvBpcqDoYI8Nvw7oHQ38ajeW06Cga+Muu1ihBuzv5xe8OTo80H+0sNP+/AeIkpggBIHeZmnMRVEQPKxG3d5jD3E0V5VlCn+tZj5DptMMDNX/+HdHCeOCMFEKlxZM5/ssULwB7nwSgRMSUrQcNA1t+/xKPmAB41Xr/a9jJBNjoSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729026141; c=relaxed/simple;
-	bh=/8qW//Xm2w8jxPweUPLiAJboYgNdq6ur315Duu6eN2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBLmdVJoXTM3AC85Z29n+LFq42gcas6bci8ZQKPfCp91nYS9IgKWuEsXaZGSKzeL8MRiN9/vNr8SAtFPKgQq5rE93vYFe2eVFAysfz5KZSR7yw3GJsmnXN/ZlqtyFWqz+biWY9jMqf7Ooqg0nFjnweP3Q2g1EfIBLRIQlHNpdqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 49FKxsmh030529;
-	Tue, 15 Oct 2024 15:59:54 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 49FKxsAU030528;
-	Tue, 15 Oct 2024 15:59:54 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Tue, 15 Oct 2024 15:59:53 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev, paulmck@kernel.org,
-        sfr@canb.auug.org.au, jpoimboe@kernel.org,
-        linux-toolchains@vger.kernel.org
-Subject: Re: [PATCH] HID: simplify code in fetch_item()
-Message-ID: <20241015205953.GH29862@gate.crashing.org>
-References: <ZvwYbESMZ667QZqY@google.com> <20241010222451.GA3571761@thelio-3990X> <Zw60Sj-iFh1KWwWG@google.com> <20241015192604.GA1329867@thelio-3990X>
+	s=arc-20240116; t=1729026086; c=relaxed/simple;
+	bh=N1hEchc/2XTzoorfyS2708tEKgnm+DrlsQ7RPL4btDc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=glF+xJxRuOaPqODuqSmod+3ntUkI+Ahjp5FSAWs0zI0LnFQhMaWk9iquBat5kUPL5/FJhIzPepSNnIvLWBVZYZ2zZ4VDnZEuLuGWtffHOzQbdDdVADms9g8A21FBfb5jC47Se6M88CSmcM3PVbJ+BsI6gPm0xqh35j3kP72Yxzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C205CC4CEC6;
+	Tue, 15 Oct 2024 21:01:25 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 6BFDE1060437; Tue, 15 Oct 2024 23:01:23 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-acpi@vger.kernel.org, chrome-platform@lists.linux.dev
+In-Reply-To: <20241005-power-supply-no-wakeup-source-v1-0-1d62bf9bcb1d@weissschuh.net>
+References: <20241005-power-supply-no-wakeup-source-v1-0-1d62bf9bcb1d@weissschuh.net>
+Subject: Re: [PATCH 0/8] power: supply: core: remove
+ {,devm_}power_supply_register_no_ws()
+Message-Id: <172902608343.467915.12779076525660728753.b4-ty@collabora.com>
+Date: Tue, 15 Oct 2024 23:01:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015192604.GA1329867@thelio-3990X>
-User-Agent: Mutt/1.4.2.3i
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
 
-On Tue, Oct 15, 2024 at 12:26:04PM -0700, Nathan Chancellor wrote:
-> On Tue, Oct 15, 2024 at 11:28:26AM -0700, Dmitry Torokhov wrote:
-> > Oh well, if our toolchain does not like "unreachable()" then we can
-> > simply remove it - the switch does cover all possible values and the
-> > "return" statement should be valid even if compiler somehow decides that
-> > "switch" statement can be skipped.
-> > 
-> > If you can send a patch that would be great.
+
+On Sat, 05 Oct 2024 12:05:02 +0200, Thomas Weißschuh wrote:
+> The meaning of the _no_ws() suffix is not immediately clear when reading
+> the code. Furthermore there is already a dedicated API to configure the
+> details of the created power supply in "struct power_supply_config".
+> Migrate the functionality to "struct power_supply_config" and remove the
+> special functions.
 > 
-> Done, thanks a lot for the input!
 > 
-> https://lore.kernel.org/20241015-hid-fix-fetch_item-unreachable-v1-1-b131cd10dbd1@kernel.org/
+> [...]
 
-There also is -funreachable-traps, which the kernel might want to use
-(with that option every builtin_unreachablei() is compiled to a trap
-instruction, instead of that the compiler just thinks "Aha!  This can
-never happen!", and optimise based on that).
+Applied, thanks!
 
+[1/8] power: supply: core: add wakeup source inhibit by power_supply_config
+      commit: 49000fee9e639f62ba1f965ed2ae4c5ad18d19e2
+[2/8] ACPI: battery: Register power supply with power_supply_register()
+      commit: 2de244e91ddf5cfcf7d88275ad2dbe7f0367e57e
+[3/8] power: supply: acer_a500_battery: register power supply with devm_power_supply_register()
+      commit: 8c3985bb4e78fb487621dce733fae387fce174a8
+[4/8] power: supply: bq27xxx_battery: register power supply with power_supply_register()
+      commit: 1011646d4bd6c2eedb68d131ba7ddaf9ecd2aa9e
+[5/8] power: supply: cros_usbpd-charger: register power supply with devm_power_supply_register()
+      commit: e8d2dfa6d246b2b879287c79098a1960b3856533
+[6/8] power: supply: lenovo_yoga_c630_battery: register power supplies with power_supply_register()
+      commit: 705833305a7a68d6ff163626abd81735940b7751
+[7/8] power: supply: max77976_charger: register power supply with devm_power_supply_register()
+      commit: 79b9630e6fc80f225e1564b42cae154970f31136
+[8/8] power: supply: core: remove {,devm_}power_supply_register_no_ws()
+      commit: 85d319e14f301e1c68131b74c1dceabae73d1e81
 
-Segher
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
 
