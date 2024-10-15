@@ -1,152 +1,181 @@
-Return-Path: <linux-kernel+bounces-365342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE06A99E0D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:21:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A3999E0DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2648CB25094
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674171C218A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AEB1D0B91;
-	Tue, 15 Oct 2024 08:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C661CACC9;
+	Tue, 15 Oct 2024 08:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j8rNIhzv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cJxQl/vG"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B771C68AA;
-	Tue, 15 Oct 2024 08:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172621C82E6
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980465; cv=none; b=MiNkR5uut6ol5McatbAEAVBLOtEOscUtzwuul/ZwPWkEwJuUJppCH/ZB19aw4x982Vr5YZY/NmZQhU71Go4M7r5h6970Ew0jSftGjKHYBVanT8FRDC/nfa4HE36V3bwQe45ywaCUIwf3sRIvR6fUcgWhixj/Fsr/IU7C0KEFIks=
+	t=1728980496; cv=none; b=L7dWWoDihZFA3VsWi54CKW+7M9+5bK0QA/nfE4N6Suvd+TvWZU8ZOkkvUaJ1N5ovWagXzQvcu3FC2WOnfW7MkP53UqSwtTN+nvRXu9ZkiS/mPQEENn+4D/V/bGC9JqGaUUEhBFx+Xwx68NV3N/pYN8C35h+fHA9hRwy+f8xO0SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980465; c=relaxed/simple;
-	bh=jQONjEO3Dvgc9q9uTAPqUYVLyxVvsquQ1uaea/VM9QY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=M7wwxBzChxf6sC0DGNUCcWn0qEirlS/tFp5xZSr0Q+33p3/hCvlQEElEQ5Xa81Q1EeN0aB9IaYid3Qv9Ryy48oKyG51LRFXppLSKO9jYWDJdyLNzoOtUsdVO2+/+wbgR5GM038te21r0fHozcaabwyPNPdCf/PyXpFrmK/Nw138=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j8rNIhzv; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728980465; x=1760516465;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=jQONjEO3Dvgc9q9uTAPqUYVLyxVvsquQ1uaea/VM9QY=;
-  b=j8rNIhzvbAh2tBNeILYkUiiJRWX3P6hFg6yxSfo5YzUQ4Z14Ut0xvjBf
-   GBRM1lvsQ3MBIw5P1l1OetG5L9ulYZ0wrY+jVtdJA2yx+Rtj71DQxOXi3
-   oeGMqIYgVdcg94xYzppEXgaV9Bee8bFLKPLVfOVYXwo7ublHfe5vNgz2F
-   MMIwBeI76Z4qZzc0RSSbFoweUyoSpMNEwGhoymIk6Z3k0jzfAfaFGxeq6
-   nVGzGvHoJu/nCWcoaqwuXlBqYuWMOiVVtSaoLY6lfDbBJtAnNPLu27Flx
-   4DnKWz4gNnjoqszXtE/bgh7bmUPbW6ysq+0z6doOVn9X71DAMZDyjaSBl
-   Q==;
-X-CSE-ConnectionGUID: p1BOMSWuQ2yCKtb4ss7dUg==
-X-CSE-MsgGUID: HM7fEz+fSsmKEzf0qjDNOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="45831188"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="45831188"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 01:21:04 -0700
-X-CSE-ConnectionGUID: AMKXXzI1R1uF3cgCdLgJvg==
-X-CSE-MsgGUID: YVtNiue1QmOGgHguPnKJdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="77763195"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.12])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 01:21:01 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 15 Oct 2024 11:20:58 +0300 (EEST)
-To: Kurt Borja <kuurtb@gmail.com>
-cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-    platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] alienware-wmi: added platform profile support
-In-Reply-To: <20241012020237.20057-2-kuurtb@gmail.com>
-Message-ID: <9a2ce7a9-9c8c-4279-aa9c-de9fa879f38b@linux.intel.com>
-References: <20241012015849.19036-3-kuurtb@gmail.com> <20241012020237.20057-2-kuurtb@gmail.com>
+	s=arc-20240116; t=1728980496; c=relaxed/simple;
+	bh=zD3HmgW+TlfcyOvp2QLRv/48BOBk+PPPEeanN3RBWTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tuxVcVwDTuA8OZ6cnX5PQgz6M18hMsXMTu1SLpCzMp2ld3jh7bji9hSTHlnDKGO/8SjFlkUsdB4sJPD+7cRLy4R8JEHaXNmrhmUaOrV8vsZknBXJq1N3QgApyz8kMYvVt5+YIqmXXgKSIsgyudFLL2NFRIVYzc2vjb6zgDRCDus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cJxQl/vG; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-84fb533bb9bso1100321241.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:21:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728980493; x=1729585293; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lW8e1d56O5rgpMPsi4Gluv5d8nw+f0Vj8iqFfuuPxRg=;
+        b=cJxQl/vGpmKCoYKFErbas4jm6IAU2jvM2UrCApMSZcOM0lNU8P5ABW5E6rXEurnSGC
+         ATyi8msajb33+8h/hVgq+Zg2/ptVOMgPNLu/7p1HNAmiWQXpG08j1jUpObu/lMWqYTXt
+         GLTbsZazjAndN/8fpPLt1ESL7k93Uh+MzpV5HnOxZOqSifqYhuLb1rD2c3OhyAR121Ai
+         Zf7FA18zWWXOxiboOg/sV18lll4SE9/xcEXcNT7srWp+DPBlT+l763jCdVwK2owl3EPy
+         dUTQtlc4dtTMXRtlV0Nx/3U+mxN/5ZR0T5ty9ruWsLkxchMOe/9I0UassSRe8hEpvX7B
+         zQgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728980493; x=1729585293;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lW8e1d56O5rgpMPsi4Gluv5d8nw+f0Vj8iqFfuuPxRg=;
+        b=u6ayyJYj2+T08k0luL9ELwIr+jxQ+ehca1Q+Q1QAllClYb1xSp5d2E47mkih9UGt6x
+         Dc1njCMwO9tPJ28gQj9D3CXY1ESimP6r0RQpc5uI/K4Q0cgsBoa5PKnqDbNcm0NO/Tys
+         VqloBmX08aRxL5mmr7CE4QlFj0zprb9EyFzOpfWBTUxbzmnyTir0OD+/5QY1ILahoNVA
+         AYK2E4aG7ps6CNdqggMhHsTcpiRVTSeLgWiHjLiK2sgL5vzBNQnyOpGHRPEJWKMlACjp
+         UQo6P2sh8zL5/OdQY9YqSFLSyKvoaAvg3/JO4aNqilLFOyVAHjt8Acu/G/sDiAGFHJes
+         xyXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVyfeJa73RN9ZRZwQ2Y2/s0Jyw1na0y9seWbu9OTOH/6AkosG58psM6qKFF7ntr8pfJiisAcCuo/K5dXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2YDH1K2zwmBIYLCdT4dsw1MZJWrhdrNlxVmGzSRl8J3GPzsAe
+	EL/RjMVNEQ2yVQB+iLVz0rD3is3xepuV87SI/ApJ7WMd44WOxiq5uHyPLdaLY2MQ6AcdRYjmU8L
+	c9FiC+NB4lCQsrBTJw3/7WQ7kBau5OPlCqUDKILF3bqPsasXewfE=
+X-Google-Smtp-Source: AGHT+IFUIwYSu6KbEUAyth9XxFqC5nZrcsAdb62v1PqnR10rTpKu/1c9tc94aN8gqcFnCnBkFhMxBIdlbJj9h25BLbM=
+X-Received: by 2002:a05:6102:cd4:b0:493:eebc:d77d with SMTP id
+ ada2fe7eead31-4a4659ca79dmr8656632137.15.1728980492921; Tue, 15 Oct 2024
+ 01:21:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241014141042.954319779@linuxfoundation.org>
+In-Reply-To: <20241014141042.954319779@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 15 Oct 2024 13:51:21 +0530
+Message-ID: <CA+G9fYs-BXW2J-n1R7VO2j-qqpP=3nzYC4a2C7=-fnLTW8OR8w@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/213] 6.6.57-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Sven Schnelle <svens@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 11 Oct 2024, Kurt Borja wrote:
+On Mon, 14 Oct 2024 at 20:06, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.57 release.
+> There are 213 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.57-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-> Implements platform profile support for Dell laptops with new WMAX
-> thermal interface, present on some Alienware X-Series, Alienware
-> M-Series and Dell's G-Series laptops. This implementation supports two
-> sets of thermal profile codes, namely *thermal* and *thermal_ustt*, plus
-> additional quirk *gmode* for Dell's G-Series laptops.
-> 
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
->  drivers/platform/x86/dell/Kconfig         |   1 +
->  drivers/platform/x86/dell/alienware-wmi.c | 236 ++++++++++++++++++++++
->  2 files changed, 237 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
-> index 68a49788a..b06d634cd 100644
-> --- a/drivers/platform/x86/dell/Kconfig
-> +++ b/drivers/platform/x86/dell/Kconfig
-> @@ -21,6 +21,7 @@ config ALIENWARE_WMI
->  	depends on LEDS_CLASS
->  	depends on NEW_LEDS
->  	depends on ACPI_WMI
-> +	select ACPI_PLATFORM_PROFILE
->  	help
->  	 This is a driver for controlling Alienware BIOS driven
->  	 features.  It exposes an interface for controlling the AlienFX
-> diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-> index b27f3b64c..6e30e9376 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi.c
-> @@ -8,8 +8,11 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
->  #include <linux/acpi.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/platform_profile.h>
->  #include <linux/dmi.h>
->  #include <linux/leds.h>
->  
-> @@ -25,6 +28,12 @@
->  #define WMAX_METHOD_AMPLIFIER_CABLE	0x6
->  #define WMAX_METHOD_DEEP_SLEEP_CONTROL	0x0B
->  #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
-> +#define WMAX_METHOD_THERMAL_INFORMATION	0x14
-> +#define WMAX_METHOD_THERMAL_CONTROL	0x15
-> +
-> +#define WMAX_ARG_GET_CURRENT_PROF	0x0B
-> +
-> +#define WMAX_FAILURE_CODE		0xFFFFFFFF
->  
->  MODULE_AUTHOR("Mario Limonciello <mario.limonciello@outlook.com>");
->  MODULE_DESCRIPTION("Alienware special feature control");
-> @@ -49,11 +58,27 @@ enum WMAX_CONTROL_STATES {
->  	WMAX_SUSPEND = 3,
->  };
->  
-> +enum WMAX_THERMAL_PROFILE {
-> +	WMAX_THERMAL_QUIET = 0x96,
-> +	WMAX_THERMAL_BALANCED = 0x97,
-> +	WMAX_THERMAL_BALANCED_PERFORMANCE = 0x98,
-> +	WMAX_THERMAL_PERFORMANCE = 0x99,
-> +	WMAX_THERMAL_USTT_LOW_POWER = 0xA5,
-> +	WMAX_THERMAL_USTT_QUIET = 0xA3,
-> +	WMAX_THERMAL_USTT_BALANCED = 0xA0,
-> +	WMAX_THERMAL_USTT_BALANCED_PERFORMANCE = 0xA1,
-> +	WMAX_THERMAL_USTT_PERFORMANCE = 0xA4,
-> +	WMAX_THERMAL_GMODE = 0xAB,
+The S390 build broke on the stable-rc linux-6.6.y branch due to
+following build warnings / errors.
 
-While doing the next version, could also align these values please.
+First seen on v6.6.56-214-g8a7bf87a1018
+  GOOD: v6.6.56
+  BAD: v6.6.56-214-g8a7bf87a1018
 
--- 
- i.
+Bisection points to,
+  d38c79a1f30ba78448cc58d5dee31c636e16112d
+  s390/traps: Handle early warnings gracefully
+    [ Upstream commit 3c4d0ae0671827f4b536cc2d26f8b9c54584ccc5 ]
+
+List of regressions,
+* s390, build
+  - clang-19-allnoconfig
+  - clang-19-defconfig
+  - clang-19-tinyconfig
+  - clang-nightly-allnoconfig
+  - clang-nightly-defconfig
+  - clang-nightly-tinyconfig
+  - gcc-13-allmodconfig
+  - gcc-13-allnoconfig
+  - gcc-13-defconfig
+  - gcc-13-tinyconfig
+  - gcc-8-allnoconfig
+  - gcc-8-defconfig-fe40093d
+  - gcc-8-tinyconfig
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Build log:
+-------
+arch/s390/kernel/early.c: In function '__do_early_pgm_check':
+arch/s390/kernel/early.c:177:30: error: implicit declaration of
+function 'get_lowcore'; did you mean 'S390_lowcore'?
+[-Werror=implicit-function-declaration]
+  177 |         struct lowcore *lc = get_lowcore();
+      |                              ^~~~~~~~~~~
+      |                              S390_lowcore
+arch/s390/kernel/early.c:177:30: warning: initialization of 'struct
+lowcore *' from 'int' makes pointer from integer without a cast
+[-Wint-conversion]
+cc1: some warnings being treated as errors
+make[5]: *** [scripts/Makefile.build:243: arch/s390/kernel/early.o] Error 1
+
+
+Build log link:
+---------
+  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwi03QYzWjrOZMpsvCF31N0Oc/
+  - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.56-214-g8a7bf87a1018/testrun/25432877/suite/build/test/gcc-13-defconfig/log
+
+metadata:
+----
+  git describe: v6.6.56-214-g8a7bf87a1018
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git sha: 8a7bf87a1018a21d9dbbc5a794cb9a4fb3243aa0
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwi03QYzWjrOZMpsvCF31N0Oc/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwi03QYzWjrOZMpsvCF31N0Oc/
+  toolchain: clang-19 and gcc-13
+  config: defconfig
+  arch: S390
+
+Steps to reproduce:
+-------
+# tuxmake --runtime podman --target-arch s390 --toolchain gcc-13
+--kconfig defconfig
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
