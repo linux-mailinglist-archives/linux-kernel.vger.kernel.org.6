@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-366711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F21C99F8F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A7099F8C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044A0282FA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:18:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97EC7282BC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C0F1FE116;
-	Tue, 15 Oct 2024 21:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843671FBF47;
+	Tue, 15 Oct 2024 21:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Es04bfnH"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9nby1db"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679151FE103
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47771F80A8;
+	Tue, 15 Oct 2024 21:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729027056; cv=none; b=D0RchUG5tqd0cQwWzApsKHamwsRe75PjirmBbuG5mCwUMGj0sxigpQmixHQoUKY3GJBE4OwRvScjsTDuPqHYzKLSKGglevKpRt6RpzrrPBGl2AyFrphPsEEnyZ4nbqnXVnoEthGF1nUdyVs0XEzWZ7eg8WjyYdHGJz5SsAaaifc=
+	t=1729026821; cv=none; b=u5FFuJOgpjnemBhclZTwOb8YJoZ/aDrOb4IMdEHk1ypJp8sQy/qh7QMTPY5bJnZlHuDm5hfHHqApeuJT0s70j1+AwSf7Sgg++qVtzDdRpU0fgfksx9K4OKzX2kAnRRR2z+AnHjGVInei4veIoV2MAw6ZtQIAGoxnUL5lp7rXQhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729027056; c=relaxed/simple;
-	bh=sq1soXl6abewwlFa2cbC8njUDVPYJn8dPV3vVeC5jfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MsMJj9Uz163wgxNlD2L9X4ItCU+DBXMS4zXabmY86z7LfuIXEgt6wNOf4TbS8mRmvQnBR8JzXJYcNt6qT7HHy8v1jv95oYeCQFtJuJ9sgqTRJtWM4yhSkVD5hKoXC11QfMJo7GCUBoCsL+ITYu/6KtRGyez5WbVZkOWsXClYt2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Es04bfnH; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cf3e36a76so23653405ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:17:32 -0700 (PDT)
+	s=arc-20240116; t=1729026821; c=relaxed/simple;
+	bh=srU30wlT2wsVrJmZPkwMohWcppPywLLb+E2fsMsQAPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=muvqn+zGN2bmPAy+cysIk4f3AnzGUY+xVliM0oMtNJHyPROJ6J8VBJ6OzfPcMC7+2ddBp9WE9JvfVplbL38yTF8SweWWTzaqxzIq+kLTl0yxufSfuX8ZXQp44KJl+FgOE2vimT+3aGGVzRZHoCFZDZAfSa5hIHpkuDGZ9uJSk7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9nby1db; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2e31aacbbso451852a91.2;
+        Tue, 15 Oct 2024 14:13:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729027051; x=1729631851; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=45JHgiZllHV9bG+rAdE9g36380sJR4Ghem5bkWEe8y4=;
-        b=Es04bfnHbqQMIpb3BGY2wj/E7r7GNf93YN5M9k4bgRM/cQtCisjTgdtiZO4M8Raka4
-         YWaxTIakiN0meX6YmnAnooEX7ws36BKLEXo+FNzNgbq4qSXI9Oqlou24+DHBjtIy9gse
-         wwlcFBe2uCaiVFOwYF+VQ/O2UC2NW+1gwooBY=
+        d=gmail.com; s=20230601; t=1729026819; x=1729631619; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KOu0ihc9uIYIAfX2AUeosgsSEBssXUcp9S/hXeZuKE0=;
+        b=Z9nby1dbRvpJkRCIWBnj4DCmdyxl6ueOFuwkabCBjecKajUyo9k9HazvtztBsgNYOW
+         RF/IWSEtqJiTd4IzMpDTUEPes0Pxe4EPzfqaI73Ynlk9LjWSwHclKqA81ZqyKiMSgyun
+         ivrs1MxpDa71JZiqBsAt46zH5V+DQ2S238vR1hPTbzSN8dg0QrSubmO5mNARobkFZYkK
+         3CkosEiqSKMcxboMRWv0F4idHvQAih1+BmHYLSYP/dDGEtvvxOMydkk7bQlBn6THjjRj
+         60v80JOHQrqrU9bNXBF1OaqM40Rxx6WfhVLAXMcYr40GcsBAcp0m9Oss0lK+L8i551bs
+         6GRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729027051; x=1729631851;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=45JHgiZllHV9bG+rAdE9g36380sJR4Ghem5bkWEe8y4=;
-        b=OafNR45OsJAF2XrcRChvRZSB7uyZEA1sLnZzeEDKVzE9FHoo89jIwAHwfnf8GfKhsI
-         +HbMEtFfaHe5O2rCBNW/4CcIU+bH+wbvDkBs3P+lk6kEMKHvDyo6LrIZ6wWrgVDMZToA
-         WIZoXTfzuAI5y50+sKmrvR0k1X18BdMi2qirzxrhCHZ1tIs7iq0ikV3Ebnw4szw55lqU
-         NrT1m4OUGqiCryVFRI3HREl6TRtPmmbPbE3aLiqDjdONDwsMet40eAYrqUUnYps4e5fo
-         DmC58M2xFbtdtDy2xgK5N7QeRocVikPQ8lRUuXwZs+dYR6hoAhC+AVAjNYCDz00VZwc3
-         QZEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOJsvOtEGEG37bMOw0AFBy39Iv/nVZq1L2rZKYGIskpG2rf18RadaKH4zqNzy1AoGzENLWnCqdINScj2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnR/I3/rT9JwhMxpq/UwEC30GaZJN7Zb3kiGcflKlW/8wprM5R
-	jOvBbjUXB0xBt8bzpUZpOS2hgs6lCgkbAlkxIRzDEIdBjA5HAzLVdzT+9xYm/w==
-X-Google-Smtp-Source: AGHT+IEBiwMyi3fjfu1hF5JodP8eCHbFlmnTBRYbtyOyrIuYZzVq5QuUA3QT0frTpd8QsWbReK0dag==
-X-Received: by 2002:a17:903:22c4:b0:20c:a055:9f07 with SMTP id d9443c01a7336-20ca145f3d6mr197854775ad.26.1729027051559;
-        Tue, 15 Oct 2024 14:17:31 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:eef3:dbf8:fbe3:ab12])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20d17f828c8sm16720525ad.37.2024.10.15.14.17.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 14:17:31 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Brian Norris <briannorris@google.com>,
-	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH] PCI: dwc: Use level-triggered handler for MSI IRQs
-Date: Tue, 15 Oct 2024 14:12:16 -0700
-Message-ID: <20241015141215.1.Id60295bee6aacf44aa3664e702012cb4710529c3@changeid>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+        d=1e100.net; s=20230601; t=1729026819; x=1729631619;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KOu0ihc9uIYIAfX2AUeosgsSEBssXUcp9S/hXeZuKE0=;
+        b=UkChtQ7+ko96IUrx/nMNZEmisqHboJO23ja/u+qLYHepj70WTodiPSV9OLny3YsJIv
+         GL5TLQOU+92qWs49xP5H5FMUGH4TAwm4YCgURk7v6POA6qHFR8/miXgal1LfIv7pU59S
+         FmT8c+FSP92e4GebEdi5qWBTLEiO9EuMBmH8sPJldNNI7jKNNHIz8ysR0oBnCejImNiG
+         RkTuO1UVV+cbK3ShjopUJwFvyRcyvLL1t5FJT7Sm6RjUC43lIenYxC/Ja1KMtHgTvE90
+         n0pq7r+n7AwGYgYGcvwM7FdUVXmOT/0fXz1sWIJEFB3rSuW7xhOblKtGFWr/MPv5XKth
+         FnEw==
+X-Forwarded-Encrypted: i=1; AJvYcCW47KNUq3VCQemVfIpdJiYXoGlqZCE+UI1kgWs6ngv7Pw4xGlVnMOBJB18eWFpD0LOhQU8Xt/NkUIdMhs5cjAk=@vger.kernel.org, AJvYcCXD2VLcL82YSRUzrgk1dDCQ19s00fBdv+WvruOPFf9nbEukxbDQIjHaZbkL2MNhgvMeJyy6yuPUz2huZ1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd2ig6bfZ3ntQWA/PQp9mo9CdeiDa345lxkMn468kYgxCNhfA3
+	5CLSFDBDfEb0QTetOfvsX8a+kFdompjxzqSZj36p+MzZPGUpuzVI3bRNz8smW+g3BLzrZVtm4xB
+	ZZdaT4NO8Bpm1Apx0PAshtjHuUu6wa7r40Lw+Eg==
+X-Google-Smtp-Source: AGHT+IF8kAzRKBXrIifOwRFtD+RFl1CuI4fQA97YZBFOx8cLVWjZ0lhvVZZy/fop5x2p1PZi1RwSxhR23jOZe0cVkCo=
+X-Received: by 2002:a17:90b:2092:b0:2e2:af5b:a18d with SMTP id
+ 98e67ed59e1d1-2e2f0c55102mr8932393a91.4.1729026818903; Tue, 15 Oct 2024
+ 14:13:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241004154149.93856-1-dakr@kernel.org>
+In-Reply-To: <20241004154149.93856-1-dakr@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 15 Oct 2024 23:13:26 +0200
+Message-ID: <CANiq72=d4hGNvw8tYNdeVozaMsnJ2BTxhZE_a4sRe73pMC5K=Q@mail.gmail.com>
+Subject: Re: [PATCH v9 00/29] Generic `Allocator` support for Rust
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	akpm@linux-foundation.org, daniel.almeida@collabora.com, 
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com, 
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, 
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Brian Norris <briannorris@google.com>
+On Fri, Oct 4, 2024 at 5:42=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> This patch series adds generic kernel allocator support for Rust, which s=
+o far
+> is limited to `kmalloc` allocations.
 
-Per Synopsis's documentation, the msi_ctrl_int signal is
-level-triggered, not edge-triggered.
+Applied to `rust-next` -- thanks _a lot_ everyone!
 
-The use of handle_edge_trigger() was chosen in commit 7c5925afbc58
-("PCI: dwc: Move MSI IRQs allocation to IRQ domains hierarchical API"),
-which actually dropped preexisting use of handle_level_trigger().
-Looking at the patch history, this change was only made by request:
+    [ Fixed typo. - Miguel ]
 
-  Subject: Re: [PATCH v6 1/9] PCI: dwc: Add IRQ chained API support
-  https://lore.kernel.org/all/04d3d5b6-9199-218d-476f-c77d04b8d2e7@arm.com/
+    [ Added temporary `allow(dead_code)` for `dangling_from_layout` to clea=
+n
+      warning in `rusttest` target as discussed in the list (but it is
+      needed earlier, i.e. in this patch already). Added colon. - Miguel ]
 
-  "Are you sure about this "handle_level_irq"? MSIs are definitely edge
-   triggered, not level."
+    [ Added missing `_old_layout` parameter as discussed. - Miguel ]
 
-However, while the underlying MSI protocol is edge-triggered in a sense,
-the DesignWare IP is actually level-triggered.
+    [ Reworded typo. - Miguel ]
 
-So, let's switch back to level-triggered.
+    [ Added backticks, fixed typos. - Miguel ]
 
-In many cases, the distinction doesn't really matter here, because this
-signal is hidden behind another (chained) top-level IRQ which can be
-masked on its own. But it's still wise to manipulate this interrupt line
-according to its actual specification -- specifically, to mask it while
-we handle it.
+    [ Formatted a few comments. - Miguel ]
 
-Signed-off-by: Brian Norris <briannorris@google.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
+    [ This patch starts using a new unstable feature, `inline_const`, but
+      it was stabilized in Rust 1.79.0, i.e. the next version after the
+      minimum one, thus it will not be an issue. - Miguel ]
 
- drivers/pci/controller/dwc/pcie-designware-host.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+    [ Cleaned `rustdoc` unescaped backtick warning, added a couple more
+      backticks elsewhere, fixed typos, sorted `feature`s, rewrapped
+      documentation lines. - Miguel ]
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 3e41865c7290..0fb79a26d05e 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -198,7 +198,7 @@ static int dw_pcie_irq_domain_alloc(struct irq_domain *domain,
- 	for (i = 0; i < nr_irqs; i++)
- 		irq_domain_set_info(domain, virq + i, bit + i,
- 				    pp->msi_irq_chip,
--				    pp, handle_edge_irq,
-+				    pp, handle_level_irq,
- 				    NULL, NULL);
- 
- 	return 0;
--- 
-2.47.0.rc1.288.g06298d1525-goog
+    [ Fixed typos. - Miguel ]
 
+    [ Added newline in documentation, changed case of section to be
+      consistent with an existing one, fixed typo. - Miguel ]
+
+    [ Converted `kasan_test_rust.rs` too, as discussed. - Miguel ]
+
+    [ Removed the temporary `allow(dead_code)` as discussed in the list and
+      fixed typo, added backticks. - Miguel ]
+
+Cheers,
+Miguel
 
