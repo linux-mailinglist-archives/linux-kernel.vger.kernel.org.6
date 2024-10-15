@@ -1,115 +1,123 @@
-Return-Path: <linux-kernel+bounces-366399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C22D99F4C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:04:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FCF99F4D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5121A284CB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34EFC1F26D37
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488001FAF00;
-	Tue, 15 Oct 2024 18:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407971FAF1C;
+	Tue, 15 Oct 2024 18:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c9s6aWqE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="dNHcsg7+"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E16428691;
-	Tue, 15 Oct 2024 18:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36E728691;
+	Tue, 15 Oct 2024 18:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015460; cv=none; b=rYA5XawIENX2Vin+NulNXlToV1LGffI5/q1HV1DbTZVQQSFbBEXAIFMvRNjlXJ8cT0ML2vHf0Zz054S8+UG6jgM+KauXHNBveG/xfTpyd4shRqIN4dfDU0o3k67HwLjebZSy0cTfp0UUDNxooqUSXLPQCa/lRm7dH9gIHaSiYl4=
+	t=1729015653; cv=none; b=HRxifj/EBFl1GBRGadurIQ9ewjEUUr5weQBXcsE1d6DB7eRtaSTOS3s74t1Oa86GbqEZceiE+o8kT58zVbsUeAA6KE5O5tyFY8liPqp3SMGvvv/OTM+tq/dPhrSDR+00Hwh1w/82l13qZ183ub9F+PCuXGrwveS4ZPD4UxZKobk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015460; c=relaxed/simple;
-	bh=6d/cMzHxJYfxTVbJFM7CFUuaoh2hWWe4To4Wt5P9CNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuEk7Sr3ZTYJFVd0LqwKOQE+pdgyuVGFyZn3GGGaG6nqC/pZxoRDIO9Nb+ieTQux31MhBkrqbURII+Vm25DTgZPG0qUCS27BagvBLiS+moWpq09Z2cXov9rrryZil49Q7tsXq7tmopHHnqGjPj5nFK8h8AhkeURNgw5zQPPykj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c9s6aWqE; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729015459; x=1760551459;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=6d/cMzHxJYfxTVbJFM7CFUuaoh2hWWe4To4Wt5P9CNI=;
-  b=c9s6aWqEAlCFpu/IF6U2Q5QKAhENo4Uq74P1be3Bd0QzTxxEDOGROGfP
-   uzai7G7vKXnTqgijRgdjjC2m31zzR8JGQUh95Om/bJfwZGOyvMhvdyqfB
-   E1L+oKeCjSlMLDXaYXuFiH5ie9cHTZ7W648B21AwkHkyTEki/OapakFMW
-   JZV8CluTFljsvPwECSqql2CwJcBhPFw4xkVvqnzx6TFTEZVO1sZ0dnkVz
-   G7cL8RQn5WRZVNkwvioQ3cZKzoPVmxkKLKVcx7h3Cqai0vLA7QVPcYuFP
-   3LLYQ6vR+O1c4T/pMhnQTFmjIjBICdgzhgqMFUY/HZCdgUv+ElzERB8Ov
-   g==;
-X-CSE-ConnectionGUID: SN4KkAtkRKCoDh7BXIE+pg==
-X-CSE-MsgGUID: 7h/xyCwFQmuxUQwjHYVoJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="16049546"
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="16049546"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 11:04:16 -0700
-X-CSE-ConnectionGUID: is6Ub5LHStGlZsxZl094aw==
-X-CSE-MsgGUID: kLe7S2OPTkeUNN/dAT6Xxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="78318785"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 11:04:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t0ltx-00000003Tfo-2pDg;
-	Tue, 15 Oct 2024 21:04:09 +0300
-Date: Tue, 15 Oct 2024 21:04:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v8 5/8] i2c: of-prober: Add simple helpers for regulator
- support
-Message-ID: <Zw6umeIp3l-pfMSb@smile.fi.intel.com>
-References: <20241008073430.3992087-1-wenst@chromium.org>
- <20241008073430.3992087-6-wenst@chromium.org>
- <CAD=FV=Vs2bekyqBN_Lro_u32Dg9WM-bjDZr_tx-KyYH_toabVg@mail.gmail.com>
+	s=arc-20240116; t=1729015653; c=relaxed/simple;
+	bh=6aynL6Gig9/U+p30VyRE1uYq8pO0zyWR2gG4OF1dUec=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WnfkYQh5qC08SThdLZBi89iAI9DjLlzHQOy5rpJOajsjb3QgUwB0mQenY1HFibSJ6UGtGcbLCM2I+zbNQC9IkykR5jmE7MeUbwmA/K5dgcPSor15yE4oYUrKd+IwHdC0PEiu0H+jQrge59+LHNmDT1kLTzoozMlFgbcVTE2kiaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=dNHcsg7+; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=0rmEo4AJN9UfaY3o7MBm7HGCI98gYY0kjy7UDjni+VU=; t=1729015651;
+	x=1729447651; b=dNHcsg7+QPHr8UnKkQqQGETrgh+2+aIFNTCmxBFp5AKfxfY6/jwGLn7RZFXLy
+	2t9m0rhP8WIDrH6yW7MDaQ6NOExx59DjlAPwgTBG6RJ6i2hN99ntKAHPTUq7DGwi7HpzPAh2EHKL+
+	5EwTw3PB+/yRYZb302qYXpG0wCZvWrst1+YtT0DbNrnr9gmzcBPgtuzfGRH5vuvXxdstbKAKMAQ61
+	OI0pC3iQuDg99mWFokxSa/tpxsFHVGKCt8BsakOGjBlSm8W4f2JK2bec9jZW3A4K8m8DFFF1sYF3H
+	oSiyFo6oAqsV4hW61cG05O3VTLydafU/nECWtNv8AtYiuclcfw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t0lx3-0003rt-Io; Tue, 15 Oct 2024 20:07:21 +0200
+Message-ID: <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
+Date: Tue, 15 Oct 2024 20:07:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=Vs2bekyqBN_Lro_u32Dg9WM-bjDZr_tx-KyYH_toabVg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
+To: Will Deacon <will@kernel.org>, ericvh@kernel.org
+Cc: lucho@ionkov.net, asmadeus@codewreck.org,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, oss@crudebyte.com,
+ v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com,
+ keirf@google.com, regressions@lists.linux.dev
+References: <20240923100508.GA32066@willie-the-truck>
+ <20241009153448.GA12532@willie-the-truck>
+Content-Language: en-US, de-DE
+In-Reply-To: <20241009153448.GA12532@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729015651;9022dc2e;
+X-HE-SMSGID: 1t0lx3-0003rt-Io
 
-On Tue, Oct 15, 2024 at 10:58:41AM -0700, Doug Anderson wrote:
-> On Tue, Oct 8, 2024 at 12:35 AM Chen-Yu Tsai <wenst@chromium.org> wrote:
-> >
-> > +/**
-> > + * i2c_of_probe_simple_cleanup - Clean up and release resources for I2C OF prober simple helpers
-> > + * @dev: Pointer to the &struct device of the caller, only used for dev_printk() messages
-> > + * @data: Pointer to &struct i2c_of_probe_simple_ctx helper context.
-> > + *
-> > + * * If a regulator supply was found, disable that regulator and release it.
+Hi Will! Top-posting for once, to make this easily accessible to everyone.
+
+Thx for bringing this to my attention. I had hoped that Eric might reply
+and waited a bit, but that did not happen. I kind of expected that, as
+he seems to be  somewhat afk, as the last mail from him on lore is from
+mid-September; and in the weeks before that he did not post much either.
+Hmmm. :-/
+
+CCed Christian and Al, maybe they might be able to help directly or
+indirectly somehow. If not, we likely need to get Linus involved to
+decide if we want to at least temporarily revert the changes you mentioned.
+
+Ciao, Thorsten
+
+On 09.10.24 17:34, Will Deacon wrote:
+> On Mon, Sep 23, 2024 at 11:05:08AM +0100, Will Deacon wrote:
+>>
+>> I'm trying to use kvmtool to run a simple guest under an Android host
+>> but, for v6.9+ guest kernels, 'init' reliably fails to run from a 9pfs
+>> mount because VFS emits this error:
+>>
+>>   | VFS: Lookup of 'com.android.runtime' in 9p 9p would have caused loop
+>>
+>> The host directory being shared is a little odd, as it has symlinks out
+>> to other mount points. In the guest, /apex is a symlink to /host/apex.
+>> On the host, /apex/com.android.runtime is a mounted loopback device:
+>>
+>> /dev/block/loop13 on /apex/com.android.runtime type ext4 (ro,dirsync,seclabel,nodev,noatime)
+>>
+>> This used to work prior to 724a08450f74 ("fs/9p: simplify iget to remove
+>> unnecessary paths") and it looks like Oleg ran into something similar
+>> before:
+>>
+>>   https://lore.kernel.org/all/20240408141436.GA17022@redhat.com/
+>>
+>> although he worked around it by driving QEMU with different options.
+>>
+>> I can confirm that reverting the following commits gets mainline guests
+>> working again for me:
+>>
+>> 	724a08450f74 "fs/9p: simplify iget to remove unnecessary paths"
+>> 	11763a8598f8 "fs/9p: fix uaf in in v9fs_stat2inode_dotl"
+>> 	10211b4a23cf "fs/9p: remove redundant pointer v9ses"
+>> 	d05dcfdf5e16 " fs/9p: mitigate inode collisions"
+>>
+>> Do you have any better ideas? I'm happy to test anything you might have,
+>> since this is 100% reproducible on my setup.
 > 
-> nit: was the double "*" starting the line above intentional?
-
-I think so. This is documented in the kernel doc syntax. This gives proper
-lists in the rendered document.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> Adding the regression tracker as I've not heard anything back on this :(
+> #regzbot introduced: 724a08450f74
 
