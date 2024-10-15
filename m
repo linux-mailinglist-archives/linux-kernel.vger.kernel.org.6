@@ -1,85 +1,91 @@
-Return-Path: <linux-kernel+bounces-365898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC1199EDB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:34:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8338A99EDBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F7511C21701
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA391F235F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35AB1386D1;
-	Tue, 15 Oct 2024 13:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102661AF0D3;
+	Tue, 15 Oct 2024 13:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0X4/WtO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="HX3Ezwaq"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135B81FC7CA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D895C12F5B1;
+	Tue, 15 Oct 2024 13:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999256; cv=none; b=qjubD6InqTwzueC93d1/hfGJs28TQhpnGgJh3GdD4L1OuOPxmxSKnyWznO5fLdixDrNo3b91sJehYQdfry4ozUGp5cc/JVx7C7IgVJ/IyNj8qnOhwMd9FeOjjloxBEaMPrlcA5I2zE6lBQJpgMEOYrzqctB77q9v8hHvQXcSFIc=
+	t=1728999285; cv=none; b=VVzG6/70wBV599ueZF5TiGZ/aTa5OLA5C76aHhCaPRR/5e2lvbigByow/b8Nx//dH7vj0RMn+h6FI2x4MDDSGQeZNiiNzQZE4Qx6b36RyZp0lHPMGF+9oBKd1Y0xNs+BAHV1FRF3rd6T+x4eYAfqJ6LkVnY0E0p1mr+4wx0I+rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999256; c=relaxed/simple;
-	bh=noUj4JNTHcQ4H21CQH/Qr3D06XAnQ71sjLHi5JGlLTs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Y/er0dMgr3zCL+qxQ32Inj0XI6uNrKG9lZFzfIkKeoAFIz7Iw1GcHaGCmHn3V/ItVyWFCzgM9RCJk0r7ewyaI/4/f3esqjwwLWyB0DrXFYPyQ1N+yIwT9fhT5y+MWn+VDrdHIv+OaLcvzFLtL3Q94LNBNYzstuavIpbriIyQZmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0X4/WtO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87CA5C4CEC6;
-	Tue, 15 Oct 2024 13:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728999255;
-	bh=noUj4JNTHcQ4H21CQH/Qr3D06XAnQ71sjLHi5JGlLTs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=L0X4/WtOc3fB7EvVoCmQzgqIoD6lI9YOGdt1Ij5VWPfkbVZJAcNI3Gc6KaDWopOJP
-	 skHzGJNnTqXKZ05/gQt/wwGYfyMKSVhwoTlAzNwmHXy1qOHSuSdvQ06J+kLgpnbpGe
-	 MdL7HQm1DaZtSNOwM4OCyFxZ7OHoPZB/UZYYIMu2al2IVm7pwZasDAztkAd6JUcUEX
-	 QOS2OOqK/Mt4fKsN3/5p7vIKkBr2FJr3P/FbUhtcZWa+5JMP/ihoXYNEsDC4ewsj9u
-	 zYBn44IeOO+WWAdBkTvFFzN8YNPNkX2C3fE//SLm0TrAwqnpr2m3sASfmA6JK7fYfa
-	 Cro6D98kcpZng==
-From: Lee Jones <lee@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <dda4464443fba81f79d5f8d73947dbd63083cff2.1727931468.git.mazziesaccount@gmail.com>
-References: <cover.1727931468.git.mazziesaccount@gmail.com>
- <dda4464443fba81f79d5f8d73947dbd63083cff2.1727931468.git.mazziesaccount@gmail.com>
-Subject: Re: (subset) [PATCH v2 1/2] mfd: bd96801: Add ERRB IRQ
-Message-Id: <172899925429.582805.1098830920671719671.b4-ty@kernel.org>
-Date: Tue, 15 Oct 2024 14:34:14 +0100
+	s=arc-20240116; t=1728999285; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=L8xO22sH6Vr5MCwrO2HvMZAfo0KxMgjLmYabtU3/JKn0HXEyv3t4G83zWI4LUGstkZGfj87TJb/GxGf9dNV98aN5UOdXkIsL9vs1RJ5Ce1YjahewELQhvXRAIIMBrN6wNlWDM3cl/DKk0ZNJLgXWJQcaDS/LTmg6RmJazyc9naA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=HX3Ezwaq; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1728999280; x=1729604080; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HX3EzwaqoMKxLrnIarfarSj484disxTNgoM2gfK7hULWjUXa9d1jFNx81eiGROBT
+	 zE7WdXAX2B0yZQlIMafiwpXRphqR1/AnsxB9DsDNn2vK2K2gC/vdIA6vEbJ9rSjuC
+	 O2rot8iXYmx8QAKTLcdjt/72Lb/6aObWNQoxMp4vJ08CipaDvtkmSezTr6CNoY+sa
+	 +PGOgc+LIDgFQjUaT/FYAcl0JzL2ORSgi/7DZhX641ewDgqSfLsiJZqluoqGEDqJr
+	 doeL0bDdiUlBtRMIjAMpxjqC8a5BBkEJSjUoHb+GawsMlkiqz95+TQB2Os0qrGoi0
+	 qaIl5MgBhrbgbGYQkQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.100.20] ([46.142.32.216]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MV67y-1tPLHS0av8-00S7RG; Tue, 15
+ Oct 2024 15:34:40 +0200
+Message-ID: <3f893a75-12a5-41bd-b5c7-5eaf9bb6b08a@gmx.de>
+Date: Tue, 15 Oct 2024 15:34:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.11 000/212] 6.11.4-rc2 review
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:A31CANymgpfQpVzbtJnPSr6TWkPzjMyMfBkPtmMTW3obOegERET
+ v0+ogP4yj6PCQ8BzjLGeJFNkdjgDHoNGB566TKo7MurEuWegpRkwrglEqqEjzrcfr2akmTa
+ KNZ0it/QUbDDLMPa1d5N7rJjHVpHh6kXvxP2v3ADf8g6f8GRvQ98pacuJa5ihtbDjpNDIEn
+ igAiwTx35wJSTVxiMLDdg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TFEWWmGK2v4=;JVke0K2oX/P/07Tr5j/OZqxoe2G
+ Ge21MyUJEyeOWTIKbtnT83n+trtQq7gzYEMqtAObmA2PSe+REyJlSsV6FO9KNXhcM3qvX5b+Z
+ HYemByEXJc73SDHUilDi1ZZCpO6F6/bvcTC80Cx6wR53sOYjl+omHkOrw1wRMAxWwEzcMu1GE
+ NteyrL2HlbJ8vo0xTZ2lU5YF+KM+XgyvsetuePwgv1NMvgNpe89AEehvG4kz9pwpwGL7nvcAU
+ kLh5D3gVNxfa63OnzTOh2IivO21O29P3492Aj4FrHvcnSU4gtMklDK37G2fNbRmJ40o+5Lyth
+ 2hBgZ5YijTHrVYbZDVgp9/CSBcQXpPzEtdqs8IRE64/7KUAGQ06tKBPb4cRS6yOQG8kgioF76
+ VgC/VzTK4D9dLnyNnYhRP+ppxz/MXeG8iRaStCmKdd++qas99mxmM54q4e2PkWyfYt3TlRya3
+ /Lf41WIS5hhGlEUaIa6pKc33PMPMp4pzW2Y9VJCXdNPgmi6mrrK/kejSl1arXND087/TTlMo2
+ 8/2Pt1942wjoiCydaUON+rtSj3nATfd3/riIPibG8xzJozQc1yVPOTzYm9giVSGBDgEfEhmG5
+ upzAJn48ot9sXrf+t/J64Ldtei3YX+ia4XOF8oYX+HhcqY0hxQ3U7FDfr9UKVl+dUXLJrt7j9
+ XiMaeyRVAGJ4Ftv0rRibA9pLlUgBGbN8nAvI1vjXDNzMoTkUbIToMSQzj1hAPYRh3lzwi+wsw
+ 7R+BK2a21G6y5ze2juFS03yFEZ0hWrXGI4DcG0REAu5qNABtLBa1jPYs6El5zXDT10mqKKuCF
+ hDpAZUbfOm6hFsHJn28eXB5Q==
 
-On Thu, 03 Oct 2024 08:34:38 +0300, Matti Vaittinen wrote:
-> The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
-> handling can in many cases be omitted because it is used to inform fatal
-> IRQs, which usually kill the power from the SOC.
-> 
-> There may however be use-cases where the SOC has a 'back-up' emergency
-> power source which allows some very short time of operation to try to
-> gracefully shut down sensitive hardware. Furthermore, it is possible the
-> processor controlling the PMIC is not powered by the PMIC. In such cases
-> handling the ERRB IRQs may be beneficial.
-> 
-> [...]
+Hi Greg
 
-Applied, thanks!
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-[1/2] mfd: bd96801: Add ERRB IRQ
-      commit: 44ce4f769494ff4777ae0dcb1f81363c887a6f7e
+Thanks
 
---
-Lee Jones [李琼斯]
-
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
