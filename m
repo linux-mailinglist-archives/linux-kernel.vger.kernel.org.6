@@ -1,141 +1,93 @@
-Return-Path: <linux-kernel+bounces-365922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B69799EDEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:41:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89A799EDCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D92D4B22216
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:41:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7916EB22386
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB05D227389;
-	Tue, 15 Oct 2024 13:37:42 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B083D1FAF14;
-	Tue, 15 Oct 2024 13:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDA915383F;
+	Tue, 15 Oct 2024 13:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="aCtdZ9mg"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C721B2186;
+	Tue, 15 Oct 2024 13:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999462; cv=none; b=fU4TEpszesArAXCGEqE3aHuJQKb9+NRXDWoB/hCaLFKstJGF+9nN3Bt+8HlI51lWl89DuoBZkofkLumbm9gRNpdBV5S4IanXT8aCDIyoQztz/bk/98PaV8tvyOQM/XQUnQ5xXhb6ppx5De7vF31gPd+sKNcioaP51RgYYzG8wfI=
+	t=1728999412; cv=none; b=VESfDXAR6EmUIgtvKyiWg4EIye4vHKwBrPCo8AhQMClCybRDH0LfZ2m/wv5fls9Ts3J6yZ6fWEDm3gSM7TTuriGNt2gsw9DdyyWMu+6XQw3gD+qobXlPaxAURj7VJVLw9kvH9NAFL8YWIy6NVSq1+n/GnPAVwXn1OiMuhgL/o2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999462; c=relaxed/simple;
-	bh=j6RReWYcf79gWTDSp+9jFx/cBR/XOms6tCBdzHuMCHc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W11uC32GiAHRuU7bgHaPOxR3RH0bpc6eJdLFsv3tZ8LTzX0Vdp3x3BBzTUCD+U8NBoi+XI/hZzFkug+ZCZqY4UWLSzKIKECBNEjkKw0vvGkvT6JVu1CcJ91efkjlKDhkbr8VWcg8Q+TvznitIHo12xunP//KuXzXvGgU4Ft1gqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.11,205,1725289200"; 
-   d="scan'208";a="225980160"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Oct 2024 22:37:38 +0900
-Received: from GBR-5CG2373LKG.adwin.renesas.com (unknown [10.226.93.176])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 687F040031EA;
-	Tue, 15 Oct 2024 22:37:34 +0900 (JST)
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [net-next PATCH v2 10/10] net: ravb: Add VLAN checksum support
-Date: Tue, 15 Oct 2024 14:36:34 +0100
-Message-Id: <20241015133634.193-11-paul.barker.ct@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241015133634.193-1-paul.barker.ct@bp.renesas.com>
-References: <20241015133634.193-1-paul.barker.ct@bp.renesas.com>
+	s=arc-20240116; t=1728999412; c=relaxed/simple;
+	bh=1o+mpm3TwP32msRXHLP7zEzdbkFDP0OejQgTcO9tZqA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kGHWHHhmEAJFqpwPszNpR5Y5HNfPBpXcoWtraZRCW7h9SyCeqjC96AE+t1Z/RkWSsJ3PU+hTQQWfPxV4bF8H2bj2GoXJF2hAL4BVuJqZTL0m63UmDJy7nLyWmYrXh8E+u0MEHE2L+zjygefKqzRNn5CcFqS51+bFgULgj3hcI88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=aCtdZ9mg; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D1CF6418B6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728999410; bh=/9PBSSXDLd3URlyiOb3FwjVfJcT0hVdJJ4SMwSlMcI0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=aCtdZ9mgJcGC4FCS+8I43hg5h8/oRvOS9p40s1OLNt8VfVgetMFkDZrT26qvg4dBQ
+	 LWco3ljJS9e8RRMNWRYNbsFMCo+sQM5fiZEPg+xPoLLZ3khJUd+nt4/JhNUnz6eJiy
+	 OxMmgZyh3RfaO7qddLM6xM27S+Ah7NTAM2dNxHpQz82EI4ReOPwOwW5NRGfL6/xULI
+	 /iRcbQTm3jEBMKFs9M0k5s1G3yxvc5lyM0fr1KiG6TYX/Jw2O4ZgeE0KiR5Ju1UC6J
+	 KJ7eq1K+d+MHQCAWfKIYCTbEJK13mOBYHvblKmB4XfWOmUPjLkDTVt+RnCaXTSyxdW
+	 /DbtTJAQS9hTA==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id D1CF6418B6;
+	Tue, 15 Oct 2024 13:36:49 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, David Howells <dhowells@redhat.com>,
+ Jeff Layton <jlayton@kernel.org>
+Cc: hust-os-kernel-patches@googlegroups.com, Dongliang Mu
+ <dzm91@hust.edu.cn>, netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: fix a reference of a removed file
+In-Reply-To: <20241015092356.1526387-1-dzm91@hust.edu.cn>
+References: <20241015092356.1526387-1-dzm91@hust.edu.cn>
+Date: Tue, 15 Oct 2024 07:36:49 -0600
+Message-ID: <87jze9qyha.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The GbEth IP supports offloading checksum calculation for VLAN-tagged
-packets, provided that the EtherType is 0x8100 and only one VLAN tag is
-present.
+Dongliang Mu <dzm91@hust.edu.cn> writes:
 
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
----
- drivers/net/ethernet/renesas/ravb.h      |  1 +
- drivers/net/ethernet/renesas/ravb_main.c | 24 ++++++++++++++++++++----
- 2 files changed, 21 insertions(+), 4 deletions(-)
+> Since 86b374d061ee ("netfs: Remove fs/netfs/io.c") removed
+> fs/netfs/io.c, we need to delete its reference in the documentation.
+>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+>  Documentation/filesystems/netfs_library.rst | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
+> index f0d2cb257bb8..73f0bfd7e903 100644
+> --- a/Documentation/filesystems/netfs_library.rst
+> +++ b/Documentation/filesystems/netfs_library.rst
+> @@ -592,4 +592,3 @@ API Function Reference
+>  
+>  .. kernel-doc:: include/linux/netfs.h
+>  .. kernel-doc:: fs/netfs/buffered_read.c
+> -.. kernel-doc:: fs/netfs/io.c
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index d7b3810ce21b..7b48060c250b 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1055,6 +1055,7 @@ struct ravb_hw_info {
- 	size_t gstrings_size;
- 	netdev_features_t net_hw_features;
- 	netdev_features_t net_features;
-+	netdev_features_t vlan_features;
- 	int stats_len;
- 	u32 tccr_mask;
- 	u32 tx_max_frame_size;
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 14b4462331b0..bc56f1f4bec9 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2063,13 +2063,27 @@ static void ravb_tx_timeout_work(struct work_struct *work)
- 
- static bool ravb_can_tx_csum_gbeth(struct sk_buff *skb)
- {
-+	u16 net_protocol = ntohs(skb->protocol);
- 	u8 inner_protocol;
- 
--	/* TODO: Need to add support for VLAN tag 802.1Q */
--	if (skb_vlan_tag_present(skb))
--		return false;
-+	/* GbEth IP can calculate the checksum if:
-+	 * - there are zero or one VLAN headers with TPID=0x8100
-+	 * - the network protocol is IPv4 or IPv6
-+	 * - the transport protocol is TCP, UDP or ICMP
-+	 * - the packet is not fragmented
-+	 */
-+
-+	if (net_protocol == ETH_P_8021Q) {
-+		struct vlan_hdr vhdr, *vh;
-+
-+		vh = skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr);
-+		if (!vh)
-+			return false;
-+
-+		net_protocol = ntohs(vh->h_vlan_encapsulated_proto);
-+	}
- 
--	switch (ntohs(skb->protocol)) {
-+	switch (net_protocol) {
- 	case ETH_P_IP:
- 		inner_protocol = ip_hdr(skb)->protocol;
- 		break;
-@@ -2772,6 +2786,7 @@ static const struct ravb_hw_info gbeth_hw_info = {
- 	.gstrings_size = sizeof(ravb_gstrings_stats_gbeth),
- 	.net_hw_features = NETIF_F_RXCSUM | NETIF_F_HW_CSUM,
- 	.net_features = NETIF_F_RXCSUM | NETIF_F_HW_CSUM,
-+	.vlan_features = NETIF_F_RXCSUM | NETIF_F_HW_CSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats_gbeth),
- 	.tccr_mask = TCCR_TSRQ0,
- 	.tx_max_frame_size = 1522,
-@@ -2914,6 +2929,7 @@ static int ravb_probe(struct platform_device *pdev)
- 
- 	ndev->features = info->net_features;
- 	ndev->hw_features = info->net_hw_features;
-+	ndev->vlan_features = info->vlan_features;
- 
- 	error = reset_control_deassert(rstc);
- 	if (error)
--- 
-2.43.0
+Already fixed by 368196e50194 in linux-next.
 
+Thanks,
+
+jon
 
