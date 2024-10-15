@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-366100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00E499F0DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:18:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970E899F0E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41B4DB21D1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED6C1F2367B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AB7157494;
-	Tue, 15 Oct 2024 15:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA00D14A4DF;
+	Tue, 15 Oct 2024 15:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="wMv588MR"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hvDnHk3V"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE361CBA1F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1181CBA11
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729005505; cv=none; b=OV7Hlc7CRz14geQjJH7KsTaP6Jp2e5YNthW0DmLmqjzNXBwYplWeCziInJmIQYgATC8FqBoK5vheRGklB8QxWulR96/LLyQVfu1Ix+rCDcvWZhUEgi5/mib4ImE5zGiQTlhWSPEXVuOBhR0kBOm19v8QsKQcJ0RSR4zPXmx7vYA=
+	t=1729005576; cv=none; b=ZNl8lvZPA3Oh1fFAhFLa8E1O5saSLpbvVvu7BCsg/zYlhU9zlCjzqSK8jTXGIGPiC5SRK5ujR0GkKq56z2hiTWvpDYzH2M71zXMjwx/OfdQBMDUkHLdtc63CJj3xLTpqfhA7nw8od3VIpEfbfXibM8f0KCD1hLXC1UDpBBLUZmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729005505; c=relaxed/simple;
-	bh=vHnnki3w2dy00jpZowkE0stouy/ZhxusNf/x+YFdyiw=;
-	h=Subject:To:Cc:References:From:In-Reply-To:Message-ID:Date:
-	 MIME-Version:Content-Type; b=pv7uTz84X48mImijW7eLnAznFxQtiRMqNg+NQhvDgLX4wBIpsWEvHQcWAmnPk7HRX1XVK0FrSExcyEnGlmBtQz97yksCYilPUoSfa02H5q/uFPQY2oPNJhJp+8rnZ8+dbmsf5RJSnPL1r8LiYA5LwCX9d8f97oqdr1oNTvRtK9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=wMv588MR; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id 0ZfBtbt1lg2lz0jJQtjVq9; Tue, 15 Oct 2024 15:18:16 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 0jJPtHNBPiG4P0jJPtRPiy; Tue, 15 Oct 2024 15:18:15 +0000
-X-Authority-Analysis: v=2.4 cv=VdfxPkp9 c=1 sm=1 tr=0 ts=670e87b7
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=UiXv1XNBzq_yEhrWseEA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:In-Reply-To:From:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0chHwBH4LCzMXRkBikginENruzJPKwJRgc6zLSmldsg=; b=wMv588MR7Nu4fIjNT7hejsSV4E
-	cAQ41zXPVb+MEfzdWMcLea1YCt2FpZRizUaOUyhBx5eldPesDBgMrJ06KUQQTesFb8JgAtv2oHtp6
-	7q2sSJcOyfTpTK3Ww+odBvSXCBkkNV8/4+lW/RVsJX5Y6/frg+7dI5C/PLaB2va+ImzD+fip3oYvH
-	lAQrz13D60oG6zg9MwUbcHWhCq76L8JS3ry8uPIHnWyAZoYxATvm62wrPQr8oL08WrBvYUVrEK6Tv
-	r1tWxfPucXPnNNj1qnjuQwNSDsO9jqeYbipoD5AiPCRF2rrXiyWHu/ZA8SID8a7tg5/39UyNZ/0av
-	yuDfRPEw==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47872 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1t0jJN-0020ky-03;
-	Tue, 15 Oct 2024 09:18:13 -0600
-Subject: Re: [PATCH 6.11 000/212] 6.11.4-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Gabriel Krisman Bertazi <krisman@suse.de>
-References: <20241015112329.364617631@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20241015112329.364617631@linuxfoundation.org>
-Message-ID: <48040478-dda1-9424-9dc8-4a8bdce0987b@w6rz.net>
-Date: Tue, 15 Oct 2024 08:18:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1729005576; c=relaxed/simple;
+	bh=OeZnDiQ21Kow/ABo1m0beQ7QhnKZe0Ia9aumI15eEHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgIEaYqPzxsYhGrlF+Yn6zGnT4FkeXU6boKxlpq75qAt/MhwNioN/L/5KInfFd9b97KCA8Dw+2rySffHiZjtycW69tMzTUrnLCgQGuuxKWxg9TarKkER0Bf1BAnQ9uJPWbwJf8zYvTHE9q452VY2plO2C1he+sUBTvFJxtUEhts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hvDnHk3V; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca03687fdso537145ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729005574; x=1729610374; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r3Rnuzqm/ZJHbwtJkwmQDmYpY5KahmUtxVsIkTFG29g=;
+        b=hvDnHk3VBHWmYZRXHDkk35GXUpzp0AoOYbdgjiFimp6jMtxdI43tcxL6AeLpAbaV8F
+         8wP3assN8j05QFdjsb0GI+YOXunJDQiKzPvZ+d1EQ584pOVo7O2jJpWAFFBobjv83kSW
+         yv1Tfds0UdafEryYKbqdpGO1dNeX4IV+7C373NppUGrdsU6nWzcXMr9CEg7y0Fo8bsts
+         cOYPpXTGy3N7M3pW/sJrHGunUedvq+vzXZFaJqnVK/ep8NBKFtpC7ZnPstxkBuzBWik+
+         oNSB3arGpCO0Aa9fke6OSMo+Jlcfir3gjDAQqum9MdSxEJsw1Ywyl5oso1C0SO0tq3Ai
+         CsbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729005574; x=1729610374;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r3Rnuzqm/ZJHbwtJkwmQDmYpY5KahmUtxVsIkTFG29g=;
+        b=Mn4tk2ap+OLgG3R4zPXbUSdrRghlGrMmF3SoM7Vj/I+Wvr/aYTnhW+HRYkd8j1wbsy
+         cdp60G8W9v8nucKIuwoLuy5QvEjORmoG7HqN8ohPcq5HCohs1/SlW6zr0NvCd+0T5enS
+         Ak3nhKKLVE4AvW3vg+OoQqzSrJYdhCYy7LSFq+6Oo9vIT6cZUmJAfFLMfFH3WSZFEoyy
+         412yyja2CPdNVne6P39IOBbwcQVpEiGR7Ty/a+OCkVmIbcB3Z3L2rbMy1upo6wuuS73C
+         M+TeUUXNWRMo6ZvQXK26ngynCw9Po90Xi09E9U060RzkiEVcRXz1bopyZ1+9t9qPZmT4
+         cakw==
+X-Forwarded-Encrypted: i=1; AJvYcCULguqXJ9UzLUFsDzxzzLDsJXjPI52ttjBh5nFe19pKAoyjqpBj4td6sKHtE9BzHV+d2elChQ4R2vnzMgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDVAJrkM3+3/mStT7YtEDWAXS+88uPWmG9Pzs4NyCUNVabvIQs
+	XPtPDcp+pjfGO7z7nruMGaXPwvKeg1c25IMhmSQqfZJpbuqHjUcWElJcHIp2cg==
+X-Google-Smtp-Source: AGHT+IE0f2VvQeg757IQK69py4gyL7jf6g+kTHLVZTHwi8LjtCbcD40rA6RPqNG0wlsLEIalLzekKg==
+X-Received: by 2002:a17:903:2292:b0:20c:568f:37c7 with SMTP id d9443c01a7336-20cc02a791cmr6712555ad.17.1729005573959;
+        Tue, 15 Oct 2024 08:19:33 -0700 (PDT)
+Received: from google.com (62.166.143.34.bc.googleusercontent.com. [34.143.166.62])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392f037aasm1919291a91.29.2024.10.15.08.19.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 08:19:33 -0700 (PDT)
+Date: Tue, 15 Oct 2024 15:19:25 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joy Zou <joy.zou@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH RFC 2/2] iommu/arm-smmu-v3: Bypass SID0 for NXP i.MX95
+Message-ID: <Zw6H_fl14_r3bvgw@google.com>
+References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
+ <20241015-smmuv3-v1-2-e4b9ed1b5501@nxp.com>
+ <Zw4kKDFOcXEC78mb@google.com>
+ <20241015124723.GI1825128@ziepe.ca>
+ <ab21d602-5349-47be-b346-2fbc041fa13e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1t0jJN-0020ky-03
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:47872
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfMbFK2gSkL0UxjsdUdbhfhV7lOXJtccgnX9mQoaKGOB8cX3ZofokX/1F5FlgHH+RbhpNV/XgHoCM+U9RCTxhYc1gsgvwA9HO4emSayoR/DU7fpam+fvK
- ZuUo6GssyH8gO0zRlRzMzYVQaDT36vMyqvdzNL01xpKb2Ti/Qta6qKY/vvOfGl80yNeaD6aM7u2tukfZYdk2wDaPEA8I48iXnU8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ab21d602-5349-47be-b346-2fbc041fa13e@arm.com>
 
-On 10/15/24 4:25 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.4 release.
-> There are 212 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.4-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Oct 15, 2024 at 04:13:13PM +0100, Robin Murphy wrote:
+> On 2024-10-15 1:47 pm, Jason Gunthorpe wrote:
+> > On Tue, Oct 15, 2024 at 08:13:28AM +0000, Pranjal Shrivastava wrote:
+> > 
+> > > Umm.. this was specific for rmr not a generic thing. I'd suggest to
+> > > avoid meddling with the STEs directly for acheiving bypass. Playing
+> > > with the iommu domain type could be neater. Perhaps, modify the
+> > > ops->def_domain_type to return an appropriate domain?
+> > 
+> > Yeah, that is the expected way, to force the def_domain_type to
+> > IDENTITY and refuse to attach a PAGING/BLOCKED domain.
+> 
+> There is no domain, this is bypassing an arbitrary StreamID not associated
+> with any device. Which incidentally is something an IORT RMR can quite
+> happily achieve already (I think the DT reserved-memory binding does need a
+> proper device node to relate to, though).
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
++1. I assumed that the use-case was to first attach the streamID to a
+device and then intall a bypass for that specific streamID. If that's
+not the case, I'm not sure why are we trying to achieve that.
 
-Tested-by: Ron Economos <re@w6rz.net>
+I thought about rmr too, but it looks like the "device" is a DMA and may
+want to write to more than a fixed region of memory.
 
+> 
+> Thanks,
+> Robin.
+
+Thanks,
+Pranjal
 
