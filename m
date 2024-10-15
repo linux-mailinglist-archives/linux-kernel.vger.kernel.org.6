@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-365183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B9899DEB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:48:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BA999DEC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 084B31C21861
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612B7282575
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4226718BBAB;
-	Tue, 15 Oct 2024 06:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B508F18A944;
+	Tue, 15 Oct 2024 06:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0kEBBViw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tggnq0dM"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA4E189BBF;
-	Tue, 15 Oct 2024 06:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBA34D8DA;
+	Tue, 15 Oct 2024 06:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728974890; cv=none; b=GVUqRCtWMPuhymz5eDjmlu86leJnJtKSz+3CVN3xM7H/dlsTGeg+8NdPqgNsyCIRzEl/sRxPciIxGMH/Yv17qNQc3TQ67JntuyT8YuAT5R2G5TqJ5JuhoW0MSidkTQ93oGRHqXJbAbcFiNCAAV9kPxE808zys3OXJUotnhoF+dI=
+	t=1728975220; cv=none; b=s+j8wpwRu9RYf9MdqBHX2Vm+6ymxbYOo0ts1YsieouzRxm0EyoZk1RPGy+0j0ZEyN/+27FCYC2xQkAMC4fsqBPxF80uMI6/mFSXxWJHIMzXQzKObym/AHfvjUMLQQLytTS9HzZ14md6762luhLN6KqAmKrks7wHN85i4ivY7KK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728974890; c=relaxed/simple;
-	bh=Mciw6yhCANdXF5sjQVXRJKl08/eUKEIsu2jyoWqK8uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RT8q8dwrtX7MXFTFJgK2xeNGajCi2r8Fa3ythU7r6/jOqfFMK/BnLyMC7hk67qS6LpThG05FGldX6S2hw4QL16N67jUxME/FjFiXjkKKozJMyFW7jQXqe1fzjoKNe0Vtejy59g8tfduUu4fDBM8NQ+aV0U8PD5TdUDUZs9FsjwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0kEBBViw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D3A5C4CEC7;
-	Tue, 15 Oct 2024 06:48:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728974890;
-	bh=Mciw6yhCANdXF5sjQVXRJKl08/eUKEIsu2jyoWqK8uw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0kEBBViwGucY+T//4KaFg6XYuQDpM4aKae1jn7orluthv9c7oKjAbFco858au0N6b
-	 1MKPdTl8j+RRpoPHCyOCt+yBv+KFWJ/KSgrg6xg5MMSHsRxbWys/ZDfucBzpAGmK+n
-	 v+zomLwruUhm3W5X07H1gtzInHO7T1kBgLsDOF0E=
-Date: Tue, 15 Oct 2024 08:48:04 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Hui Guo <guohui.study@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Alex Elder <elder@kernel.org>,
-	Aditya Garg <gargaditya08@live.com>,
-	Grant Grundler <grundler@chromium.org>,
-	Kerem Karabay <kekrby@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Oliver Neukum <oneukum@suse.com>, Yajun Deng <yajun.deng@linux.dev>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING: refcount bug in put_device
-Message-ID: <2024101515-helmet-stoic-1c97@gregkh>
-References: <CAHOo4gL5BYS53rd2bJiKmL1XSg94hn0u4yCPut7NqZ0XZMNf3A@mail.gmail.com>
+	s=arc-20240116; t=1728975220; c=relaxed/simple;
+	bh=Y0hLA3/kNh66v8rXi2L3o39hA6dsPBl6ysnS7YrgzjI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YlUh/1pnocyPhYKvJ0SUFzoJQ2+nDaVzyd/vg53UC7d1rjaXRi34yIa6UY7UnNfl69hzKYBsksdC53r+f/IXX0tJyp4QGWiHM0jW4juiedxeYGbNLf8xgaU2aSmcl29J8kNJkqU4TZqwkwV0hVqCX+fJAbNpYAyJ2tcXFl6P0XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tggnq0dM; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1728975219; x=1760511219;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Y0hLA3/kNh66v8rXi2L3o39hA6dsPBl6ysnS7YrgzjI=;
+  b=tggnq0dM9B13BoT1d2ZzKmxb63KIjc2seCDf0EdXxdijbrsZIrd/XeM+
+   3viPY8YCwN9eGQbCFmj3RwKlkj9LjjdscSayS+hxOApen6/juIPPG6cqY
+   2sLeOgnASTA1G3QMgRbLIzlXRJB1ePRM8F/9nIMllbCPtbmGne/7OnCUh
+   1C+caioVylS8O43WtoVJqK87ctqOSqRJcMpe1FGG/0QcXMsDKT6QZUi2l
+   J8tZYbnN2m9Na5n76fvnUJeRh2WTTWsYEci4pY5fLbhhdrtZP8F8qoHsD
+   FHdRiT8Pno14REky3SFLvXvbPkNGD98KApdmJo3enD5ziO2cKTVJtGJkI
+   g==;
+X-CSE-ConnectionGUID: yCv4gCQTSamF0+7By3EDTQ==
+X-CSE-MsgGUID: 4Be8WNoUR6SQxl8RV0RJEw==
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="264095707"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Oct 2024 23:53:33 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 14 Oct 2024 23:52:52 -0700
+Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 14 Oct 2024 23:52:50 -0700
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: <conor@kernel.org>, <conor.dooley@microchip.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>,
+	<linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND] dt-bindings: rtc: mpfs-rtc: remove Lewis from maintainers
+Date: Tue, 15 Oct 2024 07:52:05 +0100
+Message-ID: <20241015-surcharge-caucasian-095d1fd2fa27@wendy>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHOo4gL5BYS53rd2bJiKmL1XSg94hn0u4yCPut7NqZ0XZMNf3A@mail.gmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1351; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=fWpxN8K11bJ5x0YC40mNtLQgQ9o7Ar/G2CczGbAX7fQ=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOl8giJ3M4Qql96KTkq8rHRlG9O7yeYuTMu3NkxVVpq/mbup ak9gRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACYSs4Phf/a1v3eecTycs9I8tW+54y vjM20Ljpguy6r58Ph6a4/miSBGhsdZzsl+pTdzOH+YGKmWbboZ8s1mp5//ITu3J6b799fPZQAA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, Oct 15, 2024 at 02:37:47PM +0800, Hui Guo wrote:
-> Hi Kernel Maintainers,
-> we found a crash "WARNING: refcount bug in put_device" in upstream, we
-> also have successfully reproduced it manually:
-> 
-> HEAD Commit: 9852d85ec9d492ebef56dc5f229416c925758edc(tag 'v6.12-rc1')
-> kernel config: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/6.12.config
-> 
-> console output:
-> https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/83e10c2b482009dbb3b32ece907dcc361978f9b9/log0
-> repro report: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/83e10c2b482009dbb3b32ece907dcc361978f9b9/repro.report
-> syz reproducer:
-> https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/83e10c2b482009dbb3b32ece907dcc361978f9b9/repro.prog
-> c reproducer: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/83e10c2b482009dbb3b32ece907dcc361978f9b9/repro.cprog
+Lewis hasn't worked at Microchip for a while, and IIRC never actually
+worked on the RTC in the first place. Remove him from the maintainers
+list in the binding, leaving Daire.
 
-As this is using a "fake" yealink device, odds are there's some
-reference counting bug on the disconnect path that you have found.  Care
-to send a patch to fix it up as you can test it easily?
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Noticed him in the CC list of your resend, figured it was worth removing
+him.
 
-thanks,
+CC: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Conor Dooley <conor+dt@kernel.org>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: linux-rtc@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
-greg k-h
+diff --git a/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml b/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml
+index 7742465b93839..59919a3e1c46c 100644
+--- a/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml
++++ b/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml
+@@ -12,7 +12,6 @@ allOf:
+ 
+ maintainers:
+   - Daire McNamara <daire.mcnamara@microchip.com>
+-  - Lewis Hanly <lewis.hanly@microchip.com>
+ 
+ properties:
+   compatible:
+-- 
+2.43.2
+
 
