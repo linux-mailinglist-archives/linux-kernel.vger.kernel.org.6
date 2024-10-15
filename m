@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-366343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E345B99F411
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBAC99F423
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28B79B21C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:30:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8756B22B38
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4571F9ECC;
-	Tue, 15 Oct 2024 17:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9DE1FAEF2;
+	Tue, 15 Oct 2024 17:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Wf9tqruW"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Q8GBbYOA"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F161F9EA3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD731F76AA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729013438; cv=none; b=G9VEsI66/KEoatY9W0enxja3C04dwMu7hxC2h0QUz7/bPQgcHmoU1a9T+74De5S5EqJAyaTXr/wSc+VekqUD6DE4zISv6EOI8AoxrZaTs7VVhTVWkyNJ73o9uGnvpk6iO++hJYjZqWiDUz6+akTs+g3SA9I7zLffn7LOgVNmrDU=
+	t=1729013548; cv=none; b=l+utkeeOEhhg1WuBO3VYsA9IwduvCWTDaPS6rP5PvCsANyZWfRm/nSOhoEyDVn5uKc8Ne60RB+6oPw9XSoZOJ53ZjSKRLz96F73cJmmwHs79JbyH0Q9T009B5230TKR+z6pXotxWo4foyjwKrdWrB25jsM10+ezRFHMjmvCh30A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729013438; c=relaxed/simple;
-	bh=fPoINJewr4rZ2fD0i2SvcxTzuhA/UFayJmMdvI3vclc=;
+	s=arc-20240116; t=1729013548; c=relaxed/simple;
+	bh=fTfBdMc8mV3YGlFlTznYH31fTmJnZUAYfBaH2x6vF+I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lhitP50QzXtPbyVPu7SA9ir0N+Ip4kY6ArkJdc/rIYUIXYwQyXInmcA+E/uQm6MKXvtpSXLdXwG5tRqJ0tt4LhyKRWzGJtvjUj2YuuOmXdUGR0JinD7sA2VQkGIOgA5pzk8M+mDO9nZa4KBr0pAgXCreC7rqtAayPuanHfGVXTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Wf9tqruW; arc=none smtp.client-ip=209.85.160.171
+	 In-Reply-To:Content-Type; b=Qq9zh3hFavxs9ASCveWK6h+28VadB9Y/tipRhm+UTW3h0j0/qmf36dCYMzhc//kZrFHDgTMXeOpeqNYhqZp8jUTnzCaFLQ3wybxHCB4Xs1wMG50FUpLavAAlIa1baFKP9SUHEyEMY9+XRcR5PYFXQR0jFyC2ISzJecpx7gEliyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Q8GBbYOA; arc=none smtp.client-ip=209.85.219.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-45f05a65398so43338931cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:30:36 -0700 (PDT)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6cbd1ae26a6so41447906d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:32:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1729013436; x=1729618236; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1729013545; x=1729618345; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=32F43aWFFhVGx2UIPkft94nsDcd5w72khuVk+0067EI=;
-        b=Wf9tqruWeL5uklteWZdV19EqgNPqCkvc0CrBSUWwdZfCXAGtFes9Y+yJrIluzVbvTd
-         G//DUMn42BNCos6dWSEfjqlyrkaqCc6YMlz6zAe79TuY28dAKtCWBCCyDM33zh+rgpqQ
-         jJKWZMwW6IsqB1GzPNCnAYd3Yc955f2Fg2qfA=
+        bh=GilTLlSelffODZfy/8XZJDTdiEXOfg2qNC/dNLqoj2k=;
+        b=Q8GBbYOA4xFXke82eI5vTrnMy2IAxYFhEEa+YUj+4IeO96SbEKptrSmCNbQzpmhMSH
+         Syejp3B6dJ5buVvKDxCujbvCovzp9OJkVkLDdRzHKEMbamg0NNc5QAGBClphu+Z/1gNq
+         UXtvzvMTyb5WXpAMyavFGnLr1/JGctsD+XNJQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729013436; x=1729618236;
+        d=1e100.net; s=20230601; t=1729013545; x=1729618345;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=32F43aWFFhVGx2UIPkft94nsDcd5w72khuVk+0067EI=;
-        b=Rz1uHGJ2BhQVFrJgpV85ZPOxEXy6N1jJWEPUfNfXTxEfULFb7Jr/FI0M2vV6foHTey
-         0YVqB83oXuHQ+4wi20ZqpRGzMPA/ls8U3/k9w8yCFCWW2qhkeHU6BSV+lx45rzRHUWDt
-         sh4+uucDQwgFRpKJNhmsoE2QpjqmFR9xo3DCqq+c+dwn9eXGhUSgfiLTyMmYD6Jmpnxg
-         Gm1vXCc2uV/YCqIIlzgjs7rEJZDBDZ2xQQ3x7rkioml5/LePZQ564q3qqyIRgdcEKdd5
-         0znG+eBuTyimPRXBz9c0JL/rejVjtZgHK+1PPauuSIun66b9p8Ly9sM/1E6tuWG7Nx7P
-         0ing==
-X-Forwarded-Encrypted: i=1; AJvYcCXWVDIYalLVvp5zMe8V8SqdiZmU5rfeh1k6hXL5G2XavjOJ+tLzwCcW2AOxX/YDRerAA8g5Px4r+1T4Bf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEKaz6FxODK+lOfzbZOrCTX/RQZq8uUiwRqggZFrVuddHfDM0k
-	i8rWjpahvgE7J8yvWf4pcoSEfXQu1+MNFTyhHK8UDDqYStie+KgZCoSlgkLZpg==
-X-Google-Smtp-Source: AGHT+IHELpbG7H9Sua7HCjciXrVYE/ELUIdGP3K1aU0Bv5OvRhFzrOOMBo7qamKP9usHie3DBAUdbw==
-X-Received: by 2002:a05:622a:17c4:b0:45d:a196:b321 with SMTP id d75a77b69052e-4604bbcccf0mr237508761cf.32.1729013435935;
-        Tue, 15 Oct 2024 10:30:35 -0700 (PDT)
+        bh=GilTLlSelffODZfy/8XZJDTdiEXOfg2qNC/dNLqoj2k=;
+        b=Sefjvdg2hXS5DPd4ggMRkULDNZ7lO5GVFs5+AjA/MY7coi1x4WNdJyhu3P9h2mFBGK
+         DO7eQwO9WdnO3CGt/3XIoambbu4c+T8eqo5+6w/Jajowhd2HSuYkHhOcG1pG+wBX6TsG
+         1/Mbq3w977iugt2TVw7Ay5NDRYyioBln0dFIW8NydQM3Acn6sDZV+xbpzNClVqrPyDQN
+         J0A5AIEEZFDyTSYMeVvyc840ok5hc/JMNd4kwzzgAobmitBcEqi+pmrYIcXgXrlMp5o0
+         15m9mIiwKS5GfPnugWjRTcww0u2IYkU9FISmwQmEOk+DZ3l7swdlIRVNK6s1kftmCk2G
+         YhXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzpEEsO5FCRa5fCudvw28iOVkWetFdSlglZEYK51OFUASA4m1PBJTw71FQnwu9x+Q/ULp/IrR3/qU2Muk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2DIDMlmdzCz8XUhE8AQ4x9j8dirHC/0IZ9u0wQT26sXebMXAT
+	FrylUBT/O/viNte5g1M4RZCAJBBrUgLVAFo6bdn8ktxItqnBrHC422AFZTV6SQ==
+X-Google-Smtp-Source: AGHT+IE+p6sXakMFFEi3I6QANbpqcIEHh9LYBD/R1eicX1H7w+X+vVfS2BnU6GXMLEtPTrVvmRqsOg==
+X-Received: by 2002:a05:6214:4a93:b0:6cc:567:d595 with SMTP id 6a1803df08f44-6cc2b8bb6efmr18165446d6.7.1729013545447;
+        Tue, 15 Oct 2024 10:32:25 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b37ba97sm8677491cf.63.2024.10.15.10.30.33
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc2290f918sm8979686d6.7.2024.10.15.10.32.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 10:30:35 -0700 (PDT)
-Message-ID: <e3a61540-714a-4f57-a3c4-c0f333e16a07@broadcom.com>
-Date: Tue, 15 Oct 2024 10:30:32 -0700
+        Tue, 15 Oct 2024 10:32:24 -0700 (PDT)
+Message-ID: <25cb1dfb-a0dd-44d9-ac35-bfbc66a82d1f@broadcom.com>
+Date: Tue, 15 Oct 2024 10:32:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/2] net: systemport: Remove unused txchk accessors
-To: netdev@vger.kernel.org
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org,
  Broadcom internal kernel review list
  <bcm-kernel-feedback-list@broadcom.com>,
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
@@ -86,7 +86,10 @@ Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
  open list <linux-kernel@vger.kernel.org>,
  "open list:CLANG/LLVM BUILD SUPPORT:" <llvm@lists.linux.dev>
 References: <20241015172458.673241-1-florian.fainelli@broadcom.com>
+ <20241015172458.673241-1-florian.fainelli@broadcom.com>
  <20241015172458.673241-2-florian.fainelli@broadcom.com>
+ <20241015172458.673241-2-florian.fainelli@broadcom.com>
+ <20241015172948.xvb3xoed52zhaqtm@skbuf>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -121,34 +124,34 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241015172458.673241-2-florian.fainelli@broadcom.com>
+In-Reply-To: <20241015172948.xvb3xoed52zhaqtm@skbuf>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/15/24 10:24, Florian Fainelli wrote:
-> Vladimir reported the following warning with clang-16 and W=1:
+On 10/15/24 10:29, Vladimir Oltean wrote:
+> On Tue, Oct 15, 2024 at 10:24:57AM -0700, Florian Fainelli wrote:
+>> Vladimir reported the following warning with clang-16 and W=1:
+>>
+>> warning: unused function 'txchk_readl' [-Wunused-function]
+>> BCM_SYSPORT_IO_MACRO(txchk, SYS_PORT_TXCHK_OFFSET);
+>> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
+>>
+>> warning: unused function 'txchk_writel' [-Wunused-function]
+>> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
+>>
+>> warning: unused function 'tbuf_readl' [-Wunused-function]
+>> BCM_SYSPORT_IO_MACRO(tbuf, SYS_PORT_TBUF_OFFSET);
+>> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
+>>
+>> warning: unused function 'tbuf_writel' [-Wunused-function]
+>> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
 > 
-> warning: unused function 'txchk_readl' [-Wunused-function]
-> BCM_SYSPORT_IO_MACRO(txchk, SYS_PORT_TXCHK_OFFSET);
-> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
-> 
-> warning: unused function 'txchk_writel' [-Wunused-function]
-> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
-> 
-> warning: unused function 'tbuf_readl' [-Wunused-function]
-> BCM_SYSPORT_IO_MACRO(tbuf, SYS_PORT_TBUF_OFFSET);
-> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
-> 
-> warning: unused function 'tbuf_writel' [-Wunused-function]
-> note: expanded from macro 'BCM_SYSPORT_IO_MACRO'
-> 
-> The TXCHK block is not being accessed, remove the IO macros used to
-> access this block. No functional impact.
-> 
-> Reported-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> I mean the warnings do say that the tbuf macros are unused too, yet you
+> only remove txchk? I did ask yesterday if that should also be deleted,
+> and with it the other unused transmit buffer macros?
+> https://lore.kernel.org/netdev/20241014174056.sxcgikf4hhw2olp7@skbuf/
 
-Forgot to remove the tbuf accessor here as well, will post again in 24hrs.
--- 
+See my response to my own posting.
+--
 Florian
 
