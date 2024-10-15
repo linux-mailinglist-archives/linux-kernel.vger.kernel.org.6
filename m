@@ -1,104 +1,122 @@
-Return-Path: <linux-kernel+bounces-366658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C1E99F857
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:57:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3800199F85C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4265E282EAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2291C223B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7622F1F9EBB;
-	Tue, 15 Oct 2024 20:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CD91FAEE8;
+	Tue, 15 Oct 2024 20:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="acWLlWt8"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpSk/pWW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05A81F80DD;
-	Tue, 15 Oct 2024 20:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3404C1F80DD;
+	Tue, 15 Oct 2024 20:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729025822; cv=none; b=iCsYl9IL2AaexVuCN+K0eRzTdm9E7fhlvWJjnWxsLay/W4ULfeH6xquIqWkaK0aNgs/PW6xeOt1dwJOj/yHaO+5f+JJEuhdNYs9OPXegp8URz6E6GR+WK7nSqJed66jl+IhreBjTxnU1AcDQO2r9wK834YSjKalh/eFXZrHo1ps=
+	t=1729025934; cv=none; b=VCe1A3k2VX1y/5F7o0JQsRYvYQXBfsm0vKd//kijbo4JK/qkLexmawS3hlDnlRNHANECR8UJKTQYs6Oj/r748IYlYDSQIqQy9a1W32by/d/0DD2e7m55FiQnrVncdXCjjjWp0nvNznoIwkFbELMknUjb+5qECmt0XM5Zupuz8HQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729025822; c=relaxed/simple;
-	bh=nhVq3bNEY/qdT3pYPq0FK313mDsysoleMV6NBIGcCW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DU0/ZSWzyvdloEfMJCRe6htftVJ3XTDkULaEUe8FNjjpEwOIq4TpHtKcFH+batbP10igkms2MugHUreSNOQw4XG7ZlnOsgxZm6MHevOE+Y3XVtQhs36jP4sn8x7vufVvY/XNV9FCH+UjwjcWfAGs/icAgs4Hk8v45AjOa0S1OOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=acWLlWt8; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=+GFRM+u+p5Z9aG1BT9r5S7bGz8OWiDpD8m6rtv8kuJs=; b=acWLlWt8x1JdqczW
-	Hk+dyAJOyjQdj4NV0myjmJRW9F60tGqnDqUr9F08cgi5k4R0yDjSilqV3FT5MEtbO2Esm4jAiNUSd
-	YrWgo4/86wpskviSgRCjD+ZSR0R1it86RRNnv8T4uEJpgobOVNU1KZE/cJCiPvp4tFTe9vQk0O0Hs
-	CbXRrfBwLwVMeSiFkE2xoio1uvo22OkyVWeeN7gbEALRIW8JInqqt43oebC4y3ndUDE6WOZZBIddm
-	cqnuomqo/+nBihrQpSMiVuAN7qJLyAEf27qqHPNRJDbD3QSm9y2m3LtyMbrD1vCOnBtL56JBStR+D
-	cZiV/DPdugPPGvCJ7g==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1t0oau-00BIbA-1p;
-	Tue, 15 Oct 2024 20:56:40 +0000
-Date: Tue, 15 Oct 2024 20:56:40 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Message-ID: <Zw7XCCfedYmRTJMS@gallifrey>
-References: <20241011135515.75317b03@canb.auug.org.au>
- <20241011175516.37dc061b@canb.auug.org.au>
- <87bjzle5g4.ffs@tglx>
+	s=arc-20240116; t=1729025934; c=relaxed/simple;
+	bh=OdfbPphNVRToS+4L7iWif22RAzWjckEAkN41WHeGg50=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UKd0c3k/AbpxwMXw9Gg6SDFDfFgX2c/jmrBDIlplu1MSZSa7wIX1FiwPzPEr9EBp58se3xRA7NiEz1V15X8WE4mdPsyRN9pfITxdOQ5Po3hN9xkJ8AYc0082X5GwvTcZxU5pCkffYSAuAKsmfCHDjJGcXIMN/YZc8OXp1/vZSYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpSk/pWW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38F55C4CEC6;
+	Tue, 15 Oct 2024 20:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729025933;
+	bh=OdfbPphNVRToS+4L7iWif22RAzWjckEAkN41WHeGg50=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rpSk/pWW0GDNpTpxzpLph+2NXw9KHKsaY1unOGf+3SFCoq6Rw9rgx5etGj1h0uTy0
+	 WT6jIOY5wwV0r+3J5hOa3DEVhvgYKT8IfmBIsKJwcmMDZYtjLt1c8Jef6lzrX0Glvl
+	 vHrUlHvyv8R9kjvD0ZvueV8oa+MvmB8aYbf4zn1g5sdgL/D56ASk87LZ8ER+v6aXvF
+	 dAXsMOpjEZYDvEDMm0Jyu3z4Ep7PialQRyNtbkdKRKVV54MBWFdnVjIbNByibA52f+
+	 zfspTtTa5B+nNNw/BTcWKvb8ZS/t1hEpNHGslTgDVmHwCqqyDZbCMBCIHIVVwektxS
+	 gX35w2B2jxpag==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Stefan Berger <stefanb@linux.ibm.com>,
+	stable@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 1/5] tpm: Return on tpm2_create_null_primary() failure
+Date: Tue, 15 Oct 2024 23:58:36 +0300
+Message-ID: <20241015205842.117300-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241015205842.117300-1-jarkko@kernel.org>
+References: <20241015205842.117300-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <87bjzle5g4.ffs@tglx>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 20:55:38 up 160 days,  8:09,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 
-* Thomas Gleixner (tglx@linutronix.de) wrote:
-> On Fri, Oct 11 2024 at 17:55, Stephen Rothwell wrote:
-> > On Fri, 11 Oct 2024 13:55:15 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >> After merging the tip tree, today's linux-next build (powerpc
-> >> ppc64_defconfig) produced this warning:
-> >> 
-> >> kernel/time/clocksource.c:1258:13: warning: '__clocksource_change_rating' defined but not used [-Wunused-function]
-> >>  1258 | static void __clocksource_change_rating(struct clocksource *cs, int rating)
-> >>       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Yes. I fixed it up on my tree and then forgot to push it into
-> tip. Sorry!
+tpm2_sessions_init() does not ignore the result of
+tpm2_create_null_primary(). Address this by returning -ENODEV to the
+caller. Given that upper layers cannot help healing the situation
+further, deal with the TPM error here by
 
-Thanks for that and apologies for not spotting it in my v1.
+Cc: stable@vger.kernel.org # v6.10+
+Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v6:
+- Address:
+  https://lore.kernel.org/linux-integrity/69c893e7-6b87-4daa-80db-44d1120e80fe@linux.ibm.com/
+  as TPM RC is taken care of at the call site. Add also the missing
+  documentation for the return values.
+v5:
+- Do not print klog messages on error, as tpm2_save_context() already
+  takes care of this.
+v4:
+- Fixed up stable version.
+v3:
+- Handle TPM and POSIX error separately and return -ENODEV always back
+  to the caller.
+v2:
+- Refined the commit message.
+---
+ drivers/char/tpm/tpm2-sessions.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Dave
-
-P.S. If you get a chance I'd appreicate if you could look at another
-deadcode of mine in x86:
-  https://lore.kernel.org/lkml/20240913005753.1392431-1-linux@treblig.org/
-
-> Thanks,
-> 
->         tglx
-> 
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index 511c67061728..253639767c1e 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -1347,6 +1347,11 @@ static int tpm2_create_null_primary(struct tpm_chip *chip)
+  *
+  * Derive and context save the null primary and allocate memory in the
+  * struct tpm_chip for the authorizations.
++ *
++ * Return:
++ * * 0		- OK
++ * * -errno	- A system error
++ * * TPM_RC	- A TPM error
+  */
+ int tpm2_sessions_init(struct tpm_chip *chip)
+ {
+@@ -1354,7 +1359,7 @@ int tpm2_sessions_init(struct tpm_chip *chip)
+ 
+ 	rc = tpm2_create_null_primary(chip);
+ 	if (rc)
+-		dev_err(&chip->dev, "TPM: security failed (NULL seed derivation): %d\n", rc);
++		return rc;
+ 
+ 	chip->auth = kmalloc(sizeof(*chip->auth), GFP_KERNEL);
+ 	if (!chip->auth)
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.47.0
+
 
