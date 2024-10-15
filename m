@@ -1,110 +1,109 @@
-Return-Path: <linux-kernel+bounces-366790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2588999FA72
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACDF99FA76
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578811C23785
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BC921F213C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845B21FE0F7;
-	Tue, 15 Oct 2024 21:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4063521E3BD;
+	Tue, 15 Oct 2024 21:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bVztYQXJ"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bs4WK+3i";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4GA+ftBD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500C51FDFBD
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2746821E3B2;
+	Tue, 15 Oct 2024 21:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729028375; cv=none; b=pFvEw5J/HRxENe7aYJVEZQ0MGMIKz7rwJfRo5pmeP3pNbn7yYmlMWGuzqHjZFLf2Vxy6UzMujsGpDvWhU+T2NU7/aMK7RtJSjf8adRvo4fox/FJhrkil/a6DB3yAY8zk5w+Qs7eQyBt7ldStn662iTVsUqJP9A0JyYqQu2H8hnk=
+	t=1729028546; cv=none; b=sdY35HdSzZv0dBbYc0nBT1rUlOARW2QM6vIV/tuDnNSS6NRubes2fUd9Axl+vSSgp+f0hBGo8tY4L/k2TH4+OQt/nCzWgf8wtT/H5XxyQgWl+tN/Z+nG2De5uU6RlyueyZ5DgJBYHiaU4v3FPmCv3tnMTJ63sV4UhrpFhUHlXaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729028375; c=relaxed/simple;
-	bh=NY5tsDG+TepaBzQoeKpnr+oeJW9vQFfX1a5J87FfW34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kz2ZzKAi/6kPbU4ROXg9LJthOg2FqEHvJmrCfWN9xtTurW6CTf5+dhWnzs/WD09Sj8CX5K3tIyQni1HORTG+p9ApXIaP0TA8m3XuBje+MZOlR9lk3wNHVK1+dgE3chYS5Bu3PIE8mNAdV4k5k/+SgHbpsWxJ4xUU+U6Obo/pkcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bVztYQXJ; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb3110b964so49227421fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729028372; x=1729633172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mt1uVRncBKO3P0OnuzsWJGZJCb1Wq0MWXLMHVEHZjFk=;
-        b=bVztYQXJ30hYLQ+Qy7++h3B3ZwpKaf0H1eyIPEWW3ZAFwDJm5owoR6jO4IGclK0LDB
-         Awx9gc7A+/n/D7hKW/duBwHIbX6qCFomfBhnUV12jFkinf0HOJ/TPl0vV4hq40jdz0vZ
-         oxQmfUffmixFc6CbSkNkiMhR1Lz0Yz7Jcco7UNZalHvjiQi3VcHFGHExhnEkubgHAGYp
-         pnsOn0P/MMLFwQ3bjFg0sSWsj0CGpoee79yewNpvH416/jf+c96uYPT1VuJ9aBgeKWEy
-         gujDPHln2njgnWt+w4exBRru6Q5RNDsrwYpQ9bVfGG0zzv+QEVAvb73MvtzQeTicZvtj
-         mUdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729028372; x=1729633172;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mt1uVRncBKO3P0OnuzsWJGZJCb1Wq0MWXLMHVEHZjFk=;
-        b=k72WlPagNJx9FvHRLtk2Sl8gVTiPJzNQjq/JUSO15hD4IBWwh7KtarfQy7V/NLywvr
-         5cdU+m4j5lzMzRfJWjWAcqzrwnFGYCQE6vhs2uue6PntggTClPecjgNRebdyIgQRI95x
-         SzSN0MmQ3+9+DLOsSsepSPenp/gkbRr8bJun17eOzP4D/dD0Ga+BwKzhZRC+igJLf7Ve
-         jmKzQWdCeffWBZLWZ9QNvFWhLjJefuJlJB90Dn7xUm7tPN7MmyJcWqr3wOBcE/l6zCyo
-         qCkIBedMe+WBO98DR9UEjds7PuagQzdxAAyRwWsxplg6pZrF0JANNzM1mP4UMwIDJ6xe
-         yjYg==
-X-Forwarded-Encrypted: i=1; AJvYcCViMcXMfGdDJpxz8TvIzT2I/tLXbt2Sr64eXAkuxCIulsR7slNerbK975LiUfhLyd5u6ZciqeznCUt0pEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRNktlPmleoC3YgLtNvUZVRel6hddtcb1FfwL7ODxBAYshXLlK
-	U630dTskw52BT5YQVGwoJ9KkJXHPQohaNx/7iHx0/2DRRTp788XACZxU0ef1G12MGe5i/5W8w7L
-	R1Fj/Ew43gwVPSh5Id3ai9lre8ZYD9/WDxauOzw==
-X-Google-Smtp-Source: AGHT+IHa2frolcu/goJFwMBAu6bA/ZWorjW/fjQ26j0X/sDgzZ923uAKQjIodHfeTUJpoVqJmFqouNcmF7KCP+Bru7g=
-X-Received: by 2002:a2e:b8c6:0:b0:2fb:565a:d918 with SMTP id
- 38308e7fff4ca-2fb565adc3bmr43605611fa.12.1729028372533; Tue, 15 Oct 2024
- 14:39:32 -0700 (PDT)
+	s=arc-20240116; t=1729028546; c=relaxed/simple;
+	bh=ADjjbzXz95P9cj8Qiy/Kdepn7OHwPWnDZ3anvu7xMrk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u16wvkFGfhGryppYl4i7X8MsOdjpYkjUyooHb8buuc77OMggAPAZfFvjQopXR7PiYk6OSsG+hdyvTt2gh0PmgktIT0DZX1SHGtBE0zeEnOeCZnzcFJ9gkbvJupPzmxCTtdrqvFsTU/Z//Jco0VmzL5JXmSmXL9HqYcRvzctsyVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bs4WK+3i; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4GA+ftBD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729028543;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hALBkgP+0vHQHFOLfJVhzpCvZiu7iqZATK+f8xljF6o=;
+	b=Bs4WK+3isP7DKVNVaTNUaI/cX7y8ywrDgKgH/p2ecpxNUxJJo0bfpcpQ8SK4BcXOY2CYJQ
+	koe/V5rgwmYPy4OWcSKmFZbCAnO4X1fTHuAcVGFm61OmX+gLgw0WYIvAimHF/WjW3WvyzH
+	SCWMpw4lmBbQGc18oHIUM1HiDR7eaiJnFh3+YDMdDoTYHCvxulNioczbrzxxErJ5PRSj+P
+	D93sv4JPFkjAYRaW9BAAMV+Cv4RpA0dmVS+s5qKqYs0Vh8Rat09h+FJ59ePaDnNdymW+ce
+	nbD6AcfZIse28KHvl5QHb6eJQY84fpgt+5/ZGIpET97fj9/LBur6aj45bZQMjQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729028543;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hALBkgP+0vHQHFOLfJVhzpCvZiu7iqZATK+f8xljF6o=;
+	b=4GA+ftBDLrodNSL6IIhR1BlPC9NDD73LIkk4yNdYSvee3SIv688WmN65Kfer6AZf+2rNDY
+	GP+ZpDSLkttq53Dw==
+To: Markus Elfring <Markus.Elfring@web.de>, Kevin Chen
+ <kevin_chen@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Andrew
+ Jeffery <andrew@codeconstruct.com.au>, Conor Dooley <conor+dt@kernel.org>,
+ Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
+In-Reply-To: <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
+References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
+ <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
+Date: Tue, 15 Oct 2024 23:42:22 +0200
+Message-ID: <874j5ddow1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015151126.2401855-1-arnd@kernel.org>
-In-Reply-To: <20241015151126.2401855-1-arnd@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 15 Oct 2024 23:39:21 +0200
-Message-ID: <CACRpkdZwG0Qgxjy-tmh34Pjd5YzMmNXM=PktKMgd+rwbfPRSPg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: th1520: add a CONFIG_OF dependency
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	Drew Fustini <dfustini@tenstorrent.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Oct 15, 2024 at 5:11=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
-te:
-
-> When compile-testing without CONfIG_OF:
+On Wed, Oct 09 2024 at 14:32, Markus Elfring wrote:
+>> +
+>> +	chained_irq_enter(chip, desc);
 >
-> drivers/pinctrl/pinctrl-th1520.c: In function 'th1520_pinctrl_dt_node_to_=
-map':
-> drivers/pinctrl/pinctrl-th1520.c:455:23: error: implicit declaration of f=
-unction 'pinconf_generic_parse_dt_config'; did you mean 'pinconf_generic_du=
-mp_config'? [-Wimplicit-function-declaration]
->   455 |                 ret =3D pinconf_generic_parse_dt_config(child, pc=
-tldev, &configs, &nconfigs);
->       |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                       pinconf_generic_dump_config
->
-> Enforce this using Kconig dependencies.
->
-> Fixes: bed5cd6f8a98 ("pinctrl: Add driver for the T-Head TH1520 SoC")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Would you become interested to collaborate with another scoped guard
+> for this programming interface?
 
-Patch applied!
+Collaborate in which way? What are you collaborating on?
 
-Yours,
-Linus Walleij
+You are merely asking people to do work which you think is useful. You
+can do that, but that does not make it useful.
+
+Making a guard variant of chained_irq_enter/exit needs some thought and
+a general plan for cleaning the whole chained irq usage up. It's on the
+cleanup list already with quite some other items.
+
+We are not adhoc adding a guard variant because guards are hip right
+now. And no this does not need a scoped variant ever.
+
+guards are not the panacea for everything.
+
+> https://elixir.bootlin.com/linux/v6.12-rc2/source/include/linux/irqchip/chained_irq.h#L13
+
+Please refrain from these silly links. People know to find the functions
+on their own.
+
+Kevin, please update the change log, add your SOB and move the local
+variables (unsigned long bit, status;) into the scoped_guard() zone.
+
+Leave chained_irq_enter/exit() alone and resubmit.
+
+Thanks,
+
+        tglx
 
