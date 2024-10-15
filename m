@@ -1,83 +1,103 @@
-Return-Path: <linux-kernel+bounces-365705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852BE99E6F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:47:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A1499E6FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B783C1C25843
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78431C25C55
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E1F19B3FF;
-	Tue, 15 Oct 2024 11:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7641E3DE8;
+	Tue, 15 Oct 2024 11:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2P4o4Du"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PzYJbgaL"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1B01AB534
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2341D90CD;
+	Tue, 15 Oct 2024 11:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728992843; cv=none; b=noItYcYxbpf2stQnvFFMPoR3GHd+eO4UgQCWqTLkyIPsLD/ihbOLi6o+blK+rmSvfKG7LQ6UDHL6yFZhJ8k0wPoFSrYbRp8KVIinN+IuxIWERmg+/apstPmBY0XOvBZKcw957sI/Hwx780FIQaliGakTdo9Oac3Tu2n52nw/YmE=
+	t=1728992863; cv=none; b=qJVCfeIMM2KhHuoZNsXYfnziLQXDA4MCyszxlDcHUb3bibgbIOe/NghftfFZ/KTFSQkxoitZqpFzV6AwBRD+9qgwMX0VgzQsR2d/Mb8OlyeZNaWpd6Repk8rIMhZeu3pLROGVx3FreCa7ixharQybbXCs4drG8Au139Ke9w3h7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728992843; c=relaxed/simple;
-	bh=YPbiicurnH1dDhqb6FYnrHy2d2a+IagWqrjbCs+mflM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VCQfxaRiX5Hds2pRY6S9rS2ECRzIB+A9dWpaEEkff15GCjTMds4XdelftHwB0R5bzGdP9lUeuzWDubAtTOf4ej012IfvBHdMVwBI4ZaAyteVZry7/PKup10xjsBi9B57nQE5bkq326WqP6OrYlEb/tVFgYIMXfrXcazex2UT9do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2P4o4Du; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867ADC4CEC6;
-	Tue, 15 Oct 2024 11:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728992842;
-	bh=YPbiicurnH1dDhqb6FYnrHy2d2a+IagWqrjbCs+mflM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Z2P4o4Dufu4e2X8yqYcxKbC0bLxAhhO91HdiyF7wF7Vz4cth8k0KHFxlE3sKnHmvz
-	 qzaAfVsLtBT8vEMI34Dcn5R38mtldxxC0jpBE00ANwemaoSHL/VFZC2YvxnB0J2XSA
-	 fxQgP6N9T+c1/kuwh1Qj3X/Vkj4DS6Fr958ngz7ClzewG4lItuXBLfRwQNg9jthWah
-	 A2lbd1p83UHKZXUalReRiiiHkIkfZzIF5PXicf9C5Rak/dol2pStaY+OVTHXgtbBex
-	 G7En1VyNL4HMT52sML1mrt15NeaMXNTu3vAQkBm6NfZBHbWarlhImn/PSjm8kF4yp2
-	 q3c9gJc8GXXeA==
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>
-Cc: lee@kernel.org, heiko@sntech.de, linux-rockchip@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, 
- Diederik de Haas <didi.debian@cknow.org>
-In-Reply-To: <08d4e88974c205eba124086ce156622e2e4cdc20.1728397516.git.dsimic@manjaro.org>
-References: <08d4e88974c205eba124086ce156622e2e4cdc20.1728397516.git.dsimic@manjaro.org>
-Subject: Re: (subset) [PATCH] mfd: rk8xx-core: Check
- "system-power-controller" first
-Message-Id: <172899284126.514208.13664393546425275514.b4-ty@kernel.org>
-Date: Tue, 15 Oct 2024 12:47:21 +0100
+	s=arc-20240116; t=1728992863; c=relaxed/simple;
+	bh=u5AGJZbozkB40tzpeBr4jueNpsfSz7RLNYEPcgjK3mI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1AlT5J+73s/PsYInViPZZ5eGEtY5lFPGL0xA/BZaXmo+RgwBK4l2pXzUNZbBw1TPlIfIiz6BY5Z6vKvjPITJE4dwzvUjVl3fxzwc9Wa9cI/aOWwyPgpaGY5918dLa6u2qvnWXIlRtkJ9ThgB/MHzqLh8UdgKgzcHXQPJs0BmIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PzYJbgaL; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49FBlRDX063484;
+	Tue, 15 Oct 2024 06:47:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728992847;
+	bh=aIapqA6FHf2A0zymdMlGcDtmtvjitsj2hgtu4BWewyg=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=PzYJbgaLxE/JNgc08CumgVe5fDV0uleiEnj6+BgL6KUxG8/lvvUke8WN4nfwx5pGQ
+	 J5amu/uZB3/LHs/tbY101Ux2OJ6XyB+7d3NeBRipy3wnxm3Ia5tl6fTNA/VTgr4nL7
+	 BkpTJA7Mta2YnFABw1KByalbCKc7wNjOAhuH/Okw=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49FBlR9N111700;
+	Tue, 15 Oct 2024 06:47:27 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 15
+ Oct 2024 06:47:27 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 15 Oct 2024 06:47:27 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49FBlRfb105410;
+	Tue, 15 Oct 2024 06:47:27 -0500
+Date: Tue, 15 Oct 2024 06:47:27 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Andrew Davis <afd@ti.com>
+CC: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Hari
+ Nagalla <hnagalla@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
+Message-ID: <20241015114727.57usuxrhpapiofvg@fretted>
+References: <20241007132441.2732215-1-arnd@kernel.org>
+ <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com>
+ <e6c84b91-20ce-474a-87f8-9faeb64f3724@app.fastmail.com>
+ <20241014165238.nbllvtnxrxbwg344@frying>
+ <585e5471-8a49-43cd-afba-055855be8e75@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <585e5471-8a49-43cd-afba-055855be8e75@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, 08 Oct 2024 16:30:10 +0200, Dragan Simic wrote:
-> Commit 961748bb1555 ("dt-bindings: mfd: rk8xx: Deprecate rockchip,system-
-> power-controller") made the property "rockchip,system-power-controller"
-> deprecated in favor of the shorter, universal form "system-power-controller".
-> Following the updates to the board dts files, [1] make the favored property
-> name checked first, to save a few CPU cycles.
-> 
-> [1] https://lore.kernel.org/linux-rockchip/20241008105450.20648-1-didi.debian@cknow.org/T/#u
-> 
-> [...]
+On 12:26-20241014, Andrew Davis wrote:
+> Stubs only make sense for optional components, like GPIOLIB, where
+> the driver using that component can continue when it is not available.
+> For all drivers that depend on TI-SCI it is not optional. The dependent
+> driver *will* fail to probe and error out. These stubs do nothing, and
+> I'd like to just remove them.
 
-Applied, thanks!
+Fair enough. I'd like to see a series where the drivers have
+been converted to modules and we remove the "select" from
+arch/arm64/Kconfig.platforms - we can then drop the stubs once the
+modularization is complete.
 
-[1/1] mfd: rk8xx-core: Check "system-power-controller" first
-      commit: ebced0587bacdce9a69adbc289ec1c35c1c6b85c
-
---
-Lee Jones [李琼斯]
-
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
