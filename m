@@ -1,185 +1,96 @@
-Return-Path: <linux-kernel+bounces-365567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF71E99E475
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A92999E478
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDE7CB22271
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8D04283F29
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69211E764B;
-	Tue, 15 Oct 2024 10:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="wn4XhrL9"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74D71E3DF1;
+	Tue, 15 Oct 2024 10:47:33 +0000 (UTC)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40831C7608
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACC81C7608
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989220; cv=none; b=PLhzcDnQYpD4STD0gyvfzHmVIeCg4I/RjzPI0Y1Jk+VzS/w2xJOBUg6za0s9KIGpOvj93Us/jtWJO8q88fqs2SNNIs169SEeBKSKwRHcmpx2iM0KEm5XSXeUBKEcIaeeLdB0ke5qicRgPoAV66TzHWP0dwiUo3z4+lhzHeQDR1c=
+	t=1728989253; cv=none; b=Fgo0LAkOPXFaeYvbOztRwFiRen12PJ4bb9aoFWK3mxyccMsyS8U1kbEEVOL2aK6PVRwn18UNme26lPcKxCgnU32U455rFkmuIfFOvwnhAlp13sEQy1V0MrUzZQcSRVeKqTcqEw6bbPPy2JOSoltTO/p8HEp7z5sUMhogJNE2pV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989220; c=relaxed/simple;
-	bh=JbGYC94SBTd36kaLgYONpoB5/edTGqERj6FLvw8mhTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZCI/1O1Dq+/NcuuUDIYrbwMU+H/PdVhlVZU1c2P1YJJtV25R3bsf0WXczLQEec5TFdxf5gycvExfhT4WN8sKFYoN9u+gfO9zb++QnARbORbYky4FZ8SEnXWOh/aso33dIRZHcGvi59bbnNCauU0WWHAzIsJzk6RvXRSaKOdHorQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=wn4XhrL9; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so287458566b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728989215; x=1729594015; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=520DfjHdYRRP2GFNU0/yY3BItKCuA8awUDQGTCRwXIQ=;
-        b=wn4XhrL9MzyE5n8dTaoMUuLsz46qXnHMgX4rnDetwZT+LzGAqgdcMLGRlZYTcFsb7F
-         f7n0i3JXxEpXuJrinPOqmgdNp3Xag33AnbACdsCIol1VBJZ9YdHN8SjPo85tJU++9ZtH
-         qEVIgzDiwewMB7RERWGGplQAdE69GtQl1ppHyOUZ4/pnvs0OzcrMqKTP/8I2Ok7/IB13
-         ES5I0NqwqVx+Nd2QWt5DMvUmqqNnvxmSnr38R40oY6cp2pe5kc5pHTqGNTWeElYcmhv3
-         z9CDCr6kMnxRpd6kCGK3tSm+2AeNGb/T16GCVqfE8fc6KJLPLIjlx8rwM1HPAN0UZ5CL
-         bu7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728989215; x=1729594015;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=520DfjHdYRRP2GFNU0/yY3BItKCuA8awUDQGTCRwXIQ=;
-        b=jyPqiQBGYh4jav5XLmKZc+PRNKDwjaRH8pX1ipP+RHXFQaIt2FVfvFs09ZFgblUaH0
-         wzzLc0Rnu02PqIYJpNzWqJcPUXqd34+JeCEABHMRbCZ+iS906kz2FW7I9zkYvZ06/4pO
-         nMabodjvYmST4eTjM/jdQ6FD+drzi6bbIZf1+717DNXGaBD3Qv78teA8HC9BxgNTggis
-         uUaJNWf9rxsV6XvTf3zvKJWVf0hBIoOZj/7Fa/KVJ798gzavCVizxBIrekKm5K7nSQnR
-         OqHq4boMxSOkfjWD0o3bcIJFC2Tr1b1gAn+UMtjlRh29XLVVSMb0iORCKrFID07/ekP6
-         ZZOw==
-X-Forwarded-Encrypted: i=1; AJvYcCULOVxbOq2IHkSMboP3ue0DOlZ3qpIQDh2BdMZpdJSxuUJvXz/3sXqVWIBA7SIKZGzyW0AIn32whaLI7GQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzSZVZcuMgKVgchPGRrf0XokfOVWpKg03B7Cxg3lB2IcGMIXFR
-	gvy+gvZxnLLyJToTZX2XF2/aRE4xTrGJIp+r5pn4sW8Yo6UkYj+kBxwegyv9a5c=
-X-Google-Smtp-Source: AGHT+IFD6hmt8hzEHRuoWoYB8e9k1HX3rhZ3I7fiMF/ztMLUUs26xHrhkT81z761RfYRJPnjMCr2Bg==
-X-Received: by 2002:a17:907:2cc2:b0:a8d:439d:5c3c with SMTP id a640c23a62f3a-a99e3b20d62mr1070172866b.8.1728989215149;
-        Tue, 15 Oct 2024 03:46:55 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29717303sm56424566b.7.2024.10.15.03.46.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 03:46:54 -0700 (PDT)
-Message-ID: <8088f2a7-3ab1-4a1e-996d-c15703da13cc@blackwall.org>
-Date: Tue, 15 Oct 2024 13:46:53 +0300
+	s=arc-20240116; t=1728989253; c=relaxed/simple;
+	bh=umAoHZaLg8OL5sN8+MqwYrOLLhFk3DJGmdHe+GY/UiI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EqOk2TvJFy3GSiUHyCOwFXOjxUbDnXLCkOxmgttp0DUvbrbU63REUmbr9SQm+KbI8ie6dp/SrYZogRfdKNOpF1QhDsH09i/fGp/rIrxutCIAe7HosYohTofud0w5erJTdexHv1wVOW5qGPKB6iZ6xmEqK5HeJA7fclm0fTdLRco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2f01:8211:4b4e:86e2])
+	by michel.telenet-ops.be with cmsmtp
+	id QanN2D00G4yGcJj06anNtu; Tue, 15 Oct 2024 12:47:22 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t0f53-003nsb-9h;
+	Tue, 15 Oct 2024 12:47:22 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t0f5G-004mAF-Bs;
+	Tue, 15 Oct 2024 12:47:22 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Rob@rox.of.borg,
+	Herring@rox.of.borg,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] PCI: Constify dummy pci_register_io_range() fwnode_handle
+Date: Tue, 15 Oct 2024 12:47:20 +0200
+Message-Id: <6a3ae390e2a978ec452ecbce3082cf51f7ee3076.1728989210.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] bpf: xdp: fallback to SKB mode if DRV flag is absent.
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Jesper Dangaard Brouer
- <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>,
- Jussi Maki <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- Liang Li <liali@redhat.com>
-References: <20241015033632.12120-1-liuhangbin@gmail.com>
- <8ef07e79-4812-4e02-a5d1-03a05726dd07@iogearbox.net>
- <2cdcad89-2677-4526-8ab5-3624d0300b7f@blackwall.org>
- <Zw5GNHSjgut12LEV@fedora>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <Zw5GNHSjgut12LEV@fedora>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 15/10/2024 13:38, Hangbin Liu wrote:
-> On Tue, Oct 15, 2024 at 12:53:08PM +0300, Nikolay Aleksandrov wrote:
->> On 15/10/2024 11:17, Daniel Borkmann wrote:
->>> On 10/15/24 5:36 AM, Hangbin Liu wrote:
->>>> After commit c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags
->>>> specified"), the mode is automatically set to XDP_MODE_DRV if the driver
->>>> implements the .ndo_bpf function. However, for drivers like bonding, which
->>>> only support native XDP for specific modes, this may result in an
->>>> "unsupported" response.
->>>>
->>>> In such cases, let's fall back to SKB mode if the user did not explicitly
->>>> request DRV mode.
->>>>
->>
->> So behaviour changed once, now it's changing again.. 
-> 
-> This should not be a behaviour change, it just follow the fallback rules.
-> 
+If CONFIG_PCI=n:
 
-hm, what fallback rules? I see dev_xdp_attach() exits on many errors
-with proper codes and extack messages, am I missing something, where's the
-fallback?
+    drivers/of/address.c: In function ‘of_pci_range_to_resource’:
+    drivers/of/address.c:247:45: error: passing argument 1 of ‘pci_register_io_range’ discards ‘const’ qualifier from pointer target type [-Werror=discarded-qualifiers]
+      247 |                 err = pci_register_io_range(&np->fwnode, range->cpu_addr,
+	  |                                             ^~~~~~~~~~~
+    In file included from drivers/of/address.c:12:
+    include/linux/pci.h:2022:63: note: expected ‘struct fwnode_handle *’ but argument is of type ‘const struct fwnode_handle *’
+     2022 | static inline int pci_register_io_range(struct fwnode_handle *fwnode,
+	  |                                         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~
 
->> IMO it's better to explicitly
->> error out and let the user decide how to resolve the situation. 
-> 
-> The user feels confused and reported a bug. Because cmd
-> `ip link set bond0 xdp obj xdp_dummy.o section xdp` failed with "Operation
-> not supported" in stead of fall back to xdpgeneral mode.
-> 
+Fixes: 6ad99a07e6d2ed91 ("PCI: Constify pci_register_io_range() fwnode_handle")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/pci.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Where's the nice extack msg then? :)
-
-We can tell them what's going on, maybe they'll want to change the bonding mode
-and still use this mode rather than falling back to another mode silently.
-That was my point, fallback is not the only solution.
-
->> The above commit
->> is 4 years old, surely everyone is used to the behaviour by now. If you insist
->> to do auto-fallback, then at least I'd go with Daniel's suggestion and do it
->> in the bonding device. Maybe it can return -EFALLBACK, or some other way to
->> signal the caller and change the mode, but you assume that's what the user
->> would want, maybe it is and maybe it's not - that is why I'd prefer the
->> explicit error so conscious action can be taken to resolve the situation.
->>
->> That being said, I don't have a strong preference, just my few cents. :)
->>
->>>> Fixes: c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags specified")
->>>> Reported-by: Liang Li <liali@redhat.com>
->>>> Closes: https://issues.redhat.com/browse/RHEL-62339
->>>
->>> nit: The link is not accessible to the public.
-> 
-> I made it public now.
-> 
->>>
->>> Also, this breaks BPF CI with regards to existing bonding selftest :
->>>
->>>   https://github.com/kernel-patches/bpf/actions/runs/11340153361/job/31536275257
-> 
-> The following should fix the selftest error.
-> 
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> index 18d1314fa797..0c380558a25d 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -5705,7 +5705,7 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
->                 if (dev_xdp_prog_count(slave_dev) > 0) {
->                         SLAVE_NL_ERR(dev, slave_dev, extack,
->                                      "Slave has XDP program loaded, please unload before enslaving");
-> -                       err = -EOPNOTSUPP;
-> +                       err = -EEXIST;
->                         goto err;
->                 }
-> 
-> But it doesn't solve the problem if the slave has xdp program loaded while
-> using an unsupported bond mode, which will return too early.
-> 
-> If there is not other driver has this problem. I can try fix this on
-> bonding side.
-> 
-> Thanks
-> Hangbin
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 11421ae5c5586443..733ff6570e2d5544 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -2019,7 +2019,7 @@ static inline int pci_request_regions(struct pci_dev *dev, const char *res_name)
+ { return -EIO; }
+ static inline void pci_release_regions(struct pci_dev *dev) { }
+ 
+-static inline int pci_register_io_range(struct fwnode_handle *fwnode,
++static inline int pci_register_io_range(const struct fwnode_handle *fwnode,
+ 					phys_addr_t addr, resource_size_t size)
+ { return -EINVAL; }
+ 
+-- 
+2.34.1
 
 
