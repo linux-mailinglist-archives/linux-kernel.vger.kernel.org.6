@@ -1,209 +1,95 @@
-Return-Path: <linux-kernel+bounces-366093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D80D99F0C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:14:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6A399F0BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7CF283A28
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:14:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37BC7B218AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2A41CBA19;
-	Tue, 15 Oct 2024 15:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8D11CBA0B;
+	Tue, 15 Oct 2024 15:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="GDlG9Xxr"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRgnyUKG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E451CBA07;
-	Tue, 15 Oct 2024 15:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8FD1CB9E4;
+	Tue, 15 Oct 2024 15:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729005232; cv=none; b=hnqH6U7oUHUCZKjAVYdOAgcIhAoP8EJSxrdPPflCUAEpGMwawOSU4wI0Z7V01+BOB3QXCnogOY7nxDmA38NBQTqlFIv8wtUMEeJ7kQleOmYMVCbE0OheLr2iYKJTqCwYyhU9ywrVc3RMW3hOvDDeqyp3AkOEJdq56X1GOQE8N/g=
+	t=1729005091; cv=none; b=ho1ZkkV0xPsMA/v+lNfXXBJBGIiy//uy/OapKxh39YDzPe7sRiPMpbG/WbcmiKEA0mCCntTZFaoRrO6ajqu0bK2Qdeyqs35p8ekKJD5p4pE+sLgEplIBD64dthDYMYkJWKgdTVXt0AhKv4u4Zf4LPA+SQpbAjcE7E6poenDEwzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729005232; c=relaxed/simple;
-	bh=+86IxgdbxFu5HPifRMcvxvMw5j37XxVXLVL3jKuTy78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dCXJpCXspdULzu9QPR29cr19Wued/bZNLIK42zcJebip/WZSIRWjqkZj2raNJ1azg6cl41/NGYXIns0PA49ejHvzfasBCy9ShEaL2NZCtOLN6y2fOpACZ3mZiqCiICYCUdp7TzCTRwTrRINE21GyvPsRgIIo/evCS0BOdcJMNDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=GDlG9Xxr; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FBfd0r018076;
-	Tue, 15 Oct 2024 17:13:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	A880Q2OSXTrE9WU64cKIX0T+jtcm1ta1QT9Gr1T9Cjw=; b=GDlG9XxrD0ZiJF55
-	6g4imFbr0sP/QNSHD5H8aM6tnUZXaO5hzxCiAWDLVbUv3SkSL4uBBjMV8+xHlX3N
-	+KCOSHPabgorYURUTTZ6l7nZRkckiX/+iWC6vAtPaqZoICr9ve3gYP5Ya8+yHpg+
-	sTOK+rSutGZ9YwTkW4+KoGW9C+FysH+4qs8toe+ISKVXLibY3dOTCXSRBK9OKnwe
-	42Ye9HE/5SFru6rrn1K6kYiQ5LW5MVsbzBPy8pFfKiDyhpjAhIBPEEw8J8q11WjO
-	R2NlhWbxACeyzZBwRdsh9sbSp9rcKxTD/fpnHzRiXf8j+wbnDJe53aCa9cGNZuuh
-	S3MWDA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42842jb63c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 17:13:21 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CFBEB40068;
-	Tue, 15 Oct 2024 17:12:04 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A917523CB46;
-	Tue, 15 Oct 2024 17:11:04 +0200 (CEST)
-Received: from [10.48.86.225] (10.48.86.225) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 15 Oct
- 2024 17:11:03 +0200
-Message-ID: <b06b5d09-190b-4567-aecd-4be1f1dee172@foss.st.com>
-Date: Tue, 15 Oct 2024 17:10:58 +0200
+	s=arc-20240116; t=1729005091; c=relaxed/simple;
+	bh=fsxR0wZfFAGioVuM2Gx0ckn1ZEOQwHuShQJgQkJClpU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IqW+SGQ0GUglr3vhu6zrWMEsXXoFF2sTpVXo9bGQrV+l4uVmbL4/S59i8CrMXVr339HCxBYqMlN7ADaM0QXVLsyX2w4w5r4F8qO9gpGFRHXAZxw+x2jW0F43S64mK+GxY9mS3uPD4/1JGsnw2ZsK2QjwzUA87nnVB/zA/k0wbkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRgnyUKG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E54AC4CEC6;
+	Tue, 15 Oct 2024 15:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729005091;
+	bh=fsxR0wZfFAGioVuM2Gx0ckn1ZEOQwHuShQJgQkJClpU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rRgnyUKGpznZ3mZKSAIdTlfytNRmMr+q/eVRLLyJsTdzjRSInIh9vBIr7tnSkPbq8
+	 fDna4PXqXdBdjIxE8NykoIqOxPbQOoPjlZDysAhi+KxkJv4y5E+LZl6o5zgY0Yf/EM
+	 e2vFR8oeDLYsO7rSG72KA5W/+YvGSFeyw/uaNr6BjFSN2Vs6QXx3cxyxpd3uN6ZBg+
+	 u6BUnxk9beEu5t5t3WMzr9y7uq0tBtC+tJQLVQFXjqMIyz5yzXEgupuOmAMprcE+sq
+	 Z328bjddJm4nP5l4wrdo374vwKf4n8QstXA1Vw/6Zgm9y2jDo9NLS/Ah0ANI2zRtFA
+	 fBhJD4w/YhM5w==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <dfustini@tenstorrent.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: th1520:  add a CONFIG_OF dependency
+Date: Tue, 15 Oct 2024 15:11:13 +0000
+Message-Id: <20241015151126.2401855-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
- platforms
-To: Marek Vasut <marex@denx.de>, Olivia Mackall <olivia@selenic.com>,
-        Herbert
- Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Lionel Debieve <lionel.debieve@foss.st.com>
-CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
- <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
- <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
- <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
- <8c13b0aa-7fb1-493c-9abc-5e5cfd982855@denx.de>
- <d862765e-e396-4f7c-97ff-76df9aa03216@foss.st.com>
- <dca83197-3484-4d6b-8507-118bf9e80e19@denx.de>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <dca83197-3484-4d6b-8507-118bf9e80e19@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
+From: Arnd Bergmann <arnd@arndb.de>
 
+When compile-testing without CONfIG_OF:
 
-On 10/14/24 20:55, Marek Vasut wrote:
-> On 10/14/24 2:36 PM, Gatien CHEVALLIER wrote:
->>
->>
->> On 10/14/24 10:52, Marek Vasut wrote:
->>> On 10/14/24 10:38 AM, Gatien CHEVALLIER wrote:
->>>>
->>>>
->>>> On 10/11/24 18:17, Marek Vasut wrote:
->>>>> On 10/11/24 5:41 PM, Gatien Chevallier wrote:
->>>>>
->>>>> [...]
->>>>>
->>>>>> @@ -551,6 +565,41 @@ static int stm32_rng_probe(struct 
->>>>>> platform_device *ofdev)
->>>>>>       priv->rng.read = stm32_rng_read;
->>>>>>       priv->rng.quality = 900;
->>>>>> +    if (!priv->data->nb_clock || priv->data->nb_clock > 2)
->>>>>> +        return -EINVAL;
->>>>>> +
->>>>>> +    priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * 
->>>>>> sizeof(*priv->clk_bulk),
->>>>>> +                      GFP_KERNEL);
->>>>>> +    if (!priv->clk_bulk)
->>>>>> +        return -ENOMEM;
->>>>>
->>>>> Try this:
->>>>>
->>>>> ret = devm_clk_bulk_get(dev, priv->data->nb_clock, priv->clk_bulk);
->>>>> ...
->>>>> // Swap the clock if they are not in the right order:
->>>>> if (priv->data->nb_clock == 2 &&
->>>>>      strcmp(__clk_get_name(priv->clk_bulk[0].clk), "core"))
->>>>> {
->>>>>   const char *id = priv->clk_bulk[1].id;
->>>>>   struct clk *clk = priv->clk_bulk[1].clk;
->>>>>   priv->clk_bulk[1].id = priv->clk_bulk[0].id;
->>>>>   priv->clk_bulk[1].clk = priv->clk_bulk[0].clk;
->>>>>   priv->clk_bulk[0].id = id;
->>>>>   priv->clk_bulk[0].clk = clk;
->>>>> }
->>>>>
->>>>
->>>> Hi Marek,
->>>>
->>>> This won't work as the name returned by this API is clk->core->name.
->>>> AFAICT, it doesn't correspond to the names present in the device tree
->>>> under the "clock-names" property.
->>>> Any other idea or are you fine with what's below?
->>> Hmmm, it is not great, but at least it reduces the changes throughout 
->>> the driver, so that is an improvement.
->>>
->>> I guess one could do some of_clk_get() and clk_is_match() in probe to 
->>> look up the clock in OF by name and then compare which clock is which 
->>> before swapping them in clk_bulk[] array, but that might be too 
->>> convoluted?
->>
->> Yes, probably too much. What's present in the patch is not close to
->> perfection but has the advantage of being straightforward. If we agree
->> on that, I'll send a V3 containing the modifications in the bindings
->> file.
-> Errr, I'm sorry, maybe there is a way to do this better. Look at 
-> drivers/clk/clk-bulk.c :
-> 
->   15 static int __must_check of_clk_bulk_get(struct device_node *np, int 
-> num_clks,
->   16                                         struct clk_bulk_data *clks)
->   17 {
->   18         int ret;
->   19         int i;
->   20
->   21         for (i = 0; i < num_clks; i++) {
->   22                 clks[i].id = NULL;
->   23                 clks[i].clk = NULL;
->   24         }
->   25
->   26         for (i = 0; i < num_clks; i++) {
->   27                 of_property_read_string_index(np, "clock-names", i, 
-> &clks[i].id);
->   28                 clks[i].clk = of_clk_get(np, i);
-> 
-> If I read this right, then clks[i].id should be the DT clock name. So 
-> the swap conditional above could use .id to identify whether the first 
-> position is core clock or not, like this:
-> 
-> if (priv->data->nb_clock == 2 &&
->      strcmp(__clk_get_name(priv->clk_bulk[0].id), "core"))
->                                              ^^
-> 
-> You might need to use devm_clk_bulk_get_all() to access the 
-> of_clk_bulk_get() .
-> 
-> Or am I missing something still ?
+drivers/pinctrl/pinctrl-th1520.c: In function 'th1520_pinctrl_dt_node_to_map':
+drivers/pinctrl/pinctrl-th1520.c:455:23: error: implicit declaration of function 'pinconf_generic_parse_dt_config'; did you mean 'pinconf_generic_dump_config'? [-Wimplicit-function-declaration]
+  455 |                 ret = pinconf_generic_parse_dt_config(child, pctldev, &configs, &nconfigs);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                       pinconf_generic_dump_config
 
-Oooooh I see, devm_clk_bulk_get() and devm_clk_bulk_get_all() use
-a different path. I don't understand why, to be honest... The doc
-doesn't state this difference either.
+Enforce this using Kconig dependencies.
 
-I'll give this a try while also correcting the issue that the robot
-highlighted.
+Fixes: bed5cd6f8a98 ("pinctrl: Add driver for the T-Head TH1520 SoC")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pinctrl/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Gatien
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index a6acc27c9a83..3fab5ebeb2e0 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -564,6 +564,7 @@ config PINCTRL_TPS6594
+ config PINCTRL_TH1520
+ 	tristate "Pinctrl driver for the T-Head TH1520 SoC"
+ 	depends on ARCH_THEAD || COMPILE_TEST
++	depends on OF
+ 	select GENERIC_PINMUX_FUNCTIONS
+ 	select GENERIC_PINCONF
+ 	select PINMUX
+-- 
+2.39.5
+
 
