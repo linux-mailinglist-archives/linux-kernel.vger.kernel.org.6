@@ -1,128 +1,179 @@
-Return-Path: <linux-kernel+bounces-365212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302D899DF10
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:05:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124CD99DF18
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95E2282B9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1A01C2184A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15CA18A6CC;
-	Tue, 15 Oct 2024 07:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKhuCiWe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE80E18BB9B;
+	Tue, 15 Oct 2024 07:06:35 +0000 (UTC)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6D518A6C8;
-	Tue, 15 Oct 2024 07:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564A0137930;
+	Tue, 15 Oct 2024 07:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975907; cv=none; b=rPIC6oRixj7RaH4QcJdXHtCzwcEI8xZB3oLvgYUXpx5gDsbefN7nOhUfexyEXFcRH/Z6d5R9jo1qsfDZnSBDy3P220XIkbuWsOLUmpekliGVvdcBfnxjQ36DXQP87KwdP6wOAgeCOQrlnsD0x3RC70fG5VTxuIsvLhYr9HyEd48=
+	t=1728975995; cv=none; b=CfeyhLrufWDuT6YTKsAM3/7xQq7QDkaxcWjb64AUHMaNFPtGkOar5yZdL2HBwLuKVej3R/8UTRaKoQd+sBRGa6Xq9qFpLhU6t/a4/BJtXO+AKd20SJPBWo/kzfGtG1iW7ByKXP3RCfsH6l8hgSGJIQUHmIkeYiE+Pt/N4cYTMYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975907; c=relaxed/simple;
-	bh=BfyGbB5QFkl3gj48BMwAkx+bbZdUF09NcgSDrmlh5B8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MrmvJhiLGYaMzP2U/is6t2WY0xcjytgnDlK+7PcSlgrKN07px5cfjCOQEqGQb9DM3Q1G1lVr19w/MQ6U3dW4BYWp0FrYgMsTJ3XdXgHaTqYZHsLMf8u7kQFABIZTOXL3T//nllOebgGilb6OLl9BBA8I4Vq9quCuONKDfNooe/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKhuCiWe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3423C4CEC7;
-	Tue, 15 Oct 2024 07:05:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728975906;
-	bh=BfyGbB5QFkl3gj48BMwAkx+bbZdUF09NcgSDrmlh5B8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UKhuCiWe86ypuPhPRiDxcS2BtYD+JKslqKQnVMwXBWeDAyR2OEJHzD4p0ciDQRCjt
-	 3fzDBu5nCYg5J7iAbB31R3ct5dPH8oR4potLtAdZ7oYpyaicPV6QtXPVJ/7dJ3zySE
-	 J/jgCVtsG32aznKYodNCc6SJE5oRkZMU0r9XBr6h4VTufwCQ1I09Q5BL6CmO11gzuf
-	 L5ShD6Pnx8XCZ93er6US472E7LNMFnPR2uzgQsZWxAN9p+x1zgPhkYr+hUVggxvg25
-	 gWAio0uFhXcLiLpUVgZrsXegHf9MgBTbfauCwF+3xY4dwNSGzh0gs67KOolqEjICJU
-	 wjtv1HcF1DFmg==
-Message-ID: <3774f3f0-7a69-4a55-a9a4-b2686bc06753@kernel.org>
-Date: Tue, 15 Oct 2024 09:05:01 +0200
+	s=arc-20240116; t=1728975995; c=relaxed/simple;
+	bh=LYPJDKAOIaphEy92xgvTYRFt9LgukmQ/k1PhfTyENkw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a2X+IzQ4vyYsqrlrr/QpjPgQozHTcyiuVTXFFqRTtDpn7E5evY7KJJqEsMk4HzZFqXTjBQ9bkErDy0hIyFYDhpn5qkiudb2ArVwdppgqMY3OhVQ+/n2Ml3NPHuTaepz9sSL1tCA+7jab5vJPp8Wq/Sh2eattYECvQRYG/HmeukQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6dbb24ee2ebso51651277b3.1;
+        Tue, 15 Oct 2024 00:06:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728975992; x=1729580792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RjXNxhe4YkjVhl5J3HDsDQslVdlFO3kMOqAyUlL8DnU=;
+        b=dnCmbDtdiSGf8/2uHGHcQ2AddAjHNWXHHNm+wnnFqDXWPwgirRoo8ekOIHa+LRSMDO
+         z/IFKX6kusVs7fFu0/IRkcY6VtPncQOmBRC07KiF16oe4bUhQj88iTI3WrtG9MNiGNsZ
+         cs3TnzVZ/TrzVgB+EnfkLzPtatQvRZ2/ZdnqFjNpDxB6/VtA3/aYjxVhHzuSxvQz/zMh
+         Nnb0nxtzK5bUF0IkiKSDLyV594K3v9C6mD4+LMXqP2w+Chu+Ai1JOPPIqHKI6ZrAsxra
+         VwLM/zIzrPQz6ss0jy8g7fe4x7stKP46TrfS2RtAEcUi07lcWcBBWnZ3J3lWOB9RorXS
+         hC+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVRksgolTY6CHYAgBw/RcYfQE+9pVPsyj8gTGmm0GHAufaoNS405A8rOOP8gkmkiknaoSdtLZKbq+qgxUQ=@vger.kernel.org, AJvYcCWxBmX4DjXXQwuV8xqbjY1yB39QG/RAGCTUMQB39a6FBVn6lXYuHkn02n0HMV67HdUCt7DZOh+H@vger.kernel.org, AJvYcCXfGli8f91XhaKdZSkiGqGPJSraCiBcRfcPkKIZ20/ijp4m7QmI5AuPFrYSw5glUUi7EhpEhxNYCTuFbHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8HpVfpS9HWNiNeHspjgMmJ5Zkxap94A3BrLP0dL8bCfRwmWlZ
+	Ugc04DSUaunG/bWutwSSLO9erCwUY/J9wxGGGa5//HYQWwtjQxp3gPHnVQ3r
+X-Google-Smtp-Source: AGHT+IGEDFEpWB0ZRU1LJRaweqLNuMHaVtzhGTM+46dG+NlSZhgCJhAZP7xp/QVL510NsacM97WPqg==
+X-Received: by 2002:a05:690c:d92:b0:6e3:1f02:4069 with SMTP id 00721157ae682-6e3477c030bmr106232847b3.7.1728975991752;
+        Tue, 15 Oct 2024 00:06:31 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e3c5d25cd2sm1581397b3.118.2024.10.15.00.06.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 00:06:31 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6dbb24ee2ebso51650877b3.1;
+        Tue, 15 Oct 2024 00:06:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVOdnARffxW2nTUe/I8GTRyNHj3Qe62yq24n+e0vBnHUllndmav0eOFsUd7/CXGmUtmeBefHM9gtVV1J/4=@vger.kernel.org, AJvYcCX1RmmnVN1vMiOYxq8GGdAX06PrDFTQ+kxWSgaRpFnn6WkOVcRw8dOmy0o3j6pYK+JdX8ERSlMj@vger.kernel.org, AJvYcCXY2WZWLcwhZjXWWQRogmoXuMv0WTySP65PuSrmIi5pkwrL89Hnv7i4vpTZ0FjHVFaLkNAG0Iwk9O46TGo=@vger.kernel.org
+X-Received: by 2002:a05:690c:5302:b0:6e2:43ea:55f with SMTP id
+ 00721157ae682-6e347c68ffbmr75764257b3.38.1728975990825; Tue, 15 Oct 2024
+ 00:06:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] Add Exynos990 pinctrl and chipid drivers
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241015063010.713407-1-igor.belwon@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241015063010.713407-1-igor.belwon@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241014141217.941104064@linuxfoundation.org> <3ab1938a-6f6a-4664-9991-d196e684974d@nvidia.com>
+In-Reply-To: <3ab1938a-6f6a-4664-9991-d196e684974d@nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Oct 2024 09:06:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVHLiB7PWji9uRLZNWqFa1r7NiTv9MWCCAg=3-924M7tA@mail.gmail.com>
+Message-ID: <CAMuHMdVHLiB7PWji9uRLZNWqFa1r7NiTv9MWCCAg=3-924M7tA@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/10/2024 08:30, Igor Belwon wrote:
-> Hi folks,
-> 
-> This series adds support for the drivers for the Exynos 990 SoC. It
-> consists of the pinctrl driver and the chipid driver. The product ID
-> of this chip for chipid is 0xe9830000. The pinctrl bank types are the
-> same as in the Exynos 850 chip.
+On Tue, Oct 15, 2024 at 7:32=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
+> On 14/10/2024 15:09, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.1.113 release.
+> > There are 798 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >       https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.1.113-rc1.gz
+> > or in the git tree and branch at:
+> >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
+> > -------------
+> > Pseudo-Shortlog of commits:
+>
+> ...
+>
+> > Oleksij Rempel <linux@rempel-privat.de>
+> >      clk: imx6ul: add ethernet refclock mux support
+>
+>
+> I am seeing the following build issue for ARM multi_v7_defconfig and
+> bisect is point to the commit ...
+>
+> drivers/clk/imx/clk-imx6ul.c: In function =E2=80=98imx6ul_clocks_init=E2=
+=80=99:
+> drivers/clk/imx/clk-imx6ul.c:487:34: error: implicit declaration of funct=
+ion =E2=80=98imx_obtain_fixed_of_clock=E2=80=99; did you mean =E2=80=98imx_=
+obtain_fixed_clock=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+>    hws[IMX6UL_CLK_ENET1_REF_PAD] =3D imx_obtain_fixed_of_clock(ccm_node, =
+"enet1_ref_pad", 0);
+>                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+>                                    imx_obtain_fixed_clock
+> drivers/clk/imx/clk-imx6ul.c:487:32: warning: assignment makes pointer fr=
+om integer without a cast [-Wint-conversion]
+>    hws[IMX6UL_CLK_ENET1_REF_PAD] =3D imx_obtain_fixed_of_clock(ccm_node, =
+"enet1_ref_pad", 0);
+>                                  ^
+> drivers/clk/imx/clk-imx6ul.c:489:34: error: implicit declaration of funct=
+ion =E2=80=98imx_clk_gpr_mux=E2=80=99; did you mean =E2=80=98imx_clk_hw_mux=
+=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+>    hws[IMX6UL_CLK_ENET1_REF_SEL] =3D imx_clk_gpr_mux("enet1_ref_sel", "fs=
+l,imx6ul-iomuxc-gpr",
+>                                    ^~~~~~~~~~~~~~~
+>                                    imx_clk_hw_mux
+> drivers/clk/imx/clk-imx6ul.c:489:32: warning: assignment makes pointer fr=
+om integer without a cast [-Wint-conversion]
+>    hws[IMX6UL_CLK_ENET1_REF_SEL] =3D imx_clk_gpr_mux("enet1_ref_sel", "fs=
+l,imx6ul-iomuxc-gpr",
+>                                  ^
+> drivers/clk/imx/clk-imx6ul.c:492:32: warning: assignment makes pointer fr=
+om integer without a cast [-Wint-conversion]
+>    hws[IMX6UL_CLK_ENET2_REF_PAD] =3D imx_obtain_fixed_of_clock(ccm_node, =
+"enet2_ref_pad", 0);
+>                                  ^
+> drivers/clk/imx/clk-imx6ul.c:494:32: warning: assignment makes pointer fr=
+om integer without a cast [-Wint-conversion]
+>    hws[IMX6UL_CLK_ENET2_REF_SEL] =3D imx_clk_gpr_mux("enet2_ref_sel", "fs=
+l,imx6ul-iomuxc-gpr",
 
-You split your patchsets in odd way. Bindings always go with driver.
+Missing backports of the other clock-related patches in the original
+series[1]?
+imx_obtain_fixed_clock() was introduced in commit 7757731053406dd0
+("clk: imx: add imx_obtain_fixed_of_clock()"), but some of the other
+patches from that series may be needed, too?
 
-Anyway, organize it per subsystem. Subsystem is:
-1. SoC
-2. pinctrl
+[1] https://lore.kernel.org/all/20230131084642.709385-1-o.rempel@pengutroni=
+x.de/
 
-So two patchsets targeting two subsystems.
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
