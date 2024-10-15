@@ -1,193 +1,161 @@
-Return-Path: <linux-kernel+bounces-365165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3119099DE6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:32:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F5199DE72
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 984EAB2265D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4AF1C23BC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C42C189F3B;
-	Tue, 15 Oct 2024 06:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727F0189BB2;
+	Tue, 15 Oct 2024 06:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PL6Bi1BB"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QSulWA69"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A6E189BB4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297E817335E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728973941; cv=none; b=g8tf8EcZE9yzMuArZj+4aQfs4DIaTuvyGTiGBc7HLkRSC8b2IFWFRo2ccX2sPPqhqLS7LQokwWGxXPfzqIT9Ng33PriWz6yYlVZeugPbDda4Rwts3TvoVIQ0I0aFnmE5aIiaXueSPKYtlWL6Zb0QLL6o9f6ZgFKqm1IZ6geyMpk=
+	t=1728973989; cv=none; b=hbxX4BK5Kn+17cRdTGFLSZ2NoPshemeC8YrxFFabteBH/7jVfXJ8ny/gPQa9WxEr8QFrTfmdW4r+sMf7XEj9jycU3xHNlXAk6buAn4We/Wn2vgD4lgfTYHo2umKAy870IFF/8X3p2+eiea8zQNIAisuq+sNgQu6qsQaPe0zmrmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728973941; c=relaxed/simple;
-	bh=1q4Y/mLkXbRsgsUsBr1rXVG3WA30GAlbK74JzmOqeeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTeUrJDOS6LhNmQLZNQjSf3EMVVKd6CL4jeP9LxkWJitP/A837fCmpHoY68wO5WZso5Qi2Cj1XODZxf5auwErGwGL7qlBdGR9G9vtiTrZhKp7diassjjc31uAdTq2C1EBCr872/gycom1Mhe59Z+n2qQJCatreSSx4mCIJ8XMIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PL6Bi1BB; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a0c40849cso275332266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:32:18 -0700 (PDT)
+	s=arc-20240116; t=1728973989; c=relaxed/simple;
+	bh=ajcr+KVWs/DtWqF1gsWdMOYVHLRYdSzAIdmxuUdyUdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LoLHe0BHHxvivfFrFNLB6YEtWVhKezxGLC9LW/bbtUdrZnaZO7qgFnHIiTv58fPI7MP9YZvOgtUXRmnQkAii2s02MIN6r2Im/MAyE5e7O3v1EgiEy2ksIihsh7+OeW/9elWpJfQBmMiqEusp05r0ie1Ycpiv48eICYLnP+9q3mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QSulWA69; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539eb97f26aso2395295e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728973937; x=1729578737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7op+5UqCxwoHXxBuDQd+qJjZ+3UWGpylDlz/kTqb0xg=;
-        b=PL6Bi1BBWUhrw++H6juzfxzC3YlEUviBtwOm6kT1GykiAzWchkJ9G4AfMib3717w21
-         HnF47beitC2XSanFc3m6unEAuRZr9gr1JZOH/pv7ApTpP+Vy+UazxPoGx/G1oqvOGRME
-         KmTc9KP72e3PkgJThMh0EdNsiRg6sLHBnxNCmzmtXNHfQiMOeVvZj4M/utxcXP5hYFWd
-         r/GFhpml3/WbjxpZwNvwIHNdRNkXX1BNQxet3bjGzGYlDsgGCd9jCBGrAOT99Eo2c5y6
-         7zEzFw5wQFfvpmlWeU9TPUDcIrMdgpcMK2dN++avlBmxr0QC4do1Usim/S4cUc7jwr6W
-         1nKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728973937; x=1729578737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1728973986; x=1729578786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7op+5UqCxwoHXxBuDQd+qJjZ+3UWGpylDlz/kTqb0xg=;
-        b=avaVl85skIDcRWbiVL9YCaPeDTsa/9zgjGW3NUNIvSN46U8LCOzAUm5uixnzz6+D83
-         z9AaLOklRgr4/xso1IWMzB8RqCcgx72V7Z8khj6LItAkfP39WTIaXBBVzOVKGUFNHB0w
-         PNp0n9QoXH2cSMwMUToyg7fUGgQIdV6OKYk3pesOlkYNvkmzqPaDiM7MBCRnaDJ1a1+0
-         uIxcvCfGwL/n5htQuELNIi2IV3X2VxIwWWYgogQyqHayfL/Fr2xQ/Nasj2U1A6ciowtA
-         0BNUNF3oaGB6ambHOraniJGwZcL28BCGcPGVaA+dleRuYL6OUp9nWR2nt0ZbjCK3VllF
-         rH7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVjsR5Oys+BBc86X4gq7Nm0VdQ1Ztv/3a96oLOz625tvvZbMRbWia9fnmyB6EChc5f+jf6AU9NXNO5h2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz555rv5vHYL9ts5Qxijgwfiyex/FoAA7fRaT3aBgUZtoyZseVK
-	XyVg4DAAFVsix2rt8mafnDxhBM02T6LGLyI32sj1A9NboqjRoclv+ZI5LEh4IUE=
-X-Google-Smtp-Source: AGHT+IGO9kn6nJ4TYuBfxJXBP1NHraNDZPSzUfn+T9RlBAD6g56KlbxRj/4ac95OylIrX3b4RE5stA==
-X-Received: by 2002:a17:906:7312:b0:a9a:139:5ef3 with SMTP id a640c23a62f3a-a9a01396165mr745726666b.55.1728973936618;
-        Mon, 14 Oct 2024 23:32:16 -0700 (PDT)
-Received: from localhost ([2001:4090:a244:83ae:c75a:6d73:cead:b69a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2984396esm30947666b.164.2024.10.14.23.32.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 23:32:15 -0700 (PDT)
-Date: Tue, 15 Oct 2024 08:32:14 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
-	Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v3 3/9] can: m_can: Map WoL to device_set_wakeup_enable
-Message-ID: <cxembrzcref2shryu3sisexjuf7jwn7ieknuw2eyzd5lpb7atq@ivtpvhrwww5q>
-References: <20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com>
- <20241011-topic-mcan-wakeup-source-v6-12-v3-3-9752c714ad12@baylibre.com>
- <20241011185929.GA53629@kernel.org>
+        bh=LSQe+OWkJptNhalICgZHHnWYpzgrAnYhHgBYOyd2y2A=;
+        b=QSulWA69imZpBxSB7twecK+I/3UCL5stUsEn22tLRtV/yOJugi9yoNoaxCSk1j4vgD
+         KoeH//1D9yJeSIwlcyddNpwX/sBCGCKjkhed0nJEcgkKjGPoD2buSZV3aarH0DvhZds/
+         wttqzeGcMJQzmJ3sPedSiyOx2gVBHsrL5xAJ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728973986; x=1729578786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LSQe+OWkJptNhalICgZHHnWYpzgrAnYhHgBYOyd2y2A=;
+        b=KQQetrAgT2A0QvbstxhztMbUZl2Ba8GC5yrkgBWIwp3UESMsSpzia0eymXXJcVaBKX
+         ogVxj9xeq4CsvUTBvzWqJw6g3Nx/Ej5Eo11JG9yiAXC/5jzLe8MfVPXEOJM4slYRwaqB
+         DB5DS3PALs4rvPk4oDRioAdTD7tg2v0OFcD0T8QNCOnCvzGZPrIO01DGFS0cIAygZt0C
+         K8vZ1/+MD/zJnKAqlqzq9BQIQYgnprGJF4avgPhvTawjQ5QNZH8cXxP/P0cvGMnecJ2s
+         82r79UZ5by4tckVbnmfnQwTgQ3ga8rly/k9ynOxvNXsVMGzA9aPzauD+dyYsqU0K0Dfn
+         hrPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNtcmw98TIGn4BOAe3qa2+q5EW+ZLxXKo+21YUI6bM11O/y1o7GUPKEvlESFKoEMYdlHnYknFkmzjCi2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTHvaxbZORMViv3FpqEapMiTVjNrLHLPwXB6z778c0UM6CwTT6
+	BRrkAWwHYXVtkqnsWH5tFCNbTsn56UP4B0Q1s7RKKV2FyquRCq/S5xh86hYFiT40IWcvn1ZHAf+
+	X87ifTIuC4Y6KIARiIxYUbyZ3fvnPvfP4AUMW
+X-Google-Smtp-Source: AGHT+IEi5VM5BInri+Xle/NpCFhUkRIBDd77CTdk9H6/daGndiGJT4jSou7J34vtaK0aKDEUC8sIsGSEXiAysfqU1+Q=
+X-Received: by 2002:a05:6512:2396:b0:539:eb82:d453 with SMTP id
+ 2adb3069b0e04-539eb82d67dmr3760676e87.39.1728973986262; Mon, 14 Oct 2024
+ 23:33:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="23bg3cpe6mlws6xq"
-Content-Disposition: inline
-In-Reply-To: <20241011185929.GA53629@kernel.org>
-
-
---23bg3cpe6mlws6xq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20241008073430.3992087-1-wenst@chromium.org> <20241008073430.3992087-8-wenst@chromium.org>
+ <Zwfy6ER6sbr_QxsY@smile.fi.intel.com> <ZwfzhsvlPrxMi61j@smile.fi.intel.com>
+ <CAGXv+5ED7j49ndT7BaESW8ZL7_mjVUJLM_FWma8Lwkg+Uh3saw@mail.gmail.com> <Zwz_Kl7SwfL0ZaAZ@smile.fi.intel.com>
+In-Reply-To: <Zwz_Kl7SwfL0ZaAZ@smile.fi.intel.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 15 Oct 2024 14:32:54 +0800
+Message-ID: <CAGXv+5H0Yvt1cwPOim-quT3C+=s9NapnryJhNxs_QW=DAyAycQ@mail.gmail.com>
+Subject: Re: [PATCH v8 7/8] platform/chrome: Introduce device tree hardware prober
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 07:59:29PM GMT, Simon Horman wrote:
-> On Fri, Oct 11, 2024 at 03:16:40PM +0200, Markus Schneider-Pargmann wrote:
-> > In some devices the pins of the m_can module can act as a wakeup source.
-> > This patch helps do that by connecting the PHY_WAKE WoL option to
-> > device_set_wakeup_enable. By marking this device as being wakeup
-> > enabled, this setting can be used by platform code to decide which
-> > sleep or poweroff mode to use.
-> >=20
-> > Also this prepares the driver for the next patch in which the pinctrl
-> > settings are changed depending on the desired wakeup source.
-> >=20
-> > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> > ---
-> >  drivers/net/can/m_can/m_can.c | 37 +++++++++++++++++++++++++++++++++++=
-++
-> >  1 file changed, 37 insertions(+)
-> >=20
-> > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_ca=
-n.c
-> > index a978b960f1f1e1e8273216ff330ab789d0fd6d51..29accadc20de7e9efa509f1=
-4209cc62e599f03bb 100644
-> > --- a/drivers/net/can/m_can/m_can.c
-> > +++ b/drivers/net/can/m_can/m_can.c
-> > @@ -2185,6 +2185,36 @@ static int m_can_set_coalesce(struct net_device =
-*dev,
-> >  	return 0;
-> >  }
-> > =20
-> > +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolin=
-fo *wol)
-> > +{
-> > +	struct m_can_classdev *cdev =3D netdev_priv(dev);
-> > +
-> > +	wol->supported =3D device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> > +	wol->wolopts =3D device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> > +}
-> > +
-> > +static int m_can_set_wol(struct net_device *dev, struct ethtool_wolinf=
-o *wol)
-> > +{
-> > +	struct m_can_classdev *cdev =3D netdev_priv(dev);
-> > +	bool wol_enable =3D !!wol->wolopts & WAKE_PHY;
->=20
-> Hi Markus,
->=20
-> I suspect there is an order of operations issue here.
-> Should the line above be like this?
->=20
-> 	bool wol_enable =3D !!(wol->wolopts & WAKE_PHY);
-
-Yes, you are absolutely right, thanks for spotting this.
-
-Best
-Markus
-
->=20
-> > +	int ret;
-> > +
-> > +	if ((wol->wolopts & WAKE_PHY) !=3D wol->wolopts)
-> > +		return -EINVAL;
-> > +
-> > +	if (wol_enable =3D=3D device_may_wakeup(cdev->dev))
-> > +		return 0;
-> > +
-> > +	ret =3D device_set_wakeup_enable(cdev->dev, wol_enable);
-> > +	if (ret) {
-> > +		netdev_err(cdev->net, "Failed to set wakeup enable %pE\n",
-> > +			   ERR_PTR(ret));
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
->=20
+On Mon, Oct 14, 2024 at 7:23=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Oct 14, 2024 at 12:56:20PM +0800, Chen-Yu Tsai wrote:
+> > On Thu, Oct 10, 2024 at 11:32=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, Oct 10, 2024 at 06:29:44PM +0300, Andy Shevchenko wrote:
+> > > > On Tue, Oct 08, 2024 at 03:34:26PM +0800, Chen-Yu Tsai wrote:
+>
 > ...
+>
+> > > > > +   .cfg =3D &chromeos_i2c_probe_simple_trackpad_cfg,
+> > > >
+> > > >       .cfg =3D DEFINE_I2C_OF_PROBE_CFG(trackpad, i2c_of_probe_simpl=
+e_ops),
+> > > >
+> > > > Or even
+> > > >
+> > > > #define DEFINE_I2C_OF_PROBE_CFG_SIMPLE(_type_)                     =
+   \
+> > > >       DEFINE_I2C_OF_PROBE_CFG(type, &i2c_of_probe_simple_ops)
+> >
+> > I'm not inclined on using compound literals here. "simple X cfg" will
+> > likely get shared between multiple |chromeos_i2c_probe_data| entries,
+> > and AFAIK the toolchain can't merge them. So we would end up with one
+> > compound literal per entry, even if their contents are the same.
+>
+> I'm not sure I follow, you are using compound literal _already_.
+> How does my proposal change that?
 
---23bg3cpe6mlws6xq
-Content-Type: application/pgp-signature; name="signature.asc"
+I'm using it where it makes sense, i.e. where the embedded variable
+is not going to be shared with other instances.
 
------BEGIN PGP SIGNATURE-----
+For the dumb probers, there's only going to be one instance per "type".
 
-iHUEABYKAB0WIQTd8KHufh7XoFiu4kEkjLTi1BWuPwUCZw4MZgAKCRAkjLTi1BWu
-P53TAQCj7dklp8iNY9/7+mXl3KO4/Qhx6MY4breTVV2LuvTk4QD/fCiMaCYLJQXv
-5aeaj3cc9UUeFKO61bSzmqzV92dHeQU=
-=Kr5x
------END PGP SIGNATURE-----
+For the simple probers, the config part is still one instance per "type",
+but the parameters are board and component specific. There will be
+multiple instances. Hence the config part can be shared, while the
+parameters likely won't be.
 
---23bg3cpe6mlws6xq--
+> > > With that also looking at the above
+> > >
+> > > #define DEFINE_I2C_OF_PROBE_CFG_NONE(_type_)                         =
+   \
+> > >         DEFINE_I2C_OF_PROBE_CFG(type, NULL)
+> >
+> > For the "dumb" case it makes sense though, since it would be one instan=
+ce
+> > per type. But we could go further and just wrap the whole
+> > |chromeos_i2c_probe_data| declaration.
+>
+> Maybe it's too far from now...
+
+This is what I have:
+
+#define DEFINE_CHROMEOS_I2C_PROBE_DATA_DUMB(_type)
+                        \
+       static const struct chromeos_i2c_probe_data
+chromeos_i2c_probe_dumb_ ## _type =3D {       \
+               .cfg =3D &(const struct i2c_of_probe_cfg) {
+                        \
+                       .type =3D #_type,
+                        \
+               },
+                        \
+};
+
+DEFINE_CHROMEOS_I2C_PROBE_DATA_DUMB(touchscreen);
+
+
+ChenYu
 
