@@ -1,517 +1,237 @@
-Return-Path: <linux-kernel+bounces-366403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EB799F4D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C74A99F4DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2BB1F21D2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A9328481D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3550C1F8EF2;
-	Tue, 15 Oct 2024 18:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559F28691;
+	Tue, 15 Oct 2024 18:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zw+byhxs"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EHXZnsZS"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2061.outbound.protection.outlook.com [40.107.94.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6798E28691
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015785; cv=none; b=TcQUdNarpt6HU4wStHYTGyJSqxizdh8hNaU/blDgip7rJ78O/UYzhSv6OXuVLzPngvd3q0BaG+lIYmYo8/OzJSIMFSb+V2ZZY4tcVRef/i/nAaGNsFRekWL9J+P+ru1oVzzyO+ua/jjCxUY2KddMhTW4kXPzvDpEspcf2cIZWNE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015785; c=relaxed/simple;
-	bh=ENUVOthTyASGcf8mdbAmVoT3dOTPJqQIyt9lfrdDDpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s3ltlj6uUO2DouFmLykk3243v+ylN9lIt+Pl9rh8oK+oHrHmlvlBFAT3GiK60N37RrogV2h+i04TfgwkGoF1T76NdmAzJ0ZUYQ4GElqFiGTTa0UZ6Y6rIM4FKfXJtSyEJBe3CrSHm9olKWLPKuw+kzTZGpXZKlJu3vs4qG97lN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zw+byhxs; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c714cd9c8so45863085ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729015782; x=1729620582; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mhRRsLR/T1fXOW5zZC3UCwsnfkeGEX7bunbKOXTaB2s=;
-        b=Zw+byhxsiZHi+iOnODfURfAenXhT283uf8DG0p5tSwyLDciF9N1mw/NIUZTrDVdBI9
-         j+WQYBrD7WCnB0Th9zlmckJj7tZTNfS0mPNIul7KWOAJOt/0hGXlYOZZRCoRF5knAzwf
-         db2VXaaY++0k4AMfKE0OWqhYPu2TXAhrr4YHEDqtsSOh0vz4pHvFoZuNxdU/91aTLTCR
-         9hz0oLuzag1YhmQDrOxfy7fTaG3NA8dkj39QoBVocLybTjoZvNwYnr/Kli/7H2ov2CuV
-         cgzhh7v87+yhQ3a1KIeg8aHEso08mf7YHfTR3HUS3X1pddE6V5th3b3Uun34M03ifTkD
-         CzlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729015782; x=1729620582;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mhRRsLR/T1fXOW5zZC3UCwsnfkeGEX7bunbKOXTaB2s=;
-        b=SjxVcD9t+FVAT4N5TXaG6AWrt4DUe170CHC6JAHyQwVRTG6WdnyVHoAIpwVTrZ7SAZ
-         mp0T5DkEKlXdEaoYjY82NAUhRVqVnVxpcr2HuWAakiM/aM9f0npSMgL7WOuWhJopKCJ4
-         QJqPFyed1YMeMyMls856bfesspeJd7O7tQ2qzr6bWF60ShGqt+6Wvynk6R0m/lm5X4fo
-         JvVYNXwAUnGXTL5VN6m8FBsE1qlv1d26U6zZUIaOfH8a4XvjL/vTLQrRRwWCxhxk5RJR
-         dpEXiuA9yV8dMqcIhvDXwkS62wafKxaz8fzyfg5vhlXNmeyySZfWeXrAzyGvMrier1wg
-         Q2vA==
-X-Gm-Message-State: AOJu0YxuxIFZaPU3rQTcGXIRukSizPVGUNugRoF2ihi1ZdB+ItfWO+Qm
-	9pXCFNbTkEkwab+e+oBqjvljd04xSHe7A/eJmHuaXcov0ecFhPKh29JjUw==
-X-Google-Smtp-Source: AGHT+IEZ+AVOBChrHTOrRx0mM+NJXJyqrdMA0PK+l/5g0k1zAZekaqIZ48kpdQ/+Bmt2qg08ZHWrfQ==
-X-Received: by 2002:a17:902:ecc1:b0:20c:c482:1d62 with SMTP id d9443c01a7336-20cc4821f06mr132887725ad.61.1729015782284;
-        Tue, 15 Oct 2024 11:09:42 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:efdb:1582:924:51c3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d180366a8sm14970675ad.165.2024.10.15.11.09.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 11:09:41 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v6] f2fs: introduce device aliasing file
-Date: Tue, 15 Oct 2024 11:09:36 -0700
-Message-ID: <20241015180936.1180394-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED9D1FAF1F;
+	Tue, 15 Oct 2024 18:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729015790; cv=fail; b=Frn7JB7jyUM9VXrtgFyF0SjVOJRwBS2j7qREckQTZLMHfRQ6NdD/sfgLCM5iXqPDtEMjUIQN36rPezgnsell75C3FZ2uvPRPDCOjYjWsmhxNlh2SBB0A4VCXz7H7ABJ/zsHjB2B4f+nFE072ZZCB8d56uiVmfdlz8EcVhoju40I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729015790; c=relaxed/simple;
+	bh=xqQVgVhDX593Q9SlaT4heR2rInN/YHQEg4B9bkOg8mY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IDSMm3BsEPw8nq3dj6vWT5AWnczvj4pb2HMjwUwgcTtM68jQZvhc7kV/dxA+ElYza/KZE5JkxgirCCFPkYSiX87OJUDoo2+2lWv+WrD6Ccqt1+o8n3zrJIopifid1Jei0kWNiXTOApaPPmVNDRmFXP6bjZqLBWi6NBDdbZA/ZtQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EHXZnsZS; arc=fail smtp.client-ip=40.107.94.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CI5nq+MR3ZkwJgh0jttNt4aRPOS7zS1djHxmkGa1wEoghI5Q4S66SknyoKZrB9D8MzVJeyX0uJ0Rn5j8YBKldlhWwDyzINF1M52o6qFutaxCjeGH/heApb5NOhWXNqPLTaxe3J3jmCVo207R74y1i+jdN+LX6+Q4RktwFwMvIRyd9oQsKIp/prRrq8ULJ9t9om9ReLVtBoVrcfs3DJx6oehiUP+ZOUf7AVVaPjnYtYBTTvCEz3gHkXcltk3ZAx3l8YWTmDa/JWal8YdIW3wAGmdd9qE/iCwZw/PAbkxGbYVl4koIdh0NQVZa/ddvkC1Vm+6l//X6HK92zcXkYCbkrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g45mgsy4pAedlnStswzneaQZCospxe+t6PPDLQ/icr8=;
+ b=R9CmEofitndpVSnR8o47DDyke4L5E4yuV9DmB71nnfvOHjD/6GFxgIOqibooumRR3425X+xoM9ZGfbHkkWfqC9n7eSyfPke4F7TM5VM3Ywn6zbOIpmRQIb3UB39vif3oTXoRy1JxSpEHRdt1NW7DhK5/c2/2pCnYz4RrXYpEQirfgB9+4oV3diB3Vm42kC/Z3fLWHS2cQJKTylhdTs9uvUbyg1AjTwp3IUt5y9HPM4Pl8D/rpzKplKZpMxWwt6nW1V2OC8/UozgWJ2D4DaKnnxFzRjdMDE8Vb92GYp2AmO/yOHFjsAAsKlowpYRnK3NoSCYTUw4qHNQEbjpvy8MKoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g45mgsy4pAedlnStswzneaQZCospxe+t6PPDLQ/icr8=;
+ b=EHXZnsZSwBI9OM5vlhgPZFAWndg/02W/qzE2tnY4rZlsmk++dWahmIa1Qxq925XMy5aucKFCBq9obfJDnMYlBFfZIuyXM9isSQCiLbGu/ZUoRj/GbZqk9QgtLlW+LSh8u1MKpep++FX+iKzBmGjPJn17rodG0m24W+aFkIcGuks=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by IA1PR12MB8285.namprd12.prod.outlook.com (2603:10b6:208:3f6::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Tue, 15 Oct
+ 2024 18:09:44 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 18:09:44 +0000
+Message-ID: <1395bee1-95a7-4d14-a5e8-0e1dc71fadac@amd.com>
+Date: Tue, 15 Oct 2024 13:09:42 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/13] platform/x86: hfi: Introduce AMD Hardware
+ Feedback Interface Driver
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+References: <20241010193705.10362-1-mario.limonciello@amd.com>
+ <20241010193705.10362-6-mario.limonciello@amd.com>
+ <20241015035233.GA28522@ranerica-svr.sc.intel.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241015035233.GA28522@ranerica-svr.sc.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9P221CA0028.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:806:25::33) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|IA1PR12MB8285:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9f23e480-91af-418a-2dcd-08dced448c29
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VGUvcytNZmRRY2F5ZXlzRU5Xb001czRYbWVPdVdjdEtqTEViU3Q2dUd2Y1c0?=
+ =?utf-8?B?dndNeVZpd3FISzcwbCtzOUFJSWxyWUJIRXFNcjdCTm1rVUxUS2E0UVBiWUh2?=
+ =?utf-8?B?Ti93YXl1TGNzaXJoVzBWT1IveTJhQnQ0MmJ0WTR2OFFzb1dRUUE2alBxeFFl?=
+ =?utf-8?B?Wng3ZVZNb2pCaXRjRnhSMnFVdTFsVVdhWk52c2IvZFBxL2twc200MHEzRUdT?=
+ =?utf-8?B?eHIxeHM2OW91TG9zeXNrZEE5QXhDZVRKMGFERmRHelh6Ti9LbEFPRlRiK3JG?=
+ =?utf-8?B?Nk1LeUczMHdlSU8rMjJacGE1TnpkUlN1d3hobVduYnFUclAzemtxSHhwNE00?=
+ =?utf-8?B?djk4Rm5XVVZlNUJ3UUhSMFBwWThTNkF2RldTdXJMd1FJQWJzNWdzb3dsZGRM?=
+ =?utf-8?B?bkRmUTZLUnloa2JxemV4OHoxNGNLTlE2WW5kRUZSSzgrazNsZVFIUGpTbVpw?=
+ =?utf-8?B?Wi9NZEZsVnpBUExpNEhMaHIvTEtWWFpVbDNuYkJQMnE5Mm00QmtoWUJLOWVF?=
+ =?utf-8?B?Rjl4SC82dXdId0p1QkV3Qm04WmcrUGNIaGlnb1lTUGt6SGJwVUR6RmhDbWhs?=
+ =?utf-8?B?MEhwQjZ0MlhLdmZTVmYzTzBYN2pDYmUxMklhanlaZkVWd1BMM1VOVDUvdW5o?=
+ =?utf-8?B?dExEZzlrY0VuaVprUjdZQ2J4UmVGa3NCQTBnSEtpNUxmZGJyY0lTb3N3Ny9o?=
+ =?utf-8?B?TEJEQVFrNHlFaHhDUUZLS3ZlK2xPWXBQT3RFOHRmTWVGQ1BJcCtNbXBkVkda?=
+ =?utf-8?B?dGEzejlyUWx3QllWMnE2QXVCNDlNSS9NRmkyRFpNYlp2ZDRjR2hVVlRjZEtG?=
+ =?utf-8?B?TlRxTFE3VWI1U25aOTQ3b1dPOTdmMzhaMDZIU1Z6MVN1aVE2RlVBV3k5Qkl3?=
+ =?utf-8?B?bUgvVHhpN1BkaWVuSWdMTDdJbGcweTQyMXkyMTBCWDdMUkx4M3NhV0MrcTdL?=
+ =?utf-8?B?RDdKaDZtTDI1Y1hoMXBMRmxpTnhwYTZIdkdGWS9pbFV1U0YyV1FXYitCWGlW?=
+ =?utf-8?B?ZGRzQlk5cjhuMElmZVVYQ1BBS1RLcVdCNXlsMTU3K2szUHNHRXFYcjVGQXhm?=
+ =?utf-8?B?UXE4WTVjNHJQZVJvdGhOK0Q3K01zdVhHdC9WTEFQMTZ6UU02SFdScFM5R0ow?=
+ =?utf-8?B?dUFQSWNxL1h2QTA0SDAvSEMzeW5HNjRLMHdydlNvMkJWSmkraE54RW05Uy9I?=
+ =?utf-8?B?Yk1MaEZXMmNJd2U3a09nbkNLWmx1cmRzb0swNGF5QUZLeDFJdjJVRjBkc2Fo?=
+ =?utf-8?B?TGZyMWZ2R1hVYnArNGJVbS92RE5KQVp6QkpiMzlVSDd2SEtoOEx0UmZCS3Jn?=
+ =?utf-8?B?TTFmWFZObk1zdTJBM2xabUN3UUZnbytiNlgxbXlzZm9iMFlhamtueTFQRXh2?=
+ =?utf-8?B?N1pydUY4TXg3ZllHRE9ZYmlPcTRFdkZSTDNNTXEwK2MwY2FLTnBBU3lQTGIy?=
+ =?utf-8?B?Ymk5U2RwSVhrb3VMb3lHV2hOVmViNklBS1kwMUlIcHNQRzY0SUI3cDRTb3VM?=
+ =?utf-8?B?a0hkeUkrdUc3NVJ5QXY1WFVSVUZjcGdUeng4T3BiZFd3UE5WM24wR3c1WlFB?=
+ =?utf-8?B?MGV5Y1I1RUNXM1BXeVArcHYrWTVnOHcyRkdjVmxJZy9OSThWdVZtcU1FTW5j?=
+ =?utf-8?B?bHkwczFHK2dnQWowelkxMUdyNGpvRXcwdjBRa3pXR2ZFcEd4NTFsNjRub2M4?=
+ =?utf-8?B?SUZNYm1mbEsrbUNsdVFYSkV2cDZjZ0poRSs1bnFkK0RtdkpBaUkrb2xBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aSs2cUU1Z2tQUmxBdjhWVmh6cEpPc0ZJM1ZpSUp3dDR2QWNnclRpcnRMckZs?=
+ =?utf-8?B?djl6cHlCWnZ5K0h5OHZidXZsSXdGVGhTTnk2NFN0Q3Z0VmdWc24yRVA5N3RZ?=
+ =?utf-8?B?UDR6Z3o5ZFFIckRVQUd5emhhRWtJcVFQenF3UnZXTXhuQzYwWTIvajE3TG5B?=
+ =?utf-8?B?UVRVd1QrK3lOT3ZKa0R1S1BDUS8zYWp5MnMvMDUyMVJGQW1qTytMREM5bXh6?=
+ =?utf-8?B?ejJNR2RJYUJyY0ZtS1I4Sm82YlRiSHk1cU4yd0tpU2pYSzlSUHdDYXJpRUZk?=
+ =?utf-8?B?OGNML1MrN2JBV1BIbEZIbkFtT1FHNzhqQWEweWhTbjIrRDhqelZEek4vUmZJ?=
+ =?utf-8?B?SU5LT28xQnM0d3FkQkYwdmxYN29YZzg2Q3FrYXFSa3ZGREV5TDVTQS8zMmdD?=
+ =?utf-8?B?WEZkZ0tSaGRTZmdFamlYMmE1RGZSd1VuMUEvQ1dmNzc2K2V1a0FOQkZ2SnRO?=
+ =?utf-8?B?WEFYZzFWRm9CQmxKcFdwaTkxYk1EWXJDcDdoMWUza01nN1hZTHFuMi9oTlA0?=
+ =?utf-8?B?b0o3bEVWNW5tcnBRcDdkRm1SOTVKczNtdVRNc0ZFajRLSmVyTjNtRWJtZyt2?=
+ =?utf-8?B?Q3FVWlV1enJLNFR3SVVydmpidjlUTW9lZ0ozTGJSK1NBL3lrMGVkdXpSVDJ1?=
+ =?utf-8?B?ZEo3bXBFYUplRStIZTRvMUFIcFB5UnUvbEhjeTc2VUZXOG56Nmd6a3VYTkVB?=
+ =?utf-8?B?WW52VGFDczdXeGhFdWw5SXFpcGh6SDhHY3huUVpOTGNSd2NFZ213M3hSVGQr?=
+ =?utf-8?B?eUd3OS82b0pPQ096dHFVWm8rTzlIQ1ZVWm1WbTRUcStUVG5DRzZnVU4yVE5q?=
+ =?utf-8?B?bnZNMngxVmFOL3JjaW1oMGY0TWRUcys5R283cjVKTHRRZTRDOVh1cFYvcUtY?=
+ =?utf-8?B?Z1Q2Sm40ZTV0Rkw1aWJ4TmFZZ3NSQVBCclJKcE56cVZNQTV1dWQya01qNUt5?=
+ =?utf-8?B?eVlwK2RORk9ablZjcHFsWGFnMGh2VGJ3c09WMkd1MzlUYmZUWFBEOWo3NXJL?=
+ =?utf-8?B?NVRUQWp4RGQ2RXdDMzJ3Znhydm9VL082TE5meFpqN3NUeCtUNm8zTy9ndExu?=
+ =?utf-8?B?QTcvVUV6Y0I0dGVhaWRwR2VKYmE3aWQ4dXc4RFdBaXpuQlk4THUwRUgxZHNk?=
+ =?utf-8?B?eGRFT3o3MmRuTnAzM2lKL1NzbWtuaWFVSjNYRWZpZW9CYWR5dkRTdDVYVVNY?=
+ =?utf-8?B?OVIwQVBIYVBwZFh6cGN6KzBNeE16cTBqWW5MaWFHTTdxbzhxT0ZvYlNxcjUv?=
+ =?utf-8?B?SWxWRlNhcVNsV0Y0bXZ1dGNZdEplTThuaXhGSWc0WVlBcDVHM2c1MjNVVkJh?=
+ =?utf-8?B?NGRsVVdQWnRPK3NHZmpKbXVzTTlFYzRqanAzeFhQUFRSelVRaWNSUERFV2NT?=
+ =?utf-8?B?MFdPVlZTdXUrd1RQYlpFVDU3SjQrSUIwVXlTVVIzTlVxS2tTZzBocEpHVjRU?=
+ =?utf-8?B?VUsvQnRPY0pCVThrZjRIMmxNRHBVeWdITFhyYWdqcEFDRlI1clBTLzFNK2hK?=
+ =?utf-8?B?QmlMcjdUODd0NU15M0ViTnJRdlduZ2RkTXpjUW5KOXBLa3VVS1BTV2RRMnBQ?=
+ =?utf-8?B?cFBneXpYRTNYRjIxREt6WWhnd1lRVTNpTXh2Ky9rSk5iZjcwYmJlOHJXVzFX?=
+ =?utf-8?B?ZzhzRDlDS1FPMGYwZVprMlFRcldYM2xTU2ZjMWRVcHAzU0NOa3JtNkhMcmVK?=
+ =?utf-8?B?QmRkdTJheHRkN29lTElNTHhUQlJyYi82a1JEZzhMcjBzcXA2cnNnbzNsSDNG?=
+ =?utf-8?B?eFhjZ0NGVWpKWTFudWxlYURocmNOVVhDbHN2Ym5yQlB4bXdCbloxblVkcjVX?=
+ =?utf-8?B?RHVaTjMrOUV3dXEzaGp1Q2FHRktkbHFqRUlnU3lHWnE5ZzF5c1ZiT1dSMk42?=
+ =?utf-8?B?cHBkMUpHMm5PeVBTTEFrWW1SY1ErMHVQTU9OaFVIRXZJaTYveVl2Q0ZHSGlP?=
+ =?utf-8?B?eXJzU29RMkFJMFJ5L0oyaEM4aXcwaFdtWkE5YW9FV2pwcWhQR3lyQWtjTkw2?=
+ =?utf-8?B?SmJDMTBjalRUeVF3S3RaTXZwQUhaSW5majB0c3NGNnNiNUVVR09jdm80ZVVM?=
+ =?utf-8?B?a1FEdnppNU5kM2RVdjVHTGpDaVBEanNmZ28vQ2RtVmh1L0pPZHZMRzN2OEFX?=
+ =?utf-8?Q?GLL8uPAGp5xzgIPbtUgmVMWjg?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f23e480-91af-418a-2dcd-08dced448c29
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 18:09:44.6336
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QcAL+EKbl2w0H7JC1T4BwpgDpIKGNgiu1S0u6PL4nuAJG/CVH1N68H6RQPViZDP2ywJkLeFRHLOf8LNZWue8Fw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8285
 
-From: Daeho Jeong <daehojeong@google.com>
+On 10/14/2024 22:52, Ricardo Neri wrote:
+> On Thu, Oct 10, 2024 at 02:36:57PM -0500, Mario Limonciello wrote:
+>> From: Perry Yuan <Perry.Yuan@amd.com>
+>>
+>> The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
+>> provide behavioral classification and a dynamically updated ranking table
+>> for the scheduler to use when choosing cores for tasks.
+>>
+>> There are two CPU core types defined: `Classic Core` and `Dense Core`.
+>> "Classic" cores are the standard performance cores, while "Dense" cores
+>> are optimized for area and efficiency.
+>>
+>> Heterogeneous compute refers to CPU implementations that are comprised
+>> of more than one architectural class, each with two capabilities. This
+>> means each CPU reports two separate capabilities: "perf" and "eff".
+>>
+>> Each capability lists all core ranking numbers between 0 and 255, where
+>> a higher number represents a higher capability.
+>>
+>> Heterogeneous systems can also extend to more than two architectural
+>> classes.
+>>
+>> The purpose of the scheduling feedback mechanism is to provide information
+>> to the operating system scheduler in real time, allowing the scheduler to
+>> direct threads to the optimal core during task scheduling.
+>>
+>> All core ranking data are provided by the BIOS via a shared memory ranking
+>> table, which the driver reads and uses to update core capabilities to the
+>> scheduler. When the hardware updates the table, it generates a platform
+>> interrupt to notify the OS to read the new ranking table.
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+> 
+> I tried to find the HFI details on the documents in this "bug" but I could
+> not find them. What document in specific could I look at?
+> 
+> Thanks and BR,
+> Ricardo
 
-F2FS should understand how the device aliasing file works and support
-deleting the file after use. A device aliasing file can be created by
-mkfs.f2fs tool and it can map the whole device with an extent, not
-using node blocks. The file space should be pinned and normally used for
-read-only usages.
+Hi Ricardo,
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
-Reviewed-by: Chao Yu <chao@kernel.org>
----
-v6: added the description in the kernel doc.
-v5: added a ioctl to know whether a file is for device aliasing
-v4: added file pinning check in sanity check
-v3: merged Chao's extent cache sanity check.
-    prevented device aliasing support with noextent mount option
-v2: changed the position of f2fs_destroy_extent_tree() only for device
-    aliasing files
----
- Documentation/filesystems/f2fs.rst | 45 ++++++++++++++++++++++++++++++
- fs/f2fs/data.c                     |  5 ++++
- fs/f2fs/extent_cache.c             | 45 +++++++++++++++++++++++++++++-
- fs/f2fs/f2fs.h                     |  5 ++++
- fs/f2fs/file.c                     | 44 ++++++++++++++++++++++++++---
- fs/f2fs/inode.c                    | 19 ++++++++++++-
- fs/f2fs/super.c                    |  4 +++
- fs/f2fs/sysfs.c                    |  2 ++
- include/uapi/linux/f2fs.h          |  1 +
- 9 files changed, 164 insertions(+), 6 deletions(-)
+It is spread out across multiple places.  This is part of the reason for 
+patch 1 in the series outlines details of how it works.
 
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 68a0885fb5e6..e61e8c630ecd 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -943,3 +943,48 @@ NVMe Zoned Namespace devices
-   can start before the zone-capacity and span across zone-capacity boundary.
-   Such spanning segments are also considered as usable segments. All blocks
-   past the zone-capacity are considered unusable in these segments.
-+
-+Device aliasing feature
-+-----------------------
-+
-+f2fs can utilize a special file called a "device aliasing file." This file allows
-+the entire storage device to be mapped with a single, large extent, not using
-+the usual f2fs node structures. This mapped area is pinned and primarily intended
-+for holding the space.
-+
-+Essentially, this mechanism allows a portion of the f2fs area to be temporarily
-+reserved and used by another filesystem or for different purposes. Once that
-+external usage is complete, the device aliasing file can be deleted, releasing
-+the reserved space back to F2FS for its own use.
-+
-+<use-case>
-+
-+# ls /dev/vd*
-+/dev/vdb (32GB) /dev/vdc (32GB)
-+# mkfs.ext4 /dev/vdc
-+# mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
-+# mount /dev/vdb /mnt/f2fs
-+# ls -l /mnt/f2fs
-+vdc.file
-+# df -h
-+/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
-+
-+# mount -o loop /dev/vdc /mnt/ext4
-+# df -h
-+/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
-+/dev/loop7                          32G   24K   30G   1% /mnt/ext4
-+# umount /mnt/ext4
-+
-+# f2fs_io getflags /mnt/f2fs/vdc.file
-+get a flag on /mnt/f2fs/vdc.file ret=0, flags=nocow(pinned),immutable
-+# f2fs_io setflags noimmutable /mnt/f2fs/vdc.file
-+get a flag on noimmutable ret=0, flags=800010
-+set a flag on /mnt/f2fs/vdc.file ret=0, flags=noimmutable
-+# rm /mnt/f2fs/vdc.file
-+# df -h
-+/dev/vdb                            64G  753M   64G   2% /mnt/f2fs
-+
-+So, the key idea is, user can do any file operations on /dev/vdc, and
-+reclaim the space after the use, while the space is counted as /data.
-+That doesn't require modifying partition size and filesystem format.
-+
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 94f7b084f601..90fa8ab85194 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3441,6 +3441,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 
- 	if (!f2fs_lookup_read_extent_cache_block(inode, index,
- 						 &dn.data_blkaddr)) {
-+		if (IS_DEVICE_ALIASING(inode)) {
-+			err = -ENODATA;
-+			goto out;
-+		}
-+
- 		if (locked) {
- 			err = f2fs_reserve_block(&dn, index);
- 			goto out;
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 62ac440d9416..019c1f7b7fa5 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -24,6 +24,7 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct f2fs_extent *i_ext = &F2FS_INODE(ipage)->i_ext;
- 	struct extent_info ei;
-+	int devi;
- 
- 	get_read_extent_info(&ei, i_ext);
- 
-@@ -38,7 +39,36 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
- 			  ei.blk, ei.fofs, ei.len);
- 		return false;
- 	}
--	return true;
-+
-+	if (!IS_DEVICE_ALIASING(inode))
-+		return true;
-+
-+	for (devi = 0; devi < sbi->s_ndevs; devi++) {
-+		if (FDEV(devi).start_blk != ei.blk ||
-+				FDEV(devi).end_blk != ei.blk + ei.len - 1)
-+			continue;
-+
-+		if (devi == 0) {
-+			f2fs_warn(sbi,
-+			    "%s: inode (ino=%lx) is an alias of meta device",
-+			    __func__, inode->i_ino);
-+			return false;
-+		}
-+
-+		if (bdev_is_zoned(FDEV(devi).bdev)) {
-+			f2fs_warn(sbi,
-+			    "%s: device alias inode (ino=%lx)'s extent info "
-+			    "[%u, %u, %u] maps to zoned block device",
-+			    __func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
-+			return false;
-+		}
-+		return true;
-+	}
-+
-+	f2fs_warn(sbi, "%s: device alias inode (ino=%lx)'s extent info "
-+			"[%u, %u, %u] is inconsistent w/ any devices",
-+			__func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
-+	return false;
- }
- 
- static void __set_extent_info(struct extent_info *ei,
-@@ -76,6 +106,9 @@ static bool __init_may_extent_tree(struct inode *inode, enum extent_type type)
- 
- static bool __may_extent_tree(struct inode *inode, enum extent_type type)
- {
-+	if (IS_DEVICE_ALIASING(inode) && type == EX_READ)
-+		return true;
-+
- 	/*
- 	 * for recovered files during mount do not create extents
- 	 * if shrinker is not registered.
-@@ -401,6 +434,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
- 	if (atomic_read(&et->node_cnt) || !ei.len)
- 		goto skip;
- 
-+	if (IS_DEVICE_ALIASING(inode)) {
-+		et->largest = ei;
-+		goto skip;
-+	}
-+
- 	en = __attach_extent_node(sbi, et, &ei, NULL,
- 				&et->root.rb_root.rb_node, true);
- 	if (en) {
-@@ -463,6 +501,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
- 		goto out;
- 	}
- 
-+	if (IS_DEVICE_ALIASING(inode)) {
-+		ret = false;
-+		goto out;
-+	}
-+
- 	en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
- 	if (!en)
- 		goto out;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 33f5449dc22d..b6ba22a1da47 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -213,6 +213,7 @@ struct f2fs_mount_info {
- #define F2FS_FEATURE_CASEFOLD			0x00001000
- #define F2FS_FEATURE_COMPRESSION		0x00002000
- #define F2FS_FEATURE_RO				0x00004000
-+#define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
- 
- #define __F2FS_HAS_FEATURE(raw_super, mask)				\
- 	((raw_super->feature & cpu_to_le32(mask)) != 0)
-@@ -3046,6 +3047,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
- #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
- #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
-+#define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
- 
- #define F2FS_QUOTA_DEFAULT_FL		(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
- 
-@@ -3061,6 +3063,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- /* Flags that are appropriate for non-directories/regular files. */
- #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
- 
-+#define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
-+
- static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
- {
- 	if (S_ISDIR(mode))
-@@ -4510,6 +4514,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
- F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
- F2FS_FEATURE_FUNCS(compression, COMPRESSION);
- F2FS_FEATURE_FUNCS(readonly, RO);
-+F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9ae54c4c72fe..25d934357d3c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -725,6 +725,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 
- 	trace_f2fs_truncate_blocks_enter(inode, from);
- 
-+	if (IS_DEVICE_ALIASING(inode) && from) {
-+		err = -EINVAL;
-+		goto out_err;
-+	}
-+
- 	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
- 
- 	if (free_from >= max_file_blocks(inode))
-@@ -739,6 +744,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 		goto out;
- 	}
- 
-+	if (IS_DEVICE_ALIASING(inode)) {
-+		struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
-+		struct extent_info ei = et->largest;
-+		unsigned int i;
-+
-+		for (i = 0; i < ei.len; i++)
-+			f2fs_invalidate_blocks(sbi, ei.blk + i);
-+
-+		dec_valid_block_count(sbi, inode, ei.len);
-+		f2fs_update_time(sbi, REQ_TIME);
-+
-+		f2fs_put_page(ipage, 1);
-+		goto out;
-+	}
-+
- 	if (f2fs_has_inline_data(inode)) {
- 		f2fs_truncate_inline_inode(inode, ipage, from);
- 		f2fs_put_page(ipage, 1);
-@@ -774,7 +794,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 	/* lastly zero out the first data page */
- 	if (!err)
- 		err = truncate_partial_data_page(inode, from, truncate_page);
--
-+out_err:
- 	trace_f2fs_truncate_blocks_exit(inode, err);
- 	return err;
- }
-@@ -992,7 +1012,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		return -EPERM;
- 
- 	if ((attr->ia_valid & ATTR_SIZE)) {
--		if (!f2fs_is_compress_backend_ready(inode))
-+		if (!f2fs_is_compress_backend_ready(inode) ||
-+				IS_DEVICE_ALIASING(inode))
- 			return -EOPNOTSUPP;
- 		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
- 			!IS_ALIGNED(attr->ia_size,
-@@ -1860,7 +1881,7 @@ static long f2fs_fallocate(struct file *file, int mode,
- 		return -EIO;
- 	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
- 		return -ENOSPC;
--	if (!f2fs_is_compress_backend_ready(inode))
-+	if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
- 		return -EOPNOTSUPP;
- 
- 	/* f2fs only support ->fallocate for regular file */
-@@ -3296,6 +3317,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 
-+	if (IS_DEVICE_ALIASING(inode))
-+		return -EINVAL;
-+
- 	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
- 		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
- 			  __func__, inode->i_ino, fi->i_gc_failures);
-@@ -3326,6 +3350,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
- 	if (f2fs_readonly(sbi->sb))
- 		return -EROFS;
- 
-+	if (!pin && IS_DEVICE_ALIASING(inode))
-+		return -EOPNOTSUPP;
-+
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
-@@ -3391,6 +3418,12 @@ static int f2fs_ioc_get_pin_file(struct file *filp, unsigned long arg)
- 	return put_user(pin, (u32 __user *)arg);
- }
- 
-+static int f2fs_ioc_get_dev_alias_file(struct file *filp, unsigned long arg)
-+{
-+	return put_user(IS_DEVICE_ALIASING(file_inode(filp)) ? 1 : 0,
-+			(u32 __user *)arg);
-+}
-+
- int f2fs_precache_extents(struct inode *inode)
- {
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
-@@ -4490,6 +4523,8 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_decompress_file(filp);
- 	case F2FS_IOC_COMPRESS_FILE:
- 		return f2fs_ioc_compress_file(filp);
-+	case F2FS_IOC_GET_DEV_ALIAS_FILE:
-+		return f2fs_ioc_get_dev_alias_file(filp, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -4764,7 +4799,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
- 	else
- 		return 0;
- 
--	map.m_may_create = true;
-+	if (!IS_DEVICE_ALIASING(inode))
-+		map.m_may_create = true;
- 	if (dio) {
- 		map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
- 						inode->i_write_hint);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 1ed86df343a5..194dc0f53ad8 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -372,6 +372,19 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 		return false;
- 	}
- 
-+	if (IS_DEVICE_ALIASING(inode)) {
-+		if (!f2fs_sb_has_device_alias(sbi)) {
-+			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
-+				  __func__, inode->i_ino);
-+			return false;
-+		}
-+		if (!f2fs_is_pinned_file(inode)) {
-+			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but is not pinned",
-+				  __func__, inode->i_ino);
-+			return false;
-+		}
-+	}
-+
- 	return true;
- }
- 
-@@ -823,7 +836,8 @@ void f2fs_evict_inode(struct inode *inode)
- 	f2fs_bug_on(sbi, get_dirty_pages(inode));
- 	f2fs_remove_dirty_inode(inode);
- 
--	f2fs_destroy_extent_tree(inode);
-+	if (!IS_DEVICE_ALIASING(inode))
-+		f2fs_destroy_extent_tree(inode);
- 
- 	if (inode->i_nlink || is_bad_inode(inode))
- 		goto no_delete;
-@@ -879,6 +893,9 @@ void f2fs_evict_inode(struct inode *inode)
- 		goto retry;
- 	}
- 
-+	if (IS_DEVICE_ALIASING(inode))
-+		f2fs_destroy_extent_tree(inode);
-+
- 	if (err) {
- 		f2fs_update_inode_page(inode);
- 		if (dquot_initialize_needed(inode))
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 87ab5696bd48..30646418241c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -834,6 +834,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			set_opt(sbi, READ_EXTENT_CACHE);
- 			break;
- 		case Opt_noextent_cache:
-+			if (F2FS_HAS_FEATURE(sbi, F2FS_FEATURE_DEVICE_ALIAS)) {
-+				f2fs_err(sbi, "device aliasing requires extent cache");
-+				return -EINVAL;
-+			}
- 			clear_opt(sbi, READ_EXTENT_CACHE);
- 			break;
- 		case Opt_noinline_data:
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index c56e8c873935..e51304bc65ea 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -1313,6 +1313,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
- F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
- F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
- F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
-+F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
- 
- static struct attribute *f2fs_sb_feat_attrs[] = {
- 	ATTR_LIST(sb_encryption),
-@@ -1329,6 +1330,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
- 	ATTR_LIST(sb_casefold),
- 	ATTR_LIST(sb_compression),
- 	ATTR_LIST(sb_readonly),
-+	ATTR_LIST(sb_device_alias),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs_sb_feat);
-diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
-index 955d440be104..f7aaf8d23e20 100644
---- a/include/uapi/linux/f2fs.h
-+++ b/include/uapi/linux/f2fs.h
-@@ -43,6 +43,7 @@
- #define F2FS_IOC_DECOMPRESS_FILE	_IO(F2FS_IOCTL_MAGIC, 23)
- #define F2FS_IOC_COMPRESS_FILE		_IO(F2FS_IOCTL_MAGIC, 24)
- #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
-+#define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
- 
- /*
-  * should be same as XFS_IOC_GOINGDOWN.
--- 
-2.47.0.rc1.288.g06298d1525-goog
+The reason for that "collect all" Bugzilla for documentation is because 
+the URLs for AMD documentation have undergone changes in the past and it 
+makes it difficult to put stable URLs in commit messages.  So teams that 
+want to reference documentation put it on a dump all bug for a stable 
+URL to reference.
 
+On that link you will find the APM, which will have some documentation 
+specifically for the CPUID leafs used for topology identification and 
+clearing history.
+
+Read patch 1 and let me know if it covers what specifically you're 
+looking for.  If it's still missing some info let me know what you would 
+like added.
+
+Also; I do want to note something; this is the first series to lay some 
+foundation for static information and not everything in patch 1 is 
+implemented in this first series.  There will be further follow-ups later.
 
