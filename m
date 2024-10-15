@@ -1,161 +1,267 @@
-Return-Path: <linux-kernel+bounces-366416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE3D99F50C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:19:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B06899F521
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8EF1C227C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D1911F24442
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B431FC7E5;
-	Tue, 15 Oct 2024 18:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEF21FC7EC;
+	Tue, 15 Oct 2024 18:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oXxMKnXw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0OdaMpoq"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961948614E;
-	Tue, 15 Oct 2024 18:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1361FC7D7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729016334; cv=none; b=ClYzGB7L3QgnAdYGBsA+nJ0Ck5kTeSi+iSpaLHTMbU/c6Plh4f+HeqsxHLjXoQ9cnG7ZFvPGULrRe7EG3wky7l0HgnVOhnpcY4xXs51OcYjAwXq1s2CFUoQxqqGDs+a5E4EC1XZuyLC6/cPUbeikOwiJ/PVFmBz6OEJOrTuIjbw=
+	t=1729016486; cv=none; b=hHPFnwXAbCmv86R/kZyfWEekLZckKx/XUInqHO9+0M/mnN7S4UfaG9FgTGOk5HsBVaeJt9yBCyOjTQVPI7uRib10/C7uQidSWRNaogwwDan1XrheuI1jWbNj75OaNrt0yuSfZLZm/v9lcedNCZA0gFzxODUOWAz9k1VeXHl1+sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729016334; c=relaxed/simple;
-	bh=JwHxPiXJuZclFdn5e8WGZJdc6o7BnirTKbw/DtMZwbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jnCDqJz2IW4CQdK+1Y4kjH8nrK4DWzoIRG/+Dh3iTU9R/yxBbdJUMt2+XkqeGZYY6FIq74PYq69S9sJfojbDNL72qlJhJA8gOHUMq3z8Y2m7/bAX5gHMlBcAjcMwGy0A7Mhwfva+ziAO73u5ZwLLR8L10ZXSy2G+rvWQToaNGE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oXxMKnXw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FHODGH011739;
-	Tue, 15 Oct 2024 18:18:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=z9jWvZ/gm8Qq74Tyw7fwZ62BiKpBEm
-	K2ZEvrNXAcRUM=; b=oXxMKnXwCx5amMohU6CS37GyuU4RSujbOh4wL35gbCULV4
-	5CL3IhUzyTQSj8wyoysAigLAAQb5hNbuUpsLp+iTUprbuPP9Vey2nOsrbfpBfQV6
-	gHxbXZWSIzuH8sOh/ubwMtW2dPyiWJengtaTtqy7Ybeew+I90ssjeQk0puSAp00e
-	O9Y1hyfNO3e61gFJEWN+bKlvawwS6LYe5FwRub3MLQCS+/cBeV2vGZ5/chHc/1hF
-	PSDpcbZBLYzrFchFF79/uAcSNuMsXx0Gzg/OCV+OQ2bbbIFQ8zQcvIr4e0jL6zbf
-	dIq546Aty20ccGqoNEVeoDCX4rMAbsUvsw9hVCqQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429vrw87yj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 18:18:12 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FIIBeG030802;
-	Tue, 15 Oct 2024 18:18:11 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429vrw87yb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 18:18:11 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FHoNUt001940;
-	Tue, 15 Oct 2024 18:18:09 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emnav9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 18:18:09 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FII6wd43254264
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 18:18:06 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D7DFA20043;
-	Tue, 15 Oct 2024 18:18:05 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4881C20040;
-	Tue, 15 Oct 2024 18:18:04 +0000 (GMT)
-Received: from osiris (unknown [9.171.70.29])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 15 Oct 2024 18:18:04 +0000 (GMT)
-Date: Tue, 15 Oct 2024 20:18:02 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Florent Revest <revest@chromium.org>,
-        linux-trace-kernel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v16 09/18] tracing: Add ftrace_fill_perf_regs() for perf
- event
-Message-ID: <20241015181802.19678-A-hca@linux.ibm.com>
-References: <172895571278.107311.14000164546881236558.stgit@devnote2>
- <172895581574.107311.17609909207681074574.stgit@devnote2>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172895581574.107311.17609909207681074574.stgit@devnote2>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bD2jHtvmSdCYlz0f55HyYodQIP0i2U6G
-X-Proofpoint-GUID: ZKaQmoX4Y2qQZa3eReUFKrNvHdqwfXne
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729016486; c=relaxed/simple;
+	bh=yc2h4BPm9lerqvkZe0C16BjSjaJRuyLKuuQpw4aslgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjXXn4b7N5gaVuJXZjkLvwOWtoVKsdpxHZEFJh9I9vI+t6ckpj66Ew07qjPpjFbcKbXr8+8K3+LvE3EE/ZztuTYE5aVH3CN4gQavq7kDKw9InXQBlcu6Q6o+jINO3I6N+xTDXouRXQKLnETMrWvMXapyvWqerVwhN1hNnD0Iaro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0OdaMpoq; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43117ed8adbso63906265e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:21:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729016482; x=1729621282; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D+aXqtZXZvimQkxefENobzS2Pd7lngBrozxAJiZ0Xjc=;
+        b=0OdaMpoqYGilHGvCmG24/rYPQoBKiq7PKbGp59bo/TS4ioFmuRJYzxIfbvNBrMdGVY
+         rc0OV0Ky6soxlpCFYvpeHFPWizwLP+OdTn0dADW5pObu4jiYU52iIy1eqpQ6+R+aO+H3
+         1lkbZc7kmXUxXcNNPk80MNBS7En0+vnJ/AXeOVtgdxAVh8/zCFFbCGiFWZ0raxizSaRh
+         fOp/yvKiPQFKIxMSkcolvAYXmfZiZG744bEJprVQopi+VeFRlJ3VmgUKOSRsVR5Fmn3P
+         YtXq7WBJ9W+3IYAwachXCR/lTQ18OHOTjiEbMIqf+3TqWE06ugmDXkye9MkEdZ70GNt2
+         +2kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729016482; x=1729621282;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+aXqtZXZvimQkxefENobzS2Pd7lngBrozxAJiZ0Xjc=;
+        b=H1MHzZsowV0NTr4WKRp1BJZKcVhfDj4XJ1rbzepQuRCqKaEpBvfNzMDtS+lu8gi4UK
+         fCqhWwV+gS2MwPNRXnEEomCwxZk8vmiiulvnd7RHj5RMz8e7j1TLOIWLKqBYNzo3mCpb
+         CT5cBNBPvcDJbeP88z1SA5zWzKw2u5yNEHgHsHglzLF5v9y4utqu0fLGKxRbyi+z2Vuc
+         XUERXr4zq7Qgxi+n0xauCDUI21Idrs/kLpiav74V7atNNXjRykohz9Ndi3K8X3DeDkSO
+         xR4ePKzXAyA5i4nxxUdY5V5Cn1mdWAWjOxjlsjyvlkHP2ASlaJbab4hBXgfjM9JVpJam
+         fg2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWWDQbAHK3lwocuXVPWO+b5yjVIgXmrJl8JhjS2ppnRAc78q7V8jd3WFMhskslbfiUEURZUUSwKLRec/1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx6DqgfEbKWjM+Rb84Ktnmo2A+I7U0LaOlWa0QHDACX3zCvg59
+	ZEXNIjps0PApYotiFgnPxJAlEH5XBzcRdhuyCpaFNoDzx6t7xjZk8vLsAg89bbA=
+X-Google-Smtp-Source: AGHT+IEd7HjqCcUyoudVa5+3g8x6nN5KRE7yRwbFauUCQQUQXSlhk1PPuVEO2uZlqnECpyuY+81AOQ==
+X-Received: by 2002:a05:600c:4e13:b0:42c:b9a5:bd95 with SMTP id 5b1f17b1804b1-43125560014mr141659805e9.0.1729016482204;
+        Tue, 15 Oct 2024 11:21:22 -0700 (PDT)
+Received: from dfj (host-79-50-238-21.retail.telecomitalia.it. [79.50.238.21])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a055sm2217994f8f.1.2024.10.15.11.21.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 11:21:21 -0700 (PDT)
+Date: Tue, 15 Oct 2024 20:19:52 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 2/8] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
+ axi variant
+Message-ID: <jscqeduc4dvvpu3z7a3jc7lfpjlzhkknfcj2fuazfciskezn5y@xwp42o6rswvt>
+References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+ <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-2-eeef0c1e0e56@baylibre.com>
+ <a27eb208-0fa1-45cc-bb0c-18a03b6cce4e@baylibre.com>
+ <imlhddzkf5eefr64n73pgtbvyax54746v6wzlwngryzzwrbw4h@uaaom7tbod5m>
+ <776ed45e-7ca8-42e8-9050-86928f223965@baylibre.com>
+ <35d247418b8bd43695644f395901b117a1014109.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 malwarescore=0 mlxlogscore=559 suspectscore=0
- priorityscore=1501 mlxscore=0 clxscore=1015 spamscore=0 impostorscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150122
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35d247418b8bd43695644f395901b117a1014109.camel@gmail.com>
 
-On Tue, Oct 15, 2024 at 10:30:15AM +0900, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 15.10.2024 16:51, Nuno Sá wrote:
+> On Tue, 2024-10-15 at 09:40 -0500, David Lechner wrote:
+> > On 10/15/24 2:44 AM, Angelo Dureghello wrote:
+> > > On 14.10.2024 16:13, David Lechner wrote:
+> > > > On 10/14/24 5:08 AM, Angelo Dureghello wrote:
+> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > 
+> > > > > Add a new compatible and related bindigns for the fpga-based
+> > > > > "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
+> > > > > 
+> > > > > The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
+> > > > > generic AXI "DAC" IP, intended to control ad3552r and similar chips,
+> > > > > mainly to reach high speed transfer rates using a QSPI DDR
+> > > > > (dobule-data-rate) interface.
+> > > > > 
+> > > > > The ad3552r device is defined as a child of the AXI DAC, that in
+> > > > > this case is acting as an SPI controller.
+> > > > > 
+> > > > > Note, #io-backend is present because it is possible (in theory anyway)
+> > > > > to use a separate controller for the control path than that used
+> > > > > for the datapath.
+> > > > > 
+> > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > ---
+> > > > >  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 56
+> > > > > ++++++++++++++++++++--
+> > > > >  1 file changed, 53 insertions(+), 3 deletions(-)
+> > > > > 
+> > > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > > b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > > index a55e9bfc66d7..2b7e16717219 100644
+> > > > > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > > @@ -19,11 +19,13 @@ description: |
+> > > > >    memory via DMA into the DAC.
+> > > > >  
+> > > > >    https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
+> > > > > +  https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+> > > > >  
+> > > > >  properties:
+> > > > >    compatible:
+> > > > >      enum:
+> > > > >        - adi,axi-dac-9.1.b
+> > > > > +      - adi,axi-ad3552r
+> > > > >  
+> > > > >    reg:
+> > > > >      maxItems: 1
+> > > > > @@ -36,7 +38,14 @@ properties:
+> > > > >        - const: tx
+> > > > >  
+> > > > >    clocks:
+> > > > > -    maxItems: 1
+> > > > > +    minItems: 1
+> > > > > +    maxItems: 2
+> > > > > +
+> > > > > +  clock-names:
+> > > > > +    minItems: 1
+> > > > > +    items:
+> > > > > +      - const: s_axi_aclk
+> > > > > +      - const: dac_clk
+> > > > >  
+> > > > >    '#io-backend-cells':
+> > > > >      const: 0
+> > > > > @@ -47,7 +56,16 @@ required:
+> > > > >    - reg
+> > > > >    - clocks
+> > > > >  
+> > > > > -additionalProperties: false
+> > > > > +allOf:
+> > > > > +  - if:
+> > > > > +      properties:
+> > > > > +        compatible:
+> > > > > +          contains:
+> > > > > +            const: adi,axi-ad3552r
+> > > > > +    then:
+> > > > > +      $ref: /schemas/spi/spi-controller.yaml#
+> > > >   +      properties:
+> > > >   +        clocks:
+> > > >   +          minItems: 2
+> > > >   +        clock-names:
+> > > >   +          minItems: 2
+> > > >   +      required:
+> > > >   +        clock-names
+> > > >   +    else:
+> > > >   +      properties:
+> > > >   +        clocks:
+> > > >   +          maxItems: 1
+> > > >   +        clock-names:
+> > > >   +          maxItems: 1
+> > > > 
+> > > > We could make the checking of clocks more strict to show
+> > > > the intent:
+> > > > 
+> > > > adi,axi-dac-9.1.b only has 1 clock and clock-names is optional.
+> > > > 
+> > > > adi,axi-ad3552r always has 2 clocks and clock-names is required.
+> > > > 
+> > > is this really necessary ? At v.6 would not fix things
+> > > not reallyh necessary.
+> > >  
+> > It is just a suggestion from me. I will leave it to the maintainers
+> > to say if it is necessary or not. (If they don't say anything, then
+> > we'll take it to mean it isn't necessary.)
+> > 
 > 
-> Add ftrace_fill_perf_regs() which should be compatible with the
-> perf_fetch_caller_regs(). In other words, the pt_regs returned from the
-> ftrace_fill_perf_regs() must satisfy 'user_mode(regs) == false' and can be
-> used for stack tracing.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->   Changes from previous series: NOTHING, just forward ported.
-> ---
->  arch/s390/include/asm/ftrace.h    |    5 +++++
+> Not a DT maintainer but IMHO, having these kind of checks in the bindings is very
+> useful.
+>
 
+added the above checks, but they are producing errors.
+
+I propose this:
+
+  ...
+
+  clocks:
+    minItems: 1
+    maxItems: 2
+
+  clock-names:
+    minItems: 1
+    maxItems: 2
+
+  '#io-backend-cells':
+    const: 0
+
+required:
+  - compatible
+  - dmas
+  - reg
+  - clocks
+
+allOf:
+  - if:
+      properties:
+        compatible:
+          contains:
+            const: adi,axi-ad3552r
+    then:
+      $ref: /schemas/spi/spi-controller.yaml#
+      properties:
+        clocks:
+          minItems: 2
+          maxItems: 2
+        clock-names:
+          items:
+            - const: s_axi_aclk
+            - const: dac_clk
+    else:
+      properties:
+        clocks:
+          maxItems: 1
+        clock-names:
+          items:
+            - const: s_axi_aclk
+
+unevaluatedProperties: false
+
+examples:
 ...
 
-> diff --git a/arch/s390/include/asm/ftrace.h b/arch/s390/include/asm/ftrace.h
-> index 5c94c1fc1bc1..f1c0e677a325 100644
-> --- a/arch/s390/include/asm/ftrace.h
-> +++ b/arch/s390/include/asm/ftrace.h
-> @@ -76,6 +76,11 @@ ftrace_regs_get_frame_pointer(struct ftrace_regs *fregs)
->  	return ftrace_regs_get_stack_pointer(fregs);
->  }
->  
-> +#define arch_ftrace_fill_perf_regs(fregs, _regs)	 do {		\
-> +		(_regs)->psw.addr = arch_ftrace_regs(fregs)->regs.psw.addr;		\
-> +		(_regs)->gprs[15] = arch_ftrace_regs(fregs)->regs.gprs[15];		\
-> +	} while (0)
-> +
+Keeping clock-names not required, for backward compatibility.
 
-This misses the feedback I gave for v15:
-https://lore.kernel.org/all/20241009100502.8007-E-hca@linux.ibm.com
+
+Regards,
+  Angelo
+ 
+> - Nuno Sá
 
