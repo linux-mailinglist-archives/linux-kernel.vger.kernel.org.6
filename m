@@ -1,74 +1,55 @@
-Return-Path: <linux-kernel+bounces-366358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2C199F44C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:43:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B4799F450
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1928A1C22AAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B711F24C8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851D91FAEED;
-	Tue, 15 Oct 2024 17:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpgYsQ/8"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25031FAEF2;
+	Tue, 15 Oct 2024 17:44:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3811F9ED1;
-	Tue, 15 Oct 2024 17:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823EB1F9ED1
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729014218; cv=none; b=Ueo8Gw2l7PPlWPwIxrGQmvmQfvBjhsdWulGNyjSSPVN3TMaRcjEaB6X5mnb270jQezJ86cx2YRimSiq7GEz2Q4Onh0P1M9AS65NUBdMa5uysbcd9tQ3HCFTYy0wXpVZ288ICf8GlFhu3r9EUbwzEs1TeZsRqiydBuMgZWMaIWb0=
+	t=1729014246; cv=none; b=pRp/vCuJPGoaJBmjAlvWNx66azrKMFhRQsWm7fFk3qyP4o7gMTT4L4/HZBfLrUoUT/YQokIW1spj3XQf2K4cWArxBB9AfXSXpKP4f4mZDKb7oTdZTkUCeKjf5ycxGlToptT8TkwUSwR7R20EE1ZPMmy1XzUfcB5rjIxcpULTs50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729014218; c=relaxed/simple;
-	bh=7rVIxV4DWhlY2sDWSt0F/dk2TjjTTLm17CBsZBtgnTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ImWO/pDNclFhU0BmPbCuW3UEqN8CPQIvCluwP2JCUoMpDmeG3ewxeMTtKIGdtH7lq12qX44n6qWVsKGslnpwib3+FZLaWEgkzlm4kQZc+YjDRUa6sW1pCHi8w6jsyKvqydzvxT0tAU0IkSijOSMTCkLCSbRYhOVxQsydTtsHvDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpgYsQ/8; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-45efe3c46b5so63326491cf.2;
-        Tue, 15 Oct 2024 10:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729014216; x=1729619016; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=dv8UgR/LR4AeS7zvg0Yg6SSEL/DLqc9M6SJQDYf4frk=;
-        b=bpgYsQ/8LsIP7OzNIeZ7yph8uiVTsNZOZ+DV4Y9oERJOI+qKnDGSJCXN5fg48W3QbC
-         cL0gR8iYEy4ie23+YWof7PSnmfhmRrj6uBSnADs9SmqrmuEX3LqiF2rFBMdxUq8QXuP0
-         CdauIwjCTixZcEJIBABEB76krwVOnm1wBHkFpUqVOUv4r7XL2aW0/JR/JHGBfG908/dX
-         5Bv8xEl8Vl9vHK8JJQhuQdYpKQqsDC+ADMJrRL7HUBroPQP58TqAEaYxP8N/o3+2Jcpi
-         wyziw4MZ3QI3rVKNtCSHQ7VMFytSK7EdszDKk36kXeQf6lxAtxuGToUpwG//vO2d7Ah+
-         Zclw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729014216; x=1729619016;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dv8UgR/LR4AeS7zvg0Yg6SSEL/DLqc9M6SJQDYf4frk=;
-        b=t8dIVokXfozkh9nWDpesHk+kMuyZxPcM5pGJvH9poHDBtbLNilbcKSOYhEHiBqDZ5D
-         ZQ5mAKiTjAM6lon73bNJamYjMmTDz9rkwrpy3AV2ojm83BvxBj50KbMF1KBScxskojmo
-         R8tN2GMRAI3nNblYaWfoolzJmTDabrWbRruGMMSr2JcVcwsed9mVmVZ/hCzBEigMuSJ3
-         +PD8PdX66efzjMI0peCI55c3Om/C1xcf7oGafxtKlenvW7dIHnyihVpDv81QeNBqCj9D
-         fycSDIMLgXI3h8MhouCPTvJ8rRVVNx9li/AkBFInmu5st8jTYcvYj4fiQ0A3Hsl7b+NP
-         Kjuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCAviibwafWs5bMGjWLsYF3CZzj+eCrP/B4+IJHD/kthpI15XTdTpLtISnGrQdAOnDRxTr7PyB@vger.kernel.org, AJvYcCW3OM/f2KX87oKRGbEMSWs8sheVuHIMU5GY4dDe7PDT8hbIOdZ/E32pS2pJWJ4ZyIdAHfN7jJ0LdpZqNL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm0USsbcuHBebLmSp5jXvkBtS3SqCWbCkNL3NQwcp/9LPRBgop
-	aClpTwSASKHPl5F729o+7kWVtfsPPB4QspJRtbaz3myTF//U8K8U
-X-Google-Smtp-Source: AGHT+IGo0qlSpaejf8FspSNe2g/JdGJ7JG9pXLssg1Q0b+Yc+AJm5sbFD5t+pa40dj4liLAZRVLyRA==
-X-Received: by 2002:ac8:5e53:0:b0:458:4ded:fe99 with SMTP id d75a77b69052e-4608a4f32f6mr13737911cf.42.1729014216316;
-        Tue, 15 Oct 2024 10:43:36 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b0e1745sm8779811cf.26.2024.10.15.10.43.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 10:43:35 -0700 (PDT)
-Message-ID: <cc980996-3a2b-4947-9903-5cb9129564ea@gmail.com>
-Date: Tue, 15 Oct 2024 10:43:32 -0700
+	s=arc-20240116; t=1729014246; c=relaxed/simple;
+	bh=LXn0moybR9RYzAbhFaw7+7cVE1/Bi/WVXUVrdQ+C2Ks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H840AkPjwtAerRAt88PU/stoUSkjURFdJdRsYWO9n7C3HTWvu5HvLNhCcYkXB59TuwEupRni7EZbMbhQ5D2ONMGXYkA0Azm8lO9V2iGmscYbPLglmaWILKZGTYkj5hCUSRrXP62NMPp4eYOvBsLLuAd1/hLyQJXE+3sdymjn3Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XShKn2M7jz9sPd;
+	Tue, 15 Oct 2024 19:43:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id TVYtcATzovDT; Tue, 15 Oct 2024 19:43:57 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XShKn0mffz9rvV;
+	Tue, 15 Oct 2024 19:43:57 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C58078B770;
+	Tue, 15 Oct 2024 19:43:56 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Jsl9_4vQLh1r; Tue, 15 Oct 2024 19:43:56 +0200 (CEST)
+Received: from [192.168.233.89] (unknown [192.168.233.89])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5FFCA8B764;
+	Tue, 15 Oct 2024 19:43:56 +0200 (CEST)
+Message-ID: <e9595d8b-d1e2-4c6a-b097-6f4f08d29866@csgroup.eu>
+Date: Tue, 15 Oct 2024 19:43:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,77 +57,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/211] 6.6.57-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241015112327.341300635@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20241015112327.341300635@linuxfoundation.org>
+Subject: Re: [PATCH 1/7] powerpc/entry: convert to common and generic entry
+To: Luming Yu <luming.yu@shingroup.cn>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+ jialong.yang@shingroup.cn, luming.yu@gmail.com
+References: <88E2581B1D024E9A+20241012035621.1245-3-luming.yu@shingroup.cn>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <88E2581B1D024E9A+20241012035621.1245-3-luming.yu@shingroup.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/15/24 04:25, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.57 release.
-> There are 211 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.57-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Le 12/10/2024 à 05:56, Luming Yu a écrit :
+> convert powerpc entry code in syscall and fault to use syscall_work
+> and irqentry_state as well as common calls implemented in generic
+> entry infrastructure.
+> 
+> Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
+> ---
+>   arch/powerpc/Kconfig                   | 1 +
+>   arch/powerpc/include/asm/hw_irq.h      | 5 +++++
+>   arch/powerpc/include/asm/processor.h   | 6 ++++++
+>   arch/powerpc/include/asm/syscall.h     | 5 +++++
+>   arch/powerpc/include/asm/thread_info.h | 1 +
+>   arch/powerpc/kernel/syscall.c          | 5 ++++-
+>   arch/powerpc/mm/fault.c                | 3 +++
+>   7 files changed, 25 insertions(+), 1 deletion(-)
+> 
+
+...
+
+> diff --git a/arch/powerpc/kernel/syscall.c b/arch/powerpc/kernel/syscall.c
+> index 77fedb190c93..e0338bd8d383 100644
+> --- a/arch/powerpc/kernel/syscall.c
+> +++ b/arch/powerpc/kernel/syscall.c
+> @@ -3,6 +3,7 @@
+>   #include <linux/compat.h>
+>   #include <linux/context_tracking.h>
+>   #include <linux/randomize_kstack.h>
+> +#include <linux/entry-common.h>
+>   
+>   #include <asm/interrupt.h>
+>   #include <asm/kup.h>
+> @@ -131,7 +132,7 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
+>   		 * and the test against NR_syscalls will fail and the return
+>   		 * value to be used is in regs->gpr[3].
+>   		 */
+> -		r0 = do_syscall_trace_enter(regs);
+> +		r0 = syscall_enter_from_user_mode(regs, r0);
+
+Can you provide details on how this works ?
+
+For instance, do_syscall_trace_enter() was calling do_seccomp().
+do_seccomp() sets regs->r3 to -ENOSYS then calls __secure_computing().
+
+Now you call syscall_enter_from_user_mode() instead which calls 
+syscall_enter_from_user_mode_work() which calls syscall_trace_enter() 
+which calls  __secure_computing() but without seting regs->r3 to -ENOSYS.
+
+So what will be returned by the below return when 
+syscall_enter_from_user_mode returns -1 ?
+
+>   		if (unlikely(r0 >= NR_syscalls))
+>   			return regs->gpr[3];
+>   
+> @@ -184,6 +185,8 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
+>   	 * So the resulting 6 or 7 bits of entropy is seen in SP[9:4] or SP[9:3].
+>   	 */
+>   	choose_random_kstack_offset(mftb());
+> +	/*common entry*/
+> +	syscall_exit_to_user_mode(regs);
+>   
+>   	return ret;
+>   }
 
