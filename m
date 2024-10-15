@@ -1,92 +1,94 @@
-Return-Path: <linux-kernel+bounces-365241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B4999DF5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA0E99DFFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC26F1F225AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:32:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D68241F21BC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B982D19F420;
-	Tue, 15 Oct 2024 07:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B40733ld"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDCF1B4F0A;
+	Tue, 15 Oct 2024 07:57:43 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214122AE94;
-	Tue, 15 Oct 2024 07:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276951ABEB8;
+	Tue, 15 Oct 2024 07:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728977541; cv=none; b=YH4A8YsncCBuffQzbhVZZsKn3IqCyhHS3LMycIjk24Gd9kfjmej7MQ/iA6vyxe3vKeSCRepNEUFyWSkK9YfjpHJOXvPjCb+LV+I3k3exGBe+EhMHAbkXDrtX9DDNR3/oQz0qT5Tp+IjLUditJrDaRwpxO+XGvrExxasu2VE1Suo=
+	t=1728979063; cv=none; b=dkokxHBNbHHAYtjjgCXkzgJEIdPpFicW0bM/aHFQtCrUjsrxnXGqzFmCE4uKNZ2L3T36YSvGpQnri+hVgzh1URoiDtfLV+X17E5DsSozWa/iyClXlxpDfUTnRSLvr4PzZRT8wrnx/G23yLEMP4wrKV1r93doQdq8UXASMtJMCPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728977541; c=relaxed/simple;
-	bh=SlZbFeD1eNDdEMFeXSby0hbrplRRAREzdJpNPkxdOCk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZEFn82fWfnzUCI0VGpLUjvZykYo63UiH7GJztId/YdTH2ipmT0wuQwiQP+ujzRel31rGpClATD4RfpMUZfDhn+Pk3ZUj/0Rf7MagJhy36p1y4b2HppBvhqtM2OcrZbPiDZ4DIHvYgDlfP78Z8XhBif7d6LJTc6NhiCkHUYmuuig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B40733ld; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F20C4CECD;
-	Tue, 15 Oct 2024 07:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728977540;
-	bh=SlZbFeD1eNDdEMFeXSby0hbrplRRAREzdJpNPkxdOCk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=B40733ldjuqIAGfcEaodWjR/BSE+YKfpSXxu4/N6RkZVY5SQuefwcT6iW5bCRYjW5
-	 ZegMjknp0JPaHx8a0YGVm5gSWbnxFgoThNnoQ2XQ/BW0YN6/eHo03KVLFRU5gME03w
-	 KQ3G+mN2CTlUvcAoZfGiyh2UmYamlAeftndz/Pz4FmpmCaP+0gk62WUboenL74YeJU
-	 XnEC6xAePK6oKxf5+nrYL4r9jdEM9dO6whxd6w2RaxxPfs2GmymnlWfKTySoJfYbJc
-	 ukY9Ea0jax9YWQA1qdILSogQQ5/iL4I1C69Pgdw4eH5/Q9MTb9OIfVx2FfEVXOap2r
-	 rSPWI5xZwMlEg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Stanislav Yakovlev <stas.yakovlev@gmail.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] wifi: ipw2x00/lib80211: select ARC4 helper
-Date: Tue, 15 Oct 2024 07:32:12 +0000
-Message-Id: <20241015073216.9443-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728979063; c=relaxed/simple;
+	bh=gJbvZ4ihg9NU9ggA0FMT/mLb35qajlrUSUmtskjYl1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=msGeUBkKAThw5KuJ6Egb78/b28v1LapVlsp39pSj/FzmQLBWiUZrtncAmVwsboM0PRVfYgkcS5sA/JczZev8vjUtkYsFandfGPxJid2e0ar8GykNm+1cXgFVhyujg9a5xP7giRHi5XmDpJ3pwNDIPaOUANxNHa1G+cBitETJVPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 707E0200C6D;
+	Tue, 15 Oct 2024 09:57:35 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B0DE2005A4;
+	Tue, 15 Oct 2024 09:57:35 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2D503183DC03;
+	Tue, 15 Oct 2024 15:57:33 +0800 (+08)
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com
+Cc: hongxing.zhu@nxp.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de
+Subject: [PATCH v5 0/2] Add one clock gate for i.MX95 HSIO block
+Date: Tue, 15 Oct 2024 15:34:02 +0800
+Message-Id: <1728977644-8207-1-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+REF_EN (Bit6) of LFAST_IO_REG control i.MX95 PCIe REF clock out
+enable/disable.
+Add one clock gate for i.MX95 HSIO block to support PCIe REF clock
+out gate.
 
-The lib80211 code uses arc4 crypto helpers that can be
-disabled:
+v5 changes:
+- Rebase to v6.12-rc3.
 
-ERROR: modpost: "arc4_setkey" [drivers/net/wireless/intel/ipw2x00/libipw.ko] undefined!
-ERROR: modpost: "arc4_crypt" [drivers/net/wireless/intel/ipw2x00/libipw.ko] undefined!
+v4 changes:
+- Correct typo in commit message of #2 patch.
 
-Select the library from Kconfig to ensure this can be called.
+v3 changes:
+- Squash first two dt-binding patches into one.
+- Add Krzysztof's Acked-by tag, and Frank's Reviewed-by tag.
 
-Fixes: 02f220b52670 ("wifi: ipw2x00/lib80211: move remaining lib80211 into libipw")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/wireless/intel/ipw2x00/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+v2 changes:
+- Correct the compatible entries by alphabetical order
+- Include all necessary To/Cc entried reminderd by Krzysztof.
+Thanks.
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/Kconfig b/drivers/net/wireless/intel/ipw2x00/Kconfig
-index 5e98be664d38..98a17c941100 100644
---- a/drivers/net/wireless/intel/ipw2x00/Kconfig
-+++ b/drivers/net/wireless/intel/ipw2x00/Kconfig
-@@ -6,6 +6,7 @@
- config IPW2100
- 	tristate "Intel PRO/Wireless 2100 Network Connection"
- 	depends on PCI && CFG80211
-+	select CRYPTO_LIB_ARC4
- 	select WIRELESS_EXT
- 	select WEXT_PRIV
- 	select FW_LOADER
--- 
-2.39.5
+[PATCH v5 1/2] dt-bindings: clock: nxp,imx95-blk-ctl: Add compatible
+[PATCH v5 2/2] clk: imx95-blk-ctl: Add one clock gate for HSIO block
 
+Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml |  5 +++--
+drivers/clk/imx/clk-imx95-blk-ctl.c                            | 20 ++++++++++++++++++++
+2 files changed, 23 insertions(+), 2 deletions(-)
 
