@@ -1,170 +1,154 @@
-Return-Path: <linux-kernel+bounces-366018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C47B99EFBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:38:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654F799EFC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A37E282157
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38FB1F23F88
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8E21C4A22;
-	Tue, 15 Oct 2024 14:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0441C4A21;
+	Tue, 15 Oct 2024 14:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b+nibxxJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kcl1rTj4"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B333E1D516F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17D91AF0AA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003064; cv=none; b=R53yKpywmjmxKsjYHcAzcSoJF+Qr2tAsUV6XyQHY+OTcrN/4R5t7utUT3Ouu8FPnAWPx+Wln3w8eV0DKNdHcbLoCVuZHSUGmzJldT0tmTe3JHdBUaCXbzDrq/KNAPElQKjpYTnEJTX02RcmMdWg6K8lU7jkS+E2Az5VZ/FZVXnw=
+	t=1729003113; cv=none; b=q6Eo1aNxVQKgoxOgOa4LKJyeC62CfbRx3b1KYS7VRoFKUYVDHdfWlzQOVecVB6aHS3q7ojJ411g+OpSN9GnIQuXl8HxF3X7bS1PNYaYrtV9PuG5e8PkGsr06dJF+9yM0dG9aD20iwJoEQnoMfoHwDX3ZCMPgJSwgeiTay2YHJQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003064; c=relaxed/simple;
-	bh=3ORK9QmMm9/z8HTBQ0Pu9FC8FS21Zyh6ymL8KvnFDf8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fnZmH3CsEmIUgRElomzXNfF0spkqUw8ziRahvBxSzevfcedxhN0F1Alz2RGiU5aA8SZLhxv6t34WVBdAd6yCsyB62aN9Dj+unpzCoV8avVW3VbiOIudi4bW/CWPfM1NgfO6cynPf2VC1s8z4FNKCERxuolaOsknVEOSOHCD0rR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b+nibxxJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729003061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jil6rhBmUsYqPqrNl1QTFBKfvq936MO3YF89zRosvWA=;
-	b=b+nibxxJq9eoO+1ajnEEmUv9K5BY2RzBdSgQGQQM24wCnR9MewXqLdXERiatBGze9x7fx4
-	lRSrplY3I+TWjRbMfpK5G4Zst1PRQiYqtYKp2h9jTs2GEdJn4+R+y4LHzYahQA6LrJe+0C
-	CCjRtDfzixdMTWLZutdS82/IW2nNYro=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-ta_CqULfP3Wqag03p_oDdw-1; Tue, 15 Oct 2024 10:37:40 -0400
-X-MC-Unique: ta_CqULfP3Wqag03p_oDdw-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b14073eabdso36415285a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:37:40 -0700 (PDT)
+	s=arc-20240116; t=1729003113; c=relaxed/simple;
+	bh=bGe7uxhpHxu3eQgZOBMZ7RzPKw8tYLJ/1ZxNYAJpONU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MDeydTSJSvECD7PovpbHmWDyRrVFXXLxFKVtdKmiPhpX+kXYXrVctr04fUY94lmBirTnUKfoiUSXpCzbPUf78M62MJPmNBatc/Jl0AGfnBAESfGROPa/L55mhir1G3QD4su7htwtXYMoDuCTZw25TBk2/uf8Lpl/bZm2uce869A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kcl1rTj4; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2888165800fso1838165fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729003110; x=1729607910; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5hi7zBVgndnwQX01Ty7toic/X9giPub3nHqkgUw6waY=;
+        b=kcl1rTj42Lf8UGTs41fBak5rW/mxBOstjXlyPR1nB41+kGRlpU6uYQldP2kOPrb7r9
+         f/ImFCpACHkdFw3rv8wm3+qhy/Vio1HF4EfOObzVNQyqedhFNmnzBEJwFgLPEkPb95/Y
+         Hdtrd5ztv3tV/lr1Sha+ccoZIxVbPpjDX1nsvCtfV9Xd2etW5IsxEX203aurunCyrBOL
+         DeB5oWscSPD3iepbmxGD8EUpK2mJaa1O1c/IeWVWHEjbVvdLMnxMkHJ18fWMNwdQ01BR
+         lF6X6L6bbZFaitUbqb3a2pcwMMTQjTuuaOPuTM+8NL/Mq82MjzrX96qKalBluGGdZv9/
+         vIAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729003060; x=1729607860;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jil6rhBmUsYqPqrNl1QTFBKfvq936MO3YF89zRosvWA=;
-        b=NZdVG6VWzSVYPB7ssF+h64jMsu5/QuasGiZCsu5mT8wXxg8fxsLOVZygUnBXNEk1iU
-         98YBgaE9kyG2qRw61vYG08O9h5jIBJqzgI+DlVKjUE0XbRZHSxKP2XLK8mUOuoBNkG47
-         oTAQD2xUbM7BMJIXujgGiDmja0NKG19hRyQVSJdRcDk7yZfaKrFlqVbiXDHl953A1ZAW
-         eAvdP83YEVSU2m+Q6jCS6JZ5Nhf9ZuI+BS9nnzWMshqYQ/Igs1DpoHjJW9Z/H+LCdv+G
-         6LjCsSRp/4JYUdDWYV05EwLmV0MkVCZv7Ego8ZYZmgqKsUgxdC1DTyF5Lk3SHEShKMwx
-         8+QA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyYgsuDa8K2jePG9U4MV7QtYxF4vvhYlayY4fhoddmyC0JMAaY4yrTVyN0dBjB6Yn5Z4tFGKSiCgDoMnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkazQuUcSSBqlvwCzkQIXJuZ2D77VolLo5voSfO3lNLuCYvRxP
-	P94LYEgcRmRHqOw5KsdPGaVRp5j2qRyKFNkJHvpGwt+/AFH5+gbF/kSjQZrH6rkIaYTvhtTvnwo
-	oFEttf2Pmzt9OLHaBDvqWjkzrlxBhKVqUevvhOLga63nKU4o0mUoeYz0UYzRXvA==
-X-Received: by 2002:a05:620a:4408:b0:7a2:ce2:5702 with SMTP id af79cd13be357-7b120faaab2mr1977564285a.10.1729003059644;
-        Tue, 15 Oct 2024 07:37:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3ymHpLMnJbxeDBu/7nyTmVQPb6GTrB4/NCj4c6GJUw7QhrOo7gz/pjiPdY5W07O1ORQZSNw==
-X-Received: by 2002:a05:620a:4408:b0:7a2:ce2:5702 with SMTP id af79cd13be357-7b120faaab2mr1977560385a.10.1729003059213;
-        Tue, 15 Oct 2024 07:37:39 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136395171sm76111185a.84.2024.10.15.07.37.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 07:37:38 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Steve Wahl <steve.wahl@hpe.com>, Steve Wahl <steve.wahl@hpe.com>, Ingo
- Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
- Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org
-Cc: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
-Subject: Re: [PATCH] sched/topology: improve topology_span_sane speed
-In-Reply-To: <20241010155111.230674-1-steve.wahl@hpe.com>
-References: <20241010155111.230674-1-steve.wahl@hpe.com>
-Date: Tue, 15 Oct 2024 16:37:35 +0200
-Message-ID: <xhsmh34kxv3dc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1729003110; x=1729607910;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5hi7zBVgndnwQX01Ty7toic/X9giPub3nHqkgUw6waY=;
+        b=VrmCNN5hww6BRAdH/T5jMPgaFf2jPiTD/avE/E9/xUiayRFGFZuC6JOuMufOydICNP
+         wtfTIM02MuQh1EHzqxH6E4sqLgSHDehSO7n3aYdmEw1KekyyilQ/FrBD5+uqKRmEn+4q
+         QD5UJw+Yye8RIv3en7lOo93ybO4DUzCZ/iZypuK8A6h2eo8WcWizZj58WeCRqFF7rMc1
+         qBvoA8q6MQYSrGbvo2Cu4m7NbocnB0m1MrKFDlqGb4snzTh4WMZsqkYBOFUz2BqxxGHJ
+         i4WwH2kdrAVxBmsFfTRaSS/e2IvoxkYytFi01sT9XFc9XnQp/2mfkfzm7Dr6nNqUGcYs
+         xT7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqV2hLm+gZxJJ5p2nCzrwU6d/JqvQEPJfCyvJ9qG01JB51ffE8aRCm0KCz0gGtzusGDBHnebcabTPl7bQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzufQxZFI1TRfaaG5QhxDVQzgytGfrKFBAnM8VV2Wm4pfPhzrm2
+	1NVSOaNio4iiTQU5yCxzJDSkr3+ed4xRAlV0AMXCu4QbPmvC/NtM2RvLvmhkXDY=
+X-Google-Smtp-Source: AGHT+IEMDvIg4Vgn+F1odN9xEZUpKQI2xdDrhvjJ0fLjwowbOOIHO+Da7a7B2ILJwx9yw0/uZSU7VA==
+X-Received: by 2002:a05:6871:4418:b0:277:ef62:e6a7 with SMTP id 586e51a60fabf-2886df8f33emr11046308fac.37.1729003110044;
+        Tue, 15 Oct 2024 07:38:30 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-288dae4f062sm312861fac.56.2024.10.15.07.38.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 07:38:28 -0700 (PDT)
+Message-ID: <2815c8b0-e2ad-47cb-b5aa-00297cf57899@baylibre.com>
+Date: Tue, 15 Oct 2024 09:38:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 7/8] iio: dac: ad3552r: add high-speed platform driver
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Angelo Dureghello <adureghello@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+ <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
+ <c3d55f78-5a54-49f8-b6a1-4ed0f24f8666@baylibre.com>
+ <8642bdb546c6046e8fe1d20ef4c93e70c95c6f71.camel@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <8642bdb546c6046e8fe1d20ef4c93e70c95c6f71.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10/10/24 10:51, Steve Wahl wrote:
-> Use a different approach to topology_span_sane(), that checks for the
-> same constraint of no partial overlaps for any two CPU sets for
-> non-NUMA topology levels, but does so in a way that is O(N) rather
-> than O(N^2).
->
-> Instead of comparing with all other masks to detect collisions, keep
-> one mask that includes all CPUs seen so far and detect collisions with
-> a single cpumask_intersects test.
->
-> If the current mask has no collisions with previously seen masks, it
-> should be a new mask, which can be uniquely identified by the lowest
-> bit set in this mask.  Keep a pointer to this mask for future
-> reference (in an array indexed by the lowest bit set), and add the
-> CPUs in this mask to the list of those seen.
->
-> If the current mask does collide with previously seen masks, it should
-> be exactly equal to a mask seen before, looked up in the same array
-> indexed by the lowest bit set in the mask, a single comparison.
->
-> Move the topology_span_sane() check out of the existing topology level
-> loop, let it use its own loop so that the array allocation can be done
-> only once, shared across levels.
->
-> On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
-> the average time to take one processor offline is reduced from 2.18
-> seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
-> 34m49.765s without this change, 16m10.038s with this change in place.)
->
+On 10/15/24 1:37 AM, Nuno Sá wrote:
+> On Mon, 2024-10-14 at 16:15 -0500, David Lechner wrote:
+>> On 10/14/24 5:08 AM, Angelo Dureghello wrote:
+>>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>>
+>>> Add High Speed ad3552r platform driver.
+>>>
+>>
+>> ...
+>>
+>>> +static int ad3552r_hs_read_raw(struct iio_dev *indio_dev,
+>>> +			       struct iio_chan_spec const *chan,
+>>> +			       int *val, int *val2, long mask)
+>>> +{
+>>> +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
+>>> +	int ret;
+>>> +
+>>> +	switch (mask) {
+>>> +	case IIO_CHAN_INFO_SAMP_FREQ: {
+>>> +		int sclk;
+>>> +
+>>> +		ret = iio_backend_read_raw(st->back, chan, &sclk, 0,
+>>> +					   IIO_CHAN_INFO_FREQUENCY);
+>>
+>> FWIW, this still seems like an odd way to get the stream mode SCLK
+>> rate from the backend to me. How does the backend know that we want
+>> the stream mode clock rate and not some other frequency value? 
+> 
+> In this case the backend has a dedicated compatible so sky is the limit :). But yeah,
+> I'm also not extremely happy with IIO_CHAN_INFO_FREQUENCY. But what do you have in
+> mind? Using the sampling frequency INFO or a dedicated OP?
+> 
 
-This isn't the first complaint about topology_span_sane() vs big
-systems. It might be worth to disable the check once it has scanned all
-CPUs once - not necessarily at init, since some folks have their systems
-boot with only a subset of the available CPUs and online them later on.
+It think it would be most straightforward to have something
+like a iio_backend_get_data_stream_clock_rate() callback since
+that is what we are getting.
 
-I'd have to think more about how this behaves vs the dynamic NUMA topology
-code we got as of
+Re: the other recent discussions about getting too many
+callbacks. Instead of a dedicated function like this, we
+could make a set of generic functions:
 
-  0fb3978b0aac ("sched/numa: Fix NUMA topology for systems with CPU-less nodes")
+iio_backend_{g,s}et_property_{s,u}(8, 16, 32, 64}()
 
-(i.e. is scanning all possible CPUs enough to guarantee no overlaps when
-having only a subset of online CPUs? I think so...)
+that take an enum parameter for the property. This way,
+for each new property, we just have to add an enum member
+instead of creating a get/set callback pair.
 
-but maybe something like so?
----
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9748a4c8d6685..bf95c3d4f6072 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2361,12 +2361,25 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
- static bool topology_span_sane(struct sched_domain_topology_level *tl,
- 			      const struct cpumask *cpu_map, int cpu)
- {
-+	static bool validated;
- 	int i = cpu + 1;
- 
-+	if (validated)
-+		return true;
-+
- 	/* NUMA levels are allowed to overlap */
- 	if (tl->flags & SDTL_OVERLAP)
- 		return true;
- 
-+	/*
-+	 * We're visiting all CPUs available in the system, no need to re-check
-+	 * things after that. Even if we end up finding overlaps here, we'll
-+	 * have issued a warning and can skip the per-CPU scan in later
-+	 * calls to this function.
-+	 */
-+	if (cpumask_equal(cpu_map, cpu_possible_mask))
-+		validated = true;
-+
- 	/*
- 	 * Non-NUMA levels cannot partially overlap - they must be either
- 	 * completely equal or completely disjoint. Otherwise we can end up
+Unrelated to this particular case, but taking the idea even
+farther, we could also do the same with enable/disable
+functions. We talked before about cutting the number of
+callbacks in half by using a bool parameter instead of
+separate enable/disable callbacks. But we could cut it down
+even more by having an enum parameter for the thing we are
+enabling/disabling.
+
 
 
