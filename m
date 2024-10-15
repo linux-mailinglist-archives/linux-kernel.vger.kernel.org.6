@@ -1,223 +1,124 @@
-Return-Path: <linux-kernel+bounces-366718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF8299F90A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB0D99F90F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C44283CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:27:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B35428408B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0F31FBF60;
-	Tue, 15 Oct 2024 21:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7881FE0EF;
+	Tue, 15 Oct 2024 21:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/zAiodb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GMrs4nau"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4479E1F8185;
-	Tue, 15 Oct 2024 21:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538481FBF52
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729027639; cv=none; b=JZEn9NYZMVb3pHNwVp92FLAfJiHoTDW9St3aEv9OqRfsRQworsWXqNi/lijSnXVt5IEuSCFZXw/UAohKGp1dvCmg8JvIBLecMHwa2q1BTjAlYtkbUToXSgWedRlW3wfYWWff1scqZexbR+h8AdDF7camC0XO8O4Vn5cZWl7mFBc=
+	t=1729027667; cv=none; b=V17IKgywFEJYaTA3Tqks01MCNwlk5+n6Ogga/9uv/BQsNNq/WhUvDvTjfahdT6jySl6ot4STCvn0OvfnH3uouWYknLKoqHtp487JeYWkMzXQ00+FvMZ7a93n3FEFwmbhaiCSV6T9XynWrIG1FKg6cv1gyoeqds1/vvxiYmssM68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729027639; c=relaxed/simple;
-	bh=bhRyfjKei9hYO+it+Ui9ogNxrCb+2kBRqH6VAgePJm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIjGQIl5axgai8DSPqXAPTrwUKnRd6uht3PUA6sLYVJ/wtwG9tT+bxs2W0uil2s1z/SwdosmnCWHTKVhFuf3aKAXBu4Hf+goLdxDYJaIuvqW0SX9lOnHzlk1cF5yJ3Rtd18DEuLU8eqkM3mOA0FkIqBljtGe66lzS0VKTdbtDg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/zAiodb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC321C4CEC6;
-	Tue, 15 Oct 2024 21:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729027638;
-	bh=bhRyfjKei9hYO+it+Ui9ogNxrCb+2kBRqH6VAgePJm4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L/zAiodbSwtCe9ReifgKdtFrqbxT3NIp3Sr6W752IMPxjf/kX3UXekdaTMlH3FlDB
-	 Hci17YfgZr+kQwDFseYSFoL81BYLtcFzzoxWt6OaOEVHO2/lvIIBAMkVnSrJA28NXA
-	 s1vEpqL/JotFF79L72rsyB5MuBWJp+kNHXY7nFzx3LDjTU24ARz6icr/ltxR9KPBks
-	 JdKPenUMCdKbxIvgq0s9PGciEQRQpmZH1SV1e1HtxFVtPJcPKqU89/IjetArNaW/7y
-	 a8rMV1fs0xA/+8qszQfl7wCw8U4b9cw6ZAB3dCkVVj3HqHtL0Y2nHE2KywDxivUu3j
-	 Bp1GwQOI9qiJA==
-Date: Tue, 15 Oct 2024 16:27:17 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
- SoCs
-Message-ID: <20241015212717.GA1983714-robh@kernel.org>
-References: <20241015105133.656360-1-ciprianmarian.costea@oss.nxp.com>
- <20241015105133.656360-2-ciprianmarian.costea@oss.nxp.com>
- <20241015211540.GA1968867-robh@kernel.org>
+	s=arc-20240116; t=1729027667; c=relaxed/simple;
+	bh=LUYhe9VHGlNz08wkcVEoMhN03ZHvrxBxGdQ3Fz1JnbE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sE7ImU6bSzk1dxBqTLKuwGFAwCwTysRLN76/N99v1ZlZQfvZsl0MAXI5vXSEa1tqbZsBRyUbqt5NUTCIhx2b4jGyS3To6CAx6L/M9Z0fMVNt+aBrtt5b9IP7Zw27y8dGYj6jv4SE0bbUnZ00+1purEH0BkZYJks2YU+wjKGVNoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GMrs4nau; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729027663;
+	bh=LUYhe9VHGlNz08wkcVEoMhN03ZHvrxBxGdQ3Fz1JnbE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=GMrs4nauD3DWAtU3TrhQDz41pEJedlZGt9I/ZG9+Y7kgOje+X1pbgsd8GLRK0+TnD
+	 DukLXXb8mQ/n1EWyaJJUWmKh7aSu6tCoBsh8BrAK+lUrGaGEuURwVd5R7RdXKg+x3b
+	 PLKfCUSzEkHUk1S1DMHbCO7PWuKkBA39NteNMwyqLbjOFcLUEVGX8U5W1XUy7NNdLD
+	 Yq7BLbLWvuUgTJyMiIv9narmH+1rkM9zh5dHzkVbINVzWXEKV0qFiQe/zc/eppIY5i
+	 AaZWhn/6OnGgEo65ZCA4D0VQq+5bL7GLix6F9FZLnVjnviRz8dIDdkTq0p6MS8Pdb+
+	 xVqABTn1QsHBA==
+Received: from [192.168.1.206] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 53DF117E374C;
+	Tue, 15 Oct 2024 23:27:42 +0200 (CEST)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Tue, 15 Oct 2024 17:27:17 -0400
+Subject: [PATCH v2 1/2] driver core: Create device_link_is_useless() helper
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015211540.GA1968867-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241015-fwdevlink-probed-no-err-v2-1-756c5e9cf55c@collabora.com>
+References: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
+In-Reply-To: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Saravana Kannan <saravanak@google.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+ Jon Hunter <jonathanh@nvidia.com>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Oct 15, 2024 at 04:15:40PM -0500, Rob Herring wrote:
-> On Tue, Oct 15, 2024 at 01:51:30PM +0300, Ciprian Costea wrote:
-> > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> > 
-> > This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
-> > 
-> > Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> > Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> > Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> > Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> > ---
-> >  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 102 ++++++++++++++++++
-> >  1 file changed, 102 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > new file mode 100644
-> > index 000000000000..3a77d4dd8f3d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > @@ -0,0 +1,102 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: NXP S32G2/S32G3 Real Time Clock (RTC)
-> > +
-> > +maintainers:
-> > +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> > +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - enum:
-> > +          - nxp,s32g2-rtc
-> > +      - items:
-> > +          - const: nxp,s32g3-rtc
-> > +          - const: nxp,s32g2-rtc
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: ipg clock drives the access to the
-> > +          RTC iomapped registers
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: ipg
-> > +
-> > +  assigned-clocks:
-> > +    minItems: 1
-> > +    items:
-> > +      - description: Runtime clock source. It must be a clock
-> > +            source for the RTC module. It will be disabled by hardware
-> > +            during Standby/Suspend.
-> > +      - description: Standby/Suspend clock source. It is optional
-> > +            and can be used in case the RTC will continue ticking during
-> > +            platform/system suspend. RTC hardware module contains a
-> > +            hardware mux for clock source selection.
-> 
-> If the RTC h/w contains a mux, then your mux inputs should be listed in 
-> 'clocks', not here.
-> 
-> > +
-> > +  assigned-clock-parents:
-> > +    description: List of phandles to each parent clock.
-> > +
-> > +  assigned-clock-rates:
-> > +    description: List of frequencies for RTC clock sources.
-> > +            RTC module contains 2 hardware divisors which can be
-> > +            enabled or not. Hence, available frequencies are the following
-> > +            parent_freq, parent_freq / 512, parent_freq / 32 or
-> > +            parent_freq / (512 * 32)
-> 
-> In general, assigned-clocks* do not need to be documented and should 
-> never be required.
-> 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - "#clock-cells"
-> > +  - clocks
-> > +  - clock-names
-> > +  - assigned-clocks
-> > +  - assigned-clock-parents
-> > +  - assigned-clock-rates
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +
-> > +    rtc0: rtc@40060000 {
-> > +        compatible = "nxp,s32g3-rtc",
-> > +                   "nxp,s32g2-rtc";
-> > +        reg = <0x40060000 0x1000>;
-> > +        interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> > +        #clock-cells = <1>;
-> > +        clocks = <&clks 54>;
-> > +        clock-names = "ipg";
-> > +        /*
-> > +         * Configuration of default parent clocks.
-> > +         * 'assigned-clocks' 0-3 IDs are Runtime clock sources
-> > +         * 4-7 IDs are Suspend/Standby clock sources.
-> > +         */
-> > +        assigned-clocks = <&rtc0 2>, <&rtc0 4>;
-> 
-> That's weird...
-> 
-> > +        assigned-clock-parents = <&clks 56>, <&clks 55>;
-> 
-> I'd expect these should be in 'clocks'. I don't think this node should 
-> be a clock provider unless it provides a clock to something outside the 
-> RTC.
-> 
-> Looks like you are just using assigned-clocks to configure the clock mux 
-> in the RTC. That's way over complicated. Just define a vendor specific 
-> property with the mux settings. 
+Create a device_link_is_useless() helper to encapsulate the logic that
+checks whether a device link is useless and use that instead.
 
-I just read v1 and got told use the clock framework...
+Suggested-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+ drivers/base/core.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-I disagree completely. Tons of h/w blocks have the ability to select 
-(internal to the block) from multiple clock sources. Making the block a 
-clock provider to itself is completely pointless and an overkill, and 
-we *never* do that. Any display controller or audio interface has 
-mutiple clock sources as just 2 examples.
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index b69b82da8837ebb6b3497d52d46a43e26ea1c64a..88a47a6e26d69aacbaeb094c42be4fcf9dde4a6b 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -668,6 +668,19 @@ postcore_initcall(devlink_class_init);
+ #define DL_ADD_VALID_FLAGS (DL_MANAGED_LINK_FLAGS | DL_FLAG_STATELESS | \
+ 			    DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE)
+ 
++static bool device_link_is_useless(u32 flags, struct device *consumer)
++{
++	/*
++	 * SYNC_STATE_ONLY links are useless once a consumer device has probed.
++	 */
++	if (flags & DL_FLAG_SYNC_STATE_ONLY &&
++	    consumer->links.status != DL_DEV_NO_DRIVER &&
++	    consumer->links.status != DL_DEV_PROBING)
++		return true;
++
++	return false;
++}
++
+ /**
+  * device_link_add - Create a link between two devices.
+  * @consumer: Consumer end of the link.
+@@ -771,13 +784,7 @@ struct device_link *device_link_add(struct device *consumer,
+ 		goto out;
+ 	}
+ 
+-	/*
+-	 * SYNC_STATE_ONLY links are useless once a consumer device has probed.
+-	 * So, only create it if the consumer hasn't probed yet.
+-	 */
+-	if (flags & DL_FLAG_SYNC_STATE_ONLY &&
+-	    consumer->links.status != DL_DEV_NO_DRIVER &&
+-	    consumer->links.status != DL_DEV_PROBING) {
++	if (device_link_is_useless(flags, consumer)) {
+ 		link = NULL;
+ 		goto out;
+ 	}
 
-However, I don't see why you need the divider config in DT. Can't you 
-figure out what divider you need based on input frequency? The output 
-frequency should be fixed, right?
+-- 
+2.47.0
 
-Rob
 
