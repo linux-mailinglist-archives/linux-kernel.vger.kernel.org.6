@@ -1,129 +1,154 @@
-Return-Path: <linux-kernel+bounces-366679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E65799F894
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:05:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C221B99F8AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE2381F23638
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:05:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25DDFB21845
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6321FAF1C;
-	Tue, 15 Oct 2024 21:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCA41FBF62;
+	Tue, 15 Oct 2024 21:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttInMuNZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XTpM1KAD"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4FA1F81AE;
-	Tue, 15 Oct 2024 21:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F402F1FAF1F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729026294; cv=none; b=mZCy3xc/lPDCM2X132k0xEeA7g0km2480D0tMTRhn6AWlqL1NbmzSTp5PHxyGrPqU1LmzPSo9jupZy0Gf5LGgrpBSIPefeW3Q2KIP25QCoDNH2CP2ApMXEn45X//abDM66rHu3yYx+fnBbUoRLm0mJko0EGMSEBsqm6tx+O2I2c=
+	t=1729026394; cv=none; b=U1+BhN80QFDpIvaDguAbo3I+LM1OEEEZKFO8hsMXLSlplVyO2TIH/XI/4tFZfiThBls5j1zl8leOmKQT3MtLPK/MMarPoOWw6jtpFGdtv0kMV864doBTA6lFMUet0NJXXIVsd7YWThYFTgKZlpgh9JL8RBnC+DAW4AOOKoo2agY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729026294; c=relaxed/simple;
-	bh=BUYL9DCxlqZBPQ7mv1XPuRWD5L3cs0jleTVBGzzkhXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQ9R7b1Nlx605hG/V/7vWmb7psl9AxCTb7InhKCK37NZB08N2tXsECQlta8bfuyFhSxCjl0F0yegEZFlz+uZxpjgLAOfIN1WAGca2vZ9X1C8x4Www4TimbCmFaF6bW4TdvMlLV3U1NwT1R+8Jzq8P0xfj5uu0TG5c3mxnwt7Fi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttInMuNZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63711C4CECF;
-	Tue, 15 Oct 2024 21:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729026293;
-	bh=BUYL9DCxlqZBPQ7mv1XPuRWD5L3cs0jleTVBGzzkhXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ttInMuNZhQyT9mQjpBo4HjV5z17nWbUD2dkhzKu3h2EinXQY2ATAebbICxfx/2YCN
-	 jAEZwj0XPLuLlgnqmUbIy4tOGdpdZkI2yGezk7iU3Sqrsu9R2L26xTRDOUh5yKvsPF
-	 4Yh17X3w44S59uwHVfiRWnyuDwjNoMajzq5UrPNUy8fBy/BWug6K9Nzfa0m3uRlPU1
-	 1iTw1uoysxPkNSnmApk6pglWHHrhNmNds/NLKI45iPoW/w2jtjR6BNJC/8+0HnCs8/
-	 cdBhs7reBwKmaNPMeDhlaDJaLXbBDsn7KaHiKq8X7jD+7KfhgtJYvr61Azy2Iqm/Q/
-	 vPBDqV8F5TzVg==
-Date: Tue, 15 Oct 2024 16:04:52 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-Message-ID: <20241015210452.GA1942395-robh@kernel.org>
-References: <20241015105133.656360-1-ciprianmarian.costea@oss.nxp.com>
- <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1729026394; c=relaxed/simple;
+	bh=usrc87swuiIEZtF6d3XncI94QYmPNZzDpOf7pgjoktg=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=aO+GXaxYC6nr+rxdb9A4ouqRl19GUyGxfPOTcjd3z8i8P21j6fMcxsm9MYPkLIgtUjNH+IGTTw9kj8IftjMotQoaop/odl0oplyEAte782SMwEedoVbkEmtsuTd60c1xxgzayYOkJ2o/fT6JESNlNszZlYh03gTaxq7evdb1PpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XTpM1KAD; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e28ef71f0d8so9448935276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729026392; x=1729631192; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=V3V7UdMfheJVSkt+63c8FaFurZG67J77B0wKxX03R3U=;
+        b=XTpM1KADwjXaBl0R/PLxol+qyRsrTnTWNGdpo9VygKW/kZ2jpWhc+neYxa9Mz01IA/
+         csxQy63Rwd4euwfXJ3wNv5MEhSBxxm72hm1ecbo1X9WB1L06ScIIax4bco17Th8cclko
+         GOT5opzRVAAh9Dgj+Cz75satN3jEGbBGAcySKJZd87QPCQmEfOJ1+9OHdIdLR/asQ2B5
+         tQyShZTzI0betViK1f/8Bvd03Mekx2pqjJJqPKdznUf6y625L93acZOsL7yloqM6XswE
+         /lIenm23vuh7yrWDmmsDOkmkinfACND+gRYiJaBT0gPgMEySfPZiYIv+/YaluxarxMps
+         BleQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729026392; x=1729631192;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V3V7UdMfheJVSkt+63c8FaFurZG67J77B0wKxX03R3U=;
+        b=xBtnc2PYeRHKgM23Szt15CT754FFJONGXlnJanbXsn5qrz8cAdL6fFykQisrH5QsVC
+         ueUgPw11QmWj9m9T7FpQ3ZDH2oHRTPswPsdrO0Q2GYyo3L6T977rIiAnlCtJllno2Amf
+         vx0Sygpxz+Xj5SHyA1xOJoTBMnw5p810HALzwkqsx+qzCzQRPeKWaAEnrMfKui1Hp+d5
+         sFXhcWL41/4UEaGu58u/iHlvIFLPJGDnfR2Sp7DkTgEDkapDb4rxqw0F57Ks4dlQiGqr
+         bAmYIvdDdmSlPiXycCc1UhcCgBjw61Vhh/hLy2LQLqoM+b3CKdpI/xYCikR9Tam/A6AJ
+         Ukaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrkXcnbEeM9bnVnR0wgOgMWwa/42TNSLhLfAhdPGC3vE/JoBKPHtNRJdkSdAYTJaAK7KZc5KVMls1wPFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8v/u3zcV3A2faECArw4ArEQ8qY5nCqVzzE/MvnW4+2bHd7M+0
+	htVdVVV3itre2kuru6ytgwShzDq7/BrWZ/7JK/HXE7+BjX1TjalPdJrwYEPxT4/KYDHjvWldek5
+	tUP0WPg==
+X-Google-Smtp-Source: AGHT+IFLQsMwt3RmY52ZnYdbWUmPSehl8+s1WJ6zwIO/r6G9EmOdNoktGWTpz27Avayxp+cRjctmzTvF362C
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:61a1:4d9d:aca1:ada])
+ (user=irogers job=sendgmr) by 2002:a05:6902:2d08:b0:e28:f6b3:3666 with SMTP
+ id 3f1490d57ef6-e2978567367mr1383276.7.1729026391842; Tue, 15 Oct 2024
+ 14:06:31 -0700 (PDT)
+Date: Tue, 15 Oct 2024 14:06:23 -0700
+Message-Id: <20241015210629.1150428-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Subject: [PATCH v4 0/5] Hwmon PMUs
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Yoshihiro Furudera <fj5100bi@fujitsu.com>, 
+	James Clark <james.clark@linaro.org>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	Howard Chu <howardchu95@gmail.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>, 
+	Yang Jihong <yangjihong1@huawei.com>, Junhao He <hejunhao3@huawei.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 15, 2024 at 01:51:31PM +0300, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
-> Add a RTC driver for NXP S32G2/S32G3 SoCs.
-> 
-> The RTC module is used to enable Suspend to RAM (STR) support
-> on NXP S32G2/S32G3 SoC based boards.
-> RTC tracks clock time during system suspend.
-> 
-> RTC from S32G2/S32G3 is not battery-powered and it is not
-> kept alive during system reset.
-> 
-> Co-developed-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> Signed-off-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> Co-developed-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  drivers/rtc/Kconfig    |  11 +
->  drivers/rtc/Makefile   |   1 +
->  drivers/rtc/rtc-s32g.c | 778 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 790 insertions(+)
->  create mode 100644 drivers/rtc/rtc-s32g.c
+Following the convention of the tool PMU, create a hwmon PMU that
+exposes hwmon data for reading. For example, the following shows
+reading the CPU temperature and 2 fan speeds alongside the uncore
+frequency:
+```
+$ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus_online/ -M UNCORE_FREQ -I 1000
+     1.001153138              52.00 'C   temp_cpu
+     1.001153138              2,588 rpm  fan1
+     1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
+     1.001153138                  8      tool/num_cpus_online/
+     1.001153138      1,077,101,397      UNC_CLOCK.SOCKET                 #     1.08 UNCORE_FREQ
+     1.001153138      1,012,773,595      duration_time
+...
+```
+
+Additional data on the hwmon events is in perf list:
+```
+$ perf list
+...
+hwmon:
+...
+  temp_core_0 OR temp2
+       [Temperature in unit coretemp named Core 0. crit=100'C,max=100'C crit_alarm=0'C. Unit:
+        hwmon_coretemp]
+...
+```
+
+v4: Drop merged patches 1 to 10. Separate adding the hwmon_pmu from
+    the update to perf_pmu to use it. Try to make source of literal
+    strings clearer via named #defines. Fix a number of GCC warnings.
+v3: Rebase, add Namhyung's acked-by to patches 1 to 10.
+v2: Address Namhyung's review feedback. Rebase dropping 4 patches
+    applied by Arnaldo, fix build breakage reported by Arnaldo.
 
 
-> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-> index 8ee79cb18322..a63d010a753c 100644
-> --- a/drivers/rtc/Makefile
-> +++ b/drivers/rtc/Makefile
-> @@ -158,6 +158,7 @@ obj-$(CONFIG_RTC_DRV_RX8025)	+= rtc-rx8025.o
->  obj-$(CONFIG_RTC_DRV_RX8111)	+= rtc-rx8111.o
->  obj-$(CONFIG_RTC_DRV_RX8581)	+= rtc-rx8581.o
->  obj-$(CONFIG_RTC_DRV_RZN1)	+= rtc-rzn1.o
-> +obj-$(CONFIG_RTC_DRV_S32G)	+= rtc-s32g.o
->  obj-$(CONFIG_RTC_DRV_S35390A)	+= rtc-s35390a.o
->  obj-$(CONFIG_RTC_DRV_S3C)	+= rtc-s3c.o
->  obj-$(CONFIG_RTC_DRV_S5M)	+= rtc-s5m.o
-> diff --git a/drivers/rtc/rtc-s32g.c b/drivers/rtc/rtc-s32g.c
-> new file mode 100644
-> index 000000000000..d6502d8bf616
-> --- /dev/null
-> +++ b/drivers/rtc/rtc-s32g.c
+Ian Rogers (5):
+  tools api io: Ensure line_len_out is always initialized
+  perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs
+  perf pmu: Add calls enabling the hwmon_pmu
+  perf test: Add hwmon "PMU" test
+  perf docs: Document tool and hwmon events
 
+ tools/lib/api/io.h                     |   1 +
+ tools/perf/Documentation/perf-list.txt |  15 +
+ tools/perf/tests/Build                 |   1 +
+ tools/perf/tests/builtin-test.c        |   1 +
+ tools/perf/tests/hwmon_pmu.c           | 243 ++++++++
+ tools/perf/tests/tests.h               |   1 +
+ tools/perf/util/Build                  |   1 +
+ tools/perf/util/evsel.c                |   9 +
+ tools/perf/util/hwmon_pmu.c            | 820 +++++++++++++++++++++++++
+ tools/perf/util/hwmon_pmu.h            | 154 +++++
+ tools/perf/util/pmu.c                  |  20 +
+ tools/perf/util/pmu.h                  |   2 +
+ tools/perf/util/pmus.c                 |   9 +
+ tools/perf/util/pmus.h                 |   3 +
+ 14 files changed, 1280 insertions(+)
+ create mode 100644 tools/perf/tests/hwmon_pmu.c
+ create mode 100644 tools/perf/util/hwmon_pmu.c
+ create mode 100644 tools/perf/util/hwmon_pmu.h
 
-> +static const struct of_device_id rtc_dt_ids[] = {
-> +	{ .compatible = "nxp,s32g2-rtc", .data = &rtc_s32g2_data},
-> +	{ .compatible = "nxp,s32g3-rtc", .data = &rtc_s32g2_data},
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
-Considering the data is the same and g3 has a fallback to g2 in the 
-binding, you can drop this line.
-
-And really you don't need rtc_s32g2_data because there is only 1 
-possible value. But maybe you know some differences which are coming 
-soon? Then it's probably okay. Up to the RTC maintainer though.
-
-Rob
 
