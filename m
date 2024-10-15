@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-365550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AD699E42B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:38:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F5499E42A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82BD1F21B25
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:38:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A6C1C21A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237BA1E4110;
-	Tue, 15 Oct 2024 10:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8C31E412E;
+	Tue, 15 Oct 2024 10:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="e4NJuH31"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqkFfq+h"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9544683
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9164683;
+	Tue, 15 Oct 2024 10:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728988686; cv=none; b=tMWJT++Piq25ccwHrZ0B7yp2XrkESVm6QQxT0dQmaY1y0l6QxhJxOP+71fGszTZFYC6QNKDJdjG0LrZaTL21MzVZucREIUSgii8e2EJ866ZZsQ0CaGVPhRt2BaUBp1zlBK/55++brFhmsZ5U7iswOKw0b6w7dSXlInRW+TXNI5A=
+	t=1728988675; cv=none; b=pPJTzi77ad23yBtqptK1xcQxL4r+U8JTc77p/sh9NBsUT8fg4O5JXSDrq6byLJBH6w4Xep4yLE3pb6F7T0aHmnFhUfAJTpkuvhbBn1A4kzuitsDGfSM+JT0QD1hhfqQG064uFariWEiEsIUF9RXs7ksKFQ70sSw6fp2IMVxPMqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728988686; c=relaxed/simple;
-	bh=sbYVBsMOuZ8OSgZN3VIKTxLph2t2IWWOMM0i//0E840=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SBuQ3rdQFf+Sv/fawOtAR/rxBeX5jwh6tjzra1zf9vc3254Sbc5lVIUmHU/+bxtCjKF/Oeq5qo7FepC/XspPYKR/QwDopKbd75p1OoMJT1oLyh96Qyhyv9lAyuYP5prqEaAwDK6WjmfUo49wStamnoLgmQCG+dC6cOFmWCAInow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=e4NJuH31; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F8KQH4007049;
-	Tue, 15 Oct 2024 12:37:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	o4wujNjsyAr/oziHHMv1TomMdx6alK8Rc8OFlafH9JQ=; b=e4NJuH315dwJ8n7/
-	YGY11mL7yVPKLmIsSb1pdwnVtQYZbco3vyV9t5GZt+Ye9hBMeI/v2/NnbkMfFCk1
-	RCjfV7ZRYN1wx7Goysl/rR7xQPBYLfYFbM7dQNSYDf87iwrOi+k2FypEUwOTgEDe
-	+RIETaAP5z3fNXT0JCo2/+LJtLGXysFema7ZlE2snL8WHlnjleYsqaSjC8V4nqWo
-	qLZtslBjxn89R4lXznW/SU4Bun+XYcJgamlgjmfyZzsEI9I7pTQ+RG3toJ2i6nqL
-	iRUhKn6l1VxSGdxhSVwaRIvTzyxztHGtI1VO2/3TU3aWxZPqy+K3DdCG5/eH/dQR
-	tw2MUA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4282p12871-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 12:37:26 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C303340051;
-	Tue, 15 Oct 2024 12:36:04 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A489D21A689;
-	Tue, 15 Oct 2024 12:35:21 +0200 (CEST)
-Received: from [10.48.86.107] (10.48.86.107) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 15 Oct
- 2024 12:35:18 +0200
-Message-ID: <324d6a90-8f9a-4916-981b-ac1253f5057b@foss.st.com>
-Date: Tue, 15 Oct 2024 12:35:08 +0200
+	s=arc-20240116; t=1728988675; c=relaxed/simple;
+	bh=aBIFc3mn2Yyw7WY57qzWmLmE36O5AfmAOWS8LLIgvJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lgJ2dIPZ3RlrKNAB3+kb4RhXiz1hFIqicbYnx8ZArmriVBtCN43SvxiKDh2IQcWSx7o8knPPCayUqQcDeb7sC0zlhktLb8HG+PLuBj4FdVxsRimRgzVVnR57ysFAXyDHc7Bl5/WCc/PPrNChAIYOfkvVf/UUksseGL2fElSspwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EqkFfq+h; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e38ebcc0abso20552997b3.2;
+        Tue, 15 Oct 2024 03:37:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728988673; x=1729593473; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/sBy7h5zwRXpi0YLT+GwChmFeJpLQsTIcdwsyDjq51U=;
+        b=EqkFfq+hSp4T3YNE/ca8xfWrRC3YHYTk1oUVpuXkvtIF40nN8bvZ90VMfGbUjHUywn
+         RE2LaK2MfnF2PfgyJa2FV82MknBOQmihEaZBMAZHdA/i/qzqbzWopqhSQZqESU3difAJ
+         YFB2Vd+79Q0mHCf6FOiye4h5Scy4Rk1vrLiVBltTqCVmlbGQO++RsxRMvSPpjdpMqDyj
+         da+nA41jVpyuF1lWcUrgZJCUaehlLHHhWJqQ4SjsFWveSaRYkcdJvHT5D4YQVJVcFQUv
+         SHgVwsiKKhgwddO6uje4//Vmi7ga+bQvehlSbBeYua2fpHxFca1j7MogcuiNK4NV3k9k
+         QQzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728988673; x=1729593473;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/sBy7h5zwRXpi0YLT+GwChmFeJpLQsTIcdwsyDjq51U=;
+        b=cE9k6mLeL4zMGiLOty6DRHaKR0qTrF8tsQ6wlnKoVYR4xz+fkEa7N7BNDewmD91mJa
+         0m8kUc9kAxHH47Gk17MB/aAlqW7AEEMIbvqk6qSXLTySNYaTMZYU4l7P2i9e4/NTq+C5
+         sIRGJb4BHRuLaWMMWWKgEI0CV7WzwrUeQ8IKRTB+A2IWr2ojvxRaT8ND4oV1PrUiAdZK
+         FgYJ0CqW/EORKEIqqhB3SGeDbUKFSOgH0ILYUWJcNfSe8L4ArNJGu6LxtFCT9yDJIYxs
+         4sCcdARqqbJVlf5gBJHsip+UibcXc1Y4k5BgKwKyAe3QCgKdNA6nk6jPRQE3Mgs0VX+r
+         R/Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUy43Kt9Kgt91SXNO2a46mPg7d+BD3pDmxpXoo8rsvK5zBJVyRQBYdcC6gH7jZWT9Y0PR+r+TzmbgF+YdlZ@vger.kernel.org, AJvYcCX6tdi9anNUt9zAc1MA3ehfNWU9BeVY/fUqo4QzCgNKrA3oLdWcek7D0jipBwWPbJ3gkISwSTh7qBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXjHjDE/Bg7xFiWM86ogAKqVl2uzKInAgFJaf+Yc/fisJF2zDm
+	su6/JQeBHlBEAWGFzIhBRmeWnXgWPvVeANMPdmDlzK1qdYoHx/yS
+X-Google-Smtp-Source: AGHT+IGEz5YR74xcvrUNnXsKm07qiR5SgHWWZyTGRmt+znubipd9asVA9EoCreMM02ebRCz2Qv1IIQ==
+X-Received: by 2002:a05:690c:5c12:b0:6e2:43ea:552 with SMTP id 00721157ae682-6e3479b5fa2mr100881787b3.16.1728988672941;
+        Tue, 15 Oct 2024 03:37:52 -0700 (PDT)
+Received: from [192.168.2.226] ([107.175.133.150])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e3c5cbd608sm2150187b3.81.2024.10.15.03.37.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 03:37:51 -0700 (PDT)
+Message-ID: <296d5c58-2713-44c7-a253-c1cb9a11e56e@gmail.com>
+Date: Tue, 15 Oct 2024 18:37:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,76 +75,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Crash on armv7-a using KASAN
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Russell King <linux@armlinux.org.uk>,
-        "Russell King (Oracle)"
-	<rmk+kernel@armlinux.org.uk>,
-        Kees Cook <kees@kernel.org>,
-        AngeloGioacchino
- Del Regno <angelogioacchino.delregno@collabora.com>,
-        Mark Brown
-	<broonie@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Antonio Borneo
-	<antonio.borneo@foss.st.com>
-References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
- <CACRpkdaMMsHXkgcOtw0aC=SPfJJURCyCgzDq-rEXrBGaM44Sdg@mail.gmail.com>
+Subject: Re: [PATCH v5] Docs/zh_CN: Translate physical_memory.rst to
+ Simplified Chinese
+To: Jonathan Corbet <corbet@lwn.net>, jiang.kun2@zte.com.cn,
+ alexs@kernel.org, siyanteng@loongson.cn, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mudongliangabcd@gmail.com
+Cc: wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, xu.xin16@zte.com.cn,
+ he.peilin@zte.com.cn, tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn,
+ zhang.yunkai@zte.com.cn
+References: <20241012171357153parWX6Has5WheQyGlP0kP@zte.com.cn>
+ <ecdc7672-965a-4bc5-8e0a-a407de82407f@gmail.com>
+ <87ed4isd7b.fsf@trenco.lwn.net>
 Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <CACRpkdaMMsHXkgcOtw0aC=SPfJJURCyCgzDq-rEXrBGaM44Sdg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <87ed4isd7b.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 10/15/24 09:55, Linus Walleij wrote:> On Mon, Oct 14, 2024 at 3:21 PM 
-Clement LE GOFFIC
-> <clement.legoffic@foss.st.com> wrote:
+
+
+On 10/15/24 03:21, Jonathan Corbet wrote:
+> Alex Shi <seakeel@gmail.com> writes:
 > 
->> I have detected a kernel crash in latest kernel on armv7-a when Kasan is
->> enabled.
-> (...)
->> Crash log with recent kernel (v6.12-rc3) :
+>> Hi Jiang, 
 >>
->> ~ # Insufficient stack space to handle exception!
+>> Your patch format is still odd in 'Subject':
+>> Subject: =?UTF-8?B?wqBbUEFUQ0ggdjVdIERvY3MvemhfQ046IFRyYW5zbGF0ZSBwaHlzaWNhbF9tZW1vcnkucnN0IHRvIFNpbXBsaWZpZWTCoENoaW5lc2U=?=
+>> Content-Type: text/plain;
+>>         charset="UTF-8"
+>> X-MAIL:mse-fl2.zte.com.cn 49C9DsLB077233
+>> X-Fangmail-Anti-Spam-Filtered: true
+>> X-Fangmail-MID-QID: 670A3DD9.001/4XQd8n4BCPz5B1DK
+>>
+>> It should a English word. 
+>> You need to send patch to yourself and apply it to check if
+>> everything all right.
 > 
-> The crash looks pretty "expected", as you say you start a lot of
-> parallel processes
-> and whoops, you run out of memory on the stack. No software can add more
-> memory to the machine.
-> 
-> KASAN uses a lot of extra memory for intercepting all memory accesses,
-> nominally one
-> extra byte per 8 bytes. This is further restricted by the complex
-> nature of the virtual
-> memory space on ARM32.
-> 
-> That said, we increase the size of per-thread storage when using KASAN,
-> THREAD_SIZE_ORDER is 2 instead of 1. Maybe the interrupt stacks need
-> to be scaled similarly to manage the increased load?
+> I think the formatting is OK - the patch applies fine here.  I would
+> appreciate a review of the actual content, though...:)
 
-Hi Linus,
+Maybe just my git has the problem? After a unchanged apply, I got a subject like following
+" [PATCH v5] Docs/zh_CN: Translate physical_memory.rst to Simplified Chinese", that includes the versions and a extra apace.
 
-Thanks for your reply.
+Yes, we could do few modification to align the format. But maybe let's thing all right at first is better? :)
 
-Once I found the issue in latest kernel, with Antonio we firstly tried 
-to increase the stack size, but it kept crashing.
-
-Then we identified the offending commit and we noticed that it does not 
-change at all the stack layout.
-In fact Ard patch only modifies the way to unwind frames for backtrace.
-
-As far as we understand, KASAN enabled causes the generation of several 
-backtraces (hashed) on alloc and free to track all the allocation.
-The offending commit seams responsible of the crash due to incorrect unwind.
-
-Best regards,
-
-Clément
+Thanks
+Alex
 
