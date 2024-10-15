@@ -1,152 +1,180 @@
-Return-Path: <linux-kernel+bounces-366900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB6A99FC06
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:04:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B1D99FC0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B881F268C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:04:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6099A1C241D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028061A0B07;
-	Tue, 15 Oct 2024 23:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528EB1B0F3D;
+	Tue, 15 Oct 2024 23:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="26adAs3q"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1KyWrNg"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C7121E3C3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186D521E3C3;
+	Tue, 15 Oct 2024 23:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729033467; cv=none; b=T+n2ybTV9I3e+eHHNFWOg+mrSwcga5cXm6iKxx3lXDHmz/xznj4KAkiUldz72BVxwToJwPw38+rJkb4WQ7bsrgf9MkIbRh+Ci4FUo8M62LNMeBhTR28+uf6w40tWJ6mjXPkaOfVclR0BJrLs/16Bj995tiUrOg+C6KTzkcf2GLY=
+	t=1729033594; cv=none; b=ZwXEtdTb2Eoih/1ZWcpQBcm9t+Df8Dm3x1oFEpeypfSyWXrPHVX0N/FV+v7PZ0i0aBro5AV9WviglH3LxtwPyQ1cqLEjnBXGJiqKVHcOJ17d31tZJko/UOge2Y1hZJa0lzz3RVnPxhmU/AKUb9iYSdPa6lEbMEbgKgGOUuh1Y4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729033467; c=relaxed/simple;
-	bh=R5/0eEoP/NH5yQmWcdDx1zc8JfQ7uaHFsmINSqAK55A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G2re5ArcgMhA6oqk9IBBX/ZxM6jAYLRzl4g4Mnu2BktFWj1TO+942EUHojxn7wrkLvgg1h+EgSGp4K92puNbR/C2krniqeMx1ok8b7sqXh8ImSuQlFQoSC8hx6SHMeiycunbDQ6Q5yyvmLTDqWgk2JGuAj4N+/gKDaYB1riTC6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=26adAs3q; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so4934381a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:04:23 -0700 (PDT)
+	s=arc-20240116; t=1729033594; c=relaxed/simple;
+	bh=c1cFwrRSKEj8jKOSk9WgJ/l04JHjabgqH6wMKYWXjGg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e2we8PrOyLhr/m+RLY+2iiU5A209Pj1kTZvfA0yKzcnKcJivQa7eun0eFVtxBYaWCOLPNsDQCwGeGElN4qKxKFTXmANtz/sEu8XVCYyc86YHHv8/YT4bycjYAPosExb0GdLOLgcQwRJqtRMnZt/xO2Mg/j4qZVon9pDE63UlvF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q1KyWrNg; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4603b835a1cso57098401cf.0;
+        Tue, 15 Oct 2024 16:06:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729033462; x=1729638262; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7TGRNGdRV8OqKzXcTQcKrsJhdxGMaN645Q/fs5kQagE=;
-        b=26adAs3qIiXx3EFJmUmu/KA09MyL1BN9fivybVRvceDWU/9kSqYqG8J6L6HyxHukgd
-         r3CbzSi5G4SEo6sjS5Xi7sk6ylWQcsBFrkLSidBw3BSWHMyAWApn/fxHXDLaJ4vkCDml
-         HFc6e3qY+CTuJAzHpR+ZIPrneK1Yz2KBYredmX74qDYF+MZ3KAJYVJCyOx6nyZ3loGgQ
-         Z2RKgzvljoZe9xXJ1C2wvRlR7nUCzjg3BfFgg8NTonpAHwIL3dmlsZDO4KeWwquLUTOI
-         /j14RKjHyV3l1sfbFh9k7bG+7deVWUF4Mssqh11ALDE8cQMuyakUz4QYAYSWafc5Me9r
-         a4Nw==
+        d=gmail.com; s=20230601; t=1729033592; x=1729638392; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BfFZUPp0XV4kx5ltz6qNvKwXCzwJIgOrmeDZF/8jtLo=;
+        b=Q1KyWrNgCaqkcsM3yWDpsCDQPGWu7W1QmiAfjnzAzdU9RgoDPhGlCSjdQZpXJsPI9u
+         3f6c+bdlkCUWxGo3tUeieGHTd/3BCZ756VjyY40NZoYVYEAWj+pgqtf0KPFedP4eejQ7
+         BsrjpomyhtIkxrmxtiEc6+bZ8pmhVa96O/AG7x4fjyldQdB3o70ITXgLsSzyxljvVWAZ
+         /Yt/qQ62tDxw5Yw1HlY8rnnd0z2bl0HzzeAfwiPQh64D+Kb8TsIqVQ8OnBt522wgz50y
+         qdqHJu6Gz7keRzaCNIjRXzZ6+hz0MgcgjYahmuukfklfMJaNie7l8rOiwaqjHwRsAYXg
+         xiyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729033462; x=1729638262;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7TGRNGdRV8OqKzXcTQcKrsJhdxGMaN645Q/fs5kQagE=;
-        b=Er5aG0trmtouoZne7gflU2nSt8LCSMtbNJnGhGCVQrLsl6ASTNj+KDHooOCf4NcWZr
-         bDY4IdJX738CXMXDZozU+GVbLj8TMscc50i42BtC6f973diFjEYf3raU4Mj2lr0lPyU/
-         IobTnQTraU6X4T8M5oErPaAnpcexzSmTj3YF8bvQkA6X/bSP83nJ2cNOgpzro53N2b3E
-         NmCgS05VG2cXbHQf8fvgcR+cYX+sjovrhrb7W3FdNR93hqcqxbaIXzpk6OE7wxX/tErw
-         gq8W5QslBguanQNxfdV2DzvThgp+eerNNVjVGFCGpAimaYruFHrnIzUkGkBpLsStzr8n
-         YgTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpEqzmuX9X0lIxhKy6WsAA/dKlI+h7mHZ+2zNovnEROyPJ/93TIOlgcm49BI5HNCFje0Rtpl2V14nJ3Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzUdc4Epiqa9dTJnpaKlThuzuDc9Xe6aytmG63TeXlVtmced53
-	tV3DS2bcXAUTLt8MDNc5c8G1OCQlTXxgHnqvMuJjJZ16VeA0+kHXa3TE9VcgA+3AukEzJV0dtcZ
-	TK+ud4KXDUJrKXUZ3PWu7aTssaSRHTvWVvCWDAqXFKwvYc+JHyh8xr2qAEKU=
-X-Google-Smtp-Source: AGHT+IFPXBLWR5bWg7Y+EC/MbuYNZyE0OS8EIdxpUsVAI1TsnbnFwiWuHFAv5UQ4nz+8uww/VQ4hfCgzUUqxYOlFrfQ=
-X-Received: by 2002:a05:6402:4311:b0:5c8:ae42:88b with SMTP id
- 4fb4d7f45d1cf-5c9950e759emr1527721a12.27.1729033462478; Tue, 15 Oct 2024
- 16:04:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729033592; x=1729638392;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BfFZUPp0XV4kx5ltz6qNvKwXCzwJIgOrmeDZF/8jtLo=;
+        b=BaYhvjtUUjXeKGGSSYi0dIDLcMzfp0GOzJp1O8+KtxxLdTTDEBKlHLNVX865up+A77
+         WLgdxlBRi7jklTJyapw2kgLkWwr9eFm6WK8FWwHiS3xjRV1XCrkb6vvPGP37L4fUSM0/
+         LvDIwx0THF4MH3Ar2HRybgmWxge8qmIup78h6WQlBsrlvMcFPm9r2AIgwjeeeQPOgr+I
+         z2RF0WgxkCkfLi8F76/l7No8+HE28N+qXJa1eevHnpnoTEfJr1HD9OGfR4pP26rtZrr8
+         Mpirtjp9JnzZkkqUJL77ikn5kKwL9bYFkNU5x4nTr1OGzYbHpflZ5OrwA6jDOCiYbOGt
+         s9NA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4N7H0qxushOEjvCz7XRXkZUU6L2MkQfKygKTpsqPenLQwTsyXMKDlMqp9OMKYYt7C0kIbBUgun+Ry@vger.kernel.org, AJvYcCVrYSIBeH9vXaRlhKAya9/e5ai1mZ24SUi69bohwPUM3x3QwYJGl3XNJVAnzqZ79ogn55lNtvqYeeYH@vger.kernel.org, AJvYcCW+IqWq+lTVBf4sHltCjtqhmV6UaPcPnj50Vv2m36eLX6ejD4U73s8n6R7P10+ykDTlK3lIit6+nCqaplsn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwopJxW6KhQF9wehINNyzYAde13BQG+La3pGJ4gakpn6Zd8SobX
+	MDQg+mzndkJUcNOJOhN02phLMweeum/Sv00D8lvsB8x1QIt3YZxP
+X-Google-Smtp-Source: AGHT+IHQmnfERjVbgde4xoS7Xg3Nee7eeqn8iqFraPmTdAJTJEW9Gmg9baMjNSv4pjmJ+IhQhYfR1A==
+X-Received: by 2002:a05:622a:1aa6:b0:458:34df:1e6a with SMTP id d75a77b69052e-4608a515378mr29032821cf.48.1729033591775;
+        Tue, 15 Oct 2024 16:06:31 -0700 (PDT)
+Received: from localhost.localdomain (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b0e407esm11224641cf.27.2024.10.15.16.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 16:06:30 -0700 (PDT)
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: u.kleine-koenig@baylibre.com,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	=?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+	David Lechner <david@lechnology.com>,
+	Mehdi Djait <mehdi.djait@bootlin.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: [PATCH v11 0/2] Add driver for Sharp Memory LCD
+Date: Tue, 15 Oct 2024 19:05:42 -0400
+Message-ID: <20241015230617.3020230-1-lanzano.alex@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015215157.18571-1-everestkc@everestkc.com.np>
- <99056bd3-748f-42e8-a25a-131f7b194f55@linuxfoundation.org>
- <CAEO-vhEwkQKnPprdw_r=mg6KRbadY6B4A3R_sOsyH0ds78wb2g@mail.gmail.com> <f53523ff-1222-4fc0-9069-10ab895e1136@linuxfoundation.org>
-In-Reply-To: <f53523ff-1222-4fc0-9069-10ab895e1136@linuxfoundation.org>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Tue, 15 Oct 2024 17:04:10 -0600
-Message-ID: <CAEO-vhEGJ-5vX6=32VwNfiV7nSkDL4iEJVti8U0=q=NfOKrSAA@mail.gmail.com>
-Subject: Re: [PATCH] staging: gpib: Move free after the variable use has been completed
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 15, 2024 at 4:55=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
->
-> On 10/15/24 16:48, Everest K.C. wrote:
-> > On Tue, Oct 15, 2024 at 4:35=E2=80=AFPM Shuah Khan <skhan@linuxfoundati=
-on.org> wrote:
-> >>
-> >> On 10/15/24 15:51, Everest K.C. wrote:
-> >>> The variable `in_data` is freed, but used later in the code.
-> >>> Fix it by moving the freeing the memory after it use has been
-> >>> completed.
-> >>>
-> >>> This issue was reported by Coverity Scan.
-> >>> Report:
-> >>> CID 1600783: (#1 of 1): Use after free (USE_AFTER_FREE)
-> >>> 19. pass_freed_arg: Passing freed pointer in_data as an argument to
-> >>> ni_usb_dump_raw_block.
-> >>>
-> >>> Fixes: 4e127de14fa7 ("staging: gpib: Add National Instruments USB GPI=
-B driver")
-> >>> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> >>> ---
-> >>>    drivers/staging/gpib/ni_usb/ni_usb_gpib.c | 2 +-
-> >>>    1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c b/drivers/stag=
-ing/gpib/ni_usb/ni_usb_gpib.c
-> >>> index 1da263676f2a..75f39e1f3ed1 100644
-> >>> --- a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> >>> +++ b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> >>> @@ -690,12 +690,12 @@ static int ni_usb_read(gpib_board_t *board, uin=
-t8_t *buffer, size_t length,
-> >>>                kfree(in_data);
-> >>>                return parse_retval;
-> >>>        }
-> >>> -     kfree(in_data);
-> >>>        if (actual_length !=3D length - status.count) {
-> >>>                pr_err("%s: actual_length=3D%i expected=3D%li\n",
-> >>>                       __func__, actual_length, (long)(length - status=
-.count));
-> >>>                ni_usb_dump_raw_block(in_data, usb_bytes_read);
-> >>>        }
-> >>> +     kfree(in_data);
-> >>>        switch (status.error_code) {
-> >>>        case NIUSB_NO_ERROR:
-> >>>                retval =3D 0;
-> >>
-> >> Looks good to me. Isn't this on next though. Don't forget to
-> >> indicate it is against next.
-> > No, it was fixed in the linux-staging repo.
-> >> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> >>
->
-> Okay - by the way the same problem is in ni_usb_write_registers().
-> Did coverity catch that one?
-No, there were no similar issues caught by coverity.
-Also, I just checked the function. I didn't see the variable being
-accessed after
-it had been freed.
-> Both problems could be fix in one patch - I will leave it up to the
-> maintainers to make a call on two patches or a single patch.
->
-> thanks,
-> -- Shuah
->
+This patch series add support for the monochrome Sharp Memory LCD
+panels. This series is based off of the work done by Mehdi Djait.
+
+References:
+https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
+https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
+
+Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
+Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+---
+Changes in v11:
+- Replace drm_fbdev_dma_setup with new drm_client_setup interface
+
+Changes in v10:
+- Address comments from from Uwe
+    - Replaced -EINVAL with PTR_ERR
+    - Error check pwm_apply_might_sleep function
+    - Remove redundant error message
+
+Changes in v9:
+- Move pwm and software VCOM generation to probe/remove functions instead of crtc enable/disable functions.
+  pwd_disable will suffice on driver removal.
+- Change comment format to match Linux Kernel style.
+
+Changes in v8:
+- Addressed review comments from Uwe
+    - Replace pwm_get_state with pwm_init_state
+    - Use pwm_set_relative_duty_cycle instead of manually setting period and duty cycle
+
+Changes in v7:
+- Add Reviewed-by tag back to dt-binding patch
+
+Changes in v6:
+- Rebase off latest drm-misc-next
+- Replace pwm_apply_state with pwm_apply_might_sleep
+
+Changes in v5:
+- Address minor style issues in sharp-memory.c
+
+Changes in v4:
+- Remove redundant dev_err
+
+Changes in v3:
+- Fix file path in MAINTAINERS file
+- Address review comments
+- Simplify mode selection based on match data instead of model
+
+Changes in v2:
+- Credited Mehdi Djait in commit messages
+- Renamed sharp,sharp-memory.yaml to sharp,ls010b7dh04.yaml
+- Using strings instead of int for vcom-mode in dt-binding
+- Fixed indentation of binding example
+- Removed binding header
+- Removed extra whitespace in sharp-memory.c
+- Fixed error handling in sharp-memory.c
+- Added match data to of_device_id table to be in-sync with spi_device_id table
+- Replaced redundant function with spi_get_device_match_data
+- Sorted header files in sharp-memory.c
+---
+
+Alex Lanzano (2):
+  dt-bindings: display: Add Sharp Memory LCD bindings
+  drm/tiny: Add driver for Sharp Memory LCD
+
+ .../bindings/display/sharp,ls010b7dh04.yaml   |  92 +++
+ MAINTAINERS                                   |   6 +
+ drivers/gpu/drm/tiny/Kconfig                  |  21 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/sharp-memory.c           | 671 ++++++++++++++++++
+ 5 files changed, 791 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+ create mode 100644 drivers/gpu/drm/tiny/sharp-memory.c
+
+-- 
+2.47.0
+
 
