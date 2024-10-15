@@ -1,201 +1,437 @@
-Return-Path: <linux-kernel+bounces-365384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB60799E189
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:49:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B1699E18E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BA81B23163
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E5B1C21465
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6653D1CFED9;
-	Tue, 15 Oct 2024 08:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC4C1CACFC;
+	Tue, 15 Oct 2024 08:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N+o2hEaM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gEuDTBij"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A2B1B0137
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A242B18A6A8
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728982110; cv=none; b=L15ucNuMP6sXfA2jphiLyO4teNNUymM4x+DqyNREdEQhIL283xNdbFcGqYDNCm6dqiI2WUswWYLK5Tki3d1i0wHI3k2oSWfx3BMMvYqv3AK+J3HPQiQ6HveNqO6B8cwcofOid0oS/oKXEG3Dekd1rqML63gdmCFGXfXhfYyx3y4=
+	t=1728982223; cv=none; b=b/slacg2zpMhqLGunu7jm2qDUcfXMvUVb92mMjC+ElOlfdXzTU8M58sKeB+vQMzww36q4lQRtkKhNQzvmNsTVYKC+0fs9TkRuuzKvgG+4UmOxjLjvVdM4PyFBYYTtjtUzNHD1O3NZMQfhIsgSSMlzf8p0Huxd3RQjAQynL1p4zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728982110; c=relaxed/simple;
-	bh=p/MIGSRtGZoGVvz7Yr/8nDGL8TNsnqXsAbNUPPNhkrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=buXAXIiIIcUBoIDBeaI4lUlg0t9dSC9QWute3jZGLec4lXjB3cKqOG0mWwjs+NkTWgWFJmuXZQh9KXzZzvi2KKPfJyTnXOEfniIzj/970tOrb95bJHb0NefvJ37ZjYq3hQTu32XOeb6ABOctlMAsNRMFctrNG2+k52XBEPjjFhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N+o2hEaM; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1728982223; c=relaxed/simple;
+	bh=OXRU4KCn2kIlSfOd2jYcKs3VGK4P0jUjafXTysl+nFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mVgU8KI5m8BXmsSw6cYHZh+KBJFBph82sQBngfYisMiRTPAMKFFq9cq3pGU6ch+K5w6Ii7w3EpQRyEG6N1l+MwTX8XzZDJua6cE2hiJQa4rXJ3cq5BVuCPzKCo22Nyt4M+fWoCW7kffSImWoCSz9pab9vw7cipBIn4zUgULCUq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gEuDTBij; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728982106;
+	s=mimecast20190719; t=1728982220;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=50wFFqNXFpjaX6P/Mlz7i8+V12CHV816FHHaZjiGzpk=;
-	b=N+o2hEaM4PXW0RILAAPK7R14ztrwLEn42Zv88neNRO7kTBrI0GX0EFJVE2uyOwJSO1gb1w
-	ba+inOfv9LWDhcHnXto4D91zwLLhsyeMg/JEWuYagKHG0FWj0AiavIW4bAPrZxiGFUveIz
-	IWhvaN87xfyB7hsgVxODqsCypyGfy2Y=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=zkv7G2y4DHYIAgdR9yw1tOjiXCJvZxXHEN8jtOVZgE0=;
+	b=gEuDTBijyc6SAo/itWBkoduiiNb4jY5/hDuMoCm6ZKs9LDRbrAwPSgtItgVsfEjbvyIu3K
+	HhvB65KnOGlf4q6hwhPXX7+qyiy1eTKGY3vTNOJFOwyyvi7EOZnsomin0M/EPVEqm1B44L
+	ZLx/SRguyKRDktLvKu8WgwAWJsTDmt8=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-606-Egjum0wqMKOYTInC51yBaw-1; Tue, 15 Oct 2024 04:48:23 -0400
-X-MC-Unique: Egjum0wqMKOYTInC51yBaw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4312731c7bfso15022875e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:48:23 -0700 (PDT)
+ us-mta-610-9SOFW0TZPrSf49KbbxGXRg-1; Tue, 15 Oct 2024 04:50:19 -0400
+X-MC-Unique: 9SOFW0TZPrSf49KbbxGXRg-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7afce523b84so1090838285a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:50:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728982102; x=1729586902;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=50wFFqNXFpjaX6P/Mlz7i8+V12CHV816FHHaZjiGzpk=;
-        b=mssxLIX46u1DHy/OOVOYvUETkV6QikfbmhgfQGYi3xbtyxJvhJrBNivHEk/cZLDoXg
-         +sB5nfEOeKxp8/VwJnv/UPkui8aPfbmBSpBwBEwD/f6CbKEn4wFtVl1SHN/IOttMCIxp
-         ozRB1QehAFspb8xTpb4PVoATdTV5VVG+FULJ859Kg3OxWHcGP6vJY5IPhOWZ6lpaZkSj
-         fyOcsdQuanBS6qxYpdi+FR6k8qZsj3lkOTQpN8Z3qRH9zL1jXSzwwHYdCH1fQ/TSrNYp
-         zL6gKZCYzZRhbvcxn2p0qneUpdBQLwZN6H+HKl51KGcAUzY7/SgEpHCEYl7ccHmnQCgB
-         0SvA==
-X-Gm-Message-State: AOJu0YzqaFXDvGXxTgFKNC5dmhLeKGoRDsVjFBaXYQOUpmGIIsMZ+80o
-	2vAV2KTJ3ROkzCT1Nt7a7L/EJq9P/3zO6EahNnGn0ji325o6y7B2T/308L7BDUzp2gyfZd0111j
-	3fBXIOW8VgrFPplRmhs3nUkNODtHaoKzTwzP+O4UTXA6FP1nUxwFu+LXGFGiCEg==
-X-Received: by 2002:a05:600c:c0d:b0:42f:7e87:3438 with SMTP id 5b1f17b1804b1-4311de0041fmr117015465e9.0.1728982102434;
-        Tue, 15 Oct 2024 01:48:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBTHE1MOfpAobdlWqdrQtQCCiBsBcqnh8ka2vWhYs6jn4f2rukhBZXH4tRhj08nCUPlOwNyw==
-X-Received: by 2002:a05:600c:c0d:b0:42f:7e87:3438 with SMTP id 5b1f17b1804b1-4311de0041fmr117015145e9.0.1728982102032;
-        Tue, 15 Oct 2024 01:48:22 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c730:9700:d653:fb19:75e5:ab5c? (p200300cbc7309700d653fb1975e5ab5c.dip0.t-ipconnect.de. [2003:cb:c730:9700:d653:fb19:75e5:ab5c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6b323asm10945305e9.36.2024.10.15.01.48.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 01:48:21 -0700 (PDT)
-Message-ID: <2050b790-4d88-4e16-8af8-3bde759d5430@redhat.com>
-Date: Tue, 15 Oct 2024 10:48:20 +0200
+        d=1e100.net; s=20230601; t=1728982218; x=1729587018;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zkv7G2y4DHYIAgdR9yw1tOjiXCJvZxXHEN8jtOVZgE0=;
+        b=GJtqNsluG/RAL6ZqkkauUoE3JMSkHaQGbVMphi+30951xQFXPLyvSdCHFwNMRVbM1L
+         K8k2nfpTlzGGpgYqn4uCI4XSNj+Kw7/RRmgZpBV/16nbpjdzlSv7kmJwQCTQ5VlVOjRg
+         X4TWTyxQuHgYA2SnmQ3h9QJLBAvXWr3U50R4uQxB7Ig8n6VT1orlvO3E4tMkuuIj2L3C
+         dWTaeOLxcttQcgCudSpZBo/Hz/tiYBS/Mvf+Sv6TVPqbxLQYguFtLqkamLWec6OuS+So
+         5OUgyFkzbV8oAiOWCoVk4wRujk4EIgkfOoYL6wA7803y9kQ/SwQb9Xf+Q8gfulnUe5hi
+         3oyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyOVZTXa+mWM7acyB5k+tYSNVJLJfQmlnS73GlZWdLZOHSy5ikxgpzPVBwtxPKqPep3wKzCROpm4XZmbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzabY/NBpL6tEzDdi7IwRLYZYglTkmyekchpXyo+Pi4h86tA3uD
+	y8tdfxz7KsDwpayFal+PnPMZqjziwwn+rYlFVjZmJaEGaDJRctUNf8HNF6xBcpUZBLvsu97+UHS
+	X1LF4x1k76CeNy2jn7gm8DHaNn3ALfCif3Wabxgz2bj6m1u432+Y8mM8ExI7UUg==
+X-Received: by 2002:a05:620a:29c6:b0:7b0:a9c1:64a3 with SMTP id af79cd13be357-7b11a37a266mr2132160685a.39.1728982218275;
+        Tue, 15 Oct 2024 01:50:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHMIuvtAdGfcowqrIhPYxqBnPaenpFGZrHqxVqtrDxQLneKEUO7Zw7nn2UxzFf11+TQQBklkQ==
+X-Received: by 2002:a05:620a:29c6:b0:7b0:a9c1:64a3 with SMTP id af79cd13be357-7b11a37a266mr2132158785a.39.1728982217760;
+        Tue, 15 Oct 2024 01:50:17 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-231.retail.telecomitalia.it. [79.46.200.231])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136170512sm43736785a.32.2024.10.15.01.50.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 01:50:17 -0700 (PDT)
+Date: Tue, 15 Oct 2024 10:50:12 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: huangwenyu1998@gmail.com
+Cc: mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] virtio: Make vring_new_virtqueue support for packed
+ vring
+Message-ID: <e7hs4gacqrg3sc3hbi5avlsoaqbnkuk4xpeodfzth5kdchoemh@cilgkvn6a3kw>
+References: <20241013033233.65026-1-huangwenyu1998@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] Documentation: s390-diag.rst: make diag500 a
- generic KVM hypercall
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
- Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-3-david@redhat.com>
- <20241014180410.10447-C-hca@linux.ibm.com>
- <78e8794a-d89f-4ded-b102-afc7cea20d1d@redhat.com>
- <20241015081212.7641-A-hca@linux.ibm.com>
- <8e39522c-2853-4d1f-b5ec-64fabcca968b@redhat.com>
- <20241015082148.7641-B-hca@linux.ibm.com>
- <d90566ac-dbe3-486b-bdc7-ece6c2ec6928@redhat.com>
- <20241015084634.7641-E-hca@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241015084634.7641-E-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241013033233.65026-1-huangwenyu1998@gmail.com>
 
-On 15.10.24 10:46, Heiko Carstens wrote:
-> On Tue, Oct 15, 2024 at 10:32:43AM +0200, David Hildenbrand wrote:
->> On 15.10.24 10:21, Heiko Carstens wrote:
->>> On Tue, Oct 15, 2024 at 10:16:20AM +0200, David Hildenbrand wrote:
->>>> On 15.10.24 10:12, Heiko Carstens wrote:
->>>>> On Mon, Oct 14, 2024 at 09:35:27PM +0200, David Hildenbrand wrote:
->>>>>> On 14.10.24 20:04, Heiko Carstens wrote:
->>>>> "If only there would be a query subcode available, so that the program
->>>>> check handling would not be necessary; but in particular my new subcode
->>>>> is not worth adding it" :)
->>>>>
->>>>> Anyway, I do not care too much.
->>>>>
->>>>
->>>> Okay, I see your point: it would allow for removing the program check
->>>> handling from the STORAGE LIMIT invocation.
->>>>
->>>> ... if only we wouldn't need the exact same program check handling for the
->>>> new query subfunction :P
->>>
->>> Yeah yeah, but I think you got that this might help in the future.
->>
->> Right. Adding it later also doesn't quite help to get rid of the checks
->> here, because some user space might implement STORAGE LIMIT without QUERY.
-> 
-> This would only help if the diag500 documentation would state that
-> implementation of the QUERY subcode is mandatory. That is: for every
-> new subcode larger than the QUERY subcode QUERY must also exist.
-> 
-> That way we only would have to implement program check handling once,
-> if a program check happens on QUERY none of the newer subcodes is
-> available, otherwise the return value would indicate that.
-> 
-> Otherwise this whole excercise would be pointless.
+On Sun, Oct 13, 2024 at 11:32:33AM +0800, huangwenyu1998@gmail.com wrote:
+>From: Wenyu Huang <huangwenyu1998@gmail.com>
+>
+>It used for testing in tools/virtio/vringh_test.c.
+>If vring_new_virtqueue supports packed vring, we can add support for
+>packed vring to vringh and test it.
 
-Yes, that would be the idea.
+I already asked this in v3, but didn't get an answer:
 
--- 
-Cheers,
+   Are you also working on that changes?
 
-David / dhildenb
+>
+>Signed-off-by: Wenyu Huang <huangwenyu1998@gmail.com>
+>---
+>Changes in v2: Make the commit title and description more clearer.
+>Changes in v3: Remove the declaration of __vring_new_virtqueue_split and
+>                           __vring_new_virtqueue_packed and move the definition of
+>                           these two functions.
+>Changes in v4: Fix checkpatch warnings/errors.
+> drivers/virtio/virtio_ring.c | 227 +++++++++++++++++++----------------
+> 1 file changed, 121 insertions(+), 106 deletions(-)
+
+The patch LGTM, but maybe we can merge it when we have also the tests 
+using it.
+
+Anyway:
+
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+
+>
+>diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+>index be7309b1e860..5fce2cce2358 100644
+>--- a/drivers/virtio/virtio_ring.c
+>+++ b/drivers/virtio/virtio_ring.c
+>@@ -223,15 +223,6 @@ struct vring_virtqueue {
+> #endif
+> };
+>
+>-static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>-					       struct vring_virtqueue_split *vring_split,
+>-					       struct virtio_device *vdev,
+>-					       bool weak_barriers,
+>-					       bool context,
+>-					       bool (*notify)(struct virtqueue *),
+>-					       void (*callback)(struct virtqueue *),
+>-					       const char *name,
+>-					       struct device *dma_dev);
+> static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num);
+> static void vring_free(struct virtqueue *_vq);
+>
+>@@ -1138,6 +1129,66 @@ static int vring_alloc_queue_split(struct vring_virtqueue_split *vring_split,
+> 	return 0;
+> }
+>
+>+static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+>+					       struct vring_virtqueue_split *vring_split,
+>+					       struct virtio_device *vdev,
+>+					       bool weak_barriers,
+>+					       bool context,
+>+					       bool (*notify)(struct virtqueue *),
+>+					       void (*callback)(struct virtqueue *),
+>+					       const char *name,
+>+					       struct device *dma_dev)
+>+{
+>+	struct vring_virtqueue *vq;
+>+	int err;
+>+
+>+	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
+>+	if (!vq)
+>+		return NULL;
+>+
+>+	vq->packed_ring = false;
+>+	vq->vq.callback = callback;
+>+	vq->vq.vdev = vdev;
+>+	vq->vq.name = name;
+>+	vq->vq.index = index;
+>+	vq->vq.reset = false;
+>+	vq->we_own_ring = false;
+>+	vq->notify = notify;
+>+	vq->weak_barriers = weak_barriers;
+>+#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+>+	vq->broken = true;
+>+#else
+>+	vq->broken = false;
+>+#endif
+>+	vq->dma_dev = dma_dev;
+>+	vq->use_dma_api = vring_use_dma_api(vdev);
+>+	vq->premapped = false;
+>+	vq->do_unmap = vq->use_dma_api;
+>+
+>+	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
+>+		!context;
+>+	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+>+
+>+	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+>+		vq->weak_barriers = false;
+>+
+>+	err = vring_alloc_state_extra_split(vring_split);
+>+	if (err) {
+>+		kfree(vq);
+>+		return NULL;
+>+	}
+>+
+>+	virtqueue_vring_init_split(vring_split, vq);
+>+
+>+	virtqueue_init(vq, vring_split->vring.num);
+>+	virtqueue_vring_attach_split(vq, vring_split);
+>+
+>+	spin_lock(&vdev->vqs_list_lock);
+>+	list_add_tail(&vq->vq.list, &vdev->vqs);
+>+	spin_unlock(&vdev->vqs_list_lock);
+>+	return &vq->vq;
+>+}
+>+
+> static struct virtqueue *vring_create_virtqueue_split(
+> 	unsigned int index,
+> 	unsigned int num,
+>@@ -1160,7 +1211,7 @@ static struct virtqueue *vring_create_virtqueue_split(
+> 	if (err)
+> 		return NULL;
+>
+>-	vq = __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
+>+	vq = __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
+> 				   context, notify, callback, name, dma_dev);
+> 	if (!vq) {
+> 		vring_free_split(&vring_split, vdev, dma_dev);
+>@@ -2050,36 +2101,29 @@ static void virtqueue_reinit_packed(struct vring_virtqueue *vq)
+> 	virtqueue_vring_init_packed(&vq->packed, !!vq->vq.callback);
+> }
+>
+>-static struct virtqueue *vring_create_virtqueue_packed(
+>-	unsigned int index,
+>-	unsigned int num,
+>-	unsigned int vring_align,
+>-	struct virtio_device *vdev,
+>-	bool weak_barriers,
+>-	bool may_reduce_num,
+>-	bool context,
+>-	bool (*notify)(struct virtqueue *),
+>-	void (*callback)(struct virtqueue *),
+>-	const char *name,
+>-	struct device *dma_dev)
+>+static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
+>+					       struct vring_virtqueue_packed *vring_packed,
+>+					       struct virtio_device *vdev,
+>+					       bool weak_barriers,
+>+					       bool context,
+>+					       bool (*notify)(struct virtqueue *),
+>+					       void (*callback)(struct virtqueue *),
+>+					       const char *name,
+>+					       struct device *dma_dev)
+> {
+>-	struct vring_virtqueue_packed vring_packed = {};
+> 	struct vring_virtqueue *vq;
+> 	int err;
+>
+>-	if (vring_alloc_queue_packed(&vring_packed, vdev, num, dma_dev))
+>-		goto err_ring;
+>-
+> 	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
+> 	if (!vq)
+>-		goto err_vq;
+>+		return NULL;
+>
+> 	vq->vq.callback = callback;
+> 	vq->vq.vdev = vdev;
+> 	vq->vq.name = name;
+> 	vq->vq.index = index;
+> 	vq->vq.reset = false;
+>-	vq->we_own_ring = true;
+>+	vq->we_own_ring = false;
+> 	vq->notify = notify;
+> 	vq->weak_barriers = weak_barriers;
+> #ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+>@@ -2100,26 +2144,52 @@ static struct virtqueue *vring_create_virtqueue_packed(
+> 	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+> 		vq->weak_barriers = false;
+>
+>-	err = vring_alloc_state_extra_packed(&vring_packed);
+>-	if (err)
+>-		goto err_state_extra;
+>+	err = vring_alloc_state_extra_packed(vring_packed);
+>+	if (err) {
+>+		kfree(vq);
+>+		return NULL;
+>+	}
+>
+>-	virtqueue_vring_init_packed(&vring_packed, !!callback);
+>+	virtqueue_vring_init_packed(vring_packed, !!callback);
+>
+>-	virtqueue_init(vq, num);
+>-	virtqueue_vring_attach_packed(vq, &vring_packed);
+>+	virtqueue_init(vq, vring_packed->vring.num);
+>+	virtqueue_vring_attach_packed(vq, vring_packed);
+>
+> 	spin_lock(&vdev->vqs_list_lock);
+> 	list_add_tail(&vq->vq.list, &vdev->vqs);
+> 	spin_unlock(&vdev->vqs_list_lock);
+> 	return &vq->vq;
+>+}
+>
+>-err_state_extra:
+>-	kfree(vq);
+>-err_vq:
+>-	vring_free_packed(&vring_packed, vdev, dma_dev);
+>-err_ring:
+>-	return NULL;
+>+static struct virtqueue *vring_create_virtqueue_packed(
+>+	unsigned int index,
+>+	unsigned int num,
+>+	unsigned int vring_align,
+>+	struct virtio_device *vdev,
+>+	bool weak_barriers,
+>+	bool may_reduce_num,
+>+	bool context,
+>+	bool (*notify)(struct virtqueue *),
+>+	void (*callback)(struct virtqueue *),
+>+	const char *name,
+>+	struct device *dma_dev)
+>+{
+>+	struct vring_virtqueue_packed vring_packed = {};
+>+	struct virtqueue *vq;
+>+
+>+	if (vring_alloc_queue_packed(&vring_packed, vdev, num, dma_dev))
+>+		return NULL;
+>+
+>+	vq = __vring_new_virtqueue_packed(index, &vring_packed, vdev, weak_barriers,
+>+					context, notify, callback, name, dma_dev);
+>+	if (!vq) {
+>+		vring_free_packed(&vring_packed, vdev, dma_dev);
+>+		return NULL;
+>+	}
+>+
+>+	to_vvq(vq)->we_own_ring = true;
+>+
+>+	return vq;
+> }
+>
+> static int virtqueue_resize_packed(struct virtqueue *_vq, u32 num)
+>@@ -2598,69 +2668,7 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
+> }
+> EXPORT_SYMBOL_GPL(vring_interrupt);
+>
+>-/* Only available for split ring */
+>-static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>-					       struct vring_virtqueue_split *vring_split,
+>-					       struct virtio_device *vdev,
+>-					       bool weak_barriers,
+>-					       bool context,
+>-					       bool (*notify)(struct virtqueue *),
+>-					       void (*callback)(struct virtqueue *),
+>-					       const char *name,
+>-					       struct device *dma_dev)
+>-{
+>-	struct vring_virtqueue *vq;
+>-	int err;
+>-
+>-	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+>-		return NULL;
+>-
+>-	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
+>-	if (!vq)
+>-		return NULL;
+>-
+>-	vq->packed_ring = false;
+>-	vq->vq.callback = callback;
+>-	vq->vq.vdev = vdev;
+>-	vq->vq.name = name;
+>-	vq->vq.index = index;
+>-	vq->vq.reset = false;
+>-	vq->we_own_ring = false;
+>-	vq->notify = notify;
+>-	vq->weak_barriers = weak_barriers;
+>-#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+>-	vq->broken = true;
+>-#else
+>-	vq->broken = false;
+>-#endif
+>-	vq->dma_dev = dma_dev;
+>-	vq->use_dma_api = vring_use_dma_api(vdev);
+>-	vq->premapped = false;
+>-	vq->do_unmap = vq->use_dma_api;
+>
+>-	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
+>-		!context;
+>-	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+>-
+>-	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+>-		vq->weak_barriers = false;
+>-
+>-	err = vring_alloc_state_extra_split(vring_split);
+>-	if (err) {
+>-		kfree(vq);
+>-		return NULL;
+>-	}
+>-
+>-	virtqueue_vring_init_split(vring_split, vq);
+>-
+>-	virtqueue_init(vq, vring_split->vring.num);
+>-	virtqueue_vring_attach_split(vq, vring_split);
+>-
+>-	spin_lock(&vdev->vqs_list_lock);
+>-	list_add_tail(&vq->vq.list, &vdev->vqs);
+>-	spin_unlock(&vdev->vqs_list_lock);
+>-	return &vq->vq;
+>-}
+>
+> struct virtqueue *vring_create_virtqueue(
+> 	unsigned int index,
+>@@ -2840,7 +2848,6 @@ int virtqueue_reset(struct virtqueue *_vq,
+> }
+> EXPORT_SYMBOL_GPL(virtqueue_reset);
+>
+>-/* Only available for split ring */
+> struct virtqueue *vring_new_virtqueue(unsigned int index,
+> 				      unsigned int num,
+> 				      unsigned int vring_align,
+>@@ -2854,11 +2861,19 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
+> {
+> 	struct vring_virtqueue_split vring_split = {};
+>
+>-	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+>-		return NULL;
+>+	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED)) {
+>+		struct vring_virtqueue_packed vring_packed = {};
+>+
+>+		vring_packed.vring.num = num;
+>+		vring_packed.vring.desc = pages;
+>+		return __vring_new_virtqueue_packed(index, &vring_packed,
+>+						    vdev, weak_barriers,
+>+						    context, notify, callback,
+>+						    name, vdev->dev.parent);
+>+	}
+>
+> 	vring_init(&vring_split.vring, num, pages, vring_align);
+>-	return __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
+>+	return __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
+> 				     context, notify, callback, name,
+> 				     vdev->dev.parent);
+> }
+>-- 
+>2.43.0
+>
 
 
