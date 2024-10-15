@@ -1,117 +1,96 @@
-Return-Path: <linux-kernel+bounces-365719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE3699E850
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:04:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7FFF99E879
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2EB282B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:04:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51B4BB25F64
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17B61EB9E9;
-	Tue, 15 Oct 2024 12:04:20 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756021EC01B;
+	Tue, 15 Oct 2024 12:06:06 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505031CFEA9;
-	Tue, 15 Oct 2024 12:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FC91EBFF5;
+	Tue, 15 Oct 2024 12:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728993860; cv=none; b=lvXbWwLTgGFf63WoguD3Bvd41rw9tcL+hembZRvIrDQY+84x2PR5gQ+gx33Rb4AKaGNy37csJomnCXcVOunD98yveXr2HmQq4zdbNx1EBRbT36AXUV2vLOE6WNERXqejKGHz+kPK/JPtzC1lZ/cHl7kKEsIgaFUV/S9m7rNULoE=
+	t=1728993966; cv=none; b=bYYE5XLrWaF4Q5M85O+GC6uuT/f4mZbsFNva5d9Yjpr4mYLJhphz8smAiOASsKjpzpR2dzXIfQjtR6yn4XHO2De7o9+suSFwzttvC8wd9BA72NQpPzMAPwr152k6uGoFc58+TdsTa+el5ed7r+5SpV5HpJTlAKViI4Dbb2xzDRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728993860; c=relaxed/simple;
-	bh=XMjnB8RwZmkonCHDLqHmGR5FGhVnHjb/lhHRhE0YbNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kv9dFTm312wBJG2IFsESHrUgPeC1o76Kp92BCRIr9yVzxpdiWKJ02bc0W5uKyk8QXbaNx00syVjgSGpoHoAMx85yeAmqJZlEf2XmWGnfHedYfVo+BgjvO9/stERJY95qz30PsdnBDaylWxAPa4mpfreK2PwsN1JGV8oIGY0kHTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 258F0C4CEC6;
-	Tue, 15 Oct 2024 12:04:14 +0000 (UTC)
-Date: Tue, 15 Oct 2024 13:04:12 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-pm@vger.kernel.org, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	pbonzini@redhat.com, wanpengli@tencent.com, vkuznets@redhat.com,
-	rafael@kernel.org, daniel.lezcano@linaro.org, peterz@infradead.org,
-	arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com,
-	harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com,
-	cl@gentwo.org, misono.tomohiro@fujitsu.com, maobibo@loongson.cn,
-	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
- smp_cond_load_relaxed()
-Message-ID: <Zw5aPAuVi5sxdN5-@arm.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
- <20240925232425.2763385-2-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1728993966; c=relaxed/simple;
+	bh=7HYLHQnjC/lS+BhsffFXfrfGzpb+/qTKgWGBH4Y2fp8=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WzZv0g51ZYl4CN7frfpNI7WGdxTk7MVsnfLxk0Z7PC9vKznY2D9fkvo65rhkYtzCrTIbmdeXRFnkyHYBaz8p6q0imQoTPl1XGiE57ybpggoGJ3PA8SUA6rebmYW6AR1CoQJZvNJG99X78mdkzQ+VGbdZM0VhZ0SmR4wGRQKtFsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XSXnt5N71z2DdVZ;
+	Tue, 15 Oct 2024 20:04:18 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA7711A016C;
+	Tue, 15 Oct 2024 20:05:31 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 15 Oct 2024 20:05:30 +0800
+Message-ID: <25f04101-d92a-466e-9824-098e7c723188@huawei.com>
+Date: Tue, 15 Oct 2024 20:05:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925232425.2763385-2-ankur.a.arora@oracle.com>
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <shenjian15@huawei.com>,
+	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
+	<horms@kernel.org>, <kalesh-anakkur.purayil@broadcom.com>,
+	<christophe.jaillet@wanadoo.fr>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V12 net-next 07/10] net: hibmcge: Implement rx_poll
+ function to receive packets
+To: Paolo Abeni <pabeni@redhat.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>
+References: <20241010142139.3805375-1-shaojijie@huawei.com>
+ <20241010142139.3805375-8-shaojijie@huawei.com>
+ <2dd71e95-5fb2-42c9-aff0-3189e958730a@redhat.com>
+ <44023e6f-5a52-4681-84fc-dd623cd9f09d@huawei.com>
+ <ee1205d6-3d6b-447f-991e-903936d45ac7@redhat.com>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <ee1205d6-3d6b-447f-991e-903936d45ac7@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Wed, Sep 25, 2024 at 04:24:15PM -0700, Ankur Arora wrote:
-> diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
-> index 9b6d90a72601..fc1204426158 100644
-> --- a/drivers/cpuidle/poll_state.c
-> +++ b/drivers/cpuidle/poll_state.c
-> @@ -21,21 +21,20 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
->  
->  	raw_local_irq_enable();
->  	if (!current_set_polling_and_test()) {
-> -		unsigned int loop_count = 0;
->  		u64 limit;
->  
->  		limit = cpuidle_poll_time(drv, dev);
->  
->  		while (!need_resched()) {
-> -			cpu_relax();
-> -			if (loop_count++ < POLL_IDLE_RELAX_COUNT)
-> -				continue;
-> -
-> -			loop_count = 0;
-> +			unsigned int loop_count = 0;
->  			if (local_clock_noinstr() - time_start > limit) {
->  				dev->poll_time_limit = true;
->  				break;
->  			}
-> +
-> +			smp_cond_load_relaxed(&current_thread_info()->flags,
-> +					      VAL & _TIF_NEED_RESCHED ||
-> +					      loop_count++ >= POLL_IDLE_RELAX_COUNT);
 
-The above is not guaranteed to make progress if _TIF_NEED_RESCHED is
-never set. With the event stream enabled on arm64, the WFE will
-eventually be woken up, loop_count incremented and the condition would
-become true. However, the smp_cond_load_relaxed() semantics require that
-a different agent updates the variable being waited on, not the waiting
-CPU updating it itself. Also note that the event stream can be disabled
-on arm64 on the kernel command line.
+on 2024/10/15 19:57, Paolo Abeni wrote:
+> On 10/15/24 13:41, Jijie Shao wrote:
+>> on 2024/10/15 18:28, Paolo Abeni wrote:
+>>> Side note: the above always uses the maximum MTU for the packet size,
+>>> if the device supports jumbo frames (8Kb size packets), it will
+>>> produce quite bad layout for the incoming packets... Is the device
+>>> able to use multiple buffers for the incoming packets?
+>>
+>> In fact, jumbo frames are not supported in device, and the maximum 
+>> MTU is 4Kb.
+>
+> FTR, even 4Kb is bad enough: tiny packets (tcp syn, UDP dns req) will 
+> use a truesize above 5K. You can get a much better the layout using 
+> copybreak.
+>
+> Cheers,
+>
+> Paolo
 
-Does the code above break any other architecture? I'd say if you want
-something like this, better introduce a new smp_cond_load_timeout()
-API. The above looks like a hack that may only work on arm64 when the
-event stream is enabled.
+Sorry, Actually 4KB。the default mtu is 1500
 
-A generic option is udelay() (on arm64 it would use WFE/WFET by
-default). Not sure how important it is for poll_idle() but the downside
-of udelay() that it won't be able to also poll need_resched() while
-waiting for the timeout. If this matters, you could instead make smaller
-udelay() calls. Yet another problem, I don't know how energy efficient
-udelay() is on x86 vs cpu_relax().
-
-So maybe an smp_cond_load_timeout() would be better, implemented with
-cpu_relax() generically and the arm64 would use LDXR, WFE and rely on
-the event stream (or fall back to cpu_relax() if the event stream is
-disabled).
-
--- 
-Catalin
 
