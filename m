@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-365842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE2D99EB8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:08:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A795799EB90
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A76E1F2622D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:08:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D904E1C231E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED641D5AD3;
-	Tue, 15 Oct 2024 13:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0827A1C07FF;
+	Tue, 15 Oct 2024 13:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="LghZXKpr"
-Received: from nbd.name (nbd.name [46.4.11.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TyiLKfPp"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A0F1AF0A9;
-	Tue, 15 Oct 2024 13:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B8F1CFEA9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728997686; cv=none; b=ZanZcQrtI2m7SNWLmsFl2n8RZ6aVzvQ7npdBqEUZ57piM0f6JPjqpMoTgWn6mibfT2C5eQ9WbMSf0+L+4bwHxVb0Ye71rOUpP+CA3Pz0MOf5lgOQ+W07b55SqR2ti0/qy3f17EtvLTyMl07rbWlsete+iQeBlU3NT40Ezb/DLN4=
+	t=1728997701; cv=none; b=GohkglABb6liuueo1U4nnSvO21F6HldDzSNP84QEreDHQ89r4HSNpu+jMQZrPwz+ejCt8ggcIuJDHTGqw8HW2Oo+tVc7IwQ83oAG5Vlbi94rIjdLGT5xiQF7losAZrNp5x1C1Fz81/CsvnXUNS09l7Ns0qF6vcKU4lnFf5PI3c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728997686; c=relaxed/simple;
-	bh=a3nB+9tQPAJSsl8Qm2/pe8fFu9bJdaYkRXWc1LV5jmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MNL+y9TVvJWOfLi7QchNE7rcamDBuXP5wW/zhxP6+F2C3s+NBkyI1NmSeoux5kYwNHdfx8oIXWrXpoBS63+8ezTvSAnGYwn8SCdx0j/ACRuHJfTe3vgOPPsTLvkWVzZLGGX4MxIlWWkpEDwz2B7oY4SfHHZWz3p/gslEG93spwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=LghZXKpr; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=p5BHUyPt1EyFTjMoAsnVPZVSP1YnGZbvLucwi3hkXsc=; b=LghZXKprKdh4ZKP8MMVtLHKtNQ
-	0aWIrf57zzmuxOu2+1wHVipPHf5I5kH4/MyyXF2wdk6ZjtA0WMRAMQd+ZYJ1/siIrF+XsH1dCLLkt
-	HsPGXeNgxJ+QCxa+O7HvSVgtEznp5ish9tOfkEBTCEG3SfibiXIQzPCaK1Hxvp1Js1NI=;
-Received: from p54ae9bfc.dip0.t-ipconnect.de ([84.174.155.252] helo=nf.local)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1t0hHC-0099iN-2Y;
-	Tue, 15 Oct 2024 15:07:50 +0200
-Message-ID: <695421bb-6f31-4bae-8c8c-6d4fccf1b497@nbd.name>
-Date: Tue, 15 Oct 2024 15:07:50 +0200
+	s=arc-20240116; t=1728997701; c=relaxed/simple;
+	bh=nGUgaS3xSqIDmh8hU4JivJzlEHXiIXok89af7BxXPcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t5ZCOMEiNSB82axhOPqNNxJfCdskgNd2KM/j+GOLEFynnDj4WTGaxokRKdUJXufQA6q948fcNF7igIP0I4etkmxuFQOkh+YQv9SynMrdZexRsi1LRaqfVgj/BO6CvXBk3lLY4yn9XN6RHmPvS8pmotHbvi+9iZnTm1jCUokdF44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TyiLKfPp; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53a007743e7so721924e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728997698; x=1729602498; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jrYegS/cg9zWrW4IjkZUnQE9rjlPUwUGC3VKtBGsMag=;
+        b=TyiLKfPp32pz5wSuayFx9M+L732xmvp3i6cdZCgFX4ZOeNf5wXVdxzUWNdIvvGw0Ez
+         Y4EJZMYSPwy8CftpfMwin7FT4huXg6RoLDhhxpcb4t3MN5BjfW8KIQu8uAbMuP1f8Sm2
+         NxcKqTfwYiG9Z8MtKAJyQb4jOIn69Px426lPTiWVgOneUzsky1mvQpMPjmQu28lpXjMV
+         gG3HVClXuXhozIxiwBlR3skVw7o06wu9+5IjXhugl4txC5638hhBIKaH8KPCIykMiC0d
+         W5kAoD422SaOOrIOKTRiPDNVjH+3QgZxgNzeiZd2sA7HjELl09wDn+pClogxrOmhbFUf
+         TlYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728997698; x=1729602498;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jrYegS/cg9zWrW4IjkZUnQE9rjlPUwUGC3VKtBGsMag=;
+        b=BMhUYGkB78W4hmWAFL4WDmtd7qPeijfQm8Se/u9YWIvA0Et+ST8T3Pf0cR/SpJMuYb
+         Stz7/8c+ffMVEFM7iuSq/7qd4a3n2ht8x37ZkRXTiA+1uHFo2rv+UiZQKqtuP+cTxYM0
+         4fQ/Cik8k1DF0WYT8aM1acU716FzHbnjEH62Vh6AwHiiMH3fOwlwlm/fkovgS7zgkQjO
+         iZ06HTcroX4FVo5CyYozsNL069IQ4cR5EPpJVc/6zMr2h6A90d+UyIfJkXfaGlGgmNZq
+         FoKaxhyoFPstVGzybzcUC74TlVUv1otDnnyX0N3lscwUdjyuelZCjy9jWZXN7pbcMjFJ
+         4x8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWICSFoxYXQ8PBXoj/jQO5vXm4DQNPzSGYYZwA7AC1hRfe1tAoEch79K3qqfmqMpdB+JO6YUk+YTmdTQ2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Qck7CnlLRgJbkhV18b8QwpDCg9MSc6CMaF0I+i4/PVL5t362
+	xA5KW0EXX+cexlqScbvzVgr2EZVYw0hmRlkYqSH5YadlkssYTTCYey2zI3YAKh8=
+X-Google-Smtp-Source: AGHT+IEiNt9jcpifpSJ4xTgDlnr3L/ZtDDqDq5h+H8YO2Y8dPiK0O/PL8SlRc64Fnhh2XiyRLqTPfw==
+X-Received: by 2002:a05:6512:2352:b0:539:f7de:df84 with SMTP id 2adb3069b0e04-539f7dee17amr3532200e87.10.1728997697532;
+        Tue, 15 Oct 2024 06:08:17 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffa8e92sm168284e87.15.2024.10.15.06.08.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 06:08:16 -0700 (PDT)
+Date: Tue, 15 Oct 2024 16:08:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: rename vph-pwr regulator
+ nodes
+Message-ID: <ofrnqmnfy7tj2myngfplhycwmm6kyv4guwjlz2vuzc7gd6retg@mleqzgzft24x>
+References: <20241015122601.16127-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 4/4] net: ethernet: mtk_eth_soc: optimize dma
- ring address/index calculation
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
- Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241015110940.63702-1-nbd@nbd.name>
- <20241015110940.63702-4-nbd@nbd.name>
- <e67883e3-b278-4052-849c-8a9a8ef145f0@lunn.ch>
-From: Felix Fietkau <nbd@nbd.name>
-Content-Language: en-US
-Autocrypt: addr=nbd@nbd.name; keydata=
- xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
- cL98efvrjdstUfTCP2pfetyN
-In-Reply-To: <e67883e3-b278-4052-849c-8a9a8ef145f0@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015122601.16127-1-johan+linaro@kernel.org>
 
-On 15.10.24 14:54, Andrew Lunn wrote:
-> On Tue, Oct 15, 2024 at 01:09:38PM +0200, Felix Fietkau wrote:
->> Since DMA descriptor sizes are all power of 2, we can avoid costly integer
->> division in favor or simple shifts.
+On Tue, Oct 15, 2024 at 02:26:00PM +0200, Johan Hovold wrote:
+> Rename the x1e80100 vph-pwr regulator nodes to use "regulator" as a
+> prefix for consistency with the other fixed regulators.
 > 
-> Could a BUILD_BUG_ON() be added to validate this?
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  .../dts/qcom/x1e80100-asus-vivobook-s15.dts   | 22 +++++++++----------
+>  arch/arm64/boot/dts/qcom/x1e80100-crd.dts     | 22 +++++++++----------
+>  .../dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  | 22 +++++++++----------
+>  .../dts/qcom/x1e80100-microsoft-romulus.dtsi  | 22 +++++++++----------
+>  4 files changed, 44 insertions(+), 44 deletions(-)
+> 
 
-Not sure if that would be useful. I can't put the BUILD_BUG_ON in the 
-initializer macro, so I could only add it for the individual dma 
-descriptor structs.
-Since the size of those structs will not be changed (otherwise it would 
-immediately visibly break with existing hw), the remaining possibility 
-would be adding new structs that violate this expectation. However, 
-those would then not be covered by the BUILD_BUG_ON.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-> Do you have some benchmark data for this series? It would be good to
-> add to a patch 0/4.
-
-No, I just ran basic tests that everything still works well and looked 
-at the assembly diff to ensure that the generated code seems sane.
-
-- Felix
+-- 
+With best wishes
+Dmitry
 
