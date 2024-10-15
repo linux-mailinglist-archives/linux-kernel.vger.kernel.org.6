@@ -1,109 +1,125 @@
-Return-Path: <linux-kernel+bounces-364988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4CE99DBF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:59:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044E799DBF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13B68B21011
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B377E2834F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2EB15956C;
-	Tue, 15 Oct 2024 01:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1073015B12A;
+	Tue, 15 Oct 2024 01:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZa2auGt"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gtOkBtSO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9D417BD3;
-	Tue, 15 Oct 2024 01:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE06515884A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728957531; cv=none; b=A9gNmdSPt4SSnb/2hP9BKaB1Deepl8qE9v1aKXBWMs57adTX7PwEYqRPzDwh6wnDyXLmpkfV5hfSUCKYwxui3q3Fwil3erzyTQR7rZFbG2OAmtMvbsc8YVUfdRwE5JNLLRBMafjG009j+QuH0NUq3e5MMLgRIIbPzPwni6DLbEg=
+	t=1728957563; cv=none; b=hDD5rawAIEQ1Jp+pQR8SULvajE6ZVgbcujdKEUyJuCsJnynTtCvmAk5p8VYJTrk+qBA3ZslYcgxQboJEDFx0Y+EPfee6Q3O7CDNeL7bnesKykhXXV5d2Is/2EhfBydHNUsoYALzMHAZIar/FevRc1viLMqHa3AhiXoDT0i6/orE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728957531; c=relaxed/simple;
-	bh=/0gsE0u6DA07Za63Ru15AVvJ6inJaTvSPG8xjdYV7Vw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLTU8OqcOgnVBy0O816B8vSMFHIE7WxCYll+cPIKvI63nXiiAShTyn7NjsjAoRLvt549xae/sAy8EG87TCxTH7kfV+87hrUANAWaevYT93HOSjpqHksR5R+Q2rr8ZPF8yytNa4ubcIxlMzQyZ7V+Nw0kq/FdqM9j0+89sWrQirs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZa2auGt; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6e35f08e23eso23820517b3.2;
-        Mon, 14 Oct 2024 18:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728957529; x=1729562329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5gsbhtgFL9eLe0z8N0+DuikAHWepswx4QLWPWc7s490=;
-        b=bZa2auGtFOzIuMVcgs/HMeX0gnpK8WKxkfCxEYaYYuyNUvFT+bUDja5e5Z1LMs1F8P
-         A4J8Z6sGZvPjlTEF+zTWvePlzdcJxhd+XONVh/vCzRO8P6z/cyYD89pJK02eR++iRwJh
-         cnchso0h9BzKAwqnIe3vq12fOcWfwHAJ5UEKCd69GY0RjVE53VmfRfdCue6vTRdtbvwN
-         a+PFY+MEgg2sRJ6QkuCgJk0AL9STYByYoqjD2E7fHn7qE+c+2rDpKLUncIE52lb83f72
-         5vJbM1qaabTv0clHQFvQ/mgY652ozVdek+pb5ibgi3XUuXMzDkKIMqcvtZX8slVGupZ6
-         j9Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728957529; x=1729562329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5gsbhtgFL9eLe0z8N0+DuikAHWepswx4QLWPWc7s490=;
-        b=R27cGlBtG7cvLhMXAx7y7rH4nWD+UBm9/I7bYrNFNH8Wb0dhhTGEV/OjpeOGRI7X69
-         gWV+pvFtaJnd8+pup+lurpLcthE0b2cTM/D9YsOgCO9QqEgSML21aGa0YXdoWX4BOQiv
-         +25P/rn0qOKkVSPzg584cTBQROQkEVHWrW/GJ6WSmth8Kl8yEbJ/NFzMQf2mnvMzEU9B
-         a5GvKsS2RYefMWnLOiaROyC0EJY5ndP9Xsf38IR6L/qOjjvt0WkfxZBcUKws4JnWyGEP
-         PvekareymlYe1n/Xe1egtcGd9ipF/19iFKZ0mo5NNMPhBC0/2eXHSt/reDMPP4GGF7lK
-         /JCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTVjpfs/u+nNPOn9h61i2tLRAc3YbXakVbc1qHLsJUzehTaP5fu0hCvn8fnO0slP0icwszck3TnM6B5f4=@vger.kernel.org, AJvYcCVAU8veTDu3Giz3pEBxyEMuKRBGYjNODGlymUTigC2G3fTiXAGkETeaDV/XqJ9vLdlFJN/pH1aU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBg1tQyolqIg4P4DHrnGMKllO/+ehJvB5okrCdytzCXHb0hL7f
-	+mZMY/fPlWWM8jz8eIMjFZ8u3UojNHDqceFAsubafBBVc2zKsUfGLHOBlFn79iSGmkC01n1APCM
-	gcO/0LSgSiGKDVei96L1rIuocXIw=
-X-Google-Smtp-Source: AGHT+IGRZLtUEZQRlXhNx/Bhkj2AdycqIRHwyIudTb83MPZjUuvtaZzUc9GdH+lXrWIoqSULqp1foFsjRPw4QyhPKvA=
-X-Received: by 2002:a05:690c:289:b0:6e3:23df:cc25 with SMTP id
- 00721157ae682-6e347b185d0mr99036847b3.26.1728957529235; Mon, 14 Oct 2024
- 18:58:49 -0700 (PDT)
+	s=arc-20240116; t=1728957563; c=relaxed/simple;
+	bh=/mpWQQUg4SLGbw0b6uVKlir/V5LQ1XvyAyhlgfEndo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKNNcfN9NtHIP5JA3HUMSuaDYxqqbqu2rqW6JQHadEQgmVbXYvzcXpn4I0BKtfLYrzshMJIlGPf9aGMA+x4fUvBhpf4Dc4XjQ9jUk2QKuUY15ckCv2/UApvEeEWH4l8VnTil03a42cBF0jDkB4u92OpPZk4eBcz+fVMD6Dmo8/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gtOkBtSO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728957559;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ml1ZBBcs96kgD+D7cgCrxHrlfi6RlfUgZkDg/aeocjg=;
+	b=gtOkBtSOsTYxj40ujpaW5nQ3R8xtu/lr5y0XsIiqA8bIo2z9Fnq1ld3jv1DPW6bDSToCJA
+	ZChyqFZJIZM9tYDqs+b94BGqKEqLmbVWaF5ZLtQ3gmg0J7toZ9o4Fuf99OOrQN/3mcKXM7
+	0hvm4dIV13b9JFLypvQP0+oB74SGjZA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-370-m3OzuSbkP1ilKYyrQmSsqg-1; Mon,
+ 14 Oct 2024 21:59:16 -0400
+X-MC-Unique: m3OzuSbkP1ilKYyrQmSsqg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74E88195608B;
+	Tue, 15 Oct 2024 01:59:14 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.119])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E666419560AA;
+	Tue, 15 Oct 2024 01:59:07 +0000 (UTC)
+Date: Tue, 15 Oct 2024 09:59:02 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+	Hamza Mahfooz <someguy@effective-light.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
+ overlapping mappings aren't supported"
+Message-ID: <Zw3MZrK_l7DuFfFd@fedora>
+References: <ZwxzdWmYcBK27mUs@fedora>
+ <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
+ <20241014074151.GA22419@lst.de>
+ <ZwzPDU5Lgt6MbpYt@fedora>
+ <7411ae1d-5e36-46da-99cf-c485ebdb31bc@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009022830.83949-1-dongml2@chinatelecom.cn> <20241014172158.382fb9c9@kernel.org>
-In-Reply-To: <20241014172158.382fb9c9@kernel.org>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Tue, 15 Oct 2024 09:58:48 +0800
-Message-ID: <CADxym3a3OQ0tuxXT+i=BORVo69btM+XNUWmwCrUjs_pZtUuOsg@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 00/12] net: vxlan: add skb drop reasons support
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: idosch@nvidia.com, aleksander.lobakin@intel.com, horms@kernel.org, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
-	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
-	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7411ae1d-5e36-46da-99cf-c485ebdb31bc@arm.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Tue, Oct 15, 2024 at 8:22=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Wed,  9 Oct 2024 10:28:18 +0800 Menglong Dong wrote:
-> > In this series, we add skb drop reasons support to VXLAN, and following
-> > new skb drop reasons are introduced:
->
-> Looks like DaveM already applied this (silently?)
+On Mon, Oct 14, 2024 at 07:09:08PM +0100, Robin Murphy wrote:
+> On 14/10/2024 8:58 am, Ming Lei wrote:
+> > On Mon, Oct 14, 2024 at 09:41:51AM +0200, Christoph Hellwig wrote:
+> > > On Mon, Oct 14, 2024 at 09:23:14AM +0200, Hannes Reinecke wrote:
+> > > > > 3) some storage utilities
+> > > > > - dm thin provisioning utility of thin_check
+> > > > > - `dt`(https://github.com/RobinTMiller/dt)
+> > > > > 
+> > > > > I looks like same user buffer is used in more than 1 dio.
+> > > > > 
+> > > > > 4) some self cooked test code which does same thing with 1)
+> > > > > 
+> > > > > In storage stack, the buffer provider is far away from the actual DMA
+> > > > > controller operating code, which doesn't have the knowledge if
+> > > > > DMA_ATTR_SKIP_CPU_SYNC should be set.
+> > > > > 
+> > > > > And suggestions for avoiding this noise?
+> > > > > 
+> > > > Can you check if this is the NULL page? Operations like 'discard' will
+> > > > create bios with several bvecs all pointing to the same NULL page.
+> > > > That would be the most obvious culprit.
+> > > 
+> > > The only case I fully understand without looking into the details
+> > > is raid1, and that will obviously map the same data multiple times
+> > 
+> > The other cases should be concurrent DIOs on same userspace buffer.
+> 
+> active_cacheline_insert() does already bail out for DMA_TO_DEVICE, so it
+> returning -EEXIST to tickle the warning would seem to genuinely imply these
+> are DMA mappings requesting to *write* the same cacheline concurrently,
+> which is indeed broken in general.
 
-Yeah, the bot didn't notify me this time :/
+The two io_uring tests are READ, and the dm thin_check are READ too.
 
-> so please *do* follow up on Ido's reviews but as incremental patches
-> rather than v8
+For the raid1 case, the warning is from raid1_sync_request() which may
+have both READ/WRITE IO.
 
-Okay, I'll send new patches to fix the comment of vxlan_snoop(),
-and use SKB_DROP_REASON_VXLAN_VNI_NOT_ FOUND in
-encap_bypass_if_local().
+Thanks,
+Ming
 
-Thanks!
-Menglong Dong
 
