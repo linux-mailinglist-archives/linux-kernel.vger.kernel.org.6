@@ -1,163 +1,219 @@
-Return-Path: <linux-kernel+bounces-366847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3935699FB68
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:24:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5034799FB6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77461F24405
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:24:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FAA1C23E7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E76E1CBE8A;
-	Tue, 15 Oct 2024 22:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D695F1D63C3;
+	Tue, 15 Oct 2024 22:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xHPqAV8s";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="37c/4Mt3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMsoD6Ls"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F26D1CACDB;
-	Tue, 15 Oct 2024 22:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3301B0F0F;
+	Tue, 15 Oct 2024 22:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729030993; cv=none; b=edizZifwEZyY4KRiE1hexAt1TJtLVHXxAH22dTLAyYXbmjAqz6jMWnnMmGEvsaui3USutVXoL9y5o4cln2ddltv6fBfzMs5Uxgi4pIbB3gTviwwSEtB6Z5NZJKWc7/SfU0e96PSfphzBztfti4zKiEhFpge+PPRRa+JhxQkCmyE=
+	t=1729031073; cv=none; b=QEQUXblPnmXnO0QPnuP8U49aUIs7q95YKdXdynUUAroZ/GXZW/+LQ7hsDFMIoRtweo44tFibEYC+k+BHEXBcn2tCC4HSZt9aEZIOsqFuSYvVQwtRZ7Yw0SNipMKLV3tsQDupEGjPxq0/ia/075OY1Wc1ig6lcJZRVBLPID6AHP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729030993; c=relaxed/simple;
-	bh=LYAYjzbXcCCmTW7PL8BZudARwDf6uv4DLSXifWXmoS0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=T3Qalts7vokwVkn6EK/KFWiukC58EJYVlyGrzobAsn9ZRVH2YCqYvesSFQd6mqdSrIRxIuGMYyPDj733Xd6yNR7RHebuLz3QcjAuwkqaELGqAC2paj7ZbB88LOpdzoJgNgZ43v+KvzBc9QKjk+M+xrKBNQtNytoIsM/nHzXQVX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xHPqAV8s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=37c/4Mt3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 22:23:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729030990;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oZ/LVyARVwZxDHEzpzW3H9mQtTsYHEOSXSa0cnWvdrw=;
-	b=xHPqAV8s2YgATbkIUCU6kQ4yNk4cEOycW2vrTUihbjLGg7+KYUfLEf3BRx2prXRKz7YFSU
-	+/2x7qiaGvIOjKhp+eT1fXDjPe6aZ4fD7y1d1zJfbO9yN0m8gwaxjYi1uRVyqOzYzAjHZ4
-	juHTi4f41FARJuxCx+g3JJYIm62ULCn3AzF5MMV1klspqFKpfXLV6J/ZQOda6NM0DV5bPo
-	BgygloyJaFlSR6g6I2VpHOYyrds2dBM2v7S/kmXCJIN5839n8PB8zl0mTP/7XDSQljBVgw
-	qcTll3KPlfGszTHJ2h5UDbyoVzhj2xziMI5QHNxS/fBdshfUFp+nCEdjz0gX6Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729030990;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oZ/LVyARVwZxDHEzpzW3H9mQtTsYHEOSXSa0cnWvdrw=;
-	b=37c/4Mt3shBP/jw0a1KvRPalbqHpJHRywwerjtrKlGwa+wh7i46LPYT1ULO9Z6RAKMWw0H
-	hFXeLaTiwO8VsjCw==
-From: "tip-bot2 for Vincenzo Frascino" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] drm: i915: Change fault type to unsigned long
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241014151340.1639555-2-vincenzo.frascino@arm.com>
-References: <20241014151340.1639555-2-vincenzo.frascino@arm.com>
+	s=arc-20240116; t=1729031073; c=relaxed/simple;
+	bh=tSAPdkBdHjG9+KNs4Rn2ppfn4xpMBH1qHfM0L+k/jxg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Bpnfu8ME1tTwbbih3l351o3D6s+fs0eZu7eBYpLxvONZ60tPGB2hE5qPSlztNiR89gX2OFUjuSl/yHZ13hKloaDh4eajJoysbdJjn4Bw9EcvgVnaraL6JTMBOEAiu/1BOnBzWrnLWIOShVpoL4i7J5h/PwP5VC2bG1Ps+9pyRzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMsoD6Ls; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71F1C4CEC6;
+	Tue, 15 Oct 2024 22:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729031072;
+	bh=tSAPdkBdHjG9+KNs4Rn2ppfn4xpMBH1qHfM0L+k/jxg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kMsoD6LsW2VTgsUXW+U4SX1+lVzBhyR49NI7EQsGUIe868usg+6KwGhVCBdvdjXeu
+	 gEPsKwBEugHUaHtux2OFkYxlYfgCWMp+ycKmya54C5s38MmCMwW6qzItGv7W5+MZKQ
+	 Vkj14bWCBjfK60TgH0mfSfltjbJZUQR+hl8sCERRwXVkvlzR1Z0X3WRiELBynmrmEU
+	 LGnjeimQgbW/tNlfIchzX2v8Bh9cVSf/naKzAJIFfig92oWe4TgVnpTZzFg9Zap/sk
+	 XmTvPpPxweKg3qOk6h59ZLvpU+zHFJ98F7GBUVoZFjHQPYVZjx0lrftgkcFEhONwzX
+	 mP6rd82m59eZA==
+Date: Wed, 16 Oct 2024 07:24:26 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, Song Liu
+ <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv6 perf/core 01/16] uprobe: Add data pointer to consumer
+ handlers
+Message-Id: <20241016072426.c6f7b9572b946dd31c0c1fb8@kernel.org>
+In-Reply-To: <20241010200957.2750179-2-jolsa@kernel.org>
+References: <20241010200957.2750179-1-jolsa@kernel.org>
+	<20241010200957.2750179-2-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <172903098946.1442.235442083227869360.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the timers/vdso branch of tip:
+On Thu, 10 Oct 2024 22:09:42 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-Commit-ID:     8fd236b00fc1bc40e2f9205d0121a2de5ea506d0
-Gitweb:        https://git.kernel.org/tip/8fd236b00fc1bc40e2f9205d0121a2de5ea=
-506d0
-Author:        Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate:    Mon, 14 Oct 2024 16:13:38 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 16 Oct 2024 00:13:04 +02:00
+> Adding data pointer to both entry and exit consumer handlers and all
+> its users. The functionality itself is coming in following change.
+> 
 
-drm: i915: Change fault type to unsigned long
+Looks good to me.
 
-Fault is currently of type u32 and with the introduction of the
-generalized vdso/page.h we trigger the error below:
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-drivers/gpu/drm/i915/gt/intel_gt_print.h:29:36: error: format =E2=80=98%lx=E2=
-=80=99 expects
-argument of type =E2=80=98long unsigned int=E2=80=99, but argument 6 has type=
- =E2=80=98u32=E2=80=99 {aka
-=E2=80=98unsigned int=E2=80=99} [-Werror=3Dformat=3D]
-   29 |         drm_dbg(&(_gt)->i915->drm, "GT%u: " _fmt, (_gt)->info.id,
-      |                                    ^~~~~~~~
-include/drm/drm_print.h:424:39: note: in definition of macro =E2=80=98drm_dev=
-_dbg=E2=80=99
-  424 |         __drm_dev_dbg(NULL, dev, cat, fmt, ##__VA_ARGS__)
-      |                                       ^~~
-include/drm/drm_print.h:524:33: note: in expansion of macro =E2=80=98drm_dbg_=
-driver=E2=80=99
-  524 | #define drm_dbg(drm, fmt, ...)  drm_dbg_driver(drm, fmt, ##__VA_ARGS_=
-_)
-      |                                 ^~~~~~~~~~~~~~
-linux/drivers/gpu/drm/i915/gt/intel_gt_print.h:29:9: note: in expansion of ma=
-cro
-=E2=80=98drm_dbg=E2=80=99
-   29 |         drm_dbg(&(_gt)->i915->drm, "GT%u: " _fmt, (_gt)->info.id,
-      |         ^~~~~~~
-drivers/gpu/drm/i915/gt/intel_gt.c:310:25: note: in expansion of macro =E2=80=
-=98gt_dbg=E2=80=99
-  310 |                         gt_dbg(gt, "Unexpected fault\n"
-      |                         ^~~~~~
+Alexei, please merge this series via bpf tree, since most of the patches
+in this series are for bpf.
 
-This happens because the type of PAGE_MASK depends on the architecture.
+Thank you,
 
-Prevent the compilation error changing the 'fault' type to unsigned
-long.
+> Acked-by: Oleg Nesterov <oleg@redhat.com>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  include/linux/uprobes.h                              |  4 ++--
+>  kernel/events/uprobes.c                              |  4 ++--
+>  kernel/trace/bpf_trace.c                             |  6 ++++--
+>  kernel/trace/trace_uprobe.c                          | 12 ++++++++----
+>  .../testing/selftests/bpf/bpf_testmod/bpf_testmod.c  |  2 +-
+>  5 files changed, 17 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index 2b294bf1881f..bb265a632b91 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -37,10 +37,10 @@ struct uprobe_consumer {
+>  	 * for the current process. If filter() is omitted or returns true,
+>  	 * UPROBE_HANDLER_REMOVE is effectively ignored.
+>  	 */
+> -	int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs);
+> +	int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs, __u64 *data);
+>  	int (*ret_handler)(struct uprobe_consumer *self,
+>  				unsigned long func,
+> -				struct pt_regs *regs);
+> +				struct pt_regs *regs, __u64 *data);
+>  	bool (*filter)(struct uprobe_consumer *self, struct mm_struct *mm);
+>  
+>  	struct list_head cons_node;
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 2a0059464383..6b44c386a5df 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -2090,7 +2090,7 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+>  		int rc = 0;
+>  
+>  		if (uc->handler) {
+> -			rc = uc->handler(uc, regs);
+> +			rc = uc->handler(uc, regs, NULL);
+>  			WARN(rc & ~UPROBE_HANDLER_MASK,
+>  				"bad rc=0x%x from %ps()\n", rc, uc->handler);
+>  		}
+> @@ -2128,7 +2128,7 @@ handle_uretprobe_chain(struct return_instance *ri, struct pt_regs *regs)
+>  	rcu_read_lock_trace();
+>  	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
+>  		if (uc->ret_handler)
+> -			uc->ret_handler(uc, ri->func, regs);
+> +			uc->ret_handler(uc, ri->func, regs, NULL);
+>  	}
+>  	rcu_read_unlock_trace();
+>  }
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index a582cd25ca87..fdab7ecd8dfa 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -3244,7 +3244,8 @@ uprobe_multi_link_filter(struct uprobe_consumer *con, struct mm_struct *mm)
+>  }
+>  
+>  static int
+> -uprobe_multi_link_handler(struct uprobe_consumer *con, struct pt_regs *regs)
+> +uprobe_multi_link_handler(struct uprobe_consumer *con, struct pt_regs *regs,
+> +			  __u64 *data)
+>  {
+>  	struct bpf_uprobe *uprobe;
+>  
+> @@ -3253,7 +3254,8 @@ uprobe_multi_link_handler(struct uprobe_consumer *con, struct pt_regs *regs)
+>  }
+>  
+>  static int
+> -uprobe_multi_link_ret_handler(struct uprobe_consumer *con, unsigned long func, struct pt_regs *regs)
+> +uprobe_multi_link_ret_handler(struct uprobe_consumer *con, unsigned long func, struct pt_regs *regs,
+> +			      __u64 *data)
+>  {
+>  	struct bpf_uprobe *uprobe;
+>  
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index c40531d2cbad..5895eabe3581 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -89,9 +89,11 @@ static struct trace_uprobe *to_trace_uprobe(struct dyn_event *ev)
+>  static int register_uprobe_event(struct trace_uprobe *tu);
+>  static int unregister_uprobe_event(struct trace_uprobe *tu);
+>  
+> -static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs);
+> +static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs,
+> +			     __u64 *data);
+>  static int uretprobe_dispatcher(struct uprobe_consumer *con,
+> -				unsigned long func, struct pt_regs *regs);
+> +				unsigned long func, struct pt_regs *regs,
+> +				__u64 *data);
+>  
+>  #ifdef CONFIG_STACK_GROWSUP
+>  static unsigned long adjust_stack_addr(unsigned long addr, unsigned int n)
+> @@ -1517,7 +1519,8 @@ trace_uprobe_register(struct trace_event_call *event, enum trace_reg type,
+>  	}
+>  }
+>  
+> -static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
+> +static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs,
+> +			     __u64 *data)
+>  {
+>  	struct trace_uprobe *tu;
+>  	struct uprobe_dispatch_data udd;
+> @@ -1548,7 +1551,8 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
+>  }
+>  
+>  static int uretprobe_dispatcher(struct uprobe_consumer *con,
+> -				unsigned long func, struct pt_regs *regs)
+> +				unsigned long func, struct pt_regs *regs,
+> +				__u64 *data)
+>  {
+>  	struct trace_uprobe *tu;
+>  	struct uprobe_dispatch_data udd;
+> diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> index 8835761d9a12..12005e3dc3e4 100644
+> --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> @@ -461,7 +461,7 @@ static struct bin_attribute bin_attr_bpf_testmod_file __ro_after_init = {
+>  
+>  static int
+>  uprobe_ret_handler(struct uprobe_consumer *self, unsigned long func,
+> -		   struct pt_regs *regs)
+> +		   struct pt_regs *regs, __u64 *data)
+>  
+>  {
+>  	regs->ax  = 0x12345678deadbeef;
+> -- 
+> 2.46.2
+> 
 
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/all/20241014151340.1639555-2-vincenzo.frascino@=
-arm.com
 
----
- drivers/gpu/drm/i915/gt/intel_gt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/gt/intel_gt.c b/drivers/gpu/drm/i915/gt/int=
-el_gt.c
-index a6c69a7..bb29f36 100644
---- a/drivers/gpu/drm/i915/gt/intel_gt.c
-+++ b/drivers/gpu/drm/i915/gt/intel_gt.c
-@@ -302,7 +302,7 @@ static void gen6_check_faults(struct intel_gt *gt)
- {
- 	struct intel_engine_cs *engine;
- 	enum intel_engine_id id;
--	u32 fault;
-+	unsigned long fault;
-=20
- 	for_each_engine(engine, gt, id) {
- 		fault =3D GEN6_RING_FAULT_REG_READ(engine);
-@@ -310,8 +310,8 @@ static void gen6_check_faults(struct intel_gt *gt)
- 			gt_dbg(gt, "Unexpected fault\n"
- 			       "\tAddr: 0x%08lx\n"
- 			       "\tAddress space: %s\n"
--			       "\tSource ID: %d\n"
--			       "\tType: %d\n",
-+			       "\tSource ID: %ld\n"
-+			       "\tType: %ld\n",
- 			       fault & PAGE_MASK,
- 			       fault & RING_FAULT_GTTSEL_MASK ?
- 			       "GGTT" : "PPGTT",
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
