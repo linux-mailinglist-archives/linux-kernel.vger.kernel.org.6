@@ -1,598 +1,144 @@
-Return-Path: <linux-kernel+bounces-366883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5578799FBCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:55:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32FF399FBCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6EED1F24076
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:55:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A6B1F24694
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAB91F584B;
-	Tue, 15 Oct 2024 22:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB6C1D63C7;
+	Tue, 15 Oct 2024 22:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="xWI07tvl"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WR0qLvq0"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C9A1D63D3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6D11B6CE8
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729032887; cv=none; b=ZtDA+2ljytPFTOjKzL+fQf0tVGK8WlfQ42bGXLhBnvHPeGQ423EuDni7UfV+Ulb4c4p5HrzSFECradbqoe5saGESFfIZbAiXZkJUdXBt53cGB5bujDMGMyLCrMkYHOPhIiOqgqdnDrvEAu6ar3gzm+/6l4DQpF2rHJihaSTPUbQ=
+	t=1729032938; cv=none; b=av7H24LMZkb6KcIdHB6IpOzm4GzN1QJVB5GbPKjSzFKsj0LzB8dvLY7AkpG4y1RDu7Cm+W0LcY9LitcsFYa7jfPcQUCxxCHZtvEnf2TyDS7McyOv3FWht4Mnu5QbGih1Nf1Z/gd4cpMq6O+urLJoHR0zX1BFosFqPHapRoJwejo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729032887; c=relaxed/simple;
-	bh=Mgjuvwdo2HydUfgd42W4VV4rxA6h2xCUoef+R/nr3rU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jGFzwlF+cW2Ifcjh4KwgZCqq8bGh7SjZeZDQ+sI+BJmdqCL1GxzTsU29c0ia9Z9ngUOshPE3zCZ1VFeHiSoEVjSwgO3JQTpFDRRm2ntQxXXa6O34mK7X/bu+5FjPcoVryzCoaSSL8qm1PjZU27oR36K4+reRgDsjuVCnayeLiAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=xWI07tvl; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id F04D82C06BE;
-	Wed, 16 Oct 2024 11:54:40 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1729032880;
-	bh=lUZKKgNOJBW9oDYcfC2pQyQ5I7fTvR2cng42v1yR36I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=xWI07tvl5s6PrYcGkt7oPEc5ezuSjXh/QHLPGCuotNCxhgCNb+s6Fd/kvj5nkRdBB
-	 miq4LV8owfD+oFQuVGfin7uF3pVyNP4E1/+SAuT4y8HB4YYy1CxMxA9gtAhyKcItom
-	 nkRBkpBerQTJUrZuhovxCPsF8txsEY/bFZxFfmiPsV/9YDZdtTv/V/R3uH1PfjzFIR
-	 kV4oVhoK/nnIQYTrmU/XFLAQu6B+1jLKE6nsRShxohXU9PCv6oGStvmRmxG/Pf9zj8
-	 BNR1z83aJ9nv0QVny9OoxlbCOTNx5fDrcSfpSddevhWBkPj65Ga5sd5fJhAYpTPXw5
-	 RTuqiQ/Q99G3g==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670ef2b00003>; Wed, 16 Oct 2024 11:54:40 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id A215513EE9C;
-	Wed, 16 Oct 2024 11:54:40 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id A0BC92820D4; Wed, 16 Oct 2024 11:54:40 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: broonie@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tsbogend@alpha.franken.de,
-	markus.stockhausen@gmx.de
-Cc: linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v5 3/3] spi: spi-mem: Add Realtek SPI-NAND controller
-Date: Wed, 16 Oct 2024 11:54:34 +1300
-Message-ID: <20241015225434.3970360-4-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241015225434.3970360-1-chris.packham@alliedtelesis.co.nz>
-References: <20241015225434.3970360-1-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1729032938; c=relaxed/simple;
+	bh=WQjK5FLZEEhU+dVrTCVPzYt+9HCaHPxg4Hx5JdLTVfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IlF0LxSz6urObh5S1s7HTTZSwtSNZf57eEVleG0IYAYSv9xrQ9ROq5WQ+mCqtmrcvbnhnsxggiq4ujX9szC/eln3WZy2gp/yvL4MhUUcnei6MdQTFWWznpeLTeYq8UcuhlRYbhz9eGRTFOMC621YYmvlUCd1FB70nm45flkg/PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WR0qLvq0; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a3b2499c65so15352995ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:55:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729032935; x=1729637735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7k93xeOUo10oQWujiX8Ujtq4yazAve1WQxIDNWLeUB8=;
+        b=WR0qLvq0bXBnk45C2/yGkRRYrWB1zVcH4arszewbGhafwuSKkRFY5lO/BNeZ2qgE0o
+         xKqb7FmMLwVgBjq+iS7EtjUUaw15gHlRi6zdVkNO4RfLPRyOzgMiZwWhwtMwVL83rKdp
+         Vn2rlG6/7/YLYxflybvlZJGWIeeUTdQvlqtD0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729032935; x=1729637735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7k93xeOUo10oQWujiX8Ujtq4yazAve1WQxIDNWLeUB8=;
+        b=aUZrxCcvyV4aZt8WWEcZAAJUEoWHAsGDybA7+rrp1T3zMDpHLoUOdDJopAmUXNge96
+         iZuOJP6jkSWoARLulF1SAv0897T+fHvLZToCIclIW9JX5JdjFN8i99VGhrXDiS4Ctlai
+         XBOa3YWHIBvPfGlHnywGd7AaxLa6Q1x/iPNJ18Kwm16xk6XkYR+lMJN5rNaW6RmdyVBC
+         2CYQCVzy4xaPEpzpgirCWXCzNhbFbzlF1FbxeWb95WpT0QEuKNFBO0MBFlhV9vu0Lg0B
+         4+jJfwcXI+hBsTxeOPefcjKSg2acaIfGeR5c3m3/Rd4SZ0lc1KBkCB5GF7gxH7FpiCmq
+         yDfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPyp9nlI7yEZKbGleP3/BwOSROElDk8oEBP/c9LoZ5PM6md/1aWSya8mlQEaAfcJMCgSkBrryPKCKEeFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxNd2D4DT2Ypyq845d6AqhfnfBD1uprf3OoxSsOLEtEDeGlHOV
+	/kbv9/PqdxNzuCRH7xhpzktSVl/YB0Oxx5sQQZ04jUpw8FTtmNMnK7mD4ZgwMyI=
+X-Google-Smtp-Source: AGHT+IHY99LhDm13B/TrzxEPQoDbwaPzU24insuKtvESXOJnVs45TI9UOS1EdYa68kby+poGQGvadQ==
+X-Received: by 2002:a05:6e02:160c:b0:39e:6e47:814d with SMTP id e9e14a558f8ab-3a3dc49c43dmr22393615ab.2.1729032935471;
+        Tue, 15 Oct 2024 15:55:35 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbecb38c85sm535170173.89.2024.10.15.15.55.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 15:55:35 -0700 (PDT)
+Message-ID: <f53523ff-1222-4fc0-9069-10ab895e1136@linuxfoundation.org>
+Date: Tue, 15 Oct 2024 16:55:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670ef2b0 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=n9Sqmae0AAAA:8 a=VwQbUJbxAAAA:8 a=gda5hHJ6RUSo0eTSPEEA:9 a=3ZKOabzyN94A:10 a=UmAUUZEt6-oIqEbegvw9:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: gpib: Move free after the variable use has been
+ completed
+To: "Everest K.C." <everestkc@everestkc.com.np>
+Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241015215157.18571-1-everestkc@everestkc.com.np>
+ <99056bd3-748f-42e8-a25a-131f7b194f55@linuxfoundation.org>
+ <CAEO-vhEwkQKnPprdw_r=mg6KRbadY6B4A3R_sOsyH0ds78wb2g@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CAEO-vhEwkQKnPprdw_r=mg6KRbadY6B4A3R_sOsyH0ds78wb2g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add a driver for the SPI-NAND controller on the RTL9300 family of
-devices.
+On 10/15/24 16:48, Everest K.C. wrote:
+> On Tue, Oct 15, 2024 at 4:35 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> On 10/15/24 15:51, Everest K.C. wrote:
+>>> The variable `in_data` is freed, but used later in the code.
+>>> Fix it by moving the freeing the memory after it use has been
+>>> completed.
+>>>
+>>> This issue was reported by Coverity Scan.
+>>> Report:
+>>> CID 1600783: (#1 of 1): Use after free (USE_AFTER_FREE)
+>>> 19. pass_freed_arg: Passing freed pointer in_data as an argument to
+>>> ni_usb_dump_raw_block.
+>>>
+>>> Fixes: 4e127de14fa7 ("staging: gpib: Add National Instruments USB GPIB driver")
+>>> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+>>> ---
+>>>    drivers/staging/gpib/ni_usb/ni_usb_gpib.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+>>> index 1da263676f2a..75f39e1f3ed1 100644
+>>> --- a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+>>> +++ b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+>>> @@ -690,12 +690,12 @@ static int ni_usb_read(gpib_board_t *board, uint8_t *buffer, size_t length,
+>>>                kfree(in_data);
+>>>                return parse_retval;
+>>>        }
+>>> -     kfree(in_data);
+>>>        if (actual_length != length - status.count) {
+>>>                pr_err("%s: actual_length=%i expected=%li\n",
+>>>                       __func__, actual_length, (long)(length - status.count));
+>>>                ni_usb_dump_raw_block(in_data, usb_bytes_read);
+>>>        }
+>>> +     kfree(in_data);
+>>>        switch (status.error_code) {
+>>>        case NIUSB_NO_ERROR:
+>>>                retval = 0;
+>>
+>> Looks good to me. Isn't this on next though. Don't forget to
+>> indicate it is against next.
+> No, it was fixed in the linux-staging repo.
+>> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+>>
 
-The controller supports
-* Serial/Dual/Quad data with
-* PIO and DMA data read/write operation
-* Configurable flash access timing
+Okay - by the way the same problem is in ni_usb_write_registers().
+Did coverity catch that one?
 
-There is a separate ECC controller on the RTL9300 which isn't currently
-supported (instead we rely on the on-die ECC supported by most SPI-NAND
-chips).
+Both problems could be fix in one patch - I will leave it up to the
+maintainers to make a call on two patches or a single patch.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
-
-Notes:
-    Changes in v5:
-    - None
-    Changes in v4:
-    - Fix up MAINTAINERS entry for renamed file
-    Changes in v3:
-    - drop wildcard rtl9300-snand compatible
-    - Add SoC specific compatibles for the 4 known variants
-    Changes in v2:
-    - Spell my own name correctly
-    - Remove unecessary rtl_snand_adjust_op_size()
-
- MAINTAINERS                         |   6 +
- drivers/spi/Kconfig                 |  11 +
- drivers/spi/Makefile                |   1 +
- drivers/spi/spi-realtek-rtl-snand.c | 405 ++++++++++++++++++++++++++++
- 4 files changed, 423 insertions(+)
- create mode 100644 drivers/spi/spi-realtek-rtl-snand.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f328373463b0..cf020c566f4a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19272,6 +19272,12 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/dsa/realtek.yaml
- F:	drivers/net/dsa/realtek/*
-=20
-+REALTEK SPI-NAND
-+M:	Chris Packham <chris.packham@alliedtelesis.co.nz>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/spi/realtek,rtl9301-snand.yaml
-+F:	drivers/spi/spi-realtek-rtl-snand.c
-+
- REALTEK WIRELESS DRIVER (rtlwifi family)
- M:	Ping-Ke Shih <pkshih@realtek.com>
- L:	linux-wireless@vger.kernel.org
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index ec1550c698d5..33228a607c4b 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -843,6 +843,17 @@ config SPI_PXA2XX
- config SPI_PXA2XX_PCI
- 	def_tristate SPI_PXA2XX && PCI && COMMON_CLK
-=20
-+config SPI_REALTEK_SNAND
-+	tristate "Realtek SPI-NAND Flash Controller"
-+	depends on MACH_REALTEK_RTL || COMPILE_TEST
-+	select REGMAP
-+	help
-+	  This enables support for the SPI-NAND Flash controller on
-+	  Realtek SoCs.
-+
-+	  This driver does not support generic SPI. The implementation
-+	  only supports the spi-mem interface.
-+
- config SPI_ROCKCHIP
- 	tristate "Rockchip SPI controller driver"
- 	depends on ARCH_ROCKCHIP || COMPILE_TEST
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index a9b1bc259b68..9a3338236645 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -119,6 +119,7 @@ obj-$(CONFIG_SPI_ROCKCHIP)		+=3D spi-rockchip.o
- obj-$(CONFIG_SPI_ROCKCHIP_SFC)		+=3D spi-rockchip-sfc.o
- obj-$(CONFIG_SPI_RB4XX)			+=3D spi-rb4xx.o
- obj-$(CONFIG_MACH_REALTEK_RTL)		+=3D spi-realtek-rtl.o
-+obj-$(CONFIG_SPI_REALTEK_SNAND)		+=3D spi-realtek-rtl-snand.o
- obj-$(CONFIG_SPI_RPCIF)			+=3D spi-rpc-if.o
- obj-$(CONFIG_SPI_RSPI)			+=3D spi-rspi.o
- obj-$(CONFIG_SPI_RZV2M_CSI)		+=3D spi-rzv2m-csi.o
-diff --git a/drivers/spi/spi-realtek-rtl-snand.c b/drivers/spi/spi-realte=
-k-rtl-snand.c
-new file mode 100644
-index 000000000000..23c42c8469e4
---- /dev/null
-+++ b/drivers/spi/spi-realtek-rtl-snand.c
-@@ -0,0 +1,405 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/completion.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/interrupt.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-mem.h>
-+
-+#define SNAFCFR 0x00
-+#define   SNAFCFR_DMA_IE BIT(20)
-+#define SNAFCCR 0x04
-+#define SNAFWCMR 0x08
-+#define SNAFRCMR 0x0c
-+#define SNAFRDR 0x10
-+#define SNAFWDR 0x14
-+#define SNAFDTR 0x18
-+#define SNAFDRSAR 0x1c
-+#define SNAFDIR 0x20
-+#define   SNAFDIR_DMA_IP BIT(0)
-+#define SNAFDLR 0x24
-+#define SNAFSR 0x40
-+#define  SNAFSR_NFCOS BIT(3)
-+#define  SNAFSR_NFDRS BIT(2)
-+#define  SNAFSR_NFDWS BIT(1)
-+
-+#define CMR_LEN(len) ((len) - 1)
-+#define CMR_WID(width) (((width) >> 1) << 28)
-+
-+struct rtl_snand {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct completion comp;
-+};
-+
-+static irqreturn_t rtl_snand_irq(int irq, void *data)
-+{
-+	struct rtl_snand *snand =3D data;
-+	u32 val =3D 0;
-+
-+	regmap_read(snand->regmap, SNAFSR, &val);
-+	if (val & (SNAFSR_NFCOS | SNAFSR_NFDRS | SNAFSR_NFDWS))
-+		return IRQ_NONE;
-+
-+	regmap_write(snand->regmap, SNAFDIR, SNAFDIR_DMA_IP);
-+	complete(&snand->comp);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static bool rtl_snand_supports_op(struct spi_mem *mem,
-+				  const struct spi_mem_op *op)
-+{
-+	if (!spi_mem_default_supports_op(mem, op))
-+		return false;
-+	if (op->cmd.nbytes !=3D 1 || op->cmd.buswidth !=3D 1)
-+		return false;
-+	return true;
-+}
-+
-+static void rtl_snand_set_cs(struct rtl_snand *snand, int cs, bool activ=
-e)
-+{
-+	u32 val;
-+
-+	if (active)
-+		val =3D ~(1 << (4 * cs));
-+	else
-+		val =3D ~0;
-+
-+	regmap_write(snand->regmap, SNAFCCR, val);
-+}
-+
-+static int rtl_snand_wait_ready(struct rtl_snand *snand)
-+{
-+	u32 val;
-+
-+	return regmap_read_poll_timeout(snand->regmap, SNAFSR, val, !(val & SNA=
-FSR_NFCOS),
-+					0, 2 * USEC_PER_MSEC);
-+}
-+
-+static int rtl_snand_xfer_head(struct rtl_snand *snand, int cs, const st=
-ruct spi_mem_op *op)
-+{
-+	int ret;
-+	u32 val, len =3D 0;
-+
-+	rtl_snand_set_cs(snand, cs, true);
-+
-+	val =3D op->cmd.opcode << 24;
-+	len =3D 1;
-+	if (op->addr.nbytes && op->addr.buswidth =3D=3D 1) {
-+		val |=3D op->addr.val << ((3 - op->addr.nbytes) * 8);
-+		len +=3D op->addr.nbytes;
-+	}
-+
-+	ret =3D rtl_snand_wait_ready(snand);
-+	if (ret)
-+		return ret;
-+
-+	ret =3D regmap_write(snand->regmap, SNAFWCMR, CMR_LEN(len));
-+	if (ret)
-+		return ret;
-+
-+	ret =3D regmap_write(snand->regmap, SNAFWDR, val);
-+	if (ret)
-+		return ret;
-+
-+	ret =3D rtl_snand_wait_ready(snand);
-+	if (ret)
-+		return ret;
-+
-+	if (op->addr.buswidth > 1) {
-+		val =3D op->addr.val << ((3 - op->addr.nbytes) * 8);
-+		len =3D op->addr.nbytes;
-+
-+		ret =3D regmap_write(snand->regmap, SNAFWCMR,
-+				   CMR_WID(op->addr.buswidth) | CMR_LEN(len));
-+		if (ret)
-+			return ret;
-+
-+		ret =3D regmap_write(snand->regmap, SNAFWDR, val);
-+		if (ret)
-+			return ret;
-+
-+		ret =3D rtl_snand_wait_ready(snand);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (op->dummy.nbytes) {
-+		val =3D 0;
-+
-+		ret =3D regmap_write(snand->regmap, SNAFWCMR,
-+				   CMR_WID(op->dummy.buswidth) | CMR_LEN(op->dummy.nbytes));
-+		if (ret)
-+			return ret;
-+
-+		ret =3D regmap_write(snand->regmap, SNAFWDR, val);
-+		if (ret)
-+			return ret;
-+
-+		ret =3D rtl_snand_wait_ready(snand);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void rtl_snand_xfer_tail(struct rtl_snand *snand, int cs)
-+{
-+	rtl_snand_set_cs(snand, cs, false);
-+}
-+
-+static int rtl_snand_xfer(struct rtl_snand *snand, int cs, const struct =
-spi_mem_op *op)
-+{
-+	unsigned int pos, nbytes;
-+	int ret;
-+	u32 val, len =3D 0;
-+
-+	ret =3D rtl_snand_xfer_head(snand, cs, op);
-+	if (ret)
-+		goto out_deselect;
-+
-+	if (op->data.dir =3D=3D SPI_MEM_DATA_IN) {
-+		pos =3D 0;
-+		len =3D op->data.nbytes;
-+
-+		while (pos < len) {
-+			nbytes =3D len - pos;
-+			if (nbytes > 4)
-+				nbytes =3D 4;
-+
-+			ret =3D rtl_snand_wait_ready(snand);
-+			if (ret)
-+				goto out_deselect;
-+
-+			ret =3D regmap_write(snand->regmap, SNAFRCMR,
-+					   CMR_WID(op->data.buswidth) | CMR_LEN(nbytes));
-+			if (ret)
-+				goto out_deselect;
-+
-+			ret =3D rtl_snand_wait_ready(snand);
-+			if (ret)
-+				goto out_deselect;
-+
-+			ret =3D regmap_read(snand->regmap, SNAFRDR, &val);
-+			if (ret)
-+				goto out_deselect;
-+
-+			memcpy(op->data.buf.in + pos, &val, nbytes);
-+
-+			pos +=3D nbytes;
-+		}
-+	} else if (op->data.dir =3D=3D SPI_MEM_DATA_OUT) {
-+		pos =3D 0;
-+		len =3D op->data.nbytes;
-+
-+		while (pos < len) {
-+			nbytes =3D len - pos;
-+			if (nbytes > 4)
-+				nbytes =3D 4;
-+
-+			memcpy(&val, op->data.buf.out + pos, nbytes);
-+
-+			pos +=3D nbytes;
-+
-+			ret =3D regmap_write(snand->regmap, SNAFWCMR, CMR_LEN(nbytes));
-+			if (ret)
-+				goto out_deselect;
-+
-+			ret =3D regmap_write(snand->regmap, SNAFWDR, val);
-+			if (ret)
-+				goto out_deselect;
-+
-+			ret =3D rtl_snand_wait_ready(snand);
-+			if (ret)
-+				goto out_deselect;
-+		}
-+	}
-+
-+out_deselect:
-+	rtl_snand_xfer_tail(snand, cs);
-+
-+	if (ret)
-+		dev_err(snand->dev, "transfer failed %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int rtl_snand_dma_xfer(struct rtl_snand *snand, int cs, const str=
-uct spi_mem_op *op)
-+{
-+	int ret;
-+	dma_addr_t buf_dma;
-+	enum dma_data_direction dir;
-+	u32 trig;
-+
-+	ret =3D rtl_snand_xfer_head(snand, cs, op);
-+	if (ret)
-+		goto out_deselect;
-+
-+	if (op->data.dir =3D=3D SPI_MEM_DATA_IN) {
-+		dir =3D DMA_FROM_DEVICE;
-+		trig =3D 0;
-+	} else if (op->data.dir =3D=3D SPI_MEM_DATA_OUT) {
-+		dir =3D DMA_TO_DEVICE;
-+		trig =3D 1;
-+	} else {
-+		ret =3D -EOPNOTSUPP;
-+		goto out_deselect;
-+	}
-+
-+	buf_dma =3D dma_map_single(snand->dev, op->data.buf.in, op->data.nbytes=
-, dir);
-+	ret =3D dma_mapping_error(snand->dev, buf_dma);
-+	if (ret)
-+		goto out_deselect;
-+
-+	ret =3D regmap_write(snand->regmap, SNAFDIR, SNAFDIR_DMA_IP);
-+	if (ret)
-+		goto out_unmap;
-+
-+	ret =3D regmap_update_bits(snand->regmap, SNAFCFR, SNAFCFR_DMA_IE, SNAF=
-CFR_DMA_IE);
-+	if (ret)
-+		goto out_unmap;
-+
-+	reinit_completion(&snand->comp);
-+
-+	ret =3D regmap_write(snand->regmap, SNAFDRSAR, buf_dma);
-+	if (ret)
-+		goto out_disable_int;
-+
-+	ret =3D regmap_write(snand->regmap, SNAFDLR,
-+			   CMR_WID(op->data.buswidth) | (op->data.nbytes & 0xffff));
-+	if (ret)
-+		goto out_disable_int;
-+
-+	ret =3D regmap_write(snand->regmap, SNAFDTR, trig);
-+	if (ret)
-+		goto out_disable_int;
-+
-+	if (!wait_for_completion_timeout(&snand->comp, usecs_to_jiffies(20000))=
-)
-+		ret =3D -ETIMEDOUT;
-+
-+	if (ret)
-+		goto out_disable_int;
-+
-+out_disable_int:
-+	regmap_update_bits(snand->regmap, SNAFCFR, SNAFCFR_DMA_IE, 0);
-+out_unmap:
-+	dma_unmap_single(snand->dev, buf_dma, op->data.nbytes, dir);
-+out_deselect:
-+	rtl_snand_xfer_tail(snand, cs);
-+
-+	if (ret)
-+		dev_err(snand->dev, "transfer failed %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static bool rtl_snand_dma_op(const struct spi_mem_op *op)
-+{
-+	switch (op->data.dir) {
-+	case SPI_MEM_DATA_IN:
-+	case SPI_MEM_DATA_OUT:
-+		return op->data.nbytes > 32;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static int rtl_snand_exec_op(struct spi_mem *mem, const struct spi_mem_o=
-p *op)
-+{
-+	struct rtl_snand *snand =3D spi_controller_get_devdata(mem->spi->contro=
-ller);
-+	int cs =3D spi_get_chipselect(mem->spi, 0);
-+
-+	dev_dbg(snand->dev, "cs %d op cmd %02x %d:%d, dummy %d:%d, addr %08llx@=
-%d:%d, data %d:%d\n",
-+		cs, op->cmd.opcode,
-+		op->cmd.buswidth, op->cmd.nbytes, op->dummy.buswidth,
-+		op->dummy.nbytes, op->addr.val, op->addr.buswidth,
-+		op->addr.nbytes, op->data.buswidth, op->data.nbytes);
-+
-+	if (rtl_snand_dma_op(op))
-+		return rtl_snand_dma_xfer(snand, cs, op);
-+	else
-+		return rtl_snand_xfer(snand, cs, op);
-+}
-+
-+static const struct spi_controller_mem_ops rtl_snand_mem_ops =3D {
-+	.supports_op =3D rtl_snand_supports_op,
-+	.exec_op =3D rtl_snand_exec_op,
-+};
-+
-+static const struct of_device_id rtl_snand_match[] =3D {
-+	{ .compatible =3D "realtek,rtl9301-snand" },
-+	{ .compatible =3D "realtek,rtl9302b-snand" },
-+	{ .compatible =3D "realtek,rtl9302c-snand" },
-+	{ .compatible =3D "realtek,rtl9303-snand" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, rtl_snand_match);
-+
-+static int rtl_snand_probe(struct platform_device *pdev)
-+{
-+	struct rtl_snand *snand;
-+	struct device *dev =3D &pdev->dev;
-+	struct spi_controller *ctrl;
-+	void __iomem *base;
-+	const struct regmap_config rc =3D {
-+		.reg_bits	=3D 32,
-+		.val_bits	=3D 32,
-+		.reg_stride	=3D 4,
-+		.cache_type	=3D REGCACHE_NONE,
-+	};
-+	int irq, ret;
-+
-+	ctrl =3D devm_spi_alloc_host(dev, sizeof(*snand));
-+	if (!ctrl)
-+		return -ENOMEM;
-+
-+	snand =3D spi_controller_get_devdata(ctrl);
-+	snand->dev =3D dev;
-+
-+	base =3D devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	snand->regmap =3D devm_regmap_init_mmio(dev, base, &rc);
-+	if (IS_ERR(snand->regmap))
-+		return PTR_ERR(snand->regmap);
-+
-+	init_completion(&snand->comp);
-+
-+	irq =3D platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	ret =3D dma_set_mask(snand->dev, DMA_BIT_MASK(32));
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to set DMA mask\n");
-+
-+	ret =3D devm_request_irq(dev, irq, rtl_snand_irq, 0, "rtl-snand", snand=
-);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to request irq\n");
-+
-+	ctrl->num_chipselect =3D 2;
-+	ctrl->mem_ops =3D &rtl_snand_mem_ops;
-+	ctrl->bits_per_word_mask =3D SPI_BPW_MASK(8);
-+	ctrl->mode_bits =3D SPI_RX_DUAL | SPI_RX_QUAD | SPI_TX_DUAL | SPI_TX_QU=
-AD;
-+	device_set_node(&ctrl->dev, dev_fwnode(dev));
-+
-+	return devm_spi_register_controller(dev, ctrl);
-+}
-+
-+static struct platform_driver rtl_snand_driver =3D {
-+	.driver =3D {
-+		.name =3D "realtek-rtl-snand",
-+		.of_match_table =3D rtl_snand_match,
-+	},
-+	.probe =3D rtl_snand_probe,
-+};
-+module_platform_driver(rtl_snand_driver);
-+
-+MODULE_DESCRIPTION("Realtek SPI-NAND Flash Controller Driver");
-+MODULE_LICENSE("GPL");
---=20
-2.47.0
+thanks,
+-- Shuah
 
 
