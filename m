@@ -1,278 +1,192 @@
-Return-Path: <linux-kernel+bounces-366649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C115499F840
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:43:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBEE99F843
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8019D288C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:43:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612691C22662
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92C51F81AE;
-	Tue, 15 Oct 2024 20:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9EF1F81BC;
+	Tue, 15 Oct 2024 20:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EwDHsf3O"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RxzU04ba"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713F2158D9C;
-	Tue, 15 Oct 2024 20:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729024975; cv=fail; b=btkCbaQFgVE6b5Gft0cle8iWk7mv9H0XqbjWY4ATRa+FA3DpmsAK6iIA8Pcvn1WzGQhKBGrblmq+egsYz9hC/d8oSgROz2VUhq3lMZabSGhhSfcuF4AdjRntDgZhwkCgCuUlNkp2o35+G7OZXph36zn/A06DrUJKOVHCNZp5AVw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729024975; c=relaxed/simple;
-	bh=E6WNnl854sb8Il2BouRiNLkIvzo/NtsVdZAPPa5ZK70=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=W+/E09iKZJXg/cUeN92LXDvKBqTtN/5yqnOdedsUOlAfYjC3rigw7EcoLFj0oGlRxcCgwOvXjc/FMF3HLghYN14u0FHIDobaUJlyemsDPjqg5sbleVm/5XKHLeQYDtx7eyD4gyUVf6XDNd5oUdu3ybhAUdsXPSrMFmTr965kebk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EwDHsf3O; arc=fail smtp.client-ip=40.107.93.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Emzr2bf0YulESPtXxUj5SAnITevM56Ub/+zETaPCasxueSPPIIGdDOtvF7kw4mEeVyrU6FVgHzYqDAS/dl1uj5LOap06Yi4Yf5HBQ9AsOS4TGu1LZjEthnl3Lt4FOucaLnR8jCD4qmLePA5lrP1Y+YzRRpmOU1+KhEpXJNv0gpfendd8/JCB9W0PjE3z+A9NKQvDIa0qH+homWL/cmSgUuWxgF/aVLsatwqYmWy5zPdOZm0vdUIna3jRZk76qOH20Hui76xq3pO/cr/aMI+wB0WA8jpucgBtZLJyuhs5/NULI4NQCqcIi7nlHO0QOjqDXDrNMFBus1AC67ZExhUcPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AN2+BGgrB4fzI6uCuSR2eTTgQ/eFQXb1rdCr8rc2ef8=;
- b=ZYVQ+i7yiBVUqha+YL/a5pOrvODMyv5AkgY8V47ZTs9QuoDDl9xlFqZBy7q9Dnn79iESzi+arIYyYD1lN2qH/C8+Quf9O4SGc/j141m6qGsfpPmb0x6sobsv+hxEdxV+6W260KY/y/dbRuaQHJ6h1dYjN+fiNiCI/VuU9f7ELOxL9h9yKhZ2nCxmiC5Chd9skGb0P2aqb/y7B8uWgTsmm1zu11kE0gboX69p/7YDg8sj9ljTZjdzd9jYT7JkPuodoRzZFne333Mj4O87KC+h4Y2Wh1VVwYkBYmoNu2va0YRTpYE+j2R4b8C2XEX4A+Qp7qvz9zG3UOOXIxVbrg3b4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AN2+BGgrB4fzI6uCuSR2eTTgQ/eFQXb1rdCr8rc2ef8=;
- b=EwDHsf3O1QNChytfXhypdBIvOSWGfR7MYxFI+h2uFLIop2ThbUI3r+2TCD20AhWhXIv/vh2FLkm74wyl6kNZsmuP583mJgxz8eqQoutjmx8yC5dkayHsttL0u1v8YSXDFsrlAPbKwiF5XklRmeuC7+aoykySDYDakim6Vx6yCAY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by CH3PR12MB8258.namprd12.prod.outlook.com (2603:10b6:610:128::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Tue, 15 Oct
- 2024 20:42:50 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8048.029; Tue, 15 Oct 2024
- 20:42:50 +0000
-Message-ID: <42c4ac2f-2b18-48d9-89b4-5c88659bee2e@amd.com>
-Date: Tue, 15 Oct 2024 15:42:46 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v8 19/25] x86/resctrl: Auto assign/unassign counters when
- mbm_cntr_assign is enabled
-To: Reinette Chatre <reinette.chatre@intel.com>,
- "Luck, Tony" <tony.luck@intel.com>
-Cc: "corbet@lwn.net" <corbet@lwn.net>, "Yu, Fenghua" <fenghua.yu@intel.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "paulmck@kernel.org" <paulmck@kernel.org>,
- "rdunlap@infradead.org" <rdunlap@infradead.org>,
- "tj@kernel.org" <tj@kernel.org>, "peterz@infradead.org"
- <peterz@infradead.org>, "yanjiewtw@gmail.com" <yanjiewtw@gmail.com>,
- "kim.phillips@amd.com" <kim.phillips@amd.com>,
- "lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "jmattson@google.com" <jmattson@google.com>,
- "leitao@debian.org" <leitao@debian.org>,
- "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "Joseph, Jithu" <jithu.joseph@intel.com>, "Huang, Kai"
- <kai.huang@intel.com>, "kan.liang@linux.intel.com"
- <kan.liang@linux.intel.com>,
- "daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "sandipan.das@amd.com" <sandipan.das@amd.com>,
- "ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
- "peternewman@google.com" <peternewman@google.com>,
- "Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Eranian, Stephane" <eranian@google.com>,
- "james.morse@arm.com" <james.morse@arm.com>
-References: <cover.1728495588.git.babu.moger@amd.com>
- <ce07d802260f537b24b3affec57c2d2e65023709.1728495588.git.babu.moger@amd.com>
- <ZwldvDBjEA3TSw2k@agluck-desk3.sc.intel.com>
- <541d6c15-ed5f-8794-506c-8fa4065ca170@amd.com>
- <SJ1PR11MB60838F3FFF40AE2718ED7833FC792@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <43654ae1-c894-409b-bcb8-065940644906@amd.com>
- <SJ1PR11MB6083379F790967B379C4232DFC442@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <a972dfe9-341b-416c-a245-0834583c6620@amd.com>
- <567bd687-a69f-46fb-ab19-3f8d95c5e798@intel.com>
- <b4d9b572-4df3-4758-a40b-cb48fde0b595@amd.com>
- <8fa57edb-996c-4867-8a7e-05a8fcb9fe3a@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <8fa57edb-996c-4867-8a7e-05a8fcb9fe3a@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN1PR12CA0113.namprd12.prod.outlook.com
- (2603:10b6:802:21::48) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495AE1F80DD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729025189; cv=none; b=XBLXTNbDZfzusx0unv3BNE+jVA5wf+qKhEHe63Aiv+fLo4oGsn/hm6xBruxKQosBIygzo2l2eOwiTU92hTmhiuZRDf9svyMlG+SQausM6aeQsKyzceIi1Ln6IZd0zlg3VWYPPWz/v30A0rnkruYlIkFt2m4jwwQOr5vJtvIaiwM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729025189; c=relaxed/simple;
+	bh=AqUdafXKTY6DDHGLzTGsizAxqmBoMgpVRl5AemWKIAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgrBDmxEGgerR7AxxXq5L/iE4mqiYXex604DoV3Q0K4hs8BN2rvlP9YCEdyOl16hikgdSIrOEIXEcOn3g2a285AqQyv6EbWhKHsl/hTEP1Fmqp7rLRAhJS+TapDycj4Wswt+0lqrJ5JTp1IWHUhzn/c3NHstZFsKCUAAN94xVhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RxzU04ba; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4601a471aecso868441cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:46:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729025187; x=1729629987; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hADrE+uGTtibEvTH0s90QZJmBdYKfXijYp7a8XNC0gY=;
+        b=RxzU04ba3Lmk/Zs/I/wzKrca5WFbJKJ2Hg4RoTg7X3ZxloAxbQzFUXW7lOLxyUKsUC
+         p3hGA/7vnFbiqrsbKh/5lNmbgijeEopsGaHaG1SEcgeHv5eNHdAk6J+4+BVhcg97dMMU
+         cFurJp1CyFP/N0al4tmw3PPuqtaO5C24Ehgf/I1w6Bod+Jqmfc5H/Uvg2pVOE5RwoZF9
+         UfkSfiEt0Vlt2PgAc0O+qhfJhZSbW6u/4WYRNdBvFgjMVFv7Dn4l8cTiQoMaUI9nR8hV
+         lu1BMTBrgbK82iuUCPE1lSlg1hFCCuqtugju4CmEvTTM4+93wYL6A+UrqtxBwqkEZKDT
+         yH8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729025187; x=1729629987;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hADrE+uGTtibEvTH0s90QZJmBdYKfXijYp7a8XNC0gY=;
+        b=JPj/u1i20s0s77Kfk0ZKAvyNTTuAyWK6sb8uMd2LbLMzlri0pqgH8MgHoALX52nw1v
+         78rWxdXvAasftC3iwtvS236OAJaAs8CuPqFSEHu8ENCgJ1p3aKa4reb95YZNkUG2ALYM
+         Hc0yX95b237JMa6xs+JiMnKdklw/OduJOw1Tpb0zl5Pd3DPwyTUDdkvX/p1KAayRVdAV
+         DQ/TobJLkZo7F0LP32lKpVmG+e7tDtLpQmbkohckRyp9JOuhO2KRsU+QK9Bc1ntdofju
+         tWTdpCrVFRUxkdnUlx4HXpFV7eDi+DvKc2lBEG4xpV/SQkIwFZYfDucVQKRe20ditpxO
+         fYlA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+eLYlfe2cbg3ylOiEPrsOWTQxOKPi/L+ybPiNpbvSpFKSO0IZUVbUKWqruvU5STn3z/m6LgN1xdKSgzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/UYTRsx7BsUNR8OB2dOnSpFKGq5hVOKCosN6NRWsPWYQ5R6MM
+	2IHK7wEt9HFiWXD9Gf86CeZRwXYcSS885/UFGRhnIC0dAk2y2Q8ZZg7Wj7uMjA==
+X-Google-Smtp-Source: AGHT+IETthPrudZ1fSdhkTk5TGYZfzkYyH24kZnnVgT0XIy0sRJSH6T8V1s8YXXPWc2XhTzfDsBVJA==
+X-Received: by 2002:a05:622a:47cd:b0:453:5b5a:e77c with SMTP id d75a77b69052e-4608db32e70mr907251cf.10.1729025186861;
+        Tue, 15 Oct 2024 13:46:26 -0700 (PDT)
+Received: from google.com (131.65.194.35.bc.googleusercontent.com. [35.194.65.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1363c9d24sm108524485a.133.2024.10.15.13.46.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 13:46:26 -0700 (PDT)
+Date: Tue, 15 Oct 2024 16:46:23 -0400
+From: Brian Geffon <bgeffon@google.com>
+To: brauner@kernel.org
+Cc: bristot@redhat.com, bsegall@google.com, cmllamas@google.com,
+	dietmar.eggemann@arm.com, ebiggers@kernel.org, jack@suse.cz,
+	jing.xia@unisoc.com, juri.lelli@redhat.com, ke.wang@unisoc.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org,
+	rostedt@goodmis.org, vincent.guittot@linaro.org,
+	viro@zeniv.linux.org.uk, vschneid@redhat.com,
+	xuewen.yan94@gmail.com, xuewen.yan@unisoc.com,
+	Benoit Lize <lizeb@google.com>
+Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for
+ ep_poll_callback
+Message-ID: <Zw7Un-Cr8JA4oMv0@google.com>
+References: <20240426-zupfen-jahrzehnt-5be786bcdf04@brauner>
+ <20240919123635.2472105-1-bgeffon@google.com>
+ <CADyq12w2KRUZCu0hLA8TJH-e+766Jq_vG9SDYtDBYXzR=r9wvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|CH3PR12MB8258:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6956129-0bb0-4851-7afc-08dced59ef7b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZkFBOEpENGNHakxpWERZWmM4aUo3MkhiMGNoVno3MXJEMWhjaDBPKzl5Y2ZB?=
- =?utf-8?B?ZmE0QmZDRlZKelNoeUhwUy84UXU2S080M3UwaGtZVmZvMFU5OFlZN1BEVm1V?=
- =?utf-8?B?TmVMdG9qQTNjd1E2ZVpCNDl4R1NhTXcvdHhPUlE4STRNYWUzRFdjcThrN21E?=
- =?utf-8?B?ejRTdkVxR0tIakNBZ01OdytOT2duRUpPSVI2S2IvOVRFNDAvNHNEV0xnSGp4?=
- =?utf-8?B?aWJZWStRZFlFQUhuVXNRbWtNQ0c3WmtHb3BJcWZtYnFkc003b3ZWWHgxaG5q?=
- =?utf-8?B?R0ZjaXpyYjZDek0wVWs5dkY5SklqVmhFWVNWenBtREJRRm1yUGR5aHR5NnBR?=
- =?utf-8?B?eW5Gc29GOEQzdUNrOExTT0lYN2dNbXRQWEZMMTRNdWhYWG9YTTRqTWs2RFJS?=
- =?utf-8?B?MnFObE9VbU55M0NCb0VhYVR2R1EvV1U5cXU0UHZ0NGthOEpGcTNIZUtJcm1u?=
- =?utf-8?B?OWdiUU5ObUJCUjhERGJsQzZDS2p1ZjlIVGR1V04xc1RxMDk5cHVPUUo1MHg2?=
- =?utf-8?B?anIzNVlQYW9hRTJqMDczYnAyTDRlWHY5VGVDSVJaNkM0eFlvTUVRR0xVOXZK?=
- =?utf-8?B?L25LV2VsU0QvV1VDRG1iMkFHa2tkM29EQVY0RXIxYkV3bmdFdXlYc1pma3pQ?=
- =?utf-8?B?K21HSVNtSllpemVaeXpxMjZzRXZtbkVVWWZ3SDFZcDdkZkZ6cnhSUFI2WEZW?=
- =?utf-8?B?UEZmanJ5b1pldkVTYmJKMlJKQ21IYzBoRHlkWkhGMjNhT29ZUFQyekJaQVBQ?=
- =?utf-8?B?RmlCUDg3MUtnRk9rajFCbDAxM2ErcjhiWGZSaXU4dHpDT2RhVVpnQnNnckRB?=
- =?utf-8?B?dWNFNW9Nbkp6UzQrY2pPSVAvWDltaU8zSTRGN3dGNld2UDZ5WVhURWUrNzFj?=
- =?utf-8?B?c0RFUzJxUHNDU3ZqUnBJWS9jalJHV1gwQTQxWUtBamtkbGpvWmtCUkJKWVlN?=
- =?utf-8?B?dTA5WWpGYmRmaHBNc2gyVlBqT2JnWjZucSs2WGs1d2N4TWlDL2lhdXlRODFz?=
- =?utf-8?B?V21tMndWNXlSUDdUQ3cybGlnZ0puMFhwbUxtUXBaS3FXOEtYRjBacTNwaEVE?=
- =?utf-8?B?Qkl1ZWg1MGs3VG5uSG5XWnovTGZobVVidlZDYll0a1oxK0VTNWd0SW10TUsy?=
- =?utf-8?B?bGZGRXlhRjUrRCtNczJMWHRaZzZVTmFreHdVakpVbXY0dzZVYWhHU25qSTZ0?=
- =?utf-8?B?K0VlcjJDZGF1d1NuMEZoWlJKRUJKZHViSUttcTRsQjVSdE01Ky9nZURKdEo2?=
- =?utf-8?B?RWVDVWRGWmtVVjVONXMxWDhqWnREV1lVUnJkYTY2bjhOc3M1WFFWcmpkR1Ji?=
- =?utf-8?B?MlUyU1lwVDR0K2JxQjFwVXVBaSs2SVNaL2MyK2tjc3BubjNQTHhmY3lyQXpU?=
- =?utf-8?B?Tlk5QmVYckJ2Y1IxRVRPYkRXWDJrbXc3UEllbEp5ZmI0U05pRTNTb29kSVNH?=
- =?utf-8?B?VWlrSTNHcENjcWZSOFhWa24yeGZHaXVvZnIxS0pQQmNWQ3FxKy9HV0dTWENL?=
- =?utf-8?B?bkttT1BNVkdLY3RVQ0lCYmhBb0puMWJ3b2pwYjlueU9pSHErc3FyVnRWV213?=
- =?utf-8?B?Z2t3ZXIwSDZEV1ZDcHV0dC9rREM5enQ5dGVNWWZnanp3eEp6WVVDRTRJRlZU?=
- =?utf-8?B?RjlqV29yTCt4TTBrbkgrS1ZTYW5UZE55ZHRkR3pCUkdTMUUzb2p3ak53cWIx?=
- =?utf-8?B?RzEzTnNRS2ozNEtDWkRyalZFbjBOeFZNOFFuK3JZNDhlTnJKbHdtYUxnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QnVUTUtYMG9mN1Q2Z0FiSk16UEs5dEdlaWhUKzNWUjU1OEgxSU5SWFp3alRU?=
- =?utf-8?B?dFhXT0dLUHNWV3h5bnVpTkQrVXRxVCs0eWI4NThvR2E3WStIdHpWcE8xWGNW?=
- =?utf-8?B?SFlNYVYxNE1DL0JFcStzODdmNm9FZk9JVUc5cmV5M1E5L3FzWDZGT0hYdm56?=
- =?utf-8?B?eDVQNHhvSVVWYWZjSGVYY28rWlgralJ0KzBhaC9XS09VWEppTngyc2d0RlUr?=
- =?utf-8?B?TitSVlQyWFhMUXVXNnQrNGxwdlFYL25VOGtxMDIyL01BZFN3NUZWS08xQjE3?=
- =?utf-8?B?bUJCTGFWa3RNajhqRllRTzEwWWdncGhjUjVEcmpOR3F1d1pYM2hnc21hZTMr?=
- =?utf-8?B?QmhKZWZJa1ZQK2locTc3NWQrNDBJUWE0azM1OTlkQmlEdElVUnpDajJRelJo?=
- =?utf-8?B?cUpKM2g4ZGtFaVBoQi9mSlNtNkNienk5SjJUbnRGYjE2TXBtTms0b0k1QWwy?=
- =?utf-8?B?ZjZ3djFMQ1lUNGRaOGRoa1FmQUdNaFA1ZEd3WC80NDBXOWsybngvY0JmejJZ?=
- =?utf-8?B?YjQxZnZSYnlsRm10WldTYXNWTEdvRFMwNmRjbXpEanpmdlIxTVdYVG8yQXZ6?=
- =?utf-8?B?S2FCNW5jLzZadFNUMlI4TFB4TjgvV09NdHEwbG1tbGRXUXBnd3l2NkhaYUQ5?=
- =?utf-8?B?TENmaWwwSEJramVFR2lXckNGL01jUHg2TWtnNDBjSnlBVXQ3RW96WkUyWnoy?=
- =?utf-8?B?M3A2Ni9EZ2ZGVGNLQVBKN3RWOFY2aFdUeDF1T1dTSExDNys3NVhWbFREd2dR?=
- =?utf-8?B?RkcwV1hocXhtVTdUc21rVEdhb1A5TjJ6QWxFdllCNXV0TEZGVWFIWkxWWDlM?=
- =?utf-8?B?K1RiNXU4ZEtZbEhwM1l5RDBMWVh6R2I1REpQbERFUDlPMVlsbjMzNWFybk1a?=
- =?utf-8?B?VUZRcFV4bEtobXBiVTlFN2g1Y1pWNldyZ2pJREtFeE9XL3dQdXZqQjlSR2VY?=
- =?utf-8?B?WkdrM2xZZytzeGFESk5MYXhrdW1QRG8rRzc4em1iL2JQVEZuVHU0RW8xdXgx?=
- =?utf-8?B?VHFxemNac053b21LR3J2enZQcDNDL3hCUG1KWCszUms1MGlwbUh0MnEyT3dL?=
- =?utf-8?B?eE44b1BQczl4ZnI5MEtYQW9sMWVUc1pXa0lKWEV1ZE5WUU9HYjRKMWJObWtx?=
- =?utf-8?B?R2NISkE3ZWhDTytHZjVYSGNaK2RheXd6b3BZRnE4QTFJL08xc0lOQVltNVQ0?=
- =?utf-8?B?Z0VjbW91alpRd3hrUGFWVi9BUmRQb2hHTkRrQ2YxOTB2OHQ0ZHBGdzV0V09K?=
- =?utf-8?B?YUR0VWQwVDZkcDY2WVJZQXdaT1BxSzZVa0NEbGh2OEY4VGVYNDVVbGlLUTNM?=
- =?utf-8?B?NEdrR0tuVXNqZmpBbVR4NG90UlhxWkxwSDNWcW1ISVFacTlKUk9BQWMyVms5?=
- =?utf-8?B?b1NsaWU5NEYzdmtzNlpsL3B0TksrcVlTT3F6SWowZ1ZCVWJMTkdjUDZPeFVZ?=
- =?utf-8?B?Wnl5QkJnYnVpcW5nVjQyQVNmZFV0ZEw5TU5HZFp2YlZOZVZ5Q1NqMmdjZ0F4?=
- =?utf-8?B?cUpmOEZ2alFaSGFKako2QkRxSlpBV2R1WWo1RUNscERiRWFZRTlPdGhEQysv?=
- =?utf-8?B?cGJWdUdrNlpJdEU2Z2ZocjR0M0J0eVFoZjFTdWJqTHBERUdFTkZYWWNDZnM1?=
- =?utf-8?B?bWhpRlF3M2ZCUU1UazBRNnY4L1hwZkNIcmhXM0E4MlQ4ai9lYXo2bEI2VnA4?=
- =?utf-8?B?aXdseERXZ1VjRG1xcEg1bkJWZkZLMTRxSFRibytEZDJOUTVsV2NDbzFLb3R5?=
- =?utf-8?B?d0JuRzV5Ym0rSll5Rlo4YytucWNtdGdvNDNQOTRBQ1V3ZmYvRVNEVFVGbVFj?=
- =?utf-8?B?UnlxaHJBcEswd3lMUnhaVDVRQ2VOKzhScTJPb2kxd2JhSmhQN0lIMmxIMklS?=
- =?utf-8?B?cXNPTWZlS2NDa2FIZTBrc3ZGZWtSc3pzbkpTd1NOY3MzM1FpYm03SUlKK3FL?=
- =?utf-8?B?NERaem1GK3RHYlFPZlROcTdpVTkrYk0xWmM3cVdLR1k5RVVxQXh4cDQ5bGN2?=
- =?utf-8?B?NEszTjJwVzFPejlEWUFlVVd2SHlGZFZBamk2bmYzdG1adUlTTFh3SysrdDV0?=
- =?utf-8?B?d2FmK2kwL05xaE9RTTZWZTYrY0FvbCtsNEJXdmZjVzl6R08rdWZEMmlMQVoz?=
- =?utf-8?Q?c2aI=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6956129-0bb0-4851-7afc-08dced59ef7b
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 20:42:50.7140
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /o74w97UPsLFhKiWiaqmqFlrmjuXeR1kOLN/R69MIeHshsZu9X0NyFnLe763Schk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8258
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADyq12w2KRUZCu0hLA8TJH-e+766Jq_vG9SDYtDBYXzR=r9wvg@mail.gmail.com>
 
-Hi Reinette,
+On Wed, Sep 25, 2024 at 02:38:02PM -0400, Brian Geffon wrote:
+> I think this patch really needs help with the commit message, something like:
+> 
+> wait_queue_func_t accepts 4 arguments (struct wait_queue_entry
+> *wq_entry, unsigned mode, int flags, void *key);
+> 
+> In the case of poll and select the wait queue function is pollwake in
+> fs/select.c, this wake function passes
+> the third argument flags as the sync parameter to the
+> default_wake_function defined in kernel/sched/core.c. This
+> argument is passed along to try_to_wake_up which continues to pass
+> down the wake flags to select_task_rq and finally
+> in the case of CFS select_task_rq_fair. In select_task_rq_fair the
+> sync flag is passed down to the wake_affine_* functions
+> in kernel/sched/fair.c which accept and honor the sync flag.
+> 
+> Epoll however when reciving the WF_SYNC flag completely drops it on
+> the floor, the wakeup function used
+> by epoll is defined in fs/eventpoll.c, ep_poll_callback. This callback
+> receives a sync flag just like pollwake;
+> however, it never does anything with it. Ultimately it wakes up the
+> waiting task directly using wake_up.
+> 
+> This shows that there seems to be a divergence between poll/select and
+> epoll regarding honoring sync wakeups.
+> 
+> I have tested this patch through self tests and numerous runs of the
+> perf benchmarks for epoll. All tests past and
+> I did not see any observable performance changes in epoll_wait.
+> 
+> Reviewed-by: Brian Geffon <bgeffon@google.com>
+> Tested-by: Brian Geffon <bgeffon@google.com>
+> Reported-by: Benoit Lize <lizeb@google.com>
 
-On 10/15/24 12:18,  wrote:
-> Hi Babu,
-> 
-> On 10/15/24 8:43 AM, Moger, Babu wrote:
->> Hi Reinette/Tony,
->>
->> On 10/14/24 21:39,  wrote:
->>> Hi Babu,
->>>
->>> On 10/14/24 9:35 AM, Moger, Babu wrote:
->>>> On 12/31/69 18:00, Luck, Tony wrote:
->>>  
->>>>>
->>>>> It is still the case that callers don't care about the return value.
->>>>
->>>> That is correct.
->>>>
->>>
->>> Are you planning to change this? I think Tony has a good point that since
->>> assignment failures do not matter it unnecessarily complicates the code to
->>> have rdtgroup_assign_cntrs() return failure.
->>>
->>> I also think the internals of rdtgroup_assign_cntrs() deserve a closer look.
->>> I assume that error handling within rdtgroup_assign_cntrs() was created with
->>> ABMC in mind. When only considering ABMC then the only reason why
->>> rdtgroup_assign_cntr_event() could fail is if the system ran out of counters
->>> and then indeed it makes no sense to attempt another call to rdtgroup_assign_cntr_event().
->>>
->>> Now that the resctrl fs/arch split is clear the implementation does indeed expose
->>> another opportunity for failure ... if the arch callback, resctrl_arch_config_cntr()
->>> fails. It could thus be possible for the first rdtgroup_assign_cntr_event() to fail
->>> while the second succeeds. Earlier [1], Tony suggested to, within rdtgroup_assign_cntrs(),
->>> remove the local ret variable and have it return void. This sounds good to me.
->>> When doing so a function comment explaining the usage will be helpful.
->>>
->>> I also think that rdtgroup_unassign_cntrs() deserves similar scrutiny. Even more
->>> so since I do not think that the second rdtgroup_unassign_cntr_event()
->>> should be prevented from running if the first rdtgroup_unassign_cntr_event() fails.
->>
->>
->> Sounds fine with me. Now it will look like this below.
-> 
-> Thank you for considering.
-> 
->>
->>
-> 
-> I assume that you will keep rdtgroup_assign_cntrs() function comment? I think
-> it may need some small changes to go with the function now returning void ...
-> for example, saying "Each group *requires* two counters" and then not failing when
-> two counters cannot be allocated seems suspect.
-> 
-> For example (please feel free to improve):
-> 
-> 	Called when a new group is created. If "mbm_cntr_assign" mode is enabled,   
-> 	counters are automatically assigned. Each group can accommodate two counters:      
-> 	one for the total event and one for the local event. Assignments may fail
-> 	due to the limited number of counters. However, it is not necessary to
-> 	fail the group creation and thus no failure is returned. Users have the
-> 	option to modify the counter assignments after the group has been created.   
-> 
+Friendly ping on this. Would someone mind taking a look and picking this
+up?
 
-Looks good. Thanks
-
--- 
-Thanks
-Babu Moger
+> 
+> 
+> On Thu, Sep 19, 2024 at 8:36 AM Brian Geffon <bgeffon@google.com> wrote:
+> >
+> > We've also observed this issue on ChromeOS, it seems like it might long-standing epoll bug as it diverges from the behavior of poll. Any chance a maintainer can take a look?
+> >
+> > Thanks
+> > Brian
+> >
+> > On Fri, Apr 26, 2024 at 04:05:48PM +0800, Xuewen Yan wrote:
+> > > Now, the epoll only use wake_up() interface to wake up task.
+> > > However, sometimes, there are epoll users which want to use
+> > > the synchronous wakeup flag to hint the scheduler, such as
+> > > Android binder driver.
+> > > So add a wake_up_sync() define, and use the wake_up_sync()
+> > > when the sync is true in ep_poll_callback().
+> > >
+> > > Co-developed-by: Jing Xia <jing.xia@unisoc.com>
+> > > Signed-off-by: Jing Xia <jing.xia@unisoc.com>
+> > > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > > ---
+> > >  fs/eventpoll.c       | 5 ++++-
+> > >  include/linux/wait.h | 1 +
+> > >  2 files changed, 5 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > > index 882b89edc52a..9b815e0a1ac5 100644
+> > > --- a/fs/eventpoll.c
+> > > +++ b/fs/eventpoll.c
+> > > @@ -1336,7 +1336,10 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+> > >                               break;
+> > >                       }
+> > >               }
+> > > -             wake_up(&ep->wq);
+> > > +             if (sync)
+> > > +                     wake_up_sync(&ep->wq);
+> > > +             else
+> > > +                     wake_up(&ep->wq);
+> > >       }
+> > >       if (waitqueue_active(&ep->poll_wait))
+> > >               pwake++;
+> > > diff --git a/include/linux/wait.h b/include/linux/wait.h
+> > > index 8aa3372f21a0..2b322a9b88a2 100644
+> > > --- a/include/linux/wait.h
+> > > +++ b/include/linux/wait.h
+> > > @@ -221,6 +221,7 @@ void __wake_up_pollfree(struct wait_queue_head *wq_head);
+> > >  #define wake_up_all(x)                       __wake_up(x, TASK_NORMAL, 0, NULL)
+> > >  #define wake_up_locked(x)            __wake_up_locked((x), TASK_NORMAL, 1)
+> > >  #define wake_up_all_locked(x)                __wake_up_locked((x), TASK_NORMAL, 0)
+> > > +#define wake_up_sync(x)                      __wake_up_sync(x, TASK_NORMAL)
+> > >
+> > >  #define wake_up_interruptible(x)     __wake_up(x, TASK_INTERRUPTIBLE, 1, NULL)
+> > >  #define wake_up_interruptible_nr(x, nr)      __wake_up(x, TASK_INTERRUPTIBLE, nr, NULL)
+> > > --
+> > > 2.25.1
+> > >
+> >
 
