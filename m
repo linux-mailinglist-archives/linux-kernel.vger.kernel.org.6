@@ -1,99 +1,160 @@
-Return-Path: <linux-kernel+bounces-366832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3901699FB1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:14:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC0B99FB3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59F041C23B8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:14:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24FB1C20F4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F511D63D0;
-	Tue, 15 Oct 2024 22:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32751B6D08;
+	Tue, 15 Oct 2024 22:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWyfb1yN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9TNb6Y7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AF01CEAD3;
-	Tue, 15 Oct 2024 22:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424D6185B47;
+	Tue, 15 Oct 2024 22:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729030467; cv=none; b=DmDFMXw0noTHEHZrzyopfP8aofSE9IDaMrfYd2Yf0h0ZpeqeUInnk0QSXgzbkk1hqGH+A4btl59oOwIrvAq38tSQv0rsMRvVoO8DWlMEefglWgUL+p/R9QArZrJwJCNbg11I6T9a8Ih+AIpdLQU9lKJALSiTwrYtn974FLOzMH0=
+	t=1729030662; cv=none; b=HEoOQPGXvp5epQSe8qJI1IYXXPo4NMnR3lAvPFY3Xuudn8tzy8hk/gn/8pABAsRs0J1jnn/UC842zyph1vUrnZMC1v5/ay825M6Y9AKWpp021qWiCwu2m8AGwYoNB8B+7qbbWH7p2ox6bFlOA7RqOU2M4az/x7xXGoc5xS0xM1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729030467; c=relaxed/simple;
-	bh=KVI17gbRn/XiNvHg57UmIBJR1zSXb183qGcnq/PSnFY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=C2qtW0jtSZGqnytrv/s6vfu18roJY7tsgxZWMUtIPlNJVJf5si/S9ISe/XLEyrYIfiZsMml3x8veqVUDo8/Uh5LMqAyBiFSaSqsA1X1puLT8ypIyVpvMfJBc2fGTgsUQQ7Dt+bp9NgCGnqmbGpKgyei9K5XF/NNMdg2tdtaUB7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWyfb1yN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A624C4CEC6;
-	Tue, 15 Oct 2024 22:14:26 +0000 (UTC)
+	s=arc-20240116; t=1729030662; c=relaxed/simple;
+	bh=uMYkHlMKaytHOvnhHen4sk4aMkGAAmVSj+k1YxZcbDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mwmEM7BGAti2j7lw1HxMCixOTeOmMTfRvO2XPzNw7JOBwZ6HLQMjt40cwEyzxWdquwUglnyZ/G3t3LHY6D7IFcgRIuGyNW6Iwi+ZvrdQ60n+eB2ijNNAHY5w7T66ozlakfbs1hlh2j3erDp09wfFbkAn9S2TQ8opYn9P68VFFfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9TNb6Y7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924D3C4CEC6;
+	Tue, 15 Oct 2024 22:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729030466;
-	bh=KVI17gbRn/XiNvHg57UmIBJR1zSXb183qGcnq/PSnFY=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=TWyfb1yNtLs/bZiJMLn9sLOsR12Az7fmc9HWm7JUASMma8z/e7WSh5Iy2Yt+WoR5H
-	 z2/mXgj2uYN7QLdk1si4FOmDxywvpHDEryRlHIAp6fudSWmbJ4J61ItSdVOpD/EoRz
-	 hdqtrFGHhbeqNCvvcpn98moS3UjH8RrYtL7v3igorvs09nl1IaH09+Pv3oSlYC7fZl
-	 uhQIRx9ltk4FG8YFMOODfJbWnR8aBlp7A3gL/ryQ+1Y3V1RTgj+deTiUfQeSwv9kks
-	 jK5cYVScwexhQ38jSJDYQYngOMRa8en2W4UlAHMklLnB4ViaD7+OXRhzDVbUBiF4Qc
-	 f+xX/pB5qwCvA==
+	s=k20201202; t=1729030661;
+	bh=uMYkHlMKaytHOvnhHen4sk4aMkGAAmVSj+k1YxZcbDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q9TNb6Y7mb2ZnDSkREuBd+zIZhQ5UlL4+nGnSv6fUlRhQQYyEjJgfHNzkHJpNNUIE
+	 Awwzor3n00sSb9KTvfywA+9gBoqnwxE3tSAPVgOY2MRJr90V+PqMte0D34wMA6Dyii
+	 lVNrktg9wupODvZnp/zFjluPk7+q3unGwiDzeIM1OzlJbXdrzM7uBcxa7lh+xw0z9q
+	 aGCi0vyTZ0Yv4Ea3RVEHowbnGY72hkqGKDskK7orwREwNTNWDUYDXWLBnaWhcU/ZBY
+	 bgpMr/hvstaNV5NQKwAyLElO/cxdzaC0Qz24kVNVlkxBjst7GvqnPA9F2GeMXxAKg1
+	 rftr8OQpGU9iQ==
+Date: Tue, 15 Oct 2024 17:17:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Cc: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Lionel Debieve <lionel.debieve@foss.st.com>, marex@denx.de,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: rng: add st,stm32mp25-rng support
+Message-ID: <20241015221740.GA2100600-robh@kernel.org>
+References: <20241015-rng-mp25-v2-v3-0-87630d73e5eb@foss.st.com>
+ <20241015-rng-mp25-v2-v3-1-87630d73e5eb@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Oct 2024 01:14:22 +0300
-Message-Id: <D4WQ58T5O21X.CGFKGFKV630K@kernel.org>
-Cc: <James.Bottomley@HansenPartnership.com>, <roberto.sassu@huawei.com>,
- <mapengyu@gmail.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu"
- <roberto.sassu@huaweicloud.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240921120811.1264985-1-jarkko@kernel.org>
- <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
- <21b46f4882f0b9b12304d7786bd88f33a7ad2b97.camel@huaweicloud.com>
- <a0068539450a81fdd363d078521cb3822c54608b.camel@kernel.org>
- <e70c55c6edea2a5be7786ee04a85778193237444.camel@kernel.org>
- <04dc04872f2925166f969b43852161d468ee899a.camel@linux.ibm.com>
- <64710fe1db1432ca8857ec83fff4809ab1550137.camel@kernel.org>
- <036746bc4e37ff10a18b5fdffd6fdee561dd5bfe.camel@linux.ibm.com>
-In-Reply-To: <036746bc4e37ff10a18b5fdffd6fdee561dd5bfe.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015-rng-mp25-v2-v3-1-87630d73e5eb@foss.st.com>
 
-On Tue Oct 15, 2024 at 11:08 PM EEST, Mimi Zohar wrote:
-> > > > since the feature itself is useful objectively, and make sure
-> > > > that those fixes bring the wanted results.
->
-> The right thing would have been to listen to my concerns when this was in=
-itially
-> being discussed.  The right thing wasn't enabling TCG_TPM2_HMAC by defaul=
-t.
+On Tue, Oct 15, 2024 at 06:48:54PM +0200, Gatien Chevallier wrote:
+> Add RNG STM32MP25x platforms compatible. Update the clock
+> properties management to support all versions.
+> 
+> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+> ---
+> Changes in V3:
+> 	- Add constraint on clock-names for st,stm32mp25-rng compatible
+> 
+> Changes in V2
+> 	-Fix missing min/maxItems
+> 	-Removed MP25 RNG example
+> 	-Renamed RNG clocks for mp25 to "core" and "bus"
+> ---
+>  .../devicetree/bindings/rng/st,stm32-rng.yaml      | 34 +++++++++++++++++++++-
+>  1 file changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+> index 340d01d481d12ce8664a60db42182ddaf0d1385b..c276723d566ce4a0d6deca10c491510644d842f8 100644
+> --- a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+> +++ b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+> @@ -18,12 +18,20 @@ properties:
+>      enum:
+>        - st,stm32-rng
+>        - st,stm32mp13-rng
+> +      - st,stm32mp25-rng
+>  
+>    reg:
+>      maxItems: 1
+>  
+>    clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    items:
+> +      - const: core
+> +      - const: bus
+>  
+>    resets:
+>      maxItems: 1
+> @@ -57,6 +65,30 @@ allOf:
+>        properties:
+>          st,rng-lock-conf: false
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - st,stm32-rng
+> +              - st,stm32mp13-rng
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +        clock-names: false
 
-This is debatable as for laptops and desktops having hard drive
-encryption do benefit with this. If systemd hadn't added
-systemd-cryptenroll I would agree with this. I learned about this
-feature two years after its inception in that project, so we needed to
-address this as a priority (I did not and will not follow systemd
-development proactively, as don't have time for that).
+It makes no sense that you allowed 1 entry, but then disallow the 
+property. Either drop the 'minItems: 1' at the top level (keeping this) 
+or put 'maxItems: 1' here, 
 
-I feel more safe using my laptop with the feature in place at least.
+> +    else:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
 
-Besides, it is complicated feature enough that it would have been
-impossible ever "zero glitch" land it. I don't think there is any
-rigid "data centers first" rule really, except maybe for those
-businesses that run data centers (and I'm not one of those
-businesses).
+maxItems is already 2. Only need minItems.
 
-BR, Jarkko
+> +        clock-names:
+> +          items:
+> +            - const: core
+> +            - const: bus
+
+You already defined the names, don't do it again. You need either 
+nothing or 'minItems: 2' depending on the above.
+
+> +      required:
+> +        - clock-names
+> +
+>  additionalProperties: false
+>  
+>  examples:
+> 
+> -- 
+> 2.25.1
+> 
 
