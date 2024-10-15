@@ -1,226 +1,200 @@
-Return-Path: <linux-kernel+bounces-365132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87C599DDFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:12:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0FE99DE02
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677DE1F22A50
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73883281565
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370F818872D;
-	Tue, 15 Oct 2024 06:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BCF18991B;
+	Tue, 15 Oct 2024 06:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVYICq4e"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fuEFHgQO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A0C178368;
-	Tue, 15 Oct 2024 06:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E6A178368;
+	Tue, 15 Oct 2024 06:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728972711; cv=none; b=fdpXN/CjnQqAHD+M83G63/LsudPS5urLPdnY/Hdd06j0YhRNfRuwWZRrdRCf1W1H9gxd3tk/9JxhFRJAPlH0iFncWhMqdg/3Vj7kR+36ov0nH7vLJd+PG/AmN94a1Z6JuDo+kBAThz7P0JoMQ0POZTgtC6uBR6N93Y9bWv3/SCw=
+	t=1728972814; cv=none; b=hI3Ph8Myoh6DOmgQlWyQswoM2hGZ5+7iK1GcX0HnBS2NXd3ha26NkkCjaky2G9tFYZhm35EH1P7tVJHuD3gxYflLUfjDIInX6DAjxrU2FDG8IxRp+J2HhRvp/QukkiislBnwq5zqN9TBa3a+16ogr47ewjZZ+dUaRuGvEt/evYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728972711; c=relaxed/simple;
-	bh=hkeq3zwGZFJludYSl00w71Jj7zFOyMGvC/pKRV8aUFU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mv9YOl5fu43FBkjSt1/s1A9Uxz1kyXSIQVe+iJyGBMQHI2dcsAh+xrCYemkbyRMOQ/9S6bZ5YhY4Nwruv8nPVOGwlT7EkNuJ8Rs969zD3TV+55aON8cuzf4iams8fhzl7aiobBvKpQJs8rX0lKSRSSTNjwxhpsvA6it/T7JDRns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVYICq4e; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43144f656f0so452805e9.0;
-        Mon, 14 Oct 2024 23:11:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728972708; x=1729577508; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0HUrqoBMuEVSoBDU5Uz3PBW7d42IZPXJjlta5F8EbHU=;
-        b=AVYICq4ekBiwCQcadKJyV3ZmHWk0EzlPypVpJSO5jQ8Sqli+p8u9RTUHAXxdtvbi6S
-         GokDxbjODixVIaNT8YIbgZZcsuncwPFkjxMXfHDru+l628oNg450zwqJRCerErUnBtUT
-         7UpOyiJ1m3mHxSg/8Mahm3V7RerHWkWiKtRKct8ztj+fZFCSuguYfhXDrnOqz95VzJli
-         3HoRnr219GVCObn6HTKyds6teIe+sNe91O6kGncb8SgPrUaVwwaNSWr64m7zIZ/AFHPd
-         cu0XjNuE2OXEAojfosUcx8pCz7MveB7TbGuuALADWXfzX+1nTcxYLJsA5l9UL/GMVAKX
-         fEvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728972708; x=1729577508;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0HUrqoBMuEVSoBDU5Uz3PBW7d42IZPXJjlta5F8EbHU=;
-        b=MqgOSKQkkPUX4bVlM8TF2X576lYOigcdtsY88LN82nnAz7GGcHYmH8CkTrmG7cmjTZ
-         9HLzYweXPOjqMhyidPSPFgE2lm3Y6A98fqunagl5fB8JXKBZwqgqbaI4NyaCaIO3eqli
-         3d6C1HxU1wjBFpuTY9OZglqbgq5MJKL309LvOKDRG5WC6wnGEek8yh8NM9V1Ty6piyZl
-         nUb3/xMhVhK2pyc0S5bXjFVfNOYlTRXiqxVmO4K9NjwwU7ZC5aR+ACa3DBR60c7wE/iv
-         SdTxkVsSeRSwIoczywYg7I3EzYu+4OeiM7bTYawlJo9fQ2kADkLt+iJ8QTl/Hb/wxgxJ
-         eWYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDaJ6bMbpfFSu1udfO3ua5ngAsqPBPz9q65FNqFsamIGdXHIgfhLv20pMdJP8S/vPw+zW5FzkB1wsX@vger.kernel.org, AJvYcCVX7p8Awt0xeebavn67RoGJIePHDaFhWZFWj2WYjA8CYUrZKduhjnjZaZv+/7JVT0yX4Ig7k3IclWlK9177@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIt8CgZBpaLamkroaLuNicdOZmstMa+9EzfFvp/SjlTSF5JPug
-	lDjzBZJqo8/7aXZnCYxfTSk9rzbmbtHNcGNr03OINbIPc92ThvOf
-X-Google-Smtp-Source: AGHT+IFuAPQNG1GgrqmXlejvYbn6rQvKYC/U5bJYnuRs7Yntp6o5EUWi2wEP06/AD/kV58t0VvAinA==
-X-Received: by 2002:adf:f806:0:b0:37d:5143:c695 with SMTP id ffacd0b85a97d-37d552d92b1mr9760420f8f.53.1728972707712;
-        Mon, 14 Oct 2024 23:11:47 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa87d48sm674852f8f.32.2024.10.14.23.11.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 23:11:47 -0700 (PDT)
-Message-ID: <df1cdac2c954d9a95b9026a400e68697e177787f.camel@gmail.com>
-Subject: Re: [PATCH v6 8/8] iio: dac: adi-axi-dac: add registering of child
- fdt node
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
- <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>,  Jonathan Cameron
- <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Date: Tue, 15 Oct 2024 08:11:46 +0200
-In-Reply-To: <022be235-f028-4b6e-9589-b0066df5d459@baylibre.com>
-References: 
-	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
-	 <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-8-eeef0c1e0e56@baylibre.com>
-	 <022be235-f028-4b6e-9589-b0066df5d459@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728972814; c=relaxed/simple;
+	bh=nMcb720BCAExfKB6LJEWqVG38e41Du2Roz3F2hdHex8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ThGHlEHbXyPe3bvveZF8++bc7so/tFZQOtSY6EQa5Y3ZSKcMHdTg9LA2IVNzk0dmgQLahEfbayRvU4zM3ZnIB8+oniegoUtMqX00qbhK39UN5r9yDUDiEjisQut3RdoM8G7dktri7KUZ5qUb66aC/H7khcGigrRbff99Ow/4nU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fuEFHgQO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F0C5C4CEC7;
+	Tue, 15 Oct 2024 06:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728972813;
+	bh=nMcb720BCAExfKB6LJEWqVG38e41Du2Roz3F2hdHex8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fuEFHgQOTV95eYjoJ7Ypx+GID3EqJW0Ax/pS92IxGPTaK/08XHc5M6pxH66wpDbjT
+	 jfpMkimI9ipSxxfVASThA3nWwTRx9JFuh6teI4NRX6vFzDpmsZYdcyquTADMg1nfVx
+	 txz+x4wxegS5eOCv6GoxPAW8xkH0NY2ykATT34LVfBqbBfIQ0KI/4IG0+fwa4izHDy
+	 dGNHUvRDcmSOy0ODfaHobDLALOl9n5p0U0t5w2SopdpUsaU6CSrgWmr6aCg7cE6MWE
+	 ga0RC8Vd7v8+81c8YbCf3a6txcENixKqlbILc43hO5r0gMzjiRaFQrzrWPpVGOyirZ
+	 ZggOTfo2GPUHQ==
+Message-ID: <b0154e75-370e-4a5f-9309-6a3ae5d85b5c@kernel.org>
+Date: Tue, 15 Oct 2024 08:13:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] media: dt-bindings: Remove assigned-clock-* from
+ various schema
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Martin Kepplinger <martink@posteo.de>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ "Paul J. Murphy" <paul.j.murphy@intel.com>,
+ Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+ Tommaso Merciai <tomm.merciai@gmail.com>,
+ Martin Hecht <martin.hecht@avnet.eu>, Zhi Mao <zhi.mao@mediatek.com>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Mikhail Rudenko <mike.rudenko@gmail.com>,
+ Ricardo Ribalda <ribalda@kernel.org>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Umang Jain <umang.jain@ideasonboard.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Dongchun Zhu <dongchun.zhu@mediatek.com>,
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+ Todor Tomov <todor.too@gmail.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
+ <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-1-a2bb12a1796d@linaro.org>
+ <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
+ <20241014203441.GF5522@pendragon.ideasonboard.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241014203441.GF5522@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-10-14 at 16:16 -0500, David Lechner wrote:
-> On 10/14/24 5:08 AM, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> >=20
-> > Change to obtain the fdt use case as reported in the
-> > adi,ad3552r.yaml file in this patchset.
-> >=20
-> > The DAC device is defined as a child node of the backend.
-> > Registering the child fdt node as a platform devices.
-> >=20
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
-> > =C2=A0drivers/iio/dac/adi-axi-dac.c | 53 ++++++++++++++++++++++++++++++=
-+++++++++++++
-> > =C2=A01 file changed, 53 insertions(+)
-> >=20
-> > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-da=
-c.c
-> > index b887c6343f96..f85e3138d428 100644
-> > --- a/drivers/iio/dac/adi-axi-dac.c
-> > +++ b/drivers/iio/dac/adi-axi-dac.c
-> > @@ -29,6 +29,8 @@
-> > =C2=A0#include <linux/iio/buffer.h>
-> > =C2=A0#include <linux/iio/iio.h>
-> > =C2=A0
-> > +#include "ad3552r-hs.h"
-> > +
-> > =C2=A0/*
-> > =C2=A0 * Register definitions:
-> > =C2=A0 *=C2=A0=C2=A0 https://wiki.analog.com/resources/fpga/docs/axi_da=
-c_ip#register_map
-> > @@ -738,6 +740,39 @@ static int axi_dac_bus_reg_read(struct iio_backend=
- *back,
-> > u32 reg, u32 *val,
-> > =C2=A0	return regmap_read(st->regmap, AXI_DAC_CUSTOM_RD_REG, val);
-> > =C2=A0}
-> > =C2=A0
-> > +static void axi_dac_child_remove(void *data)
-> > +{
-> > +	struct platform_device *pdev =3D data;
-> > +
-> > +	platform_device_unregister(pdev);
+On 14/10/2024 22:34, Laurent Pinchart wrote:
+> On Mon, Oct 14, 2024 at 09:43:07AM +0200, Krzysztof Kozlowski wrote:
+>> On Sat, Oct 12, 2024 at 04:02:50PM +0100, Bryan O'Donoghue wrote:
+>>> Remove extraneous assigned-clock* from media/i2c/* schemas, retain in the
+>>> relevant examples.
+>>>
+>>> Link: https://lore.kernel.org/linux-media/j7kgz2lyxnler5qwd7yiazdq6fmsv77kyozdrxf33h54ydakjz@uqjhwhoyv6re
+>>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>> ---
+>>>  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml | 8 --------
+>>>  Documentation/devicetree/bindings/media/i2c/ovti,ov5648.yaml | 8 --------
+>>>  Documentation/devicetree/bindings/media/i2c/ovti,ov8865.yaml | 8 --------
+>>>  Documentation/devicetree/bindings/media/i2c/ovti,ov9282.yaml | 4 ----
+>>>  Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml | 4 ----
+>>>  Documentation/devicetree/bindings/media/i2c/sony,imx334.yaml | 4 ----
+>>>  Documentation/devicetree/bindings/media/i2c/sony,imx335.yaml | 4 ----
+>>>  Documentation/devicetree/bindings/media/i2c/sony,imx412.yaml | 4 ----
+>>>  8 files changed, 44 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+>>> index 60f19e1152b33128cf3baa15b8c70a874ca6d52e..d18ead8f7fc43bfacc291aed85b5ca9166c46edb 100644
+>>> --- a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+>>> +++ b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+>>> @@ -28,12 +28,6 @@ properties:
+>>>      items:
+>>>        - description: Reference to the mclk clock.
+>>>  
+>>> -  assigned-clocks:
+>>> -    maxItems: 1
+>>> -
+>>> -  assigned-clock-rates:
+>>> -    maxItems: 1
+>>> -
+>>>    reset-gpios:
+>>>      description: Reference to the GPIO connected to the RESETB pin. Active low.
+>>>      maxItems: 1
+>>> @@ -82,8 +76,6 @@ required:
+>>>    - compatible
+>>>    - reg
+>>>    - clocks
+>>> -  - assigned-clocks
+>>> -  - assigned-clock-rates
+>>
+>> That's not extraneous, but has a meaning that without assigned-clocks
+>> this device or driver will not operate.
+> 
+> How so ? Even if we assume that the device requires a specific clock
+> frequency (which is often not the case for camera sensors, the
+> limitation usually comes from drivers, so the constraint shouldn't be
+> expressed in the bindings in that case), there is no overall requirement
+> to assign a clock rate as in many cases the clock will come from a
+> fixed-frequency oscillator. This seems to be a constraint that is
+> outside of the scope of DT bindings. It is similar to regulators, where
+> the regulator consumer doesn't have a way to express supported voltages
+> in its DT bindings.
 
-Just do platform_device_unregister(data)... Or call the argument pdev for b=
-etter
-readability...
+This property does not say it comes from a fixed-frequency oscillator,
+so I do not understand why you think it is unreasonable constraint. I
+have no clue what the author wanted to say here, so I just explained
+that there is a meaning behind requiring such properties. If you claim
+device or implementations do not have such requirement, after
+investigating each case, feel free to drop this. I think I also stated
+this already in other reply.
 
-> > +}
-> > +
-> > +static int axi_dac_create_platform_device(struct axi_dac_state *st,
-> > +					=C2=A0 struct fwnode_handle *child)
-> > +{
-> > +	struct ad3552r_hs_platform_data pdata =3D {
-> > +		.bus_reg_read =3D axi_dac_bus_reg_read,
-> > +		.bus_reg_write =3D axi_dac_bus_reg_write,
-> > +	};
-> > +	struct platform_device_info pi =3D {
-> > +		.parent =3D st->dev,
-> > +		.name =3D fwnode_get_name(child),
-> > +		.id =3D PLATFORM_DEVID_AUTO,
-> > +		.fwnode =3D child,
-> > +		.data =3D &pdata,
-> > +		.size_data =3D sizeof(pdata),
-> > +	};
-> > +	struct platform_device *pdev;
-> > +
-> > +	pdev =3D platform_device_register_full(&pi);
-> > +	if (IS_ERR(pdev))
-> > +		return PTR_ERR(pdev);
-> > +
-> > +	device_set_node(&pdev->dev, child);
->=20
-> Not sure why Nuno suggested adding device_set_node(). It is
-> redundant since platform_device_register_full() already does
-> the same thing.
->=20
-
-Indeed... I realized that yesterday when (actually) looking at
-platform_device_register_full(). You just beat me in replying to the email.=
- Sorry for
-the noise...
-
-> (And setting it after platform_device_register_full() would
-> be too late anyway since drivers may have already probed.)
-
-> > +
-> > +	return devm_add_action_or_reset(st->dev, axi_dac_child_remove, pdev);
-> > +}
-> > +
-> > =C2=A0static const struct iio_backend_ops axi_dac_generic_ops =3D {
-> > =C2=A0	.enable =3D axi_dac_enable,
-> > =C2=A0	.disable =3D axi_dac_disable,
-> > @@ -874,6 +909,24 @@ static int axi_dac_probe(struct platform_device *p=
-dev)
-> > =C2=A0		return dev_err_probe(&pdev->dev, ret,
-> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to register iio backend\n");
-> > =C2=A0
-> > +	device_for_each_child_node_scoped(&pdev->dev, child) {
-> > +		int val;
-> > +
-
-I'm starting to come around again if some sort of flag (bus_controller or a=
-n explicit
-has_child) wouldn't make sense (since you may need to re-spin another versi=
-on). So we
-could error out in case someone comes up with child nodes on a device that =
-does not
-support them.=C2=A0
-
-Anyways, I'll leave this up to you and maybe others can also argue about th=
-is...
-
-> > +		/* Processing only reg 0 node */
-> > +		ret =3D fwnode_property_read_u32(child, "reg", &val);
-> > +		if (ret)
-> > +			return dev_err_probe(&pdev->dev, ret,
-> > +						"child node missing.");
->=20
-> Shouldn't the error message say that there is a problem with the reg
-> property? We already have a handle to the child node, so the child node
-> isn't missing.
-
-Makes sense... like "reg property missing" - something on those lines.
-
-- Nuno S=C3=A1
-
-
+Best regards,
+Krzysztof
 
 
