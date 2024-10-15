@@ -1,157 +1,196 @@
-Return-Path: <linux-kernel+bounces-366428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A68A99F52C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:25:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A926699F536
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957F4B21045
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6997728491D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABF3209683;
-	Tue, 15 Oct 2024 18:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D002101A7;
+	Tue, 15 Oct 2024 18:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dG5NuTO3"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U1eyWnlh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CB51FC7DE;
-	Tue, 15 Oct 2024 18:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026B61F9ED1;
+	Tue, 15 Oct 2024 18:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729016726; cv=none; b=DhOPxJsmbxRDt+6SkZHC5Dky0OosR5U6b2xMocOgu33rdouNqZ7GHFUYxmIif54z2IIXw93kApGwg1NBWwut91Iz9+ya+AKsRKcXC8sv1SIhKQzkZwn1SjSOt0V0zgdVg75ac3JDP27WdyE/ux6rBxp4TNB58lLiyI1f1sxTGSI=
+	t=1729016846; cv=none; b=rrzfJ6LAqRTjXUJLWO82elCaEFr10c/XtVKWZQ/9F3ltEKovfOiJGoIdz4TOIUBI+u599oLX9p4TP/o0wSYouuOIHsosvtAvaTcgaH6MKCM78PZKfcCjjfJnQ5X5jdhq62F2atGuJ9xVNgp0YSPn4SzNTAbkpthjxq+fo2kNq/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729016726; c=relaxed/simple;
-	bh=uHQi+OYLUTp0oZzUmnJmlaDD6INIaffwodKQ/uKV9MU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gal9IgGKmIu8l7qG1gbCEg33+sXA2NXK7SgMNhhq8r8rOXR0o6BwgY9nfNNM99GxWgYrhQIVcQNRU8ur5LGZ/noRU4am2FYcj3mTFA656b8L5/Sc8f/OY1O3aYWmnkODZpRATeTtAkf82jLlFsYkbshe6bStcHV2CHUeftT2Yi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dG5NuTO3; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d533b5412so2823313f8f.2;
-        Tue, 15 Oct 2024 11:25:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729016723; x=1729621523; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ITxKiVu0AJ4+io6d3gJTaa3Or2O5JgC3rt9u2kwLrO0=;
-        b=dG5NuTO338wAM+7oXG/ewP6I5A3Ys65xoLa4oG7BbCT/buJhHg/DEf0o81qQxa5+LK
-         WSbiveqNf1LNk9jxPb9P8q8Zvcd1NqJwDRmm9sN2RDljOVFxt754u+IXwMJCy0hI7jah
-         +ASwbip1un37ANYWD99te9HbJ1XjeQ2dsRwdihXA6xaqGIwpxhiuIXtbr7v16bG/n+TL
-         Uyh+My9AGCLVElhpGG+YHPOP0XzPYxSzcgLlPlpojF6us6rAR05/1J0sNu+4SytdZ+B1
-         tmoMF74A/BEv7UmZoysgkrYrsgAKLfLDYmeuHtf+udn03Hx0CB7MKY9BoLr/kHAw50L3
-         kakw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729016723; x=1729621523;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ITxKiVu0AJ4+io6d3gJTaa3Or2O5JgC3rt9u2kwLrO0=;
-        b=qrG9w3upsVaP/Oaw8BdVG3btovcqJ2at7aOIO2lkkX+LBpRJqQiByFOVQ16TsM85i6
-         WyFnSxY0lqurEla+K2P4OqR9S5NSAiMYnDVNg2yQj2Pdg8pZxKpeqFHt/RnyN5YWR0+b
-         bSF5h9XMaGcEbLFrZpGiiefqFjm1yctBlOgIoNGBeJgY5vN0+ugO3l8edMVUzKMbjErt
-         Qxu89p6149UduiciP+WQ/OHp2DVfWF6KB3tmb9F4/98l0wYMqUgdfxmvV+BrGTFwNuQV
-         gIdh3xnOc5NX5z5t4MFc5KlLRaRzA9/xKUEww1UpSopuDMgKxINYaMayAPxOSy51T68G
-         grkA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8YpCseXcuTLNNUYePNHwQSxHaL1nLUbZPJs+3jWd99yh8Q0b69P8WboMSTfrODPhNJig=@vger.kernel.org, AJvYcCXFphJHXgsAr2agQ907JzqXKlTdVPLn7S6iUiYpBkZ7Gad5GIQIj09R40R1+euNffn+VIJ9nWbxg6ygVnLN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhTWAp2YlBiheFJbVH2gMPoX3s0ThMi3p864ouHDLiH0zg1/IZ
-	dkj82UGHr7YFS9UuZAlt2gQ1M6JrXOZAYUeQYm6bqiNPWzyyJyGzzOXvDdXvMJMCCgZsETOOrqq
-	gwT904pq4r31yuzl6hkI/FYW/PFg=
-X-Google-Smtp-Source: AGHT+IGX0N+4Fs+UmGEyD0ArP3gM2Itw+hfw3twUo3F0NHNdaQtjUxWuszfeOZayS3V6VAv+qbBT4OtQz0dHZ+NeE5w=
-X-Received: by 2002:a05:6000:b4b:b0:37d:5436:49b with SMTP id
- ffacd0b85a97d-37d86bb9547mr896088f8f.13.1729016722875; Tue, 15 Oct 2024
- 11:25:22 -0700 (PDT)
+	s=arc-20240116; t=1729016846; c=relaxed/simple;
+	bh=gJQ+QtaJu95zsVAAg22z4qlMvHm4Bi0RoYZIPGW4U+0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KKbrKJvpicyYD2akBqWgiobASxPxrno1qYN09riPmQlt7NT0hzL7N2eYR5V8EG3Y58wqnKBf5zD4FezxS9AbMg/e7DLKUJhhE/gAf7iLnNXRIGlGP26SvKkteWFiK1ykckRGxd8GTHpXycsOUwoLEagfTyEFgRU6wTur0uARBC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U1eyWnlh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FBejj3019629;
+	Tue, 15 Oct 2024 18:27:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ZZiwqF20rDtQLdlXXlqvzw
+	lZsLog4CB3TcNilWiCjSI=; b=U1eyWnlhg0VdjLhG3CVeVDC1XGDZMciZ3Q9xH/
+	DCml/fOB0I4c53jvzjsWXWOx9LenuVY8BXEknscATh0HHQ3A/MzjLWqc9r9j9dG1
+	QpCYA1+OMvaEVQiPr5f0l6ySbTscMhmlnec1uvZd5nyQm5aFlmMuac44csNRknFs
+	VFGSSJkRYwnT1tj3UgVeWCsEdL+jaHk8lKocCWpamQ4iEedfnmhEhnYdg4I3OQhA
+	1cbfrUlaSQSCt/jpEBNvKiZEwRU8zDJ22q4KVq08kvoM76lDnb3lIO/z7AXrfzOo
+	gQuFEySi/+88Qerqsv0XmmZPMaS+ELFNObr6xO/Z7VPXZSnA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427jd90jpv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 18:27:16 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FIRF0Z003860
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 18:27:15 GMT
+Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 15 Oct 2024 11:27:11 -0700
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+To: <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+Subject: [PATCH v2 00/22] wifi: ath12k: add Ath12k AHB driver support for IPQ5332
+Date: Tue, 15 Oct 2024 23:56:15 +0530
+Message-ID: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010232505.1339892-1-namhyung@kernel.org> <20241010232505.1339892-3-namhyung@kernel.org>
- <CAADnVQLN1De95WqUu2ESAdX-wNvaGhSNeboar1k-O+z_d7-dNA@mail.gmail.com>
- <Zwl5BkB-SawgQ9KY@google.com> <Zw1fN1WqjvoCeT_s@google.com>
- <CAADnVQJ2M953da8_gnGgWR9x6_-ztqFO8xvRU=bKcwmsH4ewvg@mail.gmail.com> <Zw6yToBbtOBPvUWx@google.com>
-In-Reply-To: <Zw6yToBbtOBPvUWx@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 15 Oct 2024 11:25:11 -0700
-Message-ID: <CAADnVQ+Y8BG80=8vcipKVnOL0Htd7W60f4LOPB5shG4eSORVcg@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="y"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4GOuJXn4R8GBzzws6oxtlsJKbqR3CP6Z
+X-Proofpoint-ORIG-GUID: 4GOuJXn4R8GBzzws6oxtlsJKbqR3CP6Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=850 malwarescore=0 priorityscore=1501 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150125
 
-On Tue, Oct 15, 2024 at 11:20=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Mon, Oct 14, 2024 at 06:50:49PM -0700, Alexei Starovoitov wrote:
-> > On Mon, Oct 14, 2024 at 11:13=E2=80=AFAM Namhyung Kim <namhyung@kernel.=
-org> wrote:
-> > >
-> > > Hi Alexei,
-> > >
-> > > On Fri, Oct 11, 2024 at 12:14:14PM -0700, Namhyung Kim wrote:
-> > > > On Fri, Oct 11, 2024 at 11:35:27AM -0700, Alexei Starovoitov wrote:
-> > > > > On Thu, Oct 10, 2024 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@ke=
-rnel.org> wrote:
-> > > > > >
-> > > > > > The bpf_get_kmem_cache() is to get a slab cache information fro=
-m a
-> > > > > > virtual address like virt_to_cache().  If the address is a poin=
-ter
-> > > > > > to a slab object, it'd return a valid kmem_cache pointer, other=
-wise
-> > > > > > NULL is returned.
-> > > > > >
-> > > > > > It doesn't grab a reference count of the kmem_cache so the call=
-er is
-> > > > > > responsible to manage the access.  The returned point is marked=
- as
-> > > > > > PTR_UNTRUSTED.  And the kfunc has KF_RCU_PROTECTED as the slab =
-object
-> > > > > > might be protected by RCU.
-> > > > >
-> > > > > ...
-> > > > > > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RCU_PROTECTED)
-> > > > >
-> > > > > This flag is unnecessary. PTR_UNTRUSTED can point to absolutely a=
-ny memory.
-> > > > > In this case it likely points to a valid kmem_cache, but
-> > > > > the verifier will guard all accesses with probe_read anyway.
-> > > > >
-> > > > > I can remove this flag while applying.
-> > > >
-> > > > Ok, I'd be happy if you would remove it.
-> > >
-> > > You will need to update the bpf_rcu_read_lock/unlock() in the test co=
-de
-> > > (patch 3).  I can send v6 with that and Vlastimil's Ack if you want.
-> >
-> > Fixed all that while applying.
-> >
-> > Could you please follow up with an open-coded iterator version
-> > of the same slab iterator ?
-> > So that progs can iterate slabs as a normal for/while loop ?
->
-> I'm not sure I'm following.  Do you want a new test program to iterate
-> kmem_caches by reading list pointers manually?  How can I grab the
-> slab_mutex then?
+Currently, Ath12k driver only supports WiFi devices that are based on
+PCI bus. New Ath12k device IPQ5332 is based on AHB bus. Hence, add
+Ath12k AHB support for IPQ5332.
 
-No.
-See bpf_iter_task_new/_next/_destroy kfuncs and
-commit c68a78ffe2cb ("bpf: Introduce task open coded iterator kfuncs").
+IPQ5332 is IEEE802.11be 2 GHz 2x2 Wifi device. To bring-up IPQ5332
+device:
+- Add hardware parameters for IPQ5332.
+- CE and CMEM register address space in IPQ5332 is separate from WCSS
+  register space. Hence, add logic to remap CE and CMEM register
+  address.
+- Add support for fixed QMI firmware memory for IPQ5332.
+- Support userPD handling for WCSS secure PIL driver to enable ath12k
+  AHB support.
+
+Depends-On: [PATCH V7 0/5] remove unnecessary q6 clocks
+Depends-On: [PATCH V2 0/4] Add new driver for WCSS secure PIL loading
+Link: https://lore.kernel.org/all/20240820055618.267554-1-quic_gokulsri@quicinc.com/
+Link: https://lore.kernel.org/all/20240829134021.1452711-1-quic_gokulsri@quicinc.com/
+
+Balamurugan S (9):
+  wifi: ath12k: add ath12k_hw_params for IPQ5332
+  wifi: ath12k: add ath12k_hw_hal_params for IPQ5332
+  wifi: ath12k: avoid m3 firmware download in AHB device IPQ5332
+  wifi: ath12k: add new CMEM read-write ath12k_hif_ops
+  wifi: ath12k: remap CMEM register space for IPQ5332
+  wifi: ath12k: fix incorrect CE addresses
+  wifi: ath12k: remap CE register space for IPQ5332
+  wifi: ath12k: add AHB driver support for IPQ5332
+  wifi: ath12k: enable ath12k AHB support
+
+P Praneesh (4):
+  wifi: ath12k: refactor ath12k_hw_regs structure
+  wifi: ath12k: add ath12k_hw_regs for IPQ5332
+  wifi: ath12k: add ath12k_hw_ring_mask for IPQ5332
+  wifi: ath12k: add CE configurations for IPQ5332
+
+Raj Kumar Bhagat (5):
+  dt-bindings: net: wireless: describe the ath12k AHB module
+  arm64: dts: qcom: add wifi node for IPQ5332 based RDP441
+  wifi: ath12k: add support for fixed QMI firmware memory
+  wifi: ath12k: add BDF address in hardware parameter
+  wifi: ath12k: convert tasklet to BH workqueue for CE interrupts
+
+Sowmiya Sree Elavalagan (4):
+  wifi: ath12k: Power up root PD
+  wifi: ath12k: Register various userPD interrupts and save SMEM entries
+  wifi: ath12k: Power up userPD
+  wifi: ath12k: Power down userPD
+---
+v2:
+- Integrated the “Support userPD handling for WCSS secure PIL driver”
+  patch series with the Ath12k AHB bring-up patch.
+- Updated DT binding and DTS files to align with the new Rproc design.
+- Addressed review comments on RFC patch series v1 of
+  “wifi: ath12k: add Ath12k AHB driver support for IPQ5332”.
+- Removed the RFC tag as all dependency patch series are now compilable.
+
+v1: https://patchwork.kernel.org/project/linux-wireless/cover/20240814094323.3927603-1-quic_rajkbhag@quicinc.com/
+---
+ .../net/wireless/qcom,ath12k-ahb.yaml         |  293 ++++
+ arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts   |   59 +-
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  108 +-
+ drivers/net/wireless/ath/ath12k/Kconfig       |    6 +
+ drivers/net/wireless/ath/ath12k/Makefile      |    1 +
+ drivers/net/wireless/ath/ath12k/ahb.c         | 1326 +++++++++++++++++
+ drivers/net/wireless/ath/ath12k/ahb.h         |   80 +
+ drivers/net/wireless/ath/ath12k/ce.c          |   90 ++
+ drivers/net/wireless/ath/ath12k/ce.h          |   18 +-
+ drivers/net/wireless/ath/ath12k/core.c        |   35 +-
+ drivers/net/wireless/ath/ath12k/core.h        |   19 +-
+ drivers/net/wireless/ath/ath12k/dp.c          |   10 +-
+ drivers/net/wireless/ath/ath12k/hal.c         |   82 +-
+ drivers/net/wireless/ath/ath12k/hal.h         |   69 +-
+ drivers/net/wireless/ath/ath12k/hif.h         |   13 +
+ drivers/net/wireless/ath/ath12k/hw.c          |  482 ++++++
+ drivers/net/wireless/ath/ath12k/hw.h          |   16 +
+ drivers/net/wireless/ath/ath12k/pci.c         |   28 +-
+ drivers/net/wireless/ath/ath12k/pci.h         |    2 +
+ drivers/net/wireless/ath/ath12k/qmi.c         |  169 ++-
+ drivers/net/wireless/ath/ath12k/qmi.h         |    1 +
+ 21 files changed, 2793 insertions(+), 114 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/wireless/qcom,ath12k-ahb.yaml
+ create mode 100644 drivers/net/wireless/ath/ath12k/ahb.c
+ create mode 100644 drivers/net/wireless/ath/ath12k/ahb.h
+
+
+base-commit: 69eabe24843f238e79a6dbbd2b3fcc8eef39d6b8
+prerequisite-patch-id: bfefff55ba6a3fdf8930b3b4d48746bc9cd5a0a0
+prerequisite-patch-id: 9e143f9cd10add55d2fd52bac0e538b904d6dee5
+prerequisite-patch-id: cb987ee3dbc145fee1135307badb61c0e21f0ccd
+prerequisite-patch-id: 14b990ceacec658b924c78d91ce33b45f70ca112
+prerequisite-patch-id: b1f6cc6ae066f3e10b5626ff0af3267449d613d3
+prerequisite-patch-id: be810c2435b44ea08527d739510d18770e732dfa
+prerequisite-patch-id: 1a946f3d5f563f0de825606b276dbaee695aa5b8
+prerequisite-patch-id: 97f4a586c7040822e0e7977bd1599333ad02237b
+prerequisite-patch-id: bc306b2998d1afe66757052e33dc685ae4e7a627
+-- 
+2.34.1
+
 
