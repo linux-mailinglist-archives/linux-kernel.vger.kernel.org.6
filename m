@@ -1,315 +1,278 @@
-Return-Path: <linux-kernel+bounces-366567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE6E99F731
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA9C99F732
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6EED1F27A09
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:23:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BAF41F27B1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8A61B6CE1;
-	Tue, 15 Oct 2024 19:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49BD1B6D0F;
+	Tue, 15 Oct 2024 19:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Px+X0x7c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="j24sqayp"
+Received: from mail-qt1-f194.google.com (mail-qt1-f194.google.com [209.85.160.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD94B1F80A0;
-	Tue, 15 Oct 2024 19:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6C61F80CD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 19:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729020187; cv=none; b=irTEOA6vlqa7B3HTMgUDVI/s4OIBrO+gUiZKk/XP8EaxuJkzC700rT5VD5mS3k/O8sw+kQ3neRP7Mj4j7N0yyyhZfi7deCXlR933IjQ8ZYbBDKsdhdV9FEAiTfXQwxagD21F2gA3lPRyjTRwtIPHEV6Obk9hZ0Fba1Dg+BjMcKo=
+	t=1729020190; cv=none; b=DpkobVmUsj/ICBiwcEc9G9Q6EWiEpRYDgSDgNJ4FYSIVw+ULB8COgEdmiggko8Szxhq90PC5flfNFut8xbJXJtz40kikNUi8UBYe73AUIX+oDstKrnRA1HEKmuOITLMfwzxJjBRE0Z8YdGOivdYZpKF84xQSv/yCTZXpgn/GsXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729020187; c=relaxed/simple;
-	bh=AimJ2Bumh9mBtdh9JV2TDD6hXkRt8u1o4jLAIlskq/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZS8upI1qmSTj08rwq0CyJHvuJdkbvnn/+qAtskgjBNyrvyYGRZesCLEBDXnsTQ+QnCOwH8+y+pxys33XXhtkb7Wj8YQScGaQBn8LfaGmUEtq+eeuf18CLn8HhzlUrzswk8wiDQuaL1yLKfhJy8NlfAiwccr5FZ5Xhey7CWn0V+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Px+X0x7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D5C0C4CEC6;
-	Tue, 15 Oct 2024 19:23:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729020187;
-	bh=AimJ2Bumh9mBtdh9JV2TDD6hXkRt8u1o4jLAIlskq/g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Px+X0x7cA0ZcXOWXADTYtS4iYAnNgGr95HUIoISvt0kYbxScjetKMwniCNLn1q7eK
-	 8Ck774T1yUJ4vm7fzhUWmJVhXyzzkyCf8tDLQ3jHDok/3SdEohu/fqHTL9MYfBwrfZ
-	 CO4MHdGFlppKk1sAK6uCytRZKtUUyY+fzgBlqZfn+kT6WSMavIfPpctSS5Syw0m+Sl
-	 LHMVz7pqfNwaYtCRBhspF5OydEdpKo0S6vOEW+Rx84T4kVHE+xcRuV2vyTrxEG1VTP
-	 LTuVNwyZNDqqBrFkkAn05mxLtGP+k/vOk2AYg7o7YSVcLdIYpp44CoLEjNZIxPn7Tq
-	 gXyH8hbC/I+Dg==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-277e6002b7dso1650018fac.1;
-        Tue, 15 Oct 2024 12:23:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWllJtkDRQPeDasljhuc/Ocw0MwmgiUyKWADB6pIlfBQRQP2wCTzqIOLVaUKAPrrKRDbOrepHI/Og3j5Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT/V28anfbI4LwwlAK6EFXbhyFbzvYSgJDsxa8VjBIlz1tLGu4
-	X/gG/fyoWu8abiNsFqrmb0z87OpQoEUIP00RkiTUcmrvpb+E7wkMxeaz3J6f3LjO32FdvqUnL8c
-	JLhCP4xwJTllcw6cjWujliUtD/YU=
-X-Google-Smtp-Source: AGHT+IHcihYeTz4OkbONhaZ/U3VFT2bJ1/ifWVPweelyxtgV+GfFBKtl2QtmLjnVXnAuJi/JDnqLn9jOSSn01m2jyTw=
-X-Received: by 2002:a05:6870:671a:b0:250:756b:b1ed with SMTP id
- 586e51a60fabf-28887348c9amr8582991fac.19.1729020186574; Tue, 15 Oct 2024
- 12:23:06 -0700 (PDT)
+	s=arc-20240116; t=1729020190; c=relaxed/simple;
+	bh=nuqVM5Pa10hgz7nFmmFVgpfYVQK/w/7stNQsizNYTCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HLW8wC0ZFs6RrTYV9EhowaTQ12ZkLn4UEGsO5sljB7mlwt5FHupDbwzIZLXq/5WLjTAQBPvdoZ1gWnG1JyvFZmJkYnTbxJ8QdAGgsGvrz3p83J38eFwx3E8yNRe496MSKKU0/HDULTbMF8yeiqTFf3d6tBSgy/owdsz+W+//1w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=j24sqayp; arc=none smtp.client-ip=209.85.160.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f194.google.com with SMTP id d75a77b69052e-45f07eb6f5fso1732251cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:23:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1729020187; x=1729624987; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X7dB0pxitQeFgVMBRDLTWgDRQeKiGn5TxSEiu8/oYsk=;
+        b=j24sqaypQsHAZpYbBD5eymoPomxCMouELlnwaHUtTAlFX517tTU31ifg1sAmN3GhOW
+         FaEkv652ye3abptu3JNUfYYhSKRNiOlC3HiMaa6i0WWXv9Nbbs0tHR1RvdSf3VoJZHPP
+         5Z7BnOjQ5T6QBkDBfb/0CGNxrHnKKdQ3qZaHfM0ccVWIVS6ooIsXIMouP9kzhHewKSr8
+         n0bzJhcoA4TsZpFTkiaExDoqfIw9Yujti9QQ0w1hau6Omd+gH0ekt7MQRfMwz5OrKKrK
+         JwkWCDClbAqlASxe8JAUEYzphVoWUHS+a07NeUksQCLA90xKwiUOku7RHzfuo+nJjTVU
+         ADuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729020187; x=1729624987;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X7dB0pxitQeFgVMBRDLTWgDRQeKiGn5TxSEiu8/oYsk=;
+        b=tup/VGpOJAgYS8kvx13tBdIYpbAMmFDN6t4jBBEcGIrZICHax0Q1agqm2YJYt7SmET
+         w/3+MJ7xIZgtOV9tW2hrTEIJNPypSy35IeI96EaCRsZbsx2kqdirBvBJG/4n4pc311tc
+         eOIZ9Au5jkl7/Yq1D+iuHFCBkG/cDMo9Wj6c5Ua18fB1z1kMEKZtc5p6T3w8O0mfdcGA
+         8PvTHk0yIejloKDUmLVSD+GobIbNjhjXsUdAtnTuenMKagI+6KOJDuXyzViWtIuvFRwb
+         KKQcp+SoWP9tr6pieKL2gJ6s+WePzwOQivxGdr/t5Eq+e8rTcPwl0HGdMQtKp6KzjQZo
+         ed/w==
+X-Gm-Message-State: AOJu0YxuGpx3pOS3cNyg5W52SjRAvvXp+5M8VGhfT9EdG7nqO6ekpdAw
+	hebYzcK28oiv6VdG1WkBi3D1ljG53tJ1PsOhj59AKFGC8WliVCmmsryNlg32TA==
+X-Google-Smtp-Source: AGHT+IEVMyd7eXgnEAfRqhwHnQdq3N+kpUIcnL/4s3rKrsYnYBtTrSPgs4TfkC0BqoBAVv/3K1YqoA==
+X-Received: by 2002:a05:622a:c4:b0:458:3162:2262 with SMTP id d75a77b69052e-46089ada3f9mr30640441cf.4.1729020186916;
+        Tue, 15 Oct 2024 12:23:06 -0700 (PDT)
+Received: from rowland.harvard.edu ([2607:fb60:2501:2805:c6d5:fe22:7fa3:ec54])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607d89942csm9261411cf.54.2024.10.15.12.23.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 12:23:06 -0700 (PDT)
+Date: Tue, 15 Oct 2024 15:23:03 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+Message-ID: <c3d59f87-bb72-46d9-94b8-7441b837bf13@rowland.harvard.edu>
+References: <6ae97ef8-bcbe-448a-9276-ad21631e43dc@rowland.harvard.edu>
+ <670e820b.050a0220.d5849.0007.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912055956.30108-1-todd.e.brandt@intel.com>
-In-Reply-To: <20240912055956.30108-1-todd.e.brandt@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 15 Oct 2024 21:22:54 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i9F4JUyxAU49=HwZFdv0MZNTeU=F2PdTf-GspCy4OS+w@mail.gmail.com>
-Message-ID: <CAJZ5v0i9F4JUyxAU49=HwZFdv0MZNTeU=F2PdTf-GspCy4OS+w@mail.gmail.com>
-Subject: Re: [PATCH] pm-graph v5.13
-To: Todd Brandt <todd.e.brandt@intel.com>
-Cc: linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, rjw@rjwysocki.net, 
-	linux-kernel@vger.kernel.org, todd.e.brandt@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670e820b.050a0220.d5849.0007.GAE@google.com>
 
-On Thu, Sep 12, 2024 at 8:00=E2=80=AFAM Todd Brandt <todd.e.brandt@intel.co=
-m> wrote:
->
-> - fix link to pm-graph homepage and in comments
-> - add usleep_range kprobe to -dev mode
-> - add SIGUSR1 and SIGUSR2 to list of captured signals
-> - kill -s USR1 causes sleepgraph to print out stack trace
-> - kill -s USR2 prints stack trace and exits
-> - stack trace is also printed to -result file
-> - add legacy support for /sys/kernel/debug/tracing/
-> - allow multiple instances of trace funcs in the same phase
-> - update javascript to draw device detail for multiple trace func instanc=
-es
-> - add -debugtiming option to print out timestamps on all outputs
->
-> Signed-off-by: Todd Brandt <todd.e.brandt@intel.com>
-> ---
->  tools/power/pm-graph/sleepgraph.8  |  3 ++
->  tools/power/pm-graph/sleepgraph.py | 59 ++++++++++++++++++++++--------
->  2 files changed, 47 insertions(+), 15 deletions(-)
->
-> diff --git a/tools/power/pm-graph/sleepgraph.8 b/tools/power/pm-graph/sle=
-epgraph.8
-> index 643271b6fc6f..491ca21dccdb 100644
-> --- a/tools/power/pm-graph/sleepgraph.8
-> +++ b/tools/power/pm-graph/sleepgraph.8
-> @@ -81,6 +81,9 @@ as resume failures.
->  .TP
->  \fB-wifitrace\fR
->  Trace through the wifi reconnect time and include it in the timeline.
-> +.TP
-> +\fB-debugtiming\fR
-> +Add timestamp to each printed output line, accurate to the millisecond.
->
->  .SS "advanced"
->  .TP
-> diff --git a/tools/power/pm-graph/sleepgraph.py b/tools/power/pm-graph/sl=
-eepgraph.py
-> index ef87e63c05c7..918eae58b0b4 100755
-> --- a/tools/power/pm-graph/sleepgraph.py
-> +++ b/tools/power/pm-graph/sleepgraph.py
-> @@ -18,7 +18,7 @@
->  #
->  # Links:
->  #       Home Page
-> -#         https://01.org/pm-graph
-> +#         https://www.intel.com/content/www/us/en/developer/topic-techno=
-logy/open/pm-graph/overview.html
->  #       Source repo
->  #         git@github.com:intel/pm-graph
->  #
-> @@ -65,6 +65,7 @@ import gzip
->  from threading import Thread
->  from subprocess import call, Popen, PIPE
->  import base64
-> +import traceback
->
->  debugtiming =3D False
->  mystarttime =3D time.time()
-> @@ -86,7 +87,7 @@ def ascii(text):
->  #       store system values and test parameters
->  class SystemValues:
->         title =3D 'SleepGraph'
-> -       version =3D '5.12'
-> +       version =3D '5.13'
->         ansi =3D False
->         rs =3D 0
->         display =3D ''
-> @@ -236,7 +237,11 @@ class SystemValues:
->                 'msleep': { 'args_x86_64': {'time':'%di:s32'}, 'ub': 1 },
->                 'schedule_timeout': { 'args_x86_64': {'timeout':'%di:s32'=
-}, 'ub': 1 },
->                 'udelay': { 'func':'__const_udelay', 'args_x86_64': {'loo=
-ps':'%di:s32'}, 'ub': 1 },
-> -               'usleep_range': { 'args_x86_64': {'min':'%di:s32', 'max':=
-'%si:s32'}, 'ub': 1 },
-> +               'usleep_range': {
-> +                       'func':'usleep_range_state',
-> +                       'args_x86_64': {'min':'%di:s32', 'max':'%si:s32'}=
-,
-> +                       'ub': 1
-> +               },
->                 'mutex_lock_slowpath': { 'func':'__mutex_lock_slowpath', =
-'ub': 1 },
->                 'acpi_os_stall': {'ub': 1},
->                 'rt_mutex_slowlock': {'ub': 1},
-> @@ -342,15 +347,21 @@ class SystemValues:
->                 if self.verbose or msg.startswith('WARNING:'):
->                         pprint(msg)
->         def signalHandler(self, signum, frame):
-> -               if not self.result:
-> -                       return
->                 signame =3D self.signames[signum] if signum in self.signa=
-mes else 'UNKNOWN'
-> -               msg =3D 'Signal %s caused a tool exit, line %d' % (signam=
-e, frame.f_lineno)
-> +               if signame in ['SIGUSR1', 'SIGUSR2', 'SIGSEGV']:
-> +                       traceback.print_stack()
-> +                       stack =3D traceback.format_list(traceback.extract=
-_stack())
-> +                       self.outputResult({'stack':stack})
-> +                       if signame =3D=3D 'SIGUSR1':
-> +                               return
-> +               msg =3D '%s caused a tool exit, line %d' % (signame, fram=
-e.f_lineno)
-> +               pprint(msg)
->                 self.outputResult({'error':msg})
-> +               os.kill(os.getpid(), signal.SIGKILL)
->                 sys.exit(3)
->         def signalHandlerInit(self):
->                 capture =3D ['BUS', 'SYS', 'XCPU', 'XFSZ', 'PWR', 'HUP', =
-'INT', 'QUIT',
-> -                       'ILL', 'ABRT', 'FPE', 'SEGV', 'TERM']
-> +                       'ILL', 'ABRT', 'FPE', 'SEGV', 'TERM', 'USR1', 'US=
-R2']
->                 self.signames =3D dict()
->                 for i in capture:
->                         s =3D 'SIG'+i
-> @@ -859,6 +870,11 @@ class SystemValues:
->                 # files needed for any trace data
->                 files =3D ['buffer_size_kb', 'current_tracer', 'trace', '=
-trace_clock',
->                                  'trace_marker', 'trace_options', 'tracin=
-g_on']
-> +               # legacy check for old systems
-> +               if not os.path.exists(self.tpath+'trace'):
-> +                       self.tpath =3D '/sys/kernel/debug/tracing/'
-> +               if not os.path.exists(self.epath):
-> +                       self.epath =3D '/sys/kernel/debug/tracing/events/=
-power/'
->                 # files needed for callgraph trace data
->                 tp =3D self.tpath
->                 if(self.usecallgraph):
-> @@ -911,6 +927,13 @@ class SystemValues:
->                 if num > 0:
->                         n =3D '%d' % num
->                 fp =3D open(self.result, 'a')
-> +               if 'stack' in testdata:
-> +                       fp.write('Printing stack trace:\n')
-> +                       for line in testdata['stack']:
-> +                               fp.write(line)
-> +                       fp.close()
-> +                       self.sudoUserchown(self.result)
-> +                       return
->                 if 'error' in testdata:
->                         fp.write('result%s: fail\n' % n)
->                         fp.write('error%s: %s\n' % (n, testdata['error'])=
-)
-> @@ -1980,7 +2003,7 @@ class Data:
->                 length =3D -1.0
->                 if(start >=3D 0 and end >=3D 0):
->                         length =3D end - start
-> -               if pid =3D=3D -2 or name not in sysvals.tracefuncs.keys()=
-:
-> +               if pid >=3D -2:
->                         i =3D 2
->                         origname =3D name
->                         while(name in list):
-> @@ -2753,7 +2776,8 @@ class Timeline:
->         def createHeader(self, sv, stamp):
->                 if(not stamp['time']):
->                         return
-> -               self.html +=3D '<div class=3D"version"><a href=3D"https:/=
-/01.org/pm-graph">%s v%s</a></div>' \
-> +               self.html +=3D '<div class=3D"version"><a href=3D"https:/=
-/www.intel.com/content/www/'+\
-> +                       'us/en/developer/topic-technology/open/pm-graph/o=
-verview.html">%s v%s</a></div>' \
->                         % (sv.title, sv.version)
->                 if sv.logmsg and sv.testlog:
->                         self.html +=3D '<button id=3D"showtest" class=3D"=
-logbtn btnfmt">log</button>'
-> @@ -5238,12 +5262,16 @@ def addScriptCode(hf, testruns):
->                                 }
->                                 var info =3D dev[i].title.split(" ");
->                                 var pname =3D info[info.length-1];
-> -                               pd[pname] =3D parseFloat(info[info.length=
--3].slice(1));
-> -                               total[0] +=3D pd[pname];
-> +                               var length =3D parseFloat(info[info.lengt=
-h-3].slice(1));
-> +                               if (pname in pd)
-> +                                       pd[pname] +=3D length;
-> +                               else
-> +                                       pd[pname] =3D length;
-> +                               total[0] +=3D length;
->                                 if(pname.indexOf("suspend") >=3D 0)
-> -                                       total[tidx] +=3D pd[pname];
-> +                                       total[tidx] +=3D length;
->                                 else
-> -                                       total[tidx+1] +=3D pd[pname];
-> +                                       total[tidx+1] +=3D length;
->                         }
->                 }
->                 var devname =3D deviceTitle(this.title, total, cpu);
-> @@ -5262,7 +5290,7 @@ def addScriptCode(hf, testruns):
->                                         phases[i].style.left =3D left+"%"=
-;
->                                         phases[i].title =3D phases[i].id+=
-" "+pd[phases[i].id]+" ms";
->                                         left +=3D w;
-> -                                       var time =3D "<t4 style=3D\"font-=
-size:"+fs+"px\">"+pd[phases[i].id]+" ms<br></t4>";
-> +                                       var time =3D "<t4 style=3D\"font-=
-size:"+fs+"px\">"+pd[phases[i].id].toFixed(3)+" ms<br></t4>";
->                                         var pname =3D "<t3 style=3D\"font=
--size:"+fs2+"px\">"+phases[i].id.replace(new RegExp("_", "g"), " ")+"</t3>"=
-;
->                                         phases[i].innerHTML =3D time+pnam=
-e;
->                                 } else {
-> @@ -6742,6 +6770,7 @@ def printHelp():
->         '   -wifi        If a wifi connection is available, check that it=
- reconnects after resume.\n'\
->         '   -wifitrace   Trace kernel execution through wifi reconnect.\n=
-'\
->         '   -netfix      Use netfix to reset the network in the event it =
-fails to resume.\n'\
-> +       '   -debugtiming Add timestamp to each printed line\n'\
->         '  [testprep]\n'\
->         '   -sync        Sync the filesystems before starting the test\n'=
-\
->         '   -rs on/off   Enable/disable runtime suspend for all devices, =
-restore all after test\n'\
-> @@ -7047,7 +7076,6 @@ if __name__ =3D=3D '__main__':
->                         except:
->                                 doError('No result file supplied', True)
->                         sysvals.result =3D val
-> -                       sysvals.signalHandlerInit()
->                 else:
->                         doError('Invalid argument: '+arg, True)
->
-> @@ -7057,6 +7085,7 @@ if __name__ =3D=3D '__main__':
->         if(sysvals.usecallgraph and sysvals.useprocmon):
->                 doError('-proc is not compatible with -f')
->
-> +       sysvals.signalHandlerInit()
->         if sysvals.usecallgraph and sysvals.cgskip:
->                 sysvals.vprint('Using cgskip file: %s' % sysvals.cgskip)
->                 sysvals.setCallgraphBlacklist(sysvals.cgskip)
-> --
+On Tue, Oct 15, 2024 at 07:54:03AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
 
-Applied as 6.13 material, thanks!
+No good; the console log shows that the timer must have been activated
+and then stopped during a period that wasn't printed in the log.  This
+next patch tries to print out more of the history.  Will it be enough?
+
+Alan Stern
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git v6.12-rc3
+
+Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+===================================================================
+--- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
++++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -50,7 +50,7 @@
+ #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
+ #define POWER_BUDGET_3	900	/* in mA */
+ 
+-#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
++#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
+ 
+ static const char	driver_name[] = "dummy_hcd";
+ static const char	driver_desc[] = "USB Host+Gadget Emulator";
+@@ -239,6 +239,12 @@ enum dummy_rh_state {
+ 	DUMMY_RH_RUNNING
+ };
+ 
++struct alaninfo {
++	const char *		str;
++	int			starts, stops;
++};
++#define MAX_INFO	16
++
+ struct dummy_hcd {
+ 	struct dummy			*dum;
+ 	enum dummy_rh_state		rh_state;
+@@ -257,6 +263,10 @@ struct dummy_hcd {
+ 	unsigned			active:1;
+ 	unsigned			old_active:1;
+ 	unsigned			resuming:1;
++
++	struct alaninfo			alaninfo[MAX_INFO];
++	int				alanindex;
++	int				starts, stops;
+ };
+ 
+ struct dummy {
+@@ -323,6 +333,44 @@ static inline struct dummy *gadget_dev_t
+ 	return container_of(dev, struct dummy, gadget.dev);
+ }
+ 
++void alandbg(struct dummy_hcd *dum_hcd, const char *str, int type);
++void alandbg(struct dummy_hcd *dum_hcd, const char *str, int type)
++{
++	int			i = dum_hcd->alanindex;
++	struct alaninfo		*info = &dum_hcd->alaninfo[i];
++
++	if (type == 1)
++		++dum_hcd->starts;
++	else if (type == 2)
++		++dum_hcd->stops;
++	info->str = str;
++	info->starts = dum_hcd->starts;
++	info->stops = dum_hcd->stops;
++
++	if (++i >= MAX_INFO)
++		i = 0;
++	dum_hcd->alanindex = i;
++}
++
++void alandump(struct dummy_hcd *dum_hcd);
++void alandump(struct dummy_hcd *dum_hcd)
++{
++	int			i = dum_hcd->alanindex;
++	int			j;
++	struct alaninfo		*info = &dum_hcd->alaninfo[i];
++	char			*p, buf[4 * 24];
++
++	p = buf;
++	for (j = 0; j < 4; ++j) {
++		if (--i < 0)
++			i = MAX_INFO - 1;
++		info = &dum_hcd->alaninfo[i];
++		p += sprintf(p, "%s %d %d  ",
++				info->str, info->starts, info->stops);
++	}
++	dev_info(dummy_dev(dum_hcd), "%s\n", p);
++}
++
+ /*-------------------------------------------------------------------------*/
+ 
+ /* DEVICE/GADGET SIDE UTILITY ROUTINES */
+@@ -1303,9 +1351,11 @@ static int dummy_urb_enqueue(
+ 		urb->error_count = 1;		/* mark as a new urb */
+ 
+ 	/* kick the scheduler, it'll do the rest */
+-	if (!hrtimer_active(&dum_hcd->timer))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++	if (!hrtimer_active(&dum_hcd->timer)) {
++		alandbg(dum_hcd, "start1", 1);
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
++	}
+ 
+  done:
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+@@ -1325,9 +1375,17 @@ static int dummy_urb_dequeue(struct usb_
+ 
+ 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
+ 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
+-			!list_empty(&dum_hcd->urbp_list))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
+-
++			!list_empty(&dum_hcd->urbp_list)) {
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++				HRTIMER_MODE_REL_SOFT);
++		alandbg(dum_hcd, "start2", 1);
++	} else {
++		int active = hrtimer_active(&dum_hcd->timer);
++		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %d active %d\n",
++				rc, list_empty(&dum_hcd->urbp_list), active);
++		if (rc == 0 && !active)
++			alandump(dum_hcd);
++	}
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+ 	return rc;
+ }
+@@ -1813,10 +1871,12 @@ static enum hrtimer_restart dummy_timer(
+ 
+ 	/* look at each urb queued by the host side driver */
+ 	spin_lock_irqsave(&dum->lock, flags);
++	alandbg(dum_hcd, "handler1", 0);
+ 
+ 	if (!dum_hcd->udev) {
+ 		dev_err(dummy_dev(dum_hcd),
+ 				"timer fired with no URBs pending?\n");
++		alandbg(dum_hcd, "handler2", 2);
+ 		spin_unlock_irqrestore(&dum->lock, flags);
+ 		return HRTIMER_NORESTART;
+ 	}
+@@ -1994,10 +2054,13 @@ return_urb:
+ 	if (list_empty(&dum_hcd->urbp_list)) {
+ 		usb_put_dev(dum_hcd->udev);
+ 		dum_hcd->udev = NULL;
++		alandbg(dum_hcd, "handler3", 2);
+ 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
+-		/* want a 1 msec delay here */
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++		alandbg(dum_hcd, "handler-start", 1);
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
++	} else {
++		alandbg(dum_hcd, "handler4", 2);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&dum->lock, flags);
+@@ -2390,8 +2453,11 @@ static int dummy_bus_resume(struct usb_h
+ 	} else {
+ 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 		set_link_state(dum_hcd);
+-		if (!list_empty(&dum_hcd->urbp_list))
+-			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
++		if (!list_empty(&dum_hcd->urbp_list)) {
++			alandbg(dum_hcd, "start3", 1);
++			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++					HRTIMER_MODE_REL_SOFT);
++			}
+ 		hcd->state = HC_STATE_RUNNING;
+ 	}
+ 	spin_unlock_irq(&dum_hcd->dum->lock);
+@@ -2490,6 +2556,10 @@ static int dummy_start(struct usb_hcd *h
+ {
+ 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
+ 
++	int i;
++	for (i = 0; i < MAX_INFO; ++i)
++		dum_hcd->alaninfo[i].str = "";
++
+ 	/*
+ 	 * HOST side init ... we emulate a root hub that'll only ever
+ 	 * talk to one device (the gadget side).  Also appears in sysfs,
+@@ -2521,6 +2591,7 @@ static void dummy_stop(struct usb_hcd *h
+ {
+ 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
+ 
++	alandbg(dum_hcd, "cancel", 0);
+ 	hrtimer_cancel(&dum_hcd->timer);
+ 	device_remove_file(dummy_dev(dum_hcd), &dev_attr_urbs);
+ 	dev_info(dummy_dev(dum_hcd), "stopped\n");
 
