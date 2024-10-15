@@ -1,218 +1,450 @@
-Return-Path: <linux-kernel+bounces-364881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB8599DA80
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:04:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE0099DA81
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 490781F23426
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:04:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF3E282BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D2E63A9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4268A5223;
 	Tue, 15 Oct 2024 00:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ym7xCBY/"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2077.outbound.protection.outlook.com [40.107.94.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJ5fLB4E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E9E28EC;
-	Tue, 15 Oct 2024 00:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728950628; cv=fail; b=umMU6RrqAkawZwzG7T3DbnzBU+txK6XfJa6cBMoUi4KBRZcxu69IgchFS4XsFswVOUw5uWQRfY4vbjpUfM5ArsTqTfQA+yApA/ff5tbuPrw4ZGlfYT+epuydvb1ikbWAghl3ASFXMp4AAdOVixS6x7+JMs/4FALNk3FyQt3NHTE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0B1290F;
+	Tue, 15 Oct 2024 00:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728950628; cv=none; b=niEX6Bhmry6Qj8o5GRKguQFdyTdjYg8BQ7rBT1NQbYx1G090MaC8cUCeMiez7wPaV1MmzcrIHVaUhqOyCpR9OPcHVkfR6BLL8a2IJHn9jgkF3OnDAOLE56WKk/Ffi3blJAdg7wNpnaoxnCw/9UgkyFSV3bJOfIqAiHpdsdG4qAU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728950628; c=relaxed/simple;
-	bh=xVsJVE9+icPcQITqNMIHHRDeHpurkBQfNXyJ+/tPbOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NADI3T7XDF6zritsVWeu+zo1PwHofpF0tuOIa8Hcw9BL0P5hpFjzuJ0hAztBtPCXZvjDkkRaxNGE47nExll0oBflGbtpHZbVzqdJ4qM7Lk7ZTlmp8V1DIQIHxi+lZA73YUhp/w05bcHdo+2KquJN7Vx0tQ79oXS5gFCu1rotyqU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ym7xCBY/; arc=fail smtp.client-ip=40.107.94.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=baaVS2BrVA0dDCrUTkQS3yAmQ1/Swc752/5D1srQ/bG4EvHvdUr5QOvG9HLJ+KAiYUPoVYq5eSriH8vpWobQuVAL/6QVPiWDTnQqXDtIOoVQUG+IlqY53S6ScLHWu/6SFsveku8kIfd7rAuCJKVwcSik/Wwd2lWhhSj6zMGeKTp9Pp5zhqRmhnw7WhGbqXVZoxd/XNpJ3Noa0ukBOOb3Fjk+KJc6o7tt+G+M8i5IJjbef/Y/HwPbX927W5BhKeGPJBJz8LoxeKLYP9/dhXD6+U8UaNDrCtfeGY4ss7OUteGPRCnVz8z3YK9LB+Vtlzes7teDHb2xvdHN3hl5qETtOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DOYk+A0yxMFrElprFSHo5TYz662LnvMMrfhmUsW0Ng4=;
- b=Xx3Ak9sLER8JJzLUCTsikTKCPPtOzjKBf7zRbX05RHVpCZKj7Dfq8QMvrQZt902C0cwT8+v8ypayjXuGfXI2oVdQdrLLNzgY/f3E6DoczWnEOi2uD8/+5zZ1F7JhBbTLgS2NxhTNyanX/nUzqIwAVELNJPof99jLP3onnGlsdhMwxOgsiyK29sZRI4pNO1tIReD2e0d+gUcxsfiQk3x+aKjcqzpAuex0u+WBNOPeKG4/yika0v6NX1KYWKM3Afp7MEaQ7/xqqVzrdznAiBseWQk+KSLZEL1o7EatcGBz90WuyVGlIglI03ovD+P8lWkbe99uPlsDnclbdDRS9aQqFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DOYk+A0yxMFrElprFSHo5TYz662LnvMMrfhmUsW0Ng4=;
- b=Ym7xCBY/Bat9IFIy0FHtTaFx1+E/3HaJFrRxem5czFjhHFsN+EQFMk41n0NOnW/jTq0TLAZswJdr+FBv3BphEoPHjiyMt5zcm7a7y6M9zfJMQ24BUkDwEnhpR9MOOE0NFLajEaE3Rgzbb/myLhh3jy3eFVheZIvUkQ0P8MRFRsDK0BwpCEhBrTPKi2R+SNcpehgcmHL5lWRSQOlhAUbyTNgfGQufrY2irTTXedIouowjmXfFrQN0QTxanvvM+oQ4Rqo3hIGBZ7V/2NM7c6OrQGggCCtXHnIuqnhm/ek47WO0uIzrA2sekXmzxLaAQ80j9P6lZ31DuAhqS/4N2JoiBg==
-Received: from MW4P222CA0010.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::15)
- by DS7PR12MB5909.namprd12.prod.outlook.com (2603:10b6:8:7a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Tue, 15 Oct
- 2024 00:03:43 +0000
-Received: from MWH0EPF000A6733.namprd04.prod.outlook.com
- (2603:10b6:303:114:cafe::5e) by MW4P222CA0010.outlook.office365.com
- (2603:10b6:303:114::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27 via Frontend
- Transport; Tue, 15 Oct 2024 00:03:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- MWH0EPF000A6733.mail.protection.outlook.com (10.167.249.25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.17 via Frontend Transport; Tue, 15 Oct 2024 00:03:42 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 14 Oct
- 2024 17:03:34 -0700
-Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 14 Oct
- 2024 17:03:32 -0700
-Message-ID: <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com>
-Date: Mon, 14 Oct 2024 17:03:32 -0700
+	bh=7tMpbJ8Vu4P4hP2iot5d3hf7tVj4juqSjYBupVFsn3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HVoU4Dptpsy8SpI/VugZ/Q4kNQFjvUcVddUI8mBOpVob5bX+fYRo5g2IBk+on81T0UziT/lbW5S7JH8WFMbVy1NlgCFqS3tu/Cp6KezWHXAZS7aP5+X/LKBTCiFGHdOb0VzcQpIHFi5AJTNqgS0fBenUN1cuXy8/4w0vF43bwKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJ5fLB4E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26190C4CEC6;
+	Tue, 15 Oct 2024 00:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728950627;
+	bh=7tMpbJ8Vu4P4hP2iot5d3hf7tVj4juqSjYBupVFsn3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uJ5fLB4ElHozodqX8Vxc2V/8LKISf2E3rmd4aIrKEGZNPprGXDzQn1r8CvH3TZ1wW
+	 CXiuXP6OrCTfIk3sxmn0GPa+x4PYpfnuuNpJ1qfcdHUgaTwf3NDv2Y2ryu27jPGyDV
+	 VSt+aj75c1c7XslYoYmCXjvGyjf7BG03k9eKyfOgdxUThjqqJ8VTdCThUc5Fapv3Xs
+	 0aHgDm4LoNrjS2twTtOvUbj0o6qBqsg4QflVmba/ONuFr7wpvhTJbn/hD1H3WeRVXO
+	 yksOtxpB2aTbQk/JtAGAMA2id0PbdmJHxXdGm3BbAPUX8ajIPdVyOQPuwAEXvLTXVn
+	 9jXyefypGhGXg==
+Date: Mon, 14 Oct 2024 19:03:44 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] gcc-sdm845: Add general purpose clock ops
+Message-ID: <eatodbdrn532sjcvmuque5wznspo6rkydp3xkycaxzyoahsiqg@t4vuy3ulbdek>
+References: <20241007-starqltechn_integration_upstream-v6-0-dd75c06c708d@gmail.com>
+ <20241007-starqltechn_integration_upstream-v6-2-dd75c06c708d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-To: Yosry Ahmed <yosryahmed@google.com>
-CC: Suren Baghdasaryan <surenb@google.com>, <akpm@linux-foundation.org>,
-	<kent.overstreet@linux.dev>, <corbet@lwn.net>, <arnd@arndb.de>,
-	<mcgrof@kernel.org>, <rppt@kernel.org>, <paulmck@kernel.org>,
-	<thuth@redhat.com>, <tglx@linutronix.de>, <bp@alien8.de>,
-	<xiongwei.song@windriver.com>, <ardb@kernel.org>, <david@redhat.com>,
-	<vbabka@suse.cz>, <mhocko@suse.com>, <hannes@cmpxchg.org>,
-	<roman.gushchin@linux.dev>, <dave@stgolabs.net>, <willy@infradead.org>,
-	<liam.howlett@oracle.com>, <pasha.tatashin@soleen.com>,
-	<souravpanda@google.com>, <keescook@chromium.org>, <dennis@kernel.org>,
-	<yuzhao@google.com>, <vvvvvv@google.com>, <rostedt@goodmis.org>,
-	<iamjoonsoo.kim@lge.com>, <rientjes@google.com>, <minchan@google.com>,
-	<kaleshsingh@google.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-modules@vger.kernel.org>,
-	<kernel-team@android.com>
-References: <20241014203646.1952505-1-surenb@google.com>
- <20241014203646.1952505-6-surenb@google.com>
- <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
- <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
- <CAJD7tkY8LKVGN5QNy9q2UkRLnoOEd7Wcu_fKtxKqV7SN43QgrA@mail.gmail.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <CAJD7tkY8LKVGN5QNy9q2UkRLnoOEd7Wcu_fKtxKqV7SN43QgrA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6733:EE_|DS7PR12MB5909:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e7735e6-5132-48d5-bd42-08dcecacd4bf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TEJtTjJkMTMrRE9kczhIb2M0dEhEUmpCRU01Vks3eFRlZG04dk9QTzZybnMy?=
- =?utf-8?B?WjdicThqWUhRWEhyUlNVSWdBREZKT1lUcnNDRGM0RkVkNkpFTUk0UlMvdjdr?=
- =?utf-8?B?SWJxb292THFjdG1mdVVDazVLQ3BxRS9HamFiRmk3SXY3TWtTUjZpcEcwSGZN?=
- =?utf-8?B?SHdzRkswaHFrYTdsM01CK2ZmS0N5eFJ1N1pTWktwaXBkT2FCTWxqWlptdWQr?=
- =?utf-8?B?RjZra0dKZnNvSExhTGpVekVrTyt1eHhTbjlndXpkNnI1YUMxdVlySklua1By?=
- =?utf-8?B?TG1uZ2VCK0RjY29ZU0o4dzhid1MyTXJESmZEeFFCZ0JheHJwMFJ6eE1DVVJM?=
- =?utf-8?B?QTQvR0UxZnhqN1EvNnY4NXlIRW1uMFFnZmFmak9VOHhHTnlmbkdUalI4TlEx?=
- =?utf-8?B?NE4xYlpOMGNqdzZpWG1ORUdiV3BMNDEvellsblE0L2JwVHRjeityNlZTcXQ3?=
- =?utf-8?B?cnYveitCZ1pyOE1BMWk2eG5qVi9SK0lKL1pzUStZb2JiTVQzRDk2WnRUc1pK?=
- =?utf-8?B?VnN1MjI5bjd1UFVDLzVZN0R3STBYbVU0bkNEZjBvZTVvYldiVi96TEplNmpU?=
- =?utf-8?B?Sk9WazErUEt4UkZiMFE3NHFOeDRGMGFkWEcxdmZmdWZrK292c3pDQjR5YzV0?=
- =?utf-8?B?RHBnay90V1BpUWJRR054NzhQaW5PWjFTenQxYm5KZkl3eThjMVV1U2JUMDVM?=
- =?utf-8?B?UnFTMnBFSW1yZkFOOHVML3JDNk5VZTAvL2VCZDBqMXJldGhpQkhORXp1b3VS?=
- =?utf-8?B?ckhuWjE3Yk9WY2tTZVhKTkEzYVM4dlJMdm9mSHczNDNMT0VydStjeGdWQ3Rj?=
- =?utf-8?B?YkF5QzZITnB3RFYvQkc2VGo5SXF4a1VZNFdybStwcTNVTVFKaHlOQzZiZ3ZP?=
- =?utf-8?B?RUF4QmhYZTlFYTNZWnBnajlXTmFoTHkyaDArUmlmY3Y5TE94ZFFRNkN5QXNw?=
- =?utf-8?B?SXVQakVJVXBZY1c5Y0w0UmtZSWtpUkR6VmNVRkg3enN1QkpQMGlrS1pMMGl5?=
- =?utf-8?B?QzBwZ1N3VVlJYXRHZklpWE9IbmlUNXlMVHp0Y3Z1Y1g1cjlyZUJETHFtNXU3?=
- =?utf-8?B?MWl6Mm1nTElSM3EyLzhteDk3WnM1dml4RnpraGtSUVVoQ3FOOCtJd1o3dHJF?=
- =?utf-8?B?b1hoMmxnRG5TYzQwc3dsUXREeEU3VU5vVGtZUlFXSjY3eTZ1aWp5dWVTdWdn?=
- =?utf-8?B?T09pVU9kMGhqck43UGhLa1ZzenZSYkRZck9pN2RZZmdBQnhseWpxekRRNUVU?=
- =?utf-8?B?SW82NXh6V2J5MzUvOVNzekJ2QjJmQUZ3ZXFTY0R1VGlVUU52ZVo2NEVJY09H?=
- =?utf-8?B?M3hBRFI2b2gxZ2Vwd1VMd2dTMWd3MGtyRDE1YXJOVzNOWUxHS1JZa0hlUTRo?=
- =?utf-8?B?MWlHbXRsOE9jdFJoQXN5OHBVZTdINTNSa2d4cEkvWHlyaUFPaUpWNzRWeVI0?=
- =?utf-8?B?SzZWZURmY0ZOZVRXdlpnOUtmQ3hGUWJSajF1bkUvb3NaSDNUdlZRcEN3M3g5?=
- =?utf-8?B?Y1ZBcCtwUUUwZjNiL01pL3lIcHJGNm53TGF0eEtMeGxQSnFEd1VNWHN2bjY2?=
- =?utf-8?B?SExzZnJaZHh0eFNKalZOSU8zOXhIMHE1Z2lGSE1URlpTNTZ2UFIyMHpCekZO?=
- =?utf-8?B?QXRCbHVKQkxxdnMwQ2kzMkkwY29sUVZsbC9QaHVtc25jSWlHa011RDlOTE9I?=
- =?utf-8?B?Uk02UWtJMjRHYW96N3lWc2s2ZFZUazlSYmdxbk1JbDA4Yk0zSDB4akpNTnh5?=
- =?utf-8?B?cWJidUdjTERxc2RXTThkNVBrNjI3bE1qQ29JR3BxQ0FQamVyenowNVFYN0lN?=
- =?utf-8?B?eFNZQ0oxaEVhQklDc1RDc1ZXWjZpQURkSi9WWmJPSW9lRE9laGVsbFhpczR5?=
- =?utf-8?Q?eIEU59puheoEl?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 00:03:42.7008
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e7735e6-5132-48d5-bd42-08dcecacd4bf
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6733.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5909
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007-starqltechn_integration_upstream-v6-2-dd75c06c708d@gmail.com>
 
-On 10/14/24 4:56 PM, Yosry Ahmed wrote:
-> On Mon, Oct 14, 2024 at 4:53 PM John Hubbard <jhubbard@nvidia.com> wrote:
->>
->> On 10/14/24 4:48 PM, Yosry Ahmed wrote:
->>> On Mon, Oct 14, 2024 at 1:37 PM Suren Baghdasaryan <surenb@google.com> wrote:
->>>>
->>>> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
->>>> references directly in the page flags. This eliminates memory
->>>> overhead caused by page_ext and results in better performance
->>>> for page allocations.
->>>> If the number of available page flag bits is insufficient to
->>>> address all kernel allocations, profiling falls back to using
->>>> page extensions with an appropriate warning to disable this
->>>> config.
->>>> If dynamically loaded modules add enough tags that they can't
->>>> be addressed anymore with available page flag bits, memory
->>>> profiling gets disabled and a warning is issued.
->>>
->>> Just curious, why do we need a config option? If there are enough bits
->>> in page flags, why not use them automatically or fallback to page_ext
->>> otherwise?
->>
->> Or better yet, *always* fall back to page_ext, thus leaving the
->> scarce and valuable page flags available for other features?
->>
->> Sorry Suren, to keep coming back to this suggestion, I know
->> I'm driving you crazy here! But I just keep thinking it through
->> and failing to see why this feature deserves to consume so
->> many page flags.
+On Mon, Oct 07, 2024 at 06:36:12PM GMT, Dzmitry Sankouski wrote:
+> SDM845 has "General Purpose" clocks that can be muxed to
+> SoC pins to clock various external devices.
+> Those clocks may be used as e.g. PWM sources for external peripherals.
 > 
-> I think we already always use page_ext today. My understanding is that
-> the purpose of this series is to give the option to avoid using
-> page_ext if there are enough unused page flags anyway, which reduces
-> memory waste and improves performance.
+> GPCLK can in theory have arbitrary value depending on the use case, so
+> the concept of frequency tables, used in rcg2 clock driver, is not
+> efficient, because it allows only defined frequencies.
 > 
-> My question is just why not have that be the default behavior with a
-> config option, use page flags if there are enough unused bits,
-> otherwise use page_ext.
+> Introduce clk_rcg2_gp_ops, which automatically calculate clock
+> mnd values for arbitrary clock rate. The calculation done as follows:
+> - upon determine rate request, we calculate m/n/pre_div as follows:
+>   - find parent(from our client's assigned-clock-parent) rate
+>   - find scaled rates by dividing rates on its greatest common divisor
+>   - assign requested scaled rate to m
+>   - factorize scaled parent rate, put multipliers to n till max value
+>     (determined by mnd_width)
+> - validate calculated values with *_width:
+>   - if doesn't fit, delete divisor and multiplier by 2 until fit
+> - return determined rate
+> 
+> Limitations:
+> - The driver doesn't select a parent clock (it may be selected by client
+>   in device tree with assigned-clocks, assigned-clock-parents properties)
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> 
+> ---
+> Changes in v6:
+> - remove unused count variable
+> - run sparse and smatch
+> 
+> Changes in v5:
+> - replace '/' to div64_u64 to fix 32 bit gcc error
+> - fix empty scalar initializer
+> ---
+>  drivers/clk/qcom/clk-rcg.h    |   1 +
+>  drivers/clk/qcom/clk-rcg2.c   | 191 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+>  drivers/clk/qcom/gcc-sdm845.c |  11 +++-----
+>  3 files changed, 189 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index 8e0f3372dc7a..8817d14bbda4 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -189,6 +189,7 @@ struct clk_rcg2_gfx3d {
+>  	container_of(to_clk_rcg2(_hw), struct clk_rcg2_gfx3d, rcg)
+>  
+>  extern const struct clk_ops clk_rcg2_ops;
+> +extern const struct clk_ops clk_rcg2_gp_ops;
+>  extern const struct clk_ops clk_rcg2_floor_ops;
+>  extern const struct clk_ops clk_rcg2_fm_ops;
+>  extern const struct clk_ops clk_rcg2_mux_closest_ops;
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 0fc23a87b432..ba0cccdc73ec 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -8,11 +8,13 @@
+>  #include <linux/err.h>
+>  #include <linux/bug.h>
+>  #include <linux/export.h>
+> +#include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/delay.h>
+>  #include <linux/rational.h>
+>  #include <linux/regmap.h>
+>  #include <linux/math64.h>
+> +#include <linux/gcd.h>
+>  #include <linux/minmax.h>
+>  #include <linux/slab.h>
+>  
+> @@ -32,6 +34,7 @@
+>  
+>  #define CFG_REG			0x4
+>  #define CFG_SRC_DIV_SHIFT	0
+> +#define CFG_SRC_DIV_LENGTH	8
+>  #define CFG_SRC_SEL_SHIFT	8
+>  #define CFG_SRC_SEL_MASK	(0x7 << CFG_SRC_SEL_SHIFT)
+>  #define CFG_MODE_SHIFT		12
+> @@ -148,6 +151,14 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
+>  	return update_config(rcg);
+>  }
+>  
+> +// Converts divisors to corresponding clock register values.
+> +// @param f - Frequency table with pure m/n/pre_div parameters.
 
-I agree that if you're going to implement this feature at all, then
-keying off of CONFIG_MEM_ALLOC_PROFILING seems sufficient, and no
-need to add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS on top of that.
+Please use kernel-doc formatting for these.
 
-thanks,
--- 
-John Hubbard
+> +static void convert_to_reg_val(struct freq_tbl *f)
+> +{
+> +	f->pre_div *= 2;
+> +	f->pre_div -= 1;
+> +}
+> +
+>  /*
+>   * Calculate m/n:d rate
+>   *
+> @@ -400,16 +411,115 @@ static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
+>  	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
+>  }
+>  
+> -static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+> -				u32 *_cfg)
 
+Could you split this patch into one that affects the non-gp rcg2
+operations, and then one that adds and uses the gp-ops?
+
+I'd expect that would make it easier to assess the risk to all other
+rcg2 use cases.
+
+> +// Split multiplier that doesn't fit in n neither in pre_div.
+> +//
+> +// @param multiplier - multiplier to split between n and pre_div
+> +// @param pre_div - pointer to pre divisor value
+> +// @param n - pointer to n divisor value
+> +// @param pre_div_max - pre divisor maximum value
+> +//
+> +static inline void clk_rcg2_split_div(int multiplier, unsigned int *pre_div,
+> +				      u16 *n, unsigned int pre_div_max)
+> +{
+> +	*n = mult_frac(multiplier * *n, *pre_div, pre_div_max);
+> +	*pre_div = pre_div_max;
+> +}
+> +
+> +static void clk_rcg2_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f,
+> +			unsigned int mnd_max, unsigned int pre_div_max)
+> +{
+> +	int i = 2;
+> +	unsigned int pre_div = 1;
+> +	unsigned long rates_gcd, scaled_parent_rate;
+> +	u16 m, n = 1, n_candidate = 1, n_max;
+> +
+> +	rates_gcd = gcd(parent_rate, rate);
+> +	m = div64_u64(rate, rates_gcd);
+> +	scaled_parent_rate = div64_u64(parent_rate, rates_gcd);
+> +	while (scaled_parent_rate > (mnd_max + m) * pre_div_max) {
+> +		// we're exceeding divisor's range, trying lower scale.
+> +		if (m > 1) {
+> +			m--;
+> +			scaled_parent_rate = mult_frac(scaled_parent_rate, m, (m + 1));
+> +		} else {
+> +			f->n = mnd_max + m;
+> +			f->pre_div = pre_div_max;
+> +			f->m = m;
+> +		}
+> +	}
+> +
+> +	n_max = m + mnd_max;
+> +
+> +	while (scaled_parent_rate > 1) {
+> +		while (scaled_parent_rate % i == 0) {
+> +			n_candidate *= i;
+> +			if (n_candidate < n_max)
+> +				n = n_candidate;
+> +			else if (pre_div * i < pre_div_max)
+> +				pre_div *= i;
+> +			else
+> +				clk_rcg2_split_div(i, &pre_div, &n, pre_div_max);
+> +
+> +			scaled_parent_rate /= i;
+> +		}
+> +		i++;
+> +	}
+> +
+> +	f->m = m;
+> +	f->n = n;
+> +	f->pre_div = pre_div > 1 ? pre_div : 0;
+> +}
+> +
+> +static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
+> +				   struct clk_rate_request *req)
+> +{
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	struct freq_tbl *f;
+> +	int mnd_max = BIT(rcg->mnd_width) - 1;
+> +	int hid_max = BIT(rcg->hid_width) - 1;
+> +	struct clk_hw *parent;
+> +	u64 parent_rate;
+> +
+> +	parent = clk_hw_get_parent(hw);
+> +	parent_rate = clk_get_rate(parent->clk);
+> +	if (!parent_rate)
+> +		return -EINVAL;
+> +
+> +	f = kzalloc(sizeof(*f), GFP_KERNEL);
+
+As far as I can tell sizeof(*f) is 16, so should be fine to just put it
+on the stack?
+
+Regards,
+Bjorn
+
+> +
+> +	if (!f)
+> +		return -ENOMEM;
+> +
+> +	clk_rcg2_calc_mnd(parent_rate, req->rate, f, mnd_max, hid_max / 2);
+> +	convert_to_reg_val(f);
+> +	req->rate = calc_rate(parent_rate, f->m, f->n, f->n, f->pre_div);
+> +
+> +	kfree(f);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __clk_rcg2_configure_parent(struct clk_rcg2 *rcg, u8 src, u32 *_cfg)
+>  {
+> -	u32 cfg, mask, d_val, not2d_val, n_minus_m;
+>  	struct clk_hw *hw = &rcg->clkr.hw;
+> -	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
+> +	u32 mask = CFG_SRC_SEL_MASK;
+> +	int index = qcom_find_src_index(hw, rcg->parent_map, src);
+>  
+>  	if (index < 0)
+>  		return index;
+>  
+> +	*_cfg &= ~mask;
+> +	*_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+> +
+> +	return 0;
+> +}
+> +
+> +static int __clk_rcg2_configure_mnd(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+> +				u32 *_cfg)
+> +{
+> +	u32 cfg, mask, d_val, not2d_val, n_minus_m;
+> +	int ret;
+> +
+>  	if (rcg->mnd_width && f->n) {
+>  		mask = BIT(rcg->mnd_width) - 1;
+>  		ret = regmap_update_bits(rcg->clkr.regmap,
+> @@ -438,9 +548,8 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+>  	}
+>  
+>  	mask = BIT(rcg->hid_width) - 1;
+> -	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+> +	mask |= CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+>  	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+> -	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+>  	if (rcg->mnd_width && f->n && (f->m != f->n))
+>  		cfg |= CFG_MODE_DUAL_EDGE;
+>  	if (rcg->hw_clk_ctrl)
+> @@ -452,6 +561,22 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+>  	return 0;
+>  }
+>  
+> +static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+> +				u32 *_cfg)
+> +{
+> +	int ret;
+> +
+> +	ret = __clk_rcg2_configure_parent(rcg, f->src, _cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = __clk_rcg2_configure_mnd(rcg, f, _cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+>  static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+>  {
+>  	u32 cfg;
+> @@ -472,6 +597,26 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+>  	return update_config(rcg);
+>  }
+>  
+> +static int clk_rcg2_configure_gp(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+> +{
+> +	u32 cfg;
+> +	int ret;
+> +
+> +	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = __clk_rcg2_configure_mnd(rcg, f, &cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return update_config(rcg);
+> +}
+> +
+>  static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+>  			       enum freq_policy policy)
+>  {
+> @@ -525,6 +670,28 @@ static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	return __clk_rcg2_set_rate(hw, rate, CEIL);
+>  }
+>  
+> +static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
+> +			    unsigned long parent_rate)
+> +{
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	int mnd_max = BIT(rcg->mnd_width) - 1;
+> +	int hid_max = BIT(rcg->hid_width) - 1;
+> +	struct freq_tbl *f;
+> +	int ret;
+> +
+> +	f = kzalloc(sizeof(*f), GFP_KERNEL);
+> +
+> +	if (!f)
+> +		return -ENOMEM;
+> +
+> +	clk_rcg2_calc_mnd(parent_rate, rate, f, mnd_max, hid_max / 2);
+> +	convert_to_reg_val(f);
+> +	ret = clk_rcg2_configure_gp(rcg, f);
+> +	kfree(f);
+> +
+> +	return ret;
+> +}
+> +
+>  static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
+>  				   unsigned long parent_rate)
+>  {
+> @@ -652,6 +819,18 @@ const struct clk_ops clk_rcg2_ops = {
+>  };
+>  EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+>  
+> +const struct clk_ops clk_rcg2_gp_ops = {
+> +	.is_enabled = clk_rcg2_is_enabled,
+> +	.get_parent = clk_rcg2_get_parent,
+> +	.set_parent = clk_rcg2_set_parent,
+> +	.recalc_rate = clk_rcg2_recalc_rate,
+> +	.determine_rate = clk_rcg2_determine_gp_rate,
+> +	.set_rate = clk_rcg2_set_gp_rate,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_rcg2_gp_ops);
+> +
+>  const struct clk_ops clk_rcg2_floor_ops = {
+>  	.is_enabled = clk_rcg2_is_enabled,
+>  	.get_parent = clk_rcg2_get_parent,
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index dc3aa7014c3e..0def0fc0e009 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -284,11 +284,6 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
+>  };
+>  
+>  static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
+> -	F(19200000, P_BI_TCXO, 1, 0, 0),
+> -	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
+> -	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
+> -	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+> -	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
+>  	{ }
+>  };
+>  
+> @@ -302,7 +297,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
+>  		.name = "gcc_gp1_clk_src",
+>  		.parent_data = gcc_parent_data_1,
+>  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_gp_ops,
+>  	},
+>  };
+>  
+> @@ -316,7 +311,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
+>  		.name = "gcc_gp2_clk_src",
+>  		.parent_data = gcc_parent_data_1,
+>  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_gp_ops,
+>  	},
+>  };
+>  
+> @@ -330,7 +325,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
+>  		.name = "gcc_gp3_clk_src",
+>  		.parent_data = gcc_parent_data_1,
+>  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_gp_ops,
+>  	},
+>  };
+>  
+> 
+> -- 
+> 2.39.2
+> 
 
