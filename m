@@ -1,125 +1,151 @@
-Return-Path: <linux-kernel+bounces-365687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC9999E621
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:38:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF4F99E62D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69C3286B82
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:38:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705931C234AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D825A1E7C34;
-	Tue, 15 Oct 2024 11:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E341D9A42;
+	Tue, 15 Oct 2024 11:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVWGJ+zu"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pouJ4Feg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBE21E7640;
-	Tue, 15 Oct 2024 11:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECB81E7669
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728992298; cv=none; b=iPek0IZexeZWjCnHT2Xcti1SyriyfkI5cQCxVYka08GW51Lo2yuYDFVhdVRy/ln05bVtIknU/JvCX5E35KLbgyUKhz2oHfvNzfV1zMebCuEG8fDeEgYQ3ivndmRwu8sHi+N02d1xzVaCrhARTVRdKj9p6sw5A4AkD2HfTQ4MAmE=
+	t=1728992325; cv=none; b=ApQckXtI7Zl+3QvZzAhpPSWCx75iTUwBRVgtR8HT5rKYc/AcNeADg0WUfej7NzYAclwmAty4UH6zw2GVanB6vhemtRj+sBEEy/SyaZ3Lnt1I/Px5edgoOEVvoRb+Qz8J1A0uuqDstwbjaDI1pslJ1vRzNWRXVmph1e+jsqDrrv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728992298; c=relaxed/simple;
-	bh=geT0lHqADzdDzIZm9Biira1fSCZG9feRVWG3U7e/Tl8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ehAg0CvhjNsXsib2uF1m8TY/9/1gBB2DZeF163H5gaD9CkXyptkV1g7fS5cb/PudxCZIkWavTCOenH3nYok6U3ByHjaGLRFiyeJo7RY4w7m5/JCAFwb0kD656RPDK3LM1y3fo2S/HW1s/wBWVCgnuRCxcbHTJsz9m+CPaylK8fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVWGJ+zu; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d533b5412so2542874f8f.2;
-        Tue, 15 Oct 2024 04:38:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728992295; x=1729597095; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zRbm+GAQ9u5DjfAW30Utt/l8EcrPAOw7i/lZO7JA7Sg=;
-        b=DVWGJ+zuRnGwXyIfOmy+KqKUwc11f7fOo+T5zJnt8FTDhi4DLhDeoEI5clsHb8YIJG
-         RhfwF1DhUnmSW7pTnGGJJpIqKCvkjqJSRqNecdvR/RcTP7fWYeo8Zkmi1xp7oWLdb/hn
-         Lb81WrBR3HV7GWLZy3ViqVl/yBYA3OczSEHXDxSUdv1n7ioPjNdcDRMnh4hC3+Dl1arO
-         kWTJNHudHl+m1XT8zRxStS7lABhMZFMtz7iuy76aQGmP1DFU8eeJPODG9yXat4P1BaBU
-         4IoXuTXYX5hChSejkKVf9jezeLcNGnApZeP1VydEfBHr7jxf6IjZoJAzuyDpLYu0AkVi
-         cy0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728992295; x=1729597095;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zRbm+GAQ9u5DjfAW30Utt/l8EcrPAOw7i/lZO7JA7Sg=;
-        b=g9/PaZ0AQ5IgFaPdkWwMZsumAvtwZjFFsAGzo72rwKj2ZDn2P9Drc6B1XZOdgxoRhX
-         /iFmcxc5LSP2q1wpBYZHGv+Uct2C43xjC+hH/Rjh0JadSo5CuDNZPFaj6UuX1Q28sUGP
-         b9R5iSkRvm8r+nUrgBgJina8/WWRrVWA3hhRN4DWkCv1tdvekjHLwPdra9/Io1KqLJAa
-         Qr6t2xAck9Q4+UOvBLUyCrj2zV3yrShvyuI/P5YQ507eiWvhnYN+ZO3THKG0iHNJ3G0z
-         dXHkV2atjOjGQWt8ATITiJZ0SESzUEJzopTlMxbnTYv9x+voTcjjq8K32iy4V8vzVzzB
-         u6Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ+VKJl3Rs9ftED1Y4eshtE8mpU6R6KUhIp8Gfnk+uTdju0F9bfg6GsMMfOU0zrXAMCzUTiQsqajcyCbNVLbFiz38=@vger.kernel.org, AJvYcCVVpqXvLlTTDYB65T/RqfUTTUtejoxzg6HaajC7w97hliANNlb7GgIZ2tqfclJEGeTKRNf6QYDwB44+HpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycqYJErVFAMYnrwRTams/O4FMzIPA4+3135zr44u8RkLW6Z130
-	rkYeQYgkQgEDuBhlChK/LMxnQy2g/YAlNA0+xK+ROfhzy8QMTNPi
-X-Google-Smtp-Source: AGHT+IH/vNkS4s7cE6jdRGiUnaB4KfJOhIfEFLA+OStSVrhM3s7KTwwFV3iG9mdQRX4CkulbNbHkxw==
-X-Received: by 2002:a5d:6b8a:0:b0:37d:4f1b:359 with SMTP id ffacd0b85a97d-37d5531b3a6mr10329736f8f.53.1728992294713;
-        Tue, 15 Oct 2024 04:38:14 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:ab23:85df:144b:6ce6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a256sm1363943f8f.14.2024.10.15.04.38.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 04:38:13 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 3/3] ASoC: audio-graph-card2: Update comment with renamed file path
-Date: Tue, 15 Oct 2024 12:37:57 +0100
-Message-ID: <20241015113757.152548-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241015113757.152548-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241015113757.152548-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1728992325; c=relaxed/simple;
+	bh=KsRWXz5u8e6OVOdYCyQDUwhXWrP8yPzKCvpfJwOeZXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fK4/POrTsLSC4qIMCwcttVpy2TN5Ezt4lJCI9uXVMt3UxomobCwrvjwyZEWad5jw9mCh0AYy35iUaoXlglBQFxLPjaoVV0PNqR1r7rVJrt4BSEzb3ooesdk36aWpmaWIMMHi8GozPXG63uo6jxft+VK5jDu3P4h8iJpCbrODC7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pouJ4Feg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0754EC4CECF;
+	Tue, 15 Oct 2024 11:38:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728992325;
+	bh=KsRWXz5u8e6OVOdYCyQDUwhXWrP8yPzKCvpfJwOeZXU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pouJ4FegQuYCCW2e/sUfaqciQg2sOVTOAAICttnqwEdCo34+z+pSJLmGOwpP1vsu/
+	 ucr6xrWhZ46sozmRM6PvGdnsRMLCp2AHFkUapyXH77eccuxECLFu1GGQm/355H/mNV
+	 SFnyHKMYqxWIXeKITWk4oZXa+JFwBaz+s9dfIa9gl75EPEEp3NfLJu83iM0FpPiL+5
+	 0uuSp59cQtIdVFzq4Tkl/Pq1dU71km3foQ40/flFdqGOS+ZxXreknOkxKzxfj2iup9
+	 AvE45bYAEILFX5eQJmTDh/p9y4qF8k6n+oNQEhlpJsf+aobPJOC1/S0I2u8EBK36go
+	 39x1kGd7o4Lbg==
+Date: Tue, 15 Oct 2024 12:38:41 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: linux@ew.tq-group.com, linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>
+Subject: Re: [PATCH v4 5/5] mfd: tqmx86: add I2C IRQ support
+Message-ID: <20241015113841.GH8348@google.com>
+References: <cover.1728286453.git.matthias.schiffer@ew.tq-group.com>
+ <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, 07 Oct 2024, Matthias Schiffer wrote:
 
-The "sound/soc/sh" directory has been renamed to "sound/soc/renesas".
-Update the comment in audio-graph-card2.c to reflect the new file path
-for better accuracy.
+> From: Gregor Herburger <gregor.herburger@tq-group.com>
+> 
+> The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
+> Add module parameter to allow configuring the IRQ number, similar to the
+> handling of the GPIO IRQ.
+> 
+> Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> ---
+> 
+> v2: improve module parameter description (was patch 4/4)
+> v3: replace IRQ 0 resource with an empty placeholder to simplify error handling
+> v4: no changes
+> 
+>  drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+> index e444fcd2a3e9d..057d035b71d33 100644
+> --- a/drivers/mfd/tqmx86.c
+> +++ b/drivers/mfd/tqmx86.c
+> @@ -50,6 +50,7 @@
+>  #define TQMX86_REG_IO_EXT_INT_9			2
+>  #define TQMX86_REG_IO_EXT_INT_12		3
+>  #define TQMX86_REG_IO_EXT_INT_MASK		0x3
+> +#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
+>  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
+>  #define TQMX86_REG_SAUC		0x17
+>  
+> @@ -60,7 +61,16 @@ static uint gpio_irq;
+>  module_param(gpio_irq, uint, 0);
+>  MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
+>  
+> -static const struct resource tqmx_i2c_soft_resources[] = {
+> +static uint i2c_irq;
+> +module_param(i2c_irq, uint, 0);
+> +MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9, 12)");
+> +
+> +static struct resource tqmx_i2c_soft_resources[] = {
+> +	/*
+> +	 * Placeholder for IRQ resource - must come first to be filled in by the
+> +	 * probe function.
+> +	 */
+> +	{},
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- sound/soc/generic/audio-graph-card2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Having a NULLed entry in the first slot doesn't sit well with me at all.
 
-diff --git a/sound/soc/generic/audio-graph-card2.c b/sound/soc/generic/audio-graph-card2.c
-index 4ad3d1b0714f..747afe7d6f34 100644
---- a/sound/soc/generic/audio-graph-card2.c
-+++ b/sound/soc/generic/audio-graph-card2.c
-@@ -50,7 +50,7 @@
- 	snd_soc_runtime_get_dai_fmt()
- 
- 	sample driver
--		linux/sound/soc/sh/rcar/core.c
-+		linux/sound/soc/renesas/rcar/core.c
- 		linux/sound/soc/codecs/ak4613.c
- 		linux/sound/soc/codecs/pcm3168a.c
- 		linux/sound/soc/soc-utils.c
+In order for us to avoid wasting memory, it would be better to place the
+entry at the end of the array with a blank entry:
+
+  DEFINE_RES_IRQ(0),
+
+Later comes the matching code which updates the 0 value to something sane.
+
+Before you call to the add the devices, check to see if the value has
+changed.  If it hasn't, deprecate num_resources, effectively masking the
+last entry in the array.  Then when platform_device_add_resources()
+comes to duplicate the array, it will only copy the relevant entries.
+
+>  	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
+>  };
+>  
+> @@ -263,6 +273,14 @@ static int tqmx86_probe(struct platform_device *pdev)
+>  	ocores_platform_data.clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
+>  
+>  	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
+> +		if (i2c_irq) {
+> +			err = tqmx86_setup_irq(dev, "I2C", i2c_irq, io_base,
+> +					       TQMX86_REG_IO_EXT_INT_I2C_SHIFT);
+> +			if (!err)
+> +				/* Assumes the IRQ resource placeholder is first */
+> +				tqmx_i2c_soft_resources[0] = DEFINE_RES_IRQ(i2c_irq);
+> +		}
+> +
+>  		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+>  					   tqmx86_i2c_soft_dev,
+>  					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
+> -- 
+> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+> Amtsgericht München, HRB 105018
+> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+> https://www.tq-group.com/
+> 
+
 -- 
-2.43.0
-
+Lee Jones [李琼斯]
 
