@@ -1,88 +1,62 @@
-Return-Path: <linux-kernel+bounces-366786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01ABB99FA6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:46:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B616C99FA6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77BD11F23EA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3C51C20CB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDE8227B85;
-	Tue, 15 Oct 2024 21:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08BD229138;
+	Tue, 15 Oct 2024 21:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QmPsUAdi"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Tq5qugG3"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0B7227394;
-	Tue, 15 Oct 2024 21:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729028265; cv=fail; b=hFaYlvcnzefEH6uBGAhLYyUPbWELVz1n0WJZS6Kf8QEejnDJz/GFWLA65BJvTP1wz8cPoFJ5XZMalp6WR2I8Q+F7YAQsaIOCkObP9EiXAbEH+z48P5hOLtUbKd7aCg8JbUtvTDK7I44iub85FgvYvpWt2amR11McBO3DTm8Ts/Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729028265; c=relaxed/simple;
-	bh=/QoTUS+pqdujq/XVYeoY3WE4U2hs/Jg3l1Tc+a4DkpQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FWzSFF3G9Ok8DegshqMjcgrb8QSHQji6FFMhAyFwuAs7LGqEOnfyJ0SUi8EcnFFjchx8I4Oawqe30JHqrKII4CuAXn2G5VBvAXYRcCTgVs7J1QHB8i4lpsQbeNebovWnFCvh8Wb7PQa09PJBTmTpnRPTEFBiw07LsV6Cu6cOnLM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QmPsUAdi; arc=fail smtp.client-ip=40.107.236.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NgkO/7f+E8RYYSBaAqE0wv/aGzVfglobTt2/cC6zA3kGgx4SBB32i3pr8eqF6VkLvKrLotFUnOJYkMDnZG0JMQ9TSJPfKNZNgVEWBZBfBl8vtL154eA4lW+r6QGrK9pGpFLPIcskm7hDvopvN4qvJSqjjgzi8VIrCbBvYZAlff0iCmIrdq6zL5HJl4aRn9gYDJwvSTloFuw9AuHVIB+nwEz/bxhHNMP8SohrzgYzex2+z7Fh7nfuPPrK645GOddLPibKadXG4SucqRyoTyDcH+m2V/rlLDJ5LTn+1CS4ABObbabGWlLlVZmPFSamB9FhgtquMncv/Ti3Eqgs7rAG7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XfpZgescQjpWXN1v9vPph7nPAsr/SHJOxlJjO7c06HM=;
- b=PJDXGCm5GrJ+LRZ2TSFsDlbWhtYPOAdvgM/fhAG+HOl6F1alH689K4G7mOLJZQ/OiZe38jL/K5N6WyRasfSpZTLqgIJKo1fGQqcbS8MDJ2qUakSmyAbijXSznT5HlbQeRoh7uRDrthVQZr2po3dLnJOU8kbnZprhqBl6WS+vZEN5LvmROVnMWdEzlkKhLHWU1eq3ZpTqWfENqIJ9BxDkf2904iU43w/09C4LGEhsVcmXmVwrwagZq77QNwUGOX+JQnyxUivEwV5cY+PyTaFmVhlOalSfFtWQGuTC59bkL5NZDhMb8tzINGkul8bdKzPnTxLmdlQjRed7bbhLH3wghQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XfpZgescQjpWXN1v9vPph7nPAsr/SHJOxlJjO7c06HM=;
- b=QmPsUAditrJEZg1Yqnp3h8OiNmGWVkcKDMyPfZuw6iVrlosvELueQAjy6GiU3UGUrLniXlKAoATLKGu7nmN/cYlSOp5nmEyqeXY0PzZ5NQR2ddtRkZZ955lje/+L8qxAz5UCpDlcCoUWYRifZBIAsW34NYKKLAEdst+JRxsnDHY=
-Received: from MN2PR20CA0046.namprd20.prod.outlook.com (2603:10b6:208:235::15)
- by MN0PR12MB5785.namprd12.prod.outlook.com (2603:10b6:208:374::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
- 2024 21:37:38 +0000
-Received: from MN1PEPF0000F0DF.namprd04.prod.outlook.com
- (2603:10b6:208:235:cafe::a4) by MN2PR20CA0046.outlook.office365.com
- (2603:10b6:208:235::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27 via Frontend
- Transport; Tue, 15 Oct 2024 21:37:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000F0DF.mail.protection.outlook.com (10.167.242.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8069.17 via Frontend Transport; Tue, 15 Oct 2024 21:37:38 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Oct
- 2024 16:37:35 -0500
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: <x86@kernel.org>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, "Mario
- Limonciello" <mario.limonciello@amd.com>, Perry Yuan <perry.yuan@amd.com>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>, "Shyam
- Sundar S K" <Shyam-sundar.S-k@amd.com>
-Subject: [PATCH v3 14/14] platform/x86: hfi: Add debugfs support
-Date: Tue, 15 Oct 2024 16:36:45 -0500
-Message-ID: <20241015213645.1476-15-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241015213645.1476-1-mario.limonciello@amd.com>
-References: <20241015213645.1476-1-mario.limonciello@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E605B22910B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729028271; cv=none; b=nnW+62muDkxtYcFxEH9IWLKJESGTT56pMTYhVZOh9Azo9qvLj22mk515FBK2DXD9QCF7hvA302hMKQWG1tC8FsTrmwisNSSJEq2CtbUyTgvOxVAztwveFBDY5ETfPDVfMursEcsGRLl+V1lUeXZz867siUj8JRxtX574UihmV1g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729028271; c=relaxed/simple;
+	bh=0UL++Gv2Ddo3rS6Nlwye9qh95QgpHjox9QWlt7Vn/W8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C4v6ylNOdZzXWUKnjPJUmc4YJun0GbmDR1zw3GjwCTOUyDO9amkJmyuBMfF7mWpeolrIFUA4+mIXW/qBG5bQdWoBykLP2ZfEzb4haY73eevmqdbbLbOOCu342W2gQjM27749ivk+9tNHE9IvDwN3APRFInCkrJsZGyHa1sRY7z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Tq5qugG3; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729028266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bHLO0k40DlJvpKFDxsDix1kd1cXxAKJ76NZ9bnkBv4A=;
+	b=Tq5qugG3KRstaJyKB2v7jem16OWo8hf1FE8Bk2YQgzaNsn5L5Hdh3YJAV1LW5CvgVMAUFm
+	lf8psQxJxgAbqSinP0BMINvR6tRlx5cLmVZ/kcL4mCx3EKc/46+SZIu/HHOPv4O17G1fKs
+	3jK+DM+OnL4o4CnT1FCz/hLi3lrc+pI=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	JP Kobryn <inwardvessel@gmail.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v2] memcg: add tracing for memcg stat updates
+Date: Tue, 15 Oct 2024 14:37:21 -0700
+Message-ID: <20241015213721.3804209-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,138 +64,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DF:EE_|MN0PR12MB5785:EE_
-X-MS-Office365-Filtering-Correlation-Id: 81a34033-d854-411a-c804-08dced619717
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KLnWZYZDa04Wl6e867JEBmKwqocMGK90WiwUKonporyDvqEYsUd9tLxIp677?=
- =?us-ascii?Q?4DC3Q4sKRo2OC3DusNF6n4zDM4mCAN7TXVPuADdBA1Ws1ppTlldbtrSj9uuj?=
- =?us-ascii?Q?1DUKOD2mCoxHOMlF+8PIEJRyk7ONho70lSllF+RnGFT3oa+AkDT1AiR42J+t?=
- =?us-ascii?Q?8TgLlvKLevHcGzvjNLoCTkZTwlKDg6KYaaej0336kpCH+hcLHbiUMjxJ8VnG?=
- =?us-ascii?Q?jW0bjeCHe89AVeeXTMLAxPQhyFEKW9a6lx6ZYgWT7JCgUYvqSXfb7FwNEi+Y?=
- =?us-ascii?Q?SmfI7dc94QJywLWF0ARuUXSsRKPT0buhvZR38uTYDr3WhHQn5+IJaprKSfxG?=
- =?us-ascii?Q?X2k6iyqDZt5t6t+OjU/FKRXxq3efItf5Hy6KWpX4/ffmyOfj1JY/Lqm3dxFr?=
- =?us-ascii?Q?R962jHr/1awecAmlfC2wg9d3bsD99CQw3CQQEPib8e7YvFQ2YvqiHg0+QZPe?=
- =?us-ascii?Q?UjXoMC1fgy8fRQd6Umd+8fb7V8yaidLozd2UjHzNS6WRoIQ4KoxrZLmw2s2p?=
- =?us-ascii?Q?trYAhsX+naBug2G4JThjSctdv+T+AE1MhoUvUCL+lXCi4om1hPJ18q2pCz8D?=
- =?us-ascii?Q?kHpGkWoGFhSETdlKmERuF+CbjVdh7fZjKF4Qx8tWHXYMQfgZX73j+lcnar/p?=
- =?us-ascii?Q?11+J+kb8W4Bdajp5L7VqynuxxuNE3tfkcUgE2bSsyTLWBeL853Cb0qbqKGcF?=
- =?us-ascii?Q?mZaHx9bjptak9xANiHDVJaukb2fCwTjaaSUYKzrvA/tqF23dYR/bN204Ugp4?=
- =?us-ascii?Q?oSINttm3m9sVnKrDWMzsUecQhqViP1OeGdcNkij5jz0eENVgC2PRVrPoEv4J?=
- =?us-ascii?Q?twZ/wGoTZTxk9MMZNg7TSuRIu28uHQuQIOfRm6Zp9pMl8YxmjAGtBsRfpnV6?=
- =?us-ascii?Q?PenaCsfxEMxIZ6dyh5EzpUX7Zhw7Gwrw6olT+Bl4Ym+uKDIwY98JKT2cImPl?=
- =?us-ascii?Q?5MZOd3Rc+0/6uyHD7BhHUsCLKEH8+X/AkcgwAbD1TU4tjTB1FNvqSJLb5I88?=
- =?us-ascii?Q?KS25U15qY/mQNCeOnJwA/4LN6DWR+mhOsbE9dD1aGV8E0E6sagp4kNljtSvw?=
- =?us-ascii?Q?33fNVNrn4bsiZ56DUvlIm04S70vIBsSaeKhBqm/T+F5iR1Xf6Wh8+Ubtbt9Z?=
- =?us-ascii?Q?7LfmYGWgiSfZww/04rSmMkWfVRTuX0Wr7aV53phHXuSdRl6xMZDjTyJVi598?=
- =?us-ascii?Q?NeWszXAB1b9NddRYUVyl9NZ+yFno9yP4w80O00/7Ux5fR6+k9eAjdRnNgrZ+?=
- =?us-ascii?Q?GzOZb/tkYHvweFIbdPV2wa+p/jMxwK4Zr4qVmexrnOYge+heKEJF+HyeTOlw?=
- =?us-ascii?Q?M7QR1Vk01g2sNjurDxN9Wonh6AQaWy4JmxdyAqr190H4zvjXQxbwKqZ9pbDe?=
- =?us-ascii?Q?EKxBIz/BNh1jIl2gS1U76R6YkgRk?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 21:37:38.1671
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81a34033-d854-411a-c804-08dced619717
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0DF.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5785
+X-Migadu-Flow: FLOW_OUT
 
-Add a dump of the class and capabilities table to debugfs to assist
-with debugging scheduler issues.
+The memcg stats are maintained in rstat infrastructure which provides very
+fast updates side and reasonable read side.  However memcg added plethora
+of stats and made the read side, which is cgroup rstat flush, very slow.
+To solve that, threshold was added in the memcg stats read side i.e.  no
+need to flush the stats if updates are within the threshold.
 
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+This threshold based improvement worked for sometime but more stats were
+added to memcg and also the read codepath was getting triggered in the
+performance sensitive paths which made threshold based ratelimiting
+ineffective.  We need more visibility into the hot and cold stats i.e.
+stats with a lot of updates.  Let's add trace to get that visibility.
+
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Muchun Song <songmuchun@bytedance.com>
+Cc: JP Kobryn <inwardvessel@gmail.com>
+Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
-v2->v3:
-  * New patch
----
- drivers/platform/x86/amd/hfi/hfi.c | 31 ++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Changes since v1:
+- Used unsigned long type for memcg_rstat_events (Yosry)
+- Kept the Acks and Reviews tag
 
-diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-index 6c90b50f0a40..6df80f6ac73c 100644
---- a/drivers/platform/x86/amd/hfi/hfi.c
-+++ b/drivers/platform/x86/amd/hfi/hfi.c
-@@ -13,6 +13,7 @@
- #include <linux/acpi.h>
- #include <linux/cpu.h>
- #include <linux/cpumask.h>
-+#include <linux/debugfs.h>
- #include <linux/gfp.h>
- #include <linux/init.h>
- #include <linux/io.h>
-@@ -79,6 +80,8 @@ struct amd_hfi_data {
- 	void __iomem		*pcc_comm_addr;
- 	struct acpi_subtable_header	*pcct_entry;
- 	struct amd_shmem_info	*shmem;
+ include/trace/events/memcg.h | 81 ++++++++++++++++++++++++++++++++++++
+ mm/memcontrol.c              | 13 +++++-
+ 2 files changed, 92 insertions(+), 2 deletions(-)
+ create mode 100644 include/trace/events/memcg.h
+
+diff --git a/include/trace/events/memcg.h b/include/trace/events/memcg.h
+new file mode 100644
+index 000000000000..8667e57816d2
+--- /dev/null
++++ b/include/trace/events/memcg.h
+@@ -0,0 +1,81 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM memcg
 +
-+	struct dentry *dbgfs_dir;
- };
- 
- /**
-@@ -243,6 +246,8 @@ static void amd_hfi_remove(struct platform_device *pdev)
- {
- 	struct amd_hfi_data *dev = platform_get_drvdata(pdev);
- 
-+	debugfs_remove_recursive(dev->dbgfs_dir);
++#if !defined(_TRACE_MEMCG_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_MEMCG_H
 +
- 	mutex_destroy(&dev->lock);
++#include <linux/memcontrol.h>
++#include <linux/tracepoint.h>
++
++
++DECLARE_EVENT_CLASS(memcg_rstat_stats,
++
++	TP_PROTO(struct mem_cgroup *memcg, int item, int val),
++
++	TP_ARGS(memcg, item, val),
++
++	TP_STRUCT__entry(
++		__field(u64, id)
++		__field(int, item)
++		__field(int, val)
++	),
++
++	TP_fast_assign(
++		__entry->id = cgroup_id(memcg->css.cgroup);
++		__entry->item = item;
++		__entry->val = val;
++	),
++
++	TP_printk("memcg_id=%llu item=%d val=%d",
++		  __entry->id, __entry->item, __entry->val)
++);
++
++DEFINE_EVENT(memcg_rstat_stats, mod_memcg_state,
++
++	TP_PROTO(struct mem_cgroup *memcg, int item, int val),
++
++	TP_ARGS(memcg, item, val)
++);
++
++DEFINE_EVENT(memcg_rstat_stats, mod_memcg_lruvec_state,
++
++	TP_PROTO(struct mem_cgroup *memcg, int item, int val),
++
++	TP_ARGS(memcg, item, val)
++);
++
++DECLARE_EVENT_CLASS(memcg_rstat_events,
++
++	TP_PROTO(struct mem_cgroup *memcg, int item, unsigned long val),
++
++	TP_ARGS(memcg, item, val),
++
++	TP_STRUCT__entry(
++		__field(u64, id)
++		__field(int, item)
++		__field(unsigned long, val)
++	),
++
++	TP_fast_assign(
++		__entry->id = cgroup_id(memcg->css.cgroup);
++		__entry->item = item;
++		__entry->val = val;
++	),
++
++	TP_printk("memcg_id=%llu item=%d val=%lu",
++		  __entry->id, __entry->item, __entry->val)
++);
++
++DEFINE_EVENT(memcg_rstat_events, count_memcg_events,
++
++	TP_PROTO(struct mem_cgroup *memcg, int item, unsigned long val),
++
++	TP_ARGS(memcg, item, val)
++);
++
++
++#endif /* _TRACE_MEMCG_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index c098fd7f5c5e..17af08367c68 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -71,6 +71,10 @@
+ 
+ #include <linux/uaccess.h>
+ 
++#define CREATE_TRACE_POINTS
++#include <trace/events/memcg.h>
++#undef CREATE_TRACE_POINTS
++
+ #include <trace/events/vmscan.h>
+ 
+ struct cgroup_subsys memory_cgrp_subsys __read_mostly;
+@@ -682,7 +686,9 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
+ 		return;
+ 
+ 	__this_cpu_add(memcg->vmstats_percpu->state[i], val);
+-	memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val));
++	val = memcg_state_val_in_pages(idx, val);
++	memcg_rstat_updated(memcg, val);
++	trace_mod_memcg_state(memcg, idx, val);
  }
  
-@@ -400,6 +405,28 @@ static int amd_hfi_metadata_parser(struct platform_device *pdev,
- 	return ret;
+ /* idx can be of type enum memcg_stat_item or node_stat_item. */
+@@ -741,7 +747,9 @@ static void __mod_memcg_lruvec_state(struct lruvec *lruvec,
+ 	/* Update lruvec */
+ 	__this_cpu_add(pn->lruvec_stats_percpu->state[i], val);
+ 
+-	memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val));
++	val = memcg_state_val_in_pages(idx, val);
++	memcg_rstat_updated(memcg, val);
++	trace_mod_memcg_lruvec_state(memcg, idx, val);
+ 	memcg_stats_unlock();
  }
  
-+static int class_capabilities_show(struct seq_file *s, void *unused)
-+{
-+	int cpu, idx;
-+
-+	seq_puts(s, "CPU #\tWLC\tPerf\tEff\n");
-+	for_each_present_cpu(cpu) {
-+		struct amd_hfi_cpuinfo *hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
-+
-+		seq_printf(s, "%d\t", cpu);
-+		for (idx = 0; idx < hfi_cpuinfo->nr_class; idx++) {
-+			seq_printf(s, "%s%d\t%d\t%d\n",
-+				   idx == 0 ? "" : "\t",
-+				   idx,
-+				   hfi_cpuinfo->amd_hfi_classes[idx].perf,
-+				   hfi_cpuinfo->amd_hfi_classes[idx].eff);
-+		}
-+	}
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(class_capabilities);
-+
- static int amd_hfi_pm_resume(struct device *dev)
- {
- 	int ret, cpu;
-@@ -473,6 +500,10 @@ static int amd_hfi_probe(struct platform_device *pdev)
- 
- 	schedule_work(&sched_amd_hfi_itmt_work);
- 
-+	amd_hfi_data->dbgfs_dir = debugfs_create_dir("amd_hfi", arch_debugfs_dir);
-+	debugfs_create_file("class_capabilities", 0644, amd_hfi_data->dbgfs_dir, pdev,
-+			    &class_capabilities_fops);
-+
- 	return 0;
+@@ -832,6 +840,7 @@ void __count_memcg_events(struct mem_cgroup *memcg, enum vm_event_item idx,
+ 	memcg_stats_lock();
+ 	__this_cpu_add(memcg->vmstats_percpu->events[i], count);
+ 	memcg_rstat_updated(memcg, count);
++	trace_count_memcg_events(memcg, idx, count);
+ 	memcg_stats_unlock();
  }
  
 -- 
-2.43.0
+2.43.5
 
 
