@@ -1,341 +1,127 @@
-Return-Path: <linux-kernel+bounces-364962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6619799DBB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:36:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50C299DBC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24DDF287DF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:36:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDA791C23500
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABBF174ED0;
-	Tue, 15 Oct 2024 01:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105C515A856;
+	Tue, 15 Oct 2024 01:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GR47BMjW"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E4ErzauT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614F017278D;
-	Tue, 15 Oct 2024 01:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BB813DBBC;
+	Tue, 15 Oct 2024 01:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728956047; cv=none; b=sB/DbKj6A9jk/GHN6XbsygC7sb1wd9bRNRRs4w9/qF8qU+w7oXqa54VRlhewBD329d/0UwQSI03sL2sKYk9n/26irFkglIlld5+RlRKddU0vaiAbG4Bnp5J8/pB7swQ70UKCuJCsLhtyVxCDmZnSHwRW6Rt7YutNZAgRznJGNPY=
+	t=1728956183; cv=none; b=pID7t9UCpzXR9THzIEjnsUn2O+h4uQbbCTtlWsgoKKFTCqJxfiFATJQyW7E11C7oyF/PfFxMY8KC+nKOJUQ5KwuWMwlTcbajrmwYb1vA3IaVJ5jZOmZ3GEMe9xo5xhhJVQ8EYWTmGxT4qjOsF4B1rGG+OzghKWrG1HdO1leqjNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728956047; c=relaxed/simple;
-	bh=iqGGq6N27+nHuKYdGvepkbL4yx0VHztAXhAi6+Z+rWg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MMEJVZN+Cj/xp9OCIhKyR8stKUZAyBJjwOvvOA4Y/w+m9YDM51vlSW4zeRyhycxBjTIIDlORO8cor2hx9hXEZX/HNHHLcZkUUW9mZOmzjKFt8kExEa+G7fsf/+SZET+SCG9krGUtYOb1jUDo2jqJhh1UwnD0lgf8U+xT98KR4oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GR47BMjW; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e49d5deeeso92824b3a.0;
-        Mon, 14 Oct 2024 18:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728956045; x=1729560845; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GH3A6vmgsIOEd/hbrPIWDSgafEN9K6GfNlaS75g6hkg=;
-        b=GR47BMjWd//epMWCjnXJRcn5qUGpXqGQtC0O5umCSXrevqrn52zl5OwUXT1ET3MybI
-         aOY5pI5zBgWrbgARNWTQN2HM1rJo9ZlaH3s44CQjqa+YkNEWpEU43N4JRZkL537/Hrwo
-         XtbPWek/h2Pz/8R/rDFpUT1cPeBfgYkLH6YpqbsNWENkzBSSlu4n7zAVfZYakv9u8dtm
-         5knN1FhlLn4knz0IFGYCxkmXK4lbZmB1YzSAevkvC4ibpdhkp4iJBjBXvEW7FhmfsAzg
-         Wm0f5C9aIFg3pagDCQ9dHycWASVJSTuDk4cl/zomx8BkvkCS/KBISARQDmIT28GE5bcD
-         8bKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728956045; x=1729560845;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GH3A6vmgsIOEd/hbrPIWDSgafEN9K6GfNlaS75g6hkg=;
-        b=l6oGU2sNhODM6RwvDr1URZarIzofU4WXEt5atT+nhL25TMaHwopnfHn+RhO/Per4mY
-         fOn99qGwsF0NW/vgkB9nyG4LiTBsrx0/t149TGDyr483cB/n9sYBvDi5wVscADQ/WUxQ
-         Lg/azYqo/chdO6gTXwn37+47n2PH3RpVO0Ij4oE1Dv1KrTATWtMpTl55pPbe23JCeKg3
-         OrlqIceW/Sers6GsqJB1ZLHdfx58BsjF/pk0aXEj9KIoHURs8volzgnH4zzNk4XgpNP1
-         RrcI5qe8oPja3q7bJ6YihU/0OL0+uoZ3SakhPbeIoEb5w5P1S2IJbbWojJ4jMF8liooj
-         Z9WA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5+egpxlXlQqSYuwahnGkcoI+3uopefu8yB7NfkAOJtw+S6ctmq6lC5Knnezjb+XgtXr/2qHh1D8q@vger.kernel.org, AJvYcCWIs2N4xZfmedjtsFfpivHhTNkGv0vXbtkJyaew61V+PNccpWI3wduF7JMPzkxgDQTbhGy3bULfHNPyKCh0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOfMqJUUjvV7pjbFmOB/s3/u9ro53zXuAH0HwZZ6VCdkDWTok1
-	+kOjtVe/tlwOMBgBMkwBE9Sj6RemZBhCNdd15GP34WCxC8lTC0EriN6olg==
-X-Google-Smtp-Source: AGHT+IENbE5VfJLTsH3qhdrga+goKQnThLNGc16l2GIKEVjDEiHa1fFBGByWr8papJ5EnN6tQKh//w==
-X-Received: by 2002:a05:6a00:198e:b0:71e:594c:a812 with SMTP id d2e1a72fcca58-71e594caa26mr4591504b3a.0.1728956044402;
-        Mon, 14 Oct 2024 18:34:04 -0700 (PDT)
-Received: from localhost.localdomain ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a4243sm189713b3a.131.2024.10.14.18.34.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 18:34:04 -0700 (PDT)
-From: Frank Wang <frawang.cn@gmail.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	william.wu@rock-chips.com,
-	tim.chen@rock-chips.com,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Frank Wang <frank.wang@rock-chips.com>
-Subject: [PATCH 2/2] phy: rockchip-naneng-combo: Support rk3576
-Date: Tue, 15 Oct 2024 09:33:51 +0800
-Message-Id: <20241015013351.4884-2-frawang.cn@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241015013351.4884-1-frawang.cn@gmail.com>
-References: <20241015013351.4884-1-frawang.cn@gmail.com>
+	s=arc-20240116; t=1728956183; c=relaxed/simple;
+	bh=BxunOLC7SLYiMYlnQtABF4rqOdPefSeGirsL1mlD6ZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzjpbcpoKK2rEuqGiTkyXLNOAiddLTN0/z1RSZRlNjfSajcTXdaCeZjSOoBBMfPZk1C6mraWm+M3yDNgjQ8Sdpj1gUEjSGRsp4g7GrBiQM4zx56cA/S2f0abrMUQutJXiWje9bK1MTIXPL7xmZ2q71gxiXnpJ+IioWRIOtfsYDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E4ErzauT; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728956182; x=1760492182;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BxunOLC7SLYiMYlnQtABF4rqOdPefSeGirsL1mlD6ZA=;
+  b=E4ErzauTuREde4iXU9beK0WMlbXeBcDlNELH6/XupgQ2KYTO3ksKG80r
+   hAbQZHtSXSH9PegqXNWCC71ZeZrOIIjSizr6Nei7qQJDfEYAF+fOeJnN2
+   MH0kLvOTAfDkCRO1K4ahQeQ1hNqKgmziaVJBZzEauA2oxoPv3TJTsIm6a
+   013NapRk1eM7QTBpds/IUdZA6yJBZQk+Jhlc4BkQNY8A0FlswxUl1AiJF
+   kctUjaF3ZA6eV/rWRf6gRrck4+rD+TMlz9aqtp+xQHiWGjxbPDFowBfA/
+   Y0JiP6J+yNUkYMeeewYy02jofB6XGA+u47PS2R4pWOJOOwScorTPYANsJ
+   g==;
+X-CSE-ConnectionGUID: PLhTiosGSGyKP1a2Urp2Jg==
+X-CSE-MsgGUID: 6Y7b11+mSHCLyhZ9mUwk3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="38961852"
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="38961852"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 18:36:21 -0700
+X-CSE-ConnectionGUID: A+HDiqjaRMGA/VUwCnfLbQ==
+X-CSE-MsgGUID: gxxyTZ14QXWROMXSgMy4/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="77604846"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 14 Oct 2024 18:36:19 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0WTw-000HRe-25;
+	Tue, 15 Oct 2024 01:36:16 +0000
+Date: Tue, 15 Oct 2024 09:35:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com
+Subject: Re: [PATCH v3] alienware-wmi: Dell AWCC platform_profile support
+Message-ID: <202410150939.BgH8WpE3-lkp@intel.com>
+References: <20241008195642.36677-2-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008195642.36677-2-kuurtb@gmail.com>
 
-From: Kever Yang <kever.yang@rock-chips.com>
+Hi Kurt,
 
-phy0: pcie, sata
-phy1: pcie, sata, usb3
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-Signed-off-by: William Wu <william.wu@rock-chips.com>
-Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
----
- .../rockchip/phy-rockchip-naneng-combphy.c    | 202 ++++++++++++++++++
- 1 file changed, 202 insertions(+)
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.12-rc3 next-20241014]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-index 0a9989e41237..4c41317a8041 100644
---- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-+++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-@@ -98,6 +98,7 @@ struct rockchip_combphy_grfcfg {
- 	struct combphy_reg pipe_rxterm_set;
- 	struct combphy_reg pipe_txelec_set;
- 	struct combphy_reg pipe_txcomp_set;
-+	struct combphy_reg pipe_clk_24m;
- 	struct combphy_reg pipe_clk_25m;
- 	struct combphy_reg pipe_clk_100m;
- 	struct combphy_reg pipe_phymode_sel;
-@@ -584,6 +585,203 @@ static const struct rockchip_combphy_cfg rk3568_combphy_cfgs = {
- 	.combphy_cfg	= rk3568_combphy_cfg,
- };
- 
-+static int rk3576_combphy_cfg(struct rockchip_combphy_priv *priv)
-+{
-+	const struct rockchip_combphy_grfcfg *cfg = priv->cfg->grfcfg;
-+	unsigned long rate;
-+
-+	switch (priv->type) {
-+	case PHY_TYPE_PCIE:
-+		/* Set SSC downward spread spectrum */
-+		rockchip_combphy_updatel(priv, GENMASK(5, 4), BIT(4), 0x7c);
-+
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con0_for_pcie, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con1_for_pcie, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con2_for_pcie, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con3_for_pcie, true);
-+		break;
-+	case PHY_TYPE_USB3:
-+		/* Set SSC downward spread spectrum */
-+		rockchip_combphy_updatel(priv, GENMASK(5, 4), BIT(4), 0x7c);
-+
-+		/* Enable adaptive CTLE for USB3.0 Rx */
-+		rockchip_combphy_updatel(priv, GENMASK(0, 0), BIT(0), 0x38);
-+
-+		/* Set PLL KVCO fine tuning signals */
-+		rockchip_combphy_updatel(priv, GENMASK(4, 2), BIT(3), 0x80);
-+
-+		/* Set PLL LPF R1 to su_trim[10:7]=1001 */
-+		writel(0x4, priv->mmio + (0xb << 2));
-+
-+		/* Set PLL input clock divider 1/2 */
-+		rockchip_combphy_updatel(priv, GENMASK(7, 6), BIT(6), 0x14);
-+
-+		/* Set PLL loop divider */
-+		writel(0x32, priv->mmio + (0x11 << 2));
-+
-+		/* Set PLL KVCO to min and set PLL charge pump current to max */
-+		writel(0xf0, priv->mmio + (0xa << 2));
-+
-+		/* Set Rx squelch input filler bandwidth */
-+		writel(0x0d, priv->mmio + (0x14 << 2));
-+
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txcomp_sel, false);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txelec_sel, false);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->usb_mode_set, true);
-+		break;
-+	case PHY_TYPE_SATA:
-+		/* Enable adaptive CTLE for SATA Rx */
-+		rockchip_combphy_updatel(priv, GENMASK(0, 0), BIT(0), 0x38);
-+
-+		/* Set tx_rterm = 50 ohm and rx_rterm = 43.5 ohm */
-+		writel(0x8F, priv->mmio + (0x06 << 2));
-+
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con0_for_sata, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con1_for_sata, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con2_for_sata, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con3_for_sata, true);
-+		rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_con0_for_sata, true);
-+		rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_con1_for_sata, true);
-+		break;
-+	default:
-+		dev_err(priv->dev, "incompatible PHY type\n");
-+		return -EINVAL;
-+	}
-+
-+	rate = clk_get_rate(priv->refclk);
-+
-+	switch (rate) {
-+	case REF_CLOCK_24MHz:
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_24m, true);
-+		if (priv->type == PHY_TYPE_USB3 || priv->type == PHY_TYPE_SATA) {
-+			/* Set ssc_cnt[9:0]=0101111101 & 31.5KHz */
-+			rockchip_combphy_updatel(priv, GENMASK(7, 6), BIT(6), 0xe << 2);
-+
-+			rockchip_combphy_updatel(priv, GENMASK(7, 0), 0x5f, 0xf << 2);
-+		} else if (priv->type == PHY_TYPE_PCIE) {
-+			/* PLL KVCO tuning fine */
-+			rockchip_combphy_updatel(priv, GENMASK(4, 2), 0x4 << 2, 0x20 << 2);
-+
-+			/* Set up rx_trim */
-+			writel(0x0, priv->mmio + (0x1b << 2));
-+
-+			/* Set up su_trim: T0_1 */
-+			writel(0x90, priv->mmio + (0xa << 2));
-+			writel(0x02, priv->mmio + (0xb << 2));
-+			writel(0x57, priv->mmio + (0xd << 2));
-+
-+			writel(0x5f, priv->mmio + (0xf << 2));
-+		}
-+		break;
-+	case REF_CLOCK_25MHz:
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_25m, true);
-+		break;
-+	case REF_CLOCK_100MHz:
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_100m, true);
-+		if (priv->type == PHY_TYPE_PCIE) {
-+			/* gate_tx_pck_sel length select work for L1SS */
-+			writel(0xc0, priv->mmio + 0x74);
-+
-+			/* PLL KVCO tuning fine */
-+			rockchip_combphy_updatel(priv, GENMASK(4, 2), 0x4 << 2, 0x20 << 2);
-+
-+			/* Set up rx_trim: PLL LPF C1 85pf R1 1.25kohm */
-+			writel(0x4c, priv->mmio + (0x1b << 2));
-+
-+			/* Set up su_trim: T3_P1 650mv */
-+			writel(0x90, priv->mmio + (0xa << 2));
-+			writel(0x43, priv->mmio + (0xb << 2));
-+			writel(0x88, priv->mmio + (0xc << 2));
-+			writel(0x56, priv->mmio + (0xd << 2));
-+		} else if (priv->type == PHY_TYPE_SATA) {
-+			/* downward spread spectrum +500ppm */
-+			rockchip_combphy_updatel(priv, GENMASK(7, 4), 0x50, 0x1f << 2);
-+
-+			/* ssc ppm adjust to 3500ppm */
-+			rockchip_combphy_updatel(priv, GENMASK(3, 0), 0x7, 0x9 << 2);
-+		}
-+		break;
-+	default:
-+		dev_err(priv->dev, "Unsupported rate: %lu\n", rate);
-+		return -EINVAL;
-+	}
-+
-+	if (priv->ext_refclk) {
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_ext, true);
-+		if (priv->type == PHY_TYPE_PCIE && rate == REF_CLOCK_100MHz) {
-+			writel(0x10, priv->mmio + (0x20 << 2));
-+
-+			writel(0x0c, priv->mmio + (0x1b << 2));
-+
-+			/* Set up su_trim: T3_P1 650mv */
-+			writel(0x90, priv->mmio + (0xa << 2));
-+			writel(0x43, priv->mmio + (0xb << 2));
-+			writel(0x88, priv->mmio + (0xc << 2));
-+			writel(0x56, priv->mmio + (0xd << 2));
-+		}
-+	}
-+
-+	if (priv->enable_ssc) {
-+		rockchip_combphy_updatel(priv, GENMASK(4, 4), BIT(4), 0x7 << 2);
-+
-+		if (priv->type == PHY_TYPE_PCIE && rate == REF_CLOCK_24MHz) {
-+			/* Xin24M T0_1 650mV */
-+			writel(0x00, priv->mmio + (0x10 << 2));
-+			writel(0x32, priv->mmio + (0x11 << 2));
-+			writel(0x00, priv->mmio + (0x1b << 2));
-+			writel(0x90, priv->mmio + (0x0a << 2));
-+			writel(0x02, priv->mmio + (0x0b << 2));
-+			writel(0x08, priv->mmio + (0x0c << 2));
-+			writel(0x57, priv->mmio + (0x0d << 2));
-+			writel(0x40, priv->mmio + (0x0e << 2));
-+			writel(0x5f, priv->mmio + (0x0f << 2));
-+			writel(0x10, priv->mmio + (0x20 << 2));
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct rockchip_combphy_grfcfg rk3576_combphy_grfcfgs = {
-+	/* pipe-phy-grf */
-+	.pcie_mode_set		= { 0x0000, 5, 0, 0x00, 0x11 },
-+	.usb_mode_set		= { 0x0000, 5, 0, 0x00, 0x04 },
-+	.pipe_rxterm_set	= { 0x0000, 12, 12, 0x00, 0x01 },
-+	.pipe_txelec_set	= { 0x0004, 1, 1, 0x00, 0x01 },
-+	.pipe_txcomp_set	= { 0x0004, 4, 4, 0x00, 0x01 },
-+	.pipe_clk_24m		= { 0x0004, 14, 13, 0x00, 0x00 },
-+	.pipe_clk_25m		= { 0x0004, 14, 13, 0x00, 0x01 },
-+	.pipe_clk_100m		= { 0x0004, 14, 13, 0x00, 0x02 },
-+	.pipe_phymode_sel	= { 0x0008, 1, 1, 0x00, 0x01 },
-+	.pipe_rate_sel		= { 0x0008, 2, 2, 0x00, 0x01 },
-+	.pipe_rxterm_sel	= { 0x0008, 8, 8, 0x00, 0x01 },
-+	.pipe_txelec_sel	= { 0x0008, 12, 12, 0x00, 0x01 },
-+	.pipe_txcomp_sel	= { 0x0008, 15, 15, 0x00, 0x01 },
-+	.pipe_clk_ext		= { 0x000c, 9, 8, 0x02, 0x01 },
-+	.pipe_phy_status	= { 0x0034, 6, 6, 0x01, 0x00 },
-+	.con0_for_pcie		= { 0x0000, 15, 0, 0x00, 0x1000 },
-+	.con1_for_pcie		= { 0x0004, 15, 0, 0x00, 0x0000 },
-+	.con2_for_pcie		= { 0x0008, 15, 0, 0x00, 0x0101 },
-+	.con3_for_pcie		= { 0x000c, 15, 0, 0x00, 0x0200 },
-+	.con0_for_sata		= { 0x0000, 15, 0, 0x00, 0x0129 },
-+	.con1_for_sata		= { 0x0004, 15, 0, 0x00, 0x0000 },
-+	.con2_for_sata		= { 0x0008, 15, 0, 0x00, 0x80c1 },
-+	.con3_for_sata		= { 0x000c, 15, 0, 0x00, 0x0407 },
-+	/* php-grf */
-+	.pipe_con0_for_sata	= { 0x001C, 2, 0, 0x00, 0x2 },
-+	.pipe_con1_for_sata	= { 0x0020, 2, 0, 0x00, 0x2 },
-+};
-+
-+static const struct rockchip_combphy_cfg rk3576_combphy_cfgs = {
-+	.num_phys = 2,
-+	.phy_ids = {
-+		0x2b050000,
-+		0x2b060000
-+	},
-+	.grfcfg		= &rk3576_combphy_grfcfgs,
-+	.combphy_cfg	= rk3576_combphy_cfg,
-+};
-+
- static int rk3588_combphy_cfg(struct rockchip_combphy_priv *priv)
- {
- 	const struct rockchip_combphy_grfcfg *cfg = priv->cfg->grfcfg;
-@@ -775,6 +973,10 @@ static const struct of_device_id rockchip_combphy_of_match[] = {
- 		.compatible = "rockchip,rk3568-naneng-combphy",
- 		.data = &rk3568_combphy_cfgs,
- 	},
-+	{
-+		.compatible = "rockchip,rk3576-naneng-combphy",
-+		.data = &rk3576_combphy_cfgs,
-+	},
- 	{
- 		.compatible = "rockchip,rk3588-naneng-combphy",
- 		.data = &rk3588_combphy_cfgs,
+url:    https://github.com/intel-lab-lkp/linux/commits/Kurt-Borja/alienware-wmi-Dell-AWCC-platform_profile-support/20241011-184337
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241008195642.36677-2-kuurtb%40gmail.com
+patch subject: [PATCH v3] alienware-wmi: Dell AWCC platform_profile support
+config: x86_64-buildonly-randconfig-004-20241015 (https://download.01.org/0day-ci/archive/20241015/202410150939.BgH8WpE3-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241015/202410150939.BgH8WpE3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410150939.BgH8WpE3-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/platform/x86/dell/alienware-wmi.c: In function 'profile_to_wmax_arg':
+>> drivers/platform/x86/dell/alienware-wmi.c:822:16: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
+     822 |         return FIELD_PREP(PROFILE_MASK, prof) | PROFILE_ACTIVATE;
+         |                ^~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/FIELD_PREP +822 drivers/platform/x86/dell/alienware-wmi.c
+
+   819	
+   820	static u32 profile_to_wmax_arg(enum WMAX_THERMAL_PROFILE prof)
+   821	{
+ > 822		return FIELD_PREP(PROFILE_MASK, prof) | PROFILE_ACTIVATE;
+   823	}
+   824	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
