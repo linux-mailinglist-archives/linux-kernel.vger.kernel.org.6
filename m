@@ -1,228 +1,106 @@
-Return-Path: <linux-kernel+bounces-365833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0793499EB0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:02:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5E899EB1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFFB3285906
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:02:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20E93B21347
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68FF1C07DD;
-	Tue, 15 Oct 2024 13:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC511AF0B1;
+	Tue, 15 Oct 2024 13:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IOllLqMb"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2070.outbound.protection.outlook.com [40.107.92.70])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bR5xbrlP"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7D01C07C9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728997349; cv=fail; b=c0Pxb9gKVcs+WhwXPXBWCKfhbQ736v8pVwbcs8QEVTdYxQnLCVeKcHOFqcdF4mZIh6vPlMbkRPX5tILeGSiNWBh6pnHiRgl96KXzZU7hglYKtbWqD/0Lohyaz56S94y0khKzymULIPskfY0HTO+pihHpzkR3IAbjX4G4VAVVQUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728997349; c=relaxed/simple;
-	bh=gdDoSRJtJh3gTCTctnypzobVIgRBymnTKydRu0NIPvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=svgxbtMPD9eQ2l0eO7uI9PrK4FlQAFqY0poDUM4ZGUZGpemAz0I8xcUARi6d9PkhGLLPH4+mtjijmFqoH6cPNQbjkKkwmEzswslLzgbdFSUDp4Pa8G+EwnxDWmuFr87Or3QM3uVr9sRyjYL/SMXJkuSC2b+AcUOmR1PJ+WiSFtY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IOllLqMb; arc=fail smtp.client-ip=40.107.92.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jbOJduoStfR9rbc1OgObzg0bD4c9AoooeJeqjZ0gkGZQIG/DVofwHKcKUKC0In39Ze3TQnWsVK7Uh2xyOAJgVb1wnYdOwLmM/wqc9NyXZY9zs4L+NbvkQ/PpI4O7jgEpqiG5qg+srF90hZDUi0zTcMozVkXYYvvznx8bOLeXzqCNtmfVbkPKjvbqVcZ+2tr4+q6H8EQd381J9Jv37lr5+Fd8pA0tryP69soRVyepP6nAlQ/mVTPnnPNMQfmeMngAHWXFM+fDI3BgP5tUhIbj9Q4+hUTiI1Xx/XIPi/R5q4CTMZlCqx+b8yGxejERL3oNtSpNlr0jOHm1RiPFs3J6ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f76HBwAdqm7WwMLZsVoVyx2L0uQgnZpwNUG7IU9tKkM=;
- b=crTFxPUWyyy7xeGacYOxLIqyaTgBQ5kaglqOiTOWwgpqsxT49C4qwttmddio4gN6gTr/DADDhU+AvhzEZMIqdIJdRTRbnE3HEs2INL5ujYp6HavJFI4cc5uhYmQs0/1qQGNoOVIhiUSuwRzT6TA4LJMKTGkBtPdHY7BuFLbq/Wzna8cWU34iUiJbifgW6F6HsZ5JQCVSLu+l54DFVX3GON3mwvUBNXoK2CbKHyNo7PnrtksN/3Wzg3RICKIsIYz5BXdky2JN2m57lVa3H+QRHFvlgIbiKyaMeMiD/zoaewnBXlUH3epp3z5SZF8hm0VV8GCvTIixgJvvk2D2aGIWuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f76HBwAdqm7WwMLZsVoVyx2L0uQgnZpwNUG7IU9tKkM=;
- b=IOllLqMbmS+29W2hKpmARL9QyvZ9SQzCVyOK9sXGmTVsAMSqrMn3bWJwyJqowr+iRwIajjaaSI0UpnDh0mP97SBoQUJv1vE10mUAqjuJDhrlJwFSw7HFct6xPjBjUxeXA9I0sawIS4zTRLGgS9iVj5UQGBr1czZWJqTXLPNU3txKP3swExyydYQurXtq8eKTQAMuDxxONTcCr701kmB2WATnPvJWVt6IUBhFDZbFU0TazC+NykCG4ex0jgwIle2VgDmiVW0iczn6gsIpa7ZGIU2XCPw/N20PEqNJGV026X7bEHtbLwOo3k68DaSzmvqnL5kKLXpoDa8yN0HTsh0TAw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS0PR12MB7655.namprd12.prod.outlook.com (2603:10b6:8:11e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Tue, 15 Oct
- 2024 13:02:22 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 13:02:22 +0000
-Date: Tue, 15 Oct 2024 10:02:21 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
-Cc: intel-xe@lists.freedesktop.org, Matthew Brost <matthew.brost@intel.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	DRI-devel <dri-devel@lists.freedesktop.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] mm/hmm, mm/migrate_device: Allow p2p access and p2p
- migration
-Message-ID: <20241015130221.GK3394334@nvidia.com>
-References: <20241015111322.97514-1-thomas.hellstrom@linux.intel.com>
- <20241015121759.GG3394334@nvidia.com>
- <19fb79c069b812b164abd4f79d38bb12d2f5afa4.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <19fb79c069b812b164abd4f79d38bb12d2f5afa4.camel@linux.intel.com>
-X-ClientProxiedBy: BLAPR03CA0065.namprd03.prod.outlook.com
- (2603:10b6:208:329::10) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5476A1C07CC;
+	Tue, 15 Oct 2024 13:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728997386; cv=none; b=oz48GXf1IjZmfdFNjqcWBooxugKmv3hI/J0TmFcVnJsTiA+X3UCIRtUZo8pC3liENbbnnzmhbt2nlyPXTgMy6Yt56wqMSmS0mTm4Irm45bPTxF6sT0kR14wAa7WQliooxv+VqIq/7/cvA9GXUaX29OUco6d7X4qV4bZEpOd8B74=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728997386; c=relaxed/simple;
+	bh=KsxbVLLb5mSXr9MzEnFI0WZ6wgABIMOU16O5rHYUfAg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GM3tb+nU7zxCs4/hTeo50mXvex7eA/daKkKiOHsogCW9hzhSOPRzmkti6DJWdNUNUw0u/jbGsuxBKdEniTeJY7ej8V4qlo856MLD1ltvuyFj9qs33jJm870heiK1z+Sbxm3sR6SyW4kkZ4K6yxiVhgf6080w0rnx0NggxLugJzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bR5xbrlP; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CD437240011;
+	Tue, 15 Oct 2024 13:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728997377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tB4vniWUxYC17UqKEQJdi/0DMe6E+5OaeMyfhUbhiaQ=;
+	b=bR5xbrlPWX4u95XKip/MkJK7Wc6MKFo7FSbzplH2dJf+y3zWSswC2hOl+EX0nT0fYdNhRA
+	FPfArP8eyLqsfl9+JIgB6W/hK0P8zRuLh02uADrNkRTImbMUUJ7KWy6H8hzOtiPYY7aqb+
+	WM+I3GoY/OsdddGWMdMdHUq3cY8eVWw1Q1RksaLmrz9+CK6wweuYuTkcZIsqyuo1vaOcbS
+	Mt68Y9kUfQbGUiLQ1v+5OtlKVFZZKoo8sAhglzq7307SVd8h5xHKIC0Pn1pTBAzkbHnrPH
+	aUo/cEJwxvUNQsP3Iwqd2Df/k9q8+rRRPY4gm+oe8MX1jK8ptOyFAIlFNJpSLg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kyle Swenson <kyle.swenson@est.tech>,
+	thomas.petazzoni@bootlin.com,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net] net: pse-pd: Fix out of bound for loop
+Date: Tue, 15 Oct 2024 15:02:54 +0200
+Message-Id: <20241015130255.125508-1-kory.maincent@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB7655:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5000157d-4ace-4728-04f0-08dced199b7d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MmR3NG5qb3p3WjdoWG5yM1ltY3BZbnFmcW40VVN3aVdWMXF1MWdnS2x4UzZt?=
- =?utf-8?B?L0YwWXlRSmhsSHhPYmNKdHBheStra0tQeFl5aXE4UU10WG9lMHkrZFdTYjZ5?=
- =?utf-8?B?L0MxQktENmI3cTQyN0JJOWppMEZkZDFGQTFzMUxkWncxRDRUUElsaEdUU2NQ?=
- =?utf-8?B?bVI2d3A3bWpZQlduQWFjTkszVlp6TkZnaGFJd2Q2MzVKTWc2UThTenkzT2VV?=
- =?utf-8?B?ajNDQys4bnh5SUJLUzAzRVhRYXFwcFJHWmxGSUhoTy83OUN5Z3NPN3gzZHUx?=
- =?utf-8?B?RlQ4dzFUemowbXlMZjhkL2pJQy92ZmhUS2xqUmJtY2ZITmx2Qm9TTnF6RzhF?=
- =?utf-8?B?THB2bmYrMSs5MWZ2Y01PaUtpZzBmOEU2ZVJCNXlsWkdKdGxaQS9Sd2RCcEJH?=
- =?utf-8?B?Nnh5TjJKWXRJR3ZnY0JsdlBLUGpBVW9aTXY2Sm9ZeC9Yam5od3JwenZMSGs0?=
- =?utf-8?B?WUtwTnYzMDBhUnU0Q2ZicGNUU3ZWYmVBeHZHcm5wbUJFOStWZFJqZm5Cbngy?=
- =?utf-8?B?SnhnbWorYmRta1lMM3pKdVVjQzFCWWk5bVNBVEdMNEc3YXJDZ0ZER01LcE50?=
- =?utf-8?B?L2J4aXRJOWRGMXJIeDVRMENUbXVpeUh2SG82TmFJVmo5ZmtCdU45M29NMkE3?=
- =?utf-8?B?Ti9PdmRtZ0YvZzc5dDhncE1mbW9yR0F5cGk4c3kxWnFjMVAzQSsxK1ljNlht?=
- =?utf-8?B?NHR5dzM1RmNUQmxEbDFncUFKd29GVGR6c1NQQnQ1ZDZBeEk1NnVvQXR2VmJv?=
- =?utf-8?B?UDIwTFc2a2hJT0lnMngrMWE5TExTNm5ET1dON3IvTVBXS25NTk9VVjF4a1o5?=
- =?utf-8?B?bWh6OE5MbTNjVnhiNUJvQXhGZ09hRFNsb0VVdWExd1BmQmE4T3lHZ0JqRlNJ?=
- =?utf-8?B?VlE4UWdUQkdqdnRudFpqS2pJK0t5cjhOVUovbFZrQktVOGVBNUxRdEJjbWRH?=
- =?utf-8?B?dmxIcDJUK3p3L1hWS0x2MFF6TlNaYU1tckxiSmJpZDJjaDFITmJuNE44QS9O?=
- =?utf-8?B?Qm81UTFOcWJlNk5uUWVJd0lqQmY1VFR3SzRqbUp5VXU4QXZBS0p1eUF2RFJY?=
- =?utf-8?B?aGcyV29oeWNtWDZmL3VrVzNWbEh6b0kxTVpTVFhFMW5tTlRuREQ0ODF2dFUx?=
- =?utf-8?B?T3hpTDlCRXRtRTJuc2lMNnNHWFp1bmp0WFJoZWJjM1JoSUdML2J5cE5QTnFU?=
- =?utf-8?B?RFpibDUvRXBtMU5pSld1OGtwMjNCeWJ6NzdzY3I3WFJsY0NpODN0NFZaRnRF?=
- =?utf-8?B?MWF5SnRvcElrSnl6cEVyL0lqL094Z0hjSytSemRWdHpFSTZaQnBBSVRQMEY1?=
- =?utf-8?B?MURrUHI1MkJGU2ZzRTMzaEtSWC9iVTFlQXUrbUtYOU5INWl3Vk42VVpqK1Ro?=
- =?utf-8?B?YUU3K0p0ZDJ2MlRIY1liS2NndWJyZktxZ2MxMWpzcE0xcHFzSDBIb0VBbHQ2?=
- =?utf-8?B?ZXgwRzRzY0g1WXZwU0M5Z3ZqaTRIOEZSdFY4ZzdQRlB2UkhTM2JBQ0ptTDF6?=
- =?utf-8?B?YkVobEI4K2hpRHBtZDlIQWNLem5wZUNRTlBzTHJNMHFpUnhwYXhmbnU1RU9L?=
- =?utf-8?B?eFZ3c3ZCQ2RnZFByWWhnVUVkWHk0MUIxKytETmRPR2dVT2JtYm9nTEh3cS80?=
- =?utf-8?B?a2lqL1BGbzBRUko0aU5CN01SWklJazhpbEwvNTExQWdaVU13QnVOU3FzYThk?=
- =?utf-8?B?Nm5kRWJwRnlyc2MwUnFvamFLNDdvaDdHRlVWWHJXYWl3NGVrVUFjdTJ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MlloTUIzbjZPSXFFand3RG1ORlpzQVVySnltL0hPYWtCUjZMaG9wQVB1VDF3?=
- =?utf-8?B?cHVMM2hmRW5xVXh3RDdIY3NTaUppYUNiY0tXSjlZajArbkJpZTdaRjNzelRM?=
- =?utf-8?B?U01ueW1Lc09aVXNGTWpBL2x3V2FLamRGOFBPMk9FVXM2aytwL01SU21LTytC?=
- =?utf-8?B?T1o0cXpKN1pDNjNadHFuOEE1RTRSNC90MFFqeXdydzJqQzE2MVRCalArb1k1?=
- =?utf-8?B?RUhFSTMzMkU1Q1ZId3N2R1VxTVlvZUJpcDc0aXlwdWZRQnVFSDBOUmN6di8w?=
- =?utf-8?B?OUVhVHBvaFdtdTlpVEhERjY1R3FGampuTGRHWUl6WlhLTXBaSzJ0WkJjc0lv?=
- =?utf-8?B?U1I1LzRRMkQwSVpoa2cyUXdlZE96RXpTWVdhajhtblpid3M2bDZQS2l3d3Vv?=
- =?utf-8?B?VEhxSVpzSjR1d2Jmeit4SVlaMmdDTlE2WkszL3k4MDBUcDhRV0FYS29Vd2Y5?=
- =?utf-8?B?V1BNMVFUQ0YwVDg3dHRLS2VMTlNzUzYxdGlGcFBwVE5VamJuVlI1QkMzVFhk?=
- =?utf-8?B?MU8vNkNyQXpNTWo1UTgvV1FGTFVQTWt6RG1POFJoSmg0SGhGWGlJNUFYUzZE?=
- =?utf-8?B?TlhSWFA0dFVKMHhydTFJYW5TNE15L0I3SVJCVDhhRGJQNko3R2x6Y2Z3bkhL?=
- =?utf-8?B?bHlwOGt2aDd3U1Uwbmw1TmFMZHZpM3NhMFFCeCtKRkgyd3RiLy9GMmg0d1p5?=
- =?utf-8?B?SjVnQTlBZ0tpMGVscmkxdUVMN2dOZkpjemNFM0ZSbVJFNzI1L0FIQ2Yrbjk4?=
- =?utf-8?B?a2pERzdUSWF5VTdKRUtVeDIzRDQzT0VuRlByMzlHQXlyWVoxK2dDODZjeW5E?=
- =?utf-8?B?TXY4QVROaUZ6c0gvVU1tL1VYbnV1QXFaTkRMZmRhRWk3ckFPcU1RV2lnSFpr?=
- =?utf-8?B?ZDYxV3dWYjMrWVlPb0hBZFp4Q01rRHJPZCtKVkl0NDdoTkkxeUVZdHp4QTFs?=
- =?utf-8?B?clNOYSs5bVlIdzNMdlRtR0lyQkI2UGp1RzlTTGV4MTE3MCtod2JrLzEwY05E?=
- =?utf-8?B?dlVBRkJCV25oRnNNMlVKd0J6dWh5Y2lXRzVtL1RUYmxVR253WnEvR2ZRR0hS?=
- =?utf-8?B?WHI3VmsxdEpoM0VSMEtValZ3ZGIveW1LWk9md3lBV0FhakY5QnVIbFNXZEtp?=
- =?utf-8?B?TWRPWE1LSzFuaXp5UE1XTGdTN2F4bm9lQWhudDhTQW5YYURlVzJoMHpYUzdQ?=
- =?utf-8?B?UmNYK282MkNaM0hzUlNFUE1VM3pMSUxPd25kYW1lWnhYTUxDM2RKY1FEcCt1?=
- =?utf-8?B?cXlnb3YwcW1YZWR6VHhoVnJBNnk2QkI0anhheU1oZXFhc1VWSUhRMlVQYkpD?=
- =?utf-8?B?a1RqODlzUzNUczhyMEwwVlgydzk5TFpjRkhoZFdKeEFrYmlqRFpCdnFGclJH?=
- =?utf-8?B?ZjVyK0tSZ3J6Mld4R053KzRoRExNNTExeHpPNjJYWWRVbXpwanlmcnBYVWZL?=
- =?utf-8?B?Q0xyL3l3VjBjbGdrakNKV29STUFJUDBGdE4rd3NLUkFVdUFDYkhJM05GL2VJ?=
- =?utf-8?B?cFp0ZFJndWpyVWdYZGl1RFJyYUM5dnU1RWVYaHprc1hkME9abXdUNXZnMlhu?=
- =?utf-8?B?RHgvVjlyWCs0U2pncW5EckFwei9FaHJONVlieUxFOFYyWjdMR2V2SlNGTU1T?=
- =?utf-8?B?UEljWXBJTWg1bVU5RXpHS01zZHVqeWVXYmx3YzgvSXNsY3V5L1BaTHJ2Mytu?=
- =?utf-8?B?MnVReVVLdFZ6eHNMZXBKREYzVXBMV01PWUxTZHJOcUJMa1ErRWR5QW9Yc0NR?=
- =?utf-8?B?bDZHYUpzOVduVzRFMFUwL2JVTUZOZDlyV3JlUUZ5UW42TXRaM1RLRUZ4VVJx?=
- =?utf-8?B?ZWlFZU9wcHllaWdhcUd2WHVudzF6ZWs0MHF1RmY5WTJmem9jN3BBSFJRZEJK?=
- =?utf-8?B?N09UdjlOV1lrbUtpeVBQYzdxMDhwUDBQaGt4eFY4YURoNWRzYTM4bkZaQS9N?=
- =?utf-8?B?Vml5eENzVnU0NjA3Q0JpM2JuWHFmUmVvUSs5SWNicjJ2eTRyWDI2clQxbWEr?=
- =?utf-8?B?SmhPS3NkNUhMT3RnRDBBL1dCR3VOQ3BwWFVDVTBHS21JNnkrRG5BR3R5Vmhw?=
- =?utf-8?B?ZjU5TGR4b3lGVjM5d3JyQTlnWEF6a0RFYVZoRGZoZ3JzcHVQRitJMzR4NFor?=
- =?utf-8?Q?tSAg=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5000157d-4ace-4728-04f0-08dced199b7d
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 13:02:21.9714
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WrP3qtrmqgI3OlfIskQ31O5A8y+TWc84qvemnxedDqFZo5ZncGE9MIN+7OO9Km8Z
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7655
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Tue, Oct 15, 2024 at 02:41:24PM +0200, Thomas Hellström wrote:
-> > It has nothing to do with kernel P2P, you are just allowing more
-> > selective filtering of dev_private_owner. You should focus on that in
-> > the naming, not p2p. ie allow_dev_private()
-> > 
-> > P2P is stuff that is dealing with MEMORY_DEVICE_PCI_P2PDMA.
-> 
-> Yes, although the intention was to incorporate also other fast
-> interconnects in "P2P", not just "PCIe P2P", but I'll definitely take a
-> look at the naming.
+Adjust the loop limit to prevent out-of-bounds access when iterating over
+PI structures. The loop should not reach the index pcdev->nr_lines since
+we allocate exactly pcdev->nr_lines number of PI structures. This fix
+ensures proper bounds are maintained during iterations.
 
-It has nothing to do with that, you are just filtering the device
-private pages differently than default.
+Fixes: 9be9567a7c59 ("net: pse-pd: Add support for PSE PIs")
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+ drivers/net/pse-pd/pse_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Your end use might be P2P, but at this API level it certainly is not.
+diff --git a/drivers/net/pse-pd/pse_core.c b/drivers/net/pse-pd/pse_core.c
+index f8e6854781e6..2906ce173f66 100644
+--- a/drivers/net/pse-pd/pse_core.c
++++ b/drivers/net/pse-pd/pse_core.c
+@@ -113,7 +113,7 @@ static void pse_release_pis(struct pse_controller_dev *pcdev)
+ {
+ 	int i;
+ 
+-	for (i = 0; i <= pcdev->nr_lines; i++) {
++	for (i = 0; i < pcdev->nr_lines; i++) {
+ 		of_node_put(pcdev->pi[i].pairset[0].np);
+ 		of_node_put(pcdev->pi[i].pairset[1].np);
+ 		of_node_put(pcdev->pi[i].np);
+@@ -647,7 +647,7 @@ static int of_pse_match_pi(struct pse_controller_dev *pcdev,
+ {
+ 	int i;
+ 
+-	for (i = 0; i <= pcdev->nr_lines; i++) {
++	for (i = 0; i < pcdev->nr_lines; i++) {
+ 		if (pcdev->pi[i].np == np)
+ 			return i;
+ 	}
+-- 
+2.34.1
 
-> > This is just allowing more instances of the same driver to co-
-> > ordinate
-> > their device private memory handle, for whatever purpose.
-> 
-> Exactly, or theoretically even cross-driver.
-
-I don't want to see things like drivers changing their pgmap handles
-privately somehow. If we are going to make it cross driver then it
-needs to be generalized alot more.
-
-> > 
-> > Otherwise I don't see a particular problem, though we have talked
-> > about widening the matching for device_private more broadly using
-> > some
-> > kind of grouping tag or something like that instead of a callback.
-> > You
-> > may consider that as an alternative
-> 
-> Yes. Looked at that, but (if I understand you correctly) that would be
-> the case mentioned in the commit message where the group would be set
-> up statically at dev_pagemap creation time?
-
-Not necessarily statically, but the membership would be stored in the
-pagemap and by updated during hotplug/etc
-
-If this is for P2P then the dynamic behavior is pretty limited, some
-kind of NxN bitmap.
-
-> > hmm_range struct inside a caller private data struct and use that
-> > instead if inventing a whole new struct and pointer.
-> 
-> Our first attempt was based on that but then that wouldn't be reusable
-> in the migrate_device.c code. Hence the extra indirection.
-
-It is performance path, you should prefer duplication rather than
-slowing it down..
-
-Jason
 
