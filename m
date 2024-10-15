@@ -1,97 +1,110 @@
-Return-Path: <linux-kernel+bounces-365627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC9699E532
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:10:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F59B99E53D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A392836D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD621F21D96
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90321E8833;
-	Tue, 15 Oct 2024 11:09:53 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100FD1E571A;
-	Tue, 15 Oct 2024 11:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651FA1E7666;
+	Tue, 15 Oct 2024 11:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ENbINzWK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9924F1D8A1E;
+	Tue, 15 Oct 2024 11:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990593; cv=none; b=NoU981N1pWfRSPWic1jAKFjUtxpwJ8Z+F+ytROqFdUEtmEhZnGdcm/E8aAafgxiZ8m355wyknvH/R1SlaeraAyw82hzcYxgw0N9HpGiDD/TCwgthRX8sOxNg34Hbqy20DHoFPmDgRAs7BKyUfBtY/pF4zIFrWm+kCi5C/DyOs5s=
+	t=1728990632; cv=none; b=jtro8TwmlBPySbxxIzgT7idjmmJoADVTwNzYeffp8spoa/IVcZR5kASeLbmymu4Th34X9/h1YyQT/X95W0bvf8AlGrmVhxzrZpdNome+DsT6v9yDVNKEWitGiLFW6e9POKBtUpXXoExsroRU8K6GWZze+CET8I6qgmU90sF1Ifs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990593; c=relaxed/simple;
-	bh=+G7yFXFTJdYUvkwG9ZrXJHw6lTDClttw60acmxAQajg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UIVix7tdPHfoU8KNupj/DGL4LBLhTPpDdakbcDjbxjhVX8R0aC63kPqDyhsVgZYYZ2Jr9GfR8a/fSqe2VwygSNSxZ7em7tlrJHLAlxPKDhlXFvHp2rffUg1xqcUR0VczT8K04dWvybK2rAlRO6uh4E+Mpf7N1Tyzvvqpwb5uNA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1670e4d78aab-f43b9;
-	Tue, 15 Oct 2024 19:09:46 +0800 (CST)
-X-RM-TRANSID:2ee1670e4d78aab-f43b9
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee1670e4d78962-01745;
-	Tue, 15 Oct 2024 19:09:45 +0800 (CST)
-X-RM-TRANSID:2ee1670e4d78962-01745
-From: Liu Jing <liujing@cmss.chinamobile.com>
-To: qmo@kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Liu Jing <liujing@cmss.chinamobile.com>
-Subject: [PATCH] bpftool: optimize if statement code
-Date: Tue, 15 Oct 2024 19:09:44 +0800
-Message-Id: <20241015110944.6975-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1728990632; c=relaxed/simple;
+	bh=5aeyu7uYwG5DbyLuOUrkdyPSoIVIgnN8aSc3vEfPZko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMgNmdcSDV2Yw9f2uQp8ho8H90edB0BQ+gEjz4EG46dbr+ShHD4m/ljZBBK/fKTIQrBQ6GPFJDJMNkGO+BjtVNk+J76+UMvC3WeKRQaCp2u45KXr2oiCiaO5drPbINtU/aKQyyQ9paOiS6YGmL5wRxq+jyGebyzw5hv9ne1wjXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ENbINzWK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF58C4CEC6;
+	Tue, 15 Oct 2024 11:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728990632;
+	bh=5aeyu7uYwG5DbyLuOUrkdyPSoIVIgnN8aSc3vEfPZko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ENbINzWKQ1ZfE+FvEJLhMNiqk7edL7FDZBQ1cSXZFCak+odzJT0JPts2eIZAE+Bg7
+	 4reoEFrfhZnCWmxBAx/nKn+xg9zbJo6SRv+lhK6+hHTc5X5MERaZW0lbH0JT49WG4i
+	 JLxvs3eH2mDSjdcqBiERxYvCjl5Mlm20i3d7eE+8=
+Date: Tue, 15 Oct 2024 13:10:28 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 6.11 000/214] 6.11.4-rc1 review
+Message-ID: <2024101514-blurred-nappy-547a@gregkh>
+References: <20241014141044.974962104@linuxfoundation.org>
+ <CA+G9fYsPPmEbjNza_Tjyf+ZweuHcjHboOJfHeVSSVnmEV2gzXw@mail.gmail.com>
+ <cdb9391d-88ee-430c-8b3b-06b355f4087f@kernel.org>
+ <6dd1f93f-2900-41cc-a369-1ce397e1fb52@kernel.org>
+ <20241015094645.7641-F-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241015094645.7641-F-hca@linux.ibm.com>
 
-Since both conditions are used to check whether len is valid, we can combine the two conditions into a single if statement
-Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
----
- tools/bpf/bpftool/feature.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+On Tue, Oct 15, 2024 at 11:46:45AM +0200, Heiko Carstens wrote:
+> On Tue, Oct 15, 2024 at 10:51:31AM +0200, Jiri Slaby wrote:
+> > On 15. 10. 24, 9:18, Jiri Slaby wrote:
+> > > On 15. 10. 24, 9:05, Naresh Kamboju wrote:
+> > > > On Mon, 14 Oct 2024 at 19:55, Greg Kroah-Hartman
+> > > Reverting of this makes it work again:
+> > > commit 51ab63c4cc8fbcfee58b8342a35006b45afbbd0d
+> > > Refs: v6.11.3-19-g51ab63c4cc8f
+> > > Author:     Heiko Carstens <hca@linux.ibm.com>
+> > > AuthorDate: Wed Sep 4 11:39:27 2024 +0200
+> > > Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > CommitDate: Mon Oct 14 16:10:09 2024 +0200
+> > > 
+> > >      s390/boot: Compile all files with the same march flag
+> > > 
+> > >      [ Upstream commit fccb175bc89a0d37e3ff513bb6bf1f73b3a48950 ]
+> > > 
+> > > 
+> > > If the above is to be really used in stable (REASONS?), I believe at
+> > > least these are missing:
+> > > ebcc369f1891 s390: Use MARCH_HAS_*_FEATURES defines
+> > > 697b37371f4a s390: Provide MARCH_HAS_*_FEATURES defines
+> > 
+> > And this one:
+> > db545f538747 s390/boot: Increase minimum architecture to z10
+> 
+> All of this is not supposed to be stable material.
+> 
 
-diff --git a/tools/bpf/bpftool/feature.c b/tools/bpf/bpftool/feature.c
-index 4dbc4fcdf473..0121e0fd6949 100644
---- a/tools/bpf/bpftool/feature.c
-+++ b/tools/bpf/bpftool/feature.c
-@@ -158,10 +158,9 @@ static int get_vendor_id(int ifindex)
- 
- 	len = read(fd, buf, sizeof(buf));
- 	close(fd);
--	if (len < 0)
--		return -1;
--	if (len >= (ssize_t)sizeof(buf))
-+	if ((len < 0) || (len >= (ssize_t)sizeof(buf)))
- 		return -1;
-+
- 	buf[len] = '\0';
- 
- 	return strtol(buf, NULL, 0);
--- 
-2.27.0
+Agreed, I'm dropping this compile s390 patch, thanks for the build
+testing everyone!  Something went wrong with the testing on our end,
+odd...
 
+thanks,
 
-
+greg k-h
 
