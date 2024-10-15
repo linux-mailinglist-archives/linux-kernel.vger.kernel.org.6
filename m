@@ -1,148 +1,142 @@
-Return-Path: <linux-kernel+bounces-366085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD13C99F0AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:07:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EA999F0B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090A41C21D3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9B6283454
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBCC1CB9FF;
-	Tue, 15 Oct 2024 15:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEA71CBA09;
+	Tue, 15 Oct 2024 15:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vzP8M5Jc"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eGIfYFSl"
+Received: from mail-io1-f65.google.com (mail-io1-f65.google.com [209.85.166.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C97D1CB9E4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3AD1CB9FD;
+	Tue, 15 Oct 2024 15:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729004865; cv=none; b=fX0vVbr1JEDIPPTZkX3LA1cHVBaqXytCNtE7xfS21xRw2+DYhvHIYiAKQ8+AjWL08soH3i+pFzYkGv9LEI44BkrVJAJSByYoMNn9ZcPjNfdl6V3HnC2ZXladWR4tl9hdPPdLB/leqsMqCkg00Pr/3MW/P4LqBXPcBQgcVGMPiEM=
+	t=1729004980; cv=none; b=B6quGOoOZhO5l3tMaD5rLahUTGsKb969vwCzzU82RkmHtUcXH7NfMuTT8CSVvsOOqd86ZNOmhbQGQRDbB7nYT+Gn71sjjvYV5W61mBMknM1vyBbz7r3+YmxLCGJDUJKPtMw95afxMSzH/PPrAUey+37dMJe1cgpbdGcwsutvJYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729004865; c=relaxed/simple;
-	bh=f4WuBg7WlMrKS0da9MDKLt/3P+sLy8hGoRgtuR/wpwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGlWOCyY6XsLGeUcBIq7a1WDHC8Jnw+R8D8cDMASfZezYVf8u+uKG38J5RL6Z0PinaTnOVS8mdDTbXQ/emjYt8/08rf6PzPu/lyTFIzcdfKhTx+Q7QOFAhvujE4yJ2oG3wyGEiTfgxEkbmMgE84KTnd1FTvGr81w9J2zdd8HNq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vzP8M5Jc; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c8ac50b79so506885ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:07:43 -0700 (PDT)
+	s=arc-20240116; t=1729004980; c=relaxed/simple;
+	bh=B8ChUxBvAFtLMqKDKXjgchdjFht6tXh8QUoy24QiB9U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mjkx8qK7Hvsddd5XUquV4anCmqhADditixWA78N6rOczpi08z5Kwe6YfmAziWFCkv4hOni8Grcio0CKGF/UXE5vI46IM+Tl/JBebkJevjJqnADOck16xrol0dmiOts3DtnabJ7MnCLgIL41ljJUMdASJU0FE45MBVMA7J3Pg+1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eGIfYFSl; arc=none smtp.client-ip=209.85.166.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f65.google.com with SMTP id ca18e2360f4ac-8353b41369fso353601539f.3;
+        Tue, 15 Oct 2024 08:09:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729004863; x=1729609663; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PlA/wii2bh+bHrcTk784szy5HvJLhrYuLgVdXpT1LYk=;
-        b=vzP8M5JcqhbzuzunnR2SonGUJkvZUCWQZacWfn8/PrqV86plgTSDZC4Z6Zqv82ikag
-         OW1Ikw7KORUohCDqm10+XiNkXRHz0BqJoij5sPxUnZd3C7AVDKaiwMsu1iT6EBp3Pbm4
-         n39tQWDw+mtKtvavzsXkLJW0DgUwOL074N5IsbLjRDE+r62Odz+2gkYVIUgFJcMGVFWv
-         LH1jyC0YRD1S8RdCKxphhYc6ucU5b9ruAdeyzJBjYepugChQYCiaxHifwFM944l0gdcW
-         CuVlTvsTcVBUfJ1AgOrDw3kAa+Mw05+kN0nJSA3kME0sAS7ENBV4JKU7ECDU4oqYIonV
-         NYuA==
+        d=gmail.com; s=20230601; t=1729004978; x=1729609778; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0jFk0JoI0mzXirTKJ2ym3XvHzvgOMMC5dTTxSarG5vI=;
+        b=eGIfYFSlYD5bgXLpXBYgFM+RDao93/v+IYb9lgWPgmsmYJKFV8t58p9u+nxgSsExG9
+         OnFOJIWTyu6qq06838ArpzOlhnyYJUtP+FU219y2gQ3vLYLMnp3dcQnMcHbyzgCtWBKC
+         Y8bP21itMe1HeSrtuzT7rlpf0Avj4MlvzOSQUY2tpZVoVzUMPXZ2uw7NEj3JiWzoMVzP
+         xZ+lx4c4F8/+saagH/VAsByG3KDmEwEmHAu/HF9LRD/G+xGjAzJZlcg84s2xqWyMLapp
+         lO5p0VMzaEzrW0cGjbi/S6VGSBtKXT+UqGtWYMuJuBN66SHpOxejRa/jcKj5u2KSEXhV
+         Hp9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729004863; x=1729609663;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PlA/wii2bh+bHrcTk784szy5HvJLhrYuLgVdXpT1LYk=;
-        b=jd+0aW+0mQYzTWcimsz5ejKF5wFOzKnsskh/mn34ypYUSgc7lXmu5RYIcOwLkvT2SC
-         ztvby/SOh90Vzkr7kyEMRmy/qMAf1Wfo9eD1p4bu1vbLWMC3IXm9XQl8tfjzpkn1L/g9
-         fdCHzfKJW/03VGe+kgtbY8FSilYOnaOLaRNdu6G40sDjbtfbX691rY35BnSiym0o0q1B
-         4Ccv6aA0i94jXy94j7R5cXaIk5SYmHpf+1rIhzSPeO2BRECG0MwDzFMxaSfVOySx0us9
-         iZ2pYlaY7hSDnnvtze5Q8y3c1GrC2NrFHlHGGhBzPR3J0H7j847ExG2uYJq0ZH0Pa+me
-         PhsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwdllySkaFW4WMRgUIyN9BE2IEUXEXnr4pbp91EfLl65RJQtkTGqveqzr6LcSZN9gvstIr8lCJ+UJBtoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmik0mbLzxpxCj2FFaaINr64ErcHthIxgMEZA1sjh3hNIXm+Wa
-	J7BEp6R+ERI2d9lupgfic1dlTYKNjUJ2Qqgbh4h98TSRnsvC8RxxCVyGsh4G3A==
-X-Google-Smtp-Source: AGHT+IF1l7OR0X37A5QzB6dpGx5CADv36IvHuR768YDJl8fOGKf/Ye/4uOiLVbH4UsZhcLQQ270hKA==
-X-Received: by 2002:a17:902:e890:b0:20c:805a:22b with SMTP id d9443c01a7336-20cbced5496mr6942145ad.24.1729004862458;
-        Tue, 15 Oct 2024 08:07:42 -0700 (PDT)
-Received: from google.com (62.166.143.34.bc.googleusercontent.com. [34.143.166.62])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6ba33csm1451237a12.17.2024.10.15.08.07.38
+        d=1e100.net; s=20230601; t=1729004978; x=1729609778;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0jFk0JoI0mzXirTKJ2ym3XvHzvgOMMC5dTTxSarG5vI=;
+        b=ZkOpVO596aQXCVVxlJ7nMTnNkj81sSUeMEQ7H0Vb+YUbx5DVT6cVzWEKpT+AnAwQvR
+         vg4QBTLiz/id36LUJDpCeRJ3dEjxz/EIqv6m72pBaie6plXKZpDB2VpehtTXSx6OFi0m
+         3IF1nDZxpMkKzNXNLYcZohIiwoTo/MYvOm4xiJc7bXlMtxlvvz+oDBi2g+wPnrKsK3Xp
+         INLQWMv+tptvC11gm737E6v3HRCh0qWx6mYw7Y7JhRQcXk+jY8aM2OGlzp7FTea4vc5e
+         8b8ZBTol/Y4auMQoIHTB4SWksPcRgIqqYYim/Q23x2hXv/BU6ALQBigAe/r595DuWODe
+         8O1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2b927CqWdS8HkoLFvR6TCv7bbELVuW76fQxUKTAePfL1qi+JeWASbOzbp67aty0crhAXVdeNZd2PHlSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8a6KnYNDGrnIpShSoorQ4D7iOqNoauL2gP1Giqzp6CRuvWOeR
+	O05/obL89zakWYBR1ojfygDBAuEOfnkK1Zi00zZlW1VC/XXUBrmh
+X-Google-Smtp-Source: AGHT+IHdb4DKuD8UI9qQvkOpboqxD26XUGSjN3VyUCARnSUSOGkRglKnUFhhRT2KKjLmh7Kgs5mNIw==
+X-Received: by 2002:a05:6e02:1c0a:b0:3a3:aff3:a02b with SMTP id e9e14a558f8ab-3a3bcdba90bmr96729065ab.6.1729004978169;
+        Tue, 15 Oct 2024 08:09:38 -0700 (PDT)
+Received: from localhost.localdomain ([2406:8dc0:b002:b20f:f975:8fff:9776:9f47])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6d58ddsm1458406a12.53.2024.10.15.08.09.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 08:07:41 -0700 (PDT)
-Date: Tue, 15 Oct 2024 15:07:32 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joy Zou <joy.zou@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH RFC 2/2] iommu/arm-smmu-v3: Bypass SID0 for NXP i.MX95
-Message-ID: <Zw6FNCACa03nE5Cx@google.com>
-References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
- <20241015-smmuv3-v1-2-e4b9ed1b5501@nxp.com>
- <Zw4kKDFOcXEC78mb@google.com>
- <20241015124723.GI1825128@ziepe.ca>
- <Zw6DekI9X7lL4f1G@google.com>
+        Tue, 15 Oct 2024 08:09:37 -0700 (PDT)
+From: Kieran Moy <kfatyuip@gmail.com>
+To: shuah@kernel.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kieran Moy <kfatyuip@gmail.com>
+Subject: [PATCH] applyed suggested changes
+Date: Tue, 15 Oct 2024 23:09:20 +0800
+Message-ID: <20241015150921.78678-1-kfatyuip@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw6DekI9X7lL4f1G@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 15, 2024 at 03:00:10PM +0000, Pranjal Shrivastava wrote:
-> On Tue, Oct 15, 2024 at 09:47:23AM -0300, Jason Gunthorpe wrote:
-> > On Tue, Oct 15, 2024 at 08:13:28AM +0000, Pranjal Shrivastava wrote:
-> > 
-> > > Umm.. this was specific for rmr not a generic thing. I'd suggest to
-> > > avoid meddling with the STEs directly for acheiving bypass. Playing
-> > > with the iommu domain type could be neater. Perhaps, modify the
-> > > ops->def_domain_type to return an appropriate domain?
-> > 
-> > Yeah, that is the expected way, to force the def_domain_type to
-> > IDENTITY and refuse to attach a PAGING/BLOCKED domain.
-> > 
-> > If this is a common thing we could have the core code take on more of
-> > the job.
-> 
-> Yes! I've seen the IOMMU being bypassed at multiple places, primarily
-> for performance, people like bypassing the iommu for "trusted" devices.
-> A few examples that are publically accessible: Qcomm SoCs [1], [2].
-> Seems like Qualcomm have a DT property `qcomm-s1-bypass` to achieve
-> something similar.
-> 
-> In fact, *blast from the past*, I tried to do something similar sometime
-> ago with [3]. Although, perhaps that wasn't the best way (and I was a
-> kernel newbie :))
-> 
-> A little off-topic, but I think there has been some interest to bypass
-> the default substream as well while still maintaining PASID isolation.[4]
-> 
+---
+ tools/power/cpupower/po/zh_CN.po | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Agh, apologies, ignore the following part about rmr,
-it won't solve the problem here.
-> Although, as far as arm-smmu-v3 is concerned, IIRC, I think there was a
-> way to tell that the region is reserved and don't map it.
+diff --git a/tools/power/cpupower/po/zh_CN.po b/tools/power/cpupower/po/zh_CN.po
+index 456cde997..33fb3f000 100644
+--- a/tools/power/cpupower/po/zh_CN.po
++++ b/tools/power/cpupower/po/zh_CN.po
+@@ -19,11 +19,11 @@ msgstr ""
+ 
+ #: utils/idle_monitor/nhm_idle.c:36
+ msgid "Processor Core C3"
+-msgstr "处理器核心 C3"
++msgstr "处理器 Core C3"
+ 
+ #: utils/idle_monitor/nhm_idle.c:43
+ msgid "Processor Core C6"
+-msgstr "处理器核心 C6"
++msgstr "处理器 Core C6"
+ 
+ #: utils/idle_monitor/nhm_idle.c:51
+ msgid "Processor Package C3"
+@@ -35,7 +35,7 @@ msgstr "处理器套件 C6"
+ 
+ #: utils/idle_monitor/snb_idle.c:33
+ msgid "Processor Core C7"
+-msgstr "处理器核心 C7"
++msgstr "处理器 Core C7"
+ 
+ #: utils/idle_monitor/snb_idle.c:40
+ msgid "Processor Package C2"
+@@ -47,7 +47,7 @@ msgstr "处理器套件 C7"
+ 
+ #: utils/idle_monitor/amd_fam14h_idle.c:56
+ msgid "Package in sleep state (PC1 or deeper)"
+-msgstr "处于睡眠状态的包（PC1 或更深）"
++msgstr "Package in sleep state （PC1 或更深）"
+ 
+ #: utils/idle_monitor/amd_fam14h_idle.c:63
+ msgid "Processor Package C1"
+@@ -59,11 +59,11 @@ msgstr "北桥 P1 布尔计数器（返回 0 或 1）"
+ 
+ #: utils/idle_monitor/mperf_monitor.c:35
+ msgid "Processor Core not idle"
+-msgstr "处理器核心不空闲"
++msgstr "处理器 Core不空闲"
+ 
+ #: utils/idle_monitor/mperf_monitor.c:42
+ msgid "Processor Core in an idle state"
+-msgstr "处理器核心处于空闲状态"
++msgstr "处理器 Core处于空闲状态"
+ 
+ #: utils/idle_monitor/mperf_monitor.c:50
+ msgid "Average Frequency (including boost) in MHz"
+-- 
+2.47.0
 
-> 
-> > 
-> > Jason
-> 
-> Thanks,
-> Pranjal
-> 
-> [1]
-> https://github.com/realme-kernel-opensource/realme5-kernel-source/blob/master/arch/arm64/boot/dts/qcom/sa8155-vm-qupv3.dtsi#L22
-> 
-> [2] 
-> https://android.googlesource.com/kernel/msm/+/android-7.1.0_r0.2/Documentation/devicetree/bindings/platform/msm/ipa.txt#28
-> 
-> [3]
-> https://lore.kernel.org/all/20230707104857.348353-1-praan@google.com/
-> 
-> [4]
-> https://lore.kernel.org/all/CAGfWUPziSWNMc_px4E-i+_V_Jxdb_WSwOLXHZ+PANz2Tv5pFPA@mail.gmail.com/
 
