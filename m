@@ -1,151 +1,188 @@
-Return-Path: <linux-kernel+bounces-366208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123B899F22F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:00:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A09299F233
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0EB281E49
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:00:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB75C1C2238F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7381F4FBB;
-	Tue, 15 Oct 2024 15:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696181F667E;
+	Tue, 15 Oct 2024 15:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c1lrf8Lf"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="InYUrCyF"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C4B1DD0D9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1F81F667C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729007940; cv=none; b=owKHpTHWcxsPCUTgf58eVhR8kWC5CZ83c20ZDFvzSPRUFhjD7eVNIskZTENPG7slsuMF3UBP2eHf1j/Mm8QCrbXQPM4llMAi5RfnSbBArjhGRSaRMwBPwzhXRbi0iZVhZ1zEhOGxvdFAyjoyjx188PkMU/Hy+lY3x2bVmlTtCZQ=
+	t=1729007955; cv=none; b=hwrunH2/HecWXnBF5L/2/DW6Uqk3uBmWJG7BN+bE2on0JjFhIsiV8lqEvFSJO1Xc9vo4eEupoNAApkIFrFKyaT3qJM9/2W4x/iplxfJXfV2mF1OSspGE43FTRIZniRliIk+iA++jh3lcBcetw6toDSBpLBg6GydfIzrlIDHRRl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729007940; c=relaxed/simple;
-	bh=Ufoea8S6uikhI6YFc1QTKMiy+3BtUZ/7Cg2cwFKix3Q=;
+	s=arc-20240116; t=1729007955; c=relaxed/simple;
+	bh=XE41Ka7vKxZjagEXLHac+Fwc56DYu0ANyHcZAa6jXdw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QLdXWnbseLoZ/DL7C0in/e02aZr8oCCZFwbRQnJwBbEs6UCR+NymoDSVYnUIfC5lMzumum0H9TlbmVY2kgemTE0oYWxX03AvcgkVOu2ZUokZ+DuC1NsO8UqhUos0kv3kFBmPFoESkORTrC//QpE2J29mSNJmopARcPAKjux71v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c1lrf8Lf; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb498a92f6so28312931fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:58:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=TB2X5Owjl6MslV9F8i/MhUESWJkB2nzzzWT+qNCdUsI1tp4swhjkOpbq0OrZnUBx8HrroHE1rA6xqJOpzyskNARvfTHBWS4JfDEdUGoJf1wgwJ76uFUstmm4mEuaG2XBdJSIwoIkTEDeW+/cO9roEqFGxdt2l6PbD1kuqBacjWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=InYUrCyF; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-45fb0ebb1d0so723081cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729007935; x=1729612735; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729007953; x=1729612753; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f8q7MgnvGlQX6akYRxirKYZTLEprABkBbW76qdniZOI=;
-        b=c1lrf8LfOXaMFknfH6JMdz53WBVb0IT4h5EGZVN31lY/ZdIvbXQ0cjeb1dgJKNhsUp
-         1zgVKRvo9V35ckD2+9wHRBX4u1AyzeE7/VK3VF6z8LTBkk+3gyU6c1vhLZ44B//iWo6W
-         Tk8ithjezGxU/e8nRSyTBGlhkidtLRDiL8PrA=
+        bh=XE41Ka7vKxZjagEXLHac+Fwc56DYu0ANyHcZAa6jXdw=;
+        b=InYUrCyF1rEOsYNSVAHRT+QpeORYlDOg0R9f1bATZsSE/a5ljFOeiaptj2jum+sDAX
+         0lRFmdxIS1u8eJQ84mnPKZAKR12ik+LepB87gcmnQzz+O/wQ4aUXtrcDTrJ7BIrva3Qs
+         e4V888udjmjBsVm2SW1iyJBPaDueyJ+F/8wUB64Lc5Mj6t1U7IFWzF8Bq9RRUHXIpIMo
+         9JWqc3pNV4MP0D5/NVKhIMZQRSejoDe9qMGSdKd6HddesKjtKw39vr2QWr6hGhA6/Ae7
+         8614dwy8S66dF7jqMN6oOE5yhSU4E9h4YdZkDNe7Y1i5KTZIpj30uX69gXpbhLkgk/u7
+         r2tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729007935; x=1729612735;
+        d=1e100.net; s=20230601; t=1729007953; x=1729612753;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=f8q7MgnvGlQX6akYRxirKYZTLEprABkBbW76qdniZOI=;
-        b=mui5cIz5ovIDHmcfERUBOjVE67zZRWjcvHiiXppBgtfOyKHmcGn0cjEUFGmCndsrZ9
-         Qu0r69cnV+SX/roFY0K6k4O2/6zNDAkeM3rBwxlNzbPbLPTdtnnxhqBYQHDe8iYEsHOl
-         bv71LhPQhLH/4+Z5SPKFZ+uP7nFGb/tt1Exv5y2zPY6CyU2/dMnlsWmzJg1ZG6uVjKcy
-         t8bBdkAFyk9pSCM7mKM0riGCeZ74IuNGTOGGNRkhcvWQnYPx2bU5XfZytxahIz6WdBvT
-         jjJ6YvyuaJj9ufPd8k7gEcwAVU1WicVHYUcKvq/XXX1x8UX8QefZ0GLYo89HYB3x/Qdh
-         WVMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaGd+lOeQLFYuxQ4pYhHcodCrTBn+T0hGhUyat5lRNNeLjwrKD8B3rKsAM8tU8+NRhaV1ebcMVO4rmjB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMfxfALlmiIxCXkKGJ+Vs+nfKDS/KjFzVqhPfEeucEAUVzu29+
-	76wgdTS6sn9W9/DNfIda28DIcjDNc5aHa9w4va7nEy41c9jifMRKJbhgcSANdlXIjAcKxaxudmT
-	BMA==
-X-Google-Smtp-Source: AGHT+IHlZpDyIbVZyzFbbHrwBzzLSko32Ml0SM5h4NqS67nL/nf6rmXRocpKWBv23TQzJLQ29rEujA==
-X-Received: by 2002:a2e:a549:0:b0:2fb:58c0:de5b with SMTP id 38308e7fff4ca-2fb61b4c19amr6888611fa.11.1729007934620;
-        Tue, 15 Oct 2024 08:58:54 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb5d0fe135sm1899651fa.4.2024.10.15.08.58.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 08:58:54 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f72c913aso2640401e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:58:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVuB3Y/AEDQIvFJ94sMvQESmGUVOlcB+68QuaJvM6q6DH/i9cg3fOyunuLqH/CZcruqQuwQ4c8mVymz6WU=@vger.kernel.org
-X-Received: by 2002:a05:6512:692:b0:530:c212:4a5a with SMTP id
- 2adb3069b0e04-53a03f1af4amr688286e87.22.1729007932572; Tue, 15 Oct 2024
- 08:58:52 -0700 (PDT)
+        bh=XE41Ka7vKxZjagEXLHac+Fwc56DYu0ANyHcZAa6jXdw=;
+        b=Pf3wurLRE0ldMKgl0BR3Vkppj+JpJY+xyO62iHQdYosaXcqkU1r5DPsOEFr2BPclRm
+         HoQ41N6CQY/0m30lB3t01omMcnuCyw7aUux84Q8ol439qsqo10WMNq36goPLDDOo9BQD
+         nHtlb+22uFmCpmZLN9t4LmsD1+kuYOeJ0ibnO4T3RPq7oV9wWoixBlVCWY2bOzwy4c3e
+         2jkvkXRL8haevLrhCFBHxc2S3A7P62T7T/zfrhFJIXK6eF0RQeAbpITVccR/0K9SF61V
+         yeaVOvL1uaXSeIzH26KinWDiuuBpWn+edMYCtXWntzxgkNZ2irXCJufk/+CmahEU14E2
+         hRVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLC163oCTmuXBHul+0PWqRtullXw/KDM3PBO+khffhEU4pUXkO0Ju+hXHeldt8SF7vOwZfljR5uc+8rrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/vtGS5qf24XlYupFQCxadEmoBPJ9yoYlNKaFFB3aBoS5p9GVj
+	xBF97J+fSr9bdK39UtXbZAY6GdutjIt6doWrkO1/eAfpEjKKiDs/zF3ZIPV+WiEn0A4ZifF1E34
+	Na7cJ1zA5r25p6b4xscN6el1jDixj38IBmvI7
+X-Google-Smtp-Source: AGHT+IF6xgKzdwApAz/tp26tbpQrjDXqxixmCCmxzkzM5PRyG4nrJ8/4jSASshjSbXG9ZNd4t2I6D2nt4kc3vxb6XWk=
+X-Received: by 2002:a05:622a:4b05:b0:453:56e7:c62b with SMTP id
+ d75a77b69052e-46058ec036amr9300601cf.12.1729007952467; Tue, 15 Oct 2024
+ 08:59:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015-color-v1-1-35b01fa0a826@chromium.org>
-In-Reply-To: <20241015-color-v1-1-35b01fa0a826@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 15 Oct 2024 08:58:36 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XrrhUoB9=JuPY2erLMA7S-EREqvP5t8NNuBuUiA4rZjQ@mail.gmail.com>
-Message-ID: <CAD=FV=XrrhUoB9=JuPY2erLMA7S-EREqvP5t8NNuBuUiA4rZjQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Fix color format MACROs in OVL
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
+References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-6-surenb@google.com>
+ <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
+ <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com> <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
+ <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com> <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
+In-Reply-To: <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 15 Oct 2024 08:58:59 -0700
+Message-ID: <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+To: David Hildenbrand <david@redhat.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net, 
+	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
+	xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
+	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Tue, Oct 15, 2024 at 3:30=E2=80=AFAM Hsin-Te Yuan <yuanhsinte@chromium.o=
-rg> wrote:
+On Tue, Oct 15, 2024 at 8:42=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> In commit 9f428b95ac89 ("drm/mediatek: Add new color format MACROs in
-> OVL"), some new color formats are defined in the MACROs to make the
-> switch statement more concise. However, there are typos in these
-> formats MACROs, which cause the return value to be incorrect. Fix the
-> typos to ensure the return value remains unchanged.
-
-Right. I had a little bit of time figuring it out from the commit
-message of the original CL, but I think the commit you're fixing was
-_intended_ to be a noop and just a cleanup. ...but after resolving the
-#defines before and after I can see that it wasn't.
-
-
-> Fix: 9f428b95ac89 ("drm/mediatek: Add new color format MACROs in OVL")
-
-The above syntax isn't quite right. It should be:
-
-Fixes: 9f428b95ac89 ("drm/mediatek: Add new color format MACROs in OVL")
-
-See `Documentation/process/submitting-patches.rst` which talks about
-how to get `git` to format it for you.
-
-
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> ---
->  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> On 15.10.24 16:59, Suren Baghdasaryan wrote:
+> > On Tue, Oct 15, 2024 at 12:32=E2=80=AFAM David Hildenbrand <david@redha=
+t.com> wrote:
+> >>
+> >> On 15.10.24 01:53, John Hubbard wrote:
+> >>> On 10/14/24 4:48 PM, Yosry Ahmed wrote:
+> >>>> On Mon, Oct 14, 2024 at 1:37=E2=80=AFPM Suren Baghdasaryan <surenb@g=
+oogle.com> wrote:
+> >>>>>
+> >>>>> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
+> >>>>> references directly in the page flags. This eliminates memory
+> >>>>> overhead caused by page_ext and results in better performance
+> >>>>> for page allocations.
+> >>>>> If the number of available page flag bits is insufficient to
+> >>>>> address all kernel allocations, profiling falls back to using
+> >>>>> page extensions with an appropriate warning to disable this
+> >>>>> config.
+> >>>>> If dynamically loaded modules add enough tags that they can't
+> >>>>> be addressed anymore with available page flag bits, memory
+> >>>>> profiling gets disabled and a warning is issued.
+> >>>>
+> >>>> Just curious, why do we need a config option? If there are enough bi=
+ts
+> >>>> in page flags, why not use them automatically or fallback to page_ex=
+t
+> >>>> otherwise?
+> >>>
+> >>> Or better yet, *always* fall back to page_ext, thus leaving the
+> >>> scarce and valuable page flags available for other features?
+> >>>
+> >>> Sorry Suren, to keep coming back to this suggestion, I know
+> >>> I'm driving you crazy here! But I just keep thinking it through
+> >>> and failing to see why this feature deserves to consume so
+> >>> many page flags.
+> >>
+> >> My 2 cents: there is nothing wrong about consuming unused page flags i=
+n
+> >> a configuration. No need to let them stay unused in a configuration :)
+> >>
+> >> The real issue starts once another feature wants to make use of some o=
+f
+> >> them ... in such configuration there would be less available for
+> >> allocation tags and the performance of allocations tags might
+> >> consequently get worse again.
+> >
+> > Thanks for the input and indeed this is the case. If this happens, we
+> > will get a warning telling us that page flags could not be used and
+> > page_ext will be used instead. I think that's the best I can do given
+> > that page flag bits is a limited resource.
 >
-> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/me=
-diatek/mtk_disp_ovl.c
-> index 89b439dcf3a6af9f5799487fdc0f128a9b5cbe4a..1632ac5c23d87e1cdc41013a9=
-cf7864728dcb63b 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> @@ -65,8 +65,8 @@
->  #define OVL_CON_CLRFMT_RGB     (1 << 12)
->  #define OVL_CON_CLRFMT_ARGB8888        (2 << 12)
->  #define OVL_CON_CLRFMT_RGBA8888        (3 << 12)
-> -#define OVL_CON_CLRFMT_ABGR8888        (OVL_CON_CLRFMT_RGBA8888 | OVL_CO=
-N_BYTE_SWAP)
-> -#define OVL_CON_CLRFMT_BGRA8888        (OVL_CON_CLRFMT_ARGB8888 | OVL_CO=
-N_BYTE_SWAP)
-> +#define OVL_CON_CLRFMT_ABGR8888        (OVL_CON_CLRFMT_ARGB8888 | OVL_CO=
-N_BYTE_SWAP)
-> +#define OVL_CON_CLRFMT_BGRA8888        (OVL_CON_CLRFMT_RGBA8888 | OVL_CO=
-N_BYTE_SWAP)
+> Right, I think what John is concerned about (and me as well) is that
+> once a new feature really needs a page flag, there will be objection
+> like "no you can't, we need them for allocation tags otherwise that
+> feature will be degraded".
 
-Other than the slightly broken "Fixes" tag, the above looks right to me.
+I do understand your concern but IMHO the possibility of degrading a
+feature should not be a reason to always operate at degraded capacity
+(which is what we have today). If one is really concerned about
+possible future regression they can set
+CONFIG_PGALLOC_TAG_USE_PAGEFLAGS=3Dn and keep what we have today. That's
+why I'm strongly advocating that we do need
+CONFIG_PGALLOC_TAG_USE_PAGEFLAGS so that the user has control over how
+this scarce resource is used.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+>
+> So a "The Lord has given, and the Lord has taken away!" mentality might
+> be required when consuming that many scarce resources, meaning, as long
+> as they are actually unused, use them, but it should not block other
+> features that really need them.
+
+I agree and I think that's what I implemented here. If there are
+enough page flag bits we use them, otherwise we automatically fall
+back to page_ext.
+
+>
+> Does that make sense?
+
+Absolutely and thank you all for the feedback.
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
