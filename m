@@ -1,253 +1,285 @@
-Return-Path: <linux-kernel+bounces-366142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7AB99F155
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2B699F15A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E87B1C2310F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA8F1C22660
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E4A1EF092;
-	Tue, 15 Oct 2024 15:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17181DD0CA;
+	Tue, 15 Oct 2024 15:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IC7N8+ML"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ww0Z9FYv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CCE1D5144;
-	Tue, 15 Oct 2024 15:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7851B393F;
+	Tue, 15 Oct 2024 15:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006496; cv=none; b=D9DmGua9gbn001led9V+8kdmqaiL8makCr2I3ZdQ5LQ4T5fe0DxUsfJBrpMx6y/hUgF0AkFruMWeTkrgImZr5thuTJUwMXCz6HFQ3yZ61E+ULIBI/2Crha5TwHVkViQbTBP3r0m3KejB1XZ9E1ooxfnt3PuFDY3sWQolyDPrI7Q=
+	t=1729006545; cv=none; b=oN6dQaiH0lZqzKo2YJeb1jS8IX7WM+WUNvdwuyJEr7QArPrUJw1HW2ZWmhsbcrqau+vMbuJQSX1SNnhOW8MT6YVlM+Lp7cvgAhL/RL8rlFF8mSPQcTozKyWE8YHEdHr+dn/CHQdcEQzq44h9HClOnRjWWjhl3AnUeoZJRP/5Ryo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006496; c=relaxed/simple;
-	bh=PhRvpPKrx/+TlxkQdY6IJqPpUFZ5XqXmhuDaY9RXZPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hr+T7fM4V9c/QvoBYNSCdeEFsbOMCI0aSSIowa7Gz2JDVyLFUVYgvSoj8w4v0+2ejsrLPQHjFD4JXoZWbobmtSBYY1QIL1qHIHrthVd7+0T6Tejwy/JXUmK45fQBnZE+6HKwm6B+Uy1p4ZeNpBWqe4UlWHw1g2l/Tj20ymjpYZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IC7N8+ML; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA198C4CEC6;
-	Tue, 15 Oct 2024 15:34:55 +0000 (UTC)
+	s=arc-20240116; t=1729006545; c=relaxed/simple;
+	bh=0l6KkvoDwX3UCktk+Bgp5F5kNFErOuVuyCFTPC5R9pQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JsVRN03Gl6cHu9GDUw0icBPjXyhhWiiyL8GqjkUu2VUAlpC+1Er7WsvBW4JhWCVGdpzObY/VOfTAzkWZSJyh7DPoElQGCoYiH+d6RAvPHJUChpfVjQgzBmcQwnwwi30JXHQ+GDRTxOiJKpcLvKOhuemCyHIZ/oM7KYCypx9cm0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ww0Z9FYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77104C4CED2;
+	Tue, 15 Oct 2024 15:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729006495;
-	bh=PhRvpPKrx/+TlxkQdY6IJqPpUFZ5XqXmhuDaY9RXZPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IC7N8+MLCIXEQWLyo1LhMNCFV9jtw5dMvV9M+EryVmtYPYOwRtgC8MFFPq27V3ZB7
-	 8XQDXUJaQMf3an0IBFfOlGwwYNQ+0diMmD0AAR+QbwKb4uxNifo8rUbHQ5X3EBV7yZ
-	 d7T9pVLm8Vq34TFyXih4nnOxSc9MnTkIW7edxg+JYN8+fkCiyyntiq9BVhv0VBjGJJ
-	 MV0O30dCGPj5cfgoRt2ykuUVJnckN/nv0itIoAPz7Za8CTqYiOkUNsAtk8+J2PYNqr
-	 yLb89G6V9tKtEheYNGtDmj6b1XTuVVewYcM8SdqeWzCSqEw1c7CReMMYqbCTUTriPM
-	 zGFFmAvDmqmlg==
-Date: Tue, 15 Oct 2024 10:34:54 -0500
-From: Rob Herring <robh@kernel.org>
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-Cc: aisheng.dong@nxp.com, andy@black.fi.intel.com, catalin.marinas@arm.com,
-	devicetree@vger.kernel.org, hch@lst.de, iommu@lists.linux.dev,
-	kernel@quicinc.com, klarasmodin@gmail.com,
-	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-	quic_ninanaik@quicinc.com, robin.murphy@arm.com,
-	saravanak@google.com, will@kernel.org
-Subject: Re: [PATCH v10 0/2] Dynamic Allocation of the reserved_mem array
-Message-ID: <20241015153454.GA982004-robh@kernel.org>
-References: <20241008220624.551309-1-quic_obabatun@quicinc.com>
+	s=k20201202; t=1729006544;
+	bh=0l6KkvoDwX3UCktk+Bgp5F5kNFErOuVuyCFTPC5R9pQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ww0Z9FYv4+QykZ/JTQgGhst8EkSaXcEhi3dGYtIEfapusJzAYgSjbLwc3icb9PAXD
+	 /jxbGdYqxmmTY3MbgfkdU0btL7Q6WckGSeD1QCEitPrv/+fMdZLBFWMUHpFTJcne6z
+	 /v1kP4HCc9uQUoS1Rnv9hfNbtJLYzI+cTUdUV0F9cjuWDK6snyAIV9qpOZm1p/rymU
+	 xK2aOtUzHLy02Z1bBSvmW64MOSl7rrAQIV1kcNjrnzohlEWb5HQMhureiHCfePY58w
+	 KK7fyPTSz/kmg6JV/deSKydaJbCNCBWY82TjL7O3va5ieUqO7/qwMiAHI7p7wC28q2
+	 4/+24pFLWPJRw==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e803a9f208so3179149eaf.0;
+        Tue, 15 Oct 2024 08:35:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUNd90erj5R5gsX+19wA6W7K5xFRsX7TCwVGve5sLbMsdg5aj5P2kteDloqIXsVnO0LINnRueOUDaid@vger.kernel.org, AJvYcCW+Mtpcx2rnfBV2EaYPFvvuSnbZIZDrtZ1tc9nuk1GSXa5Ruv4D6zuRCdWRLVNjWvfHHj+a1PBIyzjd@vger.kernel.org, AJvYcCWZtBJKO/tLljnto6kT9AsHTbjSUxm+IJxRIGJg9tBFq7yvVL6V40Lyr2geMWhFH4vVtfPVXyx6FfMvfg==@vger.kernel.org, AJvYcCX1+BaSbddgoZp5iXyKsE13sMxnG1Pe5Dj2mOCt84PaQ5V/tY4DVQ+XDIZpQFois5jTSzlCiIcBZvr1Nbr5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdvUbDHJlqC8RStoZg7gDIYTMaaF7vySDPyph5JdQ3KQ9h3sZv
+	YNduz0vJxMX4Xoqb5Wc2lzdk1HfniENVZLBhCJB2tqroF1Dnmbi9Kxfe1IuLknao8oqGOAUDT1o
+	BuxGrCIFmIPZtTaBWUZTERqQOPKo=
+X-Google-Smtp-Source: AGHT+IHFJh9rxSSaZMQcEQN8RDT7AyJeT13P5MvWKfMRdXo+P+Zu/PYJqtqAb/El25D+k7E4jFV6XBFJxO90UnNUNlk=
+X-Received: by 2002:a05:6820:212:b0:5df:83a7:9ddf with SMTP id
+ 006d021491bc7-5eb1884dc96mr8268797eaf.0.1729006543638; Tue, 15 Oct 2024
+ 08:35:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008220624.551309-1-quic_obabatun@quicinc.com>
+References: <20241009124120.1124-1-shiju.jose@huawei.com> <20241009124120.1124-13-shiju.jose@huawei.com>
+ <20241014164339.00003e73@Huawei.com> <2024101410-turf-junior-7739@gregkh>
+ <2024101451-reword-animation-2179@gregkh> <20241014181654.00005180@Huawei.com>
+ <CAJZ5v0j-mwZmuciSTaL8MyAp530y=n9HbQ=uVvcnvGLR1n+YuQ@mail.gmail.com>
+ <20241015101025.00005305@Huawei.com> <20241015104021.00002906@huawei.com>
+ <2024101517-bubbling-deploy-1be0@gregkh> <CAJZ5v0iyc5gvpXjpZdmv-vh8+haPENz+UBXVSF6UDBCRT12fMg@mail.gmail.com>
+ <20241015151947.00006a4f@Huawei.com>
+In-Reply-To: <20241015151947.00006a4f@Huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 15 Oct 2024 17:35:31 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iRzFQ4EaHKjs0oirmh1HpkONz--JKYB3oLrT84A+XXzA@mail.gmail.com>
+Message-ID: <CAJZ5v0iRzFQ4EaHKjs0oirmh1HpkONz--JKYB3oLrT84A+XXzA@mail.gmail.com>
+Subject: Re: [PATCH v13 12/18] platform: Add __free() based cleanup function
+ for platform_device_put
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, linuxarm@huawei.com, 
+	shiju.jose@huawei.com, linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	bp@alien8.de, tony.luck@intel.com, lenb@kernel.org, mchehab@kernel.org, 
+	dan.j.williams@intel.com, dave@stgolabs.net, dave.jiang@intel.com, 
+	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com, 
+	david@redhat.com, Vilas.Sridharan@amd.com, leo.duran@amd.com, 
+	Yazen.Ghannam@amd.com, rientjes@google.com, jiaqiyan@google.com, 
+	Jon.Grimm@amd.com, dave.hansen@linux.intel.com, naoya.horiguchi@nec.com, 
+	james.morse@arm.com, jthoughton@google.com, somasundaram.a@hpe.com, 
+	erdemaktas@google.com, pgonda@google.com, duenwen@google.com, 
+	gthelen@google.com, wschwartz@amperecomputing.com, 
+	dferguson@amperecomputing.com, wbs@os.amperecomputing.com, 
+	nifan.cxl@gmail.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com, 
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com, 
+	wanghuiqiang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 08, 2024 at 03:06:22PM -0700, Oreoluwa Babatunde wrote:
-> The reserved_mem array is used to store data for the different
-> reserved memory regions defined in the DT of a device.  The array
-> stores information such as region name, node reference, start-address,
-> and size of the different reserved memory regions.
-> 
-> The array is currently statically allocated with a size of
-> MAX_RESERVED_REGIONS(64). This means that any system that specifies a
-> number of reserved memory regions greater than MAX_RESERVED_REGIONS(64)
-> will not have enough space to store the information for all the regions.
-> 
-> This can be fixed by making the reserved_mem array a dynamically sized
-> array which is allocated using memblock_alloc() based on the exact
-> number of reserved memory regions defined in the DT.
-> 
-> On architectures such as arm64, memblock allocated memory is not
-> writable until after the page tables have been setup.
-> This is an issue because the current implementation initializes the
-> reserved memory regions and stores their information in the array before
-> the page tables are setup. Hence, dynamically allocating the
-> reserved_mem array and attempting to write information to it at this
-> point will fail.
-> 
-> Therefore, the allocation of the reserved_mem array will need to be done
-> after the page tables have been setup, which means that the reserved
-> memory regions will also need to wait until after the page tables have
-> been setup to be stored in the array.
-> 
-> When processing the reserved memory regions defined in the DT, these
-> regions are marked as reserved by calling memblock_reserve(base, size).
-> Where:  base = base address of the reserved region.
->         size = the size of the reserved memory region.
-> 
-> Depending on if that region is defined using the "no-map" property,
-> memblock_mark_nomap(base, size) is also called.
-> 
-> The "no-map" property is used to indicate to the operating system that a
-> mapping of the specified region must NOT be created. This also means
-> that no access (including speculative accesses) is allowed on this
-> region of memory except when it is coming from the device driver that
-> this region of memory is being reserved for.[1]
-> 
-> Therefore, it is important to call memblock_reserve() and
-> memblock_mark_nomap() on all the reserved memory regions before the
-> system sets up the page tables so that the system does not unknowingly
-> include any of the no-map reserved memory regions in the memory map.
-> 
-> There are two ways to define how/where a reserved memory region is
-> placed in memory:
-> i) Statically-placed reserved memory regions
-> i.e. regions defined with a set start address and size using the
->      "reg" property in the DT.
-> ii) Dynamically-placed reserved memory regions.
-> i.e. regions defined by specifying a range of addresses where they can
->      be placed in memory using the "alloc_ranges" and "size" properties
->      in the DT.
-> 
-> The dynamically-placed reserved memory regions get assigned a start
-> address only at runtime. And this needs to  be done before the page
-> tables are setup so that memblock_reserve() and memblock_mark_nomap()
-> can be called on the allocated region as explained above.
-> Since the dynamically allocated reserved_mem array can only be
-> available after the page tables have been setup, the information for
-> the dynamically-placed reserved memory regions needs to be stored
-> somewhere temporarily until the reserved_mem array is available.
-> 
-> Therefore, this series makes use of a temporary static array to store
-> the information of the dynamically-placed reserved memory regions until
-> the reserved_mem array is allocated.
-> Once the reserved_mem array is available, the information is copied over
-> from the temporary array into the reserved_mem array, and the memory for
-> the temporary array is freed back to the system.
-> 
-> The information for the statically-placed reserved memory regions does
-> not need to be stored in a temporary array because their starting
-> address is already stored in the devicetree.
-> Once the reserved_mem array is allocated, the information for the
-> statically-placed reserved memory regions is added to the array.
-> 
-> Note:
-> Because of the use of a temporary array to store the information of the
-> dynamically-placed reserved memory regions, there still exists a
-> limitation of 64 for this particular kind of reserved memory regions.
-> >From my observation, these regions are typically small in number and
-> hence I expect this to not be an issue for now.
-> 
-> Patch Versions:
-> 
-> v10:
-> - Rebase patchset on v6.12-rc2.
-> 
-> v9:
-> - fix issue reported from v8:
->   https://lore.kernel.org/all/DU0PR04MB92999E9EEE959DBC3B1EAB6E80932@DU0PR04MB9299.eurprd04.prod.outlook.com/
->   In v8, the rmem struct being passed into __reserved_mem_init_node()
->   was not the same as what was being stored in the reserved_mem array.
->   As a result, information such as rmem->ops was not being stored in
->   the array for these regions.
->   Make changes to pass the same reserved_mem struct into
->   __reserved_mem_init_node() as what is being stored in the reserved_mem
->   array.
-> 
-> v8:
-> https://lore.kernel.org/all/20240830162857.2821502-1-quic_obabatun@quicinc.com/
-> - Check the value of initial_boot_params in
->   fdt_scan_reserved_mem_reg_nodes() to avoid breakage on architectures
->   where this is not being used as was found to be the case for x86 in
->   the issues reported below:
->   https://lore.kernel.org/all/202408192157.8d8fe8a9-oliver.sang@intel.com/
->   https://lore.kernel.org/all/ZsN_p9l8Pw2_X3j3@black.fi.intel.com/
-> 
-> v7:
-> https://lore.kernel.org/all/20240809184814.2703050-1-quic_obabatun@quicinc.com/
-> - Make changes to initialize the reserved memory regions earlier in
->   response to issue reported in v6:
->   https://lore.kernel.org/all/20240610213403.GA1697364@thelio-3990X/
-> 
-> - For the reserved regions to be setup properly,
->   fdt_init_reserved_mem_node() needs to be called on each of the regions
->   before the page tables are setup. Since the function requires a
->   refernece to the devicetree node of each region, we are not able to
->   use the unflattened_devicetree APIs since they are not available until
->   after the page tables have been setup.
->   Hence, revert the use of the unflatten_device APIs as a result of this
->   limitation which was discovered in v6:
->   https://lore.kernel.org/all/986361f4-f000-4129-8214-39f2fb4a90da@gmail.com/
->   https://lore.kernel.org/all/DU0PR04MB9299C3EC247E1FE2C373440F80DE2@DU0PR04MB9299.eurprd04.prod.outlook.com/
-> 
-> v6:
-> https://lore.kernel.org/all/20240528223650.619532-1-quic_obabatun@quicinc.com/
-> - Rebased patchset on top of v6.10-rc1.
-> - Addressed comments received in v5 such as:
->   1. Switched to using relevant typed functions such as
->      of_property_read_u32(), of_property_present(), etc.
->   2. Switched to using of_address_to_resource() to read the "reg"
->      property of nodes.
->   3. Renamed functions using "of_*" naming scheme instead of "dt_*".
-> 
-> v5:
-> https://lore.kernel.org/all/20240328211543.191876-1-quic_obabatun@quicinc.com/
-> - Rebased changes on top of v6.9-rc1.
-> - Addressed minor code comments from v4.
-> 
-> v4:
-> https://lore.kernel.org/all/20240308191204.819487-2-quic_obabatun@quicinc.com/
-> - Move fdt_init_reserved_mem() back into the unflatten_device_tree()
->   function.
-> - Fix warnings found by Kernel test robot:
->   https://lore.kernel.org/all/202401281219.iIhqs1Si-lkp@intel.com/
->   https://lore.kernel.org/all/202401281304.tsu89Kcm-lkp@intel.com/
->   https://lore.kernel.org/all/202401291128.e7tdNh5x-lkp@intel.com/
-> 
-> v3:
-> https://lore.kernel.org/all/20240126235425.12233-1-quic_obabatun@quicinc.com/
-> - Make use of __initdata to delete the temporary static array after
->   dynamically allocating memory for reserved_mem array using memblock.
-> - Move call to fdt_init_reserved_mem() out of the
->   unflatten_device_tree() function and into architecture specific setup
->   code.
-> - Breaking up the changes for the individual architectures into separate
->   patches.
-> 
-> v2:
-> https://lore.kernel.org/all/20231204041339.9902-1-quic_obabatun@quicinc.com/
-> - Extend changes to all other relevant architectures by moving
->   fdt_init_reserved_mem() into the unflatten_device_tree() function.
-> - Add code to use unflatten devicetree APIs to process the reserved
->   memory regions.
-> 
-> v1:
-> https://lore.kernel.org/all/20231019184825.9712-1-quic_obabatun@quicinc.com/
-> 
-> References:
-> [1] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/reserved-memory/reserved-memory.yaml#L79
-> 
-> Oreoluwa Babatunde (2):
->   of: reserved_mem: Restruture how the reserved memory regions are
->     processed
->   of: reserved_mem: Add code to dynamically allocate reserved_mem array
-> 
->  drivers/of/fdt.c             |   5 +-
->  drivers/of/of_private.h      |   3 +-
->  drivers/of/of_reserved_mem.c | 227 +++++++++++++++++++++++++++--------
->  3 files changed, 179 insertions(+), 56 deletions(-)
+On Tue, Oct 15, 2024 at 4:19=E2=80=AFPM Jonathan Cameron
+<Jonathan.Cameron@huawei.com> wrote:
+>
+> On Tue, 15 Oct 2024 15:32:28 +0200
+> "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+>
+> > On Tue, Oct 15, 2024 at 12:17=E2=80=AFPM Greg KH <gregkh@linuxfoundatio=
+n.org> wrote:
+> > >
+> > > On Tue, Oct 15, 2024 at 10:40:54AM +0100, Jonathan Cameron wrote:
+> > > > On Tue, 15 Oct 2024 10:10:25 +0100
+> > > > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+> > > >
+> > > > > On Mon, 14 Oct 2024 20:06:40 +0200
+> > > > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+> > > > >
+> > > > > > On Mon, Oct 14, 2024 at 7:17=E2=80=AFPM Jonathan Cameron
+> > > > > > <Jonathan.Cameron@huawei.com> wrote:
+> > > > > > >
+> > > > > > > On Mon, 14 Oct 2024 18:04:37 +0200
+> > > > > > > Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > > > >
+> > > > > > > > On Mon, Oct 14, 2024 at 06:00:51PM +0200, Greg KH wrote:
+> > > > > > > > > On Mon, Oct 14, 2024 at 04:43:39PM +0100, Jonathan Camero=
+n wrote:
+> > > > > > > > > > On Wed, 9 Oct 2024 13:41:13 +0100
+> > > > > > > > > > <shiju.jose@huawei.com> wrote:
+> > > > > > > > > >
+> > > > > > > > > > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > > > > > > > > >
+> > > > > > > > > > > Add __free() based cleanup function for platform_devi=
+ce_put().
+> > > > > > > > > > >
+> > > > > > > > > > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@hua=
+wei.com>
+> > > > > > > > > > > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> > > > > > > > > > > ---
+> > > > > > > > > > >  include/linux/platform_device.h | 1 +
+> > > > > > > > > > >  1 file changed, 1 insertion(+)
+> > > > > > > > > > >
+> > > > > > > > > > > diff --git a/include/linux/platform_device.h b/includ=
+e/linux/platform_device.h
+> > > > > > > > > > > index d422db6eec63..606533b88f44 100644
+> > > > > > > > > > > --- a/include/linux/platform_device.h
+> > > > > > > > > > > +++ b/include/linux/platform_device.h
+> > > > > > > > > > > @@ -232,6 +232,7 @@ extern int platform_device_add_da=
+ta(struct platform_device *pdev,
+> > > > > > > > > > >  extern int platform_device_add(struct platform_devic=
+e *pdev);
+> > > > > > > > > > >  extern void platform_device_del(struct platform_devi=
+ce *pdev);
+> > > > > > > > > > >  extern void platform_device_put(struct platform_devi=
+ce *pdev);
+> > > > > > > > > > > +DEFINE_FREE(platform_device_put, struct platform_dev=
+ice *, if (_T) platform_device_put(_T))
+> > > > > > > > > > >
+> > > > > > > > > > >  struct platform_driver {
+> > > > > > > > > > >         int (*probe)(struct platform_device *);
+> > > > > > > > > >
+> > > > > > > > > > +CC Greg KH and Rafael.
+> > > > > > > > > >
+> > > > > > > > > > Makes sure to include them on v14 as this needs review =
+from a driver core point
+> > > > > > > > > > of view I think.
+> > > > > > > > >
+> > > > > > > > > Why is this needed for a platform device?  This feels lik=
+e you will have
+> > > > > > > > > to do more work to "keep" the reference on the normal pat=
+h than you to
+> > > > > > > > > today to release the reference on the error path, right? =
+ Have a pointer
+> > > > > > > > > to a patch that uses this?
+> > > > > > > >
+> > > > > > > > Ah, is it this one:
+> > > > > > > >       https://lore.kernel.org/all/20241014164955.00003439@H=
+uawei.com/
+> > > > > > > > ?
+> > > > > > > >
+> > > > > > > > If so, no, that's an abuse of a platform device, don't do t=
+hat, make a
+> > > > > > > > REAL device on the bus that this device lives on.  If it do=
+esn't live on
+> > > > > > > > a real bus, then put it on the virtual bus but do NOT abuse=
+ the platform
+> > > > > > > > device layer for something like this.
+> > > > > > >
+> > > > > > > Ok.  Probably virtual bus it is then.  Rafael, what do you th=
+ink makes sense
+> > > > > > > for a 'feature' that is described only by an ACPI table (here=
+ RAS2)?
+> > > > > > > Kind of similar(ish) to say IORT.
+> > > > > >
+> > > > > > Good question.
+> > > > > >
+> > > > > > I guess it depends on whether or not there are any registers to=
+ access
+> > > > > > or AML to interact with.  If so, I think that a platform device=
+ makes
+> > > > > > sense.
+> > > > >
+> > > > > Unfortunately still a gray area I think.
+> > > > >
+> > > > > This does access mailbox memory addresses, but they are provided
+> > > > > by an existing platform device, so maybe platform device for this
+> > > > > device is still inappropriate :(
+> > > > >
+> > > > > What this uses is:
+> > > > > PCC channel (mailbox in memory + doorbells, etc but that is indir=
+ectly
+> > > > > provided as a service via reference in ACPI to the PCCT table ent=
+ry
+> > > > > allowing this to find the mailbox device - which is a platform
+> > > > > device drivers/mailbox/pcc.c).
+> > > > > Because it's all spec defined content in the mailbox messages, we=
+ don't
+> > > > > have the more flexible (and newer I think) 'register' via operati=
+on region
+> > > > > stuff in AML.
+> > > > >
+> > > > > A wrinkle though.  The mailbox data is mapped into this driver vi=
+a
+> > > > > an acpi_os_ioremap() call.
+> > > > >
+> > > > > So I'm thinking we don't have a strong reason for a platform devi=
+ce
+> > > > > other than 'similarity' to other examples.  Never the strongest r=
+eason!
+> > > > >
+> > > > > We'll explore alternatives and see what they end up looking like.
+> > > > >
+> > > > > Jonathan
+> > > > >
+> > > >
+> > > > Greg,
+> > > >
+> > > > I'm struggling a little to figure out how you envision the virtual =
+bus
+> > > > working here.  So before we spend too much time implementing the wr=
+ong thing
+> > > > as it feels non trivial, let me check my understanding.
+> > > >
+> > > > Would this mean registering a ras2 bus via subsys_virtual_register(=
+).
+> > > > (Similar to done for memory tiers)
+> > >
+> > > It should show up under /sys/devices/virtual/ is what I mean.
+> > >
+> > > > On that we'd then add all the devices: one per RAS2 PCC descriptor =
+(these
+> > > > are one per independent feature). Each feature has its own mailbox =
+sub
+> > > > channel (via a reference to the PCC mailbox devices .
+> > > > Typically you have one of these per feature type per numa node, but
+> > > > that isn't guaranteed.  That will then need wiring up with bus->pro=
+be() etc
+> > > > so that the RAS2 edac feature drivers can find this later and bind =
+to it to
+> > > > register with edac etc.
+> > > >
+> > > > So spinning up a full new bus, to support this?  I'm not against th=
+at.
+> > >
+> > > No, again, see how the stuff that shows up in /sys/devices/virtual
+> > > works, that should be much simpler.
+> > >
+> > > But really, as this is a "bus", just make a new one.  I don't underst=
+and
+> > > why ACPI isn't creating your devices for you, as this is ACPI code,
+> > > perhaps just fix that up instead?  That would make much more sense to
+> > > me...
+> >
+> > Because it is a data-only table, not AML.
+> >
+> > It looks to me like this could be an auxiliary device, similar to the
+> > Intel VSEC driver: see intel_vsec_add_aux() etc.
+> >
+>
+> That was in the other branch of the thread abbreviated as auxbus.
+> My concern with that approach is we have no parent device and the
+> auxiliary bus is always described as being for sub parts of a
+> compound device. In the intel_vsec case there is always a parent
+> pci device or platform device.
+>
+> I don't think there is any functional requirement for a real parent,
+> it just feels like abuse given the stated purpose of auxiliary bus.
+> Greg, auxiliary bus or separate acpi_ras2 bus feel better to you?
+>
+> We'd need to parent it off something to avoid the check in
+> auxiliary_device_init() + all devices should have a parent anyway.
 
-Applied, thanks.
-
-Rob
+Wouldn't that be the platform device providing the mailbox memory
+addresses mentioned in one of the previous messages?
 
