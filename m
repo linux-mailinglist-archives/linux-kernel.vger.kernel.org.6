@@ -1,103 +1,248 @@
-Return-Path: <linux-kernel+bounces-365176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9E799DE9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B020399DEA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B1528299A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7094128349F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B5018A6DB;
-	Tue, 15 Oct 2024 06:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E8918A950;
+	Tue, 15 Oct 2024 06:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aHOMS+zf"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="u/1YDoDf"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7C7189BBF;
-	Tue, 15 Oct 2024 06:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E0118A6A7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728974560; cv=none; b=Sw5C9sRdFPZO7cMnYFPrULHv4hqQJ7l33BYmqC+eCPtvYpPX3M5w5D+4b81ssFakovaGzHTwBdfwswW2A2hNDaQzqhqV562mELlEBVgMhNynEySqJH/LTOrumqPKyG/2mcBBulmRzoAsjTkOpX8RjpFENtNqD4Zo0n2XZbeMIDc=
+	t=1728974589; cv=none; b=CRR8xmUz8q2Q7o+o5AQF86cwV/PoynqHqw2nqHvgOLfVvojgT4zPmgB7d5likrYJ+sAZ/A28lbSjWEPZVM8nPt4UFmnKkZy+BvozDcHoQo0eq7nh7PgPv+8SwYhhzTUpeVPXCzwRZKD7IaRj5hcOfJjtkZKnidVEhoE9LaXI/7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728974560; c=relaxed/simple;
-	bh=aiXNLSRhQN0z1MRO9ms2eURg5IDM20JVzKogOwDL9+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e5qdMDidjKt5KARuGeEnp7vyIFhomQDnQ16RplqZpI+j/I3BVbOHR0LNHzBfslXIdwftNXk8Sc7zcE1x2lmpaZoW3aQrrFYuh3VAvOU1FQ6jyYDOfbS/wNaSqjeGwuoZNc563zK9Jb0PM/O8sYCtypS8LN9P1U/xMK/p216TOSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aHOMS+zf; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MQf6eU49nzCPx7wGCmxXqAfm87s3A8uKXv6OumyhoYM=; b=aHOMS+zf8Iz6zGFDFvEkw7RZrK
-	h3McXlcOlpgV4Ay57ILIK+BqQtcwyVMydca+eLBCkcjPFB4O2WzKik2NKswWrtmRvwKc/zPNq3Xep
-	VKutjVCFSUW1UPvtPtm2VkuMZgHNQs1ne8fvyI8+HCuzW/xBeP10XYyAxHsSGA86a21HyfG6EEZlV
-	387WcH3NCDww/fA0OTZt6+TW+RbDRzxhsBpUzX4hu/yIzndNUYTjSFsj6X5y21G7Cgn6VdRTuTVf4
-	vLV2h5ZDCscac2BbJIlAToVGeqL/Ffmk7Xv2KuuGiRSsflDYlR69TVWCY2ES5u4vr5b4BboZ/JWoE
-	Wy33STMg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t0bGP-00000007F6f-3YZB;
-	Tue, 15 Oct 2024 06:42:37 +0000
-Date: Mon, 14 Oct 2024 23:42:37 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Song Liu <song@kernel.org>,
-	bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
- cover security.bpf xattr names
-Message-ID: <Zw4O3cqC6tlr5Kty@infradead.org>
-References: <20241002214637.3625277-1-song@kernel.org>
- <20241002214637.3625277-3-song@kernel.org>
- <Zw34dAaqA5tR6mHN@infradead.org>
- <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
- <Zw384bed3yVgZpoc@infradead.org>
- <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
+	s=arc-20240116; t=1728974589; c=relaxed/simple;
+	bh=q4pOo0mKq9PHvAzEjAZuBGJwLjJ61GOeJjV0JBSuu0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ltyOgwKB+URhh7M66/mTCRdhyKjgy/Oz7savQ41kPwPG0qThk/LGPTd8krHWtZDeq5FIih76ALdBc00UVkN6lqQa7tAbLantP18kPTKYJRkczJhoo8w/adFAy9wrqyA54+MUpWWppMMQfrY0UJsiQwMVrILfY6nQAcx+TMUpEOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=u/1YDoDf; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a1a90bd015so13695055ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1728974587; x=1729579387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iyYlnfYOujvvEy5NpJ15tZ1d57xVnxV002iUwSLbYqo=;
+        b=u/1YDoDflZ3z8/KJlDBBugq3/PUx5GBdjHA3FGjagXCW8fBHm7XKQNEv5h378QW4SW
+         XkOFQOin3x/i/fSd23LjVYeOuz5Fa8NHLeHNrHqJzDP5ZOe7dlZfmnlG9fwDSRXNgQga
+         nAG6UbhKnYQaf664yYPZcH1+NDU1Fq3d5hHr9HMxSuViozhXavQZZoVMFQojt3Te5wTy
+         RD4diIoHulJozY6R9tSKawIZQBNI6TYZGu5PX3uupB5W4uOB0A78HuecG4zSyVaW6eJc
+         6pLea2w8Z7a7WfM/v3KUpWs7IFHgEP19bBqpSnjFlvWusdIvVtY662ddnzYMIAMcr+jd
+         PvYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728974587; x=1729579387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iyYlnfYOujvvEy5NpJ15tZ1d57xVnxV002iUwSLbYqo=;
+        b=eg3Jh72QkmyNf7N9rvLo90lEduSlv5TYFSfZ9MpjLFUfwqA1m2pW71aALdJzj17F25
+         2P9s1pNm2hHzCmESRfdKjNeUdlU2sexlFVIXP6wOsEDixvNzxbuDfi41KYA81zdg6FHX
+         wGel++tJP7UPTodMzwJ2rahAKfWDQ03Kks4twaeG/fLm2kD9rd53C66Xu7Q0vUkdDzlR
+         imwQRc4/uNpgticbv8Y72NMp4yDQ6xWqxNX3pGLdOWZUk7NVFQ1okDzEyVpSpMymx9fg
+         /8UHsB+AUz63h8ELHQTQG1oe8GQ6gjhnKrWWPspLZhYYXXKfPXd+NZFsK87kzNyujGjJ
+         XoTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGisJiwRfRApcbaFVBIVd/Erzp/zSwf2dNqmdbCLXg2T6uNQ44ly1A4bq/8H2bf9jht1+HCm+AW27WLPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyfdSwK/jixJbR9y+m3Evw5P/KA4wDLDZne9g6MglB20GaZoSh
+	YSXIiU2JOMGVQ8sOVF2Ca83Fn4V2iDnE49er9UcT2vLmwSn/e79suQU2mh2IMVMpZbXpeDFXZzB
+	jij1cf00ITrgi0QY7Cq+vwt5t50ee49+gkzgW8Q==
+X-Google-Smtp-Source: AGHT+IGvQbC0/b5Ce2YbvHlkhebuCb+KYoHY5qbt65xUQ/y6bbyBicbUVY5plLRK82lv2VCEPUGhaowNVLFLGqH6YzQ=
+X-Received: by 2002:a05:6e02:b44:b0:3a1:f549:7272 with SMTP id
+ e9e14a558f8ab-3a3b5fc3bafmr104253155ab.23.1728974587112; Mon, 14 Oct 2024
+ 23:43:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <cover.1728957131.git.zhouquan@iscas.ac.cn>
+In-Reply-To: <cover.1728957131.git.zhouquan@iscas.ac.cn>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 15 Oct 2024 12:12:55 +0530
+Message-ID: <CAAhSdy1nmpiSfi-9B0ZXS9s6CYs_R9YZfd6rrXNc-BQHucm6ww@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] riscv: Add perf support to collect KVM guest
+ statistics from host side
+To: zhouquan@iscas.ac.cn
+Cc: ajones@ventanamicro.com, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 05:52:02AM +0000, Song Liu wrote:
-> >> Do you mean user.* xattrs are untrusted (any user can set it), so we 
-> >> should not allow BPF programs to read them? Or do you mean xattr 
-> >> name "user.kfuncs" might be taken by some use space?
-> > 
-> > All of the above.
-> 
-> This is a selftest, "user.kfunc" is picked for this test. The kfuncs
-> (bpf_get_[file|dentry]_xattr) can read any user.* xattrs. 
-> 
-> Reading untrusted xattrs from trust BPF LSM program can be useful. 
-> For example, we can sign a binary with private key, and save the
-> signature in the xattr. Then the kernel can verify the signature
-> and the binary matches the public key.
+On Tue, Oct 15, 2024 at 8:28=E2=80=AFAM <zhouquan@iscas.ac.cn> wrote:
+>
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+>
+> Add basic guest support to RISC-V perf, enabling it to distinguish
+> whether PMU interrupts occur in the host or the guest, and then
+> collect some basic guest information from the host side
+> (guest os callchain is not supported for now).
+>
+> Based on the x86/arm implementation, tested with kvm-riscv.
+> test env:
+> - host: qemu-9.0.0
+> - guest: qemu-9.0.0 --enable-kvm (only start one guest and run top)
+>
+> -----------------------------------------
+> 1) perf kvm top
+> ./perf kvm --host --guest \
+>   --guestkallsyms=3D/<path-to-kallsyms> \
+>   --guestmodules=3D/<path-to-modules> top
+>
+> PerfTop:      41 irqs/sec  kernel:97.6% us: 0.0% guest kernel: 0.0% guest=
+ us: 0.0% exact:  0.0% [250Hz cycles:P],  (all, 4 CPUs)
+> -------------------------------------------------------------------------=
+------
+>
+>     64.57%  [kernel]        [k] default_idle_call
+>      3.12%  [kernel]        [k] _raw_spin_unlock_irqrestore
+>      3.03%  [guest.kernel]  [g] mem_serial_out
+>      2.61%  [kernel]        [k] handle_softirqs
+>      2.32%  [kernel]        [k] do_trap_ecall_u
+>      1.71%  [kernel]        [k] _raw_spin_unlock_irq
+>      1.26%  [guest.kernel]  [g] do_raw_spin_lock
+>      1.25%  [kernel]        [k] finish_task_switch.isra.0
+>      1.16%  [kernel]        [k] do_idle
+>      0.77%  libc.so.6       [.] ioctl
+>      0.76%  [kernel]        [k] queue_work_on
+>      0.69%  [kernel]        [k] __local_bh_enable_ip
+>      0.67%  [guest.kernel]  [g] __noinstr_text_start
+>      0.64%  [guest.kernel]  [g] mem_serial_in
+>      0.41%  libc.so.6       [.] pthread_sigmask
+>      0.39%  [kernel]        [k] mem_cgroup_uncharge_skmem
+>      0.39%  [kernel]        [k] __might_resched
+>      0.39%  [guest.kernel]  [g] _nohz_idle_balance.isra.0
+>      0.37%  [kernel]        [k] sched_balance_update_blocked_averages
+>      0.34%  [kernel]        [k] sched_balance_rq
+>
+> 2) perf kvm record
+> ./perf kvm --host --guest \
+>   --guestkallsyms=3D/<path-to-kallsyms> \
+>   --guestmodules=3D/<path-to-modules> record -a sleep 60
+>
+> [ perf record: Woken up 3 times to write data ]
+> [ perf record: Captured and wrote 1.292 MB perf.data.kvm (17990 samples) =
+]
+>
+> 3) perf kvm report
+> ./perf kvm --host --guest \
+>   --guestkallsyms=3D/<path-to-kallsyms> \
+>   --guestmodules=3D/<path-to-modules> report -i perf.data.kvm
+>
+> # Total Lost Samples: 0
+> #
+> # Samples: 17K of event 'cycles:P'
+> # Event count (approx.): 269968947184
+> #
+> # Overhead  Command          Shared Object            Symbol
+> # ........  ...............  .......................  ...................=
+...........................
+> #
+>     61.86%  swapper          [kernel.kallsyms]        [k] default_idle_ca=
+ll
+>      2.93%  :6463            [guest.kernel.kallsyms]  [g] do_raw_spin_loc=
+k
+>      2.82%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_out
+>      2.11%  sshd             [kernel.kallsyms]        [k] _raw_spin_unloc=
+k_irqrestore
+>      1.78%  :6462            [guest.kernel.kallsyms]  [g] do_raw_spin_loc=
+k
+>      1.37%  swapper          [kernel.kallsyms]        [k] handle_softirqs
+>      1.36%  swapper          [kernel.kallsyms]        [k] do_idle
+>      1.21%  sshd             [kernel.kallsyms]        [k] do_trap_ecall_u
+>      1.21%  sshd             [kernel.kallsyms]        [k] _raw_spin_unloc=
+k_irq
+>      1.11%  qemu-system-ris  [kernel.kallsyms]        [k] do_trap_ecall_u
+>      0.93%  qemu-system-ris  libc.so.6                [.] ioctl
+>      0.89%  sshd             [kernel.kallsyms]        [k] __local_bh_enab=
+le_ip
+>      0.77%  qemu-system-ris  [kernel.kallsyms]        [k] _raw_spin_unloc=
+k_irqrestore
+>      0.68%  qemu-system-ris  [kernel.kallsyms]        [k] queue_work_on
+>      0.65%  sshd             [kernel.kallsyms]        [k] handle_softirqs
+>      0.44%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_in
+>      0.42%  sshd             libc.so.6                [.] pthread_sigmask
+>      0.34%  :6462            [guest.kernel.kallsyms]  [g] serial8250_tx_c=
+hars
+>      0.30%  swapper          [kernel.kallsyms]        [k] finish_task_swi=
+tch.isra.0
+>      0.29%  swapper          [kernel.kallsyms]        [k] sched_balance_r=
+q
+>      0.29%  sshd             [kernel.kallsyms]        [k] __might_resched
+>      0.26%  swapper          [kernel.kallsyms]        [k] tick_nohz_idle_=
+exit
+>      0.26%  swapper          [kernel.kallsyms]        [k] sched_balance_u=
+pdate_blocked_averages
+>      0.26%  swapper          [kernel.kallsyms]        [k] _nohz_idle_bala=
+nce.isra.0
+>      0.24%  qemu-system-ris  [kernel.kallsyms]        [k] finish_task_swi=
+tch.isra.0
+>      0.23%  :6462            [guest.kernel.kallsyms]  [g] __noinstr_text_=
+start
+>
+> ---
+> Change since v3:
+> - Rebased on v6.12-rc3
+>
+> Change since v2:
+> - Rebased on v6.11-rc7
+> - Keep the misc type consistent with other architectures as `unsigned lon=
+g` (Andrew)
+> - Add the same comment for `kvm_arch_pmi_in_guest` as in arm64. (Andrew)
+>
+> Change since v1:
+> - Rebased on v6.11-rc3
+> - Fix incorrect misc type (Andrew)
+>
+> ---
+> v3 link:
+> https://lore.kernel.org/all/cover.1726126795.git.zhouquan@iscas.ac.cn/
+> v2 link:
+> https://lore.kernel.org/all/cover.1723518282.git.zhouquan@iscas.ac.cn/
+> v1 link:
+> https://lore.kernel.org/all/cover.1721271251.git.zhouquan@iscas.ac.cn/
+>
+> Quan Zhou (2):
+>   riscv: perf: add guest vs host distinction
+>   riscv: KVM: add basic support for host vs guest profiling
+>
+>  arch/riscv/include/asm/kvm_host.h   | 10 ++++++++
+>  arch/riscv/include/asm/perf_event.h |  6 +++++
+>  arch/riscv/kernel/perf_callchain.c  | 38 +++++++++++++++++++++++++++++
+>  arch/riscv/kvm/Kconfig              |  1 +
+>  arch/riscv/kvm/main.c               | 12 +++++++--
+>  arch/riscv/kvm/vcpu.c               |  7 ++++++
+>  6 files changed, 72 insertions(+), 2 deletions(-)
 
-I would expect that to be done through an actual privileged interface.
-Taking an arbitrary name that was available for use by user space
-programs for 20 years and now giving it a new meaning is not a good
-idea.
+Please include Reviewed-by tags obtained on previous patch revisions.
 
+Queued this series for Linux-6.13
+
+Regards,
+Anup
+
+>
+>
+> base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+> --
+> 2.34.1
+>
 
