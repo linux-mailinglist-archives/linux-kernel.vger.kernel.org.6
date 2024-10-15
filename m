@@ -1,127 +1,124 @@
-Return-Path: <linux-kernel+bounces-365194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C0D99DEDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:57:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB92C99DEE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50C26B23DEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:57:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23815B24564
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878A118B468;
-	Tue, 15 Oct 2024 06:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lRp2p7f8"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CCA1A4E9D;
+	Tue, 15 Oct 2024 06:58:23 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA3614037F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5D818BBAB;
+	Tue, 15 Oct 2024 06:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975452; cv=none; b=l/039+556V1W5iTglKMAGj6zuKdfm5xoNl4efjd880n1MA9hS/6XufA89wwW6FuOKwNstIaSWMJpS3A5gkDhR2cl0fYxmV3u5u+bdncPUC2lJ6gceilHmw/eiX31XtCQRA6ju26mRxy8tzzxTRyy7Oy1zYRqBc22tXWvg87hmnE=
+	t=1728975502; cv=none; b=D4FqU0lYlmJWHm56aX8MOoP0TgDlbYbYx1JRuU1n8eJo25fl05dOC/hTwvdxxITS8X46gnmSYKcP4Wu/7sQQ+tomHJyzW81YEfpSUbU8fKl+A98ALQGbtYnzU+21cFOmuNBCSIjyHvnzdOZ1aDJtaHr6w/qIWEQilqaGbEaZr5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975452; c=relaxed/simple;
-	bh=Y4iYisPE+jBJC8rD/H+PzqkPMgerWST/XJ2cDwjOk2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YO4jG6nPenVB4pqfK2iHn4Q4nt3d3qQ1M8ySInApYJTx0XklYiI/rYLTE4CR6Sevt50f2fjnkRJn3DLSvqTWCnlAthdCDfzZjjruKlSaFEuz9QAzUZ6QQmQ3NczNIsXWH9p7c9J70wTjYXl5Wbdcsnn3P1DNYFelD2lwWIY3kYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lRp2p7f8; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728975448; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=B8nxFyU5YMoHcqu1ZHV4lDe6X80IG0w/RG5iDyYGDEA=;
-	b=lRp2p7f8DzTymk7GEAc/nM5/0/bm+ASyxcRpCwLqy7CT43nR1wknOs6TMOLt2JLzquoWCsyO4Y/Fd/9S6aZBOf2wrFomdtwumVktbCD4jlMvtFxBZxrZ/MSnyYiHl7kcptwFXDEFQ0W5Z8fRewmRz0Wecn1TVM728zmswvzDnr8=
-Received: from 30.221.130.176(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHCKdPH_1728975447 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Oct 2024 14:57:27 +0800
-Message-ID: <f14d3bf9-ae99-40fb-ac4f-a0bd905259e6@linux.alibaba.com>
-Date: Tue, 15 Oct 2024 14:57:26 +0800
+	s=arc-20240116; t=1728975502; c=relaxed/simple;
+	bh=P9MrTrTcqFC6kqabqOk1UqStUxOy6sPc0vuL+9AyT6Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nnitznuoW0LMeUV+WdEf4rRwiB1zefmIYmdAprtHU/EMUuOYou8VtBlelNXkYTtdGY7iJR+FcFYA6OwkF2wVY76IGrqiiR0aF2/LYUmw3ssm3MbW3LBn4t92CCg5AdlVuyvimQ0lDZhistjr1oFSN4if1kXvNo5+QwCVROyoX4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e2e41bd08bso51771397b3.2;
+        Mon, 14 Oct 2024 23:58:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728975498; x=1729580298;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g9ZJm1Xd625FdxJzOYOI4sM0DLZMI3AC9koPfqu1w8M=;
+        b=pGLB8ns1wYzgGuXQYWHly3Orx5R6pJj9gc3V8HqN79JBDNb4/iJaYKVg1+8ngjulHp
+         IqMzYdX7CJz0kf/SdKX3GPaQqaH/4aPp940Nb8igkPXr2OgKiMH5UCSIB5w/kD4Dhjgx
+         /hDWC4By8eo6GgocTCzdHjxm3Byz8tGbTv8TSM1VUiApKAYYe9zEFxS+g9YP5BxI549X
+         ZZiXWA9Q4J46BMcGpNVOZ+gfgNVnj21S1dn4TDxlIbR4oBst6s8ReVyhW1yBTB3pv6sF
+         i27oqGzbOmu/Zxk2piesKhuKni+7YPgG/gboWdP6em6dF1U0WJrTy8E490Et7fZGk2bt
+         IYIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwHoy4m672zZAEeaOgWWnk6YUl6rJSuLo0EsUvWySZRG198MWsyAEZ3AjTPD3vZ8iZXysSbIjTTiVImM4GeN6tWuY=@vger.kernel.org, AJvYcCXTuQSIO9s2dyXtiuTKu4WkjdseHEZWv/wj3GWCgCECcW7pPdX6XdLVbXdeTRunCwR+krathl9T@vger.kernel.org, AJvYcCXxCgvafcve027yo36vBs49wAxK4fbnQ6pEOETzYO1Ml8GeJ4jV+txc9EVm5TLtGRGSxxodDyrwoSibPlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEm8kEAM5J7C3pyumoRkJItB6CMVz/dJG6PgdCgJH7TQNRmR+z
+	sAeRRZH7RxAV95sK8Hby0zC2lLvF1WaCI0hraG/DcxrzrIDRnh7ez8tuZJc9
+X-Google-Smtp-Source: AGHT+IHA+MH43tB9UIrPwzv6bPmRwFFpteWXQmDwBJ2qbk1WkYfI2P/4GdyDgpNMpJ7vr/9CvqDp8g==
+X-Received: by 2002:a05:690c:6711:b0:6db:deb7:d693 with SMTP id 00721157ae682-6e364347ac3mr83851867b3.22.1728975497593;
+        Mon, 14 Oct 2024 23:58:17 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e3c5b52391sm1583577b3.58.2024.10.14.23.58.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 23:58:16 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e29267b4dc4so3016641276.0;
+        Mon, 14 Oct 2024 23:58:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8X0M8jE7t1zVHJkI0CQqwJ5KJIxeavmCJmXr73zzhFmwYGs79mSLTrov6ocDM1bDLDdHljZcUwM06LzQ=@vger.kernel.org, AJvYcCVfswXD1ae6qDfJ7ucfBlOwCs61xfBPlloirAtYyPSl4nytSMAyYsOO0tUpHzIPRKOVrze3aMYLRQR5PSgbYLRS8eM=@vger.kernel.org, AJvYcCWHp95jxOj8KRerAX/6ZjXohF/9rCbm8QZGk2PsvAFzgsb6iTHVsiorVT+SSVzQjYlrRMcksgxk@vger.kernel.org
+X-Received: by 2002:a05:6902:705:b0:e24:cae9:4e39 with SMTP id
+ 3f1490d57ef6-e2931ddba31mr7343624276.51.1728975496145; Mon, 14 Oct 2024
+ 23:58:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] erofs: fix blksize < PAGE_SIZE in fileio mode
-To: Hongzhen Luo <hongzhen@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-References: <20241015064007.3449582-1-hongzhen@linux.alibaba.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20241015064007.3449582-1-hongzhen@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241014144250.38802-1-wanghai38@huawei.com>
+In-Reply-To: <20241014144250.38802-1-wanghai38@huawei.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Oct 2024 08:58:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVsagE1HMf5aLD_ZrubocY_DqX-UrTLxiFOMT+kwVhysg@mail.gmail.com>
+Message-ID: <CAMuHMdVsagE1HMf5aLD_ZrubocY_DqX-UrTLxiFOMT+kwVhysg@mail.gmail.com>
+Subject: Re: [PATCH net] net: ethernet: rtsn: fix potential memory leak in rtsn_start_xmit()
+To: Wang Hai <wanghai38@huawei.com>
+Cc: niklas.soderlund@ragnatech.se, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, andrew@lunn.ch, zhangxiaoxu5@huawei.com, 
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Wang,
 
+On Mon, Oct 14, 2024 at 4:43=E2=80=AFPM Wang Hai <wanghai38@huawei.com> wro=
+te:
+> The rtsn_start_xmit() returns NETDEV_TX_OK without freeing skb
+> in case of skb->len being too long, add dev_kfree_skb_any() to fix it.
+>
+> Fixes: b0d3969d2b4d ("net: ethernet: rtsn: Add support for Renesas Ethern=
+et-TSN")
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
 
-On 2024/10/15 14:40, Hongzhen Luo wrote:
-> In fileio mode, when blcksize is not equal to PAGE_SIZE,
-> erofs will attempt to set the block size of sb->s_bdev,
-> which will trigger a panic. This patch fixes this.
+Thanks for your patch!
 
-Please fix trivial typos:
+> --- a/drivers/net/ethernet/renesas/rtsn.c
+> +++ b/drivers/net/ethernet/renesas/rtsn.c
+> @@ -1057,6 +1057,7 @@ static netdev_tx_t rtsn_start_xmit(struct sk_buff *=
+skb, struct net_device *ndev)
+>         if (skb->len >=3D TX_DS) {
+>                 priv->stats.tx_dropped++;
+>                 priv->stats.tx_errors++;
+> +               dev_kfree_skb_any(skb);
+>                 goto out;
+>         }
 
-erofs: fix blksize < PAGE_SIZE for file-backed mounts
+Does the same apply to the skb_put_padto() failure path below?
 
+drivers/net/ethernet/renesas/rtsn.c-    if (skb_put_padto(skb, ETH_ZLEN))
+drivers/net/ethernet/renesas/rtsn.c-            goto out;
 
-Adjust sb->s_blocksize{,_bits} directly for file-backed
-mounts when the fs block size is smaller than PAGE_SIZE.
+Gr{oetje,eeting}s,
 
-Previously, EROFS used sb_set_blocksize(), which caused
-a panic if bdev-backed mounts is not used.
+                        Geert
 
-> 
-> Fixes: fb176750266a ("erofs: add file-backed mount support")
-> 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Unnecessary blank line.
-
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> ---
-> v2: Add support for blocksize < PAGE_SIZE in file-backed mount mode.
-> v1: https://lore.kernel.org/linux-erofs/20241015033601.3206952-1-hongzhen@linux.alibaba.com/
-> ---
->   fs/erofs/super.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 320d586c3896..abe2d85512dd 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -631,9 +631,15 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->   			errorfc(fc, "unsupported blksize for fscache mode");
->   			return -EINVAL;
->   		}
-> -		if (!sb_set_blocksize(sb, 1 << sbi->blkszbits)) {
-> -			errorfc(fc, "failed to set erofs blksize");
-> -			return -EINVAL;
-> +
-> +		if (erofs_is_fileio_mode(sbi)) {
-> +			sb->s_blocksize = (1 << sbi->blkszbits);
-> +			sb->s_blocksize_bits = sbi->blkszbits;
-> +		} else {
-> +			if (!sb_set_blocksize(sb, 1 << sbi->blkszbits)) {
-> +				errorfc(fc, "failed to set erofs blksize");
-> +				return -EINVAL;
-> +			}
-
-Please use
-
-		} else if (!sb_set_blocksize(sb, 1 << sbi->blkszbits)) {
-			errorfc(fc, "failed to set erofs blksize");
-			return -EINVAL;
-		}
-Here.
-
-Thanks,
-Gao Xiang
-
->   		}
->   	}
->   
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
