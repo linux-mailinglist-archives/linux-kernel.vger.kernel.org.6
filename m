@@ -1,265 +1,272 @@
-Return-Path: <linux-kernel+bounces-365163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7623099DE69
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:31:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A9899DE60
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069B61F2477E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:31:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57090B216A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A53F19CD16;
-	Tue, 15 Oct 2024 06:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9B7189F43;
+	Tue, 15 Oct 2024 06:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="XWmHLOOW"
-Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAK0vwJE"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1837D18BB88;
-	Tue, 15 Oct 2024 06:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FA9189916;
+	Tue, 15 Oct 2024 06:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728973830; cv=none; b=ZSezlf7jNBxSaZXiXpZnPpk1vvo3qeKwp9I7p4+vFriY07te3PaFEHJuTg+9AsvHunB1qLnSKQN6bxqAKdNQ0/WuG3ybgoDArTMY/KpoH3b+2pWtEqPBlyEK15h5grV03nfBsn1KXEp/ckd23CpHH1azRKweAM8nWWYJn3XCN40=
+	t=1728973817; cv=none; b=OOkBkojMsP9Zyio29bAixtt7SACJ3UywhvwoRbHHIt1DQ0zW3Js4Rplr+je5zOBlC3pHNWad8kP0Iief2NvXy+u6Gs20s0+qsSsEt0U11FC9ioEOuw/2tMlvSv328MKfNTnxfxxmjsbMa8W/wxXa4/KZ6098XwUu8u+wVV9lX2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728973830; c=relaxed/simple;
-	bh=AR66/OaRzfYm+EtRABHjuOd2PZp8U59f/SQLoC8FMDw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p6R0MebRzAwwwztPovnIvZohivXVncotsrGDb+tB/Qqqqtmj6NxtEwNm/Ak3SXWY+u2+0jggFlI1MULumn3itA9N8Hgweztnw/AcO9J55bxE0ZgYvS+chD3ZrVyCgCzqxTu53hyRnwRBu0a4b+8Qe3kLTpSxkUaV5fi84YPDo3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=XWmHLOOW; arc=none smtp.client-ip=63.250.43.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4XSPNg5hDfz4wPF;
-	Tue, 15 Oct 2024 06:30:27 +0000 (UTC)
-Received: from igor-systemproductname.lan (83.8.240.202.ipv4.supernova.orange.pl [83.8.240.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4XSPNX5CD2z2x9B;
-	Tue, 15 Oct 2024 06:30:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1728973822;
-	bh=AR66/OaRzfYm+EtRABHjuOd2PZp8U59f/SQLoC8FMDw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XWmHLOOW7rdcYVFXws7im6Z8Z01kmK8YCBZs5uKsNdwgyyxjhKfAL+JMwFNb2jPnN
-	 yLPjOhKBieJBE97uQdJ2+Ec0fqQ37cxuy0+RezAZCGeV6WZsOHucFSw7/mFItl8pe9
-	 fHyjLIJ6ecEjx+L1z/lajdE/olcz33Ht1ICsLFI7fh/PVKfx+alZz1l8b5xZTUWoXm
-	 0CZo8amqzEs+HhBNPadqr+OTvcYlS3P9dhBmycRc6VJgTIh3CMK12X928f2riqlGps
-	 p4y7s+9d9NN99bHXLSzlx9juDixSCGf3PVW5FdoAKh9ur73gN/Nz69b0OPLd6hI6Bq
-	 nEbf5jfoVuf2Q==
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] pinctrl: samsung: Add support for Exynos990 pinctrl
-Date: Tue, 15 Oct 2024 08:30:10 +0200
-Message-ID: <20241015063010.713407-3-igor.belwon@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241015063010.713407-1-igor.belwon@mentallysanemainliners.org>
-References: <20241015063010.713407-1-igor.belwon@mentallysanemainliners.org>
+	s=arc-20240116; t=1728973817; c=relaxed/simple;
+	bh=41Txd5YoLMl6wAv7Qsle+XXPiZ4/UQIHqTjLCoOyMYE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RD3UPy+TBVRFK3m8MvYRQpVlTLePmqpcwhoAgxctzSwpEARTcxSyPYe20+eC/fvzSx/nc/ujrjqC0dSf6tCG7YwmGt3/yMvH05xdzGeGUOFtGMGV+CCfsVrR36akVTgnM9nCzasUqIov+UOcWrqa37oQqY2wcZvnqGIdI57Ijpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAK0vwJE; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d447de11dso3615234f8f.1;
+        Mon, 14 Oct 2024 23:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728973814; x=1729578614; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0/51GjD74rmzWSp7jmO+qgKLOzZqeiFNpacQrj2PkHc=;
+        b=hAK0vwJE1TnvRAkeFUJFV+B7pDF3PdsoNadn6H7lS4oTB1lB4CbjuODHookD29phOZ
+         GY1AgJ06dupGXRyVkIoKaQHJbqA+H1G+bmkeE43UIEMJZqsBq4rQS7aIfw21n5FEzzCE
+         C/GZXhEuTSg03N679fou2OcmtRevKy/2P2kBZ4rtxe1xlOaee0tI690ghY2RNdr1sG2F
+         Xn3KpRc96LapQeYfqRvBwc97V2tiUuGsAa2fUztzaRkQkntRmCNPMLXLriBNwfBa6/PN
+         in7t7TLFo5W1bJcxVKqPe4m5bzUHxN0BxiBWG7JcwylEKySwceX/+shxbSrYzH9qBMXK
+         aGXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728973814; x=1729578614;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0/51GjD74rmzWSp7jmO+qgKLOzZqeiFNpacQrj2PkHc=;
+        b=PXiGFKQGewwOsR7wbSvKlsn9WHy6/LTrIjAHW/tAu0o+ynUPwX0i/XwAH6DdXe/sAT
+         n7VudxONoUwr9HdUkmk41Q+KOef96B794c3cnAN6wufVsHCiXxPvh/SS6nfYghkgH9t0
+         Bi/wSq2PkgQXRdxIoWr7Aud/kIEf8Om9SwP7K7oKNuLRF6XsNQA+3PEaU+lmQj7WsXMi
+         nn9sbc2IDtCf8pYxNVg6jh7nj7ThB65LaEO2edSwqvIDP8gtLCCVPY75o7GfGlQ2ziid
+         sd7JY0uWGPgGijDqZzr1M2ztK+WEgUj1Mb0ZdDXcfuUZURx41ygTowucTOUoDkt75/r6
+         UmEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7eTzkcDAAu71v9hd5THy+u6ZKYvqC9Wws11R0a+zFD4sgj3UUXDnTNLniLH2+xNiAYrQWZXfdJpf204+H@vger.kernel.org, AJvYcCWDOOC1nFBXlg9MRb3WVkfNRPsULj0RRDFYpgwwG5aVPE+U3TK9wHo4Eo7dpy9Y7vibFtcYi3D6Rys8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu47JROUvS0VY/ESBCK/cDam884tpK/dfjtaPJh1iMQ97Sdz/w
+	EzWo7hDdf1FYPusF6qnqzzrrSud2BizdYeF+fnXydMpbPkZXhNSo
+X-Google-Smtp-Source: AGHT+IGztSWoQNZUn18NP0qjrUlztyHZzM+Qnb1J/xY9GzqeImDRsQ4KreubkMNqsIUw5R4KTyaejg==
+X-Received: by 2002:adf:a395:0:b0:37d:4fe9:b6a7 with SMTP id ffacd0b85a97d-37d5529effamr9818072f8f.36.1728973814126;
+        Mon, 14 Oct 2024 23:30:14 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc40a14sm698756f8f.103.2024.10.14.23.30.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 23:30:13 -0700 (PDT)
+Message-ID: <c4a961752398b7ecc6ed2eb59633b662ccfaaf50.camel@gmail.com>
+Subject: Re: [PATCH v6 4/8] iio: dac: adi-axi-dac: extend features
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
+ <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>,  Jonathan Cameron
+ <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Date: Tue, 15 Oct 2024 08:30:13 +0200
+In-Reply-To: <ab559026-7e95-4adc-9978-6db30982b2a6@baylibre.com>
+References: 
+	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+	 <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-4-eeef0c1e0e56@baylibre.com>
+	 <ab559026-7e95-4adc-9978-6db30982b2a6@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add support for the Exynos 990 pin controller.
-This SoC has 7 banks in total. The Exynos 990 uses the same bank types as
-Exynos 850, so we use Exynos 850 macros.
+On Mon, 2024-10-14 at 16:14 -0500, David Lechner wrote:
+> On 10/14/24 5:08 AM, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> >=20
+> > Extend AXI-DAC backend with new features required to interface
+> > to the ad3552r DAC. Mainly, a new compatible string is added to
+> > support the ad3552r-axi DAC IP, very similar to the generic DAC
+> > IP but with some customizations to work with the ad3552r.
+> >=20
+> > Then, a serie of generic functions has been added to match with
+>=20
+> spelling: series
+>=20
+> > ad3552r needs. Function names has been kept generic as much as
+> > possible, to allow re-utilization from other frontend drivers.
+> >=20
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > ---
+>=20
+> ...
+>=20
+> > +static int axi_dac_read_raw(struct iio_backend *back,
+> > +			=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
+> > +			=C2=A0=C2=A0=C2=A0 int *val, int *val2, long mask)
+> > +{
+> > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > +	int err, reg;
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_FREQUENCY:
+> > +
+> > +		if (!st->info->has_dac_clk)
+> > +			return -EOPNOTSUPP;
+> > +
+> > +		/*
+> > +		 * As from ad3552r AXI IP documentation,
+> > +		 * returning the SCLK depending on the stream mode.
+> > +		 */
+> > +		err =3D regmap_read(st->regmap, AXI_DAC_CUSTOM_CTRL_REG, &reg);
+> > +		if (err)
+> > +			return err;
+> > +
+> > +		if (reg & AXI_DAC_CUSTOM_CTRL_STREAM)
+> > +			*val =3D st->dac_clk_rate / 2;
+> > +		else
+> > +			*val =3D st->dac_clk_rate / 8;
+>=20
+> To get the DAC sample rate, we only care about the streaming mode
+> rate, so this should just always be / 2 and not / 8. Otherwise
+> the sampling_frequency attribute in the DAC driver will return
+> the wrong value when the buffer is not enabled. We never do buffered
+> writes without enabling streaming mode.
 
-Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
----
- .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 140 ++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
- 3 files changed, 143 insertions(+)
+But the question then is, what do we return when streaming mode is off? Div=
+iding by 2
+in that case won't report the actual SCLK. But you do have a point and I th=
+ink a very
+common pattern from userspace is to first get the sampling frequency and on=
+ly then
+starting buffering. In this case, yes, we get the wrong sampling frequency.=
+ Bottom
+line I agree with David and we should just care about returning the max sam=
+pling
+frequency which is the one that apps ultimately care about.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-index c5df4f1bc600..f07c26d37442 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-@@ -627,6 +627,146 @@ const struct samsung_pinctrl_of_match_data exynos850_of_data __initconst = {
- 	.num_ctrl	= ARRAY_SIZE(exynos850_pin_ctrl),
- };
- 
-+/* pin banks of exynos990 pin-controller 0 (ALIVE) */
-+static struct samsung_pin_bank_data exynos990_pin_banks0[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-+	EXYNOS850_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-+	EXYNOS850_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-+	EXYNOS850_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-+	EXYNOS850_PIN_BANK_EINTW(2, 0x080, "gpa4", 0x10),
-+	EXYNOS850_PIN_BANK_EINTN(7, 0x0A0, "gpq0"),
-+};
-+
-+/* pin banks of exynos990 pin-controller 1 (CMGP) */
-+static struct samsung_pin_bank_data exynos990_pin_banks1[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTN(1, 0x000, "gpm0"),
-+	EXYNOS850_PIN_BANK_EINTN(1, 0x020, "gpm1"),
-+	EXYNOS850_PIN_BANK_EINTN(1, 0x040, "gpm2"),
-+	EXYNOS850_PIN_BANK_EINTN(1, 0x060, "gpm3"),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x080, "gpm4", 0x00),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x0A0, "gpm5", 0x04),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x0C0, "gpm6", 0x08),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x0E0, "gpm7", 0x0c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x100, "gpm8", 0x10),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x120, "gpm9", 0x14),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x140, "gpm10", 0x18),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x160, "gpm11", 0x1c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x180, "gpm12", 0x20),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x1A0, "gpm13", 0x24),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x1C0, "gpm14", 0x28),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x1E0, "gpm15", 0x2c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x200, "gpm16", 0x30),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x220, "gpm17", 0x34),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x240, "gpm18", 0x38),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x260, "gpm19", 0x3c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x280, "gpm20", 0x40),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x2A0, "gpm21", 0x44),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x2C0, "gpm22", 0x48),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x2E0, "gpm23", 0x4c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x300, "gpm24", 0x50),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x320, "gpm25", 0x54),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x340, "gpm26", 0x58),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x360, "gpm27", 0x5c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x380, "gpm28", 0x60),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x3A0, "gpm29", 0x64),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x3C0, "gpm30", 0x68),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x3E0, "gpm31", 0x6c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x400, "gpm32", 0x70),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x420, "gpm33", 0x74),
-+
-+};
-+
-+/* pin banks of exynos990 pin-controller 2 (HSI1) */
-+static struct samsung_pin_bank_data exynos990_pin_banks2[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(4, 0x000, "gpf0", 0x00),
-+	EXYNOS850_PIN_BANK_EINTG(6, 0x020, "gpf1", 0x04),
-+	EXYNOS850_PIN_BANK_EINTG(3, 0x040, "gpf2", 0x08),
-+};
-+
-+/* pin banks of exynos990 pin-controller 3 (HSI2) */
-+static struct samsung_pin_bank_data exynos990_pin_banks3[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(2, 0x000, "gpf3", 0x00),
-+};
-+
-+/* pin banks of exynos990 pin-controller 4 (PERIC0) */
-+static struct samsung_pin_bank_data exynos990_pin_banks4[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x000, "gpp0", 0x00),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x020, "gpp1", 0x04),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x040, "gpp2", 0x08),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x060, "gpp3", 0x0C),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x080, "gpp4", 0x10),
-+	EXYNOS850_PIN_BANK_EINTG(2, 0x0A0, "gpg0", 0x14),
-+};
-+
-+/* pin banks of exynos990 pin-controller 5 (PERIC1) */
-+static struct samsung_pin_bank_data exynos990_pin_banks5[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x000, "gpp5", 0x00),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x020, "gpp6", 0x04),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x040, "gpp7", 0x08),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x060, "gpp8", 0x0C),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x080, "gpp9", 0x10),
-+	EXYNOS850_PIN_BANK_EINTG(6, 0x0A0, "gpc0", 0x14),
-+	EXYNOS850_PIN_BANK_EINTG(4, 0x0C0, "gpg1", 0x18),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x0E0, "gpb0", 0x1C),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x100, "gpb1", 0x20),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x120, "gpb2", 0x24),
-+};
-+
-+/* pin banks of exynos990 pin-controller 6 (VTS) */
-+static struct samsung_pin_bank_data exynos990_pin_banks6[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(7, 0x000, "gpv0", 0x00),
-+};
-+
-+static const struct samsung_pin_ctrl exynos990_pin_ctrl[] __initconst = {
-+	{
-+		/* pin-controller instance 0 ALIVE data */
-+		.pin_banks	= exynos990_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks0),
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+	}, {
-+		/* pin-controller instance 1 CMGP data */
-+		.pin_banks	= exynos990_pin_banks1,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks1),
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+	}, {
-+		/* pin-controller instance 2 HSI1 data */
-+		.pin_banks	= exynos990_pin_banks2,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks2),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 3 HSI2 data */
-+		.pin_banks	= exynos990_pin_banks3,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks3),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 4 PERIC0 data */
-+		.pin_banks	= exynos990_pin_banks4,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks4),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 5 PERIC1 data */
-+		.pin_banks	= exynos990_pin_banks5,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks5),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 6 VTS data */
-+		.pin_banks	= exynos990_pin_banks6,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks6),
-+	},
-+};
-+
-+const struct samsung_pinctrl_of_match_data exynos990_of_data __initconst = {
-+	.ctrl		= exynos990_pin_ctrl,
-+	.num_ctrl	= ARRAY_SIZE(exynos990_pin_ctrl),
-+};
-+
- /* pin banks of exynosautov9 pin-controller 0 (ALIVE) */
- static const struct samsung_pin_bank_data exynosautov9_pin_banks0[] __initconst = {
- 	EXYNOS850_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 86c7de109bca..42e40860841b 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1479,6 +1479,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = &exynos850_of_data },
- 	{ .compatible = "samsung,exynos8895-pinctrl",
- 		.data = &exynos8895_of_data },
-+	{ .compatible = "samsung,exynos990-pinctrl",
-+		.data = &exynos990_of_data },
- 	{ .compatible = "samsung,exynosautov9-pinctrl",
- 		.data = &exynosautov9_of_data },
- 	{ .compatible = "samsung,exynosautov920-pinctrl",
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index dc930d620f55..615048f94524 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -385,6 +385,7 @@ extern const struct samsung_pinctrl_of_match_data exynos7_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos7885_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos850_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos8895_of_data;
-+extern const struct samsung_pinctrl_of_match_data exynos990_of_data;
- extern const struct samsung_pinctrl_of_match_data exynosautov9_of_data;
- extern const struct samsung_pinctrl_of_match_data exynosautov920_of_data;
- extern const struct samsung_pinctrl_of_match_data fsd_of_data;
--- 
-2.45.2
+So, I would say to divide it by 2 during probe and just return that value i=
+n here.
+
+- Nuno S=C3=A1
+>=20
+> > +
+> > +		return IIO_VAL_INT;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +}
+> > +
+> > +static int axi_dac_bus_reg_write(struct iio_backend *back, u32 reg, u3=
+2 val,
+> > +				 size_t data_size)
+> > +{
+> > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > +	int ret;
+> > +	u32 ival;
+> > +
+> > +	if (data_size =3D=3D sizeof(u16))
+> > +		ival =3D FIELD_PREP(AXI_DAC_CUSTOM_WR_DATA_16, val);
+> > +	else
+> > +		ival =3D FIELD_PREP(AXI_DAC_CUSTOM_WR_DATA_8, val);
+> > +
+> > +	ret =3D regmap_write(st->regmap, AXI_DAC_CUSTOM_WR_REG, ival);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/*
+> > +	 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to know
+>=20
+> I'm guessing these got renamed. REG_CNTRL_2 =3D AXI_DAC_CNTRL_2_REG
+> and AXI_DAC_CNTRL_DATA_WR =3D AXI_DAC_CUSTOM_WR_REG?
+>=20
+> > +	 * the data size. So keeping data size control here only,
+> > +	 * since data size is mandatory for the current transfer.
+> > +	 * DDR state handled separately by specific backend calls,
+> > +	 * generally all raw register writes are SDR.
+> > +	 */
+> > +	if (data_size =3D=3D sizeof(u8))
+> > +		ret =3D regmap_set_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SYMB_8B);
+> > +	else
+> > +		ret =3D regmap_clear_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> > +					AXI_DAC_CNTRL_2_SYMB_8B);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret =3D regmap_update_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > +				 AXI_DAC_CUSTOM_CTRL_ADDRESS,
+> > +				 FIELD_PREP(AXI_DAC_CUSTOM_CTRL_ADDRESS, reg));
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret =3D regmap_update_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA,
+> > +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret =3D regmap_read_poll_timeout(st->regmap,
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_REG, ival=
+,
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ival & AXI_DAC_CUSTOM_CTRL_TR=
+ANSFER_DATA,
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 10, 100 * KILO);
+> > +	if (ret)
+> > +		return ret;
+>=20
+> Should we also clear AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA on timeout
+> so that we don't leave things in a bad state?
+>=20
+> > +
+> > +	return regmap_clear_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA);
+> > +}
+> > +
+>=20
+> ...
+>=20
+> > =C2=A0static int axi_dac_probe(struct platform_device *pdev)
+> > =C2=A0{
+> > -	const unsigned int *expected_ver;
+> > =C2=A0	struct axi_dac_state *st;
+> > =C2=A0	void __iomem *base;
+> > =C2=A0	unsigned int ver;
+> > @@ -566,15 +793,26 @@ static int axi_dac_probe(struct platform_device *=
+pdev)
+> > =C2=A0	if (!st)
+> > =C2=A0		return -ENOMEM;
+> > =C2=A0
+> > -	expected_ver =3D device_get_match_data(&pdev->dev);
+> > -	if (!expected_ver)
+> > +	st->info =3D device_get_match_data(&pdev->dev);
+> > +	if (!st->info)
+> > =C2=A0		return -ENODEV;
+> > =C2=A0
+> > -	clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
+> > +	clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
+>=20
+> This will break existing users that don't have clock-names
+> in the DT. It should be fine to leave it as NULL in which
+> case it will get the clock at index 0 in the clocks array
+> even if there is more than one clock.
+
+Good catch...
+
+- Nuno S=C3=A1
 
 
