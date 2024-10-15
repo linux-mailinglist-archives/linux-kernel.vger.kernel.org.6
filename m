@@ -1,122 +1,83 @@
-Return-Path: <linux-kernel+bounces-366030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FE999EFE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:41:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF0F99EFE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD04280EE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90BB1F2183C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8C41C4A26;
-	Tue, 15 Oct 2024 14:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBSlLPln"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD62F1C4A20;
+	Tue, 15 Oct 2024 14:42:12 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E4613D520;
-	Tue, 15 Oct 2024 14:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E64155A4D;
+	Tue, 15 Oct 2024 14:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003289; cv=none; b=Z6d5YUnPg6AZ3AQWDx5sL29kgFjF1DEhFgLgtUbL/8CrBk2N4YkGIplt/pH/0F/ZbDoKwGAMhmWSXDWmDW3gKYpzq4K6oQs9/AtU4sZHWHfl7frM8zQYuNssL7zIAx7RrFkonGxzPBM0VWCEAlUePTnM5npJnqfaxcxbiIt7/vo=
+	t=1729003332; cv=none; b=TNYuPaZdYKAs5y6es1BrrY+5dAIeyS1JMuK8wLNWVrsBIXZKCeb9sd9OaKl/mAdfDG7J0lYg0YyWROMAZRKpoVOC2uFGSZm6WAzqJYvN8Fmt56Voi6MgsfBGcmqTgkISHaCMSXsacPrqIKMDQ0NcTnf0N6Mg7LAVsx3JT76QS6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003289; c=relaxed/simple;
-	bh=cq/4BkMX1uuzIk6CfhT1Rj5dcfcNtZgB8iidWJOYtsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGCMqfEvMQOxJA6BSak6aTP0fPTs1ogVVNEA9nvIRlZib8yVSsS6j1QuxMPpGm2z5Lfq6QuwgeNOdK1Hk6usGWDmjcmMKAn/GHYy7sQHuwk3nhDP9/zp95q7t4oh7Vn70+M4BZDC5YHo5Mj/KLhA5wnsJEppgvKaDRRqHTYHUNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBSlLPln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B82C4CEC6;
-	Tue, 15 Oct 2024 14:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729003287;
-	bh=cq/4BkMX1uuzIk6CfhT1Rj5dcfcNtZgB8iidWJOYtsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MBSlLPlnviSq0LgnR282AcxyGeSNjmieakzewyuvlOgJFkEJYyZjcnVKPp/LIhYXb
-	 nXDwh0SQuJbdgJfaAWRJYXC+7f89C7m6Rn5ESkFKUL858/RlCl902MSyQcx11fhPUr
-	 NF+kjdgzznQpMWbzevlbzhKBOY7FK4FojezwY+CHW1E9fGtMdEULmyno1f8irwp1i3
-	 cZPtceZNEd0kg1Yn2QvibI8si6WGGSW2wP11sT3a+xedJvdUFHjcwlemFaqswWyID+
-	 fIY6bjGvfK/ZrAYcweAfvnxocg8LRdMOgRUn/8VmGAfSvVvP3O8qTUqS5hMNXe6nl6
-	 rr7L021od77qw==
-Date: Tue, 15 Oct 2024 04:41:26 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <andrea.righi@linux.dev>
-Cc: David Vernet <void@manifault.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v4] sched_ext: Trigger ops.update_idle() from
- pick_task_idle()
-Message-ID: <Zw5_FlXfbLXDLCPG@slm.duckdns.org>
-References: <20241015111539.12136-1-andrea.righi@linux.dev>
+	s=arc-20240116; t=1729003332; c=relaxed/simple;
+	bh=SZwOspUzxTNLsDBQR25+Wq52EFpmfCW4oghRyLCrYjk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ETo178AsKgwoR+etmUrmfz5fZ9/Vpr2imO7kq6bmvbTPmRsuQ9z52kr2R+SryhNKdAASaRXelxjtP3MKkY7kTnkLBQrcQJY+YPInENgcoyoX2yBFZCwrBLgVwjq3PF2H7ArLw78D+8W70xOXM18n92MCauoh22WKJi/XKTIzI1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XScF76Zt9zfcmS;
+	Tue, 15 Oct 2024 22:39:39 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8FCA71401F4;
+	Tue, 15 Oct 2024 22:42:06 +0800 (CST)
+Received: from huawei.com (10.175.113.133) by kwepemm600001.china.huawei.com
+ (7.193.23.3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 15 Oct
+ 2024 22:42:05 +0800
+From: Wang Hai <wanghai38@huawei.com>
+To: <sammy@sammy.net>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <zhangxiaoxu5@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<wanghai38@huawei.com>
+Subject: [PATCH net] net/sun3_82586: fix potential memory leak in sun3_82586_send_packet()
+Date: Tue, 15 Oct 2024 22:41:48 +0800
+Message-ID: <20241015144148.7918-1-wanghai38@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015111539.12136-1-andrea.righi@linux.dev>
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
 
-Hello, Andrea.
+The sun3_82586_send_packet() returns NETDEV_TX_OK without freeing skb
+in case of skb->len being too long, add dev_kfree_skb() to fix it.
 
-On Tue, Oct 15, 2024 at 01:15:39PM +0200, Andrea Righi wrote:
-...
-> For example, a BPF scheduler might use logic like the following to keep
-> the CPU active under specific conditions:
-> 
-> void BPF_STRUCT_OPS(sched_update_idle, s32 cpu, bool idle)
-> {
-> 	if (!idle)
-> 		return;
-> 	if (condition)
-> 		scx_bpf_kick_cpu(cpu, 0);
-> }
-> 
-> A call to scx_bpf_kick_cpu() wakes up the CPU, so in theory,
-> ops.update_idle() should be triggered again until the condition becomes
-> false. However, this doesn't happen, and scx_bpf_kick_cpu() doesn't
-> produce the expected effect.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+ drivers/net/ethernet/i825xx/sun3_82586.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I thought more about this scenario and I'm not sure anymore whether we want
-to guarantee that scx_bpf_kick_cpu() is followed by update_idle(cpu, true).
-Here are a couple considerations:
-
-- As implemented, the transtions aren't balanced. ie. When the above
-  happens, update_idle(cpu, true) will be generated multiple times without
-  intervening update_idle(cpu, false). We can insert artificial false
-  transtions but that's cumbersome and...
-
-- For the purpose of determining whether a CPU is idle for e.g. task
-  placement from ops.select_cpu(). The CPU *should* be considered idle in
-  this polling state.
-
-Overall, it feels a bit contrived to generate update_idle() events
-consecutively for this. If a scheduler wants to poll in idle state, can't it
-do something like the following?
-
-- Trigger kick from update_idle(cpu, true) and remember that the CPU is in
-  the polling state.
-
-- Keep kicking from ops.dispatch() until polling state is cleared.
-
-As what kick() guarnatees is at least one dispatch event after kicking, this
-is guaranteed to be correct and the control flow, while a bit more
-complicated, makes sense - it triggers dispatch on idle transition and keeps
-dispatching in the idle state.
-
-What do you think?
-
-Thanks.
-
+diff --git a/drivers/net/ethernet/i825xx/sun3_82586.c b/drivers/net/ethernet/i825xx/sun3_82586.c
+index f2d4669c81cf..58a3d28d938c 100644
+--- a/drivers/net/ethernet/i825xx/sun3_82586.c
++++ b/drivers/net/ethernet/i825xx/sun3_82586.c
+@@ -1012,6 +1012,7 @@ sun3_82586_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 	if(skb->len > XMIT_BUFF_SIZE)
+ 	{
+ 		printk("%s: Sorry, max. framelength is %d bytes. The length of your frame is %d bytes.\n",dev->name,XMIT_BUFF_SIZE,skb->len);
++		dev_kfree_skb(skb);
+ 		return NETDEV_TX_OK;
+ 	}
+ 
 -- 
-tejun
+2.17.1
+
 
