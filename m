@@ -1,50 +1,93 @@
-Return-Path: <linux-kernel+bounces-365051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB7499DCDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:36:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E3E99DCDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 666A9B21EFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A187283553
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAC0170A1A;
-	Tue, 15 Oct 2024 03:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D291714BE;
+	Tue, 15 Oct 2024 03:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PL60Acov"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjFQVLrl"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59294A3C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3B64A3C;
+	Tue, 15 Oct 2024 03:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728963370; cv=none; b=Jtj+valQKFjrL/tv8pe7pdWmJ0bhmsdVFJBw2Mk7h8L3HBUEU6wLp2hO2sqH2MEStqKT9UodBc3ruxuFa5dCBCYchVbOB0tSAIJUdnJkzR3WBKzMGgBBAzpgZTx7vmeftan6BYXel1ByH3/Ygw92PCG+25fW/UKEjMrA4hIUIaM=
+	t=1728963407; cv=none; b=RP4qzmaenVulCZ0avJUO3V80w6h7whuKDXkYtgbHb1PtUvySYyZAToG4DQZ6Zpizyhe7kfTswD3j6QFUMhcugSoYlWD59BtcFxyfH0mZql7qT4LoOmuC0LXiPkbLkmUmzTdnzul1zRGmgJGPCxOQjbnNcj9PtXRhuWKLzmtXyOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728963370; c=relaxed/simple;
-	bh=2MoicOKn4zhHiXNq+zaJjQeHE1CLIN9RFW8Ycz0pbw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RhTyYr4XcXhqp3qV/siDS7ADrrtCltJYH+wf+N7nZYdmjwwWVja2byTe6Pp7uKyq5ztDMLTlFR7gDINZFgTY6/gs7ReeMe0NVw2iitRG7FJl61LIsm2k8hB6eqJxO/tjSSzr5z46rPsajP2Kb6vWy0Luzu1VznHLGgKvSDdTTGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PL60Acov; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728963364; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=KAnLsh6bLgE9XrlGeHLBUwKUDXPUE2E6PeL04XoPxyM=;
-	b=PL60AcovyOiN4psNYi0SdZj4+ebmP9S/IDTYvxcCSCRE7B5Y4NBxexCgRHA5Ryr4WRXal4gL9PUFE7/sI5U98Kn0Ycu3BLmkigK7gsOfmEfSwq+HttWElFmqASZqXc2ICo+1Y2iEw2vMamQfvewFzpFajN8WTXauIko4rhN2Z2Q=
-Received: from localhost(mailfrom:hongzhen@linux.alibaba.com fp:SMTPD_---0WHBnLfO_1728963363 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Oct 2024 11:36:03 +0800
-From: Hongzhen Luo <hongzhen@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org,
-	Hongzhen Luo <hongzhen@linux.alibaba.com>
-Subject: [PATCH] erofs: fix unsupported blksize in fileio mode
-Date: Tue, 15 Oct 2024 11:36:01 +0800
-Message-ID: <20241015033601.3206952-1-hongzhen@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1728963407; c=relaxed/simple;
+	bh=IG3XD04vq8XRCloN1zWCeLhVLSJJ1bc/lJNrVV1t19Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C8+PqAOeDKwy1zxKswfnMKBIRqRq0YotfmuzqKT2Tk4QMvEmnI1cQCyydkzW/4YgKFOsiNJJXhjnOf/hrzKXKzmj8I7xlK5D88mNvQWbGtgo5gIUkHQ/p95sJ1Zq3rQ8nRsqmibrs2muthk2dZHD1Zke6RUHtMx1iZWgEUt1mtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjFQVLrl; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e49ef3bb9so2007001b3a.1;
+        Mon, 14 Oct 2024 20:36:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728963405; x=1729568205; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/3pmHU7vhPrYcyCzss6urx3Tnp2KXqxZWV5m+7oVlXQ=;
+        b=QjFQVLrlmcG568MQN0PMg1dV6UQ7+i+gheath0Ig3xPjghmso/Ng0q8Mhu7817z+fs
+         zNLrZFX1m/7Q0O52K+OyiH8I9t+utXXp17BOJMd8CTjYnsSQvaaZbTRFN3lOTLGl4KKN
+         ZHSUm2jPHCrHVswwoUPlHmZDgVIDn06ADOF5WoG0CSckgSMA9BNuR8L1+a6eqvL3mhpq
+         1RgKrNwPALPSBJ1Q25n4ko1nqwzXL7jLdZFBQoqM90KqOVezoco+mOpboE3o27hEyV77
+         HUXqJ2pJV/msg6Ya2nW1DO3ea943TL3HOTAHn22yWShCHOR2jZyeNrTlr5GwAezsGwXN
+         OpWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728963405; x=1729568205;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/3pmHU7vhPrYcyCzss6urx3Tnp2KXqxZWV5m+7oVlXQ=;
+        b=EaGkQ7ch++1ZI3e/cggSkcYb6YEBUFTDtr228WeEhuhXoleQk+MjjMKvW6+ROXSRZx
+         noNANVYIFRsyVNbBPOUzh8iHH4C49UWX/gP8neEr4SgkYsgtEM0gDmU2CHsagqYtspVo
+         YUdrNG7n7NHdwLLtXtUujH8OjY7RFG3drKFIhzr0t347FZYHZsDQTUQAmLOVplwCAfUY
+         BHHwvhhh9kP3qjfEd8L6Urv9DH4fKITkrzvCd+RGIF8MyY59la6lvufvf6JpZPngTRKm
+         HByWk2dnrOcT/yBBbIj2/mbNerVks073RLKmW2lSPQ6hlBf0h8ZeIAuZJDBZMM8938t9
+         9Vog==
+X-Forwarded-Encrypted: i=1; AJvYcCVgzD8EY6AbMd+KOjyMWoH87YeB6sVgGLG4QuMdWZOo0VkW5qao0eLL1dROpGjLxbtKQps=@vger.kernel.org, AJvYcCVl/WohduNlRhajB2gGIujAcpWOrSzzk92dRvmOF0VM0ooA13twCsRIpyoez9BmbZbEUJKI1cHoj0x1XvDt@vger.kernel.org
+X-Gm-Message-State: AOJu0YycuIlMHG+WEF7FhYIpWIgQoE+3NqoFfvITlhRWdyurmmHy/YIr
+	LIhQMW7PqePLimUx4APcGrRqUyyDo/2IqD7Y7naHVxPQSdowswx3q8SB71Eh30o=
+X-Google-Smtp-Source: AGHT+IF3ESuhQZCT1Iiw9p1S5INzWYGNFho5Yws1UkPDaoRKDK6B+H3B/zsxXOVuDAydY/j9A8J4EQ==
+X-Received: by 2002:a05:6a00:859a:b0:71e:66e6:ca17 with SMTP id d2e1a72fcca58-71e66e6d110mr8433621b3a.9.1728963404599;
+        Mon, 14 Oct 2024 20:36:44 -0700 (PDT)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e775259a1sm300054b3a.204.2024.10.14.20.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 20:36:44 -0700 (PDT)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrii Nakryiko <andriin@fb.com>,
+	Jussi Maki <joamaki@gmail.com>,
+	Jay Vosburgh <jv@jvosburgh.net>,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>,
+	Liang Li <liali@redhat.com>
+Subject: [PATCH net] bpf: xdp: fallback to SKB mode if DRV flag is absent.
+Date: Tue, 15 Oct 2024 03:36:32 +0000
+Message-ID: <20241015033632.12120-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,33 +96,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In fileio mode, when blcksize is not equal to PAGE_SIZE,
-erofs will attempt to set the block size of sb->s_bdev,
-which will trigger a panic. This patch fixes this.
+After commit c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags
+specified"), the mode is automatically set to XDP_MODE_DRV if the driver
+implements the .ndo_bpf function. However, for drivers like bonding, which
+only support native XDP for specific modes, this may result in an
+"unsupported" response.
 
-Fixes: fb176750266a ("erofs: add file-backed mount support")
+In such cases, let's fall back to SKB mode if the user did not explicitly
+request DRV mode.
 
-Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+Fixes: c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags specified")
+Reported-by: Liang Li <liali@redhat.com>
+Closes: https://issues.redhat.com/browse/RHEL-62339
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 ---
- fs/erofs/super.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/core/dev.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 320d586c3896..a7635e667d4b 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -631,6 +631,10 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 			errorfc(fc, "unsupported blksize for fscache mode");
- 			return -EINVAL;
+diff --git a/net/core/dev.c b/net/core/dev.c
+index ea5fbcd133ae..e32069d81cd7 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -9579,6 +9579,7 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
+ 
+ 	/* don't call drivers if the effective program didn't change */
+ 	if (new_prog != cur_prog) {
++reinstall:
+ 		bpf_op = dev_xdp_bpf_op(dev, mode);
+ 		if (!bpf_op) {
+ 			NL_SET_ERR_MSG(extack, "Underlying driver does not support XDP in native mode");
+@@ -9586,8 +9587,17 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
  		}
-+		if (erofs_is_fileio_mode(sbi)) {
-+			errorfc(fc, "unsupported blksize for fileio mode");
-+			return -EINVAL;
+ 
+ 		err = dev_xdp_install(dev, mode, bpf_op, extack, flags, new_prog);
+-		if (err)
++		if (err) {
++			/* The driver returns not supported even .ndo_bpf
++			 * implemented, fall back to SKB mode.
++			 */
++			if (err == -EOPNOTSUPP && mode == XDP_MODE_DRV &&
++			    !(flags & XDP_FLAGS_DRV_MODE)) {
++				mode = XDP_MODE_SKB;
++				goto reinstall;
++			}
+ 			return err;
 +		}
- 		if (!sb_set_blocksize(sb, 1 << sbi->blkszbits)) {
- 			errorfc(fc, "failed to set erofs blksize");
- 			return -EINVAL;
+ 	}
+ 
+ 	if (link)
 -- 
-2.43.5
+2.46.0
 
 
