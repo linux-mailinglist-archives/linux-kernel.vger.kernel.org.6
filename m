@@ -1,69 +1,60 @@
-Return-Path: <linux-kernel+bounces-366211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F8499F237
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:01:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1455A99F234
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA5B5B2269E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:01:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7341C224E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBB01F76C2;
-	Tue, 15 Oct 2024 15:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391C01E6DEE;
+	Tue, 15 Oct 2024 15:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="gHZ4donL"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/gez9tf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2F41F7065;
-	Tue, 15 Oct 2024 15:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9541E1E9096;
+	Tue, 15 Oct 2024 15:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729007997; cv=none; b=gxHNS05JyDEkapOzzrSAM4XwBZhKMI/Oih4YXyrMnESqFgBHizArothtL/u/TcUq6hGo6BJH4QLaW7km2m82tI7fKgqZSvolEEkgMcjW/NUMNPPW2sZsJDrsv5kr7zOTiUPKz18ayQ91M+n7IYn3NVAlT7ryF7DRd1+w5kvUh6g=
+	t=1729007991; cv=none; b=FumMjhpmwP5iEDJVRenUXDi4wOJotXxZVN2ptm0jCHHYMeg/x945t40Hs42espRciWgiHauYpdO1AqijdN0G5RB/n2lbcdM1Xq1vRm32oVWZ6XHsAVoB9wBGMMTUNz3S6zyeS5wRjRsP3MdV7+L2WPXBIHupAn8YcrmQkJYyd7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729007997; c=relaxed/simple;
-	bh=2mK+ZWFmR/HEmxNXgK8igOSG3DBZjetA7eR4+41kzn4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bA/z7G4WrOUWUvPQOWbK8nd3jhabxI7N+sRY39Cw+Vd93WKjKTZ3lZ2M0j9EDKneJEpeioHfyx/wqNi2EWYWCn+fFZDCCwr2gGTAfvTv4FZ4JLUZ9NPs5o1pErqxJi34NNyTl+Al618Kg4CMPzT+6DFKuVUtwCS0GQjsRh0stDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=gHZ4donL; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1A7E3240003;
-	Tue, 15 Oct 2024 15:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1729007992;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=muVbXj6XjdM0+48mRJ+sHlgnyRTe+ujByi/N8a3eBTU=;
-	b=gHZ4donLANwwj7WEZd0j8tA3ic8bZf2ia6q3HlhTGiET+Nvgh3TjDYlHXDistcF+lyHcx2
-	K0qrxStda8Eaw46w7rFD+mE5WWeXz86nJ/rdcqf4KW8x7aRh8RY0xKv0MhmQB/IYWJIOkH
-	vSYxKazzw+dMgcNmipFPOlMp0aeRSfpjfHdvgRLzAhiIdVV5VjEEIYgW2MaT91tyOhb9V7
-	0QwsOwXm0Y32jnBFs52zUfvQC8j8Lbx45RjU/hdZMntyh5dWa11406j3HEDbsTtdVoRNAU
-	bWTDsEOH8FtsM0mwmj7RBwRUOepKNZt8+Y0Glwd+RaU+SntsCTlxJ0ZXfT7Img==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Theodore Ts'o
- <tytso@mit.edu>,  Andreas Dilger <adilger.kernel@dilger.ca>,  Hugh Dickins
- <hughd@google.com>,  Andrew Morton <akpm@linux-foundation.org>,  Jonathan
- Corbet <corbet@lwn.net>,  smcv@collabora.com,  kernel-dev@igalia.com,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-ext4@vger.kernel.org,  linux-mm@kvack.org,
-  linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 01/10] libfs: Create the helper function
- generic_ci_validate_strict_name()
-In-Reply-To: <20241010-tonyk-tmpfs-v6-1-79f0ae02e4c8@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Thu, 10 Oct 2024 16:39:36 -0300")
-References: <20241010-tonyk-tmpfs-v6-0-79f0ae02e4c8@igalia.com>
-	<20241010-tonyk-tmpfs-v6-1-79f0ae02e4c8@igalia.com>
-Date: Tue, 15 Oct 2024 11:59:48 -0400
-Message-ID: <87bjzls6ff.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1729007991; c=relaxed/simple;
+	bh=5NaaBNOaRCCAQwYF+nDe/ZN5voDdMgWTNF8IQ2SoN1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b3OQA/otC24u/8v5y5VVwvsBkRq3n2b9nX2ThObjwAw42Wj7wvDsVMYGTbMfeEY9JOyuWtowT+uiXyzRB7hgLbmcUjtCntpqbcWrLujqTkE5oZlSB3+FdlsFBItWNrAmP9TIz/CNdnP+15UflfVYuxx1RpNIhs3qvEl+vxzEN7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/gez9tf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24647C4CEC6;
+	Tue, 15 Oct 2024 15:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729007991;
+	bh=5NaaBNOaRCCAQwYF+nDe/ZN5voDdMgWTNF8IQ2SoN1Y=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=f/gez9tfH2tYJDCsBuHroN3voe20/0GbkS2gE/ev2f8yKPnQRijsa+a7QbAvtC8Bg
+	 h3ROPL7SYXjbg9ndbBGm3Q9Ls2RG6qM7e3ekeEOCpOo5bZmaa4R7Viog+Z1i6YycIm
+	 VXb203CUkHUvQnbzOPU58soAj6492rQ5cyN7thw5J8ZvUaDg4WNArEhD7SUCeu7bbo
+	 jBaJlQKHAhLIrXy2a7ourlm/+l2rlyi2SqpjEWPmJTYcDLLQiOe82f1/RQiHdnYH69
+	 P1d9MQP8qVS3fLRQQAXUX8sYMDJZpr8mPjXwOomPvTXfKuMtnawzfn5fg4YygmKsTm
+	 ZPnhgiyDe7Tow==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id AECA2CE0971; Tue, 15 Oct 2024 08:59:50 -0700 (PDT)
+Date: Tue, 15 Oct 2024 08:59:50 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rostedt@goodmis.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH v2 rcu 13/13] srcu: Improve srcu_read_lock_lite()
+ kernel-doc comment
+Message-ID: <3fa5f1c1-3635-408d-b0f2-e3aa63ecb76d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <3b82ac1a-8786-4a27-8eff-ecc67b50dfb6@paulmck-laptop>
+ <20241011173931.2050422-13-paulmck@kernel.org>
+ <CAEf4BzYOdvO_PY-QZySa1qtWqZ_+1zySrw+0Qo1cc9HL5=L4aA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,47 +62,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzYOdvO_PY-QZySa1qtWqZ_+1zySrw+0Qo1cc9HL5=L4aA@mail.gmail.com>
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+On Fri, Oct 11, 2024 at 10:57:13AM -0700, Andrii Nakryiko wrote:
+> On Fri, Oct 11, 2024 at 10:39 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > Where RCU is watching is where it is OK to invoke rcu_read_lock().
+> >
+> > Reported-by: Andrii Nakryiko <andrii@kernel.org>
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > ---
+> >  include/linux/srcu.h | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> 
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-> +static inline bool generic_ci_validate_strict_name(struct inode *dir, st=
-ruct qstr *name)
-> +{
-> +	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
-> +		return true;
-> +
-> +	/*
-> +	 * A casefold dir must have a encoding set, unless the filesystem
-> +	 * is corrupted
-> +	 */
-> +	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
-> +		return true;
-> +
-> +	return utf8_validate(dir->i_sb->s_encoding, name);
+Applied, thank you!
 
-There is something fishy here.  Concerningly, the fstests test doesn't
-catch it.
+							Thanx, Paul
 
-utf8_validate is defined as:
-
-  int utf8_validate(const struct unicode_map *um, const struct qstr *str)
-
-Which returns 0 on success and !0 on error. Thus, when casting to bool,
-the return code should be negated.
-
-But generic/556 doesn't fail. That's because we are over cautious, and
-also check the string at the end of generic_ci_d_hash.  So we never
-really reach utf8_validate in the tested case.
-
-But if you comment the final if in generic_ci_d_hash, you'll see this
-patchset regresses the fstests case generic/556 over ext4.
-
-We really need the check in both places, though.  We don't want to rely
-on the behavior of generic_ci_d_hash to block invalid filenames, as that
-might change.
-
---=20
-Gabriel Krisman Bertazi
+> > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> > index 4ba96e2cfa405..bab1dae3f69e6 100644
+> > --- a/include/linux/srcu.h
+> > +++ b/include/linux/srcu.h
+> > @@ -270,7 +270,8 @@ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
+> >   * synchronize_rcu_expedited(), IPIs and all.
+> >   *
+> >   * Note that srcu_read_lock_lite() can be invoked only from those contexts
+> > - * where RCU is watching.  Otherwise, lockdep will complain.
+> > + * where RCU is watching, that is, from contexts where it would be legal
+> > + * to invoke rcu_read_lock().  Otherwise, lockdep will complain.
+> >   */
+> >  static inline int srcu_read_lock_lite(struct srcu_struct *ssp) __acquires(ssp)
+> >  {
+> > --
+> > 2.40.1
+> >
 
