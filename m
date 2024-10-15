@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-366350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E176099F42A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:34:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E9299F42B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D195B22494
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:34:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CBA21F230AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E424F1F9EDB;
-	Tue, 15 Oct 2024 17:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BB11F9ECF;
+	Tue, 15 Oct 2024 17:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3F4w3u6"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="OB59CKMm"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D776A1AF0CF;
-	Tue, 15 Oct 2024 17:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94251F76AA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729013666; cv=none; b=u2q9Nppix3MTsi9394VE41RVUM6mNMevmdGzRTRxweB8F335pGbI75NRbz8EjfzliBc4Zv+nKbwu/2fyXmAUTlCUAOYCUkKBksPvjbiDpL4yEluEaAJzhfAfi/SrJmbCbRQZBHybVzdiFOvN0Jamnn1ASLFIhMmeCZtkpvzuaq0=
+	t=1729013724; cv=none; b=aYSDb6HTWNTrcwM0D2QXBVKCnuUIWztoBjfSWS68HTI3Ho0Nkcy5mgOMGZv7SpsHwbzUvDizzT2jGU6N2dmKbFmjd4pAnNvmPtvirZ0yDbHq3ZKwGBQCTp9imggdKhnAl+NmIR0ItjiOeONAWlDDzTDtdXtGqPHvTcjDTCRjQvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729013666; c=relaxed/simple;
-	bh=/JoeasmV9+sdv/gcsuqFPMkgsCx0WR4nc656RNzg7VA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=srSEgnBJiTmffJnZ3NkzxYmD2DKQhM0xdGsA34H1TW4gfJgezniD7AjoPH5+7deTXUVUeVplHYYl1hg8OIXPWhkVnvJ+7zhMc6+Cu6o8gDd4ymyS7Ax0auKRb4xff/XunnVv/9bBQf6Vv/Rgue2BP1VCtDY5iNNNRApVSGT9lcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3F4w3u6; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4a492f73befso642337137.2;
-        Tue, 15 Oct 2024 10:34:24 -0700 (PDT)
+	s=arc-20240116; t=1729013724; c=relaxed/simple;
+	bh=NnE26QuJL8kx6+nbQti902lo90aIRg62wHnFCAy3axM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYGltLugg4PIL6xPJpPFo+Ub3fKkDFOQftlDBWVezMZb8EfV/XPX1FvGC3nRpmvVqREpzjuMc3rTLCeBBZWv3C6l64FQ8ggisocz0zeKI6GFPEjKFWhNqzY3KOzEE3O3n1+lhY9E7M4u/htcM6knq3c4QPKwivSfkrFpKYbNd5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=OB59CKMm; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cf3e36a76so21669645ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:35:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729013664; x=1729618464; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+T79nYP2zFo1bwn+SXuL/+PCmL3zX/hJMTnr67F8jfw=;
-        b=G3F4w3u62p7SDtYhuWVSMNCTpFltW3CKzLnLpKrukQUFUv09CXyRV4zJOZpV3KKKQI
-         gzJB+LoKMP/TFaB79BO3M6ygqiUEkbZteWR0DTHETVimiUS2wy0AcPujb1lFYsURwZT+
-         03yZ70SQtL5pvtf0e8gTmfVms9qq7xCnIwMJK4j1Hjuj5W8kC8CEkQzamijLBP73CBs7
-         eAmgAZwVregk5KgVegEp0/Org6gbjGMqp9357qjAIaZFpGOon9eD6o/hk7BnJlRifWa4
-         fIoah8M2fOXTrDule0M+rvAJ8j+pIFtMKti5Y6hX9oCwbD/4/31MekWauhNmLUUqc/6V
-         2gmA==
+        d=tenstorrent.com; s=google; t=1729013722; x=1729618522; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JytOzcc+dUIDL9WdRCARe9Uv3pKvU7/eSVdxVkOAXWI=;
+        b=OB59CKMmnuVW8Gv4Jyw7vxRpstTMGWAa/XpilTdlpgIeXoZuDF6NnlzfiVkbxf6TbT
+         EZaWkFGR4UZ8QVuswGw2sVHhvkYat/jqf2ZOW8eppiS8gy6iBYqclvIZFzuGgrN1mJ9A
+         qZkTq08umUdMw+kHbJB72hXSSumbmVv5Dpt2Dnd/xCpXWEE9PbcBgrdhVRVg8Uqs3Zzk
+         vyPzI/+LHi04B3S6DSqqxgmkq9F/UTn/lCO+RtzMPIOGdq+vj5r9m0mweMIranXVzXug
+         fgocse758hBtLfMM2BAAz6IkFNhHfPTm0tzmQQ89PUSniw3AdWVB09snPkR2T0SGrnNd
+         NgNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729013664; x=1729618464;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+T79nYP2zFo1bwn+SXuL/+PCmL3zX/hJMTnr67F8jfw=;
-        b=BNOwjWaNWXItfd+9IKZg1cjTx6gRHaeWFTVmhqw2JI24db020aF5FEnSrp27R3YaMu
-         jGq1R1DyxbG1fEPYoQRoCBRIkstCDCKkCDwnfIzDcVypcIZ0AeucBChfPz5jr9mQIE4T
-         fxKuPKxWkrBRCUE0LlpOgxT9z5AkDXX3+EbjtQFS8aJHAV8Y2SObl7DOiRwSTr0G1kA9
-         1o2MA1IG1rhILQVb6houA0oC8WcNev7J/Ped7d5iBRi/BsulZXMjmekBM8FlmaMzadCZ
-         WOUBsC05YBx6Mw2qZHLchh3P2WZJcyp8wVPnJqkVA9usM9xQD2PmGcQSAgCF6tpta693
-         GadQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyc8GeIpzCZDA721WZdKaO1U+GsjlKOy0nqgxNawZFgxeaxbgXQ6vQpIVKRuyTPTATZ9ihjdVr5yQmquE=@vger.kernel.org, AJvYcCX7+0GKoQXc/JQuajCSzIdPAeHPoMX9eIZX0KHpw4kX9wQ3lWH76x3GAmuxoYeZMTIF10j3ycj0ZGL7wig=@vger.kernel.org, AJvYcCXdk2sCRHIY1udTZoPWpBtdi7OPmLBAC++9lIhfm37MrWfqsJIVUgylryXfiMGUBl5U6g2pIonTmHUIZvj8+Dvp7ME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTjlm85Ir8htbwItHmnaMh2LjOEV3b0iTUaR6ONWq8zPrZYdO6
-	QgKrk22fGHvevkY67WKo6fSptRYw59WzIUliJcjXOd+YEHc6Yi38AmYy5OiSS/zLe+pYaJuTnh2
-	3RytPPvFn7w8VN10b6sre+rEtGsI=
-X-Google-Smtp-Source: AGHT+IFATsZGHTGxvJHYQ27CG1IJ6rqdCsQzvlrM1F9YJC/NDesAW8Jdx/+vcKEH4L5isn8F3Lfm7yEsypdJ1943PBw=
-X-Received: by 2002:a05:6122:32c9:b0:50c:9834:57b3 with SMTP id
- 71dfb90a1353d-50d374b8fcdmr7013697e0c.4.1729013663604; Tue, 15 Oct 2024
- 10:34:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729013722; x=1729618522;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JytOzcc+dUIDL9WdRCARe9Uv3pKvU7/eSVdxVkOAXWI=;
+        b=ZjIEApr+ZszptY0B+P9C+Wi4Xzwe7zo8fNZ7WujExoYETyOROMUnlsbyGsDsqif9Xg
+         fHZaShQ2Zj506p+3fmrHAozDrD17iBvE8pN5duDT9ybio08BoaSKkgpPVTt54MmehKmk
+         L29RHFxOsdIo10W7gFbIY9Ibtrc+JpUjIG5/wxRrb0QsgsEyhiUOsbvoISIcup92IYd6
+         fCtvwy0Xp5RFcle4IljAhXob847cb3nRYU9vaL7vQ12LskknReuWpdVbkkHA7McKYuPi
+         +/pYNpdoiVw64UxmHRcxZxyk9PIlXZaOYV7b8+OSKZ4Ba6NmSJubKjLfWjtvcEpbnj4H
+         FY1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVG7m6bllOOyPvaOiJuzWEBFiFlisXTJgSfJmy4Ae5aVFJMNuzYYFIO+Kt16f/R0LQUMQ+YOncXTVhj1aI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQl45HhGpl/G2TdHgfwihdkc86T4KW4Y0M9QuAZArWHA+nzT6a
+	W0FFXR8gOYjGq2RIpc5AHLyGzjl5p7CwmD53iX0JFJjNk5kvz3xFzCdMHzqs190=
+X-Google-Smtp-Source: AGHT+IHgnKPG+JToMuAc0LWW3oeijO/iQFtN52pi0xgDD1whm+yFZJ03BLmZqH4aS986t90jj6sCwA==
+X-Received: by 2002:a17:903:2301:b0:20c:7d4c:64db with SMTP id d9443c01a7336-20ca16be1f5mr250149925ad.49.1729013722182;
+        Tue, 15 Oct 2024 10:35:22 -0700 (PDT)
+Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805a180sm14526195ad.242.2024.10.15.10.35.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 10:35:21 -0700 (PDT)
+Date: Tue, 15 Oct 2024 10:35:20 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Kanak Shilledar <kanakshilledar@gmail.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] riscv: dts: thead: Add TH1520 pin controller support
+Message-ID: <Zw6n2HJqltna1Y3U@x1>
+References: <20241014-th1520-pinctrl-dts-v1-0-268592ca786e@tenstorrent.com>
+ <20241015-thriving-dizzy-4708ff6b6ebe@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241011173052.1088341-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241015102235.GF5682@pendragon.ideasonboard.com>
-In-Reply-To: <20241015102235.GF5682@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 15 Oct 2024 18:33:57 +0100
-Message-ID: <CA+V-a8uH6gZjHUes_K=t_R5_o2i9LevifU6mz3kaUbQS0pK6wg@mail.gmail.com>
-Subject: Re: [PATCH v5 10/22] media: rzg2l-cru: Remove unnecessary WARN_ON
- check in format func
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015-thriving-dizzy-4708ff6b6ebe@spud>
 
-Hi Laurent,
+On Tue, Oct 15, 2024 at 06:19:19PM +0100, Conor Dooley wrote:
+> On Mon, Oct 14, 2024 at 10:54:17AM -0700, Drew Fustini wrote:
+> > This series of device tree patches enables the TH1520 pin controllers on
+> > the BeagleV Ahead and Lichee Pi 4A boards.
+> > 
+> > Patches 1-7 have all been cherry picked from esmil's th1520 branch [1].
+> > They do not have the issues pointed out in the previous series [2] that
+> > I sent out which contained out dated versions of the patches.
+> > 
+> > The final patch was suggested by Emil as there are not currently any
+> > users of the spi0 node so there is no need to enable it in the board dts
+> > files.
+> > 
+> > I have tested on the BeagleV Ahead and the LicheePi 4A. The leds on the
+> > BeagleV can be controlled as expected through sysfs.
+> > 
+> > [1] https://github.com/esmil/linux
+> > [2] https://lore.kernel.org/lkml/20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com/
+> 
+> btw, this should have continued the version numbering from [2] and been
+> v4
 
-Thank you for the review.
+Thanks, I'll keep that in mind for the future.
 
-On Tue, Oct 15, 2024 at 11:22=E2=80=AFAM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Fri, Oct 11, 2024 at 06:30:40PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > `WARN_ON(!fmt)` check in `rzg2l_cru_format_bytesperline()` is unnecessa=
-ry
-> > because the `rzg2l_cru_format_align()` function ensures that a valid
-> > `pixelformat` is set before calling `rzg2l_cru_format_bytesperline()`. =
-As
-> > a result, `rzg2l_cru_format_from_pixel()` is guaranteed to return a
-> > non-NULL value, making the check redundant.
-> >
-> > Additionally, the return type of `rzg2l_cru_format_bytesperline()` is
-> > `u32`, but the code returned `-EINVAL`, a negative value. This mismatch=
- is
-> > now  resolved by removing the invalid error return path.
->
-> s/now  /now /
->
-Oops, I will drop the extra space.
-
-Cheers,
-Prabhakar
+-Drew
 
