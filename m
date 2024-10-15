@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-366190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A40599F1FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:52:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D21399F200
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0078F1F21B42
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:52:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FEC828271A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0569A1E6339;
-	Tue, 15 Oct 2024 15:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861581E7653;
+	Tue, 15 Oct 2024 15:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYtPI9Eg"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fm/cpHjS"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4971CBA18;
-	Tue, 15 Oct 2024 15:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755ED1D5144;
+	Tue, 15 Oct 2024 15:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729007521; cv=none; b=PcnYI20v2QlcywcZi96XdNtwnZ6hAq7os3hnPq3+qj/T0aVBtnlp30m6S51/PeG4LAB8U0/AWPfDFEU2QZvnVhf2JGVZO1pV2akgdddFb8akRXktqq6tQhDfjBHgez1rHdWddsiO4ZXRrRkGWhZr3qNHFVicpGAFjfmvLff8ChY=
+	t=1729007537; cv=none; b=dJQdvh1mwiXriZQWyCRXUU+nEO3qb3ArcVHTa8O+EC6j2DHlhK3yIfmzXzsVlPnDx6C1U6JYz8d/U5lXJ8tIHPIYDpj8ZqGbCPJ4cTDKupLcK3Ty63ZQ+C7SAwMZK+2HryHmuuT46rB/z/m9AaQItR/hHKQ0MdJm68dNbRx1Z4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729007521; c=relaxed/simple;
-	bh=nS7IU49Ufuj1+KhRrg1Rn1SWIkOpLB9C5aDsxWhgVEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IDJA6Bt5BJWRs++brrVImQDAvCzqxU5XewRGHeSuIEmYo/pVT49lo8ceqeYCyxbr+VLqdel2apov8VX9vy9uoM4hYwfXvq4M57w8iob1tTDrdgIxYp6S1vsYODwA2kHPxTJC65912vDWjVOfXeEQjscBW4Zmv78fHlG0h24sDD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYtPI9Eg; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1729007537; c=relaxed/simple;
+	bh=xM3QmGPYOaP0UHcuOOhwp6Lr5ugRT16Ld7IeqHdYrpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Gar5JE2jj9OVfPz0nEdWBsFfvJLA7EWWVJ1eqiEwTDL0K1hkRd2W0ABk8J/ujySEJNhs1t9zc9glexSvEFS3/vxa7FFehacDceG1osLRHelwn309iKjIfYoQ5mw3LkW4WKTmHiqdqzjZ5Xi+Fb9elQcfg7pLJXKsdHapG6AY5kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fm/cpHjS; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e5a1c9071so2188482b3a.0;
-        Tue, 15 Oct 2024 08:51:59 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ea9739647bso1125414a12.0;
+        Tue, 15 Oct 2024 08:52:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729007519; x=1729612319; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pjM9kwiZh5mmOHhBqP/Zm8P/ZASjmloafCH5HmKG1OU=;
-        b=PYtPI9EgFIkgUumQpeveeu4Cm6b+Z36cnjbEdgYOw1Jla+jMC0YjTKmjw8+KwlHhEP
-         TQ/FgjF4JnLS0O3NazsfSer4/ql78zm7y+A5BfHpyPGyscFvpvAKczPmC0sxpN1O0kEK
-         KxlySuLq7yFTN2lekhV6163k3OQBMC631dhLWUB2trwlzXTsVx301B/EbSd1WdiMhHUT
-         4kwoel+eMkzBkFn7NeASWB2AszpBgkqWGPBrjpzOTN5a6NqVuGXtGd8TBlQdlb12ydl1
-         XGYqYnCEhf8EHmqXJzoopjojhZhjsPCitX+mjAPFvzCi9LvTlWlZmhthvaUt7i1zcJND
-         /wLg==
+        d=gmail.com; s=20230601; t=1729007535; x=1729612335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kg8eaAXWXzuM+DpadepOogSQbjhJV0Lyf//6lAln8tk=;
+        b=fm/cpHjSDLXg+BokDe9wm3Z32qwlH3+hR2FDI3N/D8NeMAoX8c3IEW8EAEzrzR/qAQ
+         bjn8PLghXIpuFEOsf1gzG+AVr0kHOJ/ilN5GOQlExWjQd2mhGez6c448Hg9u03FrvyDd
+         d3uWe5y+8gyMZH4hyf2q792v5T5NKsLYrfsuFhRBwbmELt2dmgRBOt8eHPlIDtEGRI8f
+         OenmTaANGyZn7V2CWBbIVX7g4xe5hI6EVbczbi/QRxU5V1dHUA5aLPTVAWCESR9zaGgL
+         +9kKY14jPOtHzlVrOs4Km7FWwNpP1cD3ccP+giJErr8UUoKfC7Uy9QT8oMhtTIAUsZO2
+         AnuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729007519; x=1729612319;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pjM9kwiZh5mmOHhBqP/Zm8P/ZASjmloafCH5HmKG1OU=;
-        b=Wn9ck2yIZfpa/etxFc8qvedjxY7sx6xNN/mupQvx5QveeoLc+JPtNs6FS893rraIta
-         Oue8RWrb/vPiElETd+rJrtbsaDTaVXzFiFAAW8X2i3bkhtS0NH8TmbU6qZWn86m2xdt0
-         jYKxS+6hFgYZfOYyhrvg1K6D+oWS1RYIzCUWXFA/kSE2oeWqgTp6Qelvn1ENhIRBHWl2
-         wnjruJhxWg2ihz1LpTRSrdOlrqCDI/tidMEef9H+5/47mXGMcTJZWV6//AhJ11a/Yl25
-         Iwku6tFEvCP/LIkJLKWQjedfRFVBWswP6KU49lcVbAHYQ6xCT5KFlgk1F+tnRGsR8P1U
-         5bQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW53CJj7GwXamI4REhKEHQUYjfyuHHBmdT96zL26PHUbxU1I6rX8CLZCMtAF6TG+JpMnhcyiWFm+EDVdy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZytRZrzFyT6K8XmeroAxFvx+jwKCsZd1kwAeDk9DiHruloOoK
-	Jzf6RscPCjVmR/Vb9AgZ9I0mWNCi4US/YO//Jk7fmD9Es2BYftcj7AA8GGnZgY0=
-X-Google-Smtp-Source: AGHT+IGemyAIvmMW5ZL39CUqgVl2Ig0uZ2rxoUDJxcdhzf6LJh9gOcXc62OiKX12ZIW0wzWmffLfHg==
-X-Received: by 2002:a05:6a00:22c4:b0:71e:4422:a1b with SMTP id d2e1a72fcca58-71e44220dd6mr20037218b3a.14.1729007518820;
-        Tue, 15 Oct 2024 08:51:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729007535; x=1729612335;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kg8eaAXWXzuM+DpadepOogSQbjhJV0Lyf//6lAln8tk=;
+        b=hkF3Xt0aqhd8TBQIhbd+G/gba4G/m6KB6VxW5eTPqmYa19NLCaSJ3F2nBzXCoxOAFv
+         fhwJp/t23Fk6CM5FNGmeVFViqxfGSmF7W+ZkLEXhTomGWseYGG26/Kq72bvDmB02I7GT
+         g8AuR6eE6BnpnWSn5Fd5gWRf977Mj/2v9G08QJHN8NTOlefQWt1BQB36zEVN4eHkT6Vk
+         2/vwHdmYzWof3N7j4yHfijdTPKLIwE3BCiTGMcXayAUaNwB/tBdfOqDR9lUdyp63EOsQ
+         oeH/kKRjbIKmULNE4+9GCYJTe63JO+fV6WXBHnLwFyq3KM/CbUQvEreRqbw5+C0dbA1w
+         DChA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTIYJOnoCtaot3Xpl9W/u2M8IlLByybU0HmOxl44+3f/+MLtmc0z2gOtk+JusHkcsk9ayJ7ZhWmIAsM0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRWlBc7IpmukKzS3KjrdiMYPWfXdrlCcwckONUZ6TbQc7naP+S
+	RmrEK3oqhBHYQ7TSf+xnA242DX+gbTuzoH/c5VW1LYMrqvUPfUlA5kXxRwB2kE4=
+X-Google-Smtp-Source: AGHT+IFWuhRjKxvrrrxnTxB+PGHsgL6hk1OCr6VM2byohhsaEbwvaCicOUwbTwKEOs+nCqgndiR7uw==
+X-Received: by 2002:a05:6a21:3a83:b0:1d8:f4d9:790c with SMTP id adf61e73a8af0-1d905ecb8demr858673637.15.1729007535436;
+        Tue, 15 Oct 2024 08:52:15 -0700 (PDT)
 Received: from Hridesh-ArchLinux.am.students.amrita.edu ([123.63.2.2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a2561sm1461753b3a.97.2024.10.15.08.51.49
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a2561sm1461753b3a.97.2024.10.15.08.52.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 08:51:57 -0700 (PDT)
+        Tue, 15 Oct 2024 08:52:14 -0700 (PDT)
 From: Hridesh MG <hridesh699@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -90,10 +92,12 @@ Cc: Andreas Hindborg <a.hindborg@kernel.org>,
 	Aswin Unnikrishnan <aswinunni01@gmail.com>,
 	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
 	FUJITA Tomonori <fujita.tomonori@gmail.com>
-Subject: [PATCH v6 0/4]  Clean up rustdocs and add new checkpatch checks
-Date: Tue, 15 Oct 2024 21:21:35 +0530
-Message-ID: <cover.1728818976.git.hridesh699@gmail.com>
+Subject: [PATCH v6 1/4] rust: make section names plural
+Date: Tue, 15 Oct 2024 21:21:36 +0530
+Message-ID: <e25a1758fdac497b64cb2bb3534894142b6f4569.1728818976.git.hridesh699@gmail.com>
 X-Mailer: git-send-email 2.46.1
+In-Reply-To: <cover.1728818976.git.hridesh699@gmail.com>
+References: <cover.1728818976.git.hridesh699@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,43 +106,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Clean up the rustdocs as suggested by two issues[1][2]. The first issue
-is to convert all rustdoc headers to plural in order to maintain
-consistency and avoid situations where further additions to the doc
-could render the grammar incorrect. The second issue aims to remove
-consecutive empty rustdoc lines.
+From: Patrick Miller <paddymills@proton.me>
 
-Also add two new checks (patches 2 and 4) to checkpatch to detect any
-future occurrences of the above two issues and optionally fix them using
---fix.
+Update existing rust documentation section headers to use plural names.
 
-This patchset is a merger of two different patchsets [3] and [4] with a
-few improvements made on top of them which are listed on their
-individual changelogs.
+Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1110
+Signed-off-by: Patrick Miller <paddymills@proton.me>
+Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+---
+ rust/kernel/init.rs     | 2 +-
+ rust/kernel/list/arc.rs | 2 +-
+ rust/kernel/sync/arc.rs | 2 +-
+ rust/macros/lib.rs      | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-[1]: https://github.com/Rust-for-Linux/linux/issues/1110
-[2]: https://github.com/Rust-for-Linux/linux/issues/1109
-
-[3]: https://lore.kernel.org/rust-for-linux/20241002022749.390836-1-paddymills@proton.me/
-[4]: https://lore.kernel.org/rust-for-linux/dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com/
-
-Hridesh MG (2):
-  rust: kernel: clean up empty `///` lines
-  checkpatch: warn on empty rust doc comments
-
-Patrick Miller (2):
-  rust: make section names plural
-  checkpatch: warn on known non-plural rust doc headers
-
- rust/kernel/block/mq/request.rs |  1 -
- rust/kernel/init.rs             |  2 +-
- rust/kernel/list/arc.rs         |  2 +-
- rust/kernel/rbtree.rs           |  1 -
- rust/kernel/sync/arc.rs         |  2 +-
- rust/macros/lib.rs              |  2 +-
- scripts/checkpatch.pl           | 22 ++++++++++++++++++++++
- 7 files changed, 26 insertions(+), 6 deletions(-)
-
+diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+index 25057cbed40b..2036846fc579 100644
+--- a/rust/kernel/init.rs
++++ b/rust/kernel/init.rs
+@@ -744,7 +744,7 @@ macro_rules! try_init {
+ /// Asserts that a field on a struct using `#[pin_data]` is marked with `#[pin]` ie. that it is
+ /// structurally pinned.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// This will succeed:
+ /// ```
+diff --git a/rust/kernel/list/arc.rs b/rust/kernel/list/arc.rs
+index 3483d8c232c4..e85d026ace4b 100644
+--- a/rust/kernel/list/arc.rs
++++ b/rust/kernel/list/arc.rs
+@@ -461,7 +461,7 @@ impl<T, U, const ID: u64> core::ops::DispatchFromDyn<ListArc<U, ID>> for ListArc
+ 
+ /// A utility for tracking whether a [`ListArc`] exists using an atomic.
+ ///
+-/// # Invariant
++/// # Invariants
+ ///
+ /// If the boolean is `false`, then there is no [`ListArc`] for this value.
+ #[repr(transparent)]
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 9325cc5a16a4..d814032e0ccb 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -433,7 +433,7 @@ fn from(item: Pin<UniqueArc<T>>) -> Self {
+ /// There are no mutable references to the underlying [`Arc`], and it remains valid for the
+ /// lifetime of the [`ArcBorrow`] instance.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// ```
+ /// use kernel::sync::{Arc, ArcBorrow};
+diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+index a626b1145e5c..3879e1162866 100644
+--- a/rust/macros/lib.rs
++++ b/rust/macros/lib.rs
+@@ -307,7 +307,7 @@ pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
+ /// literals (lifetimes and documentation strings are not supported). There is a difference in
+ /// supported modifiers as well.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// ```ignore
+ /// use kernel::macro::paste;
 -- 
 2.46.1
 
