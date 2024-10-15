@@ -1,92 +1,161 @@
-Return-Path: <linux-kernel+bounces-365522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A5899E3A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:19:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031E499E3A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED65B225C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A702846AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546C61E2031;
-	Tue, 15 Oct 2024 10:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1471E282C;
+	Tue, 15 Oct 2024 10:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xq7ZBlNQ"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iB1Bfr7u"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C201CBEB8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069DD1CBEB8;
+	Tue, 15 Oct 2024 10:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728987556; cv=none; b=h7vTQ8rV63BiV+bXcBeG1PISDPVYyi/5UcmBD0rs3KOaOSNal9juSwIuCQ1EkWysArwlf8w/LbM71BdQ3kd/lhO9PQ5Zw4q3MftJqmVCcVd8jcNcSHWUja/TCjxZF83+1d+t5XFAUlubVKj/fUD96ZvO0E9n/khz1vaTQ06r7r0=
+	t=1728987545; cv=none; b=hfAhz4LAJdpTRAHIOF+b+bzlHDKdArDalIFFkUBe1EYCgOJjfUwwvG/TgebiIck0kOg/Y5wLk5scH4/y8Awxg+4wnQhl0VomlsllZRyc0hzixXxdpZeAFuuqqilqHdND8PxwGNrsG8f4NJXHbN19spCvdETg36znr+Ieh+8msNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728987556; c=relaxed/simple;
-	bh=9kxCMO+ZKfdLpSe3ykZ9428rS0DuSJXVQQ17j+vf3bE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qel3nJKruCbFsIYxbbnKdiq9sOqSEfi7QT33GM7/tdLCz9xbTJ9gDkfHSV3w3zc6TvfHKVqTzMh9bHDwyqXxic3TSyv1jbp3UjZ2QYRA78Ra6K3gj3r/bNVCvmaoMRP/g6XLtjcNtdCwGSKGASf/7S/504YAlDpGzJkfkypm4ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xq7ZBlNQ; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728987551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=pOwhazTNXJq9la23bs9AQS6qvy6I2WjnVd+IS9JBBEo=;
-	b=Xq7ZBlNQnUigAHx8FZkA722SNh81nb3PNNCW4C0yWvWmKHPUgMNxAa0YsqbE8Omq1gd2FQ
-	ukl0M0jVK2vyEklpEoDa2G2o9Wo8FidMd3smQb5H4DDUGWnuuL8qzo6gLFFo9OM2xnHAz1
-	EXPPTqk5mWwTmcJwI6Uu1jmtzGhbPtQ=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] hv: hyperv.h: Annotate vmbus_channel_gpadl_header with __counted_by()
-Date: Tue, 15 Oct 2024 12:18:29 +0200
-Message-ID: <20241015101829.94876-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1728987545; c=relaxed/simple;
+	bh=VWUNZO+nDheRKZ5nkF50AW67/8AZ063Ip3o0fiXPBio=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfdoL8HPCCETwF8cZ03tzXiMD1gQHYM4SlvIEfl1Y9s9lK8PJCxo446g8aAVct6OgRI0cJYoOmNaARPWFt5V9LcTOF6qP4uvKidIvbLxKT+0HMEl7o1mIIB+Wes6zjPkOE4PoAtO/iR0HA4WCp+QilVqMVLoJZCbQ307vlSHT0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iB1Bfr7u; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F0le1p012750;
+	Tue, 15 Oct 2024 10:19:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=AGzN2LeQRNdMVTwurXOEhf/o
+	AIn0zeR7yD9+1e6sqHs=; b=iB1Bfr7uY7GdPS+Ok4AV0tlSd+FsLGHAOZT/Nbwl
+	P8sEm8F0s3iwt0BkZjeO9Kf3f3TdwvXAtTPT8wQs4eWx6QRaeiOTotRrNeb9906Z
+	mYKtmX8U/yeCbNr4UMqO3imYA5s2momnbL/w9sfzsM+iZu0fljcwy08/pNOLXSpt
+	7MXTEq9E7GFmpwpd3ZQYgj8KWG781u8I5iCAqRyve2uCrJLTByBSAhZ79H/IuCI7
+	k1m+Z3B2v/xfu/nI5Kx8dfl0kVCBqETk7cgzXYQxeRlweBoW2mSaiY3UzetTs6Nw
+	6cosByoaLvL/BgaOfdElaXOpt1fn5HFEfeJEFX3ba4/d3A==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429e5g17nq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 10:18:59 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FAIxXt029902
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 10:18:59 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 15 Oct 2024 03:18:56 -0700
+Date: Tue, 15 Oct 2024 15:48:47 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Kuldeep Singh <quic_kuldsing@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Qingqing Zhou <quic_qqzhou@quicinc.com>
+Subject: Re: [PATCH v2 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
+ unsupported SHM bridge enabling
+Message-ID: <Zw5BhwpJ8UWm7Fiq@hu-mojha-hyd.qualcomm.com>
+References: <20241014111527.2272428-1-quic_kuldsing@quicinc.com>
+ <20241014111527.2272428-2-quic_kuldsing@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241014111527.2272428-2-quic_kuldsing@quicinc.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NDAUO9GaYUON1msTlhPiUv-0xbOiM1HL
+X-Proofpoint-ORIG-GUID: NDAUO9GaYUON1msTlhPiUv-0xbOiM1HL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ adultscore=0 impostorscore=0 mlxscore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410150070
 
-Add the __counted_by compiler attribute to the flexible array member
-range to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Mon, Oct 14, 2024 at 04:45:26PM +0530, Kuldeep Singh wrote:
+> From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+> 
+> When enabling SHM bridge, QTEE returns 0 and sets error 4 in result to
+> qcom_scm for unsupported platforms. Currently, tzmem interprets this as
+> an unknown error rather than recognizing it as an unsupported platform.
+> 
+> Error log:
+> [    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
+> [    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
+> 
+> To address this, modify the function call qcom_scm_shm_bridge_enable()
+> to remap result to indicate an unsupported error. This way, tzmem will
+> correctly identify it as an unsupported platform case instead of
+> reporting it as an error.
+> 
+> Fixes: 178e19c0df1b ("firmware: qcom: scm: add support for SHM bridge operations")
+> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+> Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
+> ---
+>  drivers/firmware/qcom/qcom_scm.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 10986cb11ec0..0df81a9ed438 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -112,6 +112,7 @@ enum qcom_scm_qseecom_tz_cmd_info {
+>  };
+>  
+>  #define QSEECOM_MAX_APP_NAME_SIZE		64
+> +#define SHMBRIDGE_RESULT_NOTSUPP		4
+>  
+>  /* Each bit configures cold/warm boot address for one of the 4 CPUs */
+>  static const u8 qcom_scm_cpu_cold_bits[QCOM_SCM_BOOT_MAX_CPUS] = {
+> @@ -1361,6 +1362,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
+>  
+>  int qcom_scm_shm_bridge_enable(void)
+>  {
+> +	int ret;
+> +
+>  	struct qcom_scm_desc desc = {
+>  		.svc = QCOM_SCM_SVC_MP,
+>  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
+> @@ -1373,7 +1376,15 @@ int qcom_scm_shm_bridge_enable(void)
+>  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
+>  		return -EOPNOTSUPP;
+>  
+> -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
+> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
+> +		return -EOPNOTSUPP;
+> +
+> +	return res.result[0];
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_scm_shm_bridge_enable);
 
-Compile-tested only.
+Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- include/linux/hyperv.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 22c22fb91042..ec62d625c439 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -643,7 +643,7 @@ struct vmbus_channel_gpadl_header {
- 	u32 gpadl;
- 	u16 range_buflen;
- 	u16 rangecount;
--	struct gpa_range range[];
-+	struct gpa_range range[] __counted_by(rangecount);
- } __packed;
- 
- /* This is the followup packet that contains more PFNs. */
--- 
-2.47.0
-
+-Mukesh
 
