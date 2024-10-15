@@ -1,308 +1,867 @@
-Return-Path: <linux-kernel+bounces-365056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53E099DCED
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:40:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D2399DCEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38B831F22FAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:40:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4D21C214DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BCC17335E;
-	Tue, 15 Oct 2024 03:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCB517278D;
+	Tue, 15 Oct 2024 03:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="aJ+f/+RV"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF78172BA8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rw5iXrlu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC9C38DE9;
+	Tue, 15 Oct 2024 03:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728963625; cv=none; b=NcZRvGDYlNFcKBQLnKM9p04446DqI0CUbSq2JhScbLWQlkvms+3f1FuvqHNLXBYd4Kgckt83jDFcS6G024RyGRR9sFwq3i0DcnqPCLW3sn+M4mgrceMBuo4LWTSeayqZw7e7BmcdKXFuSPvtCUvEhlHyLwoAR+/Lq7qY8V4gpyg=
+	t=1728963619; cv=none; b=V5t/Fx8Q4gXgWrZ1+pxCPEiGWIowyIBL9uSRE1efaC0WOBQmTRS2aJS3JGhCMPhfm5mwwzdxVoirENfxx6YynaXYNO0fJYEVZEmJXS1jRSXfJ9q0BaZ1oR5Xkk4MU0dYetKTT/L5uFrG0DUlFsbZZIAa7+rxMi0s2AhnlLNnaHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728963625; c=relaxed/simple;
-	bh=7PyEDO1RkcgTdsGXLo7KbqjJKgNvONvNiOhM80Z/7Qw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=VPL9VqnIISqSIF19o2xp7MsKq+waajcql8+Iv5z7FwF0lufQsTFSH92TA5kvSrmc+HZorE/NtCZnQq6dQ+pSVXVUnSj10Ap4CufnmCbxAWT91+3Eeeqyi6siEd4cHkFUp5xYrm38JT/t1UoK6sc3gW9yn68e/IzBDLC+kgULQZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=aJ+f/+RV reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=YUUT/GHECURXTB/qCmFvKHfDzCj7orwuG5VBFdAb8KE=; b=a
-	J+f/+RV6vAXcY7PJ04jh5FM0tWNcOphM/saZj7pqkOfM0uenIAV8bUina8AjvQgg
-	f5/zeBJZKeUNrZPdiDf/C6kCbbogkg+CujUnKkFnny/+INb7RAWoHdtUz1g+XP30
-	IoMChMAUBhLG7/ezGhu9VbuKCyxDkNoHENaJtpziOM=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-105 (Coremail) ; Tue, 15 Oct 2024 11:38:44 +0800
- (CST)
-Date: Tue, 15 Oct 2024 11:38:44 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Piotr Zalewski" <pZ010001011111@proton.me>
-Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, "Daniel Stone" <daniel@fooishbar.org>, 
-	"Dragan Simic" <dsimic@manjaro.org>, 
-	"Diederik de Haas" <didi.debian@cknow.org>
-Subject: Re:[PATCH v5] rockchip/drm: vop2: add support for gamma LUT
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20241014222022.571819-4-pZ010001011111@proton.me>
-References: <20241014222022.571819-4-pZ010001011111@proton.me>
-X-NTES-SC: AL_Qu2ZCvWdvE0p4iSZbOkXn0kXhec2W8Czvvgg34JRP5k0tyTsxzgGbW9cHXjP+s6ULwOhoAi6XyNfxM5FYqxheYcHQWe88ugeMTHq27gcz/1M
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1728963619; c=relaxed/simple;
+	bh=B5X2vtdgYsGsyYANp4J004prXjxNfyBC1DGPm3C4cIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KSnTMu1nhoze0kPaiJ8oD4hWe/5gmRJnkIjRrsLUArQ5PBauUjq/Dw9WljfS3ber575vgxV1v1Y0g9zXIg/kJRzedNSuDKX0bEJWFTsszctvR1w1FvUjT0/4E+7y7FT7s6KDSwY8Z5XfdrJe7v9rRM0GAE1gKawF7Ixco0D/nX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rw5iXrlu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 303B3C4CEC7;
+	Tue, 15 Oct 2024 03:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728963617;
+	bh=B5X2vtdgYsGsyYANp4J004prXjxNfyBC1DGPm3C4cIQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rw5iXrlupqBE9Gj31ni0qxuxPKN+k8WyMPD9SkAEX1GQt54C3VQ086KCtUUQsl2ZF
+	 UBXIF8zXlBnp7gCW6UAeUYvDMml1L6n8G8kwa5bFhGaRsshwlo2xNotX2MC9CTby4Z
+	 x8gdQ/ICW2QWUMzUT1aJrkf5kLbCwppn9rsG9mdVdrzwZ1c00jUkDtxUHnCMo4dvKv
+	 ylD80BBtt1XBvHlUSc8OS+pgKPXItZYsWHDadyAu/kudzYXcDvBM3Ch/ByFPWpBQkB
+	 I0GX7urU1i0ZdmnPIfbtLSYX5ZwaDIxrm4grGA9t8ysn1WnONKjd4No2zLjG5SdRw9
+	 krSTl1bEwyNtw==
+Date: Tue, 15 Oct 2024 03:40:11 +0000
+From: sergeh@kernel.org
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org, mic@digikod.net,
+	linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
+	audit@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v2 1/6] LSM: Ensure the correct LSM context releaser
+Message-ID: <Zw3kG5-Xh4iqDYSz@lei>
+References: <20241014151450.73674-1-casey@schaufler-ca.com>
+ <20241014151450.73674-2-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7b45f190.452f.1928e41b746.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:aSgvCgD3D0_E4w1nOdsNAA--.5362W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0g15XmcN3QaI4gAEsn
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014151450.73674-2-casey@schaufler-ca.com>
 
-CkhpIFBpb3RyLAoKQXQgMjAyNC0xMC0xNSAwNjozMDoyNywgIlBpb3RyIFphbGV3c2tpIiA8cFow
-MTAwMDEwMTExMTFAcHJvdG9uLm1lPiB3cm90ZToKPkFkZCBzdXBwb3J0IGZvciBnYW1tYSBMVVQg
-aW4gVk9QMiBkcml2ZXIuIFRoZSBpbXBsZW1lbnRhdGlvbiB3YXMgaW5zcGlyZWQKPmJ5IG9uZSBm
-b3VuZCBpbiBWT1AxIGRyaXZlci4gQmx1ZSBhbmQgcmVkIGNoYW5uZWxzIGluIGdhbW1hIExVVCBy
-ZWdpc3Rlcgo+d3JpdGUgd2VyZSBzd2FwcGVkIHdpdGggcmVzcGVjdCB0byBob3cgZ2FtbWEgTFVU
-IHZhbHVlcyBhcmUgd3JpdHRlbiBpbgo+Vk9QMS4gR2FtbWEgTFVUIHBvcnQgc2VsZWN0aW9uIHdh
-cyBhZGRlZCBiZWZvcmUgdGhlIHdyaXRlIG9mIG5ldyBnYW1tYSBMVVQgCj50YWJsZS4gSWYgdGhl
-IGN1cnJlbnQgU29DIGlzIFJLMzU4OCwgInNlYW1sZXNzIiBnYW1tYSBsdXQgdXBkYXRlIGlzIAo+
-cGVyZm9ybWVkIHNpbWlsYXJseSB0byBob3cgaXQgd2FzIGRvbmUgaW4gdGhlIGNhc2Ugb2YgUksz
-Mzk5IGluIFZPUDFbMV0uIEluCj5zZWFtbGVzcyB1cGRhdGUgZ2FtbWEgTFVUIGRpc2FibGUgYmVm
-b3JlIHRoZSB3cml0ZSBpc24ndCBuZWNlc3NhcnksIAo+ZGlmZmVyZW50IHJlZ2lzdGVyIGlzIGJl
-aW5nIHVzZWQgdG8gc2VsZWN0IGdhbW1hIExVVCBwb3J0WzJdIGFuZCBhZnRlciAKPnNldHRpbmcg
-RFNQX0xVVF9FTiBiaXQsIEdBTU1BX1VQREFURV9FTiBiaXQgaXMgc2V0WzNdLiBHYW1tYSBzaXpl
-IGlzIHNldCAKPmFuZCBkcm0gY29sb3IgbWFuYWdlbWVudCBpcyBlbmFibGVkIGZvciBlYWNoIHZp
-ZGVvIHBvcnQncyBDUlRDIGV4Y2VwdCBvbmVzIAo+d2hpY2ggaGF2ZSBubyBhc3NvY2lhdGVkIGRl
-dmljZS4gCj4KPlNvbHV0aW9uIHdhcyB0ZXN0ZWQgb24gUkszNTY2IChQaW5ldGFiMikuIFdoZW4g
-dXNpbmcgdXNlcnNwYWNlIHRvb2xzCj53aGljaCBzZXQgZWcuIGNvbnN0YW50IGNvbG9yIHRlbXBl
-cmF0dXJlIG5vIGlzc3VlcyB3ZXJlIG5vdGljZWQuIFdoZW4KPnVzaW5nIHVzZXJzcGFjZSB0b29s
-cyB3aGljaCBhZGp1c3QgZWcuIGNvbG9yIHRlbXBlcmF0dXJlIHRoZSBzbGlnaHQgc2NyZWVuCj5m
-bGlja2VyIGlzIHZpc2libGUgcHJvYmFibHkgYmVjYXVzZSBvZiBnYW1tYSBMVVQgZGlzYWJsZS4K
-Pgo+Q29tcGFyZSBiZWhhdmlvdXIgb2YgZWcuOgo+YGBgCj5nYW1tYXN0ZXAgLU8gMzAwMAo+YGBg
-Cj4KPlRvIGVnLjoKPmBgYAo+Z2FtbWFzdGVwIC1sIDUzOjIzIC10IDYwMDA6MzAwMAo+YGBgCj4K
-PkluIGxhdHRlciBjYXNlIGNvbG9yIHRlbXBlcmF0dXJlIGlzIHNsb3dseSBhZGp1c3RlZCBhdCB0
-aGUgYmVnaW5uaW5nIHdoaWNoCj5jYXVzZXMgc2NyZWVuIHRvIHNsaWdobHkgZmxpY2tlci4gVGhl
-biBpdCBhZGp1c3RzIGV2ZXJ5IGZldyBzZWNvbmRzIHdoaWNoIAo+YWxzbyBjYXVzZXMgc2xpZ2h0
-IHNjcmVlbiBmbGlja2VyLgo+Cj5bMV0gaHR0cHM6Ly9saXN0cy5pbmZyYWRlYWQub3JnL3BpcGVy
-bWFpbC9saW51eC1yb2NrY2hpcC8yMDIxLU9jdG9iZXIvMDI4MTMyLmh0bWwKPlsyXSBodHRwczov
-L2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC80ODI0OTcwOC04YzA1LTQwZDItYTVkOC0y
-M2RlOTYwYzVhNzdAcm9jay1jaGlwcy5jb20vCj5bM10gaHR0cHM6Ly9naXRodWIuY29tL3JhZHhh
-L2tlcm5lbC9ibG9iL2xpbnV4LTYuMS1zdGFuLXJrcjEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlw
-L3JvY2tjaGlwX2RybV92b3AyLmMjTDM0MzcKPgo+SGVscGVkLWJ5OiBEYW5pZWwgU3RvbmUgPGRh
-bmllbEBmb29pc2hiYXIub3JnPgo+SGVscGVkLWJ5OiBEcmFnYW4gU2ltaWMgPGRzaW1pY0BtYW5q
-YXJvLm9yZz4KPkhlbHBlZC1ieTogRGllZGVyaWsgZGUgSGFhcyA8ZGlkaS5kZWJpYW5AY2tub3cu
-b3JnPgo+SGVscGVkLWJ5OiBBbmR5IFlhbiA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cj5TaWdu
-ZWQtb2ZmLWJ5OiBQaW90ciBaYWxld3NraSA8cFowMTAwMDEwMTExMTFAcHJvdG9uLm1lPgo+LS0t
-Cj4KPk5vdGVzOgo+ICAgIENoYW5nZXMgaW4gdjU6Cj4gICAgICAgIC0gRG8gbm90IHRyaWdnZXIg
-ZnVsbCBtb2Rlc2V0IGluIGNhc2Ugc2VhbWxlc3MgZ2FtbWEgbHV0IHVwZGF0ZQo+CQkgIGlzbid0
-IHBvc3NpYmxlIChlZy4gcmszNTZ4IGNhc2UpLiBJdCB3YXMgZGlzY292ZXJlZCB0aGF0IHdpdGgg
-Cj4JCSAgZnVsbCBtb2Rlc2V0LCB1c2Vyc3BhY2UgdG9vbHMgd2hpY2ggYWRqdXN0IGNvbG9yIHRl
-bXBlcmF0dXJlIHdpdGgKPiAgICAgICAgICBoaWdoIGZyZXF1ZW5jeSBjYXVzZSBzY3JlZW4gdG8g
-Z28gYmxhY2sgYW5kIHJlZHVjZSBvdmVyYWxsCj4gICAgICAgICAgcGVyZm9ybWFuY2UuIEluc3Rl
-YWQsIHJldmVydCB0byBwcmV2aW91cyBiZWhhdmlvdXIgb2YgbHV0IHVwZGF0ZQo+CQkgIGhhcHBl
-bmluZyBpbiBhdG9taWNfYmVnaW4gb3IgKGluIGNhc2UgdGhlcmUgaXMgYSBtb2Rlc2V0KSBpbgo+
-CQkgIGF0b21pY19lbmFibGUuIEFsc28sIGFkZCB1bnJlbGF0ZWQgdG8gbW9kZXNldCB0cmlnZ2Vy
-Cj4JCSAgY2hhbmdlcy9pbXByb3ZlbWVudHMgZnJvbSB2NCBvbiB0b3AuIEltcHJvdmUgY29kZSBy
-ZWFkYWJpbGl0eQo+CQkgIHRvby4KPgo+ICAgIENoYW5nZXMgaW4gdjQ6Cj4gICAgICAgIC0gcmV3
-b3JrIHRoZSBpbXBsZW1lbnRhdGlvbiB0byBiZXR0ZXIgdXRpbGl6ZSBEUk0gYXRvbWljIHVwZGF0
-ZXNbMl0KPiAgICAgICAgLSBoYW5kbGUgdGhlIFJLMzU4OCBjYXNlWzJdWzNdCj4gICAgCj4gICAg
-Q2hhbmdlcyBpbiB2MzoKPiAgICAgICAgLSB2MyBpcyBwYXRjaCB2MiAicmVzZW5kIiwgYnkgbWlz
-dGFrZSB0aGUgaW5jcmVtZW50YWwgcGF0Y2ggd2FzCj4gICAgICAgIHNlbnQgaW4gdjIKPiAgICAK
-PiAgICBDaGFuZ2VzIGluIHYyOgo+ICAgICAgICAtIEFwcGx5IGNvZGUgc3R5bGluZyBjb3JyZWN0
-aW9uc1sxXQo+ICAgICAgICAtIE1vdmUgZ2FtbWEgTFVUIHdyaXRlIGluc2lkZSB0aGUgdm9wMiBs
-b2NrCj4JCj4JTGluayB0byB2NDogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcm9ja2No
-aXAvMjAyNDA4MTUxMjQzMDYuMTg5MjgyLTItcFowMTAwMDEwMTExMTFAcHJvdG9uLm1lLwo+ICAg
-IExpbmsgdG8gdjM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJvY2tjaGlwL1RrZ0tW
-aXZ1YUxGTElMUFktbjNpWm9fOEtGLWRhS2RxZHUtMF9lMEhQLTVBcl84REFMRGVOV29nMnN1d1dL
-alg3ZW9tY2JHRVQwS1plN0RsemRoSzJZTTZDYkxiZUtlRlpyLU1KekpNdHcwPUBwcm90b24ubWUv
-Cj4gICAgTGluayB0byB2MjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcm9ja2NoaXAv
-SGswM0hEYjZ3U1NIV3RFRlpIVXllMDZIUjAtOVl6UDVuQ0h4OUE4X2tIeldTWmF3RHJVMW8xcGpF
-R2tDT0pGb1JnMG5UQjRCV0V2NlYwWEJPakY0LTBNajQ0bHAyVHJqYVFmbnl0enAtUGs9QHByb3Rv
-bi5tZS9ULyN1Cj4gICAgTGluayB0byB2MTogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgt
-cm9ja2NoaXAvOTczNmVhZGY2YTlkOGU5N2VlZjkxOWM2YjNkODg4MjhAbWFuamFyby5vcmcvVC8j
-dAo+ICAgIAo+ICAgIFsxXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC9k
-MDE5NzYxNTA0YjU0MDYwMGQ5ZmM3YTU4NWQ2Zjk1ZkBtYW5qYXJvLm9yZwo+ICAgIFsyXSBodHRw
-czovL2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC9DQVBqODdyT009ajB6bXVXTDlmckdL
-VjF4elBiSnJrPVE5aXA3Rl9IQVBZbmJDcVBvdXdAbWFpbC5nbWFpbC5jb20KPiAgICBbM10gaHR0
-cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcm9ja2NoaXAvN2Q5OThlNGMtZTFkMy00ZThiLWFm
-NzYtYzViYzgzYjQzNjQ3QHJvY2stY2hpcHMuY29tCj4KPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2No
-aXAvcm9ja2NoaXBfZHJtX3ZvcDIuYyB8IDE2MSArKysrKysrKysrKysrKysrKysrCj4gZHJpdmVy
-cy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmggfCAgIDUgKwo+IDIgZmlsZXMg
-Y2hhbmdlZCwgMTY2IGluc2VydGlvbnMoKykKPgo+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5jIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlw
-L3JvY2tjaGlwX2RybV92b3AyLmMKPmluZGV4IDk4NzMxNzJlM2ZkMy4uYTZhMmQ3ZGY1ZWNjIDEw
-MDY0NAo+LS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMK
-PisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5jCj5AQCAt
-Mjc4LDYgKzI3OCwxNSBAQCBzdGF0aWMgdTMyIHZvcDJfcmVhZGwoc3RydWN0IHZvcDIgKnZvcDIs
-IHUzMiBvZmZzZXQpCj4gCXJldHVybiB2YWw7Cj4gfQo+IAo+K3N0YXRpYyB1MzIgdm9wMl92cF9y
-ZWFkKHN0cnVjdCB2b3AyX3ZpZGVvX3BvcnQgKnZwLCB1MzIgb2Zmc2V0KQo+K3sKPisJdTMyIHZh
-bDsKPisKPisJcmVnbWFwX3JlYWQodnAtPnZvcDItPm1hcCwgdnAtPmRhdGEtPm9mZnNldCArIG9m
-ZnNldCwgJnZhbCk7Cj4rCj4rCXJldHVybiB2YWw7Cj4rfQo+Kwo+IHN0YXRpYyB2b2lkIHZvcDJf
-d2luX3dyaXRlKGNvbnN0IHN0cnVjdCB2b3AyX3dpbiAqd2luLCB1bnNpZ25lZCBpbnQgcmVnLCB1
-MzIgdikKPiB7Cj4gCXJlZ21hcF9maWVsZF93cml0ZSh3aW4tPnJlZ1tyZWddLCB2KTsKPkBAIC05
-OTgsNiArMTAwNyw1NSBAQCBzdGF0aWMgdm9pZCB2b3AyX2Rpc2FibGUoc3RydWN0IHZvcDIgKnZv
-cDIpCj4gCWNsa19kaXNhYmxlX3VucHJlcGFyZSh2b3AyLT5oY2xrKTsKPiB9Cj4gCj4rc3RhdGlj
-IGJvb2wgdm9wMl92cF9kc3BfbHV0X2lzX2VuYWJsZWQoc3RydWN0IHZvcDJfdmlkZW9fcG9ydCAq
-dnApCj4rewo+KwlyZXR1cm4gKHUzMikgKHZvcDJfdnBfcmVhZCh2cCwgUkszNTY4X1ZQX0RTUF9D
-VFJMKSAmIFJLMzU2OF9WUF9EU1BfQ1RSTF9fRFNQX0xVVF9FTikgPgo+KwkgICAgMDsKPit9Cj4r
-Cj4rc3RhdGljIHZvaWQgdm9wMl92cF9kc3BfbHV0X2Rpc2FibGUoc3RydWN0IHZvcDJfdmlkZW9f
-cG9ydCAqdnApCj4rewo+Kwl1MzIgZHNwX2N0cmwgPSB2b3AyX3ZwX3JlYWQodnAsIFJLMzU2OF9W
-UF9EU1BfQ1RSTCk7Cj4rCj4rCWRzcF9jdHJsICY9IH5SSzM1NjhfVlBfRFNQX0NUUkxfX0RTUF9M
-VVRfRU47Cj4rCXZvcDJfdnBfd3JpdGUodnAsIFJLMzU2OF9WUF9EU1BfQ1RSTCwgZHNwX2N0cmwp
-Owo+K30KPisKPitzdGF0aWMgYm9vbCB2b3AyX3ZwX2RzcF9sdXRfcG9sbF9kaXNhYmxlKHN0cnVj
-dCB2b3AyX3ZpZGVvX3BvcnQgKnZwKQo+K3sKPisJdTMyIGRzcF9jdHJsOwo+KwlpbnQgcmV0ID0g
-cmVhZHhfcG9sbF90aW1lb3V0KHZvcDJfdnBfZHNwX2x1dF9pc19lbmFibGVkLCB2cCwgZHNwX2N0
-cmwsCj4rCQkJCSFkc3BfY3RybCwgNSwgMzAgKiAxMDAwKTsKPisJaWYgKHJldCkgewo+KwkJZHJt
-X2Vycih2cC0+dm9wMi0+ZHJtLCAiZGlzcGxheSBMVVQgUkFNIGVuYWJsZSB0aW1lb3V0IVxuIik7
-Cj4rCQlyZXR1cm4gZmFsc2U7Cj4rCX0KPisKPisJcmV0dXJuIHRydWU7Cj4rfQo+Kwo+K3N0YXRp
-YyB2b2lkIHZvcDJfdnBfZHNwX2x1dF9lbmFibGUoc3RydWN0IHZvcDJfdmlkZW9fcG9ydCAqdnAp
-Cj4rewo+Kwl1MzIgZHNwX2N0cmwgPSB2b3AyX3ZwX3JlYWQodnAsIFJLMzU2OF9WUF9EU1BfQ1RS
-TCk7Cj4rCj4rCWRzcF9jdHJsIHw9IFJLMzU2OF9WUF9EU1BfQ1RSTF9fRFNQX0xVVF9FTjsKPisJ
-dm9wMl92cF93cml0ZSh2cCwgUkszNTY4X1ZQX0RTUF9DVFJMLCBkc3BfY3RybCk7Cj4rfQo+Kwo+
-K3N0YXRpYyB2b2lkIHZvcDJfdnBfZHNwX2x1dF91cGRhdGVfZW5hYmxlKHN0cnVjdCB2b3AyX3Zp
-ZGVvX3BvcnQgKnZwKQo+K3sKPisJdTMyIGRzcF9jdHJsID0gdm9wMl92cF9yZWFkKHZwLCBSSzM1
-NjhfVlBfRFNQX0NUUkwpOwo+Kwo+Kwlkc3BfY3RybCB8PSBSSzM1ODhfVlBfRFNQX0NUUkxfX0dB
-TU1BX1VQREFURV9FTjsKPisJdm9wMl92cF93cml0ZSh2cCwgUkszNTY4X1ZQX0RTUF9DVFJMLCBk
-c3BfY3RybCk7Cj4rfQo+Kwo+K3N0YXRpYyBpbmxpbmUgYm9vbCB2b3AyX3N1cHBvcnRzX3NlYW1s
-ZXNzX2dhbW1hX2x1dF91cGRhdGUoc3RydWN0IHZvcDIgKnZvcDIpCj4rewo+KwlyZXR1cm4gKHZv
-cDItPmRhdGEtPnNvY19pZCA9PSAzNTg4KTsKPit9Cj4rCj4rCj4gc3RhdGljIHZvaWQgdm9wMl9j
-cnRjX2F0b21pY19kaXNhYmxlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiAJCQkJICAgICBzdHJ1
-Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpCj4gewo+QEAgLTE0ODIsNiArMTU0MCw2NiBAQCBz
-dGF0aWMgYm9vbCB2b3AyX2NydGNfbW9kZV9maXh1cChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4g
-CXJldHVybiB0cnVlOwo+IH0KPiAKPitzdGF0aWMgdm9pZCB2b3AyX2NydGNfd3JpdGVfZ2FtbWFf
-bHV0KHN0cnVjdCB2b3AyICp2b3AyLCBzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4rewo+Kwljb25z
-dCBzdHJ1Y3Qgdm9wMl92aWRlb19wb3J0ICp2cCA9IHRvX3ZvcDJfdmlkZW9fcG9ydChjcnRjKTsK
-PisJY29uc3Qgc3RydWN0IHZvcDJfdmlkZW9fcG9ydF9kYXRhICp2cF9kYXRhID0gJnZvcDItPmRh
-dGEtPnZwW3ZwLT5pZF07Cj4rCj4rCXN0cnVjdCBkcm1fY29sb3JfbHV0ICpsdXQgPSBjcnRjLT5z
-dGF0ZS0+Z2FtbWFfbHV0LT5kYXRhOwo+Kwl1bnNpZ25lZCBpbnQgaSwgYnBjID0gaWxvZzIodnBf
-ZGF0YS0+Z2FtbWFfbHV0X2xlbik7Cj4rCXUzMiB3b3JkOwo+Kwo+Kwlmb3IgKGkgPSAwOyBpIDwg
-Y3J0Yy0+Z2FtbWFfc2l6ZTsgaSsrKSB7Cj4rCQl3b3JkID0gKGRybV9jb2xvcl9sdXRfZXh0cmFj
-dChsdXRbaV0uYmx1ZSwgYnBjKSA8PCAoMiAqIGJwYykpIHwKPisJCSAgICAoZHJtX2NvbG9yX2x1
-dF9leHRyYWN0KGx1dFtpXS5ncmVlbiwgYnBjKSA8PCBicGMpIHwKPisJCSAgICBkcm1fY29sb3Jf
-bHV0X2V4dHJhY3QobHV0W2ldLnJlZCwgYnBjKTsKPisKPisJCXdyaXRlbCh3b3JkLCB2b3AyLT5s
-dXRfcmVncyArIGkgKiA0KTsKPisJfQo+K30KPisKPitzdGF0aWMgdm9pZCB2b3AyX2NydGNfYXRv
-bWljX3RyeV9zZXRfZ2FtbWEoc3RydWN0IHZvcDIgKnZvcDIsCgpXaHkgd2UgbmVlZCBhICBfdHJ5
-XyBpbiB0aGUgZnVuY3Rpb24gbmFtZSA/Cgo+KwkJCQkJc3RydWN0IHZvcDJfdmlkZW9fcG9ydCAq
-dnAsCj4rCQkJCQlzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4rCQkJCQlzdHJ1Y3QgZHJtX2NydGNf
-c3RhdGUgKmNydGNfc3RhdGUpCj4rewo+Kwo+KwlpZiAodm9wMi0+bHV0X3JlZ3MgJiYgY3J0Y19z
-dGF0ZS0+Y29sb3JfbWdtdF9jaGFuZ2VkKSB7Cj4rCQlpZiAoIWNydGNfc3RhdGUtPmdhbW1hX2x1
-dCkgewo+KwkJCXZvcDJfdnBfZHNwX2x1dF9kaXNhYmxlKHZwKTsKPisJCQlyZXR1cm47Cj4rCQl9
-Cj4rCj4rCQlpZiAodm9wMl9zdXBwb3J0c19zZWFtbGVzc19nYW1tYV9sdXRfdXBkYXRlKHZvcDIp
-KSB7CkkgdGhpbmsgaXQncyBiZXR0ZXJ5IHRvIGNoZWNrIGZvciByazM1NjgvcmszNTY2IGhlcmUs
-ICB0aGUgbmV3ZXIgc29jIHdpbGwgYWxsIGZvbGxvdwpyazM1ODggc3VwcG9ydCBzZWFtbGVzcyBn
-YW1tYSBsdXQgdXBkYXRlLgoKCj4rCQkJdm9wMl93cml0ZWwodm9wMiwgUkszNTY4X0xVVF9QT1JU
-X1NFTCwgRklFTERfUFJFUCgKPisJCQkJUkszNTg4X0xVVF9QT1JUX1NFTF9fR0FNTUFfQUhCX1dS
-SVRFX1NFTCwKPisJCQkJdnAtPmlkKSk7Cj4rCQkJdm9wMl9jcnRjX3dyaXRlX2dhbW1hX2x1dCh2
-b3AyLCBjcnRjKTsKPisJCQl2b3AyX3ZwX2RzcF9sdXRfZW5hYmxlKHZwKTsKPisJCQl2b3AyX3Zw
-X2RzcF9sdXRfdXBkYXRlX2VuYWJsZSh2cCk7Cj4rCQl9IGVsc2UgewoKQXMgZm9yIHJrMzU2Ni82
-OCwgd2Ugc2hvdWxkIGRvIGV4Y2x1c2l2ZSBjaGVjayBoZXJlLCBiZWNhdXNlIHRoZXJlIGlzIG9u
-bHkKb25lIGdhbW1hICwgIG9ubHkgb25lIFZQIGNhbiB1c2UgaXQgYXQgYSB0aW1lLiBTZWUgbXkg
-Y29tbWVudHMgaW4gVjM6CgpodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Byb2plY3QvbGlu
-dXgtcm9ja2NoaXAvcGF0Y2gvVGtnS1ZpdnVhTEZMSUxQWS1uM2lab184S0YtZGFLZHFkdS0wX2Uw
-SFAtNUFyXzhEQUxEZU5Xb2cyc3V3V0tqWDdlb21jYkdFVDBLWmU3RGx6ZGhLMllNNkNiTGJlS2VG
-WnItTUp6Sk10dzA9QHByb3Rvbi5tZS8KCgo+KwkJCXZvcDJfdnBfZHNwX2x1dF9kaXNhYmxlKHZw
-KTsKPisJCQl2b3AyX2NmZ19kb25lKHZwKTsKPisJCQlpZiAoIXZvcDJfdnBfZHNwX2x1dF9wb2xs
-X2Rpc2FibGUodnApKQo+KwkJCQlyZXR1cm47Cj4rCj4rCQkJdm9wMl93cml0ZWwodm9wMiwgUksz
-NTY4X0xVVF9QT1JUX1NFTCwgdnAtPmlkKTsKPisJCQl2b3AyX2NydGNfd3JpdGVfZ2FtbWFfbHV0
-KHZvcDIsIGNydGMpOwo+KwkJCXZvcDJfdnBfZHNwX2x1dF9lbmFibGUodnApOwo+KwkJfQo+Kwl9
-Cj4rfQo+Kwo+K3N0YXRpYyBpbmxpbmUgdm9pZCB2b3AyX2NydGNfYXRvbWljX3RyeV9zZXRfZ2Ft
-bWFfbG9ja2VkKHN0cnVjdCB2b3AyICp2b3AyLAo+KwkJCQkJc3RydWN0IHZvcDJfdmlkZW9fcG9y
-dCAqdnAsCj4rCQkJCQlzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4rCQkJCQlzdHJ1Y3QgZHJtX2Ny
-dGNfc3RhdGUgKmNydGNfc3RhdGUpCj4rewo+Kwl2b3AyX2xvY2sodm9wMik7Cj4rCXZvcDJfY3J0
-Y19hdG9taWNfdHJ5X3NldF9nYW1tYSh2b3AyLCB2cCwgY3J0YywgY3J0Y19zdGF0ZSk7Cj4rCXZv
-cDJfdW5sb2NrKHZvcDIpOwo+K30KPisKPiBzdGF0aWMgdm9pZCB2b3AyX2RpdGhlcl9zZXR1cChz
-dHJ1Y3QgZHJtX2NydGMgKmNydGMsIHUzMiAqZHNwX2N0cmwpCj4gewo+IAlzdHJ1Y3Qgcm9ja2No
-aXBfY3J0Y19zdGF0ZSAqdmNzdGF0ZSA9IHRvX3JvY2tjaGlwX2NydGNfc3RhdGUoY3J0Yy0+c3Rh
-dGUpOwo+QEAgLTIwNTcsMTEgKzIxNzUsMzUgQEAgc3RhdGljIHZvaWQgdm9wMl9jcnRjX2F0b21p
-Y19lbmFibGUoc3RydWN0IGRybV9jcnRjICpjcnRjLAo+IAo+IAl2b3AyX3ZwX3dyaXRlKHZwLCBS
-SzM1NjhfVlBfRFNQX0NUUkwsIGRzcF9jdHJsKTsKPiAKPisJdm9wMl9jcnRjX2F0b21pY190cnlf
-c2V0X2dhbW1hKHZvcDIsIHZwLCBjcnRjLCBjcnRjX3N0YXRlKTsKPisKPiAJZHJtX2NydGNfdmJs
-YW5rX29uKGNydGMpOwo+IAo+IAl2b3AyX3VubG9jayh2b3AyKTsKPiB9Cj4gCj4rc3RhdGljIGlu
-dCB2b3AyX2NydGNfYXRvbWljX2NoZWNrX2dhbW1hKHN0cnVjdCB2b3AyX3ZpZGVvX3BvcnQgKnZw
-LAo+KwkJCQkJc3RydWN0IGRybV9jcnRjICpjcnRjLAo+KwkJCQkJc3RydWN0IGRybV9hdG9taWNf
-c3RhdGUgKnN0YXRlLAo+KwkJCQkJc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlKQo+
-K3sKPisJc3RydWN0IHZvcDIgKnZvcDIgPSB2cC0+dm9wMjsKPisJdW5zaWduZWQgaW50IGxlbjsK
-PisKPisJaWYgKCF2cC0+dm9wMi0+bHV0X3JlZ3MgfHwgIWNydGNfc3RhdGUtPmNvbG9yX21nbXRf
-Y2hhbmdlZCB8fAo+KwkgICAgIWNydGNfc3RhdGUtPmdhbW1hX2x1dCkKPisJCXJldHVybiAwOwo+
-Kwo+KwlsZW4gPSBkcm1fY29sb3JfbHV0X3NpemUoY3J0Y19zdGF0ZS0+Z2FtbWFfbHV0KTsKPisJ
-aWYgKGxlbiAhPSBjcnRjLT5nYW1tYV9zaXplKSB7Cj4rCQlkcm1fZGJnKHZvcDItPmRybSwgIklu
-dmFsaWQgTFVUIHNpemU7IGdvdCAlZCwgZXhwZWN0ZWQgJWRcbiIsCj4rCQkJCSAgICAgIGxlbiwg
-Y3J0Yy0+Z2FtbWFfc2l6ZSk7Cj4rCQlyZXR1cm4gLUVJTlZBTDsKPisJfQo+Kwo+KwlyZXR1cm4g
-MDsKPit9Cj4rCj4gc3RhdGljIGludCB2b3AyX2NydGNfYXRvbWljX2NoZWNrKHN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YywKPiAJCQkJICBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpCj4gewo+
-QEAgLTIwNjksNiArMjIxMSwxMSBAQCBzdGF0aWMgaW50IHZvcDJfY3J0Y19hdG9taWNfY2hlY2so
-c3RydWN0IGRybV9jcnRjICpjcnRjLAo+IAlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZTsKPiAJaW50
-IG5wbGFuZXMgPSAwOwo+IAlzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKmNydGNfc3RhdGUgPSBkcm1f
-YXRvbWljX2dldF9uZXdfY3J0Y19zdGF0ZShzdGF0ZSwgY3J0Yyk7Cj4rCWludCByZXQ7Cj4rCj4r
-CXJldCA9IHZvcDJfY3J0Y19hdG9taWNfY2hlY2tfZ2FtbWEodnAsIGNydGMsIHN0YXRlLCBjcnRj
-X3N0YXRlKTsKPisJaWYgKHJldCkKPisJCXJldHVybiByZXQ7Cj4gCj4gCWRybV9hdG9taWNfY3J0
-Y19zdGF0ZV9mb3JfZWFjaF9wbGFuZShwbGFuZSwgY3J0Y19zdGF0ZSkKPiAJCW5wbGFuZXMrKzsK
-PkBAIC0yNDU2LDkgKzI2MDMsMTIgQEAgc3RhdGljIHZvaWQgdm9wMl9zZXR1cF9kbHlfZm9yX3dp
-bmRvd3Moc3RydWN0IHZvcDIgKnZvcDIpCj4gCXZvcDJfd3JpdGVsKHZvcDIsIFJLMzU2OF9TTUFS
-VF9ETFlfTlVNLCBzZGx5KTsKPiB9Cj4gCj4rCj4gc3RhdGljIHZvaWQgdm9wMl9jcnRjX2F0b21p
-Y19iZWdpbihzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gCQkJCSAgIHN0cnVjdCBkcm1fYXRvbWlj
-X3N0YXRlICpzdGF0ZSkKPiB7Cj4rCXN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqY3J0Y19zdGF0ZSA9
-Cj4rCQlkcm1fYXRvbWljX2dldF9uZXdfY3J0Y19zdGF0ZShzdGF0ZSwgY3J0Yyk7Cj4gCXN0cnVj
-dCB2b3AyX3ZpZGVvX3BvcnQgKnZwID0gdG9fdm9wMl92aWRlb19wb3J0KGNydGMpOwo+IAlzdHJ1
-Y3Qgdm9wMiAqdm9wMiA9IHZwLT52b3AyOwo+IAlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZTsKPkBA
-IC0yNDgyLDYgKzI2MzIsMTEgQEAgc3RhdGljIHZvaWQgdm9wMl9jcnRjX2F0b21pY19iZWdpbihz
-dHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gCXZvcDJfc2V0dXBfbGF5ZXJfbWl4ZXIodnApOwo+IAl2
-b3AyX3NldHVwX2FscGhhKHZwKTsKPiAJdm9wMl9zZXR1cF9kbHlfZm9yX3dpbmRvd3Modm9wMik7
-Cj4rCj4rCS8vIE5PVEU6IGluIGNhc2Ugb2YgbW9kZXNldCBnYW1tYSBsdXQgdXBkYXRlCj4rCS8v
-IGFscmVhZHkgaGFwcGVuZWQgaW4gYXRvbWljIGVuYWJsZQo+KwlpZiAoIWRybV9hdG9taWNfY3J0
-Y19uZWVkc19tb2Rlc2V0KGNydGNfc3RhdGUpKQo+KwkJdm9wMl9jcnRjX2F0b21pY190cnlfc2V0
-X2dhbW1hX2xvY2tlZCh2b3AyLCB2cCwgY3J0YywgY3J0Y19zdGF0ZSk7CgpJIHdvdWxkIGxpa2Ug
-dXBkYXRlIGdhbW1hIGF0IGNydGNfYXRvbWljX2ZsdXNoIGNhbGxiYWNrIGxpa2UgbWVkaWF0ZWNr
-LCB0aWRzcywgYXN0LCBhbmQKd2UgYWxzbyBmb2xsb3dpbmcgdGhlc2UgaW4gb3VyIGJzcCBjb2Rl
-LgoKPiB9Cj4gCj4gc3RhdGljIHZvaWQgdm9wMl9jcnRjX2F0b21pY19mbHVzaChzdHJ1Y3QgZHJt
-X2NydGMgKmNydGMsCj5AQCAtMjc5MCw3ICsyOTQ1LDEzIEBAIHN0YXRpYyBpbnQgdm9wMl9jcmVh
-dGVfY3J0Y3Moc3RydWN0IHZvcDIgKnZvcDIpCj4gCQl9Cj4gCj4gCQlkcm1fY3J0Y19oZWxwZXJf
-YWRkKCZ2cC0+Y3J0YywgJnZvcDJfY3J0Y19oZWxwZXJfZnVuY3MpOwo+KwkJaWYgKHZvcDItPmx1
-dF9yZWdzICYmIHZwLT5jcnRjLmRldiAhPSBOVUxMKSB7Cj4rCQkJY29uc3Qgc3RydWN0IHZvcDJf
-dmlkZW9fcG9ydF9kYXRhICp2cF9kYXRhID0gJnZvcDJfZGF0YS0+dnBbdnAtPmlkXTsKPiAKPisJ
-CQlkcm1fbW9kZV9jcnRjX3NldF9nYW1tYV9zaXplKCZ2cC0+Y3J0YywgdnBfZGF0YS0+Z2FtbWFf
-bHV0X2xlbik7Cj4rCQkJZHJtX2NydGNfZW5hYmxlX2NvbG9yX21nbXQoJnZwLT5jcnRjLCAwLCBm
-YWxzZSwKPisJCQkJCQkgICB2cF9kYXRhLT5nYW1tYV9sdXRfbGVuKTsKCkl0IHNlZW1zIHRoYXQg
-d2UgY2FuIGtlZXAgaXQgaW4gb25lIGxpbmUsICB0aGUgZGVmYXVsdCBsaW1pdCAgb2YgbGludXgg
-a2VybmVsIGNvZGluZyBzdHlsZSBpcyAxMDAgY2hhcmFjdGVycyBub3cuCgoKPisJCX0KPiAJCWlu
-aXRfY29tcGxldGlvbigmdnAtPmRzcF9ob2xkX2NvbXBsZXRpb24pOwo+IAl9Cj4gCj5kaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmggYi9kcml2
-ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuaAo+aW5kZXggNjE1YTE2MTk2
-YWZmLi41MTBkZGE2ZjkwOTIgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
-cm9ja2NoaXBfZHJtX3ZvcDIuaAo+KysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tj
-aGlwX2RybV92b3AyLmgKPkBAIC0zOTQsNiArMzk0LDcgQEAgZW51bSBkc3RfZmFjdG9yX21vZGUg
-ewo+ICNkZWZpbmUgUkszNTY4X1JFR19DRkdfRE9ORV9fR0xCX0NGR19ET05FX0VOCQlCSVQoMTUp
-Cj4gCj4gI2RlZmluZSBSSzM1NjhfVlBfRFNQX0NUUkxfX1NUQU5EQlkJCQlCSVQoMzEpCj4rI2Rl
-ZmluZSBSSzM1NjhfVlBfRFNQX0NUUkxfX0RTUF9MVVRfRU4JCQlCSVQoMjgpCj4gI2RlZmluZSBS
-SzM1NjhfVlBfRFNQX0NUUkxfX0RJVEhFUl9ET1dOX01PREUJCUJJVCgyMCkKPiAjZGVmaW5lIFJL
-MzU2OF9WUF9EU1BfQ1RSTF9fRElUSEVSX0RPV05fU0VMCQlHRU5NQVNLKDE5LCAxOCkKPiAjZGVm
-aW5lIFJLMzU2OF9WUF9EU1BfQ1RSTF9fRElUSEVSX0RPV05fRU4JCUJJVCgxNykKPkBAIC00MDgs
-NiArNDA5LDggQEAgZW51bSBkc3RfZmFjdG9yX21vZGUgewo+ICNkZWZpbmUgUkszNTY4X1ZQX0RT
-UF9DVFJMX19DT1JFX0RDTEtfRElWCQlCSVQoNCkKPiAjZGVmaW5lIFJLMzU2OF9WUF9EU1BfQ1RS
-TF9fT1VUX01PREUJCQlHRU5NQVNLKDMsIDApCj4gCj4rI2RlZmluZSBSSzM1ODhfVlBfRFNQX0NU
-UkxfX0dBTU1BX1VQREFURV9FTgkJQklUKDIyKQo+Kwo+ICNkZWZpbmUgUkszNTg4X1ZQX0NMS19D
-VFJMX19EQ0xLX09VVF9ESVYJCUdFTk1BU0soMywgMikKPiAjZGVmaW5lIFJLMzU4OF9WUF9DTEtf
-Q1RSTF9fRENMS19DT1JFX0RJVgkJR0VOTUFTSygxLCAwKQo+IAo+QEAgLTQ2MCw2ICs0NjMsOCBA
-QCBlbnVtIGRzdF9mYWN0b3JfbW9kZSB7Cj4gI2RlZmluZSBSSzM1ODhfRFNQX0lGX1BPTF9fRFAx
-X1BJTl9QT0wJCQlHRU5NQVNLKDE0LCAxMikKPiAjZGVmaW5lIFJLMzU4OF9EU1BfSUZfUE9MX19E
-UDBfUElOX1BPTAkJCUdFTk1BU0soMTAsIDgpCj4gCj4rI2RlZmluZSBSSzM1ODhfTFVUX1BPUlRf
-U0VMX19HQU1NQV9BSEJfV1JJVEVfU0VMCUdFTk1BU0soMTMsIDEyKQo+Kwo+ICNkZWZpbmUgUksz
-NTY4X1ZQMF9NSVBJX0NUUkxfX0RDTEtfRElWMl9QSEFTRV9MT0NLCUJJVCg1KQo+ICNkZWZpbmUg
-UkszNTY4X1ZQMF9NSVBJX0NUUkxfX0RDTEtfRElWMgkJCUJJVCg0KQo+IAo+LS0gCj4yLjQ3LjAK
-Pgo+Cj4KPl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj5M
-aW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKPkxpbnV4LXJvY2tjaGlwQGxpc3RzLmluZnJhZGVh
-ZC5vcmcKPmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
-cm9ja2NoaXAK
+On Mon, Oct 14, 2024 at 08:14:45AM -0700, Casey Schaufler wrote:
+> Add a new lsm_context data structure to hold all the information about a
+> "security context", including the string, its size and which LSM allocated
+> the string. The allocation information is necessary because LSMs have
+> different policies regarding the lifecycle of these strings. SELinux
+> allocates and destroys them on each use, whereas Smack provides a pointer
+> to an entry in a list that never goes away.
+> 
+> Update security_release_secctx() to use the lsm_context instead of a
+> (char *, len) pair. Change its callers to do likewise.  The LSMs
+> supporting this hook have had comments added to remind the developer
+> that there is more work to be done.
+> 
+> The BPF security module provides all LSM hooks. While there has yet to
+> be a known instance of a BPF configuration that uses security contexts,
+> the possibility is real. In the existing implementation there is
+> potential for multiple frees in that case.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+
+Thanks.
+
+Reviewed-by: Serge Hallyn <sergeh@kernel.org>
+
+for the set (as far as affects lsm, of course).
+
+> Cc: linux-integrity@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: audit@vger.kernel.org
+> Cc: netfilter-devel@vger.kernel.org
+> To: Pablo Neira Ayuso <pablo@netfilter.org>
+> Cc: linux-nfs@vger.kernel.org
+> Cc: Todd Kjos <tkjos@google.com>
+> ---
+>  drivers/android/binder.c                | 24 ++++++-------
+>  fs/ceph/xattr.c                         |  6 +++-
+>  fs/nfs/nfs4proc.c                       |  8 +++--
+>  fs/nfsd/nfs4xdr.c                       |  8 +++--
+>  include/linux/lsm_hook_defs.h           |  2 +-
+>  include/linux/security.h                | 35 +++++++++++++++++--
+>  include/net/scm.h                       | 11 +++---
+>  kernel/audit.c                          | 30 ++++++++---------
+>  kernel/auditsc.c                        | 23 +++++++------
+>  net/ipv4/ip_sockglue.c                  | 10 +++---
+>  net/netfilter/nf_conntrack_netlink.c    | 10 +++---
+>  net/netfilter/nf_conntrack_standalone.c |  9 +++--
+>  net/netfilter/nfnetlink_queue.c         | 13 ++++---
+>  net/netlabel/netlabel_unlabeled.c       | 45 +++++++++++--------------
+>  net/netlabel/netlabel_user.c            | 11 +++---
+>  security/apparmor/include/secid.h       |  2 +-
+>  security/apparmor/secid.c               | 11 ++++--
+>  security/security.c                     |  8 ++---
+>  security/selinux/hooks.c                | 11 ++++--
+>  19 files changed, 167 insertions(+), 110 deletions(-)
+> 
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> index 978740537a1a..d4229bf6f789 100644
+> --- a/drivers/android/binder.c
+> +++ b/drivers/android/binder.c
+> @@ -3011,8 +3011,7 @@ static void binder_transaction(struct binder_proc *proc,
+>  	struct binder_context *context = proc->context;
+>  	int t_debug_id = atomic_inc_return(&binder_last_id);
+>  	ktime_t t_start_time = ktime_get();
+> -	char *secctx = NULL;
+> -	u32 secctx_sz = 0;
+> +	struct lsm_context lsmctx;
+>  	struct list_head sgc_head;
+>  	struct list_head pf_head;
+>  	const void __user *user_buffer = (const void __user *)
+> @@ -3291,7 +3290,8 @@ static void binder_transaction(struct binder_proc *proc,
+>  		size_t added_size;
+>  
+>  		security_cred_getsecid(proc->cred, &secid);
+> -		ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
+> +		ret = security_secid_to_secctx(secid, &lsmctx.context,
+> +					       &lsmctx.len);
+>  		if (ret) {
+>  			binder_txn_error("%d:%d failed to get security context\n",
+>  				thread->pid, proc->pid);
+> @@ -3300,7 +3300,7 @@ static void binder_transaction(struct binder_proc *proc,
+>  			return_error_line = __LINE__;
+>  			goto err_get_secctx_failed;
+>  		}
+> -		added_size = ALIGN(secctx_sz, sizeof(u64));
+> +		added_size = ALIGN(lsmctx.len, sizeof(u64));
+>  		extra_buffers_size += added_size;
+>  		if (extra_buffers_size < added_size) {
+>  			binder_txn_error("%d:%d integer overflow of extra_buffers_size\n",
+> @@ -3334,23 +3334,23 @@ static void binder_transaction(struct binder_proc *proc,
+>  		t->buffer = NULL;
+>  		goto err_binder_alloc_buf_failed;
+>  	}
+> -	if (secctx) {
+> +	if (lsmctx.context) {
+>  		int err;
+>  		size_t buf_offset = ALIGN(tr->data_size, sizeof(void *)) +
+>  				    ALIGN(tr->offsets_size, sizeof(void *)) +
+>  				    ALIGN(extra_buffers_size, sizeof(void *)) -
+> -				    ALIGN(secctx_sz, sizeof(u64));
+> +				    ALIGN(lsmctx.len, sizeof(u64));
+>  
+>  		t->security_ctx = t->buffer->user_data + buf_offset;
+>  		err = binder_alloc_copy_to_buffer(&target_proc->alloc,
+>  						  t->buffer, buf_offset,
+> -						  secctx, secctx_sz);
+> +						  lsmctx.context, lsmctx.len);
+>  		if (err) {
+>  			t->security_ctx = 0;
+>  			WARN_ON(1);
+>  		}
+> -		security_release_secctx(secctx, secctx_sz);
+> -		secctx = NULL;
+> +		security_release_secctx(&lsmctx);
+> +		lsmctx.context = NULL;
+>  	}
+>  	t->buffer->debug_id = t->debug_id;
+>  	t->buffer->transaction = t;
+> @@ -3394,7 +3394,7 @@ static void binder_transaction(struct binder_proc *proc,
+>  	off_end_offset = off_start_offset + tr->offsets_size;
+>  	sg_buf_offset = ALIGN(off_end_offset, sizeof(void *));
+>  	sg_buf_end_offset = sg_buf_offset + extra_buffers_size -
+> -		ALIGN(secctx_sz, sizeof(u64));
+> +		ALIGN(lsmctx.len, sizeof(u64));
+>  	off_min = 0;
+>  	for (buffer_offset = off_start_offset; buffer_offset < off_end_offset;
+>  	     buffer_offset += sizeof(binder_size_t)) {
+> @@ -3773,8 +3773,8 @@ static void binder_transaction(struct binder_proc *proc,
+>  	binder_alloc_free_buf(&target_proc->alloc, t->buffer);
+>  err_binder_alloc_buf_failed:
+>  err_bad_extra_size:
+> -	if (secctx)
+> -		security_release_secctx(secctx, secctx_sz);
+> +	if (lsmctx.context)
+> +		security_release_secctx(&lsmctx);
+>  err_get_secctx_failed:
+>  	kfree(tcomplete);
+>  	binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index e066a556eccb..f7996770cc2c 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -1446,12 +1446,16 @@ int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
+>  
+>  void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
+>  {
+> +#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
+> +	struct lsm_context scaff; /* scaffolding */
+> +#endif
+>  #ifdef CONFIG_CEPH_FS_POSIX_ACL
+>  	posix_acl_release(as_ctx->acl);
+>  	posix_acl_release(as_ctx->default_acl);
+>  #endif
+>  #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
+> -	security_release_secctx(as_ctx->sec_ctx, as_ctx->sec_ctxlen);
+> +	lsmcontext_init(&scaff, as_ctx->sec_ctx, as_ctx->sec_ctxlen, 0);
+> +	security_release_secctx(&scaff);
+>  #endif
+>  #ifdef CONFIG_FS_ENCRYPTION
+>  	kfree(as_ctx->fscrypt_auth);
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index cd2fbde2e6d7..76776d716744 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -138,8 +138,12 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+>  static inline void
+>  nfs4_label_release_security(struct nfs4_label *label)
+>  {
+> -	if (label)
+> -		security_release_secctx(label->label, label->len);
+> +	struct lsm_context scaff; /* scaffolding */
+> +
+> +	if (label) {
+> +		lsmcontext_init(&scaff, label->label, label->len, 0);
+> +		security_release_secctx(&scaff);
+> +	}
+>  }
+>  static inline u32 *nfs4_bitmask(struct nfs_server *server, struct nfs4_label *label)
+>  {
+> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> index f118921250c3..537ad363d70a 100644
+> --- a/fs/nfsd/nfs4xdr.c
+> +++ b/fs/nfsd/nfs4xdr.c
+> @@ -3653,8 +3653,12 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+>  
+>  out:
+>  #ifdef CONFIG_NFSD_V4_SECURITY_LABEL
+> -	if (args.context)
+> -		security_release_secctx(args.context, args.contextlen);
+> +	if (args.context) {
+> +		struct lsm_context scaff; /* scaffolding */
+> +
+> +		lsmcontext_init(&scaff, args.context, args.contextlen, 0);
+> +		security_release_secctx(&scaff);
+> +	}
+>  #endif /* CONFIG_NFSD_V4_SECURITY_LABEL */
+>  	kfree(args.acl);
+>  	if (tempfh) {
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index eb2937599cb0..c13df23132eb 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -300,7 +300,7 @@ LSM_HOOK(int, -EOPNOTSUPP, secid_to_secctx, u32 secid, char **secdata,
+>  LSM_HOOK(int, -EOPNOTSUPP, lsmprop_to_secctx, struct lsm_prop *prop,
+>  	 char **secdata, u32 *seclen)
+>  LSM_HOOK(int, 0, secctx_to_secid, const char *secdata, u32 seclen, u32 *secid)
+> -LSM_HOOK(void, LSM_RET_VOID, release_secctx, char *secdata, u32 seclen)
+> +LSM_HOOK(void, LSM_RET_VOID, release_secctx, struct lsm_context *cp)
+>  LSM_HOOK(void, LSM_RET_VOID, inode_invalidate_secctx, struct inode *inode)
+>  LSM_HOOK(int, 0, inode_notifysecctx, struct inode *inode, void *ctx, u32 ctxlen)
+>  LSM_HOOK(int, 0, inode_setsecctx, struct dentry *dentry, void *ctx, u32 ctxlen)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index fd690fa73162..1a3ca02224e8 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -225,6 +225,37 @@ extern unsigned long dac_mmap_min_addr;
+>  #define dac_mmap_min_addr	0UL
+>  #endif
+>  
+> +/*
+> + * A "security context" is the text representation of
+> + * the information used by LSMs.
+> + * This structure contains the string, its length, and which LSM
+> + * it is useful for.
+> + */
+> +struct lsm_context {
+> +	char	*context;	/* Provided by the module */
+> +	u32	len;
+> +	int	id;		/* Identifies the module */
+> +};
+> +
+> +/**
+> + * lsmcontext_init - initialize an lsmcontext structure.
+> + * @cp: Pointer to the context to initialize
+> + * @context: Initial context, or NULL
+> + * @size: Size of context, or 0
+> + * @id: Which LSM provided the context
+> + *
+> + * Fill in the lsmcontext from the provided information.
+> + * This is a scaffolding function that will be removed when
+> + * lsm_context integration is complete.
+> + */
+> +static inline void lsmcontext_init(struct lsm_context *cp, char *context,
+> +				   u32 size, int id)
+> +{
+> +	cp->id = id;
+> +	cp->context = context;
+> +	cp->len = size;
+> +}
+> +
+>  /*
+>   * Values used in the task_security_ops calls
+>   */
+> @@ -556,7 +587,7 @@ int security_ismaclabel(const char *name);
+>  int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+>  int security_lsmprop_to_secctx(struct lsm_prop *prop, char **secdata, u32 *seclen);
+>  int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
+> -void security_release_secctx(char *secdata, u32 seclen);
+> +void security_release_secctx(struct lsm_context *cp);
+>  void security_inode_invalidate_secctx(struct inode *inode);
+>  int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+>  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+> @@ -1545,7 +1576,7 @@ static inline int security_secctx_to_secid(const char *secdata,
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline void security_release_secctx(char *secdata, u32 seclen)
+> +static inline void security_release_secctx(struct lsm_context *cp)
+>  {
+>  }
+>  
+> diff --git a/include/net/scm.h b/include/net/scm.h
+> index 0d35c7c77a74..f75449e1d876 100644
+> --- a/include/net/scm.h
+> +++ b/include/net/scm.h
+> @@ -105,16 +105,17 @@ static __inline__ int scm_send(struct socket *sock, struct msghdr *msg,
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  static inline void scm_passec(struct socket *sock, struct msghdr *msg, struct scm_cookie *scm)
+>  {
+> -	char *secdata;
+> -	u32 seclen;
+> +	struct lsm_context ctx;
+>  	int err;
+>  
+>  	if (test_bit(SOCK_PASSSEC, &sock->flags)) {
+> -		err = security_secid_to_secctx(scm->secid, &secdata, &seclen);
+> +		err = security_secid_to_secctx(scm->secid, &ctx.context,
+> +					       &ctx.len);
+>  
+>  		if (!err) {
+> -			put_cmsg(msg, SOL_SOCKET, SCM_SECURITY, seclen, secdata);
+> -			security_release_secctx(secdata, seclen);
+> +			put_cmsg(msg, SOL_SOCKET, SCM_SECURITY, ctx.len,
+> +				 ctx.context);
+> +			security_release_secctx(&ctx);
+>  		}
+>  	}
+>  }
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index d2797e8fe182..bafd8fd2b1f3 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -1221,8 +1221,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
+>  	struct audit_buffer	*ab;
+>  	u16			msg_type = nlh->nlmsg_type;
+>  	struct audit_sig_info   *sig_data;
+> -	char			*ctx = NULL;
+> -	u32			len;
+> +	struct lsm_context	lsmctx;
+>  
+>  	err = audit_netlink_ok(skb, msg_type);
+>  	if (err)
+> @@ -1472,27 +1471,29 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
+>  		break;
+>  	}
+>  	case AUDIT_SIGNAL_INFO:
+> -		len = 0;
+>  		if (lsmprop_is_set(&audit_sig_lsm)) {
+> -			err = security_lsmprop_to_secctx(&audit_sig_lsm, &ctx,
+> -							 &len);
+> +			err = security_lsmprop_to_secctx(&audit_sig_lsm,
+> +							 &lsmctx.context,
+> +							 &lsmctx.len);
+>  			if (err)
+>  				return err;
+>  		}
+> -		sig_data = kmalloc(struct_size(sig_data, ctx, len), GFP_KERNEL);
+> +		sig_data = kmalloc(struct_size(sig_data, ctx, lsmctx.len),
+> +				   GFP_KERNEL);
+>  		if (!sig_data) {
+>  			if (lsmprop_is_set(&audit_sig_lsm))
+> -				security_release_secctx(ctx, len);
+> +				security_release_secctx(&lsmctx);
+>  			return -ENOMEM;
+>  		}
+>  		sig_data->uid = from_kuid(&init_user_ns, audit_sig_uid);
+>  		sig_data->pid = audit_sig_pid;
+>  		if (lsmprop_is_set(&audit_sig_lsm)) {
+> -			memcpy(sig_data->ctx, ctx, len);
+> -			security_release_secctx(ctx, len);
+> +			memcpy(sig_data->ctx, lsmctx.context, lsmctx.len);
+> +			security_release_secctx(&lsmctx);
+>  		}
+>  		audit_send_reply(skb, seq, AUDIT_SIGNAL_INFO, 0, 0,
+> -				 sig_data, struct_size(sig_data, ctx, len));
+> +				 sig_data, struct_size(sig_data, ctx,
+> +						       lsmctx.len));
+>  		kfree(sig_data);
+>  		break;
+>  	case AUDIT_TTY_GET: {
+> @@ -2180,23 +2181,22 @@ void audit_log_key(struct audit_buffer *ab, char *key)
+>  int audit_log_task_context(struct audit_buffer *ab)
+>  {
+>  	struct lsm_prop prop;
+> -	char *ctx = NULL;
+> -	unsigned len;
+> +	struct lsm_context ctx;
+>  	int error;
+>  
+>  	security_current_getlsmprop_subj(&prop);
+>  	if (!lsmprop_is_set(&prop))
+>  		return 0;
+>  
+> -	error = security_lsmprop_to_secctx(&prop, &ctx, &len);
+> +	error = security_lsmprop_to_secctx(&prop, &ctx.context, &ctx.len);
+>  	if (error) {
+>  		if (error != -EINVAL)
+>  			goto error_path;
+>  		return 0;
+>  	}
+>  
+> -	audit_log_format(ab, " subj=%s", ctx);
+> -	security_release_secctx(ctx, len);
+> +	audit_log_format(ab, " subj=%s", ctx.context);
+> +	security_release_secctx(&ctx);
+>  	return 0;
+>  
+>  error_path:
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index f28fd513d047..c196dd4c9b54 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -1098,8 +1098,7 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+>  				 char *comm)
+>  {
+>  	struct audit_buffer *ab;
+> -	char *ctx = NULL;
+> -	u32 len;
+> +	struct lsm_context ctx;
+>  	int rc = 0;
+>  
+>  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_OBJ_PID);
+> @@ -1110,12 +1109,12 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+>  			 from_kuid(&init_user_ns, auid),
+>  			 from_kuid(&init_user_ns, uid), sessionid);
+>  	if (lsmprop_is_set(prop)) {
+> -		if (security_lsmprop_to_secctx(prop, &ctx, &len)) {
+> +		if (security_lsmprop_to_secctx(prop, &ctx.context, &ctx.len)) {
+>  			audit_log_format(ab, " obj=(none)");
+>  			rc = 1;
+>  		} else {
+> -			audit_log_format(ab, " obj=%s", ctx);
+> -			security_release_secctx(ctx, len);
+> +			audit_log_format(ab, " obj=%s", ctx.context);
+> +			security_release_secctx(&ctx);
+>  		}
+>  	}
+>  	audit_log_format(ab, " ocomm=");
+> @@ -1371,6 +1370,7 @@ static void audit_log_time(struct audit_context *context, struct audit_buffer **
+>  
+>  static void show_special(struct audit_context *context, int *call_panic)
+>  {
+> +	struct lsm_context lsmcxt;
+>  	struct audit_buffer *ab;
+>  	int i;
+>  
+> @@ -1401,7 +1401,8 @@ static void show_special(struct audit_context *context, int *call_panic)
+>  				*call_panic = 1;
+>  			} else {
+>  				audit_log_format(ab, " obj=%s", ctx);
+> -				security_release_secctx(ctx, len);
+> +				lsmcontext_init(&lsmcxt, ctx, len, 0);
+> +				security_release_secctx(&lsmcxt);
+>  			}
+>  		}
+>  		if (context->ipc.has_perm) {
+> @@ -1560,15 +1561,15 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
+>  				 MAJOR(n->rdev),
+>  				 MINOR(n->rdev));
+>  	if (lsmprop_is_set(&n->oprop)) {
+> -		char *ctx = NULL;
+> -		u32 len;
+> +		struct lsm_context ctx;
+>  
+> -		if (security_lsmprop_to_secctx(&n->oprop, &ctx, &len)) {
+> +		if (security_lsmprop_to_secctx(&n->oprop, &ctx.context,
+> +					       &ctx.len)) {
+>  			if (call_panic)
+>  				*call_panic = 2;
+>  		} else {
+> -			audit_log_format(ab, " obj=%s", ctx);
+> -			security_release_secctx(ctx, len);
+> +			audit_log_format(ab, " obj=%s", ctx.context);
+> +			security_release_secctx(&ctx);
+>  		}
+>  	}
+>  
+> diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
+> index cf377377b52d..a8180dcc2a32 100644
+> --- a/net/ipv4/ip_sockglue.c
+> +++ b/net/ipv4/ip_sockglue.c
+> @@ -128,20 +128,20 @@ static void ip_cmsg_recv_checksum(struct msghdr *msg, struct sk_buff *skb,
+>  
+>  static void ip_cmsg_recv_security(struct msghdr *msg, struct sk_buff *skb)
+>  {
+> -	char *secdata;
+> -	u32 seclen, secid;
+> +	struct lsm_context ctx;
+> +	u32 secid;
+>  	int err;
+>  
+>  	err = security_socket_getpeersec_dgram(NULL, skb, &secid);
+>  	if (err)
+>  		return;
+>  
+> -	err = security_secid_to_secctx(secid, &secdata, &seclen);
+> +	err = security_secid_to_secctx(secid, &ctx.context, &ctx.len);
+>  	if (err)
+>  		return;
+>  
+> -	put_cmsg(msg, SOL_IP, SCM_SECURITY, seclen, secdata);
+> -	security_release_secctx(secdata, seclen);
+> +	put_cmsg(msg, SOL_IP, SCM_SECURITY, ctx.len, ctx.context);
+> +	security_release_secctx(&ctx);
+>  }
+>  
+>  static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
+> diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+> index 6a1239433830..86a57a3afdd6 100644
+> --- a/net/netfilter/nf_conntrack_netlink.c
+> +++ b/net/netfilter/nf_conntrack_netlink.c
+> @@ -357,10 +357,10 @@ static int ctnetlink_dump_mark(struct sk_buff *skb, const struct nf_conn *ct,
+>  static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
+>  {
+>  	struct nlattr *nest_secctx;
+> -	int len, ret;
+> -	char *secctx;
+> +	struct lsm_context ctx;
+> +	int ret;
+>  
+> -	ret = security_secid_to_secctx(ct->secmark, &secctx, &len);
+> +	ret = security_secid_to_secctx(ct->secmark, &ctx.context, &ctx.len);
+>  	if (ret)
+>  		return 0;
+>  
+> @@ -369,13 +369,13 @@ static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
+>  	if (!nest_secctx)
+>  		goto nla_put_failure;
+>  
+> -	if (nla_put_string(skb, CTA_SECCTX_NAME, secctx))
+> +	if (nla_put_string(skb, CTA_SECCTX_NAME, ctx.context))
+>  		goto nla_put_failure;
+>  	nla_nest_end(skb, nest_secctx);
+>  
+>  	ret = 0;
+>  nla_put_failure:
+> -	security_release_secctx(secctx, len);
+> +	security_release_secctx(&ctx);
+>  	return ret;
+>  }
+>  #else
+> diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
+> index 7d4f0fa8b609..5f7fd23b7afe 100644
+> --- a/net/netfilter/nf_conntrack_standalone.c
+> +++ b/net/netfilter/nf_conntrack_standalone.c
+> @@ -172,17 +172,16 @@ static void ct_seq_stop(struct seq_file *s, void *v)
+>  #ifdef CONFIG_NF_CONNTRACK_SECMARK
+>  static void ct_show_secctx(struct seq_file *s, const struct nf_conn *ct)
+>  {
+> +	struct lsm_context ctx;
+>  	int ret;
+> -	u32 len;
+> -	char *secctx;
+>  
+> -	ret = security_secid_to_secctx(ct->secmark, &secctx, &len);
+> +	ret = security_secid_to_secctx(ct->secmark, &ctx.context, &ctx.len);
+>  	if (ret)
+>  		return;
+>  
+> -	seq_printf(s, "secctx=%s ", secctx);
+> +	seq_printf(s, "secctx=%s ", ctx.context);
+>  
+> -	security_release_secctx(secctx, len);
+> +	security_release_secctx(&ctx);
+>  }
+>  #else
+>  static inline void ct_show_secctx(struct seq_file *s, const struct nf_conn *ct)
+> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+> index d2773ce9b585..37757cd77cf1 100644
+> --- a/net/netfilter/nfnetlink_queue.c
+> +++ b/net/netfilter/nfnetlink_queue.c
+> @@ -567,6 +567,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>  	enum ip_conntrack_info ctinfo = 0;
+>  	const struct nfnl_ct_hook *nfnl_ct;
+>  	bool csum_verify;
+> +	struct lsm_context scaff; /* scaffolding */
+>  	char *secdata = NULL;
+>  	u32 seclen = 0;
+>  	ktime_t tstamp;
+> @@ -810,8 +811,10 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>  	}
+>  
+>  	nlh->nlmsg_len = skb->len;
+> -	if (seclen)
+> -		security_release_secctx(secdata, seclen);
+> +	if (seclen) {
+> +		lsmcontext_init(&scaff, secdata, seclen, 0);
+> +		security_release_secctx(&scaff);
+> +	}
+>  	return skb;
+>  
+>  nla_put_failure:
+> @@ -819,8 +822,10 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>  	kfree_skb(skb);
+>  	net_err_ratelimited("nf_queue: error creating packet message\n");
+>  nlmsg_failure:
+> -	if (seclen)
+> -		security_release_secctx(secdata, seclen);
+> +	if (seclen) {
+> +		lsmcontext_init(&scaff, secdata, seclen, 0);
+> +		security_release_secctx(&scaff);
+> +	}
+>  	return NULL;
+>  }
+>  
+> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+> index 1bc2d0890a9f..8303bbcfc543 100644
+> --- a/net/netlabel/netlabel_unlabeled.c
+> +++ b/net/netlabel/netlabel_unlabeled.c
+> @@ -374,8 +374,7 @@ int netlbl_unlhsh_add(struct net *net,
+>  	struct net_device *dev;
+>  	struct netlbl_unlhsh_iface *iface;
+>  	struct audit_buffer *audit_buf = NULL;
+> -	char *secctx = NULL;
+> -	u32 secctx_len;
+> +	struct lsm_context ctx;
+>  
+>  	if (addr_len != sizeof(struct in_addr) &&
+>  	    addr_len != sizeof(struct in6_addr))
+> @@ -438,11 +437,10 @@ int netlbl_unlhsh_add(struct net *net,
+>  unlhsh_add_return:
+>  	rcu_read_unlock();
+>  	if (audit_buf != NULL) {
+> -		if (security_secid_to_secctx(secid,
+> -					     &secctx,
+> -					     &secctx_len) == 0) {
+> -			audit_log_format(audit_buf, " sec_obj=%s", secctx);
+> -			security_release_secctx(secctx, secctx_len);
+> +		if (security_secid_to_secctx(secid, &ctx.context,
+> +					     &ctx.len) == 0) {
+> +			audit_log_format(audit_buf, " sec_obj=%s", ctx.context);
+> +			security_release_secctx(&ctx);
+>  		}
+>  		audit_log_format(audit_buf, " res=%u", ret_val == 0 ? 1 : 0);
+>  		audit_log_end(audit_buf);
+> @@ -473,8 +471,7 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
+>  	struct netlbl_unlhsh_addr4 *entry;
+>  	struct audit_buffer *audit_buf;
+>  	struct net_device *dev;
+> -	char *secctx;
+> -	u32 secctx_len;
+> +	struct lsm_context ctx;
+>  
+>  	spin_lock(&netlbl_unlhsh_lock);
+>  	list_entry = netlbl_af4list_remove(addr->s_addr, mask->s_addr,
+> @@ -494,10 +491,10 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
+>  					  addr->s_addr, mask->s_addr);
+>  		dev_put(dev);
+>  		if (entry != NULL &&
+> -		    security_secid_to_secctx(entry->secid,
+> -					     &secctx, &secctx_len) == 0) {
+> -			audit_log_format(audit_buf, " sec_obj=%s", secctx);
+> -			security_release_secctx(secctx, secctx_len);
+> +		    security_secid_to_secctx(entry->secid, &ctx.context,
+> +					     &ctx.len) == 0) {
+> +			audit_log_format(audit_buf, " sec_obj=%s", ctx.context);
+> +			security_release_secctx(&ctx);
+>  		}
+>  		audit_log_format(audit_buf, " res=%u", entry != NULL ? 1 : 0);
+>  		audit_log_end(audit_buf);
+> @@ -534,8 +531,7 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
+>  	struct netlbl_unlhsh_addr6 *entry;
+>  	struct audit_buffer *audit_buf;
+>  	struct net_device *dev;
+> -	char *secctx;
+> -	u32 secctx_len;
+> +	struct lsm_context ctx;
+>  
+>  	spin_lock(&netlbl_unlhsh_lock);
+>  	list_entry = netlbl_af6list_remove(addr, mask, &iface->addr6_list);
+> @@ -554,10 +550,10 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
+>  					  addr, mask);
+>  		dev_put(dev);
+>  		if (entry != NULL &&
+> -		    security_secid_to_secctx(entry->secid,
+> -					     &secctx, &secctx_len) == 0) {
+> -			audit_log_format(audit_buf, " sec_obj=%s", secctx);
+> -			security_release_secctx(secctx, secctx_len);
+> +		    security_secid_to_secctx(entry->secid, &ctx.context,
+> +					     &ctx.len) == 0) {
+> +			audit_log_format(audit_buf, " sec_obj=%s", ctx.context);
+> +			security_release_secctx(&ctx);
+>  		}
+>  		audit_log_format(audit_buf, " res=%u", entry != NULL ? 1 : 0);
+>  		audit_log_end(audit_buf);
+> @@ -1069,10 +1065,9 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
+>  	int ret_val = -ENOMEM;
+>  	struct netlbl_unlhsh_walk_arg *cb_arg = arg;
+>  	struct net_device *dev;
+> +	struct lsm_context ctx;
+>  	void *data;
+>  	u32 secid;
+> -	char *secctx;
+> -	u32 secctx_len;
+>  
+>  	data = genlmsg_put(cb_arg->skb, NETLINK_CB(cb_arg->nl_cb->skb).portid,
+>  			   cb_arg->seq, &netlbl_unlabel_gnl_family,
+> @@ -1127,14 +1122,14 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
+>  		secid = addr6->secid;
+>  	}
+>  
+> -	ret_val = security_secid_to_secctx(secid, &secctx, &secctx_len);
+> +	ret_val = security_secid_to_secctx(secid, &ctx.context, &ctx.len);
+>  	if (ret_val != 0)
+>  		goto list_cb_failure;
+>  	ret_val = nla_put(cb_arg->skb,
+>  			  NLBL_UNLABEL_A_SECCTX,
+> -			  secctx_len,
+> -			  secctx);
+> -	security_release_secctx(secctx, secctx_len);
+> +			  ctx.len,
+> +			  ctx.context);
+> +	security_release_secctx(&ctx);
+>  	if (ret_val != 0)
+>  		goto list_cb_failure;
+>  
+> diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
+> index 81635a13987b..f5e7a9919df1 100644
+> --- a/net/netlabel/netlabel_user.c
+> +++ b/net/netlabel/netlabel_user.c
+> @@ -84,8 +84,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
+>  					       struct netlbl_audit *audit_info)
+>  {
+>  	struct audit_buffer *audit_buf;
+> -	char *secctx;
+> -	u32 secctx_len;
+> +	struct lsm_context ctx;
+>  
+>  	if (audit_enabled == AUDIT_OFF)
+>  		return NULL;
+> @@ -99,10 +98,10 @@ struct audit_buffer *netlbl_audit_start_common(int type,
+>  			 audit_info->sessionid);
+>  
+>  	if (lsmprop_is_set(&audit_info->prop) &&
+> -	    security_lsmprop_to_secctx(&audit_info->prop, &secctx,
+> -				       &secctx_len) == 0) {
+> -		audit_log_format(audit_buf, " subj=%s", secctx);
+> -		security_release_secctx(secctx, secctx_len);
+> +	    security_lsmprop_to_secctx(&audit_info->prop, &ctx.context,
+> +				       &ctx.len) == 0) {
+> +		audit_log_format(audit_buf, " subj=%s", ctx.context);
+> +		security_release_secctx(&ctx);
+>  	}
+>  
+>  	return audit_buf;
+> diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
+> index cc6d1c9f4a47..8b92f90b6921 100644
+> --- a/security/apparmor/include/secid.h
+> +++ b/security/apparmor/include/secid.h
+> @@ -29,7 +29,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+>  int apparmor_lsmprop_to_secctx(struct lsm_prop *prop, char **secdata,
+>  			       u32 *seclen);
+>  int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
+> -void apparmor_release_secctx(char *secdata, u32 seclen);
+> +void apparmor_release_secctx(struct lsm_context *cp);
+>  
+>  
+>  int aa_alloc_secid(struct aa_label *label, gfp_t gfp);
+> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+> index 6350d107013a..8d9ced8cdffd 100644
+> --- a/security/apparmor/secid.c
+> +++ b/security/apparmor/secid.c
+> @@ -120,9 +120,16 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+>  	return 0;
+>  }
+>  
+> -void apparmor_release_secctx(char *secdata, u32 seclen)
+> +void apparmor_release_secctx(struct lsm_context *cp)
+>  {
+> -	kfree(secdata);
+> +	/*
+> +	 * stacking scaffolding:
+> +	 * When it is possible for more than one LSM to provide a
+> +	 * release hook, do this check:
+> +	 * if (cp->id == LSM_ID_APPARMOR || cp->id == LSM_ID_UNDEF)
+> +	 */
+> +
+> +	kfree(cp->context);
+>  }
+>  
+>  /**
+> diff --git a/security/security.c b/security/security.c
+> index 0003d5ace5cc..0c9c3a02704b 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -4365,14 +4365,14 @@ EXPORT_SYMBOL(security_secctx_to_secid);
+>  
+>  /**
+>   * security_release_secctx() - Free a secctx buffer
+> - * @secdata: secctx
+> - * @seclen: length of secctx
+> + * @cp: the security context
+>   *
+>   * Release the security context.
+>   */
+> -void security_release_secctx(char *secdata, u32 seclen)
+> +void security_release_secctx(struct lsm_context *cp)
+>  {
+> -	call_void_hook(release_secctx, secdata, seclen);
+> +	call_void_hook(release_secctx, cp);
+> +	memset(cp, 0, sizeof(*cp));
+>  }
+>  EXPORT_SYMBOL(security_release_secctx);
+>  
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 025b60c5b605..1503d398c87d 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6624,9 +6624,16 @@ static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+>  				       secid, GFP_KERNEL);
+>  }
+>  
+> -static void selinux_release_secctx(char *secdata, u32 seclen)
+> +static void selinux_release_secctx(struct lsm_context *cp)
+>  {
+> -	kfree(secdata);
+> +	/*
+> +	 * stacking scaffolding:
+> +	 * When it is possible for more than one LSM to provide a
+> +	 * release hook, do this check:
+> +	 * if (cp->id == LSM_ID_SELINUX || cp->id == LSM_ID_UNDEF)
+> +	 */
+> +
+> +	kfree(cp->context);
+>  }
+>  
+>  static void selinux_inode_invalidate_secctx(struct inode *inode)
+> -- 
+> 2.46.0
+> 
 
