@@ -1,173 +1,191 @@
-Return-Path: <linux-kernel+bounces-365333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A589999E0B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:18:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A9299E0CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504211F25453
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:18:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DAFB24BAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A741CACD8;
-	Tue, 15 Oct 2024 08:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC4C1C9EDF;
+	Tue, 15 Oct 2024 08:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="K9EIK2av"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7aZlg7v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3921C9B81;
-	Tue, 15 Oct 2024 08:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537171B85F8
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980244; cv=none; b=RW2WmavLLi19nQx/WDfVYns/zTWSWGOoUY1Avi3pY/Catsr+8HxVKtPYG35Qj0erHmFrHhhL2DP8fSCb695xfeiQv+WTSLKF4mlg+B8t5HjiF98oLbV55j6sTjRj7GMuQDc2U2Q7KnWJ9myBcZBgkNGxaetzuw621yun2EApP9Y=
+	t=1728980320; cv=none; b=efkAbpP+quyznyQIa9UpcZhwg4iS/uITPhLMrlQ2++RRMx6ZaiUXdWbEqmgRI4Vk9LBmulrMwy4MxM0jduJn1Rgcz0rvWtsU0aP1DmMvh98ed8zmwj2qVFDWjs7FUTP9PvQp/qKhikX3G6/Go5IYIght9riiJO+ss/MG+rg6JFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980244; c=relaxed/simple;
-	bh=R/IeZAKwaTvmee4fCSDVbeOW5LzJGMRTCA8XDNmd73Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gow0w4+bRAArE5D1XzkJW0PoNFkwwS1AG8PU1sR1cyDX4cKTXd4zE72lY739BtVGy0KQXxbTgF0fqkjG9K9L6Xk4ARhNrJVcqj/sUaGvmlR0rcKV2lsfAlZVZUt29j3oFwnQDcPaavRZokrxfhGNAWKq1XtyiNbwg/lcjaiaj/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=K9EIK2av; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1728980237; x=1729585037; i=deller@gmx.de;
-	bh=R/IeZAKwaTvmee4fCSDVbeOW5LzJGMRTCA8XDNmd73Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=K9EIK2avcync2NGpa2KpL0wSeaxZLdNZMtsmQ4pgAhySSMsN7XD5NOui/EB6MT1i
-	 UGCu/prBEDHa+DzID97kmUI1oJKcJT+pkUoAtjLoo2vuBM85nyRsciU4Om4aU9L5t
-	 PYG89uXQTlzt+R8tLRdcr1/iidx5DRGwOgzROykQB5wm+nnj+Lm0/JyBesRtogA6/
-	 ZH+z6v3382OY7nhsexD7L7K9iViQ/sSA5zl+Z2H90MHqFdvW+xLOqgFgj2CErBJx6
-	 KPm2wW7j3cS98lcoztHJLdWRogIRE3BawVxmcz6oUrNAiWCwj2IYs8L2JIOX3hMLp
-	 /GFFz2UYWzxueQ++wQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MuDbx-1tobcv4Bqf-00z9po; Tue, 15
- Oct 2024 10:17:17 +0200
-Message-ID: <0d4f76d0-9b67-4956-bd13-ce694585a6fd@gmx.de>
-Date: Tue, 15 Oct 2024 10:17:15 +0200
+	s=arc-20240116; t=1728980320; c=relaxed/simple;
+	bh=ahVaFIJ9Q4nkJPT/HtjQ9GsRX4RsaRaVXNn412Tk+HY=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=SSt/17LBngBDhxixG4Cb2FsunXV4Uq3K3DAT0802Z7UiHKp5PUCcJmp6v0DV38qK4yNe08Xej3u63ZDLCVDkP9o2TapLXcUo9YvFQCNKTgEH8A53qPOcXExzoRkVTfyx8o0NsNvxNf2DKMa9bboBRitDz5UlPo/A7DR24L66LMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7aZlg7v; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728980320; x=1760516320;
+  h=date:from:to:cc:subject:message-id;
+  bh=ahVaFIJ9Q4nkJPT/HtjQ9GsRX4RsaRaVXNn412Tk+HY=;
+  b=n7aZlg7vEdxNbvmYl3zUF8PlP5QM7yhuQ10drU0cXAhIesOhxqLXmekR
+   cq8BpXmKiss5+y+eSczeSbRKCggA9wseyQXHRMcYFd5UnIcVmueVWxuF+
+   RUHv1XLC2zSlHSQlRW0bSGsRO/eYoCPHoZ2k8yCow2Dbs70+ctE48ubQP
+   K/jYHaX8y71REo3rnuT6p08T5Gv+g1yMoM+PgNn0Gmpw+TZZatq/kzQUt
+   2RlgXNvdloujLjZlldKUKHiDsN2pHArnfe7Fb3xs/u3/CJcqoLr5Rblnk
+   eLd4//GD9XzCCRDOFI2LaCdoOxUuHY+wyOrn07eked2DyTZEVtAaLnrcc
+   g==;
+X-CSE-ConnectionGUID: NKMzkZwYQyiEVzSvWhjVog==
+X-CSE-MsgGUID: EXgfyBZGTyyghlX4gdpyJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="45830915"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="45830915"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 01:18:39 -0700
+X-CSE-ConnectionGUID: I1zoxudQRLCtSPQvIsiyLQ==
+X-CSE-MsgGUID: CbUcFP3iTw6sk0POgBx9RQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="77762566"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 15 Oct 2024 01:18:38 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0clH-000Hnr-1L;
+	Tue, 15 Oct 2024 08:18:35 +0000
+Date: Tue, 15 Oct 2024 16:17:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/cache] BUILD SUCCESS
+ 29eaa79583671f1e1b468760d505ef837317ab15
+Message-ID: <202410151625.ELD6jCFy-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the fbdev tree
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Gonzalo Silvalde Blanco <gonzalo.silvalde@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20241015120119.533e65e8@canb.auug.org.au>
- <7df614b3-4b6c-490a-b64b-ceabf7d2d290@suse.de>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <7df614b3-4b6c-490a-b64b-ceabf7d2d290@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:R4WMAmc/CfqirNbrWBoo+oxjn8TuXPevx2nE+R2HpCB6OdsVK+a
- HKbMhRvuXtoACAIozVGC/lCndH83Rtp6/dvvbxY9vHNXxBnPZlwuNUBgyOnsWdtTSTvYMp5
- 4CKJYLX8LYsiF2YAMoNKttHpD+xB4GKO28fgFYI3maYeOu8ztgGnzMc8ZZuF0RoYnwqc1hk
- LFdu0nknclZUULNsgQNKw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dykrvO4qZLE=;znImtFtMsCIlSgQj4OIhiO+6XjB
- pdF6EyJb2EOwoYgCalodVbpgLNNKQfzyPJguqVc/biwKBpy77QJrZ7wwcu/Uc1p/qqrgUN6St
- LNH6QXPQh/YRDw5dRi1Feago3aAkSvoi/7bSx7+nPk3nRE66x5iJ/SOc8ghpeqPbdMzg/1imU
- +jBXOe11s4QP5fH5e0mWozw2yqCSLoCpowoUWfO48quQwb34JMBynVi9OOvOC+GZEDXooQYGU
- FA2IGVrRRGZgYmrkANhX7auAAwzirZs8xFnx/N8GX0cZGIs8FOwZffvVs84mUX2qtpzX+3r5t
- 3lfvcMnHx0/JziKSYfcXAHdXpvlo756tS8r7t2JDJcGGjqZ/sgwzTsNV/PtW0l/NucxQaeh8t
- y0/pQ6sDN6Y4JQ3MbnJ30xf1d6+yjDoWVWLKOqhnic+j9ILsSJ9+pNQTdJz4drhXikX7LJb5z
- wo0BwYPl2UyEZA3WICmra0FnBSoE2Gp9U6RMbvrGKgGGDhRSqvIDcHKN8ZwRB3XQUji02+cvH
- 978VUJQIRVuai9xeLJjDDv4fQ66IdFVImgk4QrjT0KQWoLQO1I2DMHOqUZiskSfG8kex2d9FT
- tYm983zsm4xrGFmkO+SNGEz13hlXd81bVn9TVfo15JIHFZkC2Cr659POxG9CcFR283H5bQoHw
- NSb1tE0Baxpi3Z2TIfPZ8RiF2GsseKZdWwvnqOOALbmRNfn9xkAFnZHkzphq/N6QTBH4nNY9R
- Dcx9fte4odPQfLofVKOzF55KJWWZpXMkhxXNYly9rTkKXNfOrA+y2kcFlMX/R4ppba1QR5bz7
- 1nU1jKxprae0K1OGo9t/ptmQ==
 
-On 10/15/24 09:15, Thomas Zimmermann wrote:
-> Hi
->
-> Am 15.10.24 um 03:01 schrieb Stephen Rothwell:
->> Hi all,
->>
->> After merging the fbdev tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/video/fbdev/sstfb.c: In function 'sstfb_probe':
->> drivers/video/fbdev/sstfb.c:1439:2: error: invalid preprocessing direct=
-ive #fdef; did you mean #ifdef?
->> =C2=A0 1439 | #fdef CONFIG_FB_DEVICE
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 ^~~~
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 ifdef
->> drivers/video/fbdev/sstfb.c:1442:2: error: #endif without #if
->> =C2=A0 1442 | #endif
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 ^~~~~
->>
->> Caused by commit
->>
->> =C2=A0=C2=A0 7c0510bb3452 ("fbdev: sstfb: Make CONFIG_FB_DEVICE optiona=
-l")
->>
->> I have used the fbdev tree from next-20241014 for today.
->
-> Thanks for reporting. While it has my r-b, it wasn't supposed to be merg=
-ed yet. I sent out a fix to address the remaining problems. See
->
-> https://lore.kernel.org/linux-fbdev/20241015071029.25639-1-tzimmermann@s=
-use.de/T/#u
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
+branch HEAD: 29eaa79583671f1e1b468760d505ef837317ab15  x86/resctrl: Slightly clean-up mbm_config_show()
 
-Thanks Thomas and Stephen!
+elapsed time: 912m
 
-I've merged Thomas changes into one patch and pushed a new version.
-The issue should be resolved now.
+configs tested: 99
+configs skipped: 125
 
-Helge
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+alpha                               defconfig    gcc-14.1.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                                 defconfig    gcc-14.1.0
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                                 defconfig    gcc-14.1.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                               defconfig    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                                defconfig    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.1.0
+i386                             allmodconfig    clang-18
+i386                              allnoconfig    clang-18
+i386                             allyesconfig    clang-18
+i386                                defconfig    clang-18
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+loongarch                           defconfig    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+m68k                                defconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+microblaze                          defconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+nios2                             allnoconfig    gcc-14.1.0
+nios2                               defconfig    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.1.0
+parisc                              defconfig    gcc-12
+parisc64                            defconfig    gcc-14.1.0
+powerpc                          allmodconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.1.0
+riscv                            allmodconfig    gcc-14.1.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.1.0
+riscv                               defconfig    gcc-12
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                                defconfig    gcc-12
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sparc                            allmodconfig    gcc-14.1.0
+sparc64                             defconfig    gcc-12
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-18
+x86_64                           allyesconfig    clang-18
+x86_64      buildonly-randconfig-001-20241015    clang-18
+x86_64      buildonly-randconfig-002-20241015    clang-18
+x86_64      buildonly-randconfig-003-20241015    clang-18
+x86_64      buildonly-randconfig-004-20241015    clang-18
+x86_64      buildonly-randconfig-005-20241015    clang-18
+x86_64      buildonly-randconfig-006-20241015    clang-18
+x86_64                              defconfig    clang-18
+x86_64                                  kexec    gcc-12
+x86_64                randconfig-001-20241015    clang-18
+x86_64                randconfig-002-20241015    clang-18
+x86_64                randconfig-003-20241015    clang-18
+x86_64                randconfig-004-20241015    clang-18
+x86_64                randconfig-005-20241015    clang-18
+x86_64                randconfig-006-20241015    clang-18
+x86_64                randconfig-011-20241015    clang-18
+x86_64                randconfig-012-20241015    clang-18
+x86_64                randconfig-013-20241015    clang-18
+x86_64                randconfig-014-20241015    clang-18
+x86_64                randconfig-015-20241015    clang-18
+x86_64                randconfig-016-20241015    clang-18
+x86_64                randconfig-071-20241015    clang-18
+x86_64                randconfig-072-20241015    clang-18
+x86_64                randconfig-073-20241015    clang-18
+x86_64                randconfig-074-20241015    clang-18
+x86_64                randconfig-075-20241015    clang-18
+x86_64                randconfig-076-20241015    clang-18
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
