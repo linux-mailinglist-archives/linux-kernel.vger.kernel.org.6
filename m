@@ -1,256 +1,215 @@
-Return-Path: <linux-kernel+bounces-366001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B035699EF63
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:22:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A1599EF62
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3D78B216C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:22:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C145F1F2604C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8271B21BE;
-	Tue, 15 Oct 2024 14:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903CE1C4A12;
+	Tue, 15 Oct 2024 14:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbepH3NK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FkJVkntR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F3D149E16
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CD9149E16;
+	Tue, 15 Oct 2024 14:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729002153; cv=none; b=GJ+XdO8GYRM50GFHgS5gj4RFwl+dbdR7esta+dm+6IlUUMrrFZ07mLfK68d0ThJ2EmeopaawSTlIM3qu0nOF9BjXeiVtImsYRdzr/Gm0yaPWvI4Bykfwz13EPBHt6P2VS5UPz4KdTB9SZQDo8oZJMEwaFqHQwkxZ8OKDGshRUkA=
+	t=1729002147; cv=none; b=d93qyra2HcjLkwY7og5/GS6K7kz1rROM51E1Ku1/RBOFmhFKVNAL5lR4y6MPORfRCGxlHe77+O3olGxrS4bs6CMU1nljBN7RcRNvZzGYRkll7sxgrZDb3R/oj0qMsVSxXQJ5eeHQCy9B62/eAuppqqkrO0THJVz14wRqQD2h1Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729002153; c=relaxed/simple;
-	bh=devtTuHgL7IFyzvPORd4MUSVH/6RavDyucyCuwYH864=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=plnH0v8TQbi0Je9FzMezzU6t6fAHiAohL2tSA+2t6GbkQUYRAdvxTGeb7vkXM8o3oN1w+OiioDFtfOA70e+LHsT4OCNj/0+978x3aeq6llhcCYEFd8zNZWgSi2I55I8g7420K02O/MoP99FmbWEhM0ZzIuKix3M5/SgzW8JMvL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jbepH3NK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BEBFC4CED2
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:22:33 +0000 (UTC)
+	s=arc-20240116; t=1729002147; c=relaxed/simple;
+	bh=3lH1yDNH4/NXorniCVSsSt3aItdm4wsD0ht4IfwjUAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GO32FNHwr8m865FpGvJyRu3NhlOYm71UhpssX2rpn4hiuxCuFCa6Fa1Z6MQugGMNPh9K8dxabqiaNeVeqFFvtGxzZN8pnzeEPGS1x64Skr2thlyfE9r8j4E4ygR8LsmjsUynDk1A2BSYseTj8BnSLBgZph4o8ORnKHvhUzMzAIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FkJVkntR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167B0C4CEC6;
+	Tue, 15 Oct 2024 14:22:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729002153;
-	bh=devtTuHgL7IFyzvPORd4MUSVH/6RavDyucyCuwYH864=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jbepH3NKeLE1Twx9l1VR72K5uilEa8+kFE1F5rzl9dAlvCMXdmUS7g4+RWqND5Z/V
-	 +yU33sO01rkniBoVZCThzE6gicCS9P8wBxlQSPG3Kd+jVNSkjizRW9b56BzNVvR9Pw
-	 nmIuyYSRWxBwSEe1wZYuRZRdImeeKSu/TriknGbpKg1/QByOjAMI35tn+JbF5zJkF1
-	 iNgOXpkHzqEFFIgsg/9vP9eKvkouMGzZyKx9xvpkR4eby2RwHQmeQmmX6eWSKfEv+6
-	 h09Pjs4bNieEgvMOPukCBfxI9M3cp6r5yvD+8zcb0zES4YR+g7slxADX987rCiTuuw
-	 5YoER/VT1i/Lw==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53a007743e7so849757e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:22:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXqOkFCTiTzbDjQ+uY0iMUaGkkjsMwETQX7NIAboNYtDlLJXUAgaJON78EJ44kun/QVgDopKgyI239pSlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3Ds9FdndDRliMuRLRjFM2kaHIgxxwuJwdQ7VpsjZcrBgOevub
-	o+xSIQ9vEi/8ET3PtT6xVq0SERhmINEx4PspXNVvN1ZlJi6pmFRkfEUPh/pKLP0jFrHhiO15jEP
-	JMD5xYqDFjpIuKlrSpn1Y3IU3oG8=
-X-Google-Smtp-Source: AGHT+IFqYbTf2aEqCiuWJJAzGvdQ47nkaIEh+ubNeAj+TplREnMor3L/Pj2e/J/KYj2XFwyBXu3hQiFR1zci/aPawc8=
-X-Received: by 2002:a05:6512:2589:b0:539:e85c:c888 with SMTP id
- 2adb3069b0e04-539e85ccc0amr5093195e87.40.1729002151503; Tue, 15 Oct 2024
- 07:22:31 -0700 (PDT)
+	s=k20201202; t=1729002145;
+	bh=3lH1yDNH4/NXorniCVSsSt3aItdm4wsD0ht4IfwjUAM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FkJVkntRx2kEp8kOuI0hdS8kyQbP+qTDOyl75hWJ1QC9c96KQRoZ4paUJpy0KVrdv
+	 IdtnNyuuVqdfB0TZpDUQWkuxVVuCjjuuBX0XJmbuwE1B918NdJCm25kKYddE0p/ZNV
+	 kncsLrZF8/fcsIaXRVavjOwPaOBWBedn8qOVuiKpvZyqQ76GEcm+1mzKOvy6pVHVnI
+	 uAc5fSsmPCp822btHW9k8jE2CtZmFD/g1ZHC9XAz8dIJpNuLzBAr65GAgrlp5K24VM
+	 7w1TrL9iPeVxG1WxNDxg5iqaDa9dMTGkVR8Sui8k1lj9t00ReQ1WPEuOp3KhP+wV8P
+	 q/HBjYdy4p15w==
+Date: Tue, 15 Oct 2024 16:22:23 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, Miguel Ojeda <ojeda@kernel.org>,
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>
+Subject: Re: [PATCH v3 16/16] checkpatch: Remove broken sleep/delay related
+ checks
+Message-ID: <Zw56n9P0Io1bMb0y@localhost.localdomain>
+References: <20241014-devel-anna-maria-b4-timers-flseep-v3-0-dc8b907cb62f@linutronix.de>
+ <20241014-devel-anna-maria-b4-timers-flseep-v3-16-dc8b907cb62f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
- <Zw5D2aTkkUVOK89g@J2N7QTR9R3> <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
- <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com>
-In-Reply-To: <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 15 Oct 2024 16:22:20 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
-Message-ID: <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
-Subject: Re: Crash on armv7-a using KASAN
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Clement LE GOFFIC <clement.legoffic@foss.st.com>, Russell King <linux@armlinux.org.uk>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	Antonio Borneo <antonio.borneo@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241014-devel-anna-maria-b4-timers-flseep-v3-16-dc8b907cb62f@linutronix.de>
 
-On Tue, 15 Oct 2024 at 16:00, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Tue, Oct 15, 2024 at 03:51:02PM +0200, Linus Walleij wrote:
-> > On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mark Rutland <mark.rutland@arm=
-.com> wrote:
-> > > On Mon, Oct 14, 2024 at 03:19:49PM +0200, Clement LE GOFFIC wrote:
-> >
-> > > I think what's happening here is that when switching from prev to nex=
-t
-> > > in the scheduler, we switch to next's mm before we actually switch to
-> > > next's register state, and there's a transient window where prev is
-> > > executed using next's mm. AFAICT we don't map prev's KASAN stack shad=
-ow
-> > > into next's mm anywhere, and so inlined KASAN_STACK checks recursivel=
-y
-> > > fault on this until we switch to the overflow stack.
-> >
-> > Oh my, that's pretty advanced. Well spotted!
-> > So it has nothing to do with Ards commit, correlation does not
-> > imply causation.
-> >
-> > > More details on that below.
-> > >
-> > > Linus, are you able to look into this?
-> >
-> > Of course, I'm trying to reproduce the bug.
-> >
-> > > >  __dabt_svc from do_translation_fault+0x30/0x2b0
-> > > >  do_translation_fault from do_DataAbort+0x74/0x1dc
-> > > >  do_DataAbort from __dabt_svc+0x4c/0x80
-> > > > Exception stack(0xac003ad8 to 0xac003b20)
-> > > > 3ac0:                                                       ac003bc=
-8
-> > > > 00000005
-> > > > 3ae0: ac003b88 74800779 7480078f ac003b88 7480078f ac003b88 0000000=
-5
-> > > > 82412640
-> > > > 3b00: ac003d20 ac003d54 00000051 ac003b28 80125c14 80125920 200f019=
-3
-> > > > ffffffff
-> > > >  __dabt_svc from do_translation_fault+0x30/0x2b0
-> > > >  do_translation_fault from do_DataAbort+0x74/0x1dc
-> > > >  do_DataAbort from __dabt_svc+0x4c/0x80
-> > > > Exception stack(0xac003b88 to 0xac003bd0)
-> > > > 3b80:                   ac003c78 00000805 ac003c38 7480078f 7480079=
-8
-> > > > ac003c38
-> > > > 3ba0: 74800798 ac003c38 00000805 82412640 ac003d20 ac003d54 0000005=
-1
-> > > > ac003bd8
-> > > > 3bc0: 80125c14 80125920 200f0193 ffffffff
-> > > >  __dabt_svc from do_translation_fault+0x30/0x2b0
-> > > >  do_translation_fault from do_DataAbort+0x74/0x1dc
-> > > >  do_DataAbort from __dabt_svc+0x4c/0x80
-> > >
-> > > The above frames are the same; whatever the kernel is accessing at
-> > > do_translation_fault+0x30 is causing this to go recursive...
-> > >
-> > > I can reproduce this, pretty easily, with a similar enough trace, tho=
-ugh
-> > > faddr2line isn't happy to give me a line number.
-> >
-> > Did you reproduce it the same way with a few find /?
-> >
-> > I am trying to reproduce it and failing :/
-> > (Using Torvald's HEAD)
-> >
-> > This is my config:
-> >
-> > CONFIG_HAVE_ARCH_KASAN=3Dy
-> > CONFIG_HAVE_ARCH_KASAN_VMALLOC=3Dy
-> > CONFIG_CC_HAS_KASAN_GENERIC=3Dy
-> > CONFIG_CC_HAS_WORKING_NOSANITIZE_ADDRESS=3Dy
-> > CONFIG_KASAN=3Dy
-> > CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=3Dy
-> > CONFIG_KASAN_GENERIC=3Dy
-> > CONFIG_KASAN_OUTLINE=3Dy
-> > # CONFIG_KASAN_INLINE is not set
-> > # CONFIG_KASAN_STACK is not set
-> > # CONFIG_KASAN_VMALLOC is not set
-> > # CONFIG_KASAN_EXTRA_INFO is not set
-> >
-> > Do you use more KASAN?
->
-> I used a config per Clement's instructions, i.e.
->
-> | [mark@lakrids:~/src/linux]% git checkout v6.12-rc3
-> | HEAD is now at 8e929cb546ee4 Linux 6.12-rc3
-> | [mark@lakrids:~/src/linux]% git clean -qfdx
-> | [mark@lakrids:~/src/linux]% echo 'CONFIG_KASAN=3Dy' > arch/arm/configs/=
-fragment-kasan.config
-> | [mark@lakrids:~/src/linux]% usekorg 14.2.0 make ARCH=3Darm CROSS_COMPIL=
-E=3Darm-linux-gnueabi- vexpress_defconfig fragment-kasan.config
-> |   HOSTCC  scripts/basic/fixdep
-> |   HOSTCC  scripts/kconfig/conf.o
-> |   HOSTCC  scripts/kconfig/confdata.o
-> |   HOSTCC  scripts/kconfig/expr.o
-> |   LEX     scripts/kconfig/lexer.lex.c
-> |   YACC    scripts/kconfig/parser.tab.[ch]
-> |   HOSTCC  scripts/kconfig/lexer.lex.o
-> |   HOSTCC  scripts/kconfig/menu.o
-> |   HOSTCC  scripts/kconfig/parser.tab.o
-> |   HOSTCC  scripts/kconfig/preprocess.o
-> |   HOSTCC  scripts/kconfig/symbol.o
-> |   HOSTCC  scripts/kconfig/util.o
-> |   HOSTLD  scripts/kconfig/conf
-> | #
-> | # configuration written to .config
-> | #
-> | Using .config as base
-> | Merging ./arch/arm/configs/fragment-kasan.config
-> | Value of CONFIG_KASAN is redefined by fragment ./arch/arm/configs/fragm=
-ent-kasan.config:
-> | Previous value: # CONFIG_KASAN is not set
-> | New value: CONFIG_KASAN=3Dy
-> |
-> | #
-> | # merged configuration written to .config (needs make)
-> | #
-> | #
-> | # configuration written to .config
-> | #
-> | [mark@lakrids:~/src/linux]% grep KASAN .config
-> | CONFIG_KASAN_SHADOW_OFFSET=3D0x5f000000
-> | CONFIG_HAVE_ARCH_KASAN=3Dy
-> | CONFIG_HAVE_ARCH_KASAN_VMALLOC=3Dy
-> | CONFIG_CC_HAS_KASAN_GENERIC=3Dy
-> | CONFIG_KASAN=3Dy
-> | CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=3Dy
-> | CONFIG_KASAN_GENERIC=3Dy
-> | # CONFIG_KASAN_OUTLINE is not set
-> | CONFIG_KASAN_INLINE=3Dy
-> | CONFIG_KASAN_STACK=3Dy
-> | CONFIG_KASAN_VMALLOC=3Dy
-> | # CONFIG_KASAN_MODULE_TEST is not set
-> | # CONFIG_KASAN_EXTRA_INFO is not set
->
-> IIUC you'll need CONFIG_KASAN_INLINE=3Dy, CONFIG_KASAN_STACK=3Dy, and
-> CONFIG_KASAN_VMALLOC=3Dy.
->
-> With that, just booting and tapping a few keys was sufficient to trigger
-> a crash using Debian the initrd Clement linked.
->
-> [...]
->
-> > > The relevant asm is:
-> > (...)
-> > > ... so we're using the new task's mm, but still executing in the cont=
-ext of the
-> > > old task (and using its stack). I suspect the new task's mm doesn't h=
-ave the
-> > > old task's stack shadow mapped in, and AFAICT we don't map that in ex=
-plicitly
-> > > anywhere before we switch to the new mm.
-> > >
-> > > Linus, can you look into that?
-> >
-> > Yeah it looks like a spot-on identification of the problem, I can try t=
-o
-> > think about how we could fix this if I can reproduce it, I keep trying
-> > to provoke the crash :/
->
-> It's a bit grotty -- AFAICT you'd either need to prefault in the
-> specific part of the vmalloc space when switching tasks, or we'd need to
-> preallocate all the shared vmalloc tables at the start of time so that
-> they're always up-to-date.
->
-> While we could disable KASAN_STACK, that's only going to mask the
-> problem until this happens for any other vmalloc shadow...
->
+Le Mon, Oct 14, 2024 at 10:22:33AM +0200, Anna-Maria Behnsen a écrit :
+> checkpatch.pl checks for several things related to sleep and delay
+> functions. In all warnings the outdated documentation is referenced. All
+> broken parts are listed one by one in the following with an explanation why
+> this check is broken. For a basic background of those functions please also
+> refere to the updated function descriptions of udelay(), nsleep_range() and
+> msleep().
+> 
+> Be aware: The change is done with a perl knowledge of the level "I'm able
+> to spell perl".
+> 
+> The following checks are broken:
+> 
+> - Check: (! ($delay < 10) )
+>   Message: "usleep_range is preferred over udelay;
+>             see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: When it is an atomic context, udelay() is
+>                            mandatory.
+> 
+> - Check: ($min eq $max)
+>   Message:  "usleep_range should not use min == max args;
+>              see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: When the requested accuracy for the sleep
+>                            duration requires it, it is also valid to use
+>                            min == max.
+> 
+> - Check: ($delay > 2000)
+>   Message: "long udelay - prefer mdelay;
+>             see arch/arm/include/asm/delay.h\n"
+>   Why is the check broken: The threshold when to start using mdelay() to
+>                            prevent an overflow depends on
+>                            MAX_UDELAY_MS. This value is architecture
+>                            dependent. The used value for the check and
+>                            reference is arm specific. Generic would be 5ms,
+>                            but this would "break" arm, loongarch and mips
+>                            and also the arm value might "break" mips and
+>                            loongarch in some configurations.
+> 
+> - Check: ($1 < 20)
+>   Message: "msleep < 20ms can sleep for up to 20ms;
+>             see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: msleep(1) might sleep up to 20ms but only on a
+>                            HZ=100 system. On a HZ=1000 system this will be
+>                            2ms. This means, the threshold cannot be hard
+>                            coded as it depends on HZ (jiffy granularity and
+>                            timer wheel bucket/level granularity) and also
+>                            on the required accuracy of the callsite. See
+>                            msleep() and also the USLEEP_RANGE_UPPER_BOUND
+>                            value.
+> 
+> Remove all broken checks. Update checkpatch documentation accordingly.
+> 
+> Cc: Andy Whitcroft <apw@canonical.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> ---
+> v3: Move it to the end of the queue and adapt it to the new patch which
+>     removes the link to the outdated documentation before.
+> v2: Rephrase commit message
+> ---
+>  Documentation/dev-tools/checkpatch.rst |  4 ----
+>  scripts/checkpatch.pl                  | 38 ----------------------------------
+>  2 files changed, 42 deletions(-)
+> 
+> diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
+> index abb3ff682076..f5c27be9e673 100644
+> --- a/Documentation/dev-tools/checkpatch.rst
+> +++ b/Documentation/dev-tools/checkpatch.rst
+> @@ -466,10 +466,6 @@ API usage
+>    **UAPI_INCLUDE**
+>      No #include statements in include/uapi should use a uapi/ path.
+>  
+> -  **USLEEP_RANGE**
+> -    usleep_range() should be preferred over udelay(). The proper way of
+> -    using usleep_range() is mentioned in the kernel docs.
+> -
+>  
+>  Comments
+>  --------
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 98790fe5115d..34d4b5beda29 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -6591,28 +6591,6 @@ sub process {
+>  			}
+>  		}
+>  
+> -# prefer usleep_range over udelay
+> -		if ($line =~ /\budelay\s*\(\s*(\d+)\s*\)/) {
+> -			my $delay = $1;
+> -			# ignore udelay's < 10, however
+> -			if (! ($delay < 10) ) {
+> -				CHK("USLEEP_RANGE",
+> -				    "usleep_range is preferred over udelay; see function description of usleep_range() and udelay().\n" . $herecurr);
+> -			}
+> -			if ($delay > 2000) {
+> -				WARN("LONG_UDELAY",
+> -				     "long udelay - prefer mdelay; see function description of mdelay().\n" . $herecurr);
+> -			}
+> -		}
+> -
+> -# warn about unexpectedly long msleep's
+> -		if ($line =~ /\bmsleep\s*\((\d+)\);/) {
+> -			if ($1 < 20) {
+> -				WARN("MSLEEP",
+> -				     "msleep < 20ms can sleep for up to 20ms; see function description of msleep().\n" . $herecurr);
+> -			}
+> -		}
+> -
+>  # check for comparisons of jiffies
+>  		if ($line =~ /\bjiffies\s*$Compare|$Compare\s*jiffies\b/) {
+>  			WARN("JIFFIES_COMPARISON",
+> @@ -7069,22 +7047,6 @@ sub process {
+>  			}
+>  		}
+>  
+> -# check usleep_range arguments
+> -		if ($perl_version_ok &&
+> -		    defined $stat &&
+> -		    $stat =~ /^\+(?:.*?)\busleep_range\s*\(\s*($FuncArg)\s*,\s*($FuncArg)\s*\)/) {
+> -			my $min = $1;
+> -			my $max = $7;
+> -			if ($min eq $max) {
+> -				WARN("USLEEP_RANGE",
+> -				     "usleep_range should not use min == max args;  see function description of usleep_range().\n" . "$here\n$stat\n");
+> -			} elsif ($min =~ /^\d+$/ && $max =~ /^\d+$/ &&
+> -				 $min > $max) {
+> -				WARN("USLEEP_RANGE",
+> -				     "usleep_range args reversed, use min then max;  see function description of usleep_range().\n" . "$here\n$stat\n");
 
-Is the other vmalloc shadow not covered by the ordinary on-demand faulting?
+Why not keep the min > max static check?
 
-When I implemented VMAP_STACK for ARM, I added an explicit load from
-the new stack while still running from the old one (in __switch_to) so
-that the ordinary faulting code can deal with it. Couldn't we do the
-same for the vmalloc shadow of the new stack?
+Thanks.
+
+> -			}
+> -		}
+> -
+>  # check for naked sscanf
+>  		if ($perl_version_ok &&
+>  		    defined $stat &&
+> 
+> -- 
+> 2.39.5
+> 
 
