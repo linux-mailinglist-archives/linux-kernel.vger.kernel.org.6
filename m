@@ -1,108 +1,143 @@
-Return-Path: <linux-kernel+bounces-366668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69A799F880
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:02:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA32899F884
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 045BB1C21F4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83DE21F22E2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554C11FAF1B;
-	Tue, 15 Oct 2024 21:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235161FBF7F;
+	Tue, 15 Oct 2024 21:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="LR3EeD3j"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="PPw6+L+0"
+Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C844F1F9EAE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418901FBF5A;
+	Tue, 15 Oct 2024 21:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729026114; cv=none; b=gL+OeUdBkw8F4+gnzd/9OFLe/S+nu9deaMAfWPAHGn18tpbPEgKKZWsCAtokFmTf97pIrbsk9OUzGPDfgz6vI0S3aokWg13angqmm3oH9rjyJb3Z8NoOgpQ7aIFnAAFbXDH0UhBZXT0FjxdQbMdhqz5CWy2eiwGoLb16rQHBz1M=
+	t=1729026143; cv=none; b=NVJdPgeffpc3Ix/M/nKfJ36z4TkMUxLCvQnioPgZItd0U22VbaPSDXTQbztTNuMzvpPCmTraIR4gIvzXziImhGvAh6E0VtJGEPR3+sjB6c4SQzwlPql1NhE/JeBoxGUTKKW3qdVbVIFqW4idZgqUNSXs1zC+u62943WTBK9J8WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729026114; c=relaxed/simple;
-	bh=MZpiEl9+p1+8tohkeplA7FfFnOl9tmF6blXh1D3ylwc=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KWZzthdxLOZJNONIMJDdt7f1rWFHXV8L+eQRmsENgruB2cVsA9sCfFaYzaUKSTeJw7w9ccabB/1V8lB5gyTBXR97C+99Qq3R1nSD8e9U859C9gYf8OZ1frlUx+OMp2NArM67Ogq65A9Z1Z/pUIX68GnQGek1TgvJy/j1HzrWkio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=LR3EeD3j; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	s=arc-20240116; t=1729026143; c=relaxed/simple;
+	bh=oFo8Q6ugAd9MvV4AXvtFm4bsZ9qTxjvEoBmwTQDMEwM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=srbqnxtz/2DhRgulUiBZonBALKkWISeyCzNFC0EpooroGwC6cgQDdRYnCSTefv1VQASlSWfvrKEO3QpqOJ5ZEnAOVFMp/7LshIgoetmUpcfc0Vd2jgiNMKbDjLt+837Y+eOvlQ2c+JZp1HqSC+cqzPkYlx2aDVbb1CICGwT4JQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=PPw6+L+0; arc=none smtp.client-ip=63.250.43.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4XSmkg6Ddtz4wfm;
+	Tue, 15 Oct 2024 21:02:19 +0000 (UTC)
+Received: from igor-systemproductname.lan (83.8.240.202.ipv4.supernova.orange.pl [83.8.240.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8145B2C03CB;
-	Wed, 16 Oct 2024 10:01:43 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1729026103;
-	bh=MZpiEl9+p1+8tohkeplA7FfFnOl9tmF6blXh1D3ylwc=;
-	h=From:To:Subject:Date:References:In-Reply-To:From;
-	b=LR3EeD3jVJUbtC74r8VOEEBDYDwzAbh0lmQmczn5c5D69dfzReB8inCvJ/QXTJ7RD
-	 fbPxNNcM8lT/bd8oBSZc03YU5BEHB1WQ4fkAbJmfMeEIt81hI19NDtxyAztwQsE2yh
-	 El35bTKx+EK0CArIwY8DlQpkVe2W+BPI/nYdMsTqvPf3Ugc1RzF6oQkVHE6gSYAzst
-	 kavvSKh4Ea6AOIHVDg2vKGlURvaowHOr+rDQmAa2Geh5yXGP60etRaXn3WPd9cV8CW
-	 YKlfd/YV7mL57oDO9OIH+fez8Wr+FvHkMyaZAAratLPkLcuc3MuqIqzitK1RRlXMwc
-	 RVvBBeEx43URQ==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670ed8370000>; Wed, 16 Oct 2024 10:01:43 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Wed, 16 Oct 2024 10:01:43 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
- SMTP Server (TLS) id 15.0.1497.48; Wed, 16 Oct 2024 10:01:43 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Wed, 16 Oct 2024 10:01:43 +1300
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>, "Masahiro
- Yamada" <masahiroy@kernel.org>
-Subject: Re: Building out of tree dtbs
-Thread-Topic: Building out of tree dtbs
-Thread-Index: AQHbHz8ShM93kB+1lU6CdSd0a3sZxrKHcnIA
-Date: Tue, 15 Oct 2024 21:01:42 +0000
-Message-ID: <2a2be28c-fd5e-45b0-8834-611d35c5e6a6@alliedtelesis.co.nz>
-References: <269854a8-1041-4ba6-b022-ba8ec15c6b78@alliedtelesis.co.nz>
-In-Reply-To: <269854a8-1041-4ba6-b022-ba8ec15c6b78@alliedtelesis.co.nz>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <29306E9582879B409922E33C57C3D3CA@atlnz.lc>
-Content-Transfer-Encoding: base64
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4XSmkX2ZRlz8sWP;
+	Tue, 15 Oct 2024 21:02:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1729026134;
+	bh=oFo8Q6ugAd9MvV4AXvtFm4bsZ9qTxjvEoBmwTQDMEwM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PPw6+L+0UCB4Vb/3QhoCmCb9cD/TLr88rXv9K/zg/0SvIpAWCXUWXGTrmlF19x8Q5
+	 4pr+V4uWisEx59pHeXIux5pkZsaGS4h70EPf4Hr6YbGtgJZ3WMrjoq4eGPoeO/S7Cw
+	 pnw76r1oeQrfOfqW6bp+S1GnYaGdnMrh/2mm5T53BQSGb87GFrlc5jrwdqaxY6zOVh
+	 XxoMTUhxr+HwzJTFgIBGvlBV3bsrX7uckWEYnuqo1S9O/qSBzoxYzuUjZFO/y6ipxy
+	 fSevKkz6loDPzxjSmMhhv3elYD7QGb/UDcxbZWYe79GsxrJZoNM+4THa+ULD3yuVnk
+	 f8r+lIqMCo5UQ==
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	David Wronek <davidwronek@gmail.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] Add minimal Exynos990 SoC and SM-N981B support
+Date: Tue, 15 Oct 2024 23:01:59 +0200
+Message-ID: <20241015210205.963931-1-igor.belwon@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670ed837 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=p0WdMEafAAAA:8 a=YRHvXXt1AAAA:8 a=cBH9McE8t2GGkYx7cgcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=9bw_jnHfPby8klRCszyn:22
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
 
-DQpPbiAxNi8xMC8yNCAwOToxNiwgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4gKHJlc2VuZCB3aXRo
-b3V0IEhUTUwgcGFydCkNCj4NCj4gSGksDQo+DQo+IEkganVzdCBub3RpY2VkIHdpdGggdGhlIGxh
-dGVzdCA2LjEyLXJjIEknbSBubyBsb25nZXIgYWJsZSB0byBidWlsZCBhbiANCj4gb3V0IG9mIHRy
-ZWUgZHRiIGJ5IGp1c3QgY29weWluZyBpdCBpbnRvIGFyY2gvJEFSQ0gvYm9vdC9kdHMgKGF0IGxl
-YXN0IA0KPiBmb3IgQVJDSD1taXBzIGFuZCBBUkNIPWFybTY0KSBhbmQgcnVubmluZyBgbWFrZSBt
-eS1ib2FyZC5kdGJgLiBJIA0KPiBiZWxpZXZlIGJ1aWxkcm9vdCByZWxpZXMgb24gdGhpcyBhcyB3
-ZWxsWzFdLg0KDQpBIHNpbXBsZSByZXBybyBpcw0KDQptYWtlIEFSQ0g9YXJtIG12ZWJ1X3Y3X2Rl
-ZmNvbmZpZw0KY3AgYXJjaC9hcm0vYm9vdC9kdHMvbWFydmVsbC9hcm1hZGEtMzg1LWRiLWFwLmR0
-cyANCmFyY2gvYXJtL2Jvb3QvZHRzL215Ym9hcmQuZHRzDQptYWtlIEFSQ0g9YXJtIG15Ym9hcmQu
-ZHRiDQoNCj4NCj4gSXMgdGhpcyBhbiBpbnRlbnRpb25hbCBjaGFuZ2U/IElzIGl0IHRvbyBsYXRl
-IHRvIHVuZG8gaXQgKG9yIHByb3ZpZGUgDQo+IGFuIGFsdGVybmF0aXZlIHdheSBvZiBoYXZpbmcg
-b3V0IG9mIHRyZWUgZHRzIHRoYXQgbWFrZSB1c2Ugb2YgaW4tdHJlZSANCj4gZHRzaSkuDQpMb29r
-cyBsaWtlIHRoaXMgaXMgY2F1c2VkIGJ5IGNvbW1pdCBlN2UyOTQxMzAwZDIgKCJrYnVpbGQ6IHNw
-bGl0IGRldmljZSANCnRyZWUgYnVpbGQgcnVsZXMgaW50byBzY3JpcHRzL01ha2VmaWxlLmR0YnMi
-KS4gVGhlIGNvbmRpdGlvbmFsIGluY2x1ZGUgDQpvZiBNYWtlZmlsZS5kdGJzIGlzbid0IHNhdGlz
-ZmllZCB3aGVuIGJ1aWxkaW5nIGFuIG91dCBvZiB0cmVlIGR0Yi4NCj4NCj4gVGhhbmtzLA0KPiBD
-aHJpcw0KPg0KPiAtLSANCj4NCj4gWzFdIC0gDQo+IGh0dHBzOi8vZ2l0bGFiLmNvbS9idWlsZHJv
-b3Qub3JnL2J1aWxkcm9vdC8tL2Jsb2IvbWFzdGVyL2xpbnV4L2xpbnV4Lm1rP3JlZl90eXBlPWhl
-YWRzI0w1MTYNCj4=
+Hi folks,
+
+This series adds initial support for the Exynos 990 SoC and also
+initial board support for the Samsung Galaxy Note20 5G (SM-N981B)
+codenamed c1s.
+
+The Exynos 990 SoC is also used in the S20 series, as well as in the
+Note 20 Ultra phones. Currently the device trees added are for the
+Exynos 990 SoC and c1s. The device tree has been tested with 
+dtbs_check W=1 and results in no warnings.
+
+This initial bringup consists of:
+ * cpus
+ * pinctrl
+ * gpio-keys
+ * simple-framebuffer
+ 
+This is enough to reach a shell in an initramfs. More platform support
+will be added in the future.
+
+The preferred way to boot the upstream kernel is by using a shim
+bootloader, called uniLoader [1], which works around some issues with
+the stock, non-replacable Samsung S-LK bootloader. For example, the
+stock bootloader leaves the decon trigger control unset, which causes
+the framebuffer not to refresh.
+
+Device functionality depends on the 2nd patch series:
+"Add Exynos990 pinctrl and chipid drivers"
+
+[1] https://github.com/ivoszbg/uniLoader
+
+Changes in v2:
+ - Added acked-by tag by Rob Herring
+ - Fixed two stray newlines in SoC and device DTs
+ - Fixed commit message for the c1s device tree
+ - Changed osc-clock to clock-osc and ordered nodes in SoC DT
+ - Fixed ordering in the gic node in SoC DT
+ - Fixed memory node unit address
+ - Fixed memory node reg properties, to map all available RAM
+ - Moved pinctrl binding commits to the 2nd patch series.
+
+Kind regards,
+Igor
+
+Igor Belwon (6):
+  dt-bindings: arm: cpus: Add Samsung Mongoose M5
+  dt-bindings: hwinfo: exynos-chipid: Add compatible for Exynos 990
+    chipid
+  dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990
+    boards
+  soc: samsung: exynos-chipid: Add support for Exynos 990 chipid
+  arm64: dts: exynos: Add initial support for the Exynos 990 SoC
+  arm64: dts: exynos: Add initial support for Samsung Galaxy Note20 5G
+    (c1s)
+
+ .../devicetree/bindings/arm/cpus.yaml         |   1 +
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../hwinfo/samsung,exynos-chipid.yaml         |   1 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ arch/arm64/boot/dts/exynos/exynos990-c1s.dts  |  66 ++++++
+ arch/arm64/boot/dts/exynos/exynos990.dtsi     | 194 ++++++++++++++++++
+ drivers/soc/samsung/exynos-chipid.c           |   1 +
+ 7 files changed, 270 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-c1s.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990.dtsi
+
+-- 
+2.45.2
+
 
