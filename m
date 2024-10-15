@@ -1,232 +1,247 @@
-Return-Path: <linux-kernel+bounces-364933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3344699DB4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:28:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D635A99DB4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76A7282C60
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:28:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F8428171C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644F814037F;
-	Tue, 15 Oct 2024 01:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A5C156C40;
+	Tue, 15 Oct 2024 01:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="lG20H/D7"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011049.outbound.protection.outlook.com [40.107.74.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYG/aoMb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841BD184F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728955715; cv=fail; b=u4wVhp2DIoVQwM7aV2lfvLRkEHCTeLPhdUbK/9rV02xV5MYNa3aDXgqrUly6TlJcpDZH4GVIdRK0n/Q8jq8Rb3uXNi82E6wI5sI8tVdyyyBjoXtQ/ly9hGq6R+efTgW3QEKlj54uzNFiArtuwh8h02IzgWcH0h6h6+SLmRSM8yU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728955715; c=relaxed/simple;
-	bh=sxk9SW7IcElFMMckDQpZblL5wVkiCY0/yQmGy3TGLGU=;
-	h=Message-ID:To:Cc:From:Subject:Content-Type:Date:MIME-Version; b=R+9pBIGedt1gJif5tXJ13oqnag2G60vCZxqxizPVu769Fu5o6vQEXrNF/d2UuTyDZ7G2EisxXn/kg7vqF1L7XOtALYxrytgc+gA6x8YYLr9ZhcvMZA+448dgkOoAR7Jt340gfRH3sIKm9XLDFR4e3bjMeFtpb4FrXYNlLiIBhZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=lG20H/D7; arc=fail smtp.client-ip=40.107.74.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hTRM5jl+fV0ULQjF+J/JSAuueAh4UStccJ1a0iLnB24Kp3+lW4wrjWt3jy0vyjXF+wAeDq1cbuz1Q24KttEWXCjRw+ZkLyRHTPEuWhL/lvsmQ82PkIO440qBw0trx6koDINmTNqkFSAwWFZv7YayB/EeeyUQI70Ute3mo3F/dUA/wQuUnq6fMXAPChCc31MKx2r5XMFMNAKrX6WNzJdOVwDd28kzzsy/+D+TuW8Lq/SIoBByTw+Nge4FEeZABF5eQIksj8VlvoDKrFGcTXiiWnZIm6K23aiind2iIPAdJ2KVgjSorY3t/83igdfUO2bCPxCunNakUsiyGoV18mjbHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wh/L1bAIdslP4DMMoq6VB2uhENE/TfWDMUfeLShKnWg=;
- b=FUwPaxHCWrR6gAg1vvHXzjJp8W6zorZfmDbzTxg2mml1e2+QW2p315D1hdpE+NZ7j0k/toRtBxtxfW49dUJYXp5ZsKEgko3fTUkjMZSEYf/ypl065/p5vmNzIlZk0/bXMhxhxQ5GeFSGe3sjJZEyB2/aq5SDajQHBQ4uQbJ09zB/2yCjalgvWlrMLBJkMfZYykYPHr8IftRwQ1R5M0wQtJroL0Glr9JtR37OIx6U2w5I221uYPd04hdgt+qBJK5ZBVuGSA8zxWAUXMa5aHVtV1AxGw7/PHuCiPoK8EgD/Ig1/Uyc7hS1eq/3Dv2GOgmIx5g1WZ1mvCUls/zJxTQGZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wh/L1bAIdslP4DMMoq6VB2uhENE/TfWDMUfeLShKnWg=;
- b=lG20H/D7vW5j+T60akxxgAaXRVf8E/61i5iMKU3+ofFtscpP1lAGsO1rmsfJKfiUNAHpUu18v6Ct6cxIRA/N4ruoWIVFGi71gqFN8NkTM+dBBk7eeEwpQARb1BfsnkZnY2LfRTtkBmUdC7cz3XqARb1gne64VyTVXfVuv4stO+Q=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TYWPR01MB11377.jpnprd01.prod.outlook.com
- (2603:1096:400:3f6::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Tue, 15 Oct
- 2024 01:28:29 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 01:28:29 +0000
-Message-ID: <8734kyqhmq.wl-kuninori.morimoto.gx@renesas.com>
-To: Rob Herring <robh@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,	Thierry Reding <treding@nvidia.com>,	Simona Vetter <simona@ffwll.ch>,	Neil Armstrong <neil.armstrong@linaro.org>,	Maxime Ripard <mripard@kernel.org>,	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,	Jessica Zhang <quic_jesszhan@quicinc.com>,	Florian Fainelli <florian.fainelli@broadcom.com>,	David Airlie <airlied@gmail.com>,	Daniel Vetter <daniel@ffwll.ch>,	Alexey Brodkin <abrodkin@synopsys.com>,	dri-devel@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v5] gpu: drm: replace of_graph_get_next_endpoint()
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 15 Oct 2024 01:28:29 +0000
-X-ClientProxiedBy: TYCP286CA0224.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c5::8) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C7815380A;
+	Tue, 15 Oct 2024 01:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728955718; cv=none; b=ZAh1tJyJ21ReDqvX9thMV4+znLQEfBPgG24HBUjWlj0iqFlJZmvxN4JmBG4clocKTIku6erRdfYH4C6iL10BC9UjOS0FoK9pWF6uDQfpN3wWxiqM7rAf7Nf1LZDLpCzozezMsAe9vA8QH5YEO00yETtoWfJtHJ0Fq+iPK2tCJD4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728955718; c=relaxed/simple;
+	bh=Oj3xSE23iCGMT76Tv93Pnx4Nkruws3NLTRwRWzAiW4E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r6KdsTmFs4p7ycMhOYmAxsv/V7lf4biy9wt8iCfLR96yDjCGrBEoZpwlVH7UHF9+EvUqcP/dROekfVdMNVsB/bcfb12Y6p8JT61cXfqCuU6tYIJ5h3IWuNgr9BmymikIpCFGYtIY7yjahkdGrXKw/js3aZzr5s5ZbVCQYN383s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYG/aoMb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68573C4CEC6;
+	Tue, 15 Oct 2024 01:28:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728955717;
+	bh=Oj3xSE23iCGMT76Tv93Pnx4Nkruws3NLTRwRWzAiW4E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gYG/aoMbLj/2TBlxIXwStjGkay/hqy43Lq7jYApsPrUYM2X/dVIE3GkJvDq3RIW6B
+	 Uw1nUgmaAUIDy8Lpc5x+sq5E6XE6Ssmc1fcan019BN8Qb3/9YP9q9s+n7BjzWSdMbE
+	 +3NVAOo4lBFfpQiqfxgv0zalp7gRbuPYnQyO9lf6vDbNwYa7QoHM41l7NFKLFN82P2
+	 nK9zpxxuogSbzeZinnwS3hIHGUDW1c7F7ZDVX2Rk/o4ffTNeCPIp+1C44ghOWK7v1U
+	 ieAkxx5utlojFijqw5u7emet8BxYres6l3Jy30hMCji9NiEkNNomAC7PLfUN6oPGf3
+	 7fGtoStKFJrww==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arch@vger.kernel.org
+Subject: [PATCH v16 00/18] tracing: fprobe: function_graph: Multi-function graph and fprobe on fgraph
+Date: Tue, 15 Oct 2024 10:28:33 +0900
+Message-ID: <172895571278.107311.14000164546881236558.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYWPR01MB11377:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e588275-3de6-4bd3-3ffd-08dcecb8acbd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1DZLAwPY+JPzglLiK3M42Y9Z2aUs8rCZQRIJpmLa1fnnsuqfGzCbsZ8WF+0Z?=
- =?us-ascii?Q?t4SlyxAydXIa+q4DANkdmoAKXB6K0zgIN1kGlbjzhxD8kal9w9IUXWTC5GZ8?=
- =?us-ascii?Q?7niA4oFpJPdvAkMGmuT7UxjBOYMu5oiMRMPsRrifKXqHEj/diVJGh5lqXJxl?=
- =?us-ascii?Q?y1rJO328o25fzUYhh07Njq2o8UrNXurqWcO6xi/E5pGqwSZ4uRQTwDMf6bL/?=
- =?us-ascii?Q?DfWkbY8RibG+dcn3u2fZDg54vkFIQJkdT4bYhXzpqQJVCHuIsrUEDCF1nEA4?=
- =?us-ascii?Q?2XLOW7p4BqSt3U/WxvenJS8Cnkl74Si88Y7m+Q/0kp+neufyEX4s0GEQOVZv?=
- =?us-ascii?Q?6hmyIy3rm0i3qrpp4DlSWahrFa41S1rCX0oxXLS+2gXO7lvIXmNdyDD1Venj?=
- =?us-ascii?Q?4MGXoNnbE5FpYAlSMDsy1vCv56nMTgWglTux78TVFO7quvooWWicPn4oqCJ+?=
- =?us-ascii?Q?rlNuSQD7K2Zsnu5LUdnu4pWPB4dD2gqJB5L5mmu6El5u9ccJUnr0aeqBfy+M?=
- =?us-ascii?Q?GuLdmEAszYTuJmKAm4brMvuaQ973ZOjjmgi5BXYEGasPGgIAzK+VM4otlO6f?=
- =?us-ascii?Q?tRSCOw1XVt2W8BLjaPL07uvpRxZotcSx0XJqYbpn2ipngWPKQRuilY0uA510?=
- =?us-ascii?Q?LwrhaGQYez2ax207XFEltdCLyc9S+7piJ4kGj0ZPm31wcdDTWuWFafEJAnis?=
- =?us-ascii?Q?4g1kQvgh/JHjtvyFVP80AxFeRB2BZT0OBZDDQCCfKnSRl3ce+5qhpvZAWV3R?=
- =?us-ascii?Q?Adlp9ig5vkKwptn4QYJY/rW/lCNccCaV7u759mJbgZM7vTmwDai758k1G0bI?=
- =?us-ascii?Q?143ShdAd3wZk3JaWJt8sCe7z56Bz3HU5NegiAnpYGjBicyMzP++Sd1vxdFUY?=
- =?us-ascii?Q?qjNqTHNJ/T4+njC9GuxxUpd09/M9SvazS12anWm01K+sVuhl06Ety4gQoO3a?=
- =?us-ascii?Q?ezYAUpyNUHIAOHXBx/IdMRZor5rgIEh3THsWs3bLnVxrj0dpoKgJicJ2nWFz?=
- =?us-ascii?Q?RGRmHSk7cnAgEg3X85B8pejjQG75rwW4mfYRMp8houeAheWrT8YYtBvIu9uR?=
- =?us-ascii?Q?EQqbKPlP1lVeUoUHQm9HRL7JFsElUAwmpiTBqSoGL8UwTBekRyJ5e/DVu4rA?=
- =?us-ascii?Q?BRtko88S2+LjQLJCNA7xttnuFAW3Jj5OmLp3UWnAgSyXMCjvBqQ3u364yQ60?=
- =?us-ascii?Q?2xr3SrK2pHmKN2b9L2HbUpoAFJBUiieC+EXjpdO+Td/M86Ppnc/Hg1w84plf?=
- =?us-ascii?Q?KvBEGyaxmiSZapn3GF6a1r5lk6Smtr2qwTLSdBkOFPRVRPygGGpy13EzYIvP?=
- =?us-ascii?Q?X7bRtuCP5m+Q+jNy8TDtXENPpIfcuJW+DeRDJqAwk28GRIBISSEQERDn/DR9?=
- =?us-ascii?Q?Knv9ulU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kqAhFcXXNxJRkU4R+YbgYrPgu5arKlqHh54kTbCeq8rOveOFQjefoa4h6kRt?=
- =?us-ascii?Q?Jqa9XH0vGSva7dKzERlGlFrLu9pbtY5IG/i5E3G5KyAySJX5YqKyWPOYsTmz?=
- =?us-ascii?Q?UrmqzoSU8OvmgHQi3vkCIzS50xooINsOje8ifO7MviExa8/4cTVNw2R1VMRu?=
- =?us-ascii?Q?TGZSAJ0TmezdAUH48H0NxEKrD610D6MvRfhweEd36Psx3MYnlwYHq1PxA54E?=
- =?us-ascii?Q?0g0P2Q8eBgIOj6BBFUsKz++F/z2+KvhlrDFq17D16OkqKynlcuar3ajdOrbB?=
- =?us-ascii?Q?vYFsqqemZG0CBlDjFmPipmnbxYIEpyo7PEU9CmzbTUjFYxeXO4rChvX4GnIe?=
- =?us-ascii?Q?aOBwyP2Yra/ZPfY1NWUd00TfIO+SJoHSVcadarpfA5fIdoeAeMdbEitVANMj?=
- =?us-ascii?Q?83RMs8dE2hxLONnfy8FY48f8D5tmrzAJihicRaSGbxJ2V8lfUImo/D4m58RO?=
- =?us-ascii?Q?0z2GhBKrxb/cUMOMTrH4FaBWrtVJSiA86t3lZ+gjtw2K4tVujgkNqwtJMmKs?=
- =?us-ascii?Q?FiUY9W0AGyxPk2adOcd7CbA/fZGVKCsw84Xyf4nofAaYlT0LbffRShhzakRV?=
- =?us-ascii?Q?PMfJ6ZTB1S61NmIrRO0TsZY3V7jfN2ugebdY4QVFCUDXWj/8rTEelA2mS9es?=
- =?us-ascii?Q?lVlT4TnOdl/X6vzqSq7SDVmq4mneKXMii12cIxxgRqRkIA2VeghWHLxSxdzY?=
- =?us-ascii?Q?zc5q27IcMBfngGUaUFNGJo9nSaOp0PEDnquFzn09rHSfkhSXMPXZHbsBH0yX?=
- =?us-ascii?Q?Vvia+Uq8EV3JwGmyuScGbiRxzRXd0mT/gqCzyuB4clPRZL2vMcTsc9uvPVuV?=
- =?us-ascii?Q?nLjq6CWSWF0S60Yz8zxf0+o4TQEUGJGOdImSvUZyo/HcjOgM8dI5mLn40zs3?=
- =?us-ascii?Q?kM/3FZl28VqVvmN60SsJRSR4wEHTtL7S8cN3R47YR01bKHa8m48lKhfzZG4A?=
- =?us-ascii?Q?A0lQrLSo13VdFDp8QkyRlmBMpErIY4OqLuozLNKrIO1Fb4UdYZyWNccrO3bW?=
- =?us-ascii?Q?yfEI9+vYUtaLqXUkL9eHFYSh4WzG26/w+6lMWS9nfYBFAhiQde4A/cQpsULX?=
- =?us-ascii?Q?QkpNJ0kmAHIIVu8Lk43d3YzO/aL6SE+exF6fPBjZahlXujvJBVppryvmsMPb?=
- =?us-ascii?Q?lgpljMNgV9r6901H/26EeNqsrUe9SbInYS9pWYzTbySDCSUYi4wWC6OiYOh3?=
- =?us-ascii?Q?l/obCzByNscG9BcbfN1W/lHQAcLmftUOOFZ1muELBmfZwj+AYMMbRtGorGHp?=
- =?us-ascii?Q?tr2rD2hhJ65jawDEgBdbr6OqcTcpIYdS70dpT2p4jZRuV/1SF9p7+5X+tNpq?=
- =?us-ascii?Q?amJUbFcUSM0LCfZWug+VHhjCxpFcP1kSQW4+hKGhzRwf2wFybITQt+5//LN4?=
- =?us-ascii?Q?iZLrHvcnUfXZOZZhSkmNcvPKZPPs3HP+HB7+NtKWE0d2QZegH1u/Zjb0++MP?=
- =?us-ascii?Q?6TM6xHd45cR2RH+KPe32ccq6r0+FxKNNnGsB0fCvFlnSHN87ColclJzIE8zJ?=
- =?us-ascii?Q?xcTuYEsYCmgWlXYeXFnky1+hbpBA1mLLB/QTYUZsMmukb3Z+ko3xnvUhl4vQ?=
- =?us-ascii?Q?0PF2Zzi2UtPttrdpBHxNuUa4EO8/40QDTHO6DA9eQjDKQWpSO2xnASDSNoPG?=
- =?us-ascii?Q?/YOFBCChrXu5lFvvl5V/BCA=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e588275-3de6-4bd3-3ffd-08dcecb8acbd
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 01:28:29.7186
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l+p/exHOaasbob93rQzju28r/rUApeAUYWYSp+mKHKS3qtMN+bptAH3oyn8C4IcbZRO0/BkJNNb6uvXjKDj+rTMYkY1mWCTHhgQ030+zKANG+ZHy4HnHTANTkmQMW0Jh
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11377
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-From DT point of view, in general, drivers should be asking for a
-specific port number because their function is fixed in the binding.
+Hi,
 
-of_graph_get_next_endpoint() doesn't match to this concept.
+Here is the 16th version of the series to re-implement the fprobe on
+function-graph tracer. The previous version is;
 
-Simply replace
+https://lore.kernel.org/all/172639136989.366111.11359590127009702129.stgit@devnote2/T/#u
 
-	- of_graph_get_next_endpoint(xxx, NULL);
-	+ of_graph_get_endpoint_by_regs(xxx, 0, -1);
+This version rebased on for-next branch on linux-trace tree (thus
+it is rebased on ftrace_regs API integration), add a fix for 
+ftrace_regs_*() macros [1/18], update s390 return_to_handler [3/18]
+and rename HAVE_PT_REGS_TO_FTRACE_REGS_CAST to
+HAVE_FTRACE_REGS_HAVING_PT_REGS macro.
+Also, Cc to arch maintainers for the patches which touch the
+architecture dependent files.
 
-Link: https://lore.kernel.org/r/20240202174941.GA310089-robh@kernel.org
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I've simply build for arm, arm64, loongarch, powerpc, riscv,
+and s390. And run tests on qemu for x86-64.
+
+Overview
+--------
+This series rewrites the fprobe on this function-graph.
+The purposes of this change are;
+
+ 1) Remove dependency of the rethook from fprobe so that we can reduce
+   the return hook code and shadow stack.
+
+ 2) Make 'ftrace_regs' the common trace interface for the function
+   boundary.
+
+1) Currently we have 2(or 3) different function return hook codes,
+ the function-graph tracer and rethook (and legacy kretprobe).
+ But since this  is redundant and needs double maintenance cost,
+ I would like to unify those. From the user's viewpoint, function-
+ graph tracer is very useful to grasp the execution path. For this
+ purpose, it is hard to use the rethook in the function-graph
+ tracer, but the opposite is possible. (Strictly speaking, kretprobe
+ can not use it because it requires 'pt_regs' for historical reasons.)
+
+2) Now the fprobe provides the 'pt_regs' for its handler, but that is
+ wrong for the function entry and exit. Moreover, depending on the
+ architecture, there is no way to accurately reproduce 'pt_regs'
+ outside of interrupt or exception handlers. This means fprobe should
+ not use 'pt_regs' because it does not use such exceptions.
+ (Conversely, kprobe should use 'pt_regs' because it is an abstract
+  interface of the software breakpoint exception.)
+
+This series changes fprobe to use function-graph tracer for tracing
+function entry and exit, instead of mixture of ftrace and rethook.
+Unlike the rethook which is a per-task list of system-wide allocated
+nodes, the function graph's ret_stack is a per-task shadow stack.
+Thus it does not need to set 'nr_maxactive' (which is the number of
+pre-allocated nodes).
+Also the handlers will get the 'ftrace_regs' instead of 'pt_regs'.
+Since eBPF mulit_kprobe/multi_kretprobe events still use 'pt_regs' as
+their register interface, this changes it to convert 'ftrace_regs' to
+'pt_regs'. Of course this conversion makes an incomplete 'pt_regs',
+so users must access only registers for function parameters or
+return value. 
+
+Design
+------
+Instead of using ftrace's function entry hook directly, the new fprobe
+is built on top of the function-graph's entry and return callbacks
+with 'ftrace_regs'.
+
+Since the fprobe requires access to 'ftrace_regs', the architecture
+must support CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS and
+CONFIG_HAVE_FTRACE_GRAPH_FUNC, which enables to call function-graph
+entry callback with 'ftrace_regs', and also
+CONFIG_HAVE_FUNCTION_GRAPH_FREGS, which passes the ftrace_regs to
+return_to_handler.
+
+All fprobes share a single function-graph ops (means shares a common
+ftrace filter) similar to the kprobe-on-ftrace. This needs another
+layer to find corresponding fprobe in the common function-graph
+callbacks, but has much better scalability, since the number of
+registered function-graph ops is limited.
+
+In the entry callback, the fprobe runs its entry_handler and saves the
+address of 'fprobe' on the function-graph's shadow stack as data. The
+return callback decodes the data to get the 'fprobe' address, and runs
+the exit_handler.
+
+The fprobe introduces two hash-tables, one is for entry callback which
+searches fprobes related to the given function address passed by entry
+callback. The other is for a return callback which checks if the given
+'fprobe' data structure pointer is still valid. Note that it is
+possible to unregister fprobe before the return callback runs. Thus
+the address validation must be done before using it in the return
+callback.
+
+Download
+--------
+This series can be applied against the ftrace/for-next branch in
+linux-trace tree.
+
+This series can also be found below branch.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/fprobe-on-fgraph
+
+Thank you,
+
 ---
-- 1 month passed, but nothing happened.
-- rebased on latest linus branch
-- add Dmitry Reviewed-by
 
- drivers/gpu/drm/drm_of.c                              | 4 +++-
- drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 2 +-
- drivers/gpu/drm/tiny/arcpgu.c                         | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
+Masami Hiramatsu (Google) (18):
+      tracing: Use arch_ftrace_regs() for ftrace_regs_*() macros
+      tracing: Rename ftrace_regs_return_value to ftrace_regs_get_return_value
+      function_graph: Pass ftrace_regs to entryfunc
+      function_graph: Replace fgraph_ret_regs with ftrace_regs
+      function_graph: Pass ftrace_regs to retfunc
+      fprobe: Use ftrace_regs in fprobe entry handler
+      fprobe: Use ftrace_regs in fprobe exit handler
+      tracing: Add ftrace_partial_regs() for converting ftrace_regs to pt_regs
+      tracing: Add ftrace_fill_perf_regs() for perf event
+      tracing/fprobe: Enable fprobe events with CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+      bpf: Enable kprobe_multi feature if CONFIG_FPROBE is enabled
+      ftrace: Add CONFIG_HAVE_FTRACE_GRAPH_FUNC
+      fprobe: Rewrite fprobe on function-graph tracer
+      tracing/fprobe: Remove nr_maxactive from fprobe
+      selftests: ftrace: Remove obsolate maxactive syntax check
+      selftests/ftrace: Add a test case for repeating register/unregister fprobe
+      Documentation: probes: Update fprobe on function-graph tracer
+      bpf: Add get_entry_ip() for arm64
 
-diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-index 177b600895d3c..b6b2cade69aeb 100644
---- a/drivers/gpu/drm/drm_of.c
-+++ b/drivers/gpu/drm/drm_of.c
-@@ -504,6 +504,8 @@ EXPORT_SYMBOL_GPL(drm_of_get_data_lanes_count_ep);
-  * Gets parent DSI bus for a DSI device controlled through a bus other
-  * than MIPI-DCS (SPI, I2C, etc.) using the Device Tree.
-  *
-+ * This function assumes that the device's port@0 is the DSI input.
-+ *
-  * Returns pointer to mipi_dsi_host if successful, -EINVAL if the
-  * request is unsupported, -EPROBE_DEFER if the DSI host is found but
-  * not available, or -ENODEV otherwise.
-@@ -516,7 +518,7 @@ struct mipi_dsi_host *drm_of_get_dsi_bus(struct device =
-*dev)
- 	/*
- 	 * Get first endpoint child from device.
- 	 */
--	endpoint =3D of_graph_get_next_endpoint(dev->of_node, NULL);
-+	endpoint =3D of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
- 	if (!endpoint)
- 		return ERR_PTR(-ENODEV);
-=20
-diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/driver=
-s/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-index 4618c892cdd65..e10e469aa7a6c 100644
---- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-+++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-@@ -400,7 +400,7 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c=
-)
- 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
-=20
- 	/* Look up the DSI host.  It needs to probe before we do. */
--	endpoint =3D of_graph_get_next_endpoint(dev->of_node, NULL);
-+	endpoint =3D of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
- 	if (!endpoint)
- 		return -ENODEV;
-=20
-diff --git a/drivers/gpu/drm/tiny/arcpgu.c b/drivers/gpu/drm/tiny/arcpgu.c
-index 4f8f3172379e3..8c29b719ea626 100644
---- a/drivers/gpu/drm/tiny/arcpgu.c
-+++ b/drivers/gpu/drm/tiny/arcpgu.c
-@@ -288,7 +288,7 @@ static int arcpgu_load(struct arcpgu_drm_private *arcpg=
-u)
- 	 * There is only one output port inside each device. It is linked with
- 	 * encoder endpoint.
- 	 */
--	endpoint_node =3D of_graph_get_next_endpoint(pdev->dev.of_node, NULL);
-+	endpoint_node =3D of_graph_get_endpoint_by_regs(pdev->dev.of_node, 0, -1)=
-;
- 	if (endpoint_node) {
- 		encoder_node =3D of_graph_get_remote_port_parent(endpoint_node);
- 		of_node_put(endpoint_node);
---=20
-2.43.0
 
+ Documentation/trace/fprobe.rst                     |   42 +
+ arch/arm64/Kconfig                                 |    2 
+ arch/arm64/include/asm/ftrace.h                    |   47 +
+ arch/arm64/kernel/asm-offsets.c                    |   12 
+ arch/arm64/kernel/entry-ftrace.S                   |   32 +
+ arch/arm64/kernel/ftrace.c                         |   20 +
+ arch/loongarch/Kconfig                             |    4 
+ arch/loongarch/include/asm/ftrace.h                |   32 -
+ arch/loongarch/kernel/asm-offsets.c                |   12 
+ arch/loongarch/kernel/ftrace_dyn.c                 |   10 
+ arch/loongarch/kernel/mcount.S                     |   17 -
+ arch/loongarch/kernel/mcount_dyn.S                 |   14 
+ arch/powerpc/Kconfig                               |    1 
+ arch/powerpc/include/asm/ftrace.h                  |   13 
+ arch/powerpc/kernel/trace/ftrace.c                 |    2 
+ arch/powerpc/kernel/trace/ftrace_64_pg.c           |   10 
+ arch/riscv/Kconfig                                 |    3 
+ arch/riscv/include/asm/ftrace.h                    |   45 +
+ arch/riscv/kernel/ftrace.c                         |   17 +
+ arch/riscv/kernel/mcount.S                         |   24 -
+ arch/s390/Kconfig                                  |    3 
+ arch/s390/include/asm/ftrace.h                     |   31 +
+ arch/s390/kernel/asm-offsets.c                     |    6 
+ arch/s390/kernel/mcount.S                          |   13 
+ arch/x86/Kconfig                                   |    4 
+ arch/x86/include/asm/ftrace.h                      |   33 -
+ arch/x86/kernel/ftrace.c                           |   50 +-
+ arch/x86/kernel/ftrace_32.S                        |   15 
+ arch/x86/kernel/ftrace_64.S                        |   17 -
+ include/linux/fprobe.h                             |   57 +-
+ include/linux/ftrace.h                             |  103 +++
+ include/linux/ftrace_regs.h                        |   16 -
+ kernel/trace/Kconfig                               |   22 +
+ kernel/trace/bpf_trace.c                           |   83 ++-
+ kernel/trace/fgraph.c                              |   62 +-
+ kernel/trace/fprobe.c                              |  637 ++++++++++++++------
+ kernel/trace/ftrace.c                              |    6 
+ kernel/trace/trace.h                               |    6 
+ kernel/trace/trace_fprobe.c                        |  146 ++---
+ kernel/trace/trace_functions_graph.c               |   10 
+ kernel/trace/trace_irqsoff.c                       |    6 
+ kernel/trace/trace_probe_tmpl.h                    |    2 
+ kernel/trace/trace_sched_wakeup.c                  |    6 
+ kernel/trace/trace_selftest.c                      |   11 
+ lib/test_fprobe.c                                  |   51 --
+ samples/fprobe/fprobe_example.c                    |    4 
+ .../test.d/dynevent/add_remove_fprobe_repeat.tc    |   19 +
+ .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    4 
+ 48 files changed, 1167 insertions(+), 615 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
