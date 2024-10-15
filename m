@@ -1,285 +1,221 @@
-Return-Path: <linux-kernel+bounces-366144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2B699F15A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:35:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E9099F163
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA8F1C22660
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:35:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 532F12822D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17181DD0CA;
-	Tue, 15 Oct 2024 15:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023231DD0CF;
+	Tue, 15 Oct 2024 15:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ww0Z9FYv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WHBGjFKy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aCYuJVFc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7851B393F;
-	Tue, 15 Oct 2024 15:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC271CB9E2;
+	Tue, 15 Oct 2024 15:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006545; cv=none; b=oN6dQaiH0lZqzKo2YJeb1jS8IX7WM+WUNvdwuyJEr7QArPrUJw1HW2ZWmhsbcrqau+vMbuJQSX1SNnhOW8MT6YVlM+Lp7cvgAhL/RL8rlFF8mSPQcTozKyWE8YHEdHr+dn/CHQdcEQzq44h9HClOnRjWWjhl3AnUeoZJRP/5Ryo=
+	t=1729006579; cv=none; b=TcGWeqrCt00UmEFHKzeGayasjkk1WwUdQH2FmrbXRX67oXX/wihdo56YsTNGy5XvaOpJ0e0utpoKQf4dXFUWXP6TzEHn1VSehixP50jPlWmAb/FThsFaD16mMvB3TXrfuEoHU+ol2NEOYY7BfJi1u3/U7S40oJVAPYmbg1xEQw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006545; c=relaxed/simple;
-	bh=0l6KkvoDwX3UCktk+Bgp5F5kNFErOuVuyCFTPC5R9pQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JsVRN03Gl6cHu9GDUw0icBPjXyhhWiiyL8GqjkUu2VUAlpC+1Er7WsvBW4JhWCVGdpzObY/VOfTAzkWZSJyh7DPoElQGCoYiH+d6RAvPHJUChpfVjQgzBmcQwnwwi30JXHQ+GDRTxOiJKpcLvKOhuemCyHIZ/oM7KYCypx9cm0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ww0Z9FYv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77104C4CED2;
-	Tue, 15 Oct 2024 15:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729006544;
-	bh=0l6KkvoDwX3UCktk+Bgp5F5kNFErOuVuyCFTPC5R9pQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ww0Z9FYv4+QykZ/JTQgGhst8EkSaXcEhi3dGYtIEfapusJzAYgSjbLwc3icb9PAXD
-	 /jxbGdYqxmmTY3MbgfkdU0btL7Q6WckGSeD1QCEitPrv/+fMdZLBFWMUHpFTJcne6z
-	 /v1kP4HCc9uQUoS1Rnv9hfNbtJLYzI+cTUdUV0F9cjuWDK6snyAIV9qpOZm1p/rymU
-	 xK2aOtUzHLy02Z1bBSvmW64MOSl7rrAQIV1kcNjrnzohlEWb5HQMhureiHCfePY58w
-	 KK7fyPTSz/kmg6JV/deSKydaJbCNCBWY82TjL7O3va5ieUqO7/qwMiAHI7p7wC28q2
-	 4/+24pFLWPJRw==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e803a9f208so3179149eaf.0;
-        Tue, 15 Oct 2024 08:35:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNd90erj5R5gsX+19wA6W7K5xFRsX7TCwVGve5sLbMsdg5aj5P2kteDloqIXsVnO0LINnRueOUDaid@vger.kernel.org, AJvYcCW+Mtpcx2rnfBV2EaYPFvvuSnbZIZDrtZ1tc9nuk1GSXa5Ruv4D6zuRCdWRLVNjWvfHHj+a1PBIyzjd@vger.kernel.org, AJvYcCWZtBJKO/tLljnto6kT9AsHTbjSUxm+IJxRIGJg9tBFq7yvVL6V40Lyr2geMWhFH4vVtfPVXyx6FfMvfg==@vger.kernel.org, AJvYcCX1+BaSbddgoZp5iXyKsE13sMxnG1Pe5Dj2mOCt84PaQ5V/tY4DVQ+XDIZpQFois5jTSzlCiIcBZvr1Nbr5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdvUbDHJlqC8RStoZg7gDIYTMaaF7vySDPyph5JdQ3KQ9h3sZv
-	YNduz0vJxMX4Xoqb5Wc2lzdk1HfniENVZLBhCJB2tqroF1Dnmbi9Kxfe1IuLknao8oqGOAUDT1o
-	BuxGrCIFmIPZtTaBWUZTERqQOPKo=
-X-Google-Smtp-Source: AGHT+IHFJh9rxSSaZMQcEQN8RDT7AyJeT13P5MvWKfMRdXo+P+Zu/PYJqtqAb/El25D+k7E4jFV6XBFJxO90UnNUNlk=
-X-Received: by 2002:a05:6820:212:b0:5df:83a7:9ddf with SMTP id
- 006d021491bc7-5eb1884dc96mr8268797eaf.0.1729006543638; Tue, 15 Oct 2024
- 08:35:43 -0700 (PDT)
+	s=arc-20240116; t=1729006579; c=relaxed/simple;
+	bh=6BQsKAqP2CS6V9PDubSmcfaTOHNmsnNP+sk3h4adKLw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=V7PhPC1DhfZmpCxkvNLikbw7b4C5nsF1roa8k+57Ky0Z9KR4quOlyqJMNST4Oh0nH11X7SDY1qNCijnBpgWJc+VVbHIUxdmfuLL+4zpehab6UoIobYFzmTeobIBbyfi4v4Vx2IniwgqEsXcD4jRiV0yVm3HQoBB6ziWCqv2Yci8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WHBGjFKy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aCYuJVFc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Oct 2024 15:36:14 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729006575;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VF2keW+8jjocj40krtzVcBhegMeJLceh+E1g8CQwADo=;
+	b=WHBGjFKy7prRm49wwmiAlU+TCmNqlS9hg+IDYSammJ1LGxM3cb/mexLXl92i9Svxd+NCmJ
+	ExCf2Zkuu9DVbHYyR1dFXeEvE6+KRUpeCrV6MnhlxLkjhYmu6NXtvrPTlvAOxO+Uprfp2J
+	J46OYHZltl3fLCpDiQXGtwXQAGlox3B+4qsJtBxSFz4PkjXJtKvQ/KkwFDTzQ/SHHurWAO
+	kWV+7UHRmHjgSSRM2BfbZHxcYNmF+e9dl4rTTh6zrL0xcYJXgfi4JZWWGimv9NoHjyT1dk
+	4P+VN6Zt8OAy1e+uFcfK9Tkg3mpZVpR2SZWHfSCIP3WvBs2TexKiaicAp7t80A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729006575;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VF2keW+8jjocj40krtzVcBhegMeJLceh+E1g8CQwADo=;
+	b=aCYuJVFcxBKqNjniMA4Pf3gLtZxwIIh9q7DGXWg2jTtjEZkSshhIZgfOQp5B4IsP4pa9XF
+	isA21WUcex7c7aBw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/debugobjects] debugobjects: Track object usage to avoid
+ premature freeing of objects
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Zhen Lei <thunder.leizhen@huawei.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <87bjznhme2.ffs@tglx>
+References: <87bjznhme2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009124120.1124-1-shiju.jose@huawei.com> <20241009124120.1124-13-shiju.jose@huawei.com>
- <20241014164339.00003e73@Huawei.com> <2024101410-turf-junior-7739@gregkh>
- <2024101451-reword-animation-2179@gregkh> <20241014181654.00005180@Huawei.com>
- <CAJZ5v0j-mwZmuciSTaL8MyAp530y=n9HbQ=uVvcnvGLR1n+YuQ@mail.gmail.com>
- <20241015101025.00005305@Huawei.com> <20241015104021.00002906@huawei.com>
- <2024101517-bubbling-deploy-1be0@gregkh> <CAJZ5v0iyc5gvpXjpZdmv-vh8+haPENz+UBXVSF6UDBCRT12fMg@mail.gmail.com>
- <20241015151947.00006a4f@Huawei.com>
-In-Reply-To: <20241015151947.00006a4f@Huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 15 Oct 2024 17:35:31 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iRzFQ4EaHKjs0oirmh1HpkONz--JKYB3oLrT84A+XXzA@mail.gmail.com>
-Message-ID: <CAJZ5v0iRzFQ4EaHKjs0oirmh1HpkONz--JKYB3oLrT84A+XXzA@mail.gmail.com>
-Subject: Re: [PATCH v13 12/18] platform: Add __free() based cleanup function
- for platform_device_put
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, linuxarm@huawei.com, 
-	shiju.jose@huawei.com, linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	bp@alien8.de, tony.luck@intel.com, lenb@kernel.org, mchehab@kernel.org, 
-	dan.j.williams@intel.com, dave@stgolabs.net, dave.jiang@intel.com, 
-	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com, 
-	david@redhat.com, Vilas.Sridharan@amd.com, leo.duran@amd.com, 
-	Yazen.Ghannam@amd.com, rientjes@google.com, jiaqiyan@google.com, 
-	Jon.Grimm@amd.com, dave.hansen@linux.intel.com, naoya.horiguchi@nec.com, 
-	james.morse@arm.com, jthoughton@google.com, somasundaram.a@hpe.com, 
-	erdemaktas@google.com, pgonda@google.com, duenwen@google.com, 
-	gthelen@google.com, wschwartz@amperecomputing.com, 
-	dferguson@amperecomputing.com, wbs@os.amperecomputing.com, 
-	nifan.cxl@gmail.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com, 
-	roberto.sassu@huawei.com, kangkang.shen@futurewei.com, 
-	wanghuiqiang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <172900657475.1442.16629168348781563122.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 4:19=E2=80=AFPM Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
->
-> On Tue, 15 Oct 2024 15:32:28 +0200
-> "Rafael J. Wysocki" <rafael@kernel.org> wrote:
->
-> > On Tue, Oct 15, 2024 at 12:17=E2=80=AFPM Greg KH <gregkh@linuxfoundatio=
-n.org> wrote:
-> > >
-> > > On Tue, Oct 15, 2024 at 10:40:54AM +0100, Jonathan Cameron wrote:
-> > > > On Tue, 15 Oct 2024 10:10:25 +0100
-> > > > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> > > >
-> > > > > On Mon, 14 Oct 2024 20:06:40 +0200
-> > > > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
-> > > > >
-> > > > > > On Mon, Oct 14, 2024 at 7:17=E2=80=AFPM Jonathan Cameron
-> > > > > > <Jonathan.Cameron@huawei.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, 14 Oct 2024 18:04:37 +0200
-> > > > > > > Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > > >
-> > > > > > > > On Mon, Oct 14, 2024 at 06:00:51PM +0200, Greg KH wrote:
-> > > > > > > > > On Mon, Oct 14, 2024 at 04:43:39PM +0100, Jonathan Camero=
-n wrote:
-> > > > > > > > > > On Wed, 9 Oct 2024 13:41:13 +0100
-> > > > > > > > > > <shiju.jose@huawei.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > > > > > > > >
-> > > > > > > > > > > Add __free() based cleanup function for platform_devi=
-ce_put().
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@hua=
-wei.com>
-> > > > > > > > > > > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > >  include/linux/platform_device.h | 1 +
-> > > > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git a/include/linux/platform_device.h b/includ=
-e/linux/platform_device.h
-> > > > > > > > > > > index d422db6eec63..606533b88f44 100644
-> > > > > > > > > > > --- a/include/linux/platform_device.h
-> > > > > > > > > > > +++ b/include/linux/platform_device.h
-> > > > > > > > > > > @@ -232,6 +232,7 @@ extern int platform_device_add_da=
-ta(struct platform_device *pdev,
-> > > > > > > > > > >  extern int platform_device_add(struct platform_devic=
-e *pdev);
-> > > > > > > > > > >  extern void platform_device_del(struct platform_devi=
-ce *pdev);
-> > > > > > > > > > >  extern void platform_device_put(struct platform_devi=
-ce *pdev);
-> > > > > > > > > > > +DEFINE_FREE(platform_device_put, struct platform_dev=
-ice *, if (_T) platform_device_put(_T))
-> > > > > > > > > > >
-> > > > > > > > > > >  struct platform_driver {
-> > > > > > > > > > >         int (*probe)(struct platform_device *);
-> > > > > > > > > >
-> > > > > > > > > > +CC Greg KH and Rafael.
-> > > > > > > > > >
-> > > > > > > > > > Makes sure to include them on v14 as this needs review =
-from a driver core point
-> > > > > > > > > > of view I think.
-> > > > > > > > >
-> > > > > > > > > Why is this needed for a platform device?  This feels lik=
-e you will have
-> > > > > > > > > to do more work to "keep" the reference on the normal pat=
-h than you to
-> > > > > > > > > today to release the reference on the error path, right? =
- Have a pointer
-> > > > > > > > > to a patch that uses this?
-> > > > > > > >
-> > > > > > > > Ah, is it this one:
-> > > > > > > >       https://lore.kernel.org/all/20241014164955.00003439@H=
-uawei.com/
-> > > > > > > > ?
-> > > > > > > >
-> > > > > > > > If so, no, that's an abuse of a platform device, don't do t=
-hat, make a
-> > > > > > > > REAL device on the bus that this device lives on.  If it do=
-esn't live on
-> > > > > > > > a real bus, then put it on the virtual bus but do NOT abuse=
- the platform
-> > > > > > > > device layer for something like this.
-> > > > > > >
-> > > > > > > Ok.  Probably virtual bus it is then.  Rafael, what do you th=
-ink makes sense
-> > > > > > > for a 'feature' that is described only by an ACPI table (here=
- RAS2)?
-> > > > > > > Kind of similar(ish) to say IORT.
-> > > > > >
-> > > > > > Good question.
-> > > > > >
-> > > > > > I guess it depends on whether or not there are any registers to=
- access
-> > > > > > or AML to interact with.  If so, I think that a platform device=
- makes
-> > > > > > sense.
-> > > > >
-> > > > > Unfortunately still a gray area I think.
-> > > > >
-> > > > > This does access mailbox memory addresses, but they are provided
-> > > > > by an existing platform device, so maybe platform device for this
-> > > > > device is still inappropriate :(
-> > > > >
-> > > > > What this uses is:
-> > > > > PCC channel (mailbox in memory + doorbells, etc but that is indir=
-ectly
-> > > > > provided as a service via reference in ACPI to the PCCT table ent=
-ry
-> > > > > allowing this to find the mailbox device - which is a platform
-> > > > > device drivers/mailbox/pcc.c).
-> > > > > Because it's all spec defined content in the mailbox messages, we=
- don't
-> > > > > have the more flexible (and newer I think) 'register' via operati=
-on region
-> > > > > stuff in AML.
-> > > > >
-> > > > > A wrinkle though.  The mailbox data is mapped into this driver vi=
-a
-> > > > > an acpi_os_ioremap() call.
-> > > > >
-> > > > > So I'm thinking we don't have a strong reason for a platform devi=
-ce
-> > > > > other than 'similarity' to other examples.  Never the strongest r=
-eason!
-> > > > >
-> > > > > We'll explore alternatives and see what they end up looking like.
-> > > > >
-> > > > > Jonathan
-> > > > >
-> > > >
-> > > > Greg,
-> > > >
-> > > > I'm struggling a little to figure out how you envision the virtual =
-bus
-> > > > working here.  So before we spend too much time implementing the wr=
-ong thing
-> > > > as it feels non trivial, let me check my understanding.
-> > > >
-> > > > Would this mean registering a ras2 bus via subsys_virtual_register(=
-).
-> > > > (Similar to done for memory tiers)
-> > >
-> > > It should show up under /sys/devices/virtual/ is what I mean.
-> > >
-> > > > On that we'd then add all the devices: one per RAS2 PCC descriptor =
-(these
-> > > > are one per independent feature). Each feature has its own mailbox =
-sub
-> > > > channel (via a reference to the PCC mailbox devices .
-> > > > Typically you have one of these per feature type per numa node, but
-> > > > that isn't guaranteed.  That will then need wiring up with bus->pro=
-be() etc
-> > > > so that the RAS2 edac feature drivers can find this later and bind =
-to it to
-> > > > register with edac etc.
-> > > >
-> > > > So spinning up a full new bus, to support this?  I'm not against th=
-at.
-> > >
-> > > No, again, see how the stuff that shows up in /sys/devices/virtual
-> > > works, that should be much simpler.
-> > >
-> > > But really, as this is a "bus", just make a new one.  I don't underst=
-and
-> > > why ACPI isn't creating your devices for you, as this is ACPI code,
-> > > perhaps just fix that up instead?  That would make much more sense to
-> > > me...
-> >
-> > Because it is a data-only table, not AML.
-> >
-> > It looks to me like this could be an auxiliary device, similar to the
-> > Intel VSEC driver: see intel_vsec_add_aux() etc.
-> >
->
-> That was in the other branch of the thread abbreviated as auxbus.
-> My concern with that approach is we have no parent device and the
-> auxiliary bus is always described as being for sub parts of a
-> compound device. In the intel_vsec case there is always a parent
-> pci device or platform device.
->
-> I don't think there is any functional requirement for a real parent,
-> it just feels like abuse given the stated purpose of auxiliary bus.
-> Greg, auxiliary bus or separate acpi_ras2 bus feel better to you?
->
-> We'd need to parent it off something to avoid the check in
-> auxiliary_device_init() + all devices should have a parent anyway.
+The following commit has been merged into the core/debugobjects branch of tip:
 
-Wouldn't that be the platform device providing the mailbox memory
-addresses mentioned in one of the previous messages?
+Commit-ID:     ff8d523cc4520a5ce86cde0fd57c304e2b4f61b3
+Gitweb:        https://git.kernel.org/tip/ff8d523cc4520a5ce86cde0fd57c304e2b4f61b3
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Sun, 13 Oct 2024 20:45:57 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 15 Oct 2024 17:30:33 +02:00
+
+debugobjects: Track object usage to avoid premature freeing of objects
+
+The freelist is freed at a constant rate independent of the actual usage
+requirements. That's bad in scenarios where usage comes in bursts. The end
+of a burst puts the objects on the free list and freeing proceeds even when
+the next burst which requires objects started again.
+
+Keep track of the usage with a exponentially wheighted moving average and
+take that into account in the worker function which frees objects from the
+free list.
+
+This further reduces the kmem_cache allocation/free rate for a full kernel
+compile:
+
+   	    kmem_cache_alloc()	kmem_cache_free()
+Baseline:   225k		173k
+Usage:	    170k		117k
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
+Link: https://lore.kernel.org/all/87bjznhme2.ffs@tglx
+
+---
+ lib/debugobjects.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 40 insertions(+), 5 deletions(-)
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index cc32844..7f50c44 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -13,6 +13,7 @@
+ #include <linux/hash.h>
+ #include <linux/kmemleak.h>
+ #include <linux/sched.h>
++#include <linux/sched/loadavg.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+@@ -86,6 +87,7 @@ static struct obj_pool pool_to_free = {
+ 
+ static HLIST_HEAD(pool_boot);
+ 
++static unsigned long		avg_usage;
+ static bool			obj_freeing;
+ 
+ static int __data_racy			debug_objects_maxchain __read_mostly;
+@@ -427,11 +429,31 @@ static struct debug_obj *lookup_object(void *addr, struct debug_bucket *b)
+ 	return NULL;
+ }
+ 
++static void calc_usage(void)
++{
++	static DEFINE_RAW_SPINLOCK(avg_lock);
++	static unsigned long avg_period;
++	unsigned long cur, now = jiffies;
++
++	if (!time_after_eq(now, READ_ONCE(avg_period)))
++		return;
++
++	if (!raw_spin_trylock(&avg_lock))
++		return;
++
++	WRITE_ONCE(avg_period, now + msecs_to_jiffies(10));
++	cur = READ_ONCE(pool_global.stats.cur_used) * ODEBUG_FREE_WORK_MAX;
++	WRITE_ONCE(avg_usage, calc_load(avg_usage, EXP_5, cur));
++	raw_spin_unlock(&avg_lock);
++}
++
+ static struct debug_obj *alloc_object(void *addr, struct debug_bucket *b,
+ 				      const struct debug_obj_descr *descr)
+ {
+ 	struct debug_obj *obj;
+ 
++	calc_usage();
++
+ 	if (static_branch_likely(&obj_cache_enabled))
+ 		obj = pcpu_alloc();
+ 	else
+@@ -450,14 +472,26 @@ static struct debug_obj *alloc_object(void *addr, struct debug_bucket *b,
+ /* workqueue function to free objects. */
+ static void free_obj_work(struct work_struct *work)
+ {
+-	bool free = true;
++	static unsigned long last_use_avg;
++	unsigned long cur_used, last_used, delta;
++	unsigned int max_free = 0;
+ 
+ 	WRITE_ONCE(obj_freeing, false);
+ 
++	/* Rate limit freeing based on current use average */
++	cur_used = READ_ONCE(avg_usage);
++	last_used = last_use_avg;
++	last_use_avg = cur_used;
++
+ 	if (!pool_count(&pool_to_free))
+ 		return;
+ 
+-	for (unsigned int cnt = 0; cnt < ODEBUG_FREE_WORK_MAX; cnt++) {
++	if (cur_used <= last_used) {
++		delta = (last_used - cur_used) / ODEBUG_FREE_WORK_MAX;
++		max_free = min(delta, ODEBUG_FREE_WORK_MAX);
++	}
++
++	for (int cnt = 0; cnt < ODEBUG_FREE_WORK_MAX; cnt++) {
+ 		HLIST_HEAD(tofree);
+ 
+ 		/* Acquire and drop the lock for each batch */
+@@ -468,9 +502,10 @@ static void free_obj_work(struct work_struct *work)
+ 			/* Refill the global pool if possible */
+ 			if (pool_move_batch(&pool_global, &pool_to_free)) {
+ 				/* Don't free as there seems to be demand */
+-				free = false;
+-			} else if (free) {
++				max_free = 0;
++			} else if (max_free) {
+ 				pool_pop_batch(&tofree, &pool_to_free);
++				max_free--;
+ 			} else {
+ 				return;
+ 			}
+@@ -1110,7 +1145,7 @@ static int debug_stats_show(struct seq_file *m, void *v)
+ 	for_each_possible_cpu(cpu)
+ 		pcp_free += per_cpu(pool_pcpu.cnt, cpu);
+ 
+-	pool_used = data_race(pool_global.stats.cur_used);
++	pool_used = READ_ONCE(pool_global.stats.cur_used);
+ 	pcp_free = min(pool_used, pcp_free);
+ 	pool_used -= pcp_free;
+ 
 
