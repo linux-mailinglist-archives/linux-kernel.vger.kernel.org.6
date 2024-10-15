@@ -1,57 +1,87 @@
-Return-Path: <linux-kernel+bounces-366279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D0D99F315
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:46:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB88399F318
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21FA81F21DE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:46:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011361C21F0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386CC1F76B4;
-	Tue, 15 Oct 2024 16:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602A91F9EA2;
+	Tue, 15 Oct 2024 16:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVs8Df2o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCsBMBtc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F21F6671;
-	Tue, 15 Oct 2024 16:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915961D5169;
+	Tue, 15 Oct 2024 16:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729010659; cv=none; b=ryjYNaaQOA/t83wyK5gpELRjuyeWzXDbHjB61u3HrNzPpA/SSmL+Nk27lcM7qgOS5EyGfNGa8epgef+Bav7xEE+3LsqmZFmcHfTO2jwwnWbymW6s5+49WCdYU914LSeQx/tRPFB0NSvKbAKDymiNp6PcU6OHc0M1si2DvOl2Lf0=
+	t=1729010771; cv=none; b=PaIkHJ46uMXqyAn8HfJKwiryxl61JNXda65VC5/MD9p2tNv1TcR97z60DP1ZTUo/ffZ30+tawZUveEQT7RxOIR/8K0YNN08+Q+NiXAb0ujASqe+LLrM8DOubjP0hMD+q4eTUOxFS3z08CpkxuG75iwLlCGpMNTuRRoCWFpBRylg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729010659; c=relaxed/simple;
-	bh=1Yzhnbim0NFkYWi4viU/6zv+YCq/dxIxbqmb+G1U/uA=;
+	s=arc-20240116; t=1729010771; c=relaxed/simple;
+	bh=ty485hgQRf36tvCdf7hLCpqH8wPJP/ov3etpcqFjYBw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IKMM2nDe8EYIL9h9QvFpQmFklVXkXCVelP7yMM357j91vOZ66/qfmZuGj5mYpj7hXuvfDdNCf7cY1KydE4tGPYKBYo7LwyDc/FbP/cp2RVfwjsLjU8wZOpEGfgxwhesJi5ptHpNhrBL7z4dOrgLrmYbG/4byokTi8sba4PTfhRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVs8Df2o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10108C4CEC6;
-	Tue, 15 Oct 2024 16:44:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=A55+WbkrObhGcxpWS9TXBHU/l6BgCg0SLECN0RuErtsBgNE7UlPNDhVwZr3yFae26RVMYpuEXxnw01NKS88Tfs5uwP/pWl7PFOc3mCuAO6MwkLHeOw/LacyFTGNYhNuPT8kJsAzE7ZJ7p6tetaX3m9Tb2R5sfL8Cp0gY4bqBClw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCsBMBtc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9660C4CEC6;
+	Tue, 15 Oct 2024 16:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729010659;
-	bh=1Yzhnbim0NFkYWi4viU/6zv+YCq/dxIxbqmb+G1U/uA=;
+	s=k20201202; t=1729010771;
+	bh=ty485hgQRf36tvCdf7hLCpqH8wPJP/ov3etpcqFjYBw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PVs8Df2oWaAYxMWxxlXM02rbRSnryokH/HKXZjhOaLzdyuFgiQK98ogayz/SlLaI8
-	 nR+vzjBRdvMqL7n9UF8q+UXAKU5pPF13q0UV3uAXRAv536lg+zYnXLwv0t0TIQuaNo
-	 p8cxLNNhISYH2suyl//gZd7eyMvxWCfCBJ1NL4ruMh7h4neWE+2eQJLMFqXTfzL1v8
-	 1FOvdv2bZIsGsTFGirrU0BBHw9Aw4im0cUlUbWrPjawYjSBkDBp67PFKImA3Bbk626
-	 FoydSwzUvnWpxJ3lq0DtIqWnHGyHhsRxWqaGdJk1TXyMegxYx0uYKc3Ln+P8pmxqC2
-	 62Yw+e8Cwab0A==
-Date: Tue, 15 Oct 2024 18:44:13 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Zheng Zengkai <zhengzengkai@huawei.com>
-Cc: guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com,
-	maz@kernel.org, rafael@kernel.org, lenb@kernel.org,
-	daniel.lezcano@linaro.org, tglx@linutronix.de,
-	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ACPI: GTDT: Tighten the check for the array of
- platform timer structures
-Message-ID: <Zw6b3V5Mk2tIGmy5@lpieralisi>
-References: <20241015152602.184108-1-zhengzengkai@huawei.com>
+	b=QCsBMBtcCWJ6BusDVYweMMvwHStKIq9JHRukZj/8ReMVp/piTWhlQAiNOCUn00IDT
+	 KW9tfaN4Op8u0JikMfXBgS8HaSOBo1FDnUsHzFJb8e2UKdW5s8G8zg6taztjhTeWe/
+	 G+THbdgIw4Nuezq2itQRuQJsHwJe71+7nQOsgS/XVanPnTEIUAgIgBsb+jU2qut9iz
+	 NwIRhfqgXLwcaEABQk4e3E0zK/8Y7JpwEB2RMc5napn7msbHYyNRA5oN8zEXA/+fcB
+	 MthVhQ4oWpMs9mJZXhusjDSHsRhA6yIuTYJkhI9l4CvKuLDbKKg67vLo/JKFzjWw0x
+	 q1MKryp1rv7vw==
+Date: Tue, 15 Oct 2024 11:46:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	"Paul J. Murphy" <paul.j.murphy@intel.com>,
+	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Martin Hecht <martin.hecht@avnet.eu>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Mikhail Rudenko <mike.rudenko@gmail.com>,
+	Ricardo Ribalda <ribalda@kernel.org>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Dongchun Zhu <dongchun.zhu@mediatek.com>,
+	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+	Todor Tomov <todor.too@gmail.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] media: dt-bindings: Remove assigned-clock-* from
+ various schema
+Message-ID: <20241015164609.GA1235530-robh@kernel.org>
+References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
+ <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-1-a2bb12a1796d@linaro.org>
+ <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
+ <20241014203441.GF5522@pendragon.ideasonboard.com>
+ <b0154e75-370e-4a5f-9309-6a3ae5d85b5c@kernel.org>
+ <20241015112922.GB2712@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,141 +90,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015152602.184108-1-zhengzengkai@huawei.com>
+In-Reply-To: <20241015112922.GB2712@pendragon.ideasonboard.com>
 
-On Tue, Oct 15, 2024 at 11:26:02PM +0800, Zheng Zengkai wrote:
-> As suggested by Marc and Lorenzo, first we need to check whether the
-
-I would just describe the change, the tags and Link: are there to
-describe this patch history.
-
-> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
-> de-referencing what it points at to detect the length of the platform
-> timer struct and then check that the length of current platform_timer
-> struct is also valid, i.e. the length is not zero and within gtdt_end.
-> Now next_platform_timer() only checks against gtdt_end for the entry of
-> subsequent platform timer without checking the length of it and will
-> not report error if the check failed and the existing check in function
-> acpi_gtdt_init() is also not enough.
+On Tue, Oct 15, 2024 at 02:29:22PM +0300, Laurent Pinchart wrote:
+> On Tue, Oct 15, 2024 at 08:13:19AM +0200, Krzysztof Kozlowski wrote:
+> > On 14/10/2024 22:34, Laurent Pinchart wrote:
+> > > On Mon, Oct 14, 2024 at 09:43:07AM +0200, Krzysztof Kozlowski wrote:
+> > >> On Sat, Oct 12, 2024 at 04:02:50PM +0100, Bryan O'Donoghue wrote:
+> > >>> Remove extraneous assigned-clock* from media/i2c/* schemas, retain in the
+> > >>> relevant examples.
+> > >>>
+> > >>> Link: https://lore.kernel.org/linux-media/j7kgz2lyxnler5qwd7yiazdq6fmsv77kyozdrxf33h54ydakjz@uqjhwhoyv6re
+> > >>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> > >>> ---
+> > >>>  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml | 8 --------
+> > >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov5648.yaml | 8 --------
+> > >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov8865.yaml | 8 --------
+> > >>>  Documentation/devicetree/bindings/media/i2c/ovti,ov9282.yaml | 4 ----
+> > >>>  Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml | 4 ----
+> > >>>  Documentation/devicetree/bindings/media/i2c/sony,imx334.yaml | 4 ----
+> > >>>  Documentation/devicetree/bindings/media/i2c/sony,imx335.yaml | 4 ----
+> > >>>  Documentation/devicetree/bindings/media/i2c/sony,imx412.yaml | 4 ----
+> > >>>  8 files changed, 44 deletions(-)
+> > >>>
+> > >>> diff --git a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> > >>> index 60f19e1152b33128cf3baa15b8c70a874ca6d52e..d18ead8f7fc43bfacc291aed85b5ca9166c46edb 100644
+> > >>> --- a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> > >>> +++ b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> > >>> @@ -28,12 +28,6 @@ properties:
+> > >>>      items:
+> > >>>        - description: Reference to the mclk clock.
+> > >>>  
+> > >>> -  assigned-clocks:
+> > >>> -    maxItems: 1
+> > >>> -
+> > >>> -  assigned-clock-rates:
+> > >>> -    maxItems: 1
+> > >>> -
+> > >>>    reset-gpios:
+> > >>>      description: Reference to the GPIO connected to the RESETB pin. Active low.
+> > >>>      maxItems: 1
+> > >>> @@ -82,8 +76,6 @@ required:
+> > >>>    - compatible
+> > >>>    - reg
+> > >>>    - clocks
+> > >>> -  - assigned-clocks
+> > >>> -  - assigned-clock-rates
+> > >>
+> > >> That's not extraneous, but has a meaning that without assigned-clocks
+> > >> this device or driver will not operate.
+> > > 
+> > > How so ? Even if we assume that the device requires a specific clock
+> > > frequency (which is often not the case for camera sensors, the
+> > > limitation usually comes from drivers, so the constraint shouldn't be
+> > > expressed in the bindings in that case), there is no overall requirement
+> > > to assign a clock rate as in many cases the clock will come from a
+> > > fixed-frequency oscillator. This seems to be a constraint that is
+> > > outside of the scope of DT bindings. It is similar to regulators, where
+> > > the regulator consumer doesn't have a way to express supported voltages
+> > > in its DT bindings.
+> > 
+> > This property does not say it comes from a fixed-frequency oscillator,
+> > so I do not understand why you think it is unreasonable constraint. I
+> > have no clue what the author wanted to say here, so I just explained
+> > that there is a meaning behind requiring such properties. If you claim
+> > device or implementations do not have such requirement, after
+> > investigating each case, feel free to drop this. I think I also stated
+> > this already in other reply.
 > 
-> Modify the for_each_platform_timer() iterator and use it combined with
-> a dedicated check function platform_timer_valid() to do the check
-> against table length (gtdt_end) for each element of platform timer
-> array in function acpi_gtdt_init(), making sure that both their entry
-> and length actually fit in the table.
-> 
-> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Co-developed-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
-> ---
-> Changes in v3:
-> - based on Marc's patch and reuse the for_each_platform_timer() loop
-> 
-> Changes in v2:
-> - Check against gtdt_end for both entry and len of each array element
-> Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
-> 
-> Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
-> ---
->  drivers/acpi/arm64/gtdt.c | 32 +++++++++++++++++++++-----------
->  1 file changed, 21 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
-> index c0e77c1c8e09..3583c99afb0d 100644
-> --- a/drivers/acpi/arm64/gtdt.c
-> +++ b/drivers/acpi/arm64/gtdt.c
-> @@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
->  
->  static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
->  
-> -static inline __init void *next_platform_timer(void *platform_timer)
-> +static __init bool platform_timer_valid(void *platform_timer)
->  {
->  	struct acpi_gtdt_header *gh = platform_timer;
->  
-> -	platform_timer += gh->length;
-> -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
-> -		return platform_timer;
-> +	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
-> +		platform_timer < acpi_gtdt_desc.gtdt_end &&
-> +		gh->length != 0 &&
-> +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
-> +}
-> +
-> +static __init void *next_platform_timer(void *platform_timer)
-> +{
-> +	struct acpi_gtdt_header *gh = platform_timer;
->  
-> -	return NULL;
-> +	return platform_timer + gh->length;
->  }
->  
-> -#define for_each_platform_timer(_g)				\
-> -	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
-> +#define for_each_platform_timer(_g, first_entry)	\
-> +	for (_g = first_entry; platform_timer_valid(_g);	\
->  	     _g = next_platform_timer(_g))
->  
->  static inline bool is_timer_block(void *platform_timer)
-> @@ -155,8 +161,9 @@ bool __init acpi_gtdt_c3stop(int type)
->  int __init acpi_gtdt_init(struct acpi_table_header *table,
->  			  int *platform_timer_count)
->  {
-> -	void *platform_timer;
-> +	void *platform_timer, *tmp;
+> For camera sensor drivers I'm pretty sure we can drop those properties
+> when they're marked as required, as there's no intrinsic characteristics
+> of camera sensors that would require assigned-clock*.
 
-It makes more sense - thank you and Marc.
+I tend to agree, and would take it one step further to say that applies 
+everywhere. Whatever clock setup needed is outside the scope of a 
+binding. The simplest case is all input clocks are fixed. The next 
+simplest case is firmware did all clock setup needed for a specific 
+board and the boot time default works.
 
-Nit: you don't really need another pointer (ie tmp) but you may keep
-it if that makes the code clearer - all you need to do is using
-platform_timer as an iterator and initialize
-
-	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-
-if all checks passed (you are using tmp just because after the loop
-platform_timer can't be used to initialize acpi_gtdt_desc.platform_timer).
-
-Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-
-(now let's see if this survives GTDTs out there :))
-
->  	struct acpi_table_gtdt *gtdt;
-> +	int cnt = 0;
->  
->  	gtdt = container_of(table, struct acpi_table_gtdt, header);
->  	acpi_gtdt_desc.gtdt = gtdt;
-> @@ -177,7 +184,10 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->  	}
->  
->  	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
-> +	for_each_platform_timer(tmp, platform_timer)
-> +		cnt++;
-> +
-> +	if (cnt != gtdt->platform_timer_count) {
->  		pr_err(FW_BUG "invalid timer data.\n");
->  		return -EINVAL;
->  	}
-> @@ -305,7 +315,7 @@ int __init acpi_arch_timer_mem_init(struct arch_timer_mem *timer_mem,
->  	void *platform_timer;
->  
->  	*timer_count = 0;
-> -	for_each_platform_timer(platform_timer) {
-> +	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
->  		if (is_timer_block(platform_timer)) {
->  			ret = gtdt_parse_timer_block(platform_timer, timer_mem);
->  			if (ret)
-> @@ -398,7 +408,7 @@ static int __init gtdt_sbsa_gwdt_init(void)
->  	if (ret || !timer_count)
->  		goto out_put_gtdt;
->  
-> -	for_each_platform_timer(platform_timer) {
-> +	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
->  		if (is_non_secure_watchdog(platform_timer)) {
->  			ret = gtdt_import_sbsa_gwdt(platform_timer, gwdt_count);
->  			if (ret)
-> -- 
-> 2.20.1
-> 
+Rob
 
