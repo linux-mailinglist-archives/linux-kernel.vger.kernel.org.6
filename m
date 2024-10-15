@@ -1,184 +1,200 @@
-Return-Path: <linux-kernel+bounces-365565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C8D99E471
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:46:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B5D99E472
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5042A1C227F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7FD282D31
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E681D9A46;
-	Tue, 15 Oct 2024 10:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DA21D2B21;
+	Tue, 15 Oct 2024 10:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ZPoAjnUx"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAB033F9;
-	Tue, 15 Oct 2024 10:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U4F7Y0ga"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5F1146D55
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989184; cv=none; b=oxJyd57bLEZ/XeW0BazdyVSA25I0jEfMgAMrULrn31ENMIP8G6EeDaMpN4yaqWD1tySJ2xySOBxhyPPrpHYFJXtEPm80kLfPONhjjrIxikyHlvV3rEcjRtKy7PsqNxGxgq0TRXVYWXs3cq8hTyMJoh/Biz5kCDVm7YPutsQ8KhE=
+	t=1728989203; cv=none; b=dblx1WjG4h1taaAbkPkeApzu0BLbYrTeKy0uP1VtWGIPSjwB1wqFTSwmzoE8BxGjm0V3DFe+m23rlitECT4z/sNpsSpZbOUrjkR3I698VFi7111kE7Fzm2G+WC7SCfVGbKkSnYVt0zYsixa1Pb6ykyMorbl0bNygpAs/ERa51OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989184; c=relaxed/simple;
-	bh=EuXnCWIiQhRFrjL6fPApbKY2jvd/nDnfoACXtAi5qLI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=e3ScVNPMIGGBNHVx2ezbar9ByKFnHmZgxfWVCeNGABmPbMA27O9YuEu/+QrSC/xiSwKMcK8lboba9vHnw/c0x4t3Z8bCYTXAE+uSaZ0a/XnKBHFThg4UYeudUW7mjb2aAFQQcRxrpL8Vwf4cYki0LLvrXYV5Zv6OsWcVDNynZmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ZPoAjnUx; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=tPUOEplHUhN44pHUebHBM8RtOCgVVbYiugLiJbJxvlQ=; b=Z
-	PoAjnUxWOn3ofUhWzD4qieMGNGW2syqR43RzHB6LR7CFq5gHS3rPE9BGT76bfUfp
-	IbPhErPNcxY35E/VfDVJwC6P1xMtUjQWPAAEmtuzYdYrDDgUkSrltfjJYPsbEJJY
-	MBjNCQdJdxB/kYOvN5ofOLd1l7gN+i5g/VzYPB/cfU=
-Received: from tangchunyou$163.com ( [120.136.174.178] ) by
- ajax-webmail-wmsvr-40-123 (Coremail) ; Tue, 15 Oct 2024 18:45:29 +0800
- (CST)
-Date: Tue, 15 Oct 2024 18:45:29 +0800 (CST)
-From: =?UTF-8?B?5ZSQ5pil5pyJ?= <tangchunyou@163.com>
-To: "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>
-Cc: fancer.lancer@gmail.com, vkoul@kernel.org, dmaengine@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH] dma/dw-edma: chip regs base should add the offset
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20241015053608.h2avloxfak5yagyd@thinkpad>
-References: <20241014134832.4505-1-tangchunyou@163.com>
- <20241015053608.h2avloxfak5yagyd@thinkpad>
-X-NTES-SC: AL_Qu2ZCvWTtkkp7yWYZ+kfm0cXjuc3X8ewvvsv1IBTP5h+jAnpxgcYRG5SEF7bwse0DyOomgmGdRln7/RWcpJBX4IaIcXI2E2fnJubZnX6K05UOg==
-Content-Type: multipart/mixed; 
-	boundary="----=_Part_164458_1235785359.1728989129506"
+	s=arc-20240116; t=1728989203; c=relaxed/simple;
+	bh=fW476nZCmDCSRgye7UwJvzeVl9dNa+iwAAalvvIkHZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ROMA5l2RTiK2NpaP00SY4BdWHD10AtKO0tgtzwVq2AiJ0bt1NwBispqkEJ0FQ+U7GOouL1oMCPYJjVKzoD5dJNMILX1oESTCbRwmiWk/pwLtZEWWxJ4oyvTyBrr0HgEO1E2ciePN8w64qcmjyMWCYqCv77F2QYC1BiHOrUWTCz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U4F7Y0ga; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728989200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IDU1D/r+iHdlN/95BqAJt4M/vmdPwT06riD32mBzX2I=;
+	b=U4F7Y0ga9ueo4j4fdoDJgbi2y6dXhtVj6v9EIPMmgqMtpg1+gjUyNrQNN1ajumbixAAue8
+	6FlTmwZGr4t9VJBnBYNORj3h+QkW99T9NFMrx3bgmwhj6xD+OElt8UEZGClPoEGg96g2vB
+	UzSDGD0BJsar/5b3wwmOFia9a4IK9jY=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-119-nsQ-24BTNBatpgatfrMQEQ-1; Tue, 15 Oct 2024 06:46:39 -0400
+X-MC-Unique: nsQ-24BTNBatpgatfrMQEQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431159f2864so27302175e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:46:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728989198; x=1729593998;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IDU1D/r+iHdlN/95BqAJt4M/vmdPwT06riD32mBzX2I=;
+        b=YWrgoPC9ukbxYDIcaLL3vrvqW167kTB/OWvWrKH4Tnni81oMfcpOoDd1FaBvI/dpdk
+         4s4dqV7boErwjpabyxaHEpUPurEI/EdRaGfIKs+rXRC5X2aVDrmAi38l/DHZJuqL4XKy
+         y2owTE9IJkXPnCbMQyMtXoAXDehcWsvM/iThanPVSeMAfxPXrEB/nwnlaf1u7dNuNMxl
+         RWr3gucf+XayypsIB+Ui6xoME2uSKtLeE3BO92ept3E5kNwGy5x9UmeWdPKrHggA/Bie
+         P3AzbBztqm+JougF8344wuvLS52PKub3EIRqYSRz22AlUiEDh8WFfiRuEEH/mDKY1N7o
+         Qlyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWihUjZaoD17553tnvx/zA+UyKYm5OiGCSffYbxNYFmcPFRWAniAL3MQ0JesCEqbmli3F7jTP/N3FKltMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymT3Zk1w6T4DEw9AIz1K/uLCxYjy6Fl3wcaQhcQNfFI2YrYP3u
+	UdVxdrohLomEGuyEryjWg5fEGb9dKNzKsNPVlZ1aa9o3hty6f0VowQ1Wg96Kgnavo6ejlyX5NAR
+	Bp+TaONgXRJ9Dt7uhJ+9cOpBWBfiFg6sH81TlRin4y5rvVB8ES3Bkm+1r5LKljw==
+X-Received: by 2002:a05:600c:1c03:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-4314a35ee09mr387505e9.26.1728989198391;
+        Tue, 15 Oct 2024 03:46:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5tzDNsvw78nPVMi9k1REjGUg4XGV2iEzziTWMsPaqrmq2TWxV+DN6MD4mOFzehVuI5P/yng==
+X-Received: by 2002:a05:600c:1c03:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-4314a35ee09mr387165e9.26.1728989197940;
+        Tue, 15 Oct 2024 03:46:37 -0700 (PDT)
+Received: from [10.202.147.124] (nat-pool-brq-u.redhat.com. [213.175.37.12])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56ea05sm14089065e9.23.2024.10.15.03.46.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 03:46:37 -0700 (PDT)
+Message-ID: <2a212bcf-a8ee-4f10-9c5b-948b9f6895f3@redhat.com>
+Date: Tue, 15 Oct 2024 12:46:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7100a983.a923.1928fc86b23.Coremail.tangchunyou@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:eygvCgD3H5DPRw5nJLgOAA--.22434W
-X-CM-SenderInfo: 5wdqwu5kxq50rx6rljoofrz/1tbiYxp5UWcOC7eCMQACs1
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
-
-------=_Part_164458_1235785359.1728989129506
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_164460_915974015.1728989129506"
-
-------=_Part_164460_915974015.1728989129506
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf test: Fix probe testsuite with a new error message
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linux-perf-users <linux-perf-users@vger.kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Michael Petlan <mpetlan@redhat.com>
+References: <20241010051620.1066407-1-namhyung@kernel.org>
+ <ZwfNL2sLL8cDy2au@x1> <ZwfNmDNzQAXf0ZQV@x1>
+ <af8c186d-72ba-4fcb-8737-84b665017cdd@redhat.com>
+ <CA+JHD91skZHrEanhANQzWaq=4wpZomTn8Vab4j+wT2kHdibTkA@mail.gmail.com>
+Content-Language: en-US
+From: Veronika Molnarova <vmolnaro@redhat.com>
+In-Reply-To: <CA+JHD91skZHrEanhANQzWaq=4wpZomTn8Vab4j+wT2kHdibTkA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-aGkgTWFuaToKCnNvcnJ5LCBJIGFtIGEgbm92aWNlIGluIHN1Ym1pdHRpbmcgcGF0Y2hlcy4gRG8g
-eW91IHRoaW5rIG15IG1vZGlmaWNhdGlvbnMgbWVldCB0aGUgcmVxdWlyZW1lbnRzPyBJZiBub3Qs
-IHBsZWFzZSBoZWxwIHBvaW50IG91dCB0aGUgcHJvYmxlbSwgcHJlZmVyYWJseSB3aXRoIGFuIGV4
-YW1wbGUuIFRoYW5rIHlvdSEKCkkgaGFkIG1vZGlmeSBpdCBpbiB0aGUgYXR0YWNobWVudC4KCgoK
-CmNodW55b3UKCgoKCgoKCgoKCgoKCgpBdCAyMDI0LTEwLTE1IDEzOjM2OjA4LCAiTWFuaXZhbm5h
-biBTYWRoYXNpdmFtIiA8bWFuaXZhbm5hbi5zYWRoYXNpdmFtQGxpbmFyby5vcmc+IHdyb3RlOgo+
-T24gTW9uLCBPY3QgMTQsIDIwMjQgYXQgMDk6NDg6MzJQTSArMDgwMCwgQ2h1bnlvdVRhbmcgd3Jv
-dGU6Cj4+IEZyb206IHRhbmdjaHVueW91IDx0YW5nY2h1bnlvdUAxNjMuY29tPgo+PiAKPj4gZml4
-IHRoZSByZWdzIGJhc2Ugd2l0aCBvZmZzZXQuCj4+IAo+Cj5Jbml0aWFsbHkgSSB0aG91Z2h0IHRo
-YXQgdGhpcyBwYXRjaCBpcyBhIHNwYW0sIGJ1dCBpdCBpcyBub3QuIEl0IGlzIGluZGVlZAo+Zml4
-aW5nIGEgcmVhbCBidWcgaW4gdGhlIGRyaXZlci4gQnV0IHRoZSBzdWJqZWN0IGFuZCBkZXNjcmlw
-dGlvbiBtYWRlIGl0IGxvb2sKPmxpa2UgYSBzcGFtLiBQbGVhc2UgZm9sbG93IHRoZSBwcm9jZXNz
-IGRlZmluZWQgaW46Cj5Eb2N1bWVudGF0aW9uL3Byb2Nlc3MvNS5Qb3N0aW5nLnJzdCB0byBzZW5k
-IHRoZSBwYXRjaGVzLgo+Cj5Fc3NlbnRpYWxseSB5b3UgbmVlZCB0byBwcm9wZXJseSBkZXNjcmli
-ZSB3aGF0IHRoZSBwYXRjaCBkb2VzIGFuZCBob3cgaXQgaW1wYWN0cwo+dGhlIGRyaXZlciBldGMu
-Li4gVGhlbiB0aGVyZSBuZWVkcyB0byBiZSBhIHZhbGlkICdGaXhlcycgdGFnIGFuZCBzdGFibGUg
-bGlzdAo+c2hvdWxkIGJlIENDZWQgdG8gYmFja3BvcnQgdG8gc3RhYmxlIGtlcm5lbHMuCj4KPi0g
-TWFuaQo+Cj4+IFNpZ25lZC1vZmYtYnk6IHRhbmdjaHVueW91IDx0YW5nY2h1bnlvdUAxNjMuY29t
-Pgo+PiAtLS0KPj4gIGRyaXZlcnMvZG1hL2R3LWVkbWEvZHctZWRtYS1wY2llLmMgfCAyICsrCj4+
-ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCj4+IAo+PiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9kbWEvZHctZWRtYS9kdy1lZG1hLXBjaWUuYyBiL2RyaXZlcnMvZG1hL2R3LWVkbWEvZHct
-ZWRtYS1wY2llLmMKPj4gaW5kZXggMWM2MDQzNzUxZGM5Li4yOTE4YjY0NzA4ZjkgMTAwNjQ0Cj4+
-IC0tLSBhL2RyaXZlcnMvZG1hL2R3LWVkbWEvZHctZWRtYS1wY2llLmMKPj4gKysrIGIvZHJpdmVy
-cy9kbWEvZHctZWRtYS9kdy1lZG1hLXBjaWUuYwo+PiBAQCAtMjM0LDYgKzIzNCw4IEBAIHN0YXRp
-YyBpbnQgZHdfZWRtYV9wY2llX3Byb2JlKHN0cnVjdCBwY2lfZGV2ICpwZGV2LAo+PiAgCWlmICgh
-Y2hpcC0+cmVnX2Jhc2UpCj4+ICAJCXJldHVybiAtRU5PTUVNOwo+PiAgCj4+ICsJY2hpcC0+cmVn
-X2Jhc2UgKz0gdnNlY19kYXRhLnJnLm9mZjsKPj4gKwo+PiAgCWZvciAoaSA9IDA7IGkgPCBjaGlw
-LT5sbF93cl9jbnQ7IGkrKykgewo+PiAgCQlzdHJ1Y3QgZHdfZWRtYV9yZWdpb24gKmxsX3JlZ2lv
-biA9ICZjaGlwLT5sbF9yZWdpb25fd3JbaV07Cj4+ICAJCXN0cnVjdCBkd19lZG1hX3JlZ2lvbiAq
-ZHRfcmVnaW9uID0gJmNoaXAtPmR0X3JlZ2lvbl93cltpXTsKPj4gLS0gCj4+IDIuMjUuMQo+PiAK
-Pgo+LS0gCj7grq7grqPgrr/grrXgrqPgr43grqPgrqngr40g4K6a4K6k4K6+4K6a4K6/4K614K6u
-4K+NCg==
-------=_Part_164460_915974015.1728989129506
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: base64
 
-PGRpdiBkYXRhLW50ZXM9Im50ZXNfbWFpbF9ib2R5X3Jvb3QiIHN0eWxlPSJsaW5lLWhlaWdodDox
-Ljc7Y29sb3I6IzAwMDAwMDtmb250LXNpemU6MTRweDtmb250LWZhbWlseTpBcmlhbCI+PGRpdiBp
-ZD0ic3BuRWRpdG9yQ29udGVudCI+PHAgc3R5bGU9Im1hcmdpbjogMDsiPmhpIE1hbmk6PC9wPjxw
-IHN0eWxlPSJtYXJnaW46IDA7Ij5zb3JyeSwgSSBhbSBhIG5vdmljZSBpbiBzdWJtaXR0aW5nIHBh
-dGNoZXMuIERvIHlvdSB0aGluayBteSBtb2RpZmljYXRpb25zIG1lZXQgdGhlIHJlcXVpcmVtZW50
-cz8gSWYgbm90LCBwbGVhc2UgaGVscCBwb2ludCBvdXQgdGhlIHByb2JsZW0sIHByZWZlcmFibHkg
-d2l0aCBhbiBleGFtcGxlLiBUaGFuayB5b3UhPC9wPjxwIHN0eWxlPSJtYXJnaW46IDA7Ij5JIGhh
-ZCBtb2RpZnkgaXQgaW4gdGhlIGF0dGFjaG1lbnQuPC9wPjxwIHN0eWxlPSJtYXJnaW46IDA7Ij48
-YnI+PC9wPjxwIHN0eWxlPSJtYXJnaW46IDA7Ij5jaHVueW91PC9wPjxwIHN0eWxlPSJtYXJnaW46
-IDA7Ij48YnI+PC9wPjxwIHN0eWxlPSJtYXJnaW46IDA7Ij48YnI+PC9wPjxwIHN0eWxlPSJtYXJn
-aW46IDA7Ij48YnI+PC9wPjwvZGl2PjxkaXYgc3R5bGU9InBvc2l0aW9uOnJlbGF0aXZlO3pvb206
-MSI+PC9kaXY+PGRpdiBpZD0iZGl2TmV0ZWFzZU1haWxDYXJkIj48L2Rpdj48cCBzdHlsZT0ibWFy
-Z2luOiAwOyI+PGJyPjwvcD48cHJlPjxicj5BdCAyMDI0LTEwLTE1IDEzOjM2OjA4LCAiTWFuaXZh
-bm5hbiBTYWRoYXNpdmFtIiAmbHQ7bWFuaXZhbm5hbi5zYWRoYXNpdmFtQGxpbmFyby5vcmcmZ3Q7
-IHdyb3RlOgomZ3Q7T24gTW9uLCBPY3QgMTQsIDIwMjQgYXQgMDk6NDg6MzJQTSArMDgwMCwgQ2h1
-bnlvdVRhbmcgd3JvdGU6CiZndDsmZ3Q7IEZyb206IHRhbmdjaHVueW91ICZsdDt0YW5nY2h1bnlv
-dUAxNjMuY29tJmd0OwomZ3Q7Jmd0OyAKJmd0OyZndDsgZml4IHRoZSByZWdzIGJhc2Ugd2l0aCBv
-ZmZzZXQuCiZndDsmZ3Q7IAomZ3Q7CiZndDtJbml0aWFsbHkgSSB0aG91Z2h0IHRoYXQgdGhpcyBw
-YXRjaCBpcyBhIHNwYW0sIGJ1dCBpdCBpcyBub3QuIEl0IGlzIGluZGVlZAomZ3Q7Zml4aW5nIGEg
-cmVhbCBidWcgaW4gdGhlIGRyaXZlci4gQnV0IHRoZSBzdWJqZWN0IGFuZCBkZXNjcmlwdGlvbiBt
-YWRlIGl0IGxvb2sKJmd0O2xpa2UgYSBzcGFtLiBQbGVhc2UgZm9sbG93IHRoZSBwcm9jZXNzIGRl
-ZmluZWQgaW46CiZndDtEb2N1bWVudGF0aW9uL3Byb2Nlc3MvNS5Qb3N0aW5nLnJzdCB0byBzZW5k
-IHRoZSBwYXRjaGVzLgomZ3Q7CiZndDtFc3NlbnRpYWxseSB5b3UgbmVlZCB0byBwcm9wZXJseSBk
-ZXNjcmliZSB3aGF0IHRoZSBwYXRjaCBkb2VzIGFuZCBob3cgaXQgaW1wYWN0cwomZ3Q7dGhlIGRy
-aXZlciBldGMuLi4gVGhlbiB0aGVyZSBuZWVkcyB0byBiZSBhIHZhbGlkICdGaXhlcycgdGFnIGFu
-ZCBzdGFibGUgbGlzdAomZ3Q7c2hvdWxkIGJlIENDZWQgdG8gYmFja3BvcnQgdG8gc3RhYmxlIGtl
-cm5lbHMuCiZndDsKJmd0Oy0gTWFuaQomZ3Q7CiZndDsmZ3Q7IFNpZ25lZC1vZmYtYnk6IHRhbmdj
-aHVueW91ICZsdDt0YW5nY2h1bnlvdUAxNjMuY29tJmd0OwomZ3Q7Jmd0OyAtLS0KJmd0OyZndDsg
-IGRyaXZlcnMvZG1hL2R3LWVkbWEvZHctZWRtYS1wY2llLmMgfCAyICsrCiZndDsmZ3Q7ICAxIGZp
-bGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCiZndDsmZ3Q7IAomZ3Q7Jmd0OyBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9kbWEvZHctZWRtYS9kdy1lZG1hLXBjaWUuYyBiL2RyaXZlcnMvZG1hL2R3LWVk
-bWEvZHctZWRtYS1wY2llLmMKJmd0OyZndDsgaW5kZXggMWM2MDQzNzUxZGM5Li4yOTE4YjY0NzA4
-ZjkgMTAwNjQ0CiZndDsmZ3Q7IC0tLSBhL2RyaXZlcnMvZG1hL2R3LWVkbWEvZHctZWRtYS1wY2ll
-LmMKJmd0OyZndDsgKysrIGIvZHJpdmVycy9kbWEvZHctZWRtYS9kdy1lZG1hLXBjaWUuYwomZ3Q7
-Jmd0OyBAQCAtMjM0LDYgKzIzNCw4IEBAIHN0YXRpYyBpbnQgZHdfZWRtYV9wY2llX3Byb2JlKHN0
-cnVjdCBwY2lfZGV2ICpwZGV2LAomZ3Q7Jmd0OyAgCWlmICghY2hpcC0mZ3Q7cmVnX2Jhc2UpCiZn
-dDsmZ3Q7ICAJCXJldHVybiAtRU5PTUVNOwomZ3Q7Jmd0OyAgCiZndDsmZ3Q7ICsJY2hpcC0mZ3Q7
-cmVnX2Jhc2UgKz0gdnNlY19kYXRhLnJnLm9mZjsKJmd0OyZndDsgKwomZ3Q7Jmd0OyAgCWZvciAo
-aSA9IDA7IGkgJmx0OyBjaGlwLSZndDtsbF93cl9jbnQ7IGkrKykgewomZ3Q7Jmd0OyAgCQlzdHJ1
-Y3QgZHdfZWRtYV9yZWdpb24gKmxsX3JlZ2lvbiA9ICZhbXA7Y2hpcC0mZ3Q7bGxfcmVnaW9uX3dy
-W2ldOwomZ3Q7Jmd0OyAgCQlzdHJ1Y3QgZHdfZWRtYV9yZWdpb24gKmR0X3JlZ2lvbiA9ICZhbXA7
-Y2hpcC0mZ3Q7ZHRfcmVnaW9uX3dyW2ldOwomZ3Q7Jmd0OyAtLSAKJmd0OyZndDsgMi4yNS4xCiZn
-dDsmZ3Q7IAomZ3Q7CiZndDstLSAKJmd0O+CuruCuo+Cuv+CuteCuo+CvjeCuo+CuqeCvjSDgrprg
-rqTgrr7grprgrr/grrXgrq7gr40KPC9wcmU+PC9kaXY+
-------=_Part_164460_915974015.1728989129506--
 
-------=_Part_164458_1235785359.1728989129506
-Content-Type: application/octet-stream; 
-	name=0001-dma-dw-edma-chip-regs-base-should-add-the-offset.patch
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="0001-dma-dw-edma-chip-regs-base-should-add-the-offset.patch"
+On 10/10/24 16:40, Arnaldo Carvalho de Melo wrote:
+> On Thu, Oct 10, 2024, 10:31 AM Veronika Molnarova <vmolnaro@redhat.com>
+> wrote:
+> 
+>>
+>>
+>> On 10/10/24 14:50, Arnaldo Carvalho de Melo wrote:
+>>> On Thu, Oct 10, 2024 at 09:48:52AM -0300, Arnaldo Carvalho de Melo wrote:
+>>>> On Wed, Oct 09, 2024 at 10:16:20PM -0700, Namhyung Kim wrote:
+>>>>> On my system, it's constantly failing because of new error message from
+>>>>> perf probe.  It should update the regex pattern to match the message -
+>>>>> "A function DIE doesn't have decl_line. Maybe broken DWARF?".
+>>>>>
+>>>>>   $ sudo head -n 2 /sys/kernel/debug/kprobes/blacklist | cut -f2
+>>>>>   warn_thunk_thunk
+>>>>>   asm_exc_divide_error
+>>>>>
+>>>>>   $ sudo perf probe warn_thunk_thunk
+>>>>>   A function DIE doesn't have decl_line. Maybe broken DWARF?
+>>>>>   A function DIE doesn't have decl_line. Maybe broken DWARF?
+>>>>>   Probe point 'warn_thunk_thunk' not found.
+>>>>>     Error: Failed to add events.
+>>>>>
+>>>>>   $ sudo perf probe asm_exc_overflow
+>>>>>   Failed to find scope of probe point.
+>>>>>     Error: Failed to add events.
+>>>>
+>>>> We discussed this in the past, I came up with a similar patch, Veronika
+>>>> rightly pointed out that this may point to a real problem, Masami said
+>>>> that since these are for DWARF from assembly those are known issues, I
+>>>> suggested Veronika checked if the CU where the function came from was
+>>>> generated from Assembly (there are DWARF tags that have that info), IIRC
+>>>> she said she would try to do it.
+>>>>
+>>>> I'll try to find out the threads and see what happened.
+>>>
+>>> https://lore.kernel.org/all/ZvXhJLkJcR99Y2sF@google.com/T/#u
+>>>
+>>> Veronika, was there a v3?
+>>>
+>>> Thanks,
+>> Well the patch was already applied upstream so we are talking about a fix
+>> not v3, right?
+> 
+> 
+> 
+> 
+> Can you provide a url for the patch that was applied upstream?
+> 
+> I just checked at
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh?h=perf-tools-next
+> 
+> And I'm not seeing it.
 
-RnJvbSA4YTE4YjJiMDVhNmIwYzkxODIyODhmNTU0OWY1NjRiNjFiYjJlMWUzIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiB0YW5nY2h1bnlvdSA8dGFuZ2NodW55b3VAMTYzLmNvbT4KRGF0
-ZTogTW9uLCAxNCBPY3QgMjAyNCAxOToxNTowOSArMDgwMApTdWJqZWN0OiBbUEFUQ0hdIGRtYS9k
-dy1lZG1hOiBjaGlwIHJlZ3MgYmFzZSBzaG91bGQgYWRkIHRoZSBvZmZzZXQKCjEuIHRoZSByZWdz
-IGJhc2UgaW4gdGhlIGJhciBoYXZlIGFuIG9mZnNldCByZy5vZmYKMi4gYWRkIHRoZSBvZmZzZXQg
-dG8gb2J0YWluIHRoZSByZWFsIHJlZ19iYXNlCgpTaWduZWQtb2ZmLWJ5OiB0YW5nY2h1bnlvdSA8
-dGFuZ2NodW55b3VAMTYzLmNvbT4KLS0tCiBkcml2ZXJzL2RtYS9kdy1lZG1hL2R3LWVkbWEtcGNp
-ZS5jIHwgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZG1hL2R3LWVkbWEvZHctZWRtYS1wY2llLmMgYi9kcml2ZXJzL2RtYS9kdy1lZG1h
-L2R3LWVkbWEtcGNpZS5jCmluZGV4IDFjNjA0Mzc1MWRjOS4uMjkxOGI2NDcwOGY5IDEwMDY0NAot
-LS0gYS9kcml2ZXJzL2RtYS9kdy1lZG1hL2R3LWVkbWEtcGNpZS5jCisrKyBiL2RyaXZlcnMvZG1h
-L2R3LWVkbWEvZHctZWRtYS1wY2llLmMKQEAgLTIzNCw2ICsyMzQsOCBAQCBzdGF0aWMgaW50IGR3
-X2VkbWFfcGNpZV9wcm9iZShzdHJ1Y3QgcGNpX2RldiAqcGRldiwKIAlpZiAoIWNoaXAtPnJlZ19i
-YXNlKQogCQlyZXR1cm4gLUVOT01FTTsKIAorCWNoaXAtPnJlZ19iYXNlICs9IHZzZWNfZGF0YS5y
-Zy5vZmY7CisKIAlmb3IgKGkgPSAwOyBpIDwgY2hpcC0+bGxfd3JfY250OyBpKyspIHsKIAkJc3Ry
-dWN0IGR3X2VkbWFfcmVnaW9uICpsbF9yZWdpb24gPSAmY2hpcC0+bGxfcmVnaW9uX3dyW2ldOwog
-CQlzdHJ1Y3QgZHdfZWRtYV9yZWdpb24gKmR0X3JlZ2lvbiA9ICZjaGlwLT5kdF9yZWdpb25fd3Jb
-aV07Ci0tIAoyLjI1LjEKCg==
-------=_Part_164458_1235785359.1728989129506--
+Well the patch adding the failing test case that you can see at
+
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh?h=perf-tools-next
+
+There was the whole patchset that contained the failing probe test case.
+The patchset was applied and merged upstream so there won't be a v3 for 
+the failing test case, instead we will send a fix patch resolving the 
+mentioned issue. Hopefully this explains the confusion that I think
+happened.
+
+We will send the next patchset soon containing also the patch fixing
+the probe issue with bad dwarf so if there will still be some confusion 
+that should resolve that.
+
+- Veronika
+
+> 
+> - Arnaldo
+> 
+> As Arnaldo mentioned, I got together a fix patch that checks
+> 
+>> the CU for the Assembly for blacklisted probe. Michael also suggested the
+>> possibility to check multiple blacklisted probes if we are not able to
+>> check
+>> for the Assembly, so I also added that.
+>>
+>> I will send the fix patch soon as part of the perftool upstreaming patchset
+>> to prevent conflicts happening. Hopefully, this can be at the start of the
+>> next week if all of the checks pass.
+>>
+>> Thanks,
+>> Veronika
+>>>
+>>> - Arnaldo
+>>>
+>>
+>>
+> 
 
 
