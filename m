@@ -1,132 +1,213 @@
-Return-Path: <linux-kernel+bounces-366808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A3B99FAC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:02:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E802399FACC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F147B2134D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:02:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 258111C22083
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F4E1B0F16;
-	Tue, 15 Oct 2024 22:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70BC1B0F2D;
+	Tue, 15 Oct 2024 22:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="j2bsjpXL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiF3dOBd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F2F21E3C4;
-	Tue, 15 Oct 2024 22:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1659338DE9;
+	Tue, 15 Oct 2024 22:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729029747; cv=none; b=eKbnBODbI1zPOIJwUGANVsA/bsuNSXkQTrHFL3Oi0YhdCXJqArnwpqTVyt+zGDUacTN9sDiNpp0VsuvvPa53hBI18yXrdnTf2eyh2OufWZVxTiW1jSJvTYcupJdroINVD5y09xhbvpU0Cu2i5aManw7VryoaJEhEmpUtMXFGdAw=
+	t=1729029776; cv=none; b=ZUsbabl/7Wy3iUQUKsYo+u81kQ6ZJON6gAnpRN+bxn7jCm9crceCvO80P7CJghN4BHvABVVO+Uza66JOOwWyfmDfjbkk970rHgq51UKs9K+j24mVvump4OJxyNQcnNSt1RKojDX/to8D+z2t0ExMBYXfCOltm7SiAZwvkurQzMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729029747; c=relaxed/simple;
-	bh=3FMXA06SLyxe4d1QjZ3S8XqjSxoyuM2EDn+/3su358I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DgUZ5jZcc3ycf/E9ShibieOXbfTAxGjNJ54rUD0hKNJm7AYzDNxLO5Sp7wVWFFRJ0xEOBvBppsLFUf0WfBvXTvUS/qq1MKxLgvoFtWMF6UspywTYpgSm7+UsomSxy1xOUgNv5L4xgo9qXNWHCtQLPFiULexeznWj6KCytGen/7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=j2bsjpXL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729029740;
-	bh=amBjm3gdTBfhT3NTOMTN+68x4oxurJ9whoqBomPVaxU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=j2bsjpXLvm3ita8K7ms5RAUPsdEA30DK/bj1Pya6vrry7EjEX7nxfX1Mu9hOQBY4C
-	 HyH7hx14aUjWMljLezK19EP1hP+3Pj99Qepkwuu1iQT2y4rRUNQj4vpgbYy7POHTQu
-	 YzooUpHtui0A5j/6/nSBquTMAp42jTMl78/mu4VYIgBLD+X3o+8C02Yrjf1/Yts4y6
-	 3Q7PUeMwlGGYm0B3adOrJLyT0waraXpVm5jYn3fdF8wFDSs9gIPqNWO2tbHnL2JzSa
-	 IGWZ/MZbdNcqnRwm1jsEppvEgtkPm+fBt1K2TgF5NmTMEMwJ/qzZsAEHjdte9Xb6Be
-	 Q7dYzvH+hCiJw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XSp3w1r2xz4wx5;
-	Wed, 16 Oct 2024 09:02:20 +1100 (AEDT)
-Date: Wed, 16 Oct 2024 09:02:20 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, David Chinner
- <david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong"
- <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, <linux-xfs@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the vfs-brauner tree
-Message-ID: <20241016090220.5b67bb5f@canb.auug.org.au>
+	s=arc-20240116; t=1729029776; c=relaxed/simple;
+	bh=X0Rvixf1qnnNpSRTwWM3Y7ex5D+CLcnHZdWnoTkBnOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9dcALDLvWvBLtGZR1G/4BtjbzfCxCZitEZY2sWp7qhmmrzFQ7vNTbHgOmlXed4EPANMLLVxuRCQZ5nU/rbJjK8ZyFnARmG0eoJLbB910lEaIuiGL7ynw6AzsE9RnTL0Sef63cOBe4HnYbrnfhqLp8FTsNz4Cft68waAJ+/igdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiF3dOBd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6983BC4CEC6;
+	Tue, 15 Oct 2024 22:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729029775;
+	bh=X0Rvixf1qnnNpSRTwWM3Y7ex5D+CLcnHZdWnoTkBnOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hiF3dOBdou3YJeiimqjqktlFcGC3xTWFSYi3iiRH14EElSzaxuQRIFjig3nWAQJR9
+	 Yn0qPTypg2kFBuzobhfecjvXj2ZCFONb8j87WZ6vuK9r858p/v9vL+aYZP9z7JShV9
+	 p0w3tFXAgjsv79QtH6ywDokn2B39Z4NAoMbpZQdRzS0lyIC3E9HzRR3e4QvFWDkgPH
+	 54/tvUBLJXxm27/QG0C1KF4VHla8LfBJr2cwGQF98IxHDbw3a+b+wMLqSGydSwdj5G
+	 TkWXp6Bp8zaVKmsqjTVxM6RxZt2AvAiNqSkW9lQNxRiIcwyCziM08c3nQTYZVB0zCv
+	 8ZLOs75QQEoXQ==
+Date: Tue, 15 Oct 2024 17:02:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
+	xiaoning.wang@nxp.com, Frank.Li@nxp.com,
+	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
+	bhelgaas@google.com, horms@kernel.org, imx@lists.linux.dev,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 03/13] dt-bindings: net: add bindings for
+ NETC blocks control
+Message-ID: <20241015220254.GA2025619-robh@kernel.org>
+References: <20241015125841.1075560-1-wei.fang@nxp.com>
+ <20241015125841.1075560-4-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iXwp_DuUPe4iH51ss3y0KQc";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015125841.1075560-4-wei.fang@nxp.com>
 
---Sig_/iXwp_DuUPe4iH51ss3y0KQc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 15, 2024 at 08:58:31PM +0800, Wei Fang wrote:
+> Add bindings for NXP NETC blocks control. Usually, NETC has 2 blocks of
+> 64KB registers, integrated endpoint register block (IERB) and privileged
+> register block (PRB). IERB is used for pre-boot initialization for all
+> NETC devices, such as ENETC, Timer, EMIDO and so on. And PRB controls
 
-Hi all,
+EMIDO or EMDIO? 
 
-The following commits are also in the xfs tree as different commits
-(but the same patches):
+> global reset and global error handling for NETC. Moreover, for the i.MX
+> platform, there is also a NETCMIX block for link configuration, such as
+> MII protocol, PCS protocol, etc.
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+> v2 changes:
+> 1. Rephrase the commit message.
+> 2. Change unevaluatedProperties to additionalProperties.
+> 3. Remove the useless lables from examples.
+> ---
+>  .../bindings/net/nxp,netc-blk-ctrl.yaml       | 107 ++++++++++++++++++
+>  1 file changed, 107 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/nxp,netc-blk-ctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/nxp,netc-blk-ctrl.yaml b/Documentation/devicetree/bindings/net/nxp,netc-blk-ctrl.yaml
+> new file mode 100644
+> index 000000000000..18a6ccf6bc2e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/nxp,netc-blk-ctrl.yaml
+> @@ -0,0 +1,107 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/nxp,netc-blk-ctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NETC Blocks Control
+> +
+> +description:
+> +  Usually, NETC has 2 blocks of 64KB registers, integrated endpoint register
+> +  block (IERB) and privileged register block (PRB). IERB is used for pre-boot
+> +  initialization for all NETC devices, such as ENETC, Timer, EMIDO and so on.
+> +  And PRB controls global reset and global error handling for NETC. Moreover,
+> +  for the i.MX platform, there is also a NETCMIX block for link configuration,
+> +  such as MII protocol, PCS protocol, etc.
+> +
+> +maintainers:
+> +  - Wei Fang <wei.fang@nxp.com>
+> +  - Clark Wang <xiaoning.wang@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,imx95-netc-blk-ctrl
+> +
+> +  reg:
+> +    minItems: 2
+> +    maxItems: 3
+> +
+> +  reg-names:
+> +    minItems: 2
+> +    items:
+> +      - const: ierb
+> +      - const: prb
+> +      - const: netcmix
+> +
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 2
+> +
+> +  ranges: true
+> +
+> +  clocks:
+> +    items:
+> +      - description: NETC system clock
 
-  c650b5a9028f ("xfs: punch delalloc extents from the COW fork for COW writ=
-es")
-  f8bb8ce211ce ("xfs: set IOMAP_F_SHARED for all COW fork allocations")
-  cd97b59a531d ("xfs: share more code in xfs_buffered_write_iomap_begin")
-  7f6e164457c6 ("xfs: support the COW fork in xfs_bmap_punch_delalloc_range=
-")
-  99c29f16b79f ("xfs: IOMAP_ZERO and IOMAP_UNSHARE already hold invalidate_=
-lock")
-  2f58268678f1 ("xfs: take XFS_MMAPLOCK_EXCL xfs_file_write_zero_eof")
-  71f1cd607850 ("xfs: factor out a xfs_file_write_zero_eof helper")
-  f66815a521bd ("iomap: move locking out of iomap_write_delalloc_release")
-  1eef06039a75 ("iomap: remove iomap_file_buffered_write_punch_delalloc")
-  18f08714e7b2 ("iomap: factor out a iomap_last_written_block helper")
+Just 'maxItems: 1' is enough. The description doesn't add much.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ipg_clk
 
-These are commits
+Just 'ipg'
 
-  f6f91d290c8b ("xfs: punch delalloc extents from the COW fork for COW writ=
-es")
-  7d6fe5c586e6 ("xfs: set IOMAP_F_SHARED for all COW fork allocations")
-  c29440ff66d6 ("xfs: share more code in xfs_buffered_write_iomap_begin")
-  8fe3b21efa07 ("xfs: support the COW fork in xfs_bmap_punch_delalloc_range=
-")
-  abd7d651ad2c ("xfs: IOMAP_ZERO and IOMAP_UNSHARE already hold invalidate_=
-lock")
-  acfbac776496 ("xfs: take XFS_MMAPLOCK_EXCL xfs_file_write_zero_eof")
-  3c399374af28 ("xfs: factor out a xfs_file_write_zero_eof helper")
-  b78495166264 ("iomap: move locking out of iomap_write_delalloc_release")
-  caf0ea451d97 ("iomap: remove iomap_file_buffered_write_punch_delalloc")
-  c0adf8c3a9bf ("iomap: factor out a iomap_last_written_block helper")
-
-in the xfs tree.
-
-These are causing at least one conflict due to later commits in the
-vfs-brauner tree.  Maybe you could share a stable branch?
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/iXwp_DuUPe4iH51ss3y0KQc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcO5mwACgkQAVBC80lX
-0GzidAf+JGNspgiZBzM0yZqAL3AJA57fy/PyS/sPC3rFNFWD4P2HZSWsanL6UCAg
-NLnSP1eIPnthmEnPYUocNxej86FtSiwPIynStrXymYMjZbFzK8Mi/7E96FEXxuza
-4GHIao4XpY+e/EFjF16ePYoSQmrFPDVtvsPOb2a0WDk7ihxZDDOwttzUvdMZeTTt
-dayu46EIQTI9u7zpEa81zc/paoJYDjlPRssZe2hrAhthEtMMQClbk9YK1orzMNX0
-e46XUVglqtZjzASmhuzuuvQkt5WlllKcIuteOUCfrQ0GgpjHBu+vcPBhY7+HeZQz
-neD4zLba3O5HdKIFxKjy7EnlHhqK4w==
-=125M
------END PGP SIGNATURE-----
-
---Sig_/iXwp_DuUPe4iH51ss3y0KQc--
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  "^pcie@[0-9a-f]+$":
+> +    $ref: /schemas/pci/host-generic-pci.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - reg
+> +  - reg-names
+> +  - ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    bus {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        netc-blk-ctrl@4cde0000 {
+> +            compatible = "nxp,imx95-netc-blk-ctrl";
+> +            reg = <0x0 0x4cde0000 0x0 0x10000>,
+> +                  <0x0 0x4cdf0000 0x0 0x10000>,
+> +                  <0x0 0x4c81000c 0x0 0x18>;
+> +            reg-names = "ierb", "prb", "netcmix";
+> +            #address-cells = <2>;
+> +            #size-cells = <2>;
+> +            ranges;
+> +            clocks = <&scmi_clk 98>;
+> +            clock-names = "ipg_clk";
+> +            power-domains = <&scmi_devpd 18>;
+> +
+> +            pcie@4cb00000 {
+> +                compatible = "pci-host-ecam-generic";
+> +                reg = <0x0 0x4cb00000 0x0 0x100000>;
+> +                #address-cells = <3>;
+> +                #size-cells = <2>;
+> +                device_type = "pci";
+> +                bus-range = <0x1 0x1>;
+> +                ranges = <0x82000000 0x0 0x4cce0000  0x0 0x4cce0000  0x0 0x20000
+> +                          0xc2000000 0x0 0x4cd10000  0x0 0x4cd10000  0x0 0x10000>;
+> +
+> +                mdio@0,0 {
+> +                    compatible = "pci1131,ee00";
+> +                    reg = <0x010000 0 0 0 0>;
+> +                    #address-cells = <1>;
+> +                    #size-cells = <0>;
+> +                };
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.34.1
+> 
 
