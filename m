@@ -1,138 +1,220 @@
-Return-Path: <linux-kernel+bounces-366706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E4999F8D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:16:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA24E99F8D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F4028282E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:16:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41A43B22A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EC61FBF7B;
-	Tue, 15 Oct 2024 21:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825AA1FAF16;
+	Tue, 15 Oct 2024 21:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trEOH0Zd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERO0r4Z3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317F81FBF67;
-	Tue, 15 Oct 2024 21:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA632176228;
+	Tue, 15 Oct 2024 21:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729026944; cv=none; b=sHaXxTlTnwCC6cuW3nczwD37oJJD7uXOeQ4B5rkFKJmv5+EZcrx3zehYg4KRa5lwcs/ACkUk9+6rjF80Q5uSBxmg/gN82P2avueNNDC+gczemEd67pb6V/89BdgAbXQna0ov8EG0PNSerVR49KSLbkRmiSE5Z2fU1csIs04i0gE=
+	t=1729026941; cv=none; b=nEe8gBb8wEE82YegoXS90sTE4oMc6WjDCPOrHVqRkcKV12esby9v1gyatKCjRSNo7meyS3sdlDeGQ8+kVpAkf5ntFFrfkiYXdSmVkcVKZh1xjc3h4cNDN6khahNjkhfQ3WNrr2UV3QI7fKfeVdSqz/KIkndGkcIawRtn4Js03rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729026944; c=relaxed/simple;
-	bh=nQF2Y1FXsj0Px4wn8LQKUfNX9xjpyWpZNQSrnkpLZ6Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bhT61nOfGchv0UyTkZ/jtv71cs7Dp1wZXPw8cHBAaA6ygbD99jjs6LPxFMphbnPnH7lddgCeNNomeqseaoZwYKSA/j+dxNhcPQR4fIc9w82pYU0SfWJcbOU9Mdncrz9mfFOykQdKqRYet+lx/kwcDAww0A/i4NEb1SQKhiC67uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trEOH0Zd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8ACC4CEC7;
-	Tue, 15 Oct 2024 21:15:43 +0000 (UTC)
+	s=arc-20240116; t=1729026941; c=relaxed/simple;
+	bh=yt1duf2stz7fs97tAvuTo8dAcFpcYAXJM9L9Chn7CT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkyiJy7cDY4ja+aUAEnjJAElZntkPR2e1cTFs45Mvdw16Pf2ZMvgJlXJRESMZnJOZGALXN00XyfwVhFuLb0NZJIAHfdc9A4iYV1NQoHZnLUTDjbbL11B7WV0TxwoxpfQUZC2iUhsFWv9H6cPHEqby8gK8mwwyuTL7oawtvSav2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERO0r4Z3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A42C4CEC6;
+	Tue, 15 Oct 2024 21:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729026943;
-	bh=nQF2Y1FXsj0Px4wn8LQKUfNX9xjpyWpZNQSrnkpLZ6Y=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=trEOH0Zdpqs6HWQC7Q/ezGdyCzVhzjryDzMZ9+YGw/NKH2LbiLWsBuWZEjzIYqHID
-	 g2k+MabduCsmg+SE3H1uOFvRmveRjdBn9bT8y44hR0w+ka9YMSpRsg0sdsCdDP7PZP
-	 6rR9dora0DN1UCB0rPPJHD/Ou8Z7NruHQG/Mzaa09zgCg5+QpNDIrSOoiWxcU4zQ47
-	 8nQGOsALZtdYySytjGgAGemiRi/sbIpQMG3K3VmWoqj55KSeD9nHRvwNvtxzQfJyhc
-	 iZpGtjRmYKLeAEe4pQHqYLvYu4uS8BNgu4bRU+J6Eo5hplEl3G1dPfKMO9WUYNLDmZ
-	 ZUFaQn7kXcqGQ==
+	s=k20201202; t=1729026941;
+	bh=yt1duf2stz7fs97tAvuTo8dAcFpcYAXJM9L9Chn7CT4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ERO0r4Z3F5D5H7CgQQTyalc+ktI+5et0ohuCLLEY3huL03Gv6adY2tCwwpZMivDyK
+	 IXAi0h2c2ZW5yBCcUxVuvE/eWf3H5vYzAaEwTqLL/qic7IxS/+09vfCjz/0nYKkhJP
+	 9q0peZGIMq3YLOJ169VSUu+CTkCqrta8spYdlHnaukR5U6hA/GZF+5kAKrqxUUM/j4
+	 tDIqBwEQdTqmXRPM5AcGJaYes4lpzGmtJaYucHTZ6x6uvnHI6zUjDMuNlpm7nvsve9
+	 k66n24EFU+7ibzHbRK3rS9Esv+71ZuqhtICHHS9mI7cdOFLxwnTtHw6SQx9Z90JNBs
+	 SAcsDl4RIyX0g==
+Date: Tue, 15 Oct 2024 16:15:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
+ SoCs
+Message-ID: <20241015211540.GA1968867-robh@kernel.org>
+References: <20241015105133.656360-1-ciprianmarian.costea@oss.nxp.com>
+ <20241015105133.656360-2-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Oct 2024 00:15:39 +0300
-Message-Id: <D4WOWALWYOES.Q12TQS9P30TH@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: ibmvtpm: Set TPM_OPS_AUTO_STARTUP flag on driver
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Stefan Berger" <stefanb@linux.ibm.com>,
- <linux-integrity@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-X-Mailer: aerc 0.18.2
-References: <20241014141643.3101129-1-stefanb@linux.ibm.com>
-In-Reply-To: <20241014141643.3101129-1-stefanb@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015105133.656360-2-ciprianmarian.costea@oss.nxp.com>
 
-On Mon Oct 14, 2024 at 5:16 PM EEST, Stefan Berger wrote:
-> Set the TPM_OPS_AUTO_STARTUP on the driver so that the ibmvtpm driver now
-> uses tpm2_auto_startup and tpm1_auto_startup like many other drivers do.
-> Remove tpm_get_timeouts, tpm2_get_cc_attrs_tbl, and tpm2_sessions_init
-> calls from it since these will all be called in tpm2_auto_startup and
-> tpm1_auto_startup.
->
-> The exporting of the tpm2_session_init symbol was only necessary while th=
-e
-> ibmvtpm driver was calling this function. Since this is not the case
-> anymore, remove this symbol from being exported.
->
-> What is new for the ibmvtpm driver is that now tpm2_do_selftest and
-> tpm1_do_selftest will be called that send commands to the TPM to perform
-> or continue its selftest. However, the firmware should already have sent
-> these commands so that the TPM will not do much work at this time.
->
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+On Tue, Oct 15, 2024 at 01:51:30PM +0300, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> 
+> This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
+> 
+> Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 > ---
->  drivers/char/tpm/tpm2-sessions.c |  1 -
->  drivers/char/tpm/tpm_ibmvtpm.c   | 15 +--------------
->  2 files changed, 1 insertion(+), 15 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-ses=
-sions.c
-> index 511c67061728..b1a0a37f14d7 100644
-> --- a/drivers/char/tpm/tpm2-sessions.c
-> +++ b/drivers/char/tpm/tpm2-sessions.c
-> @@ -1362,5 +1362,4 @@ int tpm2_sessions_init(struct tpm_chip *chip)
-> =20
->  	return rc;
->  }
-> -EXPORT_SYMBOL(tpm2_sessions_init);
->  #endif /* CONFIG_TCG_TPM2_HMAC */
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtp=
-m.c
-> index 1e5b107d1f3b..76d048f63d55 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -450,6 +450,7 @@ static bool tpm_ibmvtpm_req_canceled(struct tpm_chip =
-*chip, u8 status)
->  }
-> =20
->  static const struct tpm_class_ops tpm_ibmvtpm =3D {
-> +	.flags =3D TPM_OPS_AUTO_STARTUP,
->  	.recv =3D tpm_ibmvtpm_recv,
->  	.send =3D tpm_ibmvtpm_send,
->  	.cancel =3D tpm_ibmvtpm_cancel,
-> @@ -690,20 +691,6 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev=
-,
->  	if (!strcmp(id->compat, "IBM,vtpm20"))
->  		chip->flags |=3D TPM_CHIP_FLAG_TPM2;
-> =20
-> -	rc =3D tpm_get_timeouts(chip);
-> -	if (rc)
-> -		goto init_irq_cleanup;
-> -
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> -		rc =3D tpm2_get_cc_attrs_tbl(chip);
-> -		if (rc)
-> -			goto init_irq_cleanup;
-> -
-> -		rc =3D tpm2_sessions_init(chip);
-> -		if (rc)
-> -			goto init_irq_cleanup;
-> -	}
-> -
->  	return tpm_chip_register(chip);
->  init_irq_cleanup:
->  	do {
+>  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 102 ++++++++++++++++++
+>  1 file changed, 102 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> new file mode 100644
+> index 000000000000..3a77d4dd8f3d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> @@ -0,0 +1,102 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP S32G2/S32G3 Real Time Clock (RTC)
+> +
+> +maintainers:
+> +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nxp,s32g2-rtc
+> +      - items:
+> +          - const: nxp,s32g3-rtc
+> +          - const: nxp,s32g2-rtc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: ipg clock drives the access to the
+> +          RTC iomapped registers
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ipg
+> +
+> +  assigned-clocks:
+> +    minItems: 1
+> +    items:
+> +      - description: Runtime clock source. It must be a clock
+> +            source for the RTC module. It will be disabled by hardware
+> +            during Standby/Suspend.
+> +      - description: Standby/Suspend clock source. It is optional
+> +            and can be used in case the RTC will continue ticking during
+> +            platform/system suspend. RTC hardware module contains a
+> +            hardware mux for clock source selection.
 
-Not much to say about this ;-)
+If the RTC h/w contains a mux, then your mux inputs should be listed in 
+'clocks', not here.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> +
+> +  assigned-clock-parents:
+> +    description: List of phandles to each parent clock.
+> +
+> +  assigned-clock-rates:
+> +    description: List of frequencies for RTC clock sources.
+> +            RTC module contains 2 hardware divisors which can be
+> +            enabled or not. Hence, available frequencies are the following
+> +            parent_freq, parent_freq / 512, parent_freq / 32 or
+> +            parent_freq / (512 * 32)
 
-BR, Jarkko
+In general, assigned-clocks* do not need to be documented and should 
+never be required.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - assigned-clocks
+> +  - assigned-clock-parents
+> +  - assigned-clock-rates
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    rtc0: rtc@40060000 {
+> +        compatible = "nxp,s32g3-rtc",
+> +                   "nxp,s32g2-rtc";
+> +        reg = <0x40060000 0x1000>;
+> +        interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+> +        #clock-cells = <1>;
+> +        clocks = <&clks 54>;
+> +        clock-names = "ipg";
+> +        /*
+> +         * Configuration of default parent clocks.
+> +         * 'assigned-clocks' 0-3 IDs are Runtime clock sources
+> +         * 4-7 IDs are Suspend/Standby clock sources.
+> +         */
+> +        assigned-clocks = <&rtc0 2>, <&rtc0 4>;
+
+That's weird...
+
+> +        assigned-clock-parents = <&clks 56>, <&clks 55>;
+
+I'd expect these should be in 'clocks'. I don't think this node should 
+be a clock provider unless it provides a clock to something outside the 
+RTC.
+
+Looks like you are just using assigned-clocks to configure the clock mux 
+in the RTC. That's way over complicated. Just define a vendor specific 
+property with the mux settings. 
+
+> +        /*
+> +         * Clock frequency can be divided by value
+> +         * 512 or 32 (or both) via hardware divisors.
+> +         * Below configuration:
+> +         * Runtime clock source: FIRC (51 MHz) / 512 (DIV512)
+> +         * Suspend/Standby clock source: SIRC (32 KHz)
+> +         */
+> +        assigned-clock-rates = <99609>, <32000>;
+> +    };
+> -- 
+> 2.45.2
+> 
 
