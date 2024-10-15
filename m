@@ -1,96 +1,219 @@
-Return-Path: <linux-kernel+bounces-366174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5DD99F1A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B9C99F1A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7D21C21AD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:43:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 475E11C21BC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A3D1F76DD;
-	Tue, 15 Oct 2024 15:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93931EB9E6;
+	Tue, 15 Oct 2024 15:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+X7X8UH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dAuKOA0b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E05D1DD0F8;
-	Tue, 15 Oct 2024 15:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766781D8A12
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006893; cv=none; b=Ia7XWlqCE3UAHdjxg480wmnfwXUnaIYnA6Ff7rM+duiSgTxIhan71dRX2FL9MRKN5nP4NvpYFeM5W9QoojbmgXam1dGRhDNDSUWk4/SsJ3iCptODm94B5clwpuak5YnxPWTSWMyH0u6UwYZxk1Ik+DRo7zx2R7huU69Pr00zmkQ=
+	t=1729006953; cv=none; b=jOyiDLj25RCziZqctK4f4dLtkCjZ34OhhETf3+GVUewnbTog6Z0tdC77DSazYOvH40K6ZY5MyL7uzxgCKqCVeT3012DbX8NcNBGgMSE2PoFcDRq+KnK2BuFcZrZGspXLh8IoIP2UqfwAo9aSIbDzpljQM5WiI/KhLwoWgHqf250=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006893; c=relaxed/simple;
-	bh=jLKAQ9uXagsJyhH6n6MG/G9/BrDcU+zfGa0vOh67cIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZGFCIOudip9dX9d2oljFus5P3ZtYPiPUBwtUH5QiUet/3tDA/ypNzO3/Y4tTGCTPXpMAhOSAB5re8c8cYpuMg445qiLDtUfXOqmwkXVo25ON3h0O91KMt/1OgDbZnvdm3+l0SptrhV52NzPgbE/2PC1JBEztR1sMA3maw378d+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+X7X8UH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80581C4CECF;
-	Tue, 15 Oct 2024 15:41:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729006893;
-	bh=jLKAQ9uXagsJyhH6n6MG/G9/BrDcU+zfGa0vOh67cIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u+X7X8UHEd3gozYGyuMwL/tAC/R4zlxoKUwcxrbwDS2Z3cF+8s/7h6AHH6w2JR1oX
-	 1Nh1D+L4buWKaMaT3ZhLrFVjk4ZcQ1yqbIoAVngBeohUwI0u3/XGcpyJ0cTJrgWk7I
-	 IK15mSYsmmG2AaSbnQ5zcmezmsvE7wF+b7kgoEX/Xarb23ECkneLt15BHX5epzyaQr
-	 HJI0pfqjyrztp1TBo0iwtvI8v49YnpufpzLJUvIevYLkK+65R1Jn8/1d0UQa6fLc+T
-	 xsT8XYWHT3KJBi2g6GYZkMX1LuUu2V8xuPm78+EC6UoQf0V+pdauARp3HL53AuwORa
-	 xykZ7Nfzz8XWQ==
-Date: Tue, 15 Oct 2024 16:41:29 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?utf-8?B?0JjQu9GM0Y8g0K/QutC+0LLQu9C10LI=?= <ilyadud25@gmail.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: amd: yc: Fix non-functional mic on ASUS E1404FA
-Message-ID: <4ab081bb-682a-486a-96fe-99fa65642f06@sirena.org.uk>
-References: <CAPsZJ9WXAeEW=oPKn2F9zC8GHwoiQ8Ly93480c0oxjY9xOCsUg@mail.gmail.com>
+	s=arc-20240116; t=1729006953; c=relaxed/simple;
+	bh=5PR3L/M7rmbRke/aF9fzK+CaZLRYuzFD8o0izqT6d6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r3ziXCjrzj7rCEA3utmvFAyPS6rGhDrKzuCdqEnd5YPIYxT6HtJwAuJN8xaJJaM5ABvK0IUJXol7QmxQ38tgjP34YKgFoX6HDE0SeTU1v+4EcVbD4a5cmLbDo05ddUvKb0/sp6G4eIT9JYbk6TvTJ4/DOpAskRyH8XAmZ8Cvhlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dAuKOA0b; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729006950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yCgrahaTrhKOIckAKrhaa+/bWy4C0fCSk2G7dPS9pHw=;
+	b=dAuKOA0bNaK+uKDpcb4adxG7/4D9XwfIb3rko5JHEOrkSMl0W0cghNK4ltOhUb3aDg+rih
+	JHiQ8W52IlZXnLuNC1d0/3kngjuJUlGvDu5o5coYF+7zMFGGtJ3nBXUyHZu3PmXVX9yBJ3
+	8vUH0yHcpr04m1BMr6Z4pmIOhr4qg3s=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-67-vhK4mDRnOAyrCXQ1W3lhww-1; Tue, 15 Oct 2024 11:42:29 -0400
+X-MC-Unique: vhK4mDRnOAyrCXQ1W3lhww-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-539f7abe2e6so1998657e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:42:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729006948; x=1729611748;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yCgrahaTrhKOIckAKrhaa+/bWy4C0fCSk2G7dPS9pHw=;
+        b=WicIyzSk3bmjh4rOYhh1hCf5eEPrxE85FFAxIEA9bjdY4Kr2Y/eEOdzuof6t3wb+yi
+         yrLHwNqsVB2Oz1VHT8xaF52UF0Tf8grE2R/d2qXEGEq692NrtMvF70F/Mff2lCnP/kx/
+         mvAuly6tdYNK31Qu2y6xzWfKXN+4tkeGJje1P2lQolfSzZMrnuGpUyUxxS+61X2GHzbX
+         ZK3KsKZol8aQrLeV9p1qljn32i7sjStARluje4IoWyD0Eih90MIyB/dOqHzUr624uLr1
+         r2MmljNZ0J5aeBCmHTZXzTACm7/oNky2VnzxWfrwWOH039LXnwKSd/M78SUTg00VN6fl
+         NdMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfDK3Efi4vBoogz4syqyG2aIoIZfO8hMubyW+YGWpjOLmj2Xq6pKdCpf4Z3zZ+eWpzGw4B4bzH3h82uH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLfPz0wQ9ggx5OkTp1gCUHmUTOJqbbGtLZ/LsWWe4UOKY3kh76
+	lQlKDO2N1vtiNf+5/5qHh4CeJjd9IKfoaLtzvKqMFD0uyMVRW7Dyev3DpmmMTewz6ZybqhjmJet
+	qW8TfWErioChy8n7Aj2k26tYqhAFG3oTx+MTJFADPQX2NEH/MlR6w24yu6Cyafg==
+X-Received: by 2002:a05:6512:12d6:b0:539:93b2:1372 with SMTP id 2adb3069b0e04-539da5abc99mr8383568e87.51.1729006947791;
+        Tue, 15 Oct 2024 08:42:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVW574cmL1pxEgo/iF86oTmZutmZL4ggDc0SlBni3S0Liv2hijpNUZb737CpeKdanAF8RWIA==
+X-Received: by 2002:a05:6512:12d6:b0:539:93b2:1372 with SMTP id 2adb3069b0e04-539da5abc99mr8383548e87.51.1729006947295;
+        Tue, 15 Oct 2024 08:42:27 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c730:9700:d653:fb19:75e5:ab5c? (p200300cbc7309700d653fb1975e5ab5c.dip0.t-ipconnect.de. [2003:cb:c730:9700:d653:fb19:75e5:ab5c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4314209688dsm18864365e9.14.2024.10.15.08.42.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 08:42:26 -0700 (PDT)
+Message-ID: <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
+Date: Tue, 15 Oct 2024 17:42:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fbymosMKjkYgxEwX"
-Content-Disposition: inline
-In-Reply-To: <CAPsZJ9WXAeEW=oPKn2F9zC8GHwoiQ8Ly93480c0oxjY9xOCsUg@mail.gmail.com>
-X-Cookie: New customers only.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Yosry Ahmed <yosryahmed@google.com>,
+ akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net,
+ arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
+ thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
+ xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz,
+ mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+ dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+ pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org,
+ dennis@kernel.org, yuzhao@google.com, vvvvvv@google.com,
+ rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org, kernel-team@android.com
+References: <20241014203646.1952505-1-surenb@google.com>
+ <20241014203646.1952505-6-surenb@google.com>
+ <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
+ <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
+ <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
+ <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 15.10.24 16:59, Suren Baghdasaryan wrote:
+> On Tue, Oct 15, 2024 at 12:32 AM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 15.10.24 01:53, John Hubbard wrote:
+>>> On 10/14/24 4:48 PM, Yosry Ahmed wrote:
+>>>> On Mon, Oct 14, 2024 at 1:37 PM Suren Baghdasaryan <surenb@google.com> wrote:
+>>>>>
+>>>>> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
+>>>>> references directly in the page flags. This eliminates memory
+>>>>> overhead caused by page_ext and results in better performance
+>>>>> for page allocations.
+>>>>> If the number of available page flag bits is insufficient to
+>>>>> address all kernel allocations, profiling falls back to using
+>>>>> page extensions with an appropriate warning to disable this
+>>>>> config.
+>>>>> If dynamically loaded modules add enough tags that they can't
+>>>>> be addressed anymore with available page flag bits, memory
+>>>>> profiling gets disabled and a warning is issued.
+>>>>
+>>>> Just curious, why do we need a config option? If there are enough bits
+>>>> in page flags, why not use them automatically or fallback to page_ext
+>>>> otherwise?
+>>>
+>>> Or better yet, *always* fall back to page_ext, thus leaving the
+>>> scarce and valuable page flags available for other features?
+>>>
+>>> Sorry Suren, to keep coming back to this suggestion, I know
+>>> I'm driving you crazy here! But I just keep thinking it through
+>>> and failing to see why this feature deserves to consume so
+>>> many page flags.
+>>
+>> My 2 cents: there is nothing wrong about consuming unused page flags in
+>> a configuration. No need to let them stay unused in a configuration :)
+>>
+>> The real issue starts once another feature wants to make use of some of
+>> them ... in such configuration there would be less available for
+>> allocation tags and the performance of allocations tags might
+>> consequently get worse again.
+> 
+> Thanks for the input and indeed this is the case. If this happens, we
+> will get a warning telling us that page flags could not be used and
+> page_ext will be used instead. I think that's the best I can do given
+> that page flag bits is a limited resource.
 
---fbymosMKjkYgxEwX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Right, I think what John is concerned about (and me as well) is that 
+once a new feature really needs a page flag, there will be objection 
+like "no you can't, we need them for allocation tags otherwise that 
+feature will be degraded".
 
-On Tue, Oct 15, 2024 at 09:01:39PM +0700, =D0=98=D0=BB=D1=8C=D1=8F =D0=AF=
-=D0=BA=D0=BE=D0=B2=D0=BB=D0=B5=D0=B2 wrote:
-> ASUS VivoBook E1404FA needs a quirks-table entry for the internal
-> microphone to function properly.
+So a "The Lord has given, and the Lord has taken away!" mentality might 
+be required when consuming that many scarce resources, meaning, as long 
+as they are actually unused, use them, but it should not block other 
+features that really need them.
 
-> diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
-> index ace6328..d06c162 100644
+Does that make sense?
 
-You've not provided a Signed-off-by for this so I can't do anything with
-it, please see Documentation/process/submitting-patches.rst for details
-on what this is and why it's important.
+-- 
+Cheers,
 
---fbymosMKjkYgxEwX
-Content-Type: application/pgp-signature; name="signature.asc"
+David / dhildenb
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcOjSgACgkQJNaLcl1U
-h9APRwf9FydkQxwYuJDT0VWBk6snQI3/YH7Px2YYfc/4cpiIkJtckv0TMEc6Z1pZ
-6blTtj9k7wrVc3/MpQUr+eoG+XVjMbz9NTt9D6WtlKkIxa2Jmps6ZI2ih2fKZgXu
-S35YH2JscfdR+KaNejocgCe4DQ2mDSeg3rcChpmaYwzPfZL1BWMCzwyuodmO4IoW
-aKfmjIaziFqGSDbX3x+gA9KrL2sNW50yHhJ+e2bYRNm+fxKgBxQ/Oo0pjcNU48i0
-Sc931/va5WKcdRMF5hKquv5TDzkRvWCofXFXob3zAtBFuDksIP7cmBm+VLv1eRw7
-2KtojEhmz61wISh+r5KMXOrVF7O4Tw==
-=PiWx
------END PGP SIGNATURE-----
-
---fbymosMKjkYgxEwX--
 
