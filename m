@@ -1,151 +1,363 @@
-Return-Path: <linux-kernel+bounces-366007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A4B99EF9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02CBA99EFA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E39281CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5422283098
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2EB14F117;
-	Tue, 15 Oct 2024 14:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1531C4A1B;
+	Tue, 15 Oct 2024 14:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="DCvNZV0L";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XG1jhIQY"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKfjf2Dk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5332F1FC7D6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB561AF0AA;
+	Tue, 15 Oct 2024 14:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729002772; cv=none; b=Sv6wwPx5Z9M7xaIAnx2819lNI9y95uowyLJCEGTHZcSEGagsljL02caepHpKSYBLQIYpVZCmGtlPJ9pEnZN5qee14EXtoi2Iw4XiOfomvbwATM7xBnKKXq/esl8GSalcKT3/bnmGGiOdaIXP+BQOZPQaEtKV7PbH008NBBZ5sas=
+	t=1729002815; cv=none; b=JWniz83041UA2RI4WVwcgmck84ubeplH4Qi4ncPhvlpMS2oAQTS1kpFq+BNMBZi8ntYrXRttk5eMUTDpkQrsNx96hh2Ddeqmf0WL+xYrogr4WaYJoNNjWlFImngEy35lll6T6IscVWK5wJnJ+XIy+pTqjplhpRz8hZ57CbC65Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729002772; c=relaxed/simple;
-	bh=g4sTiUvjTsetjuJdEgbcRfe++R54P0kyuoDwU0SoaU4=;
+	s=arc-20240116; t=1729002815; c=relaxed/simple;
+	bh=PNMJc04pU83VuuyPs3myh2JVU41q5r+y1toi+Wk/W0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Phb1J4brrYy+8lm8uuV8xYgpG9ycNjbpNleeZ8PzkLgQSnl3ITiYz62Jp6tvqhk8ROFoZDOm/Cn8hSVqOsiau0pWP4IMdgNxca3OcbIhhODguTkTH7Lr5fIGizEVVWjw9XKiBUWkd4MCkwIaM1RILF/t/kvFJWNKv2KzwIt7UEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=DCvNZV0L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XG1jhIQY; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id D229A11400B8;
-	Tue, 15 Oct 2024 10:32:47 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Tue, 15 Oct 2024 10:32:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1729002767; x=
-	1729089167; bh=BdJQJ6JTmrxhR/CBpOrLwB6GgPYfRWDiNQYumQSX2aA=; b=D
-	CvNZV0Lb12ysCHUNkQxJ+XdhztK/9hpUMKMDzjXAa/G2YhHYkaHRswIqNHet6Gy7
-	qesw9ovlzTt7AZ7k/Z6QmxtXtTkJcfcovGiuJhhWd1afFmaQxHSbSbsgUSGp6DuR
-	4/PyPvdLoyz5pIlV0O3UW+gEyhog9hg8NCsLFGZ/cFklT3s4BSzEzsxK74DNFCWJ
-	pDOMQJkqhiLC0dc37X8nD0/7Uu97ZVK1z7jc5cy4NlWPvKGpe9ODGbxxurmtlkpf
-	Wysj8EOKs+vG5oVwANz1C+1D+8WPhYJ72PdQffyOZTh4RGFzY+zDTvFYJ3Ex6/kq
-	Wd5f/dcA0BiabKXDeQzBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1729002767; x=1729089167; bh=BdJQJ6JTmrxhR/CBpOrLwB6GgPYf
-	RWDiNQYumQSX2aA=; b=XG1jhIQYqo+XGvfnuP53v0ImXBuSeBAI4y3d8Xufdo7Q
-	2FFi04mEy8WALmVB9OcrHRkMZb+zmrFcYDOI4DkzANU3Ffn17ub6lqySX1xiz4v1
-	JvnfG9s0wYa3HHj63P3+1uw4JJP8Vkbvhrl9cnhJIqExv/IAx3F1mqmkuMFxgQFC
-	r4Vlgu6b/GGL1b1vznalAw1zbiufBy4dQQnX8x3YQMLFvxvEYYB8AAp34mpM6pWh
-	FUsE/yLmTlNp13AYkqfEWGglHte1O2LHjDicDdQjiHVpYB63htqwWr0JU5IZXarh
-	aFCNbmOUuohMLanEOWYFQ8kFXGEPFQ6f+uQUU3pYVQ==
-X-ME-Sender: <xms:D30OZ4MjUCtTCkDneT2Ian2aRg7PsKuEF7hiXsPhdwJ6zii_E0EM2Q>
-    <xme:D30OZ-_swA9kcwiQqBfZXFdDspYox_8QnNiw1qdljKL9ej7gBCZ0iF-qdvQZnQPmE
-    6hQW5oigzMskFMPP9k>
-X-ME-Received: <xmr:D30OZ_Tzt68MG9JTwy0gdvjy5_8RT-9po7-vFJQ8VqT5onBCJDAp-fwas7PzbtOgOMgt7w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegjedgjeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeeltedugedtgfehuddu
-    hfetleeiuedvtdehieejjedufeejfeegteetuddtgefgudenucffohhmrghinhepkhgvrh
-    hnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhope
-    eipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgusehrvgguhhgrthdr
-    tghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphht
-    thhopehshiiisghothdojeguledujehfieejtgdthedtieeitggvtgdvleehsehshiiikh
-    grlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtoheprghkphhmsehl
-    ihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehjrghnnhhhsehgoh
-    hoghhlvgdrtghomh
-X-ME-Proxy: <xmx:D30OZwuDU9hGODdBt-0bIdp25s-RUEir3NxK3iv4EVxrXOyXAYCQzA>
-    <xmx:D30OZwdysrf81ghW_V733dENtebBiF5SwP8NWO6fddyB_8egdgYMEA>
-    <xmx:D30OZ01zxzpdsVwMT4xgS-2jwrCurJ40J-sqQkBgs4niEiEpSaoJOw>
-    <xmx:D30OZ0_XHLzkmsPtzA69dHsNFgkrbrWC0kJ7TzfBjOUUsk-Zufy2Hw>
-    <xmx:D30OZ4RvaYJjOF5AJg7SZ_liBaTcH1FUX7DXAQEyCy7Bh_YrOhqTa_Z9>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 15 Oct 2024 10:32:44 -0400 (EDT)
-Date: Tue, 15 Oct 2024 17:32:39 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzbot+7d917f67c05066cec295@syzkaller.appspotmail.com, Andrew Morton <akpm@linux-foundation.org>, 
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v1] mm/pagewalk: fix usage of pmd_leaf()/pud_leaf()
- without present check
-Message-ID: <bu3aq2gxcfkjxocu3uzowvevlv6rgeihepc36cwuhh44xqydkc@3ghgml6xnlgx>
-References: <20241015111236.1290921-1-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nrDyMTFrFh1tgSc94sspDtG025CDhE3ogX76TWgZ4hRX6VqFqTGBuq9kyrELbNY84MhN+JLQACVkEymIoAsxgB4oq+CDomqu2TQ9NaMH+ORbGs96cNVD+CfsNta9UnhTAkdop0mTkez9EFOollD30Hoc33g6lcRZz8t9/8+A41g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKfjf2Dk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C810C4CEC6;
+	Tue, 15 Oct 2024 14:33:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729002814;
+	bh=PNMJc04pU83VuuyPs3myh2JVU41q5r+y1toi+Wk/W0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XKfjf2DkuDwwCU82M6UHX06chmOI+WDD2mhjgqrAQDG2t7dk+ig/OEcVdNtFkkyVB
+	 PDSJ7jl8ORsRRkDfgPglFEdHjlUxAeAjWXY4l/gJpzSci6CIdYKkLHoZB2MUcYucbG
+	 sBxrbAEtcg7hGL4RAsl4dRshgIgIpf9iYy75SL1uib2R4SkrezMk3kb4c46pONJNe9
+	 Xsm58y9DqWbDj3SBCojy9D7rouqKCOPMsz82eRE9f+NFHFmD2qthHgEYlHbW+3aAyA
+	 02uRYfaKaFMHIrxWVwXmru/arqZVqFVu+Vb6hj7fIw1/vnX/JkvWdXCiIO+QYQzgc1
+	 23yn48mym8e3g==
+Date: Tue, 15 Oct 2024 15:33:29 +0100
+From: Lee Jones <lee@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 7/7] leds: max77705: Add LEDs support
+Message-ID: <20241015143329.GJ8348@google.com>
+References: <20241007-starqltechn_integration_upstream-v6-0-0d38b5090c57@gmail.com>
+ <20241007-starqltechn_integration_upstream-v6-7-0d38b5090c57@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241015111236.1290921-1-david@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241007-starqltechn_integration_upstream-v6-7-0d38b5090c57@gmail.com>
 
-On Tue, Oct 15, 2024 at 01:12:36PM +0200, David Hildenbrand wrote:
-> pmd_leaf()/pud_leaf() only implies a pmd_present()/pud_present() check on
-> some architectures.
+On Mon, 07 Oct 2024, Dzmitry Sankouski wrote:
 
-Should we clarify what behaviour we actually want from arch code?
+> This adds basic support for LEDs for the max77705 PMIC.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> 
+> ---
+> Changes for v5:
+> - use same hardware name in Kconfig and module descriptions
+> - remove copyrighter owner from module authors
+> 
+> Changes in v4:
+> - inline BLINK_(ON|OFF) macro
+> - remove camel case
+> - drop backwards compatibility(new driver)
+> - drop module alias
+> ---
+>  MAINTAINERS                  |   1 +
+>  drivers/leds/Kconfig         |   6 ++++++
+>  drivers/leds/Makefile        |   1 +
+>  drivers/leds/leds-max77705.c | 157 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Lol!  How big is your terminal? :)
 
-> We really should check for
-> pmd_present()/pud_present() first.
+>  4 files changed, 165 insertions(+)
 > 
-> This should explain the report we got on ppc64 (which has
-> CONFIG_PGTABLE_HAS_HUGE_LEAVES set in the config) that triggered:
-> 	VM_WARN_ON_ONCE(pmd_leaf(pmdp_get_lockless(pmdp)));
-> 
-> Likely we had a PMD migration entry for which pmd_leaf() did not
-> trigger. We raced with restoring the PMD migration entry, and suddenly
-> saw a pmd_leaf(). In this case, pte_offset_map_lock() saved us from more
-> trouble, because it rechecks the PMD value, but we would not have processed
-> the migration entry -- which is not too bad because the only user of
-> FW_MIGRATION is KSM for unsharing, and KSM only applies to small folios.
-> 
-> Further, we shouldn't re-read the PMD/PUD value for our warning, the
-> primary purpose of the VM_WARN_ON_ONCE() is to find spurious use of
-> pmd_leaf()/pud_leaf() without CONFIG_PGTABLE_HAS_HUGE_LEAVES.
-> 
-> As a side note, we are currently not implementing FW_MIGRATION support
-> for PUD migration entries, which likely should exist due to hugetlb. Add
-> a TODO so this won't fall through the cracks if more FW_MIGRATION users
-> get added.
-> 
-> Fixes: aa39ca6940f1 ("mm/pagewalk: introduce folio_walk_start() + folio_walk_end()")
-> Reported-by: syzbot+7d917f67c05066cec295@syzkaller.appspotmail.com
-> Closes: https://lkml.kernel.org/r/670d3248.050a0220.3e960.0064.GAE@google.com
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Jann Horn <jannh@google.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4bc9c0da6adb..66a1dd7577c4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14079,6 +14079,7 @@ F:	drivers/*/max14577*.c
+>  F:	drivers/*/max77686*.c
+>  F:	drivers/*/max77693*.c
+>  F:	drivers/*/max77705*.c
+> +F:	drivers/leds/leds-max77705.c
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Alphabetical?
+
+>  F:	drivers/clk/clk-max77686.c
+>  F:	drivers/extcon/extcon-max14577.c
+>  F:	drivers/extcon/extcon-max77693.c
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index b784bb74a837..a8492623caa4 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -753,6 +753,12 @@ config LEDS_MAX77650
+>  	help
+>  	  LEDs driver for MAX77650 family of PMICs from Maxim Integrated.
+>  
+> +config LEDS_MAX77705
+> +	tristate "LED support for Maxim MAX77705 PMIC"
+> +	depends on MFD_MAX77705 && LEDS_CLASS && I2C
+
+If MFD_MAX77705 depends on I2C, you shouldn't need that here.
+
+> +	help
+> +	  LED driver for MAX77705 MFD chip from Maxim Integrated.
+
+No such thing as an "MFD chip".
+
+> +
+>  config LEDS_MAX8997
+>  	tristate "LED support for MAX8997 PMIC"
+>  	depends on LEDS_CLASS && MFD_MAX8997
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 18afbb5a23ee..096bf244527d 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -60,6 +60,7 @@ obj-$(CONFIG_LEDS_LP8860)		+= leds-lp8860.o
+>  obj-$(CONFIG_LEDS_LT3593)		+= leds-lt3593.o
+>  obj-$(CONFIG_LEDS_MAX5970)		+= leds-max5970.o
+>  obj-$(CONFIG_LEDS_MAX77650)		+= leds-max77650.o
+> +obj-$(CONFIG_LEDS_MAX77705)		+= leds-max77705.o
+>  obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
+>  obj-$(CONFIG_LEDS_MC13783)		+= leds-mc13783.o
+>  obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+> diff --git a/drivers/leds/leds-max77705.c b/drivers/leds/leds-max77705.c
+> new file mode 100644
+> index 000000000000..50af81fb7324
+> --- /dev/null
+> +++ b/drivers/leds/leds-max77705.c
+> @@ -0,0 +1,157 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Based on leds-max77650 driver:
+> +//		Copyright (C) 2018 BayLibre SAS
+> +//		Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+You don't need to do that.
+
+> +//
+> +// LED driver for MAXIM 77705 MFD.
+
+Remove MFD from everywhere.
+
+> +// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.org>
+
+Only the SPDX in C++ please.
+
+> +#include <linux/i2c.h>
+> +#include <linux/leds.h>
+> +#include <linux/mfd/max77705-private.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#define MAX77705_LED_NUM_LEDS		4
+> +#define MAX77705_LED_EN_MASK		GENMASK(1, 0)
+> +#define MAX77705_LED_MAX_BRIGHTNESS	0xff
+> +
+> +struct max77705_led {
+> +	struct led_classdev cdev;
+> +	struct regmap *regmap;
+> +	unsigned int en_shift;
+> +	unsigned int reg_brightness;
+> +};
+> +
+> +static struct max77705_led *max77705_to_led(struct led_classdev *cdev)
+> +{
+> +	return container_of(cdev, struct max77705_led, cdev);
+> +}
+> +
+> +static int max77705_rgb_blink(struct led_classdev *cdev,
+> +				unsigned long *delay_on,
+> +				unsigned long *delay_off)
+> +{
+> +	struct max77705_led *led = max77705_to_led(cdev);
+> +	int value, on_value, off_value;
+> +
+> +	on_value = (((*delay_on < 100) ? 0 :
+> +			(*delay_on < 500) ? *delay_on/100 - 1 :
+> +			(*delay_on < 3250) ? (*delay_on - 500) / 250 + 4 : 15) << 4);
+> +	off_value = ((*delay_off < 1) ? 0x00 :
+> +			(*delay_off < 500) ? 0x01 :
+> +			(*delay_off < 5000) ? *delay_off / 500 :
+> +			(*delay_off < 8000) ? (*delay_off - 5000) / 1000 + 10 :
+> +			(*delay_off < 12000) ? (*delay_off - 8000) / 2000 + 13 : 15);
+
+These nested ternary are pretty miserable.  Please break them out.
+
+Also all of these magic numbers probably need defining so the maths
+becomes easier to follow for humans.
+
+> +	value = on_value | off_value;
+> +	return regmap_write(led->regmap, MAX77705_RGBLED_REG_LEDBLNK, value);
+> +}
+> +
+> +static int max77705_led_brightness_set(struct led_classdev *cdev,
+> +					enum led_brightness brightness)
+> +{
+> +	struct max77705_led *led = max77705_to_led(cdev);
+> +	int ret;
+
+Pop the ret on the bottom, if no other reason than for my OCD!
+
+> +	unsigned long blink_default = 0;
+> +
+> +	if (brightness == LED_OFF) {
+> +		// Flash OFF
+
+No C++ comments please.
+
+> +		ret = regmap_update_bits(led->regmap,
+> +					MAX77705_RGBLED_REG_LEDEN,
+> +					MAX77705_LED_EN_MASK << led->en_shift, 0);
+> +		max77705_rgb_blink(cdev, &blink_default, &blink_default);
+> +	} else {
+> +		// Set current
+> +		ret = regmap_write(led->regmap,
+> +				   led->reg_brightness, brightness);
+
+Line wrap at 100-chars.
+
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		ret = regmap_update_bits(led->regmap,
+> +					MAX77705_RGBLED_REG_LEDEN, LED_ON << led->en_shift,
+> +					MAX77705_LED_EN_MASK << led->en_shift);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int max77705_led_probe(struct platform_device *pdev)
+> +{
+> +	struct fwnode_handle *child;
+> +	struct max77705_led *leds, *led;
+> +	struct device *dev;
+> +	struct regmap *map;
+
+s/map/regmap/
+
+> +	int rv, num_leds;
+
+What's rv?  If it's "return value", then please just use ret.
+
+> +	u32 reg;
+> +
+> +	dev = &pdev->dev;
+
+Do this during the declaration
+
+> +	leds = devm_kcalloc(dev, sizeof(*leds),
+> +				MAX77705_LED_NUM_LEDS, GFP_KERNEL);
+> +	if (!leds)
+> +		return -ENOMEM;
+> +
+> +	map = dev_get_regmap(dev->parent, NULL);
+> +	if (!map)
+> +		return -ENODEV;
+> +
+> +	num_leds = device_get_child_node_count(dev);
+> +	if (!num_leds || num_leds > MAX77705_LED_NUM_LEDS)
+
+num_leds < 0
+
+> +		return -ENODEV;
+> +
+> +	device_for_each_child_node(dev, child) {
+
+If you use the _scoped version, you can drop the gotos.
+
+> +		struct led_init_data init_data = {};
+> +
+> +		rv = fwnode_property_read_u32(child, "reg", &reg);
+> +		if (rv || reg >= MAX77705_LED_NUM_LEDS) {
+> +			rv = -EINVAL;
+> +			goto err_node_put;
+> +		}
+> +
+> +		led = &leds[reg];
+> +		led->regmap = map;
+> +		led->reg_brightness = MAX77705_RGBLED_REG_LED0BRT + reg;
+> +		led->en_shift = 2 * reg;
+
+Why 2?
+
+> +		led->cdev.brightness_set_blocking = max77705_led_brightness_set;
+> +		led->cdev.blink_set = max77705_rgb_blink;
+> +		led->cdev.max_brightness = MAX77705_LED_MAX_BRIGHTNESS;
+> +
+> +		init_data.fwnode = child;
+> +		init_data.devicename = "max77705";
+
+You don't want to use the label as the devicename?
+
+https://github.com/torvalds/linux/blob/master/drivers/leds/led-core.c#L526
+
+> +
+> +		rv = devm_led_classdev_register_ext(dev, &led->cdev,
+> +							&init_data);
+> +		if (rv)
+> +			goto err_node_put;
+> +
+> +		rv = max77705_led_brightness_set(&led->cdev, LED_OFF);
+> +		if (rv)
+> +			goto err_node_put;
+> +	}
+> +
+> +	return 0;
+
+'\n' here.
+
+> +err_node_put:
+> +	fwnode_handle_put(child);
+> +	return rv;
+> +}
+> +
+> +static const struct of_device_id max77705_led_of_match[] = {
+> +	{ .compatible = "maxim,max77705-led" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, max77705_led_of_match);
+> +
+> +static struct platform_driver max77705_led_driver = {
+> +	.driver = {
+> +		.name = "max77705-led",
+> +		.of_match_table = max77705_led_of_match,
+> +	},
+> +	.probe = max77705_led_probe,
+> +};
+> +module_platform_driver(max77705_led_driver);
+> +
+> +MODULE_DESCRIPTION("Maxim MAX77705 LED driver");
+> +MODULE_AUTHOR("Dzmitry Sankouski <dsankouski@gmail.com>");
+> +MODULE_LICENSE("GPL");
+> 
+> -- 
+> 2.39.2
+> 
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Lee Jones [李琼斯]
 
