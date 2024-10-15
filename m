@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-366152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8136F99F16F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:37:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2762E99F171
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342C41F249B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7F41F25066
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA5C1F76AD;
-	Tue, 15 Oct 2024 15:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5331C1F76C1;
+	Tue, 15 Oct 2024 15:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oQkOOvh+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hzgMjcdm"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="apTZskcn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DwJwK5VL"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F1A1F130D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C274F1F4FC2;
 	Tue, 15 Oct 2024 15:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006583; cv=none; b=oSc6kwl3oND5MNa2nx4D3dEES3SIlr7cBVFg4BMvWNLga966Fe10FpdWtKkSMUKWVN08yWgzpZ5vMbTraKvaCFUa3Cz4qjaRpK6n4zfWOJXtCYc6imRDpcfoUmoYO+fHOqSyXQywFKhgRPh1r1e8nM6h0VAsxNXzkrluAd2AFbs=
+	t=1729006583; cv=none; b=TGUwv3HnVDD7sKXwHOc5ZYusN8L6yBpzFzdH7DVoLToTlqzEovKNhwpByN592hXq8lKz4wHMxg/A2YNblpuw2X8z8pgLfqtQz831bWNOpmUza0trD80RjhEM/QM3pEBRuWIg4tM6f6dq/KboS0N0OfwazK+DHqovLCNGpqr5AUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729006583; c=relaxed/simple;
-	bh=jGeDU79BD9hNzb3P9kk7+TkVIyjgRGeD6NkZuFhPvpg=;
+	bh=Bm/nOi3K6qU3dDGFVwIQMvvVqi9vAK4dn8MOfxOwSw4=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=boDIV8AO0SYSn3PbYS2kjeewlC1Z7HBcVPUOH9lJyfGrtKwCZ27N8ZAGqIC8bhZ+Zb9l1MzmV0p+MTjfM2ccz/JoUS5AUxAw6qEhmlp3NgRJn50GhDZD1so8vtjACf7Qzp90VCKBKuIrG2aZoDFlcyO12CPlPINAfGzs5NJ+PY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oQkOOvh+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hzgMjcdm; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=PnGt3hNqJ0rxwSgW+kZ8XAnBCDpchvphJZEnIRyfHMMNWLv18EFAXWgJtuOkTEslTvDAhgy2wcrD8+Ynhab4a8ficLxHQ+BStDprVPZoxgZcZ1LXJxFGwKE9QbJkmDCbEdtYW05K7udUFfUPL2+zeIClFvXYTPwL3/HPCL9iyTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=apTZskcn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DwJwK5VL; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 15:36:18 -0000
+Date: Tue, 15 Oct 2024 15:36:19 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729006579;
+	s=2020; t=1729006580;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cuELzk/YjeLb0za7G13KLY/xCDjQQJYDwGvVyLmKFiw=;
-	b=oQkOOvh+JOMVu013w4gCI5sMmCnITc21haIwmPMD7w2rQTgSVA6nCED/slSPhCT+1d5BAn
-	QLYjoEAYIY4Sb4A31TiXd7yswuxpDLPiFtRJF0Tb57HB6HzKsfe/DnQON25/LfDY3ynsF4
-	Rl0S6wYrekmuQaUQ/eh+O2lnuSif+3v1K5OSvgbNvwpogiyqgiusIlAcMffL/2Cg3URhIv
-	MA5v9VbOTtEZ30+wkMke8qcMg/yoHGTQpjBoolSVFKEy+af+FLNOqEPY7rKgzJxX9aUDZU
-	xkS9r2uLK6n4DuuFg1hgtq/Omic8uhQtBpmIcLbjuwjwClqhWVUGL5QqvHAUaA==
+	bh=a5XxRSRdDKo30wi5wB5/T6ZFVXlAxAhSIAq8D52r62c=;
+	b=apTZskcnefEzeNqfuTp91sapkCBlXz5GfkzudON16K3BJ7Vgbhb3ZsoC5EODN3Z4c5eNro
+	Yy0Yro6sJVUxVuXJX+u+sqCrlBmxvnYeevltAe0LgHtnHIjj3s0HacUXhx+9NOUT/gTmPB
+	Rw3ihQzCwtC2/IB3X79g7BAZD38Tw+2/zuoABYcpPKVoBq5urrsUuTTgn48CRKsqpz1xsf
+	1tzJjYAm0ozs1WqZ6Eb0yI+6u7DkS7+wbiD3pPv01ei8JQ3OnsFvf0z9Af5/bkYzG4k9IS
+	qlxSNM2/wGq0pmVNS84DX8rsqw7N3jL7xuJ2uyaYy3MBMhp97DuhTZH4CUGvQA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729006579;
+	s=2020e; t=1729006580;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cuELzk/YjeLb0za7G13KLY/xCDjQQJYDwGvVyLmKFiw=;
-	b=hzgMjcdmHgFgeiwSjDrIFqTYLb4/0fsU9k0B5Z1FPFv1Lh8kj+8bWckpasZPpM4wBQTckR
-	29rJzIaBVpIQlLCw==
+	bh=a5XxRSRdDKo30wi5wB5/T6ZFVXlAxAhSIAq8D52r62c=;
+	b=DwJwK5VLqHFgYvzJh5IbUHEfFWy5OZWFJ6uC1SLfil2A1DUW6kgge0j5o5B4ukeK1b8c/5
+	7jGwhzTyYjEc46Dw==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: core/debugobjects] debugobjects: Use static key for boot pool selection
+Subject: [tip: core/debugobjects] debugobjects: Rework free_object_work()
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  Zhen Lei <thunder.leizhen@huawei.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241007164914.077247071@linutronix.de>
-References: <20241007164914.077247071@linutronix.de>
+In-Reply-To: <20241007164914.015906394@linutronix.de>
+References: <20241007164914.015906394@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172900657890.1442.12329507555490681170.tip-bot2@tip-bot2>
+Message-ID: <172900657949.1442.6232514176387919418.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,93 +81,138 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the core/debugobjects branch of tip:
 
-Commit-ID:     14077b9e583bbafc9a02734beab99c37bff68644
-Gitweb:        https://git.kernel.org/tip/14077b9e583bbafc9a02734beab99c37bff68644
+Commit-ID:     9ce99c6d7bfbca71f1e5fa34045ea48cb768f54a
+Gitweb:        https://git.kernel.org/tip/9ce99c6d7bfbca71f1e5fa34045ea48cb768f54a
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 07 Oct 2024 18:50:13 +02:00
+AuthorDate:    Mon, 07 Oct 2024 18:50:12 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 15 Oct 2024 17:30:32 +02:00
 
-debugobjects: Use static key for boot pool selection
+debugobjects: Rework free_object_work()
 
-Get rid of the conditional in the hot path.
+Convert it to batch processing with intermediate helper functions. This
+reduces the final changes for batch processing.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
-Link: https://lore.kernel.org/all/20241007164914.077247071@linutronix.de
+Link: https://lore.kernel.org/all/20241007164914.015906394@linutronix.de
 
 ---
- lib/debugobjects.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ lib/debugobjects.c | 82 +++++++++++++++++++++------------------------
+ 1 file changed, 39 insertions(+), 43 deletions(-)
 
 diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index d5a8538..65cce4c 100644
+index 3700ddf..d5a8538 100644
 --- a/lib/debugobjects.c
 +++ b/lib/debugobjects.c
-@@ -7,16 +7,16 @@
+@@ -35,7 +35,7 @@
+  * frequency of 10Hz and about 1024 objects for each freeing operation.
+  * So it is freeing at most 10k debug objects per second.
+  */
+-#define ODEBUG_FREE_WORK_MAX	1024
++#define ODEBUG_FREE_WORK_MAX	(1024 / ODEBUG_BATCH_SIZE)
+ #define ODEBUG_FREE_WORK_DELAY	DIV_ROUND_UP(HZ, 10)
  
- #define pr_fmt(fmt) "ODEBUG: " fmt
+ struct debug_bucket {
+@@ -158,6 +158,21 @@ static bool pool_move_batch(struct obj_pool *dst, struct obj_pool *src)
+ 	return true;
+ }
  
-+#include <linux/cpu.h>
- #include <linux/debugobjects.h>
--#include <linux/interrupt.h>
-+#include <linux/debugfs.h>
-+#include <linux/hash.h>
-+#include <linux/kmemleak.h>
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
- #include <linux/seq_file.h>
--#include <linux/debugfs.h>
- #include <linux/slab.h>
--#include <linux/hash.h>
--#include <linux/kmemleak.h>
--#include <linux/cpu.h>
-+#include <linux/static_key.h>
- 
- #define ODEBUG_HASH_BITS	14
- #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
-@@ -103,6 +103,8 @@ static int __data_racy		debug_objects_freed;
- static void free_obj_work(struct work_struct *work);
- static DECLARE_DELAYED_WORK(debug_obj_work, free_obj_work);
- 
-+static DEFINE_STATIC_KEY_FALSE(obj_cache_enabled);
++static bool pool_pop_batch(struct hlist_head *head, struct obj_pool *src)
++{
++	if (!src->cnt)
++		return false;
 +
- static int __init enable_object_debug(char *str)
- {
- 	debug_objects_enabled = true;
-@@ -343,7 +345,7 @@ static struct debug_obj *alloc_object(void *addr, struct debug_bucket *b,
++	for (int i = 0; src->cnt && i < ODEBUG_BATCH_SIZE; i++) {
++		struct hlist_node *node = src->objects.first;
++
++		WRITE_ONCE(src->cnt, src->cnt - 1);
++		hlist_del(node);
++		hlist_add_head(node, head);
++	}
++	return true;
++}
++
+ static struct debug_obj *__alloc_object(struct hlist_head *list)
  {
  	struct debug_obj *obj;
+@@ -343,55 +358,36 @@ static struct debug_obj *alloc_object(void *addr, struct debug_bucket *b,
+ 	return obj;
+ }
  
--	if (likely(obj_cache))
-+	if (static_branch_likely(&obj_cache_enabled))
- 		obj = pcpu_alloc();
- 	else
- 		obj = __alloc_object(&pool_boot);
-@@ -393,7 +395,7 @@ static void free_obj_work(struct work_struct *work)
+-/*
+- * workqueue function to free objects.
+- *
+- * To reduce contention on the global pool_lock, the actual freeing of
+- * debug objects will be delayed if the pool_lock is busy.
+- */
++/* workqueue function to free objects. */
+ static void free_obj_work(struct work_struct *work)
+ {
+-	struct debug_obj *obj;
+-	unsigned long flags;
+-	HLIST_HEAD(tofree);
++	bool free = true;
+ 
+ 	WRITE_ONCE(obj_freeing, false);
+-	if (!raw_spin_trylock_irqsave(&pool_lock, flags))
+-		return;
+ 
+-	if (pool_global.cnt >= pool_global.max_cnt)
+-		goto free_objs;
+-
+-	/*
+-	 * The objs on the pool list might be allocated before the work is
+-	 * run, so recheck if pool list it full or not, if not fill pool
+-	 * list from the global free list. As it is likely that a workload
+-	 * may be gearing up to use more and more objects, don't free any
+-	 * of them until the next round.
+-	 */
+-	while (pool_to_free.cnt && pool_global.cnt < pool_global.max_cnt) {
+-		obj = hlist_entry(pool_to_free.objects.first, typeof(*obj), node);
+-		hlist_del(&obj->node);
+-		hlist_add_head(&obj->node, &pool_global.objects);
+-		WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt - 1);
+-		WRITE_ONCE(pool_global.cnt, pool_global.cnt + 1);
+-	}
+-	raw_spin_unlock_irqrestore(&pool_lock, flags);
+-	return;
++	if (!pool_count(&pool_to_free))
++		return;
+ 
+-free_objs:
+-	/*
+-	 * Pool list is already full and there are still objs on the free
+-	 * list. Move remaining free objs to a temporary list to free the
+-	 * memory outside the pool_lock held region.
+-	 */
+-	if (pool_to_free.cnt) {
+-		hlist_move_list(&pool_to_free.objects, &tofree);
+-		WRITE_ONCE(pool_to_free.cnt, 0);
++	for (unsigned int cnt = 0; cnt < ODEBUG_FREE_WORK_MAX; cnt++) {
++		HLIST_HEAD(tofree);
++
++		/* Acquire and drop the lock for each batch */
++		scoped_guard(raw_spinlock_irqsave, &pool_lock) {
++			if (!pool_to_free.cnt)
++				return;
++
++			/* Refill the global pool if possible */
++			if (pool_move_batch(&pool_global, &pool_to_free)) {
++				/* Don't free as there seems to be demand */
++				free = false;
++			} else if (free) {
++				pool_pop_batch(&tofree, &pool_to_free);
++			} else {
++				return;
++			}
++		}
++		free_object_list(&tofree);
+ 	}
+-	raw_spin_unlock_irqrestore(&pool_lock, flags);
+-
+-	free_object_list(&tofree);
+ }
+ 
  static void __free_object(struct debug_obj *obj)
- {
- 	guard(irqsave)();
--	if (likely(obj_cache))
-+	if (static_branch_likely(&obj_cache_enabled))
- 		pcpu_free(obj);
- 	else
- 		hlist_add_head(&obj->node, &pool_boot);
-@@ -572,7 +574,7 @@ static struct debug_obj *lookup_object_or_alloc(void *addr, struct debug_bucket 
- 
- static void debug_objects_fill_pool(void)
- {
--	if (unlikely(!obj_cache))
-+	if (!static_branch_likely(&obj_cache_enabled))
- 		return;
- 
- 	if (likely(!pool_should_refill(&pool_global)))
-@@ -1378,6 +1380,7 @@ void __init debug_objects_mem_init(void)
- 
- 	/* Everything worked. Expose the cache */
- 	obj_cache = cache;
-+	static_branch_enable(&obj_cache_enabled);
- 
- #ifdef CONFIG_HOTPLUG_CPU
- 	cpuhp_setup_state_nocalls(CPUHP_DEBUG_OBJ_DEAD, "object:offline", NULL,
 
