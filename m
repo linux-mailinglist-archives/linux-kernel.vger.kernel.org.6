@@ -1,167 +1,133 @@
-Return-Path: <linux-kernel+bounces-365895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E52199EDA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C57799EDAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F31282A1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446191C20FC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0501AF0AE;
-	Tue, 15 Oct 2024 13:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363AD14A60D;
+	Tue, 15 Oct 2024 13:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qY1mh+1L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="yR6xUNes"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6E112F5B1;
-	Tue, 15 Oct 2024 13:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C3E136E28
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999186; cv=none; b=m7tcyYcw5PwuYDvK9BLxfCKP0KHGzA9XbjMJAe3mEv1bHIFYARhkfjNQ1oatjoJkGd+Qnshzvey3utLrRGnbAY6n5tgCajsbjxx7OBbSjtJvuX/vgyl2iZcnZnyzRhqqONRhJD+lhd9QN1ZS6QTHz9L198QZI/1ycGRVVGhZXeg=
+	t=1728999197; cv=none; b=YtpR8NY55hhS3WAOucnBbBNH8hIMkJDMkEU3uRkg8sGkdmmHfsDG4JpkTLWgjlZk9DBDORbGr0XjzYdR4IjPcc/V8V555SgYDDM/V6Hq0BA5VgHn2zuQKp4IGEkaP8QaFXk/JnmjNPYLYNhDg5lCLH3wHAoLEi5papS4qqGV/oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999186; c=relaxed/simple;
-	bh=GHyPHJVzyZd8ZM4LZypRlrrgBnlS1b8lfXtOUdWOHeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c46VjWKQhoBLESSz62/majyrfJPxdwt5X0xgoLuzGLrziVb+Fp0CCeo3WxLBisf/SF0Al1vUpg9DsFphH0Gj6/qcjBUCQ3IjNzJ+aW1VWWO9CRaQlt00hRp/f4bA+yISk9//LnRcEI7xmtAXdcBreVayEP6XcbFaVeYG47YnFl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qY1mh+1L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC6B8C4CEC6;
-	Tue, 15 Oct 2024 13:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728999186;
-	bh=GHyPHJVzyZd8ZM4LZypRlrrgBnlS1b8lfXtOUdWOHeA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qY1mh+1L9ZCh74km29cUBEJ231pdgihcWdxTU5NGSvUp0T+6/XxeRnlz223xhAuH2
-	 0vVZsMVhoUu++wVwPVjSd22kCSuzOE/g8Ql0AbMl9tU+ATAr+ykZZ9oR4nN4GFl5ev
-	 fw6HvQesa+fuyRUukrOtD58c2FWU3U7P0X/FRRXPnDBIJEEdnMUWwvoAi6GbDaWwIW
-	 pkCIw2r4aq579Qry7JbiEBXZ+qyg60W2qDvcM3/SQLs8dQ7iQJqxa/cmKKQEhiqy7c
-	 kKDRcWgBgxRii0Mz6gmcftFKjQLAh+5Tfl5+jT4bBJnrdh+yv014QfpMU8qsVx7BNo
-	 sunx9TQjaYRsw==
-Message-ID: <78a1c5c8-53c8-4144-b311-c34b155ca27c@kernel.org>
-Date: Tue, 15 Oct 2024 15:33:00 +0200
+	s=arc-20240116; t=1728999197; c=relaxed/simple;
+	bh=UJEXxmod9hwkTENeMk5+2g6dtyvgZ2h1Duc4mV+05xs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hL4eTtwkmtS+XhO5QYh9Iytv7uBP4vgwAqPIsCwBkz11ipAK3Ual+ATriJ7edUDDalbX/0C1vp7TxYqCENNFQZaDAJrTYXFoPmEDtW/CqfweJlYVs8CuryZktg3AnBeVFfjKA1FJEEAX5wtn6cOUdqnaUXlZnfmrvRn1KhFOAD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=yR6xUNes; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so1587515f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1728999194; x=1729603994; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QS14/1rLrV66qDBatRYaujSeYfhdUS/QKbwUq4VPEjM=;
+        b=yR6xUNestIQGqBoSQFhtGQjPFxM9n+m00oG5Q59JZY+IvJzy8ovCaEtrdvoui88wTX
+         iTW1SFaPzwv2+izGsC+m+jLcbRbKIzqlooLTGirJn4OFNvV4tdiGZIRETlj7f6GdJzb1
+         fBqv/qKigSKqUGU7leP2VupPKGFskUESTg9rFQ2uafJCi4GuXc66x7zeTeur24uK0ewJ
+         8p2eILLqoH/CIFPFGo1RHzLSg7LUDd1HrNic8JwMZJAf6xyDpZLJNfSqOiXF+foVWC1+
+         Q61+bKkGETiQFmmh50M5gkvCS+JDkJaSZLT5jjcUXHWwxRSSPzBBo9/POyMmIz8boJN3
+         4Lig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728999194; x=1729603994;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QS14/1rLrV66qDBatRYaujSeYfhdUS/QKbwUq4VPEjM=;
+        b=OT+M4ucBHAmr2mUe5SCWXJSeWogU7O3YHE7WDnv+poWnrp291OoDdr8QkxAhjW0F7x
+         QLSWui8rNINWUt1+d05VmIO3cYyY72kguPOm4FcyCvxXNKmK/I0z27B47puPY3ev4PUP
+         mqiL0+SCg2mhAztQ/pBrHY3BDHeIOnjQmavsTjZ6hnRYy7x6O1qA1vrzr1Kv3cEQ56Eb
+         savrqDSY7r6+USBpPNDN1LqJfI/W2MtuixTINLU6ycMgK8t/wN8UsCVfryo5PDP5Q4Jf
+         pJB+8LqMgfvfcxiNPjNmMbamSR6hH5lvZ/MEXcDpMVWbkkbxEi98lTVaqS+rprtu4yR+
+         btug==
+X-Forwarded-Encrypted: i=1; AJvYcCVd816RJ3zrRGi5Y1SfXQ3DTW8ivWYyVA8ymgpP2C93kkhdJu/38C5VW/uANYj+WXX3n/rmrF2g2Mly8Oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzoso3ZA3bPvn0FR0gSWI5+RCkoeBeeVpY1hEXcRoL1/ersHxvN
+	fZeGxqCjueoD1I3ngkYqGQTSmkVhEW7scL3u16vKddJJQEHfoZ8vzZnxfBWcozZPmozACMYd/8t
+	hyLwAzvrG8rd53c2Jd3XhYJbqlRIRGp2cjwxOiA==
+X-Google-Smtp-Source: AGHT+IGNradBs7hA6tXJ03WnMFyglMyY4jCHENeRjpb48YC3HbpmmRPnxpuAwooOcuGkZlLWRPIWTDx0C/YHIDf8Dy4=
+X-Received: by 2002:adf:f304:0:b0:37d:4fb1:4fab with SMTP id
+ ffacd0b85a97d-37d601d21bemr6228186f8f.57.1728999194068; Tue, 15 Oct 2024
+ 06:33:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/5] arm64: dts: qcom: Add support for configuring
- channel TRE size
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
- Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com,
- quic_vtanuku@quicinc.com
-References: <20241015120750.21217-1-quic_jseerapu@quicinc.com>
- <20241015120750.21217-3-quic_jseerapu@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241015120750.21217-3-quic_jseerapu@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241015112327.341300635@linuxfoundation.org>
+In-Reply-To: <20241015112327.341300635@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Tue, 15 Oct 2024 22:33:02 +0900
+Message-ID: <CAKL4bV7WGcKbkCkfG-J8UtrKt5MM5dObr1c5RoKmm-TxfAVVkQ@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/211] 6.6.57-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/10/2024 14:07, Jyothi Kumar Seerapu wrote:
-> When high performance with multiple i2c messages in a single transfer
-> is required, employ Block Event Interrupt (BEI) to trigger interrupts
-> after specific messages transfer and the last message transfer,
-> thereby reducing interrupts.
-> For each i2c message transfer, a series of Transfer Request Elements(TREs)
-> must be programmed, including config tre for frequency configuration,
-> go tre for holding i2c address and dma tre for holding dma buffer address,
-> length as per the hardware programming guide. For transfer using BEI,
-> multiple I2C messages may necessitate the preparation of config, go,
-> and tx DMA TREs. However, a channel TRE size of 64 is often insufficient,
-> potentially leading to failures due to inadequate memory space.
-> 
-> Adjust the channel TRE size through the device tree.
-> The default size is 64, but clients can modify this value based on
-> their heigher channel TRE size requirements.
-> 
-> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 132 +++++++++++++--------------
->  1 file changed, 66 insertions(+), 66 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 3d8410683402..c7c0e15ff9d3 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -1064,7 +1064,7 @@
->  		};
->  
->  		gpi_dma0: dma-controller@900000 {
-> -			#dma-cells = <3>;
-> +			#dma-cells = <4>;
->  			compatible = "qcom,sc7280-gpi-dma", "qcom,sm6350-gpi-dma";
->  			reg = <0 0x00900000 0 0x60000>;
->  			interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
-> @@ -1114,8 +1114,8 @@
->  							"qup-memory";
->  				power-domains = <&rpmhpd SC7280_CX>;
->  				required-opps = <&rpmhpd_opp_low_svs>;
-> -				dmas = <&gpi_dma0 0 0 QCOM_GPI_I2C>,
-> -				       <&gpi_dma0 1 0 QCOM_GPI_I2C>;
-> +				dmas = <&gpi_dma0 0 0 QCOM_GPI_I2C 64>,
-> +				       <&gpi_dma0 1 0 QCOM_GPI_I2C 64>;
+Hi Greg
 
-So everywhere is 64, thus this is fixed. Deduce it from the compatible
+On Tue, Oct 15, 2024 at 8:26=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.57 release.
+> There are 211 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.57-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Best regards,
-Krzysztof
+6.6.57-rc2 tested.
 
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
+
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+
+[    0.000000] Linux version 6.6.57-rc2rv
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
+Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Tue Oct 15 22:09:26 JST 2024
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
