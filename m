@@ -1,91 +1,86 @@
-Return-Path: <linux-kernel+bounces-365937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF2E99EE29
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:51:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEE399EE31
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2722B21A6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E7A1C21AEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955981B2183;
-	Tue, 15 Oct 2024 13:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5EF1B2186;
+	Tue, 15 Oct 2024 13:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mjF6cR7W"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jdkft+J3"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA021AF0C9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6209B1AF0CD;
+	Tue, 15 Oct 2024 13:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000283; cv=none; b=VyoaVy7kD9s2CTjd2gU9VQnlwAE0oW/UryuTBIs5G3StMNYnTgzzMAzY9SLOkZe1o2ZAiz1/GstEhUwi1S7bssKNibuKohjt36ctBpX8uWlRlWKef73y5PWWagUNpgKJcssR/bRKC1XNWWI9439ROpIfpDpT5ihnIJAHm74+VaY=
+	t=1729000385; cv=none; b=aVsgmHQdPsMXfy6+r04jqCMZV/DZ2a+aDypda33fVOuc2D0w5ZVd3XUpQbFSBzXp1MLKggsOozdSffU3vOH2dXIa02kOOQfHigIYB/EWcUwQWlMWXcstJsxA38HIuxqFpdLOUJRJUU2nnTaaBbshik4mvZr+GE/IvKuCvDgEMoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000283; c=relaxed/simple;
-	bh=1z5v2g/M8TGfXA6gWIica8246cfTbPJR6x/M/MJlmF0=;
+	s=arc-20240116; t=1729000385; c=relaxed/simple;
+	bh=H2j8tAxArH59yBDbzIrl/MGCWx5bBjQgQoB0i4mdJuU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AvmLPPgSSVGKusf9dywZwh+zSZDMV7S70t4u3lQ2+PjhzZgFVuwO6W6D3SZNvWHL19gAsg+YNw/wPLAMM3xBO8DGUf0mO7JPjRUHRQ1QWYcBajcB6H0nwd2gbKPGjAieAjcjoOK9Xx3hBaDbr6y0lRjhP4W+8FK3MgL8aX9M3LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mjF6cR7W; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20ce65c8e13so18870455ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:51:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729000281; x=1729605081; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FQbfyi27tzCxQ9WkWmXe1wWLf7FoB61MNcmlSkHbiww=;
-        b=mjF6cR7WsjkzLW6LOvb99VRyd0IXEnxV98OEJOgTjXIJHqgUpAJzH+1dGlAFGxKu/j
-         d3TvYNIU17uDReZy90uSfi1UdtC3jqv5zXx+Iybu55LJSW2YrUJf1yaNnFj1U5s5mkTT
-         9i8WeHbOibvnvH96IAuVy2BW9F5YgeDXeEU62j9oq2ekouZwhL47CCsczvU2VqAUJb8e
-         DQNu98pVbzwOafTUayO0Lb1WvKuD5NZ1h93YRtM7SSM0f7PG5PicDscg0eTI1h242wB4
-         V4OLmancX2L109s8XN9U1vgp3WDs+xx5iryqlYqsllaefBXFBw/IxGdgZYcRCRjK+PNe
-         WQrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729000281; x=1729605081;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FQbfyi27tzCxQ9WkWmXe1wWLf7FoB61MNcmlSkHbiww=;
-        b=qh8J22V+kqRyfQU3cqCotPAAsvPpfBEwvJxJi2zghDAcEkFZnCirKmPhxSCeK+9IQy
-         wB4CyN2iAPlEM6B1HHjE8j0NheTDKmvAXVh+bg0+wnWgm3yE5qNViAlJvjAAsjIZd7Ff
-         Bi01+RBo2jt+dKZbFpYIo0Rhc0Y/Bz3g6Xzg0WwhnUn+nhzwXAJLPYflILSc0Qjf6Eq8
-         43dFBFRbb205LbAKJkUxYJfmE96u02ZISCuJJYVnWELwD1ljK0Om9TWxcEP7whk6cfhX
-         oP+phCVu5qSw98Owk0UIIY2CtVrTCkRo3T250jWM7CubLD3Lk4K869zfdoWvhKqEL0Qa
-         9yuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXoBIif93yhlDzV9N52Sby5OnyrngEpjADhzVJ68a8COZNT6oB9bubGOeBKT3tMrSAEb4Mk1Lq4uUfBcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVvWRa5DdoNR1/QbcoDSZqfQ85c2T14f+6eHXju5ZY8qqFZDO0
-	5LOIdxNxEtZGNPmp9iOjv9sG6LpNj2/Boj/NSrCW1ZfktKlUh7BiIvvMM4+RpQ==
-X-Google-Smtp-Source: AGHT+IHb8DRdX7nVZkVKvSzh4aB00ZRPlP2F8yO4iHAIQ/4bBM9EAsjLt6eSWDKJ/Teh6L8UAt2OKA==
-X-Received: by 2002:a17:902:e541:b0:20c:d469:ba95 with SMTP id d9443c01a7336-20cd469bdaemr105114035ad.16.1729000280754;
-        Tue, 15 Oct 2024 06:51:20 -0700 (PDT)
-Received: from thinkpad ([220.158.156.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f84f66sm12129015ad.28.2024.10.15.06.51.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 06:51:20 -0700 (PDT)
-Date: Tue, 15 Oct 2024 19:21:14 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org,
-	krzk+dt@kernel.org, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, conor+dt@kernel.org,
-	abel.vesa@linaro.org, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for
- Windows
-Message-ID: <20241015135114.kbiyvymng4e6dmvb@thinkpad>
-References: <20240911073337.90577-1-quic_sibis@quicinc.com>
- <20240911073337.90577-3-quic_sibis@quicinc.com>
- <pt4wtycddqhcvw2iblaojmzsdggmlafft4vu6lg5j2vstbhbqj@acenyi5k3yeq>
- <eqy4yicgeqlgaytgzybnitvbrdr7jmjjk5k2swmadad6scwk77@ubaf7a2kgmdm>
- <1BBC34CC-92D9-4F6E-8DFA-1F2DA36D545A@linaro.org>
- <20241001085105.iglzp3art5ysli2d@thinkpad>
- <b1d982c1-f800-97eb-1be3-e77e04a8e81d@quicinc.com>
- <20241006180146.m6xvpwbvkiy7obpx@thinkpad>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gl3wNXJNTA00d1Jcp+t+Gb6MCYUvXpC6IQYfjjjFo0yPC24hPuXQXZtJYQFbUIzB9HY1GDEsOdGd6gABLlh7BMeu4/D638fIy0a2dRu5wQb4/rNW3z2sFWXdBi8jTcZBL/XQbp8qvd8pmNSr2oeGC22BVOdI5WfwrWr7MOtQyrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jdkft+J3; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D8BF340E0198;
+	Tue, 15 Oct 2024 13:53:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id fRYxJ-Jjmc2o; Tue, 15 Oct 2024 13:52:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729000376; bh=IndR389A56EgJLmSWnnTj3gROCafm4Xdw9n+uR2RGCM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jdkft+J3SSI5ZXcvcV/k5hX3cOtNWyBIEvTpdM2GoZrSE/jn4WoU69GIN4e52j/wq
+	 /PRHj1ovwgYX7fRy9ZthF0WRFR/6vxUDs5SfOsdLV4l86xTmEyE3MUDYuPXcJD5j3M
+	 sNij5PdsnkO/psDzydolB6nvMkepsXfV5JkVJpKo6ImwvqO9oH8XoT+QA34wLpwlxL
+	 /EMfBxinh0RQSy1R5NQpJGrjAyrxq2YiSi7oPQp/DUXXIBRpVw/jeeAzsP7SehrQoN
+	 arRDdbAyDW3xsxpnJRDYjRX3+39kSTLk0uM0yaevYUZ5e3ZnTt2RP0brVd0gKJYxq/
+	 u6Isbz5PPh/lGtgo+3R7vzfEMvvB45fW4yr9N5aseWkDXfJsFXs761FrHdsZsTKNcz
+	 yicGbCQd4GWmYNKS5V4aoDSjoLocyMCRcD/2pVYqwFhQ8azfsU7l5knK60zw6clpJW
+	 BRC1QYxVgI5zd2KOiO6NJW4ftNrb2KQoarT6nGy+kTk4NNNfNZbQbaZZchKgEzeRgl
+	 4HZTFTjS/svrSQDPapdTDTHPOOaM8/FE2TidJjbw9iEycQScZqWvXxUqR2z0JqdPdG
+	 6R/1Y5JLlKPdlVVKiJDYmhV1nU4marIkRR4GtOevV1yw8eHuKhBXIpg3l5hs8RC4J6
+	 QI6uqckTWiOyOkTlrhjxZZ4M=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 576D240E0169;
+	Tue, 15 Oct 2024 13:52:43 +0000 (UTC)
+Date: Tue, 15 Oct 2024 15:52:31 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Kaplan, David" <David.Kaplan@amd.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>
+Subject: Re: [PATCH 1/6] x86/bugs: Create single parameter for VERW based
+ mitigations
+Message-ID: <20241015135231.GCZw5zn0fnI8dXpHtw@fat_crate.local>
+References: <20240924223140.1054918-2-daniel.sneddon@linux.intel.com>
+ <LV3PR12MB92651F4DF654C886B9F2BCF7947E2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20241010045219.vgpcl7nfqaimqrne@treble.attlocal.net>
+ <20241010145737.GOZwfrYaGxCOOlaVhy@fat_crate.local>
+ <88baaae8-d9fe-4c8a-a5e2-383d6b641e2c@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,81 +89,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241006180146.m6xvpwbvkiy7obpx@thinkpad>
+In-Reply-To: <88baaae8-d9fe-4c8a-a5e2-383d6b641e2c@linux.intel.com>
 
-On Sun, Oct 06, 2024 at 11:31:52PM +0530, Manivannan Sadhasivam wrote:
-> On Sun, Oct 06, 2024 at 12:33:21AM +0530, Sibi Sankar wrote:
-> > 
-> > 
-> > On 10/1/24 14:21, Manivannan Sadhasivam wrote:
-> > > On Tue, Oct 01, 2024 at 09:56:30AM +0300, Dmitry Baryshkov wrote:
-> > > > On October 1, 2024 5:42:35 AM GMT+03:00, Bjorn Andersson <andersson@kernel.org> wrote:
-> > > > > On Wed, Sep 11, 2024 at 10:55:05AM GMT, Dmitry Baryshkov wrote:
-> > > > > > On Wed, Sep 11, 2024 at 01:03:37PM GMT, Sibi Sankar wrote:
-> > > > > [..]
-> > > > > > > diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> > > > > [..]
-> > > > > > > +
-> > > > > > > +&pcie5 {
-> > > > > > > +	perst-gpios = <&tlmm 149 GPIO_ACTIVE_LOW>;
-> > > > > > > +	wake-gpios = <&tlmm 151 GPIO_ACTIVE_LOW>;
-> > > > > > > +
-> > > > > > > +	vddpe-3v3-supply = <&vreg_wwan>;
-> > > > > > 
-> > > > > > Please use pwrseq instead.
-> > > > > > 
-> > > > > 
-> > > > > What benefit is there to wrap a single 3.3V regulator in pwrseq driver?
-> > > > 
-> > > > First of all, is it really just a 3.3V? Second, is it actually powering up the host controller (as expressed in the device tree? Is it a power supply to the slot (in this case, I think, it should be expressed differently)? Or is it a power supply to the card itself?
-> > > > 
-> > > 
-> > > Yeah, we should get into the details here. We were not paying attention till
-> > > now, but with the advent of pwrseq, we should describe the power supply properly
-> > > in DT.
-> > > 
-> > > Here I believe the supply is to the PCIe Mini Card connector where a modem is
-> > > connected. In that case, 3.3v supply should be connected to 3.3Vaux of the
-> > > connector and we should have a generic pwrseq driver for the mini cards.
-> > > 
-> > 
-> > Hey Mani, Dmitry,
-> > 
-> > The schematics are identical to that of the X1E CRD with
-> > the exception of the pcie daughter card having the rtl8125g
-> > on it. Yes, the 3.3V supply is connected to the card as well.
-> > 
-> 
-> Is this connected to the 3.3vaux of the card? Please specify the actual rail
-> name as the 'PCI Express Mini Card Electromechanical Specification' specifies
-> only 3.3Vaux and 1.5v supplies.
-> 
-> > Doesn't this mean all other x1e boards out there needs to be
-> > updated with pwrseq as well? Anway will get that addressed in
-> > v3.
-> > 
-> 
-> pwrseq is the kernel driver abstraction, nothing to do with DT. But for making
-> use of pwrseq, the supplies need to be described in the proper place. In this
-> case most likely under a separate node of PCIe bridge. Then you'd need a
-> separate pwrseq driver in kernel to parse the supply and take care of it.
-> 
-> I'm currently writing a pwrseq driver for standard slots (x8 for X1E) and should
-> be able to post it early next week. So you or someone could use it as a
-> reference to add a new driver for m-pcie cards.
-> 
-> If no one picks it up, I may just do it.
-> 
+On Mon, Oct 14, 2024 at 08:42:26AM -0700, Daniel Sneddon wrote:
+> The reason I did the patches this way wasn't so much "need" as it just seemed a
+> simpler way to do it. Why have 4 knobs when there is really only 1 mitigation
+> under the hood? My question for you then is what you mean by "proper sync"? I'm
+> guessing you mean that if any one of those 4 mitigations is set to off then
+> assume all are off? 
 
-Hi,
+Well, up until now at least, we have handled under the assumption that not
+every user knows exactly what needs to be configured in order to be safe.
 
-The slot driver is taking more time than anticipated due to the pwrctl rework.
-So please go ahead with the current binding and we would switch to pwrseq
-later once the driver is available.
+So, we have always aimed for a sane default.
 
-- Mani
+IOW, if a user wants to disable one mitigation but all 4 are mitigated by the
+same thing, then we probably should issue a warning saying something like:
+
+	"If you want to disable W, then you need to disable W, X and Y too in
+	order to disable W effectively as all 4 are mitigated by the same
+	mechanism."
+
+And problem solved.
+
+IOW, I don't expect someone would consciously want to disable a subset of
+those mitigations but leave the remaining ones on. What usually happens, is
+people do "mitigations=off" in order to regain their performance but not do
+this selective thing which doesn't make a whole lot sense to me anyway.
+
+Thx.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
