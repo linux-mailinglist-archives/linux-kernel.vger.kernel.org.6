@@ -1,119 +1,172 @@
-Return-Path: <linux-kernel+bounces-366886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0605C99FBD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:57:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC7B99FBD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61CA287FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:57:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20CB41F213C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330D51D63D3;
-	Tue, 15 Oct 2024 22:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB0F1D63D0;
+	Tue, 15 Oct 2024 22:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="En2I013j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J05FT0bO"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94871B0F0D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7D21D63CD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729033071; cv=none; b=BcttucTUjQcFRwR6rPn3kXRlGO14/9Twq3qwdwRna0EbLV6fnG+56pYWVbYhx2ucZeUxdxy+Z1Eehva+xjTYEXkada2g3YGyZ6s0YF8y63OmiTcyBUAovYcf/bWY2yGKA8d+gTev6O+kyBTnU0OWaEQt+0SinAevRxcHhIWMnsU=
+	t=1729033180; cv=none; b=qAbRjaBh4yLPma0bYF1oJzy6RkK+6niYnvMpTs9fi/grCLEZ87x1zZm95ilgJqEkco8sl4efLZkpE6uLsA6oWYogVjX77Bch0HmDuwFNZowo2xFiBu0YVKjRYN9YWPqg8SkM1DmcHjFohFoLwLV0nnf4FSgSE5nuj7vybMWuMCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729033071; c=relaxed/simple;
-	bh=vr4BB+dxMaXv4PMO6tf1h4aLh4XEoKAsPXHIiN0pblw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+AbArPgRI65cxQpv8/0H0tB22iUQE+MAr+eHOpOlAlPda7B1A3d7/mwGQwVQgMmFQWZbudtcs6eD8qiQoLwigFUxerVw9yKfCo7eeN15y0nIntsM/GL1LLCBDCGbK+2FkJWXwFgbNfh+s1gx5f7ljFB0DmFQKR0K1kkmFLvl+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=En2I013j; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729033070; x=1760569070;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vr4BB+dxMaXv4PMO6tf1h4aLh4XEoKAsPXHIiN0pblw=;
-  b=En2I013jRsQZ7YxvKvCw1r/2Pf/DP+a7lRRhdSLuUk3kKwhXVa8jLaGX
-   omELa5S64zL0Z5upxB5THMSr+rOn6BjuApsC8GZ4vSApQvnM6fywKlSuA
-   p3D6Cy3vjnBoElYOkwQhQoE72O225NFQWC1wqxaIZI8kHQBLqbExpCcNO
-   FX1HnXVjIcNlVny1f6HRFAv01NuSn7UzDdNUsQa7C/cEaN8IK9XmFWWbr
-   a4X2fRtkkTF1KPkhN/jJskFJhp7+v32dXkSEd8It1MSSusCyEAGCIHsD7
-   /MpmtY9xKi41MG7T0HXJIDGq4ngI+OvITeaKdUayHXRomEwWoy7tuNoz/
-   A==;
-X-CSE-ConnectionGUID: oo/6RUMfTfGigXGmIXhmnw==
-X-CSE-MsgGUID: 7o/DHt6LTWaMR/L0gjaoPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28655993"
-X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
-   d="scan'208";a="28655993"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 15:57:49 -0700
-X-CSE-ConnectionGUID: wQnKD7fFTEGxCZQUPrHd0Q==
-X-CSE-MsgGUID: LzDqLHZkQy+WwXakY8FmDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
-   d="scan'208";a="78057920"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 15:57:49 -0700
-Date: Tue, 15 Oct 2024 15:57:47 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: James Morse <james.morse@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: Re: [PATCH v5 02/40] x86/resctrl: Add a helper to avoid reaching
- into the arch code resource list
-Message-ID: <Zw7za0Cp0oH6v5w6@agluck-desk3.sc.intel.com>
-References: <20241004180347.19985-1-james.morse@arm.com>
- <20241004180347.19985-3-james.morse@arm.com>
+	s=arc-20240116; t=1729033180; c=relaxed/simple;
+	bh=glZWFHnHemFUqJOD7Sb/Nrj7aOzGfWHp45F6CqIEbr0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QLJTp32gRBjuVIV/7afitqQtuqewndP0l491rg1QE+0YA8wNrjsJawv+TEcocOb/cu8CZ9hkAKfuzPVL2Qnelt/bZuDNv3Hjo12DctsXtwgeMD6yueoSujl7vdCQW7m8+31U+U4Py/ChcgCYUKWFFNuFi5d9CQsYYT3QYK/jtpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J05FT0bO; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4601a471aecso26271cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:59:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729033177; x=1729637977; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aatrfRIq+KwjGDMApdNFzlbuQ/dlgztbUi1A7FhVako=;
+        b=J05FT0bOE/56N47S34Yh9y9yYelnXGECE9sqe20xEqWvNSfTUpFm7GvPs9+YlP2ncc
+         k8FcVB+w0kSuDwYXWEs9/9MjRQxG9VOB0w/6iAJgwLn8aEsbP1VhyxY2NFHplMFjixPj
+         lLTP3D16J1QFfhZ9VAk9wz5cNjSkQyW06Eec8GlrbkBWNOQiHuStDRld8dYEDmztADLk
+         aAdaez/3k4ff3VIHcDJYQz5XXW7iSEjj+GY3bXbfOIyjAuiR/fDRUgFfWewOEM8kTSuh
+         NY3d0B+FzsFsm/OQ33NxLWipHrocPxdB+LbBVZ4IHAQ5zkpqSwuA244oEomF2cjLR+BL
+         RHlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729033177; x=1729637977;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aatrfRIq+KwjGDMApdNFzlbuQ/dlgztbUi1A7FhVako=;
+        b=B6g5l1sZpZOUw4mizgNayoUPfeIVyJdajeX11KF9Dt1DPqf3Fc8c4bJpHtrtXizaOf
+         s5EpgMXuopBSeLEIHBEOXW5W/Jx4jN66X+JbG8txH0rKgVKt5nDuNelzorGFhTylvchj
+         /Q/1aehDC8NWCOWOIWEKibGNcD0UuDH8pCQtG2jCxD3dbJbobx9QXa3q6OszytXtyHtl
+         zC1BsmS2Qf2nDnvS96pcljaG5DAZsJzlntnBh9X0wc+ggIj3D7haNLUA66gKxFqsjcv0
+         V4FjI9rbNlTBLfQESNe5ZKKGkWf/YloHZhEHZK9poId53k+phZZrTyEnTPwfPjQBZG6j
+         eHeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXveRJDc0Mzmy4MbqCgey1/vGtxObqOVcxITuVmWJ9qA2hMMLQTDwOcTwQK3tl0aHiD25lJhteWgLIES1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtN6sgIfJ4dkPhuKUgNJh9YY7+sSHBAbvVBI4XjIXd/R4H75Un
+	HdhoMWTBF+LRQDRL3ihktuDFNe7c9yA0K4be/mKlXDc2OWwJj/zgiI17PkGMf6qRucabyReH6+X
+	XYz1pQkjwOfF4ba8aIoTmyI82RepREq7k2nrA
+X-Google-Smtp-Source: AGHT+IELTeVk+3ZUTk+NpnVTeDJUGBGjLAiZXyLrgAjXmAsx+E8kO4d8VubcdugaUnODGJwHhuL8CSe4MgIy4xCWvP4=
+X-Received: by 2002:a05:622a:46cb:b0:45c:9d26:8f6e with SMTP id
+ d75a77b69052e-4608ed29b69mr572131cf.21.1729033176389; Tue, 15 Oct 2024
+ 15:59:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004180347.19985-3-james.morse@arm.com>
+References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-3-surenb@google.com>
+ <20241014165149.6adebbf38fdc0a1f79ded66b@linux-foundation.org>
+ <CAJuCfpETusPzdjEg01zahF7NOStQJZmoM5Jabqd5tJpCCQrj2g@mail.gmail.com> <k4uejpziyyhcuozdpm6x6iy5zuugfhozilmgmjvo574yuq2oen@zvdoiqmk2mii>
+In-Reply-To: <k4uejpziyyhcuozdpm6x6iy5zuugfhozilmgmjvo574yuq2oen@zvdoiqmk2mii>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 15 Oct 2024 15:59:23 -0700
+Message-ID: <CAJuCfpEdkVkeBvHyusiY8XQaM22vP_LZr9LnWxesHMt7f=No4g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] alloc_tag: load module tags into separate
+ contiguous memory
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kent.overstreet@linux.dev, corbet@lwn.net, 
+	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
+	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
+	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	dennis@kernel.org, jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
+	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 04, 2024 at 06:03:09PM +0000, James Morse wrote:
-> +struct rdt_resource *resctrl_arch_get_resource(enum resctrl_res_level l)
-> +{
-> +	if (l >= RDT_NUM_RESOURCES)
-> +		return NULL;
-> +
-> +	return &rdt_resources_all[l].r_resctrl;
-> +}
+On Tue, Oct 15, 2024 at 2:08=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Mon, Oct 14, 2024 at 07:10:56PM GMT, Suren Baghdasaryan wrote:
+> > On Mon, Oct 14, 2024 at 4:51=E2=80=AFPM Andrew Morton <akpm@linux-found=
+ation.org> wrote:
+> > >
+> > > On Mon, 14 Oct 2024 13:36:43 -0700 Suren Baghdasaryan <surenb@google.=
+com> wrote:
+> > >
+> > > > When a module gets unloaded there is a possibility that some of the
+> > > > allocations it made are still used and therefore the allocation tag=
+s
+> > > > corresponding to these allocations are still referenced. As such, t=
+he
+> > > > memory for these tags can't be freed. This is currently handled as =
+an
+> > > > abnormal situation and module's data section is not being unloaded.
+> > > > To handle this situation without keeping module's data in memory,
+> > > > allow codetags with longer lifespan than the module to be loaded in=
+to
+> > > > their own separate memory. The in-use memory areas and gaps after
+> > > > module unloading in this separate memory are tracked using maple tr=
+ees.
+> > > > Allocation tags arrange their separate memory so that it is virtual=
+ly
+> > > > contiguous and that will allow simple allocation tag indexing later=
+ on
+> > > > in this patchset. The size of this virtually contiguous memory is s=
+et
+> > > > to store up to 100000 allocation tags.
+> > > >
+> > > > ...
+> > > >
+> > > > --- a/kernel/module/main.c
+> > > > +++ b/kernel/module/main.c
+> > > > @@ -1254,22 +1254,17 @@ static int module_memory_alloc(struct modul=
+e *mod, enum mod_mem_type type)
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > -static void module_memory_free(struct module *mod, enum mod_mem_ty=
+pe type,
+> > > > -                            bool unload_codetags)
+> > > > +static void module_memory_free(struct module *mod, enum mod_mem_ty=
+pe type)
+> > > >  {
+> > > >       struct module_memory *mem =3D &mod->mem[type];
+> > > > -     void *ptr =3D mem->base;
+> > > >
+> > > >       if (mem->is_rox)
+> > > >               vfree(mem->rw_copy);
+> > > >
+> > > > -     if (!unload_codetags && mod_mem_type_is_core_data(type))
+> > > > -             return;
+> > > > -
+> > > > -     execmem_free(ptr);
+> > > > +     execmem_free(mem->base);
+> > > >  }
+> > >
+> > > The changes around here are dependent upon Mike's "module: make
+> > > module_memory_{alloc,free} more self-contained", which is no longer i=
+n
+> > > mm-unstable.  I assume Mike is working on a v2 so I'll park this seri=
+es
+> > > for now.
+> >
+> > Looks like the last update on Mike's patchset was back in May. Let me
+> > check with Mike if he is planning to get it out soon. I would like my
+> > patchset to get into 6.12 if possible.
+>
+> 6.12 or 6.13?
 
-Is this a bit fragile if someone adds a new item in enum resctrl_res_level
-but doesn't add a new entry to struct rdt_hw_resource rdt_resources_all[]
-in arch/x86/kernel/cpu/resctrl/core.c
-
-Any caller of resctrl_arch_get_resource(new item name) will get past
-the check "if (l >= RDT_NUM_RESOURCES)" and then return a pointer past
-the end of the rdt_resources_all[] array.
-
-Maybe make sure the array is padded out to the right size?
-
-struct rdt_hw_resource rdt_resources_all[RDT_NUM_RESOURCES - 1] = {
-	...
-};
-
--Tony
+Right, it's 6.13 at this point.
 
