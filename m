@@ -1,167 +1,111 @@
-Return-Path: <linux-kernel+bounces-365625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D4399E525
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:09:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C26A199E535
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4331F24611
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:09:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D926283C00
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD221E766D;
-	Tue, 15 Oct 2024 11:08:59 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421781EB9E8;
+	Tue, 15 Oct 2024 11:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="murZkFD/"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEDD1E377E;
-	Tue, 15 Oct 2024 11:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76B51E32AF;
+	Tue, 15 Oct 2024 11:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990538; cv=none; b=vBjWHi7swnPgrGQO06MwR7Pb35zAGed8DPEM9BBQMtgs1Rzr6EPwgCblSyCHhyJO/RDbwWb4cmtDtiJszeNZOVS0Al06fvq+YsSrgLgPKXKkvUG2iB4LFV7eBGvCLZU6kzzBNuLO8AMMlAoWioXtg+fgSxedajt2o65QW7xl8k4=
+	t=1728990595; cv=none; b=gzrPbViXOEXxdf76RKpsnWXlDerkSqgswVczWVGxXCoaRk3Jl1nxX9PCx9ZOPH+XG0z3FGVUiBWalIhUthTcu7uQZfMhOThnHbwWysuQzCJ4jk0rqr5M5rjoBeAI9Tf33Xz73ke9N4VpAzEy4qr4AFo6mGVABBGvgA6F4htqKvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990538; c=relaxed/simple;
-	bh=7vjGjQHfBMbftYavyzTIGaLgrxdYcK7KHDnpT08ZtaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CsPwlTNJrfK6s6UFwZxjUvZBj/jH7bQ+fgO9QRTE7s9tMwQJBnKIlS+zD/m8vXBzEm0RR/7kDbyq6KdETRVyL4S8uyAaMNVT08LEMtYm2eBGYNg+coz8JcswoeLjL+A68JHRaxDh8tQRUUN/1jzjgSSoe5ChovIMolgcTRIxWpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: oNnjvyTlQJS726R6/G4jfQ==
-X-CSE-MsgGUID: BqDuvhe7RMWh3rr1LViSLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="32295900"
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="32295900"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 04:08:56 -0700
-X-CSE-ConnectionGUID: A4XlGWDvSqSs2/hGER1uWQ==
-X-CSE-MsgGUID: DF/+bTsNTu2B2M/K1ho2UQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="82516728"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 04:08:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1t0fQ1-00000003FDA-0Jg3;
-	Tue, 15 Oct 2024 14:08:49 +0300
-Date: Tue, 15 Oct 2024 14:08:48 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: "Nechita, Ramona" <Ramona.Nechita@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v6 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <Zw5NQM6Z9ATOx6SX@smile.fi.intel.com>
-References: <20240926135418.8342-1-ramona.nechita@analog.com>
- <20240926135418.8342-4-ramona.nechita@analog.com>
- <ZvV2mHkl4qxVVmBH@smile.fi.intel.com>
- <DM6PR03MB4315785FB25B980264748BCBF3782@DM6PR03MB4315.namprd03.prod.outlook.com>
- <20241010184516.66826055@jic23-huawei>
- <Zwgb_Fq4dhVwzpf9@smile.fi.intel.com>
- <20241012114202.425f1b74@jic23-huawei>
+	s=arc-20240116; t=1728990595; c=relaxed/simple;
+	bh=u/ZF658jnh35jb/jImoWHb8+tweptTkbxHIN0BLRg/Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o6uKuf+hLkY4pRwux6KAas/Cr6c4lSdorwE7UjqpS6t0f4G75x8OE4riHrBnxA5xyfcVtyowL3MMgKfuKD0R6HR6tJuzHoZTcOGVZFPCdhON/FRzl6iq5XfHaYE+b+wOwKlfKrwi4wmWgZ3spcWzbPr/7uPXC0SN4sJtPKRWUl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=murZkFD/; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=00J3RVPq4/h4Gn9zjAJgxg9MqOXs2BDYFaepZNulNug=; b=murZkFD/6e9FjDuEIp5PZR/1bR
+	LzkxMjmNagb5GYM9dLk9SPNm82n01g+KRK4q1pS/kxvZtPVk6yOcwEi11P8OhLOpqvt7eINvvQITQ
+	k3/q7lK4AqPOn78czVrT/yEXLrfQZPESdR/piJAnS3FouSWuV2BccVYUtUouh8Cz5leM=;
+Received: from p54ae9bfc.dip0.t-ipconnect.de ([84.174.155.252] helo=Maecks.lan)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1t0fQr-0096bC-0o;
+	Tue, 15 Oct 2024 13:09:41 +0200
+From: Felix Fietkau <nbd@nbd.name>
+To: netdev@vger.kernel.org,
+	Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH net-next 1/4] net: ethernet: mtk_eth_soc: compile out netsys v2+ code on mt7621
+Date: Tue, 15 Oct 2024 13:09:35 +0200
+Message-ID: <20241015110940.63702-1-nbd@nbd.name>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241012114202.425f1b74@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 12, 2024 at 11:42:02AM +0100, Jonathan Cameron wrote:
-> On Thu, 10 Oct 2024 21:25:00 +0300
-> Andy Shevchenko <andy@kernel.org> wrote:
-> > On Thu, Oct 10, 2024 at 06:45:16PM +0100, Jonathan Cameron wrote:
-> > > On Thu, 10 Oct 2024 14:32:49 +0000
-> > > "Nechita, Ramona" <Ramona.Nechita@analog.com> wrote:  
+Avoid some branches in the hot path on low-end devices with limited CPU power,
+and reduce code size
 
-...
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> > > > >> +	/*
-> > > > >> +	 * DMA (thus cache coherency maintenance) requires the
-> > > > >> +	 * transfer buffers to live in their own cache lines.
-> > > > >> +	 */
-> > > > >> +	struct {
-> > > > >> +		u32 chans[8];
-> > > > >> +		s64 timestamp;    
-> > > > >
-> > > > >	aligned_s64 timestamp;
-> > > > >
-> > > > >while it makes no difference in this case, this makes code aligned inside the IIO subsystem.    
-> > > > 
-> > > > I might be missing something but I can't find the aligned_s64 data type, should I define it myself
-> > > > in the driver?  
-> > > 
-> > > Recent addition to the iio tree so it is in linux-next but not in mainline yet.
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=togreg&id=e4ca0e59c39442546866f3dd514a3a5956577daf
-> > > It just missed last cycle.
-> > >   
-> > > > >> +	} data __aligned(IIO_DMA_MINALIGN);    
-> > > > >
-> > > > >Note, this is different alignment to the above. And isn't the buffer below should have it instead?  
-> > > 
-> > > While I'm here:  No to this one.  The s64 alignment is about
-> > > performance of CPU access + consistency across CPU architectures.
-> > > This one (which happens to always be 8 or more) is about DMA safety.  
-> > 
-> > Right, but shouldn't...
-> > 
-> > > > >> +	u32			spidata_tx[8];  
-> > 
-> > > > >> +	u8			reg_rx_buf[3];
-> > > > >> +	u8			reg_tx_buf[3];  
-> > 
-> > ...one of these also be cache aligned for DMA?
-> No need as long as driver doesn't do anything bad like
-> write to these whilst another dma transaction is in flight.
-> (I haven't checked though, but typical drivers don't)
-> All you have to do is ensure that any DMA buffer doesn't share
-> a cacheline with an unrelated bit of data (i.e. a separate allocation or some
-> state tracking etc). It is fine for multiple DMA buffers  (say rx and tx)
-> to be in the same cacheline.  Any DMA device that is stupid enough
-> to stomp it itself is broken (and would be fairly hard to build!). Such
-> a device would need to be worked around in the controller driver.
-> 
-> They are allowed to write back stale data, but not garbage data to unrelated
-> parts of the cacheline.  I.e. a tx buffer that was changed whilst
-> the SPI transaction was going on, might be overwritten with the old value
-> when the SPI controller DMAs back an updated version of the cacheline
-> containing the rx data + a cached copy of the early tx data.
-> The risk we are defending against with this alignment isn't this, it's
-> unrelated (and typically not protected by lock) fields in the structure
-> being overwritten with stale data.  The really nasty one being when
-> the allocator gives the next bit of the cacheline to another allocation.
-> (avoided here because the structure is sized as a multiple of the maximum
->  alignment).
-> 
-> Now, the code that bounces unaligned dma buffers on arm64 will probably
-> bounce these because it can't tell they are safe :( That's not incorrect
-> it's just less than optimal.
-
-Thanks for the really good elaboration! I will try hard to not forget it.
-
-> > > > >> +	u8			reset_buf[8];  
-
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+index 0d5225f1d3ee..654897141869 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+@@ -1324,16 +1324,22 @@ extern const struct of_device_id of_mtk_match[];
+ 
+ static inline bool mtk_is_netsys_v1(struct mtk_eth *eth)
+ {
++	if (IS_ENABLED(CONFIG_SOC_MT7621))
++		return true;
+ 	return eth->soc->version == 1;
+ }
+ 
+ static inline bool mtk_is_netsys_v2_or_greater(struct mtk_eth *eth)
+ {
++	if (IS_ENABLED(CONFIG_SOC_MT7621))
++		return false;
+ 	return eth->soc->version > 1;
+ }
+ 
+ static inline bool mtk_is_netsys_v3_or_greater(struct mtk_eth *eth)
+ {
++	if (IS_ENABLED(CONFIG_SOC_MT7621))
++		return false;
+ 	return eth->soc->version > 2;
+ }
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.0
 
 
