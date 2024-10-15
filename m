@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-365908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E8199EDC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1202B99EDC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B134B21829
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:37:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E6ACB215F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CE81C07C8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD281C07CC;
 	Tue, 15 Oct 2024 13:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VV1dJCxs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lharttqv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5467E1B21AD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884E71514F8
 	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999382; cv=none; b=QlwcQ9yethjXJPL29NTQ/hlXO769nL5LGe7Spa23yNXY+GTAFniwRhSF4Mc6VrGc1tPGmadQ7DnGsA992/V/L+dk2ptTdah6WnbYdA6Xf9X1ZbnICHWTNZMhfQXZ9dHeBMEkvwjAOjc2edZU/7QKiazZ1XXmcy/C4PipgGAZ8Bk=
+	t=1728999383; cv=none; b=Q1vWsmNmLAmyqi0eKsM0JBuvDoQNyIovpS3+KShF52tD8sjQ4WBO7nNvKVzh2IH7gd/eqcddBRfdP+OvfGyWN1csYRkxLs54cT9rSUC3CxZlJTPVw1om7ah9fzepzYsFGH7/fP3klTrrfxk3xK2/OxmiY0Hr9/vSgJ9kqmfZ2ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999382; c=relaxed/simple;
-	bh=xeLkTEKTNAT9sGDnDK9o2ilMhsBVyA9UijtR9xfjMfM=;
+	s=arc-20240116; t=1728999383; c=relaxed/simple;
+	bh=mFXiqK3KfzjuuV7ca3Y11LL8SftOwK2eMizVPciOeTw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YG2tysWvza5fsCCuruZ4uKiXNzFhf+7L/dXrUCTIColImi2owxg4bL91k0otL//VLmbUEm4+7L4Gb8+wYOtEp529bqb7jB02rSToXaGFrQl7d0dyVwSwYa8pVc28Nuln4rwKm0NASZQcCj4t09ASa4Cg/x9wJnv1sIN1sQW7hf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VV1dJCxs; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=k0nTb9fJYJYN/Dc6cTSMI+0+mOcajVntQowki7JqdX9l8jWfNOk/ClVOFww6ro1lTFxcfGuiYpjmFCsTxsAb5SxbPGP2Gx97wBydC9ndyBq+Po07+jt7nukc3VrsT9GbGDexRFoRL3lxP15WS21ldT3OG2PwCdj95tfk1tmqIxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lharttqv; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -36,25 +36,25 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JwYhkpHghGKHLaekKCNgK0lS740JHddsBSXXuOkvWNI=;
-	b=VV1dJCxsUCvuMJs/3Z2kG9VLDwFKraAkYRyFYe7LXuStY1/R+W5QM3TITg38T3dYpe8say
-	p0chyUzjjPlwt1dfS2aKf3oicE5+mtr+vYlgEOClrsh8F1RqdjZn5PwWndjw18y0ER+EaH
-	NnaeiLA1rwvYpFu6g8X1ugy35Z3+n0g=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=bbffXuV/W2LJJxkF9vZjOFB2SKnvqHFB2UqKGcqsdjI=;
+	b=LharttqvhM6G+EjB7tpGivH9wEEQsnHSKPj33/Le3k4T8LH9031vJAlugum0RTvDSk3yWc
+	BgkyQHrrAlIbx/rjjeWGfk1zwdyy483XEzo9R0v1UeddcV4nVCcDCsGy6V5oIdQ/ogp44S
+	IQoNcTQ7ZopqTv8l89a+vXtCgwaBJrI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-498-EO0uGmp6OmOK-1ygPSlV2A-1; Tue,
- 15 Oct 2024 09:36:17 -0400
-X-MC-Unique: EO0uGmp6OmOK-1ygPSlV2A-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-447-Bo8bhmqKPq-l0asBS4WYGw-1; Tue,
+ 15 Oct 2024 09:36:19 -0400
+X-MC-Unique: Bo8bhmqKPq-l0asBS4WYGw-1
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 55F361955BC1;
-	Tue, 15 Oct 2024 13:36:16 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 807641954233;
+	Tue, 15 Oct 2024 13:36:18 +0000 (UTC)
 Received: from fedora.brq.redhat.com (unknown [10.43.17.159])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 695D119560A7;
-	Tue, 15 Oct 2024 13:36:14 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B422719560A3;
+	Tue, 15 Oct 2024 13:36:16 +0000 (UTC)
 From: tglozar@redhat.com
 To: rostedt@goodmis.org
 Cc: linux-trace-kernel@vger.kernel.org,
@@ -62,9 +62,9 @@ Cc: linux-trace-kernel@vger.kernel.org,
 	jkacur@redhat.com,
 	jwyatt@redhat.com,
 	Tomas Glozar <tglozar@redhat.com>
-Subject: [PATCH v4 4/6] rtla/timerlat: Add --deepest-idle-state for top
-Date: Tue, 15 Oct 2024 15:35:50 +0200
-Message-ID: <20241015133552.3043040-5-tglozar@redhat.com>
+Subject: [PATCH v4 5/6] rtla/timerlat: Add --deepest-idle-state for hist
+Date: Tue, 15 Oct 2024 15:35:51 +0200
+Message-ID: <20241015133552.3043040-6-tglozar@redhat.com>
 In-Reply-To: <20241015133552.3043040-1-tglozar@redhat.com>
 References: <20241015133552.3043040-1-tglozar@redhat.com>
 Precedence: bulk
@@ -78,36 +78,35 @@ X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
 From: Tomas Glozar <tglozar@redhat.com>
 
-Add option to limit deepest idle state on CPUs where timerlat is running
-for the duration of the workload.
+Support limiting deepest idle state also for timerlat-hist.
 
 Signed-off-by: Tomas Glozar <tglozar@redhat.com>
 ---
- tools/tracing/rtla/src/timerlat_top.c | 42 ++++++++++++++++++++++++++-
+ tools/tracing/rtla/src/timerlat_hist.c | 42 +++++++++++++++++++++++++-
  1 file changed, 41 insertions(+), 1 deletion(-)
 
-diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
-index 7fb85c8ee3bc..fca0da3caa87 100644
---- a/tools/tracing/rtla/src/timerlat_top.c
-+++ b/tools/tracing/rtla/src/timerlat_top.c
-@@ -48,6 +48,7 @@ struct timerlat_top_params {
- 	int			pretty_output;
+diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+index d49c8f0855fe..01dd337da13a 100644
+--- a/tools/tracing/rtla/src/timerlat_hist.c
++++ b/tools/tracing/rtla/src/timerlat_hist.c
+@@ -55,6 +55,7 @@ struct timerlat_hist_params {
+ 	int			entries;
  	int			warmup;
  	int			buffer_size;
 +	int			deepest_idle_state;
- 	cpu_set_t		hk_cpu_set;
- 	struct sched_attr	sched_param;
- 	struct trace_events	*events;
-@@ -447,7 +448,7 @@ static void timerlat_top_usage(char *usage)
- 		"",
- 		"  usage: rtla timerlat [top] [-h] [-q] [-a us] [-d s] [-D] [-n] [-p us] [-i us] [-T us] [-s us] \\",
- 		"	  [[-t[file]] [-e sys[:event]] [--filter <filter>] [--trigger <trigger>] [-c cpu-list] [-H cpu-list]\\",
--		"	  [-P priority] [--dma-latency us] [--aa-only us] [-C[=cgroup_name]] [-u|-k] [--warm-up s]",
-+		"	  [-P priority] [--dma-latency us] [--aa-only us] [-C[=cgroup_name]] [-u|-k] [--warm-up s] [--deepest-idle-state n]",
+ };
+ 
+ struct timerlat_hist_cpu {
+@@ -655,7 +656,7 @@ static void timerlat_hist_usage(char *usage)
+ 		"         [-t[file]] [-e sys[:event]] [--filter <filter>] [--trigger <trigger>] [-c cpu-list] [-H cpu-list]\\",
+ 		"	  [-P priority] [-E N] [-b N] [--no-irq] [--no-thread] [--no-header] [--no-summary] \\",
+ 		"	  [--no-index] [--with-zeros] [--dma-latency us] [-C[=cgroup_name]] [--no-aa] [--dump-task] [-u|-k]",
+-		"	  [--warm-up s]",
++		"	  [--warm-up s] [--deepest-idle-state n]",
  		"",
  		"	  -h/--help: print this menu",
  		"	  -a/--auto: set automatic trace mode, stopping the session if argument in us latency is hit",
-@@ -481,6 +482,7 @@ static void timerlat_top_usage(char *usage)
+@@ -695,6 +696,7 @@ static void timerlat_hist_usage(char *usage)
  		"	  -U/--user-load: enable timerlat for user-defined user-space workload",
  		"	     --warm-up s: let the workload run for s seconds before collecting data",
  		"	     --trace-buffer-size kB: set the per-cpu trace buffer size in kB",
@@ -115,7 +114,7 @@ index 7fb85c8ee3bc..fca0da3caa87 100644
  		NULL,
  	};
  
-@@ -518,6 +520,9 @@ static struct timerlat_top_params
+@@ -732,6 +734,9 @@ static struct timerlat_hist_params
  	/* disabled by default */
  	params->dma_latency = -1;
  
@@ -124,34 +123,34 @@ index 7fb85c8ee3bc..fca0da3caa87 100644
 +
  	/* display data in microseconds */
  	params->output_divisor = 1000;
- 
-@@ -550,6 +555,7 @@ static struct timerlat_top_params
- 			{"aa-only",		required_argument,	0, '5'},
- 			{"warm-up",		required_argument,	0, '6'},
- 			{"trace-buffer-size",	required_argument,	0, '7'},
-+			{"deepest-idle-state",	required_argument,	0, '8'},
+ 	params->bucket_size = 1;
+@@ -772,6 +777,7 @@ static struct timerlat_hist_params
+ 			{"dump-task",		no_argument,		0, '\1'},
+ 			{"warm-up",		required_argument,	0, '\2'},
+ 			{"trace-buffer-size",	required_argument,	0, '\3'},
++			{"deepest-idle-state",	required_argument,	0, '\4'},
  			{0, 0, 0, 0}
  		};
  
-@@ -726,6 +732,9 @@ static struct timerlat_top_params
- 		case '7':
+@@ -960,6 +966,9 @@ static struct timerlat_hist_params
+ 		case '\3':
  			params->buffer_size = get_llong_from_str(optarg);
  			break;
-+		case '8':
++		case '\4':
 +			params->deepest_idle_state = get_llong_from_str(optarg);
 +			break;
  		default:
- 			timerlat_top_usage("Invalid option");
+ 			timerlat_hist_usage("Invalid option");
  		}
-@@ -922,6 +931,7 @@ int timerlat_top_main(int argc, char *argv[])
+@@ -1152,6 +1161,7 @@ int timerlat_hist_main(int argc, char *argv[])
  	int return_value = 1;
- 	char *max_lat;
+ 	pthread_t timerlat_u;
  	int retval;
 +	int nr_cpus, i;
  
- 	params = timerlat_top_parse_args(argc, argv);
+ 	params = timerlat_hist_parse_args(argc, argv);
  	if (!params)
-@@ -971,6 +981,28 @@ int timerlat_top_main(int argc, char *argv[])
+@@ -1201,6 +1211,28 @@ int timerlat_hist_main(int argc, char *argv[])
  		}
  	}
  
@@ -180,7 +179,7 @@ index 7fb85c8ee3bc..fca0da3caa87 100644
  	if (params->trace_output) {
  		record = osnoise_init_trace_tool("timerlat");
  		if (!record) {
-@@ -1125,6 +1157,13 @@ int timerlat_top_main(int argc, char *argv[])
+@@ -1332,6 +1364,13 @@ int timerlat_hist_main(int argc, char *argv[])
  	timerlat_aa_destroy();
  	if (dma_latency_fd >= 0)
  		close(dma_latency_fd);
@@ -194,9 +193,9 @@ index 7fb85c8ee3bc..fca0da3caa87 100644
  	trace_events_destroy(&record->trace, params->events);
  	params->events = NULL;
  out_free:
-@@ -1134,6 +1173,7 @@ int timerlat_top_main(int argc, char *argv[])
+@@ -1340,6 +1379,7 @@ int timerlat_hist_main(int argc, char *argv[])
  	osnoise_destroy_tool(record);
- 	osnoise_destroy_tool(top);
+ 	osnoise_destroy_tool(tool);
  	free(params);
 +	free_cpu_idle_disable_states();
  out_exit:
