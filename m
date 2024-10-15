@@ -1,259 +1,339 @@
-Return-Path: <linux-kernel+bounces-366476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C0E99F5D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:40:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA2299F5D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC9A21F24200
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:40:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95EF1F23671
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3BD203710;
-	Tue, 15 Oct 2024 18:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7902036FD;
+	Tue, 15 Oct 2024 18:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a9+184Kr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BREkziV/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="DmVvwC6Q"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4912036E3;
-	Tue, 15 Oct 2024 18:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247B02036E7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729017610; cv=none; b=Tq+Yh/GKCu/8UTZC6TkHl0MwjK1hdh923Xyf9WDlIXNX5kGA1HWd9wH9m4cNMvgCH74bmnTjcK+glcVXn8FZ5+FSrBFOS1RIsxgj8Le1WFUA3rGDWZ+KV1faRtRQgHu5BXWX/68GA80eSmssnefFxxZXUw9rkA4w+gKixL4geU0=
+	t=1729017621; cv=none; b=Wbj0LUznRYFkAoqLA6eWU/azrwMvEMEzB0LF0/8aPkXZGd63p2/OObtdgGe0Ef3kGTm/BDN/kSLhO4wXAokEo2hPwMjio3b2e783CDmDnHn1X/N9gJ7j43Bt1wIp6tRNlr5CbhIjNufO/LQaPYMh6/AWHh1S4R3ueAOEicJncn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729017610; c=relaxed/simple;
-	bh=O32/x0jgoXEVBJisE5ZiTUlRDxKf44L9Q8icNmu+NYM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=AqF+X0Oy9yxf8DiwSVDqJE8DMZBZ6FmGx+ptP5fjnzbyMWIV64noatSXNi7aMPg3BQzlk4nSXwOWLi4W7iqFax3gwBTnwRb1bKcqRf+rr4iN78inUrUElGRA51iTrUusld4kS7rh+gY3oJUcQwnv/vgET9uSsEuKxfRT8dD6GMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a9+184Kr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BREkziV/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 18:40:06 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729017606;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=68a46Dz0xqZoTJ1bSg2oRYongfJei12cDe+OIveeM3E=;
-	b=a9+184KrPCddehL7ria41VPDXZYTdvAYhCYcXo/tX9akcpTP+r57W6Sdl3XaK3/VdLvPfj
-	FX6ZXpZ6R5ML892o/VxTOF0ndbGaKrmG5HnS2rs7hPI12hTe4jKupCsdjecYEFaU5R0g86
-	doPYqrbG+zyGxfTCN/9qfWN536vlPC6mL7F2j3fS/lG1BCvFPuwHVhvCvA+YfETpYN+iqD
-	/Wv+kpf8w4AAlIgbOVVgQZ9LSRjquec9xmiu+ucCWo0eOAFmljtvpLi8QI/JqLoCvmyZIz
-	Yqmhgv/U0MNd8LE9pzy8vnWxF9yCSXPUwyW/+vFk2RtY+L7QxS+uNEFT0UyFBg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729017606;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=68a46Dz0xqZoTJ1bSg2oRYongfJei12cDe+OIveeM3E=;
-	b=BREkziV/3HILfc9OPeG1b2I0JA1QyVw98KeQX1nBzNNQhxipd96eoqSlBEDLDUaUoXGeug
-	YdXa4+sBgahW/NAQ==
-From: "tip-bot2 for Pavan Kumar Paluri" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/sev] x86/virt: Move SEV-specific parsing into arch/x86/virt/svm
-Cc: Pavan Kumar Paluri <papaluri@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241014130948.1476946-2-papaluri@amd.com>
-References: <20241014130948.1476946-2-papaluri@amd.com>
+	s=arc-20240116; t=1729017621; c=relaxed/simple;
+	bh=S8qZ5VAzN4pcHHfNgHDiuu35+4RSiNxrbYTWhDHnCKM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c/QRbO+tV4/FORLTMlOO8yNoeU46Rpy2kuZe4bwmnKC3Ykc/umY6o1UAvSqzW/FrXQ7w4lIMjZzI4fqQxmE9YCfdCTCDyHI3G6wnhAPqo2tp6Uu4P6ifNvQPx1cXQKoiU2bG0varxfzgLZb47botNcpCaCxg8ZcXzwyLhJEoKoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=DmVvwC6Q; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbd12b38b4so46961996d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:40:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1729017618; x=1729622418; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8ZIAcIQNXFU0HJAbelK5w6AajE5AfFCSDcserEzGKO8=;
+        b=DmVvwC6Qsq+1nwmUyMWT96jwI+YO/NCs/aZQHUtCV5XIjPF8ntC96BIYe2jNgtT5lQ
+         VwypBg4dWjmDYkGX0QrDbWLBkYHwxXN85WCUAU5jnmcBLi3bHi7Yqgc6uaLw1LaAaCLj
+         I7UOLyDiSQObK0/YsgYXEUplBMt+XWxFKZyD1FwKh8VNaIo83tPUNoMQaKxGEXRbsn5A
+         y5TMw8eTSIthtaYWx8b0hNiHA9gGzei42ns+zbIBwTwcVhBbHOyrIJjG3xRnHeJ2zA/B
+         I7iDGhVJ5mTdLXPlsrxMnSzeDcn21NBnwpGhtHQc5A76RP4/5khkxDKX6vkp4UXbjyd8
+         sUOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729017618; x=1729622418;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8ZIAcIQNXFU0HJAbelK5w6AajE5AfFCSDcserEzGKO8=;
+        b=tEdnlxKoJBGuHkiulfp/6b86LX2Yhcbq8KMNkW2sgSLSCKi3YT0QYCmbUQZWMcUbIe
+         AESrS0G0EnCME0fImGTmkMJmRI/N2Ar9BDfY4Jdp9qNbL2oIhCvv7qo7PDvbzDBxERkt
+         D/FUv5+2G5Q2G7SqMXQ0O8/QOyXCdtkjs0lagB9rP+o414l+/lSgN3qaQd4vTbubQdH1
+         xLGCQNOLOFNRbJ/VnWQ7UzTZFYK1CkLw9L9KX7yfESb+QpXmU/YOBGcKPuWFeobcarzN
+         PMmtWKnHYqhh41YOQ2p4AQkJNMEM5k0R/UTw6lK1Sn4pMfParD40Ttl/MyQBAhTvQdi/
+         ncZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcpJSa1Wo9zwfg3a1lRrly5JIDrST/wUTeVzBdSceuyW5sqVOFWWGpijmt6V8EaV1XveOflyPjl5YqvUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwKwis2HRzXAohsnkFtZR1kPIzai/5UEvRgN1RysFHT85/qhIx
+	PPsLewLRpvHx3aME8/KrwJNHBZKGcp8w66NFbLyywQbRRBUU66h9I8/nTbkVPec=
+X-Google-Smtp-Source: AGHT+IFusBTYb7gPAxZixD4vre5MF4aNXpzmSWO1sCDmCktW5i/0FD6ZzrAV8Ze8EESk75jqueZHlQ==
+X-Received: by 2002:a05:6214:469b:b0:6cb:faee:76da with SMTP id 6a1803df08f44-6cc2b923c6fmr17530536d6.48.1729017618017;
+        Tue, 15 Oct 2024 11:40:18 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:862e::7a9])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc22959b4fsm9683206d6.84.2024.10.15.11.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 11:40:17 -0700 (PDT)
+Message-ID: <ef6f582876782339a6abed5e5d114efade10f9ec.camel@ndufresne.ca>
+Subject: Re: [PATCH v1 00/10] Add MediaTek ISP7 camera system driver
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	 <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	 <angelogioacchino.delregno@collabora.com>, Sumit Semwal
+	 <sumit.semwal@linaro.org>, Christian Konig <christian.koenig@amd.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+ linaro-mm-sig@lists.linaro.org, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
+  teddy.chen@mediatek.com, hidenorik@chromium.org, yunkec@chromium.org, 
+ shun-yi.wang@mediatek.com
+Date: Tue, 15 Oct 2024 14:40:16 -0400
+In-Reply-To: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
+References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172901760612.1442.501863210235242260.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/sev branch of tip:
+Hi,
 
-Commit-ID:     4ae47fa7e8f95be17d4ff9c317a1193bbb4a3998
-Gitweb:        https://git.kernel.org/tip/4ae47fa7e8f95be17d4ff9c317a1193bbb4a3998
-Author:        Pavan Kumar Paluri <papaluri@amd.com>
-AuthorDate:    Mon, 14 Oct 2024 08:09:47 -05:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 15 Oct 2024 19:54:42 +02:00
+Le mercredi 09 octobre 2024 =C3=A0 19:15 +0800, Shu-hsiang Yang a =C3=A9cri=
+t=C2=A0:
+> Based on linux-next/master, tag: next-20241008
+>=20
+> The patch set adds the MediaTek ISP7.x camera system hardware driver.
+>=20
+> This driver sets up ISP hardware, handles interrupts, and initializes
+> V4L2 device nodes and functions. Moreover, implement V4L2 standard
+> video driver that utilizes media framework APIs. It also connects
+> the sensors and ISP, bridging with the seninf interface. Communicate
+> with SCP co-processor to compose ISP registers in the firmware.
 
-x86/virt: Move SEV-specific parsing into arch/x86/virt/svm
+Thanks for this work. If I read you correctly, this will depends on an scp
+firmware update. Its probably early at rev1, but we appreciate if you can c=
+ross-
+reference your associated linux-firmware submission (or document which MT
+flavour of SCP firmware) contains this support already.
 
-Move SEV-specific kernel command line option parsing support from
-arch/x86/coco/sev/core.c to arch/x86/virt/svm/cmdline.c so that both
-host and guest related SEV command line options can be supported.
+For ISP drivers reviewers, we have the experience with SCP that the IPC is =
+not
+versioned, making it difficult to maintain backward compatibility. Won't ma=
+tter
+until this is merged, but be aware that unless this SCP IPC design issue ha=
+s
+been fixed, any change to the -if headers means a modification to the SCP h=
+as
+been made, and often we have had to ask MTK to revisit the firmware code to
+unbreak backward compatibility.
 
-No functional changes intended.
+If this specific part of the SCP IPC is versioned, please let us know. I do=
+n't
+want this to be alarming message, just something we need to collectively be
+aware of not to break userspace, which may not update their firmwares in lo=
+ck
+step with the kernel.
 
-Signed-off-by: Pavan Kumar Paluri <papaluri@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Link: https://lore.kernel.org/r/20241014130948.1476946-2-papaluri@amd.com
----
- arch/x86/coco/sev/core.c          | 44 +------------------------------
- arch/x86/include/asm/sev-common.h | 27 ++++++++++++++++++-
- arch/x86/virt/svm/Makefile        |  1 +-
- arch/x86/virt/svm/cmdline.c       | 33 +++++++++++++++++++++++-
- 4 files changed, 61 insertions(+), 44 deletions(-)
- create mode 100644 arch/x86/virt/svm/cmdline.c
+regards,
+Nicolas
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index de1df0c..ff19e80 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -141,33 +141,6 @@ static DEFINE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
- static DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
- static DEFINE_PER_CPU(u64, svsm_caa_pa);
- 
--struct sev_config {
--	__u64 debug		: 1,
--
--	      /*
--	       * Indicates when the per-CPU GHCB has been created and registered
--	       * and thus can be used by the BSP instead of the early boot GHCB.
--	       *
--	       * For APs, the per-CPU GHCB is created before they are started
--	       * and registered upon startup, so this flag can be used globally
--	       * for the BSP and APs.
--	       */
--	      ghcbs_initialized	: 1,
--
--	      /*
--	       * Indicates when the per-CPU SVSM CA is to be used instead of the
--	       * boot SVSM CA.
--	       *
--	       * For APs, the per-CPU SVSM CA is created as part of the AP
--	       * bringup, so this flag can be used globally for the BSP and APs.
--	       */
--	      use_cas		: 1,
--
--	      __reserved	: 61;
--};
--
--static struct sev_config sev_cfg __read_mostly;
--
- static __always_inline bool on_vc_stack(struct pt_regs *regs)
- {
- 	unsigned long sp = regs->sp;
-@@ -2374,23 +2347,6 @@ static int __init report_snp_info(void)
- }
- arch_initcall(report_snp_info);
- 
--static int __init init_sev_config(char *str)
--{
--	char *s;
--
--	while ((s = strsep(&str, ","))) {
--		if (!strcmp(s, "debug")) {
--			sev_cfg.debug = true;
--			continue;
--		}
--
--		pr_info("SEV command-line option '%s' was not recognized\n", s);
--	}
--
--	return 1;
--}
--__setup("sev=", init_sev_config);
--
- static void update_attest_input(struct svsm_call *call, struct svsm_attest_call *input)
- {
- 	/* If (new) lengths have been returned, propagate them up */
-diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
-index 98726c2..50f5666 100644
---- a/arch/x86/include/asm/sev-common.h
-+++ b/arch/x86/include/asm/sev-common.h
-@@ -220,4 +220,31 @@ struct snp_psc_desc {
- #define GHCB_ERR_INVALID_INPUT		5
- #define GHCB_ERR_INVALID_EVENT		6
- 
-+struct sev_config {
-+	__u64 debug		: 1,
-+
-+	      /*
-+	       * Indicates when the per-CPU GHCB has been created and registered
-+	       * and thus can be used by the BSP instead of the early boot GHCB.
-+	       *
-+	       * For APs, the per-CPU GHCB is created before they are started
-+	       * and registered upon startup, so this flag can be used globally
-+	       * for the BSP and APs.
-+	       */
-+	      ghcbs_initialized	: 1,
-+
-+	      /*
-+	       * Indicates when the per-CPU SVSM CA is to be used instead of the
-+	       * boot SVSM CA.
-+	       *
-+	       * For APs, the per-CPU SVSM CA is created as part of the AP
-+	       * bringup, so this flag can be used globally for the BSP and APs.
-+	       */
-+	      use_cas		: 1,
-+
-+	      __reserved	: 61;
-+};
-+
-+extern struct sev_config sev_cfg;
-+
- #endif
-diff --git a/arch/x86/virt/svm/Makefile b/arch/x86/virt/svm/Makefile
-index ef2a31b..eca6d71 100644
---- a/arch/x86/virt/svm/Makefile
-+++ b/arch/x86/virt/svm/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-$(CONFIG_KVM_AMD_SEV) += sev.o
-+obj-$(CONFIG_CPU_SUP_AMD) += cmdline.o
-diff --git a/arch/x86/virt/svm/cmdline.c b/arch/x86/virt/svm/cmdline.c
-new file mode 100644
-index 0000000..add4bae
---- /dev/null
-+++ b/arch/x86/virt/svm/cmdline.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * AMD SVM-SEV command line parsing support
-+ *
-+ * Copyright (C) 2023 - 2024 Advanced Micro Devices, Inc.
-+ *
-+ * Author: Michael Roth <michael.roth@amd.com>
-+ */
-+
-+#include <linux/string.h>
-+#include <linux/printk.h>
-+#include <linux/cache.h>
-+
-+#include <asm/sev-common.h>
-+
-+struct sev_config sev_cfg __read_mostly;
-+
-+static int __init init_sev_config(char *str)
-+{
-+	char *s;
-+
-+	while ((s = strsep(&str, ","))) {
-+		if (!strcmp(s, "debug")) {
-+			sev_cfg.debug = true;
-+			continue;
-+		}
-+
-+		pr_info("SEV command-line option '%s' was not recognized\n", s);
-+	}
-+
-+	return 1;
-+}
-+__setup("sev=", init_sev_config);
+p.s. for those new to MTK architecture, the SCP firmware provides services =
+to
+everything multimedia in the platform, including CODECs, color converter an=
+d
+scalers, etc.
+
+>=20
+> These patches include CSI received data from sensors, sensor interface
+> bridge, raw/YUV image pre-processing, ISP utility and ISP control parts.
+>=20
+> Thank you for reviewing these patches.
+>=20
+> Shu-hsiang Yang (10):
+>   dt-bindings: media: mediatek: add camsys device
+>   media: platform: mediatek: add seninf controller
+>   media: platform: mediatek: add isp_7x seninf unit
+>   media: platform: mediatek: add isp_7x cam-raw unit
+>   media: platform: mediatek: add isp_7x camsys unit
+>   media: platform: mediatek: add isp_7x utility
+>   media: platform: mediatek: add isp_7x video ops
+>   media: platform: mediatek: add isp_7x state ctrl
+>   media: platform: mediatek: add isp_7x build config
+>   uapi: linux: add mediatek isp_7x camsys user api
+>=20
+>  .../media/mediatek/mediatek,cam-raw.yaml      |  169 +
+>  .../media/mediatek/mediatek,cam-yuv.yaml      |  148 +
+>  .../media/mediatek/mediatek,camisp.yaml       |   71 +
+>  .../media/mediatek/mediatek,seninf-core.yaml  |  106 +
+>  .../media/mediatek/mediatek,seninf.yaml       |   88 +
+>  drivers/media/platform/mediatek/Kconfig       |    1 +
+>  drivers/media/platform/mediatek/Makefile      |    2 +
+>  drivers/media/platform/mediatek/isp/Kconfig   |   21 +
+>  .../platform/mediatek/isp/isp_7x/Makefile     |    7 +
+>  .../mediatek/isp/isp_7x/camsys/Makefile       |   16 +
+>  .../isp_7x/camsys/kd_imgsensor_define_v4l2.h  |   87 +
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-ctrl.c | 1797 ++++++
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-ctrl.h |  140 +
+>  .../isp/isp_7x/camsys/mtk_cam-debug.c         | 1271 ++++
+>  .../isp/isp_7x/camsys/mtk_cam-debug.h         |  273 +
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-defs.h |  168 +
+>  .../isp/isp_7x/camsys/mtk_cam-dmadbg.h        |  721 +++
+>  .../isp/isp_7x/camsys/mtk_cam-feature.c       |   40 +
+>  .../isp/isp_7x/camsys/mtk_cam-feature.h       |   26 +
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-fmt.h  |   87 +
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-ipi.h  |  233 +
+>  .../isp/isp_7x/camsys/mtk_cam-meta-mt8188.h   | 2436 ++++++++
+>  .../isp/isp_7x/camsys/mtk_cam-plat-util.c     |  207 +
+>  .../isp/isp_7x/camsys/mtk_cam-plat-util.h     |   16 +
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-pool.c |  393 ++
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-pool.h |   28 +
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.c  | 5359 +++++++++++++++++
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.h  |  325 +
+>  .../isp/isp_7x/camsys/mtk_cam-raw_debug.c     |  403 ++
+>  .../isp/isp_7x/camsys/mtk_cam-raw_debug.h     |   39 +
+>  .../isp/isp_7x/camsys/mtk_cam-regs-mt8188.h   |  382 ++
+>  .../isp/isp_7x/camsys/mtk_cam-seninf-def.h    |  193 +
+>  .../isp/isp_7x/camsys/mtk_cam-seninf-drv.c    | 1741 ++++++
+>  .../isp/isp_7x/camsys/mtk_cam-seninf-drv.h    |   16 +
+>  .../isp/isp_7x/camsys/mtk_cam-seninf-hw.h     |  120 +
+>  .../isp/isp_7x/camsys/mtk_cam-seninf-if.h     |   28 +
+>  .../isp/isp_7x/camsys/mtk_cam-seninf-regs.h   |   40 +
+>  .../isp/isp_7x/camsys/mtk_cam-seninf-route.c  |  356 ++
+>  .../isp/isp_7x/camsys/mtk_cam-seninf-route.h  |   23 +
+>  .../isp/isp_7x/camsys/mtk_cam-seninf.h        |  170 +
+>  .../isp/isp_7x/camsys/mtk_cam-timesync.c      |  125 +
+>  .../isp/isp_7x/camsys/mtk_cam-timesync.h      |   12 +
+>  .../isp/isp_7x/camsys/mtk_cam-ufbc-def.h      |   59 +
+>  .../isp/isp_7x/camsys/mtk_cam-video.c         | 1817 ++++++
+>  .../isp/isp_7x/camsys/mtk_cam-video.h         |  224 +
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam.c      | 4168 +++++++++++++
+>  .../mediatek/isp/isp_7x/camsys/mtk_cam.h      |  733 +++
+>  .../isp_7x/camsys/mtk_camera-v4l2-controls.h  |   65 +
+>  .../isp_7x/camsys/mtk_csi_phy_2_0/Makefile    |    5 +
+>  .../mtk_csi_phy_2_0/mtk_cam-seninf-cammux.h   |  911 +++
+>  .../mtk_cam-seninf-csi0-cphy.h                |   69 +
+>  .../mtk_cam-seninf-csi0-dphy.h                |  139 +
+>  .../mtk_cam-seninf-hw_phy_2_0.c               | 2879 +++++++++
+>  .../mtk_cam-seninf-mipi-rx-ana-cdphy-csi0a.h  |  257 +
+>  .../mtk_cam-seninf-seninf1-csi2.h             |  415 ++
+>  .../mtk_cam-seninf-seninf1-mux.h              |  147 +
+>  .../mtk_csi_phy_2_0/mtk_cam-seninf-seninf1.h  |   47 +
+>  .../mtk_csi_phy_2_0/mtk_cam-seninf-tg1.h      |   49 +
+>  .../mtk_csi_phy_2_0/mtk_cam-seninf-top-ctrl.h |   99 +
+>  include/uapi/linux/mtkisp_camsys.h            |  227 +
+>  60 files changed, 30194 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
+atek,cam-raw.yaml
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
+atek,cam-yuv.yaml
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
+atek,camisp.yaml
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
+atek,seninf-core.yaml
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
+atek,seninf.yaml
+>  create mode 100644 drivers/media/platform/mediatek/isp/Kconfig
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/Makefile
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/Mak=
+efile
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/kd_=
+imgsensor_define_v4l2.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-ctrl.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-ctrl.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-debug.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-debug.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-defs.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-dmadbg.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-feature.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-feature.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-fmt.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-ipi.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-meta-mt8188.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-plat-util.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-plat-util.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-pool.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-pool.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-raw.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-raw.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-raw_debug.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-raw_debug.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-regs-mt8188.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf-def.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf-drv.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf-drv.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf-hw.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf-if.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf-regs.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf-route.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf-route.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-seninf.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-timesync.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-timesync.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-ufbc-def.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-video.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam-video.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_cam.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_camera-v4l2-controls.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/Makefile
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-cammux.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-csi0-cphy.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-csi0-dphy.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-hw_phy_2_0.c
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-mipi-rx-ana-cdphy-csi0a.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-seninf1-csi2.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-seninf1-mux.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-seninf1.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-tg1.h
+>  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
+_csi_phy_2_0/mtk_cam-seninf-top-ctrl.h
+>  create mode 100644 include/uapi/linux/mtkisp_camsys.h
+>=20
+
 
