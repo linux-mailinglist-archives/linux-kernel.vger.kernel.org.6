@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-365575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890E899E489
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:51:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E293F99E48A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E4328400A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:51:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6194EB23A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD461E907D;
-	Tue, 15 Oct 2024 10:51:25 +0000 (UTC)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA281EABD7;
+	Tue, 15 Oct 2024 10:51:27 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B228B1E8830
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1B11E377E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989485; cv=none; b=XLmgh0TftnV06FYrWAJ+fVlp3tbVmimun6axNopZucFNZ2CQcGDpcWVSm5CJJg8ZOgVqM8ln/2u0tDkt8Wnj37QiLKCti/eU4VR6auBVSHBV7StrcCFsmIWgy0DGo9r1+LlAPY8w+r/ga1dyQzDIKIbDqC3X9VLchGL+K/VL3g0=
+	t=1728989487; cv=none; b=m0zGnbA7MqUqoPmTS3qcjGWfxCkWTh0xXuwiJ76N7oO3vDq0N/Xrh3sKV+Q3mIoOJsRYU2whjkAYMOC9NKL95mKKFNVbmTX8279IA8fnqA4jLjcJCuzz/hT91Vb+sGBbTGacWhs+QegJ76YaNoqMlDCzJAqSOxCsTEDKfB9ekao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989485; c=relaxed/simple;
-	bh=noKDIv0h7Ynv810imGOXTcEg1IQAlLRsP4VhEHZUHOc=;
+	s=arc-20240116; t=1728989487; c=relaxed/simple;
+	bh=9GZgHLphi5Wk4HmWN/Gm+S5zsftBa7bRNsvRGrRRmL4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lpzXIDJ5IRofYimZu3FCdQecMnKkpSjmsEyRMZpogdFTnG7b2TXCeJMVM8cGDjBIYqwgQzGHwn8HRnJKdYuy8AXPXyfVrXHyxBKsEOUELR9zEGd3h83lyu4+ntdONLmlNtgxvI7ZRXDnZpaQ3h8j+Bf2WuGexwYpI4ZvDyNAPhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.51
+	 MIME-Version; b=ZjmAD/MPRgS6YttFQ7wgUALwWjs1wO9D7G03Ixz1Bs+zRag2tVoySBOhr4cSxWxFpyRGweiVqbLYqjMp1lnndT2S8yjXD2ZdOOnfxO+9niiDIXHTAXw5j9avBqxpzz3zO6PWz9fz1dSsJTFIvgp+I9opJ0YY4wpTIJPa2Ym2N94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso2664358e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:51:23 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4311bb9d4beso34961855e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:51:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728989482; x=1729594282;
+        d=1e100.net; s=20230601; t=1728989484; x=1729594284;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=icEUaeGE3WMkx6ZfDT6djzDVF/cO+oPPN/8W1btpyhI=;
-        b=Clww0QyKN3m5aMFJPijDUw0VdaG8l9Ex3uXJYmSpB86WeV0bfpiqCQ1kBQkv/7LX2E
-         C29qOKJW/Y2HtGPum6/aJI6A34FysuyFzvU5S2w31LvkzuHsX6yLOridHEWj6J/YzlMh
-         3ujQArio5OxRqaK4YszgJ2vunP15q1FLETrAhdMzEbXSj53x7jZW4pM1wc/dUZ2uyGYm
-         IcHVt+KEdXIQsM/875F7Ili5OEYEinzFLriCk+7BEDNKhhYGBnZYFvzLaE+uG3eohtVL
-         QV353pDOonvCrU4ZLXsc2MyrEFz5GYRnr5Pjg34vYmSRw/2tydyHQaYX6vu3suwrvBvz
-         5wDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXz/1RwMJZWvUdSiWjKBIyJL2/85fETO7KdwkJmCGhGSAcccjKKglkbJLMmSQ7iKIatdZpqEsz5Flq/p0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykjFeF9ZAFdpaTOPBkarZc0GVbuOdMnOct+GVu9zs2Y9NIqZrq
-	GPIEOahVQH4ZdtcwXYPZkcEuko2K7stuRCzpNGQt7zVIMDiOiqNA
-X-Google-Smtp-Source: AGHT+IF0OuV2qhV2mSH72m35MPN1Rq40TLgvgJeV1aeG7yeagMUM9BETj9YDa2vmdJieEV8Gk/yyfg==
-X-Received: by 2002:a05:6512:10d1:b0:532:c197:393e with SMTP id 2adb3069b0e04-539e54d7ba7mr4799747e87.11.1728989481381;
-        Tue, 15 Oct 2024 03:51:21 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-112.fbsv.net. [2a03:2880:30ff:70::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6c6464sm14062525e9.46.2024.10.15.03.51.20
+        bh=Kvs4LqINVgBhaSBAT3DZgAdv6NUP3/EwAoWMF6a1O7M=;
+        b=XlY6MKRfKWf6h5xfjlwBGc84iF2xEjcTum164McGVdD6wpn/sq1fmhBMKLPpYJSN+o
+         GpqbHOiXqPrAn50tUyNjclM7MgceBDAgTz6SWDhOlIIwaWGdO8pMlfNT5k6xkin+OD44
+         9wEimJIxHJ93rxgezIEq9K38f3JnpKza5a3o52bYwkGognKowH2tNSYsArdjRWrKeXHL
+         KEWCuCarmLCzYwKQCzrlGU21yU7Tx/vaQj227CTs4w8Ol1UFAwmdVOm9lrpzGMKj3c+9
+         B41hNt+xOB2i9agNVApN1izgVcjPJ+FwVTk8u81m/bwdqVvW7JuJCpyOrnP185bSdvnX
+         b5yw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8j+nRNNYIae/qyDWYJWmy8o0IxHF9FLek5wsqpVWz4oy468L9+WJkDpoHZ5sdgVs9lI6TsnJrkpLfeWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznlTqKeU6hxaVyfChVd1GiaSnZMRKHj+j+kHf1ojrxYBjUUHiB
+	w2usTMGuNQln9KJ2pPxhKmJfakDRVbcZCuPUHpqYCA0qw3ZoOVzC
+X-Google-Smtp-Source: AGHT+IEwHPS3iHYo8pijwkLDsdDwhNILMyZpgoa9CuaZDjtL+cklX5ongFxs+cHJsA0PAjOFXMp4NA==
+X-Received: by 2002:a05:600c:3496:b0:42c:b22e:fbfa with SMTP id 5b1f17b1804b1-431255e765amr101656005e9.21.1728989483296;
+        Tue, 15 Oct 2024 03:51:23 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf8228sm1247443f8f.81.2024.10.15.03.51.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 03:51:20 -0700 (PDT)
+        Tue, 15 Oct 2024 03:51:22 -0700 (PDT)
 From: Breno Leitao <leitao@debian.org>
 To: bp@alien8.de,
 	x86@kernel.org,
@@ -64,9 +64,9 @@ To: bp@alien8.de,
 	"H. Peter Anvin" <hpa@zytor.com>
 Cc: kernel-team@meta.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] x86/bugs: Use cpu_smt_possible helper
-Date: Tue, 15 Oct 2024 03:51:05 -0700
-Message-ID: <20241015105107.496105-2-leitao@debian.org>
+Subject: [PATCH 2/2] x86/bugs: spectre user default must depend on MITIGATION_SPECTRE_V2
+Date: Tue, 15 Oct 2024 03:51:06 -0700
+Message-ID: <20241015105107.496105-3-leitao@debian.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241015105107.496105-1-leitao@debian.org>
 References: <20241015105107.496105-1-leitao@debian.org>
@@ -78,51 +78,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a helper function to check if SMT is available. Use this helper
-instead of performing the check manually.
+Change the default value of spectre v2 in user mode to respect the
+CONFIG_MITIGATION_SPECTRE_V2 config option.
 
-The helper function cpu_smt_possible() does exactly the same thing as
-was being done manually inside spectre_v2_user_select_mitigation().
-Specifically, it returns false if CONFIG_SMP is disabled, otherwise
-it checks the cpu_smt_control global variable.
+Currently, user mode spectre v2 is set to auto
+(SPECTRE_V2_USER_CMD_AUTO) by default, even if
+CONFIG_MITIGATION_SPECTRE_V2 is disabled.
 
-This change improves code consistency and reduces duplication.
+Set the spectre_v2 value to auto (SPECTRE_V2_USER_CMD_AUTO) if the
+Spectre v2 config (CONFIG_MITIGATION_SPECTRE_V2) is enabled, otherwise
+set the value to none (SPECTRE_V2_USER_CMD_NONE).
+
+Important to say the command line argument "spectre_v2_user" overwrites
+the default value in both cases.
 
 Signed-off-by: Breno Leitao <leitao@debian.org>
+Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index d1915427b4ff..6d3b61d7be9c 100644
+index 6d3b61d7be9c..c21ff072e048 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1315,16 +1315,11 @@ static void __init
- spectre_v2_user_select_mitigation(void)
+@@ -1277,9 +1277,13 @@ static __ro_after_init enum spectre_v2_mitigation_cmd spectre_v2_cmd;
+ static enum spectre_v2_user_cmd __init
+ spectre_v2_parse_user_cmdline(void)
  {
- 	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
--	bool smt_possible = IS_ENABLED(CONFIG_SMP);
- 	enum spectre_v2_user_cmd cmd;
++	enum spectre_v2_user_cmd mode;
+ 	char arg[20];
+ 	int ret, i;
  
- 	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
- 		return;
++	mode = IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?
++		SPECTRE_V2_USER_CMD_AUTO : SPECTRE_V2_USER_CMD_NONE;
++
+ 	switch (spectre_v2_cmd) {
+ 	case SPECTRE_V2_CMD_NONE:
+ 		return SPECTRE_V2_USER_CMD_NONE;
+@@ -1292,7 +1296,7 @@ spectre_v2_parse_user_cmdline(void)
+ 	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
+ 				  arg, sizeof(arg));
+ 	if (ret < 0)
+-		return SPECTRE_V2_USER_CMD_AUTO;
++		return mode;
  
--	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
--	    cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
--		smt_possible = false;
--
- 	cmd = spectre_v2_parse_user_cmdline();
- 	switch (cmd) {
- 	case SPECTRE_V2_USER_CMD_NONE:
-@@ -1385,7 +1380,7 @@ spectre_v2_user_select_mitigation(void)
- 	 * so allow for STIBP to be selected in those cases.
- 	 */
- 	if (!boot_cpu_has(X86_FEATURE_STIBP) ||
--	    !smt_possible ||
-+	    !cpu_smt_possible() ||
- 	    (spectre_v2_in_eibrs_mode(spectre_v2_enabled) &&
- 	     !boot_cpu_has(X86_FEATURE_AUTOIBRS)))
- 		return;
+ 	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
+ 		if (match_option(arg, ret, v2_user_options[i].option)) {
+@@ -1302,8 +1306,8 @@ spectre_v2_parse_user_cmdline(void)
+ 		}
+ 	}
+ 
+-	pr_err("Unknown user space protection option (%s). Switching to AUTO select\n", arg);
+-	return SPECTRE_V2_USER_CMD_AUTO;
++	pr_err("Unknown user space protection option (%s). Switching to default\n", arg);
++	return mode;
+ }
+ 
+ static inline bool spectre_v2_in_ibrs_mode(enum spectre_v2_mitigation mode)
 -- 
 2.43.5
 
