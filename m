@@ -1,165 +1,200 @@
-Return-Path: <linux-kernel+bounces-364956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CFCB99DBA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:35:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5196E99DBAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05D86287CD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:34:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97B32B22AEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A77158A30;
-	Tue, 15 Oct 2024 01:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C2615531B;
+	Tue, 15 Oct 2024 01:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="wn3nw3yM"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRNgSrbG"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879B518A6BA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E67A184F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728955926; cv=none; b=OJXdOqOZVZAymHH1PAbdiVA3WuS2D+l3Yo3byI8R+yu6AdrzYM848/M3uKFibUhRqj5MA0loeReb5tny7h9iP7YRAysfIe6tRDNLc9IVARffqqScczviwQxXgwqFzFo+FBpg9wkVITY/+3kPZlkE16IjRk6bLG5lSrzhd0tSvxc=
+	t=1728956029; cv=none; b=Hfj8zVT/WLo2xTowYG4Z4wA/s8Tq5IbUWzybxGjdVR6vVBdBZmEYsnRFqEBrin0xl70Yo6oK9u/RCVGr/WtvdnDJAsrihzjCogkgcFIRYaNgZ7rOZgI9LzqKmPNjDGPHsDsxTjEd2sJlGgfuzEANEUZDytm//ABDWdbUDCVmi+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728955926; c=relaxed/simple;
-	bh=evtDFhlbO2SfYWbBEcGg1cg6KW2I8YqCcXT82SPzxcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pi8Z9GOl7YKzwxJx1XcdEUjdbA3UymQ2zb0uaN2EoBJ/5Af1LSu+GVxKzBVhk18LHC6fs9Ga473jHC5P8wnSqs9+kGDscSaUXOxs6f8U2YiB2zeShBdpVE9qUBmhtI304bdb1cOQi47290O9e13Ycki+034z6wKviwqqQ3eNLGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=wn3nw3yM; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b110709ebeso352026185a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 18:32:04 -0700 (PDT)
+	s=arc-20240116; t=1728956029; c=relaxed/simple;
+	bh=bGWf++BT2vSXQXO9NtpABnmFty/6BVF6bM7nrLh32Gc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ftkR1+PlZTZ8SeY09JfLAnDKbihzg9hPMkEo9igAyuTZHw1+LTT9sRWibiiSDxJjZjIDHLNjIAUYYAgb0c7fAIRfquepDCyttXcER9+8/00Y1MomXl3YhxJcOcHuvFtN3ReF7zTdeB1ZCTIsvZlnopsuW7CWd0eDkBOa1EERTi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRNgSrbG; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso3044478a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 18:33:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1728955923; x=1729560723; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IcrqeSJOTDI/cz8AM43HkiRMvxwegUULZjWirUjS4dU=;
-        b=wn3nw3yMrQmYf0jnMy6rs/mkB8H0VREMt0z5LzZ+/KHjUsYNGiQnOgYFVQKIE0IuoD
-         h4Sjv5LzVPCdepviNnrkAYdrvWDGS4kJBAa8BId5GtCh1Wb0+zv0877kPbDcDQMVYbN6
-         z0o6f72yjNbmxoSS8v2W5wMQrqME0FMaACHIoazFbZxDdPK0ElTeRU3ctO84xOPYmWWx
-         I0wuw/rKWBTIalv4f8i7XgcqfIEac1fvXRKCvks6TKHScPl7xd2VJ3JjVhCqEUEH3DHo
-         xKY6JBNbnSkJiJnL5TV1GPWp6Ebmy2ZkzAhDTfWH4UREbKapNyT6CG7Lg94wQoVL/Vm/
-         6jTA==
+        d=gmail.com; s=20230601; t=1728956027; x=1729560827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/FgRTRf0le7Jh2w75CMwMOtbUSojhg+y46VXsqNVeW4=;
+        b=NRNgSrbG6ckjqEGikP26Cq5GH3YozOK0o6k2FTtZadG/BEh1mMTN5ADFacu5g4xDtl
+         Rk/CxzIbBtmjFKiDTsRqmNHtxiqc+V21g505up/AW1asIMtwHSBbmVWaZgnzYiIsEkCm
+         MTd/W5JSUFJCuSe2ps9tzzb9VUKqOfulI5C1yWMuwzPZeMBBR/HZQMVflbemnV/jYvOe
+         vOhsNSUFhAkexTySZLBRZMHxaUVfuMaSqfSyQJhHs7riWMjrcXPyg2Jfpf0hG1qyGNW7
+         Vz41SF4BnPzdeeJOihvs8v4OkRIfEQ609MKvsiZ5wFMpfG2BKsFCAVOpG2LWr4v1uuIY
+         t0gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728955923; x=1729560723;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IcrqeSJOTDI/cz8AM43HkiRMvxwegUULZjWirUjS4dU=;
-        b=Urrvv4NyGy0ofs4w68TgK5pohsa53B/kKqrhJB51xJaj5C9vYCWJ/9fLgQDfdVgIsH
-         pMTUFSZw3x+xgtfkWLSlN8855Ll7BQtalxfHs4SRNavVxXvGAivN907FsCsE7macO5z4
-         M32PAASgDuvdIAUTkEs04wWyNEvGjRRSZ96uaDstvhCckhwN68NKUxSF9fHZqg6d994A
-         /wP9Z1UeCJhl+QZrMKOunnZx+3VYqOzoHhMK/ZGxLhY3m62kH0JPiAY5jLYdHRCejKWI
-         FY5Rp0b4GCrtWiyqZZNnPDvdEC56k7R3ykLJcVsihB9g8bBBUi45T9SRA7IPu13VDk/4
-         IKjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtKzwrrUTuT6xKOFzORtuJNVDi8aNOARsEmEr6BB5NVc7gNdV/EdZJkp/il4Z9lxOq3tSg/5k0CYGSBhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEkeGhKRSk5cQDLNykVhhklgYZ0hOHcRuKn84ScdMajBWjLDFp
-	wdxDWf6c5YiJlD7grHDZJ3QFnlIkptZKtaYnj0eKd35WNBeOcVBq1iqdDvRFzN/1f3VS/hSrq7w
-	=
-X-Google-Smtp-Source: AGHT+IFb3JuxX0Me0Jk5ytKkH2I02jiUABZ/eXCHy7K9rI0ylzmgsAhY46mtxElZewvi2+A35r4cAw==
-X-Received: by 2002:a05:620a:468a:b0:7ae:d2d0:f86 with SMTP id af79cd13be357-7b11a396bfcmr1842929485a.38.1728955923241;
-        Mon, 14 Oct 2024 18:32:03 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::7dde])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b378b1csm1254641cf.75.2024.10.14.18.32.01
+        d=1e100.net; s=20230601; t=1728956027; x=1729560827;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/FgRTRf0le7Jh2w75CMwMOtbUSojhg+y46VXsqNVeW4=;
+        b=PVYgWW39H5rhG2IONmhqHiyfbl2jyzjMpOHJZSp2l5qP5ayJ0jHcY6VWySWty+arIF
+         0VhvTbfrOot/q0XdoLeM1jMvmBfelOAmaIjNldUV4LVZE1OCgH4zs0CS8htnWhP7y3Wg
+         K3ZjREApxV8WT466RPWibQviY6OI40h5urQsWmeXFHDwj9ZlsqFnNXnBcY+SvUVSY+9n
+         WcZ7lmllhQesWXYWiTqkSZGjdbW++px3KT2JPArzUlROpZNVyuEYMrcJHFvaOKo5VjFX
+         4YPQtIBWoIhchCZpuflHGp9iB07gYx2YpYH0pf0Up/Lner84DP6OxhbM+kzRH23/GgEq
+         I7VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq/j7nRiHn04urkHN6YE1g/ID9yIC199/5F5H7/84BZPxPIE94ouXSDggU+/6RqxKNB2xN0Gb9csO3Pkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu/s2PsE4NEnhDsMF3w92YShtcDzwnBtxvd2C5KmHXDm+IO+ZY
+	Llb8GuiqOoRP6Mo8AVd/0PSKKFbNzkghY9PxqHbPHh2IOUoCunqs
+X-Google-Smtp-Source: AGHT+IE2VbhYvinnTtnp8gdiPFs7AssOulNu8P5FQjpDVoCidl6hRwDILWFOZsBNBRYKYFDJk0Ss8Q==
+X-Received: by 2002:a05:6a20:9f4a:b0:1d5:1729:35ec with SMTP id adf61e73a8af0-1d8c955c8ebmr16914023637.7.1728956026633;
+        Mon, 14 Oct 2024 18:33:46 -0700 (PDT)
+Received: from dw-tp.. ([171.76.80.151])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77508562sm189349b3a.186.2024.10.14.18.33.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 18:32:02 -0700 (PDT)
-Date: Mon, 14 Oct 2024 21:31:59 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzkaller-bugs@googlegroups.com
-Cc: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>,
-	USB mailing list <linux-usb@vger.kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-Message-ID: <377d1fd2-054a-4ce2-a188-3db86675e5d9@rowland.harvard.edu>
-References: <1336ee1b-cf5d-4081-b4f1-512e2b29dace@rowland.harvard.edu>
- <670dbb0e.050a0220.3798c8.0134.GAE@google.com>
+        Mon, 14 Oct 2024 18:33:45 -0700 (PDT)
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	Marco Elver <elver@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Donet Tom <donettom@linux.vnet.ibm.com>,
+	Pavithra Prakash <pavrampu@linux.vnet.ibm.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Subject: [RFC RESEND v2 00/13] powerpc/kfence: Improve kfence support
+Date: Tue, 15 Oct 2024 07:03:23 +0530
+Message-ID: <cover.1728954719.git.ritesh.list@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670dbb0e.050a0220.3798c8.0134.GAE@google.com>
+Content-Transfer-Encoding: 8bit
 
-Syzkaller people:
+Resending v2 for review comments.
 
-What's going on here?  This was working earlier today...
+This patch series addresses following to improve kfence support on Powerpc.
 
-Alan Stern
+1. Usage of copy_from_kernel_nofault() within kernel, such as read from
+   /proc/kcore can cause kfence to report false negatives.
 
-PS: Why doesn't syzkaller use a 12-digit SHA-1 code in the commit: line 
-near the bottom below?  This has been the standard in the kernel 
-community for years.
+   This is similar to what was reported on s390. [1]
+   [1]: https://lore.kernel.org/all/20230213183858.1473681-1-hca@linux.ibm.com/
 
-On Mon, Oct 14, 2024 at 05:45:02PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot tried to test the proposed patch but the build/boot failed:
-> 
-> kernel clean failed: failed to run ["make" "-j" "0" "ARCH=x86_64" "distclean"]: exit status 2
-> make: the '-j' option requires a positive integer argument
-> Usage: make [options] [target] ...
-> Options:
->   -b, -m                      Ignored for compatibility.
->   -B, --always-make           Unconditionally make all targets.
->   -C DIRECTORY, --directory=DIRECTORY
->                               Change to DIRECTORY before doing anything.
->   -d                          Print lots of debugging information.
->   --debug[=FLAGS]             Print various types of debugging information.
->   -e, --environment-overrides
->                               Environment variables override makefiles.
->   -E STRING, --eval=STRING    Evaluate STRING as a makefile statement.
->   -f FILE, --file=FILE, --makefile=FILE
->                               Read FILE as a makefile.
->   -h, --help                  Print this message and exit.
->   -i, --ignore-errors         Ignore errors from recipes.
->   -I DIRECTORY, --include-dir=DIRECTORY
->                               Search DIRECTORY for included makefiles.
->   -j [N], --jobs[=N]          Allow N jobs at once; infinite jobs with no arg.
->   -k, --keep-going            Keep going when some targets can't be made.
->   -l [N], --load-average[=N], --max-load[=N]
->                               Don't start multiple jobs unless load is below N.
->   -L, --check-symlink-times   Use the latest mtime between symlinks and target.
->   -n, --just-print, --dry-run, --recon
->                               Don't actually run any recipe; just print them.
->   -o FILE, --old-file=FILE, --assume-old=FILE
->                               Consider FILE to be very old and don't remake it.
->   -O[TYPE], --output-sync[=TYPE]
->                               Synchronize output of parallel jobs by TYPE.
->   -p, --print-data-base       Print make's internal database.
->   -q, --question              Run no recipe; exit status says if up to date.
->   -r, --no-builtin-rules      Disable the built-in implicit rules.
->   -R, --no-builtin-variables  Disable the built-in variable settings.
->   -s, --silent, --quiet       Don't echo recipes.
->   --no-silent                 Echo recipes (disable --silent mode).
->   -S, --no-keep-going, --stop
->                               Turns off -k.
->   -t, --touch                 Touch targets instead of remaking them.
->   --trace                     Print tracing information.
->   -v, --version               Print the version number of make and exit.
->   -w, --print-directory       Print the current directory.
->   --no-print-directory        Turn off -w, even if it was turned on implicitly.
->   -W FILE, --what-if=FILE, --new-file=FILE, --assume-new=FILE
->                               Consider FILE to be infinitely new.
->   --warn-undefined-variables  Warn when an undefined variable is referenced.
-> 
-> This program built for x86_64-pc-linux-gnu
-> Report bugs to <bug-make@gnu.org>
-> 
-> 
-> 
-> Tested on:
-> 
-> commit:         8e929cb5 Linux 6.12-rc3
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git v6.12-rc3
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f342ea16c9d06d80b585
-> compiler:       
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=162e785f980000
-> 
+   Hence this series adds patch-1 as a kfence kunit test to detect
+   copy_from_kernel_nofault() case. I assume the same might be needed for all
+   other archs as well (Please correct if this understanding is wrong).
+
+   Patch-2, thus adds a fix to handle this case in ___do_page_fault() for
+   powerpc.
+
+2. (book3s64) Kfence depends upon debug_pagealloc infrastructure on Hash.
+   debug_pagealloc allocates a linear map based on the size of the DRAM i.e.
+   1 byte for every 64k page. That means for a 16TB DRAM, it will need 256MB
+   memory for linear map. Memory for linear map on pseries comes from
+   RMA region which has size limitation. On P8 RMA is 512MB, in which we also
+   fit crash kernel at 256MB, paca allocations and emergency stacks.
+   That means there is not enough memory in the RMA region for the linear map
+   based on DRAM size (required by debug_pagealloc).
+
+   Now kfence only requires memory for it's kfence objects. kfence by default
+   requires only (255 + 1) * 2 i.e. 32 MB for 64k pagesize.
+
+Summary of patches
+==================
+This series in Patch-1 adds a kfence kunit testcase to detect
+copy_from_kernel_nofault() case. I assume the same should be needed for all
+other archs as well.
+
+Patch-2 adds a fix to handle this false negatives from copy_from_kernel_nofault().
+
+Patch[3-9] removes the direct dependency of kfence on debug_pagealloc
+infrastructure. We make Hash kernel linear map functions to take linear map array
+as a parameter so that it can support debug_pagealloc and kfence individually.
+That means we don't need to keep the size of the linear map to be
+DRAM_SIZE >> PAGE_SHIFT anymore for kfence.
+
+Patch-10: Adds kfence support with above (abstracted out) kernel linear map
+infrastructure. With it, this also fixes, the boot failure problem when kfence
+gets enabled on Hash with >=16TB of RAM.
+
+Patch-11 & Patch-12: Ensure late initialization of kfence is disabled for both
+Hash and Radix due to linear mapping size limiations. Commit gives more
+description.
+
+Patch-13: Early detects if debug_pagealloc cannot be enabled (due to RMA size
+limitation) so that the linear mapping size can be set correctly during init.
+
+Testing:
+========
+It passes kfence kunit tests with Hash and Radix.
+[   44.355173][    T1] # kfence: pass:27 fail:0 skip:0 total:27
+[   44.358631][    T1] # Totals: pass:27 fail:0 skip:0 total:27
+[   44.365570][    T1] ok 1 kfence
+
+
+Future TODO:
+============
+When kfence on Hash gets enabled, the kernel linear map uses PAGE_SIZE mapping
+rather than 16MB mapping. This should be improved in future.
+
+v1 -> v2:
+=========
+1. Added a kunit testcase patch-1.
+2. Fixed a false negative with copy_from_kernel_nofault() in patch-2.
+3. Addressed review comments from Christophe Leroy.
+4. Added patch-13.
+
+
+Nirjhar Roy (1):
+  mm/kfence: Add a new kunit test test_use_after_free_read_nofault()
+
+Ritesh Harjani (IBM) (12):
+  powerpc: mm: Fix kfence page fault reporting
+  book3s64/hash: Remove kfence support temporarily
+  book3s64/hash: Refactor kernel linear map related calls
+  book3s64/hash: Add hash_debug_pagealloc_add_slot() function
+  book3s64/hash: Add hash_debug_pagealloc_alloc_slots() function
+  book3s64/hash: Refactor hash__kernel_map_pages() function
+  book3s64/hash: Make kernel_map_linear_page() generic
+  book3s64/hash: Disable debug_pagealloc if it requires more memory
+  book3s64/hash: Add kfence functionality
+  book3s64/radix: Refactoring common kfence related functions
+  book3s64/hash: Disable kfence if not early init
+  book3s64/hash: Early detect debug_pagealloc size requirement
+
+ arch/powerpc/include/asm/kfence.h        |   8 +-
+ arch/powerpc/mm/book3s64/hash_utils.c    | 364 +++++++++++++++++------
+ arch/powerpc/mm/book3s64/pgtable.c       |  13 +
+ arch/powerpc/mm/book3s64/radix_pgtable.c |  12 -
+ arch/powerpc/mm/fault.c                  |  10 +-
+ arch/powerpc/mm/init-common.c            |   1 +
+ mm/kfence/kfence_test.c                  |  17 ++
+ 7 files changed, 318 insertions(+), 107 deletions(-)
+
+--
+2.46.0
+
 
