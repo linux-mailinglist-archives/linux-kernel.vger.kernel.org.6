@@ -1,238 +1,174 @@
-Return-Path: <linux-kernel+bounces-365226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2CFC99DF32
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:18:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F8799DF34
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 442B9B21363
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:18:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4141BB21491
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82F418BBBA;
-	Tue, 15 Oct 2024 07:18:32 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7417D18BBBA;
+	Tue, 15 Oct 2024 07:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oRl8OF+H"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78F218B46D;
-	Tue, 15 Oct 2024 07:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3246E9474;
+	Tue, 15 Oct 2024 07:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728976712; cv=none; b=jZYCi6hvgLIcNqAbqCcMDMuD6pr/waFvTwwrFpnL/UfITxl+ub6y4+1H61hHoRLVKxLg5pbFxAIlRczTFMUsMlX9JsoXWdTDP3iE5YOuT2ug2LCfzi+LJHGWZVNT2kbY3F55INIFIuDu5sG+nOn7yyNhY6sNRrbHsRFAe4i7P3g=
+	t=1728976789; cv=none; b=jb8BUCXeq78iiWO98xihYWS+PBmzeraO2C/8vFShTtPBqPvoaEXsZnSUkD95b0Gt3CA71XkT9YbfCXtim14vjJZD9K4F/LOhYl3YdsteWN+Z/dqvjtpNKHTu90EFponjLn5+p7f8RTW9yF/r8zNvs3Ab5jhCtCknEmufMoD3XQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728976712; c=relaxed/simple;
-	bh=4OOZYkyFgO/AQycLeey45cxHQ8gT2wl0zTCH9ILQSJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OM8zUIKqjPaqH7UXehpXJyZXSC5D1SQ1msVUihCIbOBWP5lbZ38yz87CqDXyLlftHJHgcPXsXeU4Oq85VRNzJIh7e/f4MI0XW4/ALTIklmsaO1v9e6vzriYy962LF08ZMa+nybx5zQC6o3Jg3c/+fPXDvxyikRRnhjlOChTL7LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43055b43604so48374575e9.3;
-        Tue, 15 Oct 2024 00:18:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728976709; x=1729581509;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qSFoFVl0g4CE4dcMqFm1QdG+UafZHTTYiUNagjWmSb0=;
-        b=a7H27JaoFvdOio0Kb++35wM/eW89Ew7H8azRibNLm6fqdr9kc7rO0rdpcRCNNIRxH8
-         pUgQRnIR9v0Mra2VCWN44t+eWNlIyXPeweT2l9F5SidEaSXTVUERgytYm5hVO3SdXlVU
-         86/k2QAmaO8egsvsZC8GX3xcaT6e5Dh5vwxoIV9OQSl9huHEhkxBCL8VJ/BkkujW7yN2
-         VqJr0Z8B+qLT28dsVaSpJZRK53playqa3+X2CExOhfJpaFani8tC9Mhkw387iNg6zIrN
-         GqbgSb7tQUCf0E0nb5vba1O2DlpVHK07jt0BNwmh/zcC5OTSXewpFU3LBF/HwHHaNft0
-         nVkA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+vcTS044bW+kkU5RpvNmrT01FSu6dDyoBEPnWPpxa8Q8lEcFO1KfVhQXFdIsgufzD/FoomBVGjW602mQ=@vger.kernel.org, AJvYcCV+FW4y9dqhH+BG8yH1YNZJEaRBbEstTJGBAphpM/+TGNp52dinqeSSI82Cl4zw+mvWZA6bZicAiunxcg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZttlSqbrtb4L7kTRwMIFkBEPcPLCoYSn5UtxN/fh8Zr6e0Qx7
-	WRTsza37hGL+o4+BSzhx1DrhiirA8rLYm3BKMmoLMrJR6z3SGMN5
-X-Google-Smtp-Source: AGHT+IHpVrAsFcjZGEwRS8xD8fiBE1LFGxoGCmzt/kXflsSU/3usgD1drRuzyHjtxJyV9uI8X3y4zg==
-X-Received: by 2002:a05:600c:5021:b0:430:5356:ac92 with SMTP id 5b1f17b1804b1-4311deaea4dmr120428625e9.7.1728976708578;
-        Tue, 15 Oct 2024 00:18:28 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56998fsm9007985e9.16.2024.10.15.00.18.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 00:18:26 -0700 (PDT)
-Message-ID: <cdb9391d-88ee-430c-8b3b-06b355f4087f@kernel.org>
-Date: Tue, 15 Oct 2024 09:18:24 +0200
+	s=arc-20240116; t=1728976789; c=relaxed/simple;
+	bh=Sjot4pSF2SyT6FdglAfZCnA766l89vUuQJTg3qTfbPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e0V0EDuAF0wWnNiMYMK8SzsGDMbx+lwtqafJwF9nKQ00P5wDOQ9oNyl9DIg7yE5INoYIxOm8cbRHCHYLwz7PGMGMASt8iMN7u+pSbSGeL7dQRFnoXsfDPPGWRW6AcKObxdV+813ZRz/Kfm/q5tEgBBUtTiwqGxSC727Jzb9BT/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oRl8OF+H; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F6nHpr015833;
+	Tue, 15 Oct 2024 07:19:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=DMi9YO3e7Eu+djS8lokJU70DHc6dVgZju7R3SqDF/
+	Hw=; b=oRl8OF+HscHph5F066m43FZmZA+a8Erjm7kdJ4p0ej1dhFozLvXXLqZ+F
+	e4iiLsI/VsOzumTF3YCo08hBxzGH4mzEZji4MIuPn/hyenIY4lyaCgOdbTxWQURr
+	uvo8piSRGA/M7YNFWP1iWPhhApfIQn+ZoJ1i986cBj/cE3bqbbjI2r50rOsSMzE3
+	5jpTmArfcukQNMvyLBHy8ypd8zk1m/ZOQccvB4gGf0QwXFnSatMEE2CpsIRhBbLx
+	2QuRv5qFk3wPFpNoR5Lw8wrWKI9zD0S4CXKZ0ybhI9x8+DvaBp79ejpSjmqDbaoF
+	NQmBTdCvcVPwbKjlm0m1rRd9O/lCw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429kf7r4xr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 07:19:33 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49F7I1jO011094;
+	Tue, 15 Oct 2024 07:19:33 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429kf7r4wt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 07:19:33 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F71Hsx006671;
+	Tue, 15 Oct 2024 07:19:06 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4283ertmqv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 07:19:06 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49F7J5FJ56164768
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 07:19:05 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4479320043;
+	Tue, 15 Oct 2024 07:19:05 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2B6DF20040;
+	Tue, 15 Oct 2024 07:19:03 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.in.ibm.com (unknown [9.204.206.66])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 15 Oct 2024 07:19:02 +0000 (GMT)
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen@kernel.org
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: PPC: Book3S HV: Reset LPCR_MER before running a vCPU to avoid spurious interrupts
+Date: Tue, 15 Oct 2024 12:48:29 +0530
+Message-ID: <20241015071831.229313-1-gautam@linux.ibm.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.11 000/214] 6.11.4-rc1 review
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org, Heiko Carstens
- <hca@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Thomas Richter <tmricht@linux.ibm.com>, linux-s390@vger.kernel.org
-References: <20241014141044.974962104@linuxfoundation.org>
- <CA+G9fYsPPmEbjNza_Tjyf+ZweuHcjHboOJfHeVSSVnmEV2gzXw@mail.gmail.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <CA+G9fYsPPmEbjNza_Tjyf+ZweuHcjHboOJfHeVSSVnmEV2gzXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _eKUh-zxI8-ZbJpD8Onr0EPqEjuFAfWj
+X-Proofpoint-GUID: 77n-MqbNxLD2HzfaLJDPoIRFwa7ISm46
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=687
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1011 adultscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150047
 
-On 15. 10. 24, 9:05, Naresh Kamboju wrote:
-> On Mon, 14 Oct 2024 at 19:55, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->>
->> This is the start of the stable review cycle for the 6.11.4 release.
->> There are 214 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->>          https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.4-rc1.gz
->> or in the git tree and branch at:
->>          git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
-> 
-> The S390 build broke on the stable-rc linux-6.11.y branch due to
-> following build warnings / errors.
-> 
-> First seen on v6.11.3-215-ga491a66f8da4
->    GOOD: v6.11.3
->    BAD: v6.11.3-215-ga491a66f8da4
-> 
-> List of regressions,
-> * s390, build
->    - clang-19-allnoconfig
->    - clang-19-defconfig
->    - clang-nightly-allnoconfig
->    - clang-nightly-defconfig
->    - gcc-13-allmodconfig
->    - gcc-13-allnoconfig
->    - gcc-13-defconfig
->    - gcc-13-tinyconfig
->    - gcc-8-allnoconfig
->    - gcc-8-defconfig-fe40093d
->    - gcc-8-tinyconfig
-> 
-> Build log:
-> -------
->    arch/s390/include/asm/cpu_mf.h: Assembler messages:
->    arch/s390/include/asm/cpu_mf.h:165: Error: Unrecognized opcode: `lpp'
->    make[3]: *** [scripts/Makefile.build:244: arch/s390/boot/startup.o] Error 1
-> 
->    arch/s390/include/asm/atomic_ops.h: Assembler messages:
->    arch/s390/include/asm/atomic_ops.h:83: Error: Unrecognized opcode: `laag'
->    arch/s390/include/asm/atomic_ops.h:83: Error: Unrecognized opcode: `laag'
->    make[3]: *** [scripts/Makefile.build:244: arch/s390/boot/vmem.o] Error 1
-> 
->    arch/s390/include/asm/bitops.h: Assembler messages:
->    arch/s390/include/asm/bitops.h:308: Error: Unrecognized opcode: `flogr'
->    make[3]: *** [scripts/Makefile.build:244:
-> arch/s390/boot/pgm_check_info.o] Error 1
-> 
->    arch/s390/include/asm/timex.h: Assembler messages:
->    arch/s390/include/asm/timex.h:192: Error: Unrecognized opcode: `stckf'
->    arch/s390/include/asm/timex.h:192: Error: Unrecognized opcode: `stckf'
->    make[3]: *** [scripts/Makefile.build:244: arch/s390/boot/kaslr.o] Error 1
->    make[3]: Target 'arch/s390/boot/bzImage' not remade because of errors.
->    make[2]: *** [arch/s390/Makefile:137: bzImage] Error 2
+Reset LPCR_MER bit before running a vCPU to ensure that it is not set if
+there are no pending interrupts. Running a vCPU with LPCR_MER bit set
+and no pending interrupts results in L2 vCPU getting an infinite flood
+of spurious interrupts. The 'if check' in kvmhv_run_single_vcpu() sets
+the LPCR_MER bit if there are pending interrupts.
 
-The diff of cflags used for arch/s390/boot:
---- good        2024-10-15 09:13:59.769479783 +0200
-+++ bad 2024-10-15 09:13:39.393060183 +0200
-@@ -55,10 +55,10 @@
-  -Wno
-  -array
-  -bounds
---march=z196
-  -mtune=z13
-  -Wa,
-  -I/dev/shm/jslaby/linux/arch/s390/include
-+-march=z900
-  -I/dev/shm/jslaby/linux/arch/s390/boot
-  -Iarch/s390/boot
-  -DKBUILD_MODFILE='"arch/s390/boot/startup"'
+The spurious flood problem can be observed in 2 cases:
+1. Crashing the guest while interrupt heavy workload is running
+  a. Start a L2 guest and run an interrupt heavy workload (eg: ipistorm)
+  b. While the workload is running, crash the guest (make sure kdump
+     is configured)
+  c. Any one of the vCPUs of the guest will start getting an infinite
+     flood of spurious interrupts.
 
+2. Running LTP stress tests in multiple guests at the same time
+   a. Start 4 L2 guests.
+   b. Start running LTP stress tests on all 4 guests at same time.
+   c. In some time, any one/more of the vCPUs of any of the guests will
+      start getting an infinite flood of spurious interrupts.
 
+The root cause of both the above issues is the same:
+1. A NMI is sent to a running vCPU that had LPCR_MER bit set.
+2. In the NMI path, all registers are refreshed, i.e, H_GUEST_GET_STATE
+   is called for all the registers.
+3. When H_GUEST_GET_STATE is called for lpcr, the vcpu->arch.vcore->lpcr
+   of that vCPU at L1 level gets updated with LPCR_MER set to 1, and this
+   new value is always used whenever that vCPU runs, regardless of whether
+   there was a pending interrupt.
+4. Since LPCR_MER is set, the vCPU in L2 always jumps to the external
+   interrupt handler, and this cycle never ends.
 
+Fix the spurious flood by making sure LPCR_MER is always reset before
+running a vCPU.
 
-Reverting of this makes it work again:
-commit 51ab63c4cc8fbcfee58b8342a35006b45afbbd0d
-Refs: v6.11.3-19-g51ab63c4cc8f
-Author:     Heiko Carstens <hca@linux.ibm.com>
-AuthorDate: Wed Sep 4 11:39:27 2024 +0200
-Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CommitDate: Mon Oct 14 16:10:09 2024 +0200
+Fixes: ec0f6639fa88 ("KVM: PPC: Book3S HV nestedv2: Ensure LPCR_MER bit is passed to the L0")
+Cc: stable@vger.kernel.org # v6.8+
+Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+---
+ arch/powerpc/kvm/book3s_hv.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-     s390/boot: Compile all files with the same march flag
-
-     [ Upstream commit fccb175bc89a0d37e3ff513bb6bf1f73b3a48950 ]
-
-
-If the above is to be really used in stable (REASONS?), I believe at 
-least these are missing:
-ebcc369f1891 s390: Use MARCH_HAS_*_FEATURES defines
-697b37371f4a s390: Provide MARCH_HAS_*_FEATURES defines
-
-
-thanks,
+diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+index 8f7d7e37bc8c..dca7cc301415 100644
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -98,6 +98,13 @@
+ /* Used to indicate that a guest passthrough interrupt needs to be handled */
+ #define RESUME_PASSTHROUGH	(RESUME_GUEST | RESUME_FLAG_ARCH2)
+ 
++/* Clear LPCR_MER bit - If we run a L2 vCPU with LPCR_MER bit set but no pending external
++ * interrupts, we end up getting a flood of spurious interrupts in L2 KVM guests. To avoid
++ * that, reset LPCR_MER and let the check for pending interrupts in kvmhv_run_single_vcpu()
++ * set LPCR_MER if there are pending interrupts.
++ */
++#define kvmppc_reset_lpcr_mer(vcpu) (vcpu->arch.vcore->lpcr &= ~LPCR_MER)
++
+ /* Used as a "null" value for timebase values */
+ #define TB_NIL	(~(u64)0)
+ 
+@@ -5091,7 +5098,7 @@ static int kvmppc_vcpu_run_hv(struct kvm_vcpu *vcpu)
+ 		accumulate_time(vcpu, &vcpu->arch.guest_entry);
+ 		if (cpu_has_feature(CPU_FTR_ARCH_300))
+ 			r = kvmhv_run_single_vcpu(vcpu, ~(u64)0,
+-						  vcpu->arch.vcore->lpcr);
++						  kvmppc_reset_lpcr_mer(vcpu));
+ 		else
+ 			r = kvmppc_run_vcpu(vcpu);
+ 
 -- 
-js
-suse labs
+2.46.2
 
 
