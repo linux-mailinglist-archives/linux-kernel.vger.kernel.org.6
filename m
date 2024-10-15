@@ -1,51 +1,71 @@
-Return-Path: <linux-kernel+bounces-366401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FCF99F4D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:07:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AAB899F4D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34EFC1F26D37
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE083284E92
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407971FAF1C;
-	Tue, 15 Oct 2024 18:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3E31FC7F6;
+	Tue, 15 Oct 2024 18:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="dNHcsg7+"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="B6u/r6Lc"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36E728691;
-	Tue, 15 Oct 2024 18:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7562F1B21BA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015653; cv=none; b=HRxifj/EBFl1GBRGadurIQ9ewjEUUr5weQBXcsE1d6DB7eRtaSTOS3s74t1Oa86GbqEZceiE+o8kT58zVbsUeAA6KE5O5tyFY8liPqp3SMGvvv/OTM+tq/dPhrSDR+00Hwh1w/82l13qZ183ub9F+PCuXGrwveS4ZPD4UxZKobk=
+	t=1729015655; cv=none; b=fDxIduwD4KF55lKR0y0XrpWED5phbp7xKt5aS2kp9jOfj/Ttyls2tK3Qtlev3bPQkujHCsVHjdJnBhfRYlgv34XBpl0NdjWxSM8E5CLZjt38iwnI0IAGpDEp4Mca+9A0526w9FeIs3uttClJA39Lm6bQhuMLC1QOpYzpmmF5aHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015653; c=relaxed/simple;
-	bh=6aynL6Gig9/U+p30VyRE1uYq8pO0zyWR2gG4OF1dUec=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WnfkYQh5qC08SThdLZBi89iAI9DjLlzHQOy5rpJOajsjb3QgUwB0mQenY1HFibSJ6UGtGcbLCM2I+zbNQC9IkykR5jmE7MeUbwmA/K5dgcPSor15yE4oYUrKd+IwHdC0PEiu0H+jQrge59+LHNmDT1kLTzoozMlFgbcVTE2kiaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=dNHcsg7+; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=0rmEo4AJN9UfaY3o7MBm7HGCI98gYY0kjy7UDjni+VU=; t=1729015651;
-	x=1729447651; b=dNHcsg7+QPHr8UnKkQqQGETrgh+2+aIFNTCmxBFp5AKfxfY6/jwGLn7RZFXLy
-	2t9m0rhP8WIDrH6yW7MDaQ6NOExx59DjlAPwgTBG6RJ6i2hN99ntKAHPTUq7DGwi7HpzPAh2EHKL+
-	5EwTw3PB+/yRYZb302qYXpG0wCZvWrst1+YtT0DbNrnr9gmzcBPgtuzfGRH5vuvXxdstbKAKMAQ61
-	OI0pC3iQuDg99mWFokxSa/tpxsFHVGKCt8BsakOGjBlSm8W4f2JK2bec9jZW3A4K8m8DFFF1sYF3H
-	oSiyFo6oAqsV4hW61cG05O3VTLydafU/nECWtNv8AtYiuclcfw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t0lx3-0003rt-Io; Tue, 15 Oct 2024 20:07:21 +0200
-Message-ID: <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
-Date: Tue, 15 Oct 2024 20:07:10 +0200
+	s=arc-20240116; t=1729015655; c=relaxed/simple;
+	bh=mp2svKcmNny1JZ8mUVCe1St4WuevGVB4bca4Z482AGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r79tMCT4NWpJDx6EA+OUOSCCE61uEyye+4jwqWz1dppz+v/k+8lt1ZMvesQCLPktbDAcnPUCCacXb2sl2I+IKPDUJWYgJbaQStjtiqJBImPyibqnwQveR/q0YVRlHbmj2obqFN6y56o8GwQRJG9rLyFeIyrE+4IqbUdUVdvt0eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=B6u/r6Lc; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e74900866so910721b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1729015652; x=1729620452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=uyplW89FHBeoQEYicibHANYldii1FOFczTEx2pQXNVc=;
+        b=B6u/r6Lc8t2noN5Xd7C8kLdrJgNksClxutdcKxkz2mimW2OcbbIbDsPDbsW7NRpSj/
+         yHwIT316lwgZVuioIQoBHW26lb+7gXKyL6kk21O5dl9BYSlYb7cYXmvqefHNGXU3MARQ
+         meu8PFf84YwvvrwTHBDHMaT+73zbU6mMHQ4JM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729015652; x=1729620452;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uyplW89FHBeoQEYicibHANYldii1FOFczTEx2pQXNVc=;
+        b=O+n0WAkUjTBLRolTeoYJptACbHbVwi4Hd6IV1ty7C0UaGore43Qoc9SVFFbs5LNLzM
+         pDJrbHw63za/UldvpvD6EudAozjUkTHsRoXrUJDOq5GXlHgNhoRDgBQzVln6o2TYhm0c
+         dRXB76AKPfdbddsj8gLMsLZ35DApzHvl1dcCafB3iQkuEN322CCiRGvqwRb1Rj+oi1HP
+         ShIbn2CC2DnZUEv4z5DFslpbpsR8Pd9Nq0gTMiZveji6ygtZP3r9IgCEvRKwD5VbUlq0
+         8b+9nsjV/Gh6P0PSYG0WVDywdiDYdgJRRNXBP2tgXsVpcBf1sBwj2+hhSvO75hLLQAZ3
+         IhyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVReU7+20OfcFRPAx6CwQsoz7YalnLCaf6V0ANJNNnfEpjZqjOcLX9Jj20AlDgEP0FdciSX0XQQi9DPkt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJV6sriMtWH/MZJQAqxspX4bN85sUTGb+d9XLKxEsihJ7UmKEr
+	EAnvz3sPHO2peOJv1PR77zplRcPFbN/0fVZheOGtjSHPh35qcZ1rR5A8YRJjOA==
+X-Google-Smtp-Source: AGHT+IGkgFxmWu3ONSnK7BzmVrFic2xtXKYm0lvFrM56CsdAhB3PKvklnkPE6VXQrWi3toc6W5vxhA==
+X-Received: by 2002:a05:6a00:178b:b0:717:9154:b5d6 with SMTP id d2e1a72fcca58-71e7daef79amr1507687b3a.22.1729015651593;
+        Tue, 15 Oct 2024 11:07:31 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77507db4sm1571983b3a.188.2024.10.15.11.07.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 11:07:30 -0700 (PDT)
+Message-ID: <ed541d60-46dd-4b23-b810-548166b7a826@broadcom.com>
+Date: Tue, 15 Oct 2024 11:07:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,71 +73,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
-To: Will Deacon <will@kernel.org>, ericvh@kernel.org
-Cc: lucho@ionkov.net, asmadeus@codewreck.org,
- Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, oss@crudebyte.com,
- v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com,
- keirf@google.com, regressions@lists.linux.dev
-References: <20240923100508.GA32066@willie-the-truck>
- <20241009153448.GA12532@willie-the-truck>
-Content-Language: en-US, de-DE
-In-Reply-To: <20241009153448.GA12532@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729015651;9022dc2e;
-X-HE-SMSGID: 1t0lx3-0003rt-Io
+Subject: Re: [PATCH net] net: systemport: fix potential memory leak in
+ bcm_sysport_xmit()
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Wang Hai <wanghai38@huawei.com>, bcm-kernel-feedback-list@broadcom.com,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ zhangxiaoxu5@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241014145115.44977-1-wanghai38@huawei.com>
+ <0c21ac6a-fda4-4924-9ad1-db1b549be418@broadcom.com>
+ <20241015110154.55c7442f@kernel.org>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241015110154.55c7442f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Will! Top-posting for once, to make this easily accessible to everyone.
-
-Thx for bringing this to my attention. I had hoped that Eric might reply
-and waited a bit, but that did not happen. I kind of expected that, as
-he seems to be  somewhat afk, as the last mail from him on lore is from
-mid-September; and in the weeks before that he did not post much either.
-Hmmm. :-/
-
-CCed Christian and Al, maybe they might be able to help directly or
-indirectly somehow. If not, we likely need to get Linus involved to
-decide if we want to at least temporarily revert the changes you mentioned.
-
-Ciao, Thorsten
-
-On 09.10.24 17:34, Will Deacon wrote:
-> On Mon, Sep 23, 2024 at 11:05:08AM +0100, Will Deacon wrote:
+On 10/15/24 11:01, Jakub Kicinski wrote:
+> On Mon, 14 Oct 2024 09:59:27 -0700 Florian Fainelli wrote:
+>>> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+>>> index c9faa8540859..0a68b526e4a8 100644
+>>> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
+>>> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+>>> @@ -1359,6 +1359,7 @@ static netdev_tx_t bcm_sysport_xmit(struct sk_buff *skb,
+>>>    		netif_err(priv, tx_err, dev, "DMA map failed at %p (len=%d)\n",
+>>>    			  skb->data, skb_len);
+>>>    		ret = NETDEV_TX_OK;
+>>> +		dev_kfree_skb_any(skb);
 >>
->> I'm trying to use kvmtool to run a simple guest under an Android host
->> but, for v6.9+ guest kernels, 'init' reliably fails to run from a 9pfs
->> mount because VFS emits this error:
->>
->>   | VFS: Lookup of 'com.android.runtime' in 9p 9p would have caused loop
->>
->> The host directory being shared is a little odd, as it has symlinks out
->> to other mount points. In the guest, /apex is a symlink to /host/apex.
->> On the host, /apex/com.android.runtime is a mounted loopback device:
->>
->> /dev/block/loop13 on /apex/com.android.runtime type ext4 (ro,dirsync,seclabel,nodev,noatime)
->>
->> This used to work prior to 724a08450f74 ("fs/9p: simplify iget to remove
->> unnecessary paths") and it looks like Oleg ran into something similar
->> before:
->>
->>   https://lore.kernel.org/all/20240408141436.GA17022@redhat.com/
->>
->> although he worked around it by driving QEMU with different options.
->>
->> I can confirm that reverting the following commits gets mainline guests
->> working again for me:
->>
->> 	724a08450f74 "fs/9p: simplify iget to remove unnecessary paths"
->> 	11763a8598f8 "fs/9p: fix uaf in in v9fs_stat2inode_dotl"
->> 	10211b4a23cf "fs/9p: remove redundant pointer v9ses"
->> 	d05dcfdf5e16 " fs/9p: mitigate inode collisions"
->>
->> Do you have any better ideas? I'm happy to test anything you might have,
->> since this is 100% reproducible on my setup.
+>> Since we already have a private counter tracking DMA mapping errors, I
+>> would follow what the driver does elsewhere in the transmit path,
+>> especially what bcm_sysport_insert_tsb() does, and just use
+>> dev_consume_skb_any() here.
 > 
-> Adding the regression tracker as I've not heard anything back on this :(
-> #regzbot introduced: 724a08450f74
+> Are you saying that if the packet drop is accounted is some statistics
+> we should not inform drop monitor about it? 🤔️
+> That wasn't my understanding of kfree_skb vs consume_skb..
+
+Yes that's my reasoning here, now given that we have had packet drops on 
+transmit that took forever to track down, maybe I better retract that 
+statement and go with v1.
+-- 
+Florian
 
