@@ -1,67 +1,57 @@
-Return-Path: <linux-kernel+bounces-366898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA41799FC03
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:02:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA1599FC04
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 185251C2442B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:02:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B58B1C264F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800A91D63F4;
-	Tue, 15 Oct 2024 23:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C2621E3C3;
+	Tue, 15 Oct 2024 23:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qd2vWfI3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVdG0VXw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A121A0B07;
-	Tue, 15 Oct 2024 23:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121671B0F1F;
+	Tue, 15 Oct 2024 23:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729033329; cv=none; b=HYsEynOQbOAVVURWAvyEbtjKnJNE4Z4oDcQD0UkLB6hvQ/epsoCqKqrgMEFrkQHdBD4NzCaPYyCmt22rNyDrg42RbdImX4ty0n6GhYzDh67K2QnAf4HFiiakBPTC+kvcjhXB6kkvfBeGg7jN99IbEQCLrsPNi7NgT/pKkHYvi4E=
+	t=1729033358; cv=none; b=s0sUJD4hIR/8CqoXaAVcuHpxrxqFyWNREsNC+2Ty4KmbmEZ+7z7XrlsHXxL8v3mkfqM5LivZI+d+M3HRSxQbs/he3P2XHnxsYc0S8GsnLrvvOJRxzpdVJiZedoZKkaGU2O1uWEA1AKjzBDm9IqP3exC9dbplQBKOHxRasQit3Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729033329; c=relaxed/simple;
-	bh=sxqU6EcUk8DvoT4B7jYVxfYQVgW1xGwF9+1H+ah6yg0=;
+	s=arc-20240116; t=1729033358; c=relaxed/simple;
+	bh=Mh22a83gJV5bSpvhN5uzzyv9X2ldBJwBfJ6ImtJn+SE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h1BwXNWwsTqoAhmUMNvecXCO97H7fmsAzJtQQfiNCeqlSskdqN8IPVTqAkpEdLjtvKHqrDJa8oDO4ERmUdyJKS3Yv++Wso9FfTMeHNz3jt9o3RG9dGoFQsgaBsBcBD689tvWfcAxuaeXILmWYjTu3CqwKHWVuB9Fq+z7KLSaEDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qd2vWfI3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=mUFuUDjPLb+T13crf9T6WeNqvmmZOjE+1O9AdsG9ipM=; b=qd2vWfI3e7rgHEMZNX9dxj2kbz
-	Ic4V1IerIJC807KDM9PXjN29Gle5kMyhV1ByvlEoDQekg4sZHMG/+XoUuhCIPojHxa59pIrvZVqPb
-	8NxmDPdTHh2tyJcY4FmarWCIDbaJ7HoMKpoZz5026Jxbz27r45lXKV5YjiXzMkNVcQ9s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t0qY1-00A5JG-Cn; Wed, 16 Oct 2024 01:01:49 +0200
-Date: Wed, 16 Oct 2024 01:01:49 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Richard Cochran <richardcochran@gmail.com>, kernel@collabora.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	Jianguo Zhang <jianguo.zhang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	Hsuan-Yu Lin <shane.lin@canonical.com>,
-	Pablo Sun <pablo.sun@mediatek.com>,
-	fanyi zhang <fanyi.zhang@mediatek.com>
-Subject: Re: [PATCH 2/2] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
- ethernet
-Message-ID: <0e72a636-19e1-4f2d-8ea2-f1666c525400@lunn.ch>
-References: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
- <20241015-genio700-eth-v1-2-16a1c9738cf4@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ngKy1ZxQc9RH0nizj/qEYbJAyBLQ403NRl7dS+tbcECVj9SwMyy8SJEbjUKrYioItX0fK5amhFpPnO3rqsGrjBt2pS1KuSXKCMW/bNYLiGVo8y+uK4WpijAeWnc8cTPXHde9ohbMWHEsCOt/dkfAHNjTqo8eRXeECFKGYV4nPts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVdG0VXw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 813E2C4CEC6;
+	Tue, 15 Oct 2024 23:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729033357;
+	bh=Mh22a83gJV5bSpvhN5uzzyv9X2ldBJwBfJ6ImtJn+SE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=RVdG0VXw2vtAFhwjTZf3nusK0qEbhjLdcKT8zkYPzFQYAm2sHHUXXMvH5tV4q5N48
+	 khzVBdNv8mUqA8m01KyaSZXPXYAupjsRGm2CxmdKxjYtaW4FV7EDod2aUGKu/8pdsE
+	 kwztW7zQSOKPP9Ec4HRFsvVoreJwStBWnrIGXmpRyefsmeEH+Kl4FsRmtYSuBdEIka
+	 UKGCIcbwD9PkfV857m2K8dR/30k1O3Ak7ugKx4H/P5H670iCortRC+CVPQvFYjc4KH
+	 /Hg5xPZU74bNUOTNQBxvzRdaF9etVuOYojltKnglHnBRI2Dl2sPRdpZIuYu7VRER5Z
+	 aVNGvhXrupUkw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2B867CE098E; Tue, 15 Oct 2024 16:02:37 -0700 (PDT)
+Date: Tue, 15 Oct 2024 16:02:37 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rostedt@goodmis.org
+Subject: Re: [PATCH rcu 0/3] RCU CPU stall-warning changes for v6.13
+Message-ID: <f5a833c4-6346-4ec4-8360-4a818342fb52@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <fb0b7a92-d371-4510-80c4-25a57f2c4f3d@paulmck-laptop>
+ <670eb924.050a0220.63bb1.4746@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,19 +60,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015-genio700-eth-v1-2-16a1c9738cf4@collabora.com>
+In-Reply-To: <670eb924.050a0220.63bb1.4746@mx.google.com>
 
-> +&eth {
-> +	phy-mode ="rgmii-rxid";
-> +	phy-handle = <&ethernet_phy0>;
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&eth_default_pins>;
-> +	pinctrl-1 = <&eth_sleep_pins>;
-> +	snps,reset-gpio = <&pio 147 GPIO_ACTIVE_HIGH>;
-> +	snps,reset-delays-us = <0 10000 10000>;
-> +	mediatek,tx-delay-ps = <2030>;
+On Tue, Oct 15, 2024 at 02:49:06PM -0400, Joel Fernandes wrote:
+> On Wed, Oct 09, 2024 at 11:05:02AM -0700, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > This series contains RCU CPU stall-warning changes for v6.13:
+> > 
+> > 1.	Delete unused rcu_gp_might_be_stalled() function.
+> > 
+> > 2.	Stop stall warning from dumping stacks if grace period ends.
+> > 
+> > 3.	Finer-grained grace-period-end checks in rcu_dump_cpu_stacks().
+> > 
+> 
+> Other than small nit in 2/3, 
+> 
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-Can you set phy-mode to rgmii-id, and remove the tx-delay-ps property?
+Applied, thank you, and I also added the data_race() in 2/3.
 
-    Andrew
+> I was curious if you're seeing perf or other improvements with the
+> finer-grained rnp locking.
+
+This is about robustness rather that performance, though I suppose you
+could argue that lack of robustness is an extreme form of bad performance.
+Holding the leaf rcu_node locks for too long while dumping stacks can
+result in things like CSD-lock timeouts due to the dumping CPU having
+interrupts disabled for an extended period.
+
+And earlier commit, 1ecd9d68eb44 ("rcu: Defer printing stall-warning
+backtrace when holding rcu_node lock"), took care of most of the issue
+by deferring the actual output.  But while in the area, it seemed wise
+to avoid up to 64 dumps being generated (but no longer printed) while
+holding a leaf rcu_node lock.
+
+Hence this commit.
+
+							Thanx, Paul
+
+> thanks,
+> 
+>  - Joel
+> 
+> 
+> > 						Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> >  b/include/linux/rcutiny.h |    1 -
+> >  b/include/linux/rcutree.h |    1 -
+> >  b/kernel/rcu/tree_stall.h |   30 ------------------------------
+> >  kernel/rcu/tree_stall.h   |   35 ++++++++++++++++++++++-------------
+> >  4 files changed, 22 insertions(+), 45 deletions(-)
+> > 
 
