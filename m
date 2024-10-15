@@ -1,191 +1,158 @@
-Return-Path: <linux-kernel+bounces-365601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5459E99E4D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:58:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DEC899E4C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79F91F242AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:58:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 959AFB23C3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8111F4FBF;
-	Tue, 15 Oct 2024 10:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16A31E9068;
+	Tue, 15 Oct 2024 10:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B5oBb7ET"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pnK6HnFv"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94361EBA19;
-	Tue, 15 Oct 2024 10:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A8B1E490B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989802; cv=none; b=bLF6POwsLJ4B8IcYOkoWX1jn5RzQJv8yjRLNIpfa3dfqF1PKhKpVdhWL+7+8C04H+VHa+dhhrmBN+eHDlFSwEgOyjQ8i1dBDHvwqK2Ah/dEojYuEUcrpRh+9Xz0Gg6dFTzVSKEq9usXnZ32LuZkTO3akU5uEelYUnUR1YoCLgE8=
+	t=1728989798; cv=none; b=XR0H4i87O0RDsvoyW6hOaQkpTDn24Ycum3HyYVA3FpzSQkct86CwkLodYIKJLoKa8zbRcPQOZNmR9ZZsStdDecPN6EhVtL8vW0fYqdsyiCPzUN/hKUSAY56x0KIqzec/v97aY2HrBX+cviXAMK5MiXfIVUlxA/QyLJvWjGV46fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989802; c=relaxed/simple;
-	bh=yjiXxptdjsh8JK5XZhUOGmAPGz5cEXLC+/UkEggW9ug=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QTl4jylqsRzjSe2Pa9drx079HfCsSnEQQWiqkB2JIpM6MHib1fI9ws2Px2XCxJMfGVg0KWGC/TtLB+0eD6y6rqdFbKdxTZUZJU1OZXJNBQZnnJHms3Yrf6XyHoLnMdqUSCw42sEzR6/L64VSQgKVC0jNBAJ3rqKoyTwG6euifs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B5oBb7ET; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F8PHWh023761;
-	Tue, 15 Oct 2024 10:56:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=rNGwixYfUUPYg6Njj
-	OEFj7h4gHe7G0ava0pIqhoYWcg=; b=B5oBb7ETsejPWJsKqAEpV9r9EC6dzQmFo
-	O/DqVIgLSmEoY9LIQdWeDFyiafImd1XW6B+Ma0z1BT32efgtLuHbWu93HlZ/Kpij
-	+pMXnqodKvfE6WfeveOyvFtcHCBF2vQa3sAL48InlkvhbE5qIGy/voLPn4z2vKx1
-	wyoAwsKMlo70i1BHqzulGlM2OFusCg0L/GB2N5QyWeSW00hM3gb8MjD1FMJCYolt
-	nYRuHKLGpv6Zpv0o2QmeAvBWo80j/57XIOkIZEGx/+LKjoz0oIuYZSmvAUPpLuZH
-	cKwPH9mo9/Rzx8cZY3iAm9bW38aSZQamii/mlZ+4f7rJjijVpax9w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429mv4rqkg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 10:56:26 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FAsZFP030322;
-	Tue, 15 Oct 2024 10:56:25 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429mv4rqkc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 10:56:25 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7k1Fv001940;
-	Tue, 15 Oct 2024 10:56:24 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emkc62-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 10:56:24 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FAuK3c54264082
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 10:56:20 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 737412004B;
-	Tue, 15 Oct 2024 10:56:20 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1124120040;
-	Tue, 15 Oct 2024 10:56:18 +0000 (GMT)
-Received: from vishalc-ibm.ibmuc.com (unknown [9.39.24.36])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 10:56:17 +0000 (GMT)
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Vishal Chourasia <vishalc@linux.ibm.com>
-Subject: [v2 PATCH 2/2] crypto/nx: Fix invalid wait context during kexec reboot
-Date: Tue, 15 Oct 2024 16:25:52 +0530
-Message-ID: <20241015105551.1817348-3-vishalc@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241015105551.1817348-2-vishalc@linux.ibm.com>
-References: <20241015105551.1817348-2-vishalc@linux.ibm.com>
+	s=arc-20240116; t=1728989798; c=relaxed/simple;
+	bh=4Bsvwmqq0WjjdqNzlBEgAYEHSuoKEz5gm23FepVkvmw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eW6VJ2qBCmpfeAZBvYqx5vW4oNIDW0F/gVHE6QY4pAzY+K7Ee+TVUmXhk3dgxIHIjdVG/rTaDxgjaUJDENtXZqVfyDbO1fjlvyaN6FCYzSR17T28mRaolgauaPzK7VIlT8feoMeWB4C7xzKU59N+5yiIp8QJTwdFzSRs7fj+uwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pnK6HnFv; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d518f9abcso2877755f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728989792; x=1729594592; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ec2bUapoj79RNmiOev4bGC58j52LzkNK84ZlsQIKGC8=;
+        b=pnK6HnFvUE9YayQVSPJgdpvTbY4O6bC/zCNIIbdpxJNA0Tp9wi20jlx11w+/0S2OpV
+         DJKReaReAe6V5+dL8WTO5J45Yt6vRbPKr4QrYW2J3KqZbgAFMd0udtAB8ZZs3SfWCl5s
+         NNI032++T4lRoTA9Y3xmPeP38jRk5nvFfduD2rCNYZcoMkansTpZbEZjnjPQSIs41mJd
+         aLy8o41JncvE1yerYEOYcKRgBeRaD69WliCK0vzLcTzlWzUzqlk/ypCm+m0Hmh6RxIFQ
+         Jsy/cOlTqE/PYywIwNWWs0dRtklXHap+IwnN0c8NDFhnjlK6rsu2Ul/6glDlOhbse8l0
+         xmcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728989792; x=1729594592;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ec2bUapoj79RNmiOev4bGC58j52LzkNK84ZlsQIKGC8=;
+        b=imDEzCKwEnxiVptL2xBcixZXJ2QwNgwGugVYQaRB29HA1lqpwydTVz9v2X5RLBEWFj
+         SDhZRMcQPXta+NRPn6gM/FLlIlhp/dITQVE4cf0U/zQxz0mKPEmIooNYlA+ZWzAQHDFN
+         sHnQmNKo1jYUQ5p4xeTuLjog4ONOWbuzLGv7GN2DYH5QhqGO61fBCZpHHiA7uwQURSzY
+         AbPr/phhyFxkqRko+EZFL0fTDVRlxgeOgZWWBgl6MRsU5DwoC7YJZvID9uPPqqTKRJgM
+         eJ17Sgrgpe2crqZEH8jeCekOppxohl1g9/Zd9YjNSoUn+HHMwal4A1DCsFT2Fo/I+6lO
+         iWyg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9heQjUi4zr5vb63iXC/vP94ispRw5kgGxo2qnpVvvAGiUdqPCP7IXv2vAaMxBILsQFpAp5Yq1AGESDEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgZ0qPDiWCSsTtaaC3N82vRzmEIjRjdg+yWo1x2mx4ueuI+m1p
+	sP2GHt2NL1OnX3jhO+fRAhh8oHA++BYR8oQilJcL65biRw1yFwpZpPbwl3PSBe9Sq4W/gAk27Oa
+	g
+X-Google-Smtp-Source: AGHT+IHlk3tBk+7IzFn3w5fq6X6HsWlt+Z0Dspng2cX9oA7IUBFQ8qOQiO+q6FaHycqaan9/bqzRyg==
+X-Received: by 2002:adf:ea45:0:b0:37d:4cef:538e with SMTP id ffacd0b85a97d-37d552d29edmr9617409f8f.55.1728989792164;
+        Tue, 15 Oct 2024 03:56:32 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:d382:b11b:c441:d747])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc403d3sm1254115f8f.101.2024.10.15.03.56.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 03:56:31 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v3 0/6] gpio: notify user-space about config changes in the
+ kernel
+Date: Tue, 15 Oct 2024 12:56:12 +0200
+Message-Id: <20241015-gpio-notify-in-kernel-events-v3-0-9edf05802271@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: g16Py42SK_L-rMj-yeOvDFUupNO8oXmW
-X-Proofpoint-ORIG-GUID: fs1dDhFKwsuTRqwwm_EFPCJBgdaU9WZJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- mlxscore=0 suspectscore=0 phishscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 bulkscore=0 malwarescore=0 mlxlogscore=791
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150072
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAExKDmcC/4XNQQ6CMBCF4auYrh3TKSDgynsYF1imMJG0pCWNh
+ HB3Cytdsfzf4nuLCOSZgridFuEpcmBnU2Tnk9B9YzsCblMLJVUua5VDN7ID6yY2M7CFN3lLA1A
+ kOwWQpW5rVFhkVIlEjJ4Mf3b+8Uzdc5icn/e3iNu6wyjlARwRJFSNVjVha3JD94Ft493F+U5sc
+ lQ/GsoDTSXtVVxljmhKXdR/2rquX7UEeQ0XAQAA
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2302;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=4Bsvwmqq0WjjdqNzlBEgAYEHSuoKEz5gm23FepVkvmw=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnDkpWzA8DC/BFJbdFDnVI8cDlEyYxjkt3Y6PW3
+ TNeREBn6Y+JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZw5KVgAKCRARpy6gFHHX
+ ctyGD/sH2AFbqZkz1SQLkohCW1h6tpAZwkpixjEnXKJrRruz2td5kBTfwILwC3ubmQqcsdR/rEG
+ ulRMBxIRPdqb7YJkf34dgvwPG0Oo80S9t4dAfx50xWkkcETloKiEyIgAL96Dua/0ejOhjfUN7xO
+ Z8aaB7zo2X3MAHbwlfF20fzCnPLWWRQ/fkYikb0zOwvCkJK2LR8T9zIW/fwyOJRMdAXbt3rhnv8
+ Ey1j2+lWiQ3eMBph/eZNpXGlJBwI2PVY2eMyRXxq83wFxUWe6ExYbsWyhQcugJ9JKg3xYg5eF+z
+ fnW14WghIBF2E8C4YS87Npym6dd4et3qCrnLBQJYW7g48JMTEXGSrVUsSK03sZDhNb60nnoPAxK
+ mzWGnOk2SaCEx1q38NpfchtsB3sogT+W4e2Df8cYZk/m3Mw7EuIejnAdvMD90owWKfOjquiebxH
+ NvvnuHMYEfa9tYJuDlkPesLzhRds+2nkJXpNzT1eIfw/hixQqnemRTchd7K48Ejzoy+dTlvdDll
+ RtoCW1pZYWFH4rYcBSA490QelZQ0Jgp+m07JrNadVKJqtlVgVWf888QdYJY5/u6qBQ4aHDIKvJR
+ PR5Kocp88XflFQCA9D2yTM7ueppYwsXZvuhVByJzUnzyhW5h+6nCkp0uu1ENPNHOcTES9RC3L7R
+ y7qIi1mm0K/nWTA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-nx842_remove() call of_reconfig_notifier_unregister while holding the
-devdata_spinlock. This could lead to an invalid wait context error during
-kexec reboot, as of_reconfig_notifier_unregister tries to acquire a read-write
-semaphore (check logs) while holding a spinlock.
+We currently only emit events on changed line config to user-space on
+changes made from user-space. Users have no way of getting notified
+about in-kernel changes. This series improves the situation and also
+contains a couple other related improvements.
 
-Move the of_reconfig_notifier_unregister() call before acquiring the
-spinlock to prevent this race condition invalid wait contexts during system
-shutdown or kexec operations.
+This is a reworked approach which gets and stores as much info (all of
+it actually, except for the pinctrl state) the moment the event occurrs
+but moves the actual queueing of the event on the kfifo to a dedicated
+high-priority, ordered workqueue.
 
-Log:
-
-[ BUG: Invalid wait context ]
-6.11.0-test2-10547-g684a64bf32b6-dirty #79 Not tainted
------------------------------
-kexec/61926 is trying to lock:
-c000000002d8b590 ((of_reconfig_chain).rwsem){++++}-{4:4}, at: blocking_notifier_chain_unregister+0x44/0xa0
-other info that might help us debug this:
-context-{5:5}
-4 locks held by kexec/61926:
- #0: c000000002926c70 (system_transition_mutex){+.+.}-{4:4}, at: __do_sys_reboot+0xf8/0x2e0
- #1: c00000000291af30 (&dev->mutex){....}-{4:4}, at: device_shutdown+0x160/0x310
- #2: c000000051011938 (&dev->mutex){....}-{4:4}, at: device_shutdown+0x174/0x310
- #3: c000000002d88070 (devdata_mutex){....}-{3:3}, at: nx842_remove+0xac/0x1bc
-stack backtrace:
-CPU: 2 UID: 0 PID: 61926 Comm: kexec Not tainted 6.11.0-test2-10547-g684a64bf32b6-dirty #79
-Hardware name: IBM,9080-HEX POWER10 (architected) 0x800200 0xf000006 of:IBM,FW1060.00 (NH1060_012) hv:phyp pSeries
-Call Trace:
-[c0000000bb577400] [c000000001239704] dump_stack_lvl+0xc8/0x130 (unreliable)
-[c0000000bb577440] [c000000000248398] __lock_acquire+0xb68/0xf00
-[c0000000bb577550] [c000000000248820] lock_acquire.part.0+0xf0/0x2a0
-[c0000000bb577670] [c00000000127faa0] down_write+0x70/0x1e0
-[c0000000bb5776b0] [c0000000001acea4] blocking_notifier_chain_unregister+0x44/0xa0
-[c0000000bb5776e0] [c000000000e2312c] of_reconfig_notifier_unregister+0x2c/0x40
-[c0000000bb577700] [c000000000ded24c] nx842_remove+0x148/0x1bc
-[c0000000bb577790] [c00000000011a114] vio_bus_remove+0x54/0xc0
-[c0000000bb5777c0] [c000000000c1a44c] device_shutdown+0x20c/0x310
-[c0000000bb577850] [c0000000001b0ab4] kernel_restart_prepare+0x54/0x70
-[c0000000bb577870] [c000000000308718] kernel_kexec+0xa8/0x110
-[c0000000bb5778e0] [c0000000001b1144] __do_sys_reboot+0x214/0x2e0
-[c0000000bb577a40] [c000000000032f98] system_call_exception+0x148/0x310
-[c0000000bb577e50] [c00000000000cedc] system_call_vectored_common+0x15c/0x2ec
---- interrupt: 3000 at 0x7fffa07e7df8
-NIP:  00007fffa07e7df8 LR: 00007fffa07e7df8 CTR: 0000000000000000
-REGS: c0000000bb577e80 TRAP: 3000   Not tainted  (6.11.0-test2-10547-g684a64bf32b6-dirty)
-MSR:  800000000280f033   CR: 48022484  XER: 00000000
-IRQMASK: 0
-GPR00: 0000000000000058 00007ffff961f1e0 00007fffa08f7100 fffffffffee1dead
-GPR04: 0000000028121969 0000000045584543 0000000000000000 0000000000000003
-GPR08: 0000000000000003 0000000000000000 0000000000000000 0000000000000000
-GPR12: 0000000000000000 00007fffa0a9b360 ffffffffffffffff 0000000000000000
-GPR16: 0000000000000001 0000000000000002 0000000000000001 0000000000000001
-GPR20: 000000011710f520 0000000000000000 0000000000000000 0000000000000001
-GPR24: 0000000129be0480 0000000000000003 0000000000000003 00007ffff961f2b0
-GPR28: 00000001170f2d30 00000001170f2d28 00007fffa08f18d0 0000000129be04a0
-NIP [00007fffa07e7df8] 0x7fffa07e7df8
-LR [00007fffa07e7df8] 0x7fffa07e7df8
---- interrupt: 3000
-
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/crypto/nx/nx-common-pseries.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes in v3:
+- don't reach into pinctrl if the USED flag is already set
+- reword the comment from patch 5 and move it one patch back
+- don't abandon emitting the event if the GPIO chip is gone by the time
+  the work is executed, just don't reach into pinctrl and return
+  whatever data we already had
+- Link to v2: https://lore.kernel.org/r/20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org
 
-diff --git a/drivers/crypto/nx/nx-common-pseries.c b/drivers/crypto/nx/nx-common-pseries.c
-index a0eb900383af7..1660c5cf3641c 100644
---- a/drivers/crypto/nx/nx-common-pseries.c
-+++ b/drivers/crypto/nx/nx-common-pseries.c
-@@ -1122,10 +1122,11 @@ static void nx842_remove(struct vio_dev *viodev)
- 
- 	crypto_unregister_alg(&nx842_pseries_alg);
- 
-+	of_reconfig_notifier_unregister(&nx842_of_nb);
-+
- 	spin_lock_irqsave(&devdata_spinlock, flags);
- 	old_devdata = rcu_dereference_check(devdata,
- 			lockdep_is_held(&devdata_spinlock));
--	of_reconfig_notifier_unregister(&nx842_of_nb);
- 	RCU_INIT_POINTER(devdata, NULL);
- 	spin_unlock_irqrestore(&devdata_spinlock, flags);
- 	synchronize_rcu();
+Changes in v2:
+- put all line-info events emitting on a workqueue to allow queueing
+  them from atomic context
+- switch the notifier type used for emitting info events to atomic
+- add a patch notifying user-space about drivers requesting their own
+  descs
+- drop patches that were picked up
+- Link to v1: https://lore.kernel.org/r/20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org
+
+---
+Bartosz Golaszewski (6):
+      gpiolib: notify user-space when a driver requests its own desc
+      gpio: cdev: prepare gpio_desc_to_lineinfo() for being called from atomic
+      gpiolib: add a per-gpio_device line state notification workqueue
+      gpio: cdev: put emitting the line state events on a workqueue
+      gpiolib: switch the line state notifier to atomic
+      gpiolib: notify user-space about in-kernel line state changes
+
+ drivers/gpio/gpiolib-cdev.c | 127 +++++++++++++++++++++++++++++++++-----------
+ drivers/gpio/gpiolib.c      |  79 +++++++++++++++++++++++----
+ drivers/gpio/gpiolib.h      |   8 ++-
+ 3 files changed, 172 insertions(+), 42 deletions(-)
+---
+base-commit: b852e1e7a0389ed6168ef1d38eb0bad71a6b11e8
+change-id: 20240924-gpio-notify-in-kernel-events-07cd912153e8
+
+Best regards,
 -- 
-2.47.0
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
