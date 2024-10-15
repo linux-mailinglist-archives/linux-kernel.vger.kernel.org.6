@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-366410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED1399F4F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:13:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB0999F4F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CCE0284C7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:13:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9DE1F21807
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992861F8F17;
-	Tue, 15 Oct 2024 18:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7E31FAF1E;
+	Tue, 15 Oct 2024 18:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="F4AFHT7u"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="NoASghbF"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BC638DC7;
-	Tue, 15 Oct 2024 18:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BFE38DC7;
+	Tue, 15 Oct 2024 18:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729016010; cv=none; b=XAPts4ovG4zX344N6vT4FDqSSJvrouz6FkRF4rpC5vEq7Eex+u8Mt5mR/Oz4YsiY6wi584TPaYam+Mz2CNsR/OpdD7M2KL8+Pwi2/Dhuytrt/pZSlz9XHRqXmiV5o5pbyRrMwpw+YV1rESRVObDI0lZQsPDlObyL1W1aOfaeA1Q=
+	t=1729016042; cv=none; b=U1Od4EFSr/asps5V7GjnrslCg7gNZz0t5mzq+Z8GvnnRDXlG82GLjfhi8ZeAS8tzl4xNHMQrHs7nmsS6f//ljUUnaK2Hhq7RKOeUwsDaPjlKPCFvcX0bIDdkmU2kdKiCWt79o7Sw8EwKzypNgZ9jH0Hw79yGe7KDo5FEseXiuN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729016010; c=relaxed/simple;
-	bh=ETZt6RgX1ZoX/EIl4DmreqHjVo5fG0VKU4pkRRnusrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IbcDf5a5Ey12tOSyc4SAfO50qP2J/QSMI9Rn6+OanoymYtDTFf/FHwLDAalz+OisaGdiqZG0fMCpEgjwhE0B8M0IOdznaQvlgXUt14lMhIGFzfBk7fZ5vwgp5XpgtUMAmcy/pIaIv9dh+n3o4jfdzBqZvtAdk6Q1z9m5d9NW5qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=F4AFHT7u; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=gTV2WyhAptOPtQpq1eQKhlZnoaCfGwfjJaHbKBok3Oo=;
-	t=1729016008; x=1729448008; b=F4AFHT7ud5aJuj5Zx/jH+Sk1oQDnb/TAEhRN1A+CEiGBZUH
-	wgE2kAtz30mrbG8+litnrfqxfJV5jlKDneKoAq+TMeofYmAYbcgQjU+vbENMraL75cHGEyp+pavZZ
-	0t0bm23eoVerpNe6cOHCBvH/MwADFLfiafUXD2WTkbaBHZryGklPoozfNVfJ9OCAPDvTD7mNcofGo
-	JxnRBNnoGh+1zg2vrUUY95Vt5m9hmPqKRYkf3YIcfmo1TaIAgtXmMeKqxjxdw7jTpSn9kcXwaInjH
-	tF5faEtkZSO3oz3lmQNskRRfBozFHFXeKWLwv3m0kC5pQYkPPk9K7yQZ0MFbR34A==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t0m2m-0004mf-L7; Tue, 15 Oct 2024 20:13:16 +0200
-Message-ID: <041511ee-4556-422a-8604-30b5e0dfd21c@leemhuis.info>
-Date: Tue, 15 Oct 2024 20:13:00 +0200
+	s=arc-20240116; t=1729016042; c=relaxed/simple;
+	bh=NuuSKPyw9BOEDfj88ei99Ubn1R/nnJqQiQ4AL9f4wRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=umM9+wV/HuV7mpolmzaMXfP1AvI1aUpth17IXTcu/NLNl2HBDVnTNZazMBTMe6Yrce+JuXO8vaSiYndq3vtXbqBJh3tiTFCtMt8XXg6cy5CcqtWU7GHRjh49ic3fhx1+wAOMDngFgWwHihCCdcGhFZ3fwc+KCgcU3CiVwrgM5xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=NoASghbF; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XSj0L3jKxzlgMVp;
+	Tue, 15 Oct 2024 18:13:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1729016029; x=1731608030; bh=NuuSKPyw9BOEDfj88ei99Ubn
+	1R/nnJqQiQ4AL9f4wRw=; b=NoASghbFw2VKynVxJX0Zxgj/s+/KGLI0dD1ZtLgy
+	55Ivb4KvfZdGRlIQ7WLyw1J87onlb8IgJx7rnaHQmQ/bT6nEdqKmTzP63rq92IJv
+	YyZk1OSCUx2uPlfAyLZnCCw+RNH2+dCbF5+q+mDvGk5G6/c5mcnm9Pach8ehGHbf
+	ElfA0ABvfh0LGccz6GHEsz7qg/S95njPd8iptolNbBxXHumozS51haj9ooS04Nfj
+	RIBaGcy9LuHSSy/1KruFhh4yl677iWhKh8d2JilyWdVxw1k8/hdDtKzFSB8eK/xV
+	Cx45NWkw0mqYH8TAK8ZSM48EezVci+NRAJ7tdt85O/GN2Q==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id w9apkZmV1nWc; Tue, 15 Oct 2024 18:13:49 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XSj094FPpzlgMW5;
+	Tue, 15 Oct 2024 18:13:45 +0000 (UTC)
+Message-ID: <420692d5-d968-4e47-9eaf-14d574b62593@acm.org>
+Date: Tue, 15 Oct 2024 11:13:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,252 +64,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] GM20B pmu timeout
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, kherbst@redhat.com,
- lyude@redhat.com, dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
- dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-Cc: regressions@lists.linux.dev
-References: <20241010133253.30311-1-diogo.ivo@tecnico.ulisboa.pt>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <20241010133253.30311-1-diogo.ivo@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3 2/2] scsi: ufs: core: reflect function execution result
+ in return
+To: SEO HOYOUNG <hy50.seo@samsung.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+ jejb@linux.ibm.com, martin.petersen@oracle.com, beanhuo@micron.com,
+ kwangwon.min@samsung.com, kwmad.kim@samsung.com, sh425.lee@samsung.com,
+ quic_nguyenb@quicinc.com, cpgs@samsung.com, h10.kim@samsung.com,
+ grant.jung@samsung.com, junwoo80.lee@samsung.com, wkon.kim@samsung.com
+References: <cover.1728544727.git.hy50.seo@samsung.com>
+ <CGME20241010074231epcas2p2d15a81d68b68d757039a56e8dd9cca3c@epcas2p2.samsung.com>
+ <300052382d9d03bf087d71201bd159805b8fd041.1728544727.git.hy50.seo@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <300052382d9d03bf087d71201bd159805b8fd041.1728544727.git.hy50.seo@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729016008;c0e3e698;
-X-HE-SMSGID: 1t0m2m-0004mf-L7
 
-Hi, Thorsten here, the Linux kernel's regression tracker.
+On 10/10/24 12:52 AM, SEO HOYOUNG wrote:
+> If an error is returned in the power mode function, it is returned and
+> modified to cause failure in the UFS linkup.
+> If it is an asymmetric connected lane, the UFS init can fail because it is
+> an incorrect situation.
 
-On 10.10.24 15:32, Diogo Ivo wrote:
-> 
-> Somewhere between 6.11-rc4 and 6.11-rc5 the following error message is displayed
-> when trying to initialize a nvc0_screen on the Tegra X1's GM20B:
-> 
-> [ 34.431210] nouveau 57000000.gpu: pmu:hpq: timeout waiting for queue ready
-> [ 34.438145] nouveau 57000000.gpu: gr: init failed, -110
-> nvc0_screen_create:1075 - Error allocating PGRAPH context for M2MF: -110
-> failed to create GPU screen
+Why is this an incorrect situation? If ufshcd_get_max_pwr_mode() fails,
+won't communication succeed with a lower power mode than maximum power?
 
-Thx for the report. Hmmm. No reply so far. :-/
+Thanks,
 
-Diogo, maybe report this here as well:
-https://gitlab.freedesktop.org/drm/nouveau/-/issues/
-
-Afterwards drop a link to the ticket here. Reporting nouveau issues via
-email should work, but maybe you have more luck there.
-
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-
-> If we then try a second time we get a more detailed error message:
-> 
-> [   27.432391] ------------[ cut here ]------------
-> [   27.437019] nouveau 57000000.gpu: timeout
-> [   27.441083] WARNING: CPU: 2 PID: 307 at drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c:840 gf100_gr_fecs_bind_pointer+0x140/0x158 [nouveau]
-> [   27.453897] Modules linked in: nouveau drm_ttm_helper ttm backlight gpu_sched i2c_algo_bit drm_gpuvm drm_exec efivarfs
-> [   27.464592] CPU: 2 UID: 0 PID: 307 Comm: loadjpeg Not tainted 6.11.0-rc4+ #1
-> [   27.471628] Hardware name: nvidia NVIDIA P2371-2180/NVIDIA P2371-2180, BIOS 2024.10-rc5-00018-g56b47b8b6a09 10/01/2024
-> [   27.482303] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [   27.489251] pc : gf100_gr_fecs_bind_pointer+0x140/0x158 [nouveau]
-> [   27.495535] lr : gf100_gr_fecs_bind_pointer+0x140/0x158 [nouveau]
-> [   27.501794] sp : ffffffc082473810
-> [   27.505100] x29: ffffffc082473840 x28: ffffff80c56fe500 x27: ffffff80c6f3be40
-> [   27.512227] x26: 00000000804001ea x25: 0000000000000001 x24: 0000000000000000
-> [   27.519351] x23: ffffff80c5516808 x22: ffffffc079d08350 x21: ffffff80c16bae40
-> [   27.526476] x20: 0000000000409800 x19: ffffff80c5516808 x18: ffffffffffffffff
-> [   27.533599] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000006
-> [   27.540724] x14: ffffffc0817defc8 x13: 74756f656d697420 x12: 3a7570672e303030
-> [   27.547848] x11: ffffffc0817defc8 x10: 00000000000003f1 x9 : ffffffc081836fc8
-> [   27.554972] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : 0000000000000001
-> [   27.562096] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> [   27.569218] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffffff80d578c600
-> [   27.576341] Call trace:
-> [   27.578780]  gf100_gr_fecs_bind_pointer+0x140/0x158 [nouveau]
-> [   27.584698]  gf100_grctx_generate+0x54c/0x6f4 [nouveau]
-> [   27.590093]  gf100_gr_chan_new+0x3f8/0x430 [nouveau]
-> [   27.595223]  nvkm_gr_cclass_new+0x34/0x48 [nouveau]
-> [   27.600269]  nvkm_cgrp_ectx_get+0x134/0x224 [nouveau]
-> [   27.605485]  nvkm_cgrp_vctx_get+0x11c/0x300 [nouveau]
-> [   27.610704]  nvkm_chan_cctx_get+0x144/0x25c [nouveau]
-> [   27.615920]  nvkm_uchan_object_new+0xd8/0x1e0 [nouveau]
-> [   27.621311]  nvkm_ioctl_new+0x14c/0x24c [nouveau]
-> [   27.626167]  nvkm_ioctl+0xd0/0x280 [nouveau]
-> [   27.630590]  nvkm_client_ioctl+0x10/0x1c [nouveau]
-> [   27.635551]  nvif_client_ioctl+0x20/0x2c [nouveau]
-> [   27.640493]  usif_ioctl+0x294/0x420 [nouveau]
-> [   27.645021]  nouveau_drm_ioctl+0xb0/0xe0 [nouveau]
-> [   27.649982]  __arm64_sys_ioctl+0xac/0xf0
-> [   27.653900]  invoke_syscall+0x48/0x104
-> [   27.657645]  el0_svc_common.constprop.0+0x40/0xe0
-> [   27.662341]  do_el0_svc+0x1c/0x28
-> [   27.665650]  el0_svc+0x3c/0x108
-> [   27.668787]  el0t_64_sync_handler+0x120/0x12c
-> [   27.673133]  el0t_64_sync+0x190/0x194
-> [   27.676789] ---[ end trace 0000000000000000 ]---
-> [   27.681937] nouveau 57000000.gpu: gr: failed to construct context
-> [   27.688126] nouveau 57000000.gpu: fifo:000000:0002:[loadjpeg[307]] ectx 0[gr]: -110
-> [   27.695786] nouveau 57000000.gpu: fifo:000000:0002:0002:[loadjpeg[307]] vctx 0[gr]: -110
-> nvc0_screen_create:1075 - Error allocating PGRAPH context for M2MF: -110
-> failed to create GPU screen
-> 
-> but I am not sure if this is connected to the fact that the first attempt
-> failed or not.
-> 
-> When trying to bissect the issue the "bad" commit I obtained was 9b340aeb26d5.
-> However, checking out this commit and compiling the kernel leads to a different
-> error where we have a boot regression:
-> 
-> [   19.146693] nouveau 57000000.gpu: Adding to iommu group 3
-> [   19.155581] nouveau 57000000.gpu: NVIDIA GM20B (12b000a1)
-> [   19.161025] nouveau 57000000.gpu: imem: using IOMMU
-> [   22.451833] ------------[ cut here ]------------
-> [   22.456460] nouveau 57000000.gpu: timeout
-> [   22.460508] WARNING: CPU: 0 PID: 201 at drivers/gpu/drm/nouveau/nvkm/falcon/gm200.c:231 gm200_flcn_fw_boot+0x2a4/0x428 [nouveau]
-> [   22.472384] Modules linked in: nouveau(+) drm_ttm_helper ttm backlight gpu_sched i2c_algo_bit drm_gpuvm drm_exec efivarfs
-> [   22.483342] CPU: 0 UID: 0 PID: 201 Comm: (udev-worker) Not tainted 6.11.0-rc1+ #4
-> [   22.490811] Hardware name: nvidia NVIDIA P2371-2180/NVIDIA P2371-2180, BIOS 2024.10-rc5-00018-g56b47b8b6a09 10/01/2024
-> [   22.501485] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [   22.508434] pc : gm200_flcn_fw_boot+0x2a4/0x428 [nouveau]
-> [   22.514063] lr : gm200_flcn_fw_boot+0x2a4/0x428 [nouveau]
-> [   22.519656] sp : ffffffc0822fb3e0
-> [   22.522961] x29: ffffffc0822fb410 x28: ffffff80c7bf0008 x27: ffffff80d5625208
-> [   22.530088] x26: 0000000000000001 x25: 0000000000000010 x24: 0000000000000000
-> [   22.537213] x23: ffffff80c4e920b8 x22: 0000000000000000 x21: 0000000000000000
-> [   22.544336] x20: 0000000000000010 x19: ffffff80c4e920b8 x18: ffffffffffffffff
-> [   22.551460] x17: 000000000000d000 x16: 0000000000000000 x15: 0000000000000006
-> [   22.558585] x14: ffffffc08181efa8 x13: 74756f656d697420 x12: 3a7570672e303030
-> [   22.565709] x11: ffffffc08181efa8 x10: 00000000000003fd x9 : ffffffc081876fa8
-> [   22.572834] x8 : 0000000000017fe8 x7 : 00000000fffff000 x6 : 0000000000000001
-> [   22.579958] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> [   22.587083] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffffff80c2f98000
-> [   22.594208] Call trace:
-> [   22.596647]  gm200_flcn_fw_boot+0x2a4/0x428 [nouveau]
-> [   22.601904]  nvkm_falcon_fw_boot+0x1b4/0x598 [nouveau]
-> [   22.607237]  nvkm_acr_hsfw_boot+0x78/0xa4 [nouveau]
-> [   22.612309]  gm200_acr_init+0x18/0x24 [nouveau]
-> [   22.617034]  nvkm_acr_load+0x7c/0x18c [nouveau]
-> [   22.621760]  nvkm_acr_init+0x54/0x70 [nouveau]
-> [   22.626400]  nvkm_subdev_init_+0x5c/0x12c [nouveau]
-> [   22.631471]  nvkm_subdev_init+0x60/0xa0 [nouveau]
-> [   22.636370]  nvkm_device_init+0x160/0x2a0 [nouveau]
-> [   22.641448]  nvkm_udevice_init+0x60/0xa0 [nouveau]
-> [   22.646439]  nvkm_object_init+0x48/0x1c0 [nouveau]
-> [   22.651426]  nvkm_ioctl_new+0x164/0x24c [nouveau]
-> [   22.656323]  nvkm_ioctl+0xd0/0x280 [nouveau]
-> [   22.660787]  nvkm_client_ioctl+0x10/0x1c [nouveau]
-> [   22.665784]  nvif_object_ctor+0xe8/0x1b8 [nouveau]
-> [   22.670769]  nvif_device_ctor+0x28/0x78 [nouveau]
-> [   22.675667]  nouveau_cli_init+0x154/0x5e0 [nouveau]
-> [   22.680749]  nouveau_drm_device_init+0x84/0x2e0 [nouveau]
-> [   22.686352]  nouveau_platform_device_create+0x90/0xe0 [nouveau]
-> [   22.692476]  nouveau_platform_probe+0x40/0xc0 [nouveau]
-> [   22.697904]  platform_probe+0x68/0xd8
-> [   22.701564]  really_probe+0xbc/0x2c0
-> [   22.705133]  __driver_probe_device+0x78/0x120
-> [   22.709480]  driver_probe_device+0x3c/0x160
-> [   22.713654]  __driver_attach+0x90/0x1a0
-> [   22.717481]  bus_for_each_dev+0x78/0xd8
-> [   22.721309]  driver_attach+0x24/0x30
-> [   22.724875]  bus_add_driver+0xe4/0x208
-> [   22.728615]  driver_register+0x68/0x124
-> [   22.732443]  __platform_driver_register+0x28/0x40
-> [   22.737137]  nouveau_drm_init+0x90/0x1000 [nouveau]
-> [   22.742217]  do_one_initcall+0x44/0x230
-> [   22.746047]  do_init_module+0x5c/0x220
-> [   22.749788]  load_module+0x748/0x87c
-> [   22.753355]  init_module_from_file+0x88/0xcc
-> [   22.757617]  __arm64_sys_finit_module+0x164/0x328
-> [   22.762310]  invoke_syscall+0x48/0x104
-> [   22.766054]  el0_svc_common+0xc8/0xe8
-> [   22.769710]  do_el0_svc+0x20/0x34
-> [   22.773017]  el0_svc+0x3c/0x108
-> [   22.776155]  el0t_64_sync_handler+0x120/0x12c
-> [   22.780502]  el0t_64_sync+0x190/0x194
-> [   22.784156] ---[ end trace 0000000000000000 ]---
-> [   22.788838] nouveau 57000000.gpu: pmu(acr): mbox 00000001 00000000
-> [   22.795033] nouveau 57000000.gpu: pmu(acr):load: boot failed: -110
-> [   22.801235] nouveau 57000000.gpu: acr: init failed, -110
-> [   22.806858] nouveau 57000000.gpu: init failed with -110
-> [   22.812084] nouveau: DRM-master:00000000:00000080: init failed with -110
-> [   22.818793] nouveau 57000000.gpu: DRM-master: Device allocation failed: -110
-> [   22.826368] ------------[ cut here ]------------
-> [   22.830980] WARNING: CPU: 2 PID: 201 at drivers/gpu/drm/nouveau/nvkm/subdev/mmu/base.c:239 nvkm_mmu_dtor+0xac/0xc0 [nouveau]
-> [   22.842573] Modules linked in: nouveau(+) drm_ttm_helper ttm backlight gpu_sched i2c_algo_bit drm_gpuvm drm_exec efivarfs
-> [   22.853529] CPU: 2 UID: 0 PID: 201 Comm: (udev-worker) Tainted: G        W          6.11.0-rc1+ #4
-> [   22.862475] Tainted: [W]=WARN
-> [   22.865433] Hardware name: nvidia NVIDIA P2371-2180/NVIDIA P2371-2180, BIOS 2024.10-rc5-00018-g56b47b8b6a09 10/01/2024
-> [   22.876107] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [   22.883055] pc : nvkm_mmu_dtor+0xac/0xc0 [nouveau]
-> [   22.888063] lr : nvkm_mmu_dtor+0x24/0xc0 [nouveau]
-> [   22.893057] sp : ffffffc0822fb7f0
-> [   22.896362] x29: ffffffc0822fb7f0 x28: 0000000000000000 x27: ffffffc079c69a18
-> [   22.903488] x26: ffffffc079c69d38 x25: ffffffc081892ce8 x24: ffffff80d5624e00
-> [   22.910613] x23: ffffff80d5624e08 x22: dead000000000122 x21: dead000000000100
-> [   22.917737] x20: ffffff80d5624f50 x19: ffffff80c4e07500 x18: ffffffffffffffff
-> [   22.924861] x17: 0000000000001000 x16: 0000000000000000 x15: 0000000000000000
-> [   22.931985] x14: 0000000000000000 x13: dead000000000122 x12: 0000000000000001
-> [   22.939109] x11: 0000000080000000 x10: 0000000000000000 x9 : 0000000000000001
-> [   22.946233] x8 : 00000000000007e0 x7 : 0000000000000000 x6 : 0000000000000239
-> [   22.953357] x5 : 000000000010000c x4 : dead000000000122 x3 : ffffff80c2fa5b38
-> [   22.960481] x2 : ffffff80d519a320 x1 : ffffff80d519a2d0 x0 : ffffff80d519a2c0
-> [   22.967604] Call trace:
-> [   22.970042]  nvkm_mmu_dtor+0xac/0xc0 [nouveau]
-> [   22.974690]  nvkm_subdev_del+0x6c/0xf8 [nouveau]
-> [   22.979504]  nvkm_device_del+0x78/0x120 [nouveau]
-> [   22.984410]  nouveau_platform_device_create+0x54/0xe0 [nouveau]
-> [   22.990534]  nouveau_platform_probe+0x40/0xc0 [nouveau]
-> [   22.995966]  platform_probe+0x68/0xd8
-> [   22.999624]  really_probe+0xbc/0x2c0
-> [   23.003192]  __driver_probe_device+0x78/0x120
-> [   23.007540]  driver_probe_device+0x3c/0x160
-> [   23.011714]  __driver_attach+0x90/0x1a0
-> [   23.015542]  bus_for_each_dev+0x78/0xd8
-> [   23.019369]  driver_attach+0x24/0x30
-> [   23.022937]  bus_add_driver+0xe4/0x208
-> [   23.026676]  driver_register+0x68/0x124
-> [   23.030503]  __platform_driver_register+0x28/0x40
-> [   23.035197]  nouveau_drm_init+0x90/0x1000 [nouveau]
-> [   23.040274]  do_one_initcall+0x44/0x230
-> [   23.044103]  do_init_module+0x5c/0x220
-> [   23.047844]  load_module+0x748/0x87c
-> [   23.051412]  init_module_from_file+0x88/0xcc
-> [   23.055672]  __arm64_sys_finit_module+0x164/0x328
-> [   23.060367]  invoke_syscall+0x48/0x104
-> [   23.064110]  el0_svc_common+0xc8/0xe8
-> [   23.067765]  do_el0_svc+0x20/0x34
-> [   23.071073]  el0_svc+0x3c/0x108
-> [   23.074206]  el0t_64_sync_handler+0x120/0x12c
-> [   23.078553]  el0t_64_sync+0x190/0x194
-> [   23.082206] ---[ end trace 0000000000000000 ]---
-> [   23.087065] nouveau 57000000.gpu: imem: instobj LRU not empty!
-> [   23.092906] nouveau 57000000.gpu: imem: instobj vmap area not empty! 0x40000 bytes still mapped
-> [   23.101958] nvkm: mm not clean!
-> [   23.105095] nvkm: node list:
-> [   23.107994] nvkm: 	00000000 00000074 0
-> [   23.111750] nvkm: 	00400074 00000040 1
-> [   23.115496] nvkm: 	000000b4 003fff4c 0
-> [   23.119248] nvkm: free list:
-> [   23.122128] nvkm: 	00000000 00000074 0
-> [   23.125880] nvkm: 	000000b4 003fff4c 0
-> [   23.129643] nouveau 57000000.gpu: probe with driver nouveau failed with error -110
-> 
-> so I am not sure that this is the actual commit that introduces the breakage.
-> I have also tried to manually checkout some commits to see where the problem
-> could be but unfortunately nothing came out of it.
-> 
-> Best regards,
-> Diogo
-> 
-> #regzbot introduced: v6.11-rc4..v6.11-rc5 
-> 
-> 
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-#regzbot poke
+Bart.
 
