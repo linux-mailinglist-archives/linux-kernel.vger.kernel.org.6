@@ -1,140 +1,130 @@
-Return-Path: <linux-kernel+bounces-364919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4453C99DB1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:09:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7D599DB18
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09F31F23583
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6053F2831E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C610C14AD19;
-	Tue, 15 Oct 2024 01:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="YihReD8p"
-Received: from esa5.hc1455-7.c3s2.iphmx.com (esa5.hc1455-7.c3s2.iphmx.com [68.232.139.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCB313B791;
+	Tue, 15 Oct 2024 01:08:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F69E82890;
-	Tue, 15 Oct 2024 01:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C276D13A3ED;
+	Tue, 15 Oct 2024 01:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728954533; cv=none; b=d8cx76N6dQna3rEaE7Qxu8LzGNwM7Gu3Pg/A/kWq9rtax5Wt8E9/WPmO0O06pQwfpYpiac3bpvxaklkhpPVKPIRE8W9aXxiGZ9utoECSXlcHf9VOg6aD/rHeCOJggIHuYObmJKz/b1cSRcpjei6z0epTgnc7Y9AvaXvXxBHAi9w=
+	t=1728954507; cv=none; b=Nar7cVK7uFtVis7LTfhd3N2zeB3dDkgotvlO5bbDD1XSiEG+0HaHk0HhromwJ3aFwuk8yx16tPf0XrR6ne7KGPDnWtCBqDAAiPqtwytB01rItUKfnr8VHmBjBg3tKHznvL5sTNnDVAd2S7GmSkmJwZCFP7luKpp//uFmbY7Ne04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728954533; c=relaxed/simple;
-	bh=FYawhF9gZT0clVcL2KVukGITmTJeMlLSK+4R7Jc9UJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=enuH6HnpeSd7mTE56ZGcEnui2MMGukTOOJc9VIwV320tfYh+qr6VOow3lXj9MeTX4q4CAeOxI+SXKzwM1TpNwYX2z3yCgAeBVioV/p8yP1pyh8zINEiw/1KKESzNPm+aXJbGXXjsEeSaDdSlQr3QaEmMY2/dq2dkT2F6IggRfAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=YihReD8p; arc=none smtp.client-ip=68.232.139.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1728954530; x=1760490530;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=FYawhF9gZT0clVcL2KVukGITmTJeMlLSK+4R7Jc9UJM=;
-  b=YihReD8p+sP/Pa/DPtsS88qVflyzc7lNTxiBnR6XCrggjZOC/HQcQoih
-   3xFiN+vzcQZpWzuPRy0LuifSh8R4QWE+76dV/8l7VCio6xq3XelOek2Lc
-   Gcn883Dr1sVvPTAcP2vrQBRkIxsr6t3Mvv4Itf8hMezrqf8ZVaea8jkcQ
-   tmEb+GYrFxgmv9Tx2tj9vU/Od8zIcdgID9rxFk8wNDv64MhWxeOpqtDBg
-   qmzzZZ5oRndj4UzlhCC/LRhk5QP8XLaiMYb6o0SaTjmclcbmC8alvK+SD
-   0rFoiovVH8LPu2vZXf5m1RM25/9gqWk4TY0tGHuiZqwtNG1yUDsyoip15
-   w==;
-X-CSE-ConnectionGUID: jvkhFroATiiFKCsILigaig==
-X-CSE-MsgGUID: COJx4A2zSlemAkaV3uUCAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="175952434"
-X-IronPort-AV: E=Sophos;i="6.11,204,1725289200"; 
-   d="scan'208";a="175952434"
-Received: from unknown (HELO yto-r2.gw.nic.fujitsu.com) ([218.44.52.218])
-  by esa5.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 10:07:37 +0900
-Received: from yto-m4.gw.nic.fujitsu.com (yto-nat-yto-m4.gw.nic.fujitsu.com [192.168.83.67])
-	by yto-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id B9163C68E5;
-	Tue, 15 Oct 2024 10:07:36 +0900 (JST)
-Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
-	by yto-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id F2D7DC56D6;
-	Tue, 15 Oct 2024 10:07:35 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id 90F5F6BD6D;
-	Tue, 15 Oct 2024 10:07:35 +0900 (JST)
-Received: from iaas-rdma.. (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 210CA1A000B;
-	Tue, 15 Oct 2024 09:07:35 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: linux-kselftest@vger.kernel.org,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>
-Subject: [PATCH 3/3] selftests: ignore output files and clean them in Makefile
-Date: Tue, 15 Oct 2024 09:08:17 +0800
-Message-ID: <20241015010817.453539-3-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20241015010817.453539-1-lizhijian@fujitsu.com>
-References: <20241015010817.453539-1-lizhijian@fujitsu.com>
+	s=arc-20240116; t=1728954507; c=relaxed/simple;
+	bh=7fi11oqdsEvU7LXkhsaTVxgl7Dg+idIz/SLSOKSmIOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PH3ALl9c8kMF03uVXAftXzobw5v3nFjE8kBE+EMQYACJwbPalxVBkE2osPoRwHL6AL7xjT4vLQIbgbWve8lgJoswITWl2LnzRM7gvEaHzTf3zvRNKxNu7Lbz2tX62yYAjM0bkIhWERHuHG8qQY7buVlqt3ErhfGYfPFkHA2qrMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3C32C4CEC3;
+	Tue, 15 Oct 2024 01:08:23 +0000 (UTC)
+Date: Mon, 14 Oct 2024 21:08:41 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Jose E. Marchesi" <jemarch@gnu.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, Nick Desaulniers <ndesaulniers@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra
+ <peterz@infradead.org>, Zheng Yejian <zhengyejian@huaweicloud.com>, Andrii
+ Nakryiko <andrii.nakryiko@gmail.com>
+Subject: Have compiler remove __fentry locations from overwritten weak
+ functions
+Message-ID: <20241014210841.5a4764de@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28732.003
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28732.003
-X-TMASE-Result: 10--7.072700-10.000000
-X-TMASE-MatchedRID: tlYlTTNZdz+AIpLP/qXbGbnHu4BcYSmtegIHHX2L4YyjEIt+uIPPOBka
-	AZoftHktcMrdJyab/PEN81EjEf6F2+BRuAss+FbmCtzGvPCy/m42ZWOmuJUS2bgbJOZ434BshFA
-	nTzcsrmW1h3Ci3ttLreihEDlL1+arGAdnzrnkM48URSScn+QSXt0H8LFZNFG7bkV4e2xSge7pEy
-	O57i/rZERHSQjgfIu/WoQbvMANSI1vZlbU822PH8WFcyN1Agmm
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-After `make run_tests`, the git status complains:
-Untracked files:
-    (use "git add <file>..." to include in what will be committed)
-        cpufreq/cpufreq_selftest.dmesg_cpufreq.txt
-        cpufreq/cpufreq_selftest.dmesg_full.txt
-        cpufreq/cpufreq_selftest.txt
-        zram/err.log
+There's a long standing issue with having fentry in weak functions that
+were overwritten. This was first caught when a "notrace" function was
+showing up in the /sys/kernel/tracing/available_filter_functions list.
 
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
- tools/testing/selftests/cpufreq/.gitignore | 1 +
- tools/testing/selftests/cpufreq/Makefile   | 1 +
- tools/testing/selftests/zram/.gitignore    | 1 +
- 3 files changed, 3 insertions(+)
- create mode 100644 tools/testing/selftests/cpufreq/.gitignore
- create mode 100644 tools/testing/selftests/zram/.gitignore
+   https://lore.kernel.org/all/20220412094923.0abe90955e5db486b7bca279@kernel.org/
 
-diff --git a/tools/testing/selftests/cpufreq/.gitignore b/tools/testing/selftests/cpufreq/.gitignore
-new file mode 100644
-index 000000000000..f684d27f5d91
---- /dev/null
-+++ b/tools/testing/selftests/cpufreq/.gitignore
-@@ -0,0 +1 @@
-+cpufreq_selftest.*
-diff --git a/tools/testing/selftests/cpufreq/Makefile b/tools/testing/selftests/cpufreq/Makefile
-index c86ca8342222..9b2ccb10b0cf 100644
---- a/tools/testing/selftests/cpufreq/Makefile
-+++ b/tools/testing/selftests/cpufreq/Makefile
-@@ -3,6 +3,7 @@ all:
- 
- TEST_PROGS := main.sh
- TEST_FILES := cpu.sh cpufreq.sh governor.sh module.sh special-tests.sh
-+EXTRA_CLEAN := cpufreq_selftest.dmesg_cpufreq.txt cpufreq_selftest.dmesg_full.txt cpufreq_selftest.txt
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/zram/.gitignore b/tools/testing/selftests/zram/.gitignore
-new file mode 100644
-index 000000000000..b4a2cb6fafa6
---- /dev/null
-+++ b/tools/testing/selftests/zram/.gitignore
-@@ -0,0 +1 @@
-+err.log
--- 
-2.44.0
+What was happening is that ftrace uses kallsyms (what is basically listed
+by nm) to map the location of __fentry to the previous symbol ahead of it.
+Then it says that function is the name of the function for that __fentry.
+But when you have weak functions, you can have this:
 
+
+  int notrace do_not_watch_me(void)
+  {
+	return whatever;
+  }
+
+  void __weak define_me_in_arch(void)
+  {
+	return;
+  }
+
+The define_me_in_arch() gets a __fentry, but because it is overwritten, it
+becomes attached to the end of do_not_watch_me(). When ftrace asks kallsyms
+for the symbol name of that __fentry location, it returns
+do_not_watch_me(), and ftrace will simply list that.
+
+I currently have a hack in the kernel that has:
+
+	ret = kallsyms_lookup(ip, NULL, &offset, &modname, str);
+	/* Weak functions can cause invalid addresses */
+	if (!ret || offset > FTRACE_MCOUNT_MAX_OFFSET) {
+		snprintf(str, KSYM_SYMBOL_LEN, "%s_%ld",
+			 FTRACE_INVALID_FUNCTION, offset);
+		ret = NULL;
+	}
+
+Which checks if the __fentry is too far away from the start of the symbol
+returned and if so, it uses the name: __ftrace_invalid_address__
+
+Then when you cat /sys/kernel/tracing/available_filter_functions you get:
+
+   [..]
+   do_one_initcall
+   __ftrace_invalid_address___884
+   rootfs_init_fs_context
+   wait_for_initramfs
+   __ftrace_invalid_address___84
+   calibration_delay_done
+   calibrate_delay
+   [..]
+
+
+The order of available_filter_functions matter as you can enable the filter
+via the index into that file.
+
+   seq 50 100 > /sys/kernel/tracing/set_ftrace_filter
+
+will enable all the functions in available_filter_functions from index of
+50 through 100 (it does it in n*log(n) time, where as echoing the names in
+takes n^2 time). It also allows you to differentiate between different
+functions with the same name.
+
+That means the weak functions found still need to be listed, otherwise it
+will make the index lookup not match what is shown.
+
+But I was thinking, since gcc (and perhaps clang?) now has:
+
+  -mrecord-mcount
+
+that creates the __mcount_loc section that ftrace uses to find where the
+__fentry's are. Perhaps the compiler can simply remove any of those
+__fentry's that happen to exist in a weak function that was overridden.
+
+Would this be something that the compiler could do?
+
+-- Steve
 
