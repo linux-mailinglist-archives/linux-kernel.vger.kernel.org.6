@@ -1,170 +1,166 @@
-Return-Path: <linux-kernel+bounces-365320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE6099E077
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F78099E07B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78F68B23730
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:11:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E6C1F23E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F2B1C57A5;
-	Tue, 15 Oct 2024 08:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33071C302E;
+	Tue, 15 Oct 2024 08:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TEl8zEsd"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="kEhLKthX"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41511BF804
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A2F1B4F0A;
+	Tue, 15 Oct 2024 08:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728979855; cv=none; b=NDtgxiIewMAHFJ57svhsk5F6zbOG7SkaKX05uY30ZQ49Ac/3FE2rQ6cEo8Lup1ljv1g4Je7cD5xgBc01sBAsgf5WkffEynqvPWUE2/Fq7v/gX7Yb6f+Evbdc1krOROJx3q8N/9Ly2i0Pc/V2EosdPJ4Kwjiejy6X7wU4x4k3vak=
+	t=1728979883; cv=none; b=AR2QfgteTq1fJj73GQNh58IL4rbq+CcckXklh/2gsYlt2WNmTIS5GoleHNs6AKtC51AwpwXXa1CUnC/7zCr+YjFDws2TpRtX6mAWSpXX7xsjFlCPFgZGu2op9uIXqwqJGQRiesFB9WAQPPo84ZsGIyQQBaL6R5AZe3UaZj3fjKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728979855; c=relaxed/simple;
-	bh=KvE7gAeW8sXhIWJBpSNrJV9X+nydWZGu3u6USXH/JFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pX+qTxD7I9zMCxz2ZWtJlLVo7MpHfdPeFYg5vIYP2NlCeq6RxoOfo5AA4Yo7xXMHQEF0YeGojEI281rPbwETVLix0knAtT9BoNIGPJwcEW/rWIVyXPJIOrZVAyQdr+j1AKWJ8hta16wFrVJmBReuKXdjF0ccGXxQJHHYRiXqy5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TEl8zEsd; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7aa086b077so663061166b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728979852; x=1729584652; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KvE7gAeW8sXhIWJBpSNrJV9X+nydWZGu3u6USXH/JFE=;
-        b=TEl8zEsdlCq75LLFnDiukeJAwlSHT/3QIqRwSPU2J2MWJrxN0GLbfuqMMmywJ8/PCm
-         gV543OyynyBZIFPMRlocx7y5veZ9TZr0Y8U+h5G3mpeInNTQ2dPkeaDxrGVir32PqJ2k
-         o62FsT8d/PIWcFk3IYrTx0hEwMTXFpmqQpPYWffa9x768svl6orfZwUSMznhAjJeJPTu
-         jkwFEwd1FwyMmoh7w5hNfLCD65q+I3g1Kdw25hcsEGUW1LeVdHYjMkVPoANAZzOHn1P6
-         TEJ+3jiGdBMvU9lSCrVavxTdRgZ7P8vVhHYnVMHa0KrwJF02xNxtH75ld3TDsLx2Ran0
-         ahXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728979852; x=1729584652;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KvE7gAeW8sXhIWJBpSNrJV9X+nydWZGu3u6USXH/JFE=;
-        b=GsR6BDFdlKOxNPlg6WCAT16/5JL8ylTLQWeiwwAKo4SBG/B8IqjKokjdRkwiSNyKpU
-         mQdSeZVttmZ3+fEJSrns7u7KGAWTl4l+es/xPuL9Vruj3PPgkGjv0Le6vak+bJXuEf3f
-         3IkEeG/fIMzINuWEX3VVw6Aa+JzCkcaaSyAOru3RofJIIBCGAd9H3qJ+UbRfZH/8g7Wn
-         MdLhDtPKg8yGQ9xeiqR8JdHzIfq09P5zNah/5NLZqmdBi2OBl1/fbRor2oqKi14My6da
-         5SdO0xDLqL3b5L7yDZvMSPw+RabffkdnZD9hRtOMF13yHyO1OmOOd5cY/sAORfqBV5zU
-         YYVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBEEKUGePbmhOH9cgtYb26JBXfGxRiPJSslXZMhZH4AOOnn9fM7LHnNXZ9Xju3Mdzd5Lv/mlkrLdIjg5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcXO21dPUxeYDTh4Xh5K71LFv2+dpq/8T6Y+081BAHD7D74oNT
-	XRtPnhi2p+d/wpjCCRKWxlvzUQe9uuielCPIt9Ques3XfIWf5xjD5LzDAka6bhbHAIq+HAfQYcC
-	1vSzENlSEnXo73faATZyH/UaftKgRCq43mqc2
-X-Google-Smtp-Source: AGHT+IHj3pap7JooFFjvVueeXA2+cvcJjG4tmLO9wFNQuWlLuixkFRBrdGwr8xAFLl+BwvBI0CIXr/tQT4JW9Ohs+5g=
-X-Received: by 2002:a17:907:7b8b:b0:a9a:2e12:1a06 with SMTP id
- a640c23a62f3a-a9a2e121be4mr61446266b.51.1728979851608; Tue, 15 Oct 2024
- 01:10:51 -0700 (PDT)
+	s=arc-20240116; t=1728979883; c=relaxed/simple;
+	bh=mQWMACPtiDci8G7WcpMi/jiFarITfO4k7sfUpetIOeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BwDNP6yJFABk657zsqfvQmktkhydkG3ZX6G6r8wk5HAhA4NsDSGDV69K04+I69HCO8HUaIJkU1V8WK/l9F2Qy6qyGeqT3RMHaljJK2pumUSaJijQm8j7gA0E5ift3/EEus7F6a1QcXwYxlkSd/hTrU0c6Y/dEtIRB+1mbYUuiws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=kEhLKthX; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1728979822; x=1729584622; i=deller@gmx.de;
+	bh=mQWMACPtiDci8G7WcpMi/jiFarITfO4k7sfUpetIOeY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=kEhLKthXHetj7wJfQVwcEaoKB9ONI+iIp1bapaxkZrQ6tB21eJ/dFrdvwUtMtcC1
+	 MRnIClo3fGa7GOmTto/F6alBJZZLKxvzOkPKi8ojt2c7DVQRZbpXd9VIgDSup8hZ3
+	 Qi0IFcDubkuwazkgiAlFpZfiF1JmncgXGb53JYi7uywqPcAjXrhNcSfmb+0QMBTYg
+	 +XiMtf4Z0bEGJFQb/rA5OUgHbm9L1N0s8NQ2iAT9NX6G0354MyhZuBfLvDndsyHpm
+	 NoWyN4r7D13REQEl20lx+kBaf8AiRNMS08KifNR6z/79mSEckBxIAvtD0YvqPenoA
+	 bkzDynEtiCZ1599yfw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M9Fjb-1t3fJ44BT5-0005aP; Tue, 15
+ Oct 2024 10:10:22 +0200
+Message-ID: <8b15aa5d-f768-4778-8246-eda704e7c7a2@gmx.de>
+Date: Tue, 15 Oct 2024 10:10:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-6-surenb@google.com>
- <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
- <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com> <CAJD7tkY8LKVGN5QNy9q2UkRLnoOEd7Wcu_fKtxKqV7SN43QgrA@mail.gmail.com>
- <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com> <CAJuCfpE4eOH+HN8dQAavwUaMDfX5Fdyx7zft6TKcT33TiiDbXQ@mail.gmail.com>
-In-Reply-To: <CAJuCfpE4eOH+HN8dQAavwUaMDfX5Fdyx7zft6TKcT33TiiDbXQ@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 15 Oct 2024 01:10:15 -0700
-Message-ID: <CAJD7tkb7UTpNWwJ84TZqB7SyZ2eyQrraOJ0g2qDmxS6C6Y1AtQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, akpm@linux-foundation.org, 
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, 
-	rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, 
-	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
-	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
-	dennis@kernel.org, yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
-	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: da8xx: remove the driver
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, David Lechner <david@lechnology.com>,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20241015065329.12732-1-brgl@bgdev.pl>
+ <4cdde7d6-e0ad-44a4-bb8f-1df5cd3b1874@suse.de>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <4cdde7d6-e0ad-44a4-bb8f-1df5cd3b1874@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DGDxZHuhnqs53RL0iCKK0AY2nwxQt9QhUMglCt2CTckGP+6IxIV
+ L+8+juqTUjmo950QNy7J4vn22//2fsKuXBw8IU1xOlVRKYm9EOyYwjrzl3hi5VUm1EuH19N
+ QditLxnjjeXpQUAL9+gf1EvyJBJkffGxpMCyu1B60FVWCw290VPHt5Hu7I+dKobymolmtCc
+ rgAA+YzHE6dTuVrE1n9sg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/25xlcbN1QU=;P7NDhGTyrT6yTj2fLg5HEeESMBD
+ qT8b3LEXXFUNA1icwlxE3++/9d5qRAOzmTE6IVI37MNGSyLwDkPzSDdospbrZ/3IAqUJyqBUB
+ nG7vynyqlsKkkuddyRq9VnyICwMmXVmiSTHVazymO0Je5xfRoPqd9TraB2HP15gtZoxyAKE7y
+ H0KBGkuOhsToWDXKXTBM/xji6BxCQMmj2itci9w/IKszS/Y7kPodiZ4vS7s55bGqXGbDx1rHA
+ izPrJ5aMphKf1zv5DQC3RBt0vNk41/mkwalPvgxI9Gpi90FnCOZHuk6oJGmMJvkRtnsmvgZEu
+ wGnQ6JT63AtVDZUSq5YGjg1KMENllcFr7zUtGYqMFCYvQOFri/50asT2p3C70TTB8Y0/3hyYh
+ 4nv7H2yGHE1kkhZ4xHs3KZuCmZCkrX+nd0pInUrYU0t7x0Fp61Kpp6WMBa8O+wl08lGifkzBD
+ WZOepmmORV/kn2yx6bPjQh8/qMZCRaa3urR6hCZfYFqiNRhMozqwUd11L36GlnYPcfluFkZTV
+ 864yaHdHsoz66XqgXvdUkrwnMYiKqsFRyjrv/bmzUst0m21YWz+2cV/BtiLoZMoTDmSlKJW/3
+ mYrZ26DqSl4tbkdtG4bLARSXmYVNBh7YH24HycUw7W4U6RNhFipEehYmVQjP5KQFtZU4GMYnG
+ lOA0ah8p43n1ZZSAkbYxmmeTc9sn9zJIlE8pNk+9Bez+ZRzP7txjZHI/Ef4CeufgsMdREdBjc
+ HNQ1Jb+3SEGEQj/PUIW2FUBM94jUBNp9/5XwoShmMRZh78O7P6bqjeVT8wutyObq/3iblm+lP
+ llvDtcP1yTVcpcBeb9nXgPDQ==
 
-On Mon, Oct 14, 2024 at 6:58=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
+On 10/15/24 09:16, Thomas Zimmermann wrote:
+> Am 15.10.24 um 08:53 schrieb Bartosz Golaszewski:
+>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
+>> This driver is no longer used on any platform. It has been replaced by
+>> tilcdc on the two DaVinci boards we still support and can be removed.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> On Mon, Oct 14, 2024 at 5:03=E2=80=AFPM 'John Hubbard' via kernel-team
-> <kernel-team@android.com> wrote:
-> >
-> > On 10/14/24 4:56 PM, Yosry Ahmed wrote:
-> > > On Mon, Oct 14, 2024 at 4:53=E2=80=AFPM John Hubbard <jhubbard@nvidia=
-.com> wrote:
-> > >>
-> > >> On 10/14/24 4:48 PM, Yosry Ahmed wrote:
-> > >>> On Mon, Oct 14, 2024 at 1:37=E2=80=AFPM Suren Baghdasaryan <surenb@=
-google.com> wrote:
-> > >>>>
-> > >>>> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
-> > >>>> references directly in the page flags. This eliminates memory
-> > >>>> overhead caused by page_ext and results in better performance
-> > >>>> for page allocations.
-> > >>>> If the number of available page flag bits is insufficient to
-> > >>>> address all kernel allocations, profiling falls back to using
-> > >>>> page extensions with an appropriate warning to disable this
-> > >>>> config.
-> > >>>> If dynamically loaded modules add enough tags that they can't
-> > >>>> be addressed anymore with available page flag bits, memory
-> > >>>> profiling gets disabled and a warning is issued.
-> > >>>
-> > >>> Just curious, why do we need a config option? If there are enough b=
-its
-> > >>> in page flags, why not use them automatically or fallback to page_e=
-xt
-> > >>> otherwise?
-> > >>
-> > >> Or better yet, *always* fall back to page_ext, thus leaving the
-> > >> scarce and valuable page flags available for other features?
-> > >>
-> > >> Sorry Suren, to keep coming back to this suggestion, I know
-> > >> I'm driving you crazy here! But I just keep thinking it through
-> > >> and failing to see why this feature deserves to consume so
-> > >> many page flags.
-> > >
-> > > I think we already always use page_ext today. My understanding is tha=
-t
-> > > the purpose of this series is to give the option to avoid using
-> > > page_ext if there are enough unused page flags anyway, which reduces
-> > > memory waste and improves performance.
-> > >
-> > > My question is just why not have that be the default behavior with a
-> > > config option, use page flags if there are enough unused bits,
-> > > otherwise use page_ext.
-> >
-> > I agree that if you're going to implement this feature at all, then
-> > keying off of CONFIG_MEM_ALLOC_PROFILING seems sufficient, and no
-> > need to add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS on top of that.
->
-> Yosry's original guess was correct. If not for loadable modules we
-> could get away with having no CONFIG_PGALLOC_TAG_USE_PAGEFLAGS. We
-> could try to fit codetag references into page flags and if they do not
-> fit we could fall back to page_ext. That works fine when we have a
-> predetermined number of tags. But loadable modules make this number
-> variable at runtime and there is a possibility we run out of page flag
-> bits at runtime. In that case, the current patchset disables memory
-> profiling and issues a warning that the user should disable
-> CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to avoid this situation. I expect
-> this to be a rare case but it can happen and we have to provide a way
-> for a user to avoid running out of bits, which is where
-> CONFIG_PGALLOC_TAG_USE_PAGEFLAGS would be used.
+> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-If this is in fact a rare case, I think it may make more sense for the
-config to be on by default, and the config description would clearly
-state that it is intended to be turned off only if the loadable
-modules warning fires.
+applied.
+
+Thanks!
+Helge
+
+
+>> ---
+>> =C2=A0 drivers/video/fbdev/Kconfig=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 13 -
+>> =C2=A0 drivers/video/fbdev/Makefile=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 -
+>> =C2=A0 drivers/video/fbdev/da8xx-fb.c | 1665 --------------------------=
+------
+>> =C2=A0 include/video/da8xx-fb.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 94 --
+>> =C2=A0 4 files changed, 1773 deletions(-)
+>> =C2=A0 delete mode 100644 drivers/video/fbdev/da8xx-fb.c
+>> =C2=A0 delete mode 100644 include/video/da8xx-fb.h
+
 
