@@ -1,168 +1,170 @@
-Return-Path: <linux-kernel+bounces-365068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FDA99DD0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:56:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C00799DD10
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65622833DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:56:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DE62834C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98293172798;
-	Tue, 15 Oct 2024 03:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E316F17278D;
+	Tue, 15 Oct 2024 03:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cUkB3m5s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R4HznoaE"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EAD1714C4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61C516EB5D
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728964570; cv=none; b=E1speC9723QJIM5FPB9ucTd41HEIMywUJBckJ3SjmcQelvv9w/ClVDcFHDf+f6eShFodWlrkCST/NG+hyLoOBr1vLdPJ3ux4Xd/BYR6ZMuUHVsCQMLQ8s4IPdnyg1y4liuz52F/VzSCzQ/84eJaNEWpmFMx4q0pU8ermN5rUd5g=
+	t=1728964685; cv=none; b=H/0rA8zAt5KL9WrSEVcpgH30RL4JEkpwrFZUGEzv4KrFO/gGzc39kdvWc5gBrWCvclU6sqOpQqw0xbP7r0fT4cfVEaFOgGlUqpEVm9Z2FEM5MIK3SEKlm66O7PelxdVCsSHrMi8jFKRTnXlIDuo6GwToDyXFP9GQHmTgy1fSHd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728964570; c=relaxed/simple;
-	bh=MgtyB/AAROrtxH1XraK2lYAW3vbCsCYiprQHNQSY0ag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BUPD+WuQMUybGMaJgXgFg7/FfKC/15gTaXj2UUFTops+/IOrb2yE40Lu+gCQQ/XkAkwzksGCCsUVnLNz8Yw9NJ8vAfyzFpfYbk4yCezI7j7u4TSH5xiic374AP7htD9KZCP9ql11z01e2I+875HG1+EWSWM2AkeqPmn5BDpVeGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cUkB3m5s; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728964567;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/gQj7yhKGwHX3tay3bEUPL2aqsF2Bb60CY1YisKDKbg=;
-	b=cUkB3m5sEwL9Gssk2oIkeuTrLZL18V44yJzof0LmDTD1ft8NhuHSh4jr35KZmadpgGQl1H
-	xuPvyl0NxCKoq4APEa+2hirPjdhUozNi7lxpR4Ky7oZvQh5puZLgUOQHGPbfAhNKFOcOqZ
-	mVHSiOxgWX/stK/Q8+T+zTDLS3Ko2pE=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-270-037OPyDUPOKIkW7aeu09Bg-1; Mon, 14 Oct 2024 23:56:04 -0400
-X-MC-Unique: 037OPyDUPOKIkW7aeu09Bg-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-71e455defb9so5307979b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:56:04 -0700 (PDT)
+	s=arc-20240116; t=1728964685; c=relaxed/simple;
+	bh=N40ZSNWwPk28dZ+LQrxhSO5jACT0zCPufmoUUaRuVJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LckYckQQGGRtXJZc1yWzE6svi4p0nOxdvrY834eshXzPqAVoDHrbgJ+CCOfW4FUUmpQlIRdhAkAbAguhqelzLEgqDh7W88nWVOOcrYN3t0+VhmMPyK2E8HNvfTdj7ZVqus2Ca3fKVZ7Kn078wQKgwWFxCl2enYAGaB0rPLgMV94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R4HznoaE; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so35235a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:58:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728964681; x=1729569481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p9QWKZtDdFz4L73hcRjBFd+xD0iZq8pzY5qOSjjFSZc=;
+        b=R4HznoaEDlNPDF6EM7qoHkybgoUZcuH9su7oJQBvY0oqXKrBxJHr/8cCndMM+uLrAh
+         8ersWRigFXsZ0/Vi4gpvK9eUrKIDCcNarKZxA/VDQTGxgmh3r3csUFuUJ+LCGKzaGLe4
+         8YxjzI7xba9K+TWqNpvkbitMVq6FkGOcX7tihNMsqd0T3zRlOkQbXZReDgAp6kxMoQvQ
+         Vj6zA22p/6fymGOR8wINgR9vShNrGpjf9SJCLr8cdyol5/cKtgWWb8L5Pa1/UXG/lrRg
+         CZdFbEAh6mmGOg209D8Sab4Ol2RJqj4CeeKZSr9z4x6MT6K9fsxIOTA2vLQpDrukssE+
+         AF2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728964563; x=1729569363;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/gQj7yhKGwHX3tay3bEUPL2aqsF2Bb60CY1YisKDKbg=;
-        b=YeULmsQ4a2k9GM39ZujUB/q1IsFnnMRmTNoVMMqY5U07dj0oeBKOrqeIJSx19jq6yN
-         dJwCewVdncX27dUMJBMBWkY8T40fR7yz0G8dQDnK+9yKebNLpywyY6sLqZWfG9Ni7qQr
-         sLceFu4/hSdxyBI4w8ssBhhyW0JV+vmjlU+8n3DGUKfpykQakxtJHerebV0sPJyB5/KK
-         5R9PwXfaqR8Agt04IzILZwDMsEhU4IDKcqUPkm/hwWfNeKLsAj+2tX63RXPh1q3cxDTi
-         QhbcWN71uvt7Q6ZuPDeeNQgzgGR8V1/j9Dht8VGAXWZRLEGOlKq1oIgcGi88m/wupRsA
-         JF1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1PqXwpVdtrg32UrjEIQYTkcpcjAoIL/K/rev/SxTHZKrIs3v3CsR6qkPyHfN82hUTJ3W47pJu79q979U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS0hb1tQAak+5n7c+gf/cNgOund5alG6xYbNNzi4eXv5MndmqK
-	71C8OjYJ+XMJeNWdiM/jXezrpRs4DSHAWMI4z+Sj1OVO096yNCHYe5AWt9BIsTSC8yNI/a5zTZi
-	2t83pt5/e0j4cmLjh3iChjdUDOWdc0woy/fg5Ayf7h5B+EeyTn+iYYVH3jJE8hw==
-X-Received: by 2002:a05:6a21:4d8c:b0:1d8:f894:43f9 with SMTP id adf61e73a8af0-1d8f89445eamr681082637.11.1728964563166;
-        Mon, 14 Oct 2024 20:56:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGybMblrnhP5WbRv8pGItZKUwHcNnS++KdeQ7wfVC+XkNBJwpsFwHEmwrwG693wjo55GOXWsQ==
-X-Received: by 2002:a05:6a21:4d8c:b0:1d8:f894:43f9 with SMTP id adf61e73a8af0-1d8f89445eamr681045637.11.1728964562725;
-        Mon, 14 Oct 2024 20:56:02 -0700 (PDT)
-Received: from [192.168.68.54] ([180.233.125.129])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6ba2d4sm339896a12.11.2024.10.14.20.55.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 20:56:02 -0700 (PDT)
-Message-ID: <2352629a-3742-45e9-a38f-196989918c9b@redhat.com>
-Date: Tue, 15 Oct 2024 13:55:53 +1000
+        d=1e100.net; s=20230601; t=1728964681; x=1729569481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p9QWKZtDdFz4L73hcRjBFd+xD0iZq8pzY5qOSjjFSZc=;
+        b=XQ1p9c/5XKLwGShDUnUIq8Wnd3dmBieBropFtr+ND0QRNLYCwqD1d9IU9M/YUzNuAs
+         U9loOsx3ji7uWVnfkJTkUPC5gi+DAYJFBDwQVBB8vj7SuiSItvo1sZZGLUqW8M9u1T9B
+         V4GHcHHou7ERXQsUV+ryboAb7daZkxECP+VHoGNGRMQRzcPlSqr4LwsnQIJkj1hx4VEe
+         oZODop2G/uHRcQebjrt1YChefHyhWqThsBYwiS6upGdNV+Kp1WdTV0MddaJxmXLE0dfW
+         5r340cMeSvTScAjbFGY/fjzlHP0lSCdj1B40oyTkksBRBYgbWMjizzqb/1uJeGh0pwOw
+         E5cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWw2zcYANg93E/gRa4Z7KBt6zk0I11c7hjNiJTkS5PcVLmofeJxKDWIXklfBKyX7I1pFFcyZ656i1VZLMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbB44/h1nhujKYLO+q9V2pxEtn8a6AAm+kR8BcmxQWOay2YU8r
+	ILV5GSn1rpLwLLXIVeY4mXIdbcsZdoz7UwLJ3w+prnBFgKFfADmUnz6eK8d0Agv9cEurutfCgQs
+	rHc42XBnJNhCTfjh5bp+pYNDV+qq8wIKxwhAo
+X-Google-Smtp-Source: AGHT+IE/Mbk48UdN6n+R06D0061d9x0T4HYynAxMG9ehl5kqxUTk/rg+uyWs8G1J3z3EpkLDqsneJzTbxqupOe4TGro=
+X-Received: by 2002:a05:6402:26c1:b0:5c2:5641:af79 with SMTP id
+ 4fb4d7f45d1cf-5c95b0bd39amr641707a12.0.1728964680865; Mon, 14 Oct 2024
+ 20:58:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/11] arm64: realm: Query IPA size from the RMM
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004144307.66199-1-steven.price@arm.com>
- <20241004144307.66199-4-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20241004144307.66199-4-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241014085816.1401364-1-guanyulin@google.com>
+ <20241014085816.1401364-6-guanyulin@google.com> <9b5fe5d2-77a7-40b7-b260-856c35d9dcec@rowland.harvard.edu>
+In-Reply-To: <9b5fe5d2-77a7-40b7-b260-856c35d9dcec@rowland.harvard.edu>
+From: Guan-Yu Lin <guanyulin@google.com>
+Date: Tue, 15 Oct 2024 11:56:00 +0800
+Message-ID: <CAOuDEK2f_mtfiye7MdnOqEkq3pYW1kcdkwEMMBC5CkkQ1OGu3A@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] usb: host: enable sideband transfer during system sleep
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
+	mathias.nyman@intel.com, yajun.deng@linux.dev, sumit.garg@linaro.org, 
+	kekrby@gmail.com, oneukum@suse.com, dianders@chromium.org, perex@perex.cz, 
+	tiwai@suse.com, niko.mauno@vaisala.com, andreyknvl@gmail.com, 
+	christophe.jaillet@wanadoo.fr, tj@kernel.org, stanley_chang@realtek.com, 
+	quic_jjohnson@quicinc.com, ricardo@marliere.net, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, badhri@google.com, 
+	albertccwang@google.com, quic_wcheng@quicinc.com, pumahsu@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/5/24 12:42 AM, Steven Price wrote:
-> The top bit of the configured IPA size is used as an attribute to
-> control whether the address is protected or shared. Query the
-> configuration from the RMM to assertain which bit this is.
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v4:
->   * Make PROT_NS_SHARED check is_realm_world() to reduce impact on
->     non-CCA systems.
-> Changes since v2:
->   * Drop unneeded extra brackets from PROT_NS_SHARED.
->   * Drop the explicit alignment from 'config' as struct realm_config now
->     specifies the alignment.
-> ---
->   arch/arm64/include/asm/pgtable-prot.h | 4 ++++
->   arch/arm64/include/asm/rsi.h          | 2 +-
->   arch/arm64/kernel/rsi.c               | 8 ++++++++
->   3 files changed, 13 insertions(+), 1 deletion(-)
-> 
+On Mon, Oct 14, 2024 at 11:56=E2=80=AFPM Alan Stern <stern@rowland.harvard.=
+edu> wrote:
+>
+> On Mon, Oct 14, 2024 at 08:50:29AM +0000, Guan-Yu Lin wrote:
+> >
+> > diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> > index e713cf9b3dd2..eb85cbb1a2ff 100644
+> > --- a/drivers/usb/core/driver.c
+> > +++ b/drivers/usb/core/driver.c
+> > @@ -1583,6 +1583,11 @@ int usb_suspend(struct device *dev, pm_message_t=
+ msg)
+> >       struct usb_device       *udev =3D to_usb_device(dev);
+> >       int r;
+> >
+> > +     if (msg.event =3D=3D PM_EVENT_SUSPEND && usb_sideband_check(udev)=
+) {
+> > +             dev_dbg(dev, "device accessed via sideband\n");
+> > +             return 0;
+> > +     }
+>
+> I'm not so sure about this.  By returning early, you prevent the drivers
+> bound to this device from suspending.  But they can't operate properly
+> when the system is in a low-power mode.  Won't that cause problems?
+>
+> Maybe this really belongs in usb_suspend_device(), and its counterpart
+> belongs in usb_resume_device().
+>
 
-[...]
+To my understanding, after the system is suspended, the USB driver
+will do nothing as the main processor has been suspended. May I check
+what forms of low power mode and operation we are discussing here?
 
-> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
-> index 9bf757b4b00c..a6495a64d9bb 100644
-> --- a/arch/arm64/kernel/rsi.c
-> +++ b/arch/arm64/kernel/rsi.c
-> @@ -8,6 +8,11 @@
->   #include <linux/psci.h>
->   #include <asm/rsi.h>
->   
-> +struct realm_config config;
-> +
+usb_suspend_device() did close the required port/bus to maintain usb
+transfer. However, there are additional usb_hcd_flush_endpoint() calls
+aside from usb_suspend_device(). Maybe we should consider not doing
+those also since some of the endpoints are now handled by the
+sideband.
 
-Nit: I think this variable is file-scoped since it has a generic name.
-In this case, 'static' is needed to match with the scope.
+> > diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> > index 1ff7d901fede..9876b3940281 100644
+> > --- a/drivers/usb/core/hcd.c
+> > +++ b/drivers/usb/core/hcd.c
+> > @@ -2593,6 +2593,7 @@ struct usb_hcd *__usb_create_hcd(const struct hc_=
+driver *driver,
+> >       timer_setup(&hcd->rh_timer, rh_timer_func, 0);
+> >  #ifdef CONFIG_PM
+> >       INIT_WORK(&hcd->wakeup_work, hcd_resume_work);
+> > +     refcount_set(&hcd->sb_usage_count, 0);
+>
+> Did I miss something?  I didn't notice this field in any of the earlier
+> patches.  Was it already created by the prerequisite series?  If so, why
+> didn't that series do this initialization?
+>
+> >  #endif
+> >
+> >       INIT_WORK(&hcd->died_work, hcd_died_work);
+> > diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+> > index 0b4685aad2d5..d315d066a56b 100644
+> > --- a/drivers/usb/core/usb.c
+> > +++ b/drivers/usb/core/usb.c
+> > @@ -671,6 +671,7 @@ struct usb_device *usb_alloc_dev(struct usb_device =
+*parent,
+> >       dev->state =3D USB_STATE_ATTACHED;
+> >       dev->lpm_disable_count =3D 1;
+> >       atomic_set(&dev->urbnum, 0);
+> > +     refcount_set(&dev->sb_usage_count, 0);
+>
+> And doesn't this belong in the 3/5 patch, the one that creates the
+> sb_usage_count field?
+>
+> Alan Stern
 
-> +unsigned long prot_ns_shared;
-> +EXPORT_SYMBOL(prot_ns_shared);
-> +
->   DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
->   EXPORT_SYMBOL(rsi_present);
->   
-> @@ -67,6 +72,9 @@ void __init arm64_rsi_init(void)
->   		return;
->   	if (!rsi_version_matches())
->   		return;
-> +	if (WARN_ON(rsi_get_realm_config(&config)))
-> +		return;
-> +	prot_ns_shared = BIT(config.ipa_bits - 1);
->   
->   	arm64_rsi_setup_memory();
->   
+Thanks for the suggestion, I'll move this, as well as the
+initialization of hcd->sb_usage_count, to corresponding earlier
+patches.
 
-Thanks,
-Gavin
-
+Regards,
+Guan-Yu
 
