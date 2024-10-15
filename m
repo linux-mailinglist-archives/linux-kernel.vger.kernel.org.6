@@ -1,227 +1,270 @@
-Return-Path: <linux-kernel+bounces-366244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2853F99F29B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:22:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25EA99F29D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD184282EDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:22:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFD95B20FF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8111F6665;
-	Tue, 15 Oct 2024 16:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E421EC006;
+	Tue, 15 Oct 2024 16:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0pH7gf2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qac8OD/a"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38C613B284;
-	Tue, 15 Oct 2024 16:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B2C13B284
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729009359; cv=none; b=nq2uCpOUE0s9GIRspoa3O86mblD/JINJEWnbzSOjLV6StoBGSZ01I3TiUSLMprXBFM1MZluWrconHcxaKTEdHisQqwXieoW6RCfdrL2iPvSqKuOvPZct9B/i6hvYPrlYMDljV3HPcdTndDptS4yvd2ULk0IDg+FG/DJxc4L6C34=
+	t=1729009392; cv=none; b=qARKw9zYV9pjCdXcy2aYtmVqq/oUXIWrdcJQ014Qh4q2E+nYucT6bSQUcSibt6k9lPV3gAClVxTKCxxtnLeeeAflwHIXBbiaY/rqK/CONw7XzLU91kKW9rEFyXGZz0az5rIwATsSkuOOWGO1u0pYecpD4T/fDpVZOsIv4kmHXl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729009359; c=relaxed/simple;
-	bh=/af6Ex+gSseyWdLBMjtn07sutpsjuHhvKKSivJFiKE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9/mVDsZG1AP4pn9sZmXVzwZhtp+97zYzaUWZ9ewKUW8uHEC8zEc1dxIlFXaF3dTkP1aYBm3+whGcj/j+KaAZ8H6JMLUH+WJLtAJnrLmD2iznA+86tUvm5gfCB0ctyK2INi8N1JKwdGsvcSnhsw8AxIJP8IRrp1cpqDlTy0gjWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0pH7gf2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB30C4CEC6;
-	Tue, 15 Oct 2024 16:22:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729009359;
-	bh=/af6Ex+gSseyWdLBMjtn07sutpsjuHhvKKSivJFiKE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E0pH7gf2cR7iOVf4YnSc7kLHg5Epw1FtyWvj1xVuInBe5I0D3LthHO5KeAzR2XEIr
-	 yNpTQgNNLSx3of7/XOf5+nEbNW5hLjajiuw4rk4QEB9+BcaBB6huNeG26e55XpJUn8
-	 wXF6iBWl+/KJfRsqChmWj7375euC9rYBtBoLDWRIuMqA+FKuPqO6VE5DAMrj2oFuBH
-	 P9V1bZ4qKcudyf1wzMldyBUxC2AB4XpfUvRlNSgBjCkVCvYeqLkchO+hE52lnSZRm0
-	 LLXdZYIz8UQelWwgi+rBTL1bIrnmJjRYDEmAqxOiicrM3nGNQWaDAUpofu/yLiY0sY
-	 Ke5xKqklx2ncg==
-Date: Tue, 15 Oct 2024 09:22:37 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, dchinner@redhat.com,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Christoph Hellwig <hch@lst.de>, nirjhar@linux.ibm.com
-Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
- extsize
-Message-ID: <20241015162237.GX21853@frogsfrogsfrogs>
-References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
- <20241011163830.GX21853@frogsfrogsfrogs>
- <20241011164057.GY21853@frogsfrogsfrogs>
- <ZwzlPR6044V/Siph@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <20241014152856.GG21853@frogsfrogsfrogs>
- <Zw4RYapUKWH5u7yt@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+	s=arc-20240116; t=1729009392; c=relaxed/simple;
+	bh=uefXRuLRMGJk2JENPf/9hb6iCQCpfb0wiT21exX72XY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GcBa/RdfR1nm4dE1FuIGdn8DJbvwRnGT4vIn0vMAahAjBnM3mn9PIzlqSrtXislhiVlHGCSSczkOc2qFsnO95TjlY4ff3Vzj/AkFaozIf9yRwoPZUVgkEDtxHVY2R0Hql2RxDMEYgsJeK7mSjDVcbTq7nvCaxCB9mzOInuyO8aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qac8OD/a; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4601a471aecso783971cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:23:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729009390; x=1729614190; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dDWOPijrZeJilZ37ZHNgChR3sqw/x2Nu3+ZmwEvNv6E=;
+        b=Qac8OD/aWgNMuRL34wugqaAEPCaHg5p9UvYbva55bwMucxndK6rBfluyryeE89s+Dz
+         E+zUlScivpl0wD1Kd3QDN5P5WBacjfdW/h/v2n+qhraVqBaaBBDgF2cK8yo4Wq6pNjZM
+         RvaccBC5aORFXJLuhc/i8jP0nx/5LcF/Tj6uflBAyjt2Pf5V/QF9iB/qrv206uq9/6h0
+         7Hj1ys5U2SWA7TSdtIp9D7UMk763Wwolqa56C3PgkBdfF5SDfoX2GRmJDJwxxZvsTVDP
+         NOKOpKdqLsO7mRpNsth3BRN4MjcTTMsyjLwIljgFotf5mQrPqoi99Hrpth8FGzyqmmAf
+         7xNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729009390; x=1729614190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dDWOPijrZeJilZ37ZHNgChR3sqw/x2Nu3+ZmwEvNv6E=;
+        b=MZ2fwcH81htksgHrrYRq00WWtXDXlXe/t7ZWw0YijyzjM7jw4DgYqAIKSR9Fx3pkNd
+         DowLYnnKXhtJ80ESpbHQZJcWRBysIp+qcDO+/5j7L/psZzj9+pve2fv1tlhyi8OEa2MJ
+         or69HYgP5HOwya3N0CmRfeLyE0K71Iu+/tCFeeKTqBoJm8y9tmh325/3mBlU8OQAhHOo
+         7pNstcG52wBPTF6tuiGdW8JPdCPmuV5I95xK4dZZIWUUyqfoeeDEz3Yq0tlbhNNctiUE
+         3AP66YoUzmK/t2+YCTfFqnpYX0Q5EdgonxAvdG9CHLadXLsFZnYwijOn1h8G7vmoC/vs
+         6Nmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGg1ZIzBRcmCExswblyOJAKCQHMDE5KbM4WGDxw+EzTSqAwwCxBZhLHF81NGnzRt2N/8P0m92nM4lRNaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRvlTbSZhWrMpgaJIjQd+a8JwVcxlt6zMA389BMqe/en5ReZaL
+	PLG4gnrdxPkMk0QLbl54qRkqcpbjV0siXaQfLiv1XvTuLlE5LWqgyst2/gKRx0uT83mKd78sAcU
+	xPMciJ0nVCFG9BO0C0tWEQOT7CWpmm9LXD3Wy
+X-Google-Smtp-Source: AGHT+IEdoinHZ+gJHUrxuTfBN3ObqCd0A0nLR1UEjRZ5azygqzxHrrwrJ66HtWmyVeMZaCbHdz0pHDOuqnFsue4cYlA=
+X-Received: by 2002:a05:622a:a28c:b0:45c:9d26:8f6e with SMTP id
+ d75a77b69052e-46059c77ccdmr9063491cf.21.1729009389338; Tue, 15 Oct 2024
+ 09:23:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw4RYapUKWH5u7yt@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241007205236.11847-1-fw@strlen.de> <20241007181541.4bbe9b8580f6475023256515@linux-foundation.org>
+ <CAJuCfpGZg8Pydy4rGUefOBgwJZ5C6_s3p913oFQJSVV+S9MQoA@mail.gmail.com>
+ <ZwTb8tMVVqrpZIv2@pc636> <CAJuCfpFKXYEaNJce2bUDR0EJNNk8KV_cUZfRALfmp=ejCW042A@mail.gmail.com>
+ <ZwUunnGM9UFJ9bdt@pc638.lan> <CAJuCfpEtZK-w_=WuSPcQAJRyoazNkw-jxGoRyU0Ggg+Ljz2dZA@mail.gmail.com>
+ <ZwZApQ5eB-Bx8Bpe@pc636>
+In-Reply-To: <ZwZApQ5eB-Bx8Bpe@pc636>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 15 Oct 2024 09:22:55 -0700
+Message-ID: <CAJuCfpHR33mZEqtstEVz=x0tgG9ZDbH4Tf0nEmVUnn5GygR+NA@mail.gmail.com>
+Subject: Re: [PATCH lib] lib: alloc_tag_module_unload must wait for pending
+ kfree_rcu calls
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Florian Westphal <fw@strlen.de>, 
+	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Ben Greear <greearb@candelatech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 12:23:21PM +0530, Ojaswin Mujoo wrote:
-> On Mon, Oct 14, 2024 at 08:28:56AM -0700, Darrick J. Wong wrote:
-> > On Mon, Oct 14, 2024 at 03:02:45PM +0530, Ojaswin Mujoo wrote:
-> > > On Fri, Oct 11, 2024 at 09:40:57AM -0700, Darrick J. Wong wrote:
-> > > > On Fri, Oct 11, 2024 at 09:38:30AM -0700, Darrick J. Wong wrote:
-> > > > > On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
-> > > > > > Extsize is allowed to be set on files with no data in it. For this,
-> > > > > > we were checking if the files have extents but missed to check if
-> > > > > > delayed extents were present. This patch adds that check.
-> > > > > > 
-> > > > > > While we are at it, also refactor this check into a helper since
-> > > > > > its used in some other places as well like xfs_inactive() or
-> > > > > > xfs_ioctl_setattr_xflags()
-> > > > > > 
-> > > > > > **Without the patch (SUCCEEDS)**
-> > > > > > 
-> > > > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> > > > > > 
-> > > > > > wrote 1024/1024 bytes at offset 0
-> > > > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> > > > > > 
-> > > > > > **With the patch (FAILS as expected)**
-> > > > > > 
-> > > > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> > > > > > 
-> > > > > > wrote 1024/1024 bytes at offset 0
-> > > > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> > > > > > xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
-> > > > > > 
-> > > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > > > 
-> > > > > Looks good now,
-> > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > > 
-> > > > That said, could you add a fixes tag for the xfs_ioctl_setattr_*
-> > > > changes, please?
-> > > 
-> > > Actually a small doubt Darrick regarding the Fixes commit (asked inline
-> > > below):
-> > > 
-> > > > 
-> > > > --D
-> > > > 
-> > > > > --D
-> > > > > 
-> > > > > > ---
-> > > > > >  fs/xfs/xfs_inode.c | 2 +-
-> > > > > >  fs/xfs/xfs_inode.h | 5 +++++
-> > > > > >  fs/xfs/xfs_ioctl.c | 4 ++--
-> > > > > >  3 files changed, 8 insertions(+), 3 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > > > > > index bcc277fc0a83..19dcb569a3e7 100644
-> > > > > > --- a/fs/xfs/xfs_inode.c
-> > > > > > +++ b/fs/xfs/xfs_inode.c
-> > > > > > @@ -1409,7 +1409,7 @@ xfs_inactive(
-> > > > > >  
-> > > > > >  	if (S_ISREG(VFS_I(ip)->i_mode) &&
-> > > > > >  	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
-> > > > > > -	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
-> > > > > > +	     xfs_inode_has_filedata(ip)))
-> > > > > >  		truncate = 1;
-> > > > > >  
-> > > > > >  	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
-> > > > > > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> > > > > > index 97ed912306fd..03944b6c5fba 100644
-> > > > > > --- a/fs/xfs/xfs_inode.h
-> > > > > > +++ b/fs/xfs/xfs_inode.h
-> > > > > > @@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
-> > > > > >  	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
-> > > > > >  }
-> > > > > >  
-> > > > > > +static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
-> > > > > > +{
-> > > > > > +	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
-> > > > > > +}
-> > > > > > +
-> > > > > >  /*
-> > > > > >   * Check if an inode has any data in the COW fork.  This might be often false
-> > > > > >   * even for inodes with the reflink flag when there is no pending COW operation.
-> > > > > > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > > > > > index a20d426ef021..2567fd2a0994 100644
-> > > > > > --- a/fs/xfs/xfs_ioctl.c
-> > > > > > +++ b/fs/xfs/xfs_ioctl.c
-> > > > > > @@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
-> > > > > >  
-> > > > > >  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
-> > > > > >  		/* Can't change realtime flag if any extents are allocated. */
-> > > > > > -		if (ip->i_df.if_nextents || ip->i_delayed_blks)
-> > > > > > +		if (xfs_inode_has_filedata(ip))
-> > > > > >  			return -EINVAL;
-> > > > > >  
-> > > > > >  		/*
-> > > > > > @@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
-> > > > > >  	if (!fa->fsx_valid)
-> > > > > >  		return 0;
-> > > > > >  
-> > > > > > -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
-> > > > > > +	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
-> > > 
-> > > So seems like there have been lots of changes to this particular line
-> > > mostly as a part of refactoring other areas but seems like the actual
-> > > commit that introduced it was:
-> > > 
-> > >   commit e94af02a9cd7b6590bec81df9d6ab857d6cf322f
-> > >   Author: Eric Sandeen <sandeen@sgi.com>
-> > >   Date:   Wed Nov 2 15:10:41 2005 +1100
-> > >   
-> > >       [XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not
-> > >       using xfs rt
-> > > 
-> > > Before this we were actually checking ip->i_delayed_blks correctly. So just wanted 
-> > > to confirm that the fixes would have the above commit right?
-> > > 
-> > > If this looks okay I'll send a revision with this above tags:
-> > > 
-> > > Fixes: e94af02a9cd7 ("[XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not using xfs rt")
-> > 
-> > Yeah, that sounds fine.  Want to write a quick fstest to bang on
-> > xfs_ioctl_setattr_check_extsize to force everyone to backport it? :)
-> 
-> Got it, thanks, I'll send a v4.
-> 
-> Regarding the tests, we were thinking of adding more comprehensive
-> generic tests for extsize now that ext4 is also implementing it. We
-> have a new team member Nirjhar (cc'd) who is interested in writing the 
-> xfstest and is working on it as we speak.
+On Wed, Oct 9, 2024 at 1:36=E2=80=AFAM Uladzislau Rezki <urezki@gmail.com> =
+wrote:
+>
+> On Tue, Oct 08, 2024 at 11:34:10AM -0700, Suren Baghdasaryan wrote:
+> > On Tue, Oct 8, 2024 at 6:07=E2=80=AFAM Uladzislau Rezki <urezki@gmail.c=
+om> wrote:
+> > >
+> > > On Tue, Oct 08, 2024 at 04:16:39AM -0700, Suren Baghdasaryan wrote:
+> > > > On Tue, Oct 8, 2024 at 12:15=E2=80=AFAM Uladzislau Rezki <urezki@gm=
+ail.com> wrote:
+> > > > >
+> > > > > On Mon, Oct 07, 2024 at 06:49:32PM -0700, Suren Baghdasaryan wrot=
+e:
+> > > > > > On Mon, Oct 7, 2024 at 6:15=E2=80=AFPM Andrew Morton <akpm@linu=
+x-foundation.org> wrote:
+> > > > > > >
+> > > > > > > On Mon,  7 Oct 2024 22:52:24 +0200 Florian Westphal <fw@strle=
+n.de> wrote:
+> > > > > > >
+> > > > > > > > Ben Greear reports following splat:
+> > > > > > > >  ------------[ cut here ]------------
+> > > > > > > >  net/netfilter/nf_nat_core.c:1114 module nf_nat func:nf_nat=
+_register_fn has 256 allocated at module unload
+> > > > > > > >  WARNING: CPU: 1 PID: 10421 at lib/alloc_tag.c:168 alloc_ta=
+g_module_unload+0x22b/0x3f0
+> > > > > > > >  Modules linked in: nf_nat(-) btrfs ufs qnx4 hfsplus hfs mi=
+nix vfat msdos fat
+> > > > > > > > ...
+> > > > > > > >  Hardware name: Default string Default string/SKYBAY, BIOS =
+5.12 08/04/2020
+> > > > > > > >  RIP: 0010:alloc_tag_module_unload+0x22b/0x3f0
+> > > > > > > >   codetag_unload_module+0x19b/0x2a0
+> > > > > > > >   ? codetag_load_module+0x80/0x80
+> > > > > > > >
+> > > > > > > > nf_nat module exit calls kfree_rcu on those addresses, but =
+the free
+> > > > > > > > operation is likely still pending by the time alloc_tag che=
+cks for leaks.
+> > > > > > > >
+> > > > > > > > Wait for outstanding kfree_rcu operations to complete befor=
+e checking
+> > > > > > > > resolves this warning.
+> > > > > > > >
+> > > > > > > > Reproducer:
+> > > > > > > > unshare -n iptables-nft -t nat -A PREROUTING -p tcp
+> > > > > > > > grep nf_nat /proc/allocinfo # will list 4 allocations
+> > > > > > > > rmmod nft_chain_nat
+> > > > > > > > rmmod nf_nat                # will WARN.
+> > > > > > > >
+> > > > > > > > ...
+> > > > > > > >
+> > > > > > > > --- a/lib/codetag.c
+> > > > > > > > +++ b/lib/codetag.c
+> > > > > > > > @@ -228,6 +228,8 @@ bool codetag_unload_module(struct modul=
+e *mod)
+> > > > > > > >       if (!mod)
+> > > > > > > >               return true;
+> > > > > > > >
+> > > > > > > > +     kvfree_rcu_barrier();
+> > > > > > > > +
+> > > > > > > >       mutex_lock(&codetag_lock);
+> > > > > > > >       list_for_each_entry(cttype, &codetag_types, link) {
+> > > > > > > >               struct codetag_module *found =3D NULL;
+> > > > > > >
+> > > > > > > It's always hard to determine why a thing like this is presen=
+t, so a
+> > > > > > > comment is helpful:
+> > > > > > >
+> > > > > > > --- a/lib/codetag.c~lib-alloc_tag_module_unload-must-wait-for=
+-pending-kfree_rcu-calls-fix
+> > > > > > > +++ a/lib/codetag.c
+> > > > > > > @@ -228,6 +228,7 @@ bool codetag_unload_module(struct module
+> > > > > > >         if (!mod)
+> > > > > > >                 return true;
+> > > > > > >
+> > > > > > > +       /* await any module's kfree_rcu() operations to compl=
+ete */
+> > > > > > >         kvfree_rcu_barrier();
+> > > > > > >
+> > > > > > >         mutex_lock(&codetag_lock);
+> > > > > > > _
+> > > > > > >
+> > > > > > > But I do wonder whether this is in the correct place.
+> > > > > > >
+> > > > > > > Waiting for a module's ->exit() function's kfree_rcu()s to co=
+mplete
+> > > > > > > should properly be done by the core module handling code?
+> > > > > >
+> > > > > > I don't think core module code cares about kfree_rcu()s being c=
+omplete
+> > > > > > before the module is unloaded.
+> > > > > > Allocation tagging OTOH cares because it is about to destroy ta=
+gs
+> > > > > > which will be accessed when kfree() actually happens, therefore=
+ a
+> > > > > > strict ordering is important.
+> > > > > >
+> > > > > > >
+> > > > > > > free_module() does a full-on synchronize_rcu() prior to freei=
+ng the
+> > > > > > > module memory itself and I think codetag_unload_module() coul=
+d be
+> > > > > > > called after that?
+> > > > > >
+> > > > > > I think we could move codetag_unload_module() after synchronize=
+_rcu()
+> > > > > > inside free_module() but according to the reply in
+> > > > > > https://lore.kernel.org/all/20241007112904.GA27104@breakpoint.c=
+c/
+> > > > > > synchronize_rcu() does not help. I'm not quite sure why...
+> > > > > >
+> > > > > It is because, synchronize_rcu() is used for a bit different thin=
+gs,
+> > > > > i.e. it is about a GP completion. Offloading objects can span sev=
+eral
+> > > > > GPs.
+> > > >
+> > > > Ah, thanks! Now that I looked into the patch that recently added
+> > > > kvfree_rcu_barrier() I understand that a bit better.
+> > > >
+> > > > >
+> > > > > > Note that once I'm done upstreaming
+> > > > > > https://lore.kernel.org/all/20240902044128.664075-3-surenb@goog=
+le.com/,
+> > > > > > this change will not be needed and I'm planning to remove this =
+call,
+> > > > > > however this change is useful for backporting. It should be sen=
+t to
+> > > > > > stable@vger.kernel.org # v6.10+
+> > > > > >
+> > > > > The kvfree_rcu_barrier() has been added into v6.12:
+> > > > >
+> > > > > <snip>
+> > > > > urezki@pc638:~/data/raid0/coding/linux.git$ git tag --contains 2b=
+55d6a42d14c8675e38d6d9adca3014fdf01951
+> > > > > next-20240912
+> > > > > next-20240919
+> > > > > next-20240920
+> > > > > next-20241002
+> > > > > v6.12-rc1
+> > > > > urezki@pc638:~/data/raid0/coding/linux.git$
+> > > > > <snip>
+> > > > >
+> > > > > For 6.10+, it implies that the mentioned commit should be backpor=
+ted also.
+> > > >
+> > > > I see. I guess for pre-6.12 we would use rcu_barrier() instead of
+> > > > kvfree_rcu_barrier()?
+> > > >
+> > > For kernels < 6.12, unfortunately not :) If you have a possibility to
+> > > switch to reclaim over call_rcu() API, then you can go with rcu_barri=
+er()
+> > > which waits for all callbacks to be completed.
+> >
+> > We do not control the call-site inside the module, so this would not
+> > be possible.
+> >
+> > >
+> > > Or backport kvfree_rcu_barrier(). It __should__ be easy since there
+> > > were not many changes into kvfree_rcu() between 6.10 and 6.12-rcX.
+> >
+> > That sounds better. I'll take a stab at it. Thanks!
 
-Heh, welcome! :)
+I prepared backports for stable 6.10.y and 6.11.y branches which
+contain this patch along with the prerequisite "rcu/kvfree: Add
+kvfree_rcu_barrier() API" patch. I think that's the only prerequisite
+required. However, since this patch is not yet in Linus' tree, I'll
+wait for it to get there before sending backports to stable (per Greg
+KH's recommendation). Please let me know if you think it's more
+critical and should be posted earlier.
+Thanks,
+Suren.
 
-> Since the area is new to him, it might take a bit of time to get that
-> out, hope that is okay?
-
-Sounds good to me.  You might see how many of the tests/xfs/ stuff can
-be pulled up to tests/generic/ as a starting point.
-
---D
-
-> Regards,
-> Ojaswin
-> 
-> > 
-> > --D
-> > 
-> > > Thanks,
-> > > Ojaswin
-> > > 
-> > > > > >  	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
-> > > > > >  		return -EINVAL;
-> > > > > >  
-> > > > > > -- 
-> > > > > > 2.43.5
-> > > > > > 
-> > > > > > 
-> > > > > 
-> > > 
-> 
+> >
+> You are welcome!
+>
+> --
+> Uladzislau Rezki
+>
 
