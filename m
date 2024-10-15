@@ -1,124 +1,164 @@
-Return-Path: <linux-kernel+bounces-366801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1117899FA93
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:53:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A2499FA8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 959141F2288E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A37531C215AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9282221E3B7;
-	Tue, 15 Oct 2024 21:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F20021E3B7;
+	Tue, 15 Oct 2024 21:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="cpPfRDQp"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vl7V5SQ4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sSlxmmtY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB1F21E3A2
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FB421E3A2;
+	Tue, 15 Oct 2024 21:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729029195; cv=none; b=BSGhs9kshjK/kxiA4noh44/9wg1znG0lEwy1rtYRKJR9Hho9rORb8XOUhyCuoTuGc+fLEZu+M778KWjnjKMJ16ax2nUWD1Ze7IZ46BQ6xNw7LPESoez2DJJVopwkxpz2p+a8Oegg5KWRGLO6+QLtbRr7NbdzppgnDFV83hutqBI=
+	t=1729029132; cv=none; b=ty0sjzVXLhpyvOdt5V8o8DrdAL42pRGuORn4A7E84R5V/bBK8MDaSwDiYFeuqYGHIy6vM9FgAwoiz0JVtg41ar+CAz1dviSspIKRFIEb+CrTXAANSE47hTGNxdHQskdSzfDh1vf0Ex2hu6c2Chs+bps6mIJYqJCiLbfOykoalX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729029195; c=relaxed/simple;
-	bh=33zh+FNJ8Pdz2z5fFtLbuLnDgMJRzb/PKTlMZr5vzNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FLcIo88oiEoyDW2H1BkM8Mtj4l8iBkbsYI+0w0gq7swVQqXvu/Nlt3iVn0zOFc+jv+x0vtsT48KU2h3fRTw8wE+6BwkvI+cXyF9mzUm1CD0QbPH4Z0kYvxM03jr3DU4adJ/JdCtPb7sMzxD2obnMcRbqVayPnhCTjCBCboQtOVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=cpPfRDQp; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so2636029b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:53:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729029193; x=1729633993; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tgYy6Bm6ST3WMLvvW5zbLbX+E8lzENv9uLpgUUiRQbE=;
-        b=cpPfRDQpqqZQlqi+e+MG+IUq52F+XmE3XvVstNAe/P0UdxAgcISu4uoR1ey3RsXX6y
-         RTgCEOzUvG2hkSRhMryD4Wewaa3YMaQcK6DvRNM+AdDvsUbUktxgxFfJhQD/c+G3C0Ah
-         WrbSWndwrWDPLDOuk0HZ5uTfQNTOWfgFuZpjBxeUzM9qmhU7Q0f7/3v63BJ0hl9n17Ex
-         uZPcUBv7pNgkuA2wYwVRQh6zW7mf2/WHO/fazliXcJLTG8EAh/cbG4yjyaTFoSgifqn2
-         ZfzleYQtbHp+qnnv8gSkR+U/SeckMjcpFNQR8NSzu/5r+vfj90e7q5N27tsr85ZNwSlT
-         TRzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729029193; x=1729633993;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tgYy6Bm6ST3WMLvvW5zbLbX+E8lzENv9uLpgUUiRQbE=;
-        b=TcP1kJhONPgsRiQuJZtrAnuX9ADu1eebT6Tatsk2rd1yKf0Uky9tcJSntkI2QF+tf5
-         OU/HWL+f9j3u2tiX03K5s584v/nKGigZuOAh8HrFtGnp5jJz7XvO/cv+OnUNojPt3Q57
-         ARGlIhVq/GFRWZZRs7nGMamT+Qia/TXiev5aiB7HlFcx6vxd1mS0jiIzmT+df9AV8SXu
-         p1jBOtI6QeZAyjO9qbyX24QKQiIu9M4jm0nVNPE5CaiYpLF28ER9eD4CXtCvXvjlMwOo
-         2pXSg/kV7+sI4YANeF/1STmzT/9HGw1cBN0qryw3kW4xsKDSPrEuukUbpbH3+pT6p/4v
-         3h1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX3cftgh2ZVw5B+9eW/bGD1qtAkMwwJfBVlAjVjAefTahr6qlSdypPMmneAZQ6ZvTNZn59QbDkc73E8YY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSiUwJ0PeNHa8Ka7ZeO5IsZ1+Ja/0x3Mxc+Cs0FuxghoEossdI
-	RQuh5T4+dAU5UOE95aXmuk0zq5cYzpDV1hJ8XXBW8H2yAE0TLi7TDud0FudG/k1YCX0S+d8AWXa
-	GLBeUiFbEbgU=
-X-Google-Smtp-Source: AGHT+IHKRWB3I+w3ryMfWgsL3J2DCrxRJgLiiR2QKNjK8+DYFibDfVRHnxZR4m7tvrx4sHkzUbzeUQ==
-X-Received: by 2002:a05:6a00:9159:b0:71e:cf8:d6fa with SMTP id d2e1a72fcca58-71e7da61f1amr2296785b3a.15.1729029192757;
-        Tue, 15 Oct 2024 14:53:12 -0700 (PDT)
-Received: from localhost.localdomain ([81.17.122.160])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71e7750a74csm1789969b3a.212.2024.10.15.14.53.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 14:53:12 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: dpenkler@gmail.com,
-	gregkh@linuxfoundation.org
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: gpib: Move free after the variable use has been completed
-Date: Tue, 15 Oct 2024 15:51:55 -0600
-Message-ID: <20241015215157.18571-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729029132; c=relaxed/simple;
+	bh=p61YuIh1Y8MUDVqmuiNV/jsV3UiIoa56tIkQZUYCVNA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VTQVGo50U2UUrhQL/93FGEjR0QB9H4C68gSdZzw0BdCbg2X5Z5/ZISoM6+OUZfOlsYyzZColDkvJUoM2oQC9RiMIlFGb30uDXhb3ALJ0A40F8iIXGPOYZflQBLGQvXwzGlIBSTXRzh2ZyIYAyvgRoXQNOlUVi8fJW26DliPRtcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vl7V5SQ4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sSlxmmtY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729029129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V17BgVSHlm/Th688C4r6hGpuwTlMDXhpOb8SuP6x8Fo=;
+	b=vl7V5SQ4lMqu3lE1zrTeHK9jmn0btpzXg4+Xff4gScdfjUYVEFvzS4ow1o9zqeQzWkvtsJ
+	XtzXKpbmbtRDt2aqseFwH0ruGL6K6VG3iPk+o8yqTMX/KV21p3ptn5CROAVPzH0r3jprYz
+	1jxzmUxhuH8X8XZdpBIGFR4v6rCsSf6koIrJW13IAkF9tUzWW9ZawHQiPieJ6s0LG/AO53
+	bmTiC0HY8x+/FxKIkYKm9NGjqONYD/1/j4rxBxr8V2mEFGsaLPR/0JYVVnIqGBDOCXFigH
+	L5Yth5QMuZ9x9xfZP9D0J4n3Sys6emhfDgQVmpNyN1jXzi2fdNu7QkpDWhLL9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729029129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V17BgVSHlm/Th688C4r6hGpuwTlMDXhpOb8SuP6x8Fo=;
+	b=sSlxmmtYfGW/39lSIkBfcY+CL/ruYvLqhaZw59bKhPNV165tpJOQAEaURvx4WxlJUnw5lX
+	23eB9XeHPdcoKBAQ==
+To: Markus Elfring <Markus.Elfring@web.de>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>, linux-renesas-soc@vger.kernel.org, Geert
+ Uytterhoeven <geert+renesas@glider.be>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>, Chris Paterson
+ <Chris.Paterson2@renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v4] irqchip/renesas-rzg2l: Fix missing put_device
+In-Reply-To: <663a37fe-ffc4-4826-b8ba-bcefdb0e7992@web.de>
+References: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
+ <663a37fe-ffc4-4826-b8ba-bcefdb0e7992@web.de>
+Date: Tue, 15 Oct 2024 23:52:09 +0200
+Message-ID: <871q0hdofq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The variable `in_data` is freed, but used later in the code.
-Fix it by moving the freeing the memory after it use has been
-completed.
+On Fri, Oct 11 2024 at 20:48, Markus Elfring wrote:
+>> rzg2l_irqc_common_init calls of_find_device_by_node, but the
+>> corresponding put_device call is missing.
+>
+> How do you think about to append parentheses to function names
+> (so that they can be distinguished a bit easier from other identifiers)?
+>
+>
+>> Make use of the cleanup interfaces from cleanup.h to call into
+>> __free_put_device (which in turn calls into put_device) when
+>
+> Can it help to influence the understanding of this programming
+> interface by mentioning the usage of a special attribute?
 
-This issue was reported by Coverity Scan.
-Report:
-CID 1600783: (#1 of 1): Use after free (USE_AFTER_FREE)
-19. pass_freed_arg: Passing freed pointer in_data as an argument to
-ni_usb_dump_raw_block.
+Can you please stop pestering people with incomprehensible word salad?
 
-Fixes: 4e127de14fa7 ("staging: gpib: Add National Instruments USB GPIB driver")
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
----
- drivers/staging/gpib/ni_usb/ni_usb_gpib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> leaving function rzg2l_irqc_common_init and variable "dev" goes
+>> out of scope.
+>>
+>> Mind that we don't want to "put" "dev" when rzg2l_irqc_common_init
+>> completes successfully, therefore assign NULL to "dev" to prevent
+>> __free_put_device from calling into put_device within the successful
+>> path.
+>
+> Will further software design options become applicable here?
+>
+> Can any pointer type be used for the return value
+> (instead of the data type =E2=80=9Cint=E2=80=9D)?
 
-diff --git a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-index 1da263676f2a..75f39e1f3ed1 100644
---- a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-+++ b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-@@ -690,12 +690,12 @@ static int ni_usb_read(gpib_board_t *board, uint8_t *buffer, size_t length,
- 		kfree(in_data);
- 		return parse_retval;
- 	}
--	kfree(in_data);
- 	if (actual_length != length - status.count) {
- 		pr_err("%s: actual_length=%i expected=%li\n",
- 		       __func__, actual_length, (long)(length - status.count));
- 		ni_usb_dump_raw_block(in_data, usb_bytes_read);
- 	}
-+	kfree(in_data);
- 	switch (status.error_code) {
- 	case NIUSB_NO_ERROR:
- 		retval = 0;
--- 
-2.43.0
+How is this relevant here?
 
+>
+>> "make coccicheck" will still complain about missing put_device calls,
+>> but those are false positives now.
+>
+> Would you like to discuss any adjustment possibilities for this
+> development tool?
+
+Would you like to get useful work done insteead of telling everyone what
+to do? There is nothing to discuss.
+
+>> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
+>> @@ -8,6 +8,7 @@
+>>   */
+>>
+>>  #include <linux/bitfield.h>
+>> +#include <linux/cleanup.h>
+> =E2=80=A6
+>
+> This header file would usually be included by an other inclusion statemen=
+t already,
+> wouldn't it?
+
+Relying on indirect includes is not necessarily a good idea/
+
+>> @@ -530,12 +531,12 @@ static int rzg2l_irqc_parse_interrupts(struct rzg2=
+l_irqc_priv *priv,
+>>  static int rzg2l_irqc_common_init(struct device_node *node, struct devi=
+ce_node *parent,
+>>  				  const struct irq_chip *irq_chip)
+>>  {
+>> +	struct platform_device *pdev =3D of_find_device_by_node(node);
+>> +	struct device *dev __free(put_device) =3D pdev ? &pdev->dev : NULL;
+>>  	struct irq_domain *irq_domain, *parent_domain;
+>> -	struct platform_device *pdev;
+>>  	struct reset_control *resetn;
+>>  	int ret;
+>>
+>> -	pdev =3D of_find_device_by_node(node);
+>>  	if (!pdev)
+>>  		return -ENODEV;
+> =E2=80=A6
+>
+> Would you dare to reduce the scopes for any local variables here?
+> https://refactoring.com/catalog/reduceScopeOfVariable.html
+
+Can you keep your refactoring links for yourself please? We are aware of
+this.
+
+But this change fixes a bug and that's it. We are not doing cleanups in
+a bug fix. Please read and understand Documentation/process before
+giving people ill defined advise.
+
+Thanks,
+
+        tglx
 
