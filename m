@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-365494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60DF99E325
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072E399E32C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 142FCB2100E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:53:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062B91C21C8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588021D9A7A;
-	Tue, 15 Oct 2024 09:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877551E282B;
+	Tue, 15 Oct 2024 09:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="RImCyTmH"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yn4Beh69"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F122818B488
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D087F7FC;
+	Tue, 15 Oct 2024 09:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728985994; cv=none; b=GfJ5d03YvZyVmQbKbIJV2Wjx8Gcg81ocx7Of203UVuTk0lakck03HJulnFpvNPLyQsUb5eeD/c2FyzDpQA+rsLinLzZI7LScqi5DIum6MaK3WbbqRHlnKR0KiWtTg2clSFxcxcAh+v22QCuCCE5AddiIeaf5R/lY9RqRGaLlVuA=
+	t=1728986051; cv=none; b=HFzanGkt2HmcqFoKgZSVzgGbOkX3FFN7A4RtOov4LJ3oLQlLoMTaLxac1Udb/OOIyshsYQATYxYKtdHdHcDMbSw5jnNfzDt1fOa8nk/snebEWQi6WlzCah3qmvXeA9UQ4iD6t4NWz8jOj54DWUEe37W3uKyvp4ClwvD85uk9cnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728985994; c=relaxed/simple;
-	bh=+QiVpaJTqb9lGZxquQMPwOmszRdsIH3dWewjm4uDNPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l5qW2h45RhNhR+Y2iJZ0sG39hqS6NMFbUqohik00LaZ8Az+t7jAZbg61Fxv+tcMPNlneZxfsGPhtNj6uy0Ykz358Hn0/0c+WU2g+JtV9dfHqCQlv8ID0KOYzmbYaTVlJ4hltMkMI/ZyhIiaPLa19eVqp6AqGy2h92R6heSPnICs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=RImCyTmH; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so23894501fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:53:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728985991; x=1729590791; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gXKHChHiIoQp0tWweCcNM5/x2glH+l2xRI6KeML9nf4=;
-        b=RImCyTmH1jUX12qXeNqCXjNwCcO4NA39rko4oHZBRSb6DVeBuumbE30kyNhSKCu1q0
-         5w9sugSt4W2ir2ZI9o7UBMO2J7r90zc74gbEOFw34jzNqMSK0pUFt/up2NxGWCG9cvt9
-         i8Z8RRZNcUpaqDRoIBurWfNdR0/JFBlzlA4nWvK6XlXJAnOI3RvdIjXOHhBlq5yxWePq
-         uWuJZFJa8qCIj3UC4FPkDL96SI+dxPv50wJyYdhfvwqMvrIxiQR/X33Y1D6bktoANvQi
-         8OqHcIAAnlL/x1aCYP1fItBel3syc6GggeEmpibh91EOb5s4JBX48Px3he5Mt26jd16S
-         XG5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728985991; x=1729590791;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gXKHChHiIoQp0tWweCcNM5/x2glH+l2xRI6KeML9nf4=;
-        b=cFmXY6JY3aoLd/QNc6O4QNrxFPmUz+auVke9i+hWs3O+9PUDvNVQJdw0/ECEoswYNo
-         LtttjBuTstkvuIenGiYSLo2q5aPNm1fPlgluObAoQB6ejCIARQLXesabQc/K7hUmRRIJ
-         ttXg3BTRhcUSoVt9BxLL+a33zaZ+LVqLlNsd/qQrBvyP0zFH0mahvULy5tZQxRbOvdWt
-         6ydzhxmnZhh3s6JDiCAkVbmruloGhbeTfcMAsePZt31keSrW6ZmSS/OLD3o9fFP2TFVO
-         h6dCPCWifLkCzMXcDEEZddIJLEnpxuVkh17SLexSCYm8RpYVH8E1qUxjE6S836AkS1Uz
-         hGgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfMeVpsvJDuF5i3eOqNebKlkVNMzmDrmIURmb3FyG6ehyxXPVV7incV3C7BFLxLOTyqg5zUO3Ggul+Iek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0EdFD2uSVIuAIwjQU0Xr410pbQuZMHN+UfcuoUqmfP9C1v6/I
-	d5+E+fbMjwYfub1TOTVA6bqQGPJAMD1v5/rOXwBvHSn97gw6lLHPGZMJn82Vv7U=
-X-Google-Smtp-Source: AGHT+IEHVCGw5gneW8aiZsfe3uUHa9UQ89iqVPpiZ2h77v58WraREjoOic94ZLZj77yCdDgyfYbw+g==
-X-Received: by 2002:a05:651c:2220:b0:2fb:3881:35d5 with SMTP id 38308e7fff4ca-2fb3f2c725emr60984831fa.35.1728985990884;
-        Tue, 15 Oct 2024 02:53:10 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2973fba2sm51027766b.47.2024.10.15.02.53.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 02:53:10 -0700 (PDT)
-Message-ID: <2cdcad89-2677-4526-8ab5-3624d0300b7f@blackwall.org>
-Date: Tue, 15 Oct 2024 12:53:08 +0300
+	s=arc-20240116; t=1728986051; c=relaxed/simple;
+	bh=VxH0d8OiCc+yI1zRcswIOsXhZoYIMl9urHl70yfxeao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LEqZn1r4XNO/U6rYzbePQAkMZJUHy/xlMO3MxbrGApGl+lsytLl/j0Pq63EbH4LMOMGlbscsqTNEwWPV6fACAK0a1pFUFLN5I2gLwPv3WECoo84aM/iDdrDoF1PcB/khCMiGIEgSTb/W4wGAXeR/vWBCbYlV9dxXprbGeq7rtcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yn4Beh69; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F9G5Xa019351;
+	Tue, 15 Oct 2024 09:53:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gIzGYTNAP570onZc1Q9SZ0BCayz48+49eB4KT3Q0w+o=; b=Yn4Beh69hIeMH9hG
+	TH8cCYS8Go5MVduJ8jKPA4IpQWYZQyyp95fsEjzTXKrab20KG9um2x+dVNyh4fXm
+	H8jYpU28rjYazd/xlWVMPix5hAPtdBDAfORLfRxlv3EljAxiJLaYy2l5k1rXaZ+e
+	liK1slAA+LgtWem3l7mZcUF3UX+IoqDX0VRHHhypmtt9xcKoAwdD2R7RXeSCBzuO
+	DlV/sIQpX1f8dhIICNt+2Fcsu/M85rSL8lYv1lD2MVjHglif477WfbD+cKnTuBu2
+	5c6CSXV36a0dJDhwzWamXJbhNacLh+rhZlI4qEIFReKZuinrr8wSXxpaTmg005GQ
+	xGsjwQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429nm3g306-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 09:53:59 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49F9rwD6001924
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 09:53:58 GMT
+Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Oct
+ 2024 02:53:54 -0700
+Message-ID: <85a13e7c-b48c-4105-a633-a48ebebe9fdf@quicinc.com>
+Date: Tue, 15 Oct 2024 17:53:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,95 +64,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] bpf: xdp: fallback to SKB mode if DRV flag is absent.
-To: Daniel Borkmann <daniel@iogearbox.net>, Hangbin Liu
- <liuhangbin@gmail.com>, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>,
- Jussi Maki <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- Liang Li <liali@redhat.com>
-References: <20241015033632.12120-1-liuhangbin@gmail.com>
- <8ef07e79-4812-4e02-a5d1-03a05726dd07@iogearbox.net>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <8ef07e79-4812-4e02-a5d1-03a05726dd07@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2 0/4] Add support for APPS SMMU on QCS615
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <robimarko@gmail.com>, <will@kernel.org>,
+        <robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+References: <20241015081603.30643-1-quic_qqzhou@quicinc.com>
+ <e0bd108f-1133-473a-a0e5-6efe1b19f50d@kernel.org>
+From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+In-Reply-To: <e0bd108f-1133-473a-a0e5-6efe1b19f50d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pkVBa3nGe1uQilYiIB6dfxCdyJpfAk4T
+X-Proofpoint-ORIG-GUID: pkVBa3nGe1uQilYiIB6dfxCdyJpfAk4T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150067
 
-On 15/10/2024 11:17, Daniel Borkmann wrote:
-> On 10/15/24 5:36 AM, Hangbin Liu wrote:
->> After commit c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags
->> specified"), the mode is automatically set to XDP_MODE_DRV if the driver
->> implements the .ndo_bpf function. However, for drivers like bonding, which
->> only support native XDP for specific modes, this may result in an
->> "unsupported" response.
+
+
+在 10/15/2024 4:20 PM, Krzysztof Kozlowski 写道:
+> On 15/10/2024 10:15, Qingqing Zhou wrote:
+>> Enable APPS SMMU function on QCS615 platform. APPS SMMU is required
+>> for address translation in devices including Ethernet/UFS/USB and
+>> so on.
 >>
->> In such cases, let's fall back to SKB mode if the user did not explicitly
->> request DRV mode.
+>> Add the SCM node for SMMU probing normally. SMMU driver probe will
+>> check qcom_scm ready or not, without SCM node, SMMU driver probe will
+>> defer.
+>> The dmesg log without SCM node:
+>> platform 15000000.iommu: deferred probe pending: arm-smmu: qcom_scm not ready
 >>
-
-So behaviour changed once, now it's changing again.. IMO it's better to explicitly
-error out and let the user decide how to resolve the situation. The above commit
-is 4 years old, surely everyone is used to the behaviour by now. If you insist
-to do auto-fallback, then at least I'd go with Daniel's suggestion and do it
-in the bonding device. Maybe it can return -EFALLBACK, or some other way to
-signal the caller and change the mode, but you assume that's what the user
-would want, maybe it is and maybe it's not - that is why I'd prefer the
-explicit error so conscious action can be taken to resolve the situation.
-
-That being said, I don't have a strong preference, just my few cents. :)
-
->> Fixes: c8a36f1945b2 ("bpf: xdp: Fix XDP mode when no mode flags specified")
->> Reported-by: Liang Li <liali@redhat.com>
->> Closes: https://issues.redhat.com/browse/RHEL-62339
-> 
-> nit: The link is not accessible to the public.
-> 
-> Also, this breaks BPF CI with regards to existing bonding selftest :
-> 
->   https://github.com/kernel-patches/bpf/actions/runs/11340153361/job/31536275257
-> 
-> Given this issue is related to only bonding driver, could this be fixed
-> there instead?
-> 
->> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
->> ---
->>   net/core/dev.c | 12 +++++++++++-
->>   1 file changed, 11 insertions(+), 1 deletion(-)
+>> With the SCM node, SMMU can probe normally, but SCM driver still fails
+>> to probe because of one SCM bug:
+>> qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
+>> qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
+>> The above SCM bug is fixed by:
+>> https://lore.kernel.org/all/20241005140150.4109700-2-quic_kuldsing@quicinc.com/
+>> But above patch doesn't impact building of current patch series, this patch
+>> series can build successfully without above patch.
 >>
->> diff --git a/net/core/dev.c b/net/core/dev.c
->> index ea5fbcd133ae..e32069d81cd7 100644
->> --- a/net/core/dev.c
->> +++ b/net/core/dev.c
->> @@ -9579,6 +9579,7 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
->>         /* don't call drivers if the effective program didn't change */
->>       if (new_prog != cur_prog) {
->> +reinstall:
->>           bpf_op = dev_xdp_bpf_op(dev, mode);
->>           if (!bpf_op) {
->>               NL_SET_ERR_MSG(extack, "Underlying driver does not support XDP in native mode");
->> @@ -9586,8 +9587,17 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
->>           }
->>             err = dev_xdp_install(dev, mode, bpf_op, extack, flags, new_prog);
->> -        if (err)
->> +        if (err) {
->> +            /* The driver returns not supported even .ndo_bpf
->> +             * implemented, fall back to SKB mode.
->> +             */
->> +            if (err == -EOPNOTSUPP && mode == XDP_MODE_DRV &&
->> +                !(flags & XDP_FLAGS_DRV_MODE)) {
->> +                mode = XDP_MODE_SKB;
->> +                goto reinstall;
->> +            }
->>               return err;
->> +        }
->>       }
->>         if (link)
+>> Dependency:
+>> https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
+>>
+>> Changes in v2:
+>> - Address the comments on bindings from Krzysztof.
+> 
+> Which comments? Be specific what changed.
+Got it, will change into "Add QCS615 into compatibles disallowing clocks in arm,smmu.yaml to address the comments in arm,smmu bindings patch from Krzysztof." in next version. Is it fine?
+> 
+> Best regards,
+> Krzysztof
+> 
 
 
