@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-365740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390A699E948
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A02799E94D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67AEF1C22CE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1FA71F21311
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879B71F4705;
-	Tue, 15 Oct 2024 12:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3B61E8830;
+	Tue, 15 Oct 2024 12:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1VK+X9i"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OM/8T+WK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642CA1EABCC;
-	Tue, 15 Oct 2024 12:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6800D1D5ADB;
+	Tue, 15 Oct 2024 12:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728994411; cv=none; b=T5gDdn0VzdZ3bh5AHyV2LFmEiRmLvNb3as0MxGj8BhCDkB7PjObtjXoYdl4vgBFrmlsPwD4HOcTKkc9raudV7rdQERJBH5VPt4IxdfaKHynV1nzal5w3tGvlbDZgcoTP5v4aNCgIwQZFKKqd1yuImu1zhMfBX7qRK29lllrhX40=
+	t=1728994511; cv=none; b=IzBV3MbmpVMjmn4JB24fsJMeOfOd8z/mhEpV4P9HLODFRV11zT0j/Mv87q4mb9HTvokwgPdQ06IjfcRzzuSFWECLJz44eGS6u4OacvuUWQfJPmErCvBpW5ln8Kd/oL20k5xIZlW3O1WObYQrj0MoDVFXWjf86aYFJPJv9dhB2OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728994411; c=relaxed/simple;
-	bh=KXWCJOpbHpL9DIZ5J7xh0XTLCqFDtsOZ+XU1CgD8GPU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UOP4JqFQBu4AyfoAq/3iyr1lMydxUrbSRvbqBFIRs6qAx4ybAE/2Voj8895d+FBcWyojkgbnGJ9cdEqVvf6N6KEDLdxpLDQ/TJCRJpD4uT26kXHH4Hq+X3g/f/v6GS5n4xOTDTrt0PFmaudoeeFYQIPgZN/aU5VZZXaHTOvS5m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H1VK+X9i; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5e7e1320cabso1858751eaf.0;
-        Tue, 15 Oct 2024 05:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728994409; x=1729599209; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pCA2dSjig9QjhuM6n0is+Pu4ptTOUVUC6+z7okb0WPo=;
-        b=H1VK+X9iyUJI8xGDD9N38lph9HmLhjk24+INSsSOIhu97V9cQt2C2bkdzH5k4Zh3nS
-         zBF5x7kS+2D0C5He0dP+bem8aCZKksGtkalU0PtDFrj/f1xkNlGQy8DHrrn62XoWgPUz
-         cxmDJIvgn3X7S67jL/hqqiz+pYp8/qY0yuvywGN7IfbhJgY5zl362y1tzuWshhBKjK8V
-         F5At84/2Og04wg53al2Ws5nFKqgxAOtq6MMzLkCNIrRaGY1W2h4TvXQ7MUeoqjYBo7Jf
-         +DblqXJGCW8oV+qPjfKfwppbRGGZAsZzU1vwPzyhFj9+ck50UT1AWabIusRrR0AbM8zs
-         zMdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728994409; x=1729599209;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pCA2dSjig9QjhuM6n0is+Pu4ptTOUVUC6+z7okb0WPo=;
-        b=oucAwDYiAZEoBvdGhnSFZx6rOZ0PkYY4r8vfz3LKvxxp5OKwKmk9Rtk8wbOh+tdr3j
-         x8AF2iVsR6kgGA8T7jQPeuEVEXep/w2WuAylEJnXgkXf//BxcLFy9yRa8paKP4YXMCKh
-         S8JwjjJDegaNpARuGl5P/l/8ukPyHKaV6Ve/S7ri2dElyBVvihFrTxpYk83NJm0haTuR
-         OfEcRh51GtP7wf3hvz8uoYQPy+h0HlK+MgMCm9gw8YpF1Fjb4XY1zQ6B9+CZBu6l5Edf
-         jY60lVqdtLK/XlxsCc3+0z2zFa2Wsogx1phbDzyImYSo76vCOEtpvv8DVHsMh2ZznRFz
-         P0nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZY2/y+30rfsjjI5QtMcA3JA4T9X0XmcJLSWMQKH70eB2WzmIPeFNJmikggbcOoBURbY3GoOsb@vger.kernel.org, AJvYcCWqEjPV6/VC2gob6eG8OTxrP6j73lRpagDfOs+I6w6LwYiED8HYOkZvo3HfGFHXluyfaQep5tZbcyJsYU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAwG2yULa/JAJVQZ3PFQ8lHoIn+IBma8Pz4tpLhJkLch37H44U
-	XU4PzLV7TCuZ/fjhzHF6pvMhPaQYZYlid/rDXaG70+u7oF4WstFwfxzoLDwB
-X-Google-Smtp-Source: AGHT+IFPkOyYwKlqlonc6AecyXi5LVJvxeKZb47a5nMJmH80bHoTjjV4mLMp38pzBiftIDpx6dPrdA==
-X-Received: by 2002:a05:6358:7603:b0:1c2:f910:c2b3 with SMTP id e5c5f4694b2df-1c340dd2636mr92620155d.21.1728994409342;
-        Tue, 15 Oct 2024 05:13:29 -0700 (PDT)
-Received: from dev.. ([129.41.59.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c707839sm1179839a12.69.2024.10.15.05.13.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 05:13:28 -0700 (PDT)
-From: Rohit Chavan <roheetchavan@gmail.com>
-To: Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	hariprasad <hkelam@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rohit Chavan <roheetchavan@gmail.com>
-Subject: [PATCH] octeontx2-af: Use str_enabled_disabled()
-Date: Tue, 15 Oct 2024 17:43:00 +0530
-Message-Id: <20241015121300.1601108-1-roheetchavan@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728994511; c=relaxed/simple;
+	bh=1dTvursAVotDjwh/ETMarv28WWUMW3C4nw02ITS1GJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X8EiPTJsgW33QZdqiBvyKguQY1dl6kDP2mW64HJkwNZzrEZSArvsrUqZvg19JbnAyJUTs4GRc27koS6OwBlGPsc6MMBGfCYsEWzo5b9qVL8/UWDTScSp+6/2EIlQ0Zv5w3bruBdt2kRlSysmlT2pbRYabOBpigCzczTzv7ZD6uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OM/8T+WK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C17C4CEC6;
+	Tue, 15 Oct 2024 12:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728994511;
+	bh=1dTvursAVotDjwh/ETMarv28WWUMW3C4nw02ITS1GJQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OM/8T+WK16XjIesrzIdumV3GCukFt+gD39AhYdM3ckhfJzrEDjQYS4qh0fwxy3COU
+	 R48eXoQ7aZHF7EKsD3rp52UX7KiOwaxC3fTGQ1gjCoo+F6F95vl+yYx1yPVZfwIxch
+	 b8mL+MapqPhpzeV33LVZGwxGbmF00RDtqgBhPBQzX4BGTnotgxh9d6A19QtzCxT6/D
+	 OY65/AcxzBtgLw4oUfs0oKgrUNYP6ItQFIGQT+s1tDY2ukB+XgDaQxGrsu2IFwHGjS
+	 h+TsxJFdIjnnRVq8V7gv4LJ0QfHwd5PeEAR7mjyLA1y/GU85xkN+BL4aavxG6VPa/q
+	 WVDqXMzsmdyDw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1t0gSK-000000003vj-17ni;
+	Tue, 15 Oct 2024 14:15:16 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH] phy: qcom: qmp-pcie: drop bogus x1e80100 qref supplies
+Date: Tue, 15 Oct 2024 14:14:06 +0200
+Message-ID: <20241015121406.15033-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,27 +65,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
- Use str_enabled_disabled() helper instead of open coding the same.
+The PCIe PHYs on x1e80100 do not a have a qref supply so stop requesting
+one. This also avoids the follow warning at boot:
 
-Signed-off-by: Rohit Chavan <roheetchavan@gmail.com>
+	qcom-qmp-pcie-phy 1bfc000.phy: supply vdda-qref not found, using dummy regulator
+
+Fixes: 9dab00ee9544 ("phy: qcom: qmp-pcie: Add Gen4 4-lanes mode for X1E80100")
+Fixes: 606060ce8fd0 ("phy: qcom-qmp-pcie: Add support for X1E80100 g3x2 and g4x2 PCIE")
+Cc: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-index 7498ab429963..5d09cb56e67a 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-@@ -1251,7 +1251,7 @@ static int rvu_af_npc_exact_feature_get(struct devlink *devlink, u32 id,
- 	enabled = rvu_npc_exact_has_match_table(rvu);
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+index f71787fb4d7e..36aaac34e6c6 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+@@ -3661,8 +3661,8 @@ static const struct qmp_phy_cfg x1e80100_qmp_gen4x2_pciephy_cfg = {
  
- 	snprintf(ctx->val.vstr, sizeof(ctx->val.vstr), "%s",
--		 enabled ? "enabled" : "disabled");
-+		 str_enabled_disabled(enabled));
+ 	.reset_list		= sdm845_pciephy_reset_l,
+ 	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
+-	.vreg_list		= sm8550_qmp_phy_vreg_l,
+-	.num_vregs		= ARRAY_SIZE(sm8550_qmp_phy_vreg_l),
++	.vreg_list		= qmp_phy_vreg_l,
++	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+ 	.regs			= pciephy_v6_regs_layout,
  
- 	return 0;
- }
+ 	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
+@@ -3695,8 +3695,8 @@ static const struct qmp_phy_cfg x1e80100_qmp_gen4x4_pciephy_cfg = {
+ 
+ 	.reset_list		= sdm845_pciephy_reset_l,
+ 	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
+-	.vreg_list		= sm8550_qmp_phy_vreg_l,
+-	.num_vregs		= ARRAY_SIZE(sm8550_qmp_phy_vreg_l),
++	.vreg_list		= qmp_phy_vreg_l,
++	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+ 	.regs			= pciephy_v6_regs_layout,
+ 
+ 	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
 -- 
-2.34.1
+2.45.2
 
 
