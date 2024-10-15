@@ -1,110 +1,119 @@
-Return-Path: <linux-kernel+bounces-366766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B087399FA1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:42:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2964999FA22
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D41341C2202A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B0B284606
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6EA202653;
-	Tue, 15 Oct 2024 21:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0260C1B0F07;
+	Tue, 15 Oct 2024 21:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YpWeCW4x"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PtWFFG5r"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB647202640
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BBA1B0F08
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729028027; cv=none; b=J28+AMfxORbkY1zrXvP2fAPymZisL9jZBaFisYOXVPKYY/uY2xWhFMwcEJc0rizNnCDSswWbualSDaBnunvhE++ZiaLuCjaut+SOf0VHUGTb7JqljKfcbuR6baq9TswlGivQlU2bTljy7fjEBnqzUyALlMK5Lkwo448iVVgxf0U=
+	t=1729028052; cv=none; b=JemI9iLxSc3YD32yV3vdZ9c3c6mv6tsFMJqd3ohCVwiBwI8OufRre5jI2nGT7vh64fsVKuxpQ7vCodRuFVk8XPFOG0Ut7UhTmKfMbxLMRc63OpvnhC7QwnYdTcn6aveFOWRUZ2xkDc5jK16py+XCUAvtpI2ZODd86dlWLOwBUMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729028027; c=relaxed/simple;
-	bh=yif5WGdngIm9HjD6DlYBoXIhPMqEFaBqxwmPjDbql7g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aqBABY9RQ5SyV2jhwEBQPhlPxFSJRdvnMSBZt+Cvw3w0PXtAWW6pR2VTtg/yjAy7D1rGx04mbgf9pqA+nGfWdl4ZijP3z7b+NrFuS7CvnYVlZ59N5cHc6iAskiJIwGin8YIVIlZlrASRvlsukRM7igyjC7xMSxVB6iKZUkPyr2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YpWeCW4x; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49FLXPXN025915;
-	Tue, 15 Oct 2024 16:33:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729028005;
-	bh=QvnFcob+2HOivdOzFJ/ecoS+EXmlRXVsbJmIgJJMYlY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=YpWeCW4xl+x2cVyRI07AIIE6ri17ufcsopX3qzE/GGM/+wz7qDSPCftGiVHuSW3B+
-	 nG1bO/h3Gnf9qo07uyhOedycIMYbM6RcUuzu/7bC5hO0gvHW7qSB40bVt4KgmPSVnu
-	 5SQOo4sj70bY0+FFGXsVTfKQE7EUQgrsP0F8UdYA=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49FLXP1C038581
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 15 Oct 2024 16:33:25 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 15
- Oct 2024 16:33:25 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 15 Oct 2024 16:33:25 -0500
-Received: from fllvsmtp7.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49FLXNBe038888;
-	Tue, 15 Oct 2024 16:33:25 -0500
-From: Andrew Davis <afd@ti.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Hari
- Nagalla <hnagalla@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Andrew Davis <afd@ti.com>
-Subject: [PATCH v2 3/3] mailbox: ti-msgmgr: Allow building under COMPILE_TEST
-Date: Tue, 15 Oct 2024 16:33:22 -0500
-Message-ID: <20241015213322.2649011-4-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241015213322.2649011-1-afd@ti.com>
-References: <20241015213322.2649011-1-afd@ti.com>
+	s=arc-20240116; t=1729028052; c=relaxed/simple;
+	bh=knTgNecEkYKeM/JJuIkK3FnpRRBOBT0/xY6PnfCDNgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0q0kIIh5zV1LWM19I2HhJEm7MeInFxapF/7YE7D6rNmiVBLFuj3niVVuhBclZ7KOSElW4BE3DSgurmaIuR2uQ7aADeW5raw33kHQDx4X7SMvySM3nn+U5zEAggptOM5wJZRIqDz13JMV9jqc5tHIV87oaAST47MOPKCjJeWTa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PtWFFG5r; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e30fb8cb07so2764297a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729028050; x=1729632850; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DKjBORgdklEf0VcX5F4hTKcBGHj5kwXdCtAfdZCcB54=;
+        b=PtWFFG5rP5EVlcOQHNmvJwMM5bZKj2qn7HBXaBvmSUg4cdzcDaaESuhDNjkpfF305g
+         /JZowdpoi/ZfEWNqjPw9IA6vzW1IaNC1/mYdQMy49BztjFdI0zGz2AR9kSVMVXEz9wyi
+         whUh6BatT7C4yEVnAMc8Wx35VLWfRM2924oxQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729028050; x=1729632850;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DKjBORgdklEf0VcX5F4hTKcBGHj5kwXdCtAfdZCcB54=;
+        b=xRYo8ZdqlPLGQ31G8m9xqMyN9lm1r+xR+F1FISCxNWGXuEynLzSop0Qz0ZezCtPesD
+         ffsGCJKVhh1sDmhZhWac2cGK7l5Aih6TCo2xyUszpYtJAwZcg0x3/qqn008VI1nc/NdT
+         xCTZ1M1q6IVrpcIYcWsHPDKEMqwm+6pFxS52BWBmzk9HQ6WaDSFil1nlxqcKGWr3daxd
+         pBCx6h4Lo1/PlyRrxbTohGnVdy8as9yMewwxGqykZQjTfu25E34xjCJYPDZuRbw+yaf9
+         lHPYuvI/mqLaskCl6UJAUbzBMNiw+FzUS+L37+03jrhEJ3Wv53Rf27LngL1nIlIc6dT7
+         e+zA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlum27jYqikSI95/+ER8A3XFqFm54QQU4Si34a6f3nPkHHUJbY9eFOofjk8dF1usGKOhNtYVgzbyFUwC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg73UVyOLBdvQPmWZwDKrKXtyF0SrsM9IkJrUl6/7v9lnmBGbr
+	B0w4g6UWA2qw5ltRt+mSVowf6ud/hlgVAmrsEa+hqwRFY3lCnWOU2TwDEhDGXA==
+X-Google-Smtp-Source: AGHT+IHRze0IzcATBijgCp06ZoOiRkVXgkxhi7l6ZEkczzicwWYspql4/Tq/D7z2iq5VXHb4rA81kw==
+X-Received: by 2002:a17:90a:b017:b0:2e0:ab57:51ec with SMTP id 98e67ed59e1d1-2e2f0d7c939mr19519508a91.30.1729028050216;
+        Tue, 15 Oct 2024 14:34:10 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:eef3:dbf8:fbe3:ab12])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2e392f753b4sm2409874a91.49.2024.10.15.14.34.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 14:34:09 -0700 (PDT)
+Date: Tue, 15 Oct 2024 14:34:08 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Kees Cook <kees@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	David Lin <yu-hao.lin@nxp.com>, linux-hardening@vger.kernel.org,
+	Kalle Valo <kvalo@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 1/2] wifi: mwifiex: Fix memcpy() field-spanning write
+ warning in mwifiex_config_scan()
+Message-ID: <Zw7f0FTlGk__kE6e@google.com>
+References: <20241007222301.24154-1-alpernebiyasak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007222301.24154-1-alpernebiyasak@gmail.com>
 
-The TI message manager driver can be compiled without ARCH_KEYSTONE
-nor ARCH_K3 enabled. Allow it to be built under COMPILE_TEST.
+On Tue, Oct 08, 2024 at 01:20:54AM +0300, Alper Nebi Yasak wrote:
+> Replace one-element array with a flexible-array member in `struct
+> mwifiex_ie_types_wildcard_ssid_params` to fix the following warning
+> on a MT8173 Chromebook (mt8173-elm-hana):
+> 
+> [  356.775250] ------------[ cut here ]------------
+> [  356.784543] memcpy: detected field-spanning write (size 6) of single field "wildcard_ssid_tlv->ssid" at drivers/net/wireless/marvell/mwifiex/scan.c:904 (size 1)
+> [  356.813403] WARNING: CPU: 3 PID: 742 at drivers/net/wireless/marvell/mwifiex/scan.c:904 mwifiex_scan_networks+0x4fc/0xf28 [mwifiex]
+> 
+> The "(size 6)" above is exactly the length of the SSID of the network
+> this device was connected to. The source of the warning looks like:
+> 
+>     ssid_len = user_scan_in->ssid_list[i].ssid_len;
+>     [...]
+>     memcpy(wildcard_ssid_tlv->ssid,
+>            user_scan_in->ssid_list[i].ssid, ssid_len);
+> 
+> There is a #define WILDCARD_SSID_TLV_MAX_SIZE that uses sizeof() on this
+> struct, but it already didn't account for the size of the one-element
+> array, so it doesn't need to be changed.
+> 
+> Fixes: 5e6e3a92b9a4 ("wireless: mwifiex: initial commit for Marvell mwifiex driver")
+> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 
-Signed-off-by: Andrew Davis <afd@ti.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nishanth Menon <nm@ti.com>
----
- drivers/mailbox/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For patch 1:
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 6fb995778636a..af721d769fdf2 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -127,7 +127,7 @@ config STI_MBOX
- 
- config TI_MESSAGE_MANAGER
- 	tristate "Texas Instruments Message Manager Driver"
--	depends on ARCH_KEYSTONE || ARCH_K3
-+	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
- 	default ARCH_K3
- 	help
- 	  An implementation of Message Manager slave driver for Keystone
--- 
-2.39.2
-
+Acked-by: Brian Norris <briannorris@chromium.org>
 
