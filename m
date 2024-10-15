@@ -1,169 +1,185 @@
-Return-Path: <linux-kernel+bounces-366215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8A799F24A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:06:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5828699F24D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E2E1F237F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:06:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25E22B210D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A788B1EBA0A;
-	Tue, 15 Oct 2024 16:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476931EB9E6;
+	Tue, 15 Oct 2024 16:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lOGNiF7f"
-Received: from mail-lf1-f65.google.com (mail-lf1-f65.google.com [209.85.167.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcHw95Oq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A873BBF6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971081CB9EB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729008383; cv=none; b=t3xwCiXdvZx4++B027KFiaxEgDq3qbaajd7IeuDewFaANKkAgP15tyA+RxnOW+L0xUAkfFKJoquLsu1vWWs9HoZXeWGpw4FSTsUu0heCqtkhUdKN68yeC9HVpbuuR9wiDrAQ7pwQ9TaQXtT0ci7+ol7xGEm/SFHVw4WOaCFx30E=
+	t=1729008433; cv=none; b=JyzbkMSA4EWFp84gzBlXEu1m4HWBKrWHOco+3uI9wExlPwC/s674t0WwmZHsLE0q8SMGxHNJu6UAHglrHzK9n4ippXY6rCNMwM29ixV4k40I2RsiJvMv79N946bjioMRfaUiUFh9yQb1AR8+9R/651uM0mtLDbRsvucaGpxwnIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729008383; c=relaxed/simple;
-	bh=coV+CW89lf2xb2YOQ9WrDQ5/UFSIDkfrD6hBq941WwA=;
+	s=arc-20240116; t=1729008433; c=relaxed/simple;
+	bh=D7JyEOlwv7WG/d5IV3rEXIgpdsFELO1WX45XePGFoRo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YoJKtOt+zQq7Vh+fPjtNNDivQ2qrmvto3zTTaIjFijn+oo53A0TKrOMFQH1CcV2eqa8dq4pwJknG3pcV8PCJVbCltOld9t1/LombjC79O+xP3Wtlh5Byue68KIUrngDY99IIO4Kw0YG0wGT32jYbq5ldLky92Os9HmkFSv2yV3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lOGNiF7f; arc=none smtp.client-ip=209.85.167.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f65.google.com with SMTP id 2adb3069b0e04-539fe02c386so99e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729008379; x=1729613179; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pXMfoHtJcAiX4YFy/v4VHJn4H6jq9Bc4cWujSEwbcdk=;
-        b=lOGNiF7fh099XNfRmTG8719InGkcNW98XxAXlhttTSep181Qygv+IgRu8azTa8zbxt
-         XnasfUSxMVAC9Yvr+PG3m22c7XuL9q/dXOnt717ZbWM5iLaGkhOIHXh/b9HHBggvM4E5
-         znqI48iNeMmvVj0h5EozJsF+H+1E3K06u+ymw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729008379; x=1729613179;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pXMfoHtJcAiX4YFy/v4VHJn4H6jq9Bc4cWujSEwbcdk=;
-        b=NEp34KvaaTFAmJNyhP3FMeixHbbKoa6hxSPIDqFiAPXLnlwKAoAfDvzcslqaiiHGR4
-         2IDgv8+QCNCZ1YguIadl07sfmerUTBEbxT8qU4Z3Lpvu5braiIiDW97LtVz+6K/OU4BN
-         m/JDvID5DhBcTxe56S0pmycStD3nc5I957Dzp01Mnpvj96Dybe3O/skoXpdHJsHbz8PM
-         Y5QX4vt4RCq1140rrsc5I745V/JAer4lkVStb9nek+U8ftj/ZcGFauK0/yDr2BS/LO28
-         +RVTLPeT785VKyD/lUikMNGM2XeF0tBuHUDVTpPmMn+Kks9uQ3oqpIE8BBwDpstZM1PD
-         cCzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyiSXn03lzn8XRHU20RPqXkoc/OesnLIXIvH2rYstC4E42tXjnWnjVbEJ0lywgu6BSjpbXtN5n2JuI2sY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU/e21sfY1ADkDdLaymI/QQZQ0TpUvWHNfQ250vXcN65tqpXC/
-	W6g47YC1B+0pc9bsn8yEin+TFyUVlKvVrRQzSqrleiFZlnu70UYLTw7+WPK1BU32l57wm/mtw2G
-	ktWns
-X-Google-Smtp-Source: AGHT+IGEoMP2j9uNH65RNYu3UjSDlJblsog5X+0ZTldHQcidpeCxEm61YDvH1gYpCdgOFJFrFiDBNw==
-X-Received: by 2002:a05:6512:104c:b0:539:fd1b:bb0c with SMTP id 2adb3069b0e04-53a03c9efa1mr405385e87.11.1729008379094;
-        Tue, 15 Oct 2024 09:06:19 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffb4930sm204250e87.119.2024.10.15.09.06.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 09:06:18 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3312870e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:06:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW9kaMLG/GDhahlxAo4aPQFg9ZQEDanA/3+FKy1EJcUNJ9NISfdEjzjK050qljOWiaWu3Qg4MGVWzDG4Kg=@vger.kernel.org
-X-Received: by 2002:a05:6512:a95:b0:539:edc9:7400 with SMTP id
- 2adb3069b0e04-53a03cc8dedmr370366e87.20.1729008378263; Tue, 15 Oct 2024
- 09:06:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=CuOMZHCZJ1fxMPUuhktSjzIgmj4aX1AH1ypG5zsGRJE28I3xVCldRgSPlw4zITaLWpgjmgg6dowm9bcWBNg/Sb/n/Jh2UghMFx92gLX+JVQTsPgIzFqHI8FOYASbq8SFLp3BJ6eYR5rySq54DKO7kmmiJkalcFqnQUL6/OOhNlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcHw95Oq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED80C4CECD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729008433;
+	bh=D7JyEOlwv7WG/d5IV3rEXIgpdsFELO1WX45XePGFoRo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BcHw95OqEetqK+AIcrg8jY24AQZrA4JWT/u9EQs5kVDD8X5Ld1SIO8faBBUelRvJ8
+	 B+MUH2Dx0NAT2q6jFLbY5UBCvVNz+p46VhlRKvMXet3+zAj7bTLYmyVMbdg6ZADNAn
+	 x2owNcWSh6mjLDbkMA/F68BZJ4gTiSmu9U/lMlQfyDlI42dMJ3SZw6VrT9Bt9xNdR/
+	 hQ18frBTq5YOwnr6Pbteq1W0dGEPMNFxhzabEf226Me1bFQS6e+6Fo1UrE+R/dl9D+
+	 iD7Qhnn9yQo/i6L+GGQ1pfbyzY7LLLlwir+hZT/LnRIuwy8MqoGeGaPKvhPga+ibB5
+	 sSBXc/CDvt0qw==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f6e1f756so2619717e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:07:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVXY+X7k0H9NCWJniirUHfDjfATKrtsVseoXVfcpCKDvxql0ipes7/d1zkiwW2Bty35B5tu1h1N1HqmfDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZzluyQYWMP/IZUI2WeD0USDUcS/ZmZxKYTcHzpjvyhdYTdyEC
+	8ajhR6QyP50BqUFLrNQFSowqDqygCORqOQVkT5K5V+BRYoOHXGHU7iwZKRFaf6xhOHWzhaNTmf1
+	ZAwG8I/vrPkAcPH7eH/JJsIubrUk=
+X-Google-Smtp-Source: AGHT+IHzzQVqqolf9ERW72m7zA2TZMqTrNbIF8nK7gXzM+liLJ/+eIDKS0f4wIrQ+zaQmKdMqDvYpV5KLtGuVaCQW4I=
+X-Received: by 2002:a05:6512:1382:b0:539:f675:84d7 with SMTP id
+ 2adb3069b0e04-53a03f484e6mr680756e87.32.1729008431443; Tue, 15 Oct 2024
+ 09:07:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015134606.5b87093e@endymion.delvare>
-In-Reply-To: <20241015134606.5b87093e@endymion.delvare>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 15 Oct 2024 09:06:04 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WhVWswn28hbxNDLDhMeiZOpsWzsx8OkORniOxWVx_4Gg@mail.gmail.com>
-Message-ID: <CAD=FV=WhVWswn28hbxNDLDhMeiZOpsWzsx8OkORniOxWVx_4Gg@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/display: Drop obsolete dependency on COMPILE_TEST
-To: Jean Delvare <jdelvare@suse.de>
-Cc: dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	YueHaibing <yuehaibing@huawei.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>, freedreno <freedreno@lists.freedesktop.org>
+References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
+ <Zw5D2aTkkUVOK89g@J2N7QTR9R3> <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
+ <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
+ <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
+ <Zw6Jk74-d0mhR0jx@J2N7QTR9R3.cambridge.arm.com>
+In-Reply-To: <Zw6Jk74-d0mhR0jx@J2N7QTR9R3.cambridge.arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 15 Oct 2024 18:07:00 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXG3bwMGpArYNUm-qMO7PPgb3--wy5kp-3Ks2Uv9M479xg@mail.gmail.com>
+Message-ID: <CAMj1kXG3bwMGpArYNUm-qMO7PPgb3--wy5kp-3Ks2Uv9M479xg@mail.gmail.com>
+Subject: Re: Crash on armv7-a using KASAN
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Clement LE GOFFIC <clement.legoffic@foss.st.com>, Russell King <linux@armlinux.org.uk>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	Antonio Borneo <antonio.borneo@foss.st.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Tue, Oct 15, 2024 at 4:46=E2=80=AFAM Jean Delvare <jdelvare@suse.de> wro=
-te:
+On Tue, 15 Oct 2024 at 17:26, Mark Rutland <mark.rutland@arm.com> wrote:
 >
-> Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
-> is possible to test-build any driver which depends on OF on any
-> architecture by explicitly selecting OF. Therefore depending on
-> COMPILE_TEST as an alternative is no longer needed.
+> On Tue, Oct 15, 2024 at 04:44:56PM +0200, Ard Biesheuvel wrote:
+> > On Tue, 15 Oct 2024 at 16:35, Mark Rutland <mark.rutland@arm.com> wrote=
+:
+> > >
+> > > On Tue, Oct 15, 2024 at 04:22:20PM +0200, Ard Biesheuvel wrote:
+> > > > On Tue, 15 Oct 2024 at 16:00, Mark Rutland <mark.rutland@arm.com> w=
+rote:
+> > > > >
+> > > > > On Tue, Oct 15, 2024 at 03:51:02PM +0200, Linus Walleij wrote:
+> > > > > > On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mark Rutland <mark.rut=
+land@arm.com> wrote:
+> > > > > > > On Mon, Oct 14, 2024 at 03:19:49PM +0200, Clement LE GOFFIC w=
+rote:
+> > > > > >
+> > > > > > > I think what's happening here is that when switching from pre=
+v to next
+> > > > > > > in the scheduler, we switch to next's mm before we actually s=
+witch to
+> > > > > > > next's register state, and there's a transient window where p=
+rev is
+> > > > > > > executed using next's mm. AFAICT we don't map prev's KASAN st=
+ack shadow
+> > > > > > > into next's mm anywhere, and so inlined KASAN_STACK checks re=
+cursively
+> > > > > > > fault on this until we switch to the overflow stack.
+> > >
+> > > [...]
+> > >
+> > > > > > Yeah it looks like a spot-on identification of the problem, I c=
+an try to
+> > > > > > think about how we could fix this if I can reproduce it, I keep=
+ trying
+> > > > > > to provoke the crash :/
+> > > > >
+> > > > > It's a bit grotty -- AFAICT you'd either need to prefault in the
+> > > > > specific part of the vmalloc space when switching tasks, or we'd =
+need to
+> > > > > preallocate all the shared vmalloc tables at the start of time so=
+ that
+> > > > > they're always up-to-date.
+> > > > >
+> > > > > While we could disable KASAN_STACK, that's only going to mask the
+> > > > > problem until this happens for any other vmalloc shadow...
+> > > >
+> > > > Is the other vmalloc shadow not covered by the ordinary on-demand f=
+aulting?
+> > >
+> > > It depends on what the vmalloc memory is used for; if it's anything e=
+lse
+> > > used in the fault handling path, that'll fault recursively, and it's
+> > > possible that'll happen indirectly via other instrumentation.
+> > >
+> > > > When I implemented VMAP_STACK for ARM, I added an explicit load fro=
+m
+> > > > the new stack while still running from the old one (in __switch_to)=
+ so
+> > > > that the ordinary faulting code can deal with it. Couldn't we do th=
+e
+> > > > same for the vmalloc shadow of the new stack?
+> > >
+> > > We could do something similar, but note that it's backwards: we need =
+to
+> > > ensure that the old/current stack shadow will be mapped in the new mm=
+.
+> > >
+> > > So the usual fault handling can't handle that as-is, because you need=
+ to
+> > > fault-in pages for an mm which isn't yet in use. That logic could be
+> > > factored out and shared, though.
+> >
+> > Not sure I follow you here. The crash is in the kernel, no?
 >
-> To avoid reintroducing the randconfig bug originally fixed by commit
-> 876271118aa4 ("drm/display: Fix build error without CONFIG_OF"),
-> DRM_MSM which selects DRM_DISPLAY_DP_HELPER must explicitly depend
-> on OF. This is consistent with what all other DRM drivers are doing.
+> Yep; I'm referring to the vmalloc space being lazily faulted-in and
+> copied from init_mm into the active pgd under do_translation_fault().
 >
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> ---
-> For regular builds, this is a no-op, as OF is always enabled on
-> ARCH_QCOM and SOC_IMX5. So this change only affects test builds. As
-> explained before, allowing test builds only when OF is enabled
-> improves the quality of these test builds, as the result is then
-> closer to how the code is built on its intended targets.
+> Looking some more, I don't see how VMAP_STACK guarantees that the
+> old/active stack is mapped in the new mm when switching from the old mm
+> to the new mm (which happens before __switch_to()).
 >
-> Changes in v3:
-> * Rebase on top of kernel v6.11.
-> Changes in v2:
-> * Let DRM_MSM depend on OF so that random test builds won't break.
+> Either I'm missing something, or we have a latent bug. Maybe we have
+> some explicit copying/prefaulting elsewhere I'm missing?
 >
->  drivers/gpu/drm/display/Kconfig |    2 +-
->  drivers/gpu/drm/msm/Kconfig     |    1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
+
+We bump the vmalloc_seq counter for that. Given that the top-level
+page table can only gain entries covering the kernel space, this
+should be sufficient for the old task's stack to be mapped in the new
+task's page tables.
+
+> What happens when switching between two tasks whose stacks happen to be
+> in distinct sub-trees of the vmalloc tables?
 >
-> --- linux-6.11.orig/drivers/gpu/drm/display/Kconfig
-> +++ linux-6.11/drivers/gpu/drm/display/Kconfig
-> @@ -3,7 +3,7 @@
->  config DRM_DISPLAY_DP_AUX_BUS
->         tristate
->         depends on DRM
-> -       depends on OF || COMPILE_TEST
-> +       depends on OF
+> > So there is only a single vmalloc space where all the mappings should
+> > reside, but each process has its own copy of the top level page table,
+> > which needs to be synced up when it goes stale.
 >
->  config DRM_DISPLAY_HELPER
->         tristate
-> --- linux-6.11.orig/drivers/gpu/drm/msm/Kconfig
-> +++ linux-6.11/drivers/gpu/drm/msm/Kconfig
-> @@ -6,6 +6,7 @@ config DRM_MSM
->         depends on ARCH_QCOM || SOC_IMX5 || COMPILE_TEST
->         depends on COMMON_CLK
->         depends on IOMMU_SUPPORT
-> +       depends on OF
+> Yep -- the problem is when we can safely do that syncing up, since the
+> lazy syncing in do_translation_fault() can't safely be used to sync
+> anything that's used during do_translation_fault(), including the stack,
+> etc.
+>
 
-Perhaps nobody landed this because you're missing the msm maintainers
-as specified by `./scripts/get_maintainer.pl -f
-drivers/gpu/drm/msm/Kconfig` ? I've added them here. It seems like
-we'd at least need an Ack by those guys since this modified the
-msm/Kconfig...
-
-FWIW I haven't spent massive time studying this, but what you have
-here looks reasonable. I'm happy at least with this from a DP AUX bus
-perspective:
-
-Acked-by: Douglas Anderson <dianders@chromium.org>
-
-Presumably landing this via drm-misc makes the most sense after MSM
-guys give it an Ack.
-
-
--Doug
+Indeed.
 
