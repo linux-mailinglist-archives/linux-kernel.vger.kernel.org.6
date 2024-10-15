@@ -1,147 +1,1288 @@
-Return-Path: <linux-kernel+bounces-365483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF4999E30A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:47:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2D099E30B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F2C283618
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1341C21992
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F341E0487;
-	Tue, 15 Oct 2024 09:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B08818B488;
+	Tue, 15 Oct 2024 09:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B9X19gLz"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VxIrK3AN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C93E18B488;
-	Tue, 15 Oct 2024 09:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC8F1D14FF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728985653; cv=none; b=X5LsnSU92PbNHFKoQWc+05BCDkUMsX80XguCZF/NPQyElUaTgQtuL+oqoFgKIFmACljpSblUCRl2YmMFUGeoxKKTrZKWpu0HUXbSAjUOS7I6VrMycEQ2kH1j+ea7X8hsRnODet8xtdU7xh8gPb3BpMzSmQ95T0TcKPfgR+Fh0xw=
+	t=1728985655; cv=none; b=RwB5AxvLafn/cws3NfHMqOiBCUNAZ0ZEz979Y4d4RzEmKNgXjusae9V+5Llw/wx4LWRrruzNSFpgA17BPfCFQQBy61zI5rqf1mSDZX/ADY/e+QzcsBYx/Fyj/FVTdxepaVrN7uF4PsfVKTnGMRRAiixih/NJt9YORPj0oGi7qVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728985653; c=relaxed/simple;
-	bh=5T8ObhgxQkBGUuRQW4PDmqdYfE1QHbUI+kJjWHnuKR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QllZQ6nL1IzF6G0utW8/fp2O4jN+n9OjPbLACMOq67v9aUXGZaentkMr8vsI6nzU9G2iJA5X1q3eOBkhHX+mHY46mI/QbaK2lWHF6Ajiu2+caT2dkN6slHw81nBbK8gxhKQRHHsUq5YSgU8yz1IwB2ohLZKyq/y+W6e6Jwf++h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B9X19gLz; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7o99r030191;
-	Tue, 15 Oct 2024 09:46:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=k9bFiz
-	jRuhZcLwgOZeLnzCyme3HKz9tMoCkYWK3pwUE=; b=B9X19gLzEHrCcTtou3x30s
-	SHDv4JlUPWMS36G3BQjonVC1+gsZ45w0p1gsGIRspyCqGPBfmz3EE3dEFmDaSQUK
-	xWd83Mml5UrxSasVWmnVuUxEDXy0N8OuCNWXZxopNBrErDymDzbajaKFAVZ42sac
-	EdhalzX0Gk3MHrczE5mD2qvnJQ75+UU5u2pRmRjcndFg+0m7D8sjHm6SDakJiUtW
-	aBqcEC/mC3baxVnP1g1Eabo18XPmT7cRreTJvBXjMLPotsFvHd8dNhIG58qFGBqD
-	3cVKKXLO0+t/wtCGEVD9t640qd4ZM21fQbSZwgwEl6VcFfUNrN7dxWx92nYhkS9A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429mbmrk28-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 09:46:53 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49F9kqjT014450;
-	Tue, 15 Oct 2024 09:46:52 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429mbmrk24-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 09:46:52 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F81dai006401;
-	Tue, 15 Oct 2024 09:46:51 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk2y7f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 09:46:51 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49F9kltQ26739020
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 09:46:47 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 69C5920043;
-	Tue, 15 Oct 2024 09:46:47 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C765A20040;
-	Tue, 15 Oct 2024 09:46:46 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 15 Oct 2024 09:46:46 +0000 (GMT)
-Date: Tue, 15 Oct 2024 11:46:45 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, patches@lists.linux.dev,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-        jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-        srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-        allen.lkml@gmail.com, broonie@kernel.org,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 6.11 000/214] 6.11.4-rc1 review
-Message-ID: <20241015094645.7641-F-hca@linux.ibm.com>
-References: <20241014141044.974962104@linuxfoundation.org>
- <CA+G9fYsPPmEbjNza_Tjyf+ZweuHcjHboOJfHeVSSVnmEV2gzXw@mail.gmail.com>
- <cdb9391d-88ee-430c-8b3b-06b355f4087f@kernel.org>
- <6dd1f93f-2900-41cc-a369-1ce397e1fb52@kernel.org>
+	s=arc-20240116; t=1728985655; c=relaxed/simple;
+	bh=ZJwWAQdxpAMShMB9x4KWTYOYFcgKfP3wtwMMUuZGdTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pVELZTsUfE7i4y0pvO4EE3TFou5np0MUm3PbRhRxwxpRIELvT2N1XODc5lmZwH6YQ727geE4+Ifpyn4E87dnWao9wLK+5r86Tv3zZZ7qG+NSXETJ8aLNRUV4wGLnT2zxyVTjQeMhihOZdbx1S6UVfkrI61Gh40fuBokLFSrYn9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VxIrK3AN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728985651;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qDoQ6b8OVxyFQCqH0buKliXJ1kdplRKQIlq8njgQGpU=;
+	b=VxIrK3ANAEa4UGWyoseKGAJVHeClT0wVR33oNlds62L2AmMQpQsZvSSx9Z2j1kRYffO3Mb
+	cj/BklebrenGXdOjhdzZ2pjODYMno6TPeoV/tv+/AljYfW7zZCLYhFt2YuSGsZuh8gT3af
+	hDvk4bBYmraUIph4OiU4+mLw0F+q04E=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-664-b9w3C9HaMbSiPV20cMm2eA-1; Tue,
+ 15 Oct 2024 05:47:30 -0400
+X-MC-Unique: b9w3C9HaMbSiPV20cMm2eA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 116F019560BD;
+	Tue, 15 Oct 2024 09:47:29 +0000 (UTC)
+Received: from kate-fedora.redhat.com (unknown [10.39.192.47])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 605EB300019D;
+	Tue, 15 Oct 2024 09:47:24 +0000 (UTC)
+From: Kate Hsuan <hpa@redhat.com>
+To: hpa@redhat.com
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] media: Add t4ka3 camera sensor driver
+Date: Tue, 15 Oct 2024 17:47:22 +0800
+Message-ID: <20241015094722.220990-1-hpa@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6dd1f93f-2900-41cc-a369-1ce397e1fb52@kernel.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pZKsdrJkczM9N3yrhs87owQXtEzgB5QJ
-X-Proofpoint-ORIG-GUID: qOIE5GXM8Tu82EJeLc0KwmL18OhgQdXy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=389 malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1011
- spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150063
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Oct 15, 2024 at 10:51:31AM +0200, Jiri Slaby wrote:
-> On 15. 10. 24, 9:18, Jiri Slaby wrote:
-> > On 15. 10. 24, 9:05, Naresh Kamboju wrote:
-> > > On Mon, 14 Oct 2024 at 19:55, Greg Kroah-Hartman
-> > Reverting of this makes it work again:
-> > commit 51ab63c4cc8fbcfee58b8342a35006b45afbbd0d
-> > Refs: v6.11.3-19-g51ab63c4cc8f
-> > Author:     Heiko Carstens <hca@linux.ibm.com>
-> > AuthorDate: Wed Sep 4 11:39:27 2024 +0200
-> > Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > CommitDate: Mon Oct 14 16:10:09 2024 +0200
-> > 
-> >      s390/boot: Compile all files with the same march flag
-> > 
-> >      [ Upstream commit fccb175bc89a0d37e3ff513bb6bf1f73b3a48950 ]
-> > 
-> > 
-> > If the above is to be really used in stable (REASONS?), I believe at
-> > least these are missing:
-> > ebcc369f1891 s390: Use MARCH_HAS_*_FEATURES defines
-> > 697b37371f4a s390: Provide MARCH_HAS_*_FEATURES defines
-> 
-> And this one:
-> db545f538747 s390/boot: Increase minimum architecture to z10
+Add the t4ka3 driver from:
+https://github.com/kitakar5525/surface3-atomisp-cameras.git
 
-All of this is not supposed to be stable material.
+With many cleanups / changes (almost a full rewrite) to make it suitable
+for upstream:
+
+* Remove the VCM and VCM-OTP support, the mainline kernel models VCMs and
+  calibration data eeproms as separate v4l2-subdev-s.
+
+* Remove the integration-factor t4ka3_get_intg_factor() support and IOCTL,
+  this provided info to userspace through an atomisp private IOCTL.
+
+* Turn atomisp specific exposure/gain IOCTL into standard v4l2 controls.
+
+* Use normal ACPI power-management in combination with runtime-pm support
+  instead of atomisp specific GMIN power-management code.
+
+* Turn into a standard V4L2 sensor driver using
+  v4l2_async_register_subdev_sensor().
+
+* Add vblank, hblank, and link-freq controls; drop get_frame_interval().
+
+* Use CCI register helpers.
+
+* Calculate values for modes instead of using fixed register-value lists,
+  allowing arbritrary modes.
+
+* Add get_selection() and set_selection() support
+
+* Add a CSI2 bus configuration check
+
+This been tested on a Xiaomi Mipad2 tablet which has a T4KA3 sensor with
+DW9761 VCM as back sensor.
+
+Co-developed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Kate Hsuan <hpa@redhat.com>
+---
+Changes in v4:
+1. Another CI issue fixes.
+
+Changes in v3:
+1. Fix the issues reported by the CI system.
+
+Changes in v2:
+1. The regmap information was obtained before configuring runtime PM so
+   probe() can return without disabling runtime PM.
+2. In t4ka3_s_stream(), return -EBUSY when the streaming is enabled.
+---
+ drivers/media/i2c/Kconfig  |    9 +
+ drivers/media/i2c/Makefile |    1 +
+ drivers/media/i2c/t4ka3.c  | 1120 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 1130 insertions(+)
+ create mode 100644 drivers/media/i2c/t4ka3.c
+
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 8ba096b8ebca..38aba3624669 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -690,6 +690,15 @@ config VIDEO_S5K6A3
+ 	  This is a V4L2 sensor driver for Samsung S5K6A3 raw
+ 	  camera sensor.
+ 
++config VIDEO_T4KA3
++	tristate "Toshiba T4KA3 sensor support"
++	depends on ACPI || COMPILE_TEST
++	depends on GPIOLIB
++	select V4L2_CCI_I2C
++	help
++	  This is a Video4Linux2 sensor driver for the Toshiba T4KA3 8 MP
++	  camera sensor.
++
+ config VIDEO_VGXY61
+ 	tristate "ST VGXY61 sensor support"
+ 	select V4L2_CCI_I2C
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index fbb988bd067a..ad67ea33ce37 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -129,6 +129,7 @@ obj-$(CONFIG_VIDEO_SAA717X) += saa717x.o
+ obj-$(CONFIG_VIDEO_SAA7185) += saa7185.o
+ obj-$(CONFIG_VIDEO_SONY_BTF_MPX) += sony-btf-mpx.o
+ obj-$(CONFIG_VIDEO_ST_MIPID02) += st-mipid02.o
++obj-$(CONFIG_VIDEO_T4KA3) += t4ka3.o
+ obj-$(CONFIG_VIDEO_TC358743) += tc358743.o
+ obj-$(CONFIG_VIDEO_TC358746) += tc358746.o
+ obj-$(CONFIG_VIDEO_TDA1997X) += tda1997x.o
+diff --git a/drivers/media/i2c/t4ka3.c b/drivers/media/i2c/t4ka3.c
+new file mode 100644
+index 000000000000..f62920e93430
+--- /dev/null
++++ b/drivers/media/i2c/t4ka3.c
+@@ -0,0 +1,1120 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Support for T4KA3 8M camera sensor.
++ *
++ * Copyright (C) 2015 Intel Corporation. All Rights Reserved.
++ * Copyright (C) 2016 XiaoMi, Inc.
++ * Copyright (C) 2024 Hans de Goede <hansg@kernel.org>
++ */
++
++#include <linux/acpi.h>
++#include <linux/bits.h>
++#include <linux/delay.h>
++#include <linux/dev_printk.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/mod_devicetable.h>
++#include <linux/mutex.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++#include <linux/types.h>
++
++#include <media/media-entity.h>
++#include <media/v4l2-async.h>
++#include <media/v4l2-cci.h>
++#include <media/v4l2-common.h>
++#include <media/v4l2-ctrls.h>
++#include <media/v4l2-fwnode.h>
++#include <media/v4l2-subdev.h>
++
++#define T4KA3_NATIVE_WIDTH			3280
++#define T4KA3_NATIVE_HEIGHT			2464
++#define T4KA3_NATIVE_START_LEFT			0
++#define T4KA3_NATIVE_START_TOP			0
++#define T4KA3_ACTIVE_WIDTH			3280
++#define T4KA3_ACTIVE_HEIGHT			2460
++#define T4KA3_ACTIVE_START_LEFT			0
++#define T4KA3_ACTIVE_START_TOP			2
++#define T4KA3_MIN_CROP_WIDTH			2
++#define T4KA3_MIN_CROP_HEIGHT			2
++
++#define T4KA3_PIXELS_PER_LINE			3440
++#define T4KA3_LINES_PER_FRAME_30FPS		2492
++#define T4KA3_FPS				30
++#define T4KA3_PIXEL_RATE \
++	(T4KA3_PIXELS_PER_LINE * T4KA3_LINES_PER_FRAME_30FPS * T4KA3_FPS)
++
++/*
++ * TODO this really should be derived from the 19.2 MHz xvclk combined
++ * with the PLL settings. But without a datasheet this is the closest
++ * approximation possible.
++ *
++ * link-freq = pixel_rate * bpp / (lanes * 2)
++ * (lanes * 2) because CSI lanes use double-data-rate (DDR) signalling.
++ * bpp = 10 and lanes = 4
++ */
++#define T4KA3_LINK_FREQ				((u64)T4KA3_PIXEL_RATE * 10 / 8)
++
++/* For enum_frame_size() full-size + binned-/quarter-size */
++#define T4KA3_FRAME_SIZES			2
++
++#define T4KA3_REG_PRODUCT_ID_HIGH		CCI_REG8(0x0000)
++#define T4KA3_REG_PRODUCT_ID_LOW		CCI_REG8(0x0001)
++#define T4KA3_PRODUCT_ID			0x1490
++
++#define T4KA3_REG_STREAM			CCI_REG8(0x0100)
++#define T4KA3_REG_IMG_ORIENTATION		CCI_REG8(0x0101)
++#define T4KA3_HFLIP_BIT				BIT(0)
++#define T4KA3_VFLIP_BIT				BIT(1)
++#define T4KA3_REG_PARAM_HOLD			CCI_REG8(0x0104)
++#define T4KA3_REG_COARSE_INTEGRATION_TIME	CCI_REG16(0x0202)
++#define T4KA3_COARSE_INTEGRATION_TIME_MARGIN	6
++#define T4KA3_REG_DIGGAIN_GREEN_R		CCI_REG16(0x020e)
++#define T4KA3_REG_DIGGAIN_RED			CCI_REG16(0x0210)
++#define T4KA3_REG_DIGGAIN_BLUE			CCI_REG16(0x0212)
++#define T4KA3_REG_DIGGAIN_GREEN_B		CCI_REG16(0x0214)
++#define T4KA3_REG_GLOBAL_GAIN			CCI_REG16(0x0234)
++#define T4KA3_MIN_GLOBAL_GAIN_SUPPORTED		0x0080
++#define T4KA3_MAX_GLOBAL_GAIN_SUPPORTED		0x07ff
++#define T4KA3_REG_FRAME_LENGTH_LINES		CCI_REG16(0x0340) /* aka VTS */
++/* FIXME: need a datasheet to verify the min + max vblank values */
++#define T4KA3_MIN_VBLANK			4
++#define T4KA3_MAX_VBLANK			0xffff
++#define T4KA3_REG_PIXELS_PER_LINE		CCI_REG16(0x0342) /* aka HTS */
++/* These 2 being horz/vert start is a guess (no datasheet), always 0 */
++#define T4KA3_REG_HORZ_START			CCI_REG16(0x0344)
++#define T4KA3_REG_VERT_START			CCI_REG16(0x0346)
++/* Always 3279 (T4KA3_NATIVE_WIDTH - 1, window is used to crop */
++#define T4KA3_REG_HORZ_END			CCI_REG16(0x0348)
++/* Always 2463 (T4KA3_NATIVE_HEIGHT - 1, window is used to crop */
++#define T4KA3_REG_VERT_END			CCI_REG16(0x034a)
++/* Output size (after cropping/window) */
++#define T4KA3_REG_HORZ_OUTPUT_SIZE		CCI_REG16(0x034c)
++#define T4KA3_REG_VERT_OUTPUT_SIZE		CCI_REG16(0x034e)
++/* Window/crop start + size *after* binning */
++#define T4KA3_REG_WIN_START_X			CCI_REG16(0x0408)
++#define T4KA3_REG_WIN_START_Y			CCI_REG16(0x040a)
++#define T4KA3_REG_WIN_WIDTH			CCI_REG16(0x040c)
++#define T4KA3_REG_WIN_HEIGHT			CCI_REG16(0x040e)
++#define T4KA3_REG_TEST_PATTERN_MODE		CCI_REG8(0x0601)
++/* Unknown register at address 0x0900 */
++#define T4KA3_REG_0900				CCI_REG8(0x0900)
++#define T4KA3_REG_BINNING			CCI_REG8(0x0901)
++#define T4KA3_BINNING_VAL(_b) \
++	({ typeof(_b) (b) = (_b); \
++	((b) << 4) | (b); })
++
++struct t4ka3_ctrls {
++	struct v4l2_ctrl_handler handler;
++	struct v4l2_ctrl *hflip;
++	struct v4l2_ctrl *vflip;
++	struct v4l2_ctrl *vblank;
++	struct v4l2_ctrl *hblank;
++	struct v4l2_ctrl *exposure;
++	struct v4l2_ctrl *test_pattern;
++	struct v4l2_ctrl *link_freq;
++	struct v4l2_ctrl *gain;
++};
++
++struct t4ka3_mode {
++	struct v4l2_rect		crop;
++	struct v4l2_mbus_framefmt	fmt;
++	int				binning;
++	u16				win_x;
++	u16				win_y;
++};
++
++struct t4ka3_data {
++	struct v4l2_subdev sd;
++	struct media_pad pad;
++	struct mutex lock; /* serialize sensor's ioctl */
++	struct t4ka3_ctrls ctrls;
++	struct t4ka3_mode mode;
++	struct device *dev;
++	struct regmap *regmap;
++	struct gpio_desc *powerdown_gpio;
++	struct gpio_desc *reset_gpio;
++	s64 link_freq[1];
++	int streaming;
++};
++
++/* init settings */
++static const struct cci_reg_sequence t4ka3_init_config[] = {
++	{CCI_REG8(0x4136), 0x13},
++	{CCI_REG8(0x4137), 0x33},
++	{CCI_REG8(0x3094), 0x01},
++	{CCI_REG8(0x0233), 0x01},
++	{CCI_REG8(0x4B06), 0x01},
++	{CCI_REG8(0x4B07), 0x01},
++	{CCI_REG8(0x3028), 0x01},
++	{CCI_REG8(0x3032), 0x14},
++	{CCI_REG8(0x305C), 0x0C},
++	{CCI_REG8(0x306D), 0x0A},
++	{CCI_REG8(0x3071), 0xFA},
++	{CCI_REG8(0x307E), 0x0A},
++	{CCI_REG8(0x307F), 0xFC},
++	{CCI_REG8(0x3091), 0x04},
++	{CCI_REG8(0x3092), 0x60},
++	{CCI_REG8(0x3096), 0xC0},
++	{CCI_REG8(0x3100), 0x07},
++	{CCI_REG8(0x3101), 0x4C},
++	{CCI_REG8(0x3118), 0xCC},
++	{CCI_REG8(0x3139), 0x06},
++	{CCI_REG8(0x313A), 0x06},
++	{CCI_REG8(0x313B), 0x04},
++	{CCI_REG8(0x3143), 0x02},
++	{CCI_REG8(0x314F), 0x0E},
++	{CCI_REG8(0x3169), 0x99},
++	{CCI_REG8(0x316A), 0x99},
++	{CCI_REG8(0x3171), 0x05},
++	{CCI_REG8(0x31A1), 0xA7},
++	{CCI_REG8(0x31A2), 0x9C},
++	{CCI_REG8(0x31A3), 0x8F},
++	{CCI_REG8(0x31A4), 0x75},
++	{CCI_REG8(0x31A5), 0xEE},
++	{CCI_REG8(0x31A6), 0xEA},
++	{CCI_REG8(0x31A7), 0xE4},
++	{CCI_REG8(0x31A8), 0xE4},
++	{CCI_REG8(0x31DF), 0x05},
++	{CCI_REG8(0x31EC), 0x1B},
++	{CCI_REG8(0x31ED), 0x1B},
++	{CCI_REG8(0x31EE), 0x1B},
++	{CCI_REG8(0x31F0), 0x1B},
++	{CCI_REG8(0x31F1), 0x1B},
++	{CCI_REG8(0x31F2), 0x1B},
++	{CCI_REG8(0x3204), 0x3F},
++	{CCI_REG8(0x3205), 0x03},
++	{CCI_REG8(0x3210), 0x01},
++	{CCI_REG8(0x3216), 0x68},
++	{CCI_REG8(0x3217), 0x58},
++	{CCI_REG8(0x3218), 0x58},
++	{CCI_REG8(0x321A), 0x68},
++	{CCI_REG8(0x321B), 0x60},
++	{CCI_REG8(0x3238), 0x03},
++	{CCI_REG8(0x3239), 0x03},
++	{CCI_REG8(0x323A), 0x05},
++	{CCI_REG8(0x323B), 0x06},
++	{CCI_REG8(0x3243), 0x03},
++	{CCI_REG8(0x3244), 0x08},
++	{CCI_REG8(0x3245), 0x01},
++	{CCI_REG8(0x3307), 0x19},
++	{CCI_REG8(0x3308), 0x19},
++	{CCI_REG8(0x3320), 0x01},
++	{CCI_REG8(0x3326), 0x15},
++	{CCI_REG8(0x3327), 0x0D},
++	{CCI_REG8(0x3328), 0x01},
++	{CCI_REG8(0x3380), 0x01},
++	{CCI_REG8(0x339E), 0x07},
++	{CCI_REG8(0x3424), 0x00},
++	{CCI_REG8(0x343C), 0x01},
++	{CCI_REG8(0x3398), 0x04},
++	{CCI_REG8(0x343A), 0x10},
++	{CCI_REG8(0x339A), 0x22},
++	{CCI_REG8(0x33B4), 0x00},
++	{CCI_REG8(0x3393), 0x01},
++	{CCI_REG8(0x33B3), 0x6E},
++	{CCI_REG8(0x3433), 0x06},
++	{CCI_REG8(0x3433), 0x00},
++	{CCI_REG8(0x33B3), 0x00},
++	{CCI_REG8(0x3393), 0x03},
++	{CCI_REG8(0x33B4), 0x03},
++	{CCI_REG8(0x343A), 0x00},
++	{CCI_REG8(0x339A), 0x00},
++	{CCI_REG8(0x3398), 0x00}
++};
++
++static const struct cci_reg_sequence t4ka3_pre_mode_set_regs[] = {
++	{CCI_REG8(0x0112), 0x0A},
++	{CCI_REG8(0x0113), 0x0A},
++	{CCI_REG8(0x0114), 0x03},
++	{CCI_REG8(0x4136), 0x13},
++	{CCI_REG8(0x4137), 0x33},
++	{CCI_REG8(0x0820), 0x0A},
++	{CCI_REG8(0x0821), 0x0D},
++	{CCI_REG8(0x0822), 0x00},
++	{CCI_REG8(0x0823), 0x00},
++	{CCI_REG8(0x0301), 0x0A},
++	{CCI_REG8(0x0303), 0x01},
++	{CCI_REG8(0x0305), 0x04},
++	{CCI_REG8(0x0306), 0x02},
++	{CCI_REG8(0x0307), 0x18},
++	{CCI_REG8(0x030B), 0x01},
++};
++
++static const struct cci_reg_sequence t4ka3_post_mode_set_regs[] = {
++	{CCI_REG8(0x0902), 0x00},
++	{CCI_REG8(0x4220), 0x00},
++	{CCI_REG8(0x4222), 0x01},
++	{CCI_REG8(0x3380), 0x01},
++	{CCI_REG8(0x3090), 0x88},
++	{CCI_REG8(0x3394), 0x20},
++	{CCI_REG8(0x3090), 0x08},
++	{CCI_REG8(0x3394), 0x10}
++};
++
++static inline struct t4ka3_data *to_t4ka3_sensor(struct v4l2_subdev *sd)
++{
++	return container_of(sd, struct t4ka3_data, sd);
++}
++
++static inline struct t4ka3_data *ctrl_to_t4ka3(struct v4l2_ctrl *ctrl)
++{
++	return container_of(ctrl->handler, struct t4ka3_data, ctrls.handler);
++}
++
++/* T4KA3 default GRBG */
++static const int t4ka3_hv_flip_bayer_order[] = {
++	MEDIA_BUS_FMT_SGRBG10_1X10,
++	MEDIA_BUS_FMT_SBGGR10_1X10,
++	MEDIA_BUS_FMT_SRGGB10_1X10,
++	MEDIA_BUS_FMT_SGBRG10_1X10,
++};
++
++static const struct v4l2_rect t4ka3_default_crop = {
++	.left = T4KA3_ACTIVE_START_LEFT,
++	.top = T4KA3_ACTIVE_START_TOP,
++	.width = T4KA3_ACTIVE_WIDTH,
++	.height = T4KA3_ACTIVE_HEIGHT,
++};
++
++static int t4ka3_detect(struct t4ka3_data *sensor, u16 *id);
++
++static void t4ka3_set_bayer_order(struct t4ka3_data *sensor,
++				  struct v4l2_mbus_framefmt *fmt)
++{
++	int hv_flip = 0;
++
++	if (sensor->ctrls.vflip && sensor->ctrls.vflip->val)
++		hv_flip += 1;
++
++	if (sensor->ctrls.hflip && sensor->ctrls.hflip->val)
++		hv_flip += 2;
++
++	fmt->code = t4ka3_hv_flip_bayer_order[hv_flip];
++}
++
++static int t4ka3_update_exposure_range(struct t4ka3_data *sensor)
++{
++	int exp_max = sensor->mode.fmt.height + sensor->ctrls.vblank->val -
++		      T4KA3_COARSE_INTEGRATION_TIME_MARGIN;
++
++	return __v4l2_ctrl_modify_range(sensor->ctrls.exposure, 0, exp_max,
++					1, exp_max);
++}
++
++static struct v4l2_rect *
++__t4ka3_get_pad_crop(struct t4ka3_data *sensor,
++		     struct v4l2_subdev_state *state,
++		     unsigned int pad,
++		     enum v4l2_subdev_format_whence which)
++{
++	if (which == V4L2_SUBDEV_FORMAT_TRY)
++		return v4l2_subdev_state_get_crop(state, pad);
++
++	return &sensor->mode.crop;
++}
++
++static struct v4l2_mbus_framefmt *
++__t4ka3_get_pad_format(struct t4ka3_data *sensor,
++		       struct v4l2_subdev_state *sd_state, unsigned int pad,
++		       enum v4l2_subdev_format_whence which)
++{
++	if (which == V4L2_SUBDEV_FORMAT_TRY)
++		return v4l2_subdev_state_get_format(sd_state, pad);
++
++	return &sensor->mode.fmt;
++}
++
++static void t4ka3_fill_format(struct t4ka3_data *sensor,
++			      struct v4l2_mbus_framefmt *fmt,
++			      unsigned int width, unsigned int height)
++{
++	memset(fmt, 0, sizeof(*fmt));
++	fmt->width = width;
++	fmt->height = height;
++	fmt->field = V4L2_FIELD_NONE;
++	fmt->colorspace = V4L2_COLORSPACE_SRGB;
++	t4ka3_set_bayer_order(sensor, fmt);
++}
++
++static void t4ka3_calc_mode(struct t4ka3_data *sensor)
++{
++	int width = sensor->mode.fmt.width;
++	int height = sensor->mode.fmt.height;
++	int binning;
++
++	if (width  <= (sensor->mode.crop.width / 2) &&
++	    height <= (sensor->mode.crop.height / 2))
++		binning = 2;
++	else
++		binning = 1;
++
++	width *= binning;
++	height *= binning;
++
++	sensor->mode.binning = binning;
++	sensor->mode.win_x = (sensor->mode.crop.left +
++				(sensor->mode.crop.width - width) / 2) & ~1;
++	sensor->mode.win_y = (sensor->mode.crop.top +
++				(sensor->mode.crop.height - height) / 2) & ~1;
++	/*
++	 * t4ka's window is done after binning, but must still be a multiple of 2 ?
++	 * Round up to avoid top 2 black lines in 1640x1230 (quarter res) case.
++	 */
++	sensor->mode.win_x = DIV_ROUND_UP(sensor->mode.win_x, binning);
++	sensor->mode.win_y = DIV_ROUND_UP(sensor->mode.win_y, binning);
++}
++
++static void t4ka3_get_vblank_limits(struct t4ka3_data *sensor, int *min, int *max, int *def)
++{
++	*min = T4KA3_MIN_VBLANK + (sensor->mode.binning - 1) * sensor->mode.fmt.height;
++	*max = T4KA3_MAX_VBLANK - sensor->mode.fmt.height;
++	*def = T4KA3_LINES_PER_FRAME_30FPS - sensor->mode.fmt.height;
++}
++
++static int t4ka3_set_pad_format(struct v4l2_subdev *sd,
++				struct v4l2_subdev_state *sd_state,
++				struct v4l2_subdev_format *format)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++	struct v4l2_mbus_framefmt *try_fmt;
++	const struct v4l2_rect *crop;
++	unsigned int width, height;
++	int min, max, def, ret = 0;
++
++	crop = __t4ka3_get_pad_crop(sensor, sd_state, format->pad, format->which);
++
++	/* Limit set_fmt max size to crop width / height */
++	width = clamp_val(ALIGN(format->format.width, 2),
++			  T4KA3_MIN_CROP_WIDTH, crop->width);
++	height = clamp_val(ALIGN(format->format.height, 2),
++			   T4KA3_MIN_CROP_HEIGHT, crop->height);
++	t4ka3_fill_format(sensor, &format->format, width, height);
++
++	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
++		try_fmt = v4l2_subdev_state_get_format(sd_state, 0);
++		*try_fmt = format->format;
++		return 0;
++	}
++
++	mutex_lock(&sensor->lock);
++
++	if (sensor->streaming) {
++		ret = -EBUSY;
++		goto unlock;
++	}
++
++	sensor->mode.fmt = format->format;
++	t4ka3_calc_mode(sensor);
++
++	/* vblank range is height dependent adjust and reset to default */
++	t4ka3_get_vblank_limits(sensor, &min, &max, &def);
++	ret = __v4l2_ctrl_modify_range(sensor->ctrls.vblank, min, max, 1, def);
++	if (ret)
++		goto unlock;
++
++	ret = __v4l2_ctrl_s_ctrl(sensor->ctrls.vblank, def);
++	if (ret)
++		goto unlock;
++
++	def = T4KA3_ACTIVE_WIDTH - sensor->mode.fmt.width;
++	ret = __v4l2_ctrl_modify_range(sensor->ctrls.hblank, def, def, 1, def);
++	if (ret)
++		goto unlock;
++	ret = __v4l2_ctrl_s_ctrl(sensor->ctrls.hblank, def);
++	if (ret)
++		goto unlock;
++
++	/* exposure range depends on vts which may have changed */
++	ret = t4ka3_update_exposure_range(sensor);
++	if (ret)
++		goto unlock;
++
++unlock:
++	mutex_unlock(&sensor->lock);
++	return ret;
++}
++
++/* Horizontal flip the image. */
++static int t4ka3_t_hflip(struct v4l2_subdev *sd, int value)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++	int ret;
++	u64 val;
++
++	if (sensor->streaming)
++		return -EBUSY;
++
++	val = value ? T4KA3_HFLIP_BIT : 0;
++
++	ret = cci_update_bits(sensor->regmap, T4KA3_REG_IMG_ORIENTATION,
++			      T4KA3_HFLIP_BIT, val, NULL);
++	if (ret)
++		return ret;
++
++	t4ka3_set_bayer_order(sensor, &sensor->mode.fmt);
++	return 0;
++}
++
++/* Vertically flip the image */
++static int t4ka3_t_vflip(struct v4l2_subdev *sd, int value)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++	int ret;
++	u64 val;
++
++	if (sensor->streaming)
++		return -EBUSY;
++
++	val = value ? T4KA3_VFLIP_BIT : 0;
++
++	ret = cci_update_bits(sensor->regmap, T4KA3_REG_IMG_ORIENTATION,
++			      T4KA3_VFLIP_BIT, val, NULL);
++	if (ret)
++		return ret;
++
++	t4ka3_set_bayer_order(sensor, &sensor->mode.fmt);
++	return 0;
++}
++
++static int t4ka3_test_pattern(struct t4ka3_data *sensor, s32 value)
++{
++	return cci_write(sensor->regmap, T4KA3_REG_TEST_PATTERN_MODE, value, NULL);
++}
++
++static int t4ka3_detect(struct t4ka3_data *sensor, u16 *id)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(&sensor->sd);
++	struct i2c_adapter *adapter = client->adapter;
++	u64 high, low;
++	int ret = 0;
++
++	/* i2c check */
++	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
++		return -ENODEV;
++
++	/* check sensor chip ID	 */
++	cci_read(sensor->regmap, T4KA3_REG_PRODUCT_ID_HIGH, &high, &ret);
++	cci_read(sensor->regmap, T4KA3_REG_PRODUCT_ID_LOW, &low, &ret);
++	if (ret)
++		return ret;
++
++	*id = (((u8)high) << 8) | (u8)low;
++	if (*id != T4KA3_PRODUCT_ID) {
++		dev_err(sensor->dev, "main sensor t4ka3 ID error\n");
++		return -ENODEV;
++	}
++
++	return 0;
++}
++
++static int
++t4ka3_s_config(struct v4l2_subdev *sd)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++	u16 sensor_id;
++	int ret;
++
++	ret = pm_runtime_get_sync(sensor->sd.dev);
++	if (ret < 0) {
++		dev_err(sensor->dev, "t4ka3 power-up err");
++		return ret;
++	}
++
++	ret = t4ka3_detect(sensor, &sensor_id);
++	if (ret) {
++		dev_err(sensor->dev, "Failed to detect sensor.\n");
++		goto fail_detect;
++	}
++
++fail_detect:
++	pm_runtime_put(sensor->sd.dev);
++	return ret;
++}
++
++static int t4ka3_s_ctrl(struct v4l2_ctrl *ctrl)
++{
++	struct t4ka3_data *sensor = ctrl_to_t4ka3(ctrl);
++	int ret;
++
++	/* Update exposure range on vblank changes */
++	if (ctrl->id == V4L2_CID_VBLANK) {
++		ret = t4ka3_update_exposure_range(sensor);
++		if (ret)
++			return ret;
++	}
++
++	/* Only apply changes to the controls if the device is powered up */
++	if (!pm_runtime_get_if_in_use(sensor->sd.dev)) {
++		t4ka3_set_bayer_order(sensor, &sensor->mode.fmt);
++		return 0;
++	}
++
++	switch (ctrl->id) {
++	case V4L2_CID_TEST_PATTERN:
++		ret = t4ka3_test_pattern(sensor, ctrl->val);
++		break;
++	case V4L2_CID_VFLIP:
++		ret = t4ka3_t_vflip(&sensor->sd, ctrl->val);
++		break;
++	case V4L2_CID_HFLIP:
++		ret = t4ka3_t_hflip(&sensor->sd, ctrl->val);
++		break;
++	case V4L2_CID_VBLANK:
++		ret = cci_write(sensor->regmap, T4KA3_REG_FRAME_LENGTH_LINES,
++				sensor->mode.fmt.height + ctrl->val, NULL);
++		break;
++	case V4L2_CID_EXPOSURE:
++		ret = cci_write(sensor->regmap, T4KA3_REG_COARSE_INTEGRATION_TIME,
++				ctrl->val, NULL);
++		break;
++	case V4L2_CID_ANALOGUE_GAIN:
++		ret = cci_write(sensor->regmap, T4KA3_REG_GLOBAL_GAIN,
++				ctrl->val, NULL);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	pm_runtime_put(sensor->sd.dev);
++	return ret;
++}
++
++/* Window/crop start + size *after* binning */
++#define T4KA3_REG_WIN_START_X			CCI_REG16(0x0408)
++#define T4KA3_REG_WIN_START_Y			CCI_REG16(0x040a)
++#define T4KA3_REG_WIN_WIDTH			CCI_REG16(0x040c)
++#define T4KA3_REG_WIN_HEIGHT			CCI_REG16(0x040e)
++#define T4KA3_REG_TEST_PATTERN_MODE		CCI_REG8(0x0601)
++/* Unknown register at address 0x0900 */
++#define T4KA3_REG_0900				CCI_REG8(0x0900)
++static int t4ka3_set_mode(struct t4ka3_data *sensor)
++{
++	int ret = 0;
++
++	cci_write(sensor->regmap, T4KA3_REG_HORZ_OUTPUT_SIZE, sensor->mode.fmt.width, &ret);
++	/* Write mode-height - 2 otherwise things don't work, hw-bug ? */
++	cci_write(sensor->regmap, T4KA3_REG_VERT_OUTPUT_SIZE, sensor->mode.fmt.height - 2, &ret);
++	/* Note overwritten by __v4l2_ctrl_handler_setup() based on vblank ctrl */
++	cci_write(sensor->regmap, T4KA3_REG_FRAME_LENGTH_LINES, T4KA3_LINES_PER_FRAME_30FPS, &ret);
++	cci_write(sensor->regmap, T4KA3_REG_PIXELS_PER_LINE, T4KA3_PIXELS_PER_LINE, &ret);
++	/* Always use the full sensor, using window to crop */
++	cci_write(sensor->regmap, T4KA3_REG_HORZ_START, 0, &ret);
++	cci_write(sensor->regmap, T4KA3_REG_VERT_START, 0, &ret);
++	cci_write(sensor->regmap, T4KA3_REG_HORZ_END, T4KA3_NATIVE_WIDTH - 1, &ret);
++	cci_write(sensor->regmap, T4KA3_REG_VERT_END, T4KA3_NATIVE_HEIGHT - 1, &ret);
++	/* Set window */
++	cci_write(sensor->regmap, T4KA3_REG_WIN_START_X, sensor->mode.win_x, &ret);
++	cci_write(sensor->regmap, T4KA3_REG_WIN_START_Y, sensor->mode.win_y, &ret);
++	cci_write(sensor->regmap, T4KA3_REG_WIN_WIDTH, sensor->mode.fmt.width, &ret);
++	cci_write(sensor->regmap, T4KA3_REG_WIN_HEIGHT, sensor->mode.fmt.height, &ret);
++	/* Write 1 to unknown register 0x0900 */
++	cci_write(sensor->regmap, T4KA3_REG_0900, 1, &ret);
++	cci_write(sensor->regmap, T4KA3_REG_BINNING, T4KA3_BINNING_VAL(sensor->mode.binning), &ret);
++
++	return ret;
++}
++
++static int t4ka3_s_stream(struct v4l2_subdev *sd, int enable)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++	int ret;
++
++	mutex_lock(&sensor->lock);
++
++	if (sensor->streaming == enable) {
++		dev_warn(sensor->dev, "Stream already %s\n", enable ? "started" : "stopped");
++		ret = -EBUSY;
++		goto error_unlock;
++	}
++
++	if (enable) {
++		ret = pm_runtime_get_sync(sensor->sd.dev);
++		if (ret < 0) {
++			dev_err(sensor->dev, "power-up err.\n");
++			goto error_unlock;
++		}
++
++		cci_multi_reg_write(sensor->regmap, t4ka3_init_config,
++				    ARRAY_SIZE(t4ka3_init_config), &ret);
++		/* enable group hold */
++		cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 1, &ret);
++		cci_multi_reg_write(sensor->regmap, t4ka3_pre_mode_set_regs,
++				    ARRAY_SIZE(t4ka3_pre_mode_set_regs), &ret);
++		if (ret)
++			goto error_powerdown;
++
++		ret = t4ka3_set_mode(sensor);
++		if (ret)
++			goto error_powerdown;
++
++		ret = cci_multi_reg_write(sensor->regmap, t4ka3_post_mode_set_regs,
++					  ARRAY_SIZE(t4ka3_post_mode_set_regs), NULL);
++		if (ret)
++			goto error_powerdown;
++
++		/* Restore value of all ctrls */
++		ret = __v4l2_ctrl_handler_setup(&sensor->ctrls.handler);
++		if (ret)
++			goto error_powerdown;
++
++		/* disable group hold */
++		cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 0, &ret);
++		cci_write(sensor->regmap, T4KA3_REG_STREAM, 1, &ret);
++		if (ret)
++			goto error_powerdown;
++
++		sensor->streaming = 1;
++	} else {
++		ret = cci_write(sensor->regmap, T4KA3_REG_STREAM, 0, NULL);
++		if (ret)
++			goto error_powerdown;
++
++		ret = pm_runtime_put(sensor->sd.dev);
++		if (ret)
++			goto error_unlock;
++
++		sensor->streaming = 0;
++	}
++
++	mutex_unlock(&sensor->lock);
++	return ret;
++
++error_powerdown:
++	pm_runtime_put(sensor->sd.dev);
++error_unlock:
++	mutex_unlock(&sensor->lock);
++	return ret;
++}
++
++static int t4ka3_get_selection(struct v4l2_subdev *sd,
++			       struct v4l2_subdev_state *state,
++			       struct v4l2_subdev_selection *sel)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++
++	switch (sel->target) {
++	case V4L2_SEL_TGT_CROP:
++		mutex_lock(&sensor->lock);
++		sel->r = *__t4ka3_get_pad_crop(sensor, state, sel->pad,
++					       sel->which);
++		mutex_unlock(&sensor->lock);
++		break;
++	case V4L2_SEL_TGT_NATIVE_SIZE:
++	case V4L2_SEL_TGT_CROP_BOUNDS:
++		sel->r.top = 0;
++		sel->r.left = 0;
++		sel->r.width = T4KA3_NATIVE_WIDTH;
++		sel->r.height = T4KA3_NATIVE_HEIGHT;
++		break;
++	case V4L2_SEL_TGT_CROP_DEFAULT:
++		sel->r = t4ka3_default_crop;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int t4ka3_set_selection(struct v4l2_subdev *sd,
++			       struct v4l2_subdev_state *state,
++			       struct v4l2_subdev_selection *sel)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++	struct v4l2_mbus_framefmt *format;
++	struct v4l2_rect *crop;
++	struct v4l2_rect rect;
++
++	if (sel->target != V4L2_SEL_TGT_CROP)
++		return -EINVAL;
++
++	/*
++	 * Clamp the boundaries of the crop rectangle to the size of the sensor
++	 * pixel array. Align to multiples of 2 to ensure Bayer pattern isn't
++	 * disrupted.
++	 */
++	rect.left = clamp_val(ALIGN(sel->r.left, 2),
++			      T4KA3_NATIVE_START_LEFT, T4KA3_NATIVE_WIDTH);
++	rect.top = clamp_val(ALIGN(sel->r.top, 2),
++			     T4KA3_NATIVE_START_TOP, T4KA3_NATIVE_HEIGHT);
++	rect.width = clamp_val(ALIGN(sel->r.width, 2),
++			       T4KA3_MIN_CROP_WIDTH, T4KA3_NATIVE_WIDTH);
++	rect.height = clamp_val(ALIGN(sel->r.height, 2),
++				T4KA3_MIN_CROP_HEIGHT, T4KA3_NATIVE_HEIGHT);
++
++	/* Make sure the crop rectangle isn't outside the bounds of the array */
++	rect.width = min_t(unsigned int, rect.width,
++			   T4KA3_NATIVE_WIDTH - rect.left);
++	rect.height = min_t(unsigned int, rect.height,
++			    T4KA3_NATIVE_HEIGHT - rect.top);
++
++	crop = __t4ka3_get_pad_crop(sensor, state, sel->pad, sel->which);
++
++	mutex_lock(&sensor->lock);
++
++	*crop = rect;
++
++	if (rect.width != crop->width || rect.height != crop->height) {
++		/*
++		 * Reset the output image size if the crop rectangle size has
++		 * been modified.
++		 */
++		format = __t4ka3_get_pad_format(sensor, state, sel->pad,
++						sel->which);
++		format->width = rect.width;
++		format->height = rect.height;
++		if (sel->which == V4L2_SUBDEV_FORMAT_ACTIVE)
++			t4ka3_calc_mode(sensor);
++	}
++
++	mutex_unlock(&sensor->lock);
++
++	sel->r = rect;
++
++	return 0;
++}
++
++static int
++t4ka3_enum_mbus_code(struct v4l2_subdev *sd,
++		     struct v4l2_subdev_state *sd_state,
++		     struct v4l2_subdev_mbus_code_enum *code)
++{
++	if (code->index)
++		return -EINVAL;
++
++	code->code = MEDIA_BUS_FMT_SGRBG10_1X10;
++	return 0;
++}
++
++static int t4ka3_enum_frame_size(struct v4l2_subdev *sd,
++				 struct v4l2_subdev_state *sd_state,
++				 struct v4l2_subdev_frame_size_enum *fse)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++	struct v4l2_rect *crop;
++
++	if (fse->index >= T4KA3_FRAME_SIZES)
++		return -EINVAL;
++
++	crop = __t4ka3_get_pad_crop(sensor, sd_state, fse->pad, fse->which);
++	if (!crop)
++		return -EINVAL;
++
++	fse->min_width = crop->width / (fse->index + 1);
++	fse->min_height = crop->height / (fse->index + 1);
++	fse->max_width = fse->min_width;
++	fse->max_height = fse->min_height;
++
++	return 0;
++}
++
++static int
++t4ka3_get_pad_format(struct v4l2_subdev *sd,
++		     struct v4l2_subdev_state *sd_state,
++		     struct v4l2_subdev_format *fmt)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++	struct v4l2_mbus_framefmt *format =
++		__t4ka3_get_pad_format(sensor, sd_state, fmt->pad, fmt->which);
++
++	fmt->format = *format;
++	return 0;
++}
++
++static int t4ka3_check_hwcfg(struct t4ka3_data *sensor)
++{
++	struct fwnode_handle *fwnode = dev_fwnode(sensor->dev);
++	struct v4l2_fwnode_endpoint bus_cfg = {
++		.bus_type = V4L2_MBUS_CSI2_DPHY,
++	};
++	struct fwnode_handle *endpoint;
++	unsigned int i;
++	int ret;
++
++	/*
++	 * Sometimes the fwnode graph is initialized by the bridge driver.
++	 * Bridge drivers doing this may also add GPIO mappings, wait for this.
++	 */
++	endpoint = fwnode_graph_get_next_endpoint(fwnode, NULL);
++	if (!endpoint)
++		return dev_err_probe(sensor->dev, -EPROBE_DEFER,
++				     "waiting for fwnode graph endpoint\n");
++
++	ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &bus_cfg);
++	fwnode_handle_put(endpoint);
++	if (ret)
++		return ret;
++
++	if (bus_cfg.bus.mipi_csi2.num_data_lanes != 4) {
++		dev_err(sensor->dev, "only a 4-lane CSI2 config is supported");
++		ret = -EINVAL;
++		goto out_free_bus_cfg;
++	}
++
++	if (!bus_cfg.nr_of_link_frequencies) {
++		dev_err(sensor->dev, "no link frequencies defined\n");
++		ret = -EINVAL;
++		goto out_free_bus_cfg;
++	}
++
++	for (i = 0; i < bus_cfg.nr_of_link_frequencies; i++) {
++		if (bus_cfg.link_frequencies[i] == T4KA3_LINK_FREQ)
++			break;
++	}
++
++	if (i == bus_cfg.nr_of_link_frequencies) {
++		dev_err(sensor->dev, "supported link freq %llu not found\n",
++			T4KA3_LINK_FREQ);
++		ret = -EINVAL;
++		goto out_free_bus_cfg;
++	}
++
++out_free_bus_cfg:
++	v4l2_fwnode_endpoint_free(&bus_cfg);
++
++	return ret;
++}
++
++static int t4ka3_init_state(struct v4l2_subdev *sd,
++			    struct v4l2_subdev_state *sd_state)
++{
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++
++	*v4l2_subdev_state_get_crop(sd_state, 0) = t4ka3_default_crop;
++
++	t4ka3_fill_format(sensor, v4l2_subdev_state_get_format(sd_state, 0),
++			  T4KA3_ACTIVE_WIDTH, T4KA3_ACTIVE_HEIGHT);
++	return 0;
++}
++
++static const struct v4l2_ctrl_ops t4ka3_ctrl_ops = {
++	.s_ctrl = t4ka3_s_ctrl,
++};
++
++static const struct v4l2_subdev_video_ops t4ka3_video_ops = {
++	.s_stream = t4ka3_s_stream,
++};
++
++static const struct v4l2_subdev_pad_ops t4ka3_pad_ops = {
++	.enum_mbus_code = t4ka3_enum_mbus_code,
++	.enum_frame_size = t4ka3_enum_frame_size,
++	.get_fmt = t4ka3_get_pad_format,
++	.set_fmt = t4ka3_set_pad_format,
++	.get_selection = t4ka3_get_selection,
++	.set_selection = t4ka3_set_selection,
++};
++
++static const struct v4l2_subdev_ops t4ka3_ops = {
++	.video = &t4ka3_video_ops,
++	.pad = &t4ka3_pad_ops,
++};
++
++static const struct v4l2_subdev_internal_ops t4ka3_internal_ops = {
++	.init_state = t4ka3_init_state,
++};
++
++static void t4ka3_remove(struct i2c_client *client)
++{
++	struct v4l2_subdev *sd = i2c_get_clientdata(client);
++	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
++
++	v4l2_async_unregister_subdev(&sensor->sd);
++	media_entity_cleanup(&sensor->sd.entity);
++	v4l2_ctrl_handler_free(&sensor->ctrls.handler);
++	pm_runtime_disable(&client->dev);
++}
++
++static int t4ka3_init_controls(struct t4ka3_data *sensor)
++{
++	const struct v4l2_ctrl_ops *ops = &t4ka3_ctrl_ops;
++	struct t4ka3_ctrls *ctrls = &sensor->ctrls;
++	struct v4l2_ctrl_handler *hdl = &ctrls->handler;
++	int min, max, def;
++	static const char * const test_pattern_menu[] = {
++		"Disabled",
++		"Solid White",
++		"Color Bars",
++		"Gradient",
++		"Random Data",
++	};
++
++	v4l2_ctrl_handler_init(hdl, 4);
++
++	hdl->lock = &sensor->lock;
++
++	ctrls->vflip = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
++	ctrls->hflip = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_HFLIP, 0, 1, 1, 0);
++
++	ctrls->test_pattern = v4l2_ctrl_new_std_menu_items(hdl, ops,
++							   V4L2_CID_TEST_PATTERN,
++							   ARRAY_SIZE(test_pattern_menu) - 1,
++							   0, 0, test_pattern_menu);
++	ctrls->link_freq = v4l2_ctrl_new_int_menu(hdl, NULL, V4L2_CID_LINK_FREQ,
++						  0, 0, sensor->link_freq);
++
++	t4ka3_get_vblank_limits(sensor, &min, &max, &def);
++	ctrls->vblank = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_VBLANK, min, max, 1, def);
++
++	def = T4KA3_PIXELS_PER_LINE - sensor->mode.fmt.width;
++	ctrls->hblank = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_HBLANK,
++					  def, def, 1, def);
++
++	max = T4KA3_LINES_PER_FRAME_30FPS - T4KA3_COARSE_INTEGRATION_TIME_MARGIN;
++	ctrls->exposure = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_EXPOSURE,
++					    0, max, 1, max);
++
++	ctrls->gain = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_ANALOGUE_GAIN,
++					T4KA3_MIN_GLOBAL_GAIN_SUPPORTED,
++					T4KA3_MAX_GLOBAL_GAIN_SUPPORTED,
++					1, T4KA3_MIN_GLOBAL_GAIN_SUPPORTED);
++
++	if (hdl->error)
++		return hdl->error;
++
++	ctrls->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
++	ctrls->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
++	ctrls->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
++	ctrls->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
++
++	sensor->sd.ctrl_handler = hdl;
++	return 0;
++}
++
++static int t4ka3_pm_suspend(struct device *dev)
++{
++	struct t4ka3_data *sensor = dev_get_drvdata(dev);
++
++	gpiod_set_value_cansleep(sensor->powerdown_gpio, 1);
++	gpiod_set_value_cansleep(sensor->reset_gpio, 1);
++
++	return 0;
++}
++
++static int t4ka3_pm_resume(struct device *dev)
++{
++	struct t4ka3_data *sensor = dev_get_drvdata(dev);
++	u16 sensor_id;
++	int ret;
++
++	usleep_range(5000, 6000);
++
++	gpiod_set_value_cansleep(sensor->powerdown_gpio, 0);
++	gpiod_set_value_cansleep(sensor->reset_gpio, 0);
++
++	/* waiting for the sensor after powering up */
++	msleep(20);
++
++	ret = t4ka3_detect(sensor, &sensor_id);
++	if (ret) {
++		dev_err(sensor->dev, "sensor detect failed\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static DEFINE_RUNTIME_DEV_PM_OPS(t4ka3_pm_ops, t4ka3_pm_suspend, t4ka3_pm_resume, NULL);
++
++static int t4ka3_probe(struct i2c_client *client)
++{
++	struct t4ka3_data *sensor;
++	int ret;
++
++	/* allocate sensor device & init sub device */
++	sensor = devm_kzalloc(&client->dev, sizeof(*sensor), GFP_KERNEL);
++	if (!sensor)
++		return -ENOMEM;
++
++	sensor->dev = &client->dev;
++
++	ret = t4ka3_check_hwcfg(sensor);
++	if (ret)
++		return ret;
++
++	mutex_init(&sensor->lock);
++
++	sensor->link_freq[0] = T4KA3_LINK_FREQ;
++	sensor->mode.crop = t4ka3_default_crop;
++	t4ka3_fill_format(sensor, &sensor->mode.fmt, T4KA3_ACTIVE_WIDTH, T4KA3_ACTIVE_HEIGHT);
++	t4ka3_calc_mode(sensor);
++
++	v4l2_i2c_subdev_init(&sensor->sd, client, &t4ka3_ops);
++	sensor->sd.internal_ops = &t4ka3_internal_ops;
++
++	sensor->powerdown_gpio = devm_gpiod_get(&client->dev, "powerdown",
++						GPIOD_OUT_HIGH);
++	if (IS_ERR(sensor->powerdown_gpio))
++		return dev_err_probe(&client->dev, PTR_ERR(sensor->powerdown_gpio),
++				     "getting powerdown GPIO\n");
++
++	sensor->reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
++						     GPIOD_OUT_HIGH);
++	if (IS_ERR(sensor->reset_gpio))
++		return dev_err_probe(&client->dev, PTR_ERR(sensor->reset_gpio),
++				     "getting reset GPIO\n");
++
++	sensor->regmap = devm_cci_regmap_init_i2c(client, 16);
++	if (IS_ERR(sensor->regmap))
++		return PTR_ERR(sensor->regmap);
++
++	pm_runtime_set_suspended(&client->dev);
++	pm_runtime_enable(&client->dev);
++	pm_runtime_set_autosuspend_delay(&client->dev, 1000);
++	pm_runtime_use_autosuspend(&client->dev);
++
++	ret = t4ka3_s_config(&sensor->sd);
++	if (ret)
++		goto err_pm_runtime;
++
++	sensor->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
++	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
++	sensor->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
++
++	ret = t4ka3_init_controls(sensor);
++	if (ret)
++		goto err_controls;
++
++	ret = media_entity_pads_init(&sensor->sd.entity, 1, &sensor->pad);
++	if (ret)
++		goto err_controls;
++
++	ret = v4l2_async_register_subdev_sensor(&sensor->sd);
++	if (ret)
++		goto err_media_entity;
++
++	return 0;
++
++err_media_entity:
++	media_entity_cleanup(&sensor->sd.entity);
++err_controls:
++	v4l2_ctrl_handler_free(&sensor->ctrls.handler);
++err_pm_runtime:
++	pm_runtime_disable(&client->dev);
++	return ret;
++}
++
++static struct acpi_device_id t4ka3_acpi_match[] = {
++	{ "XMCC0003" },
++	{}
++};
++MODULE_DEVICE_TABLE(acpi, t4ka3_acpi_match);
++
++static struct i2c_driver t4ka3_driver = {
++	.driver = {
++		.name = "t4ka3",
++		.acpi_match_table = ACPI_PTR(t4ka3_acpi_match),
++		.pm = pm_sleep_ptr(&t4ka3_pm_ops),
++	},
++	.probe = t4ka3_probe,
++	.remove = t4ka3_remove,
++};
++module_i2c_driver(t4ka3_driver)
++
++MODULE_DESCRIPTION("A low-level driver for T4KA3 sensor");
++MODULE_AUTHOR("HARVEY LV <harvey.lv@intel.com>");
++MODULE_LICENSE("GPL");
+-- 
+2.46.2
+
 
