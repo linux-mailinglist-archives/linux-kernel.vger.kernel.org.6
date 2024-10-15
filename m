@@ -1,126 +1,132 @@
-Return-Path: <linux-kernel+bounces-366807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FA799FAAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:58:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A3B99FAC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D871F1F22793
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:58:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F147B2134D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9AB21E3CC;
-	Tue, 15 Oct 2024 21:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F4E1B0F16;
+	Tue, 15 Oct 2024 22:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5hlu9cq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="j2bsjpXL"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBF421E3A0;
-	Tue, 15 Oct 2024 21:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F2F21E3C4;
+	Tue, 15 Oct 2024 22:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729029518; cv=none; b=KLXGAaSM1GagAJ2oiaQwkBl8GQBiQdEEMowaOiGaWTt0ToM5blXN/ur/fRbCDekIQjQdccKVlv3lVKVE5rNATRkT94WVabvgyzmUzIE2YzpQG9mR6PVrnx6mjY/sj3Fy4iigSfC0Otk9TS2VbnbPsQiQ1GVvCqPOumz5pJcwV2w=
+	t=1729029747; cv=none; b=eKbnBODbI1zPOIJwUGANVsA/bsuNSXkQTrHFL3Oi0YhdCXJqArnwpqTVyt+zGDUacTN9sDiNpp0VsuvvPa53hBI18yXrdnTf2eyh2OufWZVxTiW1jSJvTYcupJdroINVD5y09xhbvpU0Cu2i5aManw7VryoaJEhEmpUtMXFGdAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729029518; c=relaxed/simple;
-	bh=JjirfYOBICS63RdNb4ix+9Zt0rkV4u0oor5q7jb/hWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFZ386iBnsBSdjw8nRpgwIjkZ7ncf5Lbt8sLQJ+N/Mqw7olMkuvm/Gc4X1moHko6Rnoh2olYCJ/1CHcdvszhq/XqQTcvaZbFT8jBNvRWntEkNdCoK4T5EJ0OpWuc3wxS1U/+Ug9wfRzkFyULpI8HA00A9mF7t4nMkWSlKdlnzKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5hlu9cq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40763C4CEC6;
-	Tue, 15 Oct 2024 21:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729029518;
-	bh=JjirfYOBICS63RdNb4ix+9Zt0rkV4u0oor5q7jb/hWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z5hlu9cq3oRtd5VPPs60R0hS432xRp3nC5dRhY7yppsPlYMQtwu/NHSFh2mWNrN1o
-	 Pt5m1vjiLOp0mvS7JkBFNna7BuKWq79pFD7PfQD3/fcnlSwWUp40ytMDmPReUsihRu
-	 /sQzrUKFZr6XUstfzS1wacifbGZpWU3apIqc31YxdmSGO/OiKMjsNDc/C4bFsvlLJM
-	 CjEI+6QmbBKL2SQB3yRkkuoPAKH53wpRVjUY0VJcLdnIkzrRYzXrklQ36xxDuymwLI
-	 lHjlaO3yLcsYfJu0hbZwwpIDzTkGSHThVT/xeBJNvb1SKXPAJRlEUrCEyH5gUZo23v
-	 idvl9b8VJbuGg==
-Date: Tue, 15 Oct 2024 16:58:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
-	xiaoning.wang@nxp.com, Frank.Li@nxp.com,
-	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
-	bhelgaas@google.com, horms@kernel.org, imx@lists.linux.dev,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 net-next 02/13] dt-bindings: net: add i.MX95 ENETC
- support
-Message-ID: <20241015215837.GA2022846-robh@kernel.org>
-References: <20241015125841.1075560-1-wei.fang@nxp.com>
- <20241015125841.1075560-3-wei.fang@nxp.com>
+	s=arc-20240116; t=1729029747; c=relaxed/simple;
+	bh=3FMXA06SLyxe4d1QjZ3S8XqjSxoyuM2EDn+/3su358I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DgUZ5jZcc3ycf/E9ShibieOXbfTAxGjNJ54rUD0hKNJm7AYzDNxLO5Sp7wVWFFRJ0xEOBvBppsLFUf0WfBvXTvUS/qq1MKxLgvoFtWMF6UspywTYpgSm7+UsomSxy1xOUgNv5L4xgo9qXNWHCtQLPFiULexeznWj6KCytGen/7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=j2bsjpXL; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729029740;
+	bh=amBjm3gdTBfhT3NTOMTN+68x4oxurJ9whoqBomPVaxU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=j2bsjpXLvm3ita8K7ms5RAUPsdEA30DK/bj1Pya6vrry7EjEX7nxfX1Mu9hOQBY4C
+	 HyH7hx14aUjWMljLezK19EP1hP+3Pj99Qepkwuu1iQT2y4rRUNQj4vpgbYy7POHTQu
+	 YzooUpHtui0A5j/6/nSBquTMAp42jTMl78/mu4VYIgBLD+X3o+8C02Yrjf1/Yts4y6
+	 3Q7PUeMwlGGYm0B3adOrJLyT0waraXpVm5jYn3fdF8wFDSs9gIPqNWO2tbHnL2JzSa
+	 IGWZ/MZbdNcqnRwm1jsEppvEgtkPm+fBt1K2TgF5NmTMEMwJ/qzZsAEHjdte9Xb6Be
+	 Q7dYzvH+hCiJw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XSp3w1r2xz4wx5;
+	Wed, 16 Oct 2024 09:02:20 +1100 (AEDT)
+Date: Wed, 16 Oct 2024 09:02:20 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, David Chinner
+ <david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong"
+ <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, <linux-xfs@vger.kernel.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the vfs-brauner tree
+Message-ID: <20241016090220.5b67bb5f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015125841.1075560-3-wei.fang@nxp.com>
+Content-Type: multipart/signed; boundary="Sig_/iXwp_DuUPe4iH51ss3y0KQc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Oct 15, 2024 at 08:58:30PM +0800, Wei Fang wrote:
-> The ENETC of i.MX95 has been upgraded to revision 4.1, and the vendor
-> ID and device ID have also changed, so add the new compatible strings
-> for i.MX95 ENETC. In addition, i.MX95 supports configuration of RGMII
-> or RMII reference clock.
-> 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
-> v2 changes: remove "nxp,imx95-enetc" compatible string.
-> ---
->  .../devicetree/bindings/net/fsl,enetc.yaml    | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> index e152c93998fe..409ac4c09f63 100644
-> --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> @@ -20,14 +20,25 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    items:
-> -      - enum:
-> -          - pci1957,e100
-> -      - const: fsl,enetc
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - pci1957,e100
-> +          - const: fsl,enetc
-> +      - items:
+--Sig_/iXwp_DuUPe4iH51ss3y0KQc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-You can omit items here.
+Hi all,
 
-> +          - const: pci1131,e101
->  
->    reg:
->      maxItems: 1
->  
-> +  clocks:
-> +    items:
-> +      - description: MAC transmit/receiver reference clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: enet_ref_clk
+The following commits are also in the xfs tree as different commits
+(but the same patches):
 
-Clock names are local to the block, so 'enet_' is redundant. It's all 
-clock names, so '_clk' is redundant too. IOW, just use 'ref'.
+  c650b5a9028f ("xfs: punch delalloc extents from the COW fork for COW writ=
+es")
+  f8bb8ce211ce ("xfs: set IOMAP_F_SHARED for all COW fork allocations")
+  cd97b59a531d ("xfs: share more code in xfs_buffered_write_iomap_begin")
+  7f6e164457c6 ("xfs: support the COW fork in xfs_bmap_punch_delalloc_range=
+")
+  99c29f16b79f ("xfs: IOMAP_ZERO and IOMAP_UNSHARE already hold invalidate_=
+lock")
+  2f58268678f1 ("xfs: take XFS_MMAPLOCK_EXCL xfs_file_write_zero_eof")
+  71f1cd607850 ("xfs: factor out a xfs_file_write_zero_eof helper")
+  f66815a521bd ("iomap: move locking out of iomap_write_delalloc_release")
+  1eef06039a75 ("iomap: remove iomap_file_buffered_write_punch_delalloc")
+  18f08714e7b2 ("iomap: factor out a iomap_last_written_block helper")
 
-> +
->    mdio:
->      $ref: mdio.yaml
->      unevaluatedProperties: false
-> -- 
-> 2.34.1
-> 
+These are commits
+
+  f6f91d290c8b ("xfs: punch delalloc extents from the COW fork for COW writ=
+es")
+  7d6fe5c586e6 ("xfs: set IOMAP_F_SHARED for all COW fork allocations")
+  c29440ff66d6 ("xfs: share more code in xfs_buffered_write_iomap_begin")
+  8fe3b21efa07 ("xfs: support the COW fork in xfs_bmap_punch_delalloc_range=
+")
+  abd7d651ad2c ("xfs: IOMAP_ZERO and IOMAP_UNSHARE already hold invalidate_=
+lock")
+  acfbac776496 ("xfs: take XFS_MMAPLOCK_EXCL xfs_file_write_zero_eof")
+  3c399374af28 ("xfs: factor out a xfs_file_write_zero_eof helper")
+  b78495166264 ("iomap: move locking out of iomap_write_delalloc_release")
+  caf0ea451d97 ("iomap: remove iomap_file_buffered_write_punch_delalloc")
+  c0adf8c3a9bf ("iomap: factor out a iomap_last_written_block helper")
+
+in the xfs tree.
+
+These are causing at least one conflict due to later commits in the
+vfs-brauner tree.  Maybe you could share a stable branch?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iXwp_DuUPe4iH51ss3y0KQc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcO5mwACgkQAVBC80lX
+0GzidAf+JGNspgiZBzM0yZqAL3AJA57fy/PyS/sPC3rFNFWD4P2HZSWsanL6UCAg
+NLnSP1eIPnthmEnPYUocNxej86FtSiwPIynStrXymYMjZbFzK8Mi/7E96FEXxuza
+4GHIao4XpY+e/EFjF16ePYoSQmrFPDVtvsPOb2a0WDk7ihxZDDOwttzUvdMZeTTt
+dayu46EIQTI9u7zpEa81zc/paoJYDjlPRssZe2hrAhthEtMMQClbk9YK1orzMNX0
+e46XUVglqtZjzASmhuzuuvQkt5WlllKcIuteOUCfrQ0GgpjHBu+vcPBhY7+HeZQz
+neD4zLba3O5HdKIFxKjy7EnlHhqK4w==
+=125M
+-----END PGP SIGNATURE-----
+
+--Sig_/iXwp_DuUPe4iH51ss3y0KQc--
 
