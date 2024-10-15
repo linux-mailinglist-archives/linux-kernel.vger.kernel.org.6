@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-365455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B75599E299
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:15:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9899D99E29E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E491D280D87
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:15:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9E2F1C21E5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042B91D1729;
-	Tue, 15 Oct 2024 09:15:41 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA2D18035;
+	Tue, 15 Oct 2024 09:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TXrQw8Ia"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01F418035;
-	Tue, 15 Oct 2024 09:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534F9185B47
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728983740; cv=none; b=ci1c0gjetrWNqpqw5yD+CfU6JdQ2vGLgddC4TCbbbjWjgya8SznyX6neTY9Zx8TkkeF8p6b+ogSY6/QqfT9qbZk84fH/KD6B1VLO4U8/UlCukopTEkiR8ldT2an7U2MjMBlHlKfWGPP3VbJQqv31x9ME/U5mrjQ+0L9IH24hky0=
+	t=1728983883; cv=none; b=poD4iEGDLC2JUpfduqy83aYsuRUDUBxvXwhQqJUE2mZnTF+u9Kfy9lRSYrrIlSbFhn6cO1zZI4tRwUSxlpRkdb7N0ydAuvDuoo7fsAvzTh0zWbCcnrfjbqYhaAmPC4V349j3jnXjmc+5QriMx764J8BQlSl6tQi6gDyTe3ovGvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728983740; c=relaxed/simple;
-	bh=CrfC+DKGXR7kRcsLQbFWSymUPaJylAZTT2Uka196tWI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ioDC7ZjgAB+B5H1P/eZsIeUa3L9vqsRe3ATJrDgqMFAw4eHKBSP8Q0ppGw+zb4RllTmgyR07MBClHgUL6H5RrDloSZnfTWOycN9DjpK4jEf5mb2U1PxkBT0aiKMhTHmmoJCQt9ZIKRI/0W3RHo4wSORLmR0DDTPXwBnnry0XtNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 014c91068ad611efa216b1d71e6e1362-20241015
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:5ee77643-f18f-4553-a220-202d0346f11b,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:9781bf6be741a4c27f4ab9224d50864e,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:1
-	1|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 014c91068ad611efa216b1d71e6e1362-20241015
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <luyun@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 199891051; Tue, 15 Oct 2024 17:15:22 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id EE8BFB8001A5;
-	Tue, 15 Oct 2024 17:15:21 +0800 (CST)
-X-ns-mid: postfix-670E32A9-8658841082
-Received: from localhost.localdomain (unknown [10.42.43.204])
-	by node2.com.cn (NSMail) with ESMTPA id 7A95EB8001A5;
-	Tue, 15 Oct 2024 09:15:21 +0000 (UTC)
-From: Yun Lu <luyun@kylinos.cn>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1728983883; c=relaxed/simple;
+	bh=QKK+v/ZsrCK+dVdz+Wx/3jRpHa+zlANSUsS5qMRPejg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISx6SaStLb+juz6A134DlA4telpSQPF6fXt4XFIujNqzPRw7DbmixgTfYcJ4DNZtsApmzdstKQa7T7s+6bJDMYThVxMURuduuSVIX42i5Hg4EfMHsD60NVNqbzR+a83N7RRC6BOe3505NUbQtbcf0M2LHvlmDvaSyqyn52pHZDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TXrQw8Ia; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=CrKJ
+	Ml4xA1hyzF3zu2LSgTaX/Cn7gqdQ3RYgTr27ea8=; b=TXrQw8Ia4bDLdCDRrakE
+	pPGRA8KakQKFMQpsy6BXr/O4pcjz7uL0HR3y24L++jeFnxtpgfFgIi2lD9Tt7kkx
+	/DVoElD1XssQ1K+z7VqdYQ6TeMM69Knhbl4aOh4BO1ncOh47sOtOFAZ07lQUAB0Q
+	M65a6hzaNBdfzkuzFDvYPxJrtGZqpjM8hy58hPk+29xnmJ2WwzwzLyhZFJNzNCXY
+	Xcv2N2oFCnqIde/RUdzOeXZMy6UImNdWCEEvX1yTi85YW2M+E0O8rvd3+QgUGJnh
+	Z9+cJq0N0SnY/sQ0ZLcoclMm7awyOvIz8+h8UIMuLFxAx0+3SvgplvKjzdK2n6lq
+	Hw==
+Received: (qmail 2653402 invoked from network); 15 Oct 2024 11:17:50 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Oct 2024 11:17:50 +0200
+X-UD-Smtp-Session: l3s3148p1@pJ5rbYAkYJ4gAwDPXyR3ALZ8hQlyja84
+Date: Tue, 15 Oct 2024 11:17:48 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+Message-ID: <Zw4zPOXSJIWEMd2Y@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] selftest: hid: add the missing tests directory
-Date: Tue, 15 Oct 2024 17:15:20 +0800
-Message-Id: <20241015091520.2431150-1-luyun@kylinos.cn>
-X-Mailer: git-send-email 2.27.0
+References: <20241015075134.1449458-1-TroyMitchell988@gmail.com>
+ <20241015075134.1449458-3-TroyMitchell988@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+4lmCUjPIwlwsZrJ"
+Content-Disposition: inline
+In-Reply-To: <20241015075134.1449458-3-TroyMitchell988@gmail.com>
 
-Commit 160c826b4dd0 ("selftest: hid: add missing run-hid-tools-tests.sh")
-has added the run-hid-tools-tests.sh script for it to be installed, but
-I forgot to add the tests directory together.
 
-If running the test case without the tests directory,  will results in
-the following error message:
+--+4lmCUjPIwlwsZrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    make -C tools/testing/selftests/ TARGETS=3Dhid install \
-	    INSTALL_PATH=3D$KSFT_INSTALL_PATH
-    cd $KSFT_INSTALL_PATH
-    ./run_kselftest.sh -t hid:hid-core.sh
 
-  /usr/lib/python3.11/site-packages/_pytest/config/__init__.py:331: Plugg=
-yTeardownRaisedWarning: A plugin raised an exception during an old-style =
-hookwrapper teardown.
-  Plugin: helpconfig, Hook: pytest_cmdline_parse
-  UsageError: usage: __main__.py [options] [file_or_dir] [file_or_dir] [.=
-..]
-  __main__.py: error: unrecognized arguments: --udevd
-    inifile: None
-    rootdir: /root/linux/kselftest_install/hid
+> +/* spacemit i2c registers */
+> +#define ICR          0x0		/* Control Register */
+> +#define ISR          0x4		/* Status Register */
+> +#define ISAR         0x8		/* Slave Address Register */
+> +#define IDBR         0xc		/* Data Buffer Register */
+> +#define ILCR         0x10		/* Load Count Register */
+> +#define IWCR         0x14		/* Wait Count Register */
+> +#define IRST_CYC     0x18		/* Bus reset cycle counter */
+> +#define IBMR         0x1c		/* Bus monitor register */
 
-In fact, the run-hid-tools-tests.sh script uses the scripts in the tests
-directory to run tests. The tests directory also needs to be added to be
-installed.
+These registers look a lot like the ones for i2c-pxa. Can the pxa driver
+maybe be re-used for your I2C core?
 
-v2: add the error message
 
-Fixes: ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core tests")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yun Lu <luyun@kylinos.cn>
----
- tools/testing/selftests/hid/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+--+4lmCUjPIwlwsZrJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/tools/testing/selftests/hid/Makefile b/tools/testing/selftes=
-ts/hid/Makefile
-index 38ae31bb07b5..662209f5fabc 100644
---- a/tools/testing/selftests/hid/Makefile
-+++ b/tools/testing/selftests/hid/Makefile
-@@ -18,6 +18,7 @@ TEST_PROGS +=3D hid-usb_crash.sh
- TEST_PROGS +=3D hid-wacom.sh
-=20
- TEST_FILES :=3D run-hid-tools-tests.sh
-+TEST_FILES +=3D tests
-=20
- CXX ?=3D $(CROSS_COMPILE)g++
-=20
---=20
-2.27.0
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcOMzkACgkQFA3kzBSg
+KbbMeQ/+LaZ1hGrKfGOMVAIViVfn5I8r6ddkUeKKpQSsOqNL5yZ+m6BP1P7lvtMZ
+N/SsIQG4DDphYwG8O0Ewoc+8j8rWbSnn3B9+OpnPLC7NJh1lJEUoxmhf+7fAA6EN
+tWlkwsk7EWgSbTUP7PGlKkvlhi63oVfjMnEPD9fW0+Z1zgllUqbdisY9CnvB/iHk
+h3KtU3WiQv6T6H1z4dX9td1Ma/U3YX1c9xoLLPl7i7wDynZBzJ5kZxnHu/IYTeJx
+dKos5yJGDFeapct6GE2TIZqTonpYbBafma+nBG226SHyR1d4VjqDupZ42uUxWbal
+QnKdFpUG7feQyiIpvTXMYDqRMBf7b+mOfSsxCqY9S9MSqSE/EHMC0vzsDRVQC/Lc
+H7w0dbHGLyDb3XmhVNSRA4KmyqI1hfouQmt1oFqgHMZAu9btsrxeu8ES8hHT9Th8
+dxFQvQ6FXunSDDX3X9v9vWaWGb7vIKpLhWQZ8gjvjcsbhOeNkN89kAzbi6O0Y1Vo
+hgMo25e0VSL6kCE3EQPHXHMBPeTE36AX7ATpktXlCKeeLQbt2K2EGmnkiCsglBmg
+EaN9kTNbNK/LNcx2LvTO8mvyHGUXTQCFDcwDCIKhO7zoHQycn5k4gg2rMBMhSwQB
+RZLVyeG5jarAm6B6MNILdDuFOl7jYxPyM6TcDGDE9blTgCcJG9U=
+=Tyju
+-----END PGP SIGNATURE-----
+
+--+4lmCUjPIwlwsZrJ--
 
