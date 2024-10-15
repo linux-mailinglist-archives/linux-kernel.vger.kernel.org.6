@@ -1,133 +1,170 @@
-Return-Path: <linux-kernel+bounces-365026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E79099DC5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:43:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4705699DC67
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0E8280E1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:43:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785381C2124C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1276816E89B;
-	Tue, 15 Oct 2024 02:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D19316DC3C;
+	Tue, 15 Oct 2024 02:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Yae3PdeC"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81A816A92D;
-	Tue, 15 Oct 2024 02:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T46TAodU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D735C6AB8;
+	Tue, 15 Oct 2024 02:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728960220; cv=none; b=ploLB5EVO/Q+fygHQd4KhVlagYl6/QWz9cnn5vyfDGr1SFNlmypaLSCvVITBmIr+0XJG7TKZIO8G1uPRp+7SwrTt4IDEaINEVR0ukvThBQRiJDgRdVHVjScjYqbRfOQs+wXocNkx0az5A5ib9QE3e3wHC+WZzxnf/jFMwEQU9kg=
+	t=1728960400; cv=none; b=kM1jDnlNoMHd7mio+1czPEc96lgCzKZRopgk4d6nBPLsN1m3PwN4IWNzs31JtisUGHl8LOUitywgwZGcmp81OSIoXzS3O5OhDcnElnHd5gH3xL1mIHujFrxCC7h7E/L9X59iRlXBQdRNtbzfM+kFw5yeFa3ZVX2IvBSV1mozxx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728960220; c=relaxed/simple;
-	bh=fu4tV/Ybuw5z2VSKw3uQ2W+FpVaaobIFmxfAkGSDrv4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=H03CWuf8znAbWVBlT85pH7XAvVAjZ/x+vZAs+wPpuKhP4NJ93hX7B3lcRgrrBSrpLghMXbqL+xO6pq8w5/2x/9PLnmv1CLlGekKJS2KJj2+i3NSfRVeMYWymB1LgkAhdlzYC8kj/H740mr+E7Dg7HSlKA6+t4g5MvdXaorjrAXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Yae3PdeC; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=YHoulzNfEf/3cchh2O
-	p7Oha0dOhZ4RRfuu2b6gpk1XQ=; b=Yae3PdeCU6cpDz4x/SeXTr60D65nDQRV6P
-	M8KAdX6reL3MDZ+JKdTXkHrLwIO4R/JKlCCiSB0eoCSPEbbukUtIq8juRRpBbGfd
-	YIfX7u7LoHj7D8xjhOe9vcDQa5Fr+S+LKqQYU4PZ2O2nE2M/CeTP1BCuoKNpg8U2
-	SGBz8roNc=
-Received: from localhost.localdomain (unknown [111.48.58.10])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3vwnM1g1nGs7RBA--.775S2;
-	Tue, 15 Oct 2024 10:43:25 +0800 (CST)
-From: huanglei814 <huanglei814@163.com>
-To: alexandre.belloni@bootlin.com
-Cc: linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	huanglei <huanglei@kylinos.cn>
-Subject: [PATCH] rtc: add prefix modalias for rtc modules
-Date: Tue, 15 Oct 2024 10:43:22 +0800
-Message-Id: <20241015024322.15272-1-huanglei814@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:_____wD3vwnM1g1nGs7RBA--.775S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJF4xuF13CF48KFyUAFyxKrg_yoW5CrW5pa
-	15Ar15ur17Krs3GaykGrZ8uFW5K3W7KrWjkF1UJa9I9a4fAFn7ZwnxJFyrXF1DXrn5Ww42
-	qw1jkr15GFykJFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UE9aPUUUUU=
-X-CM-SenderInfo: xkxd0wxohlmiqu6rljoofrz/1tbixwx59mcNzu-iFAAAs5
+	s=arc-20240116; t=1728960400; c=relaxed/simple;
+	bh=hb/tXU639KZVM7PWEVuCMASmkvuahxNCAt+oTq3QPNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=U7yr+CNSVEH3f/sgMEcWWErFMsHhjf50ldRiJq2oyRJdsMUHkFCP8/rqZh6YXv+lEyB84UNlH5sEr0oyRqQ3E6CGoXk3NMa+Kxct1pvcH4/OlUwv8B13XnJhSOh550XJKMZmohDjKi5doteavcjGhK08G4zCK+6rgdXz7JyUvto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T46TAodU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F1pLdg028934;
+	Tue, 15 Oct 2024 02:46:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pbEGIR5/6gy6kLcA5WidgDGnLnhumHi9DVqfOYna3Nk=; b=T46TAodUUVjBk9FV
+	lN+2YsTYwPAP8uHgd3/C+l+dGKcGfqVj6wQdQ5mxpAsTOSw7cZYyICXKGxjjf7VG
+	kAX1sjF2fbkvN1Dclq7q1bdhd54VoW/zvEjx/bWrpprmFprdOP6NIGRro3xAtpRt
+	jX0oDHghoS90XNPDhgQAJPZosbibbDkMnhyvgLm1OitWmyT2RAzBTdQnkTxPk11d
+	DZWTvgyJNcQrUJ6HCcVW6EMEVyUrt5DxPbEdPpNWSt09y+rggeqvjraAvlLuIN8x
+	eCj7S2Hlw4Ix0142SJlS0gqlotvAftKOmd7Bq5UC7gWmsa6KWuDkuC39Tu6bnPSr
+	Wy5U5g==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4292evhwcm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 02:46:24 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49F2kNHt003772
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 02:46:23 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
+ 2024 19:46:17 -0700
+Message-ID: <28567b77-9d0c-421a-8c2e-88a310a20704@quicinc.com>
+Date: Tue, 15 Oct 2024 10:46:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 6/8] PCI: qcom: Fix the ops for SC8280X family SoC
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Johan Hovold <johan+linaro@kernel.org>
+References: <20241014171807.GA612411@bhelgaas>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <20241014171807.GA612411@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3wDoqdW48Ll3OwwhzQMMW2xvx-lvC8Qx
+X-Proofpoint-ORIG-GUID: 3wDoqdW48Ll3OwwhzQMMW2xvx-lvC8Qx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
+ phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 impostorscore=0
+ suspectscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410150017
 
-From: huanglei <huanglei@kylinos.cn>
 
-When these rtc drivers is built as a module, To wire it up to udev,
-and let the module be loaded automatically, we need to export these
-alias from the modules.
+On 10/15/2024 1:18 AM, Bjorn Helgaas wrote:
+> [+cc Johan; if you tag a commit with Fixes:, please cc the author of
+> that commit!]
+>
+> On Fri, Oct 11, 2024 at 03:41:40AM -0700, Qiang Yu wrote:
+>> On SC8280X family SoC, PCIe controllers are connected to SMMUv3, hence
+>> they don't need the config_sid() callback in ops_1_9_0 struct. Fix it by
+>> introducing a new ops struct, namely ops_1_21_0, so that BDF2SID mapping
+>> won't be configured during init.
+> Can you make the subject line say something specific about what this
+> patch does?  "Fix the ops" really doesn't include any useful
+> information.
+Sure, will directly say Remove BDF2SID mapping config for SC8280XP in 
+subject.
+>
+> Based on the Fixes: below, this has to do with ASPM, so the subject
+> line (and the commit log) should probably say something about ASPM.
+>
+> I don't see the connection between your mention of SMMUv3 and ASPM.
+> Are there two logical changes here that should be two separate
+> patches?
+This patch is to remove config_sid callback for sc8280x as it
+supports SMMUv3.
 
-Signed-off-by: huanglei <huanglei@kylinos.cn>
----
- drivers/rtc/rtc-ds1302.c | 1 +
- drivers/rtc/rtc-ds1307.c | 1 +
- drivers/rtc/rtc-ds1343.c | 1 +
- drivers/rtc/rtc-ds1347.c | 1 +
- drivers/rtc/rtc-ds1374.c | 1 +
- drivers/rtc/rtc-ds1672.c | 1 +
- 6 files changed, 6 insertions(+)
+This patch is not related to ASPM. Look like using
+70574511f3f ("PCI: qcom: Add support for SC8280XP")
+in Fixes tag is better. Sorry for the confusion.
 
-diff --git a/drivers/rtc/rtc-ds1302.c b/drivers/rtc/rtc-ds1302.c
-index ecc7d0307932..cc82f8e6326b 100644
---- a/drivers/rtc/rtc-ds1302.c
-+++ b/drivers/rtc/rtc-ds1302.c
-@@ -211,3 +211,4 @@ module_spi_driver(ds1302_driver);
- MODULE_DESCRIPTION("Dallas DS1302 RTC driver");
- MODULE_AUTHOR("Paul Mundt, David McCullough");
- MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("spi:rtc-ds1302");
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index 872e0b679be4..c402ab5cf383 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -2024,3 +2024,4 @@ module_i2c_driver(ds1307_driver);
- 
- MODULE_DESCRIPTION("RTC driver for DS1307 and similar chips");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("i2c:rtc-ds1307");
-diff --git a/drivers/rtc/rtc-ds1343.c b/drivers/rtc/rtc-ds1343.c
-index ed5a6ba89a3e..e9183f745922 100644
---- a/drivers/rtc/rtc-ds1343.c
-+++ b/drivers/rtc/rtc-ds1343.c
-@@ -481,3 +481,4 @@ MODULE_DESCRIPTION("DS1343 RTC SPI Driver");
- MODULE_AUTHOR("Raghavendra Chandra Ganiga <ravi23ganiga@gmail.com>,"
- 		"Ankur Srivastava <sankurece@gmail.com>");
- MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("spi:ds1343");
-diff --git a/drivers/rtc/rtc-ds1347.c b/drivers/rtc/rtc-ds1347.c
-index a40c1a52df65..babdd35cd82d 100644
---- a/drivers/rtc/rtc-ds1347.c
-+++ b/drivers/rtc/rtc-ds1347.c
-@@ -181,3 +181,4 @@ module_spi_driver(ds1347_driver);
- MODULE_DESCRIPTION("DS1347 SPI RTC DRIVER");
- MODULE_AUTHOR("Raghavendra C Ganiga <ravi23ganiga@gmail.com>");
- MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("spi:ds1347");
-diff --git a/drivers/rtc/rtc-ds1374.c b/drivers/rtc/rtc-ds1374.c
-index c2359eb86bc9..3d61ab23c41c 100644
---- a/drivers/rtc/rtc-ds1374.c
-+++ b/drivers/rtc/rtc-ds1374.c
-@@ -582,3 +582,4 @@ module_i2c_driver(ds1374_driver);
- MODULE_AUTHOR("Scott Wood <scottwood@freescale.com>");
- MODULE_DESCRIPTION("Maxim/Dallas DS1374 RTC Driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("i2c:rtc-ds1374");
-diff --git a/drivers/rtc/rtc-ds1672.c b/drivers/rtc/rtc-ds1672.c
-index 6e5314215d00..a2240cd92774 100644
---- a/drivers/rtc/rtc-ds1672.c
-+++ b/drivers/rtc/rtc-ds1672.c
-@@ -158,3 +158,4 @@ module_i2c_driver(ds1672_driver);
- MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
- MODULE_DESCRIPTION("Dallas/Maxim DS1672 timekeeper driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("i2c:rtc-ds1672");
--- 
-2.17.1
-
+Thanks,
+Qiang
+>> Fixes: d1997c987814 ("PCI: qcom: Disable ASPM L0s for sc8280xp, sa8540p and sa8295p")
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-qcom.c | 12 +++++++++++-
+>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index 88a98be930e3..468bd4242e61 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
+>>   	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>>   };
+>>   
+>> +/* Qcom IP rev.: 1.21.0 */
+>> +static const struct qcom_pcie_ops ops_1_21_0 = {
+>> +	.get_resources = qcom_pcie_get_resources_2_7_0,
+>> +	.init = qcom_pcie_init_2_7_0,
+>> +	.post_init = qcom_pcie_post_init_2_7_0,
+>> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>> +	.deinit = qcom_pcie_deinit_2_7_0,
+>> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>> +};
+>> +
+>>   static const struct qcom_pcie_cfg cfg_1_0_0 = {
+>>   	.ops = &ops_1_0_0,
+>>   };
+>> @@ -1405,7 +1415,7 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
+>>   };
+>>   
+>>   static const struct qcom_pcie_cfg cfg_sc8280xp = {
+>> -	.ops = &ops_1_9_0,
+>> +	.ops = &ops_1_21_0,
+>>   	.no_l0s = true,
+>>   };
+>>   
+>> -- 
+>> 2.34.1
+>>
 
