@@ -1,126 +1,213 @@
-Return-Path: <linux-kernel+bounces-366281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41F099F31B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEA599F337
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C880286856
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5942880CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EDC1F76B4;
-	Tue, 15 Oct 2024 16:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC53B1F76D3;
+	Tue, 15 Oct 2024 16:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A8Y2KEEX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9/D5LIV"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1B91B21B3;
-	Tue, 15 Oct 2024 16:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411091FC7C3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729010861; cv=none; b=BtXlM74EcF8WagQhMgseklZImoZkjZUpzYJ+IYfusfvh99aNRoGhQpjlS9Z27D/2GPXYSSDqo6XhUk+VM1FH2XWoJrmsBgThMB0E1zSwSKYFmyrmifRAyBYauPlEpH2O6QKziPhBiyWB5HaV+B76pwyXlThKNCPbLiUTIRc3hVk=
+	t=1729010895; cv=none; b=RsEJLJG2KLQhpmddh45aOlJd81lyATaYubH0ND5tdqPqf7T3WKrudL/1tbpOTyU8G5cPF+ou3HXAdJWPKG6CPXsLDu3G8CTdVfY12k1opNT/DtVj3LpKoq3YeDP8a0TqotFYatQAsIeZmmAVdr4L1A89bUdL0sevu38ZxzrrPuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729010861; c=relaxed/simple;
-	bh=3HDWfwQxNr9jcacdjyqR2N2Ro1vMfuFIFd9bLMt+MUE=;
+	s=arc-20240116; t=1729010895; c=relaxed/simple;
+	bh=/Jc8uvLh1yHtx6Qpa7GDZefgH+t5Jvkba6SDmj7fFIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0xL3Cb7+p28LDHDCAcnDVKsESHXBUtDX9/xIrC/F4DQ1tWOh0TAE3dRz9iMh+OSId4/OWrOT78PyPoeQJgS0nVB9069RecvC9PEHg/f6bVpJcdaNBKKq7MLSyoBfkTDf4PN6IvdWmZ0sqSGIdfMHSlkHU/nPRpNyWq23JseDN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A8Y2KEEX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A706C4CEC6;
-	Tue, 15 Oct 2024 16:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729010860;
-	bh=3HDWfwQxNr9jcacdjyqR2N2Ro1vMfuFIFd9bLMt+MUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A8Y2KEEXoUYm8txol4GcIpfYpyML1pEmuh2lFM9mVE0RDHIwz+RgyvP0DF9thEF/E
-	 GkpRe3BezXF/XyGF67a8bY31ku896v8Py+GndCoBIpOC+hUJVzAMLk1Da8IA1U0/Km
-	 okKPGTnuPJ34jRMgeX5IiPaQRYf+0l/xtYbZLok1GAkkhzvyq6yLT768x5pQWYivnI
-	 fPBDmK2MeRMal19wCTTnjZfpmenbO9PJMu/DdJHViG4gC+CFf6YZfSDf5hhflVhE3+
-	 7wVqDWhXxQJ6G4fEQwmFcombJZWGTnecrGpSmisIFiQ4OZgNGhXFt2zlWa1x2PvlBN
-	 Q2gsjKc9wRykA==
-Date: Tue, 15 Oct 2024 17:47:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
-Message-ID: <20241015-jot-disposal-543cf7338a97@spud>
-References: <20241015075134.1449458-1-TroyMitchell988@gmail.com>
- <20241015075134.1449458-2-TroyMitchell988@gmail.com>
- <1524dbc2-2c9a-476f-a06a-0d998c29534d@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H81345mtqmY1fQcWB+RNOyqy4tINdvaZpB3n2txRE3I802Y1NAbLB9p17MbyzYnfMV0iTxBLC2zfwMNdBFH6epaxEPh2F1/QB3o56aJMULglxy1jJDl7e8wiKBzuzvPZJTCIXtyfNckA0R2hdqMLH8V38bd8zQ8Aw0rw6rDGtdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9/D5LIV; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c767a9c50so45940935ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729010891; x=1729615691; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihI25Jo95pBvZkJLqX0Jc6fBbS14WZlY5IwIVqf7awk=;
+        b=m9/D5LIV/YbeTllFHf4IBsSZJtfKa3l9yJvD4yYXnKm5hScPLG42JPN33B/l5Zdf0P
+         w7ZB4DifSPnvQ16yY7VkIfBiJ0hWe0OHsg019kUoB8UjR5j9Q/BqmcY+5ZzDn2Kq6wrs
+         Gz27JFYCCHVWnj78bRhuKuc4qpQ8wDinwVvtlOG+psL8Xw3K/Mh30zd0Z32AWRjsSLU2
+         E+UJQTBxA7mHtW6FoUoXM8jasKro9tLuYXENR19yI4fknOfr6H8IanKYQlVpQ5cB45mO
+         advFbchgUwbzEDU6gwWUALW8s+0U7uDNoRVrB88d5ud3YQ0CdruvskxWezSIn8ERlfBh
+         /A/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729010891; x=1729615691;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ihI25Jo95pBvZkJLqX0Jc6fBbS14WZlY5IwIVqf7awk=;
+        b=rRn9oUI6jBYcnxJ7+ebhrQUiFjclcnSg8KWHn2swJ9iHpvufAGqO7/7/rA64oaR9Xg
+         /kv6TT0Srz6St8AJd1MilizQMolCfbLpeLzYqpYNL3yzzBmeCA6Xck8v/E04kuX5iLLO
+         Nj/Rb7kgisKWlP+eRCVMpra6i7qXthSKIoWL7oSz/4l9uy+hCpfktOuOm01HMfyWOSgS
+         GWKmWe6x9xO+FkyBBB9QXcdEbVSoFiAjQ2nerwFtAWYNQfvKeghiIhkxhnZprSlbtxQl
+         IUB5p9QH6KSe6Y8Hd1Fe26WsdoqMeI0ELQPrsbqf9k+WlRio8BsT2Fyp9wRevLQ3WX2A
+         oVbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOzC+QrwB6Vphd0WvKS5U88TfKZaurD0/0BBqNIVLg0TpoRXa+hp+i873f/AQO+3QJ1fsahm4WgStt35Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO7qDaOWVQbenfldbe93tYe5ymGC93n+6ZUyY6q6T6d3Z9N43p
+	75YBcA2LPDSj6PczMKxmkbcoUp4BtpaTLE2TIh0Of96cQg4isr4ODhPsl9lAIXKimlAB4yHs/B/
+	/
+X-Google-Smtp-Source: AGHT+IH7nqrjmNQoECCe3KKhqSZv+vi5izhEjiijtArvlkP/GK5rigzGBG9sRCIvmLdogJuWgQ2ccw==
+X-Received: by 2002:a17:902:d48b:b0:20b:7210:5859 with SMTP id d9443c01a7336-20cbb240b1bmr173955925ad.38.1729010891503;
+        Tue, 15 Oct 2024 09:48:11 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:3f26:e29e:2634:fca0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805ca55sm14105185ad.261.2024.10.15.09.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 09:48:10 -0700 (PDT)
+Date: Tue, 15 Oct 2024 10:48:08 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andersson@kernel.org, upstream+rproc@sigma-star.at, ohad@wizery.com,
+	s-anna@ti.com, t-kristo@ti.com
+Subject: Re: [PATCH] rpmsg_ns: Work around TI non-standard message
+Message-ID: <Zw6cyFirqQ6Esr+0@p14s>
+References: <20241011123922.23135-1-richard@nod.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="feYD3AfAHHXSuwu2"
-Content-Disposition: inline
-In-Reply-To: <1524dbc2-2c9a-476f-a06a-0d998c29534d@kernel.org>
-
-
---feYD3AfAHHXSuwu2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241011123922.23135-1-richard@nod.at>
 
-On Tue, Oct 15, 2024 at 10:02:21AM +0200, Krzysztof Kozlowski wrote:
-> On 15/10/2024 09:51, Troy Mitchell wrote:
-> > The i2c of K1 supports fast-speed-mode and high-speed-mode,
->=20
-> s/i2c/I2C/
->=20
-> > and supports FIFO transmission.
-> >=20
-> > Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> > ---
-> >  .../bindings/i2c/spacemit,k1-i2c.yaml         | 59 +++++++++++++++++++
-> >  1 file changed, 59 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/i2c/spacemit,k1-i=
-2c.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml=
- b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> > new file mode 100644
-> > index 000000000000..c1460ec2b323
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> > @@ -0,0 +1,59 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/i2c/spacemit,k1-i2c.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: I2C controller embedded in SpacemiT's K1 SoC
-> > +
-> > +maintainers:
-> > +  - Troy Mitchell <troymitchell988@gmail.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: spacemit,k1-i2c
->=20
-> There is no such vendor prefix.
+Good morning Richard,
 
-7cf3e9bfc63db ("dt-bindings: vendor-prefixes: add spacemit") will be in
-tomorrow's next.
+On Fri, Oct 11, 2024 at 02:39:22PM +0200, Richard Weinberger wrote:
+> Texas Instruments ships a patch in their vendor kernels,
+> which adds a new NS message that includes a description field.
+> While TI is free to do whatever they want in their copy of the kernel,
+> it becomes a mess when people switch to a mainline kernel and want
+> to use their existing DSP programs with it.
 
---feYD3AfAHHXSuwu2
-Content-Type: application/pgp-signature; name="signature.asc"
+I suspect there is a lot more things to change when going from downstream to a
+mainline kernel.  
 
------BEGIN PGP SIGNATURE-----
+> 
+> To make it easier to migrate to a mainline kernel,
+> let's make the kernel aware of their non-standard extension but
+> briefly ignore the description field.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZw6cqAAKCRB4tDGHoIJi
-0sS/AP0bFzSKBkQwpTXIGW6worOTR2eaFIZkN6vGoAdsa7IsmAEA+EWq3rBZycrK
-hxxrp6Gj3FQFrd1CTHEbmTjf8xGhgw4=
-=lEi6
------END PGP SIGNATURE-----
+In my opinion the real fix here is to get TI to use the standard message
+announcement structure.  The ->desc field doesn't seem to be that useful since
+it gets discarted.
 
---feYD3AfAHHXSuwu2--
+Thanks,
+Mathieu
+
+> 
+> [0] https://patchwork.kernel.org/project/linux-remoteproc/patch/20190815231448.10100-1-s-anna@ti.com/
+> [1] https://stash.phytec.com/projects/PUB/repos/linux-phytec-ti/commits/aeded1f439effc84aa9f4e341a6e92ce1844ab98#drivers/rpmsg/virtio_rpmsg_bus.c
+> 
+> Cc: ohad@wizery.com
+> Cc: s-anna@ti.com
+> Cc: t-kristo@ti.com
+> Signed-off-by: Richard Weinberger <richard@nod.at>
+> ---
+> FWIW, this is a forward port of a patch I'm using on v6.6.
+> 
+> Thanks,
+> //richard
+> ---
+>  drivers/rpmsg/rpmsg_ns.c | 30 ++++++++++++++++++++++--------
+>  include/linux/rpmsg/ns.h |  8 ++++++++
+>  2 files changed, 30 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+> index bde8c8d433e0a..2fb3721eb0141 100644
+> --- a/drivers/rpmsg/rpmsg_ns.c
+> +++ b/drivers/rpmsg/rpmsg_ns.c
+> @@ -31,10 +31,11 @@ EXPORT_SYMBOL(rpmsg_ns_register_device);
+>  static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+>  		       void *priv, u32 src)
+>  {
+> -	struct rpmsg_ns_msg *msg = data;
+>  	struct rpmsg_device *newch;
+>  	struct rpmsg_channel_info chinfo;
+>  	struct device *dev = rpdev->dev.parent;
+> +	__rpmsg32 ns_addr, ns_flags;
+> +	char *ns_name;
+>  	int ret;
+>  
+>  #if defined(CONFIG_DYNAMIC_DEBUG)
+> @@ -42,23 +43,36 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+>  			 data, len, true);
+>  #endif
+>  
+> -	if (len != sizeof(*msg)) {
+> +	if (len == sizeof(struct rpmsg_ns_msg)) {
+> +		struct rpmsg_ns_msg *msg = data;
+> +
+> +		ns_addr = msg->addr;
+> +		ns_flags = msg->flags;
+> +		ns_name = msg->name;
+> +	} else if (len == sizeof(struct __rpmsg_ns_msg_ti)) {
+> +		struct __rpmsg_ns_msg_ti *msg = data;
+> +
+> +		ns_addr = msg->addr;
+> +		ns_flags = msg->flags;
+> +		ns_name = msg->name;
+> +		dev_warn(dev, "non-standard ns msg found\n");
+> +	} else {
+>  		dev_err(dev, "malformed ns msg (%d)\n", len);
+>  		return -EINVAL;
+>  	}
+>  
+>  	/* don't trust the remote processor for null terminating the name */
+> -	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+> +	ns_name[RPMSG_NAME_SIZE - 1] = '\0';
+>  
+> -	strscpy_pad(chinfo.name, msg->name, sizeof(chinfo.name));
+> +	strscpy_pad(chinfo.name, ns_name, sizeof(chinfo.name));
+>  	chinfo.src = RPMSG_ADDR_ANY;
+> -	chinfo.dst = rpmsg32_to_cpu(rpdev, msg->addr);
+> +	chinfo.dst = rpmsg32_to_cpu(rpdev, ns_addr);
+>  
+>  	dev_info(dev, "%sing channel %s addr 0x%x\n",
+> -		 rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY ?
+> -		 "destroy" : "creat", msg->name, chinfo.dst);
+> +		 rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY ?
+> +		 "destroy" : "creat", ns_name, chinfo.dst);
+>  
+> -	if (rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY) {
+> +	if (rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY) {
+>  		ret = rpmsg_release_channel(rpdev, &chinfo);
+>  		if (ret)
+>  			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+> diff --git a/include/linux/rpmsg/ns.h b/include/linux/rpmsg/ns.h
+> index a7804edd6d58f..60fca84ad4cea 100644
+> --- a/include/linux/rpmsg/ns.h
+> +++ b/include/linux/rpmsg/ns.h
+> @@ -26,6 +26,14 @@ struct rpmsg_ns_msg {
+>  	__rpmsg32 flags;
+>  } __packed;
+>  
+> +/* Non-standard extended ns message by Texas Instruments */
+> +struct __rpmsg_ns_msg_ti {
+> +	char name[RPMSG_NAME_SIZE];
+> +	char desc[RPMSG_NAME_SIZE]; /* ignored */
+> +	u32 addr;
+> +	u32 flags;
+> +} __packed;
+> +
+>  /**
+>   * enum rpmsg_ns_flags - dynamic name service announcement flags
+>   *
+> -- 
+> 2.35.3
+> 
 
