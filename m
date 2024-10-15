@@ -1,202 +1,228 @@
-Return-Path: <linux-kernel+bounces-365832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F2F99EADB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:59:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0793499EB0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3067F283D94
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFFB3285906
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64BF1C07C2;
-	Tue, 15 Oct 2024 12:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68FF1C07DD;
+	Tue, 15 Oct 2024 13:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BqUsw6Ts"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IOllLqMb"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2070.outbound.protection.outlook.com [40.107.92.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0A11C07E5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728997193; cv=none; b=D02k81zzgYN5CTZ9mDoD3ISGiVke7tdjBXqFZui+SmUgXV2QtKpC8YhvdLt4KaZu3RcMZBu8RB/1AVDxvjrE62ECm1UWmpkCpd8imKVlZ0wah8xbLknPGAEy0MTm26p4ARgAm4lZ9nILciNDPL8ZU7RCLFdfg91XcHDN+Pkr1jM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728997193; c=relaxed/simple;
-	bh=TUTwAcc5h3DiOx2Hm6YmzHVNMrPJb9caBuTCMkTQTA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WGIDG3zVF8QnHFosdD2qy9QaG8Ng1eaHtg0rbFqt46+bF3BjhSYxmY1XClKJkXa0PKVsVJwhtpwsFiTlBw5IGozphwyvx3jkeyMM053OO6vvzOQL0tUNIWon6r2DPjTUOl3QB60qnSBavO0ApEvVqqEfdcabUKzdZZH2Bax58zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BqUsw6Ts; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cb7088cbcso27659925ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728997191; x=1729601991; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gQ2ExxafYH8pysjVtyTxWl0xH3aoVpQcW06brvyTYc4=;
-        b=BqUsw6TsbXVm2woacayqtMOqcA1ZH2QDiYcSHh1+ZmG+2045DUCcNIO2hRuuukP35k
-         1JDX4JxwbrUVszvw3VlA1+krQCXP92MeK01PB1T1wo22f0THEULlj2v68vsegtxZKEN1
-         JXhyNG1bmTQ1O2FuWRZ/o4PqgqdsACyDzyaoHgL1T68yTh1Thw4Mz06tbJvtshMyLv/S
-         tGkN1f92/h1nz3+OAEi8FOuP2TEH6fQFBTbzheBjBO3JalaOtwjCNGl+UmXTIRNKUPZn
-         hnmS/VbWMBWVBlDLATLFAdLYv18utJKx0ADuWqUMPVfKLRi9IoM028jxi8cNFw0epppL
-         VMDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728997191; x=1729601991;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gQ2ExxafYH8pysjVtyTxWl0xH3aoVpQcW06brvyTYc4=;
-        b=OGwksqQnzK2czc73gUH9THimWracHz2xzGJfERl9ejj/FpYwh4qE5Tcip6wo5tHF85
-         hillHerjIbD7BzBpw1Q7PSftIRxMIRCoALVi8B99qN8mZRHvoShtjBGWuBY/N1SI5/tT
-         Zg+/SqIRar3CsU7LWnSfC/NsmPfASWl0AjOVnUbrpsT2LExkMi5GEiXCNOrnoyRkB1mQ
-         68uc8ht/Fpf1y8mRc0L32PZPlrv9azf2xBekklG1tFMXUrG7c4YbtbHaJm4aQWJY/+QT
-         HP5UvcExA/S3i1wq+qsGKZqPg8MN7cLu4bkF6P5Y/PNwN+jOFJeIfyvtNpqhcS7/43je
-         skHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYRcxAQmMZgOcoeke3RW9rj2zKArTy8gZgxStNJtOCX4L7yzvSqosbx7q0aSw4sB8RXTjBR+vAFsKMMbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAdS1S3m57YDGqcLwKu5EnBb/iHS3OKjl5ZV/gT4uFBGv12gGt
-	DzYJ4qcKJZfSTOuauI+HgXg7xtCYsJ8NIcdgEsSnZz7CyEGk+g8Q4QqW8p9ihA==
-X-Google-Smtp-Source: AGHT+IHkGuzbGfZUwoftrk6pBddGB0A/KcBGkupentXwPJMsPJLg9KJR/+RBkXTL5DL7BPN+340c5w==
-X-Received: by 2002:a17:903:2301:b0:20b:7e1f:bff2 with SMTP id d9443c01a7336-20ca145921fmr210209595ad.17.1728997190673;
-        Tue, 15 Oct 2024 05:59:50 -0700 (PDT)
-Received: from thinkpad ([220.158.156.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f84f5bsm11534205ad.7.2024.10.15.05.59.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 05:59:50 -0700 (PDT)
-Date: Tue, 15 Oct 2024 18:29:45 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>,
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>,
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 2/3] PCI: rockchip: Simplify reset control handling by
- using reset_control_bulk*() function
-Message-ID: <20241015125945.llbyg6w7viucw5rh@thinkpad>
-References: <20241014135210.224913-1-linux.amoon@gmail.com>
- <20241014135210.224913-3-linux.amoon@gmail.com>
- <20241015051141.g6fh222zrkvnn4l6@thinkpad>
- <CANAwSgSEkFtY6-i3TOPZbwB5EuD4BHboh_jsTwByQw7NLLrstQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7D01C07C9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728997349; cv=fail; b=c0Pxb9gKVcs+WhwXPXBWCKfhbQ736v8pVwbcs8QEVTdYxQnLCVeKcHOFqcdF4mZIh6vPlMbkRPX5tILeGSiNWBh6pnHiRgl96KXzZU7hglYKtbWqD/0Lohyaz56S94y0khKzymULIPskfY0HTO+pihHpzkR3IAbjX4G4VAVVQUY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728997349; c=relaxed/simple;
+	bh=gdDoSRJtJh3gTCTctnypzobVIgRBymnTKydRu0NIPvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=svgxbtMPD9eQ2l0eO7uI9PrK4FlQAFqY0poDUM4ZGUZGpemAz0I8xcUARi6d9PkhGLLPH4+mtjijmFqoH6cPNQbjkKkwmEzswslLzgbdFSUDp4Pa8G+EwnxDWmuFr87Or3QM3uVr9sRyjYL/SMXJkuSC2b+AcUOmR1PJ+WiSFtY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IOllLqMb; arc=fail smtp.client-ip=40.107.92.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jbOJduoStfR9rbc1OgObzg0bD4c9AoooeJeqjZ0gkGZQIG/DVofwHKcKUKC0In39Ze3TQnWsVK7Uh2xyOAJgVb1wnYdOwLmM/wqc9NyXZY9zs4L+NbvkQ/PpI4O7jgEpqiG5qg+srF90hZDUi0zTcMozVkXYYvvznx8bOLeXzqCNtmfVbkPKjvbqVcZ+2tr4+q6H8EQd381J9Jv37lr5+Fd8pA0tryP69soRVyepP6nAlQ/mVTPnnPNMQfmeMngAHWXFM+fDI3BgP5tUhIbj9Q4+hUTiI1Xx/XIPi/R5q4CTMZlCqx+b8yGxejERL3oNtSpNlr0jOHm1RiPFs3J6ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f76HBwAdqm7WwMLZsVoVyx2L0uQgnZpwNUG7IU9tKkM=;
+ b=crTFxPUWyyy7xeGacYOxLIqyaTgBQ5kaglqOiTOWwgpqsxT49C4qwttmddio4gN6gTr/DADDhU+AvhzEZMIqdIJdRTRbnE3HEs2INL5ujYp6HavJFI4cc5uhYmQs0/1qQGNoOVIhiUSuwRzT6TA4LJMKTGkBtPdHY7BuFLbq/Wzna8cWU34iUiJbifgW6F6HsZ5JQCVSLu+l54DFVX3GON3mwvUBNXoK2CbKHyNo7PnrtksN/3Wzg3RICKIsIYz5BXdky2JN2m57lVa3H+QRHFvlgIbiKyaMeMiD/zoaewnBXlUH3epp3z5SZF8hm0VV8GCvTIixgJvvk2D2aGIWuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f76HBwAdqm7WwMLZsVoVyx2L0uQgnZpwNUG7IU9tKkM=;
+ b=IOllLqMbmS+29W2hKpmARL9QyvZ9SQzCVyOK9sXGmTVsAMSqrMn3bWJwyJqowr+iRwIajjaaSI0UpnDh0mP97SBoQUJv1vE10mUAqjuJDhrlJwFSw7HFct6xPjBjUxeXA9I0sawIS4zTRLGgS9iVj5UQGBr1czZWJqTXLPNU3txKP3swExyydYQurXtq8eKTQAMuDxxONTcCr701kmB2WATnPvJWVt6IUBhFDZbFU0TazC+NykCG4ex0jgwIle2VgDmiVW0iczn6gsIpa7ZGIU2XCPw/N20PEqNJGV026X7bEHtbLwOo3k68DaSzmvqnL5kKLXpoDa8yN0HTsh0TAw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS0PR12MB7655.namprd12.prod.outlook.com (2603:10b6:8:11e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Tue, 15 Oct
+ 2024 13:02:22 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 13:02:22 +0000
+Date: Tue, 15 Oct 2024 10:02:21 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org, Matthew Brost <matthew.brost@intel.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	DRI-devel <dri-devel@lists.freedesktop.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] mm/hmm, mm/migrate_device: Allow p2p access and p2p
+ migration
+Message-ID: <20241015130221.GK3394334@nvidia.com>
+References: <20241015111322.97514-1-thomas.hellstrom@linux.intel.com>
+ <20241015121759.GG3394334@nvidia.com>
+ <19fb79c069b812b164abd4f79d38bb12d2f5afa4.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <19fb79c069b812b164abd4f79d38bb12d2f5afa4.camel@linux.intel.com>
+X-ClientProxiedBy: BLAPR03CA0065.namprd03.prod.outlook.com
+ (2603:10b6:208:329::10) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANAwSgSEkFtY6-i3TOPZbwB5EuD4BHboh_jsTwByQw7NLLrstQ@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB7655:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5000157d-4ace-4728-04f0-08dced199b7d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MmR3NG5qb3p3WjdoWG5yM1ltY3BZbnFmcW40VVN3aVdWMXF1MWdnS2x4UzZt?=
+ =?utf-8?B?L0YwWXlRSmhsSHhPYmNKdHBheStra0tQeFl5aXE4UU10WG9lMHkrZFdTYjZ5?=
+ =?utf-8?B?L0MxQktENmI3cTQyN0JJOWppMEZkZDFGQTFzMUxkWncxRDRUUElsaEdUU2NQ?=
+ =?utf-8?B?bVI2d3A3bWpZQlduQWFjTkszVlp6TkZnaGFJd2Q2MzVKTWc2UThTenkzT2VV?=
+ =?utf-8?B?ajNDQys4bnh5SUJLUzAzRVhRYXFwcFJHWmxGSUhoTy83OUN5Z3NPN3gzZHUx?=
+ =?utf-8?B?RlQ4dzFUemowbXlMZjhkL2pJQy92ZmhUS2xqUmJtY2ZITmx2Qm9TTnF6RzhF?=
+ =?utf-8?B?THB2bmYrMSs5MWZ2Y01PaUtpZzBmOEU2ZVJCNXlsWkdKdGxaQS9Sd2RCcEJH?=
+ =?utf-8?B?Nnh5TjJKWXRJR3ZnY0JsdlBLUGpBVW9aTXY2Sm9ZeC9Yam5od3JwenZMSGs0?=
+ =?utf-8?B?WUtwTnYzMDBhUnU0Q2ZicGNUU3ZWYmVBeHZHcm5wbUJFOStWZFJqZm5Cbngy?=
+ =?utf-8?B?SnhnbWorYmRta1lMM3pKdVVjQzFCWWk5bVNBVEdMNEc3YXJDZ0ZER01LcE50?=
+ =?utf-8?B?L2J4aXRJOWRGMXJIeDVRMENUbXVpeUh2SG82TmFJVmo5ZmtCdU45M29NMkE3?=
+ =?utf-8?B?Ti9PdmRtZ0YvZzc5dDhncE1mbW9yR0F5cGk4c3kxWnFjMVAzQSsxK1ljNlht?=
+ =?utf-8?B?NHR5dzM1RmNUQmxEbDFncUFKd29GVGR6c1NQQnQ1ZDZBeEk1NnVvQXR2VmJv?=
+ =?utf-8?B?UDIwTFc2a2hJT0lnMngrMWE5TExTNm5ET1dON3IvTVBXS25NTk9VVjF4a1o5?=
+ =?utf-8?B?bWh6OE5MbTNjVnhiNUJvQXhGZ09hRFNsb0VVdWExd1BmQmE4T3lHZ0JqRlNJ?=
+ =?utf-8?B?VlE4UWdUQkdqdnRudFpqS2pJK0t5cjhOVUovbFZrQktVOGVBNUxRdEJjbWRH?=
+ =?utf-8?B?dmxIcDJUK3p3L1hWS0x2MFF6TlNaYU1tckxiSmJpZDJjaDFITmJuNE44QS9O?=
+ =?utf-8?B?Qm81UTFOcWJlNk5uUWVJd0lqQmY1VFR3SzRqbUp5VXU4QXZBS0p1eUF2RFJY?=
+ =?utf-8?B?aGcyV29oeWNtWDZmL3VrVzNWbEh6b0kxTVpTVFhFMW5tTlRuREQ0ODF2dFUx?=
+ =?utf-8?B?T3hpTDlCRXRtRTJuc2lMNnNHWFp1bmp0WFJoZWJjM1JoSUdML2J5cE5QTnFU?=
+ =?utf-8?B?RFpibDUvRXBtMU5pSld1OGtwMjNCeWJ6NzdzY3I3WFJsY0NpODN0NFZaRnRF?=
+ =?utf-8?B?MWF5SnRvcElrSnl6cEVyL0lqL094Z0hjSytSemRWdHpFSTZaQnBBSVRQMEY1?=
+ =?utf-8?B?MURrUHI1MkJGU2ZzRTMzaEtSWC9iVTFlQXUrbUtYOU5INWl3Vk42VVpqK1Ro?=
+ =?utf-8?B?YUU3K0p0ZDJ2MlRIY1liS2NndWJyZktxZ2MxMWpzcE0xcHFzSDBIb0VBbHQ2?=
+ =?utf-8?B?ZXgwRzRzY0g1WXZwU0M5Z3ZqaTRIOEZSdFY4ZzdQRlB2UkhTM2JBQ0ptTDF6?=
+ =?utf-8?B?YkVobEI4K2hpRHBtZDlIQWNLem5wZUNRTlBzTHJNMHFpUnhwYXhmbnU1RU9L?=
+ =?utf-8?B?eFZ3c3ZCQ2RnZFByWWhnVUVkWHk0MUIxKytETmRPR2dVT2JtYm9nTEh3cS80?=
+ =?utf-8?B?a2lqL1BGbzBRUko0aU5CN01SWklJazhpbEwvNTExQWdaVU13QnVOU3FzYThk?=
+ =?utf-8?B?Nm5kRWJwRnlyc2MwUnFvamFLNDdvaDdHRlVWWHJXYWl3NGVrVUFjdTJ3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MlloTUIzbjZPSXFFand3RG1ORlpzQVVySnltL0hPYWtCUjZMaG9wQVB1VDF3?=
+ =?utf-8?B?cHVMM2hmRW5xVXh3RDdIY3NTaUppYUNiY0tXSjlZajArbkJpZTdaRjNzelRM?=
+ =?utf-8?B?U01ueW1Lc09aVXNGTWpBL2x3V2FLamRGOFBPMk9FVXM2aytwL01SU21LTytC?=
+ =?utf-8?B?T1o0cXpKN1pDNjNadHFuOEE1RTRSNC90MFFqeXdydzJqQzE2MVRCalArb1k1?=
+ =?utf-8?B?RUhFSTMzMkU1Q1ZId3N2R1VxTVlvZUJpcDc0aXlwdWZRQnVFSDBOUmN6di8w?=
+ =?utf-8?B?OUVhVHBvaFdtdTlpVEhERjY1R3FGampuTGRHWUl6WlhLTXBaSzJ0WkJjc0lv?=
+ =?utf-8?B?U1I1LzRRMkQwSVpoa2cyUXdlZE96RXpTWVdhajhtblpid3M2bDZQS2l3d3Vv?=
+ =?utf-8?B?VEhxSVpzSjR1d2Jmeit4SVlaMmdDTlE2WkszL3k4MDBUcDhRV0FYS29Vd2Y5?=
+ =?utf-8?B?V1BNMVFUQ0YwVDg3dHRLS2VMTlNzUzYxdGlGcFBwVE5VamJuVlI1QkMzVFhk?=
+ =?utf-8?B?MU8vNkNyQXpNTWo1UTgvV1FGTFVQTWt6RG1POFJoSmg0SGhGWGlJNUFYUzZE?=
+ =?utf-8?B?TlhSWFA0dFVKMHhydTFJYW5TNE15L0I3SVJCVDhhRGJQNko3R2x6Y2Z3bkhL?=
+ =?utf-8?B?bHlwOGt2aDd3U1Uwbmw1TmFMZHZpM3NhMFFCeCtKRkgyd3RiLy9GMmg0d1p5?=
+ =?utf-8?B?SjVnQTlBZ0tpMGVscmkxdUVMN2dOZkpjemNFM0ZSbVJFNzI1L0FIQ2Yrbjk4?=
+ =?utf-8?B?a2pERzdUSWF5VTdKRUtVeDIzRDQzT0VuRlByMzlHQXlyWVoxK2dDODZjeW5E?=
+ =?utf-8?B?TXY4QVROaUZ6c0gvVU1tL1VYbnV1QXFaTkRMZmRhRWk3ckFPcU1RV2lnSFpr?=
+ =?utf-8?B?ZDYxV3dWYjMrWVlPb0hBZFp4Q01rRHJPZCtKVkl0NDdoTkkxeUVZdHp4QTFs?=
+ =?utf-8?B?clNOYSs5bVlIdzNMdlRtR0lyQkI2UGp1RzlTTGV4MTE3MCtod2JrLzEwY05E?=
+ =?utf-8?B?dlVBRkJCV25oRnNNMlVKd0J6dWh5Y2lXRzVtL1RUYmxVR253WnEvR2ZRR0hS?=
+ =?utf-8?B?WHI3VmsxdEpoM0VSMEtValZ3ZGIveW1LWk9md3lBV0FhakY5QnVIbFNXZEtp?=
+ =?utf-8?B?TWRPWE1LSzFuaXp5UE1XTGdTN2F4bm9lQWhudDhTQW5YYURlVzJoMHpYUzdQ?=
+ =?utf-8?B?UmNYK282MkNaM0hzUlNFUE1VM3pMSUxPd25kYW1lWnhYTUxDM2RKY1FEcCt1?=
+ =?utf-8?B?cXlnb3YwcW1YZWR6VHhoVnJBNnk2QkI0anhheU1oZXFhc1VWSUhRMlVQYkpD?=
+ =?utf-8?B?a1RqODlzUzNUczhyMEwwVlgydzk5TFpjRkhoZFdKeEFrYmlqRFpCdnFGclJH?=
+ =?utf-8?B?ZjVyK0tSZ3J6Mld4R053KzRoRExNNTExeHpPNjJYWWRVbXpwanlmcnBYVWZL?=
+ =?utf-8?B?Q0xyL3l3VjBjbGdrakNKV29STUFJUDBGdE4rd3NLUkFVdUFDYkhJM05GL2VJ?=
+ =?utf-8?B?cFp0ZFJndWpyVWdYZGl1RFJyYUM5dnU1RWVYaHprc1hkME9abXdUNXZnMlhu?=
+ =?utf-8?B?RHgvVjlyWCs0U2pncW5EckFwei9FaHJONVlieUxFOFYyWjdMR2V2SlNGTU1T?=
+ =?utf-8?B?UEljWXBJTWg1bVU5RXpHS01zZHVqeWVXYmx3YzgvSXNsY3V5L1BaTHJ2Mytu?=
+ =?utf-8?B?MnVReVVLdFZ6eHNMZXBKREYzVXBMV01PWUxTZHJOcUJMa1ErRWR5QW9Yc0NR?=
+ =?utf-8?B?bDZHYUpzOVduVzRFMFUwL2JVTUZOZDlyV3JlUUZ5UW42TXRaM1RLRUZ4VVJx?=
+ =?utf-8?B?ZWlFZU9wcHllaWdhcUd2WHVudzF6ZWs0MHF1RmY5WTJmem9jN3BBSFJRZEJK?=
+ =?utf-8?B?N09UdjlOV1lrbUtpeVBQYzdxMDhwUDBQaGt4eFY4YURoNWRzYTM4bkZaQS9N?=
+ =?utf-8?B?Vml5eENzVnU0NjA3Q0JpM2JuWHFmUmVvUSs5SWNicjJ2eTRyWDI2clQxbWEr?=
+ =?utf-8?B?SmhPS3NkNUhMT3RnRDBBL1dCR3VOQ3BwWFVDVTBHS21JNnkrRG5BR3R5Vmhw?=
+ =?utf-8?B?ZjU5TGR4b3lGVjM5d3JyQTlnWEF6a0RFYVZoRGZoZ3JzcHVQRitJMzR4NFor?=
+ =?utf-8?Q?tSAg=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5000157d-4ace-4728-04f0-08dced199b7d
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 13:02:21.9714
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WrP3qtrmqgI3OlfIskQ31O5A8y+TWc84qvemnxedDqFZo5ZncGE9MIN+7OO9Km8Z
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7655
 
-On Tue, Oct 15, 2024 at 02:30:23PM +0530, Anand Moon wrote:
-> Hi Manivannan,
+On Tue, Oct 15, 2024 at 02:41:24PM +0200, Thomas Hellström wrote:
+> > It has nothing to do with kernel P2P, you are just allowing more
+> > selective filtering of dev_private_owner. You should focus on that in
+> > the naming, not p2p. ie allow_dev_private()
+> > 
+> > P2P is stuff that is dealing with MEMORY_DEVICE_PCI_P2PDMA.
 > 
-> Thanks for your review comments.
-> 
-> On Tue, 15 Oct 2024 at 10:41, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Mon, Oct 14, 2024 at 07:22:03PM +0530, Anand Moon wrote:
-> > > Refactor the reset control handling in the Rockchip PCIe driver,
-> > > introduce a more robust and efficient method for assert and
-> > > deassert reset controller using reset_control_bulk*() API. Using the
-> > > reset_control_bulk APIs, the reset handling for the core clocks reset
-> > > unit becomes much simpler.
-> > >
-> > > Spilt the reset controller in two groups as per the
-> > >  RK3399 TM  17.5.8.1 PCIe Initialization Sequence
-> > >     17.5.8.1.1 PCIe as Root Complex.
-> > >
-> > > 6. De-assert the PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N
-> > >    simultaneously.
-> > >
-> >
-> > I'd reword it slightly:
-> >
-> > Following the recommendations in 'Rockchip RK3399 TRM v1.3 Part2':
-> >
-> > 1. Split the reset controls into two groups as per section '17.5.8.1.1 PCIe
-> > as Root Complex'.
-> >
-> > 2. Deassert the 'Pipe, MGMT Sticky, MGMT, Core' resets in groups as per section
-> > '17.5.8.1.1 PCIe as Root Complex'. This is accomplished using the
-> > reset_control_bulk APIs.
-> >
-> > > - devm_reset_control_bulk_get_exclusive(): Allows the driver to get all
-> > >   resets defined in the DT thereby removing the hardcoded reset names
-> > >   in the driver.
-> > > - reset_control_bulk_assert(): Allows the driver to assert the resets
-> > >   defined in the driver.
-> > > - reset_control_bulk_deassert(): Allows the driver to deassert the resets
-> > >   defined in the driver.
-> > >
-> >
-> > No need to list out the APIs. Just add them to the first paragraph itself to
-> > explain how they are used.
-> >
-> 
-> Here is a short version of the commit message.
-> 
-> Introduce a more robust and efficient method for assert and deassert
-> the reset controller using the reset_control_bulk*() API.
-> Simplify reset handling for the core clocks reset unit with the
-> reset_control_bulk APIs.
-> 
-> devm_reset_control_bulk_get_exclusive(): Obtain all resets from the
->             device tree, removing hardcoded names.
-> reset_control_bulk_assert(): assert the resets defined in the driver.
-> reset_control_bulk_deassert(): deassert the resets defined in the driver..
-> 
+> Yes, although the intention was to incorporate also other fast
+> interconnects in "P2P", not just "PCIe P2P", but I'll definitely take a
+> look at the naming.
 
-How about,
+It has nothing to do with that, you are just filtering the device
+private pages differently than default.
 
-"Currently, the driver acquires and asserts/deasserts the resets individually
-thereby making the driver complex to read. But this can be simplified by using
-the reset_control_bulk APIs. Use devm_reset_control_bulk_get_exclusive() API to
-acquire all the resets and use reset_control_bulk_{assert/deassert}() APIs to
-assert/deassert them in bulk.
+Your end use might be P2P, but at this API level it certainly is not.
 
-Also follow the recommendations provided in 'Rockchip RK3399 TRM v1.3 Part2':
-..."
+> > This is just allowing more instances of the same driver to co-
+> > ordinate
+> > their device private memory handle, for whatever purpose.
+> 
+> Exactly, or theoretically even cross-driver.
 
-- Mani
+I don't want to see things like drivers changing their pgmap handles
+privately somehow. If we are going to make it cross driver then it
+needs to be generalized alot more.
 
-> Following the recommendations in 'Rockchip RK3399 TRM v1.3 Part2':
+> > 
+> > Otherwise I don't see a particular problem, though we have talked
+> > about widening the matching for device_private more broadly using
+> > some
+> > kind of grouping tag or something like that instead of a callback.
+> > You
+> > may consider that as an alternative
 > 
-> 1. Split the reset controls into two groups as per section '17.5.8.1.1 PCIe
-> as Root Complex'.
-> 
-> 2. Deassert the 'Pipe, MGMT Sticky, MGMT, Core' resets in groups as per section
-> '17.5.8.1.1 PCIe as Root Complex'. This is accomplished using the
-> reset_control_bulk APIs.
-> 
-> Does this look good to you? Let me know if you need any further adjustments!
-> 
-> I will fix this for CLK bulk as well.
-> 
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >
-> > Some nitpicks below. Rest looks good.
-> 
-> I will fix these in the next version.
-> 
-> > - Mani
-> >
-> > --
-> > மணிவண்ணன் சதாசிவம்
-> 
-> Thanks
-> -Anand
+> Yes. Looked at that, but (if I understand you correctly) that would be
+> the case mentioned in the commit message where the group would be set
+> up statically at dev_pagemap creation time?
 
--- 
-மணிவண்ணன் சதாசிவம்
+Not necessarily statically, but the membership would be stored in the
+pagemap and by updated during hotplug/etc
+
+If this is for P2P then the dynamic behavior is pretty limited, some
+kind of NxN bitmap.
+
+> > hmm_range struct inside a caller private data struct and use that
+> > instead if inventing a whole new struct and pointer.
+> 
+> Our first attempt was based on that but then that wouldn't be reusable
+> in the migrate_device.c code. Hence the extra indirection.
+
+It is performance path, you should prefer duplication rather than
+slowing it down..
+
+Jason
 
