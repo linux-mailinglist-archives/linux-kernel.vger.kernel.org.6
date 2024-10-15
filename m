@@ -1,222 +1,114 @@
-Return-Path: <linux-kernel+bounces-366080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5430499F095
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A99599F0A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC6251F2742A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:03:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C67282976
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F121CBA08;
-	Tue, 15 Oct 2024 15:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910BC1CBA0E;
+	Tue, 15 Oct 2024 15:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QfX0vw2R"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeJ/bPa1"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901B91CB9F5;
-	Tue, 15 Oct 2024 15:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DA61CB9E5;
+	Tue, 15 Oct 2024 15:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729004521; cv=none; b=PF6Cnu/DujnXg1PSCrQ5M5jpFu6ComzMzV/Ga1Cj1rXsOgEovffjF2p0N6118KeIzGzamedpxHg4x0gEW/OsjSYE9bUylynl6aa4XLwHXK4ZqEccQIZ5nZY6TtR4ybJ1yTJXeZQDvD4vtpdF7gEE0kSXXNjh1xg4eabYbWK/Ma8=
+	t=1729004781; cv=none; b=HWYO6ELMcNYp/p53c4jOUy2kUYNND40dEb8cF88zdPsOrdFtWmRKYQwxYG935H0KXaRE5p34zl3hOlBgGnszYE3fNMFOkrYfecMJsO2j28+3Rgues1uAHNSxsyZETOXmZhO5Cv+9UepwYoW8OwjpqVTrRTNN0Z3JEMjebykP5Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729004521; c=relaxed/simple;
-	bh=YGU+J1NkQ+h6jYecjiH9GTgc+nKSIsMGztz7yJvVgZc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UWPypOgSCz2KYPvINudqR98J4vFtfpisb2Yf+fvC4jXhtBTOIIrf+yXfj0ZOJMKyEX2JM5eW9lZwwqYiIUq1xZyyvIOnzdgQIfM5YU2zsGkP0YdsONWXdc1U4ZUbaxB43YX/F9zq0mi5x3Ui1eTqpbKx/7A97KDx2Ag0LTobgoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QfX0vw2R; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FEtfPS009449;
-	Tue, 15 Oct 2024 15:01:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Sw+G2O
-	/RrELhPikO7oYEY0X9vcv1HAK1MI8RNoTdpK0=; b=QfX0vw2R0JcukJBH8XOl4Q
-	C/cFm/nvg8NerS5ren9vi7oHWhiOxxgGOSkUEhKIXfrkxEvYJ5cTG/UyaKzC/i1d
-	IozoobDpdmXWHXQmS/3ou+RSR3NYTJ6V8WVC3brGi0F7S1sZoy1rHeLGtW8RD7kq
-	d0rAykktgNEuOkIAMWAPP1upUMvy1UhKtsJrZUbbhTZccP01dTd8eQ+SPAMJiqXP
-	EAT8C4QEI/ZZdh2h51KuO1b7AwVuMSuj4u4xg7qQGPROoHWR2Lm2WSgr5ocmB+TQ
-	8+xn/s98biWQaWiodsEmoj6CZOQf6Elu2nxXchVvFcs87evddMQpU7PXQTuRHEVQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429tk781eq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 15:01:50 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FEwHl3016212;
-	Tue, 15 Oct 2024 15:01:50 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429tk781ej-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 15:01:49 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FEGSbq027499;
-	Tue, 15 Oct 2024 15:01:48 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txmjcp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 15:01:48 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FF1lsZ27001358
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 15:01:47 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 22B9858051;
-	Tue, 15 Oct 2024 15:01:47 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 376BD5805C;
-	Tue, 15 Oct 2024 15:01:45 +0000 (GMT)
-Received: from wecm-9-67-37-172.wecm.ibm.com (unknown [9.67.37.172])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 15:01:45 +0000 (GMT)
-Message-ID: <8131b905c61a7baf4bd09ec4a08e1ace84d36754.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT)
- to support QEMU/KVM memory devices
-From: Eric Farman <farman@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>, David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Vasily Gorbik
- <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck
- <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio
- Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mario
- Casquero <mcasquer@redhat.com>
-Date: Tue, 15 Oct 2024 11:01:44 -0400
-In-Reply-To: <20241014184339.10447-E-hca@linux.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
-	 <20241014144622.876731-5-david@redhat.com>
-	 <20241014184339.10447-E-hca@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: oiDcZvE5rWbNLUCRElJ1IfzPka5qxG8w
-X-Proofpoint-GUID: flUxXiPfEXI7RXTEkEcHTYtcpZ7IpCgb
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729004781; c=relaxed/simple;
+	bh=XvBsOmthnKBPrNadqnGm1o00dVUQIb/e1aIhuZtK1yw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DEgsa353ukLgGy3rMnJcc2aJxMnQQcxQ9RBMSM3Fa9jRarB0zRokRV4dapn+vRUP/PdSUxCiC5MXVU9aRJqTAyUUbH4CLIruWqQtKJlTSqLS/homhu1U5xEeeKOA/mLeSTU1XM05L9n1us9yygDHylUIxqeAMoYr0Ie3EyVGGIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YeJ/bPa1; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e59dadebso4057395e87.0;
+        Tue, 15 Oct 2024 08:06:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729004777; x=1729609577; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XvBsOmthnKBPrNadqnGm1o00dVUQIb/e1aIhuZtK1yw=;
+        b=YeJ/bPa1ajV8sWfdfXZl4GNruUi28XLWjSB9Bs2G3n0T5hirNAhjknX0TTDNKVIX+4
+         irSzym/MXkl/LQ6ZWLehgtgqWw9NnaOY9x8u8dDebnN0xO7KnEaBkEJzjOc4BNFilZbE
+         M528iyG3SnJGZ2lqYJsT9mUmem95P2mgFPRdnqClh0bqWhdMvn81btqTfJ8HGRSZz8VD
+         hscL0oe45pvPFyivKfv6MZj0maqlyjrvJr64h9EkjvvmbVD2SjoG4rLP+8wnWNHLj5Uw
+         X+2AKaVyftTwZY4CywqS9zVQGtfFn1iqMaHwUjFR9XezmjiF33LpIFrQ4rz17CloTLQF
+         P6SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729004777; x=1729609577;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XvBsOmthnKBPrNadqnGm1o00dVUQIb/e1aIhuZtK1yw=;
+        b=aC0K2z50sgV2rW++Njn/hG4pI/8A2bwMAP96O5BXmzf79BfNMNgHkewypuUksciuKi
+         c1CEQEZe8x7ldagpepQLWVToK8ZzqRq4SyVpzPoTeWrbZwMEhZra/BJSdcxVNvL2cqbS
+         etqB3WAhpCjv051Cith0U8VlsV98qgim+ZlQOo4DAizzJfZcLGGKRXNHFYbjgxhpRB0p
+         TLvMOTNS/aiQ+rneVjRzqNNiBEKBhnJui2y6AKR8xaYRWu/gd1kaJ5ekwaMCJt5wZDUB
+         sWmN+Sxit/idLZBYXKDpFj62/by57eEc4KnhcJ7YiaSAPFZmcTqhPxQdJjyDPjft9m56
+         9zwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYyIqbZ68OaUXHhTfpjoqIJBHlLg28kZoWSBkYHYp79QHw2VyLACeWrBAPjc7T/yrvHMODceQlCzQm677Yc1I=@vger.kernel.org, AJvYcCV9oS/XdMKm2KsTrEmXC7G9e8Pj3TSM4SpeC3Fx3sZQMaW/ckI02ij+drKrmyKoadYji2GMF88WLWG2Y5w=@vger.kernel.org, AJvYcCWc5ghOWdqsHYeQoIyWVDoFLzG1crHofHpOsl9Yejtiiifk/+THMIK5EwbhR2hbAXyxFRar9qGAXGf8JwYU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMYOluvEH4wqqZsZuPKo9X8UJy9Ud8VqB1R0iZRfGRSIgOsUeA
+	imHEGOkBdwnygf/aKZkxG4DYHee5ZRUzCwYeQ2jYE0da6wFfz81mN3rCdvgu0SKGqgcHVGGMz7O
+	QlEgWifTrDVADc2ntaRnPYLuOgn8=
+X-Google-Smtp-Source: AGHT+IHQoOP8jo18+oRF/qa4tf8/HVzJKKvXRnn2v7lQpYy+Htgtl6nj/cR8piEY4H9/JgOwIt16LeZEf+7rlgJ0VM8=
+X-Received: by 2002:a2e:a544:0:b0:2f7:7d69:cb5d with SMTP id
+ 38308e7fff4ca-2fb61aa16b5mr7296111fa.0.1729004776352; Tue, 15 Oct 2024
+ 08:06:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- lowpriorityscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- clxscore=1011 malwarescore=0 phishscore=0 adultscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150101
+References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
+ <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
+ <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
+ <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
+ <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
+ <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com>
+ <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com>
+ <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com>
+ <CAK7LNARg=ZvD14ARKw40uk0XNfE5qgWqsrM6H4jBJu0m5XYCWQ@mail.gmail.com>
+ <CANiq72n6zkCZdUJ0A8enLW3BgmA_=eJKgDKwNCfs-q3dfeR2BA@mail.gmail.com>
+ <CAJ-ks9==6mi7SF5rTR=YouwC6RwktJftqXHqhsBcHNTWxdbfig@mail.gmail.com> <CANiq72nBYswZs_m9Ky3KKNz_WmHrsSoRDJqcuHGt2WpvUogtqw@mail.gmail.com>
+In-Reply-To: <CANiq72nBYswZs_m9Ky3KKNz_WmHrsSoRDJqcuHGt2WpvUogtqw@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 15 Oct 2024 11:05:38 -0400
+Message-ID: <CAJ-ks9khX7Ha4iGWOkbHeXzJLPisE9r=+q54Z9HMQkojR=-a8Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: query the compiler for dylib path
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	rust-for-linux@vger.kernel.org, Fiona Behrens <me@kloenk.dev>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
+	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2024-10-14 at 20:43 +0200, Heiko Carstens wrote:
-> On Mon, Oct 14, 2024 at 04:46:16PM +0200, David Hildenbrand wrote:
-> > To support memory devices under QEMU/KVM, such as virtio-mem,
-> > we have to prepare our kernel virtual address space accordingly and
-> > have to know the highest possible physical memory address we might see
-> > later: the storage limit. The good old SCLP interface is not suitable f=
-or
-> > this use case.
-> >=20
-> > In particular, memory owned by memory devices has no relationship to
-> > storage increments, it is always detected using the device driver, and
-> > unaware OSes (no driver) must never try making use of that memory.
-> > Consequently this memory is located outside of the "maximum storage
-> > increment"-indicated memory range.
-> >=20
-> > Let's use our new diag500 STORAGE_LIMIT subcode to query this storage
-> > limit that can exceed the "maximum storage increment", and use the
-> > existing interfaces (i.e., SCLP) to obtain information about the initial
-> > memory that is not owned+managed by memory devices.
+I did more digging and I don't think this is going to be readily
+fixable upstream:
+see https://github.com/rust-lang/rust/issues/131720#issuecomment-2414179941.
 
-...snip...
+A symlink fixes the problem if we *never* specify a path to
+libmacros.so, is that how we want to proceed? Note that currently we do
+specify it in one place in rust/Makefile and again in
+generate_rust_analyzer.py, so those would need updates.
 
-> The patch below changes your code accordingly, but it is
-> untested. Please verify that your code still works.
-
-...snip...
-
-> diff --git a/arch/s390/boot/physmem_info.c b/arch/s390/boot/physmem_info.c
-> index fb4e66e80fd8..975fc478e0e3 100644
-> --- a/arch/s390/boot/physmem_info.c
-> +++ b/arch/s390/boot/physmem_info.c
-> @@ -109,10 +109,11 @@ static int diag260(void)
->  	return 0;
->  }
-> =20
-> +#define DIAG500_SC_STOR_LIMIT 4
-> +
->  static int diag500_storage_limit(unsigned long *max_physmem_end)
->  {
-> -	register unsigned long __nr asm("1") =3D 0x4;
-> -	register unsigned long __storage_limit asm("2") =3D 0;
-> +	unsigned long storage_limit;
->  	unsigned long reg1, reg2;
->  	psw_t old;
-> =20
-> @@ -123,21 +124,24 @@ static int diag500_storage_limit(unsigned long *max=
-_physmem_end)
->  		"	st	%[reg2],4(%[psw_pgm])\n"
->  		"	larl	%[reg1],1f\n"
->  		"	stg	%[reg1],8(%[psw_pgm])\n"
-> +		"	lghi	1,%[subcode]\n"
-> +		"	lghi	2,0\n"
->  		"	diag	2,4,0x500\n"
->  		"1:	mvc	0(16,%[psw_pgm]),0(%[psw_old])\n"
-> +		"	lgr	%[slimit],2\n"
->  		: [reg1] "=3D&d" (reg1),
->  		  [reg2] "=3D&a" (reg2),
-> -		  "+&d" (__storage_limit),
-> +		  [slimit] "=3Dd" (storage_limit),
->  		  "=3DQ" (get_lowcore()->program_new_psw),
->  		  "=3DQ" (old)
->  		: [psw_old] "a" (&old),
->  		  [psw_pgm] "a" (&get_lowcore()->program_new_psw),
-> -		  "d" (__nr)
-> -		: "memory");
-> -	if (!__storage_limit)
-> -	        return -EINVAL;
-> -	/* convert inclusive end to exclusive end. */
-> -	*max_physmem_end =3D __storage_limit + 1;
-> +		  [subcode] "i" (DIAG500_SC_STOR_LIMIT)
-> +		: "memory", "1", "2");
-> +	if (!storage_limit)
-> +		return -EINVAL;
-> +	/* Convert inclusive end to exclusive end */
-> +	*max_physmem_end =3D storage_limit + 1;
->  	return 0;
->  }
-> =20
->=20
-
-I like the idea of a defined constant here instead of hardcoded, but maybe =
-it should be placed
-somewhere in include/uapi so that QEMU can pick it up with update-linux-hea=
-ders.sh and be in sync
-with the kernel, instead of just an equivalent definition in [1] ?
-
-[1] https://lore.kernel.org/qemu-devel/20241008105455.2302628-8-david@redha=
-t.com/
-
+Tamir
 
