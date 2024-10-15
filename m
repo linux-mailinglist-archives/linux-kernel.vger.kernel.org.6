@@ -1,74 +1,131 @@
-Return-Path: <linux-kernel+bounces-366099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC66D99F0D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:16:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00E499F0DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0F60283A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:16:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41B4DB21D1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436B028377;
-	Tue, 15 Oct 2024 15:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AB7157494;
+	Tue, 15 Oct 2024 15:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDCp2BvC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="wMv588MR"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11DE1CB9F2;
-	Tue, 15 Oct 2024 15:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE361CBA1F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729005382; cv=none; b=F36vpuIZWf7YbDh5jBgorP7oHkbTpm5H+gn/kllYg3cwTXpttfioOjhSLE/MCMtQdKpiuo7i945UMhqurW8LnJ0aPp0VcV7kriOAFecLK75PvkVbTPDhrUcfw0Zeyvj/lPnsnO+18QYbqn4WBT4fkbo3t1B8+4UC8yMtHNJ6Ikg=
+	t=1729005505; cv=none; b=OV7Hlc7CRz14geQjJH7KsTaP6Jp2e5YNthW0DmLmqjzNXBwYplWeCziInJmIQYgATC8FqBoK5vheRGklB8QxWulR96/LLyQVfu1Ix+rCDcvWZhUEgi5/mib4ImE5zGiQTlhWSPEXVuOBhR0kBOm19v8QsKQcJ0RSR4zPXmx7vYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729005382; c=relaxed/simple;
-	bh=UrHKn0YlrR8Wl1Xg0bjUNAEqlqnNCKzAKjg7iocFKqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cpXQvTKCqticcl47iUwWSHR5cTktx4W++IBDTc1/aFxnbvKBrYcucWlIMknNXCkebFbvskW1Xk473rx8kWawRh8sd5YtCe0qaMB9V07kAPV3F0OXURCd6uS8LI0CIyN+wl+JTyeICqXYMS9mdDJYVyFe1hdznUFQOgAYBcyFBn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDCp2BvC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F807C4CEC6;
-	Tue, 15 Oct 2024 15:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729005382;
-	bh=UrHKn0YlrR8Wl1Xg0bjUNAEqlqnNCKzAKjg7iocFKqs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DDCp2BvC4EydV50evYqf/fjXD+e/LfUvXb/RxsvyGkkaEKPnERjHz6ldO1cr6oqBW
-	 G2Xp8A1e2cMXPIo/vC3br36h8twLsfDxx23wd92qVie/e6PxomIz4DlTbxOuogknWo
-	 yajmCFJQmBeft3Knt/qDVdOpaNGLL5HycLxFfctOjNVRKso2fvTP7DGwpBWD/JywmA
-	 YLNjAy4otjVpVAjhmVZWPzxar/uBXxQEqQO2QgR2xBMGbSbGAKGWe242WR9BbUI4tv
-	 bLe3+BEOz5Q7+o/O7LhjaL4GQDdXUCmtPmXU/QdD4kUImBy+m9cC8eUwl5kWxV7rJn
-	 Kc7NZSJ3eWcKw==
-Date: Tue, 15 Oct 2024 08:16:21 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Pavan Chebbi
- <pavan.chebbi@broadcom.com>, Michael Chan <mchan@broadcom.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net-next v1 1/1] tg3: Increase buffer size for IRQ label
-Message-ID: <20241015081621.7bea8cd7@kernel.org>
-In-Reply-To: <20241014103810.4015718-1-andriy.shevchenko@linux.intel.com>
-References: <20241014103810.4015718-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1729005505; c=relaxed/simple;
+	bh=vHnnki3w2dy00jpZowkE0stouy/ZhxusNf/x+YFdyiw=;
+	h=Subject:To:Cc:References:From:In-Reply-To:Message-ID:Date:
+	 MIME-Version:Content-Type; b=pv7uTz84X48mImijW7eLnAznFxQtiRMqNg+NQhvDgLX4wBIpsWEvHQcWAmnPk7HRX1XVK0FrSExcyEnGlmBtQz97yksCYilPUoSfa02H5q/uFPQY2oPNJhJp+8rnZ8+dbmsf5RJSnPL1r8LiYA5LwCX9d8f97oqdr1oNTvRtK9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=wMv588MR; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
+	by cmsmtp with ESMTPS
+	id 0ZfBtbt1lg2lz0jJQtjVq9; Tue, 15 Oct 2024 15:18:16 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 0jJPtHNBPiG4P0jJPtRPiy; Tue, 15 Oct 2024 15:18:15 +0000
+X-Authority-Analysis: v=2.4 cv=VdfxPkp9 c=1 sm=1 tr=0 ts=670e87b7
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=UiXv1XNBzq_yEhrWseEA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:In-Reply-To:From:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0chHwBH4LCzMXRkBikginENruzJPKwJRgc6zLSmldsg=; b=wMv588MR7Nu4fIjNT7hejsSV4E
+	cAQ41zXPVb+MEfzdWMcLea1YCt2FpZRizUaOUyhBx5eldPesDBgMrJ06KUQQTesFb8JgAtv2oHtp6
+	7q2sSJcOyfTpTK3Ww+odBvSXCBkkNV8/4+lW/RVsJX5Y6/frg+7dI5C/PLaB2va+ImzD+fip3oYvH
+	lAQrz13D60oG6zg9MwUbcHWhCq76L8JS3ry8uPIHnWyAZoYxATvm62wrPQr8oL08WrBvYUVrEK6Tv
+	r1tWxfPucXPnNNj1qnjuQwNSDsO9jqeYbipoD5AiPCRF2rrXiyWHu/ZA8SID8a7tg5/39UyNZ/0av
+	yuDfRPEw==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47872 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1t0jJN-0020ky-03;
+	Tue, 15 Oct 2024 09:18:13 -0600
+Subject: Re: [PATCH 6.11 000/212] 6.11.4-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Gabriel Krisman Bertazi <krisman@suse.de>
+References: <20241015112329.364617631@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20241015112329.364617631@linuxfoundation.org>
+Message-ID: <48040478-dda1-9424-9dc8-4a8bdce0987b@w6rz.net>
+Date: Tue, 15 Oct 2024 08:18:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1t0jJN-0020ky-03
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:47872
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfMbFK2gSkL0UxjsdUdbhfhV7lOXJtccgnX9mQoaKGOB8cX3ZofokX/1F5FlgHH+RbhpNV/XgHoCM+U9RCTxhYc1gsgvwA9HO4emSayoR/DU7fpam+fvK
+ ZuUo6GssyH8gO0zRlRzMzYVQaDT36vMyqvdzNL01xpKb2Ti/Qta6qKY/vvOfGl80yNeaD6aM7u2tukfZYdk2wDaPEA8I48iXnU8=
 
-On Mon, 14 Oct 2024 13:38:10 +0300 Andy Shevchenko wrote:
-> While at it, move the respective buffer out from the structure as
-> it's used only in one caller. This also improves memory footprint
-> of struct tg3_napi.
+On 10/15/24 4:25 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.4 release.
+> There are 212 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.4-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-It's passed to request_irq(), I thought request_irq() dups the string
-but I can't see it now. So please include in the commit message a
-reference to the function where the strdup (or such) of name happens 
-in the request_irq() internals.
--- 
-pw-bot: cr
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+
+Tested-by: Ron Economos <re@w6rz.net>
+
 
