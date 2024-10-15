@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-365281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AE099DFD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A778999DFD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9531F22569
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36E3A1F2210E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D68C1ADFE9;
-	Tue, 15 Oct 2024 07:55:12 +0000 (UTC)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE0E1AB526;
+	Tue, 15 Oct 2024 07:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DJ6649l7"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515FD1AB512
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66CF189BA7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978911; cv=none; b=FcyigOdrfmAR32nDPMOilZ2p0vfAhoG1qrIChP7V30RfZge+xkLAwarGB0yjTLCKb4EY9gPTYalhPXC5wBWoLdEQM+D5T6kR9dYL57m3joju2rP49GM2XJiJ9Gy+oRTBdi9N560aGvdy1j9FPgzBNbKn19gV9UaiVTwx+YQ5j6g=
+	t=1728978967; cv=none; b=RYagj7WtvlbeJVS796/5FLBhsOvGL7dlWbyaVMxhtwZaTfv/8PdXOveTZWeodbGqtUZ7ySGLr7GaoX9LOf8n6Soc1oIV0Xd26a8UR2SPhn/2PrfgmF/QSZ5r6Wq8yaOayBDIzbHXzklUHt/pGkv7uYV7EhsLceSxYwZs/goDLR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978911; c=relaxed/simple;
-	bh=ii8htVBOIQMD6YROi2gN0ymVMXeCnK+nd9KVyxhMd+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tKj/m0BJA1rfXyDBgUAJCgnWrzpzgJHHecSz+Rg5AqlUzDRXO2+R8ouqWYqZZyJJDumgCIZzvv8P7JUbkn2t79XBAJgkSfA6zHwc+HYM+cPZNy4cGx1I+CO8ImKXXfwt0+Hge7NWZVyWHweOc7rtdB7ZRQdNYww+BRHmEfI+R1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e6c754bdso2200657e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:55:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728978908; x=1729583708;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1728978967; c=relaxed/simple;
+	bh=W4f2iJU2YRRvkqlQGmRp0NrctfUTlxD5uwwI+OoQ05k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hmpL9+uglZoKg+4nS2cju2mYcrTJDiEZsdsDp2VEdRTfWAFfXA3PABm2iIiQOWGVuHlhduD5Pnwki8kamdljhTwoUNXQ0POOc0Yrz/bASEXV4qgg85Z4rRyD1RPuXf8qosRUF6KJpdqDpSIDto9G4/MKoamKsIXF6jCUCOqo11k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DJ6649l7; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f6e1f756so1966865e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728978964; x=1729583764; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Rk4YzhmzfwQ0wk9yPG9FayuK6TP7WW167GjZjQmg/sM=;
-        b=j3xRqwxqts481fxEK6EV85PrO7B1/4bE2k+YaCUeEMPfQxhKhcdAr2DH/sIfpTTSg8
-         vKfWOOlghA/sy0XWVYO1bgkPMScNLixVfxkWH5Pt0iO6JYdgYLIGq+IG9+n11XqcokuA
-         fox+GxlaPhlF1vDFJY77sVvk3bc/okTHKSpKc4rX7H2iHPW8eScK2Wepf7TS9YUti1yO
-         8XzvQ+vSQKpti4JO0Ui+vtWjSbkMzZljUo/9SkQNeiFmuTOmA2ELUI5NgiSshOvpdPoi
-         4QoeJAztEknHH3RTjB0DlAkydviTn1KVCazm8J9q18QXbv/ug8fto1VWzjIXua5l3Eu9
-         Tg7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUWdBsP9tiTjhtzp0azI4loxIL4yjB+2q3bTYmaO/NsZaNL1IJgZgLX5bPs+U1OD/v6GfKOuqvvnCnseTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3UllPIm64yfIL0ErI+uuytypJ+iejWt8BMMZGp/JIfTockmlU
-	htGQngLRM0SFFXdaJVL8KtwVAuW659KH4diUteHMYqOG2xxprRsdcgxiFhbI
-X-Google-Smtp-Source: AGHT+IEaNWzR6c+WNUpmiKMSy6YuKwAmsJ0lPI69XZg/dAcUf0KUl/f+IcQl4/8yATpfWodCWP/F3A==
-X-Received: by 2002:a05:6512:402a:b0:539:f619:b458 with SMTP id 2adb3069b0e04-539f619b4cbmr3043115e87.22.1728978908112;
-        Tue, 15 Oct 2024 00:55:08 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc41a15sm872328f8f.110.2024.10.15.00.55.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 00:55:07 -0700 (PDT)
-Message-ID: <f5469873-f099-4926-883a-37badec904df@kernel.org>
-Date: Tue, 15 Oct 2024 09:55:06 +0200
+        bh=W4f2iJU2YRRvkqlQGmRp0NrctfUTlxD5uwwI+OoQ05k=;
+        b=DJ6649l7Ej5D6iP/gSpXgvctovstvezMwapTSW0qRipinXkXFSJGt0VhIIsNDfeNuM
+         qIqETPAv2VPpHQb8l6QDDEsdEcDchvuQ3PkMCuL6DnPblF1ds6/S1n3c7gRA8cViChUu
+         l88vxr2M1ti3fDXvl+vnfqVqYkOo86F5umy93pCadAInMSRIcoa5sl6IZosDRfO7Wp05
+         m4WG5V8HltzPnzy/WefF9EciHDDM4TgxLlq5y9igq6/Binwe4LhmeavH5L1vA73UeZnd
+         SJOBUi0dNnnW0H+iNmQctSx4OW7TzILwUIe6obixfwYWDqbjI23ZZJZAhVzQ3uPqNEXt
+         uMmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728978964; x=1729583764;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W4f2iJU2YRRvkqlQGmRp0NrctfUTlxD5uwwI+OoQ05k=;
+        b=NUVtRnB2OtxyTNyP2bIVhQv/YOireq7K/o34+1+ClRwjm4tXy7GZuHy+d2eQR+UN0D
+         IMLhmzsxEMJFnhVIOvkYTqfmhdgmhPBLhtM37WFR19reW90wbUYVPna86Q0BNXpWpwzn
+         6/2W7RFxYRA1/xIrxBihbJdy+4aj2hgn+BmHVuS9xNWsdVU4YThQOIJFikqMTdb4VFi9
+         /9D8qIZGiuShvB82zVo8kX0XWXMcPlCefwJu+HAz7kFDNCV51c0DKn8rzZ4KCYMKUxYP
+         5aydVj0zQpg/JTd/qS5ZeT071JcJPUkFsM6+Re3cQMjpH/onhP/xAX/ZtP2F5KH1x39U
+         sBpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUu/i3BJDBI3NLrZR37ouHbcgm/zXZiKxyjMwGFUbsua3+VGiZ3KWQUxr8ZJKbzO1jXIbSIsCna0bonzXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9iTJ2lN7+DyvR1GezK58SYUQwP6Vz0J+Mpjmoucmh9FgGeG8C
+	QAOJWevwP6zMn2MuvHYiRbWvEdbjuYfu3XZaShsPvtoBgL0yKCyUi7r3EGDUjB2LsQi6ckbVuxj
+	XHsl3/j4Vl79UHz6l/kB9EMlJhCe7XznM/96Ecw==
+X-Google-Smtp-Source: AGHT+IGxQoVV1qAm1koIq8EsNt09kbaJ+UbkKc4EVXnZTt6xt0Ql1TEN5rxOvW8w3QwasQCGnoEZst65gfgN3WuoTY4=
+X-Received: by 2002:a05:6512:695:b0:539:f37f:bed9 with SMTP id
+ 2adb3069b0e04-539f37fc164mr3497720e87.8.1728978963859; Tue, 15 Oct 2024
+ 00:56:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kfifo: don't include dma-mapping.h in kfifo.h
-To: Christoph Hellwig <hch@lst.de>
-Cc: stefani@seibold.net, jassisinghbrar@gmail.com,
- linux-kernel@vger.kernel.org
-References: <20241014144643.51917-1-hch@lst.de>
- <ab456339-18fd-45d8-abde-b04196e0f604@kernel.org>
- <20241015075053.GA25249@lst.de>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- xsFNBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
- rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
- rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
- i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
- wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
- ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
- cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
- 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
- w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
- YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABzSFKaXJpIFNsYWJ5
- IDxqaXJpc2xhYnlAa2VybmVsLm9yZz7CwXcEEwEIACEFAlW3RUwCGwMFCwkIBwIGFQgJCgsC
- BBYCAwECHgECF4AACgkQvSWxBAa0cEnVTg//TQpdIAr8Tn0VAeUjdVIH9XCFw+cPSU+zMSCH
- eCZoA/N6gitEcnvHoFVVM7b3hK2HgoFUNbmYC0RdcSc80pOF5gCnACSP9XWHGWzeKCARRcQR
- 4s5YD8I4VV5hqXcKo2DFAtIOVbHDW+0okOzcecdasCakUTr7s2fXz97uuoc2gIBB7bmHUGAH
- XQXHvdnCLjDjR+eJN+zrtbqZKYSfj89s/ZHn5Slug6w8qOPT1sVNGG+eWPlc5s7XYhT9z66E
- l5C0rG35JE4PhC+tl7BaE5IwjJlBMHf/cMJxNHAYoQ1hWQCKOfMDQ6bsEr++kGUCbHkrEFwD
- UVA72iLnnnlZCMevwE4hc0zVhseWhPc/KMYObU1sDGqaCesRLkE3tiE7X2cikmj/qH0CoMWe
- gjnwnQ2qVJcaPSzJ4QITvchEQ+tbuVAyvn9H+9MkdT7b7b2OaqYsUP8rn/2k1Td5zknUz7iF
- oJ0Z9wPTl6tDfF8phaMIPISYrhceVOIoL+rWfaikhBulZTIT5ihieY9nQOw6vhOfWkYvv0Dl
- o4GRnb2ybPQpfEs7WtetOsUgiUbfljTgILFw3CsPW8JESOGQc0Pv8ieznIighqPPFz9g+zSu
- Ss/rpcsqag5n9rQp/H3WW5zKUpeYcKGaPDp/vSUovMcjp8USIhzBBrmI7UWAtuedG9prjqfO
- wU0ETpLnhgEQAM+cDWLL+Wvc9cLhA2OXZ/gMmu7NbYKjfth1UyOuBd5emIO+d4RfFM02XFTI
- t4MxwhAryhsKQQcA4iQNldkbyeviYrPKWjLTjRXT5cD2lpWzr+Jx7mX7InV5JOz1Qq+P+nJW
- YIBjUKhI03ux89p58CYil24Zpyn2F5cX7U+inY8lJIBwLPBnc9Z0An/DVnUOD+0wIcYVnZAK
- DiIXODkGqTg3fhZwbbi+KAhtHPFM2fGw2VTUf62IHzV+eBSnamzPOBc1XsJYKRo3FHNeLuS8
- f4wUe7bWb9O66PPFK/RkeqNX6akkFBf9VfrZ1rTEKAyJ2uqf1EI1olYnENk4+00IBa+BavGQ
- 8UW9dGW3nbPrfuOV5UUvbnsSQwj67pSdrBQqilr5N/5H9z7VCDQ0dhuJNtvDSlTf2iUFBqgk
- 3smln31PUYiVPrMP0V4ja0i9qtO/TB01rTfTyXTRtqz53qO5dGsYiliJO5aUmh8swVpotgK4
- /57h3zGsaXO9PGgnnAdqeKVITaFTLY1ISg+Ptb4KoliiOjrBMmQUSJVtkUXMrCMCeuPDGHo7
- 39Xc75lcHlGuM3yEB//htKjyprbLeLf1y4xPyTeeF5zg/0ztRZNKZicgEmxyUNBHHnBKHQxz
- 1j+mzH0HjZZtXjGu2KLJ18G07q0fpz2ZPk2D53Ww39VNI/J9ABEBAAHCwV8EGAECAAkFAk6S
- 54YCGwwACgkQvSWxBAa0cEk3tRAAgO+DFpbyIa4RlnfpcW17AfnpZi9VR5+zr496n2jH/1ld
- wRO/S+QNSA8qdABqMb9WI4BNaoANgcg0AS429Mq0taaWKkAjkkGAT7mD1Q5PiLr06Y/+Kzdr
- 90eUVneqM2TUQQbK+Kh7JwmGVrRGNqQrDk+gRNvKnGwFNeTkTKtJ0P8jYd7P1gZb9Fwj9YLx
- jhn/sVIhNmEBLBoI7PL+9fbILqJPHgAwW35rpnq4f/EYTykbk1sa13Tav6btJ+4QOgbcezWI
- wZ5w/JVfEJW9JXp3BFAVzRQ5nVrrLDAJZ8Y5ioWcm99JtSIIxXxt9FJaGc1Bgsi5K/+dyTKL
- wLMJgiBzbVx8G+fCJJ9YtlNOPWhbKPlrQ8+AY52Aagi9WNhe6XfJdh5g6ptiOILm330mkR4g
- W6nEgZVyIyTq3ekOuruftWL99qpP5zi+eNrMmLRQx9iecDNgFr342R9bTDlb1TLuRb+/tJ98
- f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
- DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
- S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-In-Reply-To: <20241015075053.GA25249@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
+In-Reply-To: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Oct 2024 09:55:52 +0200
+Message-ID: <CACRpkdaMMsHXkgcOtw0aC=SPfJJURCyCgzDq-rEXrBGaM44Sdg@mail.gmail.com>
+Subject: Re: Crash on armv7-a using KASAN
+To: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+Cc: Russell King <linux@armlinux.org.uk>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, linux-stm32@st-md-mailman.stormreply.com, 
+	Antonio Borneo <antonio.borneo@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15. 10. 24, 9:50, Christoph Hellwig wrote:
-> On Tue, Oct 15, 2024 at 09:47:31AM +0200, Jiri Slaby wrote:
->>> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
->>> index 6797770474a55d..680243751d625f 100644
->>> --- a/drivers/mailbox/omap-mailbox.c
->>> +++ b/drivers/mailbox/omap-mailbox.c
->>> @@ -15,6 +15,7 @@
->>>    #include <linux/slab.h>
->>>    #include <linux/kfifo.h>
->>>    #include <linux/err.h>
->>> +#include <linux/io.h>
->>
->> Oh, I've just noticed this. Why io.h?
-> 
-> Because it would not comple with out it.  To be specific: asm/io.h is
-> where __raw_readl and __raw_writel are defined, and we generally prefer
-> the Linux over the asm headers.
+Hi Clement,
 
-OK, but how does this relate to "kfifo: don't include dma-mapping.h in 
-kfifo.h"?
+thanks for your report! I looked a bit at it:
 
--- 
-js
-suse labs
+On Mon, Oct 14, 2024 at 3:21=E2=80=AFPM Clement LE GOFFIC
+<clement.legoffic@foss.st.com> wrote:
 
+> I have detected a kernel crash in latest kernel on armv7-a when Kasan is
+> enabled.
+(...)
+> Crash log with recent kernel (v6.12-rc3) :
+>
+> ~ # Insufficient stack space to handle exception!
+
+The crash looks pretty "expected", as you say you start a lot of
+parallel processes
+and whoops, you run out of memory on the stack. No software can add more
+memory to the machine.
+
+KASAN uses a lot of extra memory for intercepting all memory accesses,
+nominally one
+extra byte per 8 bytes. This is further restricted by the complex
+nature of the virtual
+memory space on ARM32.
+
+That said, we increase the size of per-thread storage when using KASAN,
+THREAD_SIZE_ORDER is 2 instead of 1. Maybe the interrupt stacks need
+to be scaled similarly to manage the increased load?
+
+Yours,
+Linus Walleij
 
