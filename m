@@ -1,167 +1,92 @@
-Return-Path: <linux-kernel+bounces-366795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCA299FA80
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:49:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFEB999FA83
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47172815A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC4F1F23ED5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92DC1F80D9;
-	Tue, 15 Oct 2024 21:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DD91FAF04;
+	Tue, 15 Oct 2024 21:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZWA+L+Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Ne3Tinpu"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255A51AB6D4;
-	Tue, 15 Oct 2024 21:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96BC18BB84;
+	Tue, 15 Oct 2024 21:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729028798; cv=none; b=X91RG6SmHRzv8U6AdTTRrQ6sqd7b5Ln3VTcxiNhLnssHsVtXY6lig5/L4EfB0EXqSUXeE4stkMZ8loZfIqY2lite04NvfG/yMXcVPfexuUW6u/EwVVeEQM2VR746GndbWH63DUaM+ytichU2XBwOLYzMftLRVKW6eZ/weX03xZA=
+	t=1729028892; cv=none; b=Y1m/AZ3+m1EFNXNvXjSM9MVHjD1+fNXlkaqSbsY0jXsaNCjU5HFcrq84EJRkeO58dtjaSFz02RClbCBLK8OFe+A6U/2GIXNT7uSBf4XRNKOn48p5IAxViYNNhhnbVzt64A8fnt57Gwqy9uLPdGZ1Evdn5sE8zsRJur4WY8ChpjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729028798; c=relaxed/simple;
-	bh=5hMFAGCQ/p0vLmyk7t5lsLX/S1FvE/P1hbZfk8QRsHo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=P1jj42bLsK/7cyN7cLRrcsRzD3vrcMUHPIFCO14IYQ4rYDRG/3JXhDsZyb2Y5iOAMs1nVaTCNZgFgl4fywuIYUdIOYWnt20Wj3hLBzAjDqUML/ZcWUuOGzsJ+8Yz5j0hEISNPPE73Bt/JP3l+qX3IYWjyFBmYfep12hn2Yhgthg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZWA+L+Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01476C4CEC6;
-	Tue, 15 Oct 2024 21:46:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729028797;
-	bh=5hMFAGCQ/p0vLmyk7t5lsLX/S1FvE/P1hbZfk8QRsHo=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=KZWA+L+ZXKrrt1USZrzDfXbcNR2r/kt/OJsAgYBjMkNvj2rCBPX5gJKYGF5fQRf+4
-	 SZVRWJH8qF2Q3iwameaknB3XN8qejShq07uaxZxLzJIAwnHZE9aOLK7HbMjOrHA1T7
-	 YmoztuUV9lHqGLJj0v23w87CyRCCbjF2ZW/yBLyenrCMBmcnv/pwP6Mah4+H0k5WD9
-	 ZfsKXM/dIJ/S2CN4VKjtSJ3U5xvw/vynR/AmnYZss5NXbfH1TZT70iTjS0hMcPAIEQ
-	 TnGTK0VsI+v49dyQJvn9znFziqA59nGEi4VDMhim06mxA1YeiN8cpKhNvyb9wt/IEd
-	 Rjtb6Bhg8B73A==
+	s=arc-20240116; t=1729028892; c=relaxed/simple;
+	bh=LHtP3qPFkbfoli3ZXTb8e1xlPp4DeRzZwv2eNaX8jDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfgJn/uQE8y78H7u6Fv+o8xcP0WpUM3JR1yTXNR2IvZTHz7AqJX8bKNEdtaV5PYtAPPm5AH7siAFXh7/jmmf75/de4sFDsrW1jXI7+V9FNTHlugVc+1mi62PhtFdDITNENS9F1TGcTGRtnq+mdBY5dwl/y6jeqdSNPApCNoBUxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Ne3Tinpu; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=T5a05ILCG4Q76Wew1TSwZJHR6DQTGSFk7b9OMwsxIKI=; b=Ne3TinpuXVgPKeOn
+	+k5e8Aw242kJAxO9I4S5yhkfrqtKgoa95MP+4HZ6s36Oxoq7gN+zlD0hZX/wRNcbxzwI6IQmYmWt2
+	1r8pENTdgjvh4QSUacyIfcccROQBVzTVPIIYfgVymLydQaXJtCLCjf5QUekEXER3eaEZV8vMvoUH5
+	E1Up2HHSHCHjuiumqn9a/PUEtAzdNUFLhFjuIk/aXPnD70KefZWVn67V777gbQZBt8NE1gTJzLwd/
+	X5N63dBYuZd2P0wesDDmUi7kGGhrsL8sMxLDSGjEWg8wmlDeTZkxZLyJbUfj6eB+LS9Dbu/WuO+ZS
+	FTRR1ntAPcEnaoEgJA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1t0pOe-00BJf3-2Y;
+	Tue, 15 Oct 2024 21:48:04 +0000
+Date: Tue, 15 Oct 2024 21:48:04 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: anil.gurumurthy@qlogic.com, sudarsana.kalluru@qlogic.com,
+	James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] scsi: bfa: Remove deadcode
+Message-ID: <Zw7jFFSzcSPfln2Y@gallifrey>
+References: <20240915125633.25036-1-linux@treblig.org>
+ <yq1ttddqdbh.fsf@ca-mkp.ca.oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Oct 2024 00:46:33 +0300
-Message-Id: <D4WPJY0LZR8T.2HMLVCKXL45TA@kernel.org>
-Cc: <James.Bottomley@HansenPartnership.com>, <roberto.sassu@huawei.com>,
- <mapengyu@gmail.com>, "Paul Moore" <paul@paul-moore.com>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
- be disabled on boot
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Mimi Zohar"
- <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241015193916.59964-1-zohar@linux.ibm.com>
- <D4WP74KE8VZF.3VJITHXKVZOHK@kernel.org>
-In-Reply-To: <D4WP74KE8VZF.3VJITHXKVZOHK@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <yq1ttddqdbh.fsf@ca-mkp.ca.oracle.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 21:47:54 up 160 days,  9:01,  1 user,  load average: 0.07, 0.07,
+ 0.02
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Wed Oct 16, 2024 at 12:29 AM EEST, Jarkko Sakkinen wrote:
-> On Tue Oct 15, 2024 at 10:39 PM EEST, Mimi Zohar wrote:
-> > The initial TPM2 HMAC session capability added HMAC authentication to
-> > each and every TPM communication making the pcr_extend performance
-> > abysmal for HW TPMs. Further, the new CONFIG_TCG_TPM2_HMAC option was
-> > configured by default on x86_64.
-> >
-> > The decision to use the TPM2 HMAC session capability feature doesn't
-> > differentiate between the critical encrypted and the non-encrypted
-> > communication, but when configured is required for all TPM communicatio=
-n.
-> >
-> > In addition, the reason to HMAC the tpm2_pcr_extend() as provided in co=
-mmit
-> > 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()") was to prote=
-ct
-> > tpm2_pcr_extend() when used by "trusted keys" to lock the PCR.  However=
-,
-> > locking the PCR is currently limited to TPM 1.2.
-> >
-> > We can revert the commit which adds the HMAC sessions for
-> > tpm2_pcr_extend, allow just the TPM2 pcr_extend HMAC capability to be
-> > disabled on boot for better IMA performance, or define a generic boot
-> > command line option to disable HMAC in general.  This patch allows
-> > disabling the HMAC for just the TPM2_pcr_extend.
-> >
-> > Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
-> > Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> > ---
-> > Comment: applied and tested with/without patches in Jarkko's hmac-v5 br=
-anch -
-> > commit 92999f9cd11f ("tpm: flush the auth session only when /dev/tpm0 i=
-s open")
-> >
-> >  .../admin-guide/kernel-parameters.txt         |  5 ++
-> >  drivers/char/tpm/tpm2-cmd.c                   | 41 ++++++++++---
-> >  drivers/char/tpm/tpm2-sessions.c              | 59 +++++++++++--------
-> >  include/linux/tpm.h                           |  4 ++
-> >  4 files changed, 77 insertions(+), 32 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
-ation/admin-guide/kernel-parameters.txt
-> > index 1518343bbe22..c7811f32ba28 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -6727,6 +6727,11 @@
-> >  	torture.verbose_sleep_duration=3D [KNL]
-> >  			Duration of each verbose-printk() sleep in jiffies.
-> > =20
-> > +	tpm_pcr_extend_hmac_disable [HW,TPM]
-> > +			Disable TPM2 pcr_extend HMAC for better IMA
-> > +			performance. By default is set to true (1).
-> > +			Mainly needed when using a HW TPM2.
->
-> Thanks for doing this! I think the code change itself is pretty good but
-> maybe we should not emphasize HMAC per se (applies to config flag too but
-> it is what it is now) but instead that they are encrypted and integrity
-> protected.
->
-> I guess all these features intend to protect data from unintended and
-> physical access, like in common sense terms.
->
-> So like for any possible sysadmin and similar I think this would be somet=
-hing
-> that anyone could grab:
->
-> 	tpm_disable_protect_pcrs [HW,TPM]
-> 			Do not protect PCR registers from unintended physical
-> 			access, or interposers in the bus by the means of
-> 			having an encrypted and integrity protected session=20
-> 			wrapped around TPM2_PCR_Extend command. Consider this
-> 			in a situation where TPM is heavily utilized by
-> 			IMA, thus protection causing a major performance hit,
-> 			and the space where machines are deployed is by other
-> 			means guarded.
->
-> Perhaps a bit long but at least it is clear and helps to make the right c=
-hoice.
+* Martin K. Petersen (martin.petersen@oracle.com) wrote:
+> 
+> >   This removes a pile of dead functions in the SCSI bfa driver.
+> > These were spotted by hunting for unused symbols in a unmodular
+> > kernel build, and then double checking by grepping for the function
+> > name.
+> 
+> Applied to 6.13/scsi-staging, thanks!
 
-Back in 2018 at LA, I think it was LSS, there was BoF where this was
-discussed I said that for me this feature does not necessarily make
-sense since data centers tend to have armed guards, and not black hat
-would ever take a even a minor risk of getting hole in the head :-)
+Thanks!
 
-After that the whole ecosystem has changed, especially thanks to what
-Apple has done with their security chip and user friendly encrypted
-boot process, and that has reflected to systemd and the use TPM2,
-and thus as a feature bus protection has become relevant.
+Dave
 
-So also based on these old conclusions I had I fully agree that we
-need such a flag to balance things between desktop/laptop and server
-use cases, which are both quite relevant. E.g. just me personally
-I really enjoy the experience of being able to boot my ThinkPad=20
-with encryption and without having to type a passphrase per
-boot.
-
-I.e. the buy-in part is totally addressed as far as I'm concerned :-)
-
-BR, Jarkko
+> 
+> -- 
+> Martin K. Petersen	Oracle Linux Engineering
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
