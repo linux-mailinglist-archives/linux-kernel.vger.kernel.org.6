@@ -1,142 +1,171 @@
-Return-Path: <linux-kernel+bounces-366613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD61E99F7D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:04:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430A599F7D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E900F1C22E0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A831F22063
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1852003A3;
-	Tue, 15 Oct 2024 20:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370631F818C;
+	Tue, 15 Oct 2024 20:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WYezYEl3"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HGbLkhQd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2C21FF044;
-	Tue, 15 Oct 2024 20:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B601B6CE8;
+	Tue, 15 Oct 2024 20:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729022562; cv=none; b=TJR4nqK87z/Yck8NmzJKVrGVjIeOM3m8QZS7yg6hFPAN+lCnGRqBQsDftwI+JG52kZ/PUN+QY8y1eOLjPs/kE1WGTBuyGwAJ53DDEOVkouyFkDCuoxkDViZrO/T7pPhvEgHfWtlEA0fc2mZxLxOeIAlLwGX407IhzkDuNmsQ/+w=
+	t=1729022664; cv=none; b=RO9eQL+BDvxIKFzeMKZNWWKRGIor5IfSm8W7VqJPrBquVd3QoA01Kfg1rgSyPP8if9RR2gSCluDAkXMeBQRq+FITagt5q9nGjVz3fqZeU6eqrJFWvmnpbfrvbSU92JRT4oQCyClQG5yi31+qppXvWCALxigW29Qy/Xi5XHK1I7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729022562; c=relaxed/simple;
-	bh=bk+3487l6q9TzfLOX73ymPMg2rI1oPjPCENy0GqRe+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GxcQkY+MZjfRHuP18e65o4jSwHU6X7YrS8kut+nzBJoKLjJVhscohubCAMZwtjxROU3zpzoO8wLs1qY1FOhQPsodNNu2rAKrTCY6Sa3hRuAjeN8W7nq8dWguX/JXKoKq1JFauzMTYfSVTjbrybRi3YSSRTg6fPkHDwpQ/f540qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WYezYEl3; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e4c2e36daso162115b3a.0;
-        Tue, 15 Oct 2024 13:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729022560; x=1729627360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K2zTTCNmsBFr9AQAiKF1M8ZtwCExJpwgSSti0BgjQY0=;
-        b=WYezYEl38GutEwI4875fOvafbOCAVaTxL9QThnIGNO7TM+YmDcGduPkYWdB7b0oLou
-         i3G7ewyLL1T/RORUdhIH9dYEA0z7ZPUEIo20gvNCb5lv4bUlnR9Fu6suGLTkHgFQm8sj
-         g4KPTMNwE7kqAd8mls1LT3+uNqt158p5llg2kgOxJVoC8ca9Id5SLGBqysXa3wXoVBT8
-         eVQdKCA0NzREWYDaZwjdzO+2kRuqJmW/+JHxUzuq/41nDY2xCZj1zP5o1mtqCRi9YO/f
-         BqVCo05+KRT08q7xmJacdT/Tl+7GLhWrwbxxlV7cHZEeTYDImrWgnFg2gPbqdZ4dm+RX
-         dHLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729022560; x=1729627360;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K2zTTCNmsBFr9AQAiKF1M8ZtwCExJpwgSSti0BgjQY0=;
-        b=qVWI1Ry5dEVMjAmB0Xi37HdP1WijxXX9JmK0uDu2D6pOEWpxVjtH98Eo0C3bmW8lSf
-         pAPeNEbbUZHoyGU//I5enHREeNcJ/R9rGfQc2LNZ66fQEJ+qBqM7Jr4XPrKDn2nKAYef
-         zKcXUph4fztzr3h7gdmkNbf+Eoz8cgh6kIe2LZ08EdBEkO7gH1v6dKgJxBsvoCvUuzy9
-         GbegS+aSvsc2+YJAivBO/4LmEsGJVcsq3wIMNuOqJ34YC2MZdHaZiCs7shIsZoAG6Y/H
-         mkV8ZBI5UBM46RhWj822NOSFK1tzqWLc1U7T7qAg8i2SBZVtrO6HzTQ7eY8Wpg6aXYA+
-         xUVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAe0yLUmM8AHcNJD9w/ZDFcq7GIg+tg//BiVqUXq8n1JHI7MZBUndsQEZzQpIwjy/1KLkO2HTQrEJCJ24=@vger.kernel.org, AJvYcCXUcfmoh6lJrnzmiAl1Scqm8/vHG4xQ4w3cXU8m2yeECbrUkbN4iz6UEniNg/GqoE+4MtrLCO3/WC79/uJuciE0yJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsw1hPYrv02dUGSiYfYt5t/jYDw5juPU+CXM3bpOJ3P0egC9g6
-	2HuaZCcI/Fj9wgSscFt+Jx/0nk7uO+XG93NTMTUyc2OH231jBa5UzWT7wueI
-X-Google-Smtp-Source: AGHT+IE4PDveGExp+bQG/xt0ssoR3HWs/WP6wUGZmAnugEy0L9fjqD5Pj6SBoncfA1l4nIlJ0bUaSA==
-X-Received: by 2002:a05:6a20:c888:b0:1c8:de01:e7e5 with SMTP id adf61e73a8af0-1d8bc8c8c47mr19937000637.15.1729022559748;
-        Tue, 15 Oct 2024 13:02:39 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77518a1csm1690163b3a.187.2024.10.15.13.02.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 13:02:39 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kurt Kanzenbach <kurt@linutronix.de>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com (maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER),
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-	George McCollister <george.mccollister@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Rosen Penev <rosenp@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Breno Leitao <leitao@debian.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-renesas-soc@vger.kernel.org (open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER)
-Subject: [PATCHv7 net-next 6/6] net: ibm: emac: generate random MAC if not found
-Date: Tue, 15 Oct 2024 13:02:21 -0700
-Message-ID: <20241015200222.12452-8-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241015200222.12452-1-rosenp@gmail.com>
-References: <20241015200222.12452-1-rosenp@gmail.com>
+	s=arc-20240116; t=1729022664; c=relaxed/simple;
+	bh=Rnu09hJl6K2b4+bSX8dix8LfkDzTEBEatOpaSZ/ARGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qzeKWlDDXnFSKgPW6Ue94yJ7u824VHmGqDEsSquzIcxSyDNCv7bEcsPcDuAKM/Sqm/73CPt529m17Xl1pV3bfYocobcwVR1RGR/Su9sZpEBuosbozy6NB5zSbbPy2vOE+IVUPBiGB7uDGvUst/POmAeclTQxWGzvxozjXdofXto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HGbLkhQd; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729022663; x=1760558663;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Rnu09hJl6K2b4+bSX8dix8LfkDzTEBEatOpaSZ/ARGA=;
+  b=HGbLkhQdUFJV7yLFVXQ6E1KFrTayGzQAH6l1/2SDM1Jh8fnPPscxu0xw
+   lQ4TAU5h/HFp7stZO9rTXmRP0D53kHU6614Juxw8M3n9iF4amAJ43fggX
+   j+JWoKvLwZfTVnyw9f2l8x2Oq/Uwn9ZW2Hde67NJeGfm9bmPLKBFOiA/t
+   SuGKxnYiEjKwhnqEuvfoGvUsEQonvesibuAdTdmpk9NPzHIaNPHH49cCY
+   Is7VDziapLVSru0lwuVHCGNypRffF/g+5r7TnhrZFlkNv7JhaA3EIw1TN
+   3Q6xFCBf8seM8N+SPmCtr9Ta4B/6rnsBW5GAVrLD1hUXZzWtxlR19DjRG
+   g==;
+X-CSE-ConnectionGUID: l/Hbs21US5S0AyuyhskLLw==
+X-CSE-MsgGUID: oW6kGfb5Qxq7yZMDvsr+DA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28536393"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28536393"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 13:04:23 -0700
+X-CSE-ConnectionGUID: KQgjgbmWR125mAtv+W7wfQ==
+X-CSE-MsgGUID: WZ4e83m4RZKthYx2ZbqLSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
+   d="scan'208";a="77887292"
+Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.221.110]) ([10.124.221.110])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 13:04:21 -0700
+Message-ID: <f02a96a2-9f3a-4bed-90a5-b3309eb91d94@intel.com>
+Date: Tue, 15 Oct 2024 13:04:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: WARNING in get_pat_info
+To: Marius Fleischer <fleischermarius@gmail.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+Cc: syzkaller@googlegroups.com, harrisonmichaelgreen@gmail.com,
+ Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ io-uring@vger.kernel.org
+References: <CAJg=8jwijTP5fre8woS4JVJQ8iUA6v+iNcsOgtj9Zfpc3obDOQ@mail.gmail.com>
+ <CAJg=8jxg=hCxTeNMmtUTKeBhP=4ryoAb0ekoP05FOLjmDN5G0g@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CAJg=8jxg=hCxTeNMmtUTKeBhP=4ryoAb0ekoP05FOLjmDN5G0g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On this Cisco MX60W, u-boot sets the local-mac-address property.
-Unfortunately by default, the MAC is wrong and is actually located on a
-UBI partition. Which means nvmem needs to be used to grab it.
+On 10/15/24 11:55, Marius Fleischer wrote:
+> Hope you are doing well!
+> 
+> Quick update from our side: The reproducer from the previous email
+> still triggers a WARNING on v5.15 (commit hash
+> 3a5928702e7120f83f703fd566082bfb59f1a57e). Happy to also test on
+> other kernel versions if that helps.
+> 
+> Please let us know if there is any other helpful information we can provide.
 
-In the case where that fails, EMAC fails to initialize instead of
-generating a random MAC as many other drivers do.
+I don't know for sure, but I suspect that io_uring is triggering this.
+The reproducer is:
 
-Match behavior with other drivers to have a working ethernet interface.
+	syz_io_uring_setup(0x6f7e, &(0x7f0000000080), 0x0, 0x0)
+	syz_clone(0x24080, 0x0, 0x0, 0x0, 0x0, 0x0) (fail_nth: 40)
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/ibm/emac/core.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+and the stack trace shows:
 
-diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/ethernet/ibm/emac/core.c
-index 3bea10624291..fb9adcc3a16d 100644
---- a/drivers/net/ethernet/ibm/emac/core.c
-+++ b/drivers/net/ethernet/ibm/emac/core.c
-@@ -2937,9 +2937,12 @@ static int emac_init_config(struct emac_instance *dev)
- 
- 	/* Read MAC-address */
- 	err = of_get_ethdev_address(np, dev->ndev);
--	if (err)
--		return dev_err_probe(&dev->ofdev->dev, err,
--				     "Can't get valid [local-]mac-address from OF !\n");
-+	if (err == -EPROBE_DEFER)
-+		return err;
-+	if (err) {
-+		dev_warn(&dev->ofdev->dev, "Can't get valid mac-address. Generating random.");
-+		eth_hw_addr_random(dev->ndev);
-+	}
- 
- 	/* IAHT and GAHT filter parameterization */
- 	if (emac_has_feature(dev, EMAC_FTR_EMAC4SYNC)) {
--- 
-2.47.0
+ untrack_pfn+0xdc/0x240 arch/x86/mm/pat/memtype.c:1122
+ ...
+ __mmput+0x122/0x4b0 kernel/fork.c:1126
+ ...
+ __do_sys_clone+0xc8/0x110 kernel/fork.c:2721
 
+So whatever is happening is going on with a VM_PFNMAP VMA.  Those aren't
+super common except when you're mmap()'ing something from a device
+driver.  I would randomly guess that io_uring_setup() is setting up a
+VM_PFNMAP VMA and untrack_pfn() is getting called when that VMA is
+getting torn down.
+
+The other goofiness is that the copy_mm() path is ending up in
+exit_mmap().  I think the only way to end up doing that is in the
+failure path of dup_mm().
+
+So I *think* what happens is that a io_uring VMA gets created in
+dup_mmap(), but never gets any pages faulted in.  Some later setup fails
+and the new mm needs to be torn down.  *Something* about the io_uring
+VMA screws up the untrack_pfn() code.
+
+I'm hoping that this rings a bell with the io_uring folks and this is a
+bug they've found and fixed in mainline that just got missed backporting
+to stable.
 
