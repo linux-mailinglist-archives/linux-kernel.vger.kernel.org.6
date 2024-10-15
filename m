@@ -1,121 +1,113 @@
-Return-Path: <linux-kernel+bounces-365673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8AB99E5B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F1299E5B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4C81F24124
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90EA11F22A21
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD28146588;
-	Tue, 15 Oct 2024 11:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CEF1E490B;
+	Tue, 15 Oct 2024 11:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aCXFZCqg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="ZXYYYkl1"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1153615099D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B551D4146
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728991983; cv=none; b=WDJ/vvjxx+FWpttS7lHRo9cVHVFT0i0cyFhlezmrCmFZJVzKdyiS+zQZEWKQ+0qyl5TrZ3ubpox4hqLmJQwsXCowHwWvXyC6P4HMTX2AqpOQ2Vjulp0mNgqpTag2QAyhQeblYl2ACv2sbDKvrYHLzVHFjabdy5A59yWyL9tvC8E=
+	t=1728992023; cv=none; b=EScpkzbg1mUZ5TSsGutRzNYfJReuNkmc67xb+tTAhTfxjBiuwu5VUCCi/EW+g6YU9GBZWkUt5m8EFLQ0c4oF74Rj59iu8dzdXlCQcWZixFwD6k14Ni3552v0GAczSglCbs3bDB1mJafwrXv7Wr5PxtHKBANz+Lqv7Nu60aRPlEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728991983; c=relaxed/simple;
-	bh=4LJhOFliEGCYJeXPJjq9rcUD45sfo6k8OvuueXwJPNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lIAJwulPX+KC3+xzVlQ8ErFj9upjdtOSIiICMmn0vbO961u7NU8Di3+wtEaYs8owX9EooJrHl4OTvYbexcpBddJGNLHC75XP/XbPdwrrHqkxflQWH+n6N4oAfDjcNcU+ukGR5FpXbNwIOZRBPuAwyK50gpa9D95Bw6ELX0OrY4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aCXFZCqg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728991980;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/HGIkCUj4P3GarxgLwJxQhDbXDAu8fFAFismcPS1kbs=;
-	b=aCXFZCqgc/97wXkszn6KCFesGptpNwFlxI3HLlv/BQGoLanD0HJTGYF5G0aYksGMSXvRu5
-	4XZLh9p2NwOFmanED4KPd1mTldzXSDBSVasjyDZEQHH9OZEclhZosUl9W4S2aj5U7TFr3x
-	CbC1wd6BywYMR5hXTNoFXh7Ybebi4WI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-418-3e_yrsp9Ma6nLKjnkrghrw-1; Tue, 15 Oct 2024 07:32:59 -0400
-X-MC-Unique: 3e_yrsp9Ma6nLKjnkrghrw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d4cf04be1so2509860f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:32:59 -0700 (PDT)
+	s=arc-20240116; t=1728992023; c=relaxed/simple;
+	bh=n7SubaJSHWnwzmJYVg+/hDDzkKVaUYfo8oF8RburLY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qe5SDOc6GQRqCaJtLCaCVEJ848fAAJ3R4uZW38YsYj3m7PZQHR1i07SnAndAbZSto8wdFKMgN/oWKr1JA1AC+ne3FPX/wjhnqssl1ZmJ8VNNM1JbDLpXKKEKHEuloqP6ntz84DmfoEME0OrDpadOlUo2sPb5IxJA8uA7VxRkNoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=ZXYYYkl1; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4311d972e3eso30793115e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1728992020; x=1729596820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XdCKGciVd3zo7aXijLR7SkbYORjmO2SkRR0OXaKBfA4=;
+        b=ZXYYYkl1yVmwnwfRNwgZgoonyqQNWIYJGvywQLXQbygmpJrYQ7awY7NPre62PU8oZD
+         4ZVctQmGG9gKYAC8gNKSaSwxO2mHv+1kabqR23OEgkxFelpa9/YAGe2ltnKFF2/AkXlH
+         xZNxyt6vlIvSkxzzGg1KwPIg2/xoeh8FWb/INWH38y0a0j1jcOFKzw5FjwoFrQNkus/p
+         En+xFOnhIMpbWVgVNHrW4mhHHqbT44OpHr35TWBPSlpmJN1X+q0dQJP/gUIb+m8YxFga
+         UZ+fhYMEueHFrNwtJdvyzA5HW1nt1hL9KvjiVuwY1b3sfi4B4mQdfMp+PjquMQLw0nAW
+         oKFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728991978; x=1729596778;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/HGIkCUj4P3GarxgLwJxQhDbXDAu8fFAFismcPS1kbs=;
-        b=Li4aQO78dJd/izP092pploP7Mt+6zUWg3DJS4k6eB6bTM6IxsDYu2JoLkLsMxoofMS
-         PoAy8MYOc7POAlmyyf4FIqcNWXGCjzx2NVwjcfacvGwBmJKSzhxaaUzuB6Hplq/eXCcR
-         XW2dUowA7qr5LeId5bsZWyyraCqzwcljmCu86wrZtOtLCacRncIEx41x99W4cKk/RkRb
-         z1YvOV7HIt8W574HA9wiPyFYw+ZW4ekvKGXqgw3FKMf6se8I97Oy+kFwe5P9a1EsGNXK
-         DqUpomXACpcyNG6Mh40yvjCMPCEFYd+xQm3nGghJ5ALZUV/3Gwu/xEs76nqBoF1K4Tdv
-         /HIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgD951KHvNR8CQXvq/fPSw4pVHK/n8VR8J6KahBKqs/o6YulZN1MHKGFTX3fefBZYOLr/LURripD/TKKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm1dgxhjmqKbQCd9TsT8MrO1Hrg4eu0kjQ1qSZujWV8qZkwn3T
-	xeuLc6o3jiG41lkt9hIF6ASCAiiTeRSGzWsdKpF9vT8M+0NT1hwlRCmvsP5YgJjX6vXoHRRCmhQ
-	jzb/q57u/9/YYGHvc7rPECNH+n1nYKDH2rXluX9ZxHJiX1GkjzsdWhY0fvfSYew==
-X-Received: by 2002:adf:e88b:0:b0:37d:4cd6:6f2b with SMTP id ffacd0b85a97d-37d551d2566mr8948111f8f.14.1728991978136;
-        Tue, 15 Oct 2024 04:32:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH0OIgcZteYdJmzz82U4QRQMqjjMjSGyiYZpdCbwV+aF+nP0JM4GQJ9u+1zyEL5Auz8eFwycg==
-X-Received: by 2002:adf:e88b:0:b0:37d:4cd6:6f2b with SMTP id ffacd0b85a97d-37d551d2566mr8948093f8f.14.1728991977737;
-        Tue, 15 Oct 2024 04:32:57 -0700 (PDT)
-Received: from [192.168.88.248] (146-241-22-245.dyn.eolo.it. [146.241.22.245])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc411fbsm1332551f8f.107.2024.10.15.04.32.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 04:32:57 -0700 (PDT)
-Message-ID: <d2cef2e4-d697-456f-8893-57f29ad17f3b@redhat.com>
-Date: Tue, 15 Oct 2024 13:32:55 +0200
+        d=1e100.net; s=20230601; t=1728992020; x=1729596820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XdCKGciVd3zo7aXijLR7SkbYORjmO2SkRR0OXaKBfA4=;
+        b=oIBz+mka3e2MLFn/QCXDyNpxN1xrxKWCJRJ80Og9Gg6u7ASEfQYe0QVN9nVCZC6ZYl
+         xyZ0b1UJRrVa2dhhkZhE/gy2PyElETOWQazl8vKeCvrQi9smXOYNfXPZ7Hj45+EN4Aa/
+         NAOHBXvE8wi2tiptTmzCyubSxGKJzqWgNO0WoaPUSRvKBD3Cabknmq+7KheBmCwZ5+/0
+         RBtO5Gs/e98TlHotrT93uQUAgXAPPN6NPbpa1L6NJFxoaJDdCJ0ZuFYtuuP6jhxLlR+B
+         5T4vYdkCwPYUpHKe4IAb6cTkKhM02hi0bzPriW8ygPqWnfgex3sC1buX5Ji7pND7sXUT
+         LVZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJY0oplplPQSsrYxL7OlNugtQH9OWBqSw8/jZU3XhqksGsywjpBIHadQR7GvivNVkKK5ondN1nqXEJ8TI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7WDdnhyUoLt5oDWSzwY5DiVpiz0SMHTrEkZ/01VPbY8U0zAgO
+	qIGWLPbO4RX58gDXHWAOy4JU2cix6oQ6MsJ6WzAafCuYKAusOfeWid6azTcd9DWmnpXr5hzdWI9
+	P
+X-Google-Smtp-Source: AGHT+IGR5tFZm0GR7qpxw/Kb3XIiEjCDeEb+G70DGLBQHIJHw0mVQruB08eq7oEtjBF0dsMsz+djdA==
+X-Received: by 2002:a05:600c:3543:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-431255e4113mr104447345e9.16.1728992019892;
+        Tue, 15 Oct 2024 04:33:39 -0700 (PDT)
+Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4314209688dsm12579695e9.14.2024.10.15.04.33.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 04:33:39 -0700 (PDT)
+From: Naresh Solanki <naresh.solanki@9elements.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Naresh Solanki <naresh.solanki@9elements.com>
+Subject: [PATCH 1/2] dt-bindings: trivial-devices: Remove vicor,pli1209bc
+Date: Tue, 15 Oct 2024 17:03:26 +0530
+Message-ID: <20241015113329.667831-1-naresh.solanki@9elements.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next][V2] octeontx2-af: Fix potential integer overflows
- on integer shifts
-To: Colin Ian King <colin.i.king@gmail.com>,
- Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>,
- Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
- hariprasad <hkelam@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Naveen Mamindlapalli <naveenm@marvell.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241010154519.768785-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241010154519.768785-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/10/24 17:45, Colin Ian King wrote:
-> The left shift int 32 bit integer constants 1 is evaluated using 32 bit
-> arithmetic and then assigned to a 64 bit unsigned integer. In the case
-> where the shift is 32 or more this can lead to an overflow. Avoid this
-> by shifting using the BIT_ULL macro instead.
-> 
-> Fixes: 019aba04f08c ("octeontx2-af: Modify SMQ flush sequence to drop packets")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
-> 
-> V2: Fix both (1 << i) shifts, thanks to Dan Carpenter for spotting the
->      second shift that I overlooked in the first patch.
+vicor,pli1209bc doesn't fit into trivial devices as it needs additional
+properties.
 
-The blamed commit is in the 'net' tree already, I'm applying the patch 
-there.
+Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+---
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 --
+ 1 file changed, 2 deletions(-)
 
-Cheers,
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 15f89d7ecf73..00361b5cfc3c 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -404,8 +404,6 @@ properties:
+           - ti,tps546d24
+             # I2C Touch-Screen Controller
+           - ti,tsc2003
+-            # Vicor Corporation Digital Supervisor
+-          - vicor,pli1209bc
+             # Winbond/Nuvoton H/W Monitor
+           - winbond,w83793
+ 
 
-Paolo
+base-commit: 7ae5eff46d61cc9b4674920821cb31e8c8fadf36
+-- 
+2.42.0
 
 
