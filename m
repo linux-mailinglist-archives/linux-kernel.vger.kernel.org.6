@@ -1,172 +1,164 @@
-Return-Path: <linux-kernel+bounces-366518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1BC699F6C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:09:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BE099F6D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FCAF1F23F80
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:09:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB2B284AE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F31F80C0;
-	Tue, 15 Oct 2024 19:09:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545381F8182;
+	Tue, 15 Oct 2024 19:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1/98/a6q"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783F21F80A0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 19:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58AE1F5820
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 19:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729019368; cv=none; b=OErTNlR+wkQqNOyquQAHuHU31pgwpNFqnv0HRke5uAuawGf/cMD0mxn2PYLuSeOW4LHRZNdmJpMsK48+h9zMtxHLY5dCvHYDl6SrK4t7B6yAWAzVZFJdcWG6+Pwypwvly8VHYOuOSclvn/FvF6Ru+eZb49VFLi2RizfKy4DzDaM=
+	t=1729019432; cv=none; b=XeKZiJaaOYKa/MYGXXIaR7+BJ/CKGBH5No6GpC9bNYYO8WvEDFo5zURw6Q33K+HUfIZ/oGfK3JL76iS9XcT6PpYaj8mgVuU/mBGOoGud8YT1O/LQqQiRQLnbKPX3Qe3KDSyy/HsV/YStGWCM+GfRMnkRBdbsNTT4frMYpTsnwBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729019368; c=relaxed/simple;
-	bh=u1uAwktf6kk8nVT1WwQn5qWjduf1jXs8aWE0d1BVCG4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Y/3oMSNPzTryaEAdGT5ZiuMfu+PBytZca4LafakMThxD2jOm6TGm/hF7HUs+Z2ch7cHzNGYqABX2ATrdJU0SC006G+ji31SSvViwDHreUmRv+cvvoyJr8nM6cPOZq8+h0OhA8AOrCkaEmRLy8YDwrHHiUet9G3uC/Uhl+P7G+j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3466d220dso54553795ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:09:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729019365; x=1729624165;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ITeBmiKPxke1DH9sYqgNIlVHlUNkQ0WHvvDjCpx3+Bc=;
-        b=TjDbaO3tAxFQmtkuPWmHvHPN4VC6Tpbj6wi7IWTnYYZhNB+/Uzsa00qI110ICD8qFT
-         Uw/JQaI630W4pwgH700hB/NjiS6gJHKesWrjWS1Cf65cgp+L8CUSmRWDJWQpG7KL5nB1
-         RsJTghXru4DmTQwOdE5SyOwBmq40dFv+zsGMVej1dZ38PKj+xq6ULofBD7+RJBZfrfql
-         fvkq1bVC3IxQOfxby19zNTi1efRkKvuCffhiOOb0hMpTvQIkaUJpuzjMb524Bbf435ud
-         J1dpDMO6yFwFhWkYcgILHBG17afh6IBdRLzwbjP9S3lQgc5w4OmS7h9TvX6+i3YSXdAo
-         C5+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKbujciPCHo2HMU08Y5PpvrihqSRpapVLEIy1ewp769l61YsTmOibSH34HE5Vl/zBDjSIcjKfNb2Gogbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNUdcQnUDYhtk5F3gzZ0qVhk7WDiLqWPHc3wh3HNHWNAaz3g/6
-	fvxV3eOqE41NKmHWaj57ypNvYRKSxWapePvmeJgupwFKM+UU7BvIUOD3/c8Wqx690HF/OwSMKaT
-	/+nkOwfwfVVAY7ZR4VQvCoPml9d6D80S/vkj5O1fe4xAZcmEbzP1d5sc=
-X-Google-Smtp-Source: AGHT+IGpa/p4mxM4VBJEqmkiVGZ8cJWslOWsSMrxRUbbSmaJdDs5orv+v+JB1Enu97wMr+0RJBPRjJkwpL520np+r35DT4O/0bZ6
+	s=arc-20240116; t=1729019432; c=relaxed/simple;
+	bh=13iyl3tkt/KH3WSFGCNZ75R+ZsPtVYJ21tNP3lxAntE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qHkzJGmj0Afr6J6xd62wosLvmV7ixn8aRfGrBvahWUfi60a45MfwdinwBz78akXxXvfRaZrYgQFApwSv3/dzq8MjI5dqD8cJjcsYn3qNtdk4IsEZGoCeK9NK/Op0vgE88Pmv4zBp5FFFpsG34DP95VIgCCR2innsoQhEHNXdoUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1/98/a6q; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XSkFd5dl1zlgMVv;
+	Tue, 15 Oct 2024 19:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:from:from:received:received; s=mr01; t=
+	1729019423; x=1731611424; bh=W88TTuUhnY31/9FlPTFIiu9601xGgCON0k3
+	HAotyVWw=; b=1/98/a6qyaKQCBGb9+jRk0v1CKKKVbsbIEPUbUtGCvNqbCE8dsE
+	gAUKpOGXsNwjXKArrjkKaqqvr7hCWk6MM/qrTb+D5nXPThU4m6fzoRSj/DTm7lHH
+	JkOyZlYrKYCqWIZsRr7jB6GUv+p+Xx3zc+JSMenKQcJN2LSUXccJAnRxQI4lcuHd
+	M5BdUememVM8fnP1dSHJONd/JFnVWyWjPU5nIg0yM5ZNatcp2R9yIeRvHNeAy6Qo
+	ag4qHZ2h+CQ2huZ/zOh9iTpUu6Z5MN/MxAUkg6sQVkahA0JSwb5zGuHH/RXEb+Kk
+	JdR/BcxyWwlWWIIz/wwZecs8wkJ27Ccnx+w==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id qyXeiO_pxTSt; Tue, 15 Oct 2024 19:10:23 +0000 (UTC)
+Received: from bvanassche.mtv.corp.google.com (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XSkFV3WwfzlgMVh;
+	Tue, 15 Oct 2024 19:10:21 +0000 (UTC)
+From: Bart Van Assche <bvanassche@acm.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH v3 00/22] Reduce the scope of 'nr_irqs'
+Date: Tue, 15 Oct 2024 12:09:31 -0700
+Message-ID: <20241015190953.1266194-1-bvanassche@acm.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188e:b0:3a3:afa3:5155 with SMTP id
- e9e14a558f8ab-3a3b6050e70mr145590025ab.25.1729019365547; Tue, 15 Oct 2024
- 12:09:25 -0700 (PDT)
-Date: Tue, 15 Oct 2024 12:09:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670ebde5.050a0220.d9b66.0154.GAE@google.com>
-Subject: [syzbot] [iommu?] kernel BUG in dma_alloc_attrs
-From: syzbot <syzbot+b4bfacdec173efaa8567@syzkaller.appspotmail.com>
-To: hch@lst.de, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	m.szyprowski@samsung.com, robin.murphy@arm.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Thomas,
 
-syzbot found the following issue on:
+In addition to the global 'nr_irqs' variable, there are plenty of local
+variables with the same name. This makes reviewing kernel patches and
+auditing kernel source code harder than necessary. Hence this patch serie=
+s
+that reduces the scope of the global 'nr_irqs' variable to file scope and
+that introduces functions for retrieving and setting the value of this
+variable.
 
-HEAD commit:    1d227fcc7222 Merge tag 'net-6.12-rc3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c56f07980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4bfacdec173efaa8567
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14572840580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12572840580000
+Accesses of the global variable 'nr_irqs' have been identified with
+Coccinelle.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-1d227fcc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ea82465646ea/vmlinux-1d227fcc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f764dd6d008a/bzImage-1d227fcc.xz
+Please consider this patch series for the next merge window.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b4bfacdec173efaa8567@syzkaller.appspotmail.com
+Thanks,
 
-------------[ cut here ]------------
-kernel BUG at arch/x86/mm/physaddr.c:28!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5114 Comm: syz-executor411 Not tainted 6.12.0-rc2-syzkaller-00205-g1d227fcc7222 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__phys_addr+0x162/0x170 arch/x86/mm/physaddr.c:28
-Code: e8 23 e8 51 00 48 c7 c7 c0 86 7a 8e 4c 89 f6 4c 89 fa e8 f1 98 b1 03 e9 45 ff ff ff e8 07 e8 51 00 90 0f 0b e8 ff e7 51 00 90 <0f> 0b e8 f7 e7 51 00 90 0f 0b 0f 1f 40 00 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90002d4f4c0 EFLAGS: 00010293
-RAX: ffffffff8142ff51 RBX: 0000000000000001 RCX: ffff88800023a440
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90002d4f5e8 R08: ffffffff8142fe9c R09: 312e64313a30303a
-R10: dffffc0000000000 R11: fffff91ffff86755 R12: ffffe8ffffc33a60
-R13: dffffc0000000000 R14: 000040800b111000 R15: 000000000000002e
-FS:  0000555576947380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffabc3020f0 CR3: 000000004020a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- virt_to_phys arch/x86/include/asm/io.h:131 [inline]
- perf_trace_dma_alloc+0x3dd/0x620 include/trace/events/dma.h:117
- trace_dma_alloc include/trace/events/dma.h:117 [inline]
- dma_alloc_attrs+0x46c/0x4e0 kernel/dma/mapping.c:622
- usbdev_mmap+0x247/0x900 drivers/usb/core/devio.c:251
- call_mmap include/linux/fs.h:2172 [inline]
- mmap_region+0x1add/0x2990 mm/mmap.c:1440
- do_mmap+0x8f0/0x1000 mm/mmap.c:496
- vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
- ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ffabc28b979
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd4658b118 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ffabc28b979
-RDX: 0000000001000002 RSI: 0000000000400000 RDI: 0000000020000000
-RBP: 00007ffabc2fe5f0 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000000000011012 R11: 0000000000000246 R12: 0000000000000001
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__phys_addr+0x162/0x170 arch/x86/mm/physaddr.c:28
-Code: e8 23 e8 51 00 48 c7 c7 c0 86 7a 8e 4c 89 f6 4c 89 fa e8 f1 98 b1 03 e9 45 ff ff ff e8 07 e8 51 00 90 0f 0b e8 ff e7 51 00 90 <0f> 0b e8 f7 e7 51 00 90 0f 0b 0f 1f 40 00 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90002d4f4c0 EFLAGS: 00010293
-RAX: ffffffff8142ff51 RBX: 0000000000000001 RCX: ffff88800023a440
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90002d4f5e8 R08: ffffffff8142fe9c R09: 312e64313a30303a
-R10: dffffc0000000000 R11: fffff91ffff86755 R12: ffffe8ffffc33a60
-R13: dffffc0000000000 R14: 000040800b111000 R15: 000000000000002e
-FS:  0000555576947380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffabc3020f0 CR3: 000000004020a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Bart.
 
+Changes compared to v2:
+ - Changed "This patch prepares" into "Prepare" in the several patch
+   descriptions.
+ - Changed the type of 'nr_irqs' from 'int' into 'unsigned int'.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes compared to v1:
+ - Renamed the accessor functions: number_of_interrupts() has been rename=
+d into
+   irq_get_nr_irqs() and set_number_of_interrupts() has been renamed into
+   set_number_of_interrupts().
+ - Made the description of patch 01 more detailed. It is now explained in
+   detail why it is useful to introduce accessor functions for 'nr_irqs'.
+ - Cache the irq_get_nr_irqs() return value if it is used as a loop upper=
+ bound
+   or inside a loop body instead of relying on CSE (common subexpression
+   elimination) by the compiler.
+ - Changed the return type of the accessor functions from 'int' into
+   'unsigned int'.
+ - Split the hamradio patch into two patches - one patch per driver.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Bart Van Assche (22):
+  genirq: Introduce irq_get_nr_irqs() and irq_set_nr_irqs()
+  ARM: Switch to irq_get_nr_irqs() / irq_set_nr_irqs()
+  LoongArch: Switch to irq_set_nr_irqs()
+  powerpc/cell: Switch to irq_get_nr_irqs()
+  s390/irq: Switch to irq_get_nr_irqs()
+  x86/acpi: Switch to irq_get_nr_irqs() and irq_set_nr_irqs()
+  hpet: Switch to irq_get_nr_irqs()
+  net: 3com: 3c59x: Switch to irq_get_nr_irqs()
+  net: hamradio: baycom_ser_fdx: Switch to irq_get_nr_irqs()
+  net: hamradio: scc: Switch to irq_get_nr_irqs()
+  scsi: aha152x: Switch to irq_get_nr_irqs()
+  serial: core: Switch to irq_get_nr_irqs()
+  serial: 8250: Switch to irq_get_nr_irqs()
+  serial: amba-pl010: Switch to irq_get_nr_irqs()
+  serial: amba-pl011: Switch to irq_get_nr_irqs()
+  serial: cpm_uart: Switch to irq_get_nr_irqs()
+  serial: ucc_uart: Switch to irq_get_nr_irqs()
+  sh: intc: Switch to irq_get_nr_irqs()
+  xen/events: Switch to irq_get_nr_irqs()
+  fs/procfs: Switch to irq_get_nr_irqs()
+  genirq: Switch to irq_get_nr_irqs()
+  genirq: Unexport nr_irqs
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ arch/arm/kernel/irq.c                  |  5 ++--
+ arch/loongarch/kernel/irq.c            |  4 +--
+ arch/powerpc/platforms/cell/axon_msi.c |  2 +-
+ arch/s390/kernel/irq.c                 |  2 +-
+ arch/x86/kernel/acpi/boot.c            |  6 +++--
+ arch/x86/kernel/apic/vector.c          |  8 +++---
+ drivers/char/hpet.c                    |  1 +
+ drivers/net/ethernet/3com/3c59x.c      |  2 +-
+ drivers/net/hamradio/baycom_ser_fdx.c  |  1 +
+ drivers/net/hamradio/scc.c             |  4 ++-
+ drivers/scsi/aha152x.c                 |  2 +-
+ drivers/sh/intc/virq-debugfs.c         |  1 +
+ drivers/tty/serial/8250/8250_port.c    |  2 +-
+ drivers/tty/serial/amba-pl010.c        |  2 +-
+ drivers/tty/serial/amba-pl011.c        |  2 +-
+ drivers/tty/serial/cpm_uart.c          |  2 +-
+ drivers/tty/serial/serial_core.c       |  2 +-
+ drivers/tty/serial/ucc_uart.c          |  2 +-
+ drivers/xen/events/events_base.c       |  2 +-
+ fs/proc/interrupts.c                   |  4 +--
+ fs/proc/stat.c                         |  4 +--
+ include/linux/irqnr.h                  | 36 +++++++++++++++-----------
+ kernel/irq/irqdesc.c                   | 26 +++++++++++++++++--
+ kernel/irq/irqdomain.c                 |  2 +-
+ kernel/irq/proc.c                      |  3 ++-
+ 25 files changed, 81 insertions(+), 46 deletions(-)
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
