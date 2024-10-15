@@ -1,213 +1,209 @@
-Return-Path: <linux-kernel+bounces-365609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BF799E4E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:01:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8482A99E4E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044EA1C25692
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437CE283892
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC991D4341;
-	Tue, 15 Oct 2024 11:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500CB1D2F40;
+	Tue, 15 Oct 2024 11:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XK1hrJZl"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABD9140E50;
-	Tue, 15 Oct 2024 11:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990069; cv=none; b=Zr07S2Ybqqfk1/ndoUHjnrGkQ4+CjOnxz8GyJPUFCzXyz4hJrQ+UrzEq81wbu2wYCVQZmSn3fagslI6eUygSgLLRhidFTU7bNsqszkYm/I85VN6SCQ7oNHAH5eapHifdUV/D2ieF6Ak6ZRmYB3M06q7v1WLVtP5rPMw/hIKlx+8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990069; c=relaxed/simple;
-	bh=WB6mgSkA81g3/KEMsbSRyW2k533ipwlnb4WNkoNtomQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eQstQua2tUHjmPqNQPEAjyk3TZzHMV0WJy0hemgcQp24yrRfHtcpbLf0iZMZmbHejVy1XGE0XlXCi2tVFRM9TukJS05SOIvf2L/9SoYMsz8ZfQaCiiLssU/IjMzlcv5vPHCaH9rneOOPPK4XmIc4SI117fumpX0pCOyHj8GBODM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XK1hrJZl; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=cKk7J
-	UQzl8vCMU2KIrJzQardE31VHcQXn8CelcJsQsc=; b=XK1hrJZlt9+w3WlkkdJPL
-	+8imNMUKJ2WDpj9XaMG8m4rRcJffRN22Z1CZNl6uzhKJ+6hOgXznoZN8gjwsfIaA
-	ruuTrVOT1nSIjI5F/2Q/Tmlw1+IehBgVnGRFNBvWcQLNodRzkaQGatBUK9Zp7BQd
-	AqbxEI88O/zWTTSzj434CI=
-Received: from localhost.localdomain (unknown [111.48.69.246])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3n+pgSw5nWa8pBQ--.29774S2;
-	Tue, 15 Oct 2024 19:00:50 +0800 (CST)
-From: zhouyuhang <zhouyuhang1010@163.com>
-To: brauner@kernel.org,
-	shuah@kernel.org
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="A1tsEJ7F"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2055.outbound.protection.outlook.com [40.107.103.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3EB18A944
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728990017; cv=fail; b=VDqz5p3gsxY5mNSb7OqLPRvhinnTSbaluXFMWfanDRlp7s/adgXj2mkQX23/otHyDCgu9Q5CiQMj0d8TgGlr5aHo1J4BwPY9B+k8/+rGfQZjX/hcZHJGXcWJfQmUzo6KRURfqMoSRWfJlrJoDWKEXdWat1BvqNVdNqDfwIEYJns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728990017; c=relaxed/simple;
+	bh=q7flMUPH707ltPwLDFXbp29DvFm5eZs2yXGjSVF7j1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=EwEks67hBbRMX79j8BnwKw/uW8GQLQgje2WBKRLx7dkQt1qZNKtVHlVSFI5/6mL48Lkh7QlvNqDQ8k9NI8VGDpN7W1wyqwLrd0DzQgrYPoE7PCPmYJ224p8E9MHXJ8t9uRz8ylQkK54oW+l/abRbbP0s+RkqoG2XNLJul8I3np8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=A1tsEJ7F; arc=fail smtp.client-ip=40.107.103.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gvd5S7FvhhaRKBA2bqH1RSVK3Ga4zx8uoDZgRGJIef4N3XxbqYKl1eFZHUM6TGkevhXJci7JVz0Xu+4X6qTbCHolcq7W1uG5XOsJkDDAZ0ZZb7OoVmSUiNVU7KJxICdI2N1oWld6rcj8WcxN2ov6qOlhYIOOX3yjcGrYo7A6tDqwPRnxxqmWsFukGb3v9BW2n9/egEPH1zkxrN0US/wCXLBSKGa4Yg1L1+IdXzbK52f07PNP96toS5tNW0aL67M0SR6zq1gIUyM7aAOLQlCOZ6PClAGOTSQNpYtmu5cUhuNFglZTrIwXgaqSCQyxLl1HUHylHw2vYaqvEYBAW64g8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xHQjkZXb/6OURw7Kb/Bgp2XF1hBud9V3o4HSC1dLYQw=;
+ b=gJNv8iOTVL03ueWhSP57er7cN1BNLZKczOP8u5lBHCjutCZS5JSjACLPl7Idtdxd6tKm0pTv/ktMywvVpV4PJH/YwjOkeBu/CUklapolHbsei5gsUreKMmlf+xXXDVNQJs4+xbVfzM+baeVF/xmjyhz6P52+s8xjRsLxAXxBg8xe4l6ik6rXKfO78ONQ97iHYIqVFuuMn1Yw97rbYUbAHCPNaCixfRUyFk8QJ1dYEIXqej94O1MCcJyR8r/X2j2nnKBUi6KeLpealnDWuXpNNui/zsKzxOGeD0358UVfBPJKymoCbYdsTqFztCZGuuz8E7FqNMqbJBCDApXsOdo6pQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xHQjkZXb/6OURw7Kb/Bgp2XF1hBud9V3o4HSC1dLYQw=;
+ b=A1tsEJ7FJXYJNxqLrWe+kwCPLOD3tQApV+AS9ObHTXz073HrdGas/CKXbwiZtKwHVqqkUwvZzE30VxoYO5pWi7GVIN4Q4P1YDv3zxR3lotCl8N92dMk+zTQ6eylnTw9BxcyW2Lp41H5pNMYdgi1BuHA97aWxMOxTyDhhJdhNBU/i6UGBcmkmnTx2Zx44PEZJi0awDcKJqtqqCg/3fbdIWlWeJSYp6+ynwgTRoodYnrkgdfxrjVfXfi8D2DNe91U8UuXc8rE4Qi3FP+cknRvR0JFlFqmiEL9eR5Zx/5vuQQMiUStt+v8FT34QvstdjxskHkqUmmgswMXjL1KNFNX9rQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by PA1PR04MB10771.eurprd04.prod.outlook.com (2603:10a6:102:493::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 11:00:10 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 11:00:10 +0000
+From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+To: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	zhouyuhang <zhouyuhang@kylinos.cn>
-Subject: [PATCH v2] selftests: clone3: Use the capget and capset syscall directly
-Date: Tue, 15 Oct 2024 18:59:54 +0800
-Message-Id: <20241015105955.126994-1-zhouyuhang1010@163.com>
-X-Mailer: git-send-email 2.27.0
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Subject: [PATCH] checkpatch: mark 'devm_rtc_device_register' deprecated
+Date: Tue, 15 Oct 2024 14:00:07 +0300
+Message-ID: <20241015110007.658273-1-ciprianmarian.costea@oss.nxp.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM4PR07CA0024.eurprd07.prod.outlook.com
+ (2603:10a6:205:1::37) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n+pgSw5nWa8pBQ--.29774S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJw4kWr4kGFW3AFykCw4rZrb_yoWruFyfpa
-	48Zr45KFs5Wr1xGFW8AwsruF1rKF4kXF48Jr1UJw1j9r13Krn2yr4IkFykK3W2g3yDu3y5
-	ua10gF4SvF1kJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bjpndUUUUU=
-X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiLwd5JmcOLWIswAABs8
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|PA1PR04MB10771:EE_
+X-MS-Office365-Filtering-Correlation-Id: 510ad66a-641a-4d83-3511-08dced088965
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SVoxaHJrVlpLRms3RE0veFJKOUpkdTBrRFkzUnZ2WnFDZ0crNFhzSkRZems4?=
+ =?utf-8?B?aUY1RW9pM0s2dzY0a3ZDYjhPTEVXZzJMeXU0M0x5dnlOeDNsaHR0Z2o0dTBB?=
+ =?utf-8?B?cHVYRGs4NUVJQkZVTTRNclRveUtiMjZEQmF4UGRpQjBCZHFLNVVQMTJjTGpZ?=
+ =?utf-8?B?Q1B5am9vdjUyUlAxK3RDa1d3NDFWRWVic3J2b0RhTmhmZ3Zqd2xOallYeUlH?=
+ =?utf-8?B?Z0EwVVZQOVhFdVExQzgrbHEyVTNnemFFT1ZwbDd6amhmU0F0MEpHUzlJS0xC?=
+ =?utf-8?B?ZkU1TjNiRHkwWEZ4SWcwdnFhYVhjZmNVZ0hndzVhY25OQ243VFV5MDRsMGFD?=
+ =?utf-8?B?QWlQdkR4SlpIdThJWDFzdkJqWWNtQnpkMHBHU2hCWWFsU3dzNVltSEpMd0U1?=
+ =?utf-8?B?V0R0NkF2c0luTjhUYnN6NFczNGpoeGsxQ3FZaVB4REhWcWdWSGVTVWZLTmp5?=
+ =?utf-8?B?T0x5M085bzMrMWxtdUNnSHJmQlFEL0NKZmRGb0pQQ2t0ZFN3SS92cmRGM2xk?=
+ =?utf-8?B?aXhKTnhiUnZyNGp5aXVramJVenoxaEhWU0VxZ1lOY2ZDSG03NkttZk0wSjJC?=
+ =?utf-8?B?dWUyUU9XV3pBRjlFeFlhaHRkd1NlbjBzWVNNaXRMaWdiOVU4cXlKZld5T1Fa?=
+ =?utf-8?B?aUY1Y1JWOWlTTEJiemZFWWIwL3lQTUZUaFN5N1VzbUh3Z2RHK0NqVlBlRGI2?=
+ =?utf-8?B?eDEvMFJFUUIzTkk0LzVETm1Dak1pL0Y4d3JtaFVWc1YwbXN6V0NHWVpUNzgw?=
+ =?utf-8?B?NitPMUhqaDlYTEhIcXJyUkhqMkEwMWxQMm5lUzVTOUFRQXVXSDBreTB2YXh5?=
+ =?utf-8?B?T2dwUEwxc2V2R0hlVkZTanhuR2pxVW5xSjdlWjFJMDRWcXU4QTU5U0ZxaG5l?=
+ =?utf-8?B?ZWdEMnpqczNsMjQva2wzRTI1ZGVCRXpMRDBXaTgzUm51d2tiRzlscmx4aStz?=
+ =?utf-8?B?U2ZCaDJUaEgrNy9kSEVkVjI4eXBXL1BPZkNsb2R0dFE4Z2pGY2hXQXp3VmF1?=
+ =?utf-8?B?cEZRZ3p1TjFqeXpPSjFxSXg4TVl4Qjh6eGFaWWdVNkNtY3BCcS9qc1MwSTZI?=
+ =?utf-8?B?d0ppWEZScWlkSEhqZHFWQ09TRHh2NTA4THMvSnpONStOVGlRVkZGakt6ZDM3?=
+ =?utf-8?B?WjVzUFZtQWxHNy9ieSs4UHdwY1JjWk5ZRFUrZkQ0QlIyRHljcW1oaUVaZFR1?=
+ =?utf-8?B?Qlo4ZVN6THkxWVo0YUlvZjRHaVR5T0N2MW5qR2hMS0hwQnVsek0xdFZBWkkw?=
+ =?utf-8?B?ZmkyRkY2dHcyZHhJTVZVWW41K3dRSkRLbFphMFJDRXREUnFQQWszOG43WDIr?=
+ =?utf-8?B?WGNiUEc3RXdKWEJHc1pTTkJ6NEN3c3NxM0ZTaXZvMWZPc0wyajI2NjZ5SzZp?=
+ =?utf-8?B?dFRYRExlR2I2dDV4Snd5eXU4bkJDb0Zub0QxRGVDU1V4ZjlQczNmT05sRWxr?=
+ =?utf-8?B?cFV0VFFQdkowTDJPNHBsUndzUEMva3huZ3NUM1FLclJXdjliSDc4azNrb2s1?=
+ =?utf-8?B?cDdLd2JCZS9iUVlnTlFaZHVhWUFkTWY2TlV2TW1yZmxaeXJzZ1JVTU1aeFIw?=
+ =?utf-8?B?WURSNjduSS9zcFU1dGxHbWpObUw2SFJMT2wxeE5pOXArdlJKWFp1eWZ3aE5o?=
+ =?utf-8?Q?euA58Js4fX/BMdRkQytSi2vr4MfMd9mH/6QM103t9Jac=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L2t0SGVWMXFYK0d0U0VpS09GMGhpODhYcWI0VFhCcVdIOVZ0anRtV1g0dVRo?=
+ =?utf-8?B?eHFSZXo1aW1EUjVrMjg4SGw0NVRJU2Z5L0JvQXcyVURQZlJZRThSVUt3dnpD?=
+ =?utf-8?B?cmQwOFMwZWZhU2txSlJvTnNuVTV1WlM5OUJtR2c1WVM2elJ1dlJnRWtZMlRR?=
+ =?utf-8?B?ckFzeGxFUEROQWp2R1NIeUpOUHdqYThKaUhKdnM2ajkvdksweVdNMTR3d3Bn?=
+ =?utf-8?B?SENUS1BPSGxpRkNBVGhQS04vNEYvdjZjeWJyK3J6UTRtdHRhcWNXVWRyakJ3?=
+ =?utf-8?B?UmpsbUl5SW1POXZQVmxsdXJuT2dTUnRTVnEzV2lMTjc3eEh6M01KaDJYL2V6?=
+ =?utf-8?B?RGhCVVMwZklrUWJOeFNrc2ZYa0k0UjgvZjNvZHhhSjgzbUNzb2JtTXY5MkNp?=
+ =?utf-8?B?cHJEaHEySU50Yy9oNE04Vk9hV2hWN3BzeVVLQTJ1NDlZUWZvdkdLYVpRbWl5?=
+ =?utf-8?B?cThBRTFFRE9iM3djQUJiYW83VmdCK1RsN2NISHErMnE0R2JtdXptNHdjTUNl?=
+ =?utf-8?B?MENUZ0l5WnJXNWo3Y2NjNXdJYUhFNkduSmF1blo2ZXovejQwQWgwczNTSkNq?=
+ =?utf-8?B?MEl6UG9GUSs2S2VJUjdGSW1GOVhSWDIvK2xtR0czMGRIOVJZNHNRT1doQlpn?=
+ =?utf-8?B?blZaZGc4Und2MnpRWGp2UWxMT24xNFIvVUlOVy96NWxlT2NMU1hzSVBuL0ht?=
+ =?utf-8?B?L1hKWUhiKzh5T0dvM3NuRHZaL2pkTm1GaGhVQUF6c1IreUhlYUZpeDhJUnhO?=
+ =?utf-8?B?U1dLYU1FaWdCTUNNUnJSMVRMSmdzMHdHVVBBK09sSDlCV3lGN3FFa3RuaUdj?=
+ =?utf-8?B?ZWIzWlUwaUQvT0ZJZy85R2hsaTRqWC9wL0d2U2kyN0k1Y1I4ZVZoR0dlMTV0?=
+ =?utf-8?B?SGhwOVhzKzFEemJLK0hHYjRxSHU1aGRha0I3Wk5WaTFSZGN4RHpEa2N4S25t?=
+ =?utf-8?B?QkpHYlpKRW4vUFpWNjlwc2xORXFYVnhROHJrRmd0d203MUhBTlZWRjVtZmFn?=
+ =?utf-8?B?VnNKRnY1dC9xelZUN3p0WE9iTDFoRHBPM0hEN0h3L1l3Vk5LWXoveXkzZXZR?=
+ =?utf-8?B?bS8xcFE0OWE2akhpNmx0VXprL2YybCt3N3VLQWMrUmtNNW9wTXFvYXJ6YTBD?=
+ =?utf-8?B?Q3IvdTZFYXBpRFlVNWZIeGtGTFRoQXBNMlk1Wm1PWERRY1cyVU56cHJ3NXAy?=
+ =?utf-8?B?YzVDZGpsYjIxTlRCaW9OR1NCRUZhQjBKb3NabW14RjRqbGtPQ00zQXE3QUsr?=
+ =?utf-8?B?aDRqQzQxaGtlbmJhdmlqQnRDdm5tSXZxUEVVQ05EVnc5QWZrdkN4c2hIZHFo?=
+ =?utf-8?B?aGFaVjFPUHJmZm9pVWpweklnZVNoeDYyUmZ6YmRHNGNLRGtPUml3dUtzWjgy?=
+ =?utf-8?B?N1RRdU9uSzlXZmYvUmZIYkg2SXNYZ1BpL2x1WTVwdXpRRG1xd3k5UDM0WkxN?=
+ =?utf-8?B?WFJMemtIS1l2eWNkc0pnSFU3UnRkdFZPb3RGc0JKNkE1WUpGZHZlNkZBWmc3?=
+ =?utf-8?B?dmNselRSaXdvVHBMR04wYVd4S0dHczc3SHZiUXFxV29LdXYvUCtYNWdRNFlO?=
+ =?utf-8?B?a1BhVXh2MXFRMlZWNVc0UFQyczFHUkUydVdsODFnZ3dlMUJkdTBrZmpPRTNV?=
+ =?utf-8?B?QUdSd1kzelFmTGJmeWRqMTloWDZJcWVzU3BrMU5UNi9weUJ0WTBId3F0OG9x?=
+ =?utf-8?B?emRvSkxyZUlTbHpiZUdtb0RRSmpCZTZNYzZzR01kSmx1a0VWV2N4OTZQMk15?=
+ =?utf-8?B?WjNnOTZUQXN0WmV0MkVYNnFQMVBCTSsxTUF0V0p3aDQxODNHRzBBejlZY0FH?=
+ =?utf-8?B?TlU2MmdUc1VFa21ZK2s2amI2ZFVKa2pvUWtnOU1tTlpIamhLOGJrTDF1VHlu?=
+ =?utf-8?B?amwvRTlYQWVoV3B5R001ZGRVN1VEaTVmTlE2bnQrcmpXcURMVTN3R3JiM3Ry?=
+ =?utf-8?B?U0lBcHU0M2RBTUR5WEpFRVlFNXpFcUNVYzJiVEIvZzFBaUJibGlleVpwMlFz?=
+ =?utf-8?B?dzYxVzNLdXBjWW9wRkgrTGdJOHduUEtTMG9iRnJvYW5nMmZ1bnZuZnlPYVdV?=
+ =?utf-8?B?VlQ0UWdnamRkUE9wcDl2WmFPNVlVMm9oN1FueFpoNzh1Q1FJZlBjN3JRY3JH?=
+ =?utf-8?B?UEVqRjUzYUJPcmwxUmxXdndxYW12RDZSY2RxbWkrbDY5b1FpUG9EaG03RmNo?=
+ =?utf-8?B?blE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 510ad66a-641a-4d83-3511-08dced088965
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 11:00:10.1651
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: htHDknFjzEexgFwGajvDVLMpfw3DhniEJZBVjg1GYerUZ/+OD5jw2OqVXmzHBcYGrIF749ynXANq0noyewE/nADUKLLkKgdo+ui9bUNBYec=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10771
 
-From: zhouyuhang <zhouyuhang@kylinos.cn>
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
-The libcap commit aca076443591 ("Make cap_t operations thread safe.")
-added a __u8 mutex at the beginning of the struct _cap_struct, it changes
-the offset of the members in the structure that breaks the assumption
-made in the "struct libcap" definition in clone3_cap_checkpoint_restore.c.
-This will make the test fail. So use the capget and capset syscall
-directly and remove the libcap library dependency like the
-commit 663af70aabb7 ("bpf: selftests: Add helpers to directly use
-the capget and capset syscall") does.
+devm_rtc_device_register() is marked as deprecated in its
+declaration comment [1].
 
-Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+Furthermore, comments [2] and [3] emphasize that devm_rtc_device_register()
+is deprecated and that devm_rtc_allocate_device()
+and [devm_]rtc_register_device should be used instead.
+
+Add devm_rtc_device_register() to the list of deprecated apis.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/rtc/class.c#n455
+[2] https://lore.kernel.org/lkml/20220921114624.3250848-2-linux@rasmusvillemoes.dk/
+[3] https://lore.kernel.org/lkml/6659aa90-53c5-4a91-a9f9-01120c88f107@oss.nxp.com/
+
+Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 ---
- tools/testing/selftests/clone3/Makefile       |  1 -
- .../clone3/clone3_cap_checkpoint_restore.c    | 53 ++++++++-----------
- .../selftests/clone3/clone3_cap_helpers.h     | 23 ++++++++
- 3 files changed, 44 insertions(+), 33 deletions(-)
- create mode 100644 tools/testing/selftests/clone3/clone3_cap_helpers.h
+ scripts/checkpatch.pl | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
-index 84832c369a2e..59d26e8da8d2 100644
---- a/tools/testing/selftests/clone3/Makefile
-+++ b/tools/testing/selftests/clone3/Makefile
-@@ -1,6 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
--LDLIBS += -lcap
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 4427572b2477..daa1fd2d4a5b 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -848,6 +848,7 @@ our %deprecated_apis = (
+ 	"kunmap"				=> "kunmap_local",
+ 	"kmap_atomic"				=> "kmap_local_page",
+ 	"kunmap_atomic"				=> "kunmap_local",
++	"devm_rtc_device_register"	=> "devm_rtc_allocate_device' and 'devm_rtc_register_device",
+ );
  
- TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
- 	clone3_cap_checkpoint_restore
-diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-index 3c196fa86c99..242088eeec88 100644
---- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-+++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-@@ -15,7 +15,6 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include <stdbool.h>
--#include <sys/capability.h>
- #include <sys/prctl.h>
- #include <sys/syscall.h>
- #include <sys/types.h>
-@@ -26,6 +25,7 @@
- 
- #include "../kselftest_harness.h"
- #include "clone3_selftests.h"
-+#include "clone3_cap_helpers.h"
- 
- static void child_exit(int ret)
- {
-@@ -87,47 +87,36 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
- 	return ret;
- }
- 
--struct libcap {
--	struct __user_cap_header_struct hdr;
--	struct __user_cap_data_struct data[2];
--};
--
- static int set_capability(void)
- {
--	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
--	struct libcap *cap;
--	int ret = -1;
--	cap_t caps;
--
--	caps = cap_get_proc();
--	if (!caps) {
--		perror("cap_get_proc");
-+	struct __user_cap_data_struct data[2];
-+	struct __user_cap_header_struct hdr = {
-+		.version = _LINUX_CAPABILITY_VERSION_3,
-+	};
-+	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
-+	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
-+	int ret;
-+
-+	ret = capget(&hdr, data);
-+	if (ret) {
-+		perror("capget");
- 		return -1;
- 	}
- 
- 	/* Drop all capabilities */
--	if (cap_clear(caps)) {
--		perror("cap_clear");
--		goto out;
--	}
-+	memset(&data, 0, sizeof(data));
- 
--	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
--	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-+	data[0].effective |= cap0;
-+	data[0].permitted |= cap0;
- 
--	cap = (struct libcap *) caps;
-+	data[1].effective |= cap1;
-+	data[1].permitted |= cap1;
- 
--	/* 40 -> CAP_CHECKPOINT_RESTORE */
--	cap->data[1].effective |= 1 << (40 - 32);
--	cap->data[1].permitted |= 1 << (40 - 32);
--
--	if (cap_set_proc(caps)) {
--		perror("cap_set_proc");
--		goto out;
-+	ret = capset(&hdr, data);
-+	if (ret) {
-+		perror("capset");
-+		return -1;
- 	}
--	ret = 0;
--out:
--	if (cap_free(caps))
--		perror("cap_free");
- 	return ret;
- }
- 
-diff --git a/tools/testing/selftests/clone3/clone3_cap_helpers.h b/tools/testing/selftests/clone3/clone3_cap_helpers.h
-new file mode 100644
-index 000000000000..3fa59ef68fb8
---- /dev/null
-+++ b/tools/testing/selftests/clone3/clone3_cap_helpers.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __CLONE3_CAP_HELPERS_H
-+#define __CLONE3_CAP_HELPERS_H
-+
-+#include <linux/capability.h>
-+
-+/*
-+ * Compatible with older version
-+ * header file without defined
-+ * CAP_CHECKPOINT_RESTORE.
-+ */
-+#ifndef CAP_CHECKPOINT_RESTORE
-+#define CAP_CHECKPOINT_RESTORE 40
-+#endif
-+
-+/*
-+ * Removed the libcap library dependency.
-+ * So declare them here directly.
-+ */
-+int capget(cap_user_header_t header, cap_user_data_t data);
-+int capset(cap_user_header_t header, const cap_user_data_t data);
-+
-+#endif
+ #Create a search pattern for all these strings to speed up a loop below
 -- 
-2.27.0
+2.45.2
 
 
