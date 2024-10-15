@@ -1,125 +1,102 @@
-Return-Path: <linux-kernel+bounces-364989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044E799DBF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:59:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F6499DBFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B377E2834F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:59:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 476971C21A41
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1073015B12A;
-	Tue, 15 Oct 2024 01:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CED615C145;
+	Tue, 15 Oct 2024 02:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gtOkBtSO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3uYrzGH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE06515884A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954BB41C63;
+	Tue, 15 Oct 2024 02:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728957563; cv=none; b=hDD5rawAIEQ1Jp+pQR8SULvajE6ZVgbcujdKEUyJuCsJnynTtCvmAk5p8VYJTrk+qBA3ZslYcgxQboJEDFx0Y+EPfee6Q3O7CDNeL7bnesKykhXXV5d2Is/2EhfBydHNUsoYALzMHAZIar/FevRc1viLMqHa3AhiXoDT0i6/orE=
+	t=1728957625; cv=none; b=VkHEp9DubfyJrYwIHid589Wc6yQFyB05T36lLt+uosDCufYqXuLSNKjGoy2jyKwjpsRLzaQzCOC3k8mFb5V9u1U+oUBkXrqcA+jd9pjMN6TjHYagzpT72FWDLaIiNNakf8A5jkG4+LClb2X+SQJgxF4TNyiAPmfB6tpEqq5i8wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728957563; c=relaxed/simple;
-	bh=/mpWQQUg4SLGbw0b6uVKlir/V5LQ1XvyAyhlgfEndo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKNNcfN9NtHIP5JA3HUMSuaDYxqqbqu2rqW6JQHadEQgmVbXYvzcXpn4I0BKtfLYrzshMJIlGPf9aGMA+x4fUvBhpf4Dc4XjQ9jUk2QKuUY15ckCv2/UApvEeEWH4l8VnTil03a42cBF0jDkB4u92OpPZk4eBcz+fVMD6Dmo8/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gtOkBtSO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728957559;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ml1ZBBcs96kgD+D7cgCrxHrlfi6RlfUgZkDg/aeocjg=;
-	b=gtOkBtSOsTYxj40ujpaW5nQ3R8xtu/lr5y0XsIiqA8bIo2z9Fnq1ld3jv1DPW6bDSToCJA
-	ZChyqFZJIZM9tYDqs+b94BGqKEqLmbVWaF5ZLtQ3gmg0J7toZ9o4Fuf99OOrQN/3mcKXM7
-	0hvm4dIV13b9JFLypvQP0+oB74SGjZA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-370-m3OzuSbkP1ilKYyrQmSsqg-1; Mon,
- 14 Oct 2024 21:59:16 -0400
-X-MC-Unique: m3OzuSbkP1ilKYyrQmSsqg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74E88195608B;
-	Tue, 15 Oct 2024 01:59:14 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.119])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E666419560AA;
-	Tue, 15 Oct 2024 01:59:07 +0000 (UTC)
-Date: Tue, 15 Oct 2024 09:59:02 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-	Hamza Mahfooz <someguy@effective-light.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
- overlapping mappings aren't supported"
-Message-ID: <Zw3MZrK_l7DuFfFd@fedora>
-References: <ZwxzdWmYcBK27mUs@fedora>
- <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
- <20241014074151.GA22419@lst.de>
- <ZwzPDU5Lgt6MbpYt@fedora>
- <7411ae1d-5e36-46da-99cf-c485ebdb31bc@arm.com>
+	s=arc-20240116; t=1728957625; c=relaxed/simple;
+	bh=rCVAZHtuiawarDEZZotMDsxYdy6ZRqoS28eKJ5t3cAg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tPx4RmKfLEMPi3b52JtIc0KZmspq1SlK0FkVUdTGHMeAUNB2YwbHAyBxrqWWbl8sbU5bnVg4OJjULincVHTHepBX1p1l5O41s0/PXxA7eiOtyG0zNuuJc0CJOqjCOdeiHPrg/CcaVB3sE8YuYV1oywC9ue+OD248aZ1LWUv8Ero=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3uYrzGH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDF9C4CEC3;
+	Tue, 15 Oct 2024 02:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728957625;
+	bh=rCVAZHtuiawarDEZZotMDsxYdy6ZRqoS28eKJ5t3cAg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=W3uYrzGHnsJcub+zJSSVLMQf4Bg9Z6RKWUSVhkCGsZIE6MijCPdl9tgIlV9uvgMlI
+	 q7ciITmrBaJfjz6QO114XQn4bC05PB+EQQVVcpdD1VGmZs7lgrKLs/5TeDmLJPSq9y
+	 pwGBId4yaUsmYwuz7+k/ucnQwgrUMv9mtNoqRcA8nl9boSZYMwBC2H89NNzHAEOiQ5
+	 Nq1YijTReMV/NTvvhOqzY7AChGzhBWXt+K95HXm07KkLxIrElyNQqp+SlD3E5l2DVe
+	 DaTJ+97L7C6G4wSZLxe3ZQ2X0+dmJep9WfvSUJRaijbOZdbhHKTo6Rh9QlRoagAFW1
+	 MBzMlxy0i26dQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EC63822E4C;
+	Tue, 15 Oct 2024 02:00:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7411ae1d-5e36-46da-99cf-c485ebdb31bc@arm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 bpf-next 0/3] bpf: Add kmem_cache iterator and kfunc
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172895763026.696768.9791144201638057630.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Oct 2024 02:00:30 +0000
+References: <20241010232505.1339892-1-namhyung@kernel.org>
+In-Reply-To: <20241010232505.1339892-1-namhyung@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, akpm@linux-foundation.org,
+ cl@linux.com, penberg@kernel.org, rientjes@google.com,
+ iamjoonsoo.kim@lge.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+ 42.hyeyoo@gmail.com, linux-mm@kvack.org, acme@kernel.org, kees@kernel.org,
+ paulmck@kernel.org
 
-On Mon, Oct 14, 2024 at 07:09:08PM +0100, Robin Murphy wrote:
-> On 14/10/2024 8:58 am, Ming Lei wrote:
-> > On Mon, Oct 14, 2024 at 09:41:51AM +0200, Christoph Hellwig wrote:
-> > > On Mon, Oct 14, 2024 at 09:23:14AM +0200, Hannes Reinecke wrote:
-> > > > > 3) some storage utilities
-> > > > > - dm thin provisioning utility of thin_check
-> > > > > - `dt`(https://github.com/RobinTMiller/dt)
-> > > > > 
-> > > > > I looks like same user buffer is used in more than 1 dio.
-> > > > > 
-> > > > > 4) some self cooked test code which does same thing with 1)
-> > > > > 
-> > > > > In storage stack, the buffer provider is far away from the actual DMA
-> > > > > controller operating code, which doesn't have the knowledge if
-> > > > > DMA_ATTR_SKIP_CPU_SYNC should be set.
-> > > > > 
-> > > > > And suggestions for avoiding this noise?
-> > > > > 
-> > > > Can you check if this is the NULL page? Operations like 'discard' will
-> > > > create bios with several bvecs all pointing to the same NULL page.
-> > > > That would be the most obvious culprit.
-> > > 
-> > > The only case I fully understand without looking into the details
-> > > is raid1, and that will obviously map the same data multiple times
-> > 
-> > The other cases should be concurrent DIOs on same userspace buffer.
+Hello:
+
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Thu, 10 Oct 2024 16:25:02 -0700 you wrote:
+> Hello,
 > 
-> active_cacheline_insert() does already bail out for DMA_TO_DEVICE, so it
-> returning -EEXIST to tickle the warning would seem to genuinely imply these
-> are DMA mappings requesting to *write* the same cacheline concurrently,
-> which is indeed broken in general.
+> I'm proposing a new iterator and a kfunc for the slab memory allocator
+> to get information of each kmem_cache like in /proc/slabinfo or
+> /sys/kernel/slab in more flexible way.
+> 
+> v5 changes)
+> 
+> [...]
 
-The two io_uring tests are READ, and the dm thin_check are READ too.
+Here is the summary with links:
+  - [v5,bpf-next,1/3] bpf: Add kmem_cache iterator
+    https://git.kernel.org/bpf/bpf-next/c/4971266e1595
+  - [v5,bpf-next,2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
+    https://git.kernel.org/bpf/bpf-next/c/04b069ff0181
+  - [v5,bpf-next,3/3] selftests/bpf: Add a test for kmem_cache_iter
+    https://git.kernel.org/bpf/bpf-next/c/73bb7e74d181
 
-For the raid1 case, the warning is from raid1_sync_request() which may
-have both READ/WRITE IO.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks,
-Ming
 
 
