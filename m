@@ -1,116 +1,106 @@
-Return-Path: <linux-kernel+bounces-365471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA38099E2CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 313D799E2D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 621541F235C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:30:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1BE1F2422E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E493F1DD891;
-	Tue, 15 Oct 2024 09:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C5F1DDA16;
+	Tue, 15 Oct 2024 09:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tP61n0UC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovSJbhRU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443E61B0137;
-	Tue, 15 Oct 2024 09:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5264985260;
+	Tue, 15 Oct 2024 09:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728984600; cv=none; b=J/AvSVAioGyStJ4Xn81FtsFra199S+UW9ozMuy2J7Qzdk1XcBMKpvYIjt6kYsaU3jTpCzL5I27mRKIddpK0iSysZhGbDljTyhiAvJ1gQ8GVgUtCAqfzFSAHgtP51w37CFVz0l3nsR5y8gUF/Y7+1Sz8cpdpSnVEvOBvSSYBV2ps=
+	t=1728984628; cv=none; b=p5PliOZ4JioBSMeNEcDM79E7Lsg9l3pq2JNNoT77bJgkFU40+tKgVOfhKRDR/g3dszzg6RqHZEDTpZwYBGU+bS2S/tbdL9HeyF1H4KPMVabjoIGiJuzNu9idJ5f5kZ+Z5myUpej6hM+aRUiHsSqDUit2Ze5oLu8HCC2l4t0bNEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728984600; c=relaxed/simple;
-	bh=W/TkYHxrVnIc6my5zXTtl1l07XVKWx/k+ZOyI6nY7JU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9AkPaIEmgy4qXmvePpEuDDSs4bm4XCGggqfuFRKH6ZwWT6CUkWG64kDDQcGY6QJXczLTHzQSpyivdKJYcxrYSsm1NQ0KzlDrtBGHZ0G2ov4Rcx85xJHua8wDunfmlGwKL180rdhrvL54408hNO1xKe/9YMzpIt53IX4QJMC8mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tP61n0UC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3216AC4CEC6;
-	Tue, 15 Oct 2024 09:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728984599;
-	bh=W/TkYHxrVnIc6my5zXTtl1l07XVKWx/k+ZOyI6nY7JU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tP61n0UCmDvkDYr88ehg2yHhb8z5YuWi8lRKMrQoG/5yLX2NWtd3oXF+0z5rW/1Fq
-	 oARGcPqNojD6bG47UcuKJ2HltfSxOe1J3jZC4PlPjCMQTe4HPGvCqMd7UDwZA48f1r
-	 E+Dv0g3Y6okAhs2z/Sa+Sv3LxpAmqzJHAAcT4tyU=
-Date: Tue, 15 Oct 2024 11:29:56 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kent Gibson <warthog618@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 0/2] gpio: create the /sys/class/gpio mount point with
- GPIO_SYSFS disabled
-Message-ID: <2024101531-lazy-recollect-6cbe@gregkh>
-References: <20241015-gpio-class-mountpoint-v2-0-7709301876ef@linaro.org>
+	s=arc-20240116; t=1728984628; c=relaxed/simple;
+	bh=PyLkawt3Ctd5wUXtSXeszN5JM22h+Eny77/oczq6ubs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ISyooJgR1Rdl6/ppPfeKzdfupup/sc6AZi26IsmE15F0yeo6uauCv8ZIuvcbL9aSimzdfOWaFMGjgKxCLo7iBRUawT5R3wwvxoCupZohZY5uuyIPS8Ive9e4w184YZaWvwsF/0Kgz64ZcDnEmP/6doL10FQ/c/jo+/ZHr3Zsghc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovSJbhRU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE74AC4CEC6;
+	Tue, 15 Oct 2024 09:30:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728984627;
+	bh=PyLkawt3Ctd5wUXtSXeszN5JM22h+Eny77/oczq6ubs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ovSJbhRUKII2mP5UFZJDSUq1jSHSPyVfMn8Advj79JYcQcGh9+EW+DTPy4D146r4y
+	 RLh7+bOKL7sQBIC220pPHV0htBubUC/w2Lnd1NVXiT0MkGXXUNtGV08QGDs3QJZK97
+	 +G06IiS0RsUPbVjpGRlEmh0HO4uGOyelteM/vPCE7hAl/KblEMzLMIZJCXblVJsohL
+	 5GWsu38G0cBikXT1ca3kgQEJ4s24icaBtvK52i+tcTUqxZ4jrf34QXmYgOKHJfJrkf
+	 1QlasYcVNrV8eLXbayKlVW9tfSkWz1EZSQC274uXicopj5b6da++d5AGmCNSJcTNzF
+	 2wVI020F/t0FA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BD43809A8A;
+	Tue, 15 Oct 2024 09:30:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015-gpio-class-mountpoint-v2-0-7709301876ef@linaro.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 1/5] dt-bindings: leds: add 'active-high' property
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172898463271.1092562.11143129173306386760.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Oct 2024 09:30:32 +0000
+References: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
+In-Reply-To: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, lxu@maxlinear.com, ansuelsmth@gmail.com,
+ bartosz.golaszewski@linaro.org, robimarko@gmail.com,
+ rmk+kernel@armlinux.org.uk, jacek.anaszewski@gmail.com,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-On Tue, Oct 15, 2024 at 10:00:22AM +0200, Bartosz Golaszewski wrote:
-> Greg, Rafael,
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Thu, 10 Oct 2024 13:53:36 +0100 you wrote:
+> Other than described in commit c94d1783136e ("dt-bindings: net: phy:
+> Make LED active-low property common") the absence of the 'active-low'
+> property means not to touch the polarity settings which are inherited
+> from reset defaults, the bootloader or bootstrap configuration. Hence,
+> in order to override a LED pin being active-high in case of the default,
+> bootloader or bootstrap setting being active-low an additional property
+> 'active-high' is required. Document that property and make it mutually
+> exclusive to the existing 'active-low' property.
 > 
-> The first patch in this series is small but may be seen as controversial
-> so here's a little backstory.
+> [...]
 
-Ah, now I see the 0/2 email...
+Here is the summary with links:
+  - [net-next,v2,1/5] dt-bindings: leds: add 'active-high' property
+    (no matching commit)
+  - [net-next,v2,2/5] net: phy: support 'active-high' property for PHY LEDs
+    https://git.kernel.org/netdev/net-next/c/a274465cc3be
+  - [net-next,v2,3/5] net: phy: aquantia: correctly describe LED polarity override
+    https://git.kernel.org/netdev/net-next/c/9d55e68b19f2
+  - [net-next,v2,4/5] net: phy: mxl-gpy: correctly describe LED polarity
+    https://git.kernel.org/netdev/net-next/c/eb89c79c1b8f
+  - [net-next,v2,5/5] net: phy: intel-xway: add support for PHY LEDs
+    https://git.kernel.org/netdev/net-next/c/1758af47b98c
 
-> We have two sets of GPIO APIs currently in the kernel: the legacy one
-> based on numbers and the modern one using descriptors. Our goal is to
-> remove the old one from the kernel to which there are two obstacles: the
-> first one is easier and consists of converting all remaining in-kernel
-> users to the preferred API. This is tedious but it's all within our
-> control, just demands a lot of effort. The second obstacle is much harder
-> as it involves removing an existing kernel uABI that is the GPIO sysfs
-> interface at /sys/class/gpio.
-> 
-> Despite providing a number of user-space tools making using the GPIO
-> character device easier, it's become clear that some users just prefer
-> how the sysfs interface works and want to keep using it. Unless we can
-> provide a drop-in replacement, they will protest any attempts at
-> removing it from the kernel. As the GPIO sysfs module is the main user
-> of the global GPIO numberspace, we will not be able to remove it from
-> the kernel either.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-They should protest it's removal, and you should support it for forever,
-as that's the api that they rely on and you need to handle.  That's the
-joy of kernel development, you can't drop support for stuff people rely
-on, sorry.
 
-> I am working on a FUSE-based libgpiod-to-sysfs compatibility layer that
-> could replace the in-kernel sysfs and keep all the user-space programs
-> running but in order to keep it fully compatible, we need to be able to
-> mount it at /sys/class/gpio. We can't create directories in sysfs from
-> user-space and with GPIO_SYSFS disabled, the directory is simply not
-> there.
-
-Ick, no, just keep the kernel stuff please.
-
-> I would like to do what we already do for /sys/kernel/debug,
-> /sys/kernel/config, etc. and create an always-empty mount point at
-> /sys/class/gpio. To that end, I need the address of the /sys/class
-> kobject and the first patch in this series exports it.
-
-No, debug and config are different, they are not "fake" subsystems, they
-are totally different interfaces and as such, can use those locations as
-mount points for their in-kernel filesystem interfaces.  You are wanting
-a random userspace mount point, that's totally different.
-
-Sorry, just live with the kernel code please.  Work to get all userspace
-moved off of it if you feel it is so bad, and only then can you remove
-it.
-
-greg k-h
 
