@@ -1,96 +1,123 @@
-Return-Path: <linux-kernel+bounces-365459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C534199E2A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:20:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26FE99E2AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CAFEB23A25
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:20:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983431F24C79
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE921DD880;
-	Tue, 15 Oct 2024 09:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F291DC04C;
+	Tue, 15 Oct 2024 09:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsGpLfO4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DaiM59KA"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16F71BE854;
-	Tue, 15 Oct 2024 09:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C62A1D9A6F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728984026; cv=none; b=sgOO2e7vWP0YEH4CsJDa60pEiavzDNQMiQCV694TLP3IqcCNTKK4VCYYdAiKDiTeDsg1dt5xKcg6CkA7XG+8RFqOQDh9HvtITDgBvwrLZpZWEIX+0pw/KjVIyTtoIWGUk6M4eB+gDPmC0gBg9c+rYQo3G+3WfD9LvDZ8FZS0lIU=
+	t=1728984127; cv=none; b=eYcWXkQ52uCjHWzBY3sl1xuGCV2wLyS2cBoujd2m0lof8rO6jjV2OxKYkPKRhvupG5dWopQG6M8MSJ/pqeftRYFUbu8gUghFAWyvCjjxj1gPe+4KurDNLkP55rVqaAid84ULQfCEuOKXHW2eoruNMb1bqr7oW9F+ZDyS+Hna4CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728984026; c=relaxed/simple;
-	bh=0/2K0bhJeAkm6/7sg4ysryFBGytwQfnlFQcMiTWVRyk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CB09PS0sbG12T3NoCepyrPcsKHczIj/E3bGOSiA5jTQMl79pDTabKSlN2I9rL7qUSV4p1/iIWnFtYOkSRTrvZCi6WSAlSQpkOn/uGqsnYxXGHnijUfd8IruVk7tnUhaaGKpL6UvOVubNZZNp/h4BrJgAvdDBwh+sxvBGhUOSl9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsGpLfO4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA02C4CEC6;
-	Tue, 15 Oct 2024 09:20:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728984026;
-	bh=0/2K0bhJeAkm6/7sg4ysryFBGytwQfnlFQcMiTWVRyk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=BsGpLfO479fGxceEcZN98XeYHDLTzPqQSEYLXEzIxF19jRpO20Lz+VJJYkfBblQax
-	 el0vzmzm5wsZ3G9kXZItI9p30/NafDSpBxDSuHM7iPrrbrGkYlO2/MiUiUuk1asMaP
-	 zcLFNYd8DrZcNxPjCoSQ3lp96ZUQTgywIuP4dlQa/iJMzOiyYd1Ul6QSQCYr3tR/Lx
-	 NFaEO+U1LrjAPxOgNx64TJgewxrwsU7jtiQ8MewFfCh4WxDU25E4zE+D+CRfe0doZG
-	 nNDg8MldmLw3sETnlJPDcU60dE8d1TOiKVsRMND4UvRhCY9LiHYqcrvtf81T/E2GIp
-	 StvkJehS+Wpgw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF853809A8A;
-	Tue, 15 Oct 2024 09:20:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728984127; c=relaxed/simple;
+	bh=6+gmtYw45aqHn+y+b2wThFOrNk2glrL/25OmMya8cBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0lA8SF0ppNu5Xlnpia6loR+E5mGdULiLEOXJXIj5UOL4O96ztXaBofK/H87n05rm06humj5Qi8Dy8fFQMETc/JxBCeRWnlseEuJN/E/NQKJjLbQ09a0TlY1muQ99FXwWUZybSc7zdrN7x+t/x49mn1QPPfRDUMpPxcsHxwTgzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DaiM59KA; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=iQHq
+	zbKxqUoCmjQH95lvBtyd+w6FkD7yAoIG21ZXiMw=; b=DaiM59KAEjZbv29Gxft6
+	Utxa9lBXNLCsXY7cE0TJ38tgHg9fRCuYiPxu5jD9DBybnORQPZSJvof5CwUbEBXh
+	czK286oetIvsd2GaNVHl6VaOXI24nfKDX7jFEVG//sfZ9MkmLbhmqQpE0eHI/y7M
+	fA3qLsT+VSCBaBZcY1U2J70GkCodKk4TOQuihthE/VsHxqA65Kqyci7xDSlH+g31
+	duMDcDhuz/jM5fxNgSYuJH3bUNk927Rggnu3LdIrhVFbKwcSNaO9a5PISElG3SHm
+	J62dgh/YI4SsCJDVAheEm7QlO65pdGQ2f3HxiHBQ5mRCWKO9SLQTnT4t/oR1FV0t
+	ug==
+Received: (qmail 2654849 invoked from network); 15 Oct 2024 11:22:03 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Oct 2024 11:22:03 +0200
+X-UD-Smtp-Session: l3s3148p1@bZV1fIAkdpEgAwDPXyR3ALZ8hQlyja84
+Date: Tue, 15 Oct 2024 11:21:57 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+Message-ID: <Zw40NajLjMa_AnY4@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20241015075134.1449458-1-TroyMitchell988@gmail.com>
+ <20241015075134.1449458-3-TroyMitchell988@gmail.com>
+ <eb4112aa-21d0-4537-a18c-940d8832711a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v5 net-next 0/2] make PHY output RMII reference clock
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172898403175.1090412.4776964842960064624.git-patchwork-notify@kernel.org>
-Date: Tue, 15 Oct 2024 09:20:31 +0000
-References: <20241010061944.266966-1-wei.fang@nxp.com>
-In-Reply-To: <20241010061944.266966-1-wei.fang@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
- andrei.botila@oss.nxp.com, linux@armlinux.org.uk, horms@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, imx@lists.linux.dev
-
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu, 10 Oct 2024 14:19:42 +0800 you wrote:
-> The TJA11xx PHYs have the capability to provide 50MHz reference clock
-> in RMII mode and output on REF_CLK pin. Therefore, add the new property
-> "nxp,rmii-refclk-output" to support this feature. This property is only
-> available for PHYs which use nxp-c45-tja11xx driver, such as TJA1103,
-> TJA1104, TJA1120 and TJA1121.
-> 
-> 
-> [...]
-
-Here is the summary with links:
-  - [v5,net-next,1/2] dt-bindings: net: tja11xx: add "nxp,rmii-refclk-out" property
-    https://git.kernel.org/netdev/net-next/c/09277e4fc9a6
-  - [v5,net-next,2/2] net: phy: c45-tja11xx: add support for outputting RMII reference clock
-    https://git.kernel.org/netdev/net-next/c/6d8d89873ae0
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J9OO5FzHaRoktCip"
+Content-Disposition: inline
+In-Reply-To: <eb4112aa-21d0-4537-a18c-940d8832711a@kernel.org>
 
 
+--J9OO5FzHaRoktCip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > +static inline u32 spacemit_i2c_read_reg(struct spacemit_i2c_dev *i2c, =
+int reg)
+> > +{
+> > +	return readl(i2c->base + reg);
+>=20
+> So basically short and obvious code like this:
+>=20
+> 	readl(i2c->base + reg);
+>=20
+> you replace with:
+>=20
+> 	spacemit_i2c_read_reg(i2c, reg)
+>=20
+> how is this helpful?
+
+I always have the same question when I see this. However, I don't blame
+Troy. We have quite some occurances of this in the kernel, so I wouldn't
+be surprised if people think this is a kernel-style-pattern :/
+
+
+--J9OO5FzHaRoktCip
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcONDUACgkQFA3kzBSg
+KbaeSg//dFtNaRJ0AHNqbcfBgNb+AqFiu4SRst/KrQ8catyR3apD1Ul3c3tituAq
+w3J/27NuNHDz5FUOz35CryCtOh8Ox6KUz/uUd5dACYc+PQmat65fvRVR5rZjKuCr
+OKRDcXqblMwmwILkGIiEUdIvMDtIr8p8BPR8EHvdDaPRxb7hQGdZmaZSqnv0WxB0
+VSF017hg1JoFz8HpdOIdAZ+3qZXxsLlyMhHC26LFUbeAw4EkPlLyAntGj1f0uTgS
+TdPpqcoT3I5CUKv6Wao0v49VD3urDOWF5kVRdlcnNdVjAoPeKtC2gn3ZA8bTOaYF
+QDh2oPT3CJ32nwRoKiEj0C0wvvz3+IjfYAVGeAlghKI4J1uwyZjo1PatoN2hp3Wl
+mpzVOADN944TWyE7mIjKtew7PRaJsdQ0W3rkpd4Qe/pANCigAZP38r1luicvlH/r
+EnT2eycO5pTbQhB4VnwTTi9P3ZIL+Yb/oD8jfTejcizGqOs9X8YTUcSwAFNj765p
+WXovX5sOBxHTXiJ0kJzfUtHgUnIezgbIa76xRVeKYFRvFLkqeR3nXFo/GCUH9YVI
+uu4lBNtZthxwYxA0NORLr97zLyCUzqAg0MoCP7AGcbr0dF9wT3j9PpmBgxn6wDio
+itmfHg2Mt/HqXX7idDfB3KiQpGE1Yufvt22n3jI/qLo4eaKkwL8=
+=cdl7
+-----END PGP SIGNATURE-----
+
+--J9OO5FzHaRoktCip--
 
