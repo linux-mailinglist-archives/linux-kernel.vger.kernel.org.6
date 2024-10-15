@@ -1,537 +1,102 @@
-Return-Path: <linux-kernel+bounces-364885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FE699DA8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:12:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23ED99DA95
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60EC81F2350E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:12:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30B09B22100
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B00231C87;
-	Tue, 15 Oct 2024 00:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047A933EA;
+	Tue, 15 Oct 2024 00:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0X0NFE24"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WuA34u+Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AF4136A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3A319A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728951149; cv=none; b=Ol/CrAwFNObAmRbZcIAFDR08gSELgcBd0WiPOPDHKkoHH+VqMesphwZj+Yf9+dUaioIpWuTu60PehTVaQOZdyeJB1c5g4ghBDpDGUtDOWyCcFsndRRfDr+v6JKGw9/atty+iyN/C1vu2LrF5CnQzQQ9/6Fv3Sv8riC9flwN+jEE=
+	t=1728951258; cv=none; b=DPbjE93MLitOElPBv3FxOOQvWCDHqMT9Rr4mxxBuYpbVkfog56nq+IJyUym2rWxYblTJ6iSRt9LWVK+VpluCTfFD5EUBYFk1os1oWB+1IZ0Bt1P94wVdBMkv2ATY5wuYDJsYIkKmT+JoMEM7SCJRRZnlGLEPh3m93XFhCKgHwCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728951149; c=relaxed/simple;
-	bh=q+OgFmqhk/HJD3GVdmya2ZCFmSEpTmfeM4Ui3XhpTVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JvYQ9YzhmvHiCAR1ZUPNAGtiUNL294+0UmYUEqs+7r74QbhsRunR7QVg4v24HLs+eXynmwuzQ7WWq5BpoO6xEDqFK5qI5KIPIWBpbTtJT+epEj6LHF/dEjt3oY8GhBwH3dlo8ED664wBPA1D9tOoclLVRg5BSEXYN0+aIOYiumY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0X0NFE24; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-717d2b8c08aso1807625a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728951145; x=1729555945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2nJK5ypxzPre+b3iZgUs3/o2UAwXiSSl8CirXUM73cg=;
-        b=0X0NFE24xO13NwRWEWVkZUBgCjXcSbRTof86LqpGCOL1/oPisu56ditiUGgHwEdXVn
-         GKx4pZOjVnZHVXC2hKFy12tiUQk+Ku90AFn9jL6MjgLR7536/uAiROzVs4wngoUGOIUl
-         d0A8IYYACn0xyuhyuJC6160bPMxvsxHAGM9oCw2mH9YtWVqTT/EU7HtR7HY/4hyZux95
-         pj9hxS4Hihf0BInePdpXZo4vgAPOeSr3cr0+bw7EpzSlu09sLo1t+2OFrdyXppWeh7QG
-         g/TLwePIfV58ed4kH6ZnP9fpIHC/1DDimUn2ePNnb6mkmI76G2ukIr4hJe4O1lhl0Y6d
-         nkug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728951145; x=1729555945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2nJK5ypxzPre+b3iZgUs3/o2UAwXiSSl8CirXUM73cg=;
-        b=GlDx3pqDZ7fIb6ZygTocLvT659wCOsLRrSJFc2m1EqxX2+eChDcm7z2LPO8oQMWXtu
-         Pdq6ERpuWEgEObxXmOumND7YsRF3hs68F4O3KPwF1cD4/+BeTizfOB2DUoDwJEyGEDyO
-         PdCKsXHKtkLbnTya/NiDOLlSZdZ8BrqS7u9KidVsV1gc+6qcCwCfb+PPcOvuxMejg60F
-         o/br3lBsXQ8YPEOjo58C+oHA868rnSHCXOxNIUUa0RpYS4XHncwipTMA1xksKFqanx2K
-         9zRPkMa+2/DV0bs/CFjnH0Uu8QhBasviJMKboC3tT5rCLu95qC/r5xq8aVI7o/qL6Uhu
-         xdaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTq8ZFN7AVxia9SVgmwxtxhTiBXnXT6cS+Fq/f16hfPn7GK4pM+Go3sQaem4JPnDsKNSoEblaL1N/FURU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUe5xBQPNGgvf20HsCz9WWJ94LzZ+/ZJ/OAO3kDCU0+JxWaWnD
-	w0CtFkAwnaMgIKV2xVTRRo/sLlMjUOS3CQ6HbPUM5Qp41Fi2HIQyTnhN3nlZZGg=
-X-Google-Smtp-Source: AGHT+IFUmS4kVr2Pv7oFj7W8MKvd6iijlrriku8hfRtZ9uKSfBSxmXMv7Q8VVGLYVLbT+xWg7qohAQ==
-X-Received: by 2002:a05:6830:2b0f:b0:716:a7fc:20b1 with SMTP id 46e09a7af769-717d63eb003mr8735657a34.6.1728951145153;
-        Mon, 14 Oct 2024 17:12:25 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-717fba4196csm82237a34.77.2024.10.14.17.12.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 17:12:23 -0700 (PDT)
-Message-ID: <60452f83-28a1-4a80-8e90-1f1ed32a594e@baylibre.com>
-Date: Mon, 14 Oct 2024 19:12:22 -0500
+	s=arc-20240116; t=1728951258; c=relaxed/simple;
+	bh=Tg7JX687x5251Ku5whEkeIFu+50VBNMoKFGSzdW/FRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FP4Ef4uHiGfeJrS2Oz+nw53Noe+fP/LpzTQSwZbM9Xl0wr2hFnAhQbDLLCynxbtOPwEHwvc8iUkzMyZbb/uA3HVZoISQaQZy5sf3/12wNefj9nD6JSGFDH/P9F+e1XEClX0/ggWnUIYSY8LJl8gcz1mTQHlaFajrjb+qeSOskq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WuA34u+Q; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728951256; x=1760487256;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Tg7JX687x5251Ku5whEkeIFu+50VBNMoKFGSzdW/FRE=;
+  b=WuA34u+QXjQf0VdPSoKJMS5/143//FCdmXNCjkha7tAIhm/pI4NkKalf
+   s7SB62eqAt3vhpE59xm1IfLpkoUf1yzu7T4UmzGmI2OQX3IVjKBNyfulM
+   gNB/6fmW3Z386qvchNY0UWqt6UUeyLCARARaayyX1AUfDEEZj16LKZvFD
+   Gl6Mt2yZrjr58IXmdRFh5/z76anonvm+j6P4SATLfXWdhloIQyEchl+YS
+   IX4vr1AQOUR2ctun2aLWs2TQml/7JiqjJxSfEPNXezGHoTMZ89K6/7Qtd
+   kRUhE5yc2EB+qgPFiHJs7q+9T72gYN7nMid+gVJib8HxIBTgvCI1ALdCp
+   A==;
+X-CSE-ConnectionGUID: Xww3zuIBTi+xFVFEF01oeQ==
+X-CSE-MsgGUID: Iek22BtgQNqGhI8zTKxaIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="31201025"
+X-IronPort-AV: E=Sophos;i="6.11,203,1725346800"; 
+   d="scan'208";a="31201025"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 17:14:16 -0700
+X-CSE-ConnectionGUID: 0cSVu3LtTwiUNXSv9M/o4Q==
+X-CSE-MsgGUID: wLM6z+8fTGiOes2nTNFf+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,203,1725346800"; 
+   d="scan'208";a="78163062"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 14 Oct 2024 17:14:15 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0VCW-000HLx-0Q;
+	Tue, 15 Oct 2024 00:14:12 +0000
+Date: Tue, 15 Oct 2024 08:13:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Martyn Welch <martyn.welch@collabora.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>
+Subject: ti_k3_m4_remoteproc.c:undefined reference to
+ `devm_ti_sci_get_by_phandle'
+Message-ID: <202410150837.FOGlkGvW-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Andy Shevchenko <andy@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Ivan Mikhaylov <fr0st61te@gmail.com>,
- Marius Cristea <marius.cristea@microchip.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Mike Looijmans <mike.looijmans@topic.nl>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org
-References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
- <20241014094154.9439-6-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241014094154.9439-6-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/14/24 4:40 AM, Antoniu Miclaus wrote:
-> Add support for the AD485X a fully buffered, 8-channel simultaneous
-> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
-> differential, wide common-mode range inputs.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   eca631b8fe808748d7585059c4307005ca5c5820
+commit: ebcf9008a895a2a9416f69e186b56fbade35e12c remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
+date:   8 weeks ago
+config: arm-randconfig-001-20241015 (https://download.01.org/0day-ci/archive/20241015/202410150837.FOGlkGvW-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241015/202410150837.FOGlkGvW-lkp@intel.com/reproduce)
 
-...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410150837.FOGlkGvW-lkp@intel.com/
 
-> +static int ad4851_set_sampling_freq(struct ad4851_state *st, unsigned int freq)
-> +{
-> +	struct pwm_state cnv_state = {
-> +		.duty_cycle = AD4851_T_CNVH_NS,
+All errors (new ones prefixed by >>):
 
-PWM drivers typically round down, so this mimimum required
-high time may not be met if pwm_apply cannot make an exact
-match.
+   arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
+>> ti_k3_m4_remoteproc.c:(.text+0xc24): undefined reference to `devm_ti_sci_get_by_phandle'
 
-> +		.enabled = true,
-> +	};
-> +	int ret;
-> +
-> +	freq = clamp(freq, 1, st->info->throughput);
-> +
-> +	cnv_state.period = DIV_ROUND_CLOSEST_ULL(GIGA, freq);
-
-As Uwe mentioned in v2, ROUND_CLOSEST doesn't seem like the
-best choice here.
-
-And usually we use NSEC_PER_SEC for this instead of GIGA.
-
-> +
-> +	ret = pwm_apply_might_sleep(st->cnv, &cnv_state);
-> +	if (ret)
-> +		return ret;
-
-pwm_get_state_hw() is currently not public. But it would be nice
-to make it public and use it here to assign st->sampling_freq to
-the actual frequency the hardware is capable of instead of the
-requested frequency. This way users can read back the sampling
-frequency attribute to know what the real sample rate is in case
-the exact requested rate was not possible.
-
-> +
-> +	st->sampling_freq = freq;
-> +
-> +	return 0;
-> +}
-> +
-
-...
-
-> +static int ad4851_set_oversampling_ratio(struct ad4851_state *st,
-> +					 const struct iio_chan_spec *chan,
-> +					 unsigned int osr)
-> +{
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	if (osr == 1) {
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					 AD4851_OS_EN_MSK, 0);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					 AD4851_OS_EN_MSK, AD4851_OS_EN_MSK);
-> +		if (ret)
-> +			return ret;
-
-regmap_clear_bits() and regmap_set_bits() would make this a bit
-less verbose and consistent with the effort started in [1].
-
-[1]: https://lore.kernel.org/linux-iio/20240617-review-v3-0-88d1338c4cca@baylibre.com/
-
-
-> +
-> +		val = ad4851_osr_to_regval(osr);
-> +		if (val < 0)
-> +			return -EINVAL;
-> +
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					 AD4851_OS_RATIO_MSK, val);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	switch (chan->scan_type.realbits) {
-> +	case 20:
-> +		switch (osr) {
-> +		case 1:
-> +			val = 20;
-> +			break;
-> +		default:
-> +			val = 24;
-> +			break;
-> +		}
-> +		break;
-> +	case 16:
-> +		val = 16;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = iio_backend_data_size_set(st->back, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
-> +				  AD4851_PACKET_FORMAT_MASK, (osr == 1) ? 0 : 1);
-> +}
-> +
-> +static int ad4851_get_oversampling_ratio(struct ad4851_state *st, unsigned int *val)
-> +{
-> +	unsigned int osr;
-> +	int ret;
-> +
-> +	ret = regmap_read(st->regmap, AD4851_REG_OVERSAMPLE, &osr);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!FIELD_GET(AD4851_OS_EN_MSK, osr))
-> +		*val = 1;
-> +	else
-> +		*val = ad4851_oversampling_ratios[FIELD_GET(AD4851_OS_RATIO_MSK, osr)];
-
-Why is 1 not in the table?
-
-> +
-> +	return IIO_VAL_INT;
-> +}
-> +
-> +static int ad4851_setup(struct ad4851_state *st)
-> +{
-> +	unsigned int product_id;
-> +	int ret;
-> +
-
-Would be nice to do a hard reset here if possible using st->pd_gpio
-(datasheet says to cycle this twice and then wait 1 ms).
-
-> +	ret = ad4851_set_sampling_freq(st, HZ_PER_MHZ);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_A,
-> +			   AD4851_SW_RESET);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_B,
-> +			   AD4851_SINGLE_INSTRUCTION);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_A,
-> +			   AD4851_SDO_ENABLE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(st->regmap, AD4851_REG_PRODUCT_ID_L, &product_id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (product_id != st->info->product_id)
-> +		dev_info(&st->spi->dev, "Unknown product ID: 0x%02X\n",
-> +			 product_id);
-> +
-> +	ret = regmap_write(st->regmap, AD4851_REG_DEVICE_CTRL,
-> +			   AD4851_ECHO_CLOCK_MODE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(st->regmap, AD4851_REG_PACKET, 0);
-> +}
-> +
-
-...
-
-> +
-> +static int ad4851_set_calibscale(struct ad4851_state *st, int ch, int val,
-> +				 int val2)
-> +{
-> +	unsigned long long gain;
-
-	u64
-
-> +	u8 buf[0];
-> +	int ret;
-> +
-> +	if (val < 0 || val2 < 0)
-> +		return -EINVAL;
-> +
-> +	gain = val * MICRO + val2;
-> +	gain = DIV_U64_ROUND_CLOSEST(gain * 32768, MICRO);
-> +
-> +	put_unaligned_be16(gain, buf);
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	ret = regmap_write(st->regmap, AD4851_REG_CHX_GAIN_MSB(ch),
-> +			   buf[0]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(st->regmap, AD4851_REG_CHX_GAIN_LSB(ch),
-> +			    buf[1]);
-> +}
-> +
-
-...
-
-> +
-> +static int ad4851_set_offset(struct ad4851_state *st,
-> +			     const struct iio_chan_spec *chan, int val)
-> +{
-> +	guard(mutex)(&st->lock);
-> +
-> +	if (val != st->offsets[chan->channel])
-> +		return 0;
-> +
-> +	st->offsets[chan->channel] = val;
-> +	/* Restore to the default range if offset changes */
-> +	if (st->offsets[chan->channel])
-> +		return regmap_write(st->regmap,
-> +					AD4851_REG_CHX_SOFTSPAN(chan->channel),
-> +					AD4851_SOFTSPAN_N40V_40V);
-> +	return regmap_write(st->regmap,
-> +				AD4851_REG_CHX_SOFTSPAN(chan->channel),
-> +				AD4851_SOFTSPAN_0V_40V);
-
-Pretty sure I mentioned this in a previous review...
-
-I don't see how changing the softspan affects the offset. A raw value
-of 0 is still 0V either way.
-
-It should only affect the scale and signed vs. unsigned data.
-
-> +}
-> +
-
-...
-
-> +
-> +#define AD4851_IIO_CHANNEL(index, real, storage)			\
-> +{									\
-> +	.type = IIO_VOLTAGE,						\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
-> +		BIT(IIO_CHAN_INFO_CALIBBIAS) |				\
-> +		BIT(IIO_CHAN_INFO_SCALE) |				\
-> +		BIT(IIO_CHAN_INFO_OFFSET),				\
-> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),			\
-> +	.info_mask_shared_by_type_available =				\
-> +		BIT(IIO_CHAN_INFO_SCALE) |				\
-> +		BIT(IIO_CHAN_INFO_OFFSET) |				\
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),			\
-> +	.indexed = 1,							\
-> +	.channel = index,						\
-
-These chips are fully differential, so I would expect:
-
-	.differential = 1,
-	.channel = 2 * index,
-	.channel2 = 2 * index + 1,
-
-Or alternatly, if we use the devicetree to specify the type of input
-attached, (differential or signle-ended) then this would be dynamically
-configured.
-
-> +	.scan_index = index,						\
-> +	.scan_type = {							\
-> +		.sign = 's',						\
-> +		.realbits = real,					\
-> +		.storagebits = storage,					\
-
-Since enabling oversampling can change realbits, this driver will likely
-need to implement scan_type_ext so that userspace is aware of the
-difference when oversampling is enabled. (Adding support for oversampling
-could always be a followup patch instead of trying to do everything
-all at once.)
-
-See the ad7380 driver as an example of how to impelemt this. [2]
-
-[2]: https://lore.kernel.org/linux-iio/20240530-iio-add-support-for-multiple-scan-types-v3-5-cbc4acea2cfa@baylibre.com/
-
-Also, I would expect the .sign value to depend on how the
-input is being used. If it is differential or single-ended
-bipolar, then it is signed, but if it is signle-ended unipoloar
-then it is unsiged.
-
-Typically, this is coming from the devicetree because it
-depends on what is wired up to the input.
-
-> +	},								\
-> +}
-
-...
-
-> +static int ad4851_probe(struct spi_device *spi)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct ad4851_state *st;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +	st->spi = spi;
-> +
-> +	ret = devm_mutex_init(&spi->dev, &st->lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_regulator_bulk_get_enable(&spi->dev,
-> +					     ARRAY_SIZE(ad4851_power_supplies),
-> +					     ad4851_power_supplies);
-> +	if (ret)
-> +		return dev_err_probe(&spi->dev, ret,
-> +				     "failed to get and enable supplies\n");
-> +
-> +	ret = devm_regulator_get_enable_optional(&spi->dev, "vddh");
-> +	if (ret < 0 && ret != -ENODEV)
-> +		return dev_err_probe(&spi->dev, ret, "failed to get vddh voltage\n");
-> +
-> +	ret = devm_regulator_get_enable_optional(&spi->dev, "vddl");
-> +	if (ret < 0 && ret != -ENODEV)
-> +		return dev_err_probe(&spi->dev, ret, "failed to get vddl voltage\n");
-> +
-> +	ret = devm_regulator_get_enable_optional(&spi->dev, "vrefbuf");
-> +	if (ret < 0 && ret != -ENODEV)
-> +		return dev_err_probe(&spi->dev, ret, "failed to get vrefbuf voltage\n");
-
-According to the datasheet, if there is a supply cconnected to the
-REFBUF pin, then "Disable the internal band-gap reference and the
-internal reference buffer through the DEVICE_CTRL register in this
-configuration and connect the REFIO pin to the GND pins."
-
-So we probably shoudn't be enabling this supply until after
-configuring the registers.
-
-> +
-> +	ret = devm_regulator_get_enable_optional(&spi->dev, "vddl");
-
-Should be "vrefio", not vddl".
-
-> +	if (ret < 0 && ret != -ENODEV)
-> +		return dev_err_probe(&spi->dev, ret, "failed to get vrefio voltage\n");
-
-We need to keep track if this supply is present or not and set
-REF_SEL in the DEVICE_CTRL register accordingly.
-
-> +
-> +	st->pd_gpio = devm_gpiod_get_optional(&spi->dev, "pd", GPIOD_OUT_LOW);
-> +	if (IS_ERR(st->pd_gpio))
-> +		return dev_err_probe(&spi->dev, PTR_ERR(st->pd_gpio),
-> +				     "Error on requesting pd GPIO\n");
-> +
-> +	st->cnv = devm_pwm_get(&spi->dev, NULL);
-> +	if (IS_ERR(st->cnv))
-> +		return dev_err_probe(&spi->dev, PTR_ERR(st->cnv),
-> +				     "Error on requesting pwm\n");
-> +
-> +	st->info = spi_get_device_match_data(spi);
-> +	if (!st->info)
-> +		return -ENODEV;
-> +
-> +	st->regmap = devm_regmap_init_spi(spi, &regmap_config);
-> +	if (IS_ERR(st->regmap))
-> +		return PTR_ERR(st->regmap);
-> +
-> +	ret = ad4851_scale_offset_fill(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad4851_setup(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->name = st->info->name;
-> +	indio_dev->channels = st->info->channels;
-> +	indio_dev->num_channels = st->info->num_channels;
-> +	indio_dev->info = &ad4851_iio_info;
-> +
-> +	st->back = devm_iio_backend_get(&spi->dev, NULL);
-> +	if (IS_ERR(st->back))
-> +		return PTR_ERR(st->back);
-> +
-> +	ret = devm_iio_backend_request_buffer(&spi->dev, st->back, indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_iio_backend_enable(&spi->dev, st->back);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad4851_calibrate(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_iio_device_register(&spi->dev, indio_dev);
-> +}
-> +
-> +static const struct of_device_id ad4851_of_match[] = {
-> +	{ .compatible = "adi,ad4858", .data = &ad4851_info, },
-> +	{ .compatible = "adi,ad4857", .data = &ad4852_info, },
-> +	{ .compatible = "adi,ad4856", .data = &ad4853_info, },
-> +	{ .compatible = "adi,ad4855", .data = &ad4854_info, },
-> +	{ .compatible = "adi,ad4854", .data = &ad4855_info, },
-> +	{ .compatible = "adi,ad4853", .data = &ad4856_info, },
-> +	{ .compatible = "adi,ad4852", .data = &ad4857_info, },
-> +	{ .compatible = "adi,ad4851", .data = &ad4858_info, },
-> +	{ .compatible = "adi,ad4858i", .data = &ad4858i_info, },
-> +	{}
-
-As requested in previous reviews, { } is preferred to be consistent.
-
-And more importantly, it looks like compatible strings are in
-reverse order compared to info structs.
-
-> +};
-> +
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
