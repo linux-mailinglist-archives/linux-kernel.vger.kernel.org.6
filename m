@@ -1,192 +1,196 @@
-Return-Path: <linux-kernel+bounces-366110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5BE99F101
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAAE999F108
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0C21C22438
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:24:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8AA11C22894
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9E11B3921;
-	Tue, 15 Oct 2024 15:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7626D1B394D;
+	Tue, 15 Oct 2024 15:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ODxZ3Ayk"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hyqXcJmb"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7611B2181
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729005824; cv=none; b=iBfdUlM3hnouaCjPg+lbeof6Loln5fAfEaV4/p+KD5KbpP+UIK+WcDEweYCGLtDJ5VLRqjq2rwMIHCV8mQLUk6SRK33W74E2/rpWUfHaSsA6ql3cIMxneOXaQtWYANUr2Zc0xGf8ybkCBeRiN7ltCqm5yCmTOg9/ExI29teF9/s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729005824; c=relaxed/simple;
-	bh=ibOMGyy9MOm2vdzyRR7ujrHzgVMe6RdwJhby4PeTS5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UCq5LabxRYPr4kXR1fi5SA8ajsr8aak3nEwE0sQ9btILUtnJk4MC1+/pfNexVqtE2KS870JA/Rfl4iZk1ZIG2QHO0HR4YqoFUwJgO0hL5MTCMYXHtstl/ubu2RHvLHcWF5sPqUIcBZqnQQk8jwajO92UD11M4JhEmEboFrab2fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ODxZ3Ayk; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a3b8964134so11127245ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:23:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729005822; x=1729610622; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SG9oZeCQixkQj/EuBdFW7/W28zFcKeJtf6zC5ywQazQ=;
-        b=ODxZ3Aykp08FkaNIp6FQq0r1Ec+al/BfnfFxAGkUjCFRAJOh/i/AYRkXM6+vNDFn4P
-         Elackh5TQpAGH8UKPAdU4WVoMhU0aplxfuzYxVbHAZ9Zf6sWCAxK046s2VPpnWCscHZ4
-         spoQKlT68hRah6wWAiFhvIGBbLsMpQZponEus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729005822; x=1729610622;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SG9oZeCQixkQj/EuBdFW7/W28zFcKeJtf6zC5ywQazQ=;
-        b=J2Oer+wA6MfIcAl/OwseeLMEqS9OrzIIkdXzNTAkDbXyjN31hI4hb5xhy6/LLZfo+Z
-         6qaU9EBMaqnE+L8NczO22KMAa0Y+ZmlSqDuTXZhWU611RPJMLOc8JZoTEXCypBtMCWBE
-         yHvpXT4B0SdKox+tPlDwBiGBayURzfFB37X065QDO6JInUX6D62pCubxj//+iqanjXkj
-         9adEz1haAoyxMYwprvn+yaLoi+q7NrT4lckOuWIJSqPhfTBxpG9PW5qne+WVxiQAb5FD
-         DazSogeRhnDx69WEXpXzTOjViKxwzEKdbA13q5P82d2zlvQt1tfA8pMqwoY8UtpXP02I
-         +P+Q==
-X-Gm-Message-State: AOJu0YzEXJ9s7C3OBd6f/fd6vf0zVkttD8w1toHShsg/mwzWWNim47zK
-	TgBpHNQHGzFsWlaBML61cTeQup7mURLSn+4JnSQqJu5/GPLrASwqyZQYONIuJdRuSijVkHJvZ/k
-	a
-X-Google-Smtp-Source: AGHT+IF33hXmGihjl1zU+NN6M6a/vLnjZ7HgtQDtxpt7THx0iw4xm/mXlY9UgwvQ02qUwnubsqirpg==
-X-Received: by 2002:a05:6e02:198b:b0:3a0:9c20:8070 with SMTP id e9e14a558f8ab-3a3bcdf03f4mr83358245ab.20.1729005821916;
-        Tue, 15 Oct 2024 08:23:41 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3d715e488sm3569555ab.83.2024.10.15.08.23.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 08:23:41 -0700 (PDT)
-Message-ID: <b82a25f8-e7a9-4a42-9a16-c2cda99feecd@linuxfoundation.org>
-Date: Tue, 15 Oct 2024 09:23:40 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173CD1B3921;
+	Tue, 15 Oct 2024 15:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729005853; cv=fail; b=LL08Gk2QlVjfBFkArGTzhWjtNTHB2n4KYv4DS3v9oby+x9Pn3DiM6/ufRXVfcftvbb/E+KXZRijZtoiJi1tkCBnWDLSc06RSy/Zz91tspNF3hyhykqHCwtcIKaCRhDuiTRxkuogtQz/gA0ZTt4+b24FTy1Sn9Cr/Vftk4tsDPyo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729005853; c=relaxed/simple;
+	bh=JkEP7WmBB8TB0tYN54nt9zv0OvHh13ReXzcwg3zXAlQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Be6eC+hOpuyV9EhNhDobyR/JNGKRkk4l3uJS0a6cDR7DP1GZxCKgDR0R8KyGtJoOOvGSgU1o7dQHHHX6nZidg/8ehDYNjqrtHrS7poS7Ra8uovMQtbdVAYZWH+mMDsxfJgMpBkm+O3tp2QG8G4gE5U92HTl8mEXEbdrUtC09lYI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hyqXcJmb; arc=fail smtp.client-ip=40.107.93.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K2evHHOJ26ThGW8sUtyaCQegNc1PJd6s/dYQ/w+XwPV6GZKYGrcApa+QfgLzVUiZrEKzBoOqUbiAuAePOrH2rXkw5L3L1YioNNL+TH1EhynHkchXUS7p0w7/LYfGZfrNBzRJcDpaP+cp49kVeJx9bh1hpEZ0gNAorLAVfzasolkuV3uiWx+BbeuTel1mpJW63+dVK+INFczqDCJijxiuN9EcjiKnntZqUMv4R5/e+X5TuvwF0fh8MoQ0Rx6gH+Ou7k9R1o7hn3F4T2lN8RvEe+WTzJfhQAi5UhekPqjwJh1t8TKNmQNrx+UxHTenWbdK0qLcvWHp4ae92BYa7o2rlg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wE5tQ0PgpoSdnn+RUVbHJmE1TQA5QsSTlbYjB79bN/4=;
+ b=QtddrZIwFCcRt0e/Bfp8KgmP5cDjCq3Ph+6C4NGukTkJxFuRq1+qe22OQcI4kPvP2M7YbxSenolOPWZnhSSZiujKrdXYS0LL4r/2hcQ7JXViKcBD07NyX8M7HI4SLbqNzybLobZkO33jqFEfsOiyMVzgbpNHAUPkdf9tHMsKY1CTbA2FQjLC+vqZ+fzNaUI0POM4V4mpKMyrQxYQGaOg8g8uHmBU9aUsbIsqVP4/7FQ1Sb/0IFa7VxNqXWgCydBRxay5mXWTdMjfiDIRNdhQBa3Lh1f7J4rvbFK2d2hQxra3g6MC8EvnwhSeUKnmW4Sw1ml3u+v8o23ZUri2ulN7Mg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=lists.freedesktop.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wE5tQ0PgpoSdnn+RUVbHJmE1TQA5QsSTlbYjB79bN/4=;
+ b=hyqXcJmbMfvgLNAaVqlQ4p50SxUNqZzgpcPTFh3xidmRQUx7BdoUnfT/GQuk0/oqWxvh3yYu+3iaKh15FcYAmrhLi5rFFl5XWwcEFTrIKw/xKARQhkF9xEmpyWX6NKljSWCQmTz7QepwC+9Yu/YayOhiQH4waNb2sLQi6bBGAbtRZstoYNpO2AWUAjkn+2fVnbKNS16kb6jZsCqF9Iz196V0XmGUn9Pwn2XWOP/jp6XjD1Jno+Y4i4NG2/C+fa6/n9dE5pj0wfCb4uKkXkd5k7hxf384LltRN529+jcwtlGRXDQ/A+FKm8ZSRYYYSiCJuzL7BhBJQxegNYIJ/FQfWQ==
+Received: from CH0P220CA0028.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:ef::7) by
+ CH2PR12MB4294.namprd12.prod.outlook.com (2603:10b6:610:a9::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.27; Tue, 15 Oct 2024 15:24:07 +0000
+Received: from CH2PEPF0000013F.namprd02.prod.outlook.com
+ (2603:10b6:610:ef:cafe::be) by CH0P220CA0028.outlook.office365.com
+ (2603:10b6:610:ef::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27 via Frontend
+ Transport; Tue, 15 Oct 2024 15:24:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CH2PEPF0000013F.mail.protection.outlook.com (10.167.244.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.17 via Frontend Transport; Tue, 15 Oct 2024 15:24:07 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Oct
+ 2024 08:23:56 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 15 Oct 2024 08:23:56 -0700
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.181)
+ with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Tue, 15 Oct
+ 2024 08:23:52 -0700
+From: Yonatan Maman <ymaman@nvidia.com>
+To: <nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-mm@kvack.org>, <herbst@redhat.com>,
+	<lyude@redhat.com>, <dakr@redhat.com>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <jgg@ziepe.ca>, <leon@kernel.org>, <jglisse@redhat.com>,
+	<akpm@linux-foundation.org>, <dri-devel@lists.freedesktop.org>,
+	<apopple@nvidia.com>, <bskeggs@nvidia.com>
+CC: Yonatan Maman <Ymaman@Nvidia.com>
+Subject: [PATCH v1 0/4] GPU Direct RDMA (P2P DMA) for Device Private Pages
+Date: Tue, 15 Oct 2024 18:23:44 +0300
+Message-ID: <20241015152348.3055360-1-ymaman@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: clone3: Use the capget and capset syscall
- directly
-To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org, shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- zhouyuhang <zhouyuhang@kylinos.cn>
-References: <20241010121612.2601444-1-zhouyuhang1010@163.com>
- <5b471a5c-c99d-42a5-943d-bb253127a202@linuxfoundation.org>
- <a2ab9671-5095-47bf-82cf-0e167320772f@163.com>
- <b2e02494-0f22-476e-bb79-f3a133b7fa07@linuxfoundation.org>
- <714162ff-a2f8-4fc6-91af-0ecd6376bc7f@163.com>
- <0f79692e-ed68-462d-8ec7-955219116282@linuxfoundation.org>
- <5c4272c4-3f9c-4ce8-ba73-50b5f16ab605@163.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <5c4272c4-3f9c-4ce8-ba73-50b5f16ab605@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013F:EE_|CH2PR12MB4294:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02c3d9b1-ad89-47dd-abb5-08dced2d694b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|1800799024|376014|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?H1voHeiAKH2orGQxiONk1KWZ2YdElyHQMkT1nfw3A1sz5iGZNh8E4f9YIyB3?=
+ =?us-ascii?Q?C/Wu+CfxKn8GUbR/TgmqFXG2wS4yT1t+iAyw9WJMVPJ9IouTs8DmPKgcVB90?=
+ =?us-ascii?Q?m4PsbLV1QkAKjXFRL1Mm1Ak4PMA2FKoXc3Mx5hqh44HuqfprMHsQF7LaeSkb?=
+ =?us-ascii?Q?hG5s7zZbuCn/niMC19dbzCkBt7zv43MdJFcCrN21ww9rWEmO7eT72mFX2XEm?=
+ =?us-ascii?Q?ATcv6R4wh2/wVZ61jzJ5J63ju/ZCbfefzOjJTc7uitYy3xEIwW/4PF4ljgY4?=
+ =?us-ascii?Q?M2mtApRKXtQJsLNaSXjanX6/NAxKnx5DycDFD2zOOHkLEDcb/pIKRpZjsoaz?=
+ =?us-ascii?Q?j893fNM4lDrJ68KEsa6H6GbgfBRwZ8hy33IVImFJx1QWBG3iAiZpoHyq24kZ?=
+ =?us-ascii?Q?Hr0ickaXnp8k2VzhkczoWArwFLI2ZbGxSn7GKmnqD4BN+Jgk7rKszrBcjcv6?=
+ =?us-ascii?Q?ku8czYLwu1q8HgcNQ5Z/eyXobelSSXhGXMQdYAbsR1W4/GThKRyUVYsPpxzr?=
+ =?us-ascii?Q?TPkF55FKzp3xCe6SVjvOTfDU2BXEmRrFDuZiWtefDg0Up8xK6Aeb44ouys63?=
+ =?us-ascii?Q?gpPaFSLVPo+zjKc1fPQj7kTp15uAzlFlO/ejC+vu4zXjzi1nn0ztYn7XPF+e?=
+ =?us-ascii?Q?2QE6erKaTMw11TrG6WQobBHMyD60zAeILRmehCXGoTrWaRWwXfPahXIgZmvb?=
+ =?us-ascii?Q?8alGG21fSvbv7f5E+MYKVLevXuJmxRF04Mq2EnoR2YwY/X7nsjHpoOhDnELv?=
+ =?us-ascii?Q?okiDmW89t9KSHULLW//ayTdhA/whA9mcPhgn0k7aLmYGuVLGUwSJHz9RcNdA?=
+ =?us-ascii?Q?GZtZ0VGnSdLnZU6+BgBn1i8EGkETI2SzO0IpAnmZJDy4SDzRmuoyiTHoZ6Ot?=
+ =?us-ascii?Q?mnEDPuRLRkJBQ0+NggOAhTS6Ffe0r/48ObEyNy4XGVfMcYtE6ypqWK40ENjl?=
+ =?us-ascii?Q?SfnpRyqK5kKS4dkNGzbzV2BH14FWaRmZ1tBLlL787Bmfjy2+9MH2HwgXgpn3?=
+ =?us-ascii?Q?Jfwupw0nX2Jmh1Opjpo3QOLmPNhOZ/89Fuujyj1oDM7Lbgd/XRnApO2NeX16?=
+ =?us-ascii?Q?r/aEQVlCmzbrvGtmxK0pVFTFrncWJeLFtXnFDT6CsfjUkqridhNPLP69mF2p?=
+ =?us-ascii?Q?H5pf1H2GzEWxX5tT7mGcnD2aYrYh5geara0C5rKBdKJPAcjTC4AB/Q+M5u5m?=
+ =?us-ascii?Q?xb5URZtMpYHdvLRJhXBTlDdnuJ7m8yCwsN2CRdMM6J2rlV9c1heS5vm/3Lfc?=
+ =?us-ascii?Q?WiN8voIH+0JSp+H/XG0nnL8xI5zViUbbQmqvLM4jvP17UnrHDjqqOSBWzWKm?=
+ =?us-ascii?Q?CdNsbyzrvOL9u9WOm1fJqv487TOqSkttgKIRiyjC6JatCg6+an9d7nNqmLao?=
+ =?us-ascii?Q?hOdKJhR7LgYB6oYkBu+R+5pwd3iG?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(1800799024)(376014)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 15:24:07.4239
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02c3d9b1-ad89-47dd-abb5-08dced2d694b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000013F.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4294
 
-On 10/15/24 03:00, zhouyuhang wrote:
-> 
+From: Yonatan Maman <Ymaman@Nvidia.com>
 
-[snip] for clarity.
+This patch series aims to enable Peer-to-Peer (P2P) DMA access in
+GPU-centric applications that utilize RDMA and private device pages. This
+enhancement is crucial for minimizing data transfer overhead by allowing
+the GPU to directly expose device private page data to devices such as
+NICs, eliminating the need to traverse system RAM, which is the native
+method for exposing device private page data.
 
->>>>>> Why is this necessary? This is defined in linux/capability.h.
-> 
-> Sorry for not noticing this before.
-> This is to be compatible with some older versions of linux/capability.h that do not define this macro.
-> 
->>>>>>
->>>>>>> +int capget(cap_user_header_t header, cap_user_data_t data);
->>>>>>> +int capset(cap_user_header_t header, const cap_user_data_t data);
->>>>>>
->>>>>> In general prototypes such as these should be defined in header
->>>>>> file. Why are we defining these here?
->>>>>>
->>>>>> These are defined in sys/capability.h
->>>>>>
->>>>>> I don't understand this change. You are removing sys/capability.h
->>>>>> which requires you to add these defines here. This doesn't
->>>>>> sound like a correct solution to me.
->>>>>>
->>>>>
->>>>> I tested it on my machine without libcap-dev installed, the /usr/include/linux/capability.h
->>>>>
->>>>> is on this machine by default. Successfully compiled using #include <linux/capability.h>
->>>>>
->>>>> but not with #include <sys/capability.h>. This patch removes libcap library dependencies.
->>>>>
->>>>> And we don't use any part of sys/capability.h other than these two syscalls. So I think that's why it's necessary.
->>>>
->>>> You are changing the code to not include sys/capability.h
->>>> What happens if sys/capability.h along with linux/capability.h
->>>>
->>>> Do you see problems?
->>>>
+To fully support Peer-to-Peer for device private pages, the following
+changes are proposed:
 
+`Memory Management (MM)`
+ * Leverage struct pagemap_ops to support P2P page operations: This
+modification ensures that the GPU can directly map device private pages
+for P2P DMA.
+ * Utilize hmm_range_fault to support P2P connections for device private
+pages (instead of Page fault)
 
->>>
->>> I'm sorry, maybe I wasn't clear enough.
->>> When we install the libcap library it will have the following output:
->>>
->>> test@test:~/work/libcap$ sudo make install | grep capability
->>> install -m 0644 include/sys/capability.h /usr/include/sys
->>> install -m 0644 include/sys/capability.h /usr/include/sys
->>> /usr/share/man/man5 capability.conf.5 \
->>>
->>> It installs sys/capability.h in the correct location, but does not
->>>
->>> install linux/capability.h, so sys/capability.h is bound to the libcap library
->>
->> It won't install inux/capability.h unless you run "make headers" in
->> the kernel repo.
->>
->>>
->>> and they will either exist or disappear together. Now I want to remove
->>>
->>> the dependency of the test on libcap library so I changed the code that it
->>>
->>> does not contain sys/capability.h but instead linux/capability.h,
->>>
->>> so that the test can compile successfully without libcap being installed,
->>>
->>> these two syscalls are not declared in linux/capability.h(It is sufficient for test use except for these two syscalls)
->>>
->>> so we need to declare them here. I think that's why the commit 663af70aabb7
->>>
->>> ("bpf: selftests: Add helpers to directly use the capget and capset syscall") I refered to
->>>
->>> does the same thing. As for your question "What happens if sys/capability.h along
->>>
->>> with linux/capability.h", I haven't found the problem yet, I sincerely hope you can
->>>
->>> help me improve this code. Thank you very much.
->>
->> Try this:
->>
->> Run make headers in the kernel repo.
->> Build without making any changes.
->> Then add you changes and add linux/capability.h to include files
->>
->> Tell me what happens.
+`IB Drivers`
+Add TRY_P2P_REQ flag for the hmm_range_fault call: This flag indicates the
+need for P2P mapping, enabling IB drivers to efficiently handle P2P DMA
+requests.
 
-Try the above first.
+`Nouveau driver`
+Add support for the Nouveau p2p_page callback function: This update
+integrates P2P DMA support into the Nouveau driver, allowing it to handle
+P2P page operations seamlessly.
 
->>
->> The change you are making isn't correct. Because you don't want to
->> define system calls locally in your source file.
->>
-> 
-> Thanks, I see.
-> Maybe I should move them to a new header file and resend a patch.
+`MLX5 Driver`
+Optimize PCI Peer-to-Peer for private device pages, by enabling Address
+Translation service(ATS) for ODP memory.
 
-No. Please see above. I would rather not see these defined at all
-locally.
+Yonatan Maman (4):
+  mm/hmm: HMM API for P2P DMA to device zone pages
+  nouveau/dmem: HMM P2P DMA for private dev pages
+  IB/core: P2P DMA for device private pages
+  RDMA/mlx5: Enabling ATS for ODP memory
 
-thanks,
--- Shuah
+ drivers/gpu/drm/nouveau/nouveau_dmem.c | 117 ++++++++++++++++++++++++-
+ drivers/infiniband/core/umem_odp.c     |   2 +-
+ drivers/infiniband/hw/mlx5/mlx5_ib.h   |   6 +-
+ include/linux/hmm.h                    |   2 +
+ include/linux/memremap.h               |   7 ++
+ mm/hmm.c                               |  28 ++++++
+ 6 files changed, 156 insertions(+), 6 deletions(-)
+
+-- 
+2.34.1
+
 
