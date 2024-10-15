@@ -1,172 +1,197 @@
-Return-Path: <linux-kernel+bounces-366619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD57999F7E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:09:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157E699F7E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C7A1C21100
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:09:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93A831F2239A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71C11F76D7;
-	Tue, 15 Oct 2024 20:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648D31F76B4;
+	Tue, 15 Oct 2024 20:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UNfs8g3h"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfIeVi2w"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823F51B3936;
-	Tue, 15 Oct 2024 20:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E991B3936
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729022940; cv=none; b=Gtv9mBF7wJDkTC4OOoYuz9VFK1a1WxF3N72nBI+ZaSkfw2musPBXqPGdNRzdy7oJSbf3zj4EiHJlv3XEcMQ/HWyg4k1l5xNw3l0LZVrNKn8qg2tDojdwo4cHZpSBEXHXmQ1G7cK/DeTikAECzdid/S4uVaNx8G3WBtbjrRgxDBQ=
+	t=1729023036; cv=none; b=MbFRj82gf4qMf325a9oXv3o9HGAWLuAYO93Kt5P8Yc4r5n/hCzahuJiTm4u9eSQdooAVp2Tqs/j1E+RhZRr/f4pKOuroJN2ohb8kb3aKrOHjuAZ+UAka3Wob5i9mB8GoP9Jx9HTS1ToAPq3coLiLadkE+w6iTMZAM1Li5pkmYgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729022940; c=relaxed/simple;
-	bh=j2OJ4nJ22YAGX1EN1Ws9619MuiTw8/GcQUNttC73stc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pWndNrWop9YuUzDfXLo0gKyMQard1QsCRW+dZSQNNb5KVjCCEJV/vwIzBfE1ebgQ4gqEUzoRbWMxKSNKawQI/YEH9CDJ7BwtU7gO3bcZKE+7g+QpiSHraJlBWtVHyKkFMkj4nC07rF8Ie5lR5ZuNa+FChg9hvVSNt2aJWmcjLRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UNfs8g3h; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FJuBhD002725;
-	Tue, 15 Oct 2024 20:08:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=69L/af
-	3IKivmKEyI/Ji8fL2xhTF/EYJNbW9XFUPCA2Q=; b=UNfs8g3hi7tf/L+cDxN+IV
-	E6mgZzQ7BANlXNe2isaXxE4G4VApivQAH0fDC10cYAIF4JEWIvBjQ1H7g5VJYRh9
-	r5vU69++lQRkTRsbqlZ1IES+XfqHoGg/NUbaYrHx1rbvrPH/twGd4AjyxDBn+IIk
-	aI3eY7yPMksw4idZj1hsUGyeNxmeEA/bSXTNvrXaUH5jiWKDkSO+WZp845cFbz0Z
-	sSNfUn3QiwM4Sx2WOta6cmJ08hCsYUFa3ln/mJcoq8mNxWpOU/CExCinL2p5qb8X
-	W7FrLtAr8fNqI4n5T7RR4PdrU0+MUu8/8Y0Okw/XybVhDSRdU03ec/oTG7LY7b5Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429xywr1rg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 20:08:30 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FK8TK7028463;
-	Tue, 15 Oct 2024 20:08:30 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429xywr1ra-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 20:08:29 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FJC56T005930;
-	Tue, 15 Oct 2024 20:08:29 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428650wd5u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 20:08:29 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FK8SQi48562460
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 20:08:28 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A2B2B58059;
-	Tue, 15 Oct 2024 20:08:28 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D8AD558058;
-	Tue, 15 Oct 2024 20:08:27 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.187.172])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 15 Oct 2024 20:08:27 +0000 (GMT)
-Message-ID: <036746bc4e37ff10a18b5fdffd6fdee561dd5bfe.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>,
-        linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
-        mapengyu@gmail.com, David Howells <dhowells@redhat.com>,
-        Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
- <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe
- <jgg@ziepe.ca>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 15 Oct 2024 16:08:27 -0400
-In-Reply-To: <64710fe1db1432ca8857ec83fff4809ab1550137.camel@kernel.org>
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-	 <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
-	 <21b46f4882f0b9b12304d7786bd88f33a7ad2b97.camel@huaweicloud.com>
-	 <a0068539450a81fdd363d078521cb3822c54608b.camel@kernel.org>
-	 <e70c55c6edea2a5be7786ee04a85778193237444.camel@kernel.org>
-	 <04dc04872f2925166f969b43852161d468ee899a.camel@linux.ibm.com>
-	 <64710fe1db1432ca8857ec83fff4809ab1550137.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: vEnh6mst_1x2h32pBMI1SmYyzJM4-QtK
-X-Proofpoint-GUID: SXjOjMcLJvo3WHzLFeaengjc6HSy-qJw
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729023036; c=relaxed/simple;
+	bh=+IZLUbdC3a5VkG6ekzM6z6vzbHg+prIGmN6C1yRHEsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WDb9axVPKgGzgBiJlbut3Ae0zTkG+y7TsaqCZmE2o6hxuy4i3CpWC96mNizuzH2/7rAkVadEML1dj3t3A4411OtgVDZYeGCYdGGZbKcjMZHMX1d6hPTDZ+7uRFwg5hwMP4/ftb5JJxLX2zno3x2diwU8O2F+a5OXW3ONJrBKufw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfIeVi2w; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-50d431b0ae2so120269e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:10:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729023033; x=1729627833; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uoX7+hLaC0C/69Spu6+hOK+MSkV4/XZ7Txsz18m8pxg=;
+        b=OfIeVi2wNm+DtPsLDRerkuZv8c5upZl4OoNPLJP+OWSj1M8QEBX2z76icG+/T9Hy+e
+         OAcUT0hX6psc7D0445gd7I5NRrpwlXj0RBBHgfIq1HEduMORoNlHXML8CV/OGPfnib5Y
+         cDy1f25CoPzKSJwuIAmf4CT8x56bDQxVlCEXOu6z0gNSQ+JBS5ayzUI2hwJQn1fcYNWt
+         lLTLJ0zpq4xyJvW8vrc0XA8at32/h9e5VpOzvJSQkaAhakLNxfx5jlAnvk/y/s3FZl9j
+         DTXcrXnHQ6z+tKmVk/zEGRQrJPqdZaoeIsKZmy2/rSYsKB1OfqGD5ikm8EE7IRU5GrQJ
+         zStw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729023033; x=1729627833;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uoX7+hLaC0C/69Spu6+hOK+MSkV4/XZ7Txsz18m8pxg=;
+        b=BljV0ByFBzJjiBkDxdEeaxM9pv9dTqaeq0aVy9RomX+rLpqD9YDo9MoQpzgcYJW22g
+         n53negeF1fBc3yXrNO0XarlsJaX+Z4iSTMoYOXHU/dlOjeEiCYw7gpbU7SIqy6wSGG9T
+         ApbNkopZzIQE8/2k0eE2rHK1VQCdc41ga4qqOl8HvFN1HerMumZl0indy0iP/9XKO+dq
+         o4WP4u9cxL6gl+LesD5crzRLWdu23VcBmjScWOiwYrSXeURKIDbGvb82d/6zEpSra/jL
+         iDwuAJqdNScGgn59lWTwefbAXSUMlOQFj8tDrMtBGo75xIwY7Neln5DzalH5sbymwjvx
+         9nWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLHdBSsNB0C2G749M17aLQaicCMkDk8qOJZF97cvNV5aBJoCp4W4nVYBTiTu3vTQx+KbOOSccuKqzuGME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoHlTI0rQbKBRfzeLBkhq/p8qxpmNNJrJ+8JJOB9yPYkwuxMSV
+	QBVqQ08SSOhBqFmL3VueuQfaSbSoWQ2msteJnQTjW9NVihsL+/RWHXo729oVlKDXgeOpwfZOjoG
+	b+SUu3wyQZUy8imhx/3a02G2qADc=
+X-Google-Smtp-Source: AGHT+IEsYPsTX4eylMTds43/bzmQobTVe9+2pqaFnScuD8Bd/Iwkduivlw6dP8DrCJn+8z6kLaQ0xdwcdJurNvKh8Ag=
+X-Received: by 2002:a05:6122:2216:b0:50c:ef20:6bed with SMTP id
+ 71dfb90a1353d-50d1bb18ba6mr11219904e0c.3.1729023032911; Tue, 15 Oct 2024
+ 13:10:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- spamscore=0 priorityscore=1501 phishscore=0 adultscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1015 impostorscore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410150135
+References: <20240914063746.46290-1-21cnbao@gmail.com> <92f97c8e-f23d-4c6e-9f49-230fb4e96c46@redhat.com>
+ <CAGsJ_4zdqXtvUS8fHzUhM=iGrPpC8X7uw8wt4sSfCvsrh7um3w@mail.gmail.com> <7dcd3446cd8c4da69242e5d6680c1429@honor.com>
+In-Reply-To: <7dcd3446cd8c4da69242e5d6680c1429@honor.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 16 Oct 2024 09:10:21 +1300
+Message-ID: <CAGsJ_4xF6FuncfErMmMotkOYNGZcqPXqS20zORAyVZ4LYbO0_w@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: mglru: provide a separate list for lazyfree anon folios
+To: gaoxu <gaoxu2@honor.com>
+Cc: David Hildenbrand <david@redhat.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"mhocko@suse.com" <mhocko@suse.com>, "hailong.liu@oppo.com" <hailong.liu@oppo.com>, 
+	"kaleshsingh@google.com" <kaleshsingh@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lokeshgidra@google.com" <lokeshgidra@google.com>, "ngeoffray@google.com" <ngeoffray@google.com>, 
+	"shli@fb.com" <shli@fb.com>, "surenb@google.com" <surenb@google.com>, "yuzhao@google.com" <yuzhao@google.com>, 
+	"minchan@kernel.org" <minchan@kernel.org>, Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-10-14 at 15:34 +0300, Jarkko Sakkinen wrote:
-> On Mon, 2024-10-14 at 07:45 -0400, Mimi Zohar wrote:
-> > > > For server/IMA use case I'll add a boot parameter it can be
-> > > > either on or off by default, I will state that in the commit
-> > > > message and we'll go from there.
-> >=20
-> > Sounds good.
->=20
-> But only after this patch set lands. I gave this a thought and since
-> this patch set is specifically for a specific Bugzilla bug that it
-> closes, I have no interest to increase its scope.
+On Tue, Oct 15, 2024 at 11:03=E2=80=AFPM gaoxu <gaoxu2@honor.com> wrote:
+>
+> >
+> > On Wed, Sep 18, 2024 at 12:02=E2=80=AFAM David Hildenbrand <david@redha=
+t.com>
+> > wrote:
+> > >
+> > > On 14.09.24 08:37, Barry Song wrote:
+> > > > From: Barry Song <v-songbaohua@oppo.com>
+> > > >
+> > > > This follows up on the discussion regarding Gaoxu's work[1]. It's
+> > > > unclear if there's still interest in implementing a separate LRU
+> > > > list for lazyfree folios, but I decided to explore it out of
+> > > > curiosity.
+> > > >
+> > > > According to Lokesh, MADV_FREE'd anon folios are expected to be
+> > > > released earlier than file folios. One option, as implemented by Ga=
+o
+> > > > Xu, is to place lazyfree anon folios at the tail of the file's
+> > > > `min_seq` generation. However, this approach results in lazyfree
+> > > > folios being released in a LIFO manner, which conflicts with LRU
+> > > > behavior, as noted by Michal.
+> > > >
+> > > > To address this, this patch proposes maintaining a separate list fo=
+r
+> > > > lazyfree anon folios while keeping them classified under the "file"
+> > > > LRU type to minimize code changes. These lazyfree anon folios will
+> > > > still be counted as file folios and share the same generation with
+> > > > regular files. In the eviction path, the lazyfree list will be
+> > > > prioritized for scanning before the actual file LRU list.
+> > > >
+> > >
+> > > What's the downside of another LRU list? Do we have any experience on=
+ that?
+> >
+> > Essentially, the goal is to address the downsides of using a single LRU=
+ list for files
+> > and lazyfree anonymous pages - seriously more files re-faults.
+> >
+> > I'm not entirely clear on the downsides of having an additional LRU lis=
+t. While it
+> > does increase complexity, it doesn't seem to be significant.
+> >
+> > Let's wait for Gaoxu's test results before deciding on the next steps.
+> > I was just
+> > curious about how difficult it would be to add a separate list, so I to=
+ok two hours
+> > to explore it :-)
+> Hi song,
+> I'm very sorry, various reasons combined have caused the delay in the res=
+ults.
+>
+> Basic version=EF=BC=9Aandroid V (enable Android ART use MADV_FREE)
+> Test cases: 60 apps repeatedly restarted, tested for 8 hours;
+> The test results are as follows:
+>         workingset_refault_anon   workingset_refault_file
+> base        42016805                92010542
+> patch       19834873                49383572
+> % diff       -52.79%                  -46.33%
+>
+> Additionally, a comparative test was conducted on
+> add-lazyfree-folio-to-lru-tail.patch[1], and the results are as follows:
+>                workingset_refault_anon   workingset_refault_file
+> lazyfree-tail        20313395                 52203061
+> patch             19834873                 49383572
+> % diff              -2.36%                    -5.40%
+>
+> From the results, it can be seen that this patch is very beneficial and
+> better than the results in [1]; it can solve the performance issue of hig=
+h
+> IO caused by extensive use of MADV_FREE on the Android platform.
+>
 
-Prior to your performance improvement patch set it took >10 minutes to boot,
-when it succeeded booting.  Now on Fedora 40 with "ima_policy=3Dtcb" on the=
- boot
-command line, it's taking ~3 minutes to boot.  Do you really think that is
-acceptable?!
+Thank you for the testing and data. The results look promising. Would you
+mind if I send a v2 with the test data and your tag included in the changel=
+og?
+I mean:
 
-> >=20
-> > >=20
-> > > Up until legit fixes are place distributors can easily disable
-> > > the feature. It would be worse if TCG_TPM2_HMAC did not exist.
-> > >=20
-> > > So I think it is better to focus on doing right things right,
-> > > since the feature itself is useful objectively, and make sure
-> > > that those fixes bring the wanted results.
+Tested-by: Gao Xu <gaoxu2@hihonor.com>
 
-The right thing would have been to listen to my concerns when this was init=
-ially
-being discussed.  The right thing wasn't enabling TCG_TPM2_HMAC by default.
+> Test case notes: There is a discrepancy between the test results mentione=
+d in
+> [1] and the current test results because the test cases are different. Th=
+e test
+> case used in [1] involves actions such as clicking and swiping within the=
+ app
+> after it starts; For the sake of convenience and result stability, the cu=
+rrent
+> test case only involves app startup without clicking and swiping, and the=
+ number
+> of apps has been increased (30->60).
+>
+> 1. https://lore.kernel.org/all/f29f64e29c08427b95e3df30a5770056@honor.com=
+/T/#u
+> >
+> > >
+> > > --
+> > > Cheers,
+> > >
+> > > David / dhildenb
+> > >
+> >
 
-> >=20
-> > Are you backtracking on having a boot parameter here specifically to
-> > turn on/off
-> > HMAC encryption for IMA?
->=20
-> I'm not really sure yet but obviously any change goes through review.
->=20
-> Also fastest route is to send your own RFC's to IMA specific issue.
-> For me it will take some time (post this patch set).
-
-Done.  The patch applies cleanly with/without the TPM performance improveme=
-nt
-patch set.
-https://lore.kernel.org/linux-integrity/20241015193916.59964-1-zohar@linux.=
-ibm.com/
-
-Mimi
+Thanks
+Barry
 
