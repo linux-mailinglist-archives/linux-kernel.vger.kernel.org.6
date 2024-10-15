@@ -1,80 +1,114 @@
-Return-Path: <linux-kernel+bounces-365360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E0699E12A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:33:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D365D99E1C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B439E1F21BF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:33:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99964285D20
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9421C1CACCE;
-	Tue, 15 Oct 2024 08:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JP3f/g+o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13931D12FE;
+	Tue, 15 Oct 2024 08:57:26 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA2318BBA2;
-	Tue, 15 Oct 2024 08:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63241C3F0A;
+	Tue, 15 Oct 2024 08:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728981193; cv=none; b=lY/j8JTM17P4WvLagQUEtTvcKmff5JF4Nx5a+f9MbpGMM93b9/yLFAqQh8Z2E8nvk+FP33XdFOd9wk1GpHACVL3nuGF3Ej9I5e6OSmjvII/yTnPhcHuQkTfMAO92jjmP9lK0HBMD2DR/2q2evEstPw+HCwmLq+KdA98aCMmu/Pc=
+	t=1728982646; cv=none; b=rdFVERkSn4oVMyWGeDq5Nypc8K1sqwRl6VIRj6HR495TTJHkHd6dRTYgfO09QYgppfPPB+Y/AJwd6s3I3FtT1Sf3UV6hJxpir88WVDIGMuGnyr4RTlPwXzXoh0P2CGflo9dhA++B+l44Z7YeBdwbwMWxbjs8nO/Nfj7B0wq7tqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728981193; c=relaxed/simple;
-	bh=qSHMuG4Fq9b0x2gCn0cRZ9FrjmHewU55gF4kABDNxWM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XC5jTQqGox1UlqGkdCpi2y5LzgJQlcXIac1J0OmUHxm5M7ScemLdKohBtyYbkcb3irUE4mqa2f/s8QA6hsdheixo0EwJNPWXZjZ+HSEVqu50AlDCQuiAftinnbbdXnm8Op4X+A9C8JuyiEfqunA4LRTJhPrYsjq5QenNGv0+4V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JP3f/g+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60009C4CEC7;
-	Tue, 15 Oct 2024 08:33:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728981192;
-	bh=qSHMuG4Fq9b0x2gCn0cRZ9FrjmHewU55gF4kABDNxWM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=JP3f/g+opdc1UaZ70uB6cQ6IUa/824NdZeIpu4s1so0/WjMWSo+vSs+3fH1k8rx6n
-	 8xyQAfNpQzC+eKxnIoVLHk7u1cG5NExJzfo2kDnFp/u29xoA8h6jCnp8qE2YWKqew2
-	 qTROn8srssPzf0DVTmpaIfJHJa5jVCR/4a9EDAvFMe9g6clsgrkYFtGFnusQ+duvSQ
-	 UXpYWDwFhMHnjeLCDoIbstSCgoXvYW+RdK0ZXG8XSMPNakwDPaiaXNpi6nyf72FX/k
-	 YIee06lE6+LLeh1SjU4gYpyaLRsXyA0j3D6jPQ85FJLVSmt5fM+lzTyh55UMOTRcSw
-	 51UJaPW/LRZyg==
-From: Lee Jones <lee@kernel.org>
-To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, 
- Aaro Koskinen <aaro.koskinen@iki.fi>, Lee Jones <lee@kernel.org>, 
- Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>, linux-clk@vger.kernel.org, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Andreas Kemnade <andreas@kemnade.info>
-In-Reply-To: <20241014161109.2222-2-andreas@kemnade.info>
-References: <20241014161109.2222-1-andreas@kemnade.info>
- <20241014161109.2222-2-andreas@kemnade.info>
-Subject: Re: (subset) [PATCH v5 1/3] mfd: twl-core: Add a clock subdevice
- for the TWL6030
-Message-Id: <172898119013.384451.4986094816910935104.b4-ty@kernel.org>
-Date: Tue, 15 Oct 2024 09:33:10 +0100
+	s=arc-20240116; t=1728982646; c=relaxed/simple;
+	bh=U6yQ/f3Naq0OsRV96BmYWiqs7sstzCIDACQi/JYJ5nY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=boZHF6KREYEZZVQkcqh5+UlTU0JfpZtDkobISdLyy0+YzQrHcQK82sg9jwoCNYYEyCN+0qXubcqDfWBJPvr2FyE48dTz4pOJuLbCpIFWmYFP+r7BZWGPm3C5zYcFTAIEERGH3/WSXFrtm/hUCWzBMDOeQo4tlzatZrDDlzbsM8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 56AFA200CA9;
+	Tue, 15 Oct 2024 10:57:22 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1AC7E2004C4;
+	Tue, 15 Oct 2024 10:57:22 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DF572183DC04;
+	Tue, 15 Oct 2024 16:57:19 +0800 (+08)
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	frank.li@nxp.com,
+	l.stach@pengutronix.de,
+	robh+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	festevam@gmail.com,
+	s.hauer@pengutronix.de
+Cc: hongxing.zhu@nxp.com,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	kernel@pengutronix.de,
+	imx@lists.linux.dev
+Subject: [PATCH v4 0/9] A bunch of changes to refine i.MX PCIe driver
+Date: Tue, 15 Oct 2024 16:33:24 +0800
+Message-Id: <1728981213-8771-1-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
 
-On Mon, 14 Oct 2024 18:11:07 +0200, Andreas Kemnade wrote:
-> Also the TWL6030 has some clocks, so add a subdevice for that.
-> 
-> 
+A bunch of changes to refine i.MX PCIe driver.
+- Add ref clock gate for i.MX95 PCIe by #1, #2 and #9 patches.
+  The changes of clock part are here [1].
+  [1] https://lkml.org/lkml/2024/10/15/390
+- #3 and #4 patches clean i.MX PCIe driver by removing useless codes.
+  Patch #3 depends on dts changes. And the dts changes had been applied
+  by Shawn, there is no dependecy now.
+- Make core reset and enable_ref_clk symmetric for i.MX PCIe driver by
+  #5 and #6 patches.
+- Use dwc common suspend resume method, and enable i.MX8MQ, i.MX8Q and
+  i.MX95 PCIe PM supports by #7 and #8 patches.
 
-Applied, thanks!
+v4 changes:
+It's my fault that I missing Manivanna in the reviewer list.
+I'm sorry about that.
+- Rebase to v6.12-rc3, and resolve the dtsi conflictions.
+  Add Manivanna into reviewer list.
 
-[1/3] mfd: twl-core: Add a clock subdevice for the TWL6030
-      commit: 5ebc60259a0fdd13aef077726b1773f1ae091efc
+v3 changes:
+- Update EP binding refer to comments provided by Krzysztof Kozlowski.
+  Thanks.
 
---
-Lee Jones [李琼斯]
+v2 changes:
+- Add the reasons why one more clock is added for i.MX95 PCIe in patch #1.
+- Add the "Reviewed-by: Frank Li <Frank.Li@nxp.com>" into patch #2, #4, #5,
+  #6, #8 and #9.
+
+[PATCH v4 1/9] dt-bindings: imx6q-pcie: Add ref clock for i.MX95 PCIe
+[PATCH v4 2/9] PCI: imx6: Add ref clock for i.MX95 PCIe
+[PATCH v4 3/9] PCI: imx6: Fetch dbi2 and iATU base addesses from DT
+[PATCH v4 4/9] PCI: imx6: Correct controller_id generation logic for
+[PATCH v4 5/9] PCI: imx6: Make core reset assertion deassertion
+[PATCH v4 6/9] PCI: imx6: Make *_enable_ref_clk() function symmetric
+[PATCH v4 7/9] PCI: imx6: Use dwc common suspend resume method
+[PATCH v4 8/9] PCI: imx6: Add i.MX8MQ i.MX8Q and i.MX95 PCIe PM
+[PATCH v4 9/9] arm64: dts: imx95: Add ref clock for i.MX95 PCIe
+
+Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-common.yaml |   4 +-
+Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml     |   1 +
+Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml        |  25 ++++++++++--
+arch/arm64/boot/dts/freescale/imx95.dtsi                         |  18 +++++++--
+drivers/pci/controller/dwc/pci-imx6.c                            | 166 +++++++++++++++++++++++++++-------------------------------------------------
+5 files changed, 97 insertions(+), 117 deletions(-)
 
 
