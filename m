@@ -1,97 +1,121 @@
-Return-Path: <linux-kernel+bounces-365237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08F099DF55
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:31:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EB199DF57
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A221C20FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:31:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07223B21782
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295CC1741DC;
-	Tue, 15 Oct 2024 07:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5RxPUCr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C18F4C7E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7757618B48A;
+	Tue, 15 Oct 2024 07:31:32 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DA69474;
+	Tue, 15 Oct 2024 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728977481; cv=none; b=fM9BIZTzMqLVWSj76yEEeYzQI/m2F2PM50ZCbRer94MEby1E1xF8ZGge/vmAFyJPRKWq95z28zR5A29zPXhG9l8Uz6V67B4+Veb2TV54HEvrOHDtfX/1KPUnv5FNCRs9oUzgg55NNdwY/4/aEgcT7Ivo7gyHkxotnIGIfOgGxFE=
+	t=1728977492; cv=none; b=fQmNKYN2Uh2XxbUvNXFGGgWRkRzqmlC0O43DWF0z4QAyksxaF5MuB7T82j5/8fOWphq7ytiA8iIq/3e2Qdig4M5FGb2cOUnesaXBjjjeU3jZFsPv5O+Q6IApO+75NEJl/xWMx9D9F/ZNFueXLuXzT5VD8T5TpQ6xhwgonQzlHVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728977481; c=relaxed/simple;
-	bh=Q9g8DeRx0E0haActJkNDnfZjJ2WLhwa/6Ap91qIZX7M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pTd2d+3ZcTWsRmqJ0XPs+T41a/7cv3vswwUmcc4fS7NqUJl77fRqdj38EcR41gtwGF0lTE3xL1EcW/hqY3HCZnb1hkvhQ+2d/2+VBT/XC5F98ELxW/gJHtN4nSluQxQwB34cc0WeWUHHWiGihHusE1rU/Yza7p8e01i/fD0RYBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5RxPUCr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F2E8C4CEC7;
-	Tue, 15 Oct 2024 07:31:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728977481;
-	bh=Q9g8DeRx0E0haActJkNDnfZjJ2WLhwa/6Ap91qIZX7M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=c5RxPUCreYGHsx0j/dGQl6LL7wZ+FBGyDJ3m+SJVfIjuxcL5IJSxhkVW/9n79cAyU
-	 /dLhI0uvfp4UbECZ6JF7FmLB5lNrKbCyS5wueTrIyrUsVfe3Jj5x1gJ8rPt9DxNdP2
-	 v9vQzRbheD1QYTC8mN2R4uP/L6HrvKNS8D0Iuf/s27HNYNTEzX18+tcvcokt8IWCkH
-	 +/aniVFuzpCT4Vgd3xSo/xWzKC6x2SJ/YwVHNCf1cwotSTWkMT15DbPYJYRYx/Dhg+
-	 7S6T0ONzw1hOrru5DkSlDF4oH/xmy/isQYFZ2M6/c0YEzCH016s/RUOrsJkxxL+S3w
-	 ytOKF3BweUOHA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panel: s6e3ha8: select CONFIG_DRM_DISPLAY_DSC_HELPER
-Date: Tue, 15 Oct 2024 07:30:50 +0000
-Message-Id: <20241015073115.4128727-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728977492; c=relaxed/simple;
+	bh=qkl07GsDAQF6Pr/zHIiOpWct36waJvB8FxgzPaEqV0o=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=G1b5zTnpVAcaKSyN+qxx1CLJFlm/0fmuRtMB7p9O8LYaWLa804et3QD7mLAIX3q8OopzQ7xf+PmKXjSGISsQ3EqVpnAeKZ/kskp+UKiwilwk7Q/9EjfFZU+pymKNw2anAxEuMpW4oxYzpKjI32yH+/INSYyvrur7VOoZskSnpmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Axw3BNGg5nrAcdAA--.42145S3;
+	Tue, 15 Oct 2024 15:31:25 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMCx3tVLGg5nbKAqAA--.21873S3;
+	Tue, 15 Oct 2024 15:31:23 +0800 (CST)
+Subject: Re: [PATCH 2/4] kunit: qemu_configs: add LoongArch config
+To: =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <thomas.weissschuh@linutronix.de>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+References: <20241014-kunit-loongarch-v1-0-1699b2ad6099@linutronix.de>
+ <20241014-kunit-loongarch-v1-2-1699b2ad6099@linutronix.de>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <0de2d738-0ace-3c17-8ee5-cc307725e27b@loongson.cn>
+Date: Tue, 15 Oct 2024 15:31:04 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20241014-kunit-loongarch-v1-2-1699b2ad6099@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCx3tVLGg5nbKAqAA--.21873S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7ZFWfAF4fKryfuF1ruFyUArc_yoW8Gr1xpr
+	WxZay5Kr48KF1fXws7Gryq9FWrGrs2kF42gFW3JryrWrZ8G348uw10g342vFnFy398t3WF
+	qFWvqFn0qF1UJ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4cdbUU
+	UUU
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Thomas,
 
-The new driver needs the dsc helper code to be available:
+Thanks for work it out on LoongArch.
 
-x86_64-linux-ld: vmlinux.o: in function `s6e3ha8_amb577px01_wqhd_prepare':
-panel-samsung-s6e3ha8.c:(.text+0x16b1e65): undefined reference to `drm_dsc_pps_payload_pack'
+Reviewed-by: Bibo Mao <maobibo@loongson.cn>
 
-Select it from Kconfig as we do for other similar drivers.
-
-Fixes: 779679d3c164 ("drm/panel: Add support for S6E3HA8 panel driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/panel/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index ddfaa99ea9dd..ffe7eff71496 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -626,6 +626,7 @@ config DRM_PANEL_SAMSUNG_AMS639RQ08
- config DRM_PANEL_SAMSUNG_S6E88A0_AMS452EF01
- 	tristate "Samsung AMS452EF01 panel with S6E88A0 DSI video mode controller"
- 	depends on OF
-+	select DRM_DISPLAY_DSC_HELPER
- 	select DRM_MIPI_DSI
- 	select VIDEOMODE_HELPERS
- 
--- 
-2.39.5
+On 2024/10/14 下午7:36, Thomas Weißschuh wrote:
+> Add a basic config to run kunit tests on LoongArch.
+> This requires QEMU 9.1.0 or later for the necessary direct kernel boot
+> support.
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+>   tools/testing/kunit/qemu_configs/loongarch.py | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
+> 
+> diff --git a/tools/testing/kunit/qemu_configs/loongarch.py b/tools/testing/kunit/qemu_configs/loongarch.py
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..e7bb7c07819677dfdefac012821a732555813cae
+> --- /dev/null
+> +++ b/tools/testing/kunit/qemu_configs/loongarch.py
+> @@ -0,0 +1,16 @@
+> +from ..qemu_config import QemuArchParams
+> +
+> +QEMU_ARCH = QemuArchParams(linux_arch='loongarch',
+> +			   kconfig='''
+> +CONFIG_EFI_STUB=n
+> +CONFIG_PCI_HOST_GENERIC=y
+> +CONFIG_SERIAL_8250=y
+> +CONFIG_SERIAL_8250_CONSOLE=y
+> +CONFIG_SERIAL_OF_PLATFORM=y
+> +''',
+> +			   qemu_arch='loongarch64',
+> +			   kernel_path='arch/loongarch/boot/vmlinux.elf',
+> +			   kernel_command_line='console=ttyS0',
+> +			   extra_qemu_params=[
+> +					   '-machine', 'virt',
+> +					   '-cpu', 'max',])
+> 
 
 
