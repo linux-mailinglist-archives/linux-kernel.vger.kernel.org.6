@@ -1,89 +1,153 @@
-Return-Path: <linux-kernel+bounces-365615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7468999E500
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:06:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8D699E502
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11EF9B25123
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:06:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E27FB2520E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF211D6DC9;
-	Tue, 15 Oct 2024 11:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZNTfiIW5"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5663F1D89EC;
+	Tue, 15 Oct 2024 11:06:09 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2C11D5AA7
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F03A1D5AA7;
+	Tue, 15 Oct 2024 11:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990358; cv=none; b=pY8H8lSKb2fUFslaBCJCv7LNFY3OfjPf8RTW5YRtqD84YNkfEigbEGI5sYJasCt3cJv4Io5jTrTllKvPIsS6q8wb0jhlZzXvgrc2zCP3ZasNZMXdWnTX9o/I9JiSYp7JiIMC/FQa7Nb8Rzjod7mrcOvEnyWGtoLgt67yriNpoF8=
+	t=1728990368; cv=none; b=oLCn6cwF63+50Bwk7DAzHuG6mE0yWWgdQ0hJBs8264EQP9u1aHmGjhbNOmogKqKYDcx+M6b0vmUYo8xPhq344wp22kv/r6n36zfvPDvV3nAhOYz+xuae6xDZ6f9uvJvmMbleZMMSdtO48Wz7ln+vxOiCVRRRGMfueFpGvkwSc8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990358; c=relaxed/simple;
-	bh=AzRRqPDK3ejkGJ1KpgqSIJYMjEzCj0QCSKvVeuJY9gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GFsR0YMdX1y3pruuRJXZLQ4z74CeaEpG+paAh9PQ7pmaXJAAQBUzOkV3DEaMpHgvcVMFNUCSECpaqUQknYFwXwOD6u0dQ61Qt/+w/CNWCY2lStQijrhGY0id0rs6eEs6wEmeDyG7hXtMcGf8ahMlrwE/M2tUXS+fRIapjM9C1J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZNTfiIW5; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=l33eO8/FI/SCiAplEu+7yzE6KmjybAxtOSv9i13d6lY=; b=ZNTfiIW5Dnz6gLMFAOkXMPFfIQ
-	cl4XgEV2ZOi18TDsDd4t/VUmIQtY/FIAG3y62h0tPzNe5SEJ8PByqcpg6S1iaA1W5T2akTyO5PQ9C
-	nrdWj+u9ysmJ1Qe7krwW1d34B9823Pxund8ZLVrKj+MD3L+tD3Wh/mxCG9vCSltYRE/ESisVqHasu
-	d6dw2XTVu3C9QooAPcHyzprfc1WtJZ7ZGpmCQmJC+wgl0C/ywLj5oGcWcjzhnpBZ8D3i3YRYgo/CI
-	JDGD5ZOZnmm4h/QdtHUB5+KMHw1+xa4IdkYYAm8yo/GtCCPBl8ak1V1X/eorRDO+ytOkzcfdVBEw4
-	DN9Cb6nA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t0fN3-00000006XcP-3xF7;
-	Tue, 15 Oct 2024 11:05:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1AA44300777; Tue, 15 Oct 2024 13:05:45 +0200 (CEST)
-Date: Tue, 15 Oct 2024 13:05:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Russ Anderson <rja@hpe.com>,
-	Dimitri Sivanich <sivanich@hpe.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/topology: improve topology_span_sane speed
-Message-ID: <20241015110544.GQ16066@noisy.programming.kicks-ass.net>
-References: <20241010155111.230674-1-steve.wahl@hpe.com>
- <60473622-e6f9-561b-a269-9da64add4966@amd.com>
+	s=arc-20240116; t=1728990368; c=relaxed/simple;
+	bh=3zML59RatoNqBYcR7Z7wp7j3ByZzVl8OfAGbcMBzujA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uQizqUvHJEkoZZwBof79aDdA4lBGUOHJMdqy0EkUWDtJ2LWsjTl4PjBAwkjdwbSbjpimhf0X/blu+/8RYAOgRwZV+gJHUyP7IJcFKmM6TeIeY8LEZnQV6gSl4VpWI+M1aNOKFfM+HSjnFBOMpuf4WoNRttcPPffzm3Oggr01txA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XSWSP4634zpX0l;
+	Tue, 15 Oct 2024 19:04:05 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 28EF4180106;
+	Tue, 15 Oct 2024 19:06:04 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Oct 2024 19:06:03 +0800
+Message-ID: <625cdab0-7348-41a1-b07f-6e5fe7962eec@huawei.com>
+Date: Tue, 15 Oct 2024 19:06:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <60473622-e6f9-561b-a269-9da64add4966@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+CC: Furong Xu <0x1207@gmail.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<xfr@outlook.com>
+References: <20241010114019.1734573-1-0x1207@gmail.com>
+ <601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
+ <20241011101455.00006b35@gmail.com>
+ <CAC_iWjL7Z6qtOkxXFRUnnOruzQsBNoKeuZ1iStgXJxTJ_P9Axw@mail.gmail.com>
+ <20241011143158.00002eca@gmail.com>
+ <21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
+ <CAC_iWjLE+R8sGYx74dZqc+XegLxvd4GGG2rQP4yY_p0DVuK-pQ@mail.gmail.com>
+ <d920e23b-643d-4d35-9b1a-8b4bfa5b545f@huawei.com>
+ <20241014143542.000028dc@gmail.com>
+ <14627cec-d54a-4732-8a99-3b1b5757987d@huawei.com>
+ <CAC_iWjKWjRbhfHz4CJbq-SXEd=rDJP+Go0bfLQ4pMxFNNuPXNQ@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAC_iWjKWjRbhfHz4CJbq-SXEd=rDJP+Go0bfLQ4pMxFNNuPXNQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Tue, Oct 15, 2024 at 03:50:49PM +0530, K Prateek Nayak wrote:
-
-> > +	masks = kmalloc_array(num_possible_cpus(), sizeof(struct cpumask *), GFP_KERNEL);
-> > +	if (!masks)
-> > +		return ret;
+On 2024/10/15 15:43, Ilias Apalodimas wrote:
+> Hi Yunsheng,
 > 
-> That looks like a very large array that seems unnecessary. Instead, is
-> it possible to use "tl->mask(id)" down blow to check for equality? (I'll
-> elaborate more below)
+> On Mon, 14 Oct 2024 at 15:39, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> On 2024/10/14 14:35, Furong Xu wrote:
+>>> Hi Yunsheng,
+>>>
+>>> On Sat, 12 Oct 2024 14:14:41 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>>
+>>>> I would prefer to add a new api to do that, as it makes the semantic
+>>>> more obvious and may enable removing some checking in the future.
+>>>>
+>>>> And we may need to disable this 'feature' for frag relate API for now,
+>>>> as currently there may be multi callings to page_pool_put_netmem() for
+>>>> the same page, and dma_sync is only done for the last one, which means
+>>>> it might cause some problem for those usecases when using frag API.
+>>>
+>>> I am not an expert on page_pool.
+>>> So would you mind sending a new patch to add a non-dma-sync version of
+>>> page_pool_put_page() and CC it to me?
+>>
+>> As I have at least two patchsets pending for the net-next, which seems
+>> it might take a while, so it might take a while for me to send another
+>> new patch.
+>>
+>> Perhaps just add something like page_pool_put_page_nosync() as
+>> page_pool_put_full_page() does for the case of dma_sync_size being
+>> -1? and leave removing of extra checking as later refactoring and
+>> optimization.
+>>
+>> As for the frag related API like page_pool_alloc_frag() and
+>> page_pool_alloc(), we don't really have a corresponding free side
+>> API for them, instead we reuse page_pool_put_page() for the free
+>> side, and don't really do any dma sync unless it is the last frag
+>> user of the same page, see the page_pool_is_last_ref() checking in
+>> page_pool_put_netmem().
+>>
+>> So it might require more refactoring to support the usecase of
+>> this patch for frag API, for example we might need to pull the
+>> dma_sync operation out of __page_pool_put_page(), and put it in
+>> page_pool_put_netmem() so that dma_sync is also done for the
+>> non-last frag user too.
+>> Or not support it for frag API for now as stmmac driver does not
+>> seem to be using frag API, and put a warning to catch the case of
+>> misusing of the 'feature' for frag API in the 'if' checking in
+>> page_pool_put_netmem() before returning? something like below:
+>>
+>> --- a/include/net/page_pool/helpers.h
+>> +++ b/include/net/page_pool/helpers.h
+>> @@ -317,8 +317,10 @@ static inline void page_pool_put_netmem(struct page_pool *pool,
+>>          * allow registering MEM_TYPE_PAGE_POOL, but shield linker.
+>>          */
+>>  #ifdef CONFIG_PAGE_POOL
+>> -       if (!page_pool_is_last_ref(netmem))
+>> +       if (!page_pool_is_last_ref(netmem)) {
+>> +               /* Big comment why frag API is not support yet */
+>> +               DEBUG_NET_WARN_ON_ONCE(!dma_sync_size);
 
-drive-by comments, haven't got time atm to read this, but
-num_possible_cpus() is wrong, this should be nr_cpu_ids.
+Note, the above checking is not 100% reliable, as which frag user
+is the last one depending on runtime excution.
 
-The CPU mask must not be assumed dense.
+> 
+> Ok, since we do have a page_pool_put_full_page(), adding a variant for
+> the nosync seems reasonable.
+> But can't the check above be part of that function instead of the core code?
+
+I was thinking about something like below mirroring page_pool_put_full_page()
+for simplicity:
+static inline void page_pool_put_page_nosync(struct page_pool *pool,
+					     struct page *page, bool allow_direct)
+{
+	page_pool_put_netmem(pool, page_to_netmem(page), 0, allow_direct);
+}
+
+And do the dma_sync_size checking as this patch does in
+page_pool_dma_sync_for_device().
 
