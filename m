@@ -1,156 +1,232 @@
-Return-Path: <linux-kernel+bounces-364932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3A199DB47
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3344699DB4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 813C6B21B59
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:28:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76A7282C60
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C09B14831E;
-	Tue, 15 Oct 2024 01:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644F814037F;
+	Tue, 15 Oct 2024 01:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PMW2WQcC"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="lG20H/D7"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011049.outbound.protection.outlook.com [40.107.74.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0039184F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728955682; cv=none; b=uFhxV8VRsefB2//gIf2ksMW2XU3cK9CrE0t/EctKjLn9XoIfd3cHU7aXtNc5rCU8vP2+c0OdtUxohAZJ4AzfUZGI8ZOUUPalUKQHPKJydGQJYvW6HxThJO2wD6isRtGQhlblftElp5zoIfuVCZdmCBeib/4pltQU47FzITn77cg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728955682; c=relaxed/simple;
-	bh=gS0yxpQN86jLAWvfeaNTzay/a4WG+ypSZ9NOBXk/+n4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PBrQHNozLf5hYJ5/z3gPcFIvjgUS575iwQzgoNmKcOGb5PNeCS8tBIONjuOZ5eEzTSIS47lLcs1JmBgFf2E3MF+YXAPYDbR0LyBcgXteSsRzkQOn9CoyboEnbpBrtzkNE1h30aagrmf4z2268f5inIu6a24bScxm3ooeNuvzygc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PMW2WQcC; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 14 Oct 2024 21:27:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728955677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=EBKI0jhPyCaBxpT3oWhn2T9UWRj8G6nH6l3Lm03f80A=;
-	b=PMW2WQcCGq9D7z5wsVzgbyMkEULuGdNp9Z842hnrWFvOhxt1uHtMS0OtcCk589Q1NFxD+q
-	anrTGChpKmbhG1dZHzGoVjWCMR28+yedykBqGWLsrg0Mpfv2aeVAz1g1lFL/xFWKLEq8wl
-	VrQAF5NSdHhvUALMkK16DtS40eUuTRM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.12-rc4
-Message-ID: <lazo4f4eueknrlk5odp37fboznvfxnizhdeqttnmxkbgp7szjj@m3sjqp7mxm5d>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841BD184F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728955715; cv=fail; b=u4wVhp2DIoVQwM7aV2lfvLRkEHCTeLPhdUbK/9rV02xV5MYNa3aDXgqrUly6TlJcpDZH4GVIdRK0n/Q8jq8Rb3uXNi82E6wI5sI8tVdyyyBjoXtQ/ly9hGq6R+efTgW3QEKlj54uzNFiArtuwh8h02IzgWcH0h6h6+SLmRSM8yU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728955715; c=relaxed/simple;
+	bh=sxk9SW7IcElFMMckDQpZblL5wVkiCY0/yQmGy3TGLGU=;
+	h=Message-ID:To:Cc:From:Subject:Content-Type:Date:MIME-Version; b=R+9pBIGedt1gJif5tXJ13oqnag2G60vCZxqxizPVu769Fu5o6vQEXrNF/d2UuTyDZ7G2EisxXn/kg7vqF1L7XOtALYxrytgc+gA6x8YYLr9ZhcvMZA+448dgkOoAR7Jt340gfRH3sIKm9XLDFR4e3bjMeFtpb4FrXYNlLiIBhZk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=lG20H/D7; arc=fail smtp.client-ip=40.107.74.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hTRM5jl+fV0ULQjF+J/JSAuueAh4UStccJ1a0iLnB24Kp3+lW4wrjWt3jy0vyjXF+wAeDq1cbuz1Q24KttEWXCjRw+ZkLyRHTPEuWhL/lvsmQ82PkIO440qBw0trx6koDINmTNqkFSAwWFZv7YayB/EeeyUQI70Ute3mo3F/dUA/wQuUnq6fMXAPChCc31MKx2r5XMFMNAKrX6WNzJdOVwDd28kzzsy/+D+TuW8Lq/SIoBByTw+Nge4FEeZABF5eQIksj8VlvoDKrFGcTXiiWnZIm6K23aiind2iIPAdJ2KVgjSorY3t/83igdfUO2bCPxCunNakUsiyGoV18mjbHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wh/L1bAIdslP4DMMoq6VB2uhENE/TfWDMUfeLShKnWg=;
+ b=FUwPaxHCWrR6gAg1vvHXzjJp8W6zorZfmDbzTxg2mml1e2+QW2p315D1hdpE+NZ7j0k/toRtBxtxfW49dUJYXp5ZsKEgko3fTUkjMZSEYf/ypl065/p5vmNzIlZk0/bXMhxhxQ5GeFSGe3sjJZEyB2/aq5SDajQHBQ4uQbJ09zB/2yCjalgvWlrMLBJkMfZYykYPHr8IftRwQ1R5M0wQtJroL0Glr9JtR37OIx6U2w5I221uYPd04hdgt+qBJK5ZBVuGSA8zxWAUXMa5aHVtV1AxGw7/PHuCiPoK8EgD/Ig1/Uyc7hS1eq/3Dv2GOgmIx5g1WZ1mvCUls/zJxTQGZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wh/L1bAIdslP4DMMoq6VB2uhENE/TfWDMUfeLShKnWg=;
+ b=lG20H/D7vW5j+T60akxxgAaXRVf8E/61i5iMKU3+ofFtscpP1lAGsO1rmsfJKfiUNAHpUu18v6Ct6cxIRA/N4ruoWIVFGi71gqFN8NkTM+dBBk7eeEwpQARb1BfsnkZnY2LfRTtkBmUdC7cz3XqARb1gne64VyTVXfVuv4stO+Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by TYWPR01MB11377.jpnprd01.prod.outlook.com
+ (2603:1096:400:3f6::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Tue, 15 Oct
+ 2024 01:28:29 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 01:28:29 +0000
+Message-ID: <8734kyqhmq.wl-kuninori.morimoto.gx@renesas.com>
+To: Rob Herring <robh@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,	Thierry Reding <treding@nvidia.com>,	Simona Vetter <simona@ffwll.ch>,	Neil Armstrong <neil.armstrong@linaro.org>,	Maxime Ripard <mripard@kernel.org>,	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,	Jessica Zhang <quic_jesszhan@quicinc.com>,	Florian Fainelli <florian.fainelli@broadcom.com>,	David Airlie <airlied@gmail.com>,	Daniel Vetter <daniel@ffwll.ch>,	Alexey Brodkin <abrodkin@synopsys.com>,	dri-devel@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH v5] gpu: drm: replace of_graph_get_next_endpoint()
+User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 15 Oct 2024 01:28:29 +0000
+X-ClientProxiedBy: TYCP286CA0224.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c5::8) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYWPR01MB11377:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e588275-3de6-4bd3-3ffd-08dcecb8acbd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1DZLAwPY+JPzglLiK3M42Y9Z2aUs8rCZQRIJpmLa1fnnsuqfGzCbsZ8WF+0Z?=
+ =?us-ascii?Q?t4SlyxAydXIa+q4DANkdmoAKXB6K0zgIN1kGlbjzhxD8kal9w9IUXWTC5GZ8?=
+ =?us-ascii?Q?7niA4oFpJPdvAkMGmuT7UxjBOYMu5oiMRMPsRrifKXqHEj/diVJGh5lqXJxl?=
+ =?us-ascii?Q?y1rJO328o25fzUYhh07Njq2o8UrNXurqWcO6xi/E5pGqwSZ4uRQTwDMf6bL/?=
+ =?us-ascii?Q?DfWkbY8RibG+dcn3u2fZDg54vkFIQJkdT4bYhXzpqQJVCHuIsrUEDCF1nEA4?=
+ =?us-ascii?Q?2XLOW7p4BqSt3U/WxvenJS8Cnkl74Si88Y7m+Q/0kp+neufyEX4s0GEQOVZv?=
+ =?us-ascii?Q?6hmyIy3rm0i3qrpp4DlSWahrFa41S1rCX0oxXLS+2gXO7lvIXmNdyDD1Venj?=
+ =?us-ascii?Q?4MGXoNnbE5FpYAlSMDsy1vCv56nMTgWglTux78TVFO7quvooWWicPn4oqCJ+?=
+ =?us-ascii?Q?rlNuSQD7K2Zsnu5LUdnu4pWPB4dD2gqJB5L5mmu6El5u9ccJUnr0aeqBfy+M?=
+ =?us-ascii?Q?GuLdmEAszYTuJmKAm4brMvuaQ973ZOjjmgi5BXYEGasPGgIAzK+VM4otlO6f?=
+ =?us-ascii?Q?tRSCOw1XVt2W8BLjaPL07uvpRxZotcSx0XJqYbpn2ipngWPKQRuilY0uA510?=
+ =?us-ascii?Q?LwrhaGQYez2ax207XFEltdCLyc9S+7piJ4kGj0ZPm31wcdDTWuWFafEJAnis?=
+ =?us-ascii?Q?4g1kQvgh/JHjtvyFVP80AxFeRB2BZT0OBZDDQCCfKnSRl3ce+5qhpvZAWV3R?=
+ =?us-ascii?Q?Adlp9ig5vkKwptn4QYJY/rW/lCNccCaV7u759mJbgZM7vTmwDai758k1G0bI?=
+ =?us-ascii?Q?143ShdAd3wZk3JaWJt8sCe7z56Bz3HU5NegiAnpYGjBicyMzP++Sd1vxdFUY?=
+ =?us-ascii?Q?qjNqTHNJ/T4+njC9GuxxUpd09/M9SvazS12anWm01K+sVuhl06Ety4gQoO3a?=
+ =?us-ascii?Q?ezYAUpyNUHIAOHXBx/IdMRZor5rgIEh3THsWs3bLnVxrj0dpoKgJicJ2nWFz?=
+ =?us-ascii?Q?RGRmHSk7cnAgEg3X85B8pejjQG75rwW4mfYRMp8houeAheWrT8YYtBvIu9uR?=
+ =?us-ascii?Q?EQqbKPlP1lVeUoUHQm9HRL7JFsElUAwmpiTBqSoGL8UwTBekRyJ5e/DVu4rA?=
+ =?us-ascii?Q?BRtko88S2+LjQLJCNA7xttnuFAW3Jj5OmLp3UWnAgSyXMCjvBqQ3u364yQ60?=
+ =?us-ascii?Q?2xr3SrK2pHmKN2b9L2HbUpoAFJBUiieC+EXjpdO+Td/M86Ppnc/Hg1w84plf?=
+ =?us-ascii?Q?KvBEGyaxmiSZapn3GF6a1r5lk6Smtr2qwTLSdBkOFPRVRPygGGpy13EzYIvP?=
+ =?us-ascii?Q?X7bRtuCP5m+Q+jNy8TDtXENPpIfcuJW+DeRDJqAwk28GRIBISSEQERDn/DR9?=
+ =?us-ascii?Q?Knv9ulU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kqAhFcXXNxJRkU4R+YbgYrPgu5arKlqHh54kTbCeq8rOveOFQjefoa4h6kRt?=
+ =?us-ascii?Q?Jqa9XH0vGSva7dKzERlGlFrLu9pbtY5IG/i5E3G5KyAySJX5YqKyWPOYsTmz?=
+ =?us-ascii?Q?UrmqzoSU8OvmgHQi3vkCIzS50xooINsOje8ifO7MviExa8/4cTVNw2R1VMRu?=
+ =?us-ascii?Q?TGZSAJ0TmezdAUH48H0NxEKrD610D6MvRfhweEd36Psx3MYnlwYHq1PxA54E?=
+ =?us-ascii?Q?0g0P2Q8eBgIOj6BBFUsKz++F/z2+KvhlrDFq17D16OkqKynlcuar3ajdOrbB?=
+ =?us-ascii?Q?vYFsqqemZG0CBlDjFmPipmnbxYIEpyo7PEU9CmzbTUjFYxeXO4rChvX4GnIe?=
+ =?us-ascii?Q?aOBwyP2Yra/ZPfY1NWUd00TfIO+SJoHSVcadarpfA5fIdoeAeMdbEitVANMj?=
+ =?us-ascii?Q?83RMs8dE2hxLONnfy8FY48f8D5tmrzAJihicRaSGbxJ2V8lfUImo/D4m58RO?=
+ =?us-ascii?Q?0z2GhBKrxb/cUMOMTrH4FaBWrtVJSiA86t3lZ+gjtw2K4tVujgkNqwtJMmKs?=
+ =?us-ascii?Q?FiUY9W0AGyxPk2adOcd7CbA/fZGVKCsw84Xyf4nofAaYlT0LbffRShhzakRV?=
+ =?us-ascii?Q?PMfJ6ZTB1S61NmIrRO0TsZY3V7jfN2ugebdY4QVFCUDXWj/8rTEelA2mS9es?=
+ =?us-ascii?Q?lVlT4TnOdl/X6vzqSq7SDVmq4mneKXMii12cIxxgRqRkIA2VeghWHLxSxdzY?=
+ =?us-ascii?Q?zc5q27IcMBfngGUaUFNGJo9nSaOp0PEDnquFzn09rHSfkhSXMPXZHbsBH0yX?=
+ =?us-ascii?Q?Vvia+Uq8EV3JwGmyuScGbiRxzRXd0mT/gqCzyuB4clPRZL2vMcTsc9uvPVuV?=
+ =?us-ascii?Q?nLjq6CWSWF0S60Yz8zxf0+o4TQEUGJGOdImSvUZyo/HcjOgM8dI5mLn40zs3?=
+ =?us-ascii?Q?kM/3FZl28VqVvmN60SsJRSR4wEHTtL7S8cN3R47YR01bKHa8m48lKhfzZG4A?=
+ =?us-ascii?Q?A0lQrLSo13VdFDp8QkyRlmBMpErIY4OqLuozLNKrIO1Fb4UdYZyWNccrO3bW?=
+ =?us-ascii?Q?yfEI9+vYUtaLqXUkL9eHFYSh4WzG26/w+6lMWS9nfYBFAhiQde4A/cQpsULX?=
+ =?us-ascii?Q?QkpNJ0kmAHIIVu8Lk43d3YzO/aL6SE+exF6fPBjZahlXujvJBVppryvmsMPb?=
+ =?us-ascii?Q?lgpljMNgV9r6901H/26EeNqsrUe9SbInYS9pWYzTbySDCSUYi4wWC6OiYOh3?=
+ =?us-ascii?Q?l/obCzByNscG9BcbfN1W/lHQAcLmftUOOFZ1muELBmfZwj+AYMMbRtGorGHp?=
+ =?us-ascii?Q?tr2rD2hhJ65jawDEgBdbr6OqcTcpIYdS70dpT2p4jZRuV/1SF9p7+5X+tNpq?=
+ =?us-ascii?Q?amJUbFcUSM0LCfZWug+VHhjCxpFcP1kSQW4+hKGhzRwf2wFybITQt+5//LN4?=
+ =?us-ascii?Q?iZLrHvcnUfXZOZZhSkmNcvPKZPPs3HP+HB7+NtKWE0d2QZegH1u/Zjb0++MP?=
+ =?us-ascii?Q?6TM6xHd45cR2RH+KPe32ccq6r0+FxKNNnGsB0fCvFlnSHN87ColclJzIE8zJ?=
+ =?us-ascii?Q?xcTuYEsYCmgWlXYeXFnky1+hbpBA1mLLB/QTYUZsMmukb3Z+ko3xnvUhl4vQ?=
+ =?us-ascii?Q?0PF2Zzi2UtPttrdpBHxNuUa4EO8/40QDTHO6DA9eQjDKQWpSO2xnASDSNoPG?=
+ =?us-ascii?Q?/YOFBCChrXu5lFvvl5V/BCA=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e588275-3de6-4bd3-3ffd-08dcecb8acbd
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 01:28:29.7186
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l+p/exHOaasbob93rQzju28r/rUApeAUYWYSp+mKHKS3qtMN+bptAH3oyn8C4IcbZRO0/BkJNNb6uvXjKDj+rTMYkY1mWCTHhgQ030+zKANG+ZHy4HnHTANTkmQMW0Jh
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11377
 
-The following changes since commit 0f25eb4b60771f08fbcca878a8f7f88086d0c885:
+From DT point of view, in general, drivers should be asking for a
+specific port number because their function is fixed in the binding.
 
-  bcachefs: Rework logged op error handling (2024-10-04 20:25:32 -0400)
+of_graph_get_next_endpoint() doesn't match to this concept.
 
-are available in the Git repository at:
+Simply replace
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-14
+	- of_graph_get_next_endpoint(xxx, NULL);
+	+ of_graph_get_endpoint_by_regs(xxx, 0, -1);
 
-for you to fetch changes up to 5e3b72324d32629fa013f86657308f3dbc1115e1:
+Link: https://lore.kernel.org/r/20240202174941.GA310089-robh@kernel.org
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+- 1 month passed, but nothing happened.
+- rebased on latest linus branch
+- add Dmitry Reviewed-by
 
-  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
+ drivers/gpu/drm/drm_of.c                              | 4 +++-
+ drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 2 +-
+ drivers/gpu/drm/tiny/arcpgu.c                         | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-----------------------------------------------------------------
-bcachefs fixes for 6.12-rc4
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index 177b600895d3c..b6b2cade69aeb 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -504,6 +504,8 @@ EXPORT_SYMBOL_GPL(drm_of_get_data_lanes_count_ep);
+  * Gets parent DSI bus for a DSI device controlled through a bus other
+  * than MIPI-DCS (SPI, I2C, etc.) using the Device Tree.
+  *
++ * This function assumes that the device's port@0 is the DSI input.
++ *
+  * Returns pointer to mipi_dsi_host if successful, -EINVAL if the
+  * request is unsupported, -EPROBE_DEFER if the DSI host is found but
+  * not available, or -ENODEV otherwise.
+@@ -516,7 +518,7 @@ struct mipi_dsi_host *drm_of_get_dsi_bus(struct device =
+*dev)
+ 	/*
+ 	 * Get first endpoint child from device.
+ 	 */
+-	endpoint =3D of_graph_get_next_endpoint(dev->of_node, NULL);
++	endpoint =3D of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
+ 	if (!endpoint)
+ 		return ERR_PTR(-ENODEV);
+=20
+diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/driver=
+s/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+index 4618c892cdd65..e10e469aa7a6c 100644
+--- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
++++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+@@ -400,7 +400,7 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c=
+)
+ 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
+=20
+ 	/* Look up the DSI host.  It needs to probe before we do. */
+-	endpoint =3D of_graph_get_next_endpoint(dev->of_node, NULL);
++	endpoint =3D of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
+ 	if (!endpoint)
+ 		return -ENODEV;
+=20
+diff --git a/drivers/gpu/drm/tiny/arcpgu.c b/drivers/gpu/drm/tiny/arcpgu.c
+index 4f8f3172379e3..8c29b719ea626 100644
+--- a/drivers/gpu/drm/tiny/arcpgu.c
++++ b/drivers/gpu/drm/tiny/arcpgu.c
+@@ -288,7 +288,7 @@ static int arcpgu_load(struct arcpgu_drm_private *arcpg=
+u)
+ 	 * There is only one output port inside each device. It is linked with
+ 	 * encoder endpoint.
+ 	 */
+-	endpoint_node =3D of_graph_get_next_endpoint(pdev->dev.of_node, NULL);
++	endpoint_node =3D of_graph_get_endpoint_by_regs(pdev->dev.of_node, 0, -1)=
+;
+ 	if (endpoint_node) {
+ 		encoder_node =3D of_graph_get_remote_port_parent(endpoint_node);
+ 		of_node_put(endpoint_node);
+--=20
+2.43.0
 
-- New metadata version inode_has_child_snapshots
-  This fixes bugs with handling of unlinked inodes + snapshots, in
-  particular when an inode is reattached after taking a snapshot;
-  deleted inodes now get correctly cleaned up across snapshots.
-
-- Disk accounting rewrite fixes
-  - validation fixes for when a device has been removed
-  - fix journal replay failing with "journal_reclaim_would_deadlock"
-
-- Some more small fixes for erasure coding + device removal
-
-- Assorted small syzbot fixes
-
-----------------------------------------------------------------
-Alan Huang (2):
-      bcachefs: Release transaction before wake up
-      bcachefs: Fix state lock involved deadlock
-
-Kent Overstreet (23):
-      bcachefs: Fix lockdep splat in bch2_accounting_read
-      bcachefs: Split out check_unreachable_inodes() pass
-      bcachefs: reattach_inode() now correctly handles interior snapshot nodes
-      bcachefs: btree_iter_peek_upto() now handles BTREE_ITER_all_snapshots
-      bcachefs: Delete vestigal check_inode() checks
-      bcachefs: bcachefs_metadata_version_inode_has_child_snapshots
-      bcachefs: Kill bch2_propagate_key_to_snapshot_leaves()
-      bcachefs: bch2_inode_or_descendents_is_open()
-      bcachefs: Disk accounting device validation fixes
-      closures: Add closure_wait_event_timeout()
-      bcachefs: Check if stuck in journal_res_get()
-      bcachefs: __wait_for_freeing_inode: Switch to wait_bit_queue_entry
-      bcachefs: Fix bch2_have_enough_devs() for BCH_SB_MEMBER_INVALID
-      bcachefs: Fix invalid shift in member_to_text()
-      bcachefs: Fix accounting replay flags
-      bcachefs: Fix bkey_nocow_lock()
-      bcachefs: Improve check_snapshot_exists()
-      bcachefs: fix uaf in bch2_dio_write_done()
-      bcachefs: Fix missing bounds checks in bch2_alloc_read()
-      bcachefs: Add missing validation for bch_stripe.csum_granularity_bits
-      bcachefs: Fix kasan splat in new_stripe_alloc_buckets()
-      bcachefs: Handle race between stripe reuse, invalidate_stripe_to_dev
-      bcachefs: Fix sysfs warning in fstests generic/730,731
-
-Mohammed Anees (1):
-      bcachefs: Fix NULL pointer dereference in bch2_opt_to_text
-
-Piotr Zalewski (1):
-      bcachefs: add check for btree id against max in try read node
-
- fs/bcachefs/alloc_background.c      |  10 +
- fs/bcachefs/bcachefs_format.h       |   3 +-
- fs/bcachefs/btree_gc.c              |  15 +-
- fs/bcachefs/btree_io.c              |   5 +-
- fs/bcachefs/btree_iter.c            |   6 +-
- fs/bcachefs/btree_iter.h            |   8 +
- fs/bcachefs/btree_node_scan.c       |   3 +
- fs/bcachefs/data_update.c           |   1 +
- fs/bcachefs/disk_accounting.c       | 149 ++++++++++----
- fs/bcachefs/ec.c                    |  94 ++++++---
- fs/bcachefs/errcode.h               |   3 +-
- fs/bcachefs/extents.h               |  10 +
- fs/bcachefs/fs-io-direct.c          |   3 +-
- fs/bcachefs/fs.c                    | 102 +++++++++-
- fs/bcachefs/fs.h                    |   9 +-
- fs/bcachefs/fsck.c                  | 384 ++++++++++++++++++++++--------------
- fs/bcachefs/fsck.h                  |   1 +
- fs/bcachefs/inode.c                 | 275 ++++++++++++++++++++++----
- fs/bcachefs/inode.h                 |  10 +
- fs/bcachefs/inode_format.h          |   3 +-
- fs/bcachefs/journal.c               |  13 ++
- fs/bcachefs/opts.c                  |   4 +-
- fs/bcachefs/recovery.c              |   3 +-
- fs/bcachefs/recovery_passes_types.h |   1 +
- fs/bcachefs/replicas.c              |  39 +++-
- fs/bcachefs/sb-downgrade.c          |   5 +-
- fs/bcachefs/sb-errors_format.h      |   6 +-
- fs/bcachefs/sb-members.c            |  10 +-
- fs/bcachefs/snapshot.c              | 129 +++---------
- fs/bcachefs/snapshot.h              |   3 -
- fs/bcachefs/super.c                 |  34 +++-
- include/linux/closure.h             |  35 ++++
- 32 files changed, 976 insertions(+), 400 deletions(-)
 
