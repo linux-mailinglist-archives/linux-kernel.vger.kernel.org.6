@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-365485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2C499E30D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:48:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8712299E314
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07074283429
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:48:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2071F233A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CAB1E04BD;
-	Tue, 15 Oct 2024 09:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82181E2018;
+	Tue, 15 Oct 2024 09:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iwDMg2Qt"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Z+6wr2fC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D4E175A6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA1818B488;
+	Tue, 15 Oct 2024 09:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728985721; cv=none; b=DTR6LVxR2zZDLF0C39w13AfeC/082qaR+nALoeHEcg7jHVzR9zxVQSz9kW7b+Dr/92kr+/6TgzFTSNF32YC8DcxEug0n2bd1TF6vQl60xNvHbxq5QdK6iaAhPxCF8y7xVC8sqUjsQGhXw+BejHLeyKFe3l91DOPvn8okqa0JXes=
+	t=1728985759; cv=none; b=V0eC1/3IfXzICI4j8IkWr0QfClzNg05VZWt1WAHIxoceOAcbNFVpDZ5rMUYfKUaAqJO0GgN45buAe/3LvxD+P3ZKiYxdP5mEsBNwNlbnOgmTBE57DVuLbZIGSEKZmt/Ngl8G+Sus9oNGqBp0gG7GzUK07RCFIkBpRM+0kAhERJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728985721; c=relaxed/simple;
-	bh=yYb9sb5AxiXLVlD3bVkK64FKKxtA8VrXUNvbw1gtuts=;
+	s=arc-20240116; t=1728985759; c=relaxed/simple;
+	bh=pkfmR86OLnLflTvdgJ9gzMh0Z9LchJNRWECKaDZz6OQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TplW0uM03IKSul/iKaRaz6pipOA3RmgY0z1pbECuHBvkRcVYfS/+zN1qf3rupWujE+G4qLIb5c4T3oSsu1ZcVyIPM1Z3gC/IgbEsASaRGMVnj/aESLYoac9oU0h1HSj/U//yIYBLInzBA+MhPgDeBb1aXTb4nLPftQAY6xQbQGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iwDMg2Qt; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso152891266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728985718; x=1729590518; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1teDS0JJcna/90ckTpcvCS/IaGCA4XWx1Jz7qyJi5jg=;
-        b=iwDMg2QteR0yvQQM8Nr9teOoWqzj45RezjE8fzK0xcJK1mpdZzVBOXiw5YrjND2Gn2
-         Mqo4KoPBtdmjzEThnKdagd4ypoBC1COy25D+624kMRHZ1ld7KlairyjXLUxkrFDxUPtS
-         vruKcjH7YHyLWQxFtKOHarjn1uv6vBJw8+vdesNq4GN6ZPXgB79JKynZt3eVoYBO8PhR
-         09kKyjNo2F9CjbYkdI7+/hYOWMLeZ0Trn1zpeYwX31stqr7HpVxhHMnw1nmRAsDhkXzn
-         By/WZbBBG8VJglj34kTh+hry6tBMoV00Lz4x0fwIiqPvW8kgqApwOMdzap/i6WjR2+Gf
-         hytQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728985718; x=1729590518;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1teDS0JJcna/90ckTpcvCS/IaGCA4XWx1Jz7qyJi5jg=;
-        b=mSHapljhzakOg3Du3Q3T/IwjGinHzuw4al14zn/nj/kWvHj8Eez05U2Gv+1X6s0P1/
-         uYExhrMm2dpNcTT6LdQnqkmMeBz0y1GeYlYdTpIfn4vDuGjqlcp3bl7Z/UM+JCkA5byk
-         7lVAuEeJarBJqqrg5Sk+O3c64FDje4lRRjJLzQ3Y5vptYibmG/g9tADD2sfUZx8EGnpo
-         pct5SvGUPqGDA4qwJWYZFOkm10aNGDsbCYFjOIPd9FfhE+CA8k4+fujT7KU4ira8MK1f
-         9eDNVW0vLVIGq+WBbvTTCdYUw0XI+f82J2fbJyVpHoIgzYDyzluBnl6ZiRx5WnRAtjud
-         bSRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmUu3NsXB8GKbGHnPHVDU5vA6A4aiMpucSoO2knZBPe2lW+8cYPo6C4BPzI7q0dnby14NkM8y/RVPnr10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxejixmRhNEn7pxdQl2MmpSxrGiLojUiXXJgVC1jk8CPvjqrBFl
-	aGuBEfJGBOFRgTbEecDQsJozZGEJG7hLYIpolJjOtLCuDZE2bKDbZ6U/NqujX38=
-X-Google-Smtp-Source: AGHT+IHVV5gB4sO2s8rG8UOt0XzDKS6ScXRIKX4PKjbNf6jNN37IksWraaka1Knc+QX36AetoAcjJg==
-X-Received: by 2002:a17:907:869f:b0:a99:fc3d:7c76 with SMTP id a640c23a62f3a-a99fc3d7e78mr723129666b.37.1728985718522;
-        Tue, 15 Oct 2024 02:48:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29850a36sm49903666b.181.2024.10.15.02.48.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 02:48:38 -0700 (PDT)
-Date: Tue, 15 Oct 2024 12:48:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, skhan@linuxfoundation.org,
-	kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2][next] Bluetooth: btintel_pcie: Remove structually
- deadcode
-Message-ID: <8a4a8915-d59a-407d-9f93-f047370cca62@stanley.mountain>
-References: <20241015045843.20134-1-everestkc@everestkc.com.np>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uUaISoqcT/AmLxGCvyX4DCnYerUdbwJ1TSxShaxhllqQqxEEKsd1oGOwkr3insAytlVLPgqtrGC5SmSbwdh//rgtZCeVvI77cMoZ4DOHYsFOGUAXy/7hkF3OoC8s6etllP+03SUL5we0L4IIy+vA2n9YTkHc32xAHP582iE7sUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Z+6wr2fC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6977440E01A5;
+	Tue, 15 Oct 2024 09:49:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id RDGTe0vdMgzz; Tue, 15 Oct 2024 09:49:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1728985748; bh=Lwyk6dqtr7douMO9sTb0q4k/d7+lucp4olJGes24ZKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z+6wr2fCWcN7NxjV2gLBlDR2ZIkUsxGW2YbCCNhqTlDNBF4TOlJkO9MMzGG/n0RqP
+	 J+RZnIeo2TkRdUofHSjYHykMbIkt6ZmHK9eMatG214fJA+UHJihZ2sGqNSGwf6Yv14
+	 0IidpmyhCSWEuhRjGT4hGJjwj1vtreCKPUwivoMvul7R70TwHF+G7iRT4DHvi/mhWm
+	 FOxC8EWptJXFTlm3OinccDTT0S5U9Nw0tNS0473cBMEnsz9lZ085tD2taDrjGXFVPs
+	 Sef6eziy8AOJaBQ7eoXNmhsISYRSL669ChJ+hxVjza1yh8VSpJ73kRWd3R+pfLnwC3
+	 26F/CbH2fap/1qOse7+4fwUfDHG9tDWu2LhfCA9R/eXIxB2Yjc23Mc0phc6E8LCMed
+	 3rH1/CqduFpOkivyQmmq6+Bd6Nu98Pzt6Wi6pmseQKJiqquBRYG3S2GQjljXyJ/j9l
+	 +PuOkL342QMGILMrvynG6aKz4FjJYIYLA8HclFIFLjcVA3Lt1eHudgSM6eWuuWvPqh
+	 XQcg5TXFke3trKS378NfW27ym2eHK5SNM27g9YiOdm51jsGTVwFdXBjxvg74/Zi6Dq
+	 z19oYO8B0lw+DKw7QRB1pjKwwC/uL76tWCYO1krDO12tUoUhHZ5/5FaPdi6FYJTK7L
+	 Wo0wuQD/3mPZrq2AAJ/ALP0s=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 695D740E0184;
+	Tue, 15 Oct 2024 09:48:49 +0000 (UTC)
+Date: Tue, 15 Oct 2024 11:48:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Cc: Avadhut Naik <avadhut.naik@amd.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Luck, Tony" <tony.luck@intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
+	"john.allen@amd.com" <john.allen@amd.com>,
+	"avadnaik@amd.com" <avadnaik@amd.com>
+Subject: Re: [PATCH v5 1/5] x86/mce: Add wrapper for struct mce to export
+ vendor specific info
+Message-ID: <20241015094843.GAZw46e6KKVjigUatc@fat_crate.local>
+References: <20241001181617.604573-1-avadhut.naik@amd.com>
+ <20241001181617.604573-2-avadhut.naik@amd.com>
+ <CY8PR11MB713406B2C492D55428397AFA89452@CY8PR11MB7134.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241015045843.20134-1-everestkc@everestkc.com.np>
+In-Reply-To: <CY8PR11MB713406B2C492D55428397AFA89452@CY8PR11MB7134.namprd11.prod.outlook.com>
 
-The subject has a typo.  s/structually/structurally/
-
-> The intel bluetooth module was successfully built after the change
-> without any errors.
+On Tue, Oct 15, 2024 at 06:53:41AM +0000, Zhuo, Qiuxu wrote:
+> The word 'mce' isn't too long. IMHO using 'mce' instead of 'm' as
+> a variable name is more meaningful :-).
 > 
+>     struct mce mce;
 
-Delete this sentence.  It should just be assumed that changes don't break the
-build.  You can put that code isn't tested under the --- cut off line, if you
-want to put a warning message.  But we don't need this in the permanent git log.
+No, this is not better. Because sometimes it is ambiguous whether the struct
+"mce" is meant or the variable "mce".
 
+-- 
+Regards/Gruss,
+    Boris.
 
-> This issue was reported by Coverity Scan.
-> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600709
-> 
-> Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between driver and firmware")
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
-  ^^^
-Cut off line.
-
-regards,
-dan carpenter
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
