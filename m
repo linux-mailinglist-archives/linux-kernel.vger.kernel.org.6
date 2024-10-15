@@ -1,101 +1,219 @@
-Return-Path: <linux-kernel+bounces-365962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4035099EE9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E9299EE94
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D70285070
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3AB1F2774A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E561C07D4;
-	Tue, 15 Oct 2024 14:02:38 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656FF1B2197;
-	Tue, 15 Oct 2024 14:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE061B2191;
+	Tue, 15 Oct 2024 14:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UjOlTXn4"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F993399F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000958; cv=none; b=byxAqbLJx1izBMGofwCfV8uRxrNOCWiyITekxsl/mruikchS47F4YtyGWqLYSUeLYu6wmDORzYmQ69/qzNaLS16Hcg3YGYdrm7iHahSWB2gqij//pkl7eCFZdDpUutWRwKeyXf43OHyszGUM/6Kww4VCnhPlkJ5cxhOple01UyQ=
+	t=1729000941; cv=none; b=TQV1c9XjGfXcjXIUrZVatWuMdU2ycKsMFpIpv4xVz35QNKQfgaKO49yr1U5jTtd9L9UWjqXoTaAvmnGrXk/vDvk4kbvr7/dt897aoGLO5EoLUihWps/5v97wPXCi++49JSw8XmEIZeikMqOzB8+yOPDuyeGvnoDWitXV7pPzVqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000958; c=relaxed/simple;
-	bh=WCIixjPVUsi5A6a0hBxdzf3+ZO1NSQkbn7E+fmOCPTQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q9b9Pc83QfVHZa0ralIe859OddZ2PwIPK11yUboFCBh5JkY6UBcYCFTVljgAYIj1ui4hwhyHBaWcWiJUEUIXEKWgfQgvII9wdKIOLXE/lT5DObB5Ijdu0lWXuEa5sUH8UII2PuLM0m2M9QfJbXChNzcayw/GXCGvRFDngqZMoNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app2 (Coremail) with SMTP id HwEQrAAHsBTzdQ5nAAkRAQ--.36771S2;
-	Tue, 15 Oct 2024 22:02:27 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.12.177.116])
-	by gateway (Coremail) with SMTP id _____wAXIULydQ5nxbFIAA--.32737S2;
-	Tue, 15 Oct 2024 22:02:27 +0800 (CST)
-From: Haoyang Liu <tttturtleruss@hust.edu.cn>
-To: Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: hust-os-kernel-patches@googlegroups.com,
-	Haoyang Liu <tttturtleruss@hust.edu.cn>,
-	kasan-dev@googlegroups.com,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs/dev-tools: fix a typo
-Date: Tue, 15 Oct 2024 22:01:59 +0800
-Message-Id: <20241015140159.8082-1-tttturtleruss@hust.edu.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729000941; c=relaxed/simple;
+	bh=uiJM4rSUOQpRuJzKCUCsVPKJFZberrG38PKUqst0GRU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=REjX9K4n1zhZw8dP9byuFyZIQ2CMRYL++ob7UpGF7h4rdMtVQzcYt7NEFiAjdA9K0FhR+jHtMJ0Dk7Yge9GydxjW80PZ/tHfxv8El5D4kEqWyq+355vCkrfIsvoubSfoXPkPiayCWxHRfjnamXnSAqFFy8zNuS334b+L3x2DFEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UjOlTXn4; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43114c47615so28484725e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729000938; x=1729605738; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D3UvK17eSPt8UOicM/0eqJEABn/661zuSOEvnahhcrQ=;
+        b=UjOlTXn4z1SgFi4cJjdzEQaiyE/af8Z/vi/TmCqPe7uhR75iKGqJ1RKKGk+QnaqASB
+         ZyX+9F4OMqXQ2la9OZZjvuey+mRUHLLMVhh8vnXPa98bQydF46/qXqglrAJ7MO9JOWn4
+         7eNLSQpz5smqpohq7JOG+DutCLnNpL/Hnm/Z3XS6LbOocEXW/dxKkiwOh673YwX1uqBt
+         6A8PGOdWhtxA4RYMuSFlgNTkbUU6myOdHEXnsU31tEo1q6noD9U9rr8qUd7pu3dtAeGv
+         ECed8JB2ZyBz65E1JSlb/TkSPHEBC6LjtT0vykARNitVZ2e3F4u09qIz4o358FGpfRjU
+         Bh2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729000938; x=1729605738;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D3UvK17eSPt8UOicM/0eqJEABn/661zuSOEvnahhcrQ=;
+        b=nCGuon44I/5m0KwL52WWfR4VD3wKWSxxhOQ7iausIZcYK1/RtpSgso40VsidCVw2Zk
+         G2MkmS9J3obYQ8eJUmmd6nT41Kns0xCdedNqn+yKp8TE+VywsnTD/cBe0PlkE9gSa9V0
+         1q8Y7ORM4hcH3BlxYf8HOcOJWYM/3BCzvr+uwOZJpmjLl611Tuj6BU9qZBSF7/PB0jwU
+         pMLrCVa37kycBNd5GeRL+ihi/zvG+hkKfo11nIhYDe8lmHYFmEk7SMrkl9wJAiIX/mv6
+         7TcVjhv4YbxYZxYDwJQw5CcCYubS+TaqluqGOKx+Pqtt2Woncf4UoAt7uEkud9ezvlcF
+         vXgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZBOHjXdZxGTerUeCn9H4TCGn8VzwkJ8s2FEFVbsjHyB8J/gdHNrpHXd+Q/vvIWstcUIWy3j9v5YMg7Fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL/ih0zc5UkN2Gd1VUwEXdBXNoWfVBUvlNfByLM0QUTgOpFsei
+	4y+gWo+o8WkAeZ8NE97ow2x+CmPz70+2SE/gsFgoCyySnfm63UDSXh4DARyxazEAm6isT06CYsG
+	BKXdu1wdJjutbog==
+X-Google-Smtp-Source: AGHT+IGU78NPTvkFziD53eUU1HzliQBcjp57k9rG0VlMlSkUOEZYF0iVT9DAZ6/MiIGfP+K1uxt2QF8cbr3ayec=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:600c:793:b0:431:4b20:c7f9 with SMTP
+ id 5b1f17b1804b1-4314b20c90fmr21015e9.5.1729000937986; Tue, 15 Oct 2024
+ 07:02:17 -0700 (PDT)
+Date: Tue, 15 Oct 2024 14:02:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrAAHsBTzdQ5nAAkRAQ--.36771S2
-Authentication-Results: app2; spf=neutral smtp.mail=tttturtleruss@hust
-	.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gry3WFWrWFyDGFy7Xr4Dtwb_yoWfKFbEyF
-	WIqa1DAr98AF90qr40yrs7Xr1Svw4rWF1rCayfArW5G3sFywsxJF9Fvws0qr4Uuw47uFnr
-	Crs3Zr9xtw13KjkaLaAFLSUrUUUU8b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbkAYjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
-	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
-	8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2
-	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUXV
-	WUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Cr0_Gr1UMcIj6x8ErcxFaVAv8V
-	W8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
-	jcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF04k20x
-	vE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
-	Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjxUFa9aDUUUU
-X-CM-SenderInfo: rxsqjiqrssiko6kx23oohg3hdfq/1tbiAQgLAmcN5cAjpwAFsO
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAON1DmcC/x3MQQqAIBBA0avErBtQMYKuEi3MxhoiC0eiiO6et
+ HyL/x8QSkwCXfVAopOF91ig6wr84uJMyFMxGGWsVrrB7GRFcYHyjX6LWdC1PpAdjbetgtIdiQJ f/7Mf3vcDzqqUCmMAAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5281; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=uiJM4rSUOQpRuJzKCUCsVPKJFZberrG38PKUqst0GRU=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnDnXlT0P9OH45c6iZwippHyMTLUkxyS14qWHIW
+ C90/syoimyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZw515QAKCRAEWL7uWMY5
+ RjJeEAC4nJb3elnKdDzL5/RoMJ3lgi3cdw40bmjgthB/t2mjkEnDxrVXpD6avxj5DXUhIfeX90o
+ 4Mg05WTn5yXHvjwdTDn4oW7sMwU0Yy5xYrWJMDJWrAumWU7bYSl2NI+jx2/Gb8FMuxMBIyg6Ud/
+ bjRSsMuqnkVvlx3xKNGSWo9ERmQ8Y+yZO3TYPx6GdoUGhVmegC0DoDjyuPwYaeu0xCGV3L2cM1S
+ TC9WRefQQVs5QXCZWJgyIgOzDaj3y6SeAUVcN9K80awo6Gm5mXu7Klr3A1RO9Bo1TrG2/eHBlSK
+ yt16d+qSL/UxAxvQvz3eDE+bpkUS2N3crC2hADzdgMg0n9Gz2I0f4rhAWtU+ykGvjjCEzCI+6pS
+ 3ajsT8fszK7F3eWZXBnVDhv1Hr91ADY84NXhCg3EtC270Eul7OebK86tTfyMI9vJi2cJAxXgV9Q
+ F2nB6OtEKAojVaWuzwL6X5OhNxMfPCCBSJbbl3MihTgZx0gBhd4GNzeqBWlOXed5F5vcxfxv4Bb
+ ck7nDrTqhInxq4rDw5Ptbt3Vlr4mTjWTiygcBQB8W5JYc5Y5qIrR5qA6VSqlvW7pQQgiwIKGRTw
+ +g6dmypdfgWNC1tegdYUTyYjaN8SOXnBo9kU6gptOaEcVxJRsoMySbxm9Br22x4BIGcq2pN6/kI 2FrW5cbBWCYgBlg==
+X-Mailer: b4 0.13.0
+Message-ID: <20241015-task-safety-cmnts-v1-1-46ee92c82768@google.com>
+Subject: [PATCH] rust: task: adjust safety comments in Task methods
+From: Alice Ryhl <aliceryhl@google.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-fsdevel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-fix a typo in dev-tools/kmsan.rst
+The `Task` struct has several safety comments that aren't so great. For
+example, the reason that it's okay to read the `pid` is that the field
+is immutable, so there is no data race, which is not what the safety
+comment says.
 
-Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
+Thus, improve the safety comments. Also add an `as_ptr` helper. This
+makes it easier to read the various accessors on Task, as `self.0` may
+be confusing syntax for new Rust users.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- Documentation/dev-tools/kmsan.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is based on top of vfs.rust.file as the file series adds some new
+task methods. Christian, can you take this through that tree?
+---
+ rust/kernel/task.rs | 43 ++++++++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/dev-tools/kmsan.rst b/Documentation/dev-tools/kmsan.rst
-index 6a48d96c5c85..0dc668b183f6 100644
---- a/Documentation/dev-tools/kmsan.rst
-+++ b/Documentation/dev-tools/kmsan.rst
-@@ -133,7 +133,7 @@ KMSAN shadow memory
- -------------------
+diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+index 1a36a9f19368..080599075875 100644
+--- a/rust/kernel/task.rs
++++ b/rust/kernel/task.rs
+@@ -145,11 +145,17 @@ fn deref(&self) -> &Self::Target {
+         }
+     }
  
- KMSAN associates a metadata byte (also called shadow byte) with every byte of
--kernel memory. A bit in the shadow byte is set iff the corresponding bit of the
-+kernel memory. A bit in the shadow byte is set if the corresponding bit of the
- kernel memory byte is uninitialized. Marking the memory uninitialized (i.e.
- setting its shadow bytes to ``0xff``) is called poisoning, marking it
- initialized (setting the shadow bytes to ``0x00``) is called unpoisoning.
++    /// Returns a raw pointer to the task.
++    #[inline]
++    pub fn as_ptr(&self) -> *mut bindings::task_struct {
++        self.0.get()
++    }
++
+     /// Returns the group leader of the given task.
+     pub fn group_leader(&self) -> &Task {
+-        // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
+-        // have a valid `group_leader`.
+-        let ptr = unsafe { *ptr::addr_of!((*self.0.get()).group_leader) };
++        // SAFETY: The group leader of a task never changes after initialization, so reading this
++        // field is not a data race.
++        let ptr = unsafe { *ptr::addr_of!((*self.as_ptr()).group_leader) };
+ 
+         // SAFETY: The lifetime of the returned task reference is tied to the lifetime of `self`,
+         // and given that a task has a reference to its group leader, we know it must be valid for
+@@ -159,42 +165,41 @@ pub fn group_leader(&self) -> &Task {
+ 
+     /// Returns the PID of the given task.
+     pub fn pid(&self) -> Pid {
+-        // SAFETY: By the type invariant, we know that `self.0` is a valid task. Valid tasks always
+-        // have a valid pid.
+-        unsafe { *ptr::addr_of!((*self.0.get()).pid) }
++        // SAFETY: The pid of a task never changes after initialization, so reading this field is
++        // not a data race.
++        unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
+     }
+ 
+     /// Returns the UID of the given task.
+     pub fn uid(&self) -> Kuid {
+-        // SAFETY: By the type invariant, we know that `self.0` is valid.
+-        Kuid::from_raw(unsafe { bindings::task_uid(self.0.get()) })
++        // SAFETY: It's always safe to call `task_uid` on a valid task.
++        Kuid::from_raw(unsafe { bindings::task_uid(self.as_ptr()) })
+     }
+ 
+     /// Returns the effective UID of the given task.
+     pub fn euid(&self) -> Kuid {
+-        // SAFETY: By the type invariant, we know that `self.0` is valid.
+-        Kuid::from_raw(unsafe { bindings::task_euid(self.0.get()) })
++        // SAFETY: It's always safe to call `task_euid` on a valid task.
++        Kuid::from_raw(unsafe { bindings::task_euid(self.as_ptr()) })
+     }
+ 
+     /// Determines whether the given task has pending signals.
+     pub fn signal_pending(&self) -> bool {
+-        // SAFETY: By the type invariant, we know that `self.0` is valid.
+-        unsafe { bindings::signal_pending(self.0.get()) != 0 }
++        // SAFETY: It's always safe to call `signal_pending` on a valid task.
++        unsafe { bindings::signal_pending(self.as_ptr()) != 0 }
+     }
+ 
+     /// Returns the given task's pid in the current pid namespace.
+     pub fn pid_in_current_ns(&self) -> Pid {
+-        // SAFETY: We know that `self.0.get()` is valid by the type invariant, and passing a null
+-        // pointer as the namespace is correct for using the current namespace.
+-        unsafe { bindings::task_tgid_nr_ns(self.0.get(), ptr::null_mut()) }
++        // SAFETY: It's valid to pass a null pointer as the namespace (defaults to current
++        // namespace). The task pointer is also valid.
++        unsafe { bindings::task_tgid_nr_ns(self.as_ptr(), ptr::null_mut()) }
+     }
+ 
+     /// Wakes up the task.
+     pub fn wake_up(&self) {
+-        // SAFETY: By the type invariant, we know that `self.0.get()` is non-null and valid.
+-        // And `wake_up_process` is safe to be called for any valid task, even if the task is
++        // SAFETY: It's always safe to call `signal_pending` on a valid task, even if the task
+         // running.
+-        unsafe { bindings::wake_up_process(self.0.get()) };
++        unsafe { bindings::wake_up_process(self.as_ptr()) };
+     }
+ }
+ 
+@@ -202,7 +207,7 @@ pub fn wake_up(&self) {
+ unsafe impl crate::types::AlwaysRefCounted for Task {
+     fn inc_ref(&self) {
+         // SAFETY: The existence of a shared reference means that the refcount is nonzero.
+-        unsafe { bindings::get_task_struct(self.0.get()) };
++        unsafe { bindings::get_task_struct(self.as_ptr()) };
+     }
+ 
+     unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+
+---
+base-commit: 22018a5a54a3d353bf0fee7364b2b8018ed4c5a6
+change-id: 20241015-task-safety-cmnts-a7cfe4b2c470
+
+Best regards,
 -- 
-2.25.1
+Alice Ryhl <aliceryhl@google.com>
 
 
