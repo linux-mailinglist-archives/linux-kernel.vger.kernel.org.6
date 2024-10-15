@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-365521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031E499E3A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6804099E3A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A702846AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D7432846BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1471E282C;
-	Tue, 15 Oct 2024 10:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4401E2841;
+	Tue, 15 Oct 2024 10:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iB1Bfr7u"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RL1iabjE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069DD1CBEB8;
-	Tue, 15 Oct 2024 10:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778301DAC89
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728987545; cv=none; b=hfAhz4LAJdpTRAHIOF+b+bzlHDKdArDalIFFkUBe1EYCgOJjfUwwvG/TgebiIck0kOg/Y5wLk5scH4/y8Awxg+4wnQhl0VomlsllZRyc0hzixXxdpZeAFuuqqilqHdND8PxwGNrsG8f4NJXHbN19spCvdETg36znr+Ieh+8msNU=
+	t=1728987574; cv=none; b=eqZRRsbQPqki9XPduRhUUBRXkfUEhVh2UwTVf1ZIvBno6tq7M0fPsRsQlwNTKQw8tHhMPzc6+MxOWi1n03USyq6GdCKacmkBeQUXRSV3/TQwnKN8CNrC9NyWxQZcN2BPzdh9r2sJRZM2Bf8mxWDlUlGDPxuuhxCa4r94heR4jeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728987545; c=relaxed/simple;
-	bh=VWUNZO+nDheRKZ5nkF50AW67/8AZ063Ip3o0fiXPBio=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VfdoL8HPCCETwF8cZ03tzXiMD1gQHYM4SlvIEfl1Y9s9lK8PJCxo446g8aAVct6OgRI0cJYoOmNaARPWFt5V9LcTOF6qP4uvKidIvbLxKT+0HMEl7o1mIIB+Wes6zjPkOE4PoAtO/iR0HA4WCp+QilVqMVLoJZCbQ307vlSHT0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iB1Bfr7u; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F0le1p012750;
-	Tue, 15 Oct 2024 10:19:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=AGzN2LeQRNdMVTwurXOEhf/o
-	AIn0zeR7yD9+1e6sqHs=; b=iB1Bfr7uY7GdPS+Ok4AV0tlSd+FsLGHAOZT/Nbwl
-	P8sEm8F0s3iwt0BkZjeO9Kf3f3TdwvXAtTPT8wQs4eWx6QRaeiOTotRrNeb9906Z
-	mYKtmX8U/yeCbNr4UMqO3imYA5s2momnbL/w9sfzsM+iZu0fljcwy08/pNOLXSpt
-	7MXTEq9E7GFmpwpd3ZQYgj8KWG781u8I5iCAqRyve2uCrJLTByBSAhZ79H/IuCI7
-	k1m+Z3B2v/xfu/nI5Kx8dfl0kVCBqETk7cgzXYQxeRlweBoW2mSaiY3UzetTs6Nw
-	6cosByoaLvL/BgaOfdElaXOpt1fn5HFEfeJEFX3ba4/d3A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429e5g17nq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 10:18:59 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FAIxXt029902
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 10:18:59 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 15 Oct 2024 03:18:56 -0700
-Date: Tue, 15 Oct 2024 15:48:47 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Kuldeep Singh <quic_kuldsing@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Qingqing Zhou <quic_qqzhou@quicinc.com>
-Subject: Re: [PATCH v2 1/2] firmware: qcom: scm: Return -EOPNOTSUPP for
- unsupported SHM bridge enabling
-Message-ID: <Zw5BhwpJ8UWm7Fiq@hu-mojha-hyd.qualcomm.com>
-References: <20241014111527.2272428-1-quic_kuldsing@quicinc.com>
- <20241014111527.2272428-2-quic_kuldsing@quicinc.com>
+	s=arc-20240116; t=1728987574; c=relaxed/simple;
+	bh=UtNejxWTGys9rDt1pROLsuGxzh/JYXHbYWC1bkRqFBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CapuHK0sR3zoBTc5vNgU57U13zwv2nVO6CFG+qFugu9hdwQFi8tRvzk+lOIYSufQY97ByK9wiilScZKK0YfeNPAd446NQqSKac5hNXUVJM4wMXaAUISh89oTq9au7CsXlM85y/xD3N99xrpMzlilkJriiZ76xmoJqNSM5Diw5og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RL1iabjE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728987571;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yL03YOPM9cVhg3T+Qftkg8/CQZZbBVIoxOh8LNZ0CNY=;
+	b=RL1iabjEWGsviJh/lgJeoOeS14UYFfl4t3zPM7yHqF7jRcVMbpnFldn0rc4y/zFL3wiuA9
+	S6+tkNjlUH3iVsdIy16E6McSa7dtCG60Ebz2PSaJ0FZEJYEs+oYf/E9vfVt13tXradEoQL
+	91o4ttZQ9lmTnskmC4h51THB36VSP9w=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-482-blWc40RyMA-I1MBeM5f2nQ-1; Tue, 15 Oct 2024 06:19:29 -0400
+X-MC-Unique: blWc40RyMA-I1MBeM5f2nQ-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a99efc7d881so186215966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:19:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728987568; x=1729592368;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yL03YOPM9cVhg3T+Qftkg8/CQZZbBVIoxOh8LNZ0CNY=;
+        b=EEUVPP1evEz0I5hb8lFKfNVlxxgerkq1KXMnPsOfHoXgQv9RwynCLYTUDz2dlr8T0r
+         NgEI8VMS9lMXf8skXDANGca5Pjdr8TTNt1BssI6FmX6yvBD8It3VY9RQJEJ+FQGBDjSX
+         bB4qdMarN8vFfQa1CKqVSLdd1X5Z12Egk25nMpjiJE70I1ckESYNafllUdJoi3MynrVq
+         57u/vEGDQut9/w+WsjNGss+c9p8PujB8XO6FRCi8EqmtF3m5DNOmeh2BoiFVmN57kBhB
+         /k5eT5mel6Wdr6xoCgaTf5e1HAlmUR2uzDGMVGwo3QhxbavyRjdfD9nfhQ2NIDFxj0Yf
+         ssHg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1quQTyqT+1aT7hMDIoI+asHP3TgDqRor0ASCtJ//Pe6jmbGm6FcEbiNdIfND6Fr0Hh+3dIFZ5P5UG/Sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEqfT7GB/a9tQ9KGVSxdHLVxstHLkWN+3KGX4cAPRFaVLB7G2Q
+	tn3fszVlQbD0MJfgmdlXgikkqAdDomzI7fGnirB/E09v4KcdAdDXktJLH8Y1QiLKm/q8mT20JAc
+	mA+BE3y39xW6VMhRGqR/06W1XCCXA4tJhj8qEr+9z6rOf6x8wu22s/yyGzxmuHg==
+X-Received: by 2002:a17:907:3cb:b0:a9a:f82:7712 with SMTP id a640c23a62f3a-a9a0f8277a0mr373405666b.52.1728987568225;
+        Tue, 15 Oct 2024 03:19:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFCt73pi+kBQa8sFo8lywX0rXLgjhAffY6kTOniri1Q1voIZU61MMns3Q+EQxXd6h1IBekPBA==
+X-Received: by 2002:a17:907:3cb:b0:a9a:f82:7712 with SMTP id a640c23a62f3a-a9a0f8277a0mr373404366b.52.1728987567756;
+        Tue, 15 Oct 2024 03:19:27 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:171:1a30:7155:8c78:3ad8:e1c0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a298169a8sm53853266b.134.2024.10.15.03.19.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 03:19:27 -0700 (PDT)
+Date: Tue, 15 Oct 2024 06:19:22 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mike Christie <michael.christie@oracle.com>
+Cc: Cindy Lu <lulu@redhat.com>, jasowang@redhat.com,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 7/7] vhost: Add new UAPI to support change to task mode
+Message-ID: <20241015061702-mutt-send-email-mst@kernel.org>
+References: <20241004015937.2286459-1-lulu@redhat.com>
+ <20241004015937.2286459-8-lulu@redhat.com>
+ <a6b0d25b-4b8c-4633-8900-978adf14795d@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241014111527.2272428-2-quic_kuldsing@quicinc.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NDAUO9GaYUON1msTlhPiUv-0xbOiM1HL
-X-Proofpoint-ORIG-GUID: NDAUO9GaYUON1msTlhPiUv-0xbOiM1HL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- adultscore=0 impostorscore=0 mlxscore=0 priorityscore=1501 suspectscore=0
- bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410150070
+In-Reply-To: <a6b0d25b-4b8c-4633-8900-978adf14795d@oracle.com>
 
-On Mon, Oct 14, 2024 at 04:45:26PM +0530, Kuldeep Singh wrote:
-> From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+On Mon, Oct 14, 2024 at 03:56:33PM -0500, Mike Christie wrote:
+> On 10/3/24 8:58 PM, Cindy Lu wrote:
+> > Add a new UAPI to support setting the vhost device to
+> > use task mode. The user space application needs to use
+> > VHOST_SET_INHERIT_FROM_OWNER to set the mode.
+> > This setting must be set before VHOST_SET_OWNER is set.
+> > 
+> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > ---
+> >  drivers/vhost/vhost.c      | 18 +++++++++++++++++-
+> >  include/uapi/linux/vhost.h |  2 ++
+> >  2 files changed, 19 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > index 08c9e77916ca..0e5c81026acd 100644
+> > --- a/drivers/vhost/vhost.c
+> > +++ b/drivers/vhost/vhost.c
+> > @@ -2341,8 +2341,24 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
+> >  {
+> >  	struct eventfd_ctx *ctx;
+> >  	u64 p;
+> > -	long r;
+> > +	long r = 0;
+> >  	int i, fd;
+> > +	bool inherit_owner;
+> > +
+> > +	if (ioctl == VHOST_SET_INHERIT_FROM_OWNER) {
 > 
-> When enabling SHM bridge, QTEE returns 0 and sets error 4 in result to
-> qcom_scm for unsupported platforms. Currently, tzmem interprets this as
-> an unknown error rather than recognizing it as an unsupported platform.
+> Maybe instead of a modparam and this ioctl we just want a new ioctl:
 > 
-> Error log:
-> [    0.177224] qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
-> [    0.177244] qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
-> 
-> To address this, modify the function call qcom_scm_shm_bridge_enable()
-> to remap result to indicate an unsupported error. This way, tzmem will
-> correctly identify it as an unsupported platform case instead of
-> reporting it as an error.
-> 
-> Fixes: 178e19c0df1b ("firmware: qcom: scm: add support for SHM bridge operations")
-> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
-> Co-developed-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 10986cb11ec0..0df81a9ed438 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -112,6 +112,7 @@ enum qcom_scm_qseecom_tz_cmd_info {
->  };
->  
->  #define QSEECOM_MAX_APP_NAME_SIZE		64
-> +#define SHMBRIDGE_RESULT_NOTSUPP		4
->  
->  /* Each bit configures cold/warm boot address for one of the 4 CPUs */
->  static const u8 qcom_scm_cpu_cold_bits[QCOM_SCM_BOOT_MAX_CPUS] = {
-> @@ -1361,6 +1362,8 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
->  
->  int qcom_scm_shm_bridge_enable(void)
->  {
-> +	int ret;
-> +
->  	struct qcom_scm_desc desc = {
->  		.svc = QCOM_SCM_SVC_MP,
->  		.cmd = QCOM_SCM_MP_SHM_BRIDGE_ENABLE,
-> @@ -1373,7 +1376,15 @@ int qcom_scm_shm_bridge_enable(void)
->  					  QCOM_SCM_MP_SHM_BRIDGE_ENABLE))
->  		return -EOPNOTSUPP;
->  
-> -	return qcom_scm_call(__scm->dev, &desc, &res) ?: res.result[0];
-> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (res.result[0] == SHMBRIDGE_RESULT_NOTSUPP)
-> +		return -EOPNOTSUPP;
-> +
-> +	return res.result[0];
->  }
->  EXPORT_SYMBOL_GPL(qcom_scm_shm_bridge_enable);
+> /*
+>  * This will setup the owner based on the calling thread instead of
+>  * using kthread.
+>  */
+> #define VHOST_INHERIT_OWNER _IO(VHOST_VIRTIO, 0x83)
 
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+I feel this is not good because it is insecure -
+process should not normally have a say in whether
+namespaces work correctly.
+So we want the system admin to be able to block the
+old mode.
 
--Mukesh
+> It would initially be used by vhost-scsi when worker_per_virtqueue=true
+> since that is a new use case and there will be no regressions.
+> 
+> For the other cases we default to VHOST_SET_OWNER. Other QEMU cases or
+> tool XYZ can use the new ioctl when they are ready.
+
+I do not like it that we switched default now we apparently will be
+switching it back. Will break some userspace whatever we do.
+
+-- 
+MST
+
 
