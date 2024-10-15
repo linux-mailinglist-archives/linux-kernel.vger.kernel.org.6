@@ -1,102 +1,98 @@
-Return-Path: <linux-kernel+bounces-365273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB80F99DFBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:53:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6868B99DFC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773341F239DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:53:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5B52B23B8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6DB1A76D0;
-	Tue, 15 Oct 2024 07:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C761B4F2B;
+	Tue, 15 Oct 2024 07:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tCgDcmSK"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="i5wzU23O"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1356518A6D9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CEB189BA7;
+	Tue, 15 Oct 2024 07:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978777; cv=none; b=AV2mBdrL3qt4/4opzTV2eA35afFtDSHqqOG6UELzhU/IhXB6WRACZ7jiP8ZZQ5uwHlUEFHIz7RJyqJ+bH3/RA54nnP92YAWQNZmPRy0jvRkv7ZjpzXrCbvIOzE6juZFxUtdmEe54PX2sg1lAUeLP/m8QzA5cyCdHNfZGZXcTPpU=
+	t=1728978824; cv=none; b=pnWH0yV29Mc5mNUvVQ4Q1JHcwNu90AKzG98WWzB6DUdJ//DRKfKLVHo1GJA6beZDlJIBJVBDDFk/dLs8I74Mk5aca85K0VtvMnusZIhcLz0R0VShMDJLVy0ZEHpVCQ8lxL0YqiLza5/54EEZdD3JvNzER1GzjSaX8/rQIvyg/Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978777; c=relaxed/simple;
-	bh=yKy4gKAOegZZMQfE4qbX5aO6EBlZq7VAN/0/6IdaTwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KQHA5Yu9kwzr9TlRxoHB7UGStPvIWLNHn0q7BvhzcDVm+hDFfiy/eTnNtUEEvZwMB8hKYrD5NLKCYk4wiyzcovOcTY5osIwLcvfzCp9hbXKyxR0JRGV90qdetgqRejIDDnM+OfwC84qcapWQmq2LbhI+k6tbypb/tZHw5QlYPQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tCgDcmSK; arc=none smtp.client-ip=115.124.30.118
+	s=arc-20240116; t=1728978824; c=relaxed/simple;
+	bh=N10GtP79W0SQR6wTu+fzxDJSpZ/fzVfhJC0zpyVlcsI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=oYr87HxSddGnhAIwqDKvCs/rA8KbHCB1LfB61GQK6fHpzQ/ycyn4tinoTH+1jdtLGo3vn98XTvG1hqu/bCT7eYmNz023mGzif6ZSjBUtvKGmGsdIoFSnWZZtQaTXXrP/EHlldQ6Ue5Y8HlJk1wJo4lmS7LUL60nR0GmkqBpRlw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=i5wzU23O; arc=none smtp.client-ip=115.124.30.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1728978766; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=XmrO3mGDMdEdy6F/vjqBqNRpe+B/XqnieplA2yVTEyY=;
-	b=tCgDcmSKP3xypRqxOP8JMSQXVQwbDggKAdFNEQS6XhTpby9AgNIvhUAb7PVhWiD+zq7o4HuI5kFbyFqjVJDaw/IeKjJd9GnUD7KAPkq1Si8p1PnY93ruj3c9k9ipQ3DIeUDJAQRokxWXlH4I+vBGt16VenV51D0SN6uwLvujAM4=
-Received: from 30.221.130.176(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHCxYGt_1728978765 cluster:ay36)
+	t=1728978814; h=From:To:Subject:Date:Message-Id;
+	bh=iOQC40k/fMHf8VAUXityLW99zk2gANc5PBCPfsApcU4=;
+	b=i5wzU23OQzbSTl+F2NckQX1fuVwijuTur7VmdKaIEZjFzwKIBzlfALvm1ykM35ALtblAdi9jbEckav9i8TsSdU2ai2EVunuoqk2XPQNBA2BaqVoY0YLDgT39FuNQABBwehkvz8r4B+XYUbBY7JXNreZDaETIg7B02v/Eq0jkXAU=
+Received: from srmbuffer011165236051.sqa.net(mailfrom:renyu.zj@linux.alibaba.com fp:SMTPD_---0WHCfYCS_1728978808 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Tue, 15 Oct 2024 15:52:46 +0800
-Message-ID: <b0c38bac-a682-45ae-8991-b73991ae6ddb@linux.alibaba.com>
-Date: Tue, 15 Oct 2024 15:52:44 +0800
+          Tue, 15 Oct 2024 15:53:34 +0800
+From: Jing Zhang <renyu.zj@linux.alibaba.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: xueshuai@linux.alibaba.com,
+	zhuo.song@linux.alibaba.com
+Subject: [PATCH] perf/tests: fix record+probe_libc_inet_pton test on aarch64
+Date: Tue, 15 Oct 2024 15:53:27 +0800
+Message-Id: <1728978807-81116-1-git-send-email-renyu.zj@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] erofs: fix blksize < PAGE_SIZE for file-backed mounts
-To: Hongzhen Luo <hongzhen@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-References: <20241015070750.3489603-1-hongzhen@linux.alibaba.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20241015070750.3489603-1-hongzhen@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+Since commit 1f85d016768f ("perf test record+probe_libc_inet_pton: Fix
+call chain match on x86_64") remove function getaddrinfo() on expected
+file, the test failed on aarch64. On aarch64, function getaddrinfo()
+show up in the call chain.
 
+$perf script -i /tmp/perf.data.1PV
+ping 2588319 [125] 500119.122843: probe_libc:inet_pton: (ffff9a4f7410)
+            ffff9a4f7410 __GI___inet_pton+0x0 (/usr/lib64/libc-2.32.so)
+            ffff9a4c5f7c getaddrinfo+0xec (/usr/lib64/libc-2.32.so)
+            aaaad6d32b38 [unknown] (/usr/bin/ping)
 
-On 2024/10/15 15:07, Hongzhen Luo wrote:
-> Adjust sb->s_blocksize{,_bits} directly for file-backed
-> mounts when the fs block size is smaller than PAGE_SIZE.
-> 
-> Previously, EROFS used sb_set_blocksize(), which caused
-> a panic if bdev-backed mounts is not used.
-> 
-> Fixes: fb176750266a ("erofs: add file-backed mount support")
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> ---
-> v3: Fix trivial typos.
-> v2: https://lore.kernel.org/linux-erofs/20241015064007.3449582-1-hongzhen@linux.alibaba.com/
-> v1: https://lore.kernel.org/linux-erofs/20241015033601.3206952-1-hongzhen@linux.alibaba.com/
-> ---
->   fs/erofs/super.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 320d586c3896..ca45dfb17d7c 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -631,7 +631,11 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->   			errorfc(fc, "unsupported blksize for fscache mode");
->   			return -EINVAL;
->   		}
-> -		if (!sb_set_blocksize(sb, 1 << sbi->blkszbits)) {
-> +
-> +		if (erofs_is_fileio_mode(sbi)) {
-> +			sb->s_blocksize = (1 << sbi->blkszbits);
+So just remove getaddrinfo() on x86_64.
 
-Why needing parentheses here?
+Fixes: 1f85d016768f ("perf test record+probe_libc_inet_pton: Fix call chain match on x86_64")
+Signed-off-by: Jing Zhang <renyu.zj@linux.alibaba.com>
+---
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks,
-Gao Xiang
-
-> +			sb->s_blocksize_bits = sbi->blkszbits;
-> +		} else if (!sb_set_blocksize(sb, 1 << sbi->blkszbits)) {
->   			errorfc(fc, "failed to set erofs blksize");
->   			return -EINVAL;
->   		}
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 47a26f2..09d7b0b 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -52,8 +52,12 @@ trace_libc_inet_pton_backtrace() {
+ 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
+ 		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
+ 		;;
++	x86_64)
++		eventattr='max-stack=3'
++		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
+ 	*)
+ 		eventattr='max-stack=3'
++		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
+ 		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
+ 		;;
+ 	esac
+-- 
+1.8.3.1
 
 
