@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-366039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A580F99F006
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:48:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5664E99F00F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CAD71F2471B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881D31C22068
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BEE1AF0D5;
-	Tue, 15 Oct 2024 14:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519161C4A25;
+	Tue, 15 Oct 2024 14:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2ssUReZW"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFkIV/Vk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DF41F61C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A098C155A4D;
+	Tue, 15 Oct 2024 14:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003704; cv=none; b=TqdprIneC3/4gU9eJCd1lIsomNsibaAfIFz+pAvrP3W6sc13El8Gj4rer9CWFbA2A4YQbAXq5RJKId2Hsl5crgfMkXBKd6kdFVp7o2mUqgFg+0TK60Caj78VchFkA5TqERcTCkSW2hZaBLuNTE1SuUsk4wk1z/mRLq/tRIXz6R4=
+	t=1729003749; cv=none; b=ImuWiKXAw2CsO3FipI7SB8C7HPHyELjnr6MR6ik3/xRcbBlbTez4snejIttEuYtvYV+PIv4i1Try3F+kHSzdwrYNI83hkFYQyMZPoKd2FSSPMDNpuv4QC70MIWv7OvDcFI4NV2KK1Hb3mf9UqPNO+uko5bWLVpk1Y5wuxHDqRMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003704; c=relaxed/simple;
-	bh=1ZKbFqq5xIztMsJdbLYu9Ok3agkULQ0nUqv7argX3yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TdYRA3xB5Lc1YANDojgNWXs33qxuWemvzyt4AUj8aVdJEtSynYhutMxZ4V/dhB7wbF2kb1vOvQkJ6/5g60pYh3w1LMAm90wOSDUBQQs+DAPqP3OoIqkbIdgvJN/x/TqSiAxQgUXs+36Bi0cRvdBH702pmWcgq2Fmwtd96iY7BSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2ssUReZW; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-716a52841b5so2843529a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:48:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729003701; x=1729608501; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KUVW0w4TahcLd/Tf8bTFKOH/+gu9J1Ctw2P3JJAhxMU=;
-        b=2ssUReZWojhEj+Ek7OgVqglakTyup8dshveg5Ky1T4DQZZSFTRv+ojSxlj4dYuiRHw
-         9sh9TN2im4S35nrIbr0ByQF0O8Y46iwo0CG+AjlLinz8XpovI8DO7H5aFLMUzWi7S3zp
-         Y+t9jyJRkKvKRVdq9mwkRtRisTPt71Xr37gIBQJNVd0YYp1rRaqyFllKOCQvOwCRYD8C
-         OJTu0VE+f70KcoO9NmDphtgzttZCk/uQZcQFqOoC/SK47IMROyDmh6AutHMRoZf/4E7O
-         vgf9kY35EiCposQ/1Qypuf7i7x0zPwMQUphIFT2POWvgsFdbuUfjbMo3Ogq/KRFEjvLw
-         HMAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729003701; x=1729608501;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KUVW0w4TahcLd/Tf8bTFKOH/+gu9J1Ctw2P3JJAhxMU=;
-        b=SS8v/Us0kgasV6IJfZ6Q3d8XEf/4jXSjXv3a+5Ps9iT7WuPgE7bzmKkWVFlH5p2qt8
-         hgoftqAIOJo9qFtawdDHAO2GO8NRNI0XYAkMHhtm3/EIvr9ow/CpMdEdKEX9UFAjiY/n
-         12Wn7dGyhqxM+VMGQHs8n7QhaZzNZCqUD7yFHPoIKre4PMVIWQ2jhRMZ4Ou+xi478a5d
-         n1OyhfIPbdjo3IhTR1WFMhud377t3Ul06a6DRBpPXQyarzOVZK7oo0pAHJkzPreY7Z8X
-         Omo0wSf2UgSZFhvntIZy1R5rfOPKnJuLvVw7DUU4C7ZHmhlu6QuBj/QUsNHyQWFAnu03
-         g7xA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfLx9TepaTQGq2SB0valCxMachpEloIKE1dDPLl+xGlftxy/sPsOJmYGKF9fam0Z0D9Tk1xJ/suAHCxW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD53m3N4AijUzOHQOYld8fKvyJ8TNeNosvwFK3KDwzfaMoOV6D
-	KSWh8QcBj96o9TCUvwAshQj4QFHJxtokK9QhteOPra8UIzUdsEK7LoyXpTbUQuM=
-X-Google-Smtp-Source: AGHT+IHF1LHG4GcRViICSmBgqiP8SHfhXVmF8tDnJrqAqe6yocnsYDdQLqSDrYOeyZh9hqhH5NspiQ==
-X-Received: by 2002:a05:6830:3482:b0:710:f3cb:5b85 with SMTP id 46e09a7af769-7180342d344mr774702a34.6.1729003701442;
-        Tue, 15 Oct 2024 07:48:21 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eb4ee121bfsm266967eaf.28.2024.10.15.07.48.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 07:48:20 -0700 (PDT)
-Message-ID: <f1f7f187-f1d4-4d81-9187-ac238c0ca964@baylibre.com>
-Date: Tue, 15 Oct 2024 09:48:19 -0500
+	s=arc-20240116; t=1729003749; c=relaxed/simple;
+	bh=FcCpjXPzzn/2wc5VegshDOVuebjc1SvSVsH5sDQ2yBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aMjaaKZWh1w/xMKlQ0nmD+y/X8+1ZYnJzO0EGjFl+XfdlEkfUEuQCDHo0NDxZ/+AFeRy427eUqhVy/oXmSYutQzr5ptlxvGcpmiml7kCqWdn23lDgz7x8K02QKAEdDyJV825/XNZtEKA5YmlrPhJqNFg01zUfEMulCf2mlvar/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFkIV/Vk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97910C4CEC6;
+	Tue, 15 Oct 2024 14:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729003749;
+	bh=FcCpjXPzzn/2wc5VegshDOVuebjc1SvSVsH5sDQ2yBQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=BFkIV/VkTTtB45oHq0TKz89rX91/FqJFko8PIp5BUs0UlQD3cnT8hTdoSFjEPMdWB
+	 W4iZsO+T3ZD1SaDMGS5a8Oqclj3oANQiv+1Gx43+7dA1VvAkT1Sl0GxQHM2eUhhhbH
+	 hUzWwXxAMGkA4NWuIHe71B4i4AGJ5rdIowtLtlJ28yfcL15EixlHI3wFHPmybY4PI8
+	 YjBPWHgOzkqoFeDCGsCqDYjC1RO2Kr91KbSXAuP8KY44nlVlut+9GhWJoqY5vRrvyI
+	 qWiqMOh0OFuaz0fepf6JQcvmafawSt13JG2Y6Wu9gGyAoS1FiT1QmWDusnq459gf5t
+	 9fhEjRVfbmrNA==
+Message-ID: <b981df66-2501-40ad-8064-158cf93407f7@kernel.org>
+Date: Tue, 15 Oct 2024 16:49:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,47 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/8] iio: dac: ad3552r: add high-speed platform driver
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Angelo Dureghello <adureghello@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 2/2] dt-bindings: hwmon: pmbus: pli209bc: Add bindings
+To: Guenter Roeck <linux@roeck-us.net>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
- <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
- <549566b00524c0230a6a970b74a38dbe58e2589d.camel@gmail.com>
+ <conor+dt@kernel.org>, Sylvester Bauer <sylv@sylv.io>,
+ linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241015113329.667831-1-naresh.solanki@9elements.com>
+ <20241015113329.667831-2-naresh.solanki@9elements.com>
+ <c07435f5-af3f-46e2-8e4d-b0a42969b60a@kernel.org>
+ <30089bac-e764-45ca-b0fd-f0eb0333e632@roeck-us.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <549566b00524c0230a6a970b74a38dbe58e2589d.camel@gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <30089bac-e764-45ca-b0fd-f0eb0333e632@roeck-us.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10/15/24 2:15 AM, Nuno Sá wrote:
-> On Mon, 2024-10-14 at 12:08 +0200, Angelo Dureghello wrote:
->> From: Angelo Dureghello <adureghello@baylibre.com>
-
-...
-
->> +	} else {
->> +		err = ad3552r_qspi_update_reg_bits(st,
->> +					AD3552R_REG_ADDR_INTERFACE_CONFIG_A,
->> +					AD3552R_MASK_SOFTWARE_RESET,
->> +					AD3552R_MASK_SOFTWARE_RESET, 1);
->> +		if (err)
->> +			return err;
->> +	}
->> +	msleep(100);
+On 15/10/2024 16:10, Guenter Roeck wrote:
+> On 10/15/24 04:48, Krzysztof Kozlowski wrote:
+>> On 15/10/2024 13:33, Naresh Solanki wrote:
+>>> Add bindings for Vicor pli1209bc.
+>>> It a Digital Supervisor with Isolation for use with BCM Bus Converter
+>>> Modules.
+>>>
+>>> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+>>> ---
+>>>   .../bindings/hwmon/pmbus/vicor,pli1209bc.yaml | 65 +++++++++++++++++++
+>>
+>> This has to be squashed with previous patch.
+>>
 > 
-> nit: fsleep()
-> 
+> Neither me nor the hwmon mailing list was copied on that previous patch
+> (or on an intro patch if there was one), so I have no idea what this
+> is about.
 
-fsleep() is microseconds, but we really do want milliseconds here.
-Datasheet t_18 is 100 ms. (Internally, fsleep() calls msleep()
-for anything over 20 ms anyway so makes more sense to just call
-msleep() directly and avoid 3 extra 0s.)
+Heh... that's even worse because without that visibility you would pick
+up this patch only leading to duplicated compatibles warnings.
+
+Naresh, sending such patchsets is really not correct. Be sure you
+organize them logically and in fully bisectable way, and then you CC
+relevant people.
+
+Best regards,
+Krzysztof
 
 
