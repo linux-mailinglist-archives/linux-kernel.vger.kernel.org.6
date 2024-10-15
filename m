@@ -1,215 +1,334 @@
-Return-Path: <linux-kernel+bounces-366506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DD899F68F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:58:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C08299F693
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC9D1C21374
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:58:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8C71F22F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028393DAC02;
-	Tue, 15 Oct 2024 18:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8661F80C8;
+	Tue, 15 Oct 2024 18:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZpEQlPAs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="XEDj9uO5"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2046.outbound.protection.outlook.com [40.107.20.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51772296CF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729018347; cv=none; b=tBurp/SpbdaB5zxrfccZSiujW2YcuCdKHV+Th3kmr8nJgQdo+KWXC+/if4nRx4XSXKgUS9fZ+IXe55kvH2hD76xQIiELurSw3yN016je3WL0w+4C6enkbUuA+krddkORZVey80ytK6yyt/jOJg11tjJApDNNimHJCiXE/IFQ9/U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729018347; c=relaxed/simple;
-	bh=ZGl79UfjjHp/dbanoMIKpsfiBb1RGuN8b5mG9T34Oqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n8hWaNW4NS9Pu/vyc4b+KAtyXd5k7p8u02qsk1Qnsf/+4CuGXhX9jUD+CjNpvAV5c0dj6KAGj24UIS71rMhLEmjfNwYj+yhpAfABCSHFmvexyzrQzo/WXQz5zA2uU6FFRMY00rPvFe4P0Wvnkj74DF7IJIvRd/DhfwalosDAgDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZpEQlPAs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729018344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GXTMrjROGaTcKBpC5zD8IzpbS8kTElR36tpy9F32tfY=;
-	b=ZpEQlPAsYeOvXntrSbW0ABh7+2tSnwXa7WDwEHLDoPzkzPlltrF8A4RHQEjn0jScLBUlis
-	wmd0W+PAX8Yx9bEeoXRDah/Ys1P/curCYyNwbglXIlutUGsLFDcqyRME90m3ZSCtEYFUp5
-	H9moGF9JCYMYdcT+qjaQvzQDOz9LTZQ=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-483-NU25J-VNOveCGcw_YH-8jw-1; Tue, 15 Oct 2024 14:52:22 -0400
-X-MC-Unique: NU25J-VNOveCGcw_YH-8jw-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c9166079c0so4114679a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:52:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729018341; x=1729623141;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GXTMrjROGaTcKBpC5zD8IzpbS8kTElR36tpy9F32tfY=;
-        b=MylEDOUOyWennzPHBDa0FZoff/RpnGoEd4Gxo2dw+L+sFUY8uJn914hryMsrlGibse
-         zX8NL6HLujRF0goD7jWktLfNHOgsV249qUFQwmX+u0m6824GY4vDRvm0TWH6pp4wL5UU
-         Iliit98qzOP00YcIzMclEfjhS6hvnzRTXCImLgly6qit2KmCjAV6ZKFgTgTuYfgQMXuq
-         cVuZ8HI3bx6oS19LtL1AA+NHSQyNYO7xMt0ONg+FURiHvxwn4Gto4ExcyJxjkOcMOSBs
-         ptYkXCXgkR/eQ3asB6gJzLbzEa0FobFCmsE54melE+x9jh2fPDn7i304CNwFcNAWpCiH
-         4OFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNIjuUjptMvgGmqMQ0HQl2NKpzOsvKSO6BwfSUcwA3LCWZn0ObmFvaM0BllyjagwEt/E2k8cxCHCm/d5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6zBS30j84TlwTnozHzNhgD+jS08JT9zet9wy29qi9vvyIPUa2
-	02Rs6AruERqTFTB2aoccmOa6Z2nN/Jr+Kgn2D3j3xGVEPhMHVRAJkAnJl50aNB6kPokbVofeMPH
-	hcRodicrgUCQmmKzow6uCjUHeXMurC14rbXpycBgZ1wSMEUkYc6Hfq5BCYcBpRQ==
-X-Received: by 2002:a05:6402:520f:b0:5c5:ba82:c3b1 with SMTP id 4fb4d7f45d1cf-5c95ac4e471mr9747002a12.29.1729018341587;
-        Tue, 15 Oct 2024 11:52:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4IRS8nhPSbHHMGAr1esFr/1sORzxV4dHhLUSla/ENaT5Qe2x1SJKm+qMzu8Ky2rtxd6imbQ==
-X-Received: by 2002:a05:6402:520f:b0:5c5:ba82:c3b1 with SMTP id 4fb4d7f45d1cf-5c95ac4e471mr9746938a12.29.1729018341069;
-        Tue, 15 Oct 2024 11:52:21 -0700 (PDT)
-Received: from eisenberg.fritz.box (200116b82d5d5a0006e2615320d1d4db.dip.versatel-1u1.de. [2001:16b8:2d5d:5a00:6e2:6153:20d1:d4db])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d39a9a2sm974438a12.0.2024.10.15.11.52.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 11:52:20 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Basavaraj Natikar <basavaraj.natikar@amd.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Dubov <oakad@yahoo.com>,
-	Sudarsana Kalluru <skalluru@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rasesh Mody <rmody@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com,
-	Igor Mitsyanko <imitsyanko@quantenna.com>,
-	Sergey Matyukevich <geomatsi@gmail.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Sanjay R Mehta <sanju.mehta@amd.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Chen Ni <nichen@iscas.ac.cn>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Ricky Wu <ricky_wu@realtek.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Yi Liu <yi.l.liu@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Ye Bin <yebin10@huawei.com>,
-	=?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Rui Salvaterra <rsalvaterra@gmail.com>
-Cc: linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ntb@lists.linux.dev,
-	linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH 13/13] PCI: Deprecate pci_intx(), pcim_intx()
-Date: Tue, 15 Oct 2024 20:51:23 +0200
-Message-ID: <20241015185124.64726-14-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241015185124.64726-1-pstanner@redhat.com>
-References: <20241015185124.64726-1-pstanner@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8331E1F80A2
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729018366; cv=fail; b=FvdprJ/7Qxko8hKZUmP57j/3tKwBizZJ2lishvbfMeHNZ4Iku/n/0FVqv9bOAITsfSoMyixtdTRa0jkPiqOG4RJtyZMPpP5EA4pAXfKA9PJQy5dRgdGa/ub5zc7xZLwsyQR5fWC1uUH/zZpbd1XRotYMid3ekWcsrV6RDKTXqXA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729018366; c=relaxed/simple;
+	bh=lMougKV/184WKxzKLBBhMYxmNoDznExdCLPjwD8ryrE=;
+	h=From:To:CC:Subject:In-Reply-To:Message-ID:References:Date:
+	 MIME-Version:Content-Type; b=PuP4kWo2G4K/mnHw1XbvPeZ6fLaGFpitxKFmPh7YnT7OtymfkZp8WJ8x3Cb7t2Eg8g6MPFN0kowNw8pmsdCdgg4rMFGD37eteR3+epcyzk9CD7Rp+Pkv6ujHgkc/stvkCFvp8rajEAHHUvndXm7k2xG4b8bu/hQTavAEGQWtWv4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=XEDj9uO5; arc=fail smtp.client-ip=40.107.20.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eVQ7tlp9HOVKocps6QQroqh8ffLgjM3K9UVEJn0P5Pv/0u0ayLxmKZhm/MKc2JiGm4GONqXLS6UXDbdpAxM/hJgtM/RZctpXqdsYEHFtOJltmGYRoNRaWlLmWbxOnaCafvVipWGwe3yxWTSVYgLXrF77iRZqJwcFQRYgAYC6iFWotJ0DGI2ufrqlDZBgeTJeWeJR7ObdqJn8w+lNC/4l9d+UCSXXXvUwYZDPVW6VSddUkxjUKUM8mv8mz4PtlR3Mv05CXO9O+GY7YihqgV1VwkDu5LuZmrjCob/vaiER1Gite8fjCiqiNmJIEnc2faZx96DA0hyu5KgptYCkRkoJnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rTL2LBDbL0qc5ThRNA3ur1lSmI82842LeIXvRQ5M0fA=;
+ b=kX9eQySELmIHF9tMqvw8xWc4h+UrjPkegcAOxktXnkRp9p/qb6Om/khycOCUw0uot24iivrnyJ3weknm4bCQWvzSUZz4Qvvc/qLVRPQXJHc5pI/RUNKDEuEn//pNmTDnVeeaM5DEmBUoZz0rScZN0n0QkvsWfMsWsQenVCrOMtKvwJjtYU1HO/1BmhjsOvHtgqEVNXODLwvFpZAob6NhDjXA2MEY6772nbPJVQ+fx7ssJeL2f0lN8g3v9HNAYVf0C1r3yA79w7shAGMyGkvb1Ktgr/WoFBk7N8t0HxAxzW0MNT+w70pGTazhvPQs6GOkJ9mAJJwFkQn5KXrr5TInfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rTL2LBDbL0qc5ThRNA3ur1lSmI82842LeIXvRQ5M0fA=;
+ b=XEDj9uO5oiPked4zSHfi2tN+HVj8HYTba+161XDjpcv0slAhLvpDpWIoowGVgmFGmBEyCsa9hN4SbRVOOJBIKUXyAVZxqsliUSoJdkTQ+pviIVVxjr4kx/Y/NdSyNJAfjoYwUQDfojrckZZcvSBJdaHXzL8lu3ySw4s4VMRfsok=
+Received: from AS9PR07CA0044.eurprd07.prod.outlook.com (2603:10a6:20b:46b::30)
+ by AS2PR02MB8885.eurprd02.prod.outlook.com (2603:10a6:20b:554::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 18:52:38 +0000
+Received: from AM4PEPF00025F9A.EURPRD83.prod.outlook.com
+ (2603:10a6:20b:46b:cafe::29) by AS9PR07CA0044.outlook.office365.com
+ (2603:10a6:20b:46b::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17 via Frontend
+ Transport; Tue, 15 Oct 2024 18:52:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AM4PEPF00025F9A.mail.protection.outlook.com (10.167.16.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8093.1 via Frontend Transport; Tue, 15 Oct 2024 18:52:38 +0000
+Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Oct
+ 2024 20:52:37 +0200
+From: Waqar Hameed <waqar.hameed@axis.com>
+To: Zhihao Cheng <chengzhihao1@huawei.com>
+CC: Richard Weinberger <richard@nod.at>, Sascha Hauer
+	<s.hauer@pengutronix.de>, <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC] ubifs: Fix use-after-free in ubifs_tnc_end_commit
+In-Reply-To: <5173d3d2-4a6b-8b0b-c8f7-8034c9763532@huawei.com> (Zhihao Cheng's
+	message of "Sat, 12 Oct 2024 20:30:17 +0800")
+Message-ID: <pnd7ca9r0pt.fsf@axis.com>
+References: <1225b9b5bbf5278e5ae512177712915f1bc0aebf.1728570925.git.waqar.hameed@axis.com>
+	<5173d3d2-4a6b-8b0b-c8f7-8034c9763532@huawei.com>
+Date: Tue, 15 Oct 2024 20:52:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM4PEPF00025F9A:EE_|AS2PR02MB8885:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74a32d8c-5376-4eab-fef1-08dced4a8a45
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WkRKYWJnYzlMdFVML2FaSTNLbzlrMUZ0U0pJNmo2R3dnaUQ4M0N4K1lod1R5?=
+ =?utf-8?B?Q2s0YW9lWjk4OFc4WjJDNFRCR1ZtQTVQWVlML2IxOWNwMUhMbDFhSDdyZHhQ?=
+ =?utf-8?B?VzdhWkVHZ3d2dWpERjUxeit5c3JOZXM4L1ZWeXVCanY3VVAxUzlHeUxHRm9a?=
+ =?utf-8?B?TXoxZm01bTRGdmRFZlIxM2FQZ0dFblZWL0lSOW9rTnpIL1lUWUxLeE4vcUdq?=
+ =?utf-8?B?dFJsNUttODk5azB2QjZoZ1RxMGlWdzlyWWhmYzhnejU1Q1FZRUhvS2VHMkhu?=
+ =?utf-8?B?LzRHSWt5S1l2MDZXeVdLN2J1ak9wU3d3TDRTWmlnZnVaUUlHMG43Umsvdkxn?=
+ =?utf-8?B?Qll0WlNXY3JsMmVUNlRrNDNrd3o1KzIxcG5QOXd4dGE0Tmc2dFFIQzB0TFc4?=
+ =?utf-8?B?VlA4UkZKUFN0a2NFWWRrbDlrL3RtbjJUOTBLeVRpQkYxbzAwU0VNYkg1djd6?=
+ =?utf-8?B?UStGQTU0U1VYZVIya3hRR2pTNmtQSGZHR0lid1pWL0JjekY4bERkejh6Sk5O?=
+ =?utf-8?B?Y2cvTWJodThwZzc1ZUZjdTNsVWs2OGRlc1o5L0FPMlZKejFneUpWZ1VYVm5v?=
+ =?utf-8?B?Mm5LQmt3UFp1WktsVXZocXVHVjg1dnlEOTlBT3RNeUpDMkRGZGJNQy84NkVW?=
+ =?utf-8?B?T0VqZ1hFYkNWcUN4OFl2Q2lrMzNZM3Q1YUNrUnZBWHZFNlRBSk9mRjdOSVVZ?=
+ =?utf-8?B?bURsRXVHOVVxa1I1aXBxRTE5bDVXNzB5MEJMaDByendrbXFHNC9uR3RyUUho?=
+ =?utf-8?B?dWtoVTdCemN2bzBrbUtMMG92OFNLNEFmOVdNSGFnNlkyQkNwblp2d0RZeTRK?=
+ =?utf-8?B?TEx1aDVxekhjdlo1K0E0OUgydlhBM09EQ0JnK1ZQOU1ud1BQNUNYTHI1Q0Iv?=
+ =?utf-8?B?WVh3bWwwQkQrbDFxc3dCSTBjY3Q3cFZoNjNIaDVCV2V4NVU1MExwVlRHdFNX?=
+ =?utf-8?B?R2dEcUVjQXdOWHhsNEVBVHdHZ3dTMEJmSTV2anlnRHd3VEErNjVjZjRVTmMr?=
+ =?utf-8?B?NmZSQ1Z5eERPb3pyYnNmay84UW5OdFZlMDZiREpGcW1CaVNYa29KY202Vkoz?=
+ =?utf-8?B?NGcwWE0xWGNUTnYwdngzdmhEY0UzNzh4SmRvSDQxSDZ0elR4UjdkRXVMRkRR?=
+ =?utf-8?B?Q3ZJUkxqWERhVk9jaUx5bUdnbjg1UkRyeTBZcEpUQ3Vhd24vM2czd2JtRnVT?=
+ =?utf-8?B?UGp0WWl6L2E1YUtiTGd5dUUwcHZJd2pqQVdCa1Z0Y1kvRytza0dUVmo2dHU5?=
+ =?utf-8?B?alZlb3BGL3pzS3NiY2p5VVpTOEcxNDNNWS9HcmowQzVHRzNMdFpqcUxGM0k3?=
+ =?utf-8?B?Qm1oUnBrb0V3YkZic1huai9DWjlZNExFMlRrTUgxMGZiNjBqbGVjcW5PbFV4?=
+ =?utf-8?B?cDVFMEthV1ZaNVRCMEd0dGFsbmxidW80VHhEMldMMTMyQnByMGxHVXZESlZP?=
+ =?utf-8?B?L2kySlhscWpIclB5MU9NbWE3Y1dObmRMR0tsQUNEeVVHVjhubUJseG9tMVJJ?=
+ =?utf-8?B?SGJtdTdKZHVKRDRWMDhZWlpzK1hPWkpCK05pYVZEMm5zQkV0Y2xJQUpBMkQv?=
+ =?utf-8?B?czFaUWpxazlhMDhsTTUyL1k0dzlTMlhHNE81OHpidXY1a1JoRDBEV1ZLOC9K?=
+ =?utf-8?B?Zm0rR1B4b0lSK3phdVBjT0Y0V2xJcjdVUlR4QUM5VHFUMEF3UzFkM3MyUHQ1?=
+ =?utf-8?B?c0txZGFiR2F6TE5HNS9KMVcxSjQzalN5SjBLbzZ0RXNnMzVhOXpTbE53NnhN?=
+ =?utf-8?B?b1NLWFJiVHlnQWN0QS9TWWRpdjJDSlhzdUwrWjV2UmVsQ3RkUEFtNWh4VzJI?=
+ =?utf-8?B?WjROalJZUjIrSjBQUy96VzQxbm4wMUxPWWVxM2R6bEZJdWhKRGpKWkhzSWFv?=
+ =?utf-8?Q?shof5qyipvZFb?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 18:52:38.2504
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74a32d8c-5376-4eab-fef1-08dced4a8a45
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00025F9A.EURPRD83.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR02MB8885
 
-pci_intx() and its managed counterpart pcim_intx() only exist for older
-drivers which have not been ported yet for various reasons. Future
-drivers should preferably use pci_alloc_irq_vectors().
+On Sat, Oct 12, 2024 at 20:30 +0800 Zhihao Cheng <chengzhihao1@huawei.com> =
+wrote:
 
-Mark pci_intx() and pcim_intx() as deprecated and encourage usage of
-pci_alloc_irq_vectors() in its place.
+> =E5=9C=A8 2024/10/9 22:46, Waqar Hameed =E5=86=99=E9=81=93:
+>> Running
+>>    rm -f /etc/test-file.bin
+>>    dd if=3D/dev/urandom of=3D/etc/test-file.bin bs=3D1M count=3D60 conv=
+=3Dfsync
+>> in a loop, with `CONFIG_UBIFS_FS_AUTHENTICATION`, KASAN reports:
+>>    BUG: KASAN: use-after-free in ubifs_tnc_end_commit+0xa5c/0x1950
+>>    Write of size 32 at addr ffffff800a3af86c by task ubifs_bgt0_20/153
+>>    Call trace:
+>>     dump_backtrace+0x0/0x340
+>>     show_stack+0x18/0x24
+>>     dump_stack_lvl+0x9c/0xbc
+>>     print_address_description.constprop.0+0x74/0x2b0
+>>     kasan_report+0x1d8/0x1f0
+>>     kasan_check_range+0xf8/0x1a0
+>>     memcpy+0x84/0xf4
+>>     ubifs_tnc_end_commit+0xa5c/0x1950
+>>     do_commit+0x4e0/0x1340
+>>     ubifs_bg_thread+0x234/0x2e0
+>>     kthread+0x36c/0x410
+>>     ret_from_fork+0x10/0x20
+>>    Allocated by task 401:
+>>     kasan_save_stack+0x38/0x70
+>>     __kasan_kmalloc+0x8c/0xd0
+>>     __kmalloc+0x34c/0x5bc
+>>     tnc_insert+0x140/0x16a4
+>>     ubifs_tnc_add+0x370/0x52c
+>>     ubifs_jnl_write_data+0x5d8/0x870
+>>     do_writepage+0x36c/0x510
+>>     ubifs_writepage+0x190/0x4dc
+>>     __writepage+0x58/0x154
+>>     write_cache_pages+0x394/0x830
+>>     do_writepages+0x1f0/0x5b0
+>>     filemap_fdatawrite_wbc+0x170/0x25c
+>>     file_write_and_wait_range+0x140/0x190
+>>     ubifs_fsync+0xe8/0x290
+>>     vfs_fsync_range+0xc0/0x1e4
+>>     do_fsync+0x40/0x90
+>>     __arm64_sys_fsync+0x34/0x50
+>>     invoke_syscall.constprop.0+0xa8/0x260
+>>     do_el0_svc+0xc8/0x1f0
+>>     el0_svc+0x34/0x70
+>>     el0t_64_sync_handler+0x108/0x114
+>>     el0t_64_sync+0x1a4/0x1a8
+>>    Freed by task 403:
+>>     kasan_save_stack+0x38/0x70
+>>     kasan_set_track+0x28/0x40
+>>     kasan_set_free_info+0x28/0x4c
+>>     __kasan_slab_free+0xd4/0x13c
+>>     kfree+0xc4/0x3a0
+>>     tnc_delete+0x3f4/0xe40
+>>     ubifs_tnc_remove_range+0x368/0x73c
+>>     ubifs_tnc_remove_ino+0x29c/0x2e0
+>>     ubifs_jnl_delete_inode+0x150/0x260
+>>     ubifs_evict_inode+0x1d4/0x2e4
+>>     evict+0x1c8/0x450
+>>     iput+0x2a0/0x3c4
+>>     do_unlinkat+0x2cc/0x490
+>>     __arm64_sys_unlinkat+0x90/0x100
+>>     invoke_syscall.constprop.0+0xa8/0x260
+>>     do_el0_svc+0xc8/0x1f0
+>>     el0_svc+0x34/0x70
+>>     el0t_64_sync_handler+0x108/0x114
+>>     el0t_64_sync+0x1a4/0x1a8
+>> The offending `memcpy` is in `ubifs_copy_hash()`. Fix this by checking
+>> if the `znode` is obsolete before accessing the hash (just like we do
+>> for `znode->parent`).
+>
+> Do you mean that the UAF occurs in following path:
+> do_commit -> ubifs_tnc_end_commit -> write_index:
+> while (1) {
+>    ...
+>    znode =3D cnext;
+>    ...
+>    if (znode->cparent)
+>      ubifs_copy_hash(c, hash, znode->cparent->zbranch[znode->ciip].hash);=
+  //
+>      znode->cparent has been freed!
+> }
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/pci/devres.c | 5 ++++-
- drivers/pci/pci.c    | 5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+Yes, that's what KASAN reports. It's the `memcpy()` in
+`ubifs_copy_hash()` that triggers the slab-use-after-free.
 
-diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-index 6f8f712fe34e..4c76fc063104 100644
---- a/drivers/pci/devres.c
-+++ b/drivers/pci/devres.c
-@@ -435,7 +435,7 @@ static struct pcim_intx_devres *get_or_create_intx_devres(struct device *dev)
- }
- 
- /**
-- * pcim_intx - managed pci_intx()
-+ * pcim_intx - managed pci_intx() (DEPRECATED)
-  * @pdev: the PCI device to operate on
-  * @enable: boolean: whether to enable or disable PCI INTx
-  *
-@@ -443,6 +443,9 @@ static struct pcim_intx_devres *get_or_create_intx_devres(struct device *dev)
-  *
-  * Enable/disable PCI INTx for device @pdev.
-  * Restore the original state on driver detach.
-+ *
-+ * This function is DEPRECATED. Do not use it in new code.
-+ * Use pci_alloc_irq_vectors() instead (there is no managed version, currently).
-  */
- int pcim_intx(struct pci_dev *pdev, int enable)
- {
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 7ce1d0e3a1d5..dc69e23b8982 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4477,11 +4477,14 @@ void pci_disable_parity(struct pci_dev *dev)
- }
- 
- /**
-- * pci_intx - enables/disables PCI INTx for device dev
-+ * pci_intx - enables/disables PCI INTx for device dev (DEPRECATED)
-  * @pdev: the PCI device to operate on
-  * @enable: boolean: whether to enable or disable PCI INTx
-  *
-  * Enables/disables PCI INTx for device @pdev
-+ *
-+ * This function is DEPRECATED. Do not use it in new code.
-+ * Use pci_alloc_irq_vectors() instead.
-  */
- void pci_intx(struct pci_dev *pdev, int enable)
- {
--- 
-2.47.0
+>
+> If so, according to the current implementation(lastest linux kernel is v6=
+.12), I
+> cannot understand that how the znode->cparent is freed before write_index=
+()
+> finished, it looks impossible.
+> All dirty znodes are gathered by function get_znodes_to_commit() which is
+> protected by c->tnc_mutex, and the 'cparent' member in all dirty znodes is
+> assigned with non-NULL. Then I think the znode memory freeing path
+> 'tnc_delete->kfree(znode)' cannot happen, because:
+> 1) If a znode is dirtied, all its' ancestor znodes(a path from znode to r=
+oot
+> znode) must be dirtied, which is guaranteed by UBIFS. See
+> dirty_cow_bottom_up/lookup_level0_dirty.
+> 2) A dirty znode waiting for commit cannot be freed before write_index()
+> finished, which is guaranteed by tnc_delete:
+>   if (znode->cnext) {
+>     __set_bit(OBSOLETE_ZNODE, &znode->flags);
+>     ...
+>   } else {
+>     kfree(znode);
+>   }
+
+I'm with you here. Initially I thought there was some lock missing
+(since it is showing signs of a race, e.g. not deterministic). But as
+you point out, it is protected with `tnc_mutex`, hence my "RFC" tag on
+this patch.
+
+>> Fixes: 16a26b20d2af ("ubifs: authentication: Add hashes to index nodes")
+>> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+>> ---
+>> I'm not entirely sure if this is the _correct_ way to fix this. However,
+>> testing shows that the problem indeed disappears.
+>> My understanding is that the `znode` could concurrently be deleted (with
+>> a reference in an unprotected code section without `tnc_mutex`). The
+>> assumption is that in this case it would be sufficient to check
+>> `ubifs_zn_obsolete(znode)`, like as in the if-statement for
+>> `znode->parent` just below.
+>
+> I'm analyzing tnc-related code these days, however I can't find places th=
+at may
+> concurrently operate the same znode. And I cannot reproduce the problem w=
+ith
+> your reproducer:
+> while true; do
+>   rm -f /UBIFS_MNT/test-file.bin
+>   dd if=3D/dev/urandom of=3D/UBIFS_MNT/test-file.bin bs=3D1M count=3D60 c=
+onv=3Dfsync
+> done
+
+For completeness, here are the _exact_ steps that I have used to
+reproduce this on my system with v6.12-rc2 (commit 75b607fab38d "Merge
+tag 'sched_ext-for-6.12-rc2-fixes' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext"):
+
+```
+ubiattach -m 2
+
+keyctl add logon dummy_key: dummy_load @us
+
+ubimkvol /dev/ubi0 -s 80MiB -n 0 -N test-vol
+ubiupdatevol /dev/ubi0_0 -t
+
+mount -t ubifs /dev/ubi0_0 /mnt/flash -o auth_hash_name=3Dsha256,auth_key=
+=3Ddummy_key:
+
+count=3D0
+while true; do
+    date
+    count=3D$(($count + 1))
+    echo count=3D$count
+
+    rm -f /mnt/flash/test-file.bin
+    dd if=3D/dev/urandom of=3D/mnt/flash/test-file.bin bs=3D1M count=3D60 c=
+onv=3Dfsync
+
+    echo ""
+done
+```
+
+Note that you need to have `CONFIG_UBIFS_FS_AUTHENTICATION=3Dy` (and
+`CONFIG_KASAN=3Dy` obviously) in your `.config` in order to trigger the
+offending `memcpy()` in `ubifs_copy_hash()`. Also, it takes a while. For
+example, last time it took me 88 iterations of the above loop before it
+triggered. So you might need to let it spin for a while.
+
+>
+> Can you dig more deeper by adding more debug message, so that we can figu=
+re out
+> what is really happening.
+
+Certainly! I could try to enable the debug prints from UBIFS, however
+they are *a lot*. Moreover, printing that much changes the timing
+behavior and might make it harder to trigger the use-after-free. Do you
+have any tips on where we should try to focus the debug prints (a
+dynamic debug filter).
+
+[...]
 
 
