@@ -1,176 +1,142 @@
-Return-Path: <linux-kernel+bounces-366049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5542699F02C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:52:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D135699F121
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080B81F22E84
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:52:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70921C23031
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FF71D514F;
-	Tue, 15 Oct 2024 14:52:37 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7791FC7EC;
-	Tue, 15 Oct 2024 14:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3A61B3954;
+	Tue, 15 Oct 2024 15:26:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5AC1CBA1D
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003956; cv=none; b=NqcI7LQHkVtoubW0V2pD/NOAZVUkvyqs0TchcFQSxh6xZKSXnq963XLlXfRdy+7krtUxm+x7PhkBCcaYdyZrgxzYnX3FdDdCTUsGSte6IFewKj0pHZSvYO34jOf/GVxTkQ2b++WvBsxxwt5gVYza0lrP32fAzsV9XjwDMb8y3mA=
+	t=1729005978; cv=none; b=Xs2aNKRnolVJG++Dp2TI4BA2iUcrDi811ye0Yvv8tH5DLCkI8HLFQ0AK9UR8xls8oNNMc+L4eGFnHl1u80PJR0buJdbFcX2BJMc0qfc2BXdvO0W/TqqcxR7fclRNDeex7sTdQNC3A3xWckdiljjoHxsLO+JmhzvgsuU17HRPgBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003956; c=relaxed/simple;
-	bh=/HR8iP94s0idk8HNyY5fUA88vostpaZn0pIs5HRvDpk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cq1187UsPSPODkTdNhYXVA8ZFO9SGZNueMRUidK8LVn5AU/TQbc3V4ek6N/xeXkdc9AmxWk1KdtTbAIII+2j+UTS8AXhB+e/xwXThgoBMKaSTGWN6AVSoy3OO5bpDONMxdA2QNgoMPdwtkceJ9LOlWO/97ukLSvE3jj+SCfu/pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XScR75WqCz1HL2t;
-	Tue, 15 Oct 2024 22:48:19 +0800 (CST)
-Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
-	by mail.maildlp.com (Postfix) with ESMTPS id 333BB1A0188;
-	Tue, 15 Oct 2024 22:52:32 +0800 (CST)
-Received: from huawei.com (10.175.113.25) by kwepemd200010.china.huawei.com
- (7.221.188.124) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 15 Oct
- 2024 22:52:31 +0800
-From: Zheng Zengkai <zhengzengkai@huawei.com>
-To: <lpieralisi@kernel.org>, <guohanjun@huawei.com>, <sudeep.holla@arm.com>,
-	<mark.rutland@arm.com>, <maz@kernel.org>, <rafael@kernel.org>,
-	<lenb@kernel.org>
-CC: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
-	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <zhengzengkai@huawei.com>
-Subject: [PATCH v3] ACPI: GTDT: Tighten the check for the array of platform timer structures
-Date: Tue, 15 Oct 2024 23:26:02 +0800
-Message-ID: <20241015152602.184108-1-zhengzengkai@huawei.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1729005978; c=relaxed/simple;
+	bh=bqwtlhzJ3wh01w6QEQuywq4iwW9mt1CLvMHit2Oma5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ft3ohWGzB1ggZYtNLtHiGg5fYPBXEhZKyMa2saIlf6BoVvh+ie1wR+sfllf87Lz387jOIe/iFt89JrIklFI4YCeAdMfbK6ofIGJzyva+xANO59hcJrE+u7vUZk0cSgwNX5+iEtjpB9TBAFEQ5O/ofniFZ+cF3+qLD4GVztliGxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E0FB1007;
+	Tue, 15 Oct 2024 08:26:45 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBA0B3F528;
+	Tue, 15 Oct 2024 08:26:13 -0700 (PDT)
+Date: Tue, 15 Oct 2024 16:26:11 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Clement LE GOFFIC <clement.legoffic@foss.st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Kees Cook <kees@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Antonio Borneo <antonio.borneo@foss.st.com>
+Subject: Re: Crash on armv7-a using KASAN
+Message-ID: <Zw6Jk74-d0mhR0jx@J2N7QTR9R3.cambridge.arm.com>
+References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
+ <Zw5D2aTkkUVOK89g@J2N7QTR9R3>
+ <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
+ <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com>
+ <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
+ <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com>
+ <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200010.china.huawei.com (7.221.188.124)
+In-Reply-To: <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
 
-As suggested by Marc and Lorenzo, first we need to check whether the
-platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
-de-referencing what it points at to detect the length of the platform
-timer struct and then check that the length of current platform_timer
-struct is also valid, i.e. the length is not zero and within gtdt_end.
-Now next_platform_timer() only checks against gtdt_end for the entry of
-subsequent platform timer without checking the length of it and will
-not report error if the check failed and the existing check in function
-acpi_gtdt_init() is also not enough.
+On Tue, Oct 15, 2024 at 04:44:56PM +0200, Ard Biesheuvel wrote:
+> On Tue, 15 Oct 2024 at 16:35, Mark Rutland <mark.rutland@arm.com> wrote:
+> >
+> > On Tue, Oct 15, 2024 at 04:22:20PM +0200, Ard Biesheuvel wrote:
+> > > On Tue, 15 Oct 2024 at 16:00, Mark Rutland <mark.rutland@arm.com> wrote:
+> > > >
+> > > > On Tue, Oct 15, 2024 at 03:51:02PM +0200, Linus Walleij wrote:
+> > > > > On Tue, Oct 15, 2024 at 12:28 PM Mark Rutland <mark.rutland@arm.com> wrote:
+> > > > > > On Mon, Oct 14, 2024 at 03:19:49PM +0200, Clement LE GOFFIC wrote:
+> > > > >
+> > > > > > I think what's happening here is that when switching from prev to next
+> > > > > > in the scheduler, we switch to next's mm before we actually switch to
+> > > > > > next's register state, and there's a transient window where prev is
+> > > > > > executed using next's mm. AFAICT we don't map prev's KASAN stack shadow
+> > > > > > into next's mm anywhere, and so inlined KASAN_STACK checks recursively
+> > > > > > fault on this until we switch to the overflow stack.
+> >
+> > [...]
+> >
+> > > > > Yeah it looks like a spot-on identification of the problem, I can try to
+> > > > > think about how we could fix this if I can reproduce it, I keep trying
+> > > > > to provoke the crash :/
+> > > >
+> > > > It's a bit grotty -- AFAICT you'd either need to prefault in the
+> > > > specific part of the vmalloc space when switching tasks, or we'd need to
+> > > > preallocate all the shared vmalloc tables at the start of time so that
+> > > > they're always up-to-date.
+> > > >
+> > > > While we could disable KASAN_STACK, that's only going to mask the
+> > > > problem until this happens for any other vmalloc shadow...
+> > >
+> > > Is the other vmalloc shadow not covered by the ordinary on-demand faulting?
+> >
+> > It depends on what the vmalloc memory is used for; if it's anything else
+> > used in the fault handling path, that'll fault recursively, and it's
+> > possible that'll happen indirectly via other instrumentation.
+> >
+> > > When I implemented VMAP_STACK for ARM, I added an explicit load from
+> > > the new stack while still running from the old one (in __switch_to) so
+> > > that the ordinary faulting code can deal with it. Couldn't we do the
+> > > same for the vmalloc shadow of the new stack?
+> >
+> > We could do something similar, but note that it's backwards: we need to
+> > ensure that the old/current stack shadow will be mapped in the new mm.
+> >
+> > So the usual fault handling can't handle that as-is, because you need to
+> > fault-in pages for an mm which isn't yet in use. That logic could be
+> > factored out and shared, though.
+> 
+> Not sure I follow you here. The crash is in the kernel, no?
 
-Modify the for_each_platform_timer() iterator and use it combined with
-a dedicated check function platform_timer_valid() to do the check
-against table length (gtdt_end) for each element of platform timer
-array in function acpi_gtdt_init(), making sure that both their entry
-and length actually fit in the table.
+Yep; I'm referring to the vmalloc space being lazily faulted-in and
+copied from init_mm into the active pgd under do_translation_fault().
 
-Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Co-developed-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
----
-Changes in v3:
-- based on Marc's patch and reuse the for_each_platform_timer() loop
+Looking some more, I don't see how VMAP_STACK guarantees that the
+old/active stack is mapped in the new mm when switching from the old mm
+to the new mm (which happens before __switch_to()).
 
-Changes in v2:
-- Check against gtdt_end for both entry and len of each array element
-Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
+Either I'm missing something, or we have a latent bug. Maybe we have
+some explicit copying/prefaulting elsewhere I'm missing?
 
-Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
----
- drivers/acpi/arm64/gtdt.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+What happens when switching between two tasks whose stacks happen to be
+in distinct sub-trees of the vmalloc tables?
 
-diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
-index c0e77c1c8e09..3583c99afb0d 100644
---- a/drivers/acpi/arm64/gtdt.c
-+++ b/drivers/acpi/arm64/gtdt.c
-@@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
- 
- static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
- 
--static inline __init void *next_platform_timer(void *platform_timer)
-+static __init bool platform_timer_valid(void *platform_timer)
- {
- 	struct acpi_gtdt_header *gh = platform_timer;
- 
--	platform_timer += gh->length;
--	if (platform_timer < acpi_gtdt_desc.gtdt_end)
--		return platform_timer;
-+	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
-+		platform_timer < acpi_gtdt_desc.gtdt_end &&
-+		gh->length != 0 &&
-+		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
-+}
-+
-+static __init void *next_platform_timer(void *platform_timer)
-+{
-+	struct acpi_gtdt_header *gh = platform_timer;
- 
--	return NULL;
-+	return platform_timer + gh->length;
- }
- 
--#define for_each_platform_timer(_g)				\
--	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
-+#define for_each_platform_timer(_g, first_entry)	\
-+	for (_g = first_entry; platform_timer_valid(_g);	\
- 	     _g = next_platform_timer(_g))
- 
- static inline bool is_timer_block(void *platform_timer)
-@@ -155,8 +161,9 @@ bool __init acpi_gtdt_c3stop(int type)
- int __init acpi_gtdt_init(struct acpi_table_header *table,
- 			  int *platform_timer_count)
- {
--	void *platform_timer;
-+	void *platform_timer, *tmp;
- 	struct acpi_table_gtdt *gtdt;
-+	int cnt = 0;
- 
- 	gtdt = container_of(table, struct acpi_table_gtdt, header);
- 	acpi_gtdt_desc.gtdt = gtdt;
-@@ -177,7 +184,10 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
- 	}
- 
- 	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
--	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
-+	for_each_platform_timer(tmp, platform_timer)
-+		cnt++;
-+
-+	if (cnt != gtdt->platform_timer_count) {
- 		pr_err(FW_BUG "invalid timer data.\n");
- 		return -EINVAL;
- 	}
-@@ -305,7 +315,7 @@ int __init acpi_arch_timer_mem_init(struct arch_timer_mem *timer_mem,
- 	void *platform_timer;
- 
- 	*timer_count = 0;
--	for_each_platform_timer(platform_timer) {
-+	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
- 		if (is_timer_block(platform_timer)) {
- 			ret = gtdt_parse_timer_block(platform_timer, timer_mem);
- 			if (ret)
-@@ -398,7 +408,7 @@ static int __init gtdt_sbsa_gwdt_init(void)
- 	if (ret || !timer_count)
- 		goto out_put_gtdt;
- 
--	for_each_platform_timer(platform_timer) {
-+	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
- 		if (is_non_secure_watchdog(platform_timer)) {
- 			ret = gtdt_import_sbsa_gwdt(platform_timer, gwdt_count);
- 			if (ret)
--- 
-2.20.1
+> So there is only a single vmalloc space where all the mappings should
+> reside, but each process has its own copy of the top level page table,
+> which needs to be synced up when it goes stale.
 
+Yep -- the problem is when we can safely do that syncing up, since the
+lazy syncing in do_translation_fault() can't safely be used to sync
+anything that's used during do_translation_fault(), including the stack,
+etc.
+
+Mark.
 
