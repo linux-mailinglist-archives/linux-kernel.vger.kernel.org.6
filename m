@@ -1,120 +1,135 @@
-Return-Path: <linux-kernel+bounces-365262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925E099DFA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:49:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A42D899DFA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A1A8B22658
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:49:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522E11F231AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3240A1A76D0;
-	Tue, 15 Oct 2024 07:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GTCcg14r"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7CC18B48A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4263B1AB525;
+	Tue, 15 Oct 2024 07:49:47 +0000 (UTC)
+Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF998189BBF;
+	Tue, 15 Oct 2024 07:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978566; cv=none; b=IN9vvlfIuLmBVlSaq9Oq65LE1oD8ESMXkG33Lpailc6cqgnd9XXFIilPjXwuCkGg46q++nLJWFaTSwYG/pcizJcLO25Ukil3C4dbpKfNAhdj6/fvgau92j9/ZcoolllhZbzBELMFuOG7GkspEDd8EdrnEPWbwg5s1Wyb486O1H0=
+	t=1728978586; cv=none; b=kw/Ssgy71zbxIDZ6CZxQAJ0Vc2v2x6ckMBaelzbrvaf3M5Z/yT80moXp3XgbVDtSDTs7++W0CfxPoJvPFk3XKzrYbL1/k3HpmEVv3nzbcwuPqOfFebaQVfGWSLsqo3e65sqNCzBYzPlC/jhXM+aavKfuqCIo31/++0wXNr8G6fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978566; c=relaxed/simple;
-	bh=1gbWcAskLtuIcyihhu9c+7AfMGCc9qrTqDcakMl2d+0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U9rgPlp8A5MVxXrg63Or4ewCo0o9M2M/obH3RjM2DZ0DomKZ/DKhanSn2IdMSLzaTNE/GFFflE13y82ASXfi8cKTvQu7ian9MvG2Uzj8mFL23HXn15wQaOs7A8hYzXWN72B4YyzKQZuJ2LqSgCTQYp1eey35F90b7ZT3/93YD0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GTCcg14r; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c94a7239cfso2299863a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728978563; x=1729583363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0icc/AUQ8WVT9pXXaqfsQ+O84Dh7jPoXBxzIImpUACo=;
-        b=GTCcg14rHhLxuY0wtwMLls1VHqF8SEfFaSDJanyI/VaANG99hlebvaY61UVYWK1+rk
-         CC90qtqs0TUPOlRl4cvNgwXXVBcOQTTB7Sp8oekhfAr3uHWCPqbXl6tCP4hU3OzuUMI+
-         EmtZbXFmkx9/QkTWf03H+FY1WqAClHR6HF6XJQeMe39205yYtOHat+Hel63w6WiyT5OY
-         ZLKM6ci2sqrPW4S6/MCNK0VPtgSOzor4lBuqDgqGfUqFqtf+f3n7cX6iCQmth4MUe1jf
-         A09IJpuLKqzu96hL9B0MPVCDaILmGdPjmFTdFuuxheCZ41alamsHzt7FS/Pz0TrQiB7f
-         SJpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728978563; x=1729583363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0icc/AUQ8WVT9pXXaqfsQ+O84Dh7jPoXBxzIImpUACo=;
-        b=EeziANBGzKKUzaLbEvh2Q7fonf7aO+8XxLLJ8RT9tX2z7TH29H291pPgh9Muhs6fRL
-         dNaAh/eH0Mh2CXl3DaSG+AcRz53BVSDDfn6gEMom4UXvxXWsJBxSC4LCE3NVuQA/iGXS
-         AO/fqqmcbXvqFeAmZ5s39F6WqzGPmY0XG8YquJSX/JfY1BFR/ChnR9WceTi5Wa1hp30h
-         saiAw4MKA8XJDMOl4yqJ0WyMCZGxBjMSZH7xaiW1bAkn4mC3eYEOMtwGpyxz8W/zznZM
-         Oy8rUuet55uHW6qhLkniRIqJCzSNLfxWV427jZ4tU8vzlKLyNL7W9ZHskoozzl7AaYXy
-         FTPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYr+fNcfhiuJt5fqY+ATbD3rbT3+Trme6vDOkqLdvCxvv8pNdurXdYDnJRSE87ZnmPSQaoViT1C0c01oo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTTC2P9CUgcrlfWSgehhavT3LPv4PJ571zkoqsD7hDxlN/u6xV
-	TMNEdOqK28u7BJognZrc0CRsqpbmF9suYfGhJsn0OXaK67TMLv50O/NAt6LApNBZZV6HHJaaWMz
-	i26D1QwZG1Y5ONrQFKJEuT8qj0jwP3aogWSI9
-X-Google-Smtp-Source: AGHT+IEUPCLq2fMi1HPzgRwWyYlbPVHtF7hRqZjN4RQ4wB4rew35OMAVkyEDQ/mvrIfOIMfqQ0lMowiG4CPB+1QSuyw=
-X-Received: by 2002:aa7:d38c:0:b0:5c8:8cf5:e97a with SMTP id
- 4fb4d7f45d1cf-5c95ac6353bmr13764361a12.33.1728978562972; Tue, 15 Oct 2024
- 00:49:22 -0700 (PDT)
+	s=arc-20240116; t=1728978586; c=relaxed/simple;
+	bh=ERi7IPOprRx59JXhjMC3xTcDaqfRPPR8xmHcnPlE138=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mlu9XtP4Ud2oY0YS7eE5TCY9lNzNhPy9bcn9pFPFr6bGrXuDjF/e5cYW6Z3DKCxMwO5n+xJF6KXmBDH9jJPP5Iij1BzU1cn52i3pXaGPVyC2I0E5cSingEBXZnT1c5OdMyj/IqnYx4pDOj3qgHdolkKDGIhM5A0r5ehFpoL0VXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee9670e1e9281e-2782b;
+	Tue, 15 Oct 2024 15:49:40 +0800 (CST)
+X-RM-TRANSID:2ee9670e1e9281e-2782b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee7670e1e93b5a-f518e;
+	Tue, 15 Oct 2024 15:49:40 +0800 (CST)
+X-RM-TRANSID:2ee7670e1e93b5a-f518e
+From: Liu Jing <liujing@cmss.chinamobile.com>
+To: peter.ujfalusi@gmail.com
+Cc: jarkko.nikula@bitmer.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-omap@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Liu Jing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] Use card->dev in replace of the &pdev->dev argument in the dev_err function
+Date: Tue, 15 Oct 2024 15:49:38 +0800
+Message-Id: <20241015074938.6247-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014144250.38802-1-wanghai38@huawei.com>
-In-Reply-To: <20241014144250.38802-1-wanghai38@huawei.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 15 Oct 2024 09:49:11 +0200
-Message-ID: <CANn89i+LwDrV4km4iymw4yXU+kVMAvhmLUk2x_bmKXD_Bphi5w@mail.gmail.com>
-Subject: Re: [PATCH net] net: ethernet: rtsn: fix potential memory leak in rtsn_start_xmit()
-To: Wang Hai <wanghai38@huawei.com>
-Cc: niklas.soderlund@ragnatech.se, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, andrew@lunn.ch, zhangxiaoxu5@huawei.com, 
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 4:43=E2=80=AFPM Wang Hai <wanghai38@huawei.com> wro=
-te:
->
-> The rtsn_start_xmit() returns NETDEV_TX_OK without freeing skb
-> in case of skb->len being too long, add dev_kfree_skb_any() to fix it.
->
-> Fixes: b0d3969d2b4d ("net: ethernet: rtsn: Add support for Renesas Ethern=
-et-TSN")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
-> ---
->  drivers/net/ethernet/renesas/rtsn.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/r=
-enesas/rtsn.c
-> index f9f63c61d792..6b3f7fca8d15 100644
-> --- a/drivers/net/ethernet/renesas/rtsn.c
-> +++ b/drivers/net/ethernet/renesas/rtsn.c
-> @@ -1057,6 +1057,7 @@ static netdev_tx_t rtsn_start_xmit(struct sk_buff *=
-skb, struct net_device *ndev)
->         if (skb->len >=3D TX_DS) {
->                 priv->stats.tx_dropped++;
->                 priv->stats.tx_errors++;
-> +               dev_kfree_skb_any(skb);
->                 goto out;
->         }
->
+Because card->dev = &pdev->dev is already defined in the rx51_soc_probe function,
+and then &pdev->dev is still used.
 
-Note this is dead code for this driver. This condition should never be
-hit with checks in upper layers,
-because TX_DS is bigger than device max mtu.
+Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+---
+ sound/soc/ti/rx51.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+diff --git a/sound/soc/ti/rx51.c b/sound/soc/ti/rx51.c
+index 77296237575a..d9900c69e536 100644
+--- a/sound/soc/ti/rx51.c
++++ b/sound/soc/ti/rx51.c
+@@ -371,7 +371,7 @@ static int rx51_soc_probe(struct platform_device *pdev)
+ 
+ 		dai_node = of_parse_phandle(np, "nokia,cpu-dai", 0);
+ 		if (!dai_node) {
+-			dev_err(&pdev->dev, "McBSP node is not provided\n");
++			dev_err(card->dev, "McBSP node is not provided\n");
+ 			return -EINVAL;
+ 		}
+ 		rx51_dai[0].cpus->dai_name = NULL;
+@@ -381,7 +381,7 @@ static int rx51_soc_probe(struct platform_device *pdev)
+ 
+ 		dai_node = of_parse_phandle(np, "nokia,audio-codec", 0);
+ 		if (!dai_node) {
+-			dev_err(&pdev->dev, "Codec node is not provided\n");
++			dev_err(card->dev, "Codec node is not provided\n");
+ 			return -EINVAL;
+ 		}
+ 		rx51_dai[0].codecs->name = NULL;
+@@ -389,7 +389,7 @@ static int rx51_soc_probe(struct platform_device *pdev)
+ 
+ 		dai_node = of_parse_phandle(np, "nokia,audio-codec", 1);
+ 		if (!dai_node) {
+-			dev_err(&pdev->dev, "Auxiliary Codec node is not provided\n");
++			dev_err(card->dev, "Auxiliary Codec node is not provided\n");
+ 			return -EINVAL;
+ 		}
+ 		rx51_aux_dev[0].dlc.name = NULL;
+@@ -399,7 +399,7 @@ static int rx51_soc_probe(struct platform_device *pdev)
+ 
+ 		dai_node = of_parse_phandle(np, "nokia,headphone-amplifier", 0);
+ 		if (!dai_node) {
+-			dev_err(&pdev->dev, "Headphone amplifier node is not provided\n");
++			dev_err(card->dev, "Headphone amplifier node is not provided\n");
+ 			return -EINVAL;
+ 		}
+ 		rx51_aux_dev[1].dlc.name = NULL;
+@@ -408,7 +408,7 @@ static int rx51_soc_probe(struct platform_device *pdev)
+ 		rx51_codec_conf[1].dlc.of_node = dai_node;
+ 	}
+ 
+-	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
++	pdata = devm_kzalloc(card->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (pdata == NULL)
+ 		return -ENOMEM;
+ 
+@@ -439,7 +439,7 @@ static int rx51_soc_probe(struct platform_device *pdev)
+ 
+ 	err = devm_snd_soc_register_card(card->dev, card);
+ 	if (err) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", err);
++		dev_err(card->dev, "snd_soc_register_card failed (%d)\n", err);
+ 		return err;
+ 	}
+ 
+-- 
+2.27.0
+
+
+
 
