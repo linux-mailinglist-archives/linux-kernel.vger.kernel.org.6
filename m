@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-365728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA15099E8C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:09:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB1499E9EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDBA2830C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:09:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5027B1C236F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700CE1F7091;
-	Tue, 15 Oct 2024 12:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Cdpo1ZZi"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4A322739D;
+	Tue, 15 Oct 2024 12:34:22 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2103.outbound.protection.partner.outlook.cn [139.219.17.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8D1EC01B
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728994119; cv=none; b=l2WLIx+hKV18qYrJHtxKGTcY+y4UvzxTAFH+gv8+UpM3shzqJsMt2NVDugU09ru9Kbw8K8tUShx1ydXOm61pNhBLTTRbgjsBCeT11UUhwaT+zBpfgvqgjBSXE0oNOc7sB0THGTIGxlhKBQigc4myvko/wlJYcGWqS7Fwzta+eq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728994119; c=relaxed/simple;
-	bh=wcco51v4ndssSUSTfxrKzKb6FGX+SH3xE5vfA2R4D9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VoCDkZHu8bwajUCzQWa8wxQjfpEZ1+/ZItIih/oxbwfW3yKGZlawsfIXoQ51xgKnXjXGvHdg6F/lW8zs4DHF3mqmWT+R/Iecr2bMQSEVZgIHZmRfqPYkKRT4/tTXLKRny3iZuKWhrRoV5o3PfPxBRoBXjXxfckQSlIUSMMBxntQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Cdpo1ZZi; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43116f8a3c9so60313885e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:08:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728994116; x=1729598916; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jb5H3boBi96I8Ci/iktPPSQLPU64M18S3ob2HZhlQ4I=;
-        b=Cdpo1ZZiqqsfIRKT8bPoq+q3OLzwBR3vB2ZYzIO4B1aL+queEdC56SKUPCigrGRYsL
-         X7wJBfSXCfT0sSbz+Th0XL5j4CxkM47txTsJwlsOylmjtlyHY7E3XGBXbUq2E5I2ZdK0
-         SoPoDTd2ihExFeXvVIiQMhUkDyXadEMOB+GVtGCW7n4WcKSVMaZjL0uwG4glIJyGbPWE
-         Yp+gMmNO9MZkdgYFN9nZLQoYpOEI3hmrZjriQcwMUI7AcqMMSh95MZm13dZYDEGyVpyE
-         f5eMwAg35CeXP7xBBbWapgRVEgHV5z6llcKUZLWQPTVjdwIfXbcNd6xifPTnFznPG1XR
-         BhCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728994116; x=1729598916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jb5H3boBi96I8Ci/iktPPSQLPU64M18S3ob2HZhlQ4I=;
-        b=Pi4vFKW/y911G+6M9p8MIfa9cwfcRU9t8Bwqw+SNmuqj1xyOaU4Zh3U4RmTes0C9y0
-         hfIKctr79Rov8RyysPcQm61K543/uBPOHxECaF+yZ72LhYBjhhYoXgW0gXZYUNkptsIO
-         SbEA24jKhnTZ6GwUORvSlHYmC6a01f5uMm7B6jH8ET5LcgEbObs8t5xFLupVRq00j0Be
-         UC1Ib5nnTCyTse5aBpcbpDfmhfpRW5rK4P1KLuw9Iqt357jHHPGfZ7EXiuduUNxGGlj+
-         NWysfS7EA+Zosl9LC1DKsXZgT1aUXHGeClyTqRwP/3JsbxBgoRVgI9zojy5yOmaRmvi0
-         q4jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbWs7fjKntQw6+2hNjHgteESKqyr9JyP6M4ALOztk/l/jdSgtz5wFz7q2K9AzQA7jagCpgcgf21gt1FYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBLUArvkr+JBA0m/jcZAq/6UmUPBtebXmgL7vJUhFzt4gg2oMG
-	jwkhmgQpd7MAqIEjJE4eOjxeZRzjMkp1TshFLV4CNB+veSU14RCRZ8CLMBoA6Y8=
-X-Google-Smtp-Source: AGHT+IHTWs2V6srqDKoruyVn6m+lYkAUbIDhtTysf4cloX9kctqEwo1M8MrkOY8lvinjAcKVF03gXw==
-X-Received: by 2002:a05:600c:3ba1:b0:42c:c401:6d6f with SMTP id 5b1f17b1804b1-431255e052amr140489625e9.16.1728994115314;
-        Tue, 15 Oct 2024 05:08:35 -0700 (PDT)
-Received: from pathway.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6b320asm16051135e9.33.2024.10.15.05.08.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 05:08:34 -0700 (PDT)
-Date: Tue, 15 Oct 2024 14:08:33 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH 0/2] Use dot prefixes for section names
-Message-ID: <Zw5a-JH99HwxhoY3@pathway.suse.cz>
-References: <20241014125703.2287936-4-ardb+git@google.com>
- <CAHk-=wit+BLbbLPYOdoODvUYcZX_Gv8o-H7_usyEoAVO1YSJdg@mail.gmail.com>
- <CAMj1kXFu=fABi+d=A5PL2yNx2b70toT9KtDfnvU=8mmUBHMutg@mail.gmail.com>
- <CAHk-=wjk3ynjomNvFN8jf9A1k=qSc=JFF591W00uXj-qqNUxPQ@mail.gmail.com>
- <CAMj1kXGtruDm81Yor8hrOnSj7-J1vKKB1c-H0ZAtyMG_mZgWMg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEF91CEADB;
+	Tue, 15 Oct 2024 12:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.103
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728995661; cv=fail; b=lkI/EK6xIz1InjYGJJiZe+lXTaZeQdaaSGgaEXYxcKKj+U+egLNNuAMjy3Cp83L/q9kbyVBScNyk80y6b6PdOWPTbaBIxCtJcLPeIswERBiJG7Vivh8fi3GCkKeI3YhuCSKg0GmqCbZ4WsLvaKvHxdqaZdg9QeIzIjBpLKSUAq8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728995661; c=relaxed/simple;
+	bh=iT2wgr2wM31RkT8f26iqfj2jdsdUVNCwTxf0kvAlRLw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GtgQR88t77YLehDmVAp+eMtNhinmvyK2s4uwQKW+iER1ADriSp9jjDrNq6+3+ogiffai5jItOrsbPUsFkpQQfKgFLcrPcbKEjxbTBgI8MDnuuve/ZZ527i0hlwMQ4BgRlBSkDbf19cQfqc55bZtO5bUw79Vk6jKRPpuN8/Ya378=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UK43JSzZzdhYTdNvvIrIEqFcJdMyYRDiK62oNYXH2uTLr5gjhYdntzmXLNVBvm6DNKBajaKzUCBiDHLfkTrEwYRbyTSVYqqREpTAUfH0SyOo6WMYUx2n+VUVOBdcjwET0zyrkQKaD9+f/9ac9H84WBGShf0kNBLdjaI1x7RyyC3CYIimAXGxhJQc3/p7XMrYU01VOXDkm0dSbdYz6T4BEamrEZpnC4CbVU6RinR/gvrCMF1NTAmbWrrVtIsnDRhfMrmBgkvSMoXloy5ZJjDFjoEbrLfR/Z3J8ItEPMhk6Pf3FbmRjd8tlc9Dr0Xbi49HfiF2tAlFA7DsLMPPDXI0bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H21ENuAQ3xhhwqJ2Csk3hLYVtlxsl1QHD1/8Vp4Qjww=;
+ b=T1SdBtCQQB1+3RyU+woKxl7WPmu5JFjM2wvOXF+ZRFgGFo3+snoo7SYhTgaNu6rTnKUr0DRzBuOSJ7hypCGZYbMtCMdSMG3MYHzSHeKtzaENorIZInXRODbyXMKab2XLBzMyjzHxAzi2/SJgz8/bqsQEWD8LwPsk4vUfNc9uo/jA1s45Hw+OFm1MNCQ/m9ZSEBixgSY1iutNf+/ZtzjpKkVwF6Y+ZFQ44D/kJjFozxVtnJHIC+sg8z4tdQ+CxMfpXhU3H0zXBgq3vp4sIzPW1X6bb7k0BcWib9/7EKPW5wSeC3/0DlRU2i9BcvY3xklQLnSebr/MUOYkOKGQpnbPsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:f::12) by ZQZPR01MB1105.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:9::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20; Tue, 15 Oct
+ 2024 06:57:39 +0000
+Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+ ([fe80::617c:34a2:c5bf:8095]) by
+ ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn ([fe80::617c:34a2:c5bf:8095%4])
+ with mapi id 15.20.8048.013; Tue, 15 Oct 2024 06:57:39 +0000
+From: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lftan.linux@gmai.com
+Subject: [PATCH net-next 2/4] net: stmmac: dwmac4: Fix the MTL_OP_MODE_*_MASK operation
+Date: Tue, 15 Oct 2024 14:57:06 +0800
+Message-ID: <20241015065708.3465151-3-leyfoon.tan@starfivetech.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20241015065708.3465151-1-leyfoon.tan@starfivetech.com>
+References: <20241015065708.3465151-1-leyfoon.tan@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJXPR01CA0067.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:12::34) To ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:f::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXGtruDm81Yor8hrOnSj7-J1vKKB1c-H0ZAtyMG_mZgWMg@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZQZPR01MB0979:EE_|ZQZPR01MB1105:EE_
+X-MS-Office365-Filtering-Correlation-Id: 169e70cd-f86a-4f41-45da-08dcece6a84b
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|41320700013|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	8hCt93Dzn0qARH+yZMf1xFVPEZQfzdSB4/je7g5znUq9voyY7tFHQSF+u1rdhsQONktH8hcLqJmNfNA/gcZJbKuWwRsT8KpbPFNun4+GppHNBmSjNDueZpdSb62pVb2WF3yOOhqWsOQCGz12hYddgQk/Owx9WazLYVVTxb19qMpkAelmguIdaZ7ccOtdk6JTiFfwn9xWzJkjyA/wFC6NGKrk+f9+zkCNX5XiK/8mATyjoS7r0HNoLHvqQ/YS6KwpF8+c61InZa5WSVu9mVJnqlpfi8WVn5j6w+Dt5HWOAB+mbukd9hWFGoQWAtu4XtiT6MCsDkhaIHFUG9cPvkJLyBe7Ov6iVDOoa2Ba57Gs9vAbmr9t2YsVzUooWzRuFlJNWWbMtTU45UB70bR6jAbblX1RB7L/dsYM1ewvkaOoHS7k9VblqpZbGu47ZSbFFbKnDiIOVjQ+8p8Zc3WJeSd58kf4fpAMSkKa3JcbO/wxEOqKgldCPVt4Lqy44jpElqPcAjN7YONO3hYEZJnNHEab/ggO4zy2XAvDSMbLRVwqKtDy5dojnG8FgAryoquIeg95SKUmT2N9iEG/3V0JD/TUqbZJWcILGKaUIZoxNgyT5h2xJPWvwS2xA/2A5QrJGoNf
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(41320700013)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CQe9MP9CKByiZbEMu6KUJmGmXnONGjE1nBaFjMqYayy7LiHsTWjRXLWN+Ngm?=
+ =?us-ascii?Q?MPI/sebm8ugplg5szNdP/GFTNVh2rv1TiFsxJCODXe/1/SyCmrF3eiaXL3Ye?=
+ =?us-ascii?Q?SE0p2B+f0wGUqU9f7iT8A8aEQmvpyCgoHPldWfGQ+mxhcR6IZdKf4MplsSLc?=
+ =?us-ascii?Q?CGifkp3IX+6S+d6LY92+s8JO8X7ca1yeL1m/mL9pmWmNPzJeXJ1BF1j7O7zB?=
+ =?us-ascii?Q?1F+30uc3m81+kQ2oKC93V3xSqpcnHuw+aanZvCOZ835acJ20G777WYnefhaI?=
+ =?us-ascii?Q?YLbJKR74iUDT0Mnxi4t8W0yEm2q7+e7Uek8KYRqGmWAfHyTdBCP7BkrTHFAu?=
+ =?us-ascii?Q?Waln6EqM8IXNUxK6YUD1HdtF2h+8QdGHHuZpNfrhrImeXdHu08tMaybHciO4?=
+ =?us-ascii?Q?qgyolkveI32YxTdhSkypLOT2j8d4ax/kZ3DnOqbbopJqpCUqQ58SWbul9VM5?=
+ =?us-ascii?Q?40Vm7dwUZjkf4Drb6+MaFIN1vlpiJVTbQtRX4osqGhRTkCuj1mYhnxUfQTYU?=
+ =?us-ascii?Q?e9xrzxqta/cMtuK23JhoEkcmfZekXua4NZTL7+110P3oXUN2r0jjqn+S+BXa?=
+ =?us-ascii?Q?358ljOlcs+94DwZpqtyXMnrinQuvEFh1AfOuPpyNk8xeVFJQUjUAFd164rE3?=
+ =?us-ascii?Q?4xEkF8H7tdiYd+J3+yDxnUGZ1BCho3A/qNiTUdgFocCUjKikLUfA/BrcEs7y?=
+ =?us-ascii?Q?LUOPV9d8Yd4o+Zgc8DmdB1Hk48aF0tswCikwxAjlT18BN1VgIJ0KmZmYVpwG?=
+ =?us-ascii?Q?20qcyK7mbNJUnTVHX7/4/8WOubBFFePDJR6e16yyXIa6gz0dYa32RUsqp7Yi?=
+ =?us-ascii?Q?Ov0iLWE1IaU4f/cpKaj97xU8vhNH0Pb4OAXmZbdDhobtA4+zK+WC9CsS57ji?=
+ =?us-ascii?Q?o+zgqo62GYM0mUPdLK67YU3RNBGD5A7Cp3e3b9PtP/iOdUQQMXAIC5Yol3zY?=
+ =?us-ascii?Q?8kxMEn1C5PGpy9r2xbnyBD0ubjoUAL/Ewo0QrlgWirBNN7iLb7FmeDsF6ltZ?=
+ =?us-ascii?Q?KWS9JlA8V0DsQO7zpatoyBuc7X9AklPLItGzrMsMragnwiEy++pxMllTCiXL?=
+ =?us-ascii?Q?WSAYcTYadEWkwxKv1EomULsr12aUySrgQ9Jfd5He0tO+vhK7oGqBysZ25Dc9?=
+ =?us-ascii?Q?mNDQCJ+BLaO8FT3+Hh40AB440Vr4DNUfF3GNlZ67hLtXXh9uwlprh3YhRWeC?=
+ =?us-ascii?Q?h5aX+19JFmFTVQTos6ylnGcovYUws6WObuHi3bSGoxdupDyt0dSHNK668vLH?=
+ =?us-ascii?Q?/ttAlCncl7lvl+eoG8IsvXF0NJHUJO4dVYl+eBONkhEeqhpGxmuIltgnDg4Y?=
+ =?us-ascii?Q?xGJuS5mpD62B7gbCSNOyNn3J7PhkHBWkqrMi0Q8JDRQbnqPbL5sZwI5bn185?=
+ =?us-ascii?Q?0F/Fic7h5zrKvbwSdk7rMVx6SK5vlupqpv+v3WZcT5I6QZwXCuKbGGtVYHkr?=
+ =?us-ascii?Q?R7WedpBB2DtgsBCZiCMja7Tm5j/ZqT7ZTlDjIjItWEkkzcKnGhIIR+Pi4cJr?=
+ =?us-ascii?Q?OyhYbuNY7qmBi0tgC8uDSdrPYry9LBqCdT5bdUhf2LCSQc6qK0KNBzL2Ibko?=
+ =?us-ascii?Q?54vTGW24GpNdNgqtC4xu+C/TZM8xzMUHRNYYGzqA1hbJLLVcV/If12Ez3+Sl?=
+ =?us-ascii?Q?/Q=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 169e70cd-f86a-4f41-45da-08dcece6a84b
+X-MS-Exchange-CrossTenant-AuthSource: ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 06:57:39.1528
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M7RkyocCLzikBozWyB9GN9xrqvUyJrMwFRSMo3/2glVLgR19RqVr3rX3ubupoIFvbkRkycxgG0So4SPQ5pXPISgC/gk9IktDTuVbCwwEics=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQZPR01MB1105
 
-On Mon 2024-10-14 20:19:32, Ard Biesheuvel wrote:
-> On Mon, 14 Oct 2024 at 20:10, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Mon, 14 Oct 2024 at 10:44, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > >
-> > > We have this code in arch/x86/Makefile.postlink:
-> > >
-> > > quiet_cmd_strip_relocs = RSTRIP  $@
-> > >       cmd_strip_relocs = \
-> > >         $(OBJCOPY) --remove-section='.rel.*' --remove-section='.rel__*' \
-> > >                    --remove-section='.rela.*' --remove-section='.rela__*' $@
-> > >
-> > > Of course, that could easily be fixed, I was just being cautious in
-> > > case there is other, out-of-tree tooling for live patch or kexec etc
-> > > that has similar assumptions wrt section names.
-> >
-> > I'd actually much rather just make strip_relocs not have that "." and
-> > "__" pattern at all, and just say "we strip all sections that start
-> > with '.rel'".
-> >
-> > And then we make the rule that we do *not* create sections named ".rel*".
-> >
-> > That seems like a much simpler rule, and would seem to simplify
-> > strip_relocs too, which would just become
-> >
-> >         $(OBJCOPY) --remove-section='.rel*' $@
-> >
-> > (We seem to have three different copies of that complex pattern with
-> > .rel vs .rela and "." vs "__" - it's in s390, riscv, and x86. So we'd
-> > do that simplification in three places)
-> >
-> > IOW, I'd much rather make our section rules simpler rather than more complex.
-> >
-> > Of course, if there is some active and acute problem report with this
-> > thing, we might not have that option, but in the absence of any
-> > *known* issue with just simplifying things, I'd rather do that.
-> >
-> 
-> I don't disagree with any of this. CC'ing folks working on live patch
-> in case they have any insights.
+In order to mask off the bits, we need to use the '~' operator to invert
+all the bits of _MASK and clear them.
 
-The livepatching specific sections use the name pattern:
+Fixes: 48863ce5940f ("stmmac: add DMA support for GMAC 4.xx")
 
-	.klp.rela.objname.section_name
+Signed-off-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-They are generated by a post processing of the livepatch module.
-The code is not upstream at the moment. It is implemented by
-some out-of-tree tools which are used to build the livepatches.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+index e0165358c4ac..4e1b1bd98f68 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+@@ -266,7 +266,7 @@ static void dwmac4_dma_rx_chan_op_mode(struct stmmac_priv *priv,
+ 	} else {
+ 		pr_debug("GMAC: disable RX SF mode (threshold %d)\n", mode);
+ 		mtl_rx_op &= ~MTL_OP_MODE_RSF;
+-		mtl_rx_op &= MTL_OP_MODE_RTC_MASK;
++		mtl_rx_op &= ~MTL_OP_MODE_RTC_MASK;
+ 		if (mode <= 32)
+ 			mtl_rx_op |= MTL_OP_MODE_RTC_32;
+ 		else if (mode <= 64)
+@@ -335,7 +335,7 @@ static void dwmac4_dma_tx_chan_op_mode(struct stmmac_priv *priv,
+ 	} else {
+ 		pr_debug("GMAC: disabling TX SF (threshold %d)\n", mode);
+ 		mtl_tx_op &= ~MTL_OP_MODE_TSF;
+-		mtl_tx_op &= MTL_OP_MODE_TTC_MASK;
++		mtl_tx_op &= ~MTL_OP_MODE_TTC_MASK;
+ 		/* Set the transmit threshold */
+ 		if (mode <= 32)
+ 			mtl_tx_op |= MTL_OP_MODE_TTC_32;
+-- 
+2.34.1
 
-More details can be found in
-Documentation/livepatch/module-elf-format.rst
-
-Best Regards,
-Petr
 
