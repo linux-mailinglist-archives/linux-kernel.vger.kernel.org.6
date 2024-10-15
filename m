@@ -1,110 +1,122 @@
-Return-Path: <linux-kernel+bounces-366324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6301899F3DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:17:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D2D99F3DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0687B22445
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375AE1F21497
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02991F9EB5;
-	Tue, 15 Oct 2024 17:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11BB1F9EB2;
+	Tue, 15 Oct 2024 17:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Cgh80CJV"
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dE5LRDZC"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5291F6684;
-	Tue, 15 Oct 2024 17:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DB31F76CF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729012628; cv=none; b=d99gffoazEVqCA3f/smzYaL/jtf+XsHznpSZLiebAaGTop841qOuIPTU13J3xssXEa70h/kWySrF3VLrR0UJwc7IT11vJckmqnrlwddbyPk8vplrjZLHNj+37cFrfFs3BN8MqSHB3/OyCfLZoN1DvZ4C+4ld170pmKLHWywTAUo=
+	t=1729012644; cv=none; b=gYeH1jNt0FuxmvfCyB5QAfPVEsz9U1rYh93omBaWTlmVZLXEtcr6IhuW7nAzx+UbHgWM1GlgF2ct/PRsqPKLYsoRat9JWEjsn1IyfzW1IMmReq89O9MAqAsrEQd2vfDHkh9NZ6Rt6mBux24Hjp8YTCtE7XX7hGy5cjh4RYSUMCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729012628; c=relaxed/simple;
-	bh=3pgwbzfO+sAg7V1rNYJVaySR0aOfArSzvdBb+Bqtkfo=;
-	h=Subject:MIME-Version:Content-Type:Date:Message-ID:CC:From:To:
-	 References:In-Reply-To; b=ESOs/LfJUZbEb/OAcR4S5BLwvKC7+FajiHWi2HlnQXPglNExmK1Yg4HGZP4ubn2pNs34+5A/jBTLAQz1foyzejgHymGEKH7LjEQLjfI9eLtVKhAZ25tOK+iOBxyR/czIT9oD6X/qEx3ptTxdNYs0sj1FRD2pzDijSdiGPjqcxxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Cgh80CJV; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+	s=arc-20240116; t=1729012644; c=relaxed/simple;
+	bh=9dO6kLfKx5n+cB/N+dx9/jVakSIyCSGOQANs4+mCwvg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=laVtO0Jv8ec9HiauvxOqc8wnjFyBJlSmBeVnNKx7igyBCWH2AkCvMDqG6Ez4lN+EoKkatfvEJ+7aFtyTdg8b9UaIf0De1nqRHXYsIwZnBTE7q2KD0q0ZpJkAFKrJ5hY+rHfa1e5bFZ0G2UzUcp4jm/YkcOrLURC2iigu3S1dg24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dE5LRDZC; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so4838546f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:17:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1729012627; x=1760548627;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   cc:from:to:references:in-reply-to:subject;
-  bh=eFf2pTbi8+kG2U/aqW1y4su0gyH9oAJZFLQq1g6nLzU=;
-  b=Cgh80CJVv1W3kGvbMOStsmM61rJvzR2OxVvlQCuUqU+kVz8GrjqTB1lq
-   RCDm5/oKLMX3uQCUS1BHzxQQ2if3weFt+ehFFHKbEufFQAVXVzjGbBc6Q
-   h+qJtJgqRYxTrebmLGo7VaP7FC0mmv6rpRkCmc/z+b851Ql7h3DboThfK
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.11,205,1725321600"; 
-   d="scan'208";a="376377981"
-Subject: Re: [PATCH 2/7] KVM: x86: Implement Hyper-V's vCPU suspended state
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 17:17:00 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:25486]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.15.145:2525] with esmtp (Farcaster)
- id 5697c476-574f-4f11-a9aa-5648d5545514; Tue, 15 Oct 2024 17:16:58 +0000 (UTC)
-X-Farcaster-Flow-ID: 5697c476-574f-4f11-a9aa-5648d5545514
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 15 Oct 2024 17:16:57 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Tue, 15 Oct 2024
- 17:16:53 +0000
+        d=google.com; s=20230601; t=1729012641; x=1729617441; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TuhQaen69BVGr6S76H7dsi1dhnSW9t3zaR8BLBdDHwc=;
+        b=dE5LRDZCxQ+9MOOq0PhpCSZN8OwctdeG/ScDPyM+XV3ans+gIxoKTLKtnhGX/SurPJ
+         X53vvsn6ccMqi0YjUX9i/4YAtcvws6Nr9juifo5XGGr0NbISqyqQGfb5s9ZTzHdF7UqF
+         5qnA2l68P/tebMn/6GXlCNhspHWd1N1zML4syAcn10ONRKqbA2IWFKTUAOXDo/PMwHRW
+         WbSDZjwFJOPXd5VsuNNIXICh3/u9DoYdeAR9W9vUVV7tOKcTaUZrvRZfXfiznf0rdia5
+         VKB9tQg4k1c7u4/01wAMEkH93QWvfml2neJjsUKJ8q7xZetcjuM4uH6zY0T3BwHu6UJP
+         AeGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729012641; x=1729617441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TuhQaen69BVGr6S76H7dsi1dhnSW9t3zaR8BLBdDHwc=;
+        b=WXfmNPRTZiD7jCZ+EqOUrpYweRzGS0lQVx5l8ogcp8CG99qwvWlkzDruQfEqywJ7Qk
+         /KNJXYk6YmgfaT+qb6cGOSHgyz7qCg0FD8VjxK0t3Q3aOtpxWaEqVVvN3kyUWFZohSO5
+         BXQd7UEoo3Vf9hPBT/khfAefmPshYv0SU7EfMOuxFdbUehffuf2VsYlAUQzk73H4L1xQ
+         7aawx1kplt/AF4HM1fGLSips/UNfTqH7ytD/1FDb1gt6aX3hj0TLLM693F8VqysxM0x/
+         QyM4oGEGq4qZhWtg1+oUyadAxkbRdeqPEi2bIZ8TiumDkN45tpu7tlSrHTupifLpQ39N
+         LkBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmkBNUYhR49TA7rJuOYDxJk3XMIQ1DUHntwJX6he4wP7ouI3w1EdCA3CegOGQJyh24pxwQj49Wl0Du7sE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYpAxjytQSDOu82hsICJpXJMaxokDlpYjz/YjTYqnNExnN2/Ak
+	SLjcIMOIGI4MkNXmaSvlqPODYorU6Fy/Vz72+kuMgL+hFZUfj8zYlqaSR8sMyCyyRQE27Y5OBYu
+	xueCsttGJ3VttsBzsgz2+7ThhjsbUVV65JURA
+X-Google-Smtp-Source: AGHT+IExgSozkF8anpYsmhke6TphHpFpmFt6KSSrlZ0ptH9TNGIt7Ob73wUWFT8/LhSsvrqNXf6NfZJP5rWxJezZ0EE=
+X-Received: by 2002:a5d:4f8a:0:b0:37c:d1ea:f1ce with SMTP id
+ ffacd0b85a97d-37d5ff8db28mr9582074f8f.25.1729012640808; Tue, 15 Oct 2024
+ 10:17:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20241015-miscdevice-cint-cast-v1-1-fcf4b75700ac@google.com> <2024101545-reentry-extenuate-58ce@gregkh>
+In-Reply-To: <2024101545-reentry-extenuate-58ce@gregkh>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 15 Oct 2024 19:17:07 +0200
+Message-ID: <CAH5fLgjkDJXq6jGL7SuoyaBr6TWWcRgev9=1mT+soSK4SJBRaw@mail.gmail.com>
+Subject: Re: [PATCH] rust: miscdevice: fix warning on c_uint to u32 cast
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Date: Tue, 15 Oct 2024 17:16:49 +0000
-Message-ID: <D4WJTFFVQ5XN.13Z7NABE3IRSM@amazon.com>
-CC: Nikolas Wipper <nik.wipper@gmx.de>, Nikolas Wipper <nikwip@amazon.de>,
-	Alexander Graf <graf@amazon.de>, James Gowans <jgowans@amazon.com>,
-	<nh-open-source@amazon.com>, Paolo Bonzini <pbonzini@redhat.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <x86@kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Sean Christopherson <seanjc@google.com>, Vitaly Kuznetsov
-	<vkuznets@redhat.com>
-X-Mailer: aerc 0.18.2-67-g7f69618ac1fd-dirty
-References: <20241004140810.34231-1-nikwip@amazon.de>
- <20241004140810.34231-3-nikwip@amazon.de> <875xq0gws8.fsf@redhat.com>
- <9ef935db-459a-4738-ab9a-4bd08828cb60@gmx.de> <87h69dg4og.fsf@redhat.com>
- <Zw6PlAv4H5rNZsBf@google.com>
-In-Reply-To: <Zw6PlAv4H5rNZsBf@google.com>
-X-ClientProxiedBy: EX19D035UWA003.ant.amazon.com (10.13.139.86) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sean,
+On Tue, Oct 15, 2024 at 7:08=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Oct 15, 2024 at 02:13:22PM +0000, Alice Ryhl wrote:
+> > When building miscdevice with clippy warnings, the following warning is
+> > emitted:
+> >
+> >       warning: casting to the same type is unnecessary (`u32` -> `u32`)
+> >          --> /home/aliceryhl/rust-for-linux/rust/kernel/miscdevice.rs:2=
+20:28
+> >           |
+> >       220 |     match T::ioctl(device, cmd as u32, arg as usize) {
+> >           |                            ^^^^^^^^^^ help: try: `cmd`
+> >           |
+> >           =3D help: for further information visit
+> >             https://rust-lang.github.io/rust-clippy/master/index.html#u=
+nnecessary_cast
+> >           =3D note: `-W clippy::unnecessary-cast` implied by `-W clippy=
+::all`
+> >           =3D help: to override `-W clippy::all` add `#[allow(clippy::u=
+nnecessary_cast)]`
+> >
+> > Thus, fix it.
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> > This fixes a warning on my patches in char-misc-next. Greg, can you tak=
+e
+> > this through that tree?
+>
+> Will do, thanks!
 
-On Tue Oct 15, 2024 at 3:58 PM UTC, Sean Christopherson wrote:
-> Before we spend too much time cleaning things up, I want to first settle =
-on the
-> overall design, because it's not clear to me that punting HvTranslateVirt=
-ualAddress
-> to userspace is a net positive.  We agreed that VTLs should be modeled pr=
-imarily
-> in userspace, but that doesn't automatically make punting everything to u=
-serspace
-> the best option, especially given the discussion at KVM Forum with respec=
-t to
-> mplementing VTLs, VMPLs, TD partitions, etc.
-
-Since you mention it, Paolo said he was going to prep a doc with an
-overview of the design we discussed there. Was it published? Did I miss
-it?
-
-Thanks,
-Nicolas
+Awesome, thanks!
 
