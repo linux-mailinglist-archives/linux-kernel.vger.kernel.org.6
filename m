@@ -1,143 +1,92 @@
-Return-Path: <linux-kernel+bounces-366251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD8A99F2B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:26:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D74199F2B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D32B21C22292
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:26:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC104B21356
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C447E1F4FCA;
-	Tue, 15 Oct 2024 16:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dceeE9jM"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5861EC006
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F412A1F6677;
+	Tue, 15 Oct 2024 16:27:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291E81EC006
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729009598; cv=none; b=TckfI1XhKi586RYaanSCoWrk+eLrzQEMPEhZm6ECIk5rBCUjqsrCVvnwuO0fy3RIYgKyLVeYjoy73XY+jJtop0S3UuU+LUYGLsU4SF/AYtlEK+J52+ksfa9sZ6hg8qM8xy6lx8EB9pooS2t72sfgEwGkc1aNusfl6Gbnuv/4h3s=
+	t=1729009672; cv=none; b=SmHGJ92VWv+ioRCrnVjnd2VC87FfwPFqALXuOuCj838UT6idoL6QLzcjrBExcIrbnywBjMczPIEXLvzhtv/ghlFQJDKKbe0KonYGObDwOAXcR+4Rt6QzkjVgHwIcw/nANnds94j2nEU5Nlfg4BN2xpNT/qLJJzDjQ8L4NR2T2Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729009598; c=relaxed/simple;
-	bh=r/LUYHfo0b2oPsQBnswC2i/HWfTInJ4Wj1YFss1OM0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eQLi137xoNts0Gam8n+HF4IjQzUkxgUgWYU8zedoXKVqOvar6t9savSBwHQom/Xaal3mFxjGNODxrDDvrgpPkHypvw8eeal03sbJfzU5gNcSNOyEBhlj/LJyPrwvNzlB5oTiXBb4EGcoNn/deHqpAfQwwdYIkHIEutxK2sHcKDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dceeE9jM; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-45fb0ebb1d0so735491cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:26:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729009596; x=1729614396; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ByNOtnqk52ePIj5atFjVP7CCcQ9LOwoYrSe4G9dfPzk=;
-        b=dceeE9jMcx5ICYSFz8cO505jHTInVLzivWeO58vZkYzaQTAqGPDgZt2Wa+/bvDFSdD
-         U7KHzgB5Zofr6CT/qM+np5ihKnQc0/YvpyjG9UA4dCyddatP5GO+q1yJsaK/8yXAX4Tp
-         gShJUkXlW9RhPfywCLTsPKFSOuE2RTIEsc3HORYutBCvh1bfralHG/bTNd9+omHqUoRy
-         SvkdV1Fx6J0TCGhIf/N61l23yvuYwpRP/1iAGZIFX2La/k0cFVx2wxtji+BJkrlxuAaH
-         mtwh5c2Pxoa1RZR+gmz18/5yqh5Rvk1ETPlftuVvVxuti6To/lCKR4kmVjOAWezSfRp/
-         1Ozw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729009596; x=1729614396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ByNOtnqk52ePIj5atFjVP7CCcQ9LOwoYrSe4G9dfPzk=;
-        b=WAPmBg100/mj8ClIwPCfziE+Gq/FoFSO+dVLvZXLa5C6AcBKC6dx/C1xUE+hf3WBJI
-         fCTKT5ujlmqVkA/HFmh2J/T5cjYZQzmK9xCfAD0pARHkBMBPFWoig66v524MuqINRe7H
-         bDLkhYGo4R9Ho1s7DkxTRTEVZjfimQuFUL7/HBkNS0DXirW/+/enuxUKc+ozKWzS/DDa
-         IyIcPIxzAUZC4d3sWPyMcNwS3gNpL6YkdaZTqITu1p88nBg7E1A3xBYwuuAai2Sou9a9
-         pMG6xqhTTS7+jjb5xH1V66eWrPNCw8GD6k5xgsgjMaf1fx1yVdJwfDvQbXyaDqjnUjYN
-         CNZg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9tVyxeKRe/ipoca2o29Kcu9QN8wm/6yIObhJFCo28ZuFeXH67w/9i7qO4SO18Off8gpC4xuItrwZc/ks=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynar85hwPxvH2DtBGdCzIrH11iW00Br4hJzhrCeQhVpsJ07jNW
-	NiY1nMcwITC8ZLVCNNGH+pvSXiblVss6tm57pGSEEC4X3RfDiGQ+kqtJbyFPatNV/x27flIVGEJ
-	HZhaE2TMSqJarpQ9PXdFs5jJY+U6t1WPNzbAq
-X-Google-Smtp-Source: AGHT+IEJf/zEbvfRLlUBkavHUP4hlRMi5TuBiNYWQTdXNa6kRDfahgq4f8DAV0x/WUWXlEXeRgomzUcU5kxGSCng7Vk=
-X-Received: by 2002:a05:622a:848e:b0:458:17ac:2913 with SMTP id
- d75a77b69052e-46059c43d71mr9480531cf.11.1729009595317; Tue, 15 Oct 2024
- 09:26:35 -0700 (PDT)
+	s=arc-20240116; t=1729009672; c=relaxed/simple;
+	bh=of7g9E0gG9fv6n5gnyfrrVsPY8yP+rhfejlab2z226A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rmxJ1laKUccOppIL8TWVqGM9LyabvsHnxO+qB20GwRzfyTagyT0EcMrQI1WnW6XKEZiqoUUvF3z1UV8fUm1qC9pfd6wZljh5Qd4a0He9EBQYFkP038d2fC76crwAdFPp0K0M4untoKJbzcpC83G+6jw1wmJElBBrzkhDfR5urfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD8101763;
+	Tue, 15 Oct 2024 09:28:18 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 131043F71E;
+	Tue, 15 Oct 2024 09:27:46 -0700 (PDT)
+Date: Tue, 15 Oct 2024 17:27:32 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Clement LE GOFFIC <clement.legoffic@foss.st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Kees Cook <kees@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Antonio Borneo <antonio.borneo@foss.st.com>
+Subject: Re: Crash on armv7-a using KASAN
+Message-ID: <Zw6X9KQT0-z7r7SY@J2N7QTR9R3.cambridge.arm.com>
+References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
+ <Zw5D2aTkkUVOK89g@J2N7QTR9R3>
+ <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
+ <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com>
+ <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
+ <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com>
+ <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
+ <Zw6Jk74-d0mhR0jx@J2N7QTR9R3.cambridge.arm.com>
+ <CAMj1kXG3bwMGpArYNUm-qMO7PPgb3--wy5kp-3Ks2Uv9M479xg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014203646.1952505-1-surenb@google.com> <20241014163231.9ef058c82de8a6073b3edfdc@linux-foundation.org>
- <CAJuCfpHo=gu-JJ-N_nU_3hX4HEsfsQ6=ff19vU=NCrp1y3abiw@mail.gmail.com>
-In-Reply-To: <CAJuCfpHo=gu-JJ-N_nU_3hX4HEsfsQ6=ff19vU=NCrp1y3abiw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 15 Oct 2024 09:26:24 -0700
-Message-ID: <CAJuCfpHMRM1GyzCA_=v5V2kUZbprvNJD1aFmpF58vm0w4eWBHw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] page allocation tag compression
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, 
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
-	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
-	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
-	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXG3bwMGpArYNUm-qMO7PPgb3--wy5kp-3Ks2Uv9M479xg@mail.gmail.com>
 
-On Mon, Oct 14, 2024 at 6:48=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Mon, Oct 14, 2024 at 4:32=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
-ion.org> wrote:
+On Tue, Oct 15, 2024 at 06:07:00PM +0200, Ard Biesheuvel wrote:
+> On Tue, 15 Oct 2024 at 17:26, Mark Rutland <mark.rutland@arm.com> wrote:
+> > Looking some more, I don't see how VMAP_STACK guarantees that the
+> > old/active stack is mapped in the new mm when switching from the old mm
+> > to the new mm (which happens before __switch_to()).
 > >
-> > On Mon, 14 Oct 2024 13:36:41 -0700 Suren Baghdasaryan <surenb@google.co=
-m> wrote:
-> >
-> > > Patch #2 copies module tags into virtually contiguous memory which
-> > > serves two purposes:
-> > > - Lets us deal with the situation when module is unloaded while there
-> > > are still live allocations from that module. Since we are using a cop=
-y
-> > > version of the tags we can safely unload the module. Space and gaps i=
-n
-> > > this contiguous memory are managed using a maple tree.
-> >
-> > Does this make "lib: alloc_tag_module_unload must wait for pending
-> > kfree_rcu calls" unneeded?
->
-> With this change we can unload a module even when tags from that
-> module are still in use. However "lib: alloc_tag_module_unload must
-> wait for pending kfree_rcu calls" would still be useful because it
-> will allow us to release the memory occupied by module's tags and let
-> other modules use that memory.
->
-> >  If so, that patch was cc:stable (justifyably), so what to do about tha=
-t?
->
-> Now that I posted this patchset I'll work on backporting "lib:
-> alloc_tag_module_unload must wait for pending kfree_rcu calls" and its
-> prerequisites to 6.10 and 6.11. I'll try to get backports out
-> tomorrow.
+> > Either I'm missing something, or we have a latent bug. Maybe we have
+> > some explicit copying/prefaulting elsewhere I'm missing?
+> 
+> We bump the vmalloc_seq counter for that. Given that the top-level
+> page table can only gain entries covering the kernel space, this
+> should be sufficient for the old task's stack to be mapped in the new
+> task's page tables.
 
-I prepared 6.10 and 6.11 backports for
-https://lore.kernel.org/all/20241007205236.11847-1-fw@strlen.de but
-will wait for it to get merged into Linus' tree before posting them to
-stable.
-Thanks,
-Suren.
+Ah, yep -- I had missed that. Thanks for the pointer!
 
-> I don't think we need to backport this patchset to pre-6.12 kernels
-> since this is an improvement and not a bug fix. But if it's needed I
-> can backport it as well.
-> Thanks,
-> Suren.
+From a superficial look, it sounds like it should be possible to extend
+that to also handle the KASAN shadow of the vmalloc area (which
+__check_vmalloc_seq() currently doesn't copy), but I'm not sure of
+exactly when we initialise the shadow for a vmalloc allocation relative
+to updating vmalloc_seq.
+
+Mark.
 
