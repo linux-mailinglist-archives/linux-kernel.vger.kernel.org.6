@@ -1,77 +1,130 @@
-Return-Path: <linux-kernel+bounces-366118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6725F99F11D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:26:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5872099F11F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1D15283FDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F411C22F0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7CC1D514E;
-	Tue, 15 Oct 2024 15:25:51 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B251DD0CF;
+	Tue, 15 Oct 2024 15:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="GZTy5ZTo"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410821B2181;
-	Tue, 15 Oct 2024 15:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD3A1CB9F3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729005950; cv=none; b=HlbgbYMKFFiP3CwadIoajaBM+pKkHNGsPt2jdyVfoo6IHkfkzO46USq8bIgaya7zfjB/mNTPt8RgELlhL9K0O2dm4H4URz/3xHkF1TfDyAtth3Empr8IBZE1ujoLLnyPApUoGHNG4Vcri4OYj1uLruOPcFpL5TN+cZj13TShm24=
+	t=1729005955; cv=none; b=PIeYUviQEjGqF0zc71XcP5Tn0QdxMiMLc8q3LPuDTrU9zxLpaLbrcqp5Qc9IURNXCVNySpRuaHbtnkruKwoPHZUODBgnZ0GxQA8MgHUAnyNNaNDZcDNvmU+MTEtve7K5yAYxFm1/IFExiVo+i/0l+wwj5/RNSijn6biZOkf/dy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729005950; c=relaxed/simple;
-	bh=18FzEMnBgSIbTxs/2tPjdrl1WVdNoL/WjTV3lxGaRPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OssepQefgUg3L+2y00zzbm/+xqSqt6+8w2OIYXGt+WyC5EFDOQlTOScORk/OytRnC1d4Y6n7kkUgaNqWoI5OY7vIJXTA+vAMbxHRg0rXiS6MVsAjQr3BYGsjm5qNprEbICgfLHRE4vKzKu4JWj2DnPlzR7xtcmH6uEqJuUe7RkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1t0jQI-0007LE-9k; Tue, 15 Oct 2024 17:25:22 +0200
-Date: Tue, 15 Oct 2024 17:25:22 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Tyrone Wu <wudevelops@gmail.com>
-Cc: bpf@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrii@kernel.org, eddyz87@gmail.com,
-	mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
-	riel@surriel.com, shakeel.butt@linux.dev,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-patches-bot@fb.com
-Subject: Re: [PATCH bpf v1 1/2] bpf: fix link info netfilter flags to
- populate defrag flag
-Message-ID: <Zw6JYuga41DyoVjt@strlen.de>
-References: <20241011193252.178997-1-wudevelops@gmail.com>
+	s=arc-20240116; t=1729005955; c=relaxed/simple;
+	bh=NlKtwh+WhTORKH5aD7FPEwxmYQ5WtZi2HQF8QoJKsyo=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=MZilzOodoqXgHs20qwadxTX/oPuEWRonKy4drl7NMUxcoooltPZilAx2pD4JEqtt4+nXexhFguOEQIeT17BDtg5RpV5d7TKBUAujyYS3Je+ZVnNaworOYKiUqN6nUouzMoR9hF4KMDYgjrpPffV51wyK31NNS9jrQvrK/MYbtUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=GZTy5ZTo; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
+	by cmsmtp with ESMTPS
+	id 0Z7ottuPQqvuo0jQhtROqH; Tue, 15 Oct 2024 15:25:47 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 0jQgtHulmky5U0jQgtJWE7; Tue, 15 Oct 2024 15:25:46 +0000
+X-Authority-Analysis: v=2.4 cv=Cum5cG4D c=1 sm=1 tr=0 ts=670e897a
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=UiXv1XNBzq_yEhrWseEA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cbcSXoiP4f/zDA4ll/c+3KBailv6s4L/7Reu/3Vv82s=; b=GZTy5ZToAINBlZAGmdG7xI/Z5x
+	IQOaVmZzEhemF/6Ob7YzwnhB7bKy0OR8zWfTDphgJWt8fFXx+kVZNYb+VvsuUu+Q21VBOAQwep+Wc
+	7chb1aet7tytYW+yM6XATSGZwyrHIh2mQMx2w7t50t8mCcnGPpPF99OHSZTEJMKWovOaFsMXOL0XW
+	w5G1EmhHMhvHpmNHdGuMbQpf77zCqhDdtmmbRBOPA8G/JIa1R5pxbP9JrwRVoQDqLrH0pucKTk1y4
+	yoVqatVOtFfKQKwlcJEwi5b5UPMR/vXJSEO/+ALgxdLMJYeeaBNz8hdsUO5Q7rAuB87Uovi4mNKiL
+	4Hb5bSNA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47882 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1t0jQe-00233M-0w;
+	Tue, 15 Oct 2024 09:25:44 -0600
+Subject: Re: [PATCH 6.6 000/211] 6.6.57-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241015112327.341300635@linuxfoundation.org>
+In-Reply-To: <20241015112327.341300635@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <ec759cee-de47-dbf5-fd99-016fc411f47e@w6rz.net>
+Date: Tue, 15 Oct 2024 08:25:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011193252.178997-1-wudevelops@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1t0jQe-00233M-0w
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:47882
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 24
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfMP4+Ga2Zh8jsXPP4DoYEKjai6btCgfL2ZurSJTpXjqHoAw9ewbmc/30P5gKLcNvQ9iLCYq2zXBKhDwZSSsy/j049PYoB0m9/AK9Z76w+5dT40JGm/5Y
+ NGm0uyFTvT3Qmt733B5OLgkPaV1g9HT8UeMsV2/R51lL9bourSHs7YVhfHwckbIMEEvm5n8Zta3Aq8ZaaqcvJoSX4uhebrK3L6g=
 
-Tyrone Wu <wudevelops@gmail.com> wrote:
-> This patch correctly populates the `bpf_link_info.netfilter.flags` field
-> when user passes the `BPF_F_NETFILTER_IP_DEFRAG` flag.
+On 10/15/24 4:25 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.57 release.
+> There are 211 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.57-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Indeed, thanks for fixing this.
-Patch and testcase look good, but one nit:
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-> Fixes: 84601d6ee68a ("bpf: add bpf_link support for BPF_NETFILTER programs")
-
-BPF_F_NETFILTER_IP_DEFRAG flag was added in
-91721c2d02d3 ("netfilter: bpf: Support BPF_F_NETFILTER_IP_DEFRAG in netfilter link"), that was a bit later than the initial support.
-
-Other than that,
-Acked-by: Florian Westphal <fw@strlen.de>
+Tested-by: Ron Economos <re@w6rz.net>
 
 
