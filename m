@@ -1,266 +1,116 @@
-Return-Path: <linux-kernel+bounces-365526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D64F99E3AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:21:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0D199E3B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACB3EB2198F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:21:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51121284793
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015B81E32D0;
-	Tue, 15 Oct 2024 10:21:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2113C1E3798;
+	Tue, 15 Oct 2024 10:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LewW1oD/"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3061CBEB8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520EB1E202D;
+	Tue, 15 Oct 2024 10:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728987661; cv=none; b=UemHodUgaGwoPKh3lfPCDB2mbzKrXBQMfYsnTf8OY9a7iotvwvCC0V/k6i/HEZw3/+eoCFkAkB8h/IUghqA4f2g+9cmJz+qVXmyeFr+NYqC4GTMknvvy3DmTd8XuOkfUhSIESfvxNAf0Huys/NUCTU8Zu7bXCwRaDOx8y0vTyOo=
+	t=1728987767; cv=none; b=FlkNsdKfyDWhBjMdvxkgaYUT8S2pDqouQBoSNVWBj4gkM+ld7/4Hnr/s9UpzHaj80xXZmIU2hPzRdUNaZ1Vs4fPwSB97eyHJvmcPQtRroQWHlZsh8CW3CV03yq6QJAXQyGXRhfSnssKR3NV4mCtWW5VDayiOGHG8iqENj+pThYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728987661; c=relaxed/simple;
-	bh=qFw4pwxpBpttm95Yafbw1L21sbIFCKSXOR9wwNVM6uk=;
+	s=arc-20240116; t=1728987767; c=relaxed/simple;
+	bh=JazC3VZ30CY2aGkwYDQQKBaW4GtoR4P22Fn0jIYrD5Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1D7cB5Ve900qiMFg2ecwbUCZbSb/qs9G/ocCrB66oq2lVkYjn1Vai0eO9GGPVB9DNI6rAm2MxfqFx9gSY05kYGzQZYCMI0z3Mv2GxyxLCVu5nC0pgClORxsJcqhIN46Yv+cI8FQ+DNzunx9LMBPpvHHoBieOEmdX2neMgGG7xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1t0efi-0003Hh-A6; Tue, 15 Oct 2024 12:20:58 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1t0efh-0020WR-Je; Tue, 15 Oct 2024 12:20:57 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1t0efh-00CdtB-1f;
-	Tue, 15 Oct 2024 12:20:57 +0200
-Date: Tue, 15 Oct 2024 12:20:57 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com
-Subject: Re: [PATCH v3] wifi: mwifiex: avoid AP and STA running on different
- channel
-Message-ID: <Zw5CCWsvyoIR_0Bl@pengutronix.de>
-References: <20241008050405.6948-1-yu-hao.lin@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fe+in3kqH4hWLsjm9GgQoQj/8moE5fXle5DEMcTyJotjUXZ2hnSjoFbHlVlaqj8uFfZ9LdPx/QKvTT038z6n0RSTsHZLUwBNqByVJ6MtnKZChgix1f7KsLevt6Fi/ciF3cytaz/fP1Alx4jM+ver4F6BdaFJN0bFDpshVP1t12M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LewW1oD/; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [185.143.39.11])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9EA9A9CE;
+	Tue, 15 Oct 2024 12:20:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728987656;
+	bh=JazC3VZ30CY2aGkwYDQQKBaW4GtoR4P22Fn0jIYrD5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LewW1oD/z6GnyXA6YeoMroI8Ox3o8agpkOsCFfYkYJ9amgKD4vdGKs+LG7otsXtri
+	 o/dc3nXcqs+S1Gw2MwrYs2RdUhjUwefN7hA9iCmpkJ0mhpFaxIwrNesPPQaQ1Ncmmj
+	 fc2Ggpsuq9fd9giyVRlijVLAc9QDdxwF+BmXe3Rg=
+Date: Tue, 15 Oct 2024 13:22:35 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v5 10/22] media: rzg2l-cru: Remove unnecessary WARN_ON
+ check in format func
+Message-ID: <20241015102235.GF5682@pendragon.ideasonboard.com>
+References: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241011173052.1088341-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241008050405.6948-1-yu-hao.lin@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241011173052.1088341-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Tue, Oct 08, 2024 at 01:04:05PM +0800, David Lin wrote:
-> Current firmware doesn't support AP and STA running on different
-> channels simultaneously if DRCS is not enabled.
-> FW crash would occur in such case.
-> This patch avoids the issue by disabling AP and STA to run on
-> different channels if DRCS is not running.
+Hi Prabhakar,
+
+Thank you for the patch.
+
+On Fri, Oct 11, 2024 at 06:30:40PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Signed-off-by: David Lin <yu-hao.lin@nxp.com>
+> `WARN_ON(!fmt)` check in `rzg2l_cru_format_bytesperline()` is unnecessary
+> because the `rzg2l_cru_format_align()` function ensures that a valid
+> `pixelformat` is set before calling `rzg2l_cru_format_bytesperline()`. As
+> a result, `rzg2l_cru_format_from_pixel()` is guaranteed to return a
+> non-NULL value, making the check redundant.
+> 
+> Additionally, the return type of `rzg2l_cru_format_bytesperline()` is
+> `u32`, but the code returned `-EINVAL`, a negative value. This mismatch is
+> now  resolved by removing the invalid error return path.
 
-Acked-by: Sascha Hauer <s.hauer@pengutronix.de>
+s/now  /now /
 
-Sascha
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
 > ---
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> v3:
->    - add the check for DRCS mode.
->    - add clean comment for wiphy parameters setting.
-> 
-> v2:
->    - clean up code.
-> 
-> ---
->  .../net/wireless/marvell/mwifiex/cfg80211.c   | 32 +++++++++----
->  drivers/net/wireless/marvell/mwifiex/util.c   | 47 +++++++++++++++++++
->  drivers/net/wireless/marvell/mwifiex/util.h   | 13 +++++
->  3 files changed, 82 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> index fca3eea7ee84..ebc891d5d6c6 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> @@ -746,13 +746,18 @@ mwifiex_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed)
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index de88c0fab961..401ef7be58ec 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -835,9 +835,6 @@ static u32 rzg2l_cru_format_bytesperline(struct v4l2_pix_format *pix)
 >  
->  	priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
+>  	fmt = rzg2l_cru_format_from_pixel(pix->pixelformat);
 >  
-> +	/* Because wiphy parameters are global setting, the setting for
-> +	 * the first interface will apply for other interfaces too.
-> +	 * If AP and STA are running at same time, these parameters must
-> +	 * be the same. If the first interface is running, it means wiphy
-> +	 * parameters are already set. The second setting should be dropped
-> +	 * without error return, otherwise AP and STA can't run at the same
-> +	 * time if wiphy parameters are setting.
-> +	 */
->  	switch (priv->bss_role) {
->  	case MWIFIEX_BSS_ROLE_UAP:
-> -		if (priv->bss_started) {
-> -			mwifiex_dbg(adapter, ERROR,
-> -				    "cannot change wiphy params when bss started");
-> -			return -EINVAL;
-> -		}
-> +		if (priv->bss_started)
-> +			break;
->  
->  		bss_cfg = kzalloc(sizeof(*bss_cfg), GFP_KERNEL);
->  		if (!bss_cfg)
-> @@ -781,11 +786,9 @@ mwifiex_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed)
->  		break;
->  
->  	case MWIFIEX_BSS_ROLE_STA:
-> -		if (priv->media_connected) {
-> -			mwifiex_dbg(adapter, ERROR,
-> -				    "cannot change wiphy params when connected");
-> -			return -EINVAL;
-> -		}
-> +		if (priv->media_connected)
-> +			break;
-> +
->  		if (changed & WIPHY_PARAM_RTS_THRESHOLD) {
->  			ret = mwifiex_set_rts(priv,
->  					      wiphy->rts_threshold);
-> @@ -2069,6 +2072,9 @@ static int mwifiex_cfg80211_start_ap(struct wiphy *wiphy,
->  	if (GET_BSS_ROLE(priv) != MWIFIEX_BSS_ROLE_UAP)
->  		return -1;
->  
-> +	if (!mwifiex_is_channel_setting_allowable(priv, params->chandef.chan))
-> +		return -EOPNOTSUPP;
-> +
->  	bss_cfg = kzalloc(sizeof(struct mwifiex_uap_bss_param), GFP_KERNEL);
->  	if (!bss_cfg)
->  		return -ENOMEM;
-> @@ -2463,6 +2469,9 @@ mwifiex_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
->  		return -EFAULT;
->  	}
->  
-> +	if (!mwifiex_is_channel_setting_allowable(priv, sme->channel))
-> +		return -EOPNOTSUPP;
-> +
->  	mwifiex_dbg(adapter, INFO,
->  		    "info: Trying to associate to bssid %pM\n", sme->bssid);
->  
-> @@ -4298,6 +4307,9 @@ mwifiex_cfg80211_authenticate(struct wiphy *wiphy,
->  		return -EINVAL;
->  	}
->  
-> +	if (!mwifiex_is_channel_setting_allowable(priv, req->bss->channel))
-> +		return -EOPNOTSUPP;
-> +
->  	if (priv->auth_alg != WLAN_AUTH_SAE &&
->  	    (priv->auth_flag & HOST_MLME_AUTH_PENDING)) {
->  		mwifiex_dbg(priv->adapter, ERROR, "Pending auth on going\n");
-> diff --git a/drivers/net/wireless/marvell/mwifiex/util.c b/drivers/net/wireless/marvell/mwifiex/util.c
-> index 42c04bf858da..da5eef7b1dec 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/util.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/util.c
-> @@ -323,6 +323,53 @@ int mwifiex_debug_info_to_buffer(struct mwifiex_private *priv, char *buf,
->  	return p - buf;
+> -	if (WARN_ON(!fmt))
+> -		return -EINVAL;
+> -
+>  	return pix->width * fmt->bpp[0];
 >  }
 >  
-> +bool mwifiex_is_channel_setting_allowable(struct mwifiex_private *priv,
-> +					  struct ieee80211_channel *check_chan)
-> +{
-> +	struct mwifiex_adapter *adapter = priv->adapter;
-> +	int i;
-> +	struct mwifiex_private *tmp_priv;
-> +	u8 bss_role = GET_BSS_ROLE(priv);
-> +	struct ieee80211_channel *set_chan;
-> +
-> +	if (adapter->drcs_enabled)
-> +		return true;
-> +
-> +	for (i = 0; i < MWIFIEX_MAX_BSS_NUM; i++) {
-> +		tmp_priv = adapter->priv[i];
-> +		if (tmp_priv == priv)
-> +			continue;
-> +
-> +		set_chan = NULL;
-> +		if (bss_role == MWIFIEX_BSS_ROLE_STA) {
-> +			if (GET_BSS_ROLE(tmp_priv) == MWIFIEX_BSS_ROLE_UAP &&
-> +			    netif_carrier_ok(tmp_priv->netdev) &&
-> +			    cfg80211_chandef_valid(&tmp_priv->bss_chandef))
-> +				set_chan = tmp_priv->bss_chandef.chan;
-> +		} else if (bss_role == MWIFIEX_BSS_ROLE_UAP) {
-> +			struct mwifiex_current_bss_params *bss_params =
-> +				&tmp_priv->curr_bss_params;
-> +			int channel = bss_params->bss_descriptor.channel;
-> +			enum nl80211_band band =
-> +				mwifiex_band_to_radio_type(bss_params->band);
-> +			int freq =
-> +				ieee80211_channel_to_frequency(channel, band);
-> +
-> +			if (GET_BSS_ROLE(tmp_priv) == MWIFIEX_BSS_ROLE_STA &&
-> +			    tmp_priv->media_connected)
-> +				set_chan = ieee80211_get_channel(adapter->wiphy, freq);
-> +		}
-> +
-> +		if (set_chan && !ieee80211_channel_equal(check_chan, set_chan)) {
-> +			mwifiex_dbg(adapter, ERROR,
-> +				    "AP/STA must run on the same channel\n");
-> +			return false;
-> +		}
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static int
->  mwifiex_parse_mgmt_packet(struct mwifiex_private *priv, u8 *payload, u16 len,
->  			  struct rxpd *rx_pd)
-> diff --git a/drivers/net/wireless/marvell/mwifiex/util.h b/drivers/net/wireless/marvell/mwifiex/util.h
-> index 4699c505c0a0..16f092bb0823 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/util.h
-> +++ b/drivers/net/wireless/marvell/mwifiex/util.h
-> @@ -86,4 +86,17 @@ static inline void le16_unaligned_add_cpu(__le16 *var, u16 val)
->  	put_unaligned_le16(get_unaligned_le16(var) + val, var);
->  }
->  
-> +/* Current firmware doesn't support AP and STA running on different
-> + * channels simultaneously in normal mode.
-> + * FW crash would occur in such case.
-> + * This function is used to check if check_chan can be set to FW or not.
-> + *
-> + * Return:
-> + * %true if check_chan can be set to FW without issues.
-> + * %false there is already other channel is set to FW, setting of
-> + * check_chan is not allowable.
-> + */
-> +bool mwifiex_is_channel_setting_allowable(struct mwifiex_private *priv,
-> +					  struct ieee80211_channel *check_chan);
-> +
->  #endif /* !_MWIFIEX_UTIL_H_ */
-> 
-> base-commit: 5a4d42c1688c88f3be6aef46b0ea6c32694cd2b8
-> -- 
-> 2.34.1
-> 
-> 
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Regards,
+
+Laurent Pinchart
 
