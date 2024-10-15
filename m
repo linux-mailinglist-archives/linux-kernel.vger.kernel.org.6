@@ -1,83 +1,132 @@
-Return-Path: <linux-kernel+bounces-365716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFF399E7ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:59:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B8899E80D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 944561F22DBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:59:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC5BB25298
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3181E764A;
-	Tue, 15 Oct 2024 11:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832191E1A35;
+	Tue, 15 Oct 2024 12:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHov47xd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FOlc1cxH"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BD31E764B;
-	Tue, 15 Oct 2024 11:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364DB1C57B1;
+	Tue, 15 Oct 2024 12:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728993578; cv=none; b=P4Zspx9PmV8j2kwdKN+hjNsoJmRcS7byP50m0RvFO1rV/dA/ZUHzxsKE6mlazdEXYwcfMDLCBi0Fda0BPeaX9kiEokUm7yVMFu9Nmxrt/czXxG8CW9A+M/Ij4lcYVoW5mz4i7Aptqylus8u/5HBz+BePGHOeMLHvvKm04IP6KSc=
+	t=1728993679; cv=none; b=BM6A4U1aaYDmI6iVi6CU8tcagPGwp8+amO3PSU06UJAkZ9AFVDSGlW+F++N8f1I9Z2nyf/hAhGRpfUV/lxjnWCELUo+1+xsKYr7HQZGappiQs6wNjCOgQR80Gz2F3KxWpBvz8J192tXEOwxyW4Xm+B5bVNlCmCCXvn+vciWn0wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728993578; c=relaxed/simple;
-	bh=ODeceBYLRtueqmgHt8DfZfD2/pSz1xD49c/l3ljyl4Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bfJcMYMcetBNUvlkaQ2u0Ucw3+5WUdY4xCZakZy1vsr1s94wloV3FlRSgK8v3MILI7XAiNGNOfek9ecKktyJj3/wiM0fuuMVObQqI4FIpfq74OdIoH1gJUhoi/dG9qjgRdCR+7Ch3Qp2Xog2atZy8hiJ4fZS+ff90QxDDcna97Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHov47xd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D116C4CEC6;
-	Tue, 15 Oct 2024 11:59:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728993577;
-	bh=ODeceBYLRtueqmgHt8DfZfD2/pSz1xD49c/l3ljyl4Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=cHov47xdm6Ek2xh7pVECaTFOn/CA7c70thnr3vBzoyk6n9UMooyBfI7r1cuhGXx9l
-	 m4tg+8BGKs1CNBhxbShxzsEJE65IyeDCA+UrgGOsp4Gb3EVUr6BWikzP8XsNVYZDf9
-	 ox5j79Apdwi/p3XHKq5MRW0DcuogWC9uDhftOru47w2I8J21AYk3zIng/ed4UISWOg
-	 Amkt4/XZjxsaqo6LN9K9bbjcEBXSM9h6aBiBh1z2uIf79FzhDSlswTAQnj4hgeaq2s
-	 TxFjXdQY6ND7KUo+K6VmD2FrdrksK5x88R2DgdjD9bgG2phFeF0ZY1VZEsVcfw+qGL
-	 Ef/O64oDvSEjw==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Michal_Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Christian Marangi <ansuelsmth@gmail.com>
-In-Reply-To: <20241009095635.2790613-1-michal.vokac@ysoft.com>
-References: <20241009095635.2790613-1-michal.vokac@ysoft.com>
-Subject: Re: (subset) [PATCH v2] leds: lp5562: Add multicolor brightness
- control
-Message-Id: <172899357617.523868.14748410570100250879.b4-ty@kernel.org>
-Date: Tue, 15 Oct 2024 12:59:36 +0100
+	s=arc-20240116; t=1728993679; c=relaxed/simple;
+	bh=frGzG0exRPAvFJxx5eXtGe9i2KZlpHasEbC+y0R3c2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W56Ge/U7mFeSxr/vhWM8EIS3fIk0Faj3LJc3hD1z8wx0CF4xGxVPa93kCLbJcRr8wCAvR7cROmR98LgFgf4kFyqdPTmspGtTni8UlAhdV1+3PAoxeHvdpnyJ2+pHvavgmmOqH33zB8Je634RMp5W5j5CA/YRQo4NsfeDMeNv90U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FOlc1cxH; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FBp4YE024353;
+	Tue, 15 Oct 2024 12:01:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=NO4PsVxF0Vv0WpyYXQjdX0PJJIdJ00
+	vvIhoHcEmfrAs=; b=FOlc1cxHN0v6a0v1EsTwvx+CJNPiXbXyGApSq0A3YdIOdA
+	PSdtoFnaoef/4vQ7BFLoqSEPSrB5HE9k6QbQw5O03wbolvzm2MALDvaqd3n40wUd
+	g1LNw7YoAy7swq6+UHh9UUumvBP9sGT53KN3JxfVaEm7AsNVuWjAGNFJZN6N4mwo
+	s5gn09h8Jdk4p5F2ZlxI+o3a42iK7qTOu9PUVccWbZoxeJVrMtQc2VzcV6++ZF2u
+	nxvwCfXSIVSx1MU84FOQmA0PmOcZyT5sF6VbCRpLKoUZO1KH4DmAi+fhoNUVZmbn
+	2oPGRcCJcESz2PheTIbi0yk7Q+JIXjz/JCR+AyaA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429qvh02c5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 12:01:15 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FBdwFo005218;
+	Tue, 15 Oct 2024 12:01:15 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285nj3cp2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 12:01:14 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FC1BjB42795302
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 12:01:11 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 57C512004B;
+	Tue, 15 Oct 2024 12:01:11 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 367F620043;
+	Tue, 15 Oct 2024 12:01:11 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 15 Oct 2024 12:01:11 +0000 (GMT)
+Date: Tue, 15 Oct 2024 14:01:09 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Steffen Eiden <seiden@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+Subject: Re: [PATCH v3 5/6] s390/uvdevice: Add List Secrets Ext IOCTL
+Message-ID: <20241015120109.7641-K-hca@linux.ibm.com>
+References: <20241015112859.3069210-1-seiden@linux.ibm.com>
+ <20241015112859.3069210-6-seiden@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015112859.3069210-6-seiden@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 5tTULbaZ_3bVYklfEUCJaX23mSr1E4zU
+X-Proofpoint-ORIG-GUID: 5tTULbaZ_3bVYklfEUCJaX23mSr1E4zU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxlogscore=557 clxscore=1015 impostorscore=0 suspectscore=0 mlxscore=0
+ bulkscore=0 malwarescore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150081
 
-On Wed, 09 Oct 2024 11:56:35 +0200, Michal Vokáč wrote:
-> The framework for multicolor brightness control is already in place
-> in the lp55xx-common code but the function to control the multicolor
-> brightness for this particular chip is still missing.
+On Tue, Oct 15, 2024 at 01:28:58PM +0200, Steffen Eiden wrote:
+> Add an extended List Secrets IOCTL. In contrast to the first list IOCTL
+> this accepts an index as the first two bytes of the provided page as an
+> input. This index is then taken as the index offset for the list UVC to
+> receive later entries for the list. While at it fix some kernel doc
+> issues with the list function.
 > 
-> Implement the multicolor_brightness_fn function to allow multicolor
-> brightness control of LEDs connected to the LP5562 LED driver.
-> 
-> [...]
+> Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+> ---
+>  arch/s390/include/uapi/asm/uvdevice.h |  4 ++
+>  drivers/s390/char/uvdevice.c          | 96 +++++++++++++++++++--------
+>  2 files changed, 72 insertions(+), 28 deletions(-)
 
-Applied, thanks!
+...
 
-[1/1] leds: lp5562: Add multicolor brightness control
-      commit: 681d5fa6440cf0fd3f561638c598db18aa77e641
+> +/**
+> + * The actual list(_ext) IOCTL.
+> + * If list_ext is true, the first two bytes of the user buffer set the starting
+> + * index of the list-UVC.
+> + */
+> +static int list_secrets(struct uvio_ioctl_cb *uv_ioctl, bool list_ext)
 
---
-Lee Jones [李琼斯]
+This is not kernel-doc style :)
 
+> +	free_pages((unsigned long)secrets, 0);
+> +	return ret;
+
+free_page() instead of free_pages()?
 
