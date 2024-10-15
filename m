@@ -1,164 +1,167 @@
-Return-Path: <linux-kernel+bounces-366043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6831799F015
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:49:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D06F699F01C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4C3281FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:49:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9CB1F2186B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89731C4A38;
-	Tue, 15 Oct 2024 14:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xd3dAV66"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3879D1C4A2C;
+	Tue, 15 Oct 2024 14:50:22 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806491FC7C9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6171B2188;
+	Tue, 15 Oct 2024 14:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003786; cv=none; b=InocOWD7cPBWnAkn9X3i/jJqr1tEfBKcvqnm4sIaF9uI7p/P0nTJLt+QEHHCYCjluTt83Pi+79s8F3aM2J4KMlDYKGxJwUckaJGAzU49u8oM3TbZUpqU52wwNlvRefpEU4Qqf0mL0LqlkAV9gFllvSDTbdBS+jIsMbjMW/fp+ZM=
+	t=1729003821; cv=none; b=bU/GrGsnkxkU4Ak3EtT+b3fwail8apElwRhOWRwl/x7ecMRJac/dhsMxRO4yYG2xr3bEjR4wCRCdULFd87gAO4pRIVwO2m+YOng9BAPYFOT16qV0WlbvSFCtz52N/8jPlrlzyWPm67X3fXp5SdqCDcm6ZKAYmUyeV8bU+TB3Y1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003786; c=relaxed/simple;
-	bh=jftCcgpGscguxSk6kXzdvDBaiXSUimRLuEL9wKI3/7I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Ld82M7ns6bE5W6kfpIWD+GtOJ0uiyU3vobf7y+AgJ9uTvGzdN9652E6M961rXOXFSi7t5udyZhP0F+5C2B+QegKGwJQ0ZmCIEYt3EHQudAi4PdGlMl6Lj0UWJUNa+l6nHlmYXw5I5wyT0yAFucbYYehfzZyRrAeJPU/z8z8+4y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xd3dAV66; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-50d4213c5f6so836944e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729003783; x=1729608583; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tvpxbUbkgDaEkuRJpwxPS3JaI9LTJgLeDg7mwmImTTA=;
-        b=Xd3dAV66YNsI9470LoN+9u33Sr9YI8pXUnJZctXxD01wzndeuYyAtvdn1T8liC/9Sh
-         KNFrDozcOj2A7nh4OfL03yxRDQmSWvquzPP7srIsR9lHSEUHKqvl1gD0FCJPs3KkfGnB
-         hBXOvebCMHVZnnqlKAclrjTs4z3NPaJS4tFTqyOaL9y0HyfmSnWrzClh7HHcABSHjbNQ
-         NLlrL4vl/TwJhY7pdtgdLUz9VgJTIWNL1fhtfaTMP4UGwPduo2R2oBsL/b2xF3uwUvqs
-         J5aE52N4dMyWGweuKGrkyjw+UdlWAWlDDwlHPq+kWBoDvd8EA2Sy9vdzy52yOsrs84Gp
-         dAGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729003783; x=1729608583;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tvpxbUbkgDaEkuRJpwxPS3JaI9LTJgLeDg7mwmImTTA=;
-        b=dhe+ZpgreeSsA+NwW2k6QiwC/aKguZZOwPp9XGDR2BGN8OmRKTFa7tVn9dd7oeOiPm
-         ymw5V23FRaGaBXzkiVIUv+jE4IP2X3T7KRQWtIa8y+0DNSFIoVEdKEnR5lBsszfIH7UU
-         z36borhWQe2BDWftZv2leEuGBsyZmnRYQ8PYmH0noXWKqg5n3l/QtG8rH1KMbBTsVoDy
-         byYEIUWdDGAcjrG3myDp7W/exf6MW9eyK6rr0FQ569h9o1iOYMp97bBMvS10fOXKxtKl
-         P456SeOdx6ZDNoP4B+o5xu5orMdH4C5xY/VQqjo9C5GM+AhgWJm33bot7EnO1rK6G7H5
-         01+Q==
-X-Gm-Message-State: AOJu0Yx52O/Ed5hHXx7vENuAlwQfpCy4DU4/3V2KbWBVT5t3aoR4B5tN
-	85CRMn5BDzhC7gwN/10hDhuMlJtdxjnfa+HMldytEzTjxnU/+atMce2cDG4mvrBJdeIO1OD0INb
-	K0VV6/n7goyBVhAH67BmtRtMmCiD5JmVW2ASz+Y9UTrwSohEAI7E=
-X-Google-Smtp-Source: AGHT+IFyCjZYFgzvRtug/FF7Rkg4BIV5TdPRIQDiRczoqfOkCPSprOtAZ6MVzV6QhnnT962rmYjPy+oKdl/xd0zwff4=
-X-Received: by 2002:a05:6122:3b01:b0:50d:7a14:ddf6 with SMTP id
- 71dfb90a1353d-50d7a14e8a3mr2075278e0c.10.1729003782861; Tue, 15 Oct 2024
- 07:49:42 -0700 (PDT)
+	s=arc-20240116; t=1729003821; c=relaxed/simple;
+	bh=thdxTZMDAG8U7X9+iq8AZRYrXlpkl2sYnuB79twbLeY=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CrMYyP78Cuk6EUT777sEKsbF/x8lyCxfrYq5V48w3f10iE6+t3lTxhDAB4BTGoj+UQ7WkESR5j4B97/1Wf9CzbAOrWUsmz1oX9QY+mlacsI1ESi+5XyQY1UtKzl5puBLGj8ZfhAFSnZhLC9qEOmTze3TVm48GSLyjgL9wO2DmQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XScRp0Ky9zyTJ1;
+	Tue, 15 Oct 2024 22:48:54 +0800 (CST)
+Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0C6961401F4;
+	Tue, 15 Oct 2024 22:50:17 +0800 (CST)
+Received: from [10.174.162.134] (10.174.162.134) by
+ kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 15 Oct 2024 22:50:15 +0800
+Subject: Re: [PATCH v2] ACPI: GTDT: Tighten the check for the array of
+ platform timer structures
+To: Marc Zyngier <maz@kernel.org>
+CC: <lpieralisi@kernel.org>, <guohanjun@huawei.com>, <sudeep.holla@arm.com>,
+	<mark.rutland@arm.com>, <rafael@kernel.org>, <lenb@kernel.org>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241012085343.6594-1-zhengzengkai@huawei.com>
+ <8734l1usxe.wl-maz@kernel.org>
+ <f316e8b5-c4c9-da6f-26e8-395cb7500f1d@huawei.com>
+ <868quq69ro.wl-maz@kernel.org>
+From: Zheng Zengkai <zhengzengkai@huawei.com>
+Message-ID: <4333e8bd-89ed-f1cc-2f1d-ec539362a704@huawei.com>
+Date: Tue, 15 Oct 2024 22:50:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 15 Oct 2024 20:19:31 +0530
-Message-ID: <CA+G9fYuhS6Ltemvb_EZfq+j3PpTnmo4qb46Gu1s6L47wMsNO3g@mail.gmail.com>
-Subject: next-20241015: drivers/of/address.c:244:31: error: passing 'const
- struct fwnode_handle *' to parameter of type 'struct fwnode_handle *'
- discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-To: open list <linux-kernel@vger.kernel.org>, 
-	Linux-Next Mailing List <linux-next@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>
-Cc: Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <868quq69ro.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200010.china.huawei.com (7.221.188.124)
 
-A larger set of clang-19 builds failed on arm, mips, riscv and powerpc due to
-following Linux next-20241015 tag and these include tinyconfig, allnoconfig etc.
+Hi Marc,
 
-And gcc-13 and gcc-12 builds are passed.
+在 2024/10/14 22:26, Marc Zyngier 写道:
+> On Mon, 14 Oct 2024 13:22:26 +0100,
+> Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+>> Hi Marc,
+>>
+>> 在 2024/10/13 1:34, Marc Zyngier 写道:
+>>> On Sat, 12 Oct 2024 09:53:43 +0100,
+>>> Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+>>>> As suggested by Marc and Lorenzo, first we need to check whether the
+>>>> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+>>>> de-referencing what it points at to detect the length of the platform
+>>>> timer struct and then check that the length of current platform_timer
+>>>> struct is within gtdt_end too. Now next_platform_timer() only checks
+>>>> against gtdt_end for the entry of subsequent platform timer without
+>>>> checking the length of it and will not report error if the check failed.
+>>>>
+>>>> Add check against table length (gtdt_end) for each element of platform
+>>>> timer array in acpi_gtdt_init() early, making sure that both their entry
+>>>> and length actually fit in the table.
+>>>>
+>>>> For the first platform timer, keep the check against the end of the
+>>>> acpi_table_gtdt struct, it is unnecessary for subsequent platform timer.
+>>> Really?
+>>>
+>>>> Suggested-by: Marc Zyngier <maz@kernel.org>
+>>>> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>>>> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+>>>> ---
+>>>> Changes in v2:
+>>>> - Check against gtdt_end for both entry and len of each array element
+>>>>
+>>>> v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
+>>>> ---
+>>>>    drivers/acpi/arm64/gtdt.c | 19 +++++++++++++++----
+>>>>    1 file changed, 15 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+>>>> index c0e77c1c8e09..f5f62643899d 100644
+>>>> --- a/drivers/acpi/arm64/gtdt.c
+>>>> +++ b/drivers/acpi/arm64/gtdt.c
+>>>> @@ -157,6 +157,8 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+>>>>    {
+>>>>    	void *platform_timer;
+>>>>    	struct acpi_table_gtdt *gtdt;
+>>>> +	struct acpi_gtdt_header *gh;
+>>>> +	void *struct_end;
+>>>>      	gtdt = container_of(table, struct acpi_table_gtdt, header);
+>>>>    	acpi_gtdt_desc.gtdt = gtdt;
+>>>> @@ -177,11 +179,20 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+>>>>    	}
+>>>>      	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+>>>> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+>>>> -		pr_err(FW_BUG "invalid timer data.\n");
+>>>> -		return -EINVAL;
+>>>> +	struct_end = (void *)table + sizeof(struct acpi_table_gtdt);
+>>>> +	for (int i = 0; i < gtdt->platform_timer_count; i++) {
+>>>> +		gh = platform_timer;
+>>>> +		if (((i == 0 && platform_timer >= struct_end) || i != 0) &&
+>>> Why is only index 0 checked against the end of the table? Shouldn't
+>>> int be an invariant that all timer descriptions must not intersect
+>>> with the non-variable part of the GTDT table?
+>>
+>> AFAICS, after checking against the end of the acpi_table_gtdt struct for the
+>> first platform timer, the subsequent platform_timer pointer value
+>> computed via "platform_timer + gh->length" will also pass the check,
+>> as the gh->length is of u16 type.
+> But this is something that isn't obvious to the casual reader of this
+> code, and you want to keep validation code simple and localised, with
+> as few separate cases as you can. This isn't performance critical
+> code, and there is nothing to be gained by "optimising" this.
 
-First seen on next-20241014
-  GOOD: next-20241014
-  BAD: next-20241015
 
-List of build regressions,
-arm:
-  build:
-    * clang-19-sama5_defconfig
-    * clang-nightly-mxs_defconfig
-    * clang-nightly-exynos_defconfig
-    * clang-19-at91_dt_defconfig
-    * clang-19-pxa910_defconfig
-    * clang-nightly-vexpress_defconfig
-    * clang-19-vexpress_defconfig
-    * clang-19-mxs_defconfig
-    * clang-nightly-davinci_all_defconfig
-    * clang-19-allnoconfig
-...
-powerpc:
-  build:
-    * clang-19-tqm8xx_defconfig
-    * clang-19-tinyconfig
-    * clang-nightly-tinyconfig
-    * clang-nightly-tqm8xx_defconfig
-    * clang-19-allnoconfig
-    * clang-19-ppc64e_defconfig
-    * clang-nightly-ppc64e_defconfig
-    * clang-nightly-allnoconfig
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Build log:
------------
-drivers/of/address.c:244:31: error: passing 'const struct
-fwnode_handle *' to parameter of type 'struct fwnode_handle *'
-discards qualifiers
-[-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-  244 |                 err = pci_register_io_range(&np->fwnode,
-range->cpu_addr,
-      |                                             ^~~~~~~~~~~
-include/linux/pci.h:2022:63: note: passing argument to parameter 'fwnode' here
- 2022 | static inline int pci_register_io_range(struct fwnode_handle *fwnode,
-      |                                                               ^
-1 error generated
+OK
 
 
-Build link,
--------
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2nShjJ9pOcjqxIXViYuRI5haZZP/
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241015/testrun/25441737/suite/build/test/clang-19-tinyconfig/log
+>>
+>>>> +			platform_timer < acpi_gtdt_desc.gtdt_end &&
+>>>> +			platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end) {
+>>> Surely, assuming that length isn't zero, if the last term is true, the
+>>> previous one also is? And what if it is 0?
+>>
+>> Agree , the length should also be checked against 0,
+>> but I think we should first check the platform_timer entry pointer,
+>> then check the size of the same platform_timer structure,
+>> not check them in the opposite order.
+> Correct, that's something that needs fixing. Run with it.
+>
+> 	M.
 
-Build history:
-----------
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241015/testrun/25441737/suite/build/test/clang-19-tinyconfig/history/
 
-metadata:
-----
-  git describe: next-20241015
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-  git sha: b852e1e7a0389ed6168ef1d38eb0bad71a6b11e8
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2nShjJ9pOcjqxIXViYuRI5haZZP/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2nShjJ9pOcjqxIXViYuRI5haZZP/
-  toolchain: clang-19
-  config: defconfig
-  arch: arm, mips, riscv and powerpc
+OK,  I will do that.
 
-Steps to reproduce:
--------
-# tuxmake --runtime podman --target-arch mips --toolchain clang-19
---kconfig tinyconfig LLVM=1 LLVM_IAS=1
+Thanks!
 
---
-Linaro LKFT
-https://lkft.linaro.org
+
 
