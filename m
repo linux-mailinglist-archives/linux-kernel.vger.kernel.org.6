@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-365387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0E099E196
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:51:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBDB99E19C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41972833F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F791F25E8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4420B1D9A5B;
-	Tue, 15 Oct 2024 08:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8705B1DAC9B;
+	Tue, 15 Oct 2024 08:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="OkhIVplw"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FB41CDA36;
-	Tue, 15 Oct 2024 08:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728982240; cv=none; b=Y2XTjaLWElhceqJuyjH968Iys/Qhjnbrfa/QABrK/pB9zcr8po7AVLLgSCd+GE3PEbuTGhutSvhj5QMrwInSLTEstt5MCVuabCXVH7sMcuo4S0UBw8viLpj8WOcLIRVq4k0p1wtNje8a/hR7lhBdfpC2RmJ42eYSI6cfhZNHFRc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728982240; c=relaxed/simple;
-	bh=O4+wEG/X9xbfhukqS6DHHrV3rRut28DqQfj0gz0kqus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brIptFhxsKivoKjhHaLaDcp/cl6qGGmqMsanBb4WyAomOkBV9M4Zl7C+wdYdZ5RhWY76ZTU/+4G62Xg85Op3efAUKzyKe7+mVouQ8tEEl3dm4HsTvhGAydN5h53rWRxWT8SMrDEQ6qTJkc0ZH+FKYdY3xf8XgUq1TqF9x7RhgrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=OkhIVplw; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lRKtyiZX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id A4E842A01B8;
-	Tue, 15 Oct 2024 10:50:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1728982237;
-	bh=O4+wEG/X9xbfhukqS6DHHrV3rRut28DqQfj0gz0kqus=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OkhIVplw2EPEWkpN2AX8orxgpWlon1PjyqdW4jrvqn+tpEfcC5r++4e5j8xPKMFL5
-	 0o1Ur0m6qhtQk+AHw1L1u/eWGBlUSecUMolC2VJhZqVxs+ZJQcWipnqgvvpzHYngBJ
-	 7UNbr8Q0F+oNR0o75QukuMadhitMrplp1ElOwSGAsFtqb+6/1RezN5xp0V3401jRyC
-	 7jNalyIgAGt/JTr+JJ/nilC9YHJc/BuvoIFdYVmVqG4qkD/taXOiORAbKibndroOTX
-	 HiW2XHURYBYraGpyjPwOy1G1XI115tcLW3jz06nk7NOr59xzGSzR79zZ27mX064/x5
-	 M1zVsFKGWMotg==
-Date: Tue, 15 Oct 2024 10:50:36 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Nick Kossifidis <mick@ics.forth.gr>,
-	Sebastien Boeuf <seb@rivosinc.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux@rivosinc.com
-Subject: Re: [PATCH v9 0/7] Linux RISC-V IOMMU Support
-Message-ID: <Zw4s3BHQZ6x4d79-@8bytes.org>
-References: <cover.1728579958.git.tjeznach@rivosinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99BA1CDFDF;
+	Tue, 15 Oct 2024 08:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728982262; cv=none; b=EDHyT3HJByErsqzGr5ObaFLxZSx31qf9g9BkYmKiWs8tKCehrq1dMxBG3UMpUku/dZ++5EmfU0MWyQklv53TjZh+MlNtTQm30fsoCMWM0nCfMiYiBiRaJ7ZJqZGw1Znt1axCafyd1VO12HPA6en9ljNHZeKM4V6FDSdGbepbn98=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728982262; c=relaxed/simple;
+	bh=rdAWY29XMVbQeeBjoqujS4lUpaFsJZL9mYrWhS/o9Ew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HYQ/I/MTuXC7lT/imenQkE2OTtYPpsDd0stMDtVCYGse6E8O2RiRhlT/AUXaFBgHaSQQrbTXyh2QQjx52xdgyBKY5pzQknkSIVxaF6eLstwnWXRnQlAD16a+rWl5XK5sXENZhoghIzV7Ttzg9GDMGhdCjvbTnbWEeuWWX5ae+vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lRKtyiZX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EKjRlc026495;
+	Tue, 15 Oct 2024 08:50:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Y2KOQofzJxcJDCMGd3KQ95cvXHyGL0mOLePvwey/zWI=; b=lRKtyiZXEuo8Z9sF
+	vT7kBj7PfHEMU3CsQb9G03az/dr9s6jgmUCKcrlEEEs5izRPyK8m1c3qWDK6YURz
+	IvPvReuF1Mwsq1lG+X8hf0SFA4+hV/cqxJ+i1f+vwoZmVAve6CWoiw/gxOljEgGm
+	HxujRiPlS/bDx5Ty5aXIB1MznJ0L9h1MdB96+aTopozPgTzhIKcutaMr5oic5eOD
+	GHT1WpnZZcf3TbVe33e/ZTK+PlxSkrwSVrNkKBlxwbspoafVoM8LSj4PLt6cRplF
+	v0JFguAzbkaPOauO0jojy2i2yXh5Ir8nPxNhqSIfHjthTpsl0phe42RfvBp3tykL
+	DtJ3/w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427h6ty1yh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 08:50:52 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49F8opXv006662
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 08:50:51 GMT
+Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Oct
+ 2024 01:50:48 -0700
+Message-ID: <91774528-4cee-4872-bcea-7023c9a961f3@quicinc.com>
+Date: Tue, 15 Oct 2024 16:50:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1728579958.git.tjeznach@rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: firmware: qcom,scm: document QCS615
+ SCM
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <robimarko@gmail.com>, <will@kernel.org>,
+        <robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+References: <20241015081603.30643-1-quic_qqzhou@quicinc.com>
+ <20241015081603.30643-2-quic_qqzhou@quicinc.com>
+ <a08e76a7-8e68-4ae6-9b83-67e5d20468b9@kernel.org>
+From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+In-Reply-To: <a08e76a7-8e68-4ae6-9b83-67e5d20468b9@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Q-YJWgi4b2Gfx8GaxwTvjANrPmdWReDR
+X-Proofpoint-ORIG-GUID: Q-YJWgi4b2Gfx8GaxwTvjANrPmdWReDR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxlogscore=917 malwarescore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
+ spamscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150059
 
-On Thu, Oct 10, 2024 at 12:48:03PM -0700, Tomasz Jeznach wrote:
-> This patch series introduces support for RISC-V IOMMU architected
-> hardware into the Linux kernel.
 
-Thanks Tomasz. I plan to merge this driver into the IOMMU tree if no
-further objections are raised in this thread by Friday.
 
-Regards,
-
-	Joerg
+在 10/15/2024 4:21 PM, Krzysztof Kozlowski 写道:
+> On 15/10/2024 10:16, Qingqing Zhou wrote:
+>> Add the compatible for Qualcomm QCS615 SCM.
+>>
+>> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+> 
+> I give up on this.
+> 
+> Please reach internally to get proper guidance how to send patches and
+> what to do with tags.
+Oh, sorry for missing your ack tag, will add in next version. And thanks for your review.
+> 
+> I am not going to do the work twice.
+> 
+> Best regards,
+> Krzysztof
+> 
 
 
