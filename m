@@ -1,146 +1,159 @@
-Return-Path: <linux-kernel+bounces-365878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDF799ED2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:25:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BF799ED30
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0991C237CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:25:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26E46B22364
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDCF1FAEE1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB421FAEF8;
 	Tue, 15 Oct 2024 13:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IpezfYj/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="qjUCldBF";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="vnMZI+8p"
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156AF1FC7EF;
-	Tue, 15 Oct 2024 13:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96BC1FC7FB;
+	Tue, 15 Oct 2024 13:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728998473; cv=none; b=Lvp8O4hUugs9QNyK0LvVIRlkapvOHuNaZh9ObiWaw1Wu5pOcoJruVSuMJD1PFrWR07vdkr6yMB2NBP3rzD1uyBby4pYzM5ENcdNhtKpzct2j6ucEZKA1xhRtevsuhC0tFINoa0Gp8+Pu7vzKRpTG/7raPKH+wE0H9MMExWIYH7E=
+	t=1728998474; cv=none; b=W7YPl4ZZSV+rEWFLQt6owBN51R7a9axjzNqS7wPnLFLR0L1FTXjsG5fKSpGPidO9w8rSFkKCvLoDN3dnsU+JyN33w6dbPMYBq0BD+oUxHyU+voZxJaIQb1ORyKlt0jLchJ5r+ATwqVrIO+N0HfsLcnQ4h+YSR5Ir8BcOSMLMwyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728998473; c=relaxed/simple;
-	bh=CMw/3KzLHwM0hcPipccWgf3XPBaTYU7bKTrJRV1RlBw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tr65T7BeL0E1cCZMn9sCwENHVIYGdDoT5j6BKjbHR/Cfv44QaqeF6wyQyQl5B+p7Fscohz82tepSQQx7TlbYMjMXRj7U7qS4WWwkfa3y23QFU12oXuSqjJUR2OaYQzZU4EXv81KnZYvlHW9fXYQjIeIBtUWEoKYoCblCDdwi0Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IpezfYj/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FBDQxO028544;
-	Tue, 15 Oct 2024 13:21:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Q0fbcOtY8v19KKgTblM7Yu
-	JbUoVgeLttVGx3W4hCnfs=; b=IpezfYj/MU26BV6/zQq4nXY4KMWm0RNJqUwLaU
-	U6xB9umcrDxgaVEOk9nX0D18DE/6HamDd7w8Ltgr7+OdY3Sso0AgU39mLFxfF8mc
-	OQNFFag2i8QZcIQNxoHyUoBYVOSe9zH0EK0JzrYlUYXyhEMmhQ/Z7x285nGBmVZP
-	cKnpJ4g3JMz6JWMAa1OSTIYEmaiXmDlvYNKnI8PT3+DoFnnh64IoqsNzKVQ5CCQy
-	WPaiURb+wYhvfVODzLj4p3T8kyABTLQ7oW/ksgb2SV0EAkG8+snL1opgWW84pIV6
-	Kv9idopKXfhl5JEuov11DiTDLsTLcQQE4rwGaUCLEO/UzHwQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4292evkcg9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 13:21:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FDL7WR030926
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 13:21:07 GMT
-Received: from hu-kotarake-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 15 Oct 2024 06:21:03 -0700
-From: Rakesh Kota <quic_kotarake@quicinc.com>
-To: <dmitry.baryshkov@linaro.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_kamalw@quicinc.com>, <quic_jprakash@quicinc.com>,
-        <quic_kotarake@quicinc.com>
-Subject: [PATCH V2] arm64: dts: qcom: qcm6490-idp: Allow UFS regulators load/mode setting
-Date: Tue, 15 Oct 2024 18:50:49 +0530
-Message-ID: <20241015132049.2037500-1-quic_kotarake@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728998474; c=relaxed/simple;
+	bh=BifDifB6wdUvkl5Iu/cIT7h0gvstAeks818zu+TYv74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eiQBtsV35NwZewh3b7BBefJmPLBsqDwUeFW9MkPVqmrudrrccdjHeqdWjKMAc5shccOo+xkds7g3eazal4TW/NZ5a/T1bOW71Ray+3q2MPuyw3oL9DSDQEEsnEev8v/1C7eLglyCjACB45JWbBSVCsPSIANCMP865gRmNH3QuTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=qjUCldBF; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=vnMZI+8p; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 1A234122FE21;
+	Tue, 15 Oct 2024 06:21:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1728998472; bh=BifDifB6wdUvkl5Iu/cIT7h0gvstAeks818zu+TYv74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qjUCldBFec5UnpTkUwhnE14W7FBEE7CGTFEWgvSSW8YP4q5cXW85B80/5znrdIhvE
+	 YSgz3uRlW8xACFzs1pyfp0lMZoYWDMUtRsMhZAiqyXdqjNhGg9nQR8weK3velaT1Rw
+	 YOQI9JHF6+ywyFKZuA3per0KMo/g65m3LhG6sQ/dhwuALlB2bBLhMjuBB+POoYix/h
+	 1bwrw3U/UZowAlizH+fbYZqmNwLcU1yEETVW3OVaLSR23eCVGXgWpjTUwl89DeNkjs
+	 KEORSaahgeaZ/HPFnXqeJggxQAVXt7vhA9NQk9JgtiOcSWKqaCkV6+8D+E/meRm4p5
+	 HB0izStlZSdew==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id 59EUaKZiQaZK; Tue, 15 Oct 2024 06:21:08 -0700 (PDT)
+Received: from ketchup (unknown [110.52.220.241])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id F1E91122FE1E;
+	Tue, 15 Oct 2024 06:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1728998468; bh=BifDifB6wdUvkl5Iu/cIT7h0gvstAeks818zu+TYv74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vnMZI+8p5fXNQrO5i/2EDsem9c/EUus7ofhbdg/7N+T70XusEsqnVOpUrIfzU1sA5
+	 dghyXpOG1v48hoT77sv7mlqriSd74qa5Fdw4iirLnW/DqBdxQpM5e0Nji+dk2xds5Q
+	 /zoy6xucE6lhrJeT4/nsOAQOFbaUeHC/ZV5lsXy1R5y2kRqVKrwJtglhY7KGFBzuNY
+	 gsT6VD135fSlZgNzJo7Q1j2ozWvNkJlHQUErAPTKHhlB00UzvDAg6Wt8BVAhSfBNG8
+	 r7cJRju+03XLm+owuPVX05aY5jLxJEgDkFVt29eZJoQ6qccKePiURH0u9x5kD6Bi2R
+	 3c6zUv9dQSMNA==
+Date: Tue, 15 Oct 2024 13:20:54 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v5 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
+ Sophgo CV1800 thermal
+Message-ID: <Zw5sNqiradqQzmDD@ketchup>
+References: <20241014073813.23984-1-heylenay@4d2.org>
+ <20241014073813.23984-2-heylenay@4d2.org>
+ <4ey46hxumhldwrbzalyw6xzn2l52cejggxvg6e3imus3qqzsjn@r55xpxvkpodu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: N2nbzc-A4sXKmPcvO-KribtwDwvPHdDZ
-X-Proofpoint-ORIG-GUID: N2nbzc-A4sXKmPcvO-KribtwDwvPHdDZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=609 lowpriorityscore=0
- phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 impostorscore=0
- suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410150091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ey46hxumhldwrbzalyw6xzn2l52cejggxvg6e3imus3qqzsjn@r55xpxvkpodu>
 
-The UFS driver expects to be able to set load (and by extension, mode)
-on its supply regulators. Add the necessary properties to make that
-possible.
+On Tue, Oct 15, 2024 at 07:55:10AM +0200, Krzysztof Kozlowski wrote:
+> On Mon, Oct 14, 2024 at 07:38:11AM +0000, Haylen Chu wrote:
+> > Add devicetree binding documentation for thermal sensors integrated in
+> > Sophgo CV1800 SoCs.
+> > 
+> > Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> > ---
+> >  .../thermal/sophgo,cv1800-thermal.yaml        | 57 +++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml b/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+> > new file mode 100644
+> > index 000000000000..14abeb7a272a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+> > @@ -0,0 +1,57 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/thermal/sophgo,cv1800-thermal.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Sophgo CV1800 on-SoC Thermal Sensor
+> > +
+> > +maintainers:
+> > +  - Haylen Chu <heylenay@4d2.org>
+> > +
+> > +description: Sophgo CV1800 on-SoC thermal sensor
+> > +
+> > +$ref: thermal-sensor.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - sophgo,cv1800-thermal
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  sample-rate-hz:
+> > +    minimum: 1
+> > +    maximum: 1908
+> > +    default: 1
+> 
+> 1. Why this is a property of a board?
+> 2. I do not see this property defined in any common schema and I am not
+> sure if it even should. Sample rate appears from time to time, but not
+> in context of thermal sensors, so this should have vendor prefix.
 
-Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
----
-Changes V2:
- - Dropped the removing Min and Max Voltage change as suggusted by the Dmitry
- - Link to v1: https://lore.kernel.org/all/20241004080110.4150476-1-quic_kotarake@quicinc.com
---- 
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Thanks, I decide to remove this property.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index 5f3d4807ac43..a000bf9115cc 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -258,6 +258,8 @@ vreg_l6b_1p2: ldo6 {
- 			regulator-name = "vreg_l6b_1p2";
- 			regulator-min-microvolt = <1140000>;
- 			regulator-max-microvolt = <1260000>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-@@ -265,6 +267,8 @@ vreg_l7b_2p952: ldo7 {
- 			regulator-name = "vreg_l7b_2p952";
- 			regulator-min-microvolt = <2400000>;
- 			regulator-max-microvolt = <3544000>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-@@ -279,6 +283,8 @@ vreg_l9b_1p2: ldo9 {
- 			regulator-name = "vreg_l9b_1p2";
- 			regulator-min-microvolt = <1200000>;
- 			regulator-max-microvolt = <1304000>;
-+			regulator-allow-set-load
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-@@ -467,6 +473,8 @@ vreg_l10c_0p88: ldo10 {
- 			regulator-name = "vreg_l10c_0p88";
- 			regulator-min-microvolt = <720000>;
- 			regulator-max-microvolt = <1050000>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
--- 
-2.34.1
-
+Best regards,
+Haylen Chu
 
