@@ -1,131 +1,171 @@
-Return-Path: <linux-kernel+bounces-364986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54E699DBEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:55:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12E599DBF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FBF51F2345F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB9E2834E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E12158DB9;
-	Tue, 15 Oct 2024 01:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF0D157A48;
+	Tue, 15 Oct 2024 01:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LVXbgdHs"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xtuIo9P0"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A72156C40;
-	Tue, 15 Oct 2024 01:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6889B156C74
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728957342; cv=none; b=eYuIxyjZPJVK4sSbAm3PE8/MldIRpLKCxu7cRHi+Wrh4hmBLnGDpsAC3s+yeGsC3/l7avFaQDsLs567D1V0s3vYXV/CQZjlPeodcp1vKgweJf/E/8JX14n33G4nALHijbYTrsjpXSanE6PHEImfrkH0zMTaMcY/N8K64dijnF3I=
+	t=1728957497; cv=none; b=DEPMoMkKykGtUUwz8cV+7v3lPce7zn7/8MGiGPevlQNIZoksPR7JwbsmLzIPuCQNTYemUl0RN3vEPQp/9haXtNAhSNqVeK8QaGYErTgxPaZYkPPXqb2EZ5y/fX4khkQ0XvOeiIlOLyE+rXijhr3fKezFx0h1Hr/HCKDzVDow3+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728957342; c=relaxed/simple;
-	bh=DM7a1CGfKtDxyz/KOOYehbWVMXU/1JLpdOAKi0rkUe4=;
+	s=arc-20240116; t=1728957497; c=relaxed/simple;
+	bh=eWFuuUZrOpvWo7VozKGNJBHoN3oNzSCbMJ/S2gTUF+Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VF7VcdIttAGBHyxZqCTy6KGrgh9iyqOrpadfZ1sPUXLjgx5ltY3HBNPvEOg5ixXJTZLqqXE3KL6WeYVVZIGzS8z0XjwfddvGFlsYlW8+ssf7IuUXSCSpd7fDqjUju6cDPtSgMuQwclnieqm2dYRnQ5LQKWd6peCDi2lA1XhzijU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LVXbgdHs; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-6e2e41bd08bso50313927b3.2;
-        Mon, 14 Oct 2024 18:55:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=b9QNcX0pmZ4fA+TrGCyZVHMTlL7PJTKGtRiqMHCLoFcT37hQCkcXZPstK5NzLKWkwkzAeXxtfpgabDcTgTUJxVnmzYy1Qt6nJF2vJptdc+F/xdTA4n4XkdSNrrXYrDaLCzwyaP0o7RiFFlZ/ZTk66uMWp1OJg57yBDN8aYSdURo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xtuIo9P0; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a3b3f4b2afso974165ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 18:58:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728957339; x=1729562139; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728957495; x=1729562295; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FQHynSk+TGPwk975UzGx2hiDb6Ij1y1by+5kqLU/s4g=;
-        b=LVXbgdHson+FqiVeTCi5QI9kxbd+ESuebXgtaVaQFsJS42ncJDZ/0lOkmIUPesTMXU
-         xAw1d2QWvajNeEKOquFNCuTLOVZnv8itra2UoxbVgyADeezcOHxR41bx+jLnCPHIZj30
-         NclzJ3zTLgNXJcENc6E/wui/1ift4DZQTMXArZi201RuoCWxkxe0+kv+6w9JfZapmfRB
-         NO4d4uZVPpHAyBqXA6+w7Hi9cbL0crkFBLrOS2CooT1XmgVyoUBQmW0Uf2nWK1KvQqzF
-         9HFs0o6j9y3oG2cTudGKKeyJrk+fC7gE0YnPVfqRNJ6r1jMl0RTHfBBRqKHHKHM8k70n
-         z6FQ==
+        bh=eWFuuUZrOpvWo7VozKGNJBHoN3oNzSCbMJ/S2gTUF+Q=;
+        b=xtuIo9P0EQoVCTWyikph3GnP1diIdZinL+tMuTt+oG14RjhcepCFE6lOo5aSwCnKdc
+         OB+jnYbaOhUB56Sp+Rv5uvtfdGRPW0kP0kDQPk4XVoSGxPwgUsNg7pUEHd+4Ik3uLJvV
+         wGPRNNhXTr7Bp87GXLmUYTCpRyV8g/eBxCFyTWGSQXMA6gVE39rNBUzfAZ+p6Rn5TD7P
+         lItEuWscQ1tIDYr1TNtfqZx5EnZ9xBtbi+yiZ6L51PoTGGQy+d7QfJW/9QeVHh+7NqnX
+         HJdPB6kFgZIUd0pcA+ZtFX+mV/sxMdh5qUNSx6B6BFTYqmVFslC/2lM8J88oCRlM066P
+         azCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728957339; x=1729562139;
+        d=1e100.net; s=20230601; t=1728957495; x=1729562295;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FQHynSk+TGPwk975UzGx2hiDb6Ij1y1by+5kqLU/s4g=;
-        b=e6Z280xwnprtj/RHzjQl/4eXlnKsgBVhi+3QggJy9AUb6JwlXg5Bgd8p7BsVS15pDR
-         6jjFGuYFhRds0txSRO6IOaGcxGi7BmfjmCx9ZT5ho8imcvUx7I9NogXVt60xTEVvYSYu
-         njO3QG5h8Uw5/L2sgCud7YAs9FuguDTDfYxBio8qosl+HthbYT+sQw3EMsaU+OKK4B8V
-         gH2PgUoLbiOuVy92t2hzb+2VD1m2cWwIWygCFGanry6uxVvdow+7Efv4v1cOEkYj6o27
-         JJhNKVIzXq9RJtzXxuTcT41I/uWu+9CaUuQ5XfacnxJO7W8vrS1IuamkvCTWL5W0+9TC
-         ndRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIhckuI63Ix3BPFJIaujQHhAUpWJfINTk2PZ+4zUW/pZ+Qfb2dUGHhkFuINfCUsMlkP+mHq138@vger.kernel.org, AJvYcCX8prDqMuzqHzy5RXSsND7Kp7T0kiWaAakLHGjGgSbAqxzXY2uzeq/Nf5AqRPtNOdZMqG7IPUX60IQvKGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/81OAXeAUuFnir1+hkXHjw0Je/ilIlC/tBpzWyQgtc53wh86Q
-	VGypTA72/FXVHC2uNbqaAw5tUUSTszhPgdXG1HGR2iJ7dwt7C3l38cPF0tTXRrNbmTsrl8tTMMs
-	mLu/YKznur6faXEAyuzzfsnth8o0=
-X-Google-Smtp-Source: AGHT+IEVtP/rrgxKTWfJ5xT6Asy25uJs+Mj+/cIC3Qkep5p33ak9DVjFpxxWfnBV03ktv/Pr8f6FBeITm1sslePxnKA=
-X-Received: by 2002:a05:690c:9a06:b0:6e3:1903:5608 with SMTP id
- 00721157ae682-6e36415dabcmr79398177b3.21.1728957339210; Mon, 14 Oct 2024
- 18:55:39 -0700 (PDT)
+        bh=eWFuuUZrOpvWo7VozKGNJBHoN3oNzSCbMJ/S2gTUF+Q=;
+        b=qrzygtCvZD1nW23n0pVcCm+zygrHXMtwo9gq0fMe+6yBKT/zWxJL6i0Q95X9pNvfoI
+         JqiwVLR2a6KuPmePfIDPIpc2ZlSp9VaauWWd4BB2R2ga+NGToCAbEy2zJHjZAYeALb6c
+         KvyhmtLkN/8gWDbqlRQsPOZrNVu+/XdZdDe2icxPcYy6TQStjMa4RD6OaPK/lnI0OHDV
+         BNd1QP8TZcSx0vEyT2puVlC0W5C6lQKpmrpmY7F20rf3XsV06RogFFn40Vh/YH8Qixtu
+         sMjof7hccLILmSZLQfEB+J+S/ZAUMQEQl7Pj19FlVNAxD3H8UXZE0zjAdgSWAsUdMXiL
+         G99g==
+X-Forwarded-Encrypted: i=1; AJvYcCVIkQ+XY36g7xVEFpz/4qonKdmNWd5TdgUl2DAcocgBjo4kpASV4blv3cG2bsBA4AcD3/WVGA84Dpr2QfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOvHsLfyuoGXjtekuQkJAhRzOuXQgvUL+1Y0vwCVbj1O5oH0LB
+	u+lX8Dpdvqn+n1HuyAoFBWwJ7PHKqh8ZsS3A2Gg6LhE9FAv0mBVqF+tUez7EuEmKDJ96/ZJvXA0
+	7StDxsWE5x3S9nI3g0xtO0ple0LLxLfE90iUB
+X-Google-Smtp-Source: AGHT+IFUTrzSNCWzgxg6f1uRbvivc/cnaSRU5kEq8qHIf1qmpEoKpSwE8bxbRecx0+nraiD24B25H080NY7pzKulURA=
+X-Received: by 2002:a05:6e02:12c5:b0:39f:83dd:5672 with SMTP id
+ e9e14a558f8ab-3a3bd2d7347mr12465425ab.16.1728957495210; Mon, 14 Oct 2024
+ 18:58:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009022830.83949-1-dongml2@chinatelecom.cn>
- <20241009022830.83949-9-dongml2@chinatelecom.cn> <ZwvAVvGFju94UmxN@shredder.mtl.com>
- <CADxym3Yjv6uDicfsog_sP9iWmr_Ay+ZsyZTrMoVdufTA2BnGOg@mail.gmail.com> <Zw09Gs26YDUniCI4@shredder.mtl.com>
-In-Reply-To: <Zw09Gs26YDUniCI4@shredder.mtl.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Tue, 15 Oct 2024 09:55:39 +0800
-Message-ID: <CADxym3YHMOe8VfO0sPr8rPOBL+KhT2_DBoby5HUkBDNDOZCtYw@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 08/12] net: vxlan: use kfree_skb_reason() in vxlan_xmit()
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: kuba@kernel.org, aleksander.lobakin@intel.com, horms@kernel.org, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
-	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
-	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
+References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-6-surenb@google.com>
+ <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
+ <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com> <CAJD7tkY8LKVGN5QNy9q2UkRLnoOEd7Wcu_fKtxKqV7SN43QgrA@mail.gmail.com>
+ <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com>
+In-Reply-To: <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 14 Oct 2024 18:58:04 -0700
+Message-ID: <CAJuCfpE4eOH+HN8dQAavwUaMDfX5Fdyx7zft6TKcT33TiiDbXQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, 
+	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, 
+	rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, 
+	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
+	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	dennis@kernel.org, yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
+	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 11:47=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> w=
-rote:
+On Mon, Oct 14, 2024 at 5:03=E2=80=AFPM 'John Hubbard' via kernel-team
+<kernel-team@android.com> wrote:
 >
-> On Mon, Oct 14, 2024 at 08:35:57PM +0800, Menglong Dong wrote:
-> > On Sun, Oct 13, 2024 at 8:43=E2=80=AFPM Ido Schimmel <idosch@nvidia.com=
-> wrote:
-> > >
-> > > On Wed, Oct 09, 2024 at 10:28:26AM +0800, Menglong Dong wrote:
-> > > > Replace kfree_skb() with kfree_skb_reason() in vxlan_xmit(). Follow=
-ing
-> > > > new skb drop reasons are introduced for vxlan:
-> > > >
-> > > > /* no remote found for xmit */
-> > > > SKB_DROP_REASON_VXLAN_NO_REMOTE
-> > > > /* packet without necessary metadata reached a device which is
-> > > >  * in "external" mode
-> > > >  */
-> > > > SKB_DROP_REASON_TUNNEL_TXINFO
-> > > >
-> > > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > > > Reviewed-by: Simon Horman <horms@kernel.org>
-> > >
-> > > Reviewed-by: Ido Schimmel <idosch@nvidia.com>
-> > >
-> > > The first reason might be useful for the bridge driver as well when
-> > > there are no ports to forward the packet to (because of egress filter=
-ing
-> > > for example), but we can make it more generic if / when the bridge
-> > > driver is annotated.
+> On 10/14/24 4:56 PM, Yosry Ahmed wrote:
+> > On Mon, Oct 14, 2024 at 4:53=E2=80=AFPM John Hubbard <jhubbard@nvidia.c=
+om> wrote:
+> >>
+> >> On 10/14/24 4:48 PM, Yosry Ahmed wrote:
+> >>> On Mon, Oct 14, 2024 at 1:37=E2=80=AFPM Suren Baghdasaryan <surenb@go=
+ogle.com> wrote:
+> >>>>
+> >>>> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
+> >>>> references directly in the page flags. This eliminates memory
+> >>>> overhead caused by page_ext and results in better performance
+> >>>> for page allocations.
+> >>>> If the number of available page flag bits is insufficient to
+> >>>> address all kernel allocations, profiling falls back to using
+> >>>> page extensions with an appropriate warning to disable this
+> >>>> config.
+> >>>> If dynamically loaded modules add enough tags that they can't
+> >>>> be addressed anymore with available page flag bits, memory
+> >>>> profiling gets disabled and a warning is issued.
+> >>>
+> >>> Just curious, why do we need a config option? If there are enough bit=
+s
+> >>> in page flags, why not use them automatically or fallback to page_ext
+> >>> otherwise?
+> >>
+> >> Or better yet, *always* fall back to page_ext, thus leaving the
+> >> scarce and valuable page flags available for other features?
+> >>
+> >> Sorry Suren, to keep coming back to this suggestion, I know
+> >> I'm driving you crazy here! But I just keep thinking it through
+> >> and failing to see why this feature deserves to consume so
+> >> many page flags.
 > >
-> > You are right. As we already need a new version, so we can
-> > do something for this patch too. As you said, maybe we can rename the
-> > reason VXLAN_NO_REMOTE to NO_REMOTE for more generic
-> > usage?
+> > I think we already always use page_ext today. My understanding is that
+> > the purpose of this series is to give the option to avoid using
+> > page_ext if there are enough unused page flags anyway, which reduces
+> > memory waste and improves performance.
+> >
+> > My question is just why not have that be the default behavior with a
+> > config option, use page flags if there are enough unused bits,
+> > otherwise use page_ext.
 >
-> "NO_REMOTE" is not really applicable to the bridge driver as there are
-> no remotes, but bridge ports. I'm fine with keeping it as is for now and
-> changing it later if / when needed.
+> I agree that if you're going to implement this feature at all, then
+> keying off of CONFIG_MEM_ALLOC_PROFILING seems sufficient, and no
+> need to add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS on top of that.
 
-Okay!
+Yosry's original guess was correct. If not for loadable modules we
+could get away with having no CONFIG_PGALLOC_TAG_USE_PAGEFLAGS. We
+could try to fit codetag references into page flags and if they do not
+fit we could fall back to page_ext. That works fine when we have a
+predetermined number of tags. But loadable modules make this number
+variable at runtime and there is a possibility we run out of page flag
+bits at runtime. In that case, the current patchset disables memory
+profiling and issues a warning that the user should disable
+CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to avoid this situation. I expect
+this to be a rare case but it can happen and we have to provide a way
+for a user to avoid running out of bits, which is where
+CONFIG_PGALLOC_TAG_USE_PAGEFLAGS would be used.
+Thanks,
+Suren.
+
+>
+> thanks,
+> --
+> John Hubbard
+>
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
+>
 
