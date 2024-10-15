@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-366033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3736599EFEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:44:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE04C99EFF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D30285015
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9A21F249E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF42B1C4A2E;
-	Tue, 15 Oct 2024 14:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418621B21A9;
+	Tue, 15 Oct 2024 14:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPaMjyek"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lv68rJqM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC2B1C4A0C;
-	Tue, 15 Oct 2024 14:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9543579CD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003440; cv=none; b=tF7LyfcidX/fAysfZ8GfW6pdjMN5FBJfdM+sFufsgGq3MCRMttKAGa+TfAz8SUgN1zIleOV5KjjWL0yBecLZ26+DIDuuBLCWhX0d+ZkZgsYf2xGzAbLeOQRRUtc+LYKCMiV9BejW3Akq9rRNn7B0uJQ2CVdQGQILBRR4kRhaO0A=
+	t=1729003509; cv=none; b=KS5SnvRW0TLOh7uBPM8zvH24F9hjx4BwtXflB1PwnjTQY8scjSzit68PwALS1Hpc4GZE2XGdi0r1jTUmiqU2mQgRKjDjbr2sLtordUHIaEwQ+sudqiHwM+4gAu17tF0W0ivhUZO7C+JYoU7qzb9cDyr2OGFksY6WJixQ3ozkUJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003440; c=relaxed/simple;
-	bh=A7CxIg3FylzHgSJxPQ/0P9yWq+JAO79Um66+WxhE0R8=;
+	s=arc-20240116; t=1729003509; c=relaxed/simple;
+	bh=HcTOrdcxs92yz13WTmjFYQWdwbrGivh2PfWBFaqAVa8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OEwtDQLYd2mK4KKyTlONxGGbVQSHcADm7i0Ob1GZ77uSxTth9FB49752uOUONUL/vt57+XjMAWKwLrPJvF01SSANS6VxAtpDFh9ukCO8H2AVfC76HxXOq5IlU0EwIuhlEBGDCs7evz9nkexR3fm0jPq0VBh8gLTry1rT3SAOQSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPaMjyek; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c53efc14fso3243605ad.0;
-        Tue, 15 Oct 2024 07:43:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729003438; x=1729608238; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A7CxIg3FylzHgSJxPQ/0P9yWq+JAO79Um66+WxhE0R8=;
-        b=IPaMjyekCcsDjjWOmDOQgvnLLW1bn1wuzuzvKihAo1iSSn5IphTlBnzGHkkrFxNh1o
-         sSb+t1DvKlA8/3ClgG1sSrqNS5jV8Z/1rrebUvxhD/HQ+kLpAQJDSEFAqaH1qU9mF6/v
-         2OOqRPA8QFV3TJyT4sbpo+n/QJtLvY956dztY6nVUHI5nl0mPWlm0ZX/TNpKfaih1gkr
-         s5gvRScQP9sko1YHMOZj5QsdBi3xFDV25tq/T7CM731qvaVOVWmhiZy1dKqEqjg77RbW
-         9cZH1ADByJU7+0+WfOZqqtIWXGinyuJ3rxRHpcxchjPHDBhYerQ0X/8i0BcDyUHo2WW8
-         ukkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729003438; x=1729608238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A7CxIg3FylzHgSJxPQ/0P9yWq+JAO79Um66+WxhE0R8=;
-        b=hcZGghSKxkJpiWORTQiAX/VN6x9luBXTyRz91lErzoXdJkM6RzPxbfitb8qTnuPAe7
-         R2AhE0hcLrQjl2u/6zLBW4rJZN2EjbYKBR0EyeeDOoD8i8hXf76mJs65Sy/Xc41tOVeJ
-         ptSO4FOXTp7C2+8PiTxVe1ay2bZ75UaaqVvxWiPz7/Vzo0cG2iWqAipL8HGKTmXki6DJ
-         OcxG3fEJc9yCG8s8APQWQcxxk38e58xvEZSRaBWvifjqhxVNNhcE0X88hvUhyI0sKeXK
-         /G6rmaHgqKDAQ9xfoPMtSWA6JpzdpoK5r6i/Rqc58TgWBk9dXFKcmZbOGGvOjW5BOd37
-         VLSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUixrvi37hvsNzjTeWKuX78aiY6kercAaz+pkkmxG1xLouk5pfb7GA2ZAnO0mJeONEB7xiOG9FCxw8SIHWHzw8=@vger.kernel.org, AJvYcCV5+GTE6y3EEiDL6CgBtEulDPnGh627R5xkBYfGK3HTn1P3yvw5Hzpb8f29gzpbKrwDWP2MVs+b3OB/1/BA@vger.kernel.org, AJvYcCVvaSzQMmZtHvLuwRajnPufZnrxg5gwprzg2fird5TPBADGHNIXixzEG12ewXJdRUV/SYWUzaFGYqrvC7NuSpIfQNPu@vger.kernel.org, AJvYcCW118WfRCmlyGV/UrU6Y2vSmc51HXmxukR4BkXgBr2uw8MWWTc8SCTeIYevUmK7yY+2zIm4yUnLiiun@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsldiTl0hiQKd1I7bUg6l8+WWAy2v4ohRqGB14w2k9hIUNwVjP
-	eTMVGmEk9KxQW5QY4VOnJ7PzpvdQGV89KTPL1mCMz2x8kU9sDk7CR1dqFIJNYgpzj5/g6YSj8L4
-	fj58p3hkt6YumsEQkpvpwJ/ge3dqFP0yF/G+tDQ==
-X-Google-Smtp-Source: AGHT+IFoXEBo1ZT1pXaD7KXeYP4P5odzuHy9MKmBB6t4PDsesuSr1w9SzhznkWVEoeEweWV6j6xd4RR7WhJRY5Fpauk=
-X-Received: by 2002:a17:903:2343:b0:20b:b93f:2fec with SMTP id
- d9443c01a7336-20ca169ee11mr87190225ad.8.1729003438182; Tue, 15 Oct 2024
- 07:43:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=duCLSL81fD051nBlfjPuyBI7qGPjphZtIt8IeBoTFsAxDU+b3cJP3ZdCesY/Pyk7gwtXz1Ezd9rEvESp1jf7RZudfJ5BrsY561cii4Xgvbt5OxxUHBBJfYbXfysSisOaZyO951yzR3og1z3QuBn0aTr3OvZEzjoewYbt8xcb5d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lv68rJqM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1338AC4CECE
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729003509;
+	bh=HcTOrdcxs92yz13WTmjFYQWdwbrGivh2PfWBFaqAVa8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lv68rJqM4qhNv47qSFj3wauONMjnwRwqE6iTV0SCjLpPJXJ5OpydnGW90KR6qL6iT
+	 49PRUynad771L54n22W+SXslz1yns5q7GIrnDDBYrZBRSFJTrqOM3KXIQQEHLtZVD9
+	 kZS9vlUwPQfmhGOD/3GMkQG8y5JuzH4Rwk03l5GK1iJpc+oPLdPviU8InH3Td7miTN
+	 B9L2B4T1Db8QP4ix1FbH3LgLWmjdny2u97MdNa9dt6bugcgS0G6pDBGyh2HOywe+tq
+	 kITJEIShAhrQ35uIkpPFd0UDpLq1+K4PQzjVB4A5gQf+bdiTNXEQ0LFrcFDg+Wdwev
+	 H+PEljKFOEDyQ==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3222907e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:45:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbBbAdDY73iKdWQWvJEx/pJXtN0wI/fmP1poOfS01FmbtITLfVmUjqBqWv649ikz9NbiXoCv6e4d9j8Iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzVZ62IaftPSCMLkBlk/JF1bqimK8auWA0DayNsIYFZJ3NjX1M
+	w2EG1DuvJMGFQCHTh8aL/P7n50qbT0wKGRPOGi5g7AaLnNuKaok0ztwu6NMBYLlWKq/mPX827k1
+	ibFDAHuq4JfJKp7xYwGTUm2M76t8=
+X-Google-Smtp-Source: AGHT+IEQF2v9j6i4yu+3HsOsvdSTSU8aXXA0XaJrl3VwhE9kbJn/uTGwWFbBRQ/Jd6awHUdpNb9iGRphdoRWBmT1gSQ=
+X-Received: by 2002:a05:6512:3b96:b0:539:e453:d90c with SMTP id
+ 2adb3069b0e04-539e453da3amr4092913e87.2.1729003507421; Tue, 15 Oct 2024
+ 07:45:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011-tracepoint-v10-5-7fbde4d6b525@google.com>
- <202410151814.WmLlAkCq-lkp@intel.com> <CANiq72nn6zv9MOD2ifTXbWV3W1AgiXL=6zTX_-eGL5ggLj4fbw@mail.gmail.com>
- <CAH5fLghJrrq2nJu7S08bBg2sAjdibkZ4D14K9cqETafnr4CR4w@mail.gmail.com>
-In-Reply-To: <CAH5fLghJrrq2nJu7S08bBg2sAjdibkZ4D14K9cqETafnr4CR4w@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 15 Oct 2024 16:43:44 +0200
-Message-ID: <CANiq72kRiQvw3xWbMGRxcVJhHN0LMRa0RewxnkofVr=71KQvEA@mail.gmail.com>
-Subject: Re: [PATCH v10 5/5] rust: add arch_static_branch
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: kernel test robot <lkp@intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	oe-kbuild-all@lists.linux.dev, linux-trace-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
+ <Zw5D2aTkkUVOK89g@J2N7QTR9R3> <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
+ <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
+ <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com>
+In-Reply-To: <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 15 Oct 2024 16:44:56 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
+Message-ID: <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
+Subject: Re: Crash on armv7-a using KASAN
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Clement LE GOFFIC <clement.legoffic@foss.st.com>, Russell King <linux@armlinux.org.uk>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	Antonio Borneo <antonio.borneo@foss.st.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 3:07=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
+On Tue, 15 Oct 2024 at 16:35, Mark Rutland <mark.rutland@arm.com> wrote:
 >
-> Thank you. I was able to reproduce the error locally. It only happens
-> when CONFIG_JUMP_LABEL is disabled. I've verified that this fixes it.
+> On Tue, Oct 15, 2024 at 04:22:20PM +0200, Ard Biesheuvel wrote:
+> > On Tue, 15 Oct 2024 at 16:00, Mark Rutland <mark.rutland@arm.com> wrote=
+:
+> > >
+> > > On Tue, Oct 15, 2024 at 03:51:02PM +0200, Linus Walleij wrote:
+> > > > On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mark Rutland <mark.rutland=
+@arm.com> wrote:
+> > > > > On Mon, Oct 14, 2024 at 03:19:49PM +0200, Clement LE GOFFIC wrote=
+:
+> > > >
+> > > > > I think what's happening here is that when switching from prev to=
+ next
+> > > > > in the scheduler, we switch to next's mm before we actually switc=
+h to
+> > > > > next's register state, and there's a transient window where prev =
+is
+> > > > > executed using next's mm. AFAICT we don't map prev's KASAN stack =
+shadow
+> > > > > into next's mm anywhere, and so inlined KASAN_STACK checks recurs=
+ively
+> > > > > fault on this until we switch to the overflow stack.
+>
+> [...]
+>
+> > > > Yeah it looks like a spot-on identification of the problem, I can t=
+ry to
+> > > > think about how we could fix this if I can reproduce it, I keep try=
+ing
+> > > > to provoke the crash :/
+> > >
+> > > It's a bit grotty -- AFAICT you'd either need to prefault in the
+> > > specific part of the vmalloc space when switching tasks, or we'd need=
+ to
+> > > preallocate all the shared vmalloc tables at the start of time so tha=
+t
+> > > they're always up-to-date.
+> > >
+> > > While we could disable KASAN_STACK, that's only going to mask the
+> > > problem until this happens for any other vmalloc shadow...
+> >
+> > Is the other vmalloc shadow not covered by the ordinary on-demand fault=
+ing?
+>
+> It depends on what the vmalloc memory is used for; if it's anything else
+> used in the fault handling path, that'll fault recursively, and it's
+> possible that'll happen indirectly via other instrumentation.
+>
+> > When I implemented VMAP_STACK for ARM, I added an explicit load from
+> > the new stack while still running from the old one (in __switch_to) so
+> > that the ordinary faulting code can deal with it. Couldn't we do the
+> > same for the vmalloc shadow of the new stack?
+>
+> We could do something similar, but note that it's backwards: we need to
+> ensure that the old/current stack shadow will be mapped in the new mm.
+>
+> So the usual fault handling can't handle that as-is, because you need to
+> fault-in pages for an mm which isn't yet in use. That logic could be
+> factored out and shared, though.
+>
 
-You're welcome!
+Not sure I follow you here. The crash is in the kernel, no?
 
-By the way, if you end up sending a new version, then you could
-simplify to `ifdef CONFIG_JUMP_LABEL`.
-
-Cheers,
-Miguel
+So there is only a single vmalloc space where all the mappings should
+reside, but each process has its own copy of the top level page table,
+which needs to be synced up when it goes stale.
 
