@@ -1,135 +1,122 @@
-Return-Path: <linux-kernel+bounces-366813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E442D99FAD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:05:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F368F99FAE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977CC1F2287C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:05:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5561F2227A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93121B0F2A;
-	Tue, 15 Oct 2024 22:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DD51B3948;
+	Tue, 15 Oct 2024 22:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="aDlf69vK"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yO7PJ2b2"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4220021E3AC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4CC21E3AC
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729029904; cv=none; b=OfOHjFaHP1bwFf96tSyIqOPXM01LXwdj8PoGx2pd+pbt4RPedwyKcc6fG2ZVPWB3mwPykew/4A81SFw6FMjFkvmduxYgbtXKbM0t726HB9qm2f3X29g+jk6Rx3tDRFkkEdMyOIOYrBhsNo/N+PM6G7YFkpmN+E2AiT7j3oYzPHo=
+	t=1729030001; cv=none; b=J4HwcLgY0/u5jFRsZSdyQ9xy3yNvzCEhnuEOV0mtFbZnT/vqisMW7EVEPrNU2BGjqp0m0XJElo8GnDeum1L0345iaIg6WEgvRSFZTGPgp3em869CiiilAIxmh71Hu/F7mo7rPaoWuit8rc0yy7FjpIFXcwSS2+frXYNU2QDCFvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729029904; c=relaxed/simple;
-	bh=Pkk12nfRRJgVGUWEMa5YLLUkxQaxe30MNbzyRFlwSEM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=EOooBtBSmPSLRAGxHjFReJvgNAYmtQWmlM4BB4yNKc2ptl1dn8zsszuR7dp1IQDPKXK7DPeOPkT2cTFA91nvy2uSH7P6gp4GND6g7g/aeUId2GxA62rvYmiv3foqbM4mTcVX07L8Bs+MzE7FSILu53UhLT8+aVJNpJOytMA5UHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=aDlf69vK; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d447de11dso4221884f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:05:01 -0700 (PDT)
+	s=arc-20240116; t=1729030001; c=relaxed/simple;
+	bh=BJE4f1D4lRKL1gR0V2Ux34adfzE9M6v+2sRwffzZB50=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZSujbOOxPkZEkXCHMcnWwRIIAMoWe0xiaL4rW2qaFyrlBCSB2/5i6L6fzY1SAyoLhrzLO3eJIYGQuoAC3q25yPtv6gDs0Vzhnw9IQcbPhgVvxoJ/xJESIffb44PSbZj7ailhRuwJgEGNvaShfXY9JKeUEnBhkK7/6Q5ka389Q1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yO7PJ2b2; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb5f647538so3440571fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:06:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jrtc27.com; s=gmail.jrtc27.user; t=1729029899; x=1729634699; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1729029997; x=1729634797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Pkk12nfRRJgVGUWEMa5YLLUkxQaxe30MNbzyRFlwSEM=;
-        b=aDlf69vKTvEWLxeU1LV5g/tCQS0wWqRpdkb6skm/gocTBggo/5xcT1NDR20nVWJSXe
-         YIODM5BmPh1G/nMUhe6ng/HQAQpQ0TF7WCvgbfNFwksx78NVepbUZw1U309/AXotgxG6
-         L0rXukK7TVL50si9cSvw1XAAO63KJt3zWE89pcgPzzzVCSeGGS8seN5ugOvoaHjzOwNV
-         q7NflTtR7jjRGw8dcjzr/EN4L4z9xP53U06AhAkbzO+2tAtBfU8JEnEvYfQfNfRPmpAf
-         q4ZW8va7CMUFfBesZ/qHgZgzGHPN4XW+npoFXvQWnUmRsIM39Rxa9ASyL0MgXSG8u2RG
-         0u3A==
+        bh=Df2UGXMrSlqnXgDl1o8PQ91Gen6dUgFMpKkG/5j+dDI=;
+        b=yO7PJ2b2FsCDhboc2GtB43Vcy4TmBKq+0jR/crXVAydjm83fCqVMY0VAS4mB3EUxNA
+         vzniKMM8UKlZcX+YIbQk8dJdIB6WC1QkkKuta3gCI8tpLg/rJkjvV6Zx/jzZI98vHWZO
+         g6f6U39xTT+nK+wjoBAWM0solnTo3wqKVd0+JjFR4BDi/rVeyKfrWMkeuJTCtxvJ5erv
+         8Ujkll0uiqLWdLYhOqNIVh+kIsJmzpvnnTDVA5y1HDwZJQbGhRQ6ObluLx0eVkZqsmAY
+         BofOnWzmOd6D3y2C39WEyfngvm+ucngrDiPr8VDZ2N6cC9ofT/g4HxYHvgO7FhNQDncC
+         kGcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729029899; x=1729634699;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729029997; x=1729634797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Pkk12nfRRJgVGUWEMa5YLLUkxQaxe30MNbzyRFlwSEM=;
-        b=T2wud8PEOECUJCFgbohOOmg41XgeH7dFkFbWRNwozhNlQsl0cSl59w5QnKRjF4tAO7
-         Ix1xCo2UBwOuGd/WkgEAHXx5df/UidFve3S0e4gxdB1YzrVTSbeYXk51xuiVLc563Vbx
-         sbj2lAm1xguKPtdNmmYmZXWVHgeSmZMne6so89epawPU2/oqubT16tviqteb+GyeZ+MT
-         zWIDtAeUba/VSRzfap72LPQSIFqWh/wxhoY4BoUFpTwPJVNyqN3054LZcQw6lvZVPPG7
-         EzHL7og5mq52E0yA6RL041npptjYZQrAVs+scVlkANPkIjU6/UC6wZhJO5rBge8ukHk7
-         NUZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvwjzHmnCTXjnvrKUvulthMp07na0z/z0wPse0zttWi6nxZd2uHtWFSAJqQ4d7hM+2i5we+6Pmjmvc/XY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhpKpkHAc0joP9VYNQZzxgBEA6Q0qDUXDWcoEc6yK7sERntCZH
-	niRaw1CPlsYBoNFd1++0ec2KQpGMQqQGakA7P7NmrjL1z+0/obgd1YVHvT7HqE0=
-X-Google-Smtp-Source: AGHT+IF9x5wF1b+0KR/aLBuLslCfjie/2+kpmUaaubzh4LXZULAmGakNPlrriV3NAszZ91sIWuH2cQ==
-X-Received: by 2002:a5d:574e:0:b0:37d:518f:995d with SMTP id ffacd0b85a97d-37d552d92c7mr10802530f8f.56.1729029899444;
-        Tue, 15 Oct 2024 15:04:59 -0700 (PDT)
-Received: from smtpclient.apple ([131.111.5.201])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf857fsm2622593f8f.74.2024.10.15.15.04.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Oct 2024 15:04:58 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        bh=Df2UGXMrSlqnXgDl1o8PQ91Gen6dUgFMpKkG/5j+dDI=;
+        b=W1n74A0zaLbHS+nAB8SvBB6VpgaOcqOahZSSdQhSOAsh7LX3yqcQZVkto2rcnPT8b2
+         H+Kolc0MdUiA5n1be5+CxbtZcC08a6A/gvTqZ0VKatYybZL1iC35L7YcpJic9apNlTA0
+         /ahbmnKE6dv7xgdVuBQEK6W5sMbD1CAmTKtr4Bw4Z6fV5+oJnDRpP4ZbHUFgoyciwUEG
+         48FPhzbiwqlpmgqgnYcq1y/RUShI7a41NxJuJeFPGhradHAI6QM3HvL0WGWv4tUtJlw7
+         H+5M2/GuQcv96PWjkWP3Oq8F16HQIyi0ZuMtjXsPQySAqdKChBVom4ig2TiXPIg0hwRJ
+         AIPw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+tPBOaK1mCYyMD83rhNOAhB0hxX0I1HCRo1kz5b9vbGaE8xkNbbD3WsqHZsSzXxQRPxrCwdNCObl0MoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwASgO1emCX7mCqKRpzhiySURApivPHNF1RXPqi1gAeNZX3VOww
+	Efn3y1tk+US+IwdwHGuLjzD1n0LYd56d0bsjHnQ+IVybzaK4sMrIKlbapxAaGyQwx1rWTlsoj/O
+	KWpuyy2BmGcpfcUaB0BI/ClvJ6duDy4vo0VMkHw==
+X-Google-Smtp-Source: AGHT+IE02MJ5sLjtZ4n0KaJRs1Aik5DxDdANs4F0KVaTmjkcUN3BW1HGzLone+n39Az1ks2iqiI4fB2KQ8bjyI2qUHY=
+X-Received: by 2002:a2e:4e12:0:b0:2f7:6371:6c5a with SMTP id
+ 38308e7fff4ca-2fb30f53e35mr45632151fa.16.1729029997149; Tue, 15 Oct 2024
+ 15:06:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH -fixes] riscv: Do not use fortify in early code
-From: Jessica Clarke <jrtc27@jrtc27.com>
-In-Reply-To: <20241009072749.45006-1-alexghiti@rivosinc.com>
-Date: Tue, 15 Oct 2024 23:04:47 +0100
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Heiko Stuebner <heiko@sntech.de>,
- =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
- linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Jason Montleon <jmontleo@redhat.com>,
- stable@vger.kernel.org
+MIME-Version: 1.0
+References: <20241015065848.29429-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20241015065848.29429-1-krzysztof.kozlowski@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 Oct 2024 00:06:26 +0200
+Message-ID: <CACRpkdaJ7Qiar-nV+-HJ=7_thLK-Trrw79eA5M+Wuc3FLDpyTQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: samsung: Fix interrupt
+ constraint for variants with fallbacks
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
+	Jaewon Kim <jaewon02.kim@samsung.com>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <1CA19FB3-C1E3-4C2F-A4FB-05B69EC66D2F@jrtc27.com>
-References: <20241009072749.45006-1-alexghiti@rivosinc.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
 
-On 9 Oct 2024, at 08:27, Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
->=20
-> Early code designates the code executed when the MMU is not yet =
-enabled,
-> and this comes with some limitations (see
-> Documentation/arch/riscv/boot.rst, section "Pre-MMU execution").
->=20
-> FORTIFY_SOURCE must be disabled then since it can trigger kernel =
-panics
-> as reported in [1].
->=20
-> Reported-by: Jason Montleon <jmontleo@redhat.com>
-> Closes: =
-https://lore.kernel.org/linux-riscv/CAJD_bPJes4QhmXY5f63GHV9B9HFkSCoaZjk-q=
-CT2NGS7Q9HODg@mail.gmail.com/ [1]
-> Fixes: a35707c3d850 ("riscv: add memory-type errata for T-Head")
-> Fixes: 26e7aacb83df ("riscv: Allow to downgrade paging mode from the =
-command line")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+On Tue, Oct 15, 2024 at 8:58=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
-Is the problem in [1] not just that the early boot path uses memcpy on
-the result of ALT_OLD_PTR, which is a wildly out-of-bounds pointer from
-the compiler=E2=80=99s perspective? If so, it would seem better to use
-unsafe_memcpy for that one call site rather than use the big
-__NO_FORTIFY hammer, surely?
+> Commit 904140fa4553 ("dt-bindings: pinctrl: samsung: use Exynos7
+> fallbacks for newer wake-up controllers") added
+> samsung,exynos7-wakeup-eint fallback to some compatibles, so the
+> intention in the if:then: conditions was to handle the cases:
+>
+> 1. Single Exynos7 compatible or Exynos5433+Exynos7 or
+>    Exynos7885+Exynos7: only one interrupt
+>
+> 2. Exynos850+Exynos7: no interrupts
+>
+> This was not implemented properly however and if:then: block matches
+> only single Exynos5433 or Exynos7885 compatibles, which do not exist in
+> DTS anymore, so basically is a no-op and no enforcement on number of
+> interrupts is made by the binding.
+>
+> Fix the if:then: condition so interrupts in the Exynos5433 and
+> Exynos7885 wake-up pin controller will be properly constrained.
+>
+> Fixes: 904140fa4553 ("dt-bindings: pinctrl: samsung: use Exynos7 fallback=
+s for newer wake-up controllers")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Presumably the non-early path is just as bad to the compiler, but works
-because patch_text_nosync isn=E2=80=99t instrumented, so that would just =
-align
-the two.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Getting the implementation to not be silent on failure during early
-boot would also be a good idea, but it=E2=80=99s surely better to have
-FORTIFY_SOURCE enabled with no output for positives than disable the
-checking in the first place and risk uncaught corruption.
-
-Jess
-
+Yours,
+Linus Walleij
 
