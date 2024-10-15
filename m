@@ -1,172 +1,137 @@
-Return-Path: <linux-kernel+bounces-365583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A6B99E4A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:53:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D860699E4AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED031C24A76
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 890561F240B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27B11EABB9;
-	Tue, 15 Oct 2024 10:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987351EB9EA;
+	Tue, 15 Oct 2024 10:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HV0MAFmJ"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n//Oe3bf"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6236C1E907D;
-	Tue, 15 Oct 2024 10:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670671E32D0;
+	Tue, 15 Oct 2024 10:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989564; cv=none; b=eCzI+UfBFqt4awjhEfTU1j0sIPSbiK+JXy7VGqvXCP+Zcg2fmB42+8lX7yAdsSIqWhq2hYT2Wl6MGV61HLAZxkAOkn+tYk6w7Ks8cav75Ktjtj1Lqe9DylrSDMTrlvBgAqIX2r/cdbAQt+gFZI+TI67sQ6hKjAkfJAGN3KX5JpQ=
+	t=1728989688; cv=none; b=XqatZJYWq1gS6IIDYxk/Jn8jdE+QWDHtNLQROkkheAf2sr/upnj9MDB8rmiiHc/9FFrIBwuGX9a4LdBpmgz+umWFruLwMCturv2V2YgzpU1tcTPkXU0t8sqYCV2+PavSUfXDYxYF8UVvAftfVLcnxJ5jVhcpFwgD9OYFBCCLHLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989564; c=relaxed/simple;
-	bh=yP9CszACK6W66/sJ4yrRaQAUlEJn3RPG/6aWepyCiHg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hYfRJBqiZSD3CCncU9sACX19E+zAfCYtWvvvdlLg4MejLtY4WKrChZD25gvaTXBkkIEAf/kvIm9tF6WsX5I8m1JJs86TAI6LKfY0SB9zBB+cc3vfhRU3LUWa8QZ+nNiu7T0luQGMtbozf/v83RmdtMUgoadS1M9+p8q9KhX4MqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HV0MAFmJ; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso7912279a12.3;
-        Tue, 15 Oct 2024 03:52:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728989561; x=1729594361; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=miCofaLTCliOiaggNDs4P5r/0poFiwum/y0l9beo+ZU=;
-        b=HV0MAFmJaB59oeGlt5WAZDVBAu/N9kQD9sS0m459QnKiG/v9gczzAW8swrIZdYnUHv
-         CNJaywA95ue46RNzkjhtT4yZpFjfR/P+SMqElq6RpDqV8xKxdX767IQfx8KYrmAFiYq6
-         tSCsnLSfGsGoxmbb4cPAsNIAkXdRj0OF6fuklOH6Zh3a6nLZR8PF8EN+i5Sy8Rr6++U7
-         m8FCNY3T+GsSKl2f6OQiJ7II1MH4gD1UFllV0Yue+DVpGADy9exMAFcC48xZAH0u0b+H
-         hRkl6RnrxxOGarYgixAoUmx1425iA223jpew++PrbNgc2Vpa2YwscZEuyHRftpBaaOjy
-         OPLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728989561; x=1729594361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=miCofaLTCliOiaggNDs4P5r/0poFiwum/y0l9beo+ZU=;
-        b=gtC+/LqGbMNvwHNguTqqSCgudez8M+fkOJrfaVpYuQzNxohBdNMYEw7trJggtS3ZI1
-         tWXRdwDJ9vlhUfU0myRaw+7oWIjnpSRUqpu9xlJK91rkOQrGSPdsmsEAJMoB2hI40Xlr
-         RVS+MwKWohx/p/x6F4mlgp+PIjCqtsyEX6p1q1d0odq3Ktiiw4IVbr/bx3iQrZ2sRgq0
-         v7/wFowuv+/THHEfnEAUm5VF0NVsNhzlSOueJgPwS6ofG2hNE1nhztLLc4blZMMBe9BB
-         NS8aH+hvbaPh20DnL1GDFbKbT/yv8CyHou/WmAXRl5FWl5vZW4veLmE/yU3l4/2H2Kyr
-         3dkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVjQBfzFhJfvmJ96sLtn1BvfJD1EnDYJ1U2rKgtKw1IHFQKJC7jnNgi9PXKBp0XLVCwJR7EBoaGB7hN/U4@vger.kernel.org, AJvYcCUlc6YjuC2VVsm6dJ1ibqOJeY76VRUa2CSzCsvBjqdOdarF5BEi/O/eNLLDKEGRC6qrVOhwVBazdo0=@vger.kernel.org, AJvYcCVbXPQVfzIVmwSRjdh0z3ynwTRpSxoFTib18FBYcG9BT8j7K3CUG6bLwmTiB3jg1PgXSfbOYe/xZ9Cw@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ4NnCH+V28KyeOMn4wkjfCwy1VKQOtcdkuj7Ta0Hn2dDwIltR
-	xX07s+8BHlKHX4bkWxME05huQTIPU+nON61KD1gpD7+kHnUKMxgzCnB5A+AUnTyUlYn9NBgWkOQ
-	2mwNWm/ILvj6wilv8ORYbD1wtd+I=
-X-Google-Smtp-Source: AGHT+IFk7BXffNv4e/2AjFYfCrgZ4ShdR5CLjDEp47QaCgk8TG/YKWt1pCpDQM8SNHkK1aqMaNGsGE8gyTU8KU9g23E=
-X-Received: by 2002:a05:6402:5188:b0:5c9:59e6:e908 with SMTP id
- 4fb4d7f45d1cf-5c959e6f56amr9476072a12.6.1728989560452; Tue, 15 Oct 2024
- 03:52:40 -0700 (PDT)
+	s=arc-20240116; t=1728989688; c=relaxed/simple;
+	bh=0GjnuafM8+MuY524RzRyuybMbh2e1W5adOorLwp9ITw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d+pEJs9JD+Uu1lNEaGOTkYYZAqkaPP/kQInb8RONULWZrzKcETg+2NdcMzMpz2bBtZ0aaB6f1LgW7/Xttql6W7ErF2Rw6ZJWc6bWwOVaqLDeYqKAoFawO8GgXiHpIT2kjHmJis1NwukiDJAu2OW8txCv+aaRZH9n7ooRuz0865Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n//Oe3bf; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FApOv6013632;
+	Tue, 15 Oct 2024 10:54:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=6fsOagLG+nDf85J5DatB5patV9Oe55a8JmOALUnjE
+	80=; b=n//Oe3bfyDbve1gkdx9BaQ38NYVprDivMQSdj9tpmCiLJzc62VAt2kfR9
+	Yb1Ty5NicPsgEAnhJZaegaxTebyN2bUJfNeXJA1vg8Vlb+ASM70rej5dyGoM/6R7
+	qbfox8En6vxWmXRtoEVJh2C0RJGbNsvs3YVcEmM4WRMzCHv0ksVzqZKHlwgWJoHk
+	CApMVNrAPXXgHnQ2AXbv/5+b7Uf80iydpTGINVZWtBkWkAt+iD7IV+RcgqprW0pN
+	8gO1IMGE9dStHo6eFFRMlNx6+cw23mZ5ZgcgJAWyEngQLWKRRgntzZqe/MEl9kc+
+	ppAxyFZvogei+W/dwyPNfHBI7Vuzw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429q0gg0n1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 10:54:34 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FAsYRl020601;
+	Tue, 15 Oct 2024 10:54:34 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429q0gg0mw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 10:54:34 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F943eJ005951;
+	Tue, 15 Oct 2024 10:54:33 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428650u092-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 10:54:33 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FAsUtj45154746
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 10:54:30 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0981D20040;
+	Tue, 15 Oct 2024 10:54:30 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EAC6A2005A;
+	Tue, 15 Oct 2024 10:54:29 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 15 Oct 2024 10:54:29 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55390)
+	id 7A0F4E0125; Tue, 15 Oct 2024 12:54:29 +0200 (CEST)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Ricardo B. Marliere" <ricardo@marliere.net>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH RESEND 0/3] PtP driver for s390 clocks
+Date: Tue, 15 Oct 2024 12:54:11 +0200
+Message-ID: <20241015105414.2825635-1-svens@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+fCnZcyrGf5TBdkaG4M+r9ViKDwdCHZg12HUeeoTV3UNZnwBg@mail.gmail.com>
- <20241014025701.3096253-1-snovitoll@gmail.com> <20241014025701.3096253-3-snovitoll@gmail.com>
- <20241014161042.885cf17fca7850b5bbf2f8e5@linux-foundation.org> <CA+fCnZcwoL3qWhKsmgCCPDeAW0zpKGn=H7F8w8Fmsg+7-Y8p3g@mail.gmail.com>
-In-Reply-To: <CA+fCnZcwoL3qWhKsmgCCPDeAW0zpKGn=H7F8w8Fmsg+7-Y8p3g@mail.gmail.com>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Tue, 15 Oct 2024 15:53:35 +0500
-Message-ID: <CACzwLxgJaOL9RXkhAZEosmFDzp-D4=gGfhSh3d5scBRBaq76pw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v3 2/3] kasan: migrate copy_user_test to kunit
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 2023002089@link.tyut.edu.cn, 
-	alexs@kernel.org, corbet@lwn.net, dvyukov@google.com, elver@google.com, 
-	glider@google.com, kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryabinin.a.a@gmail.com, 
-	siyanteng@loongson.cn, vincenzo.frascino@arm.com, workflows@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: iOuI4dTUGHzT8hkOBGbOW4ro6_dV7sy3
+X-Proofpoint-GUID: v7l7l6wg5oaeQfeQFKftht8yVhUZCnBN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 clxscore=1011 mlxlogscore=514
+ priorityscore=1501 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410150072
 
-On Tue, Oct 15, 2024 at 6:18=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.=
-com> wrote:
->
-> On Tue, Oct 15, 2024 at 1:10=E2=80=AFAM Andrew Morton <akpm@linux-foundat=
-ion.org> wrote:
-> >
-> > On Mon, 14 Oct 2024 07:57:00 +0500 Sabyrzhan Tasbolatov <snovitoll@gmai=
-l.com> wrote:
-> >
-> > > Migrate the copy_user_test to the KUnit framework to verify out-of-bo=
-und
-> > > detection via KASAN reports in copy_from_user(), copy_to_user() and
-> > > their static functions.
-> > >
-> > > This is the last migrated test in kasan_test_module.c, therefore dele=
-te
-> > > the file.
-> > >
-> >
-> > x86_64 allmodconfig produces:
-> >
-> > vmlinux.o: warning: objtool: strncpy_from_user+0x8a: call to __check_ob=
-ject_size() with UACCESS enabled
+Hi,
 
-I've missed this warning during x86_64 build, sorry.
+these patches add support for using the s390 physical and TOD clock as ptp
+clock. To do so, the first patch adds a clock id to the s390 TOD clock. The
+second patch adds sending a udev event when a ptp device is added, so that
+userspace is able to generate stable device names for virtual ptp devices.
+The last patch adds the PtP driver itself.
 
->
-> Too bad. I guess we have to duplicate both kasan_check_write and
-> check_object_size before both do_strncpy_from_user calls in
-> strncpy_from_user.
+Sven Schnelle (3):
+  s390/time: Add clocksource id to TOD clock
+  ptp: Add clock name to uevent
+  s390/time: Add PtP driver
 
-Shall we do it once in strncpy_from_user() as I did in v1?
-Please let me know as I've tested in x86_64 and arm64 -
-there is no warning during kernel build with the diff below.
+ MAINTAINERS                     |   6 ++
+ arch/s390/include/asm/timex.h   |   8 ++
+ arch/s390/kernel/time.c         |   8 ++
+ drivers/ptp/Kconfig             |  11 +++
+ drivers/ptp/Makefile            |   1 +
+ drivers/ptp/ptp_clock.c         |  11 ++-
+ drivers/ptp/ptp_s390.c          | 127 ++++++++++++++++++++++++++++++++
+ include/linux/clocksource_ids.h |   1 +
+ 8 files changed, 172 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/ptp/ptp_s390.c
 
-These checks are for kernel pointer *dst only and size:
-   kasan_check_write(dst, count);
-   check_object_size(dst, count, false);
+-- 
+2.43.0
 
-And there are 2 calls of do_strncpy_from_user,
-which are implemented in x86 atm per commit 2865baf54077,
-and they are relevant to __user *src address, AFAIU.
-
-long strncpy_from_user()
-   if (can_do_masked_user_access()) {
-      src =3D masked_user_access_begin(src);
-      retval =3D do_strncpy_from_user(dst, src, count, count);
-      user_read_access_end();
-   }
-
-   if (likely(src_addr < max_addr)) {
-      if (user_read_access_begin(src, max)) {
-         retval =3D do_strncpy_from_user(dst, src, count, max);
-         user_read_access_end();
-
----
-diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-index 989a12a6787..6dc234913dd 100644
---- a/lib/strncpy_from_user.c
-+++ b/lib/strncpy_from_user.c
-@@ -120,6 +120,9 @@ long strncpy_from_user(char *dst, const char
-__user *src, long count)
-        if (unlikely(count <=3D 0))
-                return 0;
-
-+       kasan_check_write(dst, count);
-+       check_object_size(dst, count, false);
-+
-        if (can_do_masked_user_access()) {
-                long retval;
-
-@@ -142,8 +145,6 @@ long strncpy_from_user(char *dst, const char
-__user *src, long count)
-                if (max > count)
-                        max =3D count;
-
--               kasan_check_write(dst, count);
--               check_object_size(dst, count, false);
-                if (user_read_access_begin(src, max)) {
-                        retval =3D do_strncpy_from_user(dst, src, count, ma=
-x);
-                        user_read_access_end();
 
