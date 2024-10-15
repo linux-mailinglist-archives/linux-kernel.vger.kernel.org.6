@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-365023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0492199DC4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:34:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B25299DC4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA980282E64
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:34:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FEA4B2187A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514B6167D83;
-	Tue, 15 Oct 2024 02:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7091662EF;
+	Tue, 15 Oct 2024 02:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FqnEUUE+"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JmvGcGlb"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2741F61C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900C51F61C;
+	Tue, 15 Oct 2024 02:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728959679; cv=none; b=obikLMPxEkwfklzZM3GbsiVPtmFu0pMH/3Y+TGD3ItH9JUlstSwB6ih7ILyoTbaepP9VUdrFAJbHEiRzQJfCaO2qq2wotgES6LREPaJNzd2HDrEPrHS+mR6qFQwWU0UE7xhVP2/FszUCmQUm02sDlMtMBcHaMc05LSr+VNzzuoA=
+	t=1728959652; cv=none; b=mY/eUpe3cW+mDc47iGg8DrTta83aG0r9ys6hXiWSwpHXKYbKP7w/+26UTicYbjkQ75k3HZSnEyd1a8RDHQhc1Me+8kE0iM42X1GuelIcQ+jsMISlcQ+2DkTXIsSm6f+NIPGuld4y/rOiov0k//7Q4B0a5YIyvbtjvf6ysg+eEgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728959679; c=relaxed/simple;
-	bh=J96PNxXho6AM9q+vz7DQJDchGvgBPPRFe2c29HGeAEk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Wn7DOZ6ySt8bUq9Ei6uaePEZSE28mX8ay/f2/lch+V7/Z1SNp0W9AZZrbekNAG1UM+0q5ICXGEd5L2nkngXnRxlCuMtSeXPavkDsJ8TS3B+t4Xx0QTA1/yCnJvaBw7dOK88t3JMaJQSMrwKy559IUosInTy5dqbkedZtDJFe5Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FqnEUUE+; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728959675;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZCOSs8NjOrK7JCDidX00nNIZGkMQE0/GRhp6aQzYnlc=;
-	b=FqnEUUE+n6RFWCBcWGCHCiNREKt4ZvKr2xxWT+4dBB12Rw2thW3r/wofD1pXVtoqaZtjoD
-	m0y0dJO/97D8mgNQw/fEFGX9k5ebQzf4mXgwEXbo7rzQoZMSe6KiTYgpW/QzkCQ4RoAkJ2
-	MUrhp0aMvdWTHWHdPKVGbE8RdfX78ns=
+	s=arc-20240116; t=1728959652; c=relaxed/simple;
+	bh=TBwO0AyTAVcfkeQ2eryFWXgTRaeM2PEuNXkVNhBfU7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dW8qVTfNh/O3sjNdvp0ZaIBxTvzD4oQUoYEtKGVlszzrZBhCkj0x0dClUPlZQN6CybRMBnrKxhDunYxwrz37Gc91SGyxHKREg+0PJ5wrXyHZfSvYd1xKm/hgjLUnlnaiCYOITyW2hBXU0SnAhE3Pc9M2FL6qHqDht9qowC5XmQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JmvGcGlb; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728959647; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=5SWTPrpRWV5oTpc4vCe8QJknxozDoWmECEzjBVIQIOY=;
+	b=JmvGcGlbw9o+Nj3AipRl9y01L3kla3aVZoXJuy8nTGD5V/ZRZLfwFQXu7Tenc4Ia9G7QY6XgN9FBLRUAfq/KLHHefQ2MCXUWjfnCfqrigS8ogkYisTuYZo1FG6slCy9KCQxEq5og84jz2O7HMZK9e7gttXuv0sM1dLMxZ/ShbaE=
+Received: from 30.74.144.137(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHBZZRf_1728959646 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Oct 2024 10:34:06 +0800
+Message-ID: <87af6d7a-3a55-4f7d-979d-820cc390e855@linux.alibaba.com>
+Date: Tue, 15 Oct 2024 10:34:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH] mm/swapfile: skip HugeTLB pages for unuse_vma
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20241015014521.570237-1-liushixin2@huawei.com>
-Date: Tue, 15 Oct 2024 10:33:36 +0800
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: mm: fix the incorrect usage() info of
+ khugepaged
+To: Nanyong Sun <sunnanyong@huawei.com>, akpm@linux-foundation.org,
+ shuah@kernel.org, zokeefe@google.com
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com
+References: <20241015020257.139235-1-sunnanyong@huawei.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20241015020257.139235-1-sunnanyong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <ED9675B2-C82C-45D0-861B-48828553F53D@linux.dev>
-References: <20241015014521.570237-1-liushixin2@huawei.com>
-To: Liu Shixin <liushixin2@huawei.com>
-X-Migadu-Flow: FLOW_OUT
 
 
 
-> On Oct 15, 2024, at 09:45, Liu Shixin <liushixin2@huawei.com> wrote:
+On 2024/10/15 10:02, Nanyong Sun wrote:
+> The mount option of tmpfs should be huge=advise, not madvise
+> which is not supported and may mislead the users.
 > 
-> I got a bad pud error and lost a 1GB HugeTLB when calling swapoff.
-> The problem can be reproduced by the following steps:
-> 
-> 1. Allocate an anonymous 1GB HugeTLB and some other anonymous memory.
-> 2. Swapout the above anonymous memory.
-> 3. run swapoff and we will get a bad pud error in kernel message:
-> 
->  mm/pgtable-generic.c:42: bad pud 00000000743d215d(84000001400000e7)
-> 
-> We can tell that pud_clear_bad is called by pud_none_or_clear_bad
-> in unuse_pud_range() by ftrace. And therefore the HugeTLB pages will
-> never be freed because we lost it from page table. We can skip
-> HugeTLB pages for unuse_vma to fix it.
-> 
-> Fixes: 0fe6e20b9c4c ("hugetlb, rmap: add reverse mapping for hugepage")
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+> Fixes: 1b03d0d558a2 ("selftests/vm: add thp collapse file and tmpfs testing")
+> Signed-off-by: Nanyong Sun <sunnanyong@huawei.com>
 
-Acked-by: Muchun Song <muchun.song@linux.dev>
+LGTM.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-Thanks.
-
+> ---
+>   tools/testing/selftests/mm/khugepaged.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
+> index 56d4480e8d3c..8a4d34cce36b 100644
+> --- a/tools/testing/selftests/mm/khugepaged.c
+> +++ b/tools/testing/selftests/mm/khugepaged.c
+> @@ -1091,7 +1091,7 @@ static void usage(void)
+>   	fprintf(stderr, "\n\t\"file,all\" mem_type requires kernel built with\n");
+>   	fprintf(stderr,	"\tCONFIG_READ_ONLY_THP_FOR_FS=y\n");
+>   	fprintf(stderr, "\n\tif [dir] is a (sub)directory of a tmpfs mount, tmpfs must be\n");
+> -	fprintf(stderr,	"\tmounted with huge=madvise option for khugepaged tests to work\n");
+> +	fprintf(stderr,	"\tmounted with huge=advise option for khugepaged tests to work\n");
+>   	fprintf(stderr,	"\n\tSupported Options:\n");
+>   	fprintf(stderr,	"\t\t-h: This help message.\n");
+>   	fprintf(stderr,	"\t\t-s: mTHP size, expressed as page order.\n");
 
