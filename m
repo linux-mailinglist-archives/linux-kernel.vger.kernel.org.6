@@ -1,162 +1,117 @@
-Return-Path: <linux-kernel+bounces-365718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9270C99E827
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:02:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE3699E850
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD731F21D03
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2EB282B6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9C81EABC6;
-	Tue, 15 Oct 2024 12:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sf0WAxmg"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17B61EB9E9;
+	Tue, 15 Oct 2024 12:04:20 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45891D8DEA;
-	Tue, 15 Oct 2024 12:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505031CFEA9;
+	Tue, 15 Oct 2024 12:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728993750; cv=none; b=BF7kR2eKnSVHDf53fxvsXK/mJs94ogJNE1ukj/yUUIkmko/4Loyl0HDRz86I8Jzr+r0wQPXwHLVg20f/LNgDePnGpCS2VuYiuq1k26vNdAfsI5qpfXAtLxY2nBapnp+DbGg78FzbnF7Mo/xE7P658VlxXLvZ5oY4PXOJ2gUGmdY=
+	t=1728993860; cv=none; b=lvXbWwLTgGFf63WoguD3Bvd41rw9tcL+hembZRvIrDQY+84x2PR5gQ+gx33Rb4AKaGNy37csJomnCXcVOunD98yveXr2HmQq4zdbNx1EBRbT36AXUV2vLOE6WNERXqejKGHz+kPK/JPtzC1lZ/cHl7kKEsIgaFUV/S9m7rNULoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728993750; c=relaxed/simple;
-	bh=Mb2jMIhgPn95C310AjLjdOHybGQPmJhBSETFECJjd7A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aPUPIUHhd+qMTCit4h8im6pBExE2PUXwj/JPBUAGTtUVVCMCueIpbSkSAd/MZiy7NZDflHC3yekdZLfc+915BNdFi6ORBSqfTSoliSdBCK7VpXyj1Irx8n4z7X2wMtwF/k3Q/Xjj6B7zbIceSMkTvIcwU2Cy5LNLLNwFIp14U0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sf0WAxmg; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FBsoCX000968;
-	Tue, 15 Oct 2024 12:02:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=zr/zrrWXTvhTWxhtih01DT725ChHcY
-	Ut7x8P1H+ErnU=; b=sf0WAxmgUYeiUPYg9G6M1xZaaSEFYKOgmf+xedBVHTitag
-	/KMzx7kVzRzWtXcuIXL2uiFc/nPJCKW9EzzAdODparpS749PimFWFzplcJZv4pzG
-	scnLGhEbfCXz1Gi8AxwTJlOUzUdy8qhLM5qKcJK0MnUW28eTOzVeG93yQHr/3jte
-	z+/ygvkkXNvcE6hCAcKU0oxn+/nlXQtfdQaUXkFNyYmCLEBMKQwIikLJ4AmKs5lQ
-	GliTNdyr97+wtmETffLrisJEKcXmBF0D1aOiR3Ukf1oRmFL6FL0lPB8jI0lI4IPo
-	wvYe1bgBo64I44xxBSu2+Y46AYHqI0aDPLA+gjxw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429qxf81u9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 12:02:22 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FC0OFx015624;
-	Tue, 15 Oct 2024 12:02:22 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429qxf81u4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 12:02:22 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F8jtuN005215;
-	Tue, 15 Oct 2024 12:02:21 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285nj3cxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 12:02:20 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FC2Hrm16843084
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Oct 2024 12:02:17 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B5152004D;
-	Tue, 15 Oct 2024 12:02:17 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 47B8220043;
-	Tue, 15 Oct 2024 12:02:17 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 15 Oct 2024 12:02:17 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "Ricardo B. Marliere" <ricardo@marliere.net>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 2/3] ptp: Add clock name to uevent
-In-Reply-To: <2024101532-batboy-twentieth-75c4@gregkh> (Greg Kroah-Hartman's
-	message of "Tue, 15 Oct 2024 12:59:10 +0200")
-References: <20241015105414.2825635-1-svens@linux.ibm.com>
-	<20241015105414.2825635-3-svens@linux.ibm.com>
-	<2024101532-batboy-twentieth-75c4@gregkh>
-Date: Tue, 15 Oct 2024 14:02:17 +0200
-Message-ID: <yt9dmsj5r2uu.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728993860; c=relaxed/simple;
+	bh=XMjnB8RwZmkonCHDLqHmGR5FGhVnHjb/lhHRhE0YbNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kv9dFTm312wBJG2IFsESHrUgPeC1o76Kp92BCRIr9yVzxpdiWKJ02bc0W5uKyk8QXbaNx00syVjgSGpoHoAMx85yeAmqJZlEf2XmWGnfHedYfVo+BgjvO9/stERJY95qz30PsdnBDaylWxAPa4mpfreK2PwsN1JGV8oIGY0kHTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 258F0C4CEC6;
+	Tue, 15 Oct 2024 12:04:14 +0000 (UTC)
+Date: Tue, 15 Oct 2024 13:04:12 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-pm@vger.kernel.org, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	pbonzini@redhat.com, wanpengli@tencent.com, vkuznets@redhat.com,
+	rafael@kernel.org, daniel.lezcano@linaro.org, peterz@infradead.org,
+	arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com,
+	harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com,
+	cl@gentwo.org, misono.tomohiro@fujitsu.com, maobibo@loongson.cn,
+	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
+ smp_cond_load_relaxed()
+Message-ID: <Zw5aPAuVi5sxdN5-@arm.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+ <20240925232425.2763385-2-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: C5MxkPI-lNzpY37PKc_4CQ7i5Q9PFrJ4
-X-Proofpoint-GUID: EhLHQRuyEm3Gn599LIfAKyUbfl87nRQ0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxlogscore=723 lowpriorityscore=0 suspectscore=0 priorityscore=1501
- spamscore=0 clxscore=1015 impostorscore=0 adultscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925232425.2763385-2-ankur.a.arora@oracle.com>
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+On Wed, Sep 25, 2024 at 04:24:15PM -0700, Ankur Arora wrote:
+> diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
+> index 9b6d90a72601..fc1204426158 100644
+> --- a/drivers/cpuidle/poll_state.c
+> +++ b/drivers/cpuidle/poll_state.c
+> @@ -21,21 +21,20 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+>  
+>  	raw_local_irq_enable();
+>  	if (!current_set_polling_and_test()) {
+> -		unsigned int loop_count = 0;
+>  		u64 limit;
+>  
+>  		limit = cpuidle_poll_time(drv, dev);
+>  
+>  		while (!need_resched()) {
+> -			cpu_relax();
+> -			if (loop_count++ < POLL_IDLE_RELAX_COUNT)
+> -				continue;
+> -
+> -			loop_count = 0;
+> +			unsigned int loop_count = 0;
+>  			if (local_clock_noinstr() - time_start > limit) {
+>  				dev->poll_time_limit = true;
+>  				break;
+>  			}
+> +
+> +			smp_cond_load_relaxed(&current_thread_info()->flags,
+> +					      VAL & _TIF_NEED_RESCHED ||
+> +					      loop_count++ >= POLL_IDLE_RELAX_COUNT);
 
-> On Tue, Oct 15, 2024 at 12:54:13PM +0200, Sven Schnelle wrote:
->> To allow users to have stable device names with the help of udev,
->> add the name to the udev event that is sent when a new PtP clock
->> is available. The key is called 'PTP_CLOCK_NAME'.
->
-> Where are you documenting this new user/kernel api you are adding?
->
->> 
->> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
->> ---
->>  drivers/ptp/ptp_clock.c | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
->> index c56cd0f63909..15937acb79c6 100644
->> --- a/drivers/ptp/ptp_clock.c
->> +++ b/drivers/ptp/ptp_clock.c
->> @@ -25,9 +25,11 @@
->>  #define PTP_PPS_EVENT PPS_CAPTUREASSERT
->>  #define PTP_PPS_MODE (PTP_PPS_DEFAULTS | PPS_CANWAIT | PPS_TSFMT_TSPEC)
->>  
->> +static int ptp_udev_uevent(const struct device *dev, struct kobj_uevent_env *env);
->>  const struct class ptp_class = {
->>  	.name = "ptp",
->> -	.dev_groups = ptp_groups
->> +	.dev_groups = ptp_groups,
->> +	.dev_uevent = ptp_udev_uevent
->>  };
->>  
->>  /* private globals */
->> @@ -514,6 +516,13 @@ EXPORT_SYMBOL(ptp_cancel_worker_sync);
->>  
->>  /* module operations */
->>  
->> +static int ptp_udev_uevent(const struct device *dev, struct kobj_uevent_env *env)
->> +{
->> +	struct ptp_clock *ptp = container_of(dev, struct ptp_clock, dev);
->> +
->> +	return add_uevent_var(env, "PTP_CLOCK_NAME=%s", ptp->info->name);
->
-> Why is this needed?  Can't you get the name from the sysfs paths, the
-> symlink should be there already.
+The above is not guaranteed to make progress if _TIF_NEED_RESCHED is
+never set. With the event stream enabled on arm64, the WFE will
+eventually be woken up, loop_count incremented and the condition would
+become true. However, the smp_cond_load_relaxed() semantics require that
+a different agent updates the variable being waited on, not the waiting
+CPU updating it itself. Also note that the event stream can be disabled
+on arm64 on the kernel command line.
 
-You mean the 'clock_name' attribute in sysfs? That would require to
-write some script to iterate over all ptp devices and check the name,
-or is there a way to match that in udev?
+Does the code above break any other architecture? I'd say if you want
+something like this, better introduce a new smp_cond_load_timeout()
+API. The above looks like a hack that may only work on arm64 when the
+event stream is enabled.
+
+A generic option is udelay() (on arm64 it would use WFE/WFET by
+default). Not sure how important it is for poll_idle() but the downside
+of udelay() that it won't be able to also poll need_resched() while
+waiting for the timeout. If this matters, you could instead make smaller
+udelay() calls. Yet another problem, I don't know how energy efficient
+udelay() is on x86 vs cpu_relax().
+
+So maybe an smp_cond_load_timeout() would be better, implemented with
+cpu_relax() generically and the arm64 would use LDXR, WFE and rely on
+the event stream (or fall back to cpu_relax() if the event stream is
+disabled).
+
+-- 
+Catalin
 
