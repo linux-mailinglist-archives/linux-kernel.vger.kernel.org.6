@@ -1,129 +1,138 @@
-Return-Path: <linux-kernel+bounces-365791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE2799EA00
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:39:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59AF99E9D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9A77284CEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704351F237C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A956227B96;
-	Tue, 15 Oct 2024 12:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3B020CCEE;
+	Tue, 15 Oct 2024 12:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="P97ClPkU"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xEj+LFmd"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E85227B93;
-	Tue, 15 Oct 2024 12:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718EF1F4734
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728995962; cv=none; b=iUkFW5zHWUgfj9WEcnFDuG2A04F5BJEqVjW6Ie7kqfZruMMHK7QK9LgO2+vYc2i778dL76yTW1vN0eYCo6wuqF/T0/EVe6kixCtIqqPnkrtevRqSI+Wl+fkNT/BNbxB2srV/eAe+EQKcH7UqhZnnSq1+vE6a846py2aHZLvYn/0=
+	t=1728995227; cv=none; b=Aaa35nfg/gWzEoNeV0SiOeMj6T0sKWJ2sV273+pJcvo4Qk7E7eINPVuqUmd/OYppVVdGisbM92QHRBV0qtvSHrAntWmZUV83mW1D4mlPkIWq8Hrc/RiXAMAd8ZAVEzm236PuyvGU1UqlIaY/6K9BsE7AqR9CxhlADR4iIoOajL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728995962; c=relaxed/simple;
-	bh=x+iDAAYTgZt7thPALE/GpuoN/+1g28XVcuiZEr2MEbk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=qFFxRW+BSTQ/sI/EbIEzSyfXT0z27rLqsh34xOxjr5NqE1BK7vzMbYe3n35+h9+8/1cbkoLaz28NPOJKALEAQEZDxPzT8Mhl8W25hY2CCsX/eifjJerscjSSdbLEbuGPbcKjq97Ogm4+/tQg/zs2DptSicddFeu88ZAANJDgqaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=P97ClPkU; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1728995958; bh=6mzUwp6tTsQPmtvvHIUC4eTR4DQea9zTLMhz8Df/uUs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=P97ClPkUXGlR5ZxiiS1Jdwqv5wq16M56QYYXIMfSgRhptIZUn3OwITKJMJ/pgDvpw
-	 Qoq6NVXebNpsc9tGI1v7ZhY7VRwxnoaHLQPvYLr9uA0kmQn3OsmF1UCqnY0JUYTueN
-	 jr7s/bIwcV9xByybxXzdiQm7aC2owPWSNCJWflH8=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 6AD19C34; Tue, 15 Oct 2024 20:26:45 +0800
-X-QQ-mid: xmsmtpt1728995205t9pig5lzf
-Message-ID: <tencent_0EBF9E731B704B091B022578BA9EBB8E3308@qq.com>
-X-QQ-XMAILINFO: NDz66ktblfzJrZJDwmHjGNtPHzbvecvgaHO9S260NFM0PyeeXQZAeHYqUX/EuD
-	 x/i7GprzXlhbKdlhEODCaiALa3OMv+dg4dY94//BbETSFOyxC6RqW3wvGDUMYyK2huoZm4iKOnV0
-	 zjpGHbWQeOj17p7eGMSQS3hfsyIzhHZO62AwN+XJckbTuCXIW+eQDpPLPOED6J02BNZkHvME4V3r
-	 sNNJflEY23E8lw2PVxyNmh/aDFiz6wGAf1WTSGmHWcRdyZknY9STw843auJWw4JBpwnA+maPfb5T
-	 i7YDOodrOdAycLqFEd9FsXtyVTKQcN+BSQd4eBXU3ZdwgF2B3wpO2mFLK0FBOcQakjcbIAMpLAaM
-	 n2MM1Jav6uGED56VveP9/KiPYMVbkmnEDaLZb0c0mW4nil/DO6+ke7CmK0K64vjpcaZVJgSi55I+
-	 zUTimoe8BvR6NV3T3lGANO4KAKpUY438yEPDcl//RJKJXRydQEUzomdcw3ghBAvnhWCKwP+x1NqQ
-	 zi/3Gb1lLjUd3CDerOChFkoqJJkBs0Ho2Wa3YfAH2k6jsC+NVKoXXWMJD5unZJkx5Uc4y7kiDA5U
-	 b8e0Y+VT8PZnJersrV3BKRfOsVOIZjQl4OMWrwWKPgdqiLNHnHh6Ecn6itN+OtWE88bWSRs+5RAl
-	 qsTIC0JeXp6U+MwQDaI+d/r2LNXHPEEFvT54bMPtaz7aHUsEBBdOmEysud2GJpqFkV60ht1Z4ALk
-	 HiiSAbQGYC4usk7kOMA/bdHC0tW7VHkoxMwHu6cStsNrq5pQ96D6i2xhFLTopZ17JFT7D4hwyYuM
-	 OkF3TcoeacP4WgY+Nl9Zpo71RylLZLVLdQe0FmR7e8OyVi3xlVQR6On3eyjEG5zbrJSGQNKYsf1r
-	 XGFe0s4Hqk3MJUEaqqfh7j+NMtWnP1bF55/7ejcPs4Ueu9ZmHjjADsPruCdY3NER8uXsX357i5Gq
-	 5bRSKJCXiE/B7KchFdJQ==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
-Cc: clm@fb.com,
-	dsterba@suse.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH next] btrfs: Accessing head_ref within delayed_refs lock
-Date: Tue, 15 Oct 2024 20:26:46 +0800
-X-OQ-MSGID: <20241015122645.136494-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <670d3f2c.050a0220.3e960.0066.GAE@google.com>
-References: <670d3f2c.050a0220.3e960.0066.GAE@google.com>
+	s=arc-20240116; t=1728995227; c=relaxed/simple;
+	bh=IJlYtQFeLG0i9bPxCxcljLBDzVvz3Kvv8tvwApj9vmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VOh36iGJFitqp1oFfWC8Hzd6eX8J1HMKKRO7L6wvNAmqLl3m36z/CxLxejMMuYxDSuoC7SpGibPTNGOyeyYWEQ9odWLFZFQkUj7RGT+9f2Jjp8hmhh6OttlH+CQe/nVzjn4OB6Nrt7Dy6jmEukGEhe8kIsK/Ptweuuw7iKsFhPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xEj+LFmd; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e2e41bd08bso54923527b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728995223; x=1729600023; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ks6Ykml+AXF/SLAnbRT+RNH2STdD8HOXdreQb6f0egQ=;
+        b=xEj+LFmdYVHPzl3DWJcKIhao6TMusleO/pV7XcxKxG1Dy95RWHZrrq+KWDTPQWOMNz
+         1pKSwBXnuziqxns6Z18jZZ7yP3uWn8eUCg4L/2Om43l70dNbLoNZgOU7Enqh7n9NslXf
+         Z45xAZsIMK+b1tbWOhN5Ks8iwUThF4Bs7VqnKYrLhYXuWsrfPAuZxnRqdU/3b/GSLZlW
+         U50kZ2JkdUm0NuJUSt2X8/e2UzDWF2AV2QOHOXLKU69IZFDz0cpqZyCcd/siisdP1Rur
+         VY1UsoztlP5lrrPT6pB4m1A3tXEwEylGqakexw2zg6FN2W3gbWwdKka+XIz3ZoNsniGX
+         3nLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728995223; x=1729600023;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ks6Ykml+AXF/SLAnbRT+RNH2STdD8HOXdreQb6f0egQ=;
+        b=Rq9rS8TupgZli+Q4XTbqEkOGohzrUN+Qu1Tcqb+4xJJ4hsQUxizuLONR3kHqWeFc0f
+         4cO3rVkRVn33VSdOCfsGYZRCiz+IrD8UyQe2GN1/ika9xyn1KSKG3+I03GZFrBKi6j5h
+         jn7qcwNM6V2X5Y+WFsUJC0wdc1nJPraGIhpLuygbKs4ZGimep7cvDkvbseM27Od42CL7
+         v1WBtAv2gnvkITDSfpevWl1yXgay1ukEBxSdM12aD/ODnM0pWpI3UfBduo41XNi8peaj
+         p0fC2diXdfO9n/jHBzO2EssqQpMMHsbE0XD6OMHntf/njrRXumY4m/9PQWWavFxBnnL+
+         F8Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWc7yMxoiQxsQCIn6e8WGgv8gL+3hLPPCBm05GdF/3m73g5Yj1uEu7SBvV6KjM1iWQsCHuSyKtJDQF9svk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUHXcj6gkLZnNWZ0wDdYfX1GW0LTk0U0MQqmuOdFb/0tWAWo8P
+	MiVz+s48wuf/lsZLxYsDcKc55Dx4vdoxmiEKjcM65zBsPYhCFmPkUzLRx6dvz4J01GmigZ3uexn
+	hLIqK7iMz3fYYGyTAfvmMRBDIXNdZc+/4yy5exA==
+X-Google-Smtp-Source: AGHT+IF9cEyFlB4rJ2xvEcXHUWgmUWBXAAmvE4lzHc02ikckmMbCT8jufBaw4HpfIgnp6G5dxrvwmFVSxwc5Xo0DWgQ=
+X-Received: by 2002:a05:690c:d96:b0:6e2:b263:1051 with SMTP id
+ 00721157ae682-6e3640f5282mr82517567b3.7.1728995223277; Tue, 15 Oct 2024
+ 05:27:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-27-c5eaa4e9ab9e@quicinc.com>
+ <Zw0j9UeJmC1MZ3Xt@localhost.localdomain> <7vmxx5qtbvhyfcdeariqiult27j5rmykxrefl2qmkhqnrw5wi5@6ugxtx643bmq>
+ <48f0e7a1-f5d4-62ec-ec4b-f5bf2ca9caa5@quicinc.com>
+In-Reply-To: <48f0e7a1-f5d4-62ec-ec4b-f5bf2ca9caa5@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 15 Oct 2024 15:26:58 +0300
+Message-ID: <CAA8EJpq6Q80fcUZfP-DRmo8LHLHrwnkFd5FQ4Mrs0hiwPUyuSw@mail.gmail.com>
+Subject: Re: [PATCH v4 27/28] media: iris: enable video driver probe of SM8250 SoC
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Jianhua Lu <lujianhua000@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, linux-arm-msm@vger.kernel.org, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This is because the thread routine btrfs_work_helper released head_def after
-exiting delayed_refs->lock in add_delayed_ref.
-Causing add_delayed_ref to encounter uaf when accessing head_def->bytenr
-outside the delayed_refs->lock.
+On Tue, 15 Oct 2024 at 12:22, Dikshita Agarwal
+<quic_dikshita@quicinc.com> wrote:
+>
+>
+>
+> On 10/14/2024 7:38 PM, Dmitry Baryshkov wrote:
+> > On Mon, Oct 14, 2024 at 10:00:21PM +0800, Jianhua Lu wrote:
+> >> On Mon, Oct 14, 2024 at 02:37:48PM +0530, Dikshita Agarwal wrote:
+> >>> Initialize the platform data and enable video driver
+> >>> probe of SM8250 SoC.
+> >>>
+> >>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> >>> ---
+> >> [..]
+> >>> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+> >>> index 86ef2e5c488e..a2aadd48926f 100644
+> >>> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+> >>> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+> >>> @@ -325,6 +325,10 @@ static const struct of_device_id iris_dt_match[] = {
+> >>>             .compatible = "qcom,sm8550-iris",
+> >>>             .data = &sm8550_data,
+> >>>     },
+> >>> +   {
+> >>> +           .compatible = "qcom,sm8250-venus",
+> >>> +           .data = &sm8250_data,
+> >>> +   },
+> >>>     { },
+> >>>  };
+> >>>  MODULE_DEVICE_TABLE(of, iris_dt_match);
+> >>
+> >> qcom-venus driver has already supported sm8250 soc, I think you should add
+> >> an extra patch to drop sm8250 releated code from qcom-venus driver if you
+> >> tend to add support for sm8250 in qcom-iris driver.
+> >
+> > Iris driver did not feature parity with the venus driver, so it is
+> > expected that two drivers will exist side by side for some time.
+> > Nevertheless ideally we should have a way to specify which driver should
+> > be used for sm8250 (and other platforms being migrated).
+> >
+> Agree, we should have a way to specify this. Any suggestions to achieve
+> this are welcomed.
 
-Move head_ref->bytenr into the protection range of delayed_refs->lock 
-to avoid uaf in add_delayed_ref.
+See how this is handled for the drm/msm/mdp5 vs dpu drivers.
 
-Fixes: a3aad8f4f5d9 ("btrfs: qgroups: remove bytenr field from struct btrfs_qgroup_extent_record")
-Reported-and-tested-by: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c3a3a153f0190dca5be9
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/btrfs/delayed-ref.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-index 13c2e00d1270..f50fc05847a1 100644
---- a/fs/btrfs/delayed-ref.c
-+++ b/fs/btrfs/delayed-ref.c
-@@ -1012,6 +1012,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
- 	int action = generic_ref->action;
- 	bool merged;
- 	int ret;
-+	u64 bytenr;
- 
- 	node = kmem_cache_alloc(btrfs_delayed_ref_node_cachep, GFP_NOFS);
- 	if (!node)
-@@ -1056,6 +1057,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
- 		goto free_record;
- 	}
- 	head_ref = new_head_ref;
-+	bytenr = head_ref->bytenr;
- 
- 	merged = insert_delayed_ref(trans, head_ref, node);
- 	spin_unlock(&delayed_refs->lock);
-@@ -1074,7 +1076,7 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
- 		kmem_cache_free(btrfs_delayed_ref_node_cachep, node);
- 
- 	if (qrecord_inserted)
--		return btrfs_qgroup_trace_extent_post(trans, record, head_ref->bytenr);
-+		return btrfs_qgroup_trace_extent_post(trans, record, bytenr);
- 	return 0;
- 
- free_record:
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
