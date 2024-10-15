@@ -1,115 +1,221 @@
-Return-Path: <linux-kernel+bounces-365844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E6E99EBDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E2499EC01
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697A41F27219
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A631F27387
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5666E1E379D;
-	Tue, 15 Oct 2024 13:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71B41D5ABD;
+	Tue, 15 Oct 2024 13:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzdAt1J7"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P4XDAhzW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3030E1C07DF;
-	Tue, 15 Oct 2024 13:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DCD1AF0B0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728997889; cv=none; b=YfCrEJacrOrIHQQ6WkhcG3RwfftYGQJaeJOnmwmlAoBjFIsOOVyxLf5vBPKc1ncUywwboSbAZbp8gGvIYonUX015rdh3yL0erqs75ZOzlIAAhAn32vLKyvQ9z0HYgm64hhNAcnp7HrXEetRpbc7ciKa56WJAueOKoNdJfju8c8c=
+	t=1728998000; cv=none; b=SYJMEmO4HKiAviJv2wMz5NhCdxh51wyMVonZ/fg5imKqUyiruR9O4w316sCvY3xafxFIvbpfx535YsU2xQb7tqbedWWIDmyk/h5eXKyydTBzn81W8bE7GIexYe+YRe02dCkW3vHEs2GI0SbxdUvJL1NHbajci7f2dGts3B4eWk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728997889; c=relaxed/simple;
-	bh=6DubvOfcNitNNbFc4/CgkMkTSuW14iGdJHkB/Kq4p0U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OcuI1LW+oSEGT33Iu1QKFthYWlHI4moyMn0nguqob2JG0YnOLhTBYhk7CAmCU4WDtqlIVQ9k4Mx/3Pa0vo69gsrm/gjTm401Hogi4bRX4/OR5/Jga3cFK9MmJd7vIfNRtFMLK3EUcviIJyRw0Qu2eQ1Ccbuo+eSh7q43cDzdClc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BzdAt1J7; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d447de11dso3883302f8f.1;
-        Tue, 15 Oct 2024 06:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728997884; x=1729602684; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+1IE6vo5EI0G+9qqkm/qKlmdaFnB9SlCUS7LfmzYM5M=;
-        b=BzdAt1J7iEF2fUEizcyFJt+udH8eMoxVwTpVXColip1YsoYF3gWKGQ3MK6o5189JGi
-         /HmqLjUqmLHxyXr8yHfg4maBHXQx4b/qywTwKF+RfDgzeCbMOAZxKRB6Or9SSZioJOPy
-         PB4MsZ1UdQIBeGn5EKZnnN82XRkt1O+uvjuGF2Lu0XUykNVbkp74qC5MM2QoE4ft4sdD
-         oKIo8Ak87U+SrWJRGh8A+P4pjpFAB9t/WjytC97hER9La4xiNxHzpKv5HWyvISkOBxaI
-         CVg6jXhCX+0T+gaBQJZaambhJ0JqXDxE4nkA4LyubkKFWrcJvFi9XUxitfgZ+k9zWtYW
-         EaKQ==
+	s=arc-20240116; t=1728998000; c=relaxed/simple;
+	bh=plcaK76hkid5gnT1x7iHYL/VKTUqMiIgtcj1DUiEGD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UmsT6mFKMn9Ktq5QPAoNayuhx2hhKc+by1GWVuSXpRWEDwXRiKwp8hQSjmAKZM0Gpld4+sOjGe4Y1mqswBnDY8By4pt1Szez93rRuKJNXw5L0zU8rGxoksZK78wIN4F9A2XQ2Ez0uT8MHIrHw+ZrUFarxdDWMMZHkzNcswoOasw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P4XDAhzW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728997996;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6BlepldiLdUI0lbFpeXtxxXgw7IF9mMia2QYyFoiN3M=;
+	b=P4XDAhzW60uy6YPRK+3NvBy477veP6UQW+l3Q/B6znHHpNlPlx8T4awnq2iHqXC2fJKDNw
+	0lalPawJFLIQ5+7aPsRenhuS3V9DLX5VdGcP0aTUcoOoCbCUH0VKe+c1mO/AAJDgTAMqIt
+	fH9pCKCDmWrioOqvmgO1ANe8wqhS6aQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-91-1KzhV59UMvixEfQD256mAQ-1; Tue, 15 Oct 2024 09:13:15 -0400
+X-MC-Unique: 1KzhV59UMvixEfQD256mAQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431159f2864so28058945e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:13:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728997884; x=1729602684;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+1IE6vo5EI0G+9qqkm/qKlmdaFnB9SlCUS7LfmzYM5M=;
-        b=R1EHm4UATOdj0qz0NkniWjTWH/mEhu+X32C9B9AyhXtE3A6y4PAzO8+JGZYv4IseGD
-         Y23vnAGi7ykn/jcEigAnuotDr5+elVy+g6YBrAXS1WObT64uCtLkjvGBItrrdD1A1+YD
-         Ahw2CmbPLWH/nGKyX7gnMcMf+iKLr6uMDlERKP3QzvdlFnKPXW7/4q2EpUBjYcNQdUtl
-         lVDLmiHalbv6Ki2mu2OTIAZVbuYc49/x0x1mSlbGJffF6J9nKoMqO0f3Xr2HyxkZPqU3
-         nPwONLI1IlM9NSI7J5uBkcK8wd+bpxMmqR1T/qvnUL+6VdZC0n7jXMvimnCxONAIQFBX
-         acQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVB+6p08wnYFw7tLZOCzTuqSWOuB5BlKS/KwLwTNMxHnQTkM/RhdrAsyU4sbIpQz4RrwiHXD7JbNHUZRXc=@vger.kernel.org, AJvYcCWJInoTamc16vKuZtgWFYHZjnDwt6YT3LDanHb4nflRSzQ2q8T90pnSA7+gPxDkNvV2rwe5yEWFW3nulUd2@vger.kernel.org, AJvYcCXcgTaaEV6CI66e/7qpSSU6TcMHDwYLT+au9uA0vDSs0RZjGjOhSs+PzjyC9oASAAhFz530qNvYZCB9bSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYmyPp1b2Tjacp/gBpKS4DWx8lWOnNn5j7qSV/59mge9o4jibR
-	OfGeczRQ0kHw0e6ttNR08rPEkbvxJStiwyfxZkg+IubHeLIDjwG9
-X-Google-Smtp-Source: AGHT+IGQFWTBXvU5wXNEk0QGqxDOUX4gnEXP4PmUa1kS6aTrW558NclQ2ZVgyZ8GZr0QFArTBlc2Kg==
-X-Received: by 2002:a5d:4244:0:b0:37d:30e7:3865 with SMTP id ffacd0b85a97d-37d5521ac3fmr10146183f8f.34.1728997884177;
-        Tue, 15 Oct 2024 06:11:24 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf857fsm1552386f8f.74.2024.10.15.06.11.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 06:11:23 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Akhil R <akhilrajeev@nvidia.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-crypto@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] crypto: tegra: remove redundant error check on ret
-Date: Tue, 15 Oct 2024 14:11:22 +0100
-Message-Id: <20241015131122.152046-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1728997994; x=1729602794;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6BlepldiLdUI0lbFpeXtxxXgw7IF9mMia2QYyFoiN3M=;
+        b=TfW2tu92gOajyBPb8X71yk+IRzRD973uw9UhVDaSfrm6GdBt8rTv8KiegKEaqSwT2/
+         ye5Hr+B5XTQDvtNbZSP9qKzJwt/SqsZtodTFvxF6pXfCOLX5xN1euFRZ3iBb1EqsfWYp
+         n6+ng3KYhe3Vtm23O4+23bShsytiDcFUt5jBd+GsGm0gcDdGk+fh/qKtDv96Wbixx+s3
+         I6FLJoyA6HsfGcRaBBKCsA0o8NvgtWjgiTXAKNCqgTAPvx/2rji3csPhviii9Lz1io+P
+         VAgVa/VuFub6WEsyDiMVLEPgbZ2/rjwOhsgK6lnCa90+q1FCBThGs4FwM8bbHiHJKJXQ
+         hDow==
+X-Gm-Message-State: AOJu0YwgniBCAwg6/QyaUnGucc8/vgX6enNzYGqr9Quu99dG3BoUR8gY
+	4LnC0IGbEZY/eOVP3jcrUVyTyBfgdN4WQ1OeGi2sj73Jzn2xSmf5yYz6xoIGWl2nWQ87pRt/s5j
+	XkSYk9THB8+QTUD3dI6xEahoLdAWD6RA86ayW9BzdLRZIhXmI0sphRweYBmKiDjGzJe1dHXxM6U
+	24d89QzpwHNc8NiwvqZxquVrYzDCze8SRnvnrJyw3GxE4r
+X-Received: by 2002:a05:600c:5012:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-4314a284c97mr4145975e9.4.1728997994348;
+        Tue, 15 Oct 2024 06:13:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECcu2tYyH+BZRAphlRpRfkiQfa30pn2M2Jspl7YwgWKpkMZCrMZzAXuO/knsNDyrMRBiqr1g==
+X-Received: by 2002:a05:600c:5012:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-4314a284c97mr4145685e9.4.1728997993912;
+        Tue, 15 Oct 2024 06:13:13 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c730:9700:d653:fb19:75e5:ab5c? (p200300cbc7309700d653fb1975e5ab5c.dip0.t-ipconnect.de. [2003:cb:c730:9700:d653:fb19:75e5:ab5c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6b3215sm17480725e9.34.2024.10.15.06.13.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 06:13:13 -0700 (PDT)
+Message-ID: <4898fdf4-7c88-4697-9df4-64fd8a900e95@redhat.com>
+Date: Tue, 15 Oct 2024 15:13:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/pagewalk: fix usage of pmd_leaf()/pud_leaf()
+ without present check
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+ syzbot+7d917f67c05066cec295@syzkaller.appspotmail.com,
+ Andrew Morton <akpm@linux-foundation.org>, Jann Horn <jannh@google.com>
+References: <20241015111236.1290921-1-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241015111236.1290921-1-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently there is an unnecessary error check on ret without a proceeding
-assignment to ret that needs checking. The check is redundant and can be
-removed.
+On 15.10.24 13:12, David Hildenbrand wrote:
+> pmd_leaf()/pud_leaf() only implies a pmd_present()/pud_present() check on
+> some architectures. We really should check for
+> pmd_present()/pud_present() first.
+> 
+> This should explain the report we got on ppc64 (which has
+> CONFIG_PGTABLE_HAS_HUGE_LEAVES set in the config) that triggered:
+> 	VM_WARN_ON_ONCE(pmd_leaf(pmdp_get_lockless(pmdp)));
+> 
+> Likely we had a PMD migration entry for which pmd_leaf() did not
+> trigger. We raced with restoring the PMD migration entry, and suddenly
+> saw a pmd_leaf(). In this case, pte_offset_map_lock() saved us from more
+> trouble, because it rechecks the PMD value, but we would not have processed
+> the migration entry -- which is not too bad because the only user of
+> FW_MIGRATION is KSM for unsharing, and KSM only applies to small folios.
+> 
+> Further, we shouldn't re-read the PMD/PUD value for our warning, the
+> primary purpose of the VM_WARN_ON_ONCE() is to find spurious use of
+> pmd_leaf()/pud_leaf() without CONFIG_PGTABLE_HAS_HUGE_LEAVES.
+> 
+> As a side note, we are currently not implementing FW_MIGRATION support
+> for PUD migration entries, which likely should exist due to hugetlb. Add
+> a TODO so this won't fall through the cracks if more FW_MIGRATION users
+> get added.
+> 
+> Fixes: aa39ca6940f1 ("mm/pagewalk: introduce folio_walk_start() + folio_walk_end()")
+> Reported-by: syzbot+7d917f67c05066cec295@syzkaller.appspotmail.com
+> Closes: https://lkml.kernel.org/r/670d3248.050a0220.3e960.0064.GAE@google.com
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Jann Horn <jannh@google.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/crypto/tegra/tegra-se-aes.c | 2 --
- 1 file changed, 2 deletions(-)
+Was able to write a quick reproducer and verify that the issue no longer triggers with this fix.
 
-diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
-index ae7a0f8435fc..9d130592cc0a 100644
---- a/drivers/crypto/tegra/tegra-se-aes.c
-+++ b/drivers/crypto/tegra/tegra-se-aes.c
-@@ -1180,8 +1180,6 @@ static int tegra_ccm_do_one_req(struct crypto_engine *engine, void *areq)
- 			goto out;
- 	} else {
- 		rctx->cryptlen = req->cryptlen - ctx->authsize;
--		if (ret)
--			goto out;
- 
- 		/* CTR operation */
- 		ret = tegra_ccm_do_ctr(ctx, rctx);
+https://gitlab.com/davidhildenbrand/scratchspace/-/blob/main/reproducers/move-pages-pmd-leaf.c
+
+Without this fix after a couple of seconds in a VM with 2 NUMA nodes:
+
+[   54.333753] ------------[ cut here ]------------
+[   54.334901] WARNING: CPU: 20 PID: 1704 at mm/pagewalk.c:815 folio_walk_start+0x48f/0x6e0
+[   54.336455] Modules linked in: ...
+[   54.345009] CPU: 20 UID: 0 PID: 1704 Comm: move-pages-pmd- Not tainted 6.12.0-rc2+ #81
+[   54.346529] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
+[   54.348191] RIP: 0010:folio_walk_start+0x48f/0x6e0
+[   54.349134] Code: b5 ad 48 8d 35 00 00 00 00 e8 6d 59 d7 ff e8 08 74 da ff e9 9c fe ff ff 4c 8b 7c 24 08 4c 89 ff e8 26 2b be 00 e9 8a fe ff ff <0f> 0b e9 ec fe ff ff f7 c2 ff 0f 00 00 0f 85 81 fe ff ff 48 8b 02
+[   54.352660] RSP: 0018:ffffb7e4c430bc78 EFLAGS: 00010282
+[   54.353679] RAX: 80000002a3e008e7 RBX: ffff9946039aa580 RCX: ffff994380000000
+[   54.355056] RDX: ffff994606aec000 RSI: 00007f004b000000 RDI: 0000000000000000
+[   54.356440] RBP: 00007f004b000000 R08: 0000000000000591 R09: 0000000000000001
+[   54.357820] R10: 0000000000000200 R11: 0000000000000001 R12: ffffb7e4c430bd10
+[   54.359198] R13: ffff994606aec2c0 R14: 0000000000000002 R15: ffff994604a89b00
+[   54.360564] FS:  00007f004ae006c0(0000) GS:ffff9947f7400000(0000) knlGS:0000000000000000
+[   54.362111] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   54.363242] CR2: 00007f004adffe58 CR3: 0000000281e12005 CR4: 0000000000770ef0
+[   54.364615] PKRU: 55555554
+[   54.365153] Call Trace:
+[   54.365646]  <TASK>
+[   54.366073]  ? __warn.cold+0xb7/0x14d
+[   54.366796]  ? folio_walk_start+0x48f/0x6e0
+[   54.367628]  ? report_bug+0xff/0x140
+[   54.368324]  ? handle_bug+0x58/0x90
+[   54.369019]  ? exc_invalid_op+0x17/0x70
+[   54.369771]  ? asm_exc_invalid_op+0x1a/0x20
+[   54.370606]  ? folio_walk_start+0x48f/0x6e0
+[   54.371415]  ? folio_walk_start+0x9e/0x6e0
+[   54.372227]  do_pages_move+0x1c5/0x680
+[   54.372972]  kernel_move_pages+0x1a1/0x2b0
+[   54.373804]  __x64_sys_move_pages+0x25/0x30
+
+
+
+
 -- 
-2.39.5
+Cheers,
+
+David / dhildenb
 
 
