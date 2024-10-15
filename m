@@ -1,187 +1,142 @@
-Return-Path: <linux-kernel+bounces-366084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41C499F0AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:06:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C04B399F0B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9021C22CFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8445828284D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7471BF2B;
-	Tue, 15 Oct 2024 15:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C1A1BF2B;
+	Tue, 15 Oct 2024 15:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rFrdZQBU"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JkWSKLCH"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB001CB9F0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16411CB9E4;
+	Tue, 15 Oct 2024 15:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729004810; cv=none; b=QcDl0Lmo2HMZRUy/tuF/iGI+ysTxE+It2MdSgVVl9Aup9bwgONBPae9y1MTJrv/4EnJQGZcgTWV24Vvs9n0+DquuadgmA8TzIBamHUbKyWIcHjrpjec7iTaUgoKzWYftFdZ2mN8I6+V77vPYCv+RJCmMld2r4XeJlfLuDfGoxlU=
+	t=1729004897; cv=none; b=YKLcke6rg6S885orKjavy85TOaGBbNcOXvw/9CvRO9C+I3bhc4LdnSw+x5iV0IGzbz0rQ3U5R1Zc5B9U04HPy8sIE8FcXf+xL7UW97woTWvcaYU6jDjk8KT8vTJC/nf3inCeYVhaZNlYR8rIGmD8U/ccqjfJ28sxwOyJhXfpnyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729004810; c=relaxed/simple;
-	bh=ZQl9UHMbS2zpthn3YlCftCta2N9I8PKzHq+fgsLN3WU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rT3pS0DI+9Hql57iGc/WP4lRCwN9/Y1LP0JOz+2OwksqKXdWTxn/NReZ7zwOh7+meEym72qgj2EDSEH0ZghTxbd+d0RRZlDDGQYBEhjjwEWoKnMjNLlUC2ggZYJ2uTbGhgzDyR8yaC7icJQq4pKV4AK/cfe8Q/54qw8txeSoxGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rFrdZQBU; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-460395fb1acso761721cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:06:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729004808; x=1729609608; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZQl9UHMbS2zpthn3YlCftCta2N9I8PKzHq+fgsLN3WU=;
-        b=rFrdZQBUwK7/8NHpvnye4lKlnZjtShFi8/CGdGyDUgsw9iBJbNYqowB2MYXZMyuYNs
-         DXeayvOWXYxm1UK1zGyecFMNZXpowo4dQstkyZboIiMzvB6BGTLuNAPnVEAJzNn1kdRz
-         aV0ERoMyWi71ULYetk8d62Tg0R4QlrgaPk4iZ1TDdon5dxzoxlrjk03aSESlIDti5RSP
-         OJjQolWHPY+QIqDm+4Msr4Ve+Upcr4Yf43JqYR7o9uiK0nxZXTNOIUEhVRC5Eeu+1VUs
-         gzH52tuJU6ZR8qoDb/R8Zmj16ORnbMA/bsLyDkjtIpKG4HXkaDNRGExOhdWBh77AtbFa
-         I01w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729004808; x=1729609608;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZQl9UHMbS2zpthn3YlCftCta2N9I8PKzHq+fgsLN3WU=;
-        b=Mb4qfgzWuEn4wm/SeQPzXo3YC9eSiYHLcPzHK/rcwr4Vixd3gtS7Jz+0wFuJJp4EPh
-         bgvrrsPCmC6qtLTWFsnfX8ICTl9q28b0B8amP3440DDoNQyx/XwtDR/ndZl6mjP+Tm8V
-         ujkqM6E+4ObH2rAHSNZcM5WPULr8gG6DHvZa6rgSMdWrrUFiauzecmxTWYM4VNwCOEl+
-         gJJa45kz8uWM/sMMpfdRZLq/48IiJP/iwjN+2gaVNERwPmvvO77uBS9lscFM4k6G7KXX
-         ibQstZe5ShK2/o419srhilJnixQE0CFg1hVHJsmFVmNbDlxoAvXkOMXsVuuCILasq62o
-         LJgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvf0uywFTsDGh5Rxuaa0M1CLt2ZzGIb5OHE602u+InAUQVW0zFWotZSh8I7SPni3dIVN1hF+QDKvHBbLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmdmoJYUUmTxWenrHZ7+gi0GfP9wd3E4SBrmKsFJSnulg0zyoH
-	j6L/OSBAZVgQ/b+O1vJKo7aoRPsKxHg2FKudW9tknQGEHcuP3DWCXEiYCkxcRJx0sPua3mPzii3
-	5JxeZyetinn/SCVLuYs40UErmIGQfs6cZFhw+
-X-Google-Smtp-Source: AGHT+IFz49w7sJh5aAv5suX/gv44ZHvixIsfk7pLi4CHMT74qdTtREKObwESHWojwr9bWtWWKSGe9xN21xl8GKoggmw=
-X-Received: by 2002:ac8:648d:0:b0:460:8406:2c2c with SMTP id
- d75a77b69052e-46084062ef6mr1391331cf.25.1729004807352; Tue, 15 Oct 2024
- 08:06:47 -0700 (PDT)
+	s=arc-20240116; t=1729004897; c=relaxed/simple;
+	bh=gdlIJel0Ab3zWpaPit2XyOzQkLrTxP7jMksrMJtCHWY=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=A4y/P13dZJozQm6naLYvsBXxWRWMtGxVyOzc/MYaJH/2uVVa0fKy1VzzJIno1szpaOI9+0LFb6Sqv8ViML4TfXZbrykU8qKKveJo/45nvdxAJ6wm0jgophrq2sza7JzHQkFHnwN4g8dLrbUCZl4LbkDj02niPFVePm4x5McijIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JkWSKLCH; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1729004844; x=1729609644; i=markus.elfring@web.de;
+	bh=MaPDtsAu0VZDFqGSAskos6W/UUdZXWKX1E7T5Bfhlow=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=JkWSKLCHNB8kaCB9g1M8JfiGz1Gc0l/VhPaxS0LQyKyNL/hgDWVKNb3srRuEKEV1
+	 OSdGLy/YNoAZux0fmVRS3T2XdOaX6I3IPylYFKFqxx04UJCMnEF8CP3AvdQFxKxvQ
+	 QELr7IBxX6mXLCRqW80dxQOcHQoapzDhuSZpEt/qN2ZHxaN2DaQKZA5ufDHVEJ0rt
+	 15BKgS/qTaIxHvWTFhjOK7WENeRRsD3e9c/h26tNeLzithewjXBEDGRsw4hjK9ef2
+	 2Spz92VNA2FajUcCL4rVaC5p5ZLd+EhLpj8uVEDjS+5QY0MaLg7TR1XWcJ3SdunEM
+	 G8vDReVBL52VFyrYPw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [94.31.89.95] ([94.31.89.95]) by web-mail.web.de
+ (3c-app-webde-bap19.server.lan [172.19.172.19]) (via HTTP); Tue, 15 Oct
+ 2024 17:07:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-6-surenb@google.com>
- <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
- <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com> <CAJD7tkY8LKVGN5QNy9q2UkRLnoOEd7Wcu_fKtxKqV7SN43QgrA@mail.gmail.com>
- <ba888da6-cd45-41b6-9d97-8292474d3ce6@nvidia.com> <CAJuCfpE4eOH+HN8dQAavwUaMDfX5Fdyx7zft6TKcT33TiiDbXQ@mail.gmail.com>
- <CAJD7tkb7UTpNWwJ84TZqB7SyZ2eyQrraOJ0g2qDmxS6C6Y1AtQ@mail.gmail.com>
-In-Reply-To: <CAJD7tkb7UTpNWwJ84TZqB7SyZ2eyQrraOJ0g2qDmxS6C6Y1AtQ@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 15 Oct 2024 08:06:36 -0700
-Message-ID: <CAJuCfpF=EJ2CZRdg-JEdzkRCp_TtSXduB_hxqdEu379Z0OKAKg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, akpm@linux-foundation.org, 
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, 
-	rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, 
-	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
-	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
-	dennis@kernel.org, yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
-	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <trinity-8fef4ba2-f5ab-4b78-b3de-aa1dc7d2fa33-1729004844102@3c-app-webde-bap19>
+From: Markus Elfring <Markus.Elfring@web.de>
+To: Kevin Chen <kevin_chen@aspeedtech.com>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-aspeed@lists.ozlabs.org
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, BMC-SW
+ <BMC-SW@aspeedtech.com>, kernel-janitors@vger.kernel.org
+Subject: RE: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX
+ INTC
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Oct 2024 17:07:24 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <PSAPR06MB49496CC4F25425753EA4252C89452@PSAPR06MB4949.apcprd06.prod.outlook.com>
+References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
+ <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
+ <PSAPR06MB4949904D1FA95DBD3EF5288A89792@PSAPR06MB4949.apcprd06.prod.outlook.com>
+ <0b995a34-28c4-4ba6-8ad2-e8413c6a63f5@web.de>
+ <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
+ <trinity-a5696b99-bf11-4ae3-8b00-20db116f86e4-1728911450361@3c-app-webde-bs22>
+ <PSAPR06MB49496CC4F25425753EA4252C89452@PSAPR06MB4949.apcprd06.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:F3RU5HNCdI/jhBQpl+toJRa3DuBoVXM/3J7YtGQP8UK7HGzSQbDWkPV1QXbhmYa1fJYWS
+ OT3rKdiRCJX+9hUs/QEWqw7bYCjq5DB6X9H1nPG5sBtFSjbelw9+KJRI6BrjJvEzHmSWCDSYYuVF
+ MhqAxLP9hbrZtcjr58Pyok9idl9H8LpMsJCOMB8mAfnUL/YivF3D6ymuyUXT0cuW8g7l1JB65aXy
+ vmPBcROpJgZfpg24+QtdQlF6FlL4XVIdNgFDbTIU1ei0HczxdoqplmDaAViogKxnqCdBRkVWF7e4
+ mM=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dD4MnKQdevg=;PGRHMRrbx68AQKUlksNjQBeq6CZ
+ 0U6ABRx88Ioju0X2E5N/+H0j2oCYnZ1Q99BM9ThJXW6seOOSEj7zeRqoDzfJlqx8nnMQyQ688
+ ZuQgWhBKfNB0jgNSvqi1qIX19OD18UjPzLPm001jOmf9CRu5CFX9K+7d+pUrWYlEsGN2TM6tV
+ YfM3FshPbU68Z/Bk8Lli5C4pF7abi06j0/UgKE1rjG1IzvuecELoUxx6j8aoMtpdwhvoXfZW7
+ LyLmWmZEFUmLvGPyOuif9XN55EK7aDJJaTTwIMKlBz/1V0a0wE/9rMNp/ZFzKqWA3xLXvEVmZ
+ PRSMC5apha1Y7Epxf2JKIAnoiS1u8SZFgxp67tH6Pf1ED1AJJFgoiNP9XhDctNnuT30RD69Td
+ Z52BDQgTxEVPeK6XYKgCtFAlptWh5VpSEXKsrySIO+YDGC1dJKLDQSvdwj6EF7hbBnBuCBB/S
+ GgI+K/Bb3272qz30qxXj8dzKh3LcM7gaIdwfLnLw4J9x1VXi3y4qVVUIiSh37g9e4OVh//QWs
+ yockuvjNsyTIg/bWkzOmV3S6U8GFRbRMW76jf/k9/Mq8acx9IhzsZk3Yv0/vuBZJWNrT+9wos
+ ULhFGGq9+IeR8SA4waEHtPk1JDQDyN624qb2M2yTtQcSYcf7o1JHBzewZShncbE/xdtmGlQgk
+ qTuldRrUkZoo2g27bf9qhhWTL+KSeyUWRjp0Uwnpbw==
 
-On Tue, Oct 15, 2024 at 1:10=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> On Mon, Oct 14, 2024 at 6:58=E2=80=AFPM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> >
-> > On Mon, Oct 14, 2024 at 5:03=E2=80=AFPM 'John Hubbard' via kernel-team
-> > <kernel-team@android.com> wrote:
-> > >
-> > > On 10/14/24 4:56 PM, Yosry Ahmed wrote:
-> > > > On Mon, Oct 14, 2024 at 4:53=E2=80=AFPM John Hubbard <jhubbard@nvid=
-ia.com> wrote:
-> > > >>
-> > > >> On 10/14/24 4:48 PM, Yosry Ahmed wrote:
-> > > >>> On Mon, Oct 14, 2024 at 1:37=E2=80=AFPM Suren Baghdasaryan <suren=
-b@google.com> wrote:
-> > > >>>>
-> > > >>>> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
-> > > >>>> references directly in the page flags. This eliminates memory
-> > > >>>> overhead caused by page_ext and results in better performance
-> > > >>>> for page allocations.
-> > > >>>> If the number of available page flag bits is insufficient to
-> > > >>>> address all kernel allocations, profiling falls back to using
-> > > >>>> page extensions with an appropriate warning to disable this
-> > > >>>> config.
-> > > >>>> If dynamically loaded modules add enough tags that they can't
-> > > >>>> be addressed anymore with available page flag bits, memory
-> > > >>>> profiling gets disabled and a warning is issued.
-> > > >>>
-> > > >>> Just curious, why do we need a config option? If there are enough=
- bits
-> > > >>> in page flags, why not use them automatically or fallback to page=
-_ext
-> > > >>> otherwise?
-> > > >>
-> > > >> Or better yet, *always* fall back to page_ext, thus leaving the
-> > > >> scarce and valuable page flags available for other features?
-> > > >>
-> > > >> Sorry Suren, to keep coming back to this suggestion, I know
-> > > >> I'm driving you crazy here! But I just keep thinking it through
-> > > >> and failing to see why this feature deserves to consume so
-> > > >> many page flags.
-> > > >
-> > > > I think we already always use page_ext today. My understanding is t=
-hat
-> > > > the purpose of this series is to give the option to avoid using
-> > > > page_ext if there are enough unused page flags anyway, which reduce=
-s
-> > > > memory waste and improves performance.
-> > > >
-> > > > My question is just why not have that be the default behavior with =
-a
-> > > > config option, use page flags if there are enough unused bits,
-> > > > otherwise use page_ext.
-> > >
-> > > I agree that if you're going to implement this feature at all, then
-> > > keying off of CONFIG_MEM_ALLOC_PROFILING seems sufficient, and no
-> > > need to add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS on top of that.
-> >
-> > Yosry's original guess was correct. If not for loadable modules we
-> > could get away with having no CONFIG_PGALLOC_TAG_USE_PAGEFLAGS. We
-> > could try to fit codetag references into page flags and if they do not
-> > fit we could fall back to page_ext. That works fine when we have a
-> > predetermined number of tags. But loadable modules make this number
-> > variable at runtime and there is a possibility we run out of page flag
-> > bits at runtime. In that case, the current patchset disables memory
-> > profiling and issues a warning that the user should disable
-> > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to avoid this situation. I expect
-> > this to be a rare case but it can happen and we have to provide a way
-> > for a user to avoid running out of bits, which is where
-> > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS would be used.
->
-> If this is in fact a rare case, I think it may make more sense for the
-> config to be on by default, and the config description would clearly
-> state that it is intended to be turned off only if the loadable
-> modules warning fires.
+=E2=80=A6
+> > > +static void aspeed_intc_ic_irq_handler(struct irq_desc *desc) {
+=E2=80=A6
+> > > +       guard(chained_irq)(desc);
+> >=20
+> > Using another macro call =E2=80=9Cscoped_guard(=E2=80=A6) { =E2=80=A6 =
+}=E2=80=9D?
+> Is it necessary to use scoped_guard(=2E=2E=2E) {=2E=2E=2E}?
 
-Just to be clear, I think running out of pageflag bits at runtime (as
-a result of module loading) will be a rare case. That's because the
-core kernel has many more allocations than a typical module. Not
-having enough bits for the core kernel might be the most prevalent
-case, at least for large systems.
-That said, your suggestion makes sense. Since we have to keep
-CONFIG_PAGE_EXTENSION dependency (for the cases when we have to fall
-back to page_ext), there is no advantage of keeping
-CONFIG_PGALLOC_TAG_USE_PAGEFLAGS disabled. I'll change the default in
-the next version. Thanks for the suggestion!
+It depends on corresponding case disintions=2E
+
+
+> > > +       scoped_guard(raw_spinlock, &intc_ic->gic_lock) {
+> >=20
+> > Would you like to reconsider the proposed macro mixture once more?
+> Could I check the reason for once more?
+
+Coding style concerns =E2=80=A6?
+
+
+> > > +++ b/include/linux/irqchip/chained_irq=2Eh
+> > > @@ -38,4 +38,6 @@ static inline void chained_irq_exit(struct irq_chi=
+p *chip,
+> > >                 chip->irq_unmask(&desc->irq_data);
+> > >  }
+> > >
+> > > +DEFINE_GUARD(chained_irq, struct irq_desc *,
+> > chained_irq_exit((_T->irq_data=2Echip), (_T)),
+> > > +            chained_irq_enter((_T->irq_data=2Echip), (_T)))
+> >=20
+> > Would you like to add a #include directive in this header file accordi=
+ngly?
+> Can you give me an example?
+
+See also:
+https://elixir=2Ebootlin=2Ecom/linux/v6=2E12-rc3/source/include/linux/devi=
+ce=2Eh#L33
+
+Regards,
+Markus
 
