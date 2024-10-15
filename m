@@ -1,165 +1,203 @@
-Return-Path: <linux-kernel+bounces-366206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03ED199F229
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8298E99F22D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 776AAB20F6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:59:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9781B2304A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2493B1F9ECA;
-	Tue, 15 Oct 2024 15:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E181FAEFF;
+	Tue, 15 Oct 2024 15:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dKB4xsdt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aD0ysqYf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xKI1ie1X"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6241F76B5;
-	Tue, 15 Oct 2024 15:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F1A1F9EA4
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729007884; cv=none; b=Zm6Ut7A600kvEsGP0TOR/mF4BX0lhCjdwltnFWyELPkP7JxhLjc5pfMWW2sHhBxd6DkEYw+NR15YNPFJ/9lCQ6NNo3nIH3hfJWssekE1erLApMchrXm/3w25mjg0Yx5amo3JdKhWH7Pi4Us5F2F51hD76x5O+KC4opHFMle7Vfo=
+	t=1729007885; cv=none; b=OQ6vpsVWotNCIUCGeit7bk/1znwKoqaHrR04YPwa81Q74uOi1Q3j/xV2B/UrTKZRRjzO+b7HbBOFDG8w2eW8nNwsYexr8aZzUZ4W/+yKknFETl8eR46jwQ6L9zNksqGZJRhXZgSIJOWEZhU22yoCx8gnq0hoGe/+FIph61+a01Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729007884; c=relaxed/simple;
-	bh=gMX6iTfDMm1OXK+Hb0T2wIQJR4Nsxt1tYvzkW1k2q2o=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=d0mGTjJcIK6QdXyevFAvZNp+II/mKoZ+L655iovms2iqceUXTTbsJrbH2MZ9GnHYTn/cP+UPSb3uF1XcialAxu5GDXfXtN0JOuFpFYHWj51PtT+dt3A+TrsJvuvGJOEDDplrEiprhNA7z9t3waOGUbW384/j0XLhVIkkHfRm86k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dKB4xsdt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aD0ysqYf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 15:58:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729007881;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GXurgSPJOLKotS50YGrtY+lfyDJTxt6uJJNyHI0gMtM=;
-	b=dKB4xsdtNKq3Wo9jx/n3jOiyir4Y6be787ayUa/6t8r7wLNswBadrzWSYBUjay9oZ7Rzuz
-	oQjrUgyEZOEWByyOM2EH51RMGl2i4tNTS4Y19oZKcdFBNdJRnHJRjXTUWO6T76n/r2klx3
-	ypnGXd0d9P5Z6YROlDJlbdB2+I74jzGgxBoFbGzkbY5DEjaDnm0C+VNLwj+xn9Kwx1a0UJ
-	Q1t6iwlNa3pHntU+CHsbpbXAyYKiS8tqydK40bWawzp/O/OEyGGKyOuciylTwGBLy2TGmh
-	16OD+zZOX2WBHlvDGWc6L9QkaNEodqNZiIACCx3B74hwDPhCJ+9CaUr4iZus2A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729007881;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GXurgSPJOLKotS50YGrtY+lfyDJTxt6uJJNyHI0gMtM=;
-	b=aD0ysqYfOMQhTSX4s4sa5V7GFio0S2dUQQinw4oFhhQBCCAbn8e/xA6xeNTRW7pvTJNZhg
-	ci4sFBYsei3W4pBA==
-From:
- tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] vdso: Remove timekeeper argument of
- __arch_update_vsyscall()
-Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To:
- <20241010-vdso-generic-arch_update_vsyscall-v1-1-7fe5a3ea4382@linutronix.de>
-References:
- <20241010-vdso-generic-arch_update_vsyscall-v1-1-7fe5a3ea4382@linutronix.de>
+	s=arc-20240116; t=1729007885; c=relaxed/simple;
+	bh=aYJ3ScoRGgAobUtmWNW7wrrfHvNJK4QqvJ0rYbf6QwA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ghe9BsJP1B0anTXUWbbRud1OlkW9ZGCOyD9KyakhkDM7jQTSLjsqD8/Tffdfv0UYBEoWgvbYXeIR0DhAyRu3SLEhVOzHRdemHWr4rcEVsn8hMcTMM2k1+yLBaz0c8HvoSUrhM+buK3eKtT3qQbItkJfn9RBoZWzYWgODz4dTbjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xKI1ie1X; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71930797560so5976199b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729007883; x=1729612683; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bpgcprPI+vvJsG2LB/Vt+V2mYjpRXDgXYo99nuQ4xLg=;
+        b=xKI1ie1X40VczKlusr1XxD0YPkV2zZfe/6okKWD3+t8AFuC1QFITTSPGtfYAWW+NkP
+         oD/2iSw3t5TyDU6xmFJ5lEdm0VK8bhpD9Lv6J8nT1eBicsyEIYv5GnR/JdABC/Ah1yEk
+         ADV6mXe17tOE6Pyq0mR6YTrCsaSbyrgtSKTFSu55q8oyBpCYsI2v3D0zhpfrnc9cqH1I
+         m7SaNxyMhPvljDrUfbQV7g2o5dBN8kccwLR1S/QYXaCsvLoKV3qxUhFrvr1L4y0mTMkd
+         WVtbxGYXSq2vffsS6K12kSNTkmstcq7eDCyWUYm9gNUlOZYsvrCy6Jq2LczpUM8bVnq3
+         a99g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729007883; x=1729612683;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bpgcprPI+vvJsG2LB/Vt+V2mYjpRXDgXYo99nuQ4xLg=;
+        b=vxeBWFdF/hyb9NUyjJCFkytpCCI3i6B8yHc2tmzYC2O3/uDdgTJWSwCvkPpeLuj2SC
+         pp0fXlI9EoRazBMCcVrYlJOn1KHcLT8L4Ec0FARzVHs443pAsCdszegEQjxEICtXXspo
+         Cs2Q+Vv6lp1VwV0TXfGT6aB3HbXs9OQ5+0hpp65eDCz1zSOG/MwQIAZiP338gjZcxF2K
+         mAKgCO16OVT7MTw/+upeW/1MJYWI+BfDsEo4RBad8uuPNM2VXddNwGkq7HzJ0Oj0gd6s
+         lla+TU6sNYm+UDOHAiwUTCQ5x56dVGHSL79ZH3iHJY/6SNkvYjeAGGexN226IeD/Onc7
+         G74Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWZIy4eRyvmUNLN0u0JIPP3QobgeZ5OcVjM0+hbaLtqTHSyHcX4+hdn7M7TWsziNll3XMD7zYWOFyP+Uy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDoZorOLXIfnVuZsZho3zm9N1/i6RREuAkKaHYJL8uNtit81TR
+	/qHp9O0Su71/9Ir5hHMzZcCo48u9ARY3LBtwlLMF6aw/5scXrM3F68uhr8gUEhYTFM2YnweJzMk
+	qAA==
+X-Google-Smtp-Source: AGHT+IEOMhUIEJb7HA5wBTCErVAFDrxkcdBMavuoBSriks4hlucPD3WdjFvME0Ck5+1DRkZ02jm1mHkhvMQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:aa7:9d81:0:b0:71e:5bf6:fef0 with SMTP id
+ d2e1a72fcca58-71e7db6d5b2mr1783b3a.6.1729007883292; Tue, 15 Oct 2024 08:58:03
+ -0700 (PDT)
+Date: Tue, 15 Oct 2024 08:58:01 -0700
+In-Reply-To: <87h69dg4og.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <172900788089.1442.5849190644686353213.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241004140810.34231-1-nikwip@amazon.de> <20241004140810.34231-3-nikwip@amazon.de>
+ <875xq0gws8.fsf@redhat.com> <9ef935db-459a-4738-ab9a-4bd08828cb60@gmx.de> <87h69dg4og.fsf@redhat.com>
+Message-ID: <Zw6PlAv4H5rNZsBf@google.com>
+Subject: Re: [PATCH 2/7] KVM: x86: Implement Hyper-V's vCPU suspended state
+From: Sean Christopherson <seanjc@google.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Nikolas Wipper <nik.wipper@gmx.de>, Nikolas Wipper <nikwip@amazon.de>, 
+	Nicolas Saenz Julienne <nsaenz@amazon.com>, Alexander Graf <graf@amazon.de>, James Gowans <jgowans@amazon.com>, 
+	nh-open-source@amazon.com, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-The following commit has been merged into the timers/vdso branch of tip:
+On Tue, Oct 15, 2024, Vitaly Kuznetsov wrote:
+> Nikolas Wipper <nik.wipper@gmx.de> writes:
+> 
+> > On 10.10.24 10:57, Vitaly Kuznetsov wrote:
+> 
+> ...
+> 
+> >>>  int kvm_hv_vcpu_flush_tlb(struct kvm_vcpu *vcpu);
+> >>> +
+> >>> +static inline bool kvm_hv_vcpu_suspended(struct kvm_vcpu *vcpu)
+> >>> +{
+> >>> +	return vcpu->arch.hyperv_enabled &&
+> >>> +	       READ_ONCE(vcpu->arch.hyperv->suspended);
+> >>
+> >> I don't think READ_ONCE() means anything here, does it?
+> >>
+> >
+> > It does prevent compiler optimisations and is actually required[1]. Also
+> > it makes clear that this variable is shared, and may be accessed from
+> > remote CPUs.
+> >
+> > [1] https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0124r6.html#Variable%20Access
+> 
+> It certainly does no harm but I think if we follow 'Loads from and
+> stores to shared (but non-atomic) variables should be protected with the
+> READ_ONCE(), WRITE_ONCE()' rule literally we will need to sprinkle them
+> all over KVM/kernel ;-) And personally, this makes reading the code
+> harder.
+> 
+> To my (very limited) knowledge, we really need READ_ONCE()s when we need
+> to have some sort of a serialization, e.g. the moment when this read
+> happens actually makes a difference. If we can e.g. use a local variable
+> in the beginning of a function and replace all READ_ONCE()s with
+> reading this local variable -- then we don't need READ_ONCE()s and are
+> OK with possible compiler optimizations. Similar (reversed) thoughts go
+> to WRITE_ONCE().
+> 
+> I think it's OK to keep them but it would be nice (not mandatory IMO,
+> but nice) to have a comment describing which particular synchronization
+> we are achieving (== the compiler optimization scenario we are protecting
+> against). 
+> 
+> In this particular case, kvm_hv_vcpu_suspended() is inline so I briefly
+> looked at all kvm_hv_vcpu_suspended() call sites (there are three) in
+> your series but couldn't think of a place where the READ_ONCE() makes a
+> real difference. kvm_hv_hypercall_complete() looks pretty safe
+> anyway. kvm_hv_vcpu_unsuspend_tlb_flush() will be simplified
+> significantly if we merge 'suspended' with 'waiting_on': instead of 
+> 
+>       kvm_for_each_vcpu(i, v, vcpu->kvm) {
+>               vcpu_hv = to_hv_vcpu(v);
+> 
+>               if (kvm_hv_vcpu_suspended(v) &&
+>                   READ_ONCE(vcpu_hv->waiting_on) == vcpu->vcpu_id) {
+> ...
+> 
+> you will have just
+> 
+>       kvm_for_each_vcpu(i, v, vcpu->kvm) {
+>               vcpu_hv = to_hv_vcpu(v);
+> 
+>               if (vcpu_hv && vcpu_hv->waiting_on == vcpu->vcpu_id) {
+> ...
+> (and yes, I also think that READ_ONCE() is superfluous here, as real
+> (non-speculative) write below can't happen _before_ the check )
+> 
+> The last one, kvm_vcpu_running(), should also be indifferent to
+> READ_ONCE() in kvm_hv_vcpu_suspended(). I may had missed something, of
+> course, but I hope you got my line of thought.
 
-Commit-ID:     39c089a01a7e431383710a566864644cbbc0f8fe
-Gitweb:        https://git.kernel.org/tip/39c089a01a7e431383710a566864644cbbc=
-0f8fe
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Thu, 10 Oct 2024 17:44:44 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 15 Oct 2024 17:50:28 +02:00
+I don't think you're missing anything.  In general, all of this code is more than
+a bit heavy-handed and lacks any kind of precision, which makes it *really* hard
+to see what actually guarantees a vCPU won't get stuck blocking.
 
-vdso: Remove timekeeper argument of __arch_update_vsyscall()
+Writers synchronize SRCU and readers are required to acquire SRCU, but there's
+no actual data tagged as being protected by SRCU, i.e. tlb_flush_inhibit should
+be __rcu.
 
-No implementation of this hook uses the passed in timekeeper anymore.
+All of the {READ,WRITE}_ONCE() stuff provides some implicit compiler barriers,
+but the actual protection to ensure a vCPU either observes inhibit=false or a wake
+event is provided by the smp_wmb() in __kvm_make_request().
 
-This avoids including a non-VDSO header while building the VDSO, which can
-lead to compilation errors.
+And from a performance perspective, synchronizing on kvm->srcu is going to be
+susceptible to random slowdowns, because writers will have to wait until all vCPUs
+drop SRCU, even if they have nothing to do with PV TLB flushes.  E.g. if vCPUs
+are faulting in memory from swap, uninhibiting a TLB flushes could be stalled
+unnecessarily for an extended duration.
 
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/all/20241010-vdso-generic-arch_update_vsyscall-=
-v1-1-7fe5a3ea4382@linutronix.de
+Lastly, KVM_REQ_EVENT is a big hammer (triggers a lot of processing) and semantically
+misleading (there is no event to process).  At a glance, KVM_REQ_UNBLOCK is likely
+more appropriate.
 
----
- arch/arm64/include/asm/vdso/vsyscall.h | 3 +--
- include/asm-generic/vdso/vsyscall.h    | 3 +--
- kernel/time/vsyscall.c                 | 2 +-
- 3 files changed, 3 insertions(+), 5 deletions(-)
+Before we spend too much time cleaning things up, I want to first settle on the
+overall design, because it's not clear to me that punting HvTranslateVirtualAddress
+to userspace is a net positive.  We agreed that VTLs should be modeled primarily
+in userspace, but that doesn't automatically make punting everything to userspace
+the best option, especially given the discussion at KVM Forum with respect to
+mplementing VTLs, VMPLs, TD partitions, etc.
 
-diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/=
-vdso/vsyscall.h
-index 5b6d0dd..eea5194 100644
---- a/arch/arm64/include/asm/vdso/vsyscall.h
-+++ b/arch/arm64/include/asm/vdso/vsyscall.h
-@@ -6,7 +6,6 @@
-=20
- #ifndef __ASSEMBLY__
-=20
--#include <linux/timekeeper_internal.h>
- #include <vdso/datapage.h>
-=20
- enum vvar_pages {
-@@ -37,7 +36,7 @@ struct vdso_rng_data *__arm64_get_k_vdso_rnd_data(void)
- #define __arch_get_k_vdso_rng_data __arm64_get_k_vdso_rnd_data
-=20
- static __always_inline
--void __arm64_update_vsyscall(struct vdso_data *vdata, struct timekeeper *tk)
-+void __arm64_update_vsyscall(struct vdso_data *vdata)
- {
- 	vdata[CS_HRES_COARSE].mask	=3D VDSO_PRECISION_MASK;
- 	vdata[CS_RAW].mask		=3D VDSO_PRECISION_MASK;
-diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/v=
-syscall.h
-index c835607..01dafd6 100644
---- a/include/asm-generic/vdso/vsyscall.h
-+++ b/include/asm-generic/vdso/vsyscall.h
-@@ -12,8 +12,7 @@ static __always_inline struct vdso_data *__arch_get_k_vdso_=
-data(void)
- #endif /* __arch_get_k_vdso_data */
-=20
- #ifndef __arch_update_vsyscall
--static __always_inline void __arch_update_vsyscall(struct vdso_data *vdata,
--						   struct timekeeper *tk)
-+static __always_inline void __arch_update_vsyscall(struct vdso_data *vdata)
- {
- }
- #endif /* __arch_update_vsyscall */
-diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
-index 9193d61..28706a1 100644
---- a/kernel/time/vsyscall.c
-+++ b/kernel/time/vsyscall.c
-@@ -119,7 +119,7 @@ void update_vsyscall(struct timekeeper *tk)
- 	if (clock_mode !=3D VDSO_CLOCKMODE_NONE)
- 		update_vdso_data(vdata, tk);
-=20
--	__arch_update_vsyscall(vdata, tk);
-+	__arch_update_vsyscall(vdata);
-=20
- 	vdso_write_end(vdata);
-=20
+The cover letters for this series and KVM_TRANSLATE2 simply say they're needed
+for HvTranslateVirtualAddress, but neither series nor Nicolas' patch to punt
+HVCALL_TRANSLATE_VIRTUAL_ADDRESS[*] justifies the split between userspace and
+KVM.  And it very much is a split, because there are obviously a lot of details
+around TlbFlushInhibit that bleed into KVM.
+
+Side topic, what actually clears HvRegisterInterceptSuspend.TlbFlushInhibit?  The
+TLFS just says 
+
+  After the memory intercept routine performs instruction completion, it should
+  clear the TlbFlushInhibit bit of the HvRegisterInterceptSuspend register.
+
+but I can't find anything that says _how_ it clears TlbFlushInhibit.
+
+[*] https://lore.kernel.org/all/20240609154945.55332-8-nsaenz@amazon.com
 
