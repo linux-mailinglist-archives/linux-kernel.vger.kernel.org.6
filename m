@@ -1,191 +1,498 @@
-Return-Path: <linux-kernel+bounces-365017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA1B99DC3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:26:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8926199DC42
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15FADB214C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:25:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3D2B211E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0A8166F1B;
-	Tue, 15 Oct 2024 02:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A6416C6B7;
+	Tue, 15 Oct 2024 02:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GQhUe9kF"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2054.outbound.protection.outlook.com [40.107.21.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KrMBMHXN"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9917A184F;
-	Tue, 15 Oct 2024 02:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728959151; cv=fail; b=AvErhK88u3Erd4iWWsDBVxsh3QUj+0lFnAvbHVxucdYnujgAF0yVtGQcJARe1niJLrdPmFThV5S+uDYNn/cRl3rHdOy+teV+lntvDQkms+7lR7teC+CDNiNp2g06lXlZbEJxCU6iMowSkBfnMY0rC5p6vvQ60zFaqlb/1jPDg2M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728959151; c=relaxed/simple;
-	bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZgTeDXH5Fv6ewHxQOj9uQ7chgEvGcI0fo9fe3vadLV44XseApGHwhjCzKqeDw2tpin27exz8dtq1k7rP7VCfk+FJ/VD4ctQwRbsY2ckeVzTxTvEao/WlC9IbP/7hIRg2Iv/Fc6PGt+ZCxOPnC2Ap14uhshyE75LiMeAae4c7GYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GQhUe9kF; arc=fail smtp.client-ip=40.107.21.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SwQg+8DUrr+5180hKwTelQLF6mZ7jsTybiyfBX5AS9gljKbPUE4QU7T/pN8jjdeZH/HrTr4flFC9V4kK8inWiqEXDHiSZMSuybcqlNDBV43gOFQsVuri2fO6Jx1vTrmGxAedoLd0rp2Ie/o5CBom4LtUhV0yOJ0bLXeac8mHKm2eDQOYfvkwxHM705M51fQ2SeLqKTmb1haZQ4uPPr0gZvS+gOykqVdl05GeqDGx55K25MMrMVjnQjMYdmhadjvS2IVfHQ67ul1Q6vmMc5kLs6GTJ7qMhrAkql1cj4tCxwWtiuLsuXkziVi4+kULItWQbuirmGVS18mw9kS5djUf7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
- b=ii4+HCj7GcA0xMMaLQIaqJGP5UckadbB4nx4XziguUT333DDNWNtZHdhN6VLVxDE7IckEavIuiJwSiEcdsllFKqFqXF22nLHc56qDbEMQouz4YSGzbGcpxP7o1VlZN9cvU9lombZ6nWjOG7Ruq1jQII8B0LaNj1AHt5KyUCw+h0QnGxMaL3Yo1al5sLfO8u4tNeNLjkUerFnCgLfSaL5S0QWWwOnDE19DikAIyjFmtcd4tCAJmzKBDDYo/pvcOvy7qblRQP9Z8ExWKo295PY32i2g/nmajpuUjaOunL9Rd1p8Tgu/BHgHxua3jhyWRn3+o0wGWFwWqXTNoOi1ZPkKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
- b=GQhUe9kFIIBn1rKb8U1MD9z3oZy2lTesBGYuqJfif/08OoHSpVqUfU/41Ut4keaAfd95i6MF4UIwe/ELGQmYT0M680FhJKrAYiMEqZeJh97A2dIpCmUl231wNYTvnOsiND3zYqa5brCUG63MMI7+toFBwtk60knsf28rw4CMEs8SH8InU0XE0b8hOPJ4nrANmzEVEvAI+9xoU861i/ddjPe0DxzsDWW/wgTGnGhYDd6zSUp3wwA4fwbaTegWdazfRM2TlANP2f+zmHlE525wr9rVRv0KYr7GLLs7AiJd2tKLfO9PgsyHEVYxIsl3cYh7CX1vtmaviozeEVmIeWT5Sw==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VE1PR04MB7245.eurprd04.prod.outlook.com (2603:10a6:800:1b1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
- 2024 02:25:45 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 02:25:33 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>, "Peng Fan (OSS)"
-	<peng.fan@oss.nxp.com>
-CC: Abel Vesa <abelvesa@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Aisheng Dong <aisheng.dong@nxp.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/4] clk: imx: lpcg-scu: SW workaround for errata (e10858)
-Thread-Topic: [PATCH 1/4] clk: imx: lpcg-scu: SW workaround for errata
- (e10858)
-Thread-Index: AQHbHhfXcCGneoDf+E2/H05k1kIVPrKGTCmAgADJq8A=
-Date: Tue, 15 Oct 2024 02:25:33 +0000
-Message-ID:
- <PAXPR04MB8459AA95968436898B46267C88452@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20241014-imx-clk-v1-v1-0-ee75876d3102@nxp.com>
- <20241014-imx-clk-v1-v1-1-ee75876d3102@nxp.com>
- <CAOMZO5Ct1u6d8gnrSEbBW6b+sOdz3W=1oF0y21hdcUFdr0ymzg@mail.gmail.com>
-In-Reply-To:
- <CAOMZO5Ct1u6d8gnrSEbBW6b+sOdz3W=1oF0y21hdcUFdr0ymzg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VE1PR04MB7245:EE_
-x-ms-office365-filtering-correlation-id: 375da646-7c59-4328-859b-08dcecc0a558
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Q0VEWWxOUlVZUXpDYWdXSU1vL1VIYUZhVGpjbGdZNmRzeXh2SkNjN0dGT3c0?=
- =?utf-8?B?UVd1dzgwZmV4YnI5cWRHdEN0UTlneXhqL0tvSXc0NU9yejcxUTdnMWtsbXln?=
- =?utf-8?B?d29SLy9YZ1VQZ3V5azJOWlBUcGpkVWlMeXN6YkFXNU1oRGZMYTh1MVFmNXk2?=
- =?utf-8?B?blRnUWRqZ3NiVVozay80cktHSGo2Q2RvMGErcndQN0hxNWVpQmo3Y2tSQ01V?=
- =?utf-8?B?QTdpa1pmSnZXejFGQSt2MFlPRk5hWjN2TVlVQWpJNzJPVW5hSVRHZEtnMEow?=
- =?utf-8?B?TGFPZEwzWlpNc0ZTbXVFMFEyS2dpZktsMG5FUTJMQSthOHdKU1ArbVI2UWQy?=
- =?utf-8?B?MS93VXBhN0lxR2kxd1lSVVVjWlJvL0NlQ3F6aEhtK2RnSXVmTFZaWjY5QWdv?=
- =?utf-8?B?eDB2Vkx4TjR6OFJHNFVFb0luVTcvOFI4ZUlEVEl1RURHYWhpVTYycTdiZDF3?=
- =?utf-8?B?L0xUeG5IR3lIRElwOEFvajFpY0ZIdTNMVE1OL0tNVGIvYjM4V3hYVndjdEh0?=
- =?utf-8?B?Wk5zRlJEVStuM3pEMlVmZkZ3b1Zzd05TNE9MMkM3dlpXUzd5a0k1bTRYVUFr?=
- =?utf-8?B?N3dYT2hIbmMwQXpLaVd3ZUpJNTB3ZUZFWWNXT2UxTnBBRnYxVytTS3p6UnI1?=
- =?utf-8?B?V0JXSjVMdlV0bmtuRDhtbTZ3OXdTYUppWXhFbjZKdlBuaWhrS3gxZURBTytn?=
- =?utf-8?B?R3kxSUk5VHViKy9zbXN5TnowY2d5a211cHJudUpEYm5FRkpzSVl1QVJFRGh6?=
- =?utf-8?B?K0NBRGVPcGNNSEJRZmNpNitBejd5dHE5eWZwK1U1NzlrMmJIR3JvcWsrL2xG?=
- =?utf-8?B?cTRhMjdrcVRBWWR3eGdCVFdibkV4d2ZMSytNVy8zS0Q1dXBBTmNsSFlXNUFk?=
- =?utf-8?B?SlZPckVoUjJwWEw0ZjcxYTlmUlhtWmlJZG5vanloS1A4Wm15ZkVBM3FTRDhU?=
- =?utf-8?B?TG5NSXV1ZjJ1QzJ4Mll6WFNFVDVCL3ZwV3o0YU4xZHFzNXROU2puUmxpYUVP?=
- =?utf-8?B?SG9QVzVDM3I2ZEtkcjZyWkVSVjVUdzA5UjV6ZjJ2K1pXU3puc3E4SlFJTXRE?=
- =?utf-8?B?SzFaaHM2UGhCTUg4SVVuTkVkanc3dkQxd1ZHZVR4QUtnalNrM1FOODBvV2g4?=
- =?utf-8?B?Q1YrNWNFSFAzdFBaajlzM2czQVZzRFBNaVk0Z2ZKcmZna2VQeVlsQ3VicWsx?=
- =?utf-8?B?eGZhMk5FV1JoRmo1Mm1xVXdvQkV3ZTl6dTcyelE4MHpqQ1g1emx6NWQ0RTc1?=
- =?utf-8?B?NWJzUWl0d2xhUjRkQ1ltYWRoaUlMRi92WWh3dDJXRU9sMVc4NW9vQ3k4THBI?=
- =?utf-8?B?T1QwVWRWMUwvSEZHdUhWbUY2blRvdEM0elF6OGlGUHkveE5TWnJKVlBUOW51?=
- =?utf-8?B?SEc3VmkwVmowRjh0QWNEWTl5alNHNFRyZ3VOU2YwenZBOVFQYjVwMEs4RHFN?=
- =?utf-8?B?eVdqVzliZER4Z3ZkMHBBd3RBbkVMQTl1a2Z6OWRFQnNQRktaN29lcW5tV3N3?=
- =?utf-8?B?S1E0WFErTURnUk9icmZMS3FzdlJXVHBMZzRwcFZER3VnSFdzaHFOSjNVcTEr?=
- =?utf-8?B?YzdGZWJqRzB1K21aWnhpWGREbHg2WE1QV3Fyd1hleWMvQUhJd1BETnlnQmxN?=
- =?utf-8?B?WkFWQUxxalNpeDVlYUZmaUs1RisvNElUS3NoQVF2cWxpZHg3cnpXLzhjMnVo?=
- =?utf-8?B?UHNvU0FmeHQ5cjdjeTFENXRxSlJOTUxCbko1MGIzcWlSanZFQlAyUUhtMndY?=
- =?utf-8?Q?W2L2elmwqKr/Kt864o=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Q0x4eE9LOGF4ZXAweTNYV0V2dnBLSnNqVk84K0M3VTlKOURCcVdTczFodWhL?=
- =?utf-8?B?VWlHM1l5QmVWc1gvbDJ5Z3kvcU9tZ0EwZDgvd25RbnkwRFl3WXZTNVo0Rmx1?=
- =?utf-8?B?bHVrR0FJOXlyeHBBYS94S0xsZTZTajRGbGhpMHBvZ1kweGdFb3lqU3lWRXpz?=
- =?utf-8?B?ZnlINnNlYkRuUDI0cW1DZzVVY0NJbjg2YWRkSlh5VGRlZGYxaThDTXJPSDI2?=
- =?utf-8?B?TnVSTWlNcGs2eDJnVmV0MHVpMUZQdXpES0dEMVBjblR0NXcxckhpL0tHNmVa?=
- =?utf-8?B?ZzRHMVFacjhMWFJtMzJJck1aRUg3MFZ6cWIzcjJrUi9IcjFRUEJVZUM3THJG?=
- =?utf-8?B?Y1hKOWdFcitqK1pzMWx5T05QeUJkcWs1QzROSnVlb2hCeXlxd3Ezd1JpZUZY?=
- =?utf-8?B?R1dlc0l3Znk3QXBJTU91ZlVSQ0RMZDg3bHA5cHp1VlRrSDlLUER5OTlUL1V6?=
- =?utf-8?B?eE1ZYnJOSktRMWNTRHZGazRNU3BJYWMxeklDUXZuS0EvOEpyMUJXWStTLzM1?=
- =?utf-8?B?S09jeG1jbE80MEFreldFYnUrQStaUjg3VDNHNEpvZk42R0JtQTc2TUdmYzBj?=
- =?utf-8?B?V2trYzc2bzVMSWl4S055WFNsMkd4Q3BsNEh0RVV5cW1YN3RUS1pKcmZaNFpZ?=
- =?utf-8?B?R0V4ai9XNmZTV3E0amJsc2dlazFYWVZMb3k2TVJvb0M4Q1lCQlFLaXN1L3NH?=
- =?utf-8?B?NXJpc25XZXdYRElTVjBwU3VraGxSMDNjN3lrU2pLSnIxbk5RUzRkYXN3NDcy?=
- =?utf-8?B?OWMrbDN1UVR3cFY1bndjaCtyVER1SSsrZTF4aURvbUYvakx3WHZmemJmZ1Ir?=
- =?utf-8?B?Q1RzRkxvVkUvNnppdVBWcm5TcXNlRFNnK0NpemdtYkJTZnFTWVRuQmt0Mzha?=
- =?utf-8?B?c010NEtqRHUzenFDSXB3SHI4TElXYWtoVjliS0JOUG9jeGpJVTFBYVB2ZXpw?=
- =?utf-8?B?YVBtVmdWTDlTcXlIWjdRT1VmSERvUzgzZzJxalFzVXZyTzFCc1c4bk9sYTNY?=
- =?utf-8?B?QWIxVENIVkU4MFpReHpHTGVXRUltQTBFWnJYQ3VMT1lkdkRxUWZsaWJKSFkz?=
- =?utf-8?B?emFiNC9UTUtiV3NOU3IvT2NTZjVyL0hKUlg1ZmlyKzErMEtsMUV5TklVT2hi?=
- =?utf-8?B?VHR5cFlKbVp6ZVJQdVNqbzRRbkJXMlJUdVhuNDhSd3JaekpuV244UWxwYTgr?=
- =?utf-8?B?OVBiN21vQ0t0ek1MNWE1WVBrb2dGU0VJRERnMit5bG1Fbk1paElhQzhzczFn?=
- =?utf-8?B?UFJ5aXpSRWY2OTF3dGdZa3dqYjhsL1h4MEttS2t2RWI5WElWd2o0ekE4ZXVX?=
- =?utf-8?B?dlI2aW9RZ2lVbVpIWVVtUllIa1hsUkRTa2JyTWNJNVVqUzF4cGJ2YXBMSFNB?=
- =?utf-8?B?Wm9sNTFVV0s0S3EvVmVyZ0h6YTdYY0xLem5xWTVVL3E0eXVLYkVyMkNTUGJn?=
- =?utf-8?B?Mm82QXlIZEk0WFdxT1hkbjJzOVAwcStqYUtnMVpxbk9iYUd2TXdLR1gvSlZX?=
- =?utf-8?B?ZXNjYkN6N25aR3hGcnh4VWkrZXBYNmRhNFNhMTg4bHdwK0xnU2hqQ29Ud3A5?=
- =?utf-8?B?OWVaS0JwcXhtUTJONTFiU0hEVy9waTU5Q01GZGZtYUdhS0dMdWIxNGdsSlFP?=
- =?utf-8?B?YWJNcWQzcUxRNVQ2REtSLzg3NERBN0ZaRG1KUEZBNUVwcEdkRFcxbnpVNDJI?=
- =?utf-8?B?cmxSeWdaMU9tNDAwS3MwQTlSUWswK0thLzRqU0pLZ0hLNWx4L0JrVUE5T05R?=
- =?utf-8?B?MjdjVVo2bk16MjF0bGlXN0hKQ0MyU3dGbGhUMjhhb0NWd3kzRXlwbmFmY0M2?=
- =?utf-8?B?WXEvV2lVUml3WFc2OVlFSTViVmRoSHVXMU5uZmNkVDlMZ0YvbFhhMzU1ajlY?=
- =?utf-8?B?L0VhUEFPUGdZRzZRdHF6ZnlPcE1CZ2Myek91cVJ1d282anp1R2tPbmk5a3kr?=
- =?utf-8?B?RE9qZ0g0WXNvWFVJTGRxcnJ1VG9hWnJnd2VyKzZtbGVqc0k3dlRpWi9Nci8y?=
- =?utf-8?B?ZVJyTkFSdHlUMWNGbHh1WmRveVB6WkEzTXhJZzk1eVN2dGRPQ0FoQUNPSFMv?=
- =?utf-8?B?dnhsMSszSnpZVXpnckhtUUlSQ0xMM2w2MkxxVXlYMDhFVnBpbkpGbUdISHkx?=
- =?utf-8?Q?/bIg=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40365166F06;
+	Tue, 15 Oct 2024 02:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728959191; cv=none; b=kGGMRiinv2LaAJomjt1P2hjOSFHnJhY5tKYWAycUJDD2AhgNt1d7G8Xua4uxOEdS3dWokUAuAIjoLQAfXnmrrDayPXipJM4kXq7GxgxIkDa3ih6J2awpn0HH4be2te6cGEwzPk5CqEJbfg1Wfg1vNsGP+xVkW+KTpWWxtWixHEk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728959191; c=relaxed/simple;
+	bh=WCSf/ppsJnoE3NQnmNB5PWxlvdIHa+G7QKCIcIgp2kE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NppNl5RaAeVLHHx1g8MrUQI1MmCIqgxN6GQUomSmYoENatlNPAp+QkiS/cWWgfGb+8AT2vpxaKRyIiAxx48TDWMmmVFtFZkzI9fl/cLICCwfyDdRrLmdQntg0Za5ryoIpK8iRdL3zAmZPgEMxwQpwYSb1cBK2Y37aGXdnwPfLGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KrMBMHXN; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso3620089a12.2;
+        Mon, 14 Oct 2024 19:26:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728959188; x=1729563988; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AorIkQWt0jY7qdeJc9UL+1hjeMUjMwyGM6levNEeMFE=;
+        b=KrMBMHXN2f94qpuDqvzW70VMRld0zTkqfQ/ZqcY6IQxJtPd3nP322LpyGhuzwMcIcp
+         iGzzuoigRm6bhk7zRN9huv61s6xfRx750IE/p8PSGR3xqd7oNIHlJsSwTuWyz3Wt3VhM
+         luPmvcFCD7Ck+7L9BSMyMU46Tl9d1dQRM+ZMjNYMhWLOzScJ+9RQlG2YDe7Dy/Fw3KeI
+         wnMxxWN4IO+1m2q1tWK7hviySiihaJaIKvofg+8EU9TzFMMEvKqSNx96xvGnetQ51uhq
+         kZ2NK5evLNoc9O01mEUTfSJPPGaV45qOFzWTQvwGHtkHM6MdNXwZAfNNg3bL5ZOyoASN
+         iy1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728959188; x=1729563988;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AorIkQWt0jY7qdeJc9UL+1hjeMUjMwyGM6levNEeMFE=;
+        b=edTJbP9VNA9yB+gPX/EFfGVlUrE4ald5y0gqsvkFXKPXi8KeMc3FZzjEi7qLFovpao
+         DkfmGszCUEkwImO6h7GD9MaM1vSC/nx7TVvHFdRNhkCuoJvkeP3SpaynlGUVuIdDf8Lg
+         xj/ywxy5OYnKBDMavFK07Na7LwiFYhAz+4ZCxC/PKeFcQD7rB4O5LL7/oags/kSLfg9J
+         nDowbuShlyuz+be6dRV6h662gbCR+8xHCIWyLzdXEgZtN+PNHhTIgzB3PnvTHZaWdgTN
+         andI+5nWW6Mweb9S2U5WvyiOfGC/G8WSPc8NfzgJU2er9UQdfQlT1E26kvf+gqtw3g+X
+         OeTA==
+X-Forwarded-Encrypted: i=1; AJvYcCULLhy5IOqpYwDccKWdZReM7qYK8aoCPm4aXzv0c7Jv799wCEwnzkzcCXBXfehKHqQOUbxXzPFam87Na6vWp2i3+x3CDw==@vger.kernel.org, AJvYcCUUqOD0BtJXCAdcKkNU1cUf32IbDdqs9B2nZyM6i4DMcytzndx3HhMfy2rolSkcuU0AGVZz2M9rr87UAPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd0HsaIGOhyLM+ZyRCx8sHCcoQYr34EtBDIhk67chcj9ZzYNlC
+	M7sRY/xJA+bDcYp907DhBZw8eYMzkTBUWrb1tcbXBW0W4varsuAH
+X-Google-Smtp-Source: AGHT+IGoFAK3iaHA5wusA2pSprRB/4dXw8Vql+GI0a8G/daINyY5QZgGU6HC3vSlkfy/e2ciztyivQ==
+X-Received: by 2002:a05:6a21:3946:b0:1cf:3677:1c4a with SMTP id adf61e73a8af0-1d8bcf2bfa2mr23518055637.16.1728959188314;
+        Mon, 14 Oct 2024 19:26:28 -0700 (PDT)
+Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77518a5fsm230947b3a.214.2024.10.14.19.26.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 19:26:27 -0700 (PDT)
+Date: Mon, 14 Oct 2024 23:26:24 -0300
+From: Kurt Borja <kuurtb@gmail.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] alienware-wmi: WMAX interface documentation
+Message-ID: <hie35vo2bixoayjgwsube5j56tuo6rqctjolearnpmvt3qgrui@6kg342mhg34w>
+References: <20241012015849.19036-3-kuurtb@gmail.com>
+ <20241012020330.20278-2-kuurtb@gmail.com>
+ <7737a2d6-8cdb-41f3-9666-2bdee6f1f450@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 375da646-7c59-4328-859b-08dcecc0a558
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2024 02:25:33.1126
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qHEwz/uW9lkWodB097N4/UASrREYMg6TefiAMS0clR1g2k3FRWrfXVt5Nnkeq6xAfMy0sh2roblUwFDlUMbAZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7245
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7737a2d6-8cdb-41f3-9666-2bdee6f1f450@gmx.de>
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvNF0gY2xrOiBpbXg6IGxwY2ctc2N1OiBTVyB3b3JrYXJv
-dW5kIGZvciBlcnJhdGENCj4gKGUxMDg1OCkNCj4gDQo+IE9uIE1vbiwgT2N0IDE0LCAyMDI0IGF0
-IDY6MDPigK9BTSBQZW5nIEZhbiAoT1NTKQ0KPiA8cGVuZy5mYW5Ab3NzLm54cC5jb20+IHdyb3Rl
-Og0KPiANCj4gPiArLyogZTEwODU4IC1MUENHIGNsb2NrIGdhdGluZyByZWdpc3RlciBzeW5jaHJv
-bml6YXRpb24gZXJyYXRhICovDQo+IA0KPiBQbGVhc2Ugc2hhcmUgdGhlIGxpbmsgdG8gdGhlIGVy
-cmF0YSBkb2MgdGhhdCBjb250YWlucyB0aGlzIGUxMDg1OC4NCg0KaHR0cHM6Ly93d3cubnhwLmNv
-bS5jbi9kb2NzL2VuL2VycmF0YS9JTVg4XzFOOTRXLnBkZg0KDQpUaGFua3MsDQpQZW5nLg0K
+On Mon, Oct 14, 2024 at 07:10:15PM +0200, Armin Wolf wrote:
+> Am 12.10.24 um 04:03 schrieb Kurt Borja:
+> 
+> > Added documentation for new WMAX interface, present on some Alienware
+> > X-Series, Alienware M-Series and Dell's G-Series laptops.
+> > 
+> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> > ---
+> >   Documentation/wmi/devices/alienware-wmi.rst | 366 ++++++++++++++++++++
+> >   1 file changed, 366 insertions(+)
+> >   create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
+> 
+> Please update the MAINTAINERS entry for the alienware-wmi driver to
+> include this documentation file.
+
+Ok.
+
+> 
+> > 
+> > diff --git a/Documentation/wmi/devices/alienware-wmi.rst b/Documentation/wmi/devices/alienware-wmi.rst
+> > new file mode 100644
+> > index 000000000..77460b91c
+> > --- /dev/null
+> > +++ b/Documentation/wmi/devices/alienware-wmi.rst
+> > @@ -0,0 +1,366 @@
+> > +.. SPDX-License-Identifier: GPL-2.0-or-later
+> > +
+> > +==============================================
+> > +Dell AWCC WMI interface driver (alienware-wmi)
+> > +==============================================
+> > +
+> > +Introduction
+> > +============
+> > +
+> > +The WMI device WMAX has been implemented for many Alienware and Dell's G-Series
+> > +models. Throughout these models, two implementations have been identified. The
+> > +first one, used by older systems, deals with HDMI, brightness, RGB, amplifier
+> > +and deep sleep control. The second one used by newer systems deals primarily
+> > +with thermal, overclocking, and GPIO control.
+> > +
+> > +It is suspected that the latter is used by Alienware Command Center (AWCC) to
+> > +manage manufacturer predefined thermal profiles. The alienware-wmi driver
+> > +exposes Thermal_Information and Thermal_Control methods through the Platform
+> > +Profile API to mimic AWCC's behavior.
+> > +
+> > +This newer interface, named AWCCMethodFunction has been reverse engineered, as
+> > +Dell has not provided any official documentation. We will try to describe to the
+> > +best of our ability its discovered inner workings.
+> > +
+> > +.. note::
+> > +   The following method description may vary between models.
+> > +
+> > +WMI interface description
+> > +-------------------------
+> > +
+> > +The WMI interface description can be decoded from the embedded binary MOF (bmof)
+> > +data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
+> > +
+> > +::
+> > +
+> > + [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("WMI Function"), guid("{A70591CE-A997-11DA-B012-B622A1EF5492}")]
+> > + class AWCCWmiMethodFunction {
+> > +   [key, read] string InstanceName;
+> > +   [read] boolean Active;
+> > +
+> > +   [WmiMethodId(13), Implemented, read, write, Description("Return Overclocking Report.")] void Return_OverclockingReport([out] uint32 argr);
+> > +   [WmiMethodId(14), Implemented, read, write, Description("Set OCUIBIOS Control.")] void Set_OCUIBIOSControl([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(15), Implemented, read, write, Description("Clear OC FailSafe Flag.")] void Clear_OCFailSafeFlag([out] uint32 argr);
+> > +   [WmiMethodId(19), Implemented, read, write, Description("Get Fan Sensors.")] void GetFanSensors([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(20), Implemented, read, write, Description("Thermal Information.")] void Thermal_Information([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(21), Implemented, read, write, Description("Thermal Control.")] void Thermal_Control([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(23), Implemented, read, write, Description("MemoryOCControl.")] void MemoryOCControl([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(26), Implemented, read, write, Description("System Information.")] void SystemInformation([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(28), Implemented, read, write, Description("Power Information.")] void PowerInformation([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(32), Implemented, read, write, Description("FW Update GPIO toggle.")] void FWUpdateGPIOtoggle([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(33), Implemented, read, write, Description("Read Total of GPIOs.")] void ReadTotalofGPIOs([out] uint32 argr);
+> > +   [WmiMethodId(34), Implemented, read, write, Description("Read GPIO pin Status.")] void ReadGPIOpPinStatus([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(35), Implemented, read, write, Description("Read Chassis Color.")] void ReadChassisColor([out] uint32 argr);
+> > +   [WmiMethodId(36), Implemented, read, write, Description("Read Platform Properties.")] void ReadPlatformProperties([out] uint32 argr);
+> > +   [WmiMethodId(128), Implemented, read, write, Description("Caldera SW installation.")] void CalderaSWInstallation([out] uint32 argr);
+> > +   [WmiMethodId(129), Implemented, read, write, Description("Caldera SW is released.")] void CalderaSWReleased([out] uint32 argr);
+> > +   [WmiMethodId(130), Implemented, read, write, Description("Caldera Connection Status.")] void CalderaConnectionStatus([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(131), Implemented, read, write, Description("Surprise Unplugged Flag Status.")] void SurpriseUnpluggedFlagStatus([out] uint32 argr);
+> > +   [WmiMethodId(132), Implemented, read, write, Description("Clear Surprise Unplugged Flag.")] void ClearSurpriseUnpluggedFlag([out] uint32 argr);
+> > +   [WmiMethodId(133), Implemented, read, write, Description("Cancel Undock Request.")] void CancelUndockRequest([out] uint32 argr);
+> > +   [WmiMethodId(135), Implemented, read, write, Description("Devices in Caldera.")] void DevicesInCaldera([in] uint32 arg2, [out] uint32 argr);
+> > +   [WmiMethodId(136), Implemented, read, write, Description("Notify BIOS for SW ready to disconnect Caldera.")] void NotifyBIOSForSWReadyToDisconnectCaldera([out] uint32 argr);
+> > +   [WmiMethodId(160), Implemented, read, write, Description("Tobii SW installation.")] void TobiiSWinstallation([out] uint32 argr);
+> > +   [WmiMethodId(161), Implemented, read, write, Description("Tobii SW Released.")] void TobiiSWReleased([out] uint32 argr);
+> > +   [WmiMethodId(162), Implemented, read, write, Description("Tobii Camera Power Reset.")] void TobiiCameraPowerReset([out] uint32 argr);
+> > +   [WmiMethodId(163), Implemented, read, write, Description("Tobii Camera Power On.")] void TobiiCameraPowerOn([out] uint32 argr);
+> > +   [WmiMethodId(164), Implemented, read, write, Description("Tobii Camera Power Off.")] void TobiiCameraPowerOff([out] uint32 argr);
+> > + };
+> > +
+> > +Some of these methods get quite intricate so we will describe them using
+> > +pseudo-code that vaguely resembles the original ASL code.
+> > +
+> > +Argument Structure
+> > +------------------
+> > +
+> > +All input arguments have type **uint32** and their structure is very similar
+> > +between methods. Usually, the first byte corresponds to a specific *operation*
+> > +the method performs, and the subsequent bytes correspond to *arguments* passed
+> > +to this *operation*. For example, if an operation has code 0x01 and requires an
+> > +ID 0xA0, the argument you would pass to the method is 0xA001.
+> > +
+> > +
+> > +Thermal Methods
+> > +===============
+> > +
+> > +WMI method Thermal_Information([in] uint32 arg2, [out] uint32 argr)
+> > +-------------------------------------------------------------------
+> > +
+> > +::
+> > +
+> > + if BYTE_0(arg2) == 0x01:
+> > +         argr = 1
+> > +
+> > + if BYTE_0(arg2) == 0x02:
+> > +         argr = UNKNOWN_CONSTANT
+> > +
+> > + if BYTE_0(arg2) == 0x03:
+> > +         if BYTE_1(arg2) == 0x00:
+> > +                 argr = FAN_ID_0
+> > +
+> > +         if BYTE_1(arg2) == 0x01:
+> > +                 argr = FAN_ID_1
+> > +
+> > +         if BYTE_1(arg2) == 0x02:
+> > +                 argr = FAN_ID_2
+> > +
+> > +         if BYTE_1(arg2) == 0x03:
+> > +                 argr = FAN_ID_3
+> > +
+> > +         if BYTE_1(arg2) == 0x04:
+> > +                 argr = SENSOR_ID_CPU | 0x0100
+> > +
+> > +         if BYTE_1(arg2) == 0x05:
+> > +                 argr = SENSOR_ID_GPU | 0x0100
+> > +
+> > +         if BYTE_1(arg2) == 0x06:
+> > +                 argr = THERMAL_MODE_QUIET_ID
+> > +
+> > +         if BYTE_1(arg2) == 0x07:
+> > +                 argr = THERMAL_MODE_BALANCED_ID
+> > +
+> > +         if BYTE_1(arg2) == 0x08:
+> > +                 argr = THERMAL_MODE_BALANCED_PERFORMANCE_ID
+> > +
+> > +         if BYTE_1(arg2) == 0x09:
+> > +                 argr = THERMAL_MODE_PERFORMANCE_ID
+> > +
+> > +         if BYTE_1(arg2) == 0x0A:
+> > +                 argr = THERMAL_MODE_LOW_POWER_ID
+> > +
+> > +         if BYTE_1(arg2) == 0x0B:
+> > +                 argr = THERMAL_MODE_GMODE_ID
+> > +
+> > +         else:
+> > +                 argr = 0xFFFFFFFF
+> > +
+> > + if BYTE_0(arg2) == 0x04:
+> > +         if is_valid_sensor(BYTE_1(arg2)):
+> > +                 argr = SENSOR_TEMP_C
+> > +         else:
+> > +                 argr = 0xFFFFFFFF
+> > +
+> > + if BYTE_0(arg2) == 0x05:
+> > +         if is_valid_fan(BYTE_1(arg2)):
+> > +                 argr = FAN_RPM()
+> > +
+> > + if BYTE_0(arg2) == 0x06:
+> > +         skip
+> > +
+> > + if BYTE_0(arg2) == 0x07:
+> > +         argr = 0
+> > +
+> > + If BYTE_0(arg2) == 0x08:
+> > +         if is_valid_fan(BYTE_1(arg2)):
+> > +                 argr = 0
+> > +         else:
+> > +                 argr = 0xFFFFFFFF
+> > +
+> > + if BYTE_0(arg2) == 0x09:
+> > +         if is_valid_fan(BYTE_1(arg2)):
+> > +                 argr = FAN_UNKNOWN_STAT_0()
+> > +
+> > +         else:
+> > +                 argr = 0xFFFFFFFF
+> > +
+> > + if BYTE_0(arg2) == 0x0A:
+> > +         argr = THERMAL_MODE_BALANCED_ID
+> > +
+> > + if BYTE_0(arg2) == 0x0B:
+> > +         argr = CURRENT_THERMAL_MODE()
+> > +
+> > + if BYTE_0(arg2) == 0x0C:
+> > +         if is_valid_fan(BYTE_1(arg2)):
+> > +                 argr = FAN_UNKNOWN_STAT_1()
+> > +         else:
+> > +                 argr = 0xFFFFFFFF
+> > +
+> > +WMI method Thermal_Control([in] uint32 arg2, [out] uint32 argr)
+> > +---------------------------------------------------------------
+> > +
+> > +::
+> > +
+> > + if BYTE_0(arg2) == 0x01:
+> > +         if is_valid_thermal_profile(BYTE_1(arg2)):
+> > +                 SET_THERMAL_PROFILE(BYTE_1(arg2))
+> > +                 argr = 0
+> > +
+> > + if BYTE_0(arg2) == 0x02:
+> > +         if is_valid_fan(BYTE_1(arg2)):
+> > +                 SET_FAN_SPEED_MULTIPLIER(BYTE_2(arg2))
+> > +                 argr = 0
+> > +         else:
+> > +                 argr = 0xFFFFFFFF
+> > +
+> > +.. note::
+> > +   While you can manually change the fan speed multiplier with this method,
+> > +   Dell's BIOS tends to overwrite this changes anyway.
+> > +
+> > +These are the known thermal profile codes:
+> > +
+> > +::
+> > +
+> > + CUSTOM                         0x00
+> > +
+> > + QUIET                          0x96
+> > + BALANCED                       0x97
+> > + BALANCED_PERFORMANCE           0x98
+> > + PERFORMANCE                    0x99
+> > +
+> > + QUIET_USTT                     0xA3
+> > + BALANCED_USTT                  0xA0
+> > + BALANCED_PERFORMANCE_USTT      0xA1
+> > + PERFORMANCE_USTT               0xA4
+> > + LOW_POWER_USTT                 0xA5
+> > +
+> > + GMODE                          0xAB
+> > +
+> > +Usually if a model doesn't support the first four profiles they will support
+> > +the User Selectable Thermal Tables (USTT) profiles and vice-versa.
+> > +
+> > +GMODE replaces PERFORMANCE in G-Series laptops.
+> > +
+> > +WMI method GetFanSensors([in] uint32 arg2, [out] uint32 argr)
+> > +-------------------------------------------------------------
+> > +
+> > +::
+> > +
+> > + if BYTE_0(arg2) == 1:
+> > +        if is_valid_fan(BYTE_1(arg2)):
+> > +                argr = 1
+> > +        else:
+> > +                argr = 0
+> > +
+> > + if BYTE_0(arg2) == 2:
+> > +        if is_valid_fan(BYTE_1(arg2)):
+> > +                if BYTE_2(arg2) == 0:
+> > +                        argr == SENSOR_ID
+> > +                else
+> > +                        argr == 0xFFFFFFFF
+> > +        else:
+> > +                argr = 0
+> > +
+> > +Overclocking Methods
+> > +====================
+> > +
+> > +.. warning::
+> > +   These methods have not been tested and are only partially reverse
+> > +   engineered.
+> > +
+> > +WMI method Return_OverclockingReport([out] uint32 argr)
+> > +-------------------------------------------------------
+> > +
+> > +::
+> > +
+> > + CSMI (0xE3, 0x99)
+> > + argr = 0
+> > +
+> > +CSMI is an unknown operation.
+> > +
+> > +WMI method Set_OCUIBIOSControl([in] uint32 arg2, [out] uint32 argr)
+> > +-------------------------------------------------------------------
+> > +
+> > +::
+> > +
+> > + CSMI (0xE3, 0x99)
+> > + argr = 0
+> > +
+> > +CSMI is an unknown operation
+> 
+> Missing ".".
+> 
+> > +
+> > +WMI method Clear_OCFailSafeFlag([out] uint32 argr)
+> > +--------------------------------------------------
+> > +
+> > +::
+> > +
+> > + CSMI (0xE3, 0x99)
+> > + argr = 0
+> > +
+> > +CSMI is an unknown operation
+> 
+> Missing ".".
+> 
+> > +
+> > +
+> > +WMI method MemoryOCControl([in] uint32 arg2, [out] uint32 argr)
+> > +---------------------------------------------------------------
+> > +
+> > +AWCC supports memory overclocking, but this method is very intricate and has
+> > +not been deciphered yet.
+> > +
+> > +GPIO methods
+> > +============
+> > +
+> > +These methods are probably related to some kind of firmware update system,
+> > +through a GPIO device.
+> > +
+> > +.. warning::
+> > +   These methods have not been tested and are only partially reverse
+> > +   engineered.
+> > +
+> > +WMI method FWUpdateGPIOtoggle([in] uint32 arg2, [out] uint32 argr)
+> > +------------------------------------------------------------------
+> > +
+> > +::
+> > +
+> > + if BYTE_0(arg2) == 0:
+> > +         if BYTE_1(arg2) == 1:
+> > +                 SET_PIN_A_HIGH()
+> > +         else:
+> > +                 SET_PIN_A_LOW()
+> > +
+> > + if BYTE_0(arg2) == 1:
+> > +         if BYTE_1(arg2) == 1:
+> > +                 SET_PIN_B_HIGH()
+> > +
+> > +         else:
+> > +                 SET_PIN_B_LOW()
+> > +
+> > + else:
+> > +         argr = 1
+> > +
+> > +WMI method ReadTotalofGPIOs([out] uint32 argr)
+> > +----------------------------------------------
+> > +
+> > +::
+> > +
+> > + argr = 0x02
+> > +
+> > +WMI method ReadGPIOpPinStatus([in] uint32 arg2, [out] uint32 argr)
+> > +------------------------------------------------------------------
+> > +
+> > +::
+> > +
+> > + if BYTE_0(arg2) == 0:
+> > +         argr = PIN_A_STATUS
+> > +
+> > + if BYTE_0(arg2) == 1:
+> > +         argr = PIN_B_STATUS
+> > +
+> > +Other information Methods
+> > +=========================
+> > +
+> > +WMI method SystemInformation([in] uint32 arg2, [out] uint32 argr)
+> > +-----------------------------------------------------------------
+> > +
+> > +Returns unknown information.
+> > +
+> > +WMI method PowerInformation([in] uint32 arg2, [out] uint32 argr)
+> > +----------------------------------------------------------------
+> > +
+> > +Returns unknown information.
+> > +
+> > +WMI method ReadChassisColor([out] uint32 argr)
+> > +----------------------------------------------
+> > +
+> > +::
+> > +
+> > + argr = CHASSIS_COLOR_ID
+> > +
+> > +WMI method ReadPlatformProperties([out] uint32 argr)
+> > +----------------------------------------------------
+> > +
+> > +Returns unknown information.
+> > +
+> > +Acknowledgements
+> > +================
+> > +
+> > +Kudos to `AlexIII <https://github.com/AlexIII/tcc-g15>`_ for documenting
+> > +and testing avaliable thermal profile codes.
+> 
+> avaliable -> available.
+> 
+> Other than that this looks very good.
+> 
+> Thanks,
+> Armin Wolf
+
+I will fix the typos. Thanks.
+
+Kurt
+
+> 
+> > +
 
