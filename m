@@ -1,230 +1,160 @@
-Return-Path: <linux-kernel+bounces-365259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F3399DF9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:48:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5629899DFA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34908B22143
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:48:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10EE3283FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1D11C3046;
-	Tue, 15 Oct 2024 07:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123671B4F0A;
+	Tue, 15 Oct 2024 07:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dy+ck6S7"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="D5l+JJGI"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A631B85D4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAF5231C95;
+	Tue, 15 Oct 2024 07:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978459; cv=none; b=DygXHT1qJMOR9H725Hs/42yex8tmot6mvZCcfshPv4HqogdjMakbXIF6Q8Fl/kF3eUU5nh89NF0dGKW/N52JRAcmFFDp53b0x8AIcA4cht4fAdJR5KvwL8tLXaVFBzhLwZylCetbkIZ/mIZun7QK7nz2jEMUQzeGxWFFCW8RhtU=
+	t=1728978472; cv=none; b=XtrfScH2CzLpuzSeX7i72qvpN2YOSIiV6BXtxi9w3PQsh0jhtvCKJq+lHX38EDDAl0Oc9kKtVG1K0Ioym2lWSDaKtyt/MxrJ5KjcExKoSNr5HiFcns+F1W4bXxxdLR/xF5mok+n58/JTxeIMisVGXJ+k8ptXIoqM41ID/23xhH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978459; c=relaxed/simple;
-	bh=D6bs8AhbvZ1hhOwFTkRYuSj0EUYlQBuMG38nrex0/Q0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nggdf5xIeI4VYsJ/WeNqJPaxxmMYm7VLwyQpiM3rNiiPQuq1rxIKuBeigxyYH/RzgjBT5qaniBDXI2471tvgoe0JZ4dIjOmS5vI+9a660YAVuCyMgDP1hdTZyd5go/GCgAZXid6vysIC0o7xzWS+SyRXloLsI90SVUNa1i9waF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dy+ck6S7; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-84ff2921d60so759916241.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:47:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728978456; x=1729583256; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=F1JMqOkw9Vt25iJpUnQeg9aOLmHsYLQqSKR1jmOnHY8=;
-        b=dy+ck6S77AEaMfrkQxeRbZs2rPuckWAXcBu13OOeVfxxo8vN5bYbA0Kjvcdk31iCDT
-         wvQw/HuYtY0jGwbsjCY1DLF9QRmMOvIHZfha/V3x3tJ2aG0YGSaUZ/CFrFaQJlSlJv8K
-         1m4qYJWX2Nt9bWpSw11d28I5XvKKjd18K0AkbLmsZtGHVQnaSTuLBGBpMcHrrc0BwaA1
-         ei1JvBR0134PW58y4teKUkmIeJfVQGkPoX7NAg0pn7H7q2eO5oYz/ctfpoLLbar1ATZr
-         TQYqhpG5kubMlHIqACUUYy2FqgIGQq1zI4jgfgz4ldhbv1xAHRueVVtQWlry8oTyM2Eh
-         qBxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728978456; x=1729583256;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F1JMqOkw9Vt25iJpUnQeg9aOLmHsYLQqSKR1jmOnHY8=;
-        b=hQvn+y01ejjCIq5F7721hjXqm4DcRKv4jS1E0mDVPBXO/PRW0FzEJbzbwk0e2diyCA
-         VwPI8DVmfkzz2U9nDWKrdYsThg8BjQUyvARavUyy0Atv/zZjYrlXbaP3U/D1eKz/gX1s
-         tJDa7nsQ8eBwFtCP8ul1KKL7kgdF540MWNwhRG8QFN4yqC3cBz4tmngMI9Na1bPVmCw6
-         l9VvMV+GeJZqVCGvHKCioOAa28eYcl9i5hJ8oH33DqsJeNRBQ5CdL9MgiW5+J/gIcHW1
-         5cEMxNdcfZRwZYBPgEVQUOgBnj5tMXw5tA5vi/BE9ZoRybscyU8W2gZfXT5PGvDRDS3r
-         hM0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWi+I6Dz03zsZFu0D7c4pyisrifHFbXBwjdC4w61H1gTZXnLzhdyOcRSCcMpCfLRydnAGY05DyCdPrBxwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXZsW66Nz7h3kNk4Fo5OQRZCSuJRns5TQjTz4DgltMBMcd1Zff
-	KxcUaz4BXhTJyHs8W/Ctk736bDrmaocSpbmEQ/C69sRFc2iwqCtE0LJ0AurRCCSrf83rSZkbQZN
-	Ma7QxKYIp64JcLEFRkUi9vrysM0OHbYuum4W8VA==
-X-Google-Smtp-Source: AGHT+IGdVCcCuUjhI+WseBShaKTMvVroRB+xVABD2EDZXIOC+Dkk/mBw6Vsr9hWqTFsvCcMpmLqrHD58pwpk6UgsWFA=
-X-Received: by 2002:a05:6102:d87:b0:4a3:d8ab:8938 with SMTP id
- ada2fe7eead31-4a475f4cdd3mr5869905137.12.1728978456286; Tue, 15 Oct 2024
- 00:47:36 -0700 (PDT)
+	s=arc-20240116; t=1728978472; c=relaxed/simple;
+	bh=bjQqn46aGvfBXM/1EuRak8ND/FNHrfXMzpYKGjs4ayA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fztQynlVM1vOYtqZUzlgyQrd6TmL/EYIm/xtRalqTd9KWvlG4bak4Ca2xVJlaSHa3AkprQuCaDZjuw67NzfjqMXiuHnM3dc/oclF2Y+cdRYKec85kgRAAlyI9oyNFC5uZA9qhjbx/+DKW1SeIq7flV3bqn7pEfDJ57lwsTHUtrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=D5l+JJGI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F7KOrt031017;
+	Tue, 15 Oct 2024 07:47:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=FUw6yiePSnsbQ/cW85U02YPjxHS0W4rGT9lOjxkPw
+	Q4=; b=D5l+JJGIeOiFviFBWtOx6wxD2qbT2mD5HRitZjq7dTrbYpa8tREgC8gVn
+	K3cn+RBbz2nHD69ifyx4MhZDcv195tdBUKmvbxsz3a7Tzy5W3XOyPvEsGq1OcOGR
+	PatXbwpI2Lf1WqSUNMczczdGRUgu/lVJY0HvtxE+AErVKTXcCES4JruWwA4f4kY7
+	kve/v7jn1jmFNAPLlj9QVM7UjUc86sAX/CO3LwR9CmSQQQJuD7TFSLVJ6SsGHh9l
+	UBJOcMxDR8dzkWPTtpqf5Iibq8PBdW+WnZRv51m2CnrOOB4k64QJZqKme5Gfwy3B
+	po/xYQxReVQz/Zp+roZJ3HOT5t6uw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429kwvr470-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 07:47:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F4800l006401;
+	Tue, 15 Oct 2024 07:47:39 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk2evx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 07:47:39 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49F7laDr31588922
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 07:47:36 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2A3B120049;
+	Tue, 15 Oct 2024 07:47:36 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0018820040;
+	Tue, 15 Oct 2024 07:47:35 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 15 Oct 2024 07:47:35 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org, namhyung@kernel.org
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf test: Fix perf test case 84 on s390
+Date: Tue, 15 Oct 2024 09:47:26 +0200
+Message-ID: <20241015074726.268029-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014141217.941104064@linuxfoundation.org>
-In-Reply-To: <20241014141217.941104064@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 15 Oct 2024 13:17:24 +0530
-Message-ID: <CA+G9fYv7K3-4M0unzJz_AGG1kySTkDYMaqXXgCFisd2j0iPCEg@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>, Lee Jones <lee@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, linux-clk <linux-clk@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: x_9bzKsb9YCoEXrhLBvQ5ikC6DjQNHa4
+X-Proofpoint-ORIG-GUID: x_9bzKsb9YCoEXrhLBvQ5ikC6DjQNHa4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ clxscore=1011 phishscore=0 suspectscore=0 impostorscore=0 malwarescore=0
+ mlxlogscore=999 lowpriorityscore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150049
 
-On Mon, 14 Oct 2024 at 20:20, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.1.113 release.
-> There are 798 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.113-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Perf test case 84 'perf pipe recording and injection test'
+sometime fails on s390, especially on z/VM virtual machines.
 
-As others reported,
+This is caused by a very short run time of workload
 
-The arm build broke on the stable-rc linux-6.1.y branch due to
-following build warnings / errors.
+  # perf test -w noploop
 
-First seen on v6.1.112-799-gc060104c065d
-  GOOD: v6.1.112
-  BAD: v6.1.112-799-gc060104c065d
+which runs for 1 second. Occasionally this is not long
+enough and the perf report has no samples for symbol noploop.
 
-The bisection pointed to,
-  clk: imx6ul: add ethernet refclock mux support
-    [ Upstream commit 4e197ee880c24ecb63f7fe17449b3653bc64b03c ]
+Fix this and enlarge the runtime for the perf work load
+to 3 seconds. This ensures the symbol noploop is always
+present.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Output before:
+ Inject -b build-ids test
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.195 MB - ]
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.277 MB - ]
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.195 MB - ]
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.160 MB
+			 /tmp/perf.data.ELzRdq (4031 samples) ]
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.195 MB - ]
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.195 MB - ]
+ Inject -b build-ids test [Success]
 
-List of regressions,
-* arm, build
-  - clang-19-allmodconfig
-  - clang-19-defconfig
-  - clang-19-imx_v6_v7_defconfig
-  - clang-19-lkftconfig
-  - clang-19-lkftconfig-no-kselftest-frag
-  - clang-nightly-defconfig
-  - clang-nightly-imx_v6_v7_defconfig
-  - clang-nightly-lkftconfig
-  - clang-nightly-lkftconfig-kselftest
-  - gcc-13-allmodconfig
-  - gcc-13-defconfig
-  - gcc-13-imx_v6_v7_defconfig
-  - gcc-13-lkftconfig
-  - gcc-13-lkftconfig-debug
-  - gcc-13-lkftconfig-debug-kmemleak
-  - gcc-13-lkftconfig-kasan
-  - gcc-13-lkftconfig-kselftest
-  - gcc-13-lkftconfig-kunit
-  - gcc-13-lkftconfig-libgpiod
-  - gcc-13-lkftconfig-no-kselftest-frag
-  - gcc-13-lkftconfig-perf
-  - gcc-13-lkftconfig-rcutorture
-  - gcc-8-defconfig
-  - gcc-8-imx_v6_v7_defconfig
+ Inject --buildid-all build-ids test
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.195 MB - ]
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.014 MB - ]
+ Inject --buildid-all build-ids test [Failed - cannot find
+				noploop function in pipe #2]
 
+Output after:
+Successful execution for over 10 times in a loop.
 
-Build log:
----------
-drivers/clk/imx/clk-imx6ul.c:489:41: error: implicit declaration of
-function 'imx_obtain_fixed_of_clock'; did you mean
-'imx_obtain_fixed_clock'? [-Werror=implicit-function-declaration]
-  489 |         hws[IMX6UL_CLK_ENET1_REF_PAD] =
-imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
-      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~
-      |                                         imx_obtain_fixed_clock
-drivers/clk/imx/clk-imx6ul.c:489:39: warning: assignment to 'struct
-clk_hw *' from 'int' makes pointer from integer without a cast
-[-Wint-conversion]
-  489 |         hws[IMX6UL_CLK_ENET1_REF_PAD] =
-imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
-      |                                       ^
-drivers/clk/imx/clk-imx6ul.c:491:41: error: implicit declaration of
-function 'imx_clk_gpr_mux'; did you mean 'imx_clk_hw_mux'?
-[-Werror=implicit-function-declaration]
-  491 |         hws[IMX6UL_CLK_ENET1_REF_SEL] =
-imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
-      |                                         ^~~~~~~~~~~~~~~
-      |                                         imx_clk_hw_mux
-drivers/clk/imx/clk-imx6ul.c:491:39: warning: assignment to 'struct
-clk_hw *' from 'int' makes pointer from integer without a cast
-[-Wint-conversion]
-  491 |         hws[IMX6UL_CLK_ENET1_REF_SEL] =
-imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
-      |                                       ^
-drivers/clk/imx/clk-imx6ul.c:494:39: warning: assignment to 'struct
-clk_hw *' from 'int' makes pointer from integer without a cast
-[-Wint-conversion]
-  494 |         hws[IMX6UL_CLK_ENET2_REF_PAD] =
-imx_obtain_fixed_of_clock(ccm_node, "enet2_ref_pad", 0);
-      |                                       ^
-drivers/clk/imx/clk-imx6ul.c:496:39: warning: assignment to 'struct
-clk_hw *' from 'int' makes pointer from integer without a cast
-[-Wint-conversion]
-  496 |         hws[IMX6UL_CLK_ENET2_REF_SEL] =
-imx_clk_gpr_mux("enet2_ref_sel", "fsl,imx6ul-iomuxc-gpr",
-      |                                       ^
-drivers/clk/imx/clk-imx6ul.c:548:9: error: too few arguments to
-function 'imx_register_uart_clocks'
-  548 |         imx_register_uart_clocks();
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/clk/imx/clk-imx6ul.c:19:
-drivers/clk/imx/clk.h:15:6: note: declared here
-   15 | void imx_register_uart_clocks(unsigned int clk_count);
-      |      ^~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+---
+ tools/perf/tests/shell/pipe_test.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/perf/tests/shell/pipe_test.sh b/tools/perf/tests/shell/pipe_test.sh
+index d4c8005ce9b9..02d9ef27c8e7 100755
+--- a/tools/perf/tests/shell/pipe_test.sh
++++ b/tools/perf/tests/shell/pipe_test.sh
+@@ -12,7 +12,7 @@ skip_test_missing_symbol ${sym}
+ 
+ data=$(mktemp /tmp/perf.data.XXXXXX)
+ data2=$(mktemp /tmp/perf.data2.XXXXXX)
+-prog="perf test -w noploop"
++prog="perf test -w noploop 3"
+ err=0
+ 
+ set -e
+-- 
+2.47.0
 
-Build log link,
--------------
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.112-799-gc060104c065d/testrun/25432777/suite/build/test/gcc-13-defconfig/log
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwgipt3iHSCkBuMSKQIhwr95q/
-
-metadata:
-----
-  git describe: v6.1.112-799-gc060104c065d
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-  git sha: c060104c065dc2884e301155e32dd955e6bb45b5
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwgipt3iHSCkBuMSKQIhwr95q/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2nQwgipt3iHSCkBuMSKQIhwr95q/
-  toolchain: clang-19 and gcc-13
-  config: defconfig
-  arch: arm
-
-Steps to reproduce:
--------
-# tuxmake --runtime podman --target-arch arm --toolchain gcc-13
---kconfig defconfig
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
