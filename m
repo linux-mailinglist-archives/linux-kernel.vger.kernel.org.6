@@ -1,96 +1,127 @@
-Return-Path: <linux-kernel+bounces-365020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6C499DC46
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:30:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A974799DC47
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF052831AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654AC282C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E42F16130C;
-	Tue, 15 Oct 2024 02:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32B342A8A;
+	Tue, 15 Oct 2024 02:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RySrbUZE"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gHGJNDjB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CF379C8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B643B1F61C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728959425; cv=none; b=CgqJ4Ki/MfH8qXfGs7HklnFEvTZEjbi7mE59PVmSU3W3n0cE423HsQoqTff2KgM1/ZGoJ9V5JsOsG7tn0iLgrNk5ctXvUgMuq/ibYuXwNICZ44d7+Gxgg/dAAP7an7HXlmIDZm3S+8pxg/7CmykGFxrmHaFoa1OcGJ8G85b2Va0=
+	t=1728959493; cv=none; b=YtrAlsDvKJARI3ybmB1Bry28kX9dYdxo8R8YPjHspUjuX95H+y10STktsEMqWspSyylgSr0Jai+MgGx6kWBOlKyvK8JKpY7LAhqDRWVnmG9HuogTblpp0T5grYaRzJdOFKf6LRQ6eSrcIUPosHrXQEkZPE0W5Fb1dtMrAkiaBkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728959425; c=relaxed/simple;
-	bh=2sxZOK4UHRWx8tg1DEY0UMfzL5hHYaCPT4wQ7R22VjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gMoLUlWlc5z1gTcF786+nQ/V//bzynLCdvlFRoaCtLpNPtGJmsojpRtDIvBKayABQwjF3rf823gAAorsepAbbFf3GK7B1kGaeov7B8k4ANc8Z+g5mFTs2HLRUInX2APPNx5D0LfD3JAsZhAjrKIYsCWysYa1OQX8fHLUvPcVWFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RySrbUZE; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <47e92158-4fdb-4fd7-808c-b6735d7ee787@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728959417;
+	s=arc-20240116; t=1728959493; c=relaxed/simple;
+	bh=Eht3kaE8TPAUFrMmB2wYBK16NKLPLwgMkqIgrhPGAHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDJmveU1EDb8pasF4jh8+DdHWAqScysLNWW0M6ikd5tQW+Du+KfAfc4TDlp5iVnQs6pZwfjTOC2dy9JieDErDnb8XXZ94igpWX3SlOqRZTrbGzH7SSx9ocLicLsc09GZtAiLseE6pLNxoyxTrD2aK9vSLshJUuHbe/nKwqLIHQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gHGJNDjB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728959489;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=unwgkNzP3UT467HzdUb952mpfMEMHs6MjC417zS7fas=;
-	b=RySrbUZE/lXwwJUWkhUBTrwuG0KgwEnj/AtMBzMBeCJJkXoTk8+AtQWj5k06c8Kx9bK3xB
-	WCDp6f26NHpU139ck2710QHijTvsI+NnnBH8RQBc58Vs34XkyDjDpbG1r0QKiaB8xpEqpz
-	SWtuknJwub2mR9rUHF7pRDGwpnpKxPE=
-Date: Tue, 15 Oct 2024 10:30:08 +0800
+	bh=d92jJ6kW+oBkOfqEEGf2E2wbMnllb1zRN+YLBEPwhFs=;
+	b=gHGJNDjBxTIQKRz2GxgnZ37hI03TNk0pPcEoGLQbMtsiGEHcLAR5M6U2Na15kCHaAgDCmM
+	mGA1pKVdLJ+ZgcJpcrD0PGvqQZShkuMcrPVD1t1svTxyl6gsRez/u5ffPLK6kkLgHddD0V
+	xNcegJyxSgMRejWWQ9w8QPGNjnTOoRg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-zeZ5XHc8O_a_kjd-wL27mQ-1; Mon,
+ 14 Oct 2024 22:31:25 -0400
+X-MC-Unique: zeZ5XHc8O_a_kjd-wL27mQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E52EE19560A3;
+	Tue, 15 Oct 2024 02:31:23 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.119])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6266519560AE;
+	Tue, 15 Oct 2024 02:31:16 +0000 (UTC)
+Date: Tue, 15 Oct 2024 10:31:11 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.de>,
+	Hamza Mahfooz <someguy@effective-light.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ming.lei@redhat.com,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
+ overlapping mappings aren't supported"
+Message-ID: <Zw3T7-6pxGelQX_s@fedora>
+References: <ZwxzdWmYcBK27mUs@fedora>
+ <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
+ <20241014074151.GA22419@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 3/3] Docs/zh_CN: Fix the pfn calculation error in
- page_tables.rst
-To: Pengyu Zhang <zpenya1314@gmail.com>, alexs@kernel.org,
- siyanteng@loongson.cn, corbet@lwn.net, seakeel@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- yaxin_wang_uestc@163.com, zenghui.yu@linux.dev
-References: <20241014155526.17065-1-zpenya1314@gmail.com>
- <20241014155526.17065-4-zpenya1314@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20241014155526.17065-4-zpenya1314@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014074151.GA22419@lst.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-
-
-
-在 2024/10/14 23:55, Pengyu Zhang 写道:
-> Synchronize the changes of origin document to fix the pfn value.
+On Mon, Oct 14, 2024 at 09:41:51AM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 14, 2024 at 09:23:14AM +0200, Hannes Reinecke wrote:
+> >> 3) some storage utilities
+> >> - dm thin provisioning utility of thin_check
+> >> - `dt`(https://github.com/RobinTMiller/dt)
+> >>
+> >> I looks like same user buffer is used in more than 1 dio.
+> >>
+> >> 4) some self cooked test code which does same thing with 1)
+> >>
+> >> In storage stack, the buffer provider is far away from the actual DMA
+> >> controller operating code, which doesn't have the knowledge if
+> >> DMA_ATTR_SKIP_CPU_SYNC should be set.
+> >>
+> >> And suggestions for avoiding this noise?
+> >>
+> > Can you check if this is the NULL page? Operations like 'discard' will 
+> > create bios with several bvecs all pointing to the same NULL page.
+> > That would be the most obvious culprit.
+> 
+> The only case I fully understand without looking into the details
+> is raid1, and that will obviously map the same data multiple times
+> because it writes it out multiple time.  Now mapping a buffer
+> multiple times for a DMA_TO_DEVICE is relatively harmless in
+> practice as the data is transferred to the device, but it it
+> still breaks the dma buffer ownership model in the dma which is
+> really helpful to find bugs where people don't think about this
+> at all.  Not sure if there is any good solution here.
 >
-> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+
+Another related topic:
+
+Recently direct IO buffer alignment changes to just respect DMA
+controller alignment which is often too relax, such as dma_alignment
+is just 3 for many host controllers, then two direct IO buffers may
+cross same DMA mapping cache line.
+
+Is this one real problem?
+
 
 Thanks,
-Yanteng
-> ---
->   Documentation/translations/zh_CN/mm/page_tables.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/translations/zh_CN/mm/page_tables.rst b/Documentation/translations/zh_CN/mm/page_tables.rst
-> index 544381c348b1..b0700a5a8bf1 100644
-> --- a/Documentation/translations/zh_CN/mm/page_tables.rst
-> +++ b/Documentation/translations/zh_CN/mm/page_tables.rst
-> @@ -32,7 +32,7 @@ Linux 将页表定义为一个分级结构，目前有五级。对于支持的
->   在页粒度为 4KB 且地址范围为32位的情况下，pfn 0 对应地址0x00000000，pfn 1 对应
->   地址0x00001000，pfn 2 对应地址 0x00002000，以此类推，直到 pfn 0xfffff 对应
->   0xfffff000。如果页粒度为 16KB，则 pfn 分别对应地址 0x00004000、0x00008000
-> -... 0xffffc000，pfn 的范围从 0 到 0x3fffff。
-> +... 0xffffc000，pfn 的范围从 0 到 0x3ffff。
->   
->   如你所见，对于 4KB 页面粒度，页基址使用地址的 12-31 位，这就是为什么在这种情况下
->   `PAGE_SHIFT` 被定义为 12，并且 `PAGE_SIZE` 通常由页偏移定义，为 `(1 << PAGE_SHIFT)`。
+Ming
 
 
