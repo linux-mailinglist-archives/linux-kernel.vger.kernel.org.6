@@ -1,95 +1,122 @@
-Return-Path: <linux-kernel+bounces-365928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C52E99EE10
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:43:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A6799EE0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E0A31C20BAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E4F1F257D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E4E1D5174;
-	Tue, 15 Oct 2024 13:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278E71D174F;
+	Tue, 15 Oct 2024 13:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="Sr0LYTIG"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uX00nqRb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD571AF0B2;
-	Tue, 15 Oct 2024 13:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A5D1C07CC;
+	Tue, 15 Oct 2024 13:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999637; cv=none; b=Cd4dUNaMM2YjTQeRYhd9mqUUSNOXfHI//KxoQgAIy3KqI9uuhEEwemBjjff1K+y/Zw7Eiwy3VjCZM00OTMK5dMQKna6oHEgCeD+ITYNsvBiDSKCJ335+UHzad4kGyn0YC1W8AMBIq5v6et5MnJ7Q+CSOdKJm2jHs3wb8w13m9tg=
+	t=1728999628; cv=none; b=CRPqQgcXYko0uyCHqUOnDYOa6q3AlpeIJM6t/cIKbSmBCUwI4ZQ+TXN9VbTdGsdoihjYFg6mb/e+pYgF83I03wF9IXvYGIoZTSnoVhRy8hxYJhOxJwBWa0Kox316+ZHHuZs/1KvhCwJrwI8EYaoLddNxnf8XJky6IPSafrlS8C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999637; c=relaxed/simple;
-	bh=hWsnXqzWUVbS/LFkW+4v8ACd0XaCqMw01lVnIK0YzH4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hD/aPi2GKHs4iBTkl2EwESZCYA288Y5m5PurPV7w6l9IM0voneqxlg5bdLiji4k6jmNlwWt3saaFSdOhFTM47JiE1QoTvZilK1BBEwo+CujgC2iD/ek+7ABQVyEBD8O15nSZS/Yu9jnAKg/ViEk8U424cHAni3UfvwLUhy38vEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=Sr0LYTIG; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7042120011;
-	Tue, 15 Oct 2024 13:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1728999627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RFLmJEq84/4RSf31UFW/K0HnFE3ckCo/P5dpzh8CF5M=;
-	b=Sr0LYTIGO6411b3ukyZwFgc6ppUe4er18qohZzBB0p+hCXn1ltg+9xq5LMJ+sr0G37Dn/4
-	wAYFJ8NOvvS/+Y9E0NYXTqP1YIZNqn8h5+kXbPlrjX1XU0LHp6P8/cVyY+bO2s7Q320xkg
-	bC1ZkeQho1T6MfgxXKusejSY53Jx7uqZ3oqM5p9KjfUOKCqfsP7zt8A9zHQK3wKF80SWzh
-	hXBw7Pdo27zw5KquEeUdtV8l8/PaEeCIJ+AHIqq8kbsIhRTSkxhwFLt9eO3vywozEGq2sf
-	xvYjpRHeEqhHLxv12w5W0MQ9eAm+Csm4Lyr2uf1qFIjcsBz+utrJY8scDns45g==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc:  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Theodore Ts'o
- <tytso@mit.edu>,  Andreas Dilger <adilger.kernel@dilger.ca>,  Hugh Dickins
- <hughd@google.com>,  Andrew Morton <akpm@linux-foundation.org>,  Jonathan
- Corbet <corbet@lwn.net>,  smcv@collabora.com,  kernel-dev@igalia.com,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-ext4@vger.kernel.org,  linux-mm@kvack.org,
-  linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 03/10] unicode: Export latest available UTF-8 version
- number
-In-Reply-To: <20241010-tonyk-tmpfs-v6-3-79f0ae02e4c8@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Thu, 10 Oct 2024 16:39:38 -0300")
-References: <20241010-tonyk-tmpfs-v6-0-79f0ae02e4c8@igalia.com>
-	<20241010-tonyk-tmpfs-v6-3-79f0ae02e4c8@igalia.com>
-Date: Tue, 15 Oct 2024 09:40:22 -0400
-Message-ID: <87o73lscvt.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728999628; c=relaxed/simple;
+	bh=+eg5Ogets9SiLlYwP2uE1cyuHarfu0eMJpCc1LNOyZk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ug4MgT8fgB7kMq9hVseVE0EAWTXXezthk4GuhW0dcHjEoxnkLzY9RRTsKpoyfXf+6y4CbmDdFdnsdJ3+Ydizvu4VqhbFM6nlobQVoUO3lTsdULFp1bdrbcGGFtxlV2vm83tT/Iq/RhDT5Eu1hrDnVpRLuvgIyWIraeoWWUSSLQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uX00nqRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D07C4CEC6;
+	Tue, 15 Oct 2024 13:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728999626;
+	bh=+eg5Ogets9SiLlYwP2uE1cyuHarfu0eMJpCc1LNOyZk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=uX00nqRbj0TEG1Tz8shbGOT2WxuN/MzsJ0/O8D6fMk7nTY7nynwkrPoV5Izq1912G
+	 MCNxilzGTiCcfUAS5pjSXwW6q3cRG/BW6D6YbtnmlO0q+fhZtWAV8iW5Tl912r9gZP
+	 jE929Z//XzSjfIYVBdbbV+yN6bRsMcoaXu9P5SmP/HpGUsX8oWRvpS3y/CHIagsxmZ
+	 wSs02+S5+DmmcEkoZwbxu00ArbFRTvF91bDqH9pPk66sN6FjSlgd1oE0CGyqAvnLq/
+	 xoAmzPiMCVa7yA7fqt68pGzpMEomnxnAVW+/H1RaLmsld8vRk3GlFiM5j84R4We9bm
+	 NTYamxloL6Fqw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B943809A8A;
+	Tue, 15 Oct 2024 13:40:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 00/17] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172899963173.1165800.13282848624565322990.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Oct 2024 13:40:31 +0000
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ vbabka@suse.cz, paulmck@kernel.org, tom@talpey.com, Dai.Ngo@oracle.com,
+ okorniev@redhat.com, neilb@suse.de, linux-can@vger.kernel.org,
+ bridge@lists.linux.dev, b.a.t.m.a.n@lists.open-mesh.org,
+ linux-kernel@vger.kernel.org, wireguard@lists.zx2c4.com,
+ netdev@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-block@vger.kernel.org, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+ naveen@kernel.org, maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
+ kvm@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+Hello:
 
-> Export latest available UTF-8 version number so filesystems can easily
-> load the newest one.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
+This series was applied to netdev/net-next.git (main)
+by Simon Wunderlich <sw@simonwunderlich.de>:
 
-This will clash with another change sent to fs/unicode[1].
+On Sun, 13 Oct 2024 22:16:47 +0200 you wrote:
+> Since SLOB was removed and since
+> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+> it is not necessary to use call_rcu when the callback only performs
+> kmem_cache_free. Use kfree_rcu() directly.
+> 
+> The changes were done using the following Coccinelle semantic patch.
+> This semantic patch is designed to ignore cases where the callback
+> function is used in another way.
+> 
+> [...]
 
-This is just a FYI.  No need to resend. It should be handled during the
-merge. That is, unless it reaches mainline before your patchset is
-merged.
+Here is the summary with links:
+  - [01/17] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [02/17] ipv4: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [03/17] inetpeer: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [04/17] ipv6: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [05/17] xfrm6_tunnel: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [06/17] batman-adv: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    https://git.kernel.org/netdev/net-next/c/356c81b6c494
+  - [08/17] net: bridge: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [10/17] can: gw: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [14/17] kcm: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [15/17] netfilter: nf_conncount: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [16/17] netfilter: expect: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
+  - [17/17] netfilter: xt_hashlimit: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+    (no matching commit)
 
-See [1] 20241011072509.3068328-8-davidgow@google.com
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
---=20
-Gabriel Krisman Bertazi
+
 
