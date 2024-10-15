@@ -1,210 +1,132 @@
-Return-Path: <linux-kernel+bounces-365498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505C299E334
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:57:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB7D99E33A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A3B1C21F6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:57:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652FA1F22A84
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4A51E2825;
-	Tue, 15 Oct 2024 09:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972471E32A9;
+	Tue, 15 Oct 2024 09:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsv7WmBi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SnZQ/82n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA067F7FC;
-	Tue, 15 Oct 2024 09:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC6B1DF25F;
+	Tue, 15 Oct 2024 09:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728986222; cv=none; b=RP86LNKNAtnFX4VFTf/VLfEaMT9vhvT08Lig3zmOXP44E3zzaYa+sUtDYTkxEVhxaujx4O5D5Agwj3VFkGqoxmxo2K3P9v4oajFE+TUlMud+rCvSC2Et0Xau3EFmkTENjjFR50ymk7L6qt7wUI8AjbsFG6FEGMpp1pMilu5Xwr4=
+	t=1728986311; cv=none; b=KIo2rp6oU5DNF48uUfx0/mCSqW0BaLlWxqbSoPlwHgvYbxF7u8KCgvWZd7w9srZQEdYEJJXgmiXDMJLEhJ2aZVkz6bf+5fCNP/UOmNOiHxVTLy0nV/atn3Gwj0WXjSFMRjBleZBxksNEpUQxv+dCnvlqxd9eUtwdyB+clGd6zM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728986222; c=relaxed/simple;
-	bh=XbbtQwgzS/RoY3OIlALRUgO8LRfIuiE3RHLo2Fy4w+o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qQrsFyXLXimJAihwSoWGSDIPwubR81wsj439hTxfuqfAfMlGqojeKcejqdHsXpVcTZ+27bVzZXHn1HWPeC0O9faNYhrR2Kvvayn18twESzKz7wI+ODFCoLtQHVMxCj4GSoHwxIRW3kgnwxIkHDq3hIkWMBTh5yz7/FGpOooO7uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsv7WmBi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB48DC4CEC6;
-	Tue, 15 Oct 2024 09:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728986222;
-	bh=XbbtQwgzS/RoY3OIlALRUgO8LRfIuiE3RHLo2Fy4w+o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=dsv7WmBigmJHRTeWdSshrbzbirjuaZfm9l6aCOU7Agc3bJB51w/wq7MJAyMF2xHOW
-	 Lno/+4u0nxcydG/nddrf/HLx0PjItk7aj6/oqJQZBBlwZ5YmmZNG2MtELH1tB/5UdI
-	 jrM8MQQvVCYOupJcDh5dVLDzVjx1mE+2SXx7E8gevtNGrrPp0Ft82ITDH/0x1MPjQC
-	 8p+IszJjppYholnoEAAPNuddMzPPR7cOUcjpdGi+N07CfKeZxa/6l+o9jLEI58hvSB
-	 NPmEA4ECjfKyd8GGN99v2q/aEdg9eIryR8PhVGVPQte1d9PhJrD1kyTjSEYxhi2l/d
-	 ougL3DXg5VLlA==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v4 1/2] bpf: implement bpf_send_signal_task()
- kfunc
-In-Reply-To: <CAEf4Bza5HCFZmMA8UcM92TXzDq8CxKpjPkQ_s2PLuc-dGR8y2A@mail.gmail.com>
-References: <20241008114940.44305-1-puranjay@kernel.org>
- <20241008114940.44305-2-puranjay@kernel.org>
- <CAEf4Bza5HCFZmMA8UcM92TXzDq8CxKpjPkQ_s2PLuc-dGR8y2A@mail.gmail.com>
-Date: Tue, 15 Oct 2024 09:56:48 +0000
-Message-ID: <mb61pbjzln0yn.fsf@kernel.org>
+	s=arc-20240116; t=1728986311; c=relaxed/simple;
+	bh=EFjLdNc/R+TxB36k4XSzjZNz0ME/CSEs1oTBY4btMIk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iGxH5ones7/DT225cl3Sle6bgAqoLZD8M4eyYCBKhAujRCTq8PxKU28FiH4pPoB9r5fx/d2Q4CcIj0R1OpGdBdXKxLW84ycTIbs1U1t/oB3pBI4KIx4y1oZybE6uX1+p4qc1pbImFvbPo/CzIy8xatJiw2cJQl8nZHaqhATH07o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SnZQ/82n; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728986309; x=1760522309;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EFjLdNc/R+TxB36k4XSzjZNz0ME/CSEs1oTBY4btMIk=;
+  b=SnZQ/82n1AFdwoBX/ydaZVH4fUU2uI2qVTW4dTETuExBB+Pcjlulk8Sj
+   8KFgePBNrAIXar2tcwYzyLfR4I6+90/7KeoXiHH//9B+ESnweAo/+CQ9d
+   OxF7GaruCnKbRLmVEJtjsbF0p8hkEc01XjfTiGQNfbx4TgN/8bes5uD3j
+   B29I4J+NSuTPVskbrVRz5HTNTuR9o3muSus4U7Xn4hEtrQZOluBwItYs7
+   4GCQhxWxkVZTHxcm6Ccdl8rJOzqs3ntlkXeLTQWa38f/+6f1XI6MnlWZ0
+   szhotmXpD+7Yz3alZeDCpwdxIiAfPcCbicHv0hze0b8C+EneFNdOzPRu9
+   g==;
+X-CSE-ConnectionGUID: A6GiKeQ8RQu+GisCNvB+vA==
+X-CSE-MsgGUID: utO2HkY7QjqY2F3XCMaqjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="53777732"
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="53777732"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 02:58:29 -0700
+X-CSE-ConnectionGUID: qdNHGLVkRVa3jnbjaqTjlg==
+X-CSE-MsgGUID: 2esUFg9XS0+7z8XuufHo1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="82626100"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 15 Oct 2024 02:58:26 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 28DC1184; Tue, 15 Oct 2024 12:58:23 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Binbin Wu <binbin.wu@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [PATCH] x86/kvm: Override default caching mode for SEV-SNP and TDX
+Date: Tue, 15 Oct 2024 12:58:17 +0300
+Message-ID: <20241015095818.357915-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+AMD SEV-SNP and Intel TDX have limited access to MTRR: either it is not
+advertised in CPUID or it cannot be programmed (on TDX, due to #VE on
+CR0.CD clear).
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+This results in guests using uncached mappings where it shouldn't and
+pmd/pud_set_huge() failures due to non-uniform memory type reported by
+mtrr_type_lookup().
 
-> On Tue, Oct 8, 2024 at 4:49=E2=80=AFAM Puranjay Mohan <puranjay@kernel.or=
-g> wrote:
->>
->> Implement bpf_send_signal_task kfunc that is similar to
->> bpf_send_signal_thread and bpf_send_signal helpers  but can be used to
->> send signals to other threads and processes. It also supports sending a
->> cookie with the signal similar to sigqueue().
->>
->> If the receiving process establishes a handler for the signal using the
->> SA_SIGINFO flag to sigaction(), then it can obtain this cookie via the
->> si_value field of the siginfo_t structure passed as the second argument
->> to the handler.
->>
->> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
->> ---
->>  kernel/bpf/helpers.c     |  1 +
->>  kernel/trace/bpf_trace.c | 52 +++++++++++++++++++++++++++++++++-------
->>  2 files changed, 45 insertions(+), 8 deletions(-)
->>
->> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
->> index 4053f279ed4cc..2fd3feefb9d94 100644
->> --- a/kernel/bpf/helpers.c
->> +++ b/kernel/bpf/helpers.c
->> @@ -3035,6 +3035,7 @@ BTF_ID_FLAGS(func, bpf_task_get_cgroup1, KF_ACQUIR=
-E | KF_RCU | KF_RET_NULL)
->>  #endif
->>  BTF_ID_FLAGS(func, bpf_task_from_pid, KF_ACQUIRE | KF_RET_NULL)
->>  BTF_ID_FLAGS(func, bpf_throw)
->> +BTF_ID_FLAGS(func, bpf_send_signal_task, KF_TRUSTED_ARGS)
->>  BTF_KFUNCS_END(generic_btf_ids)
->>
->>  static const struct btf_kfunc_id_set generic_kfunc_set =3D {
->> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
->> index a582cd25ca876..d9662e84510d3 100644
->> --- a/kernel/trace/bpf_trace.c
->> +++ b/kernel/trace/bpf_trace.c
->> @@ -802,6 +802,8 @@ struct send_signal_irq_work {
->>         struct task_struct *task;
->>         u32 sig;
->>         enum pid_type type;
->> +       bool has_siginfo;
->> +       struct kernel_siginfo info;
->>  };
->>
->>  static DEFINE_PER_CPU(struct send_signal_irq_work, send_signal_work);
->> @@ -809,27 +811,46 @@ static DEFINE_PER_CPU(struct send_signal_irq_work,=
- send_signal_work);
->>  static void do_bpf_send_signal(struct irq_work *entry)
->>  {
->>         struct send_signal_irq_work *work;
->> +       struct kernel_siginfo *siginfo;
->>
->>         work =3D container_of(entry, struct send_signal_irq_work, irq_wo=
-rk);
->> -       group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task, work->=
-type);
->> +       siginfo =3D work->has_siginfo ? &work->info : SEND_SIG_PRIV;
->> +
->> +       group_send_sig_info(work->sig, siginfo, work->task, work->type);
->>         put_task_struct(work->task);
->>  }
->>
->> -static int bpf_send_signal_common(u32 sig, enum pid_type type)
->> +static int bpf_send_signal_common(u32 sig, enum pid_type type, struct t=
-ask_struct *task, u64 value)
->>  {
->>         struct send_signal_irq_work *work =3D NULL;
->> +       struct kernel_siginfo info;
->> +       struct kernel_siginfo *siginfo;
->> +
->> +       if (!task) {
->> +               task =3D current;
->> +               siginfo =3D SEND_SIG_PRIV;
->> +       } else {
->> +               clear_siginfo(&info);
->> +               info.si_signo =3D sig;
->> +               info.si_errno =3D 0;
->> +               info.si_code =3D SI_KERNEL;
->> +               info.si_pid =3D 0;
->> +               info.si_uid =3D 0;
->> +               info.si_value.sival_ptr =3D (void *)(unsigned long)value;
->> +               siginfo =3D &info;
->> +       }
->>
->>         /* Similar to bpf_probe_write_user, task needs to be
->>          * in a sound condition and kernel memory access be
->>          * permitted in order to send signal to the current
->>          * task.
->>          */
->> -       if (unlikely(current->flags & (PF_KTHREAD | PF_EXITING)))
->> +       if (unlikely(task->flags & (PF_KTHREAD | PF_EXITING)))
->>                 return -EPERM;
->>         if (unlikely(!nmi_uaccess_okay()))
->>                 return -EPERM;
->>         /* Task should not be pid=3D1 to avoid kernel panic. */
->> -       if (unlikely(is_global_init(current)))
->> +       if (unlikely(is_global_init(task)))
->>                 return -EPERM;
->>
->>         if (irqs_disabled()) {
->> @@ -847,19 +868,21 @@ static int bpf_send_signal_common(u32 sig, enum pi=
-d_type type)
->>                  * to the irq_work. The current task may change when que=
-ued
->>                  * irq works get executed.
->>                  */
->> -               work->task =3D get_task_struct(current);
->> +               work->task =3D get_task_struct(task);
->> +               work->has_siginfo =3D siginfo =3D=3D &info;
->> +               copy_siginfo(&work->info, &info);
->
-> we shouldn't copy_siginfo() if !work->has_siginfo, no?
+Override MTRR state, making it WB by default as the kernel does for
+Hyper-V guests.
 
-Yes, but it is only used when has_siginfo is true, so copying it doesn't
-cause any problems. I just didn't want to add another check here.
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Suggested-by: Binbin Wu <binbin.wu@intel.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+---
+ arch/x86/kernel/kvm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> other than that, lgtm
->
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 263f8aed4e2c..21e9e4845354 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -37,6 +37,7 @@
+ #include <asm/apic.h>
+ #include <asm/apicdef.h>
+ #include <asm/hypervisor.h>
++#include <asm/mtrr.h>
+ #include <asm/tlb.h>
+ #include <asm/cpuidle_haltpoll.h>
+ #include <asm/ptrace.h>
+@@ -980,6 +981,9 @@ static void __init kvm_init_platform(void)
+ 	}
+ 	kvmclock_init();
+ 	x86_platform.apic_post_init = kvm_apic_init;
++
++	/* Set WB as the default cache mode for SEV-SNP and TDX */
++	mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
+ }
+ 
+ #if defined(CONFIG_AMD_MEM_ENCRYPT)
+-- 
+2.45.2
 
-Thanks for the Ack. I hope this can go in now!
-
-Thanks,
-Puranjay Mohan
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZw48YRQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2nfQyAQCeqW35HEAD4ksD/dnVgtkBCH6pkJkX
-gc/F0aFK9fezDAD/XQbmXYj951w/eA8EIETkBnOR/Rlyi0NwiqDNtUCvugc=
-=Qt+j
------END PGP SIGNATURE-----
---=-=-=--
 
