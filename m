@@ -1,96 +1,75 @@
-Return-Path: <linux-kernel+bounces-364991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D6399DBFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:00:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C4499DC01
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256361C21AF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:00:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771141C2193B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF1B166F34;
-	Tue, 15 Oct 2024 02:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6MUEwKY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39445165F16;
-	Tue, 15 Oct 2024 02:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4ED15AD9C;
+	Tue, 15 Oct 2024 02:01:25 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DAC41C63;
+	Tue, 15 Oct 2024 02:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728957627; cv=none; b=XNXEk56slSN85ibsQrWn4XMv2LH45rktxVWVIluLfQvDigojxGq5xpTiKYiQmY4Qoec1mzKWe9TYXVw2Vcmoea5Pw1xXeE80GPWoifwMFIs3YomGVYEb+dwhwpMSG1T2zSm31wwWu3iIuovUVxJhdbJtuWE337pmRmy7/UAwr9Q=
+	t=1728957685; cv=none; b=gdTU5p/RarBeZ7mLWoFascg4no7BhM+3KAO2wSpOIotAKvRSwpBazs+URY/MdPxGYLlvuG6Qtc/yT7F2gUAmZTa1s9pHTad3Tcb1p0Id8oJVfnlRTUj/iTo/fzilrtep5egQjpuObV8fA4W7w1GSr8uhUh/h1CqYUNxu9mUFdkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728957627; c=relaxed/simple;
-	bh=KNuccX5J61wl0DNAb86MlKNymkFrcicRV5AmzgSQJKY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=EUNgnupm/0xBFYDlMGQn7GKDvo10ENFScaKYN1eh3P725dd5V6Dt6QshMDaA/odLPlrbUInCG5nNG3pP4xD7Ol0XBxT7KrteNjHFj3OvghNIE7fnCn+SPLwHGSoBEDrTWLADD/jlvWihNCGY20AD64CbKloTbtfp4khcSpi7hh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6MUEwKY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43E8C4CEC3;
-	Tue, 15 Oct 2024 02:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728957626;
-	bh=KNuccX5J61wl0DNAb86MlKNymkFrcicRV5AmzgSQJKY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=V6MUEwKYrvQFKsoQtDmEvMSwb/u8JJrGVKRIhJNZY45Q8vNBIl658DG4f26yfH4Ls
-	 Du42omdsZ316qlvXDFCvc2j4EWBfU3YfJiRjMmOy+GXybVBC6AbfJWpBWADoc/xy9x
-	 Bbz3W7IQ1/RwCqAi+hZi3JuY4hMIXsg8j8keupvGwB8PkI93aUY1yUjt1BsBiFYogC
-	 Kcbs/rxJjY9dwLp611iaG4+RhdfQNu8sTLQ4t6suCAWcxxxxmNfxqVVKW5GU+WwWI/
-	 eExSI5XytW95/HghHbxLI9y9wtPpSHkQujSlyxizoxa5Sg7wFqC5MihmepqsNnqRzR
-	 2VhayXAVDy0SQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0E53822E4C;
-	Tue, 15 Oct 2024 02:00:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728957685; c=relaxed/simple;
+	bh=DTyI8SRxp7jPsONaFnChyUkuV4JPvnXIdwINlLHvqOQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MX8viaAz6xy9CLUeX3CtV4s2ii9Aeecs0zSrpxomvKsWlOflZOF1kmX82nkscnmjyN08RSq+FYZLCz2lnG6lbnimKKAXhfjZAKPmo/MkqposE97khrlG6+R4CiSKl20PJU98bt7d60F/CeamV+VIPVF8e88SGqtCjj/Rj+6DtkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id E6EE492009C; Tue, 15 Oct 2024 04:01:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id E00EB92009B;
+	Tue, 15 Oct 2024 03:01:13 +0100 (BST)
+Date: Tue, 15 Oct 2024 03:01:13 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, zhanggenjian@kylinos.cn, 
+    ricardo@marliere.net, bvanassche@acm.org, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] mips: sgi-ip22: Replace "s[n]?printf" with sysfs_emit
+ in sysfs callbacks
+In-Reply-To: <Zw2GRQkbx8Z8DlcS@mail.google.com>
+Message-ID: <alpine.DEB.2.21.2410150220160.40463@angie.orcam.me.uk>
+References: <Zw2GRQkbx8Z8DlcS@mail.google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next 1/2] bpf: Add bpf_task_from_vpid() kfunc
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172895763151.696768.12853090794855329864.git-patchwork-notify@kernel.org>
-Date: Tue, 15 Oct 2024 02:00:31 +0000
-References: <AM6PR03MB5848E50DA58F79CDE65433C399442@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB5848E50DA58F79CDE65433C399442@AM6PR03MB5848.eurprd03.prod.outlook.com>
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 
-Hello:
+On Tue, 15 Oct 2024, Paulo Miguel Almeida wrote:
 
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+> snprintf() has the documented, but still rather strange trait of
+> returning the length of the data that *would have been* written to the
+> array if space were available, rather than the arguably more useful
+> length of data *actually* written, [...]
 
-On Mon, 14 Oct 2024 10:21:08 +0100 you wrote:
-> bpf_task_from_pid() that currently exists looks up the
-> struct task_struct corresponding to the pid in the root pid
-> namespace (init_pid_ns).
-> 
-> This patch adds bpf_task_from_vpid() which looks up the
-> struct task_struct corresponding to vpid in the pid namespace
-> of the current process.
-> 
-> [...]
+ Why do you think that just returning `n - 1' in the case of a length 
+overflow would be more useful than returning the unmet buffer length 
+requirement?  I think the opposite is the case: the value returned lets 
+you reallocate the buffer for more space and retry, and there's no other 
+way to figure out how much this would be.  And if you need to know how 
+many characters were actually written, then `min(n - 1, snprintf(...))' 
+will do (and code you propose to replace does exactly that, open-coded).
 
-Here is the summary with links:
-  - [bpf-next,1/2] bpf: Add bpf_task_from_vpid() kfunc
-    https://git.kernel.org/bpf/bpf-next/c/6dce087f24e5
-  - [bpf-next,2/2] selftests/bpf: Add tests for bpf_task_from_vpid() kfunc
-    https://git.kernel.org/bpf/bpf-next/c/108e7b4db83b
+ The change itself makes sense to me, but not your proposed description 
+I'm afraid.  Just replacing open-coded pieces with calls to `sysfs_emit' 
+is enough justification.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+  Maciej
 
