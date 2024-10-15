@@ -1,224 +1,167 @@
-Return-Path: <linux-kernel+bounces-365624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C96899E522
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:09:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D4399E525
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B293C1F245FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:09:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4331F24611
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10A1DD9BD;
-	Tue, 15 Oct 2024 11:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bOhJEgc1"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD221E766D;
+	Tue, 15 Oct 2024 11:08:59 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64F715C120;
-	Tue, 15 Oct 2024 11:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990531; cv=fail; b=b30bK/qfgwmEuPI/IhygB0h+o9AfQalfCHpqngldm/ooyoG59aNS63Un1J4wkp1oMFur9TY48KJgePqSpG+f46KSdseTLbdfgoLhHNkhbqPWBAnrYpcRWXMYZ45wm/NI+x1nZAMcCUJT7wyW8gSJ4IWCoeIbigLU+qRjUNVunYw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990531; c=relaxed/simple;
-	bh=7vYpzjO1yilt1zdjI141Llo/fAXZT/CkGAhio87ss0A=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aKtANIz7bCHpJwHjgjfhtFftmM355TXnKs2mH1MPZ/wW0y+iZ6+zpVRVjPFnD6Mjtz/Z7ktTW2qdBywEBixAZ8Jnhc7PUhW2Y8MrgpA4vpqvtE25hIBJVZzZv0EtPWFdo6oXO2PngXPVIdoYp/ECBkWyLmF3wPahoYpgR6iNPyg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bOhJEgc1; arc=fail smtp.client-ip=40.107.94.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QvgVwxQQG6a48jyTZuTygwXysvYZawUbFLi61QGnl6o64lgUBe2pVyFs/+d/CX3q91T99xviDUp5ZHXmKnSzN6ifKWgx3o85f7Fm5wrEB6+veoFmIs2XMvy/2HQ4Gijab84UX1YWe/rgFX9PF2NvZUn8rh37C2FZtdDJ9BQu9dKpZXiPZ2siZoRFlCV/MpDUmfpaG+zVM8IiMOB9w6XWoRapynuvy52FjzIF7TAh/0BC0E2o7ez51wHtAoSv2hg4MYYSiU5StxZoO6vqn0NhqpjpiWKEoILzqmLILZ7yg7TcaY1z1EX+zfaUVtvfWFnW0P0aDorSrCrNxH0wolUvPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J5ogBcGrWJdA1w5C5gcLvwHoVzuSoO0fsEL85vyVMxc=;
- b=o8BxKtJOO4OZD+UhCIM7HDuneY6waJQbk9COb7QEpT6RAIFR9QSuPlE+ehY+IhS0en46cS0mLt1MU3A+IAffMz2KTLBWCnNagdv3T/TWkHgtVRTl3qmSex0nSjEltHS6uos8rnJXZPDQfu56oKTzVwFAki3TVgkAbxM73ggZp6bZIL5GwyS9p8nKnpb/DXyxR+g9WRA288qF9XNAcf6uga6Cn95GHpa7/A+0QUzoHG/Dkgz0mPS9+fty0tOdFTLDuuT+cYWdPn4dpNDRvk1q+rzL7MbRFJLqvkOzCCjDaMuH/O+RU/lK+1qe7p4LB/wFIxd7UKrS6mSKJ9FMx/Cc4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J5ogBcGrWJdA1w5C5gcLvwHoVzuSoO0fsEL85vyVMxc=;
- b=bOhJEgc1GXVneBIhCqEOpUYF3RpgmD4MI3ojJ/NBPT9LMkO+0UEhrrUB9v8WWoC+vJfDJeXpxcilLSGiVF8hMtNIPOOCqoAqFuL5RWo7v/yRGdcn3+AiAUVieSVvdn/N6dp0Ffix9JOhijsvFjD2cOzsL5kwvuymKqwWwjKcu9LiF7/s6pCyEJCa1rsOzL7rpb0lVdzp/7N3fiHL20cDl6nK/ln+TLedcSjWKvpkR7v7gRMeqx9D7yd7D+ISodXbF8PLNeQBoPQRbsK0Pmq2uq+HflfxirHhU728Q0uqrz67zEvvIrcHEhA2ULYlKqIEVDjGAAnfgx/uwjB4W15YGA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by MN2PR12MB4176.namprd12.prod.outlook.com (2603:10b6:208:1d5::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Tue, 15 Oct
- 2024 11:08:44 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 11:08:44 +0000
-Message-ID: <4aac8cd8-57ba-4757-af9d-9ac99ec8ef9b@nvidia.com>
-Date: Tue, 15 Oct 2024 12:08:36 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: phy: aquantia: fix return value check in
- aqr107_config_mdi()
-To: Daniel Golle <daniel@makrotopia.org>, Hans-Frieder Vogt
- <hfdevel@gmx.net>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Christian Marangi <ansuelsmth@gmail.com>,
- Russell King <rmk+kernel@armlinux.org.uk>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Abhishek Chauhan <quic_abchauha@quicinc.com>,
- Robert Marko <robimarko@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <f8282e2fc6a5ac91fe91491edc7f1ca8f4a65a0d.1728825323.git.daniel@makrotopia.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <f8282e2fc6a5ac91fe91491edc7f1ca8f4a65a0d.1728825323.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0612.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:314::6) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEDD1E377E;
+	Tue, 15 Oct 2024 11:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728990538; cv=none; b=vBjWHi7swnPgrGQO06MwR7Pb35zAGed8DPEM9BBQMtgs1Rzr6EPwgCblSyCHhyJO/RDbwWb4cmtDtiJszeNZOVS0Al06fvq+YsSrgLgPKXKkvUG2iB4LFV7eBGvCLZU6kzzBNuLO8AMMlAoWioXtg+fgSxedajt2o65QW7xl8k4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728990538; c=relaxed/simple;
+	bh=7vjGjQHfBMbftYavyzTIGaLgrxdYcK7KHDnpT08ZtaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CsPwlTNJrfK6s6UFwZxjUvZBj/jH7bQ+fgO9QRTE7s9tMwQJBnKIlS+zD/m8vXBzEm0RR/7kDbyq6KdETRVyL4S8uyAaMNVT08LEMtYm2eBGYNg+coz8JcswoeLjL+A68JHRaxDh8tQRUUN/1jzjgSSoe5ChovIMolgcTRIxWpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: oNnjvyTlQJS726R6/G4jfQ==
+X-CSE-MsgGUID: BqDuvhe7RMWh3rr1LViSLQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="32295900"
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="32295900"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 04:08:56 -0700
+X-CSE-ConnectionGUID: A4XlGWDvSqSs2/hGER1uWQ==
+X-CSE-MsgGUID: DF/+bTsNTu2B2M/K1ho2UQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="82516728"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 04:08:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1t0fQ1-00000003FDA-0Jg3;
+	Tue, 15 Oct 2024 14:08:49 +0300
+Date: Tue, 15 Oct 2024 14:08:48 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: "Nechita, Ramona" <Ramona.Nechita@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 3/3] drivers: iio: adc: add support for ad777x family
+Message-ID: <Zw5NQM6Z9ATOx6SX@smile.fi.intel.com>
+References: <20240926135418.8342-1-ramona.nechita@analog.com>
+ <20240926135418.8342-4-ramona.nechita@analog.com>
+ <ZvV2mHkl4qxVVmBH@smile.fi.intel.com>
+ <DM6PR03MB4315785FB25B980264748BCBF3782@DM6PR03MB4315.namprd03.prod.outlook.com>
+ <20241010184516.66826055@jic23-huawei>
+ <Zwgb_Fq4dhVwzpf9@smile.fi.intel.com>
+ <20241012114202.425f1b74@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|MN2PR12MB4176:EE_
-X-MS-Office365-Filtering-Correlation-Id: 703bfff8-85b7-4ac4-53f7-08dced09bbfb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cHl5azhoWVdqRTN1UTlqSVJwc1g4MXBGdHJ1aUwxVVZudUY4K09laWt4ZVlL?=
- =?utf-8?B?N1BOTlpHdGdZUVlFRUhkRS9hMGxySEZBNU1CUzJOcUlIYzdKY1hmYnhHNk5Z?=
- =?utf-8?B?MmJaQVB1T0MyUkhmOFozU2drYVRma01lWlJSRmxNdFRMaEE2OWFrVWcxMDRw?=
- =?utf-8?B?b210bW4wQ0hsOWZScUwxckRKcTJZS3FMTndDWi9JM3gwVHNBTDlXUkJIdCtx?=
- =?utf-8?B?aEk2RExEOUNUT0FpYndrdCsyVjhueUNoRkdLUno4amZWZHhITW9xVmkrQWl5?=
- =?utf-8?B?V0hGVUZoZlZMOGRpSGt6K2JzTzhDV05EYmZyV0VVVUFNejF5S3ZWYS9xSEUx?=
- =?utf-8?B?aTdNYjJwK0NHR04vK29GR2k5dmNnYmJKZVo5MmhyVlQ4TE55RnlEc1YydnQv?=
- =?utf-8?B?ODYxNHVMUDI1QVRaUEI4dk1uQlB2QnVZUUhhRjBCZytSUU1UQXJab0U2cDhU?=
- =?utf-8?B?NlNweGR6K095NnB2SDVYd003THdRK0V4WXJUQkwwVDJUN1BMaDdWa0s3VjRF?=
- =?utf-8?B?OS9HWTNtc00xRGhFcTNFak1SYTd6NklVaGhPWlJ0cmxjd3F1RkZlc0VybWh6?=
- =?utf-8?B?RjdFSjlOd2ZDMlMvTyswMkxzN1NSUHR5ZUlvZHFGQmNLWVQ0RDZQbXRMQXVy?=
- =?utf-8?B?NEEvM0NMM0JqU3QrT1dPdnMxTFp5YnQzeVIxeFlUcHBibXJ6VTZPZStnb2tI?=
- =?utf-8?B?NjZRdFhhL3daSTlxWkpmSjZxKzdiakg0NjZDcmEzRm1GNm5FYzZoZGZmZE13?=
- =?utf-8?B?SlJWeE91Y3NORkVkV1orVTA2S1p0NVZ3RlRNUE9KVjB0cy9mTmh6Z0RWcXdB?=
- =?utf-8?B?MXpINGJpZ3htKzRkeDViNDBsMVh4OG5FV29aSWtOTFErbm1qa1BrcDBxT1Rx?=
- =?utf-8?B?c2dZdDJZSEhnaU56ekE1d3IrUVZmVlV6ZGFGSXNhbEN4cktJZmsrckFWd0Q3?=
- =?utf-8?B?NEM1SmZ6czZ1TElPaUJkVitsRWw1TG94djluMkxlSTFkYVNpaDA0aU42Y25n?=
- =?utf-8?B?RHBDOWdFakpPMUVmV2xXNUdFemJITTloU0tzTmd1cER5bmZXdGRuVkJmNUN1?=
- =?utf-8?B?TmNsMEQzUElLMVIxZ1ZzK2RicGRjaitGeDhSSmtXaDQxYUR3SXk2UkpQendH?=
- =?utf-8?B?N2d6ZWREcmxwdG93VktzWG5tb0RjM04xUlpBSGVLNFVoRGgyOHpSbmJYWVBQ?=
- =?utf-8?B?ZTVFNzFSUWNGQ0RlalJVZ1ZFNHVqU2FYYTUxNGN4N0N3bnZibzlBQkl1aDdZ?=
- =?utf-8?B?ZDlYTXUzS3FkOUk1WHhEdnlsZi9rV1FFbkNYdFZUSGNNNkRYL2RpVmJQQ2hJ?=
- =?utf-8?B?STJDS1YwWGFVS0lIVWZvKzQvZ1QwZVZYYmNHQnZkcklSZUlZNjB6L0FBTU92?=
- =?utf-8?B?TkFzSFdnZDRMYWV5cW5oV1pJVmxZS3oybW8xYnFya3FybGxSRUpMK0gzWDBV?=
- =?utf-8?B?QmpLUzdlTHdHc2ExUnA5bVZabGlSOGVGSDBNTzA3U0M2WjhqSnZHaUkxYXB2?=
- =?utf-8?B?TUpueW5jd05JSlYxeGhHZG13VFYwZ1BXZDRWMVJqNXIzaWc4VmFaV0ZZbVJy?=
- =?utf-8?B?SG4wSHNHb0M3b3NjT1NkWjhIUG9aMEVLWUc5anJkemw1bnZKcWUrMC80YU90?=
- =?utf-8?B?YS9senlxeXpPc3RUNlY0cU8relhBTStFOCtRTEdvSVNyUThjZmNLMlQvVjd0?=
- =?utf-8?B?OGtzVkZGd3poOFNYbDE5SWZ1ZEkvblA1clBuWEZVdUZFL1JWTVA5a09uUHdD?=
- =?utf-8?Q?UEbHhjdjACaiTuTFf0fxwZxQJsBKDfVj1RfYRoP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bWZhK1FYcmdSZWpUQTJBTThHZG11NU8ydm4wM0V3RG1raWphNGhIRjdvWVVu?=
- =?utf-8?B?ZGFkZGNVYmpkeG5SNTNtMFJoVkNwMFpUellCaThOTU1YRjNUUHgxZ1BIMmt4?=
- =?utf-8?B?SHZId0VzL2thMWVzaVdzK3hydHFINlNvWjZNczk4dEd2Vk4xSVN2WUlYdUVD?=
- =?utf-8?B?TzZtSTdsVEpuc1BzZXgyay9tempFenJJV2lxOU15V1ZVMjVwTFFWbTZwenRT?=
- =?utf-8?B?QnBGdGwwM0gzY3l1SjRRU1JjRG94QjJYR2M5TGtrRDNjcGJyWDBXbi8xSmlN?=
- =?utf-8?B?dEIrQjM3Qm9WbitSNUswNElXVkxvUkYvWGVPWXhLMXRXcHJUc3J1MHE0Nmdj?=
- =?utf-8?B?UVVkcE9QL2tDL051dnEvdWlMZTVIcGdRcHo3YlI1RFhZUkkyckF6eTk1YUEy?=
- =?utf-8?B?eUxpNDZNb2FaSXhKb29ZWEQrRjdWR3NpZXhOSGlDMVM3U0RjUHlmNUM5NGJp?=
- =?utf-8?B?OG1TT0RqRXd2dFdDeGc5NGxySWJzVktwbkV2YzhMSkFiS01laEJxM1RCTnlE?=
- =?utf-8?B?eVdsR2NIcGhNU2U1a1dGUklPK3R2b3o2dmwvZnE4SExaT2FkSllObmFIejM1?=
- =?utf-8?B?QW1UTjNJeUN6aS9hZlFTck5aUzZUa0xtUWFMM1ZoOFpGcGVuaDdOTlE0YWhz?=
- =?utf-8?B?dHdWeDQySWJWQ21LVjFrdFBYbkZNZHRsTEoyTm9COGhSQVd0T0FhOXZrRWZu?=
- =?utf-8?B?eWk5dTJhc0FDTVkzMlV1aDlaM1FBdW5HT0ptcWlya3VsZGpiUlF5N1piUmxE?=
- =?utf-8?B?Yll4c2xFQkRBMTVmZ1IwSlVUVitpMW5vR0JkNHBlWkNqRXl4NkZpRDJOVkF6?=
- =?utf-8?B?YUtDS0JZaXJwSDlOaG52aDRubXh3b1RPV1ZXclpWcTNLRzFRbTBYNXYvdDJy?=
- =?utf-8?B?L3FNVkRqaFM0ZDR1K29oSG8vSFZ5ai9MaU1tRngvSnB3U04vWVI3Y0IxSEtm?=
- =?utf-8?B?OFJKZUs1Ky9FZFh5aFdNczg0dFJ2a21GUW1RLzc5d3ZJWU1nMXJaRDRnSUZv?=
- =?utf-8?B?NjNENDZJNUJsQ0hPNHdGcUxqRFlHZlNpaU9OWlBCV1ZTSlpyOEkwdXU3ZnVV?=
- =?utf-8?B?a0R2RmdqYlBKNytidy9WOFVJU1g2U2JLNDdFRTBQT2w3dHdGTGFPc0ZPZXcw?=
- =?utf-8?B?NFpOOWxmcEIxSzB3RGMvWTNFbVJ1VzFLd24ySDJ2Wk45Q1FzTmNiN2FyU2Nn?=
- =?utf-8?B?S0RmWStoS0pubXp3bkRBUnM2cTAzVGxuNDluVWZrQ29jOEgreEw0VDNjM3Jt?=
- =?utf-8?B?N2FYNllpaERoelhNbnROU0tNaTFhc2hablNYeFl3eHFwdTdBTlpiL0JYeks2?=
- =?utf-8?B?dTVZNXo5anZMSEZ2NTJMQjVNekdwemtmQ3lFQklwandSc3B1bnpWbGh4SHM2?=
- =?utf-8?B?bE92ZVkxY3hqRFBvSjlvb2FuaWNSejJqbUxHa3FsR1d5b2czbXY4ekhCSUlD?=
- =?utf-8?B?MDhqUlBhNjZna1ZCMVJyUXJKNWZ3UXZxb3FWUlhvRGJVdmxOTEd6eGRCSEZp?=
- =?utf-8?B?c1RORGhtRWVrREJLYXJScVViUmloejhJSFo0aTd0NVV4STVKYTgwUGd5MEht?=
- =?utf-8?B?ZTlXWWpNRTV6a1kxSStWSXBaazJGKzk1S29UR0FGUGVnb01oRkx2ekV4TmRZ?=
- =?utf-8?B?VFRYQlJCeGxQT1MxdWZHY1lJejlRSkhxTmVkcHZtbTg0VHJvMzU5ZFZHeThX?=
- =?utf-8?B?cXRUejVmYUo5U0cwREJNVklDOVZvWGtPdVVob2NiM2dNajFEUGduSFZWVWp2?=
- =?utf-8?B?Z3lPWThyQy9FM002NTRVOTk4SHl4NjFkSzlqV2EwM29waDYwSmpPcFVlWjhD?=
- =?utf-8?B?SmkyOTlLVldiZU1uOFQ3eFNqQlZQajlHSnZobFM5TlVNWk5PazdOV1NBaWdR?=
- =?utf-8?B?Q2FyUHY0dFpNZ2RDSGY1QVdHTUd3R2hKaUpQUDVQTmJTcU80dXZIQjNSK3NS?=
- =?utf-8?B?RHBZWXFLS3hVQ1lYeGxWanVXbE5Vc3p2eVJGejJDWC9wTlg3NHZEeFJHQ3NV?=
- =?utf-8?B?NlRPQTAvTUFUbTJCaWJMYXc5VEhnVHNLY0JLRENKOXBaMXk1VHM2MjNENkxk?=
- =?utf-8?B?aE9INjZPZ00xbElEV0FjLzN3UGNOZk9zanZWU2NSUHNrV2d5eUU0bFBTYmFB?=
- =?utf-8?B?dlpQUzFuSERNUE03Zldoa2lubkg4UFV0S3ZBZTM2ZmF4clBRUE1pWFp4OUda?=
- =?utf-8?B?V0E9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 703bfff8-85b7-4ac4-53f7-08dced09bbfb
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 11:08:44.4880
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S67u4PKQCrR9EknPM9QaWLCAierG6I8ql2MpMWz116w+bIbz3SE3s+f/aJLVr6VzFmfV1y05OxneqXWhBmvEEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4176
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012114202.425f1b74@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Sat, Oct 12, 2024 at 11:42:02AM +0100, Jonathan Cameron wrote:
+> On Thu, 10 Oct 2024 21:25:00 +0300
+> Andy Shevchenko <andy@kernel.org> wrote:
+> > On Thu, Oct 10, 2024 at 06:45:16PM +0100, Jonathan Cameron wrote:
+> > > On Thu, 10 Oct 2024 14:32:49 +0000
+> > > "Nechita, Ramona" <Ramona.Nechita@analog.com> wrote:  
 
-On 13/10/2024 14:16, Daniel Golle wrote:
-> of_property_read_u32() returns -EINVAL in case the property cannot be
-> found rather than -ENOENT. Fix the check to not abort probing in case
-> of the property being missing, and also in case CONFIG_OF is not set
-> which will result in -ENOSYS.
+...
+
+> > > > >> +	/*
+> > > > >> +	 * DMA (thus cache coherency maintenance) requires the
+> > > > >> +	 * transfer buffers to live in their own cache lines.
+> > > > >> +	 */
+> > > > >> +	struct {
+> > > > >> +		u32 chans[8];
+> > > > >> +		s64 timestamp;    
+> > > > >
+> > > > >	aligned_s64 timestamp;
+> > > > >
+> > > > >while it makes no difference in this case, this makes code aligned inside the IIO subsystem.    
+> > > > 
+> > > > I might be missing something but I can't find the aligned_s64 data type, should I define it myself
+> > > > in the driver?  
+> > > 
+> > > Recent addition to the iio tree so it is in linux-next but not in mainline yet.
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=togreg&id=e4ca0e59c39442546866f3dd514a3a5956577daf
+> > > It just missed last cycle.
+> > >   
+> > > > >> +	} data __aligned(IIO_DMA_MINALIGN);    
+> > > > >
+> > > > >Note, this is different alignment to the above. And isn't the buffer below should have it instead?  
+> > > 
+> > > While I'm here:  No to this one.  The s64 alignment is about
+> > > performance of CPU access + consistency across CPU architectures.
+> > > This one (which happens to always be 8 or more) is about DMA safety.  
+> > 
+> > Right, but shouldn't...
+> > 
+> > > > >> +	u32			spidata_tx[8];  
+> > 
+> > > > >> +	u8			reg_rx_buf[3];
+> > > > >> +	u8			reg_tx_buf[3];  
+> > 
+> > ...one of these also be cache aligned for DMA?
+> No need as long as driver doesn't do anything bad like
+> write to these whilst another dma transaction is in flight.
+> (I haven't checked though, but typical drivers don't)
+> All you have to do is ensure that any DMA buffer doesn't share
+> a cacheline with an unrelated bit of data (i.e. a separate allocation or some
+> state tracking etc). It is fine for multiple DMA buffers  (say rx and tx)
+> to be in the same cacheline.  Any DMA device that is stupid enough
+> to stomp it itself is broken (and would be fairly hard to build!). Such
+> a device would need to be worked around in the controller driver.
 > 
-> Fixes: a2e1ba275eae ("net: phy: aquantia: allow forcing order of MDI pairs")
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Closes: https://lore.kernel.org/all/114b4c03-5d16-42ed-945d-cf78eabea12b@nvidia.com/
-> Suggested-by: Hans-Frieder Vogt <hfdevel@gmx.net>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> ---
->   drivers/net/phy/aquantia/aquantia_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> They are allowed to write back stale data, but not garbage data to unrelated
+> parts of the cacheline.  I.e. a tx buffer that was changed whilst
+> the SPI transaction was going on, might be overwritten with the old value
+> when the SPI controller DMAs back an updated version of the cacheline
+> containing the rx data + a cached copy of the early tx data.
+> The risk we are defending against with this alignment isn't this, it's
+> unrelated (and typically not protected by lock) fields in the structure
+> being overwritten with stale data.  The really nasty one being when
+> the allocator gives the next bit of the cacheline to another allocation.
+> (avoided here because the structure is sized as a multiple of the maximum
+>  alignment).
 > 
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-> index 4fe757cd7dc7..7d27f080a343 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -513,7 +513,7 @@ static int aqr107_config_mdi(struct phy_device *phydev)
->   	ret = of_property_read_u32(np, "marvell,mdi-cfg-order", &mdi_conf);
->   
->   	/* Do nothing in case property "marvell,mdi-cfg-order" is not present */
-> -	if (ret == -ENOENT)
-> +	if (ret == -EINVAL || ret == -ENOSYS)
->   		return 0;
->   
->   	if (ret)
+> Now, the code that bounces unaligned dma buffers on arm64 will probably
+> bounce these because it can't tell they are safe :( That's not incorrect
+> it's just less than optimal.
 
+Thanks for the really good elaboration! I will try hard to not forget it.
 
-Works for me!
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks
-Jon
+> > > > >> +	u8			reset_buf[8];  
 
 -- 
-nvpublic
+With Best Regards,
+Andy Shevchenko
+
+
 
