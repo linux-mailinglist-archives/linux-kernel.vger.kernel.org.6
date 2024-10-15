@@ -1,133 +1,97 @@
-Return-Path: <linux-kernel+bounces-366134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF4E99F13E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:32:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4594F99F137
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1BC61C213AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27EE1F2386A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884D51F6691;
-	Tue, 15 Oct 2024 15:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P29PkKmb"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44DF1D9580;
+	Tue, 15 Oct 2024 15:31:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192BC1F6675
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABFD147C91
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006278; cv=none; b=teaSH8FINXdNunQu0hApxNUAxKjgjUmU9nKgtLyxgxUfyj6Yqsm1X6GV6KS4zGrOJCK7xxuPf/lBgTSSkZBVs5Hb00a7MpDW4QYrZzGfxz1PgdOR52RQ7XJo2bfzu8lJnP7wcGckQhVfwIkwx4HzxmDl/BwPudWc/AMUMhuYOGY=
+	t=1729006266; cv=none; b=hIbrDoU8iTinuOH04oNalKlOOoyOLx+kkVLboZdNFH1i9h5tRY7q/nV0LOeYToA/Om8fWYvtuXPQBuvRXEzMQ8duMh2EyT5yHmtgtdpAb2q0vTtSCSdtWEViuaGDK+BmCl1be62Z0OUsLy5BEfQh08R2Zl1poFtUcOD3JTnXcb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006278; c=relaxed/simple;
-	bh=cYDjyfICw+aco4oTCL4aC6eqZy+qk7+Izy9dgfp1BlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzxUCnUY1MzU5vMmmif0BUX6ojrsI60M5vWCLwlJIvKP06W61xlbLuWTDEj2a988MzVcKw/nSaBNJMsiZvyYpD3eDvhLRKQoKS38Ptb0w0pHHmkF5ZfZkKonUQI0q9iwY+A0B+bZhANpKgyXtWWOU2sZU+LByb91ZoDxUFI+w5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P29PkKmb; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 15 Oct 2024 17:31:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729006269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oVBkIbdWBPV/rhtbMw4Aicym6UbdoQlviv3nYH6oHA=;
-	b=P29PkKmbGQnCvO64CI5YolcufqilNVtP4U+15+MVPVfj3PcecFr+ut5dN826uxNQbOhq8Z
-	NytjM0E/H6d+QgT7CLZ/CkL7XmS70NNa8dn/cuQASwQ6klQrlspq4kmzont50f7ddvk457
-	vhxjZvJRBjkj2Oiu64/iZlFV4wQqaao=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Andrea Righi <andrea.righi@linux.dev>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v4] sched_ext: Trigger ops.update_idle() from
- pick_task_idle()
-Message-ID: <Zw6KuWHPn9d6GWOK@gpd3>
-References: <20241015111539.12136-1-andrea.righi@linux.dev>
- <Zw5_FlXfbLXDLCPG@slm.duckdns.org>
+	s=arc-20240116; t=1729006266; c=relaxed/simple;
+	bh=i59obFdqyI72PyNeSYD1U0n4WunXxK1/6SIvjpa+z/Q=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=BvY1kVuW/R068KvlEAiUUWKub4+Jy7GQSc+eDV4Ae4hk9o/OvFLS75rEllMBGiBtO+J9W6rE/gUgmwLAXeXJPgZB1kypUr/vWjDhiRt3hSUmNx2W/pZwlAOIUHvoo/astM5YOoOvGlMGM0mR2zNM717Gqx5K9ynYYMix571/zmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10452C4CECF;
+	Tue, 15 Oct 2024 15:31:06 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1t0jW9-00000002z4s-2ejC;
+	Tue, 15 Oct 2024 11:31:25 -0400
+Message-ID: <20241015153125.494414250@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 15 Oct 2024 11:31:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 1/2] ring-buffer: Fix refcount setting of boot mapped buffers
+References: <20241015153105.843619901@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw5_FlXfbLXDLCPG@slm.duckdns.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
 
-On Tue, Oct 15, 2024 at 04:41:26AM -1000, Tejun Heo wrote:
-> Hello, Andrea.
-> 
-> On Tue, Oct 15, 2024 at 01:15:39PM +0200, Andrea Righi wrote:
-> ...
-> > For example, a BPF scheduler might use logic like the following to keep
-> > the CPU active under specific conditions:
-> > 
-> > void BPF_STRUCT_OPS(sched_update_idle, s32 cpu, bool idle)
-> > {
-> > 	if (!idle)
-> > 		return;
-> > 	if (condition)
-> > 		scx_bpf_kick_cpu(cpu, 0);
-> > }
-> > 
-> > A call to scx_bpf_kick_cpu() wakes up the CPU, so in theory,
-> > ops.update_idle() should be triggered again until the condition becomes
-> > false. However, this doesn't happen, and scx_bpf_kick_cpu() doesn't
-> > produce the expected effect.
-> 
-> I thought more about this scenario and I'm not sure anymore whether we want
-> to guarantee that scx_bpf_kick_cpu() is followed by update_idle(cpu, true).
-> Here are a couple considerations:
-> 
-> - As implemented, the transtions aren't balanced. ie. When the above
->   happens, update_idle(cpu, true) will be generated multiple times without
->   intervening update_idle(cpu, false). We can insert artificial false
->   transtions but that's cumbersome and...
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Agreed, I wouldn't suggest adding artificial false events.
+A ring buffer which has its buffered mapped at boot up to fixed memory
+should not be freed. Other buffers can be. The ref counting setup was
+wrong for both. It made the not mapped buffers ref count have zero, and the
+boot mapped buffer a ref count of 1. But an normally allocated buffer
+should be 1, where it can be removed.
 
-> 
-> - For the purpose of determining whether a CPU is idle for e.g. task
->   placement from ops.select_cpu(). The CPU *should* be considered idle in
->   this polling state.
-> 
-> Overall, it feels a bit contrived to generate update_idle() events
-> consecutively for this. If a scheduler wants to poll in idle state, can't it
-> do something like the following?
-> 
-> - Trigger kick from update_idle(cpu, true) and remember that the CPU is in
->   the polling state.
-> 
-> - Keep kicking from ops.dispatch() until polling state is cleared.
-> 
-> As what kick() guarnatees is at least one dispatch event after kicking, this
-> is guaranteed to be correct and the control flow, while a bit more
-> complicated, makes sense - it triggers dispatch on idle transition and keeps
-> dispatching in the idle state.
-> 
-> What do you think?
+Keep the ref count of a normal boot buffer with its setup ref count (do
+not decrement it), and increment the fixed memory boot mapped buffer's ref
+count.
 
-That seems to work in theory, I'll run some tests to confirm that it
-also works in practice. :)
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/20241011165224.33dd2624@gandalf.local.home
+Fixes: e645535a954ad ("tracing: Add option to use memmapped memory for trace boot instance")
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-It looks definitely nicer than triggering multiple ops.update_idle()
-from the kernel and we can maintain the proper semantic of triggering
-update_idle() only on actual idle state changes.
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 1c69ca1f1088..a8f52b6527ca 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -10621,10 +10621,10 @@ __init static void enable_instances(void)
+ 		 * cannot be deleted by user space, so keep the reference
+ 		 * to it.
+ 		 */
+-		if (start)
++		if (start) {
+ 			tr->flags |= TRACE_ARRAY_FL_BOOT;
+-		else
+-			trace_array_put(tr);
++			tr->ref++;
++		}
+ 
+ 		while ((tok = strsep(&curr_str, ","))) {
+ 			early_enable_events(tr, tok, true);
+-- 
+2.45.2
 
-Thanks,
--Andrea
+
 
