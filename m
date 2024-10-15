@@ -1,98 +1,161 @@
-Return-Path: <linux-kernel+bounces-366425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED9799F526
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:24:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B029199F528
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3576C1C229B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6241F23434
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859331FC7F5;
-	Tue, 15 Oct 2024 18:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21A622739E;
+	Tue, 15 Oct 2024 18:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkZGuQYx"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOD/JAw2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7668617BB16;
-	Tue, 15 Oct 2024 18:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39319212640;
+	Tue, 15 Oct 2024 18:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729016650; cv=none; b=U7HVrXyRhyO/BahyLo2+c6TZcYHCPqJHAB1sJuQnTf1+1y8HauGGzCpQgjco5RpF0vNNBT1fuKAsWn/3UnUHjka4LhIT8Kutd/M50lCRzXgSB4hwK0d0ehwUJq0o2iNv5u1UIrCjvQQblcIdleStE3CpJZ3S2E5h8CxnzlONuqI=
+	t=1729016652; cv=none; b=S1cIuvmVLC6IheBRrg6DmNQ+sdOImAqMMlFBLmkCg7tOK8i5XrNnDjDqECCpidr/aNaxUbRSteN6cuPBmBv3L36674hTWN1s4NVaE9R9k0gE3pqOgm2TkQgJUIcWNt0/rCq+25yqC8kdTTEXgLTSS3bvxsBf9EbJKgFWqxHcIXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729016650; c=relaxed/simple;
-	bh=cBQbURD9gtJ27C7LhUadVs07AFWdlIg3dabfytVFJ1g=;
+	s=arc-20240116; t=1729016652; c=relaxed/simple;
+	bh=upWiI//rYiJLMKe4yJasEb1zsuVr65vUUAay7scsqIo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ppqy97eTc2+Iewwap33hLIwmWnNtJeHECKpsaKkxup6UKKkYufzysldTBIGIlxJ1VGQ4y023rBKx4AdwAhU5ySTZUj1B/4sOY+6V6cvjsJ9RINJt78IdGLbaZFvuHqJdgdc8gYY/OLuMBRuU4NaHmzM1XhLDySi0H+0kYhJJ8JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkZGuQYx; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a099b4c66so38204866b.1;
-        Tue, 15 Oct 2024 11:24:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729016647; x=1729621447; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBQbURD9gtJ27C7LhUadVs07AFWdlIg3dabfytVFJ1g=;
-        b=YkZGuQYxV/sMl/oOAEkVF40TKV4hHz6gsysnXTs6jXBJTgpfLT1g1hgbiw6jEm5CH7
-         086s/9386K02sVSC0TDQzSoFSF/snsj2T7FTT3q44hBOznyx5SsP7L7If9duqGy4zBMg
-         DKga+4dbmP1Mdjw3cuCpO6zPNW5hy9qXL1e1O1RhM4jVdCnGqiHd8/u/NmIZcr8PJvgl
-         deq/xBVPlrEr6ZzShQcN6yxBERI7l+AOOJWobQAJrV6fWoVMDGsp5bseCmhvVxg0xv7C
-         r9z/y6595c6tX1dQARabyzMGyr+4Na2Q3kbSBibh5MnkfoVF2mraayM0YAsxGkhcC3hG
-         a3ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729016647; x=1729621447;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cBQbURD9gtJ27C7LhUadVs07AFWdlIg3dabfytVFJ1g=;
-        b=HjIRs2kzV3qU0JJwE5FsxgjNM80UDiQPzUHrRzfHdgrnWyxqgxrPO60hpb5iPmXJ4P
-         5BDADcHJCsiwbBd4Xm54L1ShLEzSlWr7I18MEuKAgE5pvlivuAG4GRvPcEud7M/Bi1cQ
-         jsqQoiJLXHTy8vlTfK/97ojNdBGebUPThMWSCKlnzNY2u3XLNps3uL25Mr8FVAWZU6X2
-         cCQaKLPw+CkuF6AEdsPbLsqnJxyU6Nh1Ner4IBJlk3aL4ytw9Z1fSQfjIHjheeqK4Wai
-         k/2EKEZHptxtbnsxgtohlqkTXKqsriUT4Cqo0+V3ngxgi0ubx0QcqeyMT8ynGcRpFrf/
-         21Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUifEsWkWllHHBj7uGh9K3aqZ9IS6hFtFckiNbCRlbfJaen5yHuIeV7rymv6yQ2izOlcfvM4mlUvcy6XBom@vger.kernel.org, AJvYcCWoh/fmv1LXXTWy4tZ7x3G8mv8bp6x6mATTulTvI4N3MtKqLJJh0n17BZntXLpZaKC2Vk/xbsEQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVnJj4upS+p5URnz3SDqTZD++axhWvrPjkeHmeD3hXVxyu6F0x
-	Wc7zuThwHqOEtxls/O/zkdE40m9aknerdb82WsabMG0mfPo6wSKE6LCxRPFGaEUmDKG2EhBpgbW
-	OJwZdNv621qWiKFC1JGDZH6RmT6I=
-X-Google-Smtp-Source: AGHT+IGy81Amdyb3jOOg/w+E46xcBY5DrRVu2jjisvT8uZCR4qImZeIOyuj/wVBNuuuj7X9XGja5HR/qvfTIyoHhqU4=
-X-Received: by 2002:a17:907:9449:b0:a9a:2afc:e4dc with SMTP id
- a640c23a62f3a-a9a39cd4d55mr4148966b.11.1729016646579; Tue, 15 Oct 2024
- 11:24:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=ahwWb9X34R/xdX411XqESahlustFXtPv/xHKNj/DJF6NB+1642ujwEJQV1SbLFbLPEGIs38Bm/mX4KqzCazFSYyPrQfQmLXorDImLGCyESHhbBNDb/rMWW5Y8gZbtapfnCBG/EFozR3lkTTxYL9AFaU7/16AbzfZO4kPPYVc4kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOD/JAw2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A13C4AF09;
+	Tue, 15 Oct 2024 18:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729016651;
+	bh=upWiI//rYiJLMKe4yJasEb1zsuVr65vUUAay7scsqIo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gOD/JAw2huOzSx4oo6mE2aERtlExe+t8XzFk2ho0psqIPh1eENDUjwTTRyGIgxoed
+	 HCuAgzTdhffQqxj9YPG4aeHxOOs4HnOGxTWt4uZwZ2I9PHzpY3wu89n5yY8a2BBCni
+	 5yhn/XwjxeV61UhQ5v1ZIzZVilmgK6KUpQUdlo7wUXx9G9ReMXFrAHukv9Hg3S665d
+	 qwliX/lGIwUwZUWw/gb/rXu/1UgA9XNlnQ3b9SVYblgitqSJc+OBZIuK2uH6CT/D8J
+	 oDJ4W35GckOEy2WFWTjpiVcW+/Q6Tz6y9Sw14oILXhEHhvCSotpd5yK0bM2UmUA3Rh
+	 DCnnE2wh3q8uw==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f84907caso2914509e87.3;
+        Tue, 15 Oct 2024 11:24:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6HKL/Qxqzjnxn8Qb8Xxndx3seUNr6IkTy6nXffJ3gXghhtS4dNzpp68MOY7UPtmYWvcZFJ3H/9DQ=@vger.kernel.org, AJvYcCWUCBMn7+pQASEpnDE7TPJOLd6vrnJCoX9qsj6DESp+wbWlFBdxg7CT34UnnAQVQKJGYCc3kwUrJePZB/cG@vger.kernel.org
+X-Gm-Message-State: AOJu0YydRwa9CIIyiFT8ZMsxGkfSXn25KCWmhOfKeWeamvA2oZ5o3HsZ
+	J8ncl45ktIGGISyC1nU+bg3J4FZCgiSSkb5QijK/RpAcUQ7hOmnst/QnP3pBZFUPkOPf+nUxpEd
+	3eK4HBSrLuk7KwEBsLNlO6qs8veo=
+X-Google-Smtp-Source: AGHT+IEqxVDXB+67x2LNye5De4wern0VGF7eTCBuNTaTpqVe3ApOmkkxRNI+6XI3r/iORIhQq67NA6NmjkUJKvg1GQM=
+X-Received: by 2002:a05:6512:3d24:b0:539:f4d8:ee43 with SMTP id
+ 2adb3069b0e04-53a03f29dacmr951250e87.22.1729016649970; Tue, 15 Oct 2024
+ 11:24:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJg=8jwFexnoTfPLg=Yd44WFVn05wAn0UgH6=baipc53mDxgyQ@mail.gmail.com>
-In-Reply-To: <CAJg=8jwFexnoTfPLg=Yd44WFVn05wAn0UgH6=baipc53mDxgyQ@mail.gmail.com>
-From: Marius Fleischer <fleischermarius@gmail.com>
-Date: Tue, 15 Oct 2024 11:23:55 -0700
-Message-ID: <CAJg=8jwrXQm19K9YpBuX=LQwwq1cDSpP6ez1XRRE7mAg_8_Xiw@mail.gmail.com>
-Subject: Re: general protection fault in bio_associate_blkg_from_css
-To: Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: syzkaller@googlegroups.com, harrisonmichaelgreen@gmail.com
+References: <20241001032028.483199-1-jeremy.linton@arm.com>
+ <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
+ <CAC_iWjJH8JwdPbL9Et6xNLf4vV1AQDm8ZZh8zYVkb+VFLXedTg@mail.gmail.com>
+ <0bed3801-47c0-439a-8b46-53c2704e9bb0@arm.com> <CAC_iWjLo3j73J1x1Bw01szxN4uHUU+tPstWkYk3=+7t7DziHpw@mail.gmail.com>
+ <c0121455-6c46-468e-a386-6be2180dd7a3@arm.com> <CAC_iWjKB479Wbg01bgbo46rM_OyNzDmxqH9OkusNr8+8GafcPQ@mail.gmail.com>
+In-Reply-To: <CAC_iWjKB479Wbg01bgbo46rM_OyNzDmxqH9OkusNr8+8GafcPQ@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 15 Oct 2024 20:23:58 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFYqon3u74_cV9v-UtQs2UQR6bVkdieW0b7QsX42AMfVg@mail.gmail.com>
+Message-ID: <CAMj1kXFYqon3u74_cV9v-UtQs2UQR6bVkdieW0b7QsX42AMfVg@mail.gmail.com>
+Subject: Re: [PATCH] efi/libstub: measure initrd to PCR9 independent of source
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: Jeremy Linton <jeremy.linton@arm.com>, linux-efi@vger.kernel.org, bp@alien8.de, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Wed, 2 Oct 2024 at 20:25, Ilias Apalodimas
+<ilias.apalodimas@linaro.org> wrote:
+>
+> Hi Jeremy,
+>
+> [...]
+>
+> > >>>
+> > >>> Back when we added this we intentionally left loading an initramfs
+> > >>> loaded via the command line out.
+> > >>> We wanted people to start using the LoadFile2 protocol instead of the
+> > >>> command line option, which suffered from various issues  -- e.g could
+> > >>> only be loaded if it resided in the same filesystem as the kernel and
+> > >>> the bootloader had to reason about the kernel memory layout.
+> > >>> I don't think measuring the command line option as well is going to
+> > >>> cause any problems, but isn't it a step backward?
+> > >>
+> > >> Thanks for looking at this. Since no one else seems to have commented, I
+> > >> will just express IMHO, that both methods are useful in differing
+> > >> circumstances.
+> > >>
+> > >> For a heavyweight Linux aware bootloader like grub/sd-boot the
+> > >> INITRD_MEDIA_GUID is obviously preferred. But, for booting strictly out
+> > >> out of a pure UEFI environment or Linux unaware bootloader (ex: UEFI
+> > >> shell),
+> > >
+> > > I am not sure I am following on the EfiShell. It has to run from an
+> > > EFI firmware somehow. The two open-source options I am aware of are
+> > > U-Boot and EDK2.
+> > > U-Boot has full support for the LoadFile2 protocol (and the
+> > > INITRD_MEDIA_GUID). In fact, you can add the initramfs/dtb/kernel
+> > > triplets as your boot options, supported by the EfiBoot manager and
+> > > you don't need grub/systemd boot etc.
+> > >
+> > > I don't think you can do that from EDK2 -- encode the initrd in a boot
+> > > option, but you can configure the initramfs to be loaded via LoadFile2
+> > > in OMVF via the 'initrd' shell command.
+> >
+> > Oh, I guess the shell is a bad example because I was unaware that there
+> > was a initrd option in it now. I'm buying into the boot loader/boot
+> > manager distinction, where the manager is largely unaware of the target
+> > OS's specific needs (in this case, having the initrd GUID set).
+>
+> Yes, FWIW what was added in U-Boot needs to be aware of the
+> Linux-specific GUID, but as far as the EFI BootOptions defined in the
+> Boot manager, we aren't violating anything in the EFI spec. On the
+> contrary, we use the _EFI_LOAD_OPTION exactly as the spec describes.
+>
+> >
+> >
+> > >
+> > >> the commandline based initrd loader is a useful function.
+> > >> Because, the kernel stub should continue to serve as a complete, if
+> > >> minimal implementation for booting Linux out of a pure UEFI environment
+> > >> without additional support infrastructure (shim/grub/etc). So, it seems
+> > >> that unless there is a reason for divergent behavior it shouldn't exist.
+> > >> And at the moment, the two primary linux bootloaders grub2 and sdboot
+> > >> are both using the INITRD_MEDIA_GUID. Given the battering ram has been
+> > >> successful, it isn't a step backward.
+> > >
+> > > I am not saying we shouldn't. As I said I don't think this patch
+> > > breaks anything. I am just wondering if enhancing EDK2 to load the
+> > > initramfs via LoadFile2 for more than OVMF is a better option.
+> >
+> > There is a separation of concerns argument here. People regularly
+> > complain about firmware implementations tuned for windows, but making
+> > the FW aware of this GUID is doing the same thing for Linux.
+> > So, IMHO
+> > that should be avoided, rather assuring the firmware is made as OS
+> > agnostic as possible, and the OS specifics are moved into the OS boot
+> > loader, one of which is this stub. It would make more logical sense to
+> > have the stub set the GUID from built in command line defaults. To be
+> > clear, i'm not suggesting that.
+>
+> I get the separation point but ....
+> If you do it the other way around you *force* people to use specific
+> OS loaders that implement OS-specific protocols. And the EFI stub is
+> not the problem here nor are distros that use such loaders. However,
+> vertical distros for embedded boards which don't need all the added
+> complexity have a reasonable way out.
+>
+> Anyway, since Ard doesn't plan to deprecate initrd=, the patch is
+> reasonable, I have no objections
+>
 
-Hope you are doing well!
-
-Quick update from our side: The reproducers from the previous email
-still trigger a general protection fault on v5.15 (commit hash
-3a5928702e7120f83f703fd566082bfb59f1a57e). Happy to also test on
-other kernel versions if that helps.
-
-Please let us know if there is any other helpful information I can provide.
-
-Wishing you a nice day!
-
-Best,
-Marius
+I've queued this up now - thanks all.
 
