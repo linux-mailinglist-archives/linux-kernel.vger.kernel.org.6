@@ -1,450 +1,133 @@
-Return-Path: <linux-kernel+bounces-364880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE0099DA81
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:04:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 926EA99DA84
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF3E282BB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5599C282BF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4268A5223;
-	Tue, 15 Oct 2024 00:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01822582;
+	Tue, 15 Oct 2024 00:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJ5fLB4E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="byeyIuGM"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0B1290F;
-	Tue, 15 Oct 2024 00:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3F3191
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 00:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728950628; cv=none; b=niEX6Bhmry6Qj8o5GRKguQFdyTdjYg8BQ7rBT1NQbYx1G090MaC8cUCeMiez7wPaV1MmzcrIHVaUhqOyCpR9OPcHVkfR6BLL8a2IJHn9jgkF3OnDAOLE56WKk/Ffi3blJAdg7wNpnaoxnCw/9UgkyFSV3bJOfIqAiHpdsdG4qAU=
+	t=1728950761; cv=none; b=Tdvh3TL9DmIw7qdMJnDRzmedo0GQJHBpRp9TRSGohQcWPhRyhVr0WKWPxKCsUjGBKXaRg/yAqzYOCd1oLTWL4CIpOP/DGatBqz2+CQFcYsq0Z/bIBUd0QeK84UNG3XogybRwPlwvx2LeR8h+4pyoE55ns/TA7crMP9L7Pu1ke3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728950628; c=relaxed/simple;
-	bh=7tMpbJ8Vu4P4hP2iot5d3hf7tVj4juqSjYBupVFsn3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVoU4Dptpsy8SpI/VugZ/Q4kNQFjvUcVddUI8mBOpVob5bX+fYRo5g2IBk+on81T0UziT/lbW5S7JH8WFMbVy1NlgCFqS3tu/Cp6KezWHXAZS7aP5+X/LKBTCiFGHdOb0VzcQpIHFi5AJTNqgS0fBenUN1cuXy8/4w0vF43bwKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJ5fLB4E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26190C4CEC6;
-	Tue, 15 Oct 2024 00:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728950627;
-	bh=7tMpbJ8Vu4P4hP2iot5d3hf7tVj4juqSjYBupVFsn3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uJ5fLB4ElHozodqX8Vxc2V/8LKISf2E3rmd4aIrKEGZNPprGXDzQn1r8CvH3TZ1wW
-	 CXiuXP6OrCTfIk3sxmn0GPa+x4PYpfnuuNpJ1qfcdHUgaTwf3NDv2Y2ryu27jPGyDV
-	 VSt+aj75c1c7XslYoYmCXjvGyjf7BG03k9eKyfOgdxUThjqqJ8VTdCThUc5Fapv3Xs
-	 0aHgDm4LoNrjS2twTtOvUbj0o6qBqsg4QflVmba/ONuFr7wpvhTJbn/hD1H3WeRVXO
-	 yksOtxpB2aTbQk/JtAGAMA2id0PbdmJHxXdGm3BbAPUX8ajIPdVyOQPuwAEXvLTXVn
-	 9jXyefypGhGXg==
-Date: Mon, 14 Oct 2024 19:03:44 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] gcc-sdm845: Add general purpose clock ops
-Message-ID: <eatodbdrn532sjcvmuque5wznspo6rkydp3xkycaxzyoahsiqg@t4vuy3ulbdek>
-References: <20241007-starqltechn_integration_upstream-v6-0-dd75c06c708d@gmail.com>
- <20241007-starqltechn_integration_upstream-v6-2-dd75c06c708d@gmail.com>
+	s=arc-20240116; t=1728950761; c=relaxed/simple;
+	bh=ZehjK1rwhKlSbWRcVkYC8kqDslvkx7/iyzRyA+OQZ8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qtnop9vyO/88ov7ho4c2sOl+Ez87KBKnAXqMTc/dK2JdAdglPZivfQrmHO0HH/sTdLTZDVqQaALlCkj4H5kUxBnWMDyMxvX7PoEqkPUhT21JcJqH0HrZ+OpN8dpiTIYnL1XEH53J77/xGmfuoIGnd2Zo7gtVKPPoh8u4iNZUoMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=byeyIuGM; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-835453714e5so213635339f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728950759; x=1729555559; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2TwSGWYk37LzL+nB3Qm3Cccq9jA0yfLg7SdVrI2yTuI=;
+        b=byeyIuGMPm5tAdlcDfvC9Onc0kjkW+PQ578wqC9y8CNORMTu9UIDuqdapzR3sFn/1M
+         ivvRBdWEA//60NN5HnDdr775wMu8ieYrwVFeqO9Prk5aWD69rmrVqQlfedZafxyVQrO1
+         /5AApctqsRvVHkNgm2vP59kg6PvFZJ9C7lFYc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728950759; x=1729555559;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2TwSGWYk37LzL+nB3Qm3Cccq9jA0yfLg7SdVrI2yTuI=;
+        b=rEdvXA+vFf9rnEaxfkGRv0g8GzIIaW9eHc7DQtuLm3Wz0NZwHYkUbmrqXxmNUPCjOp
+         YDt9pkI1vhQM0H1yuJjO0Gqw8aTOJXNoapafRpfN00/m1uocctTpQZrGvjGd2goE7ICk
+         YepO6Tb4X/GkT96kc17oklDzcjr2/8WWgmZmtpBzMLCfbFoju1IxUeo1DTkXylm6jUeD
+         Uy35GUO62M6VGP67RiE3CA2LZnFUk6z8v4kzutlloKqwYd+GU7mB3BmZ4Hs/iIoMq/Cg
+         QfgRsGrw1nXnJZRLWhPhHS22fkpY8DoRmdzABfYEG3sytugJ7pKWlMXR1Lr/VUo8/7Oo
+         ML9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVxfwpcEqDGsKnDLTs72thzM1MRhqaFq+wwN+rkIHA3ekqi877yHYZrg9b1JQHS0qwFJsn0Was4c61w2u4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7F5D9RDmTW8USE5lI0hALRf70zPeKcCK998qDYv3ePh95mGq5
+	5tL4nbn2Rx2EgWj3I510m2HR3pTh1yMCehyt3dmKDoz83CBJdOx29cKzuzgi8bhdWr6z2e5iUGa
+	x
+X-Google-Smtp-Source: AGHT+IGRqsQFDY3Ma0cJGFn2I+AneM+oWcFsIjl4jiCDBzYJaEobcPJEKkPQeLj5lCNCHDovZt411w==
+X-Received: by 2002:a05:6602:3fc6:b0:82a:4c58:e1e0 with SMTP id ca18e2360f4ac-837946843cbmr1166620739f.12.1728950758843;
+        Mon, 14 Oct 2024 17:05:58 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83a8b2aa095sm3961939f.19.2024.10.14.17.05.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 17:05:58 -0700 (PDT)
+Message-ID: <41d157fc-6413-4061-95af-518ec7b923f1@linuxfoundation.org>
+Date: Mon, 14 Oct 2024 18:05:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-starqltechn_integration_upstream-v6-2-dd75c06c708d@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/intel_pstate: fix operand expected
+To: Alessandro Zanni <alessandro.zanni87@gmail.com>, shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ anupnewsmail@gmail.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241014172149.324639-1-alessandro.zanni87@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241014172149.324639-1-alessandro.zanni87@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 06:36:12PM GMT, Dzmitry Sankouski wrote:
-> SDM845 has "General Purpose" clocks that can be muxed to
-> SoC pins to clock various external devices.
-> Those clocks may be used as e.g. PWM sources for external peripherals.
+On 10/14/24 11:21, Alessandro Zanni wrote:
+> This fix solves theses errors, when calling kselftest with
+> targets "intel_pstate":
 > 
-> GPCLK can in theory have arbitrary value depending on the use case, so
-> the concept of frequency tables, used in rcg2 clock driver, is not
-> efficient, because it allows only defined frequencies.
+> ./run.sh: line 90: / 1000: syntax error: operand expected (error token is "/ 1000")
 > 
-> Introduce clk_rcg2_gp_ops, which automatically calculate clock
-> mnd values for arbitrary clock rate. The calculation done as follows:
-> - upon determine rate request, we calculate m/n/pre_div as follows:
->   - find parent(from our client's assigned-clock-parent) rate
->   - find scaled rates by dividing rates on its greatest common divisor
->   - assign requested scaled rate to m
->   - factorize scaled parent rate, put multipliers to n till max value
->     (determined by mnd_width)
-> - validate calculated values with *_width:
->   - if doesn't fit, delete divisor and multiplier by 2 until fit
-> - return determined rate
+> ./run.sh: line 92: / 1000: syntax error: operand expected (error token is "/ 1000")
 > 
-> Limitations:
-> - The driver doesn't select a parent clock (it may be selected by client
->   in device tree with assigned-clocks, assigned-clock-parents properties)
+> To error was found by running tests manually with the command:
+> make kselftest TARGETS=intel_pstate
 > 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> 
+> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
 > ---
-> Changes in v6:
-> - remove unused count variable
-> - run sparse and smatch
 > 
-> Changes in v5:
-> - replace '/' to div64_u64 to fix 32 bit gcc error
-> - fix empty scalar initializer
-> ---
->  drivers/clk/qcom/clk-rcg.h    |   1 +
->  drivers/clk/qcom/clk-rcg2.c   | 191 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
->  drivers/clk/qcom/gcc-sdm845.c |  11 +++-----
->  3 files changed, 189 insertions(+), 14 deletions(-)
+> Notes:
+>      v2: removed debug echos
+
+See my comments on your v1. It would help to wait a bit
+to send v2.
+
+I can't reproduce this problem on Linux 6.12-rc3.
+What's you environment like?
+
 > 
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index 8e0f3372dc7a..8817d14bbda4 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -189,6 +189,7 @@ struct clk_rcg2_gfx3d {
->  	container_of(to_clk_rcg2(_hw), struct clk_rcg2_gfx3d, rcg)
->  
->  extern const struct clk_ops clk_rcg2_ops;
-> +extern const struct clk_ops clk_rcg2_gp_ops;
->  extern const struct clk_ops clk_rcg2_floor_ops;
->  extern const struct clk_ops clk_rcg2_fm_ops;
->  extern const struct clk_ops clk_rcg2_mux_closest_ops;
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 0fc23a87b432..ba0cccdc73ec 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -8,11 +8,13 @@
->  #include <linux/err.h>
->  #include <linux/bug.h>
->  #include <linux/export.h>
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/rational.h>
->  #include <linux/regmap.h>
->  #include <linux/math64.h>
-> +#include <linux/gcd.h>
->  #include <linux/minmax.h>
->  #include <linux/slab.h>
->  
-> @@ -32,6 +34,7 @@
->  
->  #define CFG_REG			0x4
->  #define CFG_SRC_DIV_SHIFT	0
-> +#define CFG_SRC_DIV_LENGTH	8
->  #define CFG_SRC_SEL_SHIFT	8
->  #define CFG_SRC_SEL_MASK	(0x7 << CFG_SRC_SEL_SHIFT)
->  #define CFG_MODE_SHIFT		12
-> @@ -148,6 +151,14 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
->  	return update_config(rcg);
->  }
->  
-> +// Converts divisors to corresponding clock register values.
-> +// @param f - Frequency table with pure m/n/pre_div parameters.
-
-Please use kernel-doc formatting for these.
-
-> +static void convert_to_reg_val(struct freq_tbl *f)
-> +{
-> +	f->pre_div *= 2;
-> +	f->pre_div -= 1;
-> +}
-> +
->  /*
->   * Calculate m/n:d rate
->   *
-> @@ -400,16 +411,115 @@ static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
->  	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
->  }
->  
-> -static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
-> -				u32 *_cfg)
-
-Could you split this patch into one that affects the non-gp rcg2
-operations, and then one that adds and uses the gp-ops?
-
-I'd expect that would make it easier to assess the risk to all other
-rcg2 use cases.
-
-> +// Split multiplier that doesn't fit in n neither in pre_div.
-> +//
-> +// @param multiplier - multiplier to split between n and pre_div
-> +// @param pre_div - pointer to pre divisor value
-> +// @param n - pointer to n divisor value
-> +// @param pre_div_max - pre divisor maximum value
-> +//
-> +static inline void clk_rcg2_split_div(int multiplier, unsigned int *pre_div,
-> +				      u16 *n, unsigned int pre_div_max)
-> +{
-> +	*n = mult_frac(multiplier * *n, *pre_div, pre_div_max);
-> +	*pre_div = pre_div_max;
-> +}
-> +
-> +static void clk_rcg2_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f,
-> +			unsigned int mnd_max, unsigned int pre_div_max)
-> +{
-> +	int i = 2;
-> +	unsigned int pre_div = 1;
-> +	unsigned long rates_gcd, scaled_parent_rate;
-> +	u16 m, n = 1, n_candidate = 1, n_max;
-> +
-> +	rates_gcd = gcd(parent_rate, rate);
-> +	m = div64_u64(rate, rates_gcd);
-> +	scaled_parent_rate = div64_u64(parent_rate, rates_gcd);
-> +	while (scaled_parent_rate > (mnd_max + m) * pre_div_max) {
-> +		// we're exceeding divisor's range, trying lower scale.
-> +		if (m > 1) {
-> +			m--;
-> +			scaled_parent_rate = mult_frac(scaled_parent_rate, m, (m + 1));
-> +		} else {
-> +			f->n = mnd_max + m;
-> +			f->pre_div = pre_div_max;
-> +			f->m = m;
-> +		}
-> +	}
-> +
-> +	n_max = m + mnd_max;
-> +
-> +	while (scaled_parent_rate > 1) {
-> +		while (scaled_parent_rate % i == 0) {
-> +			n_candidate *= i;
-> +			if (n_candidate < n_max)
-> +				n = n_candidate;
-> +			else if (pre_div * i < pre_div_max)
-> +				pre_div *= i;
-> +			else
-> +				clk_rcg2_split_div(i, &pre_div, &n, pre_div_max);
-> +
-> +			scaled_parent_rate /= i;
-> +		}
-> +		i++;
-> +	}
-> +
-> +	f->m = m;
-> +	f->n = n;
-> +	f->pre_div = pre_div > 1 ? pre_div : 0;
-> +}
-> +
-> +static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
-> +				   struct clk_rate_request *req)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	struct freq_tbl *f;
-> +	int mnd_max = BIT(rcg->mnd_width) - 1;
-> +	int hid_max = BIT(rcg->hid_width) - 1;
-> +	struct clk_hw *parent;
-> +	u64 parent_rate;
-> +
-> +	parent = clk_hw_get_parent(hw);
-> +	parent_rate = clk_get_rate(parent->clk);
-> +	if (!parent_rate)
-> +		return -EINVAL;
-> +
-> +	f = kzalloc(sizeof(*f), GFP_KERNEL);
-
-As far as I can tell sizeof(*f) is 16, so should be fine to just put it
-on the stack?
-
-Regards,
-Bjorn
-
-> +
-> +	if (!f)
-> +		return -ENOMEM;
-> +
-> +	clk_rcg2_calc_mnd(parent_rate, req->rate, f, mnd_max, hid_max / 2);
-> +	convert_to_reg_val(f);
-> +	req->rate = calc_rate(parent_rate, f->m, f->n, f->n, f->pre_div);
-> +
-> +	kfree(f);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __clk_rcg2_configure_parent(struct clk_rcg2 *rcg, u8 src, u32 *_cfg)
->  {
-> -	u32 cfg, mask, d_val, not2d_val, n_minus_m;
->  	struct clk_hw *hw = &rcg->clkr.hw;
-> -	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-> +	u32 mask = CFG_SRC_SEL_MASK;
-> +	int index = qcom_find_src_index(hw, rcg->parent_map, src);
->  
->  	if (index < 0)
->  		return index;
->  
-> +	*_cfg &= ~mask;
-> +	*_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
-> +
-> +	return 0;
-> +}
-> +
-> +static int __clk_rcg2_configure_mnd(struct clk_rcg2 *rcg, const struct freq_tbl *f,
-> +				u32 *_cfg)
-> +{
-> +	u32 cfg, mask, d_val, not2d_val, n_minus_m;
-> +	int ret;
-> +
->  	if (rcg->mnd_width && f->n) {
->  		mask = BIT(rcg->mnd_width) - 1;
->  		ret = regmap_update_bits(rcg->clkr.regmap,
-> @@ -438,9 +548,8 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
->  	}
->  
->  	mask = BIT(rcg->hid_width) - 1;
-> -	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
-> +	mask |= CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
->  	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
-> -	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
->  	if (rcg->mnd_width && f->n && (f->m != f->n))
->  		cfg |= CFG_MODE_DUAL_EDGE;
->  	if (rcg->hw_clk_ctrl)
-> @@ -452,6 +561,22 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
->  	return 0;
->  }
->  
-> +static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
-> +				u32 *_cfg)
-> +{
-> +	int ret;
-> +
-> +	ret = __clk_rcg2_configure_parent(rcg, f->src, _cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = __clk_rcg2_configure_mnd(rcg, f, _cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
->  static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
->  {
->  	u32 cfg;
-> @@ -472,6 +597,26 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
->  	return update_config(rcg);
->  }
->  
-> +static int clk_rcg2_configure_gp(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> +{
-> +	u32 cfg;
-> +	int ret;
-> +
-> +	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = __clk_rcg2_configure_mnd(rcg, f, &cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return update_config(rcg);
-> +}
-> +
->  static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
->  			       enum freq_policy policy)
->  {
-> @@ -525,6 +670,28 @@ static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
->  	return __clk_rcg2_set_rate(hw, rate, CEIL);
->  }
->  
-> +static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
-> +			    unsigned long parent_rate)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	int mnd_max = BIT(rcg->mnd_width) - 1;
-> +	int hid_max = BIT(rcg->hid_width) - 1;
-> +	struct freq_tbl *f;
-> +	int ret;
-> +
-> +	f = kzalloc(sizeof(*f), GFP_KERNEL);
-> +
-> +	if (!f)
-> +		return -ENOMEM;
-> +
-> +	clk_rcg2_calc_mnd(parent_rate, rate, f, mnd_max, hid_max / 2);
-> +	convert_to_reg_val(f);
-> +	ret = clk_rcg2_configure_gp(rcg, f);
-> +	kfree(f);
-> +
-> +	return ret;
-> +}
-> +
->  static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
->  				   unsigned long parent_rate)
->  {
-> @@ -652,6 +819,18 @@ const struct clk_ops clk_rcg2_ops = {
->  };
->  EXPORT_SYMBOL_GPL(clk_rcg2_ops);
->  
-> +const struct clk_ops clk_rcg2_gp_ops = {
-> +	.is_enabled = clk_rcg2_is_enabled,
-> +	.get_parent = clk_rcg2_get_parent,
-> +	.set_parent = clk_rcg2_set_parent,
-> +	.recalc_rate = clk_rcg2_recalc_rate,
-> +	.determine_rate = clk_rcg2_determine_gp_rate,
-> +	.set_rate = clk_rcg2_set_gp_rate,
-> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_rcg2_gp_ops);
-> +
->  const struct clk_ops clk_rcg2_floor_ops = {
->  	.is_enabled = clk_rcg2_is_enabled,
->  	.get_parent = clk_rcg2_get_parent,
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index dc3aa7014c3e..0def0fc0e009 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -284,11 +284,6 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
->  };
->  
->  static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
-> -	F(19200000, P_BI_TCXO, 1, 0, 0),
-> -	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
-> -	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
-> -	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-> -	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
->  	{ }
->  };
->  
-> @@ -302,7 +297,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
->  		.name = "gcc_gp1_clk_src",
->  		.parent_data = gcc_parent_data_1,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_gp_ops,
->  	},
->  };
->  
-> @@ -316,7 +311,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
->  		.name = "gcc_gp2_clk_src",
->  		.parent_data = gcc_parent_data_1,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_gp_ops,
->  	},
->  };
->  
-> @@ -330,7 +325,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
->  		.name = "gcc_gp3_clk_src",
->  		.parent_data = gcc_parent_data_1,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_gp_ops,
->  	},
->  };
->  
+>   tools/testing/selftests/intel_pstate/run.sh | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> -- 
-> 2.39.2
-> 
+> diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+> index e7008f614ad7..0c1b6c1308a4 100755
+> --- a/tools/testing/selftests/intel_pstate/run.sh
+> +++ b/tools/testing/selftests/intel_pstate/run.sh
+> @@ -87,9 +87,9 @@ mkt_freq=${_mkt_freq}0
+>   
+>   # Get the ranges from cpupower
+>   _min_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $1 } ')
+> -min_freq=$(($_min_freq / 1000))
+> +min_freq=$((_min_freq / 1000))
+>   _max_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $2 } ')
+> -max_freq=$(($_max_freq / 1000))
+> +max_freq=$((_max_freq / 1000))
+>   
+>   
+>   [ $EVALUATE_ONLY -eq 0 ] && for freq in `seq $max_freq -100 $min_freq`
+
+thanks,
+-- Shuah
 
