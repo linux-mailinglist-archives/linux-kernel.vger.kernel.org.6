@@ -1,127 +1,92 @@
-Return-Path: <linux-kernel+bounces-365021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A974799DC47
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:31:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0492199DC4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654AC282C98
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:31:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA980282E64
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32B342A8A;
-	Tue, 15 Oct 2024 02:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514B6167D83;
+	Tue, 15 Oct 2024 02:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gHGJNDjB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FqnEUUE+"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B643B1F61C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2741F61C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728959493; cv=none; b=YtrAlsDvKJARI3ybmB1Bry28kX9dYdxo8R8YPjHspUjuX95H+y10STktsEMqWspSyylgSr0Jai+MgGx6kWBOlKyvK8JKpY7LAhqDRWVnmG9HuogTblpp0T5grYaRzJdOFKf6LRQ6eSrcIUPosHrXQEkZPE0W5Fb1dtMrAkiaBkg=
+	t=1728959679; cv=none; b=obikLMPxEkwfklzZM3GbsiVPtmFu0pMH/3Y+TGD3ItH9JUlstSwB6ih7ILyoTbaepP9VUdrFAJbHEiRzQJfCaO2qq2wotgES6LREPaJNzd2HDrEPrHS+mR6qFQwWU0UE7xhVP2/FszUCmQUm02sDlMtMBcHaMc05LSr+VNzzuoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728959493; c=relaxed/simple;
-	bh=Eht3kaE8TPAUFrMmB2wYBK16NKLPLwgMkqIgrhPGAHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDJmveU1EDb8pasF4jh8+DdHWAqScysLNWW0M6ikd5tQW+Du+KfAfc4TDlp5iVnQs6pZwfjTOC2dy9JieDErDnb8XXZ94igpWX3SlOqRZTrbGzH7SSx9ocLicLsc09GZtAiLseE6pLNxoyxTrD2aK9vSLshJUuHbe/nKwqLIHQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gHGJNDjB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728959489;
+	s=arc-20240116; t=1728959679; c=relaxed/simple;
+	bh=J96PNxXho6AM9q+vz7DQJDchGvgBPPRFe2c29HGeAEk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Wn7DOZ6ySt8bUq9Ei6uaePEZSE28mX8ay/f2/lch+V7/Z1SNp0W9AZZrbekNAG1UM+0q5ICXGEd5L2nkngXnRxlCuMtSeXPavkDsJ8TS3B+t4Xx0QTA1/yCnJvaBw7dOK88t3JMaJQSMrwKy559IUosInTy5dqbkedZtDJFe5Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FqnEUUE+; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728959675;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d92jJ6kW+oBkOfqEEGf2E2wbMnllb1zRN+YLBEPwhFs=;
-	b=gHGJNDjBxTIQKRz2GxgnZ37hI03TNk0pPcEoGLQbMtsiGEHcLAR5M6U2Na15kCHaAgDCmM
-	mGA1pKVdLJ+ZgcJpcrD0PGvqQZShkuMcrPVD1t1svTxyl6gsRez/u5ffPLK6kkLgHddD0V
-	xNcegJyxSgMRejWWQ9w8QPGNjnTOoRg=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-zeZ5XHc8O_a_kjd-wL27mQ-1; Mon,
- 14 Oct 2024 22:31:25 -0400
-X-MC-Unique: zeZ5XHc8O_a_kjd-wL27mQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E52EE19560A3;
-	Tue, 15 Oct 2024 02:31:23 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.119])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6266519560AE;
-	Tue, 15 Oct 2024 02:31:16 +0000 (UTC)
-Date: Tue, 15 Oct 2024 10:31:11 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.de>,
-	Hamza Mahfooz <someguy@effective-light.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ming.lei@redhat.com,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
- overlapping mappings aren't supported"
-Message-ID: <Zw3T7-6pxGelQX_s@fedora>
-References: <ZwxzdWmYcBK27mUs@fedora>
- <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
- <20241014074151.GA22419@lst.de>
+	bh=ZCOSs8NjOrK7JCDidX00nNIZGkMQE0/GRhp6aQzYnlc=;
+	b=FqnEUUE+n6RFWCBcWGCHCiNREKt4ZvKr2xxWT+4dBB12Rw2thW3r/wofD1pXVtoqaZtjoD
+	m0y0dJO/97D8mgNQw/fEFGX9k5ebQzf4mXgwEXbo7rzQoZMSe6KiTYgpW/QzkCQ4RoAkJ2
+	MUrhp0aMvdWTHWHdPKVGbE8RdfX78ns=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014074151.GA22419@lst.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH] mm/swapfile: skip HugeTLB pages for unuse_vma
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20241015014521.570237-1-liushixin2@huawei.com>
+Date: Tue, 15 Oct 2024 10:33:36 +0800
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Naoya Horiguchi <nao.horiguchi@gmail.com>,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <ED9675B2-C82C-45D0-861B-48828553F53D@linux.dev>
+References: <20241015014521.570237-1-liushixin2@huawei.com>
+To: Liu Shixin <liushixin2@huawei.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 14, 2024 at 09:41:51AM +0200, Christoph Hellwig wrote:
-> On Mon, Oct 14, 2024 at 09:23:14AM +0200, Hannes Reinecke wrote:
-> >> 3) some storage utilities
-> >> - dm thin provisioning utility of thin_check
-> >> - `dt`(https://github.com/RobinTMiller/dt)
-> >>
-> >> I looks like same user buffer is used in more than 1 dio.
-> >>
-> >> 4) some self cooked test code which does same thing with 1)
-> >>
-> >> In storage stack, the buffer provider is far away from the actual DMA
-> >> controller operating code, which doesn't have the knowledge if
-> >> DMA_ATTR_SKIP_CPU_SYNC should be set.
-> >>
-> >> And suggestions for avoiding this noise?
-> >>
-> > Can you check if this is the NULL page? Operations like 'discard' will 
-> > create bios with several bvecs all pointing to the same NULL page.
-> > That would be the most obvious culprit.
+
+
+> On Oct 15, 2024, at 09:45, Liu Shixin <liushixin2@huawei.com> wrote:
 > 
-> The only case I fully understand without looking into the details
-> is raid1, and that will obviously map the same data multiple times
-> because it writes it out multiple time.  Now mapping a buffer
-> multiple times for a DMA_TO_DEVICE is relatively harmless in
-> practice as the data is transferred to the device, but it it
-> still breaks the dma buffer ownership model in the dma which is
-> really helpful to find bugs where people don't think about this
-> at all.  Not sure if there is any good solution here.
->
+> I got a bad pud error and lost a 1GB HugeTLB when calling swapoff.
+> The problem can be reproduced by the following steps:
+> 
+> 1. Allocate an anonymous 1GB HugeTLB and some other anonymous memory.
+> 2. Swapout the above anonymous memory.
+> 3. run swapoff and we will get a bad pud error in kernel message:
+> 
+>  mm/pgtable-generic.c:42: bad pud 00000000743d215d(84000001400000e7)
+> 
+> We can tell that pud_clear_bad is called by pud_none_or_clear_bad
+> in unuse_pud_range() by ftrace. And therefore the HugeTLB pages will
+> never be freed because we lost it from page table. We can skip
+> HugeTLB pages for unuse_vma to fix it.
+> 
+> Fixes: 0fe6e20b9c4c ("hugetlb, rmap: add reverse mapping for hugepage")
+> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
 
-Another related topic:
+Acked-by: Muchun Song <muchun.song@linux.dev>
 
-Recently direct IO buffer alignment changes to just respect DMA
-controller alignment which is often too relax, such as dma_alignment
-is just 3 for many host controllers, then two direct IO buffers may
-cross same DMA mapping cache line.
-
-Is this one real problem?
-
-
-Thanks,
-Ming
+Thanks.
 
 
