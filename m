@@ -1,82 +1,124 @@
-Return-Path: <linux-kernel+bounces-365350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C3F99E0F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:24:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D373499E0FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E432B21A32
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026EB1C20DAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C14A1CACDB;
-	Tue, 15 Oct 2024 08:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126301CACFD;
+	Tue, 15 Oct 2024 08:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="tu2oXq0C"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEE018A6A5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980644; cv=none; b=t+/xXWxYfnhZt1/H5DBV74tCcdDELtVYhK1IraKX3IceULDgkMFCsSYLFqDD0dR84OhFEgyXtDyw2zqvNltScM2ivIIXnCk+oxa9BicwqklkVblJH9Ltc80L6rT/JsxtSUdfGli8v6idwNkEcStX0zpHBT8CDcphDHNxJ3SSg8A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980644; c=relaxed/simple;
-	bh=tETNuYHVSMgSZcgmOsTTQxvYt5JokXBLHVq1MUYiq6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UTilNMFy1xJ+oHEN9PdpP4+sGRxIsEwdJpIwYcl8M30I6zAychudvH9RIuE8dPCz5JCwG6nAI9EzmdBqllZAitwt016EmlAr1+RVGJ/goz5q1c12+s6VAc5tCYJK+PKkBZQGxOT1bXUKjCU3sGF+KM6tiPSlEpGScyzJFdi/QGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=tu2oXq0C; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sPouMTxm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D9utk6rq"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 417F82A7853;
-	Tue, 15 Oct 2024 10:24:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1728980642;
-	bh=tETNuYHVSMgSZcgmOsTTQxvYt5JokXBLHVq1MUYiq6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tu2oXq0CfPR8yJDXsvcbHSIvMSsHWYetMd1HWkQAkHEDT2vpTurX5kc7XMDKeIM8u
-	 pl6g0q8xO3O3VDt4i1r4CITPhYUxTNaxBPOJUOvrWgQpZVw1D8a5xV3wI2jMgS4liS
-	 iWo4emcSou3uuVFKJbBOMslFNT5pdHf1vaByeF5x+PB048AQ2F8p9Q1QcPZcBtUiDd
-	 EqFyd7+3SIqkgQ5PRifj87L8uHAXQkE6L2kXWvCW5fCWkey3l0vf5Mk3fwxHTART/l
-	 TroK/7OUSXQV139bCsSuIUuwNaK5w0BLcFMfS6kcFh+gCJQvexpxfDzceGztHcIfjj
-	 WwTqCNrc7F2/g==
-Date: Tue, 15 Oct 2024 10:24:01 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jason Gunthorpe <jgg@nvidia.com>, Yi Liu <yi.l.liu@intel.com>
-Subject: Re: [PATCH v2 1/1] iommu: Remove iommu_present()
-Message-ID: <Zw4moeFYFDmn6t4b@8bytes.org>
-References: <20241009051808.29455-1-baolu.lu@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5D717335E;
+	Tue, 15 Oct 2024 08:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728980801; cv=none; b=jkZS2Zap9uvguxA4Can5rGdNqcqBHVvBXx5WsDzaDRSS6r7ellcSutYqrSj8tG0qv7E/jS2JOMg2CBM4+W0UGTDOEmTyqlykh7wyDyOQ1etdxWtG3XLz+1BE1icI7LdMsKUS5z604uQJSzPnMA2R8cKATVhVqVOTt6LR8PKQHBY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728980801; c=relaxed/simple;
+	bh=rI+G5pNEOkvsILXZjFPL7S//tggG3Bnow/b4xDlV3fc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=jVI05oSb/I/5M0mJDEQNThUIoTM05etYR/WToD1WVSW0rTCHciVDaDpyU2GEZ7Y5+mFhbMpOFXlQz7KSAFesjRJIW74lW5fOyHat6yWDesvHj88kiofrp7IkKlBMHtGA50vnClqoiMSk3oJYIrRxkv4ffFD/+iRKqYyfRTu0IF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sPouMTxm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D9utk6rq; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A31DA1140099;
+	Tue, 15 Oct 2024 04:26:37 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 15 Oct 2024 04:26:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1728980797;
+	 x=1729067197; bh=zc4AwB791GpNOqwMdNneorC41LSTgz6DIiF6gXAV7X8=; b=
+	sPouMTxmUDH2/X3hTVfpUqw0XZPerjQh99sey8AJ675nJga6B0OJnTpnigHI/T6a
+	XZO2HU3UD0YUQi3Rje9+uI7eScsIm+57kbMqrkF5LCT8TG6JmagmVgE2OGy6t5YW
+	MHi3jQqgWQHbUDIu1lYs1JO6nttavKw9DbEub+orhsJP4ITQK65wFuaW+gtMQ1X6
+	RMz7oRPkAJvr8CH2rIVR9fHImFiGb29pMbbw0oy4F3VBZ5dNhV3MHI6u0oSL0dO7
+	OyvTYVbwWMR+6mzZ1MYtpnbDuRJZNoKhmXpJRz71qH9RA+RFeh21jyu77wg3SvT1
+	uot9jDkkykmh4zT0OvumVg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728980797; x=
+	1729067197; bh=zc4AwB791GpNOqwMdNneorC41LSTgz6DIiF6gXAV7X8=; b=D
+	9utk6rqFXqQMSfwLuoucs/iucNv6tOZjxv4NyzLu/hZn/Mb+2Vb3SDgxAUHZbqaH
+	MQin2TkFwalv/le2YK8WesqeLEBsSyFwtIAYjVLvXdEmmGnK6rked4pmZ1b5WgyS
+	U4HaCue2MAiF4i9gRP3kpl/6LTEkgIgQ1Pn0vUKwdfIYrDrd7ipV5hFyUc050r0A
+	U6sN18T8uPN0Vp4BvpDlnxoAw3ZDFK3AFW6y5UZatq9p6QxyRCxd/xxb7FnCUXUZ
+	isXV0Su9iXQEzeat3gHc/fiJ9jocAMOzRwCFNrG0eRzb7tEWkW9Eyfi3NeBrAbaM
+	AFvWs6L/WcLr7ikw7xjNw==
+X-ME-Sender: <xms:PScOZxhsenKtS-V4ii4rrfpAQYeMAPMWf3v4IhN7SvbPKjHe1JNaSw>
+    <xme:PScOZ2CyU3kYjCAbUN6MfnCPgP4T46d-M9XZsBD-QtXA2zNgJZ0QZfXerOybRdrED
+    8TMY_hZ7xgi-rj6r68>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegjedgtdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtrghsrdihrghkohhvlhgvvhesgh
+    hmrghilhdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepkhhvrghloheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhgrnhhnvg
+    hssehsihhpshholhhuthhiohhnshdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghr
+    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdifih
+    hrvghlvghsshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:PScOZxGLxYLTsUwMrBKE-4wVItzijT5s3XPVcg4csIpN1-kDfmMRhw>
+    <xmx:PScOZ2TonF8uVP7JDVy2QEDCiVztnxqoV3X9ZSCN2Y6TBKJhs1856A>
+    <xmx:PScOZ-yODN-B8mWs79e0srsVoQzeA834XvG6m8P9cbtEYgfhQSolKA>
+    <xmx:PScOZ85-NytzMxuBIMmXyChUFKaTPW__WZ7n46RHhZkcn4P7VMZvdQ>
+    <xmx:PScOZ1osUXlcWSzVb00EsYSGDNV-O57NQLFtx9QBinem_gaTrKmHoDbB>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4AC812220071; Tue, 15 Oct 2024 04:26:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009051808.29455-1-baolu.lu@linux.intel.com>
+Date: Tue, 15 Oct 2024 08:26:15 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Johannes Berg" <johannes@sipsolutions.net>,
+ "Arnd Bergmann" <arnd@kernel.org>,
+ "Stanislav Yakovlev" <stas.yakovlev@gmail.com>,
+ "Kalle Valo" <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <0966392c-623d-4c96-86cd-5b25ca90d81c@app.fastmail.com>
+In-Reply-To: 
+ <a5c6a210cb6b83c7523b0e86b306a7cfa7e573fd.camel@sipsolutions.net>
+References: <20241015073216.9443-1-arnd@kernel.org>
+ <a5c6a210cb6b83c7523b0e86b306a7cfa7e573fd.camel@sipsolutions.net>
+Subject: Re: [PATCH] wifi: ipw2x00/lib80211: select ARC4 helper
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 09, 2024 at 01:18:08PM +0800, Lu Baolu wrote:
-> The last callsite of iommu_present() is removed by commit <45c690aea8ee>
-> ("drm/tegra: Use iommu_paging_domain_alloc()"). Remove it to avoid dead
-> code.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Yi Liu <yi.l.liu@intel.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> ---
->  include/linux/iommu.h |  6 ------
->  drivers/iommu/iommu.c | 25 -------------------------
->  2 files changed, 31 deletions(-)
+On Tue, Oct 15, 2024, at 07:45, Johannes Berg wrote:
+>> +++ b/drivers/net/wireless/intel/ipw2x00/Kconfig
+>> @@ -6,6 +6,7 @@
+>>  config IPW2100
+>>  	tristate "Intel PRO/Wireless 2100 Network Connection"
+>>  	depends on PCI && CFG80211
+>> +	select CRYPTO_LIB_ARC4
+>> 
+> I think this got to the wrong place?
 
-Applied, thanks.
+Right, your versions is the correct one.
+
+     Arnd
 
