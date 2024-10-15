@@ -1,253 +1,155 @@
-Return-Path: <linux-kernel+bounces-365211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0C299DF08
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF36699DF11
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88A721C219B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFABF1C21843
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA5518B48D;
-	Tue, 15 Oct 2024 07:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpi73S7K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51C919F104;
+	Tue, 15 Oct 2024 07:05:09 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2107.outbound.protection.partner.outlook.cn [139.219.146.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5120F137930;
-	Tue, 15 Oct 2024 07:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975834; cv=none; b=DJqAOdjwoKbxAPWY94GZNnnIQfNKgfsqdPJOJLohnguyfW2SevSs4JgDZng8AWG+yjOfdyAoMLX9YL0hY/dTHwyU2mltAKYXyE+ZfSmgIOF03EDscCNEXkbZgPdyczwOV4nPcu36kUEGLXfMfuICWPiiXbQs59sB7OcqjrJddIU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975834; c=relaxed/simple;
-	bh=QO4NMjC2wozHcV6ZyuyuXOsL0Tv4CXT07K6LUqAlgDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JNicFvwBEauUJ58IIvuoNNpEbngymRyIgHjH/jn7aHKstTkHGkw/O0/piFbX1fAdMUvk1a8KUZdeIcHSKmq4oDnw+oklBHhloPvWAX7AdGD29G44493kIU1XSGF/aYTnYnyaMY9pd0iq3KbkZTWflz3mK3g6aFxyFxKGbJ7++lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpi73S7K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD84C4CEC7;
-	Tue, 15 Oct 2024 07:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728975833;
-	bh=QO4NMjC2wozHcV6ZyuyuXOsL0Tv4CXT07K6LUqAlgDs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kpi73S7Kp/Acv8ERbbtjJJ1bD9gw/Tyr2FESk/h0TKwe/kXgCA/lxkfXl/nx9X+yT
-	 sHmQptI5F5+obUAKDNKrHEfOfoyeh9jUI8U6QU6Ni1xbO0WTXl44wQZhw/a9CJVt6l
-	 UyXq1HAS6kPWGaG6Eqvz/vk08Pa85H/NpWnwdp4JTEbL99EJ1B3Wo/k7iML35g9R47
-	 xa/Fan5n9JHdkK8TA3B73acnmx1vDPcp5pRshBmZi5kmUp/V3I3pKIAE9u2R1czn+V
-	 YW4P5dpOFCgNM0JAmx9XYSLwX64j8lHtZ1wbv3El97zXjgXJ1yza/oXC1RmADCfQpx
-	 TpDH1BncWXiqQ==
-Message-ID: <a83f7c01-2375-4fe5-a74c-fe7b644fd949@kernel.org>
-Date: Tue, 15 Oct 2024 09:03:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F038137930
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728975909; cv=fail; b=HQL1vjr8C6gN3LpN1gbbRGO96WUDlr1lTt+Cf1USp/NZBtweyqWm+imwUIcBGCRW/1Ynd5WApFOlMtD0gDt5oORKzQOYgbcZaqRofEOW7aBwxG9mUB2JFcs/ryXcCWAMlo0M6LdVCdeumBL0bO4ArCPiBtp/nGuVKiOmZOY+Jes=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728975909; c=relaxed/simple;
+	bh=1rrjlcapHSqYMhCJQ47iogDvi4yTRi2uNa+8zNmczj0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=bYEu2gs7bQz6ZpSzsaYZt/O8a8tIOVni4OcwoaotcdAN82fdk7eYYPoknXXCebfnZ3bo0EM3Kh0e+XcSlkkswONNClrll/C2q4r8D8DxwjjQ8eYP9sCDtNFiA5IFLVIqPqNOxrQ4F+bI7XVLKbx9iA7xaY7kPMupd0Xyv4pZt5k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EoFnRfivQAoJRbN1SfxAuaw8eaY3nKKR1wWjC7VvFFNQf3+K/GHmgxUKS6RpACLyQX7dyH8XhPHiPK/cEgDta//RbRY6kLZCljWMF2jvm+S4M9GMdg8VRmH6IXIcoeQMU8sS/FhzXMQGmKlomkI88EihlPfdQyrqD2P7OENlquwmcY9sRZehYQ6ITiw/DzgMjfoDAQG4D/SEpYGQGGJxgILScEIUNjPRDRvRmMGzdckQyHQw6/otsHxj6vqbGLgW0/RoV/wSH9ugsoB8b72CNwOaqzdOLyNFft1CfFZ7+yc6i2JNtK1U0+Yv2UNvudjH2deAwge+MiNSJ/HClCkUPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H31t3dvzwbJ9lVE0xEm6IYk4OdSIEHP853O2EZM+Xs8=;
+ b=mbsZsW5YPJohPrlDNKABxG97Jp09u49h2IfADjPz9yOqZ7uYviMgk0wkapT9P3sInV8M1u3Z1USuKSXXhSx3Ipn7WFLHdvVq3BvKUS23Dbmj924VLFk5wa+yHuh+a+qKX1TodP8ThFVlvN8lH5pEPoC2J527fGBfwvmksDzmxDp+ZSFtyoMJSp6ESVbk7jjDv+SJNRXdRsu+K1JvpAU4LT5AekSurS5dgP2Ga4XWY34NKj00sdVfRXLGk4GD5Fls/XR9NIbvZYOaH2eE+tf3JYSlVpBpOXhVWQMFGWitOvPLMaJgrUv0dPeEp3/9ErLppCXtihFxvieUShfsYp1BBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn (10.43.107.79) by
+ SHXPR01MB0496.CHNPR01.prod.partner.outlook.cn (10.43.109.149) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.27; Tue, 15 Oct 2024 07:04:59 +0000
+Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ ([fe80::3f35:8db2:7fdf:9ffb]) by
+ SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn ([fe80::3f35:8db2:7fdf:9ffb%6])
+ with mapi id 15.20.8048.020; Tue, 15 Oct 2024 07:04:58 +0000
+From: Minda Chen <minda.chen@starfivetech.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	linux-phy@lists.infradead.org
+Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Conor Dooley <conor@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Minda Chen <minda.chen@starfivetech.com>
+Subject: [PATCH v3 0/4] Fix configuration for on-chip USB 2.0 support
+Date: Tue, 15 Oct 2024 15:04:43 +0800
+Message-Id: <20241015070444.20972-1-minda.chen@starfivetech.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: ZQ0PR01CA0014.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:5::19) To SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:25::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 7/7] arm64: boot: dts: Add initial support for Samsung
- Galaxy Note20 5G (c1s)
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, david@mainlining.org
-References: <20241015062746.713245-1-igor.belwon@mentallysanemainliners.org>
- <20241015062746.713245-8-igor.belwon@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241015062746.713245-8-igor.belwon@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SHXPR01MB0863:EE_|SHXPR01MB0496:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f09c5ab-65db-4ccc-f306-08dcece7ae2e
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|41320700013|1800799024|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	9bidlKSXafkyg756490lYe3OljEZQMT+e8O9XcnQJHCJk9JpMA76bzDe7GeRMpNrJgRkt9Mr5xemDJh7JYXi8i5QV0dX/llGXDGrj0QoKtCfWpIsoLhjjj+uQ4Oc7n8juGieubxHcfpdgnmGUovkBE4M7iAw5iH+BwY2FP7ZqrfHVKAKRJWofHm3q+cZBHRG6lqeVZCURSED8KoYd5yvf9eY8a3BR/Ltc9LlJCslYOb7ILZ7WfMoXHfiMa7fuSKCWAVTvDq6yR1KluyPjzT8dtP/fJFlhmCFrgTOs1KAAb6u85epJULHK6MeuYDfP2vlkV4BeAwjhsGebz15I2zsMfFlky5s3NpKq/OCBUuG7LdtXTd/ot2Tlld081iK+K0MXlwA82i6DbzYiSU46v8E1NR9aQIzbeGhbmupWsObiWGBpPzgYCPRkSpKXMhXkAWZZ3XXIw3lsI3/o/xkwNH1ndLydz70rLs48OzDdNnJVwtIZcA5+R3dKuN1kd8Q9Fw2bCZ+Z5qEdDn9qL6Z06vSaEQTZdyjyYuv6MxIXHHwASw7wlEhd2nlbMSTxiqD5SCpdcacjhb09nkZVVnIwR/3iJLtiuFNsiNqvikC7wajKUT6edCoIeAPvxfDYA1hkySt
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(41320700013)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IsHcdY2/CMWgVW+WXHm46vJMWqkmscWRQhMKp88f8UK9fGmCbqLYV84fzQSb?=
+ =?us-ascii?Q?elzcqOIWwU1t+ZVL6wKGhsLXzmBYNeYb4GvOwXpb6ZAejE4+rbXFtfXJEwOb?=
+ =?us-ascii?Q?srteoYwv5ih1oaDqp/NvNorroncLATYefA/82TOYOV2lda0vNfhY71D8C5hJ?=
+ =?us-ascii?Q?7pIrAzgUem2vjhzezY7O0GMkhK/VSq5kKgjGu3hlysgp9Bhr0+0l5yxiwQd4?=
+ =?us-ascii?Q?yL5U5s+p5bPRAYch9u1HXTxHqpJpUi3qePrDUK4jse5ywWrT4aJXDbHoGKAP?=
+ =?us-ascii?Q?50IAk6nL7L6Vngo2MRffKP3FXJ9QVkbxz1+kr9ccZPEORI55kCKJXaIkAlk3?=
+ =?us-ascii?Q?Kp1viBdSSJP39XNQOFQS7e+m0vmsL1bt1wIYyme7wqe6HoO4d1WLBixbleRZ?=
+ =?us-ascii?Q?tU9PlE5Wg0MsybGsSHxnoWnMipD6Cfw3nbcXebTL7qAfoc5mUvU6mzOcXRJm?=
+ =?us-ascii?Q?/7q8XguRfYTh+i1C5mt/CBYmObfLuZX/DGWTd5RdmznuXENlwDBxeUrcdBoF?=
+ =?us-ascii?Q?LjQD6Mex8KsfLKFP0BbGyBYNqUlZWnXjxgBstCeABo2L3Lt6O3s5/13F+Z6+?=
+ =?us-ascii?Q?kTbaQHj+pZ0cBbOOjoNW/fy9U35PjqBvs+zhqVHuqqX3bNdybZ+V1U9viTVp?=
+ =?us-ascii?Q?RilLTVKgSizs3qm7rILzXUlvNNhBOitBtFBF+8qdgOg1jVliJnb3oV3ZbqzV?=
+ =?us-ascii?Q?gMnG08PyJw0B+EAQLrsUbm4OMIuaLRmYk3em9EBssrn03GUJ4Fy/fVQI+0JV?=
+ =?us-ascii?Q?LhLLz9rfmgkmuDYf8VOaOokXM3LT9+tffpGrqPHuEndLbQFVk6a1/5fB/ZPG?=
+ =?us-ascii?Q?T5MfjG7dp0z7dM0Zz5pzm9sBQxtONd8mnNVznZg+KKEDc16f62plLEMRLapn?=
+ =?us-ascii?Q?sSpqBipdz4AC8nRAe9S0t0/zwyhC3HFfbPo4wm2kOpyTAqXfaFJIcfyzbWHz?=
+ =?us-ascii?Q?J3gEWhwYc0e3xlsBZAjjsZ9nMv8JO+DoM498wwWLMmEstLRmlAHMvqTo0wNw?=
+ =?us-ascii?Q?8B2gs0luf0IaUzG6xhAvO8sX9uwCrJJoyAACOZi9vjYDCTuiDaL7hT4jHps9?=
+ =?us-ascii?Q?hOjW5osJtAoT+dWLYAenHwRtBI1zqGh+wZrqZqDyLAggLpFEvMQDot+xkAAh?=
+ =?us-ascii?Q?+IGYSuDekkyaThM3eFttUd16mqZKQrTeOYRDrY+sX9+RfUQs4V7ynEnZ+zHO?=
+ =?us-ascii?Q?jF2k2Z7tZL950RKU1fsLmjYCjQBj+7+EvCQEbfza+rUEdefJw+/dEWgVI9+D?=
+ =?us-ascii?Q?rFsRZbkFS0KFzFHaYoO25X5Tt6VFwo3+JLN3y0MYuDQKoup5MnGMG9wulFlg?=
+ =?us-ascii?Q?jlCEKUAUOW5ZP5R1WZbNOMw7ubKafWvUcyPwISGiHJOCKud4hU5PmtG65f1m?=
+ =?us-ascii?Q?7qoPe/bYm0yOhdOtSyF2vPadJHBsBWzYXyB/HYGgxDTISxlouXOWDY99ciE9?=
+ =?us-ascii?Q?Ph70Yyy/2++57iiPN4uo68OdYMxZG88JqEx3rYoh85UCKQRTQDMTiCJFyiLC?=
+ =?us-ascii?Q?sLARujKsEzPT5NPuWP4W/npTktODpVb2IemSiiVa3C2aZbOR1Wetlh52n1+l?=
+ =?us-ascii?Q?KJGTgmu67sCIpJYGX57qmvWYvB0eBXlANfY0GrbV7tIhCrEespZe7S0OEy7m?=
+ =?us-ascii?Q?2w=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f09c5ab-65db-4ccc-f306-08dcece7ae2e
+X-MS-Exchange-CrossTenant-AuthSource: SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 07:04:58.9013
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: N1BryfpgnhZ6HJPLq+e3FW3B2s94UcWHTInuFvqYGttzuEjVhH9PB8FnfMXXj9f9NDHLSykYlg38/O14cwKy90TVTsfEjiMVFUZJtfDYVqs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SHXPR01MB0496
 
-On 15/10/2024 08:27, Igor Belwon wrote:
-> Add initial support for the Samsung Galaxy Note20 5G (c1s/SM-N981B)
-> phone. It was launched in 2020, and it's based on the Exynos 990 SoC. It
-> has only one configuration with 8GB of RAM, albeit storage options may
-> differ.
-> 
-> This device tree adds support for the following:
-> 
-> - SimpleFB
-> - 8GB RAM
-> - Buttons
-> 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
->  arch/arm64/boot/dts/exynos/Makefile          |   1 +
->  arch/arm64/boot/dts/exynos/exynos990-c1s.dts | 111 +++++++++++++++++++
+While mainline has support for the USB controller of the JH7110 since 6.5,
+this never really worked in USB 2.0 only case.
+The reason for that was a missing syscon setting that prevented the
+connection between USB 2.0 PHY and the controller. This series finally
+fixes the issue.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Changes in v2:
+ - fix copy&paste mistake in error patch found by kernel test robot and Dan Carpenter
 
->  2 files changed, 112 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-c1s.dts
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index 18f5a3eed523..7a934499b235 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -8,5 +8,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
->  	exynos7885-jackpotlte.dtb	\
->  	exynos850-e850-96.dtb		\
->  	exynos8895-dreamlte.dtb		\
-> +	exynos990-c1s.dtb		\
->  	exynosautov9-sadk.dtb		\
->  	exynosautov920-sadk.dtb
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990-c1s.dts b/arch/arm64/boot/dts/exynos/exynos990-c1s.dts
-> new file mode 100644
-> index 000000000000..7bff098d7982
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos990-c1s.dts
-> @@ -0,0 +1,111 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +/*
-> + * Samsung Galaxy Note20 5G (c1s/SM-N981B) device tree source
-> + *
-> + * Copyright (c) 2024, Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos990.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +/ {
-> +	model = "Samsung Galaxy Note20";
-> +	compatible = "samsung,c1s", "samsung,exynos990";
-> +
-> +	chosen {
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		framebuffer0: framebuffer@f1000000 {
-> +			compatible = "simple-framebuffer";
-> +			reg = <0 0xf1000000 (1080 * 2400 * 4)>;
-> +			width = <1080>;
-> +			height = <2400>;
-> +			stride = <(1080 * 4)>;
-> +			format = "a8r8g8b8";
-> +		};
-> +	};
-> +
-> +	memory@80001000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x80000000 0x3ab00000>,
-> +		      /* Memory hole */
-> +		      <0x0 0xc1200000 0x1ed80000>,
-> +		      /* Memory hole */
-> +		      <0x0 0xe1900000 0x1a8e9800>;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		cont_splash_mem: framebuffer@f1000000 {
-> +			reg = <0 0xf1000000 0x13c6800>;
-> +			no-map;
-> +		};
-> +
-> +		abox_reserved: audio@f7fb0000 {
-> +			reg = <0 0xf7fb0000 0x2a50000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-> +		pinctrl-names = "default";
-> +
-> +		power-key {
-> +			label = "Power";
-> +			linux,code = <KEY_POWER>;
-> +			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-> +			wakeup-source;
-> +		};
-> +
-> +		voldown-key {
-> +			label = "Volume Down";
-> +			linux,code = <KEY_VOLUMEDOWN>;
-> +			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-> +		};
-> +
-> +		volup-key {
-> +			label = "Volume Up";
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-> +		};
-> +
+Change in v3:
+ - Using syscon_regmap_lookup_by_compatible() to lookup regmap. So dts
+   with no changed. Delete v2 patch1 and patch 2.
 
-Stray blank line
+Change in v4:
+ - changed the format to make it pass strict checkpatch.
 
-> +	};
-> +};
-> +
-> +&oscclk {
-> +	clock-frequency = <26000000>;
-> +};
-> +
+base on v6.12-rc1
+
+Jan Kiszka (1):
+  phy: starfive: jh7110-usb: Fix link configuration to controller
+
+ drivers/phy/starfive/phy-jh7110-usb.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 
-Best regards,
-Krzysztof
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.17.1
 
 
