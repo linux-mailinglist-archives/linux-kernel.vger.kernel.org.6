@@ -1,169 +1,165 @@
-Return-Path: <linux-kernel+bounces-366589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DD199F76F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:44:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3059799F775
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88AB71F25135
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:44:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EDC7B22ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461A01EBA0B;
-	Tue, 15 Oct 2024 19:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB71B1F76D2;
+	Tue, 15 Oct 2024 19:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/R7nQR3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="q0UQPzEo"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5E61F80A9;
-	Tue, 15 Oct 2024 19:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF3A1F5854;
+	Tue, 15 Oct 2024 19:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729021460; cv=none; b=Ql0p1BavyqbiNPaaMWlqK9ftGmBzDQL6H35aVwduE+FcdOXinqiZB/8wquPx5EJQTnUpWJ3+KSxB6DjJ7BHkGjDvhPfRzmlBohfRdznnYN5cApuGpOKo3rpptZRY5NX73+hlcDzBI1bLUOaMIlEXZJbGVAKCrm+p4gtlrQhRweY=
+	t=1729021511; cv=none; b=u/q6URYJJ7JonsTK039+PdeVuMF6eE0g/ckcGyvijxcrZKz82bMfREXsnUEuLNVnhlPKQ6l7BARQA6w0h4oJ/c/89OobT3NmQn+rQf6PkJkHZ/JN/pRbAb7p8yADsS017CXT5mhmC7XxULU7sztHMSp8gZ0EYf+A57pKbxWq+Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729021460; c=relaxed/simple;
-	bh=piAVYRm8bQi755vcZJ4BbIo9LCMHinq9/pmQKh/ZVp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=juoZHZvFCoir/tebR8gBrPmkTl5YrBeiVAdgxpkX6A1zs9YspbSDdqbA1IrQJM1tZ7Mwhrig6/zXv8ZcnxHCbbvE2/L6djSOJirkeIK10vDR6GbuX8FXOWUjag9qwvFi6PSV02YNt4waaHNSna8zKIkrUjf/DUJYcy5n6V9KRdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/R7nQR3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2DFBC4CEC6;
-	Tue, 15 Oct 2024 19:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729021460;
-	bh=piAVYRm8bQi755vcZJ4BbIo9LCMHinq9/pmQKh/ZVp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O/R7nQR3vScA8jS/82vAp70niVvfHBYlEpyAfdFiNIVzE+Hx2bE1oJ2VY2RBHnHcu
-	 y41wPg/eOcw3jPK/rM9IySa2QMOXmNanZX3LJSaPHtZCTBpdwg3l75UusJp3uDkSq2
-	 WVQaccl2SVainU4h64TMeE+ho2udLmOPK7L4LXOtWX/rA86egCBDYeEFdAc5lrwnUg
-	 xRP8xx9CySn2DW3fUsn0ER3XJcQthnUk/YuN4P6zgks8I+jtlCyc5c/yHkvPAjrJSf
-	 8Qi+QX4e08W/7agYajwG5kU4YO7mCHOT6WZVBIyx+z9UhdlXdAT9Nc7ExVctOGrN1O
-	 nDfTuJA0kRKhA==
-Date: Tue, 15 Oct 2024 14:44:18 -0500
-From: Rob Herring <robh@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	"Paul J. Murphy" <paul.j.murphy@intel.com>,
-	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	Martin Hecht <martin.hecht@avnet.eu>,
-	Zhi Mao <zhi.mao@mediatek.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Ricardo Ribalda <ribalda@kernel.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Dongchun Zhu <dongchun.zhu@mediatek.com>,
-	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-	Todor Tomov <todor.too@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] media: dt-bindings: Use additionalProperties: false
- for endpoint: properties:
-Message-ID: <20241015194418.GA1244454-robh@kernel.org>
-References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
- <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-2-a2bb12a1796d@linaro.org>
- <7ecxjoa7aije46cxmkyfd6ihxnqw4wleqkioddomxbwlu7qtrc@4dkfitppeksu>
- <6f461cb3-3a41-4a3d-b9b2-71b1c6be77f7@linaro.org>
- <9510b546-28fa-4fb4-b06e-0af5f9fd3bbb@kernel.org>
- <20241014202920.GE5522@pendragon.ideasonboard.com>
- <f265576c-7d83-40cb-b857-7ec54ef9ab46@kernel.org>
- <20241015112806.GA2712@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1729021511; c=relaxed/simple;
+	bh=Jxw4wtlEr6vIs5MfVc+/KOu5i1arbajJ5xkHL+jGtOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J0bwyjJgFiqjXzdhadv9lxijemKeO6Y7I0OE7XCaF3IHExtLsrT93SAU1m3byjTsvTCApT9ZYRSgfguax/CoaIBtMXAJY5L8JDd0T+koMWWPipIosJNJ6j+p5soc983/P7WHqEXLmaDr3QgsATUVsKagxeP0LR9ZGe9TVVrVwqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=q0UQPzEo; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bwhtgi8DcQyDJ8FWIikvDQQ5XGGnfVqxrzGDPV+2pkY=; b=q0UQPzEohGuorgdFB4IwQpx1yq
+	GxIVNS6g41P3QuqbKLt22y2lwrJpodiLo3mk1Nfrqv1Pvurq6zvOI6tXrm3k0Jw0mz0PZJ2QosunQ
+	lE8xR87+5HHebNwe5uSRwkWAYPaWlOsY9QT8x5IZqBTh+xQKQeojq94bdj/swJAkyv9k=;
+Received: from p54ae9bfc.dip0.t-ipconnect.de ([84.174.155.252] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1t0nTR-009Kvt-0i;
+	Tue, 15 Oct 2024 21:44:53 +0200
+Message-ID: <a7ab80d5-ff49-4277-ba73-db46547a8a8e@nbd.name>
+Date: Tue, 15 Oct 2024 21:44:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015112806.GA2712@pendragon.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 net-next 00/12] bridge-fastpath and related
+ improvements
+To: Eric Woudstra <ericwouds@gmail.com>,
+ Nikolay Aleksandrov <razor@blackwall.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+ <9f9f3cf0-7a78-40f1-b8d5-f06a2d428210@blackwall.org>
+ <a07cadd3-a8ff-4d1c-9dca-27a5dba907c3@gmail.com>
+ <0b0a92f2-2e80-429c-8fcd-d4dc162e6e1f@nbd.name>
+ <137aa23a-db21-43c2-8fb0-608cfe221356@gmail.com>
+From: Felix Fietkau <nbd@nbd.name>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <137aa23a-db21-43c2-8fb0-608cfe221356@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 02:28:06PM +0300, Laurent Pinchart wrote:
-> Hi Krzysztof,
+On 15.10.24 15:32, Eric Woudstra wrote:
 > 
-> On Tue, Oct 15, 2024 at 08:11:18AM +0200, Krzysztof Kozlowski wrote:
-> > On 14/10/2024 22:29, Laurent Pinchart wrote:
-> > > On Mon, Oct 14, 2024 at 10:47:31AM +0200, Krzysztof Kozlowski wrote:
-> > >> On 14/10/2024 10:31, Bryan O'Donoghue wrote:
-> > >>> On 14/10/2024 08:45, Krzysztof Kozlowski wrote:
-> > >>>> I do not understand the reasoning behind this change at all. I don't
-> > >>>> think DT maintainers ever suggested it (in fact, rather opposite:
-> > >>>> suggested using unevaluatedProps) and I think is not a consensus of any
-> > >>>> talks.
-> > >>>
-> > >>> No there is not but then, how do you give consistent feedback except 
-> > >>> proposing something to be a baseline.
-> > >>>
-> > >>> On the one hand you have upstream additionalProperties: false and 
-> > >>> unevaluatedProperites: false - it'd be better to have a consistent 
-> > >>> message on which is to be used.
-
-There are 3 options:
-
-- no $ref => additionalProperties
-- has a $ref:
-    - additionalProperties and list ref-ed properties
-    - unevaluatedProperties and don't list ref-ed properties
-
-I do debate (with myself) that that is too complicated as many don't 
-understand the difference. We could go back to always using 
-additionalProperties which is what we had before unevaluatedProperties 
-was added. The other option is always use unevaluatedProperties. 2 
-things have stopped me from going that route. I don't care to fix 
-'additionalProperties' treewide which would be necessary to implement a 
-meta-schema or check that unevaluatedProperties is used. It's not 
-something I want to manually check in reviews. The other reason is just 
-to not change what the rules are again.
-
-> > >>
-> > >> Well, I am afraid that push towards additionalProps will lead to grow
-> > >> common schema (video-interface-devices or video-interfaces) into huge
-> > >> one-fit-all binding. And that's not good.
-> > >>
-> > >> If a common binding for a group of devices encourages you to list its
-> > >> subset, then it is not that common.
-> > >>
-> > >> Solution is to fix that, e.g. split it per classes of devices.
-> > > 
-> > > I think splitting large schemas per class is a good idea, but the
-> > > problem will still exist. For instance, if we were to move the
-> > > CSI-2-specific properties to a separate schema, that schema would define
-> > > clock-lanes, data-lanes and clock-noncontinuous. The clock-lanes and
-> > > clock-noncontinuous properties do not apply to every device, how would
-> > > we then handle that ? I see three options:
-> > 
-> > Why is this a problem? Why is this a problem here, but not in other
-> > subsystems having exactly the same case?
 > 
-> I won't talk for other subsystems, but I can say I see value in
-> explicitly expressing what properties are valid for a device in DT
-> bindings both to inform DT authors and to perform validation on DT
-> sources. That's the whole point of YAML schemas, and I can't see a good
-> reason not to use the tooling we have developed when it has an easy way
-> to do the job.
+> On 10/15/24 2:16 PM, Felix Fietkau wrote:
+>> Hi Eric,
+>> 
+>> On 14.10.24 20:29, Eric Woudstra wrote:
+>>> It would be no problem for me to change the subject and body, if you
+>>> think that is better.
+>>>
+>>> The thing is, these patches actually make it possible to set up a fully
+>>> functional software fastpath between bridged interfaces. Only after the
+>>> software fastpath is set up and functional, it can be offloaded, which
+>>> happens to by my personal motivation to write this patch-set.
+>>>
+>>> If the offload flag is set in the flowtable, the software fastpath will
+>>> be offloaded. But in this patch-set, there is nothing that changes
+>>> anything there, the existing code is used unchanged.
+>> 
+>> FWIW, a while back, I also wanted to add a software fast path for the
+>> bridge layer to the kernel, also with the intention of using it for
+>> hardware offload. It wasn't accepted back then, because (if I remember
+>> correctly) people didn't want any extra complexity in the network stack
+>> to make the bridge layer faster.
+> 
+> Hello Felix,
+> 
+> I think this patch-set is a clear showcase it is not very complex at
+> all. The core of making it possible only consists a few patches. Half of
+> this patch-set involves improvements that also apply to the
+> forward-fastpath.
 
-This topic is just one piece of validation. A property being used that's 
-defined, but meaningless for a device is low on the list of what I care 
-about validating. I can't see how it would cause an actual problem? A 
-driver is going to read the property and do what with it? Could it be an 
-ABI issue ever? I can't see how other than a driver failing for some 
-reason if it finds the property, but that seems a bit far fetched.
+It's definitely an interesting approach. How does it deal with devices 
+roaming from one bridge port to another? I couldn't find that in the code.
 
-Rob
+>> Because of that, I created this piece of software:
+>> https://github.com/nbd168/bridger
+>> 
+>> It uses an eBPF TC classifier for discovering flows and handling the
+>> software fast path, and also creates hardware offload rules for flows.
+>> With that, hardware offloading for bridged LAN->WLAN flows is fully
+>> supported on MediaTek hardware with upstream kernels.
+>> 
+>> - Felix
+> 
+> Thanks, I've seen that already. Nice piece of software, but I'm not
+> running openwrt. I would like to see a solution implemented in the
+> kernel, so any operating system can use it.
+
+Makes sense. By the way, bridger can easily be built for non-OpenWrt 
+systems too. The only library that's actually needed is libubox - that 
+one is small and can be linked in statically. ubus support is fully 
+optional and not necessary for standard cases.
+
+- Felix
 
