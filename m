@@ -1,90 +1,59 @@
-Return-Path: <linux-kernel+bounces-366304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAAA99F374
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:55:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F2699F37A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1495428425B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 898AD1F244DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CCD1F76B4;
-	Tue, 15 Oct 2024 16:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509F51F76D1;
+	Tue, 15 Oct 2024 16:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1FkBHPKO"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOL0ad3a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9D51CBA1C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B561F667D;
+	Tue, 15 Oct 2024 16:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729011332; cv=none; b=aD65pLTiId7VfoFqIJkf0xW6MzhWdYoXYDprbBoH9Bw4/5K0aZVLWNYGVTDJ5v5SBfC2XxkfZYkmVAgY71FJXyrZG3wgWfuqQeBQqwVgy874dllDqapmhhs0j9y+FsSTZPbFhZEL+mW60N5DOfdJl6Ak3CCcHPszT6PV2N8AQDE=
+	t=1729011368; cv=none; b=p7y05Saz3TbzLtc1ytu/8yU2+hP57hF6I8xr8S56b4w6jvYjtHHwqH5PWNFUtcWsY7GKSngsqvFmo+TQe6Wi19VrFMkuCIVjvg/lddxzTLb9XnJCg21Y5pothaPIPw4A5olQszI65nOaT3aU0NVBOQqanpI6o89G4R7UtKEWXqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729011332; c=relaxed/simple;
-	bh=4W4bI7uebF/sEaVVeZOoyGw2rNdCSdxuqXpsYj8WkvY=;
+	s=arc-20240116; t=1729011368; c=relaxed/simple;
+	bh=hfqJKue+3XYOgvEDE+ykbHkzEUEGlHvjzIkhYRO8y10=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tznycGebc2ZEE835vAnPFQyQrmv8rLpNN8wvf1EJg652PIK4IdPcjUwO0srOebeLJ3eLMmkn3ieaWLEa7Z+rdF/QmleBqZriAueI8R0uXaRWlHCrlla7VIkhNW1v+9rlYgRcb8vqfR4NuN6l3z5w74j9ML2qmwjrXCyANQPg9sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1FkBHPKO; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e13375d3so4504812e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729011329; x=1729616129; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4W4bI7uebF/sEaVVeZOoyGw2rNdCSdxuqXpsYj8WkvY=;
-        b=1FkBHPKOUhdGT79looVNd7mg4JpzDHG8UrrcfqO79W4HyLh6P/JlBu5rGNIpLsyviK
-         0sTxfDmb0vqoFemeA7FCfMSdr7urHcklyBDehj6gOMAnbcswlidIE0PauXGqOnh2mskG
-         f7Mk+IuNVthPQzWOoIjvCfpCtwZyWq7eRhCHZ2wDL8wOCIgsbIxfCzVCTylNWrNeeFOx
-         /Wle1M3rdE6otzadmbaOHfP5VI5BAHRuoDU8d1T5O1SGFfI/ryXlNROaSDnoLkn0VPY6
-         gx2hruVNCqHSqVSZHU+BwT7LBEv8RqprJw4sf2vnbIo3VJYSKmtRSzxL4olHYOxth7f1
-         0IrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729011329; x=1729616129;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4W4bI7uebF/sEaVVeZOoyGw2rNdCSdxuqXpsYj8WkvY=;
-        b=jyaPrN8xMiaiqPmBgI9f9psX2XioGm+yJOQg9sqrHUp5UPTcFN7teHWodvul5VFjbB
-         dF0/5H5eUB9mExFy7YPupGszOngnchpW5TkqJHid/rlckaeAfbqe4tAm+MfCTdY2Y9so
-         1S6Vf0JJPUIW1YPEU75nAJ4MYmR9yud+qQCPIBMk5lCOfHcMTWMxfRq1S0NYzpGtF/hf
-         yVerEviGiRHn/+uVfTlBHA3GuRvVeZ9h87Gpce8eRMvn+/y30l4s5WcbVjI+bEnDsDrk
-         pUGYvRBBj4YPakVCkTWRs9X5+qHKvRTdamneAEoaQRgdGKxFNyJFJBF61X2Z+FZkxl7w
-         7+ow==
-X-Forwarded-Encrypted: i=1; AJvYcCV48jS3/Jn/lyF/LT64zn2gOntLJV20TEOhGTpGxL301xuI4qVI4x9eGYT7pzgObE/RwK4gKpS+E+1/gSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAeO4HQaGowzQuiO7yY4t60qGdcKy0PBwU53hyzdgEr6uBHN9b
-	R54G19wYnZOtRWYe8V6wmXv8DRA5xm1+TeFYCi/zMMtSinxMQuHJ8oW1PwWssA==
-X-Google-Smtp-Source: AGHT+IF3AWzGgTg4Qvkr9yrpW5bAHI/Y5xkCPKoE4F1EumLHWDdTfzw5TEEu47mTMpVX9kE0u9CLEA==
-X-Received: by 2002:a05:6512:e88:b0:539:f37f:bef2 with SMTP id 2adb3069b0e04-539f37fc3ccmr4140384e87.17.1729011328523;
-        Tue, 15 Oct 2024 09:55:28 -0700 (PDT)
-Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a1a3sm2007771f8f.12.2024.10.15.09.55.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 09:55:28 -0700 (PDT)
-Date: Tue, 15 Oct 2024 16:55:23 +0000
-From: Aleksei Vetrov <vvvvvv@google.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Anna-Maria Gleixner <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>, llvm@lists.linux.dev
-Subject: Re: [PATCH] mm/vmstat: Fix -Wenum-enum-conversion warning in vmstat.h
-Message-ID: <Zw6ee6PAz-kZzRAG@google.com>
-References: <20240621111604.25330-1-shivamurthy.shastri@linutronix.de>
- <ZwRA9SOcOjjLJcpi@google.com>
- <20241008005136.GA241099@thelio-3990X>
- <ZwevGZHiXOBqoslA@google.com>
- <a2e8a76a-9fad-4e3e-bce1-bf8a9d180464@app.fastmail.com>
- <20241015084714.GA1546610@thelio-3990X>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGAu07RjuPUwXoOeQUS9XDh70VN1IsyvcU8G1YSFZmLBuIawba3bO//dcMOxvWrqvbtOXoS0EdAUQFebmXOzwC1ga665Opp/u8HoFHFNFIpqLdYa48uYZHuPKwnkRtRkg14/zZLwUCVb6MNS+qLKZaxOD4o94ED2glv345FYK6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOL0ad3a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB58FC4CEC6;
+	Tue, 15 Oct 2024 16:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729011368;
+	bh=hfqJKue+3XYOgvEDE+ykbHkzEUEGlHvjzIkhYRO8y10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LOL0ad3a5QF4D6nDEDi6WusaMnXL8w3i+ooPdvVVEo5G0E0G2oPhKjYBWvQRjzh/m
+	 fSmqcwvIsq1FOrvt7YVrhexSOl6xXfLw6ccABZHDJhbDoWnSryKGYppZe52OCy6jTf
+	 FgOyT3CmQ8DIsB+K106HfNz3tQsXEOji+qDUHTl7fIibCmNCauC2KinUDgRy+SA2RB
+	 mNe3QyOwshLGSTY5Pmi5GlGYOb3Qu2kHKOd9dzw2Q8TWiEOrDaPAGn0hzboIO8cNBD
+	 jir7BiC3OKObuUy/QOCxSFQDgexAEgXGjXVvvhLGeShCvqD3foJsGo7pwPaXXwKtss
+	 C/Jw4Qd1fZdDg==
+Date: Tue, 15 Oct 2024 16:56:05 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Daeho Jeong <daeho43@gmail.com>, Daeho Jeong <daehojeong@google.com>,
+	kernel-team@android.com, linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v5] f2fs: introduce device aliasing file
+Message-ID: <Zw6epcWDc13p1yCM@google.com>
+References: <20241010192626.1597226-1-daeho43@gmail.com>
+ <ZwyyiG0pqXoBFIW5@infradead.org>
+ <CACOAw_yvb=jacbXVr76bSbCEcud=D1vw5rJVDO+TjZbMLYzdZQ@mail.gmail.com>
+ <Zw1J30Fn48uYCwK7@google.com>
+ <Zw34CMxJB-THlGW0@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,14 +62,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015084714.GA1546610@thelio-3990X>
+In-Reply-To: <Zw34CMxJB-THlGW0@infradead.org>
 
-On Tue, Oct 15, 2024 at 01:47:14AM -0700, Nathan Chancellor wrote:
-> We should be able to disable -Wenum-enum-conversion without impacting
-> the ability to catch the cases that you mentioned above. It also helps
-> that GCC supports -Wenum-conversion, but it does not seem like they have
-> an equivalent for -Wenum-enum-conversion.
+On 10/14, Christoph Hellwig wrote:
+> On Mon, Oct 14, 2024 at 04:42:07PM +0000, Jaegeuk Kim wrote:
+> > > 
+> > > Plz, refer to this patch and the description there.
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?h=dev-test&id=8cc4e257ec20bee207bb034d5ac406e1ab31eaea
+> > 
+> > Also, I added this in the description.
+> > 
+> > ---
+> >     For example,
+> >     "mkfs.f2fs -c /dev/block/test@test_alias /dev/block/main" gives
+> >     a file $root/test_alias which carves out /dev/block/test partition.
+> 
+> What partition?
+> 
+> So mkfs.f2fs adds additional devices based on the man page.
+> 
+> So the above creates a file system with two devices, but the second
+> device is not added to the general space pool, but mapped to a specific
+> file?  How does this file work.  I guess it can't be unlinked and
+> renamed.  It probably also can't be truncated and hole punched,
+> or use insert/collapse range.  How does the user find out about this
+> magic file?  What is the use case?  Are the exact semantics documented
+> somewhere?
 
-Could you please create and send a patch to disable
--Wenum-enum-conversion?
+Let me ask for putting some design in Documentation. Just for a quick reference,
+the use-case looks like:
+
+# ls /dev/vd*
+/dev/vdb (32GB) /dev/vdc (32GB)
+# mkfs.ext4 /dev/vdc
+# mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
+# mount /dev/vdb /mnt/f2fs
+# ls -l /mnt/f2fs
+vdc.file
+# df -h
+/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
+
+# mount -o loop /dev/vdc /mnt/ext4
+# df -h
+/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
+/dev/loop7                          32G   24K   30G   1% /mnt/ext4
+# umount /mnt/ext4
+
+# f2fs_io getflags /mnt/f2fs/vdc.file 
+get a flag on /mnt/f2fs/vdc.file ret=0, flags=nocow(pinned),immutable
+# f2fs_io setflags noimmutable /mnt/f2fs/vdc.file
+get a flag on noimmutable ret=0, flags=800010
+set a flag on /mnt/f2fs/vdc.file ret=0, flags=noimmutable
+# rm /mnt/f2fs/vdc.file
+# df -h
+/dev/vdb                            64G  753M   64G   2% /mnt/f2fs
+
+So, key idea is, user can do any file operations on /dev/vdc, and
+reclaim the space after the use, while the space is counted as /data.
+That doesn't require modifying partition size and filesystem format.
 
