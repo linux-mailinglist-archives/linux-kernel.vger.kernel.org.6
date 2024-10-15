@@ -1,197 +1,380 @@
-Return-Path: <linux-kernel+bounces-366906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38DE99FC1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:10:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8721C99FB7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC851C241AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:10:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE068B21E66
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5470E1D63E5;
-	Tue, 15 Oct 2024 23:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB7C1D63C6;
+	Tue, 15 Oct 2024 22:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="gkNOHaCx"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZrY9Yr8p";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JDr+e1M5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F40F173357;
-	Tue, 15 Oct 2024 23:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE90721E3A4;
+	Tue, 15 Oct 2024 22:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729033850; cv=none; b=MLf4GR0jzqln0nUbPH2Kj/aox6kEuu16WW0/WSBYngF3WIfYrpRUvWeUea9EHsKREXnApaYu8K1fXEkWBhvYjGxV2W9B6x+scrI7rtSsEicr9iE1raXwvz6MgE1GGVR7QmsGKaygJsgJqjlceA3BMRtXCV63QmWmwLbDVoT6WD0=
+	t=1729032083; cv=none; b=AyMxV0DHUM8FAUXmIS2a7tCUugxOC83WTdE08YamSzzRCVY9aFO6/JRCOy7GLFYXLkLY76Gozc4ipTgxErws1deQ6BueZFLdJueIbzWqYW+7V8OYTHuj0T+goSxYhYnlz8Lr+FBnPIowsAAzvO/eI56QYr610Hj8muu5CKzb3LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729033850; c=relaxed/simple;
-	bh=CrNU3zPe4V+PSWdy/5qXKcKFUpFWUo8dNTGLeeWXTak=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jmieylNxGL5OW6YCFvi22mb5K80bAXIwsckh/FqfpKkA2+RunLv1URBwhj/HJiTkEU2pxy5seM6TlvvMwFlYtSpuJ6/BFiTwkMQ7yX0JtwdhMpXWyHgq+dob7pJKnDnAilQoph20KSp1wDR5rEgXM+bzLmZHMczaMcUXKxSS7yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=gkNOHaCx; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1729032033;
-	bh=CrNU3zPe4V+PSWdy/5qXKcKFUpFWUo8dNTGLeeWXTak=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=gkNOHaCxYvhA1CiBD5NWIOWLJSFHbxggYZ/ekEHnVhTi/GOZWYN2D9D302L/VWlJ4
-	 PMSbWqw3Oi1lnz83Z7dbEaid/nmWmzbEgcM5PVetYPGgIytWzMbNFa/m9OLM/qpOqE
-	 iNRpt1jOxq39PkncVYT8TtY9ipFPSZ6genbbhkjw=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 1D6704040C; Tue, 15 Oct 2024 15:40:33 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 1C335400C9;
-	Tue, 15 Oct 2024 15:40:33 -0700 (PDT)
-Date: Tue, 15 Oct 2024 15:40:33 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-cc: Catalin Marinas <catalin.marinas@arm.com>, linux-pm@vger.kernel.org, 
-    kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-    linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de, 
-    mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-    x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, wanpengli@tencent.com, 
-    vkuznets@redhat.com, rafael@kernel.org, daniel.lezcano@linaro.org, 
-    peterz@infradead.org, arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com, 
-    harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com, 
-    misono.tomohiro@fujitsu.com, maobibo@loongson.cn, 
-    joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, 
-    konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
- smp_cond_load_relaxed()
-In-Reply-To: <87jze9rq15.fsf@oracle.com>
-Message-ID: <95ba9d4a-b90c-c8e8-57f7-31d82722f39e@gentwo.org>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com> <20240925232425.2763385-2-ankur.a.arora@oracle.com> <Zw5aPAuVi5sxdN5-@arm.com> <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org> <Zw6dZ7HxvcHJaDgm@arm.com> <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
- <Zw6o_OyhzYd6hfjZ@arm.com> <87jze9rq15.fsf@oracle.com>
+	s=arc-20240116; t=1729032083; c=relaxed/simple;
+	bh=QHqfs543+gxt8zfRBqEzSrbEWFpTQk6KdPnP+L+z0o4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=RwN/uw7EnRrxGsVIhDZRsOE5XbRI2SiIDlRRVFEoWxAPDg5Dz3xN5AyY1RZtVOzTCjeVXW0t3ql8asLMN+oLqrrCVwMAZnfq6IMiGTRpNKMV9V0qJglR//a/GOofwxDznnOIqkOltOgbm9ZTH+xY/oEwiSCj00XKqCtJHeh1P2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZrY9Yr8p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JDr+e1M5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Oct 2024 22:41:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729032079;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FPtLyx4dWPdgEPWAiyPKmWXLA1/5EQF2c50umC5V3ik=;
+	b=ZrY9Yr8pudq2ZGAiG9YPAp8SobROdG7ysWBSPDmuY3rSkrEIYnhE/1FfECsFjtFWF/w1jk
+	++4xkh4LMuHXbEC1tpSMFwiR9GICqoOhD5UPdTFZwQieR9H6ATwr347wGN1PGrXVhxxDph
+	kedSCAG92YSPFdoWx5zBXd0tWgXA3uJCLWIPfA/57pD/u8Yj9bPOg+jayeuF4UIxvkF6pO
+	NqYMzzFwwwssnDFbj8OWRoIQDOeXVCygDZobVWNbrwukM4K4S7KnyDWCNKpOHZR6RtO1ZQ
+	lZNStbPJC2FaoKwnFGqk4RtFsiUzPiu26cG2jxjUwFglo+DnatNOuBcqdj661Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729032079;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FPtLyx4dWPdgEPWAiyPKmWXLA1/5EQF2c50umC5V3ik=;
+	b=JDr+e1M5unK9+vTtn+9DFIpgtrXTYTPnQJpQBCR6kQdZM1BTZ8+6iGlZK76rp7mPmRaW1y
+	M3IhoeBiZxClmBDw==
+From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: timers/core] timers/Documentation: Cleanup delay/sleep documentation
+Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <20241014-devel-anna-maria-b4-timers-flseep-v3-15-dc8b907cb62f@linutronix.de>
+References:
+ <20241014-devel-anna-maria-b4-timers-flseep-v3-15-dc8b907cb62f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <172903207899.1442.17030404438633347194.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Here is a patch that keeps the cpuidle stuiff generic but allows an
-override by arm64..
+The following commit has been merged into the timers/core branch of tip:
 
+Commit-ID:     1f455f601e2060497f9883991e8d5e79fbc7b047
+Gitweb:        https://git.kernel.org/tip/1f455f601e2060497f9883991e8d5e79fbc7b047
+Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
+AuthorDate:    Mon, 14 Oct 2024 10:22:32 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 16 Oct 2024 00:36:48 +02:00
 
-From: Christoph Lameter (Ampere) <cl@linux.com>
-Subject: Revise cpu poll idle to make full use of wfet() and wfe()
+timers/Documentation: Cleanup delay/sleep documentation
 
-ARM64 has instructions that can wait for an event and timeouts.
+The documentation which tries to give advices how to properly inserting
+delays or sleeps is outdated. The file name is 'timers-howto.rst' which
+might be misleading as it is only about delay and sleep mechanisms and not
+how to use timers.
 
-Clean up the code in drivers/cpuidle/ to wait until the end
-of a period and allow the override of the handling of the
-waiting by an architecture.
+Update the documentation by integrating the important parts from the
+related function descriptions and move it all into a self explaining file
+with the name "delay_sleep_functions.rst".
 
-Provide an optimized wait function for arm64.
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lore.kernel.org/all/20241014-devel-anna-maria-b4-timers-flseep-v3-15-dc8b907cb62f@linutronix.de
 
-Signed-off-by: Christoph Lameter <cl@linux.com>
+---
+ Documentation/timers/delay_sleep_functions.rst | 121 ++++++++++++++++-
+ Documentation/timers/index.rst                 |   2 +-
+ Documentation/timers/timers-howto.rst          | 115 +---------------
+ 3 files changed, 122 insertions(+), 116 deletions(-)
+ create mode 100644 Documentation/timers/delay_sleep_functions.rst
+ delete mode 100644 Documentation/timers/timers-howto.rst
 
-Index: linux/arch/arm64/lib/delay.c
-===================================================================
---- linux.orig/arch/arm64/lib/delay.c
-+++ linux/arch/arm64/lib/delay.c
-@@ -12,6 +12,8 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/timex.h>
-+#include <linux/sched/clock.h>
-+#include <linux/cpuidle.h>
-
- #include <clocksource/arm_arch_timer.h>
-
-@@ -67,3 +69,27 @@ void __ndelay(unsigned long nsecs)
- 	__const_udelay(nsecs * 0x5UL); /* 2**32 / 1000000000 (rounded up) */
- }
- EXPORT_SYMBOL(__ndelay);
+diff --git a/Documentation/timers/delay_sleep_functions.rst b/Documentation/timers/delay_sleep_functions.rst
+new file mode 100644
+index 0000000..49d603a
+--- /dev/null
++++ b/Documentation/timers/delay_sleep_functions.rst
+@@ -0,0 +1,121 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+void cpuidle_wait_for_resched_with_timeout(u64 end)
-+{
-+	u64 start;
++Delay and sleep mechanisms
++==========================
 +
-+	while (!need_resched() && (start = local_clock_noinstr()) < end) {
++This document seeks to answer the common question: "What is the
++RightWay (TM) to insert a delay?"
 +
-+		if (alternative_has_cap_unlikely(ARM64_HAS_WFXT)) {
++This question is most often faced by driver writers who have to
++deal with hardware delays and who may not be the most intimately
++familiar with the inner workings of the Linux Kernel.
 +
-+			/* Processor supports waiting for a specified period */
-+			wfet(xloops_to_cycles((end - start) * 0x5UL));
++The following table gives a rough overview about the existing function
++'families' and their limitations. This overview table does not replace the
++reading of the function description before usage!
 +
-+		} else
-+		if (arch_timer_evtstrm_available() && start + ARCH_TIMER_EVT_STREAM_PERIOD_US * 1000 < end) {
++.. list-table::
++   :widths: 20 20 20 20 20
++   :header-rows: 2
 +
-+			/* We can wait until a periodic event occurs */
-+			wfe();
++   * -
++     - `*delay()`
++     - `usleep_range*()`
++     - `*sleep()`
++     - `fsleep()`
++   * -
++     - busy-wait loop
++     - hrtimers based
++     - timer list timers based
++     - combines the others
++   * - Usage in atomic Context
++     - yes
++     - no
++     - no
++     - no
++   * - precise on "short intervals"
++     - yes
++     - yes
++     - depends
++     - yes
++   * - precise on "long intervals"
++     - Do not use!
++     - yes
++     - max 12.5% slack
++     - yes
++   * - interruptible variant
++     - no
++     - yes
++     - yes
++     - no
 +
-+		} else
-+			/* Need to spin until the end */
-+			cpu_relax();
-+	}
-+}
++A generic advice for non atomic contexts could be:
 +
-Index: linux/drivers/cpuidle/poll_state.c
-===================================================================
---- linux.orig/drivers/cpuidle/poll_state.c
-+++ linux/drivers/cpuidle/poll_state.c
-@@ -8,35 +8,29 @@
- #include <linux/sched/clock.h>
- #include <linux/sched/idle.h>
-
--#define POLL_IDLE_RELAX_COUNT	200
-+__weak void cpuidle_wait_for_resched_with_timeout(u64 end)
-+{
-+	while (!need_resched() && local_clock_noinstr() < end) {
-+		cpu_relax();
-+	}
-+}
-
- static int __cpuidle poll_idle(struct cpuidle_device *dev,
- 			       struct cpuidle_driver *drv, int index)
- {
--	u64 time_start;
++#. Use `fsleep()` whenever unsure (as it combines all the advantages of the
++   others)
++#. Use `*sleep()` whenever possible
++#. Use `usleep_range*()` whenever accuracy of `*sleep()` is not sufficient
++#. Use `*delay()` for very, very short delays
++
++Find some more detailed information about the function 'families' in the next
++sections.
++
++`*delay()` family of functions
++------------------------------
++
++These functions use the jiffy estimation of clock speed and will busy wait for
++enough loop cycles to achieve the desired delay. udelay() is the basic
++implementation and ndelay() as well as mdelay() are variants.
++
++These functions are mainly used to add a delay in atomic context. Please make
++sure to ask yourself before adding a delay in atomic context: Is this really
++required?
++
++.. kernel-doc:: include/asm-generic/delay.h
++	:identifiers: udelay ndelay
++
++.. kernel-doc:: include/linux/delay.h
++	:identifiers: mdelay
++
++
++`usleep_range*()` and `*sleep()` family of functions
++----------------------------------------------------
++
++These functions use hrtimers or timer list timers to provide the requested
++sleeping duration. In order to decide which function is the right one to use,
++take some basic information into account:
++
++#. hrtimers are more expensive as they are using an rb-tree (instead of hashing)
++#. hrtimers are more expensive when the requested sleeping duration is the first
++   timer which means real hardware has to be programmed
++#. timer list timers always provide some sort of slack as they are jiffy based
++
++The generic advice is repeated here:
++
++#. Use `fsleep()` whenever unsure (as it combines all the advantages of the
++   others)
++#. Use `*sleep()` whenever possible
++#. Use `usleep_range*()` whenever accuracy of `*sleep()` is not sufficient
++
++First check fsleep() function description and to learn more about accuracy,
++please check msleep() function description.
++
++
++`usleep_range*()`
++~~~~~~~~~~~~~~~~~
++
++.. kernel-doc:: include/linux/delay.h
++	:identifiers: usleep_range usleep_range_idle
++
++.. kernel-doc:: kernel/time/sleep_timeout.c
++	:identifiers: usleep_range_state
++
++
++`*sleep()`
++~~~~~~~~~~
++
++.. kernel-doc:: kernel/time/sleep_timeout.c
++       :identifiers: msleep msleep_interruptible
++
++.. kernel-doc:: include/linux/delay.h
++	:identifiers: ssleep fsleep
+diff --git a/Documentation/timers/index.rst b/Documentation/timers/index.rst
+index 983f91f..4e88116 100644
+--- a/Documentation/timers/index.rst
++++ b/Documentation/timers/index.rst
+@@ -12,7 +12,7 @@ Timers
+     hrtimers
+     no_hz
+     timekeeping
+-    timers-howto
++    delay_sleep_functions
+ 
+ .. only::  subproject and html
+ 
+diff --git a/Documentation/timers/timers-howto.rst b/Documentation/timers/timers-howto.rst
+deleted file mode 100644
+index ef7a465..0000000
+--- a/Documentation/timers/timers-howto.rst
++++ /dev/null
+@@ -1,115 +0,0 @@
+-===================================================================
+-delays - Information on the various kernel delay / sleep mechanisms
+-===================================================================
 -
--	time_start = local_clock_noinstr();
-+	u64 time_start = local_clock_noinstr();
-+	u64 time_end = time_start + cpuidle_poll_time(drv, dev);
-
- 	dev->poll_time_limit = false;
-
- 	raw_local_irq_enable();
- 	if (!current_set_polling_and_test()) {
--		unsigned int loop_count = 0;
--		u64 limit;
-
--		limit = cpuidle_poll_time(drv, dev);
-+		cpuidle_wait_for_resched_with_timeout(time_end);
-+
-+		if (!need_resched())
-+			dev->poll_time_limit = true;
-
--		while (!need_resched()) {
--			cpu_relax();
--			if (loop_count++ < POLL_IDLE_RELAX_COUNT)
--				continue;
+-This document seeks to answer the common question: "What is the
+-RightWay (TM) to insert a delay?"
 -
--			loop_count = 0;
--			if (local_clock_noinstr() - time_start > limit) {
--				dev->poll_time_limit = true;
--				break;
--			}
--		}
- 	}
- 	raw_local_irq_disable();
-
-Index: linux/include/linux/cpuidle.h
-===================================================================
---- linux.orig/include/linux/cpuidle.h
-+++ linux/include/linux/cpuidle.h
-@@ -202,6 +202,9 @@ extern int cpuidle_play_dead(void);
- extern struct cpuidle_driver *cpuidle_get_cpu_driver(struct cpuidle_device *dev);
- static inline struct cpuidle_device *cpuidle_get_device(void)
- {return __this_cpu_read(cpuidle_devices); }
-+
-+extern __weak void cpuidle_wait_for_resched_with_timeout(u64);
-+
- #else
- static inline void disable_cpuidle(void) { }
- static inline bool cpuidle_not_available(struct cpuidle_driver *drv,
+-This question is most often faced by driver writers who have to
+-deal with hardware delays and who may not be the most intimately
+-familiar with the inner workings of the Linux Kernel.
+-
+-
+-Inserting Delays
+-----------------
+-
+-The first, and most important, question you need to ask is "Is my
+-code in an atomic context?"  This should be followed closely by "Does
+-it really need to delay in atomic context?" If so...
+-
+-ATOMIC CONTEXT:
+-	You must use the `*delay` family of functions. These
+-	functions use the jiffy estimation of clock speed
+-	and will busy wait for enough loop cycles to achieve
+-	the desired delay:
+-
+-	ndelay(unsigned long nsecs)
+-	udelay(unsigned long usecs)
+-	mdelay(unsigned long msecs)
+-
+-	udelay is the generally preferred API; ndelay-level
+-	precision may not actually exist on many non-PC devices.
+-
+-	mdelay is macro wrapper around udelay, to account for
+-	possible overflow when passing large arguments to udelay.
+-	In general, use of mdelay is discouraged and code should
+-	be refactored to allow for the use of msleep.
+-
+-NON-ATOMIC CONTEXT:
+-	You should use the `*sleep[_range]` family of functions.
+-	There are a few more options here, while any of them may
+-	work correctly, using the "right" sleep function will
+-	help the scheduler, power management, and just make your
+-	driver better :)
+-
+-	-- Backed by busy-wait loop:
+-
+-		udelay(unsigned long usecs)
+-
+-	-- Backed by hrtimers:
+-
+-		usleep_range(unsigned long min, unsigned long max)
+-
+-	-- Backed by jiffies / legacy_timers
+-
+-		msleep(unsigned long msecs)
+-		msleep_interruptible(unsigned long msecs)
+-
+-	Unlike the `*delay` family, the underlying mechanism
+-	driving each of these calls varies, thus there are
+-	quirks you should be aware of.
+-
+-
+-	SLEEPING FOR "A FEW" USECS ( < ~10us? ):
+-		* Use udelay
+-
+-		- Why not usleep?
+-			On slower systems, (embedded, OR perhaps a speed-
+-			stepped PC!) the overhead of setting up the hrtimers
+-			for usleep *may* not be worth it. Such an evaluation
+-			will obviously depend on your specific situation, but
+-			it is something to be aware of.
+-
+-	SLEEPING FOR ~USECS OR SMALL MSECS ( 10us - 20ms):
+-		* Use usleep_range
+-
+-		- Why not msleep for (1ms - 20ms)?
+-			Explained originally here:
+-				https://lore.kernel.org/r/15327.1186166232@lwn.net
+-
+-			msleep(1~20) may not do what the caller intends, and
+-			will often sleep longer (~20 ms actual sleep for any
+-			value given in the 1~20ms range). In many cases this
+-			is not the desired behavior.
+-
+-		- Why is there no "usleep" / What is a good range?
+-			Since usleep_range is built on top of hrtimers, the
+-			wakeup will be very precise (ish), thus a simple
+-			usleep function would likely introduce a large number
+-			of undesired interrupts.
+-
+-			With the introduction of a range, the scheduler is
+-			free to coalesce your wakeup with any other wakeup
+-			that may have happened for other reasons, or at the
+-			worst case, fire an interrupt for your upper bound.
+-
+-			The larger a range you supply, the greater a chance
+-			that you will not trigger an interrupt; this should
+-			be balanced with what is an acceptable upper bound on
+-			delay / performance for your specific code path. Exact
+-			tolerances here are very situation specific, thus it
+-			is left to the caller to determine a reasonable range.
+-
+-	SLEEPING FOR LARGER MSECS ( 10ms+ )
+-		* Use msleep or possibly msleep_interruptible
+-
+-		- What's the difference?
+-			msleep sets the current task to TASK_UNINTERRUPTIBLE
+-			whereas msleep_interruptible sets the current task to
+-			TASK_INTERRUPTIBLE before scheduling the sleep. In
+-			short, the difference is whether the sleep can be ended
+-			early by a signal. In general, just use msleep unless
+-			you know you have a need for the interruptible variant.
+-
+-	FLEXIBLE SLEEPING (any delay, uninterruptible)
+-		* Use fsleep
 
