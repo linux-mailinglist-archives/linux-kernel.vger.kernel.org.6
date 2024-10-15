@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-365299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806C299E027
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6F399E028
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4546C281F9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:02:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182A91C21EAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CDB1CACD8;
-	Tue, 15 Oct 2024 08:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFC41AC887;
+	Tue, 15 Oct 2024 08:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vdladWKj"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZumZydWW"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B7B19ABDE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4CC1741C3;
+	Tue, 15 Oct 2024 08:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728979294; cv=none; b=o8s/CC+OXV/AwwhumB6ofdjhq+VNkhXsgL7MpiLTm0RbF8DSkFVkcxnGksfqLXGe0NjSGXkrlVO7S3vrr27cNVEVbWRAMLN/S0cAcOfNohXcns5vKm8WUj591+mfGtTKlwr+8Bz6RyOkIFcaYAi9uO5DGLmi5FnZvUOqHdRMcFk=
+	t=1728979325; cv=none; b=MT/xJutRVnZDZCKSvViZl1JDoUywoNVcF4f18JaEWOzztyx8IYjyQPwGsB3GtPO0GpBngJ3qjJBsnllDTdUon5nOMoTK39NGqQ5lKuVNvW/RiXNUkEjGt7M6DzBfI2dxH9AeMhRa+HfgN2umiixJUuS0ICbzgEpRkIv05B0pPI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728979294; c=relaxed/simple;
-	bh=zj3VWhc1JXRNGK9CsDmZf0eapyKovX4dwjoqx2Q9Dio=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f7bJnXymsP1xgi62WGz+a/snWfvTkP36zCyT9rvsV4vhOvDZ5QpWqEscgUGA0NnSxjNxY3DqHNaezbffz2rQ0GjmZZq788T/04qa0kNiOnMTx1SEjDtX43lxoSDnZk8CfeETP17eObP6VfMZW58+BarFEtmhbtBCUZWN0IGOqcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vdladWKj; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fad5024b8dso53528961fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728979289; x=1729584089; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zj3VWhc1JXRNGK9CsDmZf0eapyKovX4dwjoqx2Q9Dio=;
-        b=vdladWKjT8WI2KeXleLj+/RcHhaLevl3oykRwHEj/ZVgkBv+hL95RJrvL0saG80l/8
-         hvx+1Bb1fYt8letMQFveFcCn/7Bv4jMkKa0GTSDnD3WgpUDQmfKAbHlR90919YTxYlWp
-         /MKxgZxRQSW5cvW6EI7vce1MPENxpdKmJ6vR1xTOZ56Myl5y/gBhADKnF2ML2nSNJBuo
-         0CKgDhB/60XRjW7udytqDzU1zPwXbgv1lbIUxq2RuRGLH7WPD8QszDkoRbRkvyjXEJKE
-         TyOi2XajDVnvWzSjxTBBTQUyU6PTe4QPzhkBn9L++TPSKc9bEbq5VQX4T7pRQg6sYw9v
-         cyGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728979289; x=1729584089;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zj3VWhc1JXRNGK9CsDmZf0eapyKovX4dwjoqx2Q9Dio=;
-        b=StxC2/MxoboLFeIuSd8nSSjSW5X5hP2Bo1qdUyhWYnRd0qQfgEnL4p3FjobgJ8QGRm
-         DmxKc98Z5zsuYj1y0wdtCKk4c4Erxl4iJwOoKAWoGgdviFQs0EJ33SYskwzJJWZzpjae
-         Esvok0rJMRRP5umxc0pLe/NpHxPporCz8uNwlwuVQeP61apDrN/eEG59r9hP1KE3VHWI
-         S8h/96gM58dCmzPlsR1u/gnxrx+KQM+4o/9A7cHTZITJ/nOtZHiHINKh8x1D56uTzmrv
-         lm6hkj8CS3IFk46omqzlwVN/kiacfJmSUi7aotGFBeoyTpavywO4g6cayHx+nSH54YLT
-         0lng==
-X-Forwarded-Encrypted: i=1; AJvYcCW1ab0GOza6x4Io6nB/4i9iRQW5v5RlEuAoVgk+7Pac+iX1aY6vpOiUyJuLBx0VRqMSaZ2vQSz+fBGVjbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYmArFYOWatUIHn1OTAoNbpy6pOyWc3tpURBirHEiZG70hV/Mc
-	nIYXHYHqYAsA/yCyd0kMYYLTz2Q46L8hHPNSGscjD9cGqx/7JJXO8wN6J5EJBKNueTU2iywdxh5
-	gWdFbPI94Ufzcg4tBERTcKU3nSjIwZBTXzc1X
-X-Google-Smtp-Source: AGHT+IHxfKaPProiszu4hPKA2JsWyWKW8QC7WkdMfm3qCN+vO+7OHhDa8OoE6YIicZSOeQRLIab3tjlWn0zyThhZ2QU=
-X-Received: by 2002:a05:651c:2120:b0:2fb:5d8a:4cd3 with SMTP id
- 38308e7fff4ca-2fb5d8a4f7cmr6486501fa.0.1728979289048; Tue, 15 Oct 2024
- 01:01:29 -0700 (PDT)
+	s=arc-20240116; t=1728979325; c=relaxed/simple;
+	bh=ub78Fj7PCTFI7adxyeCQY8inXoEvVxn+YvQzp6OGWQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KY80wX+gMYfrU0RmaoDcW+8nJUcF2LvWHXlSWnc2FVZAXXwTwEO84RdQm+qfEaTUn+cn02Jalfq/QRkPvhlhoLuTdtUNl3xUEaU8R5YSlZCCzt7jqiOfI10JswMVZfeMRvFioee8E/vceEQW55ils/sd1b+YFhhG983RtJhHi/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZumZydWW; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gO8AXV3B3+bik/RmMlaIBDc/tPOhu1CUoXsAdzC3rhk=; b=ZumZydWWVsQBa++m6UFoeoy0vB
+	FLXl1TcBc3Zi01yXnKrG+W1FK/OPXske7V28LyWG3UTejn0fKVutu8yHOiw4r89dhFcgh0qPU/kFg
+	Sd8j/HxQ1iqps4UtWEKJyl6cQYNjUlcFKwoGKmiJ0583SbH64+FdS63WwNvgxW+29QXRhSTwm0Isj
+	dznMNsZ6cJAugWGqilbiTWdLg/ZlVUQIF7q7SfkWEoqOJS6pYYftmOdJS5HEM622IdIiJZLpnWSps
+	v6AkB1rvlFbP2yXB5d/TuxLicOz1lEaPeox7a/aINoGk3DnPQ68McYutFNJcJ5ytM6/RZgkRBg73C
+	yQVDoHew==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0cV4-00000006VX3-0lUY;
+	Tue, 15 Oct 2024 08:01:50 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CEFE43005AF; Tue, 15 Oct 2024 10:01:49 +0200 (CEST)
+Date: Tue, 15 Oct 2024 10:01:49 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Jose E. Marchesi" <jemarch@gnu.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Zheng Yejian <zhengyejian@huaweicloud.com>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Subject: Re: Have compiler remove __fentry locations from overwritten weak
+ functions
+Message-ID: <20241015080149.GP16066@noisy.programming.kicks-ass.net>
+References: <20241014210841.5a4764de@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014153808.51894-1-ignat@cloudflare.com> <20241014153808.51894-2-ignat@cloudflare.com>
-In-Reply-To: <20241014153808.51894-2-ignat@cloudflare.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 15 Oct 2024 10:01:17 +0200
-Message-ID: <CANn89iJ0i+k_wHn-aoafY1V+mJ8TAS1DzQKnu1KkjusAWLNuyg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 1/9] af_packet: avoid erroring out after
- sock_init_data() in packet_create()
-To: Ignat Korchagin <ignat@cloudflare.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Oliver Hartkopp <socketcan@hartkopp.net>, 
-	Marc Kleine-Budde <mkl@pengutronix.de>, Alexander Aring <alex.aring@gmail.com>, 
-	Stefan Schmidt <stefan@datenfreihafen.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	David Ahern <dsahern@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org, 
-	linux-wpan@vger.kernel.org, kernel-team@cloudflare.com, kuniyu@amazon.com, 
-	alibuda@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014210841.5a4764de@gandalf.local.home>
 
-On Mon, Oct 14, 2024 at 5:38=E2=80=AFPM Ignat Korchagin <ignat@cloudflare.c=
-om> wrote:
->
-> After sock_init_data() the allocated sk object is attached to the provide=
-d
-> sock object. On error, packet_create() frees the sk object leaving the
-> dangling pointer in the sock object on return. Some other code may try
-> to use this pointer and cause use-after-free.
->
-> Suggested-by: Eric Dumazet <edumazet@google.com>
-> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
-> ---
+On Mon, Oct 14, 2024 at 09:08:41PM -0400, Steven Rostedt wrote:
+> There's a long standing issue with having fentry in weak functions that
+> were overwritten. This was first caught when a "notrace" function was
+> showing up in the /sys/kernel/tracing/available_filter_functions list.
+> 
+>    https://lore.kernel.org/all/20220412094923.0abe90955e5db486b7bca279@kernel.org/
+> 
+> What was happening is that ftrace uses kallsyms (what is basically listed
+> by nm) 
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Ah, if only. NM lists the symbol table, and that has strictly more
+information than kallsyms, notably it includes symbol length. Using
+symbol length it is trivial to distinguish the case you're tripping
+over.
 
-Thanks.
+> to map the location of __fentry to the previous symbol ahead of it.
+> Then it says that function is the name of the function for that __fentry.
+> But when you have weak functions, you can have this:
+> 
+> 
+>   int notrace do_not_watch_me(void)
+>   {
+> 	return whatever;
+>   }
+> 
+>   void __weak define_me_in_arch(void)
+>   {
+> 	return;
+>   }
+> 
+> The define_me_in_arch() gets a __fentry, but because it is overwritten, it
+> becomes attached to the end of do_not_watch_me(). When ftrace asks kallsyms
+> for the symbol name of that __fentry location, it returns
+> do_not_watch_me(), and ftrace will simply list that.
+
+Which is a kallsym bug that does not exists in the ELF space.
+
+There is a patch set that tries to fix this here:
+
+  https://lore.kernel.org/all/20240723063258.2240610-1-zhengyejian@huaweicloud.com/T/#u
+
+Instead of adding size to kallsyms it adds extra symbols to denote the
+holes, which ends up being similar.
+
+> But I was thinking, since gcc (and perhaps clang?) now has:
+> 
+>   -mrecord-mcount
+> 
+> that creates the __mcount_loc section that ftrace uses to find where the
+> __fentry's are. Perhaps the compiler can simply remove any of those
+> __fentry's that happen to exist in a weak function that was overridden.
+> 
+> Would this be something that the compiler could do?
+
+Linker, this is link time. The linker would not only have to drop the
+(weak) symbol from the symbol table (which is all it really does), but
+it would now have to go and muck about with other sections.
+
+It would have to go re-write the __mcount_loc section and drop entrie(s)
+that were inside the dropped symbol. But then, what about other extra
+sections? For instance, we can have (and still patch) alternatives in
+the 'dead' weak text.
+
+Where does this stop?
+
+LTO can do the right thing and completely eliminate the weak function,
+but anything short of that is a really big ask. Esp. since this is a
+problem of our own making -- kallsyms is a flawed representation of the
+symbol table.
+
 
