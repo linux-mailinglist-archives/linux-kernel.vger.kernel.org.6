@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-366365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87DA99F461
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:50:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A2099F465
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899121F25145
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6746283F08
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F8E1FAEFF;
-	Tue, 15 Oct 2024 17:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D39E1FAF17;
+	Tue, 15 Oct 2024 17:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="aBVTrr8l"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dIkSlvNh"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EC61F76D9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6EF1E6311
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 17:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729014596; cv=none; b=IUOvPmZzOXKwCu2TglXzbat9bO5zKTSlFcW2PyaLAkztcvab3fEc9RJzo6S8eU31Wcuwe2sL9RPDcOJQ9BKko/ReIGjPNwGZwvhIqjZYviiOdDaIb6vDshL/hCZpDAGS6gvxO2zr4lblgpMxZUQW+xciJa/UC9APs/dyn3MBGu8=
+	t=1729014682; cv=none; b=HM4mjfmhLJk0oj/zSYwoaNCAmG546QUihxmMG1hR34he7k6Conx7/fzpu/6PV4NCxghQ6KSo+0AeqHZsVyJRN+sSWUZzxUc/5btwBxhMs9RPb8JAxgIWqDeAwIvO7mYAeqqKlwXV2c1CSRziBkqNw22a0gEHjdPtd5cQf/YkQLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729014596; c=relaxed/simple;
-	bh=PVFCK4VcmlNPvXlYeH74spwk3OVg0+JICEV8l2QoxB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3p7Jc7+Wi/0r8TrCfMzOl1LJLWaQnA0XUnXuKrr/KDeeD79r2PmKz6BhpnEAflhYpkxkYfbbOj1DyKLgwdJH3Bu7aMC3xKWgsUMIAvVtQUNiNkYrxt0d4x/kSohFzN04da11eJorW58uNpUfLO9BhSVSbm5MvFqMVaCfbC6XRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=aBVTrr8l; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e5a1c9071so2294822b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:49:55 -0700 (PDT)
+	s=arc-20240116; t=1729014682; c=relaxed/simple;
+	bh=1YKM3CH5jEHgkpkOmJ9NdqwqHxCL6rD+RoUeOu+M0Zs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kHkLbYudfUtrPTzkgnC42/L3hSYIilH83hoerNuNXMHWe/OkDP7VxWB/K8toK+72f7mAdjfiUOZx6mZzUdCFmH1AQU6avLWlHDBwejKx+G70ZG7ENKKbFpgESrUFTSGkNBnUy1F6r7AWu7dG1PggL8ZouwXjW7qxsYu0OvMpZj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dIkSlvNh; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e292d801e59so5415509276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1729014595; x=1729619395; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmroNsuhTr5GGQwwwUhm6ACalGPa0bysvUdakBT6cRk=;
-        b=aBVTrr8lTEsQHQ/XFwQfN1DGHeeAkH9YJMihy2GtwcPNM+e9bZBkvJ2kR8T9En3vxY
-         pP6qMWiQS2o4MFBxdKD+XCYUd2ISLXMxr58WUOOz8gBaGplYVzFhg6uHQDaS7H1oHA5R
-         LBG3yERhQ1J2d91IT5SB4kZR3oSJ6xBKvnrukxyjVjPYEBd7cWHkHIj6Pj5CA/zksTcT
-         oMIl5+uqIB/RjWIxui+9DHZebMOzVwfb6sQq94kDowMCpYU5FpIGvdYZhwIjwLwnwyPD
-         cBZy4QcAmvoS/qPAlthqNeNOH2hengqPJ42T+tcrbq3m1wwGmj3b67FDQ1zYvQggLdHq
-         tFpQ==
+        d=google.com; s=20230601; t=1729014680; x=1729619480; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LzVsLhNxP8WDtuKH9p/BsiCdMHgFRqj/PD3WiEFxpvI=;
+        b=dIkSlvNhbL9+4j+XcSeWRI+T83+mZc6CPPOglRW5LITA2rObSZNswhNjESLOlzcn5N
+         deSv6fgAaYu8M+V35Vpc4hwCabyOLQG4pZ7FboKtT3xldJQpiKpwjI72Ye60KEzU9IYn
+         HYSITN7ea6wfwaGX0ssvJLJo8tIfeTNOAAnZzjYJNtflx9vp1d47Igy3gqynBGENiabE
+         mpV5BOFtdhodpiZIXiWKV8aFuEbaTQyPafCWs20qvrezH0kAbdzcML6CzG5lNa57sOZq
+         762MEzqOo7kq9UD31SrjYUJUpdg6jjRNPPh81Px4hFe7YO51vdSKEtT5RZsVRM/VJTxh
+         mRgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729014595; x=1729619395;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rmroNsuhTr5GGQwwwUhm6ACalGPa0bysvUdakBT6cRk=;
-        b=qHuuAecSD6bQIaPSAcKaNT2MHQgX56ePzwWVV6ypbQgrthRqxd2CYwSifbNdjAH7DX
-         aiFO03bP4YHo3n7KfszBhhBTXLesPDU7Nwd+o5prrpMYQp33SPPVlRQiSGrMgRr3ukfn
-         z3v7d+L8vpXnjF7twv7dThRYlsu6mXRMBi7xa681w16tGYtt7blnQdk7+cF/i+eNXOzp
-         S6hFQSEPP6NMGSZ/zWsmq0N9kHXhnQ5TXbUcJTlW5Vf02uzXyQJSbE82ZXixapAMkC44
-         IPFB+b42viIA3Sfgl8KBQrIm+Ru7JY0Y3ztnB0zTZgcNubQ0VW/B78RF1/nj+/IVp7nn
-         8xiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlSawlJAyY8fUYC6AN/WR7PA2moWwHBfP5VwEh6gKneG0dQ/cHz3XiFC/4l0eiKWbN/js7xKzW+SBMVY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/vUv13tzqJjgvEIdw4psSaDXUSrAgoHktRl8BKbJihnO6nPr6
-	zFhrFWdevGbMbkgYvpZMrlH9GIe1mjW7OjavoeYvP83Thn+MNByg7ifP5qejTtU=
-X-Google-Smtp-Source: AGHT+IHJ9URbclwa1UMVWESY6/yNe/xtbyrLfud2FYj1JvuzArclf48eM4tw0OYTtNis0lmfQocyqA==
-X-Received: by 2002:a05:6a00:1390:b0:71e:ba5:821b with SMTP id d2e1a72fcca58-71e3806bfefmr23908680b3a.27.1729014594684;
-        Tue, 15 Oct 2024 10:49:54 -0700 (PDT)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a431bsm1541943b3a.137.2024.10.15.10.49.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 10:49:54 -0700 (PDT)
-Date: Tue, 15 Oct 2024 10:49:52 -0700
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] riscv: dts: thead: Add TH1520 pin controller support
-Message-ID: <Zw6rQF+2SUtXi8Oa@x1>
-References: <20241014-th1520-pinctrl-dts-v1-0-268592ca786e@tenstorrent.com>
+        d=1e100.net; s=20230601; t=1729014680; x=1729619480;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LzVsLhNxP8WDtuKH9p/BsiCdMHgFRqj/PD3WiEFxpvI=;
+        b=apKW/p8REQxRdx/Bp2jnteXDZWLk69Asjq6xaRAUxrffKhdDong4IdcqeeHyOpCgrO
+         LYOkC+LcKvqHTtBi+74nJvO43DDqSaNoc1Zp6LCMStUa8oV+yjPQDB/83Yqa9n23aYYh
+         SqvMmK/28y7yZyEB3SOHQYQ3PLepsHIN7wg33MLXfTQPpbIJ3+HdA8Nyp4gLzjwn/Jsz
+         R4gMv4BgkX1qtZ89OaHVEl67l0YgJd4Emmp+9cde4XXbM7C6o34MbI8YgJDL+zfgCXFg
+         9HaBGTKhAEe0ZQ5WVAsjgt+TIOmBNpEAqmdOxswCufkpmfk/7zVFJ6x21wbtulfeGf3R
+         nP9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVu2/cTzjmWyVp7mggJ5YMIOx9I8UPezxyAfYbB21VeI2d5keRXQ5N/qNpvg2encxfqNRkp8/gHLMDvymA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPa6z+VZRK7v47eoSLaSfSX+n4DbWJ7HNuqJYY9CDpNh/mzMoM
+	S5U7VnnSdP//kCi+fw1PPd18qpN/zNYQNyZmbdlXkE0cI0xagAZ+em2AD5r9wBDnGmzdFg54LJf
+	16A==
+X-Google-Smtp-Source: AGHT+IEfLUVkB/Zw/tV3P8pzNf5N7b8EpBCnlhsG/pzHxZYrAeEXSX/92lSxXYtVIs6Hmgm0nACho5IQsWI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a5b:505:0:b0:e28:8f00:896a with SMTP id
+ 3f1490d57ef6-e2978594c30mr546276.8.1729014680360; Tue, 15 Oct 2024 10:51:20
+ -0700 (PDT)
+Date: Tue, 15 Oct 2024 10:51:19 -0700
+In-Reply-To: <D4WJTFFVQ5XN.13Z7NABE3IRSM@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014-th1520-pinctrl-dts-v1-0-268592ca786e@tenstorrent.com>
+Mime-Version: 1.0
+References: <20241004140810.34231-1-nikwip@amazon.de> <20241004140810.34231-3-nikwip@amazon.de>
+ <875xq0gws8.fsf@redhat.com> <9ef935db-459a-4738-ab9a-4bd08828cb60@gmx.de>
+ <87h69dg4og.fsf@redhat.com> <Zw6PlAv4H5rNZsBf@google.com> <D4WJTFFVQ5XN.13Z7NABE3IRSM@amazon.com>
+Message-ID: <Zw6rlxWc7UCxJFpi@google.com>
+Subject: Re: [PATCH 2/7] KVM: x86: Implement Hyper-V's vCPU suspended state
+From: Sean Christopherson <seanjc@google.com>
+To: Nicolas Saenz Julienne <nsaenz@amazon.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, Nikolas Wipper <nik.wipper@gmx.de>, 
+	Nikolas Wipper <nikwip@amazon.de>, Alexander Graf <graf@amazon.de>, James Gowans <jgowans@amazon.com>, 
+	nh-open-source@amazon.com, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Oct 14, 2024 at 10:54:17AM -0700, Drew Fustini wrote:
-> This series of device tree patches enables the TH1520 pin controllers on
-> the BeagleV Ahead and Lichee Pi 4A boards.
+On Tue, Oct 15, 2024, Nicolas Saenz Julienne wrote:
+> Hi Sean,
 > 
-> Patches 1-7 have all been cherry picked from esmil's th1520 branch [1].
-> They do not have the issues pointed out in the previous series [2] that
-> I sent out which contained out dated versions of the patches.
->
-> [...]
+> On Tue Oct 15, 2024 at 3:58 PM UTC, Sean Christopherson wrote:
+> > Before we spend too much time cleaning things up, I want to first settle on the
+> > overall design, because it's not clear to me that punting HvTranslateVirtualAddress
+> > to userspace is a net positive.  We agreed that VTLs should be modeled primarily
+> > in userspace, but that doesn't automatically make punting everything to userspace
+> > the best option, especially given the discussion at KVM Forum with respect to
+> > mplementing VTLs, VMPLs, TD partitions, etc.
+> 
+> Since you mention it, Paolo said he was going to prep a doc with an
+> overview of the design we discussed there. Was it published? Did I miss
+> it?
 
-I have applied all patches in this series to thead-dt-for-next [1].
-
-Thanks,
-Drew
-
-[1] https://github.com/pdp7/linux/commits/thead-dt-for-next/
+Nope, we're all hitting F5 mercilessly :-)
 
