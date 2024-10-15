@@ -1,156 +1,201 @@
-Return-Path: <linux-kernel+bounces-365179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA9B99DEA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 006D299DEAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90DDB282F95
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6E9283926
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8600018A6A7;
-	Tue, 15 Oct 2024 06:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D2118B46A;
+	Tue, 15 Oct 2024 06:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="muNHin34"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y8zbXHWW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9829113F435
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE514D8DA;
+	Tue, 15 Oct 2024 06:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728974716; cv=none; b=hArXckYK0WjOGHBoheo7uwxizOTBqPQuzVmL/y4DSq3Lio9WGvbsF+4kNXQrfLb+cVIwoSVc4ChnC/S3cn5qQcJug8fFvbKvkJkBgzXPyTAfUL76qwfckRVlx3PFOW2T8eQ0T5ekd89gPzI5tymTM/XroLdwgK8ImWskgMDqruk=
+	t=1728974863; cv=none; b=UYIXs7SnJtd1GPjOB2v1PBO5Ul5LtUD35vuynkMZpDNMvFh5X+zuhdf7h1f3gyMbBkL75cb4v8TasAPMMzYb0+FpcMXq97HfCH+DnMEZDC8sIN8x/hWRV6jZlgi6kOdHiCM6GnWYj4nbSwHWgkVYcTXiwbc+E4U4YQiltfdp9eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728974716; c=relaxed/simple;
-	bh=cygSbdL1l01PDza4eT3vUI2V72T4WMHSiJjgEk2Kvzw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nvamtp6sNCHTTIVzo6pE0VOz9ifPgbarJfJMDZTNDKPpePI4DMscYUWOLpTQrqL7axQ3Wy4jeU6rVhxZgo/C8FcfJaGHNjWQPWvTCa2xNuDHMABCmoM8WRJuDjH16zuqAJH7HBXa6oNX/LiYlN2SBACY/O9/B0WESxJvZ+pio7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=muNHin34; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8354d853f91so195144039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1728974715; x=1729579515; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cTOjdDeupMvfI1VTnlp57mS+VDL1wc+Sjs4FCRiPhYg=;
-        b=muNHin34gOp/KOx28BzPv57yrdXSBdo6cbeKyAzwkHCwr/E8ZyFFe2VI+nEijv0GM/
-         ddwIXm+eLXio1vkeDenYw4BHacTC+bom652aaVzCrHYboXd/e3weWq9VHZkiAmbTlOi1
-         i0K+sMeXDopwjkZciqXhGqvDHqRHEFDpqSVL506lkXy3uM0HQb9Mm7SOwD8VeXiRbMMW
-         qZjwpIjLd8aDhpkcHEp+cC1SZOIXXyysi3fHDq7NVcNExv9lr0yina9fCvhSu0gcyFRQ
-         yIlGl22hfHg/9WwlIj9wWmMPGtJNbA9MBZMy14/iqTZnKSwuoxU+xhpnCc3CqS/EYnxG
-         p+VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728974715; x=1729579515;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cTOjdDeupMvfI1VTnlp57mS+VDL1wc+Sjs4FCRiPhYg=;
-        b=Snx9B5U9C/X09ZgfuUm67oQgQo77aY9oxRIvU2+tjAA2Xk22IPoLXrm92teG0cIZus
-         1nF8+QyikvsR7yzOf1be0T/YjpQ2O9buaRmETgpgIcW5WDhP9lSL1ZPHcsxAtDLE++X1
-         +ItnsUxwYvPDaGukXaeRZbQamSc9R+Y7XRjA/kmDg2mxn6Z4y0fMgJGZ/QzmRQTI4BMq
-         Uzc9Oq8VaQQCa2zsMsXh/lY1G0QpYgrvjEOSYj8Lq6354ac3xa+/VetVwxtj6lavHHA1
-         FR+VaXDMA8tgEaxdsk+qkJcyUDZKLsTTBTX24QR/ycYKEV/RTdjSK+6mIIhGO9aDykVt
-         pnzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaqVYmQrd9SpYaGGnWWeBzqrNIZ33mS2UueLMj79q8JkQ4sZmTSKxG5HgGsFIyMO1XBFVf2zXQSDfb9jM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfu+OcH9cGIRme1p8Q0GNlmSGcuRm8njKp1RA5njYRuizzXY0a
-	1cRxXg3OctuAQVTnYBd4ZsdhfYBYIpoZ4jAht3B5k4r355imP0jX+r/8ubtpqRV5xOpq9+frUmY
-	+rTYREiy6nhlhYuAU26kHZ82yAn+YZ7zKAcVRaQ==
-X-Google-Smtp-Source: AGHT+IF+6ytBf2/P7xS3z4FPEZJZLcGyWg4N3M08mx1lsLaOIO9RQVHctNrSJxlvVx8vLnBAocKVchobXr+NRQLS1Xg=
-X-Received: by 2002:a05:6e02:3b0a:b0:3a1:a57a:40a1 with SMTP id
- e9e14a558f8ab-3a3b5f233a9mr120319715ab.5.1728974714838; Mon, 14 Oct 2024
- 23:45:14 -0700 (PDT)
+	s=arc-20240116; t=1728974863; c=relaxed/simple;
+	bh=6IAKQl0FeJyqvb+jgw9De0Ep6tMaFhgHgcVDED6/PIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uzi6ARM29UD/qy7l/wNENWuf6ntKWpn7vMmkirEBWtKtTAn9F0e2YPojbokOmDDdFBvaYaWoFlZrMmG/hmg6qWOOGvmroFSU9xvtyskSBnXlb/iHJHzvbC3O7UvjffoHK7m45X9uOA7CVsj+1D2ax4Pf/xLR1RRu5WaPhtGC8H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y8zbXHWW; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728974858; x=1760510858;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6IAKQl0FeJyqvb+jgw9De0Ep6tMaFhgHgcVDED6/PIQ=;
+  b=Y8zbXHWWxApPnc0jyW4Stv9q4c584+NHqzB00iSpqF0XREYSzuRYprJk
+   OeGzuIj+HKYGNhYkE1GQlW0zhCkNV5rZj4RAh1iRs8JavEmSpNdSPCrRV
+   1UKj1Qdz0IcJ11pG7HGdddmtXp5pbr1T3iIWfXbDdsfcAFEQZKEABHtFH
+   gpHfQi/KMnS33wXaxSkpI0+PkKzvEPEoqp9kWRHhfEvHE8CPNFZtCkb73
+   dV4shdFr0ECbtig+476ES005Wuz+D+xrVRB4IAwiw7oy4SARNp7keQj5N
+   1zNjm7uWLYMGhDQlqwJQkT20XBYygNE7HIGe1lcV5pzF2moell0/MBvSC
+   A==;
+X-CSE-ConnectionGUID: Kl9pVw1FRv+CRZNgEW+6jQ==
+X-CSE-MsgGUID: ksBp7ATcQdqhYU6omAwqYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28539405"
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="28539405"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 23:47:37 -0700
+X-CSE-ConnectionGUID: taqcyVltRrKTjJ7B5kbwzQ==
+X-CSE-MsgGUID: 4ywyFyftQkSB6s+nkaBVhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="78138620"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 14 Oct 2024 23:47:34 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0bL9-000HiD-2f;
+	Tue, 15 Oct 2024 06:47:31 +0000
+Date: Tue, 15 Oct 2024 14:46:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Lionel Debieve <lionel.debieve@foss.st.com>, marex@denx.de
+Cc: oe-kbuild-all@lists.linux.dev, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>
+Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
+ platforms
+Message-ID: <202410151421.5UhVRFdF-lkp@intel.com>
+References: <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919160126.44487-1-cyan.yang@sifive.com>
-In-Reply-To: <20240919160126.44487-1-cyan.yang@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 15 Oct 2024 12:15:04 +0530
-Message-ID: <CAAhSdy3x680G2cXqam0uc1kAAg_Cd1tFhBVygOrLZ0bL9ztDBg@mail.gmail.com>
-Subject: Re: [PATCH] RISCV: KVM: use raw_spinlock for critical section in imsic
-To: Cyan Yang <cyan.yang@sifive.com>
-Cc: atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
 
-On Thu, Sep 19, 2024 at 9:32=E2=80=AFPM Cyan Yang <cyan.yang@sifive.com> wr=
-ote:
->
-> For the external interrupt updating procedure in imsic, there was a
-> spinlock to protect it already. But since it should not be preempted in
-> any cases, we should turn to use raw_spinlock to prevent any preemption
-> in case PREEMPT_RT was enabled.
->
-> Signed-off-by: Cyan Yang <cyan.yang@sifive.com>
-> Reviewed-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Hi Gatien,
 
-LGTM.
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+[auto build test WARNING on 1d227fcc72223cbdd34d0ce13541cbaab5e0d72f]
 
-Regards,
-Anup
+url:    https://github.com/intel-lab-lkp/linux/commits/Gatien-Chevallier/dt-bindings-rng-add-st-stm32mp25-rng-support/20241011-234913
+base:   1d227fcc72223cbdd34d0ce13541cbaab5e0d72f
+patch link:    https://lore.kernel.org/r/20241011-rng-mp25-v2-v2-2-76fd6170280c%40foss.st.com
+patch subject: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x platforms
+config: nios2-randconfig-r053-20241015 (https://download.01.org/0day-ci/archive/20241015/202410151421.5UhVRFdF-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.1.0
 
-> ---
->  arch/riscv/kvm/aia_imsic.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
-> index 0a1e85932..a8085cd82 100644
-> --- a/arch/riscv/kvm/aia_imsic.c
-> +++ b/arch/riscv/kvm/aia_imsic.c
-> @@ -55,7 +55,7 @@ struct imsic {
->         /* IMSIC SW-file */
->         struct imsic_mrif *swfile;
->         phys_addr_t swfile_pa;
-> -       spinlock_t swfile_extirq_lock;
-> +       raw_spinlock_t swfile_extirq_lock;
->  };
->
->  #define imsic_vs_csr_read(__c)                 \
-> @@ -622,7 +622,7 @@ static void imsic_swfile_extirq_update(struct kvm_vcp=
-u *vcpu)
->          * interruptions between reading topei and updating pending statu=
-s.
->          */
->
-> -       spin_lock_irqsave(&imsic->swfile_extirq_lock, flags);
-> +       raw_spin_lock_irqsave(&imsic->swfile_extirq_lock, flags);
->
->         if (imsic_mrif_atomic_read(mrif, &mrif->eidelivery) &&
->             imsic_mrif_topei(mrif, imsic->nr_eix, imsic->nr_msis))
-> @@ -630,7 +630,7 @@ static void imsic_swfile_extirq_update(struct kvm_vcp=
-u *vcpu)
->         else
->                 kvm_riscv_vcpu_unset_interrupt(vcpu, IRQ_VS_EXT);
->
-> -       spin_unlock_irqrestore(&imsic->swfile_extirq_lock, flags);
-> +       raw_spin_unlock_irqrestore(&imsic->swfile_extirq_lock, flags);
->  }
->
->  static void imsic_swfile_read(struct kvm_vcpu *vcpu, bool clear,
-> @@ -1051,7 +1051,7 @@ int kvm_riscv_vcpu_aia_imsic_init(struct kvm_vcpu *=
-vcpu)
->         }
->         imsic->swfile =3D page_to_virt(swfile_page);
->         imsic->swfile_pa =3D page_to_phys(swfile_page);
-> -       spin_lock_init(&imsic->swfile_extirq_lock);
-> +       raw_spin_lock_init(&imsic->swfile_extirq_lock);
->
->         /* Setup IO device */
->         kvm_iodevice_init(&imsic->iodev, &imsic_iodoev_ops);
-> --
-> 2.39.5 (Apple Git-154)
->
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410151421.5UhVRFdF-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> drivers/char/hw_random/stm32-rng.c:585:6-12: inconsistent IS_ERR and PTR_ERR on line 586.
+
+vim +585 drivers/char/hw_random/stm32-rng.c
+
+   530	
+   531	static int stm32_rng_probe(struct platform_device *ofdev)
+   532	{
+   533		struct device *dev = &ofdev->dev;
+   534		struct device_node *np = ofdev->dev.of_node;
+   535		struct stm32_rng_private *priv;
+   536		struct resource *res;
+   537	
+   538		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+   539		if (!priv)
+   540			return -ENOMEM;
+   541	
+   542		priv->base = devm_platform_get_and_ioremap_resource(ofdev, 0, &res);
+   543		if (IS_ERR(priv->base))
+   544			return PTR_ERR(priv->base);
+   545	
+   546		priv->rst = devm_reset_control_get(&ofdev->dev, NULL);
+   547		if (!IS_ERR(priv->rst)) {
+   548			reset_control_assert(priv->rst);
+   549			udelay(2);
+   550			reset_control_deassert(priv->rst);
+   551		}
+   552	
+   553		priv->ced = of_property_read_bool(np, "clock-error-detect");
+   554		priv->lock_conf = of_property_read_bool(np, "st,rng-lock-conf");
+   555		priv->dev = dev;
+   556	
+   557		priv->data = of_device_get_match_data(dev);
+   558		if (!priv->data)
+   559			return -ENODEV;
+   560	
+   561		dev_set_drvdata(dev, priv);
+   562	
+   563		priv->rng.name = dev_driver_string(dev);
+   564		priv->rng.init = stm32_rng_init;
+   565		priv->rng.read = stm32_rng_read;
+   566		priv->rng.quality = 900;
+   567	
+   568		if (!priv->data->nb_clock || priv->data->nb_clock > 2)
+   569			return -EINVAL;
+   570	
+   571		priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * sizeof(*priv->clk_bulk),
+   572					      GFP_KERNEL);
+   573		if (!priv->clk_bulk)
+   574			return -ENOMEM;
+   575	
+   576		if (priv->data->nb_clock == 2) {
+   577			struct clk *clk;
+   578			struct clk *bus_clk;
+   579	
+   580			clk = devm_clk_get(&ofdev->dev, "core");
+   581			if (IS_ERR(clk))
+   582				return PTR_ERR(clk);
+   583	
+   584			bus_clk = devm_clk_get(&ofdev->dev, "bus");
+ > 585			if (IS_ERR(clk))
+ > 586				return PTR_ERR(bus_clk);
+   587	
+   588			priv->clk_bulk[0].clk = clk;
+   589			priv->clk_bulk[0].id = "core";
+   590			priv->clk_bulk[1].clk = bus_clk;
+   591			priv->clk_bulk[1].id = "bus";
+   592		} else {
+   593			struct clk *clk;
+   594	
+   595			clk = devm_clk_get(&ofdev->dev, NULL);
+   596			if (IS_ERR(clk))
+   597				return PTR_ERR(clk);
+   598	
+   599			priv->clk_bulk[0].clk = clk;
+   600			priv->clk_bulk[0].id = "core";
+   601		}
+   602	
+   603		pm_runtime_set_autosuspend_delay(dev, 100);
+   604		pm_runtime_use_autosuspend(dev);
+   605		pm_runtime_enable(dev);
+   606	
+   607		return devm_hwrng_register(dev, &priv->rng);
+   608	}
+   609	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
