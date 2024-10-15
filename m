@@ -1,127 +1,87 @@
-Return-Path: <linux-kernel+bounces-365638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B430B99E54F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:14:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D32999E550
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E63CA1C20925
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58CC42844DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44B01E8855;
-	Tue, 15 Oct 2024 11:14:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B951E7C35
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0BD1E5022;
+	Tue, 15 Oct 2024 11:14:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B281D8DE2
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990842; cv=none; b=U8u1BbZ1emGtlLCLJOVe/oKeJ4TZPnh1C+wS8TYH89FoYEHrtvWVJa1CPXS/JvOVCFAPm24h+c1AVNN6/Ss7yI6MJ8Vd4AG4hrVOxQkfhao2LuGn8QBO+VCvKlohojX/OMJay1IvNGHZVw5irzRYeqI5bOdQs6wgTZh+gJWun1A=
+	t=1728990847; cv=none; b=dWoE2oyG6FSohQJqBcU3SKH3/EEOEq4DAjg4MgRACFbAFlB1Bkh95FPDVwQv6UY0nKXOtRhWVkNLA94B72SHWicZvVU68GYV/+krkgZeu2OxAGK5uWxTQpECY16X0BxdxBjPUXXl5iBG08x8kq3UjZ32khqKnOpz6IBXoCT3mQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990842; c=relaxed/simple;
-	bh=LFteKUNkvfc5UKvj/oRa5rD1LKn8SWoXM/h6DpIIESs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ye1jTw5OUhEFrHpRygk3ZqQdRldIKPv2i/Cm+ZHJGe1oC03OoGEa3HgzQZUwLI5TIPE2pvFBmXAJz6uU6qDc+/tWBBPAAlouZrpTC6JRDc4+ElNbChpGHutXHRkCp3eUlkKxIUdCyPHCoC5uOMDjM6vltS4NGkkNIqbD0iFu9U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 011011007;
-	Tue, 15 Oct 2024 04:14:30 -0700 (PDT)
-Received: from [10.57.86.207] (unknown [10.57.86.207])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94A2A3F51B;
-	Tue, 15 Oct 2024 04:13:57 -0700 (PDT)
-Message-ID: <2e561511-ab20-4aa9-9b92-bd6ac6678087@arm.com>
-Date: Tue, 15 Oct 2024 12:13:55 +0100
+	s=arc-20240116; t=1728990847; c=relaxed/simple;
+	bh=k+obqg8ez/kSYPrpCwInoZCgoVi5lbYkCXruaWxb8/o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=or+EzYOEYidDfr8QeiClvM0ZPG0CcLBNbGncOp4vDHiUN9c2qTxhCXowPANovaMz1pRbJj72V6ldztEtvhJ25PImPPkU3KL1V/NKGseBukuBZz03iuDnV8AzYwRZiwb2pu4Dyrf0l3mmYLtXNn9Xrx8MU21n+WQIjQotWomtEMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso13697185ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:14:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728990845; x=1729595645;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tEhk+TpqMKJ9G+Us2Yb7tiq8D+TvLmpB6pPJUPZauiA=;
+        b=crXVG1XZGaPcGAZC8Sfl8F+ECUp0BJUZMXUIFB8AIbhQxOIZePZH8DWjUmyQmnZ2C2
+         bAtsPr6lRTIVt0hIoyjKjTTcV7hbn2tOG89cJOs4piuXqsDSmevHJjFIc4tk10KUvI03
+         FqYExJpcbk59SvV+KWzLf/RQ1A+bQm6E1MwQjKlwfUQHmHBHJrdZY4VC1nZ4DCWcVX6h
+         K8CMRsVYU1BjrN/geA6Pc9Tb+F4TfWy9Qw8XySiVhVi5OpGDftLgIFU7PPQRXETegg1A
+         cadGCL3vdNVB1c4OCvAPJZr0Gr0j7jQyOlImbmyNv4MF3PYSOW0TYSNN4yvswqqjw1jQ
+         pKAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWP8zubfDX7Nlv2Xp4Y+WmwBIehxXZclO0eVUndJYsKigdd248dA8DkNxWqOB3fUFrEEpgawqGL6K/Ydz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS4D9fGOpSJtKXuXZHh4qSvylg4TS0Z7IsZ5QGzkm7mn/zM/Zx
+	FyVlupjT0toJkY5wgGG7rNuaHPCsrbDNoaAEfyRRWWmD+8ZQXiDMtyw8RQosECe7xH620NNb5tj
+	l124PJYn3xaRkAq2XHZyfJrW87of9lEaQK0cl0lMOLFPTKMUjdhWA9m8=
+X-Google-Smtp-Source: AGHT+IHXesyNdgyZZeho/BS9jHfkCc9WHMifKPZ92CHfRQgwg4mrpdBO59kJHlA5JY+d8fL0SNb8noMhH7cm8xCklvgoGlliQfLC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 19/57] crash: Remove PAGE_SIZE compile-time
- constant assumption
-Content-Language: en-GB
-To: Baoquan He <bhe@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-19-ryan.roberts@arm.com>
- <Zw3luHGG3LqHge2m@MiWiFi-R3L-srv>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Zw3luHGG3LqHge2m@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:178b:b0:39f:36f3:1957 with SMTP id
+ e9e14a558f8ab-3a3bcd9575fmr75597205ab.3.1728990844839; Tue, 15 Oct 2024
+ 04:14:04 -0700 (PDT)
+Date: Tue, 15 Oct 2024 04:14:04 -0700
+In-Reply-To: <tencent_C4C8065D09956EC9EED90C8727FC06D75206@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670e4e7c.050a0220.d9b66.0151.GAE@google.com>
+Subject: Re: [syzbot] [btrfs?] KASAN: slab-use-after-free Read in add_delayed_ref
+From: syzbot <syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 15/10/2024 04:47, Baoquan He wrote:
-> On 10/14/24 at 11:58am, Ryan Roberts wrote:
->> To prepare for supporting boot-time page size selection, refactor code
->> to remove assumptions about PAGE_SIZE being compile-time constant. Code
->> intended to be equivalent when compile-time page size is active.
->>
->> Updated BUILD_BUG_ON() to test against limit.
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>
->> ***NOTE***
->> Any confused maintainers may want to read the cover note here for context:
->> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
->>
->>  kernel/crash_core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
->> index 63cf89393c6eb..978c600a47ac8 100644
->> --- a/kernel/crash_core.c
->> +++ b/kernel/crash_core.c
->> @@ -465,7 +465,7 @@ static int __init crash_notes_memory_init(void)
->>  	 * Break compile if size is bigger than PAGE_SIZE since crash_notes
->>  	 * definitely will be in 2 pages with that.
->>  	 */
->> -	BUILD_BUG_ON(size > PAGE_SIZE);
->> +	BUILD_BUG_ON(size > PAGE_SIZE_MIN);
-> 
-> This should be OK. While one thing which could happen is if selected size
-> is 64K, PAGE_SIZE_MIN is 4K, it will issue a false-positive warning when
-> compiling while actual it's not a problem during running. 
+Hello,
 
-PAGE_SIZE can only ever be bigger than PAGE_SIZE_MIN if compiling a "boot-time
-page size" build. And in this case, you need to know that size is small enough
-to work with any of the boot-time selectable page sizes. Since size
-(=sizeof(note_buf_t)) is invariant to PAGE_SIZE, we can do this by checking
-against PAGE_SIZE_MIN.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-So I don't think this could ever lead to a false-positive.
+Reported-by: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
+Tested-by: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
 
+Tested on:
 
-Not sure if
-> that could happen on arm64. Anyway, we can check the crash_notes to get
-> why it's so big when it really happens. So,
-> 
-> Acked-by: Baoquan He <bhe@redhat.com>
+commit:         b852e1e7 Add linux-next specific files for 20241015
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=143ec030580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3cb0191818709a2b
+dashboard link: https://syzkaller.appspot.com/bug?extid=c3a3a153f0190dca5be9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ced727980000
 
-Thanks!
-
-> 
->>  
->>  	crash_notes = __alloc_percpu(size, align);
->>  	if (!crash_notes) {
->> -- 
->> 2.43.0
->>
->>
-> 
-
+Note: testing is done by a robot and is best-effort only.
 
