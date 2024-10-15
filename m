@@ -1,233 +1,221 @@
-Return-Path: <linux-kernel+bounces-365100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694B999DD80
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:32:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA62599DD83
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7192BB22DAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60AD31F2437A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092B616DC3C;
-	Tue, 15 Oct 2024 05:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B0017A58C;
+	Tue, 15 Oct 2024 05:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ri3CAR7V"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OUXx9nnm"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBAE3C3C;
-	Tue, 15 Oct 2024 05:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728970313; cv=fail; b=YUd1FmFgWVKRDJwHYX4VBElCdk/sTs8tT+eGaykIwzl+rwvRQfCQJEvcSnWjfhpDyCIjUPTGuwkQ46t76YwSH25rYRejjmpq5mn/X43XTyg7ZP20F+K8Le4Jdho8agbPPbKOLpHQKZ+UWPjaIzj0WiLbUTKIqWH0720wGW01098=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728970313; c=relaxed/simple;
-	bh=/0Voxdk22wRvJ93t51CmJ2UiMGqm+Z+YJ3cdoiuMoAw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=maK+Hyi7K/pAsdowu4pNrqHugblG/UC1O6K8KaGwwLj6dBGW16u66p7u7reoinAw79pY3jQrZXob39SpZiLw5uB4zzlJjWe0nEK2h/UxDcNt/FrLz4O0B+wQDzyJpDbaygT5lJ9q4NJXXsKX74SaUHRxfbHJBVr8zetQoA9NKi4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ri3CAR7V; arc=fail smtp.client-ip=40.107.237.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fJNFOPCXqwOyvybjjRNCOIlAcq4XFmzqbMZ/nQAWrxa/rjRNrqAsAh+6A16dUqh+hAoTo8vjjaZxp5+ChGBGxg2yQpfdFkL1wHT0/wnRn1DTjtt4dp104Z7fDsJCBOXgSAXPOfVKFlELeg0gmtyHZ9yDIq5zcydcdETV9oyGXCbGFpJYKD+HZN+5eHUdJxObO3YokzI7QGqVWAz7YkuSmO+Pn/OovvCJ9Pce8BF5oVPVbGohOAd0cs1i8X8o1O/5mjXNM6t8/veoZHs7cvbNB9xTIT4doxeUoXaeMUho5vc49ivI0oUTM22tn6lRRc97aYZwVlO2Bd4cRR2hnPrEnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p2xRYtxw++2RzqYzoUcK+J2vOolJLfmtoTaU8hPXnV8=;
- b=W/aYlL0kWctobSBcC+KWievKD93s5BrX52SbFoTRAjs4gcstxf8FHpeIElZqvAt7wTHg6uhIpbXYmn8yWMzbOiqJ2RaJKN8wI8s34iGPBpUUEuKlfiHFKFrwBDGy5zZyNbNw7jlX3fKAAZjRCM7zzfHjtJ7dSCHorKmPgNdcbSHBSRTABSmoGp4riK3KMR9hA9GQpTjbFNt95iwaf6H6Yf01U/MURoFznD5dlgaAoNHCkNl5QkMnciC6/C0Zq65ZsuABXqAarCqdcg568YGbIx3ouuB0BpcYhYxE07mYZJ5pE9nAVBDA6xqxuRvY6iq29+mWVFUimfv755noiCvV3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p2xRYtxw++2RzqYzoUcK+J2vOolJLfmtoTaU8hPXnV8=;
- b=Ri3CAR7VzchbaYuLgGKW0E/3AqwFtdR9VCTiUTGmpD3Ui6XfgYR78q1i1/so3bkxjwZ7eoRUxYsB/T+QUq/Twl400z7aSDMkvueHt3nI+NY/H4eR88jDtsAsD62+eITnH8ZxNdyspLhSpSVfbfLhK9f9JdLSQM/gifh/plKYc7zadrE8fWcTb7fPfw1nryT2jHKT4QgrRqCBoru+Zq1CprP/HbShc3t3WWSZ0G9wCWIA4jkEczplSX0jF49koeth7FrBMQxdu5A4/jpiD6yOuNqS9cmPBhQqeK+G38NnGAnW2uJ+XJjZFs57htFWXBU3z2leJmhs6eqFBSI+HC8uHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by DM6PR12MB4353.namprd12.prod.outlook.com (2603:10b6:5:2a6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Tue, 15 Oct
- 2024 05:31:46 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 05:31:45 +0000
-Message-ID: <3ab1938a-6f6a-4664-9991-d196e684974d@nvidia.com>
-Date: Tue, 15 Oct 2024 06:31:39 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20241014141217.941104064@linuxfoundation.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20241014141217.941104064@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO2P265CA0294.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a5::18) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C0C175D3E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728970315; cv=none; b=MSRz3pp0wjtr4a2wBxB/5r+s0ggkfFobVCYTB4ZQDpbVU0IUvlEwf7utT669jY5UVNgB5+SrDmAjzTldZBv7N2iHQXK0xBRuoFhe7FSl1bliWFjolxczZ5iChoeHhWD5yeLE3iUmjsn87u6iy52Nn00/hf/QF05VEjMA2aduJQ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728970315; c=relaxed/simple;
+	bh=EfzX5krpuywmG5h0oUk6AHF+dbPj3jlM5kdV7Gl8Lu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vC/LzqSeFEWUy+POkBek/uynlMegPBWwSdKUmmQVzx62wPBopsAhHfHEK/2K48kDZhw1GZfPtTWRe/MQPCS7m2jR2VNfgljc2AhnaTcrC3C/QnGMBIzCq+3UuMusnNehy2u0qks5Q/L5v0OFheteSNvCGPP2dJeLCCpxSam/iT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OUXx9nnm; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e13375d3so3650795e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728970312; x=1729575112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6I9X4HeUOqY4U0CtpRUmEBHzfHV0sdEz17jGz7AVasM=;
+        b=OUXx9nnmvFQ6NMduKIE0bo073fKDCyWShE2Say6sTYHGKIG1g065eXweqYy0Ynvp8B
+         c3DHgoJkfeadJk3pv0uP2gukw3s1Aah+bJFhkCluTVruC4A4mgZIaHPdRBeUWTgqki9r
+         517ZXFShXOQW9a3akDIUvymUWTHkAvNoe5h+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728970312; x=1729575112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6I9X4HeUOqY4U0CtpRUmEBHzfHV0sdEz17jGz7AVasM=;
+        b=Vu56W8EONdPgGjAXphI+5CihTBv9jXxjMz15TBb21pJ8fvZDdRJuJehJtrRhTZBBD0
+         KsxGdlY48rF0oHwCKo0cCaEMaajVsJIAnk0x8WOIpHRb+4edhGoserfZJHgm8qNUH6Gj
+         1D61i8MSP9pCrJsJpuuUhGliBfYRGd/SKGOzo2E51LBXbTzM87rgoFyP5N3npBIT3o76
+         5nJ2GaR8FpGVnHOLZgNAUyWNOHnBlUfaKaZ0H7WJsIfvPhZwBo5eYGQzhHcyDzaEjvvL
+         TyqcOozp6Pj2WnuB4YCL1VESjyZ/0EKjyK26Qw3wkguyqsavEbcBcH0zHyvuGLDK+Gnw
+         oGHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDZU+ikmp6X0ifBj+gMtIgJ/IjcCYOUPpuva8uVxM2RxBluKCqIo+ZlF/lmXn6Eu7T63mMy5fOvbcZOGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx30GL0+zh/6LmuOYI+FoH7od0q7TEG3GYi2f1Gq2GKVfP6E61+
+	7FGzN0oAzGxiCyVKz7BKvJtksy+N5A68P5PzJP+LvlOE/Qx95cCMpusTZiRXYRSnsxyNIfRgabo
+	AKmgLWdCcJOz3VIcszyRoypa5OacOtP7RCwfC
+X-Google-Smtp-Source: AGHT+IFnv6XcJ0IaPSidwG2NAv6IbIwCRYACAiR+zoSqxUioN+OKGyLgyzBfN8IaMOcvrXfdKkawj5iYaHp4/g0qQYA=
+X-Received: by 2002:a05:6512:2811:b0:539:f4ab:5638 with SMTP id
+ 2adb3069b0e04-539f4ab57c9mr2610100e87.60.1728970311498; Mon, 14 Oct 2024
+ 22:31:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DM6PR12MB4353:EE_
-X-MS-Office365-Filtering-Correlation-Id: d98175c8-6726-45d8-ecdc-08dcecdaa8b9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WjN5NkxIVTkxbFVVMm9vdm5wais0NHJwaHBISWN1MGg5cnVqa0tFMXp5SVV4?=
- =?utf-8?B?VEgzTVdCNGpuR3hPWDRCa0pDYm1ETDVzUlNhRlg4VlVWeE5xTHlwZHA4Z2Yx?=
- =?utf-8?B?NHVRMmpGU0JHT0ZBblpUTmVPZjlaWUNhUUlYNXhYWndHM3NrVjA2NDRYbE5p?=
- =?utf-8?B?MHRlZzgyWWRpdFIxNUx0T0dKQjduVFFrWW5veUJHZzVZZk1qMnRDcG84OWZo?=
- =?utf-8?B?cWpWTDFFSHptWE9xNVJNaXk1MlV4Z1hLMzc5eVR0cWhxcndoTG1DN0MwNmVD?=
- =?utf-8?B?VC9lY2tlZUQzZmNLTVphTUlLNGJYeitxU0twT0JyRTQ4M3BodGQ3MXljMmxl?=
- =?utf-8?B?djdCUll3ZlN1emM4L2wzVXMySjdBV3dObUJFbW9xb3JCVFFKREdlVkEyOXJm?=
- =?utf-8?B?VFVzVllEaGNVeTN2cmxJRDZzYjVWRndoa01Ld0dVYXNSaTdlc29OdDQ3ZkVG?=
- =?utf-8?B?U3E1bmpsQ2hVaDFDeEIrcmY1ZmdkcXBodFBWakFya05Bdzhqb1cxKzlnTDA1?=
- =?utf-8?B?a1diSnFSUWFqK095MGE0b0xqYm42NVUyZFpOUVdBSlVxakE1aG9GcUpMQm1a?=
- =?utf-8?B?UG1DNHJ5RUtBaFJXU3ZiTmZlMExNbjJxSXUxckpQaS81UXdvcXFRdXdVTE10?=
- =?utf-8?B?Q1p0L2Q2c2tkcTlXR3NqaDQ1SWdzSkVrS0VIVFo5WXhaQWRocFpFSG5MRzRn?=
- =?utf-8?B?QWJxaDNNTjN1MVBYRVVCUmw4YjJXOHphL2pWWVpHNDYxNjZHYnRTNk1kRWZU?=
- =?utf-8?B?cjVwM3NyUS9PY1NkbTkrZW81SW9TeVB1Rm8xVG0xcnV3bEJpaFBDMkFEdDNL?=
- =?utf-8?B?OG1XYmp4WFhyREJTV0JTZW4wd2NydEFLazZhNzJmVG9XMzlrNWVUa0xIR1ZJ?=
- =?utf-8?B?Ym05SGFMUjVjbGJHdElUYXRvUUFySXZER0FtYmRCN0RxVHhGWUlCb2RvLzRN?=
- =?utf-8?B?clhrWXRlVCtJUSsyUmVydWRyMlZyUkFtWW0vMTNwL2p5OXJWUjV4YXhVTkt4?=
- =?utf-8?B?Z1phV28yTm1uSk8yOGFFTWhlVW9IbkxBbFZlWkVPUVdkSldUVXJpUitSVnJT?=
- =?utf-8?B?N3J5Y29NTGxWbjBraVloRGNpZUdEM0pFeFNBL0dZbjF1OWNBMDZJYlhtWmpx?=
- =?utf-8?B?VFJIdVIrTWtUN0ZEQVlKZmlNbGIwNDEySDJXVHB1WUFUQ0F5UHQyQnJ3N0I2?=
- =?utf-8?B?QzRSWVFQMzVxNFdBdnp3REo1YXlSaFM4RU53aXd5WEpDWVFKK0dTSDFuK3Ix?=
- =?utf-8?B?OXZ5cUhSaTV0SWdpbUZQSENXejN6Q2lmZ0tmeG02aEFFZU93WVZZWTIzenE4?=
- =?utf-8?B?MmZRbmtaL1AxbTJFT0ZsbGRHSERycmlRQ0xQbDBja0pJL2FxM3BseTAvNHE5?=
- =?utf-8?B?U0QzdmdZR0hJNEVqOE1xNElEQ2VxY2lvaWt5Z01NYnJPSXdYdU9MWmZPcTlu?=
- =?utf-8?B?ZUduZUhKcjlOTDNyREIzQVBwZmgyeXlrSnhPdytwRzFzNlZCTXRrTytudkNH?=
- =?utf-8?B?ME1EdUUrY0o1azJTSUE1MHV6NEUvQ2E4WmlhaTZQUGxJWkJNQXZ4eTZBZElD?=
- =?utf-8?B?NC9BczJ3QlJPVkR6U2p3bDdBRTJSNmxURTJUQWRHWllCaFJCbWl5Qnh2UmZP?=
- =?utf-8?B?UDdNT3EzQzJJa00zQlI1Z3ZscHRIcjFES0V4ckJ4WVlOaVJoekZxa3VKQVdP?=
- =?utf-8?B?TWROcFVEdHV0NGgybmdxWGJGbHgzNk16ODVyNWZHWWMycm5PVWNIZitRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ak1LUkZPWGFNQThKaUY2NDNYUjZMMEtSdCtaWXJZR3dobjlOd1JTUFFCTWRT?=
- =?utf-8?B?NXYxQnhIWlRHTUtOZUJuMmNxbzJLNDNKekc3b2JqeUNGeU9UNEdUcnBkUzVs?=
- =?utf-8?B?cHE4cnpJYmdzS01HU1V2ZWtDUFVubWdJSHRONC9yVzBNb0g0Yzk3NERxRnhW?=
- =?utf-8?B?UmZKb3hoTGUvOE1JVGxYbVNEOWllOGozL1diRklJeVlwbGlKalNUTG4rZ0JF?=
- =?utf-8?B?QzRqcGIxbnhqRlZpVUU2Y1p1ck1uSXIxbEdUK2xUMkhOOFRPeU81UWNrb0Na?=
- =?utf-8?B?QTdwTzdKY0hsN09LRURRK3FOaEVQU3pTaEhoWE9QR3hwNXliWFJoS2lQVlA3?=
- =?utf-8?B?K1MvMWFONWQxdjVWdnBMdjN6MVhhUlZ6UHllU2ZxLzhYOGxrc2h0eDF1L2Qx?=
- =?utf-8?B?eVdibVlqRXo3ZGJ0TUJRTGhOTFovWVI3OUU2d2l2RC9GcmdaUTVsbUVaYTla?=
- =?utf-8?B?elFqVVBZb0tMRlpVdHI3ZTdHajlUMTNud2RWbkc5c0hWZUNIYkNrN05mM2Jr?=
- =?utf-8?B?a0lrbkhWdlgrcGRCMm0wSW1BT1dFSjhPSHhtSnJsVGljaEZ6S0diOWdXOVls?=
- =?utf-8?B?MFRBYkdPcytzYWpoNUVSN3ZVUFhPMnNRVmFQK2VTUkt6TDRMdFNLWXA1QjRV?=
- =?utf-8?B?V1FjVU45OUp3OWdnOGlPUmJhTkVDM0I4MFVLMlFDcjQ3Qmo2eEhYb3hCaGJC?=
- =?utf-8?B?am1rbnBTU29QSHExeUdMaW5SM2RSWkFnMmxrM21kS2hDQXJhZ3FkTmMwaXdl?=
- =?utf-8?B?TTZJZkRjQjlDZHVjUFE2dU5zNG5TdUpZTmFMM01ZNUNWVkovNCtmWnNKalov?=
- =?utf-8?B?OGd2RVpuTmRsSHQ0T3VyWmUxYzZyNzFuUTNvb0w1bGRXNzFxclZEWFpDN1RY?=
- =?utf-8?B?WmpkKytyUTJBWTc1R1ZmNjVrN2g0MVFyeUg5d08rY01VZk9DZlRQMisrSWRJ?=
- =?utf-8?B?TU4vamFRdVFyd2xjbytPLzV1NnJSZmZSZTJkM0I5cnJOVTB0VktMSGJ2U0I1?=
- =?utf-8?B?WXFZNGNIOVVLeFZvNWNqM2hqVG1kcTZJY1BnRVhuSVdqMHFQT1FVRmJGSU8x?=
- =?utf-8?B?WStjbmFoeElxakUxZGU1eWtvQlVDaTFZVjBYLy8rLzNQVVZEQ1BUbXZGektQ?=
- =?utf-8?B?MGZITnBkVzNBM3dBWTRSUkhNZVAyY1JsMDJiSzF1U2RoUzB0TzlRKzhoSjNZ?=
- =?utf-8?B?aHk4RmFZc3kyYWd3RWo0QjU5RDR4VFJNVVJSc0dGbTJXdEREWllPV29BTnht?=
- =?utf-8?B?Sno2M1JQV0VwRzdTam0yWkVsU21xMlpTU2oyOEtDOXNuQy9HaVJ1cXVVY0kx?=
- =?utf-8?B?dUR0Y082QkRod3l4QVFPVFplWDYwZ0NsR1JSek80ZzByNG9lZ1FEN0J4cWNE?=
- =?utf-8?B?TDRqQjNHajBWa2htSGNsRGZEcWdTdkFtbU1rQkpJTFZCajJ4RGVuN0lwZW5x?=
- =?utf-8?B?ajJDN2JUcHhxSzV1YjhZdGx6blVxeVVmdGN1bjEyd0djSjlHVFJHaGxaQUJh?=
- =?utf-8?B?TDhEMHBLWGZoRWVQcDZpU2ROUTU1OStpUkNVd2hITHlVWERRbHJ4cEs2Yk5S?=
- =?utf-8?B?UVlsWFd3WFE4eE9JZkVWZzk2T0RpdEpRUEptaWsxTkJLaXhGalJVa2NQMTVZ?=
- =?utf-8?B?bFh1S1ZQNXhIY2FXZUU4QzFQRUVBZTF1QU9MOFJIUDB4NWk5RzQ5QWdlZ0Fn?=
- =?utf-8?B?WnRITXdQOGcrajRsbWxldEc3M2VMdWJrRG5GWCtpclhXUjF5VzNJNkpWOG51?=
- =?utf-8?B?SVBwMjhlU0hIclJYbENhK3ZrZ0xtTnNBdlc1bU56UlczRE5HNVBTYVZ4U1hY?=
- =?utf-8?B?M1Q3SnVMZmQ5U3JHOHNScVVBYjV3TjcwZlFuSUVQUnFYNWd2Y29Dcm1wU1NR?=
- =?utf-8?B?WklxVklRZUFUWFp4U3RqbCs2eElOSWpCZkR6TXcvU3ZwNGxJdW5kWWpxVzlQ?=
- =?utf-8?B?bEp5cWIvQStwSEdFcjBNb1R0Z0ZZTkNPVUhvdEVvcmU2U1k5aFppc05wcVZ2?=
- =?utf-8?B?VjRacnFJNUwra2hEMmlybmRrR09nUzhLdHU0ZUlqZExpL3pmdytFRG1TZEEv?=
- =?utf-8?B?RjVvckhLZnZEQjlNbnJpMWt5K053SlFRNjBua2puelFvL1Blc3JvOTVQNER1?=
- =?utf-8?Q?Mstc4gmVN8JgE/V29i57V+c4d?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d98175c8-6726-45d8-ecdc-08dcecdaa8b9
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 05:31:45.8384
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IenaS0JTzXrrY5lQF1l+aexADbbWc1XlM5PUFH0BWUF2997F4MiuKhOOuQ5Q9IkgvOY4CLdyteSSLGwD1TL3zw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4353
+References: <20241008073430.3992087-1-wenst@chromium.org> <20241008073430.3992087-7-wenst@chromium.org>
+ <Zwfwv-O9ln-PVMdc@smile.fi.intel.com> <CAGXv+5F=5f4R5AExANxOwgTL6_VbpHdNKKhHnzy_PDcxtcFoEQ@mail.gmail.com>
+ <Zwz-benEP4PHbRb2@smile.fi.intel.com>
+In-Reply-To: <Zwz-benEP4PHbRb2@smile.fi.intel.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 15 Oct 2024 13:31:40 +0800
+Message-ID: <CAGXv+5EwSZFoE-Uzb5x1QfknkVfd64Z_uzR0YcvZ_pR9ktGUBA@mail.gmail.com>
+Subject: Re: [PATCH v8 6/8] i2c: of-prober: Add GPIO support to simple helpers
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+On Mon, Oct 14, 2024 at 7:20=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Oct 14, 2024 at 12:06:16PM +0800, Chen-Yu Tsai wrote:
+> > On Thu, Oct 10, 2024 at 11:20=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Tue, Oct 08, 2024 at 03:34:25PM +0800, Chen-Yu Tsai wrote:
+> > > > Add GPIO support to the simple helpers for the I2C OF component pro=
+ber.
+> > > > Components that the prober intends to probe likely require their
+> > > > regulator supplies be enabled, and GPIOs be toggled to enable them =
+or
+> > > > bring them out of reset before they will respond to probe attempts.
+> > > > Regulator supplies were handled in the previous patch.
+> > > >
+> > > > The assumption is that the same class of components to be probed ar=
+e
+> > > > always connected in the same fashion with the same regulator supply
+> > > > and GPIO. The names may vary due to binding differences, but the
+> > > > physical layout does not change.
+> > > >
+> > > > This supports at most one GPIO pin. The user must specify the GPIO =
+name,
+> > > > the polarity, and the amount of time to wait after the GPIO is togg=
+led.
+> > > > Devices with more than one GPIO pin likely require specific power
+> > > > sequencing beyond what generic code can easily support.
+>
+> ...
+>
+> > > > +     /* An empty string signals an unnamed GPIO */
+> > > > +     if (!ctx->opts->gpio_name[0])
+> > > > +             con_id =3D NULL;
+> > > > +     else
+> > > > +             con_id =3D ctx->opts->gpio_name;
+> > >
+> > > Can it use positive conditional?
+> > >
+> > >         if (ctx->opts->gpio_name[0])
+> > >                 con_id =3D ctx->opts->gpio_name;
+> > >         else
+> > >                 con_id =3D NULL;
+> >
+> > You suggested writing it this way in your reply to v7. Please pick one.
+>
+> Oh, whatever you will finish with then, sorry for the noise.
 
-On 14/10/2024 15:09, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.113 release.
-> There are 798 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.113-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-> Pseudo-Shortlog of commits:
+Thank you.
 
-...
-  
-> Oleksij Rempel <linux@rempel-privat.de>
->      clk: imx6ul: add ethernet refclock mux support
+> ...
+>
+> > > > +static void i2c_of_probe_simple_disable_gpio(struct device *dev, s=
+truct i2c_of_probe_simple_ctx *ctx)
+> > > > +{
+> > > > +     if (!ctx->gpiod)
+> > > > +             return;
+> > >
+> > > Do you need this check for the future patches?
+> >
+> > Not sure I follow. The check is needed because this function is called
+> > in i2c_of_probe_simple_cleanup(), but the GPIO could have been released
+> > earlier in i2c_of_probe_simple_cleanup_early(), and that makes this
+> > function a no-op.
+>
+> Do you have a known race condition then? This is bad. You shouldn't rely =
+on
+> the sequence of events here, or the serialisation has to be added.
 
+No there isn't. Explanation below.
 
-I am seeing the following build issue for ARM multi_v7_defconfig and
-bisect is point to the commit ...
+> > The helpers for the release side are quite short, but the ones on the
+> > request side wrap some conditional and error handling. I think it's
+> > better to keep it symmetric?
+>
+> Yes, but why do you need the above check, I didn't still get...
+> I.o.w. you think that there is a gap in time that (if no check) the GPIO
+> descriptor might be changed? But then how does it affect anyway the possi=
+bility
+> that it becomes not NULL even with the current code.
 
-drivers/clk/imx/clk-imx6ul.c: In function ‘imx6ul_clocks_init’:
-drivers/clk/imx/clk-imx6ul.c:487:34: error: implicit declaration of function ‘imx_obtain_fixed_of_clock’; did you mean ‘imx_obtain_fixed_clock’? [-Werror=implicit-function-declaration]
-   hws[IMX6UL_CLK_ENET1_REF_PAD] = imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
-                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
-                                   imx_obtain_fixed_clock
-drivers/clk/imx/clk-imx6ul.c:487:32: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-   hws[IMX6UL_CLK_ENET1_REF_PAD] = imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
-                                 ^
-drivers/clk/imx/clk-imx6ul.c:489:34: error: implicit declaration of function ‘imx_clk_gpr_mux’; did you mean ‘imx_clk_hw_mux’? [-Werror=implicit-function-declaration]
-   hws[IMX6UL_CLK_ENET1_REF_SEL] = imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
-                                   ^~~~~~~~~~~~~~~
-                                   imx_clk_hw_mux
-drivers/clk/imx/clk-imx6ul.c:489:32: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-   hws[IMX6UL_CLK_ENET1_REF_SEL] = imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
-                                 ^
-drivers/clk/imx/clk-imx6ul.c:492:32: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-   hws[IMX6UL_CLK_ENET2_REF_PAD] = imx_obtain_fixed_of_clock(ccm_node, "enet2_ref_pad", 0);
-                                 ^
-drivers/clk/imx/clk-imx6ul.c:494:32: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-   hws[IMX6UL_CLK_ENET2_REF_SEL] = imx_clk_gpr_mux("enet2_ref_sel", "fsl,imx6ul-iomuxc-gpr",
+There are two codes paths, either
+
+    a) successfully finding a device and enabling it, or
+    b) exhausting all options and not finding a device, because it was
+       optional or it is malfunctioning.
+
+After either code path, this cleanup function is called.
+
+In path (a), the GPIO descriptor is released prior to enabling the device,
+because the descriptor is an exclusive resource, and as soon as the device
+is enabled, its corresponding driver may probe and request the same GPIO,
+and would fail if it was not released.
+
+In path (b), nothing was enabled, and the GPIO descriptor was not released
+early.
+
+The cleanup function here accounts for both cases, hence the check.
+
+A step-by-step description might be clearer:
+
+1. i2c_of_probe_simple_enable()
+   ...
+   1a. i2c_of_probe_simple_get_supply()
+   1b. i2c_of_probe_simple_get_gpiod()
+   1c. i2c_of_probe_simple_enable_regulator()
+   1d. i2c_of_probe_simple_set_gpio()
+
+2. Loop through potential component options and probe; if one is found:
+   2a. i2c_of_probe_simple_cleanup_early()
+       2a-i. i2c_of_probe_simple_put_gpiod
+   2b. Enable device and driver's probe() gets called
+
+3. i2c_of_probe_simple_cleanup()
+   3a. i2c_of_probe_simple_disable_gpio()
+   3b. i2c_of_probe_simple_put_gpiod()
+   3c. i2c_of_probe_simple_disable_regulator()
+   3d. i2c_of_probe_simple_put_supply()
 
 
-Jon
+ChenYu
 
--- 
-nvpublic
+> > > > +     /* Ignore error if GPIO is not in output direction */
+> > > > +     gpiod_set_value(ctx->gpiod, !ctx->opts->gpio_assert_to_enable=
+);
+> > > > +}
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
