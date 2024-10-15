@@ -1,300 +1,184 @@
-Return-Path: <linux-kernel+bounces-366488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEC599F601
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:48:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C427C99F602
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A00C1C20D2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4E5282C24
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A981B3956;
-	Tue, 15 Oct 2024 18:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4061B6D08;
+	Tue, 15 Oct 2024 18:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vQIwvf4f"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="pIMBBLpH"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4188A2036F1
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F5F203711
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729018091; cv=none; b=GWt8A5E27zKRFI1Lhv4v7jPKPv7L3ZO+WKf3S2I2no2BzRsT6yYmA1OV1h+w/y3zZdh9ajP0JwnjjVAX7GSuzo+jZqmh/weNWIlAuwx44V0xHdyPyQc0Ca87iAXiwlgT8qW/cRSIbbQHP/G242jl7JomYldhl6BHZTTD1CL5RLM=
+	t=1729018094; cv=none; b=KhRXtHJysib3QrPYQG+x3mqqmptvzfC0u5v+YyIZHmxWTg9yHHVJsDCuEyorNKeT8eVksk2ubZ0gWFzJ901OxVrpSya70uiuVN6XsBH04kCBVWMzq/CBkZqctOaRyLLTP/QPI6FnBVfqghdZbuGXcoM+SWipFdAJ4lxht0UW7Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729018091; c=relaxed/simple;
-	bh=2YOBzryoMQPT0Tv1TmqsC2v/Ef77ZZPEvOF+Rh1DTsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YCJ8lPr+i4UC7AWFvEa5d21nGGuaahyTMaDgeWc+2x3rgf1qw1sTn5nymkVC/NOsRJciKohcxaj8v6baRGJRMLEAPbvi0CN/ejU9hVkiG9ZneagNgx3GF/fhjIqt7iMtXAE7c3R/G7BAicfhzc2wWXJ1qLJfLYG2WEKldqQfGb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vQIwvf4f; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a998a5ca499so845557566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:48:09 -0700 (PDT)
+	s=arc-20240116; t=1729018094; c=relaxed/simple;
+	bh=xclAp3358o1GSRDObWNEEYRwXA2GYIZQEWERQwBhl50=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg57JGh3Z2xuoVKm4bqCaA9aMu5MonwI2fGfwPyc2Wm38buTIZ5btA0uztpFSmjTDOh8qCqoz47U4kZ6YtaJdr2e7njpOJ20nWfF5ACJEVRp8GQRgwdW4W5JSAS0aqw1f/j1qjlRPHobg8CWRMguGzunrhIDWqHcdTFTFhn012Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=pIMBBLpH; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7afcf0625a9so628617085a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729018088; x=1729622888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r0Q6Rr8GmR7OPODRoA8Pk21Xu3m03yYr3s3ff8F/GCo=;
-        b=vQIwvf4fX8BWoexsPFpDPt3uoBVGSPoWz7z2zUyyO9JK6cZLyEyE30g0bRFFe3gwXb
-         yzHDi87X8MfdG8LA2UW9jRwD+2H8NgoEFHanY280wUXuTxN8ba2SXwib/sKjjDCFDjng
-         kaDL7Y2AluGHBVb8NFwD3+c5W+5Tlpc7AD8JY3fwHG88PhrM0svgKxIYfnLcc6MPeV7I
-         zpaKJmEBZ97wu4k6tlXe2qoq4oMEZ77N8g5YpAbxzB0f9wdHJXxZGgAjFZi/phMY7pHs
-         9Dcoml/L50pgxW/kkiJzXcO0BL5vz5Q0qrYhH85Rzk0+ZO7zuRhqR6JEivJ1XeY+5Az5
-         t9+w==
+        d=joelfernandes.org; s=google; t=1729018090; x=1729622890; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3T1pHk6kVrDYaC9PJpwXDBTIgR4oYMz5uSi/GGf2dLg=;
+        b=pIMBBLpHdDhvIOF8+PLFuwOMAWR441VoIMpD2xtwQ/WEXBTQiQ0s08386WHPYIrCxX
+         HhbdGzPVzSj8zJdnJUK1/VopqKGTGwFcfpdZjw6IDdkS6hzaRghZj77esDRa/mLhfMyO
+         RJUQGTFX8PtQm3IZJBAZeYv+dfnbbMkNVT3yU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729018088; x=1729622888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r0Q6Rr8GmR7OPODRoA8Pk21Xu3m03yYr3s3ff8F/GCo=;
-        b=YscFAQV9RzYE4b+BcieWk5Bxmty9yMo7+zFkDStc7rgRrR8tSQ3vm1UdTGUnO2h3TW
-         NORR8VF0iKlQ6gnWjLe4m9lX+no0SpNt0fhMjdt1YMheqpfxJ2ji16sIL0LoR7O4GhVR
-         Zf2tQqT8Xm6lhhId0XABZz3tDrO+5wpMLQQ3g67DHsqvXgrF1D4Ur+yeyXzfXbhXvg2Y
-         VEIEbfcx8RDTkmz1sVAgOjBYWU5rKY8OOt8aUjquyc42wtvLmSLP8jjno2zsW3qTps6k
-         ftl+jHbdonDUTRmK3GdHn/DpMjP9x2KQXNJN0j63U315WMoMUZH7GwFjE0DLW2rgk8Y5
-         N72A==
-X-Forwarded-Encrypted: i=1; AJvYcCXvvFuCusF1I7I1d7yDU1XtSgIWgrysMJzh/XYBxbT3cROUq2pQCcDj3KLzdjWqB6BvlmWbuw9waw9MdeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJimQ3PbOLUVDPBVYaO7jvaAPMgodFgSp5KNf1NXt262NmaFIk
-	OMRYLUjqmTAkfux3F5bdzeKmgpYztTwwoGQCLCyJLugvJWtLHxZ15NLA2uVGiwKTlIjmFWpbdCy
-	Zo38sKZYcJ8mjE5d2DPbHsHo5w0P7GdXLhLQP
-X-Google-Smtp-Source: AGHT+IEPE4Wm+iAmO9A2wTEUS7hNRVy3vUa9Q+I2Ede5JQ064QDWeqSACfAYirinEsa2vM2o7hLn+VBgAb65Kad6Xkc=
-X-Received: by 2002:a17:907:1b1c:b0:a99:7455:25f2 with SMTP id
- a640c23a62f3a-a99e3cdc18bmr1202242066b.39.1729018087243; Tue, 15 Oct 2024
- 11:48:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729018090; x=1729622890;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3T1pHk6kVrDYaC9PJpwXDBTIgR4oYMz5uSi/GGf2dLg=;
+        b=sxcF8sWbP37pmamXcx90IpsNrcGojKbW8oE3NdtbYGNHhHogIa9W3ANckZqoBD7jHK
+         E+D21vGbRNn3vaLdBjxmmJq94LNtFK7IUPLdtbAYfDjoZHN2SE9loAwY2EZMJ+ZQMMiA
+         kwzFqH8nTRqPdnsZc+bglAY0k7TPHOsxIG0scr1rhgd0CFdl+JA0CP5ey+DsUSSPK5jg
+         Y8zlKXSEZmhuoIIRuZ/C9HUPQYUW158iLFF3uBHH1E6XsniUvwxs3fEfVfsWqDSi86SF
+         sBxosJas3KDlCStDOOrkaiwNaNU4ZSvT1pQb7B+nkafG3599g9oMLXI0UBBJp8HP9LZG
+         L7Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUFR2cnnvUX4mCC5lSXbXZ1rvz/0o4IwQgOBNCDuXotXfkyygw/SYO7ZzXEWSxPH8z7BpCptmcdTSb/IlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcNLEq1zlsUdKikRG8Llz2rcq5IjyXrOlZgCCQeQVE2f6Bi/Oh
+	JJd8iJsJP5o7nQrPQ0cNwxgk9XwmLYpQ++jLxCOY7PfKPeVt3hITZu42fItI6bQ=
+X-Google-Smtp-Source: AGHT+IGX+qjAK/CrOqvekczHdHEEe340jRXKcB/zLEOiPXMkbjeTCj4l6jHidKqL8ktZOU+ttRsz6g==
+X-Received: by 2002:a05:620a:199a:b0:7a9:ac57:ff58 with SMTP id af79cd13be357-7b120fc4cf3mr1654070685a.37.1729018090221;
+        Tue, 15 Oct 2024 11:48:10 -0700 (PDT)
+Received: from localhost ([91.196.69.99])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136179ec0sm100204585a.59.2024.10.15.11.48.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 11:48:09 -0700 (PDT)
+Message-ID: <670eb8e9.050a0220.36d3ae.48f3@mx.google.com>
+X-Google-Original-Message-ID: <20241015184807.GA973@JoelBox.>
+Date: Tue, 15 Oct 2024 14:48:07 -0400
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rostedt@goodmis.org
+Subject: Re: [PATCH rcu 2/3] rcu: Stop stall warning from dumping stacks if
+ grace period ends
+References: <fb0b7a92-d371-4510-80c4-25a57f2c4f3d@paulmck-laptop>
+ <20241009180509.778133-2-paulmck@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010003550.3695245-1-shakeel.butt@linux.dev>
- <CAJD7tkZJcnpREVdfJDMiM5y-UTX=Fby0LqQar3N9LCFeyOsn+Q@mail.gmail.com> <t6y4ocz7pxktqoktd4h5qc3jkuxifisvnwlahmpgeyitmfk5j3@fs7q2jaxchif>
-In-Reply-To: <t6y4ocz7pxktqoktd4h5qc3jkuxifisvnwlahmpgeyitmfk5j3@fs7q2jaxchif>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 15 Oct 2024 11:47:29 -0700
-Message-ID: <CAJD7tkbFbkmJYh=n1hnm=jJNZz2-BcYP4dyJF_G2Q37cGE=eJQ@mail.gmail.com>
-Subject: Re: [PATCH] memcg: add tracing for memcg stat updates
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
-	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009180509.778133-2-paulmck@kernel.org>
 
-On Tue, Oct 15, 2024 at 11:39=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> On Tue, Oct 15, 2024 at 01:07:30AM GMT, Yosry Ahmed wrote:
-> > On Wed, Oct 9, 2024 at 5:36=E2=80=AFPM Shakeel Butt <shakeel.butt@linux=
-.dev> wrote:
-> > >
-> > > The memcg stats are maintained in rstat infrastructure which provides
-> > > very fast updates side and reasonable read side. However memcg added
-> > > plethora of stats and made the read side, which is cgroup rstat flush=
-,
-> > > very slow. To solve that, threshold was added in the memcg stats read
-> > > side i.e. no need to flush the stats if updates are within the
-> > > threshold.
-> > >
-> > > This threshold based improvement worked for sometime but more stats w=
-ere
-> > > added to memcg and also the read codepath was getting triggered in th=
-e
-> > > performance sensitive paths which made threshold based ratelimiting
-> > > ineffective. We need more visibility into the hot and cold stats i.e.
-> > > stats with a lot of updates. Let's add trace to get that visibility.
-> > >
-> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> >
-> > One question below, otherwise:
-> >
-> > Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
-> >
-> > > ---
-> > >  include/trace/events/memcg.h | 59 ++++++++++++++++++++++++++++++++++=
-++
-> > >  mm/memcontrol.c              | 13 ++++++--
-> > >  2 files changed, 70 insertions(+), 2 deletions(-)
-> > >  create mode 100644 include/trace/events/memcg.h
-> > >
-> > > diff --git a/include/trace/events/memcg.h b/include/trace/events/memc=
-g.h
-> > > new file mode 100644
-> > > index 000000000000..913db9aba580
-> > > --- /dev/null
-> > > +++ b/include/trace/events/memcg.h
-> > > @@ -0,0 +1,59 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +#undef TRACE_SYSTEM
-> > > +#define TRACE_SYSTEM memcg
-> > > +
-> > > +#if !defined(_TRACE_MEMCG_H) || defined(TRACE_HEADER_MULTI_READ)
-> > > +#define _TRACE_MEMCG_H
-> > > +
-> > > +#include <linux/memcontrol.h>
-> > > +#include <linux/tracepoint.h>
-> > > +
-> > > +
-> > > +DECLARE_EVENT_CLASS(memcg_rstat,
-> > > +
-> > > +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> > > +
-> > > +       TP_ARGS(memcg, item, val),
-> > > +
-> > > +       TP_STRUCT__entry(
-> > > +               __field(u64, id)
-> > > +               __field(int, item)
-> > > +               __field(int, val)
-> > > +       ),
-> > > +
-> > > +       TP_fast_assign(
-> > > +               __entry->id =3D cgroup_id(memcg->css.cgroup);
-> > > +               __entry->item =3D item;
-> > > +               __entry->val =3D val;
-> > > +       ),
-> > > +
-> > > +       TP_printk("memcg_id=3D%llu item=3D%d val=3D%d",
-> > > +                 __entry->id, __entry->item, __entry->val)
-> > > +);
-> > > +
-> > > +DEFINE_EVENT(memcg_rstat, mod_memcg_state,
-> > > +
-> > > +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> > > +
-> > > +       TP_ARGS(memcg, item, val)
-> > > +);
-> > > +
-> > > +DEFINE_EVENT(memcg_rstat, mod_memcg_lruvec_state,
-> > > +
-> > > +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> > > +
-> > > +       TP_ARGS(memcg, item, val)
-> > > +);
-> > > +
-> > > +DEFINE_EVENT(memcg_rstat, count_memcg_events,
-> > > +
-> > > +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> > > +
-> > > +       TP_ARGS(memcg, item, val)
-> > > +);
-> > > +
-> > > +
-> > > +#endif /* _TRACE_MEMCG_H */
-> > > +
-> > > +/* This part must be outside protection */
-> > > +#include <trace/define_trace.h>
-> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > > index c098fd7f5c5e..17af08367c68 100644
-> > > --- a/mm/memcontrol.c
-> > > +++ b/mm/memcontrol.c
-> > > @@ -71,6 +71,10 @@
-> > >
-> > >  #include <linux/uaccess.h>
-> > >
-> > > +#define CREATE_TRACE_POINTS
-> > > +#include <trace/events/memcg.h>
-> > > +#undef CREATE_TRACE_POINTS
-> > > +
-> > >  #include <trace/events/vmscan.h>
-> > >
-> > >  struct cgroup_subsys memory_cgrp_subsys __read_mostly;
-> > > @@ -682,7 +686,9 @@ void __mod_memcg_state(struct mem_cgroup *memcg, =
-enum memcg_stat_item idx,
-> > >                 return;
-> > >
-> > >         __this_cpu_add(memcg->vmstats_percpu->state[i], val);
-> > > -       memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val)=
-);
-> > > +       val =3D memcg_state_val_in_pages(idx, val);
-> > > +       memcg_rstat_updated(memcg, val);
-> > > +       trace_mod_memcg_state(memcg, idx, val);
-> > >  }
-> > >
-> > >  /* idx can be of type enum memcg_stat_item or node_stat_item. */
-> > > @@ -741,7 +747,9 @@ static void __mod_memcg_lruvec_state(struct lruve=
-c *lruvec,
-> > >         /* Update lruvec */
-> > >         __this_cpu_add(pn->lruvec_stats_percpu->state[i], val);
-> > >
-> > > -       memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val)=
-);
-> > > +       val =3D memcg_state_val_in_pages(idx, val);
-> > > +       memcg_rstat_updated(memcg, val);
-> > > +       trace_mod_memcg_lruvec_state(memcg, idx, val);
-> > >         memcg_stats_unlock();
-> > >  }
-> > >
-> > > @@ -832,6 +840,7 @@ void __count_memcg_events(struct mem_cgroup *memc=
-g, enum vm_event_item idx,
-> > >         memcg_stats_lock();
-> > >         __this_cpu_add(memcg->vmstats_percpu->events[i], count);
-> > >         memcg_rstat_updated(memcg, count);
-> > > +       trace_count_memcg_events(memcg, idx, count);
-> >
-> > count here is an unsigned long, and we are casting it to int, right?
-> >
-> > Would it be slightly better if the tracepoint uses a long instead of
-> > int? It's still not ideal but probably better than int.
-> >
->
-> Do you mean something line the following? If this looks good to you then
-> we can ask Andrew to squash this in the patch.
+On Wed, Oct 09, 2024 at 11:05:08AM -0700, Paul E. McKenney wrote:
+> Currently, once an RCU CPU stall warning decides to dump the stalling
+> CPUs' stacks, the rcu_dump_cpu_stacks() function persists until it
+> has gone through the full list.  Unfortunately, if the stalled grace
+> periods ends midway through, this function will be dumping stacks of
+> innocent-bystander CPUs that happen to be blocking not the old grace
+> period, but instead the new one.  This can cause serious confusion.
+> 
+> This commit therefore stops dumping stacks if and when the stalled grace
+> period ends.
+> 
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> ---
+>  kernel/rcu/tree_stall.h | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+> index d7cdd535e50b1..9d79133377ff6 100644
+> --- a/kernel/rcu/tree_stall.h
+> +++ b/kernel/rcu/tree_stall.h
+> @@ -335,13 +335,17 @@ static int rcu_print_task_stall(struct rcu_node *rnp, unsigned long flags)
+>   * that don't support NMI-based stack dumps.  The NMI-triggered stack
+>   * traces are more accurate because they are printed by the target CPU.
+>   */
+> -static void rcu_dump_cpu_stacks(void)
+> +static void rcu_dump_cpu_stacks(unsigned long gp_seq)
+>  {
+>  	int cpu;
+>  	unsigned long flags;
+>  	struct rcu_node *rnp;
+>  
+>  	rcu_for_each_leaf_node(rnp) {
+> +		if (gp_seq != rcu_state.gp_seq) {
+> +			pr_err("INFO: Stall ended during stack backtracing.\n");
+> +			return;
+> +		}
 
-Yes, unless you have a better way to also accommodate the unsigned
-long value in __count_memcg_events().
+small nit, this also needs data_race() like you did in next patch? Although
+you did delete this code in the next patch.
 
->
->
-> diff --git a/include/trace/events/memcg.h b/include/trace/events/memcg.h
-> index 913db9aba580..37812900acce 100644
-> --- a/include/trace/events/memcg.h
-> +++ b/include/trace/events/memcg.h
-> @@ -11,14 +11,14 @@
->
->  DECLARE_EVENT_CLASS(memcg_rstat,
->
-> -       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> +       TP_PROTO(struct mem_cgroup *memcg, int item, long val),
->
->         TP_ARGS(memcg, item, val),
->
->         TP_STRUCT__entry(
->                 __field(u64, id)
->                 __field(int, item)
-> -               __field(int, val)
-> +               __field(long, val)
->         ),
->
->         TP_fast_assign(
-> @@ -33,21 +33,21 @@ DECLARE_EVENT_CLASS(memcg_rstat,
->
->  DEFINE_EVENT(memcg_rstat, mod_memcg_state,
->
-> -       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> +       TP_PROTO(struct mem_cgroup *memcg, int item, long val),
->
->         TP_ARGS(memcg, item, val)
->  );
->
->  DEFINE_EVENT(memcg_rstat, mod_memcg_lruvec_state,
->
-> -       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> +       TP_PROTO(struct mem_cgroup *memcg, int item, long val),
->
->         TP_ARGS(memcg, item, val)
->  );
->
->  DEFINE_EVENT(memcg_rstat, count_memcg_events,
->
-> -       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> +       TP_PROTO(struct mem_cgroup *memcg, int item, long val),
->
->         TP_ARGS(memcg, item, val)
->  );
->
+thanks,
+
+ - Joel
+
+
+>  		printk_deferred_enter();
+>  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+>  		for_each_leaf_node_possible_cpu(rnp, cpu)
+> @@ -608,7 +612,7 @@ static void print_other_cpu_stall(unsigned long gp_seq, unsigned long gps)
+>  	       (long)rcu_seq_current(&rcu_state.gp_seq), totqlen,
+>  	       data_race(rcu_state.n_online_cpus)); // Diagnostic read
+>  	if (ndetected) {
+> -		rcu_dump_cpu_stacks();
+> +		rcu_dump_cpu_stacks(gp_seq);
+>  
+>  		/* Complain about tasks blocking the grace period. */
+>  		rcu_for_each_leaf_node(rnp)
+> @@ -640,7 +644,7 @@ static void print_other_cpu_stall(unsigned long gp_seq, unsigned long gps)
+>  	rcu_force_quiescent_state();  /* Kick them all. */
+>  }
+>  
+> -static void print_cpu_stall(unsigned long gps)
+> +static void print_cpu_stall(unsigned long gp_seq, unsigned long gps)
+>  {
+>  	int cpu;
+>  	unsigned long flags;
+> @@ -677,7 +681,7 @@ static void print_cpu_stall(unsigned long gps)
+>  	rcu_check_gp_kthread_expired_fqs_timer();
+>  	rcu_check_gp_kthread_starvation();
+>  
+> -	rcu_dump_cpu_stacks();
+> +	rcu_dump_cpu_stacks(gp_seq);
+>  
+>  	raw_spin_lock_irqsave_rcu_node(rnp, flags);
+>  	/* Rewrite if needed in case of slow consoles. */
+> @@ -759,7 +763,8 @@ static void check_cpu_stall(struct rcu_data *rdp)
+>  	gs2 = READ_ONCE(rcu_state.gp_seq);
+>  	if (gs1 != gs2 ||
+>  	    ULONG_CMP_LT(j, js) ||
+> -	    ULONG_CMP_GE(gps, js))
+> +	    ULONG_CMP_GE(gps, js) ||
+> +	    !rcu_seq_state(gs2))
+>  		return; /* No stall or GP completed since entering function. */
+>  	rnp = rdp->mynode;
+>  	jn = jiffies + ULONG_MAX / 2;
+> @@ -780,7 +785,7 @@ static void check_cpu_stall(struct rcu_data *rdp)
+>  			pr_err("INFO: %s detected stall, but suppressed full report due to a stuck CSD-lock.\n", rcu_state.name);
+>  		} else if (self_detected) {
+>  			/* We haven't checked in, so go dump stack. */
+> -			print_cpu_stall(gps);
+> +			print_cpu_stall(gs2, gps);
+>  		} else {
+>  			/* They had a few time units to dump stack, so complain. */
+>  			print_other_cpu_stall(gs2, gps);
+> -- 
+> 2.40.1
+> 
+> 
 
