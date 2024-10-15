@@ -1,229 +1,233 @@
-Return-Path: <linux-kernel+bounces-365116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2C999DDC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:55:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA52699DDC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5308F284417
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:55:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99CEE284630
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729BB17A90F;
-	Tue, 15 Oct 2024 05:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A338C17D340;
+	Tue, 15 Oct 2024 05:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MOhm1N+z"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="duif/86e"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2058.outbound.protection.outlook.com [40.107.212.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BD2178362;
-	Tue, 15 Oct 2024 05:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728971745; cv=none; b=sSfzwO40zyUfdWaXimENS2Ww/JLfvn+12a5UGk78XiyHqyH143nLjUxbrTXFAmxwzdiYG0k8kDD7ZCRO2TJRwruVfHNXjjHxCZmK9mo0z+N976rRx4VR0EhlCRskhKGPs1cOdjPt+g/C4QMboUdZ5Itowz3l2zZmOa7eEuakobQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728971745; c=relaxed/simple;
-	bh=lBmtohuTDPWE90XRl0KZpe9ndEb6usdKtqvk3d6xLQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z8NyqgowHqdRFGys5+i0Imk9TrPzs9bTQtIb/KzcRoiHkLGSOz4fe9XeO1Lcn0iiujjzYPR8W41FHih5ZVjrDzDsbXQmW5kz8Tw1li7MvKO5U4yRAZnKsxCM4z0OTxkIjxHUxWx8SArFj7K8Y5txvIaejOsnQepmLZbKnpnzAEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MOhm1N+z; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728971738;
-	bh=s+8/iAcFNKvwtQu4NVYqQmv9auEE6mJ7XmXb0R+e2yo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MOhm1N+z3HIZ6/eHgXzzwB8f7luNK9U6Hd3El+tPK9crRV1QAD2iOo6iJLZVqx07B
-	 oW1rwwVhQDydt5dY2pl264UF2DA7g0/NBy3TsxbFt/Kxn/DMTsNHE4rUvIbpF3QQmP
-	 wJ1MUcNSEe/fd9NFDFxk/7LpDQDRQ+/KmGGDLwPBfDQI1xQ3oUrUwNiV2xflOHtGbn
-	 k2OxLfPRDbDOGSXnNvGdZiGLSVFM72rloh6zQ5WA9COCtg14YiqeOxjPGFpu7Yio1k
-	 AXF05muu7iuidmpyoYomgAjheDzMqiNz4hPmkEBWV9JhKTSbaTwcWT3SCq3xyqCYmW
-	 10XwI7L9M8TRA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XSNcV3lNgz4wb7;
-	Tue, 15 Oct 2024 16:55:38 +1100 (AEDT)
-Date: Tue, 15 Oct 2024 16:55:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Dave Penkler <dpenkler@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the staging tree
-Message-ID: <20241015165538.634707e5@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18596176FB6;
+	Tue, 15 Oct 2024 05:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728971755; cv=fail; b=T1eNUs6p/Xrw7L26RCh+nmjqZ7yVss/8fRi3iC+vUJJb7T7lotJZO4jGuortJjXy9lgP/LvvLYr7s/7UOTVFOMRXLIuqlEu6bms/v4BOqKPEumUCuziP698a5NQzO+zh0kA5iRC1zKUTNna41HWiazRxZpIUPGY6EdVbBqgXr9s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728971755; c=relaxed/simple;
+	bh=OXkF96ju7aT03IjkjC1nHgffo9nh+lzZ39R51qDU2zA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=t+5/Wfs4wF0T9b4Af0mu/TE72zFU8dNRv2gJLMx3BKXDzFl9aDcc0PADhPO+wmxk3Jyjxm4+xiTlZ9i0s5sNO9zBvGSp41YXxcmBOaKoNX5BNnBTDnZG6Q2m2nuP6BkHyvdpOukaS+n1aI8CdpAu9yNDLwMhOWaoRJk65ycCsB0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=duif/86e; arc=fail smtp.client-ip=40.107.212.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gZvt7UB/5E+tGx7kuS1T5O79+R3n39L3dLq0dp09UAV2kn+W5MFh1h+4lt2Zsm5tvleywP2m5noN7Ad5dh8tIwDDzROsMjGrzslw+Gye1FzMuwXuztq3rgzKXda/pcMuQ93WslhbB3BGQT9nue9NTZc+ySoU2xpkQ+xcxwk3MJPjXEA3KwWz0fGIf6EtA7Mck2yE3b8dT8+JF05XO1asj6CyOjGEE36cwDQU/Trm/gJAa4kqoXK/Mif54z6EKz59hGwYUwm93UnMCc0/bK6DRdnxL2ebyLHd8e0ByjmeOf6Np77/ini5vW/tWMhX3rUGb8TYRPhhRp2laeWbnzr4ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7DlRnqBHZod/UXqiIsq+Qlirdn9dcT05I3xg2cxJGdo=;
+ b=RUhNA4banw0N+Rjh2JiQw2J37Uw0g6saqUwkddesi1h7sW+IzCaKjlw9beEBCbh1kAebbTj0H0VfAuGFvVBJEMcIWBv5hly17i7Cp9R9cR+yxCocr5wymU+w9nUcmE7cTAjfzpkol341e4XSdOjc2r3lQAPrWVhiYORrEzJN4xEloxIzipxrJylMdoxPGAISP7Fbna1E1CMSginhCleEGvpL8kS3WdTrJRbxu7qVl5uqEDH7NxuZJvmbO5K8bYlM4n8WhRHBxWCRXBoeouHv0+vI8liguDtzRYxt5J5z+nCgrgBy9d93fH3XOeJSJfpwtYQmVTdXx4ABBK/7S4Fk7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7DlRnqBHZod/UXqiIsq+Qlirdn9dcT05I3xg2cxJGdo=;
+ b=duif/86eZHOPajm49CevVQ9U+/9HUYWqXkXJBUrHVynUR014Q6mSDzqDt9ChObBpD7j9Ge3nuiV0wSCepoopOWnVAbQqW8uGjaH7zM0bq8CWkdhAevTXlQLnca2NiQPQwEkdr2Ir4hoqX75tXgW8VyK9MLkgMnOJq+uW5xU5kDI+oFpyd8HIm5aKPC8uvEdBPxxnuqXlq+jhxyAMyTyIPbNd3AXqOCgWOPguB3DadMkXa/Is2+RmSzQmlXxttLg0wEuZk9VL7hRfr8UdA1JDEmuSZ3OL4+fg1MsqC53qo78OJxU7A+gCZmWZIdfbAeR+biT6Sr1G/eAJ+hp5drERJQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by MW4PR12MB7240.namprd12.prod.outlook.com (2603:10b6:303:226::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.24; Tue, 15 Oct
+ 2024 05:55:50 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 05:55:49 +0000
+Message-ID: <fd1b56c0-2136-48ea-b3c2-5b2cbdc20994@nvidia.com>
+Date: Tue, 15 Oct 2024 06:55:42 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.11 000/214] 6.11.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ linux-tegra@vger.kernel.org, stable@vger.kernel.org
+References: <20241014141044.974962104@linuxfoundation.org>
+ <1d31b7f5-6843-406e-98d6-6344e39966e9@rnnvmail202.nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <1d31b7f5-6843-406e-98d6-6344e39966e9@rnnvmail202.nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0312.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:197::11) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/RHhcJ_.P=z/kWD5EKO.7Z1a";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|MW4PR12MB7240:EE_
+X-MS-Office365-Filtering-Correlation-Id: 83963b70-c842-485a-ac74-08dcecde050b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZENHcHhHdGcwQ00xa25sUDhPMlV6NElaSlE4bDc1RHFDME1HNzdUeEZ4REc5?=
+ =?utf-8?B?WDMrSFJ4ak1vd0xvTEwxdkVaZG9HL0VHSFh4WWl5YitxQ0cwMjV3ekZCdzhP?=
+ =?utf-8?B?KzdLZytMeGpRRmVMOSs5L2hzWmVnSyt2akJqYTNHSVNKS3IrOU5Yc21WN3Za?=
+ =?utf-8?B?WWdYZnFRMGppZFoyM2RLWCtNcWQ0c09WbndsUERGU2pFWjM3ZXV4N1lJK3g3?=
+ =?utf-8?B?bW1PMmh6NnhoK2ZVNS9RMzBvUjhicGVtZytQRmlQQ0E2ZTRsVk1kQ2MvT3FZ?=
+ =?utf-8?B?UHNzNFV0VGtoVEJldTVSUHBNWlVwZG5FVnJiUnVjaGQ1WUlmR3BuWUdlL05k?=
+ =?utf-8?B?Tyt4bERIZVBYMHpJRUZQUWlNTUg4UzBGRXZWc3JjdjhNcjVZQ09paWlVaUZ5?=
+ =?utf-8?B?d3FFT0Nwa3NJN0MwNjMxd2NSYW5vZy9KblJia0xoTVlwQjdtdUh4YWpMN3Br?=
+ =?utf-8?B?YmpFc1k5dVFoYksxVUl2dHk3RFZLcEdIVFhkRGEreUhpcUFkOHJEeDBESUs3?=
+ =?utf-8?B?dXFhbUpteDRQYXk0amRNaDBQWFducjcwSUZPNGovOXJ4OVRrZk1SUDAycDZP?=
+ =?utf-8?B?OERDNnBocmZvbmNRZUxZdWpmbkg4MzYyeXJUc0lBS3ZLdEVrQWVyd0k5TVVj?=
+ =?utf-8?B?bWFEcTQ5WkRDNG1JNWNFbUxwVi96cVdkUjMwV2VMQUpiS2hqa0RxNFB2QnFk?=
+ =?utf-8?B?UkJiN085NXB0TGtrU0JBYTR3cVRHaVJrdUhnSEJyZ0M2Ky9PZGhpaWFOcTV1?=
+ =?utf-8?B?aWdoa29RRG0rQjB6NjJNcG9kZkFPbW9lZHF3d2V1cGxxQ1haUGJjN0Rveld0?=
+ =?utf-8?B?dUpqRy80YUhLb1ltcGN0b1BtMzA2YmtTWE1SRm1jc2NXRXBOYnNJeTRZWVZM?=
+ =?utf-8?B?ckRNU1M2Q0JqSzNZMTlxQjhQMVVnSmFSYXR5RVJmay84WFdIYWVKUEdGQnNI?=
+ =?utf-8?B?THp0c0l6R1Z1aDRTQWxYaFBEVERGNm85TDQzdnJJdmI2aVhIdDVCUWJ2anh4?=
+ =?utf-8?B?TUVvSk9RRk1JOVY2bThGWG1zd0F6NjJ2WnJIQllRREtjOUhsbDdtTDJFckJn?=
+ =?utf-8?B?cXRBMndJeFNyQU5KV1lvdDZOQkFNQ0N0aVRyOUQ1L2dNTmxtZmpJTDRHWGdE?=
+ =?utf-8?B?UlNoR0lkcWZCZWk4eERDU0ZaSzZSbWFSd1RPcG9UVEpNYjdWWmhkVW0zb2E3?=
+ =?utf-8?B?eHprZ0Q4SlJnbTVuVmpIUE9vaWJhOFZOemhJMWc3eklaQXlXKy9HRUdzdnZH?=
+ =?utf-8?B?YTdPTk51bEh4SVFPWE9tdmJsRG1xWGhkaWFqZGcrNDQ2cmhXMkNpRmZFaTNW?=
+ =?utf-8?B?ZW5mQnZDM1BTSVB1K1A2dlhJMndxZjNsa3NQMzdUQzV1OWozMFZ1U29FTDY0?=
+ =?utf-8?B?RER2ZHhrZmpXSVo0K1M4V05Ha290NUZBeGRJQU9OTU5TbE9BMS9kckVBMDZW?=
+ =?utf-8?B?OUpIa3pxbkNKdlNCNjVjQW0rb2FOMGtQTE9nVWlERU9kYXc1ZkpIZHQ2RCtS?=
+ =?utf-8?B?VWx4NjJJV3FzWXphZGpJeTFHSGNTZEtFWG9ENldmbnZQR1ZCTXIvaW1heDl3?=
+ =?utf-8?B?OUdFL3ZRVStJTjhmWjAxVzAxdTI2eVFwcVhKL1ZYem5jWmJrbHVoNExjeWlw?=
+ =?utf-8?B?Yzgra0tPOEt0YytHUGxVakxRKzF3WU5XTGcyc0EyRyttdW9WKzVrK3NxRUlI?=
+ =?utf-8?B?d1VrS1RZUEVHMHR4aHcvVlNXL2N5NnNaczFEOTNSTWxKSmNlQXQ5OGJnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SEdNMjBNQWZ2T1dpdjlWWFhtUEp1MEc4eVJGMWozMUhNczA1WEF2d3c3OFRN?=
+ =?utf-8?B?K1lzZmRRdWlnazlPR2FSeXg3bzh1Q3RjNDY3eHNCVGRsaS9yMEtINEpxczRx?=
+ =?utf-8?B?T1dCQ1A0Q0Q0cFB5NXdSZGpnNWcrdS84SXM1YUc1K2ZvWGVOSGs5MHV0YnlL?=
+ =?utf-8?B?eGo1TkF2eFM1MDM4VmhEd1JKSUpLNHRNdEtWYnVtR2lYUFJyUERmb21BdnBX?=
+ =?utf-8?B?UDB1eUNkWHhoeGtJMDQxSkFkZ2ZhZ1l2cHdRY1g0cXhLTnFMNG5oYndDdlVT?=
+ =?utf-8?B?dVZzbmRkblZEcG44VUg5YjhWL3hDenNLdmFIUk02Z0pkRUNnOVdBQzBDZ1Nm?=
+ =?utf-8?B?T2h6Tjc5dFRjM0FvajdYNS9iamJ1bloxNDRtc3h4SVhLRUl1YnFBbkV0WVdD?=
+ =?utf-8?B?TTBadTRORTIrUHc0YVYxbGRzMUFXZGF5K25OVXRveGVKSTdFc3RzRDd4MTlp?=
+ =?utf-8?B?bEVRWnVLeFdkRHNjQ1FoT1BLSHRuSjZZMDE3NTNQQVdqR0RaSTk4VG1uRExw?=
+ =?utf-8?B?bGZQWThhdWFNRlorMTZLR2NpazE4Tmw4VSt2aldESWFzVHh4VXozQk1ucXhW?=
+ =?utf-8?B?ZEZJRjFwbCt1bU5SN3ZJR2Foa1NIYjNzRjNiNXRhSXVtWWJpTlR4RDBWODl4?=
+ =?utf-8?B?THh6Q3F5NTgwUnZ4K0JTN1JZWmpoZnI4RFNtV0hXS3F3dVZ0NWNTMlFmWlkz?=
+ =?utf-8?B?V2RUcGhONnd0N1FSSWdOQU9EaVA4aVpCd2N2Ynh6cERkYlZWZWJLNENEMHpo?=
+ =?utf-8?B?SlpZcEtYaHdGV1MyL21ndTE5T0QvSVBRb0tIRnhhWXhjbGFKZWQ1OTlEbGs3?=
+ =?utf-8?B?WWxJeUdRdUJKcFNEa2FjakpvUmlTcS9GSERuSXZkYUhUQWo1NEFVanFJb0V3?=
+ =?utf-8?B?SDUzeGxaem80UXRzMmVSTzBYa0dUY1N4V3ZKS1VFdGJxYlB5ajdKNVlRMGdx?=
+ =?utf-8?B?R1l0TTN1VVJ5b253S3B2RnF4anhDTFVSb3J4T2pzWkxFWnhqcWt5SEp3a0d5?=
+ =?utf-8?B?Ym4rSUJKVjVNV3VqRWNHUXZJQ0tNWSszaFowVzZZa081WlJMUjY4VEFaZ09Y?=
+ =?utf-8?B?c2ZON2NuMWpaM3dZckQwMVI0amhuYzRFTTNQaDk1V0E4ZkQzVkNZQjBPdlhQ?=
+ =?utf-8?B?UDRmL29UYjlSYXdzZ1padUNobm9NRHFRVTZyZ1BzMFBKcDBSRjk4UExqS1ZT?=
+ =?utf-8?B?RzVqd2FaTFFWRkd5aE1HYWtySXBNdEhFby9hbTZQQXJ0QnlwU3NqdThJNXJj?=
+ =?utf-8?B?YzkyWmN5MkZ5ZmNpanRycWdFWmwvdndyTFV3bFdsbk9lelhuclRaeXlCWHB6?=
+ =?utf-8?B?N0tPSmF1TXFqWDd0WXlBaVRMM2pWRVlvUmdENFNHQ2hMUGl0YkhyMWxleHkr?=
+ =?utf-8?B?b0xIeWlTK1JlbjRzRTF3NkRhMWMwTy9NWnBHWTZsaE5GaEZqa0xzUEdSNG9k?=
+ =?utf-8?B?WDZ4VE5FYWNSYU8vS0dPQXFjQ1pZNllUbWdaRHBEbFhwb2lvOHZ5dXpGemYx?=
+ =?utf-8?B?T3Frem5qRGhWdWUrS2JSVzAvcXhWTE1kOVB4Uk5RaC9tbXhDbTRuVEdTQ0kr?=
+ =?utf-8?B?aHVxbWNJM1BhL1FlYlJQSWdZQlZnMjA5N2pSRzNYUDh0WDRZbGpqMVlmNXVC?=
+ =?utf-8?B?cnBiazJTSnFUTU9Nd1YwMEJReTZBQ05Bc0txZllmd3FqTW5rdDNIcTh3MVJt?=
+ =?utf-8?B?b3VKMk1uZTViTitlaFNrMXNsVVJmYW1ZSTlERUlCb0ZVV1dwOWQ5VkJQSG5v?=
+ =?utf-8?B?a1U5MWhsYm5RRzdOSC9tSTllclE5KzZ0eG05cWJmRmpMZHY1RnZkazB5YnVQ?=
+ =?utf-8?B?Y1FOOFk2YTdKRy9uMlZQM0xZSFRhQjNsNXMyUmFsb3B0QkRZTFF6SHY1c2dl?=
+ =?utf-8?B?T01VVXVKU0FRRHRUaXZIOTdtVGxxc2lvaDFhcCt1WHpsNlhQTFFLSDFEZEV6?=
+ =?utf-8?B?WnNzVXE2RnErMmFmUllYVDlvZjFWTkwzQ2UwQ3lEVDVOaC85WmovbWVNazNJ?=
+ =?utf-8?B?cXdGbGV3bk43MVBWakhpelZlMnZEMkZHWExuamFqVFlFTmN6dlFUcTBXNHpG?=
+ =?utf-8?B?ZTZ4QkNjQzBidW5qWnpNWkFTTVIzVyttTW1Rek1OT2RTMTIyZDEvNzhQMWJr?=
+ =?utf-8?Q?HfL/VR9SOLPWWTgrQR5qDpNgb?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83963b70-c842-485a-ac74-08dcecde050b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 05:55:49.2045
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NL7NOBvtDfiscA0HGx2J+Ovimhvaw4e4hIq0xRWw7BnlSm+AZdNYOlq8oxiD29LgRL5TSxFrH07pZTkJ5UoRAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7240
 
---Sig_/RHhcJ_.P=z/kWD5EKO.7Z1a
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi all,
+On 15/10/2024 06:52, Jon Hunter wrote:
+> On Mon, 14 Oct 2024 16:17:43 +0200, Greg Kroah-Hartman wrote:
+>> This is the start of the stable review cycle for the 6.11.4 release.
+>> There are 214 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+>>
+>> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
+>> Anything received after that time might be too late.
+>>
+>> The whole patch series can be found in one patch at:
+>> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.4-rc1.gz
+>> or in the git tree and branch at:
+>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+>> and the diffstat can be found below.
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+> Failures detected for Tegra ...
+> 
+> Test results for stable-v6.11:
+>      10 builds:	10 pass, 0 fail
+>      26 boots:	26 pass, 0 fail
+>      116 tests:	115 pass, 1 fail
+> 
+> Linux version:	6.11.4-rc1-ga491a66f8da4
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>                  tegra20-ventana, tegra210-p2371-2180,
+>                  tegra210-p3450-0000, tegra30-cardhu-a04
+> 
+> Test failures:	tegra194-p2972-0000: boot.py
 
-After merging the staging tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
 
-ld: warning: discarding dynamic section .glink
-ld: warning: discarding dynamic section .plt
-ld: linkage table error against `nec7210_board_online'
-ld: stubs don't match calculated size
-ld: can not build stubs: bad value
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_t1_dela=
-y':
-fmh_gpib.c:(.text+0x5e8): undefined reference to `nec7210_t1_delay'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_serial_=
-poll_status':
-fmh_gpib.c:(.text+0x70c): undefined reference to `nec7210_serial_poll_statu=
-s'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_seconda=
-ry_address':
-fmh_gpib.c:(.text+0x7e4): undefined reference to `nec7210_secondary_address'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_primary=
-_address':
-fmh_gpib.c:(.text+0x898): undefined reference to `nec7210_primary_address'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_update_=
-status':
-fmh_gpib.c:(.text+0x958): undefined reference to `nec7210_update_status'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_paralle=
-l_poll_response':
-fmh_gpib.c:(.text+0xa18): undefined reference to `nec7210_parallel_poll_res=
-ponse'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_paralle=
-l_poll':
-fmh_gpib.c:(.text+0xad8): undefined reference to `nec7210_parallel_poll'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_paralle=
-l_poll_configure':
-fmh_gpib.c:(.text+0xb98): undefined reference to `nec7210_parallel_poll_con=
-figure'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_disable=
-_eos':
-fmh_gpib.c:(.text+0xc4c): undefined reference to `nec7210_disable_eos'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_enable_=
-eos':
-fmh_gpib.c:(.text+0xce4): undefined reference to `nec7210_enable_eos'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_remote_=
-enable':
-fmh_gpib.c:(.text+0xd98): undefined reference to `nec7210_remote_enable'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_interfa=
-ce_clear':
-fmh_gpib.c:(.text+0xe58): undefined reference to `nec7210_interface_clear'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_request=
-_system_control':
-fmh_gpib.c:(.text+0xf18): undefined reference to `nec7210_request_system_co=
-ntrol'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_go_to_s=
-tandby':
-fmh_gpib.c:(.text+0xfcc): undefined reference to `nec7210_go_to_standby'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_take_co=
-ntrol':
-fmh_gpib.c:(.text+0x1098): undefined reference to `nec7210_take_control'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_command=
-':
-fmh_gpib.c:(.text+0x1170): undefined reference to `nec7210_command'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_write':
-fmh_gpib.c:(.text+0x123c): undefined reference to `nec7210_write'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_read':
-fmh_gpib.c:(.text+0x133c): undefined reference to `nec7210_read'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_device_=
-match':
-fmh_gpib.c:(.text+0x15d0): undefined reference to `gpib_match_device_path'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_init.is=
-ra.0':
-fmh_gpib.c:(.text+0x3164): undefined reference to `nec7210_board_reset'
-ld: fmh_gpib.c:(.text+0x31a4): undefined reference to `nec7210_set_handshak=
-e_mode'
-ld: fmh_gpib.c:(.text+0x335c): undefined reference to `nec7210_board_online'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_pci_att=
-ach_impl':
-fmh_gpib.c:(.text+0x35a0): undefined reference to `gpib_pci_get_device'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_pci_det=
-ach':
-fmh_gpib.c:(.text+0x5018): undefined reference to `nec7210_board_reset'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_detach':
-fmh_gpib.c:(.text+0x5508): undefined reference to `nec7210_board_reset'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_fifo_re=
-ad_countable':
-fmh_gpib.c:(.text+0x6168): undefined reference to `nec7210_set_reg_bits'
-ld: fmh_gpib.c:(.text+0x6180): undefined reference to `nec7210_set_reg_bits'
-ld: fmh_gpib.c:(.text+0x6634): undefined reference to `nec7210_set_reg_bits'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_fifo_wr=
-ite_countable':
-fmh_gpib.c:(.text+0x6f1c): undefined reference to `nec7210_set_reg_bits'
-ld: fmh_gpib.c:(.text+0x6f34): undefined reference to `nec7210_set_reg_bits'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o:fmh_gpib.c:(.text+0x6f98): mor=
-e undefined references to `nec7210_set_reg_bits' follow
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_interna=
-l_interrupt':
-fmh_gpib.c:(.text+0x80a4): undefined reference to `push_gpib_event'
-ld: fmh_gpib.c:(.text+0x80c4): undefined reference to `nec7210_interrupt_ha=
-ve_status'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_dma_cal=
-lback':
-fmh_gpib.c:(.text+0x887c): undefined reference to `nec7210_set_reg_bits'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_fifo_re=
-ad':
-fmh_gpib.c:(.text+0x8a84): undefined reference to `nec7210_set_reg_bits'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_dma_wri=
-te':
-fmh_gpib.c:(.text+0x95d8): undefined reference to `nec7210_set_reg_bits'
-ld: fmh_gpib.c:(.text+0x95f0): undefined reference to `nec7210_set_reg_bits'
-ld: fmh_gpib.c:(.text+0x9a88): undefined reference to `nec7210_set_reg_bits'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o:fmh_gpib.c:(.text+0xac38): mor=
-e undefined references to `nec7210_set_reg_bits' follow
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_exit_mo=
-dule':
-fmh_gpib.c:(.exit.text+0x38): undefined reference to `gpib_unregister_drive=
-r'
-ld: fmh_gpib.c:(.exit.text+0x44): undefined reference to `gpib_unregister_d=
-river'
-ld: fmh_gpib.c:(.exit.text+0x50): undefined reference to `gpib_unregister_d=
-river'
-ld: fmh_gpib.c:(.exit.text+0x5c): undefined reference to `gpib_unregister_d=
-river'
-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_init_mo=
-dule':
-fmh_gpib.c:(.init.text+0x100): undefined reference to `gpib_register_driver'
-ld: fmh_gpib.c:(.init.text+0x110): undefined reference to `gpib_register_dr=
-iver'
-ld: fmh_gpib.c:(.init.text+0x120): undefined reference to `gpib_register_dr=
-iver'
-ld: fmh_gpib.c:(.init.text+0x130): undefined reference to `gpib_register_dr=
-iver'
+I am seeing the following kernel warning with this updated on the above 
+board ...
 
-Caused by commit
+  ERR KERN ucsi_ccg 2-0008: con1: failed to get status
+  ERR KERN ucsi_ccg 2-0008: con2: failed to get status
 
-  8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB driver")
 
-I have marked that driver as BROKEN for today.
+If I revert the following change I don't see these warnings ...
 
---=20
-Cheers,
-Stephen Rothwell
+Heikki Krogerus <heikki.krogerus@linux.intel.com>
+     usb: typec: ucsi: Don't truncate the reads
 
---Sig_/RHhcJ_.P=z/kWD5EKO.7Z1a
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+Please note that I am not seeing these warnings on mainline/next with 
+this board.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcOA9oACgkQAVBC80lX
-0GxwIQf/YlYnm+uL9UoKmExQbFhfpwPr1zGN/QwhWgdmGtbVJXgjun1Nzs7EfolR
-f5qzLvFPOri+iB9114VsSzx5y3Gxl6EYofJVdp5hgC1qmXZZ+B6y5RDRdgtuHd4p
-mzKz5ZYGKa6HUKuadC+CkGcHRMNn1UhKmCUHNn5HULkph22y85OxwEPymSailDmf
-ux9ewdxoezeDBHxx6VGjXn9mCpNXzrfx7wE0n++Rv+YtVNhQ6m1e9ZMvFV1UplAd
-NMDR02jBShHZDPgetT+vExo6f9dYxSxkGtHGeNnD9cFggl06J1tn0s6OL4yJW6kZ
-Y+bG+pZ4FwJwRuMx6l6nO7czp3OFZw==
-=ki0/
------END PGP SIGNATURE-----
+Jon
 
---Sig_/RHhcJ_.P=z/kWD5EKO.7Z1a--
+-- 
+nvpublic
 
