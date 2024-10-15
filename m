@@ -1,130 +1,90 @@
-Return-Path: <linux-kernel+bounces-366167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B73099F18E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:41:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D4499F194
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D40DDB22E92
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:41:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F3F28166F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079C12296F0;
-	Tue, 15 Oct 2024 15:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XTW6IqaX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zYWkbU5g"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAEE2281F0;
-	Tue, 15 Oct 2024 15:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668DE1EF08D;
+	Tue, 15 Oct 2024 15:37:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734EC1E907D;
+	Tue, 15 Oct 2024 15:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729006593; cv=none; b=u/mil9ryYUdWGNwFEUMulXG7R43Uq0Y+9+mqaxpmb2xQHw6YOK3kYuMMfwU9297yiw6wbWFn69QCh/a76L4NPyn4EshbW4eWu/HpemRe5wuQvFx3n/XE8Av19OSEiy3XPZpKK1UPeH8WxHOQA3W6QrGXgy3kDJ1DaVckM+0uMvk=
+	t=1729006652; cv=none; b=Zn1mBfR9fWooNcOzz6WrAJn3bCFMcour6mGmkpCfmD3LdZzlvhXPal93m/e5zrATggmwHiJVQBxhgQRqGoZruEv7f9z/mEMQwsTup9ayvegj9qoD0hcg8erarwVauki0sq4BtbqdtJhE9wkQdBKMsyLkGTKiJfMDP94Eyt55ypI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729006593; c=relaxed/simple;
-	bh=ndqKHI7F/QtmjCvnqqeXqOOYG1ApmBSFDFQ1ghVZQgE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=UsnPT/se7Yxf0y1IhGFGMS70qqEoSXi1MpBYeCszC7rFbinswSXVh1Ap4hmh/iIRdObB9/6rcjoqgZHMdozhndgKQVn1IfUm7Zy6rwUE8CHs52LS77EwJfUIEOo69zB7CcKtW9iHr6dVhMK/+YetoWQRse1EGFVXl20lw9IxX2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XTW6IqaX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zYWkbU5g; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 15:36:29 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729006590;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yDb63z2lIl0nZJ0uxyX+eD9hEE0VIdyWc8/NyMmiqq0=;
-	b=XTW6IqaX99NsYK26wKIi0sjhDwS8P9sUhJPvI0AMWGDmtltc9LRNFsP1pLxZrXWUjM3DMP
-	NlvDruqTo1AjX6zm7JtMvjwYNtolk2htjcAzC8q3tWxvdjKq4vLLOoPrPxDjRdZWEX5P8P
-	GbaZRaUU1bZsCGHhNe4Up3sW5FDp1rpL/B2JN1JfqH1IKpX6mBd0MToIuo3BiMB55YsW9x
-	fuOshnkJDrt1MHv4OM6DrK3c2W0qL6tTlEaptrZtYxpvQHEh0CjGiWtJbDw579Bmj2hXdS
-	pxQwOu5zOnjvX1npTAbDv2Di0QkyTjW1LUrU/+sYPy6bKP5Ic87R7b8Y3CoqOg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729006590;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yDb63z2lIl0nZJ0uxyX+eD9hEE0VIdyWc8/NyMmiqq0=;
-	b=zYWkbU5g7FjSCfS5ZipjQpMIWsqQwOlWJ4HfextRwY3g8iNGxj2+AB89me07TqNG284HAv
-	vMFBk7JVigQNBUAQ==
-From: "tip-bot2 for Zhen Lei" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: core/debugobjects] debugobjects: Delete a piece of redundant code
-Cc: Zhen Lei <thunder.leizhen@huawei.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240911083521.2257-2-thunder.leizhen@huawei.com>
-References: <20240911083521.2257-2-thunder.leizhen@huawei.com>
+	s=arc-20240116; t=1729006652; c=relaxed/simple;
+	bh=jIHKLLYvcMpH1boWXYI/mCtJG1/1ZWjBoHvUBhjHlYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4UHsZXe3Ogq/7njr0tFWmL1E/pirihtqeMOe5+LhwRuNsw+s+l6kGzGTWr6LFzpqJjeDu0+esLrrrav5H/8xmQJK6248Eysxw3NsEUOlLhWsK2FC/qOgxv5bsoj8z4yi5+mrV0YU5l7FS2ccN8BbpFvYIIXk8xK+3qZ3Q50f2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87583FEC;
+	Tue, 15 Oct 2024 08:37:59 -0700 (PDT)
+Received: from [10.57.87.12] (unknown [10.57.87.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5ABE13F528;
+	Tue, 15 Oct 2024 08:37:27 -0700 (PDT)
+Message-ID: <ce7cc76f-426f-4d19-b4be-3964647a2f2d@arm.com>
+Date: Tue, 15 Oct 2024 16:37:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172900658932.1442.15852426163479944809.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] iommu/arm-smmu-v3: Bypass SID0 for NXP i.MX95
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Pranjal Shrivastava <praan@google.com>,
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>,
+ Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joy Zou <joy.zou@nxp.com>,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Peng Fan <peng.fan@nxp.com>
+References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
+ <20241015-smmuv3-v1-2-e4b9ed1b5501@nxp.com> <Zw4kKDFOcXEC78mb@google.com>
+ <20241015124723.GI1825128@ziepe.ca>
+ <ab21d602-5349-47be-b346-2fbc041fa13e@arm.com>
+ <20241015153110.GM1825128@ziepe.ca>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241015153110.GM1825128@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the core/debugobjects branch of tip:
+On 2024-10-15 4:31 pm, Jason Gunthorpe wrote:
+> On Tue, Oct 15, 2024 at 04:13:13PM +0100, Robin Murphy wrote:
+>> On 2024-10-15 1:47 pm, Jason Gunthorpe wrote:
+>>> On Tue, Oct 15, 2024 at 08:13:28AM +0000, Pranjal Shrivastava wrote:
+>>>
+>>>> Umm.. this was specific for rmr not a generic thing. I'd suggest to
+>>>> avoid meddling with the STEs directly for acheiving bypass. Playing
+>>>> with the iommu domain type could be neater. Perhaps, modify the
+>>>> ops->def_domain_type to return an appropriate domain?
+>>>
+>>> Yeah, that is the expected way, to force the def_domain_type to
+>>> IDENTITY and refuse to attach a PAGING/BLOCKED domain.
+>>
+>> There is no domain, this is bypassing an arbitrary StreamID not associated
+>> with any device.
+> 
+> If the stream ID is going to flow traffic shouldn't it have a DT node
+> for it? Something must be driving the DMA on this SID, and the kernel
+> does need to know what that is in some way, even for basic security
+> things like making sure VFIO doesn't get a hold of it :\
 
-Commit-ID:     a0ae95040853aa05dc006f4b16f8c82c6f9dd9e4
-Gitweb:        https://git.kernel.org/tip/a0ae95040853aa05dc006f4b16f8c82c6f9dd9e4
-Author:        Zhen Lei <thunder.leizhen@huawei.com>
-AuthorDate:    Mon, 07 Oct 2024 18:49:52 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 15 Oct 2024 17:30:30 +02:00
+Exactly, hence this RFC is definitely not the right approach.
 
-debugobjects: Delete a piece of redundant code
-
-The statically allocated objects are all located in obj_static_pool[],
-the whole memory of obj_static_pool[] will be reclaimed later. Therefore,
-there is no need to split the remaining statically nodes in list obj_pool
-into isolated ones, no one will use them anymore. Just write
-INIT_HLIST_HEAD(&obj_pool) is enough. Since hlist_move_list() directly
-discards the old list, even this can be omitted.
-
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240911083521.2257-2-thunder.leizhen@huawei.com
-Link: https://lore.kernel.org/all/20241007164913.009849239@linutronix.de
-
-
----
- lib/debugobjects.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 5ce473a..df48acc 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -1325,10 +1325,10 @@ static int __init debug_objects_replace_static_objects(void)
- 	 * active object references.
- 	 */
- 
--	/* Remove the statically allocated objects from the pool */
--	hlist_for_each_entry_safe(obj, tmp, &obj_pool, node)
--		hlist_del(&obj->node);
--	/* Move the allocated objects to the pool */
-+	/*
-+	 * Replace the statically allocated objects list with the allocated
-+	 * objects list.
-+	 */
- 	hlist_move_list(&objects, &obj_pool);
- 
- 	/* Replace the active object references */
+Thanks,
+Robin.
 
