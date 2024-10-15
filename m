@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-366192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A6599F201
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1657B99F202
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 17:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B3F1F22D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE45282D31
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF4E1E6DEE;
-	Tue, 15 Oct 2024 15:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8457F1E9096;
+	Tue, 15 Oct 2024 15:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrC/+mh3"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XU4OCjBi"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603A11CBA18;
-	Tue, 15 Oct 2024 15:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782581CBA18;
+	Tue, 15 Oct 2024 15:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729007551; cv=none; b=s6JoW4aYR9FWo1JaJDBOHDm2V3JHcNb5hrctdskirkvOXCDv7iLATuxPqafGb/5i1rEkN3VeHMJrzOdtivpl3Rd5RsoPhzNmX4H8to5TNXD5RsaBlH2SLcfOwxuB4CfCwh1Zjhhwf97QrrFL4xs+8yJWGXuTOJteclY7u+IVxSo=
+	t=1729007563; cv=none; b=CgZqA9c9UU+EvgOjS/Bg7IUay8dzJCQgBeQgEYkk84PqKbM1j5S+yAJXreYTzk7+GrlP1GIkWvqhD9S6SiXI+33sILblFvxyJO3wWvFKTZ6bxyPPIpwm5/UleY+DLUzwbejE5GJ0tdjvQzO+FDuv5YjK5wlaelwvulvoPqSc8GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729007551; c=relaxed/simple;
-	bh=+Fp5ImgtvT/g8YQzRUmLKeuXeZI3mdgbhmU4ODD+i9w=;
+	s=arc-20240116; t=1729007563; c=relaxed/simple;
+	bh=uN1REU0Di5I3mklfKwwzumFIR1apUk4/wC9sJd6e83w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lr3ey8uPcYVXbguGgzSuj7MAxOz2OCtNWdmsEHnWEjIDWtwuItpRLYQY4Vatc2KGVQlRz8tAGkIFEkGDx+6f/R8JoV16VWwdtsDF6tb9zHxVkWHMrKi5FLD/MTUsvzuAuguOUbN+mcZEYg2RX+Hmj0Es4ocRIlwgbbA/Fdw3oBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JrC/+mh3; arc=none smtp.client-ip=209.85.210.175
+	 MIME-Version; b=QtcE4B//cs4PZxhOkxYxsAhKAFRmrO7wp+ddI0bO/h3yu1DvdUHcT6UwCXBDF+K89K3oK+LfvfgmKsnmJ6NvEd9J1ACUE+Wk+AJBB+P3aR2RI9IhxDkC93UWcVMzxW5jA+rx2Yd0y8d5GwsXLFGrVPiuCGBrqOyGyuFYFk77i6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XU4OCjBi; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e6f085715so1566128b3a.2;
-        Tue, 15 Oct 2024 08:52:30 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-288642376bcso2452534fac.1;
+        Tue, 15 Oct 2024 08:52:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729007549; x=1729612349; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729007561; x=1729612361; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=351WEUHsLBNMjnwFGj/YaHLkFIDuudwz/R8NEtbQqd8=;
-        b=JrC/+mh3L4SerHjvLBcJycfOBmuBNtEHa09H4KxLtsFHkxw9yEL+VGrAEY0fCdocRp
-         M3ITqFUR/LDCjsxHV/zGQMcW4x8k6IIWQhpUr63TnddH0O6FLo69WBy60nrnY7HrPakf
-         1ef547Ro8IR+jGULnmUAFjkz8D6CGzG1crKVqHHnV97U0hGr4btpCwDF56d/S2KRVgbe
-         J6KGKI7uMP1nfh2FvKb6jtcMkPUp37upBQXPW4Vs0mYAgUyeKc5cRI1C3DFyTDjR1Bcn
-         Z/ttkcuwJoRu7tihiAdbCOnSp5a+eJDpXIyR5kpAq1rvmO9YxRdQ9j23qs5fzVZyI7se
-         jPbQ==
+        bh=GrJdz13VBM6PnyfIrWk3YM9luzWUsilA55w4yeLkO7s=;
+        b=XU4OCjBipdYW0yE0++7DKe4MZF9gaTMeZF3/JI/DYzlYV1qEGDdAkazashJv16zNsn
+         Md4MdIgrQlCAff6nuJnst3RdwxGi1+Fx9fc18/WVuVpu/6vqhj8/87QdQIdKkTPN9aRO
+         wmin+pP/LJEWmD3T4dBpQE/zZVcF1uXADf2Z10EHGRMJzWhTwKHVDZmCcPlWT0AZMfGw
+         asgJd1eRGw181bzirm5p95yyqwKVIuzcsDeUgUAKXP8QCVjOKVCRUJAeS4QxnX+bZrBB
+         n3XGQS0pK2VkMHGEEdgfcGXxvbKL4/qV+HJ1Z++5wxNLhzIOU+NUqQ9DMEhw43JtZDrL
+         zEeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729007549; x=1729612349;
+        d=1e100.net; s=20230601; t=1729007561; x=1729612361;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=351WEUHsLBNMjnwFGj/YaHLkFIDuudwz/R8NEtbQqd8=;
-        b=M9KrQoCKP0nQ8r41sAqBj16vrTBmw7jqyLd4YGqWBnMNglMZMaOwd7E1CgxewUt6C7
-         qU9b9SGw8+zTgtfuhFiSgH75TKtVpP6i0MZI+9LclEUv8FPgWlUjqkJ5s2HLQcrPaM18
-         ODgVOw2jmvOpdW/6A8aG74TQfqQvR8My68WMiC64dwTkoBaXSFhy9NWttUkpg+wodKOp
-         6F2UbtzrBbKXHg7woratbkB3xlcRWIj9lCKjAY7rHf54fN7n30wdw+ihL2DsdVzyLr/F
-         /RINiEqSwd7XOqVbXAmnsD4pl+bGTXMiyiFe+GBRuDGfme0Hdw4kdpAxPbAGRuWlppZY
-         LCVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJcjF8k3G1P73u+hmBs9A5xCwThMiEYOqnHW6mfIYHQ5qSbm6ZLtpV+9mmjJ5qQhCefoGm3gVTqUaGleg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW6mOL8JueoSHd+AZKFFK6U40iAVCHnajca28eu0K4TFdRbrd+
-	i2dpNacMZh3sdm+cUPXMbzWfjjJWhI+k3+35u+EdjjBASUgYVj2ssHGZP6l2ulE=
-X-Google-Smtp-Source: AGHT+IHDO1X3FNYdrJ+gs37IQiBKhlQ9JngCoqgyknUGtlhXnGGzA/uxDLJVfWLQCuIdCStO++H+3Q==
-X-Received: by 2002:a05:6a00:1250:b0:71e:fb4:6c98 with SMTP id d2e1a72fcca58-71e4c1cfc05mr22451433b3a.23.1729007549172;
-        Tue, 15 Oct 2024 08:52:29 -0700 (PDT)
+        bh=GrJdz13VBM6PnyfIrWk3YM9luzWUsilA55w4yeLkO7s=;
+        b=Qh3W5ewXL50AMXrNIoTW2nEn2IvA0GlJSKIVA6Og7oBpRJ4yQmpf0Eym2XJTlUGxAJ
+         VA3xsjptY9+s7QJQESYLGPmVxDVSJ1JmP7jXJELk7XMHKz2b5YnTVZuW8HtJ1iXjaEtK
+         xSLsOOV2cMLHvItu7NNnYrZL5Q9NU0YssOGfSVub3k1bxomFldq6COpoyn8RskunMSkT
+         cy9G0ILyDhaG31aQoBfl+uafTPaw+wUxKhVS6uiyIu+GkpHUB1HvMJChlgwOdf5Jjss6
+         m6DFR5EwUAFN9GpnrWnFXePHmAI3WoJMlBBhA6XJc5ymh0S6BYIdajZjQG8cTEBm/HhH
+         9dKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfFfPBVpZ+0Hs/5KeHZDIDAYGvXnDmM2m3gUq3oOt6inDPJUWK3Q6CdtcS1qxaAnn8RXI3/2yFe0omyh8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+wdTXDiI/XDhewob5CFA4VESAdrBAEOeLnYRCwPmqYARt1sLm
+	pGwKOyXKIfbU0gBsLdby/5KKo/Ly2Ixime/0ZYxaGR/klBcMkcdkrQp8obUYh20=
+X-Google-Smtp-Source: AGHT+IGvIvlkwmUzaoU7B8CSaATLdDpPybawEbZcgXCffHNDVSH7wRChKyPeweYtqsa/fce2pakVGA==
+X-Received: by 2002:a05:6870:ac26:b0:288:2b44:5577 with SMTP id 586e51a60fabf-2888734357amr6494708fac.18.1729007561144;
+        Tue, 15 Oct 2024 08:52:41 -0700 (PDT)
 Received: from Hridesh-ArchLinux.am.students.amrita.edu ([123.63.2.2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a2561sm1461753b3a.97.2024.10.15.08.52.20
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a2561sm1461753b3a.97.2024.10.15.08.52.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 08:52:28 -0700 (PDT)
+        Tue, 15 Oct 2024 08:52:40 -0700 (PDT)
 From: Hridesh MG <hridesh699@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -92,9 +92,9 @@ Cc: Andreas Hindborg <a.hindborg@kernel.org>,
 	Aswin Unnikrishnan <aswinunni01@gmail.com>,
 	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
 	FUJITA Tomonori <fujita.tomonori@gmail.com>
-Subject: [PATCH v6 2/4] checkpatch: warn on known non-plural rust doc headers
-Date: Tue, 15 Oct 2024 21:21:37 +0530
-Message-ID: <088495172736416665325802594aeb6996159f9a.1728818976.git.hridesh699@gmail.com>
+Subject: [PATCH v6 3/4] rust: kernel: clean up empty `///` lines
+Date: Tue, 15 Oct 2024 21:21:38 +0530
+Message-ID: <5f42e19fe52adc07d44d1fde225e8d933fde54f8.1728818976.git.hridesh699@gmail.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <cover.1728818976.git.hridesh699@gmail.com>
 References: <cover.1728818976.git.hridesh699@gmail.com>
@@ -106,73 +106,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Patrick Miller <paddymills@proton.me>
-
-Add a check for documentation in rust files. Warn if certain known
-documentation headers are not plural.
-
-The rust maintainers prefer document headers to be plural. This is to
-enforce consistency as well as to protect against errors when additions
-are made. For instance, if a header says "Example" for a single example,
-adding a second example may cause confusion. The maintainers wish to
-avoid reminding users to update their documentation for such cases.
+Remove unnecessary empty `///` lines in the rust docs.
 
 Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1110
-Signed-off-by: Patrick Miller <paddymills@proton.me>
+Link: https://github.com/Rust-for-Linux/linux/issues/1109
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Hridesh MG <hridesh699@gmail.com>
 ---
-v1: https://lore.kernel.org/rust-for-linux/2024090628-bankable-refusal-5f20@gregkh/T/#t
-v2: https://lore.kernel.org/rust-for-linux/92be0b48-cde9-4241-8ef9-7fe4d7c42466@proton.me/T/#t
-  - fixed whitespace that was formatted due to editor settings 
-v3: https://lore.kernel.org/rust-for-linux/da34f89c-f94c-43aa-946c-57fec3597974@proton.me/T/#t
-  - move && to previous line and remove whitespace in WARN per Joe Perches
-  - reformat following C coding style
-v4: https://lore.kernel.org/rust-for-linux/20240914181618.837227-2-paddymills@proton.me/
-  - add @fix option (credit: Joe Perches)
-  - add Error to list of checked section headers
-  - make check for rust file its own if statement because more rust
-      checks are planned
-v5: https://lore.kernel.org/rust-for-linux/20241002022749.390836-2-paddymills@proton.me/
-  - merged Hridesh MG's patch[1] to check against consecutive empty rustdoc comments
-  - revised Hridesh MG's patch to match against $prevrawline being new
-      or existing
-  - added fix to Hridesh MG's patch
-v6:
-  - undid the merging of Hridesh MG's patch
-  - revised opening comment to be more explicit per Miguel Ojeda
-  - The --fix option was throwing an uninitialized variable error, fixed
-    it and made it automatically convert the headers to plural.
+Changelog:
+v1->v2
+- Fixed typo in commit title and description
+- Removed backslashes in kernel::block::mq::Request
+- Link to v1: https://lore.kernel.org/rust-for-linux/20240909161749.147076-1-hridesh699@gmail.com/
 
-[1]: https://lore.kernel.org/rust-for-linux/bf6544faba2b53ce901b2e031f3d944babcc7018.1727606659.git.hridesh699@gmail.com/
+v2->v3
+- Fixed From: tag in patch header
+- Link to v2: https://lore.kernel.org/rust-for-linux/aa1b4059dfac001945745db02b6f6d9db2e5d1cb.1726072795.git.hridesh699@gmail.com/
+
+No changes from v3->v6
 ---
- scripts/checkpatch.pl | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ rust/kernel/block/mq/request.rs | 1 -
+ rust/kernel/rbtree.rs           | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 4427572b2477..c390a9926cd5 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3900,6 +3900,19 @@ sub process {
- 			     "Avoid using '.L' prefixed local symbol names for denoting a range of code via 'SYM_*_START/END' annotations; see Documentation/core-api/asm-annotations.rst\n" . $herecurr);
- 		}
+diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
+index a0e22827f3f4..313334b1bf18 100644
+--- a/rust/kernel/block/mq/request.rs
++++ b/rust/kernel/block/mq/request.rs
+@@ -30,7 +30,6 @@
+ /// D) Request is owned by driver with more than one `ARef` in existence
+ ///    (refcount > 2)
+ ///
+-///
+ /// We need to track A and B to ensure we fail tag to request conversions for
+ /// requests that are not owned by the driver.
+ ///
+diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+index d03e4aa1f481..c0730c1f9707 100644
+--- a/rust/kernel/rbtree.rs
++++ b/rust/kernel/rbtree.rs
+@@ -1034,7 +1034,6 @@ fn next(&mut self) -> Option<Self::Item> {
  
-+# checks that only apply to Rust files
-+		if ($realfile =~ /\.rs$/) {
-+			# check that document section headers are plural
-+			if ($rawline =~ /^\+\s*\/\/\/\s+#+\s+(Example|Error|Guarantee|Invariant|Panic)\s*$/i) {
-+				if (WARN("RUST_DOC_HEADER",
-+				         "Rust doc section names should be plural\n" . $herecurr) &&
-+				    $fix) {
-+					my $header = $1;
-+					$fixed[$fixlinenr] =~ s/\b$header\b/ucfirst(lc($header)) . 's'/e;
-+				}
-+			}
-+		}
-+
- # check we are in a valid source file C or perl if not then ignore this hunk
- 		next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
- 
+ /// A memory reservation for a red-black tree node.
+ ///
+-///
+ /// It contains the memory needed to hold a node that can be inserted into a red-black tree. One
+ /// can be obtained by directly allocating it ([`RBTreeNodeReservation::new`]).
+ pub struct RBTreeNodeReservation<K, V> {
 -- 
 2.46.1
 
