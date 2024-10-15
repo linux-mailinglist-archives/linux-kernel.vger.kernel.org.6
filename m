@@ -1,128 +1,64 @@
-Return-Path: <linux-kernel+bounces-365808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104FF99EA32
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:45:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB5C99E9E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8321288366
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BCBE1C21234
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759C3227BAC;
-	Tue, 15 Oct 2024 12:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JHS/G8h9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC277227B83;
+	Tue, 15 Oct 2024 12:33:34 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D576C1F7084;
-	Tue, 15 Oct 2024 12:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130171CEADB;
+	Tue, 15 Oct 2024 12:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728996243; cv=none; b=Q8kkZm0/6I5u4Pu4oJDCdVSbP4TXJ+gdrBQgLVGWNRixBx+6izQrNfdKpawfoa0nNUKzK3SXKRH34jtH4sNb7P2kQ4yaAjLakfwERMeaF3u2Os/4v0vX7kdpXWY8pTvwDkIUjjJPrHfojVpnSfZz5NWJ/QfIU9iwS0e3H+O2+RA=
+	t=1728995614; cv=none; b=LGFee/oBKR7l1/nl+UY/2b9X224xbXXf5kvzL2SvdEzfNJlLcEb37oSYgLhDMUCi1oVmrwCuegMQYdhs0tA4iy6xhfJtEEMQphQKUrXHPnI68yZF0WFRroRIUum0+WWwhNPfo1Dyzj6fGL5OOn7jlb/6jWdSn/XEPdCWPzSBd7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728996243; c=relaxed/simple;
-	bh=W5XKx9Quk746L7Qt7FDFxGAoA35Y1Se7+CZOvQViApQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=shVDUVURtPNV200Doq/r+3WH1p1CAsWnVTAwbg7IqrTBm2p5r4bCZTcFJOEe03pihyyVNY11Gqqx5YWmXGrt7XUNiSugLCsThMtc2a4EAZUt8wTp0cdL2Zwht+efKd6iMaxZNoYRs4MLDZLZp6YUqmnHVM4/NM4H6t7birKANHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JHS/G8h9; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728996242; x=1760532242;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=W5XKx9Quk746L7Qt7FDFxGAoA35Y1Se7+CZOvQViApQ=;
-  b=JHS/G8h9YJhG6sacWa6bGBJ8PtsUsKgZv312ODtXaL8ATUVRw0AYr+BS
-   c531oOdvuXsVS6O3b7dAm0yUCvaq2KfkV53ous0BddX3h685tJZ7r7dfP
-   G1fKv5fzGTj/LFVOBBTqaT9V0FG5YxRP+LO74/DsZx0U0x1E1j/Clv/TP
-   KkKFPaq/TGS6TD4uPQPyjprm8IHh602AGS1lAK+982+5VzVBjZJtByfWO
-   ShmZWMIdvfbAg+TmgBvhLM6WRQLFNUISgPAUl1d+37biNqlYpqHXuMxXI
-   Rd2zGKZL4PlMqWZj3M0eGutSKfbWlfvppw6z4jnByJGLBBRTKPnh6wIu0
-   A==;
-X-CSE-ConnectionGUID: 6INJ+BZLRqOSyBkYeWboIA==
-X-CSE-MsgGUID: KWx6zk+VR0i7FKOJUNMJQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28486116"
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="28486116"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 05:44:01 -0700
-X-CSE-ConnectionGUID: nPgmRvf1S06PelgmqmdnTA==
-X-CSE-MsgGUID: WN6ojAK4RsCMfOgkYP4etQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="77903240"
-Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 05:43:59 -0700
-From: Alexander Usyskin <alexander.usyskin@intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Oren Weil <oren.jer.weil@intel.com>,
-	Tomas Winkler <tomasw@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Rohit Agarwal <rohiagar@chromium.org>,
-	Brian Geffon <bgeffon@google.com>
-Subject: [char-misc-next v3] mei: use kvmalloc for read buffer
-Date: Tue, 15 Oct 2024 15:31:57 +0300
-Message-ID: <20241015123157.2337026-1-alexander.usyskin@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728995614; c=relaxed/simple;
+	bh=r8NJhNW2NGHmD6eructmNftLrlxZrsEcUUeKsW1XvQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MB93vSHPUGOzf8tUmzFYJH2B65Xp7N77m5/3JlUQnI02rsIbFq8jzI1+fZ/O3c+L9vY8oYJmaeQrSgXMUPayWP4JmO++hl6sQLfrZzR6tGehOnLcn+w+EqiZsNYR4i7WoY4E0JKr4fjB7HVYgTdlIBSNe+zdFfL/Fd1OYrVtPTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 950FE227AAC; Tue, 15 Oct 2024 14:33:28 +0200 (CEST)
+Date: Tue, 15 Oct 2024 14:33:28 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, brauner@kernel.org,
+	djwong@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	dchinner@redhat.com, cem@kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v8 5/7] xfs: Support atomic write for statx
+Message-ID: <20241015123328.GA687@lst.de>
+References: <20241015090142.3189518-1-john.g.garry@oracle.com> <20241015090142.3189518-6-john.g.garry@oracle.com> <20241015121539.GB32583@lst.de> <9c05dfea-339e-44e7-9688-b5206726a1c5@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c05dfea-339e-44e7-9688-b5206726a1c5@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Read buffer is allocated according to max message size, reported by
-the firmware and may reach 64K in systems with pxp client.
-Contiguous 64k allocation may fail under memory pressure.
-Read buffer is used as in-driver message storage and not required
-to be contiguous.
-Use kvmalloc to allow kernel to allocate non-contiguous memory.
+On Tue, Oct 15, 2024 at 01:22:27PM +0100, John Garry wrote:
+>> Nit: I'd do with the single use sbp local variable here.
+>
+> I think that you mean do without.
 
-Fixes: 3030dc056459 ("mei: add wrapper for queuing control commands.")
-Reported-by: Rohit Agarwal <rohiagar@chromium.org>
-Closes: https://lore.kernel.org/all/20240813084542.2921300-1-rohiagar@chromium.org/
-Tested-by: Brian Geffon <bgeffon@google.com>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
----
-
-Changes since V2:
- - add Fixes and CC:stable
-
-Changes since V1:
- - add Tested-by and Reported-by
-
- drivers/misc/mei/client.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
-index 9d090fa07516..be011cef12e5 100644
---- a/drivers/misc/mei/client.c
-+++ b/drivers/misc/mei/client.c
-@@ -321,7 +321,7 @@ void mei_io_cb_free(struct mei_cl_cb *cb)
- 		return;
- 
- 	list_del(&cb->list);
--	kfree(cb->buf.data);
-+	kvfree(cb->buf.data);
- 	kfree(cb->ext_hdr);
- 	kfree(cb);
- }
-@@ -497,7 +497,7 @@ struct mei_cl_cb *mei_cl_alloc_cb(struct mei_cl *cl, size_t length,
- 	if (length == 0)
- 		return cb;
- 
--	cb->buf.data = kmalloc(roundup(length, MEI_SLOT_SIZE), GFP_KERNEL);
-+	cb->buf.data = kvmalloc(roundup(length, MEI_SLOT_SIZE), GFP_KERNEL);
- 	if (!cb->buf.data) {
- 		mei_io_cb_free(cb);
- 		return NULL;
--- 
-2.43.0
+Yes, sorry.
 
 
