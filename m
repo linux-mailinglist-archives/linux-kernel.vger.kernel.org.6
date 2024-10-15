@@ -1,83 +1,195 @@
-Return-Path: <linux-kernel+bounces-365828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE7899EA77
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:55:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0882B99EA7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7DD1F210A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C641C22C03
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D531AF0B6;
-	Tue, 15 Oct 2024 12:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AEE1E907D;
+	Tue, 15 Oct 2024 12:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iVDHgLOS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nM8K+qa0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62BC1C07FA;
-	Tue, 15 Oct 2024 12:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05511C07CC;
+	Tue, 15 Oct 2024 12:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728996880; cv=none; b=CSVJ/SuvBqpqev/6AGBKssV+tnAgrpSF9WV05uvpaobo5fTn7RptE4KIt0M9gRg+2CHbeChdulstj/SosomkjncO5B0om2OAF0ecTX8eZYebO2AJ62S5DZt9lpcIjKFVXVQ6eMwt6lPIAwCY3i7ZEPcAK0qYHvArmRyKg9ydky8=
+	t=1728996892; cv=none; b=AC8W0gswn6E7Ehckjq37akiDfnHf+4qtJwCJd5mq4/65LB4QyK0vyTtwizbaShxhfKMqceh5OWhsa+unbX4mzaJyMl5kDv7DQ2aSgaNblBXX1m4uz6NeuFUEvXBtPq1IahujDunVpwNtUMxiAV1NBWudgK4yaFZrDZNrTqMzVMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728996880; c=relaxed/simple;
-	bh=oK+G8a33qABtf0hMSDI5iwKCPFm59lWpc2Ii4qH5YkY=;
+	s=arc-20240116; t=1728996892; c=relaxed/simple;
+	bh=IpUeFHHJn0wswPXOIvJ6ugRddbx0dZyA2d3iKLKDp/k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sg99SoowraWRd9b2/yEZxwm6JEtl3iYsVvMbm4m32AjjbV9CpBVZwn2qQgJ+xNxkoJLC2fmZm4j3f3rDfRB3Ly+V0rDPdYuAKlpUht9DiwRyznNC5t++/Yb/BZyY7w/Ah8PNXxLtykwQiwApamlIyEpBrBiqPplma4/n5cCQQCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iVDHgLOS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=9KMHHH9wy1NkUhK8b6gjz467PXF6XivpVm4tvJmq5Ss=; b=iVDHgLOSYJkK/J+OmYpLWRhUgs
-	EKzrISJF7Kzsr3wd/12kzYPhhV/ia6n2/QPws/keUF4rlWitV0pZPjqJZNR6sufToFSO3EijPCA9z
-	LvNLRPDl3njhHyg43KYW6Acc/Nv4btEeoJyESXaL0ehtOmz7uAadT4w7ZSK1j3ZPHIBc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t0h4B-00A228-RQ; Tue, 15 Oct 2024 14:54:23 +0200
-Date: Tue, 15 Oct 2024 14:54:23 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Felix Fietkau <nbd@nbd.name>
-Cc: netdev@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKhRw4MnJHob8KJHmprmnojOihj+oMxPn2u2YdB+wpfj02RV8FTkaa/5qQDqf6IdEGyscPeR3L3EoAD5kk46p1j4uqEWPjAE9YW3GYPFPn7zRrgAZOLq1hZ9HZbuMJBfKzg8eaDzMTcjsbGAmf22W9sXHRpkBWpnnBul90siWY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nM8K+qa0; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728996891; x=1760532891;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=IpUeFHHJn0wswPXOIvJ6ugRddbx0dZyA2d3iKLKDp/k=;
+  b=nM8K+qa0WCr0vg9lCDaNzzNO/5EWpSvnxS19en9D3PFrKVE14xRwNgKc
+   zgIth3BvAzIhQr+qj1FNpdWQGWVKzaXMEbyMdNQzmj+sGW6sN1lVRjA8r
+   8DPQsgYN7vrfGyELaW97zIvP1/1nyR6a9vlYFYiTF6mqf15lyBY4Nsmga
+   pAbzrhBXcTI6OmDWI7aNLRLfHnhF1sFqOB06ACwHPOBlX0otFD59rrtRi
+   hXg2mO0PxvxKn4prT0RkefkDfoYwEj4Y0yPNA4WtvPOAV6grMSJuT6wsa
+   /MjBhGhxfdYMpDQoJ/D9TmDbZikBq0xUBg3O2yqlyxMb37HadeFVlrEY9
+   w==;
+X-CSE-ConnectionGUID: Nab0Y0QYTeSDICH9mYz+qQ==
+X-CSE-MsgGUID: MBzDGlKWQKKg1SNVuOC6qA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="27831881"
+X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
+   d="scan'208";a="27831881"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 05:54:50 -0700
+X-CSE-ConnectionGUID: 21gC6auxR7iXSugTgjheEQ==
+X-CSE-MsgGUID: lVgSUNSMRReLO0GG2lM24A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
+   d="scan'208";a="78333817"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 05:54:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t0h4U-00000003GzT-49q1;
+	Tue, 15 Oct 2024 15:54:42 +0300
+Date: Tue, 15 Oct 2024 15:54:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next 4/4] net: ethernet: mtk_eth_soc: optimize dma
- ring address/index calculation
-Message-ID: <e67883e3-b278-4052-849c-8a9a8ef145f0@lunn.ch>
-References: <20241015110940.63702-1-nbd@nbd.name>
- <20241015110940.63702-4-nbd@nbd.name>
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v8 7/8] platform/chrome: Introduce device tree hardware
+ prober
+Message-ID: <Zw5mEv_cnZzPUqII@smile.fi.intel.com>
+References: <20241008073430.3992087-1-wenst@chromium.org>
+ <20241008073430.3992087-8-wenst@chromium.org>
+ <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
+ <ZwfzhsvlPrxMi61j@smile.fi.intel.com>
+ <CAGXv+5ED7j49ndT7BaESW8ZL7_mjVUJLM_FWma8Lwkg+Uh3saw@mail.gmail.com>
+ <Zwz_Kl7SwfL0ZaAZ@smile.fi.intel.com>
+ <CAGXv+5H0Yvt1cwPOim-quT3C+=s9NapnryJhNxs_QW=DAyAycQ@mail.gmail.com>
+ <Zw5QzP-5hnHW--F-@smile.fi.intel.com>
+ <CAGXv+5FuMjSaUJ+qDrx7Vmr9o5vJ9VW=tss1ezvdJyaZZouHKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241015110940.63702-4-nbd@nbd.name>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5FuMjSaUJ+qDrx7Vmr9o5vJ9VW=tss1ezvdJyaZZouHKw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Oct 15, 2024 at 01:09:38PM +0200, Felix Fietkau wrote:
-> Since DMA descriptor sizes are all power of 2, we can avoid costly integer
-> division in favor or simple shifts.
+On Tue, Oct 15, 2024 at 08:18:50PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Oct 15, 2024 at 7:24 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Oct 15, 2024 at 02:32:54PM +0800, Chen-Yu Tsai wrote:
+> > > On Mon, Oct 14, 2024 at 7:23 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Mon, Oct 14, 2024 at 12:56:20PM +0800, Chen-Yu Tsai wrote:
+> > > > > On Thu, Oct 10, 2024 at 11:32 PM Andy Shevchenko
+> > > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > On Thu, Oct 10, 2024 at 06:29:44PM +0300, Andy Shevchenko wrote:
+> > > > > > > On Tue, Oct 08, 2024 at 03:34:26PM +0800, Chen-Yu Tsai wrote:
 
-Could a BUILD_BUG_ON() be added to validate this?
+...
 
-Do you have some benchmark data for this series? It would be good to
-add to a patch 0/4.
+> > > > > > > > +   .cfg = &chromeos_i2c_probe_simple_trackpad_cfg,
+> > > > > > >
+> > > > > > >       .cfg = DEFINE_I2C_OF_PROBE_CFG(trackpad, i2c_of_probe_simple_ops),
+> > > > > > >
+> > > > > > > Or even
+> > > > > > >
+> > > > > > > #define DEFINE_I2C_OF_PROBE_CFG_SIMPLE(_type_)                        \
+> > > > > > >       DEFINE_I2C_OF_PROBE_CFG(type, &i2c_of_probe_simple_ops)
+> > > > >
+> > > > > I'm not inclined on using compound literals here. "simple X cfg" will
+> > > > > likely get shared between multiple |chromeos_i2c_probe_data| entries,
+> > > > > and AFAIK the toolchain can't merge them. So we would end up with one
+> > > > > compound literal per entry, even if their contents are the same.
+> > > >
+> > > > I'm not sure I follow, you are using compound literal _already_.
+> > > > How does my proposal change that?
+> > >
+> > > I'm using it where it makes sense, i.e. where the embedded variable
+> > > is not going to be shared with other instances.
+> > >
+> > > For the dumb probers, there's only going to be one instance per "type".
+> > >
+> > > For the simple probers, the config part is still one instance per "type",
+> > > but the parameters are board and component specific. There will be
+> > > multiple instances. Hence the config part can be shared, while the
+> > > parameters likely won't be.
+> > >
+> > > > > > With that also looking at the above
+> > > > > >
+> > > > > > #define DEFINE_I2C_OF_PROBE_CFG_NONE(_type_)                            \
+> > > > > >         DEFINE_I2C_OF_PROBE_CFG(type, NULL)
+> > > > >
+> > > > > For the "dumb" case it makes sense though, since it would be one instance
+> > > > > per type. But we could go further and just wrap the whole
+> > > > > |chromeos_i2c_probe_data| declaration.
+> > > >
+> > > > Maybe it's too far from now...
+> > >
+> > > This is what I have:
+> > >
+> > > #define DEFINE_CHROMEOS_I2C_PROBE_DATA_DUMB(_type)
+> > >                         \
+> > >        static const struct chromeos_i2c_probe_data
+> > > chromeos_i2c_probe_dumb_ ## _type = {       \
+> >
+> > >                .cfg = &(const struct i2c_of_probe_cfg) {
+> >
+> > But the below is static initializer, why do you need a compound literal here?
+> 
+> Because .cfg takes a pointer to a struct. It's not an embedded struct.
+> The compound literal creates the internal struct, and then its address
+> is taken and assigned to the .cfg field.
+> 
+> Does that make sense?
 
-Thanks
-	Andrew
+Okay, I see now. Yeah, I have no preferences here, I saw the code like in split
+version or like in yours. I _slightly_ bend to non-compound literal variant,
+but again here it might be not worth doing a such.
+
+> > >                         \
+> > >                        .type = #_type,
+> > >                         \
+> > >                },
+> > >                         \
+> > > };
+> > >
+> > > DEFINE_CHROMEOS_I2C_PROBE_DATA_DUMB(touchscreen);
+> >
+> > s/dumb/simple/g
+> 
+> "simple" is taken. This is "dumb" as in it does not need any helpers.
+> Maybe "no-op" if you don't like the negative connotation?
+
+_BY_TYPE ?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
