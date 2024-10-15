@@ -1,149 +1,251 @@
-Return-Path: <linux-kernel+bounces-365856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5967999EC4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:17:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBE099EC77
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB671C20FB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:17:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEF561C232DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9DD221E25;
-	Tue, 15 Oct 2024 13:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E41F1D515B;
+	Tue, 15 Oct 2024 13:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OkagAwD0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZFC54ksT"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35F53DABF9;
-	Tue, 15 Oct 2024 13:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642151D5144
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728998073; cv=none; b=MQ5mXYt82sBgTMmTvFXWJOz9E6wwCTsXwd3vA5hIIJ3ySYBJk7XaqvsHdEg2mATYYOtOFY9B44Slw1t8EyjE+69wyT0KTte//yM6jXwT31VyNq3jr3xacAGnQbf0/vg8dyiS5X/HnxC4J4rwoNEK+chRi+PQIqp9Ac17CxkzHd4=
+	t=1728998127; cv=none; b=hK3wNrNCAkUm8+yJ7gm2Vy8yb+1OY2Yl4iwalexa7M+zexzcYbw96aAwJugZN0umYLb/p9AeqUpG6IKzUo0SY4xf8Kp6om0R15LDXJGPMrUXYg8/tNGt0d1GS2rLKPN+aaB2/+JsVP+8jCymZPRh4zCc6IkTxJy9aPqUu+D1rqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728998073; c=relaxed/simple;
-	bh=pVytoBZjvw24+zXCqGVMNrOmcReAspOM9jKLTykLnIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWEfeHNVZdFsSjOALHah+BlkVigoQYh8f9e5yZBCsMCOXVNUkMRZEqpbqvp493rQQk3p9bMnRv7bbNDKHPLbccIPYa6aLXQHbSY40f9oGR1JKR1Nye0ym01A61CW81z4va3HUEQJEsk8Wymd5AuVX7FmcF4gbktvDiY3sTzTH4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OkagAwD0; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728998072; x=1760534072;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pVytoBZjvw24+zXCqGVMNrOmcReAspOM9jKLTykLnIY=;
-  b=OkagAwD0zBmYw/KW0s7lBLcpBobICn7UA9nJqkEYem7krSgLE97nWPKP
-   J21k2R/P20fK2gFBdAQN6yb3LXPO6d8upcMv2aqpN9Lnr5e+Q+HvAgr2Q
-   dnwF8AfklpSXOYu6ntRAeOOWFEVUEd0IfJ5gh5ebMfjZ1N6PYslp1jRbK
-   5l0fsxOgvBQxvxCnDIrmdoiqSqUAcceoP7If6Q+S94NHg2vtOMckHaTtT
-   4gcHlqqyZJQrslOKW+h6mLRrCsNmOMOnmx1J/UTHDMHu+8W7SkgMv7Upw
-   xUWG+x/EbqQGE+zyJ8puFOlOKd9DDnzkzmpfbnOI/VN3RPumK8YimRypl
-   A==;
-X-CSE-ConnectionGUID: QqG+RS5yTGGpqdp1bgdQNQ==
-X-CSE-MsgGUID: rJI0oiW5T9iRYGrCVZC5UQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="27871633"
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="27871633"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 06:14:31 -0700
-X-CSE-ConnectionGUID: wGljMMTKSTORd+Ec9TWRWw==
-X-CSE-MsgGUID: 5Vs06dTGQ0uCBROLql8TwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
-   d="scan'208";a="82455699"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.221.110]) ([10.124.221.110])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 06:14:30 -0700
-Message-ID: <3ae51aac-085a-44f6-9f6f-565c7c5687ad@intel.com>
-Date: Tue, 15 Oct 2024 06:14:29 -0700
+	s=arc-20240116; t=1728998127; c=relaxed/simple;
+	bh=rrhBrBc+qvOCCcPqzb2+wUP0QjsBHHS8osxeBJXVnA8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FONP/AVH6PSlb4e2tTqdkNlEshwLtkWdDWCZ4S0wvP/jDQOFUd4Qs3BZrNfrIAugy0r7Pnr/P7Karo7MrLYvm/J046G/+cJrMRAQaz5LNT0KgakCCoAJI3cK1FJwJj/Dww+n1/AsB7GrraOYZJ1Uy6CfaB286hsVNmVkUXIqC8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZFC54ksT; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-37d563a1af4so1483136f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728998124; x=1729602924; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hoRLJEvz7irCXQivoQ+pb+FwvQNe9+OAJ0vzs/OATXM=;
+        b=ZFC54ksTUFlewIYaFMVyrhOCRGTFrBplAPkyDaGehmETRf7nqgKGnMZf/caEfpkbYg
+         nzRTK+Y57eB9nH6U9g3VnakSyBXrnjjfzoM7MW06OV+UFKRjR/Eye2pxlviSUI8vuvW5
+         kx3QyWjbADYOEu6//CfvfU8ReCccxg95/idktLlrfIN0iHgASjMoW2AMp460cTM+I0dr
+         VbvYFKirY2mMAD2WIBeuf/vOICyhcPBpNUzkmfxnUZhY9ptnv6WMO3Z3vPd6z6v+dNYl
+         rML8LXPQbEzZ011IC7kB79p1ar+E2KvMbX3VHZQQzf4DO8SL/qUOJk50FUGcku/5hUTc
+         bgWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728998124; x=1729602924;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hoRLJEvz7irCXQivoQ+pb+FwvQNe9+OAJ0vzs/OATXM=;
+        b=oqb/J+PHBr0fX0xj8jljZsdoezcBlfNLfPjYzLjoClCG5GCKnzZIAyEFTsHaXt/i1z
+         TexNBPUTRBHSpLWjUqenXuRnP8HSvC/9e+3sLk/BAm7PjxMnrFHyiqdLHcJTrdO6gS1x
+         G11+4BSbhsw3nGV2APEwsrNbdeKhWNZxX8UbQMz2/Ovzk0sh4L5GwT8WS/Qo+sXFyODC
+         9eScNXxy55Tog3KV4uqEN/gXYB6OFD/LMvHLAvMxw/BfMxUnqZmAFHGIgD51svQz65Nq
+         uiqV6nUs/WCQSm716jtht8g6APXzu1gtcjsxtFGRkthEVbzNHvrCaO+uNDrAk8GEFh2E
+         P5iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/NmWRp6WH7kBOLYqIuEW8Zrxm7LPZ9Ib0evPKKpw3NN+v1II0BuwVOTuNZbXnJXrPbxeswMVrxCz2nZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc5upOvADG+ar4jWR0TYwVh7Zh4V3ub5rSLpTEmqx4p7gH+OKa
+	Exp2QfSCgd70pGPQfdM26cMF33cuNDI10E8Gjsm0hiAuKa7z9d95n9+K7BBNOmLJknKlAvnqgZR
+	KvLxbl1YPvFpSwQ==
+X-Google-Smtp-Source: AGHT+IGB+6IhvdLWc6tPWiAp1cZCw12Xh9NGDAKDDG+YlQKWgCSiO9km/Ea5ijizW73RyBbMT/bf9K6yb/iXiWo=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:adf:ef52:0:b0:37d:4e56:9a42 with SMTP id
+ ffacd0b85a97d-37d86bb88c3mr103f8f.4.1728998123431; Tue, 15 Oct 2024 06:15:23
+ -0700 (PDT)
+Date: Tue, 15 Oct 2024 13:14:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/kvm: Override default caching mode for SEV-SNP and
- TDX
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Binbin Wu <binbin.wu@intel.com>, Tom Lendacky <thomas.lendacky@amd.com>
-References: <20241015095818.357915-1-kirill.shutemov@linux.intel.com>
- <294ce9a5-09b8-4248-85ad-18bdea479c73@suse.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <294ce9a5-09b8-4248-85ad-18bdea479c73@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAM9qDmcC/23RzW7DIAwH8FepOC+TzTc97T2mHSCYFmlrqqSKN
+ lV995EcNhA92tLvj23ubKE508KOhzubac1Lni6lQHw5sPHsLycaciwNxoFL0KCH2+xHuk75chs
+ EEqrggKRBVsB1ppS/97T3j1Kf83Kb5p89fMWt+zRmxQEGrRRqbkJSGN5O03T6pNdx+mJbzsori
+ 9BYXmzyFHy0GIRSnRWV5dhYUawjKYnI82B7K2trGyuLFUpExYV3I/ZW/VsLvLFqn9mjltLJOPb
+ 76tq27+piPRfJAiRE6zprKovtnU2xUYMLDnWw2FtbWd7ObLeZYVTWOdIpis66P4sA7Z1dseijC CYa65/si1BhbHH5bxhMCpFk1EHx9tKPx+MX1WiDcMQCAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5896; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=rrhBrBc+qvOCCcPqzb2+wUP0QjsBHHS8osxeBJXVnA8=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnDmrTDvc9AHxNexAsNlXKCw6r9RsObABOQs0Yu
+ 0na8cLKMsGJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZw5q0wAKCRAEWL7uWMY5
+ Ril4EACEEPWIsnxWUmp0EulhBZxkpCfaANF/knPC098SJ1716PZ2nxf9BGUe5QuWeDFtEGHmtW0
+ 4KpMKAuId6o2ya+/wIN8Su9bPFEA92WH0OPa73srl31I8cAj/xt1rQ3VAEJrYtaffdHDmbFIfUm
+ gF1r5a07aJ3t9dVW+EgVv+sLVzP2eAzB2hMeG6d3Sn8x0agjTjddaHGFyy2pobdFfPbADxHqyeW
+ DduR8eX8D1iH/oM5o5D7krrgURZEzjR0kUtgoL0NSAdonx1aQsoU1vOGKNR5ux9z3OTfvTPSCT8
+ IBgI0ItSSw/DdLJ8DzbRK+LX2zDI1DEv032C4luAm3i9X9qtqiv10fhzDAQGx4A1vIEOlSL0bSx
+ 7roGpbCf5yJA2BIJOgUGNDCnKUCaM6rHGaV7bYjP+V5P7AEmZ0+VMkS9JKSWWcz2D2k+WtPtv62
+ VcUOXVPjjA2Y0A081Iv72HF2l4nFPXY4212q5EDcNyRK5Gf4QC2eDZ8l/noTer4Y8WPkUu9W7Is
+ ngRLQFngXoWv8KlwSb2h4IEYJtrYmSf0XQRh6l3gTC+9cxTgGsqq4pD6qlGY7erJ++UxVQUYKLW
+ YQroPanOFPJzBxGOGRvbn6Zuh7ze67log3wsSPtXihtxF+xok/mAobTsrPl/wYeMzbOy1A+AR2M kaHTj0sqJaMTIJA==
+X-Mailer: b4 0.13.0
+Message-ID: <20241015-tracepoint-v11-0-cceb65820089@google.com>
+Subject: [PATCH v11 0/5] Tracepoints and static branch in Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
+	Alice Ryhl <aliceryhl@google.com>, Carlos Llamas <cmllamas@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 10/15/24 03:12, Jürgen Groß wrote:
->>
->> +    /* Set WB as the default cache mode for SEV-SNP and TDX */
->> +    mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
-> 
-> Do you really want to do this for _all_ KVM guests?
-> 
-> I'd expect this call to be conditional on TDX or SEV-SNP.
+An important part of a production ready Linux kernel driver is
+tracepoints. So to write production ready Linux kernel drivers in Rust,
+we must be able to call tracepoints from Rust code. This patch series
+adds support for calling tracepoints declared in C from Rust.
 
-I was confused by this as well.
+This series includes a patch that adds a user of tracepoits to the
+rust_print sample. Please see that sample for details on what is needed
+to use this feature in Rust code.
 
-Shouldn't mtrr_overwrite_state() be named something more like:
+This is intended for use in the Rust Binder driver, which was originally
+sent as an RFC [1]. The RFC did not include tracepoint support, but you
+can see how it will be used in Rust Binder at [2]. The author has
+verified that the tracepoint support works on Android devices.
 
-	guest_force_mtrr_state()
+This implementation implements support for static keys in Rust so that
+the actual static branch happens in the Rust object file. However, the
+__DO_TRACE body remains in C code. See v1 for an implementation where
+__DO_TRACE is also implemented in Rust.
 
-or something?
+Based on top of commit eb887c4567d1 ("tracing: Use atomic64_inc_return()
+in trace_clock_counter()") from trace/for-next, which is in turn based
+on top of v6.12-rc2.
 
-The mtrr_overwrite_state() comment is pretty good, but it looks quite
-confusing from the caller.
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+Link: https://r.android.com/3119993 [2]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v11:
+- Fix build failure with CONFIG_JUMP_LABEL disabled.
+- Remove CONFIG_HAVE_JUMP_LABEL_HACK duplication.
+- Remove explicit export of rust_helper_static_key_count.
+- Add Gary's Reviewed-by to first patch.
+- Link to v10: https://lore.kernel.org/r/20241011-tracepoint-v10-0-7fbde4d6b525@google.com
+
+Changes in v10:
+- Rebase on trace/for-next.
+- Use static_branch_unlikely as of [PATCH] tracepoints: Use new static branch API.
+- Update second patch as of [PATCH] tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL.
+- Link to v9: https://lore.kernel.org/r/20241001-tracepoint-v9-0-1ad3b7d78acb@google.com
+
+Changes in v9:
+- Rebase on v6.12-rc1.
+- Add some Reviewed-by tags from Boqun.
+- Link to v8: https://lore.kernel.org/r/20240822-tracepoint-v8-0-f0c5899e6fd3@google.com
+
+Changes in v8:
+- Use OBJTREE instead of SRCTREE for temporary asm file.
+- Adjust comments on `asm!` wrapper to be less confusing.
+- Include resolution of conflict with helpers splitting.
+- Link to v7: https://lore.kernel.org/r/20240816-tracepoint-v7-0-d609b916b819@google.com
+
+Changes in v7:
+- Fix spurious file included in first patch.
+- Fix issue with riscv asm.
+- Fix tags on fourth patch to match fifth patch.
+- Add Reviewed-by/Acked-by tags where appropriate.
+- Link to v6: https://lore.kernel.org/r/20240808-tracepoint-v6-0-a23f800f1189@google.com
+
+Changes in v6:
+- Add support for !CONFIG_JUMP_LABEL.
+- Add tracepoint to rust_print sample.
+- Deduplicate inline asm.
+- Require unsafe inside `declare_trace!`.
+- Fix bug on x86 due to use of intel syntax.
+- Link to v5: https://lore.kernel.org/r/20240802-tracepoint-v5-0-faa164494dcb@google.com
+
+Changes in v5:
+- Update first patch regarding inline asm duplication.
+- Add __rust_do_trace helper to support conditions.
+- Rename DEFINE_RUST_DO_TRACE_REAL to __DEFINE_RUST_DO_TRACE.
+- Get rid of glob-import in tracepoint macro.
+- Address safety requirements on tracepoints in docs.
+- Link to v4: https://lore.kernel.org/rust-for-linux/20240628-tracepoint-v4-0-353d523a9c15@google.com
+
+Changes in v4:
+- Move arch-specific code into rust/kernel/arch.
+- Restore DEFINE_RUST_DO_TRACE at end of define_trace.h
+- Link to v3: https://lore.kernel.org/r/20240621-tracepoint-v3-0-9e44eeea2b85@google.com
+
+Changes in v3:
+- Support for Rust static_key on loongarch64 and riscv64.
+- Avoid failing compilation on architectures that are missing Rust
+  static_key support when the archtectures does not actually use it.
+- Link to v2: https://lore.kernel.org/r/20240610-tracepoint-v2-0-faebad81b355@google.com
+
+Changes in v2:
+- Call into C code for __DO_TRACE.
+- Drop static_call patch, as it is no longer needed.
+- Link to v1: https://lore.kernel.org/r/20240606-tracepoint-v1-0-6551627bf51b@google.com
+
+---
+Alice Ryhl (5):
+      rust: add static_branch_unlikely for static_key_false
+      rust: add tracepoint support
+      rust: samples: add tracepoint to Rust sample
+      jump_label: adjust inline asm to be consistent
+      rust: add arch_static_branch
+
+ MAINTAINERS                             |  1 +
+ arch/arm/include/asm/jump_label.h       | 14 ++++---
+ arch/arm64/include/asm/jump_label.h     | 20 +++++----
+ arch/loongarch/include/asm/jump_label.h | 16 ++++---
+ arch/riscv/include/asm/jump_label.h     | 50 ++++++++++++----------
+ arch/x86/include/asm/jump_label.h       | 35 ++++++----------
+ include/linux/tracepoint.h              | 28 ++++++++++++-
+ include/trace/define_trace.h            | 12 ++++++
+ include/trace/events/rust_sample.h      | 31 ++++++++++++++
+ rust/Makefile                           |  6 +++
+ rust/bindings/bindings_helper.h         |  3 ++
+ rust/helpers/helpers.c                  |  1 +
+ rust/helpers/jump_label.c               | 14 +++++++
+ rust/kernel/.gitignore                  |  3 ++
+ rust/kernel/arch_static_branch_asm.rs.S |  7 ++++
+ rust/kernel/jump_label.rs               | 74 +++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs                      | 37 +++++++++++++++++
+ rust/kernel/tracepoint.rs               | 49 ++++++++++++++++++++++
+ samples/rust/Makefile                   |  3 +-
+ samples/rust/rust_print.rs              | 18 ++++++++
+ samples/rust/rust_print_events.c        |  8 ++++
+ scripts/Makefile.build                  |  9 +++-
+ 22 files changed, 374 insertions(+), 65 deletions(-)
+---
+base-commit: eb887c4567d1b0e7684c026fe7df44afa96589e6
+change-id: 20240606-tracepoint-31e15b90e471
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
