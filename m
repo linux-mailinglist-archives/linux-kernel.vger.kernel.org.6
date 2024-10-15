@@ -1,79 +1,68 @@
-Return-Path: <linux-kernel+bounces-365655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B807399E587
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:25:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF02099E586
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08AD1C23290
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:25:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C410B24BE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ED21E766C;
-	Tue, 15 Oct 2024 11:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9281D90CD;
+	Tue, 15 Oct 2024 11:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fdDLk2Wn"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2bOQRTfv"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5071D9350
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0B4189BB2;
+	Tue, 15 Oct 2024 11:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728991505; cv=none; b=oDReNqjF5vlsC3L+jK7d/87DHP6c1ArTTvbPDF6sAHzdf4PtsQLziZuXvRsB0vV7HXrkqOcmlr+ykvoAL2psIZzXhp5D01eKzlcAkOE7dSmF9uxY44ZcwCWcwDMf7CT12VtpExkcRCe+AzvaK5GFzdU735wharTNqwPeTWg2rsI=
+	t=1728991501; cv=none; b=frAiOWDLRzrQl5sPBXmkk9mpk3hw8RmOArjIeaBAAyc9pLqX4wVVMpuDNcrCaW4XmGjEjisgQYMZVYf4wtvMCwaClNOGzoNb8Z8Z/8kUMSl9VxvujZCeMu/5ZbxFOvJLBPiVBQduf8BQCjRTnu9xBUhgFwNjHGS7JMxWDOjcFpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728991505; c=relaxed/simple;
-	bh=UQvVfDsN+wCSuoGr8Xs5sVe0c88UGdg9Wkzi7gsbGd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=inkQai61098k/CZZ5Rlk8zWNFqkYJhTeb67BRgXwm0MbTRUfZ021jN1Mf3mMW1z4h7M9k34qoPJvs03SSicWKlbxKnnEUXOW7vkZoZ4BXx+sfO9as2TLuJoeoLwSpjHqM3AMBC14qPyVtziTKS9YcE262EU7qwbi/pIHBri1L+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fdDLk2Wn; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4311c285bc9so37929255e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728991500; x=1729596300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ey51TlE0yC24bR5TT4hURbiSeQAHlXZcKEm5xeeNSWk=;
-        b=fdDLk2WnKV19JUqR/ILBJxkfOff1L1zkD2yCYeLCGpM0QB8c/iLnT9tcUMkJFstj6+
-         27ClMZ41Jo4eFbhxI9hAJjT4pZs8Q5dXAoehEUyCbkLjAiBBavCLCWU6eb4i87t5kSoE
-         apvB26eXdMmdGRsgTSQFr437QpEvjBo40wmWooeArx/4fSLmwwS/Qw7NE5jI27VoAgx0
-         lgBVNGB/OIeDySZVJ7RFvurmEKhUimG6ZgY+A0WOWyZW1ttfjaFzEnYp2WDxv0bg+KG5
-         KCI4CR7DvpyxNs6Va7uK4ii4jjAGIp0kgQYR9CCpDy5z7TFzkAlUZHOzljDFCozJxBhD
-         XikQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728991500; x=1729596300;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ey51TlE0yC24bR5TT4hURbiSeQAHlXZcKEm5xeeNSWk=;
-        b=hvDFNuolfj0qeplZ5COQlHr1xIvx0DDQM5O2c8KPUuA6F6fapdlieGt2+7bbx4gfQW
-         OjubFOx1+MrvDbS4/C1DsSkA7hFj85zC4K0sytKvPQJHDkjtXgNql6MSXrQd/ym7Lbml
-         dyeRBThhicmvcY3XAc6Xy+Dsf2kkitn6+xpSS3W0Vv2zjj1ei/2xDv11YYy99UvyGZL+
-         M9668ZSMvtEDv6YOTubArwG69yvSQfIEiMO09zpM0TElbEb8MeggPSEHXu9iBmxs8jZh
-         6WHhdqNi4E8k3Gn6XTeZDONJHjGm0SSNMxB/HERDQGahq9PST2+imdAI0Skt/SQ5RWZb
-         M4ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVIXpdnptiHG5eUYPHOtpTOyVpFW2colWiCSDV6+EVaIULwLHasCaM/klSo2xLC+NPTcYOulPxCA3/UXVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhuaNED7i2zf93OKynDEv9rs3V4fqzseMoNZk8wDp9xDOTQqbj
-	TD09vdCTS6IZMGXw7ZEIA2bvyg8BTP/AsNlcfbVcppNywghGg/i5wf4mWp9H/gg=
-X-Google-Smtp-Source: AGHT+IGsA1lW0y1Xr625xyDZAXLEPxBdzu+Udz8r/9WbzxVdp1+43c5DolKE7kHXPHKVGsLDJA71Kw==
-X-Received: by 2002:a05:600c:5122:b0:42f:8d36:855e with SMTP id 5b1f17b1804b1-4311deb5f47mr148180455e9.5.1728991500482;
-        Tue, 15 Oct 2024 04:25:00 -0700 (PDT)
-Received: from dhcp161.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6c767csm14952715e9.48.2024.10.15.04.24.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 04:25:00 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH v2] ring-buffer: Fix reader locking when changing the sub buffer order
-Date: Tue, 15 Oct 2024 13:24:29 +0200
-Message-ID: <20241015112440.26987-1-petr.pavlu@suse.com>
+	s=arc-20240116; t=1728991501; c=relaxed/simple;
+	bh=GDaNjSSJbImDlNQZ4ChJFGlxOUagP5WQW5ICLicnLTc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b9hPpE/F2hOFhzQOYmbg1knDzhB01XHL8xB4cLCKosMqGi3PPoLPAMpWYtjMqJKjS9hDQNp6+Ph4DYqA6zHNW241Nej2s5JVEXUcO/YO/v+bqnEtVXGhCCLDOWTjiiR65B6Jt+s9tzZZbYD2ejlqD7B5v1ZD2Y48zMMM3lKK8rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2bOQRTfv; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1728991499; x=1760527499;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GDaNjSSJbImDlNQZ4ChJFGlxOUagP5WQW5ICLicnLTc=;
+  b=2bOQRTfvC/utUDKgcBYgL0aZxrouc4CUXYHUjoCJpHD7ULMvUvLnjFF9
+   gLAIwn9g1o8p3LnPAgF5OLD/SZCxdiwX+GBlFdeuuPJZMSsutHNzkQSEM
+   oqkbj3Tih8mw615+HOtwXFgs8ZvoyJ2YDnEW1ZR3OrlLSIcDZxObWoGO9
+   aZhVNLFYkgzWS7cuP+iUFO6jHEM/GZti+DNyxtS+U34ofjZWds+NphWYg
+   JKv/O3Nh2gcVOtnZnV5uCtq7HZeqdIY1rFAOSWa4WAXgFA2pemQt/jNkB
+   bnnr7zWxxmKqyotNHCycb4OOQDDkZQmyrBlDsjEak/uXrdDwnjGu9ocH3
+   Q==;
+X-CSE-ConnectionGUID: T1FxkLg4T/ecjnzvvsNMBw==
+X-CSE-MsgGUID: 39+YtSOhQ3iCnuOQj+qKAA==
+X-IronPort-AV: E=Sophos;i="6.11,205,1725346800"; 
+   d="scan'208";a="264105777"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Oct 2024 04:24:58 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 15 Oct 2024 04:24:47 -0700
+Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 15 Oct 2024 04:24:45 -0700
+From: <victor.duicu@microchip.com>
+To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>
+CC: <marius.cristea@microchip.com>, <victor.duicu@microchip.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4] iio: adc: pac1921: Add ACPI support to Microchip pac1921
+Date: Tue, 15 Oct 2024 14:24:41 +0300
+Message-ID: <20241015112441.11745-1-victor.duicu@microchip.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,119 +71,213 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The function ring_buffer_subbuf_order_set() updates each
-ring_buffer_per_cpu and installs new sub buffers that match the requested
-page order. This operation may be invoked concurrently with readers that
-rely on some of the modified data, such as the head bit (RB_PAGE_HEAD), or
-the ring_buffer_per_cpu.pages and reader_page pointers. However, no
-exclusive access is acquired by ring_buffer_subbuf_order_set(). Modifying
-the mentioned data while a reader also operates on them can then result in
-incorrect memory access and various crashes.
+From: Victor Duicu <victor.duicu@microchip.com>
 
-Fix the problem by taking the reader_lock when updating a specific
-ring_buffer_per_cpu in ring_buffer_subbuf_order_set().
+This patch implements ACPI support to Microchip pac1921.
+The driver can read shunt resistor value and label from ACPI table.
 
-Link: https://lore.kernel.org/linux-trace-kernel/20240715145141.5528-1-petr.pavlu@suse.com/
-Link: https://lore.kernel.org/linux-trace-kernel/20241010195849.2f77cc3f@gandalf.local.home/
-Link: https://lore.kernel.org/linux-trace-kernel/20241011112850.17212b25@gandalf.local.home/
-Fixes: 8e7b58c27b3c ("ring-buffer: Just update the subbuffers when changing their allocation order")
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
 ---
 
-Changes since v1 [1]:
-* Base the patch on top of clean mainline.
-* Add references as Link: in the commit message.
+The patch was tested on minnowboard and sama5.
 
-[1] https://lore.kernel.org/linux-trace-kernel/20241014141554.10484-1-petr.pavlu@suse.com/
+Differences related to previous versions:
+v4:
+- change name of pac1921_shunt_is_valid to pac1921_shunt_is_invalid.
+- fix coding style.
+- in pac1921_parse_of_fw change back to device_property_read_u32.
 
- kernel/trace/ring_buffer.c | 44 ++++++++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 18 deletions(-)
+v3:
+- simplify and make inline function pac1921_shunt_is_valid. Make argument u64.
+- fix link to DSM documentation.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt value is
+read as u64.
+- in pac1921_parse_of_fw remove code for reading label value from
+devicetree.
+- in pac1921_write_shunt_resistor cast the multiply result to u64 in order
+to fix overflow.
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index fb04445f92c3..3ea4f7bb1837 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -6728,39 +6728,38 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
- 	}
+v2:
+- remove name variable from priv. Driver reads label attribute with
+sysfs.
+- define pac1921_shunt_is_valid function.
+- move default assignments in pac1921_probe to original position.
+- roll back coding style changes.
+- add documentation for DSM(the linked document was used as reference).
+- remove acpi_match_device in pac1921_match_acpi_device.
+- remove unnecessary null assignment and comment.
+- change name of function pac1921_match_of_device to
+pac1921_parse_of_fw.
+
+v1:
+- initial version for review.
+
+ drivers/iio/adc/pac1921.c | 104 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 90 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+index a96fae546bc1..8b5127b7ee3c 100644
+--- a/drivers/iio/adc/pac1921.c
++++ b/drivers/iio/adc/pac1921.c
+@@ -67,6 +67,10 @@ enum pac1921_mxsl {
+ #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
+ #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
  
- 	for_each_buffer_cpu(buffer, cpu) {
-+		struct buffer_data_page *old_free_data_page;
-+		struct list_head old_pages;
-+		unsigned long flags;
- 
- 		if (!cpumask_test_cpu(cpu, buffer->cpumask))
- 			continue;
- 
- 		cpu_buffer = buffer->buffers[cpu];
- 
-+		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
++#define PAC1921_ACPI_GET_UOHMS_VALS             0
++#define PAC1921_ACPI_GET_LABEL			1
++#define PAC1921_DSM_UUID                        "f7bb9932-86ee-4516-a236-7a7a742e55cb"
 +
- 		/* Clear the head bit to make the link list normal to read */
- 		rb_head_page_deactivate(cpu_buffer);
+ /*
+  * Pre-computed scale factors for BUS voltage
+  * format: IIO_VAL_INT_PLUS_NANO
+@@ -204,6 +208,11 @@ struct pac1921_priv {
+ 	} scan;
+ };
  
--		/* Now walk the list and free all the old sub buffers */
--		list_for_each_entry_safe(bpage, tmp, cpu_buffer->pages, list) {
--			list_del_init(&bpage->list);
--			free_buffer_page(bpage);
--		}
--		/* The above loop stopped an the last page needing to be freed */
--		bpage = list_entry(cpu_buffer->pages, struct buffer_page, list);
--		free_buffer_page(bpage);
++static inline bool pac1921_shunt_is_invalid(u64 shunt_val)
++{
++	return (shunt_val == 0 || shunt_val > INT_MAX);
++}
++
+ /*
+  * Check if first integration after configuration update has completed.
+  *
+@@ -792,13 +801,13 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	rshunt_uohm = val * MICRO + val_fract;
+-	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
++	rshunt_uohm = (u64)val * MICRO + val_fract;
++	if (pac1921_shunt_is_invalid(rshunt_uohm))
+ 		return -EINVAL;
+ 
+ 	guard(mutex)(&priv->lock);
+ 
+-	priv->rshunt_uohm = rshunt_uohm;
++	priv->rshunt_uohm = (u32)rshunt_uohm;
+ 
+ 	pac1921_calc_current_scales(priv);
+ 
+@@ -1150,6 +1159,71 @@ static void pac1921_regulator_disable(void *data)
+ 	regulator_disable(regulator);
+ }
+ 
++/*
++ * documentation related to the ACPI device definition
++ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
++ */
++static int pac1921_match_acpi_device(struct i2c_client *client, struct pac1921_priv *priv,
++				     struct iio_dev *indio_dev)
++{
++	acpi_handle handle;
++	union acpi_object *rez;
++	guid_t guid;
++	char *label;
++	u64 temp;
++
++	guid_parse(PAC1921_DSM_UUID, &guid);
++	handle = ACPI_HANDLE(&client->dev);
++
++	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
++	if (!rez)
++		return dev_err_probe(&client->dev, -EINVAL,
++				     "Could not read shunt from ACPI table\n");
++
++	temp = rez->package.elements[0].integer.value;
++	ACPI_FREE(rez);
++
++	if (pac1921_shunt_is_invalid(temp))
++		return dev_err_probe(&client->dev, -EINVAL, "Invalid shunt resistor\n");
++
++	priv->rshunt_uohm = temp;
++	pac1921_calc_current_scales(priv);
++
++	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
++	if (!rez)
++		return dev_err_probe(&client->dev, -EINVAL,
++				     "Could not read label from ACPI table\n");
++
++	label = devm_kmemdup(&client->dev, rez->package.elements->string.pointer,
++			     (size_t)rez->package.elements->string.length + 1,
++			     GFP_KERNEL);
++	label[rez->package.elements->string.length] = '\0';
++	indio_dev->label = label;
++	ACPI_FREE(rez);
++
++	return 0;
++}
++
++static int pac1921_parse_of_fw(struct i2c_client *client, struct pac1921_priv *priv)
++{
++	int ret;
++	struct device *dev = &client->dev;
++
++	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
++				       &priv->rshunt_uohm);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Cannot read shunt resistor property\n");
++
++	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
++		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
++				     priv->rshunt_uohm);
++
++	pac1921_calc_current_scales(priv);
++
++	return 0;
++}
++
+ static int pac1921_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+@@ -1176,17 +1250,13 @@ static int pac1921_probe(struct i2c_client *client)
+ 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
+ 	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
+ 
+-	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
+-				       &priv->rshunt_uohm);
+-	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Cannot read shunt resistor property\n");
+-	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
+-		return dev_err_probe(dev, -EINVAL,
+-				     "Invalid shunt resistor: %u\n",
+-				     priv->rshunt_uohm);
 -
--		/* Free the current reader page */
--		free_buffer_page(cpu_buffer->reader_page);
-+		/*
-+		 * Collect buffers from the cpu_buffer pages list and the
-+		 * reader_page on old_pages, so they can be freed later when not
-+		 * under a spinlock. The pages list is a linked list with no
-+		 * head, adding old_pages turns it into a regular list with
-+		 * old_pages being the head.
-+		 */
-+		list_add(&old_pages, cpu_buffer->pages);
-+		list_add(&cpu_buffer->reader_page->list, &old_pages);
+-	pac1921_calc_current_scales(priv);
++	if (ACPI_HANDLE(&client->dev))
++		ret = pac1921_match_acpi_device(client, priv, indio_dev);
++	else
++		ret = pac1921_parse_of_fw(client, priv);
++	if (ret < 0)
++		return dev_err_probe(&client->dev, ret,
++				     "parameter parsing error\n");
  
- 		/* One page was allocated for the reader page */
- 		cpu_buffer->reader_page = list_entry(cpu_buffer->new_pages.next,
- 						     struct buffer_page, list);
- 		list_del_init(&cpu_buffer->reader_page->list);
+ 	priv->vdd = devm_regulator_get(dev, "vdd");
+ 	if (IS_ERR(priv->vdd))
+@@ -1243,11 +1313,17 @@ static const struct of_device_id pac1921_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, pac1921_of_match);
  
--		/* The cpu_buffer pages are a link list with no head */
-+		/* Install the new pages, remove the head from the list */
- 		cpu_buffer->pages = cpu_buffer->new_pages.next;
--		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
--		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
--
--		/* Clear the new_pages list */
--		INIT_LIST_HEAD(&cpu_buffer->new_pages);
-+		list_del_init(&cpu_buffer->new_pages);
- 
- 		cpu_buffer->head_page
- 			= list_entry(cpu_buffer->pages, struct buffer_page, list);
-@@ -6769,11 +6768,20 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
- 		cpu_buffer->nr_pages = cpu_buffer->nr_pages_to_update;
- 		cpu_buffer->nr_pages_to_update = 0;
- 
--		free_pages((unsigned long)cpu_buffer->free_page, old_order);
-+		old_free_data_page = cpu_buffer->free_page;
- 		cpu_buffer->free_page = NULL;
- 
- 		rb_head_page_activate(cpu_buffer);
- 
-+		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-+
-+		/* Free old sub buffers */
-+		list_for_each_entry_safe(bpage, tmp, &old_pages, list) {
-+			list_del_init(&bpage->list);
-+			free_buffer_page(bpage);
-+		}
-+		free_pages((unsigned long)old_free_data_page, old_order);
-+
- 		rb_check_pages(cpu_buffer);
- 	}
- 
++static const struct acpi_device_id pac1921_acpi_match[] = {
++	{ "MCHP1921" },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
+ static struct i2c_driver pac1921_driver = {
+ 	.driver	 = {
+ 		.name = "pac1921",
+ 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
+ 		.of_match_table = pac1921_of_match,
++		.acpi_match_table = pac1921_acpi_match
+ 	},
+ 	.probe = pac1921_probe,
+ 	.id_table = pac1921_id,
 
-base-commit: eca631b8fe808748d7585059c4307005ca5c5820
+base-commit: c3e9df514041ec6c46be83801b1891392f4522f7
 -- 
 2.43.0
 
