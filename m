@@ -1,49 +1,62 @@
-Return-Path: <linux-kernel+bounces-365560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 522A099E464
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:43:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3183799E467
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF139B22900
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FBA1C21D6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6E11E4110;
-	Tue, 15 Oct 2024 10:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE32D1E5720;
+	Tue, 15 Oct 2024 10:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vtOJWA/y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2ASM1MS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42944683
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7B72FC52;
+	Tue, 15 Oct 2024 10:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989025; cv=none; b=iROKug8qsYnD3Ayei3wYDqNdKebaxjWpl0UeTVyafBut5l1EuhwaGSsnunjHBSPcjtyaT8XNzJ3DnoCuZbrsm8mbcclSGnoIi70Hr98K3hJpwsSQRoUM3T0kdFEa/UNvRKFIRqKT0VGiiG/BQlfv8lPg3tCW5tPGB//XuOBE0HA=
+	t=1728989039; cv=none; b=bX/rjr3rBDBE/eb8wHTXm1PCRVz0c+d9snvQAYLKjI9nKImc7EF66X8NSUrbj/LPep8/14rtyv7SsZRslWEOX8/enO5XIST8CyhEUwbRf1vVvevB081enZSCWCO0xIoXgUlgEE2QZ+dZDHI2vNdOe+P8lB7fIT7VMi+lt6sl15Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989025; c=relaxed/simple;
-	bh=c7G5sAQyubxgmbQhX09iwpiBcYl22G4olGhAxMgWzX4=;
+	s=arc-20240116; t=1728989039; c=relaxed/simple;
+	bh=/G/Q5eALeFqEjfAGFW6b6pAIrUGg9FMOG0K7xZO3Gps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5xPOOv0k+MG5PZtO71AurFM71kX7IN1zlX+fuWQqQ/GBKZRMUwxjRvUmGKDxEVKnvsJwxR7j/ZhBB+em7y301o+lG9GqrkIiy0ejcdg28A1iX3gqUGHo7zuCCY/DRv/gyilg08vBkrJ8uEkIsDl+og+DHU6aGRL31ywrkcupO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vtOJWA/y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04DF2C4CECF;
-	Tue, 15 Oct 2024 10:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728989024;
-	bh=c7G5sAQyubxgmbQhX09iwpiBcYl22G4olGhAxMgWzX4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0GaOOIxUdZBXluMHMaI9dCcMXMAdyOK6D2mdmEN3YyHyDpWL4fcShlAYLP3jsfSyZGJwqmTI8UAk4eWWkcYKDTn8/C13JUNEhDmFgIV8OuZEFE1FIU1qlxO+brD9F/L7aSPKX5mTYPkdkcbo3CLbcxFsjZ0ElvcBBvA7ZOWChI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2ASM1MS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA9E4C4CEC6;
+	Tue, 15 Oct 2024 10:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728989038;
+	bh=/G/Q5eALeFqEjfAGFW6b6pAIrUGg9FMOG0K7xZO3Gps=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vtOJWA/yh+LgU3EFdXJjXF2UQGXymzNTqmL98DHrfCvWJrJPsjA482hjaPsuUwCzJ
-	 Nd6m0YeOxQIvxb8vLSCvs5RhV6zXqUGgMjggbIhatFZEKs3tBiL/3/sxy9SubnZleY
-	 CxsqRZsmEmtNIsygSqtYWMtM0YQSoxF4nrp08UnY=
-Date: Tue, 15 Oct 2024 12:43:41 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Abhinav Srivastava <atg271@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ethernet: Improve formatting of conditional statements
-Message-ID: <2024101509-overheat-dole-54e4@gregkh>
-References: <20241015044507.1177265-1-atg271@gmail.com>
+	b=b2ASM1MSxcYS1XVUlom2B9HpA4sTgg6zkTzvV76z0kN98YDIZ9aXa9Y6skJHHV58H
+	 UCgkasc4Iq08zUYH0cCvNqlTgNTimAr3JlG57Z6+RK0Qp5jPJqg2Cxb3ZMjIit1oYq
+	 NLyJ4yD8guY6RvAc4Gdy0cvsdr4y21Zz4ac6YC8JoCK8aEXgsfxb7zbBYH9EXX6Ghh
+	 oq0H5fWVG3qvfGkVVasFL+nG5ANnEQ3iL1OcJqve2TGlh8G9cKEzYgydzPnj7FPmfz
+	 DAAKRANBPuHZ4c31vo4TIR96Li1doZARmPqawiwrmWRSY6c+8gcXhviHQtVbt4fu1+
+	 ZzEGgjlj5q2nA==
+Date: Tue, 15 Oct 2024 11:43:53 +0100
+From: Simon Horman <horms@kernel.org>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Lee Trager <lee@trager.us>, Alexander Duyck <alexanderduyck@fb.com>,
+	Jakub Kicinski <kuba@kernel.org>, kernel-team@meta.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mohsin Bashir <mohsin.bashr@gmail.com>,
+	Sanman Pradhan <sanmanpradhan@meta.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] eth: fbnic: Add devlink dev flash support
+Message-ID: <20241015104353.GC569285@kernel.org>
+References: <20241012023646.3124717-1-lee@trager.us>
+ <20241012023646.3124717-3-lee@trager.us>
+ <8502a496-f83d-470c-a84d-081a7c7e2cae@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,62 +65,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015044507.1177265-1-atg271@gmail.com>
+In-Reply-To: <8502a496-f83d-470c-a84d-081a7c7e2cae@linux.dev>
 
-On Mon, Oct 14, 2024 at 09:45:07PM -0700, Abhinav Srivastava wrote:
-> Improve readability of conditional statements in the Octeon ethernet
-> driver by removing unnecessary parentheses and adjusting line breaks.
-> This change focuses on three functions:
+On Mon, Oct 14, 2024 at 12:18:36PM +0100, Vadim Fedorenko wrote:
+> On 12/10/2024 03:34, Lee Trager wrote:
+> > fbnic supports updating firmware using a PLDM image signed and distributed
+> > by Meta. PLDM images are written into stored flashed. Flashing does not
+> > interrupt operation.
+> > 
+> > On host reboot the newly flashed UEFI driver will be used. To run new
+> > control or cmrt firmware the NIC must be power cycled.
+> > 
+> > Signed-off-by: Lee Trager <lee@trager.us>
+
+...
+
+> > diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+
+...
+
+> > +/**
+> > + * fbnic_send_component_table - Send PLDM component table to the firmware
+> > + * @context: PLDM FW update structure
+> > + * @component: The component to send
+> > + * @transfer_flag: Flag indication location in component tables
+> > + *
+> > + * Read relevant data from component table and forward it to the firmware.
+> > + * Check response to verify if the firmware indicates that it wishes to
+> > + * proceed with the update.
+> > + *
+> > + * Return: zero on success
+> > + *	    negative error code on failure
+> > + */
+> > +static int fbnic_send_component_table(struct pldmfw *context,
+> > +				      struct pldmfw_component *component,
+> > +				      u8 transfer_flag)
+> > +{
+> > +	struct device *dev = context->dev;
+> > +	u16 id = component->identifier;
+> > +	u8 test_string[80];
+> > +
+> > +	switch (id) {
+> > +	case QSPI_SECTION_CMRT:
+> > +	case QSPI_SECTION_CONTROL_FW:
+> > +	case QSPI_SECTION_OPTION_ROM:
+> > +		break;
+> > +	default:
+> > +		dev_err(dev, "Unknown component ID %u\n", id);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	dev_dbg(dev, "Sending PLDM component table to firmware\n");
+> > +
+> > +	/* Temp placeholder */
+> > +	memcpy(test_string, component->version_string,
+> > +	       min_t(u8, component->version_len, 79));
+> > +	test_string[min_t(u8, component->version_len, 79)] = 0;
 > 
-> - cvm_oct_common_change_mtu()
-> - cvm_oct_common_set_multicast_list()
-> - cvm_oct_set_mac_filter()
+> Looks like this construction can be replaced with strscpy().
+> There were several patchsets in the tree to use strscpy(), let's follow
+> the pattern.
+
+While looking at these lines, I'm unsure why min_t() is being used
+instead of min() here. As version_len is unsigned and 79 is a positive
+constant, I believe min() should be fine here.
+
 > 
-> The modifications make the code more consistent with the Linux kernel
-> coding style guidelines, specifically in regards to the formatting of
-> multi-line conditional statements. No functional changes are made.
-> 
-> Signed-off-by: Abhinav Srivastava <atg271@gmail.com>
-
-Your subject line looks odd for things that touch this file:
-
->  drivers/staging/octeon/ethernet.c | 15 ++++++---------
-
-	$ git log --oneline drivers/staging/octeon/ethernet.c | head -n 10
-	00d066a4d4ed netdev_features: convert NETIF_F_LLTX to dev->lltx
-	c46d4073ec68 staging: octeon: ethernet: Convert to platform remove callback returning void
-	5cd4dc44b8a0 Merge tag 'staging-5.16-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging
-	8b6ce9b02672 staging: use of_get_ethdev_address()
-	524b09ea34a4 staging: use eth_hw_addr_set() in orphan drivers
-	a76053707dbf dev_ioctl: split out ndo_eth_ioctl
-	9d31d2338950 Merge tag 'net-next-5.13' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
-	c295d3007ff6 staging: octeon: Use 'for_each_child_of_node'
-	83216e3988cd of: net: pass the dst buffer to of_get_mac_address()
-	179f5dc36b0a staging: octeon: repair "fixed-link" support
-
->  1 file changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
-> index a5e99cc78a45..77044b7b40da 100644
-> --- a/drivers/staging/octeon/ethernet.c
-> +++ b/drivers/staging/octeon/ethernet.c
-> @@ -248,9 +248,8 @@ static int cvm_oct_common_change_mtu(struct net_device *dev, int new_mtu)
->  
->  	dev->mtu = new_mtu;
->  
-> -	if ((interface < 2) &&
-> -	    (cvmx_helper_interface_get_mode(interface) !=
-> -		CVMX_HELPER_INTERFACE_MODE_SPI)) {
-> +	if (interface < 2 && cvmx_helper_interface_get_mode(interface) !=
-> +	CVMX_HELPER_INTERFACE_MODE_SPI){
-
-Surely that can't be right?  Did you run checkpatch.pl after you made
-your change?  Please always do so.
-
-Also use scripts/get_maintainer.pl to determine what mailing lists to
-send stuff too.
-
-thanks,
-
-greg k-h
+> > +	dev_info(dev, "PLDMFW: Component ID: %u version %s\n",
+> > +		 id, test_string);
+> > +
+> > +	return 0;
+> > +}
 
