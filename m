@@ -1,107 +1,119 @@
-Return-Path: <linux-kernel+bounces-366461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC6499F5A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:35:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BD399F5AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 030BD280D0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:35:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A64B0B20BC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4642A1F5859;
-	Tue, 15 Oct 2024 18:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D501F8197;
+	Tue, 15 Oct 2024 18:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJY9cLOe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJQxZZh9"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DD418870C;
-	Tue, 15 Oct 2024 18:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC811F8189;
+	Tue, 15 Oct 2024 18:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729017167; cv=none; b=jRWjlhPwDcqtEgJMJ8/bZoFkF25K2Cooez8nrxi1IOffktlt4+4YH9lZrLxeSYXQyeflheWf+GuT/BXt+pEYBKzlnYyL7qirV1QlJPv3p5ZUFk6Sxunc2hNTVwRefbBBv5yKpZkTrkn5xTPhjxBnxAKJyLLvL2HM7Y47V7lJb8w=
+	t=1729017196; cv=none; b=HUsBp/Hgso1l/4kNilb5PSdRDApRQ2XoC8g/ztJnwvdlfIeWeTsElzJCzowbJdd0m0gg66fRnOnNn3oCKuCyLnOPkALg7Zoa3Y81aTU2sVrWduFBdxe37SWnA6t6vzmUw8g898IoF4ys189XalK0ag8RDTB2/SLd9YejhB2SYd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729017167; c=relaxed/simple;
-	bh=eXyTxIn0BglKxRIQBZyfKUTN2Io3vKgjDguSNoAEE1M=;
+	s=arc-20240116; t=1729017196; c=relaxed/simple;
+	bh=DwEpV51Gw++CnaM2ntiG0KG1pqwuN9CXaowTc6tIBxw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fzP9qXd4snqrkaR1gySPlTVymIHJhK0kG8M9AbJz65/wRgLBvCCAnWfHfQ2XC8rZjtgX0ebl/yWG/XJE3ZjDITyyXzo4KeW+i5rXobRHq5y6yk3oAsjyoEQm5v8oeVk20Blu85jSjbqdRHiGQ8DaQgRxRqljIEzCIJQfgrmks1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJY9cLOe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1258C4CED0;
-	Tue, 15 Oct 2024 18:32:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729017167;
-	bh=eXyTxIn0BglKxRIQBZyfKUTN2Io3vKgjDguSNoAEE1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FJY9cLOe/OL6Dr6isL8dCx4/S3wU3r+qkOwyQ7fYcCEi3MQ3VsZ0DjZmj8HZIaV5I
-	 OlLK9lLMgEZdvRcHZ8m7bN7qa5WD3/RrziNRWtDJ3R2gA8APV48vwewk6uF5a9w/Dz
-	 kU4Pyqnuf5vKm8ZUp3/HFe114JDOjD6FfMObJJ2699yjtqakDp58qFoe6bxwpRvyqz
-	 7s07pq//GlR/Pi/ROPK3lYEw1CTYyPMgy6bRgwxcZWuj13LSDhgsWb9cxEupN8ITp6
-	 pMcyVRcwHfEQRJ18LOc6b8p11MUxJre0t3dW4wKF1xE4KB3lRoohGusvvixXO6pyH7
-	 z7xzRvbI8wZeQ==
-Date: Tue, 15 Oct 2024 11:32:45 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, james.clark@linaro.org,
-	alan.maguire@oracle.com
-Subject: Re: [PATCH v2 0/2] perf trace: Fix support for the new BPF feature
- in clang 12
-Message-ID: <Zw61TUe1V97dKWer@google.com>
-References: <20241011021403.4089793-1-howardchu95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HaJjwVnG08b0zHp9abFARNImAQEZ4lWwgTtyhRbexx5oLfYzKBM/SVbXu1XaGbDY63vs4IA3YsA7eodtO9w65Yw0ezOcvybRzFu38neelqq+z0SGgXFxl0rOlaa0NZt5OkGQL0CS2H20xfr+pUDDAqOzwRnwGd+OAqlkvVoqiOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJQxZZh9; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e4fa3ea7cso2830278b3a.0;
+        Tue, 15 Oct 2024 11:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729017194; x=1729621994; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yGPYe2MqBwMWZrJsnLJOc2LmTcid9OihZ1hAWIHTzKg=;
+        b=bJQxZZh9pvdlDMd0GHVR6fhKAHkKPFIGjBDxq/rjYNjUgLVnmeDscI6u7IwAJMhokO
+         gbH2ULlplE7nynKpjMQ/FXFP+56VL0zzGT8ZL3bX0kD0Rxj7+CsMtaOi595AKtLy9qUG
+         NJ5/+UJClBtyL5KkvZx1leHD5OqeOXqI1w9qXgCKUfXIS8/kpuxI1CiJFBYowCBkFRQp
+         wT8OB3yAI5aDED/5+Ou9rKBQxFfuXqZKx+bJmurEbLwY11KbZiQ8mxtqpgfO3avX0ejD
+         6pn3KQKKE+R8XN03ZQvSFHh9Jcvnngc10SQVo3DX1hO7+F0FP9v8qV+hsKEPt2Xz/77s
+         C4jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729017194; x=1729621994;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yGPYe2MqBwMWZrJsnLJOc2LmTcid9OihZ1hAWIHTzKg=;
+        b=iWzUJqJIl15/04DaXu8j4rSs82jw6JHDuegBzB61xJazD3OQfCfDMhYI1+MRIiuWP0
+         60KTvXKf2VIRDafezsm+GPZCKoTgQWnNDovQLcMdIR/TurWgFY9L1NgG76PRie9i+dit
+         DPJyyScD2GVYRnVg8yZQlMA/DoZPpO2qmJ+Kp3JGtIpk3udvIYyXpn3Q+dVGxjBvhsV8
+         E78wnPG+ufzxfeB8LRLkOZHwCml7jQkPxJil2dS6NF7msvtoRZvpsRrrF7btnuxHW3it
+         kRC53YSIEwRupxYyHlmPv6697GwgTxiXxUtLWc2SsiELrzb1LumLaAgfGryDyw6DE235
+         xJyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPGaDw9MIk9qYKGaUSZMdFdLmSgCXiudVfDwhgjWU7/Qjm99wlOtBRGDrkYGCM/G8MRh+H7AjIKEs/ZnyyY3JSsg==@vger.kernel.org, AJvYcCVSiYcOvDS//5K4yWGH8tbt4DXVEiQt0bS9JkRs/7OCEoYcmNkl7GmrpBPO9ai1EQHbOLNsyN9gLmHj4xA=@vger.kernel.org, AJvYcCWS99qquatjrD8p5mk3cwr4B1rZjpP4kffahGD3CbH3zDDG4s6vAq74mZcXhuDLr/6U8JwA9Csunur9nA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyANCm4YMahQcs2emXHQgGLf7SpCU3lzE3fW1pMuZCfigxlKUxn
+	auiwNih85vOlQkP9yfXjgzcm3U4v2DdcW4JN9O/F3N/2FqKCIAlz
+X-Google-Smtp-Source: AGHT+IGx4Wpf2vecDrOHEWMdzE9PmcQPFMoV0ZbriB+gqvuGl4Z+r/mw9Bg1z8h0Gdh6QO04i+Rk3w==
+X-Received: by 2002:a05:6a00:23c7:b0:71e:695:41ee with SMTP id d2e1a72fcca58-71e4c139383mr19140399b3a.5.1729017193889;
+        Tue, 15 Oct 2024 11:33:13 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:4bfb:6b8:82e3:75b8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a41afsm1589567b3a.113.2024.10.15.11.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 11:33:13 -0700 (PDT)
+Date: Tue, 15 Oct 2024 11:33:11 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: bentiss@kernel.org, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org, linux-toolchains@vger.kernel.org,
+	jpoimboe@kernel.org
+Subject: Re: [BUG] -next objtool build failure (bisected)
+Message-ID: <Zw61Z8xBhe1oJ_-W@google.com>
+References: <fe8c909e-bf02-4466-b3eb-0a4747df32e3@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241011021403.4089793-1-howardchu95@gmail.com>
+In-Reply-To: <fe8c909e-bf02-4466-b3eb-0a4747df32e3@paulmck-laptop>
 
-On Thu, Oct 10, 2024 at 07:14:00PM -0700, Howard Chu wrote:
-> Changes in v2:
-> - Resolved a clang-16 build error pointed out by Namhyung Kim
->   <namhyung@kernel.org>
-> 
-> The new augmentation feature in perf trace, along with the protocol
-> change (from payload to payload->value), breaks the clang 12 build.
-> 
-> perf trace actually builds for any clang version newer than clang 16.
-> However, as pointed out by Namhyung Kim <namhyung@kernel.org> and Ian
-> Rogers <irogers@google.com>, clang 16, which was released in 2023, is
-> still too new for most users. Additionally, as James Clark
-> <james.clark@linaro.org> noted, some commonly used distributions do not
-> yet support clang 16. Therefore, breaking BPF features between clang 12
-> and clang 15 is not a good approach.
-> 
-> This patch series rewrites the BPF program in a way that allows it to
-> pass the BPF verifier, even when the BPF bytecode is generated by older
-> versions of clang.
-> 
-> However, I have only tested it till clang 14, as older versions are not
-> supported by my distribution.
-> 
-> Howard Chu (2):
->   perf build: Change the clang check back to 12.0.1
->   perf trace: Rewrite BPF code to pass the verifier
+Hi Paul,
 
-Tested with clang 16.  And I think it's better to change the order of
-the commits so it can fix the problem first and then check the version.
+On Tue, Oct 15, 2024 at 11:10:11AM -0700, Paul E. McKenney wrote:
+> Hello!
+> 
+> The next-20241011 release gets me build errors like the following:
+> 
+> 	vmlinux.o: warning: objtool: fetch_item() falls through to next function
+> 
+> Bisection leads me here:
+> 
+> 	61595012f280 ("HID: simplify code in fetch_item()")
+> 
+> This diff looks inoffensive to me, but I get this error on this commit
+> and not on its predecessor.
+> 
+> This build failure happens on quite a few different kernel configurations.
+> I bisected using this particular reproducer:
+> 
+> tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --buildonly --configs SRCU-T
+> 
+> Thoughts?
 
-Thanks,
-Namhyung
+I just added you to another thread where Nathan proposed a couple of
+solutions:
 
-> 
->  tools/perf/Makefile.config                    |   4 +-
->  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 122 ++++++++++--------
->  2 files changed, 69 insertions(+), 57 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
+https://lore.kernel.org/r/20241010222451.GA3571761@thelio-3990X
+
+Thanks.
+
+-- 
+Dmitry
 
