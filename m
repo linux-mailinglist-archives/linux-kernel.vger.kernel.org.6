@@ -1,110 +1,283 @@
-Return-Path: <linux-kernel+bounces-365935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963A699EE23
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C98E899EE27
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA3681C20B76
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84571C203D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77CF1AF0BC;
-	Tue, 15 Oct 2024 13:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3048C189F30;
+	Tue, 15 Oct 2024 13:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W/+dY4uM"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/Gy0IHH"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E99E170A3A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8748A20311
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729000207; cv=none; b=iG99N2Zu5k/X4jOXZ/18sCpVMYWfuFpHLcAR5I4fyybjfIrOk78SNAydnYtKCo7Ae2pZRUUkSaTa4k1jAqmuyf5A9j03nHR2+aE04NXagpNjITdG1QbtDvHOnzMdTY/D1lBZf7BHYO0fR3GluyyVsgiHoqoecPpnIV7kJE4EbZc=
+	t=1729000278; cv=none; b=Mx8Rrb6OAByKh3K2HTmMVqV6XOTvx1elhIHpEuOjdkHb5CqJCQHV4Foz1f1cuC9omR8GxSNuEE63qsc7vATISRdThOfueHkCJeu6/NfPcASiOVLJ0LL/v9qe4PYbppemYvscyU5MjvzZhexfOLz1SWSC67QEevCrmZvu9++moQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729000207; c=relaxed/simple;
-	bh=H4nUnTC/mdAHJ8whTn4/NoSOHF5aQx8EjvAPFGyij9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XP8yUzQCC5h7Zd+3CyNXHIAXYZPPKd0XkSaZrIg/ChOZxKtIqwxMlsnUUOitg8clZ2iBBktLl1p2vqATp8Y4pNDsN5pZi3PPARt1s7i023uy46I1tysaBptp7SAApuQrKhsto9YooJKPW65TnBzwFYs+mwqCVUmjqhIRazZexRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W/+dY4uM; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1729000278; c=relaxed/simple;
+	bh=v34AO2/w1FJNH9rpjHwbZw0s455VymKO/WzCEHZsVOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pZ23TjQFDsxci5pgIWrxaZgebBPHphcwl80WNCpu7MrQubf85XMhAUVZuyxEOcOZE0JIHvBaur7US7g/vCVdyyuAk5RUJYUn+aySia9Z4qjmo1isT3bL/dD6/2n9CH9+KlmcnTyNYf/LGnXvNlLAr2yJjzFPamgwso/iN+KiLNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f/Gy0IHH; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3159311e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:50:05 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso12606551fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:51:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729000204; x=1729605004; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FD0iGhVyvSNI4hIlLRLN+1/oqBE9b4I//1UiQGbWTqc=;
-        b=W/+dY4uMj7JDg+lelWE516EqBEXuPjblu+Q9KXcqETw3Hu9alLTK6H5lOrYqhRcfuG
-         +cZ/ViL4/2P9f80SOQZVWdooIVfU+MyWv+OJvxD/AD2CrznziPymoEO8Zn/cAQaikRFS
-         9SdmGVe7uOOqKTrZh+x0JKlBP7dvbFQXB/I7QynbYkhEHXc6rB8zssYWLmphZiqCfLUO
-         UHXjfg0szYfhToIG0XX+oj9qNTCMta+k/jAXvtuxdZK0OGWR0H3wPoCxq1DrSZA+IA+b
-         ASLcHFJYL9en8s/ZLaXMNjzGHpB6FxLptG8P6OI8NYYHNeeNFF5gtyPV9uQvCKhr776v
-         NIxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729000204; x=1729605004;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1729000275; x=1729605075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FD0iGhVyvSNI4hIlLRLN+1/oqBE9b4I//1UiQGbWTqc=;
-        b=CdOevkx2Jkw86N27VHorXa1rUqmC4BvtGUX31bSEqnwx5a/I7ikSGfE+7s2zCSOJpS
-         DIb4Xt0ekPgFSbHxjZHg2lhe8SxmKhNWQ9Wn8dDKHgJVfoPeDvGotpWRt/wR/gm+OgTV
-         hUKBmNLxOSRKbgTagjNi58Dn70Q5TVggX3L1OlBEkrYjVt8RSlP/Wazu311OfqQqp81a
-         B6xKg2fUBXzfBMiTqWZ31IF/BFTivbPWVt/kpKkv6fb2X8Jnm3mBXlP+VLuTduRHdBcN
-         ZMOerpOMYdKXXSYlWoIZRr0FTaxNVYbcBIQSHNdaEviC1rSHTkiP/8Zw6xluY86IRWBU
-         OXCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXS1TSlFjk/AJo9Q5mmNLOROMVK5XzPdudM6zkMmgfvx4yUGImCEaj4+PRAhGqd7mfS+ZrGwSayj9zFp3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEXSKaZpsTATVEcKOf0R9vBMq9qz0PGxQfaoQpyw+HTcqpIxlY
-	e3xiILu4KKnAZ0pr8haFTZTXH1EXRgIawL2Q0urrJbWsiIK7RfzGpaxPyBG3ZMJn7u0tT+OpEMU
-	EtOE=
-X-Google-Smtp-Source: AGHT+IHoxE97W7pq98kCNKGan3wyUPPB4piqn0nLwlER2aqV9877/qmvV1C9BfrTXGFUKRAZTXASDQ==
-X-Received: by 2002:a05:6512:2311:b0:539:f51d:8273 with SMTP id 2adb3069b0e04-53a03c8fd6emr210613e87.1.1729000203622;
-        Tue, 15 Oct 2024 06:50:03 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffa896bsm174209e87.30.2024.10.15.06.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 06:50:02 -0700 (PDT)
-Date: Tue, 15 Oct 2024 16:49:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, fekz115@gmail.com, 
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [RESEND PATCH v2 1/1] arm64: dts: qcom: sc7280: Add 0x81 Adreno
- speed bin
-Message-ID: <jg6fkul5qxq4vcsxk4fky5h2s5mn5lpbf7sgm74ga4sbsibcrl@2evll6msgvkg>
-References: <20241014194825.44406-1-danila@jiaxyga.com>
- <20241014194825.44406-2-danila@jiaxyga.com>
+        bh=4ODytrdty9/l8W4bhXX0aVFku2lv2Z3WhuLQqcWmQRg=;
+        b=f/Gy0IHHF93+8B0rC5ACLo1y6ByIYBszcJTca6LsNZKtKs4/ioK6/V/FOZA9fvL4y8
+         IU05/+QOXeEC7MXuOCEJLgVfGyGd3pfY409Om4yBWETqbHrBHRlZQiamrfeJuQGQM4Mk
+         K0b8nGa7qkE0EPevZlzRg1/1v8yaw+lw4JgWIJ3PO9RLIeqiWDxOE7emCWMv9kerzfjc
+         EiqUiKv/S2kxsj2f6Dw1chS6cKfSiYYJcrHx2FVcG7Z5Ijv//RbTfutJ/LBwtmhLkI8e
+         eEwrGEd9pGWPBuk5NGj61cObZZ5gZGedYgzUdX4K4fBsJRIJ8YfVd/aFS+urjnEdvEDX
+         faBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729000275; x=1729605075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4ODytrdty9/l8W4bhXX0aVFku2lv2Z3WhuLQqcWmQRg=;
+        b=I6dfqp1l6QytPBXxkRGTUNoTl0+IPGXsKNqjzQbEss99uPW3UtMrvowJ57xBHhmL/h
+         ZBMzhBeI9u7q4cpQfy70NQnDXgj6j4y/e/za9sC6k9bExFXJxjCfG3c4SLbXS83OF7Zj
+         K9uYuM3eoYBY1VHqX2PFpiSFaN9JEGkaNi+q9MoqI8/LcWb9GO1aht131VcMnKugMvtk
+         xxkosHcjrmLMf1H5vo+jv8oJGt7TF53Cy6HUeBqrlrY+gaTmQ+VLAWF7ch7/UwCcvV+c
+         7jt+/SitbbmREeeR91OZSf6j5hgYZdroHEHqdVEyHX/pzamixKd8WIiC0jpfli1refLK
+         g9vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUL7qE5WDCjjnDIJJwLtV0pKnPhB7wNNgt3wXDTYWv8jKrHWKchR26mRs/nBzGyvLH+E7uUmBep4Imakog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpSo/SlfodAsbIT16r9gxMgwt2/IrwuZviVjcjMELrZUQhfK26
+	8Sicw1S83BCtV2A9LUiDy7/n60b9jndSJ19FeUECNdhkrU91JCstETEPzsj9eb2S0acq6Vdq+2s
+	+tKxHJdpwngByXy/sdPv4gvpAhZyjiqNJSv8PPA==
+X-Google-Smtp-Source: AGHT+IEjg+oNmPlVRuJ8pkfPVdg+5ie4HBYgAkEDVDyZgEVWbqqs90OfojuOPZIC0pqhRyMuznx/G4XAshimAxobopg=
+X-Received: by 2002:a2e:d01:0:b0:2f6:649e:bf5c with SMTP id
+ 38308e7fff4ca-2fb32786cf4mr52281651fa.17.1729000274334; Tue, 15 Oct 2024
+ 06:51:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014194825.44406-2-danila@jiaxyga.com>
+References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com> <Zw5D2aTkkUVOK89g@J2N7QTR9R3>
+In-Reply-To: <Zw5D2aTkkUVOK89g@J2N7QTR9R3>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Oct 2024 15:51:02 +0200
+Message-ID: <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
+Subject: Re: Crash on armv7-a using KASAN
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Clement LE GOFFIC <clement.legoffic@foss.st.com>, Russell King <linux@armlinux.org.uk>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, linux-stm32@st-md-mailman.stormreply.com, 
+	Antonio Borneo <antonio.borneo@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 10:48:25PM +0300, Danila Tikhonov wrote:
-> From: Eugene Lepshy <fekz115@gmail.com>
-> 
-> A642L (speedbin 0x81) uses index 4, so this commit sets the fourth bit
-> for A642L supported opps.
-> 
-> Signed-off-by: Eugene Lepshy <fekz115@gmail.com>
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
+On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mark Rutland <mark.rutland@arm.com=
+> wrote:
+> On Mon, Oct 14, 2024 at 03:19:49PM +0200, Clement LE GOFFIC wrote:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> I think what's happening here is that when switching from prev to next
+> in the scheduler, we switch to next's mm before we actually switch to
+> next's register state, and there's a transient window where prev is
+> executed using next's mm. AFAICT we don't map prev's KASAN stack shadow
+> into next's mm anywhere, and so inlined KASAN_STACK checks recursively
+> fault on this until we switch to the overflow stack.
 
--- 
-With best wishes
-Dmitry
+Oh my, that's pretty advanced. Well spotted!
+So it has nothing to do with Ards commit, correlation does not
+imply causation.
+
+> More details on that below.
+>
+> Linus, are you able to look into this?
+
+Of course, I'm trying to reproduce the bug.
+
+> >  __dabt_svc from do_translation_fault+0x30/0x2b0
+> >  do_translation_fault from do_DataAbort+0x74/0x1dc
+> >  do_DataAbort from __dabt_svc+0x4c/0x80
+> > Exception stack(0xac003ad8 to 0xac003b20)
+> > 3ac0:                                                       ac003bc8
+> > 00000005
+> > 3ae0: ac003b88 74800779 7480078f ac003b88 7480078f ac003b88 00000005
+> > 82412640
+> > 3b00: ac003d20 ac003d54 00000051 ac003b28 80125c14 80125920 200f0193
+> > ffffffff
+> >  __dabt_svc from do_translation_fault+0x30/0x2b0
+> >  do_translation_fault from do_DataAbort+0x74/0x1dc
+> >  do_DataAbort from __dabt_svc+0x4c/0x80
+> > Exception stack(0xac003b88 to 0xac003bd0)
+> > 3b80:                   ac003c78 00000805 ac003c38 7480078f 74800798
+> > ac003c38
+> > 3ba0: 74800798 ac003c38 00000805 82412640 ac003d20 ac003d54 00000051
+> > ac003bd8
+> > 3bc0: 80125c14 80125920 200f0193 ffffffff
+> >  __dabt_svc from do_translation_fault+0x30/0x2b0
+> >  do_translation_fault from do_DataAbort+0x74/0x1dc
+> >  do_DataAbort from __dabt_svc+0x4c/0x80
+>
+> The above frames are the same; whatever the kernel is accessing at
+> do_translation_fault+0x30 is causing this to go recursive...
+>
+> I can reproduce this, pretty easily, with a similar enough trace, though
+> faddr2line isn't happy to give me a line number.
+
+Did you reproduce it the same way with a few find /?
+
+I am trying to reproduce it and failing :/
+(Using Torvald's HEAD)
+
+This is my config:
+
+CONFIG_HAVE_ARCH_KASAN=3Dy
+CONFIG_HAVE_ARCH_KASAN_VMALLOC=3Dy
+CONFIG_CC_HAS_KASAN_GENERIC=3Dy
+CONFIG_CC_HAS_WORKING_NOSANITIZE_ADDRESS=3Dy
+CONFIG_KASAN=3Dy
+CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=3Dy
+CONFIG_KASAN_GENERIC=3Dy
+CONFIG_KASAN_OUTLINE=3Dy
+# CONFIG_KASAN_INLINE is not set
+# CONFIG_KASAN_STACK is not set
+# CONFIG_KASAN_VMALLOC is not set
+# CONFIG_KASAN_EXTRA_INFO is not set
+
+Do you use more KASAN?
+
+Then I run:
+
+${QEMU} -M vexpress-a15 -m 512M -no-reboot -smp cpus=3D2 -kernel
+${ZIMAGE} -dtb ${DTB} -append "root=3D/dev/mmcblk0 rw roottype=3Dext4
+console=3DttyAMA0" -serial stdio -drive
+if=3Dsd,driver=3Draw,cache=3Dwriteback,file=3D./arch_rootfs.ext4
+
+This is a rootfs with Debian.
+
+Then I fork a few find /|grep fnord > /dev/null &
+
+root@vexpress:~# find / |grep fnord > /dev/null &
+[1] 554
+root@vexpress:~# find / |grep fnord > /dev/null &
+[2] 556
+root@vexpress:~# find / |grep fnord > /dev/null &
+[3] 558
+root@vexpress:~# find / |grep fnord > /dev/null &
+[4] 560
+root@vexpress:~# find / |grep fnord > /dev/null &
+[5] 562
+root@vexpress:~# find / |grep fnord > /dev/null &
+[6] 564
+root@vexpress:~# find / |grep fnord > /dev/null &
+[7] 566
+root@vexpress:~# find / |grep fnord > /dev/null &
+[8] 568
+root@vexpress:~# find / |grep fnord > /dev/null &
+[9] 570
+root@vexpress:~# find / |grep fnord > /dev/null &
+[10] 572
+root@vexpress:~# find / |grep fnord > /dev/null &
+[11] 574
+root@vexpress:~# find / |grep fnord > /dev/null &
+[12] 576
+root@vexpress:~# find / |grep fnord > /dev/null &
+[13] 578
+root@vexpress:~# find / |grep fnord > /dev/null &
+[14] 580
+root@vexpress:~# find / |grep fnord > /dev/null &
+[15] 582
+root@vexpress:~# find / |grep fnord > /dev/null &
+[16] 584
+root@vexpress:~# find / |grep fnord > /dev/null &
+[17] 586
+root@vexpress:~# find / |grep fnord > /dev/null &
+^[[A[18] 588
+root@vexpress:~# find / |grep fnord > /dev/null &
+^[[A[19] 590
+root@vexpress:~# find / |grep fnord > /dev/null &
+[20] 592
+root@vexpress:~#
+root@vexpress:~# ps
+  PID TTY          TIME CMD
+  291 ttyAMA0  00:00:02 login
+  550 ttyAMA0  00:00:01 bash
+  553 ttyAMA0  00:00:06 find
+  554 ttyAMA0  00:00:00 grep
+  555 ttyAMA0  00:00:04 find
+  556 ttyAMA0  00:00:00 grep
+  557 ttyAMA0  00:00:03 find
+  558 ttyAMA0  00:00:00 grep
+  559 ttyAMA0  00:00:03 find
+  560 ttyAMA0  00:00:00 grep
+  561 ttyAMA0  00:00:03 find
+  562 ttyAMA0  00:00:00 grep
+  563 ttyAMA0  00:00:02 find
+  564 ttyAMA0  00:00:00 grep
+  565 ttyAMA0  00:00:02 find
+  566 ttyAMA0  00:00:00 grep
+  567 ttyAMA0  00:00:02 find
+  568 ttyAMA0  00:00:00 grep
+  569 ttyAMA0  00:00:02 find
+  570 ttyAMA0  00:00:00 grep
+  571 ttyAMA0  00:00:02 find
+  572 ttyAMA0  00:00:00 grep
+  573 ttyAMA0  00:00:01 find
+  574 ttyAMA0  00:00:00 grep
+  575 ttyAMA0  00:00:01 find
+  576 ttyAMA0  00:00:00 grep
+  577 ttyAMA0  00:00:01 find
+  578 ttyAMA0  00:00:00 grep
+  579 ttyAMA0  00:00:01 find
+  580 ttyAMA0  00:00:00 grep
+  581 ttyAMA0  00:00:01 find
+  582 ttyAMA0  00:00:00 grep
+  583 ttyAMA0  00:00:01 find
+  584 ttyAMA0  00:00:00 grep
+  585 ttyAMA0  00:00:01 find
+  586 ttyAMA0  00:00:00 grep
+  587 ttyAMA0  00:00:01 find
+  588 ttyAMA0  00:00:00 grep
+  589 ttyAMA0  00:00:01 find
+  590 ttyAMA0  00:00:00 grep
+  591 ttyAMA0  00:00:01 find
+  592 ttyAMA0  00:00:00 grep
+  593 ttyAMA0  00:00:01 ps
+root@vexpress:~#
+
+This refused to crash.
+
+Then I recompiled with GCC as I was using LLVM CLANG. But
+same non-problem: no crash.
+
+> The relevant asm is:
+(...)
+> ... so we're using the new task's mm, but still executing in the context =
+of the
+> old task (and using its stack). I suspect the new task's mm doesn't have =
+the
+> old task's stack shadow mapped in, and AFAICT we don't map that in explic=
+itly
+> anywhere before we switch to the new mm.
+>
+> Linus, can you look into that?
+
+Yeah it looks like a spot-on identification of the problem, I can try to
+think about how we could fix this if I can reproduce it, I keep trying
+to provoke the crash :/
+
+Yours,
+Linus Walleij
 
