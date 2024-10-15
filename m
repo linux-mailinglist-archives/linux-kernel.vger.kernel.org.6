@@ -1,181 +1,116 @@
-Return-Path: <linux-kernel+bounces-365059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F47799DCF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:43:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C49299DCF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E311DB21750
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:43:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C853C1F2212A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22681714B0;
-	Tue, 15 Oct 2024 03:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C55C17278D;
+	Tue, 15 Oct 2024 03:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sM3IzIhw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aUqfvXbk"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB8B38DE9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E663416B38B;
+	Tue, 15 Oct 2024 03:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728963827; cv=none; b=CBavApT2H5Qa3LjumGZWiQ1NganRMsJDSYv452HEgVzpHc44osdv+YBEcLvIa/uMNLDg2Xy+fqIw7sgSd18tA4NNsuXAStCQLGgrp0FVRU9DMtK+W841JsT7mM9KIRB2RNpwjiAmU9JX1I3WEOI9EM/ReviBh6q8p+X+u9bcKpg=
+	t=1728963835; cv=none; b=kH6WDJzRQ1N4pSxYF/aBUTeA2U+tsZMu3XNt2etM9ENZ28EEoem2mAEjzex8veBzS9IvgVN61KRLEpCqHc5/133EzQ+EBCDdNMUp7WvCUQ9HjaPdm3loqjL0tBQG5UoQoI5KZrhAXdpiIeNMugH+FbdR4+YYly6ELOYhEHoWqvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728963827; c=relaxed/simple;
-	bh=MjCUBiWnp9PMS4F87LZ3PySPrHGyFoBvs6QlesZy16M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z1ANpY0fKuVEQPyOrhtgXVKBVGopnGfI9nAYTRCHXp5PARn6qjow3Tzt97OouPgIM9XbUA6miPcj5KmDPLKRZjvH4RuuQPfhsS0azA7DH/WpTq8wWvOs5MDrPiEKosmG7AF3OsaxMf6MozYdjab3K+bI90J2gHAasn3VEBWplQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sM3IzIhw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 358C4C4CEC7;
-	Tue, 15 Oct 2024 03:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728963826;
-	bh=MjCUBiWnp9PMS4F87LZ3PySPrHGyFoBvs6QlesZy16M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sM3IzIhwsVrUavZoQV0F6rbspUDHCJnAElwhgYn0Tbzvg7H8J8YMbKnoDhb2nQwsp
-	 t2as3W/T8hMqyF6nMRbe1oiYIHG5eE8diW3snDygg7JlS1u3Md1hppclS4yLX5DIBf
-	 i15xfXpOpYi69Rj64hHGFXUymLI4AG+w52Nu+OA/6JX95NI1rQ8xMzTzJb+6lKjfGg
-	 I5GcF57mfL2KNFj7N4s9DedmCvdbOF4MCd59N5TLILwpDzdCUrSYp+mWU9Gwjzkux1
-	 yxILwgIbyq1Mit6M44qQQZcfFVEPsRyNizc7Zp5+UeZvivrdAw+Jxj5BPWTuuttQ3h
-	 qyhU0OF1SaxuQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Daniel Rosenberg <drosen@google.com>
-Subject: [PATCH] f2fs: fix to account dirty data in __get_secs_required()
-Date: Tue, 15 Oct 2024 11:43:39 +0800
-Message-Id: <20241015034339.3244676-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1728963835; c=relaxed/simple;
+	bh=MDTFEqRSbXhDUt9WnX3JMTAbeMrQfEErxj+Sl/NIIKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UWW+gHcn6RAaARnWlhy4yT3gRRUiWO81b7fMKvRXdSE/tF1GX7Fv8nOjE3SQH7qmiDYtZ4863vqhUGy/lywsdUKaLcycSJHnzwP4AjZF4EqwLBSDSBAxogV6c5EOppow4ENJQ7gg9VeheK3/3B76iixn8JVwhJAJY4v8IOVbQZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=aUqfvXbk; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43056d99a5aso38258565e9.0;
+        Mon, 14 Oct 2024 20:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1728963832; x=1729568632; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yefyLQkuMeyl+1oDEeZVpEGjtr1xlgEljSXpgRP1NiI=;
+        b=aUqfvXbk3vCUMI3/Yk4IN1OWXdtHBZ1MI0cwHxLYyQSrtcMFpPXenbCD6OHW+ksBA7
+         4ct20ufKuveOFPtSoxWiTSRYgxPhO9akGJcdkA9uI80X9DO2LdpDAkM1J/mVnQs+g62e
+         8i+Yck4VfQFP45kZ1pDssSfgnFJjRiTSg1sloRVPnyickjM+vMY5lmm1AnvEBrBK6J0N
+         +/rd2bNtHg2BhBUTy2bzMxcwgbGlwxl4eTyDtYYAAM73SkV7C3S6xdv0OOt0PZpX8xOt
+         uYbF347NAO+LxQJEeY7wc9ytqjhN1RKi2sYmxqDIIA3Qq6DFC+HcK0h5tdfMRIVWtWyx
+         coMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728963832; x=1729568632;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yefyLQkuMeyl+1oDEeZVpEGjtr1xlgEljSXpgRP1NiI=;
+        b=lO800sTFh8AH1WvqYI7GOQUoBHAGWt9GjnHXtvp0iyBemdeR6loc8XnFV16t8p5hMo
+         Y6N4tEYIlFAdGc+1bP/dbKlJPzN+sWAndLJ/P5q9/v6tLyjDi3YfhS6ZAvkFzt1WYvLm
+         od9WS/iwr3TwDNEYGTZkSu2iC48FJQiRvzVZUVVs46TLTOI0CDJ8o+oMDh9j6iX97ldQ
+         IjJfnoFzBq1ZqRySpYaw9I2O9WcqOqh5XsJT/GTM9iman3ujAf4NCUookQYh4JY3b3wS
+         vY8dCJgBApIceir0P7uiBHM/QhdC6THod6w5kIn3ceec85ui6N6BgUGnKYL11OY4FqNC
+         Y6pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4QoocKb0ZXKHKd9zhTw/Ii26IKTlGqBtZuqVduwG5hRbkNqGgLvXbcXhVbBxOHKuQwg6LORrj@vger.kernel.org, AJvYcCUBiZxyrGTddiDLF3/a2zUWftUOA7vr3IlnLLf92Aw5rwt15EJD3gelpbS5s9oP2jV1OVeft3lQHHCfdRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy70cNw2UYHK/CJDa5w+AF1YnE7waaSZW13/jSGUu41rfIUXJgX
+	PhvuyfBd6/qAPGEDF2vh2aMW4F3lhA9E4TZsW3AB4OPdLTWFDcs=
+X-Google-Smtp-Source: AGHT+IFxBsZCZrESnkFz4ay1tRiYRZmAbCDrKQ/VUt7CP2eD0IUQLYHJ2jsbjR7FUpR8968cDQdNPg==
+X-Received: by 2002:a05:600c:168a:b0:431:405a:f94a with SMTP id 5b1f17b1804b1-431405afce9mr3666365e9.6.1728963832035;
+        Mon, 14 Oct 2024 20:43:52 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4546.dip0.t-ipconnect.de. [91.43.69.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4304efc442esm171078735e9.1.2024.10.14.20.43.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 20:43:51 -0700 (PDT)
+Message-ID: <e69c39f6-6db7-42be-945e-49bc0a8f7fab@googlemail.com>
+Date: Tue, 15 Oct 2024 05:43:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241014141217.941104064@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20241014141217.941104064@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-It will trigger system panic w/ testcase in [1]:
+Am 14.10.2024 um 16:09 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.113 release.
+> There are 798 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/segment.c:2752!
-RIP: 0010:new_curseg+0xc81/0x2110
-Call Trace:
- f2fs_allocate_data_block+0x1c91/0x4540
- do_write_page+0x163/0xdf0
- f2fs_outplace_write_data+0x1aa/0x340
- f2fs_do_write_data_page+0x797/0x2280
- f2fs_write_single_data_page+0x16cd/0x2190
- f2fs_write_cache_pages+0x994/0x1c80
- f2fs_write_data_pages+0x9cc/0xea0
- do_writepages+0x194/0x7a0
- filemap_fdatawrite_wbc+0x12b/0x1a0
- __filemap_fdatawrite_range+0xbb/0xf0
- file_write_and_wait_range+0xa1/0x110
- f2fs_do_sync_file+0x26f/0x1c50
- f2fs_sync_file+0x12b/0x1d0
- vfs_fsync_range+0xfa/0x230
- do_fsync+0x3d/0x80
- __x64_sys_fsync+0x37/0x50
- x64_sys_call+0x1e88/0x20d0
- do_syscall_64+0x4b/0x110
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-The root cause is if checkpoint_disabling and lfs_mode are both on,
-it will trigger OPU for all overwritten data, it may cost more free
-segment than expected, so f2fs must account those data correctly to
-calculate cosumed free segments later, and return ENOSPC earlier to
-avoid run out of free segment during block allocation.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-[1] https://lore.kernel.org/fstests/20241015025106.3203676-1-chao@kernel.org/
+Beste Grüße,
+Peter Schneider
 
-Fixes: 4354994f097d ("f2fs: checkpoint disabling")
-Cc: Daniel Rosenberg <drosen@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/segment.h | 35 +++++++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 10 deletions(-)
-
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index e9cc73093417..55a01da6c4be 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -561,18 +561,21 @@ static inline int reserved_sections(struct f2fs_sb_info *sbi)
- }
- 
- static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
--			unsigned int node_blocks, unsigned int dent_blocks)
-+			unsigned int node_blocks, unsigned int data_blocks,
-+			unsigned int dent_blocks)
- {
- 
--	unsigned segno, left_blocks;
-+	unsigned int segno, left_blocks, blocks;
- 	int i;
- 
--	/* check current node sections in the worst case. */
--	for (i = CURSEG_HOT_NODE; i <= CURSEG_COLD_NODE; i++) {
-+	/* check current data/node sections in the worst case. */
-+	for (i = CURSEG_HOT_DATA; i < NR_PERSISTENT_LOG; i++) {
- 		segno = CURSEG_I(sbi, i)->segno;
- 		left_blocks = CAP_BLKS_PER_SEC(sbi) -
- 				get_ckpt_valid_blocks(sbi, segno, true);
--		if (node_blocks > left_blocks)
-+
-+		blocks = i <= CURSEG_COLD_DATA ? data_blocks : node_blocks;
-+		if (blocks > left_blocks)
- 			return false;
- 	}
- 
-@@ -586,8 +589,9 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
- }
- 
- /*
-- * calculate needed sections for dirty node/dentry
-- * and call has_curseg_enough_space
-+ * calculate needed sections for dirty node/dentry and call
-+ * has_curseg_enough_space, please note that, it needs to account
-+ * dirty data as well in lfs mode when checkpoint is disabled.
-  */
- static inline void __get_secs_required(struct f2fs_sb_info *sbi,
- 		unsigned int *lower_p, unsigned int *upper_p, bool *curseg_p)
-@@ -596,19 +600,30 @@ static inline void __get_secs_required(struct f2fs_sb_info *sbi,
- 					get_pages(sbi, F2FS_DIRTY_DENTS) +
- 					get_pages(sbi, F2FS_DIRTY_IMETA);
- 	unsigned int total_dent_blocks = get_pages(sbi, F2FS_DIRTY_DENTS);
-+	unsigned int total_data_blocks = 0;
- 	unsigned int node_secs = total_node_blocks / CAP_BLKS_PER_SEC(sbi);
- 	unsigned int dent_secs = total_dent_blocks / CAP_BLKS_PER_SEC(sbi);
-+	unsigned int data_secs = 0;
- 	unsigned int node_blocks = total_node_blocks % CAP_BLKS_PER_SEC(sbi);
- 	unsigned int dent_blocks = total_dent_blocks % CAP_BLKS_PER_SEC(sbi);
-+	unsigned int data_blocks = 0;
-+
-+	if (f2fs_lfs_mode(sbi) &&
-+		unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+		total_data_blocks = get_pages(sbi, F2FS_DIRTY_DATA);
-+		data_secs = total_data_blocks / CAP_BLKS_PER_SEC(sbi);
-+		data_blocks = total_data_blocks % CAP_BLKS_PER_SEC(sbi);
-+	}
- 
- 	if (lower_p)
--		*lower_p = node_secs + dent_secs;
-+		*lower_p = node_secs + dent_secs + data_secs;
- 	if (upper_p)
- 		*upper_p = node_secs + dent_secs +
--			(node_blocks ? 1 : 0) + (dent_blocks ? 1 : 0);
-+			(node_blocks ? 1 : 0) + (dent_blocks ? 1 : 0) +
-+			(data_blocks ? 1 : 0);
- 	if (curseg_p)
- 		*curseg_p = has_curseg_enough_space(sbi,
--				node_blocks, dent_blocks);
-+				node_blocks, data_blocks, dent_blocks);
- }
- 
- static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
 -- 
-2.40.1
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
