@@ -1,117 +1,149 @@
-Return-Path: <linux-kernel+bounces-365735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C82399E919
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:12:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8D399E923
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42886281376
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C105F1F24073
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AA11EF0A5;
-	Tue, 15 Oct 2024 12:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467FA1F8926;
+	Tue, 15 Oct 2024 12:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cCd+k2Bc"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3YfhHbhJ"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA181EF09C;
-	Tue, 15 Oct 2024 12:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67C31F7077
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728994303; cv=none; b=PFefYN1dPrROC1fN9yo71E2ByO82C3Rfn9ZL6mc1CU7qdIjI1rqi8KSRvDSupXDLDy9EGjjkHhfqQRHQiJecsFHBLNz6N9kieA+GQR4ALuwkoIupjr16ifkPJE/PT0BGuaiP5KSXx+BtTgZKdCrwutMRMZ3ruq9o0MZYxAOn3uc=
+	t=1728994321; cv=none; b=aQDipHab3PhoLlOMkvrD5hNEkE/ehqqOobnQGE0kAjEWBzYTqDpPwVG5kCtH/XmO6rXev9avPRvBNAXNF9geBktlKZ2pnKzxxJ5QVnGP0kdfL7nikIHO2I3JUsXXZB9Oy0tgrNbHrLdeHjNW3s4uZyUJvDrkrmpEdoZL/xy3B50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728994303; c=relaxed/simple;
-	bh=B2xMX+6SvKORwecMy2BR6MpBJTzerC2mW0RZ3VND/KE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hkDP7Yw0LevvCX/+jRhD1wwwnd2k1Hd4Xbng4YxysiITq98mzMSHZfwubDgLK4Z6ycT3zPoK7gxnNJkd6HEVcTNJvzavFEbva7XQDBdEqGVEQ42tGEIwAigYzGGoHHmMZG4/L6Us/gqbKZT90u9gor00mwhFndjtAW7oU+m/a/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cCd+k2Bc; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e1c91fe739so4057519a91.2;
-        Tue, 15 Oct 2024 05:11:41 -0700 (PDT)
+	s=arc-20240116; t=1728994321; c=relaxed/simple;
+	bh=8zIccEYw0HDDponWN1yKlTjy1Je4vEQHoACjdwCtSo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aX2Tr+S3qc+U2zWydPOFIhj+R2TYkXTLFfpKCm5Jl3WTWmIo/Gj76bMMNBguwDjwqELV3mZqP11LD2NpaZEe1VhGAcnFMFF+ZIrO3C3ro2sI4f7WDd4L7Xj1MCqwZsM6Ui/flwp5V9vIJ6jaTfs5FWsAl3i0rq91axc3qM8w4mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3YfhHbhJ; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb5be4381dso7719321fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:11:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728994301; x=1729599101; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5kR93BfcYG8S010p0eA+geMSLv40hGuP+w3xQj67PSI=;
-        b=cCd+k2BcHWLeL1GjUvXUVgS9hYQegGRQUSQaB4pvA+Dp0MqiU1umLYt3jaJmWZh4kG
-         8x40BYueE5BJW6wx2EWEInA+gY6a3IjNG6/QGDzSSuk9XR8k8DPEejdprh/9jP9NNduw
-         cUl+6CisWRisd0cDymxpZismoiFJw3tnWsbfG78yKfk3CfkKZz3kiLK4q0P1NNndrAU7
-         ns8Ge8Gs2diTl7mBUamn+XVVtmIR5lPUaMmpTwZQ7jYCwzlqbj9r+EJYNXVS1dkm0rd3
-         LRSE1adfRIq68SdfxikxGhwVsw1DmhzWt6Gi3h4GF6S31jQJMyUlDo5WHuKKgWtbO0Zb
-         MRWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728994301; x=1729599101;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728994318; x=1729599118; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5kR93BfcYG8S010p0eA+geMSLv40hGuP+w3xQj67PSI=;
-        b=tATvFNHEHmazHoWVpLB16WNA4fTjJapTuz66n3bqPJ27i7rc2g5id5kgYq2AhUVq/c
-         cvH4Oqy5LQdFBiW/2DaknvNbaReAb14Dn/XPEDVADzW2VL+7paFj7QRFlxihsNkdbTRZ
-         peqcAFYW12HsiNmpWLm3pBG9DaEY5QLbKJsFZfdqv07LrOPRgmFOkOCX3L/ZgEftN05d
-         I4smspjMKe37hK4AUK6Qrl6QwpSzAS0O29r50XlGz7xzNnuifQhFgzdNwhARjzbXcfkK
-         eKjRWGmTXSDlZ9pR7Ln0JF9NoIC6eeyeaFHMt647YYgYneSGKRiZe/c6oj7QG0Ozoyeb
-         HXpA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5cPHFVo5KNHQjpbI1w+HGDelZPmiESmtOHUyJtNi3ge/DzYIdNRA4x+Nfs7UG4JhLol+f5H6BiH+Y@vger.kernel.org, AJvYcCUzx9KRonOi/cSIgiC4KDJ8QCuRabwVXnVUx4E3UnosrWUNyqE+c5Dghq34g55J+8UVm0ReldBXzE9qq1HT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL6e/Gkszbcayg0MxNSXc2gp06JZKBZU0Ifoy3/omQOw55S7cA
-	o3Pb7CZ9BCModViBkXvFVWOo57C+DFOVwqNqSUd4hnl82nUcwXPVQBQZGQ==
-X-Google-Smtp-Source: AGHT+IFIzl/30qM45epLPZCQITKrZBt1dkSO9qHNajeeKYGWRShGqz/Kq+Gs+dPNUskAsu4ChEg+zg==
-X-Received: by 2002:a17:90a:8cc:b0:2e2:c64c:a1c9 with SMTP id 98e67ed59e1d1-2e2f0b2b844mr16980466a91.24.1728994301311;
-        Tue, 15 Oct 2024 05:11:41 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392f62f09sm1552323a91.35.2024.10.15.05.11.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 05:11:41 -0700 (PDT)
-Date: Tue, 15 Oct 2024 20:11:26 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, 
-	Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Peter Zijlstra <peterz@infradead.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Guo Ren <guoren@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yangyu Chen <cyy@cyyself.name>, 
-	Jinyu Tang <tangjinyu@tinylab.org>, Hal Feng <hal.feng@starfivetech.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] irqchip: add T-HEAD C900 ACLINT SSWI driver
-Message-ID: <fzwgavmdfdm6ffzqggdfcf7p6d7vbnrsmt6vxc2whx6t6e4pif@mjvchtdmgh54>
-References: <20241009224410.53188-1-inochiama@gmail.com>
- <20241009224410.53188-3-inochiama@gmail.com>
- <87ldyqfxm0.ffs@tglx>
+        bh=IjzNejjc8uMTb65x7eVvX78L+rqya5jaiCIr7Q23w2s=;
+        b=3YfhHbhJmevYr9vSZaMSJ4HOXH8zjaq/pdEl7fxGxxU1ZS76pQ2eTwtPO2dX/CNyYE
+         lq9t/8U3RMH/AndLs7dNQeiKEfDvRu9X3Z9MgIjao3TRwnh+qlFIbFcIGZsuAqkBe7az
+         BJNtHTkYPOEqZNNfZv2rCwkmi0/bCOZKKvUR5wxzjW9X47y7sO2gA/Pj8/I/fRdN7ezh
+         i8u3yl2PX3eZEybQry1I1u+2yQfvtub24vxZe0EbuvGp4G/vAy2uWKu93o0waNXZ0Htc
+         muvSfBjLBOf2dtUxTWt8pOgdC0VZEpLZPTSxUwILAbKwz+WqVMg+YzqN++SHWxgxoouI
+         07Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728994318; x=1729599118;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IjzNejjc8uMTb65x7eVvX78L+rqya5jaiCIr7Q23w2s=;
+        b=vMCl9+v3RHeRjKdZDHrfq0BldohM/vMUsfZbOoO3csmOSMdGKNEGzMAlcVDMbk6atK
+         amud/qFi+eWDyaXoAIwoZs5tXmw3taoXvyZUrzH/qak+YFSO2R/UY81NOJGwXG1DtmuD
+         iTVKWHt+YFiMhAcdNDnwIahc3y37JcOJjw+JdnbzqnDvKKltLVYe2zVUPSxLIDO+K5Kj
+         2HdgALBFxxY8qj2dz297FK5dlZpwA2Bq3uH8sUDUrw7PUFSl8fRrBX4qiNnNHQHrJptv
+         50BnLTNfyx+V7iXRrBVMo8ZTxwNRSKcdXY/Rxs4uNHwhnwWgskBnHQjN4NtiOiT4EFQC
+         pfMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZslNoh/DzbXLebSUAW4ix9kgGp76Zs3F7OeUxbqyEvBLMT7Y4pwyuWE8xahZzMo9xXE4ZoG1zvS8edLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Co2sXaszMdb0YUcMfEfJOy+edzPczgUHH4xV04bLa6/NnfGr
+	l85+UUIHqT24sFQRGiMO5/FfA6LQM4/tcoRj9qtGKvE5N6b7jZCTG+O3zwOYTubwzAOgnwZS+J0
+	yU1e+bJ8csEBmDXs8SWMBmG9K0ugVJypXI+mNxA==
+X-Google-Smtp-Source: AGHT+IGCdmgQhJiJc3Pv4ag27yUFq+XrKOxrSkpiY8WuueWufk5SKWUm5l2IToBOGk468RZoxIPfznolraRhOqVWbzA=
+X-Received: by 2002:a05:651c:1502:b0:2fb:5ac6:90ef with SMTP id
+ 38308e7fff4ca-2fb61b45d02mr2112031fa.11.1728994317861; Tue, 15 Oct 2024
+ 05:11:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ldyqfxm0.ffs@tglx>
+References: <20241015-gpio-class-mountpoint-v2-0-7709301876ef@linaro.org> <2024101531-lazy-recollect-6cbe@gregkh>
+In-Reply-To: <2024101531-lazy-recollect-6cbe@gregkh>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 15 Oct 2024 14:11:45 +0200
+Message-ID: <CAMRc=Mea=W-1UoHMew3Si=baW3ayERrHjxjG0NPdmkCfp9dUHw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] gpio: create the /sys/class/gpio mount point with
+ GPIO_SYSFS disabled
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Kent Gibson <warthog618@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 06:38:47PM +0200, Thomas Gleixner wrote:
-> On Thu, Oct 10 2024 at 06:44, Inochi Amaoto wrote:
-> > +config THEAD_C900_ACLINT_SSWI
-> > +	bool "THEAD C9XX ACLINT S-mode IPI Interrupt Controller"
-> > +	depends on RISCV
-> > +	select IRQ_DOMAIN_HIERARCHY
-> 
-> Lacks
->         select GENERIC_IRQ_IPI_MUX
-> 
-> Other than that this looks good.
-> 
-> Thanks,
-> 
->         tglx
+On Tue, Oct 15, 2024 at 11:30=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> >
+> > Despite providing a number of user-space tools making using the GPIO
+> > character device easier, it's become clear that some users just prefer
+> > how the sysfs interface works and want to keep using it. Unless we can
+> > provide a drop-in replacement, they will protest any attempts at
+> > removing it from the kernel. As the GPIO sysfs module is the main user
+> > of the global GPIO numberspace, we will not be able to remove it from
+> > the kernel either.
+>
+> They should protest it's removal, and you should support it for forever,
+> as that's the api that they rely on and you need to handle.  That's the
+> joy of kernel development, you can't drop support for stuff people rely
+> on, sorry.
+>
 
-Thanks, I will update it.
+Yet every now and then some clearly bad decisions from the past are
+amended by removing support for older interfaces. I'm not trying to
+deprive people of something they rely on, I'm trying to provide a
+drop-in replacement in user-space using an existing, better kernel
+interface, so that we can get rid of the old one and - in the process
+- improve the entire in-kernel GPIO support.
 
-Regards,
-Inochi
+> > I am working on a FUSE-based libgpiod-to-sysfs compatibility layer that
+> > could replace the in-kernel sysfs and keep all the user-space programs
+> > running but in order to keep it fully compatible, we need to be able to
+> > mount it at /sys/class/gpio. We can't create directories in sysfs from
+> > user-space and with GPIO_SYSFS disabled, the directory is simply not
+> > there.
+>
+> Ick, no, just keep the kernel stuff please.
+>
+
+Ick? I'm not sure how to take it but are you criticising the idea
+itself of using the better kernel interface to provide a thin
+compatibility layer in user-space to the bad one that people are just
+too used to to spend time converting? Or just the mounting at the old
+mount-point part?
+
+> > I would like to do what we already do for /sys/kernel/debug,
+> > /sys/kernel/config, etc. and create an always-empty mount point at
+> > /sys/class/gpio. To that end, I need the address of the /sys/class
+> > kobject and the first patch in this series exports it.
+>
+> No, debug and config are different, they are not "fake" subsystems, they
+> are totally different interfaces and as such, can use those locations as
+> mount points for their in-kernel filesystem interfaces.  You are wanting
+> a random userspace mount point, that's totally different.
+>
+> Sorry, just live with the kernel code please.  Work to get all userspace
+> moved off of it if you feel it is so bad, and only then can you remove
+> it.
+>
+
+What if we just add a Kconfig option allowing to disable the sysfs
+attributes inside /sys/class/gpio but keep the directory? It's not
+like it's a new one, it's already there as a baked in interface.
+
+Bart
 
