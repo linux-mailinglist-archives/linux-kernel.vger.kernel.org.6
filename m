@@ -1,239 +1,363 @@
-Return-Path: <linux-kernel+bounces-365015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BDE199DC37
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:23:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C5899DC38
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4D91F23B11
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D891C20E3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF66216A94B;
-	Tue, 15 Oct 2024 02:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0871328EC;
+	Tue, 15 Oct 2024 02:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dcgoYuUK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PWP//sMJ"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AE71662EF;
-	Tue, 15 Oct 2024 02:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728958997; cv=fail; b=WajJavNbRgIgFBKwR29aILI7vjCF4RWMNP3KoDuvfhcXjCfK2xAt7Og3iHQTh/pWhhPTXd0xBYEwwx/e9KJxDb1ygBuBtvDL4Urv/5mFRur4E1J/XleK5JXEHvNP+74kxtBwPpsBo1pyo4edouhh45fCkVG/tofPNUz7GJ+duus=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728958997; c=relaxed/simple;
-	bh=eT2kjWjBtQHw7iYBXwZKhu98lvpdqSuXYISDMP3rHac=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oT/nwPb6H+It8sSbAJZ3VsTamSBsfYHWR/B4l8L4lGuoaEbxbdQo5j961Y64XGV7G+2rnNBm5zs+WvcIviVPj41ZvpNl79Ad1LvKdPFxSt7DAd0PnDhT1bxVw3KsvDNuxTjGYZqeJ/3aRFj7DrVnxD5YcEmqZZf+ZkCUvqPSzZ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dcgoYuUK; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728958995; x=1760494995;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=eT2kjWjBtQHw7iYBXwZKhu98lvpdqSuXYISDMP3rHac=;
-  b=dcgoYuUK+Am52iB/uKQs9GmgcGNJNifUpZuBELx/sxrCNpDyvJ7ycbq2
-   DerIfB6RhcmJjs4pgDEDIrNO9wEXUxitP7WOQbYmw+yuC+euOsP5mA7DV
-   r3DTyhYiJju7laoZFjZxiMp2D3Ax+uXOEIFdTS2JeqUPosHe6aQW4Slaa
-   Rx579L0peLennGo6jApOHcIbktWQNOwcS9pbTud2Ryh6eG/T/BmvAdFIK
-   Y/hwJ+wTFvZMwirEI2aA4X/UicWV0ZkwvFZY0y687gVZO9X2h3PREGIaH
-   VRaccSLKjlAn8yMZ7x8F+WfVFvs0ULOLV0EmzVdnuaY986cze8yivqKvq
-   Q==;
-X-CSE-ConnectionGUID: f4VeaREWTrCua2J6u/g2TQ==
-X-CSE-MsgGUID: 626XYs4gQJ2iXm6Nx0AaBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="32250877"
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="32250877"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 19:23:11 -0700
-X-CSE-ConnectionGUID: M54PI1ueRW6QQ70PUWCqUw==
-X-CSE-MsgGUID: UmJDmILQTniWtJ9r5Nz8fA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="77828254"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Oct 2024 19:23:07 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 14 Oct 2024 19:23:07 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 14 Oct 2024 19:23:07 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 14 Oct 2024 19:23:06 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fxY5+t/NG5LVTJsk74xfXEdszEJQbKqJ8KlnMegmuqZCLuC5hnEZZHQ2GHbIfUqrxEFASyXE1CMUTI1d5j9ND5C8vLi3fTY33Vf10Sign8RYxRWYBK3/b8Z5KKSOw+njvRA8VyquWe66JLlmCWwG4EidLRo/3XdnbiiUoBEyge8JNrldVAXW3qDyeeoDZ4gbWhlQznZsQCisx5nzc5CmO0YE93BWgbZPELrw0k/410kjupyuUV4AWB/TvaPHEOIkvqeHjn2prA5ZiTDr4y7micfjnFKgo7wDHkQBxeWRobWRZru33HqrJuTI3zCTSc/OwMb9pNAQ+Wjz0tSCiFCpNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ETdYsfVGV4upQRKIvFJavJmL/uZJuXMWdYMzvPYdqpc=;
- b=mRSwFZ0aJyAq/cX3e6t9gWzPRvrzMhAIvT1js8ddREalGQKLYCjS5kInpDcgdFLhhhDYSD1pbdK62S8fqqrSFuILlHtzjII3AhU1c1vp8JJZPI2K25tY7jZt2AmWcwvZxN7yMblaFL5VZvVRxaFcd59qc2VTA1LzK/3dB+ycGTQwpgAG2TvEXuhD4J3PQ/xw1GoJEYGHEPEAVN3e+tVKKQboNEkQYLPkFcIekJ7SJOZ9CDFlymZNzbcfMabnR0PVsUfSiizz0JR+7oE/MeEZdBVLemReLplJ/5oiFYBU+H3/rOsIT7ivr4ES7gpt1Miqe9dypaKuhM0SmLgdH2aOGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SJ0PR11MB6693.namprd11.prod.outlook.com (2603:10b6:a03:44b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
- 2024 02:22:59 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 02:22:59 +0000
-Date: Mon, 14 Oct 2024 19:22:56 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Ming Lei <ming.lei@redhat.com>, Robin Murphy <robin.murphy@arm.com>
-CC: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>, "Hamza
- Mahfooz" <someguy@effective-light.com>, Dan Williams
-	<dan.j.williams@intel.com>, <linux-block@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-raid@vger.kernel.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
- overlapping mappings aren't supported"
-Message-ID: <670dd20098d9d_3f142943d@dwillia2-xfh.jf.intel.com.notmuch>
-References: <ZwxzdWmYcBK27mUs@fedora>
- <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
- <20241014074151.GA22419@lst.de>
- <ZwzPDU5Lgt6MbpYt@fedora>
- <7411ae1d-5e36-46da-99cf-c485ebdb31bc@arm.com>
- <Zw3MZrK_l7DuFfFd@fedora>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zw3MZrK_l7DuFfFd@fedora>
-X-ClientProxiedBy: MW4PR03CA0281.namprd03.prod.outlook.com
- (2603:10b6:303:b5::16) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F1D184F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728959050; cv=none; b=iTOpUy/dm/hguo3KChd9LXpk7jO2+jUVxKv3VnO3ijyjBNPjnvZ2MMPTRDjAJrPz0xrRM0P9OKUta788tS4FGTyAFKDnrjqvdEW+NOymYzJ1uymjKAXLPo1wAF3YSKMhuCO9MZhYBqSJbD8Qjf1teXAychJCdUBrjcXfJviss0M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728959050; c=relaxed/simple;
+	bh=B6xPF6QCA06Vvy5p4PvQ6pQ7V4/v8s8YXvrpfZC36WY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cTlpURltLGHY3B4qGIqwqzpSiRrp/NznddDfng2+Jf7P9T+UfhLH1nlFyz3+f7ePTa0EsMlkgNiNIuK8MoIyS5mKSmMf3Ot6D9umGzA+mE7KnkrsprVGEFZf+pJu40BX22+C+4p7V1ufyQnTjNmaLb0IH8dSyZCxBNSOfXZ41mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PWP//sMJ; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ce611edb-87e2-4631-b813-7244d64c57d4@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728959045;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hb1t/WHXI7IyoIEPpzH/xFYMEhPHUxUF0xOiDArzIpY=;
+	b=PWP//sMJNDSwSIr9SAd9VazJeacZBj+Z+v6ycT0cXpqAMjdpXKyIf5qI6ffDAznhVz4B+l
+	Lh+1Rhsl6hHV0nozRapfKGs1oaN6XZ9H8A70YCbxVcjh2SAvsSIg20h6PqAqrA4VDiMt5H
+	Mh3MZ0ngK6w138Jd7Ql7Bp2QR9Nn/3I=
+Date: Tue, 15 Oct 2024 10:23:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SJ0PR11MB6693:EE_
-X-MS-Office365-Filtering-Correlation-Id: 963d4f0b-c7a3-4c8d-dadd-08dcecc0498e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qjngRkeJ8CBBWoIcPIvfRzWHhKhmWOSiz0KRmG3x7qAQboBAI2BmAYcrFJ7+?=
- =?us-ascii?Q?iJQumoBpEFedC7XvFXmt3+8/8xDLVJqsYKx6vtcpMUXX61xPS2Xhk9BSiPaY?=
- =?us-ascii?Q?Z9Nget3Uot7NUT6iVvOw6NoJKe0o3yHnV8m7LV4laY/edmAwJYO03bXvy6X0?=
- =?us-ascii?Q?hABQWXJIzZM0p6NIGgbYmUA9p2+AxrJB6dk111jgH2foKiwyKGkI6ScBT4nd?=
- =?us-ascii?Q?/yL1SSueCfVBZ8+yosaYELHSL8m60iQYXMleCXVRibVlUQ+SErn5NePGi4nx?=
- =?us-ascii?Q?P/NA3JSrps7RevKuZUNOWcvmBsK7iAVCa7xV7AoU6xV3omEVzvkjCnUeAg7Y?=
- =?us-ascii?Q?B7UT4nxbcFFIiaLNPbBPhYNA4bXSVNM7V7l9TVNx1q2f6DtE+FGlAfrfrAvZ?=
- =?us-ascii?Q?nJVwgKAghordxZf2hNxtkt9h8bTCwxEdUhklw6u0WhQNEYXdAnZTGhwnv6EB?=
- =?us-ascii?Q?pBTCK9C+gN0nWzZ+yjH8q2VfIN36e8vwlWll/iCp2lANBwKsYHCfcusfEMDn?=
- =?us-ascii?Q?OGVBm83LBrBSt7Ohq11PMJU6nddeFXcLQeGxKpy7TqhIOluxpGu4Bu27v31c?=
- =?us-ascii?Q?4EzIuEPJqbckWjsdH6qvVgtTk//4dE36PGS6DMFlfIhpIqF53Dpbq0H4E58b?=
- =?us-ascii?Q?BzufIqyHgPLLq5mbMVYyBNRMmACOIWhMUlMTjNE/y4ev5zY6QAraUtUn5kvI?=
- =?us-ascii?Q?LCrXo7FELw/PmNgYzROyK7Wmv5jlz65VdK+rnG+jfMhnEx/TwH0Fn894r0Oc?=
- =?us-ascii?Q?Q6e8F8x6gbymO6d3se80SLn7Uajzd8xxrwUmWr6iXz76yzKMnZ2+5xiUjrVx?=
- =?us-ascii?Q?72IEWa9kbt5pmczQ/yQck30HL1TOSVPNz9g+8Bep1qQZEBx+O7HIKkiDntYM?=
- =?us-ascii?Q?sVMGlPQaREZDHOGXpHr41MxlMrZNMdycqbCvukJ1u2FPYvU1r2HNMxFCa60w?=
- =?us-ascii?Q?JHwsbSFduVuJ+Zf1JJiCoTXUbkWxM861LHsToxYzBXv8ZoGyXYbzOQakNWmF?=
- =?us-ascii?Q?cRUiGBzDXsc0Xg3nWU1bFDGBI5x1ENmDIDut1Te7qWcEnRy1YwHWlWTYV4bs?=
- =?us-ascii?Q?UIQW3S78wrrJBX6n1+nf7tpJ3J51Q+58DvsK80hry9i6sJ9tSCh6faeN5heq?=
- =?us-ascii?Q?OfbES335BEUB7VLP1/xBAo1VQF5ABaefvM1zgRKqZVypyUyDVIrRq4j5Uhfn?=
- =?us-ascii?Q?3kB3PKPZBAEizBW01e/vl0vKxUcSyQX8m2pF8dXnGY/MXC66M/cLGHO2Awk3?=
- =?us-ascii?Q?3Qk4HZ0T7maoKh3JMWEgRb84r3fO0pA8MpwSvFsMAQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oiJkDguDf5TpQnpvAUn9DeRQlRyIhy0v6Zy321wHFJnHsongPgDxOxwENpJX?=
- =?us-ascii?Q?wvmsLSfTk2072DI6VeV4XVWs2IbIYaA37ntWL2cVLaisqhgT+AEnOuT4CJ+4?=
- =?us-ascii?Q?MvyK6i+GnjJgdnp3T8MmIzE//mOgIGQwtttMv9Ut71YUastCx3JV2cj8z9kv?=
- =?us-ascii?Q?c/o3/EAHRbBdX30QpIBnYcTxPBY+mvYVGa2zltzeTeiBUBh+djp1DNEMlgGK?=
- =?us-ascii?Q?5zG2j6AzD6o80vCFK00CjYBM9gEi1OBSGOjp7l5nkbmrsObybYxPXY1vT8hm?=
- =?us-ascii?Q?O/ojujC2BO7tyisgZCsLh4Tuiie8RarF/3K4AirQ0RrtxTVY+mGsBWm2+OWg?=
- =?us-ascii?Q?73hi/5xUd7eWUA3zlwshPJ0EmRK9UraaVUqhILw/muaBngR6TUrFxf5c4Ngt?=
- =?us-ascii?Q?XQmqXWYFKj1wPNaRcoE5uaxj13x7jS/elKPB+VFZvx9QPJLOdUYdo8PeNXeb?=
- =?us-ascii?Q?CBdToSiXnT569FSwQZ8zLo0xZWrIRqNy8VSo7BaF+9YeKIe5pHDNgLk323O+?=
- =?us-ascii?Q?TfZmBUurPUHq8hFyTaVPAdSPTcgrxOHrLIys08p53zoAtR0RI2bAomppYYW0?=
- =?us-ascii?Q?j7D0DdieaP01nqj/Q2GVnHeF7lNkORqsLHa4WTF7RM9kJswDgZr11OETPeJg?=
- =?us-ascii?Q?5jikghuCkNSU0X4e3OKwjD+65FkqaY1ScycYvds1VCR9nkRn445ZRjDL7lB8?=
- =?us-ascii?Q?HtmVoEYz84Wp9ApUnNR7mCl7OATgiIBYDocDGTp0EI65PuG4AiHEPa+WgZ3D?=
- =?us-ascii?Q?2tW2TRKJxFH2z7MDkuPovvlyN5uWgP+Uia1vZjPg67BCN/zZJcnCZbS50Hb6?=
- =?us-ascii?Q?91ZoD9BBTO6ctWFrs7rnXUv2xcivmkCJfuPMzwGvlLCDQrG4JTTShHA0FvKf?=
- =?us-ascii?Q?APGezmBehpTqQ79iPAAnrQWTcwkr5AewK+3r3I1x+mddzyi2wfjluEns6D7A?=
- =?us-ascii?Q?4p7Tv5aO/hF8ye7Z09InigHB824OvjPxlzoJMt5Yocie2c8MDyNvOGT3fX5M?=
- =?us-ascii?Q?474V5+24Emq/2IvaCxfSaLCRsJdV9j8PEs+g5YVjsMqQQAdIjRRSyFRLXwJ+?=
- =?us-ascii?Q?W7tfKtLjT3shFrHZ2XHDw1E8KiGWth39/pFuzT8tTVxJott+Fs/5jhRgJ4Eu?=
- =?us-ascii?Q?iLh1PpAuUCdnEg59NznMPul3s0gVygqZExsfpjE4PBeVe9g21oxYDX1W25eT?=
- =?us-ascii?Q?OlL0zfXr3J780nstIT1s6Zwd60NFddolgeG/cZ1Fa1XNKeL2tg1497PrOjno?=
- =?us-ascii?Q?6OtVTG7IjF6c5EGpgGCtCciKSn5c0yz+P4lKsyaRZw18Z94RqPxQyjnoKkDI?=
- =?us-ascii?Q?0PQeKSssYur9JBF2L9FfytD8NhbfIXi9xKDeI/r7pjhW0LJkdmwlcYAvUXvd?=
- =?us-ascii?Q?usQ7XxXZn6m4zEiFPh9CMnFEUZwFLEze1PQLGQqz+oz8eRrHvaDm9Wk/EdE6?=
- =?us-ascii?Q?iFs53ugXJgYszV/7GpGWl/NDZq7xNjrAwBmSk2s9ddpUINzlZRPnA80KeHWt?=
- =?us-ascii?Q?kIqi7cu5yJ2PZdtoj7XZSUWMuXFyJXzZi8PRo7Zbimz67iQFrkzLRABhTytj?=
- =?us-ascii?Q?Dubzu2e8Rk5KN8BnHrYtb2nmH38m1Oc5+HRsbBk+4ohERdd9DwhsoCZRO1K+?=
- =?us-ascii?Q?7g=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 963d4f0b-c7a3-4c8d-dadd-08dcecc0498e
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 02:22:59.2570
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kn3y1wX+oEC9xLyouZvruVsLdFvNzxnMMhIwmn7Dkkbim2kT8GymRBG+Mq1vdtIIgPPiszf629ymF1zb9JgmZEPZYcBpjAEPtb8aNv7dS50=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6693
-X-OriginatorOrg: intel.com
+Subject: Re: [PATCH v5 1/3] Docs/zh_CN: Translate page_tables.rst to
+ Simplified Chinese
+To: Pengyu Zhang <zpenya1314@gmail.com>, alexs@kernel.org,
+ siyanteng@loongson.cn, corbet@lwn.net, seakeel@gmail.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yaxin_wang_uestc@163.com, zenghui.yu@linux.dev
+References: <20241014155526.17065-1-zpenya1314@gmail.com>
+ <20241014155526.17065-2-zpenya1314@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20241014155526.17065-2-zpenya1314@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Ming Lei wrote:
-> On Mon, Oct 14, 2024 at 07:09:08PM +0100, Robin Murphy wrote:
-> > On 14/10/2024 8:58 am, Ming Lei wrote:
-> > > On Mon, Oct 14, 2024 at 09:41:51AM +0200, Christoph Hellwig wrote:
-> > > > On Mon, Oct 14, 2024 at 09:23:14AM +0200, Hannes Reinecke wrote:
-> > > > > > 3) some storage utilities
-> > > > > > - dm thin provisioning utility of thin_check
-> > > > > > - `dt`(https://github.com/RobinTMiller/dt)
-> > > > > > 
-> > > > > > I looks like same user buffer is used in more than 1 dio.
-> > > > > > 
-> > > > > > 4) some self cooked test code which does same thing with 1)
-> > > > > > 
-> > > > > > In storage stack, the buffer provider is far away from the actual DMA
-> > > > > > controller operating code, which doesn't have the knowledge if
-> > > > > > DMA_ATTR_SKIP_CPU_SYNC should be set.
-> > > > > > 
-> > > > > > And suggestions for avoiding this noise?
-> > > > > > 
-> > > > > Can you check if this is the NULL page? Operations like 'discard' will
-> > > > > create bios with several bvecs all pointing to the same NULL page.
-> > > > > That would be the most obvious culprit.
-> > > > 
-> > > > The only case I fully understand without looking into the details
-> > > > is raid1, and that will obviously map the same data multiple times
-> > > 
-> > > The other cases should be concurrent DIOs on same userspace buffer.
-> > 
-> > active_cacheline_insert() does already bail out for DMA_TO_DEVICE, so it
-> > returning -EEXIST to tickle the warning would seem to genuinely imply these
-> > are DMA mappings requesting to *write* the same cacheline concurrently,
-> > which is indeed broken in general.
-> 
-> The two io_uring tests are READ, and the dm thin_check are READ too.
+Hi Pengyu
 
-"READ from the device" == "WRITE to the page" (DMA_FROM_DEVICE).
 
-> For the raid1 case, the warning is from raid1_sync_request() which may
-> have both READ/WRITE IO.
+在 2024/10/14 23:55, Pengyu Zhang 写道:
+> This patch provides a Simplified Chinese translation of the
+> "page_tables.rst" document, aimed at improving accessibility
+> for Chinese-speaking developers and users.
+>
+> The translation prioritizes technical accuracy and readability,
+> ensuring that the content remains clear and informative for
+> its intended audience.
 
-I don't see an easy way out of this without instrumenting archs that
-can not support overlapping mappings to opt-in to bounce buffering for
-these cases.
+> Update to commit d83d5cdfa125 ("Documentation/page_tables: Add info about
+> MMU/TLB and Page Faults")
+Hmm, let silence the warning:
 
-Archs that can support this can skip the opt-in and quiet this test, but
-some of the value is being able to catch boundary conditions on more
-widely available systems.
+0001-Docs-zh_CN-Translate-page_tables.rst-to-Simplified-C.patch
+---------------------------------------------------------------
+WARNING: Unknown commit id 'd83d5cdfa125', maybe rebased or not pulled?
+#15:
+Update to commit d83d5cdfa125 ("Documentation/page_tables: Add info about
+--------
+It seems that you haven't used the development tree on kernel.org 
+website, see:
+<https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/Documentation?h=v6.12-rc3&id=4d83d5cdfa1251bea0b88b15f8ad676a83275c11>
+
+
+Let's copy this:
+Update to commit 4d83d5cdfa12 ("Documentation/page_tables: Add info about
+
+MMU/TLB and Page Faults")
+
+> Reviewed-by: Alex Shi <alexs@kernel.org>
+>
+> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
+Oh no, we don't need the blank line.
+> ---
+> v4->v5:add commit tag and Reviewed-by tag pointed by Yanteng, and restore
+> the pfn value to 0x3fffff.
+> v3->v4:fix comments from Zenghui
+> v2->v3:fix issues mentioned by Alex
+> v1->v2:fix issues mentioned by Alex, Dongliang
+>   Documentation/translations/zh_CN/mm/index.rst |   1 +
+>   .../translations/zh_CN/mm/page_tables.rst     | 221 ++++++++++++++++++
+>   2 files changed, 222 insertions(+)
+>   create mode 100644 Documentation/translations/zh_CN/mm/page_tables.rst
+>
+> diff --git a/Documentation/translations/zh_CN/mm/index.rst b/Documentation/translations/zh_CN/mm/index.rst
+> index b950dd118be7..960b6d2f3d18 100644
+> --- a/Documentation/translations/zh_CN/mm/index.rst
+> +++ b/Documentation/translations/zh_CN/mm/index.rst
+> @@ -53,6 +53,7 @@ Linux内存管理文档
+>      page_migration
+>      page_owner
+>      page_table_check
+> +   page_tables
+>      remap_file_pages
+>      split_page_table_lock
+>      vmalloced-kernel-stacks
+> diff --git a/Documentation/translations/zh_CN/mm/page_tables.rst b/Documentation/translations/zh_CN/mm/page_tables.rst
+> new file mode 100644
+> index 000000000000..544381c348b1
+> --- /dev/null
+> +++ b/Documentation/translations/zh_CN/mm/page_tables.rst
+> @@ -0,0 +1,221 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. include:: ../disclaimer-zh_CN.rst
+> +
+> +:Original: Documentation/mm/page_tables.rst
+> +
+> +:翻译:
+> +
+> + 张鹏宇 Pengyu Zhang <zpenya1314@gmail.com>
+> +
+> +:校译:
+> +
+> +====
+> +页表
+> +====
+> +
+> +分页虚拟内存是随虚拟内存的概念一起于 1962 年在 Ferranti Atlas 计算机上被提出的，
+> +这是第一台有分页虚拟内存的计算机。随着时间推移，这个特性被迁移到更新的计算机上，
+> +并且成为所有类 Unix 系统实际的特性。在 1985 年，这个特性被包含在了英特尔 80386
+> +中，也就是 Linux 1.0 基于的 CPU。
+how about 也就是运行 Linux 1.0 的CPU。
+> +
+> +页表将 CPU 看到的虚拟地址映射到外部内存总线上看到的物理地址。
+> +
+> +Linux 将页表定义为一个分级结构，目前有五级。对于支持的每种架构，其代码会根据硬件
+> +限制对这个层级结构进行映射。
+> +
+> +虚拟地址对应的物理地址通常由底层物理页帧引用。 **页帧号(page frame number,pfn)**
+> +是页的物理地址（在外部内存总线看到的地址）除以 `PAGE_SIZE` 得到的值。
+> +
+> +物理内存地址 0 对应 *pfn 0*，而最大的 pfn 对应处理器外部地址总线所能寻址物理地址
+> +的最后一页。
+> +
+> +在页粒度为 4KB 且地址范围为32位的情况下，pfn 0 对应地址0x00000000，pfn 1 对应
+> +地址0x00001000，pfn 2 对应地址 0x00002000，以此类推，直到 pfn 0xfffff 对应
+> +0xfffff000。如果页粒度为 16KB，则 pfn 分别对应地址 0x00004000、0x00008000
+> +... 0xffffc000，pfn 的范围从 0 到 0x3fffff。
+> +
+> +如你所见，对于 4KB 页面粒度，页基址使用地址的 12-31 位，这就是为什么在这种情况下
+> +`PAGE_SHIFT` 被定义为 12，并且 `PAGE_SIZE` 通常由页偏移定义，为 `(1 << PAGE_SHIFT)`。
+> +
+> +随着内存容量的增加，久而久之层级结构逐渐加深。Linux 最初使用 4KB 页面和一个名为
+> +`swapper_pg_dir` 的页表，该页表拥有 1024 个条目(entries)，覆盖 4MB 的内存，
+> +事实上Torvald 的第一台计算机正好就有 4MB 物理内存。条目在这张表中被称为 *PTE*:s
+> +- 页表条目(page table entries)。
+
+page table entries -> 页表项。 So:
+每一个页表项在这张表中被称为 *PTE*:s
+
+> +
+> +软件页表层级结构反映了页表硬件已经变得分层化的事实，而这种分层化的目的是为了节省
+> +页表内存并加快地址映射速度。
+> +
+> +当然，人们可以想象一张拥有大量条目的单一线性的页表将整个内存分为一个个页。而且，
+Hmm， let's exec %s/条目/页表项 in vim.
+> +这样的页表会非常稀疏，因为虚拟内存中大部分位置通常是未使用的。通过页表分层，虚拟
+> +内存中的大量空洞不会浪费宝贵的页表内存，因为只需要在上层页表中将大块的区域标记为
+> +未映射即可。
+> +
+> +另外，在现代处理器中，上层页表条目可以直接指向一个物理地址范围，这使得单个上层
+> +页表条目可以连续映射几兆字节甚至几千兆字节的内存范围，从而快捷地实现虚拟地址到
+> +物理地址的映射：当你找到一个像这样的大型映射范围时，无需在层级结构中进一步遍历。
+> +
+> +页表的层级结构目前发展为如下所示::
+> +
+> +  +-----+
+> +  | PGD |
+> +  +-----+
+> +     |
+> +     |   +-----+
+> +     +-->| P4D |
+> +         +-----+
+> +            |
+> +            |   +-----+
+> +            +-->| PUD |
+> +                +-----+
+> +                   |
+> +                   |   +-----+
+> +                   +-->| PMD |
+> +                       +-----+
+> +                          |
+> +                          |   +-----+
+> +                          +-->| PTE |
+> +                              +-----+
+> +
+> +
+> +不同页表层级的符号含义从最底层开始如下：
+> +
+> +- **pte**, `pte_t`, `pteval_t` = **页表条目** - 前面提到过。*pte* 是一个由
+> +  `PTRS_PER_PTE` 个 `pteval_t` 类型元素组成的数组，每个元素将一个虚拟内存页
+> +  映射到一个物理内存页。体系结构定义了 `pteval_t` 的大小和内容。
+> +
+> +  一个典型的例子是 `pteval_t` 是一个 32 或者 64 位的值，其中高位是 **pfn**，
+> +  而低位则一些特定体系架构相关的位，如内存保护。
+> +
+> +  这个 **条目(entry)** 有点令人困惑，因为在 Linux 1.0 中它确实指的是单层顶级
+> +  页表中的单个页表条目，但在首次引入二级页表时，它被重新定义为映射元素的数组。
+> +  因此，*pte* 现在指的是最底层的页 *表*，而不是一个页表 *条目*。
+> +
+> +- **pmd**, `pmd_t`, `pmdval_t` = **页中间目录(Page Middle Directory)**,
+> +  位于 *pte* 之上的层级结构，包含 `PTRS_PER_PMD` 个指向 *pte* 的引用。
+> +
+> +- **pud**, `pud_t`, `pudval_t` = **页上级目录(Page Upper Directory)**
+> +  是在其他层级之后引入的，用于处理四级页表。它可能未被使用，或者像我们稍后
+> +  讨论的那样被“折叠”。
+> +
+> +- **p4d**, `p4d_t`, `p4dval_t` = **页四级目录(Page Level 4 Directory)**
+> +  是在 *pud* 之后用于处理五级页表引入的。至此，显然需要用数字来替代 *pgd*、
+> +  *pmd*、*pud* 等目录层级的名称，不能再继续使用临时的命名方式。这个目录层级
+> +  只在实际拥有五级页表的系统上使用，否则它会被折叠。
+> +
+> +- **pgd**, `pgd_t`, `pgdval_t` = **页全局目录(Page Global Directory)** -
+> +  Linux 内核用于处理内核内存的 *PGD* 主页表仍然位于 `swapper_pg_dir`。
+> +  但系统中的每个用户空间进程也有自己的内存上下文，因此也有自己的 *pgd*，
+> +  它位于 `struct mm_struct` 中，而 `struct mm_struct` 又在每个 `struct task_struct`
+> +  中有引用。所以，任务（进程）存在一个形式为 `struct mm_struct` 的内存上下文，
+> +  而这个结构体中有一个指向指向相应的页全局目录 `struct pgt_t *pgd` 指针。
+> +
+> +重申一下：页表层级结构中的每一层都是一个 *指针数组*，所以 *pgd* 包含 `PTRS_PER_PGD`
+> +个指向下一层的指针，*p4d* 包含 `PTRS_PER_P4D` 个指向 *pud* 项的指针，依此类推。
+> +每一层的指针数量由体系结构定义。::
+> +
+> +        PMD
+> +  --> +-----+           PTE
+> +      | ptr |-------> +-----+
+> +      | ptr |-        | ptr |-------> PAGE
+> +      | ptr | \       | ptr |
+> +      | ptr |  \        ...
+> +      | ... |   \
+> +      | ptr |    \         PTE
+> +      +-----+     +----> +-----+
+> +                         | ptr |-------> PAGE
+> +                         | ptr |
+> +                           ...
+> +
+> +页表折叠
+> +========
+> +
+> +如果架构不使用所有的页表层级，那么这些层级可以被 *折叠*，也就是说被跳过。在
+> +访问下一层时，所有在页表上执行的操作都会在编译时增强，以跳过这一层。
+> +
+> +与架构无关的页表处理代码（例如虚拟内存管理器）需要编写得能够遍历当前的所有五个
+> +层级。对于特定架构的代码，也应优先采用这种风格，以便对未来的变化具有更好的适应性。
+> +
+> +MMU，TLB 和缺页异常
+> +===================
+> +
+> +`内存管理单元(MMU)` 是处理虚拟地址到物理地址转换的硬件组件。它可能会使用相对较小
+> +的硬件缓存，如 `转换后备缓冲区(TLB)` 和 `页遍历缓存`，以加快这些地址翻译过程。
+> +
+> +当 CPU 访存时，它会向 MMU 提供一个虚拟地址。MMU 会首先检查 TLB 或者页遍历缓存
+> +（在支持的架构上）是否存在对应的转换结果。如果没有，MMU 会通过遍历来确定物理地址
+> +并且建立映射。
+> +
+> +当页面被写入时，该页的脏位会被设置（即打开）。每个内存页面都有相关的权限位和脏位。
+> +后者表明这个页自从被加载到内存以来是否被修改。
+> +
+> +如果没有任何阻碍，物理内存到头来可以被任意访问并且对物理帧进行请求的操作。
+> +
+> +MMU 无法找到某些转换有多种原因。有可能是 CPU 试图去访问当前进程没有权限访问的
+> +内存，或者因为访问的数据还不在物理内存中。
+> +
+> +当这些情况发生时，MMU 会触发缺页异常，这是一种异常类型，用于通知 CPU 暂停当前
+> +执行并运行一个特殊的函数去处理这些异常。
+> +
+> +缺页异常有一些常见且预期的原因。这些因素是由称为“懒加载”和“写时复制”的进程管理
+> +优化技术来触发的。缺页异常也可能发生在当页帧被交换到持久存储（交换分区或者文件）
+> +并从其物理地址移出时。
+> +
+> +这些技术提高了内存效率，减少了延迟，并且最小化了空间占用。本文档不会深入讨论
+> +“懒加载”和“写时复制”的细节，因为这些的主题属于进程地址管理范畴，超出了本文范围。
+> +
+> +交换技术和前面提到的其他技术不同，因为它是在压力过大下情况下减少内存消耗的一种
+> +迫不得已的手段，因此是不受欢迎的。
+> +
+> +交换不适用于由内核逻辑地址映射的内存。这些地址是内核虚拟地址空间的子集，直接映射
+> +一段连续的物理内存。对于提供的任意逻辑地址，它的物理地址可以通过对偏移量进行简单
+> +的算数运算来确定。对逻辑地址的访问很快，因为这避免了复杂的页表查找，但代价是这些
+> +内存不能被驱逐或置换。
+> +
+> +如果内核无法为必须存在于物理帧中的数据腾出空间，那么它会调用内存不足(out-of-memory,
+> +OOM)杀手，通过杀掉低优先级的进程来腾出空间，直到内存压力下降到安全阈值之下。
+> +
+> +另外，代码漏洞或指示 CPU 访问的精心制作的恶意地址也可能导致缺页异常。一个进程的
+> +线程可以利用指令来访问不属于其地址空间的（非共享）内存，或者试图执行写入只读位置
+> +的指令。
+> +
+> +如果上述情况发生在用户态，内核会向当前线程发送 `段错误` (SIGSEGV)信号。该信号
+> +通常导致线程及其所属的进程终止。
+> +
+> +本文将简化并概述 Linux 内核如何处理这些缺页中断、创建表和表项、检查内存是否存在，
+> +以及当内存不存在时，如何请求从持久存储或其他设备加载数据，并更新 MMU 及其缓存。
+> +
+> +最初的步骤依赖于架构。大多是架构跳转到 `do_page_fault()`，而 x86 中断处理程序是由
+> +`DEFINE_IDTENTRY_RAW_ERRORCODE()` 宏定义的，该宏调用 `handle_page_fault()`。
+> +
+> +无论调用路径如何，所有架构最终都会调用 `handle_mm_fault()`，该函数通常会调用
+> +`__handle_mm_fault()` 来执行实际分配页表的任务。
+> +
+> +如果不幸无法调用 `__handle_mm_fault()` 则意味着虚拟地址指向了无权访问的物理
+> +内存区域（至少对于当前上下文如此）。这种情况会导致内核向该进程发送上述的 SIGSEGV
+> +信号，并引发前面提到的后果。
+> +
+> +这些用于查找偏移量的函数名称通常以 `*_offset()` 结尾，其中“\*”可以是 pgd，p4d，
+> +pud，pmd 或者 pte；而分配相应层级页表的函数名称是 `*_alloc`，它们按照上述命名
+> +约定以对应页表层级的类型命名。
+> +
+> +页表遍历可能在中间或者上层结束(PMD，PUD)。
+> +
+> +Linux 支持比通常 4KB 更大的页面（即所谓的 `巨页`）。当使用这种较大的页面时，没有
+> +必要使用更低层的页表项(PTE)。巨页通常包含 2MB 到 1GB 的大块连续物理区域，分别由
+> +PMD 和 PUD 页表项映射。
+> +
+> +巨页带来许多好处，如减少 TLB 压力，减少页表开销，提高内存分配效率，以及改善
+> +特定工作负载的性能。然而，这些好处也伴随着权衡，如内存浪费和分配难度增加。
+> +
+> +在遍历和分配的最后，如果没有返回错误，`__handle_mm_fault()` 最终调用 `handle_pte_fault()`
+> +通过 `do_fault()` 执行 `do_read_fault()`、 `do_cow_fault()` 和 `do_shared_fault()`。
+> +“read”，“cow”和“shared”分别暗示了它处理错误的类型和原因。
+> +
+> +实际的工作流程实现是非常复杂的。其设计允许 Linux 根据每种架构的特定特性处理缺页
+> +异常，同时仍然共享一个通用的整体结构。
+> +
+> +为了总结 Linux 如何处理缺页中断的概述，需要补充的是，缺页异常处理程序可以通过
+> +`pagefault_disable()` 和 `pagefault_enable()` 分别禁用和启用。
+> +
+> +许多代码路径使用了这两个函数，因为它们需要禁止陷入缺页异常处理程序，主要是为了
+> +防止死锁。
+
+Thanks,
+Yanteng
+
 
