@@ -1,272 +1,193 @@
-Return-Path: <linux-kernel+bounces-365160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A9899DE60
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3119099DE6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57090B216A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:30:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 984EAB2265D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9B7189F43;
-	Tue, 15 Oct 2024 06:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C42C189F3B;
+	Tue, 15 Oct 2024 06:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAK0vwJE"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PL6Bi1BB"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FA9189916;
-	Tue, 15 Oct 2024 06:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A6E189BB4
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728973817; cv=none; b=OOkBkojMsP9Zyio29bAixtt7SACJ3UywhvwoRbHHIt1DQ0zW3Js4Rplr+je5zOBlC3pHNWad8kP0Iief2NvXy+u6Gs20s0+qsSsEt0U11FC9ioEOuw/2tMlvSv328MKfNTnxfxxmjsbMa8W/wxXa4/KZ6098XwUu8u+wVV9lX2M=
+	t=1728973941; cv=none; b=g8tf8EcZE9yzMuArZj+4aQfs4DIaTuvyGTiGBc7HLkRSC8b2IFWFRo2ccX2sPPqhqLS7LQokwWGxXPfzqIT9Ng33PriWz6yYlVZeugPbDda4Rwts3TvoVIQ0I0aFnmE5aIiaXueSPKYtlWL6Zb0QLL6o9f6ZgFKqm1IZ6geyMpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728973817; c=relaxed/simple;
-	bh=41Txd5YoLMl6wAv7Qsle+XXPiZ4/UQIHqTjLCoOyMYE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RD3UPy+TBVRFK3m8MvYRQpVlTLePmqpcwhoAgxctzSwpEARTcxSyPYe20+eC/fvzSx/nc/ujrjqC0dSf6tCG7YwmGt3/yMvH05xdzGeGUOFtGMGV+CCfsVrR36akVTgnM9nCzasUqIov+UOcWrqa37oQqY2wcZvnqGIdI57Ijpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAK0vwJE; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d447de11dso3615234f8f.1;
-        Mon, 14 Oct 2024 23:30:15 -0700 (PDT)
+	s=arc-20240116; t=1728973941; c=relaxed/simple;
+	bh=1q4Y/mLkXbRsgsUsBr1rXVG3WA30GAlbK74JzmOqeeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qTeUrJDOS6LhNmQLZNQjSf3EMVVKd6CL4jeP9LxkWJitP/A837fCmpHoY68wO5WZso5Qi2Cj1XODZxf5auwErGwGL7qlBdGR9G9vtiTrZhKp7diassjjc31uAdTq2C1EBCr872/gycom1Mhe59Z+n2qQJCatreSSx4mCIJ8XMIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PL6Bi1BB; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a0c40849cso275332266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:32:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728973814; x=1729578614; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0/51GjD74rmzWSp7jmO+qgKLOzZqeiFNpacQrj2PkHc=;
-        b=hAK0vwJE1TnvRAkeFUJFV+B7pDF3PdsoNadn6H7lS4oTB1lB4CbjuODHookD29phOZ
-         GY1AgJ06dupGXRyVkIoKaQHJbqA+H1G+bmkeE43UIEMJZqsBq4rQS7aIfw21n5FEzzCE
-         C/GZXhEuTSg03N679fou2OcmtRevKy/2P2kBZ4rtxe1xlOaee0tI690ghY2RNdr1sG2F
-         Xn3KpRc96LapQeYfqRvBwc97V2tiUuGsAa2fUztzaRkQkntRmCNPMLXLriBNwfBa6/PN
-         in7t7TLFo5W1bJcxVKqPe4m5bzUHxN0BxiBWG7JcwylEKySwceX/+shxbSrYzH9qBMXK
-         aGXg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728973937; x=1729578737; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7op+5UqCxwoHXxBuDQd+qJjZ+3UWGpylDlz/kTqb0xg=;
+        b=PL6Bi1BBWUhrw++H6juzfxzC3YlEUviBtwOm6kT1GykiAzWchkJ9G4AfMib3717w21
+         HnF47beitC2XSanFc3m6unEAuRZr9gr1JZOH/pv7ApTpP+Vy+UazxPoGx/G1oqvOGRME
+         KmTc9KP72e3PkgJThMh0EdNsiRg6sLHBnxNCmzmtXNHfQiMOeVvZj4M/utxcXP5hYFWd
+         r/GFhpml3/WbjxpZwNvwIHNdRNkXX1BNQxet3bjGzGYlDsgGCd9jCBGrAOT99Eo2c5y6
+         7zEzFw5wQFfvpmlWeU9TPUDcIrMdgpcMK2dN++avlBmxr0QC4do1Usim/S4cUc7jwr6W
+         1nKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728973814; x=1729578614;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0/51GjD74rmzWSp7jmO+qgKLOzZqeiFNpacQrj2PkHc=;
-        b=PXiGFKQGewwOsR7wbSvKlsn9WHy6/LTrIjAHW/tAu0o+ynUPwX0i/XwAH6DdXe/sAT
-         n7VudxONoUwr9HdUkmk41Q+KOef96B794c3cnAN6wufVsHCiXxPvh/SS6nfYghkgH9t0
-         Bi/wSq2PkgQXRdxIoWr7Aud/kIEf8Om9SwP7K7oKNuLRF6XsNQA+3PEaU+lmQj7WsXMi
-         nn9sbc2IDtCf8pYxNVg6jh7nj7ThB65LaEO2edSwqvIDP8gtLCCVPY75o7GfGlQ2ziid
-         sd7JY0uWGPgGijDqZzr1M2ztK+WEgUj1Mb0ZdDXcfuUZURx41ygTowucTOUoDkt75/r6
-         UmEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7eTzkcDAAu71v9hd5THy+u6ZKYvqC9Wws11R0a+zFD4sgj3UUXDnTNLniLH2+xNiAYrQWZXfdJpf204+H@vger.kernel.org, AJvYcCWDOOC1nFBXlg9MRb3WVkfNRPsULj0RRDFYpgwwG5aVPE+U3TK9wHo4Eo7dpy9Y7vibFtcYi3D6Rys8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu47JROUvS0VY/ESBCK/cDam884tpK/dfjtaPJh1iMQ97Sdz/w
-	EzWo7hDdf1FYPusF6qnqzzrrSud2BizdYeF+fnXydMpbPkZXhNSo
-X-Google-Smtp-Source: AGHT+IGztSWoQNZUn18NP0qjrUlztyHZzM+Qnb1J/xY9GzqeImDRsQ4KreubkMNqsIUw5R4KTyaejg==
-X-Received: by 2002:adf:a395:0:b0:37d:4fe9:b6a7 with SMTP id ffacd0b85a97d-37d5529effamr9818072f8f.36.1728973814126;
-        Mon, 14 Oct 2024 23:30:14 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc40a14sm698756f8f.103.2024.10.14.23.30.13
+        d=1e100.net; s=20230601; t=1728973937; x=1729578737;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7op+5UqCxwoHXxBuDQd+qJjZ+3UWGpylDlz/kTqb0xg=;
+        b=avaVl85skIDcRWbiVL9YCaPeDTsa/9zgjGW3NUNIvSN46U8LCOzAUm5uixnzz6+D83
+         z9AaLOklRgr4/xso1IWMzB8RqCcgx72V7Z8khj6LItAkfP39WTIaXBBVzOVKGUFNHB0w
+         PNp0n9QoXH2cSMwMUToyg7fUGgQIdV6OKYk3pesOlkYNvkmzqPaDiM7MBCRnaDJ1a1+0
+         uIxcvCfGwL/n5htQuELNIi2IV3X2VxIwWWYgogQyqHayfL/Fr2xQ/Nasj2U1A6ciowtA
+         0BNUNF3oaGB6ambHOraniJGwZcL28BCGcPGVaA+dleRuYL6OUp9nWR2nt0ZbjCK3VllF
+         rH7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVjsR5Oys+BBc86X4gq7Nm0VdQ1Ztv/3a96oLOz625tvvZbMRbWia9fnmyB6EChc5f+jf6AU9NXNO5h2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz555rv5vHYL9ts5Qxijgwfiyex/FoAA7fRaT3aBgUZtoyZseVK
+	XyVg4DAAFVsix2rt8mafnDxhBM02T6LGLyI32sj1A9NboqjRoclv+ZI5LEh4IUE=
+X-Google-Smtp-Source: AGHT+IGO9kn6nJ4TYuBfxJXBP1NHraNDZPSzUfn+T9RlBAD6g56KlbxRj/4ac95OylIrX3b4RE5stA==
+X-Received: by 2002:a17:906:7312:b0:a9a:139:5ef3 with SMTP id a640c23a62f3a-a9a01396165mr745726666b.55.1728973936618;
+        Mon, 14 Oct 2024 23:32:16 -0700 (PDT)
+Received: from localhost ([2001:4090:a244:83ae:c75a:6d73:cead:b69a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2984396esm30947666b.164.2024.10.14.23.32.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 23:30:13 -0700 (PDT)
-Message-ID: <c4a961752398b7ecc6ed2eb59633b662ccfaaf50.camel@gmail.com>
-Subject: Re: [PATCH v6 4/8] iio: dac: adi-axi-dac: extend features
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
- <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>,  Jonathan Cameron
- <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Date: Tue, 15 Oct 2024 08:30:13 +0200
-In-Reply-To: <ab559026-7e95-4adc-9978-6db30982b2a6@baylibre.com>
-References: 
-	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
-	 <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-4-eeef0c1e0e56@baylibre.com>
-	 <ab559026-7e95-4adc-9978-6db30982b2a6@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        Mon, 14 Oct 2024 23:32:15 -0700 (PDT)
+Date: Tue, 15 Oct 2024 08:32:14 +0200
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
+	Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 3/9] can: m_can: Map WoL to device_set_wakeup_enable
+Message-ID: <cxembrzcref2shryu3sisexjuf7jwn7ieknuw2eyzd5lpb7atq@ivtpvhrwww5q>
+References: <20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com>
+ <20241011-topic-mcan-wakeup-source-v6-12-v3-3-9752c714ad12@baylibre.com>
+ <20241011185929.GA53629@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="23bg3cpe6mlws6xq"
+Content-Disposition: inline
+In-Reply-To: <20241011185929.GA53629@kernel.org>
 
-On Mon, 2024-10-14 at 16:14 -0500, David Lechner wrote:
-> On 10/14/24 5:08 AM, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
+
+--23bg3cpe6mlws6xq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Oct 11, 2024 at 07:59:29PM GMT, Simon Horman wrote:
+> On Fri, Oct 11, 2024 at 03:16:40PM +0200, Markus Schneider-Pargmann wrote:
+> > In some devices the pins of the m_can module can act as a wakeup source.
+> > This patch helps do that by connecting the PHY_WAKE WoL option to
+> > device_set_wakeup_enable. By marking this device as being wakeup
+> > enabled, this setting can be used by platform code to decide which
+> > sleep or poweroff mode to use.
 > >=20
-> > Extend AXI-DAC backend with new features required to interface
-> > to the ad3552r DAC. Mainly, a new compatible string is added to
-> > support the ad3552r-axi DAC IP, very similar to the generic DAC
-> > IP but with some customizations to work with the ad3552r.
+> > Also this prepares the driver for the next patch in which the pinctrl
+> > settings are changed depending on the desired wakeup source.
 > >=20
-> > Then, a serie of generic functions has been added to match with
->=20
-> spelling: series
->=20
-> > ad3552r needs. Function names has been kept generic as much as
-> > possible, to allow re-utilization from other frontend drivers.
-> >=20
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 > > ---
->=20
-> ...
->=20
-> > +static int axi_dac_read_raw(struct iio_backend *back,
-> > +			=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
-> > +			=C2=A0=C2=A0=C2=A0 int *val, int *val2, long mask)
+> >  drivers/net/can/m_can/m_can.c | 37 +++++++++++++++++++++++++++++++++++=
+++
+> >  1 file changed, 37 insertions(+)
+> >=20
+> > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_ca=
+n.c
+> > index a978b960f1f1e1e8273216ff330ab789d0fd6d51..29accadc20de7e9efa509f1=
+4209cc62e599f03bb 100644
+> > --- a/drivers/net/can/m_can/m_can.c
+> > +++ b/drivers/net/can/m_can/m_can.c
+> > @@ -2185,6 +2185,36 @@ static int m_can_set_coalesce(struct net_device =
+*dev,
+> >  	return 0;
+> >  }
+> > =20
+> > +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolin=
+fo *wol)
 > > +{
-> > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
-> > +	int err, reg;
+> > +	struct m_can_classdev *cdev =3D netdev_priv(dev);
 > > +
-> > +	switch (mask) {
-> > +	case IIO_CHAN_INFO_FREQUENCY:
-> > +
-> > +		if (!st->info->has_dac_clk)
-> > +			return -EOPNOTSUPP;
-> > +
-> > +		/*
-> > +		 * As from ad3552r AXI IP documentation,
-> > +		 * returning the SCLK depending on the stream mode.
-> > +		 */
-> > +		err =3D regmap_read(st->regmap, AXI_DAC_CUSTOM_CTRL_REG, &reg);
-> > +		if (err)
-> > +			return err;
-> > +
-> > +		if (reg & AXI_DAC_CUSTOM_CTRL_STREAM)
-> > +			*val =3D st->dac_clk_rate / 2;
-> > +		else
-> > +			*val =3D st->dac_clk_rate / 8;
->=20
-> To get the DAC sample rate, we only care about the streaming mode
-> rate, so this should just always be / 2 and not / 8. Otherwise
-> the sampling_frequency attribute in the DAC driver will return
-> the wrong value when the buffer is not enabled. We never do buffered
-> writes without enabling streaming mode.
-
-But the question then is, what do we return when streaming mode is off? Div=
-iding by 2
-in that case won't report the actual SCLK. But you do have a point and I th=
-ink a very
-common pattern from userspace is to first get the sampling frequency and on=
-ly then
-starting buffering. In this case, yes, we get the wrong sampling frequency.=
- Bottom
-line I agree with David and we should just care about returning the max sam=
-pling
-frequency which is the one that apps ultimately care about.
-
-So, I would say to divide it by 2 during probe and just return that value i=
-n here.
-
-- Nuno S=C3=A1
->=20
-> > +
-> > +		return IIO_VAL_INT;
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
+> > +	wol->supported =3D device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> > +	wol->wolopts =3D device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
 > > +}
 > > +
-> > +static int axi_dac_bus_reg_write(struct iio_backend *back, u32 reg, u3=
-2 val,
-> > +				 size_t data_size)
+> > +static int m_can_set_wol(struct net_device *dev, struct ethtool_wolinf=
+o *wol)
 > > +{
-> > +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> > +	struct m_can_classdev *cdev =3D netdev_priv(dev);
+> > +	bool wol_enable =3D !!wol->wolopts & WAKE_PHY;
+>=20
+> Hi Markus,
+>=20
+> I suspect there is an order of operations issue here.
+> Should the line above be like this?
+>=20
+> 	bool wol_enable =3D !!(wol->wolopts & WAKE_PHY);
+
+Yes, you are absolutely right, thanks for spotting this.
+
+Best
+Markus
+
+>=20
 > > +	int ret;
-> > +	u32 ival;
 > > +
-> > +	if (data_size =3D=3D sizeof(u16))
-> > +		ival =3D FIELD_PREP(AXI_DAC_CUSTOM_WR_DATA_16, val);
-> > +	else
-> > +		ival =3D FIELD_PREP(AXI_DAC_CUSTOM_WR_DATA_8, val);
+> > +	if ((wol->wolopts & WAKE_PHY) !=3D wol->wolopts)
+> > +		return -EINVAL;
 > > +
-> > +	ret =3D regmap_write(st->regmap, AXI_DAC_CUSTOM_WR_REG, ival);
-> > +	if (ret)
+> > +	if (wol_enable =3D=3D device_may_wakeup(cdev->dev))
+> > +		return 0;
+> > +
+> > +	ret =3D device_set_wakeup_enable(cdev->dev, wol_enable);
+> > +	if (ret) {
+> > +		netdev_err(cdev->net, "Failed to set wakeup enable %pE\n",
+> > +			   ERR_PTR(ret));
 > > +		return ret;
+> > +	}
 > > +
-> > +	/*
-> > +	 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to know
->=20
-> I'm guessing these got renamed. REG_CNTRL_2 =3D AXI_DAC_CNTRL_2_REG
-> and AXI_DAC_CNTRL_DATA_WR =3D AXI_DAC_CUSTOM_WR_REG?
->=20
-> > +	 * the data size. So keeping data size control here only,
-> > +	 * since data size is mandatory for the current transfer.
-> > +	 * DDR state handled separately by specific backend calls,
-> > +	 * generally all raw register writes are SDR.
-> > +	 */
-> > +	if (data_size =3D=3D sizeof(u8))
-> > +		ret =3D regmap_set_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SYMB_8B);
-> > +	else
-> > +		ret =3D regmap_clear_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
-> > +					AXI_DAC_CNTRL_2_SYMB_8B);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret =3D regmap_update_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
-> > +				 AXI_DAC_CUSTOM_CTRL_ADDRESS,
-> > +				 FIELD_PREP(AXI_DAC_CUSTOM_CTRL_ADDRESS, reg));
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret =3D regmap_update_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
-> > +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA,
-> > +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret =3D regmap_read_poll_timeout(st->regmap,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_REG, ival=
-,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ival & AXI_DAC_CUSTOM_CTRL_TR=
-ANSFER_DATA,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 10, 100 * KILO);
-> > +	if (ret)
-> > +		return ret;
->=20
-> Should we also clear AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA on timeout
-> so that we don't leave things in a bad state?
->=20
-> > +
-> > +	return regmap_clear_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
-> > +				 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA);
+> > +	return 0;
 > > +}
 > > +
 >=20
 > ...
->=20
-> > =C2=A0static int axi_dac_probe(struct platform_device *pdev)
-> > =C2=A0{
-> > -	const unsigned int *expected_ver;
-> > =C2=A0	struct axi_dac_state *st;
-> > =C2=A0	void __iomem *base;
-> > =C2=A0	unsigned int ver;
-> > @@ -566,15 +793,26 @@ static int axi_dac_probe(struct platform_device *=
-pdev)
-> > =C2=A0	if (!st)
-> > =C2=A0		return -ENOMEM;
-> > =C2=A0
-> > -	expected_ver =3D device_get_match_data(&pdev->dev);
-> > -	if (!expected_ver)
-> > +	st->info =3D device_get_match_data(&pdev->dev);
-> > +	if (!st->info)
-> > =C2=A0		return -ENODEV;
-> > =C2=A0
-> > -	clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
-> > +	clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
->=20
-> This will break existing users that don't have clock-names
-> in the DT. It should be fine to leave it as NULL in which
-> case it will get the clock at index 0 in the clocks array
-> even if there is more than one clock.
 
-Good catch...
+--23bg3cpe6mlws6xq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Nuno S=C3=A1
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTd8KHufh7XoFiu4kEkjLTi1BWuPwUCZw4MZgAKCRAkjLTi1BWu
+P53TAQCj7dklp8iNY9/7+mXl3KO4/Qhx6MY4breTVV2LuvTk4QD/fCiMaCYLJQXv
+5aeaj3cc9UUeFKO61bSzmqzV92dHeQU=
+=Kr5x
+-----END PGP SIGNATURE-----
+
+--23bg3cpe6mlws6xq--
 
