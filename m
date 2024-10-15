@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-365275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6868B99DFC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:53:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9869A99DFC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5B52B23B8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:53:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 214DCB227C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C761B4F2B;
-	Tue, 15 Oct 2024 07:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A11741EF;
+	Tue, 15 Oct 2024 07:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="i5wzU23O"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Jy/VDftk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CEB189BA7;
-	Tue, 15 Oct 2024 07:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C2D189BA7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728978824; cv=none; b=pnWH0yV29Mc5mNUvVQ4Q1JHcwNu90AKzG98WWzB6DUdJ//DRKfKLVHo1GJA6beZDlJIBJVBDDFk/dLs8I74Mk5aca85K0VtvMnusZIhcLz0R0VShMDJLVy0ZEHpVCQ8lxL0YqiLza5/54EEZdD3JvNzER1GzjSaX8/rQIvyg/Mo=
+	t=1728978817; cv=none; b=gU37wzMvzrV8YC1EgIikJw6IIDwXve4VjFTO5cANZ4UaK+KvEkLZuZBoOzs0Adtgln9i1S+oZpk85pMyrVzm8afBKGqXDssokKcRPlgrqYVOclpXtArx4etZl/I3OBwNrtbX1spfLhFB9VwYjTptW4s29YfJ+zOfC/2f6ivZ1Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728978824; c=relaxed/simple;
-	bh=N10GtP79W0SQR6wTu+fzxDJSpZ/fzVfhJC0zpyVlcsI=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=oYr87HxSddGnhAIwqDKvCs/rA8KbHCB1LfB61GQK6fHpzQ/ycyn4tinoTH+1jdtLGo3vn98XTvG1hqu/bCT7eYmNz023mGzif6ZSjBUtvKGmGsdIoFSnWZZtQaTXXrP/EHlldQ6Ue5Y8HlJk1wJo4lmS7LUL60nR0GmkqBpRlw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=i5wzU23O; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728978814; h=From:To:Subject:Date:Message-Id;
-	bh=iOQC40k/fMHf8VAUXityLW99zk2gANc5PBCPfsApcU4=;
-	b=i5wzU23OQzbSTl+F2NckQX1fuVwijuTur7VmdKaIEZjFzwKIBzlfALvm1ykM35ALtblAdi9jbEckav9i8TsSdU2ai2EVunuoqk2XPQNBA2BaqVoY0YLDgT39FuNQABBwehkvz8r4B+XYUbBY7JXNreZDaETIg7B02v/Eq0jkXAU=
-Received: from srmbuffer011165236051.sqa.net(mailfrom:renyu.zj@linux.alibaba.com fp:SMTPD_---0WHCfYCS_1728978808 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Oct 2024 15:53:34 +0800
-From: Jing Zhang <renyu.zj@linux.alibaba.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: xueshuai@linux.alibaba.com,
-	zhuo.song@linux.alibaba.com
-Subject: [PATCH] perf/tests: fix record+probe_libc_inet_pton test on aarch64
-Date: Tue, 15 Oct 2024 15:53:27 +0800
-Message-Id: <1728978807-81116-1-git-send-email-renyu.zj@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1728978817; c=relaxed/simple;
+	bh=gEzB43kTLte51hWQZRf/Rhuu5Z6lImp7sPcVeziROcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFhLvIitEeBAZegFhYhcfOg13Rf+BP62mX0rJ6YsESlXY+r35J+qRprlSGP7IYob7Mde9CQmXrIu1M8MnsY+GdOROyNiJ6luSJ+ttfF0S9LwQmh9FvEKY2nwTmv9zY3KeP9Rj2a0s7yCNXbhDvi94Uj9ZYMstexJEKMhnp4PQ+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Jy/VDftk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B2C6C4CEC7;
+	Tue, 15 Oct 2024 07:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728978816;
+	bh=gEzB43kTLte51hWQZRf/Rhuu5Z6lImp7sPcVeziROcU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jy/VDftk8Rbx4rIfW/YhieYqU8ilZ43U2XpZzMwSmW85IB4lp9biRAkVdJf+Tl6yO
+	 +9D07/oOIsR3mA/EHjbnhimkAR10TS20emawDvU1JezOeaiWQVCqr5kOxBe+X4QTje
+	 pwHgMLAjRu0tOl5lNem2QhFJffdZBro2qG+j+gew=
+Date: Tue, 15 Oct 2024 09:53:32 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vimal Agrawal <avimalin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, vimal.agrawal@sophos.com
+Subject: Re: [PATCH v2] misc: misc_minor_alloc to use ida for all
+ dynamic/misc dynamic minors
+Message-ID: <2024101548-effects-sulphuric-f3a3@gregkh>
+References: <2024101416-scouring-upbeat-b658@gregkh>
+ <20241015070226.15790-1-vimal.agrawal@sophos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015070226.15790-1-vimal.agrawal@sophos.com>
 
-Since commit 1f85d016768f ("perf test record+probe_libc_inet_pton: Fix
-call chain match on x86_64") remove function getaddrinfo() on expected
-file, the test failed on aarch64. On aarch64, function getaddrinfo()
-show up in the call chain.
+On Tue, Oct 15, 2024 at 07:02:26AM +0000, Vimal Agrawal wrote:
+> misc_minor_alloc was allocating id using ida for minor only in case of
+> MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
+> using ida_free causing a mismatch and following warn:
+> > > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
+> > > ida_free called for id=127 which is not allocated.
+> > > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+> ...
+> > > [<60941eb4>] ida_free+0x3e0/0x41f
+> > > [<605ac993>] misc_minor_free+0x3e/0xbc
+> > > [<605acb82>] misc_deregister+0x171/0x1b3
+> 
+> misc_minor_alloc is changed to allocate id from ida for all minors
+> falling in the range of dynamic/ misc dynamic minors
+> 
+> Fixes: 0ad35fed618c ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
+> Signed-off-by: Vimal Agrawal <vimal.agrawal@sophos.com>
+> ---
+>  drivers/char/misc.c   | 35 +++++++++++++++++-----
+>  lib/Kconfig.debug     | 11 +++++++
+>  lib/Makefile          |  1 +
+>  lib/test_misc_minor.c | 67 +++++++++++++++++++++++++++++++++++++++++++
 
-$perf script -i /tmp/perf.data.1PV
-ping 2588319 [125] 500119.122843: probe_libc:inet_pton: (ffff9a4f7410)
-            ffff9a4f7410 __GI___inet_pton+0x0 (/usr/lib64/libc-2.32.so)
-            ffff9a4c5f7c getaddrinfo+0xec (/usr/lib64/libc-2.32.so)
-            aaaad6d32b38 [unknown] (/usr/bin/ping)
+Cool, thanks for the test, but shouldn't that be a separate patch?  That
+doesn't need to be backported anywhere :)
 
-So just remove getaddrinfo() on x86_64.
+Can you split this up into a 2 patch series?
 
-Fixes: 1f85d016768f ("perf test record+probe_libc_inet_pton: Fix call chain match on x86_64")
-Signed-off-by: Jing Zhang <renyu.zj@linux.alibaba.com>
----
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 4 ++++
- 1 file changed, 4 insertions(+)
+Also, you need to fix your "From:" line, it does not match up with your
+signed-off-by: line :(
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 47a26f2..09d7b0b 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -52,8 +52,12 @@ trace_libc_inet_pton_backtrace() {
- 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
- 		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 		;;
-+	x86_64)
-+		eventattr='max-stack=3'
-+		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 	*)
- 		eventattr='max-stack=3'
-+		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
- 		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 		;;
- 	esac
--- 
-1.8.3.1
+thanks,
 
+greg k-h
 
