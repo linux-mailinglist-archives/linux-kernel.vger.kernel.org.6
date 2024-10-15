@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-365134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 139AF99DE04
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:14:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA59599DE08
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B6C31C21002
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:14:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FDA31F22CB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D6C189B86;
-	Tue, 15 Oct 2024 06:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E41E18991B;
+	Tue, 15 Oct 2024 06:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m++N9N8J";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NLS1ayk5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="irBSJEDR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C9518991B;
-	Tue, 15 Oct 2024 06:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20762582;
+	Tue, 15 Oct 2024 06:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728972845; cv=none; b=GnS47pBbj2lzo2004jigA9q6dAYfaqdMdjtoTdUtTHarO05348eBRyiD/QQVync8o+eISEKJzDVumA03kzTH3CN58aNAcbI5VzNz4qfZ9btDJsqf7Jj9rXbyOWqCK39IN04BIArlYixq4R/mX7mFTNwAHKFBPR6hSWC++bXS9QA=
+	t=1728972937; cv=none; b=bHWanLRSaeQSWkVljGdLNlRG2eg/plbnMzHizrDgN/I1/Q+wnCe8Lh/i7Umu0Q4PWwY6GoUVarTv1RlRFE26JkhvqEoM9FOLEXjP1xHmpxG7VAjfn9aF/N6nuUwIsFK7rtN+V1tJjjy8wWzf71FWD6myGogA+/yEj618746+8uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728972845; c=relaxed/simple;
-	bh=5ezQ4iOfjQC4QXS6QdvYdJ7iFydplzaRqru6e+xglpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3TOZQWV2GfDEthkD95DumlN8i7wDIMHHlJPdM2MaBekU2jvfB+Q9cJHhyWYvjkxQ99QbmjwrKDnw2vtVxJOjP/TUfb+HHTXjxaUvXI/BzIweiy4ClM7nBau73RLmZlCLI2ze6jGdwlq94oX03JmP+nOwiYNrjYrSmHRtLDhDCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m++N9N8J; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NLS1ayk5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 08:14:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728972840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6CTuybMTKk4xqMVTcmv0cjAnhK4J0k49VxoBvvmZlUg=;
-	b=m++N9N8JgHQ7iw5dh4kt6PVN5qDlxzUnqbZJReTt0BFZ9aOxXbabzCchKhdK6Uztjy+CF7
-	11RDYP+RIrQseXzpWjPQ32xEHqtyNSx5K1uM87ZlLoKC6BudeUsyStYDhC6HgiZfUTjxyk
-	IDhm+hds/6zLibZ3OmuBKPahL4xIKbS1fuRFVWTXOllivBSy4K4ZfMrk149N35oX8Yen2x
-	FyO1Na7yRvgIGzbexo3UYwK5gQhgWcf3NatMuOqegqzhoW7rEfJ/bT1BF7/d7NPY2fGprQ
-	1IiTTIdmJBWXE6XwNEjKtmk0Bh++LXcmMy1ee9sScE2Lrioey42Obw8ZH5R2lw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728972840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6CTuybMTKk4xqMVTcmv0cjAnhK4J0k49VxoBvvmZlUg=;
-	b=NLS1ayk560aF7rmCk8VBhbsOZRk0VVKh4Yxyk4bpDCWyPFIcK0GbzAPHfJlBWXOeZmq8HZ
-	8GKxeknLIreEN2Aw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com
-Subject: Re: [PATCH 1/4] LoongArch: Don't crash in stack_top() for tasks
- without vDSO
-Message-ID: <20241015080942-1c451e52-39b4-473d-9919-6b03dbfb7008@linutronix.de>
-References: <20241014-kunit-loongarch-v1-0-1699b2ad6099@linutronix.de>
- <20241014-kunit-loongarch-v1-1-1699b2ad6099@linutronix.de>
- <CAAhV-H4GvYVphn+srVFEdPboxCz-z04vXa-=e5ptJpdJZgPp=g@mail.gmail.com>
+	s=arc-20240116; t=1728972937; c=relaxed/simple;
+	bh=J3AEEHWFdXK99qmd51njSmIbev5atRLnRYTFUmdmIwU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tM3LlLQgTuK9RD+OWgbVPaTN4LrczfPV1qYmlJcS/Dw6r3dSNGXjJVdJJHAw+07C1fds2N9iQqwML/fNFtm337joZoU3WVmGul3UlAAxx7boBRRYI4hIVM4cjdOflq1xpF+FgNQEUojc2715UQ3D1VQvKC+TXpohaU9l480gaz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=irBSJEDR; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728972936; x=1760508936;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=J3AEEHWFdXK99qmd51njSmIbev5atRLnRYTFUmdmIwU=;
+  b=irBSJEDRVbmiEtJJ1+puM78qFiDI5s7If0EclsKWYeji9vGboS/UyG9I
+   g9fMzFuSGJqU7ogcLRg4Qq2pSYZTQb9DZRGuJhJDk2YFwj0MKqXU9Cc31
+   rsASE9AYsitkjKZa/jnlMpku87m7m09yPnBTwxn5qF3fM4cKiPJVXIaMD
+   aSFLaX221DIBOR/hVNUWcMSmHs0lmoFCyeB4T3KxbpFHjtPnlvmMcQx7O
+   FUypEgVAJWqGkuWu3/+VhJudLnZjDmBpnVCmMJgmqPk8kW4Itb5GQHruu
+   rxy58SuVyZHBnh9qLxXaOXEbJno2Sd49uEj/1xfFasKNt+5PnnN0T+elf
+   w==;
+X-CSE-ConnectionGUID: fIY17HwZSQ6j1a2zVFyrpQ==
+X-CSE-MsgGUID: H4x5SoGoSUmvvTpVbHraAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="39721986"
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="39721986"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 23:15:35 -0700
+X-CSE-ConnectionGUID: oOMMFqeMR3u/cwaAPy56aw==
+X-CSE-MsgGUID: Cc8Kwl+kT0Ch4xj8sPpPpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="101135730"
+Received: from rzhang1-mobl7.sh.intel.com ([10.238.6.124])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 23:15:30 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	rafael.j.wysocki@intel.com,
+	x86@kernel.org,
+	linux-pm@vger.kernel.org
+Cc: hpa@zytor.com,
+	peterz@infradead.org,
+	thorsten.blum@toblux.com,
+	yuntao.wang@linux.dev,
+	tony.luck@intel.com,
+	len.brown@intel.com,
+	srinivas.pandruvada@intel.com,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH V4] x86/apic: Always explicitly disarm TSC-deadline timer
+Date: Tue, 15 Oct 2024 14:15:22 +0800
+Message-Id: <20241015061522.25288-1-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H4GvYVphn+srVFEdPboxCz-z04vXa-=e5ptJpdJZgPp=g@mail.gmail.com>
 
-Hi Huacai,
+New processors have become pickier about the local APIC timer state
+before entering low power modes. These low power modes are used (for
+example) when you close your laptop lid and suspend. If you put your
+laptop in a bag in this unnecessarily-high-power state, it is likely
+to get quite toasty while it quickly sucks the battery dry.
 
-On Tue, Oct 15, 2024 at 10:15:39AM +0800, Huacai Chen wrote:
-> I can take this patch to the loongarch tree, but I think others should
-> get upstream via kselftests tree?
+The problem boils down to some CPUs' inability to power down until the
+kernel fully disables the local APIC timer. The current kernel code
+works in one-shot and periodic modes but does not work for deadline
+mode. Deadline mode has been the supported and preferred mode on
+Intel CPUs for over a decade and uses an MSR to drive the timer
+instead of an APIC register.
 
-Yes, sounds good.
-Could you take a look at patches 2 and 4, too?
+Disable the TSC Deadline timer in lapic_timer_shutdown() by writing to
+MSR_IA32_TSC_DEADLINE when in TSC-deadline mode. Also avoid writing
+to the initial-count register (APIC_TMICT) which is ignored in
+TSC-deadline mode.
 
-Thanks,
-Thomas
+Note: The APIC_LVTT|=APIC_LVT_MASKED operation should theoretically be
+enough to tell the hardware that the timer will not fire in any of the
+timer modes. But mitigating AMD erratum 411[1] also requires clearing
+out APIC_TMICT. Solely setting APIC_LVT_MASKED is also ineffective in
+practice on Intel Lunar Lake systems, which is the motivation for this
+change.
 
-> On Mon, Oct 14, 2024 at 7:36 PM Thomas Weißschuh
-> <thomas.weissschuh@linutronix.de> wrote:
-> >
-> > Not all tasks have a vDSO mapped, for example kthreads never do.
-> > If such a task ever ends up calling stack_top(), it will derefence the
-> > NULL vdso pointer and crash.
-> >
-> > This can for example happen when using kunit:
-> >
-> >         [<9000000000203874>] stack_top+0x58/0xa8
-> >         [<90000000002956cc>] arch_pick_mmap_layout+0x164/0x220
-> >         [<90000000003c284c>] kunit_vm_mmap_init+0x108/0x12c
-> >         [<90000000003c1fbc>] __kunit_add_resource+0x38/0x8c
-> >         [<90000000003c2704>] kunit_vm_mmap+0x88/0xc8
-> >         [<9000000000410b14>] usercopy_test_init+0xbc/0x25c
-> >         [<90000000003c1db4>] kunit_try_run_case+0x5c/0x184
-> >         [<90000000003c3d54>] kunit_generic_run_threadfn_adapter+0x24/0x48
-> >         [<900000000022e4bc>] kthread+0xc8/0xd4
-> >         [<9000000000200ce8>] ret_from_kernel_thread+0xc/0xa4
-> >
-> > Fixes: 803b0fc5c3f2 ("LoongArch: Add process management")
-> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> > ---
-> >  arch/loongarch/kernel/process.c | 16 +++++++++-------
-> >  1 file changed, 9 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/loongarch/kernel/process.c b/arch/loongarch/kernel/process.c
-> > index f2ff8b5d591e4fd638109d2c98d75543c01a112c..6e58f65455c7ca3eae2e88ed852c8655a6701e5c 100644
-> > --- a/arch/loongarch/kernel/process.c
-> > +++ b/arch/loongarch/kernel/process.c
-> > @@ -293,13 +293,15 @@ unsigned long stack_top(void)
-> >  {
-> >         unsigned long top = TASK_SIZE & PAGE_MASK;
-> >
-> > -       /* Space for the VDSO & data page */
-> > -       top -= PAGE_ALIGN(current->thread.vdso->size);
-> > -       top -= VVAR_SIZE;
-> > -
-> > -       /* Space to randomize the VDSO base */
-> > -       if (current->flags & PF_RANDOMIZE)
-> > -               top -= VDSO_RANDOMIZE_SIZE;
-> > +       if (current->thread.vdso) {
-> > +               /* Space for the VDSO & data page */
-> > +               top -= PAGE_ALIGN(current->thread.vdso->size);
-> > +               top -= VVAR_SIZE;
-> > +
-> > +               /* Space to randomize the VDSO base */
-> > +               if (current->flags & PF_RANDOMIZE)
-> > +                       top -= VDSO_RANDOMIZE_SIZE;
-> > +       }
-> >
-> >         return top;
-> >  }
-> >
-> > --
-> > 2.47.0
-> >
+1. 411 Processor May Exit Message-Triggered C1E State Without an Interrupt if Local APIC Timer Reaches Zero - https://www.amd.com/content/dam/amd/en/documents/archived-tech-docs/revision-guides/41322_10h_Rev_Gd.pdf
+
+Cc: stable@vger.kernel.org
+Fixes: 279f1461432c ("x86: apic: Use tsc deadline for oneshot when available")
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Tested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Tested-by: Todd Brandt <todd.e.brandt@intel.com>
+---
+V2
+- Improve changelog
+V3
+- Subject and changelog rewrite
+- Check LAPIC Timer mode using APIC_LVTT value instead of extra CPU feature flag check
+- Avoid APIC_TMICT write which is ignored in TSC-deadline mode
+V4
+- Add back Fixes tag and stable tag which was missing in V3
+- Update patch recipients
+---
+ arch/x86/kernel/apic/apic.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 6513c53c9459..5436a4083065 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -440,7 +440,19 @@ static int lapic_timer_shutdown(struct clock_event_device *evt)
+ 	v = apic_read(APIC_LVTT);
+ 	v |= (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
+ 	apic_write(APIC_LVTT, v);
+-	apic_write(APIC_TMICT, 0);
++
++	/*
++	 * Setting APIC_LVT_MASKED should be enough to tell the
++	 * hardware that this timer will never fire. But AMD
++	 * erratum 411 and some Intel CPU behavior circa 2024
++	 * say otherwise. Time for belt and suspenders programming,
++	 * mask the timer and zero the counter registers:
++	 */
++	if (v & APIC_LVT_TIMER_TSCDEADLINE)
++		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
++	else
++		apic_write(APIC_TMICT, 0);
++
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
+
 
