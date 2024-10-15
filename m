@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-365840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C1599EB75
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:07:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8726899EB81
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6DD61F258AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:07:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF30283789
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E031D5AC6;
-	Tue, 15 Oct 2024 13:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2E31CFEA9;
+	Tue, 15 Oct 2024 13:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PacNLH21"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="i/Xfs3Ef";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="E7ya//8L"
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6E01C07E5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79961C07FF;
+	Tue, 15 Oct 2024 13:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728997634; cv=none; b=W4kfqz7GBbM8sAaEG0kASnEcfIk5WlFEP3G+gM5Hf7WiNlRAjvIQdGr4qgGQ80ClcRtDiOElOJc6r1LsI8KkJaoHMAYYMIHUbTqdT47OP/PSKlUYOCT+JcdS6PGhEps6qQfI6hkwkelMl+wIz2QxsU65/Fmeuf5B9oXYpsZUt9I=
+	t=1728997666; cv=none; b=RMgU2OA6Ef8ObQwSv9arT/jmTRk6y2qHRwwAWPumxsu1itL3R2+qfS+i9lUT6/5l5qr3kjH9osRTUhlQ2tM8pSymzVU5pe/SDOPv/9pr/QfZn9MRjKZC+dNme/t0fdxF2+cWAh6YbIl9oHRIT3c0s+4U/pRdkPLlTpWPtaT1azU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728997634; c=relaxed/simple;
-	bh=RAFtXXlMObqVzV2d+gmuJ5R6yL2BTETgZusCP73IhnA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tf6n3g78ENivq2YOW9y2jF/YUtY/K3KP8xzKu632OncbzmHbz0NZhesXrRBPc9ErDNiXDQYRTIUXkmR040k5lA/OicyCfqkPIIidFJGSNjOUjg3ruCz/8+YKP0FxQBjh2sbtfm/uJXqcEwfZjUQv6t7qcknpxyhIM8Q7NqZ4AUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PacNLH21; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43055b43604so51479605e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728997631; x=1729602431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=en9jFwXT2bDiA0LT5HaPdVoOH8lCOJ0LwIRdXejUMhk=;
-        b=PacNLH21jg9EtiZ777S++jbmSnReEBX+Eiw0EER8eKcVl8dX6oUMoGhpc9ntPaPGFU
-         tNvkF656WDjHebY888fAZtMmGNqdMgceAa5gF3ZhIACFWX5GCq8vNMiaKU9IkPlrOGLJ
-         ndrO87HjcATCXrJUcfHRPQyfLTV0eQ5OwakKmvIBtp8n2/0mYEXMRGGTqtbJpBr5NKnm
-         9k2qZbqjkoRIyPd+wvGYUdl4geJWuYnsn0nx/ttLZhLGTyTv5dfLIe91is0nM229KN23
-         0G2J58/1gbKDOxqkswiSy5leEA4AQwoxlrIJEtujvkHd8cFcwP85SMWIyofNNKDJlf/c
-         Qb+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728997631; x=1729602431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=en9jFwXT2bDiA0LT5HaPdVoOH8lCOJ0LwIRdXejUMhk=;
-        b=KrB2aLC3iiSK8ZsXef4KB9RK654H80dKFgmg9S4IdvxnXasF2uzuOJDFFUYdSbpyLp
-         tfRsmcx5dUS3VjyT4qSwYhHNK70kgxJu/7cShrp7FD2REXpuiWJ5KBRI3r/sq4byI8no
-         +/DYj5XbuhwYpxq4Gjd/pU4NAmUvTDAYz7s/diXABE57SmfO+e2blrZzA3+M/HS6quqo
-         tbbbTELBWFQq7CYtD5jNp6xFAMvYaNhVgxQk29jJm2hrDvnPoI0Na+K6wPfa129VQX/l
-         TsbW/wrxw26EyIas1pmLeIo2FTE50iX2ZrQ0lP454ikRHqKr58gJPOBTik9tUOu55J3/
-         O/tA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyd9W1nRvDVWqn8NxFyMyjFQTtXFIF96ruxkOaeyj4SmvCCvdyw2O2m1x0jY1+xK3Cz7jv/fkFs0Y2HM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjgF7d/albXhj/NpKFM2edv4a7sGfZI2j353ueNr6keUageziu
-	b7m9kOnZpehycCWJGywUjok8xtAGoEXLqfKiDYsWqVWJUJQkl2vHK50canGts9zKq9aJDNm/IQh
-	MskmmTfjZqhUjRAYV6Y9KcYb1W9DRZx2bNbe5
-X-Google-Smtp-Source: AGHT+IF+ejFusSyTSFm0RCp9pxJc8mmToy5lXNSY48Rr+wd/q53EvtiwpWkYjw4u1eyqqetmcpQmCrujFgNR9X+o7To=
-X-Received: by 2002:a05:600c:b8d:b0:42c:cd88:d0f4 with SMTP id
- 5b1f17b1804b1-4314a379091mr4398285e9.22.1728997630948; Tue, 15 Oct 2024
- 06:07:10 -0700 (PDT)
+	s=arc-20240116; t=1728997666; c=relaxed/simple;
+	bh=z8CMqF1Qkrr11chR38o4qGiOfMIibQckV72yf00J/J8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+gL9Bvy1V4X2gmIiHqqjBTW29sTCb3vIlA99FgvvFEq5xkAvfJESARS2hmCbA4P1t4yZbmDncyv7SdltLBffIuDoMbEsfr6mLUaPPiV66kqSpZjdyMW9AIv9vmQNbFHWn6hZ/XjBRH4smAMvMn6qUdmXgD2MDKaJgUCXAtPP+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=i/Xfs3Ef; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=E7ya//8L; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 68EC7122FE21;
+	Tue, 15 Oct 2024 06:07:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1728997656; bh=z8CMqF1Qkrr11chR38o4qGiOfMIibQckV72yf00J/J8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i/Xfs3EfOWgr0NZuSh+H4k6e3qGH2F/B9PnPqW3VW+740K0nPmK9nkFAsT667IK/A
+	 Xmt2BLwhU2JZsCkN+DGTH8bNVCIZZyivM6+cQxxLdr0TrrdXs8Gj6OE0qZLsNKXJs9
+	 lfsp53kARAC1XHOb9bkKmzeYPh4UKZFdZTudtpaQ9rBxszrF2EiE8l2VoUC0gxv31k
+	 mTDERgn4QqE9TDGyiStvylX5DwNyAUig/AwXzovZoE3EMUtBQi77zEdu0K19X8mR7H
+	 mCzwRy+xbrdybg7HI1UqhkT2vQBHTDmuwkb4WACoXGxrZXynuqZ9J4VlEH73C/x1qS
+	 PMKgMYZ9suxfA==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id OkmRudQO2a8g; Tue, 15 Oct 2024 06:07:33 -0700 (PDT)
+Received: from ketchup (unknown [110.52.220.241])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 99CB0122FE1E;
+	Tue, 15 Oct 2024 06:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1728997653; bh=z8CMqF1Qkrr11chR38o4qGiOfMIibQckV72yf00J/J8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E7ya//8LT+6l88z0sqOEUvAZ3tXkFMTajQE+HilwRcmp3JqyvcM+MDr75SHUiiUEX
+	 kdqUQojZVzKbbrVTh3WKRguUqy5uWAO9FMg/TAjgltU+QIlBzz0g1wpdkRB7lhNBLO
+	 zR3BOol17M6FEribXcTnomnXCm/jxaZxfrGrmxNlBVcI6mmTiHtHmtsa34IrsI05yj
+	 NNP3I+Vtjwgq6M5D2+OLvukn9uG2X4lNgteg8lEXh+8/Twv+Tq3wpEPSAtSKp4tWvq
+	 Jftbn2xZoBeEtkPKz5y3SWiRs6YcgGlwj8tiTOY9ZIpYk7Ceu0Tzmz+AFfVg99511x
+	 ihEp6vcWORHiA==
+Date: Tue, 15 Oct 2024 13:07:19 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v5 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
+ Sophgo CV1800 thermal
+Message-ID: <Zw5pB_tPuOgIbaxV@ketchup>
+References: <20241014073813.23984-1-heylenay@4d2.org>
+ <20241014073813.23984-2-heylenay@4d2.org>
+ <cycdlsi3tb6nqgbzzmypmblpcxxqmn3slqcbf5mq2okw3lqrdr@ghvswymvnslp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011-tracepoint-v10-5-7fbde4d6b525@google.com>
- <202410151814.WmLlAkCq-lkp@intel.com> <CANiq72nn6zv9MOD2ifTXbWV3W1AgiXL=6zTX_-eGL5ggLj4fbw@mail.gmail.com>
-In-Reply-To: <CANiq72nn6zv9MOD2ifTXbWV3W1AgiXL=6zTX_-eGL5ggLj4fbw@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 15 Oct 2024 15:06:59 +0200
-Message-ID: <CAH5fLghJrrq2nJu7S08bBg2sAjdibkZ4D14K9cqETafnr4CR4w@mail.gmail.com>
-Subject: Re: [PATCH v10 5/5] rust: add arch_static_branch
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	oe-kbuild-all@lists.linux.dev, linux-trace-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cycdlsi3tb6nqgbzzmypmblpcxxqmn3slqcbf5mq2okw3lqrdr@ghvswymvnslp>
 
-On Tue, Oct 15, 2024 at 2:11=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Oct 15, 2024 at 1:06=E2=80=AFPM kernel test robot <lkp@intel.com>=
- wrote:
-> >
-> > >> /bin/sh: 1: cannot create rust/kernel/arch_static_branch_asm.rs: Dir=
-ectory nonexistent
->
-> This happens because we run `RSCPP` even when it is not a target. We
-> can add the dependency conditionally:
->
-> @@ -423,8 +425,10 @@ $(obj)/uapi.o: $(src)/uapi/lib.rs \
->  $(obj)/kernel.o: private rustc_target_flags =3D --extern alloc \
->      --extern build_error --extern macros --extern bindings --extern uapi
->  $(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/alloc.o $(obj)/build_error.=
-o \
-> -    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o \
-> -       $(obj)/kernel/arch_static_branch_asm.rs FORCE
-> +    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o FORCE
->         +$(call if_changed_rule,rustc_library)
-> +ifneq ($(CONFIG_JUMP_LABEL),)
-> +$(obj)/kernel.o: $(obj)/kernel/arch_static_branch_asm.rs
-> +endif
+On Tue, Oct 15, 2024 at 07:52:33AM +0200, Krzysztof Kozlowski wrote:
+> On Mon, Oct 14, 2024 at 07:38:11AM +0000, Haylen Chu wrote:
+> > Add devicetree binding documentation for thermal sensors integrated in
+> > Sophgo CV1800 SoCs.
+> > 
+> > Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> > ---
+> >  .../thermal/sophgo,cv1800-thermal.yaml        | 57 +++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml b/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+> > new file mode 100644
+> > index 000000000000..14abeb7a272a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+> > @@ -0,0 +1,57 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/thermal/sophgo,cv1800-thermal.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Sophgo CV1800 on-SoC Thermal Sensor
+> > +
+> > +maintainers:
+> > +  - Haylen Chu <heylenay@4d2.org>
+> > +
+> > +description: Sophgo CV1800 on-SoC thermal sensor
+> > +
+> > +$ref: thermal-sensor.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - sophgo,cv1800-thermal
+> 
+> Not much improved, judging by other patches there is no "CV1800" SoC,
+> but that's a family name.  Otherwise please point us to bindings or DTS
+> using this SoC.
 
-Thank you. I was able to reproduce the error locally. It only happens
-when CONFIG_JUMP_LABEL is disabled. I've verified that this fixes it.
+"cv1800" is referenced in the clock binding[1] and usb binding[2]. I
+don't think there are other CV1800 SoC variants. Usage of "CV1800"
+should be specific and unambiguous.
 
-Alice
+Best regards,
+Haylen Chu
+
+[1]: https://elixir.bootlin.com/linux/v6.11.3/source/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
+[2]: https://elixir.bootlin.com/linux/v6.11.3/source/Documentation/devicetree/bindings/usb/dwc2.yaml#L62
 
