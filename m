@@ -1,197 +1,124 @@
-Return-Path: <linux-kernel+bounces-365448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB45C99E26B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:11:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881E899E272
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FAE1F22BE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:11:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123B41F234D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4541E5717;
-	Tue, 15 Oct 2024 09:10:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889621E7C22;
+	Tue, 15 Oct 2024 09:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URveVPnX"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2721CFECF;
-	Tue, 15 Oct 2024 09:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A288B1D9A71;
+	Tue, 15 Oct 2024 09:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728983434; cv=none; b=tU6tXgY/1WM24+P6niRRbvVXWTCvyDWvS+3myusLAi4WaeXcyd/QNFYRn3hcyQDoQkhJ1r3vY59wLhbjjswoM3GE3UA3XsFSAZfoS2RQJpNrmRupRSZ20oxA1ye5bJrpn0W92NDIlDqTyom4hJ4+ycgDrW1r3aA4G4qvGvPqeAA=
+	t=1728983448; cv=none; b=FLU4Rb9NiBOOGK9XJuswCGt6yO73yhHQQzcKIMRwGzwke5Y9PncRJB22EUMZuC75rfW8fIJQynS3ozdpnyzZlXYa4fWA6K4/o8wOIlu/Qo4W2pEfn8/gltPVW0uEfWku2qxgliQ7hxgvcZGj9UMsRdRa8x2NqUwp059rZcI1zXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728983434; c=relaxed/simple;
-	bh=ZPIoCpxu67xAOL3ntfDBE9PLJHmZbiNck7d5LLVG9ss=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P0+g5T9TOIfc4L4ihFIULaFtSHsSeR0AvkvsCGH5ZO/SCjjV//hfC6ujI2Kj0Mpe66Vg6Kh4E3vubaoe5Ux2eOjjcj7a0bBCW1zoSekbIRm0mkVLHkeBYGLEpGReWKzRDRqFHEhI03lX/ntzM/Gg5HEKXPMAb0KgG8U7nmyi90Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XSSwf4c5Rz6K93g;
-	Tue, 15 Oct 2024 17:09:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id A73B7140AA7;
-	Tue, 15 Oct 2024 17:10:28 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 15 Oct
- 2024 11:10:27 +0200
-Date: Tue, 15 Oct 2024 10:10:25 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: Greg KH <gregkh@linuxfoundation.org>, <shiju.jose@huawei.com>,
-	<linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<lenb@kernel.org>, <mchehab@kernel.org>, <dan.j.williams@intel.com>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <david@redhat.com>,
-	<Vilas.Sridharan@amd.com>, <leo.duran@amd.com>, <Yazen.Ghannam@amd.com>,
-	<rientjes@google.com>, <jiaqiyan@google.com>, <Jon.Grimm@amd.com>,
-	<dave.hansen@linux.intel.com>, <naoya.horiguchi@nec.com>,
-	<james.morse@arm.com>, <jthoughton@google.com>, <somasundaram.a@hpe.com>,
-	<erdemaktas@google.com>, <pgonda@google.com>, <duenwen@google.com>,
-	<gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH v13 12/18] platform: Add __free() based cleanup function
- for platform_device_put
-Message-ID: <20241015101025.00005305@Huawei.com>
-In-Reply-To: <CAJZ5v0j-mwZmuciSTaL8MyAp530y=n9HbQ=uVvcnvGLR1n+YuQ@mail.gmail.com>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
-	<20241009124120.1124-13-shiju.jose@huawei.com>
-	<20241014164339.00003e73@Huawei.com>
-	<2024101410-turf-junior-7739@gregkh>
-	<2024101451-reword-animation-2179@gregkh>
-	<20241014181654.00005180@Huawei.com>
-	<CAJZ5v0j-mwZmuciSTaL8MyAp530y=n9HbQ=uVvcnvGLR1n+YuQ@mail.gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728983448; c=relaxed/simple;
+	bh=cR540dZmBzwpTX6Wh1/ls2Pc4BJzzAEpA/3IzRGRs8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MYiZqSMWNoamCcI3DMYbtr4DZ4vk4KYcPh9Et/xYgsdDIaAxjfYqo9GHj6JJryTRcVkqnXlIYoqkCLWNtP5Y/TdV2di4MxWrFa5zDHXu3u93klk3MgLceG32SWLMF22q/qhIQJEQEMJnXIMpiQFXNvLj9H5NT3oylYh1FkOMKXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URveVPnX; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2c2a17aa4so1034172a91.0;
+        Tue, 15 Oct 2024 02:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728983447; x=1729588247; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cR540dZmBzwpTX6Wh1/ls2Pc4BJzzAEpA/3IzRGRs8w=;
+        b=URveVPnX942Flucimxccxb8uB6/dFE/DrnrLHewt6X46Qka1sw0ymZNqs1ickq9fwP
+         XLqB3xHyoa8ShkffsgVFiTfKB9YQGrbfa58KzNqAPY1QUKbno8hQzY9IpnsvTfjlwARc
+         zAUF9wPdxvPSl8v5jMcmOHjp7AA94kT2qFD06ArNZ4Pd52CEjMVLqIdTrT/424ePqo+t
+         wHoyj8yzOpfZBnwuj+nZA6OIizi0s1KMEWu5AIjSIl+MvZH5UvwXdfB7OVTSq0pgLqmm
+         6y4G3gSOE79BpdsxmxBalAqSMLbqNTKpViMb2yG0Hz3LoX01TAJkYb9gEjoTQuYRFn1d
+         DzLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728983447; x=1729588247;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cR540dZmBzwpTX6Wh1/ls2Pc4BJzzAEpA/3IzRGRs8w=;
+        b=V15btyHJQV/TJ4jZhsyXqjlyG0oznHW3RV8+r1w30q5QhweHs+DkGHjGsP9pXU9BVg
+         ROzwq+6mBESL/Q0MXx//lGfIh06Yx8IZmTcJ8d0oKsVRSIcm9NyMzAScvOjIq/Mlg7Sq
+         qAovb6jwiFe9V3xCnlH08F2eDZ5fcjZltn6s0RF2Z1unyJOpairlm/9rjIVNpmn4rSdy
+         lT7DEuLysfQhJgPV3SFMGYepavA14tKdiMovHmCH337OZULKMNirG2sYkf9o7XlmUPfP
+         0swG/H9mkgNOx4TSA/fGuIatn9q2X9UbVA8ujz4KN6CDGBS3Qg8WB8Dw9Bvwuys27G+J
+         N5fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJkOsE3oSSQbCIGFLaS1VxVpQ2R5bWD435ydTUa8MS1ptd2Pq/gjaCl2b+2RlkGnAMazDxmGd09V4AJpE=@vger.kernel.org, AJvYcCVPSMC3fE9MEiEOo+87WVv1JpWhLtwAmzX3JaR85X8iU0wgYuymx7HxBBMpRSObjnCwQYFU7EPFsr+yYZuY@vger.kernel.org, AJvYcCWSdUiBkE0bLJ4mp8mfxzv2sYMnIHd+J394clP4lU2vpS6nagQY5aLxutFMh3CRU5eGa7x1O9F3rkGU2pLBWCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEdz4IvhL3JHV79reXOR2YbZtf40VIO14pJAkyvpZLoF2uIW8Y
+	LUen3EtG7vJHkZxvmOnmBQW/pdzT4f8vJ5wdD9JEwycensLhrpRdrqV22lf3kntu9mtsbeEYGbv
+	BIjS0z5ETvOqmhshyvKfXA/98z2de648B+zA=
+X-Google-Smtp-Source: AGHT+IGZsNDB+ABXPBlmyO/cf/3TEXkJdKaH6E2+ZYW7ktKw6b71kXpHZSGypfjgoQez1xtdGHoqIn7dJ3k/qVX+y4E=
+X-Received: by 2002:a17:90a:1f8a:b0:2e2:e929:e8d2 with SMTP id
+ 98e67ed59e1d1-2e2f0d7843bmr7394920a91.4.1728983446822; Tue, 15 Oct 2024
+ 02:10:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
+ <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
+ <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
+ <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
+ <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
+ <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com>
+ <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com> <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com>
+In-Reply-To: <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 15 Oct 2024 11:10:33 +0200
+Message-ID: <CANiq72=a5QzdBbMkEHUu2L44oNCWDNKbvgx69zSvLQV7E0wAbw@mail.gmail.com>
+Subject: Re: [PATCH] rust: query the compiler for dylib path
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Daniel Gomez <da.gomez@samsung.com>, rust-for-linux@vger.kernel.org, 
+	Fiona Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
+	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, 14 Oct 2024 20:06:40 +0200
-"Rafael J. Wysocki" <rafael@kernel.org> wrote:
+On Sun, Oct 13, 2024 at 1:53=E2=80=AFAM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> A symlink would possibly work (unless rustc refuses to load anything
+> other than .dylib on macOS for whatever reason), but wouldn't be very
+> ergonomic; you'd have to create the symlink blind or else run the build
+> system until it fails, then create the symlink, and then run the build
+> again.
 
-> On Mon, Oct 14, 2024 at 7:17=E2=80=AFPM Jonathan Cameron
-> <Jonathan.Cameron@huawei.com> wrote:
-> >
-> > On Mon, 14 Oct 2024 18:04:37 +0200
-> > Greg KH <gregkh@linuxfoundation.org> wrote:
-> > =20
-> > > On Mon, Oct 14, 2024 at 06:00:51PM +0200, Greg KH wrote: =20
-> > > > On Mon, Oct 14, 2024 at 04:43:39PM +0100, Jonathan Cameron wrote: =
-=20
-> > > > > On Wed, 9 Oct 2024 13:41:13 +0100
-> > > > > <shiju.jose@huawei.com> wrote:
-> > > > > =20
-> > > > > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > > >
-> > > > > > Add __free() based cleanup function for platform_device_put().
-> > > > > >
-> > > > > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > > > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> > > > > > ---
-> > > > > >  include/linux/platform_device.h | 1 +
-> > > > > >  1 file changed, 1 insertion(+)
-> > > > > >
-> > > > > > diff --git a/include/linux/platform_device.h b/include/linux/pl=
-atform_device.h
-> > > > > > index d422db6eec63..606533b88f44 100644
-> > > > > > --- a/include/linux/platform_device.h
-> > > > > > +++ b/include/linux/platform_device.h
-> > > > > > @@ -232,6 +232,7 @@ extern int platform_device_add_data(struct =
-platform_device *pdev,
-> > > > > >  extern int platform_device_add(struct platform_device *pdev);
-> > > > > >  extern void platform_device_del(struct platform_device *pdev);
-> > > > > >  extern void platform_device_put(struct platform_device *pdev);
-> > > > > > +DEFINE_FREE(platform_device_put, struct platform_device *, if =
-(_T) platform_device_put(_T))
-> > > > > >
-> > > > > >  struct platform_driver {
-> > > > > >         int (*probe)(struct platform_device *); =20
-> > > > >
-> > > > > +CC Greg KH and Rafael.
-> > > > >
-> > > > > Makes sure to include them on v14 as this needs review from a dri=
-ver core point
-> > > > > of view I think. =20
-> > > >
-> > > > Why is this needed for a platform device?  This feels like you will=
- have
-> > > > to do more work to "keep" the reference on the normal path than you=
- to
-> > > > today to release the reference on the error path, right?  Have a po=
-inter
-> > > > to a patch that uses this? =20
-> > >
-> > > Ah, is it this one:
-> > >       https://lore.kernel.org/all/20241014164955.00003439@Huawei.com/
-> > > ?
-> > >
-> > > If so, no, that's an abuse of a platform device, don't do that, make a
-> > > REAL device on the bus that this device lives on.  If it doesn't live=
- on
-> > > a real bus, then put it on the virtual bus but do NOT abuse the platf=
-orm
-> > > device layer for something like this. =20
-> >
-> > Ok.  Probably virtual bus it is then.  Rafael, what do you think makes =
-sense
-> > for a 'feature' that is described only by an ACPI table (here RAS2)?
-> > Kind of similar(ish) to say IORT. =20
->=20
-> Good question.
->=20
-> I guess it depends on whether or not there are any registers to access
-> or AML to interact with.  If so, I think that a platform device makes
-> sense.
+Could you please test if the symlink work?
 
-Unfortunately still a gray area I think.
+It is definitely not elegant, and if we start having several macro
+crates, it will not really work for you.
 
-This does access mailbox memory addresses, but they are provided
-by an existing platform device, so maybe platform device for this
-device is still inappropriate :(
+However, it would be good to know the potential options available here
+and, if it works, it would allow you to get it working right away
+while upstream Rust replies.
 
-What this uses is:
-PCC channel (mailbox in memory + doorbells, etc but that is indirectly
-provided as a service via reference in ACPI to the PCCT table entry
-allowing this to find the mailbox device - which is a platform
-device drivers/mailbox/pcc.c).
-Because it's all spec defined content in the mailbox messages, we don't
-have the more flexible (and newer I think) 'register' via operation region
-stuff in AML.
+Thanks!
 
-A wrinkle though.  The mailbox data is mapped into this driver via
-an acpi_os_ioremap() call. =20
-
-So I'm thinking we don't have a strong reason for a platform device
-other than 'similarity' to other examples.  Never the strongest reason!
-
-We'll explore alternatives and see what they end up looking like.
-
-Jonathan
-
-
-
->=20
-> > My thinking on a platform device was that this could be described
-> > in DSDT and would have ended up as one. No idea why it isn't.
-> > Maybe it predated the resource stuff that lets you use PCC channels
-> > from methods under devices. Anyhow, it's not something I care about
-> > so virtual bus is fine by me. =20
->=20
-
+Cheers,
+Miguel
 
