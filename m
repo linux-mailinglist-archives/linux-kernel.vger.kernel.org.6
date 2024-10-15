@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-366877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBBA99FBB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:49:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BDF99FBC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E80528574A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF9EAB21E81
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F911F80D9;
-	Tue, 15 Oct 2024 22:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2461D63E8;
+	Tue, 15 Oct 2024 22:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="CrmZkrrP"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="XK0KZ6uv"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4891F76B1
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237871D63C7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729032514; cv=none; b=lfIvaMkzFtz5H1ab09hjmUCas7+y39XUNYK+yj+eSgX0OZF7TFg7RU7QDSdcTVZCL2JhKFj8g+Rp6wllVNa2JOadNGo4U888rnbnaaNo9qu4Ia5AihmPmy7zddgw9cU8vTgkJV6Iql+L0ZO5RnZuZo+nVy74zCfdJJFnY+22wrg=
+	t=1729032885; cv=none; b=Ryu397D3gBsCe7zFqHLdGD+6aNG221cr5uZRpkZW0TgRos7cPVV9dbkkd3MLm/U7graJl5WGucpFjKFnaAjDelGCSxYSqGBdowXdY6x9MfskuHsI8s9agxe6DcuOuc0leIJFHvUbA2NF0kIYDOYVWy7jvQPoe2xEzpvzPp7KgN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729032514; c=relaxed/simple;
-	bh=MilXVF0Pl7zreQTOpN2ffuJKLXQVDsOWlshtxvK8NbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J2+y67AdF+/EFqXYSeZun5GgRaIcu3X7uIC3dt/eX94yOF5XApA9+25fvNDr+VFdui85nG7bkJUTy49dNZInoXLWo8DuZ2uBENdrLx0hpxLmsm6qUjziB8LGZc8fo3UI0iNXYzqsXKQiUdoIWfyWP1ZHUR1dx4RLwYpWR0pq7t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=CrmZkrrP; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c94861ee25so3648821a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 15:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729032510; x=1729637310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=miq9FmtmjdBD0hWpSYeZA2klh/HZsIKy05pk3Zx+Afg=;
-        b=CrmZkrrPc2154rE2OCIJSTZ9pywB6zp8WyprJ9EyCU4nxuVpLL9xmNvr7UtXaN8bzE
-         fWEWhXx5cOfntR6q1tRSVWth5b93w9vZF+v7SIJh6N3y2XHa66L0aEj5rqD+cj085z1o
-         nLikKUPJ9wfD4eThC7SVhRvkwh4i7lMEKQNgQf/frgiIJC8RZvUVxAbAgHpUGGNE/VTO
-         kbOkS6Yk53L7oKyDJo0QEgc31XVA5vbz7J5TQzhyNRVNRF+E3tg8ybCcuQKRuBlssndP
-         Xm31GETBwN3iK0Y2peUXR7TKctwKv4cxo5NbQHBwZ76rFWP9FS638XpyDCTzzcg2CY18
-         6xPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729032510; x=1729637310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=miq9FmtmjdBD0hWpSYeZA2klh/HZsIKy05pk3Zx+Afg=;
-        b=edcPTl1HrHRVfxj+nyGiTmivVoxIzNXe4fhwPhGXfEEuVqVOml8RvoZKBecZ5Wgi4d
-         KvVOPTizyZl1X6hWiY/oqiCt5KN2QJzqWesMplggqTQHsGKMbSSKs4vdHxYYprTL5dDT
-         rIaKx55yxx0oB1I6OKJKNYHBlXBsGvtn5R4tjfdxbnppPmzS5ewsweOBLCBZB2GfmqJx
-         z+FRw4pDH2ymlZ040f6Iihw1TCNrD1OlcZgqJxHZsAbXbTNn7BwJv3QEG4gYthIsXvhB
-         ctQJ8paNM7/GwGwMOeRZ65tHXdO7HNj5nnztbi9ID6gCYThba3IvycUK6eWLtRjXZgk+
-         wC2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVvnlfpHg7H2gCQa+BUiKCnxfVAAdohh3fZ9ez880ohSXL6t6oWPSkanEDGhFf0o+JkF7cusVa+yOVowRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysZurmuVsK9vuVmaMjNJ53rHoRYocQaf31dlnRR7Nc95Morg1W
-	E9CPn9tPuy0KGX7CIpyrCnLUXVa6rdNqgOcUaflKHouLbWOEsXcOq6u5cH4LSO038N9hO3G8TBr
-	+Af+BLWO2KXQ3pPFD6aT0dVcK8WykcIv1UGU9OA==
-X-Google-Smtp-Source: AGHT+IEwOi3xOaRekA3PPJMkq6HAJdzViRwYCHfUYxVkjaE6to7N2i/cYZrGYTe0N4xvD1sOPBjtZAPxgpVW4Xl0qFM=
-X-Received: by 2002:a05:6402:c41:b0:5c5:b7fd:170a with SMTP id
- 4fb4d7f45d1cf-5c95ac50794mr18001007a12.28.1729032510392; Tue, 15 Oct 2024
- 15:48:30 -0700 (PDT)
+	s=arc-20240116; t=1729032885; c=relaxed/simple;
+	bh=nMQRNViX6xJHcoQxaJF2VbYXBVB+6r++BfH93n/78n4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXCRXHl/Oj+MpPG1NsKdyvgG2xZAOoFw3o7mHcG5QTSnKUA004VrG3gECbv462bd4sfOARpoTKC0pYK7e0ZHQTlFwxDCGAE4P/QbrPzHQdPS7XF28Q6nAJLJGambNZae7tNUM+HmyYG76T+cpDmyfUMlHSQidBGS82SUGIt2vCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=XK0KZ6uv; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id EF1DF2C03E8;
+	Wed, 16 Oct 2024 11:54:40 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1729032880;
+	bh=2E1sJhOJl4dQGZR1QcnlyJlacaJ60TVeM1vYzwx+5Yo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XK0KZ6uvR+7ZYWA0PfoH1EYonEzg5raEHY+JVjLmq5szhx528nT5QLcexkYu4Ls2C
+	 kxT4w0b8yoYbib+ZsiAXCRdEcWNCjnZvrw4sEtj/lvcrbWx49WxWVJGjQSNm/1veMn
+	 DgEmly+xfG+H8joFogDwAu1RLeFPZte5Eew/1uPcQlLx217nm+XNP+JnzraQjVziwH
+	 om95TKynCMmp5Jy2L4JMy9L+OCKTV2LpcxkH8OdJ1Rarrbm/J3WftUeHhw50FMd5P0
+	 36Gs7PZr9XxDXVbIZYsPhylAUCeatWUtagnTEet778/PEhHJxflfJ7sKlJD6LS6mRY
+	 oo+pTWsYR3n6g==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B670ef2b00000>; Wed, 16 Oct 2024 11:54:40 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 9A6AF13ED7B;
+	Wed, 16 Oct 2024 11:54:40 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 948D02820D4; Wed, 16 Oct 2024 11:54:40 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de,
+	markus.stockhausen@gmx.de
+Cc: linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v5 0/3] Realtek SPI-NAND controller
+Date: Wed, 16 Oct 2024 11:54:31 +1300
+Message-ID: <20241015225434.3970360-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015215157.18571-1-everestkc@everestkc.com.np> <99056bd3-748f-42e8-a25a-131f7b194f55@linuxfoundation.org>
-In-Reply-To: <99056bd3-748f-42e8-a25a-131f7b194f55@linuxfoundation.org>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Tue, 15 Oct 2024 16:48:18 -0600
-Message-ID: <CAEO-vhEwkQKnPprdw_r=mg6KRbadY6B4A3R_sOsyH0ds78wb2g@mail.gmail.com>
-Subject: Re: [PATCH] staging: gpib: Move free after the variable use has been completed
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670ef2b0 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=63fhtx2pClmO-oMQzGgA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Tue, Oct 15, 2024 at 4:35=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
->
-> On 10/15/24 15:51, Everest K.C. wrote:
-> > The variable `in_data` is freed, but used later in the code.
-> > Fix it by moving the freeing the memory after it use has been
-> > completed.
-> >
-> > This issue was reported by Coverity Scan.
-> > Report:
-> > CID 1600783: (#1 of 1): Use after free (USE_AFTER_FREE)
-> > 19. pass_freed_arg: Passing freed pointer in_data as an argument to
-> > ni_usb_dump_raw_block.
-> >
-> > Fixes: 4e127de14fa7 ("staging: gpib: Add National Instruments USB GPIB =
-driver")
-> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> > ---
-> >   drivers/staging/gpib/ni_usb/ni_usb_gpib.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c b/drivers/stagin=
-g/gpib/ni_usb/ni_usb_gpib.c
-> > index 1da263676f2a..75f39e1f3ed1 100644
-> > --- a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> > +++ b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> > @@ -690,12 +690,12 @@ static int ni_usb_read(gpib_board_t *board, uint8=
-_t *buffer, size_t length,
-> >               kfree(in_data);
-> >               return parse_retval;
-> >       }
-> > -     kfree(in_data);
-> >       if (actual_length !=3D length - status.count) {
-> >               pr_err("%s: actual_length=3D%i expected=3D%li\n",
-> >                      __func__, actual_length, (long)(length - status.co=
-unt));
-> >               ni_usb_dump_raw_block(in_data, usb_bytes_read);
-> >       }
-> > +     kfree(in_data);
-> >       switch (status.error_code) {
-> >       case NIUSB_NO_ERROR:
-> >               retval =3D 0;
->
-> Looks good to me. Isn't this on next though. Don't forget to
-> indicate it is against next.
-No, it was fixed in the linux-staging repo.
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
->
-> thanks,
-> -- Shuah
+This series adds support for the SPI-NAND flash controller on the RTL9300
+family of SoCs.
+
+There are 2 physical chip selects which are called SPI_MST_CS0 and SPI_MS=
+T_CS1
+in the datasheet. Via some pin-strapping these can be assigned to either =
+the
+SPI-NOR controller or the SPI-NAND controller. Which means you can end up=
+ with
+the following permutations
+
+  SPI-Flash
+  Boot Model SPI_MST_CS0 SPI_MST_CS1
+  ---------- ----------- -----------
+  NOR x1     NOR-CS0     X
+  NOR x2     NOR-CS0     NOR-CS1
+  NAND x1    NAND-CS0    X
+  NAND x2    NAND-CS0    NAND-CS1
+  NOR+NAND   NOR-CS0     NAND-CS0
+
+Chris Packham (3):
+  dt-bindings: spi: Add realtek,rtl9301-snand
+  mips: dts: realtek: Add SPI NAND controller
+  spi: spi-mem: Add Realtek SPI-NAND controller
+
+ .../bindings/spi/realtek,rtl9301-snand.yaml   |  62 +++
+ MAINTAINERS                                   |   6 +
+ arch/mips/boot/dts/realtek/rtl930x.dtsi       |  13 +
+ drivers/spi/Kconfig                           |  11 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-realtek-rtl-snand.c           | 405 ++++++++++++++++++
+ 6 files changed, 498 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/realtek,rtl9301=
+-snand.yaml
+ create mode 100644 drivers/spi/spi-realtek-rtl-snand.c
+
+--=20
+2.47.0
+
 
