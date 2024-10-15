@@ -1,124 +1,224 @@
-Return-Path: <linux-kernel+bounces-365352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D373499E0FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:26:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67CB199E0FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026EB1C20DAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27CC2283281
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126301CACFD;
-	Tue, 15 Oct 2024 08:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF541CACFD;
+	Tue, 15 Oct 2024 08:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sPouMTxm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D9utk6rq"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qiL+6Aep"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5D717335E;
-	Tue, 15 Oct 2024 08:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5C917335E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728980801; cv=none; b=jkZS2Zap9uvguxA4Can5rGdNqcqBHVvBXx5WsDzaDRSS6r7ellcSutYqrSj8tG0qv7E/jS2JOMg2CBM4+W0UGTDOEmTyqlykh7wyDyOQ1etdxWtG3XLz+1BE1icI7LdMsKUS5z604uQJSzPnMA2R8cKATVhVqVOTt6LR8PKQHBY=
+	t=1728980846; cv=none; b=M+5vZx1q0cWBzTpqtKmZISwdpnpIB/sO5KXUZywXH4dR6+C8JKvlrAdU1C6WqeXOBquGk47jYcBz1uVu+5uoV+J2BeJSGV9R4NNRLVDc35f64AFugl6jkep02n3AlJ2EDsSxFzSFJkxAXZRKSDefumlzkDArauKR3eTfaEGlJ/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728980801; c=relaxed/simple;
-	bh=rI+G5pNEOkvsILXZjFPL7S//tggG3Bnow/b4xDlV3fc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jVI05oSb/I/5M0mJDEQNThUIoTM05etYR/WToD1WVSW0rTCHciVDaDpyU2GEZ7Y5+mFhbMpOFXlQz7KSAFesjRJIW74lW5fOyHat6yWDesvHj88kiofrp7IkKlBMHtGA50vnClqoiMSk3oJYIrRxkv4ffFD/+iRKqYyfRTu0IF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sPouMTxm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D9utk6rq; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A31DA1140099;
-	Tue, 15 Oct 2024 04:26:37 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 15 Oct 2024 04:26:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728980797;
-	 x=1729067197; bh=zc4AwB791GpNOqwMdNneorC41LSTgz6DIiF6gXAV7X8=; b=
-	sPouMTxmUDH2/X3hTVfpUqw0XZPerjQh99sey8AJ675nJga6B0OJnTpnigHI/T6a
-	XZO2HU3UD0YUQi3Rje9+uI7eScsIm+57kbMqrkF5LCT8TG6JmagmVgE2OGy6t5YW
-	MHi3jQqgWQHbUDIu1lYs1JO6nttavKw9DbEub+orhsJP4ITQK65wFuaW+gtMQ1X6
-	RMz7oRPkAJvr8CH2rIVR9fHImFiGb29pMbbw0oy4F3VBZ5dNhV3MHI6u0oSL0dO7
-	OyvTYVbwWMR+6mzZ1MYtpnbDuRJZNoKhmXpJRz71qH9RA+RFeh21jyu77wg3SvT1
-	uot9jDkkykmh4zT0OvumVg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728980797; x=
-	1729067197; bh=zc4AwB791GpNOqwMdNneorC41LSTgz6DIiF6gXAV7X8=; b=D
-	9utk6rqFXqQMSfwLuoucs/iucNv6tOZjxv4NyzLu/hZn/Mb+2Vb3SDgxAUHZbqaH
-	MQin2TkFwalv/le2YK8WesqeLEBsSyFwtIAYjVLvXdEmmGnK6rked4pmZ1b5WgyS
-	U4HaCue2MAiF4i9gRP3kpl/6LTEkgIgQ1Pn0vUKwdfIYrDrd7ipV5hFyUc050r0A
-	U6sN18T8uPN0Vp4BvpDlnxoAw3ZDFK3AFW6y5UZatq9p6QxyRCxd/xxb7FnCUXUZ
-	isXV0Su9iXQEzeat3gHc/fiJ9jocAMOzRwCFNrG0eRzb7tEWkW9Eyfi3NeBrAbaM
-	AFvWs6L/WcLr7ikw7xjNw==
-X-ME-Sender: <xms:PScOZxhsenKtS-V4ii4rrfpAQYeMAPMWf3v4IhN7SvbPKjHe1JNaSw>
-    <xme:PScOZ2CyU3kYjCAbUN6MfnCPgP4T46d-M9XZsBD-QtXA2zNgJZ0QZfXerOybRdrED
-    8TMY_hZ7xgi-rj6r68>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegjedgtdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtrghsrdihrghkohhvlhgvvhesgh
-    hmrghilhdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepkhhvrghloheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhgrnhhnvg
-    hssehsihhpshholhhuthhiohhnshdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdifih
-    hrvghlvghsshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:PScOZxGLxYLTsUwMrBKE-4wVItzijT5s3XPVcg4csIpN1-kDfmMRhw>
-    <xmx:PScOZ2TonF8uVP7JDVy2QEDCiVztnxqoV3X9ZSCN2Y6TBKJhs1856A>
-    <xmx:PScOZ-yODN-B8mWs79e0srsVoQzeA834XvG6m8P9cbtEYgfhQSolKA>
-    <xmx:PScOZ85-NytzMxuBIMmXyChUFKaTPW__WZ7n46RHhZkcn4P7VMZvdQ>
-    <xmx:PScOZ1osUXlcWSzVb00EsYSGDNV-O57NQLFtx9QBinem_gaTrKmHoDbB>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4AC812220071; Tue, 15 Oct 2024 04:26:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728980846; c=relaxed/simple;
+	bh=2rPMDg9/t/w3G0K3y2gXVBxMKzjXfjCzHeqESJZkYtc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BnQdrJMI6Zmn9azDjmBTzIfXfEBWWXv2KFMEtWt5eMLu08qG93s2xukbaPAkZJ7JYuuVRKbbfMEzZkqe1TCOU19Sef+DoV+z09bsUwsNEoBDHghk0SGtdnEBjHsZuNtlqBdRGnAzYaXNyr8d+kJwBfBB2IP8JWogGLelH0g127g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qiL+6Aep; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e2915f00c12so3820424276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:27:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728980843; x=1729585643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kh7NkmDAM9m5O1uSrySh2RZX18Uua/RhFygWOGIe73E=;
+        b=qiL+6AepYPevLSJOFp22+tPi2acq+OunVin4e2WNSn48kT/UyiDAZz7vOpUzSR6wpj
+         1d7XIiF5BxdoFG15E/NGz0yZvhxmHVGire23CL+nIXZMklcuWSHzsoVkMtZ/NwHvoI7t
+         WUkjW0C4IPwWF+roCyOC7IyYalw/28TGM7/AGu7QApaFEanrAED2fMT8C+yOod9iT6OY
+         8C9C/YxSqmHtr7D1xxrHEkGA+LD6Wg2lzrti1Yj4OB2JA2YvYhvGJgY2V8TJFYVGWucR
+         8uuQE+pyEfUWdQ4/YTTK9lccGnXXQNcsNERRr50FxWk/SfXRTtujCk4B87046TgzNtXW
+         T2Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728980843; x=1729585643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kh7NkmDAM9m5O1uSrySh2RZX18Uua/RhFygWOGIe73E=;
+        b=MTUMmzIVZOh18I//pTwk1mvHG+XngwEtVR/yabOSSIwS2z4IMgc2HqldRJQIXn6ILi
+         NJUa8aE8U4lob+NHns8164ybPz7qmfQNFUo6MARBdVMzCLdghx6iTuIW/GN02NKBe7I3
+         s0pqVTdnLbxEWMRo4QjRoleV/1GKdxCpYYcX5Hr51mZUfrm2KGZ+YcWrnCpbSoHmErfv
+         djFxVdrviMtbJndqNE+MaPuQiU43G2IkRNrz+xSIEqzv4lUVFp6KMMAHTTtnQTmjdkaF
+         mefIxq4UPFfieGiaYR9iypLxHHhKKH49w2MdwBKdOJHkmgBy2OXpWv41s+lY9b/pfHXP
+         yCtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeQDxgtLhnBv3XpO4Gnj7eZX0BeKrtJpPYCc6PC4XJ3dJ6KZ1UOTEuSHC0yuj/pK+NeRDhwqRJ1nQS2MA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqivYHlSm18CBzETQaqiEtapJ4KzCeQ4UR3A0WlgEx1365EVMq
+	8+7glPsE1wPyUI0xsqCNuiUWd6E9TBeiF7ZLu1JO30w6rzBvSLcqWUgGJDeQy2RFCNONrnpAzgL
+	u2i6jjfK8Zlowkee2PCTsexcZ94Bz2bIcZu4vJ9TolvWeDCTI3zAly/X1
+X-Google-Smtp-Source: AGHT+IFkKg4baqyI1mR+ynKg6uqf1M6RVbil+T3rXQaW6Bdg4AXGejHp/kAEANso21Z43EVZ9cmSocT4SYoeks7pIAU=
+X-Received: by 2002:a05:6902:1893:b0:e29:2f00:803e with SMTP id
+ 3f1490d57ef6-e292f00c843mr9386451276.33.1728980843258; Tue, 15 Oct 2024
+ 01:27:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 15 Oct 2024 08:26:15 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Johannes Berg" <johannes@sipsolutions.net>,
- "Arnd Bergmann" <arnd@kernel.org>,
- "Stanislav Yakovlev" <stas.yakovlev@gmail.com>,
- "Kalle Valo" <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <0966392c-623d-4c96-86cd-5b25ca90d81c@app.fastmail.com>
-In-Reply-To: 
- <a5c6a210cb6b83c7523b0e86b306a7cfa7e573fd.camel@sipsolutions.net>
-References: <20241015073216.9443-1-arnd@kernel.org>
- <a5c6a210cb6b83c7523b0e86b306a7cfa7e573fd.camel@sipsolutions.net>
-Subject: Re: [PATCH] wifi: ipw2x00/lib80211: select ARC4 helper
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-9-76d4f5d413bf@linaro.org>
+ <zig5zuf6hjcrkwmsdiahtzz3t3mxrmwxj65l43xij3zhfcyidn@fuisasnavvo3>
+ <CABymUCP7bVBSWXCNp33x_B8KaZSFU-Dx+bU5ctkgDGXrzURrXQ@mail.gmail.com>
+ <CAA8EJpovnEq_ciO0YmiREhwvxv6yGKnRMPx5=6G7R+Ob6Hy_hA@mail.gmail.com>
+ <CABymUCPdu5+iz-amwv_O999sLUOmUMczo_v=1aUpJGpHo5f8CA@mail.gmail.com> <CAA8EJppMu5o7juhKUN2Y_4CRYKtaWN9G01aPU2ZfksE_tzjqCQ@mail.gmail.com>
+In-Reply-To: <CAA8EJppMu5o7juhKUN2Y_4CRYKtaWN9G01aPU2ZfksE_tzjqCQ@mail.gmail.com>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Tue, 15 Oct 2024 16:27:12 +0800
+Message-ID: <CABymUCNbwY5hoaOxydPccFAdbnCQgUMspJLHkNziQyf=NxOj2A@mail.gmail.com>
+Subject: Re: [PATCH v2 09/14] drm/msm/dpu: blend pipes per mixer pairs config
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024, at 07:45, Johannes Berg wrote:
->> +++ b/drivers/net/wireless/intel/ipw2x00/Kconfig
->> @@ -6,6 +6,7 @@
->>  config IPW2100
->>  	tristate "Intel PRO/Wireless 2100 Network Connection"
->>  	depends on PCI && CFG80211
->> +	select CRYPTO_LIB_ARC4
->> 
-> I think this got to the wrong place?
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=E6=
+=9C=8811=E6=97=A5=E5=91=A8=E4=BA=94 15:13=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Fri, 11 Oct 2024 at 10:11, Jun Nie <jun.nie@linaro.org> wrote:
+> >
+> > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=
+=E6=9C=8811=E6=97=A5=E5=91=A8=E4=BA=94 15:03=E5=86=99=E9=81=93=EF=BC=9A
+> > >
+> > > On Fri, 11 Oct 2024 at 09:40, Jun Nie <jun.nie@linaro.org> wrote:
+> > > >
+> > > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=
+=B410=E6=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:15=E5=86=99=E9=81=93=EF=BC=
+=9A
+> > > > >
+> > > > > On Wed, Oct 09, 2024 at 04:50:22PM GMT, Jun Nie wrote:
+> > > > > > Blend pipes by set of mixer pair config. The first 2 pipes are =
+for left
+> > > > > > half screen with the first set of mixer pair config. And the la=
+ter 2 pipes
+> > > > > > are for right in quad pipe case.
+> > > > > >
+> > > > > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > > > > > ---
+> > > > > >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 38 +++++++++++++=
++++++-----------
+> > > > > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
+> > > > > >  2 files changed, 25 insertions(+), 14 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers=
+/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > > > > index 43d9817cd858f..66f745399a602 100644
+> > > > > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > > > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > > > > @@ -442,7 +442,7 @@ static void _dpu_crtc_blend_setup_mixer(str=
+uct drm_crtc *crtc,
+> > > > > >       const struct msm_format *format;
+> > > > > >       struct dpu_hw_ctl *ctl =3D mixer->lm_ctl;
+> > > > > >
+> > > > > > -     uint32_t lm_idx, i;
+> > > > > > +     uint32_t lm_idx, lm_pair, i, pipe_idx;
+> > > > > >       bool bg_alpha_enable =3D false;
+> > > > > >       DECLARE_BITMAP(fetch_active, SSPP_MAX);
+> > > > > >
+> > > > > > @@ -463,15 +463,20 @@ static void _dpu_crtc_blend_setup_mixer(s=
+truct drm_crtc *crtc,
+> > > > > >               if (pstate->stage =3D=3D DPU_STAGE_BASE && format=
+->alpha_enable)
+> > > > > >                       bg_alpha_enable =3D true;
+> > > > > >
+> > > > > > -             for (i =3D 0; i < PIPES_PER_LM_PAIR; i++) {
+> > > > > > -                     if (!pstate->pipe[i].sspp)
+> > > > > > -                             continue;
+> > > > > > -                     set_bit(pstate->pipe[i].sspp->idx, fetch_=
+active);
+> > > > > > -                     _dpu_crtc_blend_setup_pipe(crtc, plane,
+> > > > > > -                                                mixer, cstate-=
+>num_mixers,
+> > > > > > -                                                pstate->stage,
+> > > > > > -                                                format, fb ? f=
+b->modifier : 0,
+> > > > > > -                                                &pstate->pipe[=
+i], i, stage_cfg);
+> > > > > > +             /* loop pipe per mixer pair */
+> > > > > > +             for (lm_pair =3D 0; lm_pair < PIPES_PER_PLANE / 2=
+; lm_pair++) {
+> > > > > > +                     for (i =3D 0; i < PIPES_PER_LM_PAIR; i++)=
+ {
+> > > > > > +                             pipe_idx =3D i + lm_pair * PIPES_=
+PER_LM_PAIR;
+> > > > > > +                             if (!pstate->pipe[pipe_idx].sspp)
+> > > > > > +                                     continue;
+> > > > > > +                             set_bit(pstate->pipe[pipe_idx].ss=
+pp->idx, fetch_active);
+> > > > > > +                             _dpu_crtc_blend_setup_pipe(crtc, =
+plane,
+> > > > > > +                                                        mixer,=
+ cstate->num_mixers,
+> > > > > > +                                                        pstate=
+->stage,
+> > > > > > +                                                        format=
+, fb ? fb->modifier : 0,
+> > > > > > +                                                        &pstat=
+e->pipe[pipe_idx], i,
+> > > > > > +                                                        &stage=
+_cfg[lm_pair]);
+> > > > > > +                     }
+> > > > > >               }
+> > > > > >
+> > > > > >               /* blend config update */
+> > > > > > @@ -503,7 +508,7 @@ static void _dpu_crtc_blend_setup(struct dr=
+m_crtc *crtc)
+> > > > > >       struct dpu_crtc_mixer *mixer =3D cstate->mixers;
+> > > > > >       struct dpu_hw_ctl *ctl;
+> > > > > >       struct dpu_hw_mixer *lm;
+> > > > > > -     struct dpu_hw_stage_cfg stage_cfg;
+> > > > > > +     struct dpu_hw_stage_cfg stage_cfg[LM_PAIRS_PER_PLANE];
+> > > > >
+> > > > > After seeing this code, can we define STAGES_PER_PLANE (and
+> > > > > also keep PLANES_PER_STAGE defined to 2)?
+> > > > >
+> > > > Could you elaborate it? Stages describe how many layers to be blend=
+ed.
+> > > > Plane is a DRM concept that describe a buffer to be display in spec=
+ific
+> > > > display driver. Plane is already mapped to SSPP/multi-rect in DPU d=
+river
+> > > >  in blending stage level. So I am confused here.
+> > >
+> > > We have dpu_hw_stage_cfg, you are adding a second instance of it. So
+> > > we now have two stages per plane.
+> >
+> > So you suggest to replace LM_PAIRS_PER_PLANE with STAGES_PER_PLANE,
+> > right? I assume a stage is coupled with a LM pair.
+> >
+> > But for PLANES_PER_STAGE, I am still confused. A stage or a LM pair can
+> > involve many SSPP layers. How it related to planes? Plane is a concepts=
+ from
+> > higher level.
+>
+> PIPES_PER_STAGE, excuse me.
 
-Right, your versions is the correct one.
+Do you mean to keep PIPES_PER_STAGE and do not introduce PIPES_PER_LM_PAIR,
+or use both? Looks like they are equal in hardware nature. A stage
+structure serves
+a mixer pair with 2 pipes. We can use PIPES_PER_LM_PAIR and add comment to
+ indicate it, thus avoid defining too many macro.
 
-     Arnd
+>
+> --
+> With best wishes
+> Dmitry
 
