@@ -1,254 +1,167 @@
-Return-Path: <linux-kernel+bounces-365894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB3A99EDA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:32:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E52199EDA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19401F21C99
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F31282A1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B177114D2B9;
-	Tue, 15 Oct 2024 13:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0501AF0AE;
+	Tue, 15 Oct 2024 13:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ew1MCGii"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qY1mh+1L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59631FC7C2;
-	Tue, 15 Oct 2024 13:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6E112F5B1;
+	Tue, 15 Oct 2024 13:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999161; cv=none; b=gB4sVowd03oZCHKsL68UB9NvhAgq4Y3p7EdXOAUIvUXfb1dEAhWjLgLJesrxpWXudtOk17sclkhmKloGgti9UyqW2hw2h+JFMj0zRtv5hItTPM/TlNfAR97j3MJwSUmgn184fju7CA7FeKpJbEB+w7NohQRQfZoLRsYO2yrjT3M=
+	t=1728999186; cv=none; b=m7tcyYcw5PwuYDvK9BLxfCKP0KHGzA9XbjMJAe3mEv1bHIFYARhkfjNQ1oatjoJkGd+Qnshzvey3utLrRGnbAY6n5tgCajsbjxx7OBbSjtJvuX/vgyl2iZcnZnyzRhqqONRhJD+lhd9QN1ZS6QTHz9L198QZI/1ycGRVVGhZXeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999161; c=relaxed/simple;
-	bh=5fIT9OmKwq1xHPg4nWK9yuoW/kODnF5lwDlL5KHxdbE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X5Qi0rewQMizaOx96J+TyfzzxHcAHTRIKTWgWAEtwoa3HYK7YR6t2Rya5AZUpyQScMnGEM8XMZvkzMHlaF27c19DjVOtD5fb9DPhCFVVOKWmfoOfFx1LcAYRxOToFUAY7/Vw67+ZXIB4tc+AmJortDJbdZHJPrGkGuL3dHd+xEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ew1MCGii; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A38C4CECE;
-	Tue, 15 Oct 2024 13:32:40 +0000 (UTC)
+	s=arc-20240116; t=1728999186; c=relaxed/simple;
+	bh=GHyPHJVzyZd8ZM4LZypRlrrgBnlS1b8lfXtOUdWOHeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c46VjWKQhoBLESSz62/majyrfJPxdwt5X0xgoLuzGLrziVb+Fp0CCeo3WxLBisf/SF0Al1vUpg9DsFphH0Gj6/qcjBUCQ3IjNzJ+aW1VWWO9CRaQlt00hRp/f4bA+yISk9//LnRcEI7xmtAXdcBreVayEP6XcbFaVeYG47YnFl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qY1mh+1L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC6B8C4CEC6;
+	Tue, 15 Oct 2024 13:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728999160;
-	bh=5fIT9OmKwq1xHPg4nWK9yuoW/kODnF5lwDlL5KHxdbE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ew1MCGiimUYdnMV2OnA9mPw2zX+Lo/8sQxlvO3xGOROD8DmGJzveF+N2QQ0Ij3DOh
-	 JzRTfn6ziFZ3c+2epd/w6ubYtOKv2IqHe66K1aQan++eU14Dk8mUqVJo1RkorVIKU8
-	 exWfBmXZsC9+rHDDeyKIUnwZSiq39Is3dl+htJaQVHueBpuwNxKNLp0JDotHLB9b6l
-	 PvvSZKBW8bgXPQWobmMITW2ZVqHevhQ8tbXmcKsGyCTv3Yow5BnrPa6uNZsnnsYsEK
-	 AZQcQ2TTEuXz/Ec6rku+BrfQRQRZUdIigyHq431wGjIyiPWxugOUuDDjRdpRKrBVx2
-	 p9O5nyiQ4PZCQ==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e5ccec079eso1860286b6e.3;
-        Tue, 15 Oct 2024 06:32:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVDtHSyvHazyOGPYognEkTi2CV5Qog+13ArQZe65NO9sz3SBNYhBhTnlEbB3AE5GS1AiElG2CWPUg79@vger.kernel.org, AJvYcCWIkVzR8dDCVbffca3cmXatfBPoubzyPAo6JD1r18fuTwrFbikHYFlhDobUlTIfKn8CQdpcXNFOD+y8@vger.kernel.org, AJvYcCWj1pHPDG4f8lJD7eUtppIkRsTRiwoT5Bj/fQEoPCWPD7OOjw7hndLCFqm92lWeQB6A8jeCEvSPOmahAAV3@vger.kernel.org, AJvYcCXRBmukqEViyI7RbSWQBALUpQlI+O+iRgtdqM9K3HdOdh8ZGDn78/LUrwQKcMF14jnQKI2VZWUBKa96sg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNK3VQ4h9VD+s4x3r0XSJ/A3fBfNcEX0NxNIlNANY1zD9o0TOv
-	Rk6Io4ffO7vrMsuhVk3bJX8w5614+AXQmByZ3Jgk5Pt0/fDOgxOg2HAXkAaGBHbdhPb55rC9j4q
-	puV8AXxHN5HVfNZExn4XeLFVUbFk=
-X-Google-Smtp-Source: AGHT+IHuO1i4hxtn/TwfVt+toXC1+oAP+6GnGpmajF9HnA2MJ52+I8CyfiFQ6xobfIYee3MmOj6Drz38cNmnbBK/tZA=
-X-Received: by 2002:a05:6870:2896:b0:277:cc56:2300 with SMTP id
- 586e51a60fabf-2886dd70fd1mr11104236fac.12.1728999159750; Tue, 15 Oct 2024
- 06:32:39 -0700 (PDT)
+	s=k20201202; t=1728999186;
+	bh=GHyPHJVzyZd8ZM4LZypRlrrgBnlS1b8lfXtOUdWOHeA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qY1mh+1L9ZCh74km29cUBEJ231pdgihcWdxTU5NGSvUp0T+6/XxeRnlz223xhAuH2
+	 0vVZsMVhoUu++wVwPVjSd22kCSuzOE/g8Ql0AbMl9tU+ATAr+ykZZ9oR4nN4GFl5ev
+	 fw6HvQesa+fuyRUukrOtD58c2FWU3U7P0X/FRRXPnDBIJEEdnMUWwvoAi6GbDaWwIW
+	 pkCIw2r4aq579Qry7JbiEBXZ+qyg60W2qDvcM3/SQLs8dQ7iQJqxa/cmKKQEhiqy7c
+	 kKDRcWgBgxRii0Mz6gmcftFKjQLAh+5Tfl5+jT4bBJnrdh+yv014QfpMU8qsVx7BNo
+	 sunx9TQjaYRsw==
+Message-ID: <78a1c5c8-53c8-4144-b311-c34b155ca27c@kernel.org>
+Date: Tue, 15 Oct 2024 15:33:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009124120.1124-1-shiju.jose@huawei.com> <20241009124120.1124-13-shiju.jose@huawei.com>
- <20241014164339.00003e73@Huawei.com> <2024101410-turf-junior-7739@gregkh>
- <2024101451-reword-animation-2179@gregkh> <20241014181654.00005180@Huawei.com>
- <CAJZ5v0j-mwZmuciSTaL8MyAp530y=n9HbQ=uVvcnvGLR1n+YuQ@mail.gmail.com>
- <20241015101025.00005305@Huawei.com> <20241015104021.00002906@huawei.com> <2024101517-bubbling-deploy-1be0@gregkh>
-In-Reply-To: <2024101517-bubbling-deploy-1be0@gregkh>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 15 Oct 2024 15:32:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iyc5gvpXjpZdmv-vh8+haPENz+UBXVSF6UDBCRT12fMg@mail.gmail.com>
-Message-ID: <CAJZ5v0iyc5gvpXjpZdmv-vh8+haPENz+UBXVSF6UDBCRT12fMg@mail.gmail.com>
-Subject: Re: [PATCH v13 12/18] platform: Add __free() based cleanup function
- for platform_device_put
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, "Rafael J. Wysocki" <rafael@kernel.org>, linuxarm@huawei.com, 
-	shiju.jose@huawei.com, linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	bp@alien8.de, tony.luck@intel.com, lenb@kernel.org, mchehab@kernel.org, 
-	dan.j.williams@intel.com, dave@stgolabs.net, dave.jiang@intel.com, 
-	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com, 
-	david@redhat.com, Vilas.Sridharan@amd.com, leo.duran@amd.com, 
-	Yazen.Ghannam@amd.com, rientjes@google.com, jiaqiyan@google.com, 
-	Jon.Grimm@amd.com, dave.hansen@linux.intel.com, naoya.horiguchi@nec.com, 
-	james.morse@arm.com, jthoughton@google.com, somasundaram.a@hpe.com, 
-	erdemaktas@google.com, pgonda@google.com, duenwen@google.com, 
-	gthelen@google.com, wschwartz@amperecomputing.com, 
-	dferguson@amperecomputing.com, wbs@os.amperecomputing.com, 
-	nifan.cxl@gmail.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com, 
-	roberto.sassu@huawei.com, kangkang.shen@futurewei.com, 
-	wanghuiqiang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/5] arm64: dts: qcom: Add support for configuring
+ channel TRE size
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
+ Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com,
+ quic_vtanuku@quicinc.com
+References: <20241015120750.21217-1-quic_jseerapu@quicinc.com>
+ <20241015120750.21217-3-quic_jseerapu@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241015120750.21217-3-quic_jseerapu@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 12:17=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
->
-> On Tue, Oct 15, 2024 at 10:40:54AM +0100, Jonathan Cameron wrote:
-> > On Tue, 15 Oct 2024 10:10:25 +0100
-> > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> >
-> > > On Mon, 14 Oct 2024 20:06:40 +0200
-> > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
-> > >
-> > > > On Mon, Oct 14, 2024 at 7:17=E2=80=AFPM Jonathan Cameron
-> > > > <Jonathan.Cameron@huawei.com> wrote:
-> > > > >
-> > > > > On Mon, 14 Oct 2024 18:04:37 +0200
-> > > > > Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > > On Mon, Oct 14, 2024 at 06:00:51PM +0200, Greg KH wrote:
-> > > > > > > On Mon, Oct 14, 2024 at 04:43:39PM +0100, Jonathan Cameron wr=
-ote:
-> > > > > > > > On Wed, 9 Oct 2024 13:41:13 +0100
-> > > > > > > > <shiju.jose@huawei.com> wrote:
-> > > > > > > >
-> > > > > > > > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > > > > > >
-> > > > > > > > > Add __free() based cleanup function for platform_device_p=
-ut().
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.=
-com>
-> > > > > > > > > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> > > > > > > > > ---
-> > > > > > > > >  include/linux/platform_device.h | 1 +
-> > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > >
-> > > > > > > > > diff --git a/include/linux/platform_device.h b/include/li=
-nux/platform_device.h
-> > > > > > > > > index d422db6eec63..606533b88f44 100644
-> > > > > > > > > --- a/include/linux/platform_device.h
-> > > > > > > > > +++ b/include/linux/platform_device.h
-> > > > > > > > > @@ -232,6 +232,7 @@ extern int platform_device_add_data(s=
-truct platform_device *pdev,
-> > > > > > > > >  extern int platform_device_add(struct platform_device *p=
-dev);
-> > > > > > > > >  extern void platform_device_del(struct platform_device *=
-pdev);
-> > > > > > > > >  extern void platform_device_put(struct platform_device *=
-pdev);
-> > > > > > > > > +DEFINE_FREE(platform_device_put, struct platform_device =
-*, if (_T) platform_device_put(_T))
-> > > > > > > > >
-> > > > > > > > >  struct platform_driver {
-> > > > > > > > >         int (*probe)(struct platform_device *);
-> > > > > > > >
-> > > > > > > > +CC Greg KH and Rafael.
-> > > > > > > >
-> > > > > > > > Makes sure to include them on v14 as this needs review from=
- a driver core point
-> > > > > > > > of view I think.
-> > > > > > >
-> > > > > > > Why is this needed for a platform device?  This feels like yo=
-u will have
-> > > > > > > to do more work to "keep" the reference on the normal path th=
-an you to
-> > > > > > > today to release the reference on the error path, right?  Hav=
-e a pointer
-> > > > > > > to a patch that uses this?
-> > > > > >
-> > > > > > Ah, is it this one:
-> > > > > >       https://lore.kernel.org/all/20241014164955.00003439@Huawe=
-i.com/
-> > > > > > ?
-> > > > > >
-> > > > > > If so, no, that's an abuse of a platform device, don't do that,=
- make a
-> > > > > > REAL device on the bus that this device lives on.  If it doesn'=
-t live on
-> > > > > > a real bus, then put it on the virtual bus but do NOT abuse the=
- platform
-> > > > > > device layer for something like this.
-> > > > >
-> > > > > Ok.  Probably virtual bus it is then.  Rafael, what do you think =
-makes sense
-> > > > > for a 'feature' that is described only by an ACPI table (here RAS=
-2)?
-> > > > > Kind of similar(ish) to say IORT.
-> > > >
-> > > > Good question.
-> > > >
-> > > > I guess it depends on whether or not there are any registers to acc=
-ess
-> > > > or AML to interact with.  If so, I think that a platform device mak=
-es
-> > > > sense.
-> > >
-> > > Unfortunately still a gray area I think.
-> > >
-> > > This does access mailbox memory addresses, but they are provided
-> > > by an existing platform device, so maybe platform device for this
-> > > device is still inappropriate :(
-> > >
-> > > What this uses is:
-> > > PCC channel (mailbox in memory + doorbells, etc but that is indirectl=
-y
-> > > provided as a service via reference in ACPI to the PCCT table entry
-> > > allowing this to find the mailbox device - which is a platform
-> > > device drivers/mailbox/pcc.c).
-> > > Because it's all spec defined content in the mailbox messages, we don=
-'t
-> > > have the more flexible (and newer I think) 'register' via operation r=
-egion
-> > > stuff in AML.
-> > >
-> > > A wrinkle though.  The mailbox data is mapped into this driver via
-> > > an acpi_os_ioremap() call.
-> > >
-> > > So I'm thinking we don't have a strong reason for a platform device
-> > > other than 'similarity' to other examples.  Never the strongest reaso=
-n!
-> > >
-> > > We'll explore alternatives and see what they end up looking like.
-> > >
-> > > Jonathan
-> > >
-> >
-> > Greg,
-> >
-> > I'm struggling a little to figure out how you envision the virtual bus
-> > working here.  So before we spend too much time implementing the wrong =
-thing
-> > as it feels non trivial, let me check my understanding.
-> >
-> > Would this mean registering a ras2 bus via subsys_virtual_register().
-> > (Similar to done for memory tiers)
->
-> It should show up under /sys/devices/virtual/ is what I mean.
->
-> > On that we'd then add all the devices: one per RAS2 PCC descriptor (the=
-se
-> > are one per independent feature). Each feature has its own mailbox sub
-> > channel (via a reference to the PCC mailbox devices .
-> > Typically you have one of these per feature type per numa node, but
-> > that isn't guaranteed.  That will then need wiring up with bus->probe()=
- etc
-> > so that the RAS2 edac feature drivers can find this later and bind to i=
-t to
-> > register with edac etc.
-> >
-> > So spinning up a full new bus, to support this?  I'm not against that.
->
-> No, again, see how the stuff that shows up in /sys/devices/virtual
-> works, that should be much simpler.
->
-> But really, as this is a "bus", just make a new one.  I don't understand
-> why ACPI isn't creating your devices for you, as this is ACPI code,
-> perhaps just fix that up instead?  That would make much more sense to
-> me...
+On 15/10/2024 14:07, Jyothi Kumar Seerapu wrote:
+> When high performance with multiple i2c messages in a single transfer
+> is required, employ Block Event Interrupt (BEI) to trigger interrupts
+> after specific messages transfer and the last message transfer,
+> thereby reducing interrupts.
+> For each i2c message transfer, a series of Transfer Request Elements(TREs)
+> must be programmed, including config tre for frequency configuration,
+> go tre for holding i2c address and dma tre for holding dma buffer address,
+> length as per the hardware programming guide. For transfer using BEI,
+> multiple I2C messages may necessitate the preparation of config, go,
+> and tx DMA TREs. However, a channel TRE size of 64 is often insufficient,
+> potentially leading to failures due to inadequate memory space.
+> 
+> Adjust the channel TRE size through the device tree.
+> The default size is 64, but clients can modify this value based on
+> their heigher channel TRE size requirements.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 132 +++++++++++++--------------
+>  1 file changed, 66 insertions(+), 66 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index 3d8410683402..c7c0e15ff9d3 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -1064,7 +1064,7 @@
+>  		};
+>  
+>  		gpi_dma0: dma-controller@900000 {
+> -			#dma-cells = <3>;
+> +			#dma-cells = <4>;
+>  			compatible = "qcom,sc7280-gpi-dma", "qcom,sm6350-gpi-dma";
+>  			reg = <0 0x00900000 0 0x60000>;
+>  			interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -1114,8 +1114,8 @@
+>  							"qup-memory";
+>  				power-domains = <&rpmhpd SC7280_CX>;
+>  				required-opps = <&rpmhpd_opp_low_svs>;
+> -				dmas = <&gpi_dma0 0 0 QCOM_GPI_I2C>,
+> -				       <&gpi_dma0 1 0 QCOM_GPI_I2C>;
+> +				dmas = <&gpi_dma0 0 0 QCOM_GPI_I2C 64>,
+> +				       <&gpi_dma0 1 0 QCOM_GPI_I2C 64>;
 
-Because it is a data-only table, not AML.
+So everywhere is 64, thus this is fixed. Deduce it from the compatible
 
-It looks to me like this could be an auxiliary device, similar to the
-Intel VSEC driver: see intel_vsec_add_aux() etc.
+Best regards,
+Krzysztof
 
-Cheers, Rafael
 
