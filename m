@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-365663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CF399E5A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:29:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583FE99E5A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6FAE284EED
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04AA01F24B2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDD61E7653;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80E61E7C3C;
 	Tue, 15 Oct 2024 11:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UY3KbJJl"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nQMJ3k6u"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727CF189BB2;
-	Tue, 15 Oct 2024 11:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5481E1D89F8;
+	Tue, 15 Oct 2024 11:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728991747; cv=none; b=KioYM5iREIfeJTSbXRMTLdKP6XBfhJmr96njQUHsV1i1G3Xyit+ZjJ0cRqmnpggbg7x9CXhi9n/E+EVlqYvubhdI0tCjc/MOKYn2GScl/vZ/g9R5UC3mWZ5j82QUWgd64gISqXlkvdnn+W4idx7WJI99kXLoaom9ctX6JBeCEtE=
+	t=1728991748; cv=none; b=h9ECC6MXx7im2mPyrU3G0YlU3rCPYL6tc531w3LbAlj/D3XYXJ3kVN18n78unC/IFhCUIzW1FB2hWBzdO/kHJn9eci/i2dP1XVOpwAHL0pRLnHsTiDcdsHvtiMM5sepZyjkSg+geWP3HfEUiEovNhJWeeZgcOaEF5izUbvuCWyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728991747; c=relaxed/simple;
-	bh=fCcpbi/DMaiE9UkEgjGd/UHx8Y29H+4O5aEibvVOsio=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FOZEXZc4vjZG4lVLFEsiqyrAt1jVLuXq13gzW8WVpt4PZmWdPsBOS+0JFlZZeIpBPmTXzhQZL4yqMrXev2aksP8Fg3LGx1LlchgMWn8RdtWLMehrLH5CKWyxpJMSxc2XEYjiJLfFrlrV1BA9Z9kMyLLAEjX0rFEcWnQg46P+K1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UY3KbJJl; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1728991748; c=relaxed/simple;
+	bh=oKmb52NZW4Ss3mx9G4VcEGXja1Im+9PyseimUy38ot4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FCGv0uvWo/k4hGUDU1ESHF7F61fFALKOtDwGn1BSyyX0CVmkDd6HyGv0n5b2IiSrovBA7yDRMJjfdCDzfd/Nl07ZUirTG9HLeXYKyJK0GporiRf67iOYDMjiJEz1cFREwMRDWsfEGzR4h64BokyybhMUf2WN2jiFDVf5cO4WpGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nQMJ3k6u; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FAO3H6004314;
-	Tue, 15 Oct 2024 11:29:04 GMT
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FApWV3013774;
+	Tue, 15 Oct 2024 11:29:05 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=RhwuawkRavgSoXL5Aj4QSrR4egpta7JnevFXoUhiO
-	8Y=; b=UY3KbJJlNuygd+i0jmd1d6vE749CmSk4z8gvkhC5CVxtfKS4uXlJkDRbo
-	E+nqyfdoHStxUXST5tHvIMbGYXYEETWTXvqDQ7MiCbbKXgAThjXSX55lDK/Mu13W
-	3/QBVdquzmHY0vSA1K/uaUEDGAlsGuTiJo6ajJq83uqAYfExrqH5qimtuvHXOCx8
-	dYeA/3V5msVTXH/X5StFnIV9R0wlh5yqMRBBteP94/2/90iI2HssVDFfEZIxu9u6
-	cvgeVNJll9TbmrmuS2ax2AjUdDPx4D79Nng3RY2tz1MiZxAIAbbgxaoBrd7zItaA
-	czPWo9YWmRFd76SfDqQ+eNRRIJ5JA==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429pkyg9h0-1
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=WZDP5vSlSe04GTohU
+	6vluHK/vacQa3M+mRi6Zp9cMQw=; b=nQMJ3k6uIIW3JykK5FOealaaIyMWXhuaR
+	Ln7p1/lGiIkEOFR2gyEy9H8zBCSJ2Qo5ChAkglEgzQtLZIJAUbXZDdKtaTPoxP7t
+	smQvHXwl31iA3v6DmnaJw/FrmYsgx078zhdQRBUy4do4DFFkr9dvrNGHxQDBiQO6
+	Nk9P41rPz2qSrUKMIgfFEzmuCGcnAlk6NHEAou7cwPHGI44DjYEorX3xyAoyENcA
+	M//mkWQGLTIfZq/tQi6UYDCZy1Q2ilVn+TSIHvZK/Mk+HjYyx4phQXEC9vAZlkjM
+	MPFWoWIEcl72u/PHOAFop5FGwAC8FqG1r0ZRymTN76gj4WyT/kPRA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429q0gg695-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 11:29:04 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FAYtsu006674;
-	Tue, 15 Oct 2024 11:29:03 GMT
+	Tue, 15 Oct 2024 11:29:05 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49F8BF1T002452;
+	Tue, 15 Oct 2024 11:29:04 GMT
 Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4283eruq59-1
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emkh2j-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 15 Oct 2024 11:29:03 +0000
 Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FBT0sg48628014
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FBT0Ic48628016
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 15 Oct 2024 11:29:00 GMT
 Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EF26120043;
-	Tue, 15 Oct 2024 11:28:59 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 2775E20040;
+	Tue, 15 Oct 2024 11:29:00 +0000 (GMT)
 Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C866520040;
-	Tue, 15 Oct 2024 11:28:59 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 006E22004B;
+	Tue, 15 Oct 2024 11:29:00 +0000 (GMT)
 Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
 	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
 	Tue, 15 Oct 2024 11:28:59 +0000 (GMT)
@@ -72,10 +73,12 @@ Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
         Christoph Schlameuss <schlameuss@linux.ibm.com>,
         Janosch Frank <frankja@linux.ibm.com>,
         Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: [PATCH v3 0/6] s390/uv: Retrieve Secrets Ultravisor Call support
-Date: Tue, 15 Oct 2024 13:28:53 +0200
-Message-ID: <20241015112859.3069210-1-seiden@linux.ibm.com>
+Subject: [PATCH v3 1/6] s390/boot/uv.c: Use a constant for more-data rc
+Date: Tue, 15 Oct 2024 13:28:54 +0200
+Message-ID: <20241015112859.3069210-2-seiden@linux.ibm.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241015112859.3069210-1-seiden@linux.ibm.com>
+References: <20241015112859.3069210-1-seiden@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,63 +87,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: WNb7Gix-m0yrwepuIlHN3QN5e-5mm2I0
-X-Proofpoint-GUID: WNb7Gix-m0yrwepuIlHN3QN5e-5mm2I0
+X-Proofpoint-ORIG-GUID: PGIfTgPf1uksJG1jtxL7gpWE5nAK53hN
+X-Proofpoint-GUID: PGIfTgPf1uksJG1jtxL7gpWE5nAK53hN
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- mlxlogscore=358 mlxscore=0 adultscore=0 lowpriorityscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150078
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 mlxlogscore=789
+ priorityscore=1501 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410150078
 
-A new secret type (group) allows SE-guests to retrieve the secret value
-from the UV secret store. All retrieved secrets (but plaintext) are
-retrieved as a PCMKO-wrapped key so that they will never appear in
-plaintext in the secure guest. Supported key/secret types are:
-AES, AES-XTS, HMAC, and EC. Add support for an in-kernel API and an UAPI
-to retrieve a previously added secret. If the Hardware supports it,
-adding secrets works with the same infrastructure that is used by
-associate secrets introduced with AP-pass-through support.
+Add a define for the UVC rc 0x0100 that indicates that a UV-call was
+successful but may serve more data if called with a larger buffer
+again.
 
-With this addition List Secret UVCs can report more-data now and may
-expect a starting index different to zero. This requires the addition of
-LIST_SECRET_EXT IOCTL that works the same as the non_EXT variant but
-additionally accepts an index (u16) as input.
+Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+---
+ arch/s390/boot/uv.c        | 4 ++--
+ arch/s390/include/asm/uv.h | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-Since v3:
-	* rename BIT_UVC_CMD_RETR_SECRETS to BIT_UVC_CMD_RETR_SECRET
-	* Streamline list_secrets()
-	* Fix documentation styling issues
-	* Simplify conditional in find_secret()
-	* Add r-b from Christoph
-
-Since v2:
-	* Simplify conditionals
-	* Fix documentation issues
-	* Simplify list_secrets()
-	* Add r-b from Christoph
-
-Since v1:
-	* Add various r-b's
-	* Fix nits and minor issues
-
-Steffen Eiden (6):
-  s390/boot/uv.c: Use a constant for more-data rc
-  s390/uv: Retrieve UV secrets support
-  s390/uvdevice: Add Retrieve Secret IOCTL
-  s390/uvdevice: Increase indent in IOCTL definitions
-  s390/uvdevice: Add List Secrets Ext IOCTL
-  s390/uv: Retrieve UV secrets sysfs support
-
- arch/s390/boot/uv.c                   |   7 +-
- arch/s390/include/asm/uv.h            | 146 +++++++++++++++++++++++-
- arch/s390/include/uapi/asm/uvdevice.h |  36 +++---
- arch/s390/kernel/uv.c                 | 153 ++++++++++++++++++++++++-
- drivers/s390/char/uvdevice.c          | 154 +++++++++++++++++++++-----
- 5 files changed, 442 insertions(+), 54 deletions(-)
-
+diff --git a/arch/s390/boot/uv.c b/arch/s390/boot/uv.c
+index 318e6ba95bfd..2a71e759dc42 100644
+--- a/arch/s390/boot/uv.c
++++ b/arch/s390/boot/uv.c
+@@ -22,8 +22,8 @@ void uv_query_info(void)
+ 	if (!test_facility(158))
+ 		return;
+ 
+-	/* rc==0x100 means that there is additional data we do not process */
+-	if (uv_call(0, (uint64_t)&uvcb) && uvcb.header.rc != 0x100)
++	/* Ignore that there might be more data we do not process */
++	if (uv_call(0, (uint64_t)&uvcb) && uvcb.header.rc != UVC_RC_MORE_DATA)
+ 		return;
+ 
+ 	if (IS_ENABLED(CONFIG_KVM)) {
+diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
+index 153d93468b77..94ff58336e8e 100644
+--- a/arch/s390/include/asm/uv.h
++++ b/arch/s390/include/asm/uv.h
+@@ -28,6 +28,7 @@
+ #define UVC_RC_INV_STATE	0x0003
+ #define UVC_RC_INV_LEN		0x0005
+ #define UVC_RC_NO_RESUME	0x0007
++#define UVC_RC_MORE_DATA	0x0100
+ #define UVC_RC_NEED_DESTROY	0x8000
+ 
+ #define UVC_CMD_QUI			0x0001
 -- 
 2.43.0
 
