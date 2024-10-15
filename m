@@ -1,124 +1,83 @@
-Return-Path: <linux-kernel+bounces-366935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B25199FC6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC41D99FC66
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1603F2855A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9486A1F216B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A880B1F80C9;
-	Tue, 15 Oct 2024 23:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6AE1DBB24;
+	Tue, 15 Oct 2024 23:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vln0Nlmb"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCavwmTh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD0A19C542
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A38519C542;
+	Tue, 15 Oct 2024 23:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729034558; cv=none; b=qitR6iDKjVoE0J3svBnVvDVKeQvESurozRWlhg6zOPl/Spl8izjetqxr7cHE/1f0zHu+X6lxn2AUzsdeZ9zxn+SfbfrpBxFv9/qvP/9Nu+zfNj+OIaf1/t2TZY4G+H1ZkPJs/njd1leZunZRI+s3r1mH3NLAt+6X2pmGvPTrIHU=
+	t=1729034549; cv=none; b=mwupl2wlXaw3yBfafcoEmkkymwih+pIbrnxjb8rP3zWMDV630wawbbXT8i39nJ8drfVo5YT62PEwQdH0I9eI1sfz7c/70C+16A+XkoKe3exIj87nPUHyar7Cpo1RpdcgpHpeJFusTy8XNl8J+wyo2bjaPhHTSd6qEOnTAfQXI64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729034558; c=relaxed/simple;
-	bh=I523jeJXbcx4KI8RALYv3nNxeV4rQgapD1DZyvsalGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IlrII0ucuDgjRA1Wc8P8EATESVAv9ry3TaP/88TCjQocQ6CxmxZrRTW47oNJMqlvpcpLkpMU5KvqP5l3ASYMXqCMuRfqyaO7YT4tq7B62H6l1zeITUNyf70hYJLKXaA0YOtl+LaOV3qkY/ZCDDxgje+s+qXygyWDBGSIaSf6Fbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vln0Nlmb; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e66ba398so2469e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:22:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729034555; x=1729639355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9RUvHKuEBPAnu6MBocZm6vLF52qHvXQbIHH1GlTyCVw=;
-        b=vln0NlmbieQJ9TzD8KL1EZeE6NoBbVmfIBXBnawHcnKnj4FRuHKbNWcEKWdwrv4NSd
-         QAuGVckYewaT/HPK2FUYULU2dMV8FL9gBH/aedg54LGlznabSt14amQbn7XjVf83/trx
-         kvpgXHJ/cuaSEOIKVkP9TgOZTxkvJ9XQnl9lkpKzHlIuYefs8SZ0q6lyDtZguPdmYTjF
-         tbYEOru8TJ4etz1dOdPeLCltOCAtncLG5Ba5b8zvcZbfPHj+wLAtOynwFepjt5UgExFK
-         mRrno2PscYErJI2SPMfB/8FjoATql6/pw8Dd4pcrDzU9CdN+C9M/tO5h52FplZll7b6d
-         97qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729034555; x=1729639355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9RUvHKuEBPAnu6MBocZm6vLF52qHvXQbIHH1GlTyCVw=;
-        b=VnWPGMtmgkIGB2DcUCRuUCEQTEgmP23TFo4KZvJmcJ0dtdCMJnMi0UNkMGcwSNsDsu
-         E6dEAkJqLUgpb6DCdTr9GM+Hwz9Fg9sFxPb2XV58/dN7kEqfJ5JM2X6jlTYX5dX6rFMv
-         7lgujdwMiLbfbrUYn7GYK4De7pQX+nIYmHhcWGl0SMELCu86cLG3O/aopy8cuv/Uh6MM
-         6DzBbV0tCd8rp0wlQM264EEdzdebynxWTBFnK/+bGveyfWvNJx/5Y8HHB2bKLqpwi+Bz
-         4WEm35upXM5r+8tsURH+r0g01s2rmMKwjSycqmS5/24fXMjBJYic5mgF8BbRUrfTHTo1
-         6FUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVw0EIpQT2lFzJCRQdcSqICtl0q+BR5dMZCcqmaZ5G6CEbNc4JwrqgFgH52YdWuu6O+O2+ksJZYuzlde+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtE51VSdL6J4h9tbipU6GVFuRQAWm9Bbv9jX9i2qxM75n1vbuR
-	IHeRTZnegaYRh5I6Z6IMrsMCc5vqQDf4ZZT1f+Oj2RqmkI12yc36edXxcAgt1bTJD6eDPVE04YS
-	MbeU63/Q5SfC3EG02NgIwpfmurQ8RYktKlwjf
-X-Google-Smtp-Source: AGHT+IHGh6PUQoy8hght4ieDSeR+Tsek80+k3WjbTEsufsVtjnaI+27i1yToDuq/77zg6Ww2K7PJe7qX4qx5sJCsaJo=
-X-Received: by 2002:a05:6512:1592:b0:538:9e44:3034 with SMTP id
- 2adb3069b0e04-53a04d02628mr174009e87.6.1729034554499; Tue, 15 Oct 2024
- 16:22:34 -0700 (PDT)
+	s=arc-20240116; t=1729034549; c=relaxed/simple;
+	bh=SZbokGXMJZ3coHJvqdScXDpyPhe0Y00MZjJqgrpRdPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BDz4jMiq/q/el6vETfCBqi49LDVfBvEyhiBg+aW+tiXh7Q+tp4jVR8DytX5jYdC2tLn3e6/+R4ObpPrWJ39us/ap+v9VPW8KFpZd+fNTeRyzpqf8krClaBmDHZOrxq2zfhSRSi4qKHEn70m9Gs0OcPNGfr1XpZ2zqkZtZXtF9G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCavwmTh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE0F3C4CEC6;
+	Tue, 15 Oct 2024 23:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729034549;
+	bh=SZbokGXMJZ3coHJvqdScXDpyPhe0Y00MZjJqgrpRdPs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MCavwmThkKLRCH1gx9a9O0fFGORP/RNa+Dv9/0uvpZkeiuCXPVI+M9vzStMaV8jLK
+	 D+dc33UWSljwE/fv6MKsEdjawDnxveO7My8XzRmVn5nr3DtGE3zpZzuIOeSX7A3pFG
+	 iPyiNW0j3kOws/JWEjZwo+b/1PkI0g/jSNFWCzQVfKFLGglTLQQ1xtenTSDph9cFnY
+	 AZz3mWaFyBoMAwNPi+eZd4oe/S5NfKfE4AxNM/B3EQQ6RS76QFIffgO03DA9c5TvuM
+	 YaS9OrzjlmpVOnbGXkG8+ySVGvrppcUvbu1wfrFxUm7VvaPlvz4YFwoZhK90aiKm4N
+	 YzR9HO48LPNPg==
+Date: Tue, 15 Oct 2024 16:22:27 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, bryan.whitehead@microchip.com,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ anna-maria@linutronix.de, frederic@kernel.org, richardcochran@gmail.com,
+ johnstul@us.ibm.com, UNGLinuxDriver@microchip.com, jstultz@google.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 RESEND 1/2] posix-clock: Fix missing timespec64 check
+ in pc_clock_settime()
+Message-ID: <20241015162227.4265d7b2@kernel.org>
+In-Reply-To: <87v7xtc7z5.ffs@tglx>
+References: <20241009072302.1754567-1-ruanjinjie@huawei.com>
+	<20241009072302.1754567-2-ruanjinjie@huawei.com>
+	<20241011125726.62c5dde7@kernel.org>
+	<87v7xtc7z5.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925233854.90072-1-mmaurer@google.com> <20240925233854.90072-15-mmaurer@google.com>
- <ZwmlEYdS0aPVF32k@bombadil.infradead.org> <CAGSQo01o4fWYwSzZHX5dyTUKcaCSZ7z-hPQ8w63tgBPGbM_UCA@mail.gmail.com>
- <ZwmnnMmqVWLaelvQ@bombadil.infradead.org> <Zwm4lXdKB9RfPQ5M@bombadil.infradead.org>
- <Zwm4v_1wh5RwuHxF@bombadil.infradead.org>
-In-Reply-To: <Zwm4v_1wh5RwuHxF@bombadil.infradead.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Tue, 15 Oct 2024 16:22:22 -0700
-Message-ID: <CAGSQo03df-tnmwcz4nh3qtuQPKQ2zLHW0juQyKUXGsdeS7QkLA@mail.gmail.com>
-Subject: Re: [PATCH v5 14/16] modules: Support extended MODVERSIONS info
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org, 
-	gary@garyguo.net, Michael Ellerman <mpe@ellerman.id.au>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>, Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, neal@gompa.dev, 
-	marcan@marcan.st, j@jannau.net, asahi@lists.linux.dev, 
-	linux-modules@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-So, the basic things I can think of to test here are:
+On Wed, 16 Oct 2024 00:33:02 +0200 Thomas Gleixner wrote:
+> > I'm guessing we can push this into 6.12-rc and the other patch into
+> > net-next. I'll toss it into net on Monday unless someone objects.  
+> 
+> Can you folks please at least wait until the maintainers of the code in
+> question had a look ?
 
-1. The kernel can still load the previous MODVERSIONS format
-2. The kernel can load the new MODVERSIONS format
-3. If we artificially tweak a CRC in the previous format, it will fail to l=
-oad.
-4. If we artificially tweak a CRC in the new format, it will fail to load.
-5. With CONFIG_EXTENDED_MODVERSIONS enabled, the kernel will build and
-load modules with long symbol names, with MODVERSIONS enabled.
+You are literally quoting the text where I say I will wait 3 more days.
+Unfortunately "until the maintainers respond" leads to waiting forever
+50% of the time, and even when we cap at 3 working days we have 300
+patches in the queue (292 right now, and I already spent 2 hours
+reviewing today). Hope you understand.
 
-Is there anything else you were thinking of here, or are those the
-kinds of checks you were envisioning?
-
-On Fri, Oct 11, 2024 at 4:46=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
-> wrote:
->
-> On Fri, Oct 11, 2024 at 04:45:25PM -0700, Luis Chamberlain wrote:
-> >
-> > Also, just as I asked Sami, coould you split this up into patch sets?
-> > One with all the cleanups and elf validation code shifts. And then the
-> > other code. That will let me pick up quickly the first patch set.
->
-> Oh and if you can think of ways to enhance our test covereage on all
-> this as I noted to Sami, it would be greatly appreciated.
->
->   Luis
+Sorry if we applied too early, please review, I'll revert if it's no
+good.
 
