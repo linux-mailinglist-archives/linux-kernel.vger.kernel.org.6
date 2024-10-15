@@ -1,238 +1,458 @@
-Return-Path: <linux-kernel+bounces-365316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 523E699E062
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:08:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F2799E06B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5C0D1F2326A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCF741F22C4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9B71C7299;
-	Tue, 15 Oct 2024 08:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3AA1C3314;
+	Tue, 15 Oct 2024 08:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="chv8b1GM"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbXWbwiv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF7C19F420
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D981AC450;
+	Tue, 15 Oct 2024 08:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728979692; cv=none; b=cEg15rbSf8qYLMkMPOpnIcLT2/PUQSDuTl3VYghkE/rOEKKf/ShhbiCLArX59iDzW/qjKMy/CPToVN/AJqlFV/TQivhcIUBjk4v3IBbmTAQG4Tprf390F91zRCJspNqtKoco7s4rwzCw6dCZB4X3aNbvDYbBHTiLKRsmOBw2H/8=
+	t=1728979717; cv=none; b=bYbE+nLtPHUxVjxt+IbzmneQPUQ5NIQgBpwvbboyh93MC2P9tFlGohbJeSXD/zV6KJjCFVK3YN/x9w6YufYu7x3O8yWgD3Qb0yi6ZKBazsW4nGrbaKb3ZuNX01ijEoWmNQv0aCXQ9gHPjLd3I2t8t8HNYVO1By5vbfsU5VgoPco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728979692; c=relaxed/simple;
-	bh=EyuBUYVXMadI36C78i9QIdQhVNDEx6HBS9/nIPezoVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WT9VGMhtB9fuCpv56y7MlbsYWLQayw9hskx/ygBbYdW7JngsaJrgzrVX6HkGOJcxWKJGlfQABbzz9YJyQ6nit3fqzCwhaK8Unu16/milpvlh9vX2rG7oX7CIWP1sq9y2Z780Gzrtr7rEgI2G40CbFYic6qNw4f4t/5Ib5XiP3nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=chv8b1GM; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a156513a1so223692166b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 01:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728979689; x=1729584489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6DrzNGwPkbdM1CPH+YAONA+c6AWmVrJfrGwHxsSXjb8=;
-        b=chv8b1GMZTao6K3xjTGZOEaW6zi9VK3zyYvlv0FCL681X4lEScQMTiCzP9jmlStS58
-         RyfWdBjGRoA6amXm0cmmPsNxIxwYU3IHCFqGoiKYMG1xQ5OQcNuujMyqHcpreVQMuKz4
-         Ihj8ZIOBtK9D/1vto4zqseSPqHdMwF1zfj4ryGW0wo4GOr+0yLsFzgbF1MZiN9ffdNx1
-         QCN8E1hUPryXDkS8w2CuiXjw5RI6qMXFS5GdRh9G33DmBYTjZDB48Clt3E1Ws5L8znxf
-         jH03DD7yyxx7um1fnPBVfbQsQdy53n5Oss9/i/TX3omf/ZrclHXwVSd5+tLs3UI9f9bw
-         Qlcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728979689; x=1729584489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6DrzNGwPkbdM1CPH+YAONA+c6AWmVrJfrGwHxsSXjb8=;
-        b=ROjQlqTyrTpf8KLBAuzGW5/PA2Gk1+GaSGuq9s9zN27y47J4iOtnbvB7AzYmVDaEm4
-         DgzeNpdnJg4fR4YUZS9l9JSMZqtg8b1s1XY7e6fqSSmZ7JHRWW90DFDqZq4ccEVnYdAe
-         y63BfpbjqQtbuDi5PF5vWR4vCYOTL45pG7lBRRc4STwfhZR/XXu0iP2mIFHbtFM90EFt
-         pYH2Uq0+igR1yMbQ/k7YO4BljbeXw+unhyL6wISRbsjplKhEdTD19dZ9d7VQdciQCLa+
-         1QnXoU/rOun0jpmB+cICZpzwS2H9/3ErbfDggXsAeeSfwkU53CLWlmstwIIpFGojleku
-         UNig==
-X-Forwarded-Encrypted: i=1; AJvYcCWNU2p+xXrqlyg22Ai4yxJWNJJLQE37mcRB9AZJ4lMRhg2bXOgE7EZ/9L+1MA7x4woml09ynQZG3slWm4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxndqK9AP6G65aKOAPOIOu0ZhHylKgxdGPr3Mlea63e2O8G5lSJ
-	JQAKgfFiC8Eg0MWGAUuYeKEQxvei8GQlOm1ujAHnc2R5A+jlaVR6P3KWRARGLhwCfRsJ9YFfVIh
-	mrF6vRHePA3g8JpQULFUwZrvE28h6e6LW6hR/
-X-Google-Smtp-Source: AGHT+IHQzE7/7CkNCdHcq4IpVEJ3q3XKiM7PqNExgmsDCcv7tTn2wDhZIkhqo6XqDnhnl0O7IIiH6FHw2aZ61lcbY00=
-X-Received: by 2002:a17:907:7288:b0:a99:5601:7dc1 with SMTP id
- a640c23a62f3a-a99b9586a29mr1156979866b.49.1728979688785; Tue, 15 Oct 2024
- 01:08:08 -0700 (PDT)
+	s=arc-20240116; t=1728979717; c=relaxed/simple;
+	bh=SxRcfy07HWRHVvCeOcAKYGN2gzLztYTiSILDxf0OiO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fFz82vAp1i/a6RUB7Y/whdNXuRHrT2Ezr4XdTGK2tA0G1xsA7s222patrdmHM00v9TEonRluAk5nej6fhNzCyk/HFsQqCuBE1IocZMyjkeMK7Kn5FtEa3WnBnRvNvM8jE6TmOczl+FFJ4snaVWlq/cRXto8qwsLxVPMQE80BYCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbXWbwiv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4489EC4CEC7;
+	Tue, 15 Oct 2024 08:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728979716;
+	bh=SxRcfy07HWRHVvCeOcAKYGN2gzLztYTiSILDxf0OiO8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IbXWbwivVtpNeRQ2NDb/NYnvIcI/FK2Vo2GDtnHNM3yfjMrNs6HbOhF4t2EebSeWv
+	 GFpL99uMYCbXVMBxjBEk1Xh1mS4PyQ28+hS+ANxRWi1PQwzezlDCKjtOYlTxclwfk/
+	 BfjhSRM5P8IKsgdBmBEy8fqc12QwYDpnvoIN3cS0f0Oar9gYUx1Utj88rS/U8R51Vr
+	 fcFGPrLGq0cK7E5reRrMhP8Gq/nre0BHWOOUx2q77cmuhKmnqjRDwDnv86NUiToXsv
+	 l7bd6qGzyZyMXBJWkfw5SYJ5YpNNjR4zTB5Wyp+bCV41yD0OWp8nkX4b61DEdCFZTn
+	 +NjywQQ8uEdDw==
+Message-ID: <eb4112aa-21d0-4537-a18c-940d8832711a@kernel.org>
+Date: Tue, 15 Oct 2024 10:08:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010003550.3695245-1-shakeel.butt@linux.dev>
-In-Reply-To: <20241010003550.3695245-1-shakeel.butt@linux.dev>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 15 Oct 2024 01:07:30 -0700
-Message-ID: <CAJD7tkZJcnpREVdfJDMiM5y-UTX=Fby0LqQar3N9LCFeyOsn+Q@mail.gmail.com>
-Subject: Re: [PATCH] memcg: add tracing for memcg stat updates
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
-	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+To: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241015075134.1449458-1-TroyMitchell988@gmail.com>
+ <20241015075134.1449458-3-TroyMitchell988@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241015075134.1449458-3-TroyMitchell988@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 9, 2024 at 5:36=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.dev=
-> wrote:
->
-> The memcg stats are maintained in rstat infrastructure which provides
-> very fast updates side and reasonable read side. However memcg added
-> plethora of stats and made the read side, which is cgroup rstat flush,
-> very slow. To solve that, threshold was added in the memcg stats read
-> side i.e. no need to flush the stats if updates are within the
-> threshold.
->
-> This threshold based improvement worked for sometime but more stats were
-> added to memcg and also the read codepath was getting triggered in the
-> performance sensitive paths which made threshold based ratelimiting
-> ineffective. We need more visibility into the hot and cold stats i.e.
-> stats with a lot of updates. Let's add trace to get that visibility.
->
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-
-One question below, otherwise:
-
-Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
-
+On 15/10/2024 09:51, Troy Mitchell wrote:
+> This patch introduces basic I2C support for the SpacemiT K1 SoC,
+> utilizing interrupts for transfers.
+> 
+> The driver has been tested using i2c-tools on a Bananapi-F3 board,
+> and basic I2C read/write operations have been confirmed to work.
+> 
+> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
 > ---
->  include/trace/events/memcg.h | 59 ++++++++++++++++++++++++++++++++++++
->  mm/memcontrol.c              | 13 ++++++--
->  2 files changed, 70 insertions(+), 2 deletions(-)
->  create mode 100644 include/trace/events/memcg.h
->
-> diff --git a/include/trace/events/memcg.h b/include/trace/events/memcg.h
+>  drivers/i2c/busses/Kconfig  |  18 +
+>  drivers/i2c/busses/Makefile |   1 +
+>  drivers/i2c/busses/i2c-k1.c | 694 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 713 insertions(+)
+>  create mode 100644 drivers/i2c/busses/i2c-k1.c
+> 
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 53f18b351f53..cfa5cda9c8d8 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -800,6 +800,24 @@ config I2C_KEMPLD
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called i2c-kempld.
+>  
+> +config I2C_K1
+> +	tristate "Spacemit K1 I2C adapter"
+> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+
+There is no such thing as ARCH_SPACEMIT. You never mentioned any dependency.
+
+
+> +	help
+> +	  This option enables support for the I2C interface on the Spacemit K1
+> +	  platform.
+> +
+> +	  If you enable this configuration, the kernel will include support for
+> +	  the I2C adapter specific to the Spacemit K1 platform. This driver ca
+> +	  be used to manage I2C bus transactions, which are necessary for
+> +	  interfacing with I2C peripherals such as sensors, EEPROMs, and other
+> +	  devices.
+> +
+> +	  This driver can also be compiled as a module. If you choose to build
+> +	  it as a module, the resulting kernel module will be named `i2c-k1`.
+> +	  Loading this module will enable the I2C functionality for the K1
+> +	  platform dynamically, without requiring a rebuild of the kernel.
+> +
+>  config I2C_LPC2K
+>  	tristate "I2C bus support for NXP LPC2K/LPC178x/18xx/43xx"
+>  	depends on OF && (ARCH_LPC18XX || COMPILE_TEST)
+> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+> index ecc07c50f2a0..682e10435a7f 100644
+> --- a/drivers/i2c/busses/Makefile
+> +++ b/drivers/i2c/busses/Makefile
+> @@ -78,6 +78,7 @@ obj-$(CONFIG_I2C_IOP3XX)	+= i2c-iop3xx.o
+>  obj-$(CONFIG_I2C_JZ4780)	+= i2c-jz4780.o
+>  obj-$(CONFIG_I2C_KEBA)		+= i2c-keba.o
+>  obj-$(CONFIG_I2C_KEMPLD)	+= i2c-kempld.o
+> +obj-$(CONFIG_I2C_K1)		+= i2c-k1.o
+
+Are you sure you ordered it alphabetically? The same in Kconfig.
+
+>  obj-$(CONFIG_I2C_LPC2K)		+= i2c-lpc2k.o
+>  obj-$(CONFIG_I2C_LS2X)		+= i2c-ls2x.o
+>  obj-$(CONFIG_I2C_MESON)		+= i2c-meson.o
+> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
 > new file mode 100644
-> index 000000000000..913db9aba580
+> index 000000000000..85053530d9b0
 > --- /dev/null
-> +++ b/include/trace/events/memcg.h
-> @@ -0,0 +1,59 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM memcg
-> +
-> +#if !defined(_TRACE_MEMCG_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_MEMCG_H
-> +
-> +#include <linux/memcontrol.h>
-> +#include <linux/tracepoint.h>
-> +
-> +
-> +DECLARE_EVENT_CLASS(memcg_rstat,
-> +
-> +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> +
-> +       TP_ARGS(memcg, item, val),
-> +
-> +       TP_STRUCT__entry(
-> +               __field(u64, id)
-> +               __field(int, item)
-> +               __field(int, val)
-> +       ),
-> +
-> +       TP_fast_assign(
-> +               __entry->id =3D cgroup_id(memcg->css.cgroup);
-> +               __entry->item =3D item;
-> +               __entry->val =3D val;
-> +       ),
-> +
-> +       TP_printk("memcg_id=3D%llu item=3D%d val=3D%d",
-> +                 __entry->id, __entry->item, __entry->val)
-> +);
-> +
-> +DEFINE_EVENT(memcg_rstat, mod_memcg_state,
-> +
-> +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> +
-> +       TP_ARGS(memcg, item, val)
-> +);
-> +
-> +DEFINE_EVENT(memcg_rstat, mod_memcg_lruvec_state,
-> +
-> +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> +
-> +       TP_ARGS(memcg, item, val)
-> +);
-> +
-> +DEFINE_EVENT(memcg_rstat, count_memcg_events,
-> +
-> +       TP_PROTO(struct mem_cgroup *memcg, int item, int val),
-> +
-> +       TP_ARGS(memcg, item, val)
-> +);
-> +
-> +
-> +#endif /* _TRACE_MEMCG_H */
-> +
-> +/* This part must be outside protection */
-> +#include <trace/define_trace.h>
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index c098fd7f5c5e..17af08367c68 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -71,6 +71,10 @@
->
->  #include <linux/uaccess.h>
->
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/memcg.h>
-> +#undef CREATE_TRACE_POINTS
-> +
->  #include <trace/events/vmscan.h>
->
->  struct cgroup_subsys memory_cgrp_subsys __read_mostly;
-> @@ -682,7 +686,9 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum=
- memcg_stat_item idx,
->                 return;
->
->         __this_cpu_add(memcg->vmstats_percpu->state[i], val);
-> -       memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val));
-> +       val =3D memcg_state_val_in_pages(idx, val);
-> +       memcg_rstat_updated(memcg, val);
-> +       trace_mod_memcg_state(memcg, idx, val);
->  }
->
->  /* idx can be of type enum memcg_stat_item or node_stat_item. */
-> @@ -741,7 +747,9 @@ static void __mod_memcg_lruvec_state(struct lruvec *l=
-ruvec,
->         /* Update lruvec */
->         __this_cpu_add(pn->lruvec_stats_percpu->state[i], val);
->
-> -       memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val));
-> +       val =3D memcg_state_val_in_pages(idx, val);
-> +       memcg_rstat_updated(memcg, val);
-> +       trace_mod_memcg_lruvec_state(memcg, idx, val);
->         memcg_stats_unlock();
->  }
->
-> @@ -832,6 +840,7 @@ void __count_memcg_events(struct mem_cgroup *memcg, e=
-num vm_event_item idx,
->         memcg_stats_lock();
->         __this_cpu_add(memcg->vmstats_percpu->events[i], count);
->         memcg_rstat_updated(memcg, count);
-> +       trace_count_memcg_events(memcg, idx, count);
+> +++ b/drivers/i2c/busses/i2c-k1.c
+> @@ -0,0 +1,694 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2024 Troy Mitchell <troymitchell988@gmail.com>
+> + */
 
-count here is an unsigned long, and we are casting it to int, right?
 
-Would it be slightly better if the tracepoint uses a long instead of
-int? It's still not ideal but probably better than int.
+...
 
->         memcg_stats_unlock();
->  }
->
-> --
-> 2.43.5
->
+> +
+> +static inline u32 spacemit_i2c_read_reg(struct spacemit_i2c_dev *i2c, int reg)
+> +{
+> +	return readl(i2c->base + reg);
+
+So basically short and obvious code like this:
+
+	readl(i2c->base + reg);
+
+you replace with:
+
+	spacemit_i2c_read_reg(i2c, reg)
+
+how is this helpful?
+
+
+
+> +}
+> +
+> +static inline void
+> +spacemit_i2c_write_reg(struct spacemit_i2c_dev *i2c, int reg, u32 val)
+> +{
+> +	writel(val, i2c->base + reg);
+> +}
+> +
+> +static void spacemit_i2c_enable(struct spacemit_i2c_dev *i2c)
+> +{
+> +	u32 val;
+> +
+> +	val = spacemit_i2c_read_reg(i2c, ICR);
+> +	spacemit_i2c_write_reg(i2c, ICR, val | CR_IUE);
+> +}
+> +
+> +static void spacemit_i2c_disable(struct spacemit_i2c_dev *i2c)
+> +{
+> +	u32 val;
+> +
+> +	val = spacemit_i2c_read_reg(i2c, ICR);
+> +	val &= ~CR_IUE;
+> +	spacemit_i2c_write_reg(i2c, ICR, val);
+> +}
+> +
+> +static void spacemit_i2c_reset(struct spacemit_i2c_dev *i2c)
+> +{
+> +	spacemit_i2c_write_reg(i2c, ICR, CR_UR);
+> +	udelay(5);
+> +	spacemit_i2c_write_reg(i2c, ICR, 0);
+> +}
+> +
+> +static void spacemit_i2c_bus_reset(struct spacemit_i2c_dev *i2c)
+> +{
+> +	u32 status;
+> +
+> +	/* if bus is locked, reset unit. 0: locked */
+> +	status = spacemit_i2c_read_reg(i2c, IBMR);
+> +
+> +	if ((status & BMR_SDA) && (status & BMR_SCL))
+> +		return;
+> +
+> +	spacemit_i2c_reset(i2c);
+> +	usleep_range(10, 20);
+> +
+> +	/* check scl status again */
+> +	status = spacemit_i2c_read_reg(i2c, IBMR);
+> +
+> +	if (!(status & BMR_SCL))
+> +		dev_alert(i2c->dev, "unit reset failed\n");
+
+dev_warn_ratelimited
+
+> +}
+> +
+> +static int spacemit_i2c_recover_bus_busy(struct spacemit_i2c_dev *i2c)
+> +{
+> +	int ret = 0;
+> +	u32 val;
+> +
+
+...
+
+> +static inline int spacemit_i2c_xfer_core(struct spacemit_i2c_dev *i2c)
+> +{
+> +	int ret = 0;
+> +
+> +	spacemit_i2c_reset(i2c);
+> +
+> +	spacemit_i2c_calc_timeout(i2c);
+> +
+> +	spacemit_i2c_init(i2c);
+> +
+> +	spacemit_i2c_enable(i2c);
+> +	enable_irq(i2c->irq);
+> +
+> +	/* i2c wait for bus busy */
+> +	ret = spacemit_i2c_recover_bus_busy(i2c);
+> +
+> +	if (unlikely(ret))
+> +		return ret;
+> +
+> +	ret = spacemit_i2c_xfer_msg(i2c);
+> +
+
+This coding style is poor... further on this in probe function.
+
+> +	if (unlikely(ret < 0)) {
+> +		dev_dbg(i2c->dev, "i2c transfer error\n");
+> +		/* timeout error should not be overridden, and the transfer
+> +		 * error will be confirmed by err handle function latter,
+> +		 * the reset should be invalid argument error.
+> +		 */
+> +		if (ret != -ETIMEDOUT)
+> +			ret = -EINVAL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int
+> +spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg msgs[], int num)
+> +{
+> +	struct spacemit_i2c_dev *i2c = i2c_get_adapdata(adapt);
+> +	int ret;
+> +
+> +	i2c->msgs = msgs;
+> +	i2c->msg_num = num;
+> +
+> +	ret = spacemit_i2c_xfer_core(i2c);
+> +
+> +	if (likely(!ret))
+> +		spacemit_i2c_check_bus_release(i2c);
+> +
+> +	disable_irq(i2c->irq);
+> +
+> +	spacemit_i2c_disable(i2c);
+> +
+> +	if (unlikely((ret == -ETIMEDOUT || ret == -EAGAIN)))
+> +		dev_alert(i2c->dev, "i2c transfer failed, ret %d err 0x%x\n",
+> +			  ret, i2c->err);
+> +
+> +	return ret < 0 ? ret : num;
+> +}
+> +
+> +static u32 spacemit_i2c_func(struct i2c_adapter *adap)
+> +{
+> +	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
+> +}
+> +
+> +static const struct i2c_algorithm spacemit_i2c_algo = {
+> +	.xfer = spacemit_i2c_xfer,
+> +	.functionality = spacemit_i2c_func,
+> +};
+> +
+> +static int spacemit_i2c_probe(struct platform_device *pdev)
+> +{
+> +	struct spacemit_i2c_dev *i2c;
+> +	struct device_node *of_node = pdev->dev.of_node;
+> +	struct clk *clk;
+> +	int ret = 0;
+> +
+> +	i2c = devm_kzalloc(&pdev->dev,
+> +			   sizeof(struct spacemit_i2c_dev),
+
+sizeof(*) and stop unnecessary wrapping.
+
+> +			   GFP_KERNEL);
+> +	if (!i2c)
+> +		return -ENOMEM;
+> +
+> +	i2c->dev = &pdev->dev;
+> +
+> +	i2c->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (!i2c->base) {
+> +		ret = PTR_ERR(i2c->base);
+
+Drop
+
+> +		return dev_err_probe(&pdev->dev, ret, "failed to do ioremap");
+
+Just use here PTR_ERR
+
+
+> +	}
+> +
+> +	i2c->irq = platform_get_irq(pdev, 0);
+> +	if (i2c->irq < 0) {
+> +		ret = i2c->irq;
+
+Drop, really useless.
+
+> +		return dev_err_probe(&pdev->dev, ret, "failed to get irq resource");
+> +	}
+> +
+> +	ret = devm_request_irq(i2c->dev, i2c->irq,
+> +			       spacemit_i2c_irq_handler,
+> +			       IRQF_NO_SUSPEND | IRQF_ONESHOT,
+> +			       dev_name(i2c->dev), i2c);
+> +
+
+There is never a blank line between call and it's condition check if()
+statement.
+
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "failed to request irq");
+> +
+> +	disable_irq(i2c->irq);
+
+Why?
+
+> +
+> +	clk = devm_clk_get_enabled(&pdev->dev, NULL);
+> +	if (IS_ERR(clk)) {
+> +		ret = PTR_ERR(clk);
+
+drop
+
+> +		return dev_err_probe(&pdev->dev, ret, "failed to enable clock");
+> +	}
+> +
+> +	i2c_set_adapdata(&i2c->adapt, i2c);
+> +	i2c->adapt.owner = THIS_MODULE;
+> +	i2c->adapt.algo = &spacemit_i2c_algo;
+> +	i2c->adapt.dev.parent = i2c->dev;
+> +	i2c->adapt.nr = pdev->id;
+> +
+> +	i2c->adapt.dev.of_node = of_node;
+> +	i2c->adapt.algo_data = i2c;
+> +
+> +	strscpy(i2c->adapt.name, "spacemit-i2c-adapter", sizeof(i2c->adapt.name));
+> +
+> +	init_completion(&i2c->complete);
+> +
+> +	ret = i2c_add_numbered_adapter(&i2c->adapt);
+> +
+
+Drop stray blank line
+
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "failed to add i2c adapter");
+> +
+> +	platform_set_drvdata(pdev, i2c);
+> +
+> +	return 0;
+> +}
+> +
+> +static void spacemit_i2c_remove(struct platform_device *pdev)
+> +{
+> +	struct spacemit_i2c_dev *i2c = platform_get_drvdata(pdev);
+> +
+> +	i2c_del_adapter(&i2c->adapt);
+> +}
+> +
+> +static const struct of_device_id spacemit_i2c_dt_match[] = {
+> +	{ .compatible = "spacemit,k1-i2c", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, spacemit_i2c_dt_match);
+> +
+> +static struct platform_driver spacemit_i2c_driver = {
+> +	.probe = spacemit_i2c_probe,
+> +	.remove_new = spacemit_i2c_remove,
+> +	.driver = {
+> +		.name = "i2c-k1",
+> +		.of_match_table = spacemit_i2c_dt_match,
+> +	},
+> +};
+> +module_platform_driver(spacemit_i2c_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("I2C bus driver for SpacemiT K1 SoC");
+
+Best regards,
+Krzysztof
+
 
