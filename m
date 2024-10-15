@@ -1,123 +1,151 @@
-Return-Path: <linux-kernel+bounces-365461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26FE99E2AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:22:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD4A99E2B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983431F24C79
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8D782833B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F291DC04C;
-	Tue, 15 Oct 2024 09:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DA91DF259;
+	Tue, 15 Oct 2024 09:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DaiM59KA"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BMZmDK9Z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C62A1D9A6F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD091BE854;
+	Tue, 15 Oct 2024 09:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728984127; cv=none; b=eYcWXkQ52uCjHWzBY3sl1xuGCV2wLyS2cBoujd2m0lof8rO6jjV2OxKYkPKRhvupG5dWopQG6M8MSJ/pqeftRYFUbu8gUghFAWyvCjjxj1gPe+4KurDNLkP55rVqaAid84ULQfCEuOKXHW2eoruNMb1bqr7oW9F+ZDyS+Hna4CI=
+	t=1728984182; cv=none; b=ieehkgHLmrncYY6wXDv2LZj75pv1OD5t0bOohWF3keA5zCl643zYlejEtUiWUzHJRJh2nEfAMWLX3tQcXZLi8sgzIEB8VmbWuYNJ1aRHrFCZrF8nF0Ak8pSxEHlEy1wG9D4G6VRsIKlPw5gy52/OUCMRcn5XlmvqI3nVyLnHT/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728984127; c=relaxed/simple;
-	bh=6+gmtYw45aqHn+y+b2wThFOrNk2glrL/25OmMya8cBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q0lA8SF0ppNu5Xlnpia6loR+E5mGdULiLEOXJXIj5UOL4O96ztXaBofK/H87n05rm06humj5Qi8Dy8fFQMETc/JxBCeRWnlseEuJN/E/NQKJjLbQ09a0TlY1muQ99FXwWUZybSc7zdrN7x+t/x49mn1QPPfRDUMpPxcsHxwTgzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DaiM59KA; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=iQHq
-	zbKxqUoCmjQH95lvBtyd+w6FkD7yAoIG21ZXiMw=; b=DaiM59KAEjZbv29Gxft6
-	Utxa9lBXNLCsXY7cE0TJ38tgHg9fRCuYiPxu5jD9DBybnORQPZSJvof5CwUbEBXh
-	czK286oetIvsd2GaNVHl6VaOXI24nfKDX7jFEVG//sfZ9MkmLbhmqQpE0eHI/y7M
-	fA3qLsT+VSCBaBZcY1U2J70GkCodKk4TOQuihthE/VsHxqA65Kqyci7xDSlH+g31
-	duMDcDhuz/jM5fxNgSYuJH3bUNk927Rggnu3LdIrhVFbKwcSNaO9a5PISElG3SHm
-	J62dgh/YI4SsCJDVAheEm7QlO65pdGQ2f3HxiHBQ5mRCWKO9SLQTnT4t/oR1FV0t
-	ug==
-Received: (qmail 2654849 invoked from network); 15 Oct 2024 11:22:03 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Oct 2024 11:22:03 +0200
-X-UD-Smtp-Session: l3s3148p1@bZV1fIAkdpEgAwDPXyR3ALZ8hQlyja84
-Date: Tue, 15 Oct 2024 11:21:57 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-Message-ID: <Zw40NajLjMa_AnY4@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20241015075134.1449458-1-TroyMitchell988@gmail.com>
- <20241015075134.1449458-3-TroyMitchell988@gmail.com>
- <eb4112aa-21d0-4537-a18c-940d8832711a@kernel.org>
+	s=arc-20240116; t=1728984182; c=relaxed/simple;
+	bh=8/Wat0AXZ4Tmd5k7TUnKT8b5DBXzVYICqJKK1fttoU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DRDyrJJLPe4AOoo65Fes/1XZZ+qvWALPmD/s14tl+8qytn4krFKqD39CDWAgHfDYyRHFlJH3hqJxQAKOwViR7WwQ5K+Yknqh7K5ia0/JyTaKQQBvkpHJWVzpPrqHXFpD+IG1Nn8fVb00feB1vR8vkHvJ3g8Sqk9bJMnYQIhtZYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BMZmDK9Z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49F1fgJh028587;
+	Tue, 15 Oct 2024 09:22:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zWi+0lylKH9kWhVPcyDH/IDcG6li7yETfPftN2qsCmM=; b=BMZmDK9ZcW2gv8SG
+	nqp0WZpplBfKywpdcSMTTbxZ2zG2hP3Tu6pfUf5d2Zik7gkZAC8eJZfaCR4PJRFI
+	d4WHaCipNKCV46j/BUWiMeC+uD8akZ1I8ay01+uQV4ObKpeFVHf472CSCkaC3544
+	p76ExmphJYFCwfRO6rQGaD4jAVkxMaUgj2Ou0a6SWh9XOJuBcIeXNyGTq8rGM4Bu
+	HO8Lf0i1/uHjEnl7iBFkKiAPzT5mJZ5S4DYmIqAlNrRziO0Wex1M+51Y96e6/ffw
+	w2GEZSMtz8+s8sto8KiXpTEEBbpQM4wZz97eneCPAid1dhriK1m69K1+fpHAAE8K
+	OVg3zA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429exw0yss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 09:22:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49F9MnWs026335
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 09:22:49 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 15 Oct
+ 2024 02:22:44 -0700
+Message-ID: <48f0e7a1-f5d4-62ec-ec4b-f5bf2ca9caa5@quicinc.com>
+Date: Tue, 15 Oct 2024 14:52:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="J9OO5FzHaRoktCip"
-Content-Disposition: inline
-In-Reply-To: <eb4112aa-21d0-4537-a18c-940d8832711a@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 27/28] media: iris: enable video driver probe of SM8250
+ SoC
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jianhua Lu
+	<lujianhua000@gmail.com>
+CC: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Hans
+ Verkuil" <hverkuil@xs4all.nl>,
+        Sebastian Fricke
+	<sebastian.fricke@collabora.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-27-c5eaa4e9ab9e@quicinc.com>
+ <Zw0j9UeJmC1MZ3Xt@localhost.localdomain>
+ <7vmxx5qtbvhyfcdeariqiult27j5rmykxrefl2qmkhqnrw5wi5@6ugxtx643bmq>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <7vmxx5qtbvhyfcdeariqiult27j5rmykxrefl2qmkhqnrw5wi5@6ugxtx643bmq>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: K9oaYEshCCs1zm1gXNyo0JP2y6FX-cAX
+X-Proofpoint-GUID: K9oaYEshCCs1zm1gXNyo0JP2y6FX-cAX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0 mlxscore=0
+ clxscore=1011 adultscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410150063
 
 
---J9OO5FzHaRoktCip
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-
-> > +static inline u32 spacemit_i2c_read_reg(struct spacemit_i2c_dev *i2c, =
-int reg)
-> > +{
-> > +	return readl(i2c->base + reg);
->=20
-> So basically short and obvious code like this:
->=20
-> 	readl(i2c->base + reg);
->=20
-> you replace with:
->=20
-> 	spacemit_i2c_read_reg(i2c, reg)
->=20
-> how is this helpful?
-
-I always have the same question when I see this. However, I don't blame
-Troy. We have quite some occurances of this in the kernel, so I wouldn't
-be surprised if people think this is a kernel-style-pattern :/
-
-
---J9OO5FzHaRoktCip
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcONDUACgkQFA3kzBSg
-KbaeSg//dFtNaRJ0AHNqbcfBgNb+AqFiu4SRst/KrQ8catyR3apD1Ul3c3tituAq
-w3J/27NuNHDz5FUOz35CryCtOh8Ox6KUz/uUd5dACYc+PQmat65fvRVR5rZjKuCr
-OKRDcXqblMwmwILkGIiEUdIvMDtIr8p8BPR8EHvdDaPRxb7hQGdZmaZSqnv0WxB0
-VSF017hg1JoFz8HpdOIdAZ+3qZXxsLlyMhHC26LFUbeAw4EkPlLyAntGj1f0uTgS
-TdPpqcoT3I5CUKv6Wao0v49VD3urDOWF5kVRdlcnNdVjAoPeKtC2gn3ZA8bTOaYF
-QDh2oPT3CJ32nwRoKiEj0C0wvvz3+IjfYAVGeAlghKI4J1uwyZjo1PatoN2hp3Wl
-mpzVOADN944TWyE7mIjKtew7PRaJsdQ0W3rkpd4Qe/pANCigAZP38r1luicvlH/r
-EnT2eycO5pTbQhB4VnwTTi9P3ZIL+Yb/oD8jfTejcizGqOs9X8YTUcSwAFNj765p
-WXovX5sOBxHTXiJ0kJzfUtHgUnIezgbIa76xRVeKYFRvFLkqeR3nXFo/GCUH9YVI
-uu4lBNtZthxwYxA0NORLr97zLyCUzqAg0MoCP7AGcbr0dF9wT3j9PpmBgxn6wDio
-itmfHg2Mt/HqXX7idDfB3KiQpGE1Yufvt22n3jI/qLo4eaKkwL8=
-=cdl7
------END PGP SIGNATURE-----
-
---J9OO5FzHaRoktCip--
+On 10/14/2024 7:38 PM, Dmitry Baryshkov wrote:
+> On Mon, Oct 14, 2024 at 10:00:21PM +0800, Jianhua Lu wrote:
+>> On Mon, Oct 14, 2024 at 02:37:48PM +0530, Dikshita Agarwal wrote:
+>>> Initialize the platform data and enable video driver
+>>> probe of SM8250 SoC.
+>>>
+>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>> ---
+>> [..] 
+>>> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+>>> index 86ef2e5c488e..a2aadd48926f 100644
+>>> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+>>> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+>>> @@ -325,6 +325,10 @@ static const struct of_device_id iris_dt_match[] = {
+>>>  		.compatible = "qcom,sm8550-iris",
+>>>  		.data = &sm8550_data,
+>>>  	},
+>>> +	{
+>>> +		.compatible = "qcom,sm8250-venus",
+>>> +		.data = &sm8250_data,
+>>> +	},
+>>>  	{ },
+>>>  };
+>>>  MODULE_DEVICE_TABLE(of, iris_dt_match);
+>>
+>> qcom-venus driver has already supported sm8250 soc, I think you should add
+>> an extra patch to drop sm8250 releated code from qcom-venus driver if you
+>> tend to add support for sm8250 in qcom-iris driver.
+> 
+> Iris driver did not feature parity with the venus driver, so it is
+> expected that two drivers will exist side by side for some time.
+> Nevertheless ideally we should have a way to specify which driver should
+> be used for sm8250 (and other platforms being migrated).
+> 
+Agree, we should have a way to specify this. Any suggestions to achieve
+this are welcomed.
 
