@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-366210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1455A99F234
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A51B99F23A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7341C224E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:00:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD1E1C22C9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391C01E6DEE;
-	Tue, 15 Oct 2024 15:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60B356446;
+	Tue, 15 Oct 2024 16:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/gez9tf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BzoaOpGL"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9541E1E9096;
-	Tue, 15 Oct 2024 15:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD241581F3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 16:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729007991; cv=none; b=FumMjhpmwP5iEDJVRenUXDi4wOJotXxZVN2ptm0jCHHYMeg/x945t40Hs42espRciWgiHauYpdO1AqijdN0G5RB/n2lbcdM1Xq1vRm32oVWZ6XHsAVoB9wBGMMTUNz3S6zyeS5wRjRsP3MdV7+L2WPXBIHupAn8YcrmQkJYyd7Y=
+	t=1729008087; cv=none; b=E0EPui0cWJ/F4t3aZQKFPtDeQpV+HUfloI82N0NoVptREW4t461D8BZmlftnYiZ1nsfvcJgxvY8t6uIquNm9tzQrTx/3aIn3FMt2bsulCRvLFryB1ULFAa61lTMSLeO40S9YN3c21OuCa0oA6qP9G/tyBZeZ6l0sKbyWXp4pJhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729007991; c=relaxed/simple;
-	bh=5NaaBNOaRCCAQwYF+nDe/ZN5voDdMgWTNF8IQ2SoN1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3OQA/otC24u/8v5y5VVwvsBkRq3n2b9nX2ThObjwAw42Wj7wvDsVMYGTbMfeEY9JOyuWtowT+uiXyzRB7hgLbmcUjtCntpqbcWrLujqTkE5oZlSB3+FdlsFBItWNrAmP9TIz/CNdnP+15UflfVYuxx1RpNIhs3qvEl+vxzEN7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/gez9tf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24647C4CEC6;
-	Tue, 15 Oct 2024 15:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729007991;
-	bh=5NaaBNOaRCCAQwYF+nDe/ZN5voDdMgWTNF8IQ2SoN1Y=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=f/gez9tfH2tYJDCsBuHroN3voe20/0GbkS2gE/ev2f8yKPnQRijsa+a7QbAvtC8Bg
-	 h3ROPL7SYXjbg9ndbBGm3Q9Ls2RG6qM7e3ekeEOCpOo5bZmaa4R7Viog+Z1i6YycIm
-	 VXb203CUkHUvQnbzOPU58soAj6492rQ5cyN7thw5J8ZvUaDg4WNArEhD7SUCeu7bbo
-	 jBaJlQKHAhLIrXy2a7ourlm/+l2rlyi2SqpjEWPmJTYcDLLQiOe82f1/RQiHdnYH69
-	 P1d9MQP8qVS3fLRQQAXUX8sYMDJZpr8mPjXwOomPvTXfKuMtnawzfn5fg4YygmKsTm
-	 ZPnhgiyDe7Tow==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id AECA2CE0971; Tue, 15 Oct 2024 08:59:50 -0700 (PDT)
-Date: Tue, 15 Oct 2024 08:59:50 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, rostedt@goodmis.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH v2 rcu 13/13] srcu: Improve srcu_read_lock_lite()
- kernel-doc comment
-Message-ID: <3fa5f1c1-3635-408d-b0f2-e3aa63ecb76d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <3b82ac1a-8786-4a27-8eff-ecc67b50dfb6@paulmck-laptop>
- <20241011173931.2050422-13-paulmck@kernel.org>
- <CAEf4BzYOdvO_PY-QZySa1qtWqZ_+1zySrw+0Qo1cc9HL5=L4aA@mail.gmail.com>
+	s=arc-20240116; t=1729008087; c=relaxed/simple;
+	bh=jqzuI1KjZlYwaYQXOMQWI/2ET4ZxgrRbs5jSZKisPNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ewJxiEGG/oSWaEpQ2zpHanL5P9HtzXwYRDeb+awCvTLjBbxBt6RtXeNzdWNiPKbsHwqiWqMT+CdapDkL3axLCtsq9IPlMH7gBdXZk/OcDkNhF9cHb03DjhLivlG1eM2dBWw6xzYMSkU07fjfI+RBmvPceemYFwaA/yR/UGj/eOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BzoaOpGL; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-835464abfa7so187980739f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 09:01:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729008084; x=1729612884; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8s+7gsg2JYqPAfbKcYne9b3YpM+dhp+OYrhzHgGLomQ=;
+        b=BzoaOpGL0slJy5/E7DS5kQEBQAX4IA3lgaExH0so1HwaF0Jf4AlJiFWPSgBjthRvG/
+         DF+CKUE11bX5/kR+5cOz64j28HHiTRLQVcEgOd4PuC+IvCazVpndoDihdrNEIuGEpEnG
+         ladE0LSk8h92Hf1j+ty++5QMsObcimaqy60KI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729008084; x=1729612884;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8s+7gsg2JYqPAfbKcYne9b3YpM+dhp+OYrhzHgGLomQ=;
+        b=iPpp6lRW7x+RnAVlLtpWkLTC7o6SEx+BG7G0FaQtyRadq7IY8eHvouhSB18hen/E+8
+         /TlKutAQeQWSJLmTWlKRciwkrkikI49hMjm+WTJLlVBH/jkLg1MqQJw1QPryz9fOVyQK
+         yvFdgONNJ14BprnsIIQ07aAlGaJZuCmPYuMieRKE8WpYo1rgE8J/xm0zNaoUAoqEpKVC
+         +oRsXH+NgoqbHHcTfxUfjSQm+QBiYLqw5nrtOP09JGx/xgEe+EzSxuWoo7li6kwxHP3U
+         u+zQ7z5mfBW4c6wnKlV2g/03v91wU4y+/iieTRYaCJBUd5+qS8/W78rkF/k9FPEIql2z
+         vGug==
+X-Forwarded-Encrypted: i=1; AJvYcCV+LqHIm2pShKTq44As1FwgXHIIAcxDgJw5JZCwFSCDTgxXBN1lxUY4XngkA+QFNoV4xohZBKOuxZAeKoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPRZVLQmR4MDRGPp0Ae8AxGH7s7TvcrdZppQLQOYv5TbdEcyyo
+	1odWREX5bfIzgm0H86qcE3h/0Z+WirBmPpCyHYbdpS+hiR1qzKG1I02yHugDx7M=
+X-Google-Smtp-Source: AGHT+IGzELDMMYz4ZVvCQt2W2himwaElc8LWbYn6pi8ZJFv3gg5InzK/2HEeDQrXYkzZunPzolfDwg==
+X-Received: by 2002:a05:6602:1503:b0:82b:40f:63c6 with SMTP id ca18e2360f4ac-83a64d161a3mr1396226739f.4.1729008084313;
+        Tue, 15 Oct 2024 09:01:24 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83a96c7fee6sm6304139f.53.2024.10.15.09.01.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 09:01:23 -0700 (PDT)
+Message-ID: <43eff9c9-9a23-46ac-9015-dbee35562848@linuxfoundation.org>
+Date: Tue, 15 Oct 2024 10:01:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYOdvO_PY-QZySa1qtWqZ_+1zySrw+0Qo1cc9HL5=L4aA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2][next] Bluetooth: btintel_pcie: Remove structually
+ deadcode
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ "Everest K.C." <everestkc@everestkc.com.np>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241015045843.20134-1-everestkc@everestkc.com.np>
+ <8a4a8915-d59a-407d-9f93-f047370cca62@stanley.mountain>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <8a4a8915-d59a-407d-9f93-f047370cca62@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 11, 2024 at 10:57:13AM -0700, Andrii Nakryiko wrote:
-> On Fri, Oct 11, 2024 at 10:39 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > Where RCU is watching is where it is OK to invoke rcu_read_lock().
-> >
-> > Reported-by: Andrii Nakryiko <andrii@kernel.org>
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > ---
-> >  include/linux/srcu.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
+On 10/15/24 03:48, Dan Carpenter wrote:
+> The subject has a typo.  s/structually/structurally/
 > 
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+>> The intel bluetooth module was successfully built after the change
+>> without any errors.
+>>
+> 
+> Delete this sentence.  It should just be assumed that changes don't break the
+> build.  You can put that code isn't tested under the --- cut off line, if you
+> want to put a warning message.  But we don't need this in the permanent git log.
+> 
+> 
+>> This issue was reported by Coverity Scan.
+>> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600709
 
-Applied, thank you!
+Restating what I said in your other coverity patch, include
+the coverity warning. This link requires login and no use
+for people who don't have coverity account.
 
-							Thanx, Paul
+In the future don't include link that require login in the
+commit logs.
 
-> > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> > index 4ba96e2cfa405..bab1dae3f69e6 100644
-> > --- a/include/linux/srcu.h
-> > +++ b/include/linux/srcu.h
-> > @@ -270,7 +270,8 @@ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
-> >   * synchronize_rcu_expedited(), IPIs and all.
-> >   *
-> >   * Note that srcu_read_lock_lite() can be invoked only from those contexts
-> > - * where RCU is watching.  Otherwise, lockdep will complain.
-> > + * where RCU is watching, that is, from contexts where it would be legal
-> > + * to invoke rcu_read_lock().  Otherwise, lockdep will complain.
-> >   */
-> >  static inline int srcu_read_lock_lite(struct srcu_struct *ssp) __acquires(ssp)
-> >  {
-> > --
-> > 2.40.1
-> >
+>>
+>> Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between driver and firmware")
+>> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+>> ---
+>    ^^^
+> Cut off line.
+> 
+> regards,
+> dan carpenter
+> 
+
+thanks,
+-- Shuah
 
