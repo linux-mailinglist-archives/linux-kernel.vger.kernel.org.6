@@ -1,1260 +1,939 @@
-Return-Path: <linux-kernel+bounces-364948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E42A99DB7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:33:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FFB99DB7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1209287110
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AADA81C2157E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCC516E860;
-	Tue, 15 Oct 2024 01:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4881C2744B;
+	Tue, 15 Oct 2024 01:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bu3vohBA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsIS/6zD"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E67615853B;
-	Tue, 15 Oct 2024 01:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B3D1E86E;
+	Tue, 15 Oct 2024 01:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728955872; cv=none; b=JbxAGeQm27eh6v81fDrCGkYvrYxpX9h30IBeqS7v4XHNO4srYWkzoT3dS9sVnGejSyZuknbiDmz3IoSr7zzfLaBajVZlHeQbv9D80WPq7qmaZZviCT2KrKbB27DkAu4mU2DegDUxIE7vxqnDzPhMoYu4Urf3+w8cnC5z4hwEYIg=
+	t=1728955873; cv=none; b=S6U8r1KGsk7yLIX/bVlV9sPWUxGWthjkm2Kw0YKIzCyvYdTfVg7O1RM0ZuzUmX9kWmG2ia5F5U0aqdjCPGqOcvq/0OaUUre55iOj68+mRuaeJ1Y7QAu5bEodh8gFqa2xXlXcck+z3PYLi2MBN8EGdDGUdNEzzbcPA1mJ/VPR0PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728955872; c=relaxed/simple;
-	bh=znwOeJiL1OokA6M6w5qE/RYWd1MFe/p6y/VWrsmktAU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cwLStP20BHvMbTOJCZ/D2GutkfvQL3c9dAoh7itHWB9m7xWVau06t08ADDnC1dT8qnZatYeOJoM0It4dQn/9IWXkcvLlmQyKMt6TIdB0k6gZG2kEStQu0VDDh9oaylnV3bro6TxzPdpfIQKcm5whzfRBoyoBgv+HC7mnZUVyeDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bu3vohBA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05586C4CEC3;
-	Tue, 15 Oct 2024 01:31:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728955872;
-	bh=znwOeJiL1OokA6M6w5qE/RYWd1MFe/p6y/VWrsmktAU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bu3vohBAsHgHJrLIlAsvz2QoOdXqc0tp11iwG6BZ01MgVuEgeAkPeXcmNpSPeWaMh
-	 URdObbZd4RNiynHGNtRcEG9YYeU/dntBvIJWhVc/16xJxYuv/uwNn30Z28JzksufWc
-	 /+mMIkNbKv/ndkw6F9mbo9giParQeTO17J7OsExtvXWt2U5WZNrRL2DqcsP4HAJoIo
-	 9J0W8c/jnPjgz210fd7kRkcMYIvGhTv3jhd2Vp+d+72OK5Rtuw+0BS/dZdBNHmg2TP
-	 opEv+HBwJm7yodjafV8MDBM4F5P3Q0/Fnt0K51RoepwY15eLe2PK9UQ2BY3iiZ8ICu
-	 7gnI1FFYEJeVQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v16 13/18] fprobe: Rewrite fprobe on function-graph tracer
-Date: Tue, 15 Oct 2024 10:31:02 +0900
-Message-ID: <172895586274.107311.8863015368072720092.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <172895571278.107311.14000164546881236558.stgit@devnote2>
-References: <172895571278.107311.14000164546881236558.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1728955873; c=relaxed/simple;
+	bh=lpsqGHiM8eq1p2O0lhyNJ5FlmqkZWp1KeYNDEXOyScA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=gfGxlgjDYzH1EyRsboTRW0CqLAjIcT16tJN2oV7D0QX6AQ++1oAOh54lOJGLQJTbz+jFdvZW9E9M6xgXAcpr8xo/N4lNIFTZiXFHgsx1fbLYGjqneyrY1bIJ+oV3PtKseif64UVqw3cnhuvtcNONSas4GrKMiOzYcRAsp/0foSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsIS/6zD; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e467c3996so2197211b3a.2;
+        Mon, 14 Oct 2024 18:31:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728955870; x=1729560670; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RNG1SNrsuojG2hR0z6ifJiyXikUylACmIWAGHfmukyo=;
+        b=XsIS/6zD665JNDBYFhi1gRoc7Ey3p/CFqAkyw0+jZdfBKvZ6gqwJS1q3PAtIMohFaO
+         w2BVxC+NSH3ayf9pT4VEbR3+yPA7ogd9g7d4oW2CbaUtmASoQ3cVfGzG01BXbCi1y96J
+         wSC34FYx9lFYzJXmlYijEunRKT0xy8qf8B1wjc7ZKmk4Lcp5ZaDqYJIe6oK+VfjWh4xQ
+         SiFS+lMZe5J4q0UZSEo/69mLJe4HIseG4aB7aAuZmQnMr/oAzYA/pc6f0zi06QrgG/L8
+         wD9QT8h47CylVZDvSkldqBSstvtp1RplRy5zlfL8ihIgi7/NExVZ9zE3YvCJAQI0OUUD
+         QYTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728955870; x=1729560670;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RNG1SNrsuojG2hR0z6ifJiyXikUylACmIWAGHfmukyo=;
+        b=EKPOmKe8yleikBFAt6j1L2uFnlgLWxjxv1ovkabwhtcKQZpiqFMd4y2EUaU47Kz0wV
+         HUDWda/Atgyjq0PHPtCaZS7000tsTJWmKnKVDVDbb+6CJYZR8WkTzY4WSciJfDAFY2YN
+         2+j4lD40/f66KARnUF9uIXIdiIpALFPjRNEhTcf+JdvmNXhDpgyHQcN/Cj5q1p4Uvdh0
+         LxttZK+ARJh2S1gB9Q19T+qgZAYGB8K0enMxeWBXLBL9mA7qa1i+rDiKJBcLyFdHZ10M
+         XXm9p2mKRGFBrwnnrGQLfbJN01XgHMdaR1D9PG5p1mwJhPr+mA1OvglPFHrD/WJq0MMI
+         bvyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzuyTM0P6X6w44ndsOCJ3tvWqMCUWASVRRShSuJMOKJFCN9Bz5FSP72fYTaBZCQvkRi72WP3fonAvKTL4=@vger.kernel.org, AJvYcCVgsVWKIE4GlCxDjD1W+fX8Wnn3heYCsHCykgIt8i9UpoaKpmYYK50Zli6cc0W09yYgUYn7dJRXOtZL@vger.kernel.org, AJvYcCWeq9ShoFUgDV7RrnY7fDrKXkaMycKuDXy1GJ9Neqmmyc3vsRG8c9biyF+pDmmxSvime0NeKJJEa7ds6GeKag==@vger.kernel.org, AJvYcCX+ZkDLRCUk6k8ELlZ5lGP2ahcCrYWDFkubvqNk46pweYvY1BLC9AuCdMUwqpS4tdBJlSbBHTFA2Fgt@vger.kernel.org, AJvYcCXEVJmQg27ymYb+r53tZ4tnWMTTMj590AzE5Jop9ZtkZ80Z2dpvx7UwUvnnIXyDLmj2Own5M1CMrqj30TM=@vger.kernel.org, AJvYcCXj2tQKH/uIB/lSj7qFxhmc1djQT/vBJFwSvJb7bAE+G4xuLhO63YUKvQp6R//HZbPK/p8a5AIEaIxu@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFL3sNuaNLoTAMO7PshB39FevaMuzfLhe85idzPXliFxCBOufe
+	gdgcyztGgfbYsB/P908sEYvbvZ/U1q85UgDfFjAqmACmT799BodP
+X-Google-Smtp-Source: AGHT+IGX53ey5mNqjA9r625PKZtyG/eMot374hJt2wy+HsKsqVOzMFLG5j/RMzyAYv8lKlwIH4cxfA==
+X-Received: by 2002:a05:6a00:23d6:b0:71e:688c:1edd with SMTP id d2e1a72fcca58-71e688c213emr7504781b3a.27.1728955869282;
+        Mon, 14 Oct 2024 18:31:09 -0700 (PDT)
+Received: from localhost ([2600:6c51:4c3f:8886::b19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e773b1672sm194590b3a.83.2024.10.14.18.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 18:31:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Oct 2024 18:31:06 -0700
+Message-Id: <D4VZPC5UQ6M4.2K3F7ILC40I1R@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v28 00/33] Introduce QC USB SND audio offloading support
+From: "Christopher Snowhill" <kode54@gmail.com>
+To: "Wesley Cheng" <quic_wcheng@quicinc.com>,
+ <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+ <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+ <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+ <tiwai@suse.com>, <krzk+dt@kernel.org>,
+ <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
+ <bgoswami@quicinc.com>, <robh@kernel.org>, <gregkh@linuxfoundation.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241011000650.2585600-1-quic_wcheng@quicinc.com>
+ <D4SXH1FKFQVL.184F0TQOCJWVR@gmail.com>
+ <dec26205-2bdc-4e2e-8732-eb0d68dde129@quicinc.com>
+In-Reply-To: <dec26205-2bdc-4e2e-8732-eb0d68dde129@quicinc.com>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Mon Oct 14, 2024 at 10:08 AM PDT, Wesley Cheng wrote:
+> Hi Chris,
+>
+> On 10/11/2024 4:08 AM, Christopher Snowhill wrote:
+> > Comment posted below, after the commit listing.
+> >
+> > On Thu Oct 10, 2024 at 5:05 PM PDT, Wesley Cheng wrote:
+> >> Requesting to see if we can get some Acked-By tags, and merge on usb-n=
+ext.
+> >>
+> >> Several Qualcomm based chipsets can support USB audio offloading to a
+> >> dedicated audio DSP, which can take over issuing transfers to the USB
+> >> host controller.  The intention is to reduce the load on the main
+> >> processors in the SoC, and allow them to be placed into lower power mo=
+des.
+> >> There are several parts to this design:
+> >>   1. Adding ASoC binding layer
+> >>   2. Create a USB backend for Q6DSP
+> >>   3. Introduce XHCI interrupter support
+> >>   4. Create vendor ops for the USB SND driver
+> >>
+> >>       USB                          |            ASoC
+> >> --------------------------------------------------------------------
+> >>                                    |  _________________________
+> >>                                    | |sm8250 platform card     |
+> >>                                    | |_________________________|
+> >>                                    |         |           |
+> >>                                    |      ___V____   ____V____
+> >>                                    |     |Q6USB   | |Q6AFE    | =20
+> >>                                    |     |"codec" | |"cpu"    |
+> >>                                    |     |________| |_________|
+> >>                                    |         ^  ^        ^
+> >>                                    |         |  |________|
+> >>                                    |      ___V____    |
+> >>                                    |     |SOC-USB |   |
+> >>    ________       ________               |        |   |
+> >>   |USB SND |<--->|QC offld|<------------>|________|   |
+> >>   |(card.c)|     |        |<----------                |
+> >>   |________|     |________|___     | |                |
+> >>       ^               ^       |    | |    ____________V_________
+> >>       |               |       |    | |   |APR/GLINK             |
+> >>    __ V_______________V_____  |    | |   |______________________|
+> >>   |USB SND (endpoint.c)     | |    | |              ^
+> >>   |_________________________| |    | |              |
+> >>               ^               |    | |   ___________V___________
+> >>               |               |    | |->|audio DSP              |
+> >>    ___________V_____________  |    |    |_______________________|
+> >>   |XHCI HCD                 |<-    |
+> >>   |_________________________|      |
+> >>
+> >>
+> >> Adding ASoC binding layer
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> >> soc-usb: Intention is to treat a USB port similar to a headphone jack.
+> >> The port is always present on the device, but cable/pin status can be
+> >> enabled/disabled.  Expose mechanisms for USB backend ASoC drivers to
+> >> communicate with USB SND.
+> >>
+> >> Create a USB backend for Q6DSP
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> >> q6usb: Basic backend driver that will be responsible for maintaining t=
+he
+> >> resources needed to initiate a playback stream using the Q6DSP.  Will
+> >> be the entity that checks to make sure the connected USB audio device
+> >> supports the requested PCM format.  If it does not, the PCM open call =
+will
+> >> fail, and userspace ALSA can take action accordingly.
+> >>
+> >> Introduce XHCI interrupter support
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> XHCI HCD supports multiple interrupters, which allows for events to be=
+ routed
+> >> to different event rings.  This is determined by "Interrupter Target" =
+field
+> >> specified in Section "6.4.1.1 Normal TRB" of the XHCI specification.
+> >>
+> >> Events in the offloading case will be routed to an event ring that is =
+assigned
+> >> to the audio DSP.
+> >>
+> >> Create vendor ops for the USB SND driver
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> qc_audio_offload: This particular driver has several components associ=
+ated
+> >> with it:
+> >> - QMI stream request handler
+> >> - XHCI interrupter and resource management
+> >> - audio DSP memory management
+> >>
+> >> When the audio DSP wants to enable a playback stream, the request is f=
+irst
+> >> received by the ASoC platform sound card.  Depending on the selected r=
+oute,
+> >> ASoC will bring up the individual DAIs in the path.  The Q6USB backend=
+ DAI
+> >> will send an AFE port start command (with enabling the USB playback pa=
+th), and
+> >> the audio DSP will handle the request accordingly.
+> >>
+> >> Part of the AFE USB port start handling will have an exchange of contr=
+ol
+> >> messages using the QMI protocol.  The qc_audio_offload driver will pop=
+ulate the
+> >> buffer information:
+> >> - Event ring base address
+> >> - EP transfer ring base address
+> >>
+> >> and pass it along to the audio DSP.  All endpoint management will now =
+be handed
+> >> over to the DSP, and the main processor is not involved in transfers.
+> >>
+> >> Overall, implementing this feature will still expose separate sound ca=
+rd and PCM
+> >> devices for both the platform card and USB audio device:
+> >>  0 [SM8250MTPWCD938]: sm8250 - SM8250-MTP-WCD9380-WSA8810-VA-D
+> >>                       SM8250-MTP-WCD9380-WSA8810-VA-DMIC
+> >>  1 [Audio          ]: USB-Audio - USB Audio
+> >>                       Generic USB Audio at usb-xhci-hcd.1.auto-1.4, hi=
+gh speed
+> >>
+> >> This is to ensure that userspace ALSA entities can decide which route =
+to take
+> >> when executing the audio playback.  In the above, if card#1 is selecte=
+d, then
+> >> USB audio data will take the legacy path over the USB PCM drivers, etc=
+...
+> >>
+> >> The current limitation is that the latest USB audio device that is ide=
+ntified
+> >> will be automatically selected by the Q6USB BE DAI for offloading.  Fu=
+ture
+> >> patches can be added to possibly add for more flexibility, but until t=
+he userpace
+> >> applications can be better defined, having these mechanisms will compl=
+icate the
+> >> overall implementation.
+> >>
+> >> USB offload Kcontrols
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> Part of the vendor offload package will have a mixer driver associated=
+ with it
+> >> (mixer_usb_offload.c).  This entity will be responsible for coordinati=
+ng with
+> >> SOC USB and the Q6USB backend DAI to fetch information about the sound=
+ card
+> >> and PCM device indices associated with the offload path.  The logic is=
+ done
+> >> based on the current implementation of how paths are controlled within=
+ the QC
+> >> ASoC implementation.
+> >>
+> >> QC ASoC Q6Routing
+> >> -----------------
+> >> Within the Q6 ASOC design, the registered ASoC platform card will expo=
+se a set
+> >> of kcontrols for enabling the BE DAI links to the FE DAI link.  For ex=
+ample:
+> >>
+> >> tinymix -D 0 contents
+> >> Number of controls: 1033
+> >> ctl     type    num     name                                    value
+> >> ...
+> >> 1025    BOOL    1       USB Mixer MultiMedia1                   Off
+> >> 1026    BOOL    1       USB Mixer MultiMedia2                   Off
+> >> 1027    BOOL    1       USB Mixer MultiMedia3                   Off
+> >> 1028    BOOL    1       USB Mixer MultiMedia4                   Off
+> >> 1029    BOOL    1       USB Mixer MultiMedia5                   Off
+> >> 1030    BOOL    1       USB Mixer MultiMedia6                   Off
+> >> 1031    BOOL    1       USB Mixer MultiMedia7                   Off
+> >> 1032    BOOL    1       USB Mixer MultiMedia8                   Off
+> >>
+> >> Each of these kcontrols will enable the USB BE DAI link (q6usb) to be =
+connected
+> >> to a FE DAI link (q6asm).  Since each of these controls are DAPM widge=
+ts, when
+> >> it is enabled, the DAPM widget's "connect" flag is updated accordingly=
+.
+> >>
+> >> USB Offload Mapping
+> >> -------------------
+> >> Based on the Q6routing, the USB BE DAI link can determine which sound =
+card and
+> >> PCM device is enabled for offloading.  Fetching the ASoC platform soun=
+d card's
+> >> information is fairly straightforward, and the bulk of the work goes t=
+o finding
+> >> the corresponding PCM device index.  As mentioned above, the USB BE DA=
+I can
+> >> traverse the DAPM widgets to find the DAPM path that is related to the=
+ control
+> >> for the "USB Mixer."  Based on which "USB Mixer" is enabled, it can fi=
+nd the
+> >> corresponding DAPM widget associated w/ the FE DAI link (Multimedia*).=
+  From there
+> >> it can find the PCM device created for the Multimedia* stream.
+> >>
+> >> Only one BE DAI link can be enabled per FE DAI.  For example, if the H=
+DMI path is
+> >> enabled for Multimedia1, the USB Mixer will be disabled and switched o=
+ver.
+> >>
+> >> Examples of kcontrol
+> >> --------------------
+> >> tinymix -D 0 contents
+> >> Number of controls: 1033
+> >> ctl     type    num     name=20
+> >> ...
+> >> 1025    BOOL    1       USB Mixer MultiMedia1                   Off
+> >> 1026    BOOL    1       USB Mixer MultiMedia2                   On
+> >> 1027    BOOL    1       USB Mixer MultiMedia3                   Off
+> >> 1028    BOOL    1       USB Mixer MultiMedia4                   Off
+> >> 1029    BOOL    1       USB Mixer MultiMedia5                   Off
+> >> 1030    BOOL    1       USB Mixer MultiMedia6                   Off
+> >> 1031    BOOL    1       USB Mixer MultiMedia7                   Off
+> >> 1032    BOOL    1       USB Mixer MultiMedia8                   Off
+> >>
+> >> tinymix -D 2 contents
+> >> Number of controls: 7
+> >> ctl     type    num     name                                    value
+> >> 0       INT     2       Playback Channel Map                    0, 0 (=
+range 0->36)
+> >> 1       BOOL    2       MDR-1ADAC  Playback Switch              On, On
+> >> 2       BOOL    1       MDR-1ADAC  Playback Switch              On
+> >> 3       INT     2       MDR-1ADAC  Playback Volume              127, 1=
+27 (range 0->127)
+> >> 4       INT     1       MDR-1ADAC  Playback Volume              127 (r=
+ange 0->127)
+> >> 5       BOOL    1       Sony Internal Clock Validity            On
+> >> 6       INT     2       USB Offload Playback Route PCM#0        0, 1 (=
+range -1->255)
+> >>
+> >> The example highlights that the userspace/application can utilize the =
+offload path
+> >> for the USB device on card#0 PCM device#1.
+> >>
+> >> When dealing with multiple USB audio devices, only the latest USB devi=
+ce identified
+> >> is going to be selected for offload capable.
+> >>
+> >> tinymix -D 1 contents
+> >> Number of controls: 9
+> >> ctl     type    num     name                                    value
+> >> 0       INT     2       Capture Channel Map                     0, 0 (=
+range 0->36)
+> >> 1       INT     2       Playback Channel Map                    0, 0 (=
+range 0->36)
+> >> 2       BOOL    1       Headset Capture Switch                  On
+> >> 3       INT     1       Headset Capture Volume                  1 (ran=
+ge 0->4)
+> >> 4       BOOL    1       Sidetone Playback Switch                On
+> >> 5       INT     1       Sidetone Playback Volume                4096 (=
+range 0->8192)
+> >> 6       BOOL    1       Headset Playback Switch                 On
+> >> 7       INT     2       Headset Playback Volume                 20, 20=
+ (range 0->24)
+> >> 8       INT     2       USB Offload Playback Route PCM#0        -1, -1=
+ (range -1->255)
+> >>
+> >> "-1, -1" shows that this device has no route to the offload path.
+> >>
+> >> This feature was validated using:
+> >> - tinymix: set/enable the multimedia path to route to USB backend
+> >> - tinyplay: issue playback on platform card
+> >>
+> >> Changelog
+> >> --------------------------------------------
+> >> Changes in v28:
+> >> - Fixed some phrases/wording within the SOC USB documentation, and als=
+o added an output
+> >> with aplay -l for the example output.
+> >> - Fixed allocated string buffer for creating the USB SND offload mixer=
+, and added
+> >> a PCM index check to ensure that the pcm index is less than the expect=
+ed number.
+> >> - Added a complement enable jack call if USB backend DAI link drivers =
+need access
+> >> to it.
+> >>
+> >> Changes in v27:
+> >> - Added some comments and notes about the offload design.  Enforcing t=
+he q6routing
+> >> to only allow one USB mixer (PCM device) to be enabled at a time.
+> >> - Modified SND_JACK_USB notifications for all USB audio offloadable de=
+vices plugged
+> >> in
+> >> - Rebased on latest XHCI secondary interrupter IMOD changes upstream. =
+ Modified the
+> >> change in this series to allow for XHCI sideband to set the IMOD for s=
+ideband
+> >> clients.
+> >> - Updated documentation on how USB SND kcontrols are involved in the o=
+verall design.
+> >> - Remove mutex locking from suspend/resume platform ops, as USB core e=
+nsures that the
+> >> interface and device are in the RPM_ACTIVE state while disconnect is h=
+andled.
+> >>
+> >> Changes in v26:
+> >> - Cleaned up drivers based on errors from checkpatch
+> >> - Fixed several typos using codespell
+> >> - Removed any vendor specific notation from USB SND offload mixer patc=
+h
+> >>
+> >> Changes in v25:
+> >> - Cleanups on typos mentioned within the xHCI layers
+> >> - Modified the xHCI interrupter search if clients specify interrupter =
+index
+> >> - Moved mixer_usb_offload into its own module, so that other vendor of=
+fload USB
+> >> modules can utilize it also.
+> >> - Added support for USB audio devices that may have multiple PCM strea=
+ms, as
+> >> previous implementation only assumed a single PCM device.  SOC USB wil=
+l be
+> >> able to handle an array of PCM indexes supported by the USB audio devi=
+ce.
+> >> - Added some additional checks in the QC USB offload driver to check t=
+hat device
+> >> has at least one playback stream before allowing to bind
+> >> - Reordered DT bindings to fix the error found by Rob's bot.  The patc=
+h that
+> >> added USB_RX was after the example was updated.
+> >> - Updated comments within SOC USB to clarify terminology and to keep i=
+t consistent
+> >> - Added SND_USB_JACK type for notifying of USB device audio connection=
+s
+> >>
+> >> Changes in v24:
+> >> - Simplified the kcontrols involved in determining how to utilize the =
+offload
+> >> path.
+> >>     - There is one kcontrol registered to each USB audio device that w=
+ill
+> >>       output which card/pcm device it is mapped to for the offload rou=
+te.
+> >>     - Removed kcontrols to track offload status and device selection.
+> >>     - Default to last USB audio device plugged in as offload capable.
+> >>     - kcontrol will reside on USB SND device.
+> >> - Reworked the tracking of connected USB devices from the Q6USB BE DAI=
+ link.
+> >> Previously, it was convoluted by doing it over an array, but moved to =
+using
+> >> a list made it much simpler.  Logic is still unchanged in that the las=
+t USB
+> >> headset plugged in will be selected for offloading.
+> >> - Updated the USB SOC RST documentation accordingly with new kcontrol =
+updates.
+> >> - Added logic to fetch mapped ASoC card and pcm device index that the =
+offload
+> >> path is mapped to for the USB SND kcontrol (for offload route).
+> >> - Re-ordered series to hopefully make reviews more readable by combini=
+ng
+> >> patches based on the layer modified (ie QC ASoC, ASoC, USB sound, and =
+USB XHCI).
+> >>
+> >> Changes in v23:
+> >> - Added MODULE_DESCRIPTION() fields to drivers that needed it.
+> >>
+> >> Changes in v22:
+> >> - Removed components tag for the ASoC platform card, as the USB SND kc=
+ontrol for
+> >> notifying userspace of offload capable card achieves similar results.
+> >> - Due to the above, had to remove the review-by tag for the RST docume=
+ntation,
+> >> as changes were made to remove the components tag section.
+> >> - Took in feedback to make the SOC USB add/remove ports void.
+> >> - Fixed an issue w/ the USB SND kcontrol management for devices that h=
+ave multi
+> >> UAC interfaces. (would attempt to create the kcontrol more than once)
+> >> - Modified SOC USB card and PCM index select to be based off the num_s=
+upported
+> >> streams that is specified by the USB BE DAI.
+> >> - Modified comments on selecting the latest USB headset for offloading=
+.
+> >>
+> >> Changes in v21:
+> >> - Added an offload jack disable path from the ASoC platform driver and=
+ SOC USB.
+> >> - Refactored some of the existing SOC USB context look up APIs and cre=
+ated some
+> >> new helpers to search for the USB context.
+> >> - Renamed snd_soc_usb_find_format to snd_soc_usb_find_supported_format
+> >> - Removed some XHCI sideband calls that would allow clients to actuall=
+y enable
+> >> the IRQ line associated w/ the secondary interrupter.  This is removed=
+ because
+> >> there are other dependencies that are required for that to happen, whi=
+ch are not
+> >> covered as part of this series, and to avoid confusion.
+> >> - Due to the above, removed the need to export IMOD setting, and enabl=
+e/disable
+> >> interrupter APIs.
+> >>
+> >> Changes in v20:
+> >> - Fixed up some formatting changes pointed out in the usb.rst
+> >> - Added SB null check during XHCI sideband unregister in case caller p=
+asses
+> >> improper argument (xhci_sideband_unregister())
+> >>
+> >> Changes in v19:
+> >> - Rebased to usb-next to account for some new changes in dependent dri=
+vers.
+> >>
+> >> Changes in v18:
+> >> - Rebased to usb-next, which merged in part of the series.  Removed th=
+ese patches.
+> >> - Reworked Kconfigs for the ASoC USB related components from QCOM Q6DS=
+P drivers
+> >>   to keep dependencies in place for SoC USB and USB SND.
+> >> - Removed the repurposing of the stop ep sync API into existing XHCI o=
+perations.
+> >>   This will be solely used by the XHCI sideband for now.
+> >>
+> >> Changes in v17:
+> >> - Fixed an issue where one patch was squashed into another.
+> >> - Re-added some kconfig checks for helpers exposed in USB SND for the =
+soc usb
+> >>   driver, after running different kconfigs.
+> >>
+> >> Changes in v16:
+> >> - Modified some code layer dependencies so that soc usb can be split a=
+s a separate
+> >>   module.
+> >>   - Split the kcontrols from ASoC QCOM common layer into a separate dr=
+iver
+> >> - Reworked SOC USB kcontrols for controlling card + pcm offload routin=
+g and status
+> >>   so that there are individual controls for card and pcm devices.
+> >> - Added a kcontrol remove API in SOC USB to remove the controls on the=
+ fly.  This
+> >>   required to add some kcontrol management to SOC USB.
+> >> - Removed the disconnect work and workqueue for the QC USB offload as =
+it is not
+> >>   required, since QMI interface driver ensures events are handled in i=
+ts own WQ.
+> >>
+> >> Changes in v15:
+> >> - Removed some already merged XHCI changes
+> >> - Separated SOC USB driver from being always compiled into SOC core.  =
+Now
+> >>   configurable from kconfig.
+> >> - Fixed up ASoC kcontrol naming to fit guidelines.
+> >> - Removed some unnecessary dummy ifdefs.
+> >> - Moved usb snd offload capable kcontrol to be initialized by the plat=
+form offloading
+> >>   driver.
+> >>
+> >> Changes in v14:
+> >> - Cleaned up some USB SND related feedback:
+> >>   - Renamed SNDUSB OFFLD playback available --> USB offload capable ca=
+rd
+> >>   - Fixed locking while checking if stream is in use
+> >>   - Replaced some mutex pairs with guard(mutex)
+> >>
+> >> Changes in v13:
+> >> - Pulled in secondary/primary interrupter rework from Mathias from:
+> >>   https://git.kernel.org/pub/scm/linux/kernel/git/mnyman/xhci.git/log/=
+drivers/usb/host?h=3Dfix_eventhandling
+> >>   - Did some cleanup and commit message updates, and tested on current=
+ code base.
+> >> - Added mutex locking to xhci sideband to help prevent any race condit=
+ions, esp. for when accessing shared
+> >>   references.
+> >> - Addressed concerns from Hillf about gfp_flags and locking used in qc=
+_usb_audio_offload.
+> >> - Rebased onto usb-next
+> >>
+> >> Changes in v12:
+> >> - Updated copyright year to 2024.  Happy new years!
+> >> - Fixed newline format on mixer offload driver.
+> >>
+> >> Changes in v11:
+> >> - Modified QMI format structures to be const
+> >>
+> >> Changes in v10:
+> >> - Added new mixer for exposing kcontrol for sound card created by USB =
+SND.  This
+> >> allows for applications to know which platform sound card has offload =
+support.
+> >> Will return the card number.
+> >> - Broke down and cleaned up some functions/APIs within qc_audio_offloa=
+d driver.
+> >> - Exported xhci_initialize_ring_info(), and modified XHCI makefile to =
+allow for
+> >> the XHCI sideband to exist as a module.
+> >> - Reworked the jack registration and moved it to the QCOM platform car=
+d driver,
+> >> ie sm8250.
+> >> - Added an SOC USB API to fetch a standard component tag that can be a=
+ppended to
+> >> the platform sound card.  Added this tag to sm8250 if any USB path exi=
+sts within
+> >> the DT node.
+> >> - Moved kcontrols that existed in the Q6USB driver, and made it a bit =
+more generic,
+> >> so that naming can be standardized across solutions.  SOC USB is now r=
+esponsible
+> >> for creation of these kcontrols.
+> >> - Added a SOC USB RST document explaining some code flows and implemen=
+tation details
+> >> so that other vendors can utilize the framework.
+> >> - Addressed a case where USB device connection events are lost if usb =
+offload driver
+> >> (qc_audio_offload) is not probed when everything else has been initial=
+ized, ie=20
+> >> USB SND, SOC USB and ASoC sound card.  Add a rediscover device call du=
+ring module
+> >> init, to ensure that connection events will be propagated.
+> >> - Rebased to usb-next.
+> >>
+> >> Changes in v9:
+> >> - Fixed the dt binding check issue with regards to num-hc-interrupters=
+.
+> >>
+> >> Changes in v8:
+> >> - Cleaned up snd_soc_usb_find_priv_data() based on Mark's feedback.  R=
+emoved some of
+> >> the duplicate looping code that was present on previous patches.  Also=
+ renamed the API.
+> >> - Integrated Mathias' suggestions on his new sideband changes:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/mnyman/xhci.git/log/?h=
+=3Dfeature_interrupters
+> >> - Addressed some of Mathias' fixme tags, such as:
+> >>  - Resetting transfer ring dequeue/enqueue pointers
+> >>  - Issuing stop endpoint command during ep removal
+> >>  - Reset ERDP properly to first segment ring during interrupter remova=
+l. (this is currently
+> >>    just being cleared to 0, but should be pointing to a valid segment =
+if controller is still
+> >>    running.
+> >>
+> >> Changes in v7:
+> >> - Fixed dt check error for q6usb bindings
+> >> - Updated q6usb property from qcom,usb-audio-intr-num --> qcom,usb-aud=
+io-intr-idx
+> >> - Removed separate DWC3 HC interrupters num property, and place limits=
+ to XHCI one.
+> >> - Modified xhci_ring_to_sgtable() to use assigned IOVA/DMA address to =
+fetch pages, as
+> >> it is not ensured event ring allocated is always done in the vmalloc r=
+ange.
+> >>
+> >> Changes in v6:
+> >> - Fixed limits and description on several DT bindings (XHCI and Q6USB)
+> >> - Fixed patch subjects to follow other ALSA/ASoC notations.
+> >>
+> >> USB SND
+> >> - Addressed devices which expose multiple audio (UAC) interfaces.  The=
+se devices will
+> >> create a single USB sound card with multiple audio streams, and receiv=
+e multiple
+> >> interface probe routines.  QC offload was not properly considering cas=
+es with multiple
+> >> probe calls.
+> >> - Renamed offload module name and kconfig to fit within the SND domain=
+.
+> >> - Renamed attach/detach endpoint API to keep the hw_params notation.
+> >>
+> >> Changes in v5:
+> >> - Removed some unnecessary files that were included
+> >> - Fixed some typos mentioned
+> >> - Addressed dt-binding issues and added hc-interrupters definition to =
+usb-xhci.yaml
+> >>
+> >> XHCI:
+> >> - Moved secondary skip events API to xhci-ring and updated implementat=
+ion
+> >>    - Utilized existing XHCI APIs, such as inc_deq and xhci_update_erst=
+_dequeue()
+> >>
+> >> USB SND
+> >> - Renamed and reworked the APIs in "sound: usb: Export USB SND APIs fo=
+r modules" patch to
+> >> include suggestions to utilize snd_usb_hw_params/free and to avoid gen=
+eric naming.
+> >> - Added a resume_cb() op for completion sake.
+> >> - Addressed some locking concerns with regards to when registering for=
+ platform hooks.
+> >> - Added routine to disconnect all offloaded devices during module unbi=
+nd.
+> >>
+> >> ASoC
+> >> - Replaced individual PCM parameter arguments in snd_soc_usb_connect()=
+ with new
+> >> snd_soc_usb_device structure to pass along PCM info.
+> >> - Modified snd_jack set report to notify HEADPHONE event, as we do not=
+ support record path.
+> >>
+> >> Changes in v4:
+> >> - Rebased to xhci/for-usb-next
+> >> - Addressed some dt-bindings comments
+> >>
+> >> XHCI:
+> >> - Pulled in latest changes from Mathias' feature_interrupters branch:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/mnyman/xhci.git/log/?h=
+=3Dfeature_interrupters
+> >>
+> >> - Fixed commit text and signage for the XHCI sideband/interrupter rela=
+ted changes
+> >> - Added some logic to address the FIXME tags mentioned throughout the =
+commits, such
+> >> as handling multi segment rings and building the SGT, locking concerns=
+, and ep
+> >> cleanup operations.
+> >> - Removed some fixme tags for conditions that may not be needed/addres=
+sed.
+> >> - Repurposed the new endpoint stop sync API to be utilized in other pl=
+aces.
+> >> - Fixed potential compile issue if XHCI sideband config is not defined=
+.
+> >>
+> >> ASoC:
+> >> - Added sound jack control into the Q6USB driver.  Allows for userspsa=
+ce to know when
+> >> an offload capable device is connected.
+> >>
+> >> USB SND:
+> >> - Avoided exporting _snd_pcm_hw_param_set based on Takashi's recommend=
+ation.
+> >> - Split USB QMI packet header definitions into a separate commit.  Thi=
+s is used to
+> >> properly allow the QMI interface driver to parse and route QMI packets=
+ accordingly
+> >> - Added a "depends on" entry when enabling QC audio offload to avoid c=
+ompile time
+> >> issues.
+> >>
+> >> Changes in v3:
+> >> - Changed prefix from RFC to PATCH
+> >> - Rebased entire series to usb-next
+> >> - Updated copyright years
+> >>
+> >> XHCI:
+> >> - Rebased changes on top of XHCI changes merged into usb-next, and onl=
+y added
+> >> changes that were still under discussion.
+> >> - Added change to read in the "num-hc-interrupters" device property.
+> >>
+> >> ASoC:
+> >> - qusb6 USB backend
+> >>   - Incorporated suggestions to fetch iommu information with existing =
+APIs
+> >>   - Added two new sound kcontrols to fetch offload status and offload =
+device
+> >>     selection.
+> >>     - offload status - will return the card and pcm device in use
+> >>         tinymix -D 0 get 1 --> 1, 0 (offload in progress on card#1 pcm=
+#0)
+> >>
+> >>     - device selection - set the card and pcm device to enable offload=
+ on. Ex.:
+> >>         tinymix -D 0 set 1 2 0  --> sets offload on card#2 pcm#0
+> >>                                     (this should be the USB card)
+> >>
+> >> USB SND:
+> >> - Fixed up some locking related concerns for registering platform ops.
+> >>    - Moved callbacks under the register_mutex, so that=20
+> >> - Modified APIs to properly pass more information about the USB SND de=
+vice, so
+> >> that the Q6USB backend can build a device list/map, in order to monito=
+r offload
+> >> status and device selection.
+> >>
+> >> Changes in v2:
+> >>
+> >> XHCI:
+> >> - Replaced XHCI and HCD changes with Mathias' XHCI interrupter changes
+> >> in his tree:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/mnyman/xhci.git/log/?h=
+=3Dfeature_interrupters
+> >>
+> >> Adjustments made to Mathias' changes:
+> >>   - Created xhci-intr.h to export/expose interrupter APIs versus expos=
+ing xhci.h.
+> >>     Moved dependent structures to this file as well. (so clients can p=
+arse out
+> >>     information from "struct xhci_interrupter")
+> >>   - Added some basic locking when requesting interrupters.
+> >>   - Fixed up some sanity checks.
+> >>   - Removed clearing of the ERSTBA during freeing of the interrupter. =
+(pending
+> >>     issue where SMMU fault occurs if DMA addr returned is 64b - TODO)
+> >>
+> >> - Clean up pending events in the XHCI secondary interrupter.  While te=
+sting USB
+> >> bus suspend, it was seen that on bus resume, the xHCI HC would run int=
+o a command
+> >> timeout.
+> >> - Added offloading APIs to xHCI to fetch transfer and event ring infor=
+mation.
+> >>
+> >> ASoC:
+> >> - Modified soc-usb to allow for multiple USB port additions.  For this=
+ to work,
+> >> the USB offload driver has to have a reference to the USB backend by a=
+dding
+> >> a "usb-soc-be" DT entry to the device saved into XHCI sysdev.
+> >> - Created separate dt-bindings for defining USB_RX port.
+> >> - Increased APR timeout to accommodate the situation where the AFE por=
+t start
+> >> command could be delayed due to having to issue a USB bus resume while
+> >> handling the QMI stream start command.
+> >>
+> >> Mathias Nyman (3):
+> >>   xhci: support setting interrupt moderation IMOD for secondary
+> >>     interrupters
+> >>   xhci: add helper to stop endpoint and wait for completion
+> >>   xhci: sideband: add initial api to register a sideband entity
+> >>
+> >> Wesley Cheng (30):
+> >>   usb: host: xhci: Repurpose event handler for skipping interrupter
+> >>     events
+> >>   usb: xhci: xhci-sideband: Set IMOD for xHCI sideband clients
+> >>   usb: host: xhci-mem: Cleanup pending secondary event ring events
+> >>   usb: host: xhci-mem: Allow for interrupter clients to choose specifi=
+c
+> >>     index
+> >>   usb: host: xhci-plat: Set XHCI max interrupters if property is prese=
+nt
+> >>   usb: dwc3: Specify maximum number of XHCI interrupters
+> >>   ALSA: Add USB audio device jack type
+> >>   ALSA: usb-audio: Export USB SND APIs for modules
+> >>   ALSA: usb-audio: Check for support for requested audio format
+> >>   ALSA: usb-audio: Save UAC sample size information
+> >>   ALSA: usb-audio: Prevent starting of audio stream if in use
+> >>   ASoC: Add SOC USB APIs for adding an USB backend
+> >>   ASoC: usb: Add PCM format check API for USB backend
+> >>   ASoC: usb: Create SOC USB SND jack kcontrol
+> >>   ASoC: usb: Fetch ASoC card and pcm device information
+> >>   ASoC: doc: Add documentation for SOC USB
+> >>   ASoC: dt-bindings: qcom,q6dsp-lpass-ports: Add USB_RX port
+> >>   ASoC: dt-bindings: Update example for enabling USB offload on SM8250
+> >>   ASoC: qcom: qdsp6: Introduce USB AFE port to q6dsp
+> >>   ASoC: qcom: qdsp6: q6afe: Increase APR timeout
+> >>   ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6
+> >>   ASoC: qcom: qdsp6: Add headphone jack for offload connection status
+> >>   ASoC: qcom: qdsp6: Fetch USB offload mapped card and PCM device
+> >>   ALSA: usb-audio: Introduce USB SND platform op callbacks
+> >>   ALSA: usb-audio: qcom: Add USB QMI definitions
+> >>   ALSA: usb-audio: qcom: Introduce QC USB SND offloading support
+> >>   ALSA: usb-audio: qcom: Don't allow USB offload path if PCM device is
+> >>     in use
+> >>   ALSA: usb-audio: Add USB offload route kcontrol
+> >>   ALSA: usb-audio: Allow for rediscovery of connected USB SND devices
+> >>   ASoC: usb: Rediscover USB SND devices on USB port add
+> > Maybe increment your patch version before reposting next time? At least
+> > you gave an interesting test case for Aerc's threading. It managed to
+> > confuse your 01-32 series with the 00-33 series, and interleaved the
+> > whole lot under the one cover letter. I wonder what lore thinks of it,
+> > heh.
+> >
+> Ah...I lost track of my revisions on my end, sorry for the mix up.=C2=A0 =
+In these cases, should I resubmit this series as v29?=C2=A0 Thanks for the =
+advice in advanced.
 
-Rewrite fprobe implementation on function-graph tracer.
-Major API changes are:
- -  'nr_maxactive' field is deprecated.
- -  This depends on CONFIG_DYNAMIC_FTRACE_WITH_ARGS or
-    !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS, and
-    CONFIG_HAVE_FUNCTION_GRAPH_FREGS. So currently works only
-    on x86_64.
- -  Currently the entry size is limited in 15 * sizeof(long).
- -  If there is too many fprobe exit handler set on the same
-    function, it will fail to probe.
+Since I cannot tell which set of v28 is the correct set, perhaps it is
+best for the list that you repost the latest revision as v29. Sorry
+about that.
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Naveen N Rao <naveen@kernel.org>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-Cc: Sven Schnelle <svens@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+-Christopher
 
----
- Changes in v14:
-  - Add ftrace_regs_get_return_addresss() for riscv.
- Changes in v12:
-  - Skip updating ftrace hash if not required.
- Changes in v9:
-  - Remove unneeded prototype of ftrace_regs_get_return_address().
-  - Fix entry data address calculation.
-  - Remove DIV_ROUND_UP() from hotpath.
- Changes in v8:
-  - Use trace_func_graph_ret/ent_t for fgraph_ops.
-  - Update CONFIG_FPROBE dependencies.
-  - Add ftrace_regs_get_return_address() for each arch.
- Changes in v3:
-  - Update for new reserve_data/retrieve_data API.
-  - Fix internal push/pop on fgraph data logic so that it can
-    correctly save/restore the returning fprobes.
- Changes in v2:
-  - Add more lockdep_assert_held(fprobe_mutex)
-  - Use READ_ONCE() and WRITE_ONCE() for fprobe_hlist_node::fp.
-  - Add NOKPROBE_SYMBOL() for the functions which is called from
-    entry/exit callback.
----
- arch/arm64/include/asm/ftrace.h     |    6 
- arch/loongarch/include/asm/ftrace.h |    6 
- arch/powerpc/include/asm/ftrace.h   |    6 
- arch/riscv/include/asm/ftrace.h     |    5 
- arch/s390/include/asm/ftrace.h      |    6 
- arch/x86/include/asm/ftrace.h       |    6 
- include/linux/fprobe.h              |   53 ++-
- kernel/trace/Kconfig                |    8 
- kernel/trace/fprobe.c               |  639 +++++++++++++++++++++++++----------
- lib/test_fprobe.c                   |   45 --
- 10 files changed, 535 insertions(+), 245 deletions(-)
-
-diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
-index 6493a575664f..d1277dfa0e7a 100644
---- a/arch/arm64/include/asm/ftrace.h
-+++ b/arch/arm64/include/asm/ftrace.h
-@@ -135,6 +135,12 @@ ftrace_regs_get_frame_pointer(const struct ftrace_regs *fregs)
- 	return arch_ftrace_regs(fregs)->fp;
- }
- 
-+static __always_inline unsigned long
-+ftrace_regs_get_return_address(const struct ftrace_regs *fregs)
-+{
-+	return arch_ftrace_regs(fregs)->lr;
-+}
+>
+> Thanks
+>
+> Wesley Cheng
+>
+> >>  .../bindings/sound/qcom,sm8250.yaml           |   15 +
+> >>  Documentation/sound/soc/index.rst             |    1 +
+> >>  Documentation/sound/soc/usb.rst               |  491 ++++
+> >>  drivers/usb/dwc3/core.c                       |   12 +
+> >>  drivers/usb/dwc3/core.h                       |    2 +
+> >>  drivers/usb/dwc3/host.c                       |    3 +
+> >>  drivers/usb/host/Kconfig                      |    9 +
+> >>  drivers/usb/host/Makefile                     |    2 +
+> >>  drivers/usb/host/xhci-mem.c                   |   37 +-
+> >>  drivers/usb/host/xhci-plat.c                  |    2 +
+> >>  drivers/usb/host/xhci-ring.c                  |   54 +-
+> >>  drivers/usb/host/xhci-sideband.c              |  425 ++++
+> >>  drivers/usb/host/xhci.c                       |   51 +-
+> >>  drivers/usb/host/xhci.h                       |   19 +-
+> >>  .../sound/qcom,q6dsp-lpass-ports.h            |    1 +
+> >>  include/linux/mod_devicetable.h               |    2 +-
+> >>  include/linux/usb/xhci-sideband.h             |   70 +
+> >>  include/sound/jack.h                          |    4 +-
+> >>  include/sound/q6usboffload.h                  |   20 +
+> >>  include/sound/soc-usb.h                       |  147 ++
+> >>  include/uapi/linux/input-event-codes.h        |    3 +-
+> >>  sound/core/jack.c                             |    6 +-
+> >>  sound/soc/Kconfig                             |   10 +
+> >>  sound/soc/Makefile                            |    2 +
+> >>  sound/soc/qcom/Kconfig                        |   15 +
+> >>  sound/soc/qcom/Makefile                       |    2 +
+> >>  sound/soc/qcom/qdsp6/Makefile                 |    1 +
+> >>  sound/soc/qcom/qdsp6/q6afe-dai.c              |   60 +
+> >>  sound/soc/qcom/qdsp6/q6afe.c                  |  194 +-
+> >>  sound/soc/qcom/qdsp6/q6afe.h                  |   36 +-
+> >>  sound/soc/qcom/qdsp6/q6dsp-lpass-ports.c      |   23 +
+> >>  sound/soc/qcom/qdsp6/q6dsp-lpass-ports.h      |    1 +
+> >>  sound/soc/qcom/qdsp6/q6routing.c              |   32 +-
+> >>  sound/soc/qcom/qdsp6/q6usb.c                  |  391 ++++
+> >>  sound/soc/qcom/sm8250.c                       |   24 +-
+> >>  sound/soc/qcom/usb_offload_utils.c            |   56 +
+> >>  sound/soc/qcom/usb_offload_utils.h            |   30 +
+> >>  sound/soc/soc-usb.c                           |  369 +++
+> >>  sound/usb/Kconfig                             |   25 +
+> >>  sound/usb/Makefile                            |    4 +-
+> >>  sound/usb/card.c                              |  106 +
+> >>  sound/usb/card.h                              |   17 +
+> >>  sound/usb/endpoint.c                          |    1 +
+> >>  sound/usb/format.c                            |    1 +
+> >>  sound/usb/helper.c                            |    1 +
+> >>  sound/usb/mixer_usb_offload.c                 |  102 +
+> >>  sound/usb/mixer_usb_offload.h                 |   17 +
+> >>  sound/usb/pcm.c                               |  104 +-
+> >>  sound/usb/pcm.h                               |   11 +
+> >>  sound/usb/qcom/Makefile                       |    2 +
+> >>  sound/usb/qcom/qc_audio_offload.c             | 1974 ++++++++++++++++=
 +
- static __always_inline struct pt_regs *
- ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
- {
-diff --git a/arch/loongarch/include/asm/ftrace.h b/arch/loongarch/include/asm/ftrace.h
-index ceb3e3d9c0d3..6e0a99763a9a 100644
---- a/arch/loongarch/include/asm/ftrace.h
-+++ b/arch/loongarch/include/asm/ftrace.h
-@@ -61,6 +61,12 @@ ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs, unsigned long ip)
- #define ftrace_regs_get_frame_pointer(fregs) \
- 	(arch_ftrace_regs(fregs)->regs.regs[22])
- 
-+static __always_inline unsigned long
-+ftrace_regs_get_return_address(struct ftrace_regs *fregs)
-+{
-+	return *(unsigned long *)(arch_ftrace_regs(fregs)->regs.regs[1]);
-+}
-+
- #define ftrace_graph_func ftrace_graph_func
- void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
- 		       struct ftrace_ops *op, struct ftrace_regs *fregs);
-diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/ftrace.h
-index 407ce6eccc04..f3e7f0e44701 100644
---- a/arch/powerpc/include/asm/ftrace.h
-+++ b/arch/powerpc/include/asm/ftrace.h
-@@ -54,6 +54,12 @@ ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
- 	regs_set_return_ip(&arch_ftrace_regs(fregs)->regs, ip);
- }
- 
-+static __always_inline unsigned long
-+ftrace_regs_get_return_address(struct ftrace_regs *fregs)
-+{
-+	return arch_ftrace_regs(fregs)->regs.link;
-+}
-+
- struct ftrace_ops;
- 
- #define ftrace_graph_func ftrace_graph_func
-diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
-index 17e0a13cc386..05b0db7b8458 100644
---- a/arch/riscv/include/asm/ftrace.h
-+++ b/arch/riscv/include/asm/ftrace.h
-@@ -186,6 +186,11 @@ static __always_inline unsigned long ftrace_regs_get_return_value(const struct f
- 	return arch_ftrace_regs(fregs)->a0;
- }
- 
-+static __always_inline unsigned long ftrace_regs_get_return_address(const struct ftrace_regs *fregs)
-+{
-+	return arch_ftrace_regs(fregs)->ra;
-+}
-+
- static __always_inline void ftrace_regs_set_return_value(struct ftrace_regs *fregs,
- 							 unsigned long ret)
- {
-diff --git a/arch/s390/include/asm/ftrace.h b/arch/s390/include/asm/ftrace.h
-index f1c0e677a325..9ea23d276219 100644
---- a/arch/s390/include/asm/ftrace.h
-+++ b/arch/s390/include/asm/ftrace.h
-@@ -76,6 +76,12 @@ ftrace_regs_get_frame_pointer(struct ftrace_regs *fregs)
- 	return ftrace_regs_get_stack_pointer(fregs);
- }
- 
-+static __always_inline unsigned long
-+ftrace_regs_get_return_address(const struct ftrace_regs *fregs)
-+{
-+	return arch_ftrace_regs(fregs)->regs.gprs[14];
-+}
-+
- #define arch_ftrace_fill_perf_regs(fregs, _regs)	 do {		\
- 		(_regs)->psw.addr = arch_ftrace_regs(fregs)->regs.psw.addr;		\
- 		(_regs)->gprs[15] = arch_ftrace_regs(fregs)->regs.gprs[15];		\
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index 7e06f8c7937a..cc92c99ef276 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -58,6 +58,12 @@ arch_ftrace_get_regs(struct ftrace_regs *fregs)
- 	do { arch_ftrace_regs(fregs)->regs.ip = (_ip); } while (0)
- 
- 
-+static __always_inline unsigned long
-+ftrace_regs_get_return_address(struct ftrace_regs *fregs)
-+{
-+	return *(unsigned long *)ftrace_regs_get_stack_pointer(fregs);
-+}
-+
- struct ftrace_ops;
- #define ftrace_graph_func ftrace_graph_func
- void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
-diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
-index ef609bcca0f9..2d06bbd99601 100644
---- a/include/linux/fprobe.h
-+++ b/include/linux/fprobe.h
-@@ -5,10 +5,11 @@
- 
- #include <linux/compiler.h>
- #include <linux/ftrace.h>
--#include <linux/rethook.h>
-+#include <linux/rcupdate.h>
-+#include <linux/refcount.h>
-+#include <linux/slab.h>
- 
- struct fprobe;
--
- typedef int (*fprobe_entry_cb)(struct fprobe *fp, unsigned long entry_ip,
- 			       unsigned long ret_ip, struct ftrace_regs *regs,
- 			       void *entry_data);
-@@ -17,35 +18,57 @@ typedef void (*fprobe_exit_cb)(struct fprobe *fp, unsigned long entry_ip,
- 			       unsigned long ret_ip, struct ftrace_regs *regs,
- 			       void *entry_data);
- 
-+/**
-+ * strcut fprobe_hlist_node - address based hash list node for fprobe.
-+ *
-+ * @hlist: The hlist node for address search hash table.
-+ * @addr: The address represented by this.
-+ * @fp: The fprobe which owns this.
-+ */
-+struct fprobe_hlist_node {
-+	struct hlist_node	hlist;
-+	unsigned long		addr;
-+	struct fprobe		*fp;
-+};
-+
-+/**
-+ * struct fprobe_hlist - hash list nodes for fprobe.
-+ *
-+ * @hlist: The hlist node for existence checking hash table.
-+ * @rcu: rcu_head for RCU deferred release.
-+ * @fp: The fprobe which owns this fprobe_hlist.
-+ * @size: The size of @array.
-+ * @array: The fprobe_hlist_node for each address to probe.
-+ */
-+struct fprobe_hlist {
-+	struct hlist_node		hlist;
-+	struct rcu_head			rcu;
-+	struct fprobe			*fp;
-+	int				size;
-+	struct fprobe_hlist_node	array[];
-+};
-+
- /**
-  * struct fprobe - ftrace based probe.
-- * @ops: The ftrace_ops.
-+ *
-  * @nmissed: The counter for missing events.
-  * @flags: The status flag.
-- * @rethook: The rethook data structure. (internal data)
-  * @entry_data_size: The private data storage size.
-- * @nr_maxactive: The max number of active functions.
-+ * @nr_maxactive: The max number of active functions. (*deprecated)
-  * @entry_handler: The callback function for function entry.
-  * @exit_handler: The callback function for function exit.
-+ * @hlist_array: The fprobe_hlist for fprobe search from IP hash table.
-  */
- struct fprobe {
--#ifdef CONFIG_FUNCTION_TRACER
--	/*
--	 * If CONFIG_FUNCTION_TRACER is not set, CONFIG_FPROBE is disabled too.
--	 * But user of fprobe may keep embedding the struct fprobe on their own
--	 * code. To avoid build error, this will keep the fprobe data structure
--	 * defined here, but remove ftrace_ops data structure.
--	 */
--	struct ftrace_ops	ops;
--#endif
- 	unsigned long		nmissed;
- 	unsigned int		flags;
--	struct rethook		*rethook;
- 	size_t			entry_data_size;
- 	int			nr_maxactive;
- 
- 	fprobe_entry_cb entry_handler;
- 	fprobe_exit_cb  exit_handler;
-+
-+	struct fprobe_hlist	*hlist_array;
- };
- 
- /* This fprobe is soft-disabled. */
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 2fc55a1a88aa..7c40d6f7d25f 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -307,11 +307,9 @@ config DYNAMIC_FTRACE_WITH_ARGS
- 
- config FPROBE
- 	bool "Kernel Function Probe (fprobe)"
--	depends on FUNCTION_TRACER
--	depends on DYNAMIC_FTRACE_WITH_REGS || DYNAMIC_FTRACE_WITH_ARGS
--	depends on HAVE_FTRACE_REGS_HAVING_PT_REGS || !HAVE_DYNAMIC_FTRACE_WITH_ARGS
--	depends on HAVE_RETHOOK
--	select RETHOOK
-+	depends on HAVE_FUNCTION_GRAPH_FREGS && HAVE_FTRACE_GRAPH_FUNC
-+	select FUNCTION_GRAPH_TRACER
-+	select DYNAMIC_FTRACE_WITH_ARGS
- 	default n
- 	help
- 	  This option enables kernel function probe (fprobe) based on ftrace.
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index 90a3c8e2bbdf..5a0b4ef52fa7 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -8,98 +8,195 @@
- #include <linux/fprobe.h>
- #include <linux/kallsyms.h>
- #include <linux/kprobes.h>
--#include <linux/rethook.h>
-+#include <linux/list.h>
-+#include <linux/mutex.h>
- #include <linux/slab.h>
- #include <linux/sort.h>
- 
- #include "trace.h"
- 
--struct fprobe_rethook_node {
--	struct rethook_node node;
--	unsigned long entry_ip;
--	unsigned long entry_parent_ip;
--	char data[];
--};
-+#define FPROBE_IP_HASH_BITS 8
-+#define FPROBE_IP_TABLE_SIZE (1 << FPROBE_IP_HASH_BITS)
- 
--static inline void __fprobe_handler(unsigned long ip, unsigned long parent_ip,
--			struct ftrace_ops *ops, struct ftrace_regs *fregs)
--{
--	struct fprobe_rethook_node *fpr;
--	struct rethook_node *rh = NULL;
--	struct fprobe *fp;
--	void *entry_data = NULL;
--	int ret = 0;
-+#define FPROBE_HASH_BITS 6
-+#define FPROBE_TABLE_SIZE (1 << FPROBE_HASH_BITS)
- 
--	fp = container_of(ops, struct fprobe, ops);
-+#define SIZE_IN_LONG(x) ((x + sizeof(long) - 1) >> (sizeof(long) == 8 ? 3 : 2))
- 
--	if (fp->exit_handler) {
--		rh = rethook_try_get(fp->rethook);
--		if (!rh) {
--			fp->nmissed++;
--			return;
--		}
--		fpr = container_of(rh, struct fprobe_rethook_node, node);
--		fpr->entry_ip = ip;
--		fpr->entry_parent_ip = parent_ip;
--		if (fp->entry_data_size)
--			entry_data = fpr->data;
-+/*
-+ * fprobe_table: hold 'fprobe_hlist::hlist' for checking the fprobe still
-+ *   exists. The key is the address of fprobe instance.
-+ * fprobe_ip_table: hold 'fprobe_hlist::array[*]' for searching the fprobe
-+ *   instance related to the funciton address. The key is the ftrace IP
-+ *   address.
-+ *
-+ * When unregistering the fprobe, fprobe_hlist::fp and fprobe_hlist::array[*].fp
-+ * are set NULL and delete those from both hash tables (by hlist_del_rcu).
-+ * After an RCU grace period, the fprobe_hlist itself will be released.
-+ *
-+ * fprobe_table and fprobe_ip_table can be accessed from either
-+ *  - Normal hlist traversal and RCU add/del under 'fprobe_mutex' is held.
-+ *  - RCU hlist traversal under disabling preempt
-+ */
-+static struct hlist_head fprobe_table[FPROBE_TABLE_SIZE];
-+static struct hlist_head fprobe_ip_table[FPROBE_IP_TABLE_SIZE];
-+static DEFINE_MUTEX(fprobe_mutex);
-+
-+/*
-+ * Find first fprobe in the hlist. It will be iterated twice in the entry
-+ * probe, once for correcting the total required size, the second time is
-+ * calling back the user handlers.
-+ * Thus the hlist in the fprobe_table must be sorted and new probe needs to
-+ * be added *before* the first fprobe.
-+ */
-+static struct fprobe_hlist_node *find_first_fprobe_node(unsigned long ip)
-+{
-+	struct fprobe_hlist_node *node;
-+	struct hlist_head *head;
-+
-+	head = &fprobe_ip_table[hash_ptr((void *)ip, FPROBE_IP_HASH_BITS)];
-+	hlist_for_each_entry_rcu(node, head, hlist,
-+				 lockdep_is_held(&fprobe_mutex)) {
-+		if (node->addr == ip)
-+			return node;
- 	}
-+	return NULL;
-+}
-+NOKPROBE_SYMBOL(find_first_fprobe_node);
-+
-+/* Node insertion and deletion requires the fprobe_mutex */
-+static void insert_fprobe_node(struct fprobe_hlist_node *node)
-+{
-+	unsigned long ip = node->addr;
-+	struct fprobe_hlist_node *next;
-+	struct hlist_head *head;
- 
--	if (fp->entry_handler)
--		ret = fp->entry_handler(fp, ip, parent_ip, fregs, entry_data);
-+	lockdep_assert_held(&fprobe_mutex);
- 
--	/* If entry_handler returns !0, nmissed is not counted. */
--	if (rh) {
--		if (ret)
--			rethook_recycle(rh);
--		else
--			rethook_hook(rh, ftrace_get_regs(fregs), true);
-+	next = find_first_fprobe_node(ip);
-+	if (next) {
-+		hlist_add_before_rcu(&node->hlist, &next->hlist);
-+		return;
- 	}
-+	head = &fprobe_ip_table[hash_ptr((void *)ip, FPROBE_IP_HASH_BITS)];
-+	hlist_add_head_rcu(&node->hlist, head);
- }
- 
--static void fprobe_handler(unsigned long ip, unsigned long parent_ip,
--		struct ftrace_ops *ops, struct ftrace_regs *fregs)
-+/* Return true if there are synonims */
-+static bool delete_fprobe_node(struct fprobe_hlist_node *node)
- {
--	struct fprobe *fp;
--	int bit;
-+	lockdep_assert_held(&fprobe_mutex);
- 
--	fp = container_of(ops, struct fprobe, ops);
--	if (fprobe_disabled(fp))
--		return;
-+	WRITE_ONCE(node->fp, NULL);
-+	hlist_del_rcu(&node->hlist);
-+	return !!find_first_fprobe_node(node->addr);
-+}
- 
--	/* recursion detection has to go before any traceable function and
--	 * all functions before this point should be marked as notrace
--	 */
--	bit = ftrace_test_recursion_trylock(ip, parent_ip);
--	if (bit < 0) {
--		fp->nmissed++;
--		return;
-+/* Check existence of the fprobe */
-+static bool is_fprobe_still_exist(struct fprobe *fp)
-+{
-+	struct hlist_head *head;
-+	struct fprobe_hlist *fph;
-+
-+	head = &fprobe_table[hash_ptr(fp, FPROBE_HASH_BITS)];
-+	hlist_for_each_entry_rcu(fph, head, hlist,
-+				 lockdep_is_held(&fprobe_mutex)) {
-+		if (fph->fp == fp)
-+			return true;
- 	}
--	__fprobe_handler(ip, parent_ip, ops, fregs);
--	ftrace_test_recursion_unlock(bit);
-+	return false;
-+}
-+NOKPROBE_SYMBOL(is_fprobe_still_exist);
-+
-+static int add_fprobe_hash(struct fprobe *fp)
-+{
-+	struct fprobe_hlist *fph = fp->hlist_array;
-+	struct hlist_head *head;
-+
-+	lockdep_assert_held(&fprobe_mutex);
- 
-+	if (WARN_ON_ONCE(!fph))
-+		return -EINVAL;
-+
-+	if (is_fprobe_still_exist(fp))
-+		return -EEXIST;
-+
-+	head = &fprobe_table[hash_ptr(fp, FPROBE_HASH_BITS)];
-+	hlist_add_head_rcu(&fp->hlist_array->hlist, head);
-+	return 0;
- }
--NOKPROBE_SYMBOL(fprobe_handler);
- 
--static void fprobe_kprobe_handler(unsigned long ip, unsigned long parent_ip,
--				  struct ftrace_ops *ops, struct ftrace_regs *fregs)
-+static int del_fprobe_hash(struct fprobe *fp)
- {
--	struct fprobe *fp;
--	int bit;
-+	struct fprobe_hlist *fph = fp->hlist_array;
- 
--	fp = container_of(ops, struct fprobe, ops);
--	if (fprobe_disabled(fp))
--		return;
-+	lockdep_assert_held(&fprobe_mutex);
- 
--	/* recursion detection has to go before any traceable function and
--	 * all functions called before this point should be marked as notrace
--	 */
--	bit = ftrace_test_recursion_trylock(ip, parent_ip);
--	if (bit < 0) {
--		fp->nmissed++;
--		return;
-+	if (WARN_ON_ONCE(!fph))
-+		return -EINVAL;
-+
-+	if (!is_fprobe_still_exist(fp))
-+		return -ENOENT;
-+
-+	fph->fp = NULL;
-+	hlist_del_rcu(&fph->hlist);
-+	return 0;
-+}
-+
-+/* The entry data size is 4 bits (=16) * sizeof(long) in maximum */
-+#define FPROBE_HEADER_SIZE_BITS		4
-+#define MAX_FPROBE_DATA_SIZE_WORD	((1L << FPROBE_HEADER_SIZE_BITS) - 1)
-+#define MAX_FPROBE_DATA_SIZE		(MAX_FPROBE_DATA_SIZE_WORD * sizeof(long))
-+#define FPROBE_HEADER_PTR_BITS		(BITS_PER_LONG - FPROBE_HEADER_SIZE_BITS)
-+#define FPROBE_HEADER_PTR_MASK		GENMASK(FPROBE_HEADER_PTR_BITS - 1, 0)
-+#define FPROBE_HEADER_SIZE		sizeof(unsigned long)
-+
-+static inline unsigned long encode_fprobe_header(struct fprobe *fp, int size_words)
-+{
-+	if (WARN_ON_ONCE(size_words > MAX_FPROBE_DATA_SIZE_WORD ||
-+	    ((unsigned long)fp & ~FPROBE_HEADER_PTR_MASK) !=
-+	    ~FPROBE_HEADER_PTR_MASK)) {
-+		return 0;
- 	}
-+	return ((unsigned long)size_words << FPROBE_HEADER_PTR_BITS) |
-+		((unsigned long)fp & FPROBE_HEADER_PTR_MASK);
-+}
-+
-+/* Return reserved data size in words */
-+static inline int decode_fprobe_header(unsigned long val, struct fprobe **fp)
-+{
-+	unsigned long ptr;
-+
-+	ptr = (val & FPROBE_HEADER_PTR_MASK) | ~FPROBE_HEADER_PTR_MASK;
-+	if (fp)
-+		*fp = (struct fprobe *)ptr;
-+	return val >> FPROBE_HEADER_PTR_BITS;
-+}
-+
-+/*
-+ * fprobe shadow stack management:
-+ * Since fprobe shares a single fgraph_ops, it needs to share the stack entry
-+ * among the probes on the same function exit. Note that a new probe can be
-+ * registered before a target function is returning, we can not use the hash
-+ * table to find the corresponding probes. Thus the probe address is stored on
-+ * the shadow stack with its entry data size.
-+ *
-+ */
-+static inline int __fprobe_handler(unsigned long ip, unsigned long parent_ip,
-+				   struct fprobe *fp, struct ftrace_regs *fregs,
-+				   void *data)
-+{
-+	if (!fp->entry_handler)
-+		return 0;
-+
-+	return fp->entry_handler(fp, ip, parent_ip, fregs, data);
-+}
- 
-+static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent_ip,
-+					  struct fprobe *fp, struct ftrace_regs *fregs,
-+					  void *data)
-+{
-+	int ret;
- 	/*
- 	 * This user handler is shared with other kprobes and is not expected to be
- 	 * called recursively. So if any other kprobe handler is running, this will
-@@ -108,45 +205,185 @@ static void fprobe_kprobe_handler(unsigned long ip, unsigned long parent_ip,
- 	 */
- 	if (unlikely(kprobe_running())) {
- 		fp->nmissed++;
--		goto recursion_unlock;
-+		return 0;
- 	}
- 
- 	kprobe_busy_begin();
--	__fprobe_handler(ip, parent_ip, ops, fregs);
-+	ret = __fprobe_handler(ip, parent_ip, fp, fregs, data);
- 	kprobe_busy_end();
--
--recursion_unlock:
--	ftrace_test_recursion_unlock(bit);
-+	return ret;
- }
- 
--static void fprobe_exit_handler(struct rethook_node *rh, void *data,
--				unsigned long ret_ip, struct pt_regs *regs)
-+static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-+			struct ftrace_regs *fregs)
- {
--	struct fprobe *fp = (struct fprobe *)data;
--	struct fprobe_rethook_node *fpr;
--	struct ftrace_regs *fregs = (struct ftrace_regs *)regs;
--	int bit;
-+	struct fprobe_hlist_node *node, *first;
-+	unsigned long *fgraph_data = NULL;
-+	unsigned long func = trace->func;
-+	unsigned long header, ret_ip;
-+	int reserved_words;
-+	struct fprobe *fp;
-+	int used, ret;
- 
--	if (!fp || fprobe_disabled(fp))
--		return;
-+	if (WARN_ON_ONCE(!fregs))
-+		return 0;
-+
-+	first = node = find_first_fprobe_node(func);
-+	if (unlikely(!first))
-+		return 0;
- 
--	fpr = container_of(rh, struct fprobe_rethook_node, node);
-+	reserved_words = 0;
-+	hlist_for_each_entry_from_rcu(node, hlist) {
-+		if (node->addr != func)
-+			break;
-+		fp = READ_ONCE(node->fp);
-+		if (!fp || !fp->exit_handler)
-+			continue;
-+		/*
-+		 * Since fprobe can be enabled until the next loop, we ignore the
-+		 * fprobe's disabled flag in this loop.
-+		 */
-+		reserved_words +=
-+			SIZE_IN_LONG(fp->entry_data_size) + 1;
-+	}
-+	node = first;
-+	if (reserved_words) {
-+		fgraph_data = fgraph_reserve_data(gops->idx, reserved_words * sizeof(long));
-+		if (unlikely(!fgraph_data)) {
-+			hlist_for_each_entry_from_rcu(node, hlist) {
-+				if (node->addr != func)
-+					break;
-+				fp = READ_ONCE(node->fp);
-+				if (fp && !fprobe_disabled(fp))
-+					fp->nmissed++;
-+			}
-+			return 0;
-+		}
-+	}
- 
- 	/*
--	 * we need to assure no calls to traceable functions in-between the
--	 * end of fprobe_handler and the beginning of fprobe_exit_handler.
-+	 * TODO: recursion detection has been done in the fgraph. Thus we need
-+	 * to add a callback to increment missed counter.
- 	 */
--	bit = ftrace_test_recursion_trylock(fpr->entry_ip, fpr->entry_parent_ip);
--	if (bit < 0) {
--		fp->nmissed++;
-+	ret_ip = ftrace_regs_get_return_address(fregs);
-+	used = 0;
-+	hlist_for_each_entry_from_rcu(node, hlist) {
-+		void *data;
-+
-+		if (node->addr != func)
-+			break;
-+		fp = READ_ONCE(node->fp);
-+		if (!fp || fprobe_disabled(fp))
-+			continue;
-+
-+		if (fp->entry_data_size && fp->exit_handler)
-+			data = fgraph_data + used + 1;
-+		else
-+			data = NULL;
-+
-+		if (fprobe_shared_with_kprobes(fp))
-+			ret = __fprobe_kprobe_handler(func, ret_ip, fp, fregs, data);
-+		else
-+			ret = __fprobe_handler(func, ret_ip, fp, fregs, data);
-+		/* If entry_handler returns !0, nmissed is not counted but skips exit_handler. */
-+		if (!ret && fp->exit_handler) {
-+			int size_words = SIZE_IN_LONG(fp->entry_data_size);
-+
-+			header = encode_fprobe_header(fp, size_words);
-+			if (likely(header)) {
-+				fgraph_data[used] = header;
-+				used += size_words + 1;
-+			}
-+		}
-+	}
-+	if (used < reserved_words)
-+		memset(fgraph_data + used, 0, reserved_words - used);
-+
-+	/* If any exit_handler is set, data must be used. */
-+	return used != 0;
-+}
-+NOKPROBE_SYMBOL(fprobe_entry);
-+
-+static void fprobe_return(struct ftrace_graph_ret *trace,
-+			  struct fgraph_ops *gops,
-+			  struct ftrace_regs *fregs)
-+{
-+	unsigned long *fgraph_data = NULL;
-+	unsigned long ret_ip;
-+	unsigned long val;
-+	struct fprobe *fp;
-+	int size, curr;
-+	int size_words;
-+
-+	fgraph_data = (unsigned long *)fgraph_retrieve_data(gops->idx, &size);
-+	if (WARN_ON_ONCE(!fgraph_data))
- 		return;
-+	size_words = SIZE_IN_LONG(size);
-+	ret_ip = ftrace_regs_get_instruction_pointer(fregs);
-+
-+	preempt_disable();
-+
-+	curr = 0;
-+	while (size_words > curr) {
-+		val = fgraph_data[curr++];
-+		if (!val)
-+			break;
-+
-+		size = decode_fprobe_header(val, &fp);
-+		if (fp && is_fprobe_still_exist(fp) && !fprobe_disabled(fp)) {
-+			if (WARN_ON_ONCE(curr + size > size_words))
-+				break;
-+			fp->exit_handler(fp, trace->func, ret_ip, fregs,
-+					 size ? fgraph_data + curr : NULL);
-+		}
-+		curr += size;
- 	}
-+	preempt_enable();
-+}
-+NOKPROBE_SYMBOL(fprobe_return);
-+
-+static struct fgraph_ops fprobe_graph_ops = {
-+	.entryfunc	= fprobe_entry,
-+	.retfunc	= fprobe_return,
-+};
-+static int fprobe_graph_active;
- 
--	fp->exit_handler(fp, fpr->entry_ip, ret_ip, fregs,
--			 fp->entry_data_size ? (void *)fpr->data : NULL);
--	ftrace_test_recursion_unlock(bit);
-+/* Add @addrs to the ftrace filter and register fgraph if needed. */
-+static int fprobe_graph_add_ips(unsigned long *addrs, int num)
-+{
-+	int ret;
-+
-+	lockdep_assert_held(&fprobe_mutex);
-+
-+	ret = ftrace_set_filter_ips(&fprobe_graph_ops.ops, addrs, num, 0, 0);
-+	if (ret)
-+		return ret;
-+
-+	if (!fprobe_graph_active) {
-+		ret = register_ftrace_graph(&fprobe_graph_ops);
-+		if (WARN_ON_ONCE(ret)) {
-+			ftrace_free_filter(&fprobe_graph_ops.ops);
-+			return ret;
-+		}
-+	}
-+	fprobe_graph_active++;
-+	return 0;
-+}
-+
-+/* Remove @addrs from the ftrace filter and unregister fgraph if possible. */
-+static void fprobe_graph_remove_ips(unsigned long *addrs, int num)
-+{
-+	lockdep_assert_held(&fprobe_mutex);
-+
-+	fprobe_graph_active--;
-+	if (!fprobe_graph_active) {
-+		/* Q: should we unregister it ? */
-+		unregister_ftrace_graph(&fprobe_graph_ops);
-+		return;
-+	}
-+
-+	ftrace_set_filter_ips(&fprobe_graph_ops.ops, addrs, num, 1, 0);
- }
--NOKPROBE_SYMBOL(fprobe_exit_handler);
- 
- static int symbols_cmp(const void *a, const void *b)
- {
-@@ -176,54 +413,97 @@ static unsigned long *get_ftrace_locations(const char **syms, int num)
- 	return ERR_PTR(-ENOENT);
- }
- 
--static void fprobe_init(struct fprobe *fp)
--{
--	fp->nmissed = 0;
--	if (fprobe_shared_with_kprobes(fp))
--		fp->ops.func = fprobe_kprobe_handler;
--	else
--		fp->ops.func = fprobe_handler;
--
--	fp->ops.flags |= FTRACE_OPS_FL_SAVE_REGS;
--}
-+struct filter_match_data {
-+	const char *filter;
-+	const char *notfilter;
-+	size_t index;
-+	size_t size;
-+	unsigned long *addrs;
-+};
- 
--static int fprobe_init_rethook(struct fprobe *fp, int num)
-+static int filter_match_callback(void *data, const char *name, unsigned long addr)
- {
--	int size;
-+	struct filter_match_data *match = data;
- 
--	if (!fp->exit_handler) {
--		fp->rethook = NULL;
-+	if (!glob_match(match->filter, name) ||
-+	    (match->notfilter && glob_match(match->notfilter, name)))
- 		return 0;
--	}
- 
--	/* Initialize rethook if needed */
--	if (fp->nr_maxactive)
--		num = fp->nr_maxactive;
--	else
--		num *= num_possible_cpus() * 2;
--	if (num <= 0)
--		return -EINVAL;
-+	if (!ftrace_location(addr))
-+		return 0;
- 
--	size = sizeof(struct fprobe_rethook_node) + fp->entry_data_size;
-+	if (match->addrs)
-+		match->addrs[match->index] = addr;
- 
--	/* Initialize rethook */
--	fp->rethook = rethook_alloc((void *)fp, fprobe_exit_handler, size, num);
--	if (IS_ERR(fp->rethook))
--		return PTR_ERR(fp->rethook);
-+	match->index++;
-+	return match->index == match->size;
-+}
- 
--	return 0;
-+/*
-+ * Make IP list from the filter/no-filter glob patterns.
-+ * Return the number of matched symbols, or -ENOENT.
-+ */
-+static int ip_list_from_filter(const char *filter, const char *notfilter,
-+			       unsigned long *addrs, size_t size)
-+{
-+	struct filter_match_data match = { .filter = filter, .notfilter = notfilter,
-+		.index = 0, .size = size, .addrs = addrs};
-+	int ret;
-+
-+	ret = kallsyms_on_each_symbol(filter_match_callback, &match);
-+	if (ret < 0)
-+		return ret;
-+	ret = module_kallsyms_on_each_symbol(NULL, filter_match_callback, &match);
-+	if (ret < 0)
-+		return ret;
-+
-+	return match.index ?: -ENOENT;
- }
- 
- static void fprobe_fail_cleanup(struct fprobe *fp)
- {
--	if (!IS_ERR_OR_NULL(fp->rethook)) {
--		/* Don't need to cleanup rethook->handler because this is not used. */
--		rethook_free(fp->rethook);
--		fp->rethook = NULL;
-+	kfree(fp->hlist_array);
-+	fp->hlist_array = NULL;
-+}
-+
-+/* Initialize the fprobe data structure. */
-+static int fprobe_init(struct fprobe *fp, unsigned long *addrs, int num)
-+{
-+	struct fprobe_hlist *hlist_array;
-+	unsigned long addr;
-+	int size, i;
-+
-+	if (!fp || !addrs || num <= 0)
-+		return -EINVAL;
-+
-+	size = ALIGN(fp->entry_data_size, sizeof(long));
-+	if (size > MAX_FPROBE_DATA_SIZE)
-+		return -E2BIG;
-+	fp->entry_data_size = size;
-+
-+	hlist_array = kzalloc(struct_size(hlist_array, array, num), GFP_KERNEL);
-+	if (!hlist_array)
-+		return -ENOMEM;
-+
-+	fp->nmissed = 0;
-+
-+	hlist_array->size = num;
-+	fp->hlist_array = hlist_array;
-+	hlist_array->fp = fp;
-+	for (i = 0; i < num; i++) {
-+		hlist_array->array[i].fp = fp;
-+		addr = ftrace_location(addrs[i]);
-+		if (!addr) {
-+			fprobe_fail_cleanup(fp);
-+			return -ENOENT;
-+		}
-+		hlist_array->array[i].addr = addr;
- 	}
--	ftrace_free_filter(&fp->ops);
-+	return 0;
- }
- 
-+#define FPROBE_IPS_MAX	INT_MAX
-+
- /**
-  * register_fprobe() - Register fprobe to ftrace by pattern.
-  * @fp: A fprobe data structure to be registered.
-@@ -237,46 +517,24 @@ static void fprobe_fail_cleanup(struct fprobe *fp)
-  */
- int register_fprobe(struct fprobe *fp, const char *filter, const char *notfilter)
- {
--	struct ftrace_hash *hash;
--	unsigned char *str;
--	int ret, len;
-+	unsigned long *addrs;
-+	int ret;
- 
- 	if (!fp || !filter)
- 		return -EINVAL;
- 
--	fprobe_init(fp);
--
--	len = strlen(filter);
--	str = kstrdup(filter, GFP_KERNEL);
--	ret = ftrace_set_filter(&fp->ops, str, len, 0);
--	kfree(str);
--	if (ret)
-+	ret = ip_list_from_filter(filter, notfilter, NULL, FPROBE_IPS_MAX);
-+	if (ret < 0)
- 		return ret;
- 
--	if (notfilter) {
--		len = strlen(notfilter);
--		str = kstrdup(notfilter, GFP_KERNEL);
--		ret = ftrace_set_notrace(&fp->ops, str, len, 0);
--		kfree(str);
--		if (ret)
--			goto out;
--	}
--
--	/* TODO:
--	 * correctly calculate the total number of filtered symbols
--	 * from both filter and notfilter.
--	 */
--	hash = rcu_access_pointer(fp->ops.local_hash.filter_hash);
--	if (WARN_ON_ONCE(!hash))
--		goto out;
--
--	ret = fprobe_init_rethook(fp, (int)hash->count);
--	if (!ret)
--		ret = register_ftrace_function(&fp->ops);
-+	addrs = kcalloc(ret, sizeof(unsigned long), GFP_KERNEL);
-+	if (!addrs)
-+		return -ENOMEM;
-+	ret = ip_list_from_filter(filter, notfilter, addrs, ret);
-+	if (ret > 0)
-+		ret = register_fprobe_ips(fp, addrs, ret);
- 
--out:
--	if (ret)
--		fprobe_fail_cleanup(fp);
-+	kfree(addrs);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(register_fprobe);
-@@ -284,7 +542,7 @@ EXPORT_SYMBOL_GPL(register_fprobe);
- /**
-  * register_fprobe_ips() - Register fprobe to ftrace by address.
-  * @fp: A fprobe data structure to be registered.
-- * @addrs: An array of target ftrace location addresses.
-+ * @addrs: An array of target function address.
-  * @num: The number of entries of @addrs.
-  *
-  * Register @fp to ftrace for enabling the probe on the address given by @addrs.
-@@ -296,23 +554,27 @@ EXPORT_SYMBOL_GPL(register_fprobe);
-  */
- int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num)
- {
--	int ret;
--
--	if (!fp || !addrs || num <= 0)
--		return -EINVAL;
--
--	fprobe_init(fp);
-+	struct fprobe_hlist *hlist_array;
-+	int ret, i;
- 
--	ret = ftrace_set_filter_ips(&fp->ops, addrs, num, 0, 0);
-+	ret = fprobe_init(fp, addrs, num);
- 	if (ret)
- 		return ret;
- 
--	ret = fprobe_init_rethook(fp, num);
--	if (!ret)
--		ret = register_ftrace_function(&fp->ops);
-+	mutex_lock(&fprobe_mutex);
-+
-+	hlist_array = fp->hlist_array;
-+	ret = fprobe_graph_add_ips(addrs, num);
-+	if (!ret) {
-+		add_fprobe_hash(fp);
-+		for (i = 0; i < hlist_array->size; i++)
-+			insert_fprobe_node(&hlist_array->array[i]);
-+	}
-+	mutex_unlock(&fprobe_mutex);
- 
- 	if (ret)
- 		fprobe_fail_cleanup(fp);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(register_fprobe_ips);
-@@ -350,14 +612,13 @@ EXPORT_SYMBOL_GPL(register_fprobe_syms);
- 
- bool fprobe_is_registered(struct fprobe *fp)
- {
--	if (!fp || (fp->ops.saved_func != fprobe_handler &&
--		    fp->ops.saved_func != fprobe_kprobe_handler))
-+	if (!fp || !fp->hlist_array)
- 		return false;
- 	return true;
- }
- 
- /**
-- * unregister_fprobe() - Unregister fprobe from ftrace
-+ * unregister_fprobe() - Unregister fprobe.
-  * @fp: A fprobe data structure to be unregistered.
-  *
-  * Unregister fprobe (and remove ftrace hooks from the function entries).
-@@ -366,23 +627,41 @@ bool fprobe_is_registered(struct fprobe *fp)
-  */
- int unregister_fprobe(struct fprobe *fp)
- {
--	int ret;
-+	struct fprobe_hlist *hlist_array;
-+	unsigned long *addrs = NULL;
-+	int ret = 0, i, count;
- 
--	if (!fprobe_is_registered(fp))
--		return -EINVAL;
-+	mutex_lock(&fprobe_mutex);
-+	if (!fp || !is_fprobe_still_exist(fp)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
--	if (!IS_ERR_OR_NULL(fp->rethook))
--		rethook_stop(fp->rethook);
-+	hlist_array = fp->hlist_array;
-+	addrs = kcalloc(hlist_array->size, sizeof(unsigned long), GFP_KERNEL);
-+	if (!addrs) {
-+		ret = -ENOMEM;	/* TODO: Fallback to one-by-one loop */
-+		goto out;
-+	}
- 
--	ret = unregister_ftrace_function(&fp->ops);
--	if (ret < 0)
--		return ret;
-+	/* Remove non-synonim ips from table and hash */
-+	count = 0;
-+	for (i = 0; i < hlist_array->size; i++) {
-+		if (!delete_fprobe_node(&hlist_array->array[i]))
-+			addrs[count++] = hlist_array->array[i].addr;
-+	}
-+	del_fprobe_hash(fp);
- 
--	if (!IS_ERR_OR_NULL(fp->rethook))
--		rethook_free(fp->rethook);
-+	if (count)
-+		fprobe_graph_remove_ips(addrs, count);
- 
--	ftrace_free_filter(&fp->ops);
-+	kfree_rcu(hlist_array, rcu);
-+	fp->hlist_array = NULL;
- 
-+out:
-+	mutex_unlock(&fprobe_mutex);
-+
-+	kfree(addrs);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(unregister_fprobe);
-diff --git a/lib/test_fprobe.c b/lib/test_fprobe.c
-index 271ce0caeec0..cf92111b5c79 100644
---- a/lib/test_fprobe.c
-+++ b/lib/test_fprobe.c
-@@ -17,10 +17,8 @@ static u32 rand1, entry_val, exit_val;
- /* Use indirect calls to avoid inlining the target functions */
- static u32 (*target)(u32 value);
- static u32 (*target2)(u32 value);
--static u32 (*target_nest)(u32 value, u32 (*nest)(u32));
- static unsigned long target_ip;
- static unsigned long target2_ip;
--static unsigned long target_nest_ip;
- static int entry_return_value;
- 
- static noinline u32 fprobe_selftest_target(u32 value)
-@@ -33,11 +31,6 @@ static noinline u32 fprobe_selftest_target2(u32 value)
- 	return (value / div_factor) + 1;
- }
- 
--static noinline u32 fprobe_selftest_nest_target(u32 value, u32 (*nest)(u32))
--{
--	return nest(value + 2);
--}
--
- static notrace int fp_entry_handler(struct fprobe *fp, unsigned long ip,
- 				    unsigned long ret_ip,
- 				    struct ftrace_regs *fregs, void *data)
-@@ -79,22 +72,6 @@ static notrace void fp_exit_handler(struct fprobe *fp, unsigned long ip,
- 		KUNIT_EXPECT_NULL(current_test, data);
- }
- 
--static notrace int nest_entry_handler(struct fprobe *fp, unsigned long ip,
--				      unsigned long ret_ip,
--				      struct ftrace_regs *fregs, void *data)
--{
--	KUNIT_EXPECT_FALSE(current_test, preemptible());
--	return 0;
--}
--
--static notrace void nest_exit_handler(struct fprobe *fp, unsigned long ip,
--				      unsigned long ret_ip,
--				      struct ftrace_regs *fregs, void *data)
--{
--	KUNIT_EXPECT_FALSE(current_test, preemptible());
--	KUNIT_EXPECT_EQ(current_test, ip, target_nest_ip);
--}
--
- /* Test entry only (no rethook) */
- static void test_fprobe_entry(struct kunit *test)
- {
-@@ -191,25 +168,6 @@ static void test_fprobe_data(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, 0, unregister_fprobe(&fp));
- }
- 
--/* Test nr_maxactive */
--static void test_fprobe_nest(struct kunit *test)
--{
--	static const char *syms[] = {"fprobe_selftest_target", "fprobe_selftest_nest_target"};
--	struct fprobe fp = {
--		.entry_handler = nest_entry_handler,
--		.exit_handler = nest_exit_handler,
--		.nr_maxactive = 1,
--	};
--
--	current_test = test;
--	KUNIT_EXPECT_EQ(test, 0, register_fprobe_syms(&fp, syms, 2));
--
--	target_nest(rand1, target);
--	KUNIT_EXPECT_EQ(test, 1, fp.nmissed);
--
--	KUNIT_EXPECT_EQ(test, 0, unregister_fprobe(&fp));
--}
--
- static void test_fprobe_skip(struct kunit *test)
- {
- 	struct fprobe fp = {
-@@ -247,10 +205,8 @@ static int fprobe_test_init(struct kunit *test)
- 	rand1 = get_random_u32_above(div_factor);
- 	target = fprobe_selftest_target;
- 	target2 = fprobe_selftest_target2;
--	target_nest = fprobe_selftest_nest_target;
- 	target_ip = get_ftrace_location(target);
- 	target2_ip = get_ftrace_location(target2);
--	target_nest_ip = get_ftrace_location(target_nest);
- 
- 	return 0;
- }
-@@ -260,7 +216,6 @@ static struct kunit_case fprobe_testcases[] = {
- 	KUNIT_CASE(test_fprobe),
- 	KUNIT_CASE(test_fprobe_syms),
- 	KUNIT_CASE(test_fprobe_data),
--	KUNIT_CASE(test_fprobe_nest),
- 	KUNIT_CASE(test_fprobe_skip),
- 	{}
- };
+> >>  sound/usb/qcom/usb_audio_qmi_v01.c            |  863 +++++++
+> >>  sound/usb/qcom/usb_audio_qmi_v01.h            |  164 ++
+> >>  53 files changed, 5957 insertions(+), 57 deletions(-)
+> >>  create mode 100644 Documentation/sound/soc/usb.rst
+> >>  create mode 100644 drivers/usb/host/xhci-sideband.c
+> >>  create mode 100644 include/linux/usb/xhci-sideband.h
+> >>  create mode 100644 include/sound/q6usboffload.h
+> >>  create mode 100644 include/sound/soc-usb.h
+> >>  create mode 100644 sound/soc/qcom/qdsp6/q6usb.c
+> >>  create mode 100644 sound/soc/qcom/usb_offload_utils.c
+> >>  create mode 100644 sound/soc/qcom/usb_offload_utils.h
+> >>  create mode 100644 sound/soc/soc-usb.c
+> >>  create mode 100644 sound/usb/mixer_usb_offload.c
+> >>  create mode 100644 sound/usb/mixer_usb_offload.h
+> >>  create mode 100644 sound/usb/qcom/Makefile
+> >>  create mode 100644 sound/usb/qcom/qc_audio_offload.c
+> >>  create mode 100644 sound/usb/qcom/usb_audio_qmi_v01.c
+> >>  create mode 100644 sound/usb/qcom/usb_audio_qmi_v01.h
 
 
