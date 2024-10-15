@@ -1,257 +1,230 @@
-Return-Path: <linux-kernel+bounces-366593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC36D99F780
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B3799F782
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B9541C23215
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:51:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03AB1C21B8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAC61F582F;
-	Tue, 15 Oct 2024 19:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A63A1F5827;
+	Tue, 15 Oct 2024 19:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rPhzGdkV"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="iJsQDIgB"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F564824A0;
-	Tue, 15 Oct 2024 19:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729021850; cv=fail; b=EJ30Uki1WnLolTMYOPuZDc/BYK5Uq/EC2qwXH33/H6eLlXsntypnB7My3gn+2STdDDk7MqVxDFZJgoA4qGOO+/MUPdS7FM86qZOUlqOzRNgptdYA2l9grM05G8s0+0NhcV6riSJv5ZV985ga6aOdgsnsM8sCyptkRCrUKUw8mDk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729021850; c=relaxed/simple;
-	bh=rBNjr6kRv3/yIwqc/jRraCQ/hHpllxvlDjPvfJRQLWA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RA8y0vsOL0tPkc8EftyPykjjQ/6K89ennsWS+C0ubkTEXY5fs3He/nkBdgZBdSSSWV3f1HAb4h9wH1RQAnGTT2FtJ0viFA9J8cK1dc4XamWtxhiXrT1hId3X12qw1oJhfr1PC5dILnzFQJMN5ILKE8Y7LwexRtc6O4NrwriqUL0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rPhzGdkV; arc=fail smtp.client-ip=40.107.220.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vGm0i5Bb8WibCCSQcoT2vioNloDLZ9EsRovlRIK5/oPR6ahns7NKfmwE6ddDI4v0wBdg9eFlzzmGKHHfHIst5BLu3HzvaOzQCgpGcQreokelzS3TESAbfKfz1jt4DNNTjX9+NJgFTDyvP3zKtXr4hpzdJGx0yEnnaT0h9GCoDsU5kq80g8l8PfuSIwBSVLJB5/2J8yMHgqs4VKUvm/G13HcEOG7k71u6gr40GTnja47S++soerzPi1kyUw3HPNe7Unn+ATmbGVWGmF6BIHASFch2DkFNT5uLvYowE/19MYxa7D/x0IhzX3Cbp3fUp+Uuf2byKpCfeqX7XpK0a07mWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jCprr2fyTRR/0ZtIgFRG33NQWfz+G3RuQYJDL8I6ne0=;
- b=Jindh9oWhUvZ84d/LZljfTY1n+t81ZgCwb78Z+g8XSCvTGp4cW0ISOCBj+I/cnviCalDUC536HUYQ9ytILWFxqw0hVyI3qIIADEYVARSO27eTkaU1Ajsri7wcPbm/zSF4n1U8YfmgV1/ybAZIyh+sD9y9JWTfGP9uQXNeE7wPDSNMLQ9Pz1lM+kxQCUrkkOmcILW4/nIVvHPhIIjisPyezgdCawFRS3FvIW2ia7kMo6ZLxYBP5+kn8tZMK4+GpHL5FZs/Z1m222tD6wqJ0ki9dy3JUhO74/Fk8CF077xudah7oKwzZlQ0pZks3TZsfjjRWyf9HUDx0dpN6eAUTzS8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jCprr2fyTRR/0ZtIgFRG33NQWfz+G3RuQYJDL8I6ne0=;
- b=rPhzGdkVPVgCAM5Lxod7MMn+zqhnZjvlgvWtmI+dDxl+kxO0RNsi3TFDSfHp0zM7WMTfxAQZ9AQ3gp8rW6QvP25to/DTqXz0D25hUR6DzztXlgwu3ZNsNTq1ypLOEs2Rn1j7IEgMBPrNOfJNGdG8Kru6ryy4FiC0hZvN1q7oadk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com (2603:10b6:5:1bb::24)
- by CYXPR12MB9340.namprd12.prod.outlook.com (2603:10b6:930:e4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.22; Tue, 15 Oct
- 2024 19:50:43 +0000
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475]) by DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475%3]) with mapi id 15.20.8069.016; Tue, 15 Oct 2024
- 19:50:43 +0000
-Message-ID: <341139a9-a2d0-465e-bdd3-bdd009b78589@amd.com>
-Date: Tue, 15 Oct 2024 14:50:39 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 4/5] bnxt_en: Add TPH support in BNXT driver
-To: "Panicker, Manoj" <Manoj.Panicker2@amd.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "Jonathan.Cameron@Huawei.com" <Jonathan.Cameron@Huawei.com>,
- "helgaas@kernel.org" <helgaas@kernel.org>, "corbet@lwn.net"
- <corbet@lwn.net>, "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "pabeni@redhat.com" <pabeni@redhat.com>,
- "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
- "gospo@broadcom.com" <gospo@broadcom.com>,
- "michael.chan@broadcom.com" <michael.chan@broadcom.com>,
- "ajit.khaparde@broadcom.com" <ajit.khaparde@broadcom.com>,
- "somnath.kotur@broadcom.com" <somnath.kotur@broadcom.com>,
- "andrew.gospodarek@broadcom.com" <andrew.gospodarek@broadcom.com>,
- "VanTassell, Eric" <Eric.VanTassell@amd.com>,
- "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
- "horms@kernel.org" <horms@kernel.org>,
- "bagasdotme@gmail.com" <bagasdotme@gmail.com>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "lukas@wunner.de" <lukas@wunner.de>,
- "paul.e.luse@intel.com" <paul.e.luse@intel.com>,
- "jing2.liu@intel.com" <jing2.liu@intel.com>
-References: <20241002165954.128085-1-wei.huang2@amd.com>
- <20241002165954.128085-5-wei.huang2@amd.com>
- <20241008063959.0b073aab@kernel.org>
- <MN0PR12MB6174E0F2572E7BFC65EA464BAF792@MN0PR12MB6174.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Wei Huang <wei.huang2@amd.com>
-In-Reply-To: <MN0PR12MB6174E0F2572E7BFC65EA464BAF792@MN0PR12MB6174.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0103.namprd04.prod.outlook.com
- (2603:10b6:806:122::18) To DM6PR12MB4877.namprd12.prod.outlook.com
- (2603:10b6:5:1bb::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7CA824A0;
+	Tue, 15 Oct 2024 19:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729021963; cv=none; b=XvrQHrV+V3RgctFhYG78R6PAGgTqj1MLCW+6dNTiDQH+31SEWXF+0vIWk4yBEbVKk8AOO5WFBkIjzSqcyikwOZap/WwjMoBT9CS7xk0l92zEfV8eTSo2I9Zg/XYWeVXQo9z+3hH/gp7k4Myp9ZB3UbmDuxUAX1yHndJFty9z/fw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729021963; c=relaxed/simple;
+	bh=983aXsk+k0099873GgO6EK7TO2lUtkaxWzxJ+aOzIUE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YC6YidsKgeHC7+bYy0r+LSP80SgfNzmGIXC36CTxob+XiEYXZhdY4RDEGteVpHBRZGgnJvljLB0SWE4+kohgFY/JseTLnfWLUW3Yv6dhpFpQwhirgInOC8HKit/NXHHN1QkUFRm0QZZshkgS3vAkac4R8WBpQb2a0UwZ8JhwuBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=iJsQDIgB; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1729021959; x=1760557959;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lvzBMQNDz/N7fgI9TS5YkDPvuViLouR7Wge+YfhL9Ko=;
+  b=iJsQDIgB6kLtHt/jMHV5RP7T8svNq14FOrhdYuvfIAv9eyT+FuKJI580
+   3V4gdzDMbJd+im4pQuYk2tFfwPgldZJpvp54gpwhw6Yb5Oo7qBhbiqsD6
+   PmdeiRdcBcjHkYsNyA0esed9mYYaVRaYGLahtMCj3Wtqg/Px/WBDtDh7u
+   4=;
+X-IronPort-AV: E=Sophos;i="6.11,206,1725321600"; 
+   d="scan'208";a="461040843"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 19:52:32 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:10123]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.0.200:2525] with esmtp (Farcaster)
+ id 63d632d6-a45b-4d78-b54a-26912426c2cc; Tue, 15 Oct 2024 19:52:29 +0000 (UTC)
+X-Farcaster-Flow-ID: 63d632d6-a45b-4d78-b54a-26912426c2cc
+Received: from EX19D033EUC002.ant.amazon.com (10.252.61.215) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 15 Oct 2024 19:52:29 +0000
+Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
+ EX19D033EUC002.ant.amazon.com (10.252.61.215) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 15 Oct 2024 19:52:29 +0000
+Received: from email-imr-corp-prod-iad-all-1b-8410187a.us-east-1.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Tue, 15 Oct 2024 19:52:28 +0000
+Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
+	by email-imr-corp-prod-iad-all-1b-8410187a.us-east-1.amazon.com (Postfix) with ESMTP id 32F5B40489;
+	Tue, 15 Oct 2024 19:52:28 +0000 (UTC)
+Received: by dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (Postfix, from userid 29210185)
+	id DF2CEAB4E; Tue, 15 Oct 2024 19:52:27 +0000 (UTC)
+Date: Tue, 15 Oct 2024 19:52:27 +0000
+From: Ivan Orlov <iorlov@amazon.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: <bp@alien8.de>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
+	<pbonzini@redhat.com>, <shuah@kernel.org>, <tglx@linutronix.de>,
+	<hpa@zytor.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <x86@kernel.org>, <jalliste@amazon.com>,
+	<nh-open-source@amazon.com>, <pdurrant@amazon.co.uk>
+Subject: Re: [PATCH 1/3] KVM: x86, vmx: Add function for event delivery error
+ generation
+Message-ID: <20241015195227.GA18617@dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com>
+References: <20240927161657.68110-1-iorlov@amazon.com>
+ <20240927161657.68110-2-iorlov@amazon.com>
+ <Zwmyzg5WiKKvySS1@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4877:EE_|CYXPR12MB9340:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62ed30e2-d219-4074-7fb8-08dced52a765
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UUM4VlJpRFlneW00ME9TYUU3OG1hdDJRNEJ0NldkU3RaZmprTTBjM1VYV3Vv?=
- =?utf-8?B?U01vcXlHeDNZVFZrcVNqYjhEMGVJUjVaZFh4MTRyTCtqaVFqSlY1OTZYbkF6?=
- =?utf-8?B?ZmJ4OUEvRVc0dmRodmYrM01zcE12Tlo3N29xM3JNZEtRSmZzZXVIN1RzcEFN?=
- =?utf-8?B?b29SZHhNRUpzdkNLdzY0elpUZG9CclhYZkl6cUNTQkhheFVEOVgyOGI0b1l2?=
- =?utf-8?B?WlhESmY4MkZpb2lMeEVYb0ZVVmhQeVVaSnBsbXQzVmk1SkZnZ1JCRDlMT1I5?=
- =?utf-8?B?RkF5K1FRVENMcFZWenVSWEk3RHRnNzR0Ni9LTGUwTThKY2hDNy91QWFIOWRl?=
- =?utf-8?B?aHhJa2NLdUN2QXY0N0h3aFVTUisyOFhQQXFCeHFlRm5ab0ZrM3lmVmkvNDJy?=
- =?utf-8?B?bVRocnlLU3MvbXpKaktGcElGb0V0d1VFUWdxc0I2My9MR1duTzd2S3BsVXdn?=
- =?utf-8?B?TVZSeXBtRHNiRndCVTJYMFlhUnA3QnRyclRNb0ZwWUVHTEpaWGJzQk11Vmt2?=
- =?utf-8?B?U3NwOTdyTjhKa01lSGZITHM1OUdLTXYwdmxmcDRzSmc1R3IwcC9qdE5ZbWxH?=
- =?utf-8?B?bGtkRDRtZGRWR0szMitEOFVqRmlXWjdjZTFQejlXMWFzL0ZDS0g1RlZkdU9i?=
- =?utf-8?B?dFkrdklGaGF5Vmo4ZkpEVGtaanlTYUozMlQzay9JWi9KRU1rSHFBQTFjaGlO?=
- =?utf-8?B?Mnp5K0tqYWRESmxXSUJmaXhURk1SS1R5VmVTaXhZaldhME9aUGR6dm1ZUk1Z?=
- =?utf-8?B?YmhnQXZNdWpjamwydWtsM0YxczVnTVgwUWNqbVc1VlFLazlTQXRVYzJ3UWYy?=
- =?utf-8?B?cWpCU1l6d3JERnV6MnZBeUlHelFCVnFIa1Y2Z2pWdEwwZEtsMjk1VGpnT3ZW?=
- =?utf-8?B?WUtqZCtobXIrYW4zN01xNnh4eVBRMU5SWnJ6djduNFowT0JXTFE5S2NDUG9x?=
- =?utf-8?B?cGRoQmJGWU00RzQ3ODlndGhiYTRMZVlDdEsrTlRHbXREaytHMUptMGhjWU50?=
- =?utf-8?B?cVhseGtDeDNYS2J1S1FZM3pvWW9lcVpJL3llM1JmL2UyZk8yWVgydTU2KzQw?=
- =?utf-8?B?ZzZDVFhJT3F3RGIxM2djaEtTSGtkRHp5WDIzdkpmTENUclJ4bDRld2M4SUdk?=
- =?utf-8?B?Vk1pWUZ4bFR4dlJTdmpVcGl0eG8zNXZVeXo2MXBRWmVWMVFrS2t0M044SFJB?=
- =?utf-8?B?eVprRXpTWjA4cE1UQjJkbExFbnhvaFpXNzFRU2o5SjBTdTQwK0RNelEvR01G?=
- =?utf-8?B?dlQ1V1dncVVmTXEwbFIzZUlnc0dwYWZQYURnWkFmMzAyaHBMKzY5SjVLb1Az?=
- =?utf-8?B?V0F5Y21WTFQyMlByVXBRaHFzMHRYTzM5YVgvU0RQNVN6bUVCazFoQWZtOFBj?=
- =?utf-8?B?U28vbnd3WHlURFBoZVVmNitpZ1hqZHF5VWV5Z1NUYmVWSXU0dnpPc3NDeGJw?=
- =?utf-8?B?V3dZeFVWeXRMWWdFT3F5WURiRHg1WGJoZXlRL0NKZ3Z2NWU2UkY2VnJyVGFX?=
- =?utf-8?B?dVpHUFRFTmpORjJKM3VtVnc2cXovWkhiaEZZZG5ucTdoTWVYdzNXM3JydVdK?=
- =?utf-8?B?cmxwczYvL1pkSnVHczgvYmx6cUg0TTJmR01ZTXZ4VDlmbWdpbElwN1VzelUw?=
- =?utf-8?B?TU8vRzNPUGdQZllpMWE1WklMK0ZsNFRtZGtoSnk4RzlLYkhzdXhUMzZPdTVn?=
- =?utf-8?B?eC9OcGxrbkZiQ3RZYzlXRWxHejAwWTBKMVkyTUhvckovWCttcFJOTCtRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4877.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SGNOSmdaOCtTRjRWUkpYL2haaWhVem5udlhYblluYkRUbW1kS2ZhUW5oamh2?=
- =?utf-8?B?S3VlQW5tVmllUVBKSi9oKzNLeDdOZmdLMWRuOW9yOVZHT1psRjNWbGJFY3Fv?=
- =?utf-8?B?RjE4Z3FQTkwyc0txK3dmQk1GZkxuSlB3d3ZVbWZRM1VDTDYzMmhlYXVhS1Ur?=
- =?utf-8?B?SU9HQVVmdUM2TStJeGdobCsxM1pMMjRxVmc1eFFiZkYzWlVMQVNpeUV0VUsr?=
- =?utf-8?B?L1JFUFpEZE0xemkvRjdEbEl5Tm9LVW1wemtraytCR2FDWTd3SkNnRzVYMUpZ?=
- =?utf-8?B?ZVhYeEQzek9JRzdBWHJrQytnR2wwdDZxQW80OElaaURNV2ZnOHcyYkw0aXZI?=
- =?utf-8?B?RktYZ1NIYzNtdzUyd2JwMk1HK0FRUjVLTGRUbmRVNyszMThCNFc5eEhuMVR3?=
- =?utf-8?B?MmtuOVR5OG5mQU9aSjRFT1dUVGdxMlYxYnpWZWNSMVBNcW0vN3JUNDdmcmVz?=
- =?utf-8?B?Y0NQSEwwbGFEUkVibzFKdW5GalVOVVd0RWJjRnZpdTNQY2NjVmo4VDVBRG1Q?=
- =?utf-8?B?ZnpDdlNpZWpiYzZMLy9oWVlsOTV3QlgwMEFLYmh3bXdwaEcybXRUam0yWWFM?=
- =?utf-8?B?NXJPbTlQRTNHMFkrakVSRzZDaHltMFhmVjdHRDJUenZ1QUoyY09yYmZraS94?=
- =?utf-8?B?b0pKeGhmR0NKN0I5MHU5eVZiWGZkbktPZ1BxSEdJdS9aRGIvcnF3OFZFSHBI?=
- =?utf-8?B?cFovbkhHWE51VzdHOEdzMERCa253SlVSYldTVFpEdTJtY0tWNUVIeHBnR2ND?=
- =?utf-8?B?emRlM3dSbi9nODJpNlJsTTMrUWZqL0tsNGxVdVAxWU9KYzBBaHRhcDFwWGFt?=
- =?utf-8?B?eFlUMVp6NkpzejNEMFBwOGoydHIzckE1YVJRUFNkaWoyN1U4d25mZ2IvR0dm?=
- =?utf-8?B?YVdHaU5oVkhlZVR4QjhnTjNHaENWY2tlWGpUb1BBcWxZREdydk9VTkNRNnlu?=
- =?utf-8?B?eThKdUNLdnREVDBUZkF6cHJMZ0R5dXZUbXRnUWs0amNpS1AwdzcrS3JSUnBm?=
- =?utf-8?B?cUNZeXVLMzVLN2lsKzlUOWlVL0ZpaE9PaHRBcE1PYUtiWWMzWWptZVdtZFlC?=
- =?utf-8?B?eUdMbnNENmVtdFV5Zy8ra0k0Rk9PUDRQRWpTVWx6R2xscXZTaUF1c3A1aUMw?=
- =?utf-8?B?WGlUdzhKVWdxNjZoczlQNmR0L3pZQVVkeURRYkJva0FXdGF2aHQrRGNTUTN5?=
- =?utf-8?B?ME9Tc3U4UkVRZXlUNmhzQ0M0dVFERlpBb05yWHgrQmZEb1VyVjNLMEpVVXJR?=
- =?utf-8?B?Z3VqYzN5QTZ0RklVMkd1QlIrYTRXZ3FjNnRVL1hkcHFqUXYxRmFQRXJiU2Jw?=
- =?utf-8?B?V2laeGE1THUvL1VJZWYvNWFKeUJLSk96T2JzeG5NcEVaSWRBWk9CWU1NS0hG?=
- =?utf-8?B?VVlQNnVJTjU1bkZXZWVLM3U0SSsycHdVbHBXVjdFcU9xeERxaVhXN1BNQkxB?=
- =?utf-8?B?MkRUSmVFR3FvYmFldktnNituTjgzakFQMmFzMUdNaUhIU2RnTk9vQkcybkds?=
- =?utf-8?B?bFFrMzVtN1Zaa1ltMkEvUHBnVWt1T3owYi9nOENOc3FPS21Tb05CT2VONVAv?=
- =?utf-8?B?bkZ6eDVwMUZwYkFUZWF6Y1FZaWJKbFlHNjBCeXZzZUY0aUdWdlMwWXhiVHpy?=
- =?utf-8?B?UVFrK1FmQ0x2WHZ1THUwblRveXcvbjAyZEZ1RE1LaS92NXh6K3JnQ3E5RlBh?=
- =?utf-8?B?UlViUWk3eVlhYzFNanl5eitkSWlLTUk1dzhWUmwraEpTRHkvcEVBdVR4Y2k1?=
- =?utf-8?B?SjBPM0t3L2VnNWRFODNQYWJEWldFQnRqaWFOeHozOUFQN1U1RFB6d0pmNHZm?=
- =?utf-8?B?MWRJOWxFdnpFcWdLWWg0aTJDZnZoQ01Md1R0OFVoWXM4NEptZ0haVVBJNFYz?=
- =?utf-8?B?ZkhEcExEaGdBV0RZeU9GMkZSNFNYWU96d3Q0WXhVOFp3WE53ODJabkJtYkwr?=
- =?utf-8?B?YlRqNFkrWi83VWhRK1BRZlJ1V0ZoK3M1SzVZWWdXU2l0RlU1cDRJc2IxZ2p5?=
- =?utf-8?B?Vm9SckZobnFMRVdvTHMwOXlSYnl4QVEwUzlRQ2xIQ2MxdUVmUkROYVVJYlJS?=
- =?utf-8?B?bmR1eTErTllsSHYwT1BKL0FuZW5HcEdjVXZ2L21TVUVQWUxnU2daTHg3bGV2?=
- =?utf-8?Q?NXLU=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62ed30e2-d219-4074-7fb8-08dced52a765
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4877.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 19:50:43.2934
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4SiH6HXbHS89SbFyL9e2vdjGNKAxESuOmp6yLQzVE3vN5bRjWTprrlAWDuZRLAJW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9340
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Zwmyzg5WiKKvySS1@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-[These question are for both Jakub and Bjorn]
+Hi Sean,
 
-Any suggestions on how to proceed? I can send out a V8 patchset if Jakub
-is OK with Manoj's solution? Or only a new patch #4 is needed since the
-rest are intact.
+On Fri, Oct 11, 2024 at 04:20:46PM -0700, Sean Christopherson wrote:
+> "KVM: VMX:" for the scope.  See "Shortlog" in Documentation/process/maintainer-kvm-x86.rst
+>
 
-Thanks,
--Wei
+Ah, will update in the next version, thanks!
 
-On 10/11/24 13:35, Panicker, Manoj wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
+> On Fri, Sep 27, 2024, Ivan Orlov wrote:
+> > Extract KVM_INTERNAL_ERROR_DELIVERY_EV internal error generation into
+> > the SVM/VMX-agnostic 'kvm_prepare_ev_delivery_failure_exit' function, as
+> > it is done for KVM_INTERNAL_ERROR_EMULATION.
 > 
-> Hello Jakub,
+> Use the changelog to provide a human readable summary of the change.  There are
+> definitely situations where calling out functions, variables, defines, etc. by
+> name is necessary, but this isn't one such situation.
+>
+> > The order of internal.data array entries is preserved as is, so it is going
+> > to be the same on VMX platforms (vectoring info, full exit reason, exit
+> > qualification, GPA if error happened due to MMIO and last_vmentry_cpu of the
+> > vcpu).
 > 
-> Thanks for the feedback. We'll update the patch to cover the code under the rtnl_lock.
+> Similar to the above, let the code speak.  The "No functional change intended"
+> makes it clear that the intent is to preserve the order and behavior.
 > 
-> About the empty function, there are no actions to perform when the driver's notify.release function is called. The IRQ notifier is only registered once and there are no older IRQ notifiers for the driver that could get called back. We also followed the precedent seen from other drivers in the kernel tree that follow the same mechanism .
+> > Having it as a separate function will help us to avoid code duplication
 > 
-> See code:
-> From drivers/net/ethernet/intel/i40e/i40e_main.c
-> static void i40e_irq_affinity_release(struct kref *ref) {}
+> Avoid pronouns as much as possible, and no "we" or "us" as a hard rule.  E.g. this
+> can all be distilled down to:
+>
+
+Yeah, makes sense. Will reformulate the message in the next version to consider
+all of the changes you suggested.
+
+> --
+> Extract VMX's code for reporting an unhandleable VM-Exit during event
+> delivery to userspace, so that the boilerplate code can be shared by SVM.
 > 
+> No functional change intended.
+> --
 > 
-> From drivers/net/ethernet/intel/iavf/iavf_main.c
-> static void iavf_irq_affinity_release(struct kref *ref) {}
+
+Awesome, thanks for the example!
+
 > 
+> Please wrap at 80 columns.  While checkpatch doesn't complaing until 100, my
+> preference is to default to wrapping at 80, and poking past 80 only when it yields
+> more readable code (which is obviously subjective, but it shouldn't be too hard
+> to figure out KVM x86's preferred style).
+>
+
+Alright, will do, thanks! These rules vary from one subsystem to another, and
+I'll try to keep the style consistent in the future.
+
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index c67e448c6ebd..afd785e7f3a3 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -6550,19 +6550,10 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+> >  	     exit_reason.basic != EXIT_REASON_APIC_ACCESS &&
+> >  	     exit_reason.basic != EXIT_REASON_TASK_SWITCH &&
+> >  	     exit_reason.basic != EXIT_REASON_NOTIFY)) {
+> > -		int ndata = 3;
+> > +		gpa_t gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
+> > +		bool is_mmio = exit_reason.basic == EXIT_REASON_EPT_MISCONFIG;
 > 
-> From drivers/net/ethernet/fungible/funeth/funeth_main.c
-> static void fun_irq_aff_release(struct kref __always_unused *ref)
-> {
-> }
+> There's no need for is_mmio, just pass INVALID_GPA when the GPA isn't known.
 > 
+
+Ah alright, then we definitely don't need an is_mmio field. I assume we
+can't do MMIO at GPA=0, right?
+
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 83fe0a78146f..8ee67fc23e5d 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -8828,6 +8828,28 @@ void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu)
+> >  }
+> >  EXPORT_SYMBOL_GPL(kvm_prepare_emulation_failure_exit);
+> >  
+> > +void kvm_prepare_ev_delivery_failure_exit(struct kvm_vcpu *vcpu, gpa_t gpa, bool is_mmio)
 > 
-> Thanks
-> Manoj
+> Hmm, I don't love the name.  I really don't like that event is abbreviated, and
+> I suspect many readers will be misinterpret "event delivery failure" to mean that
+> _KVM_ failed to deliver an event.  Which is kinda sorta true, but it's more
+> accurate to say that the CPU triggered a VM-Exit when vectoring/delivery an event,
+> and KVM doesn't have code to robustly handle the situation.
 > 
-> -----Original Message-----
-> From: Jakub Kicinski <kuba@kernel.org>
-> Sent: Tuesday, October 8, 2024 6:40 AM
-> To: Huang2, Wei <Wei.Huang2@amd.com>
-> Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org; linux-doc@vger.kernel.org; netdev@vger.kernel.org; Jonathan.Cameron@Huawei.com; helgaas@kernel.org; corbet@lwn.net; davem@davemloft.net; edumazet@google.com; pabeni@redhat.com; alex.williamson@redhat.com; gospo@broadcom.com; michael.chan@broadcom.com; ajit.khaparde@broadcom.com; somnath.kotur@broadcom.com; andrew.gospodarek@broadcom.com; Panicker, Manoj <Manoj.Panicker2@amd.com>; VanTassell, Eric <Eric.VanTassell@amd.com>; vadim.fedorenko@linux.dev; horms@kernel.org; bagasdotme@gmail.com; bhelgaas@google.com; lukas@wunner.de; paul.e.luse@intel.com; jing2.liu@intel.com
-> Subject: Re: [PATCH V7 4/5] bnxt_en: Add TPH support in BNXT driver
+> Maybe kvm_prepare_event_vectoring_exit()?  Vectoring is quite specific in Intel
+> terminology.
 > 
-> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+
+Yep, sounds good, I like that the name you suggested doesn't contain 'failure'
+part as essentially it is not a failure but an MMIO exit. Will update in V2.
+
+> > +{
+> > +	struct kvm_run *run = vcpu->run;
+> > +	int ndata = 0;
+> > +	u32 reason, intr_info, error_code;
+> > +	u64 info1, info2;
 > 
+> Reverse fir/x-mas tree for variables.  See "Coding Style" in
+> Documentation/process/maintainer-kvm-x86.rst (which will redirect you to
+> Documentation/process/maintainer-tip.rst, specifically "Variable declarations").
 > 
-> On Wed, 2 Oct 2024 11:59:53 -0500 Wei Huang wrote:
->> +     if (netif_running(irq->bp->dev)) {
->> +             rtnl_lock();
->> +             err = netdev_rx_queue_restart(irq->bp->dev, irq->ring_nr);
->> +             if (err)
->> +                     netdev_err(irq->bp->dev,
->> +                                "rx queue restart failed: err=%d\n", err);
->> +             rtnl_unlock();
->> +     }
->> +}
->> +
->> +static void __bnxt_irq_affinity_release(struct kref __always_unused
->> +*ref) { }
+
+Great, didn't know about that, thanks!
+
+> > +
+> > +	kvm_x86_call(get_exit_info)(vcpu, &reason, &info1, &info2, &intr_info, &error_code);
 > 
-> An empty release function is always a red flag.
-> How is the reference counting used here?
-> Is irq_set_affinity_notifier() not synchronous?
-> Otherwise the rtnl_lock() should probably cover the running check.
+> Wrap.  Though calling back into vendor code is silly.  Pass the necessary info
+> as parameters.  E.g. error_code and intr_info are unused, so the above is wasteful
+> and weird.
+> 
+
+I use it here as this function gets called from the common for svm/vmx
+code in the next patch, but as I can see from the next email you've already
+noticed that :)
+
+> > +
+> > +	run->internal.data[ndata++] = info2;
+> > +	run->internal.data[ndata++] = reason;
+> > +	run->internal.data[ndata++] = info1;
+> > +	if (is_mmio)
+> 
+> And this is where keying off MMIO gets weird.
+> 
+
+We still need to exclude one of the data elements when GPA is not known to be
+backwards compatible, so we can get rid of the `is_mmio` argument, but
+not from this `if` (unfortunately).
+
+Thank you so much for the review!
+
+Kind regards,
+Ivan Orlov
 
