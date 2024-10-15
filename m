@@ -1,112 +1,172 @@
-Return-Path: <linux-kernel+bounces-365505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7D499E365
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:07:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD2B99E36C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A30F2B21B12
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6824D1F23EAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86181E2031;
-	Tue, 15 Oct 2024 10:07:26 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECF01E3796;
+	Tue, 15 Oct 2024 10:08:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E006B155CB0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3508A1DE4FB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728986846; cv=none; b=qbAVUtjg7MV2Rj/He7i1RJn79byHenNqyyQptPzIrpUQXFRubAM0YUxkuyr2iBIPrelXQ/vo/4FHoWz4V2V6cJqDPLOx2Qb/BDehLmG0Q6DPZAbXYwMTnNvDg0Xo6arNDbRnaiqh5fehPFcrp2dftgpFUOMBMwbjOUruLRwQFfw=
+	t=1728986885; cv=none; b=JAhsjU91bAn3b8k1ORrNHcuwVtHj2KDScHuIMGhEbPneQHWxL+GnGAVXma61dQNjoJwdU/3oZUmm1H2MfVhdn5cd9yLGSrQzJ4YQt10X2Ks+cxKdp4aluZl2GEaXurtqO74rqCKXTwHbin+9hupKu10HrYe8j+f9kSuvACYs580=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728986846; c=relaxed/simple;
-	bh=BJtB8MWXsIQNS0vTJNxQDJbVaeSTry/iBJdz0mO6874=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AGN1pB6+GIZyd86mufDj5wZuCnLJDbqMUe+aeu9IHmfChDbW/urF2yx9j9OoEhpo42ogNkL1h82ZgcYbZziPQDpCY71wwf+WRewgMRhzMxFtZ+ARbYTDdxQcQL+RAI01pmzrFMztUdv+qIKUrYauyrJHo8T5WDy6gd0ai1Zjoto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3ae775193so38528795ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:07:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728986844; x=1729591644;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HvLlDdzWlqELfwvc9RKRh3E/6y1R6ap4spML5744gV4=;
-        b=K8AP8fc6iI+lsUwi3m6dCqmvaf6q0dpzHsku8eLLRr/L0qSGc3cxjXbE6/9thWjtnO
-         Y7839ckqWHIwPv/hO/89qvjjzbHM0qI0tk1e4FwSG8d4WnVVNXbrr5erGRPo1gSgeSab
-         Xuy8rGmJq3jfIxvo/mSZ0GW3XieMdVbQMiNivLOmsresbIdN1vS4mI9mhkbjd5O6aZ8G
-         k17ZLHAtjEK8WGbX4r+cEJ93cL3k40SwxEddvkLrHswkKsRVUQ+VR9sZfF/TcWILz+PK
-         Vrp+HoSVMGY0IHXwKVph5XuJuExUvMIfXqOwS0s6HSE84ikZu2Uv+j9dl84ZWM88hm3w
-         Qraw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpPXYqmVnUbz+8tu+qcLYG5gR9XVNiKTPlr3/T4msNUuHcsqtc5itRdNwONtIxgo+QJx0XoVrAb/qOsqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLoIojn2fS0grWBOLHtBqjXSHVTLf5oZJgYzNplQLgdd1JHDdS
-	ff3mFgIT90Dexnzdh4ufXCDHfp8txl4Xj+5a6bFw2S2YpczuEcT54Ciue97poACTyRp2BtvYuEJ
-	BE+8SBrUXuP1U8Myh9MZ1gmMCbvc3UG6lUjgx2BPllvFJD7hZqKX6JFE=
-X-Google-Smtp-Source: AGHT+IFevwuuuwoQevOeV7O7PwoCtBDM6E8VUrattDKZ4QxsbBYhLe+yeMHezFwHW7trvTGH5wDgSv8tVeoGpTn8w2HdkBeBuJVq
+	s=arc-20240116; t=1728986885; c=relaxed/simple;
+	bh=K2NbxgybNusi+SAnYvjfO09UJfWncABnQUFIl1zosII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W5ZIv5vFz/ri353l+HNYRLGYsxO5H0o6XKZzQOO5L4uP+9VpMhrDjZuQ+Ep2OIbqv/MCu3r0JMDRE1ypm5HJG5mV5IaCJ2PdoiMmJ19efliFnGunPg4DEXHtrpZGnjEHAi0E9TPsnd9sbulQX3HA/9mrKgxUtfa3nEwpTRLTdpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t0eSx-0002FM-Fu; Tue, 15 Oct 2024 12:07:47 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t0eSw-0020R2-PI; Tue, 15 Oct 2024 12:07:46 +0200
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 6A3BB3531D8;
+	Tue, 15 Oct 2024 10:07:46 +0000 (UTC)
+Date: Tue, 15 Oct 2024 12:07:46 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v8 0/5] v8: firmware: imx: driver for NXP secure-enclave
+Message-ID: <20241015-eminent-fat-muskrat-de8bbd-mkl@pengutronix.de>
+References: <20241015-imx-se-if-v8-0-915438e267d3@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1489:b0:3a3:af94:461f with SMTP id
- e9e14a558f8ab-3a3bcd95e9emr92313395ab.1.1728986844074; Tue, 15 Oct 2024
- 03:07:24 -0700 (PDT)
-Date: Tue, 15 Oct 2024 03:07:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670e3edc.050a0220.d9b66.014f.GAE@google.com>
-Subject: [syzbot] Monthly kernfs report (Oct 2024)
-From: syzbot <syzbot+list4a84ad01115222f5ebad@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fwx5wstgqxbiqtx4"
+Content-Disposition: inline
+In-Reply-To: <20241015-imx-se-if-v8-0-915438e267d3@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello kernfs maintainers/developers,
 
-This is a 31-day syzbot report for the kernfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kernfs
+--fwx5wstgqxbiqtx4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-During the period, 4 new issues were detected and 0 were fixed.
-In total, 21 issues are still open and 21 have been fixed so far.
+Hey Pankaj Gupta,
 
-Some of the still happening issues:
+please install "sparse", compile your driver with "C=3D1" and fix the
+following warnings:
 
-Ref  Crashes Repro Title
-<1>  264     Yes   WARNING in kernfs_remove_by_name_ns (3)
-                   https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
-<2>  183     No    possible deadlock in input_inject_event
-                   https://syzkaller.appspot.com/bug?extid=79c403850e6816dc39cf
-<3>  145     Yes   INFO: rcu detected stall in sys_openat (3)
-                   https://syzkaller.appspot.com/bug?extid=23d96fb466ad56cbb5e5
-<4>  92      Yes   WARNING in kernfs_get (5)
-                   https://syzkaller.appspot.com/bug?extid=2f44671e54488d20f0e6
-<5>  62      Yes   INFO: task hung in kernfs_dop_revalidate (4)
-                   https://syzkaller.appspot.com/bug?extid=da20d108162166514db6
-<6>  47      Yes   INFO: task hung in kernfs_add_one
-                   https://syzkaller.appspot.com/bug?extid=e4804edf2708e8b7d2a5
-<7>  44      Yes   INFO: task hung in fdget_pos
-                   https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
-<8>  13      Yes   INFO: task hung in kernfs_remove_by_name_ns (2)
-                   https://syzkaller.appspot.com/bug?extid=6d5664213a6db9a5a72c
-<9>  7       Yes   INFO: rcu detected stall in kernfs_fop_read_iter (4)
-                   https://syzkaller.appspot.com/bug?extid=c403e932e9c6662dd4f2
-<10> 4       No    WARNING in kernfs_new_node (3)
-                   https://syzkaller.appspot.com/bug?extid=306212936b13e520679d
+| drivers/firmware/imx/se_ctrl.c:347:63: warning: incorrect type in argumen=
+t 2 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:347:63:    expected void [noderef] __iomem=
+ *addr
+| drivers/firmware/imx/se_ctrl.c:347:63:    got unsigned char [usertype] *p=
+tr
+| drivers/firmware/imx/se_ctrl.c:379:58: warning: incorrect type in argumen=
+t 1 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:379:58:    expected void [noderef] __user =
+*to
+| drivers/firmware/imx/se_ctrl.c:379:58:    got unsigned char [usertype] *u=
+sr_buf_ptr
+| drivers/firmware/imx/se_ctrl.c:570:52: warning: incorrect type in argumen=
+t 2 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:570:52:    expected void const [noderef] _=
+_user *from
+| drivers/firmware/imx/se_ctrl.c:570:52:    got unsigned char [usertype] *
+| drivers/firmware/imx/se_ctrl.c:595:50: warning: incorrect type in argumen=
+t 1 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:595:50:    expected void const [noderef] _=
+_user *
+| drivers/firmware/imx/se_ctrl.c:595:50:    got unsigned int [usertype] *[a=
+ddressable] tx_buf
+| drivers/firmware/imx/se_ctrl.c:642:46: warning: incorrect type in argumen=
+t 1 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:642:46:    expected void [noderef] __user =
+*to
+| drivers/firmware/imx/se_ctrl.c:642:46:    got unsigned int [usertype] *[a=
+ddressable] rx_buf
+| drivers/firmware/imx/se_ctrl.c:653:27: warning: incorrect type in argumen=
+t 1 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:653:27:    expected void [noderef] __user =
+*to
+| drivers/firmware/imx/se_ctrl.c:653:27:    got void *
+| drivers/firmware/imx/se_ctrl.c:689:27: warning: incorrect type in argumen=
+t 1 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:689:27:    expected void [noderef] __user =
+*to
+| drivers/firmware/imx/se_ctrl.c:689:27:    got unsigned char [usertype] *
+| drivers/firmware/imx/se_ctrl.c:713:34: warning: incorrect type in argumen=
+t 2 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:713:34:    expected void const [noderef] _=
+_user *from
+| drivers/firmware/imx/se_ctrl.c:713:34:    got unsigned char [usertype] *
+| drivers/firmware/imx/se_ctrl.c:762:61: warning: incorrect type in argumen=
+t 2 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:762:61:    expected void const [noderef] _=
+_user *from
+| drivers/firmware/imx/se_ctrl.c:762:61:    got unsigned char [usertype] *[=
+addressable] [assigned] user_buf
+| drivers/firmware/imx/se_ctrl.c:782:27: warning: incorrect type in argumen=
+t 1 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:782:27:    expected void [noderef] __user =
+*to
+| drivers/firmware/imx/se_ctrl.c:782:27:    got unsigned char [usertype] *
+| drivers/firmware/imx/se_ctrl.c:808:34: warning: incorrect type in argumen=
+t 1 (different address spaces)
+| drivers/firmware/imx/se_ctrl.c:808:34:    expected void [noderef] __user =
+*to
+| drivers/firmware/imx/se_ctrl.c:808:34:    got unsigned char [usertype] *
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+regards,
+Marc
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+--fwx5wstgqxbiqtx4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may send multiple commands in a single email message.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcOPu8ACgkQKDiiPnot
+vG8zJwf/dU27FkKIisB5y+xIMvwJ5ep9HHPy45zI6E01BL/3owRzXNIKhz1d7XxR
+0kOjPYbIn2lTte6EXh+sBssMHpm6dI+kYNE329IzC/9q5JA7aBjxrvvT8JxzW14R
+hiti08klJ/sfLfndL2D1L0/HdqZVm5i13M+VrCzaBvfcSu17Wo0DP4IBprPziUjs
+4TMy4+4zp8E5dfTLkX6e+4W++/melV6CqI6EwsF2Y30mI0TXP40Ba/mHWFU6uNkm
+doD6097Yr85TNTwGmtS84qxSHVvk8UVoLrfQzTuKeb4VXHXGsr/FsJFD0K5dMvfW
+TpxF94cuajycIGXRZwCFokff6vRetw==
+=9+AC
+-----END PGP SIGNATURE-----
+
+--fwx5wstgqxbiqtx4--
 
