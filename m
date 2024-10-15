@@ -1,123 +1,88 @@
-Return-Path: <linux-kernel+bounces-365062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E03899DCFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 690CE99DD09
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0CCFB2163B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:46:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 064C5B21E70
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC92171E76;
-	Tue, 15 Oct 2024 03:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C4D1714CC;
+	Tue, 15 Oct 2024 03:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lj6S8VVR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tTiMym2h"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946C546B8;
-	Tue, 15 Oct 2024 03:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833EE46B8
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728963998; cv=none; b=iWW/HIvdD5epifiTCMIwN6ZRgoESKUY7XC34pxWFmgYB9jmUffFxhgxC8wY9QN80I2TvLJ3qasNQu30aGGAlfj9x5PwbleUwitpL3xYHGGATyvGgVIyQGHmT7Q835VttEBuf1Cz5I8jHH1/vjE1/JGI1QSOuEGv/CPpfdJCee0c=
+	t=1728964397; cv=none; b=IAmxplUhQ+ocRAdCNkQrYIrQzD1M2nC1KOzOquJJHFF69mV5+pooAMDOkzaeCwr4GZ65gIe2MXA9RhEhu20VpiWMCewjKuK2ArZy1uXaW7M2YMESbsciOnko1CqdV1uRxPxdZ1SYJ1L4CprtgCkctngLfudbLAlgDQTGAfIjhOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728963998; c=relaxed/simple;
-	bh=VhP4ufTp43pJg/B1YzAD8L/O5ZhgPE90KANbJg7mQno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QVmBBOqjoWrCLEsINyPAniBcLZXfAS8EXPcArVLM6HJzQRMurUto8yjxp3ZHecgOkBNW2NPl1AgDTS1x3OfUHK6SmS6/lrEtvuVIQg4cg5NCubPVIXK3QT8/KdAcxfangze7eAhgftVRZhg1gQC0uMX7VHmDPuOu2yKHZXXNn+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lj6S8VVR; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728963997; x=1760499997;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VhP4ufTp43pJg/B1YzAD8L/O5ZhgPE90KANbJg7mQno=;
-  b=lj6S8VVRdFFlUF7DscBtUFidf+3J41dgXnmXrGdNT7S2LFC/Yq4nvuOY
-   1EbqYBpXzomDa/KWYuNPugK6Zhr3hr5kJ6liSiO3EJ0LqU49kRU9qhMQN
-   n9Lbx+4iRLsTVUSYQDDtuqkTYGCPO0t5O1pHtiw+ZKzv2qfvTbG5rc8uS
-   qUnjipaEms/oc+2CL9fdAFfUeqA1card6bAhOhC98BTO0veJtmCqgOicB
-   8B7kYEuGe5/7tTIaiCvQbjRe/qEt95T8iGDoIONjZzrKZ2gxGMD8+JmDb
-   l3I0cttwJe8WE6fbVfG9XL5JmpiaVSReZNeOrTurK4JZvRZUdJ11eAvTb
-   Q==;
-X-CSE-ConnectionGUID: zz9aVldMS7W5QtnNsSM5hQ==
-X-CSE-MsgGUID: ezzSmEbtSCiPO7RRgiFp6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32030702"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="32030702"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 20:46:36 -0700
-X-CSE-ConnectionGUID: bwm9j0/VTpKek/bv8SBTww==
-X-CSE-MsgGUID: xHSe1yZgSUWFVMsljU7kNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
-   d="scan'208";a="82789775"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 20:46:36 -0700
-Date: Mon, 14 Oct 2024 20:52:33 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v2 05/13] platform/x86: hfi: Introduce AMD Hardware
- Feedback Interface Driver
-Message-ID: <20241015035233.GA28522@ranerica-svr.sc.intel.com>
-References: <20241010193705.10362-1-mario.limonciello@amd.com>
- <20241010193705.10362-6-mario.limonciello@amd.com>
+	s=arc-20240116; t=1728964397; c=relaxed/simple;
+	bh=GyoFiN/rXaMe/m+aaklpP07LqfN1T2+8ThFonOV2jgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nbl+Jr0B44MNkCc2zfgkHEP+YOgy8kP9uP4RJJxcAxFYuaZr5CZ+JPdjHRrYpb8HUCEVYijUnZCAgoNIt8TgOBV+AMzOxDgyE615MJydI4A/3hrlcXEluL7j3KcVuZWJ8eeA0TzkWy06DrQzKASWkWuVQ5kbSMXisLBO2jjJwIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tTiMym2h; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728964393; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=GyoFiN/rXaMe/m+aaklpP07LqfN1T2+8ThFonOV2jgk=;
+	b=tTiMym2hn0MQy3Ob3PPAInrEeTIWU4H3OFtbWtr2rJJOVvPArMXO8F0oprqJap0G1r3eW6wGpY0q5w4UAeO5PKTgBOngwBE4BDngjR0SfImf/zj2Ja/n2D9z982KjiF/0ILBGbYQSbXe/y9H1vlr7hfVjTCfmgT5uw5Hul6mVS0=
+Received: from 30.221.131.163(mailfrom:hongzhen@linux.alibaba.com fp:SMTPD_---0WHBoCoP_1728964391 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Oct 2024 11:53:12 +0800
+Message-ID: <2d76e36c-95d5-4eb2-9825-fa5e739ae139@linux.alibaba.com>
+Date: Tue, 15 Oct 2024 11:53:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010193705.10362-6-mario.limonciello@amd.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: fix unsupported blksize in fileio mode
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+References: <20241015033601.3206952-1-hongzhen@linux.alibaba.com>
+ <231e17e3-82c1-49f4-9cc1-b376b89205b3@linux.alibaba.com>
+From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+In-Reply-To: <231e17e3-82c1-49f4-9cc1-b376b89205b3@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 02:36:57PM -0500, Mario Limonciello wrote:
-> From: Perry Yuan <Perry.Yuan@amd.com>
-> 
-> The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
-> provide behavioral classification and a dynamically updated ranking table
-> for the scheduler to use when choosing cores for tasks.
-> 
-> There are two CPU core types defined: `Classic Core` and `Dense Core`.
-> "Classic" cores are the standard performance cores, while "Dense" cores
-> are optimized for area and efficiency.
-> 
-> Heterogeneous compute refers to CPU implementations that are comprised
-> of more than one architectural class, each with two capabilities. This
-> means each CPU reports two separate capabilities: "perf" and "eff".
-> 
-> Each capability lists all core ranking numbers between 0 and 255, where
-> a higher number represents a higher capability.
-> 
-> Heterogeneous systems can also extend to more than two architectural
-> classes.
-> 
-> The purpose of the scheduling feedback mechanism is to provide information
-> to the operating system scheduler in real time, allowing the scheduler to
-> direct threads to the optimal core during task scheduling.
-> 
-> All core ranking data are provided by the BIOS via a shared memory ranking
-> table, which the driver reads and uses to update core capabilities to the
-> scheduler. When the hardware updates the table, it generates a platform
-> interrupt to notify the OS to read the new ranking table.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
 
-I tried to find the HFI details on the documents in this "bug" but I could
-not find them. What document in specific could I look at?
+On 2024/10/15 11:47, Gao Xiang wrote:
+> Hi Hongzhen,
+>
+> On 2024/10/15 11:36, Hongzhen Luo wrote:
+>> In fileio mode, when blcksize is not equal to PAGE_SIZE,
+>> erofs will attempt to set the block size of sb->s_bdev,
+>> which will trigger a panic. This patch fixes this.
+>>
+>> Fixes: fb176750266a ("erofs: add file-backed mount support")
+>>
+>> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+>
+> File-backed mounts should support < PAGE_SIZE sizes.
+> You should just fix these cases instead.
+>
+> Thanks,
+> Gao Xiang
 
-Thanks and BR,
-Ricardo
+
+Okay, I will fix it later.
+
+---
+
+Thanks,
+
+Hongzhen
+
 
