@@ -1,172 +1,253 @@
-Return-Path: <linux-kernel+bounces-365209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BAD99DF00
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:03:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0C299DF08
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 09:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45721B23E1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88A721C219B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 07:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A54C18B46D;
-	Tue, 15 Oct 2024 07:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA5518B48D;
+	Tue, 15 Oct 2024 07:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="mBUVDk3d"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021107.outbound.protection.outlook.com [52.101.129.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpi73S7K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0C8175D54
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975777; cv=fail; b=UuPTT3xgePhcZdTiSR5sOQ0lUJL5FAUAjkrQ9FYqraKLGkUaIS8UEP0U2TG2Z3pfs0LbC8fzsxDxNy6MXxhxsAstarET07tW0tMPGOn6awt4D+N3v+yTYD+h6z6MIrRacqMW9i8vWXwyXPDiKM7iSmvFh92w6HSPDOb8NPLtlAM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975777; c=relaxed/simple;
-	bh=oWdoqbgU80W8/rXucY2Lhsia5RglJhx92ArKh8Btfzc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZoDeAPYFzTf5ZMdKX2k1dfvFFPSz3AVMENrVv92VBb5D4HLyhlevDBAJhea9w2Mva4dzIbDTUvOk7MAIGG3309CE9KSoeigSENp2dXejWveukdOW2NWotYj3V9nmxgwkIBAXxAjDZTkg0q/+P86cjJjCfT6s363PvBuHRoofRAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=mBUVDk3d; arc=fail smtp.client-ip=52.101.129.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QiFJAuTEojjoadD1gZierTPhzSboLbaVBLUODqZzaObusL9qPoZ+JnZiePHOXCsG27mb8erM/AQibo9BCsXu3kr6YKIeSxXJNlob7AG9gptpybPNGfmTdolKVIsrE+iqpORGDo2I+p8QFhPSRHVv6gH4pp2/kp+I2n3WmLw1wKpa4e22WK9/aZUfpsw+C2X+4Owp8yPjTkAa7RtofCH+e5DBRZqfsIaMKBLp/PCoOWlDN//DSCRg1hwOrepp8F3l3KJ6wcuKHMI1stKLhOSC4lRPGRtuiIYpk1YVf1ldiNDl1iVBgRNs7GLUbQQzG1NRp6zOyv+7ZMM1QAQcbXA4qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oWdoqbgU80W8/rXucY2Lhsia5RglJhx92ArKh8Btfzc=;
- b=BM+h7yvJo3lkyc2DYP2RpFfpF6lsUdhE4vbTgnnvmghCSjM9YlJkPlKvTGH9e5LnBtfEbA3zw0TF7ElkpFyITIQHzgPsTCt9wN/ufGWg28dgboRQEI0jgcfWICuewlDIjax8iDxOZDiU0u7QkvpYlHd4mxs/bPCX52PmSg8jd9Rh9G3ucC+gdlhqSTO8fwJngDvnM3xdQRviA00dkhWaKMgcrb3atRGzR6XfZuuxfNvoavRvx+BCtaOZO/Yz0q5eQx161g8fpu0k7LXXbb1RaLVsp3qj7nwvoTvapMQIlNUq3YSfl7Sbrd5aB9lhnKrN9cXIWNEG4VYaZHVDZRWd1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oWdoqbgU80W8/rXucY2Lhsia5RglJhx92ArKh8Btfzc=;
- b=mBUVDk3dJuef/8QpAAaf0pQdXeiir9t5kLXUwj9E6T80MFEZQal2Hp4PHADD9JeSWCZVQkOuO/FQDfla7u4tKy85v9i/fjGwFkQA1zViUvDlr30T3Pqii2TR9NHUQS0lXD+ZLvGPGAdRLZfZjzGAZGgcZWQvVew0NXiImUm/4BB3MlYzcLSDqVCwbW1/kco/XdEhXGkyFe5Erxgo8CJnyN9189Qx3tN/PY0yGadvYpQgelKKCHGUhgcxUQ6xoD8K52fU7b0xlqJBVCI3BvmYFkCkz2FzUmmSXsqNpzOFSIv7Lm2d7ztQJVLg8wKnkTqFwdpj42sKS7ROEp2PtZ5gCA==
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
- by SEZPR06MB6870.apcprd06.prod.outlook.com (2603:1096:101:19d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Tue, 15 Oct
- 2024 07:02:47 +0000
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28%4]) with mapi id 15.20.8069.009; Tue, 15 Oct 2024
- 07:02:47 +0000
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-CC: "davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "jacob.e.keller@intel.com"
-	<jacob.e.keller@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: [net-next] net: ftgmac100: corrcet the phy interface of NC-SI mode
-Thread-Topic: [net-next] net: ftgmac100: corrcet the phy interface of NC-SI
- mode
-Thread-Index: AQHbHqbS0/A8IRhvDkaGkGGfA6q0K7KHYRoAgAABTZA=
-Date: Tue, 15 Oct 2024 07:02:46 +0000
-Message-ID:
- <SEYPR06MB5134D9F5BF6DC62BD86A03B99D452@SEYPR06MB5134.apcprd06.prod.outlook.com>
-References: <20241015020610.1824763-1-jacky_chou@aspeedtech.com>
- <mtaia5jqcpyx4bbybsvqa3kyl7o6mlavbhn3jk5gdb42ftypxn@jeydtf7ldprv>
-In-Reply-To: <mtaia5jqcpyx4bbybsvqa3kyl7o6mlavbhn3jk5gdb42ftypxn@jeydtf7ldprv>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|SEZPR06MB6870:EE_
-x-ms-office365-filtering-correlation-id: c7742a1d-55da-4b97-5149-08dcece75fd9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?DlQoYTknu0cTZABRwa54LgRIRBEB4VCj/1jwkCq0MSWCKP6NPmTix/xiY7?=
- =?iso-8859-1?Q?GzxScK7a4v6UXBsJZWQMZ+Ax14qi7wll3Wv/uVQW+69x4KStWUlwlq62w0?=
- =?iso-8859-1?Q?tQAJCET52Lzq2TJAdhz+2kT7CWiu8rUCc0YASdM3jGRFfdZlk5fIT7MIU8?=
- =?iso-8859-1?Q?BOQxUkOYMsvVyY5VFdhRLInNXbvSXl49nd3aozxpSsNO45SeaEY3A2jsSL?=
- =?iso-8859-1?Q?26Z688r8r15SULtceOP9KZDFgrfTJ9523ZKt2xRacUAxxB5l1mKX9jiCai?=
- =?iso-8859-1?Q?YwLDPMijb8ecRFL82QqbFqSA5hQNrZfvr48bI6CkMsA5VL4e5omx1eLKwM?=
- =?iso-8859-1?Q?nDKj7y0ZmG+JWjY3y03kQbE/4toxUGGJpn58FfL1X1HpzvM0Tcevsz6IzQ?=
- =?iso-8859-1?Q?Fke/x9C+PJXr4fY+yEx7CAO0aAxwbVwF+2Thz07mxhDLXCgpFgKdhFwJ9B?=
- =?iso-8859-1?Q?3RQi2xvqeKqILxVgRnzOC0dOvYfi/OSbZUqq3rCX8AK7270/WJB7m0SqUa?=
- =?iso-8859-1?Q?pDOSavUXqz/fhbv/cZr/N2lSvT/a4AGntpAX3w+IN4FepT8XbhBOVzzxnb?=
- =?iso-8859-1?Q?ILV7Jqezuf6Elaf4lLs/m4UghCEykHvhqFGYzzfQY0Ae1VzEbPeq/oc+/b?=
- =?iso-8859-1?Q?UY/yKIUTdD9PtS2uSw2NgOEmqQEqm/Hehy790CXyZatWkpr0s9q1lfpieo?=
- =?iso-8859-1?Q?vlJfrBgx6yZF4dkU53kRgB48DzbXZpBPpr16vdzs85v1JZtAAUcppkzDhr?=
- =?iso-8859-1?Q?SDZrSWGETJarcHQqtP4j3I04heKnt9jjQLoUCbPznDIN3WBIzYVjyrKf1J?=
- =?iso-8859-1?Q?+pnRBAi2tSFXT7cOYX71nB+qkFDnaC7CxhCW18qXWXFOvswr8Xyygpn1+q?=
- =?iso-8859-1?Q?I1OvdTPZSX80xYSh7b2Hr8XhboY7w4ko82O6t6UupoOwz4OhL6XYMiAgpm?=
- =?iso-8859-1?Q?hNI0HVZwu4lsxKzfMdHBNCFELnKRq+TInrjY+W+0gYOkWs/ofQyUVUxphD?=
- =?iso-8859-1?Q?9JauF1ZnJrzEQ7eMitf2Lxodf8tstxAsIaeQnZCRmXQL+abMkPLARM6Svv?=
- =?iso-8859-1?Q?0fweIUs9KmBGAx/GgYsVWAxgZD2r29zRfMIna4mVDxy7gOLX3fiUfd4rEW?=
- =?iso-8859-1?Q?QBRbj82j2a5K54/QORWEqjb8yecuqAs9B0vzipBDoQ7i/0RL05qpH9n5la?=
- =?iso-8859-1?Q?7Ioq8JOPNhCLpHFcsEG9/I3A2xYJiyahqVRGDimZ2phrz0AVC+HZsImrl5?=
- =?iso-8859-1?Q?ESYW10nRJkrpFgwIVjd2/cFs2tV0jxZVCooN8etJXM2DibkCrOiJp3cuhr?=
- =?iso-8859-1?Q?5m0RSUIHQ1w/3goKVlb5xbFspyz3AZ6aiP8rH18CnA3vu9t42D7rD/md6v?=
- =?iso-8859-1?Q?E19nUS1qe4UrHzXYO4a61sNyrtr5/7UA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?xj19J8KB9tF7l8pI/ZcILRQOR8OIDiZRb4Azi6ZQWAscmYMlIKbOxcrHda?=
- =?iso-8859-1?Q?nbG7v8N2tNue4S3D598QsPZ8lB7drSruENwXpNTXDSmpzh5Rg+GMw94RpD?=
- =?iso-8859-1?Q?Q5u9cGZMe+NWxyIvwGXkEOKcC126UUQR8VbkDbyElJ/y3C0NINc0Dw4+NS?=
- =?iso-8859-1?Q?7y+oIEUBHtckghddxWAWgjX3T6dCNq17TqqGNzqI9TAeaH159N+Sdvud5u?=
- =?iso-8859-1?Q?TZBk5OVl8cnRVD3lxk6+YE8Qv4PGO9JrgbMG9ZAluHAP7LJJBtWMrFmw6y?=
- =?iso-8859-1?Q?hKpjGhyXcZVp/w8m9vPr18/dqp22y8jJ324SSA/ZDPnPspMslIg68+/TM1?=
- =?iso-8859-1?Q?Mkce9OXrNeeGtsdXorYAhQs1FG+PGjz4WvlhQ0GOg48f5IO7FDqwvI+WEU?=
- =?iso-8859-1?Q?aU+M5h/mlNaFtfGTp07lf0op9BWvYuK3b9Kbuxf7F3V9GseLHOm8MNRf4W?=
- =?iso-8859-1?Q?e5KChpfAirSG2SlxMVwRa8aVMxlUZcR8OmmMn0AOmzKeWi3AG5UWg5eSTM?=
- =?iso-8859-1?Q?UZZ7CHDarcFeYssd74w/xnqgjKDZoSvqSPDotxNAFQyRflwdykiTe75JPP?=
- =?iso-8859-1?Q?PYm/0Urt2Zy5kl3P9tCU65US6f8PW7QtJRSw0fz+b4LMYE+78DW61aMg43?=
- =?iso-8859-1?Q?C6VI+P0Fu/DKee56IPw0ps5JCbldxLRdpytnmfSzJQ3IgTAV86Me3sE/WC?=
- =?iso-8859-1?Q?DkEMeIOtclO8KzgnUWgHMxGN8H7NwJapQSoNFfF9uEi7QNf8mqGEv+B1a8?=
- =?iso-8859-1?Q?krflUVdYIi07FA0hCHKSV578I41UwvrGcj00DxI7xEfKb2mRZo6qC8UpxI?=
- =?iso-8859-1?Q?FvJeI/QYOdmQugannCCj2US4RU9PfREWrkdZy0aWB8bDvz1bab9PnC22k0?=
- =?iso-8859-1?Q?U1UlSqOG4eyB1jEPJeAhghkibaBjBPnoWXgTvQhyulDywfMbzQyloTa9U8?=
- =?iso-8859-1?Q?wqT/6BqviOYZZG5QWiUmgcxCogmnSxv7SAPf23xBcctceZqnOSCc6Q1qTI?=
- =?iso-8859-1?Q?FTKEO2zbp+w+HBLxRduBKLxOVQFUbCwe228g2Q0O8eEqMgP+f+WKS7ofV+?=
- =?iso-8859-1?Q?djU2COHJwKxSqB5BaYONJt7QmnQqg08bWkWa1btoJqXJIiMGlxtEG1OMky?=
- =?iso-8859-1?Q?lPn5Rngd/zhvgH1qangj0DHFzwVx/puT8FLvruyqzizIKjtuMF4xYDk7Ff?=
- =?iso-8859-1?Q?pOP1ADaOLBWAqZJy5NKkK1idtAwKBiKQq/wY6XG95KrN/ZvCqL2zNv/wd9?=
- =?iso-8859-1?Q?ek1I4joa0HtEacCBNjsQlvJuMzVFhYbS0yKGx9HLugs09YKJingNY8M4dk?=
- =?iso-8859-1?Q?RxMN5m/XZQav2a1Aj+Df8NCWCgpvsmeK3uiPKLmTv7/enkmAcMsR0DRAqH?=
- =?iso-8859-1?Q?DQ1bPxDIZ+8C9y3rAOD9qSrvr4LaX9n579mEGQiYvLWIL7+Q7UxTEz3sN9?=
- =?iso-8859-1?Q?aBQLJk0+rUDzHN4+JS+xtUf2w3a0LIZ3/n1rqOpFYOP+0LhPzrkLtlmq3C?=
- =?iso-8859-1?Q?rtBjlYt7x7eeDjLMeuBkUA2QTSp96NxKFYy+Z1DDyf+fVNI/qj03LJuizO?=
- =?iso-8859-1?Q?/1fPYTZ/OR5b2QWTiwcZyirMelJuCFgm9tClfoyPP+BAEA8cgfbwWt/r7N?=
- =?iso-8859-1?Q?iZuTA0EBIjHA+ntxdo+wAcuYA7NbLHOIBk?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5120F137930;
+	Tue, 15 Oct 2024 07:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728975834; cv=none; b=DJqAOdjwoKbxAPWY94GZNnnIQfNKgfsqdPJOJLohnguyfW2SevSs4JgDZng8AWG+yjOfdyAoMLX9YL0hY/dTHwyU2mltAKYXyE+ZfSmgIOF03EDscCNEXkbZgPdyczwOV4nPcu36kUEGLXfMfuICWPiiXbQs59sB7OcqjrJddIU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728975834; c=relaxed/simple;
+	bh=QO4NMjC2wozHcV6ZyuyuXOsL0Tv4CXT07K6LUqAlgDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JNicFvwBEauUJ58IIvuoNNpEbngymRyIgHjH/jn7aHKstTkHGkw/O0/piFbX1fAdMUvk1a8KUZdeIcHSKmq4oDnw+oklBHhloPvWAX7AdGD29G44493kIU1XSGF/aYTnYnyaMY9pd0iq3KbkZTWflz3mK3g6aFxyFxKGbJ7++lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpi73S7K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD84C4CEC7;
+	Tue, 15 Oct 2024 07:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728975833;
+	bh=QO4NMjC2wozHcV6ZyuyuXOsL0Tv4CXT07K6LUqAlgDs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kpi73S7Kp/Acv8ERbbtjJJ1bD9gw/Tyr2FESk/h0TKwe/kXgCA/lxkfXl/nx9X+yT
+	 sHmQptI5F5+obUAKDNKrHEfOfoyeh9jUI8U6QU6Ni1xbO0WTXl44wQZhw/a9CJVt6l
+	 UyXq1HAS6kPWGaG6Eqvz/vk08Pa85H/NpWnwdp4JTEbL99EJ1B3Wo/k7iML35g9R47
+	 xa/Fan5n9JHdkK8TA3B73acnmx1vDPcp5pRshBmZi5kmUp/V3I3pKIAE9u2R1czn+V
+	 YW4P5dpOFCgNM0JAmx9XYSLwX64j8lHtZ1wbv3El97zXjgXJ1yza/oXC1RmADCfQpx
+	 TpDH1BncWXiqQ==
+Message-ID: <a83f7c01-2375-4fe5-a74c-fe7b644fd949@kernel.org>
+Date: Tue, 15 Oct 2024 09:03:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7742a1d-55da-4b97-5149-08dcece75fd9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2024 07:02:46.9102
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZDV4A1xpLPxQ7cYwyyQwicXrBaVljdGxM6qC47lUd88+ue8OQnNqHu0CookMW6CEEJbNimjfurCrTUNpgn2/HnZk+R8fhcgbY11f6TXaGYY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6870
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 7/7] arm64: boot: dts: Add initial support for Samsung
+ Galaxy Note20 5G (c1s)
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, david@mainlining.org
+References: <20241015062746.713245-1-igor.belwon@mentallysanemainliners.org>
+ <20241015062746.713245-8-igor.belwon@mentallysanemainliners.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241015062746.713245-8-igor.belwon@mentallysanemainliners.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Uwe,
+On 15/10/2024 08:27, Igor Belwon wrote:
+> Add initial support for the Samsung Galaxy Note20 5G (c1s/SM-N981B)
+> phone. It was launched in 2020, and it's based on the Exynos 990 SoC. It
+> has only one configuration with 8GB of RAM, albeit storage options may
+> differ.
+> 
+> This device tree adds support for the following:
+> 
+> - SimpleFB
+> - 8GB RAM
+> - Buttons
+> 
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> ---
+>  arch/arm64/boot/dts/exynos/Makefile          |   1 +
+>  arch/arm64/boot/dts/exynos/exynos990-c1s.dts | 111 +++++++++++++++++++
 
-Thanks for your friendly reminder.
-I am sorry it was a typo.
-I will correct it on next version.
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-Thanks,
-Jacky
+>  2 files changed, 112 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-c1s.dts
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> index 18f5a3eed523..7a934499b235 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -8,5 +8,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+>  	exynos7885-jackpotlte.dtb	\
+>  	exynos850-e850-96.dtb		\
+>  	exynos8895-dreamlte.dtb		\
+> +	exynos990-c1s.dtb		\
+>  	exynosautov9-sadk.dtb		\
+>  	exynosautov920-sadk.dtb
+> diff --git a/arch/arm64/boot/dts/exynos/exynos990-c1s.dts b/arch/arm64/boot/dts/exynos/exynos990-c1s.dts
+> new file mode 100644
+> index 000000000000..7bff098d7982
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos990-c1s.dts
+> @@ -0,0 +1,111 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> +/*
+> + * Samsung Galaxy Note20 5G (c1s/SM-N981B) device tree source
+> + *
+> + * Copyright (c) 2024, Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> + */
+> +
+> +/dts-v1/;
+> +#include "exynos990.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +/ {
+> +	model = "Samsung Galaxy Note20";
+> +	compatible = "samsung,c1s", "samsung,exynos990";
+> +
+> +	chosen {
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		framebuffer0: framebuffer@f1000000 {
+> +			compatible = "simple-framebuffer";
+> +			reg = <0 0xf1000000 (1080 * 2400 * 4)>;
+> +			width = <1080>;
+> +			height = <2400>;
+> +			stride = <(1080 * 4)>;
+> +			format = "a8r8g8b8";
+> +		};
+> +	};
+> +
+> +	memory@80001000 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x80000000 0x3ab00000>,
+> +		      /* Memory hole */
+> +		      <0x0 0xc1200000 0x1ed80000>,
+> +		      /* Memory hole */
+> +		      <0x0 0xe1900000 0x1a8e9800>;
+> +	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		cont_splash_mem: framebuffer@f1000000 {
+> +			reg = <0 0xf1000000 0x13c6800>;
+> +			no-map;
+> +		};
+> +
+> +		abox_reserved: audio@f7fb0000 {
+> +			reg = <0 0xf7fb0000 0x2a50000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		pinctrl-0 = <&key_power &key_voldown &key_volup>;
+> +		pinctrl-names = "default";
+> +
+> +		power-key {
+> +			label = "Power";
+> +			linux,code = <KEY_POWER>;
+> +			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
+> +			wakeup-source;
+> +		};
+> +
+> +		voldown-key {
+> +			label = "Volume Down";
+> +			linux,code = <KEY_VOLUMEDOWN>;
+> +			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		volup-key {
+> +			label = "Volume Up";
+> +			linux,code = <KEY_VOLUMEUP>;
+> +			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+
+Stray blank line
+
+> +	};
+> +};
+> +
+> +&oscclk {
+> +	clock-frequency = <26000000>;
+> +};
+> +
+
+
+Best regards,
+Krzysztof
 
 
