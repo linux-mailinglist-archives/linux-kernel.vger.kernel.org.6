@@ -1,152 +1,121 @@
-Return-Path: <linux-kernel+bounces-365563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CD399E46C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:45:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDDB99E46D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA9A1F21A29
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2621C21F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61AB1E630D;
-	Tue, 15 Oct 2024 10:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439DD1E3764;
+	Tue, 15 Oct 2024 10:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="HHSFu0Zb"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TKpc3woS"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10701E32D0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AF5170826
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 10:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989103; cv=none; b=HCBs/rKicMDFHwZsYDyzldkG67p7GdmLdUxHfD2kS98uLSlDZOzN3/ZyjPb2d5SpsasiLgWL/JHis60FZiCQFYiI92YvPqVnuitZg62qFZxFwuAdsFxfsnOxIYttJ64nPrIHnVd77sb+ofzpju+pooTR+fe3Ly9v3mOaVY5iAJk=
+	t=1728989136; cv=none; b=V81kPHBM2J0OKx6bLmBIaeUceTZ0umQUunvwAtZY8PYgB8z/XEg6UMMyPERS1JGR/DsrzPTkX94qr/TPwycGb4es9s08VsWqzIJ2R4OmhbFCbqSNH22AY0A9kgHb2SNZnzcsXsVBgDQLSifuipaxgI8PufvRi25/hcEhQRnvSV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989103; c=relaxed/simple;
-	bh=w/WDsGlXUC4WQB+TvCOJP04BD85zjGZUzm0yF1i3HlA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=heR03V72bk9AWGdBESWpjNgPo3J/+DtbuX2cCaiTXtJ3RuvlOLDoLg62AiZNwb1bmBCjppjP7WivsFOKlLo9kmay0TRVI00TAln7A9ec82BRfk+6mjoYbK43PJ92Keolksg1fFp+1+S5rkFNYNqMAmXgrk/4D0VPQaBrX/yYj+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=HHSFu0Zb reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+	s=arc-20240116; t=1728989136; c=relaxed/simple;
+	bh=2RUa+Wp78UJcnBTaHrcjGmfuvysTndxMqeQSnUj1y4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E8WcgMmfB6WtZ/TX8gBzpwbSiT5EBbT/UNfkPUof9TyF2wo5pEYHhT/Qnspk/g0f37IGeqeRVBP1iYVTwoINvLiTJMbjqOATQE4kIZJjYg2SkzZhzuWU31G5nv86/bRNC7tQQV/dIgy+bbYY8uS67Nm3Q9knry92j6RdIpSezs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TKpc3woS; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a2cdc6f0cso61969066b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 03:45:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=w/WDsGlXUC4WQB+TvCOJP04BD85zjGZUzm0yF1i3HlA=;
-  b=HHSFu0Zb5BIX+7jgFzIkoZwMbWbmVAZBaNesch89kC1a2TLfEUKR/1nw
-   C/AhXw7VfgRZoC/RtHgp+I5wglBwE0KCA364TA9hupNV1ZT8xfsGZ7usk
-   2ewg+MROIwAUSHkeWxPISlI82PAYVmjIxnJVbNbPpOqJ0E7Piy/Mk0XQm
-   O8jxgg8U+Hb4xG0kfV6cfQOKqIFoLo6w34Gj76N3s1Z43/PoO/dxW7uVF
-   qhdypndP/EhqBq5p783ZslbC9N0hjn0KtPDDrkgqVc//A3KauphQbCVr/
-   fPKKx8iEkJHstwTPcmVvfxmWhh1QRX9YuzWmSrGdrBu6lpIWiZQOkv9ma
-   g==;
-X-CSE-ConnectionGUID: MceUQWIbQ+aXS067n3EL8A==
-X-CSE-MsgGUID: Fj+CEXsvQ++Jea+32boxBw==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 15 Oct 2024 18:44:57 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 49FAir1k051183;
-	Tue, 15 Oct 2024 18:44:53 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 15 Oct 2024 18:44:52 +0800
-Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
- TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
- 15.01.2507.039; Tue, 15 Oct 2024 18:44:52 +0800
-From: <Hermes.Wu@ite.com.tw>
-To: <dmitry.baryshkov@linaro.org>
-CC: <treapking@chromium.org>, <Kenneth.Hung@ite.com.tw>, <Pet.Weng@ite.com.tw>,
-        <angelogioacchino.delregno@collabora.com>,
-        <dri-devel@lists.freedesktop.org>, <jernej.skrabec@gmail.com>,
-        <jonas@kwiboo.se>, <Laurent.pinchart@ideasonboard.com>,
-        <linux-kernel@vger.kernel.org>, <rfoss@kernel.org>
-Subject: RE: [PATCH v5 00/10]drm/bridge: it6505: fix HDCP CTS fail items and
- add MCCS support
-Thread-Topic: [PATCH v5 00/10]drm/bridge: it6505: fix HDCP CTS fail items and
- add MCCS support
-Thread-Index: AQHbHkIrffFY0R32qUmdgv9WFdJjGbKHoDVA
-Date: Tue, 15 Oct 2024 10:44:52 +0000
-Message-ID: <145004ad363c42eb87e321cd88b00eea@ite.com.tw>
-References: <20241001064305.32180-1-Hermes.Wu@ite.com.tw>
- <jd2wxdsgcgqhiek557i32c7god3cb2ic6bovyrmwsljkqtdofb@lrerfednnobl>
-In-Reply-To: <jd2wxdsgcgqhiek557i32c7god3cb2ic6bovyrmwsljkqtdofb@lrerfednnobl>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: 52B9A7E3246D09DEEC1EFEB01942D9790D5F17591F9EFEB804913B1A1BEEEBD52002:8
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google; t=1728989133; x=1729593933; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TCL9tE7kD/pEAlw/bIpW3296DIJpWExNiDbcmpjDgj8=;
+        b=TKpc3woSI8G0lsZy7MRjDx4BQlq1YfNnEb0d2nI5J4oviCb6w6SbqWbTOjJmkmXAye
+         vwIyo4fu6JgF7+ub8nAAOAZHhoSZIuPuLe46RRvZcVAUlSBDZqKe4QU1qyeEOzmiTAZQ
+         FLoSkdbEDp7TtfTnw13mAj9jVbK9Bbi4XpofaLtZlo6OAE6uq80aTPug7i4t2ko7bxIV
+         A6J7SU094mreEuxcTImfKFgxGvBg5CoDGcBS4+ipaqIot7FI8GlK7QPBMqyT7YhvdixT
+         cKedhCqcoapObKdIXS+6ZUu6AR4wXMg2dofdx02YE5gvmqoKF1Y/s7V771sb3CNcmRVE
+         TOVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728989133; x=1729593933;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCL9tE7kD/pEAlw/bIpW3296DIJpWExNiDbcmpjDgj8=;
+        b=VyE48+0Uv69ba35rS8OQxbcVxtGRLuf0SRiYNLrZQ99ZEmrk9JR5A3+ckhuVMuIlDk
+         S8X7wifNT+8835RrH5VT7ztQ9sLPqzUBA1Alh1ltsa0vZ94HENzRXevPbV/ue1jCO/0q
+         XDUQomKs532RB32apUUzHEIZnji+h/fqeMb5pSrqE4BFrv/Q6ZIexBAGvhY/d5BoqA86
+         HSVhWDtAwNiO7xPW8cyPET/xayge5PUKptvGoDyr0vGjYQtChEs6cs4w78WHcN27NKgZ
+         YX0A6y4HQ2xIbX0ft1xkmfxFUVgcBrS+U/SOjfSSb7Oy6hB1Ki7vMqtLbL4mhT5eN5YO
+         TjHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSekIPeBsC/RkWtTogfpMPwLMc4PojTEKb+wUik2zYTF/TS34tdpJFi9jusTeRgUGODoGvoQtt1miFBq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1BGBAU79aS08aXNifavfQZkRhNcvSM3vu61PR9saqT7uqu3oF
+	WUUHy6D7B8WcBanhdSQJWEFlM7vrCqnaXUkkzC3Y1XnPzyV7Q1CcjqnH/YIwpPc=
+X-Google-Smtp-Source: AGHT+IGr2iqgWL4Av+20XWPNQ/ZE7fyuLmJsKSn2ZOfDWIZori+kUOfJFFddL5wMKnYz/zgwCRipDQ==
+X-Received: by 2002:a17:907:7e8e:b0:a9a:61d:7084 with SMTP id a640c23a62f3a-a9a061d7325mr751772566b.50.1728989133267;
+        Tue, 15 Oct 2024 03:45:33 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29843318sm56079066b.150.2024.10.15.03.45.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 03:45:32 -0700 (PDT)
+Date: Tue, 15 Oct 2024 13:45:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com,
+	sprasad@microsoft.com, stfrench@microsoft.com, tom@talpey.com,
+	bharathsm@microsoft.com, nathan@kernel.org, ndesaulniers@google.com,
+	morbo@google.com, justinstitt@google.com,
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] smb: client: fix possible double free in smb2_set_ea()
+Message-ID: <c0afa02b-991c-4601-bacb-13ace9cb96f2@stanley.mountain>
+References: <20241015102036.2882322-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:mse.ite.com.tw 49FAir1k051183
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241015102036.2882322-1-suhui@nfschina.com>
 
-Pg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogRG1pdHJ5IEJhcnlzaGtvdiA8
-ZG1pdHJ5LmJhcnlzaGtvdkBsaW5hcm8ub3JnPiANCj5TZW50OiBNb25kYXksIE9jdG9iZXIgMTQs
-IDIwMjQgMTA6MDYgUE0NCj5UbzogSGVybWVzIFd1ICinZKjOp7spIDxIZXJtZXMuV3VAaXRlLmNv
-bS50dz4NCj5DYzogUGluLXllbiBMaW4gPHRyZWFwa2luZ0BjaHJvbWl1bS5vcmc+OyBLZW5uZXRo
-IEh1bmcgKKx4rmGt2ykgPEtlbm5ldGguSHVuZ0BpdGUuY29tLnR3PjsgUGV0IFdlbmcgKK/Opcmq
-4ikgPFBldC5XZW5nQGl0ZS5jb20udHc+OyBBbGxlbiBDaGVuIDxhbGxlbi5jaGVuQGl0ZS5jb20u
-dHc+OyBBbmdlbG9HaW9hY2NoaW5vIERlbCBSZWdubyA8YW5nZWxvZ2lvYWNjaGluby5kZWxyZWdu
-b0Bjb2xsYWJvcmEuY29tPjsgb3BlbiBsaXN0OkRSTSBEUklWRVJTIDxkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnPjsgSmVybmVqIFNrcmFiZWMgPGplcm5lai5za3JhYmVjQGdtYWlsLmNv
-bT47IEpvbmFzIEthcmxtYW4gPGpvbmFzQGt3aWJvby5zZT47IExhdXJlbnQgUGluY2hhcnQgPExh
-dXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT47IG9wZW4gbGlzdCA8bGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZz47IFJvYmVydCBGb3NzIDxyZm9zc0BrZXJuZWwub3JnPg0KPlN1Ympl
-Y3Q6IFJlOiBbUEFUQ0ggdjUgMDAvMTBdZHJtL2JyaWRnZTogaXQ2NTA1OiBmaXggSERDUCBDVFMg
-ZmFpbCBpdGVtcyBhbmQgYWRkIE1DQ1Mgc3VwcG9ydA0KPg0KPk9uIFR1ZSwgT2N0IDAxLCAyMDI0
-IGF0IDAyOjQyOjU5UE0gKzA4MDAsIEhlcm1lcyBXdSB3cm90ZToNCj4+IEZyb206IEhlcm1lcyBX
-dSA8SGVybWVzLnd1QGl0ZS5jb20udHc+DQo+PiANCj4+IFRoaXMgaXMgYSB2NSBwYXRjaC1zZXQu
-DQo+DQo+UGxlYXNlIGNoZWNrIHRoZSB3YXkgeW91IGFyZSBzZW5kaW5nIHlvdXIgcGF0Y2hlcy4g
-Rm9yIHNvbWUgcmVhc29uIG15DQo+ZW1haWwgY2xpZW50IGxpc3RzIHBhdGNoZXMgMC00IHNlcGFy
-YXRlbHksIHBhdGNoZXMgNi04IGFzIGEgc2VwYXJhdGUNCj50aHJlYWQgYW5kIHBhdGNoZXMgNSwg
-OSwgMTAgYXMgaW5kaXZpZHVhbCBwYXRjaGVzLiBQbGVhc2UgdXNlIHNpbmdsZSBnaXQNCj5zZW5k
-LWVtYWlsIGNvbW1hbmQgdG8gc2VuZCB0aGUgd2hvbGUgcGF0Y2hzZXQuDQoNClNlbmRpbmcgcGF0
-Y2hlcyB1c2UgZ2l0IHNlbmQtZW1haWwgdmlhIHNtdHAgc2VydmVyIGluIGEgc2hvcnQgcGVyaW9k
-IG9mIHRpbWUNCnJlYWNoIGxpbWl0cy4NCg0KTmV4dCBwYXRjaGVzIHdpbGwgdHJ5IHRvIHVzZSB3
-ZWIgc3VibWlzc2lvbiBlbmRwb2ludA0KDQo+PiANCj4+IFRoZXJlIGFyZSBsb3RzIG9mIGZhaWx1
-cmUgaXRlbXMgd2hpbGUgcnVubmluZyBIRENQIENUUyB1c2luZyBVTklHUkFGIERQUi0xMDAuDQo+
-PiBJbiBPcmRlciB0byBmaXggdGhvc2UgZmFpbHVyZXMsIEhEQ1AgZmxvdyBuZWVkcyB0byBiZSBj
-aGFuZ2VkLg0KPj4gDQo+PiBUaGUgRGlzcGxheVBvcnQgQVVYIHByb3RvY29sIHN1cHBvcnRzIEky
-QyB0cmFuc3BvcnQuDQo+PiBJbiBPcmRlciB0byBzdXBwb3J0IE1DQ1MgdmlhIHRoZSBhdXggY2hh
-bm5lbCwgdGhlIGF1eC1pMmMgb3BlcmF0aW9uIGlzIGFkZGVkLg0KPj4gDQo+PiB2NCAtPnY1Og0K
-Pj4gCS1hZGQgbW9yZSBtZXNzYWdlcyBmb3IgY2hhbmdlcy4NCj4+IAktWzIvMTBdIG1vZGlmaWVk
-IEFVWCB0cmFuc2ZlciBkYXRhIHNpemUganVkZ21lbnQuDQo+PiAJCWNoYW5nZSBmb3ItbG9vcCB0
-byBkby13aGlsZS4NCj4+IAktWzcvMTBdIGNoYW5nZSBmb3ItbG9vcCB0byBkby13aGlsZS4NCj4+
-IAktWzkvMTBdIGNoYW5nZSB3YWl0IHRpbWVyIHdpdGggdGltZXJfYWZ0ZXIoKQ0KPj4gDQo+PiAJ
-bGlua3M6DQo+PiAJaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vbG9yZS5rZXJu
-ZWwub3JnL2FsbC8yMDI0MDkyNjA3NDc1NS4yMjE3Ni00LUhlcm1lcy5XdUBpdGUuY29tLnR3L19f
-OyEhSHRuTEU4QSFBSEd3aEx1VTZheEczRTYwLUZjMU01Y1FWY19FVXdna2xuTjFuYzRZZURQM3d2
-dFZ6VENvOEkydEVjdy1hRlNETHhFLVRERGpKZ1FIdzZSWUlmZUpmNEI0SkVURSQgDQo+PiAJaHR0
-cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI0
-MDkyNjA3NTEzNC4yMjM5NC0xLUhlcm1lcy5XdUBpdGUuY29tLnR3L19fOyEhSHRuTEU4QSFBSEd3
-aEx1VTZheEczRTYwLUZjMU01Y1FWY19FVXdna2xuTjFuYzRZZURQM3d2dFZ6VENvOEkydEVjdy1h
-RlNETHhFLVRERGpKZ1FIdzZSWUlmZUpmMWVwX2Q0WCQgDQo+PiANCj4+IHYzIC0+djQ6DQo+PiAJ
-LXNwbGl0IGNoYW5nZXMgIGludG8gcGF0Y2hlcy4NCj4+IA0KPj4gdjItID4gdjM6DQo+PiAJLXNw
-bGl0IGF1eCByZWFkICBLU1YgZnVuY3Rpb24gdG8gYSBwYXRjaC4NCj4+IAktWzEvM10gbmV3IGlu
-IHYzDQo+PiAJLVsyLzNdIGFkZCBkZXNjcmlwdGlvbiBvZiBwYXRjaA0KPj4gDQo+PiB2MSAtPiB2
-MiA6DQo+PiAJLSBpZ25vcmVkLg0KPj4gDQo+PiANCj4+IA0KPj4gSGVybWVzIFd1ICgxMCk6DQo+
-PiAgIGRybS9icmlkZ2U6IGl0NjUwNTogQ2hhbmdlIGRlZmluaXRpb24gb2YgQVVYX0ZJRk9fTUFY
-X1NJWkUNCj4+ICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBpbXByb3ZlIEFVWCBvcGVyYXRpb24gZm9y
-IGVkaWQgcmVhZA0KPj4gICBkcm0vYnJpZGdlOiBpdDY1MDU6IGFkZCBBVVggb3BlcmF0aW9uIGZv
-ciBIRENQIEtTViBsaXN0IHJlYWQNCj4+ICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBDaGFuZ2UgZGVm
-aW5pdGlvbiBNQVhfSERDUF9ET1dOX1NUUkVBTV9DT1VOVA0KPj4gICBkcm0vYnJpZGdlOiBpdDY1
-MDU6IGZpeCBIRENQIEJzdGF0dXMgY2hlY2sNCj4+ICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBmaXgg
-SERDUCBlbmNyeXB0aW9uIHdoZW4gUjAgcmVhZHkNCj4+ICAgZHJtL2JyaWRnZTogaXQ2NTA1OiBm
-aXggSERDUCBDVFMgS1NWIGxpc3QgcmVhZCB3aXRoIFVOSUdSQUYgRFBSLTEwMC4NCj4+ICAgZHJt
-L2JyaWRnZTogaXQ2NTA1OiBmaXggSERDUCBDVFMgY29tcGFyZSBWIG1hdGNoaW5nDQo+PiAgIGRy
-bS9icmlkZ2U6IGl0NjUwNTogZml4IEhEQ1AgQ1RTIEtTViBsaXN0IHdhaXQgdGltZXINCj4+ICAg
-ZHJtL2JyaWRnZTogaXQ2NTA1OiBhZGQgSTJDIGZ1bmN0aW9uYWxpdHkgb24gQVVYDQo+PiANCj4+
-ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2l0ZS1pdDY1MDUuYyB8IDMzNCArKysrKysrKysrKysr
-KysrKysrKysrKy0tLS0tDQo+PiAgMSBmaWxlIGNoYW5nZWQsIDI3NyBpbnNlcnRpb25zKCspLCA1
-NyBkZWxldGlvbnMoLSkNCj4+IA0KPj4gLS0gDQo+PiAyLjM0LjENCj4+IA0KPg0KPi0tIA0KPldp
-dGggYmVzdCB3aXNoZXMNCj5EbWl0cnkNCj4NCj4NCkJSLA0KSGVybWVzDQo=
+On Tue, Oct 15, 2024 at 06:20:37PM +0800, Su Hui wrote:
+> Clang static checker(scan-build) warning：
+> fs/smb/client/smb2ops.c:1304:2: Attempt to free released memory.
+>  1304 |         kfree(ea);
+>       |         ^~~~~~~~~
+> 
+> There is a double free in such case:
+> 'ea is initialized to NULL' -> 'first successful memory allocation for
+> ea' -> 'something failed, goto sea_exit' -> 'first memory release for ea'
+> -> 'goto replay_again' -> 'second goto sea_exit before allocate memory
+> for ea' -> 'second memory release for ea resulted in double free'.
+> 
+> Re-initialie 'ea' to NULL near to the replay_again label, it can fix this
+> double free problem.
+> 
+> Fixes: 4f1fffa23769 ("cifs: commands that are retried should have replay flag set")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+> v2: 
+> - Move 'ea = NULL' near to the replay_again label.(Dan's suggestion)
+
+Thanks!
+
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
 
