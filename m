@@ -1,273 +1,178 @@
-Return-Path: <linux-kernel+bounces-365136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F61299DE0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:16:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C5D99DE0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC8F28187C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:16:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 988DF1C20FDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AA318991B;
-	Tue, 15 Oct 2024 06:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9098E189B82;
+	Tue, 15 Oct 2024 06:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zQQGTXgI"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JT9y5awk"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0225A175562;
-	Tue, 15 Oct 2024 06:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DA01591EA;
+	Tue, 15 Oct 2024 06:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728972959; cv=none; b=cXk3xyrxar+IfBvBFAJuGHgFoo/6Q74QmMfR3jxt0vIeo96xNwdf8sCMncspSwNCvcZ2lpKsuJOasMMdXZyq8XiMmqLef1n04urf+dVcWHNAJFgB1mL99fcoVmcnbHqUnTv/93EmlacKWibn84+xACzhRGGUI1lzmjKUvW4oOdc=
+	t=1728972983; cv=none; b=Ey9SHiq+RSfAEX8H+RaqK43oGTqi5JFVAzdF7RVP6iGenFIeSmWNDxGP6mpp1KHTW6pCUlXWxOsTb7CXbS/+o2VP7F5guNEj4Y7lGXAPnTFoB4zdiEgYDiZQ255eOugpkmSJGYoZEiJ+C2dWZ56Zc0mqjqNAbDsxQ9hRLmOShvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728972959; c=relaxed/simple;
-	bh=ooVp+xiwzPx5CdJBmrDqJgfDxs/V4f3wFEWAJYkABko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aLyFaOPkZsnor6ExzC+oPny+/M3hUHqaMGQnpeqSkFCyfFkgyFWXM4O7Jd477ubCMgPBA8W96HGyEWadamZYZrZaQxX3tCaFpmQ1D646IBcQMIoyC6o/KZo7Ao4m934dKT0+t5+09fwxiasEE7hyYWvMhQkbwMx/at9s3F48Mtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zQQGTXgI; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EL6LxVKAABxO1KNYnS0+bzWx4sk+zoR4NNlkZV/B+Gw=; b=zQQGTXgIBJ61KEJTDmi9YhW+mi
-	I6VVOJZDZXk2JbBM283fyxK35/AOuuF3nOzh4HGd7f0cn5L9Av60GXpwpow04Y7+OZQRXrYN+U+TI
-	XwXILtWsMre1e3wfI1TukYQxKbLl5li5c6n3R3TQy+2No7O2od1CVNyQUFiA8eX/vL6UmVK17aYt1
-	w7b3xLRJz7phFlknZp5aj4kwiYYnWXJoyDFsC+oTckoFQACCF50EPo491m1kpx3BXE+0QQegGVzOi
-	JzgbZ2MFGJTx2K6oQBegJbr9u8kPTR9Yjihjyna2URbxu0WKnhmpU4mUL2a4q5PF/sRVim9dBdD2h
-	W921Ahvg==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t0aqY-000713-Hd; Tue, 15 Oct 2024 08:15:54 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, Frank Wang <frawang.cn@gmail.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
- tim.chen@rock-chips.com, Kever Yang <kever.yang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>
-Subject: Re: [PATCH 2/2] phy: rockchip-naneng-combo: Support rk3576
-Date: Tue, 15 Oct 2024 08:15:53 +0200
-Message-ID: <1981070.PYKUYFuaPT@diego>
-In-Reply-To: <20241015013351.4884-2-frawang.cn@gmail.com>
-References:
- <20241015013351.4884-1-frawang.cn@gmail.com>
- <20241015013351.4884-2-frawang.cn@gmail.com>
+	s=arc-20240116; t=1728972983; c=relaxed/simple;
+	bh=ZlHhCGlulVeT/IfhfpRes5ZYNQIIDk4AdvMXoih0ql4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZu7fwu/VhF9SLGQE2wW73noFB1IJvNnutxh6VlaFeBOnEJh0Eynr+UssR8qkCqYQlpqswUWSonM3iYKZHrsSdEL26QX6XctEVnRvRrWA3JS2MAWbK4tinoY+H4HpYIiHrAFFHlWLXhG+AUIqnL1sKt/QJY2Z6bvr1J1y9f8NrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JT9y5awk; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d461162b8so3293469f8f.1;
+        Mon, 14 Oct 2024 23:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728972976; x=1729577776; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jbF6lZf6Y3cFo/FJEKPYC02XHoVdgFNRcp1kazpDm0U=;
+        b=JT9y5awk8JmyQnSAFdUvx/ZYrpB6I/GmB+RONCdBSB/V4TRXmCWYZHI6PTRow/vKbo
+         r61Mb8Pm+YPwl3AZG7IzdKgN19UYK2eEFbEdnj56i2SMRVCqfgbBmbECTEsBCTaPNlKZ
+         9FHyT0G1ALAbf3/t/NDqmhEsXArcGGrHICE39/72ePqzqMnTzvWR7LSZIZ2Rkeic0Hbb
+         k7xQqi2LWyqCW2CutcEeaJq38XA1Sj0lDSsRbcIcruCer+ZSOVmAQFF6S21JvDzrBpCw
+         gtYds8OKRR0eyUGTp+bNDJlF4dEcgdNkw252DxDLKBT27AWQd7RETjQKZxz2jjMBo81z
+         5cKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728972976; x=1729577776;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jbF6lZf6Y3cFo/FJEKPYC02XHoVdgFNRcp1kazpDm0U=;
+        b=d6Ztt2DJwcC/uMR4gqbR0F7KLbues7C4+H8sC8mI7szRA8LSD5L5UHjDCBdnsD4VBl
+         aaH9lf6b6TSo4v7P3OqVbZWvMsrUTG2ynbeBTh6O9zR0erEAVyWrgtTyw3e/XZ0gdSuK
+         8hOEiejXyK8XJbDHcTTNEuiB0cvEc9iyqh+iMadaxSoDgRifoPYNVAX7DYYKzeNfBeCr
+         E2PmSLfNGhZQWBzuOTUIXaim++9XufeRx36lbKFi29QO3jChQaS5XsWH4E62d8DluiuT
+         zvQibr2APlFXXhbjMSXad8KQQyrUIPd3h9H2VkiOeF5aIVdPL3zbVxWoJGwx2YuoehzP
+         1meQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUu1VhFTqG4sR7NF3A6LvMaiDBm8sYvfiwHadffjCNrzcpCk6ITF4lvM3+mRnWz22lVkv1DhBvi7wh2Bc0=@vger.kernel.org, AJvYcCW3VGP6ftSGunavg0UCeklJCYfammgMFVlODAwY1rQksgubqgJZ088mAkRa399QI3AgRCoISu6v/3Ual3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcYLx5wW+CYbsrmidZdFQt6EdGov3xyP1SIA34VN5l8tHxYWUE
+	cU4/AGAXV55HgpXT6dSNQCm6OtbIewGMLQE2FkVTz5m+UFVLcDLF
+X-Google-Smtp-Source: AGHT+IHtffj4kVB4CU+gpKVz68ja5fHOozQcjDr/J/MrRREyVkAKol011obQVXY72TaTGZUGL8+Etg==
+X-Received: by 2002:a05:6000:118c:b0:37d:2ceb:ef92 with SMTP id ffacd0b85a97d-37d5fedbb12mr7547393f8f.27.1728972976285;
+        Mon, 14 Oct 2024 23:16:16 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-51-176.cust.vodafonedsl.it. [188.217.51.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa87bd7sm684919f8f.35.2024.10.14.23.16.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 23:16:15 -0700 (PDT)
+Date: Tue, 15 Oct 2024 08:16:13 +0200
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: sakari.ailus@linux.intel.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: ov5645: add HAS_EVENTS support
+Message-ID: <Zw4IrU8bOOtq26Gx@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20241014173840.412695-1-tomm.merciai@gmail.com>
+ <20241014175452.GB13238@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014175452.GB13238@pendragon.ideasonboard.com>
 
-Hi Frank,
+Hi Laurent,
+Thanks for your review.
 
-Am Dienstag, 15. Oktober 2024, 03:33:51 CEST schrieb Frank Wang:
-> From: Kever Yang <kever.yang@rock-chips.com>
+On Mon, Oct 14, 2024 at 08:54:52PM +0300, Laurent Pinchart wrote:
+> Hi Tommaso,
 > 
-> phy0: pcie, sata
-> phy1: pcie, sata, usb3
+> Thank you for the patch.
 > 
-> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> Signed-off-by: William Wu <william.wu@rock-chips.com>
-> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
-> ---
->  .../rockchip/phy-rockchip-naneng-combphy.c    | 202 ++++++++++++++++++
->  1 file changed, 202 insertions(+)
+> On Mon, Oct 14, 2024 at 07:38:40PM +0200, Tommaso Merciai wrote:
+> > Controls can be exposed to userspace via a v4l-subdevX device, and
+> > userspace has to be able to subscribe to control events so that it is
+> > notified when the control changes value.
+> > Add missing HAS_EVENTS support: flag and .(un)subscribe_event().
+> > 
+> > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > ---
+> >  drivers/media/i2c/ov5645.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> > index 0c32bd2940ec..2c5145d5c616 100644
+> > --- a/drivers/media/i2c/ov5645.c
+> > +++ b/drivers/media/i2c/ov5645.c
+> > @@ -29,6 +29,7 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/types.h>
+> >  #include <media/v4l2-ctrls.h>
+> > +#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -1034,6 +1035,11 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
+> >  	.s_stream = ov5645_s_stream,
+> >  };
+> >  
+> > +static const struct v4l2_subdev_core_ops ov5645_subdev_core_ops = {
+> > +	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > +	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > +};
+> > +
+> >  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+> >  	.enum_mbus_code = ov5645_enum_mbus_code,
+> >  	.enum_frame_size = ov5645_enum_frame_size,
+> > @@ -1043,6 +1049,7 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+> >  };
+> >  
+> >  static const struct v4l2_subdev_ops ov5645_subdev_ops = {
+> > +	.core = &ov5645_subdev_core_ops,
+> >  	.video = &ov5645_video_ops,
+> >  	.pad = &ov5645_subdev_pad_ops,
+> >  };
+> > @@ -1178,7 +1185,8 @@ static int ov5645_probe(struct i2c_client *client)
+> >  
+> >  	v4l2_i2c_subdev_init(&ov5645->sd, client, &ov5645_subdev_ops);
+> >  	ov5645->sd.internal_ops = &ov5645_internal_ops;
+> > -	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > +	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > +			    V4L2_SUBDEV_FL_HAS_EVENTS;
 > 
-> diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> index 0a9989e41237..4c41317a8041 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> @@ -584,6 +585,203 @@ static const struct rockchip_combphy_cfg rk3568_combphy_cfgs = {
->  	.combphy_cfg	= rk3568_combphy_cfg,
->  };
->  
-> +static int rk3576_combphy_cfg(struct rockchip_combphy_priv *priv)
-> +{
-> +	const struct rockchip_combphy_grfcfg *cfg = priv->cfg->grfcfg;
-> +	unsigned long rate;
-> +
-> +	switch (priv->type) {
-> +	case PHY_TYPE_PCIE:
-> +		/* Set SSC downward spread spectrum */
-> +		rockchip_combphy_updatel(priv, GENMASK(5, 4), BIT(4), 0x7c);
+> Instead of patching every subdev driver, should we handle all of this in
+> the subdev core ? If a control handler is set for the subdev, we could
+> set the HAS_EVENTS flag automatically, and default to
+> v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+> if there are no control operations.
 
-Can we get constants for those magic values please?
+Well :)
+Not every subdev drivers, but only the ones I'm testing.
 
-The combophys for rk3568 and rk3588 do use actual constants to at least
-somewhat describe what happens, so it would be really nice for the rk3576
-to do this as well.
+Yesterday I was playing with ov5645 :) And I got:
 
-Same for the rockchip_combphy_updatel and other writel calls below.
+v4l2-compliance -d /dev/v4l-subdev1
 
+test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+fail: v4l2-test-controls.cpp(1108): subscribe event for control 'User Controls' failed
 
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con0_for_pcie, true);
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con1_for_pcie, true);
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con2_for_pcie, true);
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con3_for_pcie, true);
-> +		break;
-> +	case PHY_TYPE_USB3:
-> +		/* Set SSC downward spread spectrum */
-> +		rockchip_combphy_updatel(priv, GENMASK(5, 4), BIT(4), 0x7c);
-> +
-> +		/* Enable adaptive CTLE for USB3.0 Rx */
-> +		rockchip_combphy_updatel(priv, GENMASK(0, 0), BIT(0), 0x38);
-> +
-> +		/* Set PLL KVCO fine tuning signals */
-> +		rockchip_combphy_updatel(priv, GENMASK(4, 2), BIT(3), 0x80);
-> +
-> +		/* Set PLL LPF R1 to su_trim[10:7]=1001 */
-> +		writel(0x4, priv->mmio + (0xb << 2));
-> +
-> +		/* Set PLL input clock divider 1/2 */
-> +		rockchip_combphy_updatel(priv, GENMASK(7, 6), BIT(6), 0x14);
-> +
-> +		/* Set PLL loop divider */
-> +		writel(0x32, priv->mmio + (0x11 << 2));
-> +
-> +		/* Set PLL KVCO to min and set PLL charge pump current to max */
-> +		writel(0xf0, priv->mmio + (0xa << 2));
-> +
-> +		/* Set Rx squelch input filler bandwidth */
-> +		writel(0x0d, priv->mmio + (0x14 << 2));
-> +
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txcomp_sel, false);
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txelec_sel, false);
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->usb_mode_set, true);
-> +		break;
-> +	case PHY_TYPE_SATA:
-> +		/* Enable adaptive CTLE for SATA Rx */
-> +		rockchip_combphy_updatel(priv, GENMASK(0, 0), BIT(0), 0x38);
-> +
-> +		/* Set tx_rterm = 50 ohm and rx_rterm = 43.5 ohm */
-> +		writel(0x8F, priv->mmio + (0x06 << 2));
-> +
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con0_for_sata, true);
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con1_for_sata, true);
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con2_for_sata, true);
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con3_for_sata, true);
-> +		rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_con0_for_sata, true);
-> +		rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_con1_for_sata, true);
-> +		break;
-> +	default:
-> +		dev_err(priv->dev, "incompatible PHY type\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	rate = clk_get_rate(priv->refclk);
-> +
-> +	switch (rate) {
-> +	case REF_CLOCK_24MHz:
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_24m, true);
-> +		if (priv->type == PHY_TYPE_USB3 || priv->type == PHY_TYPE_SATA) {
-> +			/* Set ssc_cnt[9:0]=0101111101 & 31.5KHz */
-> +			rockchip_combphy_updatel(priv, GENMASK(7, 6), BIT(6), 0xe << 2);
-> +
-> +			rockchip_combphy_updatel(priv, GENMASK(7, 0), 0x5f, 0xf << 2);
-> +		} else if (priv->type == PHY_TYPE_PCIE) {
-> +			/* PLL KVCO tuning fine */
-> +			rockchip_combphy_updatel(priv, GENMASK(4, 2), 0x4 << 2, 0x20 << 2);
-> +
-> +			/* Set up rx_trim */
-> +			writel(0x0, priv->mmio + (0x1b << 2));
-> +
-> +			/* Set up su_trim: T0_1 */
-> +			writel(0x90, priv->mmio + (0xa << 2));
-> +			writel(0x02, priv->mmio + (0xb << 2));
-> +			writel(0x57, priv->mmio + (0xd << 2));
-> +
-> +			writel(0x5f, priv->mmio + (0xf << 2));
+Joke apart fully agree and thanks for your hint!
+I will take  a look :)
 
-This does includes both the value as well as the register addresses,
-because a hex-value with a bit shift makes that even less readable.
+> 
+> >  	ov5645->pad.flags = MEDIA_PAD_FL_SOURCE;
+> >  	ov5645->sd.dev = &client->dev;
+> >  	ov5645->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
-Thanks a lot
-Heiko
-
-
-> +		}
-> +		break;
-> +	case REF_CLOCK_25MHz:
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_25m, true);
-> +		break;
-> +	case REF_CLOCK_100MHz:
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_100m, true);
-> +		if (priv->type == PHY_TYPE_PCIE) {
-> +			/* gate_tx_pck_sel length select work for L1SS */
-> +			writel(0xc0, priv->mmio + 0x74);
-> +
-> +			/* PLL KVCO tuning fine */
-> +			rockchip_combphy_updatel(priv, GENMASK(4, 2), 0x4 << 2, 0x20 << 2);
-> +
-> +			/* Set up rx_trim: PLL LPF C1 85pf R1 1.25kohm */
-> +			writel(0x4c, priv->mmio + (0x1b << 2));
-> +
-> +			/* Set up su_trim: T3_P1 650mv */
-> +			writel(0x90, priv->mmio + (0xa << 2));
-> +			writel(0x43, priv->mmio + (0xb << 2));
-> +			writel(0x88, priv->mmio + (0xc << 2));
-> +			writel(0x56, priv->mmio + (0xd << 2));
-> +		} else if (priv->type == PHY_TYPE_SATA) {
-> +			/* downward spread spectrum +500ppm */
-> +			rockchip_combphy_updatel(priv, GENMASK(7, 4), 0x50, 0x1f << 2);
-> +
-> +			/* ssc ppm adjust to 3500ppm */
-> +			rockchip_combphy_updatel(priv, GENMASK(3, 0), 0x7, 0x9 << 2);
-> +		}
-> +		break;
-> +	default:
-> +		dev_err(priv->dev, "Unsupported rate: %lu\n", rate);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (priv->ext_refclk) {
-> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_ext, true);
-> +		if (priv->type == PHY_TYPE_PCIE && rate == REF_CLOCK_100MHz) {
-> +			writel(0x10, priv->mmio + (0x20 << 2));
-> +
-> +			writel(0x0c, priv->mmio + (0x1b << 2));
-> +
-> +			/* Set up su_trim: T3_P1 650mv */
-> +			writel(0x90, priv->mmio + (0xa << 2));
-> +			writel(0x43, priv->mmio + (0xb << 2));
-> +			writel(0x88, priv->mmio + (0xc << 2));
-> +			writel(0x56, priv->mmio + (0xd << 2));
-> +		}
-> +	}
-> +
-> +	if (priv->enable_ssc) {
-> +		rockchip_combphy_updatel(priv, GENMASK(4, 4), BIT(4), 0x7 << 2);
-> +
-> +		if (priv->type == PHY_TYPE_PCIE && rate == REF_CLOCK_24MHz) {
-> +			/* Xin24M T0_1 650mV */
-> +			writel(0x00, priv->mmio + (0x10 << 2));
-> +			writel(0x32, priv->mmio + (0x11 << 2));
-> +			writel(0x00, priv->mmio + (0x1b << 2));
-> +			writel(0x90, priv->mmio + (0x0a << 2));
-> +			writel(0x02, priv->mmio + (0x0b << 2));
-> +			writel(0x08, priv->mmio + (0x0c << 2));
-> +			writel(0x57, priv->mmio + (0x0d << 2));
-> +			writel(0x40, priv->mmio + (0x0e << 2));
-> +			writel(0x5f, priv->mmio + (0x0f << 2));
-> +			writel(0x10, priv->mmio + (0x20 << 2));
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-
-
+Thanks & Regards,
+Tommaso
 
