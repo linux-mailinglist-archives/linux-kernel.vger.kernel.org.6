@@ -1,109 +1,101 @@
-Return-Path: <linux-kernel+bounces-366851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F42A99FB72
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:28:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCD599FBFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96FBD1C23B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334C7285FF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6ED1CBE8A;
-	Tue, 15 Oct 2024 22:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002821D63ED;
+	Tue, 15 Oct 2024 23:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="45AT27Ng";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZWm6qDN8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="CgWL/MaV"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B8E21E3A4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A51B6D02;
+	Tue, 15 Oct 2024 23:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729031316; cv=none; b=dPc/eD5ePIHbQqRThSYCvpuWn4WyEFkmy1ZhYOcKJr6q5uujEpmEczO/mBRpP5b+O4crOzOLKj8ioLNk7UawzXZyWq33ch7qUScjLdFO56NZ/BSTdn6iuK+DazosLLACCFD1qHZzwiglPIrzJZ5qmbagbhMstkCJPJKrx5mb4h8=
+	t=1729033250; cv=none; b=pd1w+LGDOlAZVdvNI2sZ/l2XKUZu3CXzQhGDqgyfe6pmeFIu7e5LpASUp2uSTsxYoLlmFg3gr0lzVGAey7xB5mLYixSJnjxepXcaLcK/paMsahdwLVV1Q/krIBms7JosdfY7IBIxU2OR9zTBgrqcGrdwoxnRTQd6ePvR8hDJeOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729031316; c=relaxed/simple;
-	bh=7kCc5P3nYypQ+DSN3mEIqF1s3DGPm4C7cj53hn5IjqI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BKz7mnHmgY5wtOT3F7D7eU2TqARQ070wWC9RFZiAB30jvzQpXG9Gwotydxo9yBAKRJ4h6aSAbyFm/8U0kgQFk9vW9KpQFapSJFAvQBqjwS297p4YSf46H9LFNDwlJMZstj2enfkwTmv/SAjJdNnTOGK3kp6AOzFMYbzl4wU9k8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=45AT27Ng; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZWm6qDN8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729031312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MOYmPMGxBG4u2ssHn07KTR5Q3rDwMwSrXrOzMkyOvzg=;
-	b=45AT27NgEVuFPbaaRhWNuRrbahbQMlVPKWrevohxch44/+vx4JIwd8XRNUYYCZfNtv9gJ5
-	/T1GeSM5mAy5F0OPXHYY90wJd8KfBY2oIHlWBSSjVAfoSBSewiipHH3nAv3U/YiQd0W2tq
-	UBBNwiygAvlJiCj/hGd9VLjF/Jd4YnGY5POqfeGiinsVmmEpzO7KlsNnc7YiEX1SENXWPB
-	jAmgs6DV7Z0Qi/PGAOxLb1bp9IlmIFlkYUPxkxyBLFmJeOy4Gbklcym813YNoaH3TyEnvj
-	9492e80F9tklt8uC9L7sUji1Guwb5ZiciBQx6lVekCMbX4Y+NL68tviACAlvBA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729031312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MOYmPMGxBG4u2ssHn07KTR5Q3rDwMwSrXrOzMkyOvzg=;
-	b=ZWm6qDN8y7KRHPmnPvhXs9Jtsj6TIk5g/EKAseaIs4qJQVoX/fsnqtwlhGinRD0p77vUc9
-	4M/Rn3AiMe5STCDw==
-To: Benjamin ROBIN <dev@benjarobin.fr>, jstultz@google.com
-Cc: sboyd@kernel.org, linux-kernel@vger.kernel.org, Benjamin ROBIN
- <dev@benjarobin.fr>
-Subject: Re: [PATCH] ntp: Make sure RTC is synchronized for any time jump
-In-Reply-To: <20241006165805.47330-1-dev@benjarobin.fr>
-References: <20241006165805.47330-1-dev@benjarobin.fr>
-Date: Wed, 16 Oct 2024 00:28:31 +0200
-Message-ID: <87y12pc86o.ffs@tglx>
+	s=arc-20240116; t=1729033250; c=relaxed/simple;
+	bh=s2sAgDifVxh2D70yrHm8O3djooQiAhAi3w3ifnOaOSg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=HC9SqzCxdvAXyeihm4XR6McKsLx/7ibfZ4mxp9qONBM4V6XCcmwUVzkxvvE7BVtA1KrVV0xbaROv9BdNr6IToTV9IdsxILV3H2G8Vvp4TGkPn5mSQvvvbF90tj0qHnbPQg8Cz091Yh2Yo7whmQBG6EVQe33dh7uav/8DhMctwas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=CgWL/MaV; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1729031330;
+	bh=s2sAgDifVxh2D70yrHm8O3djooQiAhAi3w3ifnOaOSg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=CgWL/MaVR5Nl/nikdOSwGmIaDEuJOg+LkR+mHcUDRPxCPlkNnHE7sOphB+16UAIBr
+	 mtgNiGU7q46cXWSKrFqpTXY8yV+vN3KArXdyJHxJHI07pSdduYzm/3gVsbJ/sjkGTy
+	 63ToLMRltTHWVL3uyl1O2DQXvro83S627eWEJvVc=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 78E29401D1; Tue, 15 Oct 2024 15:28:50 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 77708400C9;
+	Tue, 15 Oct 2024 15:28:50 -0700 (PDT)
+Date: Tue, 15 Oct 2024 15:28:50 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+cc: Catalin Marinas <catalin.marinas@arm.com>, linux-pm@vger.kernel.org, 
+    kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de, 
+    mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+    x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, wanpengli@tencent.com, 
+    vkuznets@redhat.com, rafael@kernel.org, daniel.lezcano@linaro.org, 
+    peterz@infradead.org, arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com, 
+    harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com, 
+    misono.tomohiro@fujitsu.com, maobibo@loongson.cn, 
+    joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, 
+    konrad.wilk@oracle.com
+Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
+ smp_cond_load_relaxed()
+In-Reply-To: <87jze9rq15.fsf@oracle.com>
+Message-ID: <2c232dc6-6a13-e34b-bdcc-691c966796d4@gentwo.org>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com> <20240925232425.2763385-2-ankur.a.arora@oracle.com> <Zw5aPAuVi5sxdN5-@arm.com> <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org> <Zw6dZ7HxvcHJaDgm@arm.com> <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
+ <Zw6o_OyhzYd6hfjZ@arm.com> <87jze9rq15.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-On Sun, Oct 06 2024 at 18:58, Benjamin ROBIN wrote:
-> @@ -2553,7 +2556,6 @@ int do_adjtimex(struct __kernel_timex *txc)
->  {
->  	struct timekeeper *tk = &tk_core.timekeeper;
->  	struct audit_ntp_data ad;
-> -	bool offset_set = false;
->  	bool clock_set = false;
->  	struct timespec64 ts;
->  	unsigned long flags;
-> @@ -2576,7 +2578,6 @@ int do_adjtimex(struct __kernel_timex *txc)
->  		if (ret)
->  			return ret;
->  
-> -		offset_set = delta.tv_sec != 0;
->  		audit_tk_injoffset(delta);
->  	}
->  
-> @@ -2610,7 +2611,7 @@ int do_adjtimex(struct __kernel_timex *txc)
->  	if (clock_set)
->  		clock_was_set(CLOCK_SET_WALL);
->  
-> -	ntp_notify_cmos_timer(offset_set);
-> +	ntp_notify_cmos_timer(false);
+On Tue, 15 Oct 2024, Ankur Arora wrote:
 
-Can you please add a comment why this does not need to cancel the
-hrtimer? It took me a few looks to validate that this is correct. Six
-months down the road we both forgot about it. :)
+> > Alternatively, if we get an IPI anyway, we can avoid smp_cond_load() and
+> > rely on need_resched() and some new delay/cpu_relax() API that waits for
+> > a timeout or an IPI, whichever comes first. E.g. cpu_relax_timeout()
+> > which on arm64 it's just a simplified version of __delay() without the
+> > 'while' loops.
+>
+> AFAICT when polling (which we are since poll_idle() calls
+> current_set_polling_and_test()), the scheduler will elide the IPI
+> by remotely setting the need-resched bit via set_nr_if_polling().
 
-Also can you please rebase this on top of
+The scheduler runs on multiple cores. The core on which we are
+running this code puts the core into a wait state so the scheduler does
+not run on this core at all during the wait period.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+The other cores may run scheduler functions and set the need_resched bit
+for the core where we are currently waiting.
 
-which has a larger change of the NTP code.
+The other core will wake our core up by sending an IPI. The IPI will
+invoke a scheduler function on our core and the WFE will continue.
 
-Thanks,
+> Once we stop polling then the scheduler should take the IPI path
+> because call_function_single_prep_ipi() will fail.
 
-        tglx
+The IPI stops the polling. IPI is an interrupt.
 
 
 
