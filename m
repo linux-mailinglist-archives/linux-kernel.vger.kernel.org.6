@@ -1,92 +1,94 @@
-Return-Path: <linux-kernel+bounces-366948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6440B99FC95
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:46:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED3C99FC98
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C1E2858BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:46:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705E91C24483
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9291E32A9;
-	Tue, 15 Oct 2024 23:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8EA1E7C22;
+	Tue, 15 Oct 2024 23:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slwFGdTZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XjFwOzi2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC34C21E3AC;
-	Tue, 15 Oct 2024 23:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6019621E3D9;
+	Tue, 15 Oct 2024 23:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729035950; cv=none; b=Dy7hY2jCNtHEI+G7d4PpQi28WaCjoWCSQgHvOc9+45piDVHOzmuXcRC6WzX/ohagXV+IBSQ/zSIv2JHgreAGsmKSzaq4mPRoZXztw0SViuH6B64l+FgEMv75a7U1ABN5BxlVeG8ItPqGbh/PKlJKoyYBKL2YJeY94cSqmJDZreQ=
+	t=1729036050; cv=none; b=l8AfOruZWja4OA3mveG/3eF4kAiQVNTNyjhc9ag+G+UpiLHyIsM5lfOxLa/bMVc2WzG95Nh9VF8v2ruqMBCqzT5b6NzBjU+DPT/6CaSLoGrTXA+FQ7Dro8kw7GRdJBbJzKH1puyfumvBFl2ad05nSWjLWsOf1B3kpVHOsa/K2N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729035950; c=relaxed/simple;
-	bh=VUTSyIIZybScBanSxK1Lfw1t1mpTWNeI88T5eH5LUXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c1TibhIv1f5bSb/MkQOv3fAxRy5JqcWJ5rMhjoFn2A61bqYc0kLpBBpp/QhFqEJWuIlANSUnw/3Ei7/Xps4lzxlAdPq7OaJtdFKUdxkqQ4aZr2ghoBGAecYZS60sa6oitogShRXqBqu2E2EbVLlI6TEaXwxKqcBjH5HAFKba2cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slwFGdTZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E413C4CEC6;
-	Tue, 15 Oct 2024 23:45:49 +0000 (UTC)
+	s=arc-20240116; t=1729036050; c=relaxed/simple;
+	bh=OvwqGNg+FxCMd+bUiVx6t9oUkTAZwabidrToATtsBZo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=dCJGqJNGWVndaWvaliAE/a1JsB+nusIE5nDmEyaVqMqNVZVJnQsYR43FoNTj/5gTBUyEf+V5eLtsTVVi6DXU/xcmz0+kpz/Vs/7CHdVv/vwOmIj/az66e/K0eD87SoYyS2J3TWWtlFtIwhaMNy+KTpUmUoo3PYp+ovEkpFf7bQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XjFwOzi2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10305C4CEC6;
+	Tue, 15 Oct 2024 23:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729035950;
-	bh=VUTSyIIZybScBanSxK1Lfw1t1mpTWNeI88T5eH5LUXM=;
+	s=k20201202; t=1729036049;
+	bh=OvwqGNg+FxCMd+bUiVx6t9oUkTAZwabidrToATtsBZo=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=slwFGdTZwTTeFdq8IE/pPV16k+t4vKZdgjlMa885BQa5NIjZLvuV92DFqzukexOG7
-	 hp7o/TFPmmlLzME/Yq2RYV4FGH7q69Q/HwXRQu3nMCPaNpKOI95lu1QEP/GJmSJ1FT
-	 Gd0wvHMqKSOsokM/AszcfFz9uOE5ZeRj2PBQN02n+vuzYFc5AidDzzDi0P8+c1NQpp
-	 wmzXgYrwhL0nhsEi1PjwZxhiH55yDV0s/zcnqwxQr82Us7OtOJcq7MfgNyaFjhAMhM
-	 oOOp+/GCqfPtFxue1YdsJmj3oHNWlJjVLLNR6FLzY2RbVsIyFJ6IkCZQ876iNV331o
-	 dhsBM/ys8DymA==
-Date: Tue, 15 Oct 2024 16:45:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: "Panicker, Manoj" <Manoj.Panicker2@amd.com>, "linux-pci@vger.kernel.org"
- <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "Jonathan.Cameron@Huawei.com"
- <Jonathan.Cameron@Huawei.com>, "helgaas@kernel.org" <helgaas@kernel.org>,
- "corbet@lwn.net" <corbet@lwn.net>, "davem@davemloft.net"
- <davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
- "pabeni@redhat.com" <pabeni@redhat.com>, "alex.williamson@redhat.com"
- <alex.williamson@redhat.com>, "gospo@broadcom.com" <gospo@broadcom.com>,
- "michael.chan@broadcom.com" <michael.chan@broadcom.com>,
- "ajit.khaparde@broadcom.com" <ajit.khaparde@broadcom.com>,
- "somnath.kotur@broadcom.com" <somnath.kotur@broadcom.com>,
- "andrew.gospodarek@broadcom.com" <andrew.gospodarek@broadcom.com>,
- "VanTassell, Eric" <Eric.VanTassell@amd.com>, "vadim.fedorenko@linux.dev"
- <vadim.fedorenko@linux.dev>, "horms@kernel.org" <horms@kernel.org>,
- "bagasdotme@gmail.com" <bagasdotme@gmail.com>, "bhelgaas@google.com"
- <bhelgaas@google.com>, "lukas@wunner.de" <lukas@wunner.de>,
- "paul.e.luse@intel.com" <paul.e.luse@intel.com>, "jing2.liu@intel.com"
- <jing2.liu@intel.com>
-Subject: Re: [PATCH V7 4/5] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <20241015164548.6c7ece5f@kernel.org>
-In-Reply-To: <341139a9-a2d0-465e-bdd3-bdd009b78589@amd.com>
-References: <20241002165954.128085-1-wei.huang2@amd.com>
-	<20241002165954.128085-5-wei.huang2@amd.com>
-	<20241008063959.0b073aab@kernel.org>
-	<MN0PR12MB6174E0F2572E7BFC65EA464BAF792@MN0PR12MB6174.namprd12.prod.outlook.com>
-	<341139a9-a2d0-465e-bdd3-bdd009b78589@amd.com>
+	b=XjFwOzi2BliEFHr+mGq0ODCDL238vAdqMfZ+s41eKB2FB5V7KXhajAwS2L46Rfper
+	 ZodWMS1neWVUueTnfBkkObZ+M93Vq5sG6dJSNb0vYXnwnOV4pRu4+Gj37Fdh65lKby
+	 /rpVuutyVVxt8YRTdZYlC+8y+WjDIs4gDi7U+YTcPwV5K7I5khODfpX1POmHrWZTCM
+	 Yol/TGyYVmS2T9RvM1MPr/V4e10Rod/3W2+pofvPUgXLWe0ifC2M+It4RXbNxVcGO0
+	 z3MqRNYDsCqDm/ZfS8jzEM4Jyq5Oq/daHmM1OeAkBjA4DdJukTb0HfcdxJiwgZDcS1
+	 btQhbLNgy8rZA==
+Date: Wed, 16 Oct 2024 08:47:20 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
+ linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
+ <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
+ linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Vasily
+ Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v16 04/18] function_graph: Replace fgraph_ret_regs with
+ ftrace_regs
+Message-Id: <20241016084720.828fefb791af4bcf386aac91@kernel.org>
+In-Reply-To: <20241015183906.19678-B-hca@linux.ibm.com>
+References: <172895571278.107311.14000164546881236558.stgit@devnote2>
+	<172895575716.107311.6784997045170009035.stgit@devnote2>
+	<20241015183906.19678-B-hca@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 15 Oct 2024 14:50:39 -0500 Wei Huang wrote:
-> Any suggestions on how to proceed? I can send out a V8 patchset if Jakub
-> is OK with Manoj's solution? Or only a new patch #4 is needed since the
-> rest are intact.
+On Tue, 15 Oct 2024 20:39:06 +0200
+Heiko Carstens <hca@linux.ibm.com> wrote:
 
-1) y'all need to stop top posting
-2) Manoj's reply is AMD internal and I'm not an AMD employee
-3) precedent in drivers means relatively little, existing code 
-   can be buggy
+> That would make things much simpler... e.g. your new patch is also
+> writing r3 to fregs, why? 
+
+BTW, according to the document [1], r3 is for "return value 1", isn't it
+used usually?
+
+[1] https://www.kernel.org/doc/Documentation/s390/Debugging390.txt
+
+Thanks,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
