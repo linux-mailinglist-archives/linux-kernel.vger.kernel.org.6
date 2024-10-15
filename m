@@ -1,150 +1,142 @@
-Return-Path: <linux-kernel+bounces-366751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9B899F9E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:38:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A7099F92C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 23:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57EF728420A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C981C2312A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671792144A4;
-	Tue, 15 Oct 2024 21:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE111FF036;
+	Tue, 15 Oct 2024 21:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f2tMuNF4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVgQ1FAt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0614E20E028;
-	Tue, 15 Oct 2024 21:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE671FBF52;
+	Tue, 15 Oct 2024 21:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729027810; cv=none; b=NUNKSpI5nhvXhWsE8a8FSgoHjQgJmL0qcKg10mblUp/6lFrPK6+7PGD+fd5/HYX4QHKY6QWMGMiAbXCGEDW97VxXPwMdXRaJgGZAsLGL8kSZOnc7BMSCYYiOVxlTVgM3ufIOMmnIz/9y+QjN5hyWlEuQsT7NfVo2f7kpjcOzGUc=
+	t=1729027793; cv=none; b=lkoWWc1ip1KIihjGV+JizXzX+yRZTJL8hEVWmmWby+9EPBTwBr8MdfrO8KifrC7cQViaQeg0/+pv69slGu9rJIP9V0GgWMlSOAowTMQz5FWLdxxsuTskLxth5U08G6FQYxbv8WFS2h0DxNYi1yz8iT70H7ALH9xppd1q9EMEDUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729027810; c=relaxed/simple;
-	bh=qU0dUNxFUuN/ND2hfWc0/b53f/OYr4+0HIcF9EoyLxI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IsVM7bkl7ZB5zRj8jqy6gO/5jfXmrdAnA/x6UN7P56HCyqJWABKD6HBHQZADpfnKhAQRptqoM/flbjV3IHDzNgesc7COVQLrO8uPIQN4YYSxJ4AZvJtJn/+nWXuC2XC1w1InZu+4MhQm4LpkygdeANeis8u+3/wlukiVhetGu7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f2tMuNF4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FG0st4022433;
-	Tue, 15 Oct 2024 21:29:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M4IGsOidRHFIubeJL9OdlEYfFZx1GNBQBMy1HdndUaw=; b=f2tMuNF42vXkVMdF
-	desTF0/M6ewcPC08DKVUMdLdOpI9Pfi2vhqn9iVID91xpooBq/RTtAzC+W42Sa0L
-	MslWurW3IL/6hxWOVQs5pPYjgONYWYyRd85o8JuCzMznieQdG7MX+BzQm5ELj31m
-	wTDfNwayHnyr4TnoaC0ZgcKzYmb1RWG/rL5ITRmJCVrHlM2zJ7XAuScRF3q39mr2
-	tq82JxxRoGGBY6+g6TASJWfwFIcOWhqTxArnfVvocXykr1yYf4zfctHXb43asgda
-	XcDSl7h/e53ecQbKYCSVYyanhxoL+S8bWcBUe28kCubAE66V2kqAS7+ntBPcMP4n
-	RySPXA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429jrfah4f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 21:29:37 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49FLTagg022414
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Oct 2024 21:29:36 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 15 Oct 2024 14:29:35 -0700
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <lgirdwood@gmail.com>, <tiwai@suse.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <broonie@kernel.org>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>
-Subject: [PATCH v29 33/33] ASoC: usb: Rediscover USB SND devices on USB port add
-Date: Tue, 15 Oct 2024 14:29:15 -0700
-Message-ID: <20241015212915.1206789-34-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
-References: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1729027793; c=relaxed/simple;
+	bh=oSVdFK89IUI6uANDyGoSlNLCNsfA7F682g4XiC0m1y8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=dbICcCI35rvVsssKLTJB0RH5auzERN0fi9QOG2MnSK8tZynchuhgMhOWZpcL4ybRiKIC/9EzC4NoCjZyhQ6uUs1LEqiwV5mgdUKsZnuQGOdvGegLloG0DunpxIhdpbIfemzYQBRF77Xw656N2pdo1hg0TtPIp004L0zEwad6BRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVgQ1FAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F688C4CED5;
+	Tue, 15 Oct 2024 21:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729027792;
+	bh=oSVdFK89IUI6uANDyGoSlNLCNsfA7F682g4XiC0m1y8=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=AVgQ1FAtUdhe6G7o30SjEgC+E9nDuZhwvc80/IAzGHaXRG4gyKGRl8PEiorjLhjPC
+	 VOxW3QOg3gsHa/8An4ZemPEkJavIV3l9NNJtjGKOG4xzoKoOjjFrMU512w/FA1Rvcb
+	 GfHaROxLcRc1rqTeV0q4Fuhs+Sd5OR774yFIS4S0y0wJKKLSZ5+BOS7QlT1YZMh1ZF
+	 ZQbKx80rXcM3jA/7Uu5tGcmBylDSJ0Wda9mp89/Avn9++KGRIj7bJPJZmFQA3CF9kS
+	 ryKkQBYL3v5JWgGkNgeUudo6aCYSo83DPv9qHMO+n2wbkedm897ICdcCbqWvVGO7CS
+	 kmWU1QqW2YIoQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: JVvQOaJwyXwMJ44vtvzxisdPyv94LuQr
-X-Proofpoint-ORIG-GUID: JVvQOaJwyXwMJ44vtvzxisdPyv94LuQr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 impostorscore=0
- clxscore=1015 mlxlogscore=999 priorityscore=1501 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410150143
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 16 Oct 2024 00:29:48 +0300
+Message-Id: <D4WP74KE8VZF.3VJITHXKVZOHK@kernel.org>
+Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
+ be disabled on boot
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
+Cc: <James.Bottomley@HansenPartnership.com>, <roberto.sassu@huawei.com>,
+ <mapengyu@gmail.com>, "Paul Moore" <paul@paul-moore.com>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241015193916.59964-1-zohar@linux.ibm.com>
+In-Reply-To: <20241015193916.59964-1-zohar@linux.ibm.com>
 
-In case the USB backend device has not been initialized/probed, USB SND
-device connections can still occur.  When the USB backend is eventually
-made available, previous USB SND device connections are not communicated to
-the USB backend.  Call snd_usb_rediscover_devices() to generate the connect
-callbacks for all USB SND devices connected.  This will allow for the USB
-backend to be updated with the current set of devices available.
+On Tue Oct 15, 2024 at 10:39 PM EEST, Mimi Zohar wrote:
+> The initial TPM2 HMAC session capability added HMAC authentication to
+> each and every TPM communication making the pcr_extend performance
+> abysmal for HW TPMs. Further, the new CONFIG_TCG_TPM2_HMAC option was
+> configured by default on x86_64.
+>
+> The decision to use the TPM2 HMAC session capability feature doesn't
+> differentiate between the critical encrypted and the non-encrypted
+> communication, but when configured is required for all TPM communication.
+>
+> In addition, the reason to HMAC the tpm2_pcr_extend() as provided in comm=
+it
+> 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()") was to protect
+> tpm2_pcr_extend() when used by "trusted keys" to lock the PCR.  However,
+> locking the PCR is currently limited to TPM 1.2.
+>
+> We can revert the commit which adds the HMAC sessions for
+> tpm2_pcr_extend, allow just the TPM2 pcr_extend HMAC capability to be
+> disabled on boot for better IMA performance, or define a generic boot
+> command line option to disable HMAC in general.  This patch allows
+> disabling the HMAC for just the TPM2_pcr_extend.
+>
+> Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
+> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+> Comment: applied and tested with/without patches in Jarkko's hmac-v5 bran=
+ch -
+> commit 92999f9cd11f ("tpm: flush the auth session only when /dev/tpm0 is =
+open")
+>
+>  .../admin-guide/kernel-parameters.txt         |  5 ++
+>  drivers/char/tpm/tpm2-cmd.c                   | 41 ++++++++++---
+>  drivers/char/tpm/tpm2-sessions.c              | 59 +++++++++++--------
+>  include/linux/tpm.h                           |  4 ++
+>  4 files changed, 77 insertions(+), 32 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index 1518343bbe22..c7811f32ba28 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6727,6 +6727,11 @@
+>  	torture.verbose_sleep_duration=3D [KNL]
+>  			Duration of each verbose-printk() sleep in jiffies.
+> =20
+> +	tpm_pcr_extend_hmac_disable [HW,TPM]
+> +			Disable TPM2 pcr_extend HMAC for better IMA
+> +			performance. By default is set to true (1).
+> +			Mainly needed when using a HW TPM2.
 
-The chip array entries are all populated and removed while under the
-register_mutex, so going over potential race conditions:
+Thanks for doing this! I think the code change itself is pretty good but
+maybe we should not emphasize HMAC per se (applies to config flag too but
+it is what it is now) but instead that they are encrypted and integrity
+protected.
 
-Thread#1:
-  q6usb_component_probe()
-    --> snd_soc_usb_add_port()
-      --> snd_usb_rediscover_devices()
-        --> mutex_lock(register_mutex)
+I guess all these features intend to protect data from unintended and
+physical access, like in common sense terms.
 
-Thread#2
-  --> usb_audio_disconnect()
-    --> mutex_lock(register_mutex)
+So like for any possible sysadmin and similar I think this would be somethi=
+ng
+that anyone could grab:
 
-So either thread#1 or thread#2 will complete first.  If
+	tpm_disable_protect_pcrs [HW,TPM]
+			Do not protect PCR registers from unintended physical
+			access, or interposers in the bus by the means of
+			having an encrypted and integrity protected session=20
+			wrapped around TPM2_PCR_Extend command. Consider this
+			in a situation where TPM is heavily utilized by
+			IMA, thus protection causing a major performance hit,
+			and the space where machines are deployed is by other
+			means guarded.
 
-Thread#1 completes before thread#2:
-  SOC USB will notify DPCM backend of the device connection.  Shortly
-  after, once thread#2 runs, we will get a disconnect event for the
-  connected device.
+Perhaps a bit long but at least it is clear and helps to make the right cho=
+ice.
 
-Thread#2 completes before thread#1:
-  Then during snd_usb_rediscover_devices() it won't notify of any
-  connection for that particular chip index.
-
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- sound/soc/soc-usb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
-index e56826f1df71..ee566ca7c675 100644
---- a/sound/soc/soc-usb.c
-+++ b/sound/soc/soc-usb.c
-@@ -279,6 +279,8 @@ void snd_soc_usb_add_port(struct snd_soc_usb *usb)
- 	mutex_lock(&ctx_mutex);
- 	list_add_tail(&usb->list, &usb_ctx_list);
- 	mutex_unlock(&ctx_mutex);
-+
-+	snd_usb_rediscover_devices();
- }
- EXPORT_SYMBOL_GPL(snd_soc_usb_add_port);
- 
+BR, Jarkko
 
