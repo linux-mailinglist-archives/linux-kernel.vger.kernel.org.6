@@ -1,136 +1,125 @@
-Return-Path: <linux-kernel+bounces-365082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B66699DD48
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B961099DD4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 06:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BD881C2151D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:52:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD101C21223
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA9A17335C;
-	Tue, 15 Oct 2024 04:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6A3175562;
+	Tue, 15 Oct 2024 04:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="OQqs7p2u"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="pYcnStbb"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15700442F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 04:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C300916CD1D;
+	Tue, 15 Oct 2024 04:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728967960; cv=none; b=RRi+oJcyVmXOQS8MheQGtzfT6no6/Xl1hLtML4ov1R7IbW9Yq1zxbkOoJaEsa7HDxOL6wnUQu409YNZB+u5sAaZY5DqJY4U5IZMiZKjjfxE38/37E/yC3KCA17M5fcpcaUS5RP88tuFqunJktY1X8tPNiOFHOC+liGQOLJVDEnQ=
+	t=1728967987; cv=none; b=al56H8u9uyol8nFW3FmaRB6NVvN/dfMLBbemSqW2yfowbwO7cVdqROrjLKL3E5oYd3SeNORT9D7OM3s+bdkHzJ2BUFEIImr0RjbyAJMIPYX6heURVfOxEVJaBGzaivSkqhl/20yFEnscH4U6baPmY1WUPwltvHd9a9TsQwNMYnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728967960; c=relaxed/simple;
-	bh=RPykLgYMdLDxPzBE22J0+SM2QnMSSPWqRX74HBp54NI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FXTp5norlj2EIDaVzN3CyBnMvOL23tMHfNm1+KYPXZG0xuG7U9UA3Wq/yW6v42k0aiorVa/6FCG+OJhbBx2IP3w1UekFahjgvPxLfwnYKD/xDStUNufUypx+n/Bghx+88dGGdUetCKc5VUyF1s+fcLxaJvs1/1z4WTNJDHc02PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=OQqs7p2u; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso7485136a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:52:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728967956; x=1729572756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3tWqqKxhh0W/7ivNqGTlKJCb3/UvZfM/VJDc1l0Xb14=;
-        b=OQqs7p2uTdQ/utQkYhiIbxreYb2A3+8/6w6S5NCQl4WF4vc/wOS4CCyu9T7PqLzQeB
-         c/lPtxllcUb0STZr5AuZJB008Msrs+eUBlyIcyIw7Y+4H7TUnLnoUik7DnvpOjYKgL5i
-         9UnNCVep+GxANE0TKG0QBtddxaEoIdr3XVdWbGJQcnfNnmFDtQ+CaC/j9331eHtsTgOA
-         efYo2NiIUq0Qn6ww0sBC2f9d51dbYgMNw8roonZDugalyN+H1QqeeqS31H9yQ7jJz8dl
-         l7PWYZ3H+38LZBvxnOhdKM2C7uQOYyiIO5cBsvNBKs/W+Eg57bbPdKjYrrt33XI6Ea2n
-         PUTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728967956; x=1729572756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3tWqqKxhh0W/7ivNqGTlKJCb3/UvZfM/VJDc1l0Xb14=;
-        b=P7OzMfeqzX/p5qTPNkm3M+L7zJlIRpKefHRHNf/XG6UR2pLRB47hbT2KGFY+ZZ/dhr
-         sYj5vJaeAyWBBpqWMPAw+LsO+mPHxcD4jD4oDjlvCLiJSNA6d10JLaW1tAbIsaXq97nA
-         8Bz/ZhZhwteoTODp70aAOy8LneBpiG3acgpVX1lGvvisCqgVD0GuPQO0bw8eIQa17XeK
-         Qi1hEmtBLo59lCZxLyq0bmD+/bLMuA9xPkegXzopppo4Ckl1ZtEV7pJ46IEpn0tNc38M
-         WY7rEqlmmN6kHWNwt/yeq84EzoPZLFJsaZmQ1mjNck89r0oKx2h0aR9ZzcvNA5Bvyc8X
-         PGtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUlcSqHgV/+1mBPtj22DvGoMJ27mkJ11JOHAkIYsHUahlVNRAQ2/kqoh8bD+3LBagXk1sEtoSqLAf/UKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhhZUfoQfo1QDc3B09vgAI34/t9mFrUJZRkMuepMvkvrydbXTk
-	rjmz2uii8AYlnXwDQgx+yKEnUtEUDaTkeHKZDO62Db9IECxvGWSeNVjrPO58qoZmaYT6Q499+5i
-	WBIzJ8ooFxT3yvpWKZXzQqgi5cTtfLyoR/TZFIQ==
-X-Google-Smtp-Source: AGHT+IEU/y1a6FgQfI8YjfSVfdTShpUrSSTkz/b0IuV43k0+CLIh2c64950510hjkg2XerOUrGRbQTlqPjI3HimJE0Y=
-X-Received: by 2002:a05:6402:5c9:b0:5c8:a0fd:63d6 with SMTP id
- 4fb4d7f45d1cf-5c948d24835mr10997520a12.20.1728967956209; Mon, 14 Oct 2024
- 21:52:36 -0700 (PDT)
+	s=arc-20240116; t=1728967987; c=relaxed/simple;
+	bh=BqrNUw2K7RUtZMlq1Lf6fghkPnyhYNWO4K/G+1gUWMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYi951sP3YPhakOzBvcjiOiAmt2nSGKJH9vwyMGNmeeuSbTtjGC8ykjGk4rJBcBJXqonozxW6ovidMCjbtag9L+Ufl4AKbO1wLXGXGqpSDYIkjBrv5C+V0M9lXHS3m6wjp4Ww161a667dX25x2DTmtiFEPr2sxMrvcg3DGUF/zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=pYcnStbb; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=BWsizNzSrPZ+r+201ZIsYtk0J5IsZolcXemWtkjSrFI=; b=pYcnStbbYju0pDNtlPl/UI7wGL
+	zjYLz5a8i0LdHbzkKONRsKK2uzqOxpIsOZDa/oiGjAj5Jo+P1ByV7gP8A522DX6JG4VXOb/r7CW7m
+	SOCuDLTGUxBqD98HtmK5JjWExJDqWjoyzT+T+RmCZJzzTUbMPL1KK0rQWwc8tz7jWN89coVSoO4d0
+	cSBO5rs7EftTdk9IH5jSOyWOpsSbKHAhGENrc5Mdgi01LHH0sU1j7o3RE1SlZSzP8mWAa0pLJr/tp
+	H/7gwJCp62sNF4Qmp266N1v10DR60iYNwNoqOadBVEy+PDc+ruAkDovUNZmGyLig8nISV+3yZLzRb
+	+RBstA9A==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1t0ZOI-009QEG-20;
+	Tue, 15 Oct 2024 12:52:53 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 15 Oct 2024 12:52:52 +0800
+Date: Tue, 15 Oct 2024 12:52:52 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Klaus Kudielka <klaus.kudielka@gmail.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Romain Perier <romain.perier@free-electrons.com>
+Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
+ Turris Omnia
+Message-ID: <Zw31JIEyh28vK9q7@gondor.apana.org.au>
+References: <ZwJUO5Nz3S7EeqO6@gondor.apana.org.au>
+ <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
+ <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
+ <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
+ <ZwZAExmK52txvHE8@gondor.apana.org.au>
+ <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
+ <ZwduxHxQtHdzz-kl@gondor.apana.org.au>
+ <ZwePSPG8aWm6mwKK@gondor.apana.org.au>
+ <15fadc356b73a1e8e24183f284b5c0a44a53e679.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014163001.4537-1-everestkc@everestkc.com.np> <31a73bb7-47ec-496c-8a65-02e331051e0e@linuxfoundation.org>
-In-Reply-To: <31a73bb7-47ec-496c-8a65-02e331051e0e@linuxfoundation.org>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Mon, 14 Oct 2024 22:52:23 -0600
-Message-ID: <CAEO-vhEg_whKPkWmym99+a1Lx2kU5CcBCYrz6unKANbCbV9dHg@mail.gmail.com>
-Subject: Re: [PATCH][next] Bluetooth: btintel_pcie: Remove structually deadcode
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15fadc356b73a1e8e24183f284b5c0a44a53e679.camel@gmail.com>
 
-On Mon, Oct 14, 2024 at 6:02=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
+On Thu, Oct 10, 2024 at 07:35:33PM +0200, Klaus Kudielka wrote:
 >
-> On 10/14/24 10:30, Everest K.C. wrote:
-> > The switch case statement has a default branch. Thus, the return
-> > statement at the end of the function can never be reached.
-> > Fixing it by removing the return statement at the end of the
->
-> Change "Fixing" to "Fix it"
-Will fix it in V2.
-> > function.
-> >
-> > This issue was reported by Coverity Scan.
-> > https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssu=
-e=3D1600709
->
-> Please include the output from the scan. People can't see this report
-> without logging in.
-The issue is no longer visible in Coverity. Though the code is still
-the same. The issue hasn't
-been fixed. Should I remove the link too ?
-> >
-> > Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between dr=
-iver and firmware")
-> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> > ---
-> >   drivers/bluetooth/btintel_pcie.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btint=
-el_pcie.c
-> > index e4ae8c898dfd..660496e55276 100644
-> > --- a/drivers/bluetooth/btintel_pcie.c
-> > +++ b/drivers/bluetooth/btintel_pcie.c
-> > @@ -391,7 +391,6 @@ static inline char *btintel_pcie_alivectxt_state2st=
-r(u32 alive_intr_ctxt)
-> >       default:
-> >               return "unknown";
-> >       }
-> > -     return "null";
->
-> What happens when you build your patch with -Werror?
-> Do you see any build errors?
-I compiled the intel bluetooth module without error. Will mention that
-in V2 patch too.
-> >   }
-> >
-> >   /* This function handles the MSI-X interrupt for gp0 cause (bit 0 in
->
-> thanks,
-> -- Shuah
+> Hmmm, not really (patch applied on top of 6.12-rc2). 5 algorithms failed self-test.
+
+OK, let's try disabling TDMA altogether.  And if it still fails with
+this could you please bring back the printk patch and send me the
+result of it with TDMA disabled please?
+
+Thanks!
+
+diff --git a/drivers/crypto/marvell/cesa/cesa.c b/drivers/crypto/marvell/cesa/cesa.c
+index 5fd31ba715c2..a3f0465aa178 100644
+--- a/drivers/crypto/marvell/cesa/cesa.c
++++ b/drivers/crypto/marvell/cesa/cesa.c
+@@ -278,7 +278,7 @@ static const struct mv_cesa_caps kirkwood_caps = {
+ 	.ncipher_algs = ARRAY_SIZE(orion_cipher_algs),
+ 	.ahash_algs = orion_ahash_algs,
+ 	.nahash_algs = ARRAY_SIZE(orion_ahash_algs),
+-	.has_tdma = true,
++	.has_tdma = false,
+ };
+ 
+ static const struct mv_cesa_caps armada_370_caps = {
+@@ -287,7 +287,7 @@ static const struct mv_cesa_caps armada_370_caps = {
+ 	.ncipher_algs = ARRAY_SIZE(armada_370_cipher_algs),
+ 	.ahash_algs = armada_370_ahash_algs,
+ 	.nahash_algs = ARRAY_SIZE(armada_370_ahash_algs),
+-	.has_tdma = true,
++	.has_tdma = false,
+ };
+ 
+ static const struct mv_cesa_caps armada_xp_caps = {
+@@ -296,7 +296,7 @@ static const struct mv_cesa_caps armada_xp_caps = {
+ 	.ncipher_algs = ARRAY_SIZE(armada_370_cipher_algs),
+ 	.ahash_algs = armada_370_ahash_algs,
+ 	.nahash_algs = ARRAY_SIZE(armada_370_ahash_algs),
+-	.has_tdma = true,
++	.has_tdma = false,
+ };
+ 
+ static const struct of_device_id mv_cesa_of_match_table[] = {
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
