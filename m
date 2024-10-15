@@ -1,91 +1,140 @@
-Return-Path: <linux-kernel+bounces-364922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8729999DB2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:11:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A54599DB2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F161C21148
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:11:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 000E6B2154F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E9115ADAF;
-	Tue, 15 Oct 2024 01:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0864714D439;
+	Tue, 15 Oct 2024 01:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAHe7MY6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mfasahkd"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126C2158D8F;
-	Tue, 15 Oct 2024 01:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95C9137930;
+	Tue, 15 Oct 2024 01:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728954636; cv=none; b=cQJQPl9hm0LjGIvLPZBo9kBrCgdnL9U7AW6XPQSufPLGYCDBaMEsIM2mQ7oswqt7pm2xkylwEVCwB1VQk9cOsZFA+7poXagQc6t+eapIi4RSd5a2uJmkCKKEp0s5rcSCepsi9cBZkNomjbG/D2TA4WEOn8aj1fScQj1+PnXfyqo=
+	t=1728954688; cv=none; b=O5ARVeW2mVujF9Adkjp1QDfVmy/Wyhcxmsh9BWVASVW0Acij5EOAzPjxLl7mQJHxJLHJ5fT3rA7t59Bzhzd8qPtQyVt0i9bmh/GHV3wJRY8APLS+Zsa9IRS1I0gyVohc43Tw6/LM5dpdoz2OR48CSMgkBfapCTgwJyh5DaKD7ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728954636; c=relaxed/simple;
-	bh=pEPZn5Z1invD5+6aWwaKcd1YWvBJST7QTlQPxDSXNbo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=q91LBnH1WBAiLmlB8RqNF0ej95poDLieFiqYGm6Au5xbMLHYMvhpUZWzVJWw85ayI4cSrPax5fEouiXzMsz0eNBwDP9KecKWH5vdCFtTyGIhS/4OeEtmRbBj2m/wvdMmsLfOWx3EC/MWpmTUW+xV4XaSun8rUMBHcR6EjTY93hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAHe7MY6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98405C4CEC3;
-	Tue, 15 Oct 2024 01:10:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728954635;
-	bh=pEPZn5Z1invD5+6aWwaKcd1YWvBJST7QTlQPxDSXNbo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KAHe7MY63+CGMnlFWhUxf5LxYqmPVoY0JX342edt0cVYpBUyLfi/wWOgvFrc32/j1
-	 yZEUtm2J55ktU2AcIG/wlSBSmbmgLkRCVOmVCwtvbStirv2zNA43DcbO3kCwBGqOBb
-	 J4q4FPVU0EZcM6JFVGqGrDwkzAPZXxT0I9OaAeOAtmEaSeEZJNo+kOlzOR2kJe3g4a
-	 sFMRCBoyuT4QXWPL+UT0baatldvxXwj5DrdCsp2KaCtec7Wn/cMWKCXjrlSUPKv3QV
-	 Bg3AhhhIaCc3QxFRO2tML3y4Kf9D5O2hqgsYFdP4BGUbqkCfVCCl5rZEkhbQlEndH3
-	 ve8Rmu7E3cvTA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEF73822E4C;
-	Tue, 15 Oct 2024 01:10:41 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728954688; c=relaxed/simple;
+	bh=GFiyNF6adA02Mq2IVwbmM9nOQAw+5VpG9OYi9gku6fU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gxl+ad8fGjo1rONnt3wvy2l5qiJ5vkvn96M+4QpYTf9ysQQgLsQqcYS5Z99oEOi6eKRFOEkxUz1yDpHedQbURbEYPWO1WxBWeK5xs/MBaiF5Z8XgqMy8wTOKWvqhAWWxaDrvWWLdzs7omI5FZ4ENovTAPg97i9hx7rqiPJiCY7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mfasahkd; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso21066431fa.3;
+        Mon, 14 Oct 2024 18:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728954685; x=1729559485; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nsWOsNGSGmtH0ytbyOdAJmfSCP9OZiNKAIy8ksHhFEg=;
+        b=MfasahkdprxRRAx81tKflRVOCQdrXV/nexoTsLvX07g847A/pYm5Tus2fKX3LmFQH1
+         g9v8MaIUugcFDnxGR1XZEcKRXCLayvDDTs8cUs2LFvZB0jwvVRcXZW64l6rDp0IKheue
+         yPl1R0urFrZa9wuhrlfRCOTnOrQJuYjAUwtMQ/AkHcEtDkTW4xJV8kYKo4JHYQDsZg81
+         3qDDoRNGoe6zSvTHEPgv5iZe8OD+a/7CBeNsX990+dh/1N5WWWPdmZxjjVRlnL/57Xh5
+         nDbB2lj8QGiS1QPjUAFv0+1NdxeaVz/rAU4nnXMs3feVpXYSS8x6u/YyqKO4LAWs28dT
+         P4SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728954685; x=1729559485;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nsWOsNGSGmtH0ytbyOdAJmfSCP9OZiNKAIy8ksHhFEg=;
+        b=nn+HRxofZeCziL2dx2NZuDp0s9dWIxanzWC30fe232sLqyxxHd9ay+Qja4NuBYAUMN
+         oaoV6SSSULYi/DTomJ58WRPMxZop51vXv6ns+6O85W35HQKB1DNEWNvWuEEfkLyb4XZc
+         UQRcnhFfIwaVc76j0wd/6l1C+1f+a9dVGaH7gNEbTBe9AOWSXDMccmuTEmOT/VNCp5g4
+         xv9r2t1yUVzTkJIhl6c9WvwgkVwyqwGehwJhEXZjLoENCqfZTEUhv0nc9vBw5nJsCWdT
+         LijD+r28o5ymlobeXAXxvOee52Wesg6umaBWdQL3Up4KYWvswHBYca3Zurv+GYoKXL58
+         VpJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrpH7PI+3AKYQK0BQyQX1TzwX56ePEvnRjsuzWEvXRYPwHDvzzdsHZS6MeEBnGDXooNFlFq/zwKN5kgyvi@vger.kernel.org, AJvYcCVeekG46GO7CAyn+w1zV5HjvJ7yKt2zq+y13Uok+pVM3wC5USKecMJlJuXziNvgDk2LNLp8SQmJIgOyE9wSlyE=@vger.kernel.org, AJvYcCXAUKlt293r2W4HEDDfOoHrdeZAOGPP0xiNASTer2qMVa+qyq0SdOvvSfrk+gBK763NbVgMMiFpMbu5+a0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOH8TsXSJtIYO+nmxjZhhtxLFiQcsSGlCo1wFYcyn+yi/rifpY
+	HDCgYCEQCRObFgv5fB8qi/KOf06VPMG9T2r0XpxOULlCLOoavdYk/0X4AoWdinYmFPOAfXrlqF4
+	CgACCVgGN63pBP6ghJOQaZdxk/hrQW3us
+X-Google-Smtp-Source: AGHT+IHReT9937E4Y9zh0njLxZI25BwdY635Ngg5j+l95zk7/wFOGUxVmLiWq8NRh5rk0cLmmNwyTdGDJcvqHHKYhss=
+X-Received: by 2002:a2e:bc26:0:b0:2fb:36df:3b4 with SMTP id
+ 38308e7fff4ca-2fb3f2c7231mr53143111fa.34.1728954684446; Mon, 14 Oct 2024
+ 18:11:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: mvneta: use ethtool_puts
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172895464048.686374.13760246615148217081.git-patchwork-notify@kernel.org>
-Date: Tue, 15 Oct 2024 01:10:40 +0000
-References: <20241011195955.7065-1-rosenp@gmail.com>
-In-Reply-To: <20241011195955.7065-1-rosenp@gmail.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, marcin.s.wojtas@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org
+References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
+ <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
+ <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
+ <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
+ <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
+ <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com>
+ <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com>
+ <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com>
+ <CAK7LNARg=ZvD14ARKw40uk0XNfE5qgWqsrM6H4jBJu0m5XYCWQ@mail.gmail.com> <CANiq72n6zkCZdUJ0A8enLW3BgmA_=eJKgDKwNCfs-q3dfeR2BA@mail.gmail.com>
+In-Reply-To: <CANiq72n6zkCZdUJ0A8enLW3BgmA_=eJKgDKwNCfs-q3dfeR2BA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 14 Oct 2024 21:10:47 -0400
+Message-ID: <CAJ-ks9==6mi7SF5rTR=YouwC6RwktJftqXHqhsBcHNTWxdbfig@mail.gmail.com>
+Subject: Re: [PATCH] rust: query the compiler for dylib path
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	rust-for-linux@vger.kernel.org, Fiona Behrens <me@kloenk.dev>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
+	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Mon, Oct 14, 2024 at 3:09=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Mon, Oct 14, 2024 at 8:46=E2=80=AFPM Masahiro Yamada <masahiroy@kernel=
+.org> wrote:
+> >
+> > rustc ignores --emit=3Dlink=3Drust/libmacro.so
+> > and produces rust/libmacro.dylib.
+> >
+> > Is this a bug in rustc?
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This was my bad - I set this thread down the wrong path. In fact the
+current build produces libmacros.so, but I haven't been able to convince
+rustc to consume it. Changing `--extern macros` to `--extern
+macros=3D$(objtree)/$(obj)/libmacros.so` produces 'error[E0463]: can't
+find crate for `macros`'.
 
-On Fri, 11 Oct 2024 12:59:55 -0700 you wrote:
-> Allows simplifying get_strings and avoids manual pointer manipulation.
-> 
-> Tested on Turris Omnia.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/net/ethernet/marvell/mvneta.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+With a toy example, trying to link a proc-macro crate .so produces a
+more informative message than the kernel build does:
+```
+ rustc main.rs --extern macros=3D./libmacros.so
+error: extern location for macros is of an unknown type: ./libmacros.so
+ --> main.rs:4:1
+  |
+4 | extern crate macros;
+  | ^^^^^^^^^^^^^^^^^^^^
 
-Here is the summary with links:
-  - net: mvneta: use ethtool_puts
-    https://git.kernel.org/netdev/net-next/c/9de722c144d2
+error: file name should be lib*.rlib or lib*.dylib
+ --> main.rs:4:1
+  |
+4 | extern crate macros;
+  | ^^^^^^^^^^^^^^^^^^^^
+```
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+I've opened https://github.com/rust-lang/rust/issues/131720, let's see
+what the experts think.
 
