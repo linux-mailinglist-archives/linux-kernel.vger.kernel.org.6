@@ -1,112 +1,89 @@
-Return-Path: <linux-kernel+bounces-365042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C9899DCA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:17:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6AD099DCA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 05:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F24B283048
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:17:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64828B2203A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 03:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E76716F8F5;
-	Tue, 15 Oct 2024 03:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EzxpRdsr"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC3D4C8C;
-	Tue, 15 Oct 2024 03:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F5B16EB56;
+	Tue, 15 Oct 2024 03:17:57 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EBB535DC;
+	Tue, 15 Oct 2024 03:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728962220; cv=none; b=G4Q9Ji52v1x8rXT+hmqhr6OgE0fCp178UH8E5IsaXs1gliclU18AsVqa/1P3QXVwjSdu1HdSueLpSyuDDNdHItC0PQ9nzRhQGYmiMyFhlqokK487WALAkKkqylJMKjE+IWBH6ROKHfje3/Uh4bgyk5CAlX8JjKDZoKXlIWMlZNo=
+	t=1728962277; cv=none; b=SStLI3TkCSKCWozHjGuRkQkOZRIYYi0JRVl8TCpSJQJny6Mh5dzJAiFMwG2dIDQ1QfSuom4X2lDvhv/t46bgSS077WwC6IYuyWQ8+5wJ9y3MlkBEhUJeOinmOQCDEuLlvXodc8DGxV9x3PAyiwLKmAPoQG7IIrSy8VMgncrNGPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728962220; c=relaxed/simple;
-	bh=Vy5+b03BWuS+g4Wcrm8bS07wpHcNGmDKzU4Frh3eis8=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=PWg6eiv27uY7LCvTFWUVxA4jwRoRpQXC8p/CnBNUAQEXFlwIGfdfCwQOum8KAy+YbYjGWoTCSKM81Vjsm5pC9UjO1f6qD4FCMesFpK6iS/IwdFJ3wYysX+cS2cUSKHq2BCJuvEqfrNPKl9ZrwYPEuePPXCKqep58r+Y7gRZVAOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EzxpRdsr; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c693b68f5so49347995ad.1;
-        Mon, 14 Oct 2024 20:16:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728962218; x=1729567018; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xkYR7td2l+FeCuSLcJD66wuG7yiW4yRioWP8jk1sCVs=;
-        b=EzxpRdsrBQEcWr+WMhj6lqepNjiCvhoOoEnrsWlJmIYVNSjGVlL7r10t8/n/E5z7p/
-         n5EeSFrYMemmbxo9ibtIasJ1D5ZqAv8KOSakcrbHTWbqRZgdi75bv6uCSN5VyoqHgSpL
-         VNXPgGm8oMSrswqyin+flf28h5IyyiX0rPdGPLHZNtWhBqj+qd/wKhVDuM7VeTizFEcM
-         2aQD7yIwfnvfutyNb73pQrqJi029llzlI3hdm/8xBwKWqWe8uV0UXt038/4Aj9Y6q0H8
-         NPCtK2BCFbk1hIhE8Gv8ZsXn8XLS+fAHdDM8hmewL35665ryBY3Fpl5BeRz6v1SuHvda
-         0K/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728962218; x=1729567018;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xkYR7td2l+FeCuSLcJD66wuG7yiW4yRioWP8jk1sCVs=;
-        b=SlqfIViq9XXhNO2mIV4dZpyc2VAH7XknUz4RlMCZhktz9AIHf6NwuCrnwpDdp8YON/
-         pUWaJu0/Fd3Uwf9B8BaZ+mQCNscz2Id6uuIT3ttXwPaGAY98XQfl/VviP+pNKlFpdPfb
-         o3JFa2VIYo5bwuAeudrgDP6YUmvTHoPSmTqqdgY3huXN8co4JkLjySqZKSRVXG2Fxf68
-         xVboS6At0LfNz4tkhLR+o3fEOXcRL1x35O4M0dvzBeJ5Op/hNHMMzhruUh62TVDMI2I3
-         4LM+QNBTuCoSXSJ+wWUXFCojMMkQclSkLs2rHLThbJSrGCeAaerV1ISYAgtExNN/MFIY
-         CLaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmTJffxAMmlXv2xMbAsSqUmARpYMHfqvKcTP2/ddNAEvQCMUPKj5oFjPZL5jaFlJJP6OjcIV9W@vger.kernel.org, AJvYcCVz2TbaclSBE/E/q1T/cOMtWwxujTdL7n0s2QoT0s0WmXJcA6tbmEW0uwLtk62tHrZqi3NRnotpSMoXK20=@vger.kernel.org, AJvYcCWBOlCP2QU/mXfpCfXxooaGLT10q2casd0MKDCm/hRKxTby656b5secM8JG8dUkq7drWdG+SkbLK0L/RxuFAFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/4mAB3xV4pfGxxNlo8vJROwRQzuIDqvYpoPX+rXKKG2cJOEBt
-	vPf+dYz9Mhl+TN1imz9E08hnpnMK6ttI68oA7pocirhiyi3FHC0T
-X-Google-Smtp-Source: AGHT+IHfnyTgworhr6LYwqZjKuVR1XpcYvqTA1bM8IJkqIEMPsuzzH5ABHcOoQ0B+2FhYCQE8kAs/w==
-X-Received: by 2002:a17:902:e845:b0:20b:b26e:c149 with SMTP id d9443c01a7336-20ca1467cf5mr192200905ad.29.1728962218285;
-        Mon, 14 Oct 2024 20:16:58 -0700 (PDT)
-Received: from localhost (p4468007-ipxg23001hodogaya.kanagawa.ocn.ne.jp. [153.204.200.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804b5cfsm2566795ad.205.2024.10.14.20.16.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 20:16:57 -0700 (PDT)
-Date: Tue, 15 Oct 2024 12:16:42 +0900 (JST)
-Message-Id: <20241015.121642.1320408148892534399.fujita.tomonori@gmail.com>
-To: boqun.feng@gmail.com
-Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
- linux-kernel@vger.kernel.org, jstultz@google.com, sboyd@kernel.org
-Subject: Re: [PATCH net-next v2 0/6] rust: Add IO polling
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <Zw2KwQbAAKZ_5lPL@boqun-archlinux>
-References: <Zws7nK549LWOccEj@Boquns-Mac-mini.local>
-	<20241013.141506.1304316759533641692.fujita.tomonori@gmail.com>
-	<Zw2KwQbAAKZ_5lPL@boqun-archlinux>
+	s=arc-20240116; t=1728962277; c=relaxed/simple;
+	bh=IvNl+e/jdFX3O2ee93w1EJwzsWmALvajjo/0IM8HNZs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O9+fgMqP6FxOxTJ1fky13lKzEz02bJjzInq16dY1eNxtGpJ59c46WOOy8vSIduAhQqXjvU2YG/+rMklg0mQmaCgKzqdTUZmoN0GRxm0LTZxdn1jWqwNxlnvZK7slcxK2sfTTKGE0nXPKnrxrVaGkXpDCXIIl9Kc3aie8tw3s/Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5670dded8cd5-1ece4;
+	Tue, 15 Oct 2024 11:17:45 +0800 (CST)
+X-RM-TRANSID:2ee5670dded8cd5-1ece4
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee1670dded8074-e5d74;
+	Tue, 15 Oct 2024 11:17:45 +0800 (CST)
+X-RM-TRANSID:2ee1670dded8074-e5d74
+From: Liu Jing <liujing@cmss.chinamobile.com>
+To: lgirdwood@gmail.com
+Cc: broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Liu Jing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] ASoC: fix code redundancy in sound/soc/soc-core.c
+Date: Tue, 15 Oct 2024 11:17:42 +0800
+Message-Id: <20241015031742.5144-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Oct 2024 14:18:57 -0700
-Boqun Feng <boqun.feng@gmail.com> wrote:
+In the snd_soc_register_dai function, the logic for assigning the value of dai->id can be simplified
+using the conditional operator (also known as the ternary operator).
 
->> This patchset adds Delta (also belongs to time, I guess) and fsleep to
->> rust/kernel/time.rs. I think that fsleep belongs to timer (because
->> sleep functions in kernel/time/timer.c). It's better to add
->> rust/kerne/time/timer.rs for fsleep() rather than putting both time
->> and timer stuff to rust/kernel/time.rs?
->> 
-> 
-> Good point. So how about putting fsleep() into rusk/kernel/time/delay.rs
-> and add that into the "F:" entry of TIMER subsystem? Since "sleep"s are
-> a set of particular usage of timers which don't directly interact with a
-> timer or hrtimer struct, so I feel it's better to have their own
-> file/mod rather than sharing it with timers. Plus this results in less
-> potential conflicts with Andreas' hrtimer series.
+Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+---
+ sound/soc/soc-core.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Sure. I'll go with rust/kernel/time/delay.rs.
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 20248a29d167..cbe2be64e1c3 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -2663,10 +2663,7 @@ struct snd_soc_dai *snd_soc_register_dai(struct snd_soc_component *component,
+ 		dai->name = fmt_single_name(dev, &dai->id);
+ 	} else {
+ 		dai->name = fmt_multiple_name(dev, dai_drv);
+-		if (dai_drv->id)
+-			dai->id = dai_drv->id;
+-		else
+-			dai->id = component->num_dai;
++		dai->id = dai_drv->id ? dai_drv->id : component->num_dai;
+ 	}
+ 	if (!dai->name)
+ 		return NULL;
+-- 
+2.27.0
+
+
+
 
