@@ -1,141 +1,112 @@
-Return-Path: <linux-kernel+bounces-365811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F1699EA39
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:46:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E55E99EA3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EEB42884BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527792884CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 12:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084491C07D5;
-	Tue, 15 Oct 2024 12:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139691C07EC;
+	Tue, 15 Oct 2024 12:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qkPKAipe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="j2DLWB3P"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4684B1C07C2;
-	Tue, 15 Oct 2024 12:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107C41C07D2
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728996405; cv=none; b=HRdzqmMchjtab/tP13qtUVHPUCiWnZbSvipYIeH1H79923HMPg3vmnazUoBM3+hJK53MsjaLiLTpb6KPXiRzf2sWFmCylGx7lEb3lEsh/HUslSEGpZbubYMaq6MHmj3D0fRy/ulA0AAF/xgcUe35hHepaLb97DFSYonoZSfUXWA=
+	t=1728996447; cv=none; b=e97z/YWYkoIo+AVhUomkS4h1Pdf5UNZPGTTnChf6HnVqR68v3IR44x+VDdqlEKxbb6tYRU1KEJJL8GXu3Jh+sbh8NOwQ2ZoQYlc+Fgu0wt+LaZ5BQhQu9xqI4gLi8B6GQGnR1N16gqKAPrObbgtuwI0fMjLWvqSUlKAI/puKGzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728996405; c=relaxed/simple;
-	bh=SMWNDmBPfxChXtubJAJT+Pmtjs2xoVjbkxziJvEEtjc=;
+	s=arc-20240116; t=1728996447; c=relaxed/simple;
+	bh=9S1snqy0sUlcGrxSkmAISPY4bKaFGc5qSCVtFcrN4RE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bc/qSR9Rr0jT9O6FQizuNx4matKIiqKcO4o6lbfNXTvHulw6iXJBNpNIhaYhgiXWGLUEpWAXc3VB3rJBp+307AeEd8uD3VPhJONlGXwfnHTcpYZMrZTIHrILXzvVEQnJjZxzupNggJvgdK+ds/0io1qSAoOQcCVWHP9Th51oBIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qkPKAipe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566DAC4CECF;
-	Tue, 15 Oct 2024 12:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728996403;
-	bh=SMWNDmBPfxChXtubJAJT+Pmtjs2xoVjbkxziJvEEtjc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qkPKAipewn7fmU0jFluCtKq1OcK37BhyoYFgXBh9V/ZwiM/6YYlhjj0oFGskIcaNt
-	 rdBdXnG23cfCAbc9gNW0WLwmBpVmDo9AUXBDn1iZ7yMvYGv3aBXZPKIAUcn3F0NnW0
-	 8fayhjcBbs++0VSj3w+NtQxBrspnp+vFFZm1tpSg=
-Date: Tue, 15 Oct 2024 14:46:40 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kent Gibson <warthog618@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 0/2] gpio: create the /sys/class/gpio mount point with
- GPIO_SYSFS disabled
-Message-ID: <2024101535-wrangle-reoccupy-5ece@gregkh>
-References: <20241015-gpio-class-mountpoint-v2-0-7709301876ef@linaro.org>
- <2024101531-lazy-recollect-6cbe@gregkh>
- <CAMRc=Mea=W-1UoHMew3Si=baW3ayERrHjxjG0NPdmkCfp9dUHw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=biLx6exSKirejWuxpCCWecrJVz5LWDdmxmx+BCuVQqM4LF84F8ru2iUn7F0l5GOVeFLzLI3WEge6Q7Lmrk8SZ60rzT8T+TuOOKqbdTHIbrdqFSPPaXe4JzfawUqDDmRZiX8yyEd6HcyengX/GUdvqdDc+0Y4ZRelanUbkQE+Bk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=j2DLWB3P; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-84fd057a973so1257241241.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 05:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1728996445; x=1729601245; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9S1snqy0sUlcGrxSkmAISPY4bKaFGc5qSCVtFcrN4RE=;
+        b=j2DLWB3Paan6KBP9L8uoyRVkBC4TNnT/hpUMlcw7GzrWf1k7WAfybHi/1u0hG1h+gV
+         Wxtbnke+cFZy2rfgug2oh02DdYq1NeejYggkKA8Pwa0KipziaEHdi15SxJdleT3OpOpi
+         McgjZr27Lf0Cca0lkXEuKnwwVh+w9yt5gdequkc1ric4a2AfN1jhNVxkzYWZp9PNrfCN
+         77zntjuP/Q1qAPlULLcDiVABb7mUaPgaNOLP6OkT6MrN0Lax0IMyrlbnhDc6eVM2C4qM
+         +gvKuihwpmnwfbFqvA97BJwen+JKbjXw4SjArky1+Z/uxaeoD+p5hHgWS4TnyRMCqQOW
+         gN2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728996445; x=1729601245;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9S1snqy0sUlcGrxSkmAISPY4bKaFGc5qSCVtFcrN4RE=;
+        b=kOY4yejdOMKvXaLfuyEhAnFkA2sT2J7eqNo8JAqqOF7Q1FnIUzS5OMvvIY1DgxrYk9
+         AMTQCDso5w37tMHdvLhtF9iUqSibb1TJ5IovNNkAC7iYYO7W4oExQD9dXaED2WyVtk0p
+         F/yl4GmtsHTL1bdY173qIB8JS4az6tF20rCpOsM6QY7PL7a/8BuQsANKG5RsSSmWGMva
+         yM1kS+PXWAi//GmNAr8ByTH2xGUj/OGRDrWMrv8yVlQVVeNnKxzDdgUe9ws+089Vi9j3
+         8SHoqu9VII2fqRVQCVWX6yPIyRAI/uQ1S5p5D2N4Fr45UNhlT3DtjM6zWxPBQnq20ZH+
+         Zx2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWdziYqcJxEEs+KfU53bDosd0mkGvDvQzBwUW1XHJM1Y3pbXf+35/UeWqCXq3lFN7SwlN4RQmM4VTcNd5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWHmQq2B7E4qiKww2V1gq2O7McR7a9sJ6PMR9/CzOJnxNq0Vnv
+	f92JZT1jTyyFI5Jv9CB0FFkfjXvdI38CiaoJwD28pgugAQ/fHT/5YAEfaaIAsPg=
+X-Google-Smtp-Source: AGHT+IHIRxePA9J/5yRqXfxDEQAMQhA+JMP40CVAOrPRfL5HhzVbrqqZKc4spR4QAm7PXjUlxeCV1g==
+X-Received: by 2002:a05:6102:3752:b0:4a4:9416:6a18 with SMTP id ada2fe7eead31-4a5b579b8e7mr231229137.0.1728996444983;
+        Tue, 15 Oct 2024 05:47:24 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b13616611csm67089085a.14.2024.10.15.05.47.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 05:47:24 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t0gxP-00D2Mx-UU;
+	Tue, 15 Oct 2024 09:47:23 -0300
+Date: Tue, 15 Oct 2024 09:47:23 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Pranjal Shrivastava <praan@google.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joy Zou <joy.zou@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH RFC 2/2] iommu/arm-smmu-v3: Bypass SID0 for NXP i.MX95
+Message-ID: <20241015124723.GI1825128@ziepe.ca>
+References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
+ <20241015-smmuv3-v1-2-e4b9ed1b5501@nxp.com>
+ <Zw4kKDFOcXEC78mb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mea=W-1UoHMew3Si=baW3ayERrHjxjG0NPdmkCfp9dUHw@mail.gmail.com>
+In-Reply-To: <Zw4kKDFOcXEC78mb@google.com>
 
-On Tue, Oct 15, 2024 at 02:11:45PM +0200, Bartosz Golaszewski wrote:
-> On Tue, Oct 15, 2024 at 11:30 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > >
-> > > Despite providing a number of user-space tools making using the GPIO
-> > > character device easier, it's become clear that some users just prefer
-> > > how the sysfs interface works and want to keep using it. Unless we can
-> > > provide a drop-in replacement, they will protest any attempts at
-> > > removing it from the kernel. As the GPIO sysfs module is the main user
-> > > of the global GPIO numberspace, we will not be able to remove it from
-> > > the kernel either.
-> >
-> > They should protest it's removal, and you should support it for forever,
-> > as that's the api that they rely on and you need to handle.  That's the
-> > joy of kernel development, you can't drop support for stuff people rely
-> > on, sorry.
-> >
-> 
-> Yet every now and then some clearly bad decisions from the past are
-> amended by removing support for older interfaces. I'm not trying to
-> deprive people of something they rely on, I'm trying to provide a
-> drop-in replacement in user-space using an existing, better kernel
-> interface, so that we can get rid of the old one and - in the process
-> - improve the entire in-kernel GPIO support.
+On Tue, Oct 15, 2024 at 08:13:28AM +0000, Pranjal Shrivastava wrote:
 
-How is emulating the existing sysfs api anything "better"?  It's still
-the same api.
+> Umm.. this was specific for rmr not a generic thing. I'd suggest to
+> avoid meddling with the STEs directly for acheiving bypass. Playing
+> with the iommu domain type could be neater. Perhaps, modify the
+> ops->def_domain_type to return an appropriate domain?
 
-> > > I am working on a FUSE-based libgpiod-to-sysfs compatibility layer that
-> > > could replace the in-kernel sysfs and keep all the user-space programs
-> > > running but in order to keep it fully compatible, we need to be able to
-> > > mount it at /sys/class/gpio. We can't create directories in sysfs from
-> > > user-space and with GPIO_SYSFS disabled, the directory is simply not
-> > > there.
-> >
-> > Ick, no, just keep the kernel stuff please.
-> >
-> 
-> Ick? I'm not sure how to take it but are you criticising the idea
-> itself of using the better kernel interface to provide a thin
-> compatibility layer in user-space to the bad one that people are just
-> too used to to spend time converting? Or just the mounting at the old
-> mount-point part?
+Yeah, that is the expected way, to force the def_domain_type to
+IDENTITY and refuse to attach a PAGING/BLOCKED domain.
 
-I'm saying "Ick" for a userspace mounted filesystem on top of sysfs to
-emulate a sysfs api that the kernel provides today.
+If this is a common thing we could have the core code take on more of
+the job.
 
-> > > I would like to do what we already do for /sys/kernel/debug,
-> > > /sys/kernel/config, etc. and create an always-empty mount point at
-> > > /sys/class/gpio. To that end, I need the address of the /sys/class
-> > > kobject and the first patch in this series exports it.
-> >
-> > No, debug and config are different, they are not "fake" subsystems, they
-> > are totally different interfaces and as such, can use those locations as
-> > mount points for their in-kernel filesystem interfaces.  You are wanting
-> > a random userspace mount point, that's totally different.
-> >
-> > Sorry, just live with the kernel code please.  Work to get all userspace
-> > moved off of it if you feel it is so bad, and only then can you remove
-> > it.
-> >
-> 
-> What if we just add a Kconfig option allowing to disable the sysfs
-> attributes inside /sys/class/gpio but keep the directory? It's not
-> like it's a new one, it's already there as a baked in interface.
-
-That's up to you, but again, please do not mount a filesystem there,
-that's going to cause nothing but problems in the end (like debugfs and
-tracefs and configfs do all the time when people get confused and start
-poking around in sysfs code looking for the logic involved in other
-places.)
-
-thanks,
-
-greg k-h
+Jason
 
