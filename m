@@ -1,363 +1,191 @@
-Return-Path: <linux-kernel+bounces-365016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C5899DC38
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:24:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA1B99DC3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 04:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D891C20E3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:24:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15FADB214C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 02:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0871328EC;
-	Tue, 15 Oct 2024 02:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0A8166F1B;
+	Tue, 15 Oct 2024 02:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PWP//sMJ"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GQhUe9kF"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2054.outbound.protection.outlook.com [40.107.21.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F1D184F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 02:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728959050; cv=none; b=iTOpUy/dm/hguo3KChd9LXpk7jO2+jUVxKv3VnO3ijyjBNPjnvZ2MMPTRDjAJrPz0xrRM0P9OKUta788tS4FGTyAFKDnrjqvdEW+NOymYzJ1uymjKAXLPo1wAF3YSKMhuCO9MZhYBqSJbD8Qjf1teXAychJCdUBrjcXfJviss0M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728959050; c=relaxed/simple;
-	bh=B6xPF6QCA06Vvy5p4PvQ6pQ7V4/v8s8YXvrpfZC36WY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cTlpURltLGHY3B4qGIqwqzpSiRrp/NznddDfng2+Jf7P9T+UfhLH1nlFyz3+f7ePTa0EsMlkgNiNIuK8MoIyS5mKSmMf3Ot6D9umGzA+mE7KnkrsprVGEFZf+pJu40BX22+C+4p7V1ufyQnTjNmaLb0IH8dSyZCxBNSOfXZ41mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PWP//sMJ; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ce611edb-87e2-4631-b813-7244d64c57d4@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728959045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hb1t/WHXI7IyoIEPpzH/xFYMEhPHUxUF0xOiDArzIpY=;
-	b=PWP//sMJNDSwSIr9SAd9VazJeacZBj+Z+v6ycT0cXpqAMjdpXKyIf5qI6ffDAznhVz4B+l
-	Lh+1Rhsl6hHV0nozRapfKGs1oaN6XZ9H8A70YCbxVcjh2SAvsSIg20h6PqAqrA4VDiMt5H
-	Mh3MZ0ngK6w138Jd7Ql7Bp2QR9Nn/3I=
-Date: Tue, 15 Oct 2024 10:23:56 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9917A184F;
+	Tue, 15 Oct 2024 02:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728959151; cv=fail; b=AvErhK88u3Erd4iWWsDBVxsh3QUj+0lFnAvbHVxucdYnujgAF0yVtGQcJARe1niJLrdPmFThV5S+uDYNn/cRl3rHdOy+teV+lntvDQkms+7lR7teC+CDNiNp2g06lXlZbEJxCU6iMowSkBfnMY0rC5p6vvQ60zFaqlb/1jPDg2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728959151; c=relaxed/simple;
+	bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZgTeDXH5Fv6ewHxQOj9uQ7chgEvGcI0fo9fe3vadLV44XseApGHwhjCzKqeDw2tpin27exz8dtq1k7rP7VCfk+FJ/VD4ctQwRbsY2ckeVzTxTvEao/WlC9IbP/7hIRg2Iv/Fc6PGt+ZCxOPnC2Ap14uhshyE75LiMeAae4c7GYo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GQhUe9kF; arc=fail smtp.client-ip=40.107.21.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SwQg+8DUrr+5180hKwTelQLF6mZ7jsTybiyfBX5AS9gljKbPUE4QU7T/pN8jjdeZH/HrTr4flFC9V4kK8inWiqEXDHiSZMSuybcqlNDBV43gOFQsVuri2fO6Jx1vTrmGxAedoLd0rp2Ie/o5CBom4LtUhV0yOJ0bLXeac8mHKm2eDQOYfvkwxHM705M51fQ2SeLqKTmb1haZQ4uPPr0gZvS+gOykqVdl05GeqDGx55K25MMrMVjnQjMYdmhadjvS2IVfHQ67ul1Q6vmMc5kLs6GTJ7qMhrAkql1cj4tCxwWtiuLsuXkziVi4+kULItWQbuirmGVS18mw9kS5djUf7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
+ b=ii4+HCj7GcA0xMMaLQIaqJGP5UckadbB4nx4XziguUT333DDNWNtZHdhN6VLVxDE7IckEavIuiJwSiEcdsllFKqFqXF22nLHc56qDbEMQouz4YSGzbGcpxP7o1VlZN9cvU9lombZ6nWjOG7Ruq1jQII8B0LaNj1AHt5KyUCw+h0QnGxMaL3Yo1al5sLfO8u4tNeNLjkUerFnCgLfSaL5S0QWWwOnDE19DikAIyjFmtcd4tCAJmzKBDDYo/pvcOvy7qblRQP9Z8ExWKo295PY32i2g/nmajpuUjaOunL9Rd1p8Tgu/BHgHxua3jhyWRn3+o0wGWFwWqXTNoOi1ZPkKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LU9Vse6jp+WgM9AEri7L5hkvhucE6uYno07MO4fZqh8=;
+ b=GQhUe9kFIIBn1rKb8U1MD9z3oZy2lTesBGYuqJfif/08OoHSpVqUfU/41Ut4keaAfd95i6MF4UIwe/ELGQmYT0M680FhJKrAYiMEqZeJh97A2dIpCmUl231wNYTvnOsiND3zYqa5brCUG63MMI7+toFBwtk60knsf28rw4CMEs8SH8InU0XE0b8hOPJ4nrANmzEVEvAI+9xoU861i/ddjPe0DxzsDWW/wgTGnGhYDd6zSUp3wwA4fwbaTegWdazfRM2TlANP2f+zmHlE525wr9rVRv0KYr7GLLs7AiJd2tKLfO9PgsyHEVYxIsl3cYh7CX1vtmaviozeEVmIeWT5Sw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VE1PR04MB7245.eurprd04.prod.outlook.com (2603:10a6:800:1b1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
+ 2024 02:25:45 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
+ 02:25:33 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Abel Vesa <abelvesa@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Aisheng Dong <aisheng.dong@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/4] clk: imx: lpcg-scu: SW workaround for errata (e10858)
+Thread-Topic: [PATCH 1/4] clk: imx: lpcg-scu: SW workaround for errata
+ (e10858)
+Thread-Index: AQHbHhfXcCGneoDf+E2/H05k1kIVPrKGTCmAgADJq8A=
+Date: Tue, 15 Oct 2024 02:25:33 +0000
+Message-ID:
+ <PAXPR04MB8459AA95968436898B46267C88452@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20241014-imx-clk-v1-v1-0-ee75876d3102@nxp.com>
+ <20241014-imx-clk-v1-v1-1-ee75876d3102@nxp.com>
+ <CAOMZO5Ct1u6d8gnrSEbBW6b+sOdz3W=1oF0y21hdcUFdr0ymzg@mail.gmail.com>
+In-Reply-To:
+ <CAOMZO5Ct1u6d8gnrSEbBW6b+sOdz3W=1oF0y21hdcUFdr0ymzg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VE1PR04MB7245:EE_
+x-ms-office365-filtering-correlation-id: 375da646-7c59-4328-859b-08dcecc0a558
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Q0VEWWxOUlVZUXpDYWdXSU1vL1VIYUZhVGpjbGdZNmRzeXh2SkNjN0dGT3c0?=
+ =?utf-8?B?UVd1dzgwZmV4YnI5cWRHdEN0UTlneXhqL0tvSXc0NU9yejcxUTdnMWtsbXln?=
+ =?utf-8?B?d29SLy9YZ1VQZ3V5azJOWlBUcGpkVWlMeXN6YkFXNU1oRGZMYTh1MVFmNXk2?=
+ =?utf-8?B?blRnUWRqZ3NiVVozay80cktHSGo2Q2RvMGErcndQN0hxNWVpQmo3Y2tSQ01V?=
+ =?utf-8?B?QTdpa1pmSnZXejFGQSt2MFlPRk5hWjN2TVlVQWpJNzJPVW5hSVRHZEtnMEow?=
+ =?utf-8?B?TGFPZEwzWlpNc0ZTbXVFMFEyS2dpZktsMG5FUTJMQSthOHdKU1ArbVI2UWQy?=
+ =?utf-8?B?MS93VXBhN0lxR2kxd1lSVVVjWlJvL0NlQ3F6aEhtK2RnSXVmTFZaWjY5QWdv?=
+ =?utf-8?B?eDB2Vkx4TjR6OFJHNFVFb0luVTcvOFI4ZUlEVEl1RURHYWhpVTYycTdiZDF3?=
+ =?utf-8?B?L0xUeG5IR3lIRElwOEFvajFpY0ZIdTNMVE1OL0tNVGIvYjM4V3hYVndjdEh0?=
+ =?utf-8?B?Wk5zRlJEVStuM3pEMlVmZkZ3b1Zzd05TNE9MMkM3dlpXUzd5a0k1bTRYVUFr?=
+ =?utf-8?B?N3dYT2hIbmMwQXpLaVd3ZUpJNTB3ZUZFWWNXT2UxTnBBRnYxVytTS3p6UnI1?=
+ =?utf-8?B?V0JXSjVMdlV0bmtuRDhtbTZ3OXdTYUppWXhFbjZKdlBuaWhrS3gxZURBTytn?=
+ =?utf-8?B?R3kxSUk5VHViKy9zbXN5TnowY2d5a211cHJudUpEYm5FRkpzSVl1QVJFRGh6?=
+ =?utf-8?B?K0NBRGVPcGNNSEJRZmNpNitBejd5dHE5eWZwK1U1NzlrMmJIR3JvcWsrL2xG?=
+ =?utf-8?B?cTRhMjdrcVRBWWR3eGdCVFdibkV4d2ZMSytNVy8zS0Q1dXBBTmNsSFlXNUFk?=
+ =?utf-8?B?SlZPckVoUjJwWEw0ZjcxYTlmUlhtWmlJZG5vanloS1A4Wm15ZkVBM3FTRDhU?=
+ =?utf-8?B?TG5NSXV1ZjJ1QzJ4Mll6WFNFVDVCL3ZwV3o0YU4xZHFzNXROU2puUmxpYUVP?=
+ =?utf-8?B?SG9QVzVDM3I2ZEtkcjZyWkVSVjVUdzA5UjV6ZjJ2K1pXU3puc3E4SlFJTXRE?=
+ =?utf-8?B?SzFaaHM2UGhCTUg4SVVuTkVkanc3dkQxd1ZHZVR4QUtnalNrM1FOODBvV2g4?=
+ =?utf-8?B?Q1YrNWNFSFAzdFBaajlzM2czQVZzRFBNaVk0Z2ZKcmZna2VQeVlsQ3VicWsx?=
+ =?utf-8?B?eGZhMk5FV1JoRmo1Mm1xVXdvQkV3ZTl6dTcyelE4MHpqQ1g1emx6NWQ0RTc1?=
+ =?utf-8?B?NWJzUWl0d2xhUjRkQ1ltYWRoaUlMRi92WWh3dDJXRU9sMVc4NW9vQ3k4THBI?=
+ =?utf-8?B?T1QwVWRWMUwvSEZHdUhWbUY2blRvdEM0elF6OGlGUHkveE5TWnJKVlBUOW51?=
+ =?utf-8?B?SEc3VmkwVmowRjh0QWNEWTl5alNHNFRyZ3VOU2YwenZBOVFQYjVwMEs4RHFN?=
+ =?utf-8?B?eVdqVzliZER4Z3ZkMHBBd3RBbkVMQTl1a2Z6OWRFQnNQRktaN29lcW5tV3N3?=
+ =?utf-8?B?S1E0WFErTURnUk9icmZMS3FzdlJXVHBMZzRwcFZER3VnSFdzaHFOSjNVcTEr?=
+ =?utf-8?B?YzdGZWJqRzB1K21aWnhpWGREbHg2WE1QV3Fyd1hleWMvQUhJd1BETnlnQmxN?=
+ =?utf-8?B?WkFWQUxxalNpeDVlYUZmaUs1RisvNElUS3NoQVF2cWxpZHg3cnpXLzhjMnVo?=
+ =?utf-8?B?UHNvU0FmeHQ5cjdjeTFENXRxSlJOTUxCbko1MGIzcWlSanZFQlAyUUhtMndY?=
+ =?utf-8?Q?W2L2elmwqKr/Kt864o=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Q0x4eE9LOGF4ZXAweTNYV0V2dnBLSnNqVk84K0M3VTlKOURCcVdTczFodWhL?=
+ =?utf-8?B?VWlHM1l5QmVWc1gvbDJ5Z3kvcU9tZ0EwZDgvd25RbnkwRFl3WXZTNVo0Rmx1?=
+ =?utf-8?B?bHVrR0FJOXlyeHBBYS94S0xsZTZTajRGbGhpMHBvZ1kweGdFb3lqU3lWRXpz?=
+ =?utf-8?B?ZnlINnNlYkRuUDI0cW1DZzVVY0NJbjg2YWRkSlh5VGRlZGYxaThDTXJPSDI2?=
+ =?utf-8?B?TnVSTWlNcGs2eDJnVmV0MHVpMUZQdXpES0dEMVBjblR0NXcxckhpL0tHNmVa?=
+ =?utf-8?B?ZzRHMVFacjhMWFJtMzJJck1aRUg3MFZ6cWIzcjJrUi9IcjFRUEJVZUM3THJG?=
+ =?utf-8?B?Y1hKOWdFcitqK1pzMWx5T05QeUJkcWs1QzROSnVlb2hCeXlxd3Ezd1JpZUZY?=
+ =?utf-8?B?R1dlc0l3Znk3QXBJTU91ZlVSQ0RMZDg3bHA5cHp1VlRrSDlLUER5OTlUL1V6?=
+ =?utf-8?B?eE1ZYnJOSktRMWNTRHZGazRNU3BJYWMxeklDUXZuS0EvOEpyMUJXWStTLzM1?=
+ =?utf-8?B?S09jeG1jbE80MEFreldFYnUrQStaUjg3VDNHNEpvZk42R0JtQTc2TUdmYzBj?=
+ =?utf-8?B?V2trYzc2bzVMSWl4S055WFNsMkd4Q3BsNEh0RVV5cW1YN3RUS1pKcmZaNFpZ?=
+ =?utf-8?B?R0V4ai9XNmZTV3E0amJsc2dlazFYWVZMb3k2TVJvb0M4Q1lCQlFLaXN1L3NH?=
+ =?utf-8?B?NXJpc25XZXdYRElTVjBwU3VraGxSMDNjN3lrU2pLSnIxbk5RUzRkYXN3NDcy?=
+ =?utf-8?B?OWMrbDN1UVR3cFY1bndjaCtyVER1SSsrZTF4aURvbUYvakx3WHZmemJmZ1Ir?=
+ =?utf-8?B?Q1RzRkxvVkUvNnppdVBWcm5TcXNlRFNnK0NpemdtYkJTZnFTWVRuQmt0Mzha?=
+ =?utf-8?B?c010NEtqRHUzenFDSXB3SHI4TElXYWtoVjliS0JOUG9jeGpJVTFBYVB2ZXpw?=
+ =?utf-8?B?YVBtVmdWTDlTcXlIWjdRT1VmSERvUzgzZzJxalFzVXZyTzFCc1c4bk9sYTNY?=
+ =?utf-8?B?QWIxVENIVkU4MFpReHpHTGVXRUltQTBFWnJYQ3VMT1lkdkRxUWZsaWJKSFkz?=
+ =?utf-8?B?emFiNC9UTUtiV3NOU3IvT2NTZjVyL0hKUlg1ZmlyKzErMEtsMUV5TklVT2hi?=
+ =?utf-8?B?VHR5cFlKbVp6ZVJQdVNqbzRRbkJXMlJUdVhuNDhSd3JaekpuV244UWxwYTgr?=
+ =?utf-8?B?OVBiN21vQ0t0ek1MNWE1WVBrb2dGU0VJRERnMit5bG1Fbk1paElhQzhzczFn?=
+ =?utf-8?B?UFJ5aXpSRWY2OTF3dGdZa3dqYjhsL1h4MEttS2t2RWI5WElWd2o0ekE4ZXVX?=
+ =?utf-8?B?dlI2aW9RZ2lVbVpIWVVtUllIa1hsUkRTa2JyTWNJNVVqUzF4cGJ2YXBMSFNB?=
+ =?utf-8?B?Wm9sNTFVV0s0S3EvVmVyZ0h6YTdYY0xLem5xWTVVL3E0eXVLYkVyMkNTUGJn?=
+ =?utf-8?B?Mm82QXlIZEk0WFdxT1hkbjJzOVAwcStqYUtnMVpxbk9iYUd2TXdLR1gvSlZX?=
+ =?utf-8?B?ZXNjYkN6N25aR3hGcnh4VWkrZXBYNmRhNFNhMTg4bHdwK0xnU2hqQ29Ud3A5?=
+ =?utf-8?B?OWVaS0JwcXhtUTJONTFiU0hEVy9waTU5Q01GZGZtYUdhS0dMdWIxNGdsSlFP?=
+ =?utf-8?B?YWJNcWQzcUxRNVQ2REtSLzg3NERBN0ZaRG1KUEZBNUVwcEdkRFcxbnpVNDJI?=
+ =?utf-8?B?cmxSeWdaMU9tNDAwS3MwQTlSUWswK0thLzRqU0pLZ0hLNWx4L0JrVUE5T05R?=
+ =?utf-8?B?MjdjVVo2bk16MjF0bGlXN0hKQ0MyU3dGbGhUMjhhb0NWd3kzRXlwbmFmY0M2?=
+ =?utf-8?B?WXEvV2lVUml3WFc2OVlFSTViVmRoSHVXMU5uZmNkVDlMZ0YvbFhhMzU1ajlY?=
+ =?utf-8?B?L0VhUEFPUGdZRzZRdHF6ZnlPcE1CZ2Myek91cVJ1d282anp1R2tPbmk5a3kr?=
+ =?utf-8?B?RE9qZ0g0WXNvWFVJTGRxcnJ1VG9hWnJnd2VyKzZtbGVqc0k3dlRpWi9Nci8y?=
+ =?utf-8?B?ZVJyTkFSdHlUMWNGbHh1WmRveVB6WkEzTXhJZzk1eVN2dGRPQ0FoQUNPSFMv?=
+ =?utf-8?B?dnhsMSszSnpZVXpnckhtUUlSQ0xMM2w2MkxxVXlYMDhFVnBpbkpGbUdISHkx?=
+ =?utf-8?Q?/bIg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 1/3] Docs/zh_CN: Translate page_tables.rst to
- Simplified Chinese
-To: Pengyu Zhang <zpenya1314@gmail.com>, alexs@kernel.org,
- siyanteng@loongson.cn, corbet@lwn.net, seakeel@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- yaxin_wang_uestc@163.com, zenghui.yu@linux.dev
-References: <20241014155526.17065-1-zpenya1314@gmail.com>
- <20241014155526.17065-2-zpenya1314@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20241014155526.17065-2-zpenya1314@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 375da646-7c59-4328-859b-08dcecc0a558
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2024 02:25:33.1126
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qHEwz/uW9lkWodB097N4/UASrREYMg6TefiAMS0clR1g2k3FRWrfXVt5Nnkeq6xAfMy0sh2roblUwFDlUMbAZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7245
 
-Hi Pengyu
-
-
-在 2024/10/14 23:55, Pengyu Zhang 写道:
-> This patch provides a Simplified Chinese translation of the
-> "page_tables.rst" document, aimed at improving accessibility
-> for Chinese-speaking developers and users.
->
-> The translation prioritizes technical accuracy and readability,
-> ensuring that the content remains clear and informative for
-> its intended audience.
-
-> Update to commit d83d5cdfa125 ("Documentation/page_tables: Add info about
-> MMU/TLB and Page Faults")
-Hmm, let silence the warning:
-
-0001-Docs-zh_CN-Translate-page_tables.rst-to-Simplified-C.patch
----------------------------------------------------------------
-WARNING: Unknown commit id 'd83d5cdfa125', maybe rebased or not pulled?
-#15:
-Update to commit d83d5cdfa125 ("Documentation/page_tables: Add info about
---------
-It seems that you haven't used the development tree on kernel.org 
-website, see:
-<https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/Documentation?h=v6.12-rc3&id=4d83d5cdfa1251bea0b88b15f8ad676a83275c11>
-
-
-Let's copy this:
-Update to commit 4d83d5cdfa12 ("Documentation/page_tables: Add info about
-
-MMU/TLB and Page Faults")
-
-> Reviewed-by: Alex Shi <alexs@kernel.org>
->
-> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
-Oh no, we don't need the blank line.
-> ---
-> v4->v5:add commit tag and Reviewed-by tag pointed by Yanteng, and restore
-> the pfn value to 0x3fffff.
-> v3->v4:fix comments from Zenghui
-> v2->v3:fix issues mentioned by Alex
-> v1->v2:fix issues mentioned by Alex, Dongliang
->   Documentation/translations/zh_CN/mm/index.rst |   1 +
->   .../translations/zh_CN/mm/page_tables.rst     | 221 ++++++++++++++++++
->   2 files changed, 222 insertions(+)
->   create mode 100644 Documentation/translations/zh_CN/mm/page_tables.rst
->
-> diff --git a/Documentation/translations/zh_CN/mm/index.rst b/Documentation/translations/zh_CN/mm/index.rst
-> index b950dd118be7..960b6d2f3d18 100644
-> --- a/Documentation/translations/zh_CN/mm/index.rst
-> +++ b/Documentation/translations/zh_CN/mm/index.rst
-> @@ -53,6 +53,7 @@ Linux内存管理文档
->      page_migration
->      page_owner
->      page_table_check
-> +   page_tables
->      remap_file_pages
->      split_page_table_lock
->      vmalloced-kernel-stacks
-> diff --git a/Documentation/translations/zh_CN/mm/page_tables.rst b/Documentation/translations/zh_CN/mm/page_tables.rst
-> new file mode 100644
-> index 000000000000..544381c348b1
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/mm/page_tables.rst
-> @@ -0,0 +1,221 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/mm/page_tables.rst
-> +
-> +:翻译:
-> +
-> + 张鹏宇 Pengyu Zhang <zpenya1314@gmail.com>
-> +
-> +:校译:
-> +
-> +====
-> +页表
-> +====
-> +
-> +分页虚拟内存是随虚拟内存的概念一起于 1962 年在 Ferranti Atlas 计算机上被提出的，
-> +这是第一台有分页虚拟内存的计算机。随着时间推移，这个特性被迁移到更新的计算机上，
-> +并且成为所有类 Unix 系统实际的特性。在 1985 年，这个特性被包含在了英特尔 80386
-> +中，也就是 Linux 1.0 基于的 CPU。
-how about 也就是运行 Linux 1.0 的CPU。
-> +
-> +页表将 CPU 看到的虚拟地址映射到外部内存总线上看到的物理地址。
-> +
-> +Linux 将页表定义为一个分级结构，目前有五级。对于支持的每种架构，其代码会根据硬件
-> +限制对这个层级结构进行映射。
-> +
-> +虚拟地址对应的物理地址通常由底层物理页帧引用。 **页帧号(page frame number,pfn)**
-> +是页的物理地址（在外部内存总线看到的地址）除以 `PAGE_SIZE` 得到的值。
-> +
-> +物理内存地址 0 对应 *pfn 0*，而最大的 pfn 对应处理器外部地址总线所能寻址物理地址
-> +的最后一页。
-> +
-> +在页粒度为 4KB 且地址范围为32位的情况下，pfn 0 对应地址0x00000000，pfn 1 对应
-> +地址0x00001000，pfn 2 对应地址 0x00002000，以此类推，直到 pfn 0xfffff 对应
-> +0xfffff000。如果页粒度为 16KB，则 pfn 分别对应地址 0x00004000、0x00008000
-> +... 0xffffc000，pfn 的范围从 0 到 0x3fffff。
-> +
-> +如你所见，对于 4KB 页面粒度，页基址使用地址的 12-31 位，这就是为什么在这种情况下
-> +`PAGE_SHIFT` 被定义为 12，并且 `PAGE_SIZE` 通常由页偏移定义，为 `(1 << PAGE_SHIFT)`。
-> +
-> +随着内存容量的增加，久而久之层级结构逐渐加深。Linux 最初使用 4KB 页面和一个名为
-> +`swapper_pg_dir` 的页表，该页表拥有 1024 个条目(entries)，覆盖 4MB 的内存，
-> +事实上Torvald 的第一台计算机正好就有 4MB 物理内存。条目在这张表中被称为 *PTE*:s
-> +- 页表条目(page table entries)。
-
-page table entries -> 页表项。 So:
-每一个页表项在这张表中被称为 *PTE*:s
-
-> +
-> +软件页表层级结构反映了页表硬件已经变得分层化的事实，而这种分层化的目的是为了节省
-> +页表内存并加快地址映射速度。
-> +
-> +当然，人们可以想象一张拥有大量条目的单一线性的页表将整个内存分为一个个页。而且，
-Hmm， let's exec %s/条目/页表项 in vim.
-> +这样的页表会非常稀疏，因为虚拟内存中大部分位置通常是未使用的。通过页表分层，虚拟
-> +内存中的大量空洞不会浪费宝贵的页表内存，因为只需要在上层页表中将大块的区域标记为
-> +未映射即可。
-> +
-> +另外，在现代处理器中，上层页表条目可以直接指向一个物理地址范围，这使得单个上层
-> +页表条目可以连续映射几兆字节甚至几千兆字节的内存范围，从而快捷地实现虚拟地址到
-> +物理地址的映射：当你找到一个像这样的大型映射范围时，无需在层级结构中进一步遍历。
-> +
-> +页表的层级结构目前发展为如下所示::
-> +
-> +  +-----+
-> +  | PGD |
-> +  +-----+
-> +     |
-> +     |   +-----+
-> +     +-->| P4D |
-> +         +-----+
-> +            |
-> +            |   +-----+
-> +            +-->| PUD |
-> +                +-----+
-> +                   |
-> +                   |   +-----+
-> +                   +-->| PMD |
-> +                       +-----+
-> +                          |
-> +                          |   +-----+
-> +                          +-->| PTE |
-> +                              +-----+
-> +
-> +
-> +不同页表层级的符号含义从最底层开始如下：
-> +
-> +- **pte**, `pte_t`, `pteval_t` = **页表条目** - 前面提到过。*pte* 是一个由
-> +  `PTRS_PER_PTE` 个 `pteval_t` 类型元素组成的数组，每个元素将一个虚拟内存页
-> +  映射到一个物理内存页。体系结构定义了 `pteval_t` 的大小和内容。
-> +
-> +  一个典型的例子是 `pteval_t` 是一个 32 或者 64 位的值，其中高位是 **pfn**，
-> +  而低位则一些特定体系架构相关的位，如内存保护。
-> +
-> +  这个 **条目(entry)** 有点令人困惑，因为在 Linux 1.0 中它确实指的是单层顶级
-> +  页表中的单个页表条目，但在首次引入二级页表时，它被重新定义为映射元素的数组。
-> +  因此，*pte* 现在指的是最底层的页 *表*，而不是一个页表 *条目*。
-> +
-> +- **pmd**, `pmd_t`, `pmdval_t` = **页中间目录(Page Middle Directory)**,
-> +  位于 *pte* 之上的层级结构，包含 `PTRS_PER_PMD` 个指向 *pte* 的引用。
-> +
-> +- **pud**, `pud_t`, `pudval_t` = **页上级目录(Page Upper Directory)**
-> +  是在其他层级之后引入的，用于处理四级页表。它可能未被使用，或者像我们稍后
-> +  讨论的那样被“折叠”。
-> +
-> +- **p4d**, `p4d_t`, `p4dval_t` = **页四级目录(Page Level 4 Directory)**
-> +  是在 *pud* 之后用于处理五级页表引入的。至此，显然需要用数字来替代 *pgd*、
-> +  *pmd*、*pud* 等目录层级的名称，不能再继续使用临时的命名方式。这个目录层级
-> +  只在实际拥有五级页表的系统上使用，否则它会被折叠。
-> +
-> +- **pgd**, `pgd_t`, `pgdval_t` = **页全局目录(Page Global Directory)** -
-> +  Linux 内核用于处理内核内存的 *PGD* 主页表仍然位于 `swapper_pg_dir`。
-> +  但系统中的每个用户空间进程也有自己的内存上下文，因此也有自己的 *pgd*，
-> +  它位于 `struct mm_struct` 中，而 `struct mm_struct` 又在每个 `struct task_struct`
-> +  中有引用。所以，任务（进程）存在一个形式为 `struct mm_struct` 的内存上下文，
-> +  而这个结构体中有一个指向指向相应的页全局目录 `struct pgt_t *pgd` 指针。
-> +
-> +重申一下：页表层级结构中的每一层都是一个 *指针数组*，所以 *pgd* 包含 `PTRS_PER_PGD`
-> +个指向下一层的指针，*p4d* 包含 `PTRS_PER_P4D` 个指向 *pud* 项的指针，依此类推。
-> +每一层的指针数量由体系结构定义。::
-> +
-> +        PMD
-> +  --> +-----+           PTE
-> +      | ptr |-------> +-----+
-> +      | ptr |-        | ptr |-------> PAGE
-> +      | ptr | \       | ptr |
-> +      | ptr |  \        ...
-> +      | ... |   \
-> +      | ptr |    \         PTE
-> +      +-----+     +----> +-----+
-> +                         | ptr |-------> PAGE
-> +                         | ptr |
-> +                           ...
-> +
-> +页表折叠
-> +========
-> +
-> +如果架构不使用所有的页表层级，那么这些层级可以被 *折叠*，也就是说被跳过。在
-> +访问下一层时，所有在页表上执行的操作都会在编译时增强，以跳过这一层。
-> +
-> +与架构无关的页表处理代码（例如虚拟内存管理器）需要编写得能够遍历当前的所有五个
-> +层级。对于特定架构的代码，也应优先采用这种风格，以便对未来的变化具有更好的适应性。
-> +
-> +MMU，TLB 和缺页异常
-> +===================
-> +
-> +`内存管理单元(MMU)` 是处理虚拟地址到物理地址转换的硬件组件。它可能会使用相对较小
-> +的硬件缓存，如 `转换后备缓冲区(TLB)` 和 `页遍历缓存`，以加快这些地址翻译过程。
-> +
-> +当 CPU 访存时，它会向 MMU 提供一个虚拟地址。MMU 会首先检查 TLB 或者页遍历缓存
-> +（在支持的架构上）是否存在对应的转换结果。如果没有，MMU 会通过遍历来确定物理地址
-> +并且建立映射。
-> +
-> +当页面被写入时，该页的脏位会被设置（即打开）。每个内存页面都有相关的权限位和脏位。
-> +后者表明这个页自从被加载到内存以来是否被修改。
-> +
-> +如果没有任何阻碍，物理内存到头来可以被任意访问并且对物理帧进行请求的操作。
-> +
-> +MMU 无法找到某些转换有多种原因。有可能是 CPU 试图去访问当前进程没有权限访问的
-> +内存，或者因为访问的数据还不在物理内存中。
-> +
-> +当这些情况发生时，MMU 会触发缺页异常，这是一种异常类型，用于通知 CPU 暂停当前
-> +执行并运行一个特殊的函数去处理这些异常。
-> +
-> +缺页异常有一些常见且预期的原因。这些因素是由称为“懒加载”和“写时复制”的进程管理
-> +优化技术来触发的。缺页异常也可能发生在当页帧被交换到持久存储（交换分区或者文件）
-> +并从其物理地址移出时。
-> +
-> +这些技术提高了内存效率，减少了延迟，并且最小化了空间占用。本文档不会深入讨论
-> +“懒加载”和“写时复制”的细节，因为这些的主题属于进程地址管理范畴，超出了本文范围。
-> +
-> +交换技术和前面提到的其他技术不同，因为它是在压力过大下情况下减少内存消耗的一种
-> +迫不得已的手段，因此是不受欢迎的。
-> +
-> +交换不适用于由内核逻辑地址映射的内存。这些地址是内核虚拟地址空间的子集，直接映射
-> +一段连续的物理内存。对于提供的任意逻辑地址，它的物理地址可以通过对偏移量进行简单
-> +的算数运算来确定。对逻辑地址的访问很快，因为这避免了复杂的页表查找，但代价是这些
-> +内存不能被驱逐或置换。
-> +
-> +如果内核无法为必须存在于物理帧中的数据腾出空间，那么它会调用内存不足(out-of-memory,
-> +OOM)杀手，通过杀掉低优先级的进程来腾出空间，直到内存压力下降到安全阈值之下。
-> +
-> +另外，代码漏洞或指示 CPU 访问的精心制作的恶意地址也可能导致缺页异常。一个进程的
-> +线程可以利用指令来访问不属于其地址空间的（非共享）内存，或者试图执行写入只读位置
-> +的指令。
-> +
-> +如果上述情况发生在用户态，内核会向当前线程发送 `段错误` (SIGSEGV)信号。该信号
-> +通常导致线程及其所属的进程终止。
-> +
-> +本文将简化并概述 Linux 内核如何处理这些缺页中断、创建表和表项、检查内存是否存在，
-> +以及当内存不存在时，如何请求从持久存储或其他设备加载数据，并更新 MMU 及其缓存。
-> +
-> +最初的步骤依赖于架构。大多是架构跳转到 `do_page_fault()`，而 x86 中断处理程序是由
-> +`DEFINE_IDTENTRY_RAW_ERRORCODE()` 宏定义的，该宏调用 `handle_page_fault()`。
-> +
-> +无论调用路径如何，所有架构最终都会调用 `handle_mm_fault()`，该函数通常会调用
-> +`__handle_mm_fault()` 来执行实际分配页表的任务。
-> +
-> +如果不幸无法调用 `__handle_mm_fault()` 则意味着虚拟地址指向了无权访问的物理
-> +内存区域（至少对于当前上下文如此）。这种情况会导致内核向该进程发送上述的 SIGSEGV
-> +信号，并引发前面提到的后果。
-> +
-> +这些用于查找偏移量的函数名称通常以 `*_offset()` 结尾，其中“\*”可以是 pgd，p4d，
-> +pud，pmd 或者 pte；而分配相应层级页表的函数名称是 `*_alloc`，它们按照上述命名
-> +约定以对应页表层级的类型命名。
-> +
-> +页表遍历可能在中间或者上层结束(PMD，PUD)。
-> +
-> +Linux 支持比通常 4KB 更大的页面（即所谓的 `巨页`）。当使用这种较大的页面时，没有
-> +必要使用更低层的页表项(PTE)。巨页通常包含 2MB 到 1GB 的大块连续物理区域，分别由
-> +PMD 和 PUD 页表项映射。
-> +
-> +巨页带来许多好处，如减少 TLB 压力，减少页表开销，提高内存分配效率，以及改善
-> +特定工作负载的性能。然而，这些好处也伴随着权衡，如内存浪费和分配难度增加。
-> +
-> +在遍历和分配的最后，如果没有返回错误，`__handle_mm_fault()` 最终调用 `handle_pte_fault()`
-> +通过 `do_fault()` 执行 `do_read_fault()`、 `do_cow_fault()` 和 `do_shared_fault()`。
-> +“read”，“cow”和“shared”分别暗示了它处理错误的类型和原因。
-> +
-> +实际的工作流程实现是非常复杂的。其设计允许 Linux 根据每种架构的特定特性处理缺页
-> +异常，同时仍然共享一个通用的整体结构。
-> +
-> +为了总结 Linux 如何处理缺页中断的概述，需要补充的是，缺页异常处理程序可以通过
-> +`pagefault_disable()` 和 `pagefault_enable()` 分别禁用和启用。
-> +
-> +许多代码路径使用了这两个函数，因为它们需要禁止陷入缺页异常处理程序，主要是为了
-> +防止死锁。
-
-Thanks,
-Yanteng
-
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvNF0gY2xrOiBpbXg6IGxwY2ctc2N1OiBTVyB3b3JrYXJv
+dW5kIGZvciBlcnJhdGENCj4gKGUxMDg1OCkNCj4gDQo+IE9uIE1vbiwgT2N0IDE0LCAyMDI0IGF0
+IDY6MDPigK9BTSBQZW5nIEZhbiAoT1NTKQ0KPiA8cGVuZy5mYW5Ab3NzLm54cC5jb20+IHdyb3Rl
+Og0KPiANCj4gPiArLyogZTEwODU4IC1MUENHIGNsb2NrIGdhdGluZyByZWdpc3RlciBzeW5jaHJv
+bml6YXRpb24gZXJyYXRhICovDQo+IA0KPiBQbGVhc2Ugc2hhcmUgdGhlIGxpbmsgdG8gdGhlIGVy
+cmF0YSBkb2MgdGhhdCBjb250YWlucyB0aGlzIGUxMDg1OC4NCg0KaHR0cHM6Ly93d3cubnhwLmNv
+bS5jbi9kb2NzL2VuL2VycmF0YS9JTVg4XzFOOTRXLnBkZg0KDQpUaGFua3MsDQpQZW5nLg0K
 
