@@ -1,399 +1,337 @@
-Return-Path: <linux-kernel+bounces-366828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6054399FB09
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:13:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 998CE99FB18
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16B9C2824DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB4991C234CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0011D63C7;
-	Tue, 15 Oct 2024 22:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90ADA1B0F3D;
+	Tue, 15 Oct 2024 22:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pNHTeKGD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YGkM8Cyl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="coE9PC3q";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="e2Lilu/7"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885551B0F2B;
-	Tue, 15 Oct 2024 22:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729030365; cv=none; b=a2slleSljFrael1ZSc/G+qI+B9CJB4g7Hd8lyOzMVes3Uy2e+dyMwABvKabVIKousdARd2yLFHzEk4xqNO7mYxJ4mBhTJ34tonlmm5ACFBn4Szth/nRwt2QZ5MzLp2qFJ1OuJRUEuEBdkCYKMg+/LgFd+3P394EhHVZtQlTVbbk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729030365; c=relaxed/simple;
-	bh=sO/XmObHyXc6jcPE7NO2uNnfXLtNHJ5JEGIE6eozf4o=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=V7qK3Q0LtxirHuYjIxZGPgTIFM2lKsAZAwwJTgMNwlseMysJCfb7lcOKWZ5fUznx/Q33sbEXvila01x3fhTM9OB6zd6nS4ranKiMlgi1bk9ucR73wkkm6JUejyIeJ8vGiSdm1JchQR/dT31dnCLDwjMu+lcZ/sV9iz0NnfizqlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pNHTeKGD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YGkM8Cyl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 15 Oct 2024 22:12:35 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729030355;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QeFTvs1u9FZy2XaHGOVX3qkQ3AONujmZlnsT+jlDkKI=;
-	b=pNHTeKGDhwFSmWf3zV0IK8ibsTWGdupVTvEkonKk9G27iY6djovSeN1PZPTjTScxlhgVfk
-	71dhPYnEnUaGv8wpZ9+zHLD6wzHAUBco5oEK/IjI02OLtBBnGQJaJGoiC2tS/SR9/e91cv
-	wWRgrk0pq9+omZlv/96GFy4NJqRLrdTdrrlbnCSRTW2rU8Q8UUEv1E44Y8p8SO47/MAsGR
-	+vgZ3w57WYOq94UzGWPcCK6i/kTUx5XP9v5zAL1fOsrj+rcuXHEJeq4GO4DWB6Q0ina6z5
-	4HgTQ8hxHUScghGf0w3x1DHI1/uR1g1WuY2vj9MSaJOlBuDvxZHOBxRL1LI7ug==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729030355;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QeFTvs1u9FZy2XaHGOVX3qkQ3AONujmZlnsT+jlDkKI=;
-	b=YGkM8CylbsZkJc8CRazFyhigKxK5J5fk/+uL/gfsy1DKl5VfCm1mzM4uQqjSMnAq0+NWjf
-	i/WVfujvUlztgvCA==
-From: "tip-bot2 for Fabrizio Castro" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] dt-bindings: interrupt-controller: Add Renesas
- RZ/V2H(P) Interrupt Controller
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Thomas Gleixner <tglx@linutronix.de>, "Rob Herring (Arm)" <robh@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241009230817.798582-2-fabrizio.castro.jz@renesas.com>
-References: <20241009230817.798582-2-fabrizio.castro.jz@renesas.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F79F1B0F0E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729030461; cv=fail; b=Yo4I3x/m3PyYrQJiQwFl9mFu0Nrvn8gWXSEY/6fWb0EVNd31YnO5BT5PdnmdBx2xuxG1OZxDBEHXe0FCkRCF/Q6og1cOk/CnIt0q8ycMf5ohg8YbEVM54byIxrEkNrHSKISeoOAqOTRae3OPBquvjpYQr4HI1Bx6wLOCf/B8zxM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729030461; c=relaxed/simple;
+	bh=R9rsK5so3/yjiAh+k8pkKllFD3IBKebI7olEQTovTMk=;
+	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
+	 Content-Type:MIME-Version; b=qU06WWAqBOVEfF7adLs16S//3X7eB8tLTdTgNm7OhX7HtwzZMrVx5k0VGPFFJsO/+NeV6EHOtRDxu3RQLBORyBAMgjkZNWtYpc+cYmGpuyPBfqchYslJz2W8NUCYdQF70NvGoR/srRN25E6uL/Srf2n3JsD2YX7moBG2gavCHpo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=coE9PC3q; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=e2Lilu/7; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FHu0nd029909;
+	Tue, 15 Oct 2024 22:13:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=+Vx+nQbvqfKvjX0pk8
+	40IBK4J6Q00mzKz/9NKmyBWMM=; b=coE9PC3qDkwgxPjQ3tINccRJlexr2g4dIO
+	jaJxomRBrjGR9nIHYHfIQsVPeEy0NZ9WGuqXhkPEGpsEzgOgri7bUigrEo4bgpoN
+	SsFZY6KfsbmViRtKmGtIEBYLlGFqAKp6dKJaoUaT8Ljh8krwzA4vyecK8DHA7sKw
+	IPjvrjg6HDRf8y3BLRXN/v5fxj1OTwI47Fk71Fvoou/7QXenCkxDKaOh1Lxgw5RJ
+	qjh5lFxzL2lOr6QnesLBHcveGB3sPsHoTrLrQGiSYzEgzZWEQgg/hfXqSr10onoh
+	Pt2JHpbc8ZELzixXUUXBDkZfkfLme0kg2jfUA3qa7y7ZEddxbzhQ==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427fw2jeg2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 22:13:58 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49FKHLLN019946;
+	Tue, 15 Oct 2024 22:13:51 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2048.outbound.protection.outlook.com [104.47.56.48])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fj82yk1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 22:13:51 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qYe6aQ6RWy07gBdwli+LGy6ICViuvY3nEH/flw/seDB+95Znmbo33hpEyRldobu90MXqRi9Rx1wvUQC2PNzcv1STlq704I6aUpv3zFc4P0nis+UEkwEQOA8qHu1Jx59n2K+FC7d+k183gG4shvp3vFGWrHW0hKxRU51XqUZ75lnzWpdQUmBwBzO9Eo3WqOFJJpqZdP5tr00PrbmkVuSPfmnM9CksjtXyP5VfSJOE80rCKVRqHp/qZgiClGtnRcJhL8nA5e7pbDNnPStqNE6fDSa8gU8vG4WQLvyltPZScXZXwcrf0bGygYn0CftugYjk0biugcXspIF+pYoOoyEopA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+Vx+nQbvqfKvjX0pk840IBK4J6Q00mzKz/9NKmyBWMM=;
+ b=KxHoh8k06IYaHYOXOewF4NA8RqKEyC5R5Yce/BllIC6XqhpvhnK35/DZLgMNjam0Ciq3BFkLPFxDA/y+wk16nOAJaFXlUSOgKO7fy/uirHV4577pwhOihmnRHagNgR5m6GDNadDi3Wx/MysnAWMNjCCh9xVRF3eRhA92hIWnlP77Q9kFXzDPWcFkz3uqubR5JhIMuFCsPmQ110rWLm9TQyMeKl1RXWj29Ht6erk0yZJCCrE2GW5jYPLJmgyxRH5rlQyCJP8NDaLDSNA4/UzkBVcFx5Iiv5pBOQPnDqZas521cn3JUccCrWfogyyu32Q+gNj47D1mvj/+vhd3SbcjpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Vx+nQbvqfKvjX0pk840IBK4J6Q00mzKz/9NKmyBWMM=;
+ b=e2Lilu/7a/nP8zSFUruNDsnZ/8qT6ieaq8nBpLlI0rIg1zRW/QH7wkHJwpa5JfMKDFRrKjIOy37dd7xy8UJVLanxOZ5PuOXjtZnvLGUxKKbOTKjpcVuSsVFt8xumr6P9syzBaIC/pLAiZudEH10yRXyrgoMLeXK3t0dOA3KwjBM=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by MN2PR10MB4205.namprd10.prod.outlook.com (2603:10b6:208:1d3::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Tue, 15 Oct
+ 2024 22:13:48 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::25a9:32c2:a7b0:de9e%4]) with mapi id 15.20.8069.016; Tue, 15 Oct 2024
+ 22:13:48 +0000
+References: <20241010081032.GA17263@noisy.programming.kicks-ass.net>
+ <20241010091326.nK71dG4b@linutronix.de>
+ <20241010100308.GE17263@noisy.programming.kicks-ass.net>
+ <20241010102657.H7HpIbVp@linutronix.de>
+ <20241010104438.GJ14587@noisy.programming.kicks-ass.net>
+ <c6cbc343-01c3-4a38-8723-cc44e83dedf7@paulmck-laptop>
+ <20241011081847.r2x73XIr@linutronix.de>
+ <db3b0a4b-bec6-4b2b-bb22-d02179779cf9@paulmck-laptop>
+ <20241011144341.mQKXkGkm@linutronix.de>
+ <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
+ <20241015112224.KdvzKo80@linutronix.de>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra
+ <peterz@infradead.org>,
+        Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, frederic@kernel.org, efault@gmx.de
+Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
+In-reply-to: <20241015112224.KdvzKo80@linutronix.de>
+Date: Tue, 15 Oct 2024 15:13:46 -0700
+Message-ID: <87ed4hrp45.fsf@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR03CA0198.namprd03.prod.outlook.com
+ (2603:10b6:303:b8::23) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172903035509.1442.14130826728320686334.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|MN2PR10MB4205:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f9e6845-82b5-4e84-5777-08dced66a46e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4/qKwlFMzMZhgkLLKWUW6HeVxpKAhiD9xJg1hIAHnFCIptf2lsNCaqHaBqcH?=
+ =?us-ascii?Q?HRVqgO9KMLFrNJ0oCqJjmWKjDyaRSJhylksfXLtqAatnxznqd7HLlHse+UD5?=
+ =?us-ascii?Q?i1xLsrDBM96kGnsM9q/v7p2F23fmaAeNndBjlQMhKz8yD96pyKuL0LaJ798r?=
+ =?us-ascii?Q?Og0P02w3pvLVTAh/YPEAc74oze+emQlbNvmqdBgmDegZ/8dXYrbfB0VTsnKu?=
+ =?us-ascii?Q?4o989D7gro2js0IB0cviViC8HOhIh/OB2rpesyquQhKfIBWY3TPcbxQgj5GZ?=
+ =?us-ascii?Q?/R6fOvmLS8JZ35O55FOPYIy1UJSUFZ22Lg2k4K+vRmoY8WwtIDpZ9L6diEXt?=
+ =?us-ascii?Q?8UGy2MaEOB2t2CMKc57/2sY1A/9edMmu923W1D2p0Ep+/gU0mHbuw7xTk79e?=
+ =?us-ascii?Q?W2tYzKHhqAxwfg32HOAWlaOwS3RXmentl+1m1y/MOMTyQZIyXOxL1ND8p6/i?=
+ =?us-ascii?Q?mDEjxDf+7PQFcF107LAbpgsG79UkXHOUTYcAH3DcpoaGaNORE2+nuyyB002C?=
+ =?us-ascii?Q?0LgOrwinyv5Ucu7u91VDBgMkDxB6B+drgelEVOkEQIJrQAVz4GFdmTVDkm87?=
+ =?us-ascii?Q?fwZ2v3m4AsSX1r0qa8spSy9ubAmTAz2PrJvfPbMCx1kyJ0oGSi4dyuiKMcif?=
+ =?us-ascii?Q?SC2Ah44+PDJkXs4vicOFXHSBQIy5Quu3bU9scXySTorU0sCzygK9J6LkXoTU?=
+ =?us-ascii?Q?q168+T2TpF/nDGdhBcRZ4S1iHl8OpvNxDxZS5t35aaCh7iinvSa+b8ypEgUg?=
+ =?us-ascii?Q?CUkDPBecvuHcUKArs3d3SQtspDky8lzMz/fGHH9MNVlfjY8PI4p35hHUVQ8b?=
+ =?us-ascii?Q?PiJB01mQ1TzDIQPNSHB+aDZuzWZk9CVolDRt4U/9E9A0Mr3LZorq4jOmSxE/?=
+ =?us-ascii?Q?6/r/5ZzUOvdqjUIqZameY1BFZul1J+rgQv0M5OX5lSHHNPc/kDGtNqgLrtdA?=
+ =?us-ascii?Q?wassorrebaRO2gh3Mi0BUqv1ta+50C2BNSfRnTWbaCn9EwRcFjpyrffFg9il?=
+ =?us-ascii?Q?PeJAnCc/5jV7BZaLyr36cKgKzxIod3Cz2mZSvMB4ndoMlSLeXoaZTbzwhfUH?=
+ =?us-ascii?Q?NUA+DKkmQi6KCRaXxM8CIaxLdHfDN1q2dbnfFTsfROiSskNJ0e4NxphC2RyK?=
+ =?us-ascii?Q?nG0IGMpVj+N9W+5tDnpwjIn9IKGnH2k5U18e4kXUsn+yGvC3ML5Ra0WhvUw3?=
+ =?us-ascii?Q?JTJZE4u3SqUWmagUJS+R1GBrqGs2HQ8s3b4/HRfwzjxSgphhRBl+0i/YQhvm?=
+ =?us-ascii?Q?bCae7m1vLHvSVU2JztUmgjg3POQD9eWBeZYB2sZGNw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7IsJPf814fJYE/ejnlCt/O1JkLr/t8BsXu9OK11J+ucZD2cIA28qN3DrgyfX?=
+ =?us-ascii?Q?gws6xoRXZDs77VZ2xYw5wKK7Q0rSzau+5SuhhYKiICj+lTgG0h5hd4pAdAuE?=
+ =?us-ascii?Q?YsfUXQPnPFIaCTiInh7ICY1FdLHqBm2StecHVXhLKWt3TsUI/NG6ISzdrjSk?=
+ =?us-ascii?Q?xEHd26T9la8QAHiiBGsKV5YiWBJL6gSxIJDdODcwJVbB1jpSL1X+tGfJjdGn?=
+ =?us-ascii?Q?CmnG36Axyui3PwjU2wpIescKgfrxXBu8Uj6Y/Ah4aTmi3OchXSbXrvEspFcR?=
+ =?us-ascii?Q?3NGvC88jUHqF7JcgnPxQPCefBET2kVIxU+gewjuoDHiHsekUXO9k3AEqTFln?=
+ =?us-ascii?Q?s+T323cpS+R4rLglpbRlH1f2K5pc9cIMR/p2BdhMMjuRQtYVO1KZnKbVWtYg?=
+ =?us-ascii?Q?2nDJ80zQ2SbMlE1j2INW811783w1Ha90YHnsAEf7W2i6+Mbst7gM4454RnSC?=
+ =?us-ascii?Q?BPCM4prM5UB0dw/KTTsHWh2X0Us/G5L5RRQrQCT8fM+bxdMqCjL0LjksUdtq?=
+ =?us-ascii?Q?XhhMpy9xLyldJ+n9x/j5bSL4z1b3OQ4fqrOlO5UA3y0PYxV+DKmKw6mQcKcB?=
+ =?us-ascii?Q?PFK+9D6YfjMCE0WESJ/yLpURZ7TmC1UU/RHr8NQ7Y7jJlEKKmRzxV6qzJx8W?=
+ =?us-ascii?Q?1hXHVtM9NDe7ePlW0+VSOB4RPX2qcJrB3lfx/DEWv+CL0MeD0GU7c996+DXC?=
+ =?us-ascii?Q?+sonmMqIfjWPJ5BKo5uAXobAFMBwKl0AT3XakMbil3/GBsRVa1dAtUdzF5q4?=
+ =?us-ascii?Q?0ojoicsuoU4zs96W/fYgehQIW590ptK/wV1tRkQCFxHNNmNbY3AaDogjPkQz?=
+ =?us-ascii?Q?G88MKgcZ/7JUDJ8zAJYV7Dy9yxQcZuoHWbcS8JrI6AhArSFSmxoMZoHrNZFH?=
+ =?us-ascii?Q?5CdLXa+R0qmLFsDDb5Cp0IMCZvpRjApPw3E6Sy8HfNjyckdoa+RwlDgX74BN?=
+ =?us-ascii?Q?cxe6sajR3A2TsppUJMZGSmJX9RzpJpo91pwqYzwxp7Pmm0R/YwyJbxA9g6Gu?=
+ =?us-ascii?Q?+TNEc6TLu6FKgGn8YlD4vkVb7c2JGNOaFgxVABLxaHmSPFXtciz4LFLONyDh?=
+ =?us-ascii?Q?9igMC6j3xRU77s0BHo1STRbISGmpmZBBlos1Ot3wpGPMk5g3Xv+upc2PnyPG?=
+ =?us-ascii?Q?bcmIBKnCYpJEdniVV+bugzxFRdA5AHPnliI17QWmLCexkNJyUkR8afcL9Fed?=
+ =?us-ascii?Q?hkdbcwolJXi8WQd6I9ioiTkiCXptsVHQIqr+/hKLjd3EpRMHUEQP58YQH7d6?=
+ =?us-ascii?Q?ZPzjluXhEArCaTnqMhQRnDWTjEcRXj14HcBwFL97UkJavJNBceTLtfpRroNx?=
+ =?us-ascii?Q?e0TYQHOypP0obsZYkkJEEWGQIssNPhw7+eqYr8ksnlqrJ9JCkdxBaMCppUox?=
+ =?us-ascii?Q?9mLhr5FS+OohyrdHF+cmTvuBQUfSo7kNJ1STKoU1pjF8bX80Ewf3l0m2iZ68?=
+ =?us-ascii?Q?PGsoGdSmIIgoY4rKvsJU5VnPmhuJqH64EiqhHENH9CcE3RyGdjyrtPoRtu6o?=
+ =?us-ascii?Q?p+2Sdw05W5pwrxEgxdAlH19Y8XMKijxG9ljmpVuw8CG59n1pfNE8nv3OOvAP?=
+ =?us-ascii?Q?np+pHHAE5p/1Ff8gJ9y+Igx7Q7r3NuZxi4z4Gl8Kidtob4mOXd1ZfzFS/iAd?=
+ =?us-ascii?Q?Sg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	gFqdUd5CRmRaQKVEVKRrtJzIOg60JOHheU0PC3jHzTt6hCb2gOCkscpmO/CJI8Hrr7x36LUsSER6O3ETKHNKAmYkttAeInuHtZpxUfoiV3A7qJSG+NbKBb22QwRneEaOV2T0s129iWfkZjEoR2W8qdECAqCiDyZrixwRe9yjuDbg8sandFtI+xG1owza26pSASJZ7xXMIzbU/ITVXdbC+Os0uZFrquzEALshbYrgyTd1snQTk4JDtcrKLlJfcVnHa8YkBLEEQYQWMLLEoIEJFTOTzE15163d8+iiV6WO3RrrQaCnHziEgE20p+6LQnBl9IPLUOyPZeGAz3yk5ib2QMySNVE0Eq6+d4HFo5p3//hCtXwXBFJ40ZO7m9e8MJC8ERO9WWQUuQj7S5/0ap75lIjqRAbuPjQnMC2VlW5Qg8Tj+RrOuKnHfuDzInMVyFf3+hLbRlntK3BefhTeg5wPeatby5uMaSJJiXbl8pt7o65/UHGS1aqvERsLH1P9i3dqbw7ouPXRp57qZhtC2+qN0zWJnlGSrJyI4D9PyzwnrSKx5j0sEklGqP9zMwtnL9La3hdAg2lpDorsGIqOTREGCN7E24Cz5ReF6CP5Wg86PBE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f9e6845-82b5-4e84-5777-08dced66a46e
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2024 22:13:48.2760
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9o+LKrv8WlSaH0xDEEoOWRS0RGNIQpAWcOr/y41/tZ2408H+uOOD0ZslYlR5WHyNokKP2dwR5VC+IRtR0q78fVWQkTw7v12vlBHWRrHbR8w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4205
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_17,2024-10-15_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 phishscore=0
+ adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410150147
+X-Proofpoint-GUID: ccsVuE-0mWpOd8ywYWTTVOV3fhCN_W3Q
+X-Proofpoint-ORIG-GUID: ccsVuE-0mWpOd8ywYWTTVOV3fhCN_W3Q
 
-The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     3d5fb05e829682fd7d0d08cfcf6415aa50d4cb22
-Gitweb:        https://git.kernel.org/tip/3d5fb05e829682fd7d0d08cfcf6415aa50d4cb22
-Author:        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-AuthorDate:    Thu, 10 Oct 2024 00:08:15 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 16 Oct 2024 00:01:06 +02:00
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
 
-dt-bindings: interrupt-controller: Add Renesas RZ/V2H(P) Interrupt Controller
+> On 2024-10-11 08:59:14 [-0700], Paul E. McKenney wrote:
+>> On Fri, Oct 11, 2024 at 04:43:41PM +0200, Sebastian Andrzej Siewior wrote:
+>>
+>> > Okay, this eliminates PREEMPT_DYNAMIC then.
+>> > With PeterZ current series, PREEMPT_LAZY (without everything else
+>> > enabled) behaves as PREEMPT without the "forced" wake up for the fair
+>> > class. It is preemptible after all, with preempt_disable() actually
+>> > doing something. This might speak for preemptible RCU.
+>> > And assuming in this condition you that "low memory overhead RCU" which
+>> > is not PREEMPT_RCU. This might require a config option.
+>>
+>> The PREEMPT_DYNAMIC case seems to work well as-is for the intended users,
+>> so I don't see a need to change it.  In particular, we already learned
+>> that we need to set PREEMPT_DYNAMIC=n.  Yes, had I caught this in time, I
+>> would have argued against changing the default, but this was successfully
+>> slid past me.
+>>
+>> As for PREEMPT_LAZY, you seem to be suggesting a more intrusive change
+>> than just keeping non-preemptible RCU when the Kconfig options are
+>> consistent with this being expected.  If this is the case, what are the
+>> benefits of this more-intrusive change?
+>
+> As far as I understand you are only concerned about PREEMPT_LAZY and
+> everything else (PREEMPT_LAZY + PREEMPT_DYNAMIC or PREEMPT_DYNAMIC
+> without PREEMPT_LAZY) is fine.
+> In the PREEMPT_LAZY + !PREEMPT_DYNAMIC the suggested change
+>
+> | config PREEMPT_RCU
+> | 	bool
+> | 	default y if (PREEMPT || PREEMPT_RT || PREEMPT_DYNAMIC)
+> | 	select TREE_RCU
+> | 	help
+>
+> would disable PREEMPT_RCU while the default model is PREEMPT. You argue
 
-Add DT bindings for the Renesas RZ/V2H(P) Interrupt Controller.
+With PREEMPT_LAZY=y, PREEMPT_DYNAMIC=n, isn't the default model
+PREEMPT_LAZY, which has PREEMPTION=y, but PREEMPT=n?
 
-Also add macros for the NMI and IRQ0-15 interrupts which map the
-SPI0-16 interrupts on the RZ/V2H(P) SoC so that they can be
-used in the first cell of the interrupt specifiers.
+> that only people on small embedded would do such a thing and they would
+> like to safe additional memory.
+>
+> I don't think this is always the case because the "preemptible" users
+> would also get this and this is an unexpected change for them.
 
-For the second cell of the interrupt specifier, since NMI, IRQn
-and TINTn support different types of interrupts between themselves,
-add helper macros to make it easier for the user to work out what's
-available.
+Can you clarify this? The intent with lazy is to be preemptible but
+preempt less often. In that it is meant to be quite different from
+CONFIG_PREEMPT.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Link: https://lore.kernel.org/all/20241009230817.798582-2-fabrizio.castro.jz@renesas.com
+Ankur
 
----
- Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml | 278 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 278 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
+>> > > > If you would like to add some relief to memory constrained systems,
+>> > > > wouldn't BASE_SMALL be something you could hook to? With EXPERT_RCU to
+>> > > > allow to override it?
+>> > >
+>> > > Does BASE_SMALL affect anything but log buffer sizes?  Either way, we
+>> > > would still need to avoid the larger memory footprint of preemptible
+>> > > RCU that shows up due to RCU readers being preempted.
+>> >
+>> > It only reduces data structures where possible. So lower performance is
+>> > probably due to things like futex hashmap (and others) are smaller.
+>>
+>> Which is still counterproductive for use cases other than small deep
+>> embedded systems.
+>
+> Okay, so that option is gone.
+>
+>> > > Besides, we are not looking to give up performance vs BASE_SMALL's
+>> > > "may reduce performance" help text.
+>> > >
+>> > > Yes, yes, it would simplify things to just get rid of non-preemptible RCU,
+>> > > but that is simply not in the cards at the moment.
+>> >
+>> > Not sure what the time frame is here. If we go for LAZY and remove NONE
+>> > and VOLUNTARY then making PREEMPT_RCU would make sense to lower the
+>> > memory footprint (and not attaching to BASE_SMALL).
+>> >
+>> > Is this what you intend or did misunderstand something here?
+>>
+>> My requirement is that LAZY not remove/disable/whatever non-preemptible
+>> RCU.  Those currently using non-preemptible RCU should continue to be able
+>> to be able to use it, with or without LAZY.  So why is this requirement
+>> a problem for you?  Or am I missing your point?
+>
+> Those who were using non-preemptible RCU, whish to use LAZY_PREEPMT +
+> !PREEMPT_DYNAMIC should be able to disable PREEMPT_RCU only in this case.
+> Would the following work?
+>
+> diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+> index 8cf8a9a4d868c..2183c775e7808 100644
+> --- a/kernel/Kconfig.preempt
+> +++ b/kernel/Kconfig.preempt
+> @@ -121,6 +121,7 @@ config PREEMPT_COUNT
+>  config PREEMPTION
+>         bool
+>         select PREEMPT_COUNT
+> +       select PREEMPT_RCU if PREEMPT_DYNAMIC
+>
+>  config PREEMPT_DYNAMIC
+>  	bool "Preemption behaviour defined on boot"
+> diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+> index 3e079de0f5b43..9e4bdbbca4ff9 100644
+> --- a/kernel/rcu/Kconfig
+> +++ b/kernel/rcu/Kconfig
+> @@ -17,7 +17,7 @@ config TREE_RCU
+>  	  smaller systems.
+>
+>  config PREEMPT_RCU
+> -	bool
+> +	bool "Preemptible RCU"
+>  	default y if PREEMPTION
+>  	select TREE_RCU
+>  	help
+> @@ -91,7 +91,7 @@ config NEED_TASKS_RCU
+>
+>  config TASKS_RCU
+>  	bool
+> -	default NEED_TASKS_RCU && (PREEMPTION || PREEMPT_AUTO)
+> +	default NEED_TASKS_RCU && PREEMPTION
+>  	select IRQ_WORK
+>
+>  config FORCE_TASKS_RUDE_RCU
+>
+> I added TASKS_RCU to the hunk since I am not sure if you wish to follow
+> PREEMPTION (which is set by LAZY) or PREEMPT_RCU.
+>
+>> 							Thanx, Paul
+>
+> Sebastian
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
-new file mode 100644
-index 0000000..d7ef4f1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
-@@ -0,0 +1,278 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/renesas,rzv2h-icu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas RZ/V2H(P) Interrupt Control Unit
-+
-+maintainers:
-+  - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
-+
-+allOf:
-+  - $ref: /schemas/interrupt-controller.yaml#
-+
-+description:
-+  The Interrupt Control Unit (ICU) handles external interrupts (NMI, IRQ, and
-+  TINT), error interrupts, DMAC requests, GPT interrupts, and internal
-+  interrupts.
-+
-+properties:
-+  compatible:
-+    const: renesas,r9a09g057-icu # RZ/V2H(P)
-+
-+  '#interrupt-cells':
-+    description: The first cell is the SPI number of the NMI or the
-+      PORT_IRQ[0-15] interrupt, as per user manual. The second cell is used to
-+      specify the flag.
-+    const: 2
-+
-+  '#address-cells':
-+    const: 0
-+
-+  interrupt-controller: true
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    minItems: 58
-+    items:
-+      - description: NMI interrupt
-+      - description: PORT_IRQ0 interrupt
-+      - description: PORT_IRQ1 interrupt
-+      - description: PORT_IRQ2 interrupt
-+      - description: PORT_IRQ3 interrupt
-+      - description: PORT_IRQ4 interrupt
-+      - description: PORT_IRQ5 interrupt
-+      - description: PORT_IRQ6 interrupt
-+      - description: PORT_IRQ7 interrupt
-+      - description: PORT_IRQ8 interrupt
-+      - description: PORT_IRQ9 interrupt
-+      - description: PORT_IRQ10 interrupt
-+      - description: PORT_IRQ11 interrupt
-+      - description: PORT_IRQ12 interrupt
-+      - description: PORT_IRQ13 interrupt
-+      - description: PORT_IRQ14 interrupt
-+      - description: PORT_IRQ15 interrupt
-+      - description: GPIO interrupt, TINT0
-+      - description: GPIO interrupt, TINT1
-+      - description: GPIO interrupt, TINT2
-+      - description: GPIO interrupt, TINT3
-+      - description: GPIO interrupt, TINT4
-+      - description: GPIO interrupt, TINT5
-+      - description: GPIO interrupt, TINT6
-+      - description: GPIO interrupt, TINT7
-+      - description: GPIO interrupt, TINT8
-+      - description: GPIO interrupt, TINT9
-+      - description: GPIO interrupt, TINT10
-+      - description: GPIO interrupt, TINT11
-+      - description: GPIO interrupt, TINT12
-+      - description: GPIO interrupt, TINT13
-+      - description: GPIO interrupt, TINT14
-+      - description: GPIO interrupt, TINT15
-+      - description: GPIO interrupt, TINT16
-+      - description: GPIO interrupt, TINT17
-+      - description: GPIO interrupt, TINT18
-+      - description: GPIO interrupt, TINT19
-+      - description: GPIO interrupt, TINT20
-+      - description: GPIO interrupt, TINT21
-+      - description: GPIO interrupt, TINT22
-+      - description: GPIO interrupt, TINT23
-+      - description: GPIO interrupt, TINT24
-+      - description: GPIO interrupt, TINT25
-+      - description: GPIO interrupt, TINT26
-+      - description: GPIO interrupt, TINT27
-+      - description: GPIO interrupt, TINT28
-+      - description: GPIO interrupt, TINT29
-+      - description: GPIO interrupt, TINT30
-+      - description: GPIO interrupt, TINT31
-+      - description: Software interrupt, INTA55_0
-+      - description: Software interrupt, INTA55_1
-+      - description: Software interrupt, INTA55_2
-+      - description: Software interrupt, INTA55_3
-+      - description: Error interrupt to CA55
-+      - description: GTCCRA compare match/input capture (U0)
-+      - description: GTCCRB compare match/input capture (U0)
-+      - description: GTCCRA compare match/input capture (U1)
-+      - description: GTCCRB compare match/input capture (U1)
-+
-+  interrupt-names:
-+    minItems: 58
-+    items:
-+      - const: nmi
-+      - const: port_irq0
-+      - const: port_irq1
-+      - const: port_irq2
-+      - const: port_irq3
-+      - const: port_irq4
-+      - const: port_irq5
-+      - const: port_irq6
-+      - const: port_irq7
-+      - const: port_irq8
-+      - const: port_irq9
-+      - const: port_irq10
-+      - const: port_irq11
-+      - const: port_irq12
-+      - const: port_irq13
-+      - const: port_irq14
-+      - const: port_irq15
-+      - const: tint0
-+      - const: tint1
-+      - const: tint2
-+      - const: tint3
-+      - const: tint4
-+      - const: tint5
-+      - const: tint6
-+      - const: tint7
-+      - const: tint8
-+      - const: tint9
-+      - const: tint10
-+      - const: tint11
-+      - const: tint12
-+      - const: tint13
-+      - const: tint14
-+      - const: tint15
-+      - const: tint16
-+      - const: tint17
-+      - const: tint18
-+      - const: tint19
-+      - const: tint20
-+      - const: tint21
-+      - const: tint22
-+      - const: tint23
-+      - const: tint24
-+      - const: tint25
-+      - const: tint26
-+      - const: tint27
-+      - const: tint28
-+      - const: tint29
-+      - const: tint30
-+      - const: tint31
-+      - const: int-ca55-0
-+      - const: int-ca55-1
-+      - const: int-ca55-2
-+      - const: int-ca55-3
-+      - const: icu-error-ca55
-+      - const: gpt-u0-gtciada
-+      - const: gpt-u0-gtciadb
-+      - const: gpt-u1-gtciada
-+      - const: gpt-u1-gtciadb
-+
-+  clocks:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#interrupt-cells'
-+  - '#address-cells'
-+  - interrupt-controller
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - power-domains
-+  - resets
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+    icu: interrupt-controller@10400000 {
-+        compatible = "renesas,r9a09g057-icu";
-+        reg = <0x10400000 0x10000>;
-+        #interrupt-cells = <2>;
-+        #address-cells = <0>;
-+        interrupt-controller;
-+        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 432 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 437 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 441 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 443 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 262 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 263 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 265 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "nmi",
-+                          "port_irq0", "port_irq1", "port_irq2",
-+                          "port_irq3", "port_irq4", "port_irq5",
-+                          "port_irq6", "port_irq7", "port_irq8",
-+                          "port_irq9", "port_irq10", "port_irq11",
-+                          "port_irq12", "port_irq13", "port_irq14",
-+                          "port_irq15",
-+                          "tint0", "tint1", "tint2", "tint3",
-+                          "tint4", "tint5", "tint6", "tint7",
-+                          "tint8", "tint9", "tint10", "tint11",
-+                          "tint12", "tint13", "tint14", "tint15",
-+                          "tint16", "tint17", "tint18", "tint19",
-+                          "tint20", "tint21", "tint22", "tint23",
-+                          "tint24", "tint25", "tint26", "tint27",
-+                          "tint28", "tint29", "tint30", "tint31",
-+                          "int-ca55-0", "int-ca55-1",
-+                          "int-ca55-2", "int-ca55-3",
-+                          "icu-error-ca55",
-+                          "gpt-u0-gtciada", "gpt-u0-gtciadb",
-+                          "gpt-u1-gtciada", "gpt-u1-gtciadb";
-+        clocks = <&cpg CPG_MOD 0x5>;
-+        power-domains = <&cpg>;
-+        resets = <&cpg 0x36>;
-+    };
+
+--
+ankur
 
