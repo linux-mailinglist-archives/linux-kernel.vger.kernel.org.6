@@ -1,99 +1,154 @@
-Return-Path: <linux-kernel+bounces-365641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4D499E554
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:14:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A951B99E558
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61197B22A96
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:14:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63EE82848D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9161E8834;
-	Tue, 15 Oct 2024 11:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C898D1D89F8;
+	Tue, 15 Oct 2024 11:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SE1f2BDD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hwE0CfQ6"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36EB31D8DE2;
-	Tue, 15 Oct 2024 11:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7C0156872
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990862; cv=none; b=ryrkKS10rrE6ol2akOI2kwVk/3MsDY4AOT37y9fzDprrmoXeUJGdsuElBhyiyzaa1PPJs2qygylQl8HAdLl0Z/DNUTfFUJWUZy9PJJLE4H0RbgA78BN8twyFUAnckiTPuOThcFzw6fYQWgAMhqiYbGClwAnXAlkWVIZgJL32xNs=
+	t=1728990947; cv=none; b=JnK2PM0H4ffbMDe/uVsYP5bLikghNDfD/OvtUzzQ0fq5aze9y+DSKSOXdaC5a8qMdE2ePAzc8QjRa6QRATgVZw+z6SHfECQeDXIYL7Hfs8AIvb8cv93fIHwETxrkl/AO6N4mHw2He9jNhhk1hZpiTHGY1ztRgMIx4yrppNxkLto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990862; c=relaxed/simple;
-	bh=Ww7I9qP9b+gQT6n8y5YBtyJZUxROCz7Fcg7oOE0SK0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OB22Oyg3r297yyXq2TQx0Tg3auEm8ZpBd7OK5Rr4ImVAaiZPiTN3qtWU5gn9ytNRNNA5tL5QFLuuaC/gxW8EjRKfzON5urfAKjDL/WNORTDXaUOa+Zh0fL+IufNpxvPBKzvdwKGmr1qzUZfsy/Uh+he0Y5ShSoTPxrnInsfrnUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SE1f2BDD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D607C4CEC6;
-	Tue, 15 Oct 2024 11:14:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728990861;
-	bh=Ww7I9qP9b+gQT6n8y5YBtyJZUxROCz7Fcg7oOE0SK0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SE1f2BDD/RciteVCvrKm+seK1CXQDh5xrSyicPArx0Q/OJU22BkSaoTT/RRSTk8Zs
-	 Fk8tlDglHip8qZt53zvfwzVHkirIiKYMsjHRxSM5N52jH1+mHvG1iEpsiqE22Dtj9X
-	 zAW5rbWubeCnABr2rpT4q4BRjpXVzULc12CKuX2c=
-Date: Tue, 15 Oct 2024 13:14:18 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org,
-	linux-s390@vger.kernel.org, Sven Schnelle <svens@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
-Message-ID: <2024101509-cesspool-sensation-f3f3@gregkh>
-References: <20241014141217.941104064@linuxfoundation.org>
- <CA+G9fYuaZVQL_h1BYX4LajoMgUzZxJUH5ipdyO_4k36F62Z5DA@mail.gmail.com>
- <20241015095013.7641-H-hca@linux.ibm.com>
+	s=arc-20240116; t=1728990947; c=relaxed/simple;
+	bh=ssmqsWWS81Vg0uTaEuJJktUUR/hioVtLY2g+nX1p7M8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CLLm9w4OyHj319M9B9zwyC59pObuEwF0OjrQaA2f2c8ZzKz6VTF/wdBvOUgmZhFBQtWnxKeuWtRmmOe9z4gUZB7gpgXC6kWTSRQ0JTiO+WDLp6//TP5Hl0nnyQkwZPmZGWxBmcMhRbRRKM669bXKrUg2EnkqY0YSePw05Cw8pOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hwE0CfQ6; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728990942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ucQtvznDemSDFD+kG00/HvX/vw51G6Sc6n843ys325E=;
+	b=hwE0CfQ6zx5RuK8fo0dhqMPrV6DJKqfw01P+l6q1t/dOTG+tcASPg4MJRgpNPZn1TUXss9
+	iUYoJrknU87/9Cy/XIxRrHNxfysegb3M1fRNJ/HpSadnin1HDRLKzfrnsyvb6CB/JmoCo+
+	lsgbqfDDgAVEbhdHFEbtPevoTIB+k/w=
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH v4] sched_ext: Trigger ops.update_idle() from pick_task_idle()
+Date: Tue, 15 Oct 2024 13:15:39 +0200
+Message-ID: <20241015111539.12136-1-andrea.righi@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015095013.7641-H-hca@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 15, 2024 at 11:50:13AM +0200, Heiko Carstens wrote:
-> On Tue, Oct 15, 2024 at 02:23:32PM +0530, Naresh Kamboju wrote:
-> > On Mon, 14 Oct 2024 at 20:20, Greg Kroah-Hartman
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > 
-> > The bisection pointing to,
-> >   73e9443b9ea8d5a1b9b87c4988acc3daae363832
-> >   s390/traps: Handle early warnings gracefully
-> >     [ Upstream commit 3c4d0ae0671827f4b536cc2d26f8b9c54584ccc5 ]
-> > 
-> > 
-> > Build log:
-> > -------
-> > arch/s390/kernel/early.c: In function '__do_early_pgm_check':
-> > arch/s390/kernel/early.c:154:30: error: implicit declaration of
-> > function 'get_lowcore'; did you mean 'S390_lowcore'?
-> > [-Werror=implicit-function-declaration]
-> >   154 |         struct lowcore *lc = get_lowcore();
-> >       |                              ^~~~~~~~~~~
-> >       |                              S390_lowcore
-> > arch/s390/kernel/early.c:154:30: warning: initialization of 'struct
-> > lowcore *' from 'int' makes pointer from integer without a cast
-> > [-Wint-conversion]
-> > cc1: some warnings being treated as errors
-> 
-> Same here, please drop this patch.
->
+With the consolidation of put_prev_task/set_next_task(), see
+commit 436f3eed5c69 ("sched: Combine the last put_prev_task() and the
+first set_next_task()"), we are now skipping the transition between
+these two functions when the previous and the next tasks are the same.
 
-Now dropped from 6.1.y and 6.6.y, thanks!
+As a result, ops.update_idle() is now called only once when the CPU
+transitions to the idle class. If the CPU stays active (e.g., through a
+call to scx_bpf_kick_cpu()), ops.update_idle() will not be triggered
+again since the task remains unchanged (rq->idle).
 
-greg k-h
+While this behavior seems generally correct, it can cause issues in
+certain sched_ext scenarios.
+
+For example, a BPF scheduler might use logic like the following to keep
+the CPU active under specific conditions:
+
+void BPF_STRUCT_OPS(sched_update_idle, s32 cpu, bool idle)
+{
+	if (!idle)
+		return;
+	if (condition)
+		scx_bpf_kick_cpu(cpu, 0);
+}
+
+A call to scx_bpf_kick_cpu() wakes up the CPU, so in theory,
+ops.update_idle() should be triggered again until the condition becomes
+false. However, this doesn't happen, and scx_bpf_kick_cpu() doesn't
+produce the expected effect.
+
+In practice, this change badly impacts performance in user-space
+schedulers that rely on ops.update_idle() to activate user-space
+components.
+
+For instance, in the case of scx_rustland, performance drops
+significantly (e.g., gaming benchmarks fall from ~60fps to ~10fps).
+
+To address this, trigger ops.update_idle() also from pick_task_idle()
+when the idle task keeps running on the CPU. This restores the correct
+behavior of ops.update_idle() and it allows to fix the performance
+regression in scx_rustland.
+
+Fixes: 7c65ae81ea86 ("sched_ext: Don't call put_prev_task_scx() before picking the next task")
+Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
+---
+ kernel/sched/idle.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+ChangeLog v3 -> v4:
+  - handle the core-sched case that may ignore the result of
+    pick_task(), triggering spurious ops.update_idle() events
+
+ChangeLog v2 -> v3:
+  - add a comment to clarify why we need to update the scx idle state in
+    pick_task()
+
+ChangeLog v1 -> v2:
+  - move the logic from put_prev_set_next_task() to scx_update_idle()
+
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index d2f096bb274c..3e76b11237a9 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -466,6 +466,20 @@ static void set_next_task_idle(struct rq *rq, struct task_struct *next, bool fir
+ 
+ struct task_struct *pick_task_idle(struct rq *rq)
+ {
++	/*
++	 * When switching from a non-idle to the idle class, .set_next_task()
++	 * is called only once during the transition.
++	 *
++	 * However, the CPU may remain active for multiple rounds running the
++	 * idle task (e.g., by calling scx_bpf_kick_cpu() from the
++	 * ops.update_idle() callback).
++	 *
++	 * In such cases, we need to keep updating the scx idle state to
++	 * properly re-trigger the ops.update_idle() callback and ensure
++	 * correct handling of scx idle state transitions.
++	 */
++	if (rq->curr == rq->idle)
++		scx_update_idle(rq, true);
+ 	return rq->idle;
+ }
+ 
+-- 
+2.47.0
+
 
