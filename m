@@ -1,90 +1,135 @@
-Return-Path: <linux-kernel+bounces-366478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA2299F5D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:40:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A99CA99F5E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95EF1F23671
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD27D1C236B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7902036FD;
-	Tue, 15 Oct 2024 18:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD7A2036FB;
+	Tue, 15 Oct 2024 18:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="DmVvwC6Q"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBJmpaKT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247B02036E7
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0822036E2;
+	Tue, 15 Oct 2024 18:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729017621; cv=none; b=Wbj0LUznRYFkAoqLA6eWU/azrwMvEMEzB0LF0/8aPkXZGd63p2/OObtdgGe0Ef3kGTm/BDN/kSLhO4wXAokEo2hPwMjio3b2e783CDmDnHn1X/N9gJ7j43Bt1wIp6tRNlr5CbhIjNufO/LQaPYMh6/AWHh1S4R3ueAOEicJncn0=
+	t=1729017732; cv=none; b=Do9I1MNULB6K404HSwC8YfkoAIOOHCLgezqISlWPG3aYjQARhJA76+VMw+oSHgMyQZD/HWt10rEiKY44sS0VrxcVZ23n+HSBFQDVxAB1dfZQxwbc0P0BNq/yIEpJeJ6gY4fzmvll7klDCQOFAm+WlabSD2PHvftqL7nALuL+/Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729017621; c=relaxed/simple;
-	bh=S8qZ5VAzN4pcHHfNgHDiuu35+4RSiNxrbYTWhDHnCKM=;
+	s=arc-20240116; t=1729017732; c=relaxed/simple;
+	bh=topu4CucnY26+98rvpr6B1++4mRDeJMpDEPo/n8m79Y=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c/QRbO+tV4/FORLTMlOO8yNoeU46Rpy2kuZe4bwmnKC3Ykc/umY6o1UAvSqzW/FrXQ7w4lIMjZzI4fqQxmE9YCfdCTCDyHI3G6wnhAPqo2tp6Uu4P6ifNvQPx1cXQKoiU2bG0varxfzgLZb47botNcpCaCxg8ZcXzwyLhJEoKoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=DmVvwC6Q; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbd12b38b4so46961996d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 11:40:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1729017618; x=1729622418; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8ZIAcIQNXFU0HJAbelK5w6AajE5AfFCSDcserEzGKO8=;
-        b=DmVvwC6Qsq+1nwmUyMWT96jwI+YO/NCs/aZQHUtCV5XIjPF8ntC96BIYe2jNgtT5lQ
-         VwypBg4dWjmDYkGX0QrDbWLBkYHwxXN85WCUAU5jnmcBLi3bHi7Yqgc6uaLw1LaAaCLj
-         I7UOLyDiSQObK0/YsgYXEUplBMt+XWxFKZyD1FwKh8VNaIo83tPUNoMQaKxGEXRbsn5A
-         y5TMw8eTSIthtaYWx8b0hNiHA9gGzei42ns+zbIBwTwcVhBbHOyrIJjG3xRnHeJ2zA/B
-         I7iDGhVJ5mTdLXPlsrxMnSzeDcn21NBnwpGhtHQc5A76RP4/5khkxDKX6vkp4UXbjyd8
-         sUOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729017618; x=1729622418;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8ZIAcIQNXFU0HJAbelK5w6AajE5AfFCSDcserEzGKO8=;
-        b=tEdnlxKoJBGuHkiulfp/6b86LX2Yhcbq8KMNkW2sgSLSCKi3YT0QYCmbUQZWMcUbIe
-         AESrS0G0EnCME0fImGTmkMJmRI/N2Ar9BDfY4Jdp9qNbL2oIhCvv7qo7PDvbzDBxERkt
-         D/FUv5+2G5Q2G7SqMXQ0O8/QOyXCdtkjs0lagB9rP+o414l+/lSgN3qaQd4vTbubQdH1
-         xLGCQNOLOFNRbJ/VnWQ7UzTZFYK1CkLw9L9KX7yfESb+QpXmU/YOBGcKPuWFeobcarzN
-         PMmtWKnHYqhh41YOQ2p4AQkJNMEM5k0R/UTw6lK1Sn4pMfParD40Ttl/MyQBAhTvQdi/
-         ncZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcpJSa1Wo9zwfg3a1lRrly5JIDrST/wUTeVzBdSceuyW5sqVOFWWGpijmt6V8EaV1XveOflyPjl5YqvUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwKwis2HRzXAohsnkFtZR1kPIzai/5UEvRgN1RysFHT85/qhIx
-	PPsLewLRpvHx3aME8/KrwJNHBZKGcp8w66NFbLyywQbRRBUU66h9I8/nTbkVPec=
-X-Google-Smtp-Source: AGHT+IFusBTYb7gPAxZixD4vre5MF4aNXpzmSWO1sCDmCktW5i/0FD6ZzrAV8Ze8EESk75jqueZHlQ==
-X-Received: by 2002:a05:6214:469b:b0:6cb:faee:76da with SMTP id 6a1803df08f44-6cc2b923c6fmr17530536d6.48.1729017618017;
-        Tue, 15 Oct 2024 11:40:18 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:15:862e::7a9])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc22959b4fsm9683206d6.84.2024.10.15.11.40.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 11:40:17 -0700 (PDT)
-Message-ID: <ef6f582876782339a6abed5e5d114efade10f9ec.camel@ndufresne.ca>
-Subject: Re: [PATCH v1 00/10] Add MediaTek ISP7 camera system driver
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>, Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	 <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	 <angelogioacchino.delregno@collabora.com>, Sumit Semwal
-	 <sumit.semwal@linaro.org>, Christian Konig <christian.koenig@amd.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- linaro-mm-sig@lists.linaro.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
-  teddy.chen@mediatek.com, hidenorik@chromium.org, yunkec@chromium.org, 
- shun-yi.wang@mediatek.com
-Date: Tue, 15 Oct 2024 14:40:16 -0400
-In-Reply-To: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
-References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
+	 Content-Type:MIME-Version; b=KyIC9tMCeC916iPvifjNptlqxuw1ix+mnlt9GMInNz+W7yJZzDqIuWabfV3AwTeG6lpJn9XbFiJi1oxK0lAYs6n/OSDcBDK+aXbfD1dHB1bUCnH1+BlbIBG6scQY7SDkUjMgvYUlUE6kDXNCvL97kptqBrzE6ZDbyqCJMaw5Quw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBJmpaKT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A688C4CEC6;
+	Tue, 15 Oct 2024 18:42:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729017732;
+	bh=topu4CucnY26+98rvpr6B1++4mRDeJMpDEPo/n8m79Y=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=HBJmpaKTmGbx1F0U+2F/mFBoxa93vHz9iMDZY6bTqXWgFfLiXAjSpRQmnjT3+k84q
+	 T4ZgRKXUkow2lC/mwSzvbqw2j6h/SJ+auus7+ZHzHwiT/IHZUFuIxl3ZqE2WQuwvp7
+	 rS8qsNTfi5jhWrnam9+BCfnBrTzwESvmUC2UuX7KYpJNqGndILaw/bWRqYpoY5qLi0
+	 O5dA+9m4hCwPOoGY2kTZls/mcdjw2IK8BToxnz/QAPAW9rZSZC3qV+o27BYBL82mnJ
+	 4uv3jxIvWJsww93C3e/ecM54eB9uJ6JjkPkxGLJFhQ7SHQNiRboivk/eAcAAEaW+7R
+	 bZN78kBr0OBcA==
+Message-ID: <a70e34202c13ef2ac69f04a153268950b485781a.camel@kernel.org>
+Subject: Re: [PATCH 1/6] nfsd: drop inode parameter from
+ nfsd4_change_attribute()
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Dai
+ Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Jonathan Corbet
+ <corbet@lwn.net>,  Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
+ <anna@kernel.org>, Thomas Haynes <loghyr@gmail.com>, 
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org
+Date: Tue, 15 Oct 2024 14:42:10 -0400
+In-Reply-To: <Zw60mgZaLZtGWWil@tissot.1015granger.net>
+References: <20241014-delstid-v1-0-7ce8a2f4dd24@kernel.org>
+	 <20241014-delstid-v1-1-7ce8a2f4dd24@kernel.org>
+	 <Zw60mgZaLZtGWWil@tissot.1015granger.net>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
@@ -95,245 +140,184 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Hi,
-
-Le mercredi 09 octobre 2024 =C3=A0 19:15 +0800, Shu-hsiang Yang a =C3=A9cri=
-t=C2=A0:
-> Based on linux-next/master, tag: next-20241008
+On Tue, 2024-10-15 at 14:29 -0400, Chuck Lever wrote:
+> Hey Jeff -
 >=20
-> The patch set adds the MediaTek ISP7.x camera system hardware driver.
+> On Mon, Oct 14, 2024 at 03:26:49PM -0400, Jeff Layton wrote:
+> > Fix up nfs4_delegation_stat() to fetch STATX_MODE,
 >=20
-> This driver sets up ISP hardware, handles interrupts, and initializes
-> V4L2 device nodes and functions. Moreover, implement V4L2 standard
-> video driver that utilizes media framework APIs. It also connects
-> the sensors and ISP, bridging with the seninf interface. Communicate
-> with SCP co-processor to compose ISP registers in the firmware.
-
-Thanks for this work. If I read you correctly, this will depends on an scp
-firmware update. Its probably early at rev1, but we appreciate if you can c=
-ross-
-reference your associated linux-firmware submission (or document which MT
-flavour of SCP firmware) contains this support already.
-
-For ISP drivers reviewers, we have the experience with SCP that the IPC is =
-not
-versioned, making it difficult to maintain backward compatibility. Won't ma=
-tter
-until this is merged, but be aware that unless this SCP IPC design issue ha=
-s
-been fixed, any change to the -if headers means a modification to the SCP h=
-as
-been made, and often we have had to ask MTK to revisit the firmware code to
-unbreak backward compatibility.
-
-If this specific part of the SCP IPC is versioned, please let us know. I do=
-n't
-want this to be alarming message, just something we need to collectively be
-aware of not to break userspace, which may not update their firmwares in lo=
-ck
-step with the kernel.
-
-regards,
-Nicolas
-
-p.s. for those new to MTK architecture, the SCP firmware provides services =
-to
-everything multimedia in the platform, including CODECs, color converter an=
-d
-scalers, etc.
-
->=20
-> These patches include CSI received data from sensors, sensor interface
-> bridge, raw/YUV image pre-processing, ISP utility and ISP control parts.
->=20
-> Thank you for reviewing these patches.
->=20
-> Shu-hsiang Yang (10):
->   dt-bindings: media: mediatek: add camsys device
->   media: platform: mediatek: add seninf controller
->   media: platform: mediatek: add isp_7x seninf unit
->   media: platform: mediatek: add isp_7x cam-raw unit
->   media: platform: mediatek: add isp_7x camsys unit
->   media: platform: mediatek: add isp_7x utility
->   media: platform: mediatek: add isp_7x video ops
->   media: platform: mediatek: add isp_7x state ctrl
->   media: platform: mediatek: add isp_7x build config
->   uapi: linux: add mediatek isp_7x camsys user api
->=20
->  .../media/mediatek/mediatek,cam-raw.yaml      |  169 +
->  .../media/mediatek/mediatek,cam-yuv.yaml      |  148 +
->  .../media/mediatek/mediatek,camisp.yaml       |   71 +
->  .../media/mediatek/mediatek,seninf-core.yaml  |  106 +
->  .../media/mediatek/mediatek,seninf.yaml       |   88 +
->  drivers/media/platform/mediatek/Kconfig       |    1 +
->  drivers/media/platform/mediatek/Makefile      |    2 +
->  drivers/media/platform/mediatek/isp/Kconfig   |   21 +
->  .../platform/mediatek/isp/isp_7x/Makefile     |    7 +
->  .../mediatek/isp/isp_7x/camsys/Makefile       |   16 +
->  .../isp_7x/camsys/kd_imgsensor_define_v4l2.h  |   87 +
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-ctrl.c | 1797 ++++++
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-ctrl.h |  140 +
->  .../isp/isp_7x/camsys/mtk_cam-debug.c         | 1271 ++++
->  .../isp/isp_7x/camsys/mtk_cam-debug.h         |  273 +
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-defs.h |  168 +
->  .../isp/isp_7x/camsys/mtk_cam-dmadbg.h        |  721 +++
->  .../isp/isp_7x/camsys/mtk_cam-feature.c       |   40 +
->  .../isp/isp_7x/camsys/mtk_cam-feature.h       |   26 +
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-fmt.h  |   87 +
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-ipi.h  |  233 +
->  .../isp/isp_7x/camsys/mtk_cam-meta-mt8188.h   | 2436 ++++++++
->  .../isp/isp_7x/camsys/mtk_cam-plat-util.c     |  207 +
->  .../isp/isp_7x/camsys/mtk_cam-plat-util.h     |   16 +
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-pool.c |  393 ++
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-pool.h |   28 +
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.c  | 5359 +++++++++++++++++
->  .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.h  |  325 +
->  .../isp/isp_7x/camsys/mtk_cam-raw_debug.c     |  403 ++
->  .../isp/isp_7x/camsys/mtk_cam-raw_debug.h     |   39 +
->  .../isp/isp_7x/camsys/mtk_cam-regs-mt8188.h   |  382 ++
->  .../isp/isp_7x/camsys/mtk_cam-seninf-def.h    |  193 +
->  .../isp/isp_7x/camsys/mtk_cam-seninf-drv.c    | 1741 ++++++
->  .../isp/isp_7x/camsys/mtk_cam-seninf-drv.h    |   16 +
->  .../isp/isp_7x/camsys/mtk_cam-seninf-hw.h     |  120 +
->  .../isp/isp_7x/camsys/mtk_cam-seninf-if.h     |   28 +
->  .../isp/isp_7x/camsys/mtk_cam-seninf-regs.h   |   40 +
->  .../isp/isp_7x/camsys/mtk_cam-seninf-route.c  |  356 ++
->  .../isp/isp_7x/camsys/mtk_cam-seninf-route.h  |   23 +
->  .../isp/isp_7x/camsys/mtk_cam-seninf.h        |  170 +
->  .../isp/isp_7x/camsys/mtk_cam-timesync.c      |  125 +
->  .../isp/isp_7x/camsys/mtk_cam-timesync.h      |   12 +
->  .../isp/isp_7x/camsys/mtk_cam-ufbc-def.h      |   59 +
->  .../isp/isp_7x/camsys/mtk_cam-video.c         | 1817 ++++++
->  .../isp/isp_7x/camsys/mtk_cam-video.h         |  224 +
->  .../mediatek/isp/isp_7x/camsys/mtk_cam.c      | 4168 +++++++++++++
->  .../mediatek/isp/isp_7x/camsys/mtk_cam.h      |  733 +++
->  .../isp_7x/camsys/mtk_camera-v4l2-controls.h  |   65 +
->  .../isp_7x/camsys/mtk_csi_phy_2_0/Makefile    |    5 +
->  .../mtk_csi_phy_2_0/mtk_cam-seninf-cammux.h   |  911 +++
->  .../mtk_cam-seninf-csi0-cphy.h                |   69 +
->  .../mtk_cam-seninf-csi0-dphy.h                |  139 +
->  .../mtk_cam-seninf-hw_phy_2_0.c               | 2879 +++++++++
->  .../mtk_cam-seninf-mipi-rx-ana-cdphy-csi0a.h  |  257 +
->  .../mtk_cam-seninf-seninf1-csi2.h             |  415 ++
->  .../mtk_cam-seninf-seninf1-mux.h              |  147 +
->  .../mtk_csi_phy_2_0/mtk_cam-seninf-seninf1.h  |   47 +
->  .../mtk_csi_phy_2_0/mtk_cam-seninf-tg1.h      |   49 +
->  .../mtk_csi_phy_2_0/mtk_cam-seninf-top-ctrl.h |   99 +
->  include/uapi/linux/mtkisp_camsys.h            |  227 +
->  60 files changed, 30194 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
-atek,cam-raw.yaml
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
-atek,cam-yuv.yaml
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
-atek,camisp.yaml
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
-atek,seninf-core.yaml
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek/medi=
-atek,seninf.yaml
->  create mode 100644 drivers/media/platform/mediatek/isp/Kconfig
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/Makefile
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/Mak=
-efile
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/kd_=
-imgsensor_define_v4l2.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-ctrl.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-ctrl.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-debug.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-debug.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-defs.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-dmadbg.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-feature.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-feature.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-fmt.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-ipi.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-meta-mt8188.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-plat-util.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-plat-util.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-pool.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-pool.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-raw.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-raw.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-raw_debug.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-raw_debug.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-regs-mt8188.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf-def.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf-drv.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf-drv.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf-hw.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf-if.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf-regs.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf-route.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf-route.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-seninf.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-timesync.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-timesync.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-ufbc-def.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-video.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam-video.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_cam.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_camera-v4l2-controls.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/Makefile
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-cammux.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-csi0-cphy.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-csi0-dphy.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-hw_phy_2_0.c
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-mipi-rx-ana-cdphy-csi0a.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-seninf1-csi2.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-seninf1-mux.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-seninf1.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-tg1.h
->  create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk=
-_csi_phy_2_0/mtk_cam-seninf-top-ctrl.h
->  create mode 100644 include/uapi/linux/mtkisp_camsys.h
+> The patch description isn't clear about why this change is needed.
+> After reading through the other patches, I'm not sure I'm any more
+> enlightened about it ;-)
 >=20
 
+My original thinking was that this patch was just a cleanup and
+simplification, but now that I look, I think the inode we were passing
+to this function in nfs4_open_delegation was wrong and that could throw
+off the result in some cases.
+
+Maybe we should add a Fixes: tag for this:
+
+    bf92e5008b17 nfsd: fix initial getattr on write delegation
+
+...since that should have fixed this call as well.
+
+>=20
+> > and then drop the
+> > inode parameter from nfsd4_change_attribute(), since it's no longer
+> > needed.
+>=20
+> Since nfsd4_change_attribute() expects @stat to be filled in by the
+> caller, it needs a kdoc-style comment that documents that part of
+> the API contract.
+>=20
+
+Agreed. It needs STATX_MODE and STATX_CTIME. It can also make use of
+STATX_CHANGE_COOKIE if present.
+
+> I can add one when applying this patch, unless you would like to
+> resend this one or send me something to squash into this change.
+>=20
+
+That sounds great. A kdoc comment over that is a good idea.
+
+>=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/nfsd/nfs4state.c |  5 ++---
+> >  fs/nfsd/nfs4xdr.c   |  2 +-
+> >  fs/nfsd/nfsfh.c     | 11 ++++-------
+> >  fs/nfsd/nfsfh.h     |  3 +--
+> >  4 files changed, 8 insertions(+), 13 deletions(-)
+> >=20
+> > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> > index d753926db09eedf629fc3e0938f10b1a6fdb0245..2961a277a79c1f4cdb8c29a=
+7c19abcb3305b61a1 100644
+> > --- a/fs/nfsd/nfs4state.c
+> > +++ b/fs/nfsd/nfs4state.c
+> > @@ -5953,7 +5953,7 @@ nfs4_delegation_stat(struct nfs4_delegation *dp, =
+struct svc_fh *currentfh,
+> >  	path.dentry =3D file_dentry(nf->nf_file);
+> > =20
+> >  	rc =3D vfs_getattr(&path, stat,
+> > -			 (STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
+> > +			 (STATX_MODE | STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
+> >  			 AT_STATX_SYNC_AS_STAT);
+> > =20
+> >  	nfsd_file_put(nf);
+> > @@ -6037,8 +6037,7 @@ nfs4_open_delegation(struct nfsd4_open *open, str=
+uct nfs4_ol_stateid *stp,
+> >  		}
+> >  		open->op_delegate_type =3D NFS4_OPEN_DELEGATE_WRITE;
+> >  		dp->dl_cb_fattr.ncf_cur_fsize =3D stat.size;
+> > -		dp->dl_cb_fattr.ncf_initial_cinfo =3D
+> > -			nfsd4_change_attribute(&stat, d_inode(currentfh->fh_dentry));
+> > +		dp->dl_cb_fattr.ncf_initial_cinfo =3D nfsd4_change_attribute(&stat);
+> >  		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
+> >  	} else {
+> >  		open->op_delegate_type =3D NFS4_OPEN_DELEGATE_READ;
+> > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> > index 6286ad2afa069f5274ffa352209b7d3c8c577dac..da7ec663da7326ad5c68a9c=
+738b12d09cfcdc65a 100644
+> > --- a/fs/nfsd/nfs4xdr.c
+> > +++ b/fs/nfsd/nfs4xdr.c
+> > @@ -3621,7 +3621,7 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struc=
+t xdr_stream *xdr,
+> >  		args.change_attr =3D ncf->ncf_initial_cinfo;
+> >  		nfs4_put_stid(&dp->dl_stid);
+> >  	} else {
+> > -		args.change_attr =3D nfsd4_change_attribute(&args.stat, d_inode(dent=
+ry));
+> > +		args.change_attr =3D nfsd4_change_attribute(&args.stat);
+> >  	}
+> > =20
+> >  	if (err)
+> > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> > index 4c5deea0e9535f2b197aa6ca1786d61730d53c44..453b7b52317d538971ce41f=
+7e0492e5ab28b236d 100644
+> > --- a/fs/nfsd/nfsfh.c
+> > +++ b/fs/nfsd/nfsfh.c
+> > @@ -670,20 +670,18 @@ fh_update(struct svc_fh *fhp)
+> >  __be32 __must_check fh_fill_pre_attrs(struct svc_fh *fhp)
+> >  {
+> >  	bool v4 =3D (fhp->fh_maxsize =3D=3D NFS4_FHSIZE);
+> > -	struct inode *inode;
+> >  	struct kstat stat;
+> >  	__be32 err;
+> > =20
+> >  	if (fhp->fh_no_wcc || fhp->fh_pre_saved)
+> >  		return nfs_ok;
+> > =20
+> > -	inode =3D d_inode(fhp->fh_dentry);
+> >  	err =3D fh_getattr(fhp, &stat);
+> >  	if (err)
+> >  		return err;
+> > =20
+> >  	if (v4)
+> > -		fhp->fh_pre_change =3D nfsd4_change_attribute(&stat, inode);
+> > +		fhp->fh_pre_change =3D nfsd4_change_attribute(&stat);
+> > =20
+> >  	fhp->fh_pre_mtime =3D stat.mtime;
+> >  	fhp->fh_pre_ctime =3D stat.ctime;
+> > @@ -700,7 +698,6 @@ __be32 __must_check fh_fill_pre_attrs(struct svc_fh=
+ *fhp)
+> >  __be32 fh_fill_post_attrs(struct svc_fh *fhp)
+> >  {
+> >  	bool v4 =3D (fhp->fh_maxsize =3D=3D NFS4_FHSIZE);
+> > -	struct inode *inode =3D d_inode(fhp->fh_dentry);
+> >  	__be32 err;
+> > =20
+> >  	if (fhp->fh_no_wcc)
+> > @@ -716,7 +713,7 @@ __be32 fh_fill_post_attrs(struct svc_fh *fhp)
+> >  	fhp->fh_post_saved =3D true;
+> >  	if (v4)
+> >  		fhp->fh_post_change =3D
+> > -			nfsd4_change_attribute(&fhp->fh_post_attr, inode);
+> > +			nfsd4_change_attribute(&fhp->fh_post_attr);
+> >  	return nfs_ok;
+> >  }
+> > =20
+> > @@ -824,13 +821,13 @@ enum fsid_source fsid_source(const struct svc_fh =
+*fhp)
+> >   * assume that the new change attr is always logged to stable storage =
+in some
+> >   * fashion before the results can be seen.
+> >   */
+> > -u64 nfsd4_change_attribute(const struct kstat *stat, const struct inod=
+e *inode)
+> > +u64 nfsd4_change_attribute(const struct kstat *stat)
+> >  {
+> >  	u64 chattr;
+> > =20
+> >  	if (stat->result_mask & STATX_CHANGE_COOKIE) {
+> >  		chattr =3D stat->change_cookie;
+> > -		if (S_ISREG(inode->i_mode) &&
+> > +		if (S_ISREG(stat->mode) &&
+> >  		    !(stat->attributes & STATX_ATTR_CHANGE_MONOTONIC)) {
+> >  			chattr +=3D (u64)stat->ctime.tv_sec << 30;
+> >  			chattr +=3D stat->ctime.tv_nsec;
+> > diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
+> > index 5b7394801dc4270dbd5236f3e2f2237130c73dad..876152a91f122f83fb94ffd=
+fb0eedf8fca56a20c 100644
+> > --- a/fs/nfsd/nfsfh.h
+> > +++ b/fs/nfsd/nfsfh.h
+> > @@ -297,8 +297,7 @@ static inline void fh_clear_pre_post_attrs(struct s=
+vc_fh *fhp)
+> >  	fhp->fh_pre_saved =3D false;
+> >  }
+> > =20
+> > -u64 nfsd4_change_attribute(const struct kstat *stat,
+> > -			   const struct inode *inode);
+> > +u64 nfsd4_change_attribute(const struct kstat *stat);
+> >  __be32 __must_check fh_fill_pre_attrs(struct svc_fh *fhp);
+> >  __be32 fh_fill_post_attrs(struct svc_fh *fhp);
+> >  __be32 __must_check fh_fill_both_attrs(struct svc_fh *fhp);
+> >=20
+> > --=20
+> > 2.47.0
+> >=20
+>=20
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
