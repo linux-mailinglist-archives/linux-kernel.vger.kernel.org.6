@@ -1,131 +1,222 @@
-Return-Path: <linux-kernel+bounces-366418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A7599F513
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:20:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E3499F520
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BCD21F25295
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFCC32848E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 18:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F132101A7;
-	Tue, 15 Oct 2024 18:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9B120FAA9;
+	Tue, 15 Oct 2024 18:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpkD4qeu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNnku2Q7"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88DD1C4A2C;
-	Tue, 15 Oct 2024 18:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A00A1FC7DB;
+	Tue, 15 Oct 2024 18:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729016401; cv=none; b=q6l+VkvkXDv5peJGaUywnsQW0NyNnTI2wcgmx7cm1Pv5HL1yMdBrfhkP0ZXHHv5JbZTL/4JR8MH0GtwbUKBRFmxtfXivqwF3yoiFb0PukmH4aH/SalTTUWzqiEkVzQ63uz2A1XFAuCMMEwrLdP6jGCGX1Dod6dbAe8wKbdU2n98=
+	t=1729016450; cv=none; b=PNcC2LFUt0rcLOw3ciAvH0Xwp5ZFr56HK1OC9Q2hVaHWYtYm+rTmBZMH9Cdg2N+r0/Xr6v6bvmKZ8E11sHCrxn/nwDSlr/nRoL0oM7E8kgd9R0fagOMEC9sboI+2YyBFNZp5u3N+WVEbPNu4BZm5+qUuvuXrYplqWAsfe2TE0os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729016401; c=relaxed/simple;
-	bh=/qveEz4oH0ioXwKnVP9i6T15T8fGe8hnk98Bruxgq4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3ZXnlrywASd7UfnGm7Ks4MJMkkSnuiMKGzWX1GRt3FRSTK1uMkW0bQjpYuQUXWjMpf0tTp0NmrUUPwacoxsnBG4zsTf68ulMNVN8oxTrgvj+gb+rItJuXucnTmFHJB0t3vxN4UDyehruNI+3C4JO3+iIC97OWGTm/Q6rAKqerM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpkD4qeu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C24CC4CEC6;
-	Tue, 15 Oct 2024 18:19:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729016400;
-	bh=/qveEz4oH0ioXwKnVP9i6T15T8fGe8hnk98Bruxgq4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lpkD4qeucXLibc1EBuv+su9vyzVuPHT3FT9j0xnD5ovdbZ9wANxdqAJ6GTLeIpsnv
-	 X0ROdsgGwWCNTNErBIxQzNf06eLRV/6ns9fnfi0P4TxPboxsbIzNboGnkVcQ2TY5Lf
-	 uLKb1pLbPK4fgZkuqRhbjKHxjnqm8rBmRyupxqJ2d/ldoNPOdd0czT7aQSHLcqf2/h
-	 tcE5ht3pGEigGaWiAfvekuA5mkzbHoA+uMWgKk3LEBzGH07LSOKe6MTXXm3/u0zwMx
-	 VPEpBA00r40JIwBrcTzdXJWmKwVEOgJ8QVEVNvcU5dnkaMHEHsG03UeSpkFp8wGUEb
-	 toasnJB80NBbA==
-Date: Tue, 15 Oct 2024 11:19:58 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm <linux-mm@kvack.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH v5 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
-Message-ID: <Zw6yToBbtOBPvUWx@google.com>
-References: <20241010232505.1339892-1-namhyung@kernel.org>
- <20241010232505.1339892-3-namhyung@kernel.org>
- <CAADnVQLN1De95WqUu2ESAdX-wNvaGhSNeboar1k-O+z_d7-dNA@mail.gmail.com>
- <Zwl5BkB-SawgQ9KY@google.com>
- <Zw1fN1WqjvoCeT_s@google.com>
- <CAADnVQJ2M953da8_gnGgWR9x6_-ztqFO8xvRU=bKcwmsH4ewvg@mail.gmail.com>
+	s=arc-20240116; t=1729016450; c=relaxed/simple;
+	bh=g8nT497GMiygyFDnwm3UL7vZJXgT02yAs6uY8uejgpc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EeQQL3NJ7MTSLCP2W86R7200iQoEoz1ra+AR0xxJWeWTLYj2FGHntoRBuFRK9ChQD7KSTCF3C6/A/D0+Wp8VA/VlYE5GIPYKfI4cWRuK272FIIhvKfvOcUo1LvHFfNVzEszFh078r5fUmdg65l0vjjNAF5ZLiMV78YFtBdPYlKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNnku2Q7; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-430ee5c9570so66960755e9.3;
+        Tue, 15 Oct 2024 11:20:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729016447; x=1729621247; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6hIvEnwBZ343cKXtDWuohtqPG1xM3p2Kt+DcJe0+iuY=;
+        b=hNnku2Q7+2wRJhSt3BgY/tGDabxArWx+Vi0yWjp0q1cTRr/zRzcfIowwJ/coK8LhVD
+         4ryPlgxNIJhgsu8k/iZwvdbnTb4cCqb8RnesLOqCHqw+LwWvfWbIoiyba09wLqHkwoys
+         ZyQvGeOsVhRehySJ7OfcnGibyxPHxwrgm1z7rFc8Y/SMHFuIpx3OP4znZ2PFGgHaJx9G
+         Cm863F9NoDwsAggs82Fwd3gDpRRABNOUUOxsWbTcy7PaBd+TMN9j23QE05SSmw4b59tg
+         e0bRuZapBkZdsyrYZsig7U2HTHxZQUPlkf2KiMMJN8A6DkVyte1b2T77Pl+HibP2XnqJ
+         W8Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729016447; x=1729621247;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6hIvEnwBZ343cKXtDWuohtqPG1xM3p2Kt+DcJe0+iuY=;
+        b=F3Vv09tWeQeGryT0ziR0znTLxCdj7rmEqQ3Gz6y4cJMJUprsK+d/sLMCVRxshQPg31
+         ZsVJRtCpmupObOKQpLhiUT4YMW8ExKsQbL8kfFAOtsJFbJjs8TvaOUzJ1My53f52NPUd
+         u+tdD4LLmoePlEPS2TWJVN8Q741FCbvwGw1nd3PwKidlPl+5P5FRs2I5VikVkg+SggMn
+         eq6nlrUTDmd5MyHUBBkeiNvoEABpC2Tgxy0kc67Xb43dixTITa8tEfNwieXioByjjYEQ
+         0B7tiHA6qe8D4Esh56ZZrrQzCXkfvgBk2c8EZuIhin2r4/nqon8y7Wm2DNjauwYVn23u
+         OrgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXM0geHepBYK5cgl0/QZ5vswqyqYBIJFaqup7sXqd0KGobPHY9rutc/MTjRnHkqe1+AeQ8=@vger.kernel.org, AJvYcCXSaHnOSEd3XSY75Snkcex6NYFqla2EcGPdKzw22QrMnryzJ12uotMWeLwBapNgX5vouAvFJgKItNFyscAW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE74WrdAES+I7kzI+xQPC3SRNa0UUvs+A0EGGOFvnHto/B0xYY
+	thfYnvLtLljcyFRQbweMNse48BfWmhNT1QpFFf47rxf8Ytf3yYQd63ejYMmHkJ/ApEZkn07JhLu
+	IRf+bOKnsyZD5Z0Oeu7oQILe7Ac2ROg==
+X-Google-Smtp-Source: AGHT+IHvJ85qAy8RGc7TMIASBFKYzWQ9JcXsWekK+Q8OmG4nD6dD8iSA26w0OoZimU4HtbjlgcCICbIJ9/P2WVIS20M=
+X-Received: by 2002:a05:600c:190f:b0:428:d31:ef25 with SMTP id
+ 5b1f17b1804b1-431255db3f6mr133664955e9.12.1729016446377; Tue, 15 Oct 2024
+ 11:20:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQJ2M953da8_gnGgWR9x6_-ztqFO8xvRU=bKcwmsH4ewvg@mail.gmail.com>
+References: <20241008114940.44305-1-puranjay@kernel.org> <20241008114940.44305-2-puranjay@kernel.org>
+ <CAEf4Bza5HCFZmMA8UcM92TXzDq8CxKpjPkQ_s2PLuc-dGR8y2A@mail.gmail.com> <mb61pbjzln0yn.fsf@kernel.org>
+In-Reply-To: <mb61pbjzln0yn.fsf@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 15 Oct 2024 11:20:34 -0700
+Message-ID: <CAADnVQ+_dpZCYrh3-6nLwSr_Bwndq4TCvqu=m8jQJP+k1AZa6w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 1/2] bpf: implement bpf_send_signal_task() kfunc
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 06:50:49PM -0700, Alexei Starovoitov wrote:
-> On Mon, Oct 14, 2024 at 11:13 AM Namhyung Kim <namhyung@kernel.org> wrote:
+On Tue, Oct 15, 2024 at 2:57=E2=80=AFAM Puranjay Mohan <puranjay@kernel.org=
+> wrote:
+>
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+>
+> > On Tue, Oct 8, 2024 at 4:49=E2=80=AFAM Puranjay Mohan <puranjay@kernel.=
+org> wrote:
+> >>
+> >> Implement bpf_send_signal_task kfunc that is similar to
+> >> bpf_send_signal_thread and bpf_send_signal helpers  but can be used to
+> >> send signals to other threads and processes. It also supports sending =
+a
+> >> cookie with the signal similar to sigqueue().
+> >>
+> >> If the receiving process establishes a handler for the signal using th=
+e
+> >> SA_SIGINFO flag to sigaction(), then it can obtain this cookie via the
+> >> si_value field of the siginfo_t structure passed as the second argumen=
+t
+> >> to the handler.
+> >>
+> >> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> >> ---
+> >>  kernel/bpf/helpers.c     |  1 +
+> >>  kernel/trace/bpf_trace.c | 52 +++++++++++++++++++++++++++++++++------=
+-
+> >>  2 files changed, 45 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> >> index 4053f279ed4cc..2fd3feefb9d94 100644
+> >> --- a/kernel/bpf/helpers.c
+> >> +++ b/kernel/bpf/helpers.c
+> >> @@ -3035,6 +3035,7 @@ BTF_ID_FLAGS(func, bpf_task_get_cgroup1, KF_ACQU=
+IRE | KF_RCU | KF_RET_NULL)
+> >>  #endif
+> >>  BTF_ID_FLAGS(func, bpf_task_from_pid, KF_ACQUIRE | KF_RET_NULL)
+> >>  BTF_ID_FLAGS(func, bpf_throw)
+> >> +BTF_ID_FLAGS(func, bpf_send_signal_task, KF_TRUSTED_ARGS)
+> >>  BTF_KFUNCS_END(generic_btf_ids)
+> >>
+> >>  static const struct btf_kfunc_id_set generic_kfunc_set =3D {
+> >> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> >> index a582cd25ca876..d9662e84510d3 100644
+> >> --- a/kernel/trace/bpf_trace.c
+> >> +++ b/kernel/trace/bpf_trace.c
+> >> @@ -802,6 +802,8 @@ struct send_signal_irq_work {
+> >>         struct task_struct *task;
+> >>         u32 sig;
+> >>         enum pid_type type;
+> >> +       bool has_siginfo;
+> >> +       struct kernel_siginfo info;
+> >>  };
+> >>
+> >>  static DEFINE_PER_CPU(struct send_signal_irq_work, send_signal_work);
+> >> @@ -809,27 +811,46 @@ static DEFINE_PER_CPU(struct send_signal_irq_wor=
+k, send_signal_work);
+> >>  static void do_bpf_send_signal(struct irq_work *entry)
+> >>  {
+> >>         struct send_signal_irq_work *work;
+> >> +       struct kernel_siginfo *siginfo;
+> >>
+> >>         work =3D container_of(entry, struct send_signal_irq_work, irq_=
+work);
+> >> -       group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task, work=
+->type);
+> >> +       siginfo =3D work->has_siginfo ? &work->info : SEND_SIG_PRIV;
+> >> +
+> >> +       group_send_sig_info(work->sig, siginfo, work->task, work->type=
+);
+> >>         put_task_struct(work->task);
+> >>  }
+> >>
+> >> -static int bpf_send_signal_common(u32 sig, enum pid_type type)
+> >> +static int bpf_send_signal_common(u32 sig, enum pid_type type, struct=
+ task_struct *task, u64 value)
+> >>  {
+> >>         struct send_signal_irq_work *work =3D NULL;
+> >> +       struct kernel_siginfo info;
+> >> +       struct kernel_siginfo *siginfo;
+> >> +
+> >> +       if (!task) {
+> >> +               task =3D current;
+> >> +               siginfo =3D SEND_SIG_PRIV;
+> >> +       } else {
+> >> +               clear_siginfo(&info);
+> >> +               info.si_signo =3D sig;
+> >> +               info.si_errno =3D 0;
+> >> +               info.si_code =3D SI_KERNEL;
+> >> +               info.si_pid =3D 0;
+> >> +               info.si_uid =3D 0;
+> >> +               info.si_value.sival_ptr =3D (void *)(unsigned long)val=
+ue;
+> >> +               siginfo =3D &info;
+> >> +       }
+> >>
+> >>         /* Similar to bpf_probe_write_user, task needs to be
+> >>          * in a sound condition and kernel memory access be
+> >>          * permitted in order to send signal to the current
+> >>          * task.
+> >>          */
+> >> -       if (unlikely(current->flags & (PF_KTHREAD | PF_EXITING)))
+> >> +       if (unlikely(task->flags & (PF_KTHREAD | PF_EXITING)))
+> >>                 return -EPERM;
+> >>         if (unlikely(!nmi_uaccess_okay()))
+> >>                 return -EPERM;
+> >>         /* Task should not be pid=3D1 to avoid kernel panic. */
+> >> -       if (unlikely(is_global_init(current)))
+> >> +       if (unlikely(is_global_init(task)))
+> >>                 return -EPERM;
+> >>
+> >>         if (irqs_disabled()) {
+> >> @@ -847,19 +868,21 @@ static int bpf_send_signal_common(u32 sig, enum =
+pid_type type)
+> >>                  * to the irq_work. The current task may change when q=
+ueued
+> >>                  * irq works get executed.
+> >>                  */
+> >> -               work->task =3D get_task_struct(current);
+> >> +               work->task =3D get_task_struct(task);
+> >> +               work->has_siginfo =3D siginfo =3D=3D &info;
+> >> +               copy_siginfo(&work->info, &info);
 > >
-> > Hi Alexei,
-> >
-> > On Fri, Oct 11, 2024 at 12:14:14PM -0700, Namhyung Kim wrote:
-> > > On Fri, Oct 11, 2024 at 11:35:27AM -0700, Alexei Starovoitov wrote:
-> > > > On Thu, Oct 10, 2024 at 4:25 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > >
-> > > > > The bpf_get_kmem_cache() is to get a slab cache information from a
-> > > > > virtual address like virt_to_cache().  If the address is a pointer
-> > > > > to a slab object, it'd return a valid kmem_cache pointer, otherwise
-> > > > > NULL is returned.
-> > > > >
-> > > > > It doesn't grab a reference count of the kmem_cache so the caller is
-> > > > > responsible to manage the access.  The returned point is marked as
-> > > > > PTR_UNTRUSTED.  And the kfunc has KF_RCU_PROTECTED as the slab object
-> > > > > might be protected by RCU.
-> > > >
-> > > > ...
-> > > > > +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RCU_PROTECTED)
-> > > >
-> > > > This flag is unnecessary. PTR_UNTRUSTED can point to absolutely any memory.
-> > > > In this case it likely points to a valid kmem_cache, but
-> > > > the verifier will guard all accesses with probe_read anyway.
-> > > >
-> > > > I can remove this flag while applying.
-> > >
-> > > Ok, I'd be happy if you would remove it.
-> >
-> > You will need to update the bpf_rcu_read_lock/unlock() in the test code
-> > (patch 3).  I can send v6 with that and Vlastimil's Ack if you want.
-> 
-> Fixed all that while applying.
-> 
-> Could you please follow up with an open-coded iterator version
-> of the same slab iterator ?
-> So that progs can iterate slabs as a normal for/while loop ?
+> > we shouldn't copy_siginfo() if !work->has_siginfo, no?
+>
+> Yes, but it is only used when has_siginfo is true, so copying it doesn't
+> cause any problems. I just didn't want to add another check here.
 
-I'm not sure I'm following.  Do you want a new test program to iterate
-kmem_caches by reading list pointers manually?  How can I grab the
-slab_mutex then?
+Still, let's avoid a pointless copy.
+If I'm reading it correctly it will copy uninitialized memory
+and sanitizers won't be happy.
 
-Thanks,
-Namhyung
-
+Pls respin.
 
