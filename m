@@ -1,147 +1,154 @@
-Return-Path: <linux-kernel+bounces-366035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE04C99EFF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A0699EFF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 16:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9A21F249E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C411F24B47
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 14:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418621B21A9;
-	Tue, 15 Oct 2024 14:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F5B1AF0D4;
+	Tue, 15 Oct 2024 14:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lv68rJqM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6vjcvjW"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9543579CD
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40071FC7C4;
+	Tue, 15 Oct 2024 14:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003509; cv=none; b=KS5SnvRW0TLOh7uBPM8zvH24F9hjx4BwtXflB1PwnjTQY8scjSzit68PwALS1Hpc4GZE2XGdi0r1jTUmiqU2mQgRKjDjbr2sLtordUHIaEwQ+sudqiHwM+4gAu17tF0W0ivhUZO7C+JYoU7qzb9cDyr2OGFksY6WJixQ3ozkUJA=
+	t=1729003541; cv=none; b=VMi59d+DGHERp5omRGzmDHTK+c/1tcOUM+lLhSR/ZRDv049dYtgJH3vpv6lDTMqQ68vmPQMgYykeNNOC+hrNqkzAZ5az7h8dJRr52N8buOP8452KQN6RUeoLLaA87iuusN+ocBgDVyVpLzVqXR2JSe5Sz8GtzmmG/KTN/16/Xus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003509; c=relaxed/simple;
-	bh=HcTOrdcxs92yz13WTmjFYQWdwbrGivh2PfWBFaqAVa8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=duCLSL81fD051nBlfjPuyBI7qGPjphZtIt8IeBoTFsAxDU+b3cJP3ZdCesY/Pyk7gwtXz1Ezd9rEvESp1jf7RZudfJ5BrsY561cii4Xgvbt5OxxUHBBJfYbXfysSisOaZyO951yzR3og1z3QuBn0aTr3OvZEzjoewYbt8xcb5d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lv68rJqM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1338AC4CECE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 14:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729003509;
-	bh=HcTOrdcxs92yz13WTmjFYQWdwbrGivh2PfWBFaqAVa8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lv68rJqM4qhNv47qSFj3wauONMjnwRwqE6iTV0SCjLpPJXJ5OpydnGW90KR6qL6iT
-	 49PRUynad771L54n22W+SXslz1yns5q7GIrnDDBYrZBRSFJTrqOM3KXIQQEHLtZVD9
-	 kZS9vlUwPQfmhGOD/3GMkQG8y5JuzH4Rwk03l5GK1iJpc+oPLdPviU8InH3Td7miTN
-	 B9L2B4T1Db8QP4ix1FbH3LgLWmjdny2u97MdNa9dt6bugcgS0G6pDBGyh2HOywe+tq
-	 kITJEIShAhrQ35uIkpPFd0UDpLq1+K4PQzjVB4A5gQf+bdiTNXEQ0LFrcFDg+Wdwev
-	 H+PEljKFOEDyQ==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3222907e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 07:45:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUbBbAdDY73iKdWQWvJEx/pJXtN0wI/fmP1poOfS01FmbtITLfVmUjqBqWv649ikz9NbiXoCv6e4d9j8Iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzVZ62IaftPSCMLkBlk/JF1bqimK8auWA0DayNsIYFZJ3NjX1M
-	w2EG1DuvJMGFQCHTh8aL/P7n50qbT0wKGRPOGi5g7AaLnNuKaok0ztwu6NMBYLlWKq/mPX827k1
-	ibFDAHuq4JfJKp7xYwGTUm2M76t8=
-X-Google-Smtp-Source: AGHT+IEQF2v9j6i4yu+3HsOsvdSTSU8aXXA0XaJrl3VwhE9kbJn/uTGwWFbBRQ/Jd6awHUdpNb9iGRphdoRWBmT1gSQ=
-X-Received: by 2002:a05:6512:3b96:b0:539:e453:d90c with SMTP id
- 2adb3069b0e04-539e453da3amr4092913e87.2.1729003507421; Tue, 15 Oct 2024
- 07:45:07 -0700 (PDT)
+	s=arc-20240116; t=1729003541; c=relaxed/simple;
+	bh=c36HbQs0gJpyQFG4AYu2BErUBXyc17mTB5ULEPC4y3E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=oZDt0IYxmgTDVEdz9cWPI1+NObo7609fuprwTSnAstlnk/R2rn3OAq2s0neLI5zzliJuOX/2XrClBLcokaaWud20hV6XTmIPByk7OENv8fvRIKtbG1IdUD0o/RwXTc9jmdcQGn/YJ9zyWDb1vCVi+KugAnPLco9CfZ1bMLhtTOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R6vjcvjW; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20c77459558so43154805ad.0;
+        Tue, 15 Oct 2024 07:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729003539; x=1729608339; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ofgu3iXnCYSQ3sJFxlEFNmaN7sQ5lnXtot0dUpXtI6g=;
+        b=R6vjcvjWUPTOsFvw8T9GBv8TYGLY0UWwLyBdTeKV+mBtc5I+H8ecB5Fd1Lu58RjPIO
+         Eo6rBCZ1osTHMO80mQuCqUz3J51tQcl4Q4KRtRRo++0HqKiR4+B1VUzBKfKtA5RTPmP+
+         BH6Rq2e6VWvBTZUVLlUsnxS5dG50gdA0KovFKgkbEZ1QFwsVVrDb52dJWGJ9cstMVRhS
+         o6QC+5BI8ckltWSrpRTyCHkXzkHZuyPpGorYKLE3bKhyV/RQp313bNfi84Ri8Nnn7y2q
+         xEr10ugMTXJb4Ys+T8XdPiDZKCkX5ENpE7BdLDxihpRO9nD2BeoKNQi1/BhFXKgjBFDV
+         gA1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729003539; x=1729608339;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ofgu3iXnCYSQ3sJFxlEFNmaN7sQ5lnXtot0dUpXtI6g=;
+        b=K2Sa9tO3Wh1QCCOh7wCWIoHKGsVLXnZs466YvrSRUNUbGdbq4O9XyNfAyA9ahGMgRa
+         w1/Vb1xclIk1MATvdqvsT3/6u0ZnXDmKZJOdfeJckIacOKq4r9w4ekWKhSWvsJgH+ag3
+         +FNuhMwfmqlzDDJROjiFHuRIp7KQj/gL8NPwOWt9AUrAxR7Kox25oSHRF2j0/adCDR+5
+         9KBb1NtMiyyctDV3ORhlSdLhhUwVYix/EjhyssKRg3IM6HvE6sO/zgsRrsXy5YLjGrhG
+         8WsanhxiyaygmsOp/yzKS/pniYO//wbqmCcixLQ9lNJfwNo/yRq07tO4qsmrXG3vcZeK
+         27sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUw1QR2/W+UBX4Y1Ux+dof9HaQ/eY+GZ+yJtGPaSdwnsDJWzopQ2n62dpPWFvRd6iK/pzQ4Tf2bumaGAfdx@vger.kernel.org, AJvYcCWUwy0AiSP57Q06EVEM0XXZ4kImHStuqhLEdfDJ/nt5vprJowHxSOvG5Za4oywaDVDIOHzJFj0U+mSt2DoKWuc=@vger.kernel.org, AJvYcCXaBARHSOmiwVOSDFApLo9CRAoBRpmY7pt7C3+LeVmu093OljcwV5yN4U0zrpNXUrN8vguDRMQB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGVx324dg9EEM3hY8TeFmnmhaviA0Pq3Rnbf9DtZ5uNWY6Pnvl
+	aLreD3TYgPBALaDZlOESXWEuhvvHv99AcrEhz3Yo2QgzL3OJO0Ig
+X-Google-Smtp-Source: AGHT+IG8W36j/qtZDwW2WA2jb0i/BTgkc8ZJA0sEHueOn6qFxt+Kh7GFqBij7XyJqwymRVZNuB/RlQ==
+X-Received: by 2002:a17:902:da84:b0:20b:6458:ec83 with SMTP id d9443c01a7336-20ca144ea0fmr212260065ad.4.1729003538995;
+        Tue, 15 Oct 2024 07:45:38 -0700 (PDT)
+Received: from [198.18.0.1] (n220246094186.netvigator.com. [220.246.94.186])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6bc015sm1412742a12.19.2024.10.15.07.45.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 07:45:38 -0700 (PDT)
+Message-ID: <b7b9fba3-819a-411f-9e67-d5eec9e63eaa@gmail.com>
+Date: Tue, 15 Oct 2024 22:45:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a1a1d062-f3a2-4d05-9836-3b098de9db6d@foss.st.com>
- <Zw5D2aTkkUVOK89g@J2N7QTR9R3> <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
- <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
- <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com>
-In-Reply-To: <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 15 Oct 2024 16:44:56 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
-Message-ID: <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
-Subject: Re: Crash on armv7-a using KASAN
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Clement LE GOFFIC <clement.legoffic@foss.st.com>, Russell King <linux@armlinux.org.uk>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	Antonio Borneo <antonio.borneo@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pstore: Fix uaf when backend is unregistered
+From: Zach Wade <zachwade.k@gmail.com>
+To: Kees Cook <kees@kernel.org>
+Cc: tony.luck@intel.com, gpiccoli@igalia.com,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, lixingyang1@qq.com
+References: <2bf30957-ad04-473a-a72e-8baab648fb56@gmail.com>
+ <202410081019.0E9DE76A@keescook>
+ <6077c924-f975-49a0-8ee4-4e481664ac38@gmail.com>
+In-Reply-To: <6077c924-f975-49a0-8ee4-4e481664ac38@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 15 Oct 2024 at 16:35, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Tue, Oct 15, 2024 at 04:22:20PM +0200, Ard Biesheuvel wrote:
-> > On Tue, 15 Oct 2024 at 16:00, Mark Rutland <mark.rutland@arm.com> wrote=
-:
-> > >
-> > > On Tue, Oct 15, 2024 at 03:51:02PM +0200, Linus Walleij wrote:
-> > > > On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mark Rutland <mark.rutland=
-@arm.com> wrote:
-> > > > > On Mon, Oct 14, 2024 at 03:19:49PM +0200, Clement LE GOFFIC wrote=
-:
-> > > >
-> > > > > I think what's happening here is that when switching from prev to=
- next
-> > > > > in the scheduler, we switch to next's mm before we actually switc=
-h to
-> > > > > next's register state, and there's a transient window where prev =
-is
-> > > > > executed using next's mm. AFAICT we don't map prev's KASAN stack =
-shadow
-> > > > > into next's mm anywhere, and so inlined KASAN_STACK checks recurs=
-ively
-> > > > > fault on this until we switch to the overflow stack.
->
-> [...]
->
-> > > > Yeah it looks like a spot-on identification of the problem, I can t=
-ry to
-> > > > think about how we could fix this if I can reproduce it, I keep try=
-ing
-> > > > to provoke the crash :/
-> > >
-> > > It's a bit grotty -- AFAICT you'd either need to prefault in the
-> > > specific part of the vmalloc space when switching tasks, or we'd need=
- to
-> > > preallocate all the shared vmalloc tables at the start of time so tha=
-t
-> > > they're always up-to-date.
-> > >
-> > > While we could disable KASAN_STACK, that's only going to mask the
-> > > problem until this happens for any other vmalloc shadow...
-> >
-> > Is the other vmalloc shadow not covered by the ordinary on-demand fault=
-ing?
->
-> It depends on what the vmalloc memory is used for; if it's anything else
-> used in the fault handling path, that'll fault recursively, and it's
-> possible that'll happen indirectly via other instrumentation.
->
-> > When I implemented VMAP_STACK for ARM, I added an explicit load from
-> > the new stack while still running from the old one (in __switch_to) so
-> > that the ordinary faulting code can deal with it. Couldn't we do the
-> > same for the vmalloc shadow of the new stack?
->
-> We could do something similar, but note that it's backwards: we need to
-> ensure that the old/current stack shadow will be mapped in the new mm.
->
-> So the usual fault handling can't handle that as-is, because you need to
-> fault-in pages for an mm which isn't yet in use. That logic could be
-> factored out and shared, though.
->
 
-Not sure I follow you here. The crash is in the kernel, no?
 
-So there is only a single vmalloc space where all the mappings should
-reside, but each process has its own copy of the top level page table,
-which needs to be synced up when it goes stale.
+On 2024/10/9 21:36, Zach Wade wrote:
+> 
+> 
+> On 2024/10/9 1:23, Kees Cook wrote:
+>> On Wed, Oct 09, 2024 at 01:10:14AM +0800, Zach Wade wrote:
+>>> when unload pstore_blk, we will unlink the pstore file and
+>>> set pos->dentry to NULL, but simple_unlink(d_inode(root), pos->dentry)
+>>> may free inode of pos->dentry and free pos by free_pstore_private,
+>>> this may trigger uaf. kasan report:
+>>
+>> Thanks for this! I need to double check what happening here a bit more
+>> closely, as maybe some ordering changed after a43e0fc5e913 ("pstore:
+>> inode: Only d_invalidate() is needed")
+>>
+>>> @@ -316,9 +316,10 @@ int pstore_put_backend_records(struct 
+>>> pstore_info *psi)
+>>>           list_for_each_entry_safe(pos, tmp, &records_list, list) {
+>>>               if (pos->record->psi == psi) {
+>>>                   list_del_init(&pos->list);
+>>> -                d_invalidate(pos->dentry);
+>>> -                simple_unlink(d_inode(root), pos->dentry);
+>>> +                unlink_dentry = pos->dentry;
+>>>                   pos->dentry = NULL;
+>>> +                d_invalidate(unlink_dentry);
+>>> +                simple_unlink(d_inode(root), unlink_dentry);
+>>
+>> But on the face of it, this does solve the UAF. I'll double-check that
+>> this isn't a result of the mentioned commit.
+> 
+> Hi Cook,
+> 
+> However, I think a more appropriate solution to the problem here is to
+> check the reference count when uninstalling the mount point.
+> 
+> At the same time, the test script is attached:
+> #!/bin/bash
+> modprobe pstore_blk
+> blkdev=/dev/sda2
+> best_effort=on
+> mount -t pstore pstore /sys/fs/pstore
+> sleep 2
+> umount /sys/fs/pstore
+> modprobe -r pstore_blk
+> 
+> Thanks,
+> Zach
+> 
+>>
+> 
+>> -Kees
+>>
+> 
+
+friendly ping.
+
+Hi Cook,
+
+How are you doing? I really hope we can solve this problem.
+
+Thanks,
+Zach
 
