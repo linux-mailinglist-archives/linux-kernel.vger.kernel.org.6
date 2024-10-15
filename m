@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-366565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F20D99F72C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:22:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC8D99F72F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411611C20D47
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F385283EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20D11FAF16;
-	Tue, 15 Oct 2024 19:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875A91B3953;
+	Tue, 15 Oct 2024 19:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFKJ2D9P"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRO4MTbk"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8711F1FAEFE
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 19:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498651F80C4;
+	Tue, 15 Oct 2024 19:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729019971; cv=none; b=qsRmtF5j8quURBdDDyP5ZbNSUC30ODa7JiB0YK3Ui49P5757QHMbBAZ7nB+NYvQF97K58YsrzNX4JWSUyCO960Y014zdmzCTHC/6HNe7qJbRCJOZNmeGByemVPMAb5r75+2Gv7rguyr7IOXUSr/U/zfmicep2WRjxyUcWPDrFVo=
+	t=1729020145; cv=none; b=Xzn67ttx6RQPaktsYl9BU+mE8fJJ0cgKczMd1hnnPnOP1c3wAlRBPMqA1LwXLSdpOiKTTzbfHJNgPBukVxxYgeX5yt3GfSqPfaKtIaAPWWQKgBx6elIp3qdRrwIdm8Zd0+Q0CODWZCwrDguasbUsvkRXp8q+kJv27iUDDqvTg0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729019971; c=relaxed/simple;
-	bh=F4H3asjfD3zzqq/Ba/peDr/Tv8WbT65hIqSh3QI/+EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RTjpb0kRXNI/NKkFesOiofN5RuFqcqoVQXD0uCwDzGk7IX1WuOwJzNNgnHnLhvgoghFqs3tL8apHkqwfCa5InyYBxiHHN5bTDPc3UA4BZw5/tg5vtTaKbldEhTPMHeraeYjORFXOSSdfGdS6Qq7ZNYQEVCELz9MOgt7LsZaojmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFKJ2D9P; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1729020145; c=relaxed/simple;
+	bh=uAKGkJ4M3SRrf1ZRHELx/lQpeiO6UYKPiTFzxksy5ZA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Om/b8+KEWbK5qxmPLHTJyD6UshNxPCCl0Ijpw2YPizN9iyUoDuioA70XNlJKYoyh3NNkC6uV8fRAyvMFDMUGaTyXGuobVXi8Plle7YydYjb7a+fxvLcj6sel7cK4EXqYAwJ9Cqua/0fnK6u/ICUAdvsZjAuRjtA2Yw2mZDCpVR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRO4MTbk; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c935d99dc5so6587584a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 12:19:29 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e63c8678so3579766e87.0;
+        Tue, 15 Oct 2024 12:22:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729019968; x=1729624768; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qBVljLM53JfPGRihYqkwAXqRX7+sk8Hf9PcEHrvrWw0=;
-        b=QFKJ2D9PqwVLtmbUgKnTl3AZ1Sl8a9sSLZqLKs4aMBLKK/X08ys1tGUpgVWaVZrzNU
-         R0c8BU1nVtcnog54vKAA1gDcCbonQHnk8wIeCmaV53VI59/vPCDU+1l5G3wS77V+NFlE
-         giWroUSjNF0tykDvAPFQmD8XuJLEH/kCZCdO9j2zmBDhaUqN9Q2mWHW4ZA0LmcgKDObA
-         7ACL8EI2Z2r5tIvBYUk+WE207BrGBN3WnDBDdi1SkvhTB2e3JbkXhuL/66iRMUOEn5S7
-         Syq26JNbrG/CtGxXXl1OLgMH5uGcifooHvlYE23IbWMEK1uArXtTU2TdeohzAOAN5jyV
-         pIDw==
+        d=gmail.com; s=20230601; t=1729020141; x=1729624941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lN1bH/cSXd06vWBgv09b0nbi6rv9Bqx5gJyYzJHnxSE=;
+        b=MRO4MTbkSWTv/ULCUYUDro5XTkE42kzUSZ7Wdghj6qsVvIZ5e5TWWHYacYJvyanVvo
+         SILHvQqah9LjhTFs9TgcRpJujvIwNSdJCjZcrrkI4wSrWQzKhDinhU207618bypZI4DC
+         t3zly3EDeilRYoGbayJCdFIoBg+5IpKgAIr0iR/pu9hnYzjam3ULrLBaayIIh+iKLGcE
+         JemmqMIccA7Tag7irJSzajuFsxZk2RUNVtcMhmRQfFw71h9jEGapOVjrOPeB5It4tm0h
+         LxPA3L53yX2oKXRgwM0ixD0X3l4y/DqdeiFd8GAmwEbsJvppJUabEmkhH9JRduh0YX6I
+         Znpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729019968; x=1729624768;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qBVljLM53JfPGRihYqkwAXqRX7+sk8Hf9PcEHrvrWw0=;
-        b=D44G75W4tXjy2S6eL3NkVpXmuoxxoO6MWwnSZ17oJIQ9GeGYPBSwNIpITwmaYNqXMw
-         +10ZnRM3YC07JFH0pQDPjzOOdu8eDN3TkeIgoCP4vwbtK9/Eo95xxCf7NGCbx1MW5Kfl
-         nvPtlvpz7cI2xLCIAYLGT0sSDm3rEzJo/gb2LUK+ee/SYppG+zyRyYo28rAoFVxOuODs
-         YLrjUMkfwER0C6u2b44sD/L1YAsfIDwP/tk8yNRJN0Xi+44RA25Fn2mTQePVuIn5P/Xn
-         Xwm2jf1Px9DMrbHfh6jGzywNkdZzFwW6NsRbrindmnRfiW7ZO9e7YhX83rLxxYIXzQoq
-         MRtQ==
-X-Gm-Message-State: AOJu0Yw/wYGXywkuzq1/FVkZc/+I+YgFt4dE44r/iwkmSFBCucj+tiyy
-	vGxb5yCLsZodlfksyV8suVNVW02unmq28ngQZyxuIO1VKs+59plx
-X-Google-Smtp-Source: AGHT+IHAjmrlYnHeeDWVeJAUwyg7yniKorbiL6KpuL+pdyYE7YaTO1VpAB90LCt6WTkIP4fthnDaww==
-X-Received: by 2002:a05:6402:34c9:b0:5c9:76b6:d14e with SMTP id 4fb4d7f45d1cf-5c9950d361fmr963233a12.16.1729019967668;
-        Tue, 15 Oct 2024 12:19:27 -0700 (PDT)
-Received: from [192.168.2.105] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c9918c0978sm746343a12.33.2024.10.15.12.19.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 12:19:27 -0700 (PDT)
-Message-ID: <0b009357-79a1-4af8-ac44-7b5ad3369899@gmail.com>
-Date: Tue, 15 Oct 2024 21:19:26 +0200
+        d=1e100.net; s=20230601; t=1729020141; x=1729624941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lN1bH/cSXd06vWBgv09b0nbi6rv9Bqx5gJyYzJHnxSE=;
+        b=oO6JG501NUmLHzkQ1b4GMM442xphAyDVxfYCV8/uUKo4mkDmh0DfdiwA/HSgB2dZsn
+         NgRjsnbwXGRjLWG0kctLbXO2DvSUKvxyyRnt7nmbRKS95wXgz3vM8v1WbmQldFcjE9WO
+         Z8Dc8AFRRWG4wNbAyvh0rTjh6spELFKFst03UQVIJCT0ujtr2zrlEClIsg97IOSCD16y
+         m45V5A1RR6C57Nesuj2qYgSR4Wo9gUr2shIgdHVCeQnYTS8LQUFpG/R4wVAJ+vQaOpka
+         XoyFOzc4nTtuZK2NMZ7l0cCxHvngrCzDvXDfALaFFBT32PUg8eKlNChCMGdrZ9QfXxpN
+         3wIw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3heloElSDADgHj8Y6ShcQVXXvGUKBzrCtgh1u/BWWMaf9Fnk4iVIQjru3vJb/7aXaYlRJpxEoHVWJSU0=@vger.kernel.org, AJvYcCWa2NdJNH8u2/2th7hxT3DaqlWSe/G+3VfgrkJhbDxjWhZrZlJ1d9KSGKRuvJvnJGcXWUL3HnQJ21m31SHqZ/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyYNORnIninFPkuZZUavzM9a4R0L0k3YjWTc8Rtz8Tr0PX0fo7
+	urzTNWSl8v+9mn0k9QBxzu/J/bRJDxN5WDw0g6qygVeLV+cthMvc
+X-Google-Smtp-Source: AGHT+IFq/iItMESBszKIBLEXDdkFl2SMGGkViVgXD51kYJiMz3z6FTkaSXkqQp9KqMhRnsQCsahyNg==
+X-Received: by 2002:a05:6512:280c:b0:52e:7448:e137 with SMTP id 2adb3069b0e04-539e54d77a1mr6547243e87.6.1729020140985;
+        Tue, 15 Oct 2024 12:22:20 -0700 (PDT)
+Received: from localhost.localdomain ([83.168.79.145])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4f7f19sm982334a12.23.2024.10.15.12.22.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 12:22:19 -0700 (PDT)
+From: Karol Przybylski <karprzy7@gmail.com>
+To: kvalo@kernel.org,
+	jjohnson@kernel.org
+Cc: Karol Przybylski <karprzy7@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: ath12k: Fix for out-of bound access error
+Date: Tue, 15 Oct 2024 21:21:55 +0200
+Message-Id: <20241015192155.3643363-1-karprzy7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: gpib: Add TODO file
-To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
- <dominik.karol.piatkowski@protonmail.com>, dpenkler@gmail.com,
- gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-References: <20241015191522.14713-1-dominik.karol.piatkowski@protonmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20241015191522.14713-1-dominik.karol.piatkowski@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 15.10.24 21:16, Dominik Karol Piątkowski wrote:
-> Add a TODO file stub for the gpib driver.
-> 
-> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
-> ---
->   drivers/staging/gpib/TODO | 5 +++++
->   1 file changed, 5 insertions(+)
->   create mode 100644 drivers/staging/gpib/TODO
-> 
-> diff --git a/drivers/staging/gpib/TODO b/drivers/staging/gpib/TODO
-> new file mode 100644
-> index 000000000000..734eab691924
-> --- /dev/null
-> +++ b/drivers/staging/gpib/TODO
-> @@ -0,0 +1,5 @@
-> +TODO:
-> +- checkpatch.pl fixes
-> +
-> +Please send any patches to Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> +and Dave Penkler <dpenkler@gmail.com>.
+Size of array passed to print_array_to_buf_index is decremented by 1
 
-Hi Domenik,
+Discovered in coverity scan, CID 1600742
 
-Please do not add the last two lines as the maintainers are stored in 
-the MAINTAINERS File. This information is redundant and leads to issues 
-when the maintainers change.
+Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+---
+ drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for your support.
-
-Bye Philipp
+diff --git a/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c b/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
+index b2be7dade79f..74767ba9ec2b 100644
+--- a/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
++++ b/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
+@@ -1550,7 +1550,7 @@ ath12k_htt_print_tx_selfgen_ax_stats_tlv(const void *tag_buf, u16 tag_len,
+ 			 le32_to_cpu(htt_stats_buf->ax_mu_mimo_ndp));
+ 	len += print_array_to_buf_index(buf, len, "ax_mu_mimo_brpollX_tried = ", 1,
+ 					htt_stats_buf->ax_mu_mimo_brpoll,
+-					ATH12K_HTT_TX_NUM_AX_MUMIMO_USER_STATS, "\n");
++					ATH12K_HTT_TX_NUM_AX_MUMIMO_USER_STATS-1, "\n");
+ 	len += scnprintf(buf + len, buf_len - len, "ax_basic_trigger = %u\n",
+ 			 le32_to_cpu(htt_stats_buf->ax_basic_trigger));
+ 	len += scnprintf(buf + len, buf_len - len, "ax_ulmumimo_total_trigger = %u\n",
+-- 
+2.34.1
 
 
