@@ -1,173 +1,180 @@
-Return-Path: <linux-kernel+bounces-365388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D7299E199
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DD399E1A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 10:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 907C4B237E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9251F26283
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 08:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E7E1D0F42;
-	Tue, 15 Oct 2024 08:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A581D9669;
+	Tue, 15 Oct 2024 08:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smF9Oos3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b+SsB/GV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B53E1CACC9;
-	Tue, 15 Oct 2024 08:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEABB1CACC9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 08:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728982252; cv=none; b=AOTZkAnSt9kmx3gKThsu0A+Dk1s2lAsPwzkYF+m8+6CQOryBeZVbQCDV6zURQdEZWPU/dr3cgSH/tQZUovva5WsvF1mKyaGVEVGw6/R6b8xMS9Lbq5BYB7AmnKePqkZa4fx/XXKnzcQ4tMMK9sK9eIziAnV8jFTOpCLx9SjAarE=
+	t=1728982303; cv=none; b=gllaHogURO8UcJX/FYCngSFS7c3v/JnjyvX3PByivUQx/Bj96XqbPyQzc9P7ZSZ/MXuZlEAPy/X94UA2VRnIh42Hu+2y/isSqgNAcVJLcAW1hrKGRgTdK0gEFf97FYuOWEtyYgnAurVoOEApeneP5r5T2UsZxVg7B0iXS/E39rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728982252; c=relaxed/simple;
-	bh=eKCHhGW5lPuKziFFhV0/ls1DKJ+Sz8/SY2/HjTb/qrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpqzRo+bdlwkdW0D8MAd3KCByEgU/7vllGyH4vu28ltPOQ+Tjhto/IwAXipnxKw69RSj2Ifr1SNBlm7HvZkIr7Krcb0mHS9FNwmSNExch4ybFd3NmHCbUBaannluoTtbit7qLmkveMjH78OL8xnB1a75wzYSrGBZ4dEbpDZXxjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smF9Oos3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95AC3C4CEC6;
-	Tue, 15 Oct 2024 08:50:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728982252;
-	bh=eKCHhGW5lPuKziFFhV0/ls1DKJ+Sz8/SY2/HjTb/qrA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=smF9Oos3+kGx+7D6m1ZdXYJXM1lQqJUKRtOl/3m7++sDE0VOmcQSvlRiHyu09fv5j
-	 XyXo0GtEqqAHGi3kq9WzKEjMtVenLWj/8bk4r+z84N0MctIgSFUDfjTVyE5jiTgX6W
-	 Pu6lfGno6N4MFnM3LhJryA21Ehy+vXiko9qoUyTRYisHwjuc0gf4IgyxrT1w6yjf02
-	 HaeQ5VOqZtlLEr12WUtNx12Jjh0vRLI0/ELYhrHY/fAJN4yEeRyh4/SDLjvsDKYSHV
-	 4NwFKMJF2Gm4KX2s81hD/imv07yAjwW1Gzl86yeg7VJ0IS1z0CQYDInTq51oSw8MDn
-	 iwAmj0YZted9Q==
-Date: Tue, 15 Oct 2024 09:50:45 +0100
-From: Will Deacon <will@kernel.org>
-To: Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Nick Kossifidis <mick@ics.forth.gr>,
-	Sebastien Boeuf <seb@rivosinc.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux@rivosinc.com,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v9 2/7] iommu/riscv: Add RISC-V IOMMU platform device
- driver
-Message-ID: <20241015085044.GA19110@willie-the-truck>
-References: <cover.1728579958.git.tjeznach@rivosinc.com>
- <b8da2b00aec3f7b4b2e3a7cc194f7961bf656f24.1728579958.git.tjeznach@rivosinc.com>
+	s=arc-20240116; t=1728982303; c=relaxed/simple;
+	bh=TO5FfazasUA8bTKfpx4np1JW/UhLOXiGiVWWP47Gg8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uvd1AsJ8ANccfAo/WkD4ZTUaFM+BCxXUWTpPgVLO4Hyiz+KeU19Ns/Jwk5RbbQsYnH11Lv7GGITX9GVwwjGg4RalLN5yi2biGWXk1dg4GHtFGdeVrKwLP+4CMkqlatgOsudQlF8NX1Znu7IycCYZAOk+Rg/A1/OdjtUxZyXTlHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b+SsB/GV; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728982302; x=1760518302;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=TO5FfazasUA8bTKfpx4np1JW/UhLOXiGiVWWP47Gg8E=;
+  b=b+SsB/GVho8N4/HoB2+TMnaijO0i2IE4zwahfszcr9ccS2a/Oigx2iwN
+   +rmCxFHNIHYj6dnYZ3tSQj9QXgnAEzVsizmnO11QOfw0SdXTsZW4p0shc
+   pZe+6p0bBuXXpa+By+vwosSYjHrE1+4WJh8I4lJn0+CB6S8LmqJcd68G4
+   kNf0IV7Rd0TrclzAKGWvy2SeH0lzqkUYPYPbD0wKX5yq+GRikkEwp84a1
+   n3uK/l6kZLSUCW1RX0D3Op7gcd5YQI7/ef0/jeaq/4wjN/StsvCyW7EP6
+   paRUERScHl2cMfG1E883QKkSPhwLgMpj/JoBh6zSTPfKvuQt2YyLjLv3w
+   A==;
+X-CSE-ConnectionGUID: 08VY6wxtQv2S5ZYhOsyMuA==
+X-CSE-MsgGUID: gXS4spbUTryqb9LaOo46Mg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28460337"
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="28460337"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 01:51:42 -0700
+X-CSE-ConnectionGUID: 8hAVO72xScGG4OuhoVEQGA==
+X-CSE-MsgGUID: lXy7bNZEQH6Gty9AbbOPsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,204,1725346800"; 
+   d="scan'208";a="78653387"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 15 Oct 2024 01:51:40 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0dHF-000Hqh-0X;
+	Tue, 15 Oct 2024 08:51:37 +0000
+Date: Tue, 15 Oct 2024 16:51:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@rivosinc.com>
+Subject: arch/riscv/kvm/vcpu_sbi_sta.c:58:20: sparse: sparse: cast to
+ restricted __le32
+Message-ID: <202410151618.iYFXm2Ip-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b8da2b00aec3f7b4b2e3a7cc194f7961bf656f24.1728579958.git.tjeznach@rivosinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Oct 10, 2024 at 12:48:05PM -0700, Tomasz Jeznach wrote:
-> Introduce platform device driver for implementation of RISC-V IOMMU
-> architected hardware.
-> 
-> Hardware interface definition located in file iommu-bits.h is based on
-> ratified RISC-V IOMMU Architecture Specification version 1.0.0.
-> 
-> This patch implements platform device initialization, early check and
-> configuration of the IOMMU interfaces and enables global pass-through
-> address translation mode (iommu_mode == BARE), without registering
-> hardware instance in the IOMMU subsystem.
-> 
-> Link: https://github.com/riscv-non-isa/riscv-iommu
-> Co-developed-by: Nick Kossifidis <mick@ics.forth.gr>
-> Signed-off-by: Nick Kossifidis <mick@ics.forth.gr>
-> Co-developed-by: Sebastien Boeuf <seb@rivosinc.com>
-> Signed-off-by: Sebastien Boeuf <seb@rivosinc.com>
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
-> ---
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   eca631b8fe808748d7585059c4307005ca5c5820
+commit: e9f12b5fff8ad0eefd0340273767d329ef65fd69 RISC-V: KVM: Implement SBI STA extension
+date:   10 months ago
+config: riscv-randconfig-r132-20241015 (https://download.01.org/0day-ci/archive/20241015/202410151618.iYFXm2Ip-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20241015/202410151618.iYFXm2Ip-lkp@intel.com/reproduce)
 
-[...]
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410151618.iYFXm2Ip-lkp@intel.com/
 
-> diff --git a/drivers/iommu/riscv/iommu.h b/drivers/iommu/riscv/iommu.h
-> new file mode 100644
-> index 000000000000..700e33dc2446
-> --- /dev/null
-> +++ b/drivers/iommu/riscv/iommu.h
-> @@ -0,0 +1,62 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright © 2022-2024 Rivos Inc.
-> + * Copyright © 2023 FORTH-ICS/CARV
-> + *
-> + * Authors
-> + *	Tomasz Jeznach <tjeznach@rivosinc.com>
-> + *	Nick Kossifidis <mick@ics.forth.gr>
-> + */
-> +
-> +#ifndef _RISCV_IOMMU_H_
-> +#define _RISCV_IOMMU_H_
-> +
-> +#include <linux/iommu.h>
-> +#include <linux/types.h>
-> +#include <linux/iopoll.h>
-> +
-> +#include "iommu-bits.h"
-> +
-> +struct riscv_iommu_device {
-> +	/* iommu core interface */
-> +	struct iommu_device iommu;
-> +
-> +	/* iommu hardware */
-> +	struct device *dev;
-> +
-> +	/* hardware control register space */
-> +	void __iomem *reg;
-> +
-> +	/* supported and enabled hardware capabilities */
-> +	u64 caps;
-> +	u32 fctl;
-> +
-> +	/* available interrupt numbers, MSI or WSI */
-> +	unsigned int irqs[RISCV_IOMMU_INTR_COUNT];
-> +	unsigned int irqs_count;
-> +};
-> +
-> +int riscv_iommu_init(struct riscv_iommu_device *iommu);
-> +void riscv_iommu_remove(struct riscv_iommu_device *iommu);
-> +
-> +#define riscv_iommu_readl(iommu, addr) \
-> +	readl_relaxed((iommu)->reg + (addr))
-> +
-> +#define riscv_iommu_readq(iommu, addr) \
-> +	readq_relaxed((iommu)->reg + (addr))
-> +
-> +#define riscv_iommu_writel(iommu, addr, val) \
-> +	writel_relaxed((val), (iommu)->reg + (addr))
-> +
-> +#define riscv_iommu_writeq(iommu, addr, val) \
-> +	writeq_relaxed((val), (iommu)->reg + (addr))
-> +
-> +#define riscv_iommu_readq_timeout(iommu, addr, val, cond, delay_us, timeout_us) \
-> +	readx_poll_timeout(readq_relaxed, (iommu)->reg + (addr), val, cond, \
-> +			   delay_us, timeout_us)
-> +
-> +#define riscv_iommu_readl_timeout(iommu, addr, val, cond, delay_us, timeout_us) \
-> +	readx_poll_timeout(readl_relaxed, (iommu)->reg + (addr), val, cond, \
-> +			   delay_us, timeout_us)
-> +
-> +#endif
+sparse warnings: (new ones prefixed by >>)
+   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int const [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse:     expected unsigned int const [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:55:13: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
+>> arch/riscv/kvm/vcpu_sbi_sta.c:58:20: sparse: sparse: cast to restricted __le32
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     expected unsigned int [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int __val @@     got restricted __le32 [usertype] @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     expected unsigned int __val
+   arch/riscv/kvm/vcpu_sbi_sta.c:61:13: sparse:     got restricted __le32 [usertype]
+   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long const [noderef] __user *__p @@     got unsigned long long [usertype] *[assigned] steal_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse:     expected unsigned long long const [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:64:14: sparse:     got unsigned long long [usertype] *[assigned] steal_ptr
+>> arch/riscv/kvm/vcpu_sbi_sta.c:65:25: sparse: sparse: cast to restricted __le64
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long [noderef] __user *__p @@     got unsigned long long [usertype] *[assigned] steal_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     expected unsigned long long [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     got unsigned long long [usertype] *[assigned] steal_ptr
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned long long __val @@     got restricted __le64 [usertype] @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     expected unsigned long long __val
+   arch/riscv/kvm/vcpu_sbi_sta.c:68:17: sparse:     got restricted __le64 [usertype]
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned int [noderef] __user *__p @@     got unsigned int [usertype] *[assigned] sequence_ptr @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     expected unsigned int [noderef] __user *__p
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     got unsigned int [usertype] *[assigned] sequence_ptr
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int __val @@     got restricted __le32 [usertype] @@
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     expected unsigned int __val
+   arch/riscv/kvm/vcpu_sbi_sta.c:72:9: sparse:     got restricted __le32 [usertype]
 
-Curious: why do you need these MMIO wrappers if the driver depends on
-64BIT?
+vim +58 arch/riscv/kvm/vcpu_sbi_sta.c
 
-Will
+    24	
+    25	void kvm_riscv_vcpu_record_steal_time(struct kvm_vcpu *vcpu)
+    26	{
+    27		gpa_t shmem = vcpu->arch.sta.shmem;
+    28		u64 last_steal = vcpu->arch.sta.last_steal;
+    29		u32 *sequence_ptr, sequence;
+    30		u64 *steal_ptr, steal;
+    31		unsigned long hva;
+    32		gfn_t gfn;
+    33	
+    34		if (shmem == INVALID_GPA)
+    35			return;
+    36	
+    37		/*
+    38		 * shmem is 64-byte aligned (see the enforcement in
+    39		 * kvm_sbi_sta_steal_time_set_shmem()) and the size of sbi_sta_struct
+    40		 * is 64 bytes, so we know all its offsets are in the same page.
+    41		 */
+    42		gfn = shmem >> PAGE_SHIFT;
+    43		hva = kvm_vcpu_gfn_to_hva(vcpu, gfn);
+    44	
+    45		if (WARN_ON(kvm_is_error_hva(hva))) {
+    46			vcpu->arch.sta.shmem = INVALID_GPA;
+    47			return;
+    48		}
+    49	
+    50		sequence_ptr = (u32 *)(hva + offset_in_page(shmem) +
+    51				       offsetof(struct sbi_sta_struct, sequence));
+    52		steal_ptr = (u64 *)(hva + offset_in_page(shmem) +
+    53				    offsetof(struct sbi_sta_struct, steal));
+    54	
+    55		if (WARN_ON(get_user(sequence, sequence_ptr)))
+    56			return;
+    57	
+  > 58		sequence = le32_to_cpu(sequence);
+    59		sequence += 1;
+    60	
+    61		if (WARN_ON(put_user(cpu_to_le32(sequence), sequence_ptr)))
+    62			return;
+    63	
+    64		if (!WARN_ON(get_user(steal, steal_ptr))) {
+  > 65			steal = le64_to_cpu(steal);
+    66			vcpu->arch.sta.last_steal = READ_ONCE(current->sched_info.run_delay);
+    67			steal += vcpu->arch.sta.last_steal - last_steal;
+    68			WARN_ON(put_user(cpu_to_le64(steal), steal_ptr));
+    69		}
+    70	
+    71		sequence += 1;
+    72		WARN_ON(put_user(cpu_to_le32(sequence), sequence_ptr));
+    73	
+    74		kvm_vcpu_mark_page_dirty(vcpu, gfn);
+    75	}
+    76	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
