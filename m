@@ -1,161 +1,97 @@
-Return-Path: <linux-kernel+bounces-365626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1261999E52E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:09:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC9699E532
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71422B26043
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A392836D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 11:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93971E282B;
-	Tue, 15 Oct 2024 11:09:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A557A189BB2;
-	Tue, 15 Oct 2024 11:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90321E8833;
+	Tue, 15 Oct 2024 11:09:53 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100FD1E571A;
+	Tue, 15 Oct 2024 11:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990585; cv=none; b=P8KY7OXuAImGCrnHL2np8qRhkiTeRWiXlJPNEzBHozR2a8T52je5jfhXESJ08d5pAER3kJOQZVl+KBhcMTuJyczPOznob016EuOxD5ZAVgOhc/rmxiDoUgDdfVn8p6tkLvlp62KDLDUynOrtCzhpFVeT066l6o8tj7jMxYwCnlo=
+	t=1728990593; cv=none; b=NoU981N1pWfRSPWic1jAKFjUtxpwJ8Z+F+ytROqFdUEtmEhZnGdcm/E8aAafgxiZ8m355wyknvH/R1SlaeraAyw82hzcYxgw0N9HpGiDD/TCwgthRX8sOxNg34Hbqy20DHoFPmDgRAs7BKyUfBtY/pF4zIFrWm+kCi5C/DyOs5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990585; c=relaxed/simple;
-	bh=tXPO7KmjdcWYool96chGvBJ0Wdccziar2tj15Bs1opo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IpepYUxK0M0FlRluwu+JY4FZiinohuatOJEGWGcuSW1EnTbF2U4+n0FbY03QCRGUIt2Y+IFzGta/digB94v6jDzuBuVav2NhNYyGsFWZfiCP1T7WYkbCMDCXy5UmkDJa9K7UXpiSJZGDWHml0+mPE1ClbPHA/so04L6pbo2PxE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60B211007;
-	Tue, 15 Oct 2024 04:10:12 -0700 (PDT)
-Received: from [10.57.86.207] (unknown [10.57.86.207])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE1ED3F51B;
-	Tue, 15 Oct 2024 04:09:39 -0700 (PDT)
-Message-ID: <e5067bb8-0fcd-4739-9bca-0e872037d5a1@arm.com>
-Date: Tue, 15 Oct 2024 12:09:38 +0100
+	s=arc-20240116; t=1728990593; c=relaxed/simple;
+	bh=+G7yFXFTJdYUvkwG9ZrXJHw6lTDClttw60acmxAQajg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UIVix7tdPHfoU8KNupj/DGL4LBLhTPpDdakbcDjbxjhVX8R0aC63kPqDyhsVgZYYZ2Jr9GfR8a/fSqe2VwygSNSxZ7em7tlrJHLAlxPKDhlXFvHp2rffUg1xqcUR0VczT8K04dWvybK2rAlRO6uh4E+Mpf7N1Tyzvvqpwb5uNA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1670e4d78aab-f43b9;
+	Tue, 15 Oct 2024 19:09:46 +0800 (CST)
+X-RM-TRANSID:2ee1670e4d78aab-f43b9
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee1670e4d78962-01745;
+	Tue, 15 Oct 2024 19:09:45 +0800 (CST)
+X-RM-TRANSID:2ee1670e4d78962-01745
+From: Liu Jing <liujing@cmss.chinamobile.com>
+To: qmo@kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Liu Jing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] bpftool: optimize if statement code
+Date: Tue, 15 Oct 2024 19:09:44 +0800
+Message-Id: <20241015110944.6975-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 18/57] trace: Remove PAGE_SIZE compile-time
- constant assumption
-Content-Language: en-GB
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- Matthias Brugger <mbrugger@suse.com>, Miroslav Benes <mbenes@suse.cz>,
- Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-18-ryan.roberts@arm.com>
- <20241014124656.3ffb0f65@gandalf.local.home>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241014124656.3ffb0f65@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14/10/2024 17:46, Steven Rostedt wrote:
-> On Mon, 14 Oct 2024 11:58:25 +0100
-> Ryan Roberts <ryan.roberts@arm.com> wrote:
-> 
->> To prepare for supporting boot-time page size selection, refactor code
->> to remove assumptions about PAGE_SIZE being compile-time constant. Code
->> intended to be equivalent when compile-time page size is active.
->>
->> Convert BUILD_BUG_ON() BUG_ON() since the argument depends on PAGE_SIZE
->> and its not trivial to test against a page size limit.
->>
->> Redefine FTRACE_KSTACK_ENTRIES so that "struct ftrace_stacks" is always
->> sized at 32K for 64-bit and 16K for 32-bit. It was previously defined in
->> terms of PAGE_SIZE (and worked out at the quoted sizes for a 4K page
->> size). But for 64K pages, the size expanded to 512K. Given the ftrace
->> stacks should be invariant to page size, this seemed like a waste. As a
->> side effect, it removes the PAGE_SIZE compile-time constant assumption
->> from this code.
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>
->> ***NOTE***
->> Any confused maintainers may want to read the cover note here for context:
->> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
->>
->>  kernel/trace/fgraph.c | 2 +-
->>  kernel/trace/trace.c  | 2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
->> index d7d4fb403f6f0..47aa5c8d8090e 100644
->> --- a/kernel/trace/fgraph.c
->> +++ b/kernel/trace/fgraph.c
->> @@ -534,7 +534,7 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
->>  	if (!current->ret_stack)
->>  		return -EBUSY;
->>  
->> -	BUILD_BUG_ON(SHADOW_STACK_SIZE % sizeof(long));
->> +	BUG_ON(SHADOW_STACK_SIZE % sizeof(long));
-> 
-> Absolutely not!
-> 
-> BUG_ON() is in no way a substitution of any BUILD_BUG_ON(). BUILD_BUG_ON()
-> is a non intrusive way to see if something isn't lined up correctly, and
-> can fix it before you execute any code. BUG_ON() is the most intrusive way
-> to say something is wrong and you crash the system.
+Since both conditions are used to check whether len is valid, we can combine the two conditions into a single if statement
+Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+---
+ tools/bpf/bpftool/feature.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Yep, totally agree. I'm afraid this was me being lazy, and there are a couple of
-other instances where I have done this in other patches that I'll need to fix.
-Most of the time, I've been able to keep BUILD_BUG_ON() and simply compare
-against a page size limit.
+diff --git a/tools/bpf/bpftool/feature.c b/tools/bpf/bpftool/feature.c
+index 4dbc4fcdf473..0121e0fd6949 100644
+--- a/tools/bpf/bpftool/feature.c
++++ b/tools/bpf/bpftool/feature.c
+@@ -158,10 +158,9 @@ static int get_vendor_id(int ifindex)
+ 
+ 	len = read(fd, buf, sizeof(buf));
+ 	close(fd);
+-	if (len < 0)
+-		return -1;
+-	if (len >= (ssize_t)sizeof(buf))
++	if ((len < 0) || (len >= (ssize_t)sizeof(buf)))
+ 		return -1;
++
+ 	buf[len] = '\0';
+ 
+ 	return strtol(buf, NULL, 0);
+-- 
+2.27.0
 
-Looking at this again, perhaps the better solution is to define
-SHADOW_STACK_SIZE as PAGE_SIZE_MIN? Then it remains a compile-time constant. Is
-there any need for SHADOW_STACK_SIZE to increase with page size?
 
-> 
-> Not to mention, when function graph tracing is enabled, this gets triggered
-> for *every* function call! So I do not want any runtime test done. Every
-> nanosecond counts in this code path.
-> 
-> If anything, this needs to be moved to initialization and checked once, if
-> it fails, gives a WARN_ON() and disables function graph tracing.
-
-I'm hoping my suggestion above to decouple SHADOW_STACK_SIZE from PAGE_SIZE is
-acceptable and simpler? If not, happy to do as you suggest here.
-
-Thanks,
-Ryan
-
-> 
-> -- Steve
-> 
-> 
->>  
->>  	/* Set val to "reserved" with the delta to the new fgraph frame */
->>  	val = (FGRAPH_TYPE_RESERVED << FGRAPH_TYPE_SHIFT) | FGRAPH_FRAME_OFFSET;
->> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
->> index c3b2c7dfadef1..0f2ec3d30579f 100644
->> --- a/kernel/trace/trace.c
->> +++ b/kernel/trace/trace.c
->> @@ -2887,7 +2887,7 @@ trace_function(struct trace_array *tr, unsigned long ip, unsigned long
->>  /* Allow 4 levels of nesting: normal, softirq, irq, NMI */
->>  #define FTRACE_KSTACK_NESTING	4
->>  
->> -#define FTRACE_KSTACK_ENTRIES	(PAGE_SIZE / FTRACE_KSTACK_NESTING)
->> +#define FTRACE_KSTACK_ENTRIES	(SZ_4K / FTRACE_KSTACK_NESTING)
->>  
->>  struct ftrace_stack {
->>  	unsigned long		calls[FTRACE_KSTACK_ENTRIES];
-> 
 
 
