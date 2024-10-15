@@ -1,196 +1,186 @@
-Return-Path: <linux-kernel+bounces-366601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0CA99F7A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BF099F79C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 21:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361ED1F22189
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173A6282CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 19:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3394C1F5850;
-	Tue, 15 Oct 2024 19:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2051F5849;
+	Tue, 15 Oct 2024 19:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k6d61Duz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PL8Br/xO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EAF1B6D13
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 19:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614561B6D13;
+	Tue, 15 Oct 2024 19:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729022391; cv=none; b=gWMkjdet7IWhXC/LPfD1W6u/LO5EDvOIWmqAAKKTWXNenUWNj2dK/YE9037J+yqVyz+UWeyuQOEa+Rvcn1mKwvPMakwFW0O+g0Siay39HK3pjbz1xzXMbftlM1r+YWfWrH0R3vHJMGudnnex5Qbxcph2sv7h56nh8Ah62HLlz5E=
+	t=1729022340; cv=none; b=tkzHN+G8uGd7ia54P6mhg4YmqsjG1r0CWKSTXYML9De9wQrF5xlbXrVPkwN1aETu3KLhsBAUxtAq+lhuqhAXUL0g159cJV1htgLy04IB7Q8o5IpuZ5J4FjEIPQYFZcsRelhf6If8bASrolYrYM/ROS4Sd2eb9Ls0nAI7IO5S58Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729022391; c=relaxed/simple;
-	bh=Cs/cfh8k5ChNretn8h+TeBIjGrI86/n50LdM9PhcYQk=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=jKk1KK7xN0Ld8aG/0TP1lbms8DN4k/Qvh7WPnwzO71HdE17Nni570bxe1tuGpJ6YqbKDGyaGTT2CRme8Qc+2XF2vvbTIFOEet8JrXrXVlz9dmMMA1qQJJDs8PXMzCzic+Nvj3QxPNkflRMJLZSnhY8hOO5rD1oSQbv26mMZLmeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k6d61Duz; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729022390; x=1760558390;
-  h=date:from:to:cc:subject:message-id;
-  bh=Cs/cfh8k5ChNretn8h+TeBIjGrI86/n50LdM9PhcYQk=;
-  b=k6d61DuzvDQy7NqwGyRAJO7QZ4+i2/9fHsxwre7QHL3c+fFFqvMy18fo
-   iGLFkvP98vrbVABODlLjKe7agweh/iQem7z0tXCfY35WZf/rrN9X81TgH
-   7XKySXwxbXSd3/5d4yo2lT/eX/7XqHJSYHg723GccZpCTB2g2nHRiSGrr
-   TZ914RDOZX/uVDOpsP2GXjRwrVk8CtCO/LUa6DGppHCo3p64nD+mcL4SF
-   uY3SHM6rQE9fixW12pRZkZnsGGmFd5ouTaaIBadu96b2Ui/QxRwZkpa9B
-   jXpjD458Yzj9zWE82Psm6GCKorPhWvmFwn9e2DPSk/bVBuA3aUwfvUzZO
-   A==;
-X-CSE-ConnectionGUID: 747oQfZdRP+xAJqXKTrrSA==
-X-CSE-MsgGUID: lYEK6ZgrTDSkFikN+vUFZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="27918860"
-X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
-   d="scan'208";a="27918860"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 12:59:49 -0700
-X-CSE-ConnectionGUID: KG9yOhn2S8u3jzNFpYpuKQ==
-X-CSE-MsgGUID: aFRSYOCCTIqjOX4Q/l5ndA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
-   d="scan'208";a="82783544"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 15 Oct 2024 12:59:48 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t0nhp-000JsF-1s;
-	Tue, 15 Oct 2024 19:59:45 +0000
-Date: Wed, 16 Oct 2024 03:58:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:sched/urgent] BUILD SUCCESS
- cd9626e9ebc77edec33023fe95dab4b04ffc819d
-Message-ID: <202410160341.Xcm1yZtl-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1729022340; c=relaxed/simple;
+	bh=42f2cDVCTVN2U0GsGFbasWWywSZmux7a9WruFjV5vU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7p/SFl6eTLXwNZCWP0T73ysSlEWOfCEoQm1oXBACRCq++awjDCU8UeP+KcgD6FSJ4Fm51oFfjX2AHSsDBVrkNLEOQ9HX223m6stOdxjEDLrD4TjwI6P1xifE2cIE3jzVTiMy4UWqRJ9+NxK5In8JJrK5hUkaYe2aqi0jONiDLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PL8Br/xO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E696FC4CEC6;
+	Tue, 15 Oct 2024 19:58:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729022340;
+	bh=42f2cDVCTVN2U0GsGFbasWWywSZmux7a9WruFjV5vU4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PL8Br/xOOJAZgFi4hWMLFLAuFSaCSLoPUk6WmA4u2rGsKSQDm5pyFKAHixRv3p2OB
+	 11qrWC1v+ytKdE6fpRNyw94qXFjYGn5Bv6GCZ4K5u5mOyDBF/lrixEQy4ggTCp0xB4
+	 dIcI9YWqSyA9rZUbzUjJfiRstk3RYzjwLYCtTYx/yClH41LyHzFdPvmLE3giBMYVyW
+	 eCZ645AYjMXAVfUiUl4efcs8Y2GRBFltTORt1I5vmWKBfGnRrL2AjFfvDLE5lDwL26
+	 J0CLqM7hfmsZHNg7WQ4DI8XILiNqQwNqDrR+/BaRTypBr5DZ0enNkaizDCw8eu7mrA
+	 TnC6+Ssi+jnDQ==
+Date: Tue, 15 Oct 2024 16:58:56 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Song Liu <songliubraving@fb.com>, Howard Chu <howardchu95@gmail.com>,
+	ndrea Righi <andrea.righi@linux.dev>, peterz@infradead.org,
+	mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, james.clark@linaro.org,
+	alan.maguire@oracle.com
+Subject: Re: [PATCH v2 0/2] perf trace: Fix support for the new BPF feature
+ in clang 12
+Message-ID: <Zw7JgJc0LOwSpuvx@x1>
+References: <20241011021403.4089793-1-howardchu95@gmail.com>
+ <Zw61TUe1V97dKWer@google.com>
+ <Zw7D9HXBanPLUO4G@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw7D9HXBanPLUO4G@x1>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/urgent
-branch HEAD: cd9626e9ebc77edec33023fe95dab4b04ffc819d  sched/fair: Fix external p->on_rq users
+On Tue, Oct 15, 2024 at 04:35:16PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Oct 15, 2024 at 11:32:45AM -0700, Namhyung Kim wrote:
+> > On Thu, Oct 10, 2024 at 07:14:00PM -0700, Howard Chu wrote:
+> > > Howard Chu (2):
+> > >   perf build: Change the clang check back to 12.0.1
+> > >   perf trace: Rewrite BPF code to pass the verifier
+>  
+> > Tested with clang 16.  And I think it's better to change the order of
+> > the commits so it can fix the problem first and then check the version.
+ 
+> So, I tested it on a RHEL8 system and it gets built with clang 17 but
+> then fails to load, the verifier complains about lack of bounds checking
+> for the index of the syscall array, with or without this last patch from
+> Howard.
+ 
+> I also simplified it to a more minimal version withour renaming
+> variables, so that we see what exactly fixed the problem, its available
+> at the perf-tools/tmp.perf-tools branch, I've talked about it with
+> Howard over chat.
 
-elapsed time: 2193m
+Just to give more details, without the following patch:
 
-configs tested: 104
-configs skipped: 5
+[acme@dell-per740-01 perf-tools]$ git diff
+diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+index 3b30aa74a3ae..873fa738530b 100644
+--- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
++++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+@@ -485,7 +485,8 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+                        if (!bpf_probe_read_user(((struct augmented_arg *)payload_offset)->value, size, arg))
+                                augmented = true;
+                } else if (size < 0 && size >= -6) { /* buffer */
+-                       index = -(size + 1);
++                       //index = -(size + 1);
++                       index = 0;
+                        aug_size = args->args[index];
+ 
+                        if (aug_size > TRACE_AUG_MAX_BUF)
+[acme@dell-per740-01 perf-tools]$
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+We end up with:
 
-tested configs:
-alpha                             allnoconfig    gcc-14.1.0
-alpha                            allyesconfig    clang-20
-alpha                               defconfig    gcc-14.1.0
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.1.0
-arc                              allyesconfig    clang-20
-arc                                 defconfig    gcc-14.1.0
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.1.0
-arm                              allyesconfig    clang-20
-arm                        mvebu_v7_defconfig    clang-20
-arm                           sama7_defconfig    clang-20
-arm                        shmobile_defconfig    clang-20
-arm                          sp7021_defconfig    clang-20
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.1.0
-arm64                               defconfig    gcc-14.1.0
-csky                              allnoconfig    gcc-14.1.0
-csky                                defconfig    gcc-14.1.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.1.0
-hexagon                          allyesconfig    clang-20
-hexagon                             defconfig    gcc-14.1.0
-i386                             allmodconfig    clang-18
-i386                              allnoconfig    clang-18
-i386                             allyesconfig    clang-18
-i386        buildonly-randconfig-001-20241015    clang-18
-i386        buildonly-randconfig-002-20241015    clang-18
-i386        buildonly-randconfig-003-20241015    clang-18
-i386        buildonly-randconfig-004-20241015    clang-18
-i386        buildonly-randconfig-005-20241015    clang-18
-i386        buildonly-randconfig-006-20241015    clang-18
-i386                                defconfig    clang-18
-i386                  randconfig-001-20241015    clang-18
-i386                  randconfig-002-20241015    clang-18
-i386                  randconfig-003-20241015    clang-18
-i386                  randconfig-004-20241015    clang-18
-i386                  randconfig-005-20241015    clang-18
-i386                  randconfig-006-20241015    clang-18
-i386                  randconfig-011-20241015    clang-18
-i386                  randconfig-012-20241015    clang-18
-i386                  randconfig-013-20241015    clang-18
-i386                  randconfig-014-20241015    clang-18
-i386                  randconfig-015-20241015    clang-18
-i386                  randconfig-016-20241015    clang-18
-loongarch                        allmodconfig    gcc-14.1.0
-loongarch                         allnoconfig    gcc-14.1.0
-loongarch                           defconfig    gcc-14.1.0
-m68k                             allmodconfig    gcc-14.1.0
-m68k                              allnoconfig    gcc-14.1.0
-m68k                             allyesconfig    gcc-14.1.0
-m68k                          amiga_defconfig    clang-20
-m68k                                defconfig    gcc-14.1.0
-microblaze                       allmodconfig    gcc-14.1.0
-microblaze                        allnoconfig    gcc-14.1.0
-microblaze                       allyesconfig    gcc-14.1.0
-microblaze                          defconfig    gcc-14.1.0
-mips                              allnoconfig    gcc-14.1.0
-mips                           gcw0_defconfig    clang-20
-nios2                             allnoconfig    gcc-14.1.0
-nios2                               defconfig    gcc-14.1.0
-openrisc                          allnoconfig    clang-20
-openrisc                            defconfig    gcc-12
-parisc                            allnoconfig    clang-20
-parisc                              defconfig    gcc-12
-parisc64                            defconfig    gcc-14.1.0
-powerpc                           allnoconfig    clang-20
-powerpc                      ep88xc_defconfig    clang-20
-powerpc                       holly_defconfig    clang-20
-powerpc                      pasemi_defconfig    clang-20
-powerpc                 xes_mpc85xx_defconfig    clang-20
-riscv                             allnoconfig    clang-20
-riscv                               defconfig    gcc-12
-s390                             allmodconfig    gcc-14.1.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.1.0
-s390                                defconfig    gcc-12
-sh                               allmodconfig    gcc-14.1.0
-sh                                allnoconfig    gcc-14.1.0
-sh                               allyesconfig    gcc-14.1.0
-sh                                  defconfig    gcc-12
-sh                          landisk_defconfig    clang-20
-sh                             shx3_defconfig    clang-20
-sparc                            allmodconfig    gcc-14.1.0
-sparc64                             defconfig    gcc-12
-um                               alldefconfig    clang-20
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-18
-x86_64                           allyesconfig    clang-18
-x86_64                              defconfig    clang-18
-x86_64                                  kexec    clang-18
-x86_64                                  kexec    gcc-12
-x86_64                               rhel-8.3    gcc-12
-x86_64                           rhel-8.3-bpf    clang-18
-x86_64                         rhel-8.3-kunit    clang-18
-x86_64                           rhel-8.3-ltp    clang-18
-x86_64                          rhel-8.3-rust    clang-18
-xtensa                            allnoconfig    gcc-14.1.0
-xtensa                  nommu_kc705_defconfig    clang-20
+; } else if (size < 0 && size >= -6) { /* buffer */
+111: (b7) r1 = -6
+112: (2d) if r1 > r9 goto pc-22
+ R0=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=inv-6 R2=invP40 R3=inv(id=0) R4=map_value(id=0,off=112,ks=4,vs=24688,imm=0) R6=map_value(id=0,off=20,ks=4,vs=24,imm=0) R7=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8=invP6 R9=inv(id=0,umin_value=18446744073709551610,var_off=(0xffffffff00000000; 0xffffffff)) R10=fp0 fp-8=mmmmmmmm fp-16=map_value fp-24=map_value fp-32=map_value fp-40=invP40 fp-48=ctx fp-56=map_value fp-64=inv1 fp-72=map_value fp-80=map_value
+; index = -(size + 1);
+113: (a7) r9 ^= -1
+114: (67) r9 <<= 32
+115: (77) r9 >>= 32
+; aug_size = args->args[index];
+116: (67) r9 <<= 3
+117: (79) r1 = *(u64 *)(r10 -32)
+118: (0f) r1 += r9
+last_idx 118 first_idx 111
+regs=200 stack=0 before 117: (79) r1 = *(u64 *)(r10 -32)
+regs=200 stack=0 before 116: (67) r9 <<= 3
+regs=200 stack=0 before 115: (77) r9 >>= 32
+regs=200 stack=0 before 114: (67) r9 <<= 32
+regs=200 stack=0 before 113: (a7) r9 ^= -1
+regs=200 stack=0 before 112: (2d) if r1 > r9 goto pc-22
+regs=202 stack=0 before 111: (b7) r1 = -6
+ R0=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1=inv1 R2=invP40 R3=inv(id=0) R4=map_value(id=0,off=112,ks=4,vs=24688,imm=0) R6=map_value(id=0,off=20,ks=4,vs=24,imm=0) R7=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8=invP6 R9_r=invP(id=0,smin_value=-2147483648,smax_value=0) R10=fp0 fp-8=mmmmmmmm fp-16=map_value fp-24=map_value fp-32_r=map_value fp-40=invP40 fp-48=ctx fp-56=map_value fp-64=inv1 fp-72=map_value fp-80=map_value
+parent didn't have regs=200 stack=0 marks
+last_idx 85 first_idx 85
+regs=200 stack=0 before 85: (6d) if r1 s> r9 goto pc+25
+ R0_w=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_rw=invP1 R2_w=invP40 R3_rw=inv(id=0) R4_w=map_value(id=0,off=112,ks=4,vs=24688,imm=0) R6_rw=map_value(id=0,off=20,ks=4,vs=24,imm=0) R7_rw=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8_rw=invP6 R9_rw=invP(id=0,smin_value=-2147483648,smax_value=4096) R10=fp0 fp-8=mmmmmmmm fp-16_rw=map_value fp-24_rw=map_value fp-32_r=map_value fp-40_rw=invP40 fp-48_r=ctx fp-56_r=map_value fp-64_rw=invP1 fp-72_r=map_value fp-80_r=map_value
+parent already had regs=202 stack=0 marks
+119: (79) r9 = *(u64 *)(r1 +16)
+ R0=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=map_value(id=0,off=0,ks=4,vs=8272,umax_value=34359738360,var_off=(0x0; 0x7fffffff8),s32_max_value=2147483640,u32_max_value=-8) R2=invP40 R3=inv(id=0) R4=map_value(id=0,off=112,ks=4,vs=24688,imm=0) R6=map_value(id=0,off=20,ks=4,vs=24,imm=0) R7=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8=invP6 R9_w=invP(id=0,umax_value=34359738360,var_off=(0x0; 0x7fffffff8),s32_max_value=2147483640,u32_max_value=-8) R10=fp0 fp-8=mmmmmmmm fp-16=map_value fp-24=map_value fp-32=map_value fp-40=invP40 fp-48=ctx fp-56=map_value fp-64=inv1 fp-72=map_value fp-80=map_value
+R1 unbounded memory access, make sure to bounds check any such access
+processed 549 insns (limit 1000000) max_states_per_insn 3 total_states 27 peak_states 27 mark_read 16
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With it (which is not a fix, I'm just using it to narrow down what
+calculation the compiler is generating code the verifier in that kernel
+dislikes):
+
+[root@dell-per740-01 ~]# ~acme/bin/perf trace -e *sleep* sleep 1.234567890
+     0.000 (1234.696 ms): sleep/3852601 nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 234567890 })                  = 0
+[root@dell-per740-01 ~]# 
+
+So I'm trying adding extra bounds checking, marking the index as
+volatile, adding compiler barriers, etc, all the fun with the verifier,
+but got distracted with other stuff, coming back to this now.
+
+Ok, the following seems to do the trick:
+
+[acme@dell-per740-01 perf-tools]$ git diff
+diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+index 3b30aa74a3ae..ef87a04ff8d0 100644
+--- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
++++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+@@ -486,6 +486,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+                                augmented = true;
+                } else if (size < 0 && size >= -6) { /* buffer */
+                        index = -(size + 1);
++                       index &= 7; // To satisfy the bounds checking with the verifier in some kernels
+                        aug_size = args->args[index];
+ 
+                        if (aug_size > TRACE_AUG_MAX_BUF)
+
+I'll now test it without Howard's patch to see if it fixes the RHEL8 +
+clang 17 case.
+
+- Arnaldo
+ 
+> Song Liu reproduced the problem (unsure with what clang and kernel
+> versions) and couldn't find a way to fix it using the usual tricks to
+> coax clang to keep the bounds checking for the verifier to get
+> satisfied.
+> 
+> More generally I'll use virtme-ng[1] to test with a wider range of
+> kernels, not just clang versions.
+> 
+> - Arnaldo
+> 
+> [1] https://kernel-recipes.org/en/2024/virtme-ng/
 
