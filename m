@@ -1,233 +1,172 @@
-Return-Path: <linux-kernel+bounces-366621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B242599F7E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:11:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD57999F7E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 22:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C94CB2201A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:11:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C7A1C21100
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 20:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13011F76D7;
-	Tue, 15 Oct 2024 20:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71C11F76D7;
+	Tue, 15 Oct 2024 20:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=archlinux.org header.i=@archlinux.org header.b="iwneV//P";
-	dkim=permerror (0-bit key) header.d=archlinux.org header.i=@archlinux.org header.b="djrALNGE"
-Received: from mail.archlinux.org (mail.archlinux.org [95.216.189.61])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UNfs8g3h"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C3F1B3936;
-	Tue, 15 Oct 2024 20:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.216.189.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823F51B3936;
+	Tue, 15 Oct 2024 20:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729023087; cv=none; b=KqGmeFv2/NgE2AoPlyv1S7qd5HsJObtIZgi4hstkOOVuo+rmc43yWcK4sxsUWAPK1M1waoPWF9gc00EKffMPXwPyTnyrybFTyEcpkPJ0wfd/H7ompnfSuT06WCVRp7EQ1GFi6s37dingCQ6+PWYWUtzLcyaJFX5bqSnF7YG+4qc=
+	t=1729022940; cv=none; b=Gtv9mBF7wJDkTC4OOoYuz9VFK1a1WxF3N72nBI+ZaSkfw2musPBXqPGdNRzdy7oJSbf3zj4EiHJlv3XEcMQ/HWyg4k1l5xNw3l0LZVrNKn8qg2tDojdwo4cHZpSBEXHXmQ1G7cK/DeTikAECzdid/S4uVaNx8G3WBtbjrRgxDBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729023087; c=relaxed/simple;
-	bh=Fu78ZqWldsxz5I49tuuyG64vbdSGHOM3Qa0jC4RLOFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d0HzziuBcY5jMyk+dPgAQXluZaTJC1hXPFVMWrxVHd1AVX89+hCrddV1TWYn8LLydDFXx1M1RA589yHMBWKp3s4djn6K78kW/1uc/Qb7LP6GWZ4ijVYmn0J3P0eoRH7YcyHCTwqRgS+3KQHcCOm4ftypk5rd2L7Yi7VydVw/86A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=archlinux.org; spf=pass smtp.mailfrom=archlinux.org; dkim=pass (4096-bit key) header.d=archlinux.org header.i=@archlinux.org header.b=iwneV//P; dkim=permerror (0-bit key) header.d=archlinux.org header.i=@archlinux.org header.b=djrALNGE; arc=none smtp.client-ip=95.216.189.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=archlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=archlinux.org
-Message-ID: <1af38ab3-786d-43e8-a414-50554edf7eac@archlinux.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=archlinux.org;
-	s=dkim-rsa; t=1729022762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Fu78ZqWldsxz5I49tuuyG64vbdSGHOM3Qa0jC4RLOFE=;
-	b=iwneV//PZmNfZSPIATH7ZBIqGzSIjpXzDNpqIT4bAiwoCZbK499oi3rBLA4Z3raDHrznT8
-	zmkXLYu/FmlhbVVoncH9nNtzD+Ko2z9kCDJSxwNyMoIR5E1V37Ql8tXm3JI5EV6DaqUYy6
-	Xf4992COruWt2qOUaiMCRdYhGEuO0O0MzQelyRJDup4Mh3YloIcTeVUZ6KIRgFTc0oAzmG
-	39z1ahqlBAd+QgfGlMuINjwdYKeT/IHipJWb1IJG9BxjrVo5nFUZZPezk528c4/9uAnN1e
-	AI7/nW1QP+EW7mugbMP0jQQyvGfTNJmB+ddHYx+ZHxwG1cC+mxpL88TOadzUA+P++yr/lQ
-	uFeh2pawshjXdOys9mabPYubXv1yR8PjR+urMC8+yirsKCZarc0JriHE/qwISrn1bRoteD
-	Q/59OcRBkUip85TwpemPCA/iF6Y0kQF4518EKmYTr8mF5DUS5rq3Gw2o9PiLww0bJOhM3V
-	dPJM6yoy9DtqJd8GUe+6ZEly5mfsYpMm/Q7a7YEii0NUOJZyw0lBfcXmHcempvWE8iSryk
-	2Qg3CpVt9wLf0xxhZ013r7+g7Ft7F2rPjDYQphafMliVYS+uLwJTE1K/wIBF/n2Xs3ZS7a
-	NKPbvsVB8H+JKvKmN/mW3hmVybzdiVhmjdChFNt6B5KNMia3nLKzQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=archlinux.org;
-	s=dkim-ed25519; t=1729022762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Fu78ZqWldsxz5I49tuuyG64vbdSGHOM3Qa0jC4RLOFE=;
-	b=djrALNGErjiaIzFL/AIPiMLF81Q+IM8cTMRtNJyWCNCWA9pOZMoPUynJ4xfD/HF3WWrOWw
-	q4dnwFVjPKaaD/AA==
-Authentication-Results: mail.archlinux.org;
-	auth=pass smtp.auth=felixonmars smtp.mailfrom=felixonmars@archlinux.org
-Date: Tue, 15 Oct 2024 23:05:58 +0300
+	s=arc-20240116; t=1729022940; c=relaxed/simple;
+	bh=j2OJ4nJ22YAGX1EN1Ws9619MuiTw8/GcQUNttC73stc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pWndNrWop9YuUzDfXLo0gKyMQard1QsCRW+dZSQNNb5KVjCCEJV/vwIzBfE1ebgQ4gqEUzoRbWMxKSNKawQI/YEH9CDJ7BwtU7gO3bcZKE+7g+QpiSHraJlBWtVHyKkFMkj4nC07rF8Ie5lR5ZuNa+FChg9hvVSNt2aJWmcjLRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UNfs8g3h; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FJuBhD002725;
+	Tue, 15 Oct 2024 20:08:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=69L/af
+	3IKivmKEyI/Ji8fL2xhTF/EYJNbW9XFUPCA2Q=; b=UNfs8g3hi7tf/L+cDxN+IV
+	E6mgZzQ7BANlXNe2isaXxE4G4VApivQAH0fDC10cYAIF4JEWIvBjQ1H7g5VJYRh9
+	r5vU69++lQRkTRsbqlZ1IES+XfqHoGg/NUbaYrHx1rbvrPH/twGd4AjyxDBn+IIk
+	aI3eY7yPMksw4idZj1hsUGyeNxmeEA/bSXTNvrXaUH5jiWKDkSO+WZp845cFbz0Z
+	sSNfUn3QiwM4Sx2WOta6cmJ08hCsYUFa3ln/mJcoq8mNxWpOU/CExCinL2p5qb8X
+	W7FrLtAr8fNqI4n5T7RR4PdrU0+MUu8/8Y0Okw/XybVhDSRdU03ec/oTG7LY7b5Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429xywr1rg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 20:08:30 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49FK8TK7028463;
+	Tue, 15 Oct 2024 20:08:30 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 429xywr1ra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 20:08:29 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49FJC56T005930;
+	Tue, 15 Oct 2024 20:08:29 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428650wd5u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Oct 2024 20:08:29 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49FK8SQi48562460
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Oct 2024 20:08:28 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A2B2B58059;
+	Tue, 15 Oct 2024 20:08:28 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D8AD558058;
+	Tue, 15 Oct 2024 20:08:27 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.187.172])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 15 Oct 2024 20:08:27 +0000 (GMT)
+Message-ID: <036746bc4e37ff10a18b5fdffd6fdee561dd5bfe.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+        Roberto Sassu
+	 <roberto.sassu@huaweicloud.com>,
+        linux-integrity@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
+        mapengyu@gmail.com, David Howells <dhowells@redhat.com>,
+        Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+ <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe
+ <jgg@ziepe.ca>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 15 Oct 2024 16:08:27 -0400
+In-Reply-To: <64710fe1db1432ca8857ec83fff4809ab1550137.camel@kernel.org>
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+	 <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
+	 <21b46f4882f0b9b12304d7786bd88f33a7ad2b97.camel@huaweicloud.com>
+	 <a0068539450a81fdd363d078521cb3822c54608b.camel@kernel.org>
+	 <e70c55c6edea2a5be7786ee04a85778193237444.camel@kernel.org>
+	 <04dc04872f2925166f969b43852161d468ee899a.camel@linux.ibm.com>
+	 <64710fe1db1432ca8857ec83fff4809ab1550137.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: vEnh6mst_1x2h32pBMI1SmYyzJM4-QtK
+X-Proofpoint-GUID: SXjOjMcLJvo3WHzLFeaengjc6HSy-qJw
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH -fixes] riscv: Do not use fortify in early code
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Heiko Stuebner <heiko@sntech.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Jason Montleon <jmontleo@redhat.com>, stable@vger.kernel.org
-References: <20241009072749.45006-1-alexghiti@rivosinc.com>
-From: Felix Yan <felixonmars@archlinux.org>
-Content-Language: en-US-large
-Autocrypt: addr=felixonmars@archlinux.org; keydata=
- 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
- EAXqa6vUBxBrfkBwwf11sYqqZyFORHr8
-In-Reply-To: <20241009072749.45006-1-alexghiti@rivosinc.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------hAHpfw1bwkWTx3Aju9c33paG"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 priorityscore=1501 phishscore=0 adultscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410150135
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------hAHpfw1bwkWTx3Aju9c33paG
-Content-Type: multipart/mixed; boundary="------------jluT9zCFJUvyVOXjKssCP6HF";
- protected-headers="v1"
-From: Felix Yan <felixonmars@archlinux.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Heiko Stuebner <heiko@sntech.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Jason Montleon <jmontleo@redhat.com>, stable@vger.kernel.org
-Message-ID: <1af38ab3-786d-43e8-a414-50554edf7eac@archlinux.org>
-Subject: Re: [PATCH -fixes] riscv: Do not use fortify in early code
-References: <20241009072749.45006-1-alexghiti@rivosinc.com>
-In-Reply-To: <20241009072749.45006-1-alexghiti@rivosinc.com>
+On Mon, 2024-10-14 at 15:34 +0300, Jarkko Sakkinen wrote:
+> On Mon, 2024-10-14 at 07:45 -0400, Mimi Zohar wrote:
+> > > > For server/IMA use case I'll add a boot parameter it can be
+> > > > either on or off by default, I will state that in the commit
+> > > > message and we'll go from there.
+> >=20
+> > Sounds good.
+>=20
+> But only after this patch set lands. I gave this a thought and since
+> this patch set is specifically for a specific Bugzilla bug that it
+> closes, I have no interest to increase its scope.
 
---------------jluT9zCFJUvyVOXjKssCP6HF
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Prior to your performance improvement patch set it took >10 minutes to boot,
+when it succeeded booting.  Now on Fedora 40 with "ima_policy=3Dtcb" on the=
+ boot
+command line, it's taking ~3 minutes to boot.  Do you really think that is
+acceptable?!
 
-T24gMTAvOS8yNCAxMDoyNywgQWxleGFuZHJlIEdoaXRpIHdyb3RlOg0KPiBFYXJseSBjb2Rl
-IGRlc2lnbmF0ZXMgdGhlIGNvZGUgZXhlY3V0ZWQgd2hlbiB0aGUgTU1VIGlzIG5vdCB5ZXQg
-ZW5hYmxlZCwNCj4gYW5kIHRoaXMgY29tZXMgd2l0aCBzb21lIGxpbWl0YXRpb25zIChzZWUN
-Cj4gRG9jdW1lbnRhdGlvbi9hcmNoL3Jpc2N2L2Jvb3QucnN0LCBzZWN0aW9uICJQcmUtTU1V
-IGV4ZWN1dGlvbiIpLg0KPiANCj4gRk9SVElGWV9TT1VSQ0UgbXVzdCBiZSBkaXNhYmxlZCB0
-aGVuIHNpbmNlIGl0IGNhbiB0cmlnZ2VyIGtlcm5lbCBwYW5pY3MNCj4gYXMgcmVwb3J0ZWQg
-aW4gWzFdLg0KPiANCj4gUmVwb3J0ZWQtYnk6IEphc29uIE1vbnRsZW9uIDxqbW9udGxlb0By
-ZWRoYXQuY29tPg0KPiBDbG9zZXM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJp
-c2N2L0NBSkRfYlBKZXM0UWhtWFk1ZjYzR0hWOUI5SEZrU0NvYVpqay1xQ1QyTkdTN1E5SE9E
-Z0BtYWlsLmdtYWlsLmNvbS8gWzFdDQo+IEZpeGVzOiBhMzU3MDdjM2Q4NTAgKCJyaXNjdjog
-YWRkIG1lbW9yeS10eXBlIGVycmF0YSBmb3IgVC1IZWFkIikNCj4gRml4ZXM6IDI2ZTdhYWNi
-ODNkZiAoInJpc2N2OiBBbGxvdyB0byBkb3duZ3JhZGUgcGFnaW5nIG1vZGUgZnJvbSB0aGUg
-Y29tbWFuZCBsaW5lIikNCj4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gU2lnbmVk
-LW9mZi1ieTogQWxleGFuZHJlIEdoaXRpIDxhbGV4Z2hpdGlAcml2b3NpbmMuY29tPg0KPiAt
-LS0NCj4gICBhcmNoL3Jpc2N2L2VycmF0YS9NYWtlZmlsZSAgICB8IDYgKysrKysrDQo+ICAg
-YXJjaC9yaXNjdi9rZXJuZWwvTWFrZWZpbGUgICAgfCA1ICsrKysrDQo+ICAgYXJjaC9yaXNj
-di9rZXJuZWwvcGkvTWFrZWZpbGUgfCA2ICsrKysrLQ0KPiAgIDMgZmlsZXMgY2hhbmdlZCwg
-MTYgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Fy
-Y2gvcmlzY3YvZXJyYXRhL01ha2VmaWxlIGIvYXJjaC9yaXNjdi9lcnJhdGEvTWFrZWZpbGUN
-Cj4gaW5kZXggOGEyNzM5NDg1MTIzLi5mMGRhOWQ3YjM5YzMgMTAwNjQ0DQo+IC0tLSBhL2Fy
-Y2gvcmlzY3YvZXJyYXRhL01ha2VmaWxlDQo+ICsrKyBiL2FyY2gvcmlzY3YvZXJyYXRhL01h
-a2VmaWxlDQo+IEBAIC0yLDYgKzIsMTIgQEAgaWZkZWYgQ09ORklHX1JFTE9DQVRBQkxFDQo+
-ICAgS0JVSUxEX0NGTEFHUyArPSAtZm5vLXBpZQ0KPiAgIGVuZGlmDQo+ICAgDQo+ICtpZmRl
-ZiBDT05GSUdfUklTQ1ZfQUxURVJOQVRJVkVfRUFSTFkNCj4gK2lmZGVmIENPTkZJR19GT1JU
-SUZZX1NPVVJDRQ0KPiArS0JVSUxEX0NGTEFHUyArPSAtRF9fTk9fRk9SVElGWQ0KPiArZW5k
-aWYNCj4gK2VuZGlmDQo+ICsNCj4gICBvYmotJChDT05GSUdfRVJSQVRBX0FOREVTKSArPSBh
-bmRlcy8NCj4gICBvYmotJChDT05GSUdfRVJSQVRBX1NJRklWRSkgKz0gc2lmaXZlLw0KPiAg
-IG9iai0kKENPTkZJR19FUlJBVEFfVEhFQUQpICs9IHRoZWFkLw0KPiBkaWZmIC0tZ2l0IGEv
-YXJjaC9yaXNjdi9rZXJuZWwvTWFrZWZpbGUgYi9hcmNoL3Jpc2N2L2tlcm5lbC9NYWtlZmls
-ZQ0KPiBpbmRleCA3Zjg4Y2M0OTMxZjUuLjY5ZGM4YWFhYjNmYiAxMDA2NDQNCj4gLS0tIGEv
-YXJjaC9yaXNjdi9rZXJuZWwvTWFrZWZpbGUNCj4gKysrIGIvYXJjaC9yaXNjdi9rZXJuZWwv
-TWFrZWZpbGUNCj4gQEAgLTM2LDYgKzM2LDExIEBAIEtBU0FOX1NBTklUSVpFX2FsdGVybmF0
-aXZlLm8gOj0gbg0KPiAgIEtBU0FOX1NBTklUSVpFX2NwdWZlYXR1cmUubyA6PSBuDQo+ICAg
-S0FTQU5fU0FOSVRJWkVfc2JpX2VjYWxsLm8gOj0gbg0KPiAgIGVuZGlmDQo+ICtpZmRlZiBD
-T05GSUdfRk9SVElGWV9TT1VSQ0UNCj4gK0NGTEFHU19hbHRlcm5hdGl2ZS5vICs9IC1EX19O
-T19GT1JUSUZZDQo+ICtDRkxBR1NfY3B1ZmVhdHVyZS5vICs9IC1EX19OT19GT1JUSUZZDQo+
-ICtDRkxBR1Nfc2JpX2VjYWxsLm8gKz0gLURfX05PX0ZPUlRJRlkNCj4gK2VuZGlmDQo+ICAg
-ZW5kaWYNCj4gICANCj4gICBleHRyYS15ICs9IHZtbGludXgubGRzDQo+IGRpZmYgLS1naXQg
-YS9hcmNoL3Jpc2N2L2tlcm5lbC9waS9NYWtlZmlsZSBiL2FyY2gvcmlzY3Yva2VybmVsL3Bp
-L01ha2VmaWxlDQo+IGluZGV4IGQ1YmYxYmM3ZGU2Mi4uODFkNjlkNDVjMDZjIDEwMDY0NA0K
-PiAtLS0gYS9hcmNoL3Jpc2N2L2tlcm5lbC9waS9NYWtlZmlsZQ0KPiArKysgYi9hcmNoL3Jp
-c2N2L2tlcm5lbC9waS9NYWtlZmlsZQ0KPiBAQCAtMTYsOCArMTYsMTIgQEAgS0JVSUxEX0NG
-TEFHUwk6PSAkKGZpbHRlci1vdXQgJChDQ19GTEFHU19MVE8pLCAkKEtCVUlMRF9DRkxBR1Mp
-KQ0KPiAgIEtCVUlMRF9DRkxBR1MJKz0gLW1jbW9kZWw9bWVkYW55DQo+ICAgDQo+ICAgQ0ZM
-QUdTX2NtZGxpbmVfZWFybHkubyArPSAtRF9fTk9fRk9SVElGWQ0KPiAtQ0ZMQUdTX2xpYi1m
-ZHRfcm8ubyArPSAtRF9fTk9fRk9SVElGWQ0KPiAgIENGTEFHU19mZHRfZWFybHkubyArPSAt
-RF9fTk9fRk9SVElGWQ0KPiArIyBsaWIvc3RyaW5nLmMgYWxyZWFkeSBkZWZpbmVzIF9fTk9f
-Rk9SVElGWQ0KPiArQ0ZMQUdTX2N0eXBlLm8gKz0gLURfX05PX0ZPUlRJRlkNCj4gK0NGTEFH
-U19saWItZmR0Lm8gKz0gLURfX05PX0ZPUlRJRlkNCj4gK0NGTEFHU19saWItZmR0X3JvLm8g
-Kz0gLURfX05PX0ZPUlRJRlkNCj4gK0NGTEFHU19hcmNocmFuZG9tX2Vhcmx5Lm8gKz0gLURf
-X05PX0ZPUlRJRlkNCj4gICANCj4gICAkKG9iaikvJS5waS5vOiBPQkpDT1BZRkxBR1MgOj0g
-LS1wcmVmaXgtc3ltYm9scz1fX3BpXyBcDQo+ICAgCQkJICAgICAgIC0tcmVtb3ZlLXNlY3Rp
-b249Lm5vdGUuZ251LnByb3BlcnR5IFwNCg0KSSB3YXMgaGF2aW5nIHNpbWlsYXIgYm9vdCBp
-c3N1ZXMgd2l0aCBOZXpoYSBEMSBhbmQgdGhpcyBmaXhlcyBpdCBmb3IgbWUgDQphcyB3ZWxs
-LiBUaGFua3MgKGFuZCB0aGFua3MgRW1pbCBmb3IgcG9pbnRpbmcgbWUgdG8gdGhpcyBwYXRj
-aCkhDQoNCkFwcGxpZWQgaW4gbXkgQXJjaCBMaW51eCBSSVNDLVYgcG9ydC4NCg0KLS0gDQpS
-ZWdhcmRzLA0KRmVsaXggWWFuDQoNCg==
+> >=20
+> > >=20
+> > > Up until legit fixes are place distributors can easily disable
+> > > the feature. It would be worse if TCG_TPM2_HMAC did not exist.
+> > >=20
+> > > So I think it is better to focus on doing right things right,
+> > > since the feature itself is useful objectively, and make sure
+> > > that those fixes bring the wanted results.
 
---------------jluT9zCFJUvyVOXjKssCP6HF--
+The right thing would have been to listen to my concerns when this was init=
+ially
+being discussed.  The right thing wasn't enabling TCG_TPM2_HMAC by default.
 
---------------hAHpfw1bwkWTx3Aju9c33paG
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+> >=20
+> > Are you backtracking on having a boot parameter here specifically to
+> > turn on/off
+> > HMAC encryption for IMA?
+>=20
+> I'm not really sure yet but obviously any change goes through review.
+>=20
+> Also fastest route is to send your own RFC's to IMA specific issue.
+> For me it will take some time (post this patch set).
 
------BEGIN PGP SIGNATURE-----
+Done.  The patch applies cleanly with/without the TPM performance improveme=
+nt
+patch set.
+https://lore.kernel.org/linux-integrity/20241015193916.59964-1-zohar@linux.=
+ibm.com/
 
-wsF5BAABCAAjFiEEtZcfLFwQqaCMYAMPeGxj8zDXy5IFAmcOyyYFAwAAAAAACgkQeGxj8zDXy5Jm
-LA/9HWo8UrV4VnyaXDjZFadjKqoXDaMYplFhyoaddcFw84tAw8jX4GrRq91H3xIaSYsaLjFSJ1Tz
-Yp1fGPziHVnaB0w4vQF5lzjRXRPuaLz/sK7YY35DhBCv+zm6ulwSOamYyk8XJm35f05NGv2AVpE5
-1orgubUIj2b4D1vb0B+roYVz9iQ9ukn1mU11NpMMGDWoZTg2zt8k4SOgTUGyvuhcuWalWiLm2z6c
-+IBnE6B/bKSA7NF7yfVFd1m5i5gowDiVpPlyamzNOxTUN2K1U2pkhGSkoqUgL7u7xV46/8c8f4Bn
-ebt5kAuNhHw0DeozSMScp2XydfJx8Krzw856xCCLZECOMXgG1pzaE5ws4Ii2pwuktXV5KqqrE44z
-HXvnClh4cyxHgW73YR+hs+/Nyqa9Da1hi2NH5y66H6UtyXBCp8Rjvf6HdGw31fz6Uy2m7epqP5Sw
-woB8dJWw9JTOosHuvtSJ1jsnYn3snZ6nZn2uqoUAdunXfpkWflmwKdvVr6ms4QJYWEph+BB0yvZg
-SRaNyqRl7eLFcC7VUnQuXcBzr0RBknsTxSSJ8C26ARZTdk/73gDtsu9Y2+i4N+97MxymVuzpXPq9
-eiLP5Si5f2Pu+h2FUHhbvQDA/W9Hu0Gtkc/J3VoK9Ejtzic6LiJL2vKnwkOcLPaT4ZIEHcgLUmAu
-N20=
-=Fjnh
------END PGP SIGNATURE-----
-
---------------hAHpfw1bwkWTx3Aju9c33paG--
+Mimi
 
