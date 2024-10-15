@@ -1,133 +1,109 @@
-Return-Path: <linux-kernel+bounces-365896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-365897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C57799EDAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:33:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F53C99EDAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 15:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446191C20FC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:33:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02DBD281F48
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 13:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363AD14A60D;
-	Tue, 15 Oct 2024 13:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A061B2180;
+	Tue, 15 Oct 2024 13:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="yR6xUNes"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XD8NOGWH"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C3E136E28
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D7412F5B1
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 13:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999197; cv=none; b=YtpR8NY55hhS3WAOucnBbBNH8hIMkJDMkEU3uRkg8sGkdmmHfsDG4JpkTLWgjlZk9DBDORbGr0XjzYdR4IjPcc/V8V555SgYDDM/V6Hq0BA5VgHn2zuQKp4IGEkaP8QaFXk/JnmjNPYLYNhDg5lCLH3wHAoLEi5papS4qqGV/oE=
+	t=1728999198; cv=none; b=sDDdLlxABwMtD7mzrKYSSNbceCA9CRe/53YgkrAnJZV84S6xGhx3+XGeg6fFlKdNcWFYp3ucS9oTskm8WhOkLo9djLSovPpqgUZhxMA6PDlMxzW252/mT9HXVlI0kZtTM6/9lD0fZFCoueDUQcR+SWN6sfXDCW3XfWXVpjk3FZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999197; c=relaxed/simple;
-	bh=UJEXxmod9hwkTENeMk5+2g6dtyvgZ2h1Duc4mV+05xs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hL4eTtwkmtS+XhO5QYh9Iytv7uBP4vgwAqPIsCwBkz11ipAK3Ual+ATriJ7edUDDalbX/0C1vp7TxYqCENNFQZaDAJrTYXFoPmEDtW/CqfweJlYVs8CuryZktg3AnBeVFfjKA1FJEEAX5wtn6cOUdqnaUXlZnfmrvRn1KhFOAD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=yR6xUNes; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so1587515f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:33:15 -0700 (PDT)
+	s=arc-20240116; t=1728999198; c=relaxed/simple;
+	bh=fqVIDi6e3Pi70KY1AuVHU+nl+Y7/64vheBPcEyNObZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G8S0RLd5eTpDf2BOYC/gAQGMRzGVi7OQcO8/GCBULTnMAsnEVKLE6A0iA95DeKI55IJag8Qn6eeCcF10GCxZwZaQaAMlhQ75QzN1TtJUhq59+MiHGzEzPfwaTeI70pVJJNcZ0ZjGLbhx9REQqbLPd6HOtVUIQ0mkOEKJh7DqhlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XD8NOGWH; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb6110c8faso4689081fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 06:33:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1728999194; x=1729603994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QS14/1rLrV66qDBatRYaujSeYfhdUS/QKbwUq4VPEjM=;
-        b=yR6xUNestIQGqBoSQFhtGQjPFxM9n+m00oG5Q59JZY+IvJzy8ovCaEtrdvoui88wTX
-         iTW1SFaPzwv2+izGsC+m+jLcbRbKIzqlooLTGirJn4OFNvV4tdiGZIRETlj7f6GdJzb1
-         fBqv/qKigSKqUGU7leP2VupPKGFskUESTg9rFQ2uafJCi4GuXc66x7zeTeur24uK0ewJ
-         8p2eILLqoH/CIFPFGo1RHzLSg7LUDd1HrNic8JwMZJAf6xyDpZLJNfSqOiXF+foVWC1+
-         Q61+bKkGETiQFmmh50M5gkvCS+JDkJaSZLT5jjcUXHWwxRSSPzBBo9/POyMmIz8boJN3
-         4Lig==
+        d=linaro.org; s=google; t=1728999195; x=1729603995; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8dvw0BVQzEB9X8CFHtRp0QZ8vrqFpv2fHeUKrcBo1TY=;
+        b=XD8NOGWHBjy/qQf+WZlvVRCf3a45wfNnoPpMRd5UO1g8d2XTQXD6gpu8evwuUG9cDM
+         O6l1RVL2pARf1Zq4OlG2adJIwwkI9TNqbKNj+DbiqztqaXras/W3MZEPgbyHt87wQcih
+         qwHMNGMpfxeC2aTfpaXkAWzAr/0IP5yCe595m7KD2ZiCpaMeu8ZjKpyFjJvjbG5BC2fy
+         AOLvWgnMSFAHuotYsnFEKSm+igex/4Z2xNPWRS7vdgEhOurkLetgmsGxX7S2Fqdk32cx
+         GGRzwnTICUq7+80QV68q4o/iKQwvCNaj0mXssLZrbpPcDxBPTpXqPYa0GwPv6SKkWx9T
+         JEAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728999194; x=1729603994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QS14/1rLrV66qDBatRYaujSeYfhdUS/QKbwUq4VPEjM=;
-        b=OT+M4ucBHAmr2mUe5SCWXJSeWogU7O3YHE7WDnv+poWnrp291OoDdr8QkxAhjW0F7x
-         QLSWui8rNINWUt1+d05VmIO3cYyY72kguPOm4FcyCvxXNKmK/I0z27B47puPY3ev4PUP
-         mqiL0+SCg2mhAztQ/pBrHY3BDHeIOnjQmavsTjZ6hnRYy7x6O1qA1vrzr1Kv3cEQ56Eb
-         savrqDSY7r6+USBpPNDN1LqJfI/W2MtuixTINLU6ycMgK8t/wN8UsCVfryo5PDP5Q4Jf
-         pJB+8LqMgfvfcxiNPjNmMbamSR6hH5lvZ/MEXcDpMVWbkkbxEi98lTVaqS+rprtu4yR+
-         btug==
-X-Forwarded-Encrypted: i=1; AJvYcCVd816RJ3zrRGi5Y1SfXQ3DTW8ivWYyVA8ymgpP2C93kkhdJu/38C5VW/uANYj+WXX3n/rmrF2g2Mly8Oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzoso3ZA3bPvn0FR0gSWI5+RCkoeBeeVpY1hEXcRoL1/ersHxvN
-	fZeGxqCjueoD1I3ngkYqGQTSmkVhEW7scL3u16vKddJJQEHfoZ8vzZnxfBWcozZPmozACMYd/8t
-	hyLwAzvrG8rd53c2Jd3XhYJbqlRIRGp2cjwxOiA==
-X-Google-Smtp-Source: AGHT+IGNradBs7hA6tXJ03WnMFyglMyY4jCHENeRjpb48YC3HbpmmRPnxpuAwooOcuGkZlLWRPIWTDx0C/YHIDf8Dy4=
-X-Received: by 2002:adf:f304:0:b0:37d:4fb1:4fab with SMTP id
- ffacd0b85a97d-37d601d21bemr6228186f8f.57.1728999194068; Tue, 15 Oct 2024
- 06:33:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728999195; x=1729603995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8dvw0BVQzEB9X8CFHtRp0QZ8vrqFpv2fHeUKrcBo1TY=;
+        b=qeVbW+oap2BSclkvgeQrVbwT0akW+2Sm1U8K3m+nCDIU49lTuIXyVpWR2ErEXQYO9V
+         IzG8G4UuCc5Xq5/HXlqdfRghHv7qJamMoLIkWy7f5Jv5BIeOwID7ri/Kg2twNoDF1qEc
+         bExeRF6qyreGSfqc1/h0NmG+5IUADyTsjWOtJ8QBCsbzIDz/tY49M8Rep3Tw2Qo1vPbq
+         AjCm2M1cHk/34PUVlbdy7JbRLZWuXyr7UyrW7yOwu21WkD1f6chVJ8oZqgUXH5/aU91o
+         upLp7XrxMmv2DyR3WcRVJtxMOKxZfl1x5kkJdnjeyVqrabjo1lFNCTWUGpFrrVLkBV4Q
+         JMyw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6CWThas6/BgtyrZuzGipsCslQzQqyPp6ONTNy4hXnd1WOnF4SdIAxUTlxl0bedv79/ve/VPAlWJTLKyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxaAHfxJeZ30jLx643o6/xknSGr8vNg8l3GVrRq96LmH/M9Xxi
+	Biz8ITDv12pBWbGr4cJd9ODJeBsNLumYqompkNnY8NvP198SvqTwFf57BhGpL8Q=
+X-Google-Smtp-Source: AGHT+IFK/Bdt+DSfI3J7VfTsOap19LZdteNeX/8IXzgcY2WkwjwnNPkEkYbIBoLD/sv9TK8hsUwKnA==
+X-Received: by 2002:a2e:d01:0:b0:2fb:45cf:5eef with SMTP id 38308e7fff4ca-2fb61bacbf3mr2872721fa.30.1728999194974;
+        Tue, 15 Oct 2024 06:33:14 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb6288f34csm55761fa.126.2024.10.15.06.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 06:33:14 -0700 (PDT)
+Date: Tue, 15 Oct 2024 16:33:11 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rakesh Kota <quic_kotarake@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kamalw@quicinc.com, 
+	quic_jprakash@quicinc.com
+Subject: Re: [PATCH V2] arm64: dts: qcom: qcm6490-idp: Allow UFS regulators
+ load/mode setting
+Message-ID: <fqznmc3airujuxyepg6mv3wbwissvd7xdirr3elrhvwis7qnuw@n2m4e4lrnvvi>
+References: <20241015132049.2037500-1-quic_kotarake@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015112327.341300635@linuxfoundation.org>
-In-Reply-To: <20241015112327.341300635@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Tue, 15 Oct 2024 22:33:02 +0900
-Message-ID: <CAKL4bV7WGcKbkCkfG-J8UtrKt5MM5dObr1c5RoKmm-TxfAVVkQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/211] 6.6.57-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015132049.2037500-1-quic_kotarake@quicinc.com>
 
-Hi Greg
+On Tue, Oct 15, 2024 at 06:50:49PM +0530, Rakesh Kota wrote:
+> The UFS driver expects to be able to set load (and by extension, mode)
+> on its supply regulators. Add the necessary properties to make that
+> possible.
+> 
+> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> ---
+> Changes V2:
+>  - Dropped the removing Min and Max Voltage change as suggusted by the Dmitry
+>  - Link to v1: https://lore.kernel.org/all/20241004080110.4150476-1-quic_kotarake@quicinc.com
+> --- 
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
 
-On Tue, Oct 15, 2024 at 8:26=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.57 release.
-> There are 211 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.57-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-6.6.57-rc2 tested.
-
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
-
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
-
-[    0.000000] Linux version 6.6.57-rc2rv
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
-Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Tue Oct 15 22:09:26 JST 2024
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+-- 
+With best wishes
+Dmitry
 
