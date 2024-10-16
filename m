@@ -1,150 +1,110 @@
-Return-Path: <linux-kernel+bounces-367314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FF29A00C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:33:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A309A00C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31675282B47
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:33:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9161F22399
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60F218BC2C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C61A18BC0B;
 	Wed, 16 Oct 2024 05:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pDGBBC4h"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gwy6j0CK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADFF16C687
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9B64CB5B;
+	Wed, 16 Oct 2024 05:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729056811; cv=none; b=jO7HIvNHHDtKuVGzdNvzc1fURlo+Zp2ueILd0eLW6nv9KtYPUOYi5grTwNXNJGHVB5rSYwjdqb+8QKbe0XJvhkdTMdovGmNf9yQp/KI3PRKRRDZgsfS71WjIx5qgnxbCDTW1D69qRRfMvX/1PICYhuz5SPk5j0Gf1tGH8Hhpj0M=
+	t=1729056810; cv=none; b=i97mFSzcxrfcB6p+CwJaFhiBUsRqit9o1myphPzDlTeBlzRG7K48027QFmET0YvFJjuJdIUrKuv8h6Vux2/zVuE6s272yXeeNb5bDork5DqWOSrSFMlKyIg2m2GSKoi2dDKaPohY6feeg2NKVPl1f31WwAzfPvbweThFWfgUE20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729056811; c=relaxed/simple;
-	bh=a8AHrour6y3gtSVQgfuTGwKhI4oiODFOIV0RsJ1H81I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=n177vJOXHD51gMObkn8V8/PmkrTGSCVYBw0nC+7yVDTFmRbH+vur/44fO7LGOrMEvsTlICvR3xDAejeDg40jFVbxLiHEHr7dSWEiQJcCRMOr99RpffGvlPeg0iPWrVew0unC89pwoL5Zgb889zlT4poKdxfFSUmWWzY7BMO+C28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pDGBBC4h; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3b3f4b2afso107875ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:33:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729056808; x=1729661608; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IE3n7neBCFO0QX3SRz3T65QnhWq2c+d+oC2i4MBN32E=;
-        b=pDGBBC4hEwg1iPsMzi9bQ3+KMqgaINZMNpjYEUFDC3VR82QnxUUZoMvO/8F6zNk1LD
-         e3dcK48akf0KDNzBL4LUsa9kV6eeyWXDUqIeXZQIccgYaqOwLFqg9Ys7jmC6QoSis3Mf
-         d6wbPyWC5OsB5X5D31sx0BZLd0Rc/XMFnY5IjE2QP3c+VcXKXe9rSBK05vy2Qk88BeNd
-         HfzR0FLKzr7pnXFhjLgqTlIA4orch8vOyfmcOvai8k83rVQoIuiFpjqqIoF/UNUoR3OF
-         IGZEzBnbg1v959oHOOEdXrADN+pb23RtW69+KcNQzrlIPA59tLW9gliSRzLTDXdLiX1R
-         k+nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729056808; x=1729661608;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IE3n7neBCFO0QX3SRz3T65QnhWq2c+d+oC2i4MBN32E=;
-        b=OdObxooDcS5Vhl0rRjJryp4P83UZH00vIK3Sb0dO2L2mveUfnpwoOdzQ7idcJx8GUC
-         K747R+BXq73FJP+WQOahhXpj4+TVx6HFDO+GNLLdnKsJxTCenYXbVuvGx5OazC+9OFcu
-         gXlN49iUQwOdhiZrBYyZz6TI8NDaCzkDi2+d/TC6+7XJi4c1wj/IWWa3aVMl5tGYrDZ1
-         7/Od67a7mb93zNWX1xjynXx44mdqg4rgmKHAwzCd5JpH0+ziwRMykajRkAeU2prTt2PZ
-         8Gb1yNANUPaiKjSNpYdOzFxP1AGNDcApaKtEvnp4lnuoOaqf3p2skR5V3x7gxkqvYZen
-         uA7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVaACISJX2EiIZ/m0fgHap84/J404aFpobygKiPjD6TQnYcOsPzjd4CzJl9vEQ49qQgwAPM3jTfAnkVuRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU7n/r8O6phXIpgKDX70nSvfXbUkVDAkvDH9bUDI8JxyR2Ywpo
-	XTpDPV+ax3kMR7jK9qQdL6THKC1YhdTYnFdAEjxeiEI8PQGmfk9DH/nSWtEf9GtkoWvsfIAqbec
-	LRyXGLdbEcGGHjd7AaiiPcAOYqJN8JyVl4HPr
-X-Google-Smtp-Source: AGHT+IHVny0OObU929AfXGoqJehfn3ed3sWMkp/JKdrStFJ+P9YrlgLxFcEP8zDxPHDtQik/xhI9gZNftcG09QqbV38=
-X-Received: by 2002:a92:cd81:0:b0:3a0:a233:caf8 with SMTP id
- e9e14a558f8ab-3a3ddecf747mr2346255ab.26.1729056808205; Tue, 15 Oct 2024
- 22:33:28 -0700 (PDT)
+	s=arc-20240116; t=1729056810; c=relaxed/simple;
+	bh=+e7T4hQZhKNwlhm9rLtAT+cyHx82aCspHPskjYq2sJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFsiH1MfkpIHKhDMmbWiyjnuvnnPqZfKdZIeSMuN/WjrkbSferX4D3KDR0O9yedJVtG8mc4KnvJXpVDLSCbhp77lOU25c/7Jh/ZMV1JbVmq9/+wI5c/LRWLjmM2CSNXSmyygXW3b441eUBDWM43PpTswDeMOIEUoFTitrfOCKZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gwy6j0CK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B4EC4CED2;
+	Wed, 16 Oct 2024 05:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729056810;
+	bh=+e7T4hQZhKNwlhm9rLtAT+cyHx82aCspHPskjYq2sJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gwy6j0CKh6DZ+NbkaOTbvU9/fZ+ZmXpK0UP0hDj5S9jNfgvy6TjmEJyhXSXakHPSi
+	 ODd1XIH83PIjp1EEVxMIM+r8ogP3quUNZNig2byeKzK/wZE6hc2cnHNThNNqarZPdb
+	 Z1j6Xp1fOGt7/RylphZgrL67LNtS2oZxbwqL/cZ4=
+Date: Wed, 16 Oct 2024 07:33:23 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Dominik Karol =?utf-8?Q?Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: dpenkler@gmail.com, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2] staging: gpib: Add TODO file
+Message-ID: <2024101609-getaway-appendage-1f88@gregkh>
+References: <20241015192838.16740-1-dominik.karol.piatkowski@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-2-surenb@google.com>
- <o3jak2i7ohhxi53xlthv7yy3oop62qpfscel36szn4sctg67ip@ctrntnrcauav>
-In-Reply-To: <o3jak2i7ohhxi53xlthv7yy3oop62qpfscel36szn4sctg67ip@ctrntnrcauav>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 15 Oct 2024 22:33:15 -0700
-Message-ID: <CAJuCfpF2Xe4XcvruJe7evZpbYY71W7SVjbXQ_+XgzJvcLtVuuw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] maple_tree: add mas_for_each_rev() helper
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net, 
-	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
-	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
-	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	dave@stgolabs.net, willy@infradead.org, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com, 
-	rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241015192838.16740-1-dominik.karol.piatkowski@protonmail.com>
 
-On Tue, Oct 15, 2024 at 6:48=E2=80=AFPM 'Liam R. Howlett' via kernel-team
-<kernel-team@android.com> wrote:
->
-> * Suren Baghdasaryan <surenb@google.com> [241014 16:36]:
-> > Add mas_for_each_rev() function to iterate maple tree nodes in reverse
-> > order.
-> >
-> > Suggested-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->
-> I am now sure I added a R-B in a reply to this :)
+On Tue, Oct 15, 2024 at 07:28:57PM +0000, Dominik Karol Piątkowski wrote:
+> Add a TODO file stub for the gpib driver.
+> 
+> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
+> ---
+> v2: Remove maintainers from TODO, as they can be found in MAINTAINERS file
+>  drivers/staging/gpib/TODO | 2 ++
+>  1 file changed, 2 insertions(+)
+>  create mode 100644 drivers/staging/gpib/TODO
+> 
+> diff --git a/drivers/staging/gpib/TODO b/drivers/staging/gpib/TODO
+> new file mode 100644
+> index 000000000000..850dc1102e54
+> --- /dev/null
+> +++ b/drivers/staging/gpib/TODO
+> @@ -0,0 +1,2 @@
+> +TODO:
+> +- checkpatch.pl fixes
+> -- 
+> 2.34.1
+> 
+> 
+> 
 
-Sorry, I missed it. Will add in the next version. Thanks!
+Hi,
 
->
-> > ---
-> >  include/linux/maple_tree.h | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-> > index c2c11004085e..e7e2caa1a95a 100644
-> > --- a/include/linux/maple_tree.h
-> > +++ b/include/linux/maple_tree.h
-> > @@ -592,6 +592,20 @@ static __always_inline void mas_reset(struct ma_st=
-ate *mas)
-> >  #define mas_for_each(__mas, __entry, __max) \
-> >       while (((__entry) =3D mas_find((__mas), (__max))) !=3D NULL)
-> >
-> > +/**
-> > + * mas_for_each_rev() - Iterate over a range of the maple tree in reve=
-rse order.
-> > + * @__mas: Maple Tree operation state (maple_state)
-> > + * @__entry: Entry retrieved from the tree
-> > + * @__min: minimum index to retrieve from the tree
-> > + *
-> > + * When returned, mas->index and mas->last will hold the entire range =
-for the
-> > + * entry.
-> > + *
-> > + * Note: may return the zero entry.
-> > + */
-> > +#define mas_for_each_rev(__mas, __entry, __min) \
-> > +     while (((__entry) =3D mas_find_rev((__mas), (__min))) !=3D NULL)
-> > +
-> >  #ifdef CONFIG_DEBUG_MAPLE_TREE
-> >  enum mt_dump_format {
-> >       mt_dump_dec,
-> > --
-> > 2.47.0.rc1.288.g06298d1525-goog
-> >
->
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
