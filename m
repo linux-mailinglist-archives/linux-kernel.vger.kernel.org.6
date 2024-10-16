@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-366986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC5699FD4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:40:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45C299FD51
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B052824FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:40:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E529DB22962
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29BB12B64;
-	Wed, 16 Oct 2024 00:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7208914277;
+	Wed, 16 Oct 2024 00:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NjN+wfnH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMOeOOGO"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195D31078B;
-	Wed, 16 Oct 2024 00:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A863FBA5;
+	Wed, 16 Oct 2024 00:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729039218; cv=none; b=NJpUO3B450xCxEhKUQxSXOfvHFYcyNTl2cfDHgKn6SqAlTtY6QRvxlYPElp9wxmqTvqWjDh2oW51In4ES/Q0IhfuUf66dGRioMnS0C68ZB0gJFOBodBMpSMFI/7Bpxj7nFd5cYcfaqEtNUNF3trh5HQEdiRCI14QJIHSXJeY7/U=
+	t=1729039324; cv=none; b=qsvvWFfjjnPMFji/A5wL3PcasiR6Y7O15JcQUW+bKjKWGeN46t7oBstRZh22LxkbNdwBjlKXP4XgmduSiqcKCjkLuDzkQTJyMgYXDqow9cy78vknxN9UT283G3Cl63guGXlWNS/4SVJIih8Qt5V2l1gPaelRidgUpWxaewoCAq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729039218; c=relaxed/simple;
-	bh=GLVruwFWVTz0wRTmofVnvzSyIYOMa12IIPY2nPPvGd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eDXZQi00h4Nax07uXJqsyPbz4VveljwX9kPxTJkAgF2RTzzmhZjaG3NKYgg+s5hSKAh2ifz5CcQ7BWOHHK1ytk1bEk9eqxDOsbmhvS+J7xXUTcy0YxrMxCC4cIYVMbIS2v9YiXVDal20auV/owcbL9gv9HxaZ1YJ9lwDaqTT/zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NjN+wfnH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729039213;
-	bh=m3SSqPNg5cdqB/jyc2ZUh+Kf6hcOrHPzq39ybdyldqo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NjN+wfnHB/pO56FfiLN9Dvx5Jkk8Qtkbj8btGPmLoYzz5h8+0KzxHocXufbfAjah9
-	 EYYoTEPkyIRksnUEr0nP2AqiQPsVe16pCp4j7v6ZHYzhzyls4xwSvpTMcpX9PEEFug
-	 myneeY7I7pEfeo2MS9g0JTjZyCjI9HwAsKqt6/387W2tUKjND+ohqcYUf67UBlppmY
-	 jkusQpRWsvY+qeMIKN1wqznmic1dOJ0al3vFpR+iroGhBw2YnTHdwL8hYD5iX+rEq0
-	 EjFep4TyXTUYbpC9aBXYIPTnI9JpwgcO2Z5xUlCVsM1xqO2iR3FFPPfoTNer4c32Zj
-	 ewI67x11sZvfw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XSsZ51VTPz4wcy;
-	Wed, 16 Oct 2024 11:40:13 +1100 (AEDT)
-Date: Wed, 16 Oct 2024 11:40:13 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the v4l-dvb tree
-Message-ID: <20241016114013.37522900@canb.auug.org.au>
+	s=arc-20240116; t=1729039324; c=relaxed/simple;
+	bh=Q6S8x1mbaUJvn/eaxv2yTmQR+pRUTTVEiCmTemYZaTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VzhMe89Eh+7pgVG0pdsMVCh3Ixbd9D2tJdrcnd9ivprQT38v91rtjeR+XpRrC8ROO/R+r2VvA9jNSAUXshMRpDe4S9Dk2oBWPVXpXi2yJDcMPHkmayLcZ67a5u+FDkIjfoYHkPRpxgWvAodv5KEaQ1DDy9L50eNJnkRpTHDoeqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMOeOOGO; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4314b316495so6199975e9.2;
+        Tue, 15 Oct 2024 17:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729039321; x=1729644121; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GvcX0gGeep0GUuFVn3JiQ4Xt9Q6qGunv1EzUF9AFO/8=;
+        b=kMOeOOGOkIaIpkgte7VZZgiasmbZaX/VgnzJJboIA2ZOKIf1bOlUOjPvnGEX02sCqW
+         q6mahJUyDn2EUBdjbIxRG3xke6nEB5G6rh0JKpE1LffeMQCLyAohkniXsMMZeFEb9hxD
+         bN3F0c8h18T0HnW4c1oCdjEjkIgvplJFWuaqd0WgE51Q4iB/nFc69Us6T+TTY4s/432n
+         2jpO6Gqs2eUMYOJ8/oluP++8IKEpBuVV44nhirIUmQQ4gXpgUOGWDoImkIJwcfWO0dEL
+         /Pn3BHLbaPHG5iPyuPOCXfcD3+tXxzObzHPd9JYbF3VFdTetpa/I6IJUZtfjR2q9qNpQ
+         N3CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729039321; x=1729644121;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GvcX0gGeep0GUuFVn3JiQ4Xt9Q6qGunv1EzUF9AFO/8=;
+        b=Glg2xoYxO1VSHrUpQkZb9B0d3Re7IiTnpexpKLFFdTrLL2XsecAuIipcZOrT55STfM
+         y8P8ys8GjXirz/r6rNuAcWQynHeqEznK7Zfgr+ItTrzdGQFHeACuW7kiuqcC4Z8hULgV
+         riXU/P4Bvwf8/iJ7/OC9vLEpz30ub4hgJNHAGkhUyf3swJxmmLJsCDGmURV+lih/6OPU
+         UvY3wVFLrTHCRONplKHwpKXaUwWKLEkypDyS/eCYcg3Nll3lD0o6ZFmNbwlJUGEKcIPU
+         T3eKb0cMvuEacYgmZkCqV9vMQXGpusIPxXKK8MaNHQYGHjY+mVd7Q5wQUHjaewJoUtT9
+         cQ+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUZn4cHqMge4FprHugxw8Rd8vuTj8BJt/c93SdIYYDij0WTtKoc/FelRD+1q6ee92ZoyUJTRSFCsZbi@vger.kernel.org, AJvYcCWNpTxIzO+iQZ9hYl9RvwDMfz9ufn3W2Zdpt5hq7BoXjA4HmqoZ6b1WXG+bPoqUqwefVgNgso82u0nJOYE6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp/Jt6rL28cACDml6wgQmzONRaJLKQQnSajZBoFmT3fg++Hbn/
+	KTZGPPSFxYycA0EFa3WJm0JHPX6afqit0A1zdSFEeLalfsBX2ZxZeBNB8Kkr5kF4g4xNoxmNXV5
+	bO02g7xeXi8Y60/SMF8Si7b4FosQ=
+X-Google-Smtp-Source: AGHT+IErA0JGeWcAknCGVEPwXfu/nx8v5bP7gX5Pgx/kAAKv1urxza1nggwKBv/4ZtWjALceGSIICkf/jqP9FPFZMvo=
+X-Received: by 2002:a05:600c:1c9e:b0:430:57f2:bae5 with SMTP id
+ 5b1f17b1804b1-4311df42aa5mr122976905e9.27.1729039321310; Tue, 15 Oct 2024
+ 17:42:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vwuH3yolwJUuz/z/08lPuld";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20241015192905.28969-1-cenk.uluisik@googlemail.com> <20241015192905.28969-2-cenk.uluisik@googlemail.com>
+In-Reply-To: <20241015192905.28969-2-cenk.uluisik@googlemail.com>
+From: Jimmy Hon <honyuenkwun@gmail.com>
+Date: Tue, 15 Oct 2024 19:41:49 -0500
+Message-ID: <CALWfF7K5vGL6GPMWdi0_kwXPabKv70LSoGwK-QxL+Br+PDowqw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] arm64: dts: rockchip: Add rk3588-orangepi-5b
+ device tree and refactor
+To: Cenk Uluisik <cenk.uluisik@googlemail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Chris Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>, Andy Yan <andyshrk@163.com>, 
+	Tim Lunn <tim@feathertop.org>, Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>, 
+	Michael Riesch <michael.riesch@wolfvision.net>, Jing Luo <jing@jing.rocks>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/vwuH3yolwJUuz/z/08lPuld
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +
+> +/dts-v1/;
+> +
+> +#include "rk3588s-orangepi-5.dtsi"
+> +
+> +/ {
+> +       model = "Xunlong Orange Pi 5";
+> +       compatible = "xunlong,orangepi-5", "rockchip,rk3588s";
+> +
+> +       vcc3v3_pcie20: vcc3v3-pcie20-regulator {
+> +               compatible = "regulator-fixed";
+> +               enable-active-high;
+> +               gpios = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
+> +               regulator-name = "vcc3v3_pcie20";
+> +               regulator-boot-on;
+> +               regulator-min-microvolt = <1800000>;
+> +               regulator-max-microvolt = <1800000>;
+> +               startup-delay-us = <50000>;
+> +               vin-supply = <&vcc5v0_sys>;
+> +       };
+> +};
+> +
+> +&pcie2x1l2 {
+> +       reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
+> +       vpcie3v3-supply = <&vcc3v3_pcie20>;
+> +       status = "okay";
+> +};
+> +
+> +&sfc {
+> +       status = "okay";
+> +};
 
-Hi all,
+Regression tested on the original Orange Pi 5. Still works after the refactor.
+The microsd card is accessible from /dev/mmcblk1 just like the
+vendor's 6.1 kernel.
+NVMe works
+SFC works
 
-The following commit is also in the mm tree as a different commit (but
-the same patch):
-
-  c5120f3b20a1 ("MAINTAINERS: mailmap: update Alexey Klimov's email address=
-")
-
-This is commit
-
-  d6f369d3d989 ("MAINTAINERS: mailmap: update Alexey Klimov's email address=
-")
-
-in the mm-unstable branch of the mm tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vwuH3yolwJUuz/z/08lPuld
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcPC20ACgkQAVBC80lX
-0GyvOAf+Nn5ihH4EYZs/ShV5VmE6QRO9OmNnQe3YyQnY+J+usuoFsGvJyvgfE6O1
-dYX/ntwtDjVAZqlXNC76dA/qzA8pj0DB2qqPa0tshv4hrwwoVZnvYGtPTvZiwuMz
-lAwX0N21l42eYIeE01u7GNA5jl0P2o7olaWU132GNLOj41m66kvwyAyykgqV4U3z
-7/V0e2FOjbPD4akenMy6AY7hK47zbpRMW0C2PJiGaa8WW4fr6DJ3P+YgoVy4NTGR
-qFAvi63qJEHQMgdPkiEZUSP6YB91Xx1Nsn5OD/H6ZfpLp3U+bMiiZ2ZBiNTJ59R4
-zPC8geKs7koHZOiDlVvFEn6TFJ8E+g==
-=kgbl
------END PGP SIGNATURE-----
-
---Sig_/vwuH3yolwJUuz/z/08lPuld--
+Tested-by: Jimmy Hon <honyuenkwun@gmail.com>
 
