@@ -1,179 +1,173 @@
-Return-Path: <linux-kernel+bounces-367821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593349A073C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:27:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B689A070D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6FF41F22171
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:27:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7CFCB26970
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77F22071FC;
-	Wed, 16 Oct 2024 10:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F88206978;
+	Wed, 16 Oct 2024 10:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="K7iyw+QR"
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsWYHOvh"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579DB20695C;
-	Wed, 16 Oct 2024 10:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.143.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1778220605A;
+	Wed, 16 Oct 2024 10:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074230; cv=none; b=FgFdekQIE5RuCJ7ca4v99SiypkHkYHjFWCzA3qEQW/yKuOH9QT9fV2w5CUXYcWCpYWtT6rJmux7B+WFQrtSsMHysAwHx7OcI6ejKwy48M6qFehdLqSDOf1vlBCd5rkEqo/GCt+GBFl3deX9vcWFRSb/v0GTjP3X5uSzBKDRS9r0=
+	t=1729074139; cv=none; b=XwdwGlvg/wGd0A3BMGwp/fcM7W3rdp7YExomBBDO0r1P3CtYoAuK4s6sezt05W7qXrP77AtOlmrw9Oap9ZuXci7TjL8yJxye4eS+4Mvyf274of3fyk1zxN7R7YRYf673gSh5sVDpGKb8UuH209sRB6HHQM4gigizCEOWO009q5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074230; c=relaxed/simple;
-	bh=0aDmPs+anhfc37txHXDwfhfw7YbIofDuRGpzjKfcZG8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A0dzGr5CCeY65yMFtLmHiIi0eTZr8K3TLSiQN94OUpLgXACIgNTRmWU4LpZjSoABWl7C2qcEIMAgwYt3KSZ8iobcK4G3BKo1kIZ/tZ2auhc3gkO6B+uynTwcySVg9qBzRDe0me4pLYLxD3wcYmsFj8o1dIhgL0jxeihzvj9XUfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=K7iyw+QR; arc=none smtp.client-ip=68.232.143.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1729074228; x=1760610228;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0aDmPs+anhfc37txHXDwfhfw7YbIofDuRGpzjKfcZG8=;
-  b=K7iyw+QRly/WrCpcfIs3Lps7JZbdTu6j/F3DZuVKuJ+RXWHI/PkmhJwW
-   witDdOG2wpL0BfqAFkzIqXAttOAJxHvz/OGqQoEil7x4vjqX7oCzUlf6q
-   9QSDwYX14aW/KW9gy9g29hb5cjYjO1q98BaEkchm4Z/6bg6f4QnpB/ATK
-   +qpxHYG418e2I4IlO1X64I76kSJ1I3TLVEo6DUE8cGwYTauwCsdUHMJMf
-   As19dsQ6pJ/np+qxxnK1st6GSwxPndu1rsI5SteYobQ4jTmCWcBXSyOva
-   ndC54zD1PrydraDFwec7MaSiTb0m/FUoU9XShH1W5GRB6+ewJENUe7D9z
-   g==;
-X-CSE-ConnectionGUID: 9sCI9hpdTQWNadyIbNomKg==
-X-CSE-MsgGUID: eoleS7WdRziscVSoi3rftw==
-X-IronPort-AV: E=Sophos;i="6.11,207,1725292800"; 
-   d="scan'208";a="29536136"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Oct 2024 18:23:47 +0800
-IronPort-SDR: 670f8724_4EuPppubrDNw3KN3pw/MKWsiJNSBv4pcvtLIY3jA59vwfxp
- pAO/KmOhdMZ4fMosybJcDAjV30WRB4t75iDPSqg==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Oct 2024 02:28:05 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Oct 2024 03:23:47 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1729074139; c=relaxed/simple;
+	bh=QKT/WXdyszfDZAuBiFpIgRfqqgYlxDV3xAF2UERO4b8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bNU7His/4o38Qe8M/zDL1fjeiIAurFpNtQ5/I24C+bDUTExZW82q6ECU4WynZ7ZqZFrnVVX9VZzGzqZ6h/bqsjKK2mHgNtE/rpZcTrmBS/RrEGN4Q5b80GaqCK6X/mo1VzESjpZ760mgzlB0rE+52mk49jU0G9hw/8dQLirY97Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MsWYHOvh; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c805a0753so52243865ad.0;
+        Wed, 16 Oct 2024 03:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729074137; x=1729678937; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7hVbtChpMQWzTvbStouuEBhs655kBL7SbqySCr+6uXg=;
+        b=MsWYHOvhVM7L24ZaECYP8VUFz0mrwcxdbuBMKPvYJ4VEEJoVwhvrRElmVp0DkoJ0wx
+         tzJatAYyZn4sl2Tscjglu6ZdBAxZVu2hXfrAuCzR8MBUwaPWF4GBBtkAz3mCb20P3PNp
+         lHJF6M12pg7+EjpPJb5Q45xJLy6nrcpdxYSzDaQ45KaoKCTwTiDP+UzK50kA+bx7fhqy
+         uGQnliv3uz+7rrxFM0eaw2srO2cJ7rnJqQ+x2DTdY0T4TVGOqdueksZRYG/GWXn961HG
+         NSQH3JdB/Y+B4QXFvoU4sdnsV/T35lfcO6KYLUmvB3adyk6zIALtg42Qz/ckixFFNldc
+         M1QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729074137; x=1729678937;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7hVbtChpMQWzTvbStouuEBhs655kBL7SbqySCr+6uXg=;
+        b=EuHVajG/kwRDyqZ9eXXOVA8h6+PRWGWqg2e39UYMsnBpRqIzWjhuyK7FXBy87vAWc6
+         Cw8qvHE05obJxQY+CWGAbn5ScKhBPVxSQzbM+uVO/Offn5MUlBVgI5mjh23WeIRVYZ0B
+         V5gpuase5wH5g0NekCPvT5NXcoP85pcGHYRGYEW8CpOze615xatckXf2rQRSDDwpCWuI
+         ux8pJWu2vHzvg5p/jjPItXVXrYVYQOUvhgGfT93oj+jiE3KK5gHuMyJGHEtQMWfwuzjJ
+         +iD4nWV4qqik4tFUyQKKTrNh5km05haA78AtyP3NjNEyvCxHMz8p/ZtClavQMbz5BdVb
+         8OlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyAENaHIx3lK8NQqICzb9rXy6mfeLGOp7Hagx7io6dken7BQj0z3R4OqJxwdsygZVIMN5ZL364B/Wz+Abw@vger.kernel.org, AJvYcCVPUq61+K+Ag7vsRxz3y5Y3lm0PGbnc0gFJ0lRGtFijjz6ZVLNPZtUCDPsxvTvO8FAztsg6DtFel1AA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyri5Xugu81SB6wcCYir8qQUondMq4M/Kvt1T2vcqQEdP3+tCxj
+	LJ/CJ8l+JhMMOWca/cZvKeY3RFHpY7aHj8yv6Q7kLf+Rbmn0d3uP
+X-Google-Smtp-Source: AGHT+IGwbEg2OVpmhjJFB/PceC4hTOBxNneYztJDXoHfuTwJ9C1n3PKfJvERipSCSvzynbZY4SvWmQ==
+X-Received: by 2002:a17:903:22cb:b0:20c:ccb7:df84 with SMTP id d9443c01a7336-20d27f0cf28mr42417215ad.42.1729074137311;
+        Wed, 16 Oct 2024 03:22:17 -0700 (PDT)
+Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c715fa0sm2976588a12.78.2024.10.16.03.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 03:22:16 -0700 (PDT)
+Date: Wed, 16 Oct 2024 18:22:12 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH RESEND v2] scsi: ufs: Use wait-for-reg in HCE init
-Date: Wed, 16 Oct 2024 13:21:41 +0300
-Message-Id: <20241016102141.441382-1-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 6/6] gpiolib: notify user-space about in-kernel line
+ state changes
+Message-ID: <20241016102212.GA236073@rigel>
+References: <20241015-gpio-notify-in-kernel-events-v3-0-9edf05802271@linaro.org>
+ <20241015-gpio-notify-in-kernel-events-v3-6-9edf05802271@linaro.org>
+ <20241016051944.GA42100@rigel>
+ <20241016072730.GA120095@rigel>
+ <20241016083747.GB120095@rigel>
+ <CAMRc=McR_eMizF6r30NqbgK4mE5ErzR=wbkD4O-Czn=+Oj4AXQ@mail.gmail.com>
+ <20241016091714.GA207325@rigel>
+ <CAMRc=MdoeyXwKuLmrmJ8zRCtVDNzEd34zgZ5Autye0TNv_OLhg@mail.gmail.com>
+ <20241016094311.GA210746@rigel>
+ <CAMRc=Mefz=EBd6us-eK8kqk8zL0=LsEWUkP3JB7a0M7xcT8z8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mefz=EBd6us-eK8kqk8zL0=LsEWUkP3JB7a0M7xcT8z8Q@mail.gmail.com>
 
-The current so called "inner loop" in ufshcd_hba_execute_hce() is open
-coding ufshcd_wait_for_register. Replace it by ufshcd_wait_for_register.
-This is a code simplification - no functional change.
+On Wed, Oct 16, 2024 at 12:12:10PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Oct 16, 2024 at 11:43 AM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > On Wed, Oct 16, 2024 at 11:22:07AM +0200, Bartosz Golaszewski wrote:
+> > > On Wed, Oct 16, 2024 at 11:17 AM Kent Gibson <warthog618@gmail.com> wrote:
+> > > >
+> > > > > >
+> > > > >
+> > > > > You mean, you get a CHANGED_CONFIG event but the debounce value is not
+> > > > > in the associated line info?
+> > > > >
+> > > >
+> > > > Correct.
+> > > >
+> > >
+> > > Ok, let me see.
+> > >
+> >
+> > When setting from userspace the issue is that linereq_set_config() setting the
+> > direction will emit, quite possibly before the debounce has been set.  The
+> > edge_detector_setup() that does set it can also emit, though only if the
+> > hardware supports debounce.  And then there could be a race between the
+> > notifier being called and the period being set in the supinfo.
+> > (the set will probably win that one)
+> >
+> > Debounce set from the kernel side is going to be an issue as cdev
+> > catches and stores the value from userspace to report in the supinfo - that
+> > isn't the case for kernel calls to gpiod_set_config().
+> >
+> > Seems moving the debounce value out of the desc and into cdev, which seemed a
+> > good idea at the time, might come back and bite now if it is no longer
+> > restricted to being cdev specific.  Now there is an actual reason to
+> > store it in the desc :(.
+> >
+>
+> I'm seeing commit:
+>
+> commit 9344e34e7992fec95ce6210d95ac01437dd327ab
+> Author: Kent Gibson <warthog618@gmail.com>
+> Date:   Tue Dec 19 08:41:54 2023 +0800
+>
+>     gpiolib: cdev: relocate debounce_period_us from struct gpio_desc
+>
+>     Store the debounce period for a requested line locally, rather than in
+>     the debounce_period_us field in the gpiolib struct gpio_desc.
+>
+>     Add a global tree of lines containing supplemental line information
+>     to make the debounce period available to be reported by the
+>     GPIO_V2_GET_LINEINFO_IOCTL and the line change notifier.
+>
+>     Signed-off-by: Kent Gibson <warthog618@gmail.com>
+>     Reviewed-by: Andy Shevchenko <andy@kernel.org>
+>     Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> But it doesn't explain *why* we did this and I don't remember the
+> story behind this change.
+>
+> How bad would it be to go back to storing the debounce setting in the
+> descriptor?
+>
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
+At the time it was only being used in cdev, and moving it into cdev was
+just about not exporting cdev specific stuff to the rest of the kernel.
+So it was just tidying up.
+But if cdev is now reporting the configuration of the line independent
+of whether it was set from userspace or the kernel then it actually
+makes more sense for that state to be stored in the desc.
 
----
-Changes in v2:
- - Elaborate the commit log (Bart)
- - Change a while-loop into a for-loop (Bart)
----
- drivers/ufs/core/ufshcd.c | 67 ++++++++++++++++++---------------------
- 1 file changed, 30 insertions(+), 37 deletions(-)
+I don't have any objections to that commit being reverted.
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 9e6d008f4ea4..146915f92a85 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -4818,51 +4818,44 @@ EXPORT_SYMBOL_GPL(ufshcd_hba_stop);
-  */
- static int ufshcd_hba_execute_hce(struct ufs_hba *hba)
- {
--	int retry_outer = 3;
--	int retry_inner;
-+	int retry;
- 
--start:
--	if (ufshcd_is_hba_active(hba))
--		/* change controller state to "reset state" */
--		ufshcd_hba_stop(hba);
-+	for (retry = 3; retry > 0; retry--) {
-+		if (ufshcd_is_hba_active(hba))
-+			/* change controller state to "reset state" */
-+			ufshcd_hba_stop(hba);
- 
--	/* UniPro link is disabled at this point */
--	ufshcd_set_link_off(hba);
-+		/* UniPro link is disabled at this point */
-+		ufshcd_set_link_off(hba);
- 
--	ufshcd_vops_hce_enable_notify(hba, PRE_CHANGE);
-+		ufshcd_vops_hce_enable_notify(hba, PRE_CHANGE);
- 
--	/* start controller initialization sequence */
--	ufshcd_hba_start(hba);
-+		/* start controller initialization sequence */
-+		ufshcd_hba_start(hba);
- 
--	/*
--	 * To initialize a UFS host controller HCE bit must be set to 1.
--	 * During initialization the HCE bit value changes from 1->0->1.
--	 * When the host controller completes initialization sequence
--	 * it sets the value of HCE bit to 1. The same HCE bit is read back
--	 * to check if the controller has completed initialization sequence.
--	 * So without this delay the value HCE = 1, set in the previous
--	 * instruction might be read back.
--	 * This delay can be changed based on the controller.
--	 */
--	ufshcd_delay_us(hba->vps->hba_enable_delay_us, 100);
-+		/*
-+		 * To initialize a UFS host controller HCE bit must be set to 1.
-+		 * During initialization the HCE bit value changes from 1->0->1.
-+		 * When the host controller completes initialization sequence
-+		 * it sets the value of HCE bit to 1. The same HCE bit is read back
-+		 * to check if the controller has completed initialization sequence.
-+		 * So without this delay the value HCE = 1, set in the previous
-+		 * instruction might be read back.
-+		 * This delay can be changed based on the controller.
-+		 */
-+		ufshcd_delay_us(hba->vps->hba_enable_delay_us, 100);
- 
--	/* wait for the host controller to complete initialization */
--	retry_inner = 50;
--	while (!ufshcd_is_hba_active(hba)) {
--		if (retry_inner) {
--			retry_inner--;
--		} else {
--			dev_err(hba->dev,
--				"Controller enable failed\n");
--			if (retry_outer) {
--				retry_outer--;
--				goto start;
--			}
--			return -EIO;
--		}
--		usleep_range(1000, 1100);
-+		/* wait for the host controller to complete initialization */
-+		if (!ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE, CONTROLLER_ENABLE,
-+					      CONTROLLER_ENABLE, 1000, 50))
-+			break;
-+
-+		dev_err(hba->dev, "Enabling the controller failed\n");
- 	}
- 
-+	if (!retry)
-+		return -EIO;
-+
- 	/* enable UIC related interrupts */
- 	ufshcd_enable_intr(hba, UFSHCD_UIC_MASK);
- 
--- 
-2.25.1
+Cheers,
+Kent.
+
 
 
