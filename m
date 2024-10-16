@@ -1,220 +1,285 @@
-Return-Path: <linux-kernel+bounces-368600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE8C9A120E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:55:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0CF9A1213
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFE60B24F1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:55:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 536FCB24874
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C004121643D;
-	Wed, 16 Oct 2024 18:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054F718DF97;
+	Wed, 16 Oct 2024 18:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tcqi7kj7"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IrnCM0C4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF33212F1E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729104880; cv=none; b=LvxyEW1AdEFf8SRaxpBcYp+amAhj9AvaO+FOcd9u/HxlH8gbJZCu2xTyuRv3j3df/mC+HFv9O70WS0kxA3o0DqzBa4sO/dC6WmGfFb6c5A3amKK2oiS3FJRjMIqmxEzwbM1wjetczZUXA6uDVsIYAJNWChZZpWsahmLfRWwnreI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729104880; c=relaxed/simple;
-	bh=acJ3ioyp/DOU7wsOKFr+uLibyRAqoHdzwcK6UIKLnAw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kCtbgrcdqexMf+Pl2iXxK1xQtLQDl0PyK0iIWj4QdYGd3dsF+PIGLkNO6qfnVE61X6exPydeyX1MYHOyYgmRfQTLVfA1eAIrBluq77Afwh5VhfsO+jl3MU0mmyqfPFcKOxEDa82oXaf2cHBmIJqYEFlMK2rdYB8rLGHPgBwveEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tcqi7kj7; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e36cfed818so3606107b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729104876; x=1729709676; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J0/8QZoT17A3EROr47LCPpO2aoyicep5UUu5G7/3+TQ=;
-        b=tcqi7kj7TPjaTo8Ei3D9Qqi1tdMJhKVBZSv9UMfIUMU2WNkaQfKzA2OeaUL/d72Syw
-         /uKhlmJQ4yjfzFAkl0+aSMl/b0vhl0v4NxO21PC+qlakUHjDMuLy7FK7t4dF1G/0cndd
-         Qj8z1H7DIE8en5YWBBELQoRSP3eE+WFROmrL1alX09fcj9hjtCyBKokEm1Q0BJCdnvL5
-         zifGGnHIAQ4k7acAP1tcUAqucyRkksInLPt+Fn3rVH3stVRP/u4uAxXTFZGgYU3fOiAG
-         85mxNly6Ymy273vBlKfuu4X0oSwHKamK2Eg/y1yLXS5+ljhukn0wwBZctzhp1a7B1unI
-         MZog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729104876; x=1729709676;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J0/8QZoT17A3EROr47LCPpO2aoyicep5UUu5G7/3+TQ=;
-        b=Ks/DX1ChsenCEedq26WXApChAI0qTNmzbgyTgKBsfLrJUjE5/pEf6EWVPZy1P6IY5a
-         0AsWtSbTPbJbmBYdBHa8iwaYEBQFLKBtB0zH8Oq72p+xp+SFfewuHvs00YobG11e+vEn
-         Qly6LDp3TQwzAUvbN6dOvLup/aZiUuXWU1QJy1pHc8nxt8VS6qTFU8ebyclTCgB1W2n9
-         aGLlMgrGT9aSUCTCz6/CLkfnbryVvJh5AmInZdyb0gY+HL0a5LAhg/UHDbnpsF+rtotx
-         epxbv2WdksYR3ZH7PjwL++a6bAsi0UCllPD0K/1KKRA++RuWRS1IBmnFMR0w19O3sn40
-         suRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1vtEbuwivLe6qp9xc1YAbCavAjZ8relVbV9hwdHfUiZwGz1DvHBr3gcMfzoYuDc2ClEWSTO78szg+y0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM9tR/hHTNIx/QciKwZQPWguqypIlAJN9ysl5gFnx1/qjakqV6
-	9jgXqQMif/IIJScVCPiaBUmozWlR9G05tR2AHDyW6OyU8h42+9Wxup9PnW52tTIXK1HOOxIEKb/
-	PpA==
-X-Google-Smtp-Source: AGHT+IGs9SUMgB5/fvEZ+YcbF2zWPEo1ZtZhn/bKOtUhnEycWjUvwWralHKNqXT9eNkXrZYNERhQOnYQAU8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:4447:b0:6e3:189a:ad65 with SMTP id
- 00721157ae682-6e3d41c8134mr875717b3.5.1729104876083; Wed, 16 Oct 2024
- 11:54:36 -0700 (PDT)
-Date: Wed, 16 Oct 2024 11:54:34 -0700
-In-Reply-To: <ZwezvcaZJOg7A9el@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AF318C33E;
+	Wed, 16 Oct 2024 18:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729104952; cv=fail; b=iUPHLFWGKAOKa64JPudc0z1idojIuJiXubUY0vgXP3XgIc7TNrxdU5BMmIWMYUv65Tw3F29TnZ+wGdkw1DnlO3gzWWn17q1DJiT7hBSrq86TK+FzvVWWceIHiulfSpEFV02i6i+B8A++3zUSnYtkNAFtERpLORVRl3ZoyIA0OJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729104952; c=relaxed/simple;
+	bh=/lV4oNK2Jo4cmDejR/BOM+TuL5wLinkZ5RKTKPBtNso=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jQxzN3IDL4R/INOtkkEsjEmEXHRnljuNaGJA29RdEyL35th16mH5Q2zpvYK+5eOj2paZjhjFlrW46tptUivjSxJECdfeT9zxw/aUwpaENzCtVqF1kGDzXBgXCj9jtNww8UzlCzPn10/2v9jXQvGeIed4kdtUnti31ojmMRnGg5E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IrnCM0C4; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729104950; x=1760640950;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=/lV4oNK2Jo4cmDejR/BOM+TuL5wLinkZ5RKTKPBtNso=;
+  b=IrnCM0C429C44uttLsLmAa+oOt5yS9yRYipwA6OEofLXhb2R0f8hProy
+   ws66ShL6u6/VOdc0ISlt+XOCW6Pq9kcFQkUV0REasOleSyS8PsX85W2F1
+   mF5gYfH9Z3Ji9XpTJpA7/0jwYDXhIRB1bkEmWjzLYhvjWh5eyzJj3nEiG
+   +mURqFrq83jBj/1RIj4RSHpElDdSmMcD14pbMbOVszXM2M7ZafphY4VVO
+   FsAPRG2O7nF6CPt2qI9NN0A5eTWeAhJTS5eZwSDCqrX0ZUrGCytvzlw6I
+   O865BcGeJlaYeEPxfXeyJ979mnJLHujvsUCaxVkWK0+JnImoonWQZk642
+   Q==;
+X-CSE-ConnectionGUID: DmKycJZTRVmfyCiADgVB1w==
+X-CSE-MsgGUID: 8D3cmtvjSZGqCZCxuVd0ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39690479"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="39690479"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 11:55:48 -0700
+X-CSE-ConnectionGUID: OFEs5zksTdSBepVUd+8jlw==
+X-CSE-MsgGUID: M0ZeVUgpS/GjzLG8QVK27A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="82852975"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Oct 2024 11:55:46 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 16 Oct 2024 11:55:45 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 16 Oct 2024 11:55:44 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 16 Oct 2024 11:55:44 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.173)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 16 Oct 2024 11:55:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xQ0kzK//EmaYXkQVNIX4t8J8tZzOvQWLOLE9Oc9c2TXY+w19kHHGSM9NJLelFSQiLHkNovuNrp5ohVm+g3ZetY/hX1JnwaLazAWsAVnSTvbHdgB/nOpLzYznI3enO/veNeNioE1wW4A7RrX5xKrgKdTLLYzYvO3RzdpYHNkAYXwquYF4vAfJC4L0l3Svew7Ji912hhxCu5YtuL26sRlj/ErJ0GeWZnhxS7ZhgErTaf8pGnju175fOeQVW1oEFRjTcooKxMhRt10nrFDrQn+QpKBmkhiRVCfs7wajqtTcB0PBiGCPeWq+2X1upnW2d7OplNHnfIVVWR12vEewaUDGIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qd+WUv8JoEogBcG+jYRRD+QysL248Bz2wt1SX8faPFQ=;
+ b=kLzGNmxdWumA14t07GI2BdPohBLSMUtJQPltT9NIdzQjyQoe8Y88kbxHkwmZpNMPOv38jSN0wEQ0KWZ+CWJt3UcB6mE6TF8Zyla2vIkWisUGTxMUJryCD4Gr6PdCBcuOz16YQr+Eo+iaMsubbNvMYW9KqNm6IahdbTX7jIeNztKeMXkptszvMvOEb0irFvGMSiH0Ro86iRGN9WSvfk+f1T9/OMSc4AbpDweeDd7CO7/wIJlFQFgkHYwDSJpn6hndaKfoc2lXngltuIYe3OnalXZhSuGGET88HRro0bbGhf6DSvQVoBFeEreAODayhlaKz+77lPSioYAItot0CrVFsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by MN2PR11MB4648.namprd11.prod.outlook.com (2603:10b6:208:26f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
+ 2024 18:55:40 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
+ 18:55:40 +0000
+Message-ID: <00ae6b0e-29a2-4240-93af-c460ce4de66a@intel.com>
+Date: Wed, 16 Oct 2024 11:55:36 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 09/25] x86/resctrl: Add __init attribute to
+ dom_data_init()
+To: <babu.moger@amd.com>, <corbet@lwn.net>, <fenghua.yu@intel.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
+	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
+	<yanjiewtw@gmail.com>, <kim.phillips@amd.com>, <lukas.bulwahn@gmail.com>,
+	<seanjc@google.com>, <jmattson@google.com>, <leitao@debian.org>,
+	<jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
+	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
+	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
+	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
+	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
+	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<eranian@google.com>, <james.morse@arm.com>
+References: <cover.1728495588.git.babu.moger@amd.com>
+ <03077cf67cea1b3ebb00495fd40d1535db27ff8c.1728495588.git.babu.moger@amd.com>
+ <b19af235-7ad5-4897-8082-1eabfee849e8@intel.com>
+ <7749600f-f281-4cb8-b909-382a69dac56b@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <7749600f-f281-4cb8-b909-382a69dac56b@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR02CA0026.namprd02.prod.outlook.com
+ (2603:10b6:303:16d::25) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <Zu0vvRyCyUaQ2S2a@google.com> <20241002124324.14360-1-mankku@gmail.com>
- <Zv1gbzT1KTYpNgY1@google.com> <Zv15trTQIBxxiSFy@google.com>
- <Zv2Ay9Y3TswTwW_B@google.com> <ZwezvcaZJOg7A9el@intel.com>
-Message-ID: <ZxAL6thxEH67CpW7@google.com>
-Subject: Re: [PATCH 1/1] KVM: nVMX: update VPPR on vmlaunch/vmresume
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: "Markku =?utf-8?Q?Ahvenj=C3=A4rvi?=" <mankku@gmail.com>, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, janne.karhunen@gmail.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com, 
-	tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|MN2PR11MB4648:EE_
+X-MS-Office365-Filtering-Correlation-Id: c805d7d1-b266-48b0-4712-08dcee142105
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SzNiNFJVRXhSQllnSUpYQ2tjM0txMHJzNlVDUmh4YThrM3ZjOUFjTEtaeTd5?=
+ =?utf-8?B?bnpiY0kyU1kyMWlOOFpwVG5XQXZscWVybzdGK282NmZzcUNTRUtETlZwd3Bs?=
+ =?utf-8?B?QnQwMlJEK1ZhZDM1M24wVkJxS1BwL0xmbGxRUVhzaGw2TTNOS3pURWdiOGNR?=
+ =?utf-8?B?WVNmTUtGTDIxRmFzbi8zNG1hLzNxQzEvZGxDKytRNWJEUzkzNllZZGVNT0Ri?=
+ =?utf-8?B?aVhWKzVGK0R1K1g5eFNucU9idlFwTlBMWDB3OG4rS0FOeG5rS3NDZnZJTCs5?=
+ =?utf-8?B?c1pwZnlrVHBzZkJWTjU2azFKZ1g2eHNGTXRoOGN6Q1R3NGlKS2ZvUVp4Smhq?=
+ =?utf-8?B?QktIcTZwS01jeFBQUlh1dFBUck1FK2E1WThHUHRGL296Uk01WE1NNzU1aXpP?=
+ =?utf-8?B?SldEUzhEZXU3MXhGdmhSZWhrQmRkWHFwdkRKUGRxMTZ5WlY2a0gyZUNCdTRZ?=
+ =?utf-8?B?UURRL2UvQ1B4U0ZPa01RcTJTYUo5aDE2L3BUU01KOGl3d01Fd0lvU0ZqZWZV?=
+ =?utf-8?B?NEc4SkhJT2h5NFQ2c2ZVR2VrdUU3M1lKK0RKOFdSNEpDUFprbE12RWR4eHhn?=
+ =?utf-8?B?NnRuN00xak5YMlozWXpWSG44RExKTyttVkFOV2tReitMdlRueU0zTTlrN1Zr?=
+ =?utf-8?B?L1pDSi9pOGMxc001UU1TdFV6QnVaUEIwMU1lbnVyQmp4R3RYUnBYako3NjRk?=
+ =?utf-8?B?Q2dJNEZqZ3drOUQ0dWtvU2NVbTBjdm9BaHVhSnBOa0tzQkU0N0htM0puV2s5?=
+ =?utf-8?B?NU5BM2J3dGI3NU1pdnBhRmZ2alA5Z3RjOFFFcjRNRzR0WjJSRnBlZEljNWNO?=
+ =?utf-8?B?MTR0ZVhScThYVWd4UU14S3BDZ0lna3lLNnZzVGdQdEVNV0pUUGJLaXFxUVZF?=
+ =?utf-8?B?eG5QeFVMSm9FS05rUjVCVFl6bGFsM0NZMkJyYmhCMmJMNHpFa3JFb0pKSExX?=
+ =?utf-8?B?aGtaQW9HQlE3Tk5tMGdoT1c5K1M1Zi9FSDJLNWwwWWI1bDJPZll5WGlMS1d0?=
+ =?utf-8?B?cmk2Z2s2VUtmWWFvbGRCZ0Z4a05EYkNjaGxoY3NMOW01d0RBajFBVzNpT0ps?=
+ =?utf-8?B?VWIwM2xZK3pVaXRvODdrNnpsWkxPcEFqaUw1UlJOc3huM3NpSTU2S2VFQlY4?=
+ =?utf-8?B?Q3VoekxBbU9DVmg3dW56VkZySW8rRVAxY3h6eFNWeFdYRlIvZjh4RS9GSmZu?=
+ =?utf-8?B?ZE05eCs0ZHdWdWVneE8zNnVuVkJFa0U3MElDRk0vM1phN2toUklNbG85dlpt?=
+ =?utf-8?B?d1BGZGszRDVIQWVTY3BUdzBPWW9VL2RXZ3BnTFk3U1VsYllNZEpHTUN3dVV3?=
+ =?utf-8?B?RkJiZlZKM2lCWEoyQjQzb1VYZWI3NitKcjdZdENVQ214em50Z0dIMGZvckM0?=
+ =?utf-8?B?YUFXdkdJMTVvVEFTNWJ4VmsweTgwYVlraWlPOVI5dFYwOFFaRHAya3VhVHlP?=
+ =?utf-8?B?UkUvUDl1UkRVT3BhZ2N5b0lNeFRmVzJiQzV5TUF4YjBOdGczQU80bFgwRTlI?=
+ =?utf-8?B?YU1DMFI4cVBGbno1NEtxRm1qSVhWZUtTcmhGOUJVYS8wUlk3TG5zdGxTS3Ux?=
+ =?utf-8?B?d2lWUlZCZDM2YmpsblY0bkw2YW1QcWE2cUxJY3FkYk9COGlkRzBJS2pNaFU5?=
+ =?utf-8?B?NHdTV2IxcjB1WHNxUVh5S3YrbWhyZENLc3BoYTNZRVdhYTdBSlVReFZrN2I2?=
+ =?utf-8?B?SmJyeGxuNVBkUEZlRXpwUnl2T1NWZWtsVHRlU3lvUVRPalZjRkQ3RWtRPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NlhRdzFGNEZCM3N0ZUZlNEhkR2NSaFJHcTdtSEdpakhJZFhiSW54TzdiNjZq?=
+ =?utf-8?B?SWM5bmZyeURrWS9QZnI4Q1ovcHhmTnJrYVBKeVE3WnFhQ3UxSVNVcTd2eFhj?=
+ =?utf-8?B?ZUk0d0ZubkJjYWRrT3RJY3luZGJRRU9Fd3AyNVJnbWZSbytWMEkySlRBNEtt?=
+ =?utf-8?B?WW5GRUp1VTBkaG5rRC9sQzdpUmJiOUJGODNtakJPdTQwZ0Z5anIyaW45MFFv?=
+ =?utf-8?B?Ym9wcWE4U2FhaUIwYVVWL09XR2VNQnY4S2Rhai9VdWNWbXZJMzJNaUs2WEc2?=
+ =?utf-8?B?MFFyVjV2cytRRk9VOWJwMldpdFRyNHBJRncxMm5WSGVncDE3N2xsUlpPUEp2?=
+ =?utf-8?B?Sm1WYzNQd1lOU2ZDR1A0WnVSNFh5cDhNdWoxdGFza1RQRkxkUWUxL0ZxRFJB?=
+ =?utf-8?B?UmFMc1lla3hEcjNSTlh5Y0JCTWsxRytiZEZPay9QN3F3SGo3enRqb1BqYk5H?=
+ =?utf-8?B?VmFobno2cHZMQzZiQ1I0MTZrWnJRaHl5UC9yZGFEWFFYd1UvSGN5SmJNaC9Q?=
+ =?utf-8?B?Rjh2UDBid0hHcnB0aURPdUllcjFRUmxiNlNmNDZGbHlIcitMamlwb0MxYzFa?=
+ =?utf-8?B?YTBvRDk0L1VkTGVFZHNadVVKYjNEeWtTZkE1cWx6cFV4WkU2YzlsTDNFN2tI?=
+ =?utf-8?B?TEFXQ2FxRk9uK0czcHRqTmhzNkRuNGorMnVqOU4wWXNUSVNJcTNmSWlKMCsz?=
+ =?utf-8?B?bE50T2dFUWc3VElJbVJKdElGMnlPTkpNdlNWMHZ6c2JkV29BMGllQkx6YUVP?=
+ =?utf-8?B?VE55TlE0cjlLRGhvTVFudlBRTjY5amNtTnBTL2gvMHpBUFp0SEU0SmprOXUv?=
+ =?utf-8?B?TTJkb3BJMG9lM0w0R2pUU2hoalJmZWRnM1Rpa0huTUFwQktWTzA1WGNIVVAw?=
+ =?utf-8?B?eDFUTGdOdFVlZTdsSFY1Y3NvNDFNNUlDbVdhSmNlWFNON3JPdzcwTDRiYk1N?=
+ =?utf-8?B?SjNJS3hwT002WEt0Nlg0ajViSW16Unp2cUk1YzFiaWttZm5EcTV6cnFJdTN1?=
+ =?utf-8?B?UWxWOWtSWWhEZG9QU2Q3NTlOWi9peW0wZ2d0N2F6bmpTK0NBcVBVM2kvZHc3?=
+ =?utf-8?B?V2FodzZIeHdUTzRUVVlHSWNLdXZnK0J0djdVbi8wU2lFUktDN2gwQ01MdFR1?=
+ =?utf-8?B?dXFOSFZTc0dDakNVVVVQU0ZvQXFRZmdyTGNMcGpOMDkxbFMwMXErTXUva2Vs?=
+ =?utf-8?B?dzRNVFZqMFNneHRmM3cwNVBNMStRTjdIZmRMaXN1aTIxWnNBT1BiTk1XMERE?=
+ =?utf-8?B?RzhGanNMbm84a0ZROUlIWDZjUTVlUFArVnJrZEdYc2FDRGlsbEluSUFPUWNI?=
+ =?utf-8?B?NHVEenVhSHFGL1QreHBvUDYxNjA5cHBqaGZ6UGovTHd6Q1ZZMExxaklMS0lk?=
+ =?utf-8?B?SVA2NTE5SmdhREFjdDRoeWFIWDhMbTdQSG9wUTNIT3cxNlQxVkRkT2xNdzJo?=
+ =?utf-8?B?ZzIyT1VQUDFyZmYrdGt1R2xtaGx3OFZLQ1hyN0pGRGRqaTBSa0FXNkFwYmdJ?=
+ =?utf-8?B?UFFRNzRDVk0ya2hvY0x4d2huaW5NOU9EdGVFa0xDQ1c5aXFJNGxUSG9mRFMw?=
+ =?utf-8?B?cTBBOXpPWG1hZnZhMlpYdUFDZ0l4STVleWcreTJTdVFyT1lDcFNDREJlbXF6?=
+ =?utf-8?B?VkFOc2RPM0RaNVplZU5ac01OZFpHU1BtN1FhanNuV2dlbzJ2NFdXQnFjT1JR?=
+ =?utf-8?B?OXRWdnVEZ2FYOStXWW1RT20zeFFQVm5pLzBQN2J1eTZyOUZDMG5Xc3k0SU5a?=
+ =?utf-8?B?RUwyRWlVMHlnQUptWTNBSk9vcFJZaXpXd2pyQUtLSHdvbWlEY0RXajluY25r?=
+ =?utf-8?B?eDNWZ0dyTXdxZ2l4Sm52c2VINklva0E5VVlBenhiZG9FbkFIZ3paZU0zOVly?=
+ =?utf-8?B?NVM0N3lnYkh3MkdPQnV2SHlFc2dVVDNyNEVvZDR5ZlVQcHN3Q1NTdG1IOCtT?=
+ =?utf-8?B?a0x0S0ZjcS9QUnkxL1VwK1hpRTBhWjM4U2tJUmdTU2FQK0EzWmdDMGJVSERX?=
+ =?utf-8?B?SGwyNzl1bVp0a0pYQWwrRGFCUTlEUjF2TEpXVkVWQ2tUZkVyTmFKOFV5eGFW?=
+ =?utf-8?B?WUQ0ZHlJcXl3bzlqNk1iNUk1YkkzUVlKZ0V0RFdpNExDT3Z1YjFaTmNjT0RS?=
+ =?utf-8?B?Sms4YmpZMzhwNjA3NUR2c0pLUFFWcGUxc2pQbm5rSzlPWG9CR2pkVmZwM3p0?=
+ =?utf-8?B?bmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c805d7d1-b266-48b0-4712-08dcee142105
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 18:55:40.1538
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d7nylJCjbjft+/soChpERFBonFJPsX26BhfSI/Kr4guRBMSHK8+FNsBh7OSu5eqrMFppjnchNZgrbHSPciULTEt7n6PccjlSouD5K3YvVnI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4648
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 10, 2024, Chao Gao wrote:
-> The issue is that KVM does not properly update vmcs01's SVI. In this case, L1
-> does not intercept EOI MSR writes from the deprivileged host (L2), so KVM
+Hi Babu,
 
-Oof.  It's not simply that L1 doesn't intercept EOI, it's also that L1 doesn't
-have APICv enabled.
-
-Note, the only reason there aren't a slew of other issues in this setup is that
-KVM takes all APICv-related controls from vmcs12.  I.e. if L1 is sharing its APIC
-with L2, then KVM will effectively disable APICv when running L2.  Which is
-rather unfortunate for the pKVM-on-KVM case (lost performance), but functionally
-it's ok.
-
-E.g. if KVM enabled APICv in an APIC-passthrough scenario, then KVM would need
-to load the correct EOI bitmaps when running L2, and keep them up-to-date for
-both L1 and L2.
-
-> emulates EOI writes by clearing the highest bit in vISR and updating vPPR.
-> However, SVI in vmcs01 is not updated, causing it to retain the interrupt vector
-> that was just EOI'd. On the next VM-entry to L1, the CPU performs PPR
-> virtualization, setting vPPR to SVI & 0xf0, which results in an incorrect vPPR
+On 10/16/24 10:32 AM, Moger, Babu wrote:
 > 
-> Can you try this fix?
 > 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 4a93ac1b9be9..3d24194a648d 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -122,6 +122,8 @@
->  #define KVM_REQ_HV_TLB_FLUSH \
->  	KVM_ARCH_REQ_FLAGS(32, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
->  #define KVM_REQ_UPDATE_PROTECTED_GUEST_STATE	KVM_ARCH_REQ(34)
-> +#define KVM_REQ_UPDATE_HWAPIC_ISR \
-> +	KVM_ARCH_REQ_FLAGS(35, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
->  
->  #define CR0_RESERVED_BITS                                               \
->  	(~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
-> @@ -764,6 +766,7 @@ struct kvm_vcpu_arch {
->  	u64 apic_base;
->  	struct kvm_lapic *apic;    /* kernel irqchip context */
->  	bool load_eoi_exitmap_pending;
-> +	bool update_hwapic_isr;
+> On 10/15/24 22:13, Reinette Chatre wrote:
+>> Hi Babu,
+>>
+>> On 10/9/24 10:39 AM, Babu Moger wrote:
+>>> dom_data_init() is only called during the __init sequence.
+>>> Add __init attribute like the rest of call sequence.
+>>>
+>>> While at it, pass 'struct rdt_resource' to dom_data_init() and
+>>> dom_data_exit() which will be used for mbm counter __init and__exit
+>>> call sequence.
+>>
+>> This patch needs to be split. Please move fixes to beginning of series and
+>> move the addition of the parameter to the patch where it is first used/needed.
+> 
+> Sure. Will move the fixes to the beginning.
+> 
+>>
+>>>
+>>> Fixes: bd334c86b5d7 ("x86/resctrl: Add __init attribute to rdt_get_mon_l3_config()")
+>>
+>> For this change I think the following Fixes tag would be more accurate:
+>> Fixes: 6a445edce657 ("x86/intel_rdt/cqm: Add RDT monitoring initialization")
+>>
+>> I think for a complete fix of the above commit it also needs to add __init
+>> storage class to l3_mon_evt_init().
+> 
+> Yes. Sure.
+> 
+>>
+>> The __init storage class is also missing from rdt_get_mon_l3_config() ...
+> 
+> 1 internal.h _int rdt_get_mon_l3_config(struct rdt_resource *r);
+> 2 monitor.c  int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+> 
+> rdt_get_mon_l3_config() has __init attribute already. But prototype in
+> internal.h does not add the '__init'. Looks like that is ok.
 
-Obviously not your fault, but I'm really beginning to hate all of the flags we're
-accumulating, e.g. in addition to load_eoi_exitmap_pending and potentially
-update_hwapic_isr, VMX also has:
+I also think it may technically be ok since as far as I understand attributes
+the attributes will be merged. Even so, doing so does not match the current
+style where the storage class of declaration and definition are the same. See
+for example the partner function rdt_put_mon_l3_config().
 
-	bool change_vmcs01_virtual_apic_mode;
-	bool reload_vmcs01_apic_access_page;
-	bool update_vmcs01_cpu_dirty_logging;
-	bool update_vmcs01_apicv_status;
+> 
+> 
+>> fixing that would indeed need the Fixes tag below:
+>> Fixes: bd334c86b5d7 ("x86/resctrl: Add __init attribute to rdt_get_mon_l3_config()"
+> 
+> How about addressing both dom_data_init() and l3_mon_evt_init() in a
+> single patch and adding 2 fixes flags?
 
-Doesn't (and shouldn't) need to be handled as part of this, but I wonder if we
-can clean things up a bit by impementing something along the lines of deferred
-requests, e.g. nested_vmx_defer_request(NESTED_VMX_REQ_XXX, vcpu).  We'd still
-need to add each request, but it would cut down on some of the boilerplate, e.g.
+... and add __init to declaration of rdt_get_mon_l3_config() ?
 
-	if (vmx->nested.change_vmcs01_virtual_apic_mode) {
-		vmx->nested.change_vmcs01_virtual_apic_mode = false;
-		vmx_set_virtual_apic_mode(vcpu);
-	}
+> 
+> Fixes: 6a445edce657 ("x86/intel_rdt/cqm: Add RDT monitoring initialization")
+> Fixes: bd334c86b5d7 ("x86/resctrl: Add __init attribute to
+> rdt_get_mon_l3_config()")
 
-would become
-
-	if (nested_vmx_check_request(NESTED_VMX_REQ_VAPIC_MODE, vcpu))
-		vmx_set_virtual_apic_mode(vcpu);
-
-An alternative idea would be to use KVM_REQ_XXX directly, and shuffle them from
-vmx->nested to vcpu, but that would pollute KVM_REQ_XXX for the cases where KVM
-doesn't need a "normal" request.
-
-Another idea would be to temporarily switch to vmcs01 as needed, which would
-probably be ok for most cases since they are uncommon events, but for EOIs in
-this, situation the overhead would be non-trivial and completely unnecessary.
-
->  	DECLARE_BITMAP(ioapic_handled_vectors, 256);
->  	unsigned long apic_attention;
->  	int32_t apic_arb_prio;
-> diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
-> index b1eb46e26b2e..a8dad16161e4 100644
-> --- a/arch/x86/kvm/kvm_cache_regs.h
-> +++ b/arch/x86/kvm/kvm_cache_regs.h
-> @@ -220,6 +220,11 @@ static inline void leave_guest_mode(struct kvm_vcpu *vcpu)
->  		kvm_make_request(KVM_REQ_LOAD_EOI_EXITMAP, vcpu);
->  	}
->  
-> +	if (vcpu->arch.update_hwapic_isr) {
-> +		vcpu->arch.update_hwapic_isr = false;
-> +		kvm_make_request(KVM_REQ_UPDATE_HWAPIC_ISR, vcpu);
-
-I don't think we need a new request for this, KVM can refresh SVI directly in
-nested_vmx_vmexit(), e.g. along with change_vmcs01_virtual_apic_mode and friends.
-
-> +	}
-> +
->  	vcpu->stat.guest_mode = 0;
->  }
->  
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 5bb481aefcbc..d6a03c30f085 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -800,6 +800,9 @@ static inline void apic_clear_isr(int vec, struct kvm_lapic *apic)
->  	if (!__apic_test_and_clear_vector(vec, apic->regs + APIC_ISR))
->  		return;
->  
-> +	if (is_guest_mode(apic->vcpu))
-
-As above, I think this needs to be
-
-	if (is_guest_mode(apic->vcpu) && !nested_cpu_has_vid(get_vmcs12(vcpu)))
-
-because if virtual interrupt delivery is enabled, then EOIs are virtualized.
-Which means that this needs to be handled in vmx_hwapic_isr_update().
-
-Hmm, actually, there's more to it, I think.  If virtual interrupt deliver is
-disabled for L2, then writing vmcs02 is pointless because GUEST_INTR_STATUS is
-unused by the CPU.
-
-Argh, but hwapic_isr_update() doesn't take @vcpu.  That's easy enough to fix,
-just annoying.
-
-Chao, can you provide your SoB for your code?  If you've no objections, I'll
-massage it to avoid using a request and write a changelog, and then post it as
-part of a small series.
-
-Thanks again!
-
-> +		apic->vcpu->arch.update_hwapic_isr = true;
-> +
->  	/*
->  	 * We do get here for APIC virtualization enabled if the guest
->  	 * uses the Hyper-V APIC enlightenment.  In this case we may need
+Reinette
 
