@@ -1,211 +1,217 @@
-Return-Path: <linux-kernel+bounces-367731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B63E9A05EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 488289A05E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32F01F24AAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66FF1F218AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDB620607D;
-	Wed, 16 Oct 2024 09:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6CB205E20;
+	Wed, 16 Oct 2024 09:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KlzucaTg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fc+odG0C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27499205145
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669AD1B78F3;
+	Wed, 16 Oct 2024 09:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072163; cv=none; b=VReTK+Lt+S0GLfZfKTHv4QTGt13dDodnhGKk/Fxiow5zAuzUbUSXrLKBgfSxMP77Lvqr28VOcRZAYnPpFy/hi06y31pnr8WtVff5bsVrqsAU1OLjq3v979mPwEpFLbZ8jKc7AGdioCsntSZA0gRRNy6KhuQwoWIlDfCBj4u/obY=
+	t=1729072150; cv=none; b=aLfiZevAbRcofqfYluebv/dm7Vk1S+zrQzuH9mHO9V21KA42Hp2W/v6Qn3dXqIITUNe1bcl5l67ZkUj9fB6Ody94P36xq4IYcGm4nfvqRPaGu+wiEx9FiWIxVKF3Li5Am4eVoPZz3VQyudQLwp+o//nu2CIGlY7zsj40UQTv+tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072163; c=relaxed/simple;
-	bh=qU40uDWAXxj3oH037Z58Iia9dcS55Em7zzZb741ZWMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QPJi5+wCbGkRI9/8GhQvp/rtADlhPC38U8wavz+CjqevjyrRdfE0c+j94rlmW1Dh4hSw2uPQTwXgyO6kEyWfEkRQBW5pU7D772luMqCaJwCAsnNtm4OBzOQF+3gEiD92kZnZjR+y3tBVdF8LVpE0KWRtJ1lfCuHZxRqDbD2jH1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KlzucaTg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729072161;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8WNVMc8LDTYNGH+SAKpTHVIymq5YjMjs8ZEPHmIVyE0=;
-	b=KlzucaTgTdY/QizpENciEA4DYltZq+QvjH5do0pzSNmj/PRV5TZfIqkCqCYmC1sbizvypP
-	cniLmKknKpMwGzXYfCdQDfhxKCtc5s8uF7thQAYeLCfmuZbDEI9po13MYvw8bd3M1xzVoU
-	+S7MjcG6Z2zEC4ef8SqEH4ySeUh1R9o=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-50-CG5bkNu8NJ-0YhctogD9cA-1; Wed, 16 Oct 2024 05:49:19 -0400
-X-MC-Unique: CG5bkNu8NJ-0YhctogD9cA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4311407ae76so34363275e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:49:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729072158; x=1729676958;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8WNVMc8LDTYNGH+SAKpTHVIymq5YjMjs8ZEPHmIVyE0=;
-        b=PMNhUOgsfXH14GeVB74OlXThMd2kw0ic8Kf5TC1KrkaJbKbi8xtUABu6Zyu9Vjwq2E
-         wfYMslAbKk5OwnpImgW67WP9Imy5T8PpcrnvS3ZCwz4rFyf0YBCywPhY0Cl7WjMxiM1/
-         k8M80S23F7Fj1CLMaE7wGfFdY7XlLcuXekHADzF9xV4UjdrzZ2YvJ3M/k0oDp6CIubt7
-         rWTL1CE9K0/JvBS6b1ypGn0bRQDciBh5rhWuddej1lMD8OS2hQ4XjxIFsTLlnPDX6NFV
-         ScL6qJqrxwpIztAGkAyOu31K+D3Qc6hc+Jm/OfFnX3jTb0TvSU3A05CFCn2sjV3b0Ncf
-         Lpgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmeo6QR3oTYJh/7BETjDv7C03U/7P6QpgXq1ApCaHnjMrgjJlGUHdpgqIhiCCM5MkZJNcbuc1wzKEs2H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0nua1x1sqC/rBxsoQZYpk1OO2CvLcXMqYTKcmNE2+2J+Lf1Oe
-	7IyKDAXh/WstwdW3CmdCJMVk7NCpz9cSRRxjPhOgantVWp5yspuyBtU1AqSKXuqzxM1IcCN+6hx
-	emM/cIjckvqqkyaFc3tuGLeXNA3lAT/sRGmpHOUkOh7sDVGD+P2Vo+SmYS9PqJQ==
-X-Received: by 2002:a05:600c:4688:b0:42f:80f4:ab31 with SMTP id 5b1f17b1804b1-4314a2ff46amr26025565e9.18.1729072158270;
-        Wed, 16 Oct 2024 02:49:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHKUDE9oBG3DV9ivNP2q5cTc+CFmH4d6PSgSwWQMyk1ILj67QUdUX0ghs5JR6pQgtk/njtCOw==
-X-Received: by 2002:a05:600c:4688:b0:42f:80f4:ab31 with SMTP id 5b1f17b1804b1-4314a2ff46amr26025305e9.18.1729072157791;
-        Wed, 16 Oct 2024 02:49:17 -0700 (PDT)
-Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4314b32e487sm28190235e9.25.2024.10.16.02.49.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:49:17 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Hannes Reinecke <hare@suse.de>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Zetao <lizetao1@huawei.com>
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH v8 0/6] PCI: Remove most pcim_iounmap_regions() users
-Date: Wed, 16 Oct 2024 11:49:03 +0200
-Message-ID: <20241016094911.24818-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729072150; c=relaxed/simple;
+	bh=wSci2MEGt00ZwhkOLGWXi9O0iBhjY3moR0n+P6QCCAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ausSRA61JnISMu31qRhL2vxD15ZMSjCFDSiQGQORWR7+DC1xjOWP7NUx/PzBN7bOKt9d+ncBGZYiJS6nQtXluGRfUCIMD45k3umjJ8ylZwDGtE0f1WC6RefaswhuzNFDGyW1P0mtM0Ctew0j9gEhQXia4QKnZSQZ1wLoma5cw98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fc+odG0C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 250DFC4CEC5;
+	Wed, 16 Oct 2024 09:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729072149;
+	bh=wSci2MEGt00ZwhkOLGWXi9O0iBhjY3moR0n+P6QCCAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fc+odG0CSFtqwULyIvDfhZQuO8LmVcjkL3mGF8850X3+kB75fLBpRG02gJeS5awMw
+	 CQL8XMkqSNIw8lhyRjRVtvKYUVyhuu3cpIEkhr0MacYCBWVDoKbeQCiWLg0qk5U396
+	 jKXz8mlfBLM1FQq+f3bdnmx1Quj7Y7bbtTCMG6SCkIqPclFBMA+eKQXhCK9xC6d0XY
+	 ThXgPleKceUnEMFFazA5VB+i63quAxCZxKzagqjDpV3LQt+RkfQL9Ga6Yzp3gZtQeT
+	 DK8Mc39ZBzF65kw6+SAtZhKn8K+Q2UXIrBJM3TnNrkTkrMA5WP8e8dNL0eQkkW6Cx3
+	 ML6a96coZWNTA==
+Date: Wed, 16 Oct 2024 11:49:04 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Zheng Zengkai <zhengzengkai@huawei.com>
+Cc: guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com,
+	maz@kernel.org, rafael@kernel.org, lenb@kernel.org,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ACPI: GTDT: Tighten the check for the array of
+ platform timer structures
+Message-ID: <Zw+MENlZyrRzETX9@lpieralisi>
+References: <20241015152602.184108-1-zhengzengkai@huawei.com>
+ <Zw6b3V5Mk2tIGmy5@lpieralisi>
+ <4cea2a07-49b0-7703-4cdf-49ded9a2c9e4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4cea2a07-49b0-7703-4cdf-49ded9a2c9e4@huawei.com>
 
-Merge plan for this is the PCI-Tree.
+On Wed, Oct 16, 2024 at 04:49:36PM +0800, Zheng Zengkai wrote:
+> Hi Lorenzo,
+> 
+> 在 2024/10/16 0:44, Lorenzo Pieralisi 写道:
+> > On Tue, Oct 15, 2024 at 11:26:02PM +0800, Zheng Zengkai wrote:
+> > > As suggested by Marc and Lorenzo, first we need to check whether the
+> > I would just describe the change, the tags and Link: are there to
+> > describe this patch history.
+> 
+> 
+> Do you mean that the previous patch below also need to be listed in this
+> change log history?
+> 
+> https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
 
-After this series, only two users (net/ethernet/stmicro and
-vdpa/solidrun) will remain to be ported in the subsequent merge window.
-Doing them right now proved very difficult because of various conflicts
-as they are currently also being reworked.
+No, it was just a comment referring to "As suggested by Marc and Lorenzo",
+that's clear from the tags and a Link: to this thread will be added when
+the patch is applied (though you can add it too, it would not hurt).
 
-Changes in v8:
-  - Patch "gpio: ..": Fix a bug: don't print the wrong error code. (Simon)
-  - Split patch 1 into two patches to make adding of the new public API
-    obvious (Bartosz)
-  - Patch "ethernet: cavium: ...": Remove outdated sentences from the
-    commit message.
+Never mind.
 
-Changes in v7:
-  - Add Paolo's Acked-by.
-  - Rebase on current master; drop patch No.1 which made
-    pcim_request_region() public.
+Lorenzo
 
-Changes in v6:
-  - Remove the patches for "vdpa: solidrun" since the maintainer seems
-    unwilling to review and discuss, not to mention approve, anything
-    that is part of a wider patch series across other subsystems.
-  - Change series's name to highlight that not all callers are removed
-    by it.
-
-Changes in v5:
-  - Patch "ethernet: cavium": Re-add accidentally removed
-    pcim_iounmap_region(). (Me)
-  - Add Jens's Reviewed-by to patch "block: mtip32xx". (Jens)
-
-Changes in v4:
-  - Drop the "ethernet: stmicro: [...] patch since it doesn't apply to
-    net-next, and making it apply to that prevents it from being
-    applyable to PCI ._. (Serge, me)
-  - Instead, deprecate pcim_iounmap_regions() and keep "ethernet:
-    stimicro" as the last user for now.
-  - ethernet: cavium: Use PTR_ERR_OR_ZERO(). (Andy)
-  - vdpa: solidrun (Bugfix) Correct wrong printf string (was "psnet" instead of
-    "snet"). (Christophe)
-  - vdpa: solidrun (Bugfix): Add missing blank line. (Andy)
-  - vdpa: solidrun (Portation): Use PTR_ERR_OR_ZERO(). (Andy)
-  - Apply Reviewed-by's from Andy and Xu Yilun.
-
-Changes in v3:
-  - fpga/dfl-pci.c: remove now surplus wrapper around
-    pcim_iomap_region(). (Andy)
-  - block: mtip32xx: remove now surplus label. (Andy)
-  - vdpa: solidrun: Bugfix: Include forgotten place where stack UB
-    occurs. (Andy, Christophe)
-  - Some minor wording improvements in commit messages. (Me)
-
-Changes in v2:
-  - Add a fix for the UB stack usage bug in vdap/solidrun. Separate
-    patch, put stable kernel on CC. (Christophe, Andy).
-  - Drop unnecessary pcim_release_region() in mtip32xx (Andy)
-  - Consequently, drop patch "PCI: Make pcim_release_region() a public
-    function", since there's no user anymore. (obsoletes the squash
-    requested by Damien).
-  - vdap/solidrun:
-    • make 'i' an 'unsigned short' (Andy, me)
-    • Use 'continue' to simplify loop (Andy)
-    • Remove leftover blank line
-  - Apply given Reviewed- / acked-bys (Andy, Damien, Bartosz)
-
-
-Important things first:
-This series is based on [1] and [2] which Bjorn Helgaas has currently
-queued for v6.12 in the PCI tree.
-
-This series shall remove pcim_iounmap_regions() in order to make way to
-remove its brother, pcim_iomap_regions().
-
-Regards,
-P.
-
-[1] https://lore.kernel.org/all/20240729093625.17561-4-pstanner@redhat.com/
-[2] https://lore.kernel.org/all/20240807083018.8734-2-pstanner@redhat.com/
-
-Philipp Stanner (6):
-  PCI: Make pcim_iounmap_region() a public function
-  PCI: Deprecate pcim_iounmap_regions()
-  fpga/dfl-pci.c: Replace deprecated PCI functions
-  block: mtip32xx: Replace deprecated PCI functions
-  gpio: Replace deprecated PCI functions
-  ethernet: cavium: Replace deprecated PCI functions
-
- drivers/block/mtip32xx/mtip32xx.c              | 18 ++++++++----------
- drivers/fpga/dfl-pci.c                         | 16 ++++------------
- drivers/gpio/gpio-merrifield.c                 | 15 ++++++++-------
- .../net/ethernet/cavium/common/cavium_ptp.c    |  7 +++----
- drivers/pci/devres.c                           |  8 ++++++--
- include/linux/pci.h                            |  1 +
- 6 files changed, 30 insertions(+), 35 deletions(-)
-
--- 
-2.47.0
-
+> > > platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+> > > de-referencing what it points at to detect the length of the platform
+> > > timer struct and then check that the length of current platform_timer
+> > > struct is also valid, i.e. the length is not zero and within gtdt_end.
+> > > Now next_platform_timer() only checks against gtdt_end for the entry of
+> > > subsequent platform timer without checking the length of it and will
+> > > not report error if the check failed and the existing check in function
+> > > acpi_gtdt_init() is also not enough.
+> > > 
+> > > Modify the for_each_platform_timer() iterator and use it combined with
+> > > a dedicated check function platform_timer_valid() to do the check
+> > > against table length (gtdt_end) for each element of platform timer
+> > > array in function acpi_gtdt_init(), making sure that both their entry
+> > > and length actually fit in the table.
+> > > 
+> > > Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > > Co-developed-by: Marc Zyngier <maz@kernel.org>
+> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > > Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> > > ---
+> > > Changes in v3:
+> > > - based on Marc's patch and reuse the for_each_platform_timer() loop
+> > > 
+> > > Changes in v2:
+> > > - Check against gtdt_end for both entry and len of each array element
+> > > Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
+> > > 
+> > > Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
+> > > ---
+> > >   drivers/acpi/arm64/gtdt.c | 32 +++++++++++++++++++++-----------
+> > >   1 file changed, 21 insertions(+), 11 deletions(-)
+> > > 
+> > > diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> > > index c0e77c1c8e09..3583c99afb0d 100644
+> > > --- a/drivers/acpi/arm64/gtdt.c
+> > > +++ b/drivers/acpi/arm64/gtdt.c
+> > > @@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
+> > >   static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
+> > > -static inline __init void *next_platform_timer(void *platform_timer)
+> > > +static __init bool platform_timer_valid(void *platform_timer)
+> > >   {
+> > >   	struct acpi_gtdt_header *gh = platform_timer;
+> > > -	platform_timer += gh->length;
+> > > -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
+> > > -		return platform_timer;
+> > > +	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
+> > > +		platform_timer < acpi_gtdt_desc.gtdt_end &&
+> > > +		gh->length != 0 &&
+> > > +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
+> > > +}
+> > > +
+> > > +static __init void *next_platform_timer(void *platform_timer)
+> > > +{
+> > > +	struct acpi_gtdt_header *gh = platform_timer;
+> > > -	return NULL;
+> > > +	return platform_timer + gh->length;
+> > >   }
+> > > -#define for_each_platform_timer(_g)				\
+> > > -	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
+> > > +#define for_each_platform_timer(_g, first_entry)	\
+> > > +	for (_g = first_entry; platform_timer_valid(_g);	\
+> > >   	     _g = next_platform_timer(_g))
+> > >   static inline bool is_timer_block(void *platform_timer)
+> > > @@ -155,8 +161,9 @@ bool __init acpi_gtdt_c3stop(int type)
+> > >   int __init acpi_gtdt_init(struct acpi_table_header *table,
+> > >   			  int *platform_timer_count)
+> > >   {
+> > > -	void *platform_timer;
+> > > +	void *platform_timer, *tmp;
+> > It makes more sense - thank you and Marc.
+> > 
+> > Nit: you don't really need another pointer (ie tmp) but you may keep
+> > it if that makes the code clearer - all you need to do is using
+> > platform_timer as an iterator and initialize
+> 
+> 
+> Yes, the tmp pointer can be removed for conciseness.
+> 
+> Thanks!
+> 
+> 
+> > 
+> > 	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> > 
+> > if all checks passed (you are using tmp just because after the loop
+> > platform_timer can't be used to initialize acpi_gtdt_desc.platform_timer).
+> > 
+> > Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > 
+> > (now let's see if this survives GTDTs out there :))
+> > >   	struct acpi_table_gtdt *gtdt;
+> > > +	int cnt = 0;
+> > >   	gtdt = container_of(table, struct acpi_table_gtdt, header);
+> > >   	acpi_gtdt_desc.gtdt = gtdt;
+> > > @@ -177,7 +184,10 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+> > >   	}
+> > >   	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> > > -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+> > > +	for_each_platform_timer(tmp, platform_timer)
+> > > +		cnt++;
+> > > +
+> > > +	if (cnt != gtdt->platform_timer_count) {
+> > >   		pr_err(FW_BUG "invalid timer data.\n");
+> > >   		return -EINVAL;
+> > >   	}
+> > > @@ -305,7 +315,7 @@ int __init acpi_arch_timer_mem_init(struct arch_timer_mem *timer_mem,
+> > >   	void *platform_timer;
+> > >   	*timer_count = 0;
+> > > -	for_each_platform_timer(platform_timer) {
+> > > +	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
+> > >   		if (is_timer_block(platform_timer)) {
+> > >   			ret = gtdt_parse_timer_block(platform_timer, timer_mem);
+> > >   			if (ret)
+> > > @@ -398,7 +408,7 @@ static int __init gtdt_sbsa_gwdt_init(void)
+> > >   	if (ret || !timer_count)
+> > >   		goto out_put_gtdt;
+> > > -	for_each_platform_timer(platform_timer) {
+> > > +	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
+> > >   		if (is_non_secure_watchdog(platform_timer)) {
+> > >   			ret = gtdt_import_sbsa_gwdt(platform_timer, gwdt_count);
+> > >   			if (ret)
+> > > -- 
+> > > 2.20.1
+> > > 
+> > .
+> > 
 
