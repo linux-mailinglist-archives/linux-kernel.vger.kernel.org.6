@@ -1,76 +1,124 @@
-Return-Path: <linux-kernel+bounces-367267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5B69A0053
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7879A0059
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E4E1F22757
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CAF31F25EA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EAE187872;
-	Wed, 16 Oct 2024 04:53:33 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8549418A6CE;
+	Wed, 16 Oct 2024 04:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spKCuFxq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30A321E3BA
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 04:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2E721E3BA;
+	Wed, 16 Oct 2024 04:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729054413; cv=none; b=g34FAgoKts1AWTmTCIcZEwUGK23vHY7P18uBNa+UX3YLdu9qShQ9elWbuYNi1MHNVhK8Bb88ZrTR7+5gR5iZgRJaEyAPtCXIWmM4PSl6j3XamSmMNLLyTCzOBC/43HN2oxChU6dLyEEogQ0HN6nHdVa9VrQvyqN75ohl0RFWygA=
+	t=1729054500; cv=none; b=R/U1RA+RSOM/hjg+ugWdK8rCiZqACf3vhB8AqvLeBrPJkpdnh1NfHVa8BPDUYpoKzs0NJ+tPMKQ5TvZDVetkb/wIJDpqxp204Fjm6M9ccoUCo+lhiEIe5vZnfZvbSfRipQX8oc6KmlGA3N5hXkhTPg7PqOORkxvPbQLZJFUkxgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729054413; c=relaxed/simple;
-	bh=Rb+TVTNxVLBWa5duZt4P51Lz0F7zU95S++O7DA6hr30=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kCzvBd9GIZJ+8VrPyup3kOP4i/nMX/gHjz06hFdGDrHJIbHE2AEJ6avJLhfAP3TdU1vFztLH4ompNLWJYZMnTQLJ1IwCi1ZgmBkAXp9QK1WN/qaYT3YZQ+mDM19Y+5hVG3D/f6R7WA1/aDIvnQp5fMWoNIdDpFJ5YlDjZxFQkOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so30683865ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:53:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729054411; x=1729659211;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rb+TVTNxVLBWa5duZt4P51Lz0F7zU95S++O7DA6hr30=;
-        b=AVnoqDFAy5AtSXZ3A88R+xWlSnbx1YiW93uDvg4gb9JN+Q35T/VeDZQU4AMfQeiBYL
-         85WK1qm/KcR6v0E365+4Vv6woFhuE0pyXYG3WY2tnMBXp1OUMHtvZHmy9u0MeO63Z8u0
-         t7/ivxNtmg3vuwfhP8S3bvEvMNbQjZAf5fsQlTxBWbxmCObEdqM029tshKVpfiAY3Xvm
-         sYTUdo11rIlEEXOGPfBNmTQmwnz0AR4s6QHF7V8T0nP+UOs/rTnelu29+0BUZgsMBiqO
-         2+x/CSW24q97/qZ1ZeqY53ETCsyIK62snsUvJeaobYjqRS58XmduNL9yYoinZA3GUay9
-         BUBA==
-X-Gm-Message-State: AOJu0YwYRgg0FV7lyXxVTThaL88bDweUB2qCl3PGMacoMLqBYOiXrWgZ
-	had1WUt4v7KkCCiLALP47FABi/TCCW2KshN6NK7Kk9yu6jiJ7Uv5tar1Qo7ggL3YwA1F8FMvc7d
-	dPFkim871XA6Pd929a04NJFls/43W8Uy5X3oNdOzOijV/E6nE3bwZ6mU=
-X-Google-Smtp-Source: AGHT+IF3Gh8kQnBo9vdOq9ccT6egTKRYrcz5zXbWtw94i2xgW+oMypvZEMQgaDxfA1u83UaSCvPqvxWxEiH46G7Id4J405wbkeIC
+	s=arc-20240116; t=1729054500; c=relaxed/simple;
+	bh=ZAbZqueFOhysiBh+zQ8zwnfD/RNSp46lSmK1+1nFQxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2nKnZ0ZW7kgTf9iPjmYb02Zbg6gH8Scq0L1RUEhuMBUZaDMqX00HFpSUMzimhM1aI+CchiNT+YmHlJiZ8DJADbx/A8ukstmP+AlP7PwMys4gnG3QXGGszYhLHkz6pvWSOaluFQkKLPyK13rwDrC7yRj7eQsnNTRyXyBnUA4+PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spKCuFxq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F35C4CEC5;
+	Wed, 16 Oct 2024 04:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729054498;
+	bh=ZAbZqueFOhysiBh+zQ8zwnfD/RNSp46lSmK1+1nFQxk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=spKCuFxqFYLLRQaxwItjw18wjF6ni0fsOJovIA8hgE4lrkgpkYgjzKY0wjP/EGaDI
+	 jijnGKTjmD+iHWPVwoq9gaoAPwZgjxXL68dYv5XWsGOOM+k8nbmNR2z/OBymU47+pV
+	 FoMpooWFZ8WadAoq4BHTPMz2KQvGET8A+3V0MPjN8cxeiLpfJUy62PGmBgo9WUyV9g
+	 Ykfp6rp2RraUcyHXpNN5P4rqEIRuAu6GKrVFfOZ0btOGa1h0PMW3/3bvb7AQX1xtm7
+	 N3gqVNPp/BcJnazGbHRJIsQMPSXfH8QL26VuvrnaX07u8fP/Hd7GgAMiczDfD1/AY0
+	 dTPItXhMLpQ6Q==
+Date: Wed, 16 Oct 2024 10:24:53 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com,
+	quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v1 1/5] dt-bindings: dmaengine: qcom: gpi: Add additional
+ arg to dma-cell property
+Message-ID: <Zw9HHRyvfd66Qn4a@vaman>
+References: <20241015120750.21217-1-quic_jseerapu@quicinc.com>
+ <20241015120750.21217-2-quic_jseerapu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168e:b0:3a0:451b:ade3 with SMTP id
- e9e14a558f8ab-3a3b5f6b26bmr158817815ab.10.1729054411107; Tue, 15 Oct 2024
- 21:53:31 -0700 (PDT)
-Date: Tue, 15 Oct 2024 21:53:31 -0700
-In-Reply-To: <66f057eb.050a0220.a27de.0004.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670f46cb.050a0220.d5849.0010.GAE@google.com>
-Subject: Re: [syzbot] KMSAN: kernel-infoleak in move_addr_to_user (7)
-From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015120750.21217-2-quic_jseerapu@quicinc.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 15-10-24, 17:37, Jyothi Kumar Seerapu wrote:
+> When high performance with multiple i2c messages in a single transfer
+> is required, employ Block Event Interrupt (BEI) to trigger interrupts
+> after specific messages transfer and the last message transfer,
+> thereby reducing interrupts.
+> 
+> For each i2c message transfer, a series of Transfer Request Elements(TREs)
+> must be programmed, including config tre for frequency configuration,
+> go tre for holding i2c address and dma tre for holding dma buffer address,
+> length as per the hardware programming guide. For transfer using BEI,
+> multiple I2C messages may necessitate the preparation of config, go,
+> and tx DMA TREs. However, a channel TRE size of 64 is often insufficient,
+> potentially leading to failures due to inadequate memory space.
+> 
+> Add additional argument to dma-cell property for channel TRE size.
+> With this, adjust the channel TRE size via the device tree.
+> The default size is 64, but clients can modify this value based on
+> their specific requirements.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+> index 4df4e61895d2..002495921643 100644
+> --- a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+> +++ b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+> @@ -54,14 +54,16 @@ properties:
+>      maxItems: 13
+>  
+>    "#dma-cells":
+> -    const: 3
+> +    minItems: 3
+> +    maxItems: 4
+>      description: >
+>        DMA clients must use the format described in dma.txt, giving a phandle
+> -      to the DMA controller plus the following 3 integer cells:
+> +      to the DMA controller plus the following 4 integer cells:
+>        - channel: if set to 0xffffffff, any available channel will be allocated
+>          for the client. Otherwise, the exact channel specified will be used.
+>        - seid: serial id of the client as defined in the SoC documentation.
+>        - client: type of the client as defined in dt-bindings/dma/qcom-gpi.h
+> +      - channel-tre-size: size of the channel TRE (transfer ring element)
 
-***
+This is a firmware /software property, why should this be in hardware
+description?
 
-Subject: KMSAN: kernel-infoleak in move_addr_to_user (7)
-Author: danielyangkang@gmail.com
-
-#syz test
+-- 
+~Vinod
 
