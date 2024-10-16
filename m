@@ -1,155 +1,170 @@
-Return-Path: <linux-kernel+bounces-367068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8521699FE3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:26:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356A499FE3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 147F6B25EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:26:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E918E288222
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE08F14F12C;
-	Wed, 16 Oct 2024 01:25:40 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C252F13BAE2;
+	Wed, 16 Oct 2024 01:26:04 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD2113633F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365FA42AA4
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729041940; cv=none; b=kfcjF94LD51IDyJp4LDmOddTQujsPcTFD2G2izYnujGJXaFIPwCqzfDZa0OS0n5KdprYfAmOZOOr5nqInJyyZ24TUES97kyOJ3FA72Ru+zjzMRLD5EQVyfs1PMMe/S9liSznJHQLuIMc4WbA2pWxdfkHDcvz2Az8B1bGhQ8tQO4=
+	t=1729041964; cv=none; b=HHw/JOZhh8L8JxkjjNzEPdff6Y3yKbnjXxjFHCL0IDe+HraTyAVJ35J3p588+tEf2+1PcE+2R9v7DgUuEncqH/XlMG0krGVS3t9hj5PuJ2ziqIoX5oeIV9+/nF4aZh2NbLY4dDOOmHUlyGrjcDdK36zlrnC5ZpH5wsj5+pmjJXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729041940; c=relaxed/simple;
-	bh=XgaUC5ekKLsytnPS231NZ0ExKIN/6afzoYhrLXC6Z5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WuTdQXRD/t7GCmLqHGT95iYNQPSDAmmVkk0diFPoQh1lFRhN3CmmdO8c3/ZzhDGHpqlpQqtmFXw2wapakE9ZgzTQRXfJUeD/Nh5sj4pU76NTQvqGp68hRD2fvysYg2tUP7VkXSE1Sz+QOnEMa6Ez4YrcN3l8Aedw/QYTT/YvkVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XStXJ2bJQz10Nf8;
-	Wed, 16 Oct 2024 09:23:44 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 97969140157;
-	Wed, 16 Oct 2024 09:25:36 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 16 Oct
- 2024 09:25:35 +0800
-Message-ID: <4a18e997-3a94-4248-8923-c3764d12b0d6@huawei.com>
-Date: Wed, 16 Oct 2024 09:25:34 +0800
+	s=arc-20240116; t=1729041964; c=relaxed/simple;
+	bh=Q9W3LBi3A2xDUrzi/h8CnwiUPgO0it3f4MLxrTV7zes=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=SHdbIzGZT3psYtFyWifuWRRAL/+nvNzpWI3RjKFDcQWbpX7612edi87zJVKrkP7fYkKRK29NCVNUJDnoXTFK8w0RVbWhHfmb60NgXQHZ8Yv94xZ+oeq+9PJzdE5qqANK4XiWIn8T/nXdRwpW80fLIVZlRspJZCDE3TvXywK7KaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4XStXH1fpxzYl0Dm;
+	Wed, 16 Oct 2024 09:23:43 +0800 (CST)
+Received: from a008.hihonor.com (10.68.30.56) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 16 Oct
+ 2024 09:25:59 +0800
+Received: from a007.hihonor.com (10.68.22.31) by a008.hihonor.com
+ (10.68.30.56) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 16 Oct
+ 2024 09:25:58 +0800
+Received: from a007.hihonor.com ([fe80::4407:dd67:71d7:ea82]) by
+ a007.hihonor.com ([fe80::4407:dd67:71d7:ea82%10]) with mapi id
+ 15.02.1544.011; Wed, 16 Oct 2024 09:25:58 +0800
+From: gaoxu <gaoxu2@honor.com>
+To: Barry Song <21cnbao@gmail.com>
+CC: David Hildenbrand <david@redhat.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"mhocko@suse.com" <mhocko@suse.com>, "hailong.liu@oppo.com"
+	<hailong.liu@oppo.com>, "kaleshsingh@google.com" <kaleshsingh@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lokeshgidra@google.com" <lokeshgidra@google.com>, "ngeoffray@google.com"
+	<ngeoffray@google.com>, "shli@fb.com" <shli@fb.com>, "surenb@google.com"
+	<surenb@google.com>, "yuzhao@google.com" <yuzhao@google.com>,
+	"minchan@kernel.org" <minchan@kernel.org>, Barry Song <v-songbaohua@oppo.com>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggUkZDXSBtbTogbWdscnU6IHByb3ZpZGUgYSBzZXBh?=
+ =?utf-8?Q?rate_list_for_lazyfree_anon_folios?=
+Thread-Topic: [PATCH RFC] mm: mglru: provide a separate list for lazyfree anon
+ folios
+Thread-Index: AQHbBnCmShcKECBep0eJF+tvIkpJDLJbX+UAgAQEpICAKFfioIAALR2AgADcLyA=
+Date: Wed, 16 Oct 2024 01:25:58 +0000
+Message-ID: <8cbee57b2d7a44339372be8c7c4f25bd@honor.com>
+References: <20240914063746.46290-1-21cnbao@gmail.com>
+ <92f97c8e-f23d-4c6e-9f49-230fb4e96c46@redhat.com>
+ <CAGsJ_4zdqXtvUS8fHzUhM=iGrPpC8X7uw8wt4sSfCvsrh7um3w@mail.gmail.com>
+ <7dcd3446cd8c4da69242e5d6680c1429@honor.com>
+ <CAGsJ_4xF6FuncfErMmMotkOYNGZcqPXqS20zORAyVZ4LYbO0_w@mail.gmail.com>
+In-Reply-To: <CAGsJ_4xF6FuncfErMmMotkOYNGZcqPXqS20zORAyVZ4LYbO0_w@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
-To: Anshuman Khandual <anshuman.khandual@arm.com>, "Kirill A. Shutemov"
-	<kirill@shutemov.name>, Muchun Song <muchun.song@linux.dev>
-CC: <akpm@linux-foundation.org>, <david@fromorbit.com>,
-	<zhengqi.arch@bytedance.com>, <roman.gushchin@linux.dev>,
-	<muchun.song@linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <wangweiyang2@huawei.com>
-References: <20241014032336.482088-1-chenridong@huaweicloud.com>
- <m3cjozicivz4ydv6ovzkupuzpcvc7uptlhjd3bndpsak3z7ill@6txhj7tpejir>
- <cbf8475d-5c79-4fa4-b2a1-f553166b0afd@arm.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <cbf8475d-5c79-4fa4-b2a1-f553166b0afd@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
-
-
-On 2024/10/15 14:55, Anshuman Khandual wrote:
-> 
-> 
-> On 10/14/24 16:59, Kirill A. Shutemov wrote:
->> On Mon, Oct 14, 2024 at 03:23:36AM +0000, Chen Ridong wrote:
->>> From: Chen Ridong <chenridong@huawei.com>
->>>
->>> A memleak was found as bellow:
->>>
->>> unreferenced object 0xffff8881010d2a80 (size 32):
->>>    comm "mkdir", pid 1559, jiffies 4294932666
->>>    hex dump (first 32 bytes):
->>>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>>      40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
->>>    backtrace (crc 2e7ef6fa):
->>>      [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
->>>      [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
->>>      [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
->>>      [<ffffffff81198dd9>] online_css+0x29/0xa0
->>>      [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
->>>      [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
->>>      [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
->>>      [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
->>>      [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
->>>      [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
->>>      [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
->>>      [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>
->>> In the alloc_shrinker_info function, when shrinker_unit_alloc return
->>> err, the info won't be freed. Just fix it.
->>>
->>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
->>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>> ---
->>>   mm/shrinker.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/mm/shrinker.c b/mm/shrinker.c
->>> index dc5d2a6fcfc4..92270413190d 100644
->>> --- a/mm/shrinker.c
->>> +++ b/mm/shrinker.c
->>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>>   
->>>   err:
->>>   	mutex_unlock(&shrinker_mutex);
->>> +	kvfree(info);
->>>   	free_shrinker_info(memcg);
->>>   	return -ENOMEM;
->>>   }
->>
->> NAK. If in the future there going to one more error case after
->> rcu_assign_pointer() we will end up with double free.
->>
->> This should be safer:
->>
->> diff --git a/mm/shrinker.c b/mm/shrinker.c
->> index dc5d2a6fcfc4..763fd556bc7d 100644
->> --- a/mm/shrinker.c
->> +++ b/mm/shrinker.c
->> @@ -87,8 +87,10 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>   		if (!info)
->>   			goto err;
->>   		info->map_nr_max = shrinker_nr_max;
->> -		if (shrinker_unit_alloc(info, NULL, nid))
->> +		if (shrinker_unit_alloc(info, NULL, nid)) {
->> +			kvfree(info);
->>   			goto err;
->> +		}
->>   		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>   	}
->>   	mutex_unlock(&shrinker_mutex);
-> 
-> Agreed, this is what I mentioned earlier as well.
-> 
-> ------------------------------------------------------------------
-> I guess kvfree() should be called just after shrinker_unit_alloc()
-> fails but before calling into "goto err"
-> ------------------------------------------------------------------
-> 
-
-After discussion, it seems that v1 is acceptable.
-Hi, Muchun, do you have any other opinions?
-
-Best regards,
-Ridong
+DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IEJhcnJ5IFNvbmcgPDIx
+Y25iYW9AZ21haWwuY29tPg0KPiDlj5HpgIHml7bpl7Q6IDIwMjTlubQxMOaciDE25pelIDQ6MTAN
+Cj4g5pS25Lu25Lq6OiBnYW94dSA8Z2FveHUyQGhvbm9yLmNvbT4NCj4g5oqE6YCBOiBEYXZpZCBI
+aWxkZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT47IGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc7
+DQo+IGxpbnV4LW1tQGt2YWNrLm9yZzsgbWhvY2tvQHN1c2UuY29tOyBoYWlsb25nLmxpdUBvcHBv
+LmNvbTsNCj4ga2FsZXNoc2luZ2hAZ29vZ2xlLmNvbTsgbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZzsNCj4gbG9rZXNoZ2lkcmFAZ29vZ2xlLmNvbTsgbmdlb2ZmcmF5QGdvb2dsZS5jb207IHNo
+bGlAZmIuY29tOw0KPiBzdXJlbmJAZ29vZ2xlLmNvbTsgeXV6aGFvQGdvb2dsZS5jb207IG1pbmNo
+YW5Aa2VybmVsLm9yZzsgQmFycnkgU29uZw0KPiA8di1zb25nYmFvaHVhQG9wcG8uY29tPg0KPiDk
+uLvpopg6IFJlOiBbUEFUQ0ggUkZDXSBtbTogbWdscnU6IHByb3ZpZGUgYSBzZXBhcmF0ZSBsaXN0
+IGZvciBsYXp5ZnJlZSBhbm9uIGZvbGlvcw0KPiANCj4gT24gVHVlLCBPY3QgMTUsIDIwMjQgYXQg
+MTE6MDPigK9QTSBnYW94dSA8Z2FveHUyQGhvbm9yLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiA+DQo+
+ID4gPiBPbiBXZWQsIFNlcCAxOCwgMjAyNCBhdCAxMjowMuKAr0FNIERhdmlkIEhpbGRlbmJyYW5k
+DQo+ID4gPiA8ZGF2aWRAcmVkaGF0LmNvbT4NCj4gPiA+IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4g
+PiBPbiAxNC4wOS4yNCAwODozNywgQmFycnkgU29uZyB3cm90ZToNCj4gPiA+ID4gPiBGcm9tOiBC
+YXJyeSBTb25nIDx2LXNvbmdiYW9odWFAb3Bwby5jb20+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBU
+aGlzIGZvbGxvd3MgdXAgb24gdGhlIGRpc2N1c3Npb24gcmVnYXJkaW5nIEdhb3h1J3Mgd29ya1sx
+XS4NCj4gPiA+ID4gPiBJdCdzIHVuY2xlYXIgaWYgdGhlcmUncyBzdGlsbCBpbnRlcmVzdCBpbiBp
+bXBsZW1lbnRpbmcgYQ0KPiA+ID4gPiA+IHNlcGFyYXRlIExSVSBsaXN0IGZvciBsYXp5ZnJlZSBm
+b2xpb3MsIGJ1dCBJIGRlY2lkZWQgdG8gZXhwbG9yZQ0KPiA+ID4gPiA+IGl0IG91dCBvZiBjdXJp
+b3NpdHkuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBBY2NvcmRpbmcgdG8gTG9rZXNoLCBNQURWX0ZS
+RUUnZCBhbm9uIGZvbGlvcyBhcmUgZXhwZWN0ZWQgdG8gYmUNCj4gPiA+ID4gPiByZWxlYXNlZCBl
+YXJsaWVyIHRoYW4gZmlsZSBmb2xpb3MuIE9uZSBvcHRpb24sIGFzIGltcGxlbWVudGVkIGJ5DQo+
+ID4gPiA+ID4gR2FvIFh1LCBpcyB0byBwbGFjZSBsYXp5ZnJlZSBhbm9uIGZvbGlvcyBhdCB0aGUg
+dGFpbCBvZiB0aGUNCj4gPiA+ID4gPiBmaWxlJ3MgYG1pbl9zZXFgIGdlbmVyYXRpb24uIEhvd2V2
+ZXIsIHRoaXMgYXBwcm9hY2ggcmVzdWx0cyBpbg0KPiA+ID4gPiA+IGxhenlmcmVlIGZvbGlvcyBi
+ZWluZyByZWxlYXNlZCBpbiBhIExJRk8gbWFubmVyLCB3aGljaCBjb25mbGljdHMNCj4gPiA+ID4g
+PiB3aXRoIExSVSBiZWhhdmlvciwgYXMgbm90ZWQgYnkgTWljaGFsLg0KPiA+ID4gPiA+DQo+ID4g
+PiA+ID4gVG8gYWRkcmVzcyB0aGlzLCB0aGlzIHBhdGNoIHByb3Bvc2VzIG1haW50YWluaW5nIGEg
+c2VwYXJhdGUgbGlzdA0KPiA+ID4gPiA+IGZvciBsYXp5ZnJlZSBhbm9uIGZvbGlvcyB3aGlsZSBr
+ZWVwaW5nIHRoZW0gY2xhc3NpZmllZCB1bmRlciB0aGUgImZpbGUiDQo+ID4gPiA+ID4gTFJVIHR5
+cGUgdG8gbWluaW1pemUgY29kZSBjaGFuZ2VzLiBUaGVzZSBsYXp5ZnJlZSBhbm9uIGZvbGlvcw0K
+PiA+ID4gPiA+IHdpbGwgc3RpbGwgYmUgY291bnRlZCBhcyBmaWxlIGZvbGlvcyBhbmQgc2hhcmUg
+dGhlIHNhbWUNCj4gPiA+ID4gPiBnZW5lcmF0aW9uIHdpdGggcmVndWxhciBmaWxlcy4gSW4gdGhl
+IGV2aWN0aW9uIHBhdGgsIHRoZQ0KPiA+ID4gPiA+IGxhenlmcmVlIGxpc3Qgd2lsbCBiZSBwcmlv
+cml0aXplZCBmb3Igc2Nhbm5pbmcgYmVmb3JlIHRoZSBhY3R1YWwgZmlsZSBMUlUgbGlzdC4NCj4g
+PiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBXaGF0J3MgdGhlIGRvd25zaWRlIG9mIGFub3RoZXIg
+TFJVIGxpc3Q/IERvIHdlIGhhdmUgYW55IGV4cGVyaWVuY2Ugb24NCj4gdGhhdD8NCj4gPiA+DQo+
+ID4gPiBFc3NlbnRpYWxseSwgdGhlIGdvYWwgaXMgdG8gYWRkcmVzcyB0aGUgZG93bnNpZGVzIG9m
+IHVzaW5nIGEgc2luZ2xlDQo+ID4gPiBMUlUgbGlzdCBmb3IgZmlsZXMgYW5kIGxhenlmcmVlIGFu
+b255bW91cyBwYWdlcyAtIHNlcmlvdXNseSBtb3JlIGZpbGVzIHJlLWZhdWx0cy4NCj4gPiA+DQo+
+ID4gPiBJJ20gbm90IGVudGlyZWx5IGNsZWFyIG9uIHRoZSBkb3duc2lkZXMgb2YgaGF2aW5nIGFu
+IGFkZGl0aW9uYWwgTFJVDQo+ID4gPiBsaXN0LiBXaGlsZSBpdCBkb2VzIGluY3JlYXNlIGNvbXBs
+ZXhpdHksIGl0IGRvZXNuJ3Qgc2VlbSB0byBiZSBzaWduaWZpY2FudC4NCj4gPiA+DQo+ID4gPiBM
+ZXQncyB3YWl0IGZvciBHYW94dSdzIHRlc3QgcmVzdWx0cyBiZWZvcmUgZGVjaWRpbmcgb24gdGhl
+IG5leHQgc3RlcHMuDQo+ID4gPiBJIHdhcyBqdXN0DQo+ID4gPiBjdXJpb3VzIGFib3V0IGhvdyBk
+aWZmaWN1bHQgaXQgd291bGQgYmUgdG8gYWRkIGEgc2VwYXJhdGUgbGlzdCwgc28gSQ0KPiA+ID4g
+dG9vayB0d28gaG91cnMgdG8gZXhwbG9yZSBpdCA6LSkNCj4gPiBIaSBzb25nLA0KPiA+IEknbSB2
+ZXJ5IHNvcnJ5LCB2YXJpb3VzIHJlYXNvbnMgY29tYmluZWQgaGF2ZSBjYXVzZWQgdGhlIGRlbGF5
+IGluIHRoZSByZXN1bHRzLg0KPiA+DQo+ID4gQmFzaWMgdmVyc2lvbu+8mmFuZHJvaWQgViAoZW5h
+YmxlIEFuZHJvaWQgQVJUIHVzZSBNQURWX0ZSRUUpIFRlc3QgY2FzZXM6DQo+ID4gNjAgYXBwcyBy
+ZXBlYXRlZGx5IHJlc3RhcnRlZCwgdGVzdGVkIGZvciA4IGhvdXJzOyBUaGUgdGVzdCByZXN1bHRz
+IGFyZQ0KPiA+IGFzIGZvbGxvd3M6DQo+ID4gICAgICAgICB3b3JraW5nc2V0X3JlZmF1bHRfYW5v
+biAgIHdvcmtpbmdzZXRfcmVmYXVsdF9maWxlDQo+ID4gYmFzZSAgICAgICAgNDIwMTY4MDUgICAg
+ICAgICAgICAgICAgOTIwMTA1NDINCj4gPiBwYXRjaCAgICAgICAxOTgzNDg3MyAgICAgICAgICAg
+ICAgICA0OTM4MzU3Mg0KPiA+ICUgZGlmZiAgICAgICAtNTIuNzklICAgICAgICAgICAgICAgICAg
+LTQ2LjMzJQ0KPiA+DQo+ID4gQWRkaXRpb25hbGx5LCBhIGNvbXBhcmF0aXZlIHRlc3Qgd2FzIGNv
+bmR1Y3RlZCBvbg0KPiA+IGFkZC1sYXp5ZnJlZS1mb2xpby10by1scnUtdGFpbC5wYXRjaFsxXSwg
+YW5kIHRoZSByZXN1bHRzIGFyZSBhcyBmb2xsb3dzOg0KPiA+ICAgICAgICAgICAgICAgIHdvcmtp
+bmdzZXRfcmVmYXVsdF9hbm9uICAgd29ya2luZ3NldF9yZWZhdWx0X2ZpbGUNCj4gPiBsYXp5ZnJl
+ZS10YWlsICAgICAgICAyMDMxMzM5NSAgICAgICAgICAgICAgICAgNTIyMDMwNjENCj4gPiBwYXRj
+aCAgICAgICAgICAgICAxOTgzNDg3MyAgICAgICAgICAgICAgICAgNDkzODM1NzINCj4gPiAlIGRp
+ZmYgICAgICAgICAgICAgIC0yLjM2JSAgICAgICAgICAgICAgICAgICAgLTUuNDAlDQo+ID4NCj4g
+PiBGcm9tIHRoZSByZXN1bHRzLCBpdCBjYW4gYmUgc2VlbiB0aGF0IHRoaXMgcGF0Y2ggaXMgdmVy
+eSBiZW5lZmljaWFsDQo+ID4gYW5kIGJldHRlciB0aGFuIHRoZSByZXN1bHRzIGluIFsxXTsgaXQg
+Y2FuIHNvbHZlIHRoZSBwZXJmb3JtYW5jZSBpc3N1ZQ0KPiA+IG9mIGhpZ2ggSU8gY2F1c2VkIGJ5
+IGV4dGVuc2l2ZSB1c2Ugb2YgTUFEVl9GUkVFIG9uIHRoZSBBbmRyb2lkIHBsYXRmb3JtLg0KPiA+
+DQo+IA0KPiBUaGFuayB5b3UgZm9yIHRoZSB0ZXN0aW5nIGFuZCBkYXRhLiBUaGUgcmVzdWx0cyBs
+b29rIHByb21pc2luZy4gV291bGQgeW91IG1pbmQNCj4gaWYgSSBzZW5kIGEgdjIgd2l0aCB0aGUg
+dGVzdCBkYXRhIGFuZCB5b3VyIHRhZyBpbmNsdWRlZCBpbiB0aGUgY2hhbmdlbG9nPw0KPiBJIG1l
+YW46DQo+IA0KPiBUZXN0ZWQtYnk6IEdhbyBYdSA8Z2FveHUyQGhpaG9ub3IuY29tPg0KT2YgY291
+cnNlIG5vdCwgSSdkIGJlIGhhcHB5IHRvLg0KDQpEdWUgdG8gSU8gcGVyZm9ybWFuY2UgaXNzdWVz
+LCBBbmRyb2lkIGhhcyByZXZlcnRlZCB0aGUgQVJUIHVzZSBvZiBNQURWX0ZSRUU7DQppdCBpcyBl
+eHBlY3RlZCB0aGF0IG9uY2UgdGhlIGlzc3VlIGlzIHJlc29sdmVkLCBBbmRyb2lkIEFSVCB3aWxs
+IHJlLWVuYWJsZSBNQURWX0ZSRUUgDQphbmQgcHJvbW90ZSB0aGUgdXNlIG9mIE1BRFZfRlJFRSBp
+biBtb3JlIG1vZHVsZXMuDQo+IA0KPiA+IFRlc3QgY2FzZSBub3RlczogVGhlcmUgaXMgYSBkaXNj
+cmVwYW5jeSBiZXR3ZWVuIHRoZSB0ZXN0IHJlc3VsdHMNCj4gPiBtZW50aW9uZWQgaW4gWzFdIGFu
+ZCB0aGUgY3VycmVudCB0ZXN0IHJlc3VsdHMgYmVjYXVzZSB0aGUgdGVzdCBjYXNlcw0KPiA+IGFy
+ZSBkaWZmZXJlbnQuIFRoZSB0ZXN0IGNhc2UgdXNlZCBpbiBbMV0gaW52b2x2ZXMgYWN0aW9ucyBz
+dWNoIGFzDQo+ID4gY2xpY2tpbmcgYW5kIHN3aXBpbmcgd2l0aGluIHRoZSBhcHAgYWZ0ZXIgaXQg
+c3RhcnRzOyBGb3IgdGhlIHNha2Ugb2YNCj4gPiBjb252ZW5pZW5jZSBhbmQgcmVzdWx0IHN0YWJp
+bGl0eSwgdGhlIGN1cnJlbnQgdGVzdCBjYXNlIG9ubHkgaW52b2x2ZXMNCj4gPiBhcHAgc3RhcnR1
+cCB3aXRob3V0IGNsaWNraW5nIGFuZCBzd2lwaW5nLCBhbmQgdGhlIG51bWJlciBvZiBhcHBzIGhh
+cyBiZWVuDQo+IGluY3JlYXNlZCAoMzAtPjYwKS4NCj4gPg0KPiA+IDEuDQo+ID4gaHR0cHM6Ly9s
+b3JlLmtlcm5lbC5vcmcvYWxsL2YyOWY2NGUyOWMwODQyN2I5NWUzZGYzMGE1NzcwMDU2QGhvbm9y
+LmNvbQ0KPiA+IC9ULyN1DQo+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiAtLQ0KPiA+ID4gPiBDaGVl
+cnMsDQo+ID4gPiA+DQo+ID4gPiA+IERhdmlkIC8gZGhpbGRlbmINCj4gPiA+ID4NCj4gPiA+DQo+
+IA0KPiBUaGFua3MNCj4gQmFycnkNCg==
 
